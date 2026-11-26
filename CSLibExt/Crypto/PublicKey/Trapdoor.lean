@@ -107,8 +107,8 @@ structure DeterministicCore : Prop where
     ∀ z ∈ S.domain (index n pp pk) ∪ S.codomain (index n pp pk), z.length ≤ p.eval n.val
   correct : ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk → S.CorrectAt n pp pk sk
 
-/-- **Efficient key-indexed trapdoor function scheme, exact bounded-coin convention.** There
-are uniform polynomial-time algorithms for setup, key generation and sampling, each applied
+/-- **Bounded-coin trapdoor function scheme.** In this model there are uniform polynomial-time
+algorithms for setup, key generation and sampling, each applied
 to a fresh uniform bitstring whose length is a fixed polynomial in the positive security
 parameter. They realise the specified setup and conditional key laws and the exact uniform
 law of the nonempty domain at every generated public context. Both spaces have uniform
@@ -116,7 +116,7 @@ polynomial-time membership tests at those contexts; enumeration is not required.
 and secret maps are polynomial-time. One polynomial bounds the lengths of every generated
 system parameter, both keys and all words in either space. Correctness holds at every generated
 pair. The spaces may also depend on the public key, not just on the system parameter. -/
-structure IsFunctionScheme : Prop extends S.DeterministicCore where
+structure IsBoundedCoinFunctionScheme : Prop extends S.DeterministicCore where
   setup_law : ∃ (q : Polynomial ℕ) (P : Bits × Bits → Bits), IsPolyTime P ∧ ∀ n : ℕ+,
     (coins (q.eval n.val)).map (fun r => P (List.replicate n.val true, r)) = S.setup n
   key_law : ∃ (q : Polynomial ℕ) (G : Index → Bits × Bits), IsPolyTime G ∧
@@ -128,17 +128,20 @@ structure IsFunctionScheme : Prop extends S.DeterministicCore where
       ∃ hx : (S.domain pub).Nonempty,
         (coins (q.eval n.val)).map (fun r => sample (pub, r)) = uniformOfFinset (S.domain pub) hx
 
-/-- Exact uniform sampling requires a nonempty domain at each generated public context. -/
-theorem IsFunctionScheme.domain_nonempty {S : Family} (h : S.IsFunctionScheme)
+/-- **Nonempty bounded-coin domains.** In a bounded-coin trapdoor function scheme the exact
+uniform sampler requires a nonempty domain at every generated public context. -/
+theorem IsBoundedCoinFunctionScheme.domain_nonempty {S : Family} (h : S.IsBoundedCoinFunctionScheme)
     (n : ℕ+) (pp pk sk : Bits) (hg : S.Generated n pp pk sk) :
     (S.domain (index n pp pk)).Nonempty := by
   obtain ⟨_, _, _, hs⟩ := h.sample_law
   exact (hs n pp pk sk hg).choose
 
-/-- **A restriction of exact bounded-coin sampling.** In a trapdoor function scheme there is
-one polynomial $q$ such that the cardinality of every generated domain divides $2^{q(n)}$
-at security parameter $n$. Each domain point must have the same number of sampling tapes. -/
-theorem IsFunctionScheme.card_domain_dvd {S : Family} (h : S.IsFunctionScheme) :
+/-- **A restriction of exact bounded-coin sampling.** In a bounded-coin trapdoor function
+scheme there is one polynomial $q$ such that the cardinality of every generated domain divides
+$2^{q(n)}$ at security parameter $n$. Each domain point must have the same number of sampling
+tapes. This divisibility does not follow for a sampler with a negligible running-time tail. -/
+theorem IsBoundedCoinFunctionScheme.card_domain_dvd {S : Family}
+    (h : S.IsBoundedCoinFunctionScheme) :
     ∃ q : Polynomial ℕ, ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk →
       (S.domain (index n pp pk)).card ∣ 2 ^ q.eval n.val := by
   classical
@@ -175,15 +178,16 @@ bounded-coin model whose codomain equals its domain at every generated public co
 left inverse therefore makes the public map a permutation of that finite set. One-wayness is
 a separate property of the keyed experiment, not a consequence of correctness. -/
 def IsBoundedCoinPermutationScheme : Prop :=
-  S.IsFunctionScheme ∧ ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk →
+  S.IsBoundedCoinFunctionScheme ∧ ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk →
     S.codomain (index n pp pk) = S.domain (index n pp pk)
 
-/-- **The one-way experiment.** For a family with a nonempty domain at every generated context,
+/-- **The bounded-coin one-way experiment.** Fix a family with a nonempty domain at every
+generated context and a budget of $m$ fresh fair bits for the observer. First
 draw the system parameter and the pair of keys from their specified laws. Conditional on them,
 draw a uniform domain element and independent uniform adversary bits. The adversary receives the
 unary security parameter, system parameter, public key, public image and its own bits. It wins
 exactly when its output string equals the sampled element. -/
-noncomputable def oneWayGame
+noncomputable def boundedCoinOneWayGame
     (hne : ∀ n pp pk sk, S.Generated n pp pk sk → (S.domain (index n pp pk)).Nonempty)
     (A : Index × Bits × Bits → Bits) (n : ℕ+) (m : ℕ) : PMF Bool :=
   (S.setup n).bindOnSupport fun pp hpp =>
@@ -192,13 +196,15 @@ noncomputable def oneWayGame
       (uniformOfFinset (S.domain pub) (hne n pp pk sk ⟨hpp, hk⟩)).bind fun x =>
         (coins m).map fun r => decide (A (pub, S.eval (pub, x), r) = x)
 
-/-- **Computational one-wayness of a trapdoor function scheme.** For every polynomial coin
-budget and every single polynomial-time bitstring algorithm, the success probability in the
-keyed one-way experiment is negligible as the positive security parameter grows. Its value at
+/-- **Bounded-coin one-wayness.** A bounded-coin trapdoor function scheme is one-way in this
+model if for every polynomial coin budget and every single polynomial-time bitstring algorithm
+the success probability in the bounded-coin experiment is negligible as the positive security
+parameter grows. Its value at
 zero is extended by zero for the natural-number negligibility predicate. -/
-def IsOneWay (h : S.IsFunctionScheme) : Prop :=
+def IsBoundedCoinOneWay (h : S.IsBoundedCoinFunctionScheme) : Prop :=
   ∀ (q : Polynomial ℕ) (A : Index × Bits × Bits → Bits), IsPolyTime A → NegligibleAdv fun n =>
-    if hn : 0 < n then winProb (S.oneWayGame h.domain_nonempty A ⟨n, hn⟩ (q.eval n)) else 0
+    if hn : 0 < n then winProb (S.boundedCoinOneWayGame h.domain_nonempty A ⟨n, hn⟩ (q.eval n))
+    else 0
 
 end Family
 

@@ -1,7 +1,3 @@
-# The one-way experiment
+# The bounded-coin one-way experiment
 
-For a family with a nonempty domain at every generated context,
-draw the system parameter and the pair of keys from their specified laws. Conditional on them,
-draw a uniform domain element and independent uniform adversary bits. The adversary receives the
-unary security parameter, system parameter, public key, public image and its own bits. It wins
-exactly when its output string equals the sampled element.
+Fix a family with a nonempty domain at every generated context, a positive security parameter, and a budget of $m$ fresh fair bits for the observer. Draw the system parameter and key pair from their specified laws, then a uniform element $x$ of the selected domain. Give the observer the unary security parameter, system parameter, public key, public image of $x$ and an independent uniform $m$-bit word. It wins exactly when its answer equals $x$.

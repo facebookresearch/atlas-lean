@@ -10,6 +10,7 @@ import CSLibExt.Crypto.PublicKey.Trapdoor
 import CSLibExt.Crypto.Framework.Negligible
 import Mathlib.Analysis.SpecificLimits.Normed
 import CSLibExt.Computability.Complexity.PolynomialEncoding.PairSplit
+import CSLibExt.Computability.Complexity.PairProjection
 
 namespace Cslib.Crypto.PublicKey.Trapdoor.Tests
 
@@ -71,14 +72,14 @@ example (n : ℕ+) : wider.CorrectAt n [] [] [] ∧
 
 -- A law on the empty set cannot silently stand for a uniform challenge.
 example (S : Family) (n : ℕ+) (pp pk sk : Bits) (hg : S.Generated n pp pk sk)
-    (he : S.domain (index n pp pk) = ∅) : ¬ S.IsFunctionScheme := by
+    (he : S.domain (index n pp pk) = ∅) : ¬ S.IsBoundedCoinFunctionScheme := by
   intro h
   simpa [he] using h.domain_nonempty n pp pk sk hg
 
 -- Even a nonempty three-element domain is incompatible with exact sampling from a fixed
 -- number of fair bits, independently of which polynomial coin budget is proposed.
 example (S : Family) (n : ℕ+) (pp pk sk : Bits) (hg : S.Generated n pp pk sk)
-    (hc : (S.domain (index n pp pk)).card = 3) : ¬ S.IsFunctionScheme := by
+    (hc : (S.domain (index n pp pk)).card = 3) : ¬ S.IsBoundedCoinFunctionScheme := by
   intro h
   obtain ⟨q, hq⟩ := h.card_domain_dvd
   have hthree := hq n pp pk sk hg
@@ -183,7 +184,7 @@ private theorem uniform_letter : (uniformOfFintype (Fin 1 → Bool)).map List.of
 
 -- A full two-letter permutation scheme: the sampler reads one bit, both maps are the identity,
 -- and the two generators read zero bits. No hardness property is imposed on this fixture.
-example : binaryFamily.IsBoundedCoinPermutationScheme := by
+private theorem binary_permutation : binaryFamily.IsBoundedCoinPermutationScheme := by
   constructor
   · constructor
     · constructor
@@ -358,9 +359,10 @@ private theorem emitter_mass (o : Option Bool) (x : Bits) :
         rw [hit, ite_eq_right_of_eq_false _ _ (eq_false h₀)]
         simp [emitter_two, hit, terminal, Cfg.Halted]
 
-private noncomputable def constantAlgorithm (o : Option Bool) : TailAlgorithm where
+private noncomputable def constantAlgorithm (o : Option Bool) (b : Polynomial ℕ := 0) :
+    TailAlgorithm where
   machine := emitter o
-  bound := 0
+  bound := b
   efficient := {
     halts := fun n aux _ => (emitter_mass o (input n aux)) ▸ (PMF.pure o.toList).2
     tail := by
@@ -388,7 +390,8 @@ private theorem mem_codes (z : Bits) : z.length ≤ 1 ↔ z ∈ codes := by
   | cons b zs => cases b <;> cases zs <;> simp [codes]
 
 -- All clauses of the broad definition hold; this very same family cannot satisfy the strict one.
-example : threeLetters.IsPermutationScheme ∧ ¬ threeLetters.IsBoundedCoinPermutationScheme := by
+private theorem three_permutation :
+    threeLetters.IsPermutationScheme ∧ ¬ threeLetters.IsBoundedCoinPermutationScheme := by
   have keys {n pp pk sk} (hg : threeLetters.Generated n pp pk sk) :
       pp = [] ∧ pk = [] ∧ sk = [] := by simpa [Family.Generated, threeLetters] using hg
   constructor
@@ -422,5 +425,76 @@ example : threeLetters.IsPermutationScheme ∧ ¬ threeLetters.IsBoundedCoinPerm
     obtain ⟨q, hq⟩ := h.1.card_domain_dvd
     have hh : 3 ∣ 2 ^ q.eval 1 := by simpa [threeLetters, codes] using hq 1 [] [] [] hg
     exact (by decide : ¬ 3 ∣ 2) (Nat.prime_three.dvd_of_dvd_pow hh)
+
+open Cslib.Crypto.Framework
+
+-- Negligibility is on natural numbers with a dummy value at zero. It cannot hold when a
+-- positive lower bound holds at every *positive* security parameter.
+private theorem not_negligible_of_positive_bound {f : ℕ → ℝ} {δ : ℝ} (hδ : 0 < δ)
+    (hl : ∀ n : ℕ+, δ ≤ f n.val) : ¬ NegligibleAdv f := by
+  intro h
+  apply not_negligibleAdv_const hδ
+  apply NegligibleAdv.of_eventually_le
+  intro c
+  obtain ⟨N, hN⟩ := h.eventually_le c
+  exact ⟨max 1 N, fun n hn => (hl ⟨n, by omega⟩).trans (hN n (by omega))⟩
+
+-- In the identity permutation on the two letters, the public image is the sampled letter.
+-- Merely reading the image from the public tuple succeeds, with no coins at all.
+private abbrev readImage (t : (Bits × Bits × Bits) × Bits × Bits) : Bits := t.2.1
+
+private theorem binary_readImage (n : ℕ+) (m : ℕ) :
+    binaryFamily.boundedCoinOneWayGame binary_permutation.1.domain_nonempty readImage n m =
+      PMF.pure true := by
+  simpa [Family.boundedCoinOneWayGame, binaryFamily, readImage, PMF.map_const, Function.const_def]
+    using PMF.bind_const (uniformOfFinset letters (by simp [letters])) (PMF.pure true)
+
+example : ¬ binaryFamily.IsBoundedCoinOneWay binary_permutation.1 := by
+  intro h
+  have hA : IsPolyTime readImage := snd_poly.comp Cslib.Complexity.isPolyTime_fst
+  apply not_negligible_of_positive_bound (δ := 1) zero_lt_one _ (h 0 readImage hA)
+  intro n
+  erw [dite_eq_left n.property, binary_readImage n]
+  simp [winProb]
+
+-- For the three equally likely words, a constant output matches on precisely one word.
+-- The constant machine takes one transition (one checkpoint suffices). Its envelope of five
+-- auxiliary bits covers the canonical encoding of the two empty parameters and any public image.
+private noncomputable abbrev blankObserver := constantAlgorithm none 5
+
+private theorem blank_fits : threeLetters.TranscriptFits blankObserver := by
+  intro n pp pk sk hg y hy
+  obtain ⟨rfl, rfl, rfl⟩ : pp = [] ∧ pk = [] ∧ sk = [] := by
+    simpa [Family.Generated, threeLetters] using hg
+  obtain h | h | h : y = [] ∨ y = [false] ∨ y = [true] := by
+    simpa [threeLetters, codes] using hy
+  all_goals
+    subst y
+    change (bitEncode _).length ≤ (5 : Polynomial ℕ).eval n.val
+    rw [Polynomial.eval_ofNat]
+    decide
+
+private theorem blank_law (s : Bits) (hh : HasSum (blankObserver.machine.mass s) 1) :
+    blankObserver.machine.law s hh = PMF.pure [] :=
+  DFunLike.ext _ _ (congrFun (emitter_mass none s))
+
+private theorem three_blank_winProb (n : ℕ+) :
+    winProb (threeLetters.transcriptGame three_permutation.1.1 blankObserver blank_fits n) =
+      (1 : ℝ) / 3 := by
+  classical
+  simp only [Family.transcriptGame, threeLetters, PMF.pure_bindOnSupport, blank_law,
+    PMF.pure_map, PMF.bindOnSupport_eq_bind]
+  change winProb ((uniformOfFinset codes _).map (fun x => decide (([] : Bits) = x))) = _
+  rw [winProb, PMF.map_apply, tsum_eq_single ([] : Bits)]
+  · simp [codes, one_div]
+  · intro z hz
+    simp [Ne.symm hz]
+
+example : ¬ threeLetters.IsTranscriptOneWay three_permutation.1.1 := by
+  intro h
+  apply not_negligible_of_positive_bound (δ := 1 / 3) (by norm_num) _ (h blankObserver blank_fits)
+  intro n
+  erw [dite_eq_left n.property]
+  exact (three_blank_winProb n).ge
 
 end Cslib.Crypto.PublicKey.Trapdoor.Tests

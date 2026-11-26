@@ -1,3 +1,3 @@
-# Domain nonempty
+# Nonempty bounded-coin domains
 
-Exact uniform sampling requires a nonempty domain at each generated public context.
+In a bounded-coin trapdoor function scheme, exact uniform sampling requires a nonempty domain at every generated public context.
