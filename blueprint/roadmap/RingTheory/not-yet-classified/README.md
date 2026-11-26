@@ -55,3 +55,4 @@ Topics added since this subject's fields were last revised.
 - [Jacobian Square Presentation](associated-discr-norm-jacobian-det-of-sq.md)
 - [Left integrals on a finite free Hopf algebra](exists-left-integral-sum-apply-mul-eq-co.md)
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
+- [Determinant of a scaled dual pairing](det-dual-mul-mul-eq-norm-mul-det.md)

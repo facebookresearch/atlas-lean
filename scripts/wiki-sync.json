@@ -341,6 +341,7 @@
 "Algebra.TensorProduct.sepClosedTensorHom_injective": "960ac833ef56d71a",
 "Algebra.TensorProduct.sepClosedTensorHom_surjective": "4c3263c5e0b56014",
 "Algebra.associated_discr_norm_jacobianDet_of_square_presentation": "c92b19e8b11ae2fd",
+"Algebra.det_dual_mul_mul_eq_norm_mul_det": "53cfd88cd64dd4df",
 "Algebra.discr_ne_zero_iff_etale": "55ea59b28f9e89e8",
 "Algebra.discr_ne_zero_iff_traceForm_nondegenerate": "e0f11c70e681c02a",
 "Algebra.discr_ne_zero_of_etale": "816dd1b4a9a9902a",
