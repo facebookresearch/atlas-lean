@@ -53,9 +53,9 @@ separable over `K(y)`.
   `[F : K(y)]`. It is the pullback of the place at infinity of `K(y)`, so this is the fundamental
   identity.
 * If `K` is algebraically closed, every zero of `y` has order `3` and every zero of `y - 1728`
-  has order `2`, then the divisor `D` with coefficient `⌊2 m ord_v y / 3⌋` at the zeros of `y`,
-  `⌊m ord_v (y - 1728) / 2⌋` at the zeros of `y - 1728` and `m ord_v y` at the poles of `y`
-  satisfies `6 deg D = m [F : K(y)]`.
+  has order `2`, then for every nonnegative integer `m` the divisor `D` with coefficient
+  `⌊2 m ord_v y / 3⌋` at the zeros of `y`, `⌊m ord_v (y - 1728) / 2⌋` at the zeros of `y - 1728`,
+  `m ord_v y` at the poles of `y` and `0` elsewhere satisfies `6 deg D = m [F : K(y)]`.
 
 ## Main statements
 
@@ -206,9 +206,10 @@ end PoleDivisor
 
 /-- **Degrees of divisors with ramification orders three and two.** Let `k` be algebraically
 closed and `y : F` transcendental over `k` with `F` finite and separable over `k(y)`, such that
-every zero of `y` has order `3` and every zero of `y - 1728` has order `2`. If `D` has coefficient
-`⌊2 m ord_w y / 3⌋` at the zeros of `y`, `⌊m ord_w (y - 1728) / 2⌋` at the zeros of `y - 1728`,
-`m ord_w y` at the poles of `y` and `0` at every other place, then `6 deg D = m [F : k(y)]`. -/
+every zero of `y` has order `3` and every zero of `y - 1728` has order `2`. Let `m` be a
+nonnegative integer. If `D` has coefficient `⌊2 m ord_w y / 3⌋` at the zeros of `y`,
+`⌊m ord_w (y - 1728) / 2⌋` at the zeros of `y - 1728`, `m ord_w y` at the poles of `y` and `0` at
+every other place, then `6 deg D = m [F : k(y)]`. -/
 theorem six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two
     (k : Type*) [Field k] [IsAlgClosed k] {F : Type*} [Field F] [Algebra k F]
     (y : F) (hy : Transcendental k y)
