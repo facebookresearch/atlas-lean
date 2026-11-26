@@ -1,0 +1,19 @@
+# The operational semantics of CSP
+
+Fix an alphabet $\Sigma$ of visible events, a termination signal $\checkmark \notin \Sigma$ and a silent action $\tau$, and write $\Sigma^{\checkmark} = \Sigma \cup \{\checkmark\}$. The closed CSP terms are built from $STOP$ and $SKIP$ with prefixing $e \to P$, nondeterministic choice $P \sqcap Q$ and $\bigsqcap S$ over a nonempty set $S$ of terms, external choice $P \mathbin{\Box} Q$, generalized parallel $P \parallel_X Q$ with $X \subseteq \Sigma$, hiding $P \setminus B$ with $B \subseteq \Sigma$, renaming $P[\![R]\!]$ with $R$ a relation on $\Sigma$, sequential composition $P ; Q$ and recursion $\mu p . P$; the term $\Omega$ stands for a process that has terminated. For a prefix $e$, $\mathrm{comms}(e) \subseteq \Sigma$ is the set of events it describes and, for $a \in \mathrm{comms}(e)$, $\mathrm{subs}(a, e, P)$ is $P$ with the identifiers bound by $e$ replaced by the corresponding parts of $a$.
+
+The operational semantics is the labelled transition system on closed terms, with labels in $\Sigma^{\checkmark} \cup \{\tau\}$, whose transitions are those derivable from the following rules (each rule for $\Box$ and $\parallel_X$ also has its symmetric form).
+
+- $SKIP \xrightarrow{\checkmark} \Omega$; $STOP$ and $\Omega$ have no transitions.
+- $e \to P \xrightarrow{a} \mathrm{subs}(a, e, P)$ for every $a \in \mathrm{comms}(e)$.
+- $P \sqcap Q \xrightarrow{\tau} P$ and $P \sqcap Q \xrightarrow{\tau} Q$; $\bigsqcap S \xrightarrow{\tau} P$ for every $P \in S$.
+- $\mu p . P \xrightarrow{\tau} P[\mu p . P / p]$.
+- External choice: if $P \xrightarrow{\tau} P'$ then $P \mathbin{\Box} Q \xrightarrow{\tau} P' \mathbin{\Box} Q$; if $P \xrightarrow{a} P'$ with $a \in \Sigma^{\checkmark}$ then $P \mathbin{\Box} Q \xrightarrow{a} P'$.
+- Sequential composition: if $P \xrightarrow{x} P'$ with $x \neq \checkmark$ then $P ; Q \xrightarrow{x} P' ; Q$; if $P \xrightarrow{\checkmark} P'$ for some $P'$ then $P ; Q \xrightarrow{\tau} Q$.
+- Hiding: if $P \xrightarrow{x} P'$ with $x \notin B \cup \{\checkmark\}$ then $P \setminus B \xrightarrow{x} P' \setminus B$; if $P \xrightarrow{a} P'$ with $a \in B$ then $P \setminus B \xrightarrow{\tau} P' \setminus B$; if $P \xrightarrow{\checkmark} P'$ then $P \setminus B \xrightarrow{\checkmark} \Omega$.
+- Renaming: if $P \xrightarrow{\tau} P'$ then $P[\![R]\!] \xrightarrow{\tau} P'[\![R]\!]$; if $P \xrightarrow{a} P'$ and $a \mathrel{R} b$ then $P[\![R]\!] \xrightarrow{b} P'[\![R]\!]$; if $P \xrightarrow{\checkmark} P'$ then $P[\![R]\!] \xrightarrow{\checkmark} \Omega$.
+- Parallel: if $P \xrightarrow{\tau} P'$ then $P \parallel_X Q \xrightarrow{\tau} P' \parallel_X Q$; if $P \xrightarrow{a} P'$ with $a \in \Sigma \setminus X$ then $P \parallel_X Q \xrightarrow{a} P' \parallel_X Q$; if $P \xrightarrow{a} P'$ and $Q \xrightarrow{a} Q'$ with $a \in X$ then $P \parallel_X Q \xrightarrow{a} P' \parallel_X Q'$; if $P \xrightarrow{\checkmark} P'$ then $P \parallel_X Q \xrightarrow{\tau} \Omega \parallel_X Q$; and $\Omega \parallel_X \Omega \xrightarrow{\checkmark} \Omega$, so that a parallel composition terminates only after both components have.
+
+## Sources
+
+- A. W. Roscoe, *The Theory and Practice of Concurrency*, Prentice Hall, 1997; revised edition 2005, author's online version, <https://www.cs.ox.ac.uk/bill.roscoe/publications/68b.pdf>, Section 7.3 ("Firing rules for CSP"), the rules for $SKIP$, prefixing, nondeterministic choice, recursion, external choice, sequential composition, hiding, renaming and generalized parallel.
