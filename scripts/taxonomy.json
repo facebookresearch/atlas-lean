@@ -1347,7 +1347,6 @@
   "CSLibExt/Complexity/KeyTheorems/NaturalProofs": {"to": "TheoryOfComputation/hierarchy-theorems-and-barriers", "title": "Natural proofs barrier"},
   "CSLibExt/Complexity/KeyTheorems/MASubsetAM": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Arthur–Merlin and Merlin–Arthur classes"},
   "CSLibExt/Complexity/KeyTheorems/MajorityNotInAC0": {"to": "TheoryOfComputation/circuit-complexity", "title": "Lower bounds for AC0 circuits"},
-  "CSLibExt/Complexity/NPComplete/DominatingSetDefs": {"to": "TheoryOfComputation/np-completeness/graph-covering-and-domination", "title": "Dominating set"},
   "CSLibExt/Complexity/NPComplete/GraphColoringDefs": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph coloring"},
   "CSLibExt/Complexity/NPComplete/SequencingToMinimizeWeightedTardinessDefs": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Single-machine sequencing"},
   "CSLibExt/Computability/Automata/DA/EncodedDFA": {"to": "TheoryOfComputation/decision-procedures", "title": "Encoded finite automata"},
