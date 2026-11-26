@@ -24,6 +24,8 @@ set_option autoImplicit false
 open PhyslibExt.QuantumInfo.Interaction PhyslibExt.QuantumInfo.QIP
 
 #print axioms acceptProb_zero
+#print axioms completeWith_iff_exists_value
+#print axioms soundWith_iff_forall_value
 #print axioms complete_iff_exists_value
 #print axioms sound_iff_forall_value
 
@@ -33,12 +35,10 @@ def rejectAllPOVM (d : Type*) [Fintype d] [DecidableEq d] : POVM Bool d where
   nonneg := by
     intro b
     cases b with
-    | false =>
-      simp [HermitianMat.zero_le_iff]
-    | true =>
-      simpa using le_refl (0 : HermitianMat _ _)
+    | false => simp
+    | true => simp
   normalized := by
-    simp [Fintype.sum_bool]
+    simp
 
 noncomputable section
 
@@ -53,6 +53,11 @@ def rejectAllV (k : ℕ) : Verifier k (Fin 2) (Fin 2) where
   init := MState.pure (Ket.basis (0, 0))
   step := fun _ => CPTPMap.id
   accept := rejectAllPOVM (Fin 2 × Fin 2)
+
+/-- The memoryless prover: workspace `Unit` and identity channels. -/
+def unitProver (k : ℕ) : Prover k (Fin 2) Unit where
+  init := default
+  step := fun _ => CPTPMap.id
 
 /-- The accept-all verifier accepts with probability `1` against every prover. -/
 theorem acceptAll_acceptProb (k : ℕ) (dP : Type*) [Fintype dP] [DecidableEq dP]
@@ -83,14 +88,12 @@ theorem rejectAll_acceptProb (k : ℕ) (dP : Type*) [Fintype dP] [DecidableEq dP
 theorem complete_acceptAll_not_sound (k : ℕ) :
     Complete (acceptAllV k) ∧ ¬ Sound (acceptAllV k) := by
   have h1 : ((1 : Prob) : ℝ) = 1 := Prob.coe_one
-  haveI : Nonempty (MState Unit) := inferInstance
   constructor
-  · refine ⟨Unit, inferInstance, inferInstance,
-      ⟨Classical.choice inferInstance, fun _ => CPTPMap.id⟩, ?_⟩
+  · refine ⟨Unit, inferInstance, inferInstance, unitProver k, ?_⟩
     rw [acceptAll_acceptProb, h1]
     norm_num
   · intro hS
-    have h := hS Unit ⟨Classical.choice inferInstance, fun _ => CPTPMap.id⟩
+    have h := hS Unit (unitProver k)
     rw [acceptAll_acceptProb, h1] at h
     norm_num at h
 
@@ -110,17 +113,28 @@ theorem sound_rejectAll_not_complete (k : ℕ) :
 
 #print axioms sound_rejectAll_not_complete
 
+/-- At the extreme thresholds, the accept-all verifier has perfect completeness and the
+reject-all verifier has soundness `0`. -/
+theorem completeWith_one_acceptAll_soundWith_zero_rejectAll (k : ℕ) :
+    CompleteWith 1 (acceptAllV k) ∧ SoundWith 0 (rejectAllV k) := by
+  constructor
+  · refine ⟨Unit, inferInstance, inferInstance, unitProver k, ?_⟩
+    rw [acceptAll_acceptProb, Prob.coe_one]
+  · intro dP _ _ P
+    rw [rejectAll_acceptProb, Prob.coe_zero]
+
+#print axioms completeWith_one_acceptAll_soundWith_zero_rejectAll
+
 /-- No prover strategies exist at the empty workspace, while the memoryless
 workspace `Unit` has strategies. -/
 theorem prover_empty_unit (k : ℕ) :
     IsEmpty (Prover k (Fin 2) Empty) ∧ Nonempty (Prover k (Fin 2) Unit) := by
   constructor
-  · haveI : IsEmpty (MState Empty) :=
+  · have : IsEmpty (MState Empty) :=
       ⟨fun ρ => (inferInstance : IsEmpty Empty).elim
         (Classical.choice ρ.nonempty)⟩
     exact Function.isEmpty (fun P => P.init)
-  · haveI : Nonempty (MState Unit) := inferInstance
-    exact ⟨⟨Classical.choice inferInstance, fun _ => CPTPMap.id⟩⟩
+  · exact ⟨unitProver k⟩
 
 #print axioms prover_empty_unit
 
@@ -129,11 +143,44 @@ theorem value_acceptAll_empty_unit (k : ℕ) :
     value (acceptAllV k) Empty = 0 ∧ value (acceptAllV k) Unit = 1 := by
   constructor
   · apply value_of_isEmpty
-  · haveI := (prover_empty_unit k).2
+  · have := (prover_empty_unit k).2
     unfold value
     simp only [acceptAll_acceptProb, ciSup_const]
 
 #print axioms value_acceptAll_empty_unit
+
+/-- Completeness of the accept-all verifier, read off its value `1` at `Unit` through
+`complete_iff_exists_value`. -/
+theorem complete_acceptAll_of_value (k : ℕ) : Complete (acceptAllV k) := by
+  rw [complete_iff_exists_value]
+  refine ⟨Unit, inferInstance, inferInstance, ?_⟩
+  rw [(value_acceptAll_empty_unit k).2, Prob.coe_one]
+  norm_num
+
+#print axioms complete_acceptAll_of_value
+
+/-- Soundness of the reject-all verifier, read off its value `0` at every workspace through
+`sound_iff_forall_value`. -/
+theorem sound_rejectAll_of_value (k : ℕ) : Sound (rejectAllV k) := by
+  rw [sound_iff_forall_value]
+  intro dP _ _
+  have hle : value (rejectAllV k) dP ≤ 0 :=
+    (value_le_iff _ 0).2 (fun P => (rejectAll_acceptProb k dP P).le)
+  have hleR : (value (rejectAllV k) dP : ℝ) ≤ ((0 : Prob) : ℝ) :=
+    Subtype.coe_le_coe.mpr hle
+  rw [Prob.coe_zero] at hleR
+  linarith
+
+#print axioms sound_rejectAll_of_value
+
+/-- A value witness at the empty workspace, which has no provers, still gives completeness at
+threshold `0` through `completeWith_iff_exists_value`: the prover comes from `Unit`. -/
+theorem completeWith_zero_rejectAll_of_empty (k : ℕ) : CompleteWith 0 (rejectAllV k) := by
+  rw [completeWith_iff_exists_value]
+  refine ⟨Empty, inferInstance, inferInstance, ?_⟩
+  rw [value_of_isEmpty, Prob.coe_zero]
+
+#print axioms completeWith_zero_rejectAll_of_empty
 
 /-- A zero-round verifier measuring the message qubit of a basis-state input. -/
 def msgVerifier (q : Fin 2 × Fin 2) : Verifier 0 (Fin 2) (Fin 2) where
