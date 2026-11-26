@@ -1,3 +1,3 @@
-# Well-formed instances of TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES FOR TWO EXPRESSIONS
+# Well-formed instances of SATISFIABILITY OF BOOLEAN EXPRESSIONS
 
-An instance is well-formed when every member of $C$ is an expression over $u_0, \dots, u_{n-1}$, and $C$ consists of two distinct expressions.
+An instance is well-formed when every code in $B$ names one of the 16 binary connectives, the token list spells an expression, every variable token names one of the $n$ variables, and every connective of the expression is in $B$.

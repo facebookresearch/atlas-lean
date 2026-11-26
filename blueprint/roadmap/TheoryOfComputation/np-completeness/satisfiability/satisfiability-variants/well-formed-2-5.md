@@ -1,3 +1,3 @@
-# Well-formed instances of RENAMABLE HORN SUBFORMULA
+# Well-formed instances of MINIMUM NUMBER OF SATISFIABLE FORMULAS
 
-An instance is well-formed when every clause is a duplicate-free list of at most $3$ literals over the variables, no two clauses have the same literal set, and $K > 0$.
+An instance is well-formed when every clause of every formula has at most three literals over variables below $n$.

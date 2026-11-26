@@ -1,3 +1,3 @@
-# Well-formed instances of PREDICATE LOGIC WITHOUT NEGATION
+# Well-formed instances of MINIMUM 3DNF SATISFIABILITY
 
-An instance is well-formed when the token list spells a sentence.
+An instance is well-formed when every clause has at most three literals on variables below $n$ and $K > 0$.

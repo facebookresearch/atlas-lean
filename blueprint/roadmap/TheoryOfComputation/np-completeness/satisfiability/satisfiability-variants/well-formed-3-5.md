@@ -1,3 +1,3 @@
-# Well-formed instances of TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES
+# Well-formed instances of POSITIVE ONE-IN-THREE 3SAT
 
-An instance is well-formed when every member of $C$ is an expression over $u_0, \dots, u_{n-1}$.
+A ONE-IN-THREE 3SAT instance is well-formed for POSITIVE ONE-IN-THREE 3SAT when it is well-formed for ONE-IN-THREE 3SAT (three literals per clause, variables in range) and every literal is positive.

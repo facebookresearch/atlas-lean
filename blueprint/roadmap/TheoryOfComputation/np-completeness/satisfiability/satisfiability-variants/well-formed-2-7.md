@@ -1,3 +1,3 @@
-# Well-formed instances of UNIFICATION WITH COMMUTATIVE OPERATORS FOR SHORT EXPRESSIONS
+# Well-formed instances of SATISFIABILITY WITH AT MOST THREE OCCURRENCES PER VARIABLE
 
-An instance is well-formed when the token lists are those of expressions over the constants and every variable token names a variable below $|V|$, and no $e_i$ or $f_i$ has more than $7$ occurrences of constants and variables.
+An instance is well-formed when every clause has at most three literals on variables below $n$ and every variable occurs in at most three clauses.

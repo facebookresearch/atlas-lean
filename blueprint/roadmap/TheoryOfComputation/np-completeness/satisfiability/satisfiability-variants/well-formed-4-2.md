@@ -1,3 +1,3 @@
-# Well-formed instances of FIRST ORDER SUBSUMPTION WITH n TARGETS
+# Well-formed instances of PROBABILISTIC SATISFIABILITY
 
-For a natural number $n$, an instance is well-formed when the token lists of $E$ are those of expressions over $U \cup C$ and those of $F$ are those of expressions over $C$, and $F$ consists of exactly $n$ distinct expressions.
+An instance is well-formed when every clause uses only the variables below $n$ and every pair $(a_i, b_i)$ has $0 < b_i$ and $a_i \le b_i$, so that $a_i / b_i \in [0, 1]$.

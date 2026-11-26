@@ -1,6 +1,6 @@
-# REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA is NP-complete
+# REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA FOR FIXED K is NP-complete
 
-For every natural number $K \ge 6$, the decision problem REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+For every natural number $K \ge 6$, the decision problem [REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA FOR FIXED K](fixed-bound-dec.md), with the bound fixed to $K$, belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

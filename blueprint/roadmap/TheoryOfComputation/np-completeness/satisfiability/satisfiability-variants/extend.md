@@ -1,3 +1,3 @@
-# Assignment extended to all variables (Horn core)
+# Assignment extended to all variables
 
-A truth assignment on $n$ variables, read as false beyond $n$.
+A truth assignment to the variables below $n$, read as false beyond $n$.

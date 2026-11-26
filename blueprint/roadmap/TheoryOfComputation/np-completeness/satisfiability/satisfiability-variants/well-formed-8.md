@@ -1,3 +1,3 @@
-# Well-formed instances of RIGID E-UNIFICATION
+# Well-formed instances of SATISFIABILITY OF BOOLEAN EXPRESSIONS OVER A BASIS EXPRESSING x ∧ ¬y
 
-An instance is well-formed when the token lists are those of an equation set and of terms $s$ and $t$ over the symbols and variables.
+For a list $B$ of connective codes, an instance is well-formed when it is well-formed for SATISFIABILITY OF BOOLEAN EXPRESSIONS and its connectives are drawn from $B$.

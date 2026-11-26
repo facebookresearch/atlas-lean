@@ -3,9 +3,10 @@
 String problems (closest string, longest common subsequence, shortest common supersequence) and puzzles (Sudoku, Nonogram, Akari, Minesweeper, Latin square completion).
 
 - [Akari](akari/README.md)
-- [Automata, grammars and regular expressions](automata-grammars-and-regular-expressions/README.md)
 - [Bounded Post correspondence problem](bounded-post-correspondence-problem/README.md)
 - [Closest string](closest-string/README.md)
+- [Finite automata](finite-automata/README.md)
+- [Grammars and regular expressions](grammars-and-regular-expressions/README.md)
 - [Iterated shuffle membership](iterated-shuffle-membership/README.md)
 - [Lambek calculus derivability](lambek-calculus-derivability/README.md)
 - [Latin square completion](latin-square-completion/README.md)
