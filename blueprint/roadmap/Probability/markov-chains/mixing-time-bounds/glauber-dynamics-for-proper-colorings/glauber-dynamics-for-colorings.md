@@ -4,7 +4,7 @@ Let $G = (V,E)$ be a finite graph with $n$ vertices and maximum degree $\Delta$,
 
 ## Depends on
 
-- [Stochastic matrix](../kolmogorov-s-criterion-for-reversibility/stochastic-matrix.md)
+- [Stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/stochastic-matrix.md)
 
 ## Sources
 

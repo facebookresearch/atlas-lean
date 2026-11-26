@@ -26,6 +26,4 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Martingale problems](martingale-problems/README.md)
 - [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
 - [Autoregressive processes](autoregressive-processes/README.md)
-- [Coupling and Total-Variation Mixing](coupling-and-total-variation-mixing/README.md)
-- [Glauber Dynamics for Proper Colorings](glauber-dynamics-for-proper-colorings/README.md)
-- [Spectral Bounds on Mixing Times](spectral-bounds-on-mixing-times/README.md)
+- [Mixing-time bounds](mixing-time-bounds/README.md)

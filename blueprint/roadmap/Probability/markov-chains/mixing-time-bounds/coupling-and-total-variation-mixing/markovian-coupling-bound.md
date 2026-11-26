@@ -14,13 +14,13 @@ By induction, $Q^t((x,y),\cdot)$ is a coupling of $P^t(x,\cdot)$ and $P^t(y,\cdo
 
 ## Depends on
 
-- [Coupling of two probability measures](../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
+- [Coupling of two probability measures](../../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
 - [Distance to stationarity and total-variation mixing time](distance-to-stationarity-and-mixing-time.md)
 
 ## Proof depends on
 
 - [Basic inequalities for total-variation mixing](total-variation-mixing-inequalities.md)
-- [Coupling of two probability measures](../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
+- [Coupling of two probability measures](../../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
 
 ## Sources
 

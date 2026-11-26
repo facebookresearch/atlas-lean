@@ -23,7 +23,7 @@ The upper bound follows from the total-variation consequence of chi-square contr
 
 - [Chi-square contraction and pointwise transition bounds for reversible chains](chi-square-contraction-reversible-chain.md)
 - [Basic inequalities for total-variation mixing](../coupling-and-total-variation-mixing/total-variation-mixing-inequalities.md)
-- [Mixing of a lazy reversible chain from its spectral gap](../dirichlet-forms/is-mixed-at-of-le-spectral-gap.md)
+- [Mixing of a lazy reversible chain from its spectral gap](../../dirichlet-forms/is-mixed-at-of-le-spectral-gap.md)
 
 ## Sources
 

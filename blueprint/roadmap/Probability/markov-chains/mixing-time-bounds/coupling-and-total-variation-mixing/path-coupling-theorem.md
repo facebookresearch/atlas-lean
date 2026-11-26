@@ -15,7 +15,7 @@ Dualize: one coupled step multiplies the $\rho$-Lipschitz constant of any functi
 ## Depends on
 
 - [Distance to stationarity and total-variation mixing time](distance-to-stationarity-and-mixing-time.md)
-- [Coupling of two probability measures](../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
+- [Coupling of two probability measures](../../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
 
 ## Proof depends on
 

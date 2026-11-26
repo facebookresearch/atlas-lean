@@ -10,9 +10,9 @@ and for $\varepsilon > 0$ the *mixing time* $t_{\mathrm{mix}}(\varepsilon) = \mi
 
 ## Depends on
 
-- [Stochastic matrix](../kolmogorov-s-criterion-for-reversibility/stochastic-matrix.md)
-- [Stationary distribution](../kolmogorov-s-criterion-for-reversibility/is-stationary.md)
-- [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/stochastic-matrix.md)
+- [Stationary distribution](../../kolmogorov-s-criterion-for-reversibility/is-stationary.md)
+- [Total variation distance between finite measures](../../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Sources
 

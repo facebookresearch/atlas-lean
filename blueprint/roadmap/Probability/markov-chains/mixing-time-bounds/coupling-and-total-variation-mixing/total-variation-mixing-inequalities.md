@@ -17,8 +17,8 @@ Stationarity writes $\pi$ as a mixture of the rows $P^t(y,\cdot)$, giving $d \le
 
 ## Proof depends on
 
-- [Coupling of two probability measures](../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
-- [The distance to stationarity does not increase](../mixing-times-of-markov-chains/tv-dist-pow-succ-le.md)
+- [Coupling of two probability measures](../../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
+- [The distance to stationarity does not increase](../../mixing-times-of-markov-chains/tv-dist-pow-succ-le.md)
 
 ## Sources
 

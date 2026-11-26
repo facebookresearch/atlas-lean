@@ -16,12 +16,12 @@ Detailed balance holds because a single update between two colorings differing a
 
 - [Glauber dynamics for proper colorings with a frozen boundary](glauber-dynamics-for-colorings.md)
 - [Distance to stationarity and total-variation mixing time](../coupling-and-total-variation-mixing/distance-to-stationarity-and-mixing-time.md)
-- [Reversible stochastic matrix](../kolmogorov-s-criterion-for-reversibility/is-reversible.md)
+- [Reversible stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/is-reversible.md)
 
 ## Proof depends on
 
 - [Bubley-Dyer path coupling theorem](../coupling-and-total-variation-mixing/path-coupling-theorem.md)
-- [Detailed balance implies stationarity](../kolmogorov-s-criterion-for-reversibility/detailed-balance-is-stationary.md)
+- [Detailed balance implies stationarity](../../kolmogorov-s-criterion-for-reversibility/detailed-balance-is-stationary.md)
 
 ## Sources
 

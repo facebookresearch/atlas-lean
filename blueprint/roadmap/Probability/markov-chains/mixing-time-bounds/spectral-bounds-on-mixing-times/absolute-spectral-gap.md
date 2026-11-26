@@ -10,10 +10,10 @@ the largest modulus of a non-trivial eigenvalue, and the *absolute spectral gap*
 
 ## Depends on
 
-- [Spectral gap of a finite Markov kernel, in Dirichlet-form terms](../dirichlet-forms/spectral-gap.md)
-- [The Dirichlet form of a Markov kernel](../dirichlet-forms/form-sub-one.md)
-- [Reversible stochastic matrix](../kolmogorov-s-criterion-for-reversibility/is-reversible.md)
-- [The lazy version of a reversible stochastic matrix is reversible and stochastic](../mixing-times-of-markov-chains/lazy-mem-row-stochastic-and-detailed-bal.md)
+- [Spectral gap of a finite Markov kernel, in Dirichlet-form terms](../../dirichlet-forms/spectral-gap.md)
+- [The Dirichlet form of a Markov kernel](../../dirichlet-forms/form-sub-one.md)
+- [Reversible stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/is-reversible.md)
+- [The lazy version of a reversible stochastic matrix is reversible and stochastic](../../mixing-times-of-markov-chains/lazy-mem-row-stochastic-and-detailed-bal.md)
 
 ## Sources
 
