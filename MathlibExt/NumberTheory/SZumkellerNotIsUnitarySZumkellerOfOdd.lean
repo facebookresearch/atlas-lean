@@ -17,9 +17,10 @@ public import MathlibExt.NumberTheory.SZumkeller
 /-!
 # No odd unitary s-Zumkeller numbers
 
-There is no odd unitary s-Zumkeller number: for odd `n`, the squares of the
-proper unitary divisors are odd and odd in number, so their sum is odd and
-cannot split into two equal parts.
+There is no odd unitary s-Zumkeller number. The number `1` has no proper unitary
+divisors, so it has no split into two nonempty parts, which `IsUnitarySZumkeller`
+requires. For odd `n > 1`, the squares of the proper unitary divisors are odd and
+odd in number, so their sum is odd and cannot split into two equal parts.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 13.
