@@ -18,6 +18,7 @@ Topics added since this subject's fields were last revised.
 - [Completeness](completeness/README.md)
 - [Configuration Space](configuration-space/README.md)
 - [Conjunctive Queries](conjunctive-queries/README.md)
+- [Critical Path](critical-path/README.md)
 - [Depth Separation Construction](depth-separation-construction/README.md)
 - [Depth Separation Oscillation](depth-separation-oscillation/README.md)
 - [Depth Separation Pieces](depth-separation-pieces/README.md)
