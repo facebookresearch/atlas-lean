@@ -4,7 +4,9 @@ Call a nondeterministic safety automaton over the priorities $\{1, \dots, d\}$ a
 encodes an infinite path in a parity graph with at most $n$ vertices and priorities in $\{1, \dots, d\}$ all of whose cycles have even
 largest priority, and rejects every word whose largest priority occurring infinitely often is odd. Every strong
 $(n, d)$-separator has at least
+
 $$\binom{\lfloor \lg n \rfloor + d/2 - 1}{\lfloor \lg n \rfloor}$$
+
 states, a quasipolynomial lower bound that nearly matches the known upper bounds, so the separating-automata approach cannot
 by itself solve parity games in polynomial time (Czerwiński, Daviaud, Fijalkow, Jurdziński, Lazić and Parys).
 

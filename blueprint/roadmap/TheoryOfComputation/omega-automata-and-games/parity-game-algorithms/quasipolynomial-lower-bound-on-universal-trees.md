@@ -1,7 +1,9 @@
 # Quasipolynomial lower bound on universal trees
 
 For all positive integers $\ell$ and $h$, every $(\ell, h)$-[universal tree](universal-trees.md) has at least
+
 $$\binom{\lfloor \lg \ell \rfloor + h - 1}{h - 1}$$
+
 leaves, where $\lg$ is the logarithm to base $2$. Together with the
 [quasipolynomial universal trees](quasipolynomial-universal-trees.md) this determines the size of the smallest universal trees up to a
 polynomial factor (Czerwiński, Daviaud, Fijalkow, Jurdziński, Lazić and Parys).
