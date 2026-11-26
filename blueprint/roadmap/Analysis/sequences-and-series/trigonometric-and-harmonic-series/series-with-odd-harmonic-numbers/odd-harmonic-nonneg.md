@@ -1,3 +1,3 @@
-# Odd Harmonic nonneg
+# Odd harmonic numbers are nonnegative
 
-The odd harmonic numbers `chapter9OddHarmonic n` are nonnegative.
+For every $n \in \mathbb{N}$, the odd harmonic number $\sum_{j=0}^{n-1} \frac{1}{2j+1}$ is nonnegative.

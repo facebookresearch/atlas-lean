@@ -1,4 +1,3 @@
-# Chapter9 Entry8 Dilog
+# The dilogarithm as a power series
 
-The dilogarithm in this entry is `Real.li2PowerSeries`; the name is kept for the
-chapter-local development below.
+For real $x$, the value is $\sum_{n \ge 1} x^n / n^2$, the dilogarithm $\operatorname{Li}_2(x)$, when $|x| \le 1$, and $0$ when $|x| > 1$, where the series diverges.

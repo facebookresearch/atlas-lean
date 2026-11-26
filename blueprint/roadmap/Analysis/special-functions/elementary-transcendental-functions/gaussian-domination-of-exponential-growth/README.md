@@ -9,4 +9,4 @@
 
 ## Gaussian Moments
 
-- [Gaussian Moment damped](gaussian-moment-damped.md)
+- [Damping the datum shifts the Gaussian parameter](gaussian-moment-damped.md)

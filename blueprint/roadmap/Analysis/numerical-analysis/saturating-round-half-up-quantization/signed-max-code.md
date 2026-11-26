@@ -1,4 +1,3 @@
-# Signed Max Code
+# Greatest signed w-bit code
 
-The greatest signed `w`-bit code, `2 ^ (w - 1) - 1`. Meaningful for
-`1 <= w`; the theorems below carry that hypothesis.
+For $w \in \mathbb{N}$, the greatest signed $w$-bit code is $2^{w-1} - 1$, where $w - 1$ is truncated subtraction, so the value at $w = 0$ is $0$.

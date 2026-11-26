@@ -1,4 +1,3 @@
-# Collocated V
+# Collocated grid samples
 
-Collocated samples `v(n * dt, j * h)`, used only to record that
-the staggered constant does not transfer to collocated sampling.
+For $v : \mathbb{R}^2 \to \mathbb{R}$, steps $\Delta t, h$ and $n \in \mathbb{N}$, the collocated samples on an $N$-cell grid are $v_j^n = v(n\,\Delta t,\, j h)$ for $j = 0, \dots, N - 1$.

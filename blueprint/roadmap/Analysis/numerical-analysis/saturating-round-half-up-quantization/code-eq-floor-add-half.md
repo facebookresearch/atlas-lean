@@ -1,3 +1,3 @@
-# Rounding as the floor of y + 1/2
+# Saturating code in floor form
 
-The code in floor form: `round y = ⌊y + 1 / 2⌋`.
+For real $\Delta, x$ and integers $k_{\min}, k_{\max}$, the saturating code is $\max\big(k_{\min}, \min(k_{\max}, \lfloor x/\Delta + 1/2 \rfloor)\big)$.

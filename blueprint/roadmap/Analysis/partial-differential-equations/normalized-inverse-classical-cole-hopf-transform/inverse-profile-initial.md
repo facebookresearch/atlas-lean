@@ -1,3 +1,3 @@
-# Inverse Profile initial
+# Inverse Cole–Hopf profile at the initial time
 
-At the initial time the profile is the anchored spatial exponential.
+At the initial time, $\varphi(t_0, x) = \exp\big(-\frac{1}{2\nu}\int_{x_0}^{x} u(t_0, y)\,dy\big)$ for every $x$.

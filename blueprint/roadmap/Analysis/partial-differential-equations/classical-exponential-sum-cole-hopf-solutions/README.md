@@ -7,4 +7,4 @@
 - [Spatial derivative of the exponential-sum Cole–Hopf solution](exponential-solution-has-deriv-at-x.md)
 - [Time derivative of the exponential-sum Cole–Hopf solution](exponential-solution-has-deriv-at-t.md)
 - [Second spatial derivative of the exponential-sum Cole–Hopf solution](exponential-solution-iterated-deriv-two.md)
-- [Heat Moment zero time](heat-moment-zero-time.md)
+- [Heat moments at time zero](heat-moment-zero-time.md)

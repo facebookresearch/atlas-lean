@@ -1,4 +1,3 @@
-# Signed Min Code
+# Least signed w-bit code
 
-The least signed `w`-bit code, `-(2 ^ (w - 1))`. Meaningful for
-`1 <= w`; the theorems below carry that hypothesis.
+For $w \in \mathbb{N}$, the least signed $w$-bit code is $-2^{w-1}$, where $w - 1$ is truncated subtraction, so the value at $w = 0$ is $-1$.

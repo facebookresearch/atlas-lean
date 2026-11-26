@@ -31,4 +31,4 @@
 ## The three properties as a predicate
 
 - [Hypotheses on a Duhamel operator](is-psi-clm.md)
-- [Is Psi CLM psi](is-psi-clm-psi.md)
+- [The Duhamel operator satisfies the Duhamel-operator hypotheses](is-psi-clm-psi.md)

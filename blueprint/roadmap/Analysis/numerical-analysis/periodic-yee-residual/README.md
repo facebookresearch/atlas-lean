@@ -8,7 +8,7 @@
 
 - [Sampled U](sampled-u.md)
 - [Sampled V](sampled-v.md)
-- [Collocated V](collocated-v.md)
+- [Collocated grid samples](collocated-v.md)
 
 ## Update residuals for exact staggered samples
 
