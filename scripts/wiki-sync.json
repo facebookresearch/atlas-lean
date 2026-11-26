@@ -12500,8 +12500,6 @@
 "Cslib.Algorithms.Lean.AdjacencyMatrix.not_mem_neighbors_eraseEdge": "12de4d0bc8575c2f",
 "Cslib.Algorithms.Lean.AdjacencyMatrix.outDegree": "ae77618312b3ab23",
 "Cslib.Algorithms.Lean.AdjacencyMatrix.outDegree_empty": "6e0b3ca6f023d2ac",
-"Cslib.Algorithms.Lean.AlgebraicCostAudit.strassen_mul_count": "3a98b8181b56b07c",
-"Cslib.Algorithms.Lean.AlgebraicCostAudit.strassen_ops_le": "146605a4919ac21b",
 "Cslib.Algorithms.Lean.Alignment": "c3941fe71b493809",
 "Cslib.Algorithms.Lean.AlphaBeta.GameTree": "09d44eac7248990b",
 "Cslib.Algorithms.Lean.AlphaBeta.GameTree.map": "14389a14c8a8d092",

@@ -9,7 +9,6 @@ Topics added since this subject's fields were last revised.
 - [Adversary Output Condition](adversary-output-condition/README.md)
 - [Agnostic Finite Class](agnostic-finite-class/README.md)
 - [Aho Corasick](aho-corasick/README.md)
-- [Algebraic Cost Audit](algebraic-cost-audit/README.md)
 - [Backtracking](backtracking/README.md)
 - [Basic](basic/README.md)
 - [Bayes Net Gibbs](bayes-net-gibbs/README.md)
