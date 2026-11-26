@@ -42,7 +42,7 @@ $\hat S_{i,j} = \hat S_{i-1,j-1} + \alpha_j \hat S_{i-1,j}$ for $i, j \ge 2$.
 
 Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
 Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 1.4,
-equation (a-1). -/
+equation (2). -/
 def alphaStirlingEntry (α : ℕ → R) : ℕ → ℕ → R
   | _, 0 => α 1
   | 0, _ + 1 => 0
@@ -72,7 +72,7 @@ sequence in $R$, and let $s_{i,j}$ ($i, j \ge 0$) be the α-Stirling entries of 
 all $i, j \ge 0$, $s_{i+1,j+1} = s_{i,j} + \alpha_{j+2} s_{i,j+1}$.
 
 Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, equation (a-1). -/
+Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, equation (2). -/
 theorem alphaStirlingEntry_succ_succ (α : ℕ → R) (i j : ℕ) :
     alphaStirlingEntry α (i + 1) (j + 1) =
       alphaStirlingEntry α i j + α (j + 2) * alphaStirlingEntry α i (j + 1) := rfl
@@ -82,7 +82,7 @@ sequence in $R$, and let $s_{i,j}$ ($i, j \ge 0$) be the α-Stirling entries of 
 $s_{i,0} = \alpha_1$ for every $i \ge 0$.
 
 Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, equation (a-1). -/
+Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, equation (2). -/
 theorem alphaStirlingEntry_zero_right (α : ℕ → R) (i : ℕ) : alphaStirlingEntry α i 0 = α 1 := by
   cases i <;> rfl
 
