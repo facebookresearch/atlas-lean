@@ -14,6 +14,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.NumberTheory.InfiniteRieselRepdigits
+public import MathlibExt.NumberTheory.InfiniteRieselRepintegers
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.RieselRepdigit101
 public import MathlibExt.NumberTheory.SierpinskiRepinteger18107
@@ -42,20 +43,6 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.3
 public theorem_wanted infinite_sierpinski_repintegers {k : ℕ} (hk : IsSierpinskiNumber k)
     {S : Finset (ℕ × ℕ × ℕ)} (hS : IsSierpinskiCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
     {t : ℕ | 1 ≤ t ∧ IsSierpinskiNumber (repstring b k 0 t)}.Infinite
-
-/-- **Covering-produced Riesel numbers give infinitely many Riesel repintegers.** Let $k$ be a
-Riesel number that has Riesel covering data, so that $k$ is produced as a Riesel number by the
-covering system method. Then for every natural number $b \ge 2$ there are infinitely many $t \ge 1$
-such that the $b$-repinteger $k_b^{(t)} = k\,(b^{\ell t} - 1)/(b^{\ell} - 1)$, where $\ell$ is the
-number of base-$b$ digits of $k$ (so $k_b^{(t)}$ is $k$ written $t$ times in base $b$), is a Riesel
-number.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.4 (stated in record
-`integers-2026-A12-thm-3-3`). -/
-public theorem_wanted infinite_riesel_repintegers {k : ℕ} (hk : IsRieselNumber k)
-    {S : Finset (ℕ × ℕ × ℕ)} (hS : IsRieselCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
-    {t : ℕ | 1 ≤ t ∧ IsRieselNumber (repstring b k 0 t)}.Infinite
 
 /-- **Binary repintegers of 18107 that are Riesel numbers.** For every natural number
 $t \equiv 31 \pmod{56}$, the binary repinteger $18107_2^{(t)} = 18107\,(2^{15t} - 1)/(2^{15} - 1)$,
