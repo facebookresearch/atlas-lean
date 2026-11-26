@@ -10,10 +10,6 @@ $$\Bigl|\hat\mu_{SK} - \int x\, dF(x)\Bigr| \le \frac12\max_i\,(x_{i+1} - x_i),$
 
 since the mass $F(x_{i+1}) - F(x_i)$ of each interval is moved to its midpoint, by at most half its length. The unbiasedness of the estimator for the mean of the interpolated tolerance distribution and its exact variance under binomial sampling are [stated separately](../../../Biology/not-yet-classified/spearman-karber/expect-variance.md).
 
-## Depends on
-
-- [Unbiasedness and exact variance of the Spearman–Kärber estimator](../../../Biology/not-yet-classified/spearman-karber/expect-variance.md)
-
 ## Expansion
 
 1. The tolerance model and the Spearman–Kärber estimator with the midpoint convention.

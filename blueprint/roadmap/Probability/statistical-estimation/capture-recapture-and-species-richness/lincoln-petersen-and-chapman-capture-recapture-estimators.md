@@ -1,6 +1,6 @@
 # Lincoln–Petersen and Chapman capture–recapture estimators
 
-In a closed population of size $N$, mark $n_1$ individuals, then draw a second sample of $n_2$ without replacement and let $m$ be the number of marked individuals in it, so that $m$ is hypergeometric given $(n_1, n_2)$. The Lincoln–Petersen estimator is $n_1 n_2/m$, and Chapman's estimator is
+In a closed population of size $N$, mark $n_1$ individuals, then draw a second sample of $n_2$ without replacement, where $1 \le n_1 \le N$ and $1 \le n_2 \le N$, and let $m$ be the number of marked individuals in it, so that $m$ is hypergeometric given $(n_1, n_2)$. The Lincoln–Petersen estimator is $n_1 n_2/m$, and Chapman's estimator is
 
 $$\hat N_C = \frac{(n_1 + 1)(n_2 + 1)}{m + 1} - 1;$$
 

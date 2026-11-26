@@ -6,13 +6,7 @@ $$H = \frac{12}{N(N+1)} \sum_{i=1}^g n_i \Bigl(\bar r_i - \frac{N+1}{2}\Bigr)^2 
 
 (Kruskal–Wallis test, Wikipedia). Under the null hypothesis the ranks form a uniformly random permutation of $\{1, \dots, N\}$, which holds when the observations are i.i.d. with a continuous law, so the test is distribution-free.
 
-## Expansion
-
-1. The model: i.i.d. continuous observations, joint ranks, and the two forms of $H$.
-2. Distribution-freeness: under i.i.d. continuous sampling the rank vector is uniform on permutations and ties have probability $0$, so the law of $H$ depends only on $(n_1, \dots, n_g)$.
-3. The moments of a rank sum $R_i = n_i \bar r_i$ under sampling without replacement, $E[R_i] = n_i(N+1)/2$ and $\operatorname{Var}(R_i) = n_i(N - n_i)(N+1)/12$, and the exact null mean $E[H] = g - 1$.
-4. The exact null variance of $H$ and the correction for ties.
-5. The chi-squared limit of the null law of $H$ with $g - 1$ degrees of freedom as $\min_i n_i \to \infty$.
+- [Null distribution of the Kruskal–Wallis statistic](null-distribution-of-the-kruskal-wallis-statistic.md)
 
 ## Sources
 

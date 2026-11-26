@@ -8,7 +8,7 @@ assuming these expectations are finite, and proves (Theorem 3)
 
 $$\mathrm{TE}(x, x^*; Y) = \mathrm{NDE}(x, x^*; Y) - \mathrm{NIE}(x^*, x; Y), \qquad \mathrm{TE}(x, x^*; Y) = \mathrm{NIE}(x, x^*; Y) - \mathrm{NDE}(x^*, x; Y).$$
 
-Both follow from $Y_{x, Z_x} = Y_x$ by adding and subtracting $E(Y_{x, Z_{x^*}})$, respectively $E(Y_{x^*, Z_x})$. Consequently
+Both follow directly from the definitions (6), (20) and (21) by adding and subtracting $E(Y_{x, Z_{x^*}})$, respectively $E(Y_{x^*, Z_x})$. The composition property $Y_{x, Z_x} = Y_x$ is used in the characterization that follows. Consequently
 
 $$\mathrm{TE}(x, x^*; Y) = \mathrm{NDE}(x, x^*; Y) + \mathrm{NIE}(x, x^*; Y)$$
 

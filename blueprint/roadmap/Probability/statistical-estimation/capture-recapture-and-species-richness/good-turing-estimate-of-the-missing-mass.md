@@ -6,10 +6,6 @@ $$0 \le E\Bigl[\frac{n_1(N)}{N}\Bigr] - E[M_0(N)] = \sum_s p_s^2 (1 - p_s)^{N-1}
 
 (Rajaraman, Thangaraj and Suresh 2017, equation (2), citing McAllester and Schapire). Indeed $E[M_0(N)] = \sum_s p_s(1 - p_s)^N$ and $E[n_1(N)] = N\sum_s p_s(1 - p_s)^{N-1}$, so the difference is $\sum_s p_s \cdot p_s(1 - p_s)^{N-1} \le \max_{0 \le p \le 1} p(1 - p)^{N-1} \le 1/N$. The exact identities $E[M_0(N)] = E[n_1(N + 1)]/(N + 1)$ and their analogues for species seen $r$ times are [the Good–Turing identity for the missing mass](../../../Biology/not-yet-classified/good-turing/expect-missing-mass.md) and [the Good–Turing identity for species seen $r$ times](../../../Biology/not-yet-classified/good-turing/expect-mass-seen.md).
 
-## Depends on
-
-- [The Good–Turing identity for the missing mass](../../../Biology/not-yet-classified/good-turing/expect-missing-mass.md)
-
 ## Expansion
 
 1. The expectations of $M_0(N)$ and $n_1(N)$ as sums over species.

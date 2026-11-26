@@ -8,7 +8,7 @@ and estimate $\mu$ by $\hat\mu = \sum_i w_i^* y_i/\sum_i w_i^*$ with $w_i^* = (w
 
 $$E[Q] = (k - 1) + \Delta^2 \Bigl(S_1 - \frac{S_2}{S_1}\Bigr), \qquad S_r = \sum_i w_i^r,$$
 
-since $E[Q] = \sum_i w_i \operatorname{Var}(y_i) - S_1 \operatorname{Var}(\bar y_w)$ with $\operatorname{Var}(y_i) = w_i^{-1} + \Delta^2$ and $\operatorname{Var}(\bar y_w) = (S_1 + \Delta^2 S_2)/S_1^2$. Since $k \ge 2$ and every $w_i > 0$, $S_1 - S_2/S_1 > 0$, so the untruncated estimator is well defined and unbiased for $\Delta^2$, and the truncation at $0$ biases $\hat\Delta^2$ upward.
+since $E[Q] = \sum_i w_i \operatorname{Var}(y_i) - S_1 \operatorname{Var}(\bar y_w)$ with $\operatorname{Var}(y_i) = w_i^{-1} + \Delta^2$ and $\operatorname{Var}(\bar y_w) = (S_1 + \Delta^2 S_2)/S_1^2$. Since $k \ge 2$ and every $w_i > 0$, $S_1 - S_2/S_1 > 0$, so the untruncated estimator is well defined and unbiased for $\Delta^2$, and the truncation at $0$ gives $E[\hat\Delta^2] \ge \Delta^2$, with strict inequality exactly when $P(Q < k - 1) > 0$; this holds, for example, when the $y_i$ are normal, but does not follow from the first two moments alone.
 
 ## Depends on
 

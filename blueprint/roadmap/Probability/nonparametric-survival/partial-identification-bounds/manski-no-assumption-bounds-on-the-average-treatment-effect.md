@@ -6,9 +6,9 @@ $$E[Y(1) \mid Z = 1]\Pr[Z = 1] - E[Y(0) \mid Z = 0]\Pr[Z = 0] - \Pr[Z = 1] \le E
 
 derived independently by Robins (1989) and Manski (1990). They are sharp: no narrower bounds follow without additional assumptions. The interval lies in $[-1, 1]$, has width exactly $1$, and always contains $0$, so without further assumptions the sign of the treatment effect cannot be determined (Richardson, Hudgens, Gilbert and Fine 2014, equations (1)–(3)). If $Y(0)$ and $Y(1)$ are unbounded the bounds are uninformative; outcomes in a bounded interval reduce to $[0, 1]$ by rescaling.
 
-## Depends on
+## Proof depends on
 
-- [Finite-population average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/ate.md)
+- [Worst-case bounds for a mean with missing outcomes](../potential-outcomes-and-causal-identification/worst-case-bounds-for-a-mean-with-missing-outcomes.md)
 
 ## Expansion
 
