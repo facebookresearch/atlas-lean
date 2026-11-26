@@ -71,9 +71,7 @@ section FreeGroupH2
 variable {k G : Type u} [CommRing k] [Group G] {A : Rep k G}
 
 @[ext] structure Ext₂ (f : cocycles₂ A) where
-
   a : A
-
   g : G
 
 namespace Ext₂
@@ -94,13 +92,13 @@ instance : Group (Ext₂ f) := Group.ofLeftAxioms
   (fun x y z => by
     ext
     · have hc := (mem_cocycles₂_iff (f : G × G → A)).1 f.2 x.g y.g z.g
-      simp only [mul_def, map_add, map_mul, Module.End.mul_apply]
+      simp only [mul_def, map_add, map_mul, mul_apply_eq_comp]
       rw [eq_sub_of_add_eq hc]
       abel
     · simp only [mul_def, mul_assoc])
   (fun x => by
     ext
-    · simp only [mul_def, one_def, map_one, Module.End.one_apply, cocycles₂_map_one_fst f x.g]
+    · simp only [mul_def, one_def, map_one, one_apply_eq_self, cocycles₂_map_one_fst f x.g]
       abel
     · simp only [mul_def, one_def, one_mul])
   (fun x => by
@@ -145,8 +143,6 @@ theorem subsingleton_H2_of_isFreeGroup [IsFreeGroup G] (A : Rep k G) : Subsingle
 end FreeGroupH2
 
 section ResCores
-
-open CategoryTheory groupCohomology
 
 variable {k G : Type u} [CommRing k] [Group G] (S : Subgroup G) [S.FiniteIndex]
   [DecidableRel (QuotientGroup.rightRel S)]
@@ -195,11 +191,10 @@ theorem unit_trace (A : Rep.{u} k G) : unitCoind S A ≫ traceHom S A = S.index 
     | h g =>
       simp only [Quotient.liftOn_mk, LinearMap.comp_apply, TensorProduct.mk_apply,
         Representation.Coinvariants.lift_mk, TensorProduct.lift.tmul, Finsupp.lift_apply,
-        MonoidAlgebra.coeffLinearEquiv_apply, MonoidAlgebra.coeff_single, LinearMap.coe_comp,
-        Function.comp_apply, LinearEquiv.coe_coe, Finsupp.sum_single_index, zero_smul,
-        one_smul, hunit, Rep.hom_id, Representation.IntertwiningMap.coe_toLinearMap,
-        Representation.IntertwiningMap.id_apply]
-      rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
+        MonoidAlgebra.coeffLinearEquiv_apply, MonoidAlgebra.coeff_single, LinearEquiv.coe_coe,
+        Finsupp.sum_single_index, zero_smul, one_smul, hunit, Rep.hom_id,
+        Representation.IntertwiningMap.coe_toLinearMap, Representation.IntertwiningMap.id_apply]
+      rw [← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
 
 noncomputable def shapiroIso (A : Rep.{u} k G) (n : ℕ) :
     groupCohomology ((Rep.coindFunctor k S.subtype).obj ((Rep.resFunctor S.subtype).obj A)) n ≅
@@ -216,7 +211,7 @@ noncomputable def cores (A : Rep.{u} k G) (n : ℕ) :
 
 instance functor_additive (n : ℕ) : (functor k G n).Additive where
   map_add {A B f g} := by
-    show (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map (f + g) =
+    change (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map (f + g) =
       (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map f +
         (cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n).map g
     exact Functor.map_add _
@@ -228,9 +223,11 @@ theorem res'_cores (A : Rep.{u} k G) (n : ℕ) :
     Functor.map_nsmul, CategoryTheory.Functor.map_id]
   rfl
 
+omit [DecidableRel (QuotientGroup.rightRel S)] in
 theorem subsingleton_of_subsingleton_res (A : Rep.{u} k G) (n : ℕ)
     [hS : Subsingleton (groupCohomology ((Rep.resFunctor S.subtype).obj A) n)]
     (hidx : IsUnit (S.index : k)) : Subsingleton (groupCohomology A n) := by
+  classical
   have key : ∀ z : groupCohomology A n, (S.index : k) • z = 0 := fun z => by
     have h := congrArg (fun φ => (ModuleCat.Hom.hom φ) z) (res'_cores S A n)
     simp only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_nsmul, ModuleCat.hom_id,
@@ -248,7 +245,7 @@ variable {k G : Type u} [CommRing k] [Group G]
 theorem subsingleton_H2_of_free_finiteIndex (S : Subgroup G) [S.FiniteIndex] [IsFreeGroup S]
     (hS : IsUnit (S.index : k)) (A : Rep.{u} k G) : Subsingleton (groupCohomology A 2) := by
   classical
-  haveI : Subsingleton (groupCohomology ((Rep.resFunctor S.subtype).obj A) 2) :=
+  have : Subsingleton (groupCohomology ((Rep.resFunctor S.subtype).obj A) 2) :=
     subsingleton_H2_of_isFreeGroup ((Rep.resFunctor S.subtype).obj A)
   exact subsingleton_of_subsingleton_res S A 2 hS
 
@@ -263,14 +260,8 @@ open scoped MatrixGroups
 def sanA : SL(2, ℤ) :=
   ⟨Matrix.of ![![1, 2], ![0, 1]], by simp [Matrix.det_fin_two]⟩
 
-
 def sanB : SL(2, ℤ) :=
   ⟨Matrix.of ![![1, 0], ![2, 1]], by simp [Matrix.det_fin_two]⟩
-
-
-def DomX (v : Fin 2 → ℤ) : Prop := |v 1| < |v 0|
-
-def DomY (v : Fin 2 → ℤ) : Prop := |v 0| < |v 1|
 
 theorem abs_lt_abs_add_two_mul {x y n : ℤ} (hn : n ≠ 0) (h : |x| < |y|) :
     |y| < |x + 2 * n * y| := by
@@ -302,13 +293,13 @@ theorem sanB_zpow_coe (n : ℤ) :
     ext i j
     fin_cases i <;> fin_cases j
     all_goals simp [sanB, Matrix.mul_apply, Fin.sum_univ_succ]
-    all_goals ring
+    ring
   | pred k ih =>
     rw [_root_.zpow_sub_one, SpecialLinearGroup.coe_mul, ih, SpecialLinearGroup.coe_inv]
     ext i j
     fin_cases i <;> fin_cases j
     all_goals simp [sanB, Matrix.adjugate_fin_two, Matrix.mul_apply, Fin.sum_univ_succ]
-    all_goals ring
+    ring
 
 theorem sanA_zpow_mulVec (n : ℤ) (v : Fin 2 → ℤ) :
     (((sanA ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)).mulVec v
@@ -325,23 +316,7 @@ theorem sanB_zpow_mulVec (n : ℤ) (v : Fin 2 → ℤ) :
   funext i
   fin_cases i
   all_goals simp [Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
-  all_goals ring
-
-theorem domX_sanA_zpow_mulVec {n : ℤ} (hn : n ≠ 0) {v : Fin 2 → ℤ} (hv : DomY v) :
-    DomX (((sanA ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec v) := by
-  rw [sanA_zpow_mulVec]
-  unfold DomX
-  unfold DomY at hv
-  simp only [Matrix.cons_val_one, Matrix.cons_val_zero]
-  exact abs_lt_abs_add_two_mul hn hv
-
-theorem domY_sanB_zpow_mulVec {n : ℤ} (hn : n ≠ 0) {v : Fin 2 → ℤ} (hv : DomX v) :
-    DomY (((sanB ^ n : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).mulVec v) := by
-  rw [sanB_zpow_mulVec]
-  unfold DomY
-  unfold DomX at hv
-  simp only [Matrix.cons_val_one, Matrix.cons_val_zero]
-  exact abs_lt_abs_add_two_mul hn hv
+  ring
 
 def syllProd (L : List (Fin 2 × ℤ)) : SL(2, ℤ) :=
   (L.map fun p => (![sanA, sanB] p.1) ^ p.2).prod
@@ -391,8 +366,7 @@ theorem pingInv_syllProd :
     obtain ⟨g, n⟩ := p
     have hn : n ≠ 0 := hexp _ List.mem_cons_self
     rcases eq_or_ne g 0 with rfl | hgne
-    ·
-      have hq1 : q.1 = 1 := by
+    · have hq1 : q.1 = 1 := by
         rcases q with ⟨gq, m⟩
         fin_cases gq
         · simp at hpq
@@ -411,8 +385,7 @@ theorem pingInv_syllProd :
       constructor
       · simpa using hstep
       · simpa using lt_trans hgrow hstep
-    ·
-      have hg1 : g = 1 := by
+    · have hg1 : g = 1 := by
         fin_cases g
         · exact absurd rfl hgne
         · rfl
@@ -454,7 +427,6 @@ theorem syllProd_ne_one (L : List (Fin 2 × ℤ)) (hne : L ≠ [])
     rw [SpecialLinearGroup.coe_one, Matrix.one_mulVec]
   obtain ⟨-, hgrow⟩ := hinv
   rw [hseed] at hgrow
-
   unfold seedOf at hgrow
   split at hgrow <;> simp at hgrow
 
@@ -501,14 +473,14 @@ theorem syllProd_toSylls : ∀ L : List (Fin 2 × Bool),
       rw [htl] at ih
       by_cases hg : g = g'
       · subst hg
-        simp only [if_true]
+        simp only [ite_true]
         have hL : syllProd ((g, n + sgn b) :: t)
             = (![sanA, sanB] g) ^ (sgn b) * syllProd ((g, n) :: t) := by
           simp only [syllProd, List.map_cons, List.prod_cons]
           rw [← mul_assoc, ← _root_.zpow_add, add_comm n (sgn b)]
         rw [hL, ih, List.map_cons, List.prod_cons]
         cases b <;> simp [sgn]
-      · simp only [if_neg hg]
+      · simp only [ite_eq_right hg]
         have hL : syllProd ((g, sgn b) :: (g', n) :: t)
             = (![sanA, sanB] g) ^ (sgn b) * syllProd ((g', n) :: t) := by
           simp [syllProd]
@@ -533,7 +505,7 @@ theorem toSylls_spec : ∀ L : List (Fin 2 × Bool), FreeGroup.IsReduced L →
     cases tl with
     | nil =>
       refine ⟨?_, ?_, ?_⟩
-      · show List.IsChain _ [(g, sgn b)]
+      · change List.IsChain _ [(g, sgn b)]
         exact List.isChain_singleton _
       · intro x hx
         simp only [show toSylls [(g, b)] = [(g, sgn b)] from rfl, List.mem_singleton] at hx
@@ -557,10 +529,9 @@ theorem toSylls_spec : ∀ L : List (Fin 2 × Bool), FreeGroup.IsReduced L →
         unfold toSylls
         rw [hsyl₂]
       by_cases hg : g = g₂
-      ·
-        have hb : b = b₂ := hadj hg
+      · have hb : b = b₂ := hadj hg
         subst hb
-        rw [hunf, if_pos hg]
+        rw [hunf, ite_eq_left hg]
         have hn : if b then 0 < n₂ + sgn b else n₂ + sgn b < 0 := by
           cases b <;> simp [sgn] at hsgn₂ ⊢ <;> omega
         refine ⟨?_, ?_, ?_⟩
@@ -582,8 +553,7 @@ theorem toSylls_spec : ∀ L : List (Fin 2 × Bool), FreeGroup.IsReduced L →
             simpa using h.symm
           refine ⟨n₂ + sgn b₀, t₂, ?_, hn⟩
           rw [← hg]
-      ·
-        rw [hunf, if_neg hg]
+      · rw [hunf, ite_eq_right hg]
         refine ⟨?_, ?_, ?_⟩
         · rw [hsyl₂] at ihchain
           exact List.isChain_cons_cons.mpr ⟨hg, ihchain⟩
@@ -633,7 +603,7 @@ theorem mem_range_of_lowerLeft_eq_zero (γ : SL(2, ℤ)) (h : SanovEntries γ)
   refine ⟨(FreeGroup.of (0 : Fin 2)) ^ k, ?_⟩
   rw [map_zpow, FreeGroup.lift_apply_of]
   apply Subtype.ext
-  show (((![sanA, sanB] (0 : Fin 2) : SL(2, ℤ)) ^ k : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
+  change (((![sanA, sanB] (0 : Fin 2) : SL(2, ℤ)) ^ k : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
     = γ.1
   rw [show (![sanA, sanB] (0 : Fin 2)) = sanA from rfl, sanA_zpow_coe]
   ext i j
@@ -694,7 +664,8 @@ theorem sanovEntries_sanA_zpow_mul (m : ℤ) (γ : SL(2, ℤ)) (h : SanovEntries
   obtain ⟨ha, hd, ⟨kb, hb⟩, ⟨kc, hc⟩⟩ := h
   unfold SanovEntries
   rw [coe_sanA_zpow_mul]
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    simp only [Fin.isValue, of_apply, cons_val', cons_val_zero, cons_val_one, cons_val_fin_one]
   · rw [hc, show γ.1 0 0 + 2 * m * (2 * kc) = γ.1 0 0 + 4 * (m * kc) from by ring,
       Int.add_mul_emod_self_left]
     exact ha
@@ -707,7 +678,8 @@ theorem sanovEntries_sanB_zpow_mul (m : ℤ) (γ : SL(2, ℤ)) (h : SanovEntries
   obtain ⟨ha, hd, ⟨kb, hb⟩, ⟨kc, hc⟩⟩ := h
   unfold SanovEntries
   rw [coe_sanB_zpow_mul]
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    simp only [Fin.isValue, of_apply, cons_val', cons_val_zero, cons_val_one, cons_val_fin_one]
   · exact ha
   · rw [hb, show γ.1 1 1 + 2 * m * (2 * kb) = γ.1 1 1 + 4 * (m * kb) from by ring,
       Int.add_mul_emod_self_left]
@@ -736,7 +708,6 @@ theorem mem_range_of_sanovEntries_bounded :
     by_cases hc0 : γ.1 1 0 = 0
     · exact mem_range_of_lowerLeft_eq_zero γ h hc0
     · obtain ⟨ha, hd, hb2, hc2⟩ := h
-
       obtain ⟨m₀, hm₀⟩ := exists_balanced (γ.1 0 0) (γ.1 1 0) hc0
       have h₁ : SanovEntries (sanA ^ (-m₀) * γ) :=
         sanovEntries_sanA_zpow_mul (-m₀) γ ⟨ha, hd, hb2, hc2⟩
@@ -760,7 +731,6 @@ theorem mem_range_of_sanovEntries_bounded :
         intro h0
         rw [h0] at hodd
         omega
-
       obtain ⟨m₁, hm₁⟩ := exists_balanced (γ.1 1 0) (γ.1 0 0 - 2 * m₀ * γ.1 1 0) ha₁0
       have h₂ : SanovEntries (sanB ^ (-m₁) * (sanA ^ (-m₀) * γ)) :=
         sanovEntries_sanB_zpow_mul (-m₁) _ h₁
@@ -788,8 +758,6 @@ theorem mem_range_of_sanovEntries (γ : SL(2, ℤ)) (h : SanovEntries γ) :
 
 end Sanov
 
-set_option autoImplicit false
-
 open Matrix CongruenceSubgroup Matrix.SpecialLinearGroup
 
 open scoped MatrixGroups
@@ -798,30 +766,9 @@ section Gamma4Index
 
 def sanovRange : Subgroup SL(2, ℤ) := (FreeGroup.lift ![sanA, sanB]).range
 
-instance Gamma4_subgroupOf_normal (M : ℕ) :
-    ((Gamma 4).subgroupOf (Gamma0 M)).Normal :=
-  (Gamma_normal 4).comap (Gamma0 M).subtype
-
-theorem Gamma4_a_d_eq_one {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma 4) :
-    (γ 0 0 : ZMod 4) = 1 ∧ (γ 1 1 : ZMod 4) = 1 := by
-  rw [Gamma_mem] at hγ
-  exact ⟨hγ.1, hγ.2.2.2⟩
-
-theorem Gamma4_le_Gamma2 : Gamma 4 ≤ Gamma 2 := by
-  intro γ hγ
-  rw [Gamma_mem] at hγ ⊢
-  have key : ∀ a : ℤ, ((a : ZMod 2) : ZMod 2) =
-      ZMod.castHom (show (2:ℕ) ∣ 4 by norm_num) (ZMod 2) ((a : ZMod 4) : ZMod 4) :=
-    fun a => (map_intCast (ZMod.castHom (show (2:ℕ) ∣ 4 by norm_num) (ZMod 2)) a).symm
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · rw [key]; simp [hγ.1]
-  · rw [key]; simp [hγ.2.1]
-  · rw [key]; simp [hγ.2.2.1]
-  · rw [key]; simp [hγ.2.2.2]
-
 theorem index_Gamma4_subgroupOf_dvd (M : ℕ) :
     ((Gamma 4).subgroupOf (Gamma0 M)).index ∣ (Gamma 4).index := by
-  haveI : (Gamma 4).Normal := Gamma_normal 4
+  have : (Gamma 4).Normal := Gamma_normal 4
   exact Subgroup.relIndex_dvd_index_of_normal (H := Gamma 4) (K := Gamma0 M)
 
 theorem Gamma4_index_dvd_card :
@@ -843,9 +790,6 @@ theorem index_Gamma4_subgroupOf_dvd_48 (M : ℕ) :
 
 end Gamma4Index
 
-open Matrix CongruenceSubgroup Matrix.SpecialLinearGroup
-open scoped MatrixGroups
-
 section Gamma4Free
 
 theorem sanovRange_eq : sanovRange = (FreeGroup.lift ![sanA, sanB]).range :=
@@ -855,10 +799,8 @@ theorem Gamma4_sanovEntries {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma 4) :
     SanovEntries γ := by
   rw [Gamma_mem] at hγ
   obtain ⟨ha, hb, hc, hd⟩ := hγ
-
   refine ⟨?_, ?_, ?_, ?_⟩
-  ·
-    have : (4 : ℤ) ∣ γ.1 0 0 - 1 := by
+  · have : (4 : ℤ) ∣ γ.1 0 0 - 1 := by
       have := (ZMod.intCast_zmod_eq_zero_iff_dvd (γ.1 0 0 - 1) 4).mp (by push_cast; simp [ha])
       simpa using this
     omega
@@ -875,18 +817,15 @@ theorem Gamma4_le_sanovRange : Gamma 4 ≤ sanovRange := by
   rw [sanovRange_eq]
   exact fun γ hγ => mem_range_of_sanovEntries γ (Gamma4_sanovEntries hγ)
 
-@[reducible] noncomputable def isFreeGroup_Gamma4_subgroupOf (M : ℕ) :
+theorem isFreeGroup_Gamma4_subgroupOf (M : ℕ) :
     IsFreeGroup ↥((Gamma 4).subgroupOf (Gamma0 M)) := by
-
-  haveI : IsFreeGroup ↥(sanovRange) := sanovRange_eq ▸ isFreeGroup_sanov_range
-
-  haveI : IsFreeGroup ↥((Gamma 4).subgroupOf sanovRange) :=
-    subgroupIsFreeOfIsFree ((Gamma 4).subgroupOf sanovRange)
-  haveI : IsFreeGroup ↥(Gamma 4) :=
+  have : IsFreeGroup ↥(sanovRange) := sanovRange_eq ▸ isFreeGroup_sanov_range
+  have : IsFreeGroup ↥((Gamma 4).subgroupOf sanovRange) :=
+    Subgroup.isFreeGroupOfIsFreeGroup ((Gamma 4).subgroupOf sanovRange)
+  have : IsFreeGroup ↥(Gamma 4) :=
     IsFreeGroup.ofMulEquiv (Subgroup.subgroupOfEquivOfLe Gamma4_le_sanovRange)
-
-  haveI : IsFreeGroup ↥((Gamma0 M).subgroupOf (Gamma 4)) :=
-    subgroupIsFreeOfIsFree ((Gamma0 M).subgroupOf (Gamma 4))
+  have : IsFreeGroup ↥((Gamma0 M).subgroupOf (Gamma 4)) :=
+    Subgroup.isFreeGroupOfIsFreeGroup ((Gamma0 M).subgroupOf (Gamma 4))
   exact IsFreeGroup.ofMulEquiv
     <| (MulEquiv.subgroupCongr (Subgroup.inf_subgroupOf_right (Gamma0 M) (Gamma 4)).symm).trans
     <| (Subgroup.subgroupOfEquivOfLe (inf_le_right : Gamma0 M ⊓ Gamma 4 ≤ Gamma 4)).trans
@@ -898,18 +837,9 @@ end Gamma4Free
 
 section H2Gamma0
 
-open scoped MatrixGroups
-open CongruenceSubgroup
-
-theorem isUnit_natCast_of_dvd {k : Type*} [CommRing k] {a b : ℕ} (h : a ∣ b)
-    (hb : IsUnit (b : k)) : IsUnit (a : k) := by
-  obtain ⟨c, rfl⟩ := h
-  rw [Nat.cast_mul] at hb
-  exact isUnit_of_mul_isUnit_left hb
-
-theorem subsingleton_H2_gamma0_aux {k : Type} [CommRing k] (M : ℕ) (h6 : IsUnit (6 : k))
+theorem subsingleton_H2_Gamma0_aux {k : Type} [CommRing k] (M : ℕ) (h6 : IsUnit (6 : k))
     (A : Rep k ↥(Gamma0 M)) : Subsingleton (groupCohomology A 2) := by
-  haveI : IsFreeGroup ↥((Gamma 4).subgroupOf (Gamma0 M)) :=
+  have : IsFreeGroup ↥((Gamma 4).subgroupOf (Gamma0 M)) :=
     isFreeGroup_Gamma4_subgroupOf M
   have h2 : IsUnit (2 : k) := isUnit_of_mul_isUnit_left
     (show IsUnit ((2 : k) * 3) by norm_num; exact h6)
@@ -917,15 +847,23 @@ theorem subsingleton_H2_gamma0_aux {k : Type} [CommRing k] (M : ℕ) (h6 : IsUni
     have : ((48 : ℕ) : k) = 6 * (2 * (2 * 2)) := by norm_num
     rw [this]; exact h6.mul (h2.mul (h2.mul h2))
   exact subsingleton_H2_of_free_finiteIndex ((Gamma 4).subgroupOf (Gamma0 M))
-    (isUnit_natCast_of_dvd (index_Gamma4_subgroupOf_dvd_48 M) h48) A
+    (isUnit_of_dvd_unit (Nat.cast_dvd_cast (index_Gamma4_subgroupOf_dvd_48 M)) h48) A
 
 end H2Gamma0
 
 end Gamma0H2
 open CongruenceSubgroup in
-/-- `H²(Γ₀(M), A) = 0` for every representation `A` of `Γ₀(M)` over a
-commutative ring in which `6` is a unit. -/
-public theorem CongruenceSubgroup.subsingleton_H2_gamma0 {k : Type} [CommRing k]
+/-- **Vanishing of `H²` for `Γ₀(M)` when `6` is a unit.** For every level `M`, including
+`M = 0` (where `Γ₀(0)` is the subgroup of upper triangular matrices of `SL(2, ℤ)`), and every
+representation `A` of `Γ₀(M)` over a commutative ring `k` in which `6` is a unit, the second
+cohomology group `H²(Γ₀(M), A)` is zero.
+
+Sources: I. N. Sanov, *A property of a representation of a free group*, Doklady Akad. Nauk SSSR
+(N.S.) 57 (1947), 657–659 (the matrices `!![1, 2; 0, 1]` and `!![1, 0; 2, 1]` generate a free
+subgroup of `SL(2, ℤ)`); K. S. Brown, *Cohomology of Groups*, Graduate Texts in Mathematics 87,
+Springer, 1982, Section III.9 (restriction followed by corestriction is multiplication by the
+index). -/
+public theorem CongruenceSubgroup.subsingleton_H2_Gamma0 {k : Type} [CommRing k]
     (M : ℕ) (h6 : IsUnit (6 : k)) (A : Rep k ↥(Gamma0 M)) :
     Subsingleton (groupCohomology A 2) :=
-  Gamma0H2.subsingleton_H2_gamma0_aux M h6 A
+  Gamma0H2.subsingleton_H2_Gamma0_aux M h6 A
