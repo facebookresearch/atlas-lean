@@ -12801,6 +12801,7 @@
   "MathlibExt/NumberTheory/CollatzArithmeticDerivative": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Arithmetic derivative and the Collatz map"},
   "MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Arithmetic derivative and the Collatz map"},
   "MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Arithmetic derivative and the Collatz map"},
+  "MathlibExt/NumberTheory/CollatzArithmeticDerivativePrimeRoots": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Arithmetic derivative and the Collatz map"},
   "MathlibExt/NumberTheory/CommaSequence": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
   "MathlibExt/NumberTheory/ComplementarySequenceDeterminedBySubsequenceSumEquation": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
   "MathlibExt/NumberTheory/ComplementarySequences": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
