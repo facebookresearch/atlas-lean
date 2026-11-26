@@ -10,8 +10,10 @@ and $e^{i\epsilon D} \in C$ is logical for all real $\epsilon$, so differentiati
 $\epsilon = 0$ gives $(I - P) D P = 0$. Since $\mathfrak{c}$ lies in the Lie algebra of the product unitaries,
 $D = \sum_j \alpha_j H_j$ with $H_j$ Hermitian acting on $\mathcal{H}_j$ only, and local error detection gives
 $P H_j P \in \mathbb{C} P$. Hence $D P = P D P \in \mathbb{C} P$, so each $e^{iD_k}$, and $V$, acts on the code as a
-scalar, of modulus one because $V$ is unitary. Consequently the logical product unitaries induce on the code at most as
-many distinct operators as $B / C$ has cosets, a finite number by compactness.
+scalar, of modulus one because $V$ is unitary. Consequently, if $G$ is the group of logical product unitaries and $\mathcal{F}$ contains one element of each coset of
+$C$ in $G$, which are finitely many because $G$ is compact and $C$ is open in it, then every $U \in G$ satisfies
+$U P = e^{i\phi} F P$ for some $F \in \mathcal{F}$ and $\phi \in \mathbb{R}$: up to a global phase, the logical product
+unitaries induce only finitely many distinct operators on the code.
 
 ## Depends on
 
@@ -23,4 +25,4 @@ many distinct operators as $B / C$ has cosets, a finite number by compactness.
 
 ## Sources
 
-- B. Eastin and E. Knill, *Restrictions on transversal encoded quantum gate sets*, Phys. Rev. Lett. 102 (2009), 110502, arXiv:0811.4262, proof of Theorem 1.
+- B. Eastin and E. Knill, *Restrictions on transversal encoded quantum gate sets*, Phys. Rev. Lett. 102 (2009), 110502, arXiv:0811.4262, proof of Theorem 1, which leaves the global phase implicit.

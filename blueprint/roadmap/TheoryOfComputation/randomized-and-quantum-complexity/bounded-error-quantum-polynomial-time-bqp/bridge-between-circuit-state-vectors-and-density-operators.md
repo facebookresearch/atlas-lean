@@ -23,11 +23,10 @@ A sound expansion has separate pages for:
    qubit-$0$ bit is $1$, equals the probability of the projector onto qubit $0$ being $1$ on $\psi \psi^*$. Both sides use the
    same coefficient vector.
 
-- Statement prerequisite: finite-dimensional quantum states (pure and mixed) and density operators.
-- Statement prerequisite: measurements (POVMs and projective measurements) and the Born rule.
-
 ## Depends on
 
+- [Measurements: POVMs, projective measurements and the Born rule](../../../QuantumInformation/quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Quantum states: pure states and density operators](../../../QuantumInformation/quantum-foundations/quantum-states-pure-states-and-density-operators.md)
 - [Encoded 2-local quantum gate](../../complexity-classes/time-and-space-complexity-classes/qgate.md)
 
 ## Sources

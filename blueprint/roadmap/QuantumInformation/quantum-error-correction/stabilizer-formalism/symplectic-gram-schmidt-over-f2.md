@@ -9,8 +9,9 @@ $$\omega(z_i, z_j) = \omega(x_i, x_j) = 0, \qquad \omega(z_i, x_j) = \delta_{ij}
 
 such that $V^{\perp} = V \oplus \operatorname{span}(z_1, \dots, z_k, x_1, \dots, x_k)$. Proof: extend $V$ to a maximal
 isotropic subspace $V \oplus \operatorname{span}(z_1, \dots, z_k)$ inside $V^{\perp}$; nondegeneracy of $\omega$ gives
-$x_j \in V^{\perp}$ pairing with $z_j$ only, and the corrections $x_j \mapsto x_j + \sum_i \omega(x_i, x_j) z_i$ make
-the $x_j$ isotropic, as in Gram–Schmidt orthogonalization.
+$x_j \in V^{\perp}$ pairing with $z_j$ only, and replacing $x_2, \dots, x_k$ in turn by $x_j + \sum_{i < j} \omega(x_i, x_j) z_i$,
+with the $x_i$ already replaced, makes them isotropic while keeping $\omega(z_i, x_j) = \delta_{ij}$, as in Gram–Schmidt
+orthogonalization.
 
 ## Depends on
 

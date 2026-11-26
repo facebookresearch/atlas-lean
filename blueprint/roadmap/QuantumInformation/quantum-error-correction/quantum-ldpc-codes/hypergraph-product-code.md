@@ -19,5 +19,5 @@ surface code.
 
 ## Sources
 
-- J.-P. Tillich and G. Zémor, *Quantum LDPC codes with positive rate and minimum distance proportional to the square root of the blocklength*, IEEE Trans. Inform. Theory 60 (2014), 1193–1202, arXiv:0903.0566, Section 3, Definition 3 and Proposition 13.
+- J.-P. Tillich and G. Zémor, *Quantum LDPC codes with positive rate and minimum distance proportional to the square root of the blocklength*, IEEE Trans. Inform. Theory 60 (2014), 1193–1202, arXiv:0903.0566, Section 3, Definition 3, and Section 4.3, Proposition 13.
 - N. P. Breuckmann and J. N. Eberhardt, *Quantum low-density parity-check codes*, PRX Quantum 2 (2021), 040101, arXiv:2103.06309, Section IV.A and Appendix A.3 (the hypergraph product as a tensor product of chain complexes, Figure 6).

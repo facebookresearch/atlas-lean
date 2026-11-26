@@ -4,16 +4,9 @@ For all density operators $\rho, \sigma$ on a complex Euclidean space,
 
 $$1 - F(\rho, \sigma) \le \tfrac12\|\rho - \sigma\|_1 \le \sqrt{1 - F(\rho, \sigma)^2}.$$
 
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Trace distance and contractivity.
-
 ## Depends on
 
+- [Trace distance](trace-distance.md)
 - [Fidelity of quantum states](fidelity-of-quantum-states.md)
 
 ## Proof depends on

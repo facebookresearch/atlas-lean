@@ -16,5 +16,5 @@ transpose codes are trivial and $k = k_1 k_2$; with codes of positive rate this 
 
 ## Sources
 
-- J.-P. Tillich and G. Zémor, *Quantum LDPC codes with positive rate and minimum distance proportional to the square root of the blocklength*, IEEE Trans. Inform. Theory 60 (2014), 1193–1202, arXiv:0903.0566, Section 3, Proposition 14 and its proof.
+- J.-P. Tillich and G. Zémor, *Quantum LDPC codes with positive rate and minimum distance proportional to the square root of the blocklength*, IEEE Trans. Inform. Theory 60 (2014), 1193–1202, arXiv:0903.0566, Section 4.3, Proposition 14 and its proof.
 - N. P. Breuckmann and J. N. Eberhardt, *Quantum low-density parity-check codes*, PRX Quantum 2 (2021), 040101, arXiv:2103.06309, Appendix A.3 (the Künneth formula).

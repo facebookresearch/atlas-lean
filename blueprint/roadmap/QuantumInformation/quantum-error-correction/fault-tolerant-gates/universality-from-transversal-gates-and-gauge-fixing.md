@@ -12,7 +12,7 @@ transversal Hadamard and gauge-fixing error correction form a universal fault-to
 ## Expansion
 
 A sound expansion adds pages for triorthogonal binary matrices and the codes of Bravyi and Haah; Paetznick and Reichardt's
-claim that triorthogonality gives a transversal CCZ (their Section II, with the proof of the claim); the $[[15, 1, 3]]$
+claim that triorthogonality gives a transversal CCZ (the claim in their main text, with its proof); the $[[15, 1, 3]]$
 code as a subsystem code with its gauge group; and the gauge-fixing procedure after transversal Hadamard with its fault
 tolerance. Each needs its statement checked against the paper.
 
@@ -23,4 +23,4 @@ tolerance. Each needs its statement checked against the paper.
 
 ## Sources
 
-- A. Paetznick and B. W. Reichardt, *Universal fault-tolerant quantum computation with only transversal gates and error correction*, Phys. Rev. Lett. 111 (2013), 090505, arXiv:1304.3709, abstract and Sections II–III.
+- A. Paetznick and B. W. Reichardt, *Universal fault-tolerant quantum computation with only transversal gates and error correction*, Phys. Rev. Lett. 111 (2013), 090505, arXiv:1304.3709, abstract and the main text (the paragraphs on triorthogonal codes and the transversal CCZ claim, and on the universal gate set from transversal CCZ, transversal Hadamard and error correction).

@@ -27,5 +27,5 @@ Shor's nine-qubit code, with part of its stabilizer moved into the gauge group, 
 
 ## Sources
 
-- D. Poulin, *Stabilizer formalism for operator quantum error correction*, Phys. Rev. Lett. 95 (2005), 230504, arXiv:quant-ph/0508131, equations (1)–(3), the construction of $G$ and $L$, "a stabilizer OQEC code therefore has 4 parameters, $[[n, k, r, d]]$", and Table I.
+- D. Poulin, *Stabilizer formalism for operator quantum error correction*, Phys. Rev. Lett. 95 (2005), 230504, arXiv:quant-ph/0508131, equations (1)–(3), the construction of $G$ and $L$, "a stabilizer OQEC code therefore has 4 parameters, $[[n, k, r, d]]$", and Table II (the $[[9, 1, 4, 3]]$ version of Shor's code).
 - D. Kribs, R. Laflamme and D. Poulin, *Unified and generalized approach to quantum error correction*, Phys. Rev. Lett. 94 (2005), 180501, arXiv:quant-ph/0412076 (operator quantum error correction and its correctability condition).

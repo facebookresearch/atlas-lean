@@ -9,15 +9,9 @@ $$\frac12 + \frac12\big\|\lambda\rho_0 - (1-\lambda)\rho_1\big\|_1,$$
 and it is attained by the projective measurement onto the positive part of $\lambda\rho_0 - (1-\lambda)\rho_1$
 and its complement.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Trace distance and contractivity.
-
 ## Depends on
 
+- [Trace distance](../quantum-states-distances-and-entropy/trace-distance.md)
 - [Measurements: POVMs, projective measurements and the Born rule](../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
 
 ## Sources

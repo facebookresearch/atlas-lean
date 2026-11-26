@@ -2,7 +2,7 @@
 
 Let $q$ be a prime power. A stabilizer code over $\mathbb{F}_q$ is the joint fixed space of an abelian subgroup $S$ of the
 [qudit error group](qudit-pauli-operators-over-a-finite-field.md) $G_n$ meeting the scalars only in $I$; it is an
-$((n, K, d))_q$ code if it has dimension $K$ and detects every error of weight less than $d$ (the weight of
+$((n, K, d))_q$ code if it has dimension $K$ and detects every error of weight less than $d$ but not every error of weight $d$ (the weight of
 $\omega^c X(\mathbf a) Z(\mathbf b)$ being the number of positions $i$ with $(a_i, b_i) \ne (0, 0)$, the symplectic weight
 $\operatorname{swt}$). An $((n, K, d))_q$ stabilizer code exists if and only if there is an additive code
 $C \le \mathbb{F}_q^{2n}$ with $|C| = q^n / K$ and $C \le C^{\perp_s}$, the trace-symplectic dual, such that
