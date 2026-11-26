@@ -199,22 +199,6 @@ theorem_wanted not_isNearFPerfect_two_mul_prime_pow
     (p a : ℕ) (hp : p.Prime) :
     ¬ IsNearFPerfect (2 * p ^ a)
 
-/-- **The only $[1,\ell]$-near-perfect number of the form $2p^a$ is $18$.** For natural numbers
-$\ell$ and $n$, say that $n$ is $[1,\ell]$-near-perfect when some divisor $d$ of $n$ with $d < n$
-satisfies $\sigma(n) = n + d + \ell n$, where $\sigma(n)$ is the sum of the divisors of $n$. Then
-$18$ is $[1,1]$-near-perfect, and for every odd prime $p$ and all natural numbers $a$ and
-$\ell \ge 1$, if $2p^a$ is $[1,\ell]$-near-perfect then $2p^a = 18$.
-
-The divisor for $18$ is $d = 3$. This is part 1 of Theorem 14 of the source.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 14. -/
-theorem_wanted isKLNearPerfect_one_two_mul_prime_pow
-    (p a l : ℕ) (hp : p.Prime) (hpo : Odd p) (hl : 1 ≤ l) :
-    IsKLNearPerfect 1 1 18 ∧
-      (IsKLNearPerfect 1 l (2 * p ^ a) → 2 * p ^ a = 18)
-
 /-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
 a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
 $p_1^a p_2$ is not deficient $F_k$-perfect.
@@ -237,22 +221,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isDeficientFkPerfect_two_mul_pow
     (k p a : ℕ) (hk : 2 < k) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsDeficientFkPerfect k (2 * p ^ a)
-
-/-- **No deficient $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
-$k > 1$ be a natural number, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural
-numbers such that $a + b$ is odd or both $a$ and $b$ are odd. Then $n = p_1^a p_2^b$ is not
-deficient $F_k$-perfect: there is no divisor $d$ of $n$ with $d < n$ and
-$\sigma_k(n) + d^k = n^k + 3n$, where $\sigma_k(n) = \sum_{e \mid n} e^k$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 19. -/
-theorem_wanted not_isDeficientFkPerfect_pow_mul_pow
-    (k p₁ p₂ a b : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) (ha : 1 ≤ a) (hb : 1 ≤ b)
-    (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
-    ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂ ^ b)
 
 /-- **No near $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
 $k > 1$, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural numbers such that
