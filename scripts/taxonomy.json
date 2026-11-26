@@ -10991,6 +10991,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/RamanujanPartitionCongruence": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Ramanujan's partition congruences"},
   "MathlibExt/Combinatorics/Enumerative/Partition/RamanujanPartitionCongruenceModEleven": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Ramanujan's partition congruences"},
   "MathlibExt/Combinatorics/Enumerative/Partition/ReciprocalEulerDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "(ℓ, k)-regular partitions"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/RegularPartitionsLK": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "(ℓ, k)-regular partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/RegularTripartitionCongruences": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Tuples of ℓ-regular partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/RestrictedGrowthWordGeneratingFunction": {"to": "Combinatorics/set-partitions", "title": "Restricted-growth words"},
   "MathlibExt/Combinatorics/Enumerative/Partition/RogersRamanujan": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Rogers–Ramanujan identities"},
