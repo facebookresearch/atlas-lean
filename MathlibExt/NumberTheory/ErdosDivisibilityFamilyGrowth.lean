@@ -25,8 +25,9 @@ whenever `a, b, c ∈ A` with `a ≠ b` and `a ≠ c`.
 Is there a constant `C` with
 `F(n) = π(n) + (C + o(1)) * n^(2/3) / (log n)^2`?
 
-This file proves that the answer is yes, with `C = 27 / 2` (`conjecture_holds`), following
-Chojecki (2026, Theorem 1.1).
+This file proves that the answer is yes, with `C = 27 / 2`
+(`tendsto_F_sub_primeCounting_div`, hence `conjecture_holds`), following Chojecki (2026,
+Theorem 1.1).
 
 ## Proof outline
 
@@ -1416,8 +1417,15 @@ private theorem eventually_card_bin_le (t : ℝ) (ht : 1 < t) (i k : ℤ) (hik :
   have := (div_lt_div_iff_of_pos_right hM).mp hn
   exact_mod_cast this.le
 
-/-- **Main estimate.** `(F n - π n) / (n ^ (2/3) / (log n) ^ 2) → 27 / 2`. -/
-private theorem tendsto_main :
+/-- **Second term for strongly 2-primitive sets.** Let $F(n)$ be the largest size of a set
+$A \subseteq \{1, \dots, n\}$ such that $a \nmid bc$ whenever $a, b, c \in A$ with $a \ne b$ and
+$a \ne c$ ($b = c$ is allowed), and let $\pi(n)$ be the number of primes at most $n$. Then
+$(F(n) - \pi(n)) / (n^{2/3} / (\log n)^2) \to 27/2$ as $n \to \infty$; equivalently,
+$F(n) = \pi(n) + (27/2 + o(1))\, n^{2/3} / (\log n)^2$.
+
+Source: P. Chojecki, The Second Term for Strongly 2-Primitive Sets, arXiv preprint (2026),
+arXiv:2607.15306v1, Theorem 1.1, https://arxiv.org/abs/2607.15306. -/
+theorem tendsto_F_sub_primeCounting_div :
     Tendsto (fun n : ℕ => (((F n : ℤ) - (Nat.primeCounting n : ℤ)) : ℝ) /
       ((n : ℝ) ^ ((2 : ℝ) / 3) / (Real.log n) ^ 2)) atTop (𝓝 (27 / 2)) := by
   have hS : ∀ᶠ n : ℕ in atTop, 0 < (n : ℝ) ^ ((2 : ℝ) / 3) / Real.log n ^ 2 := by
@@ -1501,6 +1509,6 @@ https://arxiv.org/abs/2607.15306. Moved from
 `OpenConjectures/NumberTheory/ErdosDivisibilityFamilyGrowth`.
 -/
 theorem conjecture_holds : conjecture :=
-  ⟨27 / 2, by norm_num, tendsto_main⟩
+  ⟨27 / 2, by norm_num, tendsto_F_sub_primeCounting_div⟩
 
 end MathlibExt.NumberTheory.ErdosDivisibilityFamilyGrowthWanted

@@ -34,7 +34,7 @@ K. Adiprasito, J. Huh and E. Katz, *Hodge theory for combinatorial geometries*, 
 188 (2018), 381–452 (arXiv:1511.02888v2), Conjecture 1.2 and Theorem 9.9 (3): the numbers
 `f_k(M)` of `k`-element independent sets of a matroid form a log-concave sequence (the
 Welsh–Mason conjecture). The ultra log-concave strengthening is
-`WantedExt.Combinatorics.StrongMasonWanted.strong_mason_conjecture`.
+`MathlibExt.Combinatorics.StrongMasonWanted.Combinatorics.StrongMason.strong_mason_conjecture`.
 
 The proof uses the Lorentzian independence generating polynomial and the Hessian argument of
 Anari, Liu, Oveis Gharan and Vinzant, *Log-concave polynomials III* (arXiv:1811.01600).

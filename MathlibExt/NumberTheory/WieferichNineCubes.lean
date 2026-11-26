@@ -37,8 +37,8 @@ import MathlibExt.NumberTheory.QuadraticForms.LegendreThreeSquare
 `wieferich_g_three` is Wieferich's theorem (Wieferich 1909, completed by
 Kempner 1912): every natural number is a sum of nine cubes, and nine is the
 smallest such bound — `23` requires nine cubes (`23 = 2·2³ + 7·1³`, with no
-representation using eight or fewer cubes). This is the `k = 3` case of the
-Hilbert–Waring problem (`g(3) = 9`).
+representation using eight or fewer cubes: `not_isSumOfCubes_eight_twentyThree`).
+This is the `k = 3` case of the Hilbert–Waring problem (`g(3) = 9`).
 
 For large numbers we use Legendre's three-square theorem and the identity
 `(m + x)³ + (m - x)³ = 2m³ + 6mx²`. The finite part starts with two bit tables
@@ -293,7 +293,13 @@ private theorem nine_cubes (n : ℕ) : IsSumOfCubes 9 n := by
     rw [mul_pow] at h
     omega
 
-private theorem twenty_three_requires_nine : ¬ IsSumOfCubes 8 23 := by
+set_option linter.dupNamespace false in
+/-- **Twenty-three is not a sum of eight cubes.** The number $23$ is not a sum of $8$ cubes of
+natural numbers: the only cubes at most $23$ are $0$, $1$ and $8$, and a sum of $a$ eights and
+$b$ ones equal to $23$ has $a \le 2$, hence $a + b = 23 - 7a \ge 9$ terms.
+
+Source: direct check; this is the sharpness half of Wieferich's theorem `wieferich_g_three`. -/
+public theorem not_isSumOfCubes_eight_twentyThree : ¬ IsSumOfCubes 8 23 := by
   rintro ⟨x, hx⟩
   have hsmall (i) : x i ≤ 2 := by
     have h := Finset.single_le_sum (f := fun j => x j ^ 3) (fun _ _ => Nat.zero_le _)
@@ -326,6 +332,6 @@ Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912). Knill,
 theorems in mathematics*, §76. Via leanprover/lean-eval@38361be, problem `wieferich_g_three`. -/
 public theorem wieferich_g_three :
     (∀ n : ℕ, IsSumOfCubes 9 n) ∧ ∃ n : ℕ, ¬ IsSumOfCubes 8 n :=
-  ⟨nine_cubes, 23, twenty_three_requires_nine⟩
+  ⟨nine_cubes, 23, not_isSumOfCubes_eight_twentyThree⟩
 
 end MathlibExt.NumberTheory.WieferichNineCubesWanted.NumberTheory

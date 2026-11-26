@@ -23,6 +23,17 @@ example : ∀ᶠ n : ℕ in Filter.atTop, Nat.primeCounting n < F n := by
   push_cast at hpos
   exact_mod_cast sub_pos.mp hpos
 
+-- With the sharp constant `27 / 2`, `F n - π n` eventually exceeds `13 n^(2/3) / (log n)^2`.
+example : ∀ᶠ n : ℕ in Filter.atTop, 13 * ((n : ℝ) ^ ((2 : ℝ) / 3) / Real.log n ^ 2) <
+    (((F n : ℤ) - (Nat.primeCounting n : ℤ)) : ℝ) := by
+  filter_upwards [tendsto_F_sub_primeCounting_div.eventually
+      (lt_mem_nhds (by norm_num : (13 : ℝ) < 27 / 2)),
+    Filter.eventually_gt_atTop 1] with n hn hn1
+  have hden : 0 < (n : ℝ) ^ ((2 : ℝ) / 3) / Real.log n ^ 2 := by
+    have := Real.log_pos (by exact_mod_cast hn1 : (1 : ℝ) < n)
+    positivity
+  exact (lt_div_iff₀ hden).mp hn
+
 -- A set of primes is good.
 example : Good {2, 3, 5, 7} := by
   unfold Good

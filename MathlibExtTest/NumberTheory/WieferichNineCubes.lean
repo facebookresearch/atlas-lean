@@ -21,3 +21,7 @@ example : IsSumOfCubes 9 23 :=
 example : ¬ ∀ n, IsSumOfCubes 8 n := by
   obtain ⟨n, hn⟩ := wieferich_g_three.2
   exact fun h => hn (h n)
+
+-- Padding with a zero cube shows that `23` is not a sum of seven cubes either.
+example : ¬ IsSumOfCubes 7 23 := fun ⟨x, hx⟩ =>
+  not_isSumOfCubes_eight_twentyThree ⟨Fin.cons 0 x, by simp [Fin.sum_univ_succ, hx]⟩
