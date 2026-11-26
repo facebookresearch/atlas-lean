@@ -1,5 +1,5 @@
 # Flat Closure
 
-The flat closure of a subalgebra `B` of `F ⊗[R] G` (the saturation of `B`
-in `G`): the `R`-subalgebra of elements of `G` whose image `1 ⊗ g` lies in
-`B`.
+The flat closure of an `F`-subalgebra `B` of `F ⊗[R] G`, for a field `F` that is an
+`R`-algebra and a commutative `R`-algebra `G`: the preimage of `B` under `g ↦ 1 ⊗ g`, an
+`R`-subalgebra of `G`.
