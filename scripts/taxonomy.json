@@ -12152,6 +12152,7 @@
   "MathlibExt/Geometry/MovingSofaHammersleyLower": {"to": "Geometry/discrete-geometry", "title": "Moving sofa problem"},
   "MathlibExt/Geometry/ParallelPostulate": {"to": "Geometry/euclidean-geometry/foundations-and-constructions", "title": "Independence of the parallel postulate"},
   "MathlibExt/Geometry/Polyhedra/PlatonicSolidsClassification": {"to": "Geometry/discrete-geometry", "title": "Platonic solids and regular polytopes"},
+  "MathlibExt/Geometry/Polytope/BoundaryComplex": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Face numbers of convex polytopes"},
   "MathlibExt/Geometry/Polytope/Faces": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Faces of convex polytopes"},
   "MathlibExt/Geometry/Polytope/GaleEvenness": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Cyclic polytopes"},
   "MathlibExt/Geometry/Polytope/GaleTransform": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Gale diagrams"},
