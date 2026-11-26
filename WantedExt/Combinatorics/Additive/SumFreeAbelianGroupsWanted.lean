@@ -17,7 +17,6 @@ public import MathlibExt.Combinatorics.Additive.DistinctLinkGraph
 public import MathlibExt.Combinatorics.Additive.MaximalDistinctSumFreeSets
 public import MathlibExt.Combinatorics.SimpleGraph.MaximalIndependentSets
 public import MathlibExt.GroupTheory.FiniteAbelian.SubgroupCount
-public import MathlibExt.Combinatorics.Additive.SumFreeAbelianGroups
 
 /-!
 # Sum-free sets in abelian groups
@@ -26,7 +25,7 @@ Statements from Nathanaël Hassler and Andrew Treglown, *Notes on Sum-Free Sets 
 Groups*, INTEGERS 26 (2026), Article A97 (arXiv:2506.17401; definitions taken from the arXiv
 TeX source): counts of maximal (distinct) sum-free sets, the container and structure lemmas
 the paper quotes, and subgroup-counting lemmas. The quoted bounds on the number of maximal
-independent sets in graphs are in `MathlibExt.Combinatorics.Additive.SumFreeAbelianGroups`.
+independent sets in graphs are in `MathlibExt.Combinatorics.SimpleGraph.MaximalIndependentSets`.
 
 A *Schur triple* is `x + y = z`; it is *distinct* when `x, y, z` are pairwise distinct. The
 paper's decompositions `G = ℤ_{2^{α₁}} ⊕ … ⊕ K` are written as explicit products.

@@ -10600,7 +10600,6 @@
   "MathlibExt/Combinatorics/Additive/SingletonSumFreeMod": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Modular Schur numbers"},
   "MathlibExt/Combinatorics/Additive/SmallDoublingTripling": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Small doubling and small tripling"},
   "MathlibExt/Combinatorics/Additive/SquareWeightedZeroSum": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
-  "MathlibExt/Combinatorics/Additive/SumFreeAbelianGroups": {"to": "Combinatorics/additive-combinatorics/sum-free-sets", "title": "Sum-free sets in abelian groups"},
   "MathlibExt/Combinatorics/Additive/SumsetsMinimumDistinctTerms": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/SymmetricBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Rohrbach's symmetric basis theorem"},
   "MathlibExt/Combinatorics/Additive/Szemeredi": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Szemerédi's theorem"},
