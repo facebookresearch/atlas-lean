@@ -48,14 +48,6 @@ theorem_wanted sylvester_modEq_three_mod_four
     (n : ℕ) (hn : 1 ≤ n) :
     sylvesterNumber n % 4 = 3
 
-/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
-theorem_wanted sylvester_modEq_forty_three_mod_1764
-    (n : ℕ) (hn : 3 ≤ n) :
-    sylvesterNumber n % 1764 = 43
-
 /-- **Alternating divisibility for Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$ and $n$ with
 $1 \le k \le n$, the integer $S_k^2 + 1$ divides the integer $S_n - (-1)^{n-k} S_k$.
