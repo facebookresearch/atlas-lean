@@ -27,3 +27,16 @@ example : sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 4 =
     decide
   · rw [card_sortedPermutations_consecutiveCyclicStackSort_321 (by decide)]
     decide
+
+-- The smallest admissible size gives a sorted permutation with a singleton tail.
+example : ([2, 1] : List ℕ).head? = some 2 ∧ IsGoodSeq [1] :=
+  head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321
+    (n := 2) (π := [2, 1]) (by decide) (by
+      simp only [sortedPermutations, Finset.mem_filter, List.mem_toFinset, List.mem_permutations]
+      decide)
+
+-- The maximum comes first, but 2 lies strictly between the two later entries.
+example : [4, 2, 1, 3] ∉ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 4 := by
+  intro h
+  have hg := (head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321 (by decide) h).2
+  exact (by decide : ¬ IsGoodSeq [2, 1, 3]) hg
