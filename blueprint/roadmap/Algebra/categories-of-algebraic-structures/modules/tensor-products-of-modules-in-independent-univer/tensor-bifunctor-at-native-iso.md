@@ -1,4 +1,6 @@
-# Tensor Bifunctor At Native Iso
+# Independent tensor products agree naturally with the monoidal tensor
 
-In the monoidal carrier universe the heterogeneous factory is the curried tensor functor, with
-unchanged tensor products and tensor maps.
+For a commutative ring `R` in universe `u`, when both coefficient
+carrier universes are `u`, the independently sized tensor bifunctor is
+naturally isomorphic to the monoidal category's curried tensor functor.
+The components are identities on the same tensor-product modules.
