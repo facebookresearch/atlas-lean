@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.PracticalNumber
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.PracticalPolygonalSums
 public import MathlibExt.NumberTheory.OddSquareTriangular
+public import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
 
 /-!
 # Sums of practical numbers and polygonal numbers
@@ -56,17 +57,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 2
 public theorem_wanted eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
     ∃ N : ℕ, ∀ n > N, ∃ q x y : ℕ,
       IsPracticalNumber q ∧ n = q + Nat.polygonalNumber s x + Nat.polygonalNumber s y
-
-/-- **Products of a practical number with small factors.** Let $m$ be a practical number and let
-$\sigma(m)$ denote the sum of the positive divisors of $m$. Then for every natural number $n$
-with $1 \le n \le \sigma(m) + 1$, the product $mn$ is a practical number.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 4
-(arXiv Lemma 3.2; `jis-2024-24.5.1-lem-4`), quoting Margenstern. -/
-public theorem_wanted isPracticalNumber_mul_of_le_sigma_add_one (m n : ℕ)
-    (hm : IsPracticalNumber m) (hn : 0 < n) (hnm : n ≤ sigma 1 m + 1) :
-    IsPracticalNumber (m * n)
 
 /-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
 For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with
