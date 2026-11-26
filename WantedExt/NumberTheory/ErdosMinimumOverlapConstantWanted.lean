@@ -23,9 +23,9 @@ Source: Optimization Problems, Constant 1b, frozen at commit
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`, `constants/1b.md`, SHA-256
 `1c51678108c90a2e841e1b49fa97940e4e1870324e1d949ddcb5b4345a0153ec`.
 The source gives an optimization problem with known bounds and a known discrete
-equivalence, but no supported exact-value conjecture. The half upper bound, quarter lower bound,
-and Moser lower bound are proved in MathlibExt. The remaining claims are explicit
-`theorem_wanted` declarations.
+equivalence, but no supported exact-value conjecture. The half upper bound, $0.4$ upper bound,
+quarter lower bound, and Moser lower bound are proved in MathlibExt. The remaining claims are
+explicit `theorem_wanted` declarations.
 The decimal payloads are literal source requests, not certified rounded bounds.
 Full primary-paper and numerical-certificate verification remains deferred.
 -/

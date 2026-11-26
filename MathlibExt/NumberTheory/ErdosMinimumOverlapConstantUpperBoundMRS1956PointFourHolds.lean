@@ -276,7 +276,7 @@ continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.4$.
 
 Source: Motzkin--Ralston--Selfridge 1956 and Optimization Problems 1b. -/
 theorem upperBound_MRS1956_pointFour_holds : upperBound_MRS1956_pointFour := by
-  show C₁ᵦ ≤ (4 : ℝ) / 10
+  change C₁ᵦ ≤ (4 : ℝ) / 10
   refine le_trans
     (continuousMinimumOverlapConstant_isUniversalLowerBound mrsF mrsG mrs_admissible) ?_
   rw [show (4 : ℝ) / 10 = 2 / 5 by norm_num]
