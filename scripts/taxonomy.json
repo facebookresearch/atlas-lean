@@ -13057,6 +13057,7 @@
   "MathlibExt/NumberTheory/Height/SchurSiegelSmyth": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
   "MathlibExt/NumberTheory/Height/SchurSiegelSmyth/AbsoluteTrace": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
   "MathlibExt/NumberTheory/HeightOneMultipleZetaMulNat": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Height one multiple zeta values"},
+  "MathlibExt/NumberTheory/HeightOneMultipleZetaMulNegNat": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Height one multiple zeta values"},
   "MathlibExt/NumberTheory/HelouTerjanianLargePrime": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/HelouTerjanianTwo": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/HeightOneMultipleZetaSeries": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Height one multiple zeta values"},
