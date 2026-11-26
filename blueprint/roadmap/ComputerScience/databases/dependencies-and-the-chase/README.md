@@ -31,3 +31,4 @@ A set of hypotheses may contain both functional and inclusion dependencies. Impl
 - [Unrestricted implication of dependencies](implies.md)
 - [Finite implication of dependencies](finitely-implies.md)
 - [Unrestricted implication gives finite implication](finitely-implies-of-implies.md)
+- [Proof ingredients for finite and unrestricted implication](implication-proofs/README.md)
