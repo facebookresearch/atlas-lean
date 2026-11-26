@@ -96,8 +96,8 @@ private theorem constantTerm_cond_adelicBox_eq (μ : Measure 𝔸) [μ.IsAddHaar
     constantTerm (ProbabilityTheory.cond μ (adelicBox F)) unipotentGL2
         (fun g' => φ g' + ∑' ξ : F, φ (w * unipotentGL2 (ι ξ) * g')) g
       = φ g + ((μ (adelicBox F)).toReal : ℂ)⁻¹ * ∫ u, φ (w * unipotentGL2 u * g) ∂μ := by
-  obtain ⟨hS, hunf⟩ :=
-    NumberField.AdelicPeriodization.integrableOn_and_setIntegral_tsum_translate F μ hint
+  have hS := NumberField.AdelicPeriodization.integrableOn_adelicBox_tsum_comp_add F μ hint
+  have hunf := NumberField.AdelicPeriodization.setIntegral_adelicBox_tsum_comp_add F μ hint
   have hE : (fun t : 𝔸 => φ (unipotentGL2 t * g) +
       ∑' ξ : F, φ (w * unipotentGL2 (ι ξ) * (unipotentGL2 t * g)))
       = fun t => φ g + ∑' ξ : F, φ (w * unipotentGL2 (t + ι ξ) * g) := by
