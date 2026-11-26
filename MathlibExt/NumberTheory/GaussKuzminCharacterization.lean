@@ -26,9 +26,11 @@ gives the fundamental interval $I(a)$ of every string $a$ whose length lies in a
 same integral as $I(\overleftarrow{a})$, is the Gauss–Kuzmin density
 $\frac{1}{\log 2 \cdot (1 + x)}$ on $[0, 1]$ (Theorem 1 of Singh, Zhang and Hildebrand).
 
-As in the source, comparing the integrals over the fundamental intervals of
-$(a_1, \ldots, a_n, t)$ and $(t, a_n, \ldots, a_1)$ as $t \to \infty$ gives
-$f(r) = f(0)/(1 + r)$ at $r = [0; a_1, \ldots, a_n]$ (the source's Lemma 3.1). Such points, with
+As in the source, if the fundamental intervals of $(a_1, \ldots, a_n, t)$ and
+$(t, a_n, \ldots, a_1)$ carry the same integral of $f$ for every digit $t \ge 1$, where the $a_i$
+are positive integers, comparing them as $t \to \infty$ gives $f(r) = f(0)/(1 + r)$ at
+$r = [0; a_1, \ldots, a_n]$ (`density_cfValue_eq_of_append_symmetric`, the source's Lemma 3.1).
+Such points, with
 $n + 1$ in the given set, are dense in $[0, 1]$: every rational number in $[0, 1]$ is
 $[0; b_1, \ldots, b_m]$ for some string $b$ (Euclid's algorithm), and appending a string whose
 first digit is large gives strings of any larger length whose values are as close to it as
@@ -332,6 +334,29 @@ end density_eq_gaussKuzmin_of_reverse_symmetric
 
 open density_eq_gaussKuzmin_of_reverse_symmetric in
 set_option linter.unusedVariables false in
+/-- **Symmetric one-digit extensions fix the density at a rational point.** Let $f$ be a real
+function that is continuous and nonnegative on $[0, 1]$ with $\int_0^1 f(x)\,dx = 1$. Let
+$a = (a_1, \dots, a_n)$ be a string of positive integers, let $p$ and $q$ be the upper-right and
+lower-right entries of its convergent matrix $C(a)$, so that $p/q = [0; a_1, \dots, a_n]$, and let
+$\overleftarrow{a}$ be the reverse of $a$. Write $I(b)$ for the fundamental interval of a string
+$b$, $(a, t)$ for $a$ followed by $t$, and $(t, \overleftarrow{a})$ for $t$ followed by
+$\overleftarrow{a}$. If $\int_{I(a, t)} f(x)\,dx = \int_{I(t, \overleftarrow{a})} f(x)\,dx$ for
+every integer $t \ge 1$, then $f(p/q) = f(0)/(1 + p/q)$.
+
+Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
+Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
+Lemma 3.1 (`integers-2025-A89-lem-3-1`). -/
+theorem density_cfValue_eq_of_append_symmetric (f : ℝ → ℝ)
+    (hf : ContinuousOn f (Set.Icc 0 1)) (hf0 : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ f x)
+    (hf1 : ∫ x in (0 : ℝ)..1, f x = 1) (a : List ℕ) (ha : (∀ x ∈ a, 0 < x))
+    (hsym : ∀ t : ℕ, 1 ≤ t →
+      ∫ x in cfCylinder (a ++ [t]), f x = ∫ x in cfCylinder (t :: a.reverse), f x) :
+    f ((convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ)) = f 0 / (1 +
+        (convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ)) :=
+  density_val_eq hf ha hsym
+
+open density_eq_gaussKuzmin_of_reverse_symmetric in
+set_option linter.unusedVariables false in
 /-- **Reversal symmetry forces the Gauss–Kuzmin density.** Let $f$ be a real function that is
 continuous and nonnegative on $[0, 1]$ with $\int_0^1 f(x)\,dx = 1$, and let $S$ be an infinite
 set of natural numbers. Write $I(a)$ for the fundamental interval of a string $a$ and
@@ -353,7 +378,7 @@ theorem density_eq_gaussKuzmin_of_reverse_symmetric (f : ℝ → ℝ)
   have hE : ∀ a : List ℕ, (∀ x ∈ a, 0 < x) → a.length + 1 ∈ S →
       f (val a) = f 0 / (1 + val a) := by
     intro a ha hlen
-    refine density_val_eq hf ha fun t ht => ?_
+    refine density_cfValue_eq_of_append_symmetric f hf hf0 hf1 a ha fun t ht => ?_
     have hpos : ∀ x ∈ a ++ [t], 0 < x := by
       intro x hx
       rcases List.mem_append.1 hx with hx | hx
