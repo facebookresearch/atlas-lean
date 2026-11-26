@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealizationModels
 public import Mathlib.RingTheory.AdicCompletion.Basic
+public import MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealization
 
 /-!
 # Integral finite points and actual formal Hodge--Tate comparison
@@ -34,14 +35,6 @@ open MathlibExt.AlgebraicGeometry.PDivisibleCartierTowerModels
 open MathlibExt.AlgebraicGeometry.PDivisibleLieModels
 open MathlibExt.AlgebraicGeometry.PDivisibleFormalCartierCotangentModels
 open MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealizationModels
-
-/-- $p$-adic completeness of the ring of integers: let $p$ be a prime and $C$ an algebraically
-closed complete non-archimedean normed field extension of $\mathbb{Q}_p$ whose norm extends that of
-$\mathbb{Q}_p$. Then $\mathcal{O}_C$, the elements of norm at most $1$, is $p$-adically complete and
-separated. -/
-public theorem_wanted integers_adic_complete
-    (p : ℕ) [Fact p.Prime] (C : FieldTest p) :
-    IsAdicComplete (Ideal.span {(p : integers p C)}) (integers p C)
 
 /-- The formal cotangent module of a $p$-divisible group and its finite Cartier cotangents: let $p$
 be a prime, $R$ a $p$-adically complete ring, $G$ a $p$-divisible group over $R$ with a Cartier dual
