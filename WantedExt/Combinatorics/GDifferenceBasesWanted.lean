@@ -14,25 +14,14 @@ public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
 public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
+public import MathlibExt.Combinatorics.GDifferenceBases
+public import MathlibExt.Combinatorics.GDifferenceBasesGroupDiffBasisNumberLeHundredSqrt
 
 namespace MetaMathlibExt
 
 open Filter Topology
 
 @[expose] public section
-
-/-- **Kravitz's question: the normalized difference basis numbers converge.** For a finite set
-$A$ of integers and an integer $x$, write $r_{A-A}(x)$ for the number of ordered pairs
-$(a, a') \in A \times A$ with $a - a' = x$. For every integer $g \ge 1$, let $\eta_g(n)$ be the
-least size of a finite set $A$ of integers with $r_{A-A}(x) \ge g$ for every integer
-$x \in [1, n]$. Then there is a real number $c > 0$ with $\eta_g(n) / \sqrt{n} \to c$ as
-$n \to \infty$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Theorem 1 (`integers-2025-A77-thm-1`). -/
-public theorem_wanted tendsto_diffBasisNumber_div_sqrt (g : ℕ) (hg : 0 < g) :
-    ∃ c : ℝ, 0 < c ∧
-      Tendsto (fun n : ℕ => (diffBasisNumber g n : ℝ) / Real.sqrt n) atTop (𝓝 c)
 
 /-- **Singer product construction of difference bases.** Let $g, q, v \in \mathbb{N}$ and
 $m = q^2 + q + 1$. Let $a_0, \dots, a_q$ be integers in $\{1, \dots, m\}$ such that every
@@ -56,16 +45,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
     ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
-
-/-- **Square-root bound for difference bases of finite fields.** For every finite field $K$ with
-$q$ elements, the least size $\eta_1(K)$ of a set $A \subseteq K$ such that every element of $K$
-is a difference $a - a'$ of two elements of $A$ satisfies $\eta_1(K) \le 100 \sqrt{q}$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 7 (`integers-2025-A77-lem-7`). -/
-public theorem_wanted groupDiffBasisNumber_le_hundred_sqrt {K : Type*} [Field K] [Finite K]
-    [DecidableEq K] :
-    (groupDiffBasisNumber 1 K : ℝ) ≤ 100 * Real.sqrt (Nat.card K)
 
 open Classical in
 /-- **Difference bases of $\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}$.** Let $p$ be an odd prime.
