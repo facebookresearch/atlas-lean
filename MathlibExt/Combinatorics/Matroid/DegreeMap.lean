@@ -1101,8 +1101,11 @@ end
 geometries*, Ann. of Math. 188 (2018), Definition 5.9 and Proposition 5.10). For a finite
 loopless matroid `M` of rank `r + 1` there is exactly one linear map `deg : A*(M)_ℝ → ℝ` that
 vanishes on the graded pieces `A^q(M)_ℝ` with `q ≠ r` and takes the value `1` on
-`x_{F₁} ⋯ x_{F_r}` for every flag `F₁ ⊊ ⋯ ⊊ F_r` of nonempty proper flats; it restricts to an
-isomorphism `A^r(M)_ℝ ≅ ℝ`. -/
+`x_{F₁} ⋯ x_{F_r}` for every flag `F₁ ⊊ ⋯ ⊊ F_r` of nonempty proper flats.
+
+Adiprasito, Huh and Katz also prove that their degree map `A^r(Σ_M) → ℤ`, on the integral Chow
+ring of the Bergman fan `Σ_M`, is an isomorphism (Proposition 5.10); that assertion is not part of
+this statement. -/
 public theorem existsUnique_isDegreeMap {α : Type*} (M : _root_.Matroid α) [M.Finite]
     [M.Loopless] (r : ℕ) (hr : M.eRank = r + 1) :
     ∃! deg : ChowRing M →ₗ[ℝ] ℝ, IsDegreeMap M r deg := by
