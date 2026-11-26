@@ -4,6 +4,8 @@ Let $S$ be a set, $T$ a finite non-empty set and $f : S \times T \to \{0, 1\}$ a
 
 $$\Pr\bigl[f(X, Y) = 1 \wedge f(X, Y') = 1 \wedge Y \ne Y'\bigr] \ge \varepsilon^2 - \varepsilon/N.$$
 
+## Remarks
+
 Boneh and Shoup state the lemma for a finite set $S$; the bound holds for every discrete distribution of $X$.
 
 In a security reduction $X$ collects the random choices of an adversary other than a challenge $Y$; running the adversary once with challenge $Y$ and again on the same $X$ with a fresh challenge $Y'$ yields, with this probability, two successful runs on distinct challenges.
