@@ -11,6 +11,10 @@ The weights vary by factors at most $O(n)$, and an affine change of variable to 
 
 - [Barycentric weights](barycentric-weights.md)
 
+## Related topics
+
+- [Second barycentric formula](second-barycentric-formula.md)
+
 ## Sources
 
 - J.-P. Berrut and L. N. Trefethen, "Barycentric Lagrange interpolation", *SIAM Review* 46(3):501–517, 2004, Section 5, the identity (5.2), the formulas (5.3) (first kind) and (5.4) (second kind), and the remark on the interval $[a, b]$. <https://people.maths.ox.ac.uk/trefethen/barycentric.pdf>

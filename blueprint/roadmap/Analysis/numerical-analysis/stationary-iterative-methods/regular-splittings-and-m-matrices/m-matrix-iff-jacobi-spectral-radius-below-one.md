@@ -4,7 +4,7 @@ Let $A$ be a real $n \times n$ matrix with $a_{ii} > 0$ for all $i$ and $a_{ij} 
 
 $$\rho(I - D^{-1}A) < 1,$$
 
-that is, exactly when the Jacobi iteration for $A$ converges from every starting vector.
+that is, exactly when the Jacobi iteration for $Ax = b$ converges for every right-hand side $b$ and every starting vector.
 
 ## Depends on
 

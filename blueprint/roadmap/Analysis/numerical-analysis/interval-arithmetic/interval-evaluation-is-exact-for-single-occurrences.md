@@ -9,6 +9,7 @@ so interval evaluation of such an expression computes the exact range of $f$ on 
 ## Depends on
 
 - [Interval evaluation of an arithmetic expression](interval-evaluation-of-an-expression.md)
+- [Interval](interval.md)
 
 ## Proof depends on
 

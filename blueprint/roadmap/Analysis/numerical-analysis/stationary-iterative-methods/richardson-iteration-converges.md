@@ -4,7 +4,7 @@ Let $A$ be a real $n \times n$ matrix whose eigenvalues are all real, with small
 
 $$x_{k+1} = x_k + \alpha (b - A x_k),$$
 
-the [splitting iteration](splitting-iteration.md) with iteration matrix $G_\alpha = I - \alpha A$. If $\lambda_{\min} > 0$, the iteration converges from every starting vector exactly when $0 < \alpha < 2/\lambda_{\max}$; then $\rho(G_\alpha) = \max\{|1 - \alpha\lambda_{\min}|, |1 - \alpha\lambda_{\max}|\}$, which is smallest for $\alpha_{\mathrm{opt}} = 2/(\lambda_{\min} + \lambda_{\max})$, where
+the [splitting iteration](splitting-iteration.md) with iteration matrix $G_\alpha = I - \alpha A$. If $\lambda_{\min} > 0$, the iteration converges for every right-hand side and every starting vector exactly when $0 < \alpha < 2/\lambda_{\max}$; then $\rho(G_\alpha) = \max\{|1 - \alpha\lambda_{\min}|, |1 - \alpha\lambda_{\max}|\}$, which is smallest for $\alpha_{\mathrm{opt}} = 2/(\lambda_{\min} + \lambda_{\max})$, where
 
 $$\rho(G_{\alpha_{\mathrm{opt}}}) = \frac{\lambda_{\max} - \lambda_{\min}}{\lambda_{\max} + \lambda_{\min}} .$$
 

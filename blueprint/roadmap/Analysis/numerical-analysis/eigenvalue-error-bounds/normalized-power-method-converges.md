@@ -1,6 +1,6 @@
 # Convergence of the power method with max-component normalization
 
-Let $A$ be an $n \times n$ complex matrix with exactly one eigenvalue $\lambda_1$ of largest modulus, and suppose that $\lambda_1$ is semisimple. Let $P_1$ be its [spectral projector](spectral-projectors.md), let $v_0$ satisfy $P_1 v_0 \ne 0$, and suppose that the vector $P_1 v_0$ has exactly one component of largest modulus, the $j$-th. Define
+Let $A$ be an $n \times n$ complex matrix with exactly one eigenvalue $\lambda_1$ of largest modulus, and suppose that $\lambda_1 \ne 0$ and that $\lambda_1$ is semisimple. Let $P_1$ be its [spectral projector](spectral-projectors.md), let $v_0$ satisfy $P_1 v_0 \ne 0$, and suppose that the vector $P_1 v_0$ has exactly one component of largest modulus, the $j$-th. Define
 
 $$v_k = \frac{1}{\alpha_k} A v_{k-1}, \qquad k \ge 1,$$
 

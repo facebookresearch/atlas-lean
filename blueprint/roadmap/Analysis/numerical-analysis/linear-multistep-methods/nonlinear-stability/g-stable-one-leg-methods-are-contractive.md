@@ -11,6 +11,10 @@ the discrete counterpart of [contractivity of the exact solutions](dissipative-s
 - [G-stability](g-stability.md)
 - [Dissipative system](dissipative-system.md)
 
+## Related topics
+
+- [Solutions of a dissipative system are contractive](dissipative-systems-have-contractive-solutions.md)
+
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 5, the computation after Definition 17 ending in $\|U_{n+1} - V_{n+1}\|_G^2 \le \|U_n - V_n\|_G^2$. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

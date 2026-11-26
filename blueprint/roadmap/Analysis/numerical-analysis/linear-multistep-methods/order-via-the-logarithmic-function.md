@@ -11,6 +11,7 @@ Applied to $y' = y$, the truncation error is $T_n = e^{nh}(\rho(e^h) - h\sigma(e
 ## Depends on
 
 - [Order of accuracy and error constants](order-of-accuracy-and-error-constants.md)
+- [Linear multistep method](linear-multistep-method.md)
 
 ## Sources
 

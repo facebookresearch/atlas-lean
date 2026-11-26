@@ -9,10 +9,12 @@ so the enclosure has width $2(b - a)$ while the range is a point. Rewriting an e
 ## Depends on
 
 - [Interval evaluation of an arithmetic expression](interval-evaluation-of-an-expression.md)
+- [Interval](interval.md)
 
 ## Related topics
 
 - [Interval evaluation encloses the range](interval-evaluation-encloses-the-range.md)
+- [Interval evaluation is exact when each variable occurs once](interval-evaluation-is-exact-for-single-occurrences.md)
 
 ## Sources
 

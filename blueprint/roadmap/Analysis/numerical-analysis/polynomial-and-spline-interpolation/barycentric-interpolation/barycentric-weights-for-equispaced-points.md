@@ -10,6 +10,10 @@ so after the factor is dropped, which leaves the [second barycentric formula](se
 
 - [Barycentric weights](barycentric-weights.md)
 
+## Related topics
+
+- [Second barycentric formula](second-barycentric-formula.md)
+
 ## Sources
 
 - J.-P. Berrut and L. N. Trefethen, "Barycentric Lagrange interpolation", *SIAM Review* 46(3):501–517, 2004, Section 5, the formula $w_j = (-1)^{n-j}\binom{n}{j}/(h^n n!)$ for spacing $h$, its simplification (5.1), and the discussion after it. <https://people.maths.ox.ac.uk/trefethen/barycentric.pdf>

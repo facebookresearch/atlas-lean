@@ -9,6 +9,7 @@ with probability at least $1 - 2\exp(-\lambda^2/2)$. The partial sums $E_k = \su
 ## Proof depends on
 
 - [Azuma's inequality](../../../../Probability/concentration-inequalities/azuma-inequality.md)
+- [Stochastic rounding errors are mean independent](stochastic-rounding-errors-are-mean-independent.md)
 
 ## Related topics
 

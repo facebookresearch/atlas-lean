@@ -9,6 +9,11 @@ This is the fundamental theorem of interval arithmetic: a computable interval co
 ## Depends on
 
 - [Interval evaluation of an arithmetic expression](interval-evaluation-of-an-expression.md)
+- [Interval](interval.md)
+
+## Related topics
+
+- [Dependency effect of interval evaluation](dependency-effect-of-interval-evaluation.md)
 
 ## Sources
 

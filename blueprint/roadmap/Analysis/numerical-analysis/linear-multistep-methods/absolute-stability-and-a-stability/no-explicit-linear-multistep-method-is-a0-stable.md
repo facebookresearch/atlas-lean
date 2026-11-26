@@ -1,10 +1,13 @@
 # No explicit linear multistep method is A(0)-stable
 
-No explicit linear multistep method is [A(0)-stable](a-alpha-stability.md).
+No explicit [consistent](../truncation-error-and-consistency.md) linear multistep method is [A(0)-stable](a-alpha-stability.md).
+
+Consistency is needed, as for [A-stability](no-explicit-a-stable-linear-multistep-method.md): $\rho(z) = z - \tfrac12$, $\sigma = 0$ is explicit and absolutely stable for every $\bar h$.
 
 ## Depends on
 
 - [A(α)-stability](a-alpha-stability.md)
+- [Truncation error and consistency of a linear multistep method](../truncation-error-and-consistency.md)
 
 ## Related topics
 

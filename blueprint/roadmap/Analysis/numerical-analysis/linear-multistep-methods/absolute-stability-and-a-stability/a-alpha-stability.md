@@ -10,6 +10,10 @@ It is *A(0)-stable* if it is A(α)-stable for some $\alpha \in (0, \pi/2)$, and 
 
 - [Absolute stability of a linear multistep method](absolute-stability.md)
 
+## Related topics
+
+- [A-stability](a-stability.md)
+
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 4.1, Definition 12 and the remark after it. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

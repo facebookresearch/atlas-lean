@@ -11,6 +11,7 @@ Applied recursively to the stability polynomial $\pi(r; \bar h) = \rho(r) - \bar
 ## Related topics
 
 - [Routh–Hurwitz criterion](routh-hurwitz-criterion.md)
+- [Absolute stability of a linear multistep method](absolute-stability.md)
 
 ## Sources
 

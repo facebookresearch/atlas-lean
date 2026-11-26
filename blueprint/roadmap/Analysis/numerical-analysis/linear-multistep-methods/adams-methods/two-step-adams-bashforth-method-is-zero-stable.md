@@ -10,6 +10,8 @@ The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-st
 ## Proof depends on
 
 - [Zero-stability and the root condition](../zero-stability-iff-root-condition.md)
+- [Root condition](../root-condition.md)
+- [Dahlquist equivalence theorem](../dahlquist-equivalence-theorem.md)
 
 ## Sources
 
