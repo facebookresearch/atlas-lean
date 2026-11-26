@@ -1,7 +1,9 @@
 # Dominance frontiers of sets containing the entry are joins
 
 Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable. For every set $S$ of nodes that contains the entry node,
+
 $$\mathrm{DF}(S) \subseteq J(S),$$
+
 with the [dominance frontier](dominance-frontiers.md) $\mathrm{DF}$ and the [join set](converging-paths-and-join-sets.md) $J$.
 
 **Proof.** Let $X \in S$ and $Y \in \mathrm{DF}(X)$. There is a path from $X$ to $Y$ all of whose nodes before $Y$ are dominated by $X$, and a path from the entry to $Y$ none of whose nodes before $Y$ is dominated by $X$. These paths converge at $Y$.

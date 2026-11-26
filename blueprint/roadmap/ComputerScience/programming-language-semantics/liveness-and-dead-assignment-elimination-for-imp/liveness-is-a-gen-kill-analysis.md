@@ -1,7 +1,9 @@
 # Liveness is a gen/kill analysis
 
 For every IMP command $c$ and set $X$ of variables, the [live variables](live-variables-of-an-imp-command.md) satisfy
+
 $$L(c, X) = \mathit{gen}(c) \cup (X \setminus \mathit{kill}(c)),$$
+
 with the [gen and kill sets](gen-and-kill-sets-of-an-imp-command.md) of $c$.
 
 **Proof.** Induction on $c$.

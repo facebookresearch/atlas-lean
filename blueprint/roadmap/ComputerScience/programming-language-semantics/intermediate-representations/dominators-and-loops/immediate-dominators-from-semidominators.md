@@ -1,7 +1,9 @@
 # Immediate dominators from semidominators
 
 In a flowgraph $G = (V, E, r)$ with a depth-first numbering, spanning tree $T$ and [semidominators](semidominators.md) $\mathrm{sdom}$, let $w \ne r$ and let $u$ be a vertex with $\mathrm{sdom}(w) \xrightarrow{+} u \xrightarrow{*} w$ whose semidominator is minimum among such vertices. Then
+
 $$\mathrm{idom}(w) = \begin{cases} \mathrm{sdom}(w) & \text{if } \mathrm{sdom}(w) = \mathrm{sdom}(u),\\ \mathrm{idom}(u) & \text{otherwise.}\end{cases}$$
+
 Since $u \xrightarrow{*} w$, $u \le w$, and $u \ne w$ in the second case. So the immediate dominators can be computed in increasing order of vertex number once all semidominators are known.
 
 **Proof.** If $\mathrm{sdom}(u) = \mathrm{sdom}(w)$, the hypothesis of [the equality case](the-semidominator-is-the-immediate-dominator.md) holds. Otherwise $\mathrm{idom}(w) = \mathrm{idom}(u)$ by [the minimizing-vertex theorem](the-immediate-dominator-of-a-minimizing-vertex.md).

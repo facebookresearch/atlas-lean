@@ -1,7 +1,9 @@
 # Correctness of table-driven LL(1) parsing
 
 Let $G$ be a grammar with a [correct LL(1) parse table](ll-1-lookahead-and-correct-parse-tables.md), and let $\mathrm{parse}$ be the table-driven parser of [soundness of LL(1) parsing](soundness-of-ll-1-parsing.md). Then $\mathrm{parse}$ is a sound and complete parser in the sense of [parsers and recognizers](parsers-and-recognizers.md), with respect to the LL(1) derivation relation of $G$: for every grammar symbol $s$, token sequences $w, r$ and semantic value $v$,
+
 $$\mathrm{parse}(s, w \cdot r) \text{ returns } (v, r) \iff s \xrightarrow{v} w \mid r,$$
+
 and on every input it terminates, either with a value or by rejecting, never with the error that signals left recursion.
 
 **Proof.** The forward direction is [soundness](soundness-of-ll-1-parsing.md), the backward direction is [completeness](completeness-of-ll-1-parsing.md), and termination without error is [error-free termination](error-free-termination-of-ll-1-parsing.md).

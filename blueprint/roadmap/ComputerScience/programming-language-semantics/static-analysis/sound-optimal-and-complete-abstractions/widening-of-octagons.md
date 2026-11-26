@@ -1,6 +1,7 @@
 # Widening of octagons
 
 For coherent DBMs $m^+$ and $n^+$, in the notation of [difference-bound matrices and octagons](difference-bound-matrices-and-octagons.md), let
+
 $$[m^+ \mathbin{\nabla} n^+]_{ij} = \begin{cases} m^+_{ij} & \text{if } n^+_{ij} \le m^+_{ij},\\ +\infty & \text{otherwise.}\end{cases}$$
 
 1. $D^+(m^+ \mathbin{\nabla} n^+) \supseteq D^+(m^+) \cup D^+(n^+)$.

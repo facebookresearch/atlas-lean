@@ -1,6 +1,7 @@
 # Local test for dominance frontiers
 
 Let $G$ be a control-flow graph with an entry node from which every node is reachable, and let $\mathrm{DF}_{\mathrm{local}}$ be the local part of the [dominance frontier](dominance-frontiers.md). For every node $X$,
+
 $$\mathrm{DF}_{\mathrm{local}}(X) = \{Y \in \mathrm{Succ}(X) \mid \mathrm{idom}(Y) \ne X\}.$$
 
 **Proof.** Let $Y$ be a successor of $X$. Every strict dominator of $Y$ lies on every path from the entry to $X$ followed by the edge $X \to Y$, so it dominates $X$. Hence, if $X$ strictly dominates $Y$, then $X$ is the strict dominator of $Y$ closest to $Y$, that is, $\mathrm{idom}(Y) = X$; the converse is immediate.

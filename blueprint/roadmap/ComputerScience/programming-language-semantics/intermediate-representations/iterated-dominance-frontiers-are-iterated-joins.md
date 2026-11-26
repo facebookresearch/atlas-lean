@@ -1,7 +1,9 @@
 # Iterated dominance frontiers are iterated joins
 
 Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable, let $J^+$ be the [iterated join](converging-paths-and-join-sets.md) and $\mathrm{DF}^+$ the [iterated dominance frontier](dominance-frontiers.md). For every set $S$ of nodes that contains the entry node,
+
 $$J^+(S) = \mathrm{DF}^+(S).$$
+
 Consequently, treating the entry node as an assignment to every variable $V$, the set of nodes that need a $\varphi$-function for $V$ in [minimal SSA form](construction-of-minimal-ssa-form/translation-to-static-single-assignment-form.md), namely $J^+(S)$ for the set $S$ of nodes that assign to $V$, equals $\mathrm{DF}^+(S)$, and a worklist over $\mathrm{DF}$ places exactly the $\varphi$-functions of minimal SSA form.
 
 **Proof.** $J(S) \subseteq \mathrm{DF}^+(S)$ for every $S$ by [the convergence lemma](converging-paths-meet-in-an-iterated-dominance.md), and induction on the iteration gives $J^+(S) \subseteq \mathrm{DF}^+(S)$, since $J(S \cup \mathrm{DF}^+(S)) \subseteq \mathrm{DF}^+(S \cup \mathrm{DF}^+(S)) = \mathrm{DF}^+(S)$. Conversely $\mathrm{DF}(S) \subseteq J(S)$ for sets containing the entry by [the entry lemma](dominance-frontiers-of-sets-containing-the-entr.md), and induction gives $\mathrm{DF}^+(S) \subseteq J^+(S)$.

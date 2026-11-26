@@ -1,6 +1,7 @@
 # Dead-assignment elimination for IMP
 
 Let $L(c, X)$ be the set of [live variables](live-variables-of-an-imp-command.md) before an IMP command $c$ relative to $X$. *Dead-assignment elimination* $\mathrm{bury}(c, X)$ replaces by $\mathtt{skip}$ every assignment whose target is dead after it:
+
 $$
 \begin{aligned}
 \mathrm{bury}(\mathtt{skip}, X) &= \mathtt{skip},\\
@@ -10,6 +11,7 @@ $$
 \mathrm{bury}(\mathtt{while}\ b\ \mathtt{do}\ c, X) &= \mathtt{while}\ b\ \mathtt{do}\ \mathrm{bury}(c, L(\mathtt{while}\ b\ \mathtt{do}\ c, X)).
 \end{aligned}
 $$
+
 The result has the shape of the argument, except that $\mathtt{skip}$ may come from an assignment. With the [true liveness](true-liveness-of-an-imp-command.md) $L_t$ in place of $L$ the same equations define $\mathrm{bury}_t$.
 
 ## Depends on
