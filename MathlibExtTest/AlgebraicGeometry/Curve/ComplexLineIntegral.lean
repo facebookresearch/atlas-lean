@@ -33,7 +33,7 @@ example (v : Place ℂ F) {f : F} (hf : f ∈ v.toValuationSubring) :
     v.HasValueAt f (v.evalAt v.isRational_of_isCurveOver f) :=
   v.hasValueAt_evalAt _ hf
 
--- Without a holomorphic atlas, neither differentials nor primitives can be read.
+-- Without holomorphic preferred charts, neither differentials nor primitives can be read.
 example [∀ v : Place ℂ F, v.DCoordGenerates] (_v : Place ℂ F) (_ω : Ω[F⁄ℂ])
     (_γ : Path _v _v) : True := by
   fail_if_success have := _v.readDifferential _ω
@@ -75,6 +75,30 @@ example (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (g : unitInterval
     (hg : IsPrimitiveAlong ω γ g) (h01 : g 1 ≠ g 0) : pathIntegral ω γ ⟨g, hg⟩ ≠ 0 := by
   rw [hg.pathIntegral_eq]
   exact sub_ne_zero.mpr h01
+
+-- From chart readings to the integral: if the path stays in one preferred chart `e`, the reading
+-- of `ω` there is the constant `1`, and the path runs from the place with coordinate `0` to the
+-- place with coordinate `1`, then the coordinate is a primitive and the integral is `1`.
+example (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (e : OpenPartialHomeomorph (Place ℂ F) ℂ)
+    (he : ∀ t, chartAt ℂ (γ t) = e)
+    (h1 : ∀ t, ∀ᶠ z in 𝓝 (e (γ t)), (γ t).readDifferential ω z = 1)
+    (hP : e P = 0) (hQ : e Q = 1) :
+    ∃ h : IsPrimitiveAlong ω γ (fun t => e (γ t)), pathIntegral ω γ ⟨_, h⟩ = 1 := by
+  have hΦ : ∀ t, ∀ᶠ z in 𝓝 (e (γ t)), HasDerivAt id ((γ t).readDifferential ω z) z :=
+    fun t => (h1 t).mono fun z hz => by
+      rw [hz]
+      exact hasDerivAt_id z
+  have hprim : IsPrimitiveAlong ω γ (fun t => e (γ t)) := isPrimitiveAlong_of_chartAt_eq he hΦ
+  refine ⟨hprim, ?_⟩
+  unfold pathIntegral
+  rw [(⟨_, hprim⟩ : ∃ g, IsPrimitiveAlong ω γ g).choose_spec.sub_eq_sub hprim]
+  simp only [Path.source, Path.target, hP, hQ, sub_zero]
+
+example (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (e : OpenPartialHomeomorph (Place ℂ F) ℂ)
+    (he : ∀ t, chartAt ℂ (γ t) = e) (Φ : ℂ → ℂ)
+    (hΦ : ∀ t, ∀ᶠ z in 𝓝 (e (γ t)), HasDerivAt Φ ((γ t).readDifferential ω z) z) :
+    pathIntegral ω γ ⟨_, isPrimitiveAlong_of_chartAt_eq he hΦ⟩ = Φ (e Q) - Φ (e P) :=
+  pathIntegral_eq_sub_of_chartAt_eq he hΦ _
 
 -- Reversal changes the sign of the increment, and concatenation adds increments.
 example (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (g : unitInterval → ℂ)

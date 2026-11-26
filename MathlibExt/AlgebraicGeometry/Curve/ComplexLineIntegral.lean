@@ -51,13 +51,15 @@ Places, their residue fields, evaluation at rational places, divisors and the cu
 `IsCurveOver` come from the curve layer in `MathlibExt/AlgebraicGeometry/Curve/`. This file adds a
 uniformizer and its coordinate differential at a place, the coefficient and the order of a
 differential with respect to the coordinate differential, and, for a complex function field whose
-places carry a topology and an atlas, the readings of functions and differentials in charts, line
-integrals along paths and Abel-Jacobi vectors.
+places carry a topology and an atlas, the readings of functions and differentials in the preferred
+charts, line integrals along paths and Abel-Jacobi vectors.
 
 Every place of a curve over an algebraically closed field is rational, so a chart reads a function
-through its values at places. The atlas is required to be the analytic structure of the curve
-(`IsHolomorphicAtlas`): in the chart at a place, every function regular there reads as a
-holomorphic function near the centre of the chart, and the uniformizer reads as a local coordinate.
+through its values at places. Readings use the preferred chart `chartAt ℂ v` at each place `v`,
+and these charts are required to be holomorphic coordinates (`IsHolomorphicAtlas`): in the
+preferred chart at a place, every function regular there reads as a holomorphic function near the
+centre of the chart, and the uniformizer reads as a local coordinate. The other charts of the atlas
+are not constrained, and nothing here uses them.
 A differential is read through its coefficient with respect to the coordinate differential, which
 requires that differential to span (`Place.DCoordGenerates`).
 
@@ -79,7 +81,7 @@ compact curve, the period subgroup is the period lattice, and these maps lift th
   coefficient of a differential with respect to `dCoord`, and its order.
 * `AlgebraicCurve.Place.chartRead` and `AlgebraicCurve.Place.readDifferential`: readings in the
   chart at a place.
-* `AlgebraicCurve.IsHolomorphicAtlas`: the atlas is the analytic structure of the curve.
+* `AlgebraicCurve.IsHolomorphicAtlas`: the preferred charts are holomorphic coordinates.
 * `AlgebraicCurve.IsPrimitiveAlong` and `AlgebraicCurve.pathIntegral`: primitives along a path and
   the line integral.
 * `AlgebraicCurve.abelJacobiVec`, `AlgebraicCurve.abelJacobiDiv` and
@@ -92,6 +94,8 @@ compact curve, the period subgroup is the period lattice, and these maps lift th
   primitive.
 * `AlgebraicCurve.pathIntegral_trans` and `AlgebraicCurve.pathIntegral_symm`: additivity under
   concatenation and change of sign under reversal.
+* `AlgebraicCurve.pathIntegral_eq_sub_of_chartAt_eq`: along a path in one preferred chart, the line
+  integral is the increment of a local primitive of the reading.
 * `AlgebraicCurve.abelJacobiVec_sub_mem_periodSubgroup` and
   `AlgebraicCurve.abelJacobiDiv_sub_mem_periodSubgroup`: independence of the paths modulo periods.
 
@@ -227,9 +231,10 @@ theorem hasValueAt_evalAt (hv : v.IsRational) {f : F} (hf : f ∈ v.toValuationS
 variable {F : Type*} [Field F] [Algebra ℂ F]
 variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)] [IsCurveOver ℂ F]
 
-/-- **Reading of a function in a chart.** At a point `z` of the target of the chart at `v`, the
-value of `f` at the place with coordinate `z`. Every place of a complex curve is rational, so this
-is the complex number with the same residue as `f` at that place, and `0` at a pole of `f`. -/
+/-- **Reading of a function in a chart.** At a point `z` of the target of the preferred chart at
+`v`, the value of `f` at the place with coordinate `z`. Every place of a complex curve is rational,
+so this is the complex number with the same residue as `f` at that place, and `0` at a pole of
+`f`. -/
 def chartRead (v : Place ℂ F) (f : F) : ℂ → ℂ :=
   fun z => ((extChartAt 𝓘(ℂ, ℂ) v).symm z).evalAt (isRational_of_isCurveOver _) f
 
@@ -248,10 +253,11 @@ variable {F : Type*} [Field F] [Algebra ℂ F]
 variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)] [IsCurveOver ℂ F]
 
 variable (F) in
-/-- **Holomorphic atlas.** The topology and the atlas on the places of `F` are the analytic
-structure of the curve: in the chart at each place `v`, every function regular at `v` reads as a
-function that is complex differentiable near the centre of the chart, and the uniformizer at `v`
-reads with nonzero derivative at the centre, so it is a holomorphic local coordinate at `v`. -/
+/-- **Holomorphic preferred charts.** The preferred charts `chartAt ℂ v` on the places of `F`,
+which the readings use, are holomorphic coordinates: in the preferred chart at each place `v`,
+every function regular at `v` reads as a function that is complex differentiable near the centre
+of the chart, and the uniformizer at `v` reads with nonzero derivative at the centre, so it is a
+holomorphic local coordinate at `v`. The other charts of the atlas are not constrained. -/
 class IsHolomorphicAtlas : Prop where
   eventually_differentiableAt_chartRead (v : Place ℂ F) {f : F}
     (hf : f ∈ v.toValuationSubring) :
@@ -261,18 +267,19 @@ class IsHolomorphicAtlas : Prop where
 
 namespace Place
 
-/-- **Readings of regular functions are analytic.** In a holomorphic atlas, the reading of a
-function regular at `v` in the chart at `v` is analytic at the centre of the chart. -/
+/-- **Readings of regular functions are analytic.** When the preferred charts are holomorphic
+coordinates, the reading of a function regular at `v` in the preferred chart at `v` is analytic at
+the centre of the chart. -/
 theorem analyticAt_chartRead [IsHolomorphicAtlas F] (v : Place ℂ F) {f : F}
     (hf : f ∈ v.toValuationSubring) :
     AnalyticAt ℂ (v.chartRead f) (extChartAt 𝓘(ℂ, ℂ) v v) :=
   Complex.analyticAt_iff_eventually_differentiableAt.mpr
     (IsHolomorphicAtlas.eventually_differentiableAt_chartRead v hf)
 
-/-- **Reading of a differential in a chart.** The reading of `ω` in the chart at `v`, as a
-multiple of `dz`: the reading of the coefficient of `ω` with respect to `v.dCoord`, times the
+/-- **Reading of a differential in a chart.** The reading of `ω` in the preferred chart at `v`, as
+a multiple of `dz`: the reading of the coefficient of `ω` with respect to `v.dCoord`, times the
 derivative of the reading of the uniformizer at `v`. -/
-@[nolint unusedArguments] -- The atlas hypothesis makes `deriv` the derivative of holomorphic maps.
+@[nolint unusedArguments] -- The class makes `deriv` the derivative of holomorphic maps.
 def readDifferential [IsHolomorphicAtlas F] (v : Place ℂ F) [v.DCoordGenerates]
     (ω : Ω[F⁄ℂ]) : ℂ → ℂ :=
   fun z => v.chartRead (v.differentialCoeff ω) z * deriv (v.chartRead v.uniformizer) z
@@ -306,8 +313,8 @@ variable [IsHolomorphicAtlas F] [∀ v : Place ℂ F, v.DCoordGenerates]
 /-! ### Primitives and line integrals -/
 
 /-- **Primitive along a path.** `g` is a primitive of `ω` along the path `γ`: near each time `t₀`,
-`g` agrees with the composite of `γ`, the chart at `γ t₀` and a local primitive, in that chart, of
-the reading of `ω` at `γ t₀`. -/
+`g` agrees with the composite of `γ`, the preferred chart at `γ t₀` and a local primitive, in that
+chart, of the reading of `ω` at `γ t₀`. -/
 def IsPrimitiveAlong (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (g : unitInterval → ℂ) :
     Prop :=
   ∀ t₀ : unitInterval, ∃ Φ : ℂ → ℂ,
@@ -479,8 +486,8 @@ theorem exists_isPrimitiveAlong_trans {ω : Ω[F⁄ℂ]} {P Q R : Place ℂ F} {
   ⟨k, hk⟩
 
 /-- **Line integral along a path.** For a differential `ω` with a primitive along the path `γ`, the
-increment `g 1 - g 0` of a primitive `g`. It does not depend on the primitive, and it is the
-complex line integral of `ω` over `γ`. -/
+increment `g 1 - g 0` of a primitive `g`. It does not depend on the primitive, and since the
+preferred charts are holomorphic coordinates, it is the complex line integral of `ω` over `γ`. -/
 def pathIntegral (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q)
     (h : ∃ g, IsPrimitiveAlong ω γ g) : ℂ :=
   h.choose 1 - h.choose 0
@@ -522,6 +529,30 @@ theorem pathIntegral_trans {ω : Ω[F⁄ℂ]} {P Q R : Place ℂ F} {γ : Path P
   obtain ⟨k, hk, hinc⟩ := h.choose_spec.exists_trans h'.choose_spec
   rw [hk.pathIntegral_eq h'', h.choose_spec.pathIntegral_eq h,
     h'.choose_spec.pathIntegral_eq h', hinc]
+
+/-- **Primitive in one chart.** If the preferred chart at every point of `γ` is the chart `e`, and
+near the image in `e` of each point of `γ` the reading of `ω` is the derivative of `Φ`, then
+`Φ ∘ e ∘ γ` is a primitive of `ω` along `γ`. -/
+theorem isPrimitiveAlong_of_chartAt_eq {ω : Ω[F⁄ℂ]} {P Q : Place ℂ F} {γ : Path P Q}
+    {e : OpenPartialHomeomorph (Place ℂ F) ℂ} (he : ∀ t, chartAt ℂ (γ t) = e) {Φ : ℂ → ℂ}
+    (hΦ : ∀ t, ∀ᶠ z in 𝓝 (e (γ t)), HasDerivAt Φ ((γ t).readDifferential ω z) z) :
+    IsPrimitiveAlong ω γ fun t => Φ (e (γ t)) := fun t₀ => by
+  have hx : ∀ y, extChartAt 𝓘(ℂ, ℂ) (γ t₀) y = e y := fun y => by
+    rw [← he t₀]
+    rfl
+  refine ⟨Φ, ?_, Filter.Eventually.of_forall fun t => by rw [hx]⟩
+  rw [hx]
+  exact hΦ t₀
+
+/-- **Line integral in one chart.** If the preferred chart at every point of `γ` is the chart `e`,
+and near the image in `e` of each point of `γ` the reading of `ω` is the derivative of `Φ`, then
+the line integral of `ω` along `γ` is `Φ (e Q) - Φ (e P)`. -/
+theorem pathIntegral_eq_sub_of_chartAt_eq {ω : Ω[F⁄ℂ]} {P Q : Place ℂ F} {γ : Path P Q}
+    {e : OpenPartialHomeomorph (Place ℂ F) ℂ} (he : ∀ t, chartAt ℂ (γ t) = e) {Φ : ℂ → ℂ}
+    (hΦ : ∀ t, ∀ᶠ z in 𝓝 (e (γ t)), HasDerivAt Φ ((γ t).readDifferential ω z) z)
+    (h : ∃ g, IsPrimitiveAlong ω γ g) : pathIntegral ω γ h = Φ (e Q) - Φ (e P) := by
+  rw [(isPrimitiveAlong_of_chartAt_eq he hΦ).pathIntegral_eq h]
+  simp only [Path.source, Path.target]
 
 /-! ### Abel-Jacobi vectors and periods -/
 
