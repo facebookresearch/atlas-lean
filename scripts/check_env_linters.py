@@ -17,8 +17,8 @@ edits an existing declaration does not report it, nor does one that moves it
 between those files. A finding that `runLinter` prints without a position (a
 declaration without a source range, such as a structure's `mk.injEq`) is placed
 on the nearest enclosing declaration of the changed files that has one, under
-the same rule. As in Mathlib, `runLinter` sees what modules export, so in a
-`module` file it lints the public declarations only.
+the same rule. `runLinter` imports the modules with their private declarations,
+so it lints those as well.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
 
