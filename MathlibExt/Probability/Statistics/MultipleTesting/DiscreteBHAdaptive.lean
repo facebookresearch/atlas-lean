@@ -257,9 +257,10 @@ theorem stepUpIndex_le_stepUpIndex_of_le {c c' : ℕ → ℝ} (h : ∀ k, c k �
 
 /-- The `k`-th critical value of the adaptive discrete BH procedure [A-DBH-SU] at level `α` with
 null CDFs `F` and support `A`: the largest `t ∈ A ∪ {0}` with `t ≤ τ_m` (`dbhSULastCritical`) and
-`(1/m) · maxSubsetSum (F · t / (1 - F · τ_m)) (m - k + 1) ≤ α k / m`, i.e. the sum of the
-`m - k + 1` largest corrected null CDFs is at most `α k` (`0` if no `t ∈ A` qualifies). At `k = m`
-this is `τ_m` (`adbhSUCritical_self`). -/
+`(1/m) · maxSubsetSum (F · t / (1 - F · τ_m)) (m - k + 1) ≤ α k / m`, i.e. the largest sum of the
+corrected null CDFs over at most `max (m - k) 0 + 1` coordinates is at most `α k` (natural
+subtraction truncates, so the count is `1` for every `k ≥ m`; `0` if no `t ∈ A` qualifies). At
+`k = m` this is `τ_m` (`adbhSUCritical_self`). -/
 noncomputable def adbhSUCritical (α : ℝ) (F : Fin m → ℝ → ℝ) (A : Finset ℝ) (k : ℕ) : ℝ :=
   (insert 0 (A.filter fun t => t ≤ dbhSULastCritical α F A ∧
     (1 / m : ℝ) * maxSubsetSum (fun i => F i t / (1 - F i (dbhSULastCritical α F A))) (m - k + 1) ≤
