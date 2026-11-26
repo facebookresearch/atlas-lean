@@ -1,6 +1,6 @@
 # Public-goods diffusion equilibrium on a weighted graph
 
-Let cells occupy the vertices of a finite weighted graph $G$ with edge weights $e_{ij} \ge 0$ normalized so that $\sum_{j} e_{ij} = 1$ for every $i$; $e_{ij}$ is the frequency of diffusion from $i$ to $j$. Each cell has a type $s_i \in \{0, 1\}$, cooperator ($s_i = 1$) or defector ($s_i = 0$), and $\psi_i \ge 0$ denotes the concentration of a diffusible public good at vertex $i$. With production at unit rate by cooperators, utilization at unit rate, and diffusion at rate $\lambda > 0$,
+Let cells occupy the vertices of a finite, connected, bi-transitive weighted graph $G$ (so in particular $G$ is vertex-transitive and symmetric, $e_{ij} = e_{ji}$) with no self-loops ($e_{ii} = 0$) and edge weights $e_{ij} \ge 0$ normalized so that $\sum_{j} e_{ij} = 1$ for every $i$; $e_{ij}$ is the frequency of diffusion from $i$ to $j$. Each cell has a type $s_i \in \{0, 1\}$, cooperator ($s_i = 1$) or defector ($s_i = 0$), and $\psi_i \ge 0$ denotes the concentration of a diffusible public good at vertex $i$. With production at unit rate by cooperators, utilization at unit rate, and diffusion at rate $\lambda > 0$,
 
 $$\dot{\psi}_i = s_i - \psi_i - \lambda \psi_i + \lambda \sum_{j \in G} e_{ji} \psi_j .$$
 
