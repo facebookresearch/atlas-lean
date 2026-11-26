@@ -27,6 +27,9 @@ the roots of `2x² - (p + q)x + 3pq + 1 = 0`, that is, `2(r + s) = p + q` and
 The statements already proved, such as the oddness of every positive `n` with
 `D(C(n)) = C(D(n))` and the prime gap bound for semiprime solutions, live in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which this module imports publicly.
+The bounds for compatible semiprime pairs (`IsCompatibleSemiprimePair.bounds`) are proved in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`, which this module also
+imports publicly.
 -/
 module
 
