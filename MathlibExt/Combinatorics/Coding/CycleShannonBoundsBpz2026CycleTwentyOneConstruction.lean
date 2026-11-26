@@ -6,6 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`ShannonBounds/BaseC21CosetData.lean` (shannon-capacity-lean,
+https://github.com/spectra-research/shannon-capacity-lean, revision
+aa21eeb12b75b0413d3fa9fb4208b5d0bf2c4d65): the 26-point quotient code and the coset words
+`(u, v, 2v + y, 2u + z)`, used here as `quotientCode` and `encode`.
+Copyright (c) 2026 Pjotr Buys, Sven Polak, Jeroen Zuiddam. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Pjotr Buys, Sven Polak, Jeroen Zuiddam
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Coding.CycleCode
@@ -22,8 +34,9 @@ length four, obtained from 26 cosets, supplies a larger product code; taking a s
 realizes that cardinality in length 4096.
 
 Source: Pjotr Buys, Sven Polak and Jeroen Zuiddam, *Lean-verified lower bounds for the
-Shannon capacity of odd cycles*, arXiv:2607.29681v1 (2026), twenty-one-cycle construction.
-The coset code is recorded in their accompanying Lean formalisation.
+Shannon capacity of odd cycles*, arXiv:2607.29681v1 (2026), for the profiles; the 26-coset code
+is from the authors' Lean repository https://github.com/spectra-research/shannon-capacity-lean,
+revision aa21eeb12b75b0413d3fa9fb4208b5d0bf2c4d65, `ShannonBounds/BaseC21CosetData.lean`.
 -/
 
 @[expose] public section
