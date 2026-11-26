@@ -62,15 +62,16 @@ import Mathlib.Tactic.Ring
 /-!
 # Colon ideals of a weakly regular span and a determinant
 
-Let `x f : Fin n → P` with `f = g • x` for a square matrix `g`, and suppose the ideal
+Let `x f : Fin n → P` with `f = g • x` for an `n × n` matrix `g`, and suppose the ideal
 `(f)` contains a weakly regular sequence of length `n`. Using Koszul homology we show
 `(f) : (x) = (f) + (det g)` and `(f) : (det g) = (x)`.
 
 ## References
 
-* A.-M. Simon and J. R. Strooker, *Complete intersections of dimension zero: variations on a theme
-  of Wiebe*, arXiv:math/0703880, Proposition 1.2.
-* H. Wiebe, *Über homologische Invarianten lokaler Ringe*, Math. Ann. 179 (1969), 257–274.
+* A. Corso, C. Polini and W. V. Vasconcelos, *Links of prime ideals*, Math. Proc. Cambridge
+  Philos. Soc. 115 (1994), 431–436, Theorem 2.5.
+* D. G. Northcott, *A homological investigation of a certain residual ideal*, Math. Ann. 150
+  (1963), 99–110.
 -/
 
 
@@ -2896,13 +2897,19 @@ end ColonSpanDet
 
 @[expose] public section
 
-/-- **Wiebe's colon-ideal lemma.** Let `f = g • x` and suppose `(f)` contains a weakly regular
-sequence of length `n`. Then `(f) : (x) = (f) + (det g)` and `(f) : (det g) = (x)`.
+/-- **Colon ideals for a square matrix relation.** Let `P` be a commutative ring, let `x` and `f` be
+`n`-tuples of elements of `P`, and let `g` be an `n × n` matrix over `P` with `f = g • x`.
+Suppose the ideal `(f)` contains a weakly regular sequence of length `n`. Then
+`(f) : (x) = (f) + (det g)` and `(f) : (det g) = (x)`.
 
-Source: A.-M. Simon and J. R. Strooker, *Complete intersections of dimension zero: variations on a
-theme of Wiebe*, arXiv:math/0703880, Proposition 1.2, stated there for every `f` whose Koszul
-homology vanishes in positive degrees; they find part of it in H. Wiebe, *Über homologische
-Invarianten lokaler Ringe*, Math. Ann. 179 (1969), 257–274, Satz 2. -/
+Source: A. Corso, C. Polini and W. V. Vasconcelos, *Links of prime ideals*, Math. Proc.
+Cambridge Philos. Soc. 115 (1994), 431–436, Theorem 2.5 (b) and (c), which it attributes to
+D. G. Northcott, *A homological investigation of a certain residual ideal*, Math. Ann. 150
+(1963), 99–110. It states both identities for a Noetherian ring in which `(f)` has grade `n` and
+`(f) + (det g) ≠ P`, the second in the form `(f) : ((f) + (det g)) = (x)`; the two colon ideals
+agree. In a Noetherian ring with `(f) ≠ P` the hypothesis here gives grade `n`: a weakly regular
+sequence in a proper ideal is regular, and Krull's height theorem bounds the grade of `(f)` by
+`n`. -/
 public theorem Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular
     {P : Type*} [CommRing P] {n : ℕ} (x f : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
     (hf : ∀ i, f i = ∑ j, g i j * x j)
