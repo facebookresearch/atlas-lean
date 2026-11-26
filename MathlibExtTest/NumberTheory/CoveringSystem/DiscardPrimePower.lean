@@ -46,3 +46,54 @@ example : ¬ Int.IsCoveringSystem (cover.filter fun c => ¬ 2 ^ 2 ∣ c.2) := by
   decide
 
 end MetaMathlibExt.isCoveringSystem_filter_not_dvd_of_lt
+
+namespace MetaMathlibExt
+
+-- Exactly two moduli are multiples of 4 (4 and 12). Their replacement has modulus
+-- 2 * lcm(1, 3) = 6, and it must cover -1, which the retained classes miss.
+example : ∃ r : ℤ, (-1 : ℤ) ≡ r [ZMOD 6] ∧
+    Int.IsCoveringSystem {(r, 6), (0, 2), (0, 3), (1, 6)} := by
+  let C := isCoveringSystem_filter_not_dvd_of_lt.cover
+  have h := exists_isCoveringSystem_merge_prime_power C
+    isCoveringSystem_filter_not_dvd_of_lt.cover_isCoveringSystem (by decide)
+    (p := 2) (a := 2) (by decide) (by decide) (by decide)
+  have hmod : 2 ^ (2 - 1) * (C.filter fun c => 2 ^ 2 ∣ c.2).lcm
+      (fun c => c.2 / 2 ^ 2) = 6 := by decide
+  have hkeep : C.filter (fun c => ¬ 2 ^ 2 ∣ c.2) = {(0, 2), (0, 3), (1, 6)} := by decide
+  obtain ⟨r, hr⟩ := h
+  rw [hmod, hkeep] at hr
+  refine ⟨r, ?_, hr⟩
+  obtain ⟨c, hc, hrc⟩ := hr (-1)
+  rcases Finset.mem_insert.mp hc with h | h
+  · subst c
+    exact hrc
+  · exact (show ¬ ∃ c ∈ ({(0, 2), (0, 3), (1, 6)} : Finset (ℤ × ℕ)),
+        (-1 : ℤ) ≡ c.1 [ZMOD c.2] by decide) ⟨c, h, hrc⟩ |>.elim
+
+-- At a = 1 the two parity classes merge to a single class of modulus 1.
+example : ∃ r : ℤ, Int.IsCoveringSystem ({(r, 1)} : Finset (ℤ × ℕ)) := by
+  let C : Finset (ℤ × ℕ) := {(0, 2), (1, 2)}
+  have hcov : Int.IsCoveringSystem C := by
+    intro z
+    rcases Int.emod_two_eq_zero_or_one z with hz | hz
+    · exact ⟨(0, 2), by decide, by simpa [Int.ModEq] using hz⟩
+    · exact ⟨(1, 2), by decide, by simpa [Int.ModEq] using hz⟩
+  have h := exists_isCoveringSystem_merge_prime_power C hcov (by decide)
+    (p := 2) (a := 1) (by decide) (by decide) (by decide)
+  have hmod : 2 ^ (1 - 1) * (C.filter fun c => 2 ^ 1 ∣ c.2).lcm
+      (fun c => c.2 / 2 ^ 1) = 1 := by decide
+  have hkeep : C.filter (fun c => ¬ 2 ^ 1 ∣ c.2) = ∅ := by decide
+  simpa only [hmod, hkeep, Finset.insert_empty] using h
+
+-- No exact-valuation hypothesis: 4 divides one of the discarded moduli even at a = 1.
+example : ∃ r : ℤ, Int.IsCoveringSystem {(r, 2), (0, 1)} := by
+  let C : Finset (ℤ × ℕ) := {(0, 1), (0, 2), (1, 4)}
+  have hcov : Int.IsCoveringSystem C := fun z => ⟨(0, 1), by decide, Int.modEq_one⟩
+  have h := exists_isCoveringSystem_merge_prime_power C hcov (by decide)
+    (p := 2) (a := 1) (by decide) (by decide) (by decide)
+  have hmod : 2 ^ (1 - 1) * (C.filter fun c => 2 ^ 1 ∣ c.2).lcm
+      (fun c => c.2 / 2 ^ 1) = 2 := by decide
+  have hkeep : C.filter (fun c => ¬ 2 ^ 1 ∣ c.2) = {(0, 1)} := by decide
+  simpa only [hmod, hkeep] using h
+
+end MetaMathlibExt
