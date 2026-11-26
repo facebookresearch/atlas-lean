@@ -77,8 +77,10 @@ example (a : (AdeleRing (𝓞 ℚ) ℚ)ˣ) :
   rw [QuotientGroup.eq_one_iff, Matrix.GeneralLinearGroup.center_eq_range_scalar]
   exact MonoidHom.mem_range.mpr ⟨a, rfl⟩
 
-/-- With the library's instances on adelic `GL(2)` over `ℚ`, adelic `PGL(2)`
-is a Hausdorff, locally compact topological group. -/
+/-- Instance search shows that adelic `PGL(2)` over `ℚ` is a Hausdorff, locally
+compact topological group, from Mathlib's quotient-group instances, the
+library's instances on adelic `GL(2)` and
+`NumberField.AdelicCentre.isClosed_center`. -/
 example : IsTopologicalGroup (NumberField.AdelicCentre.AdelicPGL2 (𝓞 ℚ) ℚ) ∧
     T2Space (NumberField.AdelicCentre.AdelicPGL2 (𝓞 ℚ) ℚ) ∧
     LocallyCompactSpace (NumberField.AdelicCentre.AdelicPGL2 (𝓞 ℚ) ℚ) :=
