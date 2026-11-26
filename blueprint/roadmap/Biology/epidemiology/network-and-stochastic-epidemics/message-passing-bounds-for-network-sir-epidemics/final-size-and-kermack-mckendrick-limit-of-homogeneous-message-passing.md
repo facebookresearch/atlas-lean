@@ -27,6 +27,11 @@ Since $F$ is non-increasing and bounded, it has a limit $F(\infty)$, and dominat
 - [Message passing bounds the stochastic SIR epidemic on any graph](message-passing-bounds-the-stochastic-sir-epidemic-on-any-graph.md)
 - [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
 
+## Proof depends on
+
+- [Dominated convergence theorem for nonnegative functions](../../../../MeasureTheory/integration/dominated-convergence-theorem/tendsto-lintegral-of-dominated-convergence.md)
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Sources
 
 - R. R. Wilkinson, F. G. Ball, K. J. Sharkey, "The relationships between message passing, pairwise, Kermack–McKendrick and stochastic SIR epidemic models", Journal of Mathematical Biology (2017), Eqs. (9)–(21) and (30)–(33), Theorem 4, Remark 1, Corollary 3, Theorem 6 and Corollary 4, <https://doi.org/10.1007/s00285-017-1123-8>, PMCID PMC5641366.

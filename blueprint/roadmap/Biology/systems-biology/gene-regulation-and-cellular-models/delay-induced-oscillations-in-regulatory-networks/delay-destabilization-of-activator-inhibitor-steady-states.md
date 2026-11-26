@@ -14,6 +14,10 @@ An **activator–inhibitor oscillator** has signed Jacobian $\begin{pmatrix} + &
 
 - [Three-variable repressilator](../../three-variable-repressilator/README.md)
 
+## Proof depends on
+
+- [Poincaré–Bendixson theorem](../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+
 ## Expansion
 
 For part 1, view roots of $\Delta$ as intersections of the parabola $p(\lambda) = (\lambda - a_{11})(\lambda - a_{22})$ with $q(\lambda) = a_{12}a_{21}e^{-\lambda\tau}$, which for $a_{12}a_{21} < 0$ is negative, increasing and tends to $0$ exponentially in $\lambda$. As $\tau \to \infty$, $q \to 0$ uniformly on $\operatorname{Re}\lambda \ge \delta > 0$, so by continuity (Rouché) a root approaches the positive zero $a_{11}$ of $p$, and $x^*$ cannot remain stable. Typically the two stable real roots first merge into a complex pair whose real part increases through zero (a Hopf bifurcation) and later split again into real roots tending to $a_{11}$ and $a_{22}$. Since eigenvalues depend continuously on $\tau$ and every delay-driven crossing is from left to right, the first crossing is a Hopf bifurcation, and the Poincaré–Bendixson theorem in two dimensions (and its extension to monotone cyclic feedback systems for the single loop) turns local instability of the unique fixed point into global convergence to a periodic orbit. Without delay, two-component systems need autocatalysis for oscillations; the delay replaces the required time-scale separation.

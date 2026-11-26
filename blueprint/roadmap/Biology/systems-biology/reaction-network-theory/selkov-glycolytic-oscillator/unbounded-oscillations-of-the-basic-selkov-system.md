@@ -18,6 +18,10 @@ Solutions with positive initial data stay positive and exist for all $\tau \ge 0
 3. for $\alpha > \alpha_1$ every solution other than $P_0$ is unbounded and eventually monotone as in property 4;
 4. as $\alpha \uparrow \alpha_1$ the diameter of the image of the periodic solution tends to infinity.
 
+## Proof depends on
+
+- [Poincaré–Bendixson theorem](../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+
 ## Expansion
 
 After a Poincaré compactification (with one point at infinity blown up) the boundary carries steady states $P_1,\dots,P_4$; $P_1$ and $P_3$ each have a unique one-dimensional centre manifold, with the flow leaving $P_1$ and entering $P_3$. For $\alpha > \alpha_0$ exactly one of three cases holds: the two centre manifolds coincide (a heteroclinic cycle at infinity attracts every solution above it), they differ and a unique periodic orbit exists, or they differ and almost every solution escapes to $P_4$. Let $\xi_1(\alpha)$, $\xi_2(\alpha)$ be where the centre manifolds of $P_1$ and $P_3$ meet the segment $\{y = 1,\ 0 < x \le 1\}$. Both are continuous in $\alpha$. For $\alpha$ near $\alpha_0$ the stable limit cycle forces $\xi_1 - \xi_2 > 0$; for large $\alpha$ a geometric singular perturbation argument in the variables $\bar y = x^{-1/\gamma} y^{1/\gamma}$, $\bar z = x^{-1/\gamma} y^{-(\gamma-1)/\gamma}$ with $\epsilon = \alpha^{-1}$ gives a connection from $P_0$ to $P_3$, so $\xi_2 = 1 > \xi_1$. The intermediate value theorem gives $\alpha_1$; a monotonicity comparison of the centre-manifold expansions shows $\xi_1 - \xi_2$ is strictly decreasing, so $\alpha_1$ is unique. Poincaré–Bendixson and stability of all periodic orbits give the remaining statements. The unbounded solutions cast doubt on the model's biological realism, in contrast to the bounded Goldbeter–Lefever model.

@@ -26,6 +26,10 @@ and the ordering conditions are exactly those under which $\alpha, \beta$ can be
 - [Complex balancing and the deficiency-zero theorem](../../complex-balancing-and-the-deficiency-zero-theore/README.md)
 - [Chemical reaction network theory](../chemical-reaction-network-theory/README.md)
 
+## Proof depends on
+
+- [Poincaré–Bendixson theorem](../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+
 ## Sources
 
 - B. Boros, J. Hofbauer, "Oscillations in planar deficiency-one mass-action systems", Journal of Dynamics and Differential Equations (2024), Section 2 (Definitions 1–4, Theorems 1–3), Section 3 (quadrangle: Sections 3.1–3.3, Proposition 1) and Sections 4–5 (Propositions 4–7), <https://doi.org/10.1007/s10884-021-10051-z>, PMCID PMC10901957.

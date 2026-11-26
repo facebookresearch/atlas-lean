@@ -20,6 +20,10 @@ satisfies $\dot{\mathcal G} \le 0$ along solutions, with equality only at $E^*$.
 
 - [Reproduction number threshold of the activation-status structured HIV model](reproduction-number-threshold-of-the-activation-status-structured-hiv-model.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 When $R_0 > 1$, solutions starting off the infection-free set are strictly positive (by comparison with the pure switching–death semigroup) and uniformly weakly persistent. Together with dissipativity and asymptotic compactness, this gives a global attractor $Y$ in the interior, on which $H$, $I(\cdot)$ and $V$ are bounded away from $0$ and $\infty$, so $\mathcal G$ is well defined on complete orbits in $Y$. Differentiating, $\dot{\mathcal G}$ splits into $-\int w\, d\beta\, (1 - H^*/H)(cH - cH^*)$, several terms of the form $-(\text{positive}) \times \kappa(\cdot)$ for the cell-free, cell-to-cell, switching and viral-production fluxes, and one remaining term. That remaining term is $\int w \int \psi(x, y)\,[\nu(x) - \nu(y)]$ with $\nu = \ln(I/I^*) - I/I^*$, and it vanishes by the choice of $w$. Hence $\dot{\mathcal G} \le 0$, and LaSalle's principle yields $Y = \{E^*\}$, which also gives uniqueness of $E^*$.

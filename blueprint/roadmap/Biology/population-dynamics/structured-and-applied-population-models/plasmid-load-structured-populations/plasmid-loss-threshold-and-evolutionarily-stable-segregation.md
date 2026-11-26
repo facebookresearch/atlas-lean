@@ -10,6 +10,10 @@ is linear and splits as $x_0' = (\beta(0,\alpha) - \mu(0,\alpha)) x_0 + B^\top y
 
 **Definition 2 (ESSS).** A segregation strategy $p^* \in [0, 0.5]^{\hat z}$ maximizing $\lambda_1(p)$ is the evolutionarily stable segregation strategy; when $\hat\lambda_0 < \lambda_1(p^*)$ a resident population using $p^*$ cannot be invaded by any other segregation strategy.
 
+## Proof depends on
+
+- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
+
 ## Expansion
 
 Plasmid-free cells never acquire plasmids, so the system is block triangular: the plasmid-free class grows at its own rate and is fed by segregation losses, while the plasmid-bearing block evolves autonomously under $A$. By Perron–Frobenius theory for the irreducible quasi-positive matrix $A$, $y(t) \sim c e^{\lambda_1 t} \hat y$, and variation of constants shows $x_0$ grows like $e^{\max(\hat\lambda_0, \lambda_1) t}$, giving the dichotomy. Between two strategies competing in the same environment, the one with the larger $\lambda_1$ outgrows the other, which makes maximizing $\lambda_1$ the evolutionary criterion. The maximizer is not available in closed form; gradient ascent on $\lambda_1(p)$ shows that for low and medium copy numbers the optimum is $p_z = \tfrac12$ (fair segregation), while for high copy numbers it becomes systematically unequal.

@@ -26,6 +26,10 @@ At steady state the scaled net fluxes of an M-network must all be equal, since t
 
 - [Robust Lyapunov functions as common Lyapunov functions of rank-one systems](robust-lyapunov-functions-as-common-lyapunov-functions-of-rank-one-systems.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Sources
 
 - M. Ali Al-Radhawi, D. Angeli, E. D. Sontag, "A computational framework for a Lyapunov-enabled analysis of biochemical reaction networks", PLoS Computational Biology 16(2) (2020) e1007681, Results (Eq 7, "Basic biochemical examples") and Methods ("Graphical criteria for the construction of Max-Min RLFs", Theorem 4, Remark 2), <https://doi.org/10.1371/journal.pcbi.1007681>, PMCID PMC7058358.

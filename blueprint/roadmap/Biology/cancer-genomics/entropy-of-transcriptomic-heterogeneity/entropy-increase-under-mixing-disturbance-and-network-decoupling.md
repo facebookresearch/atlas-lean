@@ -16,6 +16,10 @@ $$\boldsymbol\Omega_{\boldsymbol\gamma}=\begin{pmatrix}\boldsymbol\Omega_{11}&\g
 
 with the same blocks and coupling vectors $\boldsymbol\gamma^{(x)}$, $\boldsymbol\gamma^{(y)}$. If $\boldsymbol\gamma^{(x)}\le\boldsymbol\gamma^{(y)}$ elementwise, then $H(\mathbf Y)\le H(\mathbf X)$: weaker conditional dependence between gene modules gives larger entropy.
 
+## Proof depends on
+
+- [Jensen's inequality](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+
 ## Expansion
 
 Proposition 1 is concavity of $u\mapsto-u\log u$ with Jensen's inequality (the gap is the mutual information between $\mathbf Y$ and the latent state). For the first claim of Proposition 2, $\mathbf Y^{(\tau)}_t=\mathbf Y_t+\mathbf A^{t-\tau}\boldsymbol\delta_\tau$ for $t\ge\tau$ with independent summands, so its covariance exceeds that of $\mathbf Y_t$ by the positive semidefinite term $\mathbf A^{t-\tau}\boldsymbol\Sigma_\delta(\mathbf A^{t-\tau})^\top$ and the Gaussian entropy $\tfrac12\log\det(2\pi e\boldsymbol\Sigma)$ does not decrease, since $\det(\boldsymbol\Sigma+\mathbf D)\ge\det\boldsymbol\Sigma$ for positive semidefinite $\mathbf D$, with equality for positive definite $\boldsymbol\Sigma$ only when $\mathbf D=\mathbf 0$. With $\mathbf A=\mathbf 0$ the disturbance has no effect after time $\tau$. The source's Proposition 2 also states an ordering by disturbance time; the scalar example above shows it needs a further hypothesis. Proposition 3 is proved in the paper's supplementary material. Proposition 3 formalizes that in a fully connected network each gene is constrained by the others, while in a disconnected one each varies freely. Biologically, cancer-related loss of regulatory control between modules shows up as increased transcriptomic heterogeneity.

@@ -20,6 +20,10 @@ $$\mathcal R := (n-1)\,\tilde\tau = 1,$$
 
 so outbreaks grow iff $(n-1)\tilde\tau > 1$. By contrast, in the well-mixed multi-stage model $R_0 = \beta/\gamma$ does not depend on $K$; on the network the threshold depends on the shape of the infectious-period distribution through $\tilde\tau$.
 
+## Proof depends on
+
+- [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+
 ## Expansion
 
 Given an infectious period $x$, the edge transmits with probability $1 - e^{-\tau x}$; averaging over the Erlang density gives $1 - \int_0^\infty e^{-\tau x} g(x)\,dx = 1 - (K\gamma/(\tau + K\gamma))^K$, the Laplace transform of the Erlang law. In the pairwise model an infected node infected through an edge has $n - 1$ remaining susceptible neighbours, each infected with probability $\tilde\tau$, which explains $\mathcal R = (n-1)\tilde\tau$. Formally, the characteristic polynomial of the linearized $(2K+2)$-dimensional closed pairwise system factors so that $\lambda = 0$ is a root iff $(n-1)\tilde\tau = 1$. Less variable infectious periods (larger $K$) raise transmissibility because Jensen's inequality applied to the convex map $x \mapsto e^{-\tau x}$ favours concentrated durations.

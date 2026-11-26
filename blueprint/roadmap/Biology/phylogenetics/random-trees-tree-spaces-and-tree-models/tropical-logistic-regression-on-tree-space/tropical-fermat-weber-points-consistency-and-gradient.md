@@ -16,7 +16,7 @@ an integer vector.
 
 ## Depends on
 
-- [Tropical Laplace distribution on the space of ultrametric trees](tropical-laplace-distribution-on-the-tropical-projective-torus.md)
+- [Tropical Laplace distribution on the tropical projective torus](tropical-laplace-distribution-on-the-tropical-projective-torus.md)
 
 ## Expansion
 

@@ -15,6 +15,10 @@ $$I_j(f_i) = \langle T_j f_i, f_i \rangle, \qquad \mathrm{avs}(f_i) = \langle T 
 - (Theorem 1) $H(f(X) \mid X_A) = \mathbb{E}_A\Big[h\Big(\sum_{\omega \in \operatorname{supp} f} p_{\omega \mid X_A}\Big)\Big]$, where $p_{\omega \mid X_A} = P(X = \omega \mid X_A)$ and $\mathbb{E}_A$ is over the marginal of $X_A$; hence (Proposition 4) $\mathrm{MI}(f(X); X_A) = h\big(\sum_{\omega \in \operatorname{supp} f} p_\omega\big) - H(f(X) \mid X_A)$.
 - (Theorem 2) $\mathrm{LB} \le H(f(X) \mid X_A) \le \mathrm{LB}^{1/\ln 4}$ with $\mathrm{LB} = 4\big(\mathbb{E}[f(X)] - \mathbb{E}_A\big[\mathbb{E}[f(X) \mid X_A]^2\big]\big)$.
 
+## Proof depends on
+
+- [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+
 ## Expansion
 
 Since $f$ is $\{0,1\}$-valued, $I_j(f) = \int |f - f \circ \varphi_j|^2 \, dP = \|(I - C_{\varphi_j}) f\|^2$, which is Proposition 1; the operators are positive, so the Rayleigh quotients lie below the top eigenvalue and $\|f\|^2 = \mathbb{E}[f(X)]$, which is Proposition 2. Theorem 1 is the binary specialization $P(f(X) = 1 \mid X_A) = \mathbb{E}[f(X) \mid X_A]$, and Theorem 2 combines it with Topsøe's bounds $4p(1-p) \le h(p) \le (4p(1-p))^{1/\ln 4}$ and Jensen's inequality for the concave power $1/\ln 4 < 1$. These formulas extend the uniform-measure results used to select the most determinative nodes, for instance for canalizing update rules.

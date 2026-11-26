@@ -14,6 +14,11 @@ $$[\Phi]_{kl} = \begin{cases} u_0\,(t_{k+1} - t_k), & l = 0,\\[4pt] u_l\, \dfrac
 
 - [Conditional duality between channel identification and time decoding](conditional-duality-between-channel-identification-and-time-decoding.md)
 
+## Proof depends on
+
+- [Parseval's identity on the circle](../../../../Analysis/harmonic-analysis/fourier-series/convergence-of-fourier-series/parseval-identity-on-the-circle.md)
+- [Carleson's theorem](../../../../Analysis/harmonic-analysis/fourier-series/convergence-of-fourier-series/carleson-ae-tendsto.md)
+
 ## Expansion
 
 Since $\mathcal P h \in \mathcal H$, each measurement $q_k = \langle \mathcal P h, \phi_k\rangle = \sum_l h_l \overline{\phi_{l,k}}$ is linear in the $2L + 1$ unknown coefficients, so recovery is solving a linear system; full rank needs at least $2L + 1$ measurements, i.e. $2L + 2$ spikes for one stimulus, or $2L + N + 1$ spikes over $N$ stimuli because each stimulus loses one interval. The entries of $\Phi$ are $\sqrt T\, u_l \int_{t_k}^{t_{k+1}} e_l$ evaluated in closed form. For convergence, $\mathcal P h$ is exactly the $L$-th partial Fourier sum of $h$ on $[0, T]$, so $L^2$ convergence is Parseval and almost-everywhere convergence is Carleson's theorem. Requiring inter-spike intervals at most $T/(2L+2)$ and letting $L \to \infty$ recovers a Nyquist-type condition $C\delta < \pi(b - c)/\Omega$ when $|v| \le c < b$. These are Lemma 9, Theorem 11 and Proposition 12 of the source, which also gives a multi-input version for filter banks driving an asynchronous sigma-delta modulator (its Theorem 14).

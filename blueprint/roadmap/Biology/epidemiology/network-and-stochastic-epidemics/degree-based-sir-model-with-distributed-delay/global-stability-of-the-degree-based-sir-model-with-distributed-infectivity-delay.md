@@ -17,6 +17,10 @@ So the delay kernel changes the value of the threshold through $\hat f$ but cann
 
 - [Threshold of the degree-based SIR model with distributed infectivity delay](threshold-of-the-degree-based-sir-model-with-distributed-infectivity-delay.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 *Item 1.* Take

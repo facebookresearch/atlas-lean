@@ -22,6 +22,10 @@ $$f(p) = \frac{p(1-p)\big(d_M b_W^0 - d_W b_M^0 (1 - s_h p)\big)}{b_M^0 (1-p)(1 
 
 When $1 - s_h < \frac{d_M b_W^0}{d_W b_M^0} < 1$, $f$ is bistable with zeros $0$, $\theta$, $1$, where $\theta = \frac{1}{s_h}\left(1 - \frac{d_M b_W^0}{d_W b_M^0}\right)$. Moreover, the minimal cost $\inf J_\varepsilon$ of the outbreak-size functional $J = \int_0^T I_H(t)\, dt$ over pulse controls of the above form converges to the infimum over Dirac-sum controls $u = \sum_i c_i \delta(t - t_i)$ with $\sum_i c_i = C$ ($\Gamma$-convergence).
 
+## Proof depends on
+
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Expansion
 
 Outside $[t_i, t_i + \varepsilon]$ the dynamics are $p' = f(p)$. Inside it, compare $p_\varepsilon$ with $z_\varepsilon$ solving $z' = (c_i/\varepsilon)\, g(z)$ from the same state. Both stay bounded by Grönwall's inequality, and $|z_\varepsilon - p_\varepsilon| \le \varepsilon M_f\, e^{c_i L_g} \to 0$, where $M_f = \max |f|$ and $L_g$ is a Lipschitz constant of $g$. Separating variables in the $z$ equation gives $G(z(t_i + \varepsilon)) - G(z(t_i)) = c_i$, which is the jump rule. Between jumps of a bistable $f$, a solution that avoids $\theta$ is monotone, so $F(p(t)) - F(p(t_i^+)) = t - t_i$ with $F' = 1/f$. Differentiating this identity and the jump map gives closed-form sensitivities of $p$ (and hence of $J$) with respect to each release time $t_k$ and amount $c_k$. These sensitivities drive gradient-based optimization of release schedules.

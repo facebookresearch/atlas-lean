@@ -12,6 +12,10 @@ with $P_n \equiv P_0$, forward rate constants $k_{ij} > 0$ ($j = 1, \dots, m_i +
 
 **Theorem 7 (global stability).** Every trajectory starting in a positive compatibility class converges to the unique equilibrium of that class.
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 Because the reaction graph is a single cycle of complexes, the only flux vectors balancing every species are the constant ones, which is Lemma 1. Equal rates make every equilibrium concentration a rational function of one unknown, say the last intermediate $c_{q m_q}$; substituting into the substrate conservation law gives a scalar equation on an admissible interval $(0, b_q)$, whose root exists by the intermediate value property and is unique by monotonicity arguments on the parametrization. For global stability, the piecewise linear in rates (PWLR) function

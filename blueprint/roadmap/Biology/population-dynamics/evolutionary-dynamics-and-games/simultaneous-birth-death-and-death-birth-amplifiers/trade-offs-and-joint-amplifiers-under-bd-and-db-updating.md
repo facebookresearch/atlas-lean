@@ -12,6 +12,10 @@ and $G_N$ is a **Bd$_r$-amplifier** (resp. **dB$_r$-amplifier**) if $\rho_r^{Bd}
 
 **Theorem 3 (joint amplifier).** For every large enough $N$ there is a weighted graph $A_N$ with $\rho_r^{Bd}(A_N)>\rho_r^{Bd}(K_N)$ and $\rho_r^{dB}(A_N)>\rho_r^{dB}(K_N)$ for all $r\in(1,1.2)$.
 
+## Proof depends on
+
+- [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+
 ## Expansion
 
 For $r=1$ on an undirected graph with weighted degrees $d_u$, the known neutral formulas are $\rho_1^{Bd}(G_N,v)=d_v^{-1}/\sum_u d_u^{-1}$ and $\rho_1^{dB}(G_N,v)=d_v/\sum_u d_u$, both equal to $1/N$ on $K_N$. Their product is $1/\bigl(\sum_u d_u^{-1}\sum_u d_u\bigr)\le 1/N^2$ by the Cauchy–Schwarz inequality, so they cannot both exceed $1/N$, with equality only when the degrees are all equal. Theorem 2 uses the **temperature** $T(u)=\sum_{v:(v,u)\in E}w(v,u)/\deg(v)$, the rate at which $u$ is replaced under neutral Bd: above-average temperature lowers $\gamma^{Bd}$, and below-average temperature lowers $\gamma^{dB}$ by Jensen's inequality for a concave function. The amplifier $A_N$ joins a strong Bd-amplifier chunk (a fan-like hub with two-node blades) to a Fan graph (a strong dB-amplifier) by one edge of tiny weight. The chunks then resolve to homogeneous states between rare cross-chunk events; a mutant arising in the chunk that favours the current update rule fixes there with enhanced probability and later invades the other chunk, which gains more than is lost when it arises in the unfavourable chunk. For $N=1001$ with $(a,b,f)=(30,85,801)$ numerics give Bd amplification for $r\in(1,1.09)$ and dB amplification for $r\in(1,1.2)$, with ratios above $1.44$ and $1.14$ at $r=1.05$.

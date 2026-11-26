@@ -14,6 +14,10 @@ is the largest segment sum. With $U_0=0$ and $U_j=\max\{0,U_{j-1}+S_j\}$ (Lindle
 
 **Asymptotics.** If $R$ is diagonalizable with largest eigenvalue $0<\lambda<1$ and second largest eigenvalue magnitude $\nu$, then $R^i-\lambda^iR_\infty=O(\nu^i)$ uniformly in $i$ with $R_\infty=\lim_iR^i/\lambda^i$, so $\mathbb P(H_n<a)$ decays geometrically like $\lambda^n$, with an explicit error term of order $\nu^\alpha$ when the first $\alpha$ steps are computed exactly.
 
+## Proof depends on
+
+- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
+
 ## Expansion
 
 The block identity follows by induction on $n$: each multiplication by $\Pi$ multiplies the transient block by $R$ and adds the absorbed mass $R^{n-1}v$. The local-score chain records the current excursion of the Lindley process above $0$ and stops it at $a$; sequences with rational scores reduce to integers by scaling, and Markov sequences are handled by taking the product of the score state with the previous letter. The spectral bound is the Perron–Frobenius expansion of an irreducible substochastic matrix: $\lambda\le 1$ is real, and primitivity gives $\lambda>\nu$ and a positive $R_\infty$. The same machinery yields exact pattern-count statistics through a chain on (automaton state, count).

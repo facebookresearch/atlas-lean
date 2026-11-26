@@ -20,6 +20,10 @@ and if moreover $\sup_n\mathbb E\|\nu^n_0\|^{2r}_{L^2(D)}<\infty$ for some $r\ge
 
 **Fluctuations.** Writing $\nu^n_t=\nu^n_0+\int_0^t(\text{drift})\,ds+M^n_t$, for $\alpha>d$ and suitably balanced patch volumes and sizes, the rescaled martingales $\sqrt{\ell_-(n)v_+(n)}\,M^n$ converge weakly in the space of $H^{-\alpha}(D)$-valued càdlàg paths to a centred Gaussian diffusion, which yields a Langevin approximation of the neural field.
 
+## Proof depends on
+
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Expansion
 
 The proof compares the martingale decomposition of $\nu^n$ with the integral form of the Wilson–Cowan equation. Each jump changes $\nu^n$ by $\pm l(k,n)^{-1}\mathbf 1_{D_{k,n}}$, so the quadratic variation of $M^n$ is of order $1/\ell_-(n)$ and the martingale vanishes; the drift differs from the Wilson–Cowan vector field by spatial averaging errors controlled by $\delta_+(n)$ via the Poincaré inequality, and Lipschitz continuity of $f$ with Gronwall's inequality closes the estimate. The limit does not depend on the exact microscopic rates: replacing $f$ by any $f_n\to f$ uniformly gives the same law of large numbers.

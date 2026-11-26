@@ -22,6 +22,10 @@ $$\mathcal R_0 = \frac{\beta \Pi \kappa (k_3 + \eta\sigma)}{\mu k_1 k_2 k_3}.$$
 - [Global stability of the SEIR model](README.md)
 - [Next-generation matrix and the basic reproduction number](../next-generation-matrix-and-the-basic-reproductio/README.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 For part 1, saturation only lowers the incidence: $\lambda S \le \beta(\Pi/\mu)(I_u + \eta I_e)$ on $\mathcal D$. The linear function

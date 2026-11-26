@@ -19,6 +19,10 @@ where $\mathcal R_{iM}$ is the expected number of infectious humans that end up 
 ## Depends on
 
 - [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 Infection never passes human-to-human or vector-to-vector, so with infected compartments ordered as humans then vectors the matrix $FV^{-1}$ has the bipartite block form $\begin{pmatrix} 0 & K_{HM} \\ K_{MH} & 0 \end{pmatrix}$. Its spectral radius is $\sqrt{\rho(K_{HM}K_{MH})}$, and because each generation of vector infections has a single type ($E_M \to I_M$), $K_{HM} K_{MH}$ restricted to the vector type is the scalar $(\mathcal R_{JM} + \mathcal R_{AM} + \mathcal R_{SM})\mathcal R_{MH}$; the square root reflects that a full human-to-human cycle takes two generations. On $\Omega_1$ the force of infection is bounded by its value at the disease-free susceptible levels, so the infected subsystem is dominated by the linear system $\dot x \le (F - V)x$, whose solutions decay when $\rho(FV^{-1}) \le 1$; the comparison argument plus LaSalle's invariance principle give global stability. Disease-induced death makes $N_H$ fall with prevalence, which raises the per-capita biting pressure $b_M I_M/N_H$ on the remaining susceptibles; this positive feedback is the source of the backward bifurcation.

@@ -28,6 +28,10 @@ $$\frac{dx_1}{d\tau} = \tfrac12\mu_1\sigma_1^2 S^*\,g_1, \qquad \frac{dx_2}{d\ta
 
 - [Classification of adaptive dynamics singular strategies](../../classification-of-adaptive-dynamics-singular-str/README.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 Global stability of $(S^*, I^*)$ uses $V = S - S^* - S^*\ln(S/S^*) + I - I^* - I^*\ln(I/I^*)$, for which $\dot V = -m_1\big((S - S^*) + (I - I^*)\big)^2 \le 0$, and LaSalle's principle. The invasion fitness is the per-capita growth rate of a mutant at low density in the resident environment fixed by $(S^*, I^*)$. Convergence stability is linear stability of the canonical equation, whose Jacobian is built from second derivatives of $b$, $\alpha$ and $\beta$ weighted by $S^*$, $I^*$ and the mutational speeds; evolutionary stability requires each player's fitness to have a local maximum at its own resident trait. Accelerating costs (convex $b$, concave $\alpha$ in the cost sense) favour a continuously stable outcome, while decelerating costs together with a sharply asymmetric transmission function favour branching. After host branching, two host strains coexist with one pathogen, and after pathogen branching two pathogen strains coexist with one host.
