@@ -89,7 +89,7 @@ private theorem attenuationFactor_mem_Icc {s t : ℝ} (hs : 0 < s) (ht : 0 ≤ t
 
 /-! ## The bound -/
 
-/-- **Absolute attenuation bounds** .
+/-- **Absolute attenuation bounds**.
 
 Under exactly the hypotheses of `normalizedCovariance_attenuation`
 (decomposition `X = Tx + Ex`, `Y = Ty + Ey`, square integrability,
