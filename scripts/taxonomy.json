@@ -1320,6 +1320,7 @@
   "CSLibExt/Combinatorics/RandomThreeSat": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Random 3-SAT threshold"},
   "CSLibExt/Complexity/Algebraic/ArithmeticCircuit": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Arithmetic circuits"},
   "CSLibExt/Complexity/Algebraic/DualMatrixMultiplicationBounds": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
+  "CSLibExt/Complexity/Algebraic/DualMatrixMultiplicationBoundsRectangularOperationRankBridge": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
   "CSLibExt/Complexity/Algebraic/MatrixMultiplication": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Arithmetic circuits for matrix multiplication"},
   "CSLibExt/Complexity/Algebraic/MatrixMultiplicationExponent": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
   "CSLibExt/Complexity/Algebraic/RectangularCircuitExponent": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Arithmetic circuits for matrix multiplication"},
