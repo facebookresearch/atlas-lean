@@ -45,6 +45,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.IntegerComplexityLogBound
 public import MathlibExt.NumberTheory.IntegerComplexityRecurrence
+public import MathlibExt.NumberTheory.IntegerComplexityTwoPowMulThreePow
 
 set_option autoImplicit false
 
@@ -66,17 +67,6 @@ theorem_wanted le_complexity_of_subadditive (P : ℕ → ℝ)
     (hmul : ∀ n m : ℕ, 1 ≤ n → 1 ≤ m → P (n * m) ≤ P n + P m)
     (n : ℕ) (hn : 1 ≤ n) :
     P n ≤ (cx n : ℝ)
-
-/-- **Integer complexity of $2^a 3^b$ for $a \le 2$.** Write $\lVert n \rVert$ for the integer
-complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
-$\times$ and parentheses. For all natural numbers $a \le 2$ and $b$, not both zero,
-$\lVert 2^a 3^b \rVert = 2a + 3b$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Corollary 2. -/
-theorem_wanted complexity_two_pow_mul_three_pow (a b : ℕ)
-    (ha : a ≤ 2) (hab : 1 ≤ 2 * a + 3 * b) :
-    cx (2 ^ a * 3 ^ b) = 2 * a + 3 * b
 
 /-- **Proposition 3**: `‖n‖ ≤ L(n)` for every positive `n`,
 where `L` is the function of Definition 1, given by its
