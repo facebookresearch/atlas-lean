@@ -1199,3 +1199,4 @@ Topics added since this subject's fields were last revised.
 - [Faltings Height](faltings-height/README.md)
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
+- [Local universal property of a normalized Kummer cover](exists-unique-lift-from-normalization-ku.md)
