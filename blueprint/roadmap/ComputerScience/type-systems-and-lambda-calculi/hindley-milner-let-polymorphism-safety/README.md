@@ -3,9 +3,7 @@
 - [Subject reduction](preservation.md)
 - [Progress](progress.md)
 - [Values are irreducible](not-step.md)
-- [Type soundness](type-safety.md)
 - [The calculus as an operational semantics](op-sem.md)
-- [Typed programs are safe](safe.md)
 - [Programs accepted by Algorithm W do not go wrong](type-safety-of-w.md)
 - [Application to a list of arguments](apps.md)
 - [Constants](constants.md)
@@ -39,3 +37,5 @@
 - [Term substitution for a scheme](subst-scheme.md)
 - [Term substitution for a `let`-bound name](subst-gen.md)
 - [Term substitution for a `λ`-bound name](subst-mono.md)
+
+Type soundness itself is stated at [Type safety of let-polymorphism](../type-soundness/type-safety-of-let-polymorphism.md).

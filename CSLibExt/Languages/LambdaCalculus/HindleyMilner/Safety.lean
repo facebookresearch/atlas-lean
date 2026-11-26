@@ -16,9 +16,9 @@ public import CSLibExt.Languages.TypeSafety
 
 Subject reduction, progress and type soundness for the call-by-value calculus with constants of
 `CSLibExt/Languages/LambdaCalculus/HindleyMilner/Semantics.lean`, for the syntax-directed
-Damas-Milner typing of `CSLibExt/Languages/LambdaCalculus/HindleyMilner/Typing.lean`, under the
-hypotheses `Constants.Agrees` on the δ-relation. The constants have a pure semantics, so no value
-restriction is used.
+Damas-Milner typing of `CSLibExt/Languages/LambdaCalculus/HindleyMilner/Typing.lean`, for a
+signature of finitely many constants, under the hypotheses `Constants.Agrees` on the δ-relation.
+The constants have a pure semantics, so no value restriction is used.
 
 Soundness is not proved separately: it is the safety schema of
 `CSLibExt/Languages/TypeSafety.lean` applied to the typing predicate `Constants.Typed`, both in
@@ -185,9 +185,7 @@ theorem progress (hK : K.Agrees δ) (he : HasType K.ctx e τ) :
   | var y =>
     obtain ⟨σ, ts, hy, rfl⟩ := hasType_var_iff.mp he
     have hc : y ∈ K.names := List.mem_toFinset.mpr (Ctx.mem_names_of_lookup hy)
-    rcases hK.progress (args := []) hc (by simp) he with h | ⟨e', h⟩
-    · exact Or.inl h
-    · exact Or.inr ⟨e', Step.delta h⟩
+    exact hK.progress (args := []) hc (by simp) he
   | lam z b => exact Or.inl IsValue.lam
   | app e₁ e₂ ih₁ ih₂ =>
     obtain ⟨τ₁, h₁, h₂⟩ := hasType_app_iff.mp he
@@ -204,9 +202,7 @@ theorem progress (hK : K.Agrees δ) (he : HasType K.ctx e τ) :
             · exact hargs a ha
             · rw [List.mem_singleton.mp ha]
               exact hv₂
-          rcases hK.progress hc hargs' he with h | ⟨e', h⟩
-          · exact Or.inl h
-          · exact Or.inr ⟨e', Step.delta h⟩
+          exact hK.progress hc hargs' he
       · exact Or.inr ⟨_, Step.appR hv₁ hs⟩
     · exact Or.inr ⟨_, Step.appL hs⟩
   | let_ z e₁ e₂ ih₁ _ =>
@@ -277,9 +273,10 @@ theorem IsValue.not_step (hK : K.Agrees δ) (hv : K.IsValue e) : ¬ K.Step δ e 
       rw [headArgs_var_apps] at this
       simp [headArgs] at this
 
-/-- **Type soundness.** Let $\delta$ agree with the signature $K$. If a well-formed expression
-$e$ has type $\tau$ in the initial context, then every expression $e'$ that $e$ reduces to in
-finitely many steps is a value or reduces: a typed program does not go wrong. -/
+/-- **Type soundness.** Let $K$ be a signature, with finitely many constants, and let $\delta$
+agree with it. If a well-formed expression $e$ has type $\tau$ in the initial context, then every
+expression $e'$ that $e$ reduces to in finitely many steps is a value or reduces: a typed program
+does not go wrong. -/
 theorem typeSafety (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.WF e)
     (hr : Relation.ReflTransGen (K.Step δ) e e') : K.IsValue e' ∨ ∃ e'', K.Step δ e' e'' :=
     final_or_step_of_reflTransGen (K.Step δ) K.IsValue K.Typed
@@ -298,9 +295,9 @@ def opSem (hK : K.Agrees δ) : OpSem Expr Unit where
   Final := K.IsValue
   final_terminal := fun hv _ _ h => IsValue.not_step hK hv h
 
-/-- **Typed programs are safe.** Let $\delta$ agree with the signature $K$. If a well-formed
-expression $e$ has type $\tau$ in the initial context, then no configuration reachable from $e$
-in `opSem hK` is stuck. -/
+/-- **Typed programs are safe.** Let $K$ be a signature, with finitely many constants, and let
+$\delta$ agree with it. If a well-formed expression $e$ has type $\tau$ in the initial context,
+then no configuration reachable from $e$ in `opSem hK` is stuck. -/
 theorem safe (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.WF e) : (opSem hK).Safe e :=
     OpSem.safe_of_progress_preservation (opSem hK) K.Typed
       (fun he ↦ (progress hK he.1).imp id fun ⟨e', hs⟩ ↦ ⟨e', (), hs⟩)
@@ -311,10 +308,10 @@ theorem safe (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.WF e) : (opSe
       ⟨he, hwf⟩
 
 /-- **Programs accepted by Algorithm W do not go wrong.** Let equality of base types be
-decidable and $\delta$ agree with the signature $K$. If Algorithm W, run on the initial context
-and a well-formed expression $e$ with any counter $n$, returns a substitution $s$, a monotype
-$\tau$ and a counter $n'$, then every expression that $e$ reduces to in finitely many steps is a
-value or reduces. -/
+decidable, let $K$ be a signature, with finitely many constants, and let $\delta$ agree with it.
+If Algorithm W, run on the initial context and a well-formed expression $e$ with any counter
+$n$, returns a substitution $s$, a monotype $\tau$ and a counter $n'$, then every expression that
+$e$ reduces to in finitely many steps is a value or reduces. -/
 theorem typeSafety_of_W [DecidableEq B] (hK : K.Agrees δ) {n n' : ℕ} {s : Subst B}
     (hW : W K.ctx e n = some (s, τ, n')) (hwf : K.WF e)
     (hr : Relation.ReflTransGen (K.Step δ) e e') : K.IsValue e' ∨ ∃ e'', K.Step δ e' e'' :=

@@ -129,7 +129,9 @@ every free occurrence of the name $x$ by the expression $v$:
 
 - a variable $x$ becomes $v$, and any other variable is unchanged;
 - an application is substituted on both sides;
-- under a binder $y$ ($\lambda y$, or the body of $\mathsf{let}\ y$): if $y = x$ the body is
+- in $\mathsf{let}\ y = e_1\ \mathsf{in}\ e_2$ the bound expression $e_1$ is always
+  substituted, even when $y = x$, since $y$ scopes over the body $e_2$ only;
+- under a binder $y$ ($\lambda y$, or $\mathsf{let}\ y$ for its body): if $y = x$ the body is
   unchanged; if $y$ is a free name of $v$, the binder is renamed to a name $z$ outside the names
   of the body and of $v$ and outside $\{x, y\}$, then the body is substituted; otherwise the
   body is substituted with the binder kept.
@@ -161,18 +163,23 @@ instance instHasSubstitution : HasSubstitution Expr String Expr where
 
 variable {e e₁ e₂ v : Expr} {x y : String}
 
-/-- **The notation unfolds to `Expr.subst`.** -/
+/-- **The notation unfolds to `Expr.subst`.** For all expressions $e$ and $v$ and every name
+$x$, $e[x := v]$ is `e.subst x v`. -/
 theorem subst_def : e[x := v] = e.subst x v := rfl
 
 /-- **Substitution in a variable.** The variable $y$ becomes $v$ if $y = x$ and stays $y$
 otherwise. -/
 theorem var_subst : (var y)[x := v] = if y = x then v else var y := by simp [subst_def, subst]
 
-/-- **Substitution in an application.** -/
+/-- **Substitution in an application.** For all expressions $e_1$, $e_2$, $v$ and every name
+$x$, $(e_1\, e_2)[x := v] = (e_1[x := v])\, (e_2[x := v])$: both sides of the application are
+substituted. -/
 theorem app_subst : (app e₁ e₂)[x := v] = app (e₁[x := v]) (e₂[x := v]) :=
   by simp [subst_def, subst]
 
-/-- **Substitution stops at a binder of the same name.** -/
+/-- **Substitution stops at a binder of the same name.** For all expressions $e$ and $v$ and
+every name $x$, $(\lambda x.\, e)[x := v] = \lambda x.\, e$: an abstraction that binds $x$ has no
+free occurrence of $x$. -/
 theorem lam_subst_self : (lam x e)[x := v] = lam x e := by simp [subst_def, subst]
 
 /-- **Substitution under a binder that is not free in the substituted expression.** If $y \ne x$
@@ -462,7 +469,7 @@ private theorem gen_rename_moreGeneral (Γ Γ' : Ctx B) (τ : Ty B) :
 /-- **Weakening for let-polymorphic typing.** Let $\Gamma \vdash e : \tau$, and let $\Gamma'$ be
 a context in which every free name $y$ of $e$ that has a scheme $\sigma$ in $\Gamma$ has a scheme
 in $\Gamma'$ more general than $\sigma$. Then $\Gamma' \vdash e : \tau$. The context $\Gamma'$
-may bind other names and have other free type variables; at each `let` of $e`, the type
+may bind other names and have other free type variables; at each `let` of $e$, the type
 variables generalized in $\Gamma$ are renamed above the free type variables of $\Gamma'$. -/
 theorem HasType.mono_fv {Γ : Ctx B} {e : Expr} {τ : Ty B} (h : HasType Γ e τ) {Γ' : Ctx B}
     (hΓ : ∀ y ∈ e.fv, ∀ σ, Γ.lookup y = some σ →

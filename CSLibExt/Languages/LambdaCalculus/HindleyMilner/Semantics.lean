@@ -16,9 +16,11 @@ The pure fragment of the calculus of Pottier and Rémy (*The Essence of ML Type 
 §10.1, Figures 10-1 and 10-2) over the expressions of
 `CSLibExt/Languages/LambdaCalculus/HindleyMilner/Typing.lean`, which are kept unchanged.
 
-Constants are names bound by a closed initial context $\Gamma_0$ (their Definition 10.5.2): a
-`Constants` record gives the context, an arity for each constant, and the partition into
-constructors and destructors. Constants and program variables are distinct syntactic classes in
+Constants are names bound by an initial context $\Gamma_0$ whose visible schemes are closed
+(their Definition 10.5.2): a `Constants` record gives the context, an arity for each constant,
+and the partition into constructors and destructors. The context is a list, so a signature has
+finitely many constants, whereas the source allows the set of constants to be finite or
+infinite (their §10.1). Constants and program variables are distinct syntactic classes in
 the source; here a well-formedness predicate `Constants.WF` restores this: a program never binds
 the name of a constant. Without constants, every closed typed expression would be a value or a
 redex, and progress would say nothing.
@@ -32,8 +34,10 @@ saturated destructor applications, and the evaluation contexts are `[]`, `E e`, 
 The δ-relation is a parameter. `Constants.Agrees` collects the hypotheses on it, all explicit:
 the shape of δ-redexes, well-formedness of δ-reducts, and the two requirements of Pottier and
 Rémy's Definition 10.5.5 (δ-reduction preserves types; a well-typed constant application to values
-is a value or a δ-redex). δ relates expressions only, with no store, so every constant has a
-pure semantics in the sense of their Definition 10.5.6 and no value restriction is used.
+is a value or reduces). The reduction need not happen at the root: a destructor applied to more
+values than its arity reduces inside the application, by reducing its saturated head. δ relates
+expressions only, with no store, so every constant has a pure semantics in the sense of their
+Definition 10.5.6 and no value restriction is used.
 
 ## Main definitions
 
@@ -64,10 +68,13 @@ applying $h$ to the arguments $a_1, \dots, a_k$ in order, left-associated; with 
 is $h$. -/
 def Expr.apps (h : Expr) (args : List Expr) : Expr := args.foldl Expr.app h
 
-/-- **Constants.** A signature of constants over base types $B$: a typing context $\Gamma_0$
-binding each constant name to a type scheme, an arity for each name, and the predicate telling
-the constructors apart from the destructors. The context is closed: no scheme of $\Gamma_0$ has
-a free type variable. -/
+/-- **Constants.** A signature of finitely many constants over base types $B$: a typing context
+$\Gamma_0$, a list binding each constant name to a type scheme, an arity for each name, and the
+predicate telling the constructors apart from the destructors. The context is closed: the
+visible scheme of each name, the scheme of its first binding in $\Gamma_0$, has no free type
+variable. A binding shadowed by an earlier binding of the same name is not visible and may have
+free type variables. Pottier and Rémy allow the set of constants to be finite or infinite
+(§10.1); here it is the finite set of names bound by $\Gamma_0$. -/
 structure Constants (B : Type u) where
   /-- The initial context $\Gamma_0$, binding each constant to its type scheme. -/
   ctx : Ctx B
@@ -75,7 +82,7 @@ structure Constants (B : Type u) where
   arity : String → ℕ
   /-- The constructors; every other constant is a destructor. -/
   IsCtor : String → Prop
-  /-- The initial context has no free type variable. -/
+  /-- The visible scheme of each name of the initial context has no free type variable. -/
   closed : ctx.ftv = ∅
 
 variable {B : Type u}
@@ -121,8 +128,10 @@ $K$:
 - every δ-redex is a destructor applied to exactly as many values as its arity;
 - every δ-reduct is well formed;
 - δ-reduction preserves types in the initial context (Pottier and Rémy, Definition 10.5.5 (i));
-- a constant applied to values that is well typed in the initial context is a value or a
-  δ-redex (Definition 10.5.5 (ii)). -/
+- a constant applied to values that is well typed in the initial context is a value or reduces
+  (Definition 10.5.5 (ii)). The reduction need not be a δ-step at the root: a destructor applied
+  to more values than its arity reduces in the evaluation context of the application, by
+  reducing its saturated head. -/
 structure Agrees (δ : Expr → Expr → Prop) : Prop where
   /-- δ-redexes are saturated destructor applications to values. -/
   redex : ∀ {e e' : Expr}, δ e e' → ∃ c args, e = (Expr.var c).apps args ∧ c ∈ K.names ∧
@@ -131,10 +140,10 @@ structure Agrees (δ : Expr → Expr → Prop) : Prop where
   wf : ∀ {e e' : Expr}, δ e e' → K.WF e'
   /-- δ-reduction preserves types in the initial context. -/
   preserve : ∀ {e e' : Expr} {τ : Ty B}, δ e e' → HasType K.ctx e τ → HasType K.ctx e' τ
-  /-- A well-typed constant application to values is a value or a δ-redex. -/
+  /-- A well-typed constant application to values is a value or reduces. -/
   progress : ∀ {c : String} {args : List Expr} {τ : Ty B}, c ∈ K.names →
     (∀ a ∈ args, K.IsValue a) → HasType K.ctx ((Expr.var c).apps args) τ →
-    K.IsValue ((Expr.var c).apps args) ∨ ∃ e', δ ((Expr.var c).apps args) e'
+    K.IsValue ((Expr.var c).apps args) ∨ ∃ e', K.Step δ ((Expr.var c).apps args) e'
 
 /-- **Typed programs.** An expression is a typed program of type $\tau$ for the signature $K$
 when it has type $\tau$ in the initial context and is well formed. -/

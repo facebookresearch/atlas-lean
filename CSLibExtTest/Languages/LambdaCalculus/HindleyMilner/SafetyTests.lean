@@ -26,6 +26,11 @@ destructor `not : bool → bool` with δ-rules `not tt ↦ ff` and `not ff ↦ t
 - Capture: substituting `one` under a binder named `one` renames the binder, which keeps the type
   of the reduct; plain replacement would not. That program binds a constant, so it is not well
   formed.
+- Overapplication: with the nullary constructor `u : int` and the unary destructor
+  `d : int → (int → int)`, where `d u ↦ λx. x`, the typed `(d u) u` is neither a value nor a
+  δ-redex, yet it reduces, by reducing its head `d u`. δ agrees with this signature, which needs
+  agreement to ask for reducibility rather than a δ-step at the root; `(d u) u` reduces to `u`
+  and is safe.
 - Statement pins for the safety theorems, closed by the theorems themselves.
 -/
 
@@ -137,8 +142,8 @@ theorem agrees : K₀.Agrees δ₀ := by
         obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp h₂
         rcases hnames' with rfl | rfl | rfl | rfl <;> simp [K₀, Ctx.lookup] at hσ <;> subst hσ <;>
           rw [inst_toScheme] at hτ <;> cases hτ
-        · exact ⟨.var "ff", Or.inl ⟨rfl, rfl⟩⟩
-        · exact ⟨.var "tt", Or.inr ⟨rfl, rfl⟩⟩
+        · exact ⟨.var "ff", Constants.Step.delta (Or.inl ⟨rfl, rfl⟩)⟩
+        · exact ⟨.var "tt", Constants.Step.delta (Or.inr ⟨rfl, rfl⟩)⟩
     · exfalso
       obtain ⟨τ', h'⟩ := hhead rest _ τ he
       obtain ⟨τ₂, h₂, -⟩ := hasType_app_iff.mp h'
@@ -427,6 +432,129 @@ theorem eCap_not_wf : ¬ K₀.WF eCap := by
   unfold Constants.WF
   decide
 
+/-! ### Overapplication -/
+
+/-- A second signature: the constructor `u : int` of arity 0 and the destructor
+`d : int → (int → int)` of arity 1. -/
+def Kud : Constants Base where
+  ctx := [("u", toScheme tI), ("d", toScheme (node tI (node tI tI)))]
+  arity c := if c = "d" then 1 else 0
+  IsCtor c := c ≠ "d"
+  closed := by decide
+
+/-- δ for `d`: `d u ↦ λx. x`. -/
+def δud (e e' : Expr) : Prop := e = .app (.var "d") (.var "u") ∧ e' = .lam "x" (.var "x")
+
+/-- `(d u) u`: the destructor `d` applied to one more value than its arity. -/
+def overapp : Expr := .app (.app (.var "d") (.var "u")) (.var "u")
+
+/-- δ agrees with the second signature. A typed application of a constant to values is a value,
+the δ-redex `d u`, or an overapplication of `d u` to more values, which is no δ-redex but reduces
+by reducing its head `d u`. -/
+theorem agrees_ud : Kud.Agrees δud := by
+  have valU : Kud.IsValue (.var "u") :=
+    Constants.IsValue.const (c := "u") (args := []) (by decide) (by simp)
+      (Or.inl ⟨by simp [Kud], by simp [Kud]⟩)
+  have hsteps : ∀ (rest : List Expr) (h h' : Expr), Kud.Step δud h h' →
+      Kud.Step δud (h.apps rest) (h'.apps rest) := by
+    intro rest
+    induction rest with
+    | nil => exact fun h h' hs ↦ hs
+    | cons r rs ih => exact fun h h' hs ↦ ih (.app h r) (.app h' r) (Constants.Step.appL hs)
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro e e' h
+    obtain ⟨rfl, rfl⟩ := h
+    exact ⟨"d", [.var "u"], rfl, by decide, by simp [Kud], by simp [Kud], by simpa using valU⟩
+  · intro e e' h
+    obtain ⟨-, rfl⟩ := h
+    unfold Constants.WF
+    decide
+  · intro e e' τ h he
+    obtain ⟨rfl, rfl⟩ := h
+    obtain ⟨τ₁, h₁, -⟩ := hasType_app_iff.mp he
+    obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp h₁
+    simp [Kud, Ctx.lookup] at hσ
+    subst hσ
+    rw [inst_toScheme] at hτ
+    cases hτ
+    refine HasType.lam ?_
+    simpa [inst_toScheme] using HasType.var (Γ := ("x", toScheme tI) :: Kud.ctx) (x := "x")
+      (fun _ ↦ tI) (σ := toScheme tI) (by simp [Ctx.lookup])
+  · intro c args τ hc hargs he
+    have hhead : ∀ (rest : List Expr) (h : Expr) (τ : Ty Base),
+        HasType Kud.ctx (h.apps rest) τ → ∃ τ', HasType Kud.ctx h τ' := by
+      intro rest
+      induction rest with
+      | nil => exact fun h τ hh ↦ ⟨τ, hh⟩
+      | cons r rs ih =>
+        intro h τ hh
+        obtain ⟨τ', h'⟩ := ih (.app h r) τ hh
+        obtain ⟨τ₁, h₁, -⟩ := hasType_app_iff.mp h'
+        exact ⟨_, h₁⟩
+    have hint : ∀ a, Kud.IsValue a → HasType Kud.ctx a tI → a = .var "u" := by
+      intro a hv ht
+      cases hv with
+      | var hz =>
+        obtain ⟨σ, ts, hσ, -⟩ := hasType_var_iff.mp ht
+        exact absurd (List.mem_toFinset.mpr (Ctx.mem_names_of_lookup hσ)) hz
+      | lam =>
+        obtain ⟨τ₁, τ₂, h, -⟩ := hasType_lam_iff.mp ht
+        cases h
+      | @const c' args' hc' _ hlen' =>
+        have hnames' : c' = "u" ∨ c' = "d" := by simpa [Constants.names, Kud] using hc'
+        have hargs' : args' = [] := by
+          rcases hnames' with rfl | rfl <;> simpa [Kud] using hlen'
+        subst hargs'
+        obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp ht
+        rcases hnames' with rfl | rfl <;> simp [Kud, Ctx.lookup] at hσ <;> subst hσ <;>
+          rw [inst_toScheme] at hτ
+        · rfl
+        · cases hτ
+    have hnames : c = "u" ∨ c = "d" := by simpa [Constants.names, Kud] using hc
+    rcases args with _ | ⟨a, rest⟩
+    · left
+      rcases hnames with rfl | rfl
+      · exact valU
+      · exact Constants.IsValue.const hc (by simp) (Or.inr ⟨by simp [Kud], by simp [Kud]⟩)
+    · obtain ⟨τ', h'⟩ := hhead rest (.app (.var c) a) τ he
+      obtain ⟨τ₁, h₁, h₂⟩ := hasType_app_iff.mp h'
+      obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp h₁
+      rcases hnames with rfl | rfl <;> simp [Kud, Ctx.lookup] at hσ <;> subst hσ <;>
+        rw [inst_toScheme] at hτ <;> cases hτ
+      right
+      obtain rfl := hint a (hargs a List.mem_cons_self) h₂
+      exact ⟨_, hsteps rest _ _ (Constants.Step.delta ⟨rfl, rfl⟩)⟩
+
+/-- `(d u) u` has type `int` and reduces, in the evaluation context `[] u`, to `(λx. x) u`; it is
+not a value, and no δ-rule applies to it at the root. -/
+theorem overapp_reduces : HasType Kud.ctx overapp tI ∧
+    Kud.Step δud overapp (.app (.lam "x" (.var "x")) (.var "u")) ∧
+    ¬ Kud.IsValue overapp ∧ ∀ e', ¬ δud overapp e' := by
+  have hs : Kud.Step δud overapp (.app (.lam "x" (.var "x")) (.var "u")) :=
+    Constants.Step.appL (Constants.Step.delta ⟨rfl, rfl⟩)
+  have hu : HasType Kud.ctx (.var "u") tI := by
+    simpa [inst_toScheme] using HasType.var (Γ := Kud.ctx) (x := "u") (fun _ ↦ tI)
+      (σ := toScheme tI) (by simp [Kud, Ctx.lookup])
+  have hd : HasType Kud.ctx (.var "d") (node tI (node tI tI)) := by
+    simpa [inst_toScheme] using HasType.var (Γ := Kud.ctx) (x := "d") (fun _ ↦ tI)
+      (σ := toScheme (node tI (node tI tI))) (by simp [Kud, Ctx.lookup])
+  refine ⟨.app (.app hd hu) hu, hs, fun hv ↦ Constants.IsValue.not_step agrees_ud hv hs, ?_⟩
+  intro e' h
+  simp [δud, overapp] at h
+
+/-- `(d u) u` reduces to the value `u`, and it is safe. -/
+theorem overapp_safe : Relation.ReflTransGen (Kud.Step δud) overapp (.var "u") ∧
+    (Constants.opSem agrees_ud).Safe overapp := by
+  have valU : Kud.IsValue (.var "u") :=
+    Constants.IsValue.const (c := "u") (args := []) (by decide) (by simp)
+      (Or.inl ⟨by simp [Kud], by simp [Kud]⟩)
+  have hβ : Kud.Step δud (.app (.lam "x" (.var "x")) (.var "u")) (.var "u") := by
+    simpa [Expr.subst_def, Expr.subst] using
+      Constants.Step.beta (K := Kud) (δ := δud) (z := "x") (e := .var "x") valU
+  refine ⟨.head overapp_reduces.2.1 (.single hβ), Constants.safe agrees_ud overapp_reduces.1 ?_⟩
+  unfold Constants.WF
+  decide
+
 /-! ### Statement pins -/
 
 section Pins
@@ -440,6 +568,11 @@ example : K.Agrees δ → HasType K.ctx e τ → K.IsValue e ∨ ∃ e', K.Step 
   Constants.progress
 
 example : K.Agrees δ → K.IsValue e → ¬ K.Step δ e e' := Constants.IsValue.not_step
+
+example (hK : K.Agrees δ) {c : String} {args : List Expr} : c ∈ K.names →
+    (∀ a ∈ args, K.IsValue a) → HasType K.ctx ((Expr.var c).apps args) τ →
+    K.IsValue ((Expr.var c).apps args) ∨ ∃ e', K.Step δ ((Expr.var c).apps args) e' :=
+  hK.progress
 
 example : K.Agrees δ → HasType K.ctx e τ → K.WF e → Relation.ReflTransGen (K.Step δ) e e' →
     K.IsValue e' ∨ ∃ e'', K.Step δ e' e'' := Constants.typeSafety
