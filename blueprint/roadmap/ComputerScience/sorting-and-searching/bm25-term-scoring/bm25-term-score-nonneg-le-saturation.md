@@ -1,5 +1,3 @@
 # BM25 term scores are nonnegative and saturate
 
-Let `idf ≥ 0`, `tf ≥ 0`, `k1 > 0`, and let the length-normalization factor `(1
-- b) + b * (docLen / avgLen)` be positive. Then the BM25 term score is
-nonnegative and at most `idf * (k1 + 1)`.
+Let $\mathrm{idf} \ge 0$, $\mathrm{tf} \ge 0$ and $k_1 > 0$, and let the length-normalization factor $(1 - b) + b \cdot (\mathrm{docLen} / \mathrm{avgLen})$ be positive. Then the [BM25 term score](bm25-term-score.md) is nonnegative and at most $\mathrm{idf} \cdot (k_1 + 1)$.

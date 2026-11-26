@@ -1,3 +1,3 @@
-# Bm25 Term Score zero tf
+# BM25 term score at zero term frequency
 
-A BM25 term score at zero term frequency is zero.
+For all parameters, the [BM25 term score](bm25-term-score.md) at term frequency $\mathrm{tf} = 0$ is zero.
