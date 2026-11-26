@@ -1031,8 +1031,7 @@ public theorem landau_ramanujan_asymptotic :
     have h : p % 4 = 1 ∨ p % 4 = 3 := by omega
     rcases h with h | h <;> rw [h] <;> rfl
   obtain ⟨α, hαpos, _, hH⟩ :=
-    isEquivalent_card_primeFactors_three_mod_four.exists_tendsto_sum_of_prime_mod_four
-      f lrH_nonneg lrH_le_one 1 isUnit_one hprime
+    exists_tendsto_sum_of_prime_mod_four f lrH_nonneg lrH_le_one 1 isUnit_one hprime
   obtain ⟨c₀, hc₀pos, hB⟩ := lr_B_tendsto α hαpos hH
   have hcount : ∀ᶠ x : ℝ in Filter.atTop,
       ((Set.ncard {m : ℕ | (m : ℝ) ≤ x ∧ ∃ a b : ℕ, m = a ^ 2 + b ^ 2} : ℕ) : ℝ)

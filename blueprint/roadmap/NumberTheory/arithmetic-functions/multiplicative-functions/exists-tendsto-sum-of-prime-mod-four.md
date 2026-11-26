@@ -10,4 +10,4 @@ Both sums start at $n = 1$.
 
 ## Sources
 
-- The elementary mean-value argument in the ATLAS proof of the Landau–Ramanujan theorem (`MathlibExt.NumberTheory.PrimeCounting.LandauRamanujan`, revision `81015ce9`).
+- Eduard Wirsing, “Das asymptotische Verhalten von Summen über multiplikative Funktionen”, *Math. Ann.* **143** (1961), 75–102. For the mean-value formula specialized here to $τ = 1/2$, see also Pieter Moree, *Chebyshev's bias for composite numbers with restricted prime divisors*, Theorem 1 ([arXiv:math/0112100](https://arxiv.org/abs/math/0112100)).

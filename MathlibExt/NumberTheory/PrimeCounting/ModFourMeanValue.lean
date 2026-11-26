@@ -22,13 +22,16 @@ import MathlibExt.NumberTheory.PrimeCounting.WeakPNTArithmeticProgression
 For completely multiplicative weights between zero and one that select a single odd prime
 class modulo four, `exists_tendsto_sum_of_prime_mod_four` relates the leading constants
 in the ordinary and reciprocal sums. Both the Landau–Ramanujan and the Jones–Zvonkin
-counting arguments use this estimate.
+counting arguments use this estimate. The elementary proof adapts the argument in
+`MathlibExt.NumberTheory.PrimeCounting.LandauRamanujan` at revision `81015ce9`.
 -/
 
-namespace MetaMathlibExt.isEquivalent_card_primeFactors_three_mod_four
+namespace MetaMathlibExt
 
 open Asymptotics Filter Finset Nat Chebyshev ArithmeticFunction
 open scoped Topology
+
+namespace exists_tendsto_sum_of_prime_mod_four
 
 private structure Weight where
   f : ℕ →*₀ ℝ
@@ -2313,6 +2316,10 @@ private lemma count_tendsto (α : ℝ)
 
 end Weight
 
+end exists_tendsto_sum_of_prime_mod_four
+
+open exists_tendsto_sum_of_prime_mod_four
+
 /-- **Mean values for weights selecting one odd prime class modulo four.** Suppose that
 $f : \mathbb{N} \to [0,1]$ is completely multiplicative with $f(0)=0$ and $f(1)=1$. Suppose
 that on odd primes $f$ equals the indicator of one unit residue class modulo four.
@@ -2321,8 +2328,10 @@ $\sum_{n \le x} f(n)/n$ is asymptotic to $α\sqrt{\log x}$ and
 $\sum_{n \le x} f(n)$ is asymptotic to $(α/2)x/\sqrt{\log x}$.
 Both sums start at $n = 1$.
 
-Source: The elementary mean-value argument in the ATLAS proof of the Landau–Ramanujan theorem
-(`MathlibExt.NumberTheory.PrimeCounting.LandauRamanujan`, revision `81015ce9`). -/
+Source: Eduard Wirsing, “Das asymptotische Verhalten von Summen über multiplikative Funktionen”,
+*Math. Ann.* **143** (1961), 75–102. For the mean-value formula specialized here to
+$τ = 1/2$, see also Pieter Moree, *Chebyshev's bias for composite numbers with restricted
+prime divisors*, Theorem 1 ([arXiv:math/0112100](https://arxiv.org/abs/math/0112100)). -/
 public theorem exists_tendsto_sum_of_prime_mod_four (f : ℕ →*₀ ℝ)
     (h₀ : ∀ n, 0 ≤ f n) (h₁ : ∀ n, f n ≤ 1) (a : ZMod 4) (ha : IsUnit a)
     (hp : ∀ p : ℕ, p.Prime → p ≠ 2 → f p = if (p : ZMod 4) = a then 1 else 0) :
@@ -2335,4 +2344,4 @@ public theorem exists_tendsto_sum_of_prime_mod_four (f : ℕ →*₀ ℝ)
   obtain ⟨α, hα, hA⟩ := w.recip_tendsto
   exact ⟨α, hα, hA, w.count_tendsto α hA⟩
 
-end MetaMathlibExt.isEquivalent_card_primeFactors_three_mod_four
+end MetaMathlibExt

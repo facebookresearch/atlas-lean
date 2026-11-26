@@ -13,9 +13,9 @@ import MathlibExt.NumberTheory.PrimeCounting.ModFourMeanValue
 open Filter
 open scoped Topology
 
-open MetaMathlibExt.isEquivalent_card_primeFactors_three_mod_four
+open MetaMathlibExt
 
-namespace MathlibExtTest.ModFourMeanValue
+namespace MetaMathlibExtTest.ModFourMeanValue
 
 -- The same leading constant occurs in both estimates, with a factor of two.
 example (f : ℕ →*₀ ℝ) (h₀ : ∀ n, 0 ≤ f n) (h₁ : ∀ n, f n ≤ 1) (a : ZMod 4)
@@ -29,4 +29,4 @@ example (f : ℕ →*₀ ℝ) (h₀ : ∀ n, 0 ≤ f n) (h₁ : ∀ n, f n ≤ 1
   congr 1
   field_simp
 
-end MathlibExtTest.ModFourMeanValue
+end MetaMathlibExtTest.ModFourMeanValue
