@@ -65,6 +65,7 @@ Topics added since this subject's fields were last revised.
 - [Simulated Annealing](simulated-annealing/README.md)
 - [Soundness](soundness/README.md)
 - [Summation](summation/README.md)
+- [Surface Mesh](surface-mesh/README.md)
 - [Termination](termination/README.md)
 - [Tree CSP](tree-csp/README.md)
 - [Verma Pearl Forward](verma-pearl-forward/README.md)
