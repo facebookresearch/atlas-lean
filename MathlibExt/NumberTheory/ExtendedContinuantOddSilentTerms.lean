@@ -18,8 +18,9 @@ import Mathlib.Tactic.Ring
 
 For bi-infinite integer sequences `x y z : ℤ → ℤ`, `oddSilent_terms` shows that the
 strict-equivalence hypotheses on the raw convergents force `xₙ = yₙ` for `n ≥ 0`, give explicit
-formulas for the three boundary terms `x_{-σ+2}`, `x_{-σ+1}` and `x_{-σ}`, and force
-`x_{-n} = -z_{n-σ+1}` for `n ≥ σ + 1`.
+formulas for `x_{-σ+1}` and `x_{-σ}` and for the product `x_{-σ+2} x_{-σ+1}` (the paper's
+quotient formula for `x_{-σ+2}`, multiplied out), and force `x_{-n} = -z_{n-σ+1}` for
+`n ≥ σ + 1`.
 
 Statements from Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued
 Fractions*, INTEGERS 26 (2026), Article A73.
