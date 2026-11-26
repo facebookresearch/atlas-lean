@@ -12,13 +12,20 @@ module
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.CoalgebraTensorDegree
 
 /-!
-# Native triple tensor realization for the exterior coalgebra
+# Triple tensor degrees and exterior coassociativity
 
-Both parenthesizations are the actual native graded tensor objects under the
-canonical UniverseTensor dictionaries. The right realization is a split
-injection. The native associator agrees with the original tensor associator
-under realization, and tensoring the actual coproduct agrees with the two
-ordinary iterated coproducts. These equations supply native coassociativity.
+Let R be a commutative ring, M an R-module, Eₙ=∧ⁿ_RM and Tₙ=⊕_{p+q=n}Eₚ⊗_RE_q. The
+right-associated triple degree is ⊕_{p+s=n}Eₚ⊗T_s; the left-associated degree is
+⊕_{s+r=n}T_s⊗E_r. Their pure components are indexed by p+q+r=n.
+
+Both degrees realize in E⊗(E⊗E), where E=ExteriorAlgebra(R,M); left realization includes the
+ordinary associator. Right realization has a finite projection lift as a left inverse. The
+graded associator agrees with these realizations and introduces no permutation sign.
+
+Applying the graded coproduct to the left or right tensor factor gives the two iterated
+coproduct maps. Their equality after the associator proves coassociativity in every n : ℕ. R and
+M retain their separate universes, with the categorical module universe max(u,v); no flatness
+assumption is used.
 -/
 
 @[expose] public section
@@ -41,7 +48,10 @@ local notation "𝓔" => gradedExterior R M
 local notation "𝓣" => gradedTensorSquare R M
 local notation "π" => exteriorPower.projection R M
 
-/-- The right-associated actual native triple tensor degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. tripleRightDegree in degree n is ⊕_{p+s=n} Eₚ⊗_RT_s, equivalently the
+right-associated sum of Eₚ⊗(E_q⊗E_r) over p+q+r=n. -/
 def tripleRightDegree (n : ℕ) : (ModuleCat.{max u v} R) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -49,7 +59,10 @@ def tripleRightDegree (n : ℕ) : (ModuleCat.{max u v} R) := by
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.tensorObj 𝓔 𝓣 n
 
-/-- The left-associated actual native triple tensor degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. tripleLeftDegree in degree n is ⊕_{s+r=n} T_s⊗_RE_r, equivalently the
+left-associated sum of (Eₚ⊗E_q)⊗E_r over p+q+r=n. -/
 def tripleLeftDegree (n : ℕ) : (ModuleCat.{max u v} R) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -57,7 +70,10 @@ def tripleLeftDegree (n : ℕ) : (ModuleCat.{max u v} R) := by
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.tensorObj 𝓣 𝓔 n
 
-/-- The outer canonical inclusion for the right-parenthesized triple tensor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For p,q,n : ℕ with p+q=n, tripleRightOuterι is the coproduct inclusion Eₚ⊗_RT_q →
+tripleRightDegree n. -/
 def tripleRightOuterι (p q n : ℕ) (h : p + q = n) :
     ModuleCat.of R ((⋀[R]^p M) ⊗[R] tensorDegree R M q) ⟶ tripleRightDegree R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
@@ -66,7 +82,10 @@ def tripleRightOuterι (p q n : ℕ) (h : p + q = n) :
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.ιTensorObj 𝓔 𝓣 p q n h
 
-/-- The outer canonical inclusion for the left-parenthesized triple tensor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For p,q,n : ℕ with p+q=n, tripleLeftOuterι is the inclusion Tₚ⊗_RE_q →
+tripleLeftDegree n. -/
 def tripleLeftOuterι (p q n : ℕ) (h : p + q = n) :
     ModuleCat.of R (tensorDegree R M p ⊗[R] (⋀[R]^q M)) ⟶ tripleLeftDegree R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
@@ -75,7 +94,11 @@ def tripleLeftOuterι (p q n : ℕ) (h : p + q = n) :
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.ιTensorObj 𝓣 𝓔 p q n h
 
-/-- Realize the right-associated degree in the original three-factor tensor module. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. The right realization maps tripleRightDegree n into E⊗_R(E⊗_RE), using Eₚ ↪ E on the
+first factor and the degree-q tensor realization on the second. A pure homogeneous a⊗(b⊗c)
+retains these three factors. -/
 def tripleRightRealize (n : ℕ) : tripleRightDegree R M n ⟶ ModuleCat.of R (E ⊗[R] P) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -84,7 +107,10 @@ def tripleRightRealize (n : ℕ) : tripleRightDegree R M n ⟶ ModuleCat.of R (E
   exact GradedObject.Monoidal.tensorObjDesc (fun p q _ =>
     ModuleCat.ofHom (TensorProduct.map (⋀[R]^p M).subtype (tensorDegreeRealize R M q).hom))
 
-/-- Realize the left-associated degree, followed by the original associator. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. The left realization includes Tₚ⊗E_q into (E⊗E)⊗E and then applies the ordinary
+tensor associator to E⊗(E⊗E). Thus (a⊗b)⊗c is realized as a⊗(b⊗c). -/
 def tripleLeftRealize (n : ℕ) : tripleLeftDegree R M n ⟶ ModuleCat.of R (E ⊗[R] P) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -115,14 +141,21 @@ theorem tripleLeftOuterι_realize (p q n : ℕ) (h : p + q = n) :
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.ι_tensorObjDesc (X₁ := 𝓣) (X₂ := 𝓔) _ p q h
 
-/-- The actual right-parenthesized lift of the third exterior degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For n : ℕ, tripleRightLift maps E⊗(E⊗E) to tripleRightDegree n by ∑_{p=0}ⁿ ι_{p,n-p}
+∘ (πₚ⊗L_{n-p}), where πₚ is the exterior projection and L_s the tensor-degree lift. -/
 def tripleRightLift (n : ℕ) : ModuleCat.of R (E ⊗[R] P) ⟶ tripleRightDegree R M n :=
   ∑ p : Fin (n + 1),
     ModuleCat.ofHom (TensorProduct.map (π p.val) (tensorDegreeLift R M (n - p.val)).hom) ≫
       tripleRightOuterι R M p.val (n - p.val) n
         (Nat.add_sub_of_le (Nat.le_of_lt_succ p.isLt))
 
-/-- The actual triple realization is also a split injection; no tensor flatness is used. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For each n : ℕ, tripleRightRealize followed by tripleRightLift is the identity on
+tripleRightDegree n. Hence right triple realization is a split injection, without a flatness
+hypothesis. -/
 theorem tripleRightRealize_lift (n : ℕ) :
     tripleRightRealize R M n ≫ tripleRightLift R M n = 𝟙 (tripleRightDegree R M n) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
@@ -179,19 +212,29 @@ theorem tripleRightRealize_injective (n : ℕ) :
   intro x
   exact congrArg (fun f => f.hom x) (tripleRightRealize_lift R M n)
 
-/-- The canonical pure-degree inclusion into the right-parenthesized triple tensor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For p,q,r,n : ℕ with p+q+r=n, tripleRightι includes Eₚ⊗(E_q⊗E_r) into
+tripleRightDegree n by first including E_q⊗E_r in T_{q+r}, then taking the outer
+(p,q+r)-summand. -/
 def tripleRightι (p q r n : ℕ) (h : p + q + r = n) :
     ModuleCat.of R ((⋀[R]^p M) ⊗[R] ((⋀[R]^q M) ⊗[R] (⋀[R]^r M))) ⟶
       tripleRightDegree R M n :=
   ModuleCat.ofHom (TensorProduct.map LinearMap.id (tensorDegreeι R M q r (q + r) rfl).hom) ≫
     tripleRightOuterι R M p (q + r) n (by rw [← Nat.add_assoc, h])
 
-/-- The stored additive group on the actual left-parenthesized tensor carrier. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For p,q : ℕ, the R-module tensor Eₚ⊗_RE_q carries its usual additive commutative
+group structure, used in the left-associated triple tensor module. -/
 local instance leftTensorAddGroup (p q : ℕ) :
     AddCommGroup (TensorProduct R (↥(⋀[R]^p M)) (↥(⋀[R]^q M))) :=
   TensorProduct.addCommGroup
 
-/-- The canonical pure-degree inclusion into the left-parenthesized triple tensor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For p,q,r,n : ℕ with p+q+r=n, tripleLeftι includes (Eₚ⊗E_q)⊗E_r into
+tripleLeftDegree n, first taking the (p,q)-summand of T_{p+q}, then the outer (p+q,r)-summand. -/
 def tripleLeftι (p q r n : ℕ) (h : p + q + r = n) :
     ModuleCat.of R (TensorProduct R
       (TensorProduct R (↥(⋀[R]^p M)) (↥(⋀[R]^q M))) (↥(⋀[R]^r M))) ⟶
@@ -235,7 +278,11 @@ theorem tripleLeftι_realize (p q r n : ℕ) (h : p + q + r = n) :
       (TensorProduct.map (⋀[R]^p M).subtype (⋀[R]^q M).subtype t ⊗ₜ[R] (c : E))
   rw [ht]
 
-/-- The native graded associator, retaining the original canonical dictionaries. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. In degree n : ℕ, tripleAssociator is the graded tensor associator tripleLeftDegree n
+→ tripleRightDegree n. On a homogeneous triple it is the ordinary map (a⊗b)⊗c ↦ a⊗(b⊗c), without
+an interchange sign. -/
 def tripleAssociator (n : ℕ) : tripleLeftDegree R M n ⟶ tripleRightDegree R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -254,7 +301,11 @@ theorem tripleLeftι_associator (p q r n : ℕ) (h : p + q + r = n) :
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.ιTensorObj₃'_associator_hom 𝓔 𝓔 𝓔 p q r n h
 
-/-- The actual native associator becomes the original tensor associator under realization. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For every n : ℕ, tripleAssociator followed by tripleRightRealize equals
+tripleLeftRealize. Both maps land in E⊗(E⊗E), with the ordinary tensor associator built into the
+left realization. -/
 theorem tripleAssociator_realize (n : ℕ) :
     tripleAssociator R M n ≫ tripleRightRealize R M n = tripleLeftRealize R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
@@ -283,7 +334,10 @@ theorem tripleAssociator_realize (n : ℕ) :
       rfl
   | add t s ht hs => simp only [TensorProduct.add_tmul, map_add, ht, hs]
 
-/-- Tensor the actual coproduct on the right, as a native graded morphism. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. In total degree n, gradedRightComul is id_{E•}⊗Δ, taking Tₙ to tripleRightDegree n
+by applying the graded exterior coproduct to the right factor. -/
 def gradedRightComul (n : ℕ) : tensorDegree R M n ⟶ tripleRightDegree R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -291,7 +345,10 @@ def gradedRightComul (n : ℕ) : tensorDegree R M n ⟶ tripleRightDegree R M n 
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.tensorHom (𝟙 𝓔) (gradedCoproduct R M) n
 
-/-- Tensor the actual coproduct on the left, as a native graded morphism. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. In total degree n, gradedLeftComul is Δ⊗id_{E•}, taking Tₙ to tripleLeftDegree n by
+applying the graded exterior coproduct to the left factor. -/
 def gradedLeftComul (n : ℕ) : tensorDegree R M n ⟶ tripleLeftDegree R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -368,7 +425,10 @@ theorem gradedLeftComul_realize (n : ℕ) :
   exact congrArg (fun z : P => TensorProduct.assoc R E E E (z ⊗ₜ[R] (b : E))) ha
 
 
-/-- The actual graded coproduct satisfies native coassociativity in every degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Put
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q), in the module universe max(u,v) for
+R,M in u,v. For every n : ℕ, Δₙ ≫ gradedRightComulₙ = Δₙ ≫ gradedLeftComulₙ ≫ tripleAssociatorₙ.
+This is the equality of the two iterated exterior coproducts after reassociation. -/
 theorem gradedCoproduct_coassoc (n : ℕ) :
     gradedCoproduct R M n ≫ gradedRightComul R M n =
       gradedCoproduct R M n ≫ gradedLeftComul R M n ≫ tripleAssociator R M n := by

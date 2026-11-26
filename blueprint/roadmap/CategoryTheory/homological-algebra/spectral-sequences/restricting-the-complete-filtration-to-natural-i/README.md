@@ -1,6 +1,6 @@
 # Restricting the complete filtration to natural indices
 
-- [Horizontal Filtration Nat To EInt Order Hom](horizontal-filtration-nat-to-eint-order.md)
-- [Horizontal Filtration Nat To EInt Functor](horizontal-filtration-nat-to-eint-functo.md)
-- [Horizontal Complete Total Filtration Nat Restriction Iso](horizontal-complete-total-filtration-nat.md)
-- [Horizontal Complete Total Filtration Nat Restriction Iso hom comp ι](horizontal-complete-total-filtration-nat-2.md)
+- [Natural filtration indices embed increasingly as finite extended-integer cuts](horizontal-filtration-nat-to-eint-order.md)
+- [The natural-cut embedding is a functor between ordered index categories](horizontal-filtration-nat-to-eint-functo.md)
+- [The complete diagram restricted to natural cuts is the finite filtration diagram](horizontal-complete-total-filtration-nat.md)
+- [Natural-cut restriction comparisons preserve total-complex inclusions](horizontal-complete-total-filtration-nat-2.md)

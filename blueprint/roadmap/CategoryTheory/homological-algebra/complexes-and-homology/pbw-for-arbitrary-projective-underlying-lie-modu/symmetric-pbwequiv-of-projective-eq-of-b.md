@@ -1,4 +1,6 @@
-# Symmetric PBWEquiv Of Projective eq of basis
+# Projective PBW agrees with every ordered-basis PBW equivalence
 
-The projective PBW forward map agrees with every free-basis construction whenever the
-underlying module also has a basis.
+Let R be a commutative ring, L an R-Lie algebra with projective underlying R-module, and b :
+Basis I R L with LinearOrder I. The projective-cover PBW equivalence Sym_R(L) ≃ₐ[R] gr(U_R(L))
+equals symmetricPBWEquivOfBasis(b). Both forward maps are the canonical generator-symbol
+comparison, so the equality is of the entire R-algebra equivalences, including their inverses.

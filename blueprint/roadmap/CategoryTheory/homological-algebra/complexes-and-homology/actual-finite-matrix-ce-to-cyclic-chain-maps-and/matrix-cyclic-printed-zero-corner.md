@@ -1,3 +1,6 @@
-# Matrix Cyclic Printed Zero Corner
+# The zero-extension map of negated-differential positive matrix tails
 
-Top-left zero extension on the exterior complex with the positive bracket differential.
+The zero-extension map of negated-differential positive matrix tails.
+
+Apply zero extension to the matrix CE map, negate its differential convention, and restrict to
+positive exterior degrees.

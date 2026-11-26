@@ -1,5 +1,5 @@
 # Outer Word
 
-- [Outer Word](outer-word.md)
-- [Outer Word cons snoc](outer-word-cons-snoc.md)
-- [Mul Adjacent outer Word](mul-adjacent-outer-word.md)
+- [Multiply the endpoints of a word](outer-word.md)
+- [Endpoint multiplication on a separated word](outer-word-cons-snoc.md)
+- [Adjacent multiplication commutes with endpoint multiplication](mul-adjacent-outer-word.md)

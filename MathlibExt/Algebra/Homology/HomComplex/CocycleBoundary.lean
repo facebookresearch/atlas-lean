@@ -26,7 +26,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L M : CochainComplex C ℤ} {q : ℤ}
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Removing the target shift is the original inverse shift-add map. -/
+/-- Let C be preadditive, K,M integer cochain complexes and q ∈ ℤ. For a degree-q cocycle z from K
+to M[1], let ẑ : K → (M[1])[q] be its corresponding cochain map. Removing the target shift gives
+a degree-(q+1) cocycle to M whose corresponding map is ẑ followed by the inverse shift-add
+isomorphism M[q+1] ≅ (M[1])[q]. The shift-add order is 1,q. -/
 theorem equivHomShift_symm_rightUnshift
     (z : Cocycle K (M⟦(1 : ℤ)⟧) q) :
     equivHomShift.symm (z.rightUnshift (q + 1) rfl) =
@@ -52,10 +55,10 @@ theorem equivHomShift_symm_rightUnshift
   rw [Cochain.rightShift_v z.val q 0 (zero_add q) p p (add_zero p) (p + q) rfl]
   simp [shiftFunctorObjXIso, HomologicalComplex.XIsoOfEq, Category.assoc]
 
-/--
-The degree-one shifted representative has the same covariant composition and the original
-shift-add order 1,q.
--/
+/-- Let C be preadditive, K,L,M integer cochain complexes, q ∈ ℤ, z a degree-q cocycle from K to L,
+and d : L → M[1] a cochain map. The map corresponding to the target-unshifted cocycle z
+postcomposed with d is ẑ ≫ d[q] ≫ α_{1,q,M}⁻¹ : K → M[q+1], where ẑ : K → L[q] represents z and
+α_{1,q,M} : M[q+1] ≅ (M[1])[q]. -/
 theorem equivHomShift_symm_postcomp_rightUnshift
     (z : Cocycle K L q) (d : L ⟶ M⟦(1 : ℤ)⟧) :
     equivHomShift.symm ((z.postcomp d).rightUnshift (q + 1) rfl) =
@@ -76,17 +79,21 @@ universe u v
 namespace CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- The quotient representative transported to the shifted object. -/
+/-- Let C be preadditive, K,L integer cochain complexes, q ∈ ℤ and z a degree-q cocycle from K to L.
+Its shiftedHom is [K] → [L][q] in the homotopy category: first take the quotient class of the
+corresponding cochain map K → L[q], then use the quotient functor's canonical shift isomorphism
+[L[q]] ≅ [L][q]. -/
 def Cocycle.shiftedHom {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
     (HomotopyCategory.quotient C (.up ℤ)).obj K ⟶
       ((HomotopyCategory.quotient C (.up ℤ)).obj L)⟦q⟧ :=
   (HomotopyCategory.quotient C (.up ℤ)).map (Cocycle.equivHomShift.symm z) ≫
     ((HomotopyCategory.quotient C (.up ℤ)).commShiftIso q).hom.app L
 
-/--
-The original grade-one triangle boundary acts by the exact shifted cocycle representative, with
-the quotient's shift transport.
--/
+/-- Let C be preadditive, T a triangle of integer cochain complexes with third map d : T₃ → T₁[1], K
+a complex, q ∈ ℤ and z a degree-q cocycle from K to T₃. The degree-q-to-(q+1) boundary of the
+covariant Hom sequence of the quotient triangle, with source [K], sends z.shiftedHom to the
+shiftedHom of z postcomposed with d and then target-unshifted. This is the positive composite ẑ
+≫ d[q] ≫ α_{1,q,T₁}⁻¹, with the quotient shift comparisons. -/
 theorem Cocycle.shiftedHom_boundary
     (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
     (q : ℤ) (z : Cocycle K T.obj₃ q) :
@@ -147,15 +154,18 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {D : Type u'} [Category.{v'} D] [Preadditive D] [HasShift D ℤ]
 variable (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
 
-/-- The SAME original cocycle representative mapped through a functor with its shift transport. -/
+/-- Let C be preadditive, D a category with integer shifts, and F : CochainComplex C ℤ → D commute
+with shifts. For a degree-q cocycle z from K to L, mappedShiftedHom is F(K) → F(L)[q], obtained
+by applying F to its corresponding cochain map K → L[q] and composing with F(L[q]) ≅ F(L)[q]. -/
 def Cocycle.mappedShiftedHom {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
     F.obj K ⟶ (F.obj L)⟦q⟧ :=
   F.map (Cocycle.equivHomShift.symm z) ≫ (F.commShiftIso q).hom.app L
 
-/--
-The original grade-one triangle boundary acts by the exact shifted cocycle representative, with
-the given functor's shift transport.
--/
+/-- Let C,D be preadditive, D have integer shifts, and F : CochainComplex C ℤ → D commute with
+shifts. For a triangle T, complex K, q ∈ ℤ and degree-q cocycle z from K to T₃, the boundary of
+Hom_D(F(K),−) for F(T) sends mappedShiftedHom(F,z) to mappedShiftedHom(F,(z postcomposed with
+T.mor₃) target-unshifted to degree q+1). The actual third triangle map and the shift-add order
+1,q are retained; distinguishedness of T is not required for this identity. -/
 theorem Cocycle.mappedShiftedHom_boundary
     (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
     (q : ℤ) (z : Cocycle K T.obj₃ q) :
@@ -216,10 +226,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {D : Type u'} [Category.{v'} D] [Preadditive D] [HasShift D ℤ]
 
 omit [Preadditive D] in
-/--
-The SAME mapped original cocycle representative is natural under every chain map, using the given
-functor's original shift comparison.
--/
+/-- Let C be preadditive, D a category with integer shifts and F : CochainComplex C ℤ → D commute
+with shifts. For a degree-q cocycle z from K to L and a cochain map g : L → M,
+mappedShiftedHom(F,z postcomposed with g) = mappedShiftedHom(F,z) ≫ F(g)[q] as maps F(K) →
+F(M)[q]. -/
 theorem mappedShiftedHom_postcomp (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
     {K L M : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) (g : L ⟶ M) :
     mappedShiftedHom F (z.postcomp g) = mappedShiftedHom F z ≫ (F.map g)⟦q⟧' := by
@@ -240,8 +250,11 @@ namespace CochainComplex.HomComplex.Cocycle
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- A literal grade-one cocycle acts by original graded composition after
-the SAME target unshift. This includes the stock mapping-cone minus. -/
+/-- Let C be preadditive, K,L,M integer cochain complexes, q ∈ ℤ, z a degree-q cocycle K → L and a a
+degree-one cocycle L → M. Postcomposing z with the cochain map L → M[1] represented by a and
+then removing the target shift gives the homogeneous cochain z.comp(a) of degree q+1. There is
+no additional sign; a minus already present in a, including a negative mapping-cone boundary, is
+retained. -/
 theorem postcomp_equivHomShift_rightUnshift
     {K L M : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) (a : Cocycle L M 1) :
     ((z.postcomp (equivHomShift.symm a)).rightUnshift (q + 1) rfl).val = z.val.comp a.val rfl := by
@@ -265,7 +278,9 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Target right-unshift preserves the literal single-source morphism. -/
+/-- Let C be preadditive with a zero object, Z an object, K an integer cochain complex, and a,q ∈ ℤ.
+A map f : Z → K^{q+a} defines a degree-q cochain from Z[0] to K[a]. Removing the target shift
+produces exactly the degree-(q+a) cochain from Z[0] to K defined by the same map f. -/
 theorem fromSingleMk_rightUnshift (Z : C) (K : CochainComplex C ℤ) (a q : ℤ)
     (f : Z ⟶ K.X (q + a)) :
     (fromSingleMk (X := Z) (K := K⟦a⟧) (p := 0) (q := q) (n := q) f (zero_add q)).rightUnshift (q + a) rfl =
@@ -293,10 +308,10 @@ namespace CategoryTheory
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasShift C ℤ]
 
 omit [Preadditive C] in
-/--
-Endpoint isomorphisms transport a grade-one triangle boundary on every original shifted morphism,
-with the original shift-add order.
--/
+/-- Let C be a category with integer shifts, e : X ≅ A and f : Y ≅ B isomorphisms, and d : X → Y[1],
+d′ : A → B[1] maps satisfying d ≫ f.hom[1] = e.hom ≫ d′. For q ∈ ℤ and x : Z → A[q], define
+δ_d^q(y) = y ≫ d[q] ≫ α_{1,q,Y}⁻¹, where α_{1,q,Y} : Y[q+1] ≅ (Y[1])[q]. Then δ_d^q(x ≫
+e.inv[q]) = δ_d′^q(x) ≫ f.inv[q+1], as maps Z → Y[q+1]. -/
 theorem triangle_boundary_transport
     {X Y A B Z : C} (e : X ≅ A) (f : Y ≅ B)
     (d : X ⟶ Y⟦(1 : ℤ)⟧) (d' : A ⟶ B⟦(1 : ℤ)⟧)

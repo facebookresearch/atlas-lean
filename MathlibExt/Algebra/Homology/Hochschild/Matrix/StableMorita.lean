@@ -19,13 +19,24 @@ public import Mathlib.CategoryTheory.Limits.Connected
 public import Mathlib.CategoryTheory.Filtered.Connected
 
 /-!
-# Colimits of finite matrix Hochschild complexes
+# Connected exact colimits of positive-size matrix Hochschild complexes
 
-Top-left zero extensions give a diagram of positive-size matrix Hochschild
-complexes. Its finite traces and corners assemble into maps on reindexings
-of this diagram. For a connected shape with exact colimits, the homology of
-this colimit model is the original coefficient homology, through the actual
-trace and corner maps.
+Let k be a commutative ring, A an associative unital k-algebra and M
+a compatible A-bimodule. At H=max(u,v,w,t), the diagram
+D(r)=C_*(Mat_(r+1)(A),ULift^H Mat_(r+1)(M)), r∈ℕ,
+has transitions given by top-left zero extension. Its traces form a
+natural map to the constant coefficient complex C=C_*(A,ULift^H M),
+and its corners at matrix index zero form a natural map in reverse.
+
+For a category J and G:J→ℕ, form S_G=colim_J(G⋙D), assuming colimits
+of shape J in ModuleCat^H(k). If J is connected, the compatible
+corners give I_G:C→S_G, and the trace T_G:S_G→C satisfies T_G I_G=id.
+If those colimits are also exact, trace induces H_n(S_G)≅H_n(C),
+with inverse H_n(I_G), for every n≥0.
+
+The homology isomorphism is natural for transformations G→G′.
+The object and morphism worlds of J are independent of k,A,M and H;
+no relation between those worlds is imposed.
 -/
 
 @[expose] public section
@@ -89,7 +100,10 @@ private theorem zeroExtend_scaled {N : Type*} [AddCommGroup N] [Module k N]
   by_cases hi : i.val < r <;> by_cases hl : l.val < r <;>
     simp only [Matrix.zeroExtend_apply, Matrix.map_apply, hi, hl, ↓reduceDIte, zero_smul]
 
-/-- Finite generalized trace commutes with the actual tensor zero-extension map. -/
+/-- For k-modules M,A and r≤s, extending a coefficient matrix
+and all n algebra matrices by zero from size r to size s preserves
+the generalized trace. As k-linear maps,
+T_n^s ∘ (Z_M ⊗ Z_A^⊗n) = T_n^r, including r=0. -/
 theorem generalizedTrace_zeroExtend {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     (generalizedTrace k (Fin s) n).comp
       (TensorProduct.map (Matrix.zeroExtendLinear (k := k) (A := M) h)
@@ -129,7 +143,10 @@ private theorem sum_truncate {N : Type*} [AddCommGroup N]
   intro i _
   simp only [Fin.val_castAdd, dite_eq_left i.is_lt]
 
-/-- Top-left zero extension intertwines the native left matrix coefficient action. -/
+/-- For a left A-module M and r≤s, top-left zero extension
+satisfies Z(B) • Z(X) = Z(B • X), for B∈Mat_r(A) and
+X∈Mat_r(M), with the left matrix action.
+The entry formula is (B • X)ᵢⱼ=∑ₚ Bᵢₚ • Xₚⱼ. -/
 theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
     (B : Matrix (Fin r) (Fin r) A) (X : Matrix (Fin r) (Fin r) M) :
     Matrix.zeroExtend h B • Matrix.zeroExtend h X = Matrix.zeroExtend h (B • X) := by
@@ -156,7 +173,10 @@ theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
     intro p _
     rw [Matrix.zeroExtend_of_row h B i p (Nat.le_of_not_gt hi), zero_smul]
 
-/-- Top-left zero extension intertwines the native right matrix coefficient action. -/
+/-- For a right A-module M and r≤s, top-left zero extension
+satisfies op(Z(B)) • Z(X) = Z(op(B) • X), for B∈Mat_r(A)
+and X∈Mat_r(M). The entry formula is
+(op B • X)ᵢⱼ=∑ₚ op(Bₚⱼ) • Xᵢₚ. -/
 theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
     (B : Matrix (Fin r) (Fin r) A) (X : Matrix (Fin r) (Fin r) M) :
     op (Matrix.zeroExtend h B) • Matrix.zeroExtend h X = Matrix.zeroExtend h (op B • X) := by
@@ -186,7 +206,11 @@ theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
     intro p _
     rw [Matrix.zeroExtend_of_row h X i p (Nat.le_of_not_gt hi), smul_zero]
 
-/-- The finite transition uses the nonunital algebra map given by top-left zero extension. -/
+/-- For a k-algebra A and a compatible A-bimodule M,
+r≤s gives the chain map D(r)→D(s) by zero extension from
+(r+1)×(r+1) to (s+1)×(s+1) matrices.
+Both coefficient modules are lifted to H=max(u,v,w,t), and
+the algebra map is allowed to be nonunital. -/
 def finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
     chainComplex k (Matrix (Fin (r + 1)) (Fin (r + 1)) A)
         (ULift.{max u v w t} (Matrix (Fin (r + 1)) (Fin (r + 1)) M)) ⟶
@@ -197,7 +221,11 @@ def finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
     (fun B X => (zeroExtend_left (A := A) (M := M) (Nat.succ_le_succ h) B X).symm)
     (fun B X => (zeroExtend_right (A := A) (M := M) (Nat.succ_le_succ h) B X).symm)
 
-/-- Each finite transition retains its literal matrix entries in tensor coordinates. -/
+/-- For a k-algebra A, a compatible A-bimodule M and r≤s,
+the degree-n transition sends up(X)⊗a₁⊗⋯⊗aₙ to
+up(Z(X))⊗Z(a₁)⊗⋯⊗Z(aₙ), with Z the top-left zero
+extension between sizes r+1 and s+1.
+The common coefficient height is H=max(u,v,w,t). -/
 theorem finiteTransitionAt_f_tprod {r s : ℕ} (h : r ≤ s) (n : ℕ)
     (X : Matrix (Fin (r + 1)) (Fin (r + 1)) M)
     (a : Fin n → Matrix (Fin (r + 1)) (Fin (r + 1)) A) :
@@ -214,7 +242,10 @@ theorem finiteTransitionAt_f_tprod {r s : ℕ} (h : r ≤ s) (n : ℕ)
       (fun B X => (zeroExtend_right (A := A) (M := M) (Nat.succ_le_succ h) B X).symm)
       n (ULift.up X) a)
 
-/-- A finite zero-extension transition at equal sizes is the identity. -/
+/-- For a k-algebra A and a compatible A-bimodule M, the
+finite transition at r≤r is id on
+C_*(Mat_(r+1)(A),ULift^H Mat_(r+1)(M)).
+Here H=max(u,v,w,t). -/
 theorem finiteTransitionAt_self (r : ℕ) :
     finiteTransitionAt.{t} k A M (le_rfl : r ≤ r) =
       𝟙 (chainComplex k (Matrix (Fin (r + 1)) (Fin (r + 1)) A)
@@ -231,7 +262,10 @@ theorem finiteTransitionAt_self (r : ℕ) :
   simpa only [Matrix.zeroExtend_self] using
     finiteTransitionAt_f_tprod.{t} k A M (le_rfl : r ≤ r) n X a
 
-/-- Finite zero-extension transitions compose along the order on sizes. -/
+/-- For a k-algebra A, a compatible A-bimodule M and r≤s≤q,
+the zero-extension chain transitions satisfy
+D(s→q) ∘ D(r→s) = D(r→q), at height H=max(u,v,w,t).
+They retain the same top-left matrix entries. -/
 theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
     finiteTransitionAt.{t} k A M h ≫ finiteTransitionAt.{t} k A M h' =
       finiteTransitionAt.{t} k A M (h.trans h') := by
@@ -254,7 +288,11 @@ theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
   simp only [Matrix.zeroExtend_comp]
   rfl
 
-/-- Positive-size finite matrix Hochschild complexes with their actual zero extensions. -/
+/-- For a k-algebra A and a compatible A-bimodule M, the
+functor D:ℕ→ChainComplex(ModuleCat^H(k),ℕ) sends r to
+C_*(Mat_(r+1)(A),ULift^H Mat_(r+1)(M)).
+Its transitions are top-left zero extensions, and every matrix
+size in the diagram is positive. -/
 def finiteDiagramAt : ℕ ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ where
   obj r := chainComplex k (Matrix (Fin (r + 1)) (Fin (r + 1)) A)
     (ULift.{max u v w t} (Matrix (Fin (r + 1)) (Fin (r + 1)) M))
@@ -262,7 +300,9 @@ def finiteDiagramAt : ℕ ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ where
   map_id r := finiteTransitionAt_self.{t} k A M r
   map_comp f g := (finiteTransitionAt_comp.{t} k A M (leOfHom f) (leOfHom g)).symm
 
-/-- The actual finite trace commutes with every positive-size matrix transition. -/
+/-- For a k-algebra A, a compatible A-bimodule M and r≤s,
+the traces satisfy T_s ∘ D(r→s) = T_r as chain maps
+D(r)→C_*(A,ULift^H M), with H=max(u,v,w,t). -/
 theorem finiteTransitionAt_comp_trace {r s : ℕ} (h : r ≤ s) :
     finiteTransitionAt.{t} k A M h ≫ traceChainMapAt.{t} k A M (Fin (s + 1)) =
       traceChainMapAt.{t} k A M (Fin (r + 1)) := by
@@ -308,7 +348,10 @@ private theorem zeroExtend_corner {r s : ℕ} (h : r ≤ s) {N : Type*}
       exact hi (Nat.succ_pos r)
     simp only [Matrix.zeroExtend_apply, hi, ↓reduceDIte, cornerLinear_apply, hi0, ite_false]
 
-/-- The zeroth corner is preserved by the finite zero-extension transitions. -/
+/-- For a k-algebra A, a compatible A-bimodule M and r≤s,
+the corners at index zero satisfy D(r→s) ∘ I_r = I_s.
+The corner I_r enters the positive-size matrix complex D(r),
+and all coefficient heights are H=max(u,v,w,t). -/
 theorem corner_comp_finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
     Morita.cornerChainMapAt.{t} k A M (Fin (r + 1)) 0 ≫ finiteTransitionAt.{t} k A M h =
       Morita.cornerChainMapAt.{t} k A M (Fin (s + 1)) 0 := by
@@ -351,7 +394,10 @@ theorem corner_comp_finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
         PiTensorProduct.tprod k b) hm ha
   exact hcoords
 
-/-- Finite trace is a natural transformation to the original coefficient complex. -/
+/-- For a k-algebra A and a compatible A-bimodule M, the
+finite trace maps form D→const(C_*(A,ULift^H M)).
+The naturality equation is T_s D(r→s)=T_r, with
+D(r) the size-(r+1) coefficient complex and H=max(u,v,w,t). -/
 def traceNatAt : finiteDiagramAt.{t} k A M ⟶
     (Functor.const ℕ).obj (chainComplex k A (ULift.{max u v w t} M)) where
   app r := traceChainMapAt.{t} k A M (Fin (r + 1))
@@ -363,7 +409,10 @@ def traceNatAt : finiteDiagramAt.{t} k A M ⟶
     rw [Category.comp_id]
     exact finiteTransitionAt_comp_trace.{t} k A M (leOfHom h)
 
-/-- The zeroth corner is a natural transformation into the positive-size matrix diagram. -/
+/-- For a k-algebra A and a compatible A-bimodule M, the
+corners at matrix index zero form const(C_*(A,ULift^H M))→D.
+Positive-size zero extension preserves these corners in every
+degree, at H=max(u,v,w,t). -/
 def cornerNatAt :
     (Functor.const ℕ).obj (chainComplex k A (ULift.{max u v w t} M)) ⟶
       finiteDiagramAt.{t} k A M where
@@ -378,7 +427,12 @@ def cornerNatAt :
 
 variable {J : Type j} [Category.{j'} J]
 
-/-- The earned finite trace isomorphisms form a natural homology isomorphism. -/
+/-- For a k-algebra A, a compatible A-bimodule M, a category J,
+G:J→ℕ and n≥0, finite trace gives the natural isomorphism
+j ↦ H_n(D(Gj)) ≅ const_J(H_n(C_*(A,ULift^H M))).
+Its component inverse is the homology map of the zero-index
+finite corner; connectedness is not needed for this finite
+diagram comparison. -/
 def traceHomologyNatIsoAt (G : J ⥤ ℕ) (n : ℕ) :
     (G ⋙ finiteDiagramAt.{t} k A M) ⋙
         HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
@@ -410,7 +464,10 @@ theorem traceHomologyNatIsoAt_hom_app (G : J ⥤ ℕ) (n : ℕ) (r : J) :
 
 variable [HasColimitsOfShape J (ModuleCat.{max u v w t} k)]
 
-/-- The stable colimit model of a reindexed positive-size finite matrix diagram. -/
+/-- For a k-algebra A, a compatible A-bimodule M and G:J→ℕ,
+assume colimits of shape J in ModuleCat^H(k), H=max(u,v,w,t).
+The colimit model is S_G=colim_J(G⋙D) in chain complexes.
+The object and morphism worlds of J remain independent of H. -/
 abbrev stableComplexAt (G : J ⥤ ℕ) : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
   colimit (G ⋙ finiteDiagramAt.{t} k A M)
 
@@ -418,7 +475,11 @@ private def traceCoconeAt (G : J ⥤ ℕ) : Cocone (G ⋙ finiteDiagramAt.{t} k 
   pt := chainComplex k A (ULift.{max u v w t} M)
   ι := Functor.whiskerLeft G (traceNatAt.{t} k A M)
 
-/-- The colimit trace is induced by the actual finite trace maps. -/
+/-- For a k-algebra A, a compatible A-bimodule M and G:J→ℕ
+with shape-J colimits in ModuleCat^H(k), the trace
+T_G:S_G→C_*(A,ULift^H M) is induced by the compatible finite
+traces. Its composite with each colimit leg is the trace at
+that positive-size stage. -/
 def stableTraceAt (G : J ⥤ ℕ) :
     stableComplexAt.{t} k A M G ⟶ chainComplex k A (ULift.{max u v w t} M) :=
   colimit.desc _
@@ -431,7 +492,11 @@ theorem ι_stableTraceAt (G : J ⥤ ℕ) (r : J) :
       traceChainMapAt.{t} k A M (Fin (G.obj r + 1)) := by
   exact colimit.ι_desc (traceCoconeAt.{t} k A M G) r
 
-/-- A transformation of indexing functors induces the actual colimit transition map. -/
+/-- For a k-algebra A, a compatible A-bimodule M and a
+transformation τ:G→G′ between functors J→ℕ, the finite
+size transitions induce S_G→S_G′ by the colimit universal property.
+The two complexes use the same shape-J colimits and height
+H=max(u,v,w,t). -/
 def stableMapAt {G G' : J ⥤ ℕ} (τ : G ⟶ G') :
     stableComplexAt.{t} k A M G ⟶ stableComplexAt.{t} k A M G' :=
   colimMap (Functor.whiskerRight τ (finiteDiagramAt.{t} k A M))
@@ -485,7 +550,11 @@ private theorem constantColimitIsoAt_inv_eq_ι (r : J) :
   apply (cancel_mono (constantColimitIsoAt.{t} (J := J) k A M).hom).mp
   rw [Iso.inv_hom_id, constantColimitIsoAt_leg]
 
-/-- The stable corner is induced by the coherent zeroth finite corners. -/
+/-- For a k-algebra A, a compatible A-bimodule M and
+G:J→ℕ, assume J connected and shape-J colimits in
+ModuleCat^H(k). The compatible zero-index corners define
+I_G:C_*(A,ULift^H M)→S_G through the colimit of the constant
+coefficient complex. Here H=max(u,v,w,t). -/
 def stableCornerAt (G : J ⥤ ℕ) :
     chainComplex k A (ULift.{max u v w t} M) ⟶ stableComplexAt.{t} k A M G :=
   let X : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
@@ -495,7 +564,11 @@ def stableCornerAt (G : J ⥤ ℕ) :
   (colimit.isoColimitCocone c).inv ≫
     colimMap (Functor.whiskerLeft G (cornerNatAt.{t} k A M))
 
-/-- The stable corner is the same actual corner through every finite stage. -/
+/-- For connected J, G:J→ℕ and shape-J colimits at
+H=max(u,v,w,t), the stable corner equals the zero-index corner
+into D(Gr) followed by the colimit leg, for every r∈J.
+The algebra A and compatible bimodule M have independent
+carrier worlds. -/
 theorem stableCornerAt_eq_stage (G : J ⥤ ℕ) (r : J) :
     stableCornerAt.{t} k A M G =
       Morita.cornerChainMapAt.{t} k A M (Fin (G.obj r + 1)) 0 ≫
@@ -520,7 +593,10 @@ theorem stableCornerAt_eq_stage (G : J ⥤ ℕ) (r : J) :
   rw [he]
   simpa only [colimMap_eq] using ι_colimMap τ r
 
-/-- The stable corner followed by trace is the identity chain map. -/
+/-- For a k-algebra A, a compatible A-bimodule M, connected J
+and G:J→ℕ with shape-J colimits at H=max(u,v,w,t),
+the stable maps satisfy T_G ∘ I_G = id on
+C_*(A,ULift^H M) as chain maps. -/
 theorem stableCornerAt_comp_trace (G : J ⥤ ℕ) :
     stableCornerAt.{t} k A M G ≫ stableTraceAt.{t} k A M G =
       𝟙 (chainComplex k A (ULift.{max u v w t} M)) := by
@@ -533,7 +609,12 @@ theorem stableCornerAt_comp_trace (G : J ⥤ ℕ) :
 
 variable [HasExactColimitsOfShape J (ModuleCat.{max u v w t} k)]
 
-/-- Exact connected colimits of finite matrix chains have the original coefficient homology. -/
+/-- For a k-algebra A, a compatible A-bimodule M and G:J→ℕ,
+assume J connected and both shape-J colimits and exact
+shape-J colimits in ModuleCat^H(k), H=max(u,v,w,t).
+Then H_n(S_G) ≅ H_n(C_*(A,ULift^H M)) for every n≥0,
+with maps induced by the actual colimit trace and stable corner.
+The category-index worlds are independent of H. -/
 def stableHomologyIsoAt (G : J ⥤ ℕ) (n : ℕ) :
     (stableComplexAt.{t} k A M G).homology n ≅
       (chainComplex k A (ULift.{max u v w t} M)).homology n :=
@@ -559,7 +640,11 @@ def stableHomologyIsoAt (G : J ⥤ ℕ) (n : ℕ) :
       K n ≪≫ HasColimit.isoOfNatIso e ≪≫
     colimit.isoColimitCocone c
 
-/-- The chosen homology comparison is the homology map of the actual colimit trace. -/
+/-- Under connectedness of J and exact shape-J colimits in
+ModuleCat^H(k), the isomorphism H_n(S_G)≅H_n(C_*(A,ULift^H M))
+has forward morphism H_n(T_G).
+Here G:J→ℕ, A is a k-algebra, M a compatible A-bimodule and
+H=max(u,v,w,t). -/
 theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
     (stableHomologyIsoAt.{t} k A M G n).hom =
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n := by
@@ -602,9 +687,13 @@ theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
     change HomologicalComplex.homologyMap (colimit.ι K r) n ≫
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n = _
     rw [← HomologicalComplex.homologyMap_comp, ι_stableTraceAt]
+    rfl
   exact hl.trans hr.symm
 
-/-- The inverse homology comparison is induced by the actual stable corner. -/
+/-- For a k-algebra A, a compatible A-bimodule M and
+G:J→ℕ with connected exact shape-J colimits at height
+H=max(u,v,w,t), the inverse of the stable homology comparison
+is H_n(I_G):H_n(C_*(A,ULift^H M))→H_n(S_G). -/
 theorem stableHomologyIsoAt_inv (G : J ⥤ ℕ) (n : ℕ) :
     (stableHomologyIsoAt.{t} k A M G n).inv =
       HomologicalComplex.homologyMap (stableCornerAt.{t} k A M G) n := by
@@ -613,7 +702,11 @@ theorem stableHomologyIsoAt_inv (G : J ⥤ ℕ) (n : ℕ) :
     stableHomologyIsoAt_hom, ← HomologicalComplex.homologyMap_comp,
     stableCornerAt_comp_trace, HomologicalComplex.homologyMap_id]
 
-/-- The stable homology comparison is natural in the indexing functor. -/
+/-- For a k-algebra A, a compatible A-bimodule M, connected J
+with exact shape-J colimits at H=max(u,v,w,t), and τ:G→G′,
+the homology comparisons satisfy
+χ_G′ ∘ H_n(S(τ)) = χ_G, for every n≥0.
+The target is the same coefficient homology H_n(C_*(A,ULift^H M)). -/
 theorem stableHomologyIsoAt_naturality {G G' : J ⥤ ℕ} (τ : G ⟶ G') (n : ℕ) :
     HomologicalComplex.homologyMap (stableMapAt.{t} k A M τ) n ≫
         (stableHomologyIsoAt.{t} k A M G' n).hom =

@@ -1,4 +1,7 @@
-# Partial Total Second Page Vertical Homology Iso hom
+# Factorization of the second-page iterated-homology coordinate
 
-The page-two vertical-homology coordinate is the page transition followed
-by restriction homology and the fixed-row homology comparison.
+Factorization of the second-page iterated-homology coordinate.
+
+The forward map from `E²_(p,q)` to `H_p(B.verticalHomologyComplex q)` is the inverse page
+transition, followed by the inverse fixed-row restriction homology coordinate, followed by the
+homology map of `B.partialTotalFirstPageVerticalHomologyIso q`.

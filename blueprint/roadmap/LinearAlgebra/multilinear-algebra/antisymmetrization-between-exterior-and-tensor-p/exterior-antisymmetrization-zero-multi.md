@@ -1,3 +1,6 @@
-# Exterior Antisymmetrization zero ιMulti
+# Antisymmetrization of an empty exterior word
 
-In degree zero the original antisymmetric word is the original empty tensor unit.
+Antisymmetrization of an empty exterior word.
+
+For a commutative ring k and a k-module V, the degree-zero map sends ι₀(a) to tprod(a), for
+the unique empty family a : Fin 0 → V.

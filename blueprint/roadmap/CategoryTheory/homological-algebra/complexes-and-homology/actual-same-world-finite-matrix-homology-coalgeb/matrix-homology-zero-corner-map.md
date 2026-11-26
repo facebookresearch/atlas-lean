@@ -1,3 +1,5 @@
-# Matrix Homology Zero Corner Map
+# The graded matrix homology map of zero extension
 
-The homology map of the converted zero-corner comonoid morphism.
+The graded matrix homology map of zero extension.
+
+Take homology of the compared zero-extension chain coalgebra morphism in each degree.

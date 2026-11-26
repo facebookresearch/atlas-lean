@@ -13,11 +13,14 @@ public import Mathlib.Algebra.Category.Grp.Abelian
 public import MathlibExt.Algebra.Homology.HomotopyCategory.HomComplexReducedEquivalence
 
 /-!
-# The two-sided annihilator cochain complex
+# The two-sided annihilator Hom cochain complex
 
-The two outer vanishing conditions are preserved by the signed Hom differential when the outer
-maps are complex morphisms. Their additive subgroups therefore form a cochain complex, without any
-kernel or cokernel hypothesis on the base preadditive category.
+Let D be preadditive and η : U → C, ε : A → V maps of integer cochain complexes. The homogeneous
+cochains θ killed by η-precomposition and ε-postcomposition form a subcomplex of Hom(C,A). Its
+differential is the restriction of ∂θ=d_A ∘ θ-(-1)^n θ ∘ d_C in degree n.
+
+If D has kernels and cokernels, reconstruction through coker η and ker ε is an isomorphism of
+cochain complexes Hom(coker η,ker ε) ≅ Ann(η,ε), hence induces an isomorphism on cohomology.
 -/
 
 @[expose] public section
@@ -36,9 +39,11 @@ universe u v
 variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable {U C A V : CochainComplex D ℤ}
 
-/-- The signed Hom differential preserves the two-sided annihilator in all
-integer source and target degrees. The outer maps are complex morphisms;
-the input cochain need not be closed. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. For all integers n,m, the Hom differential sends Annⁿ(η,ε) into
+Annᵐ(η,ε). In the adjacent degree m=n+1 it is ∂θ=d_A ∘ θ-(-1)^n θ ∘ d_C; nonadjacent
+differentials are zero. -/
 theorem δ_mem_annihilator (η : U ⟶ C) (ε : A ⟶ V) (n m : ℤ)
     (τ : Cochain C A n) (hτ : τ ∈ annihilator η ε n) :
     δ n m τ ∈ annihilator η ε m := by
@@ -55,10 +60,11 @@ theorem δ_mem_annihilator (η : U ⟶ C) (ε : A ⟶ V) (n m : ℤ)
         (δ_comp_ofHom τ ε m).symm
       _ = 0 := by rw [hτ.2, δ_zero]
 
-/--
-The two-sided annihilator groups with the restricted Hom differential. This construction needs
-only a preadditive base category.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. The subgroups Annⁿ(η,ε), with the restricted signed Hom
+differential, form an integer cochain complex of abelian groups. No kernels or cokernels of D
+are needed. -/
 def annihilatorComplex (η : U ⟶ C) (ε : A ⟶ V) :
     CochainComplex AddCommGrpCat.{v} ℤ := by
   let annDelta (n m : ℤ) : annihilator η ε n →+ annihilator η ε m :=
@@ -87,10 +93,11 @@ def annihilatorComplex (η : U ⟶ C) (ε : A ⟶ V) :
     change δ m k (δ n m τ.val) = 0
     exact δ_δ n m k τ.val
 
-/--
-The restricted differential has exactly the Hom differential as its underlying cochain, including
-negative and nonadjacent degrees.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. For θ in degree n and any integer m, the degree-(n,m)
+differential of the annihilator complex has underlying cochain δ(n,m,θ). Thus it retains the
+signed Hom differential in every degree. -/
 theorem annihilatorComplex_d_apply (η : U ⟶ C) (ε : A ⟶ V)
     (n m : ℤ) (τ : annihilator η ε n) :
     (((annihilatorComplex η ε).d n m) τ : annihilator η ε m).val = δ n m τ.val :=
@@ -112,11 +119,11 @@ variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable [HasKernels D] [HasCokernels D]
 variable {U C A V : CochainComplex D ℤ}
 
-/--
-The quotient/kernel Hom complex is isomorphic to the two-sided annihilator complex. Its components
-are the existing raw additive normal form; differential compatibility uses the projection and
-inclusion maps.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. The degreewise reconstruction maps form an isomorphism of
+cochain complexes Hom(coker η,ker ε) ≅ Ann(η,ε), compatible with the signed Hom differentials. -/
 def cokernelKernelHomComplexIso (η : U ⟶ C) (ε : A ⟶ V) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     let _ : HasKernel ε := HomologicalComplex.hasKernel_of_hasKernel_f ε
@@ -162,10 +169,11 @@ def cokernelKernelHomComplexIso (η : U ⟶ C) (ε : A ⟶ V) :
     exact cokernelKernelAddEquiv_apply η ε m (δ n m θ)
   exact (congrArg (δ n m) hn).trans ((hδ n m θ).trans hm.symm)
 
-/--
-Every forward component is the literal projection–cochain–inclusion reconstruction. The target
-subgroup is exposed before its value.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. In every degree n, the forward component of the Hom complex
+isomorphism sends θ′ to i_ε ∘ θ′ ∘ π_η as a cochain from C to A. -/
 theorem cokernelKernelHomComplexIso_hom_f_apply
     (η : U ⟶ C) (ε : A ⟶ V) (n : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
@@ -183,8 +191,12 @@ theorem cokernelKernelHomComplexIso_hom_f_apply
       (ofHom (kernel.ι ε)) (add_zero n)
   exact cokernelKernelAddEquiv_apply η ε n θ
 
-/-- Every inverse component is the existing unique raw quotient/kernel factor,
-not a separately chosen cochain or a cocycle assumption. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. In every degree n, the inverse component sends θ ∈ Annⁿ(η,ε)
+to its unique homogeneous factor θ′ : coker η → ker ε. It agrees with the inverse additive
+reconstruction equivalence. -/
 theorem cokernelKernelHomComplexIso_inv_f_apply
     (η : U ⟶ C) (ε : A ⟶ V) (n : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
@@ -215,11 +227,12 @@ variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable [HasKernels D] [HasCokernels D]
 variable {U C A V : CochainComplex D ℤ}
 
-/--
-The chosen quotient/kernel Hom complex and the annihilator complex have isomorphic cohomology in
-every integer degree. This is the image of the existing complex isomorphism under homology in
-abelian groups.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. For each integer n, reconstruction induces a canonical
+isomorphism Hⁿ Hom(coker η,ker ε) ≅ Hⁿ Ann(η,ε), by the cochain-complex isomorphism of these
+abelian-group complexes. -/
 def cokernelKernelCohomologyIso (η : U ⟶ C) (ε : A ⟶ V) (n : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     let _ : HasKernel ε := HomologicalComplex.hasKernel_of_hasKernel_f ε

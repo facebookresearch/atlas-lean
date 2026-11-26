@@ -1,4 +1,7 @@
-# Partial Total Spectral Step Zero Core Iso hom
+# First-core source isomorphism factors through the bottom interval
 
-The structural StageZero core isomorphism factors through the canonical
-source presentation and the canonical spectral map.
+First-core source isomorphism factors through the bottom interval.
+
+The forward map of `B.partialTotalSpectralStepZeroCoreIso q` is the stage-zero source
+transport followed by the spectral homology map from the interval `⊥ ⟶ core.i₂ (0, q)` to
+`core.i₁ (0, q) ⟶ core.i₂ (0, q)`.

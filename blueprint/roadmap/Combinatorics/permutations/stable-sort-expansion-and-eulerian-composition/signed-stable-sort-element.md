@@ -1,3 +1,4 @@
-# Signed Stable Sort Element
+# The rational signed stable-sort sum
 
-The actual signed group-ring sum of native stable sorting permutations of original labels.
+For `n,m : ℕ`, `signedStableSortElement n m = ∑ f : Fin n → Fin m, sign(Tuple.sort f)
+[Tuple.sort f]` in `ℚ[S_n]`.

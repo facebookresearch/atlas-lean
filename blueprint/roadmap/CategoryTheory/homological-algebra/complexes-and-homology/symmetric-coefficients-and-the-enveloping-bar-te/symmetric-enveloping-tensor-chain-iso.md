@@ -1,3 +1,6 @@
-# Symmetric Enveloping Tensor Chain Iso
+# The symmetric enveloping-bar tensor complex equals Hochschild chains
 
-The neutral bar comparison specializes to the original symmetric Hochschild complex.
+The symmetric enveloping-bar tensor complex equals Hochschild chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, this chain
+isomorphism identifies symmetricEnvelopingTensorComplex with chainComplex(k,A,M).

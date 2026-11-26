@@ -1,3 +1,5 @@
-# To Left lie
+# The sign formula for right-to-left Lie conversion
 
-The left action is the negative right action, not an additional input.
+The sign formula for right-to-left Lie conversion.
+
+The associated left action satisfies `[x,m] = -M.action(x)(m)`.

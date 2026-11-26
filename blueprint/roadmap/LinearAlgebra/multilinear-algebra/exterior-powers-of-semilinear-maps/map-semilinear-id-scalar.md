@@ -1,4 +1,4 @@
-# Map Semilinear id scalar
+# Identity scalars give the linear exterior map
 
-The semilinear exterior map agrees with the native exterior map when
-its scalar homomorphism is the identity.
+For a commutative ring `R`, an `R`-module `M`, an endomorphism `f : M →ₗ[R] M`, and `n : ℕ`,
+`mapSemilinear (RingHom.id R) f n = exteriorPower.map n f`.

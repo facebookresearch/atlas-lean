@@ -7,19 +7,26 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- Source proposal; Native elaboration is unexecuted. -/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricCoefficients
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.NormalizedMixedBicomplex
 
 /-!
-# The symmetric regular normalized complex and Connes B
+# Symmetric regular normalized chains and Connes' operator
 
-For a commutative algebra, the symmetric opposite action
-agrees with regular right multiplication. The normalized
-identity comparison transports the regular Connes B, its
-square-zero law and its anticommutation with the differential.
+For a commutative k-algebra A, the symmetric opposite action on the regular coefficient A equals
+regular right multiplication, and the algebra structure recovered from the scalar action equals
+the given k-algebra structure. Thus the symmetric normalized Hochschild complex and the regular
+normalized b-complex used for Connes' operator have the same degree objects and differentials.
+Their comparison isomorphism has identity components.
+
+The normalized Connes maps Bₙ : C̄ₙ(A,A) → C̄ₙ₊₁(A,A) are transported through this comparison.
+They retain B²=0 and bB+Bb=0 in every natural-number degree. The maps are ground-linear over an
+arbitrary commutative k.
+
+For the normalized Connes mixed complex, see J.-L. Loday, Cyclic Homology, second edition, §2.1.
 -/
 
 @[expose] public section
@@ -34,7 +41,8 @@ namespace ModuleCat.Algebra.Hochschild.Symmetric
 
 variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
 
-/-- The symmetric regular opposite action equals the native regular right action. -/
+/-- For a commutative ring A, the symmetric Aᵐᵒᵖ-action on A, aᵐᵒᵖ·m = a·m, equals the regular right
+multiplication action aᵐᵒᵖ·m = m·a, by commutativity. -/
 theorem regular_opModule_eq : opModule A A = (Semiring.toOppositeModule : Module Aᵐᵒᵖ A) := by
   apply Module.ext'
   intro a m
@@ -42,14 +50,21 @@ theorem regular_opModule_eq : opModule A A = (Semiring.toOppositeModule : Module
   change MulOpposite.unop a * m = m * MulOpposite.unop a
   exact mul_comm _ _
 
-/-- The regular Connes construction retains the given ground algebra. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. The k-algebra structure on A obtained from
+the regular scalar action r ↦ r·1, denoted NonUnital.regularAlgebra k A, equals the given
+k-algebra structure on A. -/
 theorem regularAlgebra_eq : NonUnital.regularAlgebra k A = (inferInstance : Algebra k A) := by
   apply Algebra.algebra_ext
   intro r
   change r • (1 : A) = algebraMap k A r
   rw [Algebra.smul_def, mul_one]
 
-/-- The symmetric and original regular normalized complexes coincide through the original structures. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. The symmetric normalized coefficient complex
+normalizedChainComplex k A A equals NonUnital.normalizedBComplex k A, the regular normalized
+b-complex used for Connes' operator. The symmetric right action and reconstructed ground algebra
+structure agree with the regular ones. -/
 theorem regularNormalizedComplex_eq : normalizedChainComplex k A A = NonUnital.normalizedBComplex k A := by
   unfold normalizedChainComplex NonUnital.normalizedBComplex
   congr 1 <;> first
@@ -57,14 +72,19 @@ theorem regularNormalizedComplex_eq : normalizedChainComplex k A A = NonUnital.n
     | exact (regularAlgebra_eq k A).symm
     | exact proof_irrel_heq _ _
 
-/-- The two original normalized degree objects agree through their ground tensor carrier. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. For every n : ℕ, the degree-n objects of
+normalizedChainComplex k A A and NonUnital.normalizedBComplex k A are equal. Both are the
+ground-module tensor A ⊗_k(A/(k·1))^{⊗n}. -/
 theorem regularNormalized_X_eq (n : ℕ) :
     (normalizedChainComplex k A A).X n = (NonUnital.normalizedBComplex k A).X n := by
   change ModuleCat.Algebra.Hochschild.normalizedChainLevel k A A n =
     ModuleCat.Algebra.Hochschild.normalizedChainLevel k A A n
   rfl
 
-/-- Equality of native complexes gives the original component transport square. -/
+/-- Let C be a category with zero morphisms, c a complex shape on an arbitrary index type, and K,L
+homological complexes of shape c. If h : K=L, the component identifications eᵢ : Kᵢ → Lᵢ induced
+by h satisfy eᵢ ≫ d_L(i,j) = d_K(i,j) ≫ eⱼ for every pair of indices i,j. -/
 private theorem differential_eq_transport {C : Type*} [Category* C]
     [CategoryTheory.Limits.HasZeroMorphisms C] {ι : Type*} {c : ComplexShape ι}
     {K L : HomologicalComplex C c} (h : K = L) (i j : ι) :
@@ -73,44 +93,63 @@ private theorem differential_eq_transport {C : Type*} [Category* C]
   cases h
   exact (Category.id_comp _).trans (Category.comp_id _).symm
 
-/-- The original regular/symmetric normalized comparison uses native identity transport in each degree. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. The equality of normalized degree objects
+gives an isomorphism normalizedChainComplex k A A ≅ NonUnital.normalizedBComplex k A. Its
+components are the identity on every normalized coefficient tensor. -/
 def regularNormalizedComplexIso : normalizedChainComplex k A A ≅ NonUnital.normalizedBComplex k A :=
   HomologicalComplex.Hom.isoOfComponents (fun n => eqToIso (regularNormalized_X_eq k A n))
     (by
       intro i j _
       simpa only [eqToIso.hom] using differential_eq_transport (regularNormalizedComplex_eq k A) i j)
 
-/-- The comparison preserves every original normalized coefficient tensor. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. For every n : ℕ, the nth component of
+regularNormalizedComplexIso.hom is the identity of the normalized regular degree-n object. -/
 theorem regularNormalizedComplexIso_hom_f (n : ℕ) :
     (regularNormalizedComplexIso k A).hom.f n = 𝟙 ((normalizedChainComplex k A A).X n) := by
   change (eqToIso (regularNormalized_X_eq k A n)).hom = 𝟙 ((normalizedChainComplex k A A).X n)
   rw [eqToIso.hom]
   exact eqToHom_refl ((normalizedChainComplex k A A).X n) (regularNormalized_X_eq k A n)
 
-/-- The inverse comparison also retains every original normalized coefficient tensor. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. For every n : ℕ, the nth component of
+regularNormalizedComplexIso.inv is also the identity of the normalized regular degree-n object. -/
 theorem regularNormalizedComplexIso_inv_f (n : ℕ) :
     (regularNormalizedComplexIso k A).inv.f n = 𝟙 ((normalizedChainComplex k A A).X n) := by
   change (eqToIso (regularNormalized_X_eq k A n)).inv = 𝟙 ((normalizedChainComplex k A A).X n)
   rw [eqToIso.inv]
   exact eqToHom_refl ((normalizedChainComplex k A A).X n) (regularNormalized_X_eq k A n).symm
 
-/-- The identity comparison identifies the two differentials in every pair of degrees. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. For all i,j : ℕ, the differentials of
+normalizedChainComplex k A A and NonUnital.normalizedBComplex k A from degree i to degree j are
+equal. -/
 theorem regularNormalized_d_eq (i j : ℕ) :
     (normalizedChainComplex k A A).d i j = (NonUnital.normalizedBComplex k A).d i j := by
   have h := (regularNormalizedComplexIso k A).hom.comm i j
   simp only [regularNormalizedComplexIso_hom_f] at h
   exact h.symm
 
-/-- The original regular Connes B, viewed on the symmetric normalized endpoints. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. In every n : ℕ, the regular normalized
+Connes operator defines a k-module map Bₙ = regularNormalizedConnes k A n : C̄ₙ(A,A) →
+C̄ₙ₊₁(A,A), through the identity-component comparison with the normalized b-complex. -/
 def regularNormalizedConnes (n : ℕ) :
     (normalizedChainComplex k A A).X n ⟶ (normalizedChainComplex k A A).X (n + 1) :=
   ModuleCat.ofHom (NonUnital.normalizedBoundary k A n).hom
 
-/-- Its original degree map is exactly the literal normalized B. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. In degree n : ℕ, the underlying linear map
+of regularNormalizedConnes k A n equals the underlying linear map NonUnital.normalizedBoundary k
+A n, the descended normalized Connes operator. -/
 theorem regularNormalizedConnes_hom (n : ℕ) :
     (regularNormalizedConnes k A n).hom = (NonUnital.normalizedBoundary k A n).hom := rfl
 
-/-- The regular B has square zero on these original normalized endpoints. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. For every n : ℕ, Bₙ followed by Bₙ₊₁ is zero
+on normalized regular chains: regularNormalizedConnes k A n ≫ regularNormalizedConnes k A (n+1)
+= 0. -/
 theorem regularNormalizedConnes_square (n : ℕ) :
     regularNormalizedConnes k A n ≫ regularNormalizedConnes k A (n + 1) = 0 := by
   apply ModuleCat.hom_ext
@@ -123,12 +162,16 @@ theorem regularNormalizedConnes_square (n : ℕ) :
     ((NonUnital.normalizedBoundary k A n).hom x) = 0
   exact h
 
-/-- The native module-hom getter takes the same two compositions and their sum to linear maps. -/
+/-- Let R be a ring and M,N,P be R-modules. For module morphisms f : M→N, g : N→M, h : M→P and i :
+P→M, the endomorphism f ≫ g + h ≫ i has underlying linear map g ∘ f + i ∘ h. -/
 private theorem comp_add_hom {R : Type*} [Ring R] {M N P : ModuleCat R}
     (f : M ⟶ N) (g : N ⟶ M) (h : M ⟶ P) (i : P ⟶ M) :
     (f ≫ g + h ≫ i).hom = g.hom.comp f.hom + i.hom.comp h.hom := rfl
 
-/-- The original complete bB+Bb law holds on the original symmetric regular normalized complex. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. Let C̄(A,A) be the normalized
+Hochschild chain complex with regular coefficients. For every n : ℕ, the endomorphism of
+C̄ₙ₊₁(A,A) given by bₙ₊₂ ∘ Bₙ₊₁ + Bₙ ∘ bₙ₊₁ is zero. Here b lowers degree and B raises degree,
+so this is the full normalized mixed-complex identity bB+Bb=0. -/
 theorem regularNormalizedConnes_mixed (n : ℕ) :
     regularNormalizedConnes k A (n + 1) ≫ (normalizedChainComplex k A A).d (n + 2) (n + 1) +
       (normalizedChainComplex k A A).d (n + 1) n ≫ regularNormalizedConnes k A n = 0 := by

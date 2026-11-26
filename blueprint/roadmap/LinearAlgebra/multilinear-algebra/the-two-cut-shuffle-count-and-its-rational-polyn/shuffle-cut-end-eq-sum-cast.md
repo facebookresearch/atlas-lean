@@ -1,3 +1,7 @@
-# Shuffle Cut End eq sum cast
+# The signed permutation sum for a fixed shuffle cut
 
-The actual cast cut is the literal signed sum of its original degree-cast permutations.
+The signed permutation sum for a fixed shuffle cut.
+
+For a commutative ring k, a k-module V and a weak cut p+q=n, shuffleCutEnd is ∑s
+sign(σₛ)ρₙ(σₛ) on V⊗n, where s ranges over (p,q)-shuffles and σₛ is its permutation
+transported to Fin n.

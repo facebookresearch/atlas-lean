@@ -1,3 +1,7 @@
-# Map Semilinear
+# Semilinear map of balanced quotients under scalar change
 
-Change the balancing ring through the original native quotient map.
+Semilinear map of balanced quotients under scalar change.
+
+For a ground-ring map `σ` and a balancing-semiring map `φ`, factor maps `f` and `g` semilinear
+for `σ` and intertwining the balancing actions through `φ` induce `Balanced k R M N →ₛₗ[σ]
+Balanced k' R' M' N'`.

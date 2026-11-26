@@ -15,15 +15,19 @@ public import
 public import MathlibExt.Algebra.Homology.FirstQuadrantSecondPageMap
 
 /-!
-# Naturality of the coherent first-page presentation
+# First-page maps in coherent relative-homology coordinates
 
-The map on the first page of the horizontal-filtration spectral sequence
-commutes with the canonical identification of a page object as relative
-homology of its coherent complete-filtration window.  This is the
-first-quadrant specialization of generic first-page page-map naturality.
+Let f : K → L be a map of nonnegative homological bicomplexes in an
+abelian category C. In column p, use the complete filtration window
+F_(ℓ_p) → F_p, where ℓ_0=−1 and ℓ_(p+1)=p.
 
-No direct-column, normalized-row, second-page, or Bousfield--Kan comparison
-is asserted here.
+The coherent first-page isomorphism identifies E¹_(p,q) with the
+relative homology of this window in cochain degree −p−q.
+The first-page morphism induced by f commutes with this isomorphism:
+θ_L ∘ E¹(f)_(p,q) = H_(−p−q)(window(f)) ∘ θ_K.
+The relative map is the interval component of the complete abelian
+spectral-object morphism. The category object and morphism worlds
+remain independent.
 -/
 
 @[expose] public section
@@ -49,8 +53,13 @@ local notation "data" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁FirstQuadrantHomological
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The page-one map commutes with the coherent relative-homology
-identification. -/
+/-- For a map f : K → L of nonnegative homological bicomplexes
+in an abelian category and p,q ≥ 0, let θ_K,θ_L identify the
+first-page objects with the coherent window homology in degree
+−p−q. Then
+θ_L ∘ E¹(f)_(p,q) = H_(−p−q)(window(f)) ∘ θ_K.
+The window endpoints are ℓ_0=−1, ℓ_(p+1)=p and upper endpoint p;
+its relative map is induced by the complete spectral morphism of f. -/
 @[reassoc]
 theorem horizontalFirstPageCoherentXIso_hom_naturality_of_bicomplex
     (f : K ⟶ L) (p q : ℕ) :

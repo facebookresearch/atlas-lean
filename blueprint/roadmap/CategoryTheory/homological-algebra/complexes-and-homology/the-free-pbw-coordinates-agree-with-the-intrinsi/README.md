@@ -2,13 +2,13 @@
 
 ## PBW
 
-- [Associated Graded Raw Linear Equiv](associated-graded-raw-linear-equiv.md)
+- [The PBW graded carrier is linearly the quotient direct sum](associated-graded-raw-linear-equiv.md)
 
 ## Universal Enveloping Algebra
 
-- [Associated Graded Basis Linear Equiv](associated-graded-basis-linear-equiv.md)
-- [Associated Graded Basis Equiv](associated-graded-basis-equiv.md)
-- [Symmetric PBWEquiv Of Basis](symmetric-pbwequiv-of-basis.md)
-- [Symmetric PBWEquiv Of Basis to Alg Hom](symmetric-pbwequiv-of-basis-to-alg-hom.md)
-- [Symmetric PBWEquiv Of Basis eq](symmetric-pbwequiv-of-basis-eq.md)
-- [Symmetric Comparison bijective of free](symmetric-comparison-bijective-of-free.md)
+- [Intrinsic and basis-dependent graded carriers are linearly equivalent](associated-graded-basis-linear-equiv.md)
+- [Intrinsic and PBW graded products agree](associated-graded-basis-equiv.md)
+- [PBW identifies the symmetric algebra with intrinsic associated grading](symmetric-pbwequiv-of-basis.md)
+- [The PBW equivalence has the canonical generator-symbol map](symmetric-pbwequiv-of-basis-to-alg-hom.md)
+- [The intrinsic PBW equivalence is independent of the ordered basis](symmetric-pbwequiv-of-basis-eq.md)
+- [The canonical PBW comparison is bijective for free Lie modules](symmetric-comparison-bijective-of-free.md)

@@ -1,3 +1,6 @@
-# Partial Total Stable Obj
+# The stable interval object of an adjacent partial-total filtration pair
 
-The direct stable interval for the partial-total filtration.
+The stable interval object of an adjacent partial-total filtration pair.
+
+In degree `n` and stage `p`, take the stable interval object at cochain degree `-n` for the
+preceding-to-current filtration indices.

@@ -1,3 +1,6 @@
-# To Module
+# Stable ring carrier maps to the stable matrix module
 
-The k-linear map to the stable matrix module induced by the finite-stage identities.
+Stable ring carrier maps to the stable matrix module.
+
+The `k`-linear map from `Matrix.Stable k A` to `Matrix.StableModule k A` is induced by the
+identity on each finite matrix stage.

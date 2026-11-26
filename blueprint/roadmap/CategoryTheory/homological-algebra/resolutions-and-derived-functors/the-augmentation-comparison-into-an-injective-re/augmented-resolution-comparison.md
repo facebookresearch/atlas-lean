@@ -1,4 +1,6 @@
-# Augmented Resolution Comparison
+# Comparing an exact coaugmented complex with an injective resolution
 
-A augmented exact complex has an comparison into the chosen injective resolution, with no
-injectivity assumption on its own terms.
+Let `C` be abelian with injective resolutions. For a nonnegative
+cochain complex `I` and a quasi-isomorphism `ι : X[0] → I`, there is a
+cochain map `a : I → I(X)` to the chosen injective resolution satisfying
+`ι ≫ a = ι_(I(X))`. The terms of `I` need not be injective.

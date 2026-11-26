@@ -1,3 +1,6 @@
-# Simplicial Diagram
+# The augmented simplicial Hochschild diagram with module coefficients
 
-The simplicial Hochschild diagram of the original augmented algebra, with arbitrary coefficient M.
+The augmented simplicial Hochschild diagram with module coefficients.
+
+For `P_• → B`, applying the fixed-module-coefficient Hochschild functor in each simplicial
+degree gives a simplicial diagram of chain complexes in the joint coefficient universe.

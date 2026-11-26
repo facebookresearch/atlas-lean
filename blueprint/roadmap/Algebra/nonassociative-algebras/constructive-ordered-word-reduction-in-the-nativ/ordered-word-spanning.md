@@ -1,4 +1,6 @@
-# Ordered Word spanning
+# Spanning of an enveloping algebra by ordered basis words
 
-All weakly increasing words span the actual native enveloping algebra
-for every selected basis, including infinite bases and positive characteristic.
+Spanning of an enveloping algebra by ordered basis words.
+
+For every basis indexed by a linearly ordered alphabet over a commutative ring, the `R`-span
+of the ordered-word values is the whole enveloping algebra.

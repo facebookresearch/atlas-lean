@@ -1,3 +1,7 @@
-# Algebra Middle Head signed cancel
+# Opposite middle-head signs cancel after A-balancing
 
-The left-last and right-first head terms cancel in the native A-balanced target.
+Opposite middle-head signs cancel after A-balancing.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, the terms (-1)ᵖ⁺¹((c ⊗ x) ⊗[A] (m ⊗ y)) and (-1)ᵖ((1_A ⊗ x) ⊗[A] ((c • m) ⊗ y)) sum
+to zero.

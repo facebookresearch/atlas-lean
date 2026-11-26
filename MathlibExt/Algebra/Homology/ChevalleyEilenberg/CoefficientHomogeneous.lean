@@ -13,12 +13,19 @@ public import Mathlib.LinearAlgebra.TensorProduct.Decomposition
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientBoundary
 
 /-!
-# Homogeneous Chevalley–Eilenberg boundaries with coefficients
+# Homogeneous coefficient boundaries and their exterior coordinates
 
-The coefficient boundary lowers exterior degree. Tensor decomposition
-identifies each homogeneous submodule with `(⋀[R]^n L) ⊗[R] M` for an arbitrary
-coefficient module. Transporting the restricted boundary through these
-coordinates gives consecutive degree maps whose square vanishes.
+Let M be a left Lie module over an R-Lie algebra L, with R commutative. The decomposition of
+ExteriorAlgebra R L into exterior degrees gives a tensor decomposition after tensoring with M.
+Its degree-n submodule is linearly equivalent to ⋀[R]^n L ⊗[R] M, and its inclusion into the
+ambient tensor product is injective because it is a summand of that decomposition.
+
+The ambient CE coefficient boundary maps degree n + 1 into degree n. Restricting and
+transporting it through these homogeneous coordinates defines the coefficient differential.
+Consecutive differentials compose to zero. In degree one, the formula is δ(x ⊗ m) = −(1 ⊗
+⁅x,m⁆), with 1 the empty exterior word.
+
+See Weibel, *An Introduction to Homological Algebra*, Chapter 7.
 -/
 
 @[expose] public section
@@ -127,7 +134,10 @@ private theorem coefficientBoundary_tmul_mem_degree (n : ℕ) (a : E)
       rw [← TensorProduct.smul_tmul', map_smul]
       exact Submodule.smul_mem _ r ih
 
-/-- The coefficient boundary lowers the homogeneous exterior tensor degree. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M a left Lie module over L. Put E =
+ExteriorAlgebra R L and let H_n be the image of (⋀[R]^n L) ⊗[R] M in E ⊗[R] M under the
+homogeneous inclusion. For every n : ℕ and p ∈ H_(n+1), coefficientBoundary R L M p belongs to
+H_n. -/
 theorem coefficientBoundary_mem_degree (n : ℕ) (p : E ⊗[R] M)
     (hp : p ∈ DirectSum.decomposeTensor G M (n + 1)) :
     coefficientBoundary R L M p ∈ DirectSum.decomposeTensor G M n := by
@@ -141,8 +151,11 @@ theorem coefficientBoundary_mem_degree (n : ℕ) (p : E ⊗[R] M)
       rw [map_add, map_add]
       exact Submodule.add_mem _ hp hq
 
-/-- The homogeneous coefficient differential is the restriction of the ambient boundary, using
-the native tensor decomposition equivalence. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M a left Lie module over L. Put E =
+ExteriorAlgebra R L and let H_n be the image of (⋀[R]^n L) ⊗[R] M in E ⊗[R] M under the
+homogeneous inclusion. For n : ℕ, coefficientDifferential R L M n : ⋀[R]^(n+1) L ⊗[R] M →ₗ[R]
+⋀[R]^n L ⊗[R] M is obtained by the degree-(n+1) inclusion, the ambient coefficientBoundary,
+and the inverse degree-n tensor-decomposition equivalence. -/
 def coefficientDifferential (n : ℕ) :
     ((⋀[R]^(n + 1) L) ⊗[R] M) →ₗ[R] ((⋀[R]^n L) ⊗[R] M) :=
   (DirectSum.decomposeTensorEquiv G M n).symm.toLinearMap.comp
@@ -153,8 +166,10 @@ def coefficientDifferential (n : ℕ) :
           rw [DirectSum.decomposeTensor_apply]
           exact LinearMap.mem_range_self ((⋀[R]^(n + 1) L).subtype.rTensor M) p)))
 
-/-- Including the homogeneous differential in the ambient tensor product gives
-the ambient coefficient boundary. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M a left Lie module over L. Put E =
+ExteriorAlgebra R L and let H_n be the image of (⋀[R]^n L) ⊗[R] M in E ⊗[R] M under the
+homogeneous inclusion. Let J_n : ⋀[R]^n L ⊗[R] M →ₗ[R] E ⊗[R] M be the homogeneous inclusion.
+Then J_n ∘ coefficientDifferential n = coefficientBoundary ∘ J_(n+1) for every n : ℕ. -/
 theorem coefficientDifferential_inclusion (n : ℕ) :
     ((⋀[R]^n L).subtype.rTensor M).comp (coefficientDifferential R L M n) =
       (coefficientBoundary R L M).comp ((⋀[R]^(n + 1) L).subtype.rTensor M) := by
@@ -171,7 +186,11 @@ theorem coefficientDifferential_inclusion (n : ℕ) :
     ((DirectSum.decomposeTensorEquiv G M n).symm q)).symm.trans
       (congrArg Subtype.val ((DirectSum.decomposeTensorEquiv G M n).apply_symm_apply q))
 
-/-- Pointwise form of the ambient characteristic equation. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M a left Lie module over L. Put E =
+ExteriorAlgebra R L and let H_n be the image of (⋀[R]^n L) ⊗[R] M in E ⊗[R] M under the
+homogeneous inclusion. For n : ℕ and p : ⋀[R]^(n+1) L ⊗[R] M, inclusion of
+coefficientDifferential R L M n p into E ⊗[R] M equals coefficientBoundary applied to the
+degree-(n+1) inclusion of p. -/
 @[simp]
 theorem coefficientDifferential_inclusion_apply (n : ℕ)
     (p : (⋀[R]^(n + 1) L) ⊗[R] M) :
@@ -179,7 +198,9 @@ theorem coefficientDifferential_inclusion_apply (n : ℕ)
       coefficientBoundary R L M (((⋀[R]^(n + 1) L).subtype.rTensor M) p) :=
   LinearMap.congr_fun (coefficientDifferential_inclusion R L M n) p
 
-/-- Consecutive homogeneous coefficient differentials compose to zero. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M a left Lie module over L. For every n :
+ℕ, coefficientDifferential R L M n ∘ coefficientDifferential R L M (n + 1) = 0 as an R-linear
+map from ⋀[R]^(n+2) L ⊗[R] M to ⋀[R]^n L ⊗[R] M. -/
 theorem coefficientDifferential_comp_differential (n : ℕ) :
     (coefficientDifferential R L M n).comp (coefficientDifferential R L M (n + 1)) = 0 := by
   apply LinearMap.ext
@@ -189,7 +210,9 @@ theorem coefficientDifferential_comp_differential (n : ℕ) :
     coefficientDifferential_inclusion_apply, coefficientDifferential_inclusion_apply,
     coefficientBoundary_squared]
 
-/-- The degree-one homogeneous differential has the negative native left action. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M a left Lie module over L. For x : L and
+m : M, coefficientDifferential R L M 0 sends exteriorPower.ιMulti R 1 (fun _ => x) ⊗ₜ[R] m to
+−(exteriorPower.ιMulti R 0 Fin.elim0 ⊗ₜ[R] ⁅x,m⁆). -/
 @[simp]
 theorem coefficientDifferential_ι_tmul (x : L) (m : M) :
     coefficientDifferential R L M 0

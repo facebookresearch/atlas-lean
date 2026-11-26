@@ -16,9 +16,11 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Opposites.Kernels
 /-!
 # Kernels of split complementary projectors
 
-The inclusion of a retract is a kernel of its complementary projector. Opposite-category duality
-gives the universal property under preadditivity. Existence of the displayed kernel then gives the
-comparison with the chosen kernel object.
+In a preadditive category, a split pair `i : Y → X`, `r : X → Y`
+with `i ≫ r = 𝟙 Y` makes `i` a kernel of the complementary endomorphism
+`q = 𝟙 X - r ≫ i`. If a kernel object is chosen, it is canonically
+isomorphic to `Y`; these comparisons are natural for compatible maps of
+the split pairs.
 -/
 
 @[expose] public section
@@ -36,16 +38,18 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (hi : i ≫ r = 𝟙 Y) (hq : q = 𝟙 X - r ≫ i)
 
 include hi hq in
-/-- The original inclusion is killed by the complementary projector. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. The inclusion is
+annihilated by the complement: `i ≫ q = 0`. -/
 @[reassoc]
 theorem inclusion_comp_splitComplement : i ≫ q = 0 := by
   rw [hq, Preadditive.comp_sub, Category.comp_id, ← Category.assoc, hi,
     Category.id_comp, sub_self]
 
-/--
-The original inclusion is the kernel, by the opposite of the split cokernel. No chosen kernel or
-global existence assumption is used by this universal property.
--/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. The map
+`i : Y → X` is a kernel of `q`; its universal property does not
+require a separate chosen kernel object. -/
 def splitComplementIsKernel :
     IsLimit (KernelFork.ofι i (inclusion_comp_splitComplement q i r hi hq)) := by
   have hiOp : r.op ≫ i.op = 𝟙 (op Y) := by
@@ -58,25 +62,37 @@ def splitComplementIsKernel :
 
 variable [HasKernel q]
 
-/-- The chosen kernel is canonically the original retract object. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If a kernel
+of `q` exists, there is a canonical isomorphism `kernel q ≅ Y`
+whose comparison respects the original inclusion. -/
 def kernelSplitComplementIso : kernel q ≅ Y :=
   (kernelIsKernel q).conePointUniqueUpToIso (splitComplementIsKernel q i r hi hq)
 
-/-- The kernel comparison keeps the original inclusion. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If the kernel
+of `q` exists, its comparison `e : kernel q ≅ Y` satisfies
+`e.hom ≫ i = kernel.ι q`. -/
 @[reassoc]
 theorem kernelSplitComplementIso_hom_ι :
     (kernelSplitComplementIso q i r hi hq).hom ≫ i = kernel.ι q :=
   IsLimit.conePointUniqueUpToIso_hom_comp (kernelIsKernel q)
     (splitComplementIsKernel q i r hi hq) WalkingParallelPair.zero
 
-/-- The inverse comparison is precisely the lift of the original inclusion. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If the kernel
+of `q` exists, the inverse comparison satisfies
+`e.inv ≫ kernel.ι q = i`. -/
 @[reassoc]
 theorem kernelSplitComplementIso_inv_ι :
     (kernelSplitComplementIso q i r hi hq).inv ≫ kernel.ι q = i :=
   IsLimit.conePointUniqueUpToIso_inv_comp (kernelIsKernel q)
     (splitComplementIsKernel q i r hi hq) WalkingParallelPair.zero
 
-/-- The forward comparison is the original kernel inclusion followed by the retraction. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If the kernel
+of `q` exists, the forward comparison to `Y` is the kernel
+inclusion followed by `r`: `e.hom = kernel.ι q ≫ r`. -/
 theorem kernelSplitComplementIso_hom :
     (kernelSplitComplementIso q i r hi hq).hom = kernel.ι q ≫ r := by
   calc
@@ -89,7 +105,11 @@ theorem kernelSplitComplementIso_hom :
 variable {X' Y' : C} (q' : X' ⟶ X') (i' : Y' ⟶ X') (r' : X' ⟶ Y')
   (hi' : i' ≫ r' = 𝟙 Y') (hq' : q' = 𝟙 X' - r' ≫ i') [HasKernel q']
 
-/-- Original inclusion compatibility earns inverse naturality for the kernel maps. -/
+/-- In a preadditive category `C`, take two split pairs `(i,r)` and
+`(i′,r′)` with complementary endomorphisms `q`, `q′` and existing
+kernels. For `f : X → X′`, `g : Y → Y′` with
+`q ≫ f = f ≫ q′` and `i ≫ f = g ≫ i′`, the induced kernel map
+commutes with the inverse comparisons from `Y` and `Y′`. -/
 @[reassoc]
 theorem kernelSplitComplementIso_inv_naturality
     (f : X ⟶ X') (g : Y ⟶ Y') (w : q ≫ f = f ≫ q')
@@ -106,7 +126,10 @@ theorem kernelSplitComplementIso_inv_naturality
     _ = g ≫ i' := hι
     _ = _ := by rw [Category.assoc, kernelSplitComplementIso_inv_ι]
 
-/-- The canonical forward comparison is natural for every original inclusion square. -/
+/-- In a preadditive category `C`, take two split pairs with complements
+`q`, `q′` and existing kernels. If `f : X → X′`, `g : Y → Y′`
+commute with the complements and inclusions, the induced kernel
+map commutes with the canonical forward comparisons to `Y` and `Y′`. -/
 @[reassoc]
 theorem kernelSplitComplementIso_naturality
     (f : X ⟶ X') (g : Y ⟶ Y') (w : q ≫ f = f ≫ q')

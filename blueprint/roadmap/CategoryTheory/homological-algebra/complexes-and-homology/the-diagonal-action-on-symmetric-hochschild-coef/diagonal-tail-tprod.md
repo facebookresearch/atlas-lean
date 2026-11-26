@@ -1,3 +1,6 @@
-# Diagonal Tail tprod
+# The equal-degree diagonal tail formula
 
-Native coordinatewise tail multiplication on the original pure tensor tuples.
+The equal-degree diagonal tail formula.
+
+For a commutative ring k, a commutative k-algebra A and a,b : Fin n → A, diagonalTail(tprod(a)
+⊗ tprod(b)) = tprod(i ↦ aᵢbᵢ).

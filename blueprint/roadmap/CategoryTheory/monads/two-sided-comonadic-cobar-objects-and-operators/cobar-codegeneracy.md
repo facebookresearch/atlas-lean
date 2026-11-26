@@ -1,4 +1,6 @@
-# Cobar Codegeneracy
+# The natural codegeneracy of two-sided cobar degree functors
 
-Codegeneracies assemble into natural transformations `C_{n+1} ⟶ C_n`
-via counit insertion.
+The natural codegeneracy of two-sided cobar degree functors.
+
+For `i : Fin (n+1)`, counit insertion at reversed position `i.rev`, followed by `R`, gives a
+natural map from degree `n+1` to degree `n`.

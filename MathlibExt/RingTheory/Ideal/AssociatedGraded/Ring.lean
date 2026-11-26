@@ -15,23 +15,16 @@ public import Mathlib.Algebra.Module.Torsion.Basic
 public import MathlibExt.RingTheory.Ideal.AssociatedGraded.Basic
 
 /-!
-# The associated-graded ring of an ideal
+# The quotient coefficient algebra of an associated graded ring
 
-For an ideal `I` in a commutative ring, the homogeneous multiplication on
-`I ^ n / I ^ (n + 1)` assembles into a commutative ring structure on the
-external direct sum. Its degree-zero piece is canonically `R ⧸ I`, and the
-total ring is naturally an algebra over that quotient.
+For an ideal `I` in a commutative ring `R`, the associated graded ring is `⨁ n : ℕ,
+I^n/I^(n+1)` with product `[x]_m [y]_n = [xy]_(m+n)`. Its degree-zero piece is `R/I`.
 
-The total ring and homogeneous multiplication reuse the canonical ideal-adic
-provider. This file adds the quotient coefficient algebra and degree-zero
-equivalence with their characteristic laws. It does not define an
-`R`-algebra initial-form map, compare with a Rees
-quotient, or claim reducedness, domainhood, or Hilbert polynomial results.
+The quotient coefficient `r mod I` enters as the degree-zero initial form `[r]_0`, and its
+action on degree `n` is `(r mod I) • [x]_n = [rx]_n`. These maps give the graded algebra
+structure over `R/I`.
 
-## Main declarations
-
-* `Ideal.associatedGradedDegreeZeroEquiv`
-* `Ideal.associatedGradedGAlgebra`
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -114,7 +107,9 @@ private theorem degreeZeroMap_bijective (I : Ideal R) :
     rw [degreeZeroMap_mk]
     exact hx
 
-/-- The degree-zero associated-graded piece is canonically `R ⧸ I`. -/
+/-- For an ideal `I` in a commutative ring `R`, `associatedGradedDegreeZeroEquiv I` is the
+`R/I`-linear equivalence `R/I ≃ₗ[R/I] I.AssociatedGradedPiece 0`. It sends `r mod I` to the
+degree-zero class `[r]_0`, using `I^0 = R`. -/
 @[no_expose]
 noncomputable def associatedGradedDegreeZeroEquiv (I : Ideal R) :
     (R ⧸ I) ≃ₗ[R ⧸ I] AssociatedGradedPiece I 0 :=
@@ -197,8 +192,9 @@ private theorem associatedGradedGAlgebra_smul_def (I : Ideal R)
   rw [idealPow_cast_coe I (zero_add n).symm]
   exact smul_eq_mul r y
 
-/-- The associated-graded ring is naturally an algebra over its degree-zero
-quotient `R ⧸ I`. -/
+/-- For an ideal `I` in a commutative ring `R`, the family `n ↦ I.AssociatedGradedPiece n` is a
+graded algebra over `R/I`. The coefficient map sends `r mod I` to `[r]_0`, and scalar
+multiplication on a homogeneous class is `(r mod I) • [x]_n = [rx]_n`. -/
 @[no_expose]
 noncomputable instance associatedGradedGAlgebra (I : Ideal R) :
     DirectSum.GAlgebra (R ⧸ I) (AssociatedGradedPiece I) := by
@@ -212,8 +208,9 @@ noncomputable instance associatedGradedGAlgebra (I : Ideal R) :
         (I.instGCommRingAdicGradedPiece.toGCommSemiring) _ x
     smul_def := associatedGradedGAlgebra_smul_def I }
 
-/-- The graded-algebra scalar insertion sends a quotient representative to
-its degree-zero initial form. -/
+/-- For an ideal `I` in a commutative ring `R` and `r : R`, `(associatedGradedGAlgebra I).toFun
+(Ideal.Quotient.mk I r)` is the degree-zero class `[r]_0` in `I.AssociatedGradedPiece 0`.
+Equivalently, it is `initialForm I 0 x`, where `x : I^0` has underlying value `r`. -/
 @[simp]
 theorem associatedGradedGAlgebra_toFun_mk (I : Ideal R) (r : R) :
     (associatedGradedGAlgebra I).toFun (Ideal.Quotient.mk I r) =

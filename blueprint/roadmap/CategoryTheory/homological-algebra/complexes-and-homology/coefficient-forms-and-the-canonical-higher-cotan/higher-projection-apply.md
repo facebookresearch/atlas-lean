@@ -1,4 +1,6 @@
-# Higher Projection apply
+# The value of the higher cotangent projection
 
-The computed projection is the original form map followed by
-its native form-level comparison.
+The value of the higher cotangent projection.
+
+For a degree-`q` Hochschild chain `z`, the higher projection is the lifted coefficient-form
+projection of `z` followed by the form-module comparison.

@@ -1,3 +1,5 @@
-# Cyclic SBIInclusion is Iso zero
+# The degree-zero isomorphism of two-column SBI
 
-The degree-zero raw Hochschild inclusion is an isomorphism.
+The degree-zero isomorphism of two-column SBI.
+
+The inclusion `H_0(CC^{(2)}(A)) → HC_0(A)` is an isomorphism.

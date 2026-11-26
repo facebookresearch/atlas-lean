@@ -1,3 +1,6 @@
-# Cokernel Split Complement Iso inv
+# Inverse cokernel comparison through the inclusion
 
-The inverse is the original inclusion followed by the quotient projection.
+In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If a cokernel
+of `q` exists, the inverse comparison is the original inclusion
+followed by the cokernel projection: `e.inv = i ≫ cokernel.π q`.

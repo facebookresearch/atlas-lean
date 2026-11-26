@@ -196,6 +196,23 @@ public theorem genDelannoyUpper_add_succ_left (k m n : ℕ) (hk : 1 ≤ k) :
   simpa only [genDelannoyUpper, htop, htop', hbot, Nat.add_sub_add_right, Nat.cast_id,
     Nat.mul_comm] using hsplit.symm
 
+/-- **Vertical difference identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $k \ge 1$,
+$D^k(m + 1, n) - D^k(m, n) = D^{k-1}(m + 1, n)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Corollary 6
+(`jis-2024-24.1.8-cor-6`). -/
+public theorem genDelannoyUpper_succ_left_sub (k m n : ℕ) (hk : 1 ≤ k) :
+    (genDelannoyUpper k (m + 1) n : ℤ) - genDelannoyUpper k m n =
+      genDelannoyUpper (k - 1) (m + 1) n := by
+  have hv := genDelannoyUpper_add_succ_left k m n hk
+  have hh := genDelannoyUpper_add_succ_right (k - 1) (m + 1) n
+  rw [Nat.sub_add_cancel hk] at hh
+  omega
+
 /-- **Horizontal difference identity for the upper generalized Delannoy numbers.**
 For natural numbers $k$, $m$ and $n$, write
 $D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper

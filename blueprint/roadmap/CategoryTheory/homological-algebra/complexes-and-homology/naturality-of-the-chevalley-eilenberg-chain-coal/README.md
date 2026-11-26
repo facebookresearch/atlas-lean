@@ -1,7 +1,7 @@
 # Naturality of the Chevalley–Eilenberg chain coalgebra
 
-- [Native Complex Map](native-complex-map.md)
-- [Native Complex Map comul](native-complex-map-comul.md)
-- [Native Complex Map counit](native-complex-map-counit.md)
-- [Native Complex Map coaug](native-complex-map-coaug.md)
-- [Native Complex Map Is Comon Hom](native-complex-map-is-comon-hom.md)
+- [The exterior chain map of a Lie homomorphism](native-complex-map.md)
+- [The coproduct square of a Lie chain map](native-complex-map-comul.md)
+- [The counit square of a Lie chain map](native-complex-map-counit.md)
+- [The coaugmentation square of a Lie chain map](native-complex-map-coaug.md)
+- [The comonoid morphism induced by a Lie map](native-complex-map-is-comon-hom.md)

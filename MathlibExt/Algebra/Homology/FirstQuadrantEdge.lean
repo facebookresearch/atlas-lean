@@ -13,19 +13,19 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantCollapse
 
 /-!
-# The surviving edge of a column-zero first-quadrant spectral sequence
+# The zero-column edge isomorphism of a collapsed second page
 
-Suppose the second page of the horizontal first-quadrant spectral sequence
-is zero in every positive horizontal degree.  The zero-column term has no
-outgoing differential, while every possible incoming differential has zero
-source.  It therefore maps isomorphically to every successor page and hence
-to the stable associated graded piece.
+Let K be a bicomplex in an abelian category, with both differentials
+lowering nonnegative degrees. Its horizontal spectral sequence has
+d^r of bidegree (−r,r−1). If E²_(p,q) is zero for every p ≥ 1 and
+q ≥ 0, the zero-column term E²_(0,n) is unchanged on every later page.
 
-The positive filtration steps are isomorphisms by the collapse theorem.  The
-zeroth graded piece is the zeroth filtration stage because the preceding
-stage is zero, and finite exhaustiveness identifies that stage with total
-homology.  Composing these comparisons gives the edge isomorphism from the
-surviving second-page term to total homology.
+At the stable page it is gr_0 H_n(Tot(K)). The preceding filtration
+stage F_(−1)H_n is zero, so this graded piece is F_0 H_n.
+The positive filtration steps on the total-degree diagonal are
+isomorphisms; finite exhaustiveness gives F_0 H_n ≅ H_n(Tot(K)).
+Their composite is the edge isomorphism
+E²_(0,n) ≅ H_n(Tot(K)) for every n ≥ 0.
 -/
 
 @[expose] public section
@@ -45,8 +45,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- At a page concentrated in horizontal degree zero, the zero-column object
-is canonically isomorphic to its page homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and an integer r ≥ 2, assume E^r_(p,q) is zero for every
+p ≥ 1 and q ≥ 0. Then E^r_(0,n) is isomorphic to its homology
+as an object of page r, for every n ≥ 0.
+The outgoing differential has no nonnegative horizontal target,
+and each possible incoming source is a zero positive-column object. -/
 noncomputable def horizontalZeroColumnPageHomologyIso
     (r : ℤ) (hr : 2 ≤ r) (n : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero
@@ -76,8 +80,10 @@ noncomputable def horizontalZeroColumnPageHomologyIso
   exact (P.iCyclesIso j k rfl hout).symm ≪≫
     P.isoHomologyπ i j rfl hin
 
-/-- The zero column is unchanged from page `r` to page `r+1` when every
-positive-column object on page `r` is zero. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, r ≥ 2 and E^r_(p,q) zero whenever p ≥ 1,
+the page homology comparison gives
+E^r_(0,n) ≅ E^(r+1)_(0,n) for every n ≥ 0. -/
 noncomputable def horizontalZeroColumnPageSuccIso
     (r : ℤ) (hr : 2 ≤ r) (n : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero
@@ -88,8 +94,11 @@ noncomputable def horizontalZeroColumnPageSuccIso
     (horizontalFirstQuadrantSpectralSequence K).iso r (r + 1) (0, n)
       rfl (by omega)
 
-/-- Under second-page concentration in horizontal degree zero, the surviving
-term is unchanged after any finite number of successor pages. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, assume E²_(p,q) is zero for p ≥ 1 and all q ≥ 0.
+For n,m ≥ 0, successive page homology comparisons give
+E²_(0,n) ≅ E^(m+2)_(0,n).
+The comparison stays on the same bidegree (0,n). -/
 noncomputable def horizontalSecondPageZeroColumnPageIso
     (n m : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero
@@ -114,8 +123,10 @@ noncomputable def horizontalSecondPageZeroColumnPageIso
         (by push_cast; omega) (by omega)
       exact ih ≪≫ eSucc ≪≫ ePage
 
-/-- The second-page zero-column term identifies with its canonical stable
-page under horizontal-degree-zero concentration. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category with E²_(p,q) zero for every positive horizontal degree,
+there is an isomorphism E²_(0,n) ≅ E^(n+2)_(0,n).
+The index n+2 is the canonical stable-page index at (0,n). -/
 noncomputable def horizontalSecondPageZeroColumnStableIso
     (n : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero
@@ -133,8 +144,10 @@ noncomputable def horizontalSecondPageZeroColumnStableIso
           omega])
       (by omega)
 
-/-- The zeroth associated graded piece is the zeroth filtration stage: its
-preceding filtration stage is zero. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the induced total-homology filtration has F_(−1)H_n = 0.
+Therefore gr_0 H_n(Tot(K)) ≅ F_0 H_n(Tot(K)) for every n ≥ 0,
+with no concentration hypothesis needed for this identity. -/
 noncomputable def horizontalTotalHomologyGradedPieceZeroIsoFiltrationZero
     (n : ℕ) :
     horizontalTotalHomologyGradedPiece K 0 n ≅
@@ -161,9 +174,11 @@ noncomputable def horizontalTotalHomologyGradedPieceZeroIsoFiltrationZero
         ((0 : ℤ) : EInt)) (Nat.zero_add n))
   exact (asIso (cokernel.π f)).symm ≪≫ eTarget
 
-/-- Under second-page concentration in horizontal degree zero, the zeroth
-filtration stage is isomorphic to every finite nonnegative stage on a fixed
-total-degree diagonal. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, suppose E²_(a,b) is zero for every a ≥ 1 and b ≥ 0.
+For p,q ≥ 0, the filtration transition induces
+F_0 H_(p+q)(Tot(K)) ≅ F_p H_(p+q)(Tot(K)).
+This statement stays on the fixed total-degree diagonal p+q. -/
 noncomputable def horizontalTotalHomologyFiltrationZeroStageIso
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero
       (((horizontalFirstQuadrantSpectralSequence K).page 2).X (p, q)))
@@ -216,8 +231,11 @@ noncomputable def horizontalTotalHomologyFiltrationZeroStageIso
         eIndex ≪≫ asIso
           (horizontalTotalHomologyFiltrationStepMap K (p + 1) q)
 
-/-- Under column-zero concentration, the zeroth filtration stage is all of
-total homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category with E² zero in positive horizontal degrees,
+F_0 H_n(Tot(K)) ≅ H_n(Tot(K)) for every n ≥ 0.
+It is the transition to the exhaustive stage F_n H_n followed by
+that stage's inclusion in total homology. -/
 noncomputable def horizontalTotalHomologyFiltrationZeroTotalIso
     (n : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero
@@ -233,9 +251,11 @@ noncomputable def horizontalTotalHomologyFiltrationZeroTotalIso
     asIso ((horizontalTotalHomologyFiltration K n).ι.app
       (((n : ℕ) : ℤ) : EInt))
 
-/-- If the second page is concentrated in horizontal degree zero, its
-surviving term in bidegree `(0,n)` is canonically isomorphic to degree-`n`
-homology of the total complex. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, if E²_(p,q) is zero for p ≥ 1 and all q ≥ 0, then
+E²_(0,n) ≅ H_n(Tot(K)) for every n ≥ 0.
+The map combines the stable-page comparison, the zeroth graded-piece
+comparison and the exhaustive total-homology filtration inclusion. -/
 noncomputable def horizontalSecondPageZeroColumnTotalHomologyIso
     (n : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero

@@ -1,4 +1,7 @@
-# Partial Total Spectral Step Zero Core Iso
+# Bottom-to-zero homology as the first core interval
 
-The literal StageZero spectral object is canonically isomorphic to the
-standard first-page core object.
+Bottom-to-zero homology as the first core interval.
+
+For natural `q`, the spectral homology of `⊥ ⟶ 0` in degree `-q` is isomorphic to the homology
+of the first core interval `core.i₁ (0, q) ⟶ core.i₂ (0, q)`, namely `-1 ⟶ 0`. The lower
+filtration stages are zero.

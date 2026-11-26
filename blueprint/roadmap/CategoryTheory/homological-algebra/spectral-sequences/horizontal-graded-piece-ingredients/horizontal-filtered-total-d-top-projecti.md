@@ -1,4 +1,6 @@
-# Horizontal Filtered Total D top Projection
+# The filtered top-column differential identity
 
-On the top column of a filtered stage, the filtered differential is the
-signed vertical differential; every lower-column contribution vanishes.
+The filtered top-column differential identity.
+
+The finite-stage boundary followed by top projection equals the previous top projection
+followed by the vertical boundary with sign `ε₂(p,q+1)`.

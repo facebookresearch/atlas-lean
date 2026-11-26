@@ -1,3 +1,6 @@
-# Cyclic BTo First Two comp inclusion
+# The full cyclic-total map of the Hochschild inclusion
 
-Composing with the raw SBI inclusion is the canonical native first-column total map.
+The full cyclic-total map of the Hochschild inclusion.
+
+Composing the `b`-complex inclusion into `CC^{(2)}(A)` with inclusion into `CC(A)` gives the
+first-column total inclusion through column-zero coordinates.

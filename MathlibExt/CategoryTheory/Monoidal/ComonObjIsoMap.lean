@@ -12,10 +12,12 @@ module
 public import MathlibExt.CategoryTheory.Monoidal.ComonObjIso
 
 /-!
-# The actual isomorphism to a transported comonoid is a comonoid map
+# The comonoid morphism of an isomorphism transport
 
-The target structure is the existing computed `ComonObj.ofIso` structure.
-No target comonoid or desired morphism certificate is supplied as an input.
+Let `e : M ≅ X` be an isomorphism in a monoidal category and let `M` have a comonoid
+structure. Equip `X` with the transported counit and comultiplication.
+
+The map `e.hom` then preserves the counit and comultiplication, so it is a comonoid morphism.
 -/
 
 @[expose] public section
@@ -28,6 +30,10 @@ namespace CategoryTheory.ComonObj
 
 variable {C : Type*} [Category* C] [MonoidalCategory C]
 
+/-- The forward comonoid map of an isomorphism transport.
+
+With `X` equipped by `ComonObj.ofIso e`, the forward isomorphism map `e.hom` is a comonoid
+homomorphism. -/
 theorem isComonHom_ofIso {M X : C} [ComonObj M] (e : M ≅ X) :
     letI : ComonObj X := ComonObj.ofIso e
     IsComonHom e.hom := by

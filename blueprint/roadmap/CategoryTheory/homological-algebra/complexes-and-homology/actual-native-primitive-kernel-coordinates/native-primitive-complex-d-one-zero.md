@@ -1,3 +1,6 @@
-# Native Primitive Complex d one zero
+# Vanishing of the bottom primitive CE differential
 
-The primitive differential from degree one to degree zero vanishes.
+Vanishing of the bottom primitive CE differential.
+
+The primitive kernel differential from degree one to degree zero is zero, as follows from its
+homogeneous primitive coordinate comparison.

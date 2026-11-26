@@ -1,4 +1,6 @@
-# Right Tensor Coordinates d
+# Differential compatibility of right tensor cancellation
 
-All-degree differential compatibility is from the two original
-generator formulas and the original right UEA action.
+Differential compatibility of right tensor cancellation.
+
+For every `n`, the degreewise cancellation equivalences intertwine the balanced tensor
+differential and the full right-coefficient Chevalley–Eilenberg differential.

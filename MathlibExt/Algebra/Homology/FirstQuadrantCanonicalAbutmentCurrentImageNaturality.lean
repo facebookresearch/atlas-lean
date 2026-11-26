@@ -17,16 +17,18 @@ public import
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
 /-!
-# Naturality of the canonical-abutment current image
+# Naturality of the current abutment image
 
-A bicomplex map induces a canonical square between the homology-to-total
-maps at every complete filtration stage.  At the first-page upper index,
-the resulting image map is the existing current filtration map.  The
-canonical-abutment current-image comparison intertwines this map with the
-corresponding relative-homology image map.
+For a first-quadrant bicomplex K in an abelian category, let G_i be its complete horizontal
+filtered total complex at i∈ℤ∪{⊥,⊤}. Write t_{K,n,i}:H_n(G_i)→H_n(Tot K). A bicomplex morphism
+f:K→L gives a commutative square between t_K and t_L, hence a map between their images that
+commutes with the inclusions into total homology.
 
-This file does not treat the preceding image or the final associated-graded
-comparison.
+For p,q∈ℕ put m=p+q and u=m+1. Let H^a_K(s,t) denote the relative cochain homology of the
+complete filtration between s≤t. The current abutment arrow is b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u).
+The bottom-relative comparisons identify image b_K with the pth horizontal filtration subobject
+of H_m(Tot K). These image comparisons commute with every bicomplex morphism, with arbitrary
+object and morphism universes.
 -/
 
 @[expose] public section
@@ -46,8 +48,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The commutative square between complete-stage homology-to-total maps
-induced by a bicomplex morphism. -/
+/-- Let C be an abelian category, f:K→L a morphism of bicomplexes of shape (down ℕ,down ℕ), n∈ℕ and
+i∈ℤ∪{⊥,⊤}. Write G_i(K) for the complete horizontal filtered total stage and
+t_K:H_n(G_i(K))→H_n(Tot K) for its inclusion map on homology. This is the arrow-category
+morphism from t_K to t_L with left edge H_n(G_i(f)) and right edge H_n(Tot f); its square
+satisfies H_n(G_i(f))≫t_L=t_K≫H_n(Tot f). -/
 noncomputable def horizontalCompleteHomologyToTotalSquareOfBicomplex
     (f : K ⟶ L) (n : ℕ) (i : EInt) :
     Arrow.mk (horizontalCompleteHomologyToTotal K n i) ⟶
@@ -69,15 +74,20 @@ noncomputable def horizontalCompleteHomologyToTotalSquareOfBicomplex
       exact HomologicalComplex.homologyMap_square
         (horizontalCompleteFilteredTotalComplexMapOfBicomplex_toTotal f i) n)
 
-/-- The image map induced by the complete-stage homology-to-total square. -/
+/-- For f:K→L between first-quadrant bicomplexes in an abelian category, n∈ℕ and a complete cut
+i∈ℤ∪{⊥,⊤}, let t_K:H_n(G_i(K))→H_n(Tot K) and t_L be the stage-to-total maps. The square with
+edges H_n(G_i(f)) and H_n(Tot f) induces this morphism image t_K→image t_L of subobjects of
+total homology. -/
 noncomputable def horizontalCompleteHomologyImageMapOfBicomplex
     (f : K ⟶ L) (n : ℕ) (i : EInt) :
     image (horizontalCompleteHomologyToTotal K n i) ⟶
       image (horizontalCompleteHomologyToTotal L n i) :=
   image.map (horizontalCompleteHomologyToTotalSquareOfBicomplex f n i)
 
-/-- The complete-stage image map commutes with the canonical inclusions into
-total homology. -/
+/-- Let f:K→L be a first-quadrant bicomplex morphism in an abelian category, n∈ℕ and i∈ℤ∪{⊥,⊤}. For
+t_K:H_n(G_i(K))→H_n(Tot K), let I_f:image t_K→image t_L be the induced image map and ι_K,ι_L
+their image inclusions. Then I_f≫ι_L=ι_K≫H_n(Tot f). Thus the image map agrees with the
+total-complex homology map after inclusion. -/
 @[reassoc (attr := simp)]
 theorem horizontalCompleteHomologyImageMapOfBicomplex_ι
     (f : K ⟶ L) (n : ℕ) (i : EInt) :
@@ -94,8 +104,11 @@ theorem horizontalCompleteHomologyImageMapOfBicomplex_ι
         (horizontalCompleteHomologyToTotal K n i)).hom ≫ sq.right
     exact image.map_ι sq
 
-/-- At the first-page upper index, the generic complete-stage image map is
-the current total-homology filtration map. -/
+/-- For a morphism f:K→L of first-quadrant bicomplexes in an abelian category and p,q∈ℕ, put m=p+q.
+The complete-stage image map in homology degree m at the finite cut i=p equals the current
+filtration map obtained from the finite horizontal filtration through its complete-to-finite
+comparison. Both are morphisms between the pth filtration subobjects of H_m(Tot K) and H_m(Tot
+L). -/
 @[simp]
 theorem horizontalCompleteHomologyImageMapOfBicomplex_eq_current
     (f : K ⟶ L) (p q : ℕ) :
@@ -179,8 +192,11 @@ theorem horizontalCompleteHomologyImageMapOfBicomplex_eq_current
         hK =≫ HomologicalComplex.homologyMap
           (total.map f (ComplexShape.down ℕ)) (p + q)
 
-/-- The relative-homology square for the current canonical-abutment image
-induced by a bicomplex morphism. -/
+/-- Let C be abelian, f:K→L a morphism of bicomplexes of shape (down ℕ,down ℕ), and p,q∈ℕ. Put m=p+q
+and u=m+1, and let H^a_K(s,t) be relative cochain homology of the complete horizontal
+filtration. For b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u), this arrow-category morphism b_K→b_L has edges
+s_f:H^{-m}_K(⊥,p)→H^{-m}_L(⊥,p) and v_f:H^{-m}_K(⊥,u)→H^{-m}_L(⊥,u) induced by the spectral
+morphism of f. Its equation is s_f≫b_L=b_K≫v_f. -/
 noncomputable def horizontalCanonicalAbutmentCurrentHomologySquareOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     Arrow.mk (horizontalCanonicalAbutmentToUpperHomologyMap K p q) ⟶
@@ -199,8 +215,10 @@ noncomputable def horizontalCanonicalAbutmentCurrentHomologySquareOfBicomplex
       (mk₁ (horizontalCanonicalAbutmentTotalMap p q)))
     ((φ.hom n).naturality d).symm
 
-/-- The map between current canonical-abutment images induced by a
-bicomplex morphism. -/
+/-- For a morphism f:K→L of first-quadrant bicomplexes in an abelian category and p,q∈ℕ, put m=p+q
+and u=m+1. Let b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u) be the current relative-homology map of the
+complete horizontal filtration. The natural square of these arrows induces this map image
+b_K→image b_L. Its codomain edge is the relative spectral map in degree -m at ⊥→u. -/
 noncomputable def horizontalCanonicalAbutmentCurrentImageMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     image (horizontalCanonicalAbutmentToUpperHomologyMap K p q) ⟶
@@ -208,8 +226,10 @@ noncomputable def horizontalCanonicalAbutmentCurrentImageMapOfBicomplex
   image.map
     (horizontalCanonicalAbutmentCurrentHomologySquareOfBicomplex f p q)
 
-/-- The current canonical-abutment image map commutes with the canonical
-inclusions. -/
+/-- Let f:K→L be a first-quadrant bicomplex morphism in an abelian category and p,q∈ℕ. Set m=p+q and
+u=m+1, and write b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u) for the current relative-homology arrow. If
+I_f:image b_K→image b_L is its induced image map and v_f:H^{-m}_K(⊥,u)→H^{-m}_L(⊥,u) is the
+degree -m spectral component at ⊥→u, then I_f≫image.ι(b_L)=image.ι(b_K)≫v_f. -/
 @[reassoc (attr := simp)]
 theorem horizontalCanonicalAbutmentCurrentImageMapOfBicomplex_ι
     (f : K ⟶ L) (p q : ℕ) :
@@ -222,8 +242,11 @@ theorem horizontalCanonicalAbutmentCurrentImageMapOfBicomplex_ι
   image.map_ι
     (horizontalCanonicalAbutmentCurrentHomologySquareOfBicomplex f p q)
 
-/-- The comparison from the current canonical-abutment image to the current
-total-homology filtration stage is natural in the bicomplex. -/
+/-- For f:K→L between first-quadrant bicomplexes in an abelian category and p,q∈ℕ, put m=p+q and
+u=m+1. Let b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u), I_f:image b_K→image b_L, and F_pH_m(Tot K) be the
+pth horizontal homology filtration subobject. The bottom-relative isomorphisms induce e_K:image
+b_K≅F_pH_m(Tot K). If F_pH_m(Tot f) is the current filtration map, then
+I_f≫e_L.hom=e_K.hom≫F_pH_m(Tot f). -/
 theorem horizontalCanonicalAbutmentCurrentImageIso_naturality_of_bicomplex
     (f : K ⟶ L) (p q : ℕ) :
     horizontalCanonicalAbutmentCurrentImageMapOfBicomplex f p q ≫

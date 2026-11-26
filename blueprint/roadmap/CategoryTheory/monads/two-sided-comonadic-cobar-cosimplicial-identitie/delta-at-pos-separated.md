@@ -1,4 +1,6 @@
-# Delta At Pos separated
+# The interchange identity of separated comultiplication insertions
 
-Separated comultiplication insertions commute past each other up to the
-standard index shift. Dual of `Monad.muAtPos_separated`.
+The interchange identity of separated comultiplication insertions.
+
+If `i+1<j`, insertion at `i` followed by insertion at `j` equals insertion at `j-1` followed
+by insertion at `i`, with the indicated power degrees.

@@ -1,3 +1,6 @@
-# Cyclic BConnes SBIPresentation Map id
+# The identity map of a left-unit SBI presentation
 
-The presentation map preserves the original identity.
+The identity map of a left-unit SBI presentation.
+
+For any witness of a left unit, the identity algebra homomorphism induces the identity on the
+associated presentation.

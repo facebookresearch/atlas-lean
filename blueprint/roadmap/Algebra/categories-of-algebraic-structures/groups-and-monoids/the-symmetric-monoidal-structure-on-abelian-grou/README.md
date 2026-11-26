@@ -1,9 +1,9 @@
 # The symmetric monoidal structure on abelian groups
 
-- [To Module Cat ULift Int](to-module-cat-ulift-int.md)
-- [To Module Cat ULift Int tensor ext](to-module-cat-ulift-int-tensor-ext.md)
-- [Inducing Functor Data](inducing-functor-data.md)
-- [Braiding hom apply](braiding-hom-apply.md)
-- [Inst Monoidal Category Ab mathlib Ext](inst-monoidal-category-ab-mathlib-ext.md)
-- [Inst Braided Category Ab mathlib Ext](inst-braided-category-ab-mathlib-ext.md)
-- [Inst Symmetric Category Ab mathlib Ext](inst-symmetric-category-ab-mathlib-ext.md)
+- [Abelian groups as modules over the lifted integers](to-module-cat-ulift-int.md)
+- [Tensor representatives determine module maps](to-module-cat-ulift-int-tensor-ext.md)
+- [Monoidal compatibility of the lifted-integer equivalence](inducing-functor-data.md)
+- [Exchange of pure integer tensors](braiding-hom-apply.md)
+- [Integer tensor product of abelian groups](inst-monoidal-category-ab-mathlib-ext.md)
+- [Tensor braiding of abelian groups](inst-braided-category-ab-mathlib-ext.md)
+- [Tensor symmetry of abelian groups](inst-symmetric-category-ab-mathlib-ext.md)

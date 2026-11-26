@@ -1,3 +1,6 @@
-# Unitization Normalized Zero Equiv projector
+# Scalar projection in normalized degree-zero coordinates
 
-The bottom normalized projector is precisely scalar projection in the original coefficient.
+Scalar projection in normalized degree-zero coordinates.
+
+Under the coefficient equivalence to `A⁺`, the degree-zero normalized scalar projector is the
+algebra projector `(r,a) ↦ (r,0)`.

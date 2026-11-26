@@ -1,3 +1,5 @@
-# Shuffle Cut End right unit
+# Right unit cut acts as identity on the tensor power
 
-The actual right-empty cut is identity after its original degree cast.
+Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The cut endomorphism for `(n,0)` is identity on `V^⊗n`.

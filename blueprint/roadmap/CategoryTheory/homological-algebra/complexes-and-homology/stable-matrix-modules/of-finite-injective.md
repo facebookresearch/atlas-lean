@@ -1,3 +1,5 @@
-# Of Finite injective
+# Each finite matrix semimodule stage embeds injectively
 
-The finite-stage inclusions are injective.
+Each finite matrix semimodule stage embeds injectively.
+
+For every natural `n`, the stage inclusion `Matrix.StableModule.ofFinite k A n` is injective.

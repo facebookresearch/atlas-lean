@@ -1,10 +1,7 @@
-# Associator hom f heq
+# Heterogeneous congruence of complex associator components
 
-Complex associator components are heterogeneously congruent when the
-three graded carriers are equal.
+Heterogeneous congruence of complex associator components.
 
-Rewrite direction: this packages `associator_hom_f_eq_graded` on both sides
-and leaves only the shallow carrier equalities `h₁`, `h₂`, and `h₃`.
-Abstract contract tests invoke the `HEq` form directly; recovering the
-ordinary Bar/Cobar bridge needs propositional leaf equalities (see the
-test module note).
+For triples of complexes with equal graded carriers, the forward associator components in
+every degree `j` are heterogeneously equal, under the stated tensor-existence and iterated-
+comparison hypotheses.

@@ -1,4 +1,6 @@
-# Left Derived Delta Functor
+# Functor isomorphisms induce left-derived delta-functor isomorphisms
 
-Coefficient maps lift a natural isomorphism to the full left-derived  delta-functor family,
-including its connecting maps.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `e : F ≅ G`. The canonical degree
+isomorphisms `L_ne` form an isomorphism of their left-derived
+homological δ-functors, including all connecting transformations.

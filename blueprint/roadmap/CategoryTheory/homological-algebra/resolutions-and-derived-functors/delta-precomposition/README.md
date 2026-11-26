@@ -1,7 +1,7 @@
 # Delta Precomposition
 
-- [Canonical Connecting eq horseshoe](canonical-connecting-eq-horseshoe.md)
-- [Canonical Connecting precomp](canonical-connecting-precomp.md)
-- [Precomp Short Exact](precomp-short-exact.md)
-- [Precomp Delta Hom](precomp-delta-hom.md)
-- [Precomp Delta Hom Of Iso](precomp-delta-hom-of-iso.md)
+- [Any compatible injective horseshoe computes the canonical boundary](canonical-connecting-eq-horseshoe.md)
+- [Right-derived precomposition preserves canonical connecting maps](canonical-connecting-precomp.md)
+- [Exact precomposition preserves short exact sequences](precomp-short-exact.md)
+- [Precomposition comparisons form a cohomological delta-functor morphism](precomp-delta-hom.md)
+- [Coefficient-isomorphism precomposition gives a delta-functor morphism](precomp-delta-hom-of-iso.md)

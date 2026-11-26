@@ -14,13 +14,15 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Local homology of the actual kernel inclusion
+# Local homology comparisons for kernel inclusions
 
-Native finite-limit evaluation makes every component of a kernel inclusion
-mono. At a zero defining component the inclusion is an isomorphism. The
-native epi/isomorphism/mono homology criterion then supplies the actual
-homology comparison when the defining middle and incoming components
-vanish, with only the two indicated homologies assumed.
+Let C have zero morphisms and finite limits, and let f : K → L be a morphism of complexes of
+any shape c. Evaluation preserves kernels, so each component of kernel.ι f is monic, and it is
+an isomorphism wherever the corresponding component of f is zero.
+
+If f is zero in degree i and in the incoming degree c.prev i, the kernel inclusion induces an
+isomorphism on degree-i homology whenever the kernel and K have that homology. For nonnegative
+cochain complexes, degree zero needs only f₀ = 0, and degree one needs f₀ = f₁ = 0.
 -/
 
 @[expose] public section
@@ -39,7 +41,9 @@ section ArbitraryShape
 variable {ι : Type w} {c : ComplexShape ι}
   {K L : HomologicalComplex C c} (f : K ⟶ L)
 
-/-- The actual kernel-inclusion component is an isomorphism where the defining map is zero. -/
+/-- Let C be a category with zero morphisms and finite limits, let c be any complex shape on an
+index type ι, and let f : K ⟶ L be a map of complexes of shape c. For i : ι, if f.f i = 0,
+then (kernel.ι f).f i : (kernel f).X i ⟶ K.X i is an isomorphism. -/
 theorem isIso_kernelInclusion_f_of_zero (i : ι) (hf : f.f i = 0) :
     IsIso ((kernel.ι f).f i) := by
   let F : HomologicalComplex C c ⥤ C := eval C c i
@@ -54,7 +58,11 @@ theorem isIso_kernelInclusion_f_of_zero (i : ι) (hf : f.f i = 0) :
   rw [← kernelComparison_comp_ι f F]
   infer_instance
 
-/-- Actual vanishing at the middle and incoming degrees earns kernel homology transport. -/
+/-- Let C be a category with zero morphisms and finite limits, let c be any complex shape on an
+index type ι, and let f : K ⟶ L be a map of complexes of shape c. Assume kernel f and K each
+have homology in degree i. If f.f i = 0 and f.f (c.prev i) = 0, then kernel.ι f is a
+quasi-isomorphism at i: its map on degree-i homology is an isomorphism. The component at
+c.next i is monic as a kernel inclusion. -/
 theorem quasiIsoAt_kernelInclusion_of_zero_components (i : ι)
     [(kernel f).HasHomology i] [K.HasHomology i]
     (hi : f.f i = 0) (hprev : f.f (c.prev i) = 0) :
@@ -75,7 +83,10 @@ theorem quasiIsoAt_kernelInclusion_of_zero_components (i : ι)
   exact ShortComplex.quasiIso_of_epi_of_isIso_of_mono
     ((shortComplexFunctor C c i).map (kernel.ι f))
 
-/-- The canonical isomorphism is homology of the actual kernel inclusion itself. -/
+/-- Let C be a category with zero morphisms and finite limits, let c be any complex shape on an
+index type ι, and let f : K ⟶ L be a map of complexes of shape c. If kernel f and K have
+homology in degree i, and f.f i = f.f (c.prev i) = 0, define the isomorphism (kernel
+f).homology i ≅ K.homology i by the homology map of kernel.ι f. -/
 def kernelHomologyIsoOfZeroComponents (i : ι)
     [(kernel f).HasHomology i] [K.HasHomology i]
     (hi : f.f i = 0) (hprev : f.f (c.prev i) = 0) :
@@ -83,7 +94,10 @@ def kernelHomologyIsoOfZeroComponents (i : ι)
   letI := quasiIsoAt_kernelInclusion_of_zero_components f i hi hprev
   exact _root_.isoOfQuasiIsoAt (kernel.ι f) i
 
-/-- The actual forward homology map is retained without unfolding the public construction. -/
+/-- Let C be a category with zero morphisms and finite limits, let c be any complex shape on an
+index type ι, and let f : K ⟶ L be a map of complexes of shape c. Assume both degree-i
+homology objects exist and f.f i = f.f (c.prev i) = 0. The forward map of
+kernelHomologyIsoOfZeroComponents f i hi hprev is homologyMap (kernel.ι f) i. -/
 theorem kernelHomologyIsoOfZeroComponents_hom (i : ι)
     [(kernel f).HasHomology i] [K.HasHomology i]
     (hi : f.f i = 0) (hprev : f.f (c.prev i) = 0) :
@@ -96,14 +110,19 @@ section NonnegativeCochains
 
 variable {K L : CochainComplex C ℕ} (f : K ⟶ L)
 
-/-- At degree zero only the degree-zero defining component must vanish. -/
+/-- Let C have zero morphisms and finite limits, and let f : K ⟶ L be a map of cochain complexes
+indexed by ℕ. If kernel f and K have homology in degree 0 and f.f 0 = 0, the kernel inclusion
+induces an isomorphism H⁰(kernel f) ≅ H⁰(K). The predecessor convention at degree zero is (up
+ℕ).prev 0 = 0. -/
 def kernelHomologyZeroIso [(kernel f).HasHomology 0] [K.HasHomology 0]
     (h0 : f.f 0 = 0) : (kernel f).homology 0 ≅ K.homology 0 :=
   kernelHomologyIsoOfZeroComponents f 0 h0 (by
     erw [CochainComplex.prev_nat_zero]
     exact h0)
 
-/-- Degree one needs zero components at degrees one and zero; outgoing inclusion is mono. -/
+/-- Let C have zero morphisms and finite limits, and let f : K ⟶ L be a map of cochain complexes
+indexed by ℕ. If kernel f and K have homology in degree 1 and f.f 1 = f.f 0 = 0, the kernel
+inclusion induces an isomorphism H¹(kernel f) ≅ H¹(K). -/
 def kernelHomologyOneIso [(kernel f).HasHomology 1] [K.HasHomology 1]
     (h1 : f.f 1 = 0) (h0 : f.f 0 = 0) : (kernel f).homology 1 ≅ K.homology 1 :=
   kernelHomologyIsoOfZeroComponents f 1 h1 (by

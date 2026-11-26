@@ -1,3 +1,6 @@
-# Kernel Split Complement Iso inv ι
+# Inverse kernel comparison preserves the inclusion
 
-The inverse comparison is precisely the lift of the original inclusion.
+In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If the kernel
+of `q` exists, the inverse comparison satisfies
+`e.inv ≫ kernel.ι q = i`.

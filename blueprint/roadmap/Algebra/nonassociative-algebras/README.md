@@ -21,7 +21,7 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [The Jacobi identity in the overlapping PBW reductions](the-jacobi-identity-in-the-overlapping-pbw-reduc/README.md)
 - [Virtual racks and quandles](virtual-racks-and-quandles/README.md)
 - [Witt's formula for free Lie algebras](witt-s-formula-for-free-lie-algebras/README.md)
-- [Induction on the native universal enveloping algebra](induction.md)
+- [Scalar and Lie-generator induction on the enveloping algebra](induction.md)
 - [Universal enveloping algebra of a Lie algebra](universal-enveloping-algebra.md)
 - [Poincaré–Birkhoff–Witt theorem](poincare-birkhoff-witt-theorem.md)
 - [Engel's theorem](engel-theorem.md)

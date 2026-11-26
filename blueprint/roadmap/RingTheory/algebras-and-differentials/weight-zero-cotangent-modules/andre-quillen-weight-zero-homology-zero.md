@@ -1,3 +1,6 @@
-# Andre Quillen Weight Zero Homology Zero Iso
+# The natural degree-zero weight-zero homology comparison
 
-The actual natural degree-zero identity for the zero-weight boundary.
+The natural degree-zero weight-zero homology comparison.
+
+The normalized constant augmentation identifies the degree-zero weight-zero homology functor
+naturally with the identity functor on `A`-modules.

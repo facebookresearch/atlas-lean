@@ -1,3 +1,4 @@
-# Native Shift Obj XIso' inv map f hom
+# Conjugating a shifted map gives the original component
 
-Coordinate conjugation of the native shifted map retains the unsigned source component.
+Let C be a preadditive category, f : K → L a map of integer chain complexes, and a,i,j ∈ ℤ with
+i−a = j. The specified coordinates satisfy e_K,i.inv ≫ S_a(f)_i ≫ e_L,i.hom = f_j.

@@ -13,11 +13,16 @@ module
 public import MathlibExt.LinearAlgebra.ExteriorPower.LeadingCoefficient
 
 /-!
-# Missing-row support of an actual leading exterior coefficient
+# Missing-coordinate vanishing for a leading determinant
 
-A tail factor whose basis index is absent from all determinant coordinates
-gives a zero row. The outside index may occur at other tail positions.
-The statement applies to arbitrary basis index sets and every exterior degree.
+For a basis indexed by a linearly ordered type, the leading functional uses the dual
+coordinates indexed by `{j} ∪ s`. If a vector in the exterior basis tail `t` has an index
+outside both `s` and `{j}`, its determinant row is zero.
+
+The resulting vanishing holds for any leading vector `x`; other positions of `t` may contain
+`j`.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 public section
@@ -28,7 +33,10 @@ universe u v w
 variable {R : Type u} [CommRing R] {M : Type v} [AddCommGroup M] [Module R M]
 variable {I : Type w} [LinearOrder I] (b : Module.Basis I R M)
 
-/-- An actual tail basis factor absent from the source and outside coordinates forces a zero determinant row. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` indexed by a linearly
+ordered type `I`. For `n : ℕ` and `s : Set.powersetCard I n`, let `e_s : Fin n ↪o I` enumerate
+`s` in order. Let `j : I`, `s,t : Set.powersetCard I n`, `x : M`, and `r : Fin n`. If `e_t r ∉
+s` and `e_t r ≠ j`, then `leadingCoefficient b j s (x ∧ (b.exteriorPower n t))=0`. -/
 theorem leadingCoefficient_wedge_basis_zero_of_missing_index {n : ℕ}
     (j : I) (s t : Set.powersetCard I n) (x : M) (r : Fin n)
     (hr : Set.powersetCard.ofFinEmbEquiv.symm t r ∉ s)

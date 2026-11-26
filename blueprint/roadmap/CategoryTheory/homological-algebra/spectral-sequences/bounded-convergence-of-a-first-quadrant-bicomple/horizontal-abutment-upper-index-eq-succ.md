@@ -1,3 +1,6 @@
-# Horizontal Abutment Upper Index eq succ
+# The finite upper abutment stage is total degree plus one
 
-The finite upper abutment stage is one above total degree `p+q`.
+For a nonnegative homological bicomplex and p,q ≥ 0,
+the upper index used in the finite abutment comparison is
+p+q+1, viewed as a finite element of EInt.
+This is one stage above the total degree n = p+q.

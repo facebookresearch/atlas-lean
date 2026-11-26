@@ -16,9 +16,12 @@ public import Mathlib.Data.Fin.Tuple.Basic
 /-!
 # Inserting a fixed tensor factor
 
-The multilinear universal property defines insertion of a fixed module
-element into a tensor power. The source and target are the usual tensor
-powers, and only semiring and module structure are required.
+Let k be a commutative semiring and B a k-module with an additive commutative monoid structure.
+For i ∈ Fin(n+1) and c ∈ B, insertion defines a k-linear map Iᵢ(c) : B⊗n → B⊗(n+1). It sends
+tprod(a) to tprod(Fin.insertNth i c a), so the existing factors retain their order.
+
+The construction uses the multilinear universal property of tensor products; see N. Bourbaki,
+Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -30,7 +33,11 @@ universe u v
 variable (k : Type u) [CommSemiring k]
   {B : Type v} [AddCommMonoid B] [Module k B]
 
-/-- Insert one fixed factor into the actual tensor power. -/
+/-- Insertion of a fixed vector into a tensor power.
+
+For a commutative semiring k, an additive commutative k-module B, i ∈ Fin(n+1) and c ∈ B,
+this k-linear map B⊗n → B⊗(n+1) inserts c at position i and shifts later factors one
+position to the right. -/
 noncomputable def insert {n : ℕ} (i : Fin (n + 1)) (c : B) :
     TensorPower k n B →ₗ[k] TensorPower k (n + 1) B :=
   PiTensorProduct.lift
@@ -50,6 +57,10 @@ noncomputable def insert {n : ℕ} (i : Fin (n + 1)) (c : B) :
           (TensorPower k (n + 1) B) from PiTensorProduct.tprod k).map_update_smul
             (Fin.insertNth (α := fun _ : Fin (n + 1) => B) i c a) (i.succAbove j) r x))
 
+/-- The pure-tensor formula for insertion.
+
+For a commutative semiring k, an additive commutative k-module B, i ∈ Fin(n+1), c ∈ B and a
+: Fin n → B, insert(k,i,c)(tprod(a)) = tprod(Fin.insertNth i c a). -/
 @[simp]
 theorem insert_tprod {n : ℕ} (i : Fin (n + 1)) (c : B) (a : Fin n → B) :
     insert k i c (PiTensorProduct.tprod k a) =

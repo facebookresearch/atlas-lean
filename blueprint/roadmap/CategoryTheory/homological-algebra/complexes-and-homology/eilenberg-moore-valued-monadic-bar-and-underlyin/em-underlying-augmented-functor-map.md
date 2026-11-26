@@ -1,3 +1,5 @@
-# Em Underlying Augmented Functor map
+# The forgotten-bar functor uses the specified algebra morphism map
 
-Map computation: bundling recovers `emUnderlyingHom`, by `rfl`.
+For a monad T on C and algebra morphism φ : alg → alg′, emUnderlyingAugmentedFunctor.map(φ)
+equals emUnderlyingHom(φ). This is the action-pairing-preserving augmented bar map induced by
+φ.

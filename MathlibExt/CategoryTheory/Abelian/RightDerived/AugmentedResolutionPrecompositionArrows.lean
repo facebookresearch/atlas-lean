@@ -12,7 +12,14 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolutionPrecomposition
 
 /-!
-# augmentation-computed precomposition arrows with their supplied quasi-isomorphism proof
+# The two augmented right-derived precomposition maps
+
+For abelian `C,D,A`, injective resolutions in `C,D`, additive
+injective- and homology-preserving `J : C → D`, and additive
+`P : C → A`, `B : D → A` with `P ≅ J ⋙ B`, an exact coaugmented
+complex `X[0] → I` gives two equal maps
+`Hⁿ(P(I)) → R^nB(J(X))`: compare to derived cohomology first, or
+first identify the mapped coefficient complex.
 -/
 
 @[expose] public section
@@ -27,7 +34,11 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolution
 variable (J : C ⥤ D) [J.Additive] [J.PreservesInjectiveObjects] [J.PreservesHomology]
   (B : D ⥤ A) [B.Additive] {P : C ⥤ A} [P.Additive]
 
-/-- The source augmentation-computed map followed by the original derived precomposition. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For a coaugmentation quasi-isomorphism `ι : X[0] → I`,
+the left route `Hⁿ(P(I)) → R^nB(J(X))` is the augmented comparison
+to `R^nP(X)` followed by the derived precomposition isomorphism. -/
 def augmentedDerivedPrecompLeft (α : P ≅ J ⋙ B) {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι) (n : ℕ) :
     ((P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I).homology n ⟶
@@ -36,10 +47,12 @@ def augmentedDerivedPrecompLeft (α : P ≅ J ⋙ B) {X : C} (I : CochainComplex
   exact P.augmentedResolutionToRightDerivedHom I ι n ≫
     (rightDerivedPrecompIsoOfIso J B α n).hom.app X
 
-/--
-The mapped augmentation-computed map after the same natural-transformation and composition
-homology maps.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For a coaugmentation quasi-isomorphism `ι : X[0] → I`,
+the right route `Hⁿ(P(I)) → R^nB(J(X))` transports cohomology by
+`α_I` and complex composition to `Hⁿ(B(J(I)))`, then applies the
+augmented comparison for `J(I)`. -/
 def augmentedDerivedPrecompRight (α : P ≅ J ⋙ B) {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι) (n : ℕ) :
     ((P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I).homology n ⟶
@@ -54,7 +67,11 @@ def augmentedDerivedPrecompRight (α : P ≅ J ⋙ B) {X : C} (I : CochainComple
       ((HomologicalComplex.singleMapHomologicalComplex J (ComplexShape.up ℕ) 0).inv.app X ≫
         (J.mapHomologicalComplex (ComplexShape.up ℕ)).map ι) n
 
-/-- Injective-resolution precomposition proves equality of these fixed arrows in every degree. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For a coaugmentation quasi-isomorphism `ι : X[0] → I`,
+the left and right augmented precomposition maps
+`Hⁿ(P(I)) → R^nB(J(X))` are equal. -/
 theorem augmentedDerivedPrecompLeft_eq_right (α : P ≅ J ⋙ B) {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι) (n : ℕ) :
     augmentedDerivedPrecompLeft J B α I ι hι n = augmentedDerivedPrecompRight J B α I ι hι n := by

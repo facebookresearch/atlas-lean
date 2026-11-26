@@ -14,16 +14,18 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.BaseChange
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced
 
 /-!
-# Balanced coefficients of scalar-extended exterior powers
+# Balanced base change of exterior powers
 
-Exterior powers commute with scalar extension without a basis or flatness
-hypothesis. Combining that existing equivalence with the actual balanced
-tensor cancellation identifies
-`M ⊗_R ⋀_R^n (R ⊗_k V)` with `M ⊗_k ⋀_k^n V`.
+Let `k,R` be commutative rings with `R` a `k`-algebra. Let `M` be a `k`-module and right
+`R`-module with commuting compatible actions, and let `V` be a `k`-module. The comparison is
+the `k`-linear equivalence `M ⊗_R Λ^n_R(R ⊗_k V) ≃ M ⊗_k Λ^n_k V`, using the balanced tensor
+presentation on the left.
 
-The original right `R`-action and original ground action of `M` are retained.
-All carrier universes are independent. Neither `M` nor `V` is assumed free,
-projective, flat or finite. The comparison is canonical on exterior words.
+On a word it sends `[m, r • ιMulti_R(1⊗v_j)]` to `(op r • m) ⊗ ιMulti_k(v_j)`. Its inverse
+inserts `1` in each scalar-extended generator. The comparison commutes with ground-linear maps
+`V → W`.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -41,8 +43,11 @@ variable (k : Type u) [CommRing k] (R : Type v) [CommRing R] [Algebra k R]
   [SMulCommClass k Rᵐᵒᵖ M] [IsScalarTower k Rᵐᵒᵖ M]
   (V : Type z) [AddCommGroup V] [Module k V]
 
-/-- The actual balanced tensor of a scalar-extended exterior power cancels
-the regular scalar factor, preserving the original coefficient module. -/
+/-- Let `k,R` be commutative rings with a `k`-algebra structure on `R`. Let `M` be a `k`-module
+and a right `R`-module (`Module Rᵐᵒᵖ M`) whose actions commute and form the tower `k → Rᵐᵒᵖ →
+M`. Let `V` be a `k`-module and put `N_n(V)=Λ^n_R(R ⊗[k] V)`, with its induced `k`-action. For
+`n : ℕ`, the comparison is `TensorProduct.Balanced k R M N_n(V) ≃ₗ[k] M ⊗[k] Λ^n_k V`,
+absorbing the scalar extension through the right coefficient action. -/
 def balancedBaseChangeEquiv (n : ℕ) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
     TensorProduct.Balanced k R M (⋀[R]^n (R ⊗[k] V)) ≃ₗ[k] M ⊗[k] (⋀[k]^n V) := by
@@ -64,8 +69,11 @@ def balancedBaseChangeEquiv (n : ℕ) :
     (fun _ _ => rfl) (fun r x => e.map_smul r x)).trans
       (TensorProduct.Balanced.cancelEquiv k R M (⋀[k]^n V))
 
-/-- A scalar-extended pure exterior word is absorbed by its actual original
-right coefficient action; no transported coefficient action is chosen. -/
+/-- Let `k,R` be commutative rings with a `k`-algebra structure on `R`. Let `M` be a `k`-module
+and a right `R`-module (`Module Rᵐᵒᵖ M`) whose actions commute and form the tower `k → Rᵐᵒᵖ →
+M`. Let `V` be a `k`-module and put `N_n(V)=Λ^n_R(R ⊗[k] V)`, with its induced `k`-action. For
+`n : ℕ`, `m : M`, `r : R`, and `a : Fin n → V`, the balanced class of `(m, r • ιMulti_R(fun j
+↦ 1⊗a j))` maps to `(op r • m) ⊗ ιMulti_k a`. -/
 theorem balancedBaseChangeEquiv_mk_smul_ιMulti
     (n : ℕ) (m : M) (r : R) (a : Fin n → V) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
@@ -83,7 +91,11 @@ theorem balancedBaseChangeEquiv_mk_smul_ιMulti
         (r • ιMulti R n (fun j => (1 : R) ⊗ₜ[k] a j)))) = _
   erw [baseChangeEquiv_symm_apply_smul_ιMulti, TensorProduct.Balanced.cancelEquiv_mk_tmul]
 
-/-- On an unscaled original exterior word the original coefficient head is unchanged. -/
+/-- Let `k,R` be commutative rings with a `k`-algebra structure on `R`. Let `M` be a `k`-module
+and a right `R`-module (`Module Rᵐᵒᵖ M`) whose actions commute and form the tower `k → Rᵐᵒᵖ →
+M`. Let `V` be a `k`-module and put `N_n(V)=Λ^n_R(R ⊗[k] V)`, with its induced `k`-action. For
+`n : ℕ`, `m : M`, and `a : Fin n → V`, the balanced class of `(m, ιMulti_R(fun j ↦ 1⊗a j))`
+maps to `m ⊗ ιMulti_k a`. -/
 theorem balancedBaseChangeEquiv_mk_ιMulti (n : ℕ) (m : M) (a : Fin n → V) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
     balancedBaseChangeEquiv k R M V n
@@ -92,7 +104,11 @@ theorem balancedBaseChangeEquiv_mk_ιMulti (n : ℕ) (m : M) (a : Fin n → V) :
   simpa only [one_smul, op_one] using
     balancedBaseChangeEquiv_mk_smul_ιMulti k R M V n m (1 : R) a
 
-/-- The inverse inserts the original scalar unit into each generator before balancing. -/
+/-- Let `k,R` be commutative rings with a `k`-algebra structure on `R`. Let `M` be a `k`-module
+and a right `R`-module (`Module Rᵐᵒᵖ M`) whose actions commute and form the tower `k → Rᵐᵒᵖ →
+M`. Let `V` be a `k`-module and put `N_n(V)=Λ^n_R(R ⊗[k] V)`, with its induced `k`-action. For
+`n : ℕ`, `m : M`, and `a : Fin n → V`, the inverse comparison sends `m ⊗ ιMulti_k a` to the
+balanced class of `(m, ιMulti_R(fun j ↦ 1⊗a j))`. -/
 theorem balancedBaseChangeEquiv_symm_tmul_ιMulti
     (n : ℕ) (m : M) (a : Fin n → V) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
@@ -107,7 +123,10 @@ section Maps
 
 variable {W : Type z'} [AddCommGroup W] [Module k W]
 
-/-- The actual exterior map of a ground-linear map, on the balanced scalar-extended model. -/
+/-- Let `k,R` be commutative rings with `R` a `k`-algebra, `M` a `k`-module and right `R`-module,
+`V,W` be `k`-modules, and `f : V →ₗ[k] W`. Put `N_n(V)=Λ^n_R(R ⊗[k] V)` with its induced
+ground action. For `n : ℕ`, the `k`-linear balanced map fixes `M` and applies `Λ^n_R(id_R ⊗ f)
+: N_n(V) → N_n(W)` to the exterior factor. -/
 def balancedBaseChangeMap (f : V →ₗ[k] W) (n : ℕ) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
     letI : Module k (⋀[R]^n (R ⊗[k] W)) := Module.compHom _ (algebraMap k R)
@@ -128,7 +147,10 @@ def balancedBaseChangeMap (f : V →ₗ[k] W) (n : ℕ) :
     (fun _ _ => rfl) (fun r x => g.map_smul r x)
 
 omit [SMulCommClass k Rᵐᵒᵖ M] [IsScalarTower k Rᵐᵒᵖ M] in
-/-- The original ground-linear map applies to every original exterior generator. -/
+/-- Let `k,R` be commutative rings with `R` a `k`-algebra, `M` a `k`-module and right `R`-module,
+`V,W` be `k`-modules, and `f : V →ₗ[k] W`. Put `N_n(V)=Λ^n_R(R ⊗[k] V)` with its induced
+ground action. For `n : ℕ`, `m : M`, and `a : Fin n → V`, the balanced map sends `[m,
+ιMulti_R(1⊗a_j)]` to `[m, ιMulti_R(1⊗f(a_j))]`. -/
 theorem balancedBaseChangeMap_mk_ιMulti
     (f : V →ₗ[k] W) (n : ℕ) (m : M) (a : Fin n → V) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
@@ -152,7 +174,12 @@ theorem balancedBaseChangeMap_mk_ιMulti
   change (f.baseChange R) ((1 : R) ⊗ₜ[k] a j) = (1 : R) ⊗ₜ[k] f (a j)
   rw [LinearMap.baseChange_tmul]
 
-/-- Canonical cancellation is natural in the original ground module, across independent worlds. -/
+/-- Let `k,R` be commutative rings with a `k`-algebra structure on `R`. Let `M` be a `k`-module
+and a right `R`-module (`Module Rᵐᵒᵖ M`) whose actions commute and form the tower `k → Rᵐᵒᵖ →
+M`. Let `V` be a `k`-module and put `N_n(V)=Λ^n_R(R ⊗[k] V)`, with its induced `k`-action. For
+a `k`-module `W`, `f : V →ₗ[k] W`, and `n : ℕ`, `E_W ∘ B_f = (id_M ⊗ Λ^n_k f) ∘ E_V`, where
+`E_V,E_W` are the balanced cancellation equivalences and `B_f` the induced balanced exterior
+map. -/
 theorem balancedBaseChangeEquiv_naturality (f : V →ₗ[k] W) (n : ℕ) :
     letI : Module k (⋀[R]^n (R ⊗[k] V)) := Module.compHom _ (algebraMap k R)
     letI : Module k (⋀[R]^n (R ⊗[k] W)) := Module.compHom _ (algebraMap k R)

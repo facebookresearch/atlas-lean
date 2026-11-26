@@ -1,3 +1,6 @@
-# Matrix Complex Functor
+# The size-indexed functor of finite matrix CE complexes
 
-The canonical finite-stage CE functor, including its zero-size stage.
+The size-indexed functor of finite matrix CE complexes.
+
+The natural-number size category maps to matrix CE complexes, with order morphisms acting by
+top-left zero extension.

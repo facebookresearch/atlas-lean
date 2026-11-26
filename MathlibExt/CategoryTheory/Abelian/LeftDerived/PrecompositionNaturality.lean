@@ -14,11 +14,14 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.HorseshoeBoundaryCho
 public import MathlibExt.CategoryTheory.Abelian.Projective.HorseshoeSplitCoordinates
 
 /-!
-# Source-precomposition and connecting-map naturality
+# Augmentation and connecting naturality of projective-preserving source change
 
-The source-precomposition comparison carries augmentation maps and left-derived connecting
-maps. Mapping projective resolutions and horseshoe coordinates proves the comparison, without
-extra exactness or projective-resolution hypotheses on the output category.
+For additive homology- and projective-preserving `U : C → D` between
+abelian categories with projective resolutions, and additive
+`L : D → E` into an abelian category, the comparison
+`L_n(U ⋙ L) ≅ U ⋙ L_nL` preserves degree-zero augmentations and
+left-derived connecting maps. Mapping projective resolutions and
+horseshoe endpoint coordinates supplies the corresponding diagrams.
 -/
 
 @[expose] public section
@@ -34,7 +37,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
 
 namespace ProjectiveResolution
 
-/-- The image-resolution augmentation has the original degree-zero map. -/
+/-- Let `C,D` be abelian, `U : C → D` additive and preserving
+projectives and homology, and `P` a projective resolution of `X`.
+The degree-zero augmentation of the mapped resolution `U(P)` is
+`U(π_P,₀)`. -/
 theorem mapProjectiveResolution_π_f_zero
     (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]
     {X : C} (P : ProjectiveResolution X) :
@@ -46,7 +52,10 @@ theorem mapProjectiveResolution_π_f_zero
   change U.map (P.π.f 0) ≫ U.map (𝟙 X) ≫ 𝟙 (U.obj X) = U.map (P.π.f 0)
   erw [Functor.map_id, Category.comp_id, Category.comp_id]
 
-/-- Composition coordinates carry the mapped-resolution opcycles augmentation. -/
+/-- Let `C,D,E` be abelian, `U : C → D` additive and preserving
+projectives and homology, `L : D → E` additive, and `P` a projective
+resolution of `X`. The complex-composition identification carries
+the opcycles augmentation of `L(U(P))` to that of `(U ⋙ L)(P)`. -/
 theorem mapCompositionOpcycles_comp_fromLeftDerivedZero'
     (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]
     (L : D ⥤ E) [L.Additive] {X : C} (P : ProjectiveResolution X) :
@@ -75,10 +84,11 @@ namespace Functor
 
 variable [HasProjectiveResolutions C] [HasProjectiveResolutions D]
 
-/--
-Canonical source precomposition retains the degree-zero augmentation. The functor L is merely
-additive; no right exactness is used.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → E` additive. The forward degree-zero precomposition comparison followed
+by the augmentation `U ⋙ L₀L → U ⋙ L` equals the augmentation
+of `L₀(U ⋙ L)`. -/
 @[reassoc]
 theorem leftDerivedPrecompIso_hom_fromLeftDerivedZero
     (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]
@@ -129,7 +139,11 @@ theorem leftDerivedPrecompIso_hom_fromLeftDerivedZero
       congrArg (fun f => a.hom ≫ f) hCore
     _ = (U ⋙ L).fromLeftDerivedZero.app X := hAugP.symm
 
-/-- The inverse source comparison has the same original augmentation. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → E` additive. The inverse degree-zero precomposition comparison followed
+by the augmentation of `L₀(U ⋙ L)` equals
+`U ⋙ L₀L → U ⋙ L`. -/
 @[reassoc]
 theorem leftDerivedPrecompIso_inv_fromLeftDerivedZero
     (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]
@@ -154,7 +168,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
   {S : ShortComplex C} {hS : S.ShortExact}
   {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
 
-/-- The inclusion is an augmentation-compatible resolution morphism. -/
+/-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be short
+exact, `P₁,P₃` endpoint projective resolutions, and `H` horseshoe data
+with middle resolution `P₂`. Its inclusion `P₁ → P₂`, together with its augmentation
+square, is a map of projective resolutions lifting `S.f`. -/
 def inclusionResolutionHom (H : HorseshoeData hS P₁ P₃) :
     ProjectiveResolution.Hom P₁ H.middle S.f where
   hom := H.i
@@ -162,7 +179,10 @@ def inclusionResolutionHom (H : HorseshoeData hS P₁ P₃) :
     simpa only [HomologicalComplex.comp_f] using
       HomologicalComplex.congr_hom H.i_augmentation 0
 
-/-- The projection is an augmentation-compatible resolution morphism. -/
+/-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be short
+exact, `P₁,P₃` endpoint projective resolutions, and `H` horseshoe data
+with middle resolution `P₂`. Its projection `P₂ → P₃`, together with its augmentation
+square, is a map of projective resolutions lifting `S.g`. -/
 def projectionResolutionHom (H : HorseshoeData hS P₁ P₃) :
     ProjectiveResolution.Hom H.middle P₃ S.g where
   hom := H.p
@@ -170,7 +190,10 @@ def projectionResolutionHom (H : HorseshoeData hS P₁ P₃) :
     simpa only [HomologicalComplex.comp_f] using
       HomologicalComplex.congr_hom H.p_augmentation 0
 
-/-- Existing endpoint coordinates give an degree splitting. -/
+/-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be short
+exact, `P₁,P₃` endpoint projective resolutions, and `H` horseshoe data
+with middle resolution `P₂`. An endpoint coordinate specification gives a splitting
+of the resolution row `P₁,n → P₂,n → P₃,n` in every degree `n`. -/
 def degreeSplitting (H : HorseshoeData hS P₁ P₃) (sH : H.Spec) (n : ℕ) :
     (ShortComplex.mk (H.i.f n) (H.p.f n)
       (HomologicalComplex.congr_hom H.zero n)).Splitting := by
@@ -192,7 +215,11 @@ section Map
 variable (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects]
   [U.PreservesHomology]
 
-/-- The three mapped resolutions and their mapped i/p form a horseshoe. -/
+/-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be short
+exact, `P₁,P₃` endpoint projective resolutions, and `H` horseshoe data
+with middle resolution `P₂`. For abelian `D` and additive homology- and projective-preserving
+`U : C → D`, mapping resolutions and the row splittings gives
+horseshoe data for the short exact sequence `U(S)`. -/
 def map (H : HorseshoeData hS P₁ P₃) (sH : H.Spec) :
     HorseshoeData (S := S.map U) (by
         let : PreservesFiniteLimits U := Functor.preservesFiniteLimits_of_preservesHomology U
@@ -210,7 +237,11 @@ def map (H : HorseshoeData hS P₁ P₃) (sH : H.Spec) :
   i_augmentation := (U.mapProjectiveResolutionHom (inclusionResolutionHom H)).hom_comp_π
   p_augmentation := (U.mapProjectiveResolutionHom (projectionResolutionHom H)).hom_comp_π
 
-/-- Mapping the splittings earns all mapped triangular coordinates. -/
+/-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be short
+exact, `P₁,P₃` endpoint projective resolutions, and `H` horseshoe data
+with middle resolution `P₂`. For abelian `D` and additive homology- and projective-preserving
+`U : C → D`, the mapped row splittings give the endpoint coordinate
+specification of the mapped horseshoe data. -/
 def mapSpec (H : HorseshoeData hS P₁ P₃) (sH : H.Spec) :
     (map U H sH).Spec :=
   (map U H sH).specOfSplittings (fun n => by
@@ -227,10 +258,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutio
   {D : Type u₂} [Category.{v₂} D] [Abelian D] [HasProjectiveResolutions D]
   {E : Type u₃} [Category.{v₃} E] [Abelian E]
 
-/--
-The canonical source precomposition comparison carries the LDdelta. Only the source functor
-preserves projectives/homology; L is merely additive.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → E` additive. For short exact `S`, the forward comparisons in degrees
+`n+1,n` satisfy `e_(n+1),X₃ ≫ δ_L,n(U(S)) = δ_(U⋙L),n ≫ e_n,X₁`. -/
 @[reassoc]
 theorem leftDerivedPrecompIso_hom_LDdelta
     (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]
@@ -298,7 +329,10 @@ theorem leftDerivedPrecompIso_hom_LDdelta
     _ = (a₃.hom ≫ dLow ≫ a₁.inv) ≫ (a₁.hom ≫ b₁ ≫ c₁.inv) :=
       (cancelTriple a₃.hom dLow a₁ (b₁ ≫ c₁.inv)).symm
 
-/-- The inverse canonical source comparison carries the same LDdelta. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → E` additive. For short exact `S`, the inverse comparisons satisfy
+`e_(n+1),X₃⁻¹ ≫ δ_(U⋙L),n = δ_L,n(U(S)) ≫ e_n,X₁⁻¹`. -/
 @[reassoc]
 theorem leftDerivedPrecompIso_inv_LDdelta
     (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]

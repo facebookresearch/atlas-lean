@@ -14,12 +14,21 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 
 /-!
-# Algebra actions on proper shuffle quotients
+# Coefficient algebra actions on proper-shuffle quotients
 
-The coefficient-head A-action preserves the Hochschild
-boundary and proper both-positive shuffle relations.
-It gives an A-linear quotient complex whose restriction
-to k agrees with the ground-linear quotient.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Multiplication by a ∈ A on the coefficient slot defines a Hochschild
+chain endomorphism. It commutes with the complete Hochschild boundary and with the coefficient
+input of the symmetric shuffle pairing.
+
+The proper relation submodule in degree n is the sum of all pairing component images with p,q >
+0 and p+q=n. This k-submodule is stable under the coefficient A-action and under the boundary.
+It therefore defines an A-linear quotient chain complex with differential [x] ↦ [bx].
+Restriction along k → A identifies this algebra-linear complex with the ground-linear proper
+quotient, through maps that retain every quotient representative.
+
+For the both-positive proper-shuffle relations in Harrison homology, see J.-L. Loday, Cyclic
+Homology, second edition, §4.2.
 -/
 
 @[expose] public section
@@ -36,7 +45,10 @@ variable (k : Type u) (A : Type v) (M : Type w) [CommRing k] [CommRing A]
   [Algebra k A] [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The native coefficient-ring construction applied to the original algebra scalar action. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. The
+coefficient action defines a ring homomorphism A → End(C(A,M)) in the category of k-module chain
+complexes. A scalar a acts in degree n by a·(m ⊗ w) = (a·m) ⊗ w. -/
 def scalarChainEndRingHom : A →+* End (chainComplex k A M) := by
   letI := opModule A M
   letI := actionsComm A M
@@ -51,11 +63,17 @@ def scalarChainEndRingHom : A →+* End (chainComplex k A M) := by
       change a • (b • m) = b • (a • m)
       exact smul_comm a b m)
 
-/-- Each original algebra scalar acts by its coefficient chain map. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For a ∈
+A, scalarChainMap is the Hochschild chain endomorphism given in every degree by multiplication
+by a on M and the identity on the algebra tail. -/
 def scalarChainMap (a : A) : chainComplex k A M ⟶ chainComplex k A M :=
   (scalarChainEndRingHom k A M a).asHom
 
-/-- The scalar chain map scales only the original coefficient slot. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For a ∈
+A, n : ℕ, m ∈ M and t : Fin n → A, the nth scalar chain map component sends m ⊗ ⊗ⱼtⱼ to (a·m) ⊗
+⊗ⱼtⱼ. -/
 theorem scalarChainMap_f_tprod (a : A) (n : ℕ) (m : M) (t : Fin n → A) :
     ((scalarChainMap k A M a).f n).hom (m ⊗ₜ[k] PiTensorProduct.tprod k t) =
       (a • m) ⊗ₜ[k] PiTensorProduct.tprod k t := by
@@ -72,7 +90,10 @@ theorem scalarChainMap_f_tprod (a : A) (n : ℕ) (m : M) (t : Fin n → A) :
       change c • (b • m) = b • (c • m)
       exact smul_comm c b m) a n m t
 
-/-- The scalar map is the original first-factor A-module action on every raw tensor. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For a ∈
+A, n : ℕ and x ∈ Cₙ, the underlying degree-n map of scalarChainMap k A M a sends x to a·x under
+the coefficient A-action. -/
 theorem scalarChainMap_f_apply (a : A) (n : ℕ) (x : M ⊗[k] TensorPower k n A) :
     ((scalarChainMap k A M a).f n).hom x = a • x := by
   let s : (M ⊗[k] TensorPower k n A) →ₗ[k] M ⊗[k] TensorPower k n A :=
@@ -90,7 +111,10 @@ theorem scalarChainMap_f_apply (a : A) (n : ℕ) (x : M ⊗[k] TensorPower k n A
   rw [h]
   exact (TensorProduct.AlgebraTensorModule.smul_eq_lsmul_rTensor a x).symm
 
-/-- The Hochschild boundary is linear over the original coefficient algebra. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. The
+Hochschild differential Cₙ₊₁ → Cₙ is A-linear for the coefficient action. algebraBoundary is
+this A-linear map, with underlying function equal to the full Hochschild boundary. -/
 def algebraBoundary (n : ℕ) :
     M ⊗[k] TensorPower k (n + 1) A →ₗ[A] M ⊗[k] TensorPower k n A where
   toFun := ((chainComplex k A M).d (n + 1) n).hom
@@ -110,7 +134,11 @@ def algebraBoundary (n : ℕ) :
     exact (congrArg d hs).symm.trans (h.trans ht)
 
 omit [SMulCommClass k A M] in
-/-- The coefficient product is tensored with the original signed proper tail word. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For p,q :
+ℕ, a lifted regular coefficient a₀, m ∈ M and words a,b of lengths p,q, the shuffle pairing is
+(a₀·m) ⊗ ∑s sign(s)·⊗ⱼ(append(a,b)(s⁻¹j)). The sum ranges over (p,q)-shuffles, and a₀ denotes
+its underlying A-element in the coefficient product. -/
 theorem pairing_pair_tprod_as_tmul (p q : ℕ) (a0 : ULift.{w} A) (m : M)
     (a : Fin p → A) (b : Fin q → A) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
@@ -141,7 +169,10 @@ theorem pairing_pair_tprod_as_tmul (p q : ℕ) (a0 : ULift.{w} A) (m : M)
   intro σ _
   exact (map_zsmul (TensorProduct.mk k M (TensorPower k (p + q) A) (a0.down • m)) _ _).symm
 
-/-- The proper shuffle pairing respects the algebra scalar maps in its coefficient input. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For a ∈
+A, write S_a for the coefficient scalar chain map and P for the pairing C(A,A_lift) ⊗ C(A,M) →
+C(A,M). Then (id ⊗ S_a) ≫ P = P ≫ S_a. -/
 theorem pairing_scalar_naturality (a : A) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -250,7 +281,11 @@ theorem pairing_scalar_naturality (a : A) :
       component p q
     _ = _ := Category.assoc _ _ _
 
-/-- The fixed ground-linear relation family in the explicit native tensor dictionary. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. In degree
+n, rawPositiveRelations is the sum of the ranges of the pairing components C_p(A,A_lift) ⊗
+C_q(A,M) → Cₙ for p,q > 0 and p+q=n. It is a k-submodule of Cₙ generated by all these component
+images. -/
 def rawPositiveRelations (n : ℕ) : Submodule k (M ⊗[k] TensorPower k n A) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -262,7 +297,10 @@ def rawPositiveRelations (n : ℕ) : Submodule k (M ⊗[k] TensorPower k n A) :=
     ModuleCat.UniverseTensor.monoidalLinear.{u, max v w} (R := k)
   exact HomologicalComplex.ChainGradedPairing.positiveImages (pairing.{u, v, w} k A M) n
 
-/-- Original algebra scalars preserve the proper-shuffle relation sum. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For a ∈
+A, n : ℕ and x ∈ rawPositiveRelations k A M n, the coefficient scalar a·x also lies in
+rawPositiveRelations k A M n. -/
 theorem rawPositiveRelations_smul (a : A) (n : ℕ) {x : M ⊗[k] TensorPower k n A}
     (hx : x ∈ rawPositiveRelations k A M n) : a • x ∈ rawPositiveRelations k A M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
@@ -280,20 +318,29 @@ theorem rawPositiveRelations_smul (a : A) (n : ℕ) {x : M ⊗[k] TensorPower k 
   change ((scalarChainMap k A M a).f n).hom x ∈ rawPositiveRelations k A M n at h
   exact (scalarChainMap_f_apply k A M a n x) ▸ h
 
-/-- The same relation set, now with its original A-module structure. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. The
+k-submodule rawPositiveRelations is stable under the coefficient A-action. With the same
+underlying set, it defines the A-submodule algebraPositiveRelations k A M n of Cₙ. -/
 def algebraPositiveRelations (n : ℕ) : Submodule A (M ⊗[k] TensorPower k n A) where
   carrier := rawPositiveRelations k A M n
   zero_mem' := (rawPositiveRelations k A M n).zero_mem
   add_mem' := (rawPositiveRelations k A M n).add_mem
   smul_mem' := fun a _ hx => rawPositiveRelations_smul k A M a n hx
 
-/-- Restriction of scalars returns the original fixed ground relation submodule. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient.
+Restricting algebraPositiveRelations k A M n along k → A gives rawPositiveRelations k A M n as a
+k-submodule of Cₙ. -/
 theorem algebraPositiveRelations_restrictScalars (n : ℕ) :
     (algebraPositiveRelations k A M n).restrictScalars k = rawPositiveRelations k A M n := by
   ext x
   rfl
 
-/-- The original complete boundary preserves those algebra relation modules. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For n :
+ℕ, algebraBoundary maps algebraPositiveRelations in degree n+1 into algebraPositiveRelations in
+degree n. Equivalently Sₙ₊₁ ≤ bₙ⁻¹(Sₙ). -/
 theorem algebraPositiveRelations_boundary (n : ℕ) :
     algebraPositiveRelations k A M (n + 1) ≤
       (algebraPositiveRelations k A M n).comap (algebraBoundary k A M n) := by
@@ -311,7 +358,10 @@ theorem algebraPositiveRelations_boundary (n : ℕ) :
   change ((chainComplex k A M).d (n + 1) n).hom x ∈ rawPositiveRelations k A M n at h
   exact h
 
-/-- The A-linear differential of the proper-shuffle quotient. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. Let Sₙ be
+algebraPositiveRelations. The boundary bₙ : Cₙ₊₁ → Cₙ induces an A-linear quotient differential
+Cₙ₊₁/Sₙ₊₁ → Cₙ/Sₙ sending [x] to [bₙx]. -/
 def algebraPositiveQuotientDifferential (n : ℕ) :
     ModuleCat.of A ((M ⊗[k] TensorPower k (n + 1) A) ⧸ algebraPositiveRelations k A M (n + 1)) ⟶
       ModuleCat.of A ((M ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A M n) :=
@@ -319,7 +369,10 @@ def algebraPositiveQuotientDifferential (n : ℕ) :
     (algebraPositiveRelations k A M n) (algebraBoundary k A M n)
     (algebraPositiveRelations_boundary k A M n))
 
-/-- Its square is zero by the original Hochschild differential. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For n :
+ℕ, the quotient differential from degree n+2 to n+1 followed by that from n+1 to n is zero. This
+is the Hochschild identity b²=0 after descent to the proper quotient. -/
 theorem algebraPositiveQuotientDifferential_comp (n : ℕ) :
     algebraPositiveQuotientDifferential k A M (n + 1) ≫ algebraPositiveQuotientDifferential k A M n = 0 := by
   apply ModuleCat.hom_ext
@@ -335,20 +388,30 @@ theorem algebraPositiveQuotientDifferential_comp (n : ℕ) :
     (((chainComplex k A M).d (n + 2) (n + 1)).hom x) = 0 at h
   exact (congrArg (algebraPositiveRelations k A M n).mkQ h).trans (map_zero _)
 
-/-- The original ground-tensor positive quotient, with its algebra-linear boundary. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. The terms
+Cₙ/algebraPositiveRelations k A M n and the induced algebra-linear boundaries form an ℕ-indexed
+chain complex of A-modules, algebraPositiveQuotientComplex. -/
 def algebraPositiveQuotientComplex : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   ChainComplex.of
     (fun n => ModuleCat.of A ((M ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A M n))
     (algebraPositiveQuotientDifferential k A M) (algebraPositiveQuotientDifferential_comp k A M)
 
-/-- Native quotient scalar restriction identifies the original quotient classes. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient.
+Restricting the quotient by the A-submodule algebraPositiveRelations to k identifies it
+k-linearly with the degree-n ground proper quotient positiveQuotient k A M. The equivalence is
+induced by the identity on representatives. -/
 def algebraPositiveQuotientLevelEquiv (n : ℕ) :
     ((M ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A M n) ≃ₗ[k]
       (positiveQuotient k A M).X n :=
   (Submodule.Quotient.restrictScalarsEquiv k (algebraPositiveRelations k A M n)).symm.trans
     (Submodule.quotEquivOfEq _ _ (algebraPositiveRelations_restrictScalars k A M n))
 
-/-- The scalar-restriction coordinates retain the same original quotient representative. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For n : ℕ
+and x ∈ Cₙ, algebraPositiveQuotientLevelEquiv sends the class of x modulo
+algebraPositiveRelations to the class of x modulo rawPositiveRelations. -/
 theorem algebraPositiveQuotientLevelEquiv_mk (n : ℕ) (x : M ⊗[k] TensorPower k n A) :
     algebraPositiveQuotientLevelEquiv k A M n ((algebraPositiveRelations k A M n).mkQ x) =
       (rawPositiveRelations k A M n).mkQ x := by
@@ -358,7 +421,10 @@ theorem algebraPositiveQuotientLevelEquiv_mk (n : ℕ) (x : M ⊗[k] TensorPower
   rw [Submodule.Quotient.restrictScalarsEquiv_symm_mk]
   exact Submodule.quotEquivOfEq_mk _ _ (algebraPositiveRelations_restrictScalars k A M n) x
 
-/-- The native restriction functor retains the original quotient's ground action. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. In each n
+: ℕ, restriction of the A-module quotient term along k → A gives a k-module object canonically
+isomorphic to (positiveQuotient k A M).X n, via the identity on quotient representatives. -/
 def algebraPositiveQuotientRestrictionLevelIso (n : ℕ) :
     (ModuleCat.restrictScalars (algebraMap k A)).obj ((algebraPositiveQuotientComplex k A M).X n) ≅
       (positiveQuotient k A M).X n := by
@@ -381,14 +447,20 @@ def algebraPositiveQuotientRestrictionLevelIso (n : ℕ) :
         exact congrArg (algebraPositiveRelations k A M n).mkQ h }
   exact (f.trans e).toModuleIso
 
-/-- The restriction map sends the original quotient class to that same raw class. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For n : ℕ
+and x ∈ Cₙ, the forward map of algebraPositiveQuotientRestrictionLevelIso sends [x] in the
+A-linear quotient term, restricted to k, to [x] in the ground proper quotient term. -/
 theorem algebraPositiveQuotientRestrictionLevelIso_mk (n : ℕ) (x : M ⊗[k] TensorPower k n A) :
     (algebraPositiveQuotientRestrictionLevelIso k A M n).hom.hom
         ((algebraPositiveRelations k A M n).mkQ x) =
       (rawPositiveRelations k A M n).mkQ x :=
   algebraPositiveQuotientLevelEquiv_mk k A M n x
 
-/-- The raw proper quotient differential retains the original A-linear boundary value. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. For n : ℕ
+and x ∈ Cₙ₊₁, the differential of positiveQuotient sends [x] modulo rawPositiveRelations in
+degree n+1 to [algebraBoundary k A M n x] modulo rawPositiveRelations in degree n. -/
 theorem positiveQuotient_d_mk (n : ℕ) (x : M ⊗[k] TensorPower k (n + 1) A) :
     ((positiveQuotient k A M).d (n + 1) n).hom ((rawPositiveRelations k A M (n + 1)).mkQ x) =
       (rawPositiveRelations k A M n).mkQ (algebraBoundary k A M n x) := by
@@ -407,7 +479,11 @@ theorem positiveQuotient_d_mk (n : ℕ) (x : M ⊗[k] TensorPower k (n + 1) A) :
   rw [ChainComplex.of_d]
   rfl
 
-/-- The A-linear quotient is the original positive quotient after native scalar restriction. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Put Cₙ = M ⊗[k] A^{⊗n}, with A acting only on the coefficient. The
+degreewise representative-preserving restriction isomorphisms commute with the quotient
+differentials and give an isomorphism between algebraPositiveQuotientComplex restricted along k
+→ A and positiveQuotient k A M as k-module chain complexes. -/
 def algebraPositiveQuotientRestrictionIso :
     ((ModuleCat.restrictScalars (algebraMap k A)).mapHomologicalComplex (ComplexShape.down ℕ)).obj
         (algebraPositiveQuotientComplex k A M) ≅ positiveQuotient k A M :=

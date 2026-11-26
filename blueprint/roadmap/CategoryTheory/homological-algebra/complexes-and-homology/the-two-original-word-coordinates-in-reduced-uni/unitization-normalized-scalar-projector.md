@@ -1,3 +1,6 @@
-# Unitization Normalized Scalar Projector f succ
+# Vanishing of the normalized scalar projector in positive degrees
 
-In every positive degree the displayed normalized scalar projector is zero.
+Vanishing of the normalized scalar projector in positive degrees.
+
+In degree `n+1`, the scalar-projector map is zero because its induced map on every quotient-
+tail factor is zero.

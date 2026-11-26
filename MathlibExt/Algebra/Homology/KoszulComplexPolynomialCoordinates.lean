@@ -11,4 +11,14 @@ module
 
 public import MathlibExt.Algebra.Homology.KoszulComplex.Polynomial.Coordinates
 
-/-! Compatibility import of the canonical general polynomial Koszul owner. -/
+/-!
+# Polynomial Koszul coefficient coordinates and their degree filtration
+
+For a commutative ring R and linearly ordered variable type I, the
+Koszul complex over P = MvPolynomial I R has coefficient coordinates
+(Set.powersetCard I n) →₀ P in exterior degree n. The signed deletion
+differential multiplies a coefficient by the deleted variable.
+Coefficientwise homogeneous projections and the filtration by polynomial
+degree plus exterior degree describe its homogeneous cycles and
+boundaries. The variable type and coefficient-ring worlds are independent.
+-/

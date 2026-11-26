@@ -1,4 +1,6 @@
-# Pairing pair eq coefficient Shuffle Map
+# The chain-pairing component equals the coefficient shuffle map
 
-The original Hochschild shuffle is exactly the head action followed by the signed tail
- product.
+The chain-pairing component equals the coefficient shuffle map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the (p,q)
+component of pairing has underlying linear map coefficientShufflePairingMap(p,q).

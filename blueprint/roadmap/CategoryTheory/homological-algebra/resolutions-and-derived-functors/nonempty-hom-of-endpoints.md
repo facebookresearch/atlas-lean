@@ -1,4 +1,7 @@
-# Comparison maps of canonical injective horseshoes
+# Injective horseshoe comparison with prescribed endpoints
 
-Canonical injective horseshoes admit a comparison over every map of short exact sequences,
-preserving the supplied endpoint resolution maps.
+In an abelian category `C`, let `S,T` be short exact sequences
+with injective endpoint resolutions `I₁,I₃` and `J₁,J₃`. Given
+`α : S → T` and resolution maps `u : I₁ → J₁`, `w : I₃ → J₃`
+over `α₁`, `α₃`, there exists a horseshoe comparison over `α`
+whose endpoint cochain maps are exactly `u` and `w`.

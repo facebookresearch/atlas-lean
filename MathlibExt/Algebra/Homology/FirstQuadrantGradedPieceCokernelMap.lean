@@ -13,15 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceNaturalMap
 
 /-!
-# The cokernel map to a horizontal graded piece
+# Complete-filtration projection factors to direct columns
 
-The natural-stage zero-composite theorem is transported back to the complete
-filtration.  This gives, uniformly in the zeroth and positive columns, a
-projection whose composite with `F_{p-1} → F_p` is zero and hence a canonical
-map from the cokernel to the direct shifted-column presentation.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. The extended natural filtration subobject identifies with the extended finite-
+stage complex, compatibly with all stage inclusions.
 
-The following splitting and cokernel-isomorphism modules prove that this map
-is an isomorphism.
+Its direct-column projection vanishes on the preceding stage. Transporting this projection to
+complete upper stages gives the same zero composite in both column zero and positive columns.
+In an abelian category, the projection therefore factors through the categorical cokernel of
+the consecutive-stage map.
 -/
 
 @[expose] public section
@@ -42,6 +43,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
+/-- The finite-complex presentation of an extended natural filtration stage.
+
+Identify the extended chain carrier of the natural filtration subobject with the cochain
+extension of the finite filtered complex. -/
 noncomputable def horizontalNaturalStageCochainIso (p : ℕ) :
     (ComplexShape.embeddingDownNat.extendFunctor C).obj
         ((horizontalTotalFiltration K).toMonoOver.obj p).obj.left ≅
@@ -51,6 +56,10 @@ noncomputable def horizontalNaturalStageCochainIso (p : ℕ) :
     (eqToIso (horizontalTotalFiltration_diagram_obj K p))
 
 set_option linter.flexible false in
+/-- Naturality of finite-stage cochain presentations.
+
+The natural filtration inclusion for `p ≤ r` commutes with the stage cochain isomorphisms and
+the extended finite-stage map. -/
 theorem horizontalNaturalStageCochainIso_naturality
     {p r : ℕ} (h : p ≤ r) :
     (ComplexShape.embeddingDownNat.extendFunctor C).map
@@ -67,6 +76,10 @@ theorem horizontalNaturalStageCochainIso_naturality
   exact congrArg
     (fun f => ((ComplexShape.embeddingDownNat.extendFunctor C).map f).f i) hmap
 
+/-- The direct-column projection from an extended filtration subobject.
+
+Use the natural-stage cochain comparison followed by projection from the extended finite stage
+to its direct column. -/
 noncomputable def horizontalMonoStageDirectColumnProjectionMap (p : ℕ) :
     (ComplexShape.embeddingDownNat.extendFunctor C).obj
         ((horizontalTotalFiltration K).toMonoOver.obj p).obj.left ⟶
@@ -74,6 +87,10 @@ noncomputable def horizontalMonoStageDirectColumnProjectionMap (p : ℕ) :
   (horizontalNaturalStageCochainIso K p).hom ≫
     horizontalNaturalDirectColumnProjectionMap K p
 
+/-- Vanishing of a preceding subobject stage under the new-column projection.
+
+The extended inclusion of natural stage `p` into stage `p+1` followed by its direct-column
+projection is zero. -/
 theorem horizontalMonoStageDirectColumnProjectionMap_stageMap_zero (p : ℕ) :
     (ComplexShape.embeddingDownNat.extendFunctor C).map
         ((horizontalTotalFiltration K).toMonoOver.map
@@ -84,6 +101,9 @@ theorem horizontalMonoStageDirectColumnProjectionMap_stageMap_zero (p : ℕ) :
   rw [Category.assoc, horizontalNaturalDirectColumnProjectionMap_stageMap_zero,
     comp_zero]
 
+/-- The direct-column projection from a positive complete upper stage.
+
+Transport the natural-stage projection through the upper-stage comparison for column `p+1`. -/
 noncomputable def horizontalCompleteSuccDirectColumnProjectionMap (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageUpperIndex (p + 1)) ⟶
@@ -91,6 +111,10 @@ noncomputable def horizontalCompleteSuccDirectColumnProjectionMap (p : ℕ) :
   (horizontalCompleteFiltrationCochainMonoUpperSuccIso K p).hom ≫
     horizontalMonoStageDirectColumnProjectionMap K (p + 1)
 
+/-- The zero composite for a positive complete filtration window.
+
+The first-page filtration map for column `p+1` followed by its direct-column projection is
+zero. -/
 theorem horizontalFirstPageFiltrationMap_succ_projection_zero (p : ℕ) :
     horizontalFirstPageFiltrationMap K (p + 1) ≫
       horizontalCompleteSuccDirectColumnProjectionMap K p = 0 := by
@@ -99,7 +123,10 @@ theorem horizontalFirstPageFiltrationMap_succ_projection_zero (p : ℕ) :
   rw [Category.assoc, horizontalMonoStageDirectColumnProjectionMap_stageMap_zero,
     comp_zero]
 
-/-- Projection of the complete upper filtration stage onto column `p`. -/
+/-- The complete upper-stage projection onto a direct column.
+
+Use the direct projection for column zero and the positive upper-stage projection for column
+`p+1`. -/
 noncomputable def horizontalCompleteDirectColumnProjectionMap :
     (p : ℕ) →
       (horizontalCompleteFiltrationCochainDiagram K).obj
@@ -108,6 +135,10 @@ noncomputable def horizontalCompleteDirectColumnProjectionMap :
   | 0 => horizontalDirectColumnProjectionMap K 0
   | p + 1 => horizontalCompleteSuccDirectColumnProjectionMap K p
 
+/-- The zero composite of every complete column window with its projection.
+
+For all `p ≥ 0`, the consecutive filtration map followed by the complete direct-column
+projection is zero. -/
 theorem horizontalFirstPageFiltrationMap_projection_zero (p : ℕ) :
     horizontalFirstPageFiltrationMap K p ≫
       horizontalCompleteDirectColumnProjectionMap K p = 0 := by
@@ -123,8 +154,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Canonical map from the consecutive-stage cokernel to the `p`th direct
-column presentation. -/
+/-- The direct-column factor of a categorical filtration cokernel.
+
+In an abelian category, the zero-composite projection descends to a map from the cokernel of
+the first-page filtration map to the direct column. -/
 noncomputable def horizontalFirstPageCokernelToDirectColumn (p : ℕ) :
     cokernel (horizontalFirstPageFiltrationMap K p) ⟶
       horizontalDirectColumnCochain K p :=

@@ -15,11 +15,14 @@ public import MathlibExt.Algebra.Homology.HomologyMapSquare
 public import MathlibExt.CategoryTheory.Abelian.Projective.ResolutionComparison
 
 /-!
-# Comparison calculus for left-derived functors
+# Resolution and composition comparisons for left derivation
 
-Canonical isomorphisms compare homology computed from any two projective resolutions. They
-satisfy identity, symmetry and composition laws and are natural in the resolved object and the
-additive functor.
+In abelian categories with projective resolutions in the source,
+left-derived objects are canonically computed by any supplied projective
+resolution. These comparisons are natural in maps and additive functors.
+An additive homology-preserving postfunctor commutes with derivation.
+An additive source functor preserving homology and projective objects
+commutes with derivation by mapping source resolutions.
 -/
 
 /-
@@ -43,8 +46,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 variable [HasProjectiveResolutions C]
 
-/-- Canonical comparison between the homology objects computed from two
-projective resolutions of the same object. -/
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, and `P,Q` projective resolutions of `X`.
+Their mapped chain homologies have the canonical comparison
+`H_n(F(P)) ≅ H_n(F(Q))`, through `L_nF(X)`. -/
 noncomputable def homologyComparisonIso {X : C}
     (P Q : ProjectiveResolution X) (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) n).obj
@@ -75,8 +80,11 @@ theorem homologyComparisonIso_trans {X : C}
     Category.assoc, Iso.hom_inv_id_assoc]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Resolution-choice comparison is natural for any two explicitly bundled
-lifts of the same morphism. -/
+/-- For abelian `C`, `D`, with projective resolutions in `C` and
+additive `F : C → D`, take pairs of resolutions `P_X,Q_X` and
+`P_Y,Q_Y` and resolution lifts of the same `f : X → Y`.
+Their degree-`n` homology maps commute with the canonical
+resolution-choice comparisons. -/
 theorem homologyComparisonIso_naturality
     {X Y : C} {PX QX : ProjectiveResolution X}
     {PY QY : ProjectiveResolution Y} {f : X ⟶ Y}
@@ -111,7 +119,10 @@ theorem homologyComparisonIso_naturality
   rw [← hQ, ← Category.assoc, hP, Category.assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse resolution comparison is natural in the additive functor. -/
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and let `F,G : C → D` be additive. For a resolution `P` of
+`X` and `α : F → G`, the map on `H_n(F(P)) → H_n(G(P))`
+commutes with the inverse comparisons to `L_nF(X)`, `L_nG(X)`. -/
 @[reassoc]
 theorem isoLeftDerivedObj_inv_naturality_functor
     {F G : C ⥤ D} [F.Additive] [G.Additive] {X : C}
@@ -125,7 +136,11 @@ theorem isoLeftDerivedObj_inv_naturality_functor
   simp only [Iso.inv_hom_id_assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The forward resolution comparison is natural in the additive functor. -/
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and let `F,G : C → D` be additive. For a resolution `P` of
+`X` and `α : F → G`, the forward comparisons
+`L_nF(X) → H_n(F(P))`, `L_nG(X) → H_n(G(P))` commute
+with `L_nα` and the mapped homology transformation. -/
 @[reassoc]
 theorem isoLeftDerivedObj_hom_naturality_functor
     {F G : C ⥤ D} [F.Additive] [G.Additive] {X : C}
@@ -146,8 +161,10 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D]
 variable {E : Type u''} [Category.{v''} E] [Abelian E]
 variable [HasProjectiveResolutions C]
 
-/-- A homology-preserving additive functor commutes with left-derived
-functors under postcomposition. -/
+/-- Let `C`, `D`, `E` be abelian with projective resolutions in `C`.
+If `F : C → D` is additive and `U : D → E` additive and
+preserving homology, then `L_nF ⋙ U ≅ L_n(F ⋙ U)`
+naturally in the resolved object. -/
 noncomputable def leftDerivedCompIsoOfPreservesHomology
     (F : C ⥤ D) [F.Additive] (U : D ⥤ E) [U.Additive]
     [U.PreservesHomology] (n : ℕ) :
@@ -190,12 +207,22 @@ end CategoryTheory.Functor
 end
 
 
-/-!
+/- Proof implementation note.
 ## Source precomposition through mapped projective resolutions
 
 The source functor preserves projectives and homology. The additive functor being derived has no
 exactness hypothesis. Components use the mapped resolution, and the canonical complex-composition
 dictionary supplies the middle isomorphism. No comparison or naturality certificate is supplied.
+-/
+
+/-!
+## Derivation under a projective-preserving source functor
+
+Let `C`, `D`, `E` be abelian, with projective resolutions in `C` and `D`.
+If additive `U : C → D` preserves projective objects and homology,
+and `L : D → E` is additive, a source resolution `P` maps to a
+projective resolution `U(P)` and gives the natural comparison
+`L_n(U ⋙ L) ≅ U ⋙ L_n(L)`.
 -/
 
 noncomputable section
@@ -212,10 +239,15 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
   (U : C ⥤ D) [U.Additive] [U.PreservesProjectiveObjects] [U.PreservesHomology]
   (L : D ⥤ E) [L.Additive]
 
-/--
+/- Proof implementation note.
 A source resolution gives the original derived precomposition component, using its image under the
 source functor.
 -/
+
+/-- Let `C`, `D`, `E` be abelian with projective resolutions in `C`
+and `D`, `U : C → D` additive and preserving projectives and
+homology, and `L : D → E` additive. A projective resolution `P`
+of `X` gives the component `L_n(U ⋙ L)(X) ≅ L_nL(U(X))`. -/
 def leftDerivedPrecompIsoWithResolution (n : ℕ) {X : C} (P : ProjectiveResolution X) :
     ((U ⋙ L).leftDerived n).obj X ≅ (L.leftDerived n).obj (U.obj X) :=
   P.isoLeftDerivedObj (U ⋙ L) n ≪≫
@@ -224,10 +256,15 @@ def leftDerivedPrecompIsoWithResolution (n : ℕ) {X : C} (P : ProjectiveResolut
         (Iso.refl (U ⋙ L)) (ComplexShape.down ℕ)).app P.complex).symm) ≪≫
     ((U.mapProjectiveResolution P).isoLeftDerivedObj L n).symm
 
-/--
+/- Proof implementation note.
 The same original morphism and its mapped resolution lift give the precomposition naturality
 square. No lift or square is an input.
 -/
+
+/-- For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U : C → D`,
+and additive `L : D → E`, the resolution-based precomposition
+components commute with every original map `f : X → Y`. -/
 theorem leftDerivedPrecompIsoWithResolution_naturality (n : ℕ)
     {X Y : C} (f : X ⟶ Y) (P : ProjectiveResolution X) (Q : ProjectiveResolution Y) :
     ((U ⋙ L).leftDerived n).map f ≫ (leftDerivedPrecompIsoWithResolution U L n Q).hom =
@@ -281,7 +318,10 @@ theorem leftDerivedPrecompIsoWithResolution_naturality (n : ℕ)
   exact (sa.horiz_comp (sb.horiz_comp sc)).w.symm
 
 
-/-- Every resolution of the same source object yields the same component. -/
+/-- For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U : C → D`,
+and additive `L : D → E`, any two projective resolutions of
+`X` give the same degree-`n` precomposition component. -/
 theorem leftDerivedPrecompIsoWithResolution_eq (n : ℕ) {X : C}
     (P Q : ProjectiveResolution X) :
     leftDerivedPrecompIsoWithResolution U L n P = leftDerivedPrecompIsoWithResolution U L n Q := by
@@ -289,10 +329,10 @@ theorem leftDerivedPrecompIsoWithResolution_eq (n : ℕ) {X : C}
   have h := leftDerivedPrecompIsoWithResolution_naturality U L n (𝟙 X) P Q
   simpa only [Functor.map_id, Category.id_comp, Category.comp_id] using h.symm
 
-/--
-Projective- and homology-preserving source precomposition commutes with left derivation, with
-naturality constructed from the mapped resolutions.
--/
+/-- Let `C`, `D`, `E` be abelian with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+and `L : D → E` additive. The component comparisons give
+a natural isomorphism `L_n(U ⋙ L) ≅ U ⋙ L_nL`. -/
 def leftDerivedPrecompIso (n : ℕ) :
     (U ⋙ L).leftDerived n ≅ U ⋙ L.leftDerived n :=
   NatIso.ofComponents
@@ -300,15 +340,26 @@ def leftDerivedPrecompIso (n : ℕ) :
     (fun {X Y} f => leftDerivedPrecompIsoWithResolution_naturality U L n f
       (projectiveResolution X) (projectiveResolution Y))
 
-/-- The canonical family component can be computed with any resolution. -/
+/-- Let `C`, `D`, `E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology, and
+`L : D → E` additive. The degree-`n` natural precomposition comparison
+at `X` equals the comparison computed with any projective resolution
+`P` of `X`. -/
 theorem leftDerivedPrecompIso_app (n : ℕ) {X : C} (P : ProjectiveResolution X) :
     (leftDerivedPrecompIso U L n).app X = leftDerivedPrecompIsoWithResolution U L n P :=
   leftDerivedPrecompIsoWithResolution_eq U L n (projectiveResolution X) P
 
-/--
+/- Proof implementation note.
 The hom component is the resolution map, composition dictionary, and inverse of the
 mapped-resolution comparison.
 -/
+
+/-- For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U`, additive `L`,
+and a resolution `P` of `X`, the forward precomposition
+component is the comparison to `H_n((U ⋙ L)(P))`, followed
+by the complex-composition identification and the inverse
+comparison from `H_n(L(U(P)))` to `L_nL(U(X))`. -/
 theorem leftDerivedPrecompIso_hom_app (n : ℕ) {X : C} (P : ProjectiveResolution X) :
     (leftDerivedPrecompIso U L n).hom.app X =
       (P.isoLeftDerivedObj (U ⋙ L) n).hom ≫
@@ -320,8 +371,17 @@ theorem leftDerivedPrecompIso_hom_app (n : ℕ) {X : C} (P : ProjectiveResolutio
       ((leftDerivedPrecompIso U L n).app X).hom from rfl, leftDerivedPrecompIso_app U L n P]
   rfl
 
-/-- The inverse component uses the reversed comparisons and the same
-complex-composition dictionary. -/
+/- Proof implementation note.
+The inverse component uses the reversed comparisons and the same
+complex-composition dictionary.
+-/
+
+/-- For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U`, additive `L`,
+and a resolution `P` of `X`, the inverse precomposition
+component starts with the comparison to `H_n(L(U(P)))`,
+uses the complex-composition identification, and finishes with
+the inverse comparison to `L_n(U ⋙ L)(X)`. -/
 theorem leftDerivedPrecompIso_inv_app (n : ℕ) {X : C} (P : ProjectiveResolution X) :
     (leftDerivedPrecompIso U L n).inv.app X =
       ((U.mapProjectiveResolution P).isoLeftDerivedObj L n).hom ≫
@@ -346,10 +406,10 @@ theorem leftDerivedPrecompIso_inv_app (n : ℕ) {X : C} (P : ProjectiveResolutio
     (congrArg (fun f => c.hom ≫ f ≫ a.inv) (show b.inv = H.map χ.hom from rfl))
 
 
-/--
-The source-precomposition comparison is natural in the additive functor being derived, for its
-derived natural transformation.
--/
+/-- For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U : C → D`,
+and additive `L₁,L₂ : D → E`, a transformation `α : L₁ → L₂`
+commutes with the forward left-derived precomposition comparisons. -/
 theorem leftDerivedPrecompIso_hom_naturality_functor
     {L₁ L₂ : D ⥤ E} [L₁.Additive] [L₂.Additive] (α : L₁ ⟶ L₂) (n : ℕ) :
     NatTrans.leftDerived (whiskerLeft U α) n ≫ (leftDerivedPrecompIso U L₂ n).hom =
@@ -402,10 +462,11 @@ theorem leftDerivedPrecompIso_hom_naturality_functor
   exact (sa.horiz_comp (sb.horiz_comp sc)).w.symm
 
 
-/--
-The inverse source-precomposition square uses the same derived transformation and requires no
-invertibility of that transformation.
--/
+/-- For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U : C → D`,
+and additive `L₁,L₂ : D → E`, the inverse precomposition
+comparisons commute with the derived transformation induced by
+`α : L₁ → L₂`. -/
 theorem leftDerivedPrecompIso_inv_naturality_functor
     {L₁ L₂ : D ⥤ E} [L₁.Additive] [L₂.Additive] (α : L₁ ⟶ L₂) (n : ℕ) :
     whiskerLeft U (NatTrans.leftDerived α n) ≫ (leftDerivedPrecompIso U L₂ n).inv =

@@ -1,3 +1,6 @@
-# Exists positive of Finite
+# Positive-size representative in the stable matrix semimodule
 
-Every stable matrix is represented in a matrix stage of positive size.
+Positive-size representative in the stable matrix semimodule.
+
+Every stable matrix semimodule element is represented by a matrix of size `n + 1` for some
+natural `n`.

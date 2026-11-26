@@ -13,16 +13,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.IdealCou
 public import Mathlib.LinearAlgebra.TensorProduct.Associator
 
 /-!
-# Adjacent ideal-block faces in tensor words
+# Multiplication faces inside a surrounded ideal block
 
-Native tensor associators place an ideal block between arbitrary prefix and
-suffix tensor words. The native ideal inclusion and tensor concatenation
-retain the original entry values and order. Every internal ideal face agrees
-with the ambient adjacent face at its corresponding position.
+A prefix of A-entries, a block of I-entries and a suffix of A-entries form a word in that
+physical order. The internal ideal face at position i appears at ambient position l+i, where l
+is the prefix length. Including the ideal product agrees with multiplying that adjacent pair
+in A.
 
-These generic maps and equations depend only on the ground ring, algebra,
-native two-sided subalgebra, coefficient and word lengths. They use the
-tensor and face constructions.
+The tensor coordinates keep an arbitrary ground coefficient V. Associators and the ordinary
+tensor swap move the ideal block between its prefix and suffix; inclusion and tensor
+concatenation then give the ambient word. The square between an internal ideal face and its
+corresponding ambient non-wrapping face commutes, with V fixed.
 -/
 
 @[expose] public section
@@ -82,7 +83,9 @@ private theorem originalContextTensor_ext (k : Type u) [CommRing k]
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
 
-/-- The literal original prefix, ideal block and suffix word in its original order. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. For a : Fin l → A, b : Fin m → I and c : Fin r → A, surroundedIdealWord l r m is
+the word a followed by the included b entries then c, with total length l+r+m. -/
 def surroundedIdealWord (left right m : ℕ) (a : Fin left → A) (b : Fin m → I.Algebra)
     (c : Fin right → A) : Fin (left + right + m) → A := fun i =>
   if hleft : i.val < left then a ⟨i.val, hleft⟩
@@ -114,12 +117,16 @@ private theorem surroundedIdealWord_trailing (left right m : ℕ)
   simp only [surroundedIdealWord, dite_eq_right hleft, dite_eq_right hmiddle,
     Nat.add_sub_cancel_left]
 
-/-- The original internal pair lies at the prefix length plus its internal position. -/
+/-- For l,r,n : ℕ and i : Fin (n + 1), surroundedIdealFaceIndex l r n i is the element of
+Fin(l+r+n+1) with value l+i.val. -/
 def surroundedIdealFaceIndex (left right n : ℕ) (i : Fin (n + 1)) :
     Fin (left + right + n + 1) := ⟨left + i.val, by omega⟩
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Multiplication in the ideal block agrees with multiplication at its original ambient position. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. For a prefix a of length l, ideal block b of length n + 2, suffix c of length r
+and i : Fin(n+1), multiplying the ambient pair at l+i in surroundedIdealWord(a,b,c) equals
+surroundedIdealWord(a,hochschildMulAdjacent i b,c). -/
 theorem surroundedIdealWord_mulAdjacent (left right n : ℕ)
     (a : Fin left → A) (b : Fin (n + 2) → I.Algebra) (c : Fin right → A)
     (i : Fin (n + 1)) :
@@ -221,12 +228,18 @@ theorem surroundedIdealWord_mulAdjacent (left right n : ℕ)
 
 variable (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The coordinate tensor retains V, the original ambient contexts and the original positive ideal block. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. For
+n : ℕ, surroundedIdealCoordinate is (V ⊗[k] (A^⊗l ⊗[k] A^⊗r)) ⊗[k] I^⊗(n+1). The ideal block
+has positive length n + 1. -/
 abbrev surroundedIdealCoordinate (left right n : ℕ) :=
   (V ⊗[k] (TensorPower k left A ⊗[k] TensorPower k right A)) ⊗[k]
     TensorPower k (n + 1) I.Algebra
 
-/-- Native tensor associators put the selected ideal block between its original prefix and suffix. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. The
+linear equivalence sends (v ⊗ (a ⊗ c)) ⊗ b to v ⊗ ((a ⊗ b) ⊗ c), from the surrounded
+coordinate to V ⊗ ((A^⊗l ⊗ I^⊗(n+1)) ⊗ A^⊗r). -/
 def surroundedIdealTensorRearrangement (left right n : ℕ) :
     surroundedIdealCoordinate k A I V left right n ≃ₗ[k]
       V ⊗[k] ((TensorPower k left A ⊗[k] TensorPower k (n + 1) I.Algebra) ⊗[k]
@@ -243,7 +256,10 @@ def surroundedIdealTensorRearrangement (left right n : ℕ) :
             (TensorPower k (n + 1) I.Algebra) (TensorPower k right A)).symm)))
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Every original factor keeps its value when the selected block is placed in its source order. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. For
+pure prefix a, block b and suffix c, surroundedIdealTensorRearrangement sends (v ⊗ (tprod a ⊗
+tprod c)) ⊗ tprod b to v ⊗ ((tprod a ⊗ tprod b) ⊗ tprod c). -/
 theorem surroundedIdealTensorRearrangement_tprod (left right n : ℕ) (v : V)
     (a : Fin left → A) (b : Fin (n + 1) → I.Algebra) (c : Fin right → A) :
     surroundedIdealTensorRearrangement k A I V left right n
@@ -255,7 +271,11 @@ theorem surroundedIdealTensorRearrangement_tprod (left right n : ℕ) (v : V)
     TensorProduct.assoc_tmul, TensorProduct.congr_tmul, LinearEquiv.refl_apply,
     TensorProduct.comm_tmul, TensorProduct.assoc_symm_tmul]
 
-/-- Original ideal inclusion and native tensor concatenation construct the ambient word map. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r.
+surroundedIdealTensorToAmbient maps the coordinate to V ⊗ A^⊗(l+r+n+1). It rearranges the
+block to the middle, includes I in A, concatenates the prefix, block and suffix, and
+transports the total-length equality. -/
 def surroundedIdealTensorToAmbient (left right n : ℕ) :
     surroundedIdealCoordinate k A I V left right n →ₗ[k]
       V ⊗[k] TensorPower k (left + right + n + 1) A :=
@@ -275,7 +295,10 @@ def surroundedIdealTensorToAmbient (left right n : ℕ) :
     (surroundedIdealTensorRearrangement k A I V left right n).toLinearMap
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- The constructed native map keeps exactly the original ordered ambient word. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. For
+v and pure tuples a,b,c, surroundedIdealTensorToAmbient sends (v ⊗ (tprod a ⊗ tprod c)) ⊗
+tprod b to v ⊗ tprod(surroundedIdealWord l r (n+1) a b c). -/
 theorem surroundedIdealTensorToAmbient_tprod (left right n : ℕ) (v : V)
     (a : Fin left → A) (b : Fin (n + 1) → I.Algebra) (c : Fin right → A) :
     surroundedIdealTensorToAmbient k A I V left right n
@@ -358,13 +381,19 @@ theorem surroundedIdealTensorToAmbient_tprod (left right n : ℕ) (v : V)
       simp only [surroundedIdealWord, dite_eq_right hleft, dite_eq_right hmiddle]
       rfl
 
-/-- The selected original ideal face uses the regular ideal-word face. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. For
+i : Fin(n+1), surroundedIdealTensorFace maps a block of length n + 2 to length n + 1 by
+id_(V⊗prefix⊗suffix) ⊗ regularWordFace_I n i.castSucc. -/
 def surroundedIdealTensorFace (left right n : ℕ) (i : Fin (n + 1)) :
     surroundedIdealCoordinate k A I V left right (n + 1) →ₗ[k]
       surroundedIdealCoordinate k A I V left right n :=
   TensorProduct.map LinearMap.id (regularWordFace k I.Algebra n i.castSucc)
 
-/-- The original ambient word face at the original internal pair, with V unchanged. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. For
+i : Fin(n+1), surroundedCoefficientWordFace is id_V ⊗ regularWordFace_A (l+r+n)
+(surroundedIdealFaceIndex l r n i).castSucc, mapping ambient word length l+r+n+2 to l+r+n+1. -/
 def surroundedCoefficientWordFace (left right n : ℕ) (i : Fin (n + 1)) :
     V ⊗[k] TensorPower k (left + right + n + 2) A →ₗ[k]
       V ⊗[k] TensorPower k (left + right + n + 1) A :=
@@ -372,7 +401,11 @@ def surroundedCoefficientWordFace (left right n : ℕ) (i : Fin (n + 1)) :
     (regularWordFace k A (left + right + n) (surroundedIdealFaceIndex left right n i).castSucc)
 
 omit [I.IsTwoSided] in
-/-- The original internal face commutes with the native ordered tensor rearrangement. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. Let V be an arbitrary k-module and take prefix length l and suffix length r. For
+i : Fin(n+1), surroundedCoefficientWordFace i ∘ surroundedIdealTensorToAmbient_(n+1) =
+surroundedIdealTensorToAmbient_n ∘ surroundedIdealTensorFace i. This square uses the ambient
+pair at l+i and the ideal inclusion's multiplicativity. -/
 theorem surroundedIdealTensorToAmbient_face (left right n : ℕ) (i : Fin (n + 1)) :
     (surroundedCoefficientWordFace k A V left right n i).comp
         (surroundedIdealTensorToAmbient k A I V left right (n + 1)) =

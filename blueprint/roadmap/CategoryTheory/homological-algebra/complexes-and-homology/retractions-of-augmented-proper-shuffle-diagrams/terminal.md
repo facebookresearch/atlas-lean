@@ -1,3 +1,5 @@
-# Terminal
+# The terminal algebra in an augmented proper-shuffle diagram
 
-The terminal point is the original coefficient algebra with the identity augmentation.
+The terminal algebra in an augmented proper-shuffle diagram.
+
+The terminal object of `Over B` is the identity augmentation `B → B`.

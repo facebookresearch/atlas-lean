@@ -1,3 +1,5 @@
-# From Left action
+# The sign formula for left-to-right Lie conversion
 
-The right action constructed from a left module is its negative left action.
+The sign formula for left-to-right Lie conversion.
+
+The right action associated to a left Lie module sends `(m,x)` to `-[x,m]`.

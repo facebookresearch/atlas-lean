@@ -13,15 +13,12 @@ module
 public import Mathlib.CategoryTheory.Monoidal.Comon_
 
 /-!
-# Transporting comonoid objects along isomorphisms
+# Comonoid transport along an isomorphism
 
-This file supplies the comonoid dual of Mathlib's `MonObj.ofIso`.  A
-comonoid structure on `M` transports across an isomorphism `M ≅ X`; the
-isomorphism becomes a comonoid isomorphism by construction.
+In a monoidal category, let `M` be a comonoid and let `e : M ≅ X`. Transport its counit by
+`e.inv ≫ ε_M` and its comultiplication by `e.inv ≫ Δ_M ≫ (e.hom ⊗ e.hom)`.
 
-## Main declaration
-
-* `CategoryTheory.ComonObj.ofIso`
+These maps satisfy the comonoid laws and give a comonoid structure on `X`.
 -/
 
 @[expose] public section
@@ -39,7 +36,10 @@ namespace CategoryTheory.ComonObj
 
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
 
-/-- Transfer a `ComonObj` structure along an isomorphism. -/
+/-- The comonoid structure transported by an isomorphism.
+
+For `e : M ≅ X`, use counit `e.inv ≫ ε_M` and comultiplication `e.inv ≫ Δ_M ≫ (e.hom ⊗ e.hom)`
+on `X`. -/
 @[simps! -isSimp, instance_reducible]
 noncomputable def ofIso {M X : C} [ComonObj M] (e : M ≅ X) : ComonObj X where
   counit := e.inv ≫ ε[M]

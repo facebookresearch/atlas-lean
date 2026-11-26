@@ -16,14 +16,15 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.MultiplicativeCoord
 public import Mathlib.Algebra.DirectSum.Decomposition
 
 /-!
-# PBW coordinates in every homogeneous degree
+# PBW coordinates on every degree quotient
 
-For a chosen ordered basis, each enveloping filtration quotient identifies linearly with the
-homogeneous polynomial module of the same degree. Degree zero is the scalar filtration stage
-modulo zero.
+Let R be a commutative ring and L an R-Lie algebra, with degree filtration D_n on U_R(L).
+Define D_{<0}=0 and D_{<n+1}=D_n inside D_{n+1}, and put G_n=D_n/D_{<n}.
 
-The homogeneous comparisons assemble into a linear equivalence from the direct sum of all
-graded quotients to the polynomial algebra.
+For an ordered basis b : Basis I R L, the degree-n homogeneous component of the PBW polynomial
+coordinate is a surjective map D_n → MvPolynomial_homogeneous(n) with kernel D_{<n}. It gives
+G_n ≃ₗ[R] MvPolynomial_homogeneous(n), including degree zero. These equivalences assemble over
+all n into ⊕_n G_n ≃ₗ[R] MvPolynomial I R.
 -/
 
 @[expose] public section
@@ -41,19 +42,28 @@ variable (R : Type u) [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The lower stage, considered inside the degree stage. -/
+/-- For an R-Lie algebra L over a commutative ring R, let D_n ⊆ U_R(L) be the degree filtration.
+Define a submodule of D_n by D_{<0}=0 and D_{<q+1}={u ∈ D_{q+1} | u ∈ D_q}. Equivalently, at
+q+1 it is the inverse image of D_q under the subtype inclusion D_{q+1} → U_R(L). This defines
+the lower denominator in every degree without natural-number truncation at degree zero. -/
 def gradedLowerStage : (n : ℕ) → Submodule R (UniversalEnvelopingAlgebra.degreeFiltration R L n)
   | 0 => ⊥
   | q + 1 => (UniversalEnvelopingAlgebra.degreeFiltration R L q).comap
       (UniversalEnvelopingAlgebra.degreeFiltration R L (q + 1)).subtype
 
-/-- The enveloping algebra filtration quotient in every degree. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and n ∈ ℕ. Define G_n = D_n/D_{<n}, where D_n
+is the degree filtration of U_R(L), D_{<0}=0, and D_{<q+1} is D_q considered inside D_{q+1}.
+Thus G_0 is D_0 modulo zero and G_{q+1} is the adjacent quotient D_{q+1}/D_q. -/
 abbrev GradedLayer (n : ℕ) :=
   UniversalEnvelopingAlgebra.degreeFiltration R L n ⧸ gradedLowerStage R L n
 
 variable {R L} {I : Type w} [LinearOrder I]
 
-/-- The computed leading projection on every filtration stage. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. For n
+∈ ℕ define D_n →ₗ[R] MvPolynomial.homogeneousSubmodule I R n by u ↦
+homogeneousComponent_n(polynomialCoordinates_b(u)). The polynomial coordinate is the R-linear
+PBW coordinate of the enveloping element, and the displayed projection retains only its
+homogeneous degree-n part. -/
 def completeGradedProjection (b : Module.Basis I R L) (n : ℕ) :
     UniversalEnvelopingAlgebra.degreeFiltration R L n →ₗ[R]
       MvPolynomial.homogeneousSubmodule I R n where
@@ -71,7 +81,10 @@ def completeGradedProjection (b : Module.Basis I R L) (n : ℕ) :
       (RingHom.id R) r • MvPolynomial.homogeneousComponent n (polynomialCoordinates b u.val)
     simp only [map_smul, RingHom.id_apply]
 
-/-- The lower stage is the kernel, including the zero lower stage at degree zero. -/
+/-- Let b : Basis I R L be an ordered basis of an R-Lie algebra over a commutative ring R. For
+every n ∈ ℕ, the kernel of u ↦ homogeneousComponent_n(polynomialCoordinates_b(u)) on D_n is
+exactly D_{<n}. At n=0 this kernel is zero; at n=q+1 it is the preceding filtration stage D_q
+inside D_{q+1}. -/
 theorem completeGradedProjection_ker (b : Module.Basis I R L) (n : ℕ) :
     LinearMap.ker (completeGradedProjection b n) = gradedLowerStage R L n := by
   cases n with
@@ -96,7 +109,10 @@ theorem completeGradedProjection_ker (b : Module.Basis I R L) (n : ℕ) :
       simpa only [completeGradedProjection, gradedProjection, gradedLowerStage] using
         gradedProjection_ker b q
 
-/-- Every homogeneous polynomial has a preimage in the enveloping algebra stage. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. For
+every n ∈ ℕ, the map D_n → MvPolynomial.homogeneousSubmodule I R n given by the degree-n
+homogeneous PBW coordinate is surjective. Thus every homogeneous polynomial of degree n is the
+top coordinate of an enveloping element lying in filtration stage n. -/
 theorem completeGradedProjection_surjective (b : Module.Basis I R L) (n : ℕ) :
     Function.Surjective (completeGradedProjection b n) := by
   intro p
@@ -111,7 +127,11 @@ theorem completeGradedProjection_surjective (b : Module.Basis I R L) (n : ℕ) :
   rw [show polynomialCoordinates b u = p.val from (polynomialCoordinates b).apply_symm_apply p.val]
   exact MvPolynomial.homogeneousComponent_eq_self p.property
 
-/-- The quotient equivalence in every degree. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R and n ∈ ℕ,
+the top PBW projection induces an R-linear equivalence G_n=D_n/D_{<n} ≃ₗ[R]
+MvPolynomial.homogeneousSubmodule I R n. It sends the class of u ∈ D_n to
+homogeneousComponent_n(polynomialCoordinates_b(u)). Its well-definedness and bijectivity use
+the lower-stage kernel identity and surjectivity of this projection. -/
 def completeGradedEquiv (b : Module.Basis I R L) (n : ℕ) :
     GradedLayer R L n ≃ₗ[R] MvPolynomial.homogeneousSubmodule I R n :=
   (Submodule.quotEquivOfEq _ _ (completeGradedProjection_ker b n).symm).trans
@@ -126,13 +146,18 @@ theorem completeGradedEquiv_mk (b : Module.Basis I R L) (n : ℕ)
     Submodule.quotEquivOfEq_mk, LinearMap.quotKerEquivOfSurjective_apply_mk]
 
 variable (R L) in
-/-- The direct sum of the enveloping algebra graded quotients, with finite support. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Define the graded R-module GradedModule R
+L to be ⊕_{n∈ℕ} G_n, where G_n=D_n/D_{<n} is the degree-n quotient of the enveloping degree
+filtration. Its elements have finite support in the degree index. The quotient layers include
+degree zero with denominator zero. -/
 abbrev GradedModule := ⨁ n, GradedLayer R L n
 
 attribute [local instance] MvPolynomial.gradedAlgebra
 
-/-- The graded-module PBW equivalence, assembled from all quotients and the polynomial
-decomposition. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. The
+degreewise quotient equivalences G_n ≃ₗ[R] MvPolynomial.homogeneousSubmodule I R n assemble
+into an R-linear equivalence ⊕_n G_n ≃ₗ[R] MvPolynomial I R. It applies the homogeneous
+coordinate map to each finite-support layer and sums the resulting homogeneous polynomials. -/
 def completeGradedModuleEquiv (b : Module.Basis I R L) :
     GradedModule R L ≃ₗ[R] MvPolynomial I R :=
   (DirectSum.congrLinearEquiv (completeGradedEquiv b)).trans

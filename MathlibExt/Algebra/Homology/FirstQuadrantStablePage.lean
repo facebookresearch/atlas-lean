@@ -13,13 +13,23 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyFiltration
 
 /-!
-# Stabilization of the first-quadrant spectral-sequence pages
+# Late first-quadrant pages stabilize to a finite abutment term
 
-For bidegree `(p,q)`, every page
-`r ≥ max (p+1) (q+2)` is identified with a fixed finite abutment term of the
-complete filtration spectral object.  The comparison uses the generic
-outer-index isomorphisms: the lower intervening stages are zero, while the
-upper intervening relative homology vanishes in the required degree.
+Let K be a nonnegative homological bicomplex in an abelian category C,
+with complete horizontal filtration F. For n=p+q, the page-r
+four-stage presentation has indices
+p−r ≤ p−1 ≤ p ≤ p+r−1.
+
+The fixed finite abutment term A_(p,q) uses instead
+−1 ≤ p−1 ≤ p ≤ n+1, in middle cochain degree −n.
+If r≥p+1, the intervening lower stages are zero. If r≥q+2,
+the intervening upper relative group vanishes in degree −n−1.
+Thus every valid page satisfying both bounds has
+E^r_(p,q) ≅ A_(p,q).
+
+The first such page is r₀=max(p+1,q+2). The finite lower index is
+the integer −1, and the upper index is n+1; the category object
+and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -40,44 +50,59 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Fixed lower index used for the finite abutment term. -/
+/-- The finite lower index for the first-quadrant abutment term
+is −1, viewed as an element of EInt.
+It is a negative finite filtration stage, distinct from the
+bottom element −∞. -/
 abbrev horizontalAbutmentLowerIndex : EInt := ((-1 : ℤ) : EInt)
 
-/-- Fixed upper index containing the full three-term homology window in total
-degree `p+q`. -/
+/-- For p,q∈ℕ, the fixed upper abutment index is p+q+1 in EInt.
+It contains the chain degrees needed to compute total homology
+in degree n=p+q. -/
 abbrev horizontalAbutmentUpperIndex (p q : ℕ) : EInt :=
   (((p + q + 1 : ℕ) : ℤ) : EInt)
 
-/-- Lower filtration index of the page-`r` term in column `p`. -/
+/-- For r∈ℤ and p∈ℕ, the lower outer filtration index of the
+page-r term in horizontal degree p is the finite integer p−r
+in EInt. -/
 abbrev horizontalSpectralPageLowerIndex (r : ℤ) (p : ℕ) : EInt :=
   (((p : ℤ) - r : ℤ) : EInt)
 
-/-- Upper filtration index of the page-`r` term in column `p`. -/
+/-- For r∈ℤ and p∈ℕ, the upper outer filtration index of the
+page-r term in horizontal degree p is the finite integer p+r−1
+in EInt. -/
 abbrev horizontalSpectralPageUpperIndex (r : ℤ) (p : ℕ) : EInt :=
   (((p : ℤ) + r - 1 : ℤ) : EInt)
 
-/-- First page at which bidegree `(p,q)` has reached both finite abutment
+/-- For p,q∈ℕ, the canonical stable-page index is
+r₀=max(p+1,q+2), computed in ℤ.
+It is the least page meeting the lower and upper finite-abutment
 bounds. -/
 abbrev horizontalStablePageIndex (p q : ℕ) : ℤ :=
   max ((p : ℤ) + 1) ((q : ℤ) + 2)
 
-/-- The stable-page index is a valid page index. -/
+/-- For p,q∈ℕ, the index r₀=max(p+1,q+2) satisfies 1≤r₀.
+Thus it is a valid index for a spectral sequence starting at page 1. -/
 theorem horizontalStablePageIndex_one_le (p q : ℕ) :
     1 ≤ horizontalStablePageIndex p q :=
   le_trans (by omega) (le_max_left _ _)
 
-/-- Lower-bound inequality built into the stable-page index. -/
+/-- For p,q∈ℕ, the canonical stable index satisfies
+p+1≤max(p+1,q+2), the bound controlling the lower page stage. -/
 theorem horizontalStablePageIndex_lower_bound (p q : ℕ) :
     (p : ℤ) + 1 ≤ horizontalStablePageIndex p q :=
   le_max_left _ _
 
-/-- Upper-bound inequality built into the stable-page index. -/
+/-- For p,q∈ℕ, the canonical stable index satisfies
+q+2≤max(p+1,q+2), the bound controlling the upper page stage. -/
 theorem horizontalStablePageIndex_upper_bound (p q : ℕ) :
     (q : ℤ) + 2 ≤ horizontalStablePageIndex p q :=
   le_max_right _ _
 
-/-- The two middle filtration indices lie between the fixed finite abutment
-bounds. -/
+/-- For p,q∈ℕ and n=p+q, the middle first-page indices satisfy
+−1≤p−1 and p≤n+1 in EInt.
+Hence the consecutive interval p−1≤p lies between the fixed
+finite abutment endpoints. -/
 theorem horizontalAbutmentIndices_le (p q : ℕ) :
     horizontalAbutmentLowerIndex ≤ horizontalFirstPageLowerIndex p ∧
       horizontalFirstPageUpperIndex p ≤ horizontalAbutmentUpperIndex p q := by
@@ -88,8 +113,12 @@ theorem horizontalAbutmentIndices_le (p q : ℕ) :
     push_cast
     omega
 
-/-- Fixed finite spectral-object term to which sufficiently late pages at
-`(p,q)` stabilize. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n=p+q, A_(p,q) is the complete spectral object's
+four-stage E-term on −1→p−1→p→n+1.
+Its connecting-map short complex uses relative cochain
+homology degrees −n−1, −n and −n+1, with middle interval
+F_(p−1) → F_p. -/
 noncomputable abbrev horizontalFirstQuadrantAbutmentTerm (p q : ℕ) : C :=
   let X := horizontalCompleteFiltrationSpectralObject K
   X.E
@@ -99,15 +128,19 @@ noncomputable abbrev horizontalFirstQuadrantAbutmentTerm (p q : ℕ) : C :=
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
       (-((p + q : ℕ) : ℤ) + 1)
 
-/-- A page satisfying the lower stable bound begins no later than the fixed
-lower abutment stage. -/
+/-- For r∈ℤ and p∈ℕ, the inequality p+1≤r implies
+p−r≤−1 in EInt.
+Thus the page's lower outer stage is no later than the fixed
+finite lower abutment stage. -/
 theorem horizontalStablePageLowerIndex_le (r : ℤ) (p : ℕ)
     (h : (p : ℤ) + 1 ≤ r) :
     horizontalSpectralPageLowerIndex r p ≤ horizontalAbutmentLowerIndex :=
   WithBotTop.coe_monotone (by
     omega)
 
-/-- A page satisfying the upper stable bound ends no earlier than the fixed
+/-- For r∈ℤ, p,q∈ℕ and n=p+q, the inequality q+2≤r implies
+n+1≤p+r−1 in EInt.
+Thus the page's upper outer stage contains the fixed finite
 upper abutment stage. -/
 theorem horizontalStablePageUpperIndex_le (r : ℤ) (p q : ℕ)
     (h : (q : ℤ) + 2 ≤ r) :
@@ -117,15 +150,19 @@ theorem horizontalStablePageUpperIndex_le (r : ℤ) (p q : ℕ)
     push_cast
     omega)
 
-/-- Every valid page contains the first-page upper filtration stage. -/
+/-- For r≥1 and p∈ℕ, the first-page upper stage p satisfies
+p≤p+r−1 in EInt.
+This is the ordering of the middle upper and page upper indices. -/
 theorem horizontalFirstPageUpperIndex_le_spectralPageUpper
     (r : ℤ) (p : ℕ) (hr : 1 ≤ r) :
     horizontalFirstPageUpperIndex p ≤
       horizontalSpectralPageUpperIndex r p :=
   WithBotTop.coe_monotone (by omega)
 
-/-- The relative homology between the page lower stage and the fixed lower
-abutment stage is zero under the lower stable bound. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, n=p+q and r≥p+1, the relative group of
+F_(p−r) → F_(−1) is zero in cochain degree −n+1.
+Both endpoint filtration complexes are zero. -/
 theorem horizontalStableLowerRelativeHomologyIsZero
     (r : ℤ) (p q : ℕ) (h : (p : ℤ) + 1 ≤ r) :
     IsZero (((horizontalCompleteFiltrationSpectralObject K).H
@@ -137,8 +174,10 @@ theorem horizontalStableLowerRelativeHomologyIsZero
   · apply horizontalCompleteFiltrationCochainDiagram_obj_isZero_of_neg K
     omega
 
-/-- The relative homology between the fixed and page upper stages is zero in
-the degree needed for stabilization. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, n=p+q and r≥q+2, the interval
+F_(n+1) → F_(p+r−1) has zero cochain homology in degree −n−1.
+Both stages exhaust the relevant total chain degree n+1. -/
 theorem horizontalStableUpperRelativeHomologyIsZero
     (r : ℤ) (p q : ℕ) (h : (q : ℤ) + 2 ≤ r) :
     IsZero (((horizontalCompleteFiltrationSpectralObject K).H
@@ -182,8 +221,11 @@ theorem horizontalStableUpperRelativeHomologyIsZero
   exact horizontalCompleteFiltrationSpectralObject_H_isZero_of_epi_f K
     (horizontalStablePageUpperIndex_le r p q h) (-(t : ℤ))
 
-/-- Every sufficiently late page object at `(p,q)` is canonically isomorphic
-to the fixed finite abutment term. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, p,q∈ℕ and r∈ℤ with r≥1, r≥p+1 and r≥q+2,
+there is an isomorphism E^r_(p,q) ≅ A_(p,q).
+The fixed finite term uses stages −1,p−1,p,p+q+1 in middle
+cochain degree −p−q. -/
 noncomputable def horizontalStablePageAbutmentIso
     (r : ℤ) (hr : 1 ≤ r) (p q : ℕ)
     (hlower : (p : ℤ) + 1 ≤ r) (hupper : (q : ℤ) + 2 ≤ r) :
@@ -230,7 +272,9 @@ noncomputable def horizontalStablePageAbutmentIso
     (horizontalStableUpperRelativeHomologyIsZero K r p q hupper)
   exact ePage ≪≫ eLower ≪≫ eUpper.symm
 
-/-- Stabilization isomorphism on the first page satisfying both bounds. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q∈ℕ, the page r₀=max(p+1,q+2) satisfies
+E^(r₀)_(p,q) ≅ A_(p,q), the fixed finite four-stage abutment term. -/
 noncomputable def horizontalStablePageAbutmentIsoAtIndex (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page
       (horizontalStablePageIndex p q)).X (p, q) ≅

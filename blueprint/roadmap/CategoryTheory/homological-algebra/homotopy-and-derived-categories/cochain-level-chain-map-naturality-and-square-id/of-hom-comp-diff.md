@@ -1,4 +1,5 @@
-# Of Hom comp diff
+# A cochain-complex map commutes with the differential cochains
 
-Cochain form of differential naturality: every morphism of cochain
-complexes commutes with the differential cochain.
+Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For f :
+F → G, its degree-zero Hom cochain satisfies ofHom(f)·d_G=d_F·ofHom(f), where the product means
+composition in source-to-target order. Equivalently d_G ∘ f=f ∘ d_F.

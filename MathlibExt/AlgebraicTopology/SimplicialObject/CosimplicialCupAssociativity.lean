@@ -17,8 +17,11 @@ public import Mathlib.CategoryTheory.Monoidal.FunctorCategory
 /-!
 # Associativity of front/back cosimplicial pairings
 
-Coface-compatible degree pairings commute with all injective simplex maps. The front, middle, and
-back compositions give the ternary formula.
+In a monoidal category, a degreewise pairing of cosimplicial objects commuting with cofaces is
+natural for all injective simplex maps. The front/back pairing in degrees p,q is obtained by
+mapping the front p-face and back q-face into degree p+q and then applying the degreewise
+pairing. For three factors, front, middle and back inclusions identify the two parenthesizations
+whenever the degreewise products satisfy the associativity square.
 -/
 
 @[expose] public section
@@ -31,7 +34,9 @@ namespace AlgebraicTopology.CosimplicialCup
 variable {C : Type uC} [Category.{vC} C] [MonoidalCategory C]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- A degree pairing compatible with every coface is compatible with every injective simplex map. -/
+/-- Let C be monoidal, A,B,D cosimplicial objects, and m_n : Aⁿ⊗Bⁿ → Dⁿ satisfy (δ_i^A⊗δ_i^B) ≫
+m_{n+1} = m_n ≫ δ_i^D for every n ∈ ℕ and i ∈ Fin(n+2). For every injective simplex map f : [r]
+→ [s], (A(f)⊗B(f)) ≫ m_s = m_r ≫ D(f). -/
 theorem pairing_naturality_mono (A B D : CosimplicialObject C)
     (m : ∀ n, A.obj (SimplexCategory.mk n) ⊗ B.obj (SimplexCategory.mk n) ⟶
       D.obj (SimplexCategory.mk n))
@@ -52,7 +57,10 @@ theorem pairing_naturality_mono (A B D : CosimplicialObject C)
     simp only [Functor.map_comp]
     rw [← tensorHom_comp_tensorHom, Category.assoc, hδ, ← Category.assoc, hf, Category.assoc]
 
-/-- The original front/back formula with an explicit common total degree. -/
+/-- Let C be monoidal, A,B,D cosimplicial objects, and m_n : Aⁿ⊗Bⁿ → Dⁿ any degreewise maps. For
+p,q,n ∈ ℕ with p+q=n, awPair is A^p⊗B^q → D^n obtained by applying A to the front inclusion [p]
+→ [n], applying B to the back inclusion [q] → [n], tensoring these maps and then applying m_n.
+This definition requires no coface compatibility of m. -/
 def awPair (A B D : CosimplicialObject C)
     (m : ∀ n, A.obj (SimplexCategory.mk n) ⊗ B.obj (SimplexCategory.mk n) ⟶
       D.obj (SimplexCategory.mk n)) (p q n : ℕ) (h : p + q = n) :
@@ -78,7 +86,12 @@ private theorem back_mono (p q n : ℕ) (h : p + q = n) :
   omega
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Front/back composition gives ternary cup associativity in an explicit common degree. -/
+/-- Let C be monoidal and A,B,F,AB,BF,D_L,D_R cosimplicial objects, with degreewise maps m_AB : A⊗B
+→ AB, m_BF : B⊗F → BF, m_L : AB⊗F → D_L and m_R : A⊗BF → D_R. Assume m_AB and m_BF commute with
+all cofaces. Let e : D_L → D_R be a cosimplicial map such that in every degree (m_AB⊗id_F) ≫ m_L
+≫ e = α ≫ (id_A⊗m_BF) ≫ m_R, where α is the tensor associator. Then for p,q,r,n ∈ ℕ with
+(p+q)+r=n, (AW_AB,p,q⊗id_{F^r}) ≫ AW_L,p+q,r ≫ e_n = α_{A^p,B^q,F^r} ≫ (id_{A^p}⊗AW_BF,q,r) ≫
+AW_R,p,q+r. No coface law on m_L or m_R is assumed. -/
 theorem awPair_assoc
     (A B C' AB BC DL DR : CosimplicialObject C)
     (mAB : ∀ n,

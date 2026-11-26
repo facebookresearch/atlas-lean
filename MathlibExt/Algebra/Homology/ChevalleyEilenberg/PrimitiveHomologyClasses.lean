@@ -16,15 +16,19 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniverseHomologyCoa
 public import Mathlib.LinearAlgebra.Matrix.Notation
 
 /-!
-# Lie vectors as primitive homology classes
+# Lie vectors and bracket obstructions in primitive homology
 
-A Lie vector defines a cycle and a homology class in degree one of the primitive
-Chevalley–Eilenberg complex. This class map is injective when the underlying ground-ring
+A Lie vector defines an element of degree one of the primitive CE kernel, a cycle and a
+homology class. Over a commutative ring, this class map is injective when the underlying Lie
 module is projective.
 
-The class of a bracket maps to zero in Chevalley–Eilenberg homology because it is a negative
-boundary of a two-vector wedge. Over a field, a nonzero bracket therefore makes the canonical
-primitive-homology comparison noninjective. Ring and Lie carrier universes remain independent.
+The primitive cycle of a bracket maps under the CE inclusion to the negative boundary of the
+two-vector wedge. Its CE homology image is therefore zero. Over a field, a nonzero bracket
+gives a nonzero primitive homology class which is killed by the canonical comparison to
+primitives in CE homology; consequently that comparison is not injective.
+
+The distinction is between taking primitives before homology and taking the primitive kernel
+after the homology coalgebra construction.
 -/
 
 @[expose] public section
@@ -42,15 +46,22 @@ variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
 
-/-- The Lie vector, in the degree-one primitive kernel. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. vector : L →ₗ[R] P.X 1 is the
+inverse of the primitive degree-one coordinate equivalence. -/
 def vector : L →ₗ[R] (nativePrimitiveComplex R L).X 1 := (nativePrimitiveDegreeOneEquiv R L).symm.toLinearMap
 
-/-- The cycle corresponding to a degree-one primitive vector. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. cycle : L →ₗ[R] P.cycles 1 is
+vector followed by the inverse cycle-inclusion isomorphism, using P.d 1 0 = 0. -/
 def cycle : L →ₗ[R] (nativePrimitiveComplex R L).cycles 1 :=
   (((nativePrimitiveComplex R L).iCyclesIso 1 0 (by simp) (nativePrimitiveComplex_d_one_zero R L)).inv).hom.comp
     (vector R L)
 
-/-- The primitive homology class of the Lie vector. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. classMap : L →ₗ[R] P.homology 1 is
+P.homologyπ 1 composed with cycle. It sends x to the homology class of its primitive-one
+vector. -/
 def classMap : L →ₗ[R] (nativePrimitiveComplex R L).homology 1 :=
   ((nativePrimitiveComplex R L).homologyπ 1).hom.comp (cycle R L)
 
@@ -60,7 +71,9 @@ theorem cycle_i (x : L) : (nativePrimitiveComplex R L).iCycles 1 (cycle R L x) =
   simpa only [cycle, LinearMap.comp_apply, CategoryTheory.comp_apply,
     CategoryTheory.id_apply] using h
 
-/-- The coordinate bridge retains precisely the exterior generator. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. For x : L, i.f 1 applied to vector
+x equals (exteriorPower.oneEquiv R L).symm x in C.X 1. -/
 theorem vector_inclusion (x : L) :
     ((nativePrimitiveInclusion R L).f 1).hom (vector R L x) = (exteriorPower.oneEquiv R L).symm x := by
   apply (exteriorPower.oneEquiv R L).injective
@@ -69,7 +82,9 @@ theorem vector_inclusion (x : L) :
     ((nativePrimitiveDegreeOneEquiv R L).symm x) = x
   exact LinearEquiv.apply_symm_apply _ _
 
-/-- Projectivity makes this original-Lie-vector class map injective. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. If Module.Projective R L holds,
+Function.Injective (classMap R L) holds. -/
 theorem classMap_injective [Module.Projective R L] : Function.Injective (classMap R L) := by
   letI : IsIso ((nativePrimitiveComplex R L).homologyπ 1) :=
     (nativePrimitiveComplex R L).isIso_homologyπ 2 1 (by simp)
@@ -81,10 +96,14 @@ theorem classMap_injective [Module.Projective R L] : Function.Injective (classMa
     (ModuleCat.mono_iff_injective _).mp inferInstance
   exact hπ.comp (hc.comp (nativePrimitiveDegreeOneEquiv R L).symm.injective)
 
-/-- The CE two-vector word; no basis or freeness premise is needed. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. For x,y : L, pairWord x y : C.X 2
+is exteriorPower.ιMulti R 2 ![x,y], the ordered two-vector word. -/
 def pairWord (x y : L) : ((canonicalChainData R L).complex).X 2 := exteriorPower.ιMulti R 2 ![x, y]
 
-/-- The CE sign is `d(x ∧ y) = -[x,y]`. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. For x,y : L, C.d 2 1 (pairWord x
+y) = −(exteriorPower.oneEquiv R L).symm ⁅x,y⁆. -/
 theorem pairWord_differential (x y : L) :
     ((canonicalChainData R L).complex).d 2 1 (pairWord R L x y) = -(exteriorPower.oneEquiv R L).symm ⁅x, y⁆ := by
   rw [ChainData.complex_d_succ]
@@ -103,7 +122,9 @@ theorem pairWord_differential (x y : L) :
     exact (boundary_ι_mul_ι R L x y).trans
       (congrArg Neg.neg hι).symm)
 
-/-- The image cycle of a bracket is the negative of the boundary cycle. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. For x,y : L, cyclesMap i 1 (cycle
+⁅x,y⁆) = −C.toCycles 2 1 (pairWord x y). -/
 theorem bracket_cycle_is_boundary (x y : L) :
     HomologicalComplex.cyclesMap (nativePrimitiveInclusion R L) 1 (cycle R L ⁅x, y⁆) =
       -((canonicalChainData R L).complex).toCycles 2 1 (pairWord R L x y) := by
@@ -118,7 +139,9 @@ theorem bracket_cycle_is_boundary (x y : L) :
   exact (neg_neg (show ((canonicalChainData R L).complex).X 1 from
     (exteriorPower.oneEquiv R L).symm ⁅x, y⁆)).symm
 
-/-- The CE homology image of every bracket's primitive class is zero. -/
+/-- Let R be a commutative ring and L an R-Lie algebra. Let P be the primitive CE complex, C the
+canonical CE complex and i : P ⟶ C the primitive inclusion. For x,y : L, homologyMap i 1
+(classMap ⁅x,y⁆) = 0 in C.homology 1. -/
 theorem homologyInclusion_bracket_zero (x y : L) :
     HomologicalComplex.homologyMap (nativePrimitiveInclusion R L) 1 (classMap R L ⁅x, y⁆) = 0 := by
   have hπ := congrArg (fun f => f (cycle R L ⁅x, y⁆))
@@ -140,11 +163,17 @@ variable (V : Type v) [LieRing V] [LieAlgebra k V]
 open scoped ModuleCat.UniverseTensor
 local instance : HasFiniteBiproducts (ModuleCat.{max u v} k) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} k)
-/-- The canonical closed module tensor structure at the carrier height. -/
+/-- Let k : Type u be a field and V : Type v a k-Lie algebra. Let P and C be its primitive and
+canonical CE complexes, and compare H_*(P) with the primitive kernel in the CE homology
+coalgebra. The canonical tensor structure on ModuleCat.{max u v} k is monoidal closed, with
+internal linear Hom objects. -/
 local instance primitiveHomologyClosed : MonoidalClosed (ModuleCat.{max u v} k) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := k)
 
-/-- The original-field primitive comparison kills every bracket class. -/
+/-- Let k : Type u be a field and V : Type v a k-Lie algebra. Let P and C be its primitive and
+canonical CE complexes, and compare H_*(P) with the primitive kernel in the CE homology
+coalgebra. For x,y : V, the degree-one component of
+UniverseHomologyCoalgebra.primitiveHomologyComparison sends classMap ⁅x,y⁆ to zero. -/
 theorem comparison_bracket_zero (x y : V) :
     UniverseHomologyCoalgebra.primitiveHomologyComparison k V 1
       (classMap k V ⁅x, y⁆) = 0 := by
@@ -176,7 +205,11 @@ theorem comparison_bracket_zero (x y : V) :
   have hz := i.hom.map_zero
   exact hi (hx.trans hz.symm)
 
-/-- A nonzero bracket supplies a obstruction to injectivity of the canonical comparison. -/
+/-- Let k : Type u be a field and V : Type v a k-Lie algebra. Let P and C be its primitive and
+canonical CE complexes, and compare H_*(P) with the primitive kernel in the CE homology
+coalgebra. If x,y : V satisfy ⁅x,y⁆ ≠ 0, the degree-one primitiveHomologyComparison is not
+injective. The primitive class map is injective for the field module, while the bracket's
+comparison image is zero. -/
 theorem comparison_not_injective_of_bracket (x y : V) (hxy : ⁅x, y⁆ ≠ 0) :
     ¬ Function.Injective (UniverseHomologyCoalgebra.primitiveHomologyComparison k V 1) := by
   intro h

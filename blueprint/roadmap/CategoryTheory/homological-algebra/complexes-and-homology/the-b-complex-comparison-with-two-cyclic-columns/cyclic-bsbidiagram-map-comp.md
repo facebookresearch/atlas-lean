@@ -1,3 +1,6 @@
-# Cyclic BSBIDiagram Map comp
+# Composition of left-unit SBI homology diagram maps
 
-The native whole-diagram map composes in the same original-map order.
+Composition of left-unit SBI homology diagram maps.
+
+The diagram map induced by a composite nonunital algebra homomorphism is the composite of the
+two diagram maps.

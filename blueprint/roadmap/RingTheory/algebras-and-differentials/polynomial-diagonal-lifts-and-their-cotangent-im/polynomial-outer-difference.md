@@ -1,4 +1,4 @@
-# Polynomial Outer Difference
+# The diagonal difference of a polynomial
 
-The original diagonal difference of an arbitrary polynomial, in the
-same enveloping carrier as the variable diagonal differences.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `p : A`, `polynomialOuterDifference k σ p` is `Δp = p ⊗ op(1) - 1 ⊗ op(p)` in `E`.

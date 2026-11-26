@@ -1,4 +1,7 @@
-# Horizontal First Page Next Cokernel Iso
+# The next-stage cokernel is the consecutive column-p+1 cokernel
 
-Precomposing a filtration map by the middle-stage identification does not
-change its cokernel.
+For a nonnegative homological bicomplex K in an abelian
+category, the cokernel of the normalized next inclusion
+F_p → F_(p+1) is isomorphic to the cokernel of the consecutive
+first-page filtration map at column p+1.
+The source identification is the common stage upper(p)=lower(p+1).

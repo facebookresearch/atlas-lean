@@ -1,4 +1,6 @@
-# Canonical To Tensor Homology
+# The CE homology diagonal before Künneth inversion
 
-The CE diagonal into homology of its tensor square is canonical over every commutative ring,
-without invoking a Künneth isomorphism.
+The CE homology diagonal before Künneth inversion.
+
+Over a commutative ring in a common carrier universe, the chain coproduct induces a graded map
+`H(C) → H(C ⊗ C)`.

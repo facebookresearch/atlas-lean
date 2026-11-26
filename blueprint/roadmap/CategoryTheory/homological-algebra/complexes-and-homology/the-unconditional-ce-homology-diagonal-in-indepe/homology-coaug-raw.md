@@ -1,3 +1,5 @@
-# Homology Coaug Raw
+# The CE homology coaugmentation from homology of the chain unit
 
-The carrier-universe homology coaugmentation, before any graded tensor Künneth transport.
+The CE homology coaugmentation from homology of the chain unit.
+
+Take the graded homology map of the chain coaugmentation, retaining its unit-complex source.

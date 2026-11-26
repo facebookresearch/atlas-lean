@@ -1,5 +1,6 @@
-# Nonempty hom
+# Existence of a Cartan–Eilenberg comparison over a chain map
 
-A comparison of supplied Cartan--Eilenberg resolutions exists over
-every chain map.  The boundary and homology lifts and both horseshoe
-middle maps are chosen noncanonically.
+Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. There exists a comparison of P and Q over g. The
+boundary and homology projective-resolution lifts and the two horseshoe middle maps are chosen,
+so this asserts existence rather than a canonical strict comparison.

@@ -1,4 +1,5 @@
-# Inversion Weight contract lt
+# Contracting two entries decreases inversion weight
 
-Replacing two adjacent letters by any single letter decreases the weight,
-regardless of the number of inversions of the resulting word.
+Replacing adjacent entries `i,j` by any entry `k` strictly decreases
+inversion weight: `inversionWeight (p ++ k :: s) < inversionWeight (p ++ i :: j :: s)`.
+No comparison among `i,j,k` is required.

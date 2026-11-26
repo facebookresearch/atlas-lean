@@ -1,3 +1,7 @@
-# Lifted Complex Coaug Is Comon Hom
+# The lifted coaugmentation preserves the comonoid
 
-The coaugmentation remains a native comonoid map after the explicit complex comparison.
+Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The transported coaugmentation into U^zC(L) is a comonoid
+morphism from the tensor-unit coalgebra.

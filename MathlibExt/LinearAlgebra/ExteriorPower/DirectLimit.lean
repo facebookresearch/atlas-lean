@@ -14,12 +14,17 @@ public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.DirectLimit
 
 /-!
-# Homogeneous exterior powers commute with directed module limits
+# Exterior powers of directed module limits
 
-Every finite tuple in the native module limit has a common original stage.
-This earns surjectivity on pure wedges. The canonical exterior-algebra
-comparison and its native zero criterion earn injectivity without flatness,
-freeness or a field. No homogeneous comparison is supplied by a caller.
+For a coherent system of `R`-modules over a nonempty directed preorder and every `n : ℕ`, the
+comparison `lim_i Λ^n_R M_i → Λ^n_R(lim_i M_i)` sends the class of a stage element to its
+exterior image under the stage map.
+
+Every finite tuple in the module limit has representatives in one common stage. This gives the
+wedge formula, and the comparison is both injective and surjective, hence an `R`-linear
+equivalence.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -36,12 +41,17 @@ variable (R : Type u) [CommRing R]
   (f : ∀ i j, i ≤ j → M i →ₗ[R] M j) [DirectedSystem M (f · · ·)]
 
 open Classical in
-/-- The original linear transitions induce the actual homogeneous exterior transitions. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. For `n : ℕ` and `i≤j`, the homogeneous transition is `exteriorPower.map n f_ij
+: Λ^n_R M_i →ₗ[R] Λ^n_R M_j`. -/
 def directLimitTransition (n : ℕ) (i j : I) (h : i ≤ j) :
     (⋀[R]^n (M i)) →ₗ[R] (⋀[R]^n (M j)) := map n (f i j h)
 
 open Classical in
-/-- Exterior-power transitions inherit the original directed-system equations. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+For every `n : ℕ`, the maps `Λ^n f_ij` satisfy identity and composition and form
+`DirectedSystem (fun i ↦ Λ^n_R M_i)`. -/
 instance directLimitTransition_directedSystem (n : ℕ) : DirectedSystem
     (fun i => ⋀[R]^n (M i)) (directLimitTransition R M f n · · ·) where
   map_self := by
@@ -61,7 +71,11 @@ instance directLimitTransition_directedSystem (n : ℕ) : DirectedSystem
       (congrArg (map n) h)) x
 
 open Classical in
-/-- Native module descent gives the canonical homogeneous power comparison. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L`, and `C_n=colim_i
+Λ^n_R M_i` in modules, with stage maps `v_i`. For `n : ℕ`, the `R`-linear map
+`directLimitComparison R M f n : C_n → Λ^n_R L` sends `v_i(x)` to `exteriorPower.map n u_i x`. -/
 def directLimitComparison (n : ℕ) :
     Module.DirectLimit (fun i => ⋀[R]^n (M i)) (directLimitTransition R M f n) →ₗ[R]
       (⋀[R]^n (DirectLimit M f)) :=
@@ -76,7 +90,11 @@ def directLimitComparison (n : ℕ) :
         (congrArg (map n) hof)) x)
 
 open Classical in
-/-- The actual homogeneous comparison retains every original exterior map of an injection. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L`, and `C_n=colim_i
+Λ^n_R M_i` in modules, with stage maps `v_i`. For `n : ℕ`, `i : I`, and `x : Λ^n_R M_i`,
+`directLimitComparison n (v_i x)=exteriorPower.map n u_i x`. -/
 theorem directLimitComparison_of (n : ℕ) (i : I) (x : ⋀[R]^n (M i)) :
     directLimitComparison R M f n
         (Module.DirectLimit.of R I (fun i => ⋀[R]^n (M i)) (directLimitTransition R M f n) i x) =
@@ -84,7 +102,11 @@ theorem directLimitComparison_of (n : ℕ) (i : I) (x : ⋀[R]^n (M i)) :
   rw [directLimitComparison, Module.DirectLimit.lift_of]
 
 open Classical in
-/-- A finite tuple in the actual native limit is represented in one original module stage. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L`, and `C_n=colim_i
+Λ^n_R M_i` in modules, with stage maps `v_i`. For `n : ℕ` and `a : Fin n → L`, there exist `i
+: I` and `b : Fin n → M_i` with `u_i(b j)=a j` for every `j : Fin n`. -/
 theorem exists_common_stage (n : ℕ) (a : Fin n → DirectLimit M f) :
     ∃ i, ∃ b : Fin n → M i, ∀ j, DirectLimit.Module.of R I M f i (b j) = a j := by
   induction n with
@@ -106,7 +128,11 @@ theorem exists_common_stage (n : ℕ) (a : Fin n → DirectLimit M f) :
         exact (DirectLimit.Module.of_f).trans (hb q)
 
 open Classical in
-/-- Pure wedges and the actual common-stage theorem earn surjectivity over an arbitrary ground ring. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L`, and `C_n=colim_i
+Λ^n_R M_i` in modules, with stage maps `v_i`. For every `n : ℕ`, `directLimitComparison R M f
+n : C_n → Λ^n_R L` is surjective. -/
 theorem directLimitComparison_surjective (n : ℕ) :
     Function.Surjective (directLimitComparison R M f n) := by
   apply LinearMap.range_eq_top.mp
@@ -200,7 +226,11 @@ private theorem fromDirectLimit_comp_powerToAlgebra (n : ℕ) :
   exact (coe_map (DirectLimit.Module.of R I M f i) x).symm
 
 open Classical in
-/-- The earned exterior-algebra comparison and native zero criterion earn homogeneous injectivity. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L`, and `C_n=colim_i
+Λ^n_R M_i` in modules, with stage maps `v_i`. For every `n : ℕ`, `directLimitComparison R M f
+n : C_n → Λ^n_R L` is injective. -/
 theorem directLimitComparison_injective (n : ℕ) : Function.Injective (directLimitComparison R M f n) := by
   intro x y hxy
   apply powerToAlgebra_injective R M f n
@@ -211,7 +241,11 @@ theorem directLimitComparison_injective (n : ℕ) : Function.Injective (directLi
     hxy).trans hy.symm)
 
 open Classical in
-/-- The canonical homogeneous comparison is an actual linear equivalence, without flatness or field assumptions. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L`, and `C_n=colim_i
+Λ^n_R M_i` in modules, with stage maps `v_i`. For every `n : ℕ`, `directLimitEquiv R M f n :
+C_n ≃ₗ[R] Λ^n_R L` is the linear equivalence whose forward map is `directLimitComparison`. -/
 def directLimitEquiv (n : ℕ) :
     Module.DirectLimit (fun i => ⋀[R]^n (M i)) (directLimitTransition R M f n) ≃ₗ[R]
       (⋀[R]^n (DirectLimit M f)) :=

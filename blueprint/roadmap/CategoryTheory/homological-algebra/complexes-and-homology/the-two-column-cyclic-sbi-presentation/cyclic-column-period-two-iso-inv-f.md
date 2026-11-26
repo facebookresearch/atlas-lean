@@ -1,3 +1,5 @@
-# Cyclic Column Period Two Iso inv f
+# The inverse tensor component of cyclic column periodicity
 
-The inverse period-two coordinate is the same original identity tensor map.
+The inverse tensor component of cyclic column periodicity.
+
+The inverse period-two column comparison is the identity on each coefficient tensor level.

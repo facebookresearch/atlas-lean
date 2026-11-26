@@ -1,3 +1,5 @@
-# Cyclic BConnes SBIPresentation Map ordinary Map
+# The ordinary component of a left-unit presentation map
 
-The ordinary component is the original regular Hochschild map.
+The ordinary component of a left-unit presentation map.
+
+The ordinary component is the regular `b`-complex map induced by the algebra homomorphism.

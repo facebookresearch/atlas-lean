@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Relative Homology Direct Column Iso hom naturality of bicomplex
+# Naturality of coherent relative-window homology in direct-column coordinates
 
-Coherent relative homology identifies naturally with direct-column
-homology under a bicomplex map.
+Naturality of coherent relative-window homology in direct-column coordinates.
+
+At degree `-p-q`, the induced relative homology map commutes with the direct-column homology
+comparison and the direct-column homology map.

@@ -15,13 +15,16 @@ public import Mathlib.CategoryTheory.Adjunction.Basic
 public import Mathlib.CategoryTheory.Monoidal.Closed.Braided
 
 /-!
-# Actual tensor exactness in the original larger coefficient world
+# Closed tensor functors after scalar-ring lifting
 
-Scalar restriction along the actual up/down ring equivalence is an exact
-equivalence. The original tensor-left functor is compared to inverse scalar
-restriction, native lifted-ring tensor-left, and scalar restriction back.
-That actual comparison gives its adjunction and hence native colimit
-preservation. No right-exactness or Künneth certificate is supplied.
+Let `R : Type u` be a commutative ring. Restriction along `R ≃+* ULift.{v} R` is an
+equivalence between the module categories with coefficient universe `max u v`.
+
+For a ground-scalar module `M`, the functor `M ⊗[R] -` is naturally isomorphic to inverse
+scalar restriction, followed by tensoring with the lifted module over `ULift.{v} R`, followed
+by scalar restriction back to `R`. Transporting the tensor–Hom adjunction along this
+comparison makes the ground-scalar tensor category monoidal closed. In particular each left
+tensor functor is a left adjoint and preserves colimits.
 -/
 
 @[expose] public section
@@ -37,26 +40,41 @@ namespace ModuleCat.UniverseScalarRestriction
 variable (R : Type u) [CommRing R]
 
 
-/-- The native ring-equivalence module equivalence in the actual common world. -/
+/-- The module equivalence for lifted scalar rings.
+
+The ring equivalence `R ≃+* ULift.{v} R` induces an equivalence from lifted-ring modules to
+`R`-modules, both in coefficient universe `max u v`. -/
 def moduleEquivalence : (ModuleCat.{max u v} (LiftedRing.{u,v} R)) ≌ (Modules.{u,v} R) :=
   ModuleCat.restrictScalarsEquivalenceOfRingEquiv (scalarEquiv.{u,v} R)
 
-/-- The actual inverse restriction of scalars, with coefficient action through down. -/
+/-- The inverse restriction to lifted scalars.
+
+The inverse of the module equivalence equips a ground-scalar module with the action of
+`ULift.{v} R` through the down map. -/
 def toLifted : (Modules.{u,v} R) ⥤ (ModuleCat.{max u v} (LiftedRing.{u,v} R)) := (moduleEquivalence.{u,v} R).inverse
 
 
-/-- The actual counit isomorphism of the original module representation. -/
+/-- The counit comparison after lifting coefficient scalars.
+
+For a ground-scalar module `M`, lifting its scalar action and restricting back gives an
+`R`-module naturally isomorphic to `M`. -/
 def originalModuleIso (M : (Modules.{u,v} R)) : (toOriginal.{u,v} R).obj ((toLifted.{u,v} R).obj M) ≅ M :=
   (moduleEquivalence.{u,v} R).counitIso.app M
 
+/-- Naturality of the inverse scalar-lifting counit.
+
+For `f : M → N`, applying `f` and then the inverse counit of `N` equals the inverse counit of
+`M` followed by the lifted-and-restricted map. -/
 @[reassoc]
 theorem originalModuleIso_inv_naturality {M N : (Modules.{u,v} R)} (f : M ⟶ N) :
     f ≫ (originalModuleIso.{u,v} R N).inv =
       (originalModuleIso.{u,v} R M).inv ≫ (toOriginal.{u,v} R).map ((toLifted.{u,v} R).map f) :=
   (moduleEquivalence.{u,v} R).counitIso.inv.naturality f
 
-/-- The actual tensor-left functor is a conjugate of native tensor over
-the actual lifted ring. Its comparison uses earned scalar/tensor isomorphisms. -/
+/-- The scalar-lifting comparison for left tensor functors.
+
+For a ground-scalar module `M`, `M ⊗[R] -` is naturally isomorphic to lifting scalars,
+tensoring with the lifted `M` over `ULift.{v} R`, and restricting scalars back. -/
 def tensorLeftComparison (M : (Modules.{u,v} R)) :
     tensorLeft M ≅ (toLifted.{u,v} R) ⋙ tensorLeft ((toLifted.{u,v} R).obj M) ⋙ (toOriginal.{u,v} R) :=
   NatIso.ofComponents (fun N =>
@@ -91,8 +109,10 @@ def tensorLeftComparison (M : (Modules.{u,v} R)) :
                   hn')))
 
 
-/-- The actual original-ring tensor-left adjunction is transported from
-the native lifted-ring tensor-left adjunction through an actual functor isomorphism. -/
+/-- The right adjoint to tensoring with a universe scalar module.
+
+For `M`, the lifted-ring tensor–Hom adjunction and the scalar-lifting comparison give a right
+adjoint to `M ⊗[R] -` in the ground-scalar module category. -/
 def closed (M : (Modules.{u,v} R)) : Closed M := by
   let J := (toLifted.{u,v} R) ⋙ tensorLeft ((toLifted.{u,v} R).obj M) ⋙ (toOriginal.{u,v} R)
   letI : (toLifted.{u,v} R).IsEquivalence := (moduleEquivalence.{u,v} R).symm.isEquivalence_functor
@@ -101,6 +121,10 @@ def closed (M : (Modules.{u,v} R)) : Closed M := by
     { rightAdj := J.rightAdjoint
       adj := (Adjunction.ofIsLeftAdjoint J).ofNatIsoLeft (tensorLeftComparison.{u,v} R M).symm }
 
+/-- The monoidal closed structure on universe scalar modules.
+
+Every left tensor functor in the module category with lifted regular unit has a right adjoint,
+as obtained through the lifted-scalar equivalence. -/
 instance monoidalClosed : MonoidalClosed (Modules.{u,v} R) where
   closed M := closed.{u,v} R M
 

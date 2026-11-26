@@ -1,3 +1,5 @@
-# Matrix Zero Corner Map Is Comon Hom
+# Comonoid compatibility of a matrix zero-extension CE map
 
-The zero-corner map is a comonoid map under the fixed canonical dictionaries.
+Comonoid compatibility of a matrix zero-extension CE map.
+
+The zero-extension chain map preserves the canonical CE comultiplication and counit.

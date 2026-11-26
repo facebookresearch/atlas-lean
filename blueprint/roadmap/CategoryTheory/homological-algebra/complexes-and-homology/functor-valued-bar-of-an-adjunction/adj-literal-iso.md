@@ -1,4 +1,6 @@
-# Adj Literal Iso
+# The forgotten adjunction bars are isomorphic as augmented objects
 
-The honest augmented comparison: the literal forgetful image is naturally
-isomorphic to the reusable surrogate model.
+Let T be a monad on C and alg a T-algebra. The simplicial comparison adjLiteralBarIso(alg),
+together with the identity on the augmentation target alg.A, defines an isomorphism
+adjLiteralAugmented(alg) ≅ adjEvaluatedAugmented(alg). The componentwise augmentation
+agreement makes it an isomorphism of augmented simplicial objects.

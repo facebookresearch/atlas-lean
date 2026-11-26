@@ -1,3 +1,4 @@
-# Is Split Epi map iff of full faithful
+# Full faithful functors preserve and reflect split epimorphisms
 
-Full faithfulness reflects splitting by lifting the section and its equation.
+Let `C,B` be categories and `V : C → B` full and faithful.
+For `g : X → Y`, `V(g)` is split epi if and only if `g` is split epi.

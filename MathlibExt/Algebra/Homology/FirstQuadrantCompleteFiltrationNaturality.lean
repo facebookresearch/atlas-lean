@@ -14,16 +14,17 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltration
 public import MathlibExt.Algebra.Homology.FirstQuadrantFiltrationNaturality
 
 /-!
-# Naturality of the complete first-quadrant filtration
+# Naturality of complete horizontal filtration stages
 
-A bicomplex map preserves every extended-integer stage of the complete
-horizontal filtration.  At bottom and negative finite indices this is the
-zero map, at a nonnegative finite index it is the existing finite-stage map,
-and at top it is the map of total complexes.
+Let C be preadditive with a zero object and finite coproducts. A morphism f:K→L of bicomplexes
+of shape (down ℕ,down ℕ) induces a chain map G_i(f):G_i(K)→G_i(L) for every cut i∈ℤ∪{⊥,⊤} of the
+complete horizontal filtration. This map is zero at bottom and negative finite cuts, the finite
+horizontal-stage map at each nonnegative integer cut, and Tot f at top.
 
-The resulting stage maps commute both with inclusion into the total complex
-and with every transition in the complete filtration.  No spectral-object or
-spectral-sequence construction is used here.
+If ι_i^K:G_i(K)→Tot K denotes the stage inclusion, then G_i(f)≫ι_i^L=ι_i^K≫Tot f. For i≤j, the
+complete transitions satisfy G_i(f)≫t^L_{i,j}=t^K_{i,j}≫G_j(f). These stage maps therefore
+define a morphism between the completely filtered total complexes, with arbitrary object and
+morphism universes.
 -/
 
 @[expose] public section
@@ -44,8 +45,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- A complete-stage bicomplex map bundled with its compatibility with the
-inclusions into the total complexes. -/
+/-- Let C be preadditive with a zero object and finite coproducts, f:K→L a morphism of
+first-quadrant bicomplexes, and i∈ℤ∪{⊥,⊤}. This is the pair consisting of the induced chain map
+G_i(f):G_i(K)→G_i(L) and the equality G_i(f)≫ι_i^L=ι_i^K≫Tot f. The map is zero at bottom or
+negative finite cuts, the finite horizontal-stage map at a≥0, and the total map at top. -/
 noncomputable def horizontalCompleteFilteredTotalComplexMapOfBicomplexData
     (f : K ⟶ L) (i : EInt) :
     { g : horizontalCompleteFilteredTotalComplex K i ⟶
@@ -94,16 +97,19 @@ noncomputable def horizontalCompleteFilteredTotalComplexMapOfBicomplexData
         𝟙 _ ≫ total.map f (ComplexShape.down ℕ)
       simp
 
-/-- The map induced by a bicomplex map on an arbitrary extended-integer
-stage of the complete horizontal filtration. -/
+/-- For a morphism f:K→L of bicomplexes of shape (down ℕ,down ℕ) in a preadditive category with a
+zero object and finite coproducts, and a cut i∈ℤ∪{⊥,⊤}, this is the induced chain map
+G_i(f):G_i(K)→G_i(L). It is the zero map at bottom and negative finite cuts, the finite
+horizontal-stage map at nonnegative integer cuts, and Tot f at top. -/
 noncomputable def horizontalCompleteFilteredTotalComplexMapOfBicomplex
     (f : K ⟶ L) (i : EInt) :
     horizontalCompleteFilteredTotalComplex K i ⟶
       horizontalCompleteFilteredTotalComplex L i :=
   (horizontalCompleteFilteredTotalComplexMapOfBicomplexData f i).1
 
-/-- The map on every complete-filtration stage commutes with inclusion into
-the corresponding total complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts, f:K→L a first-quadrant bicomplex
+morphism, and i∈ℤ∪{⊥,⊤}. With G_i(f) the induced complete-stage chain map and ι_i^K:G_i(K)→Tot
+K, ι_i^L:G_i(L)→Tot L the inclusions, G_i(f)≫ι_i^L=ι_i^K≫Tot f. -/
 @[reassoc (attr := simp)]
 theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_toTotal
     (f : K ⟶ L) (i : EInt) :
@@ -113,8 +119,10 @@ theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_toTotal
         total.map f (ComplexShape.down ℕ) :=
   (horizontalCompleteFilteredTotalComplexMapOfBicomplexData f i).2
 
-/-- Bicomplex maps commute with every transition of the complete horizontal
-filtration. -/
+/-- For a first-quadrant bicomplex morphism f:K→L in a preadditive category with a zero object and
+finite coproducts, let i≤j in ℤ∪{⊥,⊤}. The complete-stage maps and transitions satisfy
+G_i(f)≫t^L_{i,j}=t^K_{i,j}≫G_j(f), as maps G_i(K)→G_j(L). The equality includes zero bottom and
+negative stages and the top total complex. -/
 theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_naturality
     (f : K ⟶ L) {i j : EInt} (h : i ≤ j) :
     horizontalCompleteFilteredTotalComplexMapOfBicomplex f i ≫
@@ -154,8 +162,11 @@ theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_naturality
         horizontalCompleteFilteredTotalToTotal L j :=
       (Category.assoc _ _ _).symm
 
-/-- The total complex equipped with its complete extended-integer horizontal
-filtration. -/
+/-- Let C be preadditive with a zero object and finite coproducts and K a bicomplex of shape (down
+ℕ,down ℕ). This filtered object consists of the chain complex Tot K and its increasing
+horizontal filtration indexed by ℤ∪{⊥,⊤}. Bottom and negative finite stages are zero, the
+nonnegative finite stage a is G^fin_a(K), and the top stage is Tot K; all stages have their
+canonical monic inclusions into Tot K. -/
 noncomputable def horizontalCompleteTotalFilteredObject
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) :
@@ -163,8 +174,10 @@ noncomputable def horizontalCompleteTotalFilteredObject
   X := K.total (ComplexShape.down ℕ)
   filtration := horizontalCompleteTotalFiltration K
 
-/-- A bicomplex map induces a morphism between the completely filtered total
-complexes. -/
+/-- For a morphism f:K→L of first-quadrant bicomplexes in a preadditive category with a zero object
+and finite coproducts, this filtered-object morphism has underlying chain map Tot f and stage
+components G_i(f):G_i(K)→G_i(L) for i∈ℤ∪{⊥,⊤}. The stage maps commute with transitions and
+satisfy G_i(f)≫ι_i^L=ι_i^K≫Tot f, so they preserve the complete horizontal filtrations. -/
 noncomputable def horizontalCompleteTotalFilteredObjectMap (f : K ⟶ L) :
     horizontalCompleteTotalFilteredObject K ⟶
       horizontalCompleteTotalFilteredObject L :=

@@ -21,6 +21,20 @@ short exact degreewise.
 module
 
 public import MathlibExt.Algebra.Homology.FirstQuadrantTailQuotient
+/-!
+# Bicomplex lift of the inner tail-cutoff sequence
+
+Let C be an abelian category and K a bicomplex with both shapes up′(1) on ℕ. The inner tail
+beginning at r retains the inner cochain degrees at least r. Its quotient by the inner tail
+beginning at r+1 is the cutoff layer supported in inner degree r.
+
+Evaluation at inner degree r followed by the single-degree complex functor defines the
+cutoff-layer functor. Applying it to each outer cochain term gives the cutoff-layer bicomplex.
+The tail quotient lifts naturally in the outer direction, and tail(r+1)→tail r→cutoff r is short
+exact after every outer-degree evaluation, hence short exact as a bicomplex sequence. The outer
+index is retained throughout; this is an inner-degree cutoff.
+-/
+
 @[expose] public section
 
 open CategoryTheory
@@ -29,10 +43,10 @@ namespace FirstQuadrantTail
 
 variable {C : Type*} [Category C] [Abelian C]
 
-/-- The cutoff-layer endofunctor on inner complexes: project to degree `r`,
-then include as a complex supported only in degree `r`.
-Its object is definitionally `cutoffLayer r K`
-(see `cutoffLayerFunctor_obj`). -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For r : ℕ, cutoffLayerFunctor evaluates an inner complex at degree r
+and places that object in a cochain complex supported only in degree r. On a map φ it uses φ.f r
+in that single degree. -/
 noncomputable def cutoffLayerFunctor (r : ℕ) :
     HomologicalComplex C (ComplexShape.up' (1 : ℕ)) ⥤
       HomologicalComplex C (ComplexShape.up' (1 : ℕ)) :=
@@ -45,7 +59,9 @@ instance cutoffLayerFunctor_preservesZeroMorphisms (r : ℕ) :
     simp only [cutoffLayerFunctor]
     exact Functor.map_zero _ _ _
 
-/-- The object of `cutoffLayerFunctor r` is definitionally `cutoffLayer r K`. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For an inner cochain complex K and r : ℕ, (cutoffLayerFunctor r).obj
+K equals cutoffLayer r K, with K.X r in degree r and zero elsewhere. -/
 @[simp]
 lemma cutoffLayerFunctor_obj (r : ℕ)
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) :
@@ -59,7 +75,10 @@ lemma cutoffLayerFunctor_map (r : ℕ)
       (HomologicalComplex.single C (ComplexShape.up' (1 : ℕ)) r).map (φ.f r) :=
   rfl
 
-/-- The inner tail-quotient map as a natural transformation. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For r : ℕ, the maps tailQuotient K r form a natural transformation
+from innerTail r to cutoffLayerFunctor r. They retain the degree-r layer and kill all other
+target degrees. -/
 noncomputable def tailQuotientNatTrans (r : ℕ) :
     innerTail (C := C) r ⟶ cutoffLayerFunctor (C := C) r where
   app K := tailQuotient (C := C) K r
@@ -73,14 +92,20 @@ lemma tailQuotientNatTrans_app (r : ℕ)
     (tailQuotientNatTrans (C := C) r).app K = tailQuotient (C := C) K r :=
   rfl
 
-/-- Outer cutoff-layer endofunctor on bicomplexes. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. Apply cutoffLayerFunctor r to every outer cochain term. The resulting
+bicomplex endofunctor retains inner degree r in every outer degree, with the outer differential
+induced by the degree-r components. -/
 noncomputable def outerCutoffFunctor (r : ℕ) :
     HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ)) (ComplexShape.up' (1 : ℕ)) ⥤
       HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
         (ComplexShape.up' (1 : ℕ)) :=
   (cutoffLayerFunctor (C := C) r).mapHomologicalComplex (ComplexShape.up' (1 : ℕ))
 
-/-- The outer cutoff-layer bicomplex associated to `K`. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For a bicomplex K and r : ℕ, outerCutoff K r is obtained by replacing
+each inner complex K.X p by its degree-r cutoff layer, while retaining the outer cochain
+indexing. -/
 noncomputable def outerCutoff
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
       (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
@@ -94,14 +119,20 @@ lemma outerCutoff_X
     (outerCutoff (C := C) K r).X p = cutoffLayer (C := C) r (K.X p) :=
   rfl
 
-/-- Bicomplex-level quotient natural transformation. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. The inner tail quotient natural transformation lifts to a bicomplex
+natural transformation from the bicomplex of tails starting at r to outerCutoffFunctor r. Its
+outer-degree-p component is tailQuotient(K.X p,r). -/
 noncomputable def bicomplexQuotient (r : ℕ) :
     (innerTail (C := C) r).mapHomologicalComplex (ComplexShape.up' (1 : ℕ)) ⟶
       outerCutoffFunctor (C := C) r :=
   NatTrans.mapHomologicalComplex (tailQuotientNatTrans (C := C) r)
     (ComplexShape.up' (1 : ℕ))
 
-/-- Quotient map out of the tail bicomplex. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For K and r : ℕ, quotientBicomplexMap K r maps the bicomplex whose
+outer terms are innerTail r(K.X p) to outerCutoff K r, by the inner tail quotient in every outer
+degree. -/
 noncomputable def quotientBicomplexMap
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
       (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
@@ -126,7 +157,9 @@ lemma quotientBicomplexMap_f_f
       quotientF (C := C) (K.X p) r q :=
   rfl
 
-/-- The bicomplex tail inclusion followed by the quotient vanishes. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For a bicomplex K and r : ℕ, tailInclusion:tail(r+1)→tail r followed
+by quotientBicomplexMap:tail r→cutoff r is the zero bicomplex map. -/
 lemma bicomplexTailCut_zero
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
       (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
@@ -136,7 +169,9 @@ lemma bicomplexTailCut_zero
     tailInclusion_f, quotientBicomplexMap_f]
   exact tailCut_zero (C := C) (K.X p) r
 
-/-- The bicomplex short complex `tail (r + 1) ⟶ tail r ⟶ cutoff r`. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For K and r : ℕ, bicomplexTailCutShort is the short complex
+tail(r+1)→tail r→cutoff r, with first arrow tailInclusion and second arrow quotientBicomplexMap. -/
 noncomputable def bicomplexTailCutShort
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
       (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
@@ -161,7 +196,9 @@ lemma bicomplexTailCutShort_g
       quotientBicomplexMap (C := C) K r :=
   rfl
 
-/-- Degreewise, the bicomplex short complex is the production inner one. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. Evaluating bicomplexTailCutShort K r at outer degree p gives
+tailCutShort(K.X p,r), the inner short complex tail(r+1)(K.X p)→tail r(K.X p)→cutoff r(K.X p). -/
 @[simp]
 lemma bicomplexTailCutShort_map_eval
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
@@ -173,7 +210,9 @@ lemma bicomplexTailCutShort_map_eval
       tailCutShort (C := C) (K.X p) r :=
   rfl
 
-/-- The bicomplex tail-cutoff short complex is short exact. -/
+/-- Let C be an abelian category in arbitrary universes. All inner and outer complexes have the
+cochain shape up′(1) on ℕ. For any bicomplex K and r : ℕ, tail(r+1)→tail r→cutoff r is short
+exact. In every outer degree p it is the short exact inner tail-cutoff sequence of K.X p. -/
 theorem bicomplexTailCut_shortExact
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
       (ComplexShape.up' (1 : ℕ))) (r : ℕ) :

@@ -1,4 +1,4 @@
 # Map Restriction
 
-- [Restriction Functor Comp Map Iso](restriction-functor-comp-map-iso.md)
-- [Restriction Functor Comp Map Iso hom app f](restriction-functor-comp-map-iso-hom-app.md)
+- [Restriction commutes with a zero-preserving functor](restriction-functor-comp-map-iso.md)
+- [Identity components of the restriction comparison](restriction-functor-comp-map-iso-hom-app.md)

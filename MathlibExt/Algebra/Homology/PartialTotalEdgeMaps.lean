@@ -17,12 +17,17 @@ public import MathlibExt.Algebra.Homology.PartialTotalStageZeroRowCoordinate
 public import MathlibExt.Algebra.Homology.PartialTotalCoordinates
 
 /-!
-# Boundary edge maps for the partial-total spectral sequence
+# Boundary edge maps of the first-quadrant partial-total sequence
 
-The two boundary edges of a first-quadrant partial-total spectral sequence
-are constructed directly from page two, the stable interval, and the literal
-image filtration on total homology.  No page at infinity or filtration
-splitting is introduced.
+Let `B` be a first-quadrant bicomplex in an abelian category. The zero-column edge maps
+`E²_(0,n)` through its stable interval and the stage-zero homology filtration image into
+`H_n(Tot B)`. The top-row edge maps total homology through its top graded quotient into
+`E²_(n,0)`.
+
+If every incoming term `Eʳ_(r,s)` is zero for `r≥2` and `r+s=n+1`, the zero-column map from
+page two to the stable interval is an isomorphism. Its representative formula identifies the
+edge with homology of the zero-row inclusion after the vertical-horizontal homology coordinate
+comparison.
 -/
 
 @[expose] public section
@@ -48,7 +53,10 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- The shared stable-side source of the page-two zero-column comparison. -/
+/-- The spectral coordinate of a zero-column second-page source.
+
+Use the chosen page-transition interval data at `(0,q)` to form the spectral object's framed
+`E` object. -/
 noncomputable abbrev partialTotalZeroColumnStableSource (q : ℕ) : C :=
   let χ := B.partialTotalFirstPageChoice
   let η := χ.pageTransitionIndex 0 q
@@ -56,8 +64,10 @@ noncomputable abbrev partialTotalZeroColumnStableSource (q : ℕ) : C :=
     (homOfLE η.hiBot₁) (homOfLE η.hi₁₂)
     (homOfLE η.hi₂₃') η.n₀ η.n₁ η.n₂ η.hn₁ η.hn₂
 
-/-- The stable-side source is canonically isomorphic to the package-owned
-page-two coordinate. -/
+/-- The zero-column second-page coordinate isomorphism.
+
+The framed stable-source presentation is isomorphic to the chosen page-two coordinate at
+`(0,q)`. -/
 noncomputable def partialTotalZeroColumnPageTwoLeftIso (q : ℕ) :
     B.partialTotalZeroColumnStableSource q ≅
       B.partialTotalFirstPageChoice.pageTwoCoordinate 0 q := by
@@ -82,8 +92,10 @@ noncomputable def partialTotalZeroColumnPageTwoLeftIso (q : ℕ) :
     η.n₀ η.n₁ η.n₂ hLeft η.hn₁ η.hn₂
   exact eLeftRaw ≪≫ χ.pageTwoRawCoordinateIso 0 q
 
-/-- The eta-owned terminal right `E` object is the direct zero-column stable
-target. -/
+/-- The zero-column stable-target interval comparison.
+
+Extending the upper endpoint to the abutment identifies the corresponding spectral `E` object
+with the stage-zero stable interval. -/
 noncomputable def partialTotalZeroColumnStableTargetIso (q : ℕ) :
     let χ := B.partialTotalFirstPageChoice
     let η := χ.pageTransitionIndex 0 q
@@ -107,7 +119,10 @@ noncomputable def partialTotalZeroColumnStableTargetIso (q : ℕ) :
     congr 1 <;> omega
   exact eqToIso hTarget
 
-/-- The exact stable tail after the package-owned page-two left coordinate. -/
+/-- The zero-column spectral map into its stable interval.
+
+Map the framed second-page source to the stable-target presentation and then use its stable-
+interval isomorphism. -/
 noncomputable def partialTotalZeroColumnStableTail (q : ℕ) :
     B.partialTotalZeroColumnStableSource q ⟶
       B.partialTotalStableObj q 0 := by
@@ -120,8 +135,9 @@ noncomputable def partialTotalZeroColumnStableTail (q : ℕ) :
       η.n₀ η.n₁ η.n₂ η.hn₁ η.hn₂ ≫
     (B.partialTotalZeroColumnStableTargetIso q).hom
 
-/-- The package-chosen page-two zero column maps canonically to its stable
-interval through the one named left coordinate and stable tail. -/
+/-- The zero-column map from the chosen second page to its stable interval.
+
+Compose the page-two coordinate, inverse framed-source coordinate, and stable-tail map. -/
 noncomputable def partialTotalZeroColumnPageToStable (q : ℕ) :
     B.partialTotalFirstPageChoice.pageTwo.X (0, q) ⟶
       B.partialTotalStableObj q 0 :=
@@ -129,8 +145,10 @@ noncomputable def partialTotalZeroColumnPageToStable (q : ℕ) :
     (B.partialTotalZeroColumnPageTwoLeftIso q).inv ≫
     B.partialTotalZeroColumnStableTail q
 
-/-- The page-to-stable map is the page-two coordinate followed by the
-stable-side comparison and stable tail. -/
+/-- The coordinate formula for the zero-column page-to-stable map.
+
+The map is the page-two coordinate followed by the inverse source presentation and stable-tail
+map. -/
 @[reassoc]
 theorem partialTotalZeroColumnPageToStable_eq_pageTwoCoordinate (q : ℕ) :
     B.partialTotalZeroColumnPageToStable q =
@@ -139,8 +157,10 @@ theorem partialTotalZeroColumnPageToStable_eq_pageTwoCoordinate (q : ℕ) :
         B.partialTotalZeroColumnStableTail q := by
   rfl
 
-/-- The package-chosen page-two zero-column edge maps into total homology
-through the zero-stage image filtration. -/
+/-- The zero-column second-page edge into total homology.
+
+Map `E²_(0,q)` to its stable interval, identify the stage-zero graded quotient, and include
+that filtration image into `H_q(Tot B)`. -/
 noncomputable def partialTotalZeroColumnEdge (q : ℕ) :
     B.partialTotalFirstPageChoice.pageTwo.X (0, q) ⟶
       (B.total (ComplexShape.down ℕ)).homology q :=
@@ -149,7 +169,10 @@ noncomputable def partialTotalZeroColumnEdge (q : ℕ) :
     (B.partialTotalHomologyGradedZeroIso q).inv ≫
     (B.partialTotalHomologyFiltration q).ι.app ((0 : ℤ) : EInt)
 
-/-- The stable interval on the top row maps canonically to page two. -/
+/-- The top-row stable interval map to page two.
+
+The stable interval at total and filtration degree `p` maps to the second-page object at
+`(p,0)`. -/
 noncomputable def partialTotalTopRowStableToPage (p : ℕ) :
     B.partialTotalStableObj p p ⟶
       ((B.partialTotalSpectralObject.spectralSequence core).page (2 : ℤ)).X
@@ -225,8 +248,10 @@ noncomputable def partialTotalTopRowStableToPage (p : ℕ) :
     all_goals omega
   exact (eqToIso hSource).inv ≫ leftOuterMap ≫ eRight.inv ≫ ePage.inv
 
-/-- Total homology maps to the page-two top row through the exhaustive top
-filtration stage. -/
+/-- The top-row edge from total homology to page two.
+
+Map degree-`p` total homology through its top stable filtration coordinate to the second-page
+object at `(p,0)`. -/
 noncomputable def partialTotalTopRowEdge (p : ℕ) :
     (B.total (ComplexShape.down ℕ)).homology p ⟶
       ((B.partialTotalSpectralObject.spectralSequence core).page (2 : ℤ)).X
@@ -528,6 +553,10 @@ private theorem isIso_bottomRightIncrement_of_isZeroIncoming
   change IsIso Binc
   exact IsIso.of_isIso_comp_right Binc Lnew.hom
 
+/-- The zero-column stabilization isomorphism under vanishing incoming terms.
+
+For total degree `n`, if `Eʳ_(r,s)=0` for all natural `r≥2` with `r+s=n+1`, the zero-column
+page-two-to-stable map is an isomorphism. -/
 theorem isIso_partialTotalZeroColumnPageToStable_of_isZero_incoming
     (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ))
@@ -731,8 +760,10 @@ theorem isIso_partialTotalZeroColumnPageToStable_of_isZero_incoming
 
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The chosen page-two zero-column representative is homology of the
-literal zeroth-row inclusion into the total complex. -/
+/-- The zero-row homology formula for the zero-column edge.
+
+The vertical-homology class map, inverse chosen second-page comparison, and zero-column edge
+compose to homology of the zero-row inclusion into the full total. -/
 theorem partialTotalZeroColumnEdge_representation (q : ℕ) :
     let χ := B.partialTotalFirstPageChoice
     (B.verticalHomologyComplex q).pOpcycles 0 ≫

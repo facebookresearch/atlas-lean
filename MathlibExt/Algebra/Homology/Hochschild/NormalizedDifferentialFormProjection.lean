@@ -13,13 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.DifferentialFormNaturality
 public import MathlibExt.Algebra.Homology.Hochschild.Normalized
 
 /-!
-# normalized descent of the differential-form projection
+# Differential-form projection of normalized Hochschild chains
 
-The universal differential of the unit is zero. Thus the raw
-coefficient projection kills every original unit degeneracy, and the native
-Hochschild normalization universal property constructs its unique normalized
-chain map. This uses the original ground-unit quotient and introduces no
-algebra structure on that quotient.
+Let `k` be a commutative ring, `A` a commutative `k`-algebra, and `M` a compatible symmetric
+coefficient module. The coefficient form projection sends `m ⊗ (a₀ ⊗ ⋯ ⊗ a_(n-1))` to `m ⊗
+(da₀ ∧ ⋯ ∧ da_(n-1))`.
+
+Since `d1 = 0`, this projection kills every unit degeneracy. It therefore descends to a chain
+map from normalized Hochschild chains to the zero-differential coefficient-form complex. The
+descended map composed with normalized projection is the full coefficient-form chain map in
+every degree. The construction is integral and retains the independent coefficient universe.
 -/
 
 @[expose] public section
@@ -36,7 +39,10 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- A original unit factor is killed by the differential-form projection. -/
+/-- Vanishing of a differential-form projection on a unit tail factor.
+
+If one algebra tail entry of a coefficient tensor is `1`, its image under the form projection
+is zero because the corresponding universal differential is zero. -/
 theorem coefficientFormProjection_unit_factor
     (n : ℕ) (m : M) (a : Fin n → A) (i : Fin n) (hi : a i = 1) :
     coefficientFormProjection k A M n (m ⊗ₜ[k] PiTensorProduct.tprod k a) = 0 := by
@@ -46,7 +52,10 @@ theorem coefficientFormProjection_unit_factor
     rw [hi, Derivation.map_one_eq_zero]
   rw [(exteriorPower.ιMulti A n).map_coord_zero i hD, TensorProduct.tmul_zero]
 
-/-- Every original unit degeneracy vanishes after the constructed raw chain projection. -/
+/-- The coefficient-form chain projection kills unit degeneracies.
+
+Inserting a unit into any Hochschild tail position and then applying the coefficient
+differential-form chain map gives the zero map. -/
 theorem coefficientDifferentialFormChainMap_degeneracy (n : ℕ) (i : Fin (n + 1)) :
     letI := opModule A M
     letI := actionsComm A M
@@ -83,7 +92,10 @@ theorem coefficientDifferentialFormChainMap_degeneracy (n : ℕ) (i : Fin (n + 1
     (hp.trans ((congrArg (fun b : M ⊗[A] (⋀[A]^(n + 1) (KaehlerDifferential k A)) =>
       (ULift.up b : (coefficientDifferentialFormComplex k A M).X (n + 1))) hz).trans hzero)))
 
-/-- Native normalized descent of the original raw projection to coefficient forms. -/
+/-- The normalized coefficient differential-form chain projection.
+
+The coefficient-form chain map descends through Hochschild normalization by its vanishing on
+every unit degeneracy. -/
 def normalizedCoefficientDifferentialFormChainMap :
     normalizedChainComplex k A M ⟶ coefficientDifferentialFormComplex k A M := by
   letI := opModule A M
@@ -94,7 +106,10 @@ def normalizedCoefficientDifferentialFormChainMap :
     (coefficientDifferentialFormChainMap k A M)
     (coefficientDifferentialFormChainMap_degeneracy k A M)
 
-/-- The normalized projection retains the original raw chain-map square. -/
+/-- The chain factorization of coefficient-form projection through normalization.
+
+The normalized projection followed by the descended coefficient-form map equals the full
+coefficient-form chain map. -/
 @[reassoc]
 theorem normalizationProjection_differentialForms :
     normalizationProjection k A M ≫ normalizedCoefficientDifferentialFormChainMap k A M =
@@ -107,7 +122,10 @@ theorem normalizationProjection_differentialForms :
     (coefficientDifferentialFormChainMap k A M)
     (coefficientDifferentialFormChainMap_degeneracy k A M)
 
-/-- Every descended degree has the original factorwise normalization representative law. -/
+/-- The degreewise factorization of coefficient-form projection through normalization.
+
+In each degree, the factorwise normalized quotient map followed by the descended form-map
+component equals the coefficient-form component on the full tensor level. -/
 theorem normalizationLevelMap_differentialForms (n : ℕ) :
     letI := opModule A M
     letI := actionsComm A M

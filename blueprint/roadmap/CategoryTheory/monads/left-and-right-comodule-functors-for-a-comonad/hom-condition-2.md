@@ -1,3 +1,6 @@
-# Hom condition
+# The coaction equation of a left comodule morphism
 
-Compatibility of a left comodule morphism with the coactions.
+The coaction equation of a left comodule morphism.
+
+A natural transformation of left comodules intertwines the source coaction with its
+postcomposition by `G` and the target coaction.

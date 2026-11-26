@@ -19,12 +19,16 @@ public import Mathlib.Algebra.Module.Equiv.Opposite
 public import Mathlib.LinearAlgebra.TensorProduct.Associator
 
 /-!
-# The native enveloping action on the two outer tensor-power factors
+# The enveloping action on the two outer tensor factors
 
-The original A tensor TensorPower(n+1,A) carrier is identified with the
-native induced left (A tensor A-opposite)-module, retaining the middle word.
-Only the existing cons, rotation, associator, tensor swap and op coordinate
-are used. No bar complex, resolution or comparison map is reconstructed.
+For a commutative semiring `k`, tensor reassociation identifies `A ⊗[k] (V ⊗[k] A)` with `(A
+⊗[k] Aᵐᵒᵖ) ⊗[k] V`, sending `a ⊗ (v ⊗ b)` to `(a ⊗ op(b)) ⊗ v`.
+
+When `A` is a `k`-algebra, this identifies `A ⊗[k] A^(⊗(n+1))` with the induced enveloping
+module on its first and last factors. The pure scalar `l ⊗ op(r)` multiplies the first factor
+on the left and the final factor on the right, leaving the middle word unchanged.
+
+Reference: Loday, *Cyclic Homology*, Section 1.1.
 -/
 @[expose] public section
 noncomputable section
@@ -40,7 +44,9 @@ variable (k : Type u) [CommSemiring k]
 section Coordinates
 variable (A : Type v) [AddCommMonoid A] [Module k A]
 
-/-- Reassociate and move the two original outer module factors into their opposite-marked coordinate. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-semimodule. For a `k`-semimodule `V`, this is
+the `k`-linear equivalence `A ⊗[k] (V ⊗[k] A) ≃ₗ[k] (A ⊗[k] Aᵐᵒᵖ) ⊗[k] V`, sending `a⊗(x⊗b)`
+to `(a⊗op(b))⊗x`. -/
 def outerTensorCoordinate (V : Type w) [AddCommMonoid V] [Module k V] :
     A ⊗[k] (V ⊗[k] A) ≃ₗ[k] (A ⊗[k] Aᵐᵒᵖ) ⊗[k] V :=
   (TensorProduct.assoc k A V A).symm.trans
@@ -48,7 +54,8 @@ def outerTensorCoordinate (V : Type w) [AddCommMonoid V] [Module k V] :
       ((TensorProduct.assoc k V A Aᵐᵒᵖ).trans
         (TensorProduct.comm k V (A ⊗[k] Aᵐᵒᵖ))))
 
-/-- This coordinate retains the original middle vector and each outer vector. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-semimodule. For a `k`-semimodule `V`, `a,b :
+A`, and `x : V`, `outerTensorCoordinate k A V (a⊗(x⊗b))=(a⊗op(b))⊗x`. -/
 theorem outerTensorCoordinate_tmul (V : Type w) [AddCommMonoid V] [Module k V]
     (a b : A) (x : V) :
     outerTensorCoordinate k A V (a ⊗ₜ[k] (x ⊗ₜ[k] b)) =
@@ -57,14 +64,18 @@ theorem outerTensorCoordinate_tmul (V : Type w) [AddCommMonoid V] [Module k V]
     TensorProduct.congr_tmul, TensorProduct.comm_tmul, TensorProduct.assoc_tmul,
     MulOpposite.coe_opLinearEquiv]
 
-/-- The literal first/last factors become the enveloping coordinate, with the middle word unchanged. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-semimodule. For `n : ℕ`, this is `A ⊗[k]
+TensorPower k (n+1) A ≃ₗ[k] (A ⊗[k] Aᵐᵒᵖ) ⊗[k] TensorPower k n A`, separating the final factor
+of the tensor word from its middle factors. -/
 def outerCoordinate (n : ℕ) :
     A ⊗[k] TensorPower k (n + 1) A ≃ₗ[k]
       (A ⊗[k] Aᵐᵒᵖ) ⊗[k] TensorPower k n A :=
   (TensorProduct.congr (LinearEquiv.refl k A) (snocEquiv k A n).symm).trans
     (outerTensorCoordinate k A (TensorPower k n A))
 
-/-- These are the actual first, unchanged middle, and last coordinates of the input word. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-semimodule. For `n : ℕ`, `a₀ : A`, and `a :
+Fin(n+1) → A`, the map sends `a₀ ⊗ tprod(a)` to `(a₀ ⊗ op(a(Fin.last n))) ⊗ tprod(Fin.init
+a)`. -/
 theorem outerCoordinate_tprod (n : ℕ) (a₀ : A) (a : Fin (n + 1) → A) :
     outerCoordinate k A n (a₀ ⊗ₜ[k] PiTensorProduct.tprod k a) =
       (a₀ ⊗ₜ[k] op (a (Fin.last n))) ⊗ₜ[k] PiTensorProduct.tprod k (Fin.init a) := by
@@ -75,31 +86,43 @@ end Coordinates
 
 variable (A : Type v) [Semiring A] [Algebra k A]
 
-/-- Conjugate the native left tensor-module representation through the earned literal-word coordinate. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-algebra whose underlying multiplication may be
+noncommutative. Put `E=A ⊗[k] Aᵐᵒᵖ` and `X_n=A ⊗[k] TensorPower k (n+1) A`. The `k`-algebra
+homomorphism `outerRepresentation k A n : E →ₐ[k] End_k(X_n)` is the regular left action on
+the enveloping coordinate, transported by `outerCoordinate`. -/
 def outerRepresentation (n : ℕ) :
     (A ⊗[k] Aᵐᵒᵖ) →ₐ[k] Module.End k (A ⊗[k] TensorPower k (n + 1) A) :=
   ((outerCoordinate k A n).symm.conjAlgEquiv k).toAlgHom.comp
     (Algebra.lsmul (A := A ⊗[k] Aᵐᵒᵖ) k k
       ((A ⊗[k] Aᵐᵒᵖ) ⊗[k] TensorPower k n A))
 
-/-- The representation acts by actual native left multiplication in the earned coordinate. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-algebra whose underlying multiplication may be
+noncommutative. Put `E=A ⊗[k] Aᵐᵒᵖ` and `X_n=A ⊗[k] TensorPower k (n+1) A`. For `z : E` and `x
+: X_n`, `outerRepresentation k A n z x = outerCoordinate⁻¹(z • outerCoordinate x)`. -/
 theorem outerRepresentation_apply (n : ℕ) (z : A ⊗[k] Aᵐᵒᵖ)
     (x : A ⊗[k] TensorPower k (n + 1) A) :
     outerRepresentation k A n z x =
       (outerCoordinate k A n).symm (z • outerCoordinate k A n x) := rfl
 
-/-- The existing native pullback module is the enveloping module on the original word carrier. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-algebra whose underlying multiplication may be
+noncommutative. Put `E=A ⊗[k] Aᵐᵒᵖ` and `X_n=A ⊗[k] TensorPower k (n+1) A`. For `n : ℕ`,
+`outerModule k A n : Module E X_n` uses the action defined by `outerRepresentation k A n`. -/
 @[instance_reducible]
 def outerModule (n : ℕ) : Module (A ⊗[k] Aᵐᵒᵖ) (A ⊗[k] TensorPower k (n + 1) A) :=
   Module.compHom _ (outerRepresentation k A n).toRingHom
 
-/-- The earned representation preserves the original ground scalar module. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-algebra whose underlying multiplication may be
+noncommutative. Put `E=A ⊗[k] Aᵐᵒᵖ` and `X_n=A ⊗[k] TensorPower k (n+1) A`. With `outerModule
+k A n`, `IsScalarTower k E X_n` holds, so `(c • z) • x=c • (z • x)`. -/
 theorem outerScalarTower (n : ℕ) :
     letI := outerModule k A n
     IsScalarTower k (A ⊗[k] Aᵐᵒᵖ) (A ⊗[k] TensorPower k (n + 1) A) :=
   AlgHom.moduleEnd_compHom_isScalarTower (outerRepresentation k A n)
 
-/-- An enveloping pure tensor multiplies only the literal outer first/last factors. -/
+/-- Let `k` be a commutative semiring and `A` a `k`-algebra whose underlying multiplication may be
+noncommutative. Put `E=A ⊗[k] Aᵐᵒᵖ` and `X_n=A ⊗[k] TensorPower k (n+1) A`. For `l,r,a₀ : A`
+and `a : Fin(n+1) → A`, `(l⊗op(r)) • (a₀⊗tprod(a)) = (l*a₀) ⊗ tprod(Fin.snoc (Fin.init a)
+(a(Fin.last n)*r))`. The right scalar multiplies after the final factor. -/
 theorem outerModule_tprod (n : ℕ) (l r a₀ : A) (a : Fin (n + 1) → A) :
     letI := outerModule k A n
     (l ⊗ₜ[k] op r) • (a₀ ⊗ₜ[k] PiTensorProduct.tprod k a) =

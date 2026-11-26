@@ -14,13 +14,17 @@ public import MathlibExt.AlgebraicTopology.SimplexCategory.EdgePullback
 public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
-# Shuffle surjections and permutation edge coordinates
+# Rank surjections and edge coordinates of ordered shuffles
 
-Increasing positions in two blocks determine their
-rank surjections and complementary tensor edge words.
-The formulas include zero-length blocks. The ordinal
-laws require no ring structure; word products use
-a multiplicative type with one.
+An ordered (p, q)-shuffle is a permutation σ of p + q positions which is increasing on each
+original block. Its left positions are σ(0), …, σ(p − 1); its right positions are their
+complement. Counting these positions before each vertex defines surjections ⦋p + q⦌ → ⦋p⦌ and
+⦋p + q⦌ → ⦋q⦌.
+
+A rank increases exactly on an edge belonging to its block, and its value at the position of
+an original block element is that element's block index. The two complementary edge-coordinate
+maps, multiplied left factor first, reconstruct the concatenated word at σ⁻¹. This coordinate
+formula requires only multiplication with a two-sided unit and includes zero-length blocks.
 -/
 
 @[expose] public section
@@ -33,7 +37,8 @@ namespace AlgebraicTopology.EilenbergZilber
 
 variable {p q : ℕ}
 
-/-- Card step for `Fin`-valued filters. -/
+/-- For N : ℕ, a finite subset L of Fin N and k : Fin N, the cardinality of {x ∈ L | x.val < k.val
++ 1} is the cardinality of {x ∈ L | x.val < k.val} plus 1 if k ∈ L and plus 0 otherwise. -/
 private theorem filter_card_step {N : ℕ} (L : Finset (Fin N)) (k : Fin N) :
     (L.filter (fun x => x.val < k.val + 1)).card =
       (L.filter (fun x => x.val < k.val)).card + (if k ∈ L then 1 else 0) := by
@@ -60,7 +65,9 @@ private theorem filter_card_step {N : ℕ} (L : Finset (Fin N)) (k : Fin N) :
   rw [hfilter, Finset.card_union_of_disjoint hdisj]
   by_cases hk : k ∈ L <;> simp [hk]
 
-/-- Successor step of `leftHom` detects left positions. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, let L be its set of left positions and ℓ : Fin
+(p + q + 1) → Fin (p + 1) its left rank map. For every edge k : Fin (p + q), ℓ(k.succ).val =
+ℓ(k.castSucc).val + (if k ∈ L then 1 else 0). -/
 theorem leftHom_step (s : Shuffle p q) (k : Fin (p + q)) :
     (s.leftHom.toOrderHom k.succ).val
       = (s.leftHom.toOrderHom k.castSucc).val
@@ -70,7 +77,9 @@ theorem leftHom_step (s : Shuffle p q) (k : Fin (p + q)) :
     Fin.val_succ, Fin.val_castSucc]
   exact filter_card_step _ _
 
-/-- Successor step of `rightHom` detects right positions. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, let R be its set of right positions and r : Fin
+(p + q + 1) → Fin (q + 1) its right rank map. For every edge k : Fin (p + q), r(k.succ).val =
+r(k.castSucc).val + (if k ∈ R then 1 else 0). -/
 theorem rightHom_step (s : Shuffle p q) (k : Fin (p + q)) :
     (s.rightHom.toOrderHom k.succ).val
       = (s.rightHom.toOrderHom k.castSucc).val
@@ -115,7 +124,10 @@ theorem rightHom_last (s : Shuffle p q) :
 
 namespace Shuffle
 
-/-- The native shuffle structure and literal increasing-permutation subtype have the same index. -/
+/-- For p, q : ℕ, Shuffle p q is equivalent to the subtype of permutations σ of Fin (p + q) whose
+restrictions i ↦ σ(Fin.castAdd q i) and j ↦ σ(Fin.natAdd p j) are strictly increasing. The
+forward map returns s.perm with its IsShuffle proof, and the inverse packages that same
+permutation. -/
 def equivPermutationSubtype :
     Shuffle p q ≃ {σ : Equiv.Perm (Fin (p + q)) // IsShuffle σ} where
   toFun s := ⟨s.perm, s.isShuffle⟩
@@ -123,7 +135,9 @@ def equivPermutationSubtype :
   left_inv s := by cases s; rfl
   right_inv s := by cases s; rfl
 
-/-- The native left rank at an original left-block position is its original index. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, and i : Fin p, the left rank at the vertex
+(s.perm (Fin.castAdd q i)).castSucc has value i.val. Equivalently, exactly i.val left
+positions precede the shuffled position of the i-th original left element. -/
 theorem leftHom_leftPosition (s : Shuffle p q) (i : Fin p) :
     (s.leftHom.toOrderHom (s.perm (Fin.castAdd q i)).castSucc).val = i.val := by
   classical
@@ -139,7 +153,9 @@ theorem leftHom_leftPosition (s : Shuffle p q) (i : Fin p) :
     (s.perm (Fin.castAdd q j)).val < (s.perm (Fin.castAdd q i)).val)).card = i.val
   rw [hfilter, Fin.card_Iio]
 
-/-- The native right rank at an original right-block position is its original index. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, and i : Fin q, the right rank at the vertex
+(s.perm (Fin.natAdd p i)).castSucc has value i.val. Thus exactly i.val right positions precede
+that original right element's shuffled position. -/
 theorem rightHom_rightPosition (s : Shuffle p q) (i : Fin q) :
     (s.rightHom.toOrderHom (s.perm (Fin.natAdd p i)).castSucc).val = i.val := by
   classical
@@ -155,7 +171,10 @@ theorem rightHom_rightPosition (s : Shuffle p q) (i : Fin q) :
     (s.perm (Fin.natAdd p j)).val < (s.perm (Fin.natAdd p i)).val)).card = i.val
   rw [hfilter, Fin.card_Iio]
 
-/-- The left simplex map reaches every left-block ordinal vertex. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, the order-preserving vertex map s.leftHom : ⦋p +
+q⦌ ⟶ ⦋p⦌ is surjective as a function Fin (p + q + 1) → Fin (p + 1). The ranks before left
+positions give vertices 0 through p − 1, and the final vertex maps to p; this also covers p =
+0. -/
 theorem leftHom_surjective (s : Shuffle p q) :
     Function.Surjective s.leftHom.toOrderHom := by
   intro i
@@ -171,7 +190,9 @@ theorem leftHom_surjective (s : Shuffle p q) :
     change p = i.val
     omega
 
-/-- The right simplex map reaches every right-block ordinal vertex. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, the order-preserving vertex map s.rightHom : ⦋p
++ q⦌ ⟶ ⦋q⦌ is surjective as a function Fin (p + q + 1) → Fin (q + 1). The ranks before right
+positions give vertices 0 through q − 1, and the final vertex maps to q, including q = 0. -/
 theorem rightHom_surjective (s : Shuffle p q) :
     Function.Surjective s.rightHom.toOrderHom := by
   intro i
@@ -187,15 +208,22 @@ theorem rightHom_surjective (s : Shuffle p q) :
     change q = i.val
     omega
 
-/-- Left shuffle maps earn their epimorphism instance from the rank map. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, the morphism s.leftHom : ⦋p + q⦌ ⟶ ⦋p⦌ is an
+epimorphism in the simplex category. Its underlying function on ordinal vertices is the
+surjective left rank map. -/
 instance leftHom_epi (s : Shuffle p q) : Epi s.leftHom :=
   SimplexCategory.epi_iff_surjective.mpr (leftHom_surjective s)
 
-/-- Right shuffle maps earn their epimorphism instance from the rank map. -/
+/-- For p, q : ℕ and an ordered (p, q)-shuffle s, the morphism s.rightHom : ⦋p + q⦌ ⟶ ⦋q⦌ is an
+epimorphism in the simplex category because its underlying right rank function is surjective. -/
 instance rightHom_epi (s : Shuffle p q) : Epi s.rightHom :=
   SimplexCategory.epi_iff_surjective.mpr (rightHom_surjective s)
 
-/-- The two complementary edge pullbacks recover the original word at σ⁻¹. -/
+/-- Let A be a type with multiplication and a two-sided unit, let s be an ordered (p, q)-shuffle
+with permutation σ, and let a : Fin p → A and b : Fin q → A be words. For each i : Fin (p +
+q), pullbackEdges s.leftHom a i * pullbackEdges s.rightHom b i = Fin.append a b (σ.symm i).
+The factor from the block not occupying i is 1, so the multiplication order is left pullback
+followed by right pullback. -/
 theorem pullbackEdges_mul {A : Type*} [MulOneClass A] (s : Shuffle p q)
     (a : Fin p → A) (b : Fin q → A) :
     (fun i => SimplexCategory.pullbackEdges s.leftHom a i *

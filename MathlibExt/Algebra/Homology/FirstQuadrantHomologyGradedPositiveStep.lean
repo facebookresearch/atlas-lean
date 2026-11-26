@@ -14,10 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedComparison
 
 /-!
-# Positive total-homology filtration step comparisons
+# Comparing positive consecutive homology-filtration steps
 
-For a positive filtration index, the complete-filtration step intertwines
-the complete-to-finite comparisons at its predecessor and current index.
+Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), p>0, and n=p+q. Let
+e_prev compare the complete stage at (p:ℤ)−1 with finite stage p−1, and e_p compare the
+complete and finite stages at p.
+
+For the consecutive inclusions s_complete and s_finite, one has s_complete ≫ e_p.hom =
+e_prev.hom ≫ s_finite. The inverse-oriented equality is s_finite ≫ e_p.inv = e_prev.inv ≫
+s_complete.
 -/
 
 @[expose] public section
@@ -35,8 +40,11 @@ namespace HomologicalComplex₂
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The positive complete-filtration step followed by the upper comparison
-is the lower comparison followed by the corresponding finite step. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), p,q ∈ ℕ, and hp : 0 < p.
+In degree n=p+q, let s_c : F_{(p:ℤ)−1}^complete → F_p^complete and s_f : F_{p−1}^finite →
+F_p^finite be the consecutive inclusions. Let e_prev and e_p be the predecessor and current
+complete-to-finite stage isomorphisms. Then s_c ≫ e_p.hom = e_prev.hom ≫ s_f. The finite arrow
+s_f is the diagram map of the inequality p−1 ≤ p in ℕ. -/
 theorem horizontalTotalHomologyFiltrationStepMap_comp_positiveComparison
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ))
@@ -114,7 +122,11 @@ theorem horizontalTotalHomologyFiltrationStepMap_comp_positiveComparison
       exact (Category.assoc _ _ _).symm
     _ = _ := by rfl
 
-/-- Inverse orientation of the positive step comparison. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), p,q ∈ ℕ, and hp : 0 < p.
+In total degree p+q, let s_f be the finite image-filtration inclusion at natural indices p−1 ≤
+p, s_c the complete inclusion at integer indices p−1 ≤ p, and e_prev,e_p the
+complete-to-finite stage isomorphisms. Then s_f ≫ e_p.inv = e_prev.inv ≫ s_c. This specifies
+the orientation from the finite predecessor stage to the complete current stage. -/
 theorem horizontalFiniteTotalHomologyFiltrationStepMap_comp_positiveComparison_inv
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ))

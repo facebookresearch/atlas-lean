@@ -28,18 +28,13 @@ public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 public import Mathlib.CategoryTheory.Monoidal.Closed.Basic
 
 /-!
-# The symmetric monoidal structure on abelian groups
+# Integer tensor products and internal Hom of abelian groups
 
-The category `AddCommGrpCat.{u}` of abelian groups in the universe `u` is equipped with the
-monoidal structure given by the tensor product over `ℤ`, with unit the (universe-lifted) copy
-`ULift.{u} ℤ` of `ℤ`.
-
-The construction follows the pattern used for `ModuleCat.monoidalCategory`: the data of the
-monoidal structure (tensor product, unit, associator and unitors) is given explicitly, and the
-axioms are transported, via `CategoryTheory.Monoidal.induced`, along the faithful functor
-`AddCommGrpCat.toModuleCatULiftInt : AddCommGrpCat.{u} ⥤ ModuleCat.{u} (ULift.{u} ℤ)`, which is
-in fact an equivalence of categories. The braiding and the symmetry, as well as the monoidal
-closed structure, are then obtained by transport along this equivalence.
+The category `Ab` of abelian groups in a fixed universe is symmetric
+monoidal under tensor product over `ℤ`, with unit the copy of `ℤ` in
+that universe. The braiding sends `x ⊗ y` to `y ⊗ x`. The equivalence
+with modules over the same-universe copy of `ℤ` respects tensor products
+and equips `Ab` with the corresponding monoidal closed structure.
 -/
 
 universe u
@@ -48,7 +43,9 @@ open CategoryTheory MonoidalCategory TensorProduct
 
 @[expose] public section
 
-/-- Additive maps on a tensor product are equal when they agree on pure tensors. -/
+/-- For a commutative semiring `R` and `R`-modules `M`, `N`, additive
+maps from `M ⊗[R] N` to an additive commutative monoid `P` are equal
+if their values agree on every pure tensor `x ⊗ y`. -/
 private theorem TensorProduct.extAdd {R : Type*} [CommSemiring R] {M N P₂ : Type*}
     [AddCommMonoid M] [AddCommMonoid N] [AddCommMonoid P₂] [Module R M] [Module R N]
     {F : Type*} [FunLike F (M ⊗[R] N) P₂] [AddMonoidHomClass F (M ⊗[R] N) P₂]
@@ -56,7 +53,10 @@ private theorem TensorProduct.extAdd {R : Type*} [CommSemiring R] {M N P₂ : Ty
   apply DFunLike.ext _ _ fun t ↦ t.inductionOn H fun x y ha hb ↦ by
     simp only [map_add, ha, hb]
 
-/-- Additive maps on a threefold tensor product are equal when they agree on pure tensors. -/
+/-- For commutative semirings `R`, `R₂`, modules `M`, `N`, `M₂` with
+the commuting actions needed for `(M ⊗[R] N) ⊗[R₂] M₂`, two
+additive maps to `P₃` are equal if they agree on every
+`(x ⊗ y) ⊗ z`. No linearity of these two maps is required. -/
 private theorem TensorProduct.ext_threefoldAdd {R R₂ : Type*} [CommSemiring R]
     [CommSemiring R₂] {M N M₂ P₃ : Type*}
     [AddCommMonoid M] [AddCommMonoid N] [AddCommMonoid M₂] [AddCommMonoid P₃]
@@ -74,8 +74,9 @@ private theorem TensorProduct.ext_threefoldAdd {R R₂ : Type*} [CommSemiring R]
 
 namespace AddCommGrpCat
 
-/-- The data of the monoidal structure on abelian groups: the tensor product over `ℤ`, with
-unit the universe-lifted copy `ULift ℤ` of `ℤ`. -/
+/-- In the category `Ab` of abelian groups in universe `u`, tensor
+product over `ℤ`, the same-universe copy of `ℤ` as unit, and the
+integer tensor associator and unit maps form the monoidal structure data. -/
 noncomputable instance monoidalCategoryStruct : MonoidalCategoryStruct Ab.{u} where
   tensorObj M N := of (M ⊗[ℤ] N)
   whiskerLeft M _ _ f := ofHom (f.hom.toIntLinearMap.lTensor M)
@@ -88,19 +89,17 @@ noncomputable instance monoidalCategoryStruct : MonoidalCategoryStruct Ab.{u} wh
   rightUnitor M := ((TensorProduct.congr (LinearEquiv.refl ℤ M) ULift.moduleEquiv).trans
     (TensorProduct.rid ℤ M)).toAddEquiv.toAddCommGrpIso
 
-/-- The functor sending an abelian group to the corresponding module over `ULift.{u} ℤ`,
-which is an equivalence of categories.
-
-This is the reverse of
-`ModuleCat.uliftIntAddCommGrpEquivalence` (same composition of the
-integer-module equivalence and restriction of scalars, opposite direction).
--/
+/-- An abelian group in universe `u` has its unique module structure
+over the copy of `ℤ` in universe `u`. This gives an equivalence
+`Ab ≌ ModuleCat (ULift.{u} ℤ)` with the inverse forgetting that integer action. -/
 @[implicit_reducible, simps! functor inverse]
 noncomputable def toModuleCatULiftInt : Ab.{u} ≌ ModuleCat.{u} (ULift.{u} ℤ) :=
   ModuleCat.intEquivalence.symm.trans
     (ModuleCat.restrictScalarsEquivalenceOfRingEquiv ULift.ringEquiv)
 
-/-- Extensionality for morphisms out of the image of a tensor product of abelian groups. -/
+/-- For abelian groups `X`, `Y` and a module `W` over the same-universe
+copy of `ℤ`, two module morphisms from the image of `X ⊗ Y` to `W`
+are equal if they agree on each pure tensor `x ⊗ y`. -/
 lemma toModuleCatULiftInt_tensor_ext {X Y : Ab.{u}} {W : ModuleCat.{u} (ULift.{u} ℤ)}
     {f g : toModuleCatULiftInt.functor.obj (X ⊗ Y) ⟶ W}
     (h : ∀ (x : X) (y : Y), f.hom (x ⊗ₜ y) = g.hom (x ⊗ₜ y)) : f = g := by
@@ -108,8 +107,10 @@ lemma toModuleCatULiftInt_tensor_ext {X Y : Ab.{u}} {W : ModuleCat.{u} (ULift.{u
   apply TensorProduct.extAdd
   exact h
 
-/-- The data needed to induce the monoidal structure on `Ab` from the one on
-`ModuleCat (ULift ℤ)`. -/
+/-- The equivalence from abelian groups in universe `u` to modules over
+the same-universe copy of `ℤ` preserves the specified tensor and
+unit maps. These comparisons induce the integer-tensor monoidal
+structure on `Ab`. -/
 noncomputable def inducingFunctorData :
     Monoidal.InducingFunctorData toModuleCatULiftInt.functor where
   μIso X Y := (TensorProduct.equivOfCompatibleSMul ℤ (ULift ℤ) (ULift ℤ) X Y).toModuleIso
@@ -125,8 +126,9 @@ noncomputable def inducingFunctorData :
   leftUnitor_eq _ := toModuleCatULiftInt_tensor_ext fun _ _ ↦ rfl
   rightUnitor_eq _ := toModuleCatULiftInt_tensor_ext fun _ _ ↦ rfl
 
-/-- The monoidal structure on the category of abelian groups, given by the tensor product
-over `ℤ`. -/
+/-- The category `Ab` of abelian groups in universe `u` is monoidal
+with tensor product over `ℤ`, unit `ULift.{u} ℤ`, and the tensor
+associativity and unit isomorphisms. These maps satisfy the monoidal coherence laws. -/
 noncomputable instance monoidalCategoryCompat : MonoidalCategory Ab.{u} :=
   Monoidal.induced toModuleCatULiftInt.functor inducingFunctorData
 
@@ -147,7 +149,9 @@ noncomputable instance symmetricCategoryCompat : SymmetricCategory Ab.{u} where
     apply TensorProduct.extAdd (R := ℤ)
     intro x y; rfl
 
-/-- The category of abelian groups is monoidal closed. -/
+/-- The integer-tensor monoidal category `Ab` is closed: tensoring with
+each abelian group has a right adjoint given by its internal additive
+Hom group. The corresponding tensor–Hom adjunction respects the monoidal structure. -/
 noncomputable instance monoidalClosed : MonoidalClosed Ab.{u} where
   closed M :=
   { rightAdj := coyoneda.obj (.op M)
@@ -186,7 +190,9 @@ variable {M₁ M₂ M₃ M₄ : Ab.{u}}
 @[simp] lemma rightUnitor_hom_apply (x : M₁) (a : ULift.{u} ℤ) :
     (ρ_ M₁).hom (x ⊗ₜ a) = a.down • x := rfl
 
-/-- The braiding of additive groups swaps the factors of a pure tensor. -/
+/-- For abelian groups `M₁`, `M₂` in the fixed universe, the forward
+braiding `M₁ ⊗ M₂ → M₂ ⊗ M₁` sends the pure tensor `x ⊗ y`
+to `y ⊗ x`. -/
 @[simp] lemma braiding_hom_apply (x : M₁) (y : M₂) :
     (β_ M₁ M₂).hom (x ⊗ₜ y) = y ⊗ₜ x := rfl
 
@@ -195,17 +201,23 @@ variable {M₁ M₂ M₃ M₄ : Ab.{u}}
 
 @[simp] lemma ihom_obj (M N : Ab.{u}) : (ihom M).obj N = of (M →+ N) := rfl
 
-/-- The tensor monoidal structure on additive groups. -/
+/-- The category of abelian groups in universe `u` has the monoidal
+structure given by integer tensor product and the copy `ULift.{u} ℤ`
+as unit. This compatibility name denotes that same monoidal structure. -/
 @[nolint defsWithUnderscore]
 noncomputable abbrev instMonoidalCategoryAb_mathlibExt : MonoidalCategory Ab.{u} :=
   monoidalCategoryCompat
 
-/-- The tensor braiding on additive groups. -/
+/-- The integer-tensor monoidal category of abelian groups in universe
+`u` is braided. Its braiding exchanges the two tensor factors and
+is compatible with the tensor associator and unit maps. -/
 @[nolint defsWithUnderscore]
 noncomputable abbrev instBraidedCategoryAb_mathlibExt : BraidedCategory Ab.{u} :=
   braidedCategoryCompat
 
-/-- The tensor symmetry on additive groups. -/
+/-- The integer-tensor monoidal category of abelian groups in universe
+`u` is symmetric: applying the tensor-factor exchange twice is the
+identity. This compatibility name denotes the same symmetric structure. -/
 @[nolint defsWithUnderscore]
 noncomputable abbrev instSymmetricCategoryAb_mathlibExt : SymmetricCategory Ab.{u} :=
   symmetricCategoryCompat

@@ -1,3 +1,6 @@
-# Horizontal Filtered Succ Splitting
+# The splitting data of a finite successor-stage short complex
 
-The consecutive-stage short complex is split.
+The splitting data of a finite successor-stage short complex.
+
+The lower-stage retraction and top-column section, with their complementary projector
+identity, give a splitting of the successor short complex.

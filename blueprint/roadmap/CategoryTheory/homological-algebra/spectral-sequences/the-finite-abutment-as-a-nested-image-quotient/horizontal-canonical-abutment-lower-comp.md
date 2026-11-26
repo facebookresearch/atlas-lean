@@ -1,3 +1,4 @@
-# Horizontal Canonical Abutment Lower Composite Map
+# Composite filtration inclusion from bottom to the column cut
 
-Composite map from bottom to stage `p`.
+For p : ℕ, horizontalCanonicalAbutmentLowerCompositeMap is the EInt order morphism ⊥→p, the
+composite of ⊥→(p−1) and (p−1)→p.

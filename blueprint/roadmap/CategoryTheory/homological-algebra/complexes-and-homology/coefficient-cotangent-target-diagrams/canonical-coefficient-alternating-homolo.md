@@ -1,3 +1,6 @@
-# Canonical Coefficient Alternating Homology Iso
+# The homology comparison for normalized and alternating coefficient cotangents
 
-Native homology of the computed homotopy-equivalence map identifies the AQ target.
+The homology comparison for normalized and alternating coefficient cotangents.
+
+The coefficient cotangent homotopy equivalence induces an isomorphism on homology in every
+nonnegative degree.

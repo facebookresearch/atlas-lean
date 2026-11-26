@@ -16,14 +16,16 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.ZeroClass
 
 /-!
-# Degree-zero enveloping Tor comparisons
+# Degree-zero Tor at lifted augmentation modules
 
-For a free underlying Lie module over a commutative ground ring, the coefficient
-Chevalley–Eilenberg resolution computes degree-zero enveloping Tor. The canonical derived-zero
-map sends the empty-exterior class to the scalar-unit balanced tensor.
+Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). The lifted augmentation module T_H has scalar representatives
+up(up(r)); its two lifts are kept distinct from the single lift in the augmentation module T.
 
-After the trivial-module lift comparison, this agrees with the degree-zero coinvariant
-isomorphism. The derived-zero augmentation is an isomorphism.
+The homology-to-Tor comparison followed by the derived-zero morphism sends the degree-zero
+class of 1 ⊗ m to [m,up(up(1))] in N ⊗_U T_H. Cancelling the outer input lift recovers the
+canonical coinvariant identification with N ⊗_U T. The derived-zero morphism at T_H is an
+isomorphism, and is the forward map of the degree-zero Tor coordinates.
 -/
 
 @[expose] public section
@@ -51,7 +53,10 @@ local instance tensorZeroAt_additive {A : Type v} [Ring A] [Algebra R A]
     (M : ModuleCat.{z} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, v, z, z'} R A M).Additive :=
   ModuleCat.BalancedTensor.additive R A M
 
-/-- The scalar unit insertion after common-universe resolution lift. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). Let Q_H be the lifted enveloping projective resolution. For n ∈ ℕ,
+m ∈ N, and a ∈ Λⁿ_R L, the inverse equivalence Λⁿ_R L ⊗_R N → N ⊗_U Q_H,n sends a ⊗ m to
+[m,up(a ⊗ 1_U)]. The coefficient complex uses the converted left action [x,m] = −m·ι(x). -/
 theorem rightTensorCoordinatesAt_symm_tmul (n : ℕ) (m : N) (x : ⋀[R]^n L) :
     (rightTensorCoordinatesAt.{u, v, v', w} R L N n).symm (x ⊗ₜ[R] (show rightCoefficients R L N from m)) =
       TensorProduct.Balanced.mk R U N
@@ -61,7 +66,11 @@ theorem rightTensorCoordinatesAt_symm_tmul (n : ℕ) (m : N) (x : ⋀[R]^n L) :
   apply (rightTensorCoordinatesAt.{u, v, v', w} R L N n).injective
   rw [LinearEquiv.apply_symm_apply, rightTensorCoordinatesAt_mk_tmul, op_one, one_smul]
 
-/-- Unit cancellation of the lifted trivial module in tensor. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). Let T be the augmentation module and T_H = ULift_H(T) its further
+lift. Removing the outer lift in the left input gives an R-linear equivalence N ⊗_U T_H ≃ₗ[R]
+N ⊗_U T. It sends [m,up(x)] to [m,x] and its inverse sends [m,x] to [m,up(x)]. This
+equivalence requires no freeness of L. -/
 def rightTrivialTensorLiftEquiv :
     (ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
       ModuleCat.{max u v v' w} R).obj (liftedEnvelopingTrivial.{u, v, max u v v' w} R L) ≃ₗ[R]
@@ -92,8 +101,11 @@ theorem rightTrivialTensorLiftEquiv_mk_up (m : N) (x : envelopingTrivialObject R
   simp only [rightTrivialTensorLiftEquiv, TensorProduct.Balanced.congr_mk, LinearEquiv.refl_apply]
   rfl
 
-/-- The derived-zero map retains the empty exterior class and lifted scalar unit, in the common
-universe. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). Put F(X) = N ⊗_U X and T_H = ULift_H(T), where T is the
+augmentation module with carrier ULift(R). If cl(m) is the H₀ class of the empty-exterior
+tensor 1 ⊗ m, its image under the homology-to-Tor comparison and then F.fromLeftDerivedZero at
+T_H is [m,up(up(1_R))] in F(T_H). -/
 theorem rightCoefficientDerivedZeroAt_unit_class (m : N) :
     ((ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
       ModuleCat.{max u v v' w} R).fromLeftDerivedZero.app (liftedEnvelopingTrivial.{u, v, max u v v' w} R L)).hom
@@ -133,8 +145,11 @@ theorem rightCoefficientDerivedZeroAt_unit_class (m : N) :
     rightTensorCoordinatesAt_symm_tmul.{u, v, v', w} R L N 0 m (exteriorPower.ιMulti R 0 Fin.elim0)
   exact hval.trans ((congrArg (F.map aug).hom hInput).trans hUnit)
 
-/-- Full canonical H₀ agreement: the common-universe Tor computation and derived augmentation
-recover the coinvariant/unit map. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). Let Φ : H₀(C_*(L;N)) ≅ (L₀F)(T_H), where F(X) = N ⊗_U X and T_H is
+the further lift of the augmentation module T. Let k : F(T_H) ≅ F(T) remove that outer input
+lift, and let e : H₀(C_*(L;N)) ≅ F(T) be the coinvariant tensor identification. Then Φ.hom ≫
+F.fromLeftDerivedZero at T_H ≫ k.hom = e.hom, with e sending the class of 1 ⊗ m to [m,up(1)]. -/
 theorem rightCoefficientHomologyIsoTorAt_zero_canonical :
     (rightCoefficientHomologyIsoTorAt.{u, v, v', w} R L N 0).hom ≫
       (ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
@@ -165,8 +180,11 @@ theorem rightCoefficientHomologyIsoTorAt_zero_canonical :
       ((rightCoefficientHomologyZeroTensorIso_class R L N m).symm.trans
         (congrArg right ha.symm)))
 
-/-- The common-universe derived augmentation map is an isomorphism, by the two H₀ comparisons and
-unit cancellation. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). For F(X) = N ⊗_U X and the lifted augmentation module T_H, the
+canonical morphism F.fromLeftDerivedZero at T_H : (L₀F)(T_H) → F(T_H) is an isomorphism. Its
+inverse is obtained from the coefficient H₀-to-Tor comparison, the coinvariant tensor
+identification, and the cancellation of the outer lift of T_H. -/
 instance rightEnvelopingTorZeroAt_isIso : IsIso
   ((ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
   ModuleCat.{max u v v' w} R).fromLeftDerivedZero.app (liftedEnvelopingTrivial.{u, v, max u v v' w} R L)) := by
@@ -190,7 +208,12 @@ instance rightEnvelopingTorZeroAt_isIso : IsIso
   change IsIso g
   exact h.symm ▸ (inferInstance : IsIso d.hom)
 
-/-- The common-universe canonical Tor/tensor H₀ isomorphism. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). Put F(X) = N ⊗_U X and let T_H be the lifted augmentation module.
+The isomorphism (L₀F)(T_H) ≅ F(T_H) is the composite of the inverse coefficient
+homology-to-Tor comparison, the H₀ identification with F(T), and the inverse input-lift
+cancellation F(T) ≅ F(T_H). Its forward morphism is the canonical map F.fromLeftDerivedZero at
+T_H. -/
 def rightEnvelopingTorZeroIsoAt :
     ((ModuleCat.BalancedTensor.functor R U N : ModuleCat.{max u v v' w} U ⥤
       ModuleCat.{max u v v' w} R).leftDerived 0).obj
@@ -201,7 +224,11 @@ def rightEnvelopingTorZeroIsoAt :
     rightCoefficientHomologyZeroTensorIso R L N ≪≫
       (rightTrivialTensorLiftEquiv.{u, v, v', w} R L N).toModuleIso.symm
 
-/-- The computed common-height coordinates retain the derived augmentation as their forward map. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). With F(X) = N ⊗_U X and T_H the lifted augmentation module, the
+forward map of the constructed isomorphism (L₀F)(T_H) ≅ F(T_H) equals F.fromLeftDerivedZero at
+T_H. This identifies the coordinate isomorphism with the canonical natural transformation as
+an R-module morphism. -/
 theorem rightEnvelopingTorZeroIsoAt_hom :
     (rightEnvelopingTorZeroIsoAt.{u, v, v', w} R L N).hom =
       (ModuleCat.BalancedTensor.functor R U N).fromLeftDerivedZero.app

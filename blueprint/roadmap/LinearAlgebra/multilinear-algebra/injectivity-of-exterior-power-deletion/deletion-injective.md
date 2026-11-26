@@ -1,3 +1,4 @@
-# Deletion injective
+# Deletion is injective on free modules
 
-Deletion is injective on every free module over a commutative ring.
+For a commutative ring `R`, a free `R`-module `M`, and `n : ℕ`, the signed deletion map
+`Λ^(n+1)_R M → Λ^n_R M ⊗[R] M` is injective.

@@ -1,3 +1,6 @@
-# Andre Quillen Weight Zero Homology Functor
+# The weight-zero homology functor in a fixed degree
 
-Actual zero-weight André–Quillen homology in every connective degree.
+The weight-zero homology functor in a fixed degree.
+
+For `n ∈ ℕ`, this sends a coefficient module `M` to the degree-`n` homology of its normalized
+constant simplicial module.

@@ -13,12 +13,15 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageSections
 
 /-!
-# Lifting an adjacent-column class to the middle quotient
+# A degreewise section of the adjacent-column middle quotient
 
-The supported-degree section of the stage-to-column projection is followed
-by the quotient map to the middle term of the adjacent-column short exact
-sequence.  The resulting morphism is a degreewise section of that short
-exact sequence's right map.
+Let `K` be a first-quadrant bicomplex in an abelian category. The stage-to-column projection
+for column `p+1` factors through the middle cokernel of the adjacent-column short exact
+sequence.
+
+At cochain degree `-(p+1)-q`, compose the complete-stage column section with this middle
+quotient projection. The resulting degreewise lift is a section of the adjacent sequence's
+right map.
 -/
 
 @[expose] public section
@@ -38,8 +41,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The quotient projection onto the right direct column factors through the
-right map of the adjacent-column short exact sequence. -/
+/-- The factorization of a direct-column projection through the middle quotient.
+
+The cokernel projection of the composite filtration map followed by the adjacent sequence's
+right map equals the projection onto direct column `p+1`. -/
 theorem horizontalFirstPageAdjacentCokernelπ_comp_g (p : ℕ) :
     cokernel.π (horizontalFirstPageFiltrationMap K p ≫
         horizontalFirstPageNextFiltrationMap K p) ≫
@@ -59,8 +64,10 @@ theorem horizontalFirstPageAdjacentCokernelπ_comp_g (p : ℕ) :
   unfold horizontalFirstPageCokernelToDirectColumn
   rw [cokernel.π_desc]
 
-/-- Degreewise lift of a class in column `p+1` to the middle two-column
-quotient. -/
+/-- The degreewise lift of a direct-column element to the middle quotient.
+
+At degree `-(p+1)-q`, the complete column section followed by the composite-map cokernel
+projection lifts column `p+1` into the adjacent middle term. -/
 noncomputable def horizontalFirstPageAdjacentMiddleSection (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).X
         (-((p + 1 : ℕ) : ℤ) - q) ⟶
@@ -71,8 +78,10 @@ noncomputable def horizontalFirstPageAdjacentMiddleSection (p q : ℕ) :
       horizontalFirstPageNextFiltrationMap K p)).f
         (-((p + 1 : ℕ) : ℤ) - q)
 
-/-- The middle lift is a section of the adjacent sequence's right map in the
-supported degree. -/
+/-- The section identity of the adjacent-column middle lift.
+
+The middle section followed by the right quotient map is the identity on the direct-column
+term in degree `-(p+1)-q`. -/
 theorem horizontalFirstPageAdjacentMiddleSection_g (p q : ℕ) :
     horizontalFirstPageAdjacentMiddleSection K p q ≫
         (horizontalFirstPageAdjacentDirectShortComplex K p).g.f

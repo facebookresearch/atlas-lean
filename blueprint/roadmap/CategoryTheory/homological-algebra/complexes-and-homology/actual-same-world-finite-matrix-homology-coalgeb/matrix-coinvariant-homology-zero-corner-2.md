@@ -1,3 +1,6 @@
-# Matrix Coinvariant Homology Zero Corner Map Is Comon Hom
+# Comonoid compatibility of matrix coinvariant homology size maps
 
-The zero-corner homology map preserves the coinvariant homology comonoids.
+Comonoid compatibility of matrix coinvariant homology size maps.
+
+The graded zero-extension map preserves the field coinvariant homology comultiplication and
+counit.

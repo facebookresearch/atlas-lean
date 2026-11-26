@@ -1,3 +1,6 @@
-# Two pow sub two ne zero
+# Higher powers of two differ from two over the rationals
 
-Every genuinely higher lambda weight differs from the first weight over Q.
+Higher powers of two differ from two over the rationals.
+
+For a natural weight i≥2, (2:ℚ)ⁱ-2 is nonzero. This separates higher Eulerian eigenvalues from
+the lowest positive weight.

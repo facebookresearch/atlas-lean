@@ -1,6 +1,6 @@
 # Canonical joint raw coefficient Tor maps and actual working heights
 
-- [Raw Tensor Lie Height cube](raw-tensor-lie-height-cube.md)
-- [Raw Tensor Lie Height derived with input](raw-tensor-lie-height-derived-with-input.md)
-- [Raw Enveloping Trivial Lie Map height](raw-enveloping-trivial-lie-map-height.md)
-- [Raw Lie Coefficient Tor Map At height](raw-lie-coefficient-tor-map-at-height.md)
+- [Coefficient and scalar restriction commute with tensor lifting](raw-tensor-lie-height-cube.md)
+- [Derived tensor height naturality for arbitrary inputs](raw-tensor-lie-height-derived-with-input.md)
+- [Augmentation module maps commute with universe lifting](raw-enveloping-trivial-lie-map-height.md)
+- [Lie-coefficient Tor maps commute with universe lifting](raw-lie-coefficient-tor-map-at-height.md)

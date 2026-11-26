@@ -1,3 +1,6 @@
-# Map Semilinear unique
+# Uniqueness of the semilinear balanced factor map
 
-The scalar-change map is characterized by its original factor values.
+Uniqueness of the semilinear balanced factor map.
+
+A `σ`-semilinear map of balanced quotients with value `[f m ⊗ g n]` on every source pure class
+equals `mapSemilinear φ f g hf hg`.

@@ -1,8 +1,7 @@
-# Tensor Hom f eq graded
+# The graded component formula for a tensor map of complexes
 
-A complex tensor-map component is the corresponding graded tensor map.
+The graded component formula for a tensor map of complexes.
 
-Rewrite direction: from `(tensorHom f g).f j` to the graded-object
-`tensorHom` at `j`.  This is the one-level peeling rewrite used before
-`GradedObject.Monoidal.tensorHom_apply_heq`; the test module pins that exact
-two-step pattern.
+For chain maps `f` and `g`, the degree-`j` component of their tensor map is the graded tensor
+map of their component families `f.f` and `g.f`, assuming the source and target graded tensors
+exist.

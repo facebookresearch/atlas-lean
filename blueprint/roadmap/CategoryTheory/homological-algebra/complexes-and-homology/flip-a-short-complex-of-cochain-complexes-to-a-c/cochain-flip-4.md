@@ -1,3 +1,5 @@
-# Cochain Flip π₃
+# Third projection of the transposed complex
 
-The third projection retains the original third cochain complex.
+In an abelian category `C`, let `S` be a short complex of
+nonnegative cochain complexes. Projection to the third object of each transposed row
+recovers the third cochain complex `S₃`.

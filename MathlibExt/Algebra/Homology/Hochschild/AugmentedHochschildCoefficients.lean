@@ -13,12 +13,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.ProperShuffleAugmentedAlgeb
 public import MathlibExt.CategoryTheory.Comma.Over.Diagram
 
 /-!
-# Augmented-algebra Hochschild diagrams with coefficients
+# Augmented Hochschild diagrams with module coefficients
 
-A B-module M becomes a coefficient module for each algebra
-P augmented into B. Coefficient-first tensor maps form a
-Hochschild chain functor, and the augmentation fixes M
-while acting on the algebra tails.
+Let `k` be a commutative ring, `B` a commutative `k`-algebra, and `M` a `B`-module with
+compatible `k`-action. An augmentation `P → B` makes `M` a symmetric `P`-coefficient module,
+giving degree-`q` Hochschild chains `M ⊗[k] P^⊗q`.
+
+Maps over `B` retain the coefficient `m ∈ M` and apply the algebra map to each tail factor.
+They form a functor and a natural augmentation to the Hochschild complex of `B` with
+coefficients `M`. Applying these constructions to an augmented simplicial algebra gives a
+simplicial chain diagram and its augmentation. The tensor-coordinate and terminal naturality
+formulas are integral; the coefficient carrier universe is independent.
 -/
 
 @[expose] public section
@@ -39,15 +44,24 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k] (B : CommAlgCat.{max u v} k)
   (M : Type w) [AddCommGroup M] [Module k M] [Module B M]
   [SMulCommClass k B M] [IsScalarTower k B M]
 
-/-- The original Hochschild complex with the original coefficient acted on by the augmentation. -/
+/-- The Hochschild complex with coefficients along an algebra augmentation.
+
+For `P → B` and a compatible `B`-module `M`, this is the Hochschild complex with degree `q`
+equal to `M ⊗[k] P^⊗q`, using the augmentation-induced symmetric action. -/
 def complex (P : Over B) : ChainComplex (ModuleCat.{max u v w} k) ℕ := chainComplex k P.left M
 
-/-- The original algebra map acts on the tails and fixes the original coefficient head. -/
+/-- The augmented Hochschild map with a fixed module coefficient.
+
+For `f : P → Q` over `B`, the induced chain map retains `M` and applies `f` to the algebra
+tail factors. -/
 def map {P Q : Over B} (f : P ⟶ Q) : complex k B M P ⟶ complex k B M Q :=
   originalAlgebraCoefficientChainMap k f.left.hom (LinearMap.id : M →ₗ[k] M)
     (coefficientCompatibility k B M f)
 
-/-- The original coefficient/algebra Hochschild functor for arbitrary M. -/
+/-- The augmented Hochschild functor with module coefficients.
+
+For fixed `B` and `M`, this functor sends `P → B` to its Hochschild complex with coefficient
+action through `P → B`. -/
 def functor : Over B ⥤ ChainComplex (ModuleCat.{max u v w} k) ℕ where
   obj := complex k B M
   map := map k B M
@@ -84,34 +98,51 @@ def functor : Over B ⥤ ChainComplex (ModuleCat.{max u v w} k) ℕ where
     rfl
 
 omit [Algebra ℚ k] in
-/-- Every morphism retains its literal original coefficient-first tensor formula. -/
+/-- The integral tensor formula for an augmented coefficient map.
+
+For `f : P → Q` over `B`, the degree-`q` map sends `m ⊗ ⊗ᵢ aᵢ` to `m ⊗ ⊗ᵢ f(aᵢ)`. This formula
+is stated without a rational scalar assumption. -/
 theorem map_tprod {P Q : Over B} (f : P ⟶ Q) (q : ℕ) (m : M) (a : Fin q → P.left) :
     ((map k B M f).f q).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[k] PiTensorProduct.tprod k (fun j => f.left.hom (a j)) :=
   originalAlgebraCoefficientChainMap_tprod k f.left.hom (LinearMap.id : M →ₗ[k] M)
     (coefficientCompatibility k B M f) q m a
 
-/-- The terminal algebra is the original coefficient algebra with its identity augmentation. -/
+/-- The terminal algebra for an augmented module-coefficient diagram.
+
+The terminal object of `Over B` is `B` with its identity augmentation. -/
 abbrev terminalAlgebra : Over B := Over.mk (𝟙 B)
 
-/-- The original regular algebra point retains the original arbitrary coefficient M. -/
+/-- The Hochschild coefficient complex at the terminal algebra.
+
+At the identity augmentation of `B`, the augmented coefficient functor gives the Hochschild
+complex of `B` with the given coefficient module `M`. -/
 def terminalComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   (functor k B M).obj (terminalAlgebra k B)
 
-/-- An augmentation is its arrow to the original identity-augmented algebra. -/
+/-- The terminal map of an algebra with fixed module coefficients.
+
+For `P → B`, its augmentation gives the arrow in `Over B` to the identity-augmented algebra
+`B`. -/
 def toTerminal (P : Over B) : P ⟶ terminalAlgebra k B :=
   Over.homMk P.hom (by
     change P.hom ≫ 𝟙 B = P.hom
     exact Category.comp_id P.hom)
 
 omit [Algebra ℚ k] in
-/-- The original stored Over equation proves naturality of the terminal augmentation. -/
+/-- The terminal naturality equation for augmented coefficients.
+
+For `f : P → Q` over `B`, composing `f` with the terminal map of `Q` equals the terminal map
+of `P`. The equation does not require a rational scalar structure. -/
 theorem toTerminal_naturality {P Q : Over B} (f : P ⟶ Q) :
     f ≫ toTerminal k B Q = toTerminal k B P := by
   apply Over.OverMorphism.ext
   exact f.w
 
-/-- The original Hochschild augmentation is a natural transformation, for every original coefficient M. -/
+/-- The natural Hochschild augmentation with arbitrary module coefficients.
+
+The terminal algebra maps induce a natural transformation to the constant chain complex of `B`
+with coefficients `M`, retaining the coefficient value. -/
 def augmentationNat : functor k B M ⟶ (CategoryTheory.Functor.const (Over B)).obj (terminalComplex k B M) where
   app P := (functor k B M).map (toTerminal k B P)
   naturality {P Q} f := by
@@ -120,13 +151,19 @@ def augmentationNat : functor k B M ⟶ (CategoryTheory.Functor.const (Over B)).
     exact ((functor k B M).map_comp f (toTerminal k B Q)).symm.trans
       ((congrArg (functor k B M).map (toTerminal_naturality k B f)).trans (Category.comp_id _).symm)
 
-/-- The simplicial Hochschild diagram of the original augmented algebra, with arbitrary coefficient M. -/
+/-- The augmented simplicial Hochschild diagram with module coefficients.
+
+For `P_• → B`, applying the fixed-module-coefficient Hochschild functor in each simplicial
+degree gives a simplicial diagram of chain complexes in the joint coefficient universe. -/
 def simplicialDiagram
     (P : Over ((SimplicialObject.const (CommAlgCat.{max u v} k)).obj B)) :
     SimplicialObject (ChainComplex (ModuleCat.{max u v w} k) ℕ) :=
   Over.lift P.left P.hom ⋙ functor k B M
 
-/-- The original simplicial augmentation maps every original tail and keeps the coefficient head. -/
+/-- The simplicial Hochschild augmentation with module coefficients.
+
+For `P_• → B`, its algebra augmentation induces a map to the constant simplicial diagram on
+the Hochschild complex of `B` with coefficients `M`. -/
 def simplicialAugmentation
     (P : Over ((SimplicialObject.const (CommAlgCat.{max u v} k)).obj B)) :
     simplicialDiagram k B M P ⟶
@@ -134,7 +171,10 @@ def simplicialAugmentation
   Functor.whiskerLeft (Over.lift P.left P.hom) (augmentationNat k B M)
 
 omit [Algebra ℚ k] in
-/-- Every original simplicial operator retains its coefficient-first tensor map. -/
+/-- The integral tensor formula for a module-coefficient simplicial operator.
+
+A simplicial algebra operator acts on every Hochschild tail factor and retains the coefficient
+`m ∈ M`. The tensor formula is stated without a rational scalar assumption. -/
 theorem simplicialDiagram_map_tprod
     (P : Over ((SimplicialObject.const (CommAlgCat.{max u v} k)).obj B))
     {i j : SimplexCategoryᵒᵖ} (f : i ⟶ j) (q : ℕ) (m : M) (a : Fin q → P.left.obj i) :
@@ -143,7 +183,10 @@ theorem simplicialDiagram_map_tprod
   map_tprod k B M ((Over.lift P.left P.hom).map f) q m a
 
 omit [Algebra ℚ k] in
-/-- An original augmentation is the literal coefficient-first tensor of its algebra augmentation. -/
+/-- The integral tensor formula for a module-coefficient simplicial augmentation.
+
+In degree `i`, the augmentation retains `m ∈ M` and applies `P_i → B` to each Hochschild tail
+factor. The formula does not require rational scalars. -/
 theorem simplicialAugmentation_tprod
     (P : Over ((SimplicialObject.const (CommAlgCat.{max u v} k)).obj B))
     (i : SimplexCategoryᵒᵖ) (q : ℕ) (m : M) (a : Fin q → P.left.obj i) :

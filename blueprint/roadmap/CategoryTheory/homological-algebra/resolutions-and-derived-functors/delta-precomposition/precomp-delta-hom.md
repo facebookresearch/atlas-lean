@@ -1,4 +1,7 @@
-# Precomp Delta Hom
+# Precomposition comparisons form a cohomological delta-functor morphism
 
-The SAME existing right-derived precomposition family is one morphism of delta functors,
-preserving all canonical connecting maps.
+Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`E : C → D` additive and preserving injectives, homology, finite limits,
+and finite colimits, and `B : D → A` additive. The forward degree comparisons form a morphism from the
+right-derived delta-functor of `E ⋙ B` to that of `B` precomposed
+with `E`.

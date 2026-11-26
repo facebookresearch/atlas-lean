@@ -16,14 +16,15 @@ public import Mathlib.Algebra.Homology.SpectralSequence.ComplexShape
 public import MathlibExt.Algebra.Homology.PartialTotalBasic
 
 /-!
-# Horizontal components of the natural total complex
+# Horizontal components of the first-quadrant total differential
 
-For a natural first-quadrant bicomplex, the horizontal component of the total
-differential carries no extra sign: the total-complex convention has
-`ε₁ = 1`.  This file records the successor-row component formula and the
-vanishing boundary at row zero.
+Let `B` be a first-quadrant bicomplex in a preadditive category with finite coproducts. In the
+homological total complex, the horizontal component from `(p + 1, q)` to `(p, q)` has
+coefficient `ε₁ = 1`. It is the horizontal bicomplex differential followed by the inclusion of
+`(p, q)` in total degree `p + q`.
 
-Comparison with the transported page-one differential is deferred.
+At column zero the horizontal component vanishes, since zero has no predecessor in the
+natural-index complex shape.
 -/
 
 @[expose] public section
@@ -48,9 +49,11 @@ local instance : HasFiniteBiproducts C :=
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- On the successor row, the horizontal component of the total differential
-is the bicomplex horizontal differential followed by the target-row
-inclusion.  The horizontal total-complex sign is `ε₁=1`. -/
+/-- Successor horizontal total component has coefficient one.
+
+For natural `p` and `q`, the horizontal part `B.d₁ (.down ℕ) (p + 1) q (p + q)` equals `(B.d
+(p + 1) p).f q` followed by the inclusion of `B.X p q` in total degree `p + q`. The total-
+complex horizontal sign is `ε₁ = 1`. -/
 theorem d₁_succ_eq_horizontal (p q : ℕ) :
     B.d₁ (ComplexShape.down ℕ) (p + 1) q (p + q) =
       (B.d (p + 1) p).f q ≫
@@ -61,8 +64,10 @@ theorem d₁_succ_eq_horizontal (p q : ℕ) :
     (show (ComplexShape.down ℕ).Rel (p + 1) p by rfl)
     q (p + q) rfl, hε₁, one_smul]
 
-/-- The horizontal component from row zero vanishes because the natural
-chain shape has no predecessor of zero. -/
+/-- Horizontal total component at column zero is zero.
+
+For every natural `q` and total degree `n`, `B.d₁ (.down ℕ) 0 q n = 0`. The horizontal chain
+shape has no arrow from column zero to a predecessor. -/
 theorem d₁_zero_eq_zero (q n : ℕ) :
     B.d₁ (ComplexShape.down ℕ) 0 q n = 0 := by
   apply HomologicalComplex₂.d₁_eq_zero

@@ -1,3 +1,5 @@
-# Matrix Homology Coaug Is Comon Hom
+# Comonoid compatibility of finite matrix homology coaugmentation
 
-The matrix homology coaugmentation is a comonoid morphism.
+Comonoid compatibility of finite matrix homology coaugmentation.
+
+The graded matrix coaugmentation preserves the homology counit and comultiplication.

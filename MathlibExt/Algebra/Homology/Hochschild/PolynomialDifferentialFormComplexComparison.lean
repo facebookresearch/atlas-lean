@@ -14,14 +14,23 @@ public import MathlibExt.Algebra.Homology.Hochschild.DifferentialFormNaturality
 public import MathlibExt.Algebra.Homology.HomologicalComplex.ZeroDifferentialClassNaturality
 
 /-!
-# Polynomial Hochschild complexes and coefficient forms
+# Polynomial Hochschild complexes and coefficient exterior forms
 
-For a polynomial algebra over a commutative ground ring and an
-arbitrary symmetric coefficient module, the diagonal Koszul and
-enveloping bar resolutions give a chain homotopy equivalence with
-the zero-differential coefficient form complex. Its inverse is
-signed Koszul-to-bar antisymmetrization. Coefficient flatness and
-factorial inverses are not required.
+Let k be a commutative ring, A = k[σ] and M an A-module with compatible k-action, regarded as a
+symmetric bimodule. Its coefficient diagonal Koszul complex has zero differential and terms
+canonically equivalent to M ⊗_A ∧ⁿ_AΩ¹_{A/k}. These coordinate maps give an isomorphism with the
+zero-differential coefficient-form complex, using the canonical form-object universe lifts.
+
+Combining this isomorphism with the diagonal-to-bar homotopy equivalence gives a polynomial
+Hochschild-to-form homotopy equivalence. The inverse chain map on a differential-variable word
+is the signed permutation sum of its Hochschild tensor words. The resulting homology isomorphism
+and all forward, inverse and cycle-class factorization formulas hold for every n : ℕ, without a
+coefficient-flatness hypothesis or division by n!.
+
+This is the polynomial diagonal-resolution description underlying the
+Hochschild–Kostant–Rosenberg differential-form comparison; see Hochschild, Kostant and
+Rosenberg, “Differential forms on regular affine algebras,” Transactions of the American
+Mathematical Society 102 (1962), 383–408.
 -/
 
 @[expose] public section
@@ -47,15 +56,22 @@ local notation "Forms" => Symmetric.coefficientDifferentialFormComplex k A M
 local notation "Diagonal" => symmetricCoefficientComplex k σ M
 local notation "HH" => Symmetric.chainComplex k A M
 
-/-- The coefficient diagonal degree in polynomial differential-form
-coordinates, before its canonical carrier lift. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe. In
+each degree n : ℕ, the free exterior coordinates followed by eᵢ ↦ dXᵢ give a k-linear
+equivalence Dₙ ≅ M ⊗_A ∧ⁿ_AΩ¹_{A/k}, before the form term is lifted. -/
 def symmetricCoefficientFormDegreeEquiv (n : ℕ) :
     (Diagonal).X n ≃ₗ[k] M ⊗[A] (⋀[A]^n Ω) :=
   (symmetricFreeExteriorEquiv k σ M n).trans
     ((KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n).restrictScalars k)
 
-/-- Canonical polynomial coordinates identify the entire diagonal coefficient
-complex with the zero-differential coefficient form complex. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+Both D and the coefficient-form complex have zero differentials. The degreewise polynomial
+cotangent coordinate equivalences, followed by the canonical form-object lifts, give an
+isomorphism D ≅ Forms of ℕ-indexed k-module chain complexes. -/
 def symmetricCoefficientFormChainIso : Diagonal ≅ Forms :=
   HomologicalComplex.Hom.isoOfComponents
     (fun n => ((symmetricCoefficientFormDegreeEquiv k σ M n).trans
@@ -67,19 +83,30 @@ def symmetricCoefficientFormChainIso : Diagonal ≅ Forms :=
         Symmetric.coefficientDifferentialFormComplex_d_eq_zero]
       simp only [CategoryTheory.Limits.comp_zero, CategoryTheory.Limits.zero_comp])
 
-/-- The component is the form coordinate map and the canonical lift. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+For n : ℕ and x ∈ Dₙ, the nth component of symmetricCoefficientFormChainIso sends x to the
+canonical lift of symmetricCoefficientFormDegreeEquiv k σ M n x. -/
 theorem symmetricCoefficientFormChainIso_hom_f (n : ℕ) (x : (Diagonal).X n) :
     ((symmetricCoefficientFormChainIso k σ M).hom.f n).hom x =
       ULift.up (symmetricCoefficientFormDegreeEquiv k σ M n x) := rfl
 
-/-- The inverse component removes only the canonical lift and recovers the
-original diagonal coordinates. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+For an n-form ω ∈ M ⊗_A ∧ⁿ_AΩ¹_{A/k}, the inverse component of symmetricCoefficientFormChainIso
+sends the canonical lift of ω to (symmetricCoefficientFormDegreeEquiv k σ M n)⁻¹(ω). -/
 theorem symmetricCoefficientFormChainIso_inv_f (n : ℕ) (ω : M ⊗[A] (⋀[A]^n Ω)) :
     ((symmetricCoefficientFormChainIso k σ M).inv.f n).hom (ULift.up ω) =
       (symmetricCoefficientFormDegreeEquiv k σ M n).symm ω := rfl
 
-/-- The symmetric diagonal-to-Hochschild homotopy equivalence whose forward
-map is the concrete signed polynomial Koszul-to-Bar map. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+The signed polynomial coefficient antisymmetrization gives a homotopy equivalence from D to the
+Hochschild chain complex Cₙ(A,M) = M ⊗[k] A^{⊗n}. Its forward map is
+polynomialAntisymmetricCoefficientMap. -/
 def symmetricAntisymmetricCoefficientComparison : HomotopyEquiv Diagonal HH := by
   let := Symmetric.opModule A M
   let := Symmetric.actionsComm A M
@@ -87,14 +114,22 @@ def symmetricAntisymmetricCoefficientComparison : HomotopyEquiv Diagonal HH := b
   let := Symmetric.kOpTower k A M
   exact polynomialAntisymmetricCoefficientComparison k σ M
 
-/-- The polynomial Hochschild-to-forms chain homotopy equivalence.
-The inverse is signed antisymmetrization; the forward comparison is the
-augmentation-preserving projective Bar lift followed by cotangent coordinates. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+The Hochschild chain complex is homotopy equivalent to the zero-differential coefficient-form
+complex. The forward map is the bar-to-diagonal projective-resolution comparison followed by
+cotangent coordinates; the inverse is diagonal form coordinates followed by signed
+antisymmetrization. -/
 def polynomialDifferentialFormComparison : HomotopyEquiv HH Forms :=
   (symmetricAntisymmetricCoefficientComparison k σ M).symm.trans
     (HomotopyEquiv.ofIso (symmetricCoefficientFormChainIso k σ M))
 
-/-- The forward map retains the projective-resolution comparison. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+The forward map of polynomialDifferentialFormComparison equals (symmetricCoefficientComparison k
+σ M).hom followed by (symmetricCoefficientFormChainIso k σ M).hom. -/
 theorem polynomialDifferentialFormComparison_hom :
     (polynomialDifferentialFormComparison k σ M).hom =
       (symmetricCoefficientComparison k σ M).hom ≫
@@ -105,8 +140,11 @@ theorem polynomialDifferentialFormComparison_hom :
   let := Symmetric.kOpTower k A M
   rfl
 
-/-- The inverse takes the original form coordinates into the signed
-Koszul-to-Bar map, rather than choosing an abstract homology inverse. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+The inverse map of polynomialDifferentialFormComparison equals (symmetricCoefficientFormChainIso
+k σ M).inv followed by polynomialAntisymmetricCoefficientMap k σ M. -/
 theorem polynomialDifferentialFormComparison_inv :
     letI := Symmetric.opModule A M
     letI := Symmetric.actionsComm A M
@@ -121,7 +159,11 @@ theorem polynomialDifferentialFormComparison_inv :
   let := Symmetric.kOpTower k A M
   rfl
 
-/-- Inverse form comparison in the original free generator coordinates. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+For n : ℕ and ω ∈ M ⊗_A ∧ⁿ_AΩ¹_{A/k}, the inverse comparison sends its canonical lift to
+polynomialSignedRepresentative evaluated at the inverse free cotangent coordinates of ω. -/
 theorem polynomialDifferentialFormComparison_inv_f_up
     (n : ℕ) (ω : M ⊗[A] (⋀[A]^n Ω)) :
     ((polynomialDifferentialFormComparison k σ M).inv.f n).hom (ULift.up ω) =
@@ -150,8 +192,12 @@ theorem polynomialDifferentialFormComparison_inv_f_up
       (symmetricCoefficientFormChainIso_inv_f k σ M n ω)).trans
         (congrArg ((polynomialAntisymmetricCoefficientMap k σ M).f n).hom hCoordinates)))
 
-/-- A coefficient differential-variable word is sent to the complete signed
-Hochschild tensor, with its coefficient first and without normalization. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+For m ∈ M and f : Fin n → σ, the inverse comparison sends the lift of m
+⊗_A(dX_{f(0)}∧…∧dX_{f(n−1)}) to ∑π sign(π)·(m ⊗ X_{f(π(0))} ⊗ … ⊗ X_{f(π(n−1))}), where π ranges
+over permutations of Fin n. -/
 theorem polynomialDifferentialFormComparison_inv_f_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     ((polynomialDifferentialFormComparison k σ M).inv.f n).hom
@@ -167,16 +213,23 @@ theorem polynomialDifferentialFormComparison_inv_f_basis
   let := Symmetric.kOpTower k A M
   exact polynomialAntisymmetricCoefficientMap_free_basis k σ M n m f
 
-/-- The chain comparison computes every polynomial Hochschild degree
-as the original coefficient differential-form object. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+The polynomial chain comparison and the zero form differential give an isomorphism HHₙ(A,M) ≅
+Formsₙ for every n : ℕ. -/
 def polynomialDifferentialFormHomologyIso (n : ℕ) :
     (HH).homology n ≅ (Forms).X n :=
   (polynomialDifferentialFormComparison k σ M).toHomologyIso n ≪≫
     HomologicalComplex.zeroDifferentialHomologyIso Forms n
       (Symmetric.coefficientDifferentialFormComplex_d_eq_zero k A M)
 
-/-- Homology of the chain comparison is the integral
-polynomial HKR coordinate map, with only its canonical carrier lift. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe. In
+degree n : ℕ, the forward map of polynomialDifferentialFormHomologyIso equals the
+homology-to-diagonal degree map symmetricCoefficientHomologyIsoDegree.hom followed by the nth
+component of symmetricCoefficientFormChainIso.hom. -/
 theorem polynomialDifferentialFormHomologyIso_hom (n : ℕ) :
     (polynomialDifferentialFormHomologyIso k σ M n).hom =
       (symmetricCoefficientHomologyIsoDegree k σ M n).hom ≫
@@ -192,8 +245,11 @@ theorem polynomialDifferentialFormHomologyIso_hom (n : ℕ) :
     HomologicalComplex.homologyMap_comp, Category.assoc, hcoordinates]
   rfl
 
-/-- Removing the canonical lift gives the original integral all-degree HKR
-equivalence from the two resolutions. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+For z ∈ HHₙ(A,M), project the forward categorical form coordinate of z from its canonical
+universe lift. The result is symmetricHochschildDifferentialFormEquiv k σ M n z. -/
 theorem polynomialDifferentialFormHomologyIso_hom_down
     (n : ℕ) (z : (HH).homology n) :
     ((polynomialDifferentialFormHomologyIso k σ M n).hom.hom z).down =
@@ -201,7 +257,11 @@ theorem polynomialDifferentialFormHomologyIso_hom_down
   rw [polynomialDifferentialFormHomologyIso_hom]
   rfl
 
-/-- Every polynomial form is represented by the inverse of the homology comparison, hence by the constructed signed map. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe.
+For ω ∈ M ⊗_A ∧ⁿ_AΩ¹_{A/k}, the inverse of polynomialDifferentialFormHomologyIso sends its
+canonical lift to polynomialAntisymmetrizationHomology k σ M n ω. -/
 theorem polynomialDifferentialFormHomologyIso_inv_up
     (n : ℕ) (ω : M ⊗[A] (⋀[A]^n Ω)) :
     (polynomialDifferentialFormHomologyIso k σ M n).inv.hom (ULift.up ω) =
@@ -216,8 +276,12 @@ theorem polynomialDifferentialFormHomologyIso_inv_up
       (polynomialAntisymmetrizationHomology_coordinates k σ M n ω)
   exact hInv.trans hTarget.symm
 
-/-- The inverse homology comparison is the diagonal form coordinate,
-the native zero-differential class, and homology of signed antisymmetrization. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Put E = A ⊗[k] Aᵐᵒᵖ, D = M ⊗_E Kdiag
+and Formsₙ = M ⊗_A ∧ⁿ_AΩ¹_{A/k}, with the canonical lift to the coefficient-complex universe. In
+degree n : ℕ, the inverse form homology map is the composite Formsₙ → Dₙ → Hₙ(D) → HHₙ(A,M).
+These arrows are respectively the inverse diagonal form component, the zero-differential
+cycle-class map, and homology of signed polynomial antisymmetrization. -/
 theorem polynomialDifferentialFormHomologyIso_inv_factor (n : ℕ) :
     letI := Symmetric.opModule A M
     letI := Symmetric.actionsComm A M

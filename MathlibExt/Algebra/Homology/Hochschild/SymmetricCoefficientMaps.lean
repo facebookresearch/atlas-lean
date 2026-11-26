@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- UNEXECUTED source proposal. Original coefficient maps over arbitrary commutative rings. -/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricAlgebraComplex
@@ -15,17 +15,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricNormalizedPositive
 public import MathlibExt.Algebra.Homology.Hochschild.Maps
 
 /-!
-# A-linear symmetric coefficient maps
+# Coefficient maps on algebra-linear Hochschild and proper-shuffle complexes
 
-Every map acts on the original coefficient head and fixes the original
-k-tensor tails. The native coefficient-map boundary theorem proves the raw
-chain square, with the canonical opposite action preserved by A-linearity.
-Original normalization and the proper shuffle relations give the
-normalized and quotient maps and their representative squares.
+Let k be a commutative ring, A a commutative k-algebra and f : M → N an A-linear map between
+modules with compatible k-actions. In every degree it acts as f ⊗ id on the coefficient tensor
+and keeps all k-tensor tails. It commutes with the Hochschild boundary and the normalization
+quotient A/(k·1). The same map preserves both-positive shuffle images, hence induces raw and
+normalized proper-shuffle quotient chain maps with their original representatives.
 
-The ground and coefficient action worlds remain unchanged. These APIs use
-arbitrary commutative ground rings and algebras, with no rational scalar
-structure. Rational Eulerian naturality is a separate consumer of this construction.
+See J.-L. Loday, Cyclic Homology, 2nd ed., Chapter 1 and §4.5, for coefficient functoriality
+and shuffle quotients.
 -/
 
 @[expose] public section
@@ -46,21 +45,34 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   [SMulCommClass k A M] [SMulCommClass k A N]
   [IsScalarTower k A M] [IsScalarTower k A N]
 
-/-- The original coefficient map fixes the original k-tensor tail. -/
+/-- The A-linear coefficient map in one Hochschild degree.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear map f : M → N,
+this map is f ⊗ id on M ⊗[k] A⊗n → N ⊗[k] A⊗n. -/
 def algebraCoefficientLevelMap (f : M →ₗ[A] N) (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[A] N ⊗[k] TensorPower k n A :=
   TensorProduct.AlgebraTensorModule.map f LinearMap.id
 
-/-- The coefficient-head map keeps every original tail tensor. -/
+/-- The pure-word value of an A-linear coefficient map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, m ⊗ x
+maps to f(m) ⊗ x in degree n. -/
 theorem algebraCoefficientLevelMap_tmul (f : M →ₗ[A] N) (n : ℕ) (m : M) (x : TensorPower k n A) :
     algebraCoefficientLevelMap k A f n (m ⊗ₜ[k] x) = f m ⊗ₜ[k] x := rfl
 
-/-- The original identity coefficient gives the identity on the original tensor level. -/
+/-- The identity coefficient map acts identically on every A-linear Hochschild level.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraCoefficientLevelMap(id_M,n)=id on M ⊗[k] A⊗n. -/
 theorem algebraCoefficientLevelMap_id (n : ℕ) :
     algebraCoefficientLevelMap k A (LinearMap.id : M →ₗ[A] M) n = LinearMap.id :=
   TensorProduct.AlgebraTensorModule.map_id
 
-/-- Restriction of the original A-linear coefficient map is the native coefficient map. -/
+/-- Ground restriction of the algebra-linear coefficient map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+restriction from A to k agrees with the ground coefficient map having algebra arrow id_A and
+coefficient arrow f. -/
 theorem algebraCoefficientLevelMap_restrictScalars (f : M →ₗ[A] N) (n : ℕ) :
     (algebraCoefficientLevelMap k A f n).restrictScalars k =
       ModuleCat.Algebra.Hochschild.linearMap (NonUnitalAlgHom.id k A) (f.restrictScalars k) n := by
@@ -70,7 +82,10 @@ theorem algebraCoefficientLevelMap_restrictScalars (f : M →ₗ[A] N) (n : ℕ)
     ModuleCat.Algebra.Hochschild.linearMap_tprod]
   rfl
 
-/-- The literal original symmetric boundary commutes with every original A-linear coefficient map. -/
+/-- The algebra-linear coefficient arrow commutes with the raw boundary.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, bₙ,N
+∘ fₙ₊₁ = fₙ ∘ bₙ,M on the raw coefficient tensor levels. -/
 theorem algebraCoefficientLevelMap_boundary (f : M →ₗ[A] N) (n : ℕ) :
     (algebraBoundary k A N n).comp (algebraCoefficientLevelMap k A f (n + 1)) =
       (algebraCoefficientLevelMap k A f n).comp (algebraBoundary k A M n) := by
@@ -100,7 +115,10 @@ theorem algebraCoefficientLevelMap_boundary (f : M →ₗ[A] N) (n : ℕ) :
       exact f.map_smul a m) n
   exact DFunLike.congr_fun h x
 
-/-- The raw A-linear coefficient chain map on the original Hochschild complex. -/
+/-- The raw A-linear Hochschild chain map induced by a coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+assemble its maps f ⊗ id in all degrees of algebraRawComplex. -/
 def algebraRawCoefficientMap (f : M →ₗ[A] N) : algebraRawComplex k A M ⟶ algebraRawComplex k A N :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (algebraCoefficientLevelMap k A f n)) (by
     intro n
@@ -110,17 +128,27 @@ def algebraRawCoefficientMap (f : M →ₗ[A] N) : algebraRawComplex k A M ⟶ a
     simp only [ModuleCat.hom_comp, ModuleCat.hom_ofHom]
     exact algebraCoefficientLevelMap_boundary k A f n)
 
-/-- Every raw chain component is the original coefficient-head tensor map. -/
+/-- The component formula of the raw algebra-linear coefficient chain map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, its
+nth component is algebraCoefficientLevelMap(f,n). -/
 theorem algebraRawCoefficientMap_f (f : M →ₗ[A] N) (n : ℕ) :
     ((algebraRawCoefficientMap k A f).f n).hom = algebraCoefficientLevelMap k A f n := rfl
 
-/-- The coefficient-head map on the original ground-module quotient tails. -/
+/-- The coefficient arrow on normalized A-linear Hochschild levels.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, apply
+f to M and keep the tensor factors of the ground quotient A/(k·1). -/
 def algebraNormalizedCoefficientLevelMap (f : M →ₗ[A] N) (n : ℕ) :
     M ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A) →ₗ[A]
       N ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A) :=
   TensorProduct.AlgebraTensorModule.map f LinearMap.id
 
-/-- Original factorwise normalization commutes with the coefficient-head map. -/
+/-- Coefficient maps commute with the A-linear normalization projection.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+projecting fₙ to normalized tensors equals applying its normalized coefficient map after the
+projection of the source. -/
 theorem algebraNormalizationLevelMap_coefficient (f : M →ₗ[A] N) (n : ℕ) :
     (algebraNormalizationLevelMap k A N n).comp (algebraCoefficientLevelMap k A f n) =
       (algebraNormalizedCoefficientLevelMap k A f n).comp (algebraNormalizationLevelMap k A M n) := by
@@ -135,7 +163,10 @@ theorem algebraNormalizationLevelMap_coefficient (f : M →ₗ[A] N) (n : ℕ) :
     TensorProduct.AlgebraTensorModule.map_tmul, TensorProduct.AlgebraTensorModule.lTensor_tmul,
     LinearMap.id_apply]
 
-/-- Surjective original normalization earns the normalized coefficient boundary square. -/
+/-- The normalized coefficient arrow commutes with the normalized boundary.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the f
+⊗ id maps on normalized tensor tails form a chain map. -/
 theorem algebraNormalizedCoefficientLevelMap_boundary (f : M →ₗ[A] N) (n : ℕ) :
     (algebraNormalizedBoundary k A N n).comp (algebraNormalizedCoefficientLevelMap k A f (n + 1)) =
       (algebraNormalizedCoefficientLevelMap k A f n).comp (algebraNormalizedBoundary k A M n) := by
@@ -190,7 +221,10 @@ theorem algebraNormalizedCoefficientLevelMap_boundary (f : M →ₗ[A] N) (n : �
         (algebraNormalizationLevelMap k A M n (algebraBoundary k A M n x)) := hc₀
     _ = _ := congrArg (algebraNormalizedCoefficientLevelMap k A f n) (hM x).symm
 
-/-- The normalized A-linear coefficient chain map retains the original normalized boundary. -/
+/-- The A-linear chain map of normalized Hochschild coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, this
+chain map acts through f on M and fixes each normalized tail factor. -/
 def algebraNormalizedCoefficientMap (f : M →ₗ[A] N) :
     algebraNormalizedChainComplex k A M ⟶ algebraNormalizedChainComplex k A N :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (algebraNormalizedCoefficientLevelMap k A f n)) (by
@@ -201,12 +235,18 @@ def algebraNormalizedCoefficientMap (f : M →ₗ[A] N) :
     simp only [ModuleCat.hom_comp, ModuleCat.hom_ofHom]
     exact algebraNormalizedCoefficientLevelMap_boundary k A f n)
 
-/-- Every normalized component retains the original quotient-tail coefficient map. -/
+/-- The component of the normalized algebra-linear coefficient chain map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, its
+nth component is algebraNormalizedCoefficientLevelMap(f,n). -/
 theorem algebraNormalizedCoefficientMap_f (f : M →ₗ[A] N) (n : ℕ) :
     ((algebraNormalizedCoefficientMap k A f).f n).hom =
       algebraNormalizedCoefficientLevelMap k A f n := rfl
 
-/-- The coefficient maps commute with the original A-linear normalization chain map. -/
+/-- The raw-to-normalized coefficient chain square.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, raw f
+followed by normalization equals source normalization followed by normalized f. -/
 @[reassoc]
 theorem algebraNormalizationProjection_coefficient (f : M →ₗ[A] N) :
     algebraRawCoefficientMap k A f ≫ algebraNormalizationProjection k A N =
@@ -269,8 +309,10 @@ private theorem coefficientLevelMap_pairing (f : M →ₗ[A] N) (p q : ℕ) :
   rw [pairing_pair_tprod_as_tmul, algebraCoefficientLevelMap_tmul,
     pairing_pair_tprod_as_tmul, f.map_smul]
 
-/-- Original A-linear coefficient maps preserve the proper relations
-over every commutative ground ring, by the literal shuffle pairing. -/
+/-- The A-linear raw coefficient map preserves proper-shuffle images.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+degree-n both-positive relation module for M maps into that for N. -/
 theorem algebraCoefficientLevelMap_positiveRelations (f : M →ₗ[A] N) (n : ℕ) :
     algebraPositiveRelations k A M n ≤
       (algebraPositiveRelations k A N n).comap (algebraCoefficientLevelMap k A f n) := by
@@ -315,8 +357,10 @@ theorem algebraCoefficientLevelMap_positiveRelations (f : M →ₗ[A] N) (n : �
     exact hy
   exact fun x hx => hle hx
 
-/-- Actual normalized image relations are preserved by the corresponding
-original coefficient-head map, with no rational hypothesis. -/
+/-- The normalized coefficient map preserves both-positive shuffle relations.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+normalized proper-shuffle images for M map into those for N in every degree. -/
 theorem algebraNormalizedCoefficientLevelMap_positiveRelations (f : M →ₗ[A] N) (n : ℕ) :
     algebraNormalizedPositiveRelations k A M n ≤
       (algebraNormalizedPositiveRelations k A N n).comap (algebraNormalizedCoefficientLevelMap k A f n) := by
@@ -327,7 +371,10 @@ theorem algebraNormalizedCoefficientLevelMap_positiveRelations (f : M →ₗ[A] 
     algebraCoefficientLevelMap_positiveRelations k A f n hx, ?_⟩
   exact DFunLike.congr_fun (algebraNormalizationLevelMap_coefficient k A f n) x
 
-/-- The original proper quotient coefficient map uses the original A-linear quotient classes. -/
+/-- The coefficient chain map of the raw proper-shuffle quotient.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+descend the raw coefficient map through the both-positive relation modules. -/
 def algebraPositiveCoefficientMap (f : M →ₗ[A] N) :
     algebraPositiveQuotientComplex k A M ⟶ algebraPositiveQuotientComplex k A N :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
@@ -348,13 +395,20 @@ def algebraPositiveCoefficientMap (f : M →ₗ[A] N) :
         apply congrArg (algebraPositiveRelations k A N n).mkQ
         exact DFunLike.congr_fun (algebraCoefficientLevelMap_boundary k A f n) x)
 
-/-- Every proper coefficient map acts by the original coefficient tensor map on an original quotient representative. -/
+/-- The raw proper-shuffle quotient coefficient map on a representative.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+class [x] in degree n maps to [algebraCoefficientLevelMap(f,n)(x)]. -/
 theorem algebraPositiveCoefficientMap_f_mkQ (f : M →ₗ[A] N) (n : ℕ)
     (x : M ⊗[k] TensorPower k n A) :
     ((algebraPositiveCoefficientMap k A f).f n).hom ((algebraPositiveRelations k A M n).mkQ x) =
       (algebraPositiveRelations k A N n).mkQ (algebraCoefficientLevelMap k A f n x) := rfl
 
-/-- The identity coefficient gives the identity on the original proper quotient complex. -/
+/-- Identity coefficients give the identity raw proper quotient chain map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveCoefficientMap(id_M) is the identity on its raw proper-shuffle quotient
+complex. -/
 theorem algebraPositiveCoefficientMap_id :
     algebraPositiveCoefficientMap k A (LinearMap.id : M →ₗ[A] M) =
       𝟙 (algebraPositiveQuotientComplex k A M) := by
@@ -374,7 +428,10 @@ theorem algebraPositiveCoefficientMap_id :
 variable {L : Type w} [AddCommGroup L] [Module k L] [Module A L]
   [SMulCommClass k A L] [IsScalarTower k A L]
 
-/-- Composition of original A-linear coefficients is composition on the original proper quotient. -/
+/-- Composition of coefficient arrows on raw proper-shuffle quotients.
+
+For a commutative ring k, a commutative k-algebra A and compatible A-linear maps f : M → N and
+g : N → L, the quotient chain maps compose to the map of g ∘ f. -/
 @[reassoc]
 theorem algebraPositiveCoefficientMap_comp (f : M →ₗ[A] N) (g : N →ₗ[A] L) :
     algebraPositiveCoefficientMap k A f ≫ algebraPositiveCoefficientMap k A g =
@@ -396,7 +453,10 @@ theorem algebraPositiveCoefficientMap_comp (f : M →ₗ[A] N) (g : N →ₗ[A] 
   simpa only [LinearMap.id_comp, LinearMap.comp_apply, algebraCoefficientLevelMap] using
     DFunLike.congr_fun h x
 
-/-- The normalized proper coefficient map retains the original normalized image relations. -/
+/-- The coefficient map of the normalized proper-shuffle quotient complex.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, its
+normalized tensor maps descend through the normalized both-positive shuffle relations. -/
 def algebraNormalizedPositiveCoefficientMap (f : M →ₗ[A] N) :
     algebraNormalizedPositiveQuotientComplex k A M ⟶ algebraNormalizedPositiveQuotientComplex k A N :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
@@ -418,14 +478,21 @@ def algebraNormalizedPositiveCoefficientMap (f : M →ₗ[A] N) :
         apply congrArg (algebraNormalizedPositiveRelations k A N n).mkQ
         exact DFunLike.congr_fun (algebraNormalizedCoefficientLevelMap_boundary k A f n) x)
 
-/-- Every normalized proper coefficient map retains the original normalized quotient representatives. -/
+/-- The normalized proper-shuffle coefficient map on a quotient representative.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, [x]
+maps to [algebraNormalizedCoefficientLevelMap(f,n)(x)] in degree n. -/
 theorem algebraNormalizedPositiveCoefficientMap_f_mkQ (f : M →ₗ[A] N) (n : ℕ)
     (x : M ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A)) :
     ((algebraNormalizedPositiveCoefficientMap k A f).f n).hom
         ((algebraNormalizedPositiveRelations k A M n).mkQ x) =
       (algebraNormalizedPositiveRelations k A N n).mkQ (algebraNormalizedCoefficientLevelMap k A f n x) := rfl
 
-/-- Original proper quotient normalization is natural in every original A-linear coefficient map. -/
+/-- Normalization intertwines the raw and normalized proper coefficient maps.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, its
+raw proper quotient map followed by proper normalization equals proper normalization followed
+by its normalized quotient map. -/
 @[reassoc]
 theorem algebraPositiveNormalization_coefficient (f : M →ₗ[A] N) :
     algebraPositiveCoefficientMap k A f ≫ algebraPositiveNormalization k A N =

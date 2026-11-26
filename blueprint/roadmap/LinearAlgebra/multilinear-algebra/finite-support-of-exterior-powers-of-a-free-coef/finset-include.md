@@ -1,3 +1,4 @@
-# Finset Include
+# Extension by zero from finite coordinates
 
-The original finite coordinate inclusion as a native linear combination.
+For a commutative ring `R`, an index type `I`, and `s : Finset I`, `finsetInclude R s : (s →
+R) →ₗ[R] (I →₀ R)` extends a finite coordinate function by zero outside `s`.

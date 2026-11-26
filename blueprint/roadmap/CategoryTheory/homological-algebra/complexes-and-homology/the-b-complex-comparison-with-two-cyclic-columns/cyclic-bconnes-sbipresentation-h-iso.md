@@ -1,3 +1,6 @@
-# Cyclic BConnes SBIPresentation h Iso
+# The ordinary homology isomorphism in the left-unit SBI presentation
 
-The ordinary-model homology coordinate is the canonical comparison isomorphism.
+The ordinary homology isomorphism in the left-unit SBI presentation.
+
+Its ordinary homology coordinate is the isomorphism induced by the first-column inclusion from
+`b(A)` to `CC^{(2)}(A)`.

@@ -1,4 +1,7 @@
-# Horizontal First Page Cokernel Iso inv f zero
+# The inverse cokernel comparison in column zero
 
-In column zero, the inverse cokernel comparison is represented by the
-direct complete-stage section followed by the cokernel projection.
+For a nonnegative homological bicomplex K in an abelian
+category and q ≥ 0, the inverse D_0 → coker(F_(−1) → F_0)
+has component in degree −q equal to the direct zero-stage
+section followed by the cokernel projection.
+The complete lower stage F_(−1) is zero.

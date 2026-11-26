@@ -1,4 +1,4 @@
-# Bicomplex Hom id
+# The identity comparison gives the identity bicomplex map
 
-The supplied identity comparison induces the identity map of
-bicomplexes, strictly.
+Let C be abelian and P a Cartan–Eilenberg resolution of a nonnegative complex L. Its identity
+comparison induces the identity map of P.bicomplex.

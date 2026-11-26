@@ -1,5 +1,6 @@
-# Right Derived Coyoneda Iso Ext Functor Obj
+# Natural comparison of right-derived Coyoneda and Ext
 
-The right-derived functors of `preadditiveCoyoneda.obj (Opposite.op X)`
-are naturally isomorphic to the canonical covariant Ext functors
-`extFunctorObj X n`.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For fixed `X : C`, the
+resolution comparisons give a natural isomorphism of additive-group
+functors `R^nHom_C(X,-) ≅ Ext^n(X,-)`.

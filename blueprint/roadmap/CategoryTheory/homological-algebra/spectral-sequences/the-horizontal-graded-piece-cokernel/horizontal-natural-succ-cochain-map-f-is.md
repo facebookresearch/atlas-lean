@@ -1,4 +1,6 @@
-# Horizontal Natural Succ Cochain Map f is Iso of lt
+# The consecutive-stage map above new-column support
 
-Above the support of the new column, the consecutive-stage cochain map
-is an isomorphism.
+The consecutive-stage map above new-column support.
+
+In cochain degree `i>-(p+1)`, the map between extended natural stages `p` and `p+1` is an
+isomorphism.

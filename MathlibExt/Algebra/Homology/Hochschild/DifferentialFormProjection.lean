@@ -15,13 +15,23 @@ public import Mathlib.RingTheory.Kaehler.Basic
 public import MathlibExt.Algebra.Homology.ZeroDifferentialHomology
 
 /-!
-# Projection to coefficient differential forms
+# Hochschild chains and coefficient differential forms
 
-For a commutative k-algebra A and a symmetric coefficient module M,
-the word m ⊗ a₁ ⊗ ⋯ ⊗ aₙ maps to m ⊗ (da₁ ∧ ⋯ ∧ daₙ).
-The Hochschild boundary maps to zero, giving a chain map to the
-zero-differential complex of coefficient forms. This construction
-requires neither smoothness nor a polynomial presentation.
+Let k be a commutative ring, A a commutative unital k-algebra, and
+M a compatible A-module, viewed as a symmetric bimodule. Put
+Ω^n_{A/k} = ∧_A^n Ω_{A/k}. The k-linear word projection is
+φ_n : M ⊗[k] A^{⊗n} → M ⊗_A Ω^n_{A/k},
+m ⊗ a_1 ⊗ ⋯ ⊗ a_n ↦ m ⊗ (da_1 ∧ ⋯ ∧ da_n).
+
+The Leibniz rule makes φ_n annihilate the Hochschild boundary
+C_{n+1}(A,M) → C_n(A,M). Thus the lifted maps up ∘ φ_n form
+a chain map to the complex with terms ULift.{u}(M ⊗_A Ω^n_{A/k})
+and every differential zero, in ModuleCat at universe max{u,v,w}.
+Its homology gives a k-linear map HH_n(A,M) → M ⊗_A Ω^n_{A/k}.
+
+The construction uses arbitrary commutative k and A and compatible M.
+
+Reference: J.-L. Loday, Cyclic Homology, §3.2.
 -/
 
 @[expose] public section
@@ -38,21 +48,38 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
 
 local notation "Ω" => KaehlerDifferential k A
 
-/-- The alternating ground-linear word of universal differentials. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+The universal-differential word is the alternating k-multilinear map
+A^n → Ω^n, (a_0,…,a_{n-1}) ↦ da_0 ∧ ⋯ ∧ da_{n-1}. -/
 def differentialWord (n : ℕ) : A [⋀^Fin n]→ₗ[k] (⋀[A]^n Ω) :=
   ((exteriorPower.ιMulti A n).restrictScalars (R := k)).compLinearMap
     (KaehlerDifferential.D k A).toLinearMap
 
-/-- The original pure input gives the exterior differential word. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+For a : Fin n → A, the differential word evaluates to
+D_n(a) = da_0 ∧ ⋯ ∧ da_{n-1} ∈ Ω^n. -/
 theorem differentialWord_apply (n : ℕ) (a : Fin n → A) :
     differentialWord k A n a =
       exteriorPower.ιMulti A n (fun j => KaehlerDifferential.D k A (a j)) := rfl
 
-/-- The tensor universal map to the original differential-form tail. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+The alternating differential word induces a k-linear map
+A^{⊗n} → Ω^n, sending a_0 ⊗ ⋯ ⊗ a_{n-1} to
+da_0 ∧ ⋯ ∧ da_{n-1}. -/
 def differentialTailProjection (n : ℕ) : TensorPower k n A →ₗ[k] (⋀[A]^n Ω) :=
   PiTensorProduct.lift (differentialWord k A n).toMultilinearMap
 
-/-- An original pure tensor maps to the wedge of its universal differentials. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+The tensor projection evaluates on tprod(a) as
+ da_0 ∧ ⋯ ∧ da_{n-1}, for a : Fin n → A. -/
 theorem differentialTailProjection_tprod (n : ℕ) (a : Fin n → A) :
     differentialTailProjection k A n (PiTensorProduct.tprod k a) =
       exteriorPower.ιMulti A n (fun j => KaehlerDifferential.D k A (a j)) := by
@@ -62,7 +89,14 @@ theorem differentialTailProjection_tprod (n : ℕ) (a : Fin n → A) :
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The original coefficient and tensor tail pair bilinearly into coefficient forms. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The coefficient/form pairing is k-bilinear in m ∈ M and
+x ∈ A^{⊗n}, with value m ⊗_A D_n(x), where D_n is the
+tensor projection to the wedge of universal differentials. -/
 def coefficientFormPair (n : ℕ) :
     M →ₗ[k] TensorPower k n A →ₗ[k] M ⊗[A] (⋀[A]^n Ω) where
   toFun m := ((TensorProduct.mk A M (⋀[A]^n Ω) m).restrictScalars k).comp
@@ -74,13 +108,26 @@ def coefficientFormPair (n : ℕ) :
     ext x
     exact (TensorProduct.smul_tmul' c m _).symm
 
-/-- The original coefficient-first tensor projection to differential forms. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The coefficient-first tensor map φ_n : M ⊗[k] A^{⊗n} → F_n
+sends m ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} to
+m ⊗_A (da_0 ∧ ⋯ ∧ da_{n-1}). It is k-linear. -/
 def coefficientFormProjection (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[A] (⋀[A]^n Ω) :=
   TensorProduct.lift (coefficientFormPair k A M n)
 
 omit [SMulCommClass k A M] in
-/-- The projection retains the original coefficient and ordered differential word. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+For m ∈ M and a : Fin n → A,
+φ_n(m ⊗ tprod(a)) = m ⊗_A (da_0 ∧ ⋯ ∧ da_{n-1}). -/
 theorem coefficientFormProjection_tprod (n : ℕ) (m : M) (a : Fin n → A) :
     coefficientFormProjection k A M n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[A] exteriorPower.ιMulti A n (fun j => KaehlerDifferential.D k A (a j)) := by
@@ -141,8 +188,15 @@ private theorem differential_mulAdjacent_update {n : ℕ}
 
 variable (A)
 
-/-- The merged differential word is the sum of its two original deletion words
-with the coefficients required by the differential Leibniz rule. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+For a : Fin(n+1) → A and 0 ≤ i < n, replace the adjacent
+entries a_i,a_{i+1} by their product. The resulting differential word is
+D_n(merge_i(a)) = a_i D_n(a with entry i deleted)
++ a_{i+1} D_n(a with entry i+1 deleted).
+This is d(a_i a_{i+1}) = a_i da_{i+1} + a_{i+1} da_i
+in the corresponding exterior position. -/
 theorem differentialWord_mulAdjacent (n : ℕ) (i : Fin n) (a : Fin (n + 1) → A) :
     differentialWord k A n (hochschildMulAdjacent i a) =
       a i.castSucc • differentialWord k A n (a ∘ i.castSucc.succAbove) +
@@ -185,7 +239,16 @@ theorem differentialWord_mulAdjacent (n : ℕ) (i : Fin n) (a : Fin (n + 1) → 
   exact hd
 
 omit [SMulCommClass k A M] in
-/-- The original coefficient merged tensor has its two adjacent deletion terms. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+For a : Fin(n+1) → A and 0 ≤ i < n, the merged tensor has image
+φ_n(m ⊗ tprod(merge_i(a))) =
+(a_i m) ⊗_A D_n(a with entry i deleted)
++ (a_{i+1} m) ⊗_A D_n(a with entry i+1 deleted),
+with the order of every remaining entry retained. -/
 theorem coefficientFormProjection_mulAdjacent
     (n : ℕ) (i : Fin n) (m : M) (a : Fin (n + 1) → A) :
     coefficientFormProjection k A M n
@@ -247,7 +310,14 @@ private theorem dropLast_eq_delete_last (n : ℕ) (a : Fin (n + 1) → A) :
     (by simpa only [Fin.lt_def, Fin.val_last, Fin.val_castSucc] using j.isLt)]
   rfl
 
-/-- The full original symmetric Hochschild boundary is killed by the coefficient differential-form projection in every degree. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The coefficient form projection annihilates the full Hochschild
+boundary in every degree: φ_n b_{n+1} = 0 as a k-linear map
+C_{n+1}(A,M) → F_n. -/
 theorem coefficientFormProjection_boundary (n : ℕ) :
     (coefficientFormProjection k A M n).comp ((chainComplex k A M).d (n + 1) n).hom = 0 := by
   letI := opModule A M
@@ -281,13 +351,26 @@ theorem coefficientFormProjection_boundary (n : ℕ) :
     (alternating_adjacent_telescope n (fun i =>
       (a i • m) ⊗ₜ[A] differentialWord k A n (a ∘ i.succAbove)))
 
-/-- The original coefficient differential-form complex has zero differentials. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The coefficient form chain complex has degree-n object
+ULift.{u} F_n and all differentials zero. For k : Type u, A : Type v
+and M : Type w it lies in ModuleCat at universe max{u,v,w}. -/
 def coefficientDifferentialFormComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (ULift.{u} (M ⊗[A] (⋀[A]^n Ω))))
     (fun _ => 0) (by intro n; simp only [CategoryTheory.Limits.zero_comp])
 
 omit [SMulCommClass k A M] in
-/-- Every differential of the form complex is zero, also off the successor shape. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+Every map d_{i,j} in the coefficient form chain complex is zero,
+for all i,j ∈ ℕ, including pairs outside the successor shape. -/
 theorem coefficientDifferentialFormComplex_d_eq_zero (i j : ℕ) :
     (coefficientDifferentialFormComplex k A M).d i j = 0 := by
   by_cases h : (ComplexShape.down ℕ).Rel i j
@@ -297,7 +380,14 @@ theorem coefficientDifferentialFormComplex_d_eq_zero (i j : ℕ) :
       (fun n => ModuleCat.of k (ULift.{u} (M ⊗[A] (⋀[A]^n Ω)))) (fun _ => 0) j
   · exact (coefficientDifferentialFormComplex k A M).shape i j h
 
-/-- The original tensor projection is a chain map, with no desired boundary law input. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The maps up ∘ φ_n form a chain map from C_*(A,M) to the
+zero-differential complex with degree-n term ULift.{u} F_n.
+Its chain condition is the equality φ_n b_{n+1} = 0. -/
 def coefficientDifferentialFormChainMap : chainComplex k A M ⟶ coefficientDifferentialFormComplex k A M :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
     ((ULift.moduleEquiv : ULift.{u} (M ⊗[A] (⋀[A]^n Ω)) ≃ₗ[k] M ⊗[A] (⋀[A]^n Ω)).symm.toLinearMap.comp
@@ -318,7 +408,14 @@ def coefficientDifferentialFormChainMap : chainComplex k A M ⟶ coefficientDiff
     simp only [LinearMap.comp_assoc, LinearMap.comp_zero] at hp
     exact hp.symm)
 
-/-- The chain projection retains the coefficient and universal differential word. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The degree-n component of the form chain map sends
+m ⊗ tprod(a) to ULift(m ⊗_A (da_0 ∧ ⋯ ∧ da_{n-1})),
+for every m ∈ M and a : Fin n → A. -/
 theorem coefficientDifferentialFormChainMap_tprod
     (n : ℕ) (m : M) (a : Fin n → A) :
     ((coefficientDifferentialFormChainMap k A M).f n).hom
@@ -327,7 +424,13 @@ theorem coefficientDifferentialFormChainMap_tprod
         (fun j => KaehlerDifferential.D k A (a j))) :=
   congrArg ULift.up (coefficientFormProjection_tprod k A M n m a)
 
-/-- Removing the canonical whole-module lift recovers the original coefficient differential word. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+Removing the whole-form lift from the degree-n chain-map value gives
+m ⊗_A (da_0 ∧ ⋯ ∧ da_{n-1}) on input m ⊗ tprod(a). -/
 theorem coefficientDifferentialFormChainMap_tprod_down
     (n : ℕ) (m : M) (a : Fin n → A) :
     (((coefficientDifferentialFormChainMap k A M).f n).hom
@@ -335,14 +438,27 @@ theorem coefficientDifferentialFormChainMap_tprod_down
         m ⊗ₜ[A] exteriorPower.ιMulti A n (fun j => KaehlerDifferential.D k A (a j)) :=
   congrArg ULift.down (coefficientDifferentialFormChainMap_tprod k A M n m a)
 
-/-- The induced Hochschild homology map to original coefficient differential forms. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+Homology of the chain projection, followed by the degree-n homology
+identification of a zero-differential complex, gives the k-module map
+HH_n(A,M) → ULift.{u} F_n. -/
 def coefficientDifferentialFormHomologyMap (n : ℕ) :
     (chainComplex k A M).homology n ⟶ ModuleCat.of k (ULift.{u} (M ⊗[A] (⋀[A]^n Ω))) :=
   HomologicalComplex.homologyMap (coefficientDifferentialFormChainMap k A M) n ≫
     (HomologicalComplex.zeroDifferentialHomologyIso (coefficientDifferentialFormComplex k A M) n
       (coefficientDifferentialFormComplex_d_eq_zero k A M)).hom
 
-/-- The raw ground-linear map uses the original form carrier after canonical lift removal. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+Removing the target lift from the homology projection gives a
+k-linear map HH_n(A,M) → F_n = M ⊗_A Ω^n. -/
 def coefficientDifferentialFormHomologyLinearMap (n : ℕ) :
     (chainComplex k A M).homology n →ₗ[k] M ⊗[A] (⋀[A]^n Ω) :=
   (ULift.moduleEquiv : ULift.{u} (M ⊗[A] (⋀[A]^n Ω)) ≃ₗ[k] M ⊗[A] (⋀[A]^n Ω)).toLinearMap.comp

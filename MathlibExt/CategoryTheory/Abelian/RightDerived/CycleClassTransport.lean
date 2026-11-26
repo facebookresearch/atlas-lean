@@ -13,11 +13,14 @@ public import MathlibExt.Algebra.Homology.ShortComplex.Ab
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.ResolutionComparison
 
 /-!
-# Transporting cycle classes through right-derived comparisons
+# Cycle classes under lifted right-derived coefficient maps
 
-A natural transformation into a universe lift sends an original cycle to a literal lifted cycle.
-The derived postcomposition comparison then carries its homology class to the same quotient class
-computed by the target functor. The source category, functors and cycle data are arbitrary.
+Let `C` be abelian with injective resolutions, `F : C → Ab_s`,
+`P : C → Ab_max(t,s)` additive, and `U_t` the universe-lift functor.
+For a transformation `α : P → F ⋙ U_t`, a specified value on a cycle
+of the chosen resolution complex determines the same value on its
+class in `U_t(R^qF(Y))`, after the derived postcomposition and
+resolution comparisons.
 -/
 
 @[expose] public section
@@ -32,10 +35,13 @@ namespace CategoryTheory.Functor
 
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 
-/--
-The right-derived natural transformation preserves a specified cycle value under the universe-lift
-and resolution comparisons.
--/
+/-- Let `C` be abelian with injective resolutions, `F : C → Ab_s`,
+`P : C → Ab_max(t,s)` additive, `U_t : Ab_s → Ab_max(t,s)` the
+universe-lift functor, and `α : P → F ⋙ U_t`. On the chosen resolution
+`I` of `Y`, choose degree-`q` left-homology data for `P(I)` and a
+cycle-carrier element `c`. If `α_(I^q)(i(c))` is the lifted cycle
+`z` of `F(I)`, the derived map to `U_t(R^qF(Y))` sends the class of
+`c` to the lifted class of `z` under the resolution comparisons. -/
 theorem rightDerivedCompIsoOfPreservesHomology_inv_cycleClass
     (F : C ⥤ AddCommGrpCat.{s}) [F.Additive]
     (P : C ⥤ AddCommGrpCat.{max t s}) [P.Additive]

@@ -13,13 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationNaturality
 
 /-!
-# The complete horizontal-filtration functor
+# The functor of completely filtered first-quadrant total complexes
 
-First-quadrant bicomplexes map functorially to chain complexes equipped with
-their complete `EInt`-indexed horizontal filtration.  The object and morphism
-constructions are the existing complete filtered object and its stagewise map;
-functoriality follows from the corresponding identities for total-complex
-maps and extensionality of filtered-object morphisms.
+Let C be preadditive with a zero object and finite coproducts. A bicomplex K of shape (down
+ℕ,down ℕ) is sent to its total chain complex with the complete horizontal filtration indexed by
+ℤ∪{⊥,⊤}. Bottom and negative finite stages are zero, finite a≥0 stages are horizontal
+truncations, and the top stage is Tot K.
+
+A bicomplex morphism f:K→L is sent to the filtered-object morphism whose total map is Tot f and
+whose component at each cut i is G_i(f):G_i(K)→G_i(L). Those components commute with stage
+transitions and inclusions into the total complex. The assignments preserve identity maps and
+composition, with arbitrary object and morphism universes.
 -/
 
 @[expose] public section
@@ -37,8 +41,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- First-quadrant bicomplexes map functorially to completely filtered total
-complexes indexed by the extended integers. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts. This functor sends
+bicomplexes of shape (down ℕ,down ℕ) to chain complexes equipped with an increasing filtration
+indexed by ℤ∪{⊥,⊤}. Its value on K is Tot K with complete horizontal stages G_⊥=0, G_a=0 for
+finite a<0, G_a the ath horizontal stage for a≥0, and G_⊤=Tot K. A morphism f is sent to Tot f
+together with all stage maps G_i(f); identity and composition are preserved. -/
 noncomputable def horizontalCompleteTotalFilteredObjectFunctor :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
         (ComplexShape.down ℕ) ⥤

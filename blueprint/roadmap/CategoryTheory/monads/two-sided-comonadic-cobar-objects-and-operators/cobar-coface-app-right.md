@@ -1,3 +1,5 @@
-# Cobar Coface App right
+# The right-end component of a cobar coface
 
-The zeroth coface is the iterated right coaction.
+The right-end component of a cobar coface.
+
+The zeroth coface at `a` is the iterated right coaction on `R(G^n(L(a)))`.

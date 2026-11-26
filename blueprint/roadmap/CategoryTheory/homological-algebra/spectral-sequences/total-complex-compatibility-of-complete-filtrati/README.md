@@ -1,6 +1,6 @@
 # Total-complex compatibility of complete-filtration restriction
 
-- [Horizontal Total Complex Nat Const Diagram Functor](horizontal-total-complex-nat-const-diagr.md)
-- [Horizontal Total Filtration Diagram To Total](horizontal-total-filtration-diagram-to-t.md)
-- [Horizontal Complete Total Filtration Nat Restriction Diagram To Total](horizontal-complete-total-filtration-nat.md)
-- [Horizontal Complete Total Filtration Nat Restriction Nat Iso hom comp to Total](horizontal-complete-total-filtration-nat-2.md)
+- [Total complexes define constant natural-index diagrams functorially](horizontal-total-complex-nat-const-diagr.md)
+- [Finite filtration diagrams include naturally into constant total-complex diagrams](horizontal-total-filtration-diagram-to-t.md)
+- [Restricted complete diagrams include naturally into constant total complexes](horizontal-complete-total-filtration-nat.md)
+- [Bicomplex-natural restriction comparisons preserve total-complex inclusion](horizontal-complete-total-filtration-nat-2.md)

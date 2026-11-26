@@ -14,13 +14,12 @@ public import MathlibExt.Algebra.Homology.ChainComplex.HomologyZero
 public import Mathlib.Algebra.Homology.Embedding.RestrictionHomology
 
 /-!
-# Homology of the positive-index restriction when the boundary into zero vanishes
+# Homology of a positive chain restriction
 
-The positive restriction retains the original incoming differential in every
-degree. At its boundary degree zero, native cokernel homology identifies it
-with the original degree-one homology when the original d₁ is zero. Above zero,
-the native embedding-restriction homology isomorphism applies directly.
-The same original quotient class therefore carries the n to n + 1 shift.
+Restrict a nonnegative chain complex by n↦n+1. In every positive
+restricted degree, homology is the original homology one degree higher.
+At restricted degree zero this identification requires the original
+outgoing differential d_1 : K_1→K_0 to vanish.
 -/
 
 @[expose] public section
@@ -35,8 +34,12 @@ namespace ChainComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : ChainComplex C ℕ)
 
-/-- The native degree-zero cokernel is also the original degree-one homology
-when the original outgoing degree-one differential vanishes. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C and let e(n)=n+1 be the
+positive-degree embedding. If K.d 1 0 = 0, then H₀(K.restriction e) ≅ H₁(K). The condition
+makes all of K₁ cycles; the restricted degree-zero homology is the cokernel of the original
+incoming differential K₂→K₁.
+-/
 def positiveRestrictionHomologyZeroIso (h : K.d 1 0 = 0) :
     (K.restriction ComplexShape.positiveNatEmbedding).homology 0 ≅ K.homology 1 := by
   let P := K.restriction ComplexShape.positiveNatEmbedding
@@ -54,7 +57,11 @@ def positiveRestrictionHomologyZeroIso (h : K.d 1 0 = 0) :
   let hl : S.LeftHomologyData := ShortComplex.LeftHomologyData.ofIsColimitCokernelCofork S hg c hc
   exact hl.homologyIso.symm ≪≫ e.symm
 
-/-- The positive restriction homology in every higher degree is the original homology one degree up. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C and let e(n)=n+1 be the
+positive-degree embedding. For every n∈ℕ, H_{n+1}(K.restriction e) ≅ H_{n+2}(K). These degrees
+retain both adjacent differentials of K, so no condition on K.d 1 0 is required.
+-/
 def positiveRestrictionHomologySuccIso (n : ℕ) :
     (K.restriction ComplexShape.positiveNatEmbedding).homology (n + 1) ≅ K.homology (n + 2) :=
   K.restrictionHomologyIso ComplexShape.positiveNatEmbedding
@@ -67,8 +74,11 @@ def positiveRestrictionHomologySuccIso (n : ℕ) :
     ((ComplexShape.down ℕ).prev_eq' (show (ComplexShape.down ℕ).Rel (n + 3) (n + 2) from rfl))
     ((ComplexShape.down ℕ).next_eq' (show (ComplexShape.down ℕ).Rel (n + 2) (n + 1) from rfl))
 
-/-- For a complex with zero original d₁, positive restriction gives the actual
-n to n + 1 homology shift in all degrees. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C and let e(n)=n+1 be the
+positive-degree embedding. If K.d 1 0 = 0, the positive restriction shifts all homology
+degrees by one: Hₙ(K.restriction e) ≅ H_{n+1}(K) for every n∈ℕ, including n=0.
+-/
 def positiveRestrictionHomologyIso (h : K.d 1 0 = 0) : ∀ n : ℕ,
     (K.restriction ComplexShape.positiveNatEmbedding).homology n ≅ K.homology (n + 1)
   | 0 => positiveRestrictionHomologyZeroIso K h

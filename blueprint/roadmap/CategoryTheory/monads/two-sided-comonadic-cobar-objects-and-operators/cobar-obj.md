@@ -1,3 +1,6 @@
-# Cobar Obj
+# The functor in one degree of a two-sided comonadic cobar construction
 
-Degree-`n` cobar functor `R (G^n (L -)) : A ⥤ D`.
+The functor in one degree of a two-sided comonadic cobar construction.
+
+For a right comodule `R : C ⥤ D` and left comodule `L : A ⥤ C`, degree `n` is `(L ⋙ G^n) ⋙ R :
+A ⥤ D`.

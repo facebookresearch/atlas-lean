@@ -1,5 +1,6 @@
-# Cyclic BHochschild Map is Iso iff cyclic Homology Map
+# The equivalence of Hochschild and cyclic homology isomorphisms with left units
 
-The original ordinary Hochschild homology maps are all isomorphisms if and
-only if the original cyclic homology maps are all isomorphisms, for left-unital
-endpoints and any original nonunital algebra map.
+The equivalence of Hochschild and cyclic homology isomorphisms with left units.
+
+For a nonunital map between algebras with left units, all regular Hochschild homology maps are
+isomorphisms if and only if all cyclic homology maps are isomorphisms.

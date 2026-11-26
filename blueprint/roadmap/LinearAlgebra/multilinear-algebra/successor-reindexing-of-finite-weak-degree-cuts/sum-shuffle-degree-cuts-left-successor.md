@@ -1,3 +1,6 @@
-# Sum shuffle Degree Cuts left successor
+# Splitting a weak-cut sum at the empty first block
 
-The actual full weak-cut sum is the original left unit plus the actual first-block successor cuts.
+Splitting a weak-cut sum at the empty first block.
+
+For an additive commutative monoid T and f on weak cuts of n+1, ∑cuts f = f(0,n+1) + ∑p+q=n
+f(p+1,q). Both p and q in the second sum may be zero.

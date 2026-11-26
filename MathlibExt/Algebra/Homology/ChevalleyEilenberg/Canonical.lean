@@ -15,13 +15,23 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Category
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.DerivationPure
 
 /-!
-# Canonical Chevalley–Eilenberg chain models
+# Canonical exterior Chevalley–Eilenberg models
 
-The exterior boundary constructed from the Lie bracket and Jacobi identity
-has the ordered pair formula on every decomposable wedge. It defines a
-canonical model over any commutative ring. Each bracket-presented model is
-compared to it by the identity Lie algebra map, and Lie algebra homomorphisms
-induce morphisms of canonical models.
+Let R be a commutative ring and L an R-Lie algebra. The exterior
+boundary defined by the bracket and Jacobi identity is square zero.
+On a decomposable wedge its value is
+d(x_0∧⋯∧x_n)=∑_{i<j}(−1)^{i+j}[x_i,x_j]∧x with i,j deleted,
+with the bracket first and the remaining entries in their given order.
+The degree-one boundary is zero and the degree-two boundary is −[x,y].
+
+These differential objects give the canonical bracket-presented model
+of L. Every other model with that same bracket prescription is
+isomorphic to it through the identity Lie map. Lie homomorphisms
+induce morphisms of the canonical models, over arbitrary R and
+independent scalar and Lie-carrier universes.
+
+Reference: C. Chevalley and S. Eilenberg, Cohomology theory of Lie groups
+and Lie algebras (1948).
 -/
 
 @[expose] public section
@@ -39,15 +49,23 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- The adjoint exterior action replaces each factor of a pure word by its
-bracket with the acting vector. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+The adjoint exterior derivation satisfies
+ad_x(v_0∧⋯∧v_{n-1})=∑_j v_0∧⋯∧[x,v_j]∧⋯∧v_{n-1}.
+Each bracket replaces its factor in place. -/
 theorem adjointAction_ιMulti (x : L) (n : ℕ) (v : Fin n → L) :
     adjointAction R L x (ExteriorAlgebra.ιMulti R n v) =
       ∑ i : Fin n, ExteriorAlgebra.ιMulti R n (Function.update v i ⁅x, v i⁆) :=
   ExteriorAlgebra.derivation_ιMulti R L (LieAlgebra.ad R L x) n v
 
-/-- The canonical exterior boundary agrees with the ordered bracket sum
-on every decomposable wedge. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+The exterior boundary on ιMulti(v), for v:Fin(n+1)→L,
+is the image of β_n(v) in E. It is the ordered pair sum with
+coefficient (−1)^{i+j} and bracket placed first. -/
 theorem boundary_ιMulti (n : ℕ) (v : Fin (n + 1) → L) :
     boundary R L (ExteriorAlgebra.ιMulti R (n + 1) v) =
       (bracketBoundary R L n v : ExteriorAlgebra R L) := by
@@ -62,8 +80,11 @@ theorem boundary_ιMulti (n : ℕ) (v : Fin (n + 1) → L) :
       rw [ExteriorAlgebra.ιMulti_succ_apply, Matrix.cons_val_zero, Matrix.tail_cons]
       rw [boundary_ι_mul, adjointAction_ιMulti, ih]
 
-/-- The degree-restricted differential has the canonical pure-wedge
-presentation, from the canonical exterior boundary. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+The restricted differential Λ_R^{n+1}L→Λ_R^nL sends
+v_0∧⋯∧v_n to β_n(v), with the fixed ordered-pair signs. -/
 theorem differential_apply_ιMulti (n : ℕ) (v : Fin (n + 1) → L) :
     differential R L n (exteriorPower.ιMulti R (n + 1) v) =
       bracketBoundary R L n v := by
@@ -71,20 +92,28 @@ theorem differential_apply_ιMulti (n : ℕ) (v : Fin (n + 1) → L) :
   simpa only [differential_coe, exteriorPower.ιMulti_apply_coe] using
     boundary_ιMulti R L n v
 
-/-- Canonical CE data, with both the pure-wedge formula and square-zero
-derived from the Lie algebra laws. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+The canonical square-zero differential together with its wedge
+value β_n(v) gives PresentedData for the bracket prescription. -/
 def canonicalPresentedData : PresentedData R L (bracketBoundary R L) where
   toChainData := canonicalChainData R L
   d_apply_ιMulti := differential_apply_ιMulti R L
 
-/-- The canonical CE model attached to a Lie algebra over any commutative
-ring. No freeness or chosen differential is needed. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+The Lie algebra L with its canonical bracket-presented exterior
+differentials defines an object of the category of CE models. -/
 def canonicalModel : Model.{u, v} R where
   carrier := L
   data := canonicalPresentedData R L
 
-/-- The canonical comparison of any bracket-presented model with the
-model constructed from its underlying Lie algebra. -/
+/-- Let R be commutative and X a model with an R-Lie carrier and
+square-zero exterior differential presented by the canonical bracket
+formula. X is isomorphic to the canonical model of its carrier,
+with both model maps induced by the identity Lie homomorphism. -/
 def modelIsoCanonical (X : Model.{u, v} R) : X ≅ canonicalModel R X.carrier where
   hom := Model.Hom.ofLieHom X (canonicalModel R X.carrier) LieHom.id
   inv := Model.Hom.ofLieHom (canonicalModel R X.carrier) X LieHom.id
@@ -95,7 +124,12 @@ def modelIsoCanonical (X : Model.{u, v} R) : X ≅ canonicalModel R X.carrier wh
     apply Model.Hom.ext
     rfl
 
-/-- A Lie algebra map induces a morphism of canonical CE models. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+For an R-Lie homomorphism f:L→L′ in the same carrier universe,
+the exterior maps Λ_R^n f define a morphism between the canonical
+models of L and L′. -/
 def canonicalMap
     {L' : Type v} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L') :
     canonicalModel R L ⟶ canonicalModel R L' :=

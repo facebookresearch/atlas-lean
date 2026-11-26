@@ -1,5 +1,5 @@
 # Lifting an adjacent-column class to the middle quotient
 
-- [Horizontal First Page Adjacent Cokernelπ comp g](horizontal-first-page-adjacent-cokernel.md)
-- [Horizontal First Page Adjacent Middle Section](horizontal-first-page-adjacent-middle-se.md)
-- [Horizontal First Page Adjacent Middle Section g](horizontal-first-page-adjacent-middle-se-2.md)
+- [The factorization of a direct-column projection through the middle quotient](horizontal-first-page-adjacent-cokernel.md)
+- [The degreewise lift of a direct-column element to the middle quotient](horizontal-first-page-adjacent-middle-se.md)
+- [The section identity of the adjacent-column middle lift](horizontal-first-page-adjacent-middle-se-2.md)

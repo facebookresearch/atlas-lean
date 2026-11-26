@@ -15,11 +15,15 @@ public import Mathlib.RingTheory.Flat.CategoryTheory
 import MathlibExt.Algebra.Homology.QuasiIsoColimits
 
 /-!
-# The ordinary tensor abutment of a Cartan--Eilenberg tensor model
+# Ordinary tensor homology as the Cartan–Eilenberg abutment
 
-For a nonnegative chain complex which is degreewise flat, the total complex of
-its Cartan--Eilenberg tensor bicomplex maps canonically and quasi-isomorphically
-to the ordinary tensor product complex.
+Let R be commutative, K,L nonnegative R-module complexes and P a Cartan–Eilenberg resolution of
+L. Tensoring the stored column-zero augmentation with id_K gives row augmentations and a
+canonical chain map Tot(kunnethCEBicomplex(K,P)) → K ⊗ L.
+
+If every term Kᵢ is flat over R, this chain map is a quasi-isomorphism. Its homology map gives
+the canonical abutment isomorphism H_n(Tot(kunnethCEBicomplex(K,P))) ≅ H_n(K ⊗ L). Only the
+first complex is required to be degreewise flat.
 -/
 
 @[expose] public section
@@ -41,8 +45,10 @@ variable {K L : ChainComplex (ModuleCat.{u} R) ℕ}
 local instance : HasFiniteBiproducts (ModuleCat.{u} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- Tensoring the stored column-zero augmentation with the identity of the
-first complex. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. Tensoring id_K with the stored term-column augmentation P.bicomplex.X₀ → L gives a chain map
+from resolution degree zero of the tensor-convolution bicomplex to K ⊗ L. -/
 noncomputable def tensorCartanEilenbergColumnZeroMap
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -50,7 +56,10 @@ noncomputable def tensorCartanEilenbergColumnZeroMap
     (kunnethCEBicomplex K P).X 0 ⟶ tensorObj K L :=
   tensorHom (𝟙 K) P.termColumnZeroAugmentation
 
-/-- Components of `tensorCartanEilenbergColumnZeroMap`. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. In inner degree q, the column-zero tensor augmentation is exactly the degree-q component of
+id_K ⊗ the stored term-column augmentation. -/
 theorem tensorCartanEilenbergColumnZeroMap_f
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -59,8 +68,10 @@ theorem tensorCartanEilenbergColumnZeroMap_f
       (tensorHom (𝟙 K) P.termColumnZeroAugmentation).f q :=
   rfl
 
-/-- The augmentation of a flipped tensor Cartan--Eilenberg row to the
-degree-zero single complex. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For each inner total degree q, the flipped tensor-convolution row is augmented to the complex
+concentrated in resolution degree zero on (K ⊗ L)_q. -/
 noncomputable def tensorCartanEilenbergRowAugmentation
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -79,7 +90,10 @@ noncomputable def tensorCartanEilenbergRowAugmentation
           P.bicomplex_d_one_zero_comp_termColumnZeroAugmentation]
         simp⟩
 
-/-- The degree-zero component of the row augmentation. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. The resolution-degree-zero component of the degree-q row augmentation is the degree-q
+component of id_K ⊗ the term-column augmentation. -/
 theorem tensorCartanEilenbergRowAugmentation_f_zero
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -89,7 +103,11 @@ theorem tensorCartanEilenbergRowAugmentation_f_zero
   unfold tensorCartanEilenbergRowAugmentation
   exact ChainComplex.toSingle₀Equiv_symm_apply_f_zero _ _
 
-/-- Naturality of the row augmentations in the original total degree. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. The row augmentations in total degrees q+1 and q commute with the inner tensor differential
+and the differential of the concentrated target bicomplex. Thus they assemble in q to a
+bicomplex map. -/
 theorem tensorCartanEilenbergRowAugmentation_comm
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -114,8 +132,10 @@ theorem tensorCartanEilenbergRowAugmentation_comm
       (tensorCartanEilenbergColumnZeroMap K P).f q
   exact (tensorCartanEilenbergColumnZeroMap K P).comm (q + 1) q
 
-/-- The flipped tensor Cartan--Eilenberg bicomplex augmentation to the
-componentwise degree-zero single complex. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. The row augmentations assemble to a map from the flipped tensor-convolution bicomplex to the
+bicomplex concentrated in resolution degree zero on the ordinary tensor complex K ⊗ L. -/
 noncomputable def tensorCartanEilenbergRowAugmentationMap
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -127,8 +147,10 @@ noncomputable def tensorCartanEilenbergRowAugmentationMap
     (fun q => tensorCartanEilenbergRowAugmentation K P q)
     (fun q => tensorCartanEilenbergRowAugmentation_comm K P q)
 
-/-- The canonical comparison from the supplied Cartan--Eilenberg tensor model
-to the ordinary tensor product complex. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. Totalizing the row augmentation gives the canonical chain map Tot(kunnethCEBicomplex(K,P)) →
+K ⊗ L, oriented from the Cartan–Eilenberg tensor model to the ordinary tensor complex. -/
 noncomputable def tensorCartanEilenbergToTensor
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -148,8 +170,10 @@ private theorem tensorCartanEilenbergToTensor_eq
           (tensorCartanEilenbergRowAugmentationMap K P) :=
   rfl
 
-/-- On the resolution-degree-zero summand, the canonical comparison is the
-tensor of the identity with the stored term-column augmentation. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. On a summand of resolution degree zero and inner degree q, the canonical total comparison is
+exactly the degree-q component of id_K ⊗ the term-column augmentation. -/
 theorem tensorCartanEilenbergToTensor_ιTotal
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -494,9 +518,10 @@ private theorem tensorCartanEilenbergRowAugmentation_quasiIso
   · intro ij
     exact tensorAbutmentComponentAugmentation_quasiIso K P hK ij.as
 
-/-- If the first complex is degreewise flat, the canonical comparison from
-the Cartan--Eilenberg tensor model to the ordinary tensor complex is a
-quasi-isomorphism. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. Assume every Kᵢ is a flat R-module. Then the canonical comparison from the total
+Cartan–Eilenberg tensor model to K ⊗ L is a quasi-isomorphism. No flatness of L is assumed. -/
 theorem quasiIso_tensorCartanEilenbergToTensor_of_degreewise_flat
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -512,9 +537,10 @@ theorem quasiIso_tensorCartanEilenbergToTensor_of_degreewise_flat
   unfold HomologicalComplex₂.totalAugmentationDownNat
   infer_instance
 
-/-- The homology of the Cartan--Eilenberg tensor model is canonically
-isomorphic to ordinary tensor-product homology when the first complex is
-degreewise flat. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. If every Kᵢ is flat, the canonical comparison induces an isomorphism
+H_n(Tot(kunnethCEBicomplex(K,P))) ≅ H_n(K ⊗ L), for every n ∈ ℕ. -/
 noncomputable def tensorCartanEilenbergAbutmentIso
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -527,8 +553,10 @@ noncomputable def tensorCartanEilenbergAbutmentIso
   exact asIso (HomologicalComplex.homologyMap
     (tensorCartanEilenbergToTensor K P) n)
 
-/-- The forward morphism of the abutment isomorphism is the literal homology
-map of the canonical comparison. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. Assume every Kᵢ is flat. In degree n, the forward abutment isomorphism is precisely the
+homology map of the canonical chain comparison Tot(kunnethCEBicomplex(K,P)) → K ⊗ L. -/
 theorem tensorCartanEilenbergAbutmentIso_hom
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}

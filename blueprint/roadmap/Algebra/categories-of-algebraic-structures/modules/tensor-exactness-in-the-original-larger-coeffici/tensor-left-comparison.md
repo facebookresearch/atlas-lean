@@ -1,4 +1,6 @@
-# Tensor Left Comparison
+# The scalar-lifting comparison for left tensor functors
 
-The actual tensor-left functor is a conjugate of native tensor over
-the actual lifted ring. Its comparison uses earned scalar/tensor isomorphisms.
+The scalar-lifting comparison for left tensor functors.
+
+For a ground-scalar module `M`, `M ⊗[R] -` is naturally isomorphic to lifting scalars,
+tensoring with the lifted `M` over `ULift.{v} R`, and restricting scalars back.

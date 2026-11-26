@@ -14,12 +14,14 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.Algebra.Algebra.Tower
 
 /-!
-# Scalar restriction agrees with an original compatible ground action
+# Compatible ground actions and scalar restriction
 
-The native restriction functor uses Module.compHom along algebraMap. An
-original ground module with the actual scalar tower has the same values.
-The comparison is the identity on the original carrier; no Small or chosen
-comparison premise is required. Ground, algebra and carrier sizes are independent.
+For a commutative ring `k`, a ring algebra `R` over `k`, and a module `M` with compatible `k`-
+and `R`-actions, restriction along `algebraMap k R` has a `k`-linear identity comparison with
+the given ground action on `M`.
+
+The comparison and its inverse preserve every element of the carrier, and they commute with
+acting-ring-linear maps.
 -/
 
 @[expose] public section
@@ -34,7 +36,10 @@ namespace ModuleCat
 variable (k : Type u) [CommRing k] (R : Type v) [Ring R] [Algebra k R]
   (M : Type w) [AddCommGroup M] [mk : Module k M] [mr : Module R M] [tower : IsScalarTower k R M]
 
-/-- Native restriction has an actual ground-linear identity comparison to the original compatible action. -/
+/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative underlying ring,
+and `M` have `k`- and `R`-module structures satisfying `IsScalarTower k R M`. The
+scalar-restricted object `restrictScalars(algebraMap k R)(M_R)` is `k`-linearly equivalent to
+the given module `M_k` by the identity on elements, with identity inverse. -/
 def compatibleRestrictScalarsEquiv :
     ((ModuleCat.restrictScalars (algebraMap k R)).obj (ModuleCat.of R M)) ≃ₗ[k] M where
   toFun := id
@@ -46,18 +51,25 @@ def compatibleRestrictScalarsEquiv :
     erw [ModuleCat.restrictScalars.smul_def]
     exact @IsScalarTower.algebraMap_smul k R M _ _ _ mr.toMulAction mk.toSMul tower c (m : M)
 
-/-- The forward comparison is the identity on the original coefficient carrier. -/
+/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative underlying ring,
+and `M` have `k`- and `R`-module structures satisfying `IsScalarTower k R M`. For an element
+`m` of the scalar-restricted module, `compatibleRestrictScalarsEquiv k R M m=m`. -/
 @[simp]
 theorem compatibleRestrictScalarsEquiv_apply
     (m : (ModuleCat.restrictScalars (algebraMap k R)).obj (ModuleCat.of R M)) :
     compatibleRestrictScalarsEquiv k R M m = m := rfl
 
-/-- The inverse comparison also retains the original coefficient carrier. -/
+/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative underlying ring,
+and `M` have `k`- and `R`-module structures satisfying `IsScalarTower k R M`. For `m : M`,
+`(compatibleRestrictScalarsEquiv k R M).symm m=m`. -/
 @[simp]
 theorem compatibleRestrictScalarsEquiv_symm_apply (m : M) :
     (compatibleRestrictScalarsEquiv k R M).symm m = m := rfl
 
-/-- Scalar-restriction comparison is natural in original acting-ring-linear maps. -/
+/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative underlying ring,
+and `M` have `k`- and `R`-module structures satisfying `IsScalarTower k R M`. Let `N` have the
+same compatible structures and `f : M →ₗ[R] N`. With identity comparisons `E_M,E_N`, `E_N ∘
+restrictScalars(f)=f.restrictScalars k ∘ E_M` as maps of `k`-modules. -/
 theorem compatibleRestrictScalarsEquiv_naturality
     {N : Type w} [AddCommGroup N] [Module k N] [Module R N] [IsScalarTower k R N]
     (f : M →ₗ[R] N) :

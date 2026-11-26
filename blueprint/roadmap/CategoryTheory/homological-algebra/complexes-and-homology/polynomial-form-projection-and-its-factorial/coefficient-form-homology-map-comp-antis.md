@@ -1,3 +1,6 @@
-# Coefficient Form Homology Map comp antisymmetrization
+# The factorial composite of polynomial homology comparison maps
 
-The whole original homology-map composite has the exact factorial scalar.
+The factorial composite of polynomial homology comparison maps.
+
+As ground-linear maps in degree `n`, `π_n ∘ ε_n = n! • id` on the coefficient differential-
+form module.

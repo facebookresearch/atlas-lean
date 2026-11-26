@@ -15,13 +15,22 @@ public import MathlibExt.Algebra.Homology.Hochschild.Conjugation
 public import MathlibExt.LinearAlgebra.Matrix.SplitInvolution
 
 /-!
-# Conjugation and trace homotopies of finite frames
+# Finite normalized frames act trivially up to Hochschild homotopy
 
-Split rows and columns give a block involution on
-PUnit ⊕ J. Corner, unit conjugation and finite trace
-chain maps transport its homotopy to the coefficient
-complex. The finite frame is algebraic data computed
-from the underlying Morita pair.
+Let k be a commutative ring, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear actions. Let J be a finite index type
+and μ, λ : J → A satisfy ∑ᵢ μᵢ λᵢ = 1. On I = PUnit ⊕ J these data
+give a block unit c whose conjugation carries the PUnit corner of x to
+the J×J block with entries λᵢ x μⱼ. On coefficients the corresponding
+entries are λᵢ • (op(μⱼ) • m).
+
+At the common height H = max(u,v,w,z,t), the corner map, conjugation by c
+and finite matrix trace define an endomorphism F of C_*(A,ULift^H M).
+Its degree-n value, after removing the coefficient lift, is
+∑_(i₀,…,iₙ) (λ_(i₀) • (op(μ_(i₁)) • m)) ⊗
+(λ_(i₁) a₁ μ_(i₂)) ⊗ ⋯ ⊗ (λ_(iₙ) aₙ μ_(i₀)).
+The unit-conjugation homotopy gives a chain homotopy F ≃ id.
+The universes of k, A, M and J and the extra height t are independent.
 -/
 
 @[expose] public section
@@ -49,14 +58,22 @@ variable (k : Type u) [CommRing k]
 local notation "I" => PUnit ⊕ J
 local notation "b" => (Sum.inl PUnit.unit : I)
 
-/-- The original corner at a common upper coefficient lift height. -/
+/-- Let k be a commutative ring, A a k-algebra, M an A-bimodule
+with commuting k-linear actions and J a finite index type. At
+H = max(u,v,w,z,t), the PUnit corner in I = PUnit ⊕ J gives
+C_*(A,ULift^H M) → C_*(Mat_I(A),ULift^H Mat_I(M)).
+Its components put each coefficient and algebra factor in the
+distinguished diagonal entry b = inl(*). -/
 def cornerChainMapAt :
     chainComplex k A (ULift.{max u v w z t} M) ⟶
       chainComplex k (Matrix I I A) (ULift.{max u v w z t} (Matrix I I M)) :=
   liftedMapAt.{t} (cornerAlgHom k A I b) (cornerLinear k I b : M →ₗ[k] Matrix I I M)
     (corner_left k A M I b) (corner_right k A M I b)
 
-/-- The lifted corner and finite trace still retract, at every requested height. -/
+/-- For the coefficient Hochschild complexes over a k-algebra A
+and a compatible A-bimodule M, the PUnit corner into matrices indexed
+by I = PUnit ⊕ J followed by finite trace is the identity chain map.
+Both coefficient modules are lifted to H = max(u,v,w,z,t). -/
 theorem cornerChainMapAt_comp_trace :
     cornerChainMapAt.{t} k A M J ≫ traceChainMapAt.{t} k A M I =
       𝟙 (chainComplex k A (ULift.{max u v w z t} M)) := by
@@ -96,7 +113,13 @@ theorem cornerChainMapAt_comp_trace :
       generalizedTrace_corner_tprod k I b n m.down a
     _ = _ := (coefficientUnliftEquiv_tprod k A M n m a).symm
 omit [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M] [Algebra k A] in
-/-- Conjugating the coefficient corner uses one original left and right entry. -/
+/-- Let M have left A- and right A-actions, let
+I = PUnit ⊕ J be finite, and let c be a unit of Mat_I(A).
+For b = inl(*), the (i,j) entry of
+c⁻¹ • (op(c) • E_bb(m)) is
+(c⁻¹)_(i,b) • (op(c_(b,j)) • m).
+This identity uses the two coefficient actions without requiring
+them to commute or to form scalar towers over k. -/
 theorem conjugation_coefficient_corner_entry (c : (Matrix I I A)ˣ) (m : M) (i j : I) :
     letI := Coefficients.leftModule A M I
     letI := Coefficients.rightModule A M I
@@ -125,7 +148,13 @@ theorem conjugation_coefficient_corner_entry (c : (Matrix I I A)ˣ) (m : M) (i j
 variable (μ «λ» : J → A) (h : (∑ i, μ i * «λ» i) = 1)
 omit [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M] [Algebra k A] in
 
-/-- The computed block unit gives the complete original coefficient sandwich λ_i*m*μ_j. -/
+/-- Let μ, λ : J → A satisfy ∑ᵢ μᵢ λᵢ = 1, with J finite,
+and let M have left and right A-actions. Conjugating E_bb(m) by the
+normalized-frame block unit on PUnit ⊕ J gives a matrix whose only
+possibly nonzero block is the J×J block
+(i,j) ↦ λᵢ • (op(μⱼ) • m).
+No commutation or k-scalar-tower condition on these actions is needed
+for this entry formula. -/
 theorem normalizedFrame_coefficient_corner (m : M) :
     letI := Coefficients.leftModule A M I
     letI := Coefficients.rightModule A M I
@@ -162,7 +191,11 @@ theorem normalizedFrame_coefficient_corner (m : M) :
         Matrix.normalizedFrameUnit_val_inl_inr, Matrix.fromBlocks_apply₂₂,
         Matrix.of_apply]
 
-/-- The original coefficient complex endomorphism assembled from the computed block unit. -/
+/-- For a k-algebra A, an A-bimodule M with commuting k-linear
+actions, finite J and μ, λ : J → A satisfying ∑ᵢ μᵢ λᵢ = 1,
+the normalized-frame endomorphism of C_*(A,ULift^H M) is the composite
+of the PUnit corner, conjugation by the frame block unit on PUnit ⊕ J,
+and the generalized trace. Here H = max(u,v,w,z,t). -/
 def normalizedFrameChainMapAt :
     chainComplex k A (ULift.{max u v w z t} M) ⟶
       chainComplex k A (ULift.{max u v w z t} M) :=
@@ -171,7 +204,11 @@ def normalizedFrameChainMapAt :
       (Matrix.normalizedFrameUnit μ «λ» h) ≫
     traceChainMapAt.{t} k A M I
 
-/-- The unit-conjugation homotopy earns the frame map's identity endpoint. -/
+/-- Let μ, λ : J → A satisfy ∑ᵢ μᵢ λᵢ = 1, and let M be an
+A-bimodule with commuting k-linear actions. The normalized-frame
+endomorphism F of C_*(A,ULift^H M) has a chain homotopy from F to id,
+where H = max(u,v,w,z,t). It is the conjugation homotopy composed
+with the PUnit corner on the source and finite trace on the target. -/
 def normalizedFrameChainHomotopyAt :
     _root_.Homotopy (normalizedFrameChainMapAt.{t} k A M J μ «λ» h)
       (𝟙 (chainComplex k A (ULift.{max u v w z t} M))) := by
@@ -190,7 +227,10 @@ def normalizedFrameChainHomotopyAt :
   exact ((_root_.Homotopy.ofEq hf).symm.trans H).trans (_root_.Homotopy.ofEq hg)
 omit [Fintype J] [DecidableEq J] in
 
-/-- The algebra corner is the same native PUnit block used by the involution. -/
+/-- For x ∈ A and I = PUnit ⊕ J, the diagonal matrix E_bb(x),
+b = inl(*), equals the block matrix with x in its PUnit×PUnit block
+and zero in the other three blocks. This equality does not require
+J to be finite. -/
 theorem normalizedFrame_corner_eq (x : A) :
     cornerLinear k I b x = Matrix.normalizedFrameCorner (J := J) x := by
   ext i j
@@ -215,7 +255,11 @@ theorem normalizedFrame_corner_eq (x : A) :
       simp only [cornerLinear_apply, Matrix.normalizedFrameCorner,
         Matrix.fromBlocks_apply₂₂, Sum.inr_ne_inl, ite_false, Matrix.zero_apply]
 
-/-- The block conjugation has the complete original λ_i*a*μ_j algebra entries. -/
+/-- For a k-algebra A, finite J and μ, λ : J → A with
+∑ᵢ μᵢ λᵢ = 1, conjugation of E_bb(x) by the normalized-frame block
+unit on PUnit ⊕ J gives the block matrix with J×J entries λᵢ x μⱼ
+and zero in all other blocks. The multiplication order is retained
+for a noncommutative A. -/
 theorem normalizedFrame_algebra_corner (x : A) :
     Conjugation.algebraMap k (Matrix.normalizedFrameUnit μ «λ» h) (cornerAlgHom k A I b x) =
       Matrix.fromBlocks (0 : Matrix PUnit PUnit A) 0 0
@@ -223,7 +267,14 @@ theorem normalizedFrame_algebra_corner (x : A) :
   rw [Conjugation.algebraMap_apply, cornerAlgHom_apply, normalizedFrame_corner_eq]
   exact Matrix.normalizedFrameUnit_conjugateCorner μ «λ» h x
 
-/-- Down of the normalized-frame chain map is its full original finite cycle sum. -/
+/-- Let M be an A-bimodule with commuting k-linear actions and
+let μ, λ : J → A satisfy ∑ᵢ μᵢ λᵢ = 1. For m ∈ M and
+a₁,…,aₙ ∈ A, remove the target coefficient lift from the degree-n
+normalized-frame map applied to up(m) ⊗ a₁ ⊗ ⋯ ⊗ aₙ. The result is
+∑_(i₀,…,iₙ) (λ_(i₀) • (op(μ_(i₁)) • m)) ⊗
+(λ_(i₁) a₁ μ_(i₂)) ⊗ ⋯ ⊗ (λ_(iₙ) aₙ μ_(i₀)).
+The sum is over J-valued cycles with indices modulo n+1, and the
+coefficient height is H = max(u,v,w,z,t). -/
 theorem normalizedFrameChainMapAt_down_tprod
     (n : ℕ) (m : M) (a : Fin n → A) :
     (show ULift.{max u v w z t} M ⊗[k] TensorPower k n A ≃ₗ[k]

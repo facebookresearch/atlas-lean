@@ -1,3 +1,6 @@
-# Scaled Coefficient Form Homology Iso inv
+# The signed inverse of the polynomial form comparison
 
-Its inverse is the signed polynomial antisymmetrization.
+The signed inverse of the polynomial form comparison.
+
+The inverse isomorphism map is polynomial signed antisymmetrization. This inverse description
+is stated without a factorial-invertibility hypothesis.

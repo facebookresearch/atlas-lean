@@ -16,9 +16,9 @@ public import MathlibExt.GroupTheory.Perm.OrderedDeletion
 /-!
 # Antisymmetrization of two vectors
 
-The signed place-permutation sum in degree two is the first tensor word
-minus its transposition. The formula uses integral signs and requires no
-factorial inverse or rational scalar structure.
+For a commutative ring k and a k-module V, the signed lift of x ∧ y is x ⊗ y - y ⊗ x. The
+formula is integral and applies in every characteristic. It is the degree-two case of the
+exterior antisymmetrization described in N. Bourbaki, Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -30,7 +30,10 @@ namespace TensorPower
 
 variable (k : Type u) [CommRing k] (V : Type v) [AddCommGroup V] [Module k V]
 
-/-- The actual full exterior antisymmetrization is the original ordered tensor minus its reversed tensor. -/
+/-- The degree-two antisymmetrization formula.
+
+For a commutative ring k, a k-module V and x,y ∈ V, A₂(x ∧ y) = x ⊗ y - y ⊗ x in V⊗2. The
+coefficient of the transposed word is -1. -/
 theorem exteriorAntisymmetrization_two (x y : V) :
     exteriorAntisymmetrization k V 2 (exteriorPower.ιMulti k 2 (Fin.cons x (fun _ : Fin 1 => y))) =
       PiTensorProduct.tprod k (Fin.cons x (fun _ : Fin 1 => y)) -

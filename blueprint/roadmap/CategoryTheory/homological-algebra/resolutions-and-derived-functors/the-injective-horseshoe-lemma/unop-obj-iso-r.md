@@ -1,7 +1,7 @@
-# Unop Obj Iso R
+# Coherent return to the left injective resolution
 
-The `unopFunctor`-image of the op'd right-endpoint complex is the original
-cocomplex (definitionally). Stated with `unopFunctor.obj` (rather than `.op`
-followed by `.unop`) so all endpoint shapes are syntactically
-`(down ℕ).symm`, keeping `rw`-matching sound (the `.unop` roundtrip shape
-`((up ℕ).symm).symm` is only default-transparency defeq).
+Let `C` be abelian, `S` a short complex in `C`, and `I₁` an injective
+resolution of `S.X₁`. The chain complex of the opposite projective resolution
+`opProjRight I₁`, transported from `Cᵒᵖ` back to `C` by the complex opposite
+equivalence, is canonically isomorphic to `I₁.cocomplex`. The comparison is
+between cochain complexes indexed by `ℕ`, with differential `n → n + 1`.

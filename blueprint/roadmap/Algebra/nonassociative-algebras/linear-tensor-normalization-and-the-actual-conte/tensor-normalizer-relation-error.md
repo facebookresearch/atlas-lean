@@ -1,4 +1,6 @@
-# Tensor Normalizer relation Error
+# Annihilation of every contextual tensor Lie relation
 
-Every contextual native Lie relation is annihilated for arbitrary tensor
-factors, using the actual native tensor basis in both factors.
+Annihilation of every contextual tensor Lie relation.
+
+For arbitrary `p,s ∈ T_R(L)` and `x,y ∈ L`, the linear normalizer sends `p * r(x,y) * s` to
+zero.

@@ -29,12 +29,32 @@ import Mathlib.Tactic.Abel
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
-# Cyclic operators and the regular nonunital Hochschild faces
+# Cyclic norms and the regular Hochschild bicomplex
 
-The regular bar is the bar with the left multiplication
-and right multiplication representations. Its truncated differential
-comes from the general last-face truncation. Cyclic maps and norms use the
-computed tensor-power action in the same original first-factor coordinates.
+Let k be a commutative ring and A a nonunital associative ring with
+k-bilinear multiplication. The regular tensor term is
+C_n(A) = A ⊗[k] A^{⊗n}. Its signed rotation is
+t_n(a_0 ⊗ ⋯ ⊗ a_n) = (−1)^n a_n ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1},
+and its cyclic norm is N_n = ∑_{j=0}^{n} t_n^j.
+The two boundaries satisfy
+b_{n+1}(1−t_{n+1}) = (1−t_n)b′_{n+1},
+b′_{n+1}N_{n+1} = N_n b_{n+1}, and both (1−t)N and N(1−t) are zero.
+
+The cyclic bicomplex has K_{p,q} = C_q. Its even columns have
+differential b and odd columns b′. The horizontal map from p+1 to p
+is 1−t when p is even and N when p is odd. In the total complex,
+the vertical contribution is multiplied by (−1)^p, giving b on even
+columns and −b′ on odd columns. Total degree n is the finite direct sum
+over p+q=n, and HC_n(A) is its homology.
+
+The cokernel complex C_λ is the degreewise quotient by im(1−t).
+The canonical map from the cyclic total to C_λ projects column zero
+and kills every later column. Nonunital algebra maps preserve the
+faces, cyclic operators, totals and homology. For different algebra
+carrier universes, canonical coefficient lifts place the maps in
+the common k-module category; homology is compatible with those lifts.
+
+Reference: J.-L. Loday, Cyclic Homology, §2.1.
 -/
 
 @[expose] public section
@@ -49,7 +69,9 @@ universe x
 
 namespace ModuleCat.Algebra.Hochschild
 
-/-- Merging the first pair of a tuple includes the original coefficient in its ordered product. -/
+/-- For a type B with a multiplication and a tuple a : Fin(n+1) → B,
+prepend m ∈ B and merge the first pair. The resulting tuple is
+cons(m a_0, dropFirst(a)), with the ordered product m a_0. -/
 theorem mulAdjacent_cons_zero {B : Type w} [Mul B] (n : ℕ) (m : B)
     (a : Fin (n + 1) → B) :
     hochschildMulAdjacent (0 : Fin (n + 1)) (Fin.cons m a) =
@@ -58,7 +80,9 @@ theorem mulAdjacent_cons_zero {B : Type w} [Mul B] (n : ℕ) (m : B)
   cases j using Fin.cases <;>
     simp [hochschildMulAdjacent, hochschildDropFirst, Fin.succ_succAbove_succ]
 
-/-- Merging a pair after the coefficient commutes with including the coefficient. -/
+/-- For a type B with multiplication, m ∈ B and a : Fin(n+1) → B,
+merging the pair at position i+1 after prepending m equals
+cons(m, merge_i(a)), for i ∈ Fin n. -/
 theorem mulAdjacent_cons_succ {B : Type w} [Mul B] {n : ℕ} (i : Fin n) (m : B)
     (a : Fin (n + 1) → B) :
     hochschildMulAdjacent i.succ (Fin.cons m a) = Fin.cons m (hochschildMulAdjacent i a) := by
@@ -85,7 +109,9 @@ theorem mulAdjacent_cons_succ {B : Type w} [Mul B] {n : ℕ} (i : Fin n) (m : B)
         exact h ((Fin.succ_injective _) hji)
       rw [ite_eq_right h', ite_eq_right h, Fin.succ_succAbove_succ, Fin.cons_succ]
 
-/-- Inverse index rotation sends an appended final factor to the first position. -/
+/-- For any type B, appending b to a : Fin n → B and then rotating
+the last position to the first gives cons(b,a). The index action
+is the inverse of finRotate(n+1). -/
 theorem rotate_snoc {B : Type w} (n : ℕ) (a : Fin n → B) (b : B) :
     (fun i : Fin (n + 1) => (Fin.snoc (α := fun _ : Fin (n + 1) => B) a b)
       ((finRotate (n + 1)).symm i)) =
@@ -104,34 +130,54 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 
 variable (k : Type u) (A : Type v) [CommRing k] [NonUnitalRing A] [Module k A]
 
-/-- The signed cyclic endomorphism of the original regular tensor level. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The signed cyclic endomorphism of C_n is
+t_n(a_0 ⊗ ⋯ ⊗ a_n) = (−1)^n a_n ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1}. -/
 def cyclicMap (n : ℕ) : chainLevel k A A n ⟶ chainLevel k A A n :=
   ModuleCat.ofHom (TensorPower.consCyclicOperator k A n)
 
-/-- The cyclic norm on the same original tensor level. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+Write t_n(a_0 ⊗ ⋯ ⊗ a_n) = (−1)^n a_n ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1}
+and N_n = ∑_{j=0}^{n} t_n^j.
+The cyclic norm is the k-linear endomorphism N_n of C_n,
+with all n+1 powers counted with coefficient one. -/
 def normMap (n : ℕ) : chainLevel k A A n ⟶ chainLevel k A A n :=
   ModuleCat.ofHom (TensorPower.consNorm k A n)
 
-/-- The maps retain the left norm identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+For the signed rotation t_n and norm N_n, the composite which
+first applies 1−t_n and then N_n is zero: N_n(1−t_n) = 0. -/
 theorem oneSubCyclicMap_comp_normMap (n : ℕ) :
     (𝟙 (chainLevel k A A n) - cyclicMap k A n) ≫ normMap k A n = 0 := by
   apply ModuleCat.hom_ext
   change TensorPower.consNorm k A n * (1 - TensorPower.consCyclicOperator k A n) = 0
   exact TensorPower.consNorm_mul_one_sub_cyclicOperator k A n
 
-/-- The maps retain the right norm identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+For the signed rotation t_n and norm N_n, applying N_n and then
+1−t_n gives zero: (1−t_n)N_n = 0. -/
 theorem normMap_comp_oneSubCyclicMap (n : ℕ) :
     normMap k A n ≫ (𝟙 (chainLevel k A A n) - cyclicMap k A n) = 0 := by
   apply ModuleCat.hom_ext
   change (1 - TensorPower.consCyclicOperator k A n) * TensorPower.consNorm k A n = 0
   exact TensorPower.consOne_sub_cyclicOperator_mul_norm k A n
 
-/-- An integer residue acts by the cyclic representation on the original level. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The signed rotation defines an action of ℤ/(n+1) on C_n.
+For j ∈ ℤ, P_n(j) is the action of its residue class, equivalently
+the integer power t_n^j. -/
 def cyclicPowerMap (n : ℕ) (j : ℤ) : chainLevel k A A n ⟶ chainLevel k A A n :=
   ModuleCat.ofHom (TensorPower.consCyclicRepresentation k A n
     (Multiplicative.ofAdd (j : ZMod (n + 1))))
 
-/-- The zero residue acts as the identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The cyclic residue action P_n(0) is the identity of C_n. -/
 @[simp]
 theorem cyclicPowerMap_zero (n : ℕ) : cyclicPowerMap k A n 0 = 𝟙 _ := by
   apply ModuleCat.hom_ext
@@ -139,7 +185,9 @@ theorem cyclicPowerMap_zero (n : ℕ) : cyclicPowerMap k A n 0 = 𝟙 _ := by
     (Multiplicative.ofAdd (0 : ZMod (n + 1))) = 1
   exact map_one _
 
-/-- The integer generator is the signed cyclic map. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The cyclic residue action P_n(1) is the signed rotation t_n. -/
 @[simp]
 theorem cyclicPowerMap_one (n : ℕ) : cyclicPowerMap k A n 1 = cyclicMap k A n := by
   apply ModuleCat.hom_ext
@@ -147,7 +195,10 @@ theorem cyclicPowerMap_one (n : ℕ) : cyclicPowerMap k A n 1 = cyclicMap k A n 
     (Multiplicative.ofAdd ((1 : ℤ) : ZMod (n + 1))) = TensorPower.consCyclicOperator k A n
   simpa only [Int.cast_one] using TensorPower.consCyclicRepresentation_generator k A n
 
-/-- Integer addition is composition of the cyclic residue actions. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+Integer cyclic powers satisfy P_n(j) P_n(i) = P_n(i+j)
+for all i,j ∈ ℤ. -/
 @[reassoc]
 theorem cyclicPowerMap_comp (n : ℕ) (i j : ℤ) :
     cyclicPowerMap k A n i ≫ cyclicPowerMap k A n j = cyclicPowerMap k A n (i + j) := by
@@ -161,7 +212,10 @@ theorem cyclicPowerMap_comp (n : ℕ) (i j : ℤ) :
   change Multiplicative.ofAdd ((j : ZMod (n + 1)) + (i : ZMod (n + 1))) = _
   simp only [Int.cast_add, add_comm]
 
-/-- The finite-group norm is invariant before every residue action. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The cyclic norm is fixed by every residue action after it:
+P_n(j) N_n = N_n for j ∈ ℤ. -/
 @[reassoc]
 theorem normMap_comp_cyclicPowerMap (n : ℕ) (j : ℤ) :
     normMap k A n ≫ cyclicPowerMap k A n j = normMap k A n := by
@@ -172,7 +226,10 @@ theorem normMap_comp_cyclicPowerMap (n : ℕ) (j : ℤ) :
   rw [TensorPower.consNorm_eq_representation_norm]
   exact Representation.self_comp_norm _ _
 
-/-- The same native finite-group norm is invariant after every residue action. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The cyclic norm is also fixed before every residue action:
+N_n P_n(j) = N_n for j ∈ ℤ. -/
 @[reassoc]
 theorem cyclicPowerMap_comp_normMap (n : ℕ) (j : ℤ) :
     cyclicPowerMap k A n j ≫ normMap k A n = normMap k A n := by
@@ -183,7 +240,10 @@ theorem cyclicPowerMap_comp_normMap (n : ℕ) (j : ℤ) :
   rw [TensorPower.consNorm_eq_representation_norm]
   exact Representation.norm_comp_self _ _
 
-/-- The norm is the sum of the nonnegative residue actions. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The cyclic norm is the finite sum
+N_n = ∑_{j=0}^{n} P_n(j) of nonnegative cyclic residue actions. -/
 theorem normMap_sum_power (n : ℕ) :
     normMap k A n = ∑ j ∈ Finset.range (n + 1), cyclicPowerMap k A n (j : ℤ) := by
   apply ModuleCat.hom_ext
@@ -196,7 +256,10 @@ theorem normMap_sum_power (n : ℕ) :
   intro j _
   simpa only [Int.cast_natCast] using (TensorPower.consCyclicRepresentation_natCast k A n j).symm
 
-/-- Inversion permutes the finite cyclic group, giving the inverse-residue norm sum. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+Inversion permutes the cyclic residues, so the same norm is
+N_n = ∑_{j=0}^{n} P_n(−j). -/
 theorem normMap_sum_inverse_power (n : ℕ) :
     normMap k A n = ∑ j ∈ Finset.range (n + 1), cyclicPowerMap k A n (-(j : ℤ)) := by
   classical
@@ -235,34 +298,64 @@ section Multiplication
 
 variable [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The original nonunital bar with its regular coefficient actions. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The regular coefficient representations are left multiplication
+l(a)m = am and right multiplication r(op a)m = ma. They give
+the semisimplicial regular bar with terms C_n. -/
 abbrev regularBar : SemiSimplicialObject (ModuleCat.{max u v} k) :=
   bar (NonUnitalAlgHom.lmul k A) (regularRight (k := k) (A := A))
     (fun a b m => regular_commute (k := k) (A := A) a (MulOpposite.unop b) m)
 
-/-- The regular bar object is the original coefficient-and-word tensor level. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n object of the regular semisimplicial bar is exactly
+the k-module C_n = A ⊗[k] A^{⊗n}. -/
 @[simp]
 theorem regularBar_obj (n : ℕ) : (regularBar k A) _⦋n⦌ₛ = chainLevel k A A n := rfl
 
-/-- The original regular Hochschild face; no new face model is chosen. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The regular face δ_i : C_{n+1} → C_n uses right multiplication
+on the coefficient for i=0, an adjacent tail product for 1≤i≤n,
+and left multiplication by the last factor for i=n+1. -/
 abbrev regularFace (n : ℕ) (i : Fin (n + 2)) :
     chainLevel k A A (n + 1) ⟶ chainLevel k A A n :=
   face (NonUnitalAlgHom.lmul k A) (regularRight (k := k) (A := A))
     (fun a b m => regular_commute (k := k) (A := A) a (MulOpposite.unop b) m) n i
 
-/-- The full differential is the regular nonunital Hochschild complex. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The regular Hochschild chain complex has terms C_n and boundary
+b_{n+1} = ∑_{i=0}^{n+1} (−1)^i δ_i. -/
 abbrev bComplex : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   complex (NonUnitalAlgHom.lmul k A) (regularRight (k := k) (A := A))
     (fun a b m => regular_commute (k := k) (A := A) a (MulOpposite.unop b) m)
 
-/-- The truncated regular complex, retaining its original degree-zero term. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The omitted-last-face complex has all terms C_n, including C_0,
+and differential b′_{n+1} = ∑_{i=0}^{n} (−1)^i δ_i. -/
 abbrev bPrimeComplex : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   (truncatedAlternatingFaceMapComplex (ModuleCat.{max u v} k)).obj (regularBar k A)
 
-/-- Both complexes use the original regular tensor level in each degree. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n object of the b′ complex is C_n; omitting the final
+face changes its differential and retains every tensor degree. -/
 theorem bPrimeComplex_X (n : ℕ) : (bPrimeComplex k A).X n = chainLevel k A A n := rfl
 
-/-- The truncated differential is the sum of the original faces except the final one. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The b′ differential C_{n+1} → C_n is
+∑_{i=0}^{n} (−1)^i δ_i, the alternating adjacent products. -/
 theorem bPrimeComplex_d (n : ℕ) :
     (bPrimeComplex k A).d (n + 1) n =
       ∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val • regularFace k A n i.castSucc := by
@@ -281,13 +374,21 @@ theorem bPrimeComplex_d (n : ℕ) :
   exact congrArg (fun f : chainLevel k A A (n + 1) ⟶ chainLevel k A A n =>
     (-1 : ℤ) ^ i.val • f) hδ
 
-/-- The full differential retains every original face and sign. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The b differential C_{n+1} → C_n is
+∑_{i=0}^{n+1} (−1)^i δ_i, including the cyclic last face. -/
 theorem bComplex_d (n : ℕ) :
     (bComplex k A).d (n + 1) n =
       ∑ i : Fin (n + 2), (-1 : ℤ) ^ i.val • regularFace k A n i :=
   complex_d _ _ _ n
 
-/-- The first original regular face multiplies the coefficient on the right. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The first face has value
+δ_0(m ⊗ a_1 ⊗ ⋯ ⊗ a_{n+1}) = ma_1 ⊗ a_2 ⊗ ⋯ ⊗ a_{n+1}. -/
 theorem regularFace_first_tprod (n : ℕ) (m : A) (a : Fin (n + 1) → A) :
     (regularFace k A n 0).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       (m * a 0) ⊗ₜ[k] PiTensorProduct.tprod k (hochschildDropFirst a) := by
@@ -295,20 +396,34 @@ theorem regularFace_first_tprod (n : ℕ) (m : A) (a : Fin (n + 1) → A) :
     (face_first_tprod (NonUnitalAlgHom.lmul k A) (regularRight (k := k) (A := A))
       (fun a b m => regular_commute (k := k) (A := A) a (MulOpposite.unop b) m) n m a)
 
-/-- The interior original regular face preserves the order of the two adjacent factors. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+For 1≤i≤n, the interior face δ_i replaces a_i,a_{i+1}
+by their ordered product a_i a_{i+1} and leaves the coefficient m
+and every other tail factor in order. -/
 theorem regularFace_inner_tprod (n : ℕ) (i : Fin n) (m : A) (a : Fin (n + 1) → A) :
     (regularFace k A n i.castSucc.succ).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[k] PiTensorProduct.tprod k (hochschildMulAdjacent i a) :=
   face_inner_tprod _ _ _ n i m a
 
-/-- The final original regular face multiplies on the left. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The last face has value
+δ_{n+1}(m ⊗ a_1 ⊗ ⋯ ⊗ a_{n+1}) =
+a_{n+1}m ⊗ a_1 ⊗ ⋯ ⊗ a_n. -/
 theorem regularFace_last_tprod (n : ℕ) (m : A) (a : Fin (n + 1) → A) :
     (regularFace k A n (Fin.last (n + 1))).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       (a (Fin.last n) * m) ⊗ₜ[k] PiTensorProduct.tprod k (hochschildDropLast a) := by
   exact face_last_tprod (NonUnitalAlgHom.lmul k A) (regularRight (k := k) (A := A))
     (fun a b m => regular_commute (k := k) (A := A) a (MulOpposite.unop b) m) n m a
 
-/-- The truncated first differential is multiplication, with no unit assumption. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The first b′ differential is multiplication:
+b′_1(m ⊗ a) = ma under the empty-tensor identification C_0 ≃ A. -/
 theorem bPrimeComplex_d_one_tprod (m : A) (a : Fin 1 → A) :
     ((bPrimeComplex k A).d 1 0).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       (m * a 0) ⊗ₜ[k] PiTensorProduct.tprod k (fun i : Fin 0 => a i.succ) := by
@@ -325,7 +440,11 @@ theorem bPrimeComplex_d_one_tprod (m : A) (a : Fin 1 → A) :
       f.hom (m ⊗ₜ[k] PiTensorProduct.tprod k a)) hd
   exact hval.trans (regularFace_first_tprod k A 0 m a)
 
-/-- The first atomic cyclic-face identity on the original linear maps. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+As k-linear maps, the first face and signed rotation satisfy
+δ_0 t_{n+1} = (−1)^{n+1} δ_{n+1}. -/
 theorem regularFace_zero_cyclic (n : ℕ) :
     (regularFace k A n 0).hom.comp (TensorPower.consCyclicOperator k A (n + 1)) =
       (-1 : k) ^ (n + 1) • (regularFace k A n (Fin.last (n + 1))).hom := by
@@ -376,7 +495,12 @@ theorem regularFace_zero_cyclic (n : ℕ) :
     _ = (-1 : k) ^ (n + 1) • g (m ⊗ₜ[k] PiTensorProduct.tprod k a) :=
       congrArg (fun x : A ⊗[k] TensorPower k n A => (-1 : k) ^ (n + 1) • x) hg.symm
 
-/-- Every non-wrapping original regular face is the adjacent merge in full coordinates. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Let κ_n : C_n ≃ A^{⊗(n+1)} retain the full ordered word.
+For an adjacent face 0≤i≤n, κ_n δ_i(m ⊗ tprod(a)) is
+tprod(merge_i(cons(m,a))). -/
 theorem regularFace_cons_tprod (n : ℕ) (i : Fin (n + 1)) (m : A)
     (a : Fin (n + 1) → A) :
     TensorPower.consEquiv k A n
@@ -391,7 +515,11 @@ theorem regularFace_cons_tprod (n : ℕ) (i : Fin (n + 1)) (m : A)
         ((regularFace k A n i.castSucc.succ).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a)) = _
     rw [regularFace_inner_tprod, TensorPower.consEquiv_tmul, mulAdjacent_cons_succ]
 
-/-- The remaining atomic cyclic-face identity preserves every ordered adjacent product. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+As k-linear maps, the remaining cyclic-face identities are
+δ_{i+1} t_{n+1} = −t_n δ_i for 0≤i≤n. -/
 theorem regularFace_succ_cyclic (n : ℕ) (i : Fin (n + 1)) :
     (regularFace k A n i.succ).hom.comp (TensorPower.consCyclicOperator k A (n + 1)) =
       -((TensorPower.consCyclicOperator k A n).comp (regularFace k A n i.castSucc).hom) := by
@@ -459,7 +587,12 @@ theorem regularFace_succ_cyclic (n : ℕ) (i : Fin (n + 1)) :
     rw [hL, map_neg, hR]
     simp only [pow_succ, mul_neg, mul_one, neg_smul]
 
-/-- The first original face has the printed integer-sign cyclic identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+In the k-module category, the signed first-face identity is
+δ_0 t_{n+1} = (−1)^{n+1} δ_{n+1}, with the integer sign acting
+on the face morphism. -/
 theorem regularFace_zero_cyclicMap (n : ℕ) :
     cyclicMap k A (n + 1) ≫ regularFace k A n 0 =
       (-1 : ℤ) ^ (n + 1) • regularFace k A n (Fin.last (n + 1)) := by
@@ -469,7 +602,11 @@ theorem regularFace_zero_cyclicMap (n : ℕ) :
   rw [← Int.cast_smul_eq_zsmul k]
   simpa only [Int.cast_pow, Int.cast_neg, Int.cast_one] using regularFace_zero_cyclic k A n
 
-/-- Every shifted original face has the printed negative cyclic identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+In the k-module category, each shifted face satisfies
+δ_{i+1} t_{n+1} = −t_n δ_i for 0≤i≤n. -/
 theorem regularFace_succ_cyclicMap (n : ℕ) (i : Fin (n + 1)) :
     cyclicMap k A (n + 1) ≫ regularFace k A n i.succ =
       -(regularFace k A n i.castSucc ≫ cyclicMap k A n) := by
@@ -478,7 +615,12 @@ theorem regularFace_succ_cyclicMap (n : ℕ) (i : Fin (n + 1)) :
     -((TensorPower.consCyclicOperator k A n).comp (regularFace k A n i.castSucc).hom)
   exact regularFace_succ_cyclic k A n i
 
-/-- Actual inverse residue actions express every signed face through the first face. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+For i ∈ Fin(n+2), the signed face is transported from the first
+face by integer cyclic powers:
+(−1)^i δ_i = P_n(i) δ_0 P_{n+1}(−i). -/
 theorem regularFace_weighted_conjugate (n : ℕ) (i : Fin (n + 2)) :
     (-1 : ℤ) ^ i.val • regularFace k A n i =
       cyclicPowerMap k A (n + 1) (-(i.val : ℤ)) ≫ regularFace k A n 0 ≫
@@ -514,7 +656,11 @@ theorem regularFace_weighted_conjugate (n : ℕ) (i : Fin (n + 2)) :
         simp only [Category.assoc, cyclicPowerMap_comp_assoc, cyclicPowerMap_comp,
           hsource, htarget, Fin.val_succ]
 
-/-- The cyclic norm intertwines the full and truncated regular differentials. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cyclic norm intertwines the full and omitted-last-face
+boundaries: b′_{n+1} N_{n+1} = N_n b_{n+1}. -/
 theorem normMap_comp_bPrime_d (n : ℕ) :
     normMap k A (n + 1) ≫ (bPrimeComplex k A).d (n + 1) n =
       (bComplex k A).d (n + 1) n ≫ normMap k A n := by
@@ -566,7 +712,11 @@ theorem normMap_comp_bPrime_d (n : ℕ) :
       _ = _ := by rw [← sum_comp, hsource]
   exact hleft.trans hright.symm
 
-/-- Splitting off the final face compares the full and truncated boundaries. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Splitting off the last face gives
+b_{n+1} = b′_{n+1} + (−1)^{n+1} δ_{n+1}. -/
 theorem bComplex_d_eq_bPrime_add_last (n : ℕ) :
     (bComplex k A).d (n + 1) n =
       let d' : chainLevel k A A (n + 1) ⟶ chainLevel k A A n := (bPrimeComplex k A).d (n + 1) n
@@ -580,7 +730,11 @@ theorem bComplex_d_eq_bPrime_add_last (n : ℕ) :
   rw [hd, hd', Fin.sum_univ_castSucc]
   rfl
 
-/-- The shifted face sum is the cyclic translate of the truncated boundary. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cyclic translate of the full boundary is
+b_{n+1} t_{n+1} = t_n b′_{n+1} + (−1)^{n+1} δ_{n+1}. -/
 theorem cyclicMap_comp_bComplex_d (n : ℕ) :
     cyclicMap k A (n + 1) ≫ (bComplex k A).d (n + 1) n =
       let d' : chainLevel k A A (n + 1) ⟶ chainLevel k A A n := (bPrimeComplex k A).d (n + 1) n
@@ -603,7 +757,11 @@ theorem cyclicMap_comp_bComplex_d (n : ℕ) :
   rw [comp_zsmul, regularFace_succ_cyclicMap, zsmul_comp]
   simp only [Fin.val_succ, pow_succ, mul_neg, mul_one, neg_smul, smul_neg, neg_neg]
 
-/-- The two boundaries satisfy the first cyclic commutation square. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cyclic difference intertwines the two boundaries:
+b_{n+1}(1−t_{n+1}) = (1−t_n)b′_{n+1}. -/
 theorem bPrime_d_comp_oneSub_cyclicMap (n : ℕ) :
     (bPrimeComplex k A).d (n + 1) n ≫ (𝟙 (chainLevel k A A n) - cyclicMap k A n) =
       (𝟙 (chainLevel k A A (n + 1)) - cyclicMap k A (n + 1)) ≫
@@ -621,39 +779,65 @@ theorem bPrime_d_comp_oneSub_cyclicMap (n : ℕ) :
     hcyclic, hlast]
   abel
 
-/-- The first cyclic square gives the map from the truncated column to the full one. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The components 1−t_n define a chain map
+(C_*,b′) → (C_*,b) between the regular complexes. -/
 def oneSubCyclicChainMap : bPrimeComplex k A ⟶ bComplex k A :=
   ChainComplex.ofHom (fun n => 𝟙 (chainLevel k A A n) - cyclicMap k A n)
     (fun n => (bPrime_d_comp_oneSub_cyclicMap k A n).symm)
 
-/-- The norm is a map from the full column to the truncated one. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The components N_n define a chain map
+(C_*,b) → (C_*,b′) between the regular complexes. -/
 def normChainMap : bComplex k A ⟶ bPrimeComplex k A :=
   ChainComplex.ofHom (normMap k A) (normMap_comp_bPrime_d k A)
 
-/-- The first column map has its original signed cyclic component. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n component of the b′-to-b chain map is 1−t_n. -/
 @[simp]
 theorem oneSubCyclicChainMap_f (n : ℕ) :
     (oneSubCyclicChainMap k A).f n = 𝟙 (chainLevel k A A n) - cyclicMap k A n := rfl
 
-/-- The norm column map has its norm component. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n component of the b-to-b′ chain map is N_n. -/
 @[simp]
 theorem normChainMap_f (n : ℕ) : (normChainMap k A).f n = normMap k A n := rfl
 
-/-- Adjacent column maps compose to zero in the first order. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The b′-to-b map 1−t followed by the b-to-b′ map N has
+zero composite as a chain map. -/
 theorem oneSubCyclicChainMap_comp_normChainMap :
     oneSubCyclicChainMap k A ≫ normChainMap k A = 0 := by
   apply HomologicalComplex.hom_ext
   intro n
   exact oneSubCyclicMap_comp_normMap k A n
 
-/-- They compose to zero in the other order as well. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The b-to-b′ map N followed by the b′-to-b map 1−t also has
+zero composite as a chain map. -/
 theorem normChainMap_comp_oneSubCyclicChainMap :
     normChainMap k A ≫ oneSubCyclicChainMap k A = 0 := by
   apply HomologicalComplex.hom_ext
   intro n
   exact normMap_comp_oneSubCyclicMap k A n
 
-/-- Even columns use the original full boundary; odd columns use the truncated boundary. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Column p is the chain complex (C_*,b) if p is even, and
+(C_*,b′) if p is odd. -/
 def cyclicColumn (p : ℕ) : ChainComplex (ModuleCat.{max u v} k) ℕ where
   X n := chainLevel k A A n
   d i j := if Even p then (bComplex k A).d i j else (bPrimeComplex k A).d i j
@@ -676,11 +860,19 @@ def cyclicColumn (p : ℕ) : ChainComplex (ModuleCat.{max u v} k) ℕ where
     · rw [ite_eq_right hp, ite_eq_right hp]
       exact (bPrimeComplex k A).d_comp_d i j l
 
-/-- No bottom term is removed when a column is truncated. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The row-q object in every cyclic column p is C_q,
+including the bottom row q=0. -/
 @[simp]
 theorem cyclicColumn_X (p q : ℕ) : (cyclicColumn k A p).X q = chainLevel k A A q := rfl
 
-/-- An even column is the original full complex, including all of its objects and maps. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+For an even column index p, the entire column complex is
+(C_*,b), with the full regular Hochschild boundary. -/
 theorem cyclicColumn_even (p : ℕ) (hp : Even p) :
     cyclicColumn k A p = bComplex k A := by
   refine HomologicalComplex.ext (C₁ := cyclicColumn k A p) (C₂ := bComplex k A)
@@ -691,7 +883,11 @@ theorem cyclicColumn_even (p : ℕ) (hp : Even p) :
   change (if Even p then d else d') ≫ 𝟙 (chainLevel k A A j) = 𝟙 (chainLevel k A A i) ≫ d
   rw [ite_eq_left hp, Category.comp_id, Category.id_comp]
 
-/-- An odd column is the general last-face truncation. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+For a column p with ¬Even(p), the column complex is
+(C_*,b′), with the cyclic last face omitted. -/
 theorem cyclicColumn_odd (p : ℕ) (hp : ¬ Even p) :
     cyclicColumn k A p = bPrimeComplex k A := by
   refine HomologicalComplex.ext (C₁ := cyclicColumn k A p) (C₂ := bPrimeComplex k A)
@@ -702,7 +898,11 @@ theorem cyclicColumn_odd (p : ℕ) (hp : ¬ Even p) :
   change (if Even p then d else d') ≫ 𝟙 (chainLevel k A A j) = 𝟙 (chainLevel k A A i) ≫ d'
   rw [ite_eq_right hp, Category.comp_id, Category.id_comp]
 
-/-- The horizontal map alternates the maps 1-t and N, beginning with 1-t. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The horizontal chain map from column p+1 to p is 1−t
+when p is even and N when p is odd. -/
 def cyclicHorizontalMap (p : ℕ) : cyclicColumn k A (p + 1) ⟶ cyclicColumn k A p :=
   ChainComplex.ofHom
     (fun q => if Even p then 𝟙 (chainLevel k A A q) - cyclicMap k A q else normMap k A q)
@@ -728,13 +928,21 @@ def cyclicHorizontalMap (p : ℕ) : cyclicColumn k A (p + 1) ⟶ cyclicColumn k 
           normMap_comp_bPrime_d k A q
         simpa only [ite_eq_right hp, ite_eq_left hp'] using hComm
 
-/-- The horizontal component acts on the original tensor level. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+At row q, the horizontal map from p+1 to p has component
+1−t_q for even p, and N_q for odd p. -/
 @[simp]
 theorem cyclicHorizontalMap_f (p q : ℕ) :
     (cyclicHorizontalMap k A p).f q =
       if Even p then 𝟙 (chainLevel k A A q) - cyclicMap k A q else normMap k A q := rfl
 
-/-- Both norm identities prove the consecutive horizontal composites vanish. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Two consecutive horizontal column maps have zero composite,
+by N_q(1−t_q)=0 and (1−t_q)N_q=0 in every row q. -/
 theorem cyclicHorizontalMap_squared (p : ℕ) :
     cyclicHorizontalMap k A (p + 1) ≫ cyclicHorizontalMap k A p = 0 := by
   apply HomologicalComplex.hom_ext
@@ -750,18 +958,30 @@ theorem cyclicHorizontalMap_squared (p : ℕ) :
     rw [if_pos hp', if_neg hp]
     exact oneSubCyclicMap_comp_normMap k A q
 
-/-- The first-quadrant cyclic bicomplex is a chain complex of its original columns. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The columns C_*,b and C_*,b′ with the alternating horizontal
+maps form a first-quadrant bicomplex K_{p,q}=C_q of k-modules. -/
 def cyclicBicomplex :
     HomologicalComplex₂ (ModuleCat.{max u v} k) (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   ChainComplex.of (cyclicColumn k A) (cyclicHorizontalMap k A)
     (cyclicHorizontalMap_squared k A)
 
-/-- Every bicomplex cell is the original regular tensor level, including the bottom row. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Every cell K_{p,q} of the cyclic bicomplex is the regular tensor
+module C_q = A ⊗[k] A^{⊗q}. -/
 @[simp]
 theorem cyclicBicomplex_XX (p q : ℕ) :
     ((cyclicBicomplex k A).X p).X q = chainLevel k A A q := rfl
 
-/-- The horizontal differential begins with 1-t and then alternates with N. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The horizontal differential K_{p+1,q} → K_{p,q} is
+1−t_q for even p and N_q for odd p. -/
 theorem cyclicBicomplex_horizontal (p q : ℕ) :
     ((cyclicBicomplex k A).d (p + 1) p).f q =
       if Even p then 𝟙 (chainLevel k A A q) - cyclicMap k A q else normMap k A q := by
@@ -770,17 +990,30 @@ theorem cyclicBicomplex_horizontal (p q : ℕ) :
     rw [ChainComplex.of_d]
   exact (HomologicalComplex.congr_hom hd q).trans (cyclicHorizontalMap_f k A p q)
 
-/-- The unsigned vertical differential uses precisely the two original column boundaries. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The stored vertical differential K_{p,q+1} → K_{p,q} is
+b_{q+1} for even p and b′_{q+1} for odd p. -/
 theorem cyclicBicomplex_vertical (p q : ℕ) :
     ((cyclicBicomplex k A).X p).d (q + 1) q =
       if Even p then (bComplex k A).d (q + 1) q else (bPrimeComplex k A).d (q + 1) q := rfl
 
-/-- Native totalization supplies the printed sign on each vertical column. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The vertical contribution used in totalization is
+(−1)^p times the stored differential of column p, as a map
+C_{q+1} → C_q. -/
 def signedVertical (p q : ℕ) :
     chainLevel k A A (q + 1) ⟶ chainLevel k A A q :=
   (ComplexShape.down ℕ).ε p • ((cyclicBicomplex k A).X p).d (q + 1) q
 
-/-- The native sign is b on even columns and the printed -b' on odd columns. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The signed vertical differential used in the cyclic total is
+b_{q+1} on even columns and −b′_{q+1} on odd columns. -/
 theorem signedVertical_eq (p q : ℕ) :
     signedVertical k A p q =
       if Even p then (bComplex k A).d (q + 1) q else -(bPrimeComplex k A).d (q + 1) q := by
@@ -804,19 +1037,28 @@ theorem signedVertical_eq (p q : ℕ) :
   exact h₀.trans ((congrArg
     (fun f : chainLevel k A A (q + 1) ⟶ chainLevel k A A q => σ • f) hv).trans hParity)
 
-/-- Each horizontal row is the native periodic complex of the cyclic action. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+For fixed q, the periodic cyclic row has the constant object C_q,
+with consecutive maps 1−t_q,N_q,1−t_q,N_q,… .
+Its square-zero law is the pair of cyclic norm identities. -/
 def cyclicRow (q : ℕ) : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   HomologicalComplex.alternatingConst (chainLevel k A A q)
     (normMap_comp_oneSubCyclicMap k A q) (oneSubCyclicMap_comp_normMap k A q)
     (fun _ _ => ComplexShape.down_nat_odd_add)
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- The native periodic row uses the original tensor object. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+Every degree-p object of the periodic cyclic row q is C_q. -/
 @[simp]
 theorem cyclicRow_X (p q : ℕ) : (cyclicRow k A q).X p = chainLevel k A A q := rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- Its native periodic differential is the horizontal component. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+In row q, the periodic differential from p+1 to p is
+1−t_q for even p and N_q for odd p. -/
 theorem cyclicRow_d (p q : ℕ) :
     (cyclicRow k A q).d (p + 1) p =
       if Even p then 𝟙 (chainLevel k A A q) - cyclicMap k A q else normMap k A q := by
@@ -824,21 +1066,40 @@ theorem cyclicRow_d (p q : ℕ) :
     simp only [cyclicRow, HomologicalComplex.alternatingConst, ComplexShape.down_Rel,
       Nat.even_add_one, hp, not_true_eq_false, not_false_eq_true, ↓reduceDIte, ↓reduceIte]
 
-/-- Native row construction and the bicomplex use the same horizontal map. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The horizontal differential of K at row q is exactly the
+corresponding differential of the periodic row complex:
+d^K_{p+1,p}|_q = d^{row(q)}_{p+1,p}. -/
 theorem cyclicBicomplex_horizontal_eq_row (p q : ℕ) :
     ((cyclicBicomplex k A).d (p + 1) p).f q = (cyclicRow k A q).d (p + 1) p := by
   rw [cyclicBicomplex_horizontal, cyclicRow_d]
 
-/-- Totalization uses the native finite-diagonal coproduct in the module category. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cyclic total in degree n is the finite coproduct
+T_n = ⊕_{p+q=n} C_q, with its horizontal and signed vertical
+contributions. It is a k-module chain complex indexed by ℕ. -/
 abbrev cyclicTotal : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   (cyclicBicomplex k A).total (ComplexShape.down ℕ)
 
-/-- The original tensor cell has its total-complex inclusion. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cell C_q = K_{p,q} has its canonical coprojection
+ι_{p,q} : C_q → T_{p+q} into the cyclic total. -/
 def cyclicTotalInclusion (p q : ℕ) :
     chainLevel k A A q ⟶ (cyclicTotal k A).X (p + q) :=
   (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) p q (p + q) rfl
 
-/-- Native vertical totalization uses the signed boundary on the original summand. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The total vertical contribution from cell (p,q+1) is
+ι_{p,q} after the signed vertical map C_{q+1} → C_q.
+Thus it uses b on even columns and −b′ on odd columns. -/
 theorem cyclicBicomplex_d₂ (p q : ℕ) :
     (cyclicBicomplex k A).d₂ (ComplexShape.down ℕ) p (q + 1) (p + q) =
       signedVertical k A p q ≫ cyclicTotalInclusion k A p q := by
@@ -849,7 +1110,12 @@ theorem cyclicBicomplex_d₂ (p q : ℕ) :
     signedVertical k A p q ≫ cyclicTotalInclusion k A p q
   exact (Linear.units_smul_comp _ _ _).symm
 
-/-- Native horizontal totalization has no additional horizontal sign. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The total horizontal contribution from cell (p+1,q) is
+ι_{p,q}(1−t_q) for even p and ι_{p,q}N_q for odd p,
+with no further horizontal sign. -/
 theorem cyclicBicomplex_d₁ (p q : ℕ) :
     (cyclicBicomplex k A).d₁ (ComplexShape.down ℕ) (p + 1) q (p + q) =
       (if Even p then 𝟙 (chainLevel k A A q) - cyclicMap k A q else normMap k A q) ≫
@@ -872,7 +1138,11 @@ section Naturality
 variable {k A} {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- Nonunital maps intertwine every regular face with independent carrier universes. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+Applying f to every factor gives F_n : C_n(A) → C_n(B).
+Each regular face satisfies F_n δ_i^A = δ_i^B F_{n+1}. -/
 theorem regularFace_natural (f : A →ₙₐ[k] B) (n : ℕ) (i : Fin (n + 2)) :
     (TensorPower.consLevelMap (f : A →ₗ[k] B) n).comp (regularFace k A n i).hom =
       (regularFace k B n i).hom.comp (TensorPower.consLevelMap (f : A →ₗ[k] B) (n + 1)) := by
@@ -936,7 +1206,13 @@ theorem regularFace_natural (f : A →ₙₐ[k] B) (n : ℕ) (i : Fin (n + 2)) :
         rw [hInput]
         exact hB.symm
 
-/-- The same face square intertwines any finite integer-weighted selection of original faces. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+For any finite index set I, chosen faces ι(i) and integer
+weights ε_i, the sum of face maps is natural:
+F_n(∑_{i∈I} ε_i δ^A_{ι(i)}) =
+(∑_{i∈I} ε_i δ^B_{ι(i)})F_{n+1}. -/
 theorem regularFace_sum_natural (f : A →ₙₐ[k] B) (n : ℕ) {I : Type*} [Fintype I]
     (ι : I → Fin (n + 2)) (ε : I → ℤ) :
     (TensorPower.consLevelMap (f : A →ₗ[k] B) n).comp
@@ -951,7 +1227,10 @@ theorem regularFace_sum_natural (f : A →ₙₐ[k] B) (n : ℕ) {I : Type*} [Fi
   intro i _
   exact congrArg (fun z => ε i • z) (DFunLike.congr_fun (regularFace_natural f n (ι i)) x)
 
-/-- The full boundary is natural under nonunital maps, with no unit requirement. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+The full boundaries satisfy F_n b^A_{n+1} = b^B_{n+1} F_{n+1}. -/
 theorem bComplex_d_natural (f : A →ₙₐ[k] B) (n : ℕ) :
     (TensorPower.consLevelMap (f : A →ₗ[k] B) n).comp ((bComplex k A).d (n + 1) n).hom =
       ((bComplex k B).d (n + 1) n).hom.comp
@@ -964,7 +1243,11 @@ theorem bComplex_d_natural (f : A →ₙₐ[k] B) (n : ℕ) :
   rw [hA, hB]
   exact regularFace_sum_natural f n id (fun i => (-1 : ℤ) ^ i.val)
 
-/-- The final-face truncation is natural under the same nonunital map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+The omitted-last-face boundaries satisfy
+F_n b′^A_{n+1} = b′^B_{n+1} F_{n+1}. -/
 theorem bPrimeComplex_d_natural (f : A →ₙₐ[k] B) (n : ℕ) :
     (TensorPower.consLevelMap (f : A →ₗ[k] B) n).comp ((bPrimeComplex k A).d (n + 1) n).hom =
       ((bPrimeComplex k B).d (n + 1) n).hom.comp
@@ -979,7 +1262,10 @@ theorem bPrimeComplex_d_natural (f : A →ₙₐ[k] B) (n : ℕ) :
   erw [hA, hB]
   exact regularFace_sum_natural f n Fin.castSucc (fun i => (-1 : ℤ) ^ i.val)
 
-/-- The native universe-lift functors carry the original level map into a common module world. -/
+/-- Let k be commutative, A,B nonunital associative rings with k-module
+structures in universes v,w, and f : A → B k-linear. The tensor map
+F_n applies f to all n+1 factors. Lifting the source by w and the
+target by v gives a k-module morphism in common height max{u,v,w}. -/
 def levelMapLift (f : A →ₗ[k] B) (n : ℕ) :
     (ModuleCat.uliftFunctor.{w, max u v} k).obj (chainLevel k A A n) ⟶
       (ModuleCat.uliftFunctor.{v, max u w} k).obj (chainLevel k B B n) :=
@@ -988,13 +1274,21 @@ def levelMapLift (f : A →ₗ[k] B) (n : ℕ) :
 
 omit [IsScalarTower k A A] [SMulCommClass k A A]
   [IsScalarTower k B B] [SMulCommClass k B B] in
-/-- The lifted map applies only the original linear map to the original tensor value. -/
+/-- Let k be commutative and A,B nonunital rings with k-module structures
+in universes v,w. For a k-linear f : A → B, the common-height
+tensor map has value ULift(x) ↦ ULift(F_n(x)), where F_n applies
+f to every factor. -/
 @[simp]
 theorem levelMapLift_apply (f : A →ₗ[k] B) (n : ℕ)
     (x : (ModuleCat.uliftFunctor.{w, max u v} k).obj (chainLevel k A A n)) :
     (levelMapLift f n).hom x = ULift.up (TensorPower.consLevelMap f n x.down) := rfl
 
-/-- Independent-universe nonunital maps give bicomplex morphisms after native lifting. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+Lifting the A-bicomplex by w and the B-bicomplex by v gives
+objects in the common k-module universe max{u,v,w}.
+The maps F_q define a bicomplex morphism K(A) → K(B) there. -/
 def cyclicBicomplexMap (f : A →ₙₐ[k] B) :
     (((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
       (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).obj
@@ -1079,13 +1373,20 @@ def cyclicBicomplexMap (f : A →ₙₐ[k] B) :
     change L (q' + 1) ≫ UB.map dB = UA.map dA ≫ L q'
     exact (transport dA dB h).symm
 
-/-- Every lifted bicomplex component is the native lifted original level map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+Every cell (p,q) of the lifted bicomplex map is the same
+lifted tensor-level map F_q, independent of p. -/
 @[simp]
 theorem cyclicBicomplexMap_f_f (f : A →ₙₐ[k] B) (p q : ℕ) :
     ((cyclicBicomplexMap f).f p).f q = levelMapLift (f : A →ₗ[k] B) q := rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- The native lifted level map preserves the identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Set C_n = A ⊗[k] A^{⊗n}.
+The lifted tensor-level map of id_A is the identity on
+U^v C_n(A), where v is the algebra carrier universe. -/
 theorem levelMapLift_id (n : ℕ) :
     levelMapLift (LinearMap.id : A →ₗ[k] A) n =
       𝟙 ((ModuleCat.uliftFunctor.{v, max u v} k).obj (chainLevel k A A n)) := by
@@ -1095,7 +1396,11 @@ theorem levelMapLift_id (n : ℕ) :
   change ULift.up (TensorPower.consLevelMap (LinearMap.id : A →ₗ[k] A) n x) = ULift.up x
   simp only [TensorPower.consLevelMap_id, LinearMap.id_apply]
 
-/-- The lifted bicomplex map of the identity algebra map is the identity. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The lifted cyclic bicomplex morphism induced by the identity
+nonunital algebra map is the identity. -/
 theorem cyclicBicomplexMap_id :
     cyclicBicomplexMap (NonUnitalAlgHom.id k A) = 𝟙 _ := by
   apply HomologicalComplex.hom_ext
@@ -1109,44 +1414,81 @@ end Naturality
 
 section Homology
 
-/-- Cyclic homology is the homology of the cyclic total. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Cyclic homology HC_n(A/k) is the k-module H_n(T(A)),
+where T is the cyclic bicomplex total in universe max{u,v}. -/
 def cyclicHomology (n : ℕ) : ModuleCat.{max u v} k := (cyclicTotal k A).homology n
 
-/-- The Connes complex is the native cokernel of the first horizontal column map. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The Connes quotient complex C_λ is the cokernel of the first
+horizontal chain map 1−t : (C_*,b′) → (C_*,b).
+Its degree-n module is C_n/im(1−t_n). -/
 def connesComplex : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   HomologicalComplex₂.firstColumnCokernel (cyclicBicomplex k A)
 
-/-- The homology of the Connes quotient complex. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The Connes quotient homology is H_n(C_λ(A)), where
+C_λ = coker(1−t : (C_*,b′) → (C_*,b)). -/
 def connesHomology (n : ℕ) : ModuleCat.{max u v} k := (connesComplex k A).homology n
 
-/-- The cyclic total has its canonical projection to the Connes quotient. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The canonical chain map T(A) → C_λ(A) is the quotient map
+from column zero and is zero on every later column. -/
 def cyclicToConnes : cyclicTotal k A ⟶ connesComplex k A :=
   HomologicalComplex₂.firstColumnCokernelProjection (cyclicBicomplex k A)
 
-/-- The first-column summand uses the original cokernel projection. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+On column zero in degree n, the map T → C_λ is precisely
+the cokernel projection π_n : C_n → C_n/im(1−t_n). -/
 theorem cyclicToConnes_ι_zero (n : ℕ) :
     (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) 0 n n (Nat.zero_add n) ≫
         (cyclicToConnes k A).f n =
       (cokernel.π ((cyclicBicomplex k A).d 1 0)).f n :=
   HomologicalComplex₂.ι_firstColumnCokernelProjectionX_zero (cyclicBicomplex k A) n
 
-/-- Every later column is sent to zero by the canonical Connes projection. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The chain map T → C_λ sends the total summand K_{p+1,q}
+to zero in every degree n=p+1+q. -/
 theorem cyclicToConnes_ι_succ (p q n : ℕ) (h : p + 1 + q = n) :
     (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) (p + 1) q n h ≫
       (cyclicToConnes k A).f n = 0 :=
   HomologicalComplex₂.ι_firstColumnCokernelProjectionX_succ (cyclicBicomplex k A) p q n h
 
-/-- The prescribed projection induces the map on native homology. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+Homology of the canonical projection T → C_λ gives the
+k-module map HC_n(A/k) → H_n(C_λ(A)). -/
 def cyclicToConnesHomology (n : ℕ) : cyclicHomology k A n ⟶ connesHomology k A n :=
   HomologicalComplex.homologyMap (cyclicToConnes k A) n
 
-/-- Native evaluation identifies a Connes term with the cokernel of its level map. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n object of the chain cokernel C_λ is isomorphic
+to the k-module cokernel of 1−t_n : C_n → C_n. -/
 def connesComplexXIsoCokernel (n : ℕ) :
     (connesComplex k A).X n ≅ cokernel (((cyclicBicomplex k A).d 1 0).f n) :=
   (asIso (cokernelComparison ((cyclicBicomplex k A).d 1 0)
     (HomologicalComplex.eval (ModuleCat.{max u v} k) (ComplexShape.down ℕ) n))).symm
 
-/-- The evaluated incoming map is exactly the original signed endomorphism 1-t. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The evaluated incoming map of the first horizontal column is
+the k-linear endomorphism 1−t_n on A ⊗[k] A^{⊗n}. -/
 theorem connesComplex_levelMap (n : ℕ) :
     (((cyclicBicomplex k A).d 1 0).f n).hom =
       (1 : Module.End k (A ⊗[k] TensorPower k n A)) -
@@ -1165,7 +1507,11 @@ theorem connesComplex_levelMap (n : ℕ) :
   erw [ite_eq_left (show Even (0 : ℕ) from ⟨0, rfl⟩)]
   rfl
 
-/-- The native evaluated cokernel has its original module range-quotient coordinates. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n Connes term has the module-quotient coordinates
+C_λ,n ≅ C_n/im(1−t_n), where the image is the k-linear range. -/
 def connesComplexXIsoRangeQuotient (n : ℕ) :
     (connesComplex k A).X n ≅
       ModuleCat.of k (chainLevel k A A n ⧸
@@ -1173,7 +1519,11 @@ def connesComplexXIsoRangeQuotient (n : ℕ) :
   connesComplexXIsoCokernel k A n ≪≫
     ModuleCat.cokernelIsoRangeQuotient (((cyclicBicomplex k A).d 1 0).f n)
 
-/-- The native range-quotient coordinates retain the original cokernel representative. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cokernel projection C_n → C_λ,n followed by its
+range-quotient isomorphism is the quotient map x ↦ [x]. -/
 theorem connesComplex_X_isoRangeQuotient_π (n : ℕ) :
     (cokernel.π ((cyclicBicomplex k A).d 1 0)).f n ≫
       (connesComplexXIsoRangeQuotient k A n).hom =
@@ -1206,7 +1556,11 @@ theorem connesComplex_X_isoRangeQuotient_π (n : ℕ) :
       congrArg (fun a : E.obj Q ⟶ cokernel g => a ≫ z.hom) hp
     _ = _ := ModuleCat.cokernel_π_cokernelIsoRangeQuotient_hom g
 
-/-- The Connes term is the coinvariant module of the signed cyclic action. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The degree-n Connes term is the coinvariant module of the signed
+action of ℤ/(n+1) on C_n. The relations are x ∼ t_n x. -/
 def connesComplexXIsoCoinvariants (n : ℕ) :
     (connesComplex k A).X n ≅
       ModuleCat.of k (TensorPower.consCyclicRepresentation k A n).Coinvariants := by
@@ -1249,13 +1603,21 @@ section OrdinaryMaps
 variable {k A} {B : Type v} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- Full faithfulness lowers the computed lifted map to the original common-category bicomplex. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+Applying f to each regular tensor factor gives a bicomplex
+morphism K(A) → K(B) in the k-module category at height max{u,v}. -/
 def cyclicBicomplexHom (f : A →ₙₐ[k] B) : cyclicBicomplex k A ⟶ cyclicBicomplex k B :=
   (((ModuleCat.uliftFunctor.{v, max u v} k).mapHomologicalComplex
     (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).preimage
       (cyclicBicomplexMap f)
 
-/-- Every original bicomplex component is the tensor map of the nonunital map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+At every cell (p,q), the bicomplex morphism is the k-linear
+map F_q applying f to all q+1 regular tensor factors. -/
 theorem cyclicBicomplexHom_f_f (f : A →ₙₐ[k] B) (p q : ℕ) :
     ((cyclicBicomplexHom f).f p).f q =
       ModuleCat.ofHom (TensorPower.consLevelMap (f : A →ₗ[k] B) q) := by
@@ -1275,7 +1637,11 @@ theorem cyclicBicomplexHom_f_f (f : A →ₙₐ[k] B) (p q : ℕ) :
 variable {D : Type v} [NonUnitalRing D] [Module k D]
   [IsScalarTower k D D] [SMulCommClass k D D]
 
-/-- The original bicomplex map preserves identity nonunital maps. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+In a fixed common algebra universe, the cyclic bicomplex
+morphism induced by id_A is the identity of K(A). -/
 theorem cyclicBicomplexHom_id :
     cyclicBicomplexHom (NonUnitalAlgHom.id k A) = 𝟙 _ := by
   apply HomologicalComplex.hom_ext
@@ -1287,7 +1653,10 @@ theorem cyclicBicomplexHom_id :
   change TensorPower.consLevelMap (LinearMap.id : A →ₗ[k] A) q = LinearMap.id
   exact TensorPower.consLevelMap_id q
 
-/-- The original bicomplex map preserves composition in the given order. -/
+/-- Let k be commutative and A,B,D nonunital associative k-bilinear rings
+in one algebra universe. For multiplicative k-linear maps
+f : A → B and g : B → D, the bicomplex maps satisfy
+K(g ∘ f) = K(g) K(f). -/
 theorem cyclicBicomplexHom_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) :
     cyclicBicomplexHom (g.comp f) = cyclicBicomplexHom f ≫ cyclicBicomplexHom g := by
   apply HomologicalComplex.hom_ext
@@ -1302,28 +1671,52 @@ theorem cyclicBicomplexHom_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) :
       (TensorPower.consLevelMap (f : A →ₗ[k] B) q)
   exact (TensorPower.consLevelMap_comp (f : A →ₗ[k] B) (g : B →ₗ[k] D) q).symm
 
-/-- The original total-complex map of a nonunital algebra map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+Totalization of the tensor bicomplex morphism gives the
+chain map T(A) → T(B) in ModuleCat over k. -/
 def cyclicTotalHom (f : A →ₙₐ[k] B) : cyclicTotal k A ⟶ cyclicTotal k B :=
   HomologicalComplex₂.total.map (cyclicBicomplexHom f) (ComplexShape.down ℕ)
 
-/-- Native homology gives the cyclic-homology map in a common module category. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+Homology of the cyclic total chain map gives the k-module
+morphism HC_n(A/k) → HC_n(B/k). -/
 def cyclicHomologyMap (f : A →ₙₐ[k] B) (n : ℕ) : cyclicHomology k A n ⟶ cyclicHomology k B n :=
   HomologicalComplex.homologyMap (cyclicTotalHom f) n
 
-/-- The original bicomplex map induces the native Connes-cokernel map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+The tensor bicomplex map descends through the first-column
+cokernels, giving a chain map C_λ(A) → C_λ(B). -/
 def connesComplexHom (f : A →ₙₐ[k] B) : connesComplex k A ⟶ connesComplex k B :=
   HomologicalComplex₂.firstColumnCokernelMap (cyclicBicomplexHom f)
 
-/-- The Connes homology map is native homology of the cokernel map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+Homology of C_λ(A) → C_λ(B) gives the k-module map
+H_n(C_λ(A)) → H_n(C_λ(B)). -/
 def connesHomologyMap (f : A →ₙₐ[k] B) (n : ℕ) : connesHomology k A n ⟶ connesHomology k B n :=
   HomologicalComplex.homologyMap (connesComplexHom f) n
 
-/-- The prescribed total-to-quotient map is natural for nonunital maps. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+The canonical projections π_A : T(A) → C_λ(A) and π_B
+satisfy π_B T(f) = C_λ(f) π_A. -/
 theorem cyclicToConnes_naturality (f : A →ₙₐ[k] B) :
     cyclicTotalHom f ≫ cyclicToConnes k B = cyclicToConnes k A ≫ connesComplexHom f :=
   HomologicalComplex₂.firstColumnCokernelProjection_naturality (cyclicBicomplexHom f)
 
-/-- The homology comparison is natural for those same nonunital maps. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in the same algebra universe v,
+and f : A → B multiplicative and k-linear.
+On homology, the cyclic-to-Connes comparison is natural:
+H_n(C_λ(f)) π^H_A = π^H_B HC_n(f). -/
 theorem cyclicToConnesHomology_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     cyclicHomologyMap f n ≫ cyclicToConnesHomology k B n =
       cyclicToConnesHomology k A n ≫ connesHomologyMap f n := by
@@ -1336,7 +1729,11 @@ theorem cyclicToConnesHomology_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
       HomologicalComplex.homologyMap (connesComplexHom f) n
   simpa only [HomologicalComplex.homologyMap_comp] using h
 
-/-- Native totalization and homology preserve the identity algebra map. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Set C_n = A ⊗[k] A^{⊗n};
+b is the full regular Hochschild boundary and b′ omits its last cyclic face.
+The cyclic homology map induced by id_A is the identity
+of HC_n(A/k) in every degree n. -/
 theorem cyclicHomologyMap_id (n : ℕ) :
     cyclicHomologyMap (NonUnitalAlgHom.id k A) n = 𝟙 (cyclicHomology k A n) := by
   have hTotal : cyclicTotalHom (NonUnitalAlgHom.id k A) = 𝟙 (cyclicTotal k A) := by
@@ -1350,7 +1747,10 @@ theorem cyclicHomologyMap_id (n : ℕ) :
   rw [hTotal]
   exact HomologicalComplex.homologyMap_id (cyclicTotal k A) n
 
-/-- The homology maps preserve the ordered composition of nonunital maps. -/
+/-- Let k be commutative and A,B,D nonunital associative k-bilinear rings
+in one algebra universe. For multiplicative k-linear maps
+f : A → B and g : B → D, cyclic homology preserves the order:
+HC_n(g ∘ f) = HC_n(g) HC_n(f). -/
 theorem cyclicHomologyMap_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) (n : ℕ) :
     cyclicHomologyMap (g.comp f) n = cyclicHomologyMap f n ≫ cyclicHomologyMap g n := by
   have hTotal : cyclicTotalHom (g.comp f) = cyclicTotalHom f ≫ cyclicTotalHom g := by
@@ -1369,7 +1769,12 @@ theorem cyclicHomologyMap_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) (n 
 
 end OrdinaryMaps
 
-/-- Native exact ULifting and the diagonal total comparison identify lifted homology. -/
+/-- Let k : Type u be commutative and A : Type v a nonunital
+associative ring with k-bilinear multiplication. At any independent
+additional lift height ℓ, there is a k-module isomorphism
+U^ℓ HC_n(A/k) ≅ H_n(Tot(U^ℓ K(A))).
+It combines exact carrier lifting with the finite-diagonal total
+comparison, in common height max{u,v,ℓ}. -/
 def cyclicHomologyLiftIso.{lift, ground, algebra}
     (k : Type ground) (A : Type algebra) [CommRing k] [NonUnitalRing A]
     [Module k A] [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -1398,7 +1803,12 @@ section IndependentMaps
 variable {k A} {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The lift comparisons yield an homology linear map across independent worlds. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+The common-height bicomplex map induces, after the two lift
+isomorphisms, a k-linear map HC_n(A/k) → HC_n(B/k)
+on the underlying homology modules. -/
 def cyclicHomologyLinearMap (f : A →ₙₐ[k] B) (n : ℕ) :
     cyclicHomology k A n →ₗ[k] cyclicHomology k B n := by
   let eA := cyclicHomologyLiftIso.{w} k A n
@@ -1408,7 +1818,14 @@ def cyclicHomologyLinearMap (f : A →ₙₐ[k] B) (n : ℕ) :
   exact ULift.moduleEquiv.toLinearMap.comp
     (m.hom.comp ULift.moduleEquiv.symm.toLinearMap)
 
-/-- The original-carrier map is characterized by the computed common-world homology map. -/
+/-- Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+For z ∈ HC_n(A/k), the homology map is characterized
+by the equality
+E_B(up(HC_n(f)(z))) = H_n(Tot(K(f)))(E_A(up z)),
+where E_A uses lift height w and E_B lift height v to reach
+max{u,v,w}. -/
 theorem cyclicHomologyLinearMap_lift (f : A →ₙₐ[k] B) (n : ℕ)
     (z : cyclicHomology k A n) :
     (cyclicHomologyLiftIso.{v} k B n).hom (ULift.up (cyclicHomologyLinearMap f n z)) =

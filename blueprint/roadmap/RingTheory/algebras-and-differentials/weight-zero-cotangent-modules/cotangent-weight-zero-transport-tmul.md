@@ -1,3 +1,5 @@
-# Cotangent Weight Zero Transport tmul
+# The tensor formula for weight-zero transport
 
-The map is the actual regular-module map induced by the original algebra operator.
+The tensor formula for weight-zero transport.
+
+A map `f : P → Q` over `A` induces `a ⊗ p ↦ a ⊗ f(p)` on the weight-zero modules.

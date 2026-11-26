@@ -1,7 +1,6 @@
-# Coalgebra Functor Of Comonad Hom Comp
+# The composition comparison of comonad coalgebra transport
 
-Composition of comonad morphisms gives the composition of the corresponding
-coalgebra functors, in covariant order.
+The composition comparison of comonad coalgebra transport.
 
-Covariant dual of Mathlib `Monad.algebraFunctorOfMonadHomComp`, which reverses
-the order for contravariant restriction; pushforward here preserves the order.
+Transport along `G → H → K` is naturally isomorphic to first transporting along `G → H` and
+then along `H → K`.

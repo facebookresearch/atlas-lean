@@ -1,3 +1,6 @@
-# Cyclic BSBIConnecting naturality
+# Naturality of the left-unital SBI connecting map
 
-The boundary square uses the same original b and cyclic homology actions.
+Naturality of the left-unital SBI connecting map.
+
+For maps between algebras with left units, the cyclic map in degree `n` and regular Hochschild
+map in degree `n+1` commute with `B_n`.

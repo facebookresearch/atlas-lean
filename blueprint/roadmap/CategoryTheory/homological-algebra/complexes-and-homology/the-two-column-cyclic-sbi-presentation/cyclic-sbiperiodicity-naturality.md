@@ -1,3 +1,6 @@
-# Cyclic SBIPeriodicity naturality
+# Naturality of two-column cyclic periodicity
 
-Periodicity is natural in the original algebra map.
+Naturality of two-column cyclic periodicity.
+
+For a nonunital algebra map, its cyclic-homology maps in degrees `n+2` and `n` commute with
+`S_n`.

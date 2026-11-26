@@ -1,5 +1,6 @@
-# Exact Input Sequence Type
+# Exact input sequences of a cohomological delta functor
 
-The input category is taken from the connector of T. In particular, its ShortComplex category and
-zero-morphism dictionaries are the ones already captured by T, rather than a new field-level
-typeclass choice.
+For a cohomological δ-functor `T : B → D` between preadditive
+categories, its connecting transformations are indexed by short
+exact short complexes in `B`. This input type consists of such
+complexes together with their short-exactness property.

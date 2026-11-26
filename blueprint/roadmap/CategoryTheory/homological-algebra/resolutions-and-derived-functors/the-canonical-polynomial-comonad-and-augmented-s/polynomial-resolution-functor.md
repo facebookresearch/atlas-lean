@@ -1,3 +1,6 @@
-# Polynomial Resolution Functor
+# The augmented polynomial resolution functor
 
-The actual augmented polynomial resolution functor, specialized from the generic owner.
+The augmented polynomial resolution functor.
+
+The polynomial comonad assigns to each commutative `k`-algebra `A` an augmented simplicial
+algebra with degree `n` equal to `T^(n+1)(A)`.

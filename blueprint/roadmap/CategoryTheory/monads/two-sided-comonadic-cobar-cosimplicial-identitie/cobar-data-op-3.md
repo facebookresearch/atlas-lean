@@ -1,3 +1,5 @@
-# Cobar Data Op σ
+# The degeneracy maps of opposite cobar data
 
-Degeneracies of the opposite data are `op` of the codegeneracies.
+The degeneracy maps of opposite cobar data.
+
+The simplicial degeneracy at `i` is the opposite of cobar codegeneracy `i`.

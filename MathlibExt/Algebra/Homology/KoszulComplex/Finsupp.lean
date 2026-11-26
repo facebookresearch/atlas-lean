@@ -17,12 +17,19 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
 /-!
-# Koszul complexes on arbitrary finitely supported free coordinates
+# Koszul complexes of arbitrary coefficient families
 
-The differential and quotient augmentation are the existing native Koszul
-constructions. Actual finite-coordinate retractions reduce every positive
-cycle to a finite family. Projectivity uses the actual free exterior terms.
-No Lie algebra, PBW model, finite ambient index or characteristic premise is used.
+For a family a : I → R in a commutative ring, the functional on the free module I →₀ R is the
+finite linear combination v ↦ ∑ i, v_i a_i. Its exterior Koszul complex has terms ⋀[R]^n (I →₀
+R), signed deletion boundaries, and augmentation to R/(a_i).
+
+Every term is free and projective, even for an infinite index type I. If every finite ordered
+subfamily of distinct indices is weakly regular, every positive-degree cycle is a boundary.
+The quotient augmentation is then a quasi-isomorphism and defines a projective resolution of
+the quotient, in the carrier universe enlarged to max u v. Finite-support exterior retractions
+reduce the cycle computation to finite subfamilies.
+
+See Weibel, *An Introduction to Homological Algebra*, Chapter 4, for Koszul complexes.
 -/
 
 @[expose] public section
@@ -38,12 +45,16 @@ namespace KoszulComplex
 
 variable (R : Type u) [CommRing R] {I : Type v}
 
-/-- The coefficient functional on the original arbitrary free module. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. The map finsuppFunctional R a is this
+linear combination functional; its value on the unit coordinate Finsupp.single i 1 is a_i. -/
 def finsuppFunctional (a : I → R) : (I →₀ R) →ₗ[R] R :=
   Finsupp.linearCombination R a
 
-/-- The original finite-coordinate inclusion preserves the actual coefficient
-functional; this is equality of the original linear maps. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. For a finite subset s of I, composing
+x_a with Finsupp.finsetInclude R s : (s → R) →ₗ[R] (I →₀ R) equals familyFunctional R (fun i :
+s => a i.val). Thus the restricted finite family has the same functional values. -/
 theorem finsuppFunctional_comp_finsetInclude (a : I → R) (s : Finset I) :
     (finsuppFunctional R a).comp (Finsupp.finsetInclude R s) =
       familyFunctional R (fun i : s => a i.val) := by
@@ -54,9 +65,12 @@ theorem finsuppFunctional_comp_finsetInclude (a : I → R) (s : Finset I) :
     map_sum, Finsupp.linearCombination_single, familyFunctional,
     Fintype.linearCombination_apply]
 
-/-- Actual boundary construction for an arbitrary family whose finite
-distinct subfamilies are weakly regular. The exactness input is the proved
-finite-family theorem, not a supplied boundary or resolution. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. Assume that for every n : ℕ and
+injective f : Fin n → I, the list [a_(f 0), …, a_(f(n−1))] is weakly regular over R, meaning
+each coefficient acts injectively on the quotient by its predecessors. For k : ℕ and z :
+⋀[R]^(k+1) (I →₀ R) with d_x(k)(z) = 0, there exists w : ⋀[R]^(k+2) (I →₀ R) such that
+d_x(k+1)(w) = z. -/
 theorem finsupp_exact_cycles_of_finite_isWeaklyRegular
     (a : I → R)
     (ha : ∀ {n : ℕ}, ∀ f : Fin n → I, Function.Injective f →
@@ -94,8 +108,10 @@ theorem finsupp_exact_cycles_of_finite_isWeaklyRegular
         (familyFunctional R aS) (finsuppFunctional R a) inc hfunc (k + 1)) wS
     _ = z := by rw [hwS, hzS]
 
-/-- The actual arbitrary-family Koszul complex on the free finitely
-supported coordinate module, using the original Koszul boundary. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. Define finsuppComplex R a as the
+exterior Koszul complex with degree-n term ⋀[R]^n (I →₀ R) and boundary given by contraction
+with x_a. For R : Type u and I : Type v it lies in ChainComplex (ModuleCat.{max u v} R) ℕ. -/
 abbrev finsuppComplex (a : I → R) : ChainComplex (ModuleCat.{max u v} R) ℕ :=
   complex R (I →₀ R) (finsuppFunctional R a)
 
@@ -105,7 +121,11 @@ theorem finsuppFunctional_single (a : I → R) (i : I) :
   classical
   rw [finsuppFunctional, Finsupp.linearCombination_single, one_smul]
 
-/-- Signed deletion on original standard free-coordinate wedges. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. For n : ℕ and any f : Fin (n + 1) → I,
+write e_i = Finsupp.single i 1. Then d_x(n)(e_(f 0) ∧ … ∧ e_(f n)) = ∑ j : Fin (n + 1), ((−1 :
+R)^j * a_(f j)) • (⋀ q : Fin n, e_(f(j.succAbove q))). The formula holds for every tuple, with
+the undeleted coordinates in their original order. -/
 theorem finsuppDifferential_apply_basis (a : I → R) (n : ℕ) (f : Fin (n + 1) → I) :
     differential R (I →₀ R) (finsuppFunctional R a) n
       (exteriorPower.ιMulti R (n + 1) (fun j => Finsupp.single (f j) 1)) =
@@ -117,7 +137,10 @@ theorem finsuppDifferential_apply_basis (a : I → R) (n : ℕ) (f : Fin (n + 1)
   rw [finsuppFunctional_single, smul_smul]
   rfl
 
-/-- The actual differential on scalar multiples of coordinate wedges. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. For n : ℕ, p : R and f : Fin (n + 1) →
+I, the boundary of p times the wedge of e_(f j) is ∑ j, (−1 : R)^j • ((p * a_(f j)) • (⋀ q :
+Fin n, e_(f(j.succAbove q)))), where e_i is the unit coordinate at i. -/
 theorem finsuppDifferential_smul_basis (a : I → R) (n : ℕ) (p : R)
     (f : Fin (n + 1) → I) :
     differential R (I →₀ R) (finsuppFunctional R a) n
@@ -132,19 +155,27 @@ theorem finsuppDifferential_smul_basis (a : I → R) (n : ℕ) (p : R)
   congr 1
   exact mul_left_comm p ((-1 : R) ^ j.val) (a (f j))
 
-/-- The original functional range ideal is generated by the actual family. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. The ideal given by the range of x_a
+equals Ideal.span (Set.range a), the ideal generated by all coefficients a_i. -/
 theorem finsuppIdeal_eq_span (a : I → R) :
     ideal R (I →₀ R) (finsuppFunctional R a) = Ideal.span (Set.range a) := by
   change LinearMap.range (Finsupp.linearCombination R a) = _
   rw [Finsupp.range_linearCombination, Ideal.submodule_span_eq]
 
-/-- Every original arbitrary-coordinate term is free. No finite index is needed. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. For every n : ℕ, the module
+(finsuppComplex R a).X n = ⋀[R]^n (I →₀ R) is free over R. The index type I need not be
+finite. -/
 theorem finsuppComplex_free (a : I → R) (n : ℕ) :
     Module.Free R ((finsuppComplex R a).X n) := by
   change Module.Free R (⋀[R]^n (I →₀ R))
   infer_instance
 
-/-- Every original arbitrary-coordinate term is a native projective object. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. For every n : ℕ, the degree-n object of
+finsuppComplex R a is projective in ModuleCat.{max u v} R, using a basis of the exterior power
+of the free coordinate module. -/
 theorem finsuppComplex_projective (a : I → R) (n : ℕ) :
     CategoryTheory.Projective ((finsuppComplex R a).X n) := by
   classical
@@ -152,16 +183,27 @@ theorem finsuppComplex_projective (a : I → R) (n : ℕ) :
   change CategoryTheory.Projective (ModuleCat.of R (⋀[R]^n (I →₀ R)))
   exact ModuleCat.projective_of_free ((Finsupp.basisSingleOne (R := R)).exteriorPower n)
 
-/-- The original quotient augmentation remains exactly the native Koszul augmentation. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. The augmentation is the Koszul chain
+map to the complex concentrated in degree zero at the lifted quotient R ⧸ Ideal.span
+(Set.range a). In degree zero it is the zero-exterior scalar map followed by the quotient map;
+its positive-degree components are zero. -/
 abbrev finsuppAugmentation (a : I → R) := augmentation R (I →₀ R) (finsuppFunctional R a)
 
-/-- Its zero-degree exactness is the existing original quotient-augmentation proof. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. The short complex K₁ ⟶ K₀ ⟶
+ULift(R/(a_i)) formed by the Koszul boundary and quotient augmentation is exact. Under ⋀[R]^0
+(I →₀ R) ≅ R, the boundary image and augmentation kernel are both the ideal generated by the
+a_i. -/
 theorem finsuppAugmentation_exact_zero (a : I → R) :
     (augmentationShortComplex R (I →₀ R) (finsuppFunctional R a)).Exact :=
   augmentation_exact_zero R (I →₀ R) (finsuppFunctional R a)
 
-/-- Genuine finite weak regularity yields positive exactness of the original
-arbitrary-coordinate complex; the boundary is constructed by finite support. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. Assume that for every n : ℕ and
+injective f : Fin n → I, the list [a_(f 0), …, a_(f(n−1))] is weakly regular over R, meaning
+each coefficient acts injectively on the quotient by its predecessors. Then finsuppComplex R a
+is exact at degree k + 1 for every k : ℕ. -/
 theorem finsuppComplex_exactAt_of_finite_isWeaklyRegular (a : I → R)
     (ha : ∀ {n : ℕ}, ∀ f : Fin n → I, Function.Injective f →
       RingTheory.Sequence.IsWeaklyRegular R (List.ofFn fun j => a (f j))) (k : ℕ) :
@@ -180,8 +222,12 @@ theorem finsuppComplex_exactAt_of_finite_isWeaklyRegular (a : I → R)
   rw [complex_d_succ]
   exact finsupp_exact_cycles_of_finite_isWeaklyRegular R a ha k z hz
 
-/-- The original quotient augmentation is a quasi-isomorphism when actual
-finite distinct subfamilies are weakly regular. No exactness datum is an input. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. Assume that for every n : ℕ and
+injective f : Fin n → I, the list [a_(f 0), …, a_(f(n−1))] is weakly regular over R, meaning
+each coefficient acts injectively on the quotient by its predecessors. The Koszul augmentation
+to the complex concentrated at the lifted quotient R/(a_i) is a quasi-isomorphism. It
+identifies H₀ with that quotient and the positive homology with zero. -/
 theorem finsuppAugmentation_quasiIso_of_finite_isWeaklyRegular (a : I → R)
     (ha : ∀ {n : ℕ}, ∀ f : Fin n → I, Function.Injective f →
       RingTheory.Sequence.IsWeaklyRegular R (List.ofFn fun j => a (f j))) :
@@ -206,8 +252,13 @@ theorem finsuppAugmentation_quasiIso_of_finite_isWeaklyRegular (a : I → R)
       · exact finsuppComplex_exactAt_of_finite_isWeaklyRegular R a ha j
       · exact ChainComplex.exactAt_succ_single_obj _ _
 
-/-- Actual arbitrary-coordinate native projective resolution from genuine
-finite weak regularity. Concrete polynomial/diagonal clients earn this premise. -/
+/-- Let R be a commutative ring, I any index type and a : I → R a coefficient family. Let x_a : (I
+→₀ R) →ₗ[R] R send v to the finite sum ∑ i, v_i * a_i. Assume that for every n : ℕ and
+injective f : Fin n → I, the list [a_(f 0), …, a_(f(n−1))] is weakly regular over R, meaning
+each coefficient acts injectively on the quotient by its predecessors. For R : Type u and I :
+Type v, the complex finsuppComplex R a, with its quotient augmentation and projective exterior
+terms, defines a ProjectiveResolution of ModuleCat.of R (ULift.{max u v} (R ⧸ Ideal.span
+(Set.range a))). -/
 def finsuppProjectiveResolutionOfFiniteIsWeaklyRegular (a : I → R)
     (ha : ∀ {n : ℕ}, ∀ f : Fin n → I, Function.Injective f →
       RingTheory.Sequence.IsWeaklyRegular R (List.ofFn fun j => a (f j))) :

@@ -1,3 +1,6 @@
-# Obj Comp Map Iso naturality
+# Naturality of normalization quotient comparison in simplicial maps
 
-Actual simplicial maps give naturality of the original quotient comparison.
+Naturality of normalization quotient comparison in simplicial maps.
+
+The quotient comparison commutes with the normalization maps induced by every simplicial
+morphism `X → Y`.

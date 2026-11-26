@@ -1,3 +1,7 @@
-# Left Derived Precomp Iso Comp inv app
+# Inverse component of two successive precomposition comparisons
 
-Inverse components reverse the two original comparisons and the source associator.
+Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving projectives and
+homology, and `L : E → A` additive. At `X`, the inverse composite is inverse precomposition for
+`V` at `U(X)`, then inverse precomposition for `U`, then the inverse
+derived source associator.

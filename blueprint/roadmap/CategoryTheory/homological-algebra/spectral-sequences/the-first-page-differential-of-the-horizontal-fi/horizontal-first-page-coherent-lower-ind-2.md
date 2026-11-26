@@ -1,4 +1,5 @@
-# Horizontal First Page Coherent Lower Index eq i₁
+# The first-page lower endpoint in coherent coordinates
 
-The coherent lower endpoint is the lower endpoint chosen by the
-first-page spectral-sequence data.
+The first-page lower endpoint in coherent coordinates.
+
+The coherent lower index equals the lower endpoint selected by the first-page indexing data.

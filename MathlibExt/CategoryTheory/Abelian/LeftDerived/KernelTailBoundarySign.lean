@@ -15,7 +15,14 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.HorseshoeBoundaryCho
 public import Mathlib.Algebra.Homology.Embedding.RestrictionHomology
 
 /-!
-# The higher kernel-tail boundary and its sign
+# Higher kernel-tail boundaries and their alternating coefficient
+
+For a projective resolution `P` in an abelian category, let `T` be
+its kernel-tail resolution. An additive functor gives
+`H_(n+1)(F(T)) ≅ H_(n+2)(F(P))`. The signed horseshoe boundary
+followed by this isomorphism is `(-1)^(n+2)` times the identity.
+The same formula holds for the canonical derived boundary under
+the endpoint resolution comparisons.
 -/
 
 @[expose] public section
@@ -29,7 +36,10 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Applying the original functor to the restriction coordinate iso is the mapped coordinate iso. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and `Q` a
+nonnegative chain complex. For kernel-tail indices `j=i+1`, applying
+`F` to the coordinate isomorphism of the restricted term `Q_j`
+gives the coordinate isomorphism for the restriction of `F(Q)`. -/
 theorem normalizationRestrictionXIso_map_hom (F : C ⥤ D) [F.Additive]
     (Q : ChainComplex C ℕ) {i j : ℕ} (h : ChainComplex.kernelTailEmbedding.f i = j) :
     F.map (Q.restrictionXIso ChainComplex.kernelTailEmbedding h).hom =
@@ -38,7 +48,11 @@ theorem normalizationRestrictionXIso_map_hom (F : C ⥤ D) [F.Additive]
   subst h
   simp [HomologicalComplex.restrictionXIso]
 
-/-- The right-coordinate lift of a cycle has the literal mapped cross component. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and take maps
+`d_L : L₁ → L₀`, `b : R₁ → L₀`, `d_R : R₁ → R₀`.
+For `x : A → F(R₁)` with `x ≫ F(d_R)=0`, inserting `x` by the
+right inclusion then applying the mapped block differential gives
+`x ≫ F(b)` inserted by the left inclusion in `F(L₀ ⊞ R₀)`. -/
 theorem normalizationMappedBiprod_inr_boundary (F : C ⥤ D) [F.Additive]
     {L₁ L₀ R₁ R₀ : C} (dL : L₁ ⟶ L₀) (b : R₁ ⟶ L₀) (dR : R₁ ⟶ R₀)
     {A : D} (x : A ⟶ F.obj R₁) (hx : x ≫ F.map dR = 0) :
@@ -49,7 +63,9 @@ theorem normalizationMappedBiprod_inr_boundary (F : C ⥤ D) [F.Additive]
   simp only [comp_add, ← Category.assoc, hx, zero_comp, add_zero]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The homology restriction iso in the degrees used by dimension shifting. -/
+/-- Let `C,D` be abelian, `P` a projective resolution of `X`,
+`T` its kernel-tail resolution of `ker(P₀ → X)`, and `F : C → D` additive. Restriction gives a canonical homology isomorphism
+`H_(n+1)(F(T)) ≅ H_(n+2)(F(P))` for each `n ∈ ℕ`. -/
 def normalizationKernelTailHomologyIso {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] (n : ℕ) :
     ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj
@@ -62,10 +78,10 @@ def normalizationKernelTailHomologyIso {X : C} (P : ProjectiveResolution X)
     rfl rfl rfl (by simp) (by simp)
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The mapped signed kernel-tail boundary followed by the original homology restriction is the
-alternating cross sign, in every positive tail degree.
--/
+/-- Let `C,D` be abelian, `P` a projective resolution of `X`,
+`T` its kernel-tail resolution of `ker(P₀ → X)`, and `F : C → D` additive. The mapped signed-horseshoe boundary
+`H_(n+2)(F(P)) → H_(n+1)(F(T))`, followed by the restriction
+isomorphism, is `(-1)^(n+2) • 𝟙` on `H_(n+2)(F(P))`. -/
 theorem normalizationKernelTail_mappedBoundary_sign {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] (n : ℕ) :
     ((normalizationKernelTailHorseshoe P).mapped_shortExact
@@ -153,10 +169,11 @@ theorem normalizationKernelTail_mappedBoundary_sign {X : C} (P : ProjectiveResol
 variable [HasProjectiveResolutions C]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The SAME derived boundary, computed by the signed kernel-tail horseshoe, has the alternating cross
-coefficient in each positive tail degree.
--/
+/-- Let `C,D` be abelian, `P` a projective resolution of `X`,
+`T` its kernel-tail resolution of `ker(P₀ → X)`, and `F : C → D` additive. Suppose `C` has projective resolutions. The canonical boundary
+`L_(n+2)F(X) → L_(n+1)F(ker(P₀ → X))`, conjugated by the
+resolution comparisons and followed by the tail restriction
+isomorphism, is `(-1)^(n+2) • 𝟙` on `H_(n+2)(F(P))`. -/
 theorem normalizationKernelTail_nativeBoundary_sign {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (P.isoLeftDerivedObj F (n + 2)).inv ≫

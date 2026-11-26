@@ -1,5 +1,6 @@
-# Homology Primitives One Iso
+# The primitive part of field CE homology in degree one
 
-Every CE homology class of degree one is primitive. The primitive-kernel inclusion in that
-degree is an isomorphism. This does not identify it with homology of the primitive chain
-complex.
+The primitive part of field CE homology in degree one.
+
+The primitive-kernel inclusion in degree one is an isomorphism onto the full degree-one CE
+homology module.

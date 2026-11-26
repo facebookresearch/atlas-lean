@@ -1,4 +1,6 @@
-# Algebra Positive Normalization Homotopy Equiv inv
+# Inverse map of the A-linear proper normalization equivalence
 
-The inverse is the normalized first-projector section followed by
-the original normalization section and the original raw quotient.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M an A-module with compatible
+k-action. The inverse chain map of the proper normalization equivalence is the normalized
+Eulerian section, followed by the Hochschild normalization inverse and the raw proper quotient
+projection: s̄ ≫ N⁻¹ ≫ π.

@@ -1,3 +1,5 @@
-# Right Coaction Pow succ
+# The successor formula for iterated right coaction
 
-Successor is the preceding iterated coaction under `G`.
+The successor formula for iterated right coaction.
+
+The degree-`n+1` iterated right coaction at `X` is the degree-`n` iterated coaction at `G(X)`.

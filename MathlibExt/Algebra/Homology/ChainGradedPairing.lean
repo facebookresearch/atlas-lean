@@ -14,9 +14,10 @@ public import Mathlib.Algebra.Homology.Monoidal
 /-!
 # Pairings of nonnegatively graded chain complexes
 
-A chain pairing is represented by the existing chain map out of the tensor
-product complex.  This avoids duplicating the signed Leibniz law already built
-into `HomologicalComplex.tensorObj`.
+In a preadditive monoidal category with tensor product additive in each variable, a pairing of
+nonnegative chain complexes K₁,K₂,K₃ is a chain map K₁ ⊗ K₂ → K₃, assuming the tensor complex
+exists. Its bidegree-(p,q) component maps K₁,p ⊗ K₂,q to K₃,p+q and satisfies the signed Leibniz
+rule dP(x,y) = P(dx,y) + (−1)^p P(x,dy). Pairings can be postcomposed with chain maps.
 -/
 
 @[expose] public section
@@ -33,8 +34,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [MonoidalCategory C]
   [(curriedTensor C).Additive]
   [∀ Z : C, ((curriedTensor C).obj Z).Additive]
 
-/-- A degree-preserving pairing of nonnegatively graded chain complexes.
-The signed Leibniz law is exactly the chain-map law from the tensor complex. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable. For
+nonnegative chain complexes K₁,K₂,K₃ with K₁ ⊗ K₂ defined, a ChainGradedPairing is a chain map P
+: K₁ ⊗ K₂ → K₃. Its components P_{p,q} : K₁,p ⊗ K₂,q → K₃,p+q satisfy the signed Leibniz rule
+dP(x,y) = P(dx,y) + (−1)^p P(x,dy), with outgoing degree-zero differentials interpreted as zero. -/
 abbrev ChainGradedPairing
     (K₁ K₂ K₃ : ChainComplex C ℕ) [K₁.HasTensor K₂] :=
   HomologicalComplex.tensorObj K₁ K₂ ⟶ K₃
@@ -43,13 +46,18 @@ namespace ChainGradedPairing
 
 variable {K₁ K₂ K₃ : ChainComplex C ℕ} [K₁.HasTensor K₂]
 
-/-- The bidegree `(p,q)` component of a chain pairing. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable. Let
+P : K₁ ⊗ K₂ → K₃ pair nonnegative chain complexes, with the tensor complex defined. For p,q ∈ ℕ,
+pair P p q is the composite K₁,p ⊗ K₂,q → (K₁ ⊗ K₂)_{p+q} → K₃,p+q of the tensor summand
+inclusion and the degree-(p+q) component of P. -/
 noncomputable def pair (P : ChainGradedPairing K₁ K₂ K₃) (p q : ℕ) :
     K₁.X p ⊗ K₂.X q ⟶ K₃.X (p + q) :=
   HomologicalComplex.ιTensorObj K₁ K₂ p q (p + q) rfl ≫ P.f (p + q)
 
-/-- Postcompose a chain pairing with a chain map.  Coefficient pairings enter
-the shuffle construction through this operation. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable.
+Given a pairing P : K₁ ⊗ K₂ → K₃ of nonnegative chain complexes and a chain map f : K₃ → K₄,
+with K₁ ⊗ K₂ defined, postcomp P f is the pairing P ≫ f. Its bidegree component is P_{p,q} ≫
+f_{p+q}. -/
 def postcomp {K₄ : ChainComplex C ℕ}
     (P : ChainGradedPairing K₁ K₂ K₃) (f : K₃ ⟶ K₄) :
     ChainGradedPairing K₁ K₂ K₄ :=

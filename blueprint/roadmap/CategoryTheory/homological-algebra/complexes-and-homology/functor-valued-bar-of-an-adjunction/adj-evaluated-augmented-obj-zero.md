@@ -1,4 +1,5 @@
-# Adj Evaluated Augmented obj zero
+# The evaluated adjunction bar has zero-degree term TA
 
-Degree-zero object law for the evaluated augmentation, private-name-free:
-the degree-zero bar object is the monad applied to the carrier.
+Let T be a monad on C and alg=(A,a) a T-algebra. The underlying simplicial object of its
+evaluated adjunction augmentation has term T(A) at the opposite simplex [0]. The target of the
+augmentation is A.

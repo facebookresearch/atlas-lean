@@ -1,3 +1,4 @@
-# Split Word Ideal Position Count
+# The ideal-position count is the number of false colours
 
-The number of ideal positions in an arbitrary original colour.
+For c : Fin N → Bool, splitWordIdealPositionCount c is the cardinality of {i : Fin N | c i =
+false}.

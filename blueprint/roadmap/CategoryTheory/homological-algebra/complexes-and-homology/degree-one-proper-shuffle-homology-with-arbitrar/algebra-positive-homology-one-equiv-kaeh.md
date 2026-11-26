@@ -1,3 +1,6 @@
-# Algebra Positive Homology One Equiv Kaehler
+# The coefficient Kähler equivalence for proper H₁ in the unlifted carrier
 
-The same comparison returns the original coefficient Kähler tensor across independent worlds.
+The coefficient Kähler equivalence for proper H₁ in the unlifted carrier.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the same
+degree-one homology is A-linearly equivalent to M ⊗[A] Ω¹(A/k).

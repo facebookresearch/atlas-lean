@@ -1,3 +1,5 @@
-# Matrix Coefficient Map At Height naturality
+# Size naturality of lifted matrix coefficient maps
 
-Simultaneous size and coefficient naturality at one height for all carrier universes.
+Size naturality of lifted matrix coefficient maps.
+
+At a common carrier height, coefficient maps commute with zero-extension maps.

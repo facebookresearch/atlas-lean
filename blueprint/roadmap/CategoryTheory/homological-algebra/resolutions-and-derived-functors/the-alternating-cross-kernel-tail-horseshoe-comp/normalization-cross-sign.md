@@ -1,3 +1,5 @@
-# Normalization Cross Sign
+# Alternating coefficient of the kernel-tail cross map
 
-The cross coefficient of the kernel-tail horseshoe in differential degree n+1.
+For `n ∈ ℕ`, the integer cross coefficient of the kernel-tail
+horseshoe differential from degree `n+1` to `n` is
+`ε_n=(-1)^(n+1)`.

@@ -1,4 +1,4 @@
-# Homogeneous Component zero mul X
+# A variable multiple has zero constant homogeneous component
 
-The coefficient-degree-zero projection kills the image of multiplication
-by every actual polynomial variable.
+For a commutative semiring R, arbitrary I, p∈R[I] and i∈I, π₀(pXᵢ)=0. This includes p=0 and a
+trivial coefficient semiring.

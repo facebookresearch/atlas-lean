@@ -2,16 +2,16 @@
 
 ## Tensor Actions
 
-- [Left Tensor](left-tensor.md)
-- [Right Tensor](right-tensor.md)
-- [Left mul apply](left-mul-apply.md)
-- [Right mul apply](right-mul-apply.md)
-- [Regular Right](regular-right.md)
-- [Regular commute](regular-commute.md)
+- [The tensor map of a left coefficient representation](left-tensor.md)
+- [The tensor map of a right coefficient representation](right-tensor.md)
+- [Associativity of left coefficient actions](left-mul-apply.md)
+- [The order of successive right coefficient actions](right-mul-apply.md)
+- [The regular right-multiplication representation](regular-right.md)
+- [Commutation of regular left and right multiplication](regular-commute.md)
 
 ## Unitization
 
-- [Unitization Left](unitization-left.md)
-- [Opposite Unitization](opposite-unitization.md)
-- [Unitization Right](unitization-right.md)
-- [Unitization commute](unitization-commute.md)
+- [Extending a left action to the unitization](unitization-left.md)
+- [The scalar coordinate under opposite unitization](opposite-unitization.md)
+- [Extending a right action to the opposite unitization](unitization-right.md)
+- [Commuting coefficient actions after unitization](unitization-commute.md)

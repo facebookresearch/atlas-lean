@@ -1,4 +1,5 @@
-# Homology Zero Linear Equiv
+# The scalar linear equivalence of CE homology degree zero
 
-Degree-zero CE homology as an `R`-linear equivalence with `R`, without exposing the
-categorical universe lift.
+The scalar linear equivalence of CE homology degree zero.
+
+Removing the carrier lift from the categorical scalar comparison gives `X.H 0 ≃ₗ[R] R`.

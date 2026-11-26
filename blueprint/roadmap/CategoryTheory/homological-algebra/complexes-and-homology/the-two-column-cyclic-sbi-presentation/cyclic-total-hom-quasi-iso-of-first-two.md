@@ -1,4 +1,6 @@
-# Cyclic Total Hom quasi Iso of first Two
+# A cyclic-total quasi-isomorphism from a two-column comparison
 
-A quasi-isomorphism of the first-two-column complexes induces a quasi-isomorphism
-of the original cyclic totals, by the native SBI comparison theorem.
+A cyclic-total quasi-isomorphism from a two-column comparison.
+
+If a nonunital algebra map induces a quasi-isomorphism on the first-two-column totals, it
+induces a quasi-isomorphism on the full cyclic totals.

@@ -1,3 +1,4 @@
-# Eulerian Coefficient degree zero
+# The degree-zero Eulerian coefficient
 
-The original degree-zero polynomial gives exactly one zero-weight coefficient and no others.
+For `i : ℕ` and `σ ∈ S_0`, `eulerianCoefficient 0 i σ = if i=0 then 1 else 0`. The empty-word
+polynomial is the constant `1`.

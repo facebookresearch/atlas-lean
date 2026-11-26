@@ -18,16 +18,21 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Canonical
 public import Mathlib.Algebra.Lie.Abelian
 
 /-!
-# Chevalley–Eilenberg chains with right Lie coefficients
+# CE chains with coefficient-first right Lie modules
 
-For a Lie algebra L over a commutative ring R and a right Lie module M, chains in degree n are
-`M ⊗[R] (⋀[R]^n L)`. Tensor symmetry identifies this complex with the left-coefficient complex
-for the action `[x,m] = -(m · x)`.
+For a right Lie module M over an R-Lie algebra L, define chains M ⊗[R] ⋀[R]^n L. Tensor
+symmetry identifies them with exterior-first chains for the left action ⁅x,m⁆ = −m·x;
+transporting that boundary gives the right differential.
 
-The action term has sign `(-1)^i` for indices starting at zero. In degree one the boundary is
-`m · x`, and the degree-two bracket contribution is `-m ⊗ [x,y]`. Compatible Lie and
-coefficient maps induce chain maps, with universe-lift comparisons preserving the ground-ring
-action.
+On a pure word its bracket term is m ⊗ d_CE(word), and its action terms have zero-based signs
+(−1)^i. Degree one has boundary m·x, and degree two is m·x ⊗ y − m·y ⊗ x − m ⊗ [x,y]. Joint
+Lie and coefficient maps give factorwise degree maps and chain maps, with carrier lifts for
+independently sized inputs.
+
+The coefficient-first construction is functorial in right coefficients and naturally
+isomorphic to the corresponding left-coefficient functor. Trivial coefficients retain only the
+bracket differential, and trivial scalar coefficients recover the canonical exterior CE
+complex.
 -/
 
 @[expose] public section
@@ -43,24 +48,37 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- The coefficient-first chain object for a right Lie module. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For n : ℕ, rightCoefficientChainObject is ModuleCat.of R (M ⊗[R]
+⋀[R]^n L) in universe max u v w. -/
 abbrev rightCoefficientChainObject (M : RightLieModuleCat.{w} R L) (n : ℕ) :
     ModuleCat.{max u v w} R := ModuleCat.of R (M ⊗[R] (⋀[R]^n L))
 
-/-- Tensor commutation identifies the right object with the left object. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For n : ℕ, rightCoefficientDegreeEquiv : M ⊗[R] ⋀[R]^n L ≃ₗ[R]
+⋀[R]^n L ⊗[R] M_left sends m ⊗ a to a ⊗ m. -/
 def rightCoefficientDegreeEquiv (M : RightLieModuleCat.{w} R L) (n : ℕ) :
     (M ⊗[R] (⋀[R]^n L)) ≃ₗ[R]
       ((⋀[R]^n L) ⊗[R] RightLieModuleCat.toLeft M) :=
   TensorProduct.comm R M (⋀[R]^n L)
 
-/-- The right differential is the transport of the left CE differential. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For n : ℕ, δ_right,n = E_n⁻¹ ∘ coefficientDifferential_(M_left),n ∘
+E_(n+1), where E_n is rightCoefficientDegreeEquiv. Its source is M ⊗ ⋀^(n+1)L and target M ⊗
+⋀^nL. -/
 def rightCoefficientDifferential (M : RightLieModuleCat.{w} R L) (n : ℕ) :
     (M ⊗[R] (⋀[R]^(n + 1) L)) →ₗ[R] (M ⊗[R] (⋀[R]^n L)) :=
   (rightCoefficientDegreeEquiv R L M n).symm.toLinearMap.comp
     ((coefficientDifferential R L (RightLieModuleCat.toLeft M) n).comp
       (rightCoefficientDegreeEquiv R L M (n + 1)).toLinearMap)
 
-/-- Tensor coordinates expose the exact boundary used by the right differential. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For p : M ⊗ ⋀^(n+1)L, E_n(δ_right,n p) =
+coefficientDifferential_(M_left),n(E_(n+1)(p)). -/
 theorem rightCoefficientDifferential_equiv (M : RightLieModuleCat.{w} R L) (n : ℕ)
     (p : M ⊗[R] (⋀[R]^(n + 1) L)) :
     rightCoefficientDegreeEquiv R L M n (rightCoefficientDifferential R L M n p) =
@@ -68,7 +86,10 @@ theorem rightCoefficientDifferential_equiv (M : RightLieModuleCat.{w} R L) (n : 
         (rightCoefficientDegreeEquiv R L M (n + 1) p) :=
   (rightCoefficientDegreeEquiv R L M n).apply_symm_apply _
 
-/-- The inherited square-zero equation survives the tensor-coordinate transport. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For every n : ℕ, rightCoefficientDifferential n ∘
+rightCoefficientDifferential (n + 1) = 0. -/
 theorem rightCoefficientDifferential_comp_differential
     (M : RightLieModuleCat.{w} R L) (n : ℕ) :
     (rightCoefficientDifferential R L M n).comp
@@ -89,7 +110,10 @@ theorem rightCoefficientDifferential_comp_differential
   rw [h]
   exact e₀.symm.toLinearMap.map_zero
 
-/-- The coefficient-first complex, formed by the chain-complex constructor. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. rightCoefficientComplex R L M has terms M ⊗ ⋀^nL and boundary
+rightCoefficientDifferential n from n + 1 to n, in ChainComplex (ModuleCat.{max u v w} R) ℕ. -/
 def rightCoefficientComplex (M : RightLieModuleCat.{w} R L) :
     ChainComplex (ModuleCat.{max u v w} R) ℕ :=
   ChainComplex.of (rightCoefficientChainObject R L M)
@@ -114,7 +138,10 @@ theorem rightCoefficientComplex_d_eq_zero (M : RightLieModuleCat.{w} R L)
   ChainComplex.of_d_ne (rightCoefficientChainObject R L M)
     (fun n => ModuleCat.ofHom (rightCoefficientDifferential R L M n)) h
 
-/-- The coefficient-first complex is canonically isomorphic to the left CE complex. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. rightCoefficientComplexIso identifies rightCoefficientComplex R L M
+with coefficientComplex R L M_left, using the degreewise tensor flips. -/
 def rightCoefficientComplexIso (M : RightLieModuleCat.{w} R L) :
     rightCoefficientComplex R L M ≅ coefficientComplex R L (RightLieModuleCat.toLeft M) := by
   refine HomologicalComplex.Hom.isoOfComponents
@@ -128,7 +155,10 @@ def rightCoefficientComplexIso (M : RightLieModuleCat.{w} R L) :
   intro p
   exact (rightCoefficientDifferential_equiv R L M j p).symm
 
-/-- The comparison interchanges the two pure tensor factors. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For n : ℕ, m : M and a : ⋀[R]^n L, the forward degree-n component
+sends m ⊗ a to a ⊗ m. -/
 theorem rightCoefficientComplexIso_hom_f_tmul (M : RightLieModuleCat.{w} R L)
     (n : ℕ) (m : M) (a : ⋀[R]^n L) :
     ((rightCoefficientComplexIso R L M).hom.f n).hom (m ⊗ₜ[R] a) = a ⊗ₜ[R] m := by
@@ -141,7 +171,10 @@ theorem rightCoefficientComplexIso_inv_f_tmul (M : RightLieModuleCat.{w} R L)
   change (TensorProduct.comm R M.carrier (⋀[R]^n L)).symm (a ⊗ₜ[R] m) = m ⊗ₜ[R] a
   exact TensorProduct.comm_symm_tmul R M.carrier (⋀[R]^n L) m a
 
-/-- Right coefficients have the positive action in degree one. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For m : M and x : L, δ_right,0(m ⊗ ιMulti^1(x)) = (m·x) ⊗
+ιMulti^0(empty). -/
 theorem rightCoefficientDifferential_ι_tmul (M : RightLieModuleCat.{w} R L)
     (m : M) (x : L) :
     rightCoefficientDifferential R L M 0
@@ -161,7 +194,10 @@ theorem rightCoefficientDifferential_ι_tmul (M : RightLieModuleCat.{w} R L)
   rw [hTensor]
   exact TensorProduct.comm_symm_tmul R M.carrier (⋀[R]^0 L) (M.action x m) a₀
 
-/-- Degree-zero coefficient coordinates detect the positive right action. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. Applying the degree flip and coefficientZeroEquiv to δ_right,0(m ⊗
+ιMulti^1(x)) gives m·x. -/
 theorem rightCoefficientDifferential_zero_coordinate (M : RightLieModuleCat.{w} R L)
     (m : M) (x : L) :
     coefficientZeroEquiv R L (RightLieModuleCat.toLeft M)
@@ -173,7 +209,11 @@ theorem rightCoefficientDifferential_zero_coordinate (M : RightLieModuleCat.{w} 
       (exteriorPower.ιMulti R 0 Fin.elim0 ⊗ₜ[R] M.action x m) = _
   exact coefficientZeroEquiv_ι_tmul R L (RightLieModuleCat.toLeft M) (M.action x m)
 
-/-- The all-degree formula has the unchanged bracket term and zero-based right-action signs. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For xs : Fin(n+1) → L, δ_right,n(m ⊗ ιMulti xs) = m ⊗
+differential_CE,n(ιMulti xs) + ∑ i : Fin(n+1), (−1 : R)^i.val • ((m·xs_i) ⊗ ιMulti(xs ∘
+i.succAbove)). -/
 theorem rightCoefficientDifferential_apply_ιMulti_tmul
     (M : RightLieModuleCat.{w} R L) (n : ℕ) (xs : Fin (n + 1) → L) (m : M) :
     rightCoefficientDifferential R L M n
@@ -193,7 +233,10 @@ theorem rightCoefficientDifferential_apply_ιMulti_tmul
   rw [TensorProduct.neg_tmul, smul_neg, pow_succ, mul_neg, mul_one,
     neg_smul, neg_neg]
 
-/-- The bracket term has exactly the signed bracket-boundary presentation. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For xs : Fin(n+1) → L, δ_right,n(m ⊗ ιMulti xs) = m ⊗
+bracketBoundary R L n xs + ∑ i, (−1 : R)^i.val • ((m·xs_i) ⊗ ιMulti(xs ∘ i.succAbove)). -/
 theorem rightCoefficientDifferential_apply_ιMulti_tmul_bracket
     (M : RightLieModuleCat.{w} R L) (n : ℕ) (xs : Fin (n + 1) → L) (m : M) :
     rightCoefficientDifferential R L M n
@@ -203,7 +246,10 @@ theorem rightCoefficientDifferential_apply_ιMulti_tmul_bracket
           (M.action (xs i) m ⊗ₜ[R] exteriorPower.ιMulti R n (xs ∘ i.succAbove)) := by
   rw [rightCoefficientDifferential_apply_ιMulti_tmul, differential_apply_ιMulti]
 
-/-- Degree two retains both ordered action terms and the negative bracket term. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. Under the degree-one exterior coordinate, δ_right,1(m ⊗ (x∧y))
+becomes (m·x) ⊗ y − (m·y) ⊗ x − m ⊗ ⁅x,y⁆. -/
 theorem rightCoefficientDifferential_two_coordinate
     (M : RightLieModuleCat.{w} R L) (m : M) (x y : L) :
     (exteriorPower.oneEquiv R L).lTensor M
@@ -246,7 +292,10 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
 variable (f : L →ₗ⁅R⁆ L')
 variable (M : RightLieModuleCat.{w} R L) (N : RightLieModuleCat.{w'} R L')
 
-/-- A right coefficient map establishes the restricted left coefficient map. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+The same R-linear g defines rightCoefficientLieMapToLeft : M_left →ₗ⁅R,L⁆ f* N_left, where the
+converted left actions are negatives of the right actions. -/
 def rightCoefficientLieMapToLeft (g : RightLieModuleCat.HomOver f M N) :
     RightLieModuleCat.toLeft M →ₗ⁅R,L⁆
       LieModuleCat.restrictObj f (RightLieModuleCat.toLeft N) where
@@ -260,7 +309,10 @@ def rightCoefficientLieMapToLeft (g : RightLieModuleCat.HomOver f M N) :
 theorem rightCoefficientLieMapToLeft_apply (g : RightLieModuleCat.HomOver f M N) (m : M) :
     rightCoefficientLieMapToLeft R L f M N g m = g.toLinearMap m := rfl
 
-/-- The degree map applies the coefficient map first and the Lie exterior map second. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+For n : ℕ, rightCoefficientLieDegreeMap : M ⊗ Λ^nL →ₗ[R] N ⊗ Λ^nL' is g ⊗ ⋀^n f. Source and
+target Lie and coefficient universes may be different. -/
 def rightCoefficientLieDegreeMap (g : RightLieModuleCat.HomOver f M N) (n : ℕ) :
     (M ⊗[R] (⋀[R]^n L)) →ₗ[R] (N ⊗[R] (⋀[R]^n L')) :=
   TensorProduct.map g.toLinearMap (exteriorPower.map n f.toLinearMap)
@@ -272,7 +324,10 @@ theorem rightCoefficientLieDegreeMap_tmul (g : RightLieModuleCat.HomOver f M N)
       g.toLinearMap m ⊗ₜ[R] exteriorPower.map n f.toLinearMap a := by
   simp only [rightCoefficientLieDegreeMap, TensorProduct.map_tmul]
 
-/-- Linear right degree maps compose for independently sized Lie and coefficient carriers. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+Let h : L' →ₗ⁅R⁆ L'', P a right L''-module and k : HomOver h N P. For every n, the degree map
+for h,k after that for f,g equals the degree map for h.comp f and HomOver.comp k g. -/
 theorem rightCoefficientLieDegreeMap_comp
     {L'' : Type v''} [LieRing L''] [LieAlgebra R L'']
     (h : L' →ₗ⁅R⁆ L'') (P : RightLieModuleCat.{w''} R L'')
@@ -289,7 +344,10 @@ theorem rightCoefficientLieDegreeMap_comp
     RightLieModuleCat.HomOver.comp_apply, LieHom.toLinearMap_comp,
     exteriorPower.map_comp, LinearMap.comp_apply]
 
-/-- Tensor commutation relates the right degree map to the left degree map. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+Let E_M,n and E_N,n be the degree tensor flips. Then E_N,n(G_n(p)) = F_left,n(E_M,n(p)), where
+G_n = g ⊗ ⋀^n f and F_left uses rightCoefficientLieMapToLeft. -/
 theorem rightCoefficientLieDegreeMap_equiv (g : RightLieModuleCat.HomOver f M N)
     (n : ℕ) (p : M ⊗[R] (⋀[R]^n L)) :
     rightCoefficientDegreeEquiv R L' N n (rightCoefficientLieDegreeMap R L f M N g n p) =
@@ -321,7 +379,10 @@ theorem rightCoefficientLieDegreeMap_equiv (g : RightLieModuleCat.HomOver f M N)
       exact hLeft.trans ((congrArg F hM).trans hPoint).symm
   | add p q hp hq => simp only [map_add, hp, hq]
 
-/-- Arbitrary compatible coefficient and Lie maps intertwine the transported differential. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+For n : ℕ, G_n ∘ δ_right,M,n = δ_right,N,n ∘ G_(n+1), where G_n = rightCoefficientLieDegreeMap
+n. -/
 theorem rightCoefficientLieDifferential_naturality
     (g : RightLieModuleCat.HomOver f M N) (n : ℕ) :
     (rightCoefficientLieDegreeMap R L f M N g n).comp
@@ -351,7 +412,11 @@ variable {L' : Type v} [LieRing L'] [LieAlgebra R L']
 variable (f : L →ₗ⁅R⁆ L')
 variable (M : RightLieModuleCat.{w} R L) (N : RightLieModuleCat.{w} R L')
 
-/-- The right CE map is the left map conjugated by the tensor isomorphisms. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+For the bundled chain maps, the Lie carriers share universe v and coefficient carriers share
+w. rightCoefficientLieComplexMap : CE_right(L,M) ⟶ CE_right(L',N) is the left joint chain map
+conjugated by the two tensor-flip complex isomorphisms. -/
 def rightCoefficientLieComplexMap (g : RightLieModuleCat.HomOver f M N) :
     rightCoefficientComplex R L M ⟶ rightCoefficientComplex R L' N :=
   (rightCoefficientComplexIso R L M).hom ≫
@@ -359,7 +424,10 @@ def rightCoefficientLieComplexMap (g : RightLieModuleCat.HomOver f M N) :
       (RightLieModuleCat.toLeft N) (rightCoefficientLieMapToLeft R L f M N g) ≫
         (rightCoefficientComplexIso R L' N).inv
 
-/-- The chain component has the coefficient-first pure tensor formula. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+For the bundled chain maps, the Lie carriers share universe v and coefficient carriers share
+w. For n : ℕ, m : M and a : Λ^nL, its component maps m ⊗ a to g(m) ⊗ ⋀^n f(a). -/
 theorem rightCoefficientLieComplexMap_f_tmul (g : RightLieModuleCat.HomOver f M N)
     (n : ℕ) (m : M) (a : ⋀[R]^n L) :
     ((rightCoefficientLieComplexMap R L f M N g).f n).hom (m ⊗ₜ[R] a) =
@@ -373,7 +441,10 @@ theorem rightCoefficientLieComplexMap_f_tmul (g : RightLieModuleCat.HomOver f M 
     (rightCoefficientLieDegreeMap_equiv R L f M N g n (m ⊗ₜ[R] a)).symm).trans
     ((e.symm_apply_apply _).trans (rightCoefficientLieDegreeMap_tmul R L f M N g n m a))
 
-/-- The identity Lie and coefficient maps give the identity chain map. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. The chain map for LieHom.id and the identity on M equals the
+identity of rightCoefficientComplex R L M. -/
 theorem rightCoefficientLieComplexMap_id :
     rightCoefficientLieComplexMap R L (LieHom.id : L →ₗ⁅R⁆ L) M M (𝟙 M) =
       𝟙 (rightCoefficientComplex R L M) := by
@@ -389,7 +460,12 @@ theorem rightCoefficientLieComplexMap_id :
   rw [exteriorPower.map_id]
   rfl
 
-/-- Joint Lie and right-coefficient maps compose on the chain complexes. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+For the bundled chain maps, the Lie carriers share universe v and coefficient carriers share
+w. For h : L' →L'' and k : HomOver h N P in the same respective carrier universes,
+rightCoefficientLieComplexMap(f,g) ≫ rightCoefficientLieComplexMap(h,k) equals the map for
+h.comp f and HomOver.comp k g. -/
 theorem rightCoefficientLieComplexMap_comp
     {L'' : Type v} [LieRing L''] [LieAlgebra R L'']
     (h : L' →ₗ⁅R⁆ L'') (P : RightLieModuleCat.{w} R L'')
@@ -413,19 +489,29 @@ theorem rightCoefficientLieComplexMap_comp
 
 end NativeLieMaps
 
-/-- Prolongation of the right coefficient complex to a common module universe. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For a spare universe z, rightCoefficientComplexULift is the
+degreewise image of CE_right(L,M) under ModuleCat.uliftFunctor.{z,max u v w} R, with target
+height max u v w z. -/
 def rightCoefficientComplexULift (M : RightLieModuleCat.{w} R L) :
     ChainComplex (ModuleCat.{max u v w z} R) ℕ :=
   ((ModuleCat.uliftFunctor.{z, max u v w} R).mapHomologicalComplex
     (ComplexShape.down ℕ)).obj (rightCoefficientComplex R L M)
 
-/-- The prolonged degree object is the lift of the coefficient-first tensor. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. For n : ℕ, (rightCoefficientComplexULift).X n = ModuleCat.of R
+(ULift.{z} (M ⊗[R] Λ^nL)). -/
 theorem rightCoefficientComplexULift_X
     (M : RightLieModuleCat.{w} R L) (n : ℕ) :
     (rightCoefficientComplexULift.{u,v,w,z} R L M).X n =
       ModuleCat.of R (ULift.{z} (M ⊗[R] (⋀[R]^n L))) := rfl
 
-/-- Prolonging the tensor isomorphism gives the lifted left CE model. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and M :
+RightLieModuleCat.{w} R L a right Lie module with action m·x = M.action x m. Let M_left have
+left action ⁅x,m⁆ = −m·x. The degreewise ULift functor maps rightCoefficientComplexIso to an
+isomorphism rightCoefficientComplexULift M ≅ coefficientComplexULift M_left. -/
 def rightCoefficientComplexIsoULift (M : RightLieModuleCat.{w} R L) :
     rightCoefficientComplexULift.{u,v,w,z} R L M ≅
       coefficientComplexULift.{u,v,w,z} R L (RightLieModuleCat.toLeft M) :=
@@ -455,7 +541,11 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
 variable (f : L →ₗ⁅R⁆ L')
 variable (M : RightLieModuleCat.{w} R L) (N : RightLieModuleCat.{w'} R L')
 
-/-- The joint Lie/coefficient map in a common height, with all universes retained. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+For R : Type u, L : Type v, L' : Type v', M : Type w and N : Type w', the common height H =
+max u v v' w w' gives a chain map between the height-H lifted right complexes. It is the
+lifted left map conjugated by the lifted tensor flips. -/
 def rightCoefficientLieComplexMapULift (g : RightLieModuleCat.HomOver f M N) :
     rightCoefficientComplexULift.{u,v,w,max u v v' w w'} R L M ⟶
       rightCoefficientComplexULift.{u,v',w',max u v v' w w'} R L' N :=
@@ -464,7 +554,10 @@ def rightCoefficientLieComplexMapULift (g : RightLieModuleCat.HomOver f M N) :
       (RightLieModuleCat.toLeft N) (rightCoefficientLieMapToLeft R L f M N g) ≫
         (rightCoefficientComplexIsoULift.{u,v',w',max u v v' w w'} R L' N).inv
 
-/-- The independent-universe map keeps the right coefficient and ordered exterior values. -/
+/-- Let R be commutative, L,L' R-Lie algebras, M a right L-module, N a right L'-module, f : L
+→ₗ⁅R⁆ L' and g : RightLieModuleCat.HomOver f M N. Thus g is R-linear and g(m·x) = g(m)·f(x).
+At common height max u v v' w w', the degree-n component sends ULift.up(m ⊗ a) to
+ULift.up(g(m) ⊗ ⋀^n f(a)). -/
 theorem rightCoefficientLieComplexMapULift_f_tmul
     (g : RightLieModuleCat.HomOver f M N) (n : ℕ) (m : M) (a : ⋀[R]^n L) :
     ((rightCoefficientLieComplexMapULift R L f M N g).f n).hom
@@ -511,7 +604,9 @@ theorem rightCoefficientLieComplexMapULift_f_tmul
 
 end IndependentLieMaps
 
-/-- The coefficient-first CE construction is a functor on right coefficients. -/
+/-- For a commutative R : Type u and R-Lie algebra L : Type v, rightCoefficientComplexFunctor maps
+RightLieModuleCat.{w} R L to ChainComplex (ModuleCat.{max u v w} R) ℕ. Its objects are M ⊗
+Λ^nL and its coefficient maps are g ⊗ id. -/
 def rightCoefficientComplexFunctor :
     RightLieModuleCat.{w} R L ⥤ ChainComplex (ModuleCat.{max u v w} R) ℕ := by
   let K : RightLieModuleCat.{w} R L ⥤ ChainComplex (ModuleCat.{max u v w} R) ℕ :=
@@ -530,7 +625,8 @@ def rightCoefficientComplexFunctor :
         rw [K.map_comp]
         simp only [Category.assoc, Iso.inv_hom_id_assoc] }
 
-/-- Coefficient functor components are the coefficient map tensored with the identity. -/
+/-- Let R be commutative, L an R-Lie algebra and g : M ⟶ N a right coefficient morphism in a
+common carrier universe. The degree-n functor map sends m ⊗ a to g(m) ⊗ a. -/
 theorem rightCoefficientComplexFunctor_map_f_tmul
     {M N : RightLieModuleCat.{w} R L} (g : M ⟶ N) (n : ℕ) (m : M) (a : ⋀[R]^n L) :
     (((rightCoefficientComplexFunctor R L).map g).f n).hom (m ⊗ₜ[R] a) =
@@ -550,7 +646,9 @@ theorem rightCoefficientComplexFunctor_map_f_tmul
   exact (congrArg e.symm ((congrArg F hM).trans hPoint)).trans
     (TensorProduct.comm_symm_tmul R N.carrier (⋀[R]^n L) (g.toLinearMap m) a)
 
-/-- The right coefficient functor is naturally the tensor-reordered left functor. -/
+/-- For commutative R and an R-Lie algebra L, the tensor-flip complex isomorphisms form
+rightCoefficientComplexFunctor ≅ RightLieModuleCat.toLeftFunctor ⋙ coefficientComplexFunctor R
+L. Each component swaps M and Λ^nL. -/
 def rightCoefficientComplexFunctorIso :
     rightCoefficientComplexFunctor R L ≅
       RightLieModuleCat.toLeftFunctor (R := R) (L := L) ⋙ coefficientComplexFunctor R L :=
@@ -571,7 +669,8 @@ section Trivial
 
 variable (M : Type w) [AddCommGroup M] [Module R M]
 
-/-- Trivial right coefficients retain exactly the canonical bracket differential. -/
+/-- Let R be commutative, L an R-Lie algebra and M an R-module with zero right Lie action. For n :
+ℕ, rightCoefficientDifferential n = id_M ⊗ differential R L n. -/
 theorem rightCoefficientDifferential_trivial (n : ℕ) :
     rightCoefficientDifferential R L (RightLieModuleCat.trivial (R := R) (L := L) M) n =
       (differential R L n).lTensor M := by
@@ -594,7 +693,9 @@ theorem rightCoefficientDifferential_trivial (n : ℕ) :
 
 end Trivial
 
-/-- Trivial scalar coefficients recover the canonical exterior-power CE chain complex. -/
+/-- For a commutative R and R-Lie algebra L, rightCoefficientComplex with trivial scalar
+coefficient R is isomorphic to (canonicalChainData R L).complex. The degree-n map is the
+tensor left unitor R ⊗ Λ^nL → Λ^nL. -/
 def rightCoefficientTrivialScalarIso :
     rightCoefficientComplex R L (RightLieModuleCat.trivial (R := R) (L := L) R) ≅
       (canonicalChainData R L).complex := by

@@ -12,13 +12,18 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping.CoefficientCoordinates
 
 /-!
-# The leading enveloping Chevalley–Eilenberg/Koszul differential
+# The leading Koszul differential of enveloping chains
 
-In exterior-basis coordinates, the regular action and the polynomial-variable
-Koszul differential delete the same basis index. The PBW multiplication
-defect has one less coefficient degree. Together with the bracket degree drop,
-this puts the difference of the two differentials in the previous total
-filtration stage.
+Let `R` be a commutative ring and let `L` have an ordered `R`-basis `b : I → L`. Exterior-
+basis coordinates and PBW polynomial coordinates identify degree-`n` regular-coefficient
+chains with finitely supported families of polynomials indexed by `n`-element subsets of `I`.
+
+In these coordinates the action boundary deletes one exterior basis index and multiplies its
+polynomial coefficient by the corresponding variable, with sign `(-1)^i`. The difference from
+the polynomial Koszul differential consists of the bracket boundary and the lower-degree PBW
+right-multiplication defects. It therefore sends total filtration stage `p` into stage `p-1`.
+
+Reference: Weibel, *An Introduction to Homological Algebra*, Chapter 7.
 -/
 
 @[expose] public section
@@ -84,8 +89,11 @@ private theorem envelopingAction_coordinates_basis (b : Module.Basis I R L) (n :
       (u * UniversalEnvelopingAlgebra.ι R (b (Set.powersetCard.ofFinEmbEquiv.symm s i)))) = _
   rw [← exteriorBasis_erased, envelopingCoefficientCoordinates_basis_tmul]
 
-/-- Difference of the original CE differential and original variable Koszul
-differential in the polynomial coefficient coordinates. -/
+/-- The differential defect of the enveloping-to-polynomial coordinates.
+
+For an ordered basis `b`, let `c_n` be the exterior/PBW coefficient coordinates. This map is
+`c_n ∘ d_CE - d_Koszul ∘ c_(n+1)`, from degree-`n+1` regular-coefficient chains to polynomial
+families indexed by `n`-element basis subsets. -/
 def envelopingKoszulDefect (b : Module.Basis I R L) (n : ℕ) :
     (⋀[R]^(n + 1) L) ⊗[R] regularCoefficients R L →ₗ[R] F n :=
   (envelopingCoefficientCoordinates R L b n).toLinearMap.comp
@@ -151,8 +159,11 @@ private theorem envelopingKoszulDefect_tmul_mem (b : Module.Basis I R L) (n q : 
   apply (KoszulComplex.polynomialCoefficientFiltration R n (q + n)).smul_mem
   exact envelopingKoszulDefect_basis_mem R L b n q s u hu
 
-/-- The CE/Koszul differential difference lies in the previous total
-degree stage, for every original filtered chain. -/
+/-- The lower total degree of the enveloping–Koszul defect.
+
+For every ordered `R`-basis `b` and chain `z` in total enveloping filtration stage `p` of
+degree `n+1`, the defect `c_n(d_CE z) - d_Koszul(c_(n+1) z)` lies in polynomial coefficient
+filtration stage `p-1` of degree `n`. -/
 theorem envelopingKoszulDefect_mem_lowerFiltration (b : Module.Basis I R L) (p n : ℕ)
     {z : (⋀[R]^(n + 1) L) ⊗[R] regularCoefficients R L}
     (hz : z ∈ envelopingFiltration R L p (n + 1)) :

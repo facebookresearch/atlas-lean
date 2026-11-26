@@ -13,13 +13,13 @@ public import MathlibExt.Algebra.Homology.ChainComplex.PositiveTailMapFunctor
 public import MathlibExt.Algebra.Homology.HomologicalComplex.MapHomologyIso
 
 /-!
-# Native positive-tail homology commutes with additive homology preservation
+# Positive-tail homology and additive homology-preserving functors
 
-The degree shift is the original positive-tail homology isomorphism. Its
-hom is the native homology map of the actual shifted short-complex row.
-The canonical native coordinate isomorphisms retain the first two identity
-maps, and the last map is zero at degree zero. Native short-complex homology
-naturality gives the additive functor comparison without a new shift engine.
+Let K be a nonnegative chain complex in an abelian category with d_K,1,0 = 0. The comparison
+H_n(T(K)) ≅ H_{n+1}(K) is induced by a map of the corresponding short complexes. Its first two
+components are the identity reindexing maps; at n = 0 its last component is zero. For an
+additive homology-preserving functor F between abelian categories, this comparison commutes with
+T(F(K)) ≅ F(T(K)) and the canonical homology comparison H_n(F(K)) ≅ F(H_n(K)).
 -/
 
 @[expose] public section
@@ -32,7 +32,10 @@ namespace ChainComplex
 
 variable {C : Type*} [Category* C] [Abelian C]
 
-/-- The original shifted row map in explicit native degree coordinates. -/
+/-- Let C be abelian, K a nonnegative chain complex with d_K,1,0 = 0, and n a natural number. There
+is a map from T(K)_{n+1} → T(K)_n → T(K)_{n−1} to K_{n+2} → K_{n+1} → K_n. Its first two
+components are identities; the third is an identity when n > 0 and the zero map K₁ → K₀ when n =
+0. Natural-number subtraction is used in n−1. -/
 def positiveTailExplicitShortComplexMap (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
     ∀ n : ℕ, (positiveTail K).sc' (n + 1) n (n - 1) ⟶ K.sc' (n + 2) (n + 1) n
   | 0 =>
@@ -48,14 +51,20 @@ def positiveTailExplicitShortComplexMap (K : ChainComplex C ℕ) (hK : K.d 1 0 =
         exact (Category.id_comp _).trans (hK.trans (Limits.comp_zero).symm) }
   | n + 1 => (positiveTailRowIso K n).hom
 
-/-- The shifted row map uses the actual native choices of predecessor and successor. -/
+/-- Let C be abelian, K a nonnegative chain complex with d_K,1,0 = 0, and n a natural number. The
+canonical short-complex map T(K).sc(n) → K.sc(n+1) is obtained from the explicitly indexed
+shifted-row map by the predecessor and successor reindexing isomorphisms. Its middle component
+is the identity of K_{n+1}. -/
 def positiveTailShortComplexMap (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTail K).sc n ⟶ K.sc (n + 1) :=
   ((positiveTail K).isoSc' (n + 1) n (n - 1) (by simp) (by cases n <;> simp)).hom ≫
     positiveTailExplicitShortComplexMap K hK n ≫
       (K.isoSc' (n + 2) (n + 1) n (by simp [Nat.add_assoc]) (by simp)).inv
 
-/-- In canonical row coordinates the incoming component is the original identity map. -/
+/-- Let C be abelian, K a nonnegative chain complex with d_K,1,0 = 0, and n a natural number. Let
+e_T identify T(K).sc(n) with its explicit row (n+1,n,n−1), and e_K identify K.sc(n+1) with its
+row (n+2,n+1,n). The incoming component of positiveTailShortComplexMap is e_T.hom₁ ≫ e_K.inv₁,
+the canonical identification of their degree-(n+2) terms. -/
 theorem positiveTailShortComplexMap_τ₁ (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTailShortComplexMap K hK n).τ₁ =
       (((positiveTail K).isoSc' (n + 1) n (n - 1) (by simp) (by cases n <;> simp)).hom).τ₁ ≫
@@ -69,7 +78,8 @@ theorem positiveTailShortComplexMap_τ₁ (K : ChainComplex C ℕ) (hK : K.d 1 0
   exact (congrArg (fun f : K.X (n + 2) ⟶ K.X (n + 2) => e₀.hom.τ₁ ≫ f ≫ e₁.inv.τ₁) ht).trans
     (congrArg (fun f => e₀.hom.τ₁ ≫ f) (Category.id_comp _))
 
-/-- The native row map retains the literal original degree `n+1` element. -/
+/-- Let C be abelian, K a nonnegative chain complex with d_K,1,0 = 0, and n a natural number. The
+middle component of positiveTailShortComplexMap K is the identity map of K_{n+1}. -/
 theorem positiveTailShortComplexMap_τ₂ (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTailShortComplexMap K hK n).τ₂ = 𝟙 (K.X (n + 1)) := by
   let e₀ := (positiveTail K).isoSc' (n + 1) n (n - 1) (by simp) (by cases n <;> simp)
@@ -83,7 +93,9 @@ theorem positiveTailShortComplexMap_τ₂ (K : ChainComplex C ℕ) (hK : K.d 1 0
   change e₀.hom.τ₂ ≫ (positiveTailExplicitShortComplexMap K hK n).τ₂ ≫ e₁.inv.τ₂ = _
   exact (congrArg₂ (fun (f g : K.X (n + 1) ⟶ K.X (n + 1)) => f ≫ g) h₀ hm).trans (Category.id_comp _)
 
-/-- The existing positive-tail homology shift is the homology map of the actual native row map. -/
+/-- Let C be abelian, K a nonnegative chain complex with d_K,1,0 = 0, and n a natural number. The
+forward map of H_n(T(K)) ≅ H_{n+1}(K) equals the homology map induced by
+positiveTailShortComplexMap K : T(K).sc(n) → K.sc(n+1). -/
 theorem positiveTailHomologyIso_hom_eq (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTailHomologyIso K hK n).hom =
       ShortComplex.homologyMap (positiveTailShortComplexMap K hK n) := by
@@ -104,13 +116,17 @@ variable {D : Type*} [Category* D] [Abelian D]
   (F : C ⥤ D) [F.Additive] [F.PreservesHomology]
 
 omit [F.PreservesHomology] in
-/-- The degree-one zero differential is retained by the native additive complex functor. -/
+/-- Let C and D be abelian categories, F : C → D additive, and K a nonnegative chain complex with
+d_K,1,0 = 0. The mapped complex F(K) also satisfies d_F(K),1,0 = 0. -/
 theorem mapHomologicalComplex_d_one_zero (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
     ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj K).d 1 0 = 0 := by
   change F.map (K.d 1 0) = 0
   rw [hK, F.map_zero]
 
-/-- The original positive-tail homology computation respects additive homology preservation. -/
+/-- Let C and D be abelian, F : C → D additive and homology preserving, and K a nonnegative chain
+complex with d_K,1,0 = 0. For n ∈ ℕ, let α_K : T(F(K)) ≅ F(T(K)), γ_n,K : H_n(F(K)) ≅ F(H_n(K)),
+and e_K,n : H_n(T(K)) ≅ H_{n+1}(K) be the canonical comparisons. Then H_n(α_K.hom) ≫
+γ_n,T(K).hom ≫ F(e_K,n.hom) = e_F(K),n.hom ≫ γ_{n+1,K}.hom. -/
 @[reassoc]
 theorem positiveTailHomologyIso_map (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     HomologicalComplex.homologyMap ((positiveTailMapFunctorIso F).app K).hom n ≫

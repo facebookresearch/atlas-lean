@@ -1,4 +1,6 @@
-# Partial Total Homology Filtration Adjacent Hom comp to Stable zero
+# Vanishing of the preceding filtration image in the stable quotient
 
-The adjacent homology filtration map followed by the stable quotient is
+Vanishing of the preceding filtration image in the stable quotient.
+
+The adjacent filtration inclusion followed by the projection to the stable interval object is
 zero.

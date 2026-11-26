@@ -12,11 +12,14 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.Basic
 
 /-!
-# Degeneracies in coefficient Hochschild coordinates
+# Simplicial degeneracies in Hochschild coefficient coordinates
 
-The monadic coefficient bar induces degeneracy maps on the
-coefficient tensor levels. Each map inserts the algebra unit at
-its specified tensor position, with independent carrier universes.
+Let k be a commutative ring, A an associative k-algebra and M a compatible A-bimodule. In
+degree n, Hochschild chains are M ⊗[k] A⊗n. The degeneracy sᵢ retains the coefficient and
+inserts 1_A at tensor position i, for 0≤i≤n. The chain isomorphism with the coefficient bar
+uses its degreewise tensor coordinate isomorphisms.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., Chapter 1, for the Hochschild simplicial module.
 -/
 
 @[expose] public section
@@ -38,14 +41,19 @@ variable (k : Type u) (A : Type v) (M : Type w)
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M]
   [SMulCommClass k Aᵐᵒᵖ M] [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- The unit degeneracy transported to the literal tensor levels. -/
+/-- The unit-inserting degeneracy of a Hochschild tensor word.
+
+For a commutative ring k, an associative k-algebra A, a compatible A-bimodule M and i ∈
+Fin(n+1), sᵢ maps M ⊗ A⊗n to M ⊗ A⊗(n+1), retaining M and inserting 1_A at position i. -/
 def degeneracy (n : ℕ) (i : Fin (n + 1)) :
     chainLevel k A M n ⟶ chainLevel k A M (n + 1) :=
   (coefficientBarObjIso k A M n).inv ≫ (coefficientBar k A M).σ i ≫
     (coefficientBarObjIso k A M (n + 1)).hom
 
-/-- Native degeneracy inserts the unit into the tensor tuple and leaves
-the coefficient unchanged. -/
+/-- The pure-tensor formula for a Hochschild degeneracy.
+
+For a commutative ring k, an associative k-algebra A, a compatible A-bimodule M and a : Fin n
+→ A, sᵢ(m ⊗ tprod(a)) = m ⊗ tprod(hochschildInsertOne(i,a)). -/
 theorem degeneracy_tprod (n : ℕ) (i : Fin (n + 1)) (m : M) (a : Fin n → A) :
     (degeneracy k A M n i).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[k] PiTensorProduct.tprod k (hochschildInsertOne i a) := by
@@ -62,11 +70,18 @@ theorem degeneracy_tprod (n : ℕ) (i : Fin (n + 1)) (m : M) (a : Fin n → A) :
       (LinearEquiv.refl k (TensorPower k (n + 1) A)))
     (bar_degen_insert k A (ULift.{max u v w} M) n i (ULift.up m) a)).trans (by rfl)
 
-/-- Primitive components of the comparison to the native bar complex. -/
+/-- The forward coefficient-bar comparison in degree n.
+
+For a commutative ring k, an associative k-algebra A and a compatible A-bimodule M, the nth
+component of chainComplexIso.hom is the inverse coefficientBarObjIso tensor-coordinate map. -/
 theorem chainComplexIso_hom_f (n : ℕ) :
     (chainComplexIso k A M).hom.f n = (coefficientBarObjIso k A M n).inv := rfl
 
-/-- Primitive inverse components of the native bar-complex comparison. -/
+/-- The inverse coefficient-bar comparison in degree n.
+
+For a commutative ring k, an associative k-algebra A and a compatible A-bimodule M, the nth
+component of chainComplexIso.inv is coefficientBarObjIso, recovering the coefficient bar from
+its tensor coordinates. -/
 theorem chainComplexIso_inv_f (n : ℕ) :
     (chainComplexIso k A M).inv.f n = (coefficientBarObjIso k A M n).hom := rfl
 

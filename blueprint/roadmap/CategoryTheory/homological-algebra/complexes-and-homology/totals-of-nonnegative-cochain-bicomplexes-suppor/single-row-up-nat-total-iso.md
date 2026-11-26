@@ -1,4 +1,5 @@
-# Single Row Up Nat Total Iso
+# Canonical total isomorphism for an outer-degree-zero cochain bicomplex
 
-The canonical isomorphism from the total of a row-zero bicomplex to the
-original nonnegative cochain complex.
+Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+A, Tot(singleRowUpNat A) ≅ A. Its forward map is toSingleRowUpNat A and its inverse is
+fromSingleRowUpNat A.

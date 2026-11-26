@@ -1,3 +1,6 @@
-# Delta At Pos epsilon At Pos succ cast Succ of le
+# The mixed insertion identity with counit before comultiplication
 
-Distant `δ`/`ε` interchange for `of_le` (dual of `etaAtPos` version).
+The mixed insertion identity with counit before comultiplication.
+
+For left-end positions `j ≤ i`, comultiplication at `i.succ` followed by counit at
+`j.castSucc` equals counit at `j` followed by comultiplication at `i`.

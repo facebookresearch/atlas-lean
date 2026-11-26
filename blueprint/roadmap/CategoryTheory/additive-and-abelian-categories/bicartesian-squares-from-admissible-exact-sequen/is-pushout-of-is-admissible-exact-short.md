@@ -1,4 +1,5 @@
-# Is Pushout of is Admissible Exact short Complex
+# Pushouts characterized by admissible exact pairs
 
-Admissible exactness of the biproduct short complex associated to a
-commutative square implies that the square is a pushout.
+In an additive exact category `C`, let `sq` be a commutative square
+`X₁ → X₂`, `X₁ → X₃`, with target `X₄`. If its associated biproduct
+short complex is admissible exact, the original square is a pushout.

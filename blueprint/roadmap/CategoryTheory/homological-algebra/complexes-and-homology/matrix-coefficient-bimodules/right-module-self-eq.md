@@ -1,3 +1,4 @@
-# Right Module self eq
+# The right action on regular matrix coefficients
 
-The computed right action on self coefficients is the regular right module.
+For a ring A and finite ι with decidable equality, the
+right matrix module on Mat_ι(A) is regular multiplication: op B•X=XB.

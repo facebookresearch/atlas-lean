@@ -12,14 +12,11 @@ module
 public import MathlibExt.Algebra.Homology.HomologicalComplex.Splitting
 
 /-!
-# Functor coherence for actual complex splittings
+# Functoriality of splitting transport and normalization
 
-The maps are the componentwise transport already provided by `Splitting.map`.
-Identity, composition and reflexive normalization require only preservation of
-zero morphisms. The source and target object and morphism universes, and the
-index universe, are independent. Only commuting with the square-zero
-normalization requires additive source and target categories and an additive
-functor. No homology, abelian, ring or projective assumption is used.
+Zero-preserving functors map generalized-inverse splittings, with identity
+and composition laws and compatibility with reflexive normalization.
+Additive functors additionally preserve the square-zero normalization.
 -/
 
 @[expose] public section
@@ -33,7 +30,11 @@ universe u v w uD vD uE vE
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
   {ι : Type w} {c : ComplexShape ι} {K : HomologicalComplex C c}
 
-/-- Componentwise transport through the identity functor fixes the actual splitting. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. Mapping every component by the identity functor leaves the
+splitting unchanged: s.map(𝟭C)=s.
+-/
 @[simp]
 lemma map_id (s : Splitting K) : s.map (𝟭 C) = s := by
   ext i j
@@ -42,14 +43,22 @@ lemma map_id (s : Splitting K) : s.map (𝟭 C) = s := by
 variable {D : Type uD} [Category.{vD} D] [HasZeroMorphisms D]
   {E : Type uE} [Category.{vE} E] [HasZeroMorphisms E]
 
-/-- Successive componentwise transports agree with transport through the composite. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. For zero-preserving F:C⥤D and G:D⥤E between categories
+with zero morphisms, s.map(F⋙G)=(s.map F).map G.
+-/
 lemma map_comp (s : Splitting K) (F : C ⥤ D) (G : D ⥤ E)
     [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms] :
     s.map (F ⋙ G) = (s.map F).map G := by
   ext i j
   rfl
 
-/-- Zero-preserving functors commute with the actual reflexive inverse construction. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms, s a generalized-inverse
+splitting, and F:C⥤D a zero-preserving functor into a category D with zero morphisms.
+Reflexive normalization h d h is preserved: (s.map F).reflexive=s.reflexive.map F.
+-/
 lemma map_reflexive (s : Splitting K) (F : C ⥤ D) [F.PreservesZeroMorphisms] :
     (s.map F).reflexive = s.reflexive.map F := by
   ext i j
@@ -67,7 +76,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {D : Type uD} [Category.{vD} D] [Preadditive D]
   {ι : Type w} {c : ComplexShape ι} {K : HomologicalComplex C c}
 
-/-- An additive functor commutes with the proved square-zero normalization. -/
+/--
+Let C,D be preadditive categories, K a c-complex with splitting s and F:C⥤D additive. Then
+(s.map F).normalize=s.normalize.map F, so the square-zero normalized inverse maps are
+functorially preserved.
+-/
 lemma map_normalize (s : Splitting K) (F : C ⥤ D) [F.Additive] :
     (s.map F).normalize = s.normalize.map F := by
   ext i j

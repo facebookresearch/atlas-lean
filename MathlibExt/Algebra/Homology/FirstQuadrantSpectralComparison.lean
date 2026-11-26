@@ -17,18 +17,16 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantHomologyFiltrationNaturality
 
 /-!
-# Spectral-sequence comparison for first-quadrant bicomplexes
+# Comparison theorems for first-quadrant total complexes
 
-For a morphism `f : K ⟶ L` of first-quadrant bicomplexes, an isomorphism on
-every associated graded piece of total homology, or on every stable page of
-the horizontal-filtration spectral sequence, implies that the induced map of
-total complexes is a quasi-isomorphism.
+Let C be an abelian category and f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ).
+If f induces an isomorphism on Gr_pH_{p+q}(Tot) for every p,q ∈ ℕ, then Tot(f) is a
+quasi-isomorphism. The finite image filtration of H_n(Tot) is exhaustive by stage n, and its
+consecutive stages give short exact sequences used in the comparison.
 
-The graded statement is proved by induction on the finite filtration of total
-homology, using the five lemma on consecutive filtration steps.  The stable
-statement follows from naturality of the stable-page/associated-graded
-comparison.  Propagation of an isomorphism from the second page through
-successor pages to the stable page is not included here.
+The same conclusion follows if every stable-page component of f is invertible. At bidegree
+(p,q), the chosen stable page is r₀=max(p+1,q+2), and its term is naturally isomorphic to
+Gr_pH_{p+q}(Tot).
 -/
 
 @[expose] public section
@@ -49,12 +47,14 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The current-stage total-homology filtration map induced by a bicomplex
-morphism commutes with the inclusions into total homology. Not a `simp`
-lemma: the upstream `@[simp]` unfolding of the current-stage map rewrites
-the left-hand side before this commutation can match, so consumers rewrite
-by name. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+In degree n=p+q, let c(f) : F_pH_n(Tot(K)) → F_pH_n(Tot(L)) be the current complete
+image-stage map, and ι_p^K,ι_p^L the image inclusions. Then c(f) ≫ ι_p^L = ι_p^K ≫
+H_n(Tot(f)). The stage index is the finite integer p in EInt, and the equality holds at p=0 as
+well. -/
 @[reassoc]
+/- This commutation is used by name: simp unfolding of the current-stage map can rewrite its
+left-hand side before the equation matches. -/
 theorem horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_ι
     (f : K ⟶ L) (p q : ℕ) :
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex f p q ≫
@@ -119,8 +119,11 @@ theorem horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_ι
         (Category.assoc _ _ _).symm
     _ = _ := by rw [hιK]
 
-/-- The short-complex map between consecutive-step cokernel sequences induced
-by a bicomplex morphism. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+The short complexes F_{p−1}H_{p+q}(Tot) → F_pH_{p+q}(Tot) → Gr_pH_{p+q}(Tot) have a morphism
+induced by f. Its three components are the predecessor-stage map, the current-stage map, and
+the associated graded cokernel map. Their commutation equations are the consecutive-stage
+naturality square and the defining cokernel-map square. -/
 noncomputable def horizontalFiltrationStepShortComplexMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     ShortComplex.cokernelSequence
@@ -221,9 +224,11 @@ private theorem isIso_horizontalFiniteHomologyImageMapOfBicomplex_of_eq
   subst h
   exact Iff.rfl
 
-/-- If a bicomplex morphism induces isomorphisms on all associated graded
-pieces, then it induces isomorphisms on all current-stage total-homology
-filtration objects. -/
+/-- Let C be an abelian category and f : K → L a bicomplex map of shape (down ℕ,down ℕ). Suppose
+the induced map Gr_aH_{a+b}(Tot(K)) → Gr_aH_{a+b}(Tot(L)) is an isomorphism for every a,b ∈ ℕ.
+Then for every p,q ∈ ℕ the current-stage map F_pH_{p+q}(Tot(K)) → F_pH_{p+q}(Tot(L)) is an
+isomorphism. The argument compares the short exact sequences of consecutive image-filtration
+stages, starting from the zero stage at integer index −1. -/
 theorem isIso_horizontalPositiveCurrent_of_isIso_gradedPieceMap
     (f : K ⟶ L)
     (hf : ∀ p q : ℕ, IsIso
@@ -264,9 +269,11 @@ theorem isIso_horizontalPositiveCurrent_of_isIso_gradedPieceMap
         (show (p + 1) + q = p + (q + 1) by omega) p]
       exact (isIso_horizontalPositiveCurrent_iff f p (q + 1)).1 (ih (q + 1))
 
-/-- Comparison theorem, graded form: if a bicomplex morphism induces
-isomorphisms on all associated graded pieces of total homology for the
-horizontal filtration, then its total map is a quasi-isomorphism. -/
+/-- Let C be an abelian category and f : K → L a map of bicomplexes of shape (down ℕ,down ℕ). If
+for every p,q ∈ ℕ the induced map Gr_pH_{p+q}(Tot(K)) → Gr_pH_{p+q}(Tot(L)) is an isomorphism,
+then Tot(f) is a quasi-isomorphism. Here Gr_p is the cokernel of the complete image-stage
+inclusion F_{p−1} → F_p, with p−1 computed in ℤ. The conclusion means that H_n(Tot(f)) is an
+isomorphism for every n ∈ ℕ. -/
 theorem quasiIso_totalMap_of_isIso_horizontalGradedPieceMap_firstQuadrant
     (f : K ⟶ L)
     (hf : ∀ p q : ℕ, IsIso
@@ -293,8 +300,10 @@ theorem quasiIso_totalMap_of_isIso_horizontalGradedPieceMap_firstQuadrant
     ((horizontalTotalHomologyFiltration K n).ι.app (((n : ℤ) : EInt))) _
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The stable-page map induced by a bicomplex morphism is the corresponding
-component of the fixed-page map at the stable index. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Put r₀=max((p:ℤ)+1,(q:ℤ)+2). The stable-page map at (p,q) equals the (p,q)-component of the
+fixed-page map E^{r₀}(K) → E^{r₀}(L). The bound r₀ is the canonical first-quadrant stable
+index, meeting both the lower and upper finite-abutment bounds. -/
 theorem horizontalStablePageMapOfBicomplex_eq_pageMap
     (f : K ⟶ L) (p q : ℕ) :
     horizontalStablePageMapOfBicomplex f p q =
@@ -352,16 +361,21 @@ theorem horizontalStablePageMapOfBicomplex_eq_pageMap
         (homOfLE (data.le₂₃ r (p, q))) n₀ n₁ n₂
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- A bicomplex isomorphism induces an isomorphism on every stable page of
-the horizontal-filtration spectral sequence. -/
+/-- Let C be an abelian category, f : K → L an invertible bicomplex morphism of shape (down ℕ,down
+ℕ), and p,q ∈ ℕ. The induced map E^{r₀}_{p,q}(K) → E^{r₀}_{p,q}(L) is an isomorphism, where
+r₀=max((p:ℤ)+1,(q:ℤ)+2) is the chosen stable-page index. Its inverse is the stable-page map
+induced by f⁻¹. -/
 noncomputable instance isIso_horizontalStablePageMapOfBicomplex
     (f : K ⟶ L) [IsIso f] (p q : ℕ) :
     IsIso (horizontalStablePageMapOfBicomplex f p q) := by
   rw [horizontalStablePageMapOfBicomplex_eq_pageMap]
   infer_instance
 
-/-- A stable-page isomorphism induces an isomorphism on the corresponding
-associated graded piece of total homology. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+If the induced stable-page map at (p,q) is an isomorphism, then Gr_pH_{p+q}(Tot(K)) →
+Gr_pH_{p+q}(Tot(L)) is an isomorphism. The stable page is r₀=max(p+1,q+2), computed in ℤ. The
+conclusion follows through the natural stable-term isomorphisms E^{r₀}_{p,q} ≅
+Gr_pH_{p+q}(Tot). -/
 theorem
     isIso_horizontalTotalHomologyGradedPieceMapOfBicomplex_of_isIso_horizontalStablePageMap
     (f : K ⟶ L) (p q : ℕ)
@@ -379,9 +393,11 @@ theorem
   let _ := hf
   infer_instance
 
-/-- Comparison theorem, stable form: if a bicomplex morphism induces
-isomorphisms on all stable pages of the horizontal-filtration spectral
-sequence, then its total map is a quasi-isomorphism. -/
+/-- Let C be an abelian category and f : K → L a bicomplex map of shape (down ℕ,down ℕ). Suppose
+that for every p,q ∈ ℕ the induced stable-page map E^{r₀(p,q)}_{p,q}(K) → E^{r₀(p,q)}_{p,q}(L)
+is an isomorphism, where r₀(p,q)=max((p:ℤ)+1,(q:ℤ)+2). Then Tot(f) is a quasi-isomorphism. The
+stable comparisons give isomorphisms on every associated graded piece, and the finite
+exhaustive image filtrations give isomorphisms on H_n(Tot) for all n ∈ ℕ. -/
 theorem quasiIso_totalMap_of_isIso_horizontalStablePageMap_firstQuadrant
     (f : K ⟶ L)
     (hf : ∀ p q : ℕ, IsIso (horizontalStablePageMapOfBicomplex f p q)) :

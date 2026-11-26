@@ -1,3 +1,5 @@
-# Matrix Positive Tail Map
+# The positive-tail map of a finite matrix size inclusion
 
-Its finite zero-corner map, with no independently chosen map.
+The positive-tail map of a finite matrix size inclusion.
+
+Restrict the canonical matrix zero-extension chain map to positive exterior degrees.

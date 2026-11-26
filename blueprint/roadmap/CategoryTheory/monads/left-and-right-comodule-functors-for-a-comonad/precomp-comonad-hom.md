@@ -1,4 +1,6 @@
-# Precomp Comonad Hom
+# The precomposition comonad morphism of a comonad transformation
 
-The comonad morphism on `C ⥤ D` induced by `h : G ⟶ H`, via whiskering on
-the right. Dual of `Monad.precompMonadHom`.
+The precomposition comonad morphism of a comonad transformation.
+
+For `h : G → H`, applying each functor `R : C ⥤ D` to the components of `h` gives a morphism
+between the precomposition comonads.

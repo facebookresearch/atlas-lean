@@ -12,12 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.ChainGradedPairingPositiveQuotient
 
 /-!
-# Positive pairing relations after a target map
+# Positive pairing images under a target map
 
-Postcomposing an actual chain pairing takes its positive relation module to
-the image of the original relation module. The induced quotient map and its
-kernel are computed here. A quasi-isomorphism of targets does not by itself
-give a quasi-isomorphism of these quotients.
+For a chain pairing P and a target chain map f, the positive relation submodule of P followed
+by f is the image f_n(S_n) of the relation submodule S_n of P. Pulling it back along f_n gives
+S_n + ker f_n.
+
+When the two source degree-one boundaries vanish, f induces a map between the positive-image
+quotient complexes, sending [x] to [f_n(x)]. Its degree-n kernel is the image of ker f_n under
+K₃.X n → K₃.X n/S_n. Surjectivity of f_n implies surjectivity of this degree quotient map.
+These statements use the supplied additive monoidal structure over an arbitrary ring.
 -/
 
 @[expose] public section
@@ -36,13 +40,19 @@ variable {R : Type u} [Ring R]
   {K₁ K₂ K₃ L : ChainComplex (ModuleCat.{v} R) ℕ}
   (P : ChainGradedPairing K₁ K₂ K₃) (f : K₃ ⟶ L)
 
-/-- A component of the actual postcomposition is postcomposition of the component. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. For p + q = n with equality h, pairAt
+(P.postcomp f) p q n h = pairAt P p q n h ≫ f.f n. -/
 theorem pairAt_postcomp (p q n : ℕ) (h : p + q = n) :
     pairAt (P.postcomp f) p q n h = pairAt P p q n h ≫ f.f n := by
   subst n
   simp only [pairAt_rfl, pair_postcomp]
 
-/-- The positive relation family of the actual postcomposition is the direct image. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. For every n : ℕ, positiveImages
+(P.postcomp f) n = S_n.map (f.f n).hom. -/
 theorem positiveImages_postcomp (n : ℕ) :
     positiveImages (P.postcomp f) n = (positiveImages P n).map (f.f n).hom := by
   unfold positiveImages
@@ -54,7 +64,11 @@ theorem positiveImages_postcomp (n : ℕ) :
       (pairAt P z.1.1 z.1.2 n z.2.2.2).hom) = _
   exact LinearMap.range_comp _ _
 
-/-- Pulling those relations back adds exactly the kernel of the target map. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. For every n : ℕ, (positiveImages
+(P.postcomp f) n).comap (f.f n).hom = S_n ⊔ LinearMap.ker (f.f n).hom. This is the submodule
+sum of the relations and the kernel. -/
 theorem comap_positiveImages_postcomp (n : ℕ) :
     (positiveImages (P.postcomp f) n).comap (f.f n).hom =
       positiveImages P n ⊔ LinearMap.ker (f.f n).hom := by
@@ -62,19 +76,34 @@ theorem comap_positiveImages_postcomp (n : ℕ) :
 
 variable (h₁ : K₁.d 1 0 = 0) (h₂ : K₂.d 1 0 = 0)
 
-/-- The target map descends through the two actual positive relation quotients. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. Assume K₁.d 1 0 = 0 and K₂.d 1 0 = 0,
+so these image families define quotient complexes. The map positiveImageQuotientPostcompMap
+goes from K₃/S to L/f(S), with the boundaries induced from K₃ and L. In degree n it sends the
+class of x to the class of f_n(x). -/
 def positiveImageQuotientPostcompMap :
     positiveImageQuotient P h₁ h₂ ⟶ positiveImageQuotient (P.postcomp f) h₁ h₂ :=
   positiveImageQuotientMap P h₁ h₂ (P.postcomp f) h₁ h₂ (𝟙 K₁) (𝟙 K₂) f
     (by simp only [tensorHom_id_id, Category.id_comp, postcomp])
 
-/-- The descended map sends an original class to the class of its actual image. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. Assume K₁.d 1 0 = 0 and K₂.d 1 0 = 0,
+so these image families define quotient complexes. For every n : ℕ and x : K₃.X n, the
+degree-n quotient map sends S_n.mkQ x to (positiveImages (P.postcomp f) n).mkQ ((f.f n).hom
+x). -/
 theorem positiveImageQuotientPostcompMap_mk (n : ℕ) (x : K₃.X n) :
     ((positiveImageQuotientPostcompMap P f h₁ h₂).f n).hom
         ((positiveImages P n).mkQ x) =
       (positiveImages (P.postcomp f) n).mkQ ((f.f n).hom x) := rfl
 
-/-- The induced map retains the original quotient projection square. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. Assume K₁.d 1 0 = 0 and K₂.d 1 0 = 0,
+so these image families define quotient complexes. Writing π_P and π_(P.f) for the two
+quotient projections, one has π_P ≫ positiveImageQuotientPostcompMap P f h₁ h₂ = f ≫ π_(P.f)
+as chain maps. -/
 @[reassoc]
 theorem positiveImageQuotientPostcompMap_projection :
     positiveImageProjection P h₁ h₂ ≫ positiveImageQuotientPostcompMap P f h₁ h₂ =
@@ -82,7 +111,12 @@ theorem positiveImageQuotientPostcompMap_projection :
   positiveImageProjection_map P h₁ h₂ (P.postcomp f) h₁ h₂ (𝟙 K₁) (𝟙 K₂) f
     (by simp only [tensorHom_id_id, Category.id_comp, postcomp])
 
-/-- Its component kernel is the original target kernel modulo the original relations. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. Assume K₁.d 1 0 = 0 and K₂.d 1 0 = 0,
+so these image families define quotient complexes. For n : ℕ, the kernel of the induced degree
+quotient map equals (LinearMap.ker (f.f n).hom).map S_n.mkQ. As a submodule of K₃.X n/S_n, it
+is (ker f_n + S_n)/S_n. -/
 theorem ker_positiveImageQuotientPostcompMap (n : ℕ) :
     LinearMap.ker ((positiveImageQuotientPostcompMap P f h₁ h₂).f n).hom =
       (LinearMap.ker (f.f n).hom).map (positiveImages P n).mkQ := by
@@ -95,7 +129,12 @@ theorem ker_positiveImageQuotientPostcompMap (n : ℕ) :
   rw [Submodule.ker_mapQ, comap_positiveImages_postcomp, Submodule.map_sup,
     Submodule.mkQ_map_self, bot_sup_eq]
 
-/-- Surjectivity of each original component gives surjectivity of the actual quotient component. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let f : K₃ ⟶
+L be a chain map and write S_n for positiveImages P n. Assume K₁.d 1 0 = 0 and K₂.d 1 0 = 0,
+so these image families define quotient complexes. If (f.f n).hom is surjective for a
+particular n : ℕ, then the degree-n component of positiveImageQuotientPostcompMap P f h₁ h₂ is
+surjective. -/
 theorem positiveImageQuotientPostcompMap_surjective (n : ℕ)
     (hf : Function.Surjective (f.f n).hom) :
     Function.Surjective ((positiveImageQuotientPostcompMap P f h₁ h₂).f n).hom := by

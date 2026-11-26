@@ -14,11 +14,14 @@ public import Mathlib.Algebra.Homology.HomologicalComplexKernels
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Raw cochains through cokernels and kernels
+# Factorization of homogeneous cochains through a cokernel and kernel
 
-An arbitrary homogeneous cochain annihilated by precomposition and postcomposition factors
-uniquely through the cokernel and kernel. The factor is a homogeneous family, not necessarily a
-cocycle or a chain map. Only kernels and cokernels in the base preadditive category are needed.
+Let D be preadditive with kernels and cokernels. For complex maps η : U → C and ε : A → V, any
+homogeneous degree-n cochain θ : C → A with θ ∘ η=0 and ε ∘ θ=0 has a unique factor from coker η
+to ker ε.
+
+Conversely, reconstruction by the complex quotient and inclusion satisfies both vanishing
+conditions. Neither the cochain nor its factor is required to commute with the differential.
 -/
 
 @[expose] public section
@@ -86,10 +89,12 @@ private theorem factor_cokernel_kernel_component
     (cokernel.π η).f p ≫ (θ ≫ (kernel.ι ε).f q)
   exact hψ.trans hrecover.symm
 
-/--
-A raw degree-`d` cochain with both outer zero composites has a unique factor through the cokernel
-and kernel complexes. No differential compatibility is imposed on the cochain or its factor.
--/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. For every θ ∈ Annⁿ(η,ε), there exists a unique degree-n
+cochain θ′ : coker η → ker ε with i_ε ∘ θ′ ∘ π_η=θ. The factor need not be a cocycle or a chain
+map. -/
 theorem exists_unique_factor_cokernel_kernel
     {U C A V : CochainComplex D ℤ} (η : U ⟶ C) (ε : A ⟶ V)
     (d : ℤ) (τ : Cochain C A d)
@@ -143,8 +148,11 @@ theorem exists_unique_factor_cokernel_kernel
   exact (Classical.choose_spec (factor_cokernel_kernel_component η ε p q (τ.v p q hpq)
     (hpreComponent p q hpq) (hpostComponent p q hpq))).2 (ψ.v p q hpq) hψcomponent
 
-/-- Every cochain reconstructed through a cokernel projection and a kernel
-inclusion is annihilated by the two original maps, in every integer degree. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. Assume D has kernels and cokernels, so the complexes coker(η)
+and ker(ε) are computed degreewise. For every degree-n cochain θ′ : coker η → ker ε, the
+reconstruction θ=i_ε ∘ θ′ ∘ π_η satisfies θ ∘ η=0 and ε ∘ θ=0. -/
 theorem reconstruction_cokernel_kernel_vanish
     {U C A V : CochainComplex D ℤ} (η : U ⟶ C) (ε : A ⟶ V) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η

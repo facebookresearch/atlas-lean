@@ -22,8 +22,10 @@ namespace CategoryTheory.MonoidalCategory.Limits
 
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [BraidedCategory C]
 
-/-- In a braided monoidal category, if tensoring on the left by `X` preserves
-colimits of a given size, then tensoring on the right by `X` does too. -/
+/-- Let `C` be a braided monoidal category and `X ∈ C`. If the
+left tensor functor `X ⊗ -` preserves colimits of diagram size
+`(w,w′)`, the right tensor functor `- ⊗ X` preserves colimits of
+that same size, by the braiding comparison between the two functors. -/
 instance preservesColimitsOfSize_of_braided_and_preservesColimitsOfSize_tensor_left
     (X : C) [PreservesColimitsOfSize.{w, w'} (tensorLeft X)] :
     PreservesColimitsOfSize.{w, w'} (tensorRight X) :=

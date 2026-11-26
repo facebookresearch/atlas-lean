@@ -1,3 +1,4 @@
-# Hom Fixed Coefficient X
+# Degree objects of fixed-coefficient Hom cochains
 
-The degree object is the original morphism group, without a grading bound.
+Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+For every integer n, the degree-n object of Hom(P,M) is the abelian group Hom_C(Pₙ,M).

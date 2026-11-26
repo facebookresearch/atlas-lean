@@ -1,3 +1,5 @@
-# Matrix Zero Corner Map coaug
+# Coaugmentation preservation by matrix zero extension
 
-Zero corners preserve the CE coaugmentation.
+Coaugmentation preservation by matrix zero extension.
+
+The matrix CE coaugmentation followed by a zero-extension map is the target coaugmentation.

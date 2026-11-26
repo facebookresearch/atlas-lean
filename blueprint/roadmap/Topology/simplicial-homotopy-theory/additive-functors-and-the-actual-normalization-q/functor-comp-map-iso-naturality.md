@@ -1,3 +1,6 @@
-# Functor Comp Map Iso naturality
+# The natural-transformation square for quotient normalization comparison
 
-The comparison square is an equality of actual natural transformations.
+The natural-transformation square for quotient normalization comparison.
+
+The comparison isomorphisms of additive functors commute with a natural transformation between
+those functors as an equality of natural transformations.

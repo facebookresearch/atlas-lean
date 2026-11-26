@@ -1,3 +1,5 @@
-# Unitization Even Word d
+# The Hochschild boundary of an ideal-leading word
 
-The first column keeps precisely its original Hochschild differential.
+The Hochschild boundary of an ideal-leading word.
+
+The even word commutes with the regular boundary: `d(even(x)) = even(b(x))`.

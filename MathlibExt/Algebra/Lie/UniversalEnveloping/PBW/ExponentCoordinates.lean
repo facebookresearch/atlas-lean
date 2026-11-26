@@ -16,12 +16,17 @@ public import Mathlib.Data.Multiset.Sort
 public import Mathlib.RingTheory.MvPolynomial.Basic
 
 /-!
-# Exponent-function PBW coordinates
+# PBW coordinates indexed by finite exponent functions
 
-An ordered word is equivalent to its finite multiset of letters, hence to a
-finitely supported exponent function. Reindexing the actual ordered-word
-PBW basis gives the exponent basis. Its coefficient equivalence identifies
-the original UEA with polynomials as a module over the ground ring.
+Let `I` be a linearly ordered alphabet. A weakly increasing finite word is determined by its
+multiset of letters, equivalently by the finitely supported exponent function `e : I →₀ ℕ`.
+Its total exponent degree is the word length.
+
+For an ordered `R`-basis `b` of an `R`-Lie algebra over a commutative ring, reindexing the
+ordered-word PBW basis gives a basis of `U_R(L)` indexed by exponent functions. Its
+coefficient coordinates give an `R`-linear equivalence to `MvPolynomial I R`. Ordered basis
+words map to their monomials; arbitrary words map to the finite sum of monomials specified by
+their bracket normalization.
 -/
 
 @[expose] public section
@@ -34,7 +39,10 @@ namespace UniversalEnvelopingAlgebra.PBW
 
 variable {I : Type w} [LinearOrder I]
 
-/-- Weakly increasing finite words are the finite multisets of their letters. -/
+/-- The equivalence of ordered words and finite multisets.
+
+A weakly increasing word maps to its multiset of letters; the inverse sorts a multiset in the
+given linear order. -/
 def orderedWordMultisetEquiv : OrderedWord I ≃ Multiset I where
   toFun xs := (xs.val : Multiset I)
   invFun s := ⟨s.sort (· ≤ ·), Multiset.pairwise_sort s (· ≤ ·)⟩
@@ -45,40 +53,68 @@ def orderedWordMultisetEquiv : OrderedWord I ≃ Multiset I where
     exact List.mergeSort_eq_self (· ≤ ·) xs.property
   right_inv s := Multiset.sort_eq s (· ≤ ·)
 
-/-- The literal finite exponent function of a word. -/
+/-- The finite multiplicity function of a word.
+
+For a finite word `xs`, this finitely supported function records the multiplicity of each
+letter. -/
 def wordExponent (xs : List I) : I →₀ ℕ := Multiset.toFinsupp (xs : Multiset I)
 
-/-- The ordered-word/exponent-function bijection uses native multiset multiplicities. -/
+/-- The equivalence of ordered words and finite exponent functions.
+
+Multiset multiplicities identify weakly increasing words with finitely supported functions `I
+→₀ ℕ`. -/
 def orderedWordExponentEquiv : OrderedWord I ≃ (I →₀ ℕ) :=
   orderedWordMultisetEquiv.trans Multiset.toFinsupp.toEquiv
 
+/-- The exponent function of an ordered word.
+
+The ordered-word exponent equivalence sends `xs` to the multiplicity function of `xs.val`. -/
 @[simp]
 theorem orderedWordExponentEquiv_apply (xs : OrderedWord I) :
     orderedWordExponentEquiv xs = wordExponent xs.val := rfl
 
+/-- The exponent function of the empty word.
+
+The empty word has the zero multiplicity function. -/
 @[simp]
 theorem wordExponent_nil : wordExponent ([] : List I) = 0 := by
   simp only [wordExponent, Multiset.coe_nil, map_zero]
 
+/-- The exponent function of a concatenated word.
+
+The multiplicity function of `xs ++ ys` is the sum of the two word exponent functions. -/
 theorem wordExponent_append (xs ys : List I) :
     wordExponent (xs ++ ys) = wordExponent xs + wordExponent ys := by
   change Multiset.toFinsupp ((xs : Multiset I) + (ys : Multiset I)) = _
   exact map_add Multiset.toFinsupp _ _
 
+/-- The exponent function of a one-letter word.
+
+The word `[i]` has multiplicity one at `i` and zero at every other letter. -/
 @[simp]
 theorem wordExponent_singleton (i : I) : wordExponent [i] = Finsupp.single i 1 := by
   simpa only [wordExponent, Multiset.coe_singleton] using Multiset.toFinsupp_singleton i
 
+/-- The exponent function after adjoining a first letter.
+
+The word `i :: xs` has exponent function `single(i,1) + wordExponent(xs)`. -/
 theorem wordExponent_cons (i : I) (xs : List I) :
     wordExponent (i :: xs) = Finsupp.single i 1 + wordExponent xs := by
   change wordExponent ([i] ++ xs) = _
   rw [wordExponent_append, wordExponent_singleton]
 
+/-- Invariance of word exponents under an adjacent exchange.
+
+Exchanging two adjacent letters within fixed prefix and suffix words retains the multiplicity
+function. -/
 theorem wordExponent_adjacent_swap (p s : List I) (i j : I) :
     wordExponent (p ++ i :: j :: s) = wordExponent (p ++ j :: i :: s) := by
   simp only [wordExponent_append, wordExponent_cons]
   abel
 
+/-- The total exponent degree of a word.
+
+The sum of the multiplicities in a word exponent function equals the word length. -/
 theorem wordExponent_degree (xs : List I) : (wordExponent xs).degree = xs.length := by
   induction xs with
   | nil => simp only [wordExponent_nil, map_zero, List.length_nil]
@@ -86,25 +122,40 @@ theorem wordExponent_degree (xs : List I) : (wordExponent xs).degree = xs.length
       rw [wordExponent_cons, map_add, Finsupp.degree_single, ih, List.length_cons]
       omega
 
-/-- The canonical ordered word with the original finite multiplicities. -/
+/-- The ordered word with prescribed word multiplicities.
+
+Sort the letters of a word through the ordered-word exponent equivalence, retaining their
+multiplicities. -/
 def canonicalOrderedWord (xs : List I) : OrderedWord I :=
   orderedWordExponentEquiv.symm (wordExponent xs)
 
+/-- The canonical ordering of an already ordered word.
+
+A weakly increasing word is fixed by the canonical ordered-word map. -/
 @[simp]
 theorem canonicalOrderedWord_ordered (xs : OrderedWord I) :
     canonicalOrderedWord xs.val = xs :=
   orderedWordExponentEquiv.symm_apply_apply xs
 
+/-- The exponent function of the canonical ordered word.
+
+Canonical ordering retains the multiplicity of every letter. -/
 theorem canonicalOrderedWord_exponent (xs : List I) :
     wordExponent (canonicalOrderedWord xs).val = wordExponent xs :=
   orderedWordExponentEquiv.apply_symm_apply (wordExponent xs)
 
+/-- The length of the canonical ordered word.
+
+Canonical ordering retains the finite word length. -/
 theorem canonicalOrderedWord_length (xs : List I) :
     (canonicalOrderedWord xs).val.length = xs.length := by
   have h := wordExponent_degree (canonicalOrderedWord xs).val
   rw [canonicalOrderedWord_exponent, wordExponent_degree] at h
   exact h.symm
 
+/-- The word length of an exponent-function index.
+
+The ordered word corresponding to `e : I →₀ ℕ` has length `e.degree`. -/
 theorem orderedWordExponentEquiv_symm_length (e : I →₀ ℕ) :
     (orderedWordExponentEquiv.symm e).val.length = e.degree := by
   have h := wordExponent_degree (orderedWordExponentEquiv.symm e).val
@@ -112,6 +163,10 @@ theorem orderedWordExponentEquiv_symm_length (e : I →₀ ℕ) :
   rw [Equiv.apply_symm_apply] at h
   exact h.symm
 
+/-- Invariance of canonical ordering under an adjacent exchange.
+
+Two words differing by an adjacent exchange within the same prefix and suffix have the same
+canonical ordered word. -/
 theorem canonicalOrderedWord_adjacent_swap (p s : List I) (i j : I) :
     canonicalOrderedWord (p ++ i :: j :: s) = canonicalOrderedWord (p ++ j :: i :: s) := by
   rw [canonicalOrderedWord, canonicalOrderedWord, wordExponent_adjacent_swap]
@@ -122,20 +177,32 @@ variable {R : Type u} [CommRing R]
 local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "P" => MvPolynomial I R
 
-/-- The actual PBW basis indexed by finite exponent functions. -/
+/-- The PBW basis indexed by exponent functions.
+
+For an ordered basis `b` of `L`, reindex the ordered-word basis of `U_R(L)` by finite letter
+multiplicities. -/
 def exponentBasis (b : Module.Basis I R L) : Module.Basis (I →₀ ℕ) R U :=
   (orderedBasis b).reindex orderedWordExponentEquiv
 
+/-- The ordered-word value of a PBW exponent basis element.
+
+The basis element indexed by `e` is the enveloping product of the canonical ordered word with
+exponent function `e`. -/
 theorem exponentBasis_apply (b : Module.Basis I R L) (e : I →₀ ℕ) :
     exponentBasis b e = basisWord b (orderedWordExponentEquiv.symm e).val := by
   rw [exponentBasis, Module.Basis.reindex_apply, orderedBasis_apply]
   rfl
 
-/-- Polynomial PBW coordinates are a ground-module equivalence of the
-original UEA; no algebra equivalence to the commutative polynomial ring is claimed. -/
+/-- The polynomial module coordinates of an enveloping algebra.
+
+The PBW exponent basis and polynomial monomial basis give an `R`-linear equivalence `U_R(L)
+≃ₗ[R] MvPolynomial I R`. -/
 def polynomialCoordinates (b : Module.Basis I R L) : U ≃ₗ[R] P :=
   (exponentBasis b).repr.trans (MvPolynomial.basisMonomials I R).repr.symm
 
+/-- The monomial coordinate of a PBW exponent basis element.
+
+The basis element indexed by `e` maps to the polynomial monomial `X^e` with coefficient one. -/
 @[simp]
 theorem polynomialCoordinates_exponentBasis (b : Module.Basis I R L) (e : I →₀ ℕ) :
     polynomialCoordinates b (exponentBasis b e) = MvPolynomial.monomial e 1 := by
@@ -145,6 +212,10 @@ theorem polynomialCoordinates_exponentBasis (b : Module.Basis I R L) (e : I →�
   change (MvPolynomial.basisMonomials I R : (I →₀ ℕ) → P) e = _
   rw [MvPolynomial.coe_basisMonomials]
 
+/-- The polynomial coordinate of an ordered PBW word.
+
+An ordered word maps to the monomial whose exponent function records its letter
+multiplicities. -/
 theorem polynomialCoordinates_orderedWord (b : Module.Basis I R L) (xs : OrderedWord I) :
     polynomialCoordinates b (orderedWordValue b xs) =
       MvPolynomial.monomial (wordExponent xs.val) 1 := by
@@ -153,8 +224,10 @@ theorem polynomialCoordinates_orderedWord (b : Module.Basis I R L) (xs : Ordered
     rfl
   rw [← h, polynomialCoordinates_exponentBasis, orderedWordExponentEquiv_apply]
 
-/-- Polynomial coordinates compute the actual recursive word normalizer,
-including its finite lower-length bracket terms. -/
+/-- The polynomial coordinates of a bracket-normalized basis word.
+
+For an arbitrary basis word, its polynomial coordinate is the finite sum of monomials indexed
+by its ordered normal-form words, with their normalization coefficients. -/
 theorem polynomialCoordinates_basisWord (b : Module.Basis I R L) (xs : List I) :
     polynomialCoordinates b (basisWord b xs) =
       (normalize b xs).sum (fun ys r =>

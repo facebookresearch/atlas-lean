@@ -13,16 +13,15 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.Splitting
 public import MathlibExt.Algebra.Homology.ChainComplex.NativeShift
 
 /-!
-# Signed inverse transport for native integer shifts
+# Signed shifts of generalized-inverse splittings
 
-Both constructors multiply the actual reindexed inverse components by the
-same `a.negOnePow` used by the native shifted differentials. Thus three signs
-in `d h d` give one sign and two signs in each projection cancel.
+For integer cochains, shift by a places K^{i+a} in degree i and gives
+both the differential and inverse component the factor (−1)^a.
+For integer chains the corresponding term is K_{i−a}, with the same sign.
 
-The source and target remain the native shifted complexes. Isomorphism,
-zero/addition, reflexive, and normalization compatibility are equalities of
-actual `Splitting` data. Preadditivity is precisely the native signed-shift
-assumption; no homology, abelian, projective, or raw square-zero premise occurs.
+Reflexive and square-zero normalization commute with these shifts.
+Canonical zero/addition isomorphisms, complex isomorphisms and additive
+functors give the associated coherence laws.
 -/
 
 @[expose] public section
@@ -52,7 +51,11 @@ section Cochain
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   {K L : CochainComplex C ℤ}
 
-/-- The actual signed native cochain shift of a generalized inverse family. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. The shifted splitting has
+h'ᵢⱼ=(−1)ᵃ•s.hom(i+a)(j+a), using the same sign as the shifted differential so d' h' d'=d'.
+-/
 noncomputable def cochainShift (s : Splitting K) (a : ℤ) : Splitting (K⟦a⟧) where
   hom i j := a.negOnePow • s.hom (i + a) (j + a)
   zero i j hij := by
@@ -70,12 +73,20 @@ noncomputable def cochainShift (s : Splitting K) (a : ℤ) : Splitting (K⟦a⟧
       congrArg (fun f : K.X (i + a) ⟶ K.X (j + a) => a.negOnePow • f)
         (s.d_h_d (i + a) (j + a))
 
-/-- The inverse component has the native sign, including at odd and negative shifts. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. The component from (K⟦a⟧)ⁱ to
+(K⟦a⟧)ʲ is exactly (−1)ᵃ•s.hom(i+a)(j+a), for all integers i,j and shifts a.
+-/
 @[simp]
 lemma cochainShift_hom (s : Splitting K) (a i j : ℤ) :
     (s.cochainShift a).hom i j = a.negOnePow • s.hom (i + a) (j + a) := rfl
 
-/-- Signed transport commutes with the existing reflexive inverse construction. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. Reflexive normalization
+commutes with shifting: (s.cochainShift a).reflexive=s.reflexive.cochainShift a.
+-/
 lemma cochainShift_reflexive (s : Splitting K) (a : ℤ) :
     (s.cochainShift a).reflexive = s.reflexive.cochainShift a := by
   ext i j
@@ -84,7 +95,11 @@ lemma cochainShift_reflexive (s : Splitting K) (a : ℤ) :
     Linear.comp_units_smul, smul_smul, Int.units_mul_self,
     one_smul, mul_one, one_mul]
 
-/-- Signed transport commutes with the proved square-zero normalization. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. Square-zero normalization
+commutes with shifting: (s.cochainShift a).normalize=s.normalize.cochainShift a.
+-/
 lemma cochainShift_normalize (s : Splitting K) (a : ℤ) :
     (s.cochainShift a).normalize = s.normalize.cochainShift a := by
   have hnext (p : ℤ) : (ComplexShape.up ℤ).next p = p + 1 :=
@@ -101,7 +116,11 @@ lemma cochainShift_normalize (s : Splitting K) (a : ℤ) :
   simp only [CochainComplex.shiftFunctor_obj_X', hnext, add_assoc, add_left_comm, add_comm]
   rw [htranslate i]
 
-/-- Shifted inverse transport respects the native shifted complex isomorphism. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. For an isomorphism e:K≅L,
+shifting the transported splitting agrees with transporting the shifted splitting along e⟦a⟧.
+-/
 lemma cochainShift_ofIso (s : Splitting K) (e : K ≅ L) (a : ℤ) :
     (s.ofIso e).cochainShift a =
       (s.cochainShift a).ofIso
@@ -111,7 +130,11 @@ lemma cochainShift_ofIso (s : Splitting K) (e : K ≅ L) (a : ℤ) :
     CochainComplex.shiftFunctor_map_f', Linear.units_smul_comp,
     Linear.comp_units_smul]
 
-/-- The native zero isomorphism restores the actual original inverse family. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. At a=0, transport along the
+canonical isomorphism K⟦0⟧≅K restores the original splitting s.
+-/
 @[simp]
 lemma cochainShift_zero (s : Splitting K) :
     (s.cochainShift 0).ofIso
@@ -124,7 +147,11 @@ lemma cochainShift_zero (s : Splitting K) :
   have hj : j = j + 0 := by omega
   simpa only [XIsoOfEq, eqToIso] using (hom_congr s hi hj).symm
 
-/-- The native addition isomorphism identifies one signed shift with two signed shifts. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. For b∈ℤ, transporting the
+splitting shifted by a+b along K⟦a+b⟧≅(K⟦a⟧)⟦b⟧ gives (s.cochainShift a).cochainShift b.
+-/
 lemma cochainShift_add (s : Splitting K) (a b : ℤ) :
     (s.cochainShift (a + b)).ofIso
         ((CategoryTheory.shiftFunctorAdd (CochainComplex C ℤ) a b).app K) =
@@ -148,7 +175,12 @@ universe uD vD
 
 variable {D : Type uD} [Category.{vD} D] [Preadditive D]
 
-/-- Additive functor transport commutes through the actual native cochain shift isomorphism. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting and a∈ℤ. The
+shift convention is (K⟦a⟧)ⁱ=Kⁱ⁺ᵃ with differential sign (−1)ᵃ. For an additive functor F:C⥤D
+between preadditive categories, mapping the shifted splitting and transporting along
+F(K⟦a⟧)≅F(K)⟦a⟧ gives (s.map F).cochainShift a.
+-/
 lemma cochainShift_map (s : Splitting K) (F : C ⥤ D) [F.Additive] (a : ℤ) :
     ((s.cochainShift a).map F).ofIso ((F.mapCochainComplexShiftIso a).app K) =
       (s.map F).cochainShift a := by
@@ -163,7 +195,12 @@ section Chain
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   {K L : ChainComplex C ℤ}
 
-/-- Signed inverse components over the actual native chain-shift façade. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. The shifted
+splitting has component (−1)ᵃ•s.hom(i−a)(j−a), represented on the chain-shift terms by their
+canonical degree identifications.
+-/
 noncomputable def chainShift (s : Splitting K) (a : ℤ) :
     Splitting ((ChainComplex.nativeShift C a).obj K) where
   hom i j := a.negOnePow • s.hom (-(-i + a)) (-(-j + a))
@@ -183,13 +220,23 @@ noncomputable def chainShift (s : Splitting K) (a : ℤ) :
       congrArg (fun f : K.X (-(-i + a)) ⟶ K.X (-(-j + a)) => a.negOnePow • f)
         (s.d_h_d (-(-i + a)) (-(-j + a)))
 
-/-- The literal native chain inverse retains both negative indices and the native sign. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. In the
+chain-shift indexing, its component is (−1)ᵃ•s.hom(−(−i+a))(−(−j+a)), with −(−i+a)=i−a and
+likewise for j.
+-/
 @[simp]
 lemma chainShift_hom (s : Splitting K) (a i j : ℤ) :
     (s.chainShift a).hom i j =
       a.negOnePow • s.hom (-(-i + a)) (-(-j + a)) := rfl
 
-/-- The chain inverse formula in source coordinates uses the canonical native term isomorphism. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. Let
+θᵢ:(K⟨a⟩)ᵢ≅K_{i−a} and θⱼ be the canonical term isomorphisms. The inverse component is
+θᵢ.hom≫((−1)ᵃ•s.hom(i−a)(j−a))≫θⱼ.inv.
+-/
 lemma chainShift_hom_via_termIso (s : Splitting K) (a i j : ℤ) :
     (s.chainShift a).hom i j =
       (ChainComplex.nativeShiftObjXIso K a i).hom ≫
@@ -205,7 +252,12 @@ lemma chainShift_hom_via_termIso (s : Splitting K) (a i j : ℤ) :
       (hom_congr s (show -(-i + a) = i - a by omega)
         (show -(-j + a) = j - a by omega))
 
-/-- Signed chain transport commutes with the existing reflexive inverse construction. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. Reflexive
+normalization commutes with chain shifting: (s.chainShift a).reflexive=s.reflexive.chainShift
+a.
+-/
 lemma chainShift_reflexive (s : Splitting K) (a : ℤ) :
     (s.chainShift a).reflexive = s.reflexive.chainShift a := by
   ext i j
@@ -218,7 +270,12 @@ lemma chainShift_reflexive (s : Splitting K) (a : ℤ) :
   simp only [Linear.units_smul_comp, Linear.comp_units_smul, smul_smul,
     Int.units_mul_self, one_smul, mul_one, one_mul]
 
-/-- Signed chain transport commutes with the proved square-zero normalization. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. The
+square-zero normalization commutes with chain shifting: (s.chainShift
+a).normalize=s.normalize.chainShift a.
+-/
 lemma chainShift_normalize (s : Splitting K) (a : ℤ) :
     (s.chainShift a).normalize = s.normalize.chainShift a := by
   have hnext (p : ℤ) : (ComplexShape.down ℤ).next p = p - 1 :=
@@ -236,7 +293,12 @@ lemma chainShift_normalize (s : Splitting K) (a : ℤ) :
   rw [htranslate i]
   rfl
 
-/-- Chain inverse transport respects the isomorphism mapped by the actual native façade. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. For e:K≅L,
+shifting s.ofIso e agrees with transporting s.chainShift a along the shifted complex
+isomorphism K⟨a⟩≅L⟨a⟩.
+-/
 lemma chainShift_ofIso (s : Splitting K) (e : K ≅ L) (a : ℤ) :
     (s.ofIso e).chainShift a =
       (s.chainShift a).ofIso ((ChainComplex.nativeShift C a).mapIso e) := by
@@ -248,7 +310,11 @@ lemma chainShift_ofIso (s : Splitting K) (e : K ≅ L) (a : ℤ) :
     e.inv.f (-(-i + a)) ≫ (a.negOnePow • s.hom (-(-i + a)) (-(-j + a))) ≫ e.hom.f (-(-j + a))
   simp only [Linear.units_smul_comp, Linear.comp_units_smul]
 
-/-- The native chain zero isomorphism restores the actual original splitting. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. At a=0,
+transport along the canonical chain-shift isomorphism K⟨0⟩≅K restores s.
+-/
 @[simp]
 lemma chainShift_zero (s : Splitting K) :
     (s.chainShift 0).ofIso ((ChainComplex.nativeShiftZero C).app K) = s := by
@@ -261,7 +327,12 @@ lemma chainShift_zero (s : Splitting K) :
   change (K.XIsoOfEq hi).hom ≫ s.hom (-(-i + 0)) (-(-j + 0)) ≫ (K.XIsoOfEq hj).inv = s.hom i j
   exact (hom_congr s hi hj).symm
 
-/-- The native chain addition isomorphism identifies one inverse transport with two. -/
+/--
+Let K be an integer chain complex in a preadditive category C, s a splitting and a∈ℤ. Write
+K⟨a⟩ for the chain shift with degree-i term K_{i−a} and differential sign (−1)ᵃ. For b∈ℤ,
+transport along K⟨a+b⟩≅(K⟨a⟩)⟨b⟩ identifies s.chainShift(a+b) with (s.chainShift a).chainShift
+b.
+-/
 lemma chainShift_add (s : Splitting K) (a b : ℤ) :
     (s.chainShift (a + b)).ofIso ((ChainComplex.nativeShiftAdd C a b).app K) =
       (s.chainShift a).chainShift b := by
@@ -291,7 +362,10 @@ universe u v
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- Splitness is invariant under the native signed cochain shift. -/
+/--
+For an integer cochain complex K in a preadditive category C and any a∈ℤ, K is split if and
+only if its signed shift K⟦a⟧ is split.
+-/
 lemma isSplit_cochainShift_iff (K : CochainComplex C ℤ) (a : ℤ) :
     IsSplit K ↔ IsSplit (K⟦a⟧) := by
   constructor
@@ -304,7 +378,10 @@ lemma isSplit_cochainShift_iff (K : CochainComplex C ℤ) (a : ℤ) :
           (CategoryTheory.shiftFunctorZero (CochainComplex C ℤ) ℤ).app K
     exact ⟨(s.cochainShift (-a)).ofIso e⟩
 
-/-- Splitness is invariant under the actual native chain-shift façade. -/
+/--
+For an integer chain complex K in a preadditive category C and any a∈ℤ, K is split if and only
+if the signed chain shift with terms K_{i−a} is split.
+-/
 lemma isSplit_chainShift_iff (K : ChainComplex C ℤ) (a : ℤ) :
     IsSplit K ↔ IsSplit ((ChainComplex.nativeShift C a).obj K) := by
   constructor

@@ -1,5 +1,7 @@
-# Canonical Coefficient Alternating Homotopy Equiv
+# The normalized-to-alternating homotopy comparison for coefficient cotangents
 
-The normalized native AQ coefficient model is homotopy equivalent to the
-alternating proper-comparison cotangent model. The maps are the native
-normalization inclusion/projection composed with the coefficient isomorphism.
+The normalized-to-alternating homotopy comparison for coefficient cotangents.
+
+The coefficient normalization isomorphism followed by the Dold–Kan comparison gives a homotopy
+equivalence from the ground coefficient cotangent complex to the alternating-face cotangent
+complex.

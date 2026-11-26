@@ -25,20 +25,21 @@ variable (E : C ⥤ D) [E.Additive] [E.PreservesInjectiveObjects] [E.PreservesHo
 variable [PreservesFiniteLimits E] [PreservesFiniteColimits E]
 variable (B : D ⥤ A) [B.Additive]
 
-/--
-The canonical right-derived connector is the same morphism computed from every compatible split
-horseshoe.
--/
+/-- Let `C,A` be abelian, with injective resolutions in `C`, and
+`F : C → A` additive. For short exact `S` and any injective horseshoe
+`H` for `S`, the canonical boundary `R^nF(S.X₃) → R^(n+1)F(S.X₁)`
+equals the cohomology boundary computed from `H`. -/
 theorem canonicalConnecting_eq_horseshoe (F : C ⥤ A) [F.Additive] (n : ℕ)
     {S : ShortComplex C} {hS : S.ShortExact} (H : HorseshoeData S hS) :
     (Functor.rightDerivedConnecting F n).app ⟨S, hS⟩ = H.delta F n (n + 1) rfl :=
   (HorseshoeData.ofEndpoints S hS (injectiveResolution S.X₁)
     (injectiveResolution S.X₃)).delta_eq n H
 
-/--
-The SAME existing all-degree precomposition isomorphism respects the canonical target connecting
-maps, with no supplied horseshoe universal property.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`E : C → D` additive and preserving injectives, homology, finite limits,
+and finite colimits, and `B : D → A` additive. For short exact `S : X₁ → X₂ → X₃`, the forward degree
+precomposition comparisons satisfy
+`δ_(E⋙B),n ≫ e_(n+1),X₁ = e_n,X₃ ≫ δ_B,n(E(S))`. -/
 theorem canonicalConnecting_precomp (n : ℕ) (S : ShortComplex.ShortExactSequences C) :
     (Functor.rightDerivedConnecting (E ⋙ B) n).app S ≫
       (Functor.rightDerivedPrecompIso E B (n + 1)).hom.app S.obj.X₁ =
@@ -71,14 +72,17 @@ variable (B : D ⥤ A) [B.Additive] [PreservesFiniteLimits B]
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D]
   [E.PreservesInjectiveObjects] [E.PreservesHomology] in
-/-- The fixed exact equivalence preserves each short exact sequence. -/
+/-- Let `C,D` be abelian and `E : C → D` additive and preserving
+finite limits and finite colimits. Mapping any short exact sequence
+`S` by `E` gives a short exact sequence `E(S)`. -/
 theorem precompShortExact (S : ShortComplex C) (hS : S.ShortExact) :
     (S.map E).ShortExact := hS.map_of_exact E
 
-/--
-The SAME existing right-derived precomposition family is one morphism of delta functors,
-preserving all canonical connecting maps.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`E : C → D` additive and preserving injectives, homology, finite limits,
+and finite colimits, and `B : D → A` additive. The forward degree comparisons form a morphism from the
+right-derived delta-functor of `E ⋙ B` to that of `B` precomposed
+with `E`. -/
 def precompDeltaHom : Functor.rightDerivedDeltaFunctor (E ⋙ B) ⟶
     CohomologicalDeltaFunctor.precompose E (precompShortExact E)
       (Functor.rightDerivedDeltaFunctor B) :=
@@ -91,10 +95,12 @@ omit [PreservesFiniteLimits B] in
     CohomologicalDeltaFunctor.Hom.app (precompDeltaHom E B) n =
       (Functor.rightDerivedPrecompIso E B n).hom := rfl
 
-/--
-The cut3 derived isomorphism is a delta morphism too. This uses the existing NatTrans.rightDerived
-maps, not a new degreewise choice.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`E : C → D` additive and preserving injectives, homology, finite limits,
+and finite colimits, and `B : D → A` additive. Suppose also that `B` preserves finite limits. For additive
+`P : C → A` and `α : P ≅ E ⋙ B`, deriving `α` and precomposing
+with `E` gives a morphism from the right-derived delta-functor of `P`
+to the delta-functor of `B` precomposed with `E`. -/
 def precompDeltaHomOfIso {P : C ⥤ A} [P.Additive]
     (α : P ≅ E ⋙ B) : Functor.rightDerivedDeltaFunctor P ⟶
     CohomologicalDeltaFunctor.precompose E (precompShortExact E)

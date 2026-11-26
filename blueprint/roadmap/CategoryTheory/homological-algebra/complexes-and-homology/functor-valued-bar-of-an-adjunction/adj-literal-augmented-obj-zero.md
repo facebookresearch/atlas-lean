@@ -1,3 +1,5 @@
-# Adj Literal Augmented obj zero
+# The evaluated-and-forgotten bar starts with the free carrier
 
-Degree-zero object law for the literal image.
+For a monad T on C and a T-algebra alg=(A,a), the zero-degree term of adjLiteralAugmented(alg)
+equals T(A). The construction evaluates the free-forgetful adjunction bar in T.Algebra and
+then forgets its algebra structure.

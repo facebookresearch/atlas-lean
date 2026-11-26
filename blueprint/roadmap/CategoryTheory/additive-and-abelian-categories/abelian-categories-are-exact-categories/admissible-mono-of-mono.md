@@ -1,3 +1,5 @@
-# Admissible Mono of mono
+# Every abelian monomorphism is admissible
 
-Any monomorphism is admissible via its cokernel
+In an abelian category `C`, a monomorphism `i : X → Y` belongs to the
+admissible-monomorphism class determined by short exact sequences. Its
+cokernel completes it to the sequence `X → Y → cokernel i`.

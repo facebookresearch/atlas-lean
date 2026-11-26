@@ -14,16 +14,15 @@ public import MathlibExt.Combinatorics.Perm.CyclicDescentDeletion
 public import MathlibExt.Combinatorics.Perm.EulerianPolynomialCoefficients
 
 /-!
-# Actual cyclic averages of the convolution coefficient at two
+# Rotation sums of descent coefficients at two
 
-For `L=n+1` original letters, the actual rotation fibers have `t` low
-ordinary descents and `L-t` high ordinary descents. Head fixing gives
-`t=descentNumber π+1` for a nonempty tail. The explicit descent-binomial
-value at two therefore averages to twice the original tail coefficient.
+For `N=n+1`, `ρ=finRotate N`, and `σ=ρ^r₀ H_n(π)`, the sum over all position rotations is `∑ r
+: Fin N, P_(N,d(σρ^r))(2) = 2 P_(n,d(π))(2)`. Using inverse rotations gives the same value.
 
-All rotation and descent counts are proved from the original permutation
-word. No averaged coefficient identity is provided by a caller. The
-one-letter/empty-tail coefficient is handled by its actual polynomial.
+The sum has no division by `N`. A one-letter word has zero cyclic descents and contributes
+`P_(1,0)(2)=2`, agreeing with the empty-tail value `2P_(0,0)(2)`.
+
+Reference: Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -33,7 +32,10 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- The actual coefficient average in every original rotation/head-fixing fiber. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, `r₀ : Fin N`, and `π ∈ S_n`. Put `σ = ρ^r₀.val *
+headFixingHom n π` and `P_(r,d)(X)=(1/r!)∏_(j=0)^(r-1)(X+j-d)` in `ℚ[X]`. The unnormalized
+rotation sum satisfies `∑ r : Fin N, P_(N,descentNumber(σ*ρ^r.val))(2) = 2 *
+P_(n,descentNumber π)(2)`. This holds for every tail length `n`, including `n=0`. -/
 theorem descentBinomial_rotation_average_two
     (n : ℕ) (r₀ : Fin (n + 1)) (π : Perm (Fin n)) :
     (∑ r : Fin (n + 1),
@@ -88,7 +90,10 @@ theorem descentBinomial_rotation_average_two
         have hplus₁ : descentNumber π + 1 ≠ 1 := by omega
         simp only [h₀, h₁, hplus₀, hplus₁, if_false, nsmul_zero, zero_add, mul_zero]
 
-/-- Actual inverse rotations have the same coefficient average as the original forward rotations. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, `r₀ : Fin N`, and `π ∈ S_n`. Put `σ = ρ^r₀.val *
+headFixingHom n π` and `P_(r,d)(X)=(1/r!)∏_(j=0)^(r-1)(X+j-d)` in `ℚ[X]`. The
+inverse-position-rotation sum satisfies `∑ r : Fin N, P_(N,descentNumber(σ*(ρ^r.val)⁻¹))(2) =
+2 * P_(n,descentNumber π)(2)`, including the empty tail. -/
 theorem descentBinomial_rotation_average_two_inverse
     (n : ℕ) (r₀ : Fin (n + 1)) (π : Perm (Fin n)) :
     (∑ r : Fin (n + 1),

@@ -1,3 +1,6 @@
-# Normalized Hodge Homology Iso hom
+# The homology-inclusion map of the normalized Hodge decomposition
 
-The original normalized Hodge decomposition map is homology of its native image inclusions.
+The homology-inclusion map of the normalized Hodge decomposition.
+
+The forward homology decomposition map is induced by the homology maps of the normalized
+Eulerian image inclusions.

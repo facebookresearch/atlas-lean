@@ -1,4 +1,6 @@
-# Coefficient Cohomology Zero Linear Equiv
+# Degree-zero cohomology of arbitrary Lie coefficients
 
-Arbitrary native Lie coefficients use their represented UEA module, with the
-original carrier retained by the native representation/restriction unit.
+Let R be commutative, L an R-Lie algebra and X any compatible
+left Lie module. With its represented enveloping module Rep(X),
+the R-linear comparison is H^0(L,Rep(X))≃X^L, preserving X's
+coefficient carrier universe.

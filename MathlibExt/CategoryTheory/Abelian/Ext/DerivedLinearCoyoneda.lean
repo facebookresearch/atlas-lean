@@ -19,11 +19,15 @@ public import MathlibExt.CategoryTheory.Linear.Yoneda.Limits
 public import Mathlib.CategoryTheory.Preadditive.Yoneda.Limits
 
 /-!
-# Right-derived linear Coyoneda and linear Ext
+# Right-derived linear Hom and linear Ext
 
-Deriving the linear Hom functor in its second argument gives linear Ext. Exact forgetting
-compares the underlying additive groups with the preadditive Coyoneda comparison. Scalar
-naturality and the Ext scalar formula establish linearity.
+Let `R` be commutative and `C` an `R`-linear abelian category with
+injective resolutions and Ext in its hom-set universe. Right derivation
+of the module-valued functor `Hom_C(X,-)` gives native Ext with its
+coefficient-endomorphism scalar action. The comparison is `R`-linear,
+is natural in the second object, and has the same values as the
+underlying additive Coyoneda comparison. The ring carrier and the
+category object and hom-set universes are independent.
 -/
 
 @[expose] public section
@@ -42,7 +46,11 @@ variable (R : Type t) [CommRing R]
 
 variable [HasInjectiveResolutions C] [HasExt.{v} C]
 
-/-- Exact forgetting reaches the existing additive Coyoneda/Ext comparison. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. For `X : C`, forgetting scalars from the degree-`n`
+right-derived module-valued Hom functor gives a natural additive-group
+isomorphism to `Y ↦ Ext^n(X,Y)`. -/
 def rightDerivedLinearCoyonedaForgetIso (X : C) (n : ℕ) :
     (((linearCoyoneda R C).obj (Opposite.op X)).rightDerived n) ⋙
         forget₂ (ModuleCat.{v} R) AddCommGrpCat.{v} ≅
@@ -51,7 +59,12 @@ def rightDerivedLinearCoyonedaForgetIso (X : C) (n : ℕ) :
       (forget₂ (ModuleCat.{v} R) AddCommGrpCat.{v}) n ≪≫
     rightDerivedCoyonedaIsoExtFunctorObj X n
 
-/-- The comparison is R-linear, by naturality at r times the identity. -/
+/- Linearity follows from naturality at scalar multiples of identity morphisms. -/
+
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. For `X,Y : C`, there is a canonical `R`-linear equivalence
+`R^nHom_C(X,-)(Y) ≃ₗ[R] Ext^n(X,Y)`. -/
 def rightDerivedLinearCoyonedaObjEquiv (X Y : C) (n : ℕ) :
     (((linearCoyoneda R C).obj (Opposite.op X)).rightDerived n).obj Y ≃ₗ[R]
       Ext X Y n := by
@@ -69,14 +82,22 @@ def rightDerivedLinearCoyonedaObjEquiv (X Y : C) (n : ℕ) :
   rw [hr] at h
   exact h.trans (Ext.smul_eq_comp_mk₀ (ea z) r).symm
 
-/-- The linear comparison has exactly the original additive comparison's value. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. The linear derived-Hom-to-Ext equivalence at `X,Y,n` has the
+same value on every element as its underlying additive-group
+comparison. -/
 @[simp]
 theorem rightDerivedLinearCoyonedaObjEquiv_apply (X Y : C) (n : ℕ)
     (z : (((linearCoyoneda R C).obj (Opposite.op X)).rightDerived n).obj Y) :
     rightDerivedLinearCoyonedaObjEquiv R X Y n z =
       ((rightDerivedLinearCoyonedaForgetIso R X n).hom.app Y).hom z := rfl
 
-/-- The comparison intertwines derived coefficient maps with Ext postcomposition. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. For `f : Y → Y′`, the linear equivalences at `X,Y` and
+`X,Y′` intertwine the derived coefficient map with Ext postcomposition
+by the degree-zero class of `f`. -/
 theorem rightDerivedLinearCoyonedaObjEquiv_naturality
     (X : C) {Y Y' : C} (f : Y ⟶ Y') (n : ℕ)
     (z : (((linearCoyoneda R C).obj (Opposite.op X)).rightDerived n).obj Y) :
@@ -94,7 +115,11 @@ theorem rightDerivedLinearCoyonedaObjEquiv_naturality
       (ea z).comp (Ext.mk₀ f) (add_zero n)
   exact h
 
-/-- The linear Hom derived functor is naturally linear Ext. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. For fixed `X`, the linear equivalences form a natural
+isomorphism of module-valued functors
+`R^nHom_C(X,-) ≅ Ext^n(X,-)`. -/
 def rightDerivedLinearCoyonedaIsoExtFunctorObj (X : C) (n : ℕ) :
     ((linearCoyoneda R C).obj (Opposite.op X)).rightDerived n ≅
       linearExtFunctorObj R X n := by

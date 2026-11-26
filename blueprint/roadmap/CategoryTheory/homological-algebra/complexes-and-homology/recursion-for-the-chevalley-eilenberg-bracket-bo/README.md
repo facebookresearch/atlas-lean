@@ -1,5 +1,5 @@
 # Recursion for the Chevalley–Eilenberg bracket boundary
 
-- [Bracket Boundary succ coe](bracket-boundary-succ-coe.md)
-- [Bracket Boundary vec Cons coe](bracket-boundary-vec-cons-coe.md)
-- [Bracket Boundary vec Cons update coe](bracket-boundary-vec-cons-update-coe.md)
+- [The exterior-algebra image of the bracket pair sum](bracket-boundary-succ-coe.md)
+- [Splitting the bracket boundary at its first vector](bracket-boundary-vec-cons-coe.md)
+- [The adjoint replacement form of boundary recursion](bracket-boundary-vec-cons-update-coe.md)

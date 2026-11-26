@@ -16,17 +16,16 @@ public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 public import Mathlib.CategoryTheory.Abelian.LeftDerived
 
 /-!
-# Projective Chevalley–Eilenberg resolutions
+# Projective enveloping CE resolutions
 
-Let `R` be a commutative ring and `L` an `R`-Lie algebra whose underlying
-`R`-module is projective. The augmented Chevalley–Eilenberg complex over
-`UniversalEnvelopingAlgebra R L` is a projective resolution of the trivial
-enveloping module `R`.
+Let L be an R-Lie algebra whose underlying module is projective over a commutative ring. Its
+enveloping CE complex is exact in every positive degree, has projective U_R(L)-module terms
+and augments to the trivial lifted scalar module. These data form a projective resolution.
 
-The complex is exact in positive degrees, admits augmentation-preserving
-homotopy comparisons with any projective resolution of the same module,
-and computes the left derived functors of additive functors from enveloping
-modules to abelian categories.
+Resolution comparison gives an augmentation-preserving homotopy equivalence with any other
+projective resolution of that target. Under freeness this construction equals the free-module
+resolution. Applying an additive functor to an abelian category computes its left derived
+functors at the trivial module.
 -/
 
 @[expose] public section
@@ -44,8 +43,9 @@ variable (R : Type u) [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The enveloping Chevalley–Eilenberg complex is exact in each positive degree when `L` is
-projective over `R`. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Assume Module.Projective R L. For every n : ℕ, envelopingComplex R L is exact at degree n + 1. -/
 theorem envelopingComplex_exactAt_succ_of_projective (n : ℕ) :
     (envelopingComplex R L).ExactAt (n + 1) := by
   letI : QuasiIso (envelopingAugmentation R L) :=
@@ -53,8 +53,10 @@ theorem envelopingComplex_exactAt_succ_of_projective (n : ℕ) :
   exact (quasiIsoAt_iff_exactAt' (envelopingAugmentation R L) (n + 1)
     (ChainComplex.exactAt_succ_single_obj _ _)).mp inferInstance
 
-/-- The Chevalley–Eilenberg projective resolution of the trivial enveloping module when `L` is
-projective over `R`. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Assume Module.Projective R L. envelopingProjectiveResolutionOfProjective resolves T₀ with
+complex envelopingComplex R L, its augmentation and projective terms. -/
 def envelopingProjectiveResolutionOfProjective :
     ProjectiveResolution (envelopingTrivialObject R L) where
   complex := envelopingComplex R L
@@ -72,14 +74,20 @@ theorem envelopingProjectiveResolutionOfProjective_π :
     (envelopingProjectiveResolutionOfProjective R L).π =
       envelopingAugmentation R L := rfl
 
-/-- For a free Lie carrier, the projective construction agrees with the free construction. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+If Module.Free R L holds, envelopingProjectiveResolutionOfProjective R L =
+envelopingProjectiveResolution R L. -/
 theorem envelopingProjectiveResolutionOfProjective_eq_of_free [Module.Free R L] :
     envelopingProjectiveResolutionOfProjective R L =
       envelopingProjectiveResolution R L := by
   rfl
 
-/-- An augmentation-preserving homotopy equivalence with any projective resolution of the trivial
-enveloping module. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Assume Module.Projective R L. For Q : ProjectiveResolution T₀,
+envelopingResolutionHomotopyEquivOfProjective gives HomotopyEquiv (envelopingComplex R L)
+Q.complex by resolution comparison. -/
 def envelopingResolutionHomotopyEquivOfProjective
     (Q : ProjectiveResolution (envelopingTrivialObject R L)) :
     HomotopyEquiv (envelopingComplex R L) Q.complex :=
@@ -103,8 +111,10 @@ section DerivedComparison
 
 variable {D : Type a} [Category.{c} D] [Abelian D]
 
-/-- Applying an additive functor to the Chevalley–Eilenberg resolution computes its left derived
-functors on the trivial enveloping module. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Assume Module.Projective R L. For an abelian D, additive F : ModuleCat.{max u v} U ⥤ D and n :
+ℕ, H_n(F(envelopingComplex R L)) ≅ (F.leftDerived n).obj T₀. -/
 def envelopingHomologyIsoLeftDerivedOfProjective
     (F : ModuleCat.{max u v} U ⥤ D) [F.Additive] (n : ℕ) :
     (((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj

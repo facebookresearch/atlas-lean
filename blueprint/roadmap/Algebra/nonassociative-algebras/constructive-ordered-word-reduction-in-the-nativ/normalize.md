@@ -1,4 +1,7 @@
-# Normalize
+# The terminating ordered-word normalizer of a Lie basis
 
-Terminating reduction to finite combinations of ordered words. All
-coefficients of a contraction are the actual bracket coordinates of `b`.
+The terminating ordered-word normalizer of a Lie basis.
+
+At the first adjacent inversion, exchange the two letters and add the bracket-coordinate
+contractions. Recursion on inversion weight yields a finite `R`-linear combination of ordered
+words.

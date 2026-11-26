@@ -1,4 +1,7 @@
-# Chosen Coyoneda Ext Iso delta
+# Supplied-resolution Coyoneda comparisons preserve the horseshoe boundary
 
-The SAME chosen-resolution right-derived comparison intertwines every horseshoe connector with the
-original covariant Ext-class composition.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For short exact `S`, compatible injective horseshoe data `H`,
+and `Z : C`, its derived Coyoneda boundary commutes with the supplied-
+resolution Ext comparisons and postcomposition with the Yoneda class
+of `S`.

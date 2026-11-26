@@ -1,3 +1,6 @@
-# Unitization Normalized Map
+# The normalized Hochschild chain map of a unitization homomorphism
 
-The normalized chain map is the same native factor-quotient construction.
+The normalized Hochschild chain map of a unitization homomorphism.
+
+The unital extension of `f : A → B` induces the chain map on the normalized regular complexes
+of `A⁺` and `B⁺`.

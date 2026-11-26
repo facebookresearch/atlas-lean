@@ -1,4 +1,6 @@
-# Localized First Quadrant Total Nat Iso
+# Localization naturally commutes with the first-quadrant total
 
-Localization commutes naturally with the total complex of a
-first-quadrant module-valued bicomplex.
+For a commutative ring R, a submonoid S and nonnegative
+homological R-module bicomplexes, localization gives the natural
+chain isomorphism S⁻¹Tot(K) ≅ Tot(S⁻¹K).
+The total uses the finite antidiagonals p+q=n in each degree.

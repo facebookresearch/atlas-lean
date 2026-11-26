@@ -1,3 +1,6 @@
-# Algebra Two Tensor Equiv
+# Degree-two coefficient chains in the balanced Kähler boundary presentation
 
-Native cons/singleton coordinates and cancellation in degree two.
+Degree-two coefficient chains in the balanced Kähler boundary presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, M ⊗[k] A⊗2 is
+A-linearly equivalent to M ⊗[A] (A ⊗[k] (A ⊗[k] A)).

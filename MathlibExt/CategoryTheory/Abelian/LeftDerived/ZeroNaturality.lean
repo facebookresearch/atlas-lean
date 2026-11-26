@@ -13,16 +13,13 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerivedBifunctor
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.ResolutionComparison
 
 /-!
-# Naturality of the degree-zero derived comparison
+# Naturality of degree-zero left derivation
 
-The augmentation-induced comparison from a left-derived functor in degree zero is natural in the
-additive input functor. The resolution-level square uses only the supplied projective resolution;
-the functor-level square uses the chosen resolutions. Neither functor needs to preserve exact
-sequences. Finite-colimit preservation is required only to upgrade these comparison maps to
-isomorphisms.
-
-The source and target categories, and the parameter category of a bifunctor, have independent
-object and morphism universes.
+For additive functors between abelian categories, augmentation of a
+projective resolution induces the degree-zero derived comparison.
+This comparison is natural in transformations of the functor; for
+right-exact functors it is an isomorphism. A right-exact partial
+bifunctor is likewise recovered in derived degree zero in both variables.
 -/
 
 @[expose] public section
@@ -43,7 +40,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
   {D : Type u₂} [Category.{v₂} D] [Abelian D]
   {F G : C ⥤ D} [F.Additive] [G.Additive]
 
-/-- The opcycles augmentation square is natural in the additive functor. -/
+/-- For abelian `C`, `D`, a projective resolution `P` of `X`,
+and additive `F,G : C → D` with `α : F → G`, the induced
+map on degree-zero opcycles of `F(P) → G(P)` commutes with
+the two augmentation maps to `F(X)`, `G(X)` and `α_X`. -/
 @[reassoc]
 theorem ProjectiveResolution.fromLeftDerivedZero'_naturality_functor
     {X : C} (P : ProjectiveResolution X) (α : F ⟶ G) :
@@ -68,10 +68,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
   {D : Type u₂} [Category.{v₂} D] [Abelian D]
   {F G : C ⥤ D} [F.Additive] [G.Additive]
 
-/--
-Left derivation and the augmentation comparison commute with every natural transformation of
-additive functors.
--/
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and let `F,G : C → D` be additive. For `α : F → G`, the
+native degree-zero augmentation transformations satisfy
+`L₀(α) ≫ G.fromLeftDerivedZero = F.fromLeftDerivedZero ≫ α`. -/
 @[reassoc]
 theorem NatTrans.fromLeftDerivedZero_naturality_functor (α : F ⟶ G) :
     NatTrans.leftDerived α 0 ≫ G.fromLeftDerivedZero =
@@ -117,14 +117,20 @@ theorem NatTrans.fromLeftDerivedZero_naturality_functor (α : F ⟶ G) :
 
 variable [PreservesFiniteColimits F] [PreservesFiniteColimits G]
 
-/-- The forward degree-zero isomorphisms commute with functor maps. -/
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and let `F,G : C → D` be additive. If both functors preserve
+finite colimits, their degree-zero isomorphisms to `F` and `G`
+satisfy `L₀(α) ≫ e_G = e_F ≫ α` for every `α : F → G`. -/
 @[reassoc]
 theorem NatTrans.leftDerivedZeroIsoSelf_hom_naturality_functor (α : F ⟶ G) :
     NatTrans.leftDerived α 0 ≫ G.leftDerivedZeroIsoSelf.hom =
       F.leftDerivedZeroIsoSelf.hom ≫ α :=
   NatTrans.fromLeftDerivedZero_naturality_functor α
 
-/-- The inverse degree-zero isomorphisms retain the same functor maps. -/
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and let `F,G : C → D` be additive. If both functors preserve
+finite colimits, the inverse degree-zero comparisons satisfy
+`α ≫ e_G⁻¹ = e_F⁻¹ ≫ L₀(α)`. -/
 @[reassoc]
 theorem NatTrans.leftDerivedZeroIsoSelf_inv_naturality_functor (α : F ⟶ G) :
     α ≫ G.leftDerivedZeroIsoSelf.inv =
@@ -152,8 +158,15 @@ variable {C₁ : Type u₁} [Category.{v₁} C₁] [Abelian C₁]
   (F : C₁ ⥤ C₂ ⥤ D) [∀ Y : C₂, (F.flip.obj Y).Additive]
   [∀ Y : C₂, PreservesFiniteColimits (F.flip.obj Y)]
 
-/-- A right-exact bifunctor is recovered in derived degree zero, naturally
-in both original variables. The parameter category need not be additive. -/
+/- Proof implementation note.
+A right-exact bifunctor is recovered in derived degree zero, naturally
+in both original variables. The parameter category need not be additive.
+-/
+
+/-- Let `C₁`, `D` be abelian, with projective resolutions in `C₁`,
+and `C₂` a category. If each partial functor `F(-,Y) : C₁ → D`
+is additive and preserves finite colimits, derivation in the
+first variable gives a natural bifunctor isomorphism `L₀F ≅ F`. -/
 def Functor.leftDerivedBifunctorZeroIsoSelf : F.leftDerivedBifunctor 0 ≅ F :=
   NatIso.ofComponents
     (fun X => NatIso.ofComponents
@@ -168,13 +181,19 @@ def Functor.leftDerivedBifunctorZeroIsoSelf : F.leftDerivedBifunctor 0 ≅ F :=
       funext Y
       exact (F.flip.obj Y).leftDerivedZeroIsoSelf.hom.naturality f)
 
-/-- The bifunctor comparison has the degree-zero component. -/
+/-- For the bifunctor `F : C₁ → C₂ → D` with additive right-exact
+partials `F(-,Y)`, `C₁`, `D` abelian and `C₁` admitting
+projective resolutions, the degree-zero comparison at `(X,Y)`
+is the forward comparison `L₀(F(-,Y))(X) → F(X,Y)`. -/
 @[simp]
 theorem Functor.leftDerivedBifunctorZeroIsoSelf_hom_app (X : C₁) (Y : C₂) :
     ((F.leftDerivedBifunctorZeroIsoSelf).hom.app X).app Y =
       ((F.flip.obj Y).leftDerivedZeroIsoSelf.app X).hom := rfl
 
-/-- The inverse bifunctor comparison retains the inverse component. -/
+/-- For the bifunctor `F : C₁ → C₂ → D` with additive right-exact
+partials `F(-,Y)`, `C₁`, `D` abelian and `C₁` admitting
+projective resolutions, the inverse degree-zero comparison at
+`(X,Y)` is `F(X,Y) → L₀(F(-,Y))(X)`. -/
 @[simp]
 theorem Functor.leftDerivedBifunctorZeroIsoSelf_inv_app (X : C₁) (Y : C₂) :
     ((F.leftDerivedBifunctorZeroIsoSelf).inv.app X).app Y =

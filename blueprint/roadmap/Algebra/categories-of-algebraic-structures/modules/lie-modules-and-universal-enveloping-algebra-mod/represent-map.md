@@ -1,4 +1,6 @@
-# Represent Map
+# The enveloping-module map associated to a Lie-module morphism
 
-The original native Lie-module map becomes U-linear by compatibility of the associative
-representations.
+The enveloping-module map associated to a Lie-module morphism.
+
+A Lie-module map is linear over `U_R(L)` for the extended representations, hence defines a
+morphism between the associated enveloping modules.

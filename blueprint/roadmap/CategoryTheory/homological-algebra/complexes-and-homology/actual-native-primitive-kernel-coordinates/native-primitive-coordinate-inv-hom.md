@@ -1,3 +1,6 @@
-# Native Primitive coordinate inv hom
+# The inverse identity on homogeneous primitive chains
 
-The coordinate maps are inverse on the homogeneous primitive complex.
+The inverse identity on homogeneous primitive chains.
+
+The homogeneous-to-kernel map followed by the kernel-to-homogeneous map is the identity on the
+homogeneous primitive complex.

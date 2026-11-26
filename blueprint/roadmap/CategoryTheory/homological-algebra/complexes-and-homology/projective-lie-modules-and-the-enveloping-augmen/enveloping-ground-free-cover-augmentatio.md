@@ -1,4 +1,6 @@
-# Enveloping Ground Free Cover Augmentation quasi Iso
+# The quasi-isomorphism of the ground free-cover augmentation
 
-Exact ground restriction of the constructed free-cover augmentation
-is a quasi-isomorphism. No free instance on the original Lie module is used.
+The quasi-isomorphism of the ground free-cover augmentation.
+
+For the free-module Lie cover of a projective `R`-module `L`, the ground-restricted enveloping
+augmentation is a quasi-isomorphism.

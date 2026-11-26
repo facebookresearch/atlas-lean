@@ -1,3 +1,6 @@
-# Positive Hochschild Augmentation Nat
+# The natural augmentation of positive Hochschild chain diagrams
 
-Original algebra augmentations supply the positive Hochschild augmentation at every source algebra.
+The natural augmentation of positive Hochschild chain diagrams.
+
+Maps `P → B` induce a natural transformation from the positive Hochschild functor to its
+constant value at the identity augmentation of `B`.

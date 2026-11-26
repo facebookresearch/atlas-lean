@@ -1,3 +1,7 @@
-# Partial Total Spectral Sequence First Page Row Iso At
+# First-page row coordinate in a specified total degree
 
-The first-page object at `(p,q)` in a chosen total degree `n=p+q`.
+First-page row coordinate in a specified total degree.
+
+Under the same spectral-sequence hypothesis, an equality `p + q = n` gives an isomorphism from
+the first-page object at `(p, q)` to `H_n(B.totalRow p)`. The change of degree is the homology
+transport along this equality.

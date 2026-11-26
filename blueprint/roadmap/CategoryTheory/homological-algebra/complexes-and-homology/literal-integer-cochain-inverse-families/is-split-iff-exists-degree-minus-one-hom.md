@@ -1,3 +1,5 @@
-# Is Split iff exists degree Minus One Hom
+# Cochain splitness by degree-lowering inverses
 
-Integer cochain splitness is the literal degree-minus-one generalized-inverse condition.
+Let K be an integer-indexed cochain complex in a category C with zero morphisms, with dₙ : Kⁿ
+→ Kⁿ⁺¹. The complex is split if and only if there exists a family sₙ : Kⁿ⁺¹ → Kⁿ such that dₙ
+= dₙ ≫ sₙ ≫ dₙ for all n ∈ ℤ.

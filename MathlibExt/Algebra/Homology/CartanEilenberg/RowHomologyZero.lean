@@ -16,12 +16,14 @@ public import MathlibExt.Algebra.Homology.ShortComplex.SplittingComp
 public import Mathlib.Algebra.Homology.ShortComplex.Homology
 
 /-!
-# Degree-zero row homology of a Cartan--Eilenberg resolution
+# Original-degree-zero row homology
 
-This file identifies the degree-zero homology of each vertical row with the
-biproduct of the stored degree-zero homology- and boundary-resolution terms.
-It deliberately stops before assembling the horizontal differential or short
-exact sequence.
+Let P be Cartan–Eilenberg data for a nonnegative complex L in an abelian category. In resolution
+degree a, the chosen split horseshoes give the quotient (p_C ∘ r_T,p_T) : PT₀,ₐ → PH₀,ₐ ⊕ PB₀,ₐ.
+It is a cokernel of the actual original-degree incoming differential.
+
+The original-degree-zero homology of the row is therefore H₀(P.bicomplex.Xₐ) ≅ PH₀,ₐ ⊕ PB₀,ₐ.
+The opcycles and homology quotient coordinates use this same explicit projection.
 -/
 
 @[expose] public section
@@ -40,8 +42,12 @@ namespace HomologicalComplex.CartanEilenbergResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
-/-- The selected cokernel of the composite cycles/term inclusions in
-resolution degree `a`. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The map rₐ kills the composite PB₁,ₐ → PC₀,ₐ → PT₀,ₐ of the two stored left
+inclusions, and defines its selected cokernel cofork. -/
 noncomputable def rowHomologyZeroCompositeCofork (a : ℕ) :
     CokernelCofork
       ((P.cyclesComponentShortComplex a 0).f ≫
@@ -52,8 +58,12 @@ noncomputable def rowHomologyZeroCompositeCofork (a : ℕ) :
     (w₁ := (P.cyclesComponentShortComplex a 0).zero)
     (P.termComponentSplitting a 0)
 
-/-- The selected quotient map from the term-resolution component to the
-homology/boundary biproduct. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. This map is the stored explicit projection from the zero-original-degree
+term-resolution component to the homology/boundary biproduct. -/
 noncomputable def rowHomologyZeroProjection (a : ℕ) :
     (P.termResolution 0).complex.X a ⟶
       (P.homologyResolution 0).complex.X a ⊞
@@ -82,8 +92,12 @@ private theorem rowHomologyZeroProjection_comp_snd (a : ℕ) :
   rw [P.rowHomologyZeroProjection_eq a]
   simp
 
-/-- The term-row inclusion followed by the selected q=0 quotient lands in
-the homology-resolution coordinate. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. On the included cycles term PC₀,ₐ, the quotient lands only in PH₀,ₐ: rₐ ∘ i_T =
+inl ∘ p_C. -/
 @[reassoc]
 theorem termComponent_f_comp_rowHomologyZeroProjection (a : ℕ) :
     (P.termComponentShortComplex a 0).f ≫
@@ -121,15 +135,24 @@ theorem termComponent_f_comp_rowHomologyZeroProjection (a : ℕ) :
       _ = ((P.cyclesComponentShortComplex a 0).g ≫ biprod.inl) ≫
           biprod.snd := by simp
 
-/-- The selected quotient is a cokernel of the composite cycles/term
-inclusion. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The cofork with quotient rₐ is colimiting, so PH₀,ₐ ⊕ PB₀,ₐ is a cokernel of
+PB₁,ₐ → PC₀,ₐ → PT₀,ₐ. -/
 noncomputable def rowHomologyZeroCompositeCoforkIsColimit (a : ℕ) :
     IsColimit (P.rowHomologyZeroCompositeCofork a) :=
   ShortComplex.Splitting.compLeftCokernelCoforkIsColimit
     (P.cyclesComponentSplitting a 0) (P.termComponentSplitting a 0)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The selected cokernel of the incoming row differential together with its universal property. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The same quotient rₐ, together with its universal property, is a selected
+cokernel of the actual original-degree differential rowₐ,₁ → rowₐ,₀. -/
 noncomputable def rowHomologyZeroCokernelPackage (a : ℕ) :
     Σ c : CokernelCofork ((P.bicomplex.X a).d 1 0), IsColimit c := by
   let _ : Epi ((P.termHorseshoe 1).p.f a) := by
@@ -153,27 +176,47 @@ noncomputable def rowHomologyZeroCokernelPackage (a : ℕ) :
     ((P.termHorseshoe 1).p.f a) hd
   exact ⟨_, h⟩
 
-/-- The selected cokernel cofork of the incoming row differential. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The selected cofork of the actual incoming differential (P.bicomplex.Xₐ).d(1,0)
+has quotient rₐ and target PH₀,ₐ ⊕ PB₀,ₐ. -/
 noncomputable def rowHomologyZeroCofork (a : ℕ) :
     CokernelCofork ((P.bicomplex.X a).d 1 0) :=
   (P.rowHomologyZeroCokernelPackage a).1
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The incoming-differential cofork uses the explicit homology/boundary projection. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The quotient arrow of the incoming-differential cokernel cofork is exactly the
+explicit map rₐ. -/
 @[simp]
 theorem rowHomologyZeroCofork_π (a : ℕ) :
     (P.rowHomologyZeroCofork a).π =
       P.rowHomologyZeroProjection a := by
   rfl
 
-/-- The selected q=0 quotient is a cokernel of the incoming row differential. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The cofork of (P.bicomplex.Xₐ).d(1,0) with quotient rₐ is colimiting, hence
+computes the cokernel of the incoming differential. -/
 noncomputable def rowHomologyZeroCoforkIsColimit (a : ℕ) :
     IsColimit (P.rowHomologyZeroCofork a) :=
   (P.rowHomologyZeroCokernelPackage a).2
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Right homology data computing degree-zero row homology by the explicit
-homology/boundary quotient. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. Since the row has no outgoing differential in degree zero, this cokernel defines
+right homology data for the row short complex at degrees (1,0,0), with H₀ represented by PH₀,ₐ ⊕
+PB₀,ₐ. -/
 noncomputable def rowHomologyZeroRightData (a : ℕ) :
     ((P.bicomplex.X a).sc' 1 0 0).RightHomologyData :=
   ShortComplex.RightHomologyData.ofIsColimitCokernelCofork
@@ -183,8 +226,12 @@ noncomputable def rowHomologyZeroRightData (a : ℕ) :
       (P.rowHomologyZeroCoforkIsColimit a)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- In each resolution degree, q=0 row homology is the biproduct of the
-stored homology- and boundary-resolution terms. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The degree-zero row homology is canonically isomorphic to PH₀,ₐ ⊕ PB₀,ₐ, with the
+explicit quotient rₐ supplying its coordinates. -/
 noncomputable def rowHomologyZeroIso (a : ℕ) :
     (P.bicomplex.X a).homology 0 ≅
       (P.homologyResolution 0).complex.X a ⊞
@@ -194,8 +241,12 @@ noncomputable def rowHomologyZeroIso (a : ℕ) :
   exact (P.bicomplex.X a).homologyIsoSc' 1 0 0 (by simp) (by simp) ≪≫
     (P.rowHomologyZeroRightData a).homologyIso
 
-/-- The selected q=0 opcycles quotient is the explicit
-homology/boundary projection. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The quotient to opcycles of the short complex at (1,0,0), followed by its
+right-homology-data opcycles identification, equals rₐ. -/
 @[reassoc]
 theorem rowHomologyZero_sc_pOpcycles_comp_opcyclesIso (a : ℕ) :
     ((P.bicomplex.X a).sc' 1 0 0).pOpcycles ≫
@@ -203,8 +254,12 @@ theorem rowHomologyZero_sc_pOpcycles_comp_opcyclesIso (a : ℕ) :
       P.rowHomologyZeroProjection a := by
   exact (P.rowHomologyZeroRightData a).pOpcycles_comp_opcyclesIso_hom
 
-/-- The original selected opcycles quotient, transported to the explicit
-q=0 homology/boundary projection. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. Fix
+resolution degree a. Let r_T : PT₀,ₐ → PC₀,ₐ be the chosen term-horseshoe retraction, and
+p_C,p_T its cycle and term quotient maps. The selected quotient is rₐ=(p_C ∘ r_T,p_T) : PT₀,ₐ →
+PH₀,ₐ ⊕ PB₀,ₐ. The row's degree-zero opcycles quotient, transported through the canonical
+short-complex coordinate identification, is precisely the explicit quotient rₐ. -/
 @[reassoc]
 theorem rowHomologyZero_pOpcycles_comp_explicitQuotient (a : ℕ) :
     (P.bicomplex.X a).pOpcycles 0 ≫

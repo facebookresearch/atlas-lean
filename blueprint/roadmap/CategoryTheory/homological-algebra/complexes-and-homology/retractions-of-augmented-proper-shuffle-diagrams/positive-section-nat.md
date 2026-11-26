@@ -1,3 +1,5 @@
-# Positive Section Nat
+# The natural Eulerian section after positive-index restriction
 
-The positive section retains the original Eulerian section.
+The natural Eulerian section after positive-index restriction.
+
+Restrict the full Eulerian section degreewise along `n ↦ n+1`.

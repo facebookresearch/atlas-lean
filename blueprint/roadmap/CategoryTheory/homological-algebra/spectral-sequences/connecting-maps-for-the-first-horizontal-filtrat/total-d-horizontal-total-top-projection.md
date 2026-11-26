@@ -1,4 +1,6 @@
-# ΙTotal d horizontal Total Top Projection succ
+# The horizontal component of a total boundary
 
-In the full total complex, the differential from bidegree `(p+1,q)`
-followed by projection onto `(p,q)` is the horizontal differential.
+The horizontal component of a total boundary.
+
+The total inclusion from `(p+1,q)` followed by the total differential and projection to
+`(p,q)` is `ε₁(p+1,q)` times the horizontal bicomplex map.

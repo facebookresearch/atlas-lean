@@ -13,16 +13,15 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantEdge
 import Lean.Elab.Tactic.Omega
 
 /-!
-# The lowest relative row of an acyclic first-quadrant total
+# The lowest nonvanishing row of a first-quadrant spectral sequence
 
-If every lower second-page row is zero, the zero-column term in the next
-row has no incoming or outgoing differential. Its actual successor Isos
-carry it to the canonical stable page. Acyclicity of the actual signed
-total makes that stable graded piece zero.
+Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). Suppose E²_{a,b}=0
+for every a ∈ ℕ and b<q. The zero-column term E²_{0,q} then persists to every page
+E^{m+2}_{0,q}. For r≥2 the differential has bidegree (−r,r−1): outgoing arrows from column
+zero leave the first quadrant, and incoming arrows originate in lower rows.
 
-This is the usual lowest-row step used for relative coefficient bars. It
-uses the existing spectral sequence, successor and bounded-convergence
-APIs, without supplying an edge or convergence comparison.
+If Tot(K) is acyclic, bounded first-quadrant convergence identifies a sufficiently late
+zero-column term with a graded piece of zero total homology. Consequently E²_{0,q}=0.
 -/
 
 noncomputable section
@@ -90,7 +89,12 @@ private def lowestRow_pageSuccIso (q : ℕ)
     P.isoHomologyπ (c.prev (0, q)) (0, q) rfl hIn ≪≫
       S.iso r (r + 1) (0, q) rfl (by omega)
 
-/-- The actual lowest zero-column term persists through every successor page. -/
+/-- Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). For q,m ∈ ℕ, suppose
+E²_{a,b} is a zero object for every a ∈ ℕ and b<q. There is a canonical isomorphism E²_{0,q} ≅
+E^{m+2}_{0,q} in the horizontal first-quadrant spectral sequence. The page-r differential has
+bidegree (−r,r−1); for r≥2 there is no outgoing arrow from (0,q) within the first quadrant,
+while every possible incoming source has second coordinate below q and remains zero. The
+isomorphism is the composite of the resulting successor-page homology isomorphisms. -/
 def horizontalLowestRowZeroColumnPageIso (q m : ℕ)
     (hBelow : ∀ b : ℕ, b < q → ∀ a : ℕ,
       IsZero (((horizontalFirstQuadrantSpectralSequence K).page 2).X (a, b))) :
@@ -106,7 +110,11 @@ def horizontalLowestRowZeroColumnPageIso (q m : ℕ)
         (((m + 1 : ℕ) : ℤ) + 2) (by dsimp only [r]; push_cast; omega) (by omega)
       exact ih ≪≫ e ≪≫ eIndex
 
-/-- Acyclicity of the actual total kills the next relative zero-column term. -/
+/-- Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). Suppose Tot(K) is
+acyclic, and for q ∈ ℕ suppose E²_{a,b}=0 for every a ∈ ℕ and b<q in its horizontal
+first-quadrant spectral sequence. Then E²_{0,q} is a zero object. The lower-row hypothesis
+makes this term persist to later pages, while bounded convergence identifies a late term with
+Gr_0H_q(Tot(K)), which vanishes by acyclicity. -/
 theorem isZero_horizontalSecondPage_zeroColumn_of_total_acyclic_of_lower_rows
     (q : ℕ) (hTotal : (K.total (ComplexShape.down ℕ)).Acyclic)
     (hBelow : ∀ b : ℕ, b < q → ∀ a : ℕ,

@@ -1,3 +1,6 @@
-# Native Primitive Complex d eq zero
+# All free primitive complex differentials vanish
 
-Every primitive differential is zero, including the off-shape components.
+Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Free R L. For any i,j : ℕ, P.d i j = 0, including nonadjacent
+indices.

@@ -1,3 +1,6 @@
-# Exists positive of Finite
+# Positive-size representative of every stable matrix ring element
 
-Every stable matrix has a representative in a matrix stage of positive size.
+Positive-size representative of every stable matrix ring element.
+
+Every stable matrix has a representative of size `n + 1` for some natural `n`. A size-zero
+representative may be extended by zero to a positive stage.

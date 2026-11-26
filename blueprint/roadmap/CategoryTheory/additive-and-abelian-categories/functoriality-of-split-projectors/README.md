@@ -1,4 +1,4 @@
 # Functoriality of split projectors
 
-- [Preserves Kernel split Complement](preserves-kernel-split-complement.md)
-- [Preserves Cokernel split Complement](preserves-cokernel-split-complement.md)
+- [Additive functors preserve split-complement kernels](preserves-kernel-split-complement.md)
+- [Additive functors preserve split-complement cokernels](preserves-cokernel-split-complement.md)

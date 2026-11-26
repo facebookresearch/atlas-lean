@@ -1,3 +1,6 @@
-# Augmented Chain Bicomplex Augmentation App naturality
+# Naturality of augmented chain-diagram bicomplex maps
 
-Every original augmented diagram morphism preserves the original bicomplex augmentation.
+Naturality of augmented chain-diagram bicomplex maps.
+
+An augmented diagram morphism commutes with the bicomplex augmentation and the induced map on
+the target single-zero bicomplex.

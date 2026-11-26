@@ -14,13 +14,22 @@ public import MathlibExt.CategoryTheory.Monoidal.ComonObjEpi
 public import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 
 /-!
-# Coalgebra structure on adjoint Chevalley–Eilenberg coinvariants
+# The coalgebra of adjoint exterior coinvariants
 
-The adjoint chain action is a coderivation with zero counit. The coproduct and
-counit therefore descend through the coinvariant projection. Their descended
-maps satisfy the comonoid laws, and the coaugmentation descends as well.
-The coinvariant complex and its projection are bundled as a coalgebra and a
-coalgebra morphism.
+Let R:Type u be commutative, L:Type v an R-Lie algebra, and
+ι:S→L a Lie map with S:Type u. The exterior Chevalley–Eilenberg
+complex C has its primitive coproduct Δ and counit ε.
+Each adjoint chain action satisfies
+Δ A_s=(A_s⊗id+id⊗A_s)Δ and ε A_s=0.
+
+For the coinvariant projection q:C→Q, the maps (q⊗q)Δ and ε
+therefore descend to Δ_Q:Q→Q⊗Q and ε_Q:Q→𝟙.
+They satisfy coassociativity and the counit laws. The coaugmentation
+is q after the exterior coaugmentation, and q is a coalgebra morphism.
+
+The coalgebras are comonoid objects in nonnegative R-module chain
+complexes with the signed tensor product. Their carrier height is
+max{u,v}; the tensor unit is ULift.{v} R in degree zero.
 -/
 
 @[expose] public section
@@ -38,10 +47,16 @@ variable (L : Type v) [LieRing L] [LieAlgebra R L]
 variable {S : Type u} [LieRing S] [LieAlgebra R S] (ι : S →ₗ⁅R⁆ L)
 
 
-/-- The canonical tensor data used by the coinvariant complexes. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+The tensor associator regroups pure tensors, and the unitors
+use the down scalar of ULift R. -/
 local instance coinvariantTensorStructure : MonoidalCategoryStruct (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
-/-- The canonical monoidal laws on the original coefficient category. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+The associator and unitors satisfy the monoidal coherence laws,
+so these tensor objects define a monoidal module category. -/
 local instance coinvariantMonoidalCategory : MonoidalCategory (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
 local instance coinvariantMonoidalPreadditive : MonoidalPreadditive (ModuleCat.{max u v} R) :=
@@ -50,13 +65,23 @@ local instance coinvariantMonoidalLinear : MonoidalLinear R (ModuleCat.{max u v}
   ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
 local instance adjointCoinvariantFiniteBiproducts : HasFiniteBiproducts (ModuleCat.{max u v} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} R)
-/-- Closedness of the canonical coefficient tensor product. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+Tensoring with an R-module has the R-linear Hom module as its
+right adjoint. This gives the closed monoidal structure. -/
 local instance adjointCoinvariantClosed : MonoidalClosed (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := R)
-/-- The native tensor-unit comonoid at the original coefficient height. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+The unit chain complex, concentrated in degree zero, has its
+canonical comonoid structure with unit coproduct and identity counit. -/
 local instance adjointCoinvariantUnitComon : ComonObj (nativeUnitComplex.{u,v} R) :=
   ComonObj.instTensorUnit (ChainComplex (ModuleCat.{max u v} R) ℕ)
-/-- The native CE comonoid before taking coinvariants. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+The exterior chain complex C has its primitive comonoid:
+Δ(x)=1⊗x+x⊗1 on generators, with the degree-zero counit. -/
 local instance canonicalComon : ComonObj ((canonicalChainData R L).complex) := nativeComonObj R L
 
 private theorem scalarAction_quotient_comul (s : S) :
@@ -116,7 +141,13 @@ private theorem actionChain_counit :
     ((adjointActionLinear R L ι n) (s ⊗ₜ[R] a)) = 0
   exact h
 
-/-- The quotient coproduct is a native cokernel descent of the CE coproduct. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The coproduct Δ_Q:Q→Q⊗Q is determined by
+Δ_Q q=(q⊗q)Δ_C, where Δ_C is the exterior primitive coproduct. -/
 def adjointCoinvariantComul : (adjointCoinvariantComplex R L ι) ⟶ (adjointCoinvariantComplex R L ι) ⊗
   (adjointCoinvariantComplex R L ι) :=
   cokernel.desc (adjointActionChainMap R L ι)
@@ -136,7 +167,13 @@ def adjointCoinvariantComul : (adjointCoinvariantComplex R L ι) ⟶ (adjointCoi
       change (t.f n).hom ((adjointActionLinear R L ι n) (s ⊗ₜ[R] a)) = 0
       exact h)
 
-/-- The quotient counit is a native cokernel descent of the CE counit. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The counit ε_Q:Q→𝟙 is determined by ε_Q q=ε_C,
+where ε_C is the exterior chain counit. -/
 def adjointCoinvariantCounit : (adjointCoinvariantComplex R L ι) ⟶ nativeUnitComplex.{u,v} R :=
   cokernel.desc (adjointActionChainMap R L ι) (nativeComplexCounit R L)
     (by
@@ -164,12 +201,24 @@ theorem adjointCoinvariantCounit_projection :
     (adjointCoinvariantProjection R L ι) ≫ adjointCoinvariantCounit R L ι = nativeComplexCounit R L :=
   cokernel.π_desc _ _ _
 
-/-- The quotient carries a lawful native comonoid, through its epic projection. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The descended coproduct and counit make Q a comonoid in the
+signed tensor category of nonnegative R-module complexes. -/
 def adjointCoinvariantComonObj : ComonObj (adjointCoinvariantComplex R L ι) :=
   ComonObj.ofEpi (adjointCoinvariantProjection R L ι) (adjointCoinvariantComul R L ι) (adjointCoinvariantCounit R L ι)
     (adjointCoinvariantComul_projection R L ι) (adjointCoinvariantCounit_projection R L ι)
 
-/-- The coaugmentation of the coinvariant coalgebra. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The coaugmentation of Q is u_Q=q u_C:𝟙→Q,
+where u_C is the exterior-chain coaugmentation. -/
 def adjointCoinvariantCoaug : nativeUnitComplex.{u,v} R ⟶ (adjointCoinvariantComplex R L ι) := nativeComplexCoaug R L
   ≫ (adjointCoinvariantProjection R L ι)
 
@@ -202,25 +251,49 @@ theorem adjointCoinvariantCoaug_comul :
   have h₅ := Category.assoc unitorMap (HomologicalComplex.tensorHom η η) (HomologicalComplex.tensorHom q q)
   exact h₁.trans (h₂.trans (h₃.trans (h₄.trans (h₅.trans (congrArg (fun t => unitorMap ≫ t) ht)))))
 
-/-- The coinvariant projection is a native comonoid homomorphism. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The projection q preserves the coproduct and counit:
+Δ_Q q=(q⊗q)Δ_C and ε_Q q=ε_C. Thus it is a comonoid morphism. -/
 def adjointCoinvariantProjectionIsComonHom :
     letI : ComonObj (adjointCoinvariantComplex R L ι) := adjointCoinvariantComonObj R L ι
     IsComonHom (adjointCoinvariantProjection R L ι) := by
   letI : ComonObj (adjointCoinvariantComplex R L ι) := adjointCoinvariantComonObj R L ι
   exact ⟨adjointCoinvariantCounit_projection R L ι, adjointCoinvariantComul_projection R L ι⟩
 
-/-- The descended coaugmentation is a native comonoid morphism. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The descended coaugmentation u_Q:𝟙→Q is a comonoid morphism,
+preserving the tensor-unit coproduct and counit. -/
 def adjointCoinvariantCoaugIsComonHom :
     letI : ComonObj (adjointCoinvariantComplex R L ι) := adjointCoinvariantComonObj R L ι
     IsComonHom (adjointCoinvariantCoaug R L ι) := by
   letI : ComonObj (adjointCoinvariantComplex R L ι) := adjointCoinvariantComonObj R L ι
   exact ⟨adjointCoinvariantCoaug_counit R L ι, adjointCoinvariantCoaug_comul R L ι⟩
 
-/-- The coinvariant complex bundled with its native comonoid. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The complex Q with its descended coproduct and counit is the
+bundled coalgebra object in ChainComplex(ModuleCat R,ℕ). -/
 def adjointCoinvariantCoalgebra : Comon (ChainComplex (ModuleCat.{max u v} R) ℕ) :=
   { X := adjointCoinvariantComplex R L ι, comon := adjointCoinvariantComonObj R L ι }
 
-/-- The projection bundled as a native coalgebra morphism. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The projection q:C→Q is the bundled morphism from the exterior
+Chevalley–Eilenberg coalgebra to its adjoint coinvariant coalgebra. -/
 def adjointCoinvariantCoalgebraProjection : nativeCoalgebra R L ⟶ adjointCoinvariantCoalgebra R L ι := by
   letI : ComonObj (adjointCoinvariantComplex R L ι) := adjointCoinvariantComonObj R L ι
   letI : IsComonHom (adjointCoinvariantProjection R L ι) := adjointCoinvariantProjectionIsComonHom R L ι

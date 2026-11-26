@@ -14,12 +14,18 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoalgebraNaturality
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Naturality of adjoint Chevalley–Eilenberg coinvariants
+# Naturality of adjoint exterior coinvariants
 
-A commuting square of Lie algebra maps intertwines the adjoint actions, so
-the induced Chevalley–Eilenberg chain map descends to coinvariants. Its
-components preserve projected wedges, identities, compositions, coproducts,
-counits, and coaugmentations. Homology maps are induced by these chain maps.
+Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+and f:L→L′, g:S→S′ Lie maps with fι=ι′g. Exterior powers of f
+intertwine the adjoint actions. They descend to a chain map
+F:Q(L,ι)→Q(L′,ι′) satisfying Fq=q′Λf and
+F_n([x_1∧⋯∧x_n])=[f(x_1)∧⋯∧f(x_n)].
+
+The descended maps preserve identities, composition, coproducts,
+counits and coaugmentations. Their homology maps are H_n(F).
+The L-family occupies universe v and the acting S-family universe u
+of the ground ring; the chain category has height max{u,v}.
 -/
 
 @[expose] public section
@@ -41,10 +47,16 @@ variable {S' S'' : Type u} [LieRing S'] [LieAlgebra R S'] [LieRing S''] [LieAlge
 variable (ι' : S' →ₗ⁅R⁆ L')
 
 
-/-- The fixed canonical tensor data for the natural coinvariant maps. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+The tensor coordinates for the coinvariant chain maps use
+M⊗_R N and the lifted regular tensor unit. -/
 local instance coinvariantNaturalityTensorStructure : MonoidalCategoryStruct (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
-/-- The canonical monoidal laws used in coinvariant naturality. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+These tensor coordinates satisfy the associator and unitor laws,
+giving the monoidal structure for coinvariant maps. -/
 local instance coinvariantNaturalityMonoidalCategory : MonoidalCategory (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
 local instance coinvariantNaturalityMonoidalPreadditive : MonoidalPreadditive (ModuleCat.{max u v} R) :=
@@ -54,11 +66,18 @@ local instance coinvariantNaturalityMonoidalLinear : MonoidalLinear R (ModuleCat
 
 local instance coinvariantNaturalityFiniteBiproducts : HasFiniteBiproducts (ModuleCat.{max u v} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} R)
-/-- Closedness of the original coefficient tensor product. -/
+/-- For a commutative ring R:Type u and any universe v, the category
+ModuleCat.{max u v} R has tensor product M⊗_R N and unit ULift.{v} R.
+The internal R-linear Hom module is right adjoint to tensoring,
+so the coefficient category is monoidal closed. -/
 local instance coinvariantNaturalityClosed : MonoidalClosed (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := R)
 
-/-- Lie maps act on the scalar tensor complexes through their tensor maps. -/
+/-- Let R be commutative and f:L→L′, g:S→S′ Lie homomorphisms,
+with the L-family in universe v and S-family in the ring universe u.
+The maps g⊗Λ_R^n f form a chain map
+S⊗_R C_*(L)→S′⊗_R C_*(L′), where only the exterior factor
+carries the Chevalley–Eilenberg differential. -/
 def adjointActionComplexMap (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') :
     adjointActionComplex R L (S := S) ⟶ adjointActionComplex R L' (S := S') :=
   ChainComplex.ofHom
@@ -73,7 +92,12 @@ def adjointActionComplexMap (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') :
       exact congrArg (fun b => g s ⊗ₜ[R] b)
         (LinearMap.congr_fun (differential_naturality R L f n) a))
 
-/-- The commuting Lie square gives the scalar-action chain square. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+Writing α,α′ for the adjoint tensor actions, the chain square is
+(Λf)α=α′(g⊗Λf). -/
 theorem adjointActionChainMap_naturality
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) :
     adjointActionChainMap R L ι ≫ nativeComplexMap R L f =
@@ -98,7 +122,12 @@ private theorem adjointCoinvariantMap_condition
   exact (congrArg (fun t => adjointActionComplexMap R L f g ≫ t)
     (cokernel.condition (adjointActionChainMap R L' ι'))).trans comp_zero
 
-/-- The CE Lie map descends to the native coinvariant cokernel. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+The exterior Lie chain map descends to an R-module chain map
+F:Q→Q′ with Fq=q′Λf. -/
 def adjointCoinvariantMap (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) :
     (adjointCoinvariantComplex R L ι) ⟶ (adjointCoinvariantComplex R L' ι') :=
   cokernel.desc (adjointActionChainMap R L ι) (nativeComplexMap R L f ≫ (adjointCoinvariantProjection R L' ι'))
@@ -115,7 +144,12 @@ theorem adjointCoinvariantMap_projection
       (adjointCoinvariantProjection R L' ι') :=
   cokernel.π_desc _ _ _
 
-/-- The induced coinvariant map keeps the pure-wedge formula on projected generators. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+On projected decomposable generators,
+F_n([x_1∧⋯∧x_n])=[f(x_1)∧⋯∧f(x_n)]. -/
 theorem adjointCoinvariantMap_pure
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g)
     (n : ℕ) (v : Fin n → L) :
@@ -128,14 +162,24 @@ theorem adjointCoinvariantMap_pure
   exact hp.trans (congrArg ((adjointCoinvariantProjection R L' ι').f n).hom
     (nativeComplexMap_f_ιMulti R L f n v))
 
-/-- Native coinvariant identity maps are the identities. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The pair of identity Lie homomorphisms on L and S induces
+id_Q on the coinvariant chain complex. -/
 theorem adjointCoinvariantMap_id :
     adjointCoinvariantMap R L ι ι (LieHom.id : L →ₗ⁅R⁆ L)
       (LieHom.id : S →ₗ⁅R⁆ S) (by ext s; rfl) = 𝟙 (adjointCoinvariantComplex R L ι) := by
   apply (cancel_epi (adjointCoinvariantProjection R L ι)).mp
   rw [adjointCoinvariantMap_projection, nativeComplexMap_id, Category.id_comp, Category.comp_id]
 
-/-- Native coinvariant maps compose from their CE maps. -/
+/-- Let two composable commuting diagrams of Lie maps be given,
+fι=ι′g and f′ι′=ι″g′, and let the composite diagram
+(f′f)ι=ι″(g′g) commute. The induced coinvariant chain maps satisfy
+Q(f′,g′)Q(f,g)=Q(f′f,g′g), with R commutative and the same
+two carrier universes throughout. -/
 theorem adjointCoinvariantMap_comp (ι'' : S'' →ₗ⁅R⁆ L'')
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g)
     (f' : L' →ₗ⁅R⁆ L'') (g' : S' →ₗ⁅R⁆ S'') (h' : f'.comp ι' = ι''.comp g')
@@ -147,7 +191,12 @@ theorem adjointCoinvariantMap_comp (ι'' : S'' →ₗ⁅R⁆ L'')
     adjointCoinvariantMap_projection, ← Category.assoc, nativeComplexMap_comp,
     adjointCoinvariantMap_projection]
 
-/-- The induced coinvariant map preserves the counits. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+The descended chain map preserves the counits:
+ε_{Q′}F=ε_Q. -/
 theorem adjointCoinvariantMap_counit
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) :
     adjointCoinvariantMap R L ι ι' f g h ≫ adjointCoinvariantCounit R L' ι' =
@@ -157,7 +206,12 @@ theorem adjointCoinvariantMap_counit
     adjointCoinvariantCounit_projection, nativeComplexMap_counit,
     adjointCoinvariantCounit_projection]
 
-/-- The induced coinvariant map preserves the coproducts. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+The descended chain map preserves the coproducts:
+Δ_{Q′}F=(F⊗F)Δ_Q. -/
 theorem adjointCoinvariantMap_comul
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) :
     adjointCoinvariantMap R L ι ι' f g h ≫ adjointCoinvariantComul R L' ι' =
@@ -203,7 +257,11 @@ theorem adjointCoinvariantMap_comul
       congrArg (fun z => z ≫ HomologicalComplex.tensorHom m m) hd.symm
     _ = q ≫ (d ≫ HomologicalComplex.tensorHom m m) := Category.assoc _ _ _
 
-/-- The induced coinvariant map preserves the coaugmentation. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+The coaugmentation square is Fu_Q=u_{Q′}. -/
 theorem adjointCoinvariantMap_coaug
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) :
     adjointCoinvariantCoaug R L ι ≫ adjointCoinvariantMap R L ι ι' f g h =
@@ -211,7 +269,12 @@ theorem adjointCoinvariantMap_coaug
   rw [adjointCoinvariantCoaug, Category.assoc, adjointCoinvariantMap_projection,
     ← Category.assoc, nativeComplexMap_coaug, adjointCoinvariantCoaug]
 
-/-- The native coinvariant map is an comonoid homomorphism. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+The coproduct and counit squares give F:Q→Q′ the structure
+of a comonoid morphism. -/
 def adjointCoinvariantMapIsComonHom
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) :
     letI : ComonObj (adjointCoinvariantComplex R L ι) := adjointCoinvariantComonObj R L ι
@@ -222,10 +285,21 @@ def adjointCoinvariantMapIsComonHom
   exact ⟨adjointCoinvariantMap_counit R L ι ι' f g h,
     adjointCoinvariantMap_comul R L ι ι' f g h⟩
 
-/-- Native homology is the accessor of the coinvariant complex. -/
+/-- Let R:Type u be a commutative ring, L:Type v an R-Lie algebra,
+S:Type u another R-Lie algebra, and ι:S→L a Lie homomorphism.
+Write C_n=Λ_R^nL and A_s for the degreewise adjoint action of ι(s).
+Let Q=C/⟨A_s(z)⟩ be the adjoint coinvariant chain complex and
+q:C→Q its projection.
+The degree-n adjoint coinvariant homology is H_n(Q), the
+homology of the quotient chain complex. -/
 abbrev adjointCoinvariantHomology (n : ℕ) := (adjointCoinvariantComplex R L ι).homology n
 
-/-- Its induced native homology map is the accessor of the chain map. -/
+/-- Let R be commutative, ι:S→L and ι′:S′→L′ Lie homomorphisms,
+with L,L′ in universe v and S,S′ in the ring universe u.
+Let f:L→L′ and g:S→S′ be R-Lie maps satisfying fι=ι′g.
+Write Q,Q′ for the adjoint coinvariant complexes and q,q′ for their projections.
+The induced map on degree-n coinvariant homology is
+H_n(F):H_n(Q)→H_n(Q′). -/
 def adjointCoinvariantHomologyMap
     (f : L →ₗ⁅R⁆ L') (g : S →ₗ⁅R⁆ S') (h : f.comp ι = ι'.comp g) (n : ℕ) :
     adjointCoinvariantHomology R L ι n ⟶ adjointCoinvariantHomology R L' ι' n :=

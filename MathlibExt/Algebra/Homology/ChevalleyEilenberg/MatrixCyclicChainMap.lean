@@ -13,14 +13,16 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.MatrixCyclicDegreeM
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.ConnesComparison
 
 /-!
-# Finite matrix cyclic trace chain maps
+# Finite matrix CE chain maps to cyclic homology
 
-For a unital algebra over a commutative rational algebra, normalized exterior
-antisymmetrization followed by generalized matrix trace gives chain maps to the Connes
-complex. The two differential conventions differ by the degree sign `(-1)^n`.
+Let `k` be a commutative `ℚ`-algebra and `A` a unital `k`-algebra. Tail alternation of
+exterior matrix inputs followed by generalized trace gives a chain map to the cyclic quotient
+complex from the positive CE tail with negated differentials.
 
-The induced homology maps lift through the cyclic-to-Connes comparison. Zero extension and
-algebra homomorphisms preserve the finite matrix trace formulas.
+Multiplying degree `n` by `(-1)^n` gives the chain map from the canonical positive CE tail.
+Taking homology and using the tail comparison gives `H_(n+1)(gl_r(A)) → H_n(Cλ(A))`. The
+rational cyclic-to-quotient comparison then gives a map to `HC_n(A)`. These maps commute with
+top-left zero extension and entry-algebra homomorphisms.
 -/
 
 @[expose] public section
@@ -40,23 +42,31 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
 
 local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 
-/-- The finite-matrix exterior-to-Connes chain map for the positive bracket convention. -/
+/-- The finite matrix cyclic chain map with positive bracket convention.
+
+Compose the tail-alternating exterior chain map from the negated-differential positive CE tail
+with the generalized matrix trace. -/
 def matrixCyclicChainMap (r : ℕ) :
     cyclicPrintedSource k (Matrix (Fin r) (Fin r) A) ⟶ Cλ k A :=
   cyclicExteriorChainMap k (Matrix (Fin r) (Fin r) A) ≫
     ModuleCat.Algebra.Hochschild.Matrix.connesTrace k A r
 
-/-- The finite-matrix cyclic trace chain map from the positive tail of the canonical
-Chevalley–Eilenberg complex. -/
+/-- The finite matrix cyclic chain map from the canonical positive CE tail.
+
+Compose the degree-signed exterior chain map with generalized matrix trace. -/
 def matrixCyclicWeibelChainMap (r : ℕ) : matrixPositiveTail k A r ⟶ Cλ k A :=
   cyclicExteriorWeibelChainMap k (Matrix (Fin r) (Fin r) A) ≫
     ModuleCat.Algebra.Hochschild.Matrix.connesTrace k A r
 
-/-- The chain-map component is exactly the positive-convention degree map. -/
+/-- The positive-bracket component of a finite matrix cyclic chain map.
+
+The degree-`n` component is the tail-alternating closed-cycle trace degree map. -/
 theorem matrixCyclicChainMap_f (r n : ℕ) :
     ((matrixCyclicChainMap k A r).f n).hom = matrixCyclicDegreeMap k A r n := rfl
 
-/-- The component in degree n is `(-1)^n` times the normalized tail trace. -/
+/-- The canonical-convention component of a matrix cyclic chain map.
+
+The degree-`n` component is `(-1)^n` times the tail-alternating closed-cycle trace degree map. -/
 theorem matrixCyclicWeibelChainMap_f (r n : ℕ) :
     ((matrixCyclicWeibelChainMap k A r).f n).hom = matrixCyclicWeibelDegreeMap k A r n := by
   have hc : (((matrixCyclicWeibelChainMap k A r).f n).hom :
@@ -76,13 +86,19 @@ theorem matrixCyclicWeibelChainMap_f (r n : ℕ) :
   exact hc.trans ((congrArg
     (fun g => ((ModuleCat.Algebra.Hochschild.Matrix.connesTrace k A r).f n).hom.comp g) hf).trans hs)
 
-/-- Top-left zero extension on the exterior complex with the positive bracket differential. -/
+/-- The zero-extension map of negated-differential positive matrix tails.
+
+Apply zero extension to the matrix CE map, negate its differential convention, and restrict to
+positive exterior degrees. -/
 def matrixCyclicPrintedZeroCorner {r s : ℕ} (h : r ≤ s) :
     cyclicPrintedSource k (Matrix (Fin r) (Fin r) A) ⟶
       cyclicPrintedSource k (Matrix (Fin s) (Fin s) A) :=
   ChainComplex.positiveTailMap (HomologicalComplex.negateMap (matrixZeroCornerMap k A h))
 
-/-- Positive-convention chain maps are stable under every finite zero corner. -/
+/-- Size stability of the positive-bracket matrix cyclic chain map.
+
+The positive-bracket source size map followed by the larger matrix trace equals the smaller
+matrix trace. -/
 theorem matrixCyclicChainMap_zeroCorner {r s : ℕ} (h : r ≤ s) :
     matrixCyclicPrintedZeroCorner k A h ≫ matrixCyclicChainMap k A s = matrixCyclicChainMap k A r := by
   apply HomologicalComplex.hom_ext
@@ -93,7 +109,9 @@ theorem matrixCyclicChainMap_zeroCorner {r s : ℕ} (h : r ≤ s) :
       matrixCyclicDegreeMap k A r n
   exact matrixCyclicDegreeMap_zeroCorner k A h n
 
-/-- Top-left zero extension commutes with the finite matrix cyclic trace chain maps. -/
+/-- Size stability of the canonical-tail matrix cyclic chain map.
+
+The canonical positive-tail zero-extension map commutes with the degree-signed cyclic trace. -/
 theorem matrixCyclicWeibelChainMap_zeroCorner {r s : ℕ} (h : r ≤ s) :
     matrixPositiveTailMap k A h ≫ matrixCyclicWeibelChainMap k A s = matrixCyclicWeibelChainMap k A r := by
   apply HomologicalComplex.hom_ext
@@ -123,13 +141,19 @@ section Coefficients
 
 variable {B : Type v} [Ring B] [Algebra k B]
 
-/-- The positive-convention matrix map induced by the coefficient algebra map. -/
+/-- The coefficient map of positive-bracket matrix CE tails.
+
+An entry-algebra homomorphism induces the matrix CE map after differential negation and
+positive-index restriction. -/
 def matrixCyclicPrintedCoefficientMap (f : A →ₐ[k] B) (r : ℕ) :
     cyclicPrintedSource k (Matrix (Fin r) (Fin r) A) ⟶
       cyclicPrintedSource k (Matrix (Fin r) (Fin r) B) :=
   ChainComplex.positiveTailMap (HomologicalComplex.negateMap (matrixCoefficientMap k A f r))
 
-/-- The positive-convention whole matrix chain family is natural in the coefficient map. -/
+/-- Coefficient naturality of positive-bracket matrix cyclic chain maps.
+
+The positive-bracket matrix coefficient map and the induced cyclic quotient map commute with
+the matrix trace chain map. -/
 theorem matrixCyclicChainMap_naturality (f : A →ₐ[k] B) (r : ℕ) :
     matrixCyclicPrintedCoefficientMap k A f r ≫ matrixCyclicChainMap k B r =
       matrixCyclicChainMap k A r ≫
@@ -143,7 +167,10 @@ theorem matrixCyclicChainMap_naturality (f : A →ₐ[k] B) (r : ℕ) :
       (matrixCyclicDegreeMap k A r n)
   exact (matrixCyclicDegreeMap_natural k A f r n).symm
 
-/-- The whole matrix lambda family is natural under every coefficient algebra map. -/
+/-- Coefficient naturality of canonical-tail matrix cyclic chain maps.
+
+The canonical positive-tail coefficient map and cyclic quotient coefficient map commute with
+the degree-signed trace chain map. -/
 theorem matrixCyclicWeibelChainMap_naturality (f : A →ₐ[k] B) (r : ℕ) :
     ChainComplex.positiveTailMap (matrixCoefficientMap k A f r) ≫ matrixCyclicWeibelChainMap k B r =
       matrixCyclicWeibelChainMap k A r ≫
@@ -177,20 +204,28 @@ theorem matrixCyclicWeibelChainMap_naturality (f : A →ₐ[k] B) (r : ℕ) :
 
 end Coefficients
 
-/-- The map from finite-matrix CE homology to Connes quotient homology. -/
+/-- The finite matrix CE map into cyclic quotient homology.
+
+The positive-tail homology comparison and degree-signed trace induce `H_(n+1)(gl_r(A)) →
+H_n(Cλ(A))`. -/
 def matrixCyclicConnesHomologyMap (r n : ℕ) :
     matrixHomology k A r (n + 1) ⟶ ModuleCat.Algebra.Hochschild.NonUnital.connesHomology k A n :=
   (matrixPositiveTailHomologyIso k A r n).inv ≫
     HomologicalComplex.homologyMap (matrixCyclicWeibelChainMap k A r) n
 
-/-- The HC lift through the rational first-column comparison. -/
+/-- The finite matrix CE map into cyclic homology.
+
+Follow the cyclic quotient homology map by the inverse rational comparison `HC_n(A) ≅
+H_n(Cλ(A))`. -/
 def matrixCyclicHomologyMap (r n : ℕ) :
     matrixHomology k A r (n + 1) ⟶ ModuleCat.Algebra.Hochschild.NonUnital.cyclicHomology k A n :=
   matrixCyclicConnesHomologyMap k A r n ≫
     (ModuleCat.Algebra.Hochschild.NonUnital.cyclicToConnesHomologyIso k A n).inv
 
-/-- Composing the finite matrix cyclic-homology map with the cyclic-to-Connes comparison gives the
-trace map on Connes homology. -/
+/-- The cyclic quotient factorization of a matrix cyclic homology map.
+
+The map to cyclic homology followed by the cyclic-to-quotient comparison equals the trace map
+to cyclic quotient homology. -/
 @[reassoc]
 theorem matrixCyclicHomologyMap_comp_connes (r n : ℕ) :
     matrixCyclicHomologyMap k A r n ≫
@@ -200,7 +235,10 @@ theorem matrixCyclicHomologyMap_comp_connes (r n : ℕ) :
     ModuleCat.Algebra.Hochschild.NonUnital.cyclicToConnesHomologyIso_hom,
     Iso.inv_hom_id, Category.comp_id]
 
-/-- Every finite zero corner preserves the lambda-to-HC map. -/
+/-- Size stability of finite matrix CE-to-cyclic homology maps.
+
+The CE homology map of zero extension followed by the larger-size cyclic homology map equals
+the smaller-size map. -/
 theorem matrixCyclicHomologyMap_zeroCorner {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     matrixZeroCornerHomologyMap k A h (n + 1) ≫ matrixCyclicHomologyMap k A s n =
       matrixCyclicHomologyMap k A r n := by
@@ -240,7 +278,10 @@ section HomologyNaturality
 
 variable {B : Type v} [Ring B] [Algebra k B]
 
-/-- The finite matrix homology-to-Connes map is natural under the algebra map. -/
+/-- Coefficient naturality of matrix CE-to-cyclic quotient homology.
+
+The entrywise matrix CE homology map and cyclic quotient homology map commute with the trace-
+induced map. -/
 theorem matrixCyclicConnesHomologyMap_naturality (f : A →ₐ[k] B) (r n : ℕ) :
     HomologicalComplex.homologyMap (matrixCoefficientMap k A f r) (n + 1) ≫
         matrixCyclicConnesHomologyMap k B r n =
@@ -282,7 +323,10 @@ theorem matrixCyclicConnesHomologyMap_naturality (f : A →ₐ[k] B) (r n : ℕ)
     _ = eA.inv ≫ (fA ≫ c) := congrArg (fun f => eA.inv ≫ f) hm
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The HC lift is natural in the coefficient algebra map. -/
+/-- Coefficient naturality of matrix CE-to-cyclic homology.
+
+The entrywise matrix CE homology map and cyclic homology coefficient map commute with the
+trace-induced cyclic homology map. -/
 theorem matrixCyclicHomologyMap_naturality (f : A →ₐ[k] B) (r n : ℕ) :
     HomologicalComplex.homologyMap (matrixCoefficientMap k A f r) (n + 1) ≫
         matrixCyclicHomologyMap k B r n =

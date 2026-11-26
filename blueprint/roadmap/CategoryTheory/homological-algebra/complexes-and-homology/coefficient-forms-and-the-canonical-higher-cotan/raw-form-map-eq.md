@@ -1,3 +1,6 @@
-# Raw Form Map eq
+# The degreewise description of a lifted coefficient-form map
 
-The component constructor stores the same original form morphism.
+The degreewise description of a lifted coefficient-form map.
+
+The lifted weight-`q` map is the degree-`q` component of the coefficient differential-form
+complex map with algebra map `f` and identity coefficient map on `B`.

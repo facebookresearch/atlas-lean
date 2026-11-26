@@ -1,4 +1,6 @@
-# Cotangent Complex
+# The normalized polynomial cotangent complex of an algebra
 
-The canonical normalized chain model of `L_{A/k}`, using the actual
-terminal augmented algebra `id_A` and the actual polynomial resolution.
+The normalized polynomial cotangent complex of an algebra.
+
+For a commutative `k`-algebra `A`, this is the normalized cotangent chain complex of the
+polynomial resolution at the identity augmentation `A → A`.

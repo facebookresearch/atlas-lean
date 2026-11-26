@@ -13,13 +13,23 @@ public import MathlibExt.Algebra.Homology.Hochschild.DifferentialFormProjection
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEnvelopingBarComparison
 
 /-!
-# coefficient naturality of the differential-form projection
+# Coefficient naturality of the differential-form projection
 
-Algebra-linear coefficient maps act on the original coefficient head and
-leave every original tensor or differential tail unchanged. The projection
-square is proved on the tensor representatives, across independent
-coefficient worlds. In a common carrier category these maps form the native
-chain and homology naturality squares.
+Let k be a commutative ring, A a commutative unital k-algebra,
+and M,N compatible A-modules. For an A-linear map f : M → N,
+the tensor map f ⊗ id on Hochschild words and the map f ⊗ id on
+M ⊗_A Ω^n_{A/k} satisfy
+(f ⊗ id_Ω) φ_M = φ_N (f ⊗ id_{A^{⊗n}}).
+The underlying source and target coefficient universes are independent
+in this linear-map statement.
+
+For coefficients M,P in one carrier universe w, these maps define
+chain maps in ModuleCat over k at max{u,v,w}. The form complex has
+terms ULift.{u}(M ⊗_A Ω^n_{A/k}) and differential zero. Its map sends
+the lift of m ⊗ ω to the lift of f(m) ⊗ ω. The corresponding chain
+projection and homology projection squares commute.
+
+Reference: J.-L. Loday, Cyclic Homology, §3.2.
 -/
 
 @[expose] public section
@@ -40,8 +50,11 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
 
 local notation "Ω" => KaehlerDifferential k A
 
-/-- Original algebra-linear coefficient maps preserve the form projection,
-without identifying the independent source and target carrier worlds. -/
+/-- Let k be commutative, A a commutative unital k-algebra, M,N
+compatible A-modules in independent carrier universes, and f : M → N
+A-linear. With Ω^n = ∧_A^n Ω_{A/k}, the form projections satisfy
+(f ⊗_A id_Ω) φ_M = φ_N (f ⊗_k id_{A^{⊗n}})
+as k-linear maps from M ⊗[k] A^{⊗n} to N ⊗_A Ω^n. -/
 theorem coefficientFormProjection_coefficient (f : M →ₗ[A] N) (n : ℕ) :
     ((TensorProduct.map f (LinearMap.id : (⋀[A]^n Ω) →ₗ[A] (⋀[A]^n Ω))).restrictScalars k).comp
         (coefficientFormProjection k A M n) =
@@ -57,7 +70,13 @@ section CommonWorld
 variable {P : Type w} [AddCommGroup P] [Module k P] [Module A P]
   [SMulCommClass k A P] [IsScalarTower k A P]
 
-/-- The coefficient-head map on the original zero-differential form complex. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M,P compatible A-modules in the same coefficient universe w.
+Put Ω^n = ∧_A^n Ω_{A/k}, and let f : M → P be A-linear.
+The coefficient form complexes have degree-n terms
+ULift.{u}(M ⊗_A Ω^n) and ULift.{u}(P ⊗_A Ω^n), with zero
+differentials. The maps up ∘ (f ⊗_A id) ∘ down define a chain
+map between them. -/
 def coefficientDifferentialFormComplexMap (f : M →ₗ[A] P) :
     coefficientDifferentialFormComplex k A M ⟶ coefficientDifferentialFormComplex k A P where
   f n := ModuleCat.ofHom
@@ -71,7 +90,12 @@ def coefficientDifferentialFormComplexMap (f : M →ₗ[A] P) :
       coefficientDifferentialFormComplex_d_eq_zero]
     erw [CategoryTheory.Limits.comp_zero]
 
-/-- Every original form component retains the exact coefficient-head map. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M,P compatible A-modules in the same coefficient universe w.
+Put Ω^n = ∧_A^n Ω_{A/k}, and let f : M → P be A-linear.
+The degree-n component of the form-complex map is the full k-linear
+operator up ∘ (f ⊗_A id_{Ω^n}) ∘ down on the lifted form
+objects. -/
 theorem coefficientDifferentialFormComplexMap_f (f : M →ₗ[A] P) (n : ℕ) :
     ((coefficientDifferentialFormComplexMap k A f).f n).hom =
       (ULift.moduleEquiv : ULift.{u} (P ⊗[A] (⋀[A]^n Ω)) ≃ₗ[k]
@@ -80,7 +104,11 @@ theorem coefficientDifferentialFormComplexMap_f (f : M →ₗ[A] P) (n : ℕ) :
             (ULift.moduleEquiv : ULift.{u} (M ⊗[A] (⋀[A]^n Ω)) ≃ₗ[k]
               M ⊗[A] (⋀[A]^n Ω)).toLinearMap) := rfl
 
-/-- The original Hochschild coefficient chain map has the native tensor coefficient component. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M,P compatible A-modules in the same coefficient universe w.
+Put Ω^n = ∧_A^n Ω_{A/k}, and let f : M → P be A-linear.
+The degree-n component of the Hochschild coefficient chain map is
+f ⊗_k id_{A^{⊗n}}, after restricting f to a k-linear map. -/
 theorem symmetricOriginalCoefficientChainMap_tensor (f : M →ₗ[A] P) (n : ℕ) :
     ((symmetricOriginalCoefficientChainMap k A M f).f n).hom =
       TensorProduct.map (f.restrictScalars k)
@@ -91,7 +119,12 @@ theorem symmetricOriginalCoefficientChainMap_tensor (f : M →ₗ[A] P) (n : ℕ
   simp only [LinearMap.restrictScalars_apply, algebraCoefficientLevelMap_tmul,
     TensorProduct.map_tmul, LinearMap.id_apply]
 
-/-- The coefficient chain maps preserve the original form projection. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M,P compatible A-modules in the same coefficient universe w.
+Put Ω^n = ∧_A^n Ω_{A/k}, and let f : M → P be A-linear.
+Let C(f) be the Hochschild coefficient chain map, F(f) the map of
+zero-differential form complexes, and η_M,η_P their form projections.
+The chain square is η_P C(f) = F(f) η_M. -/
 @[reassoc]
 theorem coefficientDifferentialFormChainMap_coefficient (f : M →ₗ[A] P) :
     symmetricOriginalCoefficientChainMap k A M f ≫ coefficientDifferentialFormChainMap k A P =
@@ -133,14 +166,24 @@ theorem coefficientDifferentialFormChainMap_coefficient (f : M →ₗ[A] P) :
           ((hup _).trans (congrArg ULift.up hraw)))
   exact hleft.trans hright.symm
 
-/-- The original coefficient morphism on the degree form object. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M,P compatible A-modules in the same coefficient universe w.
+Put Ω^n = ∧_A^n Ω_{A/k}, and let f : M → P be A-linear.
+The degree-n map of coefficient form objects sends
+ULift(m ⊗_A ω) to ULift(f(m) ⊗_A ω), extended k-linearly.
+Its source and target lie in the common module universe max{u,v,w}. -/
 def coefficientDifferentialFormObjectMap (f : M →ₗ[A] P) (n : ℕ) :
     ModuleCat.of k (ULift.{u} (M ⊗[A] (⋀[A]^n Ω))) ⟶
       ModuleCat.of k (ULift.{u} (P ⊗[A] (⋀[A]^n Ω))) :=
   (coefficientDifferentialFormComplexMap k A f).f n
 
-/-- The original homology naturality square follows from the chain square
-and native zero-differential homology coordinates. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M,P compatible A-modules in the same coefficient universe w.
+Put Ω^n = ∧_A^n Ω_{A/k}, and let f : M → P be A-linear.
+For the induced form maps η^H_M,η^H_P on Hochschild homology,
+the degree-n square is
+η^H_P H_n(C(f)) = F_n(f) η^H_M,
+where F_n(f) acts by f on the lifted coefficient and fixes the form. -/
 @[reassoc]
 theorem coefficientDifferentialFormHomologyMap_coefficient (f : M →ₗ[A] P) (n : ℕ) :
     HomologicalComplex.homologyMap (symmetricOriginalCoefficientChainMap k A M f) n ≫

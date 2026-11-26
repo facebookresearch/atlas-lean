@@ -1,3 +1,7 @@
-# Map Semilinear Right eq map Right
+# Fixed right outer scalars recover the right-linear balanced map
 
-Keeping all scalar rings recovers the exact existing earned right-linear map.
+Fixed right outer scalars recover the right-linear balanced map.
+
+When the ground ring, balancing semiring, and right outer semiring remain fixed, the
+semilinear construction with identity scalar homomorphisms equals the right-linear map
+`mapRight f g hf hg hgS`.

@@ -13,16 +13,15 @@ module
 public import Mathlib.Algebra.Homology.DerivedCategory.KProjective
 
 /-!
-# Literal lifts from bounded projective cochain complexes
+# Lifts from bounded-above projective cochain complexes
 
-An original bounded-above complex of projective objects is K-projective. The stock localization
-bijection therefore lifts an original map through an quasi-isomorphism. A representative in the
-homotopy category gives a literal cochain map, and the quotient equality gives a full homotopy
-between its composite and the original map.
+Let A be abelian and K a cochain complex whose terms are projective and which vanishes above an
+integer cutoff. Every map K → T lifts through a quasi-isomorphism L → T up to a specified chain
+homotopy.
 
-For an additive full faithful image functor, projectivity and the cutoff of the original terms
-earn K-projectivity of the image complex. Fullness then returns a literal morphism in the original
-source category.
+If an additive full faithful functor i : P → A sends the terms of F to projective objects and F
+has the same bounded-above condition, a map i(F) → T similarly lifts through a quasi-isomorphism
+i(G) → T to a complex map F → G, with the required homotopy in A.
 -/
 
 @[expose] public section
@@ -57,10 +56,9 @@ private theorem exists_liftThroughQuasiIso_of_isKProjective [K.IsKProjective]
   refine ⟨g₀, ⟨HomotopyCategory.homotopyOfEq (g₀ ≫ q) f ?_⟩⟩
   exact (U.map_comp g₀ q).trans hgq
 
-/--
-The original cutoff and projective terms earn a literal lift through the quasi-isomorphism,
-together with its original-map homotopy.
--/
+/-- Let A be an abelian category and K,L,T integer cochain complexes. Assume a cutoff d ∈ ℤ with
+Kʲ=0 for all j>d and every Kʲ projective. Let q : L → T be a quasi-isomorphism and f : K → T a
+complex map. There exists a complex map g : K → L together with a homotopy q ∘ g ≃ f. -/
 theorem exists_boundedProjectiveLift (d : ℤ)
     (hzero : ∀ j : ℤ, d < j → IsZero (K.X j))
     (hproj : ∀ j : ℤ, Projective (K.X j))
@@ -71,10 +69,9 @@ theorem exists_boundedProjectiveLift (d : ℤ)
   let _ : K.IsKProjective := isKProjective_of_projective K d
   exact exists_liftThroughQuasiIso_of_isKProjective q hq f
 
-/--
-Choose the cochain lift whose existence follows from the original cutoff, projective terms, and
-quasi-isomorphism.
--/
+/-- Let A be an abelian category and K,L,T integer cochain complexes. Assume a cutoff d ∈ ℤ with
+Kʲ=0 for all j>d and every Kʲ projective. Let q : L → T be a quasi-isomorphism and f : K → T a
+complex map. Choose a map g : K → L whose composite with q is homotopic to f. -/
 @[no_expose]
 def boundedProjectiveLift (d : ℤ)
     (hzero : ∀ j : ℤ, d < j → IsZero (K.X j))
@@ -82,7 +79,10 @@ def boundedProjectiveLift (d : ℤ)
     (q : L ⟶ T) (hq : QuasiIso q) (f : K ⟶ T) : K ⟶ L :=
   Classical.choose (exists_boundedProjectiveLift d hzero hproj q hq f)
 
-/-- The full homotopy between the chosen lift followed by `q` and the original map `f`. -/
+/-- Let A be an abelian category and K,L,T integer cochain complexes. Assume a cutoff d ∈ ℤ with
+Kʲ=0 for all j>d and every Kʲ projective. Let q : L → T be a quasi-isomorphism and f : K → T a
+complex map. For the chosen bounded-projective lift g, there is a specified full chain homotopy
+q ∘ g ≃ f. -/
 @[no_expose]
 def boundedProjectiveLiftHomotopy (d : ℤ)
     (hzero : ∀ j : ℤ, d < j → IsZero (K.X j))
@@ -97,10 +97,10 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P]
 variable (i : P ⥤ A) [i.Additive] [i.Full] [i.Faithful]
 variable {F G : CochainComplex P ℤ}
 
-/--
-The original image-term projectivity and cutoff earn a literal source-category lift through an
-image quasi-isomorphism.
--/
+/-- Let A be abelian, P a preadditive category and i : P → A an additive full faithful functor. Let
+F,G be integer cochain complexes in P, with Fʲ=0 for j>d and every i(Fʲ) projective in A. Let q
+: i(G) → T be a quasi-isomorphism in A and f : i(F) → T a complex map. There exists a
+source-category complex map g : F → G such that q ∘ i(g) is homotopic to f. -/
 theorem exists_boundedProjectiveImageLift (d : ℤ)
     (hzero : ∀ j : ℤ, d < j → IsZero (F.X j))
     (hproj : ∀ j : ℤ, Projective (i.obj (F.X j)))
@@ -114,10 +114,10 @@ theorem exists_boundedProjectiveImageLift (d : ℤ)
   obtain ⟨g, rfl⟩ := (i.mapHomologicalComplex (.up ℤ)).map_surjective g'
   exact ⟨g, hg'⟩
 
-/--
-The lift is a literal morphism of the original source complexes, obtained through the original
-additive full faithful image.
--/
+/-- Let A be abelian, P a preadditive category and i : P → A an additive full faithful functor. Let
+F,G be integer cochain complexes in P, with Fʲ=0 for j>d and every i(Fʲ) projective in A. Let q
+: i(G) → T be a quasi-isomorphism in A and f : i(F) → T a complex map. Choose a complex map g :
+F → G whose image under i lifts f through q up to homotopy. -/
 @[no_expose]
 def boundedProjectiveImageLift (d : ℤ)
     (hzero : ∀ j : ℤ, d < j → IsZero (F.X j))
@@ -126,10 +126,10 @@ def boundedProjectiveImageLift (d : ℤ)
     (f : (i.mapHomologicalComplex (.up ℤ)).obj F ⟶ T) : F ⟶ G :=
   Classical.choose (exists_boundedProjectiveImageLift i d hzero hproj q hq f)
 
-/--
-The full homotopy of the original image of the chosen source-category lift followed by `q` to the
-original map `f`.
--/
+/-- Let A be abelian, P a preadditive category and i : P → A an additive full faithful functor. Let
+F,G be integer cochain complexes in P, with Fʲ=0 for j>d and every i(Fʲ) projective in A. Let q
+: i(G) → T be a quasi-isomorphism in A and f : i(F) → T a complex map. The image of the chosen
+source lift g satisfies a specified homotopy q ∘ i(g) ≃ f in the cochain complexes over A. -/
 @[no_expose]
 def boundedProjectiveImageLiftHomotopy (d : ℤ)
     (hzero : ∀ j : ℤ, d < j → IsZero (F.X j))

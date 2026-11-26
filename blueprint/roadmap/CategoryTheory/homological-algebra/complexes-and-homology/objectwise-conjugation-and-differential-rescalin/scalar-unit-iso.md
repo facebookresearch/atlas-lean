@@ -1,3 +1,5 @@
-# Scalar Unit Iso
+# Object automorphism given by an invertible scalar
 
-Scalar multiplication by an ring unit, as an object automorphism.
+In an `R`-linear preadditive category over a semiring `R`, a
+unit `a : Rˣ` gives an automorphism of `X` with forward map
+`a • id_X` and inverse `a⁻¹ • id_X`.

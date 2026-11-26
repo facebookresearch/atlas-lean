@@ -12,12 +12,21 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.DifferentialFormProjection
 
 /-!
-# Surjectivity of the coefficient form projection
+# Surjectivity onto coefficient differential forms
 
-Universal differentials generate Ω(A/k), so their wedges generate
-every exterior degree. The coefficient tensor projection is therefore
-surjective in every chain degree for any commutative ground algebra.
-Component surjectivity alone does not identify its homology map.
+Let k be a commutative ring, A a commutative unital k-algebra, and
+M a compatible A-module. In every degree n, the k-linear projection
+φ_n : M ⊗[k] A^{⊗n} → M ⊗_A ∧_A^n Ω_{A/k},
+m ⊗ a_1 ⊗ ⋯ ⊗ a_n ↦ m ⊗ (da_1 ∧ ⋯ ∧ da_n),
+is surjective.
+
+The elements da generate Ω_{A/k} as an A-module, and their exterior
+words generate its exterior powers. In a coefficient tensor, the
+A-scalar coefficients move to M, giving a preimage for every form.
+The whole-form lift used in the chain complex preserves this
+degreewise surjectivity.
+
+Reference: J.-L. Loday, Cyclic Homology, §3.2.
 -/
 
 @[expose] public section
@@ -35,8 +44,15 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
 
 local notation "Ω" => KaehlerDifferential k A
 
-/-- Every original coefficient differential form is an image of
-the original coefficient-first tensor projection, over any ground ring. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+The projection φ_n : M ⊗[k] A^{⊗n} → F_n is surjective
+for every n ≥ 0. Equivalently, every coefficient differential form
+has a preimage under m ⊗ tprod(a) ↦ m ⊗_A D_n(a), extended
+k-linearly to sums. -/
 theorem coefficientFormProjection_surjective (n : ℕ) :
     Function.Surjective (coefficientFormProjection k A M n) := by
   classical
@@ -81,8 +97,14 @@ theorem coefficientFormProjection_surjective (n : ℕ) :
   | tmul m ω => exact hword ω m
   | add x y hx hy => exact R.add_mem hx hy
 
-/-- The canonical whole-module lift preserves the projection
-surjectivity in every chain degree. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write Ω = Ω_{A/k}, Ω^n = ∧_A^n Ω, and d : A → Ω for the
+universal k-derivation.
+Let M be an A-module with a compatible k-module action, viewed as
+a symmetric bimodule, and set F_n = M ⊗_A Ω^n.
+In each chain degree n, the lifted projection
+C_n(A,M) → ULift.{u} F_n is surjective. Thus every element of the
+coefficient form complex has a degree-n Hochschild-chain preimage. -/
 theorem coefficientDifferentialFormChainMap_surjective (n : ℕ) :
     Function.Surjective ((coefficientDifferentialFormChainMap k A M).f n).hom := by
   intro x

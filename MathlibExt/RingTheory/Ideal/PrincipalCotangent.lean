@@ -16,11 +16,15 @@ public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 public import Mathlib.Tactic.Ring
 
 /-!
-# The conormal generator of a regular principal equation
+# Conormal coordinates for a regular principal equation
 
-For a regular equation `g`, the actual quotient-ideal conormal module
-`(g)/(g)^2` is the free rank-one module over the actual quotient by `(g)`.
-The isomorphism sends one to the class of the original equation.
+Let `B` be a commutative ring, `g : B`, and `I = (g)`. The class `[g]` generates the conormal
+module `I/I²` over `B/I`, giving a surjective map `B/I → I/I²`, `c ↦ c • [g]`.
+
+If multiplication by `g` is injective on `B` (`g ∈ nonZeroDivisors B`), this map is a
+`B/I`-linear equivalence. It sends `1` to `[g]`.
+
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 2.
 -/
 
 @[expose] public section
@@ -30,20 +34,26 @@ namespace Ideal
 variable (B : Type u) [CommRing B] (g : B)
 local notation "𝓘" => Ideal.span (Set.singleton g)
 
-/-- The class of the original principal equation in its actual conormal module. -/
+/-- For a commutative ring `B` and `g : B`, let `I = Ideal.span {g}`. The principal conormal
+generator is `I.toCotangent g`, the class `[g]` of the defining element in `I.Cotangent =
+I/I²`. -/
 def principalCotangentGenerator : (𝓘).Cotangent :=
   (𝓘).toCotangent ⟨g, Ideal.subset_span (Set.mem_singleton g)⟩
 
-/-- Multiplication by the original conormal generator over the actual quotient. -/
+/-- For a commutative ring `B`, `g : B`, and `I = (g)`, this is the `B/I`-linear map `B/I → I/I²`
+given by `c ↦ c • [g]`, where `[g] = principalCotangentGenerator B g`. -/
 def principalCotangentMap : (B ⧸ 𝓘) →ₗ[B ⧸ 𝓘] (𝓘).Cotangent :=
   LinearMap.toSpanSingleton (B ⧸ 𝓘) (𝓘).Cotangent (principalCotangentGenerator B g)
 
-/-- The original principal conormal map is scalar multiplication by its
-actual defining-equation class. -/
+/-- For a commutative ring `B`, `g : B`, `I = (g)`, and `c : B/I`, `principalCotangentMap B g c =
+c • principalCotangentGenerator B g`. Its value is scalar multiplication of the equation class
+`[g]` by `c`. -/
 theorem principalCotangentMap_apply (c : B ⧸ 𝓘) :
     principalCotangentMap B g c = c • principalCotangentGenerator B g := rfl
 
-/-- A quotient scalar acts on the equation class by the original product. -/
+/-- For a commutative ring `B` and `g,b : B`, let `I = (g)`. Then `principalCotangentMap B g (b
+mod I)` is the class of `b*g` in `I/I²`, namely `I.toCotangent (b • g)` with `g` viewed as an
+element of `I`. -/
 theorem principalCotangentMap_mk (b : B) :
     principalCotangentMap B g (Ideal.Quotient.mk 𝓘 b) =
       (𝓘).toCotangent (b • (⟨g, Ideal.subset_span (Set.mem_singleton g)⟩ : 𝓘)) := by
@@ -52,8 +62,8 @@ theorem principalCotangentMap_mk (b : B) :
   exact (IsScalarTower.algebraMap_smul (B ⧸ 𝓘) b _).trans
     ((𝓘).toCotangent.map_smul b _).symm
 
-/-- The actual equation class generates the conormal module of every
-principal ideal, without a regularity or basis hypothesis. -/
+/-- For every commutative ring `B` and `g : B`, with `I = (g)`, the map `principalCotangentMap B g
+: B/I → I/I²` is surjective. Every conormal class is a quotient-ring scalar multiple of `[g]`. -/
 theorem principalCotangentMap_surjective : Function.Surjective (principalCotangentMap B g) := by
   intro x
   obtain ⟨a, rfl⟩ := (𝓘).toCotangent_surjective x
@@ -64,8 +74,9 @@ theorem principalCotangentMap_surjective : Function.Surjective (principalCotange
   change b * g = a
   exact (mul_comm b g).trans hb.symm
 
-/-- Regularity of the original equation makes its quotient scalar
-coefficient unique in the conormal module. -/
+/-- Let `B` be a commutative ring and `g : B` satisfy `g ∈ nonZeroDivisors B`, so multiplication
+by `g` is injective on `B`. For `I = (g)`, the map `principalCotangentMap B g : B/I → I/I²`,
+`c ↦ c • [g]`, is injective. -/
 theorem principalCotangentMap_injective (hg : g ∈ nonZeroDivisors B) :
     Function.Injective (principalCotangentMap B g) := by
   rw [injective_iff_map_eq_zero]
@@ -85,14 +96,17 @@ theorem principalCotangentMap_injective (hg : g ∈ nonZeroDivisors B) :
     ((mul_right_mem_nonZeroDivisors_eq_zero_iff hg).mp hprod)
   exact (Ideal.Quotient.eq_zero_iff_mem).mpr (Ideal.mem_span_singleton.mpr ⟨c, hbc⟩)
 
-/-- The actual conormal module of a regular principal equation is its
-actual quotient ring, with one mapped to the original equation class. -/
+/-- Let `B` be a commutative ring, `g : B` a non-zero-divisor, and `I = (g)`. Multiplication by
+the conormal class `[g]` is the `B/I`-linear equivalence `principalCotangentEquiv B g hg : B/I
+≃ₗ[B/I] I/I²`, with `c ↦ c • [g]`. -/
 def principalCotangentEquiv (hg : g ∈ nonZeroDivisors B) :
     (B ⧸ 𝓘) ≃ₗ[B ⧸ 𝓘] (𝓘).Cotangent :=
   LinearEquiv.ofBijective (principalCotangentMap B g)
     ⟨principalCotangentMap_injective B g hg, principalCotangentMap_surjective B g⟩
 
-/-- The principal conormal isomorphism retains the original defining equation. -/
+/-- For a commutative ring `B` and a non-zero-divisor `g : B`, let `I = (g)`. The conormal
+equivalence satisfies `principalCotangentEquiv B g hg 1 = principalCotangentGenerator B g`, so
+the unit of `B/I` maps to the equation class `[g]` in `I/I²`. -/
 theorem principalCotangentEquiv_one (hg : g ∈ nonZeroDivisors B) :
     principalCotangentEquiv B g hg 1 = principalCotangentGenerator B g := by
   change (1 : B ⧸ 𝓘) • principalCotangentGenerator B g = _

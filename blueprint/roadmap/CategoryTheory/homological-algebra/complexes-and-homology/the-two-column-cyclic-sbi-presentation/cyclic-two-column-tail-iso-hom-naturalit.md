@@ -1,3 +1,6 @@
-# Cyclic Two Column Tail Iso hom naturality
+# Naturality of the integer-graded cyclic-tail comparison
 
-The computed integer tail comparison retains original algebra-map naturality.
+Naturality of the integer-graded cyclic-tail comparison.
+
+The integer extensions of the cokernel-tail map and full cyclic-total map commute with the
+period-two tail isomorphism.

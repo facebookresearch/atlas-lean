@@ -1,8 +1,8 @@
 # Natural maps and augmentation of the native universal enveloping algebra
 
-- [Map](map.md)
-- [Map id](map-id.md)
-- [Map comp](map-comp.md)
-- [Augmentation](augmentation.md)
-- [Augmentation unique](augmentation-unique.md)
-- [Augmentation naturality](augmentation-naturality.md)
+- [A Lie homomorphism induces an enveloping-algebra map](map.md)
+- [Enveloping maps preserve the identity Lie map](map-id.md)
+- [Enveloping maps preserve composition of Lie maps](map-comp.md)
+- [The scalar augmentation of a universal enveloping algebra](augmentation.md)
+- [A scalar algebra map killing all generators is the augmentation](augmentation-unique.md)
+- [The scalar augmentation is natural for Lie maps](augmentation-naturality.md)

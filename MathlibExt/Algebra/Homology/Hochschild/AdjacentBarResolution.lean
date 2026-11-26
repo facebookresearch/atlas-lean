@@ -12,7 +12,7 @@ module
 
 public import MathlibExt.Algebra.Homology.Hochschild.AdjacentBarEnveloping
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.ConnesBoundary
-public import MathlibExt.Algebra.Homology.Contractible
+public import MathlibExt.Algebra.Homology.HomologicalComplex.SplitExact
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
@@ -49,7 +49,7 @@ def bPrimeGroundContraction :
 
 /-- Exactness in every original ground b-prime degree follows from that contraction. -/
 theorem bPrimeGround_acyclic : (NonUnital.bPrimeComplex k A).Acyclic :=
-  (show (NonUnital.bPrimeComplex k A).Contractible from ⟨bPrimeGroundContraction k A⟩).acyclic
+  HomologicalComplex.acyclic_of_homotopy_id_zero (bPrimeGroundContraction k A)
 
 /-- The original enriched multiplication augmentation is genuinely surjective. -/
 theorem envelopingBarAugmentation_surjective : Function.Surjective (envelopingBarAugmentation k A).hom := by

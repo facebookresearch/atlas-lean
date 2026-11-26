@@ -13,12 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.CyclicWorkingHeig
 public import MathlibExt.Algebra.Homology.HomologicalComplex.MapColimits
 
 /-!
-# Connes quotient maps at a common carrier height
+# Connes cokernels and algebra maps in a common carrier universe
 
-The Connes model is the first-column cokernel of
-the lifted cyclic bicomplex. Cokernel functoriality
-gives its coefficient maps and the comparison
-with the lift of the original Connes complex.
+For a nonunital ring A with a k-module structure and k-bilinear multiplication, lift its
+cyclic bicomplex degreewise to h = max u v z. The Connes model at this height is the cokernel
+of the first horizontal column map, regarded as a nonnegative chain complex.
+
+The exact module ULift functor preserves this cokernel, giving an isomorphism from the lifted
+base Connes complex to the cokernel formed at height h. It preserves the quotient projection.
+A nonunital k-algebra homomorphism between independently sized algebras gives a map of these
+quotients at their common height and induced maps on homology.
 -/
 
 @[expose] public section
@@ -34,16 +38,31 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The cyclic bicomplex carried through the native full working-height module lift. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+For a spare universe z, put h = max u v z and let U_h be the module ULift functor from max u v
+to h, applied degreewise to chain complexes. cyclicBicomplexAtHeight applies U_h in each cell
+of cyclicBicomplex k A, using down ℕ in both directions. Its horizontal and vertical maps are
+the images of the base bicomplex maps. -/
 abbrev cyclicBicomplexAtHeight :=
   (((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex
     (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).obj (cyclicBicomplex k A)
 
-/-- The original first-column cokernel at the chosen module height. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+For a spare universe z, put h = max u v z and let U_h be the module ULift functor from max u v
+to h, applied degreewise to chain complexes. connesComplexAtHeight is the cokernel in chain
+complexes of (cyclicBicomplexAtHeight k A).d 1 0. It is the first-column Connes quotient in
+ModuleCat.{h} k. -/
 abbrev connesComplexAtHeight :=
   HomologicalComplex₂.firstColumnCokernel (cyclicBicomplexAtHeight.{u,v,z} k A)
 
-/-- Native cokernel preservation identifies the lifted Connes quotient model. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+For a spare universe z, put h = max u v z and let U_h be the module ULift functor from max u v
+to h, applied degreewise to chain complexes. Cokernel preservation gives U_h(connesComplex k
+A) ≅ connesComplexAtHeight k A. The comparison is PreservesCokernel.iso applied to the first
+horizontal map of the base cyclic bicomplex. -/
 def connesComplexLiftIsoAtHeight :
     ((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj (connesComplex k A) ≅ connesComplexAtHeight.{u,v,z} k A :=
@@ -51,7 +70,12 @@ def connesComplexLiftIsoAtHeight :
     ((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex (ComplexShape.down ℕ))
     ((cyclicBicomplex k A).d 1 0)
 
-/-- The lifted quotient comparison preserves the original cokernel projection. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+For a spare universe z, put h = max u v z and let U_h be the module ULift functor from max u v
+to h, applied degreewise to chain complexes. Let e be connesComplexLiftIsoAtHeight and π the
+cokernel projection of the base first-column map. Then U_h.map π ≫ e.hom equals the cokernel
+projection of the lifted first-column map. -/
 @[reassoc]
 theorem connesComplexLiftIsoAtHeight_π :
     ((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex
@@ -62,14 +86,24 @@ theorem connesComplexLiftIsoAtHeight_π :
     ((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex (ComplexShape.down ℕ))
     ((cyclicBicomplex k A).d 1 0)
 
-/-- The original cokernel projection, evaluated in its native degree. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+For a spare universe z, put h = max u v z and let U_h be the module ULift functor from max u v
+to h, applied degreewise to chain complexes. For n : ℕ, connesProjectionAtHeight n is the
+degree-n component of cokernel.π ((cyclicBicomplexAtHeight k A).d 1 0), from column zero to
+the Connes complex. -/
 def connesProjectionAtHeight (n : ℕ) :=
   (cokernel.π ((cyclicBicomplexAtHeight.{u,v,z} k A).d 1 0)).f n
 
 variable {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- Original independent-world cyclic coefficient maps induce their native Connes cokernel maps. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+Let B : Type w have the same nonunital k-algebra structure, let f : A →ₙₐ[k] B, and use common
+height H = max u v w z. The map connesComplexHomAtHeight f : connesComplexAtHeight A ⟶
+connesComplexAtHeight B is the first-column cokernel map induced by cyclicBicomplexMapAtHeight
+f. -/
 def connesComplexHomAtHeight (f : A →ₙₐ[k] B) :
     connesComplexAtHeight.{u,v,max u v w z} k A ⟶
       connesComplexAtHeight.{u,w,max u v w z} k B :=
@@ -77,7 +111,12 @@ def connesComplexHomAtHeight (f : A →ₙₐ[k] B) :
       cyclicBicomplexAtHeight.{u,w,max u v w z} k B := cyclicBicomplexMapAtHeight.{u,v,w,z} f
   HomologicalComplex₂.firstColumnCokernelMap φ
 
-/-- The full-height coefficient quotient retains the original first-column projection square. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+Let B : Type w have the same nonunital k-algebra structure, let f : A →ₙₐ[k] B, and use common
+height H = max u v w z. For n : ℕ, π_A,n ≫ connesComplexHomAtHeight(f).f n =
+cyclicBicomplexMapAtHeight(f).f 0.f n ≫ π_B,n, where π_A,n and π_B,n are the respective Connes
+projections at height H. -/
 @[reassoc]
 theorem connesProjectionAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     connesProjectionAtHeight.{u,v,max u v w z} k A n ≫
@@ -92,10 +131,18 @@ theorem connesProjectionAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     HomologicalComplex.comp_f, connesComplexHomAtHeight, connesProjectionAtHeight,
     connesComplexAtHeight, cyclicBicomplexAtHeight] using h
 
-/-- Native homology of the full-height Connes quotient. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+For a spare universe z, put h = max u v z and let U_h be the module ULift functor from max u v
+to h, applied degreewise to chain complexes. For n : ℕ, connesHomologyAtHeight n is
+(connesComplexAtHeight k A).homology n, the homology object in ModuleCat.{h} k. -/
 abbrev connesHomologyAtHeight (n : ℕ) := (connesComplexAtHeight.{u,v,z} k A).homology n
 
-/-- Actual independent-world coefficient maps on the native working-height Connes homology. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital ring with a k-module structure
+and k-bilinear multiplication, as expressed by IsScalarTower k A A and SMulCommClass k A A.
+Let B : Type w have the same nonunital k-algebra structure, let f : A →ₙₐ[k] B, and use common
+height H = max u v w z. For n : ℕ, connesHomologyMapAtHeight f n is homologyMap
+(connesComplexHomAtHeight f) n from the height-H Connes homology of A to that of B. -/
 def connesHomologyMapAtHeight (f : A →ₙₐ[k] B) (n : ℕ) :
     connesHomologyAtHeight.{u,v,max u v w z} k A n ⟶
       connesHomologyAtHeight.{u,w,max u v w z} k B n :=

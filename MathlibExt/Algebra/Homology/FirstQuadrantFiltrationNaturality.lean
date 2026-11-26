@@ -13,12 +13,19 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFiltrationDiagram
 
 /-!
-# Naturality of the first-quadrant horizontal filtration
+# Bicomplex maps act functorially on horizontally filtered totals
 
-A bicomplex map preserves every horizontal filtration stage of the signed
-total complex.  This file constructs the stagewise chain maps, proves their
-compatibility with the full total and with changes of filtration stage, and
-packages the construction as a functor to filtered chain complexes.
+Let C be preadditive with a zero object and finite coproducts, and let K,L
+be nonnegative homological bicomplexes. A bicomplex map f : K → L
+preserves each finite horizontal stage
+F_k T_n = ⨁_(p+q=n, p≤k) K_(p,q).
+
+The stage map applies f_(p,q) on every retained summand. It commutes
+with the restricted differential, with the inclusion into the signed
+total complex and with every stage increase k≤l.
+Thus K ↦ (Tot(K),F_• Tot(K)) is a functor to filtered chain complexes
+in C, indexed by ℕ. Its underlying map is Tot(f), and its stage-k
+map is F_k(f). The category object and morphism worlds are independent.
 -/
 
 @[expose] public section
@@ -39,8 +46,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- Degreewise map between horizontal filtration stages induced by a
-bicomplex map. -/
+/-- For f : K → L between nonnegative homological bicomplexes
+in a preadditive category with a zero object and finite coproducts,
+the degreewise stage map F_k(f)_n : F_k Tot(K)_n → F_k Tot(L)_n
+applies f_(p,q) on each summand with p+q=n and p≤k,
+then includes it in the corresponding L-summand. -/
 noncomputable def horizontalFilteredTotalMapOfBicomplex
     (f : K ⟶ L) (k n : ℕ) :
     horizontalFilteredTotalObj K k n ⟶
@@ -50,8 +60,10 @@ noncomputable def horizontalFilteredTotalMapOfBicomplex
       horizontalFilteredTotalι L k n pq
 
 omit [HasZeroObject C] in
-/-- The stage map has the expected formula on every filtered bidegree
-summand. -/
+/-- For f : K → L between nonnegative homological bicomplexes,
+and an allowed bidegree p+q=n, p≤k, the stage map satisfies
+F_k(f)_n ∘ ι_(K,p,q)^k = ι_(L,p,q)^k ∘ f_(p,q).
+This is the component formula for the finite coproduct map. -/
 @[reassoc (attr := simp)]
 theorem horizontalFilteredTotalι_mapOfBicomplex
     (f : K ⟶ L) (k n : ℕ)
@@ -63,8 +75,10 @@ theorem horizontalFilteredTotalι_mapOfBicomplex
   apply Sigma.ι_comp_desc
 
 omit [HasZeroObject C] in
-/-- A stagewise bicomplex map commutes with inclusion into the full total
-complex. -/
+/-- For a bicomplex map f : K → L in a preadditive category
+with finite coproducts, the stage maps satisfy
+i_(L,k,n) ∘ F_k(f)_n = Tot(f)_n ∘ i_(K,k,n).
+The equality is in total degree n and respects the bound p≤k. -/
 @[reassoc (attr := simp)]
 theorem horizontalFilteredTotalMapOfBicomplex_toTotal
     (f : K ⟶ L) (k n : ℕ) :
@@ -86,7 +100,11 @@ theorem horizontalFilteredTotalMapOfBicomplex_toTotal
     ← Category.assoc, horizontalFilteredTotalι_toTotal,
     HomologicalComplex₂.ιTotal_map]
 
-/-- The stagewise degree maps induced by a bicomplex map form a chain map. -/
+/-- For f : K → L between nonnegative homological bicomplexes
+in a preadditive category with a zero object and finite coproducts,
+the maps applying f_(p,q) on the coordinates p≤k define
+F_k(f) : F_k Tot(K) → F_k Tot(L) as a chain map.
+They commute with the restricted signed total differentials. -/
 noncomputable def horizontalFilteredTotalComplexMapOfBicomplex
     (f : K ⟶ L) (k : ℕ) :
     horizontalFilteredTotalComplex K k ⟶
@@ -106,8 +124,10 @@ noncomputable def horizontalFilteredTotalComplexMapOfBicomplex
     rw [horizontalFilteredTotalD_toTotal_assoc]
 
 omit [HasZeroObject C] in
-/-- The stagewise chain map commutes with the chain-map inclusion into the
-full total complex. -/
+/-- For a bicomplex map f : K → L in a preadditive category
+with finite coproducts, the chain maps satisfy
+i_(L,k) ∘ F_k(f) = Tot(f) ∘ i_(K,k).
+Both paths go from the stage-k K-subcomplex to Tot(L). -/
 @[reassoc (attr := simp)]
 theorem horizontalFilteredTotalComplexMapOfBicomplex_toTotal
     (f : K ⟶ L) (k : ℕ) :
@@ -122,7 +142,10 @@ theorem horizontalFilteredTotalComplexMapOfBicomplex_toTotal
   exact horizontalFilteredTotalMapOfBicomplex_toTotal f k n
 
 omit [HasZeroObject C] in
-/-- Stagewise bicomplex maps commute with increasing the filtration stage. -/
+/-- For a bicomplex map f : K → L and k≤l, the stage maps satisfy
+j_(L,k,l) ∘ F_k(f) = F_l(f) ∘ j_(K,k,l),
+where j_(k,l) includes the finite horizontal coordinates of stage k
+into stage l. This is a square of chain complexes. -/
 theorem horizontalFilteredTotalComplexMapOfBicomplex_naturality
     (f : K ⟶ L) {k l : ℕ} (h : k ≤ l) :
     horizontalFilteredTotalComplexMapOfBicomplex f k ≫
@@ -140,7 +163,11 @@ theorem horizontalFilteredTotalComplexMapOfBicomplex_naturality
     horizontalFilteredTotalMap_toTotal_assoc,
     horizontalFilteredTotalMap_toTotal]
 
-/-- The total complex equipped with its horizontal filtration. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the filtered
+object has underlying chain complex Tot(K) and stage-k subcomplex
+F_k T with terms ⨁_(p+q=n,p≤k) K_(p,q).
+Its filtration is indexed by ℕ. -/
 noncomputable def horizontalTotalFilteredObject
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) :
@@ -148,8 +175,11 @@ noncomputable def horizontalTotalFilteredObject
   X := K.total (ComplexShape.down ℕ)
   filtration := horizontalTotalFiltration K
 
-/-- A bicomplex map induces a morphism of horizontally filtered total
-complexes. -/
+/-- For f : K → L between nonnegative homological bicomplexes,
+the induced filtered morphism has underlying chain map Tot(f)
+and stage-k chain map F_k(f).
+Their commuting squares with the stage inclusions make a morphism
+of ℕ-filtered chain complexes. -/
 noncomputable def horizontalTotalFilteredObjectMap (f : K ⟶ L) :
     horizontalTotalFilteredObject K ⟶
       horizontalTotalFilteredObject L :=
@@ -173,8 +203,11 @@ theorem horizontalTotalFilteredObjectMap_natTrans_app
       horizontalFilteredTotalComplexMapOfBicomplex f k :=
   rfl
 
-/-- First-quadrant bicomplexes map functorially to horizontally filtered
-total complexes. -/
+/-- For a preadditive category C with a zero object and finite
+coproducts, the assignment K ↦ (Tot(K),F_• Tot(K)) defines
+a functor from nonnegative homological bicomplexes to
+FilteredObject(ChainComplex(C,ℕ),ℕ).
+On maps it uses Tot(f) and all finite-stage maps F_k(f). -/
 noncomputable def horizontalTotalFilteredObjectFunctor :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
         (ComplexShape.down ℕ) ⥤

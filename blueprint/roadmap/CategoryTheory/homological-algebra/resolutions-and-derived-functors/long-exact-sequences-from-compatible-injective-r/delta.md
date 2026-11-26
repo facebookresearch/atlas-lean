@@ -1,4 +1,6 @@
-# Delta
+# Right-derived connecting map from compatible horseshoe data
 
-The connecting morphism
-`(F.rightDerived n₀).obj S.X₃ ⟶ (F.rightDerived n₁).obj S.X₁`.
+Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, and `H` compatible injective horseshoe data
+for short exact `S : X₁ → X₂ → X₃`. For `n₁=n₀+1`, its cohomology boundary transported by the
+resolution comparisons gives `R^n₀F(X₃) → R^n₁F(X₁)`.

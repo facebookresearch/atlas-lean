@@ -13,13 +13,16 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.ProductFiltration.FirstSumm
 public import MathlibExt.LinearAlgebra.ExteriorPower.ProductFiltration.RelativeProjection
 
 /-!
-# Triangular exterior maps preserve mixed weight
+# Triangular maps preserve mixed exterior filtration
 
-The first-inclusion square determines the pure first part of each mixed
-image. Exterior multiplication and the relative-projection kernel give
-filtration preservation. The difference from the diagonal mixed image lies
-one stage deeper, so the off-diagonal component disappears in the quotient.
-No freeness, flatness or projectivity assumption is required.
+A first-summand-preserving linear map `f : M×N → M'×N'` over a commutative ring preserves
+every first-weight stage `F_m^q` under its degree-`m` exterior map.
+
+On a mixed `(i,j)` tensor, the first part is controlled by `Λ^i f.first` and the second part
+by the full image of the second inclusion. Replacing that full image by the relative map
+changes the result by a vector in `F_(i+j)^(i+1)`.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -39,7 +42,11 @@ variable {R : Type u} [CommRing R]
   {N' : Type w'} [AddCommGroup N'] [Module R N']
   (f : FirstSummandMap (R := R) (M := M) (N := N) (M' := M') (N' := N'))
 
-/-- The actual mixed image has its pure first part prescribed by the original square. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. For `i,j : ℕ`, `x ∈ Λ^i_R M`, and `y ∈ Λ^j_R N`, the image of the `(i,j)`-injection
+of `x⊗y` is `Λ^i(inl')(Λ^i f.first x) * Λ^j(f.map ∘ inr)(y)` in the exterior algebra of
+`M'×N'`. -/
 theorem map_mixed (i j : ℕ) (x : ⋀[R]^i M) (y : ⋀[R]^j N) :
     exteriorPower.map (i + j) f.map
         (injection R M N (i + j) ⟨(i, j), rfl⟩ (x ⊗ₜ[R] y)) =
@@ -58,7 +65,10 @@ theorem map_mixed (i j : ℕ) (x : ⋀[R]^i M) (y : ⋀[R]^j N) :
     ← AlgHom.comp_apply, ExteriorAlgebra.map_comp_map]
   rw [← ExteriorAlgebra.map_comp_map, AlgHom.comp_apply]
 
-/-- An actual map preserving the original first summand preserves every exterior form stage. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. For `m,q : ℕ` and `z ∈ F_m^q(M,N)`, `Λ^m f.map(z) ∈ F_m^q(M',N')`. The stage is
+defined by vanishing of mixed coordinates whose first degree is below `q`. -/
 theorem map_mem_filtration (m q : ℕ) (z : ⋀[R]^m (M × N))
     (hz : z ∈ filtration R M N m q) :
     exteriorPower.map m f.map z ∈ filtration R M' N' m q := by
@@ -90,12 +100,17 @@ theorem map_mem_filtration (m q : ℕ) (z : ⋀[R]^m (M × N))
   rw [clip_equiv_of_mem R M N m q z hz, LinearEquiv.symm_apply_apply] at h'
   exact h'
 
-/-- The original relative map is exactly the second projection of the actual relative image. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. The maps satisfy `snd' ∘ f.map ∘ inr = f.relative : N →ₗ[R] N'`. -/
 theorem relative_inr_square :
     (LinearMap.snd R M' N').comp (f.map.comp (LinearMap.inr R M N)) = f.relative := rfl
 
-/-- The off-diagonal exterior image changes the original mixed representative only
-by the actual next form-weight stage. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. For `i,j : ℕ`, `x ∈ Λ^i_R M`, and `y ∈ Λ^j_R N`, the difference between
+`Λ^(i+j)f.map(injection(x⊗y))` and the `(i,j)`-injection of `Λ^i f.first(x) ⊗ Λ^j
+f.relative(y)` lies in `F_(i+j)^(i+1)(M',N')`. -/
 theorem mixed_difference_mem_next (i j : ℕ) (x : ⋀[R]^i M) (y : ⋀[R]^j N) :
     exteriorPower.map (i + j) f.map
         (injection R M N (i + j) ⟨(i, j), rfl⟩ (x ⊗ₜ[R] y)) -

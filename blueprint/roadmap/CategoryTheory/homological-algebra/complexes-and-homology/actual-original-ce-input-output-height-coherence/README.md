@@ -1,8 +1,8 @@
 # Actual original CE input/output height coherence
 
-- [Raw Coefficient Complex Height Degree Equiv](raw-coefficient-complex-height-degree-eq.md)
-- [Raw Coefficient Complex Height Iso](raw-coefficient-complex-height-iso.md)
-- [Raw Coefficient Lift Homology Height Iso](raw-coefficient-lift-homology-height-iso.md)
-- [Raw Original Coefficient Homology Height Iso](raw-original-coefficient-homology-height.md)
-- [Raw Coefficient ULift Complex Iso height](raw-coefficient-ulift-complex-iso-height.md)
-- [Raw Coefficient Homology Transport At height](raw-coefficient-homology-transport-at-he.md)
+- [Exterior tensors under coefficient universe lifting](raw-coefficient-complex-height-degree-eq.md)
+- [Coefficient universe lifting as a chain isomorphism](raw-coefficient-complex-height-iso.md)
+- [Homology of coefficient universe lifting](raw-coefficient-lift-homology-height-iso.md)
+- [Flattening repeated lifts of Lie homology](raw-original-coefficient-homology-height.md)
+- [Coherence of coefficient chain lift comparisons](raw-coefficient-ulift-complex-iso-height.md)
+- [Coherence of Lie homology lift transport](raw-coefficient-homology-transport-at-he.md)

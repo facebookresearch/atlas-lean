@@ -13,14 +13,18 @@ public import MathlibExt.Algebra.Category.CommAlgCat.CotangentWeightZero
 public import MathlibExt.Algebra.Category.ModuleCat.ExteriorPower
 
 /-!
-# Higher-form linearization of augmented algebras
+# Higher cotangent forms and exterior base change
 
-For `P → A`, weight zero is `A ⊗[P] P`, and positive weight `n` is
-`A ⊗[P] ⋀[P]^n Ω[P⁄k]`. Exterior base change identifies these modules with
-exterior powers of the linearized cotangent object. Their maps are induced
-by the given algebra maps and preserve differential words. Weight zero
-agrees with the regular-module transport and weight one with the cotangent
-functor.
+Let `P → A` be an augmentation of commutative algebras over a commutative ring `k`. In weight
+`n`, the module is `A ⊗[P] ⋀ⁿ[P] Ω[P/k]`. Exterior base change identifies it with `⋀ⁿ[A] (A
+⊗[P] Ω[P/k])`.
+
+Maps over `A` act on each differential factor. Weight zero is `A ⊗[P] P`, and weight one is
+the cotangent module. The constructions and these comparisons are natural over arbitrary
+commutative base rings.
+
+References: Stacks Project, Section 92.3; Bourbaki, *Algebra*, Chapter III, for exterior
+powers and scalar extension.
 -/
 
 @[expose] public section
@@ -36,7 +40,10 @@ namespace CommAlgCat
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- Literal higher forms after the actual augmentation, including regular weight zero. -/
+/-- The module of higher augmented cotangent forms.
+
+For `P → A` and `n ∈ ℕ`, this is `A ⊗[P] ⋀ⁿ[P] Ω[P/k]`, viewed as an `A`-module. Weight zero
+uses `⋀⁰[P] Ω[P/k] = P`. -/
 @[implicit_reducible]
 def cotangentHigherLevel (n : ℕ) (P : Over A) : ModuleCat.{max u v} A :=
   match n with
@@ -45,7 +52,10 @@ def cotangentHigherLevel (n : ℕ) (P : Over A) : ModuleCat.{max u v} A :=
     letI : Algebra P.left A := cotangentAlgebra k A P
     ModuleCat.of A (A ⊗[P.left] (⋀[P.left]^(n + 1) (KaehlerDifferential k P.left)))
 
-/-- Native scalar extension gives the actual exterior comparison, including its unit. -/
+/-- Exterior base change for augmented cotangent forms.
+
+For every `n`, the canonical `A`-module isomorphism identifies `A ⊗[P] ⋀ⁿ[P] Ω[P/k]` with
+`⋀ⁿ[A] (A ⊗[P] Ω[P/k])`. -/
 def cotangentHigherExteriorIso (n : ℕ) (P : Over A) :
     cotangentHigherLevel k A n P ≅
       (ModuleCat.exteriorPowerFunctorAt.{max u v, max u v} A n).obj
@@ -58,13 +68,20 @@ def cotangentHigherExteriorIso (n : ℕ) (P : Over A) :
     letI : Algebra P.left A := cotangentAlgebra k A P
     exact (exteriorPower.baseChangeEquiv P.left A (KaehlerDifferential k P.left) (n + 1)).toModuleIso
 
-/-- The actual operator, constructed from the existing original cotangent operator. -/
+/-- The map on higher cotangent forms.
+
+A map `f : P → Q` over `A` induces the weight-`n` map by applying the cotangent map to each
+factor after exterior base change. -/
 def cotangentHigherMap (n : ℕ) {P Q : Over A} (f : P ⟶ Q) :
     cotangentHigherLevel k A n P ⟶ cotangentHigherLevel k A n Q :=
   (cotangentHigherExteriorIso k A n P).hom ≫
     (ModuleCat.exteriorPowerFunctorAt.{max u v, max u v} A n).map (cotangentMap k A f) ≫
       (cotangentHigherExteriorIso k A n Q).inv
 
+/-- The higher cotangent map of an identity.
+
+For every weight `n`, the identity of `P → A` induces the identity on its module of weight-`n`
+cotangent forms. -/
 @[simp]
 theorem cotangentHigherMap_id (n : ℕ) (P : Over A) :
     cotangentHigherMap k A n (𝟙 P) = 𝟙 (cotangentHigherLevel k A n P) := by
@@ -78,6 +95,10 @@ theorem cotangentHigherMap_id (n : ℕ) (P : Over A) :
   rw [cotangentMap_id.{u, v} k A P, hId, Category.id_comp]
   exact e.hom_inv_id
 
+/-- Composition of maps on higher cotangent forms.
+
+For maps `P → Q → T` over `A` and every weight `n`, the map induced by their composite is the
+composite of the induced weight-`n` maps. -/
 theorem cotangentHigherMap_comp (n : ℕ) {P Q T : Over A}
     (f : P ⟶ Q) (g : Q ⟶ T) :
     cotangentHigherMap k A n (f ≫ g) =
@@ -107,14 +128,20 @@ theorem cotangentHigherMap_comp (n : ℕ) {P Q T : Over A}
     _ = (eP.hom ≫ a ≫ eQ.inv) ≫ (eQ.hom ≫ b ≫ eT.inv) := by
       simp only [Category.assoc]
 
-/-- Higher-form linearization is functorial on the actual augmented algebras. -/
+/-- The functor of higher cotangent forms in a fixed weight.
+
+For `n ∈ ℕ`, this sends `P → A` to `A ⊗[P] ⋀ⁿ[P] Ω[P/k]` and acts on maps over `A` through
+their differential maps. -/
 def cotangentHigherFunctor (n : ℕ) : Over A ⥤ ModuleCat.{max u v} A where
   obj := cotangentHigherLevel k A n
   map := cotangentHigherMap k A n
   map_id := cotangentHigherMap_id k A n
   map_comp := cotangentHigherMap_comp k A n
 
-/-- The whole native exterior comparison is natural in the original augmented algebra. -/
+/-- Naturality of exterior base change for cotangent forms.
+
+The weight-`n` higher cotangent functor is naturally isomorphic to the cotangent functor
+followed by the `n`th exterior-power functor over `A`. -/
 def cotangentHigherExteriorNatIso (n : ℕ) :
     cotangentHigherFunctor k A n ≅
       cotangentFunctor.{u, v} k A ⋙
@@ -136,14 +163,19 @@ def cotangentHigherExteriorNatIso (n : ℕ) :
         simp only [Category.assoc]
       _ = eP.hom ≫ a := by rw [eQ.inv_hom_id, Category.comp_id])
 
-/-- An original positive-weight differential word in the literal coefficient tensor. -/
+/-- A decomposable higher cotangent differential.
+
+For `p : Fin (n+1) → P` and `a ∈ A`, this is `a ⊗ (dp₀ ∧ ⋯ ∧ dpₙ)` in weight `n+1`. -/
 def cotangentHigherTensor (n : ℕ) (P : Over A) (a : A)
     (p : Fin (n + 1) → P.left) : cotangentHigherLevel k A (n + 1) P :=
   letI : Algebra P.left A := cotangentAlgebra k A P
   a ⊗ₜ[P.left] exteriorPower.ιMulti P.left (n + 1)
     (fun i => KaehlerDifferential.D k P.left (p i))
 
-/-- The native exterior comparison retains each original differential and coefficient. -/
+/-- Exterior base change on differential wedges.
+
+The exterior base-change isomorphism sends `a ⊗ (dp₀ ∧ ⋯ ∧ dpₙ)` to `a • ((1 ⊗ dp₀) ∧ ⋯ ∧ (1 ⊗
+dpₙ))`. -/
 @[simp]
 theorem cotangentHigherExteriorIso_tensor (n : ℕ) (P : Over A)
     (a : A) (p : Fin (n + 1) → P.left) :
@@ -156,7 +188,10 @@ theorem cotangentHigherExteriorIso_tensor (n : ℕ) (P : Over A)
     P.left A (KaehlerDifferential k P.left) (n + 1) a
       (fun i => KaehlerDifferential.D k P.left (p i))
 
-/-- Every positive-weight operator is the original algebra operator on differential words. -/
+/-- The coordinate formula on higher differential forms.
+
+For a map `f : P → Q` over `A`, the induced weight-`n+1` map sends `a ⊗ (dp₀ ∧ ⋯ ∧ dpₙ)` to `a
+⊗ (d(f(p₀)) ∧ ⋯ ∧ d(f(pₙ)))`. -/
 @[simp]
 theorem cotangentHigherMap_tensor (n : ℕ) {P Q : Over A} (f : P ⟶ Q)
     (a : A) (p : Fin (n + 1) → P.left) :
@@ -204,7 +239,10 @@ theorem cotangentHigherMap_tensor (n : ℕ) {P Q : Over A} (f : P ⟶ Q)
   exact (ModuleCat.hom_inv_apply eQ (l (eP.hom x))).trans
     ((congrArg l hP).trans (hWord.trans hQ.symm))
 
-/-- The weight-zero operator is exactly the existing regular-module transport. -/
+/-- The weight-zero higher cotangent map.
+
+In weight zero, the higher cotangent map agrees with the map `A ⊗[P] P → A ⊗[Q] Q` defined
+through the regular tensor unitors. -/
 theorem cotangentHigherMap_zero_eq_weightZero {P Q : Over A} (f : P ⟶ Q) :
     cotangentHigherMap k A 0 f = cotangentWeightZeroTransport k A f := by
   let F : ModuleCat.{max u v} A ⥤ ModuleCat.{max u v} A :=
@@ -232,7 +270,9 @@ theorem cotangentHigherMap_zero_eq_weightZero {P Q : Over A} (f : P ⟶ Q) :
     _ = wP.hom ≫ zP.inv ≫ zP.hom ≫ wQ.inv := by rw [hZero]
     _ = wP.hom ≫ wQ.inv := by rw [zP.inv_hom_id_assoc]
 
-/-- The printed regular-module formula in weight zero, with the original algebra map. -/
+/-- The regular tensor formula in cotangent weight zero.
+
+For `f : P → Q` over `A`, the weight-zero map sends `a ⊗ p` to `a ⊗ f(p)`. -/
 @[simp]
 theorem cotangentHigherMap_zero_tmul {P Q : Over A} (f : P ⟶ Q)
     (a : A) (p : P.left) :
@@ -243,14 +283,20 @@ theorem cotangentHigherMap_zero_tmul {P Q : Over A} (f : P ⟶ Q)
   rw [cotangentHigherMap_zero_eq_weightZero]
   exact cotangentWeightZeroTransport_tmul k A f a p
 
-/-- Positive degree one is the existing actual cotangent functor. -/
+/-- The weight-one cotangent comparison.
+
+The higher cotangent functor in weight one is naturally isomorphic to the functor `P ↦ A ⊗[P]
+Ω[P/k]`. -/
 def cotangentHigherOneNatIso :
     cotangentHigherFunctor k A 1 ≅ cotangentFunctor k A :=
   cotangentHigherExteriorNatIso k A 1 ≪≫
     isoWhiskerLeft (cotangentFunctor k A)
       (ModuleCat.exteriorPowerOneNatIso A) ≪≫ Functor.rightUnitor _
 
-/-- The actual degree-one isomorphism sends the original coefficient word to a ⊗ dp. -/
+/-- The coordinate formula for the weight-one comparison.
+
+The weight-one comparison sends `a ⊗ dp` to the differential generator `a ⊗ dp` of the
+cotangent module. -/
 @[simp]
 theorem cotangentHigherOneNatIso_tensor (P : Over A) (a : A) (p : P.left) :
     ((cotangentHigherOneNatIso k A).hom.app P).hom
@@ -266,8 +312,10 @@ theorem cotangentHigherOneNatIso_tensor (P : Over A) (a : A) (p : P.left) :
   exact (TensorProduct.tmul_eq_smul_one_tmul (R := P.left)
     a (KaehlerDifferential.D k P.left p)).symm
 
-/-- Maps out of an actual higher-form coefficient module are determined on exterior words.
-The target module retains its independently specified original universe. -/
+/-- Extensionality on decomposable higher cotangent tensors.
+
+For weight `n+1`, two `A`-linear maps to an independently sized `A`-module `M` are equal if
+they agree on every `a ⊗ (ω₀ ∧ ⋯ ∧ ωₙ)`, with `a ∈ A` and `ωᵢ ∈ Ω[P/k]`. -/
 theorem cotangentHigher_hom_ext_succ (n : ℕ) (P : Over A)
     (M : ModuleCat.{t} A)
     {f g : (cotangentHigherLevel.{u, v} k A (n + 1) P) →ₗ[A] M}

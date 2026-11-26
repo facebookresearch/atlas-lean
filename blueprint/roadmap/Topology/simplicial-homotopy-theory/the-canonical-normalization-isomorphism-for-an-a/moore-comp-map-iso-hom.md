@@ -1,4 +1,6 @@
-# Moore Comp Map Iso hom
+# The forward map of additive normalized Moore comparison
 
-The actual forward component is the original mapped inclusion, native
-alternating transport and original target normalization projection.
+The forward map of additive normalized Moore comparison.
+
+The forward map `F(NX) → N(FX)` is `F` of the Moore inclusion, followed by alternating-complex
+transport and the target Moore projection.

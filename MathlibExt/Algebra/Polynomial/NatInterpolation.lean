@@ -12,13 +12,15 @@ module
 public import MathlibExt.Algebra.Polynomial.NatPowerCoefficients
 
 /-!
-# Actual finite rational polynomial families determined by natural values
+# Rational weighted power sums determined by natural values
 
-The original finite weighted rational power sums may use different index
-sets and repeated exponents. Native scalar polynomial root finiteness and
-native algebraic dual separation extend an earned natural-parameter
-identity to every original rational parameter. No rational-family identity
-or desired coefficient law is supplied.
+For a finite index set `I`, exponents `e : I → ℕ`, and vectors `v_i` in a `ℚ`-vector space,
+define `F(a)=∑ i, a^(e i) • v_i`.
+
+Two such families, possibly using different finite index sets and repeated exponents, agree
+for every rational parameter if they agree at every natural-number parameter.
+
+Reference: Bourbaki, *Algebra*, Chapters II and IV.
 -/
 
 @[expose] public section
@@ -33,11 +35,15 @@ namespace Polynomial
 variable {I : Type u} {J : Type v} [Fintype I] [Fintype J]
   {V : Type w} [AddCommGroup V] [Module ℚ V]
 
-/-- The actual finite weighted rational sum, retaining repeated original exponents. -/
+/-- For a finite type `I`, a `ℚ`-vector space `V`, exponents `e : I → ℕ`, vectors `v : I → V`, and
+`a : ℚ`, `finiteWeightedPowerCombination e v a = ∑ i : I, a^(e i) • v i`. Repeated exponents
+are allowed. -/
 def finiteWeightedPowerCombination (e : I → ℕ) (v : I → V) (a : ℚ) : V :=
   ∑ i : I, a ^ e i • v i
 
-/-- Native polynomial and dual separation extend the actual natural-parameter identity to every rational value. -/
+/-- Let `I,J` be finite types, `V` a `ℚ`-vector space, and `e : I → ℕ`, `f : J → ℕ`, `v : I → V`,
+`w : J → V`. If the two weighted power sums agree at `(m : ℚ)` for every `m : ℕ`, then `∑ i,
+a^(e i) • v i = ∑ j, a^(f j) • w j` for every `a : ℚ`. -/
 theorem finiteWeightedPowerCombination_eq_of_nat (e : I → ℕ) (v : I → V)
     (f : J → ℕ) (w : J → V)
     (h : ∀ m : ℕ, finiteWeightedPowerCombination e v (m : ℚ) =

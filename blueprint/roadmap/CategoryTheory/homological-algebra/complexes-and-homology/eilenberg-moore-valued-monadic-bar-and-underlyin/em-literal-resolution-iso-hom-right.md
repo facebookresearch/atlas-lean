@@ -1,5 +1,5 @@
-# Em Literal Resolution Iso hom right
+# The comparison with the regular augmentation is identity on its target
 
-The target component of the final comparison is the identity: both
-constituent isomorphisms are the identity on targets, transported along
-whiskering.
+For a monad T on C and a T-algebra alg=(A,a), the target component of
+emLiteralResolutionIso(alg).hom is the identity on A. The evaluated-and-forgotten and regular
+monadic augmentations have the same algebra-carrier target.

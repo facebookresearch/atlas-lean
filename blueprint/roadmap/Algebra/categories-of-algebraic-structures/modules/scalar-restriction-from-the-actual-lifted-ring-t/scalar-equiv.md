@@ -1,3 +1,5 @@
-# Scalar Equiv
+# The ring equivalence from scalars to lifted scalars
 
-The actual up ring equivalence; the scalar ring is not replaced in the target.
+The ring equivalence from scalars to lifted scalars.
+
+The equivalence `R ≃+* ULift.{v} R` sends `r` to `ULift.up r` and has inverse `x ↦ x.down`.

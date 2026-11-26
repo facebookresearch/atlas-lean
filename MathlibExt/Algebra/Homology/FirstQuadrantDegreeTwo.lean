@@ -13,17 +13,19 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantConvergence
 import Lean.Elab.Tactic.Omega
 
 /-!
-# A degree-two consequence of first-quadrant convergence
+# A degree-two vanishing consequence of first-quadrant convergence
 
-For the original horizontal-filtration spectral sequence of a first-quadrant
-homological bicomplex, zero total H2 and zero E2 at (0, 1) imply zero E2 at
-(2, 0). Its only possible outgoing differential is d2 to (0, 1), while every
-incoming differential has negative vertical source degree. Page three is
-already stable at (2, 0).
+Let K be a bicomplex in an abelian category, with both differentials
+lowering nonnegative degrees. For its horizontal-filtration spectral
+sequence, if H_2(Tot(K)) is zero and E²_(0,1) is zero, then E²_(2,0)
+is zero.
 
-This is the abstract low-degree calculation in Weibel, *The K-book*, IV,
-Lemma 1.3.1, printed page 262. Identifying these terms with the homology of an
-actual fibration or with native group homology is a separate obligation.
+The only possible outgoing second-page differential from (2,0) is
+d² : E²_(2,0) → E²_(0,1); every incoming differential would have
+negative vertical source degree. Hence E²_(2,0) ≅ E³_(2,0), and
+page three is already gr_2 H_2(Tot(K)).
+
+Reference: Weibel, *The K-book*, IV, Lemma 1.3.1, p. 262.
 -/
 
 @[expose] public section
@@ -38,8 +40,12 @@ universe u v
 
 namespace HomologicalComplex₂
 
-/-- Zero total H2 and zero E2 at (0, 1) force zero E2 at (2, 0) in the
-actual first-quadrant horizontal-filtration spectral sequence. -/
+/-- For a bicomplex K in an abelian category C with both
+homological indices in ℕ, suppose H_2(Tot(K)) and E²_(0,1)
+of its horizontal spectral sequence are zero objects.
+Then E²_(2,0) is also a zero object.
+The second-page differential has bidegree (−2,1), and
+E³_(2,0) is the stable graded piece of total degree-two homology. -/
 theorem isZero_horizontalSecondPage_two_zero_of_totalH2_zero
     {C : Type u} [Category.{v} C] [Abelian C]
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ))

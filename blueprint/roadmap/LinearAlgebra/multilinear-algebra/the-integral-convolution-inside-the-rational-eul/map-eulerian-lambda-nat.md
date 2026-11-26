@@ -1,3 +1,6 @@
-# Map eulerian Lambda nat
+# Scalar extension of a natural Eulerian parameter
 
-Scalar extension sends the actual rational convolution to the integral operation over the original ground.
+Scalar extension of a natural Eulerian parameter.
+
+For a commutative ℚ-algebra k and n,m ≥ 0, extending coefficients along ℚ → k sends Λₙ(m) ∈
+ℚ[Sₙ] to the integral convolution element Bₙ(m) ∈ k[Sₙ].

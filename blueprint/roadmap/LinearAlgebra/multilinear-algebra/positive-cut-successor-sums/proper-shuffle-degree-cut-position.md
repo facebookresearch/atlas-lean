@@ -1,3 +1,6 @@
-# Proper Shuffle Degree Cut Position
+# The finite coordinate of a both-positive degree cut
 
-The original both-positive degree cuts are determined by first length minus one.
+The finite coordinate of a both-positive degree cut.
+
+For n ≥ 0, the proper cuts (p,q) of n+1 with p,q>0 are equivalent to Fin n by (p,q) ↦ p-1.
+The inverse sends i to (i+1,n-i).

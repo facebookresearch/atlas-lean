@@ -1,3 +1,5 @@
-# Unitization Two Column Iso hom f
+# The components of the two-column unitization chain isomorphism
 
-The chain comparison retains each exact original coordinate, rather than a chosen equivalence field.
+The components of the two-column unitization chain isomorphism.
+
+The forward component in every degree is its degreewise two-column coordinate comparison.

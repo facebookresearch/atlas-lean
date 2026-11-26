@@ -13,13 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.Positive
 public import Mathlib.LinearAlgebra.Quotient.Basic
 
 /-!
-# Positive coefficient-bar graded quotients
+# Positive bar filtered and associated complexes
 
-Ideal-count stages in the positive coefficient
-bar form subcomplexes with zero augmentation
-term. The kernel boundary restricts and
-descends to the word-layer quotients.
-Arbitrary coefficient universes are retained.
+The positive relative bar kernel has zero degree-zero object and word length N in degree N >
+0. Define G_p,0 = 0 and G_p,n+1 by the ideal-count stage requiring n + 1 − p ideal entries.
+Its predecessor H_p is zero at p = 0 and G_(p−1) otherwise.
+
+The positive b′ differential preserves both families. Restricting it gives filtered and
+lower-stage complexes and their inclusions; descending it gives the associated complex with
+terms G_p,N/H_p,N. Its projection is a chain map, its positive-degree formula is projection
+after the restricted boundary, and its degree-zero term is zero.
 -/
 
 @[expose] public section
@@ -36,13 +39,19 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
   (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The original positive count family, with its bottom degree. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For p : ℕ,
+barFullWordFiltration p is the family G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n in
+positive degree n + 1. -/
 def barFullWordFiltration (p : ℕ) :
     ∀ n : ℕ, Submodule k ((relativePositiveBarComplex k A I V).X n)
   | 0 => ⊥
   | n + 1 => barWordFiltration k A I V p n
 
-/-- The original lower count stage, with bottom at filtration index zero. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barFullLowerWordFiltration p N is H_p,N, a submodule of K_+.X N. -/
 def barFullLowerWordFiltration (p n : ℕ) :
     Submodule k ((relativePositiveBarComplex k A I V).X n) :=
   if p = 0 then ⊥ else barFullWordFiltration k A I V (p - 1) n
@@ -62,7 +71,11 @@ theorem barFullWordFiltration_mono {p q : ℕ} (h : p ≤ q) (n : ℕ) :
   | zero => exact le_refl _
   | succ n => exact barWordFiltration_mono k A I V h n
 
-/-- The degree-one boundary lands in the zero augmentation; other degrees use accepted b′. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. For p,n : ℕ, the image of G_p,n+1 under K_+.d (n + 1) n lies in
+G_p,n. At n = 0 the target is the zero degree-zero stage. -/
 theorem barFullWordFiltration_d (p n : ℕ) :
     (barFullWordFiltration k A I V p (n + 1)).map
         ((relativePositiveBarComplex k A I V).d (n + 1) n).hom ≤
@@ -107,7 +120,11 @@ private theorem originalPositiveBarBoundary_square (n : ℕ)
   simpa only [ModuleCat.hom_comp, LinearMap.comp_apply,
     ModuleCat.hom_zero, LinearMap.zero_apply] using h
 
-/-- The positive-kernel boundary restricted to the full original count stages. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barStageD p n : G_p,n+1 →ₗ[k] G_p,n is the restriction of K_+.d
+(n + 1) n. -/
 def barStageD (p n : ℕ) :
     barFullWordFiltration k A I V p (n + 1) →ₗ[k] barFullWordFiltration k A I V p n :=
   LinearMap.codRestrict (barFullWordFiltration k A I V p n)
@@ -116,7 +133,11 @@ def barStageD (p n : ℕ) :
     (fun x => (Submodule.map_le_iff_le_comap.mp
       (barFullWordFiltration_d k A I V p n)) x.property)
 
-/-- The positive-kernel boundary restricted to the original lower stages. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barLowerStageD p n : H_p,n+1 →ₗ[k] H_p,n is the restricted
+relative positive bar boundary. -/
 def barLowerStageD (p n : ℕ) :
     barFullLowerWordFiltration k A I V p (n + 1) →ₗ[k]
       barFullLowerWordFiltration k A I V p n :=
@@ -148,12 +169,20 @@ private theorem barLowerStageD_square (p n : ℕ) :
       (((relativePositiveBarComplex k A I V).d (n + 2) (n + 1)).hom x.val) = 0
   exact originalPositiveBarBoundary_square k A I V n x.val
 
-/-- The original positive Fp family is a chain subcomplex. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barFilteredWordComplex p has degree-N module G_p,N and
+differential barStageD p n from n + 1 to n. -/
 def barFilteredWordComplex (p : ℕ) : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (barFullWordFiltration k A I V p n))
     (fun n => ModuleCat.ofHom (barStageD k A I V p n)) (by exact barStageD_square k A I V p)
 
-/-- Its lower family is bottom at p=0 and the original previous stage otherwise. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barLowerWordComplex p has degree-N module H_p,N and differential
+barLowerStageD p n. -/
 def barLowerWordComplex (p : ℕ) : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (barFullLowerWordFiltration k A I V p n))
     (fun n => ModuleCat.ofHom (barLowerStageD k A I V p n))
@@ -176,7 +205,11 @@ private theorem barLowerWordComplex_d (p n : ℕ) :
   ChainComplex.of_d (fun m => ModuleCat.of k (barFullLowerWordFiltration k A I V p m))
     (fun m => ModuleCat.ofHom (barLowerStageD k A I V p m)) n
 
-/-- The original positive-stage vector retains its original kernel boundary value. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. For x : G_p,n+1, inclusion of (barFilteredWordComplex p).d (n +
+1) n x into K_+.X n equals K_+.d (n + 1) n x.val. -/
 theorem barFilteredWordComplex_d_val (p n : ℕ)
     (x : barFullWordFiltration k A I V p (n + 1)) :
     (barFullWordFiltration k A I V p n).subtype
@@ -185,7 +218,11 @@ theorem barFilteredWordComplex_d_val (p n : ℕ)
   rw [barFilteredWordComplex_d]
   rfl
 
-/-- The original subtype family is the inclusion into the original positive kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barFilteredWordInclusion p : barFilteredWordComplex p ⟶ K_+ has
+component G_p,N.subtype in every degree N. -/
 def barFilteredWordInclusion (p : ℕ) :
     barFilteredWordComplex k A I V p ⟶ relativePositiveBarComplex k A I V :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (barFullWordFiltration k A I V p n).subtype)
@@ -201,7 +238,11 @@ theorem barFilteredWordInclusion_f_succ (p n : ℕ) :
     (barFilteredWordInclusion k A I V p).f (n + 1) =
       ModuleCat.ofHom (barWordFiltration k A I V p n).subtype := rfl
 
-/-- The lower filtration submodule includes into the current stage. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barLowerWordInclusion p maps barLowerWordComplex p to
+barFilteredWordComplex p using H_p,N ≤ G_p,N in each degree. -/
 def barLowerWordInclusion (p : ℕ) :
     barLowerWordComplex k A I V p ⟶ barFilteredWordComplex k A I V p :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
@@ -214,7 +255,11 @@ def barLowerWordInclusion (p : ℕ) :
       apply Subtype.ext
       rfl)
 
-/-- The original increasing stage inclusions commute with the native restricted differential. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. For p ≤ q, barFilteredWordMap maps barFilteredWordComplex p to
+barFilteredWordComplex q by the component inclusions G_p,N ≤ G_q,N. -/
 def barFilteredWordMap {p q : ℕ} (h : p ≤ q) :
     barFilteredWordComplex k A I V p ⟶ barFilteredWordComplex k A I V q :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
@@ -227,19 +272,31 @@ def barFilteredWordMap {p q : ℕ} (h : p ≤ q) :
       apply Subtype.ext
       rfl)
 
-/-- The original positive layer quotients, extended by their bottom augmentation quotient. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barFullWordLayer p N is G_p,N modulo the inverse image of H_p,N
+under G_p,N.subtype. This definition includes degree zero. -/
 abbrev barFullWordLayer (p n : ℕ) :=
   barFullWordFiltration k A I V p n ⧸
     (barFullLowerWordFiltration k A I V p n).comap
       (barFullWordFiltration k A I V p n).subtype
 
-/-- The native quotient projection of the original full count stage. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barFullWordLayerProjection p N is the k-linear quotient map G_p,N
+→ G_p,N/H_p,N, with H_p,N viewed inside G_p,N. -/
 def barFullWordLayerProjection (p n : ℕ) :
     barFullWordFiltration k A I V p n →ₗ[k] barFullWordLayer k A I V p n :=
   ((barFullLowerWordFiltration k A I V p n).comap
     (barFullWordFiltration k A I V p n).subtype).mkQ
 
-/-- The original positive-kernel boundary descended to the full layer quotients. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barLayerD p n maps the full layer at n + 1 to the full layer at n
+by the quotient map induced from barStageD p n and predecessor preservation. -/
 def barLayerD (p n : ℕ) :
     barFullWordLayer k A I V p (n + 1) →ₗ[k] barFullWordLayer k A I V p n :=
   ((barFullLowerWordFiltration k A I V p (n + 1)).comap
@@ -274,7 +331,11 @@ private theorem barLayerD_square (p n : ℕ) :
     exact originalPositiveBarBoundary_square k A I V n x.val
   rw [hs, map_zero]
 
-/-- Its positive terms are exactly the original barWordLayer quotients. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barAssociatedWordComplex p has degree-N term barFullWordLayer p N
+and successor differential barLayerD p n. -/
 def barAssociatedWordComplex (p : ℕ) : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (barFullWordLayer k A I V p n))
     (fun n => ModuleCat.ofHom (barLayerD k A I V p n)) (by exact barLayerD_square k A I V p)
@@ -290,7 +351,11 @@ private theorem barAssociatedWordComplex_d (p n : ℕ) :
   ChainComplex.of_d (fun m => ModuleCat.of k (barFullWordLayer k A I V p m))
     (fun m => ModuleCat.ofHom (barLayerD k A I V p m)) n
 
-/-- The native original quotient projections commute with the original restricted b′ maps. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barAssociatedWordProjection p : barFilteredWordComplex p ⟶
+barAssociatedWordComplex p has degree-N component barFullWordLayerProjection p N. -/
 def barAssociatedWordProjection (p : ℕ) :
     barFilteredWordComplex k A I V p ⟶ barAssociatedWordComplex k A I V p :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (barFullWordLayerProjection k A I V p n))
@@ -301,7 +366,12 @@ def barAssociatedWordProjection (p : ℕ) :
       intro x
       exact barLayerD_projection k A I V p n x)
 
-/-- On positive terms the associated differential uses the original layer projection. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. For x : barWordFiltration p (n + 1), in degree n + 2, the
+associated differential of [x] is the layer projection of the filtered boundary in degree n +
+1. -/
 theorem barAssociatedWordComplex_d_projection (p n : ℕ)
     (x : barWordFiltration k A I V p (n + 1)) :
     ((barAssociatedWordComplex k A I V p).d (n + 2) (n + 1)).hom
@@ -328,7 +398,11 @@ theorem barLowerWordInclusion_projection (p : ℕ) :
   apply (Submodule.Quotient.mk_eq_zero _).mpr
   exact x.property
 
-/-- The native quotient augmentation is actually zero, not a supplied acyclicity premise. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. For every p : ℕ, (barAssociatedWordComplex p).X 0 is a zero
+object, because both the full stage and its quotient have zero ambient carrier in that degree. -/
 theorem barAssociatedWordComplex_isZero_zero (p : ℕ) :
     IsZero ((barAssociatedWordComplex k A I V p).X 0) := by
   change IsZero (ModuleCat.of k (barFullWordLayer k A I V p 0))

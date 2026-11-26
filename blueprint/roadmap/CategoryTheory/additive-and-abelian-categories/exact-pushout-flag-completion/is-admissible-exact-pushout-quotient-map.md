@@ -1,5 +1,6 @@
-# Is Admissible Exact pushout Quotient Map
+# Exactness of the lower-right pushout row
 
-Completing the lower-right row of an exact pushout flag: if
-`A ⟶ Y ⟶ Q` is admissible exact and `p ≫ x = r ≫ y` is a pushout, then
-`X ⟶ P ⟶ Q`, using `pushoutQuotientMap`, is admissible exact.
+In an additive exact category `C`, suppose `A → Y → Q` is
+admissible exact and `P` is the pushout of `A → X` and `A → Y`.
+The leg `X → P` followed by the induced quotient `P → Q` gives
+an admissible exact sequence `X → P → Q`.

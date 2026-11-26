@@ -1,5 +1,5 @@
-# Generalized Trace naturality
+# Naturality under entrywise coefficient and tail maps
 
-The degree trace commutes with entrywise ground-linear maps.
-For a coefficient bimodule map and an algebra map this is the source's
-coefficient/algebra naturality in the native tensor coordinates.
+Let k be commutative, A,M,B,N k-modules in independent
+carrier universes and ι finite. For k-linear f:M→N and g:A→B,
+(f⊗g^{⊗n})Tr_{M,A}=Tr_{N,B}(f^{Mat}⊗(g^{Mat})^{⊗n}).

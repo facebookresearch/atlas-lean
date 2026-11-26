@@ -1,3 +1,5 @@
-# Matrix Coinvariant Ordinary Coaug Is Comon Hom
+# Comonoid compatibility of compared coinvariant coaugmentation
 
-The converted coinvariant coaugmentation preserves the comonoid.
+Comonoid compatibility of compared coinvariant coaugmentation.
+
+The compared coinvariant chain coaugmentation preserves the comultiplication and counit.

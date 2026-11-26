@@ -1,4 +1,6 @@
-# Polynomial Resolution Over Functor
+# Polynomial resolutions of algebras over a fixed target
 
-The canonical polynomial object of an algebra over `A`, with its
-augmentation composed with the given map into `A`.
+Polynomial resolutions of algebras over a fixed target.
+
+For `P → A`, take the augmented polynomial resolution of `P` and compose its augmentation with
+`P → A`. Maps over `A` induce augmented resolution maps.

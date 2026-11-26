@@ -14,6 +14,18 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.HomotopyCategory.ShortExact
 public import MathlibExt.Algebra.Homology.HomComplex.HomologyRepresentatives
 
+/-!
+# Mapping-cone boundaries and connecting morphisms
+
+For a short exact sequence of integer cochain complexes, the boundary
+of the canonical cone triangle agrees on homology with the connecting
+morphism after the canonical cone-to-quotient map and shift identification.
+
+Degreewise split sequences remain short exact under additive functors.
+Their cone-boundary formula is compatible with the functor and its shift
+comparison. Extension by zero also retains the evaluated splitting data.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -25,8 +37,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual mapping-cone grade-one arrow induces the original short exact
-sequence connector after the stock homology shift and cone projection. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short exact sequence of integer cochain
+complexes, with first map f. Let p:Cone(f)→D be the canonical map and b:Cone(f)→A⟦1⟧ the third
+arrow of its cone triangle. For q∈ℤ and the standard shift isomorphism η:H^q(A⟦1⟧)≅H^{q+1}(A),
+H^q(b)≫η.hom = H^q(p)≫δ_S, where δ_S:H^q(D)→H^{q+1}(A) is the sequence's connecting morphism.
+-/
 theorem native_boundary_of_shortExact
     {S : ShortComplex (CochainComplex C ℤ)} (hS : S.ShortExact) (q : ℤ) :
     HomologicalComplex.homologyMap (triangle S.f).mor₃ q ≫
@@ -66,8 +82,12 @@ namespace CochainComplex.mappingCone
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- Actual degreewise splittings give a short exact mapped complex for every
-additive functor, without requiring that functor to preserve all exact sequences. -/
+/--
+Let C,D be abelian categories and F:C⥤D an additive functor. Let S=(A→B→E) be a short complex
+of integer cochain complexes, with a splitting of its evaluation at every integer degree.
+Applying F termwise gives a short exact sequence of cochain complexes in D. Degreewise
+splitting is sufficient; preservation of arbitrary exact sequences by F is not assumed.
+-/
 theorem degreewiseSplit_map_shortExact (F : C ⥤ D) [F.Additive]
     (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ n : ℤ, (S.map (HomologicalComplex.eval C (.up ℤ) n)).Splitting) :
@@ -80,8 +100,13 @@ theorem degreewiseSplit_map_shortExact (F : C ⥤ D) [F.Additive]
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-/-- The same additive mapped-cone arrow computes the original connector of
-the actually split mapped short exact sequence. -/
+/--
+Let C,D be abelian categories and F:C⥤D an additive functor. Let S=(A→B→E) be a short complex
+of integer cochain complexes, with a splitting of its evaluation at every integer degree. For
+the canonical cone maps b:Cone(S.f)→A⟦1⟧ and p:Cone(S.f)→E, apply F and identify F(A⟦1⟧) with
+F(A)⟦1⟧. In every degree q, the induced boundary H^q(F(b)) followed by the shift
+identification equals H^q(F(p)) followed by the connecting map of F(S).
+-/
 theorem mapped_native_boundary (F : C ⥤ D) [F.Additive]
     (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ n : ℤ, (S.map (HomologicalComplex.eval C (.up ℤ) n)).Splitting)
@@ -119,8 +144,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {ι ι' : Type*} {c : ComplexShape ι} {c' : ComplexShape ι'}
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Evaluation of the actual extended short complex at an original degree
-is the same short complex, through the original extension isomorphisms. -/
+/--
+Let C be an abelian category, S a short complex of c-complexes, and e:c→c' a shape embedding.
+At i'=e(i), extending all three complexes by zero and evaluating at i' gives a short complex
+canonically isomorphic to evaluation of S at i, through the three original
+extension-coordinate isomorphisms.
+-/
 def extendDiagramEvalIso (S : ShortComplex (HomologicalComplex C c))
     (e : c.Embedding c') (i : ι) (i' : ι') (h : e.f i = i') :
     ((S.map (e.extendFunctor C)).map (eval C c' i')) ≅ S.map (eval C c i) := by
@@ -138,8 +167,12 @@ def extendDiagramEvalIso (S : ShortComplex (HomologicalComplex C c))
     simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Extending by zero preserves every actual degreewise splitting. Outside
-the original degrees, all three objects are the actual zero objects. -/
+/--
+Let C be an abelian category and S a short complex of c-complexes with a splitting at every
+evaluated degree i. For a shape embedding e:c→c', its extension by zero has a splitting at
+every degree i': at i'=e(i) transport the original splitting, and outside the image all three
+objects are zero.
+-/
 def extendDiagramSplitting (S : ShortComplex (HomologicalComplex C c))
     (s : ∀ i : ι, (S.map (eval C c i)).Splitting) (e : c.Embedding c') (i' : ι') :
     ((S.map (e.extendFunctor C)).map (eval C c' i')).Splitting := by

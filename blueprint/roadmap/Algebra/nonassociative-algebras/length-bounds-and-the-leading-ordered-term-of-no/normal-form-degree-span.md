@@ -1,3 +1,5 @@
-# Normal Form Degree Span
+# The bounded-length submodule of ordered normal forms
 
-Finite combinations of ordered words of length at most `q`.
+The bounded-length submodule of ordered normal forms.
+
+Stage `q` is spanned by the single ordered-word terms whose word length is at most `q`.

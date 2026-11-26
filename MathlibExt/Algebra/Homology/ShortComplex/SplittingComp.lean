@@ -14,9 +14,12 @@ public import Mathlib.Algebra.Homology.ShortComplex.Exact
 /-!
 # Composition of split short complexes
 
-Two split short complexes with a common middle object give a splitting for
-the composite of their left maps.  The selected right map is consequently a
-cokernel of that composite.
+Let X → Y → Z₁ and Y → Z → Z₂ be split short complexes in a preadditive category with the
+biproduct Z₁ ⊕ Z₂. The composite X → Z admits the quotient map (g₁ ∘ r₂,g₂) : Z → Z₁ ⊕ Z₂, where
+r₂ retracts Y → Z.
+
+The two splittings give a splitting of X → Z → Z₁ ⊕ Z₂. In particular, the displayed quotient
+map is a cokernel of the composite X → Z.
 -/
 
 @[expose] public section
@@ -34,8 +37,10 @@ namespace CategoryTheory.ShortComplex.Splitting
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- The composite of the left maps of two split short complexes is killed by
-the map to the biproduct of their right endpoints. -/
+/-- Let C be preadditive and let X —f₁→ Y —g₁→ Z₁ and Y —f₂→ Z —g₂→ Z₂ be short complexes with g₁ ∘
+f₁=g₂ ∘ f₂=0. Assume the biproduct Z₁ ⊕ Z₂ exists, and let s₂ be a splitting of the second
+complex with retraction r₂ : Z → Y. The map (g₁ ∘ r₂,g₂) : Z → Z₁ ⊕ Z₂ kills f₂ ∘ f₁ : X → Z. No
+splitting of the first short complex is needed for this zero-composite equation. -/
 theorem compLeft_zero
     {X Y Z Z₁ Z₂ : C}
     {f₁ : X ⟶ Y} {g₁ : Y ⟶ Z₁} {w₁ : f₁ ≫ g₁ = 0}
@@ -61,8 +66,10 @@ theorem compLeft_zero
       _ = 0 := by simp
       _ = 0 ≫ biprod.snd := by simp
 
-/-- The splitting associated to the composite of the left maps of two split
-short complexes. -/
+/-- Let C be preadditive and let X —f₁→ Y —g₁→ Z₁ and Y —f₂→ Z —g₂→ Z₂ be short complexes with g₁ ∘
+f₁=g₂ ∘ f₂=0. Assume the biproduct Z₁ ⊕ Z₂ exists, and let s₂ be a splitting of the second
+complex with retraction r₂ : Z → Y. If the first complex also has a splitting s₁, then X —f₂∘f₁→
+Z —(g₁∘r₂,g₂)→ Z₁ ⊕ Z₂ is split, with the splitting constructed from s₁ and s₂. -/
 noncomputable def compLeft
     {X Y Z Z₁ Z₂ : C}
     {f₁ : X ⟶ Y} {g₁ : Y ⟶ Z₁} {w₁ : f₁ ≫ g₁ = 0}
@@ -169,7 +176,10 @@ theorem compLeft_s
     (compLeft s₁ s₂).s = biprod.desc (s₁.s ≫ f₂) s₂.s :=
   rfl
 
-/-- The selected cokernel cofork associated to `compLeft`. -/
+/-- Let C be preadditive and let X —f₁→ Y —g₁→ Z₁ and Y —f₂→ Z —g₂→ Z₂ be short complexes with g₁ ∘
+f₁=g₂ ∘ f₂=0. Assume the biproduct Z₁ ⊕ Z₂ exists, and let s₂ be a splitting of the second
+complex with retraction r₂ : Z → Y. The quotient (g₁ ∘ r₂,g₂) : Z → Z₁ ⊕ Z₂ and its zero
+composite with f₂ ∘ f₁ define a cokernel cofork for the composite left arrow. -/
 noncomputable def compLeftCokernelCofork
     {X Y Z Z₁ Z₂ : C}
     {f₁ : X ⟶ Y} {g₁ : Y ⟶ Z₁} {w₁ : f₁ ≫ g₁ = 0}
@@ -191,8 +201,10 @@ theorem compLeftCokernelCofork_π
       biprod.lift (s₂.r ≫ g₁) g₂ :=
   rfl
 
-/-- The selected cofork associated to `compLeft` is a cokernel of the
-composite left map. -/
+/-- Let C be preadditive and let X —f₁→ Y —g₁→ Z₁ and Y —f₂→ Z —g₂→ Z₂ be short complexes with g₁ ∘
+f₁=g₂ ∘ f₂=0. Assume the biproduct Z₁ ⊕ Z₂ exists, and let s₂ be a splitting of the second
+complex with retraction r₂ : Z → Y. If the first short complex is also split, the cofork with
+quotient (g₁ ∘ r₂,g₂) is colimiting. Hence Z₁ ⊕ Z₂ is a cokernel of f₂ ∘ f₁ : X → Z. -/
 noncomputable def compLeftCokernelCoforkIsColimit
     {X Y Z Z₁ Z₂ : C}
     {f₁ : X ⟶ Y} {g₁ : Y ⟶ Z₁} {w₁ : f₁ ≫ g₁ = 0}

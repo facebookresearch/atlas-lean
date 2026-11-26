@@ -1,3 +1,5 @@
-# Is Relative Projective restrict congr
+# Equal scalar maps give the same relative projectivity property
 
-Congruence of the original ring homomorphism transports all relative lifts by the iso.
+Let `k,R` be rings, `φ,φ′ : k → R` equal ring homomorphisms,
+and `P` an `R`-module. Relative projectivity of `P` for restriction
+along `φ` is equivalent to that for `φ′`.

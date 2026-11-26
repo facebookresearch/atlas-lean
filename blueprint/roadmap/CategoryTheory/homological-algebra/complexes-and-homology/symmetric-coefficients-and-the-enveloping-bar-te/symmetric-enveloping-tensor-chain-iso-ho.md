@@ -1,3 +1,7 @@
-# Symmetric Enveloping Tensor Chain Iso hom naturality
+# Forward enveloping-bar comparison is natural in symmetric coefficients
 
-The forward symmetric comparison is natural in original A-linear coefficient maps.
+Forward enveloping-bar comparison is natural in symmetric coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+enveloping tensor f followed by the comparison equals the comparison followed by the
+Hochschild coefficient map.

@@ -1,3 +1,6 @@
-# Full Functor Retract
+# The proper-shuffle functor as a Hochschild functor retract
 
-The source functor is a native retract, with the original section and projection.
+The proper-shuffle functor as a Hochschild functor retract.
+
+The natural Eulerian section followed by the natural quotient projection is the identity on
+the proper-shuffle quotient functor.

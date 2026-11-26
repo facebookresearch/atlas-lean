@@ -26,8 +26,10 @@ universe u v
 namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The original degreewise Coyoneda complex is literally the Hom complex
-from the original degree-zero single object. -/
+/-- Let C be abelian, Z an object and K an integer cochain complex. Write F_Z=Hom_C(Z,−), valued in
+abelian groups, and H_Z(K)=HomComplex(Z[0],K). There is a canonical isomorphism F_Z(K) ≅ H_Z(K)
+of cochain complexes. In degree n it sends f : Z → K^n to the homogeneous cochain from Z[0] with
+sole possibly nonzero component f; both differentials are f ↦ f ≫ d_K. -/
 def mappedComplexIsoHomSingle (Z : C) (K : CochainComplex C ℤ) :
     ((preadditiveCoyoneda.obj (op Z)).mapHomologicalComplex (.up ℤ)).obj K ≅
       CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K := by
@@ -38,7 +40,9 @@ def mappedComplexIsoHomSingle (Z : C) (K : CochainComplex C ℤ) :
   ext f
   exact CochainComplex.HomComplex.Cochain.δ_fromSingleMk f (zero_add i) j j (zero_add j)
 
-/-- Every component is the original from-single cochain. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and n ∈ ℤ. The degree-n component of
+F_Z(K) ≅ HomComplex(Z[0],K) sends f : Z → K^n to the degree-n homogeneous cochain determined by
+f at source degree zero, namely fromSingleMk f. -/
 @[simp] theorem mappedComplexIsoHomSingle_hom_apply (Z : C)
     (K : CochainComplex C ℤ) (n : ℤ) (f : Z ⟶ K.X n) :
     @DFunLike.coe
@@ -51,7 +55,9 @@ def mappedComplexIsoHomSingle (Z : C) (K : CochainComplex C ℤ) :
       (ConcreteCategory.hom ((mappedComplexIsoHomSingle Z K).hom.f n)) f =
       CochainComplex.HomComplex.Cochain.fromSingleMk f (zero_add n) := rfl
 
-/-- The Hom-complex map is postcomposition with the given chain map. -/
+/-- Let C be abelian, Z an object and g : K → L a map of integer cochain complexes. Postcomposition
+gives a cochain map HomComplex(Z[0],K) → HomComplex(Z[0],L). In degree n it sends a homogeneous
+cochain θ to the composite of θ with the degree-zero cochain associated to g. -/
 def homComplexPostcompSingle (Z : C) {K L : CochainComplex C ℤ} (g : K ⟶ L) :
     CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K ⟶
       CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) L where
@@ -64,7 +70,9 @@ def homComplexPostcompSingle (Z : C) {K L : CochainComplex C ℤ} (g : K ⟶ L) 
     ext z
     exact CochainComplex.HomComplex.δ_comp_ofHom z g j
 
-/-- The same single-Hom comparison is natural in every chain map. -/
+/-- Let C be abelian, Z an object and g : K → L a cochain map. If e_K : F_Z(K) ≅ HomComplex(Z[0],K)
+and e_L are the canonical comparisons, then F_Z(g) ≫ e_L.hom = e_K.hom ≫
+homComplexPostcompSingle(Z,g). -/
 theorem mappedComplexIsoHomSingle_naturality (Z : C)
     {K L : CochainComplex C ℤ} (g : K ⟶ L) :
     ((preadditiveCoyoneda.obj (op Z)).mapHomologicalComplex (.up ℤ)).map g ≫
@@ -85,12 +93,16 @@ namespace CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (K L : CochainComplex C ℤ) (q : ℤ)
 
-/-- The original Hom-complex cycle class, through its homology data. -/
+/-- Let C be abelian, K,L integer cochain complexes and q ∈ ℤ. The additive map
+originalCycleClassMap sends a degree-q cocycle z in HomComplex(K,L) to its canonical class in
+H^q(HomComplex(K,L)), using the cycle inclusion and cycle-to-homology projection. -/
 def originalCycleClassMap : AddCommGrpCat.of (Cocycle K L q) ⟶ (HomComplex K L).homology q :=
   (leftHomologyData K L q).π ≫ (leftHomologyData K L q).homologyIso.inv
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The homology comparison maps every original cycle to its same class. -/
+/-- Let C be abelian, K,L integer cochain complexes, q ∈ ℤ and z a degree-q Hom-complex cocycle. The
+additive equivalence homologyAddEquiv sends originalCycleClassMap(z) to CohomologyClass.mk(z),
+the class of z modulo homogeneous coboundaries. -/
 theorem homologyAddEquiv_originalCycleClass (z : Cocycle K L q) :
     homologyAddEquiv K L q (originalCycleClassMap K L q z) = CohomologyClass.mk z := by
   have h : originalCycleClassMap K L q ≫ (leftHomologyData K L q).homologyIso.hom =
@@ -100,7 +112,9 @@ theorem homologyAddEquiv_originalCycleClass (z : Cocycle K L q) :
   exact ConcreteCategory.congr_hom h z
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Every cycle is represented by the original lift and homology projection. -/
+/-- Let C be abelian, K,L integer cochain complexes and q ∈ ℤ. The map from degree-q cocycles to
+H^q(HomComplex(K,L)) is the composite of the lift to cycles of the forgetful map z ↦ z.val and
+the canonical homology projection π_q. The cocycle equation δz=0 supplies this lift. -/
 theorem originalCycleClassMap_eq :
     originalCycleClassMap K L q =
       ((HomComplex K L).sc q).liftCycles
@@ -127,7 +141,9 @@ universe u v
 namespace CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- Postcomposition by an isomorphism as an additive Hom equivalence. -/
+/-- Let D be a preadditive category, X an object and e : Y ≅ Z an isomorphism. Postcomposition with
+e.hom gives the additive equivalence Hom_D(X,Y) ≅ Hom_D(X,Z), with inverse postcomposition by
+e.inv. -/
 def homPostcompAddEquiv {D : Type*} [Category* D] [Preadditive D]
     (X : D) {Y Z : D} (e : Y ≅ Z) : (X ⟶ Y) ≃+ (X ⟶ Z) where
   toFun f := f ≫ e.hom
@@ -138,7 +154,10 @@ def homPostcompAddEquiv {D : Type*} [Category* D] [Preadditive D]
     ((congrArg (fun a => f ≫ a) e.inv_hom_id).trans (Category.comp_id f))
   map_add' f g := @CategoryTheory.Preadditive.add_comp D _ _ X Y Z f g e.hom
 
-/-- Hom-complex homology is represented by the SAME shifted homotopy morphism. -/
+/-- Let C be abelian, K,L integer cochain complexes and q ∈ ℤ. There is an additive equivalence
+H^q(HomComplex(K,L)) ≅ Hom_{K(C)}([K],[L][q]), where K(C) is the homotopy category of integer
+cochain complexes. It sends the class of a cocycle to the quotient class of the corresponding
+cochain map K → L[q], followed by the quotient shift comparison. -/
 def homologyShiftedHomEquiv (K L : CochainComplex C ℤ) (q : ℤ) :
     (HomComplex K L).homology q ≃+
       ((HomotopyCategory.quotient C (.up ℤ)).obj K ⟶
@@ -148,7 +167,9 @@ def homologyShiftedHomEquiv (K L : CochainComplex C ℤ) (q : ℤ) :
       (homPostcompAddEquiv ((HomotopyCategory.quotient C (.up ℤ)).obj K)
         (((HomotopyCategory.quotient C (.up ℤ)).commShiftIso q).app L)))
 
-/-- Every original cocycle keeps its literal quotient representative. -/
+/-- Let C be abelian, K,L integer cochain complexes, q ∈ ℤ and z a degree-q cocycle from K to L. The
+shifted-Hom equivalence sends originalCycleClassMap(z) to z.shiftedHom : [K] → [L][q] in the
+homotopy category, retaining the cochain map represented by z. -/
 theorem homologyShiftedHomEquiv_originalCycleClass
     (K L : CochainComplex C ℤ) (q : ℤ) (z : Cocycle K L q) :
     homologyShiftedHomEquiv K L q (originalCycleClassMap K L q z) = z.shiftedHom := by
@@ -167,7 +188,9 @@ namespace CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The homology arrow sends every original cocycle to the same postcomposed cycle. -/
+/-- Let C be abelian, Z an object, g : K → L a cochain map and q ∈ ℤ. For a degree-q cocycle z from
+Z[0] to K, the homology map induced by homComplexPostcompSingle(Z,g) sends [z] to the canonical
+class of z postcomposed with g. -/
 theorem originalCycleClassMap_postcomp (Z : C) {K L : CochainComplex C ℤ}
     (g : K ⟶ L) (q : ℤ)
     (z : Cocycle ((CochainComplex.singleFunctor C 0).obj Z) K q) :
@@ -205,7 +228,9 @@ theorem originalCycleClassMap_postcomp (Z : C) {K L : CochainComplex C ℤ}
     exact congrArg (fun a => a ≫ B.homologyπ q) hc
   exact ConcreteCategory.congr_hom h z
 
-/-- Every original homology class has an cocycle representative. -/
+/-- Let C be abelian, K,L integer cochain complexes and q ∈ ℤ. The canonical class map from degree-q
+cocycles to H^q(HomComplex(K,L)) is surjective: every homology class is represented by a cocycle
+z. -/
 theorem originalCycleClassMap_surjective (K L : CochainComplex C ℤ) (q : ℤ) :
     Function.Surjective (originalCycleClassMap K L q) := by
   intro x
@@ -215,7 +240,9 @@ theorem originalCycleClassMap_surjective (K L : CochainComplex C ℤ) (q : ℤ) 
   rw [homologyAddEquiv_originalCycleClass]
   exact hz
 
-/-- The SAME homology representative comparison is natural under postcomposition. -/
+/-- Let C be abelian, Z an object, g : K → L a cochain map, q ∈ ℤ and x ∈ H^q(HomComplex(Z[0],K)).
+Under the shifted-Hom equivalences, the image of x by H^q(homComplexPostcompSingle(Z,g)) is the
+shifted homotopy morphism representing x followed by [g][q] : [K][q] → [L][q]. -/
 theorem homologyShiftedHomEquiv_postcomp (Z : C) {K L : CochainComplex C ℤ}
     (g : K ⟶ L) (q : ℤ)
     (x : (HomComplex ((singleFunctor C 0).obj Z) K).homology q) :
@@ -243,7 +270,10 @@ universe u v
 namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The single-source Hom complex shifts by the same coefficient shift. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a ∈ ℤ. There is a canonical
+cochain-complex isomorphism h_{a,K} : HomComplex(Z[0],K)[a] ≅ HomComplex(Z[0],K[a]). Its
+degree-q terms identify Hom_C(Z,K^{q+a}) on both sides and preserve the signed shift
+differential. -/
 def homSingleShiftIso (Z : C) (K : CochainComplex C ℤ) (a : ℤ) :
     (CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K)⟦a⟧ ≅
       CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) (K⟦a⟧) :=
@@ -251,10 +281,9 @@ def homSingleShiftIso (Z : C) (K : CochainComplex C ℤ) (a : ℤ) :
     (((preadditiveCoyoneda.obj (Opposite.op Z)).mapHomologicalComplex (.up ℤ)).commShiftIso a).symm.app K ≪≫
       mappedComplexIsoHomSingle Z (K⟦a⟧)
 
-/--
-The shift comparison keeps the same original pointwise morphism, encoded as the from-single
-cochain on the shifted target.
--/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. For f : Z → K^{q+a},
+the degree-q component of h_{a,K} sends the homogeneous cochain from Z[0] to K of degree q+a
+determined by f to the degree-q cochain from Z[0] to K[a] determined by that same f. -/
 theorem homSingleShiftIso_hom_fromSingle (Z : C) (K : CochainComplex C ℤ)
     (a q : ℤ) (f : Z ⟶ K.X (q + a)) :
     (homSingleShiftIso Z K a).hom.f q
@@ -281,7 +310,9 @@ universe u v
 namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The shifted-source cycle inclusion through the SAME single-Hom iso. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. The map u from degree-q
+cocycles of HomComplex(Z[0],K[a]) to HomComplex(Z[0],K)[a]^q first forgets the cocycle condition
+and then applies the inverse degree-q component of h_{a,K}. -/
 def homSingleShiftCycleInclusion (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) :
     AddCommGrpCat.of (CochainComplex.HomComplex.Cocycle ((CochainComplex.singleFunctor C 0).obj Z) (K⟦a⟧) q) ⟶
       ((CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K)⟦a⟧).X q :=
@@ -289,7 +320,9 @@ def homSingleShiftCycleInclusion (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) 
     (homSingleShiftIso Z K a).inv.f q
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The real shifted inclusion lands in the cycles. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. The transported
+inclusion u = homSingleShiftCycleInclusion satisfies u ≫ d_{HomComplex(Z[0],K)[a],q,q+1} = 0, so
+its values lie in the cycles of the shifted Hom complex. -/
 theorem homSingleShiftCycleInclusion_cycle (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) :
     homSingleShiftCycleInclusion Z K a q ≫
       ((CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K)⟦a⟧).d q (q + 1) = 0 := by
@@ -303,7 +336,10 @@ theorem homSingleShiftCycleInclusion_cycle (Z : C) (K : CochainComplex C ℤ) (a
   rw [hz, zero_comp]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The Hom(single) inverse carries each cycle to its same shifted cycle class. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. Write h :
+HomComplex(Z[0],K)[a] ≅ HomComplex(Z[0],K[a]) and u for the transported cocycle inclusion. The
+canonical cycle-class map into H^q(HomComplex(Z[0],K[a])) followed by H^q(h.inv) equals
+liftCycles(u) followed by the homology projection of HomComplex(Z[0],K)[a]. -/
 theorem homSingleShiftCycleClassMap (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) :
     CochainComplex.HomComplex.originalCycleClassMap _ (K⟦a⟧) q ≫
       HomologicalComplex.homologyMap (homSingleShiftIso Z K a).inv q =
@@ -336,10 +372,10 @@ namespace CochainComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The stock homology shift sends the shifted cycle projection to the original cycle projection after
-the same middle-component shift map.
--/
+/-- Let C be abelian, K an integer cochain complex, a,q ∈ ℤ and f : A → K[a]^q satisfy f ≫
+d_{K[a],q,q+1} = 0. Let s : H^q(K[a]) ≅ H^{q+a}(K) be the canonical homology shift and τ₂ :
+K[a]^q → K^{q+a} the middle component of the shifted short-complex comparison. Then
+liftCycles(f) ≫ π_K[a],q ≫ s.hom = liftCycles(f ≫ τ₂) ≫ π_K,q+a. -/
 theorem liftCycles_shiftIso_homologyProjection (K : CochainComplex C ℤ) (a q : ℤ)
     {A : C} (f : A ⟶ (K⟦a⟧).X q) (hf : f ≫ (K⟦a⟧).d q (q + 1) = 0) :
     ((K⟦a⟧).sc q).liftCycles f (by
@@ -386,8 +422,10 @@ namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The SAME shifted cycle inclusion is the original right-unshifted cochain,
-with the exact homology shift middle-component transport. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. Follow the inclusion of
+degree-q cocycles of HomComplex(Z[0],K[a]) into HomComplex(Z[0],K)[a]^q by the middle component
+of its homology-shift short-complex comparison. The resulting map sends z to the underlying
+degree-(q+a) cochain of z.rightUnshift, from Z[0] to K. -/
 theorem homSingleShiftCycleInclusion_original_rightUnshift
     (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) :
     homSingleShiftCycleInclusion Z K a q ≫
@@ -435,10 +473,9 @@ universe u v
 namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/--
-The single-Hom target shift identifies homology in the shifted complex with original Hom-complex
-homology in the same shifted degree.
--/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. The isomorphism χ_{a,q}
+: H^q(HomComplex(Z[0],K[a])) ≅ H^{q+a}(HomComplex(Z[0],K)) is induced by the inverse of h_{a,K},
+followed by the canonical homology shift of the complex HomComplex(Z[0],K). -/
 def homSingleShiftHomologyIso (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) :
     (CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) (K⟦a⟧)).homology q ≅
       (CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K).homology (q + a) :=
@@ -448,7 +485,9 @@ def homSingleShiftHomologyIso (Z : C) (K : CochainComplex C ℤ) (a q : ℤ) :
       (by omega)).app (CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z) K)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The comparison preserves the literal original right-unshifted cocycle class. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. If z is a degree-q
+cocycle from Z[0] to K[a], then χ_{a,q} sends its canonical class to the canonical class of
+z.rightUnshift, a degree-(q+a) cocycle from Z[0] to K. -/
 theorem homSingleShiftHomologyIso_originalCycleClass (Z : C)
     (K : CochainComplex C ℤ) (a q : ℤ)
     (z : CochainComplex.HomComplex.Cocycle ((CochainComplex.singleFunctor C 0).obj Z) (K⟦a⟧) q) :
@@ -517,10 +556,11 @@ universe u v
 namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/--
-The original Hom-complex homology representative transports the grade-one triangle arrow to the
-covariant homotopy-category connector. The target shift and its order are the original ones.
--/
+/-- Let C be abelian, Z an object, T a triangle of integer cochain complexes with d : T₃ → T₁[1], q
+∈ ℤ and x ∈ H^q(HomComplex(Z[0],T₃)). Write ψ for the shifted-Hom equivalence and χ for the
+single-Hom target-shift comparison. Then ψ_{T₁,q+1}(χ_{1,q}(H^q(postcomp(d))(x))) equals the
+degree-q-to-(q+1) boundary of Hom_{K(C)}([Z[0]],−) on the quotient triangle applied to
+ψ_{T₃,q}(x). It uses the actual map d and shift-add order 1,q. -/
 theorem homSingleShiftHomology_boundary (Z : C)
     (T : Triangle (CochainComplex C ℤ)) (q : ℤ)
     (x : (CochainComplex.HomComplex ((CochainComplex.singleFunctor C 0).obj Z)
@@ -556,10 +596,10 @@ universe u v
 namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/--
-The original Coyoneda complex comparison respects the target shift, with its existing coefficient
-shift isomorphism.
--/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a ∈ ℤ. Write e_K : F_Z(K) ≅
+HomComplex(Z[0],K), h_{a,K} for the single-Hom shift isomorphism and σ_{a,K} : F_Z(K[a]) ≅
+F_Z(K)[a] for the Coyoneda shift comparison. Then e_{K[a]}.hom ≫ h_{a,K}.inv = σ_{a,K}.hom ≫
+e_K.hom[a] as cochain maps. -/
 theorem mappedComplexIsoHomSingle_shift (Z : C) (K : CochainComplex C ℤ) (a : ℤ) :
     (mappedComplexIsoHomSingle Z (K⟦a⟧)).hom ≫ (homSingleShiftIso Z K a).inv =
       (((preadditiveCoyoneda.obj (op Z)).mapHomologicalComplex (.up ℤ)).commShiftIso a).hom.app K ≫
@@ -567,7 +607,10 @@ theorem mappedComplexIsoHomSingle_shift (Z : C) (K : CochainComplex C ℤ) (a : 
   simp [homSingleShiftIso, Category.assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The same shift comparison commutes on homology in every integer degree. -/
+/-- Let C be abelian, Z an object, K an integer cochain complex and a,q ∈ ℤ. Let e_K : F_Z(K) ≅
+HomComplex(Z[0],K), σ : F_Z(K[a]) ≅ F_Z(K)[a], s : H^q(F_Z(K)[a]) ≅ H^{q+a}(F_Z(K)) and χ :
+H^q(HomComplex(Z[0],K[a])) ≅ H^{q+a}(HomComplex(Z[0],K)) be the canonical comparisons. Then
+H^q(e_{K[a]}.hom) ≫ χ.hom = H^q(σ.hom) ≫ s.hom ≫ H^{q+a}(e_K.hom). -/
 theorem mappedComplexIsoHomSingle_homology_shift (Z : C)
     (K : CochainComplex C ℤ) (a q : ℤ) :
     HomologicalComplex.homologyMap (mappedComplexIsoHomSingle Z (K⟦a⟧)).hom q ≫
@@ -602,10 +645,12 @@ namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The mapped Coyoneda triangle arrow, coefficient shift and stock homology shift have the same
-covariant connector on original representatives.
--/
+/-- Let C be abelian, Z an object, T a triangle of integer cochain complexes with d : T₃ → T₁[1], q
+∈ ℤ and x ∈ H^q(F_Z(T₃)), where F_Z=Hom_C(Z,−). Apply H^q(F_Z(d)), then the Coyoneda shift
+comparison H^q(F_Z(T₁[1])) → H^q(F_Z(T₁)[1]), and the homology shift to degree q+1. Under F_Z(K)
+≅ HomComplex(Z[0],K) and the shifted-Hom equivalence, this result is the covariant Hom boundary
+of the quotient triangle applied to the shifted homotopy morphism representing x. Every arrow
+uses the actual third map d and the canonical shift comparisons. -/
 theorem mappedCoyoneda_triangle_representative (Z : C)
     (T : Triangle (CochainComplex C ℤ)) (q : ℤ)
     (x : (((preadditiveCoyoneda.obj (op Z)).mapHomologicalComplex (.up ℤ)).obj

@@ -1,3 +1,6 @@
-# Cyclic Weibel Source Map
+# The canonical positive-tail map of an algebra homomorphism
 
-The CE positive-tail map induced by the noncommutative algebra map.
+The canonical positive-tail map of an algebra homomorphism.
+
+A nonunital algebra map induces a commutator Lie map and hence a map on the canonical CE
+complex restricted to positive exterior degrees.

@@ -1,19 +1,19 @@
 # Rational comparison with the Connes complex
 
-- [Cyclic Row Contraction Operator](cyclic-row-contraction-operator.md)
+- [The alternating contraction operator of a cyclic row](cyclic-row-contraction-operator.md)
 
 ## Multiplication
 
-- [Cyclic Row Augmentation](cyclic-row-augmentation.md)
-- [Cyclic Row Augmentation f zero](cyclic-row-augmentation-f-zero.md)
-- [Cyclic Row Augmentation f succ](cyclic-row-augmentation-f-succ.md)
-- [Cyclic Row Augmentation quasi Iso](cyclic-row-augmentation-quasi-iso.md)
-- [Cyclic Connes Augmentation](cyclic-connes-augmentation.md)
-- [Cyclic Connes Augmentation f](cyclic-connes-augmentation-f.md)
-- [Cyclic To Connes eq transposed Augmentation](cyclic-to-connes-eq-transposed-augmentat.md)
+- [The augmentation of a horizontal cyclic row](cyclic-row-augmentation.md)
+- [The cyclic-row augmentation in position zero](cyclic-row-augmentation-f-zero.md)
+- [The cyclic-row augmentation vanishes in positive positions](cyclic-row-augmentation-f-succ.md)
+- [Invertible cyclic order makes the row augmentation a quasi-isomorphism](cyclic-row-augmentation-quasi-iso.md)
+- [The bicomplex augmentation to the Connes quotient](cyclic-connes-augmentation.md)
+- [The rows of the bicomplex Connes augmentation](cyclic-connes-augmentation-f.md)
+- [The cyclic-to-Connes projection equals the transposed total augmentation](cyclic-to-connes-eq-transposed-augmentat.md)
 
 ## Rational
 
-- [Cyclic To Connes Homology Iso](cyclic-to-connes-homology-iso.md)
-- [Cyclic To Connes Homology Iso hom](cyclic-to-connes-homology-iso-hom.md)
-- [Cyclic To Connes Homology Iso inv naturality](cyclic-to-connes-homology-iso-inv-natura.md)
+- [The rational cyclic-to-Connes homology isomorphism](cyclic-to-connes-homology-iso.md)
+- [The forward map of the rational homology isomorphism](cyclic-to-connes-homology-iso-hom.md)
+- [The inverse rational homology comparison is natural](cyclic-to-connes-homology-iso-inv-natura.md)

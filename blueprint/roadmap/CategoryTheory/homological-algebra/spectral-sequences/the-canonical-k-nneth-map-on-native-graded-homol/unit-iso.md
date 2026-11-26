@@ -1,4 +1,6 @@
-# Unit Iso
+# The unit isomorphism of graded module homology
 
-The unit of graded homology is identified by the native homology of a
-single complex. In other degrees both actual objects are zero.
+The unit isomorphism of graded module homology.
+
+The graded tensor unit is isomorphic to homology of the chain tensor unit, using degree-zero
+single-complex homology.

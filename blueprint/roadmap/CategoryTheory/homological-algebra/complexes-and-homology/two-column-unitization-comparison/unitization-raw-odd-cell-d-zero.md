@@ -1,3 +1,6 @@
-# Unitization Raw Odd Cell d zero
+# The zero boundary of the bottom retained odd-column cell
 
-The bottom odd boundary is zero because its original 1-t₀ is zero.
+The zero boundary of the bottom retained odd-column cell.
+
+The bidegree `(1,0)` cell has zero boundary in total degree zero, since its horizontal map is
+`1-t_0 = 0` and there is no lower vertical degree.

@@ -15,13 +15,21 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Coalgebra
 import Mathlib.Tactic.Abel
 
 /-!
-# Homogeneous components of the Chevalley–Eilenberg coproduct
+# Homogeneous components of the exterior chain coproduct
 
-Alternating descent and homogeneous projections construct the coproduct
-components. In every source degree and bidegree, the boundary satisfies the
-two-term coderivation equation with Koszul sign `(-1)^p`. The components
-vanish off the source antidiagonal, recover the coproduct by a finite sum,
-and are natural under Lie algebra homomorphisms.
+Let R be commutative and L an R-Lie algebra. Projecting the exterior
+primitive coproduct gives
+c_{n;p,q}:Λ_R^nL→Λ_R^pL⊗_RΛ_R^qL,
+c_{n;p,q}(a)=(π_p⊗π_q)Δ(a).
+It is zero unless p+q=n, and the coproduct on Λ_R^nL is the
+finite sum of its components for p=0,…,n.
+
+Writing d_n:Λ_R^{n+1}L→Λ_R^nL, the homogeneous coderivation law is
+c_{n;p,q} d_n =
+(d_p⊗id)c_{n+1;p+1,q} + (−1)^p(id⊗d_q)c_{n+1;p,q+1}.
+The maps are defined for all source degrees and bidegrees, including
+zero-degree factors, and are natural in Lie homomorphisms with
+independent source and target carrier universes.
 -/
 
 @[expose] public section
@@ -41,7 +49,13 @@ local notation "E" => ExteriorAlgebra R L
 local notation "Δ" => ExteriorAlgebra.coproduct R L
 local notation "π" => exteriorPower.projection R L
 
-/-- Canonical homogeneous projections intertwine the degree-lowering boundary. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+Homogeneous projection intertwines the boundary:
+π_p(∂a)=d_p(π_{p+1}a) for every a∈E. -/
 theorem projection_boundary (p : ℕ) (a : E) :
     π p (boundary R L a) = differential R L p (π (p + 1) a) := by
   have h : (π p).comp (boundary R L) = (differential R L p).comp (π (p + 1)) := by
@@ -73,7 +87,13 @@ theorem projection_boundary (p : ℕ) (a : E) :
             (ExteriorAlgebra.ιMulti_range R (k + 1) ⟨v, rfl⟩)
   exact LinearMap.congr_fun h a
 
-/-- The ambient tensor differential gives the homogeneous Koszul sign. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+Projecting D=∂⊗id+γ⊗∂ to bidegree (p,q) gives
+(d_p⊗id)(π_{p+1}⊗π_q)+(−1)^p(id⊗d_q)(π_p⊗π_{q+1}). -/
 theorem tensorBoundary_projection (p q : ℕ) (t : E ⊗[R] E) :
     TensorProduct.map (π p) (π q) (tensorBoundary R L t) =
       (differential R L p).rTensor (⋀[R]^q L)
@@ -89,19 +109,37 @@ theorem tensorBoundary_projection (p q : ℕ) (t : E ⊗[R] E) :
       simp only [map_add, ht, hs, smul_add]
       abel
 
-/-- The alternating source of a coproduct component. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+Applying (π_p⊗π_q)Δ to the n-fold exterior word gives
+an alternating R-multilinear map L^n→Λ_R^pL⊗Λ_R^qL. -/
 def coproductComponentAlternating (n p q : ℕ) :
     L [⋀^Fin n]→ₗ[R] ((⋀[R]^p L) ⊗[R] (⋀[R]^q L)) :=
   ((TensorProduct.map (π p) (π q)).comp Δ).compAlternatingMap
     (ExteriorAlgebra.ιMulti R n)
 
-/-- The degree-`n`, bidegree-`(p,q)` coproduct component, by alternating descent. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+The R-linear coproduct component c_{n;p,q}:Λ_R^nL→
+Λ_R^pL⊗Λ_R^qL is the descent of that alternating word map. -/
 def coproductComponent (n p q : ℕ) :
     (⋀[R]^n L) →ₗ[R] ((⋀[R]^p L) ⊗[R] (⋀[R]^q L)) :=
   exteriorPower.alternatingMapLinearEquiv (R := R) (n := n) (M := L)
     (N := ((⋀[R]^p L) ⊗[R] (⋀[R]^q L))) (coproductComponentAlternating R L n p q)
 
-/-- Its characteristic equation uses the ambient coproduct and degree projections. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+For a∈Λ_R^nL, the component has value
+c_{n;p,q}(a)=(π_p⊗π_q)Δ(a), after including a into E. -/
 theorem coproductComponent_apply (n p q : ℕ) (a : ⋀[R]^n L) :
     coproductComponent R L n p q a = TensorProduct.map (π p) (π q) (Δ (a : E)) := by
   have h : coproductComponent R L n p q =
@@ -115,7 +153,14 @@ theorem coproductComponent_apply (n p q : ℕ) (a : ⋀[R]^n L) :
       LinearMap.comp_apply, Submodule.subtype_apply, exteriorPower.ιMulti_apply_coe]
   exact LinearMap.congr_fun h a
 
-/-- The homogeneous CE coderivation law, without arithmetic casts between source degrees. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+In all source degrees and bidegrees,
+c_{n;p,q} d_n=(d_p⊗id)c_{n+1;p+1,q}
++(−1)^p(id⊗d_q)c_{n+1;p,q+1}. -/
 theorem coproductComponent_boundary (n p q : ℕ) :
     (coproductComponent R L n p q).comp (differential R L n) =
       ((differential R L p).rTensor (⋀[R]^q L)).comp
@@ -128,7 +173,13 @@ theorem coproductComponent_boundary (n p q : ℕ) :
     coproductComponent_apply]
   rw [differential_coe, coproduct_boundary, tensorBoundary_projection]
 
-/-- The coproduct component vanishes off its source antidiagonal. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+If p+q≠n, the component c_{n;p,q}:Λ_R^nL→Λ_R^pL⊗Λ_R^qL
+is zero. -/
 theorem coproductComponent_eq_zero_of_ne (n p q : ℕ) (hpq : p + q ≠ n) :
     coproductComponent R L n p q = 0 := by
   apply LinearMap.ext
@@ -137,7 +188,13 @@ theorem coproductComponent_eq_zero_of_ne (n p q : ℕ) (hpq : p + q ≠ n) :
   exact ExteriorAlgebra.projection_tensor_eq_zero_of_mem_degree R L n p q hpq _
     (ExteriorAlgebra.coproduct_mem_degree R L n a a.property)
 
-/-- The degree-`n` coproduct is recovered from its finite component family. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+For a∈Λ_R^nL, the full coproduct is
+Δa=∑_{p=0}^{n}(inclusion_p⊗inclusion_{n−p})c_{n;p,n−p}(a). -/
 theorem coproduct_eq_sum_components (n : ℕ) (a : ⋀[R]^n L) :
     Δ (a : E) = ∑ p : Fin (n + 1),
       TensorProduct.map (⋀[R]^p.val L).subtype (⋀[R]^(n - p.val) L).subtype
@@ -151,7 +208,13 @@ section Naturality
 
 variable {L' : Type w} [LieRing L'] [LieAlgebra R L']
 
-/-- coproduct components are natural under Lie algebra maps. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+For a Lie homomorphism f:L→L′ in an independent carrier universe,
+c^{L′}_{n;p,q} Λ^n f=(Λ^p f⊗Λ^q f)c^L_{n;p,q}. -/
 theorem coproductComponent_naturality (n p q : ℕ) (f : L →ₗ⁅R⁆ L') :
     (coproductComponent R L' n p q).comp (exteriorPower.map n f.toLinearMap) =
       (TensorProduct.map (exteriorPower.map p f.toLinearMap)

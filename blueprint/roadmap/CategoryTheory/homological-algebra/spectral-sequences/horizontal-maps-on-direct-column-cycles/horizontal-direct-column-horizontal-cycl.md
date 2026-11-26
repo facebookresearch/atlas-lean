@@ -1,5 +1,6 @@
-# Horizontal Direct Column Horizontal Cycles Map
+# The horizontal map between direct-column cycle objects
 
-Horizontal map on direct-column cycle objects, obtained by untwisting,
-passing to the original vertical columns, applying the horizontal bicomplex
-map, and transporting back.
+The horizontal map between direct-column cycle objects.
+
+Untwist source cycles, identify them with ordinary vertical cycles, apply the horizontal chain
+map, and transport back to target direct-column cycles.

@@ -1,3 +1,6 @@
-# Left Successor Degree Cut
+# Increasing the first block of a weak cut
 
-Increment the original first block length and retain its exact successor degree.
+Increasing the first block of a weak cut.
+
+For p,q≥0 with p+q=n, the left successor sends the cut (p,q) of n to (p+1,q), a weak cut of
+n+1.

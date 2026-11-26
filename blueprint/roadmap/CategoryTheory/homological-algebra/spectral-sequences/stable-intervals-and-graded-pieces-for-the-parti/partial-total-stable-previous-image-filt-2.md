@@ -1,4 +1,6 @@
-# Partial Total Stable Previous Image Filtration Iso hom comp ι
+# The inclusion equation of a preceding stable-image comparison
 
-The previous selected-image coordinate commutes with inclusion into total
-homology.
+The inclusion equation of a preceding stable-image comparison.
+
+The preceding-image comparison commutes with its image inclusion into the abutment and
+filtration inclusion into total homology.

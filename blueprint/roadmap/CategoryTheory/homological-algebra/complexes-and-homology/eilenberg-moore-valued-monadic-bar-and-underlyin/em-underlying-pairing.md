@@ -1,5 +1,6 @@
-# Em Underlying Pairing
+# The forgotten free right module is paired by the algebra action
 
-Underlying balanced pairing for the forgotten module: target the regular
-target functor and pair by `alg.a`. This is the forgetful image of the EM
-pairing, since forgetting `free` composed with evaluation is `T`.
+Let T be a monad on C and alg=(A,a) a T-algebra. Postcompose the free-algebra right T-module
+with T.forget and pair it with the constant left module of alg. The resulting C-valued
+balanced pairing has constant target A and component a : T(A) → A. Its balancing equation is
+μ_A ≫ a = T(a) ≫ a.

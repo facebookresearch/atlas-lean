@@ -1,4 +1,7 @@
-# Extended Splitting section
+# Sections of extended rows agree with the original horseshoe sections
 
-At each original natural degree, the extended section is the SAME chosen section through the
-extension coordinate isomorphisms.
+In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`, with resolutions
+`I₁,I₂,I₃` and chosen row splittings. In each nonnegative degree `q`, the section of the integer
+zero-extended row is the original section `I₃^q → I₂^q` transported
+by the extension coordinate isomorphisms.

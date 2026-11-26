@@ -1,3 +1,5 @@
-# Entries injective
+# Entries determine a stable matrix semimodule element
 
-The entry map is injective.
+Entries determine a stable matrix semimodule element.
+
+The entry map from `Matrix.StableModule k A` to `Matrix ℕ ℕ A` is injective.

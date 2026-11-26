@@ -1,3 +1,6 @@
-# Cyclic BConnes SBIPresentation Map comp
+# Composition of left-unit SBI presentation maps
 
-Composition uses the original maps, without a compatibility premise on unit choices.
+Composition of left-unit SBI presentation maps.
+
+For composable nonunital maps between algebras with left units, the induced presentation maps
+compose, with the given endpoint left-unit witnesses.

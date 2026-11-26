@@ -1,3 +1,6 @@
-# Native Primitive Map eq zero iff
+# The homogeneous primitivity criterion for a CE chain
 
-Componentwise vanishing of the primitive map is primitivity.
+The homogeneous primitivity criterion for a CE chain.
+
+The primitive-equation component vanishes on `a ∈ ⋀ⁿ[R] L` if and only if `a` belongs to the
+homogeneous primitive submodule.

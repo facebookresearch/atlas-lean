@@ -1,3 +1,5 @@
-# Is Split
+# Existence of a splitting
 
-A homological complex is split when it admits degree-one generalized inverses.
+Let K be a complex of shape c on an index type ι in a category C with zero morphisms. The
+complex is split precisely when there exists a family of reverse-degree maps hᵢⱼ, zero off
+c.Rel j i, with dᵢⱼ ≫ hⱼᵢ ≫ dᵢⱼ = dᵢⱼ for all i,j.

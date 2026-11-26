@@ -1,4 +1,6 @@
-# Partial Total E₁Adjacent Diagram Iso
+# The coordinate isomorphism of adjacent core and step diagrams
 
-Coordinate isomorphism from the adjacent core intervals to the adjacent
-partial-total steps.
+The coordinate isomorphism of adjacent core and step diagrams.
+
+The two interval-to-step comparisons identify the adjacent first-page composable diagram with
+its partial-total step presentation.

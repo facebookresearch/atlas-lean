@@ -1,4 +1,7 @@
-# Original ext Class normalized
+# Horseshoe boundary as the coaugmentation-conjugated extension class
 
-Cancel the quasi-isomorphism of the right augmentation. No comparison or boundary universal
-property is introduced.
+In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Suppose `C` has a derived category and Ext at its hom-set
+universe. For the derived extension morphism `ξ` and coaugmentation
+isomorphisms `ε_k`, the extended horseshoe boundary is
+`ε₃⁻¹ ≫ ξ ≫ ε₁[1]`.

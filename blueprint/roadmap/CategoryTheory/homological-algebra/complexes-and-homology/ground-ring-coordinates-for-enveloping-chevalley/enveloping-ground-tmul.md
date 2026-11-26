@@ -1,4 +1,6 @@
-# Enveloping Ground Tmul
+# The ground-linear tensor map with a fixed enveloping coefficient
 
-A fixed enveloping coefficient gives a ground-linear map into
-the exact native restricted CE term.
+The ground-linear tensor map with a fixed enveloping coefficient.
+
+For `a ∈ U_R(L)`, this sends `w ∈ ⋀ⁿ[R] L` to `w ⊗ a` in the ground module of the degree-`n`
+enveloping chain term.

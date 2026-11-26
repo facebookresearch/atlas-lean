@@ -1,3 +1,5 @@
-# Normalized Frame Unit conjugate Corner
+# Conjugation by a normalized frame gives the Peirce coefficient block
 
-Actual conjugation sends the PUnit corner to the computed Peirce block v_i*x*u_j.
+Let A be a ring, J finite and u,v:J → A satisfy ∑ⱼuⱼvⱼ=1. For the associated unit W and x ∈ A,
+W⁻¹·corner(x)·W has all blocks zero except the J×J block, whose (i,j)-entry is vᵢxuⱼ. The factor
+order is preserved in a noncommutative A.

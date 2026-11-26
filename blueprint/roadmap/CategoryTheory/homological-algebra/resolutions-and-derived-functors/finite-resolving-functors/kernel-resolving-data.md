@@ -1,7 +1,5 @@
-# Kernel Resolving Data
+# Kernel closure of an additive resolving functor
 
-Explicit epi-kernel closure data for an additive functor into an abelian
-category.
-
-This is an ordinary proposition rather than a typeclass: kernel
-representatives are nonfunctorial mathematical input.
+For a preadditive category `P`, an abelian category `A`, and additive
+`i : P → A`, kernel-resolving data require a kernel lift in `P` for
+every source map whose image under `i` is an epimorphism in `A`.

@@ -1,3 +1,5 @@
-# To Product
+# The component map of a split ideal sequence
 
-Both original coordinate maps enter the actual product module.
+The component map of a split ideal sequence.
+
+The `k`-linear map `A → I × (A/I)` sends `a` to `(π(a), q(a))`.

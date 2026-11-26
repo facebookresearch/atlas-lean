@@ -1,3 +1,6 @@
-# Stable Matrix Cyclic Chain Map ι
+# The finite-stage restriction of positive-bracket colimit cyclic trace
 
-The descended printed-positive map retains every finite theta-trace specialization.
+The finite-stage restriction of positive-bracket colimit cyclic trace.
+
+The negated-differential finite-stage tail inclusion followed by the colimit trace is the
+finite tail-alternating trace.

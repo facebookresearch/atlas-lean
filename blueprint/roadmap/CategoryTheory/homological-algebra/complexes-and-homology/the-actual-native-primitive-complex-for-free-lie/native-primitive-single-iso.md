@@ -1,4 +1,6 @@
-# Native Primitive Single Iso
+# The free primitive complex is the Lie carrier concentrated in degree one
 
-Over every commutative ring, the primitive complex of a free Lie module is the Lie module
-concentrated in degree one, with the necessary universe comparison.
+Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Free R L. nativePrimitiveSingleIso : P ≅ primitiveSingle R L has
+forward map nativePrimitiveToSingle and inverse nativePrimitiveFromSingle.

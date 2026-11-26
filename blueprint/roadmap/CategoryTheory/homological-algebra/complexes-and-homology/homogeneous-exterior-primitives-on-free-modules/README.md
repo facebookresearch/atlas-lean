@@ -1,7 +1,7 @@
 # Homogeneous exterior primitives on free modules in every characteristic
 
-- [Primitive Equation ι mul ι](primitive-equation-mul.md)
-- [Deletion eq coproduct Projection](deletion-eq-coproduct-projection.md)
-- [Deletion eq zero of primitive](deletion-eq-zero-of-primitive.md)
-- [Primitive degree zero](primitive-degree-zero.md)
-- [Primitive homogeneous eq zero](primitive-homogeneous-eq-zero.md)
+- [The reduced coproduct of a product of two exterior generators](primitive-equation-mul.md)
+- [Exterior deletion is the degree-(1,n) coproduct component](deletion-eq-coproduct-projection.md)
+- [Higher-degree homogeneous primitives have zero deletion](deletion-eq-zero-of-primitive.md)
+- [A homogeneous exterior primitive of degree zero vanishes](primitive-degree-zero.md)
+- [Free exterior modules have no homogeneous primitives outside degree one](primitive-homogeneous-eq-zero.md)

@@ -19,23 +19,25 @@ import MathlibExt.Algebra.Homology.CartanEilenberg.Existence
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
-# Collapse of the Künneth spectral sequence with flat first homology
+# The canonical Künneth isomorphism from flat first terms and homology
 
-If the terms and homology objects of the first complex are flat, every
-positive Tor column vanishes.  The literal zero-column edge and the literal
-zero-stage filtration inclusion are therefore isomorphisms, so the existing
-canonical finite Künneth homology map is an isomorphism.  Field and PID
-specializations retain the same canonical map.
+Let R be a commutative ring and K,L nonnegative chain complexes of
+R-modules. The canonical Künneth map is
+κ_n:⨁_(p+q=n) H_p(K)⊗[R]H_q(L)→H_n(K⊗L),
+sending tensors of cycle classes to the class of their tensor.
 
-## Mathematical reference and scope
+If every term K_i and every homology module H_i(K) is flat over R,
+κ_n is an isomorphism for every n≥0. The positive Tor columns vanish,
+and the resulting zero-column edge identifies this particular
+canonical cycle map. No flatness of the second complex L is assumed.
 
-See Weibel, *An Introduction to Homological Algebra*, Theorem 5.6.4 and
-Künneth Formula 5.6.5 for the spectral-sequence and collapse argument.
-Here the complexes are nonnegatively graded and the construction is
-objectwise, using the repository-chosen Cartan--Eilenberg resolution in the
-proof.  This API does not provide functoriality, resolution independence of
-the spectral right edge, a natural splitting, or the classical noncanonical
-splitting of the Künneth short exact sequence.
+Over a field, all term and homology modules are flat, so κ_n is always
+an isomorphism. Over a principal ideal domain, termwise flatness of K
+and torsion-freeness of every H_i(K) suffice.
+The coefficient ring and module carriers have the common world u.
+
+Reference: Weibel, *An Introduction to Homological Algebra*,
+Theorem 5.6.4 and Künneth Formula 5.6.5.
 -/
 
 @[expose] public section
@@ -55,8 +57,11 @@ local instance {R : Type u} [CommRing R] :
     HasFiniteBiproducts (ModuleCat.{u} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- If the first complex is termwise flat and has flat homology, its
-canonical Künneth homology tensor map is an isomorphism. -/
+/-- For nonnegative R-module chain complexes K,L over a
+commutative ring R, assume each K_i and each H_i(K) is flat.
+Then the canonical cycle map
+⨁_(p+q=n) H_p(K)⊗[R]H_q(L)→H_n(K⊗L)
+is an isomorphism for every n≥0. The second complex L is arbitrary. -/
 theorem isIso_kunnethHomologyTensorMap_of_flat_homology
     {R : Type u} [CommRing R]
     (K L : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -175,8 +180,11 @@ theorem isIso_kunnethHomologyTensorMap_of_flat_homology
   rw [kunnethHomologyTensorMap_eq_p_zero_edge K P hK n]
   infer_instance
 
-/-- Over a field, the canonical Künneth homology tensor map is an
-isomorphism without additional hypotheses. -/
+/-- For a field k and arbitrary nonnegative k-module chain
+complexes K,L, the canonical map
+⨁_(p+q=n) H_p(K)⊗[k]H_q(L)→H_n(K⊗L)
+is an isomorphism for every n≥0.
+No finite-dimensionality assumption is imposed. -/
 theorem isIso_kunnethHomologyTensorMap_of_field
     {k : Type u} [Field k]
     (K L : ChainComplex (ModuleCat.{u} k) ℕ) (n : ℕ) :
@@ -190,8 +198,11 @@ theorem isIso_kunnethHomologyTensorMap_of_field
     exact Module.Flat.of_free
   exact isIso_kunnethHomologyTensorMap_of_flat_homology K L hK hHK n
 
-/-- Over a commutative PID, termwise flatness and torsion-free first
-homology make the canonical Künneth homology tensor map an isomorphism. -/
+/-- For a commutative principal ideal domain R and
+nonnegative R-module chain complexes K,L, assume every K_i is flat
+and every H_i(K) is torsion-free over R.
+Then the canonical Künneth homology tensor map is an isomorphism
+in every degree n≥0. -/
 theorem isIso_kunnethHomologyTensorMap_of_pid_of_torsionFree_homology
     {R : Type u} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     (K L : ChainComplex (ModuleCat.{u} R) ℕ)

@@ -15,12 +15,15 @@ public import Mathlib.CategoryTheory.Abelian.FunctorCategory
 public import Mathlib.CategoryTheory.Functor.Currying
 
 /-!
-# right derivation of additive functor diagrams
+# Right derivation of additive-functor diagrams
 
-The degree family is the existing derived delta-functor family followed by its existing degree
-evaluation. Exact target evaluations compare derivation of the flipped functor with the flipped
-derived diagram. Source, target and index object/morphism universes remain independent. Only the
-source category has an injective-resolution hypothesis.
+Let `C,E` be abelian, with injective resolutions in `C`, and let `J`
+be a category. Right derivation in degree `n` sends a diagram of
+additive functors `Φ : J → (C → E)` to the diagram of `R^nΦ_j`.
+Deriving its flipped functor `C → (J → E)` gives a naturally isomorphic
+flipped derived diagram. Evaluation at each `j` gives the component
+comparison, which commutes with every index map and diagram map.
+All object and morphism universes of `C,E,J` are independent.
 -/
 
 @[expose] public section
@@ -37,7 +40,10 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {E : Type uE} [Category.{vE} E] [Abelian E]
   [HasInjectiveResolutions C]
 
-/-- Source-functor maps commute with the same canonical exact-target comparison. -/
+/-- Let `C,D,E` be abelian, with injective resolutions in `C`,
+`F,G : C → D` additive, and `U : D → E` additive and preserving
+homology. For `α : F → G`, the forward comparisons
+`R^nF ⋙ U ≅ R^n(F ⋙ U)` commute with `R^nα ⋙ U` and `R^n(α ⋙ U)`. -/
 theorem rightDerivedCompIsoOfPreservesHomology_hom_naturality_source
     (F G : C ⥤ D) [F.Additive] [G.Additive] (α : F ⟶ G)
     (U : D ⥤ E) [U.Additive] [U.PreservesHomology] (n : ℕ) :
@@ -101,34 +107,48 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {J : Type uJ} [Category.{vJ} J]
   [HasInjectiveResolutions C]
 
-/-- The Abelian functor-category preadditive structure used by right derivation. -/
+/-- For an abelian category `E` and a category `J`, the diagram
+category `J → E` is preadditive, with sums of natural transformations
+and bilinear composition defined at every `j`. -/
 @[implicit_reducible]
 local instance functorDiagramPreadditive : Preadditive (J ⥤ E) :=
   (inferInstance : Abelian (J ⥤ E)).toPreadditive
 
-/-- Right-derived functors in one degree, using the existing delta-family evaluation. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`. Right derivation in a fixed degree `n` defines a functor
+from additive functors `C → E` to ordinary functors `C → E`, with
+maps given by right-derived natural transformations. -/
 @[implicit_reducible]
 def degreeFamily (n : ℕ) : (C ⥤+ E) ⥤ (C ⥤ E) :=
   rightDerivedDeltaFunctorFamily C E ⋙ CohomologicalDeltaFunctor.evaluation C E n
 
-/-- The degree-n right-derived diagram of additive functors. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. Its degree-`n` derived diagram sends `j` to `R^nΦ_j` and each
+index arrow to the derived coefficient transformation. -/
 @[implicit_reducible]
 def diagram (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) : J ⥤ (C ⥤ E) :=
   Φ ⋙ degreeFamily n
 
-/-- Each diagram object is the existing right-derived factory. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. At `j`, the object of its degree-`n` derived diagram is the
+right-derived functor `R^nΦ_j`. -/
 theorem diagram_obj (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (j : J) :
     (diagram Φ n).obj j = (Φ.obj j).obj.rightDerived n := rfl
 
-/-- Every index arrow is the existing right-derived natural transformation. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. For `g : j → k`, the map of its degree-`n` derived diagram
+is the natural transformation `R^n(Φ(g)) : R^nΦ_j → R^nΦ_k`. -/
 theorem diagram_map (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) {j k : J} (f : j ⟶ k) :
     (diagram Φ n).map f = NatTrans.rightDerived (Φ.map f).hom n := rfl
 
-/-- The original diagram is flipped using the forgetful and flipping functors. -/
+/-- For abelian `C,E`, a category `J`, and a diagram `Φ` of additive
+functors `C → E`, the flipped functor sends `X` to the diagram
+`j ↦ Φ_j(X)` and sends each source map to its evaluated diagram map. -/
 abbrev flipped (Φ : J ⥤ (C ⥤+ E)) : C ⥤ (J ⥤ E) :=
   (Φ ⋙ AdditiveFunctor.forget C E).flip
 
-/-- Pointwise source additivity supplies additivity of the flipped functor. -/
+/-- For abelian `C,E`, a category `J`, and a diagram `Φ` of additive
+functors `C → E`, the flipped functor `C → (J → E)` is additive:
+it preserves sums of source maps at every index `j`. -/
 instance flipped_additive (Φ : J ⥤ (C ⥤+ E)) : (flipped Φ).Additive where
   map_add := by
     intro X Y f g
@@ -137,7 +157,10 @@ instance flipped_additive (Φ : J ⥤ (C ⥤+ E)) : (flipped Φ).Additive where
     change (Φ.obj j).obj.map (f + g) = (Φ.obj j).obj.map f + (Φ.obj j).obj.map g
     exact (Φ.obj j).obj.map_add (f := f) (g := g)
 
-/-- Exact evaluation gives the canonical source-object comparison in each index. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. Evaluation at `j` gives the canonical natural isomorphism
+`R^n(flip Φ) ⋙ ev_j ≅ R^nΦ_j`, from deriving the diagram-valued
+functor to deriving its `j`-th component. -/
 def evaluationIso (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (j : J) :
     (flipped Φ).rightDerived n ⋙ (evaluation J E).obj j ≅ (diagram Φ n).obj j := by
   letI : ((evaluation J E).obj j).PreservesHomology := {}
@@ -146,7 +169,10 @@ def evaluationIso (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (j : J) :
     Functor.comp_obj, AdditiveFunctor.forget_obj] using
       (flipped Φ).rightDerivedCompIsoOfPreservesHomology ((evaluation J E).obj j) n
 
-/-- The canonical evaluation comparison respects each index arrow. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. For `g : j → k`, the evaluation comparisons commute with
+`ev(g)` on the derived diagram-valued functor and the derived index
+map `R^n(Φ(g))`. -/
 theorem evaluationIso_hom_naturality_index (Φ : J ⥤ (C ⥤+ E)) (n : ℕ)
     {j k : J} (f : j ⟶ k) :
     Functor.whiskerLeft ((flipped Φ).rightDerived n) ((evaluation J E).map f) ≫
@@ -165,7 +191,9 @@ theorem evaluationIso_hom_naturality_index (Φ : J ⥤ (C ⥤+ E)) (n : ℕ)
   rw [hmap] at h
   exact h
 
-/-- The flipped derived diagram and derivation of the flipped functor are canonically equal. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. The comparisons at all indices give a natural isomorphism
+`R^n(flip Φ) ≅ flip(R^nΦ)` of diagram-valued functors on `C`. -/
 def flippedIso (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) :
     (flipped Φ).rightDerived n ≅ (diagram Φ n).flip :=
   NatIso.ofComponents
@@ -178,11 +206,17 @@ def flippedIso (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) :
       funext j
       exact (evaluationIso Φ n j).hom.naturality f)
 
-/-- Its forward component is the exact-evaluation comparison. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. The forward component of the flipped comparison at `X,j`
+is the forward evaluation comparison
+`R^n(flip Φ)(X)_j → R^nΦ_j(X)`. -/
 theorem flippedIso_hom_app_app (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (X : C) (j : J) :
     ((flippedIso Φ n).hom.app X).app j = (evaluationIso Φ n j).hom.app X := rfl
 
-/-- The backward component uses the same evaluation comparison inverse. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`J` a category. Let `Φ : J → (C → E)` be a diagram of additive functors. The inverse component of the flipped comparison at `X,j`
+is the inverse evaluation comparison
+`R^nΦ_j(X) → R^n(flip Φ)(X)_j`. -/
 theorem flippedIso_inv_app_app (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (X : C) (j : J) :
     ((flippedIso Φ n).inv.app X).app j = (evaluationIso Φ n j).inv.app X := rfl
 
@@ -191,7 +225,10 @@ local instance (Φ : J ⥤ (C ⥤+ E)) :
   change (flipped Φ).Additive
   exact flipped_additive Φ
 
-/-- A map of additive diagrams commutes with the canonical flipped comparison. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and
+`Φ,Ψ : J → (C → E)` be diagrams of additive functors. A map
+`α : Φ → Ψ` commutes with the forward comparisons
+`R^n(flip Φ) ≅ flip(R^nΦ)` and `R^n(flip Ψ) ≅ flip(R^nΨ)`. -/
 theorem flippedIso_naturality_diagramMap {Φ Ψ : J ⥤ (C ⥤+ E)} (α : Φ ⟶ Ψ) (n : ℕ) :
     NatTrans.rightDerived
         ((CategoryTheory.flipFunctor J C E).map

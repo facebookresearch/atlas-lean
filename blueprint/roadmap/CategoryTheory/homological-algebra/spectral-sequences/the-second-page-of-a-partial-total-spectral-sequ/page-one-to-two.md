@@ -1,3 +1,6 @@
-# Page One To Two
+# Successor equality for the first two pages
 
-The exact successor proof used by the package's HomologyData.
+Successor equality for the first two pages.
+
+For a first-page choice `χ`, the page indices satisfy `(1 : ℤ) + 1 = 2`. This equality is used
+in the homology data for the transition.

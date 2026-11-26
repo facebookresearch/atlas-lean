@@ -1,3 +1,5 @@
-# Right Coefficient Trivial Scalar Iso
+# Trivial scalar right coefficients recover the canonical exterior CE complex
 
-Trivial scalar coefficients recover the canonical exterior-power CE chain complex.
+For a commutative R and R-Lie algebra L, rightCoefficientComplex with trivial scalar
+coefficient R is isomorphic to (canonicalChainData R L).complex. The degree-n map is the
+tensor left unitor R ⊗ Λ^nL → Λ^nL.

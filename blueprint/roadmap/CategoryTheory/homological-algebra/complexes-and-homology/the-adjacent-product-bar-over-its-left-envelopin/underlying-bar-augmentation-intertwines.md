@@ -1,3 +1,8 @@
-# Underlying Bar Augmentation intertwines
+# Enveloping equivariance of multiplication
 
-The multiplication augmentation intertwines the native regular action on A.
+For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Multiplication ε : P_0 = A ⊗[k] A → A is equivariant for
+the outer action on P_0 and the regular action on A:
+ε(z • x) = z • ε(x). On elementary tensors this is
+ε((u ⊗ vᵐᵒᵖ) • (a ⊗ b)) = u(ab)v.

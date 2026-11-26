@@ -1,3 +1,5 @@
-# Horizontal First Page Upper Index eq i₂
+# The upper endpoint of a first-page filtration window
 
-The upper filtration index is the first-page upper endpoint.
+The upper endpoint of a first-page filtration window.
+
+The chosen upper index for column `p` equals the first-page upper endpoint at `(p,q)`.

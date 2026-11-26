@@ -14,13 +14,18 @@ public import MathlibExt.Algebra.Homology.Hochschild.AdjacentBarCoefficientCompa
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Basic
 
 /-!
-# Explicit and monadic coefficient Hochschild presentations
+# Explicit coefficient boundaries and the enveloping bar
 
-Specializing the nonunital coefficient representations
-to unital bimodule actions gives the same tensor levels
-and first-right, interior and last-left faces as the
-monadic coefficient bar. The comparison is the identity
-in every degree.
+Let `k` be a commutative ring, `A` a unital `k`-algebra, and `M` a bimodule with commuting
+left and right actions compatible with `k`. Specializing the explicit nonunital coefficient
+construction to these unital actions gives degree `n` equal to `M ⊗[k] A^⊗n`.
+
+Its faces agree with the coefficient bar faces: the first face uses the right coefficient
+action, interior faces multiply adjacent algebra factors, and the last face uses the left
+coefficient action. Thus its signed boundary equals the coefficient Hochschild boundary, and
+identity degree maps give a chain isomorphism. If `Module.Projective k A`, its homology
+computes the left-derived coefficient balanced-tensor functor at the regular enveloping module
+`A`. The coefficient carrier universe remains independent.
 -/
 
 @[expose] public section
@@ -38,7 +43,10 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- The explicit engine, with exactly the two original coefficient actions. -/
+/-- The explicit coefficient complex specialized to unital bimodule actions.
+
+Use the left and right multiplication representations of a bimodule `M` in the explicit
+nonunital construction. The resulting chain complex has degree `n` equal to `M ⊗[k] A^⊗n`. -/
 def originalExplicitComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   NonUnital.complex (Algebra.lsmul (A := A) k k M).toNonUnitalAlgHom
     (Algebra.lsmul (A := Aᵐᵒᵖ) k k M).toNonUnitalAlgHom
@@ -81,7 +89,11 @@ private theorem originalExplicitFace_tprod (n : ℕ) (i : Fin (n + 2)) (m : M) (
         (Algebra.lsmul (A := Aᵐᵒᵖ) k k M).toNonUnitalAlgHom
         (fun a b m => smul_comm a b m) n l m a
 
-/-- The original explicit and canonical coefficient differentials are exactly equal as native maps. -/
+/-- Equality of explicit and coefficient Hochschild differentials.
+
+In every successor degree, the explicit boundary agrees with the coefficient Hochschild
+boundary on the common tensor carrier, retaining the first-right and last-left coefficient
+actions. -/
 theorem originalExplicitComplex_d (n : ℕ) :
     ((originalExplicitComplex k A M).d (n + 1) n).hom =
       ((ModuleCat.Algebra.Hochschild.chainComplex k A M).d (n + 1) n).hom := by
@@ -96,7 +108,10 @@ theorem originalExplicitComplex_d (n : ℕ) :
   intro i _
   erw [LinearMap.smul_apply, originalExplicitFace_tprod]
 
-/-- The original two Hochschild presentations agree by native identity components in every degree. -/
+/-- The identity comparison of two coefficient Hochschild complexes.
+
+Identity maps on the degreewise coefficient tensor modules give a chain isomorphism from the
+explicit unital specialization to the coefficient Hochschild chain complex. -/
 def originalExplicitChainIso : originalExplicitComplex k A M ≅
     ModuleCat.Algebra.Hochschild.chainComplex k A M :=
   HomologicalComplex.Hom.isoOfComponents (fun _ => Iso.refl _) (by
@@ -107,8 +122,11 @@ def originalExplicitChainIso : originalExplicitComplex k A M ≅
     apply ModuleCat.hom_ext
     exact (originalExplicitComplex_d k A M j).symm)
 
-/-- The explicit original coefficient engine computes the derived
-balanced tensor through the original projective bar; no coefficient projectivity is needed. -/
+/-- The derived balanced-tensor comparison for explicit coefficient chains.
+
+If `Module.Projective k A`, degree-`n` homology of the explicit coefficient complex is
+isomorphic to the `n`th left-derived coefficient balanced-tensor value on the regular
+enveloping module `A`. The coefficient module has its given bimodule actions. -/
 def originalExplicitHomologyIsoDerived [Module.Projective k A] (n : ℕ) :
     (originalExplicitComplex k A M).homology n ≅
       ((AdjacentBar.coefficientTensorFunctor k A M).leftDerived n).obj

@@ -1,4 +1,4 @@
 # Original right UEA representations and actual coefficient carrier lifts
 
-- [Coefficient ULift Equiv](coefficient-ulift-equiv.md)
-- [Coefficient ULift Ground Equiv](coefficient-ulift-ground-equiv.md)
+- [The right enveloping-module equivalence removes a coefficient lift](coefficient-ulift-equiv.md)
+- [The coefficient-lift equivalence after ground-scalar restriction](coefficient-ulift-ground-equiv.md)

@@ -1,4 +1,6 @@
-# Polynomial Coordinates
+# The polynomial module coordinates of an enveloping algebra
 
-Polynomial PBW coordinates are a ground-module equivalence of the
-original UEA; no algebra equivalence to the commutative polynomial ring is claimed.
+The polynomial module coordinates of an enveloping algebra.
+
+The PBW exponent basis and polynomial monomial basis give an `R`-linear equivalence `U_R(L)
+≃ₗ[R] MvPolynomial I R`.

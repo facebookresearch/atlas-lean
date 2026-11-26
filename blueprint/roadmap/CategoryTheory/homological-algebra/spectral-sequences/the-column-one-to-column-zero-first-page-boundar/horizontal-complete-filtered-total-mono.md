@@ -1,5 +1,6 @@
-# Horizontal Complete Filtered Total Mono Over zero middle triangle
+# The identity triangle of zero-stage filtration subobjects
 
-At stage zero, the upper-stage identification, the common-middle
-identification, and the lower successor-stage identification form the
-identity triangle in the filtration-subobject category.
+The identity triangle of zero-stage filtration subobjects.
+
+The upper zero-stage, middle-stage, and next lower-stage comparisons compose to the identity
+isomorphism in the filtration-subobject category.

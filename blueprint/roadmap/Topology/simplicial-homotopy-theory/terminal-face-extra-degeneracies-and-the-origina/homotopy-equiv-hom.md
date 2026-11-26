@@ -1,3 +1,6 @@
-# Homotopy Equiv hom
+# The forward map of the right extra-degeneracy augmentation equivalence
 
-The equivalence's forward map is the actual native augmentation.
+The forward map of the right extra-degeneracy augmentation equivalence.
+
+The forward homotopy-equivalence map is the alternating-face augmentation to the single-zero
+point complex.

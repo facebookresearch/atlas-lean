@@ -1,3 +1,5 @@
-# Id f
+# The underlying identity of a right comodule
 
-Identity right comodule morphisms are identities underneath.
+The underlying identity of a right comodule.
+
+The identity comodule morphism has the identity transformation of the underlying functor.

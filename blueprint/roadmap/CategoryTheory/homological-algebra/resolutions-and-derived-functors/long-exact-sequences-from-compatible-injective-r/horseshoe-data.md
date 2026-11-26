@@ -1,11 +1,7 @@
-# Horseshoe Data
+# Compatible injective horseshoe data for a short exact sequence
 
-Horseshoe-type input data for the long exact sequence of right-derived
-functors: injective resolutions of the three terms of a short exact sequence
-`S`, with chosen lifts of `S.f` and `S.g` to the resolution complexes, plus a
-degreewise splitting of the resulting diagram of complexes.
-
-The middle resolution and the splittings are arbitrary compatible choices.
-`HorseshoeData.ofEndpoints` supplies such data from the injective horseshoe
-with prescribed endpoint resolutions. Source-specific factories may supply
-other compatible middle resolutions without changing this interface.
+For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, compatible horseshoe data consists of injective resolutions
+`I₁,I₂,I₃`, cochain maps lifting the two sequence maps and preserving
+their coaugmentations, a zero composite, and a splitting of
+`I₁^n → I₂^n → I₃^n` for every `n ∈ ℕ`.

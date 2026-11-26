@@ -22,10 +22,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 omit [HasInjectiveResolutions C] in
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-Correct a middle degree-zero map to retain the augmentation, while keeping the specified endpoint
-maps.
--/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. There is a middle map `b⁰ : H₂⁰ → K₂⁰` commuting with both
+endpoint maps and satisfying the coaugmentation equation
+`ι_H₂⁰ ≫ b⁰ = α₂ ≫ ι_K₂⁰`. -/
 theorem HorseshoeData.nonempty_middle_zero_comparison
     {S T : ShortComplex C} {hS : S.ShortExact} {hT : T.ShortExact}
     (H : HorseshoeData S hS) (K : HorseshoeData T hT) (α : S ⟶ T)
@@ -143,10 +145,14 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 omit [HasInjectiveResolutions C] in
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-Extend the middle comparison one degree, retaining both specified endpoint chain maps and the
-differential equation.
--/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. Suppose `bⁿ : H₂ⁿ → K₂ⁿ` commutes with both endpoint maps,
+preserves the coaugmentation when `n=0`, and has a predecessor
+compatible with the differential when `n>0`. It extends to `b^(n+1)`
+commuting with both endpoints and satisfying
+`d_H₂ ≫ b^(n+1) = bⁿ ≫ d_K₂`. -/
 theorem HorseshoeData.nonempty_middle_succ_comparison
     {S T : ShortComplex C} {hS : S.ShortExact} {hT : T.ShortExact}
     (H : HorseshoeData S hS) (K : HorseshoeData T hT) (α : S ⟶ T)
@@ -323,13 +329,24 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- A finite initial segment of the compatible middle chain map. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. A middle prefix through degree `N` consists of maps `bⁿ`
+for `n≤N` commuting with the endpoint maps, preserving the degree-zero
+coaugmentation, and satisfying every differential equation within
+those degrees. -/
 structure HorseshoeData.MiddlePrefix
     {S T : ShortComplex C} {hS : S.ShortExact} {hT : T.ShortExact}
     (H : HorseshoeData S hS) (K : HorseshoeData T hT) (α : S ⟶ T)
     (u : InjectiveResolution.Hom H.res₁ K.res₁ α.τ₁)
     (w : InjectiveResolution.Hom H.res₃ K.res₃ α.τ₃) (N : ℕ) where
-  /-- The component of the middle resolution comparison in degree n, defined for n ≤ N. -/
+  /-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. The degree-`n` component of a middle prefix through `N`,
+for `n≤N`, is a map `bⁿ : H₂ⁿ → K₂ⁿ` subject to its endpoint,
+coaugmentation, and consecutive-degree differential equations. -/
   b (n : ℕ) (hn : n ≤ N) : H.res₂.cocomplex.X n ⟶ K.res₂.cocomplex.X n
   left n hn : H.φf.f n ≫ b n hn = u.hom.f n ≫ K.φf.f n
   right n hn : b n hn ≫ K.φg.f n = H.φg.f n ≫ w.hom.f n
@@ -345,7 +362,11 @@ variable (w : InjectiveResolution.Hom H.res₃ K.res₃ α.τ₃)
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The degree-zero prefix uses the constructed augmentation correction. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. There is a compatible prefix in degree zero: its middle map
+commutes with the fixed endpoint maps and preserves the coaugmentation. -/
 def middlePrefixZero : MiddlePrefix H K α u w 0 := by
   let witness := H.nonempty_middle_zero_comparison K α u w
   let b := witness.choose
@@ -370,7 +391,12 @@ def middlePrefixZero : MiddlePrefix H K α u w 0 := by
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Extend a whole initial segment by the injective recurrence. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. Any compatible middle prefix through degree `N` extends to
+one through degree `N+1`, preserving its endpoint and coaugmentation
+conditions and adding the last differential equation. -/
 def middlePrefixSucc {N : ℕ} (P : MiddlePrefix H K α u w N) :
     MiddlePrefix H K α u w (N + 1) := by
   let witness := H.nonempty_middle_succ_comparison K α u w N
@@ -418,19 +444,32 @@ def middlePrefixSucc {N : ℕ} (P : MiddlePrefix H K α u w N) :
       rw [dite_eq_right (by omega), dite_eq_left (le_refl N)]
       exact hd
 
-/-- Successive prefixes retain every previously constructed component. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. Extending a middle prefix through degree `N` preserves each
+of its component maps in every degree `n≤N`. -/
 @[simp] theorem middlePrefixSucc_b {N : ℕ} (P : MiddlePrefix H K α u w N)
     (n : ℕ) (hn : n ≤ N) :
     (middlePrefixSucc H K α u w P).b n (Nat.le_trans hn (Nat.le_succ N)) = P.b n hn := by
   unfold middlePrefixSucc
   simp only [dite_eq_left hn]
 
-/-- All prefixes are generated from the same degree-zero correction and recurrence. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. The degree-zero prefix and successive extensions give a
+family of compatible middle prefixes through every finite degree `N`. -/
 def middlePrefixes : ∀ N, MiddlePrefix H K α u w N
   | 0 => middlePrefixZero H K α u w
   | N + 1 => middlePrefixSucc H K α u w (middlePrefixes N)
 
-/-- A later initial segment retains the component at its own degree. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. For `n≤N`, the degree-`n` component of the prefix through
+`N` equals the component of the prefix through `n`; successive
+extensions therefore define a coherent family. -/
 theorem middlePrefixes_stable (N n : ℕ) (hn : n ≤ N) :
     (middlePrefixes H K α u w N).b n hn =
       (middlePrefixes H K α u w n).b n (le_refl n) := by
@@ -448,11 +487,20 @@ theorem middlePrefixes_stable (N n : ℕ) (hn : n ≤ N) :
         subst n
         rfl
 
-/-- Every middle chain component comes from that same coherent construction. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. The stable component in degree `n` is a map
+`bⁿ : H₂ⁿ → K₂ⁿ` taken from the coherent compatible prefix through `n`. -/
 def middleComponent (n : ℕ) : H.res₂.cocomplex.X n ⟶ K.res₂.cocomplex.X n :=
   (middlePrefixes H K α u w n).b n (le_refl n)
 
-/-- These constructed components satisfy the chain equation. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. The stable middle components satisfy
+`d_H₂ⁿ ≫ b^(n+1) = bⁿ ≫ d_K₂ⁿ` for every `n`, and hence commute
+with the cochain differentials. -/
 theorem middleComponent_differential (n : ℕ) :
     H.res₂.cocomplex.d n (n + 1) ≫ middleComponent H K α u w (n + 1) =
       middleComponent H K α u w n ≫ K.res₂.cocomplex.d n (n + 1) := by
@@ -460,7 +508,11 @@ theorem middleComponent_differential (n : ℕ) :
   rw [middlePrefixes_stable H K α u w (n + 1) n (Nat.le_succ n)] at h
   exact h
 
-/-- Full middle chain map assembled from the same coherent prefixes. -/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. The stable components of the compatible prefixes assemble
+into a full cochain map `H₂ → K₂` between the middle resolutions. -/
 def middleComparison : H.res₂.cocomplex ⟶ K.res₂.cocomplex where
   f n := middleComponent H K α u w n
   comm' i j hij := by
@@ -468,10 +520,11 @@ def middleComparison : H.res₂.cocomplex ⟶ K.res₂.cocomplex where
     subst j
     exact (middleComponent_differential H K α u w i).symm
 
-/--
-Construct a compatible comparison between arbitrary split horseshoes with the prescribed endpoint
-resolution maps.
--/
+/-- Let `C` be abelian, `H,K` compatible injective horseshoe data
+for short exact sequences `S,T`, and `α : S → T`. Fix maps of
+endpoint injective resolutions `u : H₁ → K₁` over `α₁` and
+`w : H₃ → K₃` over `α₃`. The given endpoint maps and the constructed middle cochain
+map form a morphism of compatible horseshoe data over `α`. -/
 def comparisonWithEndpoints : HorseshoeData.Hom H K α where
   ψ₁ := u.hom
   ψ₂ := middleComparison H K α u w
@@ -492,10 +545,10 @@ def comparisonWithEndpoints : HorseshoeData.Hom H K α where
 
 variable [HasInjectiveResolutions C]
 
-/--
-Every additive functor's connector is independent of the whole compatible split horseshoe, not
-only of endpoint resolutions.
--/
+/-- Let `C,A` be abelian, with injective resolutions in `C`,
+`F : C → A` additive, and `H,K` any compatible injective horseshoe
+data for the same short exact sequence `S`. Their connecting maps
+`R^nF(S.X₃) → R^(n+1)F(S.X₁)` are equal for every `n`. -/
 theorem delta_eq {A : Type*} [Category* A] [Abelian A]
     {F : C ⥤ A} [F.Additive] (n : ℕ)
     (K' : HorseshoeData S hS) : H.delta F n (n + 1) rfl = K'.delta F n (n + 1) rfl := by

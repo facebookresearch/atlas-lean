@@ -15,12 +15,17 @@ public import Mathlib.LinearAlgebra.ExteriorPower.Basis
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
-# Injectivity of exterior-power deletion
+# Injectivity of signed exterior deletion
 
-The deletion map is injective whenever the module has a basis. The proof
-recovers each exterior-basis vector from one distinguished coordinate of the
-tensor-product basis. It works over every commutative ring and requires no
-finite-generation or invertibility hypothesis.
+For a module `M` over a commutative ring `R`, deletion has target `Λ^n_R M ⊗[R] M`. It sends a
+word of length `n+1` to the sum of its `r`-th deletions with coefficient `(-1)^r`, putting the
+remaining wedge first and the removed vector second.
+
+If `M` has a basis, this map is injective in every degree: one distinguished tensor-basis
+coordinate recovers each exterior-basis coefficient. Thus deletion is injective for every free
+`R`-module.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -45,7 +50,9 @@ section Basis
 
 variable {I : Type*} [LinearOrder I]
 
-/-- The ordered basis subset left after deleting position `r`. -/
+/-- Let `I` be linearly ordered, `n : ℕ`, `s : Set.powersetCard I (n+1)`, and `r : Fin(n+1)`. The
+subset `deletionEraseIndex n s r` is the ordered `n`-element subset obtained by removing `e_s
+r`; its enumeration is `e_s ∘ r.succAbove`. -/
 private noncomputable def deletionEraseIndex (n : ℕ)
     (s : Set.powersetCard I (n + 1)) (r : Fin (n + 1)) :
     Set.powersetCard I n :=
@@ -79,7 +86,10 @@ private lemma deletionEraseIndex_insert (n : ℕ)
     · exact Or.inl hk.symm
     · exact Or.inr ⟨j, by simpa [deletionEraseIndex] using hk⟩
 
-/-- Signed deletion formula on the exterior basis induced by `b`. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, `b : Basis I R M` with `I` linearly ordered,
+and `n : ℕ`. For `s : Set.powersetCard I (n+1)`, let `e_s : Fin(n+1) ↪o I` enumerate `s`. Then
+`deletion R M n (b.exteriorPower(n+1) s) = ∑ r : Fin(n+1), (-1:R)^r.val • ((b.exteriorPower n
+(deletionEraseIndex n s r)) ⊗ b(e_s r))`. -/
 private theorem deletion_apply_basis (n : ℕ) (b : Module.Basis I R M)
     (s : Set.powersetCard I (n + 1)) :
     deletion R M n (b.exteriorPower (n + 1) s) =
@@ -226,7 +236,9 @@ private theorem injective_of_exteriorBasis_images_linearIndependent (n : ℕ)
     (b.exteriorPower (n + 1)).span_eq hli'
 
 set_option backward.isDefEq.respectTransparency true in
-/-- Deletion is injective when an ordered basis is supplied. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` indexed by a linearly
+ordered type `I`. For every `n : ℕ`, `deletion R M n : Λ^(n+1)_R M → Λ^n_R M ⊗[R] M` is
+injective. -/
 theorem deletion_injective_of_basis (n : ℕ) (b : Module.Basis I R M) :
     Function.Injective (deletion R M n) := by
   exact injective_of_exteriorBasis_images_linearIndependent R M n b
@@ -234,7 +246,8 @@ theorem deletion_injective_of_basis (n : ℕ) (b : Module.Basis I R M) :
 
 end Basis
 
-/-- Deletion is injective on every free module over a commutative ring. -/
+/-- For a commutative ring `R`, a free `R`-module `M`, and `n : ℕ`, the signed deletion map
+`Λ^(n+1)_R M → Λ^n_R M ⊗[R] M` is injective. -/
 theorem deletion_injective [Module.Free R M] (n : ℕ) :
     Function.Injective (deletion R M n) := by
   classical

@@ -13,15 +13,22 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationFunctor
 
 /-!
-# Naturality of the complete-filtration spectral object
+# Naturality of complete-filtration interval cones and connecting maps
 
-A bicomplex map induces a natural transformation of the complete filtration
-diagrams, hence of their mapping-cone functors.  The mapping-cone comparison
-commutes with the connecting maps, so it gives a morphism of triangulated
-spectral objects.  Applying the existing homological-functor construction
-gives the corresponding morphism of abelian spectral objects.
+Let C be a preadditive category with a zero object and finite coproducts,
+and let K,L be bicomplexes with both differentials lowering nonnegative
+degrees. Their complete horizontal filtrations F_a are indexed by
+EInt = ℤ ∪ {−∞,+∞}. A bicomplex map f : K → L gives a natural
+map of the filtration diagrams.
 
-No spectral-sequence or page map is constructed here.
+After reindexing chain degree n to cochain degree −n, this map induces
+Cone(F_a(K) → F_b(K)) → Cone(F_a(L) → F_b(L))
+for every a ≤ b. The interval maps commute with the connecting maps
+of composable filtration inclusions, so they define a morphism of
+triangulated spectral objects in the cochain homotopy category.
+For abelian C, applying the homological functor gives the induced
+abelian spectral-object morphism. The category object and morphism
+universes remain independent.
 -/
 
 @[expose] public section
@@ -45,8 +52,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- A bicomplex map induces a natural transformation between the complete
-filtration diagrams reindexed as integer cochain complexes. -/
+/-- For a preadditive category C with a zero object and finite
+coproducts, a map f : K → L of nonnegative homological bicomplexes
+gives a natural transformation of their complete EInt-indexed
+filtration diagrams after chain degree n is placed in cochain
+degree −n. At stage a it is the extended filtered total map F_a(f). -/
 noncomputable def horizontalCompleteFiltrationCochainDiagramNatTrans
     (f : K ⟶ L) :
     horizontalCompleteFiltrationCochainDiagram K ⟶
@@ -64,8 +74,12 @@ theorem horizontalCompleteFiltrationCochainDiagramNatTrans_app
         ComplexShape.embeddingDownNat :=
   rfl
 
-/-- A bicomplex map induces a natural transformation between the mapping-cone
-functors of the two complete filtrations. -/
+/-- For nonnegative homological bicomplexes K,L in a preadditive
+category with a zero object and finite coproducts, a map f : K → L
+gives the natural cone map for every a ≤ b in EInt:
+Cone(F_a(K) → F_b(K)) → Cone(F_a(L) → F_b(L)).
+Its endpoint maps are F_a(f) and F_b(f), and their commuting square
+is the naturality of the filtration diagram. -/
 noncomputable def horizontalCompleteFiltrationMappingConeNatTrans
     (f : K ⟶ L) :
     horizontalCompleteFiltrationMappingConeFunctor K ⟶
@@ -133,8 +147,12 @@ private noncomputable def functorMappingConeCompTriangleMap
             (η.naturality a) (η.naturality b))
       simpa [functorMappingConeCompTriangle] using h.symm)
 
-/-- A bicomplex map induces a morphism between the triangulated spectral
-objects of the complete horizontal filtrations. -/
+/-- For a bicomplex map f : K → L in a preadditive category
+with a zero object and finite coproducts, the complete filtration
+cone maps define a morphism of triangulated spectral objects in
+HomotopyCategory(C,up ℤ), indexed by EInt.
+They commute with the connecting map for every composable pair
+of filtration inclusions. -/
 noncomputable def horizontalCompleteFiltrationTriangulatedSpectralObjectMap
     (f : K ⟶ L) :
     horizontalCompleteFiltrationTriangulatedSpectralObject K ⟶
@@ -171,8 +189,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- A bicomplex map induces a morphism between the abelian spectral objects of
-the complete horizontal filtrations. -/
+/-- For a map f : K → L of nonnegative homological bicomplexes
+in an abelian category C, taking homology of the complete
+triangulated interval-cone morphism gives the map between their
+abelian spectral objects. Its interval groups and connecting
+morphisms are those of the complete horizontal filtration. -/
 noncomputable def horizontalCompleteFiltrationSpectralObjectMap (f : K ⟶ L) :
     horizontalCompleteFiltrationSpectralObject K ⟶
       horizontalCompleteFiltrationSpectralObject L :=

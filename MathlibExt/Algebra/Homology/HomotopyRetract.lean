@@ -27,8 +27,10 @@ variable {V : Type u} [Category.{v} V] [Preadditive V]
   {ι : Type*} {c : ComplexShape ι}
   {C D : HomologicalComplex V c}
 
-/-- A strict retraction together with a homotopy in the other direction is a
-homotopy equivalence. -/
+/-- Let `V` be preadditive and `C,D` complexes of any shape.
+For maps `f : C → D`, `g : D → C` with `f ≫ g=𝟙 C` and a
+chain homotopy `g ≫ f ≃ 𝟙 D`, the two maps form a homotopy
+equivalence `C ≃ D`. -/
 def ofRetract (hom : C ⟶ D) (inv : D ⟶ C)
     (hom_inv_id : hom ≫ inv = 𝟙 C)
     (homotopy_inv_hom_id : Homotopy (inv ≫ hom) (𝟙 D)) :

@@ -1,4 +1,5 @@
-# Horizontal First Page Coherent Map zero
+# The coherent filtration map in column zero
 
-At column zero, the coherent filtration map is the original first-page
-filtration map.
+The coherent filtration map in column zero.
+
+The zero-column coherent map is its first-page filtration map.

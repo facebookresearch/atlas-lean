@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Connecting Map
+# The coherent-window connecting map in direct-column coordinates
 
-Connecting map obtained directly from the coherent filtration window,
-transported to direct-column homology.
+The coherent-window connecting map in direct-column coordinates.
+
+Transport the cokernel-composition connecting morphism to direct-column homology from degree
+`-(p+1)-q` to `-p-q`.

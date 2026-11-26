@@ -1,3 +1,5 @@
-# Regular Coefficient Map apply
+# Value of the lifted regular coefficient map
 
-The lifted regular map acts on the original algebra element.
+For a possibly nonunital k-algebra map g : A → B between ring k-algebras and an element a of the
+chosen source lift, regularCoefficientMap g a is the target lift of g applied to the underlying
+element of a.

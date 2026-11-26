@@ -1,6 +1,6 @@
-# Map is Pushout of is Admissible Mono
+# Exact functors preserve pushout along admissible monos
 
-An exact functor preserves a pushout along an admissible monomorphism.
-
-The other source leg is arbitrary. This is the exact-category cobase-change
-square needed by the standard Waldhausen structure.
+Let `F : C → D` be an additive exact functor between additive exact
+categories. Every pushout along an admissible monomorphism
+`i : X → Y`, with arbitrary other source leg `X → X′`, is carried
+to a pushout in `D`.

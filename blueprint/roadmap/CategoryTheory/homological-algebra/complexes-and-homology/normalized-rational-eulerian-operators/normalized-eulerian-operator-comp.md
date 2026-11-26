@@ -1,3 +1,5 @@
-# Normalized Eulerian Operator comp
+# Orthogonality and idempotence of normalized Eulerian operators
 
-Actual normalized Eulerian operators are orthogonal idempotents.
+Orthogonality and idempotence of normalized Eulerian operators.
+
+For all weights `i,j`, one has `E_n^i ∘ E_n^j = E_n^i` when `i=j`, and zero otherwise.

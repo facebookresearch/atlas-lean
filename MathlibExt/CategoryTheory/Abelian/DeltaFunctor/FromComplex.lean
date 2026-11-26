@@ -13,11 +13,13 @@ public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.Basic
 public import MathlibExt.Algebra.Homology.HomologySequenceFunctor
 
 /-!
-# δ-functors from homology of functorial complexes
+# δ-functors from families of complexes
 
-A functor carrying short exact sequences to short exact sequences of complexes gives natural
-connecting maps and a long exact homology sequence. Vanishing in the adjacent degree supplies
-the degree-zero endpoint. The construction applies to arbitrary index types and complex shapes.
+Let `A` be preadditive, `B` abelian, and `F : A → HomologicalComplex B c`
+additive and preserving short exact sequences. Homology along a natural-number
+path in the complex shape gives a homological or cohomological δ-functor
+according to the direction of the path. Vanishing at the adjacent index
+to degree zero supplies the endpoint condition of the long exact sequence.
 -/
 
 @[expose] public section
@@ -34,9 +36,11 @@ variable {ι : Type u₃} {c : ComplexShape ι}
 
 namespace HomologicalDeltaFunctor
 
-/-- Homology of a functorial family of complexes gives a homological δ-functor
-when the complexes preserve short exact sequences and homology vanishes in the
-degree adjacent to degree zero. The source needs only a preadditive structure. -/
+/-- Let `A` be preadditive, `B` abelian, and `F : A → HomologicalComplex B c`
+additive and preserving short exact sequences. If `i(n+1) → i(n)`
+are shape arrows, `i(0) → j` is a shape arrow, and `H_j(F(X))=0`
+for every `X`, the functors `X ↦ H_i(n)(F(X))` form a homological
+δ-functor `A → B`. -/
 noncomputable def ofHomology (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)
     (i : ℕ → ι) (hi : ∀ n, c.Rel (i (n + 1)) (i n))
@@ -54,7 +58,11 @@ noncomputable def ofHomology (F : A ⥤ HomologicalComplex B c) [F.Additive]
     have hδ : (hF S).δ (i 0) j h₀ = 0 := (hzero S.obj.X₁).eq_of_tgt _ _
     exact (ShortComplex.exact_iff_epi _ hδ).mp ((hF S).homology_exact₃ _ _ h₀)
 
-/-- The degree functor is the specified homology functor after the complex-valued functor. -/
+/-- For the additive short-exact-sequence-preserving family
+`F : A → HomologicalComplex B c`, with `A` preadditive, `B` abelian,
+a decreasing shape path `i(n+1) → i(n)` and vanishing at the adjacent
+index `j`, the degree-`n` functor of the resulting homological
+δ-functor is `F ⋙ homologyFunctor B c (i n)`. -/
 @[simp]
 theorem ofHomology_T (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)
@@ -64,7 +72,11 @@ theorem ofHomology_T (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (ofHomology A B F hF i hi j h₀ hzero).T n =
       F ⋙ HomologicalComplex.homologyFunctor B c (i n) := rfl
 
-/-- Connecting components are the connecting maps of the image short exact sequence. -/
+/-- For a homological δ-functor constructed from additive
+`F : A → HomologicalComplex B c`, with `A` preadditive, `B` abelian,
+the specified decreasing path and adjacent vanishing, its connecting
+component on a short exact sequence `S` is the native boundary
+`H_i(n+1)(F(S.X₃)) → H_i(n)(F(S.X₁))` of the mapped sequence. -/
 @[simp]
 theorem ofHomology_connecting_app (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)
@@ -79,9 +91,11 @@ end HomologicalDeltaFunctor
 
 namespace CohomologicalDeltaFunctor
 
-/-- Homology of a functorial family of complexes gives a cohomological δ-functor
-for an index map along which the connecting morphisms increase degree. The
-vanishing hypothesis supplies the degree-zero mono endpoint. -/
+/-- Let `A` be preadditive, `B` abelian, and `F : A → HomologicalComplex B c`
+additive and preserving short exact sequences. If `i(n) → i(n+1)`
+are shape arrows, `j → i(0)` is a shape arrow, and `H_j(F(X))=0`
+for every `X`, the functors `X ↦ H_i(n)(F(X))` form a cohomological
+δ-functor `A → B`. -/
 noncomputable def ofHomology (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)
     (i : ℕ → ι) (hi : ∀ n, c.Rel (i n) (i (n + 1)))
@@ -99,7 +113,11 @@ noncomputable def ofHomology (F : A ⥤ HomologicalComplex B c) [F.Additive]
     have hδ : (hF S).δ j (i 0) h₀ = 0 := (hzero S.obj.X₃).eq_of_src _ _
     exact (ShortComplex.exact_iff_mono _ hδ).mp ((hF S).homology_exact₁ _ _ h₀)
 
-/-- The degree functor is the specified homology functor after the complex-valued functor. -/
+/-- For an additive short-exact-sequence-preserving family
+`F : A → HomologicalComplex B c`, with `A` preadditive, `B` abelian,
+an increasing shape path `i(n) → i(n+1)` and vanishing at its
+adjacent index `j`, the degree-`n` cohomological functor is
+`F ⋙ homologyFunctor B c (i n)`. -/
 @[simp]
 theorem ofHomology_T (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)
@@ -109,7 +127,11 @@ theorem ofHomology_T (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (ofHomology A B F hF i hi j h₀ hzero).T n =
       F ⋙ HomologicalComplex.homologyFunctor B c (i n) := rfl
 
-/-- Connecting components are the connecting maps of the image short exact sequence. -/
+/-- For a cohomological δ-functor constructed from additive
+`F : A → HomologicalComplex B c`, with `A` preadditive, `B` abelian,
+the specified increasing path and adjacent vanishing, its connecting
+component on a short exact sequence `S` is the boundary
+`H_i(n)(F(S.X₃)) → H_i(n+1)(F(S.X₁))` of the mapped sequence. -/
 @[simp]
 theorem ofHomology_connecting_app (F : A ⥤ HomologicalComplex B c) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)

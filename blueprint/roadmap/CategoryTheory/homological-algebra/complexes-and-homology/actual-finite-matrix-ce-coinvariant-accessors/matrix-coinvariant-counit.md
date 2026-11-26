@@ -1,3 +1,5 @@
-# Matrix Coinvariant Counit
+# The counit of matrix adjoint coinvariants
 
-The descended counit on finite-matrix coinvariants.
+The counit of matrix adjoint coinvariants.
+
+The CE counit descends to the scalar-adjoint quotient complex.

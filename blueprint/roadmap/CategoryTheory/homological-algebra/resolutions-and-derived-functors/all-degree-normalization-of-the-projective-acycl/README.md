@@ -1,9 +1,9 @@
 # All-degree normalization of the projective acyclic comparison
 
-- [Acyclic Resolution Normalization Sign](acyclic-resolution-normalization-sign.md)
-- [Acyclic Resolution Normalization Sign zero](acyclic-resolution-normalization-sign-ze.md)
-- [Acyclic Resolution Normalization Sign one](acyclic-resolution-normalization-sign-on.md)
-- [Normalization Projective Terms acyclic](normalization-projective-terms-acyclic.md)
-- [Normalization Acyclic Projective succ succ](normalization-acyclic-projective-succ-su.md)
-- [Normalization Acyclic Projective hom](normalization-acyclic-projective-hom.md)
-- [Normalization Acyclic Projective inv comp hom](normalization-acyclic-projective-inv-com.md)
+- [Normalization signs from the kernel-tail recurrence](acyclic-resolution-normalization-sign.md)
+- [Degree-zero normalization sign](acyclic-resolution-normalization-sign-ze.md)
+- [Degree-one normalization sign](acyclic-resolution-normalization-sign-on.md)
+- [Projective-resolution terms are acyclic for an additive functor](normalization-projective-terms-acyclic.md)
+- [Higher acyclic comparison factors through the kernel-tail boundary](normalization-acyclic-projective-succ-su.md)
+- [Projective acyclic comparison has the triangular normalization sign](normalization-acyclic-projective-hom.md)
+- [Canonical inverse followed by the acyclic comparison gives the triangular scalar](normalization-acyclic-projective-inv-com.md)

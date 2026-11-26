@@ -1,3 +1,5 @@
-# Enveloping Filtration eq bot of lt
+# Vanishing of filtration stages below exterior degree
 
-Stages below the exterior degree vanish.
+Vanishing of filtration stages below exterior degree.
+
+If `p < n`, the total filtration stage `p` in chain degree `n` is the zero submodule.

@@ -1,4 +1,6 @@
-# Tensor Cartan Eilenberg Column Zero Map
+# The tensor of the Cartan–Eilenberg column-zero augmentation
 
-Tensoring the stored column-zero augmentation with the identity of the
-first complex.
+Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. Tensoring id_K with the stored term-column augmentation P.bicomplex.X₀ → L gives a chain map
+from resolution degree zero of the tensor-convolution bicomplex to K ⊗ L.

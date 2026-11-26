@@ -1,6 +1,6 @@
 # Homology and exact limits
 
-- [Homology Limit Iso](homology-limit-iso.md)
-- [Homology Limit Iso hom comp π](homology-limit-iso-hom-comp.md)
-- [Homology Limit Iso inv comp map π](homology-limit-iso-inv-comp-map.md)
-- [Homology Limit Iso hom eq limit post](homology-limit-iso-hom-eq-limit-post.md)
+- [The canonical comparison of homology with a homology-preserving limit](homology-limit-iso.md)
+- [The projection formula for the homology-limit comparison](homology-limit-iso-hom-comp.md)
+- [The inverse projection formula for the homology-limit comparison](homology-limit-iso-inv-comp-map.md)
+- [The homology-limit comparison as the limit comparison map](homology-limit-iso-hom-eq-limit-post.md)

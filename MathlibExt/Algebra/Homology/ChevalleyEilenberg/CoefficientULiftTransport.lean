@@ -18,15 +18,16 @@ public import MathlibExt.Algebra.Category.ModuleCat.UliftCoherence
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Universe lifts of Chevalley–Eilenberg coefficients
+# Coefficient lifts of Chevalley–Eilenberg chains and homology
 
-Over a commutative ring, lifting a coefficient complex is canonically isomorphic to forming
-the Chevalley–Eilenberg complex with lifted Lie coefficients. On an exterior tensor, the
-comparison lifts the coefficient factor and retains the exterior factor.
+Let `R` be a commutative ring, `L` an `R`-Lie algebra, and `M` a left Lie coefficient module.
+Lifting the entire degree tensor `⋀ⁿ[R] L ⊗[R] M` is linearly equivalent to retaining the
+exterior factor and lifting only `M`, by `up(a ⊗ m) ↦ a ⊗ up(m)`.
 
-These chain and homology comparisons are natural in compatible Lie and coefficient maps.
-Successive universe lifts flatten compatibly, with independent Lie and coefficient carrier
-universes.
+These degree maps give a chain isomorphism and homology comparisons. Successive lifts flatten
+by `up(up(x)) ↦ up(x)`. The comparisons are natural in Lie maps and equivariant coefficient
+maps, including independent source and target carrier universes. The corresponding lifted
+homology maps also define ground-linear maps between the unlifted homology carriers.
 -/
 
 @[expose] public section
@@ -44,13 +45,20 @@ attribute [local implicit_reducible] coefficientComplex coefficientComplexULift
 
 variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- Tensor/up-down coordinates from the whole-complex lift to the coefficient-carrier lift. -/
+/-- The tensor comparison between full-chain and coefficient-only lifts.
+
+In degree `n`, the equivalence removes the lift of the full exterior tensor and applies the
+coefficient lift to its right factor. -/
 def coefficientULiftDegreeEquiv (M : LieModuleCat.{w} R L) (n : ℕ) :
     (coefficientComplexULift.{u, v, w, z} R L M).X n ≃ₗ[R]
       (coefficientComplex R L (LieModuleCat.CoefficientULift.obj.{u, v, w, z} R L M)).X n :=
   (ULift.moduleEquiv : ULift.{z} ((⋀[R]^n L) ⊗[R] M) ≃ₗ[R] ((⋀[R]^n L) ⊗[R] M)).trans
     ((ULift.moduleEquiv : ULift.{z} M ≃ₗ[R] M).symm.lTensor (⋀[R]^n L))
 
+/-- The coefficient-lift formula for a lifted CE tensor.
+
+The comparison sends `up(a)` to the tensor map induced by the identity exterior map and the
+coefficient inclusion `M → ULift M`. -/
 theorem coefficientULiftDegreeEquiv_up (M : LieModuleCat.{w} R L) (n : ℕ)
     (a : (⋀[R]^n L) ⊗[R] M) :
     coefficientULiftDegreeEquiv.{u, v, w, z} R L M n (ULift.up a) =
@@ -58,6 +66,9 @@ theorem coefficientULiftDegreeEquiv_up (M : LieModuleCat.{w} R L) (n : ℕ)
   change ((ULift.moduleEquiv : ULift.{z} M ≃ₗ[R] M).symm.lTensor (⋀[R]^n L)) a = _
   rfl
 
+/-- The pure-tensor formula for the CE coefficient-lift comparison.
+
+The degree comparison sends `up(a ⊗ m)` to `a ⊗ up(m)`, retaining exterior-first order. -/
 theorem coefficientULiftDegreeEquiv_up_tmul (M : LieModuleCat.{w} R L) (n : ℕ)
     (a : ⋀[R]^n L) (m : M) :
     coefficientULiftDegreeEquiv.{u, v, w, z} R L M n (ULift.up (a ⊗ₜ[R] m)) =
@@ -65,8 +76,10 @@ theorem coefficientULiftDegreeEquiv_up_tmul (M : LieModuleCat.{w} R L) (n : ℕ)
   rw [coefficientULiftDegreeEquiv_up, LinearMap.lTensor_tmul]
   rfl
 
-/-- Chevalley–Eilenberg whole-complex lift versus CE of lifted coefficients, with the all-degree
-boundary and its naturality. -/
+/-- The chain comparison of full CE lifting and lifted coefficients.
+
+The degreewise tensor equivalences identify the whole-complex lift with the CE complex of the
+lifted Lie coefficient module. -/
 def coefficientULiftComplexIso (M : LieModuleCat.{w} R L) :
     coefficientComplexULift.{u, v, w, z} R L M ≅
       coefficientComplex R L (LieModuleCat.CoefficientULift.obj.{u, v, w, z} R L M) :=
@@ -90,12 +103,17 @@ def coefficientULiftComplexIso (M : LieModuleCat.{w} R L) :
           exact (LinearMap.congr_fun (coefficientDifferential_naturality R L M
             (LieModuleCat.CoefficientULift.up.{u, v, w, z} R L M) j) p).symm)
 
+/-- Homology preservation by the CE coefficient universe lift.
+
+The exact module lift functor preserves homology of the coefficient chain complexes. -/
 local instance coefficientHomologyULift_preservesHomology :
     (ModuleCat.uliftFunctor.{z, max u v w} R).PreservesHomology :=
   Functor.preservesHomologyOfExact (ModuleCat.uliftFunctor.{z, max u v w} R)
 
-/-- Exact whole-complex lift transports the lower-universe homology object, with the homology
-comparison. -/
+/-- The homology comparison for a whole CE complex lift.
+
+The lifted degree-`n` homology object is isomorphic to degree-`n` homology of the whole lifted
+coefficient complex. -/
 def coefficientHomologyULiftIso (M : LieModuleCat.{w} R L) (n : ℕ) :
     (ModuleCat.uliftFunctor.{z, max u v w} R).obj ((coefficientComplex R L M).homology n) ≅
       (coefficientComplexULift.{u, v, w, z} R L M).homology n := by
@@ -104,16 +122,20 @@ def coefficientHomologyULiftIso (M : LieModuleCat.{w} R L) (n : ℕ) :
   exact ((HomologicalComplex.mapHomologyFunctorIso (c := ComplexShape.down ℕ) n
     (ModuleCat.uliftFunctor.{z, max u v w} R)).app (coefficientComplex R L M)).symm
 
-/-- Up/down linear equivalence between the lower-universe homology carrier and its lifted object.
-The carrier universes are independent. -/
+/-- The linear lift equivalence of a CE homology carrier.
+
+The homology carrier is ground-linearly equivalent to its module lift by `x ↦ up(x)` and
+`up(x) ↦ x`. -/
 def coefficientHomologyCarrierLiftEquiv (M : LieModuleCat.{w} R L) (n : ℕ) :
     (coefficientComplex R L M).homology n ≃ₗ[R]
       (ModuleCat.uliftFunctor.{z, max u v w} R).obj ((coefficientComplex R L M).homology n) :=
   (ULift.moduleEquiv : ULift.{z} ((coefficientComplex R L M).homology n) ≃ₗ[R]
     (coefficientComplex R L M).homology n).symm
 
-/-- Explicit input/output homology transport to CE of the coefficient lift, with no equality
-between carrier universes. -/
+/-- The homology comparison with CE of lifted coefficients.
+
+The lifted homology object of the coefficient complex is isomorphic to homology of the CE
+complex whose coefficient carrier is lifted. -/
 def coefficientHomologyCoefficientLiftIso (M : LieModuleCat.{w} R L) (n : ℕ) :
     (ModuleCat.uliftFunctor.{z, max u v w} R).obj ((coefficientComplex R L M).homology n) ≅
       (coefficientComplex R L (LieModuleCat.CoefficientULift.obj.{u, v, w, z} R L M)).homology n :=
@@ -121,16 +143,20 @@ def coefficientHomologyCoefficientLiftIso (M : LieModuleCat.{w} R L) (n : ℕ) :
       (HomologicalComplex.homologyFunctor (ModuleCat.{max u v w z} R) (ComplexShape.down ℕ) n).mapIso
         (coefficientULiftComplexIso.{u, v, w, z} R L M)
 
-/-- Full raw homology carrier transport as a linear equivalence across independent carrier
-universes. -/
+/-- The carrier equivalence of CE homology under coefficient lifting.
+
+Combining the homology-carrier lift and the coefficient-complex comparison gives a ground-
+linear equivalence between the two homology carriers. -/
 def coefficientHomologyCoefficientLiftEquiv (M : LieModuleCat.{w} R L) (n : ℕ) :
     (coefficientComplex R L M).homology n ≃ₗ[R]
       (coefficientComplex R L (LieModuleCat.CoefficientULift.obj.{u, v, w, z} R L M)).homology n :=
   (coefficientHomologyCarrierLiftEquiv.{u, v, w, z} R L M n).trans
     (coefficientHomologyCoefficientLiftIso.{u, v, w, z} R L M n).toLinearEquiv
 
-/-- Flattening of the whole-complex lifts. This is the composition comparison used by the
-working-height tensor providers. -/
+/-- The flattening isomorphism of successive CE complex lifts.
+
+Lifting the coefficient complex first by `z` and then by `t` is isomorphic to its lift by `max
+z t`. -/
 def coefficientComplexULiftFlattenIso (M : LieModuleCat.{w} R L) :
     ((ModuleCat.uliftFunctor.{t, max u v w z} R).mapHomologicalComplex (ComplexShape.down ℕ)).obj
       (coefficientComplexULift.{u, v, w, z} R L M) ≅
@@ -142,6 +168,9 @@ def coefficientComplexULiftFlattenIso (M : LieModuleCat.{w} R L) :
       ((NatIso.mapHomologicalComplex (ModuleCat.uliftFunctorCompIso.{z, t, max u v w} R)
         (ComplexShape.down ℕ)).app (coefficientComplex R L M))
 
+/-- The component formula for flattening successive CE lifts.
+
+The flattening map sends `up(up(a))` to `up(a)` in every degree. -/
 theorem coefficientComplexULiftFlattenIso_up (M : LieModuleCat.{w} R L) (n : ℕ)
     (a : (coefficientComplex R L M).X n) :
     ((coefficientComplexULiftFlattenIso.{u, v, w, z, t} R L M).hom.f n).hom
@@ -153,8 +182,10 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L')
   (M : LieModuleCat.{w} R L) (M' : LieModuleCat.{w'} R L')
   (h : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f M')
 
-/-- The Chevalley–Eilenberg carrier-universe joint map, carried through the larger working height
-and flattening. Gamma contains both Lie and coefficient universes. -/
+/-- The lifted joint CE map at a common carrier height.
+
+For a Lie homomorphism `f` and an equivariant coefficient map `h`, lift the joint CE chain map
+and flatten the source and target into the universe joining both Lie and coefficient carriers. -/
 def coefficientLieComplexMapULiftAt :
     coefficientComplexULift.{u, v, w, max u v v' w w' z} R L M ⟶
       coefficientComplexULift.{u, v', w', max u v v' w w' z} R L' M' :=
@@ -163,6 +194,9 @@ def coefficientLieComplexMapULiftAt :
       (ComplexShape.down ℕ)).map (coefficientLieComplexMapULift R L f M M' h) ≫
         (coefficientComplexULiftFlattenIso.{u, v', w', max u v v' w w', z} R L' M').hom
 
+/-- The pure-tensor formula for a lifted joint CE map.
+
+The degree-`n` map sends `up(a ⊗ m)` to `up(⋀ⁿ(f)(a) ⊗ h(m))`. -/
 @[simp]
 theorem coefficientLieComplexMapULiftAt_up_tmul (n : ℕ) (a : ⋀[R]^n L) (m : M) :
     ((coefficientLieComplexMapULiftAt R L f M M' h).f n).hom (ULift.up (a ⊗ₜ[R] m)) =
@@ -171,8 +205,10 @@ theorem coefficientLieComplexMapULiftAt_up_tmul (n : ℕ) (a : ⋀[R]^n L) (m : 
     ((((coefficientLieComplexMapULift R L f M M' h).f n).hom (ULift.up (a ⊗ₜ[R] m))).down) = _
   rw [coefficientLieComplexMapULift_f_tmul]
 
-/-- Joint maps commute with the coefficient-carrier lift comparison. The right map is the degree
-map on the lifted Lie coefficients. -/
+/-- Naturality of the coefficient-lift comparison in joint CE maps.
+
+The full lifted joint chain map followed by the coefficient-lift comparison equals the source
+comparison followed by the joint map on lifted Lie coefficients. -/
 theorem coefficientULiftComplexIso_joint_naturality :
     coefficientLieComplexMapULiftAt R L f M M' h ≫
       (coefficientULiftComplexIso.{u, v', w', max u v v' w w' z} R L' M').hom =
@@ -224,8 +260,10 @@ theorem coefficientULiftComplexIso_joint_naturality :
             coefficientULiftDegreeEquiv_up_tmul, coefficientLieDegreeMap_tmul]
           rfl
 
-/-- Lower-carrier homology maps, transported independently of Tor through the Chevalley–Eilenberg
-joint map and the exact lift comparisons. -/
+/-- The joint CE homology map between lifted carrier objects.
+
+Transport the homology map of the lifted joint chain map through the full-complex homology
+lift isomorphisms. -/
 def coefficientRawHomologyMapAt (n : ℕ) :
     (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
       ((coefficientComplex R L M).homology n) ⟶
@@ -235,7 +273,10 @@ def coefficientRawHomologyMapAt (n : ℕ) :
       HomologicalComplex.homologyMap (coefficientLieComplexMapULiftAt R L f M M' h) n ≫
         (coefficientHomologyULiftIso.{u, v', w', max u v v' w w' z} R L' M' n).inv
 
-/-- The raw homology map, as a ground-linear map across the two independent carrier universes. -/
+/-- The joint CE homology map on independent unlifted carriers.
+
+The lifted joint homology map, composed with coefficient-carrier up and down equivalences,
+gives a ground-linear map between the unlifted homology carriers. -/
 def coefficientOriginalHomologyMapAt (n : ℕ) :
     (coefficientComplex R L M).homology n →ₗ[R] (coefficientComplex R L' M').homology n :=
   (ULift.moduleEquiv : ULift.{max u v v' w w' z} ((coefficientComplex R L' M').homology n) ≃ₗ[R]

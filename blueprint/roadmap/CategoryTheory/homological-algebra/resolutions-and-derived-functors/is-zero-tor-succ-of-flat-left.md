@@ -1,4 +1,6 @@
-# Higher Tor with a flat left factor
+# Positive Tor vanishes for a flat first tensor factor
 
-Higher Tor vanishes when the first tensor factor is flat; `Tor` is
-derived in its second factor.
+For a commutative ring R and modules A,D in
+ModuleCat^u(R), if A is flat over R, then Tor_(p+1)(A,D) is
+a zero object for every p ≥ 0.
+The Tor convention is derivation of A ⊗[R] − in its second factor D.

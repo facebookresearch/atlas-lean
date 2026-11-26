@@ -1,4 +1,4 @@
-# Projective Coefficient Homology is Zero succ
+# Positive tensor homology vanishes for a flat resolved target
 
-The original coefficient complex has zero positive homology for a flat resolved target. The
-original coefficient and original projective resolution are retained.
+Let `R` be a commutative ring in universe `u`, `M` an `R`-module
+in universe `v`, and `X` an `R`-module in universe `max(u,w)`. Let `P` be a projective resolution of `X`. If `X` is flat, `H_(n+1)(M ⊗[R] P)=0` for every `n`.

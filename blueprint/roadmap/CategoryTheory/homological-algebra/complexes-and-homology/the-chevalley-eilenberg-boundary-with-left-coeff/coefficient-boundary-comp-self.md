@@ -1,4 +1,8 @@
-# Coefficient Boundary comp self
+# The square-zero coefficient exterior boundary
 
-The canonical ambient coefficient boundary squares to zero without assumptions
-on freeness, flatness, finite dimension, or the characteristic of the base ring.
+Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The canonical coefficient boundary satisfies D²=0 as an
+R-linear endomorphism of P.

@@ -15,10 +15,18 @@ public import MathlibExt.Algebra.Homology.Hochschild.RationalEulerianComplex
 /-!
 # Eulerian weights of coefficient shuffle products
 
-The symmetric coefficient shuffle pairing intertwines
-the dyadic convolution. Rational Eulerian projection
-and cancellation of distinct powers of two identify
-the product of weights i and j with weight i + j.
+Let k be a commutative ℚ-algebra, A a commutative unital k-algebra,
+and M a compatible symmetric A-bimodule. The shuffle pairing
+C_p(A,U^wA)⊗C_q(A,M)→C_{p+q}(A,M)
+intertwines the bar-lambda convolution at two.
+
+If the two inputs have Eulerian weights i,j, their shuffle product
+has eigenvalue 2^{i+j} for that convolution. Every projector onto
+weight r≠i+j kills it, and the weight-(i+j) projector fixes it.
+Thus the product of weight-i and weight-j range elements belongs to
+the weight-(i+j) range, for all p,q,i,j≥0.
+
+Reference: J.-L. Loday, Cyclic Homology, §4.5.
 -/
 
 @[expose] public section
@@ -46,7 +54,13 @@ private theorem twoPow_injective : Function.Injective (fun n : ℕ => (2 : ℚ) 
   have hp : (0 : ℚ) < 2 ^ n := pow_pos (by norm_num) n
   nlinarith
 
-/-- The coefficient shuffle map respects the original convolution at two. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative unital
+k-algebra, and M a compatible A-module regarded as a symmetric bimodule.
+The coefficient shuffle pairs C_p(A,U^wA) with C_q(A,M)
+in the common k-module universe max{u,v,w}.
+Writing Sh_{p,q} for the coefficient shuffle pairing and Λ for
+bar-lambda at two, the square is
+Λ_{p+q}Sh_{p,q}=Sh_{p,q}(Λ_p⊗Λ_q). -/
 theorem lambdaTwo_coefficientShufflePairingMap (p q : ℕ) :
     (lambdaTwoOperator k A M (p + q)).comp (coefficientShufflePairingMap k A M p q) =
       (coefficientShufflePairingMap k A M p q).comp
@@ -78,7 +92,13 @@ private theorem paired_eigenvalue
     TensorProduct.map_smul_left, TensorProduct.map_smul_right] at h
   simpa only [LinearMap.comp_smul, smul_smul] using h
 
-/-- The product of original projected inputs has the eigenvalue at the sum of their weights. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative unital
+k-algebra, and M a compatible A-module regarded as a symmetric bimodule.
+The coefficient shuffle pairs C_p(A,U^wA) with C_q(A,M)
+in the common k-module universe max{u,v,w}.
+For the projected product Sh_{p,q}(e_p^{(i)}⊗e_q^{(j)}),
+the convolution eigenvalue is 2^{i+j}:
+Λ_{p+q}Sh(e_i⊗e_j)=algMap_ℚ(2^{i+j})Sh(e_i⊗e_j). -/
 theorem coefficientShuffle_projected_eigenvalue (p q i j : ℕ) :
     (lambdaTwoOperator k A M (p + q)).comp
         ((coefficientShufflePairingMap k A M p q).comp
@@ -104,7 +124,11 @@ theorem coefficientShuffle_projected_eigenvalue (p q i j : ℕ) :
   · rw [coefficientEulerian_outside k A (ULift.{w} A) p i (by omega), TensorProduct.map_zero_left,
       LinearMap.comp_zero, LinearMap.comp_zero, smul_zero]
 
-/-- Every off-weight Eulerian projection of a projected shuffle product vanishes. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative unital
+k-algebra, and M a compatible A-module regarded as a symmetric bimodule.
+The coefficient shuffle pairs C_p(A,U^wA) with C_q(A,M)
+in the common k-module universe max{u,v,w}.
+If r≠i+j, then e_{p+q}^{(r)}Sh_{p,q}(e_p^{(i)}⊗e_q^{(j)})=0. -/
 theorem coefficientShuffle_projected_cross_zero (p q i j r : ℕ) (hr : r ≠ i + j) :
     (coefficientEulerianOperator k A M (p + q) r).comp
       ((coefficientShufflePairingMap k A M p q).comp
@@ -132,7 +156,13 @@ theorem coefficientShuffle_projected_cross_zero (p q i j r : ℕ) (hr : r ≠ i 
       one_smul, smul_zero, X, Y] using hc
   · rw [coefficientEulerian_outside k A M (p + q) r (by omega), LinearMap.zero_comp]
 
-/-- The original coefficient shuffle product raises weights by their sum. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative unital
+k-algebra, and M a compatible A-module regarded as a symmetric bimodule.
+The coefficient shuffle pairs C_p(A,U^wA) with C_q(A,M)
+in the common k-module universe max{u,v,w}.
+The sum-weight projector fixes the projected product:
+e_{p+q}^{(i+j)}Sh_{p,q}(e_p^{(i)}⊗e_q^{(j)})
+=Sh_{p,q}(e_p^{(i)}⊗e_q^{(j)}). -/
 theorem coefficientShuffle_projected_weight (p q i j : ℕ) :
     (coefficientEulerianOperator k A M (p + q) (i + j)).comp
       ((coefficientShufflePairingMap k A M p q).comp
@@ -172,8 +202,13 @@ theorem coefficientShuffle_projected_weight (p q i j : ℕ) :
   · rw [coefficientEulerian_outside k A (ULift.{w} A) p i (by omega), TensorProduct.map_zero_left,
       LinearMap.comp_zero, LinearMap.comp_zero]
 
-/-- Original Eulerian range elements have their coefficient shuffle product
-in the original range at the sum of their weights. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative unital
+k-algebra, and M a compatible A-module regarded as a symmetric bimodule.
+The coefficient shuffle pairs C_p(A,U^wA) with C_q(A,M)
+in the common k-module universe max{u,v,w}.
+If x lies in the weight-i range in degree p and y in the
+weight-j range in degree q, then Sh_{p,q}(x⊗y) lies in
+the weight-(i+j) range in degree p+q. -/
 theorem coefficientShuffle_mem_weight (p q i j : ℕ)
     (x : ULift.{w} A ⊗[k] TensorPower k p A) (y : M ⊗[k] TensorPower k q A)
     (hx : x ∈ LinearMap.range (coefficientEulerianOperator k A (ULift.{w} A) p i))

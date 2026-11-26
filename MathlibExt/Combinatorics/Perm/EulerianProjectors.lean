@@ -13,13 +13,16 @@ public import MathlibExt.Combinatorics.Perm.EulerianComposition
 public import MathlibExt.Algebra.Polynomial.NatPowerCoefficients
 
 /-!
-# Actual rational Eulerian group-ring projectors
+# Orthogonal Eulerian coefficient elements
 
-The exact native stable-sort/product-alphabet bijection supplies the
-multiplicative polynomial-family identity. Actual natural-value polynomial
-coefficient separation gives orthogonality; evaluation at one gives the
-actual sum-to-unit law. Native polynomial degree gives the original
-out-of-range zeros. The projector laws are consequences of these polynomial identities.
+In `ℚ[S_n]`, the coefficient elements `ε_(n,i)` of the Eulerian family `Λ_n(t)=∑_(i=0)^n t^i
+ε_(n,i)` sum to the unit. They are pairwise orthogonal idempotents: `ε_(n,i)ε_(n,j)=ε_(n,i)`
+when `i=j` and zero otherwise.
+
+Coefficients with `i>n` are zero. The orthogonality law holds for every natural `i,j`,
+including the degree-zero family.
+
+Reference: Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -29,14 +32,20 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- Every original out-of-range coefficient element is the actual zero group-ring element. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)`, `P_(n,d)(X) = (1/n!)∏_(j=0)^(n-1)(X+j-d)`, and
+`Λ_n(t) = ∑ σ ∈ S_n, P_(n,descentNumber σ)(t) sign(σ) [σ]` in `ℚ[S_n]`. Write `ε_(n,i)` for
+the coefficient of `t^i` in this family. For `i : ℕ` with `n<i`, `eulerianElement n i = 0` in
+`ℚ[S_n]`. -/
 theorem eulerianElement_outside (n i : ℕ) (hi : n < i) : eulerianElement n i = 0 := by
   classical
   unfold eulerianElement
   simp_rw [eulerianCoefficient_outside n i _ hi, MonoidAlgebra.single_zero]
   exact Finset.sum_const_zero
 
-/-- The original finite homogeneous coefficient elements are pairwise orthogonal projectors. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)`, `P_(n,d)(X) = (1/n!)∏_(j=0)^(n-1)(X+j-d)`, and
+`Λ_n(t) = ∑ σ ∈ S_n, P_(n,descentNumber σ)(t) sign(σ) [σ]` in `ℚ[S_n]`. Write `ε_(n,i)` for
+the coefficient of `t^i` in this family. For `i,j : Fin(n+1)`, `ε_(n,i.val) * ε_(n,j.val) = if
+i=j then ε_(n,i.val) else 0`. -/
 theorem eulerianElement_mul_fin (n : ℕ) (i j : Fin (n + 1)) :
     eulerianElement n i.val * eulerianElement n j.val =
       if i = j then eulerianElement n i.val else 0 := by
@@ -47,7 +56,11 @@ theorem eulerianElement_mul_fin (n : ℕ) (i j : Fin (n + 1)) :
         eulerianLambda_mul_nat n a b)
   exact h i j
 
-/-- The original Eulerian elements satisfy the full zero-supported projector law in every degree. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)`, `P_(n,d)(X) = (1/n!)∏_(j=0)^(n-1)(X+j-d)`, and
+`Λ_n(t) = ∑ σ ∈ S_n, P_(n,descentNumber σ)(t) sign(σ) [σ]` in `ℚ[S_n]`. Write `ε_(n,i)` for
+the coefficient of `t^i` in this family. The identities are `∑ i : Fin(n+1), ε_(n,i.val)=1`
+and, for all `i,j : ℕ`, `ε_(n,i)*ε_(n,j)=if i=j then ε_(n,i) else 0`. Weights above `n` are
+thereby included with zero value. -/
 theorem eulerianElement_projector_laws (n : ℕ) :
     (∑ i : Fin (n + 1), eulerianElement n i.val) = 1 ∧
       ∀ i j : ℕ, eulerianElement n i * eulerianElement n j =

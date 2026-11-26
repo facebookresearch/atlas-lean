@@ -1,5 +1,6 @@
-# Em Underlying Bar Iso inv app
+# Inverse components of the regular-right bar comparison
 
-The inverse underlying comparison component in degree `n` is the whiskered
-`barMap` at the inverse module isomorphisms. Symmetric to
-`emUnderlyingBarIso_hom_app`.
+Let T be a monad on C, alg a T-algebra, and n ∈ ℕ. The inverse degree-n component of
+emUnderlyingBarIso(alg) is evaluation of barMap(emModuleIso.inv,id_L,n) at the unique point,
+with L the algebra left module. This is the bar map of the inverse regular-to-forgotten-free
+module comparison.

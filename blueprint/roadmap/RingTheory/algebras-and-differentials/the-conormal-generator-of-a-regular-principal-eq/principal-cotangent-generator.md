@@ -1,3 +1,5 @@
-# Principal Cotangent Generator
+# The principal conormal generator
 
-The class of the original principal equation in its actual conormal module.
+For a commutative ring `B` and `g : B`, let `I = Ideal.span {g}`. The principal conormal
+generator is `I.toCotangent g`, the class `[g]` of the defining element in `I.Cotangent =
+I/I²`.

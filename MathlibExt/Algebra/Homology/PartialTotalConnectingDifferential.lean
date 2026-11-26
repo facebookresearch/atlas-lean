@@ -15,14 +15,16 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalStepHomology
 
 /-!
-# The connecting-map model of the first-page differential
+# Connecting maps between adjacent signed partial-total rows
 
-For a positive filtration degree, the successor short exact sequence has a
-connecting morphism from the new signed row to the preceding filtration
-stage.  Projecting that stage onto its last row gives the canonical homology
-map that will be compared with the transported page-one differential.
+Let `B` be a first-quadrant bicomplex in an abelian category. The lower complex of filtration
+step `m+1` is the middle complex of step `m`, and their cochain extensions have the same
+supported components.
 
-The comparison theorem itself is deferred, as are E₂, Tor, and convergence.
+The successor short exact sequence gives a connecting morphism from the new signed row to the
+preceding filtered stage. Follow it by the quotient onto row `m` and the row-coordinate
+comparisons. In vertical degree `q`, the resulting map is `H_(m+1+q)(row_(m+1)) →
+H_(m+q)(row_m)`.
 -/
 
 @[expose] public section
@@ -43,8 +45,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- The source object of step `m+1` and the middle object of step `m` are
-the same filtered stage, after cochain extension. -/
+/-- The common filtered-stage isomorphism of adjacent cochain steps.
+
+The source complex of step `m+1` is isomorphic to the middle complex of step `m` after chain-
+to-cochain extension. -/
 noncomputable def partialTotalAdjacentStepCochainIso (m : ℕ) :
     (B.partialTotalStepCochainShortComplex (m + 1)).X₁ ≅
       (B.partialTotalStepCochainShortComplex m).X₂ :=
@@ -54,8 +58,10 @@ noncomputable def partialTotalAdjacentStepCochainIso (m : ℕ) :
         B.partialTotalStepShortComplex_X₂]))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- At a supported cochain degree, the adjacent-step comparison is
-heterogeneously the identity of the common partial-total component. -/
+/-- The supported component identity of adjacent-step coordinates.
+
+At the cochain degree corresponding to total degree `n`, the adjacent-step comparison is
+heterogeneously equal to the identity of the common partial-total component. -/
 theorem partialTotalAdjacentStepCochainIso_hom_f_heq
     (m n : ℕ) :
     HEq ((B.partialTotalAdjacentStepCochainIso m).hom.f
@@ -108,8 +114,11 @@ theorem partialTotalAdjacentStepCochainIso_hom_f_heq
         (CategoryTheory.eqToHom_heq_id_cod _ _ hTgt)))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The adjacent-step target map at a supported degree is the row quotient,
-followed by the canonical extension/shift coordinate. -/
+/-- The row-quotient coordinate of an adjacent-step target map.
+
+At adjacent supported cochain degrees, the step comparison and row quotient followed by the
+shift coordinate agree heterogeneously with the finite row quotient and its extension
+coordinate. -/
 theorem partialTotalAdjacentTargetMap_f_comp_shiftIso_heq
     (m k : ℕ)
     (hkdeg : ComplexShape.embeddingDownNat.f k =
@@ -283,8 +292,10 @@ theorem partialTotalAdjacentTargetMap_f_comp_shiftIso_heq
       (B.partialTotalRowQuotientF m k ≫
         (T.extendXIso e (i := k) (i' := e.f k) rfl).inv)))
 
-/-- The connecting-map model for the first-page differential from row
-`m+1` to row `m` in vertical degree `q`. -/
+/-- The connecting-map model between adjacent first-page rows.
+
+The successor-step connecting morphism followed by projection onto the preceding signed row
+gives a map from total-row homology degree `m+1+q` to degree `m+q`. -/
 noncomputable def partialTotalE₁ConnectingDifferential (m q : ℕ) :
     (B.totalRow (m + 1)).homology (m + 1 + q) ⟶
       (B.totalRow m).homology (m + q) := by

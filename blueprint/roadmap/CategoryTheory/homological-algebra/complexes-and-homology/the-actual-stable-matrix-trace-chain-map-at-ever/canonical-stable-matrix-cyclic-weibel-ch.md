@@ -1,4 +1,8 @@
-# Canonical Stable Matrix Cyclic Weibel Chain Map
+# The signed cyclic trace chain map on the stable CE positive tail
 
-The cyclic trace chain map from the positive tail of the stable matrix Chevalley–Eilenberg
-complex to the Connes complex.
+For a commutative ℚ-algebra k and an associative unital
+k-algebra A, the finite matrix trace gives
+W : positiveTail(C_*(Mat_∞(A))) → Cλ(A).
+In degree n, its value is (−1)^n times the trace of the
+coefficient-fixed tail antisymmetrization on a finite-stage wedge,
+equivalently full antisymmetrization divided by n+1.

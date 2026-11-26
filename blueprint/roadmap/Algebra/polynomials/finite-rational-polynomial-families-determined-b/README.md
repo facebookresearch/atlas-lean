@@ -1,4 +1,4 @@
 # Finite rational polynomial families determined by natural values
 
-- [Finite Weighted Power Combination](finite-weighted-power-combination.md)
-- [Finite Weighted Power Combination eq of nat](finite-weighted-power-combination-eq-of.md)
+- [A finite rational weighted power sum](finite-weighted-power-combination.md)
+- [Natural values determine a rational weighted family](finite-weighted-power-combination-eq-of.md)

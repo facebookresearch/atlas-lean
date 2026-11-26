@@ -1,3 +1,5 @@
-# Chain Two Equiv
+# Ordered coordinates for two tail factors
 
-Native cons and singleton equivalences give the ordered degree-two coordinates.
+Let k be a commutative semiring and A a k-semimodule.
+The ordered degree-two tensor coordinates give a k-linear
+equivalence A ⊗[k] A^{⊗2} ≃ A ⊗[k] (A ⊗[k] A).

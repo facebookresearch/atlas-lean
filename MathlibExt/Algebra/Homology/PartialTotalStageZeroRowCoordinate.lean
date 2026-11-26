@@ -18,15 +18,16 @@ public import MathlibExt.Algebra.Homology.PartialTotalZero
 public import MathlibExt.Algebra.Homology.PartialTotalSuccessor
 
 /-!
-# The stage-zero row coordinate
+# Row-zero inclusions and first-page coordinates
 
-This file compares the canonical inclusion of row zero into the zeroth partial
-total with the package-bound morphism from the literal bottom-to-zero spectral
-homology object to the chosen first page. The structural coordinate factors
-through the standard core via the invertible canonical spectral map, and the
-resulting comparison identifies the row-zero composite with the chosen
-first-page morphism. Its scope is the objectwise stage-zero row coordinate;
-it asserts neither a filtration splitting nor a page-at-infinity object.
+Let `B` be a first-quadrant bicomplex in an abelian category. The vertical complex `B.X 0`
+includes in `B.partialTotal 0` and in the full total complex, and these inclusions are natural
+in bicomplex maps.
+
+In degree `q`, identify the spectral homology of `⊥ ⟶ 0` in cochain degree `-q` with the first
+core interval `-1 ⟶ 0`. The first-page coordinate at `(0, q)` then identifies the homology map
+of the row-zero inclusion with the inverse signed-row homology coordinate. The source and
+stage isomorphisms satisfy the mapping-cone homology compatibility used in this identity.
 -/
 
 @[expose] public section
@@ -52,7 +53,10 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- The canonical inclusion of row zero into the zeroth partial total. -/
+/-- Row-zero inclusion into the zeroth partial total.
+
+The vertical chain complex `B.X 0` maps to `B.partialTotal 0`. Its degree-`q` component is the
+summand inclusion of `B.X 0 q` in partial-total degree `q`, using `0 + q = q`. -/
 noncomputable def partialTotalZeroRowToPartialTotal :
     B.X 0 ⟶ B.partialTotal 0 := by
   let T := B.firstStupidTrunc 0
@@ -77,7 +81,10 @@ noncomputable def partialTotalZeroRowToPartialTotal :
         exact HomologicalComplex.Hom.comm_assoc eRow.inv i j _ }
 
 
-/-- The zero-row inclusion is the stage-zero partial-total cell coordinate. -/
+/-- Degree component of the row-zero partial-total inclusion.
+
+In natural degree `q`, `B.partialTotalZeroRowToPartialTotal.f q` is `B.partialTotalComponent 0
+(0 : Fin 1) q q (Nat.zero_add q)`. -/
 @[simp]
 theorem partialTotalZeroRowToPartialTotal_f (q : ℕ) :
     B.partialTotalZeroRowToPartialTotal.f q =
@@ -91,8 +98,10 @@ theorem partialTotalZeroRowToPartialTotal_f (q : ℕ) :
         (ComplexShape.down ℕ) 0 q q (Nat.zero_add q) = _
   rfl
 
-/-- The zero-row inclusion into the partial total is natural in bicomplex
-morphisms. -/
+/-- Row-zero partial-total inclusion is natural in bicomplex maps.
+
+For a bicomplex morphism `φ : B ⟶ B'`, applying `φ.f 0` before the target row-zero inclusion
+equals applying the source row-zero inclusion before the induced map of zeroth partial totals. -/
 @[reassoc]
 theorem partialTotalZeroRowToPartialTotal_naturality
     {B' : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -107,7 +116,10 @@ theorem partialTotalZeroRowToPartialTotal_naturality
   exact (B.partialTotalComponent_naturality φ 0 (0 : Fin 1)
     q q (Nat.zero_add q)).symm
 
-/-- Inclusion of the zeroth row into the full total complex. -/
+/-- Row-zero inclusion into the full total complex.
+
+The vertical complex `B.X 0` maps to the first-quadrant homological total complex. In degree
+`q`, its component is the total summand inclusion `B.ιTotal (.down ℕ) 0 q q (Nat.zero_add q)`. -/
 noncomputable def partialTotalZeroRowToTotal :
     B.X 0 ⟶ B.total (ComplexShape.down ℕ) where
   f q := B.ιTotal (ComplexShape.down ℕ) 0 q q (Nat.zero_add q)
@@ -118,14 +130,20 @@ noncomputable def partialTotalZeroRowToTotal :
     rw [B.d₂_eq (ComplexShape.down ℕ) 0 h q' (by simp)]
     simp
 
+/-- Degree component of the row-zero full-total inclusion.
+
+The component of `B.partialTotalZeroRowToTotal` in degree `q` is the total inclusion of the
+summand indexed by `(0, q)` in total degree `q`. -/
 @[simp]
 theorem partialTotalZeroRowToTotal_f (q : ℕ) :
     B.partialTotalZeroRowToTotal.f q =
       B.ιTotal (ComplexShape.down ℕ) 0 q q (Nat.zero_add q) :=
   rfl
 
-/-- The zero-row partial-total inclusion factors the literal full-total
-zero-row inclusion. -/
+/-- Row-zero full-total inclusion factors through stage zero.
+
+The row-zero inclusion into `B.partialTotal 0`, followed by `B.partialTotalι 0`, is
+`B.partialTotalZeroRowToTotal`. -/
 @[reassoc]
 theorem partialTotalZeroRowToPartialTotal_comp_partialTotalι :
     B.partialTotalZeroRowToPartialTotal ≫ B.partialTotalι 0 =
@@ -138,8 +156,11 @@ theorem partialTotalZeroRowToPartialTotal_comp_partialTotalι :
   simpa using B.partialTotalComponent_comp_partialTotalι
     0 (0 : Fin 1) q q (Nat.zero_add q)
 
-/-- The zero-row inclusion into the full total is natural in bicomplex
-morphisms. -/
+/-- Row-zero full-total inclusion is natural in bicomplex maps.
+
+For a bicomplex morphism `φ : B ⟶ B'`, applying its row-zero map and then the target total
+inclusion equals the source total inclusion followed by the induced map of full total
+complexes. -/
 @[reassoc]
 theorem partialTotalZeroRowToTotal_naturality
     {B' : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -155,8 +176,13 @@ theorem partialTotalZeroRowToTotal_naturality
     (K := B) (L := B') (φ := φ) (c₁₂ := ComplexShape.down ℕ)
     0 q q (Nat.zero_add q)).symm
 
-/-- The canonical StageZero source and stage coordinates, constructed
-together with their homology compatibility. -/
+/-- Compatible source and stage coordinates at filtration zero.
+
+For natural `q`, this data consists of an isomorphism from `H^(-q)(⊥ ⟶ 0)` to the bottom-to-
+core spectral homology at `(0, q)`, and an isomorphism from the core filtration-stage homology
+to the extended zeroth partial-total homology. It includes their compatibility with the zero-
+source mapping-cone homology isomorphism. The stage coordinate is the homology map of the
+stage-zero filtration isomorphism, and the source coordinate is equality transport. -/
 noncomputable def partialTotalStageZeroSourceCoordinate (q : ℕ) :
     Σ eSource :
         ((B.partialTotalSpectralObject.H (-(q : ℤ))).obj
@@ -334,8 +360,11 @@ noncomputable def partialTotalStageZeroSourceCoordinate (q : ℕ) :
       rw [CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat_i₂]
       rfl)
 
-/-- The bundled StageZero stage coordinate is the homology isomorphism
-induced by the canonical finite-stage coordinate. -/
+/-- Stage-zero homology coordinate is induced by the filtration-stage isomorphism.
+
+The stage isomorphism in `B.partialTotalStageZeroSourceCoordinate q` is heterogeneously equal
+to the homology isomorphism induced by `B.partialTotalCochainFiltrationStageIso 0` in the core
+degree of `(0, q)`. -/
 theorem partialTotalStageZeroSourceCoordinate_stageIso_heq (q : ℕ) :
     HEq (B.partialTotalStageZeroSourceCoordinate q).2.1
       (HomologicalComplex.homologyMapIso
@@ -343,8 +372,10 @@ theorem partialTotalStageZeroSourceCoordinate_stageIso_heq (q : ℕ) :
         ((core).deg (0, q))) :=
   (B.partialTotalStageZeroSourceCoordinate q).2.2.2.1
 
-/-- The literal bottom-to-zero StageZero H-object is canonically identified
-with the increasing-core bottom interval. -/
+/-- Bottom-to-zero spectral homology in increasing-core coordinates.
+
+The spectral homology object of `⊥ ⟶ 0` in degree `-q` is isomorphic to the object of `⊥ ⟶
+core.i₂ (0, q)` in degree `core.deg (0, q)`. The core has `i₂ (0, q) = 0` and degree `-q`. -/
 noncomputable def partialTotalStageZeroSourceIso (q : ℕ) :
     ((B.partialTotalSpectralObject.H (-(q : ℤ))).obj
       (mk₁ (homOfLE
@@ -354,8 +385,10 @@ noncomputable def partialTotalStageZeroSourceIso (q : ℕ) :
         (show (⊥ : EInt) ≤ (core).i₂ (0, q) by simp)))) :=
   (B.partialTotalStageZeroSourceCoordinate q).1
 
-/-- The StageZero source presentation is the canonical equality transport
-from the literal bottom-to-zero H-object to the increasing-core H-object. -/
+/-- Stage-zero spectral source map is equality transport.
+
+The forward map of `B.partialTotalStageZeroSourceIso q` equals the canonical equality morphism
+obtained from `core.deg (0, q) = -q` and `core.i₂ (0, q) = 0`. -/
 theorem partialTotalStageZeroSourceIso_hom_eqToHom (q : ℕ) :
     (B.partialTotalStageZeroSourceIso q).hom = eqToHom (by
       simp only [
@@ -366,8 +399,12 @@ theorem partialTotalStageZeroSourceIso_hom_eqToHom (q : ℕ) :
   simpa only [partialTotalStageZeroSourceIso] using
     (B.partialTotalStageZeroSourceCoordinate q).2.2.2.2
 
-/-- The literal StageZero homology coordinate followed by the source
-presentation agrees with the canonical bottom-cone homology coordinate. -/
+/-- Stage-zero source transport respects mapping-cone homology coordinates.
+
+Compose the inverse bottom-step homology coordinate with the stage-zero source transport and
+the core spectral-object coordinate. The result equals the inverse extension-homology
+coordinate, followed by the inverse stage coordinate and the inverse homology isomorphism for
+the zero-source mapping cone. -/
 theorem partialTotalStageZeroSourceIso_homology_compatibility (q : ℕ) :
     (B.partialTotalSpectralStepHomologyIso q 0).inv ≫
         (B.partialTotalStageZeroSourceIso q).hom ≫
@@ -388,8 +425,11 @@ theorem partialTotalStageZeroSourceIso_homology_compatibility (q : ℕ) :
   simpa only [partialTotalStageZeroSourceIso] using
     (B.partialTotalStageZeroSourceCoordinate q).2.2.1
 
-/-- The literal StageZero spectral object is canonically isomorphic to the
-standard first-page core object. -/
+/-- Bottom-to-zero homology as the first core interval.
+
+For natural `q`, the spectral homology of `⊥ ⟶ 0` in degree `-q` is isomorphic to the homology
+of the first core interval `core.i₁ (0, q) ⟶ core.i₂ (0, q)`, namely `-1 ⟶ 0`. The lower
+filtration stages are zero. -/
 noncomputable def partialTotalSpectralStepZeroCoreIso (q : ℕ) :
     ((B.partialTotalSpectralObject.H (-(q : ℤ))).obj
       (mk₁ (homOfLE
@@ -429,8 +469,11 @@ noncomputable def partialTotalSpectralStepZeroCoreIso (q : ℕ) :
   exact B.partialTotalStageZeroSourceIso q ≪≫
     asIso ((Y.H d).map αCan)
 
-/-- The structural StageZero core isomorphism factors through the canonical
-source presentation and the canonical spectral map. -/
+/-- First-core source isomorphism factors through the bottom interval.
+
+The forward map of `B.partialTotalSpectralStepZeroCoreIso q` is the stage-zero source
+transport followed by the spectral homology map from the interval `⊥ ⟶ core.i₂ (0, q)` to
+`core.i₁ (0, q) ⟶ core.i₂ (0, q)`. -/
 theorem partialTotalSpectralStepZeroCoreIso_hom (q : ℕ) :
     (B.partialTotalSpectralStepZeroCoreIso q).hom =
       (B.partialTotalStageZeroSourceIso q).hom ≫
@@ -441,8 +484,11 @@ theorem partialTotalSpectralStepZeroCoreIso_hom (q : ℕ) :
   rfl
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The canonical morphism from the bottom-to-stage-zero spectral homology
-object to the package-chosen first-page object in bidegree `(0,q)`. -/
+/-- Bottom-to-zero homology maps to the first-page zero column.
+
+Identify the spectral homology object `H^(-q)(⊥ ⟶ 0)` with the first core interval at `(0,
+q)`, then apply the inverse first-page core coordinate. The target is the first-page object
+specified by `B.partialTotalFirstPageChoice`. -/
 noncomputable def partialTotalSpectralStepZeroToFirstPage (q : ℕ) :
     ((B.partialTotalSpectralObject.H (-(q : ℤ))).obj
       (mk₁ (homOfLE (show (⊥ : EInt) ≤ ((0 : ℤ) : EInt) by simp)))) ⟶
@@ -1124,8 +1170,12 @@ private theorem partialTotalSpectralStepZeroToFirstPage_B11At
   simp only [Category.assoc, Iso.hom_inv_id_assoc]
 
 
-/-- The fixed row-zero first-page coordinate is the stage-zero spectral
-homology coordinate induced by the canonical row inclusion. -/
+/-- Row-zero homology inclusion agrees with the first-page row coordinate.
+
+The homology map of `B.X 0 ⟶ B.partialTotal 0`, followed by the inverse spectral-step homology
+coordinate and the map to the first-page object at `(0, q)`, equals the inverse total-row
+homology coordinate followed by the inverse first-page row coordinate. Both sides have source
+`H_q(B.X 0)`. -/
 theorem
     partialTotalZeroRowToPartialTotal_homologyMap_comp_stepZeroToFirstPage
     (q : ℕ) :

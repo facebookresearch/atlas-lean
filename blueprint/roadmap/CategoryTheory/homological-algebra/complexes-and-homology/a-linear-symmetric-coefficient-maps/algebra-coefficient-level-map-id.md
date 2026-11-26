@@ -1,3 +1,6 @@
-# Algebra Coefficient Level Map id
+# The identity coefficient map acts identically on every A-linear Hochschild level
 
-The original identity coefficient gives the identity on the original tensor level.
+The identity coefficient map acts identically on every A-linear Hochschild level.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraCoefficientLevelMap(id_M,n)=id on M ⊗[k] A⊗n.

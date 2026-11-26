@@ -1,3 +1,6 @@
-# Canonical Stable Matrix Coefficient CEMap At Height inclusion
+# Naturality of lifted stable CE maps with finite matrix inclusions
 
-The finite coefficient square holds without identifying the coefficient universes.
+Naturality of lifted stable CE maps with finite matrix inclusions.
+
+Including finite matrices and then applying the stable coefficient map equals applying the
+finite entrywise coefficient map and then including into the target stable complex.

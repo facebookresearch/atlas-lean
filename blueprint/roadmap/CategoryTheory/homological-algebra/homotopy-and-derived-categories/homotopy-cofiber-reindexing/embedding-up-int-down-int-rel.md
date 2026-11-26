@@ -1,3 +1,5 @@
-# Embedding Up Int Down Int rel
+# Degree negation sends a cochain edge to a chain edge
 
-Reindexing relation for the integer chain-to-cochain embedding.
+For integer degree negation from `up ℤ` to `down ℤ`, the
+images of `i` and `i+1` satisfy the chain relation
+`down.Rel(-i,-(i+1))`.

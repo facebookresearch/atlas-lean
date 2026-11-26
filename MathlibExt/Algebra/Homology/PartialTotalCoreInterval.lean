@@ -15,13 +15,15 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalSpectralObject
 
 /-!
-# Core intervals of the partial-total filtration
+# First-page core intervals in partial-total step coordinates
 
-This file identifies each interval selected by the increasing page-one core
-with the corresponding uniform partial-total filtration step, first for
-natural chain complexes and then after extension to integer cochain degree.
+Let `B` be a first-quadrant bicomplex in a preadditive category with finite coproducts. The
+increasing first-page core interval at column zero is `-1 → 0`; at column `m+1` it is the
+consecutive interval `m → m+1`.
 
-No mapping-cone homology, spectral page, or convergence statement is made.
+These interval maps are isomorphic to the uniform partial-total step inclusions. The upper
+component is the canonical finite-stage coordinate. In an abelian category, chain-to-cochain
+extension gives the corresponding cochain interval isomorphism.
 -/
 
 @[expose] public section
@@ -50,8 +52,10 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- At filtration degree zero, the core interval `-1 ⟶ 0` is isomorphic to
-the zero-stage partial-total step. -/
+/-- The zero-column core interval in partial-total coordinates.
+
+The increasing interval `-1 → 0` is isomorphic to the zero-stage partial-total step from the
+zero complex. -/
 noncomputable def partialTotalE₁StepIsoZero (q : ℕ) :
     CategoryTheory.ComposableArrows.mk₁
         (B.partialTotalEIntFiltration.map
@@ -64,8 +68,10 @@ noncomputable def partialTotalE₁StepIsoZero (q : ℕ) :
     (B.partialTotalE₁UpperIso 0 q)
     ((B.isZero_partialTotalE₁LowerZero q).eq_of_src _ _)
 
-/-- At filtration degree `m+1`, the core interval is isomorphic to the
-successor partial-total step. -/
+/-- The positive-column core interval in partial-total coordinates.
+
+The interval for column `m+1` is isomorphic to the successor partial-total step from stage `m`
+to stage `m+1`. -/
 noncomputable def partialTotalE₁StepIsoSucc (m q : ℕ) :
     CategoryTheory.ComposableArrows.mk₁
         (B.partialTotalEIntFiltration.map
@@ -85,8 +91,10 @@ noncomputable def partialTotalE₁StepIsoSucc (m q : ℕ) :
     partialTotalStepShortComplex_f_succ] using
       B.partialTotalE₁IntervalMap_succ m q
 
-/-- Uniform chain-level comparison between the interval selected by the
-increasing core and the `p`th partial-total step. -/
+/-- The uniform core-interval comparison with partial-total steps.
+
+Use the zero-stage interval comparison in column zero and the successor comparison in positive
+columns. -/
 noncomputable def partialTotalE₁StepIso :
     (p q : ℕ) →
       CategoryTheory.ComposableArrows.mk₁
@@ -97,9 +105,10 @@ noncomputable def partialTotalE₁StepIso :
   | 0, q => B.partialTotalE₁StepIsoZero q
   | m + 1, q => B.partialTotalE₁StepIsoSucc m q
 
-/-- The upper component of the page-one interval coordinate is the
-canonical finite-stage coordinate, up to the endpoint identification built
-into the increasing core. -/
+/-- The upper finite-stage component of a core-interval comparison.
+
+The upper component of the first-page interval isomorphism is heterogeneously equal to the
+finite-stage filtration-object isomorphism. -/
 theorem partialTotalE₁StepIso_app_one_heq (p q : ℕ) :
     HEq ((B.partialTotalE₁StepIso p q).app 1)
       (B.partialTotalEIntFiltrationObjIso p) := by
@@ -154,8 +163,10 @@ section Abelian
 
 variable {D : Type u} [Category.{v} D] [Abelian D]
 
-/-- Uniform cochain-level comparison between the interval selected by the
-increasing core and the cochain extension of the `p`th filtration step. -/
+/-- The cochain extension of a first-page core-interval comparison.
+
+In an abelian category, extending the chain interval comparison identifies the increasing core
+cochain map with the cochain partial-total step. -/
 noncomputable def partialTotalE₁CochainStepIso
     (B' : HomologicalComplex₂ D (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (p q : ℕ) :

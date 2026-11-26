@@ -1,3 +1,6 @@
-# Cotangent Weight Zero Coefficient Homotopy Equiv
+# The contraction of the weight-zero coefficient complex
 
-The actual constant contraction and native normalization provide the homotopy equivalence.
+The contraction of the weight-zero coefficient complex.
+
+The Dold–Kan normalization comparison and the constant extra degeneracy give a chain homotopy
+equivalence from the normalized constant complex on `M` to `M` concentrated in degree zero.

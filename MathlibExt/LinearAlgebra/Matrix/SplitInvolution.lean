@@ -13,12 +13,16 @@ public import Mathlib.Data.Matrix.Block
 public import Mathlib.Algebra.Group.Units.Defs
 
 /-!
-# A native block involution from an actual split rectangular pair
+# A block involution from a rectangular split pair
 
-For U*V=1, the block matrix [[0,U],[V,1−V*U]] is its own inverse.
-The entries stay in an arbitrary noncommutative ring. The construction
-uses native Matrix.fromBlocks and multiplication; no inverse matrix or
-comparison is supplied as data.
+Let A be an arbitrary ring and U:N×M, V:M×N be matrices on finite index sets with UV=I_N. Then
+VU is idempotent, U(I_M−VU)=0 and (I_M−VU)V=0. The block matrix W=[[0,U],[V,I_M−VU]] therefore
+satisfies W²=I_{N⊕M} and defines a matrix unit whose inverse is W itself.
+
+For families u,v:J → A with ∑ⱼuⱼvⱼ=1, take U to be the singleton row u and V the singleton
+column v. Conjugating the scalar singleton corner x by W gives a matrix supported on J×J with
+entry vᵢxuⱼ. Ring elements are never commuted in these formulas; the ring, row/column index sets
+and singleton index retain their arbitrary universes.
 -/
 
 @[expose] public section
@@ -34,11 +38,14 @@ variable {A : Type a} [Ring A]
   {M : Type m} [Fintype M] [DecidableEq M]
   (U : Matrix N M A) (V : Matrix M N A)
 
-/-- The actual native block matrix for a rectangular pair. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+splitInvolution U V is the (N⊕M)-square block matrix W=[[0,U],[V,I_M−VU]]. Its definition does
+not require the relation UV=I_N. -/
 def splitInvolution : Matrix (N ⊕ M) (N ⊕ M) A :=
   fromBlocks 0 U V (1 - V * U)
 omit [DecidableEq M] in
-/-- The complementary block comes from an actual idempotent. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+If UV=I_N, then (VU)²=VU as an M×M matrix, so VU is idempotent. -/
 theorem splitPair_idempotent (h : U * V = 1) : (V * U) * (V * U) = V * U := by
   calc
     _ = V * (U * (V * U)) := Matrix.mul_assoc _ _ _
@@ -47,15 +54,18 @@ theorem splitPair_idempotent (h : U * V = 1) : (V * U) * (V * U) = V * U := by
     _ = (V * (U * V)) * U := (Matrix.mul_assoc _ _ _).symm
     _ = _ := by rw [h, Matrix.mul_one]
 
-/-- The top-right block cancels in the square, in the original product order. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+Under UV=I_N, one has U(I_M−VU)=0, with the indicated multiplication order. -/
 theorem splitPair_right_zero (h : U * V = 1) : U * (1 - V * U) = 0 := by
   rw [Matrix.mul_sub, Matrix.mul_one, ← Matrix.mul_assoc, h, Matrix.one_mul, sub_self]
 
-/-- The bottom-left block cancels without commuting any ring elements. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+Under UV=I_N, one has (I_M−VU)V=0. No commutativity assumption on A is needed. -/
 theorem splitPair_left_zero (h : U * V = 1) : (1 - V * U) * V = 0 := by
   rw [Matrix.sub_mul, Matrix.one_mul, Matrix.mul_assoc, h, Matrix.mul_one, sub_self]
 
-/-- The bottom-right block of the square is the actual identity. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+If UV=I_N, then VU+(I_M−VU)²=I_M. This is the lower-right block identity in W². -/
 theorem splitPair_complement (h : U * V = 1) :
     V * U + (1 - V * U) * (1 - V * U) = 1 := by
   have hp := splitPair_idempotent U V h
@@ -64,7 +74,8 @@ theorem splitPair_complement (h : U * V = 1) :
       hp, sub_self, sub_zero]
   rw [hq, add_comm, sub_add_cancel]
 
-/-- The complete actual block matrix is an involution. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+If UV=I_N, then W²=I_{N⊕M} for W=[[0,U],[V,I_M−VU]]. This holds over a noncommutative ring A. -/
 theorem splitInvolution_mul_self (h : U * V = 1) :
     splitInvolution U V * splitInvolution U V = 1 := by
   rw [splitInvolution, fromBlocks_multiply]
@@ -72,7 +83,9 @@ theorem splitInvolution_mul_self (h : U * V = 1) :
   rw [h, splitPair_right_zero U V h, splitPair_left_zero U V h,
     splitPair_complement U V h, fromBlocks_one]
 
-/-- The native unit has the same explicit matrix as both value and inverse. -/
+/-- Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+Under UV=I_N, splitInvolutionUnit is the unit of the square matrix ring with both value and
+inverse equal to W=[[0,U],[V,I_M−VU]]. -/
 def splitInvolutionUnit (h : U * V = 1) : (Matrix (N ⊕ M) (N ⊕ M) A)ˣ where
   val := splitInvolution U V
   inv := splitInvolution U V
@@ -93,10 +106,10 @@ section Row
 
 variable {J : Type m} [Fintype J] [DecidableEq J] (u v : J → A)
 
-/-- The actual one-row matrix of the normalized family. -/
+/-- For a family u:J → A, normalizedRow u is the singleton-by-J matrix with entry (⋆,j)=u(j). -/
 def normalizedRow : Matrix PUnit J A := Matrix.of (fun _ j => u j)
 
-/-- The actual one-column matrix, with no transposed product convention. -/
+/-- For a family v:J → A, normalizedColumn v is the J-by-singleton matrix with entry (j,⋆)=v(j). -/
 def normalizedColumn : Matrix J PUnit A := Matrix.of (fun j _ => v j)
 omit [DecidableEq J] in
 theorem normalizedRow_mul_column (h : (∑ j, u j * v j) = 1) :
@@ -108,7 +121,10 @@ theorem normalizedRow_mul_column (h : (∑ j, u j * v j) = 1) :
   change (∑ t : J, u t * v t) = 1
   exact h
 
-/-- The normalized family gives a concrete unit indexed by PUnit⊕J, even if J is empty. -/
+/-- Let A be a ring, J a finite index set and u,v:J → A satisfy ∑ⱼuⱼvⱼ=1. The singleton-by-J row
+U=(uⱼ) and J-by-singleton column V=(vᵢ) give the unit W=[[0,U],[V,I_J−VU]] in matrices indexed
+by {⋆}⊕J, with W⁻¹=W. The singleton index may occupy a universe independent of J, and no
+nonemptiness assumption on J is added. -/
 def normalizedFrameUnit (h : (∑ j, u j * v j) = 1) :
     (Matrix (PUnit ⊕ J) (PUnit ⊕ J) A)ˣ :=
   splitInvolutionUnit (normalizedRow u) (normalizedColumn v)
@@ -158,11 +174,14 @@ theorem normalizedFrameUnit_inv_inr_inl (h : (∑ j, u j * v j) = 1)
     (i : J) (j : PUnit.{t + 1}) :
     (normalizedFrameUnit.{a, m, t} u v h).inv (Sum.inr i) (Sum.inl j) = v i := rfl
 
-/-- The actual PUnit corner before conjugation. -/
+/-- Let A be a ring, J an index set and x ∈ A. normalizedFrameCorner x is the matrix on {⋆}⊕J with
+the singleton corner equal to x and all other blocks zero: [[x,0],[0,0]]. -/
 def normalizedFrameCorner (x : A) : Matrix (PUnit ⊕ J) (PUnit ⊕ J) A :=
   fromBlocks (Matrix.of (fun _ _ : PUnit => x)) 0 0 0
 
-/-- Actual conjugation sends the PUnit corner to the computed Peirce block v_i*x*u_j. -/
+/-- Let A be a ring, J finite and u,v:J → A satisfy ∑ⱼuⱼvⱼ=1. For the associated unit W and x ∈ A,
+W⁻¹·corner(x)·W has all blocks zero except the J×J block, whose (i,j)-entry is vᵢxuⱼ. The factor
+order is preserved in a noncommutative A. -/
 theorem normalizedFrameUnit_conjugateCorner (h : (∑ j, u j * v j) = 1) (x : A) :
     (normalizedFrameUnit.{a, m, t} u v h).inv *
         normalizedFrameCorner.{a, m, t} (J := J) x *

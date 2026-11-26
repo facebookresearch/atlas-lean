@@ -1,3 +1,6 @@
-# Cotangent Weight Zero On Resolution Iso
+# The constant-module comparison in cotangent weight zero
 
-Weight zero is canonically the actual constant A-module, not a truncated degree formula.
+The constant-module comparison in cotangent weight zero.
+
+The regular tensor unitors identify the weight-zero simplicial module of `P_• → A` with the
+constant simplicial module on `A`.

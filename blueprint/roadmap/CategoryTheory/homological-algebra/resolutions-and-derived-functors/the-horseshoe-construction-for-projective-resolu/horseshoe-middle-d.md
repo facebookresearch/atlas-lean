@@ -1,5 +1,7 @@
-# Horseshoe middle d
+# Endpoint block differential of the constructed horseshoe
 
-The horseshoe differential is lower triangular in Mathlib's
-`Biprod.ofComponents` convention (vanishing `P₁`-to-`P₃` component, free
-`P₃`-to-`P₁` cross component) in the endpoint coordinates.
+Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. In the constructed endpoint coordinates, the middle
+differential has diagonals `d_P₁,d_P₃`, zero component from
+`P₁,n+1` to `P₃,n`, and its extracted cross component from
+`P₃,n+1` to `P₁,n`.

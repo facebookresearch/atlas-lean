@@ -18,12 +18,14 @@ public import MathlibExt.Algebra.Homology.PartialTotalSuccessorCochainSplitting
 import Mathlib.Algebra.Homology.HomotopyCategory.DegreewiseSplit
 
 /-!
-# The partial-total connecting map is the horizontal row map
+# The horizontal cocycle model of partial-total connecting maps
 
-The connecting morphism of the successor filtration step agrees with the
-homology map induced by the horizontal degree-one cocycle between adjacent
-signed rows.  This comparison is chain-level and makes no spectral-page,
-E₂, Tor, abutment, or convergence claim.
+Let `B` be a first-quadrant bicomplex in an abelian category. The horizontal component between
+adjacent signed rows is a degree-one cochain cocycle, hence a map to the shifted target row.
+
+The connecting map of the successor filtration short exact sequence, projected to the
+preceding row, equals the homology map of this horizontal cocycle. The equality is also stated
+with independently named total degrees `nPlus=(m+1)+q` and `nZero=m+q`.
 -/
 
 @[expose] public section
@@ -348,9 +350,10 @@ private theorem partialTotalTransportedSplitShift_eq (m : ℕ) :
       dsimp only [K, L, P]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The connecting morphism of a successor partial-total step is the homology
-map induced by the horizontal degree-one cocycle between its adjacent signed
-rows. -/
+/-- The equality of partial-total connecting and horizontal-row homology maps.
+
+The connecting-map model from row `m+1` to row `m` in vertical degree `q` is the map induced
+by the horizontal degree-one row cocycle. -/
 @[reassoc]
 theorem partialTotalE₁ConnectingDifferential_eq_horizontalRowHomology
     (m q : ℕ) :
@@ -440,8 +443,10 @@ theorem partialTotalE₁ConnectingDifferential_eq_horizontalRowHomology
   rw [B.partialTotalTransportedSplitShift_eq m]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The connecting morphism of a successor partial-total step agrees with
-the horizontal row map at arbitrary supported total degrees. -/
+/-- The adjacent-row comparison with explicit total-degree coordinates.
+
+For `nPlus=(m+1)+q` and `nZero=m+q`, the transported successor connecting morphism equals the
+homology shift map of the horizontal row map at cochain degrees `-nPlus` and `-nZero`. -/
 theorem partialTotalE₁Connecting_eq_horizontalRowAt
     (m q nPlus nZero : ℕ)
     (hPlus : (m + 1) + q = nPlus)

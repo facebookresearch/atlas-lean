@@ -1,4 +1,7 @@
-# Horizontal Complete Filtration Cochain Homotopy
+# Complete-stage homotopies extend to the integer cochain filtration
 
-The actual complete-stage homotopy under the existing chain-to-cochain
-embedding used by the spectral object.
+Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. Let F_i(K) be G_i(K) reindexed by
+chain degree r↦cochain degree -r and extended by zero. At each i∈ℤ∪{⊥,⊤}, the complete-stage
+chain homotopy extends to a cochain homotopy F_i(f)≃F_i(g). Its nonzero components lower cochain
+degree by one.

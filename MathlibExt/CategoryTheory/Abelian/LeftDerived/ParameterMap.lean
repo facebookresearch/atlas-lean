@@ -12,15 +12,16 @@ module
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.LongExact
 public import Mathlib.CategoryTheory.CommSq
 
+/- ShortComplex.mapNatTrans maps the split horseshoe; CommSq.horiz_comp pastes its boundary square with the resolution-comparison squares. -/
+
 /-!
-# Naturality of left-derived boundaries in the additive functor
+# Coefficient naturality of left-derived connecting maps
 
-The maps in both derived degrees are the `NatTrans.leftDerived` components.
-`ShortComplex.mapNatTrans` maps the fixed split horseshoe, and `CommSq.horiz_comp` combines its
-boundary square with the existing resolution-comparison squares. No additional
-mapped-natural-transformation or endpoint comparison wrapper is introduced.
-
-Neither additive functor is required to preserve arbitrary exact sequences.
+Let `C,D` be abelian, with projective resolutions in `C`.
+A transformation between additive functors `C → D` gives commuting
+squares with the boundaries of every specified projective horseshoe,
+and hence with the canonical left-derived connecting maps.
+The degree maps are the derived natural transformations.
 -/
 
 @[expose] public section
@@ -44,10 +45,10 @@ variable {S : ShortComplex C} {hS : S.ShortExact}
 variable {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
 variable (H : ProjectiveResolution.HorseshoeData hS P₁ P₃)
 
-/--
-The supplied horseshoe boundary commutes with the left-derived components of a natural
-transformation between additive functors.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `α : F → G`. For a projective horseshoe `H` over short exact `S`, with
+endpoint coordinates and chain-adjacent degrees `i=j+1`, its
+boundaries satisfy `δ_H,F ≫ L_jα_(S.X₁) = L_iα_(S.X₃) ≫ δ_H,G`. -/
 theorem delta_naturality_functor (sH : H.Spec)
     {F G : C ⥤ D} [F.Additive] [G.Additive] (α : F ⟶ G)
     (i j : ℕ) (hij : (ComplexShape.down ℕ).Rel i j) :
@@ -89,7 +90,9 @@ end ProjectiveResolution.HorseshoeData
 
 namespace LeftDerivedDelta
 
-/-- The canonical `LDdelta` commutes with the literal left-derived parameter maps. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `α : F → G`. For short exact `S : X₁ → X₂ → X₃`, the canonical boundaries
+satisfy `L_(n+1)α_(X₃) ≫ δ_G,n = δ_F,n ≫ L_nα_(X₁)`. -/
 theorem LDdelta_natural_functor {F G : C ⥤ D} [F.Additive] [G.Additive]
     (α : F ⟶ G) (n : ℕ) (S : ShortComplex C) (hS : S.ShortExact) :
     (NatTrans.leftDerived α (n + 1)).app S.X₃ ≫ LDdelta G n S hS =

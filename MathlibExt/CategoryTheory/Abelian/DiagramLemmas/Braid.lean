@@ -15,7 +15,13 @@ public import MathlibExt.Algebra.Homology.ExactSequence
 /-!
 # The exact braid lemma
 
-Minimal strict diagram data required by the general exact-braid theorem.
+An exact braid in an abelian category consists of overlapping chains
+`A → P → B₁ → A₁ → P₁ → B₂`,
+`X → Q → B₁ → X₁ → Q₁ → B₂`, and
+`A → X → R → A₁ → X₁`, with their specified exact interior terms
+and commuting comparison maps `P → Q`, `Q → R`, `P₁ → Q₁`.
+Its diagonal `P → Q → R → P₁ → Q₁` is exact, with the third map
+factoring through `R → A₁ → P₁`.
 -/
 
 @[expose] public section
@@ -27,7 +33,15 @@ open CategoryTheory.Preadditive
 
 universe v u
 
-/-- Strict exact-braid diagram data for the general exact-braid theorem. -/
+/-- In an abelian category `C`, exact-braid data consists of chains
+`A → P → B₁ → A₁ → P₁ → B₂`, `X → Q → B₁ → X₁ → Q₁ → B₂`,
+and `A → X → R → A₁ → X₁`. They are exact respectively at
+`B₁,A₁,P₁`, at `Q,B₁,X₁`, and at `X,R,A₁`.
+The comparison maps `p : P → Q`, `q : Q → R`, `p₁ : P₁ → Q₁`
+have zero composite `p ≫ q`, agree with the two routes from `A`
+to `Q` and from `A₁` to `Q₁`, and factor the maps `P → B₁`,
+`X → R`, `Q → A₁`, `B₁ → X₁`, and `P₁ → B₂` through the
+corresponding commuting braid squares. -/
 structure ExactBraid (C : Type u) [Category.{v} C] [Abelian C] where
   A : C
   X : C
@@ -275,7 +289,9 @@ private lemma exact_P₁ :
     simp only [Category.assoc] at h_main ⊢
     exact h_main⟩
 
-/-- Exactness of the diagonal sequence in an exact braid. -/
+/-- For an exact braid `S` in an abelian category `C`, the diagonal
+sequence `P → Q → R → P₁ → Q₁`, with maps `pQ`, `qR`,
+`rA ≫ aP₁`, and `pQ₁`, is exact at its three interior objects. -/
 theorem exact :
     (ComposableArrows.mk₄ S.pQ S.qR (S.rA ≫ S.aP₁) S.pQ₁).Exact :=
   ComposableArrows.exact_of_δ₀ S.exact_Q.exact_toComposableArrows

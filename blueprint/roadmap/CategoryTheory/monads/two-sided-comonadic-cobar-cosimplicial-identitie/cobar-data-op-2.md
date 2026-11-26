@@ -1,3 +1,5 @@
-# Cobar Data Op δ
+# The face maps of opposite cobar data
 
-Faces of the opposite data are `op` of the public cofaces.
+The face maps of opposite cobar data.
+
+The simplicial face at `i` is the opposite of cobar coface `i`.

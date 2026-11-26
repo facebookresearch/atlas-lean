@@ -15,14 +15,20 @@ public import Mathlib.RingTheory.Coalgebra.Primitive
 import Mathlib.Tactic.Abel
 
 /-!
-# The canonical exterior coalgebra over a commutative ring
+# The exterior coproduct and its counit
 
-Signed insertion on `Λ M ⊗ Λ M` satisfies the exterior quadratic relation.
-The native Clifford fold therefore defines the coproduct. Coassociativity
-and both counit laws follow by exterior-word induction, without a basis or
-an invertibility assumption on factorials. Every exterior generator is
-primitive. This module supplies an ordinary coassociative coalgebra; the
-symmetry of its homogeneous components has the Koszul sign.
+For a commutative ring `R` and an `R`-module `M`, the exterior coproduct is the linear map `Δ
+: E → E ⊗[R] E`, `E=ExteriorAlgebra R M`, with `Δ(1)=1⊗1` and `Δ(ι(x))=1⊗ι(x)+ι(x)⊗1`.
+
+Its recursion uses `D_x(a⊗b)=ι(x)a⊗b+γ(a)⊗ι(x)b`, where `γ` is the grade involution. These
+insertion operators square to zero. The augmentation `ε : E → R` kills generators and supplies
+the counit. Coassociativity uses the tensor associator, and the counit identities identify the
+outputs with `1⊗a` and `a⊗1`.
+
+These maps define an ordinary coalgebra. The coproduct commutes with the grade involution and
+with exterior maps induced by linear maps.
+
+References: Bourbaki, *Algebra*, Chapter III; Sweedler, *Hopf Algebras*, Chapter 1.
 -/
 
 @[expose] public section
@@ -41,8 +47,10 @@ variable (M : Type v) [AddCommGroup M] [Module R M]
 local notation "E" => ExteriorAlgebra R M
 local notation "γ" => (CliffordAlgebra.involute : E →ₐ[R] E)
 
-/-- Insert a generator in the left tensor factor, or in the right factor
-after applying the grade involution to the left factor. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `x : M`, `signedInsertion R M x` is the endomorphism `a⊗b ↦ ι(x)*a ⊗ b
++ γ(a) ⊗ ι(x)*b`. The assignment `x ↦ signedInsertion x` is `R`-linear. -/
 def signedInsertion : M →ₗ[R] Module.End R (E ⊗[R] E) where
   toFun x := ((Algebra.lmul R E) (ι R x)).rTensor E +
     TensorProduct.map (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap ((Algebra.lmul R E) (ι R x))
@@ -70,7 +78,10 @@ theorem signedInsertion_tmul (x : M) (a b : E) :
     TensorProduct.map_tmul, AlgHom.toLinearMap_apply]
   rfl
 
-/-- The two cross terms cancel; the unmixed terms vanish by `ι(x)^2 = 0`. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For every `x : M`, `D_x ∘ D_x=0` on `E ⊗[R] E`, where
+`D_x(a⊗b)=ι(x)a⊗b+γ(a)⊗ι(x)b`. -/
 theorem signedInsertion_comp_self (x : M) :
     (signedInsertion R M x).comp (signedInsertion R M x) = 0 := by
   apply TensorProduct.ext'
@@ -85,7 +96,10 @@ theorem signedInsertion_squared (x : M) (p : E ⊗[R] E) :
     signedInsertion R M x (signedInsertion R M x p) = 0 :=
   LinearMap.congr_fun (signedInsertion_comp_self R M x) p
 
-/-- The canonical exterior coproduct, constructed by the native Clifford fold. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. The coproduct is determined by `Δ(1)=1⊗1` and `Δ(ι(x)*a)=D_x(Δ a)`, where
+`D_x(a⊗b)=ι(x)a⊗b+γ(a)⊗ι(x)b`. In particular its generators have coproduct `1⊗ι(x)+ι(x)⊗1`. -/
 def coproduct : E →ₗ[R] E ⊗[R] E :=
   CliffordAlgebra.foldr (0 : QuadraticForm R M) (signedInsertion R M)
     (fun x p => by simpa using signedInsertion_squared R M x p)
@@ -100,7 +114,9 @@ theorem coproduct_algebraMap (r : R) :
     coproduct R M (algebraMap R E r) = r • ((1 : E) ⊗ₜ[R] (1 : E)) := by
   apply CliffordAlgebra.foldr_algebraMap
 
-/-- The signed insertion recursion of the actual coproduct. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `x : M` and `a : E`, `Δ(ι(x)*a)=signedInsertion R M x (Δ a)`. -/
 @[simp]
 theorem coproduct_ι_mul (x : M) (a : E) :
     coproduct R M (ι R x * a) = signedInsertion R M x (coproduct R M a) := by
@@ -113,7 +129,10 @@ theorem coproduct_ι (x : M) :
   simpa only [mul_one, coproduct_one, signedInsertion_tmul, map_one, add_comm] using
     coproduct_ι_mul R M x (1 : E)
 
-/-- The canonical augmentation kills every exterior generator. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. `augmentation R M : E →ₐ[R] R` fixes coefficient scalars and sends every
+generator `ι(x)` to zero. Its underlying linear map is the counit. -/
 def augmentation : E →ₐ[R] R :=
   lift R ⟨(0 : M →ₗ[R] R), fun x => by simp only [LinearMap.zero_apply, zero_mul]⟩
 
@@ -131,7 +150,10 @@ theorem augmentation_involute (a : E) : augmentation R M (γ a) = augmentation R
     rw [CliffordAlgebra.involute_ι, map_neg, augmentation_ι, neg_zero]
   exact AlgHom.congr_fun h a
 
-/-- The simultaneous grade involution on the two tensor factors. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. `tensorParity R M` is the endomorphism `γ ⊗ γ` of `E ⊗[R] E`, sending
+`a⊗b` to `γ(a)⊗γ(b)`. -/
 def tensorParity : Module.End R (E ⊗[R] E) := TensorProduct.map (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
   (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
 
@@ -152,7 +174,9 @@ theorem tensorParity_signedInsertion (x : M) (p : E ⊗[R] E) :
       LinearMap.neg_apply, neg_add]
   exact LinearMap.congr_fun h p
 
-/-- The coproduct preserves the total grade involution. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For every `a : E`, `Δ(γ a)=(γ ⊗ γ)(Δ a)`. -/
 theorem coproduct_involute (a : E) :
     coproduct R M (γ a) = tensorParity R M (coproduct R M a) := by
   induction a using CliffordAlgebra.left_induction with
@@ -210,7 +234,10 @@ private theorem iteratedRight_insertion (x : M) (p : E ⊗[R] E) :
         coproduct_ι_mul, tripleInsertion_tmul]
   | add p q hp hq => simp only [map_add, hp, hq]
 
-/-- Coassociativity is derived from the common signed insertion on three factors. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `a : E`, `α((Δ ⊗ id_E)(Δ a))=(id_E ⊗ Δ)(Δ a)`, where `α : (E⊗E)⊗E ≃
+E⊗(E⊗E)` is the tensor associator. -/
 theorem coproduct_coassoc_apply (a : E) :
     TensorProduct.assoc R E E E ((coproduct R M).rTensor E (coproduct R M a)) =
       (coproduct R M).lTensor E (coproduct R M a) := by
@@ -259,7 +286,9 @@ private theorem augmentation_right_insertion (x : M) (p : E ⊗[R] E) :
     rfl
   exact LinearMap.congr_fun h p
 
-/-- Left counitality of the constructed exterior coproduct. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `a : E` and `ε=augmentation R M`, `(ε ⊗ id_E)(Δ a)=1⊗a` in `R ⊗[R] E`. -/
 theorem augmentation_rTensor_coproduct (a : E) :
     (augmentation R M).toLinearMap.rTensor E (coproduct R M a) = (1 : R) ⊗ₜ[R] a := by
   induction a using CliffordAlgebra.left_induction with
@@ -272,7 +301,9 @@ theorem augmentation_rTensor_coproduct (a : E) :
       rw [coproduct_ι_mul, augmentation_left_insertion, ha, LinearMap.lTensor_tmul]
       rfl
 
-/-- Right counitality of the constructed exterior coproduct. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `a : E` and `ε=augmentation R M`, `(id_E ⊗ ε)(Δ a)=a⊗1` in `E ⊗[R] R`. -/
 theorem augmentation_lTensor_coproduct (a : E) :
     (augmentation R M).toLinearMap.lTensor E (coproduct R M a) = a ⊗ₜ[R] (1 : R) := by
   induction a using CliffordAlgebra.left_induction with
@@ -285,7 +316,10 @@ theorem augmentation_lTensor_coproduct (a : E) :
       rw [coproduct_ι_mul, augmentation_right_insertion, ha, LinearMap.rTensor_tmul]
       rfl
 
-/-- The actual exterior coproduct and augmentation give a native coalgebra. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. The coassociative coproduct `Δ` and counit `(augmentation R
+M).toLinearMap` define `Coalgebra R E`, with the associator and both counit laws. -/
 instance instCoalgebra : Coalgebra R E where
   comul := coproduct R M
   counit := (augmentation R M).toLinearMap
@@ -293,7 +327,10 @@ instance instCoalgebra : Coalgebra R E where
   rTensor_counit_comp_comul := LinearMap.ext (augmentation_rTensor_coproduct R M)
   lTensor_counit_comp_comul := LinearMap.ext (augmentation_lTensor_coproduct R M)
 
-/-- Every Lie-independent exterior generator is primitive for the actual coalgebra. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For every `x : M`, `ι(x)` is `(1,1)`-skew primitive: its counit is zero
+and `Δ(ι(x))=1⊗ι(x)+ι(x)⊗1`. -/
 theorem ι_isPrimitive (x : M) :
     Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) (ι R x) where
   counit_eq_zero := augmentation_ι R M x
@@ -303,7 +340,10 @@ section Naturality
 
 variable {N : Type w} [AddCommGroup N] [Module R N]
 
-/-- Exterior functoriality commutes with the native grade involution. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For an `R`-module `N`, `f : M →ₗ[R] N`, and `a : E`,
+`γ_N(ExteriorAlgebra.map f a)=ExteriorAlgebra.map f (γ_M a)`. -/
 theorem involute_map_apply (f : M →ₗ[R] N) (a : E) :
     CliffordAlgebra.involute (map f a) = map f (γ a) := by
   have h : (CliffordAlgebra.involute : ExteriorAlgebra R N →ₐ[R] ExteriorAlgebra R N).comp
@@ -330,7 +370,10 @@ theorem signedInsertion_naturality (f : M →ₗ[R] N) (x : M) (p : E ⊗[R] E) 
       involute_map_apply]
   exact LinearMap.congr_fun h p
 
-/-- Every linear map induces the canonical map of exterior coalgebras. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For an `R`-module `N`, `f : M →ₗ[R] N`, and `a : E`, `(Λf ⊗ Λf)(Δ_M
+a)=Δ_N(Λf a)`, where `Λf=ExteriorAlgebra.map f`. -/
 theorem coproduct_naturality (f : M →ₗ[R] N) (a : E) :
     TensorProduct.map (map f).toLinearMap (map f).toLinearMap (coproduct R M a) =
       coproduct R N (map f a) := by

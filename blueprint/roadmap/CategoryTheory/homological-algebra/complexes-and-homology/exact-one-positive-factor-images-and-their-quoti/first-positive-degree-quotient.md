@@ -1,3 +1,5 @@
-# First Positive Degree Quotient
+# The quotient by first-positive images in one degree
 
-The actual module quotient degree, without introducing another chain engine.
+The `R`-module quotient of `K₃.X n` by the sum of the component ranges
+of `P` with `p > 0`, `q ≥ 0` and `p + q = n`. It describes one degree
+of the first-positive cokernel.

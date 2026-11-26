@@ -8,4 +8,4 @@ The symmetric group of a set as a group: support, cycles and cycle decomposition
 - [Full cycle type of a permutation of a finite set, fixed points included](permutation-cycle-type.md)
 - [Permutations grouped by their first or last value](permutations-grouped-by-their-first-or-last-valu/README.md)
 - [Separating the first coordinate modulo finite cyclic rotation](separating-the-first-coordinate-modulo-finite-cy/README.md)
-- [Period of finite rotation](fin-rotate-pow-succ.md)
+- [A full rotation cycle is the identity](fin-rotate-pow-succ.md)

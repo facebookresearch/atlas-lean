@@ -1,7 +1,6 @@
-# Em Augmented Iso
+# The forgotten-module augmented bar is the regular monadic augmentation
 
-The honest comparison isomorphism: the forgotten/evaluated augmented EM
-bar is naturally isomorphic to `BarResolution.resolutionAugmented`. Outer whiskering,
-evaluation, `constComp`, and associators prevent definitional equality, so
-the isomorphism is assembled from the data isomorphism by transport along
-the genuine augmentation functor and evaluation whiskering.
+For a monad T on C and T-algebra alg, evaluating the augmented-data comparison gives
+emUnderlyingAugmented(alg) ≅ resolutionAugmented(alg). The comparison is induced by the
+forgotten-free-to-regular right-module isomorphism and the identity left-module and target
+comparisons, so it preserves both simplicial operators and the algebra augmentation.

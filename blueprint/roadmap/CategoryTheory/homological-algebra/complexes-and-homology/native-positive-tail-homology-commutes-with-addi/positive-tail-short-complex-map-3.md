@@ -1,3 +1,4 @@
-# Positive Tail Short Complex Map τ₂
+# Middle component of the positive-tail row map
 
-The native row map retains the literal original degree `n+1` element.
+Let C be abelian, K a nonnegative chain complex with d_K,1,0 = 0, and n a natural number. The
+middle component of positiveTailShortComplexMap K is the identity map of K_{n+1}.

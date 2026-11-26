@@ -13,15 +13,19 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantSpectralSequenceSupport
 
 /-!
-# The first page of the first-quadrant spectral sequence
+# First-page terms as homology of consecutive filtration intervals
 
-The page-one object in bidegree `(p,q)` is canonically the relative homology
-of the consecutive filtration stages `F_{p-1} → F_p`, in cochain degree
-`-(p+q)`.  The extended-integer convention makes `F_{-1}=0`, so the same
-formula covers the zeroth column.
+Let K be a nonnegative homological bicomplex in an abelian category C,
+and let F_a be the complete horizontal filtration of Tot(K), indexed
+by EInt = ℤ ∪ {−∞,+∞}. The pth consecutive interval has lower index
+p−1 and upper index p.
 
-The subsequent first-page column modules identify this relative term with
-vertical homology and compute the actual page differential.
+Its relative homology in cochain degree −p−q is the first-page object:
+E¹_(p,q) ≅ H_(−p−q)(Cone(F_(p−1) → F_p)).
+The chain-to-cochain extension places total degree n at degree −n.
+At p=0 the lower filtration stage is F_(−1)=0, so the formula
+includes the zeroth column. The category object and morphism
+worlds are independent.
 -/
 
 @[expose] public section
@@ -41,11 +45,15 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Lower extended filtration index for the `p`th graded piece. -/
+/-- For p ∈ ℕ, the lower first-page index is the finite element
+p−1 of EInt, with subtraction performed in ℤ.
+In particular the lower index at p=0 is −1. -/
 def horizontalFirstPageLowerIndex (p : ℕ) : EInt :=
   @WithBotTop.coe ℤ ((p : ℤ) - 1)
 
-/-- Upper extended filtration index for the `p`th graded piece. -/
+/-- For p ∈ ℕ, the upper first-page index is p, viewed as a
+finite element of EInt. Together with lower index p−1 it selects
+the consecutive horizontal filtration interval for column p. -/
 def horizontalFirstPageUpperIndex (p : ℕ) : EInt :=
   @WithBotTop.coe ℤ (p : ℤ)
 
@@ -53,14 +61,20 @@ theorem horizontalFirstPageIndex_le (p : ℕ) :
     horizontalFirstPageLowerIndex p ≤ horizontalFirstPageUpperIndex p :=
   WithBotTop.coe_monotone (by lia)
 
-/-- Relative homology of consecutive horizontal filtration stages in the
-degree belonging to bidegree `(p,q)`. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the relative first-page object is
+H_(−p−q)(Cone(F_(p−1) → F_p)), for p,q ≥ 0.
+It is the complete spectral object's interval homology after total
+chain degree n is reindexed as cochain degree −n. -/
 abbrev horizontalFirstPageRelativeHomology (p q : ℕ) : C :=
   ((horizontalCompleteFiltrationSpectralObject K).H (-(p : ℤ) - q)).obj
     (ComposableArrows.mk₁ (homOfLE (horizontalFirstPageIndex_le p)))
 
-/-- The canonical first-page identification with relative filtration
-homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category C and p,q ≥ 0, the horizontal spectral sequence has
+E¹_(p,q) ≅ H_(−p−q)(Cone(F_(p−1) → F_p)).
+The finite indices are p−1 and p in EInt, so p=0 uses the zero
+lower filtration stage. -/
 noncomputable def horizontalFirstPageXIso (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).X (p, q) ≅
       horizontalFirstPageRelativeHomology K p q :=

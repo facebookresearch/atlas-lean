@@ -1,4 +1,5 @@
-# Em Naturality right
+# Forgotten and regular maps agree on augmentation targets
 
-The target components agree: both underlying and resolution maps act by
-`φ.f`. Consumes `BarResolution.resolutionHom_right`.
+Let T be a monad on C and φ : alg → alg′ an algebra morphism. The target components of
+emUnderlyingHom(φ) and resolutionHom(φ) are equal. Both are the underlying map φ.f between the
+algebra carriers.

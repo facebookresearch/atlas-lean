@@ -1,4 +1,6 @@
-# Enveloping Augmentation quasi Iso of free
+# The augmentation quasi-isomorphism for a free underlying Lie module
 
-The original native enveloping CE augmentation is a quasi-isomorphism
-under freeness of the original underlying Lie module.
+The augmentation quasi-isomorphism for a free underlying Lie module.
+
+If `Module.Free R L`, the enveloping Chevalley–Eilenberg augmentation to the trivial module is
+a quasi-isomorphism in every connective degree.

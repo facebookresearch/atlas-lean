@@ -16,15 +16,18 @@ public import MathlibExt.Algebra.Algebra.NonUnitalIdeal.KSplit
 public import Mathlib.CategoryTheory.ConcreteCategory.EpiMono
 
 /-!
-# Ideal complexes and filtration-zero complexes
+# Split ideal complexes identify with filtration zero
 
-The ideal-to-kernel chain maps have the images
-defining filtration zero. A ground-module
-splitting of the ideal quotient gives tensor
-component injectivity, and the image identities
-give surjectivity. The resulting chain isomorphism
-retains the positive bar’s zero augmentation
-and arbitrary coefficient modules.
+The ideal-to-relative chain map has component range equal to the bottom ideal-count stage.
+Restricting its codomain therefore gives a chain map bComplex(I) → F₀. A ground-linear
+quotient section supplies a retraction of the tensorized ideal inclusion, giving component
+injectivity; the range equality gives surjectivity. Thus this factor map is a chain
+isomorphism.
+
+With any ground coefficient V, the positive ideal bar similarly maps isomorphically to G₀
+under the same split-quotient hypothesis. Forward word coordinates use ideal inclusion in
+every factor, and inverse coordinates use the split ideal projection. Both positive complexes
+retain a zero degree-zero term.
 -/
 
 @[expose] public section
@@ -71,7 +74,11 @@ private theorem originalIdealWordRetraction (s : I.KSplit) (n : ℕ) :
     LinearMap.id
   exact PiTensorProduct.map_id
 
-/-- The original ideal-to-kernel component has values in the exact original F0 stage. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. For n : ℕ,
+idealToNaiveFiltrationZeroComponent n maps bComplex(I).X n to F₀,n by codomain restriction of
+j_I.f n, using its range equality. -/
 def idealToNaiveFiltrationZeroComponent (n : ℕ) :
     (bComplex k I.Algebra).X n →ₗ[k] naiveWordFiltration k A I 0 n :=
   LinearMap.codRestrict (naiveWordFiltration k A I 0 n)
@@ -111,7 +118,11 @@ private theorem idealToNaiveFiltrationZeroComponent_comm (n : ℕ) :
     ((idealToRelativeNaiveComplex k A I).comm (n + 1) n)
   simpa only [ModuleCat.hom_comp, LinearMap.comp_apply] using h
 
-/-- The original ideal chain map factors through the original naive F0 complex. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex.
+idealToNaiveFiltrationZeroComplex : bComplex(I) ⟶ naiveFilteredWordComplex 0 assembles the
+component codomain restrictions of j_I. -/
 def idealToNaiveFiltrationZeroComplex :
     bComplex k I.Algebra ⟶ naiveFilteredWordComplex k A I 0 :=
   ChainComplex.ofHom
@@ -123,7 +134,10 @@ theorem idealToNaiveFiltrationZeroComplex_f (n : ℕ) :
     (idealToNaiveFiltrationZeroComplex k A I).f n =
       ModuleCat.ofHom (idealToNaiveFiltrationZeroComponent k A I n) := rfl
 
-/-- Including the F0 factorization gives exactly the original ideal-to-kernel map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex.
+idealToNaiveFiltrationZeroComplex ≫ naiveFilteredWordInclusion 0 = j_I. -/
 theorem idealToNaiveFiltrationZeroComplex_inclusion :
     idealToNaiveFiltrationZeroComplex k A I ≫ naiveFilteredWordInclusion k A I 0 =
       idealToRelativeNaiveComplex k A I := by
@@ -157,7 +171,12 @@ private theorem originalIdealNaiveComponent_injective (s : I.KSplit) (n : ℕ) :
     (fun z => ((kernel.ι (cyclicBComplexHom I.quotientMap)).f n).hom z) hxy
   exact hx.symm.trans (hkernel.trans hy)
 
-/-- The source k-splitting earns injectivity; the proved original image equality earns surjectivity. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. Choose s : I.KSplit, a
+k-linear section of A → A/I, and write p_s : A → I for its ideal projection. For every n : ℕ,
+(idealToNaiveFiltrationZeroComplex).f n is bijective. Injectivity uses the tensorized
+projection p_s and surjectivity the bottom-stage image equality. -/
 theorem idealToNaiveFiltrationZeroComplex_bijective (s : I.KSplit) (n : ℕ) :
     Function.Bijective ((idealToNaiveFiltrationZeroComplex k A I).f n).hom := by
   change Function.Bijective (idealToNaiveFiltrationZeroComponent k A I n)
@@ -174,7 +193,11 @@ theorem idealToNaiveFiltrationZeroComplex_bijective (s : I.KSplit) (n : ℕ) :
     apply Subtype.ext
     exact hx
 
-/-- Degreewise bijectivity of the original factorization earns its native IsIso. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. Choose s : I.KSplit, a
+k-linear section of A → A/I, and write p_s : A → I for its ideal projection. IsIso
+(idealToNaiveFiltrationZeroComplex) holds because each of its components is bijective. -/
 theorem idealToNaiveFiltrationZeroComplex_isIso (s : I.KSplit) :
     IsIso (idealToNaiveFiltrationZeroComplex k A I) := by
   let : ∀ n : ℕ, IsIso ((idealToNaiveFiltrationZeroComplex k A I).f n) := fun n =>
@@ -182,7 +205,12 @@ theorem idealToNaiveFiltrationZeroComplex_isIso (s : I.KSplit) :
       (idealToNaiveFiltrationZeroComplex_bijective k A I s n)
   exact HomologicalComplex.Hom.isIso_of_components _
 
-/-- Under the original k-split extension, the ideal b complex is the original F0 complex. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. Choose s : I.KSplit, a
+k-linear section of A → A/I, and write p_s : A → I for its ideal projection.
+naiveFiltrationZeroIdealIso s : bComplex(I) ≅ naiveFilteredWordComplex 0 has forward map
+idealToNaiveFiltrationZeroComplex. -/
 def naiveFiltrationZeroIdealIso (s : I.KSplit) :
     bComplex k I.Algebra ≅ naiveFilteredWordComplex k A I 0 := by
   letI := idealToNaiveFiltrationZeroComplex_isIso k A I s
@@ -192,14 +220,23 @@ def naiveFiltrationZeroIdealIso (s : I.KSplit) :
 theorem naiveFiltrationZeroIdealIso_hom (s : I.KSplit) :
     (naiveFiltrationZeroIdealIso k A I s).hom = idealToNaiveFiltrationZeroComplex k A I := rfl
 
-/-- The isomorphism's original forward map recovers exactly the original ideal-to-kernel lift. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. Choose s : I.KSplit, a
+k-linear section of A → A/I, and write p_s : A → I for its ideal projection. The forward map
+of naiveFiltrationZeroIdealIso s followed by naiveFilteredWordInclusion 0 equals j_I. -/
 theorem naiveFiltrationZeroIdealIso_hom_inclusion (s : I.KSplit) :
     (naiveFiltrationZeroIdealIso k A I s).hom ≫ naiveFilteredWordInclusion k A I 0 =
       idealToRelativeNaiveComplex k A I := by
   rw [naiveFiltrationZeroIdealIso_hom]
   exact idealToNaiveFiltrationZeroComplex_inclusion k A I
 
-/-- The original forward map retains the ideal inclusion in every original word coordinate. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. Choose s : I.KSplit, a
+k-linear section of A → A/I, and write p_s : A → I for its ideal projection. In degree n, the
+forward isomorphism followed by the relative word inclusion is inclusion_I^⊗(n+1) after
+TensorPower.consEquiv on bComplex(I).X n. -/
 theorem naiveFiltrationZeroIdealIso_hom_word (s : I.KSplit) (n : ℕ) :
     (relativeNaiveWordMap k A I n).comp
         (((naiveFiltrationZeroIdealIso k A I s).hom ≫
@@ -210,7 +247,12 @@ theorem naiveFiltrationZeroIdealIso_hom_word (s : I.KSplit) (n : ℕ) :
   rw [naiveFiltrationZeroIdealIso_hom_inclusion]
   exact relativeNaiveWordMap_idealToRelative k A I n
 
-/-- The native inverse has the source projection as its original ideal-word coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let j_I : bComplex(I) → K_b be the ideal lift to the
+relative naive kernel and F₀ its bottom ideal-count subcomplex. Choose s : I.KSplit, a
+k-linear section of A → A/I, and write p_s : A → I for its ideal projection. For y : F₀,n, the
+ideal tensor coordinate of naiveFiltrationZeroIdealIso.inv y is PiTensorProduct.map (fun _ =>
+p_s) applied to the relative ambient word W_n(y.val). -/
 theorem naiveFiltrationZeroIdealIso_inv_word (s : I.KSplit) (n : ℕ)
     (y : naiveWordFiltration k A I 0 n) :
     TensorPower.consEquiv k I.Algebra n
@@ -248,7 +290,10 @@ theorem naiveFiltrationZeroIdealIso_inv_word (s : I.KSplit) (n : ℕ)
 
 variable (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The original positive ideal-to-kernel component has values in the exact full original F0 stage. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. For N : ℕ, idealToPositiveFiltrationZeroComponent N is j_I^+.f N with codomain
+restricted to barFullWordFiltration 0 N. At N = 0 its value is zero. -/
 def idealToPositiveFiltrationZeroComponent (n : ℕ) :
     (positiveBarComplex k I.Algebra V).X n →ₗ[k] barFullWordFiltration k A I V 0 n :=
   LinearMap.codRestrict (barFullWordFiltration k A I V 0 n)
@@ -296,7 +341,10 @@ private theorem idealToPositiveFiltrationZeroComponent_comm (n : ℕ) :
     ((idealToRelativePositiveBarComplex k A I V).comm (n + 1) n)
   simpa only [ModuleCat.hom_comp, LinearMap.comp_apply] using h
 
-/-- The arbitrary-coefficient positive ideal chain map factors through its original F0 complex. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. idealToPositiveFiltrationZeroComplex : positiveBar(I,V) ⟶ barFilteredWordComplex 0
+assembles the bottom-stage component restrictions of j_I^+. -/
 def idealToPositiveFiltrationZeroComplex :
     positiveBarComplex k I.Algebra V ⟶ barFilteredWordComplex k A I V 0 :=
   ChainComplex.ofHom
@@ -308,7 +356,9 @@ theorem idealToPositiveFiltrationZeroComplex_f (n : ℕ) :
     (idealToPositiveFiltrationZeroComplex k A I V).f n =
       ModuleCat.ofHom (idealToPositiveFiltrationZeroComponent k A I V n) := rfl
 
-/-- Including the full F0 factorization gives exactly the original positive ideal-to-kernel map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. idealToPositiveFiltrationZeroComplex ≫ barFilteredWordInclusion 0 = j_I^+. -/
 theorem idealToPositiveFiltrationZeroComplex_inclusion :
     idealToPositiveFiltrationZeroComplex k A I V ≫ barFilteredWordInclusion k A I V 0 =
       idealToRelativePositiveBarComplex k A I V := by
@@ -367,7 +417,11 @@ private theorem originalIdealPositiveComponent_injective (s : I.KSplit) (n : ℕ
         relativePositiveBarWordMap_idealToRelative_apply] at h
       exact h
 
-/-- The original source k-splitting and image equality earn full component bijectivity. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s. For
+every N : ℕ, (idealToPositiveFiltrationZeroComplex).f N is bijective. The positive-degree word
+retraction is id_V ⊗ p_s^⊗N, and degree zero is a map of zero objects. -/
 theorem idealToPositiveFiltrationZeroComplex_bijective (s : I.KSplit) (n : ℕ) :
     Function.Bijective ((idealToPositiveFiltrationZeroComplex k A I V).f n).hom := by
   change Function.Bijective (idealToPositiveFiltrationZeroComponent k A I V n)
@@ -395,7 +449,10 @@ theorem idealToPositiveFiltrationZeroComplex_bijective (s : I.KSplit) (n : ℕ) 
         apply Subtype.ext
         exact hx
 
-/-- The positive ideal-to-F0 chain map is a native isomorphism under the original source splitting. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s. IsIso
+(idealToPositiveFiltrationZeroComplex) holds in the positive bar chain category. -/
 theorem idealToPositiveFiltrationZeroComplex_isIso (s : I.KSplit) :
     IsIso (idealToPositiveFiltrationZeroComplex k A I V) := by
   let : ∀ n : ℕ, IsIso ((idealToPositiveFiltrationZeroComplex k A I V).f n) := fun n =>
@@ -403,7 +460,11 @@ theorem idealToPositiveFiltrationZeroComplex_isIso (s : I.KSplit) :
       (idealToPositiveFiltrationZeroComplex_bijective k A I V s n)
   exact HomologicalComplex.Hom.isIso_of_components _
 
-/-- The source k-split ideal extension identifies the positive ideal bar with the original F0 complex. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s.
+positiveFiltrationZeroIdealIso s : positiveBar(I,V) ≅ barFilteredWordComplex 0 has forward map
+idealToPositiveFiltrationZeroComplex. -/
 def positiveFiltrationZeroIdealIso (s : I.KSplit) :
     positiveBarComplex k I.Algebra V ≅ barFilteredWordComplex k A I V 0 := by
   letI := idealToPositiveFiltrationZeroComplex_isIso k A I V s
@@ -414,14 +475,22 @@ theorem positiveFiltrationZeroIdealIso_hom (s : I.KSplit) :
     (positiveFiltrationZeroIdealIso k A I V s).hom =
       idealToPositiveFiltrationZeroComplex k A I V := rfl
 
-/-- The original forward isomorphism recovers exactly the original positive ideal-to-kernel lift. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s. The
+forward map of positiveFiltrationZeroIdealIso followed by barFilteredWordInclusion 0 equals
+j_I^+. -/
 theorem positiveFiltrationZeroIdealIso_hom_inclusion (s : I.KSplit) :
     (positiveFiltrationZeroIdealIso k A I V s).hom ≫ barFilteredWordInclusion k A I V 0 =
       idealToRelativePositiveBarComplex k A I V := by
   rw [positiveFiltrationZeroIdealIso_hom]
   exact idealToPositiveFiltrationZeroComplex_inclusion k A I V
 
-/-- Positive forward coordinates retain the coefficient identity and every original ideal inclusion. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s. In
+degree n + 1, the forward isomorphism and relative word map equal id_V ⊗ inclusion_I^⊗(n+1)
+after positiveBarWordIso_I n. -/
 theorem positiveFiltrationZeroIdealIso_hom_word (s : I.KSplit) (n : ℕ) :
     (relativePositiveBarWordMap k A I V n).comp
         (((positiveFiltrationZeroIdealIso k A I V s).hom ≫
@@ -433,7 +502,11 @@ theorem positiveFiltrationZeroIdealIso_hom_word (s : I.KSplit) (n : ℕ) :
   rw [positiveFiltrationZeroIdealIso_hom_inclusion]
   exact relativePositiveBarWordMap_idealToRelative k A I V n
 
-/-- The positive inverse has the original identity-coefficient ideal-projection coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s. For y
+: barWordFiltration 0 n, the positive ideal word coordinate of the inverse image is (id_V ⊗
+p_s^⊗(n+1))(W_n^V(y.val)). -/
 theorem positiveFiltrationZeroIdealIso_inv_word (s : I.KSplit) (n : ℕ)
     (y : barWordFiltration k A I V 0 n) :
     (positiveBarWordIso k I.Algebra V n).hom.hom
@@ -476,12 +549,19 @@ theorem positiveFiltrationZeroIdealIso_inv_word (s : I.KSplit) (n : ℕ)
   rw [idealToPositiveFiltrationZeroComponent_val, hw]
   exact hr.symm
 
-/-- The positive forward isomorphism retains the original zero augmentation component. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. Choose a k-linear quotient section s : I.KSplit, with ideal projection p_s. The
+degree-zero component of positiveFiltrationZeroIdealIso.hom is zero, since the positive ideal
+source has a zero degree-zero object. -/
 theorem positiveFiltrationZeroIdealIso_hom_f_zero (s : I.KSplit) :
     (positiveFiltrationZeroIdealIso k A I V s).hom.f 0 = 0 :=
   (positiveBarComplex_isZero_zero k I.Algebra V).eq_of_src _ _
 
-/-- The original F0 target has its bottom augmentation, with no supplied zero-object premise. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let j_I^+
+: positiveBar(I,V) → K_+ be the positive ideal lift and G₀ the bottom positive count
+subcomplex. The object (barFilteredWordComplex 0).X 0 is zero, because its underlying full
+filtration stage is a submodule of the zero positive kernel object. -/
 theorem positiveFiltrationZero_isZero_zero :
     IsZero ((barFilteredWordComplex k A I V 0).X 0) := by
   apply (ModuleCat.isZero_iff_subsingleton).mpr

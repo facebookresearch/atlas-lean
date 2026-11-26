@@ -1,3 +1,5 @@
-# Matrix Ordinary Zero Corner Map
+# The compared matrix chain coalgebra map of zero extension
 
-The converted source comonoid map for every zero corner.
+The compared matrix chain coalgebra map of zero extension.
+
+The matrix zero-extension comonoid map transports through the scalar-unit comparison.

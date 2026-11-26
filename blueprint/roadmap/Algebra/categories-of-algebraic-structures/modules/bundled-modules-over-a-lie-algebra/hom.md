@@ -1,3 +1,6 @@
-# Hom
+# Lie-module homomorphisms between independent coefficient carriers
 
-Native coefficient maps also make sense between independent carrier universes.
+Lie-module homomorphisms between independent coefficient carriers.
+
+For bundled modules `X` and `Y`, this is the type of `R`-linear maps `X → Y` commuting with
+the `L`-action. The two carrier universes may differ.

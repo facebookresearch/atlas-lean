@@ -1,3 +1,5 @@
-# Left Derived Precomp Iso id
+# Identity source change gives the identity precomposition isomorphism
 
-The canonical comparison for identity source change is identity in every degree.
+Let `C,A` be abelian, with projective resolutions in `C`, and
+`L : C → A` additive. The canonical precomposition comparison for
+the identity source functor is the identity isomorphism of `L_nL`.

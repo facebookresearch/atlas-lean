@@ -1,3 +1,7 @@
-# Horizontal Complete Direct Column Projection Map naturality
+# The complete top-column projection is bicomplex-natural
 
-The complete upper-stage projection is natural under bicomplex maps.
+For f : K → L between nonnegative homological bicomplexes
+in a preadditive category with a zero object and finite coproducts,
+the complete projections satisfy
+Π_(L,p) ∘ F_p^complete(f) = D_p(f) ∘ Π_(K,p).
+All maps are integer cochain maps at the upper stage p.

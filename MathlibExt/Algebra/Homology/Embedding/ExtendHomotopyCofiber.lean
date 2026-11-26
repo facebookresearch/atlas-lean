@@ -14,14 +14,18 @@ public import MathlibExt.Algebra.Homology.HomotopyCofiber
 public import MathlibExt.Algebra.Homology.HomotopyCofiberProjection
 
 /-!
-# Extension preserves homotopy cofibers
+# Homotopy cofibers and extension by zero
 
-Extension by zero along an incoming-closed embedding of complex shapes commutes with
-homotopy cofibers. At a boundary degree, the source summand of the extended cofiber is
-zero; the comparison uses the canonical zero-summand biproduct isomorphism.
+For an incoming-closed embedding of complex shapes, extension by zero
+commutes with homotopy cofibers. On a retained outgoing edge i→j, the
+comparison identifies the source coordinate F_j and target coordinate G_i.
+At a source boundary it discards an ambient source coordinate that is
+zero, and outside the image all terms are zero.
 
-The construction generalizes the down-`ℕ` comparison originally implemented in
-`MathlibExt.Algebra.Homology.HomotopyCofiberDownNatQuasiIso`.
+If every degree has a predecessor, the canonical null-homotopies identify
+the forward isomorphism with the universal comparison. With this condition
+in both shapes, the comparisons form a natural isomorphism of cofiber
+functors. Short-complex descent maps are compatible with the comparison.
 -/
 
 @[expose] public section
@@ -45,7 +49,11 @@ variable {F G : HomologicalComplex C c} (φ : F ⟶ G)
 variable (e : c.Embedding c') [e.IsTruncLE]
 variable (hc : ∀ j : ι, ∃ i, c.Rel i j)
 
-/-- An outgoing edge from outside an incoming-closed image also ends outside it. -/
+/--
+Let e:c→c' be a relation-reflecting embedding of complex shapes whose image is closed under
+incoming differentials (IsTruncLE). If c'.Rel i' j' and i' lies outside the image, then j'
+also lies outside the image; otherwise incoming closure would put i' in the image.
+-/
 lemma not_mem_of_rel_of_not_mem_source
     {i' j' : ι'} (hij : c'.Rel i' j')
     (hi : ∀ i, e.f i ≠ i') : ∀ j, e.f j ≠ j' := by
@@ -54,7 +62,11 @@ lemma not_mem_of_rel_of_not_mem_source
   obtain ⟨i, hi'⟩ := e.mem_prev hij
   exact hi i hi'
 
-/-- An ambient successor absent from the source shape lies outside the embedded image. -/
+/--
+Let e:c→c' be a relation-reflecting embedding of complex shapes whose image is closed under
+incoming differentials (IsTruncLE). If i has no outgoing edge in c but e(i) has an outgoing
+edge in c', the target c'.next(e(i)) is outside the image of e.
+-/
 lemma not_mem_next_of_not_rel_next (i : ι)
     (hi : ¬ c.Rel i (c.next i))
     (hi' : c'.Rel (e.f i) (c'.next (e.f i))) :
@@ -67,7 +79,12 @@ lemma not_mem_next_of_not_rel_next (i : ι)
 
 variable [DecidableRel c.Rel]
 
-/-- The extension of the canonical null-homotopy of the target inclusion. -/
+/--
+Let C be preadditive with a zero object and binary biproducts, let φ:F→G be a c-complex map,
+and let e:c→c' be incoming-closed and relation-reflecting. Assume c.Rel is decidable and every
+c-degree has a predecessor. Extending the canonical null-homotopy of φ≫inr_φ gives a homotopy
+from extend(φ)≫extend(inr_φ) to zero.
+-/
 noncomputable def extendInrCompHomotopy :
     _root_.Homotopy
       (HomologicalComplex.extendMap φ e ≫
@@ -79,7 +96,12 @@ noncomputable def extendInrCompHomotopy :
         (HomologicalComplex.extendMap_zero
           (K := F) (L := homotopyCofiber φ) e)))
 
-/-- Component formula for the extended canonical null-homotopy. -/
+/--
+Let C be preadditive with a zero object and binary biproducts, φ:F→G a c-complex map, and e an
+incoming-closed embedding. Assume c.Rel is decidable and every c-degree has a predecessor. For
+c.Rel j i, the extended null-homotopy component at e(i)→e(j) is the original source-summand
+inclusion F_i→H(φ)_j, conjugated by the canonical extension term identifications.
+-/
 lemma extendInrCompHomotopy_hom (i j : ι) (hji : c.Rel j i) :
     (extendInrCompHomotopy φ e hc).hom (e.f i) (e.f j) =
       (F.extendXIso e rfl).hom ≫
@@ -92,8 +114,14 @@ lemma extendInrCompHomotopy_hom (i j : ι) (hji : c.Rel j i) :
 
 variable [DecidableRel c'.Rel]
 
-/-- The canonical comparison from the homotopy cofiber of an extended map to the
-extension of its homotopy cofiber. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. Assume every degree of c has an incoming edge. The extended target inclusion
+e_*G→e_*H(φ), together with the extended null-homotopy of e_*φ, defines the canonical
+comparison H(e_*φ)→e_*H(φ).
+-/
 noncomputable def extendComparison :
     homotopyCofiber (HomologicalComplex.extendMap φ e) ⟶
       (homotopyCofiber φ).extend e :=
@@ -101,7 +129,14 @@ noncomputable def extendComparison :
     (HomologicalComplex.extendMap (inr φ) e)
     (extendInrCompHomotopy φ e hc)
 
-/-- The degreewise extension comparison at a degree in the image. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. At an image degree e(i), the canonical comparison identifies H(e_*φ)_{e(i)} with
+(e_*H(φ))_{e(i)}, using the original source/target cofiber summands and the extension term
+isomorphisms.
+-/
 noncomputable def extendComponentIsoImage (i : ι) :
     (homotopyCofiber (HomologicalComplex.extendMap φ e)).X (e.f i) ≅
       ((homotopyCofiber φ).extend e).X (e.f i) := by
@@ -131,7 +166,14 @@ noncomputable def extendComponentIsoImage (i : ι) :
             (XIso φ i hi).symm ≪≫
             ((homotopyCofiber φ).extendXIso e rfl).symm
 
-/-- The degreewise isomorphism underlying `extendIso`. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. For i' and a selected preimage i with e(i)=i', the retained-degree comparison gives
+H(e_*φ)_{i'}≅(e_*H(φ))_{i'}, transporting the same source and target cofiber coordinates along
+that equality.
+-/
 noncomputable def extendComponentIsoPreimage {i' : ι'}
     (p : {i // e.f i = i'}) :
     (homotopyCofiber (HomologicalComplex.extendMap φ e)).X i' ≅
@@ -140,7 +182,14 @@ noncomputable def extendComponentIsoPreimage {i' : ι'}
     extendComponentIsoImage φ e p.1 ≪≫
       eqToIso (by rw [p.property])
 
-/-- The degreewise isomorphism underlying `extendIso`. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. At every c'-degree i', there is a canonical isomorphism
+H(e_*φ)_{i'}≅(e_*H(φ))_{i'}. Retained degrees use the original cofiber coordinates; outside
+the image both sides are zero objects.
+-/
 noncomputable def extendComponentIso (i' : ι') :
     (homotopyCofiber (HomologicalComplex.extendMap φ e)).X i' ≅
       ((homotopyCofiber φ).extend e).X i' := by
@@ -158,8 +207,15 @@ noncomputable def extendComponentIso (i' : ι') :
       (isZero_X (HomologicalComplex.extendMap φ e) i' hG hF)
       ((homotopyCofiber φ).isZero_extend_X e i' hmem')
 
-/-- At a degree with an outgoing edge, `extendComponentIso` is the canonical map of
-biproduct presentations. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. For an outgoing edge i→j in c, the cofiber term at i is presented as F_j⊞G_i. At
+e(i), the component comparison is the direct sum of the extension identifications on F_j and
+G_i, followed by the inverse original cofiber presentation and inverse extension coordinate of
+H(φ).
+-/
 lemma extendComponentIso_of_rel (i j : ι) (hij : c.Rel i j) :
     extendComponentIso φ e (e.f i) =
       XIsoBiprod (HomologicalComplex.extendMap φ e)
@@ -181,8 +237,15 @@ lemma extendComponentIso_of_rel (i j : ι) (hij : c.Rel i j) :
   rw [hp]
   simp [extendComponentIsoPreimage, extendComponentIsoImage, hij]
 
-/-- At a boundary degree where the ambient shape has an outgoing edge, `extendComponentIso`
-discards the zero source summand through `Limits.isoZeroBiprod`. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. Suppose i has no outgoing source edge but e(i) has an outgoing ambient edge. Its
+ambient successor is outside the image, so the extended source summand is zero. The component
+isomorphism discards that zero summand and identifies the remaining G_i coordinate with the
+original boundary cofiber term.
+-/
 lemma extendComponentIso_of_boundary (i : ι)
     (hi : ¬ c.Rel i (c.next i))
     (hi' : c'.Rel (e.f i) (c'.next (e.f i))) :
@@ -206,8 +269,14 @@ lemma extendComponentIso_of_boundary (i : ι)
   rw [hp]
   simp [extendComponentIsoPreimage, extendComponentIsoImage, hi, hi']
 
-/-- At a degree with no outgoing edge in either shape, `extendComponentIso` is induced by
-the target term alone. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. If neither i nor e(i) has an outgoing edge, the cofiber terms are their target
+G-coordinates. The comparison at e(i) is induced solely by the canonical extension
+identification of G_i.
+-/
 lemma extendComponentIso_of_no_rel (i : ι)
     (hi : ¬ c.Rel i (c.next i))
     (hi' : ¬ c'.Rel (e.f i) (c'.next (e.f i))) :
@@ -227,7 +296,14 @@ lemma extendComponentIso_of_no_rel (i : ι)
   rw [hp]
   simp [extendComponentIsoPreimage, extendComponentIsoImage, hi, hi']
 
-/-- The degreewise extension comparison preserves the first cofiber projection. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. For c.Rel i j, let θ be the component comparison at e(i) and γ the extension
+identification of H(φ)_i. Then θ.hom≫γ.hom≫pr_F equals the extended cofiber's projection to
+(e_*F)_{e(j)} followed by its identification with F_j.
+-/
 @[reassoc]
 lemma extendComponentIso_hom_extendXIso_fstX
     (i j : ι) (hij : c.Rel i j) :
@@ -241,7 +317,14 @@ lemma extendComponentIso_hom_extendXIso_fstX
   dsimp only [Iso.trans_hom, Iso.symm_hom]
   simp [fstX, Category.assoc]
 
-/-- The degreewise extension comparison preserves the second cofiber projection. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. At e(i), let θ be the component comparison and γ identify the extended original
+cofiber term with H(φ)_i. The target-coordinate projection satisfies θ.hom≫γ.hom≫pr_G =
+pr_{e_*G}≫α_G, with α_G the extension identification of G_i.
+-/
 @[reassoc]
 lemma extendComponentIso_hom_extendXIso_sndX (i : ι) :
     (extendComponentIso φ e (e.f i)).hom ≫
@@ -267,7 +350,14 @@ lemma extendComponentIso_hom_extendXIso_sndX (i : ι) :
       dsimp only [Iso.trans_hom, Iso.symm_hom]
       simp [sndX, hi, hi']
 
-/-- The degreewise extension comparison preserves the first cofiber inclusion. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. For c.Rel j i, the source-coordinate inclusion (e_*F)_{e(i)}→H(e_*φ)_{e(j)}
+followed by the component comparison equals the identification with F_i, its original
+inclusion into H(φ)_j, and inverse extension identification of that term.
+-/
 @[reassoc]
 lemma inlX_extendComponentIso_hom (i j : ι) (hji : c.Rel j i) :
     inlX (HomologicalComplex.extendMap φ e)
@@ -284,7 +374,14 @@ lemma inlX_extendComponentIso_hom (i j : ι) (hji : c.Rel j i) :
   rw [← inl_XIsoBiprod_inv φ i j hji]
   simp only [Category.assoc]
 
-/-- The degreewise extension comparison preserves the target inclusion. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. At e(i), the target inclusion (e_*G)_{e(i)}→H(e_*φ)_{e(i)} followed by the
+component comparison equals the identification with G_i, its original target inclusion, and
+inverse extension identification of H(φ)_i.
+-/
 @[reassoc]
 lemma inrX_extendComponentIso_hom (i : ι) :
     inrX (HomologicalComplex.extendMap φ e) (e.f i) ≫
@@ -391,7 +488,13 @@ private lemma extendComparison_f_eq (i' : ι') :
         (not_mem_of_rel_of_not_mem_source e hij (by simpa using hmem))
     exact (isZero_X (HomologicalComplex.extendMap φ e) i' hG hF).eq_of_src _ _
 
-/-- Extension along an incoming-closed embedding commutes with homotopy cofibers. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. The degreewise comparisons form an isomorphism of complexes H(e_*φ)≅e_*H(φ),
+including degrees outside the image and source boundary degrees.
+-/
 noncomputable def extendIso :
     homotopyCofiber (HomologicalComplex.extendMap φ e) ≅
       (homotopyCofiber φ).extend e :=
@@ -491,14 +594,26 @@ noncomputable def extendIso :
       · exact ((homotopyCofiber φ).isZero_extend_X e j'
           (by simpa using hjmem)).eq_of_tgt _ _)
 
-/-- When every degree has a predecessor, the forward map of `extendIso` is the
-universal comparison map. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. Assume every degree of c has an incoming edge. The forward morphism of
+H(e_*φ)≅e_*H(φ) is exactly the universal comparison obtained from the extended target
+inclusion and its null-homotopy.
+-/
 lemma extendIso_hom_eq_extendComparison :
     (extendIso φ e).hom = extendComparison φ e hc := by
   ext i'
   exact (extendComparison_f_eq φ e hc i').symm
 
-/-- The target inclusion is preserved by the extension comparison. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. The global target inclusion is preserved: inr_{e_*φ}≫extendIso(φ,e).hom =
+e_*(inr_φ).
+-/
 @[reassoc]
 lemma inr_extendIso_hom :
     inr (HomologicalComplex.extendMap φ e) ≫
@@ -515,7 +630,14 @@ lemma inr_extendIso_hom :
     rfl
   · exact (G.isZero_extend_X e i' (by simpa using hmem)).eq_of_src _ _
 
-/-- The first cofiber inclusion is preserved at degrees in the image of the embedding. -/
+/--
+Let C be preadditive with a zero object and binary biproducts. Let φ:F→G be a morphism of
+c-complexes and e:c→c' an incoming-closed, relation-reflecting embedding. Write e_* for
+extension by zero and H(φ) for the homotopy cofiber. Assume the relations of c and c' are
+decidable. For a reverse edge c.Rel j i, the first-summand inclusion at e(i)→e(j) followed by
+the degree-e(j) forward component agrees with the original inclusion F_i→H(φ)_j through the
+source and cofiber extension identifications.
+-/
 @[reassoc]
 lemma inlX_extendIso_hom_f (i j : ι) (hji : c.Rel j i) :
     inlX (HomologicalComplex.extendMap φ e)
@@ -536,7 +658,13 @@ variable (e : c.Embedding c') [e.IsTruncLE]
 variable (hc : ∀ j : ι, ∃ i, c.Rel i j)
 variable (hc' : ∀ j : ι', ∃ i, c'.Rel i j)
 
-/-- Naturality of the homotopy-cofiber extension comparison. -/
+/--
+Let C be preadditive with a zero object and binary biproducts, and e:c→c' incoming-closed and
+relation-reflecting. Assume both relations are decidable and every degree in both shapes has a
+predecessor. Let a be a commutative square between c-complex maps φ and ψ. The cofiber map of
+the extended square followed by θ_ψ equals θ_φ followed by the extension of its cofiber map,
+where θ_φ:H(e_*φ)≅e_*H(φ) is the canonical isomorphism.
+-/
 @[reassoc]
 theorem extendIso_naturality
     {φ ψ : Arrow (HomologicalComplex C c)} (a : φ ⟶ ψ) :
@@ -605,7 +733,13 @@ theorem extendIso_naturality
           ((homotopyCofiber ψ.hom).extendXIso e rfl).inv) h
     · exact (φ.left.isZero_extend_X e i' (by simpa using hi')).eq_of_src _ _
 
-/-- Conjugation formula for a homotopy-cofiber map under extension. -/
+/--
+Let C be preadditive with a zero object and binary biproducts, and e:c→c' incoming-closed and
+relation-reflecting. Assume both relations are decidable and every degree in both shapes has a
+predecessor. Let a be a commutative square between c-complex maps φ and ψ. The extended
+cofiber map is θ_φ.inv≫H(e_*a)≫θ_ψ.hom. Thus the two cofiber maps are related by conjugation
+through the extension isomorphisms.
+-/
 theorem extendMap_mapArrowHom
     {φ ψ : Arrow (HomologicalComplex C c)} (a : φ ⟶ ψ) :
     HomologicalComplex.extendMap
@@ -621,8 +755,12 @@ theorem extendMap_mapArrowHom
   simp only [Iso.hom_inv_id_assoc]
   exact (extendIso_naturality e hc hc' a).symm
 
-/-- Homotopy cofibers commute naturally with extension along an incoming-closed
-embedding of complex shapes. -/
+/--
+Let C be preadditive with zero object and binary biproducts. Let e:c→c' be incoming-closed and
+relation-reflecting, with decidable relations and a predecessor at every degree of each shape.
+On the arrow categories of complexes, extension followed by homotopy cofiber is naturally
+isomorphic to homotopy cofiber followed by extension.
+-/
 noncomputable def extendNatIso :
     (e.extendFunctor C).mapArrow ⋙ homotopyCofiberFunctor hc' ≅
       homotopyCofiberFunctor hc ⋙ e.extendFunctor C :=
@@ -630,19 +768,35 @@ noncomputable def extendNatIso :
     (fun φ ↦ extendIso φ.hom e)
     (fun a ↦ extendIso_naturality e hc hc' a)
 
-/-- The forward component of `extendNatIso`. -/
+/--
+Let C be preadditive with a zero object and binary biproducts, and let e:c→c' be
+incoming-closed and relation-reflecting. Assume both relations are decidable and every degree
+of both shapes has a predecessor. For an arrow φ of c-complexes, the forward component of the
+natural cofiber–extension isomorphism is θ_φ.hom:H(e_*φ)→e_*H(φ), where θ_φ is the canonical
+extension comparison.
+-/
 @[simp]
 lemma extendNatIso_hom_app (φ : Arrow (HomologicalComplex C c)) :
     (extendNatIso e hc hc').hom.app φ = (extendIso φ.hom e).hom :=
   rfl
 
-/-- The inverse component of `extendNatIso`. -/
+/--
+Let C be preadditive with a zero object and binary biproducts, and let e:c→c' be
+incoming-closed and relation-reflecting. Assume both relations are decidable and every degree
+of both shapes has a predecessor. For an arrow φ of c-complexes, the inverse component of the
+natural cofiber–extension isomorphism is θ_φ.inv:e_*H(φ)→H(e_*φ).
+-/
 @[simp]
 lemma extendNatIso_inv_app (φ : Arrow (HomologicalComplex C c)) :
     (extendNatIso e hc hc').inv.app φ = (extendIso φ.hom e).inv :=
   rfl
 
-/-- Extension comparison commutes with the universal map attached to a short complex. -/
+/--
+Let C be preadditive with zero object and binary biproducts, let e:c→c' be incoming-closed and
+relation-reflecting, and assume both relations are decidable. Let S=(A→B→D) be a short complex
+of c-complexes. For θ:H(e_*S.f)≅e_*H(S.f), the canonical descent maps to the third term
+satisfy θ.hom≫e_*(desc_S)=desc_{e_*S}.
+-/
 @[reassoc]
 theorem extendIso_hom_descShortComplex
     (S : ShortComplex (HomologicalComplex C c)) :
@@ -710,7 +864,12 @@ theorem extendIso_hom_descShortComplex
         (not_mem_of_rel_of_not_mem_source e hij (by simpa using hmem))
     exact (isZero_X (HomologicalComplex.extendMap S.f e) i' hG hF).eq_of_src _ _
 
-/-- Conjugation formula for the short-complex descent map under extension. -/
+/--
+Let C be preadditive with zero object and binary biproducts, let e:c→c' be incoming-closed and
+relation-reflecting, and assume both relations are decidable. Let S=(A→B→D) be a short complex
+of c-complexes. The extended descent map e_*(desc_S):e_*H(S.f)→e_*D equals θ.inv≫desc_{e_*S},
+using θ:H(e_*S.f)≅e_*H(S.f).
+-/
 theorem extendMap_descShortComplex
     (S : ShortComplex (HomologicalComplex C c)) :
     HomologicalComplex.extendMap (descShortComplex S) e =

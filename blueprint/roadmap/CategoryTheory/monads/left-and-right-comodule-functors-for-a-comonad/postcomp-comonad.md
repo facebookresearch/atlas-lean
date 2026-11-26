@@ -1,7 +1,6 @@
-# Postcomp Comonad
+# The comonad on functors given by postcomposition
 
-The comonad on `A ⥤ C` given by postcomposition with `G`.
+The comonad on functors given by postcomposition.
 
-The underlying functor sends `L` to `L ⋙ G`; the counit and comultiplication
-are `G.ε` and `G.δ` whiskered on the left. The laws follow componentwise from
-the comonad laws of `G`.
+For a comonad `G` on `C`, the functor-category comonad on `A ⥤ C` sends `L` to `L ⋙ G`, with
+counit and comultiplication evaluated at `L(a)`.
