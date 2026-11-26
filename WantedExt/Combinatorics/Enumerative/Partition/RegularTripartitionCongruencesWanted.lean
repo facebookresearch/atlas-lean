@@ -14,6 +14,7 @@ public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
 public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruences
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesQPochhammerPrimeDissection
 
 /-!
 # Congruences for `ℓ`-regular tripartitions, `ℓ ∈ {2, 3}` — wishlist
@@ -26,13 +27,15 @@ size `n`, i.e. `∑ T_ℓ(n) qⁿ = f_ℓ³ / f_1³` (paper, Section 1, eq. (1))
 `f_k = (q^k; q^k)_∞` is `qEulerProduct k`, written `𝔣 k` below. Eta-quotient identities are
 stated with denominators cleared (every `f_k` with `k ≥ 1` has constant coefficient `1`, so
 it is a unit of `ℤ⟦X⟧`). The Cui–Gu `p`-dissections (Lemmas 4 and 5) involve Ramanujan's
-`f(a, b)` with negated arguments and are stated for complex `q` with `‖q‖ < 1`, through
-`ramanujanThetaRaw` and `qPochhammerInfRaw`.
+`f(a, b)` with negated arguments and are stated for complex `q` with `‖q‖ < 1`; Lemma 4 is
+stated here through `ramanujanThetaRaw`, and Lemma 5, through `qPochhammerInfRaw`, is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesQPochhammerPrimeDissection`.
 
 Already stated elsewhere in this library: Lemma 2, eq. (4), is
 `qPochhammer_three_dissection_product_one_two`; Lemma 3, eq. (5), is
-`f1_cube_three_dissection`; Lemma 6, eq. (9), is the case `k = 1` of
-`qEulerProduct_pow_prime_pow_congruence`.
+`f1_cube_three_dissection`; Lemma 5, eq. (8), is `qPochhammer_prime_dissection`, proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesQPochhammerPrimeDissection`;
+Lemma 6, eq. (9), is the case `k = 1` of `qEulerProduct_pow_prime_pow_congruence`.
 -/
 
 open PowerSeries
@@ -158,35 +161,6 @@ public theorem_wanted ramanujanPsi_prime_dissection (p : ℕ) (hp : p.Prime) (hp
               (q ^ ((p ^ 2 - (2 * k + 1) * p) / 2)) +
           q ^ ((p ^ 2 - 1) / 8) * ramanujanThetaRaw (q ^ (p ^ 2)) (q ^ (3 * p ^ 2)) ∧
       ∀ m ≤ (p - 3) / 2, ¬ (m ^ 2 + m) / 2 ≡ (p ^ 2 - 1) / 8 [MOD p]
-
-/-- **Cui–Gu $p$-dissection of $f_1$.** Let $p \ge 5$ be a prime, let $s = (p - 1)/6$ if
-$p \equiv 1 \pmod 6$ and $s = (-p - 1)/6$ otherwise, and let $q$ be a complex number with
-$|q| < 1$. Write $f_k = (q^k; q^k)_\infty = \prod_{m \ge 1} (1 - q^{km})$, let
-$f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function, and
-let $K$ be the set of integers $k$ with $(1 - p)/2 \le k \le (p - 1)/2$ and $k \ne s$. Then
-$$
-f_1 = \sum_{k \in K} (-1)^k q^{k(3k+1)/2}
-f\bigl(-q^{(3p^2 + (6k+1)p)/2}, -q^{(3p^2 - (6k+1)p)/2}\bigr) +
-(-1)^s q^{(p^2-1)/24} f_{p^2}.
-$$
-All the divisions are exact and all the exponents of $q$ are nonnegative integers.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 5, eq. (8) (`integers-2024-A86-lem-5`),
-quoting S. Cui and N. Gu, *Arithmetic Properties of ℓ-Regular Partitions*, Adv. Appl. Math. 51
-(2013), 507–523, Theorem 2.2. The same identity is Nayaka, Dharmendra and Mahesh Kumar,
-*Divisibility Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80,
-Lemma 4, eq. (43) (`integers-2024-A80-lem-4`). -/
-public theorem_wanted qPochhammer_prime_dissection (p : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p)
-    (s : ℤ) (hs : s = if p % 6 = 1 then ((p : ℤ) - 1) / 6 else (-(p : ℤ) - 1) / 6)
-    (q : ℂ) (hq : ‖q‖ < 1) :
-    QPochhammer.qPochhammerInfRaw q q =
-      ∑ k ∈ (Finset.Icc ((1 - (p : ℤ)) / 2) (((p : ℤ) - 1) / 2)).erase s,
-          (-1 : ℂ) ^ k * q ^ (k * (3 * k + 1) / 2).toNat *
-            ramanujanThetaRaw (-q ^ ((3 * (p : ℤ) ^ 2 + (6 * k + 1) * p) / 2).toNat)
-              (-q ^ ((3 * (p : ℤ) ^ 2 - (6 * k + 1) * p) / 2).toNat) +
-        (-1 : ℂ) ^ s * q ^ ((p ^ 2 - 1) / 24) *
-          QPochhammer.qPochhammerInfRaw (q ^ (p ^ 2)) (q ^ (p ^ 2))
 
 /-- **The 3-dissection of the 2-regular tripartition generating function.** Let $T_2(n)$ be the
 number of 2-regular tripartitions of $n$ and $f_k = \prod_{m \ge 1} (1 - q^{km})$. In the ring
