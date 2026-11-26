@@ -43,10 +43,11 @@ containing both darts of an edge) makes such a colouring impossible, as it shoul
 variable {D : Type}
 
 /-- A simple loopless triangulation of a closed orientable surface, as an oriented combinatorial map
-on the finite dart set `D`: `α` reverses each edge (a fixed-point-free involution), `σ` rotates the
-darts around their common vertex, the surface is connected, every face (cycle of `φ = σ ∘ α`) is a
+on the dart type `D`: `α` reverses each edge (a fixed-point-free involution), `σ` rotates the darts
+around their common vertex, the surface is connected, every face (cycle of `φ = σ ∘ α`) is a
 triangle, and the graph of vertices (cycles of `σ`) and edges (pairs `{d, α d}`) has no loops and no
-multiple edges. -/
+multiple edges. The predicate does not require `D` to be finite; `grunbaumConjecture` adds
+`[Fintype D]`. -/
 def IsSimpleTriangulation (α σ : Equiv.Perm D) : Prop :=
   (∀ d, α (α d) = d) ∧ (∀ d, α d ≠ d) ∧
     (∀ d d' : D, ∃ τ ∈ Subgroup.closure ({α, σ} : Set (Equiv.Perm D)), τ d = d') ∧
@@ -55,9 +56,11 @@ def IsSimpleTriangulation (α σ : Equiv.Perm D) : Prop :=
     ∀ d d' : D, (∃ k : ℕ, (σ ^ k) d = d') → (∃ k : ℕ, (σ ^ k) (α d) = α d') → d = d'
 
 /-- The dual (cubic) graph, whose vertices are the faces and whose edges are the edges `{d, α d}`
-(joining the faces on their two sides), is `3`-edge-colorable: there is a colouring of the edges by
-`Fin 3` such that the three edges around every face have distinct colours (a dual loop admits no
-such colouring). -/
+(joining the faces on their two sides), is `3`-edge-colorable, tested on consecutive face darts:
+there is a colouring `c` of the edges by `Fin 3` with `c (φ d) ≠ c d` for every dart `d`, where
+`φ = σ ∘ α`. When every face is a triangle, as for `IsSimpleTriangulation`, this says that the three
+edges around every face have distinct colours (a dual loop admits no such colouring); on faces of
+other lengths that reading can fail, since the test compares consecutive darts only. -/
 def DualThreeEdgeColorable (α σ : Equiv.Perm D) : Prop :=
   ∃ c : D → Fin 3, (∀ d, c (α d) = c d) ∧ ∀ d, c (σ (α d)) ≠ c d
 

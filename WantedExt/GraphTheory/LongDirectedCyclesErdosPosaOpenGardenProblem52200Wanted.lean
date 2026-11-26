@@ -41,7 +41,8 @@ statement.
 -/
 
 /-- `c` lists the vertices of a directed cycle of `D` of length `m`: the vertices `c 0, …, c (m-1)`
-are distinct and `c i → c (i + 1)` is an arc for every `i`, indices taken modulo `m`. -/
+are distinct and `c i → c (i + 1)` is an arc for every `i`, indices taken modulo `m`. The case
+`m = 0` holds vacuously. -/
 def IsDirectedCycle {V : Type} (D : Digraph V) {m : ℕ} (c : Fin m → V) : Prop :=
   Function.Injective c ∧ ∀ i, D.Adj (c i) (c (finRotate m i))
 
