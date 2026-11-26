@@ -5,7 +5,7 @@ rate score in the log rate is `R(a, b) = a - ∫ (a + K) · b / (b + S) dμ`. Th
 Bochner integral, `0` when the integrand is not integrable, and `b / (b + S) = 0` where `b + S = 0`
 (`x / 0 = 0`). For a probability measure, a measurable `S > 0` and a measurable, integrable `K` it
 is `a - E[(a + K) b / (b + S)]`, the population counterpart of the
-[rate score times the rate](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/rate-score-log.md)
+[rate score times the rate](../likelihood-equations-and-efficiency-of-the-gamma/rate-score-log.md)
 of one cell with size factor `S` and count `K`.
 
 For `a ≥ 0` and `b > 0`, if `(S₀, K₀), (S₁, K₁), …` are measurable, pairwise independent copies of

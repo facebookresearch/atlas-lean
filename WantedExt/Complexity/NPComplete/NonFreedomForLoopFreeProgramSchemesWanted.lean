@@ -52,9 +52,9 @@ from a test to its two targets. An interpretation is a type `D` with a function 
 each function symbol and a predicate `D → Bool` for each predicate symbol, and the initial
 values are a state `X → D`.
 
-Paths start at the first instruction `I₁`, as in the definition of free schemes (every path
-from the start of the flow graph is followed by some computation). In a loop-free scheme every
-path extends to a maximal one, and an extension of a path that is never followed is never
+Paths start at the first instruction, `I₀` in this numbering, as in the definition of free schemes
+(every path from the start of the flow graph is followed by some computation). In a loop-free scheme
+every path extends to a maximal one, and an extension of a path that is never followed is never
 followed either, so it does not matter whether all paths or only maximal ones are counted.
 
 Encoding: the instance is decoded from a bitstring with the repository's

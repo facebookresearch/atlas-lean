@@ -10,5 +10,5 @@ measurable and integrable.
 
 For `a > 0` and `b > 0`, if `(S₀, K₀), (S₁, K₁), …` are measurable, pairwise independent copies of
 `(S, K)` on a probability space, with `S > 0` and `S`, `K` integrable, then `n⁻¹` times the
-[shape score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/shape-score.md) of the first `n`
+[shape score](../likelihood-equations-and-efficiency-of-the-gamma/shape-score.md) of the first `n`
 cells tends to `G(a, b)` almost surely by the strong law of large numbers.

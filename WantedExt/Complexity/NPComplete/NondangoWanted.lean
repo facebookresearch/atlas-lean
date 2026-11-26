@@ -89,7 +89,9 @@ def WellFormed (i : NondangoInstance) : Prop :=
     (∀ row ∈ i.2, ∀ e ∈ row, e.1 < i.1) ∧
     ∀ k < i.1, ((grid (rows i) (cols i)).induce {p | (entry i p).1 = k}).Connected
 
-/-- The cells `p`, `q`, `s` are three consecutive cells of a row, a column, or a diagonal. -/
+/-- The cells `p`, `q`, `s`, in this order, are three consecutive cells along one of the directed
+offsets `(0, 1)`, `(1, 0)`, `(1, 1)` and `(1, -1)` (row, column): right, down, down-right or
+down-left. -/
 def Consecutive {h w : ℕ} (p q s : Fin h × Fin w) : Prop :=
   (p.1 = q.1 ∧ q.1 = s.1 ∧ (p.2 : ℕ) + 1 = q.2 ∧ (q.2 : ℕ) + 1 = s.2) ∨
   (p.2 = q.2 ∧ q.2 = s.2 ∧ (p.1 : ℕ) + 1 = q.1 ∧ (q.1 : ℕ) + 1 = s.1) ∨

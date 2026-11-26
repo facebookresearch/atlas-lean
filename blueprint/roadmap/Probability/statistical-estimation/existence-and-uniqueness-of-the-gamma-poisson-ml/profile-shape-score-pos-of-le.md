@@ -1,10 +1,10 @@
 # The profile shape score is positive when 0 < M and V ≤ M
 
 For counts `k₁, …, kₙ` (`n ≥ 1`) with
-[sample mean](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M` and
-[biased sample variance](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-var.md) `V` such
+[sample mean](../likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M` and
+[biased sample variance](../likelihood-equations-and-efficiency-of-the-gamma/count-var.md) `V` such
 that `M > 0` and `V ≤ M`, the
-[profile shape score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/profile-shape-score.md)
+[profile shape score](../likelihood-equations-and-efficiency-of-the-gamma/profile-shape-score.md)
 `P(a) = ∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n (log (a + M) - log a)` is positive at every `a > 0` (the
 converse half of Levin and Reeds 1977, Theorem 2).
 

@@ -2,10 +2,8 @@
 
 ## A. PLANAR 3SAT
 
-- [Instances of PLANAR 3SAT](planar-three-sat-instance.md)
 - [Incidence graph in PLANAR 3SAT](incidence-graph.md)
 - [Well-formed instances of PLANAR 3SAT](well-formed-4.md)
-- [Feasible instances of PLANAR 3SAT](planar-three-sat-feasible.md)
 - [PLANAR 3SAT as a decision problem](planar-three-sat-dec.md)
 - [PLANAR 3SAT is NP-complete](planar-three-sat-np-complete.md)
 

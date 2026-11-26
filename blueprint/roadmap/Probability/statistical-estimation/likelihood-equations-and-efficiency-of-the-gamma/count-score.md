@@ -12,6 +12,6 @@ with the [digamma increment](digamma-increment.md) $\psi_k(a) = \sum_{j < k} 1/(
 logarithm ($\log 0 = 0$, $\log x = \log |x|$ for $x < 0$) and the convention $x / 0 = 0$. For
 $\sigma > 0$ and $a, b > 0$ it is the [gradient](score-marginal-lik-eq-count-score.md) in $\theta$
 of $\log P(k \mid a, b, \sigma)$, the logarithm of the
-[marginal likelihood](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik.md) of one
+[marginal likelihood](../../bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik.md) of one
 count. Summed over a sample at a common size factor it gives the
 [shape and rate scores](sum-count-score.md).

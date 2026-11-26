@@ -9,9 +9,9 @@ its plug-in prior mean is
 $$\frac{a}{b} = \frac{M}{\sigma} = \frac{\hat a_{\mathrm{mom}}}{\hat b_{\mathrm{mom}}},$$
 
 also the plug-in prior mean of the
-[moment shape](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/mom-shape.md)
+[moment shape](../../bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/mom-shape.md)
 $\hat a_{\mathrm{mom}} = M^2 / (V - M)$ and
-[moment rate](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/mom-rate.md)
+[moment rate](../../bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/mom-rate.md)
 $\hat b_{\mathrm{mom}} = \sigma M / (V - M)$. The two estimators differ in the shape equation: for
 $a > 0$ a root of both score equations solves $\sum_i \psi_{k_i}(a) = n \log(1 + M / a)$, the moment
 estimator $M + M^2 / a = V$.

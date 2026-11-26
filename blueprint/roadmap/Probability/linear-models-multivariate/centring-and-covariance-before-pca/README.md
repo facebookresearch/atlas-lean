@@ -2,11 +2,11 @@
 
 Throughout, $X$ is a real $n \times p$ data matrix whose rows are $n$ samples and whose columns are
 $p$ features, $\bar x \in \mathbb{R}^p$ is its vector of column
-[sample means](../../../Probability/linear-models-multivariate/principal-component-analysis/col-mean.md)
+[sample means](../principal-component-analysis/col-mean.md)
 ($0$ when $n = 0$), $X_c = X - \mathbf 1 \bar x^\top$ its
-[centred matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/center.md)
+[centred matrix](../principal-component-analysis/center.md)
 and $S = (n-1)^{-1} X_c^\top X_c$ its
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md),
+[sample covariance matrix](../principal-component-analysis/sample-cov.md),
 where $(n-1)^{-1}$ is $0$ for $n = 1$ by convention; $S = 0$ for $n \le 1$, since then $X_c = 0$.
 The pages compare $S$ with the uncentred second moment $\frac1n X^\top X$, describe its rank and
 singularity, and show that in a design where batch and condition are confounded, with $p \ge 1$, no

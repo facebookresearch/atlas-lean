@@ -2,7 +2,7 @@
 
 Let $u \in \mathbb{R}^n$ and $v \in \mathbb{R}^p$, let $\bar u = \frac1n \sum_k u_k$, and write
 $S(Y)$ for the
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+[sample covariance matrix](../principal-component-analysis/sample-cov.md)
 of a data matrix $Y$. For every $n$,
 
 $$S(u v^\top) = s_u^2\, v v^\top, \qquad s_u^2 = (n-1)^{-1} \sum_{i=1}^n (u_i - \bar u)^2,$$

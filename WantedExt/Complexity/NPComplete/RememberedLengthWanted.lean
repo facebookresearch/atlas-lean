@@ -102,7 +102,8 @@ def WellFormed (i : RememberedLengthInstance) : Prop :=
     (∀ row ∈ i.2, ∀ e ∈ row, e.1 < i.1.length) ∧
     ∀ k < i.1.length, ((Grid i).induce {x | (cell i x).1 = k}).Connected
 
-/-- The cycle `c` satisfies the rules: its cells are exactly the unshaded cells, and each time
+/-- The closed walk `c` satisfies the rules (the feasibility predicate also asks that `c` be a
+cycle): its cells are exactly the unshaded cells, and each time
 it moves from a region numbered `k > 0` into another region, its next `k` cells, and not the
 one after them, lie in that other region. -/
 def Solves (i : RememberedLengthInstance) {u : Fin (rows i) × Fin (cols i)}

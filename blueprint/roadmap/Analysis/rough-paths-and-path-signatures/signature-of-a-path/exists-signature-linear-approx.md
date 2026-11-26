@@ -28,7 +28,7 @@ reparametrisation or by tree-like pieces (see
   $S^{0 \cdots 0\, i}_{a,b} = \int_a^b \frac{(t-a)^k}{k!}\, \dot X^i_t\, dt$ are the moments of
   $\dot X^i_t\,dt$; this is how the source shows that the signature separates the points of $K$
   (its Proposition 1.34).
-- [Universal approximation theorem](../../../Analysis/approximation-theory/universal-approximation.md):
+- [Universal approximation theorem](../../approximation-theory/universal-approximation.md):
   the corresponding density theorem for neural networks on compact subsets of $\mathbb{R}^n$.
 
 ## Sources

@@ -1,7 +1,7 @@
 # Sample covariance is singular iff samples lie in an affine hyperplane
 
 Let $X$ be a real $n \times p$ data matrix whose rows $x_1, \dots, x_n$ are the samples, with
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+[sample covariance matrix](../principal-component-analysis/sample-cov.md)
 $S$. For every $n$, $S$ is singular, $\det S = 0$, exactly when all samples lie in one affine
 hyperplane: there are $w \in \mathbb{R}^p$ with $w \ne 0$ and $c \in \mathbb{R}$ such that
 $x_i \cdot w = c$ for every $i$.

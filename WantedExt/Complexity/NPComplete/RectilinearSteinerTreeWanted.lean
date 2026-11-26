@@ -62,7 +62,7 @@ reduction from every language in `NP`
 negative part) pairs, and the bound `K`. -/
 abbrev RectilinearSteinerTreeInstance := List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ
 
-/-- The integer a (positive part, negative part) pair represents. -/
+/-- The integer `a - b` that a pair `(a, b)` of natural numbers represents. -/
 def toInt (z : ℕ × ℕ) : ℤ := (z.1 : ℤ) - z.2
 
 /-- The point set `P ⊆ ℤ × ℤ` of the instance. -/

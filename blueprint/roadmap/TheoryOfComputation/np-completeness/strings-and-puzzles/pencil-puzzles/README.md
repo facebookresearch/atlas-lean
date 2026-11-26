@@ -28,7 +28,6 @@
 - [Cols in NONDANGO](cols-2.md)
 - [Cell in NONDANGO](cell-2.md)
 - [Entry in NONDANGO](entry.md)
-- [Grid in NONDANGO](grid-2.md)
 - [Well-formed instances of NONDANGO](well-formed-2.md)
 - [Consecutive in NONDANGO](consecutive.md)
 - [Solves in NONDANGO](solves-2.md)
@@ -68,10 +67,7 @@
 ## E. PIPE LINK
 
 - [Instances of PIPE LINK](pipe-link-instance.md)
-- [Rows in PIPE LINK](rows-5.md)
-- [Cols in PIPE LINK](cols-5.md)
 - [Piece in PIPE LINK](piece.md)
-- [Grid in PIPE LINK](grid-5.md)
 - [Well-formed instances of PIPE LINK](well-formed-5.md)
 - [Opens toward in PIPE LINK](opens-toward.md)
 - [Loops solving a PIPE LINK instance](solves-3.md)

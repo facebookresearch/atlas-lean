@@ -8,7 +8,7 @@ rate equation `R(a, b₀) = 0`, where `R(a, b) = a - E[(a + X₀) b / (b + S₀)
 [population rate score](pop-rate-score-log.md). Then, almost surely, for all large `n` the
 [rate root](rate-root.md) `b̂ₙ(a)` of the first `n` cells (the counts `X₀(ω), …, X₍ₙ₋₁₎(ω)` at the
 size factors `S₀(ω), …, S₍ₙ₋₁₎(ω)`) solves their
-[rate score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/rate-score.md) equation, and
+[rate score](../likelihood-equations-and-efficiency-of-the-gamma/rate-score.md) equation, and
 `b̂ₙ(a) → b₀` as `n → ∞`.
 
 The equation `R(a, b₀) = 0` holds, for example, when `E[X₀ ∣ S₀] = a S₀ / b₀` almost surely

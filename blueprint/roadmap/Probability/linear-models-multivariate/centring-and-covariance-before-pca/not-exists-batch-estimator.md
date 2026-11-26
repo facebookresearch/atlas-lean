@@ -4,7 +4,7 @@ Let $p \ge 1$, fix $E \in \mathbb{R}^{n \times p}$, $\mu \in \mathbb{R}^p$ and $
 and write $X(\beta, \delta) = E + \mathbf 1 \mu^\top + b \beta^\top + b \delta^\top$ for the
 confounded [additive design](batch-model.md), with batch effect $\beta$ and biological signal
 $\delta$ attached to the same covariate $b$. Let $S(Y)$ be the
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+[sample covariance matrix](../principal-component-analysis/sample-cov.md)
 of a data matrix $Y$. There is no map $f$ from real $p \times p$ matrices to $\mathbb{R}^p$ with
 
 $$f\bigl(S(X(\beta, \delta))\bigr) = \beta \quad \text{for all } \beta, \delta \in \mathbb{R}^p.$$

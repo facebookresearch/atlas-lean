@@ -78,8 +78,9 @@ by `f`, with `d = T.dist`. -/
 noncomputable def arrangementCost {n : ℕ} (G T : SimpleGraph (Fin n)) (f : Fin n → Fin n) : ℕ :=
   ∑ᶠ e ∈ G.edgeSet, Sym2.lift ⟨fun a b => T.dist (f a) (f b), fun _ _ => SimpleGraph.dist_comm⟩ e
 
-/-- A tree `T` on `Fin n` with root `r` and a one-to-one `f` such that the images of the ends
-of every edge lie on one simple path from `r`, and the total tree distance is at most `K`. -/
+/-- A tree `T` on `Fin n` with root `r` and a one-to-one `f` such that for each edge some simple
+path from `r` (depending on the edge) contains the images of both ends, and the total tree
+distance is at most `K`. -/
 def RootedTreeArrangementFeasible (i : RootedTreeArrangementInstance) : Prop :=
   ∃ T : SimpleGraph (Fin i.1), T.IsTree ∧ ∃ r : Fin i.1, ∃ f : Fin i.1 → Fin i.1,
     Function.Injective f ∧

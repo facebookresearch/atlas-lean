@@ -95,7 +95,8 @@ reduction from every language in `NP`
 -/
 
 /-- An order of consideration allowed by ranked pairs on profile `P`: a list of ordered pairs of
-distinct candidates with exactly one orientation of each pair of distinct candidates; each pair
+distinct candidates, with no ordered pair twice and exactly one orientation of each pair of
+distinct candidates; each pair
 `(a, b)` in it has at least as many votes ranking `a` ahead of `b` as `b` ahead of `a`; and the
 number of votes ranking the first candidate ahead of the second never increases along the list. -/
 def IsConsiderationOrder {Alt Voter : Type} [Fintype Voter] (P : Profile Alt Voter)

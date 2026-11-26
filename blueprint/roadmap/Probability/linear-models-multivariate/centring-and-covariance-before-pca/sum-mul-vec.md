@@ -2,7 +2,7 @@
 
 Let $X$ be a real $n \times p$ data matrix whose rows $x_1, \dots, x_n$ are the samples, with column
 means $\bar x$
-([sample means](../../../Probability/linear-models-multivariate/principal-component-analysis/col-mean.md)),
+([sample means](../principal-component-analysis/col-mean.md)),
 and let $w \in \mathbb{R}^p$. For every $n$,
 
 $$\sum_{i=1}^n (X w)_i = n\, (\bar x \cdot w).$$

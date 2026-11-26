@@ -9,7 +9,6 @@
 - [OPTIMAL LINEAR ARRANGEMENT for bipartite graphs as a decision problem](optimal-linear-arrangement-bipartite-dec.md)
 - [OPTIMAL LINEAR ARRANGEMENT for bipartite graphs is NP-complete](optimal-linear-arrangement-bipartite-np.md)
 - [Instances of ROOTED TREE ARRANGEMENT](rooted-tree-arrangement-instance.md)
-- [Graph of an instance of ROOTED TREE ARRANGEMENT](graph.md)
 - [Well-formed instances of ROOTED TREE ARRANGEMENT](well-formed-3.md)
 - [Arrangement cost in ROOTED TREE ARRANGEMENT](arrangement-cost.md)
 - [Feasible instances of ROOTED TREE ARRANGEMENT](rooted-tree-arrangement-feasible.md)

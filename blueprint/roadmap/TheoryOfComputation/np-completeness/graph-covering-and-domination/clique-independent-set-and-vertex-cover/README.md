@@ -193,7 +193,6 @@
 - [Weighted vertex cover by the pricing method](../../../../ComputerScience/approximation-algorithms/weighted-vertex-cover-by-the-pricing-method/README.md): a primal-dual 2-approximation for the weighted version.
 - [Ray in CLIQUE in ray intersection graphs](ray.md)
 - [Instances of CLIQUE in ray intersection graphs](ray-intersection-clique-instance.md)
-- [To int in CLIQUE in ray intersection graphs](to-int.md)
 - [Ray points in CLIQUE in ray intersection graphs](ray-points.md)
 - [Graph of an instance of CLIQUE in ray intersection graphs](graph.md)
 - [Well-formed instances of CLIQUE in ray intersection graphs](well-formed.md)

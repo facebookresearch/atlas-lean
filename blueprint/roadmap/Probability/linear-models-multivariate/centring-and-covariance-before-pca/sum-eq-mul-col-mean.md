@@ -2,7 +2,7 @@
 
 Let $X$ be a real $n \times p$ data matrix whose rows are the $n$ samples, and let
 $\bar x_j = \frac1n \sum_i X_{ij}$ be the
-[sample mean](../../../Probability/linear-models-multivariate/principal-component-analysis/col-mean.md)
+[sample mean](../principal-component-analysis/col-mean.md)
 of column $j$. For every $n$ and every column $j$,
 
 $$\sum_{i=1}^n X_{ij} = n\, \bar x_j.$$

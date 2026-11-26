@@ -1,10 +1,10 @@
 # Under overdispersion the profile shape score crosses zero at most once
 
 Let `k₁, …, kₙ` (`n ≥ 1`) be counts with
-[sample mean](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M` and
-[biased sample variance](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-var.md) `V` such
+[sample mean](../likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M` and
+[biased sample variance](../likelihood-equations-and-efficiency-of-the-gamma/count-var.md) `V` such
 that `M < V` (which forces `M > 0`). If the
-[profile shape score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/profile-shape-score.md)
+[profile shape score](../likelihood-equations-and-efficiency-of-the-gamma/profile-shape-score.md)
 `P(a) = ∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n (log (a + M) - log a)` satisfies `P(a) ≤ 0` at some `a > 0`,
 then `P(a') < 0` for every `a' > a`. This is the "at most one root" part of Levin and Reeds (1977),
 Theorem 2, for the likelihood equation in the shape.

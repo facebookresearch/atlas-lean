@@ -1,7 +1,7 @@
 # Sample covariance vanishes on $w$ iff samples project equally on it
 
 Let $X$ be a real $n \times p$ data matrix whose rows $x_1, \dots, x_n$ are the samples, with
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+[sample covariance matrix](../principal-component-analysis/sample-cov.md)
 $S$. For every $n$ and every $w \in \mathbb{R}^p$, $S w = 0$ exactly when all samples have the same
 projection on $w$:
 

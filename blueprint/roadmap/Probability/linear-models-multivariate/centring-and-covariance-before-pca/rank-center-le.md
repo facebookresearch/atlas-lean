@@ -1,7 +1,7 @@
 # Centred data matrix has rank at most $n - 1$
 
 Let $X$ be a real $n \times p$ data matrix whose rows are the $n$ samples, with
-[centred matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/center.md)
+[centred matrix](../principal-component-analysis/center.md)
 $X_c = X - \mathbf 1 \bar x^\top$. Then
 
 $$\operatorname{rank} X_c \le n - 1,$$

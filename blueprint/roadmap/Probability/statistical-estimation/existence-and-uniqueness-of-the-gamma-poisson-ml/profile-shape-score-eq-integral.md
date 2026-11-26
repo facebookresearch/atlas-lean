@@ -1,9 +1,9 @@
 # The profile shape score as a transform of the integrated discrepancy
 
 For a nonempty finite family of counts `k₁, …, kₙ` with
-[sample mean](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M`, every `a > 0`
+[sample mean](../likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M`, every `a > 0`
 and every real `T` with `T ≥ M` and `T ≥ kᵢ` for every `i`, the
-[profile shape score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/profile-shape-score.md)
+[profile shape score](../likelihood-equations-and-efficiency-of-the-gamma/profile-shape-score.md)
 `∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n (log (a + M) - log a)` equals
 `H(T) / (a + T)² + 2 ∫₀ᵀ H(u) / (a + u)³ du`, where `H` is Levin and Reeds's
 [integrated discrepancy](smoothed-discrepancy.md) (Levin and Reeds 1977, §3.1).

@@ -15,10 +15,7 @@
 
 ## B. NASH EQUILIBRIUM WITH GUARANTEED PAYOFF
 
-- [Rat code in NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](rat-code.md)
-- [Rat value in NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](rat-value.md)
 - [Instances of NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](nash-equilibrium-guaranteed-payoff-insta.md)
-- [Is matrix in NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](is-matrix.md)
 - [Well-formed instances of NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](well-formed.md)
 - [Strategy in NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](strategy.md)
 - [Utility in NASH EQUILIBRIUM WITH GUARANTEED PAYOFF](utility.md)
@@ -28,26 +25,13 @@
 
 ## C. NASH EQUILIBRIUM WITH LARGE SUPPORTS
 
-- [Rat code in NASH EQUILIBRIUM WITH LARGE SUPPORTS](rat-code-3.md)
-- [Rat value in NASH EQUILIBRIUM WITH LARGE SUPPORTS](rat-value-3.md)
-- [Instances of NASH EQUILIBRIUM WITH LARGE SUPPORTS](nash-equilibrium-large-support-instance.md)
-- [Is matrix in NASH EQUILIBRIUM WITH LARGE SUPPORTS](is-matrix-3.md)
 - [Well-formed instances of NASH EQUILIBRIUM WITH LARGE SUPPORTS](well-formed-3.md)
-- [Strategy in NASH EQUILIBRIUM WITH LARGE SUPPORTS](strategy-3.md)
-- [Utility in NASH EQUILIBRIUM WITH LARGE SUPPORTS](utility-3.md)
 - [Feasible instances of NASH EQUILIBRIUM WITH LARGE SUPPORTS](nash-equilibrium-large-support-feasible.md)
 - [NASH EQUILIBRIUM WITH LARGE SUPPORTS as a decision problem](nash-equilibrium-large-support-dec.md)
 - [NASH EQUILIBRIUM WITH LARGE SUPPORTS is NP-complete](nash-equilibrium-large-support-np-comple.md)
 
 ## D. NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k
 
-- [Rat code in NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](rat-code-2.md)
-- [Rat value in NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](rat-value-2.md)
-- [Instances of NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](nash-equilibrium-large-social-welfare-in.md)
-- [Is matrix in NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](is-matrix-2.md)
-- [Well-formed instances of NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](well-formed-2.md)
-- [Strategy in NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](strategy-2.md)
-- [Utility in NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](utility-2.md)
 - [Feasible instances of NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k](nash-equilibrium-large-social-welfare-fe.md)
 - [NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k as a decision problem](nash-equilibrium-large-social-welfare-de.md)
 - [NASH EQUILIBRIUM WITH SOCIAL WELFARE AT LEAST k is NP-complete](nash-equilibrium-large-social-welfare-np.md)

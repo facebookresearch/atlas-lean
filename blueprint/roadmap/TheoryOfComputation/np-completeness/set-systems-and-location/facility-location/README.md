@@ -6,7 +6,6 @@
 - [The FACILITY LOCATION decision problem](facility-location-dec.md)
 - [FACILITY LOCATION is NP-complete](facility-location-np-complete.md)
 - [Formulation and LP lower bound for uncapacitated facility location](facility-location-formulation-and-lp-bound.md)
-- [Rat code in PLANAR k-MEANS](rat-code.md)
 - [Value of an encoded rational in PLANAR k-MEANS](val.md)
 - [Instances of PLANAR k-MEANS](planar-kmeans-instance.md)
 - [Point in PLANAR k-MEANS](point.md)

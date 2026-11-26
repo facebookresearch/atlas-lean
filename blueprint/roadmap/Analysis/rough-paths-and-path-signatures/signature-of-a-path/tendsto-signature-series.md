@@ -18,9 +18,9 @@ $X_t = t$ and $A = \mathrm{id}$ the series is $\sum_k (t-s)^k/k!\; y_0 = e^{t-s}
 
 ## Background
 
-- [Picard iteration](../../../Analysis/ordinary-differential-equations/picard-iteration/README.md):
+- [Picard iteration](../../ordinary-differential-equations/picard-iteration/README.md):
   the convergence theorem for Picard iterates applied here.
-- [Linear systems and fundamental matrices](../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/README.md):
+- [Linear systems and fundamental matrices](../../ordinary-differential-equations/linear-systems-and-fundamental-matrices/README.md):
   for a single letter with $X_t = t$ this is the exponential series of a linear system.
 
 ## Sources

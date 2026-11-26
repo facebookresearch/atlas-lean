@@ -9,17 +9,15 @@
 - [PARTIAL FEEDBACK EDGE SET as a decision problem](partial-feedback-edge-set-dec.md)
 - [PARTIAL FEEDBACK EDGE SET is NP-complete](partial-feedback-edge-set-np-complete.md)
 
-## B. PARTIAL FEEDBACK EDGE SET for bipartite graphs with fixed `L ≥ 4`
+## B. PARTIAL FEEDBACK EDGE SET for bipartite graphs with a fixed cycle-length bound
 
-- [Instances of PARTIAL FEEDBACK EDGE SET for bipartite graphs with fixed `L ≥ 4`](bipartite-fixed-linstance.md)
-- [With bound in PARTIAL FEEDBACK EDGE SET for bipartite graphs with fixed `L ≥ 4`](with-bound.md)
-- [Well-formed instances of PARTIAL FEEDBACK EDGE SET for bipartite graphs with fixed `L ≥ 4`](well-formed.md)
-- [PARTIAL FEEDBACK EDGE SET for bipartite graphs with fixed `L ≥ 4` as a decision problem](bipartite-fixed-ldec.md)
+- [Well-formed instances of PARTIAL FEEDBACK EDGE SET for bipartite graphs with a fixed cycle-length bound `L`](well-formed.md)
+- [PARTIAL FEEDBACK EDGE SET for bipartite graphs with a fixed cycle-length bound `L` as a decision problem](bipartite-fixed-ldec.md)
 - [PARTIAL FEEDBACK EDGE SET for bipartite graphs is NP-complete for every fixed `L ≥ 4`](partial-feedback-edge-set-bipartite-fixe.md)
 
-## C. PARTIAL FEEDBACK EDGE SET with fixed `L ≥ 3`
+## C. PARTIAL FEEDBACK EDGE SET with a fixed cycle-length bound
 
-- [Instances of PARTIAL FEEDBACK EDGE SET with fixed `L ≥ 3`](fixed-linstance.md)
-- [With bound in PARTIAL FEEDBACK EDGE SET with fixed `L ≥ 3`](with-bound-2.md)
-- [PARTIAL FEEDBACK EDGE SET with fixed `L ≥ 3` as a decision problem](fixed-ldec.md)
+- [Instances of PARTIAL FEEDBACK EDGE SET with a fixed cycle-length bound `L`](fixed-linstance.md)
+- [Setting the cycle-length bound of a PARTIAL FEEDBACK EDGE SET instance](with-bound-2.md)
+- [PARTIAL FEEDBACK EDGE SET with a fixed cycle-length bound `L` as a decision problem](fixed-ldec.md)
 - [PARTIAL FEEDBACK EDGE SET is NP-complete for every fixed `L ≥ 3`](partial-feedback-edge-set-fixed-l-np-com.md)

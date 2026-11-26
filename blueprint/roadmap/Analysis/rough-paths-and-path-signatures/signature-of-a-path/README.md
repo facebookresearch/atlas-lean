@@ -59,9 +59,9 @@ for a continuous velocity.
   which paths the signature cannot tell apart.
 - [Rough paths and the extension theorem](../rough-paths-and-the-extension-theorem/README.md):
   the signature as the extension of a multiplicative functional, and its factorial decay.
-- [Picard iteration](../../../Analysis/ordinary-differential-equations/picard-iteration/README.md):
+- [Picard iteration](../../ordinary-differential-equations/picard-iteration/README.md):
   the Picard iterates of a linear controlled equation are the truncated signature series.
-- [Euler method](../../../Analysis/numerical-analysis/euler-method/README.md): on each step the
+- [Euler method](../../numerical-analysis/euler-method/README.md): on each step the
   Euler scheme for a controlled equation uses only the first level of the signature, the
   increment; higher-order schemes for controlled equations use the higher levels.
 - [Quadratic variation of Brownian motion](../../../Probability/stochastic-calculus/quadratic-variation-of-brownian-motion/README.md):

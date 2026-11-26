@@ -6,7 +6,7 @@ For a finite set of cells `j` with size factors `sⱼ > 0`, counts `kⱼ ∈ ℕ
 `L(k ∣ r) = Mult(k; K, (sⱼ / S)ⱼ) · e^(−S r) (S r)^K / K!`,
 
 where `Mult(k; K, p) = K! / ∏ⱼ kⱼ! · ∏ⱼ pⱼ^(kⱼ)` is the
-[multinomial mass](../../../Probability/distributions/discrete/multinomial-distribution/multinomial-real.md),
+[multinomial mass](../../distributions/discrete/multinomial-distribution/multinomial-real.md),
 so the first factor does not depend on the rate, and the second factor is the
 [Poisson likelihood](poisson-exposure-lik.md) of `K` at exposure `S`. With at least one cell,
 `S > 0`, the weights `sⱼ / S` form a probability vector on the cells and the first factor is the
