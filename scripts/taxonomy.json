@@ -12152,6 +12152,7 @@
   "MathlibExt/GroupTheory/IrreducibleCharacterBasis": {"to": "GroupTheory/characters-of-finite-groups", "title": "Irreducible characters and class functions"},
   "MathlibExt/GroupTheory/IsolatedSubgroupPSeparable": {"to": "GroupTheory/profinite-and-topological-groups", "title": "Separability of isolated subgroups"},
   "MathlibExt/GroupTheory/JordanLinearGroups": {"to": "GroupTheory/linear-groups", "title": "Jordan's theorem on finite linear groups"},
+  "MathlibExt/GroupTheory/LargeNormalSubsetSquareKourovka20Problem74": {"to": "GroupTheory/combinatorics-in-groups", "title": "Products of large normal subsets"},
   "MathlibExt/GroupTheory/LinearGroupFiniteness": {"to": "GroupTheory/linear-groups", "title": "Malcev's theorem on residual finiteness"},
   "MathlibExt/GroupTheory/MaschkeDecomposition": {"to": "RepresentationTheory/finite-group-representations", "title": "Maschke's theorem"},
   "MathlibExt/GroupTheory/NilpotentCaminaClassUnboundedKourovka17Problem47": {"to": "GroupTheory/finite-p-groups", "title": "Camina groups"},
