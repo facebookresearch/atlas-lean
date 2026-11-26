@@ -1,6 +1,6 @@
 # No explicit linear multistep method is A-stable
 
-No explicit [linear multistep method](linear-multistep-method.md), that is, none with $\beta_k = 0$, is [A-stable](a-stability.md).
+No explicit [linear multistep method](../linear-multistep-method.md), that is, none with $\beta_k = 0$, is [A-stable](a-stability.md).
 
 ## Depends on
 

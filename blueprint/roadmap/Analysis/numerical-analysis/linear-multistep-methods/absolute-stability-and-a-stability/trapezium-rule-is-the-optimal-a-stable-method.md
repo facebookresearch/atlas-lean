@@ -1,6 +1,6 @@
 # The trapezium rule is the most accurate second-order A-stable method
 
-Among the [A-stable](a-stability.md) [linear multistep methods](linear-multistep-method.md) of [order](order-of-accuracy-and-error-constants.md) $2$, the trapezium rule
+Among the [A-stable](a-stability.md) [linear multistep methods](../linear-multistep-method.md) of [order](../order-of-accuracy-and-error-constants.md) $2$, the trapezium rule
 
 $$y_{n+1} - y_n = \tfrac{h}{2}\bigl(f(x_{n+1}, y_{n+1}) + f(x_n, y_n)\bigr)$$
 
@@ -9,7 +9,7 @@ has the smallest error constant in absolute value. The error constant $C_3$ is c
 ## Depends on
 
 - [A-stability](a-stability.md)
-- [Order of accuracy and error constants of a linear multistep method](order-of-accuracy-and-error-constants.md)
+- [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
 
 ## Sources
 

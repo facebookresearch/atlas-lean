@@ -34,6 +34,7 @@ A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative t
 - [Vector as a sequence](vec-seq.md)
 - [Splitting a sum at its last nonzero term](sum-fin-eq-sum-range-add.md)
 - [Backward stability of Gaussian elimination, $\gamma_{3n}$ form](exists-add-mul-vec-eq-of-is-fl-lu-gamma.md)
+- [Element growth in Gaussian elimination with partial pivoting](growth-in-gaussian-elimination-with-partial-pivoting.md)
 - [$3\gamma_n + \gamma_n^2 \le \gamma_{3n}$](three-mul-gamma-add-sq-le-gamma.md)
 - [Certified enclosure for a rounded recursive log-likelihood sum](abs-rsum-sub-sum-le.md)
 

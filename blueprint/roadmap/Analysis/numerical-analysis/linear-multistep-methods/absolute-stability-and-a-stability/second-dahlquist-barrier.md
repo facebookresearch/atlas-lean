@@ -1,13 +1,13 @@
 # Second Dahlquist barrier
 
-The [order of accuracy](order-of-accuracy-and-error-constants.md) of an [A-stable](a-stability.md) implicit [linear multistep method](linear-multistep-method.md) is at most $2$.
+The [order of accuracy](../order-of-accuracy-and-error-constants.md) of an [A-stable](a-stability.md) implicit [linear multistep method](../linear-multistep-method.md) is at most $2$.
 
 Together with the fact that no explicit linear multistep method is A-stable, this limits A-stable linear multistep methods to order $2$; higher-order methods for stiff problems weaken the requirement, as the backward differentiation formulas do.
 
 ## Depends on
 
 - [A-stability](a-stability.md)
-- [Order of accuracy and error constants of a linear multistep method](order-of-accuracy-and-error-constants.md)
+- [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
 
 ## Sources
 
