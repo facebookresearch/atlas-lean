@@ -44,7 +44,8 @@ Lebesgue decomposition with respect to `ν`, then at every point `x` with `ν {x
 `ν {x} ≠ ∞` the derivative is `μ.rnDeriv ν x = μ {x} / ν {x}`. The singular part of `μ`
 vanishes at `x` because it is carried by a `ν`-null set, so `μ` is not assumed absolutely
 continuous with respect to `ν`. The finiteness hypothesis `ν {x} ≠ ∞` cannot be dropped:
-`∞ • Measure.dirac x` at its own point `x` is a counterexample (see the tests). -/
+for `μ = ν = ∞ • Measure.dirac x`, `μ.rnDeriv ν x` is nonzero, while
+`μ {x} / ν {x} = ∞ / ∞ = 0`. -/
 theorem rnDeriv_eq_measure_singleton_div {α : Type*} [MeasurableSpace α]
     (μ ν : Measure α) [μ.HaveLebesgueDecomposition ν] {x : α}
     (h0 : ν {x} ≠ 0) (htop : ν {x} ≠ ∞) :
@@ -85,8 +86,9 @@ end MeasureTheory.Measure
 
 namespace PMF
 
-/-- On a space with measurable singletons, `p.toMeasure` is absolutely continuous with respect
-to `q.toMeasure` exactly when every point charged by `p` is charged by `q`. -/
+/-- **Absolute continuity of PMF measures.** On a space with measurable singletons,
+`p.toMeasure` is absolutely continuous with respect to `q.toMeasure` exactly when every point
+charged by `p` is charged by `q`. -/
 theorem toMeasure_absolutelyContinuous_iff {α : Type*} [MeasurableSpace α]
     [MeasurableSingletonClass α] {p q : PMF α} :
     p.toMeasure ≪ q.toMeasure ↔ p.support ⊆ q.support := by

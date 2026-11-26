@@ -50,6 +50,12 @@ example : (3 • Measure.dirac true : Measure Bool).rnDeriv Measure.count false 
   rw [Measure.rnDeriv_eq_measure_singleton_div _ _ (by simp) (by simp)]
   simp
 
+/-- A reference mass other than `1` at the atom: against `2 • count`, the measure `3 • δ_true`
+has derivative `3 / 2` at `true`, so the division by `ν {x}` matters. -/
+example : (3 • Measure.dirac true : Measure Bool).rnDeriv (2 • Measure.count) true = 3 / 2 := by
+  rw [Measure.rnDeriv_eq_measure_singleton_div _ _ (by simp) (by simp)]
+  simp
+
 /-- Absolute continuity is not needed: `δ_true + δ_false` is not absolutely continuous with
 respect to `δ_true`, yet its derivative at the atom `true` is pinned to `1`. -/
 example : ¬ (Measure.dirac true + Measure.dirac false : Measure Bool) ≪ Measure.dirac true := by
@@ -104,24 +110,27 @@ example : @Measure.AbsolutelyContinuous Bool ⊥ (@PMF.toMeasure Bool ⊥ (PMF.p
 
 /-! ### Necessity of the hypotheses -/
 
-/-- The finiteness hypothesis `ν {x} ≠ ∞` cannot be dropped: for `ν = ∞ • δ_true`, the
-Radon–Nikodym derivative at `true` is nonzero, while `ν {true} / ν {true} = 0`. -/
-example : (∞ • Measure.dirac true : Measure Bool).rnDeriv (∞ • Measure.dirac true) true ≠
-    (∞ • Measure.dirac true : Measure Bool) {true} /
-      (∞ • Measure.dirac true : Measure Bool) {true} := by
-  have htop : (∞ • Measure.dirac true : Measure Bool) {true} = ∞ := by simp
+/-- The finiteness hypothesis `ν {x} ≠ ∞` cannot be dropped: for `μ = ν = ∞ • δ_x`, at a point
+`x` of any measurable space, `μ.rnDeriv ν x` is nonzero, while `μ {x} / ν {x} = ∞ / ∞ = 0`. -/
+example {α : Type*} [MeasurableSpace α] (x : α) :
+    (∞ • Measure.dirac x : Measure α).rnDeriv (∞ • Measure.dirac x) x ≠
+      (∞ • Measure.dirac x : Measure α) {x} / (∞ • Measure.dirac x : Measure α) {x} := by
+  set ν : Measure α := ∞ • Measure.dirac x with hν
+  have htop : ν {x} = ∞ := by simp [hν]
   rw [htop, ENNReal.div_top]
-  have hadd : (∞ • Measure.dirac true : Measure Bool)
-      = 0 + (∞ • Measure.dirac true : Measure Bool).withDensity 1 := by
-    rw [withDensity_one, zero_add]
-  have h := Measure.eq_withDensity_rnDeriv (s := (0 : Measure Bool)) (f := (1 : Bool → ℝ≥0∞))
-    measurable_const Measure.MutuallySingular.zero_left hadd
-  have h2 := congrArg (fun m : Measure Bool => m {true}) h
-  simp only [withDensity_one] at h2
-  rw [htop] at h2
-  rw [withDensity_apply _ (measurableSet_singleton true), lintegral_singleton, htop] at h2
+  have h := Measure.eq_withDensity_rnDeriv (s := 0) (f := 1) measurable_const
+    Measure.MutuallySingular.zero_left (by rw [withDensity_one, zero_add] : ν = 0 + ν.withDensity 1)
+  rw [withDensity_one] at h
   intro hz
-  rw [hz, zero_mul] at h2
+  have hZ : MeasurableSet (ν.rnDeriv ν ⁻¹' {0}) :=
+    Measure.measurable_rnDeriv ν ν (measurableSet_singleton 0)
+  have h1 : ν (ν.rnDeriv ν ⁻¹' {0}) = ∞ := by
+    rw [hν, smul_apply, Measure.dirac_apply' _ hZ, Set.indicator_of_mem (by exact hz)]
+    simp
+  have h2 : ν.withDensity (ν.rnDeriv ν) (ν.rnDeriv ν ⁻¹' {0}) = 0 := by
+    rw [withDensity_apply _ hZ]
+    exact setLIntegral_eq_zero hZ fun y hy => hy
+  rw [← h, h1] at h2
   exact ENNReal.top_ne_zero h2
 
 /-- The PMF mass-ratio formula needs measurable singletons: under the trivial `σ`-algebra,
