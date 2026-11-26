@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.Digits.DigitSumDirichletConvolution
+import Mathlib.Algebra.BigOperators.Module
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.SumIntegralComparisons
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -1056,38 +1057,36 @@ private theorem sum_inv_mul_succ_le_one (M : ℕ) :
   have h : (0 : ℝ) ≤ 1 / ((M : ℝ) + 1) := by positivity
   linarith
 
-/-- Summation by parts for the reciprocal digit sums, proved by induction. -/
+/-- Summation by parts for the digit sum with real weights. -/
+private theorem weighted_abel_identity (q N : ℕ) (hN : 1 ≤ N) (w : ℕ → ℝ) :
+    ∑ d ∈ Finset.Icc 1 N, digitSumVal q d * w d =
+      partialSumIcc q N * w N +
+        ∑ d ∈ Finset.Icc 1 (N - 1), partialSumIcc q d * (w d - w (d + 1)) := by
+  have hrange (d : ℕ) : ∑ i ∈ Finset.range (d + 1), digitSumVal q i = partialSumIcc q d :=
+    partialSumIcc_eq q d
+  have hzero : partialSumIcc q 0 = 0 := by simp [partialSumIcc]
+  rw [← sub_neg_eq_add, ← Finset.sum_neg_distrib]
+  simp_rw [← mul_neg, neg_sub]
+  simpa only [← Finset.Icc_add_one_left_eq_Ioc, hrange, hzero, smul_eq_mul, mul_zero,
+    sub_zero, Nat.zero_add, mul_comm] using
+    Finset.sum_Ioc_by_parts w (digitSumVal q) (m := 0) (n := N) hN
+
+/-- Summation by parts for the reciprocal digit sums. -/
 private theorem reciprocal_abel_identity (q : ℕ) :
     ∀ N : ℕ, 1 ≤ N →
       ∑ d ∈ Finset.Icc 1 N, digitSumVal q d / (d : ℝ) =
         partialSumIcc q N / (N : ℝ) +
           ∑ d ∈ Finset.Icc 1 (N - 1), partialSumIcc q d / ((d : ℝ) * ((d : ℝ) + 1)) := by
   intro N hN
-  induction N, hN using Nat.le_induction with
-  | base =>
-      simp [partialSumIcc, digitSumVal]
-  | succ N hN ih =>
-      have hsucc : ∑ d ∈ Finset.Icc 1 (N + 1), digitSumVal q d / (d : ℝ) =
-          ∑ d ∈ Finset.Icc 1 N, digitSumVal q d / (d : ℝ) +
-            digitSumVal q (N + 1) / (((N + 1 : ℕ)) : ℝ) :=
-        Finset.sum_Icc_succ_top (by omega : 1 ≤ N + 1)
-          (fun d => digitSumVal q d / (d : ℝ))
-      have hSsucc : partialSumIcc q (N + 1) = partialSumIcc q N + digitSumVal q (N + 1) := by
-        unfold partialSumIcc
-        rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ N + 1) (digitSumVal q)]
-      have hTsucc : ∑ d ∈ Finset.Icc 1 N, partialSumIcc q d / ((d : ℝ) * ((d : ℝ) + 1)) =
-          ∑ d ∈ Finset.Icc 1 (N - 1), partialSumIcc q d / ((d : ℝ) * ((d : ℝ) + 1)) +
-            partialSumIcc q N / ((N : ℝ) * ((N : ℝ) + 1)) := by
-        conv_lhs => rw [show N = N - 1 + 1 from (Nat.sub_add_cancel hN).symm]
-        rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ N - 1 + 1)
-            (fun d => partialSumIcc q d / ((d : ℝ) * ((d : ℝ) + 1))),
-          Nat.sub_add_cancel hN]
-      rw [hsucc, ih, show N + 1 - 1 = N from by omega, hTsucc, hSsucc]
-      have hNpos : (N : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
-      have hN1pos : ((N : ℝ) + 1) ≠ 0 := by positivity
-      simp only [Nat.cast_add_one]
-      field_simp
-      ring
+  have h := weighted_abel_identity q N hN (fun d => 1 / (d : ℝ))
+  simp only [← mul_div_assoc, mul_one, Nat.cast_add_one] at h
+  rw [h]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro d hd
+  have hdpos : 0 < d := (Finset.mem_Icc.mp hd).1
+  field_simp
+  ring
 
 /-- Reindexing the shifted harmonic sum. -/
 private theorem sum_inv_succ_le_harmonic (N : ℕ) :
@@ -1368,8 +1367,7 @@ private theorem reciprocal_sum_bound (q : ℕ) (hq : 2 ≤ q) :
       ((K + C1) + A * (25 + H8) + 22 * K + C1 + A) * (1 + Real.log N) := by ring
   linarith [hTri, hSbound, hAmid, hEbound, h1, h2, h3, hY, hAL]
 
-/-- Summation by parts for the log-weighted reciprocal digit sums, proved by
-induction. -/
+/-- Summation by parts for the log-weighted reciprocal digit sums. -/
 private theorem logWeighted_abel_identity (q : ℕ) :
     ∀ N : ℕ, 1 ≤ N →
       ∑ d ∈ Finset.Icc 1 N, digitSumVal q d * Real.log d / (d : ℝ) =
@@ -1377,35 +1375,8 @@ private theorem logWeighted_abel_identity (q : ℕ) :
           ∑ d ∈ Finset.Icc 1 (N - 1), partialSumIcc q d *
             (Real.log d / (d : ℝ) - Real.log ((d : ℝ) + 1) / ((d : ℝ) + 1)) := by
   intro N hN
-  induction N, hN using Nat.le_induction with
-  | base =>
-      simp [partialSumIcc, digitSumVal]
-  | succ N hN ih =>
-      have hsucc : ∑ d ∈ Finset.Icc 1 (N + 1), digitSumVal q d * Real.log d / (d : ℝ) =
-          ∑ d ∈ Finset.Icc 1 N, digitSumVal q d * Real.log d / (d : ℝ) +
-            digitSumVal q (N + 1) * Real.log ((N + 1 : ℕ) : ℝ) / (((N + 1 : ℕ)) : ℝ) :=
-        Finset.sum_Icc_succ_top (by omega : 1 ≤ N + 1)
-          (fun d => digitSumVal q d * Real.log d / (d : ℝ))
-      have hSsucc : partialSumIcc q (N + 1) = partialSumIcc q N + digitSumVal q (N + 1) := by
-        unfold partialSumIcc
-        rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ N + 1) (digitSumVal q)]
-      have hTsucc : ∑ d ∈ Finset.Icc 1 N, partialSumIcc q d *
-            (Real.log d / (d : ℝ) - Real.log ((d : ℝ) + 1) / ((d : ℝ) + 1)) =
-          ∑ d ∈ Finset.Icc 1 (N - 1), partialSumIcc q d *
-            (Real.log d / (d : ℝ) - Real.log ((d : ℝ) + 1) / ((d : ℝ) + 1)) +
-            partialSumIcc q N *
-              (Real.log N / (N : ℝ) - Real.log ((N : ℝ) + 1) / ((N : ℝ) + 1)) := by
-        conv_lhs => rw [show N = N - 1 + 1 from (Nat.sub_add_cancel hN).symm]
-        rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ N - 1 + 1)
-            (fun d => partialSumIcc q d *
-              (Real.log d / (d : ℝ) - Real.log ((d : ℝ) + 1) / ((d : ℝ) + 1))),
-          Nat.sub_add_cancel hN]
-      rw [hsucc, ih, show N + 1 - 1 = N from by omega, hTsucc, hSsucc]
-      have hNpos : (N : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
-      have hN1pos : ((N : ℝ) + 1) ≠ 0 := by positivity
-      simp only [Nat.cast_add_one]
-      field_simp
-      ring
+  simpa only [← mul_div_assoc, Nat.cast_add_one] using
+    weighted_abel_identity q N hN (fun d => Real.log d / (d : ℝ))
 
 /-- Bounds for $\log(d+1) - \log d$. -/
 private theorem log_succ_sub_log_bounds (d : ℕ) (hd : 1 ≤ d) :
