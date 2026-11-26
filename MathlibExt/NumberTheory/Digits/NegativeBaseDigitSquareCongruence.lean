@@ -79,10 +79,15 @@ def IsNegBaseGood (b : ℤ) (T : Finset ℤ) : Prop :=
 
 end
 
--- The extra unit on negative inputs handles the step from `-1` to `1`.
-private def digitRank (a : ℤ) : ℕ := 2 * a.natAbs + if a < 0 then 1 else 0
+/-- **Rank for the negative-base digit recursion.** For an integer $a$, the rank of $a$ is
+$2|a| + 1$ if $a < 0$ and $2|a|$ otherwise. The extra unit on negative inputs makes the rank
+decrease in the step from $-1$ to its quotient $1$. -/
+@[expose] public def digitRank (a : ℤ) : ℕ := 2 * a.natAbs + if a < 0 then 1 else 0
 
-private theorem digitRank_lt {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B)
+/-- **The rank decreases along the negative-base digit recursion.** Let $B \ge 2$, $d$ and $q$ be
+integers with $0 \le d < B$ and $-Bq + d \ne 0$. Then the rank of $q$ is less than the rank of
+$-Bq + d$. -/
+public theorem digitRank_lt {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B)
     (ha : -B * q + d ≠ 0) : digitRank q < digitRank (-B * q + d) := by
   set a := -B * q + d with ea
   have haq : (a.natAbs : ℤ) = |a| := Int.natCast_natAbs a
@@ -153,7 +158,10 @@ private theorem digitSumAux_stable {B : ℤ} (hB : 2 ≤ B) {f g : ℕ} {a : ℤ
     simp only [negBaseSqDigitSumAux, ite_eq_right ha]
     rw [ih (show digitRank q ≤ f by omega) (show digitRank q ≤ g by omega)]
 
-private theorem digitSum_cons {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B) :
+/-- **Digit recurrence for the negative-base digit-square sum.** Let $B \ge 2$, $d$ and $q$ be
+integers with $0 \le d < B$. Then the sum of the squares of the base-$(-B)$ digits of $-Bq + d$ is
+$d^2$ plus the sum of the squares of the base-$(-B)$ digits of $q$. -/
+public theorem digitSum_cons {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B) :
     negBaseSqDigitSum (-B) (-B * q + d) = d ^ 2 + negBaseSqDigitSum (-B) q := by
   let a := -B * q + d
   have hb : -B ≠ 0 := by omega
@@ -452,7 +460,9 @@ public theorem exists_negBaseSqDigitSum_congr (b : ℤ) (hb : b ≤ -12) (heven 
     rw [hvqr]
     ring
 
-private theorem digitSum_zero (B : ℤ) : negBaseSqDigitSum (-B) 0 = 0 := by
+/-- **The negative-base digit-square sum of zero.** For every integer $B$, the sum of the squares
+of the base-$(-B)$ digits of $0$ is $0$. -/
+public theorem digitSum_zero (B : ℤ) : negBaseSqDigitSum (-B) 0 = 0 := by
   exact digitSumAux_zero B _
 
 private theorem digitSum_pos {B : ℤ} (hB : 2 ≤ B) (a : ℤ) (ha : a ≠ 0) :

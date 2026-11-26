@@ -18,19 +18,21 @@ namespace MathlibExtTest.NumberTheory.Digits.NegativeBaseHappyNumbers
 
 open MetaMathlibExt
 
--- A common iterate below `2 * (-7)^2 = 98` for the singleton `{5}`.
-example : ∃ k : ℕ, 0 < k ∧ (negBaseSqDigitSum (-7))^[k] 5 < 98 := by
-  have hA : ∀ a ∈ ({5} : Finset ℤ), 0 < a := by
+-- A common iterate below `2 * (-7)^2 = 98` for `{5, 258}`: one step sends `5` to `25`, already
+-- below `98`, but `258` to `108`, which is not.
+example : ∃ k : ℕ, 0 < k ∧ (negBaseSqDigitSum (-7))^[k] 5 < 98 ∧
+    (negBaseSqDigitSum (-7))^[k] 258 < 98 := by
+  have hA : ∀ a ∈ ({5, 258} : Finset ℤ), 0 < a := by
     intro a ha
     simp at ha
     omega
   obtain ⟨k, hkpos, hkall⟩ :=
-    exists_iterate_negBaseSqDigitSum_lt (-7) (by norm_num) {5} hA
-  have hmem : (5 : ℤ) ∈ ({5} : Finset ℤ) := by simp
-  have h := hkall 5 hmem
+    exists_iterate_negBaseSqDigitSum_lt (-7) (by norm_num) {5, 258} hA
   have heq : 2 * (-7 : ℤ) ^ 2 = 98 := by norm_num
-  rw [heq] at h
-  exact ⟨k, hkpos, h⟩
+  have h5 := hkall 5 (by simp)
+  have h258 := hkall 258 (by simp)
+  rw [heq] at h5 h258
+  exact ⟨k, hkpos, h5, h258⟩
 
 -- Every positive integer has an iterate below `98` in base `-7`.
 example (a : ℤ) (ha0 : 0 < a) :
