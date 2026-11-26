@@ -11178,6 +11178,7 @@
   "MathlibExt/Combinatorics/Enumerative/RectangleCapacityNondecreasingWords": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Rectangles in nondecreasing words"},
   "MathlibExt/Combinatorics/Enumerative/RefinedEulerianMarginals": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Refined Eulerian polynomials"},
   "MathlibExt/Combinatorics/Enumerative/RefinedEulerianPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Refined Eulerian polynomials"},
+  "MathlibExt/Combinatorics/Enumerative/RegularOverpartitionDensityExistsGamma0LowerUnipotentTZpowDecomposition": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "ℓ-regular overpartitions"},
   "MathlibExt/Combinatorics/Enumerative/RepeatingDecimalRatio": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Binomial sum parities and cotangent floor sequences"},
   "MathlibExt/Combinatorics/Enumerative/RestrictedCombinations": {"to": "Combinatorics/elementary-enumeration", "title": "Combinations without specified separations"},
   "MathlibExt/Combinatorics/Enumerative/RightDownDiagonalSequences": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Diagonal sequences of square zig-zag shapes"},
