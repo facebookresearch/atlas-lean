@@ -20,6 +20,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.FareyStaircase
+public import MathlibExt.NumberTheory.FareyStaircaseFareyStaircaseSubMemIcc
 
 namespace MetaMathlibExt
 
@@ -84,16 +85,6 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem_wanted fareyStaircase_le_floor_div {n : ℕ} (hn : 1 ≤ n) (x : ℝ) :
     fareyStaircase n x ≤ ⌊(n : ℝ) * x⌋ / n ∧
       (⌊(n : ℝ) * x⌋ : ℝ) / n ≤ fareyStaircase n x + Real.log n / n
-
-/-- **Bounds on the increment of the Farey staircase.** Let $n \ge 2$ be a natural number and $x$
-a real number, and write $A_m$ for the Farey staircase of order $m$. Then
-$0 \le A_n(x) - A_{n-1}(x) \le \frac{\log n}{n(n-1)}$, where $\log$ is the natural logarithm.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Lemma 8 (b) (`integers-2024-A37-lem-8`). -/
-public theorem_wanted fareyStaircase_sub_mem_Icc {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
-    0 ≤ fareyStaircase n x - fareyStaircase (n - 1) x ∧
-      fareyStaircase n x - fareyStaircase (n - 1) x ≤ Real.log n / (n * (n - 1))
 
 end
 
