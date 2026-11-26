@@ -176,7 +176,8 @@ $K$ over $F$, a normal basis.
 Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
 Journal of Integer Sequences 29 (2026), Article 26.4.6, Theorem 27
 (`jis-2026-26.4.6-thm-27`). -/
-public theorem_wanted exists_normalBasis_finiteField :
+public theorem_wanted exists_normalBasis_finiteField (F K : Type*)
+    [Field F] [Fintype F] [Field K] [Fintype K] [Algebra F K] :
     ∃ β : K, LinearIndependent F (fun σ : K ≃ₐ[F] K => σ β)
 
 /-- **Normal basis coordinates turn Frobenius into rotation.** Let $K$ be a finite field that is an
