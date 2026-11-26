@@ -26,6 +26,8 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyDifferenceDominated
+public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyMstdIncreasing
+public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyKLTCardAdd
 
 namespace MetaMathlibExt
 
@@ -43,19 +45,6 @@ Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 1 (`integers-2024
 public theorem_wanted chu_family_balanced {k : ℕ} (hk : 0 < k) :
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ [1, 1])
     (A + A).card = (A - A).card
-
-/-- **MSTD sets with $M^k$ before $M^{k+1}$ (Theorem 3).** Let $k$ be a positive integer, let
-$M^n$ denote the block $1, 4, \dots, 4, 3$ with $n$ fours, and let $M_1$ be one of the
-sequences $(1, 1, 2)$, $(1, 1, 2, 1)$. Let $A = (0 \mid 1, 1, 2, M^k, M^{k+1}, M_1)$ be the set
-of partial sums, starting from $0$, of the concatenated sequence $1, 1, 2, M^k, M^{k+1}, M_1$.
-Then $A$ is sum-dominated: $|A - A| < |A + A|$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 3 (`integers-2024-A32-thm-3`). -/
-public theorem_wanted chu_family_mstd_increasing {k : ℕ} (hk : 0 < k) {M₁ : List ℕ}
-    (hM₁ : M₁ = [1, 1, 2] ∨ M₁ = [1, 1, 2, 1]) :
-    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ M₁)
-    (A - A).card < (A + A).card
 
 /-- **MSTD sets with $M^{k+1}$ before $M^k$ (Theorem 4).** Let $k$ be a positive integer, let
 $M^n$ denote the block $1, 4, \dots, 4, 3$ with $n$ fours, and let $M_1$ be one of the
@@ -91,18 +80,6 @@ Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. 
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 6 (`integers-2024-A32-thm-6`). -/
 public theorem_wanted chuFamilyKLT_card_sub {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
     (chuFamilyKLT k l t - chuFamilyKLT k l t).card = 11 + 6 * k * l * t + 8 * l * t + 8 * t
-
-/-- **Lower bound for the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers
-and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
-$|A + A| \ge 11 + 6klt + 10lt + 8t$.
-
-Together with $|A - A| = 11 + 6klt + 8lt + 8t$ (Theorem 6), this shows that $A$ is sum-dominated
-(MSTD): $|A + A| > |A - A|$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 7 (`integers-2024-A32-thm-7`). -/
-public theorem_wanted chuFamilyKLT_card_add {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
-    11 + 6 * k * l * t + 10 * l * t + 8 * t ≤ (chuFamilyKLT k l t + chuFamilyKLT k l t).card
 
 /-- **Six disjoint families in the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive
 integers, let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and
