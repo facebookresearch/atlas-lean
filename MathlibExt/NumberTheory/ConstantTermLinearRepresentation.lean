@@ -126,6 +126,42 @@ private theorem laurentDeg_pow_le {R : Type*} [Semiring R] {r : ℕ}
 
 end laurentCartier_pow_mul_single_eq_sum
 
+/-- **Degree bound for the Rowland–Zeilberger states.** Let $p$ be a prime and let $P$ and $Q$
+be Laurent polynomials in $r$ variables with integer coefficients. Write $\deg F$ for the largest
+absolute value of an exponent of a variable occurring in $F$, and $\Lambda_p$ for the operator
+that keeps the terms whose exponents are all multiples of $p$ and substitutes $x_s^p \mapsto x_s$.
+For every finite list $k_1, \dots, k_n$ of natural numbers with each $k_t < p$, starting from $Q$
+and applying $R \mapsto \Lambda_p(P^{k_t} R)$ for $t = 1, \dots, n$ in turn gives a Laurent
+polynomial of degree at most $\max(\deg P - 1, \deg Q)$.
+
+Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
+Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
+Lemma 4 (`jis-2026-26.4.2-lem-4`). -/
+public theorem laurentDeg_foldl_laurentCartier_le {r p : ℕ} (hp : p.Prime)
+    (P Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (ks : List ℕ) (hks : ∀ k ∈ ks, k < p) :
+    laurentDeg (ks.foldl (fun R k => laurentCartier p (P ^ k * R)) Q) ≤
+      max (laurentDeg P - 1) (laurentDeg Q) := by
+  let m := max (laurentDeg P - 1) (laurentDeg Q)
+  have hP : laurentDeg P ≤ m + 1 := by dsimp [m]; omega
+  refine ks.foldlRecOn (motive := fun R => laurentDeg R ≤ m) _ (le_max_right _ _) ?_
+  intro R hR k hk
+  apply (laurentDeg_le_iff _ _).2
+  intro j hj i
+  rw [Finsupp.mem_support_iff, coeff_laurentCartier hp.ne_zero, ← Finsupp.mem_support_iff] at hj
+  obtain ⟨a, ha, b, hb, hab⟩ :=
+    Finset.mem_add.mp (AddMonoidAlgebra.support_coeff_mul_subset _ _ hj)
+  have ha' := (laurentDeg_le_iff _ _).1
+    (laurentCartier_pow_mul_single_eq_sum.laurentDeg_pow_le P k) a ha i
+  have hb' := (laurentDeg_le_iff _ _).1 hR b hb i
+  apply Nat.le_of_lt_succ
+  apply Nat.lt_of_mul_lt_mul_left
+  calc
+    p * (j i).natAbs = ((a + b) i).natAbs := by rw [hab]; simp [Int.natAbs_mul]
+    _ ≤ (a i).natAbs + (b i).natAbs := Int.natAbs_add_le _ _
+    _ ≤ k * (m + 1) + m := Nat.add_le_add (ha'.trans (Nat.mul_le_mul_left k hP)) hb'
+    _ < (k + 1) * (m + 1) := by rw [Nat.succ_mul]; omega
+    _ ≤ p * (m + 1) := Nat.mul_le_mul_right _ (hks k hk)
+
 open laurentCartier_pow_mul_single_eq_sum in
 /-- **Cartier operator applied to a power times a monomial.** Let $p$ be a prime and $P$ a
 Laurent polynomial in $r$ variables with integer coefficients. Write $\mathrm{coef}_e[F]$ for the
@@ -268,6 +304,62 @@ public theorem exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : �
   have hj : j.val = 0 := smul_right_injective (Fin r → ℤ) (pow_ne_zero n hp.ne_zero)
     (by simpa only [smul_zero] using heq.symm.trans hi)
   exact hij ⟨Subtype.ext hi.symm, Subtype.ext hj.symm⟩
+
+set_option backward.proofsInPublic true in
+/-- **Powers of $\tilde\gamma(0)$ modulo $p^a$ stabilize at a matrix unit.** Let $p$ be a prime,
+let $a \ge 1$, $r$ and $m$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$,
+and let $\tilde\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p^a\mathbb{Z}$ whose
+$(i, j)$ entry is $1$ if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for
+every $s' \ge s$, $\tilde\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other
+entries are $0$.
+
+Kohen's Lemma 30 prints $\tilde\gamma(0)^s$; as in Lemma 11, it is read for every exponent
+$s' \ge s$.
+
+Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
+Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
+Lemma 30 (`jis-2026-26.4.2-lem-30`). -/
+public theorem exists_gammaZero_pow_eq_single_zmod {p : ℕ} (hp : p.Prime)
+    (a : ℕ) (ha : 0 < a) (r m : ℕ) :
+    ∃ s : ℕ, ∀ s' ≥ s,
+      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
+        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod (p ^ a)) else 0) ^ s' =
+        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1 := by
+  let T := Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m
+  let A (q : ℕ) := Matrix.of fun i j : ↥T => if i.val = p • j.val then (1 : ZMod q) else 0
+  let z : ↥T := ⟨0, by simp [T]⟩
+  -- Multiplying by the zero-digit matrix copies a column or sets it to zero.
+  have entries (n : ℕ) (i j : ↥T) :
+      (A (p ^ a) ^ n) i j = 0 ∨ (A (p ^ a) ^ n) i j = 1 := by
+    induction n generalizing j with
+    | zero => by_cases h : i = j <;> simp [h]
+    | succ n ih =>
+      rw [pow_succ, Matrix.mul_apply]
+      by_cases hj : p • j.val ∈ T
+      · let k : ↥T := ⟨p • j.val, hj⟩
+        have hcol (l : ↥T) : A (p ^ a) l j = if l = k then 1 else 0 := by
+          simp [A, k, Subtype.ext_iff]
+        simpa [hcol, mul_ite] using ih k
+      · have hcol (l : ↥T) : A (p ^ a) l j = 0 := by
+          have hne : l.val ≠ p • j.val := fun h => hj (h ▸ l.property)
+          exact ite_eq_right hne
+        simp [hcol]
+  -- Reduction modulo p commutes with powers and distinguishes the two possible entries.
+  let reduce := ZMod.castHom (dvd_pow_self p ha.ne') (ZMod p)
+  have hA : (A (p ^ a)).map reduce = A p := by
+    ext i j
+    simp [A, apply_ite reduce]
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single hp r m
+  refine ⟨s, fun n hn => ?_⟩
+  have hred : (A (p ^ a) ^ n).map reduce = Matrix.single z z 1 := by
+    rw [Matrix.map_pow, hA]
+    exact hs n hn
+  change A (p ^ a) ^ n = Matrix.single z z 1
+  have : Fact p.Prime := ⟨hp⟩
+  ext i j
+  have h := congrArg (fun M : Matrix T T (ZMod p) => M i j) hred
+  simp only [Matrix.map_apply, Matrix.single_apply] at h ⊢
+  split_ifs at h ⊢ <;> rcases entries n i j with he | he <;> simp [he] at h ⊢
 
 namespace constantTerm_pow_mul_modEq_tilde
 

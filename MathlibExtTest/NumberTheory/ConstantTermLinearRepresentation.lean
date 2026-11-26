@@ -77,6 +77,23 @@ example (e : Fin 1 → ℤ) (he : e ≠ 0) :
     (by decide) (by decide) P Pt (fun j => by simp [hsq])).2 2
   simp [hct]
 
+-- For P = x⁻⁴ and Q = x⁻¹, the digits 2, 0, 2 visit x⁻³, x⁻¹, x⁻³.
+example :
+    let P : AddMonoidAlgebra ℤ (Fin 1 → ℤ) := single (fun _ => -4) 1
+    let Q : AddMonoidAlgebra ℤ (Fin 1 → ℤ) := single (fun _ => -1) 1
+    laurentDeg ([2, 0, 2].foldl (fun R k => laurentCartier 3 (P ^ k * R)) Q) ≤ 3 := by
+  intro P Q
+  have h := laurentDeg_foldl_laurentCartier_le Nat.prime_three P Q [2, 0, 2] (by decide)
+  simpa [P, Q, laurentDeg, coeff_single] using h
+
+-- Truncated subtraction gives the initial degree bound for a constant multiplier.
+example {r p : ℕ} (hp : p.Prime) (Q : AddMonoidAlgebra ℤ (Fin r → ℤ))
+    (ks : List ℕ) (hks : ∀ k ∈ ks, k < p) :
+    laurentDeg (ks.foldl (fun R _ => laurentCartier p R) Q) ≤ laurentDeg Q := by
+  have h₁ : laurentDeg (1 : AddMonoidAlgebra ℤ (Fin r → ℤ)) = 0 := by
+    simp [laurentDeg, one_def, coeff_single]
+  simpa [h₁] using laurentDeg_foldl_laurentCartier_le hp 1 Q ks hks
+
 -- With P = 3x^2 + 5, p = 2, m = 1 and i = 0, the Cartier operator keeps 3x + 5:
 -- the sum over the box [-1, 1] reads the coefficients at exponents 2 and 0.
 example :
@@ -138,3 +155,16 @@ example :
   obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single Nat.prime_two 1 2
   refine ⟨s, fun n hn => ?_⟩
   exact (congrArg (fun M : Matrix T T (ZMod 2) => M i j) (hs n hn)).trans (by decide +revert)
+
+-- Modulo four, the eventual matrix keeps the value two at the origin and kills it elsewhere.
+example :
+    let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-2 : ℤ) 2
+    let A := Matrix.of fun i j : ↥T => if i.val = (2 : ℕ) • j.val then (1 : ZMod 4) else 0
+    let z : ↥T := ⟨0, by decide⟩
+    ∃ s : ℕ, ∀ n ≥ s, (A ^ n).mulVec (fun _ => 2) = Pi.single z 2 := by
+  intro T A z
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single_zmod Nat.prime_two 2 (by decide) 1 2
+  refine ⟨s, fun n hn => ?_⟩
+  have h : A ^ n = Matrix.single z z 1 := hs n hn
+  rw [h, Matrix.single_mulVec, one_mul]
+  rfl
