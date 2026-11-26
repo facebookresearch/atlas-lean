@@ -1,10 +1,10 @@
 # Fair-bit sampling with a running-time tail
 
-## Trapdoor
+## Local machine
 
 - [A fair-bit sampler](fair-sampler.md)
 
-## Fair Sampler
+## Sampling law and time
 
 - [One charged transition](step.md)
 - [First-halt probability](hit.md)
@@ -16,3 +16,8 @@
 - [Eventual output mass](mass.md)
 - [Law](law.md)
 - [Efficient exact sampler on a polynomial input envelope](efficient.md)
+
+## Algorithms on an input envelope
+
+- [A sampler with a uniform time guarantee](tail-algorithm.md)
+- [Realizing an exact output law](realizes.md)

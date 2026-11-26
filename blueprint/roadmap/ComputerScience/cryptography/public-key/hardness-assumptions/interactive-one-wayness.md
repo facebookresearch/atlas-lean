@@ -8,8 +8,8 @@ This is the one-way hypothesis in Boneh–Shoup’s Theorems 11.2 and 13.3. [One
 
 ## Depends on
 
-- [Variable-time trapdoor function scheme](is-tail-function-scheme.md)
-- [Probabilistic Turing machines and fair random bits](../../security-games/asymptotic-security/probabilistic-polynomial-time-turing-machines.md) (the underlying machine model; the running-time condition here is Definition 2.11)
+- [Variable-time trapdoor function scheme](variable-time-trapdoor-function-scheme.md)
+- [Efficient interactive machines](../../security-games/asymptotic-security/efficient-interactive-machines.md)
 - [Negligible advantage](../../security-games/asymptotic-security/negligible-adv.md)
 
 ## Sources

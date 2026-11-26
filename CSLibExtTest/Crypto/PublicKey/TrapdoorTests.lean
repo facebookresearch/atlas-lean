@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+module
+
 import CSLibExt.Crypto.PublicKey.Trapdoor
 import CSLibExt.Crypto.Framework.Negligible
 import Mathlib.Analysis.SpecificLimits.Normed
 import CSLibExt.Computability.Complexity.PolynomialEncoding.PairSplit
 import CSLibExt.Computability.Complexity.PairProjection
+import CSLibExt.Computability.Complexity.BoolClosure
 
 namespace Cslib.Crypto.PublicKey.Trapdoor.Tests
 
@@ -212,7 +215,7 @@ private theorem binary_permutation : binaryFamily.IsBoundedCoinPermutationScheme
       exact uniform_letter
   · exact fun _ _ _ _ _ => rfl
 
-open FairSampler
+open Cslib.Crypto.Framework FairSampler
 open scoped ENNReal
 
 -- A genuine local transition table with no work tapes. Each pair 00, 01, 10 emits one
@@ -496,5 +499,203 @@ example : ¬ threeLetters.IsTranscriptOneWay three_permutation.1.1 := by
   intro n
   erw [dite_eq_left n.property]
   exact (three_blank_winProb n).ge
+
+-- For the key-dependent fixture, pass (key, word) to a two-input operation. In the canonical
+-- encoding of ((unary, pp, key), word) the first two inner fields each have two framing layers.
+-- Skipping these fields leaves exactly the encoding of (key, word), with no re-encoding.
+private def skipField (self next : Fin 3) : TM2.Stmt (fun _ : Unit => Bool) (Fin 3) Bool :=
+  .pop () (fun v _ => v) <| .pop () (fun _ o => o.getD false) <| .branch id
+    (.pop () (fun _ _ => false) <| .pop () (fun v _ => v) (.goto fun _ => self))
+    (.goto fun _ => next)
+
+private def keepKeyTM : FinTM2 where
+  K := Unit
+  k₀ := ()
+  k₁ := ()
+  Γ _ := Bool
+  Λ := Fin 3
+  main := 0
+  σ := Bool
+  initialState := false
+  m l := if l = 0 then skipField 0 1 else if l = 1 then skipField 1 2 else .halt
+
+private def skipCfg (l : Option (Fin 3)) (w : Bits) : keepKeyTM.Cfg := ⟨l, false, fun _ => w⟩
+
+private theorem skipField_run (self next : Fin 3) (h : keepKeyTM.m self = skipField self next)
+    (u rest val : Bits) : Run keepKeyTM.m (u.length + 1)
+      (skipCfg (some self) (delimit (delimit u ++ rest) ++ val))
+      (skipCfg (some next) (delimit rest ++ val)) := by
+  induction u with
+  | nil =>
+    apply Run.single
+    rw [h]
+    apply congrArg (TM2.Cfg.mk (some next) false)
+    funext k
+    cases k
+    rfl
+  | cons b u ih =>
+    apply Run.head _ ih
+    simp only [TM2.step, skipCfg, h, Option.some.injEq]
+    apply congrArg (TM2.Cfg.mk (some self) false)
+    funext k
+    cases k
+    rfl
+
+private abbrev keepKey (v : (Bits × Bits × Bits) × Bits) : Bits × Bits := (v.1.2.2, v.2)
+
+private theorem keepKey_poly : IsPolyTime keepKey := by
+  refine ⟨{ tm := keepKeyTM, inputAlphabet := Equiv.refl Bool, outputAlphabet := Equiv.refl Bool,
+            time := Polynomial.X + 3, outputsFun := ?_ }⟩
+  rintro ⟨⟨s, p, k⟩, z⟩
+  let u := bitEncode s
+  let v := bitEncode p
+  let r := bitEncode k
+  let w := bitEncode z
+  refine ⟨⟨u.length + 1 + (v.length + 1) + 1, ?_⟩, ?_⟩
+  · have h0 := skipField_run 0 1 rfl u (delimit v ++ r) w
+    have h1 := skipField_run 1 2 rfl v r w
+    have h2 : Run keepKeyTM.m 1 (skipCfg (some 2) (delimit r ++ w))
+        (skipCfg none (delimit r ++ w)) := Run.single rfl
+    change Run keepKeyTM.m _
+      (initList keepKeyTM ((delimit (delimit u ++ (delimit v ++ r)) ++ w).map id))
+      (haltList keepKeyTM ((delimit r ++ w).map id))
+    erw [List.map_id, List.map_id]
+    exact (h0.trans h1).trans h2
+  · change _ ≤ (Polynomial.X + 3 : Polynomial ℕ).eval
+      (delimit (delimit u ++ (delimit v ++ r)) ++ w).length
+    simp only [Polynomial.eval_add, Polynomial.eval_X, Polynomial.eval_ofNat,
+      List.length_append, length_delimit]
+    omega
+
+private abbrev gate (op : Bool → Bool → Bool) (v : (Bits × Bits × Bits) × Bits) : Bits :=
+  [op (v.2.headD false) (v.1.2.2.headD false)]
+
+private theorem gate_poly (op : Bool → Bool → Bool) : IsPolyTime (gate op) :=
+  (keepKey_poly.comp (isPolyTime_heads op)).comp isPolyTime_singleton
+
+-- The two raw input stacks contain the key and the candidate word. Accept exactly one bit,
+-- allowing true only when the public key's bit is true.
+private abbrev allowed (p : Bits × Bits) :=
+  decide (p.2.length = 1) && (!p.2.headD false || p.1.headD false)
+
+private abbrev allowedComp : Host.Comp where
+  K := Bool
+  Γ _ := Bool
+  L := Fin 3
+  prog l := if l = 0 then
+    .peek false (fun _ k => k.getD false) <|
+    .pop true (fun k b => b.isSome && (!b.getD false || k)) <|
+      .peek true (fun s b => s && b.isNone) (.goto fun s => if s then 1 else 2)
+    else .halt
+  ks := [false, true]
+  ks_nodup := by decide
+  mem_ks k := by cases k <;> decide
+
+private theorem allowed_poly : IsPolyTime allowed := by
+  apply Host.isPolyTime_verifier (c := allowedComp) (cX := false) (cW := true)
+    (gX := id) (gW := id) (start := 0) (yes := 1) (no := 2)
+    (fun k z => allowed (k, z)) 1 (by decide : (false : Bool) ≠ true)
+    (by decide : (1 : Fin 3) ≠ 2) rfl rfl
+  intro k z
+  cases k with
+  | nil => cases z with
+    | nil => exact ⟨_, _, (Run.single rfl).le (by simp)⟩
+    | cons b z => cases b <;> cases z <;> exact ⟨_, _, (Run.single rfl).le (by simp)⟩
+  | cons a k => cases a <;> cases z with
+    | nil => exact ⟨_, _, (Run.single rfl).le (by simp)⟩
+    | cons b z => cases b <;> cases z <;> exact ⟨_, _, (Run.single rfl).le (by simp)⟩
+
+private abbrev fibre (pk : Bits) : Finset Bits := if pk.headD false then letters else {[false]}
+
+private noncomputable def keyedLetters : Family where
+  setup _ := PMF.pure []
+  keys _ _ := (uniformOfFinset letters (by simp [letters])).map fun b => (b, b)
+  domain ctx := fibre ctx.2.2
+  codomain ctx := fibre ctx.2.2
+  eval := gate Bool.xor
+  invert := gate Bool.xor
+
+private theorem matching (n : ℕ+) (pp pk sk : Bits) : keyedLetters.Generated n pp pk sk ↔
+    pp = [] ∧ (pk = [false] ∨ pk = [true]) ∧ sk = pk := by
+  simp [Family.Generated, keyedLetters, letters]
+  grind
+
+private theorem allowed_iff (k z : Bits) : allowed (k, z) = true ↔ z ∈ fibre k := by
+  cases hk : (k.head?).getD false <;> cases z with
+    | nil => simp [allowed, fibre, hk, letters]
+    | cons b z => cases b <;> cases z <;> simp [allowed, fibre, hk, letters]
+
+private theorem keyed_uniform (ctx : Bits × Bits × Bits) : ∃ h : (fibre ctx.2.2).Nonempty,
+    ((uniformOfFintype (Fin 1 → Bool)).map List.ofFn).map (fun r => gate Bool.and (ctx,r)) =
+      uniformOfFinset (fibre ctx.2.2) h := by
+  classical
+  cases hk : (ctx.2.2.head?).getD false with
+  | false =>
+    refine ⟨by simp [fibre, hk], ?_⟩
+    simp only [gate, List.headD_eq_head?_getD, hk, Bool.and_false]
+    erw [PMF.map_const]
+    ext y
+    simp [fibre, hk, Cslib.Probability.PMF.uniformOfFinset_apply, PMF.pure_apply]
+  | true =>
+    refine ⟨by simp [fibre, hk, letters], ?_⟩
+    have he : (fun r : Fin 1 → Bool => gate Bool.and (ctx,List.ofFn r)) = List.ofFn := by
+      funext r
+      simp [gate, hk, List.ofFn_succ]
+    rw [PMF.map_comp]
+    change (uniformOfFintype _).map (fun r : Fin 1 → Bool => gate Bool.and (ctx,List.ofFn r)) = _
+    rw [he]
+    simpa [fibre, hk] using uniform_letter
+
+private theorem keyed_permutation : keyedLetters.IsBoundedCoinPermutationScheme := by
+  refine ⟨?_, fun _ _ _ _ _ => rfl⟩
+  constructor
+  · constructor
+    · have hm := keepKey_poly.comp allowed_poly
+      exact ⟨_, _, hm, hm, fun n pp pk sk _ z => ⟨allowed_iff pk z, allowed_iff pk z⟩⟩
+    · exact gate_poly _
+    · exact gate_poly _
+    · refine ⟨1, fun n pp pk sk hg => ?_⟩
+      obtain ⟨rfl, hpk, rfl⟩ := (matching ..).mp hg
+      rcases hpk with rfl | rfl <;> simp [keyedLetters, fibre, letters, index]
+    · intro n pp pk sk hg
+      obtain ⟨rfl, hpk, rfl⟩ := (matching ..).mp hg
+      rcases hpk with rfl | rfl <;>
+        simp [Family.CorrectAt, keyedLetters, fibre, letters, index, gate, Set.MapsTo,
+          Set.LeftInvOn]
+  · refine ⟨0, Prod.snd, snd_poly, fun n => ?_⟩
+    simp [keyedLetters, PMF.map_comp, Function.comp_def, List.ofFn_zero, PMF.map_const,
+      Function.const_def]
+  · let g := fun t : Bits × Bits × Bits => (t.2.2, t.2.2)
+    have hproj : IsPolyTime (fun t : Bits × Bits × Bits => t.2.2) := snd_poly.comp snd_poly
+    refine ⟨1, g, hproj.comp isPolyTime_dup, fun n pp _ => ?_⟩
+    change ((uniformOfFintype (Fin ((1 : Polynomial ℕ).eval n.val) → Bool)).map List.ofFn).map _ = _
+    rw [Polynomial.eval_one, uniform_letter]
+    rfl
+  · refine ⟨1, gate Bool.and, gate_poly _, fun n pp pk sk _ => ?_⟩
+    obtain ⟨hne, hs⟩ := keyed_uniform (index n pp pk)
+    refine ⟨hne, ?_⟩
+    change ((uniformOfFintype (Fin ((1 : Polynomial ℕ).eval n.val) → Bool)).map List.ofFn).map _ = _
+    rw [Polynomial.eval_one]
+    exact hs
+
+example (n : ℕ+) : keyedLetters.IsBoundedCoinPermutationScheme ∧
+    keyedLetters.Generated n [] [false] [false] ∧ keyedLetters.Generated n [] [true] [true] ∧
+    (keyedLetters.domain (index n [] [false])).card = 1 ∧
+    (keyedLetters.domain (index n [] [true])).card = 2 ∧
+    keyedLetters.eval (index n [] [false], [false]) = [false] ∧
+    keyedLetters.eval (index n [] [true], [false]) = [true] := by
+  exact ⟨keyed_permutation, (matching ..).2 (by simp), (matching ..).2 (by simp),
+    by change (fibre [false]).card = 1; decide, by change (fibre [true]).card = 2; decide, rfl, rfl⟩
+
+-- Conditional laws of the *same* honest one-coin sampler at the two supported public keys.
+example (n : ℕ+) :
+    let draw := fun pk => ((uniformOfFintype (Fin 1 → Bool)).map List.ofFn).map
+      (fun r => gate Bool.and (index n [] pk, r))
+    draw [false] [true] = 0 ∧ draw [true] [true] = (2 : ℝ≥0∞)⁻¹ := by
+  dsimp only
+  obtain ⟨_, hf⟩ := keyed_uniform (index n [] [false])
+  obtain ⟨_, ht⟩ := keyed_uniform (index n [] [true])
+  rw [hf, ht]
+  simp [fibre, letters, Cslib.Probability.PMF.uniformOfFinset_apply]
 
 end Cslib.Crypto.PublicKey.Trapdoor.Tests

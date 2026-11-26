@@ -27,7 +27,7 @@ Cryptography*, v0.4, §2.4.2, Definitions 2.8–2.9 and the footnote on p. 30.
 
 @[expose] public section
 
-namespace Cslib.Crypto.PublicKey.Trapdoor
+namespace Cslib.Crypto.Framework
 
 open _root_.Turing
 open scoped ENNReal
@@ -199,4 +199,17 @@ structure Efficient (b : Polynomial ℕ) : Prop where
       M.live (p.eval n.val) (Cfg.init M.start (input n aux)) ≤ ENNReal.ofReal (ε n.val)
 
 end FairSampler
-end Cslib.Crypto.PublicKey.Trapdoor
+/-- **A sampler with a uniform time guarantee.** One fair-bit table is fixed for all security
+parameters and all auxiliary words up to its polynomial length envelope. It halts almost surely
+and has a uniform negligible running-time tail on that entire envelope. -/
+structure TailAlgorithm where
+  machine : FairSampler
+  bound : Polynomial ℕ
+  efficient : machine.Efficient bound
+
+/-- The given argument must fit the algorithm's envelope, and the mass of every output of the
+actual local computation must equal that of the specified PMF, including zero off its support. -/
+def TailAlgorithm.Realizes (A : TailAlgorithm) (n : ℕ+) (aux : Bits) (μ : PMF Bits) : Prop :=
+  aux.length ≤ A.bound.eval n.val ∧ A.machine.mass (FairSampler.input n aux) = ⇑μ
+
+end Cslib.Crypto.Framework

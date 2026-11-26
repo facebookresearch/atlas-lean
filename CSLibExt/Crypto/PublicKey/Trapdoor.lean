@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Crypto.PublicKey.Trapdoor.FairSampling
+public import CSLibExt.Crypto.Framework.FairSampling
 public import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -206,25 +206,7 @@ def IsBoundedCoinOneWay (h : S.IsBoundedCoinFunctionScheme) : Prop :=
     if hn : 0 < n then winProb (S.boundedCoinOneWayGame h.domain_nonempty A ⟨n, hn⟩ (q.eval n))
     else 0
 
-end Family
-
-/-- **A sampler with a uniform time guarantee.** One fair-bit table is fixed for all security
-parameters and all auxiliary words up to its polynomial length envelope. It halts almost surely
-and has a uniform negligible running-time tail on that entire envelope. -/
-structure TailAlgorithm where
-  machine : FairSampler
-  bound : Polynomial ℕ
-  efficient : machine.Efficient bound
-
-/-- The given argument must fit the algorithm's envelope, and the mass of every output of the
-actual local computation must equal that of the specified PMF, including zero off its support. -/
-def TailAlgorithm.Realizes (A : TailAlgorithm) (n : ℕ+) (aux : Bits) (μ : PMF Bits) : Prop :=
-  aux.length ≤ A.bound.eval n.val ∧ A.machine.mass (FairSampler.input n aux) = ⇑μ
-
-namespace Family
-
 open MetaMathlibExt.BitstringEncoding
-variable (S : Family)
 
 /-- **Variable-time trapdoor function scheme.** In addition to the deterministic operations,
 size bounds and matching-key inverse law, three fixed, almost-surely terminating efficient
@@ -235,7 +217,7 @@ Given the encoding of the system parameter and the public key, domain sampling i
 the nonempty finite domain. All three machines also receive the unary security parameter.
 The running-time guarantees cover all auxiliary inputs up to each algorithm's polynomial
 envelope, not merely typical generated keys. -/
-structure IsTailFunctionScheme : Prop extends S.DeterministicCore where
+structure IsFunctionScheme : Prop extends S.DeterministicCore where
   setup_law : ∃ P : TailAlgorithm, ∀ n, P.Realizes n [] (S.setup n)
   key_law : ∃ G : TailAlgorithm, ∀ n pp, pp ∈ (S.setup n).support →
     G.Realizes n pp ((S.keys n pp).map bitEncode)
@@ -243,7 +225,7 @@ structure IsTailFunctionScheme : Prop extends S.DeterministicCore where
     ∃ hx : (S.domain (index n pp pk)).Nonempty,
       D.Realizes n (bitEncode (pp, pk)) (uniformOfFinset (S.domain (index n pp pk)) hx)
 
-theorem IsTailFunctionScheme.domain_nonempty {S : Family} (h : S.IsTailFunctionScheme)
+theorem IsFunctionScheme.domain_nonempty {S : Family} (h : S.IsFunctionScheme)
     (n : ℕ+) (pp pk sk : Bits) (hg : S.Generated n pp pk sk) :
     (S.domain (index n pp pk)).Nonempty := (h.sample_law.choose_spec n pp pk sk hg).choose
 
@@ -253,7 +235,7 @@ then gives a permutation and its matching inverse. The domain sampler is exactly
 may have a negligible probability of running beyond its polynomial deadline. No one-wayness
 assumption or worst-case bound on the number of random bits is part of the permutation law. -/
 def IsPermutationScheme : Prop :=
-  S.IsTailFunctionScheme ∧ ∀ n pp pk sk, S.Generated n pp pk sk →
+  S.IsFunctionScheme ∧ ∀ n pp pk sk, S.Generated n pp pk sk →
     S.codomain (index n pp pk) = S.domain (index n pp pk)
 
 abbrev TranscriptFits (A : TailAlgorithm) : Prop :=
@@ -266,7 +248,7 @@ selected domain. Run a fresh efficient fair-bit algorithm on the unary security 
 the framed tuple of public parameter, public key and public image. Assuming its envelope covers
 the public transcripts, its own halting law gives the guess, which must equal the original word.
 No secret key or challenger randomness is part of the transcript. -/
-noncomputable def transcriptGame (h : S.IsTailFunctionScheme) (A : TailAlgorithm)
+noncomputable def transcriptGame (h : S.IsFunctionScheme) (A : TailAlgorithm)
     (ha : S.TranscriptFits A) (n : ℕ+) : PMF Bool :=
   (S.setup n).bindOnSupport fun pp hp => (S.keys n pp).bindOnSupport fun (pk, sk) hk =>
     let hg : S.Generated n pp pk sk := ⟨hp, hk⟩
@@ -287,7 +269,7 @@ recovering the exact input. Negligibility is in the positive security parameter,
 zero at zero. This is the noninteractive input/output experiment of Game 10.2: its timing model
 is Definition 2.8 on the whole bounded auxiliary input, not a theorem about communication costs
 or the all-environment interactive machines of Definition 2.11. -/
-def IsTranscriptOneWay (h : S.IsTailFunctionScheme) : Prop :=
+def IsTranscriptOneWay (h : S.IsFunctionScheme) : Prop :=
   ∀ (A : TailAlgorithm) (ha : S.TranscriptFits A), NegligibleAdv fun n =>
     if hn : 0 < n then winProb (S.transcriptGame h A ha ⟨n, hn⟩) else 0
 
