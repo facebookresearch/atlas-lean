@@ -1,6 +1,6 @@
 # Cecchetto-Traub-Zenklusen: unweighted connectivity augmentation is 1.393-approximable
 
-There is a polynomial-time $1.393$-approximation algorithm for the (unweighted) connectivity augmentation problem, for every $k \ge 1$; in particular also for TAP. This improves the factor $1.91$ for CAP and the factor $1.458$ for TAP of Grandoni, Kalaitzis and Zenklusen. Moreover, when the ratio between the largest and smallest link weight is bounded by a constant, the same approach yields approximation factors below $1.5$ for the weighted problems.
+There is a polynomial-time $1.393$-approximation algorithm for the (unweighted) connectivity augmentation problem, for every $k \ge 1$; in particular also for TAP. This improves the factor $1.91$ for CAP of Byrka, Grandoni and Jabal Ameli and the factor $1.458$ for TAP of Grandoni, Kalaitzis and Zenklusen. Moreover, when the ratio between the largest and smallest link weight is bounded by a constant, the same approach yields approximation factors below $1.5$ for the weighted problems.
 
 ## Proof sketch
 
@@ -22,3 +22,4 @@ First transfer TAP techniques to cactus augmentation by showing that, after a su
 
 - Federica Cecchetto, Vera Traub, Rico Zenklusen, "Bridging the Gap Between Tree and Connectivity Augmentation: Unified and Stronger Approaches", STOC (2021), arXiv:2012.00086.
 - Fabrizio Grandoni, Christos Kalaitzis, Rico Zenklusen, "Improved Approximation for Tree Augmentation: Saving by Rewiring", STOC (2018).
+- Jarosław Byrka, Fabrizio Grandoni, Afrouz Jabal Ameli, "Breaching the 2-Approximation Barrier for Connectivity Augmentation: a Reduction to Steiner Tree", STOC (2020).

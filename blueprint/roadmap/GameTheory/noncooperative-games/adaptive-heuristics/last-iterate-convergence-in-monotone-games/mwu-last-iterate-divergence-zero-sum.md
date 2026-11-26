@@ -1,6 +1,6 @@
 # Multiplicative weights diverge from interior equilibria in zero-sum games
 
-Let $A$ be a two-player zero-sum matrix game with a unique fully mixed Nash equilibrium $(x^\star, y^\star)$. If both players run multiplicative weights (Hedge) with any constant step size from any interior starting point other than the equilibrium, the Kullback–Leibler divergence $\mathrm{KL}(x^\star \Vert x^t) + \mathrm{KL}(y^\star \Vert y^t)$ is strictly increasing in $t$, and the iterates approach the boundary of the simplices; hence the last iterate does not converge to equilibrium even though time-averages do. In contrast optimistic multiplicative weights converge in the last iterate to the equilibrium.
+Let $A$ be a two-player zero-sum matrix game with a unique fully mixed Nash equilibrium $(x^\star, y^\star)$. If both players run multiplicative weights (Hedge) with any constant step size from any interior starting point other than the equilibrium, the Kullback–Leibler divergence $\mathrm{KL}(x^\star \Vert x^t) + \mathrm{KL}(y^\star \Vert y^t)$ is strictly increasing in $t$, and the iterates approach the boundary of the simplices; hence the last iterate does not converge to equilibrium even though time-averages do. In contrast, Daskalakis and Panageas prove that optimistic multiplicative weights with a sufficiently small constant step size converge in the last iterate to the equilibrium.
 
 ## Proof sketch
 

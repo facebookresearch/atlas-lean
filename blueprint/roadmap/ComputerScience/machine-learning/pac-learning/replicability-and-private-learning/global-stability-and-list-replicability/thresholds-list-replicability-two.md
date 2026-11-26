@@ -9,6 +9,7 @@ For thresholds, estimate the threshold location by an empirical quantile and rou
 ## Depends on
 
 - [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
+- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 

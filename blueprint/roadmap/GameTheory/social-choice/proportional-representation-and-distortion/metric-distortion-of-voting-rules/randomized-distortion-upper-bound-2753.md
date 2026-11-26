@@ -9,7 +9,6 @@ Neither component alone beats distortion $3$, but their bad instances are comple
 ## Depends on
 
 - [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
-- [Optimal metric distortion of randomized voting](../../optimal-metric-distortion-of-randomized-voting.md)
 - [Maximal lotteries](maximal-lotteries.md)
 
 ## Proof depends on

@@ -8,7 +8,6 @@ The program is reduced to a related program whose boundedness and optimal vertex
 
 ## Depends on
 
-- [Strongly polynomial linear programming](../../../TheoryOfComputation/polynomial-time-problems/strongly-polynomial-linear-programming.md)
 
 ## Proof depends on
 

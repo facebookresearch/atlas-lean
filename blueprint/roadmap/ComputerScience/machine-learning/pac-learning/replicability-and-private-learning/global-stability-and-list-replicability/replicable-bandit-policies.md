@@ -9,11 +9,11 @@ Run a phased elimination algorithm with geometrically growing batches; at the en
 ## Depends on
 
 - [Stochastic k-armed bandits: canonical history law and regret](../../../reinforcement-learning/multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic linear bandits and LinUCB regret](../../../reinforcement-learning/multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
 
 ## Proof depends on
 
 - [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
-- [Stochastic linear bandits and LinUCB regret](../../../reinforcement-learning/multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
 
 ## Sources
 

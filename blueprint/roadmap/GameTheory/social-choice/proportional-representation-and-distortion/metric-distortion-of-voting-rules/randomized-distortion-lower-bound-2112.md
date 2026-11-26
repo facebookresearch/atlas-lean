@@ -9,7 +9,6 @@ Construct a family of profiles with a high-dimensional symmetric structure of ca
 ## Depends on
 
 - [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
-- [Optimal metric distortion of randomized voting](../../optimal-metric-distortion-of-randomized-voting.md)
 
 ## Proof depends on
 

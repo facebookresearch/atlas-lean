@@ -6,10 +6,13 @@ Let $H \subseteq Y^X$ with $Y$ arbitrary (possibly infinite). Then $H$ is agnost
 
 Experts are indexed by subsequences of at most $d$ rounds together with labels to feed the multiclass SOA on those rounds; unlike the binary case, the best expert is not perfect, but it errs at most $d$ times more than the best fixed concept, because the SOA's version space Littlestone dimension drops on each fed round. The number of experts is $\binom{T}{\le d}$ times label choices restricted to labels actually predicted, which keeps the multiplicative-weights regret at $\tilde O(\sqrt{dT})$ even for infinite $Y$. The separation uses a class whose concepts spread over infinitely many labels so that sequential Rademacher averages diverge while the SOA still makes at most one mistake.
 
-## Proof depends on
+## Depends on
 
 - [Agnostic online learnability is characterized by the Littlestone dimension](../agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
 - [The Littlestone dimension is the optimal mistake bound](../the-littlestone-dimension-is-the-optimal-mistake-bound.md)
+
+## Proof depends on
+
 - [The $\sqrt{T}$ regret bound of Hedge](../hedge-algorithm/regret-le-two-sqrt.md)
 
 ## Sources

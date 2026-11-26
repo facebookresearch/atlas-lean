@@ -16,6 +16,7 @@ Replicability implies TV indistinguishability because for fixed samples the prob
 
 - [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
 - [Private PAC learners and their sample complexity](../private-learning-and-littlestone-classes/private-pac-learner.md)
+- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 

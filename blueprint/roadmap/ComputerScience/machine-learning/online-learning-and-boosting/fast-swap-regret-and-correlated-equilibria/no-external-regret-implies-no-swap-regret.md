@@ -11,6 +11,7 @@ Apply the tree lemma to the given external-regret learner: it needs only an exte
 - [Correlated equilibrium](../../../../GameTheory/noncooperative-games/correlated-equilibria/is-correlated-eq.md)
 - [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
 - [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
+- [The Littlestone dimension is the optimal mistake bound](../the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 

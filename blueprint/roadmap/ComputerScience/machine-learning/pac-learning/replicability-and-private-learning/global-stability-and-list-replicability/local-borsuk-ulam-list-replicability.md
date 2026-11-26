@@ -14,6 +14,7 @@ Map distributions to points of a sphere so that complementary labelings of the s
 
 - [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
 - [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
+- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 

@@ -10,6 +10,7 @@ For inverse gap weighting and any alternative mean vector $f$, split the regret 
 
 - [Decision-estimation coefficient](decision-estimation-coefficient.md)
 - [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic linear bandits and LinUCB regret](../multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
 
 ## Proof depends on
 

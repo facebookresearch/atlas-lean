@@ -9,6 +9,7 @@ By the threshold lemma it suffices to show that privately learning thresholds on
 ## Depends on
 
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
+- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 
