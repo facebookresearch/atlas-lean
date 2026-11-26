@@ -12,6 +12,7 @@ public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -20,9 +21,10 @@ import Mathlib.Tactic.Positivity
 # Parent triples of generalized Cohn triples
 
 Using the generalized Markov numbers and Cohn matrices of
-`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`, this module defines the matrix
-`genCohnS` and generalized Cohn triples, and proves that both parent constructions preserve
-generalized Cohn triples.
+`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`, and the matrix `genCohnS` and
+generalized Cohn triples of
+`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree`, this module
+proves that both parent constructions preserve generalized Cohn triples.
 
 Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11.
@@ -31,30 +33,6 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The matrix $S$ of the generalized Cohn triple relation.** For a natural number $k$, $S$
-is the $2 \times 2$ integer matrix
-
-$$S = \begin{pmatrix} k & 0 \\ 3k^2 + 3k & k \end{pmatrix}.$$
-
-It is the matrix in the relation $Q = PR - S$ that defines $k$-generalized Cohn triples.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
-public def genCohnS (k : ℕ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![(k : ℤ), 0; 3 * (k : ℤ) ^ 2 + 3 * k, k]
-
-/-- **Generalized Cohn triple.** Let $k$ be a natural number and let $S$ be the integer matrix
-with rows $(k, 0)$ and $(3k^2 + 3k, k)$. A triple $(P, Q, R)$ of integer $2 \times 2$ matrices is
-a $k$-generalized Cohn triple associated with natural numbers $(a, b, c)$ when $P$, $Q$ and $R$
-are $k$-generalized Cohn matrices, $Q = PR - S$, the $(1, 2)$-entries of $P$, $Q$ and $R$ are
-$a$, $b$ and $c$ respectively, and $(a, b, c)$ is a $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
-public def IsGenCohnTriple (k : ℕ) (P Q R : Matrix (Fin 2) (Fin 2) ℤ) (a b c : ℕ) : Prop :=
-  IsGenCohnMatrix k P ∧ IsGenCohnMatrix k Q ∧ IsGenCohnMatrix k R ∧ Q = P * R - genCohnS k ∧
-    P 0 1 = a ∧ Q 0 1 = b ∧ R 0 1 = c ∧ IsGenMarkovTriple k a b c
 
 private theorem parent_markov {k a b c : ℕ} (h : IsGenMarkovTriple k a b c) :
     let d := (a ^ 2 + k * a * c + c ^ 2) / b
