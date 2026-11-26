@@ -56,24 +56,6 @@ infinite places it fixes, and the trace of the projector `Stickelberger.omegaIde
 
 set_option autoImplicit false
 
-namespace Stickelberger
-
-open NumberField
-
-/-- For `p ≠ 0` and a `p`-th cyclotomic number field `K`, `clRingAction p K d` raises a `p`-th
-root of unity of `𝓞 K` to the power `d`. -/
-theorem clRingAction_apply_of_pow_eq (p : ℕ) [NeZero p] (K : Type*) [Field K] [NumberField K]
-    [IsCyclotomicExtension {p} ℚ K] (d : (ZMod p)ˣ) {x : 𝓞 K} (hx : x ^ p = 1) :
-    clRingAction p K d x = x ^ (d : ZMod p).val := by
-  have h := IsCyclotomicExtension.Rat.galEquivZMod_smul_of_pow_eq p K
-    ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) hx
-  rw [MulEquiv.apply_symm_apply] at h
-  rw [← h]
-  apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-  exact algebraMap_galRestrict_apply ℤ _ x
-
-end Stickelberger
-
 noncomputable section
 
 namespace W2Units

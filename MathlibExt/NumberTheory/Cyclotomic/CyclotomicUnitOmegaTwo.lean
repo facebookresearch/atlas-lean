@@ -28,7 +28,6 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.NumberTheory.Cyclotomic.UnitsModPowersEigenspace
-import MathlibExt.NumberTheory.Cyclotomic.UnitsOmegaEigenspaceFinrank
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 
 /-!
