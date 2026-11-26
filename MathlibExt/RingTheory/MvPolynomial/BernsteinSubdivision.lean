@@ -192,8 +192,11 @@ theorem bernsteinSubdivideRight_mem_Icc {n : ι → ℕ} {r : ι} {t L U : ℝ}
   · simpa [Function.update_of_ne hi] using hk i
 
 /-- The left child of the coefficient net of a box pullback reconstructs
-exactly the pullback from the left subbox. The degree bound is coordinatewise;
-endpoints and cut parameters are arbitrary real numbers, including zero widths. -/
+exactly the pullback along the left affine restriction, which replaces the
+`r`-th upper endpoint by `(1 - t) * a r + t * b r`. For ordered
+endpoints `a r ≤ b r` and `t ∈ [0, 1]` it is the left subbox; the identity
+holds for arbitrary real endpoints and cut parameters, including zero
+widths. The degree bound is coordinatewise. -/
 theorem bernsteinExpansion_subdivideLeft_box {n : ι → ℕ} {p : MvPolynomial ι ℝ}
     (hp : ∀ i, p.degreeOf i ≤ n i) (a b : ι → ℝ) (r : ι) (t : ℝ) :
     bernsteinExpansion n (bernsteinSubdivideLeft r t
@@ -214,8 +217,11 @@ theorem bernsteinExpansion_subdivideLeft_box {n : ι → ℕ} {p : MvPolynomial 
   · simp [Function.update_of_ne hi]
 
 /-- The right child of the coefficient net of a box pullback reconstructs
-exactly the pullback from the right subbox. The degree bound is coordinatewise;
-endpoints and cut parameters are arbitrary real numbers, including zero widths. -/
+exactly the pullback along the right affine restriction, which replaces the
+`r`-th lower endpoint by `(1 - t) * a r + t * b r`. For ordered
+endpoints `a r ≤ b r` and `t ∈ [0, 1]` it is the right subbox; the identity
+holds for arbitrary real endpoints and cut parameters, including zero
+widths. The degree bound is coordinatewise. -/
 theorem bernsteinExpansion_subdivideRight_box {n : ι → ℕ} {p : MvPolynomial ι ℝ}
     (hp : ∀ i, p.degreeOf i ≤ n i) (a b : ι → ℝ) (r : ι) (t : ℝ) :
     bernsteinExpansion n (bernsteinSubdivideRight n r t
