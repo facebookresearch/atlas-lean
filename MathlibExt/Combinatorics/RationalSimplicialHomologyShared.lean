@@ -16,7 +16,7 @@ public import Mathlib.Data.Finset.Lattice.Fold
 
 Shared helper for the UnsolvedMath entries on Stanley's Positivity Problems 5 and 6
 (`MathlibExt/Combinatorics/AcyclicLinksIntervalDecomposition.lean` and
-`WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`), so both speak
+`MathlibExt/Combinatorics/CohenMacaulayPartitionability.lean`), so both speak
 about the same complexes, links and Betti numbers.
 
 A finite abstract simplicial complex on the vertex set `ℕ` is a finite family `K` of finite sets
