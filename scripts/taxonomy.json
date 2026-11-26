@@ -1649,6 +1649,7 @@
   "CSLibExt/Foundations/Semantics/IOAutomaton": {"to": "ComputerScience/process-calculi", "title": "Input/output automata"},
   "CSLibExt/Foundations/Semantics/LTS/Basic": {"to": "ComputerScience/process-calculi", "title": "Labelled transition systems"},
   "CSLibExt/Foundations/Semantics/LTS/Bisimulation": {"to": "ComputerScience/process-calculi", "title": "Bisimulation"},
+  "CSLibExt/Foundations/Semantics/LTS/Fairness": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Distributed execution models"},
   "CSLibExt/Foundations/Semantics/LTS/ObservationCongruence": {"to": "ComputerScience/process-calculi", "title": "Observational congruence"},
   "CSLibExt/Foundations/Semantics/LTS/OmegaExecution": {"to": "ComputerScience/process-calculi", "title": "Labelled transition systems"},
   "CSLibExt/Foundations/Semantics/LTS/OmegaRun": {"to": "ComputerScience/process-calculi", "title": "Labelled transition systems"},
