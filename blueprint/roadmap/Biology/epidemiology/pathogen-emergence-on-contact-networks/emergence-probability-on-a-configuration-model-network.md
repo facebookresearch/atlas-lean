@@ -17,16 +17,15 @@ With $F_i$ and $F'_i$ the generating functions built from $R$ and $R'$, let $\ma
 
 $$P_{\mathrm{emerge}} = 1 - \frac{1}{1 + R_0\bigl(1 - x'\bigr)},$$
 
-so $P_{\mathrm{emerge}} \le 1 - 1/R_0$, and $P_{\mathrm{emerge}} = 0$ whenever $R'_0 \le 1$.
+so $P_{\mathrm{emerge}} \le \max(0, 1 - 1/R_0)$, and $P_{\mathrm{emerge}} = 0$ whenever $R'_0 \le 1$.
 
 ## Depends on
 
 - [Offspring generating function of the continuous offspring-production model](offspring-generating-function-of-continuous-offspring-production.md)
-- [Spectral radius and die-out of SIS epidemics on graphs](../epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md)
 
 ## Expansion
 
-Under the configuration model an edge from a degree-$i$ node lands on a degree-$j$ node with probability $k_jp(k_j)/\langle k\rangle$ (size-biased by degree), giving $\pi_{ij}$; the infector's edge is used up, giving $\pi'_{ij}$. $R'$ factors as $u v^{\top}$ with $u_i = \tfrac{\beta}{\gamma}(k_i - 1)$ and $v_j = k_jp(k_j)/\langle k\rangle$, so its only nonzero eigenvalue is $v^{\top}u = \tfrac{\beta}{\gamma}\sum_j k_j(k_j-1)p(k_j)/\langle k\rangle$. For the regular case, $1/(1 + R_0(1 - x'))$ is at least $1/R_0$ exactly when $R_0/R'_0 \ge 1$, which always holds. For an invading strain at the endemic equilibrium of a resident strain, $\nu_j$ is the equilibrium susceptible fraction among degree-$j$ nodes, obtained from pair-approximation equations. Because high-degree nodes are preferentially infected by the resident, the residual susceptible network is less heterogeneous, which is why degree heterogeneity that aids the first strain's emergence lowers the fixation probability of later strains.
+Under the configuration model an edge from a degree-$i$ node lands on a degree-$j$ node with probability $k_jp(k_j)/\langle k\rangle$ (size-biased by degree), giving $\pi_{ij}$; the infector's edge is used up, giving $\pi'_{ij}$. $R'$ factors as $u v^{\top}$ with $u_i = \tfrac{\beta}{\gamma}(k_i - 1)$ and $v_j = k_jp(k_j)/\langle k\rangle$, so its only nonzero eigenvalue is $v^{\top}u = \tfrac{\beta}{\gamma}\sum_j k_j(k_j-1)p(k_j)/\langle k\rangle$. For the regular case with $R'_0 > 1$, so that $x' = 1/R'_0$ and $R_0 > 1$, $1/(1 + R_0(1 - x'))$ is at least $1/R_0$ exactly when $R_0/R'_0 \ge 1$, which always holds; when $R'_0 \le 1$, $x' = 1$ and $P_{\mathrm{emerge}} = 0$. For an invading strain at the endemic equilibrium of a resident strain, $\nu_j$ is the equilibrium susceptible fraction among degree-$j$ nodes, obtained from pair-approximation equations. Because high-degree nodes are preferentially infected by the resident, the residual susceptible network is less heterogeneous, which is why degree heterogeneity that aids the first strain's emergence lowers the fixation probability of later strains.
 
 ## Sources
 

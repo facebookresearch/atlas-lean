@@ -10,11 +10,11 @@ $$D_\times = \mathrm{IC}_{50} \left(\frac{s}{1 - s - \rho^{-m}}\right)^{1/m};$$
 
 if $1 - s \le \rho^{-m}$ the mutant is never fitter and the MSW is empty.
 4. Hence $\mathrm{MSW} = (D_\times, D_{\mathrm{mut}})$, nonempty iff $D_\times < D_{\mathrm{mut}}$.
-5. With first-order elimination $D(t) = D_0\, 2^{-t/t_{1/2}}$ after a dose $D_0 \ge D_{\mathrm{mut}}$, the time spent in the MSW is
+5. With first-order elimination $D(t) = D_0\, 2^{-t/t_{1/2}}$ after a dose $D_0 \ge D_{\mathrm{mut}}$, the time spent in a nonempty MSW is
 
 $$t_{\mathrm{MSW}} = t_{1/2} \log_2 \frac{D_{\mathrm{mut}}}{D_\times},$$
 
-independent of the dose, while the wild type starts to grow at $t_{\mathrm{WGW}} = t_{1/2}\log_2(D_0/D_{\mathrm{wt}})$.
+independent of the dose, while, for $D_0 \ge D_{\mathrm{wt}}$, the wild type starts to grow at $t_{\mathrm{WGW}} = t_{1/2}\log_2(D_0/D_{\mathrm{wt}})$.
 
 ## Depends on
 

@@ -4,7 +4,7 @@ Consider a population in which an individual faces, over one year, a constant da
 
 $$\mathrm{NNV}_{\text{community}} = \frac{1}{365\, D\, C}.$$
 
-Now suppose the individual undergoes a procedure that adds a short window of elevated risk. Let $I$ be the probability of acquiring the infection within the $30$ days after the procedure and $R$ the probability that such a perioperative infection is fatal; the procedure-attributable mortality is
+Now suppose the individual undergoes a procedure that adds a short window of elevated risk. Let $I$ be the probability of acquiring the infection within the $30$ days after the procedure and $R$ the mortality attributable to such a perioperative infection, the excess probability of death that the infection adds to the procedure's baseline risk; the procedure-attributable mortality is
 
 $$S = I \cdot R.$$
 

@@ -8,7 +8,7 @@ where $p(r_n \mid m)$ is the empirical read spatial distribution around event $m
 
 $$p(\pi) \propto \prod_{m=1}^{M} \pi_m^{-\alpha_s + \alpha_m},$$
 
-with a uniform sparseness parameter $\alpha_s > 0$ and event-specific parameters $0 \le \alpha_m < \alpha_s$ proportional to the positional prior count $C_m$, the number of bound sequences containing an enriched k-mer whose expected binding offset maps to position $m$ (scaled by a tuning parameter $0 \le \mu < 1$). With E-step responsibilities $\gamma(z_n = m) = \pi_m p(r_n \mid m) / \sum_{m'} \pi_{m'} p(r_n \mid m')$ and effective read counts $N_m = \sum_n \gamma(z_n = m)$, the maximizer of the expected complete-data penalized log-likelihood over the simplex is
+with a uniform sparseness parameter $\alpha_s > 0$ and event-specific parameters $0 \le \alpha_m < \alpha_s$ proportional to the positional prior count $C_m$, the number of bound sequences containing an enriched k-mer whose expected binding offset maps to position $m$ (scaled by a tuning parameter $0 \le \mu < 1$). With E-step responsibilities $\gamma(z_n = m) = \pi_m p(r_n \mid m) / \sum_{m'} \pi_{m'} p(r_n \mid m')$ and effective read counts $N_m = \sum_n \gamma(z_n = m)$, the maximizer of the expected complete-data penalized log-likelihood over the simplex is, provided $N_m > \alpha_s - \alpha_m$ for at least one $m$,
 
 $$\hat\pi_m = \frac{\max(0,\; N_m - \alpha_s + \alpha_m)}{\sum_{m'} \max(0,\; N_{m'} - \alpha_s + \alpha_{m'})},$$
 

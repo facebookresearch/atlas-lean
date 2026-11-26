@@ -6,7 +6,7 @@
 
 $$L < L_S^* = \frac{\ln\bigl(r + \mu S (r-1)\bigr)}{\mu}.$$
 
-**Properties.** $L_S^* \ge L^*$ for every $S \ge 0$ and $r \ge 1$, with equality at $S = 0$; $L_S^*$ is increasing in $S$ and in $r$ and still scales as $1/\mu$. The gain enters through $\mu S$ because strands carrying several errors are stalled several times.
+**Properties.** For $r > 1$, $L_S^* \ge L^*$ for every $S \ge 0$, with equality exactly at $S = 0$; $L_S^*$ is strictly increasing in $S$ and in $r$ and still scales as $1/\mu$. The gain enters through $\mu S$ because strands carrying several errors are stalled several times.
 
 ## Depends on
 

@@ -14,6 +14,10 @@ For $R_0 \le 1$ these probabilities sum to one (the outbreak is finite almost su
 
 - [Negative-binomial offspring distribution](nb-offspring.md)
 
+## Proof depends on
+
+- [Hitting-time theorem](../../../Probability/branching-processes/total-progeny-and-the-hitting-time-theorem/nat-cast-mul-hitting-weight.md)
+
 ## Expansion
 
 By the Lagrange inversion (hitting-time) formula for branching processes, $P(J = j) = \frac1j\,P(X_1 + \dots + X_j = j - 1)$ for i.i.d. offspring counts $X_i$. A sum of $j$ independent negative-binomial$(R_0, k)$ variables is negative binomial with dispersion $kj$ and mean $jR_0$, and evaluating its mass at $j - 1$ and dividing by $j$ gives the displayed formula. The mean follows from $\mathbb E[J] = \sum_{g \ge 0} R_0^g$. Applied to Zika virus in Miami-Dade County in 2016 with $k = 0.1$, local-case counts and the number of genetic clusters among sequenced genomes each gave subcritical estimates, with an overlap of $R_0 \approx 0.5$–$0.8$, implying that local cases came from many separate introductions.
