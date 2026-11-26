@@ -9,8 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Probability.GiniSimpsonAsymptotics
+import Mathlib.Tactic.NormNum
 
 open Filter MathlibExt.Probability.DiversityStatisticsWanted
+
+-- The last sample size covered by the bounded arithmetic certificate.
+example : (197 : ℚ) ≤ giniSimpsonCount 47 := by
+  convert giniSimpsonCount_ge 47 using 1
+  norm_num
+
+-- An odd sample size in the large case, with a nonintegral lower bound.
+example : (431 / 2 : ℚ) ≤ giniSimpsonCount 49 := by
+  convert giniSimpsonCount_ge 49 using 1
+  norm_num
 
 -- A coefficient strictly below one half gives an eventual quadratic lower bound.
 example {c : ℝ} (hc : c < 1 / 2) :
