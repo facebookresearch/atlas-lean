@@ -12621,6 +12621,7 @@
   "MathlibExt/NumberTheory/CotangentPowerSums": {"to": "NumberTheory/exponential-sums", "title": "Cotangent power sums"},
   "MathlibExt/NumberTheory/CoprimePrimeSquareCubeSplit": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressions": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
+  "MathlibExt/NumberTheory/CountingAppearancesProgressionsAvailableCountDistinctPrimes": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressionsAvailableRecurrence": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressionsFirstPrimes": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressionsFreeCount": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
