@@ -11,7 +11,7 @@ Author: @toskua
 -/
 module
 
-public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.BilinearMap
+public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.CompletionMap
 public import MathlibExt.LinearAlgebra.TensorProduct.HomInjective
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Basic
 
@@ -56,7 +56,19 @@ map mapLCompletionLinear is Φ on the algebraic tensor of the bounded-map spaces
 noncomputable def mapLCompletionLinear :
     (E₁ →L[𝕜] E₂) ⊗[𝕜] (F₁ →L[𝕜] F₂) →ₗ[𝕜]
       Completion (E₁ ⊗[𝕜] F₁) →L[𝕜] Completion (E₂ ⊗[𝕜] F₂) :=
-  TensorProduct.lift mapLCompletionBilinear
+  TensorProduct.lift
+    { toFun := fun f =>
+        { toFun := fun g => mapLCompletion f g
+          map_add' g h := mapLCompletion_add_right f g h
+          map_smul' c g := mapLCompletion_smul_right c f g }
+      map_add' f h := by
+        apply LinearMap.ext
+        intro g
+        exact mapLCompletion_add_left f h g
+      map_smul' c f := by
+        apply LinearMap.ext
+        intro g
+        exact mapLCompletion_smul_left c f g }
 
 /-- **Pure operator tensor acts as the completed tensor map.**
 

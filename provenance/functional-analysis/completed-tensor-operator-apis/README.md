@@ -1,18 +1,11 @@
-# Completed tensor-operator API source snapshots
+# Archived completed tensor-operator snapshots
 
-The five new MathlibExt modules provide continuous bilinear completed tensor
-operators, rank-one and compact tensor operators, compact-map transport, and
-an algebraic nonunital star action on the Hilbert tensor completion. Scalars
-and factor universes are independent. Zero and incomplete factors are allowed
-where stated; compactness and adjoint results retain their completeness hypotheses.
+The five tensor-operator modules and the Hilbert tensor Basis interface transferred to
+pull request 8965 with three existing consumers, sixteen new statement identities and
+five new module navigation identities. Their original snapshots and revision history
+remain here as archival custody; no new tensor export records remain active here.
 
-Six readable original snapshots preserve the exact source bytes of the five
-new modules and the existing OperatorFaithfulness refactor. Five new current
-provenance rows are in files.jsonl. The refactored module keeps its preceding
-original archive and records the new-source snapshot in its existing row.
-
-Exports add the Atlas copyright header and remove book and workflow references
-from module introductions. Every noncomment declaration, type, proof and import
-byte, original author notice, and declaration-level mathematical docstring remains
-exact to the verified source. The original snapshots retain the complete source
-comments. Hashes and adaptation records identify the contributed bytes.
+The inherited OperatorFaithfulness caller is restored to the parent implementation.
+Its four inherited pages and IDs stay in this aggregate, while the published split
+retains the bilinear implementation and its historical/current provenance. Transfer
+records preserve that implementation history and every original snapshot binding.

@@ -31,4 +31,3 @@
 - [Hilbert-space form of a module rank-one operator](to-continuous-linear-map-rank-one.md)
 - [Module form of a Hilbert rank-one operator](of-continuous-linear-map-rank-one.md)
 - [Rank-one images in the module finite-rank span](of-continuous-linear-map-rank-one-mem-fi.md)
-- [Compact](map-lcompletion.md)
