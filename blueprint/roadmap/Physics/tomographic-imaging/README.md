@@ -1,6 +1,6 @@
 # Tomographic imaging
 
-Physical models of transmission tomography: Beer–Lambert attenuation along rays, finite linear designs of ray measurements, and Poisson photon-count observation laws with their identifiability up to the null space of the design.
+Physical models of transmission tomography: Beer–Lambert attenuation along rays, finite linear designs of ray measurements, and Poisson photon-count observation laws, which identify the coefficients up to the null space of the design when every ray has positive incident intensity.
 
 - [Monochromatic CT attenuation](monochromatic-ct-attenuation/README.md)
 - [Finite CT design agreement](finite-ct-design-agreement/README.md)

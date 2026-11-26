@@ -8,5 +8,6 @@ multiplication by `a` on `O`, with coefficients `χ_i`, and let `N(a)` be the
 norm of `a`.
 
 Then `χ` is monic of degree `n`; for every `i ≤ n` one has `(n - i) ·
-v(N(a)) ≤ n · v(χ_i)` in `ℕ∞`; and `n · v(N(a)) = n · v(χ_0)`. In other
-words, the Newton polygon of `χ` has a single slope.
+v(N(a)) ≤ n · v(χ_i)` in `ℕ∞`; and `n · v(N(a)) = n · v(χ_0)`. For `a ≠ 0`,
+in other words, the Newton polygon of `χ` has a single slope; for `a = 0`,
+`χ = Xⁿ` and the inequalities hold with no finite-slope edge.

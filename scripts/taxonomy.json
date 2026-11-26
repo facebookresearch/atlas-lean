@@ -882,7 +882,7 @@
     {"slug": "quantum-mechanics", "title": "Quantum mechanics", "description": "Nonrelativistic quantum mechanics: states, observables and the Born rule in finite dimensions, unitary evolution, and exactly solvable models such as the particle in a box and the harmonic oscillator. Quantum chemistry is under Chemistry and quantum information under Quantum Information.", "msc": ["81P16", "81Q05", "81Q10"], "subfields": []},
     {"slug": "thermodynamics-and-heat-transfer", "title": "Engineering thermodynamics and heat transfer", "description": "Thermodynamic states and balances of engineering systems, power and refrigeration cycles, exergy, and conduction, convection and radiation heat transfer.", "msc": ["80A05", "80A10", "80A19", "80A20", "80A21"], "subfields": []},
     {"slug": "nuclear-reactor-physics", "title": "Nuclear reactor physics", "description": "Neutron diffusion and transport models of nuclear reactors: one-group diffusion, buckling and the criticality of bare reactors.", "msc": ["82D75"], "subfields": []},
-    {"slug": "tomographic-imaging", "title": "Tomographic imaging", "description": "Physical models of transmission tomography: Beer–Lambert attenuation along rays, finite linear designs of ray measurements, and Poisson photon-count observation laws with their identifiability up to the null space of the design.", "msc": ["92C55", "44A12"], "subfields": []}
+    {"slug": "tomographic-imaging", "title": "Tomographic imaging", "description": "Physical models of transmission tomography: Beer–Lambert attenuation along rays, finite linear designs of ray measurements, and Poisson photon-count observation laws, which identify the coefficients up to the null space of the design when every ray has positive incident intensity.", "msc": ["92C55", "44A12"], "subfields": []}
    ]
   },
   "Chemistry": {
@@ -15016,6 +15016,7 @@
   "MathlibExt/RingTheory/Valuation/HenselianIntegralClosure": {"to": "RingTheory/valuation-rings", "title": "Extensions of a Henselian valuation ring"},
   "MathlibExt/RingTheory/Valuation/InertiaCyclotomic": {"to": "RingTheory/valuation-rings", "title": "Inertia and the cyclotomic character"},
   "MathlibExt/RingTheory/Valuation/InertiaRootsOfUnity": {"to": "RingTheory/valuation-rings", "title": "Inertia and roots of unity"},
+  "MathlibExt/RingTheory/Valuation/InertiaSubgroupIn": {"to": "RingTheory/valuation-rings", "title": "Inertia and roots of unity"},
   "MathlibExt/RingTheory/Valuation/IntegralRepresentation": {"to": "RingTheory/valuation-rings", "title": "Integral representation at a place above a prime"},
   "MathlibExt/RingTheory/Valuation/LiesOverPrime": {"to": "RingTheory/valuation-rings", "title": "Valuation subrings lying over a rational prime"},
   "MathlibExt/RingTheory/Valuation/PowAlgebraic": {"to": "RingTheory/valuation-rings", "title": "Values of a valuation on an algebraic extension"},

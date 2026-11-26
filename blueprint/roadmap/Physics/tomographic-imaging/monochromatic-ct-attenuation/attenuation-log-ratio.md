@@ -4,4 +4,4 @@ In the monochromatic model, take a positive incident intensity $I_0 > 0$ and a r
 
 $$\log(I_0 / I) = L.$$
 
-This is the same inversion as [monochromatic attenuation inversion](attenuation-log-inversion.md), written with the reciprocal ratio: since $\log(I_0 / I) = -\log(I / I_0)$, the two statements are equivalent forms of each other under the same hypotheses. The monochromatic assumption matters: for a mixture of energies, the negative log of the transmitted fraction need not equal the mean attenuation (see [the two-energy mixture counterexample](mixture-log-ne-mean.md)).
+Equivalently, since $\log(I_0 / I) = -\log(I / I_0)$, under the same hypotheses $-\log(I / I_0) = L$. The monochromatic assumption matters: for a mixture of energies, the negative log of the transmitted fraction need not equal the mean attenuation (see [the two-energy mixture counterexample](mixture-log-ne-mean.md)).

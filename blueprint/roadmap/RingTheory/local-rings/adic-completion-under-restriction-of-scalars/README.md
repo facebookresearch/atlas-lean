@@ -6,4 +6,3 @@
 - [Levelwise comparisons commute with transition maps](transition-map-level-restrict-scalars-eq.md)
 - [Adic completion under restriction of scalars](restrict-scalars-equiv.md)
 - [Restriction-of-scalars comparison on images of elements](restrict-scalars-equiv-of.md)
-- [Inverse restriction-of-scalars comparison on images of elements](restrict-scalars-equiv-symm-of.md)

@@ -15,7 +15,7 @@ Discrete valuation rings and general valuation rings, their completions and fini
 - [Residue valuation subrings and additivity of dimension](residue-valuation-subrings-and-additivity-of-dim/README.md)
 - [Valuation rings of one-variable function fields are PIDs](is-principal-ideal-ring-of-finite-dimens.md)
 - [Equality of discrete valuations related by a field isomorphism](eq-comap-of-valuation-subring-le-comap.md)
-- [Valuation subrings lying over a rational prime](lies-over-prime.md)
+- [Valuation subrings in which a natural number is a nonunit](lies-over-prime.md)
 - [Algebra maps from a torsion group algebra into a valuation subring](add-monoid-algebra-alg-hom-apply-mem-of.md)
 - [Characteristic of the residue field at a place above a prime](char-p-residue-field-of-lies-over-prime.md)
 - [Simple residue roots over a valuation subring](exists-unique-is-root-residue-eq-of-root.md)

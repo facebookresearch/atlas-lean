@@ -5,5 +5,6 @@ Let `R` and `S` be commutative rings, `S` an `R`-algebra, `J` an ideal of
 variables `σ`. `adicEval J x f` is the evaluation of `f` at `x`, obtained by
 extending polynomial evaluation by continuity for the `J`-adic topology on
 `S` and the discrete topology on `R`. On polynomials it is ordinary
-polynomial evaluation; for general `f` it is meaningful when the coordinates
-`x` are topologically nilpotent and `S` is `J`-adically complete.
+polynomial evaluation; for general `f` it is meaningful when `S` is `J`-adically complete, each
+coordinate `x_i` is topologically nilpotent, and the family `x` tends to `0`
+along the cofinite filter on `σ` (automatic when `σ` is finite).

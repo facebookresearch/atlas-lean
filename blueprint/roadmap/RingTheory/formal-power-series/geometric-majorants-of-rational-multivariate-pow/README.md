@@ -16,4 +16,3 @@
 - [Majorant of a product of power series](mul.md)
 - [Bound on antidiagonal sums of ratio powers](sum-antidiagonal-qpow-lt-le.md)
 - [Coefficient bound for the inverse of a power series](coeff-inv-le.md)
-- [Majorant for the inverse of a power series](is-majorized-inv.md)
