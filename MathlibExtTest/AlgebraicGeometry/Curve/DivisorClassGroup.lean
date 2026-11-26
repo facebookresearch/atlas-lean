@@ -47,9 +47,22 @@ example (σ : F ≃ₐ[K] F) (A : ValuationSubring F) (x : A) :
     ((Place.smulRingEquiv σ A x : (σ • A : ValuationSubring F)) : F) = σ x :=
   rfl
 
+/-- The action on places is the transport of `Curve/PlaceCongr.lean` along `σ`. -/
+example (σ : F ≃ₐ[K] F) (v : Place K F) : σ • v = Place.congrRingEquiv σ.toRingEquiv σ.commutes v :=
+  rfl
+
+example (σ : F ≃ₐ[K] F) (v : Place K F) :
+    Place.smulResidueAlgEquiv σ v = Place.congrResidueAlgEquiv σ.toRingEquiv σ.commutes v :=
+  rfl
+
+/-- The valuation subring of `σ • v` is the image of that of `v` under `σ`. -/
 example (σ : F ≃ₐ[K] F) (v : Place K F) :
     (σ • v).toValuationSubring = σ • v.toValuationSubring :=
-  rfl
+  Place.smul_toValuationSubring σ v
+
+example (σ : F ≃ₐ[K] F) (v : Place K F) (x : F) :
+    x ∈ (σ • v).toValuationSubring ↔ σ.symm x ∈ v.toValuationSubring :=
+  Iff.rfl
 
 example (v : Place K F) : (1 : F ≃ₐ[K] F) • v = v := one_smul _ v
 

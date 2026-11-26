@@ -31,6 +31,7 @@ module
 public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
 public import MathlibExt.AlgebraicGeometry.Curve.LPolynomial
 public import MathlibExt.AlgebraicGeometry.Curve.Place
+public import MathlibExt.AlgebraicGeometry.Curve.PlaceCongr
 public import Mathlib.Algebra.Module.Torsion.Basic
 public import Mathlib.Algebra.Ring.Subring.Pointwise
 import Mathlib.RingTheory.Henselian
@@ -47,7 +48,10 @@ file adds the order criterion `Place.ord_eq_zero_iff_adicValuation_eq_one`, the 
 every nonzero function has a principal divisor of degree zero (`HasPrincipalDivisors`), the full
 class group `Pic`, the condition `AbelJacobiCard` counting the `p ^ n`-torsion of `Pic0` (stated
 with Mathlib's `AddSubgroup.torsionBy`), the action of `F ≃ₐ[K] F` on places, divisors and `Pic0`,
-and the places attached to height-one primes of a Dedekind domain with fraction field `F`.
+and the places attached to height-one primes of a Dedekind domain with fraction field `F`. The
+action on places is the transport `Place.congrRingEquiv` of
+`MathlibExt.AlgebraicGeometry.Curve.PlaceCongr` along `σ`, and its effect on orders, residue fields
+and degrees is read off from that transport.
 -/
 
 @[expose] public section
@@ -110,52 +114,34 @@ open scoped Pointwise
 variable {K F}
 variable (σ : F ≃ₐ[K] F)
 
+/-- Pulling a valuation subring back along `σ.symm` is taking its image under `σ`. -/
+private theorem comap_symm_eq_smul (A : ValuationSubring F) :
+    A.comap (σ.toRingEquiv.symm : F →+* F) = σ • A := by
+  ext x
+  rw [ValuationSubring.mem_comap, ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem]
+  rfl
+
 /-- The ring isomorphism from a valuation subring `A` of `F` onto its image `σ • A`, given by
 `σ`. -/
-def smulRingEquiv (A : ValuationSubring F) : A ≃+* (σ • A : ValuationSubring F) where
-  toFun x := ⟨σ x, by
-    simpa [AlgEquiv.smul_def] using
-      ValuationSubring.smul_mem_pointwise_smul σ (x : F) A x.2⟩
-  invFun y := ⟨σ.symm y, by
-    have := (ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem (g := σ)
-      (S := A) (x := (y : F))).mp y.2
-    simpa [AlgEquiv.smul_def, AlgEquiv.aut_inv] using this⟩
-  left_inv x := by ext; simp
-  right_inv y := by ext; simp
-  map_mul' x y := by ext; simp
-  map_add' x y := by ext; simp
+def smulRingEquiv (A : ValuationSubring F) : A ≃+* (σ • A : ValuationSubring F) :=
+  (comapSymmRingEquiv σ.toRingEquiv A).trans
+    (RingEquiv.subringCongr (by exact congrArg ValuationSubring.toSubring (comap_symm_eq_smul σ A)))
 
 @[simp]
 theorem coe_smulRingEquiv_apply (A : ValuationSubring F) (x : A) :
     ((smulRingEquiv σ A x : (σ • A : ValuationSubring F)) : F) = σ x := rfl
 
-private theorem _root_.ValuationSubring.pointwise_smul_top :
-    σ • (⊤ : ValuationSubring F) = ⊤ := by
-  ext x
-  simp only [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem]
-  exact ⟨fun _ => ValuationSubring.mem_top x, fun _ => ValuationSubring.mem_top _⟩
-
-/-- An automorphism `σ` of `F` over `K` sends a place `v` to the place whose valuation subring is
-the image `σ • v.toValuationSubring`. -/
+/-- An automorphism `σ` of `F` over `K` sends a place `v` to its transport
+`Place.congrRingEquiv σ.toRingEquiv σ.commutes v`, whose valuation subring is the image
+`σ • v.toValuationSubring` (`smul_toValuationSubring`). -/
 instance : SMul (F ≃ₐ[K] F) (Place K F) where
-  smul σ v :=
-    { toValuationSubring := σ • v.toValuationSubring
-      algebraMap_mem' := fun a => by
-        have h := ValuationSubring.smul_mem_pointwise_smul σ (algebraMap K F a)
-          v.toValuationSubring (v.algebraMap_mem' a)
-        rwa [AlgEquiv.smul_def, σ.commutes] at h
-      ne_top' := fun h => v.ne_top' <| by
-        have := congrArg (σ⁻¹ • ·) h
-        simpa [ValuationSubring.pointwise_smul_top] using this
-      isPrincipalIdealRing' :=
-        IsPrincipalIdealRing.of_surjective
-          (smulRingEquiv σ v.toValuationSubring : _ ≃+* _)
-          (smulRingEquiv σ v.toValuationSubring).surjective }
+  smul σ v := congrRingEquiv σ.toRingEquiv σ.commutes v
 
 variable (v : Place K F)
 
 @[simp]
-theorem smul_toValuationSubring : (σ • v).toValuationSubring = σ • v.toValuationSubring := rfl
+theorem smul_toValuationSubring : (σ • v).toValuationSubring = σ • v.toValuationSubring :=
+  comap_symm_eq_smul σ v.toValuationSubring
 
 /-- The action of the automorphisms of `F` over `K` on places. -/
 instance : MulAction (F ≃ₐ[K] F) (Place K F) where
@@ -167,43 +153,17 @@ instance : MulAction (F ≃ₐ[K] F) (Place K F) where
     simp only [smul_toValuationSubring]
     rw [mul_smul]
 
-theorem ord_smul (f : F) : (σ • v).ord (σ f) = v.ord f := by
-  rcases eq_or_ne f 0 with rfl | hf
-  · simp
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  obtain ⟨u, hu⟩ := v.exists_unit_mul_zpow hf hπ
-  set n := v.ord f with hn
-  set e := smulRingEquiv σ v.toValuationSubring with he
-  have hπ' : Irreducible (e π) := (MulEquiv.irreducible_iff e).mpr hπ
-  have hu' : IsUnit (e (u : v.toValuationSubring)) := u.isUnit.map e
-  have hcoeu : ((hu'.unit : (σ • v).toValuationSubring) : F)
-      = σ ((u : v.toValuationSubring) : F) := by
-    rw [IsUnit.unit_spec]
-    rfl
-  have hcoeπ : ((e π : (σ • v).toValuationSubring) : F) = σ (π : F) := rfl
-  have key : σ f = ((hu'.unit : (σ • v).toValuationSubring) : F)
-      * (((e π : (σ • v).toValuationSubring) : F) ^ n) := by
-    rw [hcoeu, hcoeπ, hu, map_mul, map_zpow₀]
-  rw [key, (σ • v).ord_unit_smul_zpow hu'.unit hπ' n]
+theorem ord_smul (f : F) : (σ • v).ord (σ f) = v.ord f :=
+  ord_congrRingEquiv σ.toRingEquiv σ.commutes v f
 
 /-- The `K`-algebra isomorphism from the residue field of `v` onto that of `σ • v` induced by
 `σ`. -/
 def smulResidueAlgEquiv : v.ResidueField ≃ₐ[K] (σ • v).ResidueField :=
-  AlgEquiv.ofRingEquiv (f := IsLocalRing.ResidueField.mapEquiv
-      (smulRingEquiv σ v.toValuationSubring)) <| fun a => by
-    have h3 : (smulRingEquiv σ v.toValuationSubring) (algebraMap K v.toValuationSubring a)
-        = algebraMap K (σ • v).toValuationSubring a := by
-      ext
-      rw [coe_smulRingEquiv_apply, coe_algebraMap, σ.commutes]
-      rfl
-    change IsLocalRing.ResidueField.mapEquiv _ (IsLocalRing.residue _ _) =
-      IsLocalRing.residue _ _
-    rw [IsLocalRing.ResidueField.mapEquiv_apply, IsLocalRing.ResidueField.map_residue]
-    exact congrArg _ h3
+  congrResidueAlgEquiv σ.toRingEquiv σ.commutes v
 
 @[simp]
 theorem deg_smul : (σ • v).deg = v.deg :=
-  ((smulResidueAlgEquiv σ v).toLinearEquiv.finrank_eq).symm
+  deg_congrRingEquiv σ.toRingEquiv σ.commutes v
 
 end Place
 
