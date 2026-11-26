@@ -14550,6 +14550,7 @@
   "MathlibExt/Topology/Algebra/StrongCompleteness": {"to": "GroupTheory/profinite-and-topological-groups", "title": "Strong completeness of profinite groups"},
   "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSet": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
   "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetDerived": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
+  "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetLayerEnumTendsto": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
   "MathlibExt/Topology/BrouwerFixedPoint": {"to": "Topology/algebraic-topology", "title": "Brouwer fixed-point theorem"},
   "MathlibExt/Topology/Connected/Frontier": {"to": "Topology/general-topology", "title": "Connectedness"},
   "MathlibExt/Topology/ContinuousFunction/IntervalCutoff": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Trapezoidal cutoff functions"},
