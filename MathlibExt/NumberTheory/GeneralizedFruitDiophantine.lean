@@ -163,7 +163,7 @@ Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 4, Equation (6). -/
 public def fruitWeierstrassCurve {R : Type*} [CommRing R] (α : R) : WeierstrassCurve R :=
   ⟨-α, 0, 0, 0, -(α ^ 2 + 5)⟩
 
-namespace fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num
+namespace fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num
 
 private theorem num_ne_zero_mod_two_of_den_eq_zero (q : ℚ) (hd : (q.den : ZMod 2) = 0) :
     (q.num : ZMod 2) ≠ 0 := by
@@ -186,7 +186,19 @@ private theorem residue_obstruction (α t y : ZMod 4) :
   revert α t y
   decide +kernel
 
-private theorem not_equation_of_two_dvd_num (α : ℤ) (x y : ℚ) (hx : 2 ∣ x.num) :
+end fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num
+
+open fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num in
+/-- **No rational affine points of $E_\alpha$ with even $x$-numerator.** Let $\alpha$ be an integer
+and let $x, y$ be rational. If the numerator of $x$ in lowest terms is even, then $(x, y)$ does not
+satisfy $y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$. No discriminant hypothesis is needed.
+
+Source: The reduction modulo four behind the integral obstruction in Satyabrat Sahoo and Shanta
+Laishram, *Generalized Fruit Diophantine Equation over Number Fields*, INTEGERS 26 (2026),
+Article A21, Theorems 1 and 4, adapted to rational coordinates by clearing denominators and showing
+that both reduced denominators are odd. -/
+public theorem fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num (α : ℤ) (x y : ℚ)
+    (hx : 2 ∣ x.num) :
     ¬ (fruitWeierstrassCurve (α : ℚ)).toAffine.Equation x y := by
   intro h
   have hxy : y ^ 2 - (α : ℚ) * x * y = x ^ 3 - ((α : ℚ) ^ 2 + 5) := by
@@ -230,8 +242,6 @@ private theorem not_equation_of_two_dvd_num (α : ℤ) (x y : ℚ) (hx : 2 ∣ x
   apply residue_obstruction (α : ZMod 4) ((t : ZMod 4) * d) ((y.num : ZMod 4) * e)
   simpa only [ht, Int.cast_mul, Int.cast_ofNat, mul_assoc] using hnormalized
 
-end fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num
-
 set_option linter.unusedVariables false in
 /-- **Points of $E_\alpha(\mathbb{Q})$ with even numerator have infinite order.** Let $\alpha$ be an
 integer with $\alpha^8 + 5\alpha^6 - 432\alpha^4 - 4320\alpha^2 - 10800 \neq 0$, and let $E_\alpha$
@@ -239,14 +249,16 @@ be the curve $y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$ over $\mathbb{Q}$. If
 $P = (x_0, y_0) \in E_\alpha(\mathbb{Q})$ is a point such that $x_0$, written in lowest terms, has
 even numerator, then $P$ has infinite order.
 
+This holds because $E_\alpha(\mathbb{Q})$ has no affine point whose $x$-coordinate has even
+numerator in lowest terms.
+
 Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
 Number Fields*, INTEGERS 26 (2026), Article A21, Corollary 3 (`integers-2026-A21-cor-3`). -/
 public theorem fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num (α : ℤ)
     (hα : α ^ 8 + 5 * α ^ 6 - 432 * α ^ 4 - 4320 * α ^ 2 - 10800 ≠ 0) (x y : ℚ)
     (h : (fruitWeierstrassCurve (α : ℚ)).toAffine.Nonsingular x y) (hx : 2 ∣ x.num) :
     ¬ IsOfFinAddOrder (WeierstrassCurve.Affine.Point.some x y h) :=
-  False.elim (fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num.not_equation_of_two_dvd_num
-    α x y hx h.1)
+  False.elim (fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num α x y hx h.1)
 
 end
 

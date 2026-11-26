@@ -6,6 +6,9 @@ be the curve $y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$ over $\mathbb{Q}$. If
 $P = (x_0, y_0) \in E_\alpha(\mathbb{Q})$ is a point such that $x_0$, written in lowest terms, has
 even numerator, then $P$ has infinite order.
 
+This holds because $E_\alpha(\mathbb{Q})$ has no affine point whose $x$-coordinate has even
+numerator in lowest terms.
+
 ## Sources
 
 - Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over Number Fields*, INTEGERS 26 (2026), Article A21, Corollary 3.
