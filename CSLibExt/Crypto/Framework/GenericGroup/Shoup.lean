@@ -18,20 +18,26 @@ public import Mathlib.Algebra.Field.ZMod
 Counting and probability bounds for discrete logarithm in the generic group
 model of `CSLibExt.Crypto.Framework.GenericGroup.Symbolic`, following Shoup's
 proof (Victor Shoup, *Lower Bounds for Discrete Logarithms and Related
-Problems*, revised version, Section 2, Theorem 1 and Lemma 1 in degree 1).
-Distinct affine forms over `ZMod q` agree at at most one point; a union bound
-over the forms a decision tree mentions bounds its success set by
-`(m + 3).choose 2 + 1` secrets for every fixed encoding, and averaging the
-encoding gives the game bound `(((m + 3).choose 2 + 1 : ℕ) : ℝ) / q`, hence
-the `O(m²/q)` shape `((m : ℝ) + 3) ^ 2 / q`. The explicit constant is derived
-from Shoup's proof game; Shoup states the bound as `O(m²/p)` with no explicit
-constant.
+Problems*, revised version, Section 2, Theorem 1 and Lemma 1 in degree at most 1).
+For a prime `q`, distinct affine forms over `ZMod q` agree at at most one
+point; a union bound over the forms a decision tree mentions bounds its
+success set by `(m + 3).choose 2 + 1` secrets for every fixed encoding, and
+averaging the encoding gives the game bound
+`(((m + 3).choose 2 + 1 : ℕ) : ℝ) / q`, hence the explicit bound
+`((m : ℝ) + 3) ^ 2 / q`, of Shoup's `O(m²/p)` shape. The explicit constant is
+derived from Shoup's proof game; Shoup states the bound as `O(m²/p)` with no
+explicit constant.
 
 The model is the Nechaev-style symbolic one of the imported module: prime
 order `q`, labels `ZMod q`, encodings are permutations of the labels, the
 adversary is a deterministic decision tree, group-operation queries are
-counted and equality tests are free. This is not Shoup's bitstring encoding
-model, and composite orders and randomized adversaries are out of scope.
+counted and equality tests are free. A query is one multiplication or one
+inversion, where Shoup's oracle computes a sum or a difference in one query.
+The tree receives three labels, `enc 0`, `enc 1` and `enc x`; Shoup's
+algorithm receives only the generator's and the target's, so the identity
+label adds one form: the tree's list has at most `m + 3` forms where Shoup's
+game has `m + 2`. This is not Shoup's bitstring encoding model, and composite
+orders and randomized adversaries are out of scope.
 -/
 
 @[expose] public section
@@ -40,8 +46,13 @@ namespace Cslib.Crypto.Framework.GenericGroup
 
 open Finset
 
-/-- Distinct affine forms agree at no more than one point of `ZMod q`, `q` prime (Shoup, Lemma 1,
-degree 1). -/
+/-- **Distinct affine forms agree at most once.** Let `q` be prime, and read a pair `u = (a, b)`
+over `ZMod q` as the affine form `x ↦ a + b * x` (`affEval`). Two distinct forms `u ≠ v` take the
+same value at no more than one point `x` of `ZMod q`.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, Lemma 1, in one variable and degree at most 1 over the
+prime field. -/
 theorem affEval_eq_card_le_one {q : ℕ} [Fact q.Prime] {u v : Aff q} (huv : u ≠ v) :
     (univ.filter fun x : ZMod q => affEval x u = affEval x v).card ≤ 1 := by
   refine Finset.card_le_one.mpr fun x hx y hy => ?_
@@ -57,7 +68,13 @@ theorem affEval_eq_card_le_one {q : ℕ} [Fact q.Prime] {u v : Aff q} (huv : u �
     have hxy : (u.2 - v.2) * x = (u.2 - v.2) * y := by linear_combination hx' - hy'
     exact mul_left_cancel₀ hne hxy
 
-/-- Two distinct affine forms agree at a uniform point with probability at most `1/q`. -/
+/-- **Agreement probability of two affine forms.** Let `q` be prime and let `u ≠ v` be affine
+forms over `ZMod q` (`affEval`). For `x` uniform in `ZMod q`, the probability that `u` and `v`
+take the same value at `x` is at most `1 / q`.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, Lemma 1, in one variable and degree at most 1 over the
+prime field. -/
 theorem affEval_agree_winProb_le {q : ℕ} [Fact q.Prime] {u v : Aff q} (huv : u ≠ v) :
     winProb ((Cslib.Probability.PMF.uniformOfFintype (ZMod q)).map fun x =>
       decide (affEval x u = affEval x v)) ≤ 1 / q := by
@@ -66,7 +83,12 @@ theorem affEval_agree_winProb_le {q : ℕ} [Fact q.Prime] {u v : Aff q} (huv : u
   gcongr
   exact_mod_cast affEval_eq_card_le_one huv
 
-/-- Union bound: points where two distinct forms of `l` agree number at most `C(|l|, 2)`. -/
+/-- **Collision count of a list of affine forms.** Let `q` be prime and let `l` be a list of
+affine forms over `ZMod q` (`affEval`). At most `l.length.choose 2` points `x` of `ZMod q` make two
+distinct forms of `l` take the same value at `x`.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, proof of Theorem 1. -/
 theorem collision_card_le {q : ℕ} [Fact q.Prime] (l : List (Aff q)) :
     (univ.filter fun x : ZMod q =>
       ∃ u ∈ l, ∃ v ∈ l, u ≠ v ∧ affEval x u = affEval x v).card ≤ l.length.choose 2 := by
@@ -112,7 +134,14 @@ theorem collision_card_le {q : ℕ} [Fact q.Prime] (l : List (Aff q)) :
           rw [List.length_cons, key, Nat.choose_one_right]
           omega
 
-/-- Counting form, every fixed encoding: secrets on which an `m`-query tree succeeds. -/
+/-- **Generic discrete-logarithm success count, fixed encoding.** Let `q` be prime, let `enc` be
+an encoding (a permutation of `ZMod q`), and let `A` be a decision tree on three labels with leaves
+in `ZMod q` that makes at most `m` group operations on every path (`GTree.numQueries A ≤ m`). Run
+on the labels `enc 0`, `enc 1` and `enc x` with the oracle `oracleOf enc`, `A` outputs `x` for at
+most `(m + 3).choose 2 + 1` secrets `x ∈ ZMod q`.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, proof of Theorem 1. -/
 theorem dlog_success_card_le {q : ℕ} [Fact q.Prime] (enc : Equiv.Perm (ZMod q))
     (A : GTree (ZMod q) 3) {m : ℕ} (hm : GTree.numQueries A ≤ m) :
     (univ.filter fun x : ZMod q =>
@@ -139,7 +168,14 @@ theorem dlog_success_card_le {q : ℕ} [Fact q.Prime] (enc : Equiv.Perm (ZMod q)
         rw [Finset.card_singleton]
         omega
 
-/-- Uniform secret, every fixed encoding. -/
+/-- **Generic discrete-logarithm bound, fixed encoding.** Let `q` be prime, let `enc` be an
+encoding (a permutation of `ZMod q`), and let `A` be a decision tree on three labels with leaves in
+`ZMod q` that makes at most `m` group operations on every path (`GTree.numQueries A ≤ m`). For a
+uniform secret `x ∈ ZMod q`, `A`, run on the labels `enc 0`, `enc 1` and `enc x` with the oracle
+`oracleOf enc`, outputs `x` with probability at most `((m + 3).choose 2 + 1) / q`.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, proof of Theorem 1. -/
 theorem dlog_winProb_le {q : ℕ} [Fact q.Prime] (enc : Equiv.Perm (ZMod q))
     (A : GTree (ZMod q) 3) {m : ℕ} (hm : GTree.numQueries A ≤ m) :
     winProb ((Cslib.Probability.PMF.uniformOfFintype (ZMod q)).map fun x =>
@@ -150,13 +186,29 @@ theorem dlog_winProb_le {q : ℕ} [Fact q.Prime] (enc : Equiv.Perm (ZMod q))
   gcongr
   exact_mod_cast dlog_success_card_le enc A hm
 
-/-- Shoup's probability space: uniform encoding (a permutation of the labels) and uniform
-secret; outcome `true` iff the tree outputs the secret. -/
+/-- **Generic discrete-logarithm game.** Let `q > 1` and let `A` be a decision tree on three
+labels with leaves in `ZMod q`. The game draws an encoding `enc` (a permutation of `ZMod q`) and a
+secret `x ∈ ZMod q` uniformly and independently, runs `A` on the labels `enc 0`, `enc 1` and
+`enc x` (of the identity, the generator and the target) with the oracle `oracleOf enc`, and
+outputs `true` when `A` outputs `x`. Shoup's algorithm receives only the generator's and the
+target's labels; the identity label gives the tree one more form than Shoup's game, hence the
+`m + 3` in the bounds on this game where Shoup's proof has `m + 2`.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, Theorem 1. -/
 noncomputable def genericDlogGame (q : ℕ) [Fact (1 < q)] (A : GTree (ZMod q) 3) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (Equiv.Perm (ZMod q) × ZMod q)).map fun ω =>
     decide (GTree.eval (oracleOf ω.1) (dlogInputs ω.1 ω.2) A = ω.2)
 
-/-- Shoup Theorem 1-style bound with the derived explicit constant. -/
+/-- **Generic discrete-logarithm bound, uniform encoding.** Let `q` be prime and let `A` be a
+decision tree that is given the labels of `0`, `1` and the secret `x`, tests labels only for
+equality, and makes at most `m` group operations on every path (`GTree.numQueries A ≤ m`). For a
+uniform encoding (a permutation of `ZMod q`) and a uniform secret `x`, `A` outputs `x` with
+probability at most `((m + 3).choose 2 + 1) / q` (`genericDlogGame`).
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, Theorem 1, here for prime order in Nechaev's
+model. -/
 theorem genericDlog_winProb_le {q : ℕ} [Fact q.Prime] (A : GTree (ZMod q) 3) {m : ℕ}
     (hm : GTree.numQueries A ≤ m) :
     winProb (genericDlogGame q A) ≤ (((m + 3).choose 2 + 1 : ℕ) : ℝ) / q := by
@@ -184,7 +236,16 @@ theorem genericDlog_winProb_le {q : ℕ} [Fact q.Prime] (A : GTree (ZMod q) 3) {
         mul_le_mul_of_nonneg_right hcardR hqR
     _ = _ := by push_cast; ring
 
-/-- The `O(m²/q)` shape of Shoup's Theorem 1. -/
+/-- **Generic discrete-logarithm bound, squared form.** Let `q` be prime and let `A` be a
+decision tree that is given the labels of `0`, `1` and the secret `x`, tests labels only for
+equality, and makes at most `m` group operations on every path (`GTree.numQueries A ≤ m`). For a
+uniform encoding (a permutation of `ZMod q`) and a uniform secret `x`, `A` outputs `x` with
+probability at most `(m + 3) ^ 2 / q` (`genericDlogGame`), an explicit bound of Shoup's
+`O(m^2/p)` shape.
+
+Source: V. Shoup, *Lower Bounds for Discrete Logarithms and Related Problems*, revised version of
+the Eurocrypt 1997 paper, Section 2, Theorem 1, here for prime order in Nechaev's
+model. -/
 theorem genericDlog_winProb_le_sq {q : ℕ} [Fact q.Prime] (A : GTree (ZMod q) 3) {m : ℕ}
     (hm : GTree.numQueries A ≤ m) :
     winProb (genericDlogGame q A) ≤ ((m : ℝ) + 3) ^ 2 / q := by

@@ -58,10 +58,28 @@ example : winProb ((Cslib.Probability.PMF.uniformOfFintype (ZMod 7)).map fun x =
   rw [h]
   norm_num
 
+-- With the identity label, a count over the `m + 2` forms of Shoup's game fails: `T0` makes no
+-- group operation and wins with probability `3 / 7`, above `((0 + 2).choose 2 + 1) / 7`.
+example : ¬ winProb ((Cslib.Probability.PMF.uniformOfFintype (ZMod 7)).map fun x =>
+    decide (GTree.eval (oracleOf enc7) (dlogInputs enc7 x) T0 = x)) ≤
+      (((0 + 2).choose 2 + 1 : ℕ) : ℝ) / 7 := by
+  rw [winProb_map_uniform, ZMod.card]
+  have h : (univ.filter fun x : ZMod 7 =>
+      decide (GTree.eval (oracleOf enc7) (dlogInputs enc7 x) T0 = x) = true).card = 3 := by
+    decide
+  rw [h]
+  norm_num
+
 example : winProb ((Cslib.Probability.PMF.uniformOfFintype (ZMod 7)).map fun x =>
     decide (GTree.eval (oracleOf enc7) (dlogInputs enc7 x) T0 = x)) ≤
       (((0 + 3).choose 2 + 1 : ℕ) : ℝ) / 7 := by
   exact_mod_cast dlog_winProb_le enc7 T0 (m := 0) (by decide)
+
+example : winProb (genericDlogGame 7 T0) ≤ (((0 + 3).choose 2 + 1 : ℕ) : ℝ) / 7 :=
+  genericDlog_winProb_le T0 (m := 0) (by decide)
+
+example : winProb (genericDlogGame 7 T0) ≤ (((0 : ℕ) : ℝ) + 3) ^ 2 / 7 :=
+  genericDlog_winProb_le_sq T0 (m := 0) (by decide)
 
 def T2 : GTree (ZMod 2) 3 := .eqTest 2 0 (.out 0) (.out 1)
 
