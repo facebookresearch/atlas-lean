@@ -13571,6 +13571,7 @@
   "MathlibExt/NumberTheory/Recurrences/LucasParityDivisibility": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Divisibility properties of Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/LucasPeriodAverage": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Periods and averages of Lucas sequences modulo n"},
   "MathlibExt/NumberTheory/Recurrences/LucasSequenceFirstKind": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
+  "MathlibExt/NumberTheory/Recurrences/LucasSequenceModThree": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Divisibility properties of Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/LucasSquareQFinitePrimes": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Composite terms of shifted Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/MStepFibonacciConvolution": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/MStepFibonacciPartialSums": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Keyword substitutions on binary words"},
