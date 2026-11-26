@@ -384,7 +384,7 @@ theorem ValuationSubring.decompositionSubgroup_padicPlace_le_closure_range_local
   refine exists_mem_range_localGaloisToGlobal_apply_eq p σ a ?_
   refine aeval_minpoly_map_eq_zero_of_isometry (padicEmbedding p) σ
     (fun x => ?_) a
-  rw [← coe_nnnorm, ← coe_nnnorm,
+  rw [← coe_nnNorm, ← coe_nnNorm,
     nnnorm_padicEmbedding_map_eq_of_mem_decompositionSubgroup p hσ x]
 
 end MainProof

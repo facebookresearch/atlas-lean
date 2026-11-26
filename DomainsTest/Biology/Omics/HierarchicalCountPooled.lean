@@ -114,7 +114,7 @@ example {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
   have hν : ∀ K, ν {K} = ENNReal.ofReal (p K) := fun K => Measure.sum_smul_dirac_singleton
   have : IsProbabilityMeasure ν := ⟨by
     rw [Measure.sum_apply _ MeasurableSet.univ]
-    simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+    simp only [smul_apply, measure_univ, smul_eq_mul, mul_one]
     rw [← ENNReal.ofReal_tsum_of_nonneg hp0 hp.summable, hp.tsum_eq, ENNReal.ofReal_one]⟩
   refine ⟨Measure.infinitePi fun _ : ℕ => ν, inferInstance, ?_⟩
   have hind := iIndepFun_infinitePi (P := fun _ : ℕ => ν) (X := fun _ => id)

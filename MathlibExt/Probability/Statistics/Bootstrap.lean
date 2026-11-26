@@ -144,7 +144,7 @@ theorem integrable_empirical [MeasurableSingletonClass α] (x : ℕ → α) (n :
     Integrable f (empirical x n) := by
   by_cases hn : n = 0
   · simp only [empirical, hn, ite_true]
-    exact integrable_dirac enorm_lt_top
+    exact integrable_dirac eNorm_lt_top
   · rw [empirical_eq_empiricalLaw hn]
     exact integrable_empiricalLaw x n f
 

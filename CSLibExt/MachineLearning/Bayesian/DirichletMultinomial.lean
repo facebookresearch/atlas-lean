@@ -89,7 +89,7 @@ noncomputable def categoricalKernel (n : ℕ) : Kernel (Fin (n + 1) → ℝ) (Fi
   Kernel.piecewise (measurableSet_probVectors n)
     ⟨fun θ ↦ ∑ i, ENNReal.ofReal (θ i) • Measure.dirac i,
       Measure.measurable_of_measurable_coe _ fun A _ ↦ by
-        simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul]
+        simp only [Measure.coe_finsetSum, Finset.sum_apply, smul_apply, smul_eq_mul]
         exact Finset.measurable_sum _ fun i _ ↦
           (ENNReal.measurable_ofReal.comp (measurable_pi_apply i)).mul_const _⟩
     (Kernel.const _ (Measure.dirac 0))
@@ -116,7 +116,7 @@ noncomputable def categoricalSeqKernel (n N : ℕ) :
   Kernel.piecewise (measurableSet_probVectors n)
     ⟨fun θ ↦ ∑ s, seqLikelihood θ s • Measure.dirac s,
       Measure.measurable_of_measurable_coe _ fun A _ ↦ by
-        simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul]
+        simp only [Measure.coe_finsetSum, Finset.sum_apply, smul_apply, smul_eq_mul]
         exact Finset.measurable_sum _ fun s _ ↦ (measurable_seqLikelihood s).mul_const _⟩
     (Kernel.const _ (Measure.dirac fun _ : Fin N ↦ (0 : Fin (n + 1))))
 
@@ -218,7 +218,7 @@ theorem posterior_categoricalSeqKernel_dirichletMeasure (hα : ∀ i, 0 < α i)
     div_pos (multiBeta_pos hαk (Nat.succ_ne_zero n)) (multiBeta_pos hα (Nat.succ_ne_zero n))
   have hev : (categoricalSeqKernel n N ∘ₘ dirichletMeasure α) {s} =
       ENNReal.ofReal (multiBeta (fun i ↦ α i + counts s i) / multiBeta α) := by
-    rw [← withDensity_univ_eq_comp, withDensity_categoricalSeqKernel hα, Measure.smul_apply,
+    rw [← withDensity_univ_eq_comp, withDensity_categoricalSeqKernel hα, smul_apply,
       measure_univ, smul_eq_mul, mul_one]
   have hev0 : (categoricalSeqKernel n N ∘ₘ dirichletMeasure α) {s} ≠ 0 := by
     rw [hev]

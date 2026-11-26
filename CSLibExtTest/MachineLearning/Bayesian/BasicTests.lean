@@ -38,7 +38,7 @@ instance : IsMarkovKernel test := by
   refine ⟨fun b ↦ ⟨?_⟩⟩
   cases b <;>
   · simp only [test, Kernel.boolKernel_apply, Bool.false_eq_true, ite_false, ite_true,
-      Measure.add_apply, Measure.smul_apply, measure_univ, ENNReal.smul_def, smul_eq_mul,
+      add_apply, smul_apply, measure_univ, ENNReal.smul_def, smul_eq_mul,
       mul_one, ← ENNReal.coe_add, ENNReal.coe_eq_one]
     apply NNReal.eq; push_cast; norm_num
 

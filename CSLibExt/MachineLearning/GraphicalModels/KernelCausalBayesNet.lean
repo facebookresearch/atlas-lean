@@ -258,8 +258,8 @@ noncomputable def stdSimplexMeasure (w : StdSimplex ℝ α) : Measure α :=
 /-- The measure of a standard simplex point is a probability measure. -/
 instance (w : StdSimplex ℝ α) : IsProbabilityMeasure (stdSimplexMeasure w) := by
   refine ⟨?_⟩
-  rw [stdSimplexMeasure, Measure.finsetSum_apply]
-  simp_rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _),
+  rw [stdSimplexMeasure, sum_apply]
+  simp_rw [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _),
     smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun a _ => w.nonneg a), w.total_of_fintype,
     ENNReal.ofReal_one]
@@ -288,7 +288,7 @@ theorem stdSimplexMeasure_singleton (w : StdSimplex ℝ α) (b : α) :
     · have hmem : a ∉ ({b} : Set α) := by rwa [Set.mem_singleton_iff]
       rw [Measure.dirac_apply _ _, Set.indicator_of_notMem hmem 1]
       simp [h]
-  simp [stdSimplexMeasure, Measure.finsetSum_apply, Measure.smul_apply, hdirac, smul_eq_mul]
+  simp [stdSimplexMeasure, sum_apply, smul_apply, hdirac, smul_eq_mul]
 
 /-- Applying the embedded kernel. -/
 theorem BayesNet.toKernelCBN_kernel_apply (b : BayesNet α n) (k : Fin n)

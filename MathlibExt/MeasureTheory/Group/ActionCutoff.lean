@@ -159,7 +159,7 @@ theorem integrable_mul_iff_of_normalized_smul
     fun h0 => hx (by rw [h0, enorm_zero])
   have hnorm := lintegral_mul_eq_of_normalized_smul τ μ hact hμ
     (f := fun x => ‖f x‖ₑ) (w₁ := fun x => ENNReal.ofReal (w₁ x))
-    (w₂ := fun x => ENNReal.ofReal (w₂ x)) hf.enorm
+    (w₂ := fun x => ENNReal.ofReal (w₂ x)) hf.eNorm
     (fun a x => by simp only [hfinv])
     (ENNReal.measurable_ofReal.comp hw₁) (ENNReal.measurable_ofReal.comp hw₂)
     (fun x hx => h₁ x (hne x hx)) (fun x hx => h₂ x (hne x hx))

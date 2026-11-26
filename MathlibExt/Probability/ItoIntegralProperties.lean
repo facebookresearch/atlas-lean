@@ -217,7 +217,7 @@ private theorem integrandDist_toReal_const_mul {P : Measure Ω}
     (h : ∀ u ω, A u ω - B u ω = c * (H u ω - K u ω)) :
     (integrandDist P A B t).toReal = c ^ 2 * (integrandDist P H K t).toReal := by
   rw [integrandDist_eq_const_mul c h, ENNReal.toReal_mul, ENNReal.toReal_pow,
-    Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg c), sq_abs]
+    Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg c), sq_abs]
 
 private theorem itoIntegralL2_zero {P : Measure Ω} {F : Filtration ℝ≥0 mΩ}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) (hBF : Adapted F B)

@@ -122,7 +122,7 @@ theorem Submartingale.exists_ae_tendsto_of_posPart_bdd
   set B := (2 * C - ∫ ω, X 0 ω ∂μ).toNNReal
   have h_eLpNorm : ∀ n, eLpNorm (X n) 1 μ ≤ ↑B := by
     intro n
-    rw [eLpNorm_one_eq_lintegral_enorm (hint n).aestronglyMeasurable,
+    rw [eLpNorm_one_eq_lintegral_eNorm (hint n).aestronglyMeasurable,
       ← ofReal_integral_norm_eq_lintegral_enorm (hint n)]
     rw [ENNReal.ofReal_le_coe]
     exact le_trans (h_norm_bdd n) (Real.le_coe_toNNReal _)

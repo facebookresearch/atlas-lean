@@ -61,7 +61,7 @@ private theorem integrable_normalized_kernel {g : X → ℂ} {w : X → ℝ}
       (Complex.measurable_ofReal.comp
         (hw.comp (hact.comp (measurable_snd.prodMk measurable_fst))))
   refine ⟨hm.aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm, lintegral_prod _ hm.enorm.aemeasurable]
+  rw [hasFiniteIntegral_iff_enorm, lintegral_prod _ hm.eNorm.aemeasurable]
   have hn (x : X) (a : A) :
       ‖g x * (w (a • x) : ℂ)‖ₑ = ‖g x‖ₑ * ENNReal.ofReal (w (a • x)) := by
     rw [enorm_mul]

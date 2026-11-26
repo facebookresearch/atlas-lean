@@ -35,7 +35,7 @@ noncomputable def ν2 : Measure ℝ := (2⁻¹ : ℝ≥0∞) • (Measure.dirac 
 
 instance : IsProbabilityMeasure ν2 :=
   ⟨by
-    rw [ν2, Measure.smul_apply, Measure.add_apply, measure_univ, measure_univ,
+    rw [ν2, smul_apply, add_apply, measure_univ, measure_univ,
       one_add_one_eq_two, smul_eq_mul]
     exact ENNReal.inv_mul_cancel two_ne_zero ENNReal.ofNat_ne_top⟩
 

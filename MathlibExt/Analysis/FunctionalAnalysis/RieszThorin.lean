@@ -43,7 +43,7 @@ private lemma eLpNorm_count_eq_zero_iff {α : Type*} [Finite α] [MeasurableSpac
   · intro h; exact Measure.ae_count_iff.mpr (fun i => by simp [h])
 
 private lemma enorm_complex_eq_ofReal (z : Complex) : ‖z‖ₑ = ENNReal.ofReal ‖z‖ := by
-  rw [enorm_eq_nnnorm, ← coe_nnnorm z, ENNReal.ofReal_coe_nnreal]
+  rw [eNorm_eq_nnNorm, ← coe_nnNorm z, ENNReal.ofReal_coe_nnreal]
 
 private lemma eLpNorm_count_ne_top {α : Type*} [Finite α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (y : α → Complex) {r : ENNReal} (hr : r ≠ 0) :
@@ -67,7 +67,7 @@ private lemma eLpNorm_count_one_eq {α : Type*} [Fintype α] [MeasurableSpace α
     [MeasurableSingletonClass α] (y : α → Complex) :
     eLpNorm y 1 Measure.count = ∑ i, ‖y i‖ₑ := by
   have hmeas : AEStronglyMeasurable y Measure.count := .of_discrete
-  rw [eLpNorm_one_eq_lintegral_enorm hmeas, lintegral_count, tsum_fintype]
+  rw [eLpNorm_one_eq_lintegral_eNorm hmeas, lintegral_count, tsum_fintype]
 
 private lemma eLpNorm_count_top_eq {α : Type*} [Finite α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (y : α → Complex) :

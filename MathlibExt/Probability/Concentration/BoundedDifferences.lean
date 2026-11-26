@@ -55,8 +55,8 @@ private theorem finite_hoeffding {ι : Type*} [Fintype ι] [Nonempty ι]
     ∑ a ∈ Finset.univ, ENNReal.ofReal (p a) • MeasureTheory.Measure.dirac a with hμ_def
   haveI hprob : MeasureTheory.IsProbabilityMeasure μ := by
     refine ⟨?_⟩
-    rw [hμ_def, MeasureTheory.Measure.finsetSum_apply]
-    simp only [MeasureTheory.Measure.smul_apply,
+    rw [hμ_def, sum_apply]
+    simp only [smul_apply,
       MeasureTheory.Measure.dirac_apply, Set.indicator_univ, Pi.one_apply,
       smul_eq_mul, mul_one]
     rw [← ENNReal.ofReal_sum_of_nonneg (fun a _ => hp_nonneg a), hp_sum,
@@ -91,7 +91,7 @@ private theorem finite_hoeffding {ι : Type*} [Fintype ι] [Nonempty ι]
   have hPd : ((((‖g a_max - g a_min‖₊ / 2) ^ 2 : NNReal)) : ℝ)
       = ((g a_max - g a_min) / 2) ^ 2 := by
     have h1 : ((‖g a_max - g a_min‖₊ : NNReal) : ℝ) = g a_max - g a_min := by
-      rw [coe_nnnorm, Real.norm_eq_abs, abs_of_nonneg hBA0]
+      rw [coe_nnNorm, Real.norm_eq_abs, abs_of_nonneg hBA0]
     simp only [NNReal.coe_pow, NNReal.coe_div] at *
     rw [h1]
     simp

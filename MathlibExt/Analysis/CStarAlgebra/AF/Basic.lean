@@ -76,7 +76,7 @@ theorem isFiniteDimensionalSubalgebra_range
   letI : FiniteDimensional ℂ f.range := Module.Finite.of_surjective L hL
   refine ⟨?_, inferInstance⟩
   change IsClosed (f.range.toSubmodule : Set A)
-  exact Submodule.closed_of_finiteDimensional _
+  exact Submodule.isClosed_of_finiteDimensional _
 
 /-- **AF algebras from increasing finite-dimensional ranges.** Let `A` be a nonunital complex
 C*-algebra, let `Dₙ` be finite-dimensional nonunital complex C*-algebras, and let `fₙ : Dₙ → A` be

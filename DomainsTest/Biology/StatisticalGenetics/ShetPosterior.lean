@@ -42,13 +42,13 @@ noncomputable def twoPointPrior : Measure ℝ :=
 /-- The two-point prior has total mass one. -/
 instance : IsProbabilityMeasure twoPointPrior := by
   constructor
-  simp only [twoPointPrior, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+  simp only [twoPointPrior, add_apply, smul_apply, measure_univ, smul_eq_mul,
     mul_one]
   exact ENNReal.add_halves 1
 
 /-- The two-point prior is concentrated on `(0, ∞)`. -/
 theorem twoPointPrior_compl : twoPointPrior (Ioi 0)ᶜ = 0 := by
-  simp only [twoPointPrior, Measure.add_apply, Measure.smul_apply, smul_eq_mul]
+  simp only [twoPointPrior, add_apply, smul_apply, smul_eq_mul]
   rw [Measure.dirac_apply' _ measurableSet_Ioi.compl,
     Measure.dirac_apply' _ measurableSet_Ioi.compl]
   simp [Set.indicator]

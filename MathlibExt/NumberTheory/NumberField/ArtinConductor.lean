@@ -222,7 +222,7 @@ private theorem finite_setOf_not_isUnramifiedAt (ψ : (M ≃ₐ[K] M) →* ℂˣ
   · rw [Ideal.zero_eq_bot, Ne, Ideal.span_singleton_eq_bot]
     exact hN0
   · rintro P ⟨v, hv, rfl⟩
-    rw [Set.mem_setOf_eq] at hv ⊢
+    rw [Set.mem_ofPred_eq] at hv ⊢
     rw [IsUnramifiedAt] at hv
     push Not at hv
     obtain ⟨σ, hσI, hσψ⟩ := hv
@@ -240,7 +240,7 @@ private theorem hasFiniteMulSupport_of_finite (ψ : (M ≃ₐ[K] M) →* ℂˣ)
       fun w : HeightOneSpectrum (𝓞 K) ↦ w.asIdeal ^ conductorExponent ψ w := by
   refine hfin.subset fun w hw ↦ ?_
   rw [Function.mem_mulSupport] at hw
-  rw [Set.mem_setOf_eq]
+  rw [Set.mem_ofPred_eq]
   intro hunr
   exact hw (by
     rw [conductorExponent_eq_zero_of_isUnramifiedAt ψ w hunr, pow_zero])

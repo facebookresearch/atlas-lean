@@ -77,7 +77,7 @@ example : hazardMeasure ((2 : ℝ≥0∞)⁻¹ • Measure.dirac (1 : ℝ) + (2 
     hazardMeasure ((2 : ℝ≥0∞)⁻¹ • Measure.dirac (1 : ℝ) + (2 : ℝ≥0∞)⁻¹ • Measure.dirac 2)
       {2} = 1 := by
   simp only [hazardMeasure, withDensity_apply _ (measurableSet_singleton _), lintegral_singleton,
-    Measure.add_apply, Measure.smul_apply, smul_eq_mul]
+    add_apply, smul_apply, smul_eq_mul]
   constructor
   · simp [Measure.dirac_apply', measurableSet_Ici, indicator, ENNReal.inv_two_add_inv_two]
   · simp [Measure.dirac_apply', measurableSet_Ici, indicator,

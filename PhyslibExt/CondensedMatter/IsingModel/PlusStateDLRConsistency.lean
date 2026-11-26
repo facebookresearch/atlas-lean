@@ -215,7 +215,7 @@ lemma integral_fvMeasure_eq_sum (η : ConfigSpace (Site d)) (n : ℕ)
     rw [integral_smul_measure, integral_dirac, smul_eq_mul,
       ENNReal.toReal_ofReal (fvProb_nonneg η n B β h τ)]
   · intro τ _
-    exact (integrable_dirac (by simp [enorm_eq_nnnorm])).smul_measure (by simp)
+    exact (integrable_dirac (by simp [eNorm_eq_nnNorm])).smul_measure (by simp)
 
 lemma plusMeasure_coe (m : ℕ) (β h : ℝ) :
     (plusMeasure d m β h : Measure (ConfigSpace (Site d)))

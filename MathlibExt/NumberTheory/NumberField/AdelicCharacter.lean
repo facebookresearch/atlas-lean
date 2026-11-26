@@ -481,7 +481,7 @@ private lemma exists_pow_subset_of_mem_nhds
     (γ.isUnit.map MonoidWithZeroHom.ValueGroup₀.embedding).ne_zero
   obtain ⟨k, hk⟩ := exists_exp_neg_natCast_lt hγ0
   refine ⟨k, fun y hy hle => hut (hγ ?_)⟩
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   show Valued.v.restrict y < γ.1
   rw [Valuation.restrict_lt_iff_lt_embedding]
   exact lt_of_le_of_lt hle hk
@@ -1169,7 +1169,7 @@ theorem exists_nhds_forall_perp_imp_global {ψ : AddChar 𝔸 ℂ} (hψ : IsGlob
     rw [mul_add, AddChar.map_add_eq_mul, hyperp k, one_mul, h2]
   rw [hpow]
   have hlt := hUV (Set.mk_mem_prod hyU (hCV (hboxC hk)))
-  simp only [Set.mem_setOf_eq] at hlt
+  simp only [Set.mem_ofPred_eq] at hlt
   exact le_of_lt hlt
 
 theorem mem_range_algebraMap_of_forall_apply_mul_eq_one_of_faithful

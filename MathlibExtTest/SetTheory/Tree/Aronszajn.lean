@@ -81,7 +81,7 @@ example : ¬ IsOmega1Tree ℕ := by
     rw [← Cardinal.ord_aleph0]
     exact Cardinal.ord_lt_ord.2 Cardinal.aleph0_lt_aleph_one
   obtain ⟨⟨x, hx⟩, -⟩ := hlev _ homega
-  rw [level, Set.mem_setOf_eq, WellFounded.rank_eq_typein] at hx
+  rw [level, Set.mem_ofPred_eq, WellFounded.rank_eq_typein] at hx
   have hx' : (x : Ordinal) = Ordinal.omega0 := (Ordinal.typein_lt_nat x).symm.trans hx
   exact absurd hx' (Ordinal.natCast_lt_omega0 x).ne
 

@@ -614,7 +614,7 @@ theorem infinitely_many_primes_fibonacci_pseudoprime :
   have hInf : {p : ℕ | p.Prime ∧ 5 < p}.Infinite := by
     have hEq : {p : ℕ | p.Prime ∧ 5 < p} = {p : ℕ | p.Prime} \ Set.Iic 5 := by
       ext p
-      simp only [Set.mem_setOf_eq, Set.mem_diff, Set.mem_Iic, not_le]
+      simp only [Set.mem_ofPred_eq, Set.mem_diff, Set.mem_Iic, not_le]
     rw [hEq]
     exact Nat.infinite_setOfPred_prime.sdiff (Set.finite_Iic 5)
   exact Set.Infinite.mono hSub hInf

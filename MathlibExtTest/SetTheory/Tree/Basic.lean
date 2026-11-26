@@ -29,9 +29,9 @@ open MetaMathlibExt
 example : ¬ IsTree (Bool × Bool) := by
   intro h
   have hm1 : ((true, false) : Bool × Bool) ∈ {y : Bool × Bool | y < (true, true)} := by
-    simp [Set.mem_setOf_eq, Prod.lt_iff]
+    simp [Set.mem_ofPred_eq, Prod.lt_iff]
   have hm2 : ((false, true) : Bool × Bool) ∈ {y : Bool × Bool | y < (true, true)} := by
-    simp [Set.mem_setOf_eq, Prod.lt_iff]
+    simp [Set.mem_ofPred_eq, Prod.lt_iff]
   have hc := h (true, true) hm1 hm2 (by simp)
   simp [Prod.le_def] at hc
   exact absurd hc (by decide)
@@ -44,7 +44,7 @@ example : ¬ IsTree (Bool × Bool) := by
 theorem level_lt_of_lt.{u} {α : Type u} [PartialOrder α] [WellFoundedLT α]
     {a b : Ordinal.{u}} {x y : α}
     (hx : x ∈ level α a) (hy : y ∈ level α b) (hxy : x < y) : a < b := by
-  rw [level, Set.mem_setOf_eq] at hx hy
+  rw [level, Set.mem_ofPred_eq] at hx hy
   rw [← hx, ← hy]
   exact WellFounded.rank_lt_of_rel hxy
 
@@ -54,7 +54,7 @@ theorem level_disjoint.{u} {α : Type u} [PartialOrder α] [WellFoundedLT α]
     {a b : Ordinal.{u}} (hab : a ≠ b) : Disjoint (level α a) (level α b) := by
   rw [Set.disjoint_left]
   rintro x hxa hxb
-  rw [level, Set.mem_setOf_eq] at hxa hxb
+  rw [level, Set.mem_ofPred_eq] at hxa hxb
   exact hab (hxa.symm.trans hxb)
 
 -- Logic 22: $\kappa$ tree

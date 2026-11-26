@@ -177,7 +177,7 @@ noncomputable def coin : Measure Bool :=
   (1 / 2 : ENNReal) • Measure.dirac false + (1 / 2 : ENNReal) • Measure.dirac true
 
 instance : IsProbabilityMeasure coin := ⟨by
-  simp only [coin, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [coin, add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [ENNReal.div_add_div_same]; norm_num; exact ENNReal.div_self (by norm_num) (by norm_num)⟩
 
 /-- I.i.d. fair coins. -/

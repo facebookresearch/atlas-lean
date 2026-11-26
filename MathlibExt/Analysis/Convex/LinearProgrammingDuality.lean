@@ -238,7 +238,7 @@ private lemma isClosed_hull_finset (S : Finset E) :
   choose r hrnonneg hrG using hcrep
   set RG := LinearMap.range G with hRGdef
   have hRGclosed : IsClosed (↑RG : Set E) :=
-    Submodule.closed_of_finiteDimensional RG
+    Submodule.isClosed_of_finiteDimensional RG
   have hmemRG : ∀ n, (f ∘ φ) n ∈ RG := fun n => ⟨r n, hrG n⟩
   have hyRG : x ∈ RG :=
     hRGclosed.mem_of_tendsto hflim (Filter.Eventually.of_forall hmemRG)

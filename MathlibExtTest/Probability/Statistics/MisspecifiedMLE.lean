@@ -77,7 +77,7 @@ noncomputable def trueLaw : Measure Bool := (2 : ℝ≥0∞)⁻¹ • Measure.co
 
 instance : IsFiniteMeasure trueLaw :=
   ⟨by
-    rw [trueLaw, Measure.smul_apply, smul_eq_mul]
+    rw [trueLaw, smul_apply, smul_eq_mul]
     exact ENNReal.mul_lt_top (by simp) (measure_lt_top _ _)⟩
 
 /-- The unit-variance Gaussian location log-likelihood, up to an additive constant. -/
@@ -510,9 +510,9 @@ theorem tendstoInDistribution_dirac :
     hasLaw_eval _
   have hX_indep : iIndepFun (fun i (ω : ℕ → ℝ) => ω i) diracP := iIndepFun_eval _
   have hint1 : Integrable (fun ω : ℕ → ℝ => ω 0) diracP :=
-    integrable_comp_eval _ (f := id) (integrable_dirac enorm_lt_top)
+    integrable_comp_eval _ (f := id) (integrable_dirac eNorm_lt_top)
   have hint2 : Integrable (fun ω : ℕ → ℝ => ω 0 ^ 2) diracP :=
-    integrable_comp_eval _ (f := fun x => x ^ 2) (integrable_dirac enorm_lt_top)
+    integrable_comp_eval _ (f := fun x => x ^ 2) (integrable_dirac eNorm_lt_top)
   have hindep : Pairwise fun i j => (fun ω : ℕ → ℝ => ω i) ⟂ᵢ[diracP] fun ω => ω j :=
     fun _ _ hij => hX_indep.indepFun hij
   have hmean : ∫ ω, ω 0 ∂diracP = 4 := integral_comp_eval_dirac continuous_id
@@ -533,12 +533,12 @@ theorem tendstoInDistribution_dirac :
     (MLEConsistency.isMLEOn_clampMLE (by norm_num) _) (fun n => ?_) one_pos
     (fun x θ _ => hasGradientAt_gaussLL x θ)
     (fun θ _ => (continuous_gaussLL_left θ).aestronglyMeasurable)
-    (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top) (fun x θ hθ => ?_)
+    (integrable_dirac eNorm_lt_top) (integrable_dirac eNorm_lt_top) (fun x θ hθ => ?_)
     (fun x θ _ => ((hasFDerivAt_id θ).const_sub x).differentiableAt) measurable_const
-    (integrable_dirac enorm_lt_top) (fun x θ _ => by simp [fderiv_const_sub_id])
-    (measurable_id.sub_const 4) (integrable_dirac enorm_lt_top)
+    (integrable_dirac eNorm_lt_top) (fun x θ _ => by simp [fderiv_const_sub_id])
+    (measurable_id.sub_const 4) (integrable_dirac eNorm_lt_top)
     (by simp only [fderiv_const_sub_id]; exact stronglyMeasurable_const)
-    (integrable_dirac enorm_lt_top) hA aemeasurable_const (fun t => ?_)
+    (integrable_dirac eNorm_lt_top) hA aemeasurable_const (fun t => ?_)
   · show AEStronglyMeasurable
       (fun ω : ℕ → ℝ => max 0 (min 8 ((n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, ω i))) diracP
     exact (measurable_const.max (measurable_const.min (measurable_const.mul
@@ -549,7 +549,7 @@ theorem tendstoInDistribution_dirac :
   · have hB : ∀ v : ℝ,
         ⟪covarianceOperator ((Measure.dirac (4 : ℝ)).map fun x => x - 4) v, v⟫ = 0 := fun v => by
       rw [Measure.map_dirac' (f := fun x : ℝ => x - 4) (by fun_prop),
-        covarianceOperator_inner (memLp_dirac enorm_lt_top), integral_dirac]
+        covarianceOperator_inner (memLp_dirac eNorm_lt_top), integral_dirac]
       simp
     rw [ProbabilityTheory.GEE.inner_sandwichCovariance_apply, hB, Real.toNNReal_zero,
       gaussianReal_zero_var]

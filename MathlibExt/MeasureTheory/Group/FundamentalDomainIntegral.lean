@@ -149,7 +149,7 @@ theorem setLIntegral_iUnion_inv_smul_eq_and_setIntegral_eq_of_leftCosetRepresent
         ae_lt_top' (AEMeasurable.tsum fun i => (hae i).enorm) hfin.ne
       filter_upwards [hlt] with x hx
       have hx' : ∑' i, (‖h ((R i : G)⁻¹ • x)‖₊ : ℝ≥0∞) ≠ ∞ := by
-        simpa only [enorm_eq_nnnorm] using hx.ne
+        simpa only [eNorm_eq_nnNorm] using hx.ne
       have hs := ENNReal.tsum_coe_ne_top_iff_summable.mp hx'
       exact NNReal.summable_coe.mpr hs
     · rw [integral_iUnion_ae hnull hdisj hint]

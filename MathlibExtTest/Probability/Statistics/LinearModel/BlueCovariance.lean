@@ -114,7 +114,7 @@ noncomputable def μ₀ : Measure Ω₀ := (8 : ENNReal)⁻¹ • ∑ ω : Ω₀
 
 instance : IsProbabilityMeasure μ₀ := ⟨by
   unfold μ₀
-  rw [Measure.smul_apply, Measure.finsetSum_apply Finset.univ _ _]
+  rw [smul_apply, sum_apply Finset.univ _ _]
   simp [Fintype.card_prod, smul_eq_mul, ENNReal.inv_mul_cancel]⟩
 
 /-- Integrals against `μ₀` are averages over the 8 points. -/

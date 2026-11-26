@@ -225,8 +225,8 @@ noncomputable def twoSeed : RandStrategy Bool Bool Bool where
       + (2⁻¹ : ENNReal) • MeasureTheory.Measure.dirac false,
     by
       refine ⟨?_⟩
-      rw [MeasureTheory.Measure.add_apply, MeasureTheory.Measure.smul_apply,
-        MeasureTheory.Measure.smul_apply,
+      rw [add_apply, smul_apply,
+        smul_apply,
         MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ true),
         MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ false),
         smul_eq_mul, mul_one]

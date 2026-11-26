@@ -188,7 +188,7 @@ theorem leveneMeasure_apply (N nA : ℕ) (A : Set ℕ) [DecidablePred (· ∈ A)
       ENNReal.ofReal (∑ j ∈ (range (nA + 1)).filter (· ∈ A), leveneProb N nA j) := by
   classical
   rw [ENNReal.ofReal_sum_of_nonneg fun j _ => leveneProb_nonneg N nA j, sum_filter]
-  simp only [leveneMeasure, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+  simp only [leveneMeasure, Measure.coe_finsetSum, Finset.sum_apply, smul_apply,
     Measure.dirac_apply, smul_eq_mul]
   refine sum_congr rfl fun j _ => ?_
   by_cases hj : j ∈ A <;> simp [hj]

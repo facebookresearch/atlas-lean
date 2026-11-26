@@ -49,7 +49,7 @@ def recursivelyPresentedSolubleEmbeds : Prop :=
       ∃ (n k : ℕ) (R : List (List (Fin k × Bool))) (H : Type) (_ : Group H)
         (ψ : FreeGroup (Fin k) →* H), Function.Surjective ψ ∧
         ψ.ker = Subgroup.normalClosure {w | ∃ l ∈ R, w = FreeGroup.mk l} ⊔
-          derivedSeries (FreeGroup (Fin k)) n ∧
+          Subgroup.derivedSeries (FreeGroup (Fin k)) n ∧
         ∃ f : G →* H, Function.Injective f
 
 /--

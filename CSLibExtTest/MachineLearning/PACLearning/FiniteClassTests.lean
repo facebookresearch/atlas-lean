@@ -53,7 +53,7 @@ noncomputable def uniform : Measure Bool :=
 
 instance : IsProbabilityMeasure uniform := by
   constructor
-  norm_num [uniform, Measure.add_apply, Measure.smul_apply]
+  norm_num [uniform, add_apply, smul_apply]
   rw [← two_mul, ENNReal.mul_inv_cancel (by norm_num) (by norm_num)]
 
 noncomputable def quarter : Ioo (0 : ℝ≥0) 1 :=
@@ -69,7 +69,7 @@ theorem uniform_error (h : Bool → Bool) :
     measurable_id.prodMk measurable_const
   unfold error
   rw [Measure.map_apply hφ (Set.toFinite _ |>.measurableSet)]
-  simp [uniform, Measure.add_apply, Measure.smul_apply, Set.indicator]
+  simp [uniform, add_apply, smul_apply, Set.indicator]
 
 theorem nonconstant_risk :
     error (uniform.map (fun x => (x, false))) id = (1 / 2 : ℝ≥0∞) := by
@@ -85,7 +85,7 @@ theorem uniform_agreement :
   have hφ : Measurable (fun x : Bool => (x, false)) :=
     measurable_id.prodMk measurable_const
   rw [Measure.map_apply hφ (Set.toFinite _ |>.measurableSet)]
-  simp [uniform, Measure.add_apply, Measure.smul_apply]
+  simp [uniform, add_apply, smul_apply]
 
 theorem failure_event (m : ℕ) :
     {S : LabeledSample Bool Bool m | (quarter.val : ℝ≥0∞) <

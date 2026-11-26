@@ -40,7 +40,8 @@ words representing conjugate elements is decidable (`ComputablePred`), for each 
 groups: the normal closure in `F_n` of `R` together with the second derived subgroup `F_n''`. -/
 def metabelianPresentationKernel (n : ℕ) (R : Finset (FreeGroup (Fin n))) :
     Subgroup (FreeGroup (Fin n)) :=
-  Subgroup.normalClosure ((R : Set (FreeGroup (Fin n))) ∪ derivedSeries (FreeGroup (Fin n)) 2)
+  Subgroup.normalClosure ((R : Set (FreeGroup (Fin n))) ∪
+    Subgroup.derivedSeries (FreeGroup (Fin n)) 2)
 
 /-- Kourovka 4.32 (M. I. Kargapolov), the conjugacy problem for metabelian groups: in every
 finitely generated metabelian group, given by a finite presentation in the variety of metabelian

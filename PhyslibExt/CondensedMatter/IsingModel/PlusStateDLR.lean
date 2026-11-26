@@ -75,7 +75,7 @@ lemma specApply_eq_sum (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
     rw [integral_smul_measure, integral_dirac, smul_eq_mul,
       ENNReal.toReal_ofReal (fvProb_nonneg ω n B β h τ)]
   · intro τ _
-    exact (integrable_dirac (by simp [enorm_eq_nnnorm])).smul_measure (by simp)
+    exact (integrable_dirac (by simp [eNorm_eq_nnNorm])).smul_measure (by simp)
 
 lemma continuous_glue (n : ℕ) (τ : {x // x ∈ box d n} → Bool) :
     Continuous (fun ω : ConfigSpace (Site d) => glue ω τ) := by
@@ -272,9 +272,9 @@ lemma fvMeasure_apply_eq_sum (ω : ConfigSpace (Site d)) (n : ℕ)
           ENNReal.ofReal (fvProb ω n B β h τ) * (Set.indicator t (1 : ConfigSpace (Site d) → ℝ≥0∞)
               (glue ω τ)) := by
   unfold fvMeasure
-  rw [Measure.finsetSum_apply]
+  rw [sum_apply]
   refine Finset.sum_congr rfl (fun τ _ => ?_)
-  rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ ht]
+  rw [smul_apply, smul_eq_mul, Measure.dirac_apply' _ ht]
 
 lemma fvMeasure_inter_outsideSigma (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
     {s : Set (ConfigSpace (Site d))} (hs : MeasurableSet[outsideSigma (box d n)] s)

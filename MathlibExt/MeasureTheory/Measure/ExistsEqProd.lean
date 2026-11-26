@@ -108,10 +108,10 @@ private theorem slice_eq_smul (μ : Measure G) [μ.IsAddHaarMeasure] (ρ : Measu
   have huniq' : slice ρ B = (c : ℝ≥0∞) • μ := by
     rw [huniq]
     exact Measure.ext fun s _ => by
-      simp only [Measure.smul_apply, smul_eq_mul, ENNReal.smul_def]
+      simp only [smul_apply, smul_eq_mul, ENNReal.smul_def]
   have hval : ρ (K₀ ×ˢ B) = c * μ K₀ := by
     have := congrArg (fun ν : Measure G => ν K₀) huniq'
-    simp only [Measure.smul_apply, smul_eq_mul] at this
+    simp only [smul_apply, smul_eq_mul] at this
     rwa [slice_apply ρ B hK₀m] at this
   have hc' : (c : ℝ≥0∞) = ρ (K₀ ×ˢ B) / μ K₀ := by
     rw [hval, ENNReal.mul_div_cancel_right hK₀pos hK₀top]
@@ -127,7 +127,7 @@ private theorem rect_of_admissible (μ : Measure G) [μ.IsAddHaarMeasure]
     ρ (E ×ˢ B) = μ E * (ρ (K₀ ×ˢ B) / μ K₀) := by
   have h := congrArg (fun ν : Measure G => ν E)
     (slice_eq_smul μ ρ hinv K₀ hK₀m hK₀pos hK₀top B hB hBfin)
-  simp only [Measure.smul_apply, smul_eq_mul] at h
+  simp only [smul_apply, smul_eq_mul] at h
   rw [slice_apply ρ B hE] at h
   rw [h, mul_comm]
 
@@ -156,7 +156,7 @@ public theorem MeasureTheory.Measure.exists_eq_prod_of_forall_map_add_left
   set σ : Measure Y := (μ K₀)⁻¹ • (ρ.restrict (K₀ ×ˢ univ)).map Prod.snd with hσ
   have hσapp : ∀ C : Set Y, MeasurableSet C → σ C = ρ (K₀ ×ˢ C) / μ K₀ := by
     intro C hC
-    rw [hσ, Measure.smul_apply, map_apply measurable_snd hC,
+    rw [hσ, smul_apply, map_apply measurable_snd hC,
       restrict_apply (measurable_snd hC), smul_eq_mul, ENNReal.div_eq_inv_mul]
     congr 2
     ext ⟨x, y⟩

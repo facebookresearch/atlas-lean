@@ -1021,7 +1021,7 @@ private theorem morse_sqrt_near_one {n : ℕ} :
             R (J * X * J) = J * R X * J := by
   have hcomp : CompleteSpace
       (EuclideanSpace ℝ (Fin n) →L[ℝ] EuclideanSpace ℝ (Fin n)) :=
-    FiniteDimensional.complete ℝ _
+    FiniteDimensional.completeSpace ℝ _
   have hq_smooth : ContDiff ℝ (⊤ : ℕ∞)
       (fun X : EuclideanSpace ℝ (Fin n) →L[ℝ]
         EuclideanSpace ℝ (Fin n) => X * X) :=

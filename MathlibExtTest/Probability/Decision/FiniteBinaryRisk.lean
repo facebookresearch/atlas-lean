@@ -73,7 +73,7 @@ theorem finiteBinaryRisk_det_constFalse :
     simp
   have hpi_true : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {true} = ENNReal.ofReal (1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∉ ({true} : Set Bool) := by simp
     have h2 : true ∈ ({true} : Set Bool) := by simp
@@ -128,7 +128,7 @@ theorem finiteBinaryRisk_det_id :
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
   have hpi_true : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {true} = ENNReal.ofReal (1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∉ ({true} : Set Bool) := by simp
     have h2 : true ∈ ({true} : Set Bool) := by simp
@@ -136,7 +136,7 @@ theorem finiteBinaryRisk_det_id :
     simp only [Pi.one_apply, smul_eq_mul, mul_zero, mul_one, zero_add]
   have hpi_false : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {false} = ENNReal.ofReal (1 - 1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∈ ({false} : Set Bool) := by simp
     have h2 : true ∉ ({false} : Set Bool) := by simp
@@ -196,7 +196,7 @@ theorem finiteBinaryRisk_det_swap :
     exact ENNReal.div_mul_cancel (by simp) (by simp)
   have hpi_true : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {true} = ENNReal.ofReal (1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∉ ({true} : Set Bool) := by simp
     have h2 : true ∈ ({true} : Set Bool) := by simp
@@ -204,7 +204,7 @@ theorem finiteBinaryRisk_det_swap :
     simp only [Pi.one_apply, smul_eq_mul, mul_zero, mul_one, zero_add]
   have hpi_false : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {false} = ENNReal.ofReal (1 - 1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∈ ({false} : Set Bool) := by simp
     have h2 : true ∉ ({false} : Set Bool) := by simp
@@ -266,7 +266,7 @@ theorem finiteBinaryRisk_det_constTrue :
     simp
   have hpi_false : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {false} = ENNReal.ofReal (1 - 1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∈ ({false} : Set Bool) := by simp
     have h2 : true ∉ ({false} : Set Bool) := by simp
@@ -368,7 +368,7 @@ theorem finiteBinaryRisk_randomized_half :
     norm_num
   have hpi_true : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {true} = ENNReal.ofReal (1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∉ ({true} : Set Bool) := by simp
     have h2 : true ∈ ({true} : Set Bool) := by simp
@@ -376,7 +376,7 @@ theorem finiteBinaryRisk_randomized_half :
     simp only [Pi.one_apply, smul_eq_mul, mul_zero, mul_one, zero_add]
   have hpi_false : (ENNReal.ofReal (1 - 1/3 : ℝ) • Measure.dirac false
         + ENNReal.ofReal (1/3 : ℝ) • Measure.dirac true) {false} = ENNReal.ofReal (1 - 1/3 : ℝ) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∈ ({false} : Set Bool) := by simp
     have h2 : true ∉ ({false} : Set Bool) := by simp
@@ -411,7 +411,7 @@ theorem finiteBinaryRisk_randomized_half_not_deterministic :
       = ENNReal.ofReal (1/2 : ℝ) := by
     show (ENNReal.ofReal (1 - 1/2 : ℝ) • Measure.dirac false
             + ENNReal.ofReal (1/2 : ℝ) • Measure.dirac true) {true} = _
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∉ ({true} : Set Bool) := by simp
     have h2 : true ∈ ({true} : Set Bool) := by simp

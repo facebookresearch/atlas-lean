@@ -37,7 +37,7 @@ theorem riemannianVolume_ball_pos (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) {r 
     (hr : 0 < r) :
     0 < Manifold.riemannianVolume (𝓡 n) (EuclideanSpace ℝ (Fin n)) (Metric.ball x r) := by
   rw [Manifold.riemannianVolume.eq_1, finrank_euclideanSpace_fin,
-    Manifold.normalizedHausdorffMeasure.eq_1, MeasureTheory.Measure.smul_apply]
+    Manifold.normalizedHausdorffMeasure.eq_1, smul_apply]
   refine ENNReal.mul_pos ?_ ?_
   · refine ne_of_gt (ENNReal.div_pos_iff.mpr ⟨?_, ?_⟩)
     · exact ne_of_gt (Metric.measure_ball_pos _ _ one_pos)
@@ -68,7 +68,7 @@ theorem riemannianVolume_ball_pos (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) {r 
 theorem riemannianVolume_singleton (n : ℕ) (hn : 1 ≤ n) (x : EuclideanSpace ℝ (Fin n)) :
     Manifold.riemannianVolume (𝓡 n) (EuclideanSpace ℝ (Fin n)) {x} = 0 := by
   rw [Manifold.riemannianVolume.eq_1, finrank_euclideanSpace_fin,
-    Manifold.normalizedHausdorffMeasure.eq_1, MeasureTheory.Measure.smul_apply]
+    Manifold.normalizedHausdorffMeasure.eq_1, smul_apply]
   have hnpos : 0 < n := lt_of_lt_of_le Nat.zero_lt_one hn
   have hd : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr hnpos
   have := MeasureTheory.Measure.nullSingletonClass_hausdorff (EuclideanSpace ℝ (Fin n)) hd

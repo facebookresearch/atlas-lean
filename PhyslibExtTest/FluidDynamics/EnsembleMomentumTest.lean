@@ -91,7 +91,7 @@ lemma twoScenario_reynoldsStress (τ : ℝ) (y : Fin 2 → ℝ) :
       ∀ j i, reynoldsStress twoScenarioMeasure twoScenarioVelocity τ y j i = 1 := by
   have hprob : IsProbabilityMeasure twoScenarioMeasure := by
     constructor
-    simp only [twoScenarioMeasure, Measure.smul_apply, Measure.add_apply, measure_univ,
+    simp only [twoScenarioMeasure, smul_apply, add_apply, measure_univ,
       smul_eq_mul]
     rw [one_add_one_eq_two]
     exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)

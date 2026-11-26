@@ -85,8 +85,8 @@ private theorem proj_comm_of_invariant (n m : ℕ)
     (A : Matrix (Fin n) (Fin n) ℂ) (hA : A ∈ S) :
     K.starProjection.toLinearMap ∘ₗ ampOp n m A
       = ampOp n m A ∘ₗ K.starProjection.toLinearMap := by
-  haveI := FiniteDimensional.complete ℂ (PiLp 2 fun _ : Fin m => EuclideanSpace ℂ (Fin n))
-  haveI := FiniteDimensional.complete ℂ (↥K)
+  haveI := FiniteDimensional.completeSpace ℂ (PiLp 2 fun _ : Fin m => EuclideanSpace ℂ (Fin n))
+  haveI := FiniteDimensional.completeSpace ℂ (↥K)
   haveI := Submodule.HasOrthogonalProjection.ofCompleteSpace K
   have hPz : ∀ z ∈ Kᗮ, K.starProjection.toLinearMap z = 0 := by
     intro z hz

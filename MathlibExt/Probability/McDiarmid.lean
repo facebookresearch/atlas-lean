@@ -51,8 +51,8 @@ private lemma hoeffding_fin
     set μ : MeasureTheory.Measure α :=
       ∑ x : α, ENNReal.ofReal (p x) • MeasureTheory.Measure.dirac x with hμdef
     have hμuniv : μ Set.univ = 1 := by
-      rw [hμdef, MeasureTheory.Measure.finsetSum_apply]
-      simp only [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.dirac_apply,
+      rw [hμdef, sum_apply]
+      simp only [smul_apply, MeasureTheory.Measure.dirac_apply,
         Set.indicator_univ, Pi.one_apply, smul_eq_mul, mul_one]
       rw [← ENNReal.ofReal_sum_of_nonneg (fun x _ => hp_nonneg x), hp_sum,
         ENNReal.ofReal_one]

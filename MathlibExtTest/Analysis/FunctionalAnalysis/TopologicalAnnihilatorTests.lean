@@ -53,7 +53,7 @@ private theorem fst_notMem_xAxis_annihilator :
 
 /-- The `x`-axis is closed, being finite-dimensional. -/
 private theorem xAxis_closed : IsClosed (xAxis : Set (ℝ × ℝ)) :=
-  Submodule.closed_of_finiteDimensional xAxis
+  Submodule.isClosed_of_finiteDimensional xAxis
 
 /-- **Bipolar theorem on the `x`-axis:** the double annihilator of the
 `x`-axis is the `x`-axis itself. -/

@@ -120,7 +120,7 @@ theorem laplaceMeasure_le_smul {b : ℝ} (hb : 0 < b) (m m' : ℝ) :
   rw [Measure.le_iff]
   intro S hS
   simp only [laplaceMeasure]
-  rw [Measure.smul_apply, smul_eq_mul, withDensity_apply _ hS,
+  rw [smul_apply, smul_eq_mul, withDensity_apply _ hS,
     withDensity_apply _ hS, ← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
   refine lintegral_mono fun z ↦ ?_
   rw [← ENNReal.ofReal_mul (Real.exp_pos _).le]

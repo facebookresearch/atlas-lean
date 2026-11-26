@@ -739,7 +739,7 @@ theorem lipschitzWith_constMul (c : ℝ) :
           rw [edist_dist, edist_dist, Real.dist_eq, Real.dist_eq, ← mul_sub, abs_mul,
             ENNReal.ofReal_mul (abs_nonneg c)]
           congr 1
-          rw [← Real.norm_eq_abs, ofReal_norm, enorm_eq_nnnorm]
+          rw [← Real.norm_eq_abs, ofReal_norm, eNorm_eq_nnNorm]
       _ ≤ (max 1 ‖c‖₊ : ℝ≥0) * max (⨆ t, edist (φ t) t) (⨆ t, edist (f t) (g (φ t))) :=
           mul_le_mul hc ((le_iSup (fun t => edist (f t) (g (φ t))) t).trans (le_max_right _ _))
             (by simp) (by simp)

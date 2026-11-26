@@ -72,7 +72,7 @@ lemma wmeas_real {w : α → ℝ} (hw : ∀ a, 0 ≤ w a) (S : Set α) :
     (wmeas w).real S = ∑ a, S.indicator w a := by
   classical
   rw [measureReal_def, wmeas, Measure.coe_finsetSum, Finset.sum_apply]
-  simp only [Measure.smul_apply, smul_eq_mul]
+  simp only [smul_apply, smul_eq_mul]
   rw [ENNReal.toReal_sum fun a _ => ENNReal.mul_ne_top ENNReal.ofReal_ne_top
       (measure_ne_top _ _)]
   refine Finset.sum_congr rfl fun a _ => ?_

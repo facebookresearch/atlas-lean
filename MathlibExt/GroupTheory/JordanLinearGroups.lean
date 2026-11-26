@@ -803,7 +803,7 @@ private theorem jl_frobenius_step (n : ℕ)
     (hcomm : x * ⁅x, s⁆ = ⁅x, s⁆ * x) :
     x * s = s * x := by
   have : CompleteSpace (Matrix (Fin n) (Fin n) ℂ) :=
-    FiniteDimensional.complete ℂ (Matrix (Fin n) (Fin n) ℂ)
+    FiniteDimensional.completeSpace ℂ (Matrix (Fin n) (Fin n) ℂ)
   have hxfin : IsOfFinOrder (⟨x, hxG⟩ : ↥G) := isOfFinOrder_of_finite _
   have hmpos : 0 < orderOf (⟨x, hxG⟩ : ↥G) := hxfin.orderOf_pos
   have hxpow : x ^ orderOf (⟨x, hxG⟩ : ↥G) = 1 := by

@@ -60,7 +60,7 @@ lemma expChar_memLp {d : ℕ} (Omega : Set (EuclideanSpace ℝ (Fin d)))
     (p : ℝ≥0∞) (hp0 : p ≠ 0) (hp_top : p ≠ ⊤) :
     MemLp (fun x => expChar lam x) p (volume.restrict Omega) := by
   have h_enorm_one : ∀ x, ‖expChar (lam:=lam) x‖ₑ = 1 := by
-    intro x; rw [enorm_eq_nnnorm]
+    intro x; rw [eNorm_eq_nnNorm]
     have hnn : ‖expChar lam x‖₊ = 1 := by
       rw [← NNReal.coe_inj]; simp [expChar_norm]
     rw [hnn, ENNReal.coe_one]

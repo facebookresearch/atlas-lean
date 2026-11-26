@@ -48,7 +48,7 @@ theorem binaryOffspring_isProbabilityMeasure (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
   have hdirac2 : Measure.dirac (2 : ℕ) Set.univ = 1 :=
     Measure.dirac_apply_of_mem (Set.mem_univ 2)
   unfold binaryOffspring
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, hdirac0, hdirac2,
+  rw [add_apply, smul_apply, smul_apply, hdirac0, hdirac2,
     smul_eq_mul, smul_eq_mul, mul_one, mul_one,
     ← ENNReal.ofReal_add (show (0 : ℝ) ≤ 1 - p by linarith) hp0]
   have h1 : (1 : ℝ) - p + p = 1 := by ring
@@ -62,7 +62,7 @@ theorem binaryOffspring_apply_zero :
   have h20 : Measure.dirac (2 : ℕ) ({0} : Set ℕ) = 0 :=
     (dirac_eq_zero_iff_notMem (MeasurableSet.singleton 0)).mpr (by simp)
   unfold binaryOffspring
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, h00, h20,
+  rw [add_apply, smul_apply, smul_apply, h00, h20,
     smul_eq_mul, smul_eq_mul, mul_one, mul_zero, add_zero]
 
 /-- Mass at `2`. -/
@@ -73,7 +73,7 @@ theorem binaryOffspring_apply_two :
   have h22 : Measure.dirac (2 : ℕ) ({2} : Set ℕ) = 1 :=
     Measure.dirac_apply_of_mem (by simp)
   unfold binaryOffspring
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, h02, h22,
+  rw [add_apply, smul_apply, smul_apply, h02, h22,
     smul_eq_mul, smul_eq_mul, mul_zero, mul_one, zero_add]
 
 /-- No mass at `1`, so the `ν {1} ≠ 1` side condition of
@@ -85,7 +85,7 @@ theorem binaryOffspring_apply_one :
   have h21 : Measure.dirac (2 : ℕ) ({1} : Set ℕ) = 0 :=
     (dirac_eq_zero_iff_notMem (MeasurableSet.singleton 1)).mpr (by simp)
   unfold binaryOffspring
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, h01, h21,
+  rw [add_apply, smul_apply, smul_apply, h01, h21,
     smul_eq_mul, smul_eq_mul, mul_zero, mul_zero, add_zero]
 
 theorem binaryOffspring_one_ne_one :
@@ -103,7 +103,7 @@ theorem binaryOffspring_apply_of_ne (n : ℕ) (h0 : n ≠ 0) (h2 : n ≠ 2) :
     (dirac_eq_zero_iff_notMem (MeasurableSet.singleton n)).mpr
       (by simpa using Ne.symm h2)
   unfold binaryOffspring
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, h0n, h2n,
+  rw [add_apply, smul_apply, smul_apply, h0n, h2n,
     smul_eq_mul, smul_eq_mul, mul_zero, mul_zero, add_zero]
 
 /-! ## PGF identity: `f(s) = 1 - p + p * s ^ 2` -/
@@ -115,10 +115,10 @@ theorem pgf_binaryOffspring (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (s : ℝ) :
     pgf id (binaryOffspring p) s = 1 - p + p * s ^ 2 := by
   have h0 : Integrable (fun ω : ℕ => s ^ id ω)
       (ENNReal.ofReal (1 - p) • Measure.dirac (0 : ℕ)) :=
-    (integrable_dirac enorm_lt_top).smul_measure ENNReal.ofReal_ne_top
+    (integrable_dirac eNorm_lt_top).smul_measure ENNReal.ofReal_ne_top
   have h2 : Integrable (fun ω : ℕ => s ^ id ω)
       (ENNReal.ofReal p • Measure.dirac (2 : ℕ)) :=
-    (integrable_dirac enorm_lt_top).smul_measure ENNReal.ofReal_ne_top
+    (integrable_dirac eNorm_lt_top).smul_measure ENNReal.ofReal_ne_top
   have h0r : 0 ≤ (1 : ℝ) - p := by linarith
   show (∫ ω, s ^ id ω ∂binaryOffspring p) = 1 - p + p * s ^ 2
   unfold binaryOffspring

@@ -590,7 +590,7 @@ private lemma odeMaximalGlobalNotBddAbove
     · intro t ht
       exact (m.solution.hasDerivAt t (hIco ht)).hasDerivWithinAt
     · intro t ht
-      rw [← NNReal.coe_le_coe, coe_nnnorm]
+      rw [← NNReal.coe_le_coe, coe_nnNorm]
       change ‖f t (m.x t)‖ ≤ (L : ℝ) * B + M
       calc
         ‖f t (m.x t)‖ = ‖(f t (m.x t) - f t 0) + f t 0‖ := by rw [sub_add_cancel]

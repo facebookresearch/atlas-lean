@@ -255,16 +255,16 @@ theorem algHom_bijective {R : Type*} [CommRing R] [IsDomain R] {f : R[X]} (hf : 
   have hSfin : S.Finite := by
     apply (((f.map (algebraMap R (AdjoinRoot f))).roots.toFinset).finite_toSet).subset
     intro x hx
-    simp only [hS, Set.mem_setOf_eq] at hx
+    simp only [hS, Set.mem_ofPred_eq] at hx
     simp only [Finset.mem_coe, Multiset.mem_toFinset]
     rw [mem_roots ((hf.map _).ne_zero), IsRoot, eval_map, ← aeval_def]
     exact hx
   have hmaps : Set.MapsTo φ S S := fun x hx => by
-    simp only [hS, Set.mem_setOf_eq] at hx ⊢
+    simp only [hS, Set.mem_ofPred_eq] at hx ⊢
     rw [aeval_algHom_apply, hx, map_zero]
   have hbij := (hSfin.injOn_iff_bijOn_of_mapsTo hmaps).mp hinj.injOn
   have hroot : AdjoinRoot.root f ∈ S := by
-    simp only [hS, Set.mem_setOf_eq, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self]
+    simp only [hS, Set.mem_ofPred_eq, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self]
   obtain ⟨a, -, ha⟩ := hbij.surjOn hroot
   have hrange : φ.range = ⊤ := by
     rw [eq_top_iff, ← AdjoinRoot.adjoinRoot_eq_top, Algebra.adjoin_le_iff, Set.singleton_subset_iff]
@@ -374,14 +374,14 @@ theorem finite_algEquiv : Finite (W' W k ≃ₐ[W] W' W k) := by
   have hSfin : S.Finite := by
     apply ((((f W k).map (algebraMap W (W' W k))).roots.toFinset).finite_toSet).subset
     intro x hx
-    simp only [hS, Set.mem_setOf_eq] at hx
+    simp only [hS, Set.mem_ofPred_eq] at hx
     simp only [Finset.mem_coe, Multiset.mem_toFinset]
     rw [mem_roots (((monic_f W k).map _).ne_zero), IsRoot, eval_map, ← aeval_def]
     exact hx
   haveI : Finite S := hSfin.to_subtype
   refine Finite.of_injective (fun γ : W' W k ≃ₐ[W] W' W k =>
     (⟨γ (AdjoinRoot.root (f W k)), ?_⟩ : S)) ?_
-  · simp only [hS, Set.mem_setOf_eq]
+  · simp only [hS, Set.mem_ofPred_eq]
     rw [aeval_algHom_apply, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self, map_zero]
   · intro γ₁ γ₂ h
     simp only [Subtype.mk.injEq] at h
@@ -400,10 +400,10 @@ noncomputable def rootsW' : Set (W' W k) := {x | aeval x (f W k) = 0}
 
 theorem mem_rootsW'_iff (x : W' W k) :
     x ∈ rootsW' W k ↔ ((f W k).map (algebraMap W (W' W k))).IsRoot x := by
-  rw [rootsW', Set.mem_setOf_eq, IsRoot, eval_map, ← aeval_def]
+  rw [rootsW', Set.mem_ofPred_eq, IsRoot, eval_map, ← aeval_def]
 
 theorem root_mem_rootsW' : AdjoinRoot.root (f W k) ∈ rootsW' W k := by
-  simp only [rootsW', Set.mem_setOf_eq, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self]
+  simp only [rootsW', Set.mem_ofPred_eq, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self]
 
 theorem rootsW'_finite : (rootsW' W k).Finite := by
   apply ((((f W k).map (algebraMap W (W' W k))).roots.toFinset).finite_toSet).subset
@@ -426,7 +426,7 @@ theorem autOfRoot_root (a : rootsW' W k) :
 
 noncomputable def autEquivRoots : (W' W k ≃ₐ[W] W' W k) ≃ rootsW' W k where
   toFun γ := ⟨γ (AdjoinRoot.root (f W k)), by
-    simp only [rootsW', Set.mem_setOf_eq]
+    simp only [rootsW', Set.mem_ofPred_eq]
     rw [aeval_algHom_apply, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self, map_zero]⟩
   invFun a := autOfRoot W k a
   left_inv γ := by
@@ -474,7 +474,7 @@ theorem natCard_rootsW'_eq [IsAdicComplete (maximalIdeal (W' W k)) (W' W k)] :
   have hbij : Set.BijOn (residue (W' W k)) (rootsW' W k)
       {β | (((f W k).map (algebraMap W (W' W k))).map (residue (W' W k))).IsRoot β} :=
     ⟨fun a ha => by
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       rw [IsRoot, eval_map_apply, ((mem_rootsW'_iff W k a).mp ha).eq_zero, map_zero],
      rootsW'_residue_injective W k, rootsW'_residue_surjOn W k⟩
   exact Nat.card_congr hbij.equiv
@@ -489,7 +489,7 @@ theorem natCard_roots_residue_eq [IsGalois (ResidueField W) k]
       (((f W k).map (algebraMap W (W' W k))).map (residue (W' W k))).IsRoot β} =
       (fbar W k).rootSet (ResidueField (W' W k)) := by
     ext β
-    rw [map_map_f, Set.mem_setOf_eq, mem_rootSet, IsRoot, eval_map, ← aeval_def]
+    rw [map_map_f, Set.mem_ofPred_eq, mem_rootSet, IsRoot, eval_map, ← aeval_def]
     exact ⟨fun h => ⟨(fbar_monic W k).ne_zero, h⟩, fun h => h.2⟩
   rw [h1]
   have h2 : Nat.card ((fbar W k).rootSet (ResidueField (W' W k))) =

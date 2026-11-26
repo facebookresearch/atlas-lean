@@ -207,7 +207,7 @@ theorem ae_resample_mem (x : ℕ → α) {S : Set α} (hS : MeasurableSet S) {n 
   · have hn : n ≠ 0 := by omega
     have hemp : ∀ᵐ o ∂empirical x n, o ∈ S := by
       rw [ae_iff, empirical_of_ne_zero hn]
-      simp only [Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply, smul_eq_mul]
+      simp only [smul_apply, Measure.coe_finsetSum, Finset.sum_apply, smul_eq_mul]
       rw [Finset.sum_eq_zero fun m hm => ?_, mul_zero]
       rw [show {a | a ∉ S} = Sᶜ from rfl, Measure.dirac_apply' _ hS.compl]
       simp [hx m (Finset.mem_range.1 hm)]

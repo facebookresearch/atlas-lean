@@ -142,7 +142,7 @@ instance isProbabilityMeasure_poissonPointProcess :
     IsProbabilityMeasure (poissonPointProcess μ) := by
   constructor
   rw [poissonPointProcess, Measure.sum_apply _ MeasurableSet.univ]
-  simp only [Measure.smul_apply, smul_eq_mul]
+  simp only [smul_apply, smul_eq_mul]
   simp_rw [Measure.map_apply (measurable_countingMeasure _) MeasurableSet.univ,
     preimage_univ, Measure.pi_univ, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
   exact tsum_coeff_mul_pow μ
@@ -159,7 +159,7 @@ private theorem countingMeasure_apply_nat {n : ℕ}
     (x : Fin n → E) {B : Set E} [DecidablePred (· ∈ B)] (hB : MeasurableSet B) :
     countingMeasure x B = ((∑ i, if x i ∈ B then 1 else 0 : ℕ) : ℝ≥0∞) := by
   classical
-  simp only [countingMeasure, Measure.finsetSum_apply, Nat.cast_sum]
+  simp only [countingMeasure, sum_apply, Nat.cast_sum]
   apply Finset.sum_congr rfl
   intro i _
   rw [Measure.dirac_apply' _ hB]
@@ -466,7 +466,7 @@ theorem integral_exp_neg {f : E → ℝ≥0} (hf : Measurable f) :
 
 private theorem countingMeasure_univ {n : ℕ}
     (x : Fin n → E) : countingMeasure x univ = n := by
-  simp [countingMeasure, Measure.finsetSum_apply]
+  simp [countingMeasure, sum_apply]
 
 private theorem countingMeasure_split {n : ℕ}
     (x : Fin (n + 1) → E) (i : Fin (n + 1)) :

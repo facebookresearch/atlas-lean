@@ -269,7 +269,7 @@ private theorem completeSpace_fractionRing [IsAdicComplete (maximalIdeal W) W] :
       (mt (Valuation.restrict_eq_zero_iff _).mp (hvπ0 k))) trivial
     refine ⟨N, fun m hm n hn => ?_⟩
     have h := hN m hm n hn
-    simp only [Set.mem_setOf_eq, Units.val_mk0] at h
+    simp only [Set.mem_ofPred_eq, Units.val_mk0] at h
     rwa [Valuation.restrict_lt_iff] at h
   choose N hN using hu'
   let M : ℕ → ℕ := fun k => (Finset.range (k + 1)).sup N
@@ -297,7 +297,7 @@ private theorem completeSpace_fractionRing [IsAdicComplete (maximalIdeal W) W] :
   obtain ⟨k, hk⟩ := exists_pow_lt_withZero ((Valuation.ne_zero_iff _).mpr hπ0) hvπ1 hγ0
   rw [mem_atTop_sets]
   refine ⟨M k, fun n hn => hγ ?_⟩
-  simp only [Set.mem_setOf_eq, Valuation.restrict_lt_iff_lt_embedding]
+  simp only [Set.mem_ofPred_eq, Valuation.restrict_lt_iff_lt_embedding]
   have e1 : u n - (u (M 0) + algebraMap W (FractionRing W) Lim) =
       (u n - u (M k)) + algebraMap W (FractionRing W) (y k - Lim) := by
     rw [map_sub, hy]; ring

@@ -56,7 +56,7 @@ fixed `p^k`). -/
 def existsNonlinearLocallyFiniteSimpleBoundedPSubgroups : Prop :=
   ∃ (G : Type) (_ : Group G), Infinite G ∧ IsSimpleGroup G ∧ IsLocallyFinite G ∧ ¬ IsLinear G ∧
     ∃ p : ℕ, p.Prime ∧
-      ((∃ d : ℕ, ∀ P : Subgroup G, IsPGroup p P → derivedSeries P d = ⊥) ∨
+      ((∃ d : ℕ, ∀ P : Subgroup G, IsPGroup p P → Subgroup.derivedSeries P d = ⊥) ∨
         ∃ k : ℕ, ∀ P : Subgroup G, IsPGroup p P → ∀ x ∈ P, x ^ (p ^ k) = 1)
 
 /--

@@ -210,11 +210,11 @@ theorem integral_itoIntegralL2_exp_mul {Ω : Type*} {mΩ : MeasurableSpace Ω} {
         ((hJm t).integrable_mul (hJm t)).aestronglyMeasurable]
       congr 1
       refine lintegral_congr fun ω ↦ ?_
-      rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs, sq]
+      rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs, sq]
     have h2 : ∀ ω : Ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) =
         ∫⁻ u in Set.Ioc (0 : ℝ) t, ENNReal.ofReal (exp (2 * θ * u)) := fun ω ↦ by
       refine setLIntegral_congr_fun measurableSet_Ioc fun u hu ↦ ?_
-      simp only [H, Real.coe_toNNReal _ hu.1.le, Real.enorm_eq_ofReal_abs,
+      simp only [H, Real.coe_toNNReal _ hu.1.le, Real.eNorm_eq_ofReal_abs,
         abs_of_pos (exp_pos _), ← ENNReal.ofReal_pow (exp_pos _).le, sq, ← Real.exp_add]
       ring_nf
     have hcont : Continuous fun u : ℝ ↦ exp (2 * θ * u) := by fun_prop

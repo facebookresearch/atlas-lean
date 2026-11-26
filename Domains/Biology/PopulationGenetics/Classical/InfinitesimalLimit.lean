@@ -250,7 +250,7 @@ private lemma integrable_mendelLaw (f : ℝ → ℝ) (g₁ g₂ : ℕ) : Integra
   refine ((Integrable.smul_measure ?_ ENNReal.ofReal_ne_top).add_measure
     (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top)).add_measure
     (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top) <;>
-  exact integrable_dirac enorm_lt_top
+  exact integrable_dirac eNorm_lt_top
 
 /-- Integrals against the Mendelian offspring law: for `g₁, g₂ ≤ 2`, `pᵢ = gᵢ / 2` and every
 `f : ℝ → ℝ`, `∫ f = (1 - p₁) (1 - p₂) f 0 + (p₁ (1 - p₂) + (1 - p₁) p₂) f 1 + p₁ p₂ f 2`. -/
@@ -264,7 +264,7 @@ theorem integral_mendelLaw (f : ℝ → ℝ) {g₁ g₂ : ℕ} (h₁ : g₁ ≤ 
   have hg₁ : (0 : ℝ) ≤ g₁ := Nat.cast_nonneg _
   have hg₂ : (0 : ℝ) ≤ g₂ := Nat.cast_nonneg _
   have hi : ∀ a : ℝ, ∀ c : ℝ≥0∞, c ≠ ⊤ → Integrable f (c • Measure.dirac a) :=
-    fun a c hc => (integrable_dirac enorm_lt_top).smul_measure hc
+    fun a c hc => (integrable_dirac eNorm_lt_top).smul_measure hc
   unfold mendelLaw
   rw [integral_add_measure ((hi _ _ ENNReal.ofReal_ne_top).add_measure (hi _ _ ENNReal.ofReal_ne_top))
       (hi _ _ ENNReal.ofReal_ne_top),

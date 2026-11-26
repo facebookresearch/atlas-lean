@@ -152,7 +152,7 @@ noncomputable def gibbsMix (a b : ℝ≥0∞) (μm μp : Measure (ConfigSpace E)
 @[simp] lemma gibbsMix_apply (a b : ℝ≥0∞) (μm μp : Measure (ConfigSpace E))
     (s : Set (ConfigSpace E)) :
     gibbsMix a b μm μp s = a * μm s + b * μp s := by
-  simp [gibbsMix, Measure.add_apply, Measure.smul_apply]
+  simp [gibbsMix, add_apply, smul_apply]
 
 @[simp] lemma gibbsMix_one_zero (μm μp : Measure (ConfigSpace E)) :
     gibbsMix 1 0 μm μp = μm := by simp [gibbsMix]

@@ -54,19 +54,19 @@ entry is divisible by `N`. -/
 def Gamma0Away : Subgroup (SL(2, ZAway q)) where
   carrier := { g | (N : ZAway q) ∣ g 1 0 }
   one_mem' := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     change (N : ZAway q) ∣ (1 : Matrix (Fin 2) (Fin 2) (ZAway q)) 1 0
     rw [Matrix.one_apply_ne (show (1 : Fin 2) ≠ 0 by decide)]
     exact dvd_zero _
   mul_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq] at ha hb ⊢
+    simp only [Set.mem_ofPred_eq] at ha hb ⊢
     change (N : ZAway q) ∣ (a.1 * b.1) 1 0
     rw [(Matrix.two_mul_expl a.1 b.1).2.2.1]
     exact dvd_add (ha.mul_right _) (hb.mul_left _)
   inv_mem' := by
     intro a ha
-    simp only [Set.mem_setOf_eq] at ha ⊢
+    simp only [Set.mem_ofPred_eq] at ha ⊢
     rw [SpecialLinearGroup.SL2_inv_expl a]
     simp only [SpecialLinearGroup.coe_mk]
     exact dvd_neg.mpr ha

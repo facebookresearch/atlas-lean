@@ -132,20 +132,20 @@ private theorem ofReal_sub_mul_lintegral_upcrossings_reversed_le {g : Ω → ℝ
     simp at h1
   have hconst : eLpNorm (fun _ : Ω => a) 1 μ ≤ ENNReal.ofReal |a| := by
     rw [eLpNorm_const a one_ne_zero hμ0, measure_univ, ENNReal.one_rpow, mul_one,
-      Real.enorm_eq_ofReal_abs]
+      Real.eNorm_eq_ofReal_abs]
   calc ∫⁻ ω, ENNReal.ofReal ((F K ω - a)⁺) ∂μ
       ≤ ∫⁻ ω, ‖F K ω - a‖ₑ ∂μ := by
         apply lintegral_mono
         intro ω
         show ENNReal.ofReal ((F K ω - a)⁺) ≤ ‖F K ω - a‖ₑ
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         apply ENNReal.ofReal_le_ofReal
         by_cases h : 0 ≤ F K ω - a
         · rw [posPart_eq_self.2 h, abs_of_nonneg h]
         · rw [posPart_eq_zero.2 (le_of_not_ge h), abs_of_neg (lt_of_not_ge h)]
           exact neg_nonneg.mpr (le_of_not_ge h)
     _ = eLpNorm (F K - fun _ => a) 1 μ := by
-        rw [eLpNorm_one_eq_lintegral_enorm hmeas]
+        rw [eLpNorm_one_eq_lintegral_eNorm hmeas]
         rfl
     _ ≤ eLpNorm (F K) 1 μ + eLpNorm (fun _ => a) 1 μ :=
         eLpNorm_sub_le le_rfl
@@ -439,7 +439,7 @@ private theorem condExp_antitone_limit_eq {g h : Ω → ℝ} (m : ℕ → Measur
     have hcongr : ∀ n, ∫⁻ x, ‖(μ[g | m n]) x - h x‖ₑ ∂μ
         = eLpNorm ((μ[g | m n]) - h) 1 μ := by
       intro n
-      exact (eLpNorm_one_eq_lintegral_enorm
+      exact (eLpNorm_one_eq_lintegral_eNorm
         (((stronglyMeasurable_condExp (f := g) (m := m n)).aestronglyMeasurable.mono
           (hm_le n)).sub
           (hh_meas.mono (le_trans (iInf_le _ 0) (hm_le 0))).aestronglyMeasurable)).symm
@@ -499,7 +499,7 @@ private theorem condExp_antitone_ae_tendsto {g : Ω → ℝ} (m : ℕ → Measur
     have hlim' : liminf (fun n => (Real.nnabs (f n ω) : ℝ≥0∞)) atTop ≠ ⊤ := by
       have heq : (fun n => (Real.nnabs (f n ω) : ℝ≥0∞)) = (fun n => ‖f n ω‖ₑ) := by
         funext n
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         exact (ENNReal.ofReal_eq_coe_nnreal (abs_nonneg _)).symm
       rw [heq]
       exact (lt_top_iff_ne_top.mp hlim)
@@ -545,7 +545,7 @@ private theorem condExp_antitone_ae_tendsto {g : Ω → ℝ} (m : ℕ → Measur
   have hbound : eLpNorm (fun ω => limUnder atTop (fun n => f n ω)) 1 μ ≤ eLpNorm g 1 μ := by
     have hmeas0 : AEStronglyMeasurable (fun ω => limUnder atTop (fun n => f n ω)) μ :=
       hmeas_inf.mono (le_trans (iInf_le _ 0) (hm0 0)) |>.aestronglyMeasurable
-    rw [eLpNorm_one_eq_lintegral_enorm hmeas0]
+    rw [eLpNorm_one_eq_lintegral_eNorm hmeas0]
     have h1 : ∫⁻ ω, ‖limUnder atTop (fun n => f n ω)‖ₑ ∂μ
         ≤ ∫⁻ ω, liminf (fun n => ‖f n ω‖ₑ) atTop ∂μ := by
       apply lintegral_mono_ae
@@ -567,7 +567,7 @@ private theorem condExp_antitone_ae_tendsto {g : Ω → ℝ} (m : ℕ → Measur
       have hae : AEStronglyMeasurable (μ[g | m n]) μ :=
         (stronglyMeasurable_condExp (f := g) (m := m n)).aestronglyMeasurable.mono
           (hm0 n)
-      rw [← eLpNorm_one_eq_lintegral_enorm hae]
+      rw [← eLpNorm_one_eq_lintegral_eNorm hae]
       exact eLpNorm_condExp_le_eLpNorm g le_rfl
   exact memLp_one_iff_integrable.mp (lt_of_le_of_lt hbound (lt_top_iff_ne_top.mpr hgLp))
 

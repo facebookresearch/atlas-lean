@@ -128,7 +128,7 @@ noncomputable def divergenceLaw (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : �
 theorem divergenceLaw_singleton (a : ι × ι) :
     divergenceLaw π s t {a} = ENNReal.ofReal (divergenceWeight π s t a) := by
   rw [divergenceLaw, Measure.coe_finsetSum, Finset.sum_apply]
-  simp only [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ (measurableSet_singleton a),
+  simp only [smul_apply, smul_eq_mul, Measure.dirac_apply' _ (measurableSet_singleton a),
     Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq' Finset.univ a, ite_eq_left (mem_univ a)]
 
@@ -137,7 +137,7 @@ theorem isProbabilityMeasure_divergenceLaw (hπ : ∀ i, 0 ≤ π i) (hπ1 : ∑
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (ht : 0 ≤ t) : IsProbabilityMeasure (divergenceLaw π s t) := by
   constructor
   rw [divergenceLaw, Measure.coe_finsetSum, Finset.sum_apply]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg fun a _ => divergenceWeight_nonneg hπ hs ht a,
     sum_divergenceWeight hπ hπ1 hs, ENNReal.ofReal_one]
 

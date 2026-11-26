@@ -72,12 +72,12 @@ example : ¬ UnnormalizedPositiveAssociation scaledDirac := by
   have hu := h Set.univ Set.univ MeasurableSet.univ MeasurableSet.univ
     (fun _ _ _ _ => Set.mem_univ _) (fun _ _ _ _ => Set.mem_univ _)
   norm_num [UnnormalizedPositiveAssociation, scaledDirac, Measure.real,
-    Measure.smul_apply] at hu
+    smul_apply] at hu
 
 /-- Total-mass normalization makes positive association invariant under this finite scaling. -/
 example : PositivelyAssociated scaledDirac := by
   intro A B hAm hBm _hA _hB
-  simp only [scaledDirac, Measure.real, Measure.smul_apply,
+  simp only [scaledDirac, Measure.real, smul_apply,
     Measure.dirac_apply' _ hAm, Measure.dirac_apply' _ hBm,
     Measure.dirac_apply' _ (hAm.inter hBm), Measure.dirac_apply' _ MeasurableSet.univ]
   by_cases hA : allOpen ∈ A <;> by_cases hB : allOpen ∈ B <;> simp [hA, hB]

@@ -46,7 +46,7 @@ example : MathlibExt.Probability.Finance.TwoAssetMinVariance.twoAssetVariance
     MeasureTheory.memLp_const 0
   have hμreal : ∀ ω : Fin 2, μ.real {ω} = 1/2 := by
     intro ω
-    simp [hμdef, MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.real_def,
+    simp [hμdef, smul_apply, MeasureTheory.Measure.real_def,
       smul_eq_mul]
   have hmean : ∫ ω, R₁ ω ∂μ = 1/2 := by
     rw [MeasureTheory.integral_fintype (hR₁.integrable one_le_two)]
@@ -129,7 +129,7 @@ example :
     MeasureTheory.MemLp.of_bound hR₂meas.aestronglyMeasurable 1 hR₂bdd
   have hμreal : ∀ ω : Fin 2, μAnti.real {ω} = 1 / 2 := by
     intro ω
-    simp [μAnti, MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.real_def,
+    simp [μAnti, smul_apply, MeasureTheory.Measure.real_def,
       smul_eq_mul]
   have hmean₁ : ∫ ω, r₁Anti ω ∂μAnti = 1 / 2 := by
     rw [MeasureTheory.integral_fintype (hR₁.integrable one_le_two)]
@@ -179,7 +179,7 @@ example :
       ite_true, ite_false]
     norm_num
   have hprob : MeasureTheory.IsProbabilityMeasure μAnti := ⟨by
-    simp [μAnti, MeasureTheory.Measure.smul_apply, smul_eq_mul,
+    simp [μAnti, smul_apply, smul_eq_mul,
       ENNReal.inv_mul_cancel]⟩
   have hcov : ProbabilityTheory.covariance r₁Anti r₂Anti μAnti = -1 / 4 := by
     rw [ProbabilityTheory.covariance_eq_sub hR₁ hR₂, hmean₁, hmean₂]

@@ -76,7 +76,7 @@ private theorem finite_setOf_intValuation_lt_one (d : 𝓞 K) (hd : d ≠ 0) :
   have h : {v : HeightOneSpectrum (𝓞 K) | v.intValuation d < 1} =
       {v : HeightOneSpectrum (𝓞 K) | v.asIdeal ∣ Ideal.span {d}} := by
     ext v
-    simp only [Set.mem_setOf_eq, intValuation_lt_one_iff_dvd]
+    simp only [Set.mem_ofPred_eq, intValuation_lt_one_iff_dvd]
   rw [h]
   exact Ideal.finite_factors (by rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]; exact hd)
 

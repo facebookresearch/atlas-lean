@@ -672,7 +672,7 @@ private lemma lil_ae_summable_tailTerm
     exact lil_tailTerm_integrable (hMeas j) ((hIdent j).integrable_iff.mpr hInt) δ j
   have hnorm : ∀ j, eLpNorm (f j) 1 μ = ENNReal.ofReal (∫ ω, f j ω ∂μ) := by
     intro j
-    rw [eLpNorm_one_eq_lintegral_enorm (hfInt j).aestronglyMeasurable]
+    rw [eLpNorm_one_eq_lintegral_eNorm (hfInt j).aestronglyMeasurable]
     calc
       ∫⁻ ω, ‖f j ω‖ₑ ∂μ = ∫⁻ ω, ENNReal.ofReal (f j ω) ∂μ := by
         apply lintegral_congr

@@ -58,7 +58,7 @@ This is Kourovka Notebook Problem 13.56 (A. Shalev; E. I. Khukhro). -/
 def derivedLengthBoundedByRankAndFixedPoints : Prop :=
   ∃ f : ℕ → ℕ → ℕ, ∀ (p : ℕ) (G : Type) [Group G] [Finite G], p.Prime → IsPGroup p G →
     ∀ r m : ℕ, SectionalRankLE G r → ∀ φ : G ≃* G, Nat.card {g : G // φ g = g} = m →
-      derivedSeries G (f r m) = ⊥
+      Subgroup.derivedSeries G (f r m) = ⊥
 
 /--
 **The derived length of a $p$-group is bounded by its sectional rank and the fixed points of an

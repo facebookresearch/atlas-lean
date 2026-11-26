@@ -49,12 +49,12 @@ def HasWeakMinNormal (G : Type) [Group G] : Prop :=
 /-- Kourovka 6.12(a) (D. I. Zaitsev): a metabelian group satisfying the weak minimal condition for
 normal subgroups is countable. -/
 def metabelianWeakMinNormalCountable : Prop :=
-  ∀ (G : Type) [Group G], derivedSeries G 2 = ⊥ → HasWeakMinNormal G → Countable G
+  ∀ (G : Type) [Group G], Subgroup.derivedSeries G 2 = ⊥ → HasWeakMinNormal G → Countable G
 
 /-- Kourovka 6.12(b) (D. I. Zaitsev): a torsion-free metabelian group satisfying the weak minimal
 condition for normal subgroups is minimax. -/
 def metabelianTorsionFreeWeakMinNormalMinimax : Prop :=
-  ∀ (G : Type) [Group G], derivedSeries G 2 = ⊥ → HasWeakMinNormal G →
+  ∀ (G : Type) [Group G], Subgroup.derivedSeries G 2 = ⊥ → HasWeakMinNormal G →
     (∀ g : G, g ≠ 1 → ¬ IsOfFinOrder g) → IsMinimax G
 
 /--

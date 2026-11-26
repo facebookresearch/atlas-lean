@@ -46,7 +46,7 @@ def boundedIndexSubgroupOfBoundedDerivedLength : Prop :=
   ∃ (f : ℕ → ℕ → ℕ → ℕ) (g : ℕ → ℕ), ∀ p n m : ℕ, p.Prime →
     ∀ (P : Type) [Group P] [Finite P], IsPGroup p P →
       ∀ φ : MulAut P, orderOf φ = p ^ n → Nat.card {x : P // φ x = x} = p ^ m →
-        ∃ H : Subgroup P, H.index ≤ f p n m ∧ derivedSeries H (g m) = ⊥
+        ∃ H : Subgroup P, H.index ≤ f p n m ∧ Subgroup.derivedSeries H (g m) = ⊥
 
 /--
 **Almost regular automorphisms of finite $p$-groups and derived length (Kourovka 14.96).** There

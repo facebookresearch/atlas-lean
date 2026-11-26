@@ -296,7 +296,7 @@ theorem exists_le_le_measure_univ_eq (μ ν : Measure Ω) [IsProbabilityMeasure 
   · calc μ.restrict s + ν.restrict sᶜ ≤ ν.restrict s + ν.restrict sᶜ :=
           add_le_add h.le_on le_rfl
       _ = ν := Measure.restrict_add_restrict_compl hs
-  · rw [Measure.add_apply, Measure.restrict_apply_univ, Measure.restrict_apply_univ,
+  · rw [add_apply, Measure.restrict_apply_univ, Measure.restrict_apply_univ,
       totalVariationDist_eq_of_isHahnDecomposition h, ← ENNReal.ofReal_toReal (measure_ne_top μ s),
       ← ENNReal.ofReal_toReal (measure_ne_top ν sᶜ), ← ENNReal.ofReal_add ENNReal.toReal_nonneg
         ENNReal.toReal_nonneg]

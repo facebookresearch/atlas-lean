@@ -302,7 +302,7 @@ open Classical in
 lemma mnarLaw_real {s : Set Latent} (hs : MeasurableSet s) :
     mnarLaw.real s = (if (⟨true, true, false⟩ : Latent) ∈ s then 1 else 0) +
       (if (⟨true, false, false⟩ : Latent) ∈ s then 1 else 0) := by
-  rw [mnarLaw, measureReal_def, Measure.add_apply, Measure.dirac_apply' _ hs,
+  rw [mnarLaw, measureReal_def, add_apply, Measure.dirac_apply' _ hs,
     Measure.dirac_apply' _ hs]
   simp only [Set.indicator_apply, Pi.one_apply]
   split_ifs <;> norm_num [ENNReal.toReal_add]

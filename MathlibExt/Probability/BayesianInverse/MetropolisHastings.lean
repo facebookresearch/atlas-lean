@@ -137,7 +137,7 @@ theorem mhKernel_apply (Q : Kernel U U) [IsMarkovKernel Q] {Φ : U → ℝ} (hΦ
     (u : U) {B : Set U} (hB : MeasurableSet B) :
     mhKernel Q Φ hΦ u B = ∫⁻ v in B, mhAcceptPotential Φ u v ∂Q u +
       B.indicator (fun u ↦ ∫⁻ w, (1 - mhAcceptPotential Φ u w) ∂Q u) u := by
-  rw [mhKernel, add_apply, Measure.add_apply,
+  rw [mhKernel, add_apply, add_apply,
     Kernel.withDensity_apply _ (measurable_mhAcceptPotential hΦ),
     Kernel.withDensity_apply _ (show Measurable (Function.uncurry
       fun u (_ : U) ↦ ∫⁻ w, (1 - mhAcceptPotential Φ u w) ∂Q u) from

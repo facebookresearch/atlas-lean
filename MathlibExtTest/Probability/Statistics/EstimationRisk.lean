@@ -224,7 +224,7 @@ example (Ω : Type*) [MeasurableSpace Ω] [MeasurableSingletonClass Ω] (a : Ω)
     ¬ IsProbabilityMeasure ((∞ : ℝ≥0∞) • Measure.dirac a) := by
   intro h
   have h1 := h.measure_univ
-  rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ a),
+  rw [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ a),
     smul_eq_mul, mul_one] at h1
   exact ENNReal.one_ne_top h1.symm
 

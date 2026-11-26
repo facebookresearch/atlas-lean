@@ -46,7 +46,7 @@ noncomputable def unif4 : Measure (Fin 4) :=
 
 instance : IsProbabilityMeasure unif4 := by
   constructor
-  rw [unif4, Measure.smul_apply, Measure.count_univ, smul_eq_mul]
+  rw [unif4, smul_apply, Measure.count_univ, smul_eq_mul]
   simp [ENat.card_eq_coe_fintype_card]
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
 
@@ -206,7 +206,7 @@ noncomputable def unif6 : Measure (Fin 6) :=
 
 instance : IsProbabilityMeasure unif6 := by
   constructor
-  rw [unif6, Measure.smul_apply, Measure.count_univ, smul_eq_mul]
+  rw [unif6, smul_apply, Measure.count_univ, smul_eq_mul]
   simp [ENat.card_eq_coe_fintype_card]
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
 

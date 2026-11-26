@@ -131,7 +131,7 @@ example : error ((1/2 : ℝ≥0∞) • Measure.dirac ((false : Bool), true) +
     simp
   have hnmem : ((false : Bool), false) ∉ {p : Bool × Bool | (fun _ : Bool => false) p.1 ≠ p.2} := by
     simp
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply,
+  rw [add_apply, smul_apply, smul_apply,
     Measure.dirac_apply, Measure.dirac_apply,
     Set.indicator_of_mem hmem, Set.indicator_of_notMem hnmem]
   simp
@@ -146,7 +146,7 @@ example : optimalError ((1/2 : ℝ≥0∞) • Measure.dirac ((false : Bool), tr
     simp
   have hnmem : ((false : Bool), false) ∉ {p : Bool × Bool | (fun _ : Bool => false) p.1 ≠ p.2} := by
     simp
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply,
+  rw [add_apply, smul_apply, smul_apply,
     Measure.dirac_apply, Measure.dirac_apply,
     Set.indicator_of_mem hmem, Set.indicator_of_notMem hnmem]
   simp

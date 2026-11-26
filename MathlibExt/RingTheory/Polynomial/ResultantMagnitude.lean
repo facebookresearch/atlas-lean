@@ -126,7 +126,7 @@ theorem map_A_eq_B (P : ℚ[X]) (hP : P.Monic) (n : ℕ) : (A P n).map (algebraM
   apply eq_of_infinite_eval_eq
   apply Set.Infinite.mono (s := Set.range (algebraMap ℚ ℂ))
   · rintro _ ⟨c, rfl⟩
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [eval_map, eval₂_at_apply, eval_A, cast_resultant_X_pow_add_C P hP, eval_B]
   · exact Set.infinite_range_of_injective (algebraMap ℚ ℂ).injective
 
@@ -233,7 +233,7 @@ theorem leadingCoeff_comp_neg_X_nonneg (F A : ℚ[X]) (hF : 0 < F.degree) (hA : 
     obtain ⟨c, hcS, hcb⟩ := hS (-b)
     exact ⟨-c, by simpa using hcS, by omega⟩
   · intro c hc hAc
-    simp only [Set.mem_setOf_eq] at hc
+    simp only [Set.mem_ofPred_eq] at hc
     rw [eval_comp, eval_neg, eval_X] at hAc ⊢
     rw [← Int.cast_neg] at hAc ⊢
     exact h (-c) hc hAc

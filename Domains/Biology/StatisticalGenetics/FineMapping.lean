@@ -261,7 +261,7 @@ omit [DecidableEq n] in
 /-- `olsVar σ2 x = σ² / xᵀx` as a real number. -/
 private theorem coe_olsVar (σ2 : ℝ≥0) (x : EuclideanSpace ℝ n) :
     (olsVar σ2 x : ℝ) = σ2 / (ofLp x ⬝ᵥ ofLp x) := by
-  rw [olsVar, NNReal.coe_div, NNReal.coe_pow, coe_nnnorm, norm_sq_eq_dotProduct]
+  rw [olsVar, NNReal.coe_div, NNReal.coe_pow, coe_nnNorm, norm_sq_eq_dotProduct]
 
 omit [DecidableEq n] in
 /-- `0 < xᵀx` for `x ≠ 0`. -/

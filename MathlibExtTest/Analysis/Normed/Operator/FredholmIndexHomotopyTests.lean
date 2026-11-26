@@ -94,7 +94,7 @@ private instance : FiniteDimensional ℝ xAxis :=
 /-- The `x`-axis is complemented: it is closed with finite-dimensional
 quotient. -/
 private theorem xAxis_closedComplemented : xAxis.ClosedComplemented :=
-  Submodule.ClosedComplemented.of_finiteDimensional_quotient xAxis.closed_of_finiteDimensional
+  Submodule.ClosedComplemented.of_finiteDimensional_quotient xAxis.isClosed_of_finiteDimensional
 
 /-- The quotient map by the `x`-axis is Fredholm. -/
 private theorem xAxis_mkQL_fredholm : xAxis.mkQL.IsFredholm :=

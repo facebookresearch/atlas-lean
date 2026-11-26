@@ -187,10 +187,10 @@ private theorem hb_rhs :
   have d12 : Measure.dirac (1:Fin 2) {ω : Fin 2 | ((2:ℕ):ℝ) ≤ Tb ω} = 1 := by
     rw [Measure.dirac_apply, Set.indicator_of_mem m12, Pi.one_apply]
   have s1 : μb {ω : Fin 2 | ((1:ℕ):ℝ) ≤ Tb ω} = (2⁻¹ : ℝ≥0∞) := by
-    simp only [μb, Measure.add_apply, Measure.smul_apply, smul_eq_mul, d00, d10]
+    simp only [μb, add_apply, smul_apply, smul_eq_mul, d00, d10]
     simp
   have s2 : μb {ω : Fin 2 | ((2:ℕ):ℝ) ≤ Tb ω} = (2⁻¹ : ℝ≥0∞) := by
-    simp only [μb, Measure.add_apply, Measure.smul_apply, smul_eq_mul, d02, d12]
+    simp only [μb, add_apply, smul_apply, smul_eq_mul, d02, d12]
     simp
   rw [s1, s2, hw]
   norm_num
@@ -209,7 +209,7 @@ private instance : IsProbabilityMeasure μb where
     have h1 : Measure.dirac (1 : Fin 2) Set.univ = 1 := by
       rw [Measure.dirac_apply, Set.indicator_of_mem (Set.mem_univ (1 : Fin 2)),
         Pi.one_apply]
-    simp only [μb, Measure.add_apply, Measure.smul_apply, smul_eq_mul, h0, h1,
+    simp only [μb, add_apply, smul_apply, smul_eq_mul, h0, h1,
       mul_one]
     exact ENNReal.inv_two_add_inv_two
 

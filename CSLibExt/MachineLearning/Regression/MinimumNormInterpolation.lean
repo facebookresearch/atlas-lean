@@ -133,7 +133,7 @@ theorem norm_le_of_tendsto_sgdIterate {n : ℕ} {x : Fin n → E} {ι : ℕ → 
   have : FiniteDimensional ℝ (Submodule.span ℝ (Set.range x)) :=
     FiniteDimensional.span_of_finite ℝ (Set.finite_range x)
   have hclosed : IsClosed (Submodule.span ℝ (Set.range x) : Set E) :=
-    Submodule.closed_of_finiteDimensional _
+    Submodule.isClosed_of_finiteDimensional _
   have hw : w ∈ Submodule.span ℝ (Set.range x) :=
     hclosed.mem_of_tendsto hlim (Eventually.of_forall fun t => sgdIterate_mem_span x ι η e t)
   exact norm_le_of_mem_span_of_interpolates hw hy hy'

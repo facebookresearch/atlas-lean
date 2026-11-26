@@ -503,7 +503,7 @@ private theorem VHair_fderiv_bound_sphere
   intro z hz
   have hle : ‖fderiv ℝ (VHair h) z‖ ≤ max C 0 := le_trans (hC z hz) (le_max_left _ _)
   apply NNReal.coe_le_coe.mp
-  rw [coe_nnnorm]
+  rw [coe_nnNorm]
   exact hle
 
 /-- Step 2d: `V` is globally Lipschitz. Off the segment through `0` use the
@@ -608,7 +608,7 @@ private theorem VHair_Ft_bijective
     Function.Bijective (fun x => x + t • V x) := by
   set K : NNReal := ‖t‖₊ * L with hK
   have hKcoe : ((K : NNReal) : ℝ) = |t| * (L : ℝ) := by
-    rw [hK, NNReal.coe_mul, coe_nnnorm, Real.norm_eq_abs]
+    rw [hK, NNReal.coe_mul, coe_nnNorm, Real.norm_eq_abs]
   have hKlt : K < 1 := NNReal.coe_lt_coe.mp (by rwa [hKcoe, NNReal.coe_one])
   have hV : ∀ a b : E, ‖V a - V b‖ ≤ (L : ℝ) * ‖a - b‖ := by
     intro a b

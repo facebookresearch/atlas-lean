@@ -69,7 +69,7 @@ private theorem exists_pow_eq {n : ℕ} {I : FractionalIdeal R⁰ K} (hI : I ≠
   have hfin : {v : HeightOneSpectrum R | ¬count K v I / (n : ℤ) = 0}.Finite := by
     refine Set.Finite.subset (Filter.eventually_cofinite.mp (finite_factors I)) ?_
     intro v hv
-    simp only [Set.mem_setOf_eq] at hv ⊢
+    simp only [Set.mem_ofPred_eq] at hv ⊢
     exact fun h0 => hv (by rw [h0, Int.zero_ediv])
   set exps : HeightOneSpectrum R →₀ ℤ :=
     ⟨hfin.toFinset, fun v => count K v I / (n : ℤ), fun v => by

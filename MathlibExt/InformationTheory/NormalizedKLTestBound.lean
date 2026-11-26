@@ -142,7 +142,7 @@ private lemma integral_uniformBool (g : Bool → ℝ) :
 private lemma isProbabilityMeasure_uniformBool : IsProbabilityMeasure uniformBool := by
   refine ⟨?_⟩
   unfold uniformBool
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+  rw [add_apply, smul_apply, smul_apply, smul_eq_mul, smul_eq_mul,
     Measure.dirac_apply_of_mem (Set.mem_univ true),
     Measure.dirac_apply_of_mem (Set.mem_univ false), mul_one]
   exact ENNReal.inv_two_add_inv_two

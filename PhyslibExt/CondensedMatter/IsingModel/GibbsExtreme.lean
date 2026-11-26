@@ -196,17 +196,17 @@ lemma fvMeasure_real_eq (η : ConfigSpace (Site d)) (n : ℕ)
   · rw [ENNReal.toReal_sum ?_]
     · apply Finset.sum_congr rfl
       intro τ _
-      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ hA]
+      rw [smul_apply, smul_eq_mul, Measure.dirac_apply' _ hA]
       rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (fvProb_nonneg η n B β h τ)]
       congr 1
       by_cases hmem : glue η τ ∈ A
       · rw [Set.indicator_of_mem hmem, Set.indicator_of_mem hmem]; simp
       · rw [Set.indicator_of_notMem hmem, Set.indicator_of_notMem hmem]; simp
     · intro τ _
-      rw [Measure.smul_apply, smul_eq_mul]
+      rw [smul_apply, smul_eq_mul]
       exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top (Measure.dirac (glue η τ)) A)
   · unfold fvMeasure
-    exact Measure.finsetSum_apply Finset.univ _ A
+    exact sum_apply Finset.univ _ A
 
 lemma fvMeasure_dominated (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
     (hβ : 0 ≤ β) (hh : 0 ≤ h) (η η' : ConfigSpace (Site d)) (hle : η ≤ η') :

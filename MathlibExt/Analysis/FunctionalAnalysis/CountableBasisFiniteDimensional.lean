@@ -72,7 +72,7 @@ theorem finiteDimensional_of_countable_basis {𝕜 : Type*} [RCLike 𝕜]
     have hfin : (b '' (s : Set ι)).Finite := s.finite_toSet.image b
     have hfd : FiniteDimensional 𝕜 ↥(Submodule.span 𝕜 (b '' (s : Set ι))) :=
       FiniteDimensional.span_of_finite 𝕜 hfin
-    exact Submodule.closed_of_finiteDimensional _
+    exact Submodule.isClosed_of_finiteDimensional _
   obtain ⟨s, hs⟩ := nonempty_interior_of_iUnion_of_closed hclosed hcover
   have htop : Submodule.span 𝕜 (b '' (s : Set ι)) = ⊤ :=
     Submodule.eq_top_of_nonempty_interior' _ hs

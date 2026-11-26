@@ -48,7 +48,7 @@ private theorem kbAvg_isProb
     simp only [h1, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
   have hne : ((n + 1 : ℕ) : ENNReal) ≠ 0 := by positivity
   have htop : ((n + 1 : ℕ) : ENNReal) ≠ ⊤ := by simp
-  rw [isProbabilityMeasure_iff, kbAvg, Measure.smul_apply, hS, smul_eq_mul,
+  rw [isProbabilityMeasure_iff, kbAvg, smul_apply, hS, smul_eq_mul,
     ENNReal.inv_mul_cancel hne htop]
 
 /-- Integral of a bounded continuous function against a Cesàro average. -/

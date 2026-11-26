@@ -140,7 +140,7 @@ theorem isProbabilityMeasure_nbOffspring {R k : ℝ} (hk : 0 < k) (hR : 0 ≤ R)
     simpa [nbPgf] using hasSum_nbPmf_mul_pow hk hR (s := 1) (by simp)
   constructor
   rw [nbOffspring, Measure.sum_apply _ MeasurableSet.univ]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _),
+  simp only [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _),
     smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_tsum_of_nonneg (nbPmf_nonneg hk hR) hsum.summable,
     hsum.tsum_eq, ENNReal.ofReal_one]

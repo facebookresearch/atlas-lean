@@ -65,10 +65,10 @@ theorem testCount_compl : Measure.count testTreatedᶜ = 2 := by
   simp only [testCompl_coe, MeasureTheory.Measure.count_apply_finset, hcard, Nat.cast_ofNat]
 
 theorem testMu_treated : testUniform testTreated = (4 : ENNReal)⁻¹ * 2 := by
-  simp only [testUniform, MeasureTheory.Measure.smul_apply, smul_eq_mul, testCount_treated]
+  simp only [testUniform, smul_apply, smul_eq_mul, testCount_treated]
 
 theorem testMu_compl : testUniform testTreatedᶜ = (4 : ENNReal)⁻¹ * 2 := by
-  simp only [testUniform, MeasureTheory.Measure.smul_apply, smul_eq_mul, testCount_compl]
+  simp only [testUniform, smul_apply, smul_eq_mul, testCount_compl]
 
 theorem testMu_treated_toReal : (testUniform testTreated).toReal = 1 / 2 := by
   simp only [testMu_treated, ENNReal.toReal_mul, ENNReal.toReal_inv, testToReal_four,
@@ -137,7 +137,7 @@ example : att testUniform testTreated testY0 testY1 = 3 / 2
   have hμ_single : ∀ x : Fin 4, (testUniform {x}).toReal = 1 / 4 := by
     intro x
     have h1 : testUniform {x} = (4 : ENNReal)⁻¹ * Measure.count {x} := by
-      simp only [testUniform, MeasureTheory.Measure.smul_apply, smul_eq_mul]
+      simp only [testUniform, smul_apply, smul_eq_mul]
     rw [h1, MeasureTheory.Measure.count_singleton, ENNReal.toReal_mul, ENNReal.toReal_inv,
       testToReal_four, testToReal_one]
     norm_num

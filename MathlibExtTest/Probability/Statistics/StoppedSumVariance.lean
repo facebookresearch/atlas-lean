@@ -72,7 +72,7 @@ theorem collective_variance_explicit_pin :
   have hprob : IsProbabilityMeasure mu1 := by
     refine ⟨?_⟩
     show (((Fintype.card D1 : ENNReal))⁻¹ • Measure.count) Set.univ = 1
-    rw [Measure.smul_apply, hcu, hcard12, smul_eq_mul]
+    rw [smul_apply, hcu, hcard12, smul_eq_mul]
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
   have hint_eq : ∀ f : D1 → ℝ, ∫ ω, f ω ∂mu1 = (1 / 12 : ℝ) * ∑ x, f x := by
     intro f
@@ -81,7 +81,7 @@ theorem collective_variance_explicit_pin :
     have hsing : ∀ x : D1, mu1 {x} = ((Fintype.card D1 : ENNReal))⁻¹ := by
       intro x
       show (((Fintype.card D1 : ENNReal))⁻¹ • Measure.count) {x} = _
-      rw [Measure.smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
+      rw [smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
     have hw : ∀ x : D1, mu1.real {x} = (1 / 12 : ℝ) := by
       intro x
       rw [measureReal_def, hsing, hcard12, ENNReal.toReal_inv, ENNReal.toReal_natCast]
@@ -252,7 +252,7 @@ theorem collective_variance_deterministic_count :
   have hprob : IsProbabilityMeasure mu2 := by
     refine ⟨?_⟩
     show (((Fintype.card D2 : ENNReal))⁻¹ • Measure.count) Set.univ = 1
-    rw [Measure.smul_apply, hcu, hcard2, smul_eq_mul]
+    rw [smul_apply, hcu, hcard2, smul_eq_mul]
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
   have hint_eq : ∀ f : D2 → ℝ, ∫ ω, f ω ∂mu2 = (1 / 2 : ℝ) * ∑ x, f x := by
     intro f
@@ -261,7 +261,7 @@ theorem collective_variance_deterministic_count :
     have hsing : ∀ x : D2, mu2 {x} = ((Fintype.card D2 : ENNReal))⁻¹ := by
       intro x
       show (((Fintype.card D2 : ENNReal))⁻¹ • Measure.count) {x} = _
-      rw [Measure.smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
+      rw [smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
     have hw : ∀ x : D2, mu2.real {x} = (1 / 2 : ℝ) := by
       intro x
       rw [measureReal_def, hsing, hcard2, ENNReal.toReal_inv, ENNReal.toReal_natCast]
@@ -397,7 +397,7 @@ theorem collective_variance_zero_count :
   have hprob : IsProbabilityMeasure mu3 := by
     refine ⟨?_⟩
     show (((Fintype.card D3 : ENNReal))⁻¹ • Measure.count) Set.univ = 1
-    rw [Measure.smul_apply, hcu, hcard1, smul_eq_mul]
+    rw [smul_apply, hcu, hcard1, smul_eq_mul]
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
   have hS0pt : ∀ ω : D3, S3 ω = 0 := by
     intro ω
@@ -504,7 +504,7 @@ theorem collective_variance_constant_severity :
   have hprob : IsProbabilityMeasure mu4 := by
     refine ⟨?_⟩
     show (((Fintype.card D4 : ENNReal))⁻¹ • Measure.count) Set.univ = 1
-    rw [Measure.smul_apply, hcu, hcard2, smul_eq_mul]
+    rw [smul_apply, hcu, hcard2, smul_eq_mul]
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
   have hint_eq : ∀ f : D4 → ℝ, ∫ ω, f ω ∂mu4 = (1 / 2 : ℝ) * ∑ x, f x := by
     intro f
@@ -513,7 +513,7 @@ theorem collective_variance_constant_severity :
     have hsing : ∀ x : D4, mu4 {x} = ((Fintype.card D4 : ENNReal))⁻¹ := by
       intro x
       show (((Fintype.card D4 : ENNReal))⁻¹ • Measure.count) {x} = _
-      rw [Measure.smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
+      rw [smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
     have hw : ∀ x : D4, mu4.real {x} = (1 / 2 : ℝ) := by
       intro x
       rw [measureReal_def, hsing, hcard2, ENNReal.toReal_inv, ENNReal.toReal_natCast]
@@ -646,7 +646,7 @@ theorem collective_variance_theorem_backed_constant :
   have hprob : IsProbabilityMeasure mu5 := by
     refine ⟨?_⟩
     show (((Fintype.card D5 : ENNReal))⁻¹ • Measure.count) Set.univ = 1
-    rw [Measure.smul_apply, hcu, hcard2, smul_eq_mul]
+    rw [smul_apply, hcu, hcard2, smul_eq_mul]
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
   have hint_eq : ∀ f : D5 → ℝ, ∫ ω, f ω ∂mu5 = (1 / 2 : ℝ) * ∑ x, f x := by
     intro f
@@ -655,7 +655,7 @@ theorem collective_variance_theorem_backed_constant :
     have hsing : ∀ x : D5, mu5 {x} = ((Fintype.card D5 : ENNReal))⁻¹ := by
       intro x
       show (((Fintype.card D5 : ENNReal))⁻¹ • Measure.count) {x} = _
-      rw [Measure.smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
+      rw [smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
     have hw : ∀ x : D5, mu5.real {x} = (1 / 2 : ℝ) := by
       intro x
       rw [measureReal_def, hsing, hcard2, ENNReal.toReal_inv, ENNReal.toReal_natCast]

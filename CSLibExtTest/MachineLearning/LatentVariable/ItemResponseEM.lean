@@ -141,22 +141,22 @@ private theorem testMeasure_singleton (k' : Fin 2) :
     have hbmem : b ∉ ({k'} : Set (Fin 2)) := by
       simp only [Set.mem_singleton_iff]
       exact hb
-    rw [Measure.smul_apply, Measure.dirac_apply,
+    rw [smul_apply, Measure.dirac_apply,
       Set.indicator_of_notMem hbmem, smul_eq_mul, mul_zero]
   have h1 : k' ∉ Finset.univ →
       (ENNReal.ofReal (testParams.1.weight k') • Measure.dirac k') {k'} = 0 :=
     fun h => absurd (Finset.mem_univ k') h
   show ((∑ k : Fin 2, ENNReal.ofReal (testParams.1.weight k) • Measure.dirac k) {k'}
       = ENNReal.ofReal (testParams.1.weight k'))
-  rw [Measure.finsetSum_apply, Finset.sum_eq_single k' h0 h1,
-    Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton k'),
+  rw [sum_apply, Finset.sum_eq_single k' h0 h1,
+    smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton k'),
     smul_eq_mul, mul_one]
 
 private instance testMeasure_finite : IsFiniteMeasure testMeasure := by
   refine ⟨?_⟩
   show ((∑ k : Fin 2, ENNReal.ofReal (testParams.1.weight k) • Measure.dirac k) Set.univ < ∞)
-  rw [Measure.finsetSum_apply]
-  simp_rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
+  rw [sum_apply]
+  simp_rw [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
   simp only [smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun k _ => (testParams.2.weight_pos k).le),
     testParams.2.weight_sum, ENNReal.ofReal_one]
@@ -182,7 +182,7 @@ private theorem testKernel_singleton (x : Fin 1 → Bool) (k' : Fin 2) :
     have hbmem : b ∉ ({x} : Set (Fin 1 → Bool)) := by
       simp only [Set.mem_singleton_iff]
       exact hb
-    rw [Measure.smul_apply, Measure.dirac_apply,
+    rw [smul_apply, Measure.dirac_apply,
       Set.indicator_of_notMem hbmem, smul_eq_mul, mul_zero]
   have h1 : x ∉ Finset.univ →
       (localIndepPMF (testParams.1.prob k')
@@ -195,8 +195,8 @@ private theorem testKernel_singleton (x : Fin 1 → Bool) (k' : Fin 2) :
       = localIndepPMF (testParams.1.prob k')
         (fun j => (testParams.2.prob_pos k' j).le)
         (fun j => (testParams.2.prob_lt_one k' j).le) x)
-  rw [Measure.finsetSum_apply, Finset.sum_eq_single x h0 h1,
-    Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton x),
+  rw [sum_apply, Finset.sum_eq_single x h0 h1,
+    smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton x),
     smul_eq_mul, mul_one]
 
 private instance testKernel_markov : IsMarkovKernel testKernel :=
@@ -216,8 +216,8 @@ private instance testKernel_markov : IsMarkovKernel testKernel :=
     show ((∑ y : Fin 1 → Bool, localIndepPMF (testParams.1.prob k)
         (fun j => (testParams.2.prob_pos k j).le)
         (fun j => (testParams.2.prob_lt_one k j).le) y • Measure.dirac y) Set.univ = 1)
-    rw [Measure.finsetSum_apply]
-    simp_rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
+    rw [sum_apply]
+    simp_rw [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
     simp only [smul_eq_mul, mul_one]
     have hsum : ∑ y : Fin 1 → Bool, bernPMF (testParams.1.prob k) y = 1 := by
       have h := MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one

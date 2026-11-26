@@ -243,7 +243,7 @@ theorem null_state_mass_rejected :
       (fun _ : Bool => true) ⊤ (Measure.dirac true) := by
   intro h
   have hmass := h.mass_le_one false
-  norm_num [nullStateMassFamily, Measure.smul_apply] at hmass
+  norm_num [nullStateMassFamily, smul_apply] at hmass
 
 /-- Self-conditioning has a Dirac family for every finite measure, including
 zero singleton masses. The kernel identity used here is almost everywhere. -/

@@ -409,7 +409,7 @@ example (h : (Measure.pi fun _ : Fin 2 => fairCoin)
     = (Measure.pi fun _ : Fin 2 => biasedCoin)) : False := by
   have hProb : IsProbabilityMeasure biasedCoin := by
     constructor
-    simp only [biasedCoin, two_nsmul, ← two_mul, Measure.smul_apply, Measure.add_apply,
+    simp only [biasedCoin, two_nsmul, ← two_mul, smul_apply, add_apply,
       Measure.dirac_apply_of_mem (Set.mem_univ true), Measure.dirac_apply_of_mem (Set.mem_univ false),
       smul_eq_mul]
     have h3 : (3 : ENNReal) ≠ 0 := by simp
@@ -425,7 +425,7 @@ example (h : (Measure.pi fun _ : Fin 2 => fairCoin)
     exact HasLaw.id
   have hEq := (hasLaw_of_hasLaw_tuple_pi_of_mem (n := 2) 0 h1 h2).2
   have hTrue := congrArg (fun μ : Measure Bool => μ {true}) hEq
-  simp only [fairCoin, biasedCoin, two_nsmul, Measure.smul_apply, Measure.add_apply,
+  simp only [fairCoin, biasedCoin, two_nsmul, smul_apply, add_apply,
     Measure.dirac_apply_of_mem (show true ∈ ({true} : Set Bool) from by simp),
     Measure.dirac_apply' false (show MeasurableSet ({true} : Set Bool) from MeasurableSet.of_discrete),
     Set.indicator_of_notMem (show false ∉ ({true} : Set Bool) from by simp),

@@ -55,7 +55,7 @@ theorem integral_eq_sum_measureReal_mul_integral_cond_fiber {Ω α : Type*} [Mea
   have hcell : ∀ x : α, μ (X ⁻¹' {x}) • μ[|X ⁻¹' {x}] = μ.restrict (X ⁻¹' {x}) := by
     intro x
     ext t ht
-    rw [Measure.smul_apply, Measure.restrict_apply ht, smul_eq_mul, mul_comm,
+    rw [smul_apply, Measure.restrict_apply ht, smul_eq_mul, mul_comm,
       Set.inter_comm, cond_mul_eq_inter (hmeas x) t μ]
   have hint : ∀ x ∈ Finset.univ, Integrable f (μ (X ⁻¹' {x}) • μ[|X ⁻¹' {x}]) := by
     intro x _

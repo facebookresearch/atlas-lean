@@ -306,7 +306,7 @@ private lemma lk_compound_term_univ (ρ : Measure ℝ) [IsFiniteMeasure ρ] (n :
     (lkPoissonCoeff ρ n • Measure.convPow ρ n) Set.univ =
       ENNReal.ofReal
         (Real.exp (-ρ.real Set.univ) * (ρ.real Set.univ) ^ n / (n.factorial : ℝ)) := by
-  rw [Measure.smul_apply, lkConvPow_apply_univ]
+  rw [_root_.smul_apply, lkConvPow_apply_univ]
   simp only [smul_eq_mul, lkPoissonCoeff]
   let lam : ℝ := ρ.real Set.univ
   change ENNReal.ofReal (Real.exp (-lam) / (n.factorial : ℝ)) * (ρ Set.univ) ^ n =

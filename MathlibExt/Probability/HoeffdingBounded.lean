@@ -78,7 +78,7 @@ theorem measureReal_avg_sub_ge_le {n : ℕ} {Z : Fin n → Ω → ℝ} (h_indep 
     rw [← mul_sub, one_div, ← div_eq_inv_mul, le_div_iff₀ hnpos, mul_comm]
   have hcsum : ((∑ _i : Fin n, c : ℝ≥0) : ℝ) = n * ((b - a) ^ 2 / 4) := by
     rw [NNReal.coe_sum, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, hc]
-    simp only [NNReal.coe_pow, NNReal.coe_div, coe_nnnorm, Real.norm_eq_abs, NNReal.coe_ofNat]
+    simp only [NNReal.coe_pow, NNReal.coe_div, coe_nnNorm, Real.norm_eq_abs, NNReal.coe_ofNat]
     rw [div_pow, sq_abs]
     norm_num
   rw [hset]

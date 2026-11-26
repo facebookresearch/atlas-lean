@@ -236,8 +236,8 @@ noncomputable def gvMeasure (η : ConfigSpace (Site d)) (S : Finset (Site d)) (�
 lemma gvMeasure_univ (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ) :
     (gvMeasure η S β h) Set.univ = 1 := by
   unfold gvMeasure
-  rw [Measure.finsetSum_apply _ _ _]
-  simp only [Measure.smul_apply, Measure.dirac_apply' _ MeasurableSet.univ, Set.mem_univ,
+  rw [sum_apply _ _ _]
+  simp only [smul_apply, Measure.dirac_apply' _ MeasurableSet.univ, Set.mem_univ,
     Set.indicator_of_mem, Pi.one_apply, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun τ _ => gvProb_nonneg η S β h τ),
     gvProb_sum_eq_one η S β h, ENNReal.ofReal_one]
@@ -263,12 +263,12 @@ lemma gvMeasure_real_eq (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h 
   rw [show (gvMeasure η S β h) A
         = ∑ τ : {x // x ∈ S} → Bool,
             (ENNReal.ofReal (gvProb η S β h τ) • Measure.dirac (gvGlue η S τ)) A from
-      Measure.finsetSum_apply Finset.univ _ A]
+      sum_apply Finset.univ _ A]
   rw [ENNReal.toReal_sum (fun τ _ => by
-    rw [Measure.smul_apply, smul_eq_mul]
+    rw [smul_apply, smul_eq_mul]
     exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ A))]
   refine Finset.sum_congr rfl (fun τ _ => ?_)
-  rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ hA, ENNReal.toReal_mul,
+  rw [smul_apply, smul_eq_mul, Measure.dirac_apply' _ hA, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (gvProb_nonneg η S β h τ)]
   congr 1
   by_cases hmem : gvGlue η S τ ∈ A

@@ -180,7 +180,7 @@ variable (d₀ : ℝ)
 def pitchfork (q : ℝ × ℝ) : ℝ := (q.2 - d₀) * q.1 - q.1 ^ 3
 
 theorem isFredholm_zero : (0 : ℝ →L[ℝ] ℝ).IsFredholm :=
-  ⟨(0 : ℝ →L[ℝ] ℝ).isStrictMap_of_finiteDimensional, Submodule.closed_of_finiteDimensional _,
+  ⟨(0 : ℝ →L[ℝ] ℝ).isStrictMap_of_finiteDimensional, Submodule.isClosed_of_finiteDimensional _,
     inferInstance, Submodule.CoFG.of_finite, Submodule.ClosedComplemented.of_finiteDimensional _⟩
 
 /-- Its strict derivative at `(0, d₀)`: `(x, d) ↦ 0`. -/
@@ -361,7 +361,7 @@ theorem isTopCompl_of_isCompl {p q : Submodule ℝ (ℝ × ℝ)} (h : IsCompl p 
 /-- The Fredholm package with `X₁ = ℝ × 0` and `Y₀ = 0 × ℝ`. -/
 noncomputable def pkg₂ : FredholmPackage L₂ :=
   ContinuousLinearMap.IsFredholm.fredholmPackage
-    ⟨L₂.isStrictMap_of_finiteDimensional, Submodule.closed_of_finiteDimensional _, inferInstance,
+    ⟨L₂.isStrictMap_of_finiteDimensional, Submodule.isClosed_of_finiteDimensional _, inferInstance,
       Submodule.CoFG.of_finite, Submodule.ClosedComplemented.of_finiteDimensional _⟩
     (dom₁ := LinearMap.range (LinearMap.inl ℝ ℝ ℝ))
     (codom₀ := LinearMap.range (LinearMap.inr ℝ ℝ ℝ))

@@ -96,16 +96,16 @@ private theorem uniformIntegrable_one_sub_pow :
     (iSup_le fun n => ?_).trans_lt (ENNReal.coe_lt_top (r := Real.toNNReal 1))⟩
   · apply Filter.Eventually.of_forall
     intro ω
-    rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (hnn n), abs_of_nonneg (by norm_num : (0 : ℝ) ≤ (1 : ℝ))]
     exact ENNReal.ofReal_le_ofReal (sub_le_self 1 (by positivity))
-  · rw [eLpNorm_one_eq_lintegral_enorm aestronglyMeasurable_const]
+  · rw [eLpNorm_one_eq_lintegral_eNorm aestronglyMeasurable_const]
     calc ∫⁻ ω, ‖(1 - (1 / 2 : ℝ) ^ n : ℝ)‖ₑ ∂μ
         ≤ ∫⁻ _ω, (1 : ℝ≥0∞) ∂μ := by
           refine lintegral_mono_ae ?_
           apply Filter.Eventually.of_forall
           intro ω
-          rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hnn n)]
+          rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hnn n)]
           simp
       _ = 1 := by simp
       _ = ((Real.toNNReal 1 : ℝ≥0) : ℝ≥0∞) := by simp

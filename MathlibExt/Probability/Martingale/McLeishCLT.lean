@@ -876,7 +876,7 @@ private lemma maxSq_facts (X : ℕ → Ω → ℝ) (m : ℕ) (hX : ∀ k, Measur
         (fun _ _ => zero_le) hk
   refine ⟨?_, hfin, fun ω j hj => ?_⟩
   · exact Measurable.biSup (↑(range m)) (Set.to_countable _)
-      fun k _ => ((hX k).enorm).pow_const 2
+      fun k _ => ((hX k).eNorm).pow_const 2
   · have h1 : ‖X j ω‖ₑ ^ 2 ≤ ⨆ k ∈ range m, ‖X k ω‖ₑ ^ 2 :=
       le_iSup₂ (f := fun k (_ : k ∈ range m) => ‖X k ω‖ₑ ^ 2) j (mem_range.2 hj)
     have h2 := ENNReal.toReal_mono (hfin ω) h1
@@ -1144,7 +1144,7 @@ private lemma mcLeish_conditions_of_lindeberg [IsProbabilityMeasure μ] (X : ℕ
       intro ω
       refine iSup₂_le fun k hk => ?_
       have he : ‖X n k ω‖ₑ ^ 2 = ENNReal.ofReal (X n k ω ^ 2) := by
-        rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+        rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
       rw [he]
       by_cases h1 : 1 < |X n k ω|
       · have hind : X n k ω ^ 2 * Set.indicator {ω' | 1 < |X n k ω'|} 1 ω = X n k ω ^ 2 := by
@@ -1354,7 +1354,7 @@ private lemma tendstoInDistribution_linComb [IsProbabilityMeasure μ]
       refine iSup₂_le fun k hk => ?_
       have h1 : ‖Y n k ω‖ₑ ^ 2 ≤ ENNReal.ofReal (C ^ 2) * ‖X n k ω‖ₑ ^ 2 := by
         simp only [hY]
-        rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+        rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs,
           ← ENNReal.ofReal_pow (abs_nonneg _), ← ENNReal.ofReal_pow (abs_nonneg _),
           ← ENNReal.ofReal_mul (sq_nonneg _)]
         refine ENNReal.ofReal_le_ofReal ?_

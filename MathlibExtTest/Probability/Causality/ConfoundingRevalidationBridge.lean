@@ -32,11 +32,11 @@ theorem finiteLaw_apply {α : Type*} [Fintype α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (w : α → ℝ) (hn : ∀ a, 0 ≤ w a) (S : Set α) :
     finiteLaw w S = ENNReal.ofReal (∑ a, if a ∈ S then w a else 0) := by
   classical
-  rw [finiteLaw, Measure.finsetSum_apply, ENNReal.ofReal_sum_of_nonneg
+  rw [finiteLaw, sum_apply, ENNReal.ofReal_sum_of_nonneg
     (fun a _ => by split_ifs <;> simp [hn a])]
   apply Finset.sum_congr rfl
   intro a _
-  by_cases h : a ∈ S <;> simp [Measure.smul_apply, Measure.dirac_apply, Set.indicator, h]
+  by_cases h : a ∈ S <;> simp [smul_apply, Measure.dirac_apply, Set.indicator, h]
 
 theorem finiteLaw_real {α : Type*} [Fintype α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (w : α → ℝ) (hn : ∀ a, 0 ≤ w a) (S : Set α) :

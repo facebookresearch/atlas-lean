@@ -160,7 +160,7 @@ noncomputable abbrev coin : Measure Bool := (2⁻¹ : ENNReal) • Measure.count
 
 instance : IsProbabilityMeasure coin :=
   ⟨by
-    rw [Measure.smul_apply, Measure.count_univ, ENat.card_eq_coe_fintype_card, Fintype.card_bool]
+    rw [smul_apply, Measure.count_univ, ENat.card_eq_coe_fintype_card, Fintype.card_bool]
     exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)⟩
 
 theorem coin_singleton (b : Bool) : coin {b} = 2⁻¹ := by simp [coin]

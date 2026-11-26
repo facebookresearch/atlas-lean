@@ -53,7 +53,7 @@ private theorem binom_hasSum (r x : ℂ) (hx : ‖x‖ < 1) :
       (Complex.exp (r * Complex.log (1 + x))) := by
   have hball := Complex.one_add_cpow_hasFPowerSeriesOnBall_zero (a := r)
   have hxmem : x ∈ Metric.eball (0 : ℂ) (1 : ENNReal) := by
-    rw [Metric.mem_eball, edist_zero_right, enorm_eq_nnnorm, ENNReal.coe_lt_one_iff]
+    rw [Metric.mem_eball, edist_zero_right, eNorm_eq_nnNorm, ENNReal.coe_lt_one_iff]
     have h1 : ‖x‖₊ < (1 : NNReal) := by exact_mod_cast hx
     exact h1
   have hHas := hball.hasSum_sub hxmem

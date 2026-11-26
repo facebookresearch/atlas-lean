@@ -51,11 +51,11 @@ private theorem isProbabilityMeasure_dirac_sum {𝒳 : Type*} [MeasurableSpace �
   have hterm : ∀ x : 𝒳, (ENNReal.ofReal (P x) • Measure.dirac x) Set.univ
       = ENNReal.ofReal (P x) := by
     intro x
-    rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ x), smul_eq_mul,
+    rw [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ x), smul_eq_mul,
       mul_one]
   have hsum : (∑ x, ENNReal.ofReal (P x) • Measure.dirac x) Set.univ
       = ∑ x, ENNReal.ofReal (P x) := by
-    rw [Measure.finsetSum_apply]
+    rw [sum_apply]
     exact Finset.sum_congr rfl (fun x _ => hterm x)
   rw [hsum, ← ENNReal.ofReal_sum_of_nonneg (fun x _ => hP x), hPsum, ENNReal.ofReal_one]
 
@@ -76,13 +76,13 @@ private theorem count_withDensity_eq_dirac_sum {𝒳 : Type*} [MeasurableSpace �
       simp [Measure.count_apply MeasurableSet.empty, Set.encard_empty,
         Measure.dirac_apply, Set.indicator_of_notMem ha]
   rw [withDensity_apply _ (measurableSet_singleton a), hres, lintegral_dirac,
-    Measure.finsetSum_apply Finset.univ _ _,
+    sum_apply Finset.univ _ _,
     Finset.sum_eq_single a
       (fun x _ hxa => by
-        rw [Measure.smul_apply, Measure.dirac_apply _ _,
+        rw [smul_apply, Measure.dirac_apply _ _,
           Set.indicator_of_notMem (by simpa using hxa) _, smul_zero])
       (fun h => absurd (Finset.mem_univ a) h),
-    Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton a), smul_eq_mul,
+    smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton a), smul_eq_mul,
     mul_one]
 
 private theorem weightedScore_bayesRule_exists_aux

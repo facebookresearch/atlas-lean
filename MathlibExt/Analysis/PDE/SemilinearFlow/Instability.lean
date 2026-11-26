@@ -401,7 +401,7 @@ theorem exists_norm_pow_le_of_spectralRadius_lt {L : Y →L[ℂ] Y} {μ : ℝ}
         _ < μ.toNNReal ^ n := pow_lt_pow_left₀ h (by positivity) hn1
     have h3 : ‖L ^ n‖ ≤ μ ^ n := by
       have := NNReal.coe_lt_coe.2 h2
-      rw [coe_nnnorm, NNReal.coe_pow, Real.coe_toNNReal _ hμ0.le] at this
+      rw [coe_nnNorm, NNReal.coe_pow, Real.coe_toNNReal _ hμ0.le] at this
       exact this.le
     calc ‖L ^ n‖ ≤ 1 * μ ^ n := by rwa [one_mul]
       _ ≤ _ := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
@@ -434,7 +434,7 @@ theorem exists_escape_of_spectralRadius_eq {G : Y → Y} {x₀ : Y} {L : Y →L[
     ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - x₀‖ < δ ∧
       ∃ n, (∀ k < n, ‖G^[k] x - x₀‖ ≤ ρ) ∧ ε ≤ ‖G^[n] x - x₀‖ := by
   refine exists_escape_of_spectralRadius hρ hC hp hG hv hLv hν ?_
-  rw [hr, ← enorm_eq_nnnorm, ← ofReal_norm, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
+  rw [hr, ← eNorm_eq_nnNorm, ← ofReal_norm, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
   exact Real.self_lt_rpow_of_one_lt hν hp
 
 end SpectralRadius

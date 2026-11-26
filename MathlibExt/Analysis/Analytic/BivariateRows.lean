@@ -63,7 +63,7 @@ private theorem inv_poly_series (D : Polynomial ℂ) (hD : D.eval 0 ≠ 0) :
   refine ⟨fun n => (cauchyPowerSeries f 0 R).coeff n, ε / 2,
     half_pos hε, fun Y hY => hne Y hY.le, fun Y hY => ?_⟩
   have hYR : ‖Y‖₊ < R := by
-    rw [← NNReal.coe_lt_coe, coe_nnnorm]
+    rw [← NNReal.coe_lt_coe, coe_nnNorm]
     exact hY
   have hYball : Y ∈ Metric.eball (0 : ℂ) (R : ℝ≥0∞) := by
     rw [mem_eball_zero_iff, enorm_lt_coe]

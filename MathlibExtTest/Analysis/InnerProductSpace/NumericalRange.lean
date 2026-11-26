@@ -25,7 +25,7 @@ theorem numericalRange_identity_two :
     numericalRange !![(1 : ℂ), 0; 0, 1] = {1} := by
   rw [← Matrix.one_fin_two]
   ext z
-  simp only [numericalRange, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [numericalRange, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨x, hx, rfl⟩
     have hId :

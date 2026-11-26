@@ -342,7 +342,7 @@ theorem exists_unique_nearestPoint_of_minimizingSequence_of_finiteDimensional
     ∃! y, y ∈ K ∧ ‖y - x‖ = infDist x K := by
   have : UniformConvexSpace E :=
     uniformConvexSpace_of_finiteDimensional_strictConvexSpace
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   obtain ⟨y, hyK, hynorm, _⟩ := exists_tendsto_of_minimizingSequence hKconv hKclosed u hu hmin
   refine ⟨y, ⟨hyK, hynorm⟩, ?_⟩
   intro z ⟨hzK, hznorm⟩
@@ -390,7 +390,7 @@ theorem exists_unique_tendsto_of_minimizingSequence_of_finiteDimensional
     ∃! y, y ∈ K ∧ ‖y - x‖ = infDist x K ∧ Tendsto u atTop (𝓝 y) := by
   have : UniformConvexSpace E :=
     uniformConvexSpace_of_finiteDimensional_strictConvexSpace
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   obtain ⟨y, hyK, hynorm, hy⟩ :=
     exists_tendsto_of_minimizingSequence hKconv hKclosed u hu hmin
   obtain ⟨_, _, huniq⟩ :=

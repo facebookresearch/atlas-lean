@@ -169,7 +169,7 @@ noncomputable abbrev sw0 : Bool × Bool → ℝ := fun ω => if ω.1 then 1 else
 noncomputable abbrev sw1 : Bool × Bool → ℝ := fun ω => if ω.1 then 0 else 1
 
 theorem coin2_fairCoin_true : fairCoin.real {true} = 1 / 2 := by
-  simp [fairCoin, Measure.real_def, Measure.smul_apply, Measure.add_apply]
+  simp [fairCoin, Measure.real_def, smul_apply, add_apply]
 
 theorem coin2_fairCoin_univ : fairCoin.real Set.univ = 1 := probReal_univ
 

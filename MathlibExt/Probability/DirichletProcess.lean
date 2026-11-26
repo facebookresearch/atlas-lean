@@ -607,8 +607,8 @@ theorem polyaUrnPredictive_apply (α : ℝ) (H : Measure X) {n : ℕ} (xs : Fin 
     polyaUrnPredictive α H xs A =
       (ENNReal.ofReal α * H A + (univ.filter fun i ↦ xs i ∈ A).card) /
         ENNReal.ofReal (α + n) := by
-  rw [polyaUrnPredictive, Measure.smul_apply, Measure.add_apply, Measure.smul_apply,
-    Measure.finsetSum_apply, smul_eq_mul, smul_eq_mul, ENNReal.div_eq_inv_mul]
+  rw [polyaUrnPredictive, smul_apply, add_apply, smul_apply,
+    sum_apply, smul_eq_mul, smul_eq_mul, ENNReal.div_eq_inv_mul]
   congr 2
   simp_rw [Measure.dirac_apply' _ hA, Set.indicator_apply, Pi.one_apply]
   rw [Finset.sum_boole]

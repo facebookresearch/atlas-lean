@@ -82,20 +82,20 @@ example : ∃ (ν : Measure ℝ) (_hν : IsProbabilityMeasure ν) (x : ℝ),
   have hval : (1 / 2 : ENNReal).toReal = (1 / 2 : ℝ) := by
     rw [ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat]
   have hIic_half : ν (Set.Iic (1 / 2 : ℝ)) = (1 / 2 : ENNReal) := by
-    rw [hνdef, Measure.add_apply, Measure.smul_apply, Measure.smul_apply,
+    rw [hνdef, add_apply, smul_apply, smul_apply,
       Measure.dirac_apply_of_mem
         (Set.mem_Iic.mpr (show (0 : ℝ) ≤ 1 / 2 by norm_num)),
       (dirac_eq_zero_iff_notMem (s := Set.Iic (1 / 2 : ℝ)) measurableSet_Iic).mpr
         (show (1 : ℝ) ∉ Set.Iic (1 / 2 : ℝ) by norm_num [Set.mem_Iic])]
     simp
   have hIic_zero : ν (Set.Iic (0 : ℝ)) = (1 / 2 : ENNReal) := by
-    rw [hνdef, Measure.add_apply, Measure.smul_apply, Measure.smul_apply,
+    rw [hνdef, add_apply, smul_apply, smul_apply,
       Measure.dirac_apply_of_mem (Set.mem_Iic.mpr le_rfl),
       (dirac_eq_zero_iff_notMem (s := Set.Iic (0 : ℝ)) measurableSet_Iic).mpr
         (show (1 : ℝ) ∉ Set.Iic (0 : ℝ) by norm_num [Set.mem_Iic])]
     simp
   have hprob : ν Set.univ = 1 := by
-    rw [hνdef, Measure.add_apply, Measure.smul_apply, Measure.smul_apply,
+    rw [hνdef, add_apply, smul_apply, smul_apply,
       Measure.dirac_apply_of_mem (mem_univ (0 : ℝ)),
       Measure.dirac_apply_of_mem (mem_univ (1 : ℝ)),
       smul_eq_mul, mul_one]

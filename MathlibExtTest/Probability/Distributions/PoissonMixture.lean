@@ -47,7 +47,7 @@ example :
   have hprob : IsProbabilityMeasure ((1 / 2 : ENNReal) • Measure.dirac (0 : ℝ) +
       (1 / 2 : ENNReal) • Measure.dirac 2) := by
     constructor
-    simp only [Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+    simp only [add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
     exact ENNReal.add_halves 1
   have h0 : ∀ᵐ r ∂((1 / 2 : ENNReal) • Measure.dirac (0 : ℝ) +
       (1 / 2 : ENNReal) • Measure.dirac 2), 0 ≤ r := by

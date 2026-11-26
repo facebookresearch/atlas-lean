@@ -973,8 +973,8 @@ instance isProbabilityMeasure_noiseMeasure {n : ℕ} {U : Fin n → Type*} [∀ 
     IsProbabilityMeasure (noiseMeasure μ) := by
   refine ⟨?_⟩
   unfold noiseMeasure
-  rw [Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  rw [sum_apply]
+  simp only [smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun u _ => noiseWeight_nonneg μ u),
     sum_univ_noiseWeight_eq_one, ENNReal.ofReal_one]
 
@@ -994,7 +994,7 @@ theorem noiseMeasure_apply_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U
       (ENNReal.ofReal (noiseWeight μ u) • Measure.dirac u) s
         = (if u ∈ s then ENNReal.ofReal (noiseWeight μ u) else 0) := by
     intro u
-    rw [Measure.smul_apply, smul_eq_mul]
+    rw [smul_apply, smul_eq_mul]
     by_cases h : u ∈ s
     · rw [ite_eq_left h]
       have h1 : Measure.dirac u s = 1 := by
@@ -1012,7 +1012,7 @@ theorem noiseMeasure_apply_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U
   have hsum : noiseMeasure μ s
       = ∑ u ∈ Finset.univ, (ENNReal.ofReal (noiseWeight μ u) • Measure.dirac u) s := by
     unfold noiseMeasure
-    rw [MeasureTheory.Measure.finsetSum_apply]
+    rw [sum_apply]
   rw [hsum, Finset.sum_filter]
   exact Finset.sum_congr rfl fun u _ => hterm u
 

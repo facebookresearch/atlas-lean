@@ -205,7 +205,7 @@ theorem poissonMeasure_real_odd (d : ℝ≥0) :
     apply tsum_congr
     intro k
     by_cases hk : Odd k <;>
-      simp [MeasureTheory.Measure.smul_apply, Set.indicator, hk]
+      simp [smul_apply, Set.indicator, hk]
   rw [hterms, ← ENNReal.ofReal_tsum_of_nonneg hnonneg hsum.summable, hsum.tsum_eq,
     ENNReal.toReal_ofReal (hsum.nonneg hnonneg)]
 

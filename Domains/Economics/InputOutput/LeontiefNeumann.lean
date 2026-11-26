@@ -65,7 +65,7 @@ theorem isUnit_one_sub_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq �
     IsUnit (1 - A) := by
   let _ : NormedRing (Matrix ι ι ℝ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℝ (Matrix ι ι ℝ) := Matrix.linftyOpNormedAlgebra
-  let _ : CompleteSpace (Matrix ι ι ℝ) := FiniteDimensional.complete ℝ (Matrix ι ι ℝ)
+  let _ : CompleteSpace (Matrix ι ι ℝ) := FiniteDimensional.completeSpace ℝ (Matrix ι ι ℝ)
   have hnorm : ‖A‖ < 1 := by
     have hnorm_eq : ‖A‖ = ↑((Finset.univ : Finset ι).sup fun i => ∑ j, ‖A i j‖₊) :=
       Matrix.linfty_opNorm_def A
@@ -73,7 +73,7 @@ theorem isUnit_one_sub_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq �
     rw [Finset.sup_lt_iff (by simp : (⊥ : NNReal) < 1)]
     intro i _
     rw [← NNReal.coe_lt_coe, NNReal.coe_sum, NNReal.coe_one]
-    simp_rw [coe_nnnorm, show ∀ j, ‖A i j‖ = A i j from fun j => Real.norm_of_nonneg (hA0 i j)]
+    simp_rw [coe_nnNorm, show ∀ j, ‖A i j‖ = A i j from fun j => Real.norm_of_nonneg (hA0 i j)]
     exact hrow i
   exact ⟨Units.mk _ _ (mul_neg_geom_series A hnorm) (geom_series_mul_neg A hnorm), rfl⟩
 
@@ -84,7 +84,7 @@ theorem hasSum_pow_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     HasSum (fun n : ℕ => A ^ n) (1 - A)⁻¹ := by
   let _ : NormedRing (Matrix ι ι ℝ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℝ (Matrix ι ι ℝ) := Matrix.linftyOpNormedAlgebra
-  let _ : CompleteSpace (Matrix ι ι ℝ) := FiniteDimensional.complete ℝ (Matrix ι ι ℝ)
+  let _ : CompleteSpace (Matrix ι ι ℝ) := FiniteDimensional.completeSpace ℝ (Matrix ι ι ℝ)
   have hnorm : ‖A‖ < 1 := by
     have hnorm_eq : ‖A‖ = ↑((Finset.univ : Finset ι).sup fun i => ∑ j, ‖A i j‖₊) :=
       Matrix.linfty_opNorm_def A
@@ -92,7 +92,7 @@ theorem hasSum_pow_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     rw [Finset.sup_lt_iff (by simp : (⊥ : NNReal) < 1)]
     intro i _
     rw [← NNReal.coe_lt_coe, NNReal.coe_sum, NNReal.coe_one]
-    simp_rw [coe_nnnorm, show ∀ j, ‖A i j‖ = A i j from fun j => Real.norm_of_nonneg (hA0 i j)]
+    simp_rw [coe_nnNorm, show ∀ j, ‖A i j‖ = A i j from fun j => Real.norm_of_nonneg (hA0 i j)]
     exact hrow i
   have hsum_mat : HasSum (fun n : ℕ => A ^ n) (∑' n : ℕ, A ^ n) :=
     (summable_geometric_of_norm_lt_one hnorm).hasSum
@@ -103,7 +103,7 @@ theorem hasSum_pow_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     rw [one_mul]
     have hnorm_eq : ‖M‖ = ↑((Finset.univ : Finset ι).sup fun i => ∑ j, ‖M i j‖₊) :=
       Matrix.linfty_opNorm_def M
-    rw [hnorm_eq, ← coe_nnnorm]
+    rw [hnorm_eq, ← coe_nnNorm]
     norm_cast
     calc ‖M i j‖₊ ≤ ∑ j', ‖M i j'‖₊ :=
             Finset.single_le_sum (f := fun j' => ‖M i j'‖₊) (fun j' _ => zero_le)
@@ -128,7 +128,7 @@ theorem inv_one_sub_nonneg_of_rowSum_lt_one {ι : Type*} [Fintype ι] [Decidable
     0 ≤ (1 - A)⁻¹ i j := by
   let _ : NormedRing (Matrix ι ι ℝ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℝ (Matrix ι ι ℝ) := Matrix.linftyOpNormedAlgebra
-  let _ : CompleteSpace (Matrix ι ι ℝ) := FiniteDimensional.complete ℝ (Matrix ι ι ℝ)
+  let _ : CompleteSpace (Matrix ι ι ℝ) := FiniteDimensional.completeSpace ℝ (Matrix ι ι ℝ)
   have hnorm : ‖A‖ < 1 := by
     have hnorm_eq : ‖A‖ = ↑((Finset.univ : Finset ι).sup fun i => ∑ j, ‖A i j‖₊) :=
       Matrix.linfty_opNorm_def A
@@ -136,7 +136,7 @@ theorem inv_one_sub_nonneg_of_rowSum_lt_one {ι : Type*} [Fintype ι] [Decidable
     rw [Finset.sup_lt_iff (by simp : (⊥ : NNReal) < 1)]
     intro i _
     rw [← NNReal.coe_lt_coe, NNReal.coe_sum, NNReal.coe_one]
-    simp_rw [coe_nnnorm, show ∀ j, ‖A i j‖ = A i j from fun j => Real.norm_of_nonneg (hA0 i j)]
+    simp_rw [coe_nnNorm, show ∀ j, ‖A i j‖ = A i j from fun j => Real.norm_of_nonneg (hA0 i j)]
     exact hrow i
   have hsum_mat : HasSum (fun n : ℕ => A ^ n) (∑' n : ℕ, A ^ n) :=
     (summable_geometric_of_norm_lt_one hnorm).hasSum
@@ -147,7 +147,7 @@ theorem inv_one_sub_nonneg_of_rowSum_lt_one {ι : Type*} [Fintype ι] [Decidable
     rw [one_mul]
     have hnorm_eq : ‖M‖ = ↑((Finset.univ : Finset ι).sup fun i => ∑ j, ‖M i j‖₊) :=
       Matrix.linfty_opNorm_def M
-    rw [hnorm_eq, ← coe_nnnorm]
+    rw [hnorm_eq, ← coe_nnNorm]
     norm_cast
     calc ‖M i j‖₊ ≤ ∑ j', ‖M i j'‖₊ :=
             Finset.single_le_sum (f := fun j' => ‖M i j'‖₊) (fun j' _ => zero_le)

@@ -49,7 +49,7 @@ example : variationalSolution (E := ℝ) isCoercive_mul
 /-- The Galerkin solution in `⊥` is `0`. -/
 example : galerkinSolution (B := ContinuousLinearMap.mul ℝ ℝ) isCoercive_mul
     (W := (⊥ : Submodule ℝ ℝ))
-    (Submodule.closed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
+    (Submodule.isClosed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
     ((ContinuousLinearMap.mul ℝ ℝ) 3) = 0 := by
   symm
   apply galerkinSolution_eq_of_forall isCoercive_mul _
@@ -63,17 +63,17 @@ example (w : (⊥ : Submodule ℝ ℝ)) :
       (variationalSolution (E := ℝ) isCoercive_mul ((ContinuousLinearMap.mul ℝ ℝ) 3)
         - ((galerkinSolution (B := ContinuousLinearMap.mul ℝ ℝ) isCoercive_mul
             (W := (⊥ : Submodule ℝ ℝ))
-            (Submodule.closed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
+            (Submodule.isClosed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
             ((ContinuousLinearMap.mul ℝ ℝ) 3) : ℝ))) (w : ℝ) = 0 :=
   galerkin_orthogonality isCoercive_mul
-    (Submodule.closed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete _ w
+    (Submodule.isClosed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete _ w
 
 /-- Céa's lemma on `ℝ` with `W = ⊥`. -/
 example :
     ‖variationalSolution (E := ℝ) isCoercive_mul ((ContinuousLinearMap.mul ℝ ℝ) 3)
       - ((galerkinSolution (B := ContinuousLinearMap.mul ℝ ℝ) isCoercive_mul
           (W := (⊥ : Submodule ℝ ℝ))
-          (Submodule.closed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
+          (Submodule.isClosed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
           ((ContinuousLinearMap.mul ℝ ℝ) 3) : ℝ))‖
       ≤ (‖ContinuousLinearMap.mul ℝ ℝ‖ / 1) *
         ‖variationalSolution (E := ℝ) isCoercive_mul ((ContinuousLinearMap.mul ℝ ℝ) 3)
@@ -88,7 +88,7 @@ example :
     ‖variationalSolution (E := ℝ) isCoercive_mul ((ContinuousLinearMap.mul ℝ ℝ) 3)
       - ((galerkinSolution (B := ContinuousLinearMap.mul ℝ ℝ) isCoercive_mul
           (W := (⊥ : Submodule ℝ ℝ))
-          (Submodule.closed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
+          (Submodule.isClosed_of_finiteDimensional (⊥ : Submodule ℝ ℝ)).isComplete
           ((ContinuousLinearMap.mul ℝ ℝ) 3) : ℝ))‖
       ≤ (‖ContinuousLinearMap.mul ℝ ℝ‖ / 1) *
         ⨅ v : (⊥ : Submodule ℝ ℝ),
@@ -127,7 +127,7 @@ example :
     galerkinSolution (B := euclidBilin) isCoercive_euclidBilin
       (W := Submodule.span ℝ {(EuclideanSpace.single (0 : Fin 2) (1 : ℝ) :
         EuclideanSpace ℝ (Fin 2))})
-      (Submodule.closed_of_finiteDimensional
+      (Submodule.isClosed_of_finiteDimensional
         (Submodule.span ℝ {(EuclideanSpace.single (0 : Fin 2) (1 : ℝ) :
           EuclideanSpace ℝ (Fin 2))})).isComplete
       (euclidBilin (WithLp.toLp 2 ![1, 2] : EuclideanSpace ℝ (Fin 2)))
@@ -149,7 +149,7 @@ example :
       - ((galerkinSolution (B := euclidBilin) isCoercive_euclidBilin
           (W := Submodule.span ℝ {(EuclideanSpace.single (0 : Fin 2) (1 : ℝ) :
             EuclideanSpace ℝ (Fin 2))})
-          (Submodule.closed_of_finiteDimensional
+          (Submodule.isClosed_of_finiteDimensional
             (Submodule.span ℝ {(EuclideanSpace.single (0 : Fin 2) (1 : ℝ) :
               EuclideanSpace ℝ (Fin 2))})).isComplete
           (euclidBilin (WithLp.toLp 2 ![1, 2] : EuclideanSpace ℝ (Fin 2))) :

@@ -435,7 +435,7 @@ noncomputable def ν : Measure Bool :=
   (2 / 3 : ENNReal) • Measure.dirac false + (1 / 3 : ENNReal) • Measure.dirac true
 
 instance : IsProbabilityMeasure ν := ⟨by
-  simp only [ν, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [ν, add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [ENNReal.div_add_div_same]; norm_num; exact ENNReal.div_self (by norm_num) (by norm_num)⟩
 
 /-- The count read from one coordinate. -/

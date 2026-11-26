@@ -51,7 +51,7 @@ variable {X : Type*} [MeasurableSpace X]
 lemma isProbabilityMeasure_average_dirac (x : ℕ → X) {m : ℕ} (hm : m ≠ 0) :
     IsProbabilityMeasure ((m : ℝ≥0∞)⁻¹ • ∑ i ∈ range m, Measure.dirac (x i)) := by
   constructor
-  rw [Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
+  rw [smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
   simp only [measure_univ, sum_const, card_range, nsmul_eq_mul, mul_one, smul_eq_mul]
   exact ENNReal.inv_mul_cancel (by exact_mod_cast hm) (ENNReal.natCast_ne_top m)
 
@@ -78,7 +78,7 @@ theorem sampleEmpiricalMeasure_apply (x : ℕ → X) {n : ℕ} (hn : n ≠ 0) {A
     (hA : MeasurableSet A) :
     (sampleEmpiricalMeasure x n : Measure X) A =
       (n : ℝ≥0∞)⁻¹ * ((range n).filter (fun i => x i ∈ A)).card := by
-  rw [toMeasure_sampleEmpiricalMeasure x hn, Measure.smul_apply, Measure.coe_finsetSum,
+  rw [toMeasure_sampleEmpiricalMeasure x hn, smul_apply, Measure.coe_finsetSum,
     Finset.sum_apply, smul_eq_mul]
   congr 1
   simp_rw [Measure.dirac_apply' _ hA]

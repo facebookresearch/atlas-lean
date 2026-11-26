@@ -633,7 +633,7 @@ public theorem wald_second_equation
       rw [hasFiniteIntegral_iff_enorm]
       have hEq : (fun ω => ‖Glim ω‖ₑ) = fun ω => ENNReal.ofReal (Glim ω) := by
         funext ω
-        rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (sq_nonneg _)]
+        rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (sq_nonneg _)]
       rw [hEq]
       exact lt_top_iff_ne_top.mpr hfinite
     refine ⟨hint_G, ?_⟩

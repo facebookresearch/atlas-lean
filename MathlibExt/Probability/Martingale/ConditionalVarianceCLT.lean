@@ -631,7 +631,7 @@ private lemma lintegral_iSup_cutX_le (hL2 : ∀ n k, MemLp (X n k) 2 μ) {K : �
     refine iSup₂_le fun k hk => ?_
     refine le_trans (le_of_eq ?_) (single_le_sum (f := fun k =>
       ENNReal.ofReal (cutX μ (F n) (X n) K k ω ^ 2)) (fun _ _ => zero_le) hk)
-    rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+    rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hint : Integrable (fun ω => ∑ k ∈ range (r n), cutX μ (F n) (X n) K k ω ^ 2) μ :=
     integrable_finsetSum _ fun k _ => (memLp_cutX (hL2 n) K k).integrable_sq
   refine (lintegral_mono hpt).trans ?_

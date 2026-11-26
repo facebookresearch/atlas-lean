@@ -1611,7 +1611,7 @@ private lemma donsker_gaussian_tail_fourth {a : ℝ} (ha : 0 < a) :
     (by norm_num) (by norm_num) (ENNReal.ofReal a)
   have hset : {x : ℝ | ENNReal.ofReal a ≤ ‖id x‖ₑ} = {x | a ≤ |x|} := by
     ext x
-    simp only [id_eq, Real.enorm_eq_ofReal_abs]
+    simp only [id_eq, Real.eNorm_eq_ofReal_abs]
     exact ENNReal.ofReal_le_ofReal_iff (abs_nonneg x)
   rw [hset] at h
   have hleft : (ENNReal.ofReal a ^ (4 : ℝ≥0∞).toReal *

@@ -85,7 +85,7 @@ private lemma tendsto_integral_norm_zero_of_tendsto_eLpNorm
   rw [Real.dist_eq, sub_zero,
     abs_of_nonneg (integral_nonneg (fun _ => norm_nonneg _))]
   have hstep := hN n hn
-  rw [eLpNorm_one_eq_lintegral_enorm (hint n).aestronglyMeasurable,
+  rw [eLpNorm_one_eq_lintegral_eNorm (hint n).aestronglyMeasurable,
       ← ofReal_integral_norm_eq_lintegral_enorm (hint n)] at hstep
   have hle := (ENNReal.ofReal_le_ofReal_iff (by linarith)).mp hstep
   have : (fun ω : Ω => ‖f n ω - g ω‖) = fun x => ‖(f n - g) x‖ := by
@@ -103,7 +103,7 @@ private lemma tendsto_eLpNorm_of_tendsto_integral_norm_zero
   have heq : (fun n => eLpNorm (f n - g) 1 μ) =
       (fun n => ENNReal.ofReal (∫ ω, ‖f n ω - g ω‖ ∂μ)) := by
     ext n
-    rw [eLpNorm_one_eq_lintegral_enorm (hint n).aestronglyMeasurable,
+    rw [eLpNorm_one_eq_lintegral_eNorm (hint n).aestronglyMeasurable,
       ← ofReal_integral_norm_eq_lintegral_enorm (hint n)]
     congr 1
   rw [heq, show (0 : ℝ≥0∞) = ENNReal.ofReal 0 from by simp]

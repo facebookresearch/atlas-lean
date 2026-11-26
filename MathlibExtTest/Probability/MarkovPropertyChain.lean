@@ -80,7 +80,7 @@ noncomputable def initial : Measure (Option Bool) :=
 
 instance initial_isProbabilityMeasure : IsProbabilityMeasure initial := by
   rw [isProbabilityMeasure_iff]
-  norm_num [initial, Measure.smul_apply, Measure.add_apply]
+  norm_num [initial, smul_apply, add_apply]
   exact ENNReal.inv_two_add_inv_two
 
 /-- The two supported states alternate; the null state is fixed. -/
@@ -176,7 +176,7 @@ theorem boundedTime_one_mass : chain {ω | boundedTime ω = 1} = (1 / 2 : ℝ≥
     ext ω
     simp [boundedTime]
   rw [heq]
-  simpa [initial, Measure.smul_apply, Measure.add_apply] using
+  simpa [initial, smul_apply, add_apply] using
     initial_event ({some true} : Set (Option Bool)) (measurableSet_singleton _)
 
 theorem boundedTime_three_mass : chain {ω | boundedTime ω = 3} = (1 / 2 : ℝ≥0∞) := by
@@ -184,7 +184,7 @@ theorem boundedTime_three_mass : chain {ω | boundedTime ω = 3} = (1 / 2 : ℝ�
     ext ω
     simp [boundedTime]
   rw [heq]
-  simpa [initial, Measure.smul_apply, Measure.add_apply] using
+  simpa [initial, smul_apply, add_apply] using
     initial_event ({some true}ᶜ : Set (Option Bool)) (measurableSet_singleton _).compl
 
 /-- The finite stopping-time interface is exercised at a nonconstant time and nonconstant functional. -/
@@ -201,7 +201,7 @@ theorem bounded_strong_markov :
 
 /-- The actual null initial-state event is nonempty as a set of paths. -/
 theorem initial_none_null : chain {ω : ℕ → Option Bool | ω 0 = none} = 0 := by
-  simpa [initial, Measure.smul_apply, Measure.add_apply] using
+  simpa [initial, smul_apply, add_apply] using
     initial_event ({none} : Set (Option Bool)) (measurableSet_singleton _)
 
 /-- Infinity is used on that null event; elsewhere the two positive finite fibers are retained. -/

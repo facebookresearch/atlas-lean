@@ -228,7 +228,7 @@ private theorem exists_isMin_balObj {A B : Matrix (Fin n) (Fin n) ℝ} (hA : ∀
       linarith [hGC s q]
     linarith
   obtain ⟨s, hsV, hsmin⟩ := hGcont.continuousOn.exists_isMinOn'
-    (LinearMap.range Φ).closed_of_finiteDimensional (Submodule.zero_mem _)
+    (LinearMap.range Φ).isClosed_of_finiteDimensional (Submodule.zero_mem _)
     (hev.filter_mono inf_le_left)
   obtain ⟨x, rfl⟩ := LinearMap.mem_range.1 hsV
   exact ⟨x, fun x' => by

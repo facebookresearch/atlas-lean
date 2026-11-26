@@ -39,7 +39,7 @@ noncomputable def μtest : Measure (Fin 2) :=
 instance : IsProbabilityMeasure μtest := by
   unfold μtest
   constructor
-  simp only [Measure.add_apply, Measure.smul_apply, Measure.dirac_apply,
+  simp only [add_apply, smul_apply, Measure.dirac_apply,
     Set.indicator_of_mem, Set.mem_univ, Pi.one_apply, smul_eq_mul, mul_one]
   exact ENNReal.add_halves 1
 

@@ -264,7 +264,7 @@ theorem tendsto_integrandDist_delayedAverage {P : Measure Ω} [IsFiniteMeasure P
       ‖(delayedAverage hH M t n).toProcess u.toNNReal ω - truncation (H u.toNNReal) M ω‖ₑ ^ 2 ≤
         ENNReal.ofReal ((2 * |M|) ^ 2) := by
     intro n ω u hu
-    rw [toProcess_delayedAverage hH M ht n hu ω, Real.enorm_eq_ofReal_abs,
+    rw [toProcess_delayedAverage hH M ht n hu ω, Real.eNorm_eq_ofReal_abs,
       ← ENNReal.ofReal_pow (abs_nonneg _)]
     refine ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (abs_nonneg _) ?_ 2)
     refine (abs_sub _ _).trans ?_
@@ -341,7 +341,7 @@ theorem tendsto_integrandDist_delayedAverage {P : Measure Ω} [IsFiniteMeasure P
     refine tendsto_lintegral_of_dominated_convergence (fun _ ↦ ENNReal.ofReal ((2 * |M|) ^ 2))
       (fun n ↦ ?_) (fun n ↦ ?_) ?_ ?_
     · exact ((((delayedAverage hH M t n).measurable_toProcess.sub hTm).comp
-        (measurable_id.prodMk measurable_const)).enorm).pow_const 2
+        (measurable_id.prodMk measurable_const)).eNorm).pow_const 2
     · filter_upwards [ae_restrict_mem measurableSet_Ioc] with u hu using hbd n ω u hu
     · rw [lintegral_const]
       exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top (by simp)
@@ -360,7 +360,7 @@ theorem tendsto_integrandDist_delayedAverage {P : Measure Ω} [IsFiniteMeasure P
       (f := fun p : Ω × ℝ ↦ ‖(delayedAverage hH M t n).toProcess p.2.toNNReal p.1 -
         truncation (H p.2.toNNReal) M p.1‖ₑ ^ 2)
       (((((delayedAverage hH M t n).measurable_toProcess.sub hTm).comp
-        measurable_swap).enorm).pow_const 2)
+        measurable_swap).eNorm).pow_const 2)
   · calc _ ≤ ∫⁻ _u in Set.Ioc (0 : ℝ) t, ENNReal.ofReal ((2 * |M|) ^ 2) :=
           setLIntegral_mono_ae measurable_const.aemeasurable
             (Filter.Eventually.of_forall fun u hu ↦ hbd n ω u hu)
@@ -394,7 +394,7 @@ theorem tendsto_integrandDist_truncation {P : Measure Ω} {H : ℝ≥0 → Ω �
   set G : Ω → ℝ≥0∞ := fun ω ↦ ∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2 with hG
   have hGm : Measurable G := Measurable.lintegral_prod_right'
     (ν := volume.restrict (Set.Ioc (0 : ℝ) t)) (f := fun p : Ω × ℝ ↦ ‖H p.2.toNNReal p.1‖ₑ ^ 2)
-    ((hHm.comp measurable_swap).enorm.pow_const 2)
+    ((hHm.comp measurable_swap).eNorm.pow_const 2)
   have hGfin : ∀ᵐ ω ∂P, G ω ≠ ∞ := (ae_lt_top hGm hH2).mono fun _ h ↦ h.ne
   have hTm : ∀ M : ℝ, Measurable fun p : ℝ × Ω ↦ truncation (H p.1.toNNReal) M p.2 :=
     fun M ↦ (measurable_id.indicator measurableSet_Ioc).comp hHm
@@ -403,7 +403,7 @@ theorem tendsto_integrandDist_truncation {P : Measure Ω} {H : ℝ≥0 → Ω �
   refine tendsto_lintegral_of_dominated_convergence G (fun M ↦ ?_) (fun M ↦ ?_) hH2 ?_
   · exact Measurable.lintegral_prod_right' (ν := volume.restrict (Set.Ioc (0 : ℝ) t))
       (f := fun p : Ω × ℝ ↦ ‖truncation (H p.2.toNNReal) M p.1 - H p.2.toNNReal p.1‖ₑ ^ 2)
-      ((((hTm M).sub hHm).comp measurable_swap).enorm.pow_const 2)
+      ((((hTm M).sub hHm).comp measurable_swap).eNorm.pow_const 2)
   · exact Filter.Eventually.of_forall fun ω ↦ lintegral_mono fun u ↦ hpt M _
   · filter_upwards [hGfin] with ω hω
     have h0' : (0 : ℝ≥0∞) = ∫⁻ _u in Set.Ioc (0 : ℝ) t, 0 := by simp
@@ -411,7 +411,7 @@ theorem tendsto_integrandDist_truncation {P : Measure Ω} {H : ℝ≥0 → Ω �
     refine tendsto_lintegral_of_dominated_convergence (fun u ↦ ‖H u.toNNReal ω‖ₑ ^ 2)
       (fun M ↦ ?_) (fun M ↦ Filter.Eventually.of_forall fun u ↦ hpt M _) hω
       (Filter.Eventually.of_forall fun u ↦ hlim _)
-    exact (((hTm M).sub hHm).comp (measurable_id.prodMk measurable_const)).enorm.pow_const 2
+    exact (((hTm M).sub hHm).comp (measurable_id.prodMk measurable_const)).eNorm.pow_const 2
 
 /-- **Density of elementary integrands.** A progressive integrand `H` with
 `E ∫_0^t H_u² du < ∞` is the `L²(P ⊗ du)`-limit on `(0, t] × Ω` of elementary integrands

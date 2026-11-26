@@ -90,7 +90,7 @@ private instance mixQ_isProb {Ω Θ : Type*} {m₀ : MeasurableSpace Ω}
     IsProbabilityMeasure (mixQ P e) := by
   rw [isProbabilityMeasure_iff]
   simp only [mixQ, Measure.sum_apply_of_countable _ Set.univ]
-  simp_rw [Measure.smul_apply, smul_eq_mul, IsProbabilityMeasure.measure_univ, mul_one]
+  simp_rw [smul_apply, smul_eq_mul, IsProbabilityMeasure.measure_univ, mul_one]
   exact mixW_tsum
 
 /-- Every family member is absolutely continuous w.r.t. the mixture. -/

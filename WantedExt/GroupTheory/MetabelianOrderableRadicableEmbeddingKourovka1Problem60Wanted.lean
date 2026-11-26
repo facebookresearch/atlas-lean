@@ -51,7 +51,7 @@ def IsRadicable (G : Type) [Group G] : Prop :=
 /-- Kourovka 1.60 (A. I. Kokorin): every orderable metabelian group (derived length at most `2`)
 embeds, by an injective group homomorphism, in a radicable orderable group. -/
 def orderableMetabelianEmbedsInRadicableOrderable : Prop :=
-  ∀ (G : Type) [Group G], derivedSeries G 2 = ⊥ → IsOrderable G →
+  ∀ (G : Type) [Group G], Subgroup.derivedSeries G 2 = ⊥ → IsOrderable G →
     ∃ (H : Type) (_ : Group H) (f : G →* H), Function.Injective f ∧ IsOrderable H ∧ IsRadicable H
 
 /--

@@ -372,7 +372,7 @@ private theorem dpc_truncation_mem_closedBall_and_dist
       have hxA' : ¬ (↑C : ℝ≥0∞) ≤ (‖⇑v x‖₊ : ℝ≥0∞) := hxA
       have hlt : (‖⇑v x‖₊ : ℝ≥0∞) < (C : ℝ≥0∞) := lt_of_not_ge hxA'
       have hltR : ‖⇑v x‖₊ < C := by exact_mod_cast hlt
-      calc ‖⇑v x‖ = (‖⇑v x‖₊ : ℝ) := (coe_nnnorm (⇑v x)).symm
+      calc ‖⇑v x‖ = (‖⇑v x‖₊ : ℝ) := (coe_nnNorm (⇑v x)).symm
         _ ≤ (C : ℝ) := le_of_lt (by exact_mod_cast hltR)
     · rw [Set.indicator_of_notMem hx _]
       exact norm_zero.le.trans (by positivity)
@@ -618,7 +618,7 @@ private theorem dpc_exists_disjoint_of_small_sets
       ((hv (φ j)).aestronglyMeasurable).indicator hTmeas
     have e1 : eLpNorm ((s (φ j) ∩ ⋃ l, s (φ (l + j + 1))).indicator (v (φ j))) 1 μ
         = ∫⁻ x in s (φ j) ∩ ⋃ l, s (φ (l + j + 1)), ‖v (φ j) x‖ₑ ∂μ := by
-      rw [eLpNorm_one_eq_lintegral_enorm hAE, ← lintegral_indicator hTmeas]
+      rw [eLpNorm_one_eq_lintegral_eNorm hAE, ← lintegral_indicator hTmeas]
       refine lintegral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
       change ‖(s (φ j) ∩ ⋃ l, s (φ (l + j + 1))).indicator (v (φ j)) x‖ₑ = _
       by_cases hx : x ∈ s (φ j) ∩ ⋃ l, s (φ (l + j + 1))
@@ -1017,7 +1017,7 @@ private theorem dpc_tendsto_eLpNorm_restrict_of_weakly_null
         (memLp_one_iff_integrable.mp hmem).integrableOn
       have e1 : eLpNorm (⇑(v (ψ n))) 1 (μ.restrict (s (ψ n)))
           = ∫⁻ x, ‖⇑(v (ψ n)) x‖ₑ ∂(μ.restrict (s (ψ n))) :=
-        eLpNorm_one_eq_lintegral_enorm hae
+        eLpNorm_one_eq_lintegral_eNorm hae
       have e2 : (∫⁻ x, ‖⇑(v (ψ n)) x‖ₑ ∂(μ.restrict (s (ψ n))))
           = ENNReal.ofReal (∫ x in s (ψ n), ‖⇑(v (ψ n)) x‖ ∂μ) :=
         (ofReal_integral_norm_eq_lintegral_enorm hintR).symm

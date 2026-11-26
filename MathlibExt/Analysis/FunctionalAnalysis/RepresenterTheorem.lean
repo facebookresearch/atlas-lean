@@ -161,7 +161,7 @@ theorem exists_eq_kernelExpansion_of_isMinimizer [FiniteDimensional 𝕜 V] {x :
     (hf : ∀ g : H, regularizedRisk H x L Ω f ≤ regularizedRisk H x L Ω g) :
     ∃ c : Fin n → V, f = kernelExpansion H x c := by
   have hf' := mem_topologicalClosure_range_of_isMinimizer hΩ hf
-  rw [(Submodule.closed_of_finiteDimensional _).submodule_topologicalClosure_eq] at hf'
+  rw [(Submodule.isClosed_of_finiteDimensional _).submodule_topologicalClosure_eq] at hf'
   obtain ⟨c, hc⟩ := hf'
   exact ⟨c, hc.symm⟩
 
@@ -174,7 +174,7 @@ theorem exists_kernelExpansion_isMinimizer [FiniteDimensional 𝕜 V] (x : Fin n
     ∃ c : Fin n → V, ∀ g : H,
       regularizedRisk H x L Ω (kernelExpansion H x c) ≤ regularizedRisk H x L Ω g := by
   set W := LinearMap.range (kernelExpansion H x).toLinearMap
-  have hWc : IsClosed (W : Set H) := Submodule.closed_of_finiteDimensional _
+  have hWc : IsClosed (W : Set H) := Submodule.isClosed_of_finiteDimensional _
   have : ProperSpace W := FiniteDimensional.proper_rclike 𝕜 W
   obtain ⟨b, hb⟩ := hLb
   set φ : W → ℝ := fun w => regularizedRisk H x L Ω (w : H)

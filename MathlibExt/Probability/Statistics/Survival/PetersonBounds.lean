@@ -296,7 +296,7 @@ private lemma isProbabilityMeasure_mix {α : Type*} [MeasurableSpace α] (μ₀ 
     [IsProbabilityMeasure μ₀] [IsProbabilityMeasure μ₁] {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
     IsProbabilityMeasure (ENNReal.ofReal a • μ₀ + ENNReal.ofReal (1 - a) • μ₁) := by
   constructor
-  rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, measure_univ, measure_univ,
+  rw [add_apply, smul_apply, smul_apply, measure_univ, measure_univ,
     smul_eq_mul, smul_eq_mul, mul_one, mul_one, ← ENNReal.ofReal_add ha0 (sub_nonneg.2 ha1),
     (by ring : a + (1 - a) = 1), ENNReal.ofReal_one]
 
@@ -343,8 +343,8 @@ theorem petersonIdentifiedSet_eq (P : Measure (ℝ × Bool)) [IsProbabilityMeasu
       ← jointCensoredObsLaw,
       jointCensoredObsLaw_lowerCoupling, jointCensoredObsLaw_upperCoupling, ← add_smul, hsum,
       one_smul]
-  · rw [Measure.fst_apply measurableSet_Iic, Measure.add_apply, Measure.smul_apply,
-      Measure.smul_apply, ← Measure.fst_apply measurableSet_Iic,
+  · rw [Measure.fst_apply measurableSet_Iic, add_apply, smul_apply,
+      smul_apply, ← Measure.fst_apply measurableSet_Iic,
       ← Measure.fst_apply measurableSet_Iic,
       fst_map_lowerCoupling_Iic, fst_map_upperCoupling_Iic, smul_eq_mul, smul_eq_mul,
       ← ENNReal.ofReal_toReal hlo_top, ← ENNReal.ofReal_toReal hhi_top,

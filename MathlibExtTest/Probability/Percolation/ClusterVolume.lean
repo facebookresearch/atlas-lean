@@ -26,7 +26,7 @@ example (d : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
   have huniv : {ω : ConfigSpace (Sym2 (Site d)) |
       ((1 : ℕ) : ℕ∞) ≤ (cluster d ω (origin d)).encard} = Set.univ := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_univ, iff_true, Nat.cast_one,
+    simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true, Nat.cast_one,
       Set.one_le_encard_iff_nonempty]
     exact ⟨origin d, connected_refl ω (origin d)⟩
   rw [huniv, probReal_univ]

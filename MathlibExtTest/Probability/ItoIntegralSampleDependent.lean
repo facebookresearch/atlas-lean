@@ -157,7 +157,7 @@ theorem signed_windows_sq (u : ℝ) (ω : Ω) :
       (Set.Ioc (1 : ℝ) 3).indicator (fun _ ↦ (1 : ℝ≥0∞)) u := by
   rw [signedWindow, signedWindow, indicator_toNNReal, indicator_toNNReal]
   have hc : ‖brownianSign B ω‖ₑ ^ 2 = 1 := by
-    rw [Real.enorm_eq_ofReal_abs, abs_brownianSign]
+    rw [Real.eNorm_eq_ofReal_abs, abs_brownianSign]
     norm_num
   by_cases h12 : u ∈ Set.Ioc (1 : ℝ) 2
   · have h23 : u ∉ Set.Ioc (2 : ℝ) 3 := by grind

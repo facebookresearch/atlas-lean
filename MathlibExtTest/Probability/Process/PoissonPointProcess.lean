@@ -66,7 +66,7 @@ example : ∫⁻ η, η univ * η univ ∂(poissonPointProcess μ) = μ univ * (
   have hm := lintegral_lintegral_mecke μ hh
   have hmean : ∫⁻ η, η univ ∂(poissonPointProcess μ) = μ univ := by
     simpa using lintegral_lintegral μ (f := fun _ => 1) measurable_const
-  simp only [lintegral_const, Measure.add_apply, Measure.dirac_apply_of_mem (mem_univ _)] at hm
+  simp only [lintegral_const, add_apply, Measure.dirac_apply_of_mem (mem_univ _)] at hm
   rw [hm, lintegral_add_right _ measurable_const, hmean, lintegral_const,
     measure_univ (μ := poissonPointProcess μ), mul_one, mul_comm]
 

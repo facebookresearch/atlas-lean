@@ -41,7 +41,7 @@ term $G^{(4)}$ of the derived series of $G$ is trivial. -/
 def twoGeneratorCyclicDerivedLengthAtMostFour : Prop :=
   ∀ (p : ℕ) (G : Type) [Group G] [Finite G], p.Prime → IsPGroup p G →
     (∀ x y : G, IsCyclic ↥⁅Subgroup.closure {x, y}, Subgroup.closure {x, y}⁆) →
-      derivedSeries G 4 = ⊥
+      Subgroup.derivedSeries G 4 = ⊥
 
 /--
 **Derived length of $p$-groups whose $2$-generator subgroups have cyclic derived subgroups

@@ -87,7 +87,7 @@ public theorem proj_bounds (b : HilbertBasis ι 𝕜 E) (s : Finset ι) :
   classical
   let U : Submodule 𝕜 E := Submodule.span 𝕜 (s.image b : Set E)
   let : FiniteDimensional 𝕜 U := FiniteDimensional.span_finset 𝕜 (s.image b)
-  let : CompleteSpace U := FiniteDimensional.complete 𝕜 U
+  let : CompleteSpace U := FiniteDimensional.completeSpace 𝕜 U
   have hU : U.starProjection = b.toUnconditionalSchauderBasis.proj s := by
     calc
       U.starProjection =

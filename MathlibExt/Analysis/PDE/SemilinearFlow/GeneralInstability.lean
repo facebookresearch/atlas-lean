@@ -347,7 +347,7 @@ theorem mem_frontier_spectrum_of_nnnorm_eq_spectralRadius {L : X →L[𝕜] X} {
       RCLike.norm_ofReal, abs_of_pos hs0, hs, div_mul_eq_mul_div, mul_div_mul_right _ _ hn0.ne']
     linarith
   have hlt : spectralRadius 𝕜 L < ‖w‖₊ := by
-    rw [hr, ENNReal.coe_lt_coe, ← NNReal.coe_lt_coe, coe_nnnorm, coe_nnnorm, hwnorm]
+    rw [hr, ENNReal.coe_lt_coe, ← NNReal.coe_lt_coe, coe_nnNorm, coe_nnNorm, hwnorm]
     nlinarith
   exact spectrum.notMem_iff.2
     (spectrum.mem_resolventSet_iff.1 (spectrum.mem_resolventSet_of_spectralRadius_lt hlt))
@@ -382,7 +382,7 @@ theorem exists_escape_of_mem_spectrum {G : Y → Y} {x₀ : Y} {L : Y →L[ℂ] 
   have happrox := exists_approxEigenvector_of_mem_frontier
     (mem_frontier_spectrum_of_nnnorm_eq_spectralRadius hνσ hν0 hνr.symm)
   have hr : spectralRadius ℂ L < ENNReal.ofReal (‖ν‖ ^ p) := by
-    rw [← hνr, ← enorm_eq_nnnorm, ← ofReal_norm, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
+    rw [← hνr, ← eNorm_eq_nnNorm, ← ofReal_norm, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
     exact Real.self_lt_rpow_of_one_lt hν hp
   obtain ⟨μ, hμ0, hrμ, hμν⟩ := ENNReal.lt_iff_exists_real_btwn.1 hr
   obtain ⟨M, hM⟩ := Instability.exists_norm_pow_le_of_spectralRadius_lt hrμ

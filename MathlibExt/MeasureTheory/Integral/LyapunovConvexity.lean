@@ -879,7 +879,7 @@ private theorem lyapunovRange_isClosed_of_subtype_isClosed {α : Type*} [Measura
     [FiniteDimensional ℝ E] (W : Submodule ℝ E) [FiniteDimensional ℝ ↥W]
     {fW : α → W} (hclosed : IsClosed (lyapunovRange (μ := μ) (f := fW))) :
     IsClosed (W.subtypeL '' lyapunovRange (μ := μ) (f := fW)) := by
-  have hWclosed : IsClosed (W : Set E) := W.closed_of_finiteDimensional
+  have hWclosed : IsClosed (W : Set E) := W.isClosed_of_finiteDimensional
   have hmap : IsClosedMap (⇑W.subtypeL) := by
     rw [Submodule.coe_subtypeL, Submodule.coe_subtype]
     exact hWclosed.isClosedMap_subtype_val

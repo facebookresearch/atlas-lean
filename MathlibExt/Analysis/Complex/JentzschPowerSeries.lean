@@ -187,7 +187,7 @@ private theorem tendsto_section_of_norm_lt_one (a : ℕ → ℂ)
       (𝓝 ((FormalMultilinearSeries.ofScalars Complex a).sum z)) := by
   set p := FormalMultilinearSeries.ofScalars Complex a with hp
   have hzmem : z ∈ Metric.eball 0 p.radius := by
-    rw [hradius, mem_eball_zero_iff, enorm_eq_nnnorm]
+    rw [hradius, mem_eball_zero_iff, eNorm_eq_nnNorm]
     exact_mod_cast hz
   have hHas : HasSum (fun k => p k (fun _ => z)) (p.sum z) :=
     FormalMultilinearSeries.hasSum p hzmem

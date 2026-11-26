@@ -50,7 +50,7 @@ noncomputable def unif4 : Measure (Fin 4) :=
 theorem unif4_apply (s : Set (Fin 4)) :
     unif4 s = ENNReal.ofReal (1 / 4) * (s.indicator 1 0 + s.indicator 1 1 + s.indicator 1 2 +
       s.indicator 1 3) := by
-  simp only [unif4, Measure.smul_apply, Measure.add_apply, Measure.dirac_apply, smul_eq_mul]
+  simp only [unif4, smul_apply, add_apply, Measure.dirac_apply, smul_eq_mul]
 
 instance : IsProbabilityMeasure unif4 := by
   constructor

@@ -2239,7 +2239,7 @@ private theorem finite_not_squarefree_fiber [IsAlgClosed K] [W.IsElliptic] {n : 
     finite_setOf_isRoot hWr
   refine Set.Finite.subset (hroots.image (fun x => F'.eval x / G.eval x)) ?_
   intro c hc
-  rw [Set.mem_setOf_eq] at hc
+  rw [Set.mem_ofPred_eq] at hc
   unfold Squarefree at hc
   push Not at hc
   obtain ⟨q, hq2, hqu⟩ := hc

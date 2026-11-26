@@ -176,7 +176,7 @@ private def primeSet (T : Finset (Primes K)) : Set (Ideal (𝓞 K)) :=
 
 private theorem primeSet_empty : primeSet K ∅ = {⊤} := by
   ext I
-  simp only [primeSet, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [primeSet, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨hI0, hprime⟩
     by_contra hne

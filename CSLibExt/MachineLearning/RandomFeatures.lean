@@ -69,7 +69,7 @@ noncomputable def phaseMeasure : Measure ℝ :=
 instance : IsProbabilityMeasure phaseMeasure := by
   constructor
   have h : (0 : ℝ) < 2 * π := by positivity
-  simp only [phaseMeasure, Measure.smul_apply, Measure.restrict_apply MeasurableSet.univ,
+  simp only [phaseMeasure, smul_apply, Measure.restrict_apply MeasurableSet.univ,
     Set.univ_inter, Real.volume_Ioc, sub_zero, smul_eq_mul]
   exact ENNReal.inv_mul_cancel (by simpa using h) ENNReal.ofReal_ne_top
 

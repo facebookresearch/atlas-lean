@@ -1010,7 +1010,7 @@ private lemma carleman_map_sq_symmetrization (σ : Measure ℝ) (hs : σ (Iio 0)
 private lemma carleman_add_self_injective {σ τ : Measure ℝ} (h : σ + σ = τ + τ) : σ = τ := by
   ext s hs
   have heq : σ s + σ s = τ s + τ s := by
-    simpa only [Measure.add_apply] using congrArg (fun ρ : Measure ℝ => ρ s) h
+    simpa only [add_apply] using congrArg (fun ρ : Measure ℝ => ρ s) h
   apply le_antisymm
   · apply le_of_not_gt
     intro hlt

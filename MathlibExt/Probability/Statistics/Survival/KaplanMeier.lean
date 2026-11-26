@@ -167,23 +167,23 @@ theorem kmMeasure_real_apply (τ : ℝ) {B : Set ℝ} (hB : MeasurableSet B) :
       ∑ j, (if D.time j ∈ B then D.kmMass j else 0) + if τ ∈ B then D.kmTail else 0 := by
   have hfin : ∀ j, ENNReal.ofReal (D.kmMass j) * B.indicator 1 (D.time j) ≠ ⊤ := fun j => by
     by_cases h : D.time j ∈ B <;> simp [h]
-  rw [measureReal_def, kmMeasure, Measure.add_apply, Measure.coe_finsetSum, Finset.sum_apply,
+  rw [measureReal_def, kmMeasure, add_apply, Measure.coe_finsetSum, Finset.sum_apply,
     ENNReal.toReal_add (ENNReal.sum_ne_top.2 fun j _ => by
-      simpa [Measure.smul_apply, Measure.dirac_apply' _ hB] using hfin j)
-      (by by_cases h : τ ∈ B <;> simp [Measure.smul_apply, Measure.dirac_apply' _ hB, h]),
+      simpa [smul_apply, Measure.dirac_apply' _ hB] using hfin j)
+      (by by_cases h : τ ∈ B <;> simp [smul_apply, Measure.dirac_apply' _ hB, h]),
     ENNReal.toReal_sum fun j _ => by
-      simpa [Measure.smul_apply, Measure.dirac_apply' _ hB] using hfin j]
+      simpa [smul_apply, Measure.dirac_apply' _ hB] using hfin j]
   congr 1
   · refine sum_congr rfl fun j _ => ?_
     by_cases h : D.time j ∈ B <;>
-      simp [Measure.smul_apply, Measure.dirac_apply' _ hB, h, D.kmMass_nonneg j]
+      simp [smul_apply, Measure.dirac_apply' _ hB, h, D.kmMass_nonneg j]
   · by_cases h : τ ∈ B <;>
-      simp [Measure.smul_apply, Measure.dirac_apply' _ hB, h, D.kmTail_nonneg]
+      simp [smul_apply, Measure.dirac_apply' _ hB, h, D.kmTail_nonneg]
 
 /-- The Kaplan–Meier measure is a probability measure. -/
 theorem kmMeasure_isProbabilityMeasure (τ : ℝ) : IsProbabilityMeasure (D.kmMeasure τ) := by
   have hfin : D.kmMeasure τ Set.univ ≠ ⊤ := by
-    simp [kmMeasure, Measure.add_apply, Measure.smul_apply]
+    simp [kmMeasure, add_apply, smul_apply]
   refine ⟨?_⟩
   have h := D.kmMeasure_real_apply τ MeasurableSet.univ
   simp only [Set.mem_univ, ite_true, sum_kmMass_add_kmTail] at h

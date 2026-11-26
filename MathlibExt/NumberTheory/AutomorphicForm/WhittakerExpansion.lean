@@ -492,7 +492,7 @@ scoped instance instSecondCountableFiniteAdeleRing :
         (Filter.le_principal_iff.mpr (Filter.mem_cofinite.mpr (by rw [compl_compl]; exact T.finite_toSet)))) := by
       rw [RestrictedProduct.range_inclusion]
       ext x
-      simp only [Set.mem_setOf_eq, Filter.eventually_principal, Set.mem_range,
+      simp only [Set.mem_ofPred_eq, Filter.eventually_principal, Set.mem_range,
         RestrictedProduct.inclusion_apply]
       constructor
       · intro hx v hv

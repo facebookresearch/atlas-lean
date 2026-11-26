@@ -180,7 +180,7 @@ private lemma ksAffine_cauchyBound_le {p q : Polynomial ℂ} {n : ℕ}
     simpa [abs_of_nonneg ht.1] using ht.2
   have hOneSubNorm : ‖(1 - (t : ℂ))‖₊ ≤ 1 := by
     rw [← NNReal.coe_le_coe]
-    simp only [coe_nnnorm, NNReal.coe_one]
+    simp only [coe_nnNorm, NNReal.coe_one]
     rw [show (1 : ℂ) - (t : ℂ) = ((1 - t : ℝ) : ℂ) by norm_num]
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (sub_nonneg.mpr ht.2)]
     exact sub_le_self 1 ht.1

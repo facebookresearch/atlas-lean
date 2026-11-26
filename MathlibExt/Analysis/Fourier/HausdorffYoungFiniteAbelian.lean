@@ -75,7 +75,7 @@ open MathlibExt.Analysis.FunctionalAnalysis.RieszThorinWanted
 
 /-- The enorm of a complex number is the `ENNReal.ofReal` of its norm. -/
 private theorem enorm_complex_eq_ofReal (z : ℂ) : ‖z‖ₑ = ENNReal.ofReal ‖z‖ := by
-  rw [enorm_eq_nnnorm, ← coe_nnnorm z, ENNReal.ofReal_coe_nnreal]
+  rw [eNorm_eq_nnNorm, ← coe_nnNorm z, ENNReal.ofReal_coe_nnreal]
 
 /-- For counting measure on a finite type, the `eLpNorm` with exponent
 `ENNReal.ofReal r` is the `ENNReal.ofReal` of the familiar finite-sum

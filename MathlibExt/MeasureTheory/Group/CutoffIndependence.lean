@@ -131,7 +131,7 @@ private theorem lintegral_enorm_mul_lt_top (F : G → ℂ) (hFm : Measurable F)
     measurable_one.indicator hUo.measurableSet
   have hint2 : Measurable fun p : G × T =>
       ‖F p.1‖ₑ * ENNReal.ofReal (w p.1) * U.indicator 1 ((p.2 : G) * p.1) :=
-    ((hFm.comp measurable_fst).enorm.mul
+    ((hFm.comp measurable_fst).eNorm.mul
       (ENNReal.measurable_ofReal.comp (hwm.comp measurable_fst))).mul
       (hUind.comp (measurable_subgroup_mul T))
   have step1 : ∫⁻ x, ‖F x‖ₑ * ENNReal.ofReal (w x) ∂μ ≤
@@ -178,7 +178,7 @@ private theorem lintegral_enorm_mul_lt_top (F : G → ℂ) (hFm : Measurable F)
       _ = ∫⁻ x, ∫⁻ t : T, ‖F x‖ₑ * ENNReal.ofReal (w ((t : G) * x)) *
             U.indicator 1 x ∂τ ∂μ := by
           refine (lintegral_lintegral_swap ?_).symm
-          exact (((hFm.comp measurable_fst).enorm.mul
+          exact (((hFm.comp measurable_fst).eNorm.mul
             (ENNReal.measurable_ofReal.comp (hwm.comp (measurable_subgroup_mul T)))).mul
             (hUind.comp measurable_fst)).aemeasurable
       _ = ∫⁻ x, ‖F x‖ₑ * U.indicator 1 x *
@@ -198,7 +198,7 @@ private theorem lintegral_enorm_mul_lt_top (F : G → ℂ) (hFm : Measurable F)
       by_cases hxU : x ∈ U
       · rw [Set.indicator_of_mem hxU, Set.indicator_of_mem hxU, Pi.one_apply, mul_one]
         have h : ‖F x‖₊ ≤ ‖C‖₊ := by
-          rw [← NNReal.coe_le_coe, coe_nnnorm, coe_nnnorm]
+          rw [← NNReal.coe_le_coe, coe_nnNorm, coe_nnNorm]
           exact (hFb x).trans (Real.le_norm_self C)
         exact enorm_le_coe.2 h
       · simp [hxU]

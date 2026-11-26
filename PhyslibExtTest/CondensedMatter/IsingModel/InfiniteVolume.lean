@@ -48,9 +48,9 @@ lemma fvMeasure_disagree_outside (d n : ℕ) (η : ConfigSpace (Site d))
   have hmeas : MeasurableSet {ω : ConfigSpace (Site d) | ω x ≠ η x} :=
     (measurableSet_singleton (η x)).compl.preimage (measurable_pi_apply x)
   unfold fvMeasure
-  rw [Measure.finsetSum_apply _ _ _]
+  rw [sum_apply _ _ _]
   refine Finset.sum_eq_zero fun τ _ => ?_
-  rw [Measure.smul_apply, Measure.dirac_apply' _ hmeas, Set.indicator_of_notMem, smul_zero]
+  rw [smul_apply, Measure.dirac_apply' _ hmeas, Set.indicator_of_notMem, smul_zero]
   simp [glue, hx]
 
 -- The plus-boundary measure has no minus spin outside the box.

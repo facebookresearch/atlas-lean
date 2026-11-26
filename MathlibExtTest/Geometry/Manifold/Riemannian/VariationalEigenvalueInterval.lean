@@ -86,19 +86,19 @@ private lemma enorm_fderiv_cos : ∀ x : ℝ,
   have hn2 : ‖Real.sin x‖ = |Real.sin x| := Real.norm_eq_abs _
   have hnn : ‖fderiv ℝ Real.cos x‖₊ = ‖Real.sin x‖₊ :=
     Subtype.ext (hn1.trans hn2.symm)
-  rw [enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
+  rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
 
 private lemma sq_energy_cos : ∀ x : ℝ,
     (‖fderiv ℝ Real.cos x‖ₑ ^ 2 : ℝ≥0∞) =
       ENNReal.ofReal (Real.sin x ^ 2) := by
   intro (x : ℝ)
-  rw [enorm_fderiv_cos x, Real.enorm_eq_ofReal_abs _,
+  rw [enorm_fderiv_cos x, Real.eNorm_eq_ofReal_abs _,
     ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
 
 private lemma sq_mass_cos : ∀ x : ℝ,
     (‖Real.cos x‖ₑ ^ 2 : ℝ≥0∞) = ENNReal.ofReal (Real.cos x ^ 2) := by
   intro (x : ℝ)
-  rw [Real.enorm_eq_ofReal_abs _,
+  rw [Real.eNorm_eq_ofReal_abs _,
     ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
 
 private lemma integrable_of_bounded_cont {f : ℝ → ℝ} (hf : Continuous f)
@@ -355,7 +355,7 @@ theorem variationalEigenvalue_one_le :
           ENNReal.ofReal ((a + b * Real.cos x) ^ 2) := by
         intro (x : ℝ)
         have hx : (⇑u : ℝ → ℝ) x = a + b * Real.cos x := by rw [hfun]
-        rw [hx, Real.enorm_eq_ofReal_abs _,
+        rw [hx, Real.eNorm_eq_ofReal_abs _,
           ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
       have hfunEq : (fun x : ℝ => (‖⇑u x‖ₑ ^ 2 : ℝ≥0∞)) =
           (fun x : ℝ => ENNReal.ofReal ((a + b * Real.cos x) ^ 2)) :=
@@ -398,8 +398,8 @@ theorem variationalEigenvalue_one_le :
         Subtype.ext (hn.trans (Real.norm_eq_abs _).symm)
       have he : (‖fderiv ℝ (⇑u : ℝ → ℝ) x‖ₑ : ℝ≥0∞) =
           ‖(b * (-Real.sin x) : ℝ)‖ₑ := by
-        rw [enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
-      rw [he, Real.enorm_eq_ofReal_abs _,
+        rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
+      rw [he, Real.eNorm_eq_ofReal_abs _,
         ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
       congr 1
       ring

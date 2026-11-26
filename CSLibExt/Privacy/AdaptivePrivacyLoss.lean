@@ -596,7 +596,7 @@ open scoped NNReal
 /-- The Hoeffding variance proxy on `[−ε, ε]` coerces to `ε ^ 2`. -/
 private theorem stage_mgf_param_eq (ε : ℝ) (hε : 0 ≤ ε) :
     ((((‖(ε - -ε)‖₊ / 2) ^ 2 : ℝ≥0)) : ℝ) = ε ^ 2 := by
-  rw [NNReal.coe_pow, NNReal.coe_div, coe_nnnorm]
+  rw [NNReal.coe_pow, NNReal.coe_div, coe_nnNorm]
   simp only [Real.norm_eq_abs]
   rw [sub_neg_eq_add]
   have h2 : |ε + ε| = 2 * ε := by

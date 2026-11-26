@@ -31,7 +31,7 @@ Computed from the definition `(δ₁ + δ₋₁) / 2`. -/
 noncomputable def rad : Measure ℝ := (2⁻¹ : ℝ≥0∞) • (Measure.dirac 1 + Measure.dirac (-1))
 
 instance : IsProbabilityMeasure rad := ⟨by
-  simp only [rad, Measure.smul_apply, Measure.add_apply, Measure.dirac_apply_of_mem,
+  simp only [rad, smul_apply, add_apply, Measure.dirac_apply_of_mem,
     Set.mem_univ, smul_eq_mul]
   rw [← two_mul, ← mul_assoc, ENNReal.inv_mul_cancel (by norm_num) (by norm_num), one_mul]⟩
 
@@ -47,7 +47,7 @@ theorem rad_law : IsBoundedUnitLaw rad 1 where
   ae_abs_le := by
     have hm : MeasurableSet {x : ℝ | ¬ |x| ≤ 1} :=
       (measurableSet_le (f := fun x : ℝ => |x|) (by fun_prop) measurable_const).compl
-    rw [ae_iff, rad, Measure.smul_apply, Measure.add_apply, Measure.dirac_apply' _ hm,
+    rw [ae_iff, rad, smul_apply, add_apply, Measure.dirac_apply' _ hm,
       Measure.dirac_apply' _ hm]
     simp
 

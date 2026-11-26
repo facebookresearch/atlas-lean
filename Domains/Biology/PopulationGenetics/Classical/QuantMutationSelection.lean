@@ -172,7 +172,7 @@ theorem isProbabilityMeasure_select (ν : Measure ℝ) [IsProbabilityMeasure ν]
 theorem isProbabilityMeasure_mutate (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     IsProbabilityMeasure (P.mutate ρ) := by
   constructor
-  simp only [mutate, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [mutate, add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_add (by linarith [P.mu_lt_one]) P.mu_pos.le]
   simp
 

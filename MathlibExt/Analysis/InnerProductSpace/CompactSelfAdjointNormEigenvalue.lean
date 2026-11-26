@@ -80,9 +80,9 @@ theorem exists_hasEigenvalue_norm_eq (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
   rw [T.spectralRadius_eq_nnnorm hT] at hμμ
   have h2 : ‖μ‖₊ = ‖T‖₊ := by exact_mod_cast hμμ
   have hnorm : ‖μ‖ = ‖T‖ := by
-    calc ‖μ‖ = (‖μ‖₊ : ℝ) := coe_nnnorm μ
+    calc ‖μ‖ = (‖μ‖₊ : ℝ) := coe_nnNorm μ
       _ = (‖T‖₊ : ℝ) := by rw [h2]
-      _ = ‖T‖ := (coe_nnnorm T).symm
+      _ = ‖T‖ := (coe_nnNorm T).symm
   have hμ0 : μ ≠ 0 := by
     intro h
     rw [h, norm_zero] at hnorm

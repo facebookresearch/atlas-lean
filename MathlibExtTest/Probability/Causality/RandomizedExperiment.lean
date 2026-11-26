@@ -34,7 +34,7 @@ noncomputable def fairCoin : Measure Bool := (1 / 2 : ENNReal) • Measure.count
 
 instance : IsProbabilityMeasure fairCoin where
   measure_univ := by
-    rw [fairCoin, Measure.smul_apply, smul_eq_mul, Measure.count_univ,
+    rw [fairCoin, smul_apply, smul_eq_mul, Measure.count_univ,
       ENat.card_eq_coe_fintype_card, Fintype.card_bool]
     norm_num
     exact ENNReal.inv_mul_cancel (by simp) (by simp)
@@ -62,7 +62,7 @@ theorem testμ_T : testμ.real testT = 1 / 2 := by
   show (fairCoin.prod fairCoin).real ({true} ×ˢ Set.univ) = 1 / 2
   rw [Measure.real_def, Measure.prod_prod]
   have h1 : fairCoin {true} = (1 / 2 : ENNReal) := by
-    rw [fairCoin, Measure.smul_apply, smul_eq_mul, Measure.count_singleton, mul_one]
+    rw [fairCoin, smul_apply, smul_eq_mul, Measure.count_singleton, mul_one]
   have h2 : fairCoin Set.univ = 1 := measure_univ
   rw [h1, h2, mul_one, ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat]
 
@@ -88,7 +88,7 @@ theorem integral_testATE : ∫ ω, (testY₁ ω - testY₀ ω) ∂testμ = 3 / 2
     rw [Measure.real_def, Measure.prod_prod]
     have h1 : ∀ b : Bool, fairCoin {b} = (1 / 2 : ENNReal) := by
       intro b
-      rw [fairCoin, Measure.smul_apply, smul_eq_mul, Measure.count_singleton, mul_one]
+      rw [fairCoin, smul_apply, smul_eq_mul, Measure.count_singleton, mul_one]
     rw [h1, h1, ENNReal.toReal_mul, ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat]
     norm_num
   rw [integral_fintype Integrable.of_finite]

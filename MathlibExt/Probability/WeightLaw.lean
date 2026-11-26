@@ -44,8 +44,8 @@ theorem isProbabilityMeasure_weightLaw {𝓧 : Type*} [Fintype 𝓧] [Measurable
     (hg_sum : ∑ x, g x = 1) :
     IsProbabilityMeasure (weightLaw g) := by
   constructor
-  rw [weightLaw, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
+  rw [weightLaw, sum_apply]
+  simp only [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
     mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun x _ => hg_nonneg x), hg_sum, ENNReal.ofReal_one]
 
@@ -53,7 +53,7 @@ theorem isProbabilityMeasure_weightLaw {𝓧 : Type*} [Fintype 𝓧] [Measurable
 instance isFiniteMeasure_weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧] (g : 𝓧 → ℝ) :
     IsFiniteMeasure (weightLaw g) := by
   constructor
-  simp only [weightLaw, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+  simp only [weightLaw, Measure.coe_finsetSum, Finset.sum_apply, smul_apply,
     measure_univ, smul_eq_mul, mul_one]
   exact ENNReal.sum_lt_top.2 fun _ _ => ENNReal.ofReal_lt_top
 
@@ -63,7 +63,7 @@ theorem measureReal_weightLaw_singleton {𝓧 : Type*} [Fintype 𝓧] [Measurabl
     (weightLaw g).real {a} = g a := by
   classical
   simp only [Measure.real, weightLaw, Measure.coe_finsetSum, Finset.sum_apply,
-    Measure.smul_apply, Measure.dirac_apply, Set.indicator, Set.mem_singleton_iff, Pi.one_apply,
+    smul_apply, Measure.dirac_apply, Set.indicator, Set.mem_singleton_iff, Pi.one_apply,
     smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   exact ENNReal.toReal_ofReal (hg a)
 

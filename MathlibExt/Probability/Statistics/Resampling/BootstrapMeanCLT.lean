@@ -67,10 +67,10 @@ theorem empiricalLaw_eq (x : ℕ → α) (n : ℕ) :
     empiricalLaw x n = (n : ℝ≥0∞)⁻¹ • ∑ i ∈ Finset.range n, Measure.dirac (x i) := by
   ext s hs
   rw [empiricalLaw, Measure.map_apply measurable_from_nat hs, Measure.uniformOfFinset,
-    Measure.smul_apply, Measure.finsetSum_apply, Measure.finsetSum_apply, Finset.card_range,
+    smul_apply, sum_apply, sum_apply, Finset.card_range,
     smul_eq_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ (measurable_from_nat hs),
+  rw [smul_apply, smul_eq_mul, Measure.dirac_apply' _ (measurable_from_nat hs),
     Measure.dirac_apply' _ hs]
   rfl
 
@@ -89,7 +89,7 @@ theorem empiricalMean_eq (x : ℕ → ℝ) (n : ℕ) :
 theorem isProbabilityMeasure_empiricalLaw (x : ℕ → α) {n : ℕ} (hn : 0 < n) :
     IsProbabilityMeasure (empiricalLaw x n) := by
   constructor
-  rw [empiricalLaw_eq, Measure.smul_apply, Measure.finsetSum_apply]
+  rw [empiricalLaw_eq, smul_apply, sum_apply]
   simp only [measure_univ, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
     smul_eq_mul]
   exact ENNReal.inv_mul_cancel (by exact_mod_cast hn.ne') (ENNReal.natCast_ne_top n)
@@ -132,7 +132,7 @@ theorem measurePreserving_bootstrap_coord (x : ℕ → α) (n k : ℕ) :
 lemma integral_empiricalLaw [MeasurableSingletonClass α] (x : ℕ → α) (n : ℕ) (g : α → ℝ) :
     ∫ y, g y ∂(empiricalLaw x n) = (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, g (x i) := by
   rw [empiricalLaw_eq, integral_smul_measure,
-    integral_finsetSum_measure (fun i _ => integrable_dirac enorm_lt_top)]
+    integral_finsetSum_measure (fun i _ => integrable_dirac eNorm_lt_top)]
   simp [integral_dirac, ENNReal.toReal_inv]
 
 /-- Every real function is integrable for the finitely supported empirical law. -/
@@ -141,7 +141,7 @@ lemma integrable_empiricalLaw [MeasurableSingletonClass α] (x : ℕ → α) (n 
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [empiricalLaw_eq]
   · rw [empiricalLaw_eq]
-    exact (integrable_finsetSum_measure.2 fun i _ => integrable_dirac enorm_lt_top).smul_measure
+    exact (integrable_finsetSum_measure.2 fun i _ => integrable_dirac eNorm_lt_top).smul_measure
       (ENNReal.inv_ne_top.2 (by exact_mod_cast hn.ne'))
 
 private lemma integral_bootstrapRow_comp (x : ℕ → ℝ) (n k : ℕ) {g : ℝ → ℝ}

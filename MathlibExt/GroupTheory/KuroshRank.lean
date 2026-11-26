@@ -1728,7 +1728,7 @@ theorem nat_card_nonTreeRep [H.FiniteIndex]
   have hsub : nonTreeRep H hD ⊆ baseRep H hD := fun g hg => hg.1
   have hdiff : baseRep H hD \ nonTreeRep H hD = treeRep H hD := by
     ext g
-    simp only [Set.mem_diff, baseRep, nonTreeRep, treeRep, Set.mem_setOf_eq, not_and, not_not]
+    simp only [Set.mem_diff, baseRep, nonTreeRep, treeRep, Set.mem_ofPred_eq, not_and, not_not]
     exact ⟨fun ⟨hg, hg'⟩ => ⟨hg, hg' hg⟩, fun ⟨hg, hg'⟩ => ⟨hg, fun _ => hg'⟩⟩
   have hpart := Set.ncard_diff_add_ncard_of_subset hsub (Set.toFinite _)
   rw [hdiff] at hpart

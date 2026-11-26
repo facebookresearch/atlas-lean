@@ -69,13 +69,13 @@ private noncomputable def infiniteAtom : Measure Unit :=
 private theorem infiniteAtom_ne_zero : infiniteAtom ≠ 0 := by
   intro h
   have hu := congrArg (fun μ : Measure Unit => μ Set.univ) h
-  simpa [infiniteAtom, Measure.smul_apply] using hu
+  simpa [infiniteAtom, smul_apply] using hu
 
 private theorem infiniteAtom_not_finite : ¬IsFiniteMeasure infiniteAtom := by
   intro h
   letI : IsFiniteMeasure infiniteAtom := h
   have hu := IsFiniteMeasure.measure_univ_lt_top (μ := infiniteAtom)
-  simpa [infiniteAtom, Measure.smul_apply] using hu
+  simpa [infiniteAtom, smul_apply] using hu
 
 private theorem legacy_infinite_zero_collapse : legacyUnrestrictedDist infiniteAtom 0 = 0 := by
   classical
@@ -86,7 +86,7 @@ private theorem legacy_infinite_zero_collapse : legacyUnrestrictedDist infiniteA
       fun _ => (0 : ℝ) := by
     funext s
     by_cases h : () ∈ s.1 <;>
-      simp [infiniteAtom, Measure.smul_apply, Measure.dirac_apply, h]
+      simp [infiniteAtom, smul_apply, Measure.dirac_apply, h]
   rw [hvalues]
   exact ciSup_const
 
@@ -105,7 +105,7 @@ private instance : IsFiniteMeasure twiceDirac := by
 private theorem twiceDirac_term_le_two (s : {s : Set Unit // MeasurableSet s}) :
     |(twiceDirac s.1).toReal - ((0 : Measure Unit) s.1).toReal| ≤ 2 := by
   classical
-  by_cases h : () ∈ s.1 <;> norm_num [twiceDirac, Measure.add_apply, Measure.dirac_apply, h]
+  by_cases h : () ∈ s.1 <;> norm_num [twiceDirac, add_apply, Measure.dirac_apply, h]
 
 /-- The finite extension keeps the set-supremum scale for unequal total masses. -/
 example : totalVariationDist twiceDirac 0 = 2 := by
@@ -121,7 +121,7 @@ example : totalVariationDist twiceDirac 0 = 2 := by
       exact twiceDirac_term_le_two s
     have hu := le_ciSup hb (⟨Set.univ, MeasurableSet.univ⟩ :
       {s : Set Unit // MeasurableSet s})
-    norm_num [totalVariationDist, twiceDirac, Measure.add_apply] at hu ⊢
+    norm_num [totalVariationDist, twiceDirac, add_apply] at hu ⊢
     exact hu
 
 /-- Non-probability finite input calls the generalized nonnegativity API. -/

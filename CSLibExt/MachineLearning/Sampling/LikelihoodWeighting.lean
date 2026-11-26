@@ -180,8 +180,8 @@ noncomputable def jointMeasure : Measure (Fin n → α) :=
 
 instance : IsProbabilityMeasure b.jointMeasure := by
   refine ⟨?_⟩
-  rw [jointMeasure, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply, Set.indicator_of_mem, Set.mem_univ,
+  rw [jointMeasure, sum_apply]
+  simp only [smul_apply, Measure.dirac_apply, Set.indicator_of_mem, Set.mem_univ,
     smul_eq_mul, Pi.one_apply, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun x _ => b.joint_nonneg x), b.sum_joint,
     ENNReal.ofReal_one]

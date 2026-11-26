@@ -367,7 +367,7 @@ private lemma lipschitz_error {g : ℝ → ℝ} {L : ℝ} (hL : 0 ≤ L)
     (hg : ∀ x y, |g x - g y| ≤ L * |x - y|) (x y : ℝ) :
     ‖g x - g y‖ₑ ^ 2 ≤ ENNReal.ofReal L ^ 2 * ‖x - y‖ₑ ^ 2 := by
   have he : ‖g x - g y‖ₑ ≤ ENNReal.ofReal L * ‖x - y‖ₑ := by
-    simpa only [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_mul hL] using
+    simpa only [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_mul hL] using
       ENNReal.ofReal_le_ofReal (hg x y)
   simpa only [mul_pow] using pow_le_pow_left' he 2
 
@@ -414,7 +414,7 @@ theorem tendsto_lintegral_leftPointProcess_sub_sq
       ‖leftPointProcess g B t n p.2.toNNReal p.1 - g (B p.2.toNNReal p.1)‖ₑ ^ 2) := by
     exact ((leftPointProcess_measurable hBm hgm t n).sub
       (hgm.comp (hBm.comp
-        ((measurable_real_toNNReal.comp measurable_snd).prodMk measurable_fst)))).enorm.pow_const 2
+        ((measurable_real_toNNReal.comp measurable_snd).prodMk measurable_fst)))).eNorm.pow_const 2
   have hbound (n : ℕ) (hn : n ≠ 0) :
       (∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
         ‖leftPointProcess g B t n u.toNNReal ω - g (B u.toNNReal ω)‖ₑ ^ 2) ∂P) ≤
