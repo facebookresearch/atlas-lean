@@ -13185,6 +13185,7 @@
   "MathlibExt/NumberTheory/IncompleteLeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/InfiniteNonSophieGermainPrimes": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
   "MathlibExt/NumberTheory/InfiniteRieselRepdigits": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
+  "MathlibExt/NumberTheory/InfiniteRieselRepintegers": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/InitialRepetitionsC3": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/InitialRepetitionsC8": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/InitialRepetitionsC8Prime": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
