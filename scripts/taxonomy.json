@@ -14143,7 +14143,6 @@
   "MathlibExt/NumberTheory/WilsonQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotientPrimality": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotients": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
-  "MathlibExt/NumberTheory/WilsonQuotientsExistsIntEqWilsonQuotientZAndModEq": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/WilsonQuotientsExistsNatEqWilsonQuotientZPlusIff": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/Wolstenholme": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
