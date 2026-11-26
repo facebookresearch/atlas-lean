@@ -24,7 +24,8 @@ import Mathlib.Tactic.Ring
 
 This file collects the definitions for Davis's study of the odd part of `(2^e)!`. It proves the
 odd-part bijection on the upper dyadic half and congruences for odd double factorials and their
-normalized quotients.
+normalized quotients. It also counts the odd square roots of each residue congruent to one modulo
+eight.
 -/
 
 @[expose] public section
@@ -531,5 +532,191 @@ public theorem oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
   have hexact := Int.mul_ediv_cancel' (oddDoubleFactorial_normalized_congr e he).1
   simpa only [pow_succ, mul_one, hexact, sub_add_cancel] using
     (hparity.mul_left' (c := 2 ^ e)).add_right 1
+
+namespace oddSet_product_congr_shift
+
+open Finset oddDoubleFactorial_normalized_congr
+
+/-- The odd numbers below `2^(k+1)`, each translated by `x`, form the block of length `2^k`. -/
+private theorem prod_oddBelowTwoPow_eq_block (x : ℤ) (k : ℕ) :
+    ∏ i ∈ oddBelowTwoPow (k + 1), (x + (i : ℤ)) = block x (2 ^ k) := by
+  simp only [oddBelowTwoPow, block, pow_succ]
+  symm
+  refine prod_nbij' (fun i ↦ 2 * i + 1) (fun j ↦ j / 2) ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [mem_filter, mem_Ico, mem_range, Nat.odd_iff, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat, implies_true] <;> omega
+
+end oddSet_product_congr_shift
+
+open oddDoubleFactorial_normalized_congr oddSet_product_congr_shift in
+/--
+**Shifting the odd numbers below $2^e$ by $2^e$.** For every natural number $e \ge 2$, let $S_e$ be
+the set of odd integers $i$ with $1 \le i < 2^e$. Then
+$$
+\prod_{i \in S_e} i \equiv \prod_{i \in S_e} (2^e + i) \pmod{2^{2e}}.
+$$
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Proposition 9.
+-/
+public theorem oddSet_product_congr_shift (e : ℕ) (he : 2 ≤ e) :
+    (2 : ℤ) ^ (2 * e) ∣
+      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) -
+        (∏ i ∈ oddBelowTwoPow e, ((2 ^ e + i : ℕ) : ℤ)) := by
+  obtain ⟨k, rfl⟩ : ∃ k, e = k + 2 := ⟨e - 2, by omega⟩
+  -- Pair `i` with `2^e - i`: shifting both by `2^e` changes their product by `2^(2e+1)`.
+  let m := 2 ^ k
+  have hlen : 2 ^ (k + 1) = m + m := by simp [m, pow_succ, mul_two]
+  have hmod : (2 : ℤ) ^ (2 * (k + 2)) = (4 * (m : ℤ)) ^ 2 := by
+    push_cast [m]
+    ring
+  have h₀ : ((∏ i ∈ oddBelowTwoPow (k + 2), i : ℕ) : ℤ) = block 0 (m + m) := by
+    rw [← hlen, ← prod_oddBelowTwoPow_eq_block]
+    simp
+  have h₁ : ∏ i ∈ oddBelowTwoPow (k + 2), ((2 ^ (k + 2) + i : ℕ) : ℤ) = block (4 * m) (m + m) := by
+    rw [← hlen, ← prod_oddBelowTwoPow_eq_block]
+    refine Finset.prod_congr rfl fun i _ ↦ ?_
+    push_cast [m]
+    ring
+  rw [h₀, h₁, hmod]
+  exact (block_shift m).symm.dvd
+
+namespace oddPart_factorial_congr_previous
+
+open Finset
+
+private theorem oddPart_mul (a b : ℕ) : oddPart (a * b) = oddPart a * oddPart b :=
+  Nat.ordCompl_mul a b 2
+
+private theorem oddPart_prod (s : Finset ℕ) :
+    oddPart (∏ i ∈ s, i) = ∏ i ∈ s, oddPart i := by
+  induction s using Finset.induction_on with
+  | empty => simp [oddPart]
+  | insert a s ha ih => rw [prod_insert ha, prod_insert ha, oddPart_mul, ih]
+
+private theorem prod_Ioc_zero_eq_factorial (n : ℕ) : ∏ i ∈ Ioc 0 n, i = n.factorial := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [prod_Ioc_succ_top (Nat.zero_le n), ih, Nat.factorial_succ, mul_comm]
+
+end oddPart_factorial_congr_previous
+
+open oddPart_factorial_congr_previous in
+/--
+**Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
+number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
+$\mathrm{od}(n)$ denotes the odd part of $n$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Corollary 7.
+-/
+public theorem oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) :
+    (2 : ℤ) ^ e ∣ (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ) -
+      (oddPart (Nat.factorial (2 ^ e)) : ℤ) := by
+  -- Split `(2^e)!` at `2^(e-1)`; the odd parts of the upper factors are the odd numbers below
+  -- `2^e` (Lemma 5), whose product is `1` modulo `2^e` (Lemma 6).
+  have hfac : Nat.factorial (2 ^ e) =
+      Nat.factorial (2 ^ (e - 1)) * ∏ i ∈ dyadicUpperHalf e, i := by
+    rw [dyadicUpperHalf, ← prod_Ioc_zero_eq_factorial, ← prod_Ioc_zero_eq_factorial,
+      Finset.prod_Ioc_consecutive _ (Nat.zero_le _)
+        (Nat.pow_le_pow_right two_pos (Nat.sub_le e 1))]
+  have hbij : ∏ i ∈ dyadicUpperHalf e, oddPart i = ∏ i ∈ oddBelowTwoPow e, i := by
+    have h := oddPart_bijOn_upperHalf_oddSet e (by omega)
+    exact Finset.prod_nbij oddPart (fun _ ha ↦ h.mapsTo ha) h.injOn h.surjOn (fun _ _ ↦ rfl)
+  have hP : (2 : ℤ) ^ e ∣ ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) - 1 := by
+    have h := (pow_dvd_pow 2 (Nat.le_succ e)).trans (oddSet_product_congr e he)
+    have h' := dvd_add h (dvd_refl ((2 : ℤ) ^ e))
+    convert h' using 1
+    push_cast
+    ring
+  rw [hfac, oddPart_mul, oddPart_prod, hbij, Nat.cast_mul]
+  generalize ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) = P at hP ⊢
+  generalize (oddPart (2 ^ (e - 1)).factorial : ℤ) = a
+  rw [show a - a * P = -(a * (P - 1)) by ring, dvd_neg]
+  exact dvd_mul_of_dvd_right hP _
+
+namespace square_mod_twoPower_fiber_card
+
+/-- In either odd class modulo four, the root parameter runs through exactly two lifts
+of a single residue modulo `2^k`. -/
+private theorem roots_in_class (k r c w : ℕ) (hr : Odd r) (hc : r ^ 2 = 8 * c + 1)
+    (hw : w < 2 ^ k) :
+    ∃ a < 2 ^ k, ∀ t < 2 * 2 ^ k,
+      (4 * t + r) ^ 2 % (8 * 2 ^ k) = 8 * w + 1 ↔ t = a ∨ t = a + 2 ^ k := by
+  let f (t : ℕ) := 2 * t ^ 2 + r * t + c
+  -- In the difference f(a) - f(b), the factor 2(a + b) + r is odd and can be cancelled.
+  have congr_iff (a b : ℕ) : f a ≡ f b [MOD 2 ^ k] ↔ a ≡ b [MOD 2 ^ k] := by
+    constructor
+    · intro h
+      have hodd : Odd (2 * (a + b) + r) := (even_two_mul _).add_odd hr
+      apply Nat.ModEq.cancel_left_of_coprime (hodd.coprime_two_left.pow_left k)
+      convert (Nat.ModEq.add_right_cancel' c h).add_right (2 * a * b) using 1 <;> ring
+    · intro h
+      exact (((h.pow 2).mul_left 2).add (h.mul_left r)).add_right c
+  let g (a : Fin (2 ^ k)) : Fin (2 ^ k) := ⟨f a % 2 ^ k, Nat.mod_lt _ (by positivity)⟩
+  have inj : Function.Injective g := by
+    intro a b h
+    exact Fin.ext (((congr_iff a b).mp (congrArg Fin.val h)).eq_of_lt_of_lt a.isLt b.isLt)
+  obtain ⟨a, ha⟩ := Finite.surjective_of_injective inj ⟨w, hw⟩
+  have ha' : f a ≡ w [MOD 2 ^ k] := by
+    simpa only [Nat.ModEq, Nat.mod_eq_of_lt hw] using congrArg Fin.val ha
+  refine ⟨a, a.isLt, fun t ht ↦ ?_⟩
+  have hs : (4 * t + r) ^ 2 = 8 * f t + 1 := by
+    rw [add_sq, hc]
+    dsimp [f]
+    ring
+  calc
+    _ ↔ 8 * f t + 1 ≡ 8 * w + 1 [MOD 8 * 2 ^ k] := by
+      rw [hs, Nat.ModEq, Nat.mod_eq_of_lt (show 8 * w + 1 < 8 * 2 ^ k by omega)]
+    _ ↔ f t ≡ w [MOD 2 ^ k] := by
+      rw [Nat.ModEq.add_iff_right (Nat.ModEq.refl 1), Nat.ModEq.mul_left_cancel_iff' (by decide)]
+    _ ↔ t ≡ a.val [MOD 2 ^ k] := by
+      rw [← congr_iff t a]
+      exact ⟨fun h ↦ h.trans ha'.symm, fun h ↦ h.trans ha'⟩
+    _ ↔ _ := by
+      rw [Nat.ModEq, Nat.mod_eq_of_lt a.isLt]
+      by_cases h : t < 2 ^ k
+      · rw [Nat.mod_eq_of_lt h]
+        omega
+      · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (show t - 2 ^ k < 2 ^ k by omega)]
+        omega
+
+end square_mod_twoPower_fiber_card
+
+open square_mod_twoPower_fiber_card in
+/--
+**Each residue $1 \bmod 8$ has four odd square roots modulo $2^e$.** Let $e \ge 3$ and let $S_e$
+be the set of odd natural numbers $i$ with $1 \le i < 2^e$. For every natural number $v < 2^e$
+with $v \equiv 1 \pmod 8$, exactly four elements $i \in S_e$ satisfy $i^2 \bmod 2^e = v$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Lemma 20.
+-/
+public theorem square_mod_twoPower_fiber_card
+    (e : ℕ) (he : 3 ≤ e) (v : ℕ) (hv : v < 2 ^ e) (hv8 : v % 8 = 1) :
+    ({i ∈ oddBelowTwoPow e | i ^ 2 % 2 ^ e = v}).card = 4 := by
+  obtain ⟨k, rfl⟩ : ∃ k, e = k + 3 := ⟨e - 3, by omega⟩
+  let n := 2 ^ k
+  have hm : 2 ^ (k + 3) = 8 * n := by simp [n, pow_add, Nat.mul_comm]
+  rw [hm] at hv ⊢
+  obtain ⟨w, rfl⟩ : ∃ w, v = 8 * w + 1 := ⟨v / 8, by omega⟩
+  have hw : w < n := by omega
+  obtain ⟨a, ha, h₁⟩ := roots_in_class k 1 0 w (by decide) (by decide) hw
+  obtain ⟨b, hb, h₃⟩ := roots_in_class k 3 1 w (by decide) (by decide) hw
+  change a < n at ha
+  change b < n at hb
+  apply Finset.card_eq_four.mpr
+  refine ⟨4 * a + 1, 4 * (a + n) + 1, 4 * b + 3, 4 * (b + n) + 3,
+    by omega, by omega, by omega, by omega, by omega, by omega, ?_⟩
+  ext i
+  simp only [Finset.mem_filter, mem_oddSet, hm, Nat.odd_iff, Finset.mem_insert,
+    Finset.mem_singleton]
+  by_cases hi : i < 8 * n ∧ i % 2 = 1
+  · obtain ⟨t, rfl | rfl⟩ : ∃ t, i = 4 * t + 1 ∨ i = 4 * t + 3 := ⟨i / 4, by omega⟩
+    · rw [h₁ t (by omega)]
+      omega
+    · rw [h₃ t (by omega)]
+      omega
+  · omega
 
 end MetaMathlibExt

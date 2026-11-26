@@ -225,8 +225,11 @@ module-and-name row lean-facts gave no Lean link (the Lean index resolves it to 
 
 The workflow tests the card scripts and runs `rollup`, which checks first, in their own read-only job,
 `check the cards`, after `build the wiki` and from its `blueprint-dependencies` artifact; on a pull
-request it passes the base commit's ledger and annotations and Git's renames since that commit (the
-workflow does not run in merge groups). It keeps `build/cards.json` as the `cards` artifact. The wiki job
+request it passes the base commit's ledger and annotations and Git's renames since that commit. A pull
+request runs it only when the site's build runs, as when the PR changes the wiki, either ledger or what builds
+and checks the site, and a merge group never does
+([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)). It keeps
+`build/cards.json` as the `cards` artifact. The wiki job
 runs the site hook's tests (`scripts/test_card_pages.py`) with its other tests and leaves
 `scripts/test_cards.py` and the strict check of the content and its history to the card job; it runs
 `moves` once, for the moved addresses its site keeps, and `rollup` once, for the card data its site shows, each in

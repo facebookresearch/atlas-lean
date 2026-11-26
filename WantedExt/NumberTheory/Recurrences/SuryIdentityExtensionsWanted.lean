@@ -77,22 +77,6 @@ theorem_wanted fib_step_sury_sum
         (-1 : ℚ) ^ (j * (n + i)) * lucasAtInt (j : ℤ) ^ i *
           fibAtInt ((j : ℤ) * (i : ℤ))
 
-/-- **Step extension of Sury's identity for Lucas numbers.** Let $F_n$ and $L_n$ be the Fibonacci
-and Lucas numbers at integer indices. For all natural numbers $j \ge 1$ and $n$, in the rational
-numbers,
-$$2 \left(\frac{L_j}{2}\right)^{n+1} \frac{F_{jn}}{F_j} + 2 (-1)^{jn} =
-\sum_{i=0}^{n} (-1)^{j(n+i)} \left(\frac{L_j}{2}\right)^i L_{ji}.$$
-
-Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 4. -/
-theorem_wanted lucas_step_sury_sum
-    (j n : ℕ) (hj : 1 ≤ j) :
-    2 * (lucasAtInt (j : ℤ) / 2) ^ (n + 1) *
-          (fibAtInt ((j : ℤ) * (n : ℤ)) / fibAtInt (j : ℤ)) +
-        2 * (-1 : ℚ) ^ (j * n) =
-      ∑ i ∈ Finset.range (n + 1),
-        (-1 : ℚ) ^ (j * (n + i)) * (lucasAtInt (j : ℤ) / 2) ^ i *
-          lucasAtInt ((j : ℤ) * (i : ℤ))
-
 /-- **Offset step extension of Sury's identity, Fibonacci form.** Let $F_n$ be the Fibonacci
 numbers at integer indices. For all natural numbers $j$ and $n$ and every integer $k$ with
 $0 < |k| < j$,

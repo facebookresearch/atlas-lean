@@ -12,6 +12,27 @@ import MathlibExt.Combinatorics.Enumerative.AntiBonacci
 
 open MetaMathlibExt
 
+-- The lower bound is an equality for the empty form and for any singleton.
+example : antiRecurrence [] 1 = 0 ∧ antiRecurrence [4] 1 = 4 := by decide +kernel
+
+-- A large first coefficient alone does not make the bound strict.
+example : antiRecurrence [2, 1, 1] 1 = 7 := by
+  have h := antiRecurrence_one_ge [2, 1, 1] (by simp)
+  refine le_antisymm (Nat.le_of_not_lt fun hlt => ?_) h.1
+  have hw := h.2.mp hlt
+  exact (by decide +kernel : ¬ ∃ j : Fin 3, 1 ≤ (j : ℕ) ∧
+    1 < ([2, 1, 1] : List ℕ)[j]) hw
+
+-- Strictness already occurs in dimension two, from a witness at the second position.
+example : 4 < antiRecurrence [1, 2] 1 :=
+  (antiRecurrence_one_ge [1, 2] (by simp)).2.mpr ⟨1, by decide, by decide⟩
+
+-- Moving the large coefficient to the third position gives A₁ = 9 and a witness.
+example : antiRecurrence [1, 1, 2] 1 = 9 := by decide +kernel
+
+example : ∃ j : Fin 3, 1 ≤ (j : ℕ) ∧ 1 < ([1, 1, 2] : List ℕ)[j] :=
+  (antiRecurrence_one_ge [1, 1, 2] (by simp)).2.mp (by decide +kernel)
+
 -- The second block skips the first anti-Tribonacci number in its interior.
 example : (antiRecurrenceState [1, 1, 1] 2).1 = [4, 5, 7] := by decide +kernel
 

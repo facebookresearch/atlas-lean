@@ -22,12 +22,12 @@ http://www2.informatik.uni-osnabrueck.de/knust/class/ (single machine problems:
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -62,7 +62,7 @@ listed twice as the head of an arc and no job is listed twice as its tail, and a
 that the transitive closure (Mathlib's `Relation.TransGen`) of the arc relation is irreflexive.
 A schedule is a one-processor schedule `σ` of start times in the sense of Garey and Johnson's
 [SS1], with every length `1` (`IsOneProcessorSchedule`, reused from
-`SequencingToMinimizeWeightedTardinessWanted`); job `Jⱼ` completes at `Cⱼ = σ(j) + 1`. Binary
+`SequencingToMinimizeWeightedTardinessDefs`); job `Jⱼ` completes at `Cⱼ = σ(j) + 1`. Binary
 encoding of all numbers.
 
 Encoding: the instance is decoded from a bitstring with the repository's

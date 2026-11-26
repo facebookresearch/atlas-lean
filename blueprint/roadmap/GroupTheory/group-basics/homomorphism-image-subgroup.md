@@ -1,0 +1,8 @@
+# The image of a group homomorphism is a subgroup
+
+The image $\varphi(G) = \{\varphi(g) : g \in G\}$ of a homomorphism of groups $\varphi\colon G \to H$ is a subgroup of $H$. More precisely, Mathlib constructs the range of $\varphi$ as a subgroup of $H$, the image of the whole group $G$ under $\varphi$, and proves that its underlying set is exactly the image: for groups $G$ and $H$ and a homomorphism $\varphi\colon G \to H$, the carrier of the subgroup $\operatorname{range}\varphi$ equals $\{\varphi(g) : g \in G\}$. So the image contains $1_H = \varphi(1_G)$ and is closed under products and inverses, as $\varphi(g)\varphi(g^\prime) = \varphi(gg^\prime)$ and $\varphi(g)^{-1} = \varphi(g^{-1})$, and the subgroup $\operatorname{range}\varphi$ has exactly this set as its elements.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the range of a homomorphism from a group as a subgroup, and the equality of its carrier with the image: `MonoidHom.range` and `MonoidHom.coe_range`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/Subgroup/Ker.lean#L55 and https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/Subgroup/Ker.lean#L60 and https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/Subgroup/Ker.lean#L64-L67 and https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/Subgroup/Ker.lean#L73-L75.

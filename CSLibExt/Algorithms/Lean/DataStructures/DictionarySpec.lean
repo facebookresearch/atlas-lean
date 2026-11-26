@@ -10,14 +10,16 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.BinarySearchTree.Delete
 public import CSLibExt.Algorithms.Lean.DataStructures.BloomFilter
+public import Mathlib.Data.Finmap
 public import Mathlib.Data.Finset.Basic
 
 /-!
 # Dictionary specification records
 
-Specification records for finite ordered sets and approximate membership,
-with adapters for the existing binary search trees (insertion and deletion)
-and Bloom filters.
+Specification records for finite ordered sets, finite maps, and approximate
+membership, with adapters for the existing binary search trees (insertion and
+deletion) and Bloom filters; further adapters (AVL trees,
+hash tables) live next to their providers.
 
 The approximate-membership record is relational: it has no abstraction
 function to an exact set and no converse membership law, so a positive
@@ -32,7 +34,7 @@ bound; an explicit parameterized upper bound remains a separate obligation.
 
 set_option autoImplicit false
 
-universe u v
+universe u v w
 
 @[expose] public section
 
@@ -79,6 +81,49 @@ public theorem OrderedSetSpec.not_mem_delete_self {α : Type u} [LinearOrder α]
   rw [spec.mem_iff_toFinset x (spec.inv_delete x hs), spec.toFinset_delete x hs]
   intro h
   exact (Finset.mem_erase.mp h).1 rfl
+
+/-- A finite-map implementation, refined by a `Finmap` abstraction: every
+operation updates the abstraction exactly as the corresponding `Finmap`
+operation, lookup agrees with the abstraction, on states satisfying the
+invariant. -/
+public structure FiniteMapSpec (α : Type u) [DecidableEq α] (β : Type v)
+    (S : Type w) where
+  /-- The empty state. -/
+  empty : S
+  /-- Bind a key to a value, replacing any earlier binding. -/
+  insert : α → β → S → S
+  /-- Delete a key's binding. -/
+  erase : α → S → S
+  /-- Look up a key's value. -/
+  lookup : α → S → Option β
+  /-- The representation invariant. -/
+  inv : S → Prop
+  /-- The finite-map abstraction. -/
+  toFinmap : S → Finmap (fun _ : α => β)
+  inv_empty : inv empty
+  inv_insert : ∀ (x : α) (v : β) {s : S}, inv s → inv (insert x v s)
+  inv_erase : ∀ (x : α) {s : S}, inv s → inv (erase x s)
+  toFinmap_empty : toFinmap empty = ∅
+  toFinmap_insert : ∀ (x : α) (v : β) {s : S}, inv s →
+    toFinmap (insert x v s) = Finmap.insert x v (toFinmap s)
+  toFinmap_erase : ∀ (x : α) {s : S}, inv s →
+    toFinmap (erase x s) = Finmap.erase x (toFinmap s)
+  lookup_eq_toFinmap : ∀ (x : α) {s : S}, inv s →
+    lookup x s = Finmap.lookup x (toFinmap s)
+
+/-- An inserted key looks up to its inserted value. -/
+public theorem FiniteMapSpec.lookup_insert_self {α : Type u} [DecidableEq α]
+    {β : Type v} {S : Type w} (spec : FiniteMapSpec α β S) (x : α) (v : β)
+    {s : S} (hs : spec.inv s) : spec.lookup x (spec.insert x v s) = some v := by
+  rw [spec.lookup_eq_toFinmap x (spec.inv_insert x v hs),
+    spec.toFinmap_insert x v hs, Finmap.lookup_insert]
+
+/-- A deleted key looks up to nothing. -/
+public theorem FiniteMapSpec.lookup_erase_self {α : Type u} [DecidableEq α]
+    {β : Type v} {S : Type w} (spec : FiniteMapSpec α β S) (x : α) {s : S}
+    (hs : spec.inv s) : spec.lookup x (spec.erase x s) = none := by
+  rw [spec.lookup_eq_toFinmap x (spec.inv_erase x hs),
+    spec.toFinmap_erase x hs, Finmap.lookup_erase]
 
 /-- An approximate-membership implementation: a state represents a finite
 set of inserted elements through a relation, insertion extends the

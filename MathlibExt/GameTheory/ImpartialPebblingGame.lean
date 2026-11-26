@@ -9,9 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Data.Nat.ModEq
 public import MathlibExt.GameTheory.SpragueGrundy
+import Mathlib.Tactic.FinCases
 
 /-!
 # Impartial two-player `(k+1:k)`-pebbling games on `K_3` and `C_4`
@@ -23,7 +24,8 @@ and `C_4`*, Journal of Integer Sequences 27 (2024), Article 24.5.8.
 A legal move removes `k+1` pebbles from one vertex and adds `k` to an adjacent vertex.
 The total decreases by one, so it ranks the positions in the normal-play game.
 On the triangle we construct a reply that lowers the common bound on the three piles.
-For the four-cycle we prove that symmetric replies preserve the five mod-three patterns.
+On the four-cycle, moves preserve two unions of mod-three patterns, and symmetric replies
+preserve each of the five patterns.
 -/
 
 namespace MetaMathlibExt
@@ -349,6 +351,45 @@ public theorem c4Pattern_invariant_rotationalSymmetric_reflectional (a : Fin 4 �
       fun h => (shift i).trans ((h.add_right 1).trans (shift k).symm)⟩
   simp only [C4PatternAAAB, C4PatternABAB, C4PatternAABC, C4PatternABAC, C4PatternAABBHat,
     pair, imp_self, and_self]
+
+/-- **Closure of the mod-$3$ pattern classes under moves on $C_4$.** Let $a$ and $b$ be
+distributions of pebbles on the vertices of the $4$-cycle $C_4$ such that $b$ is obtained from $a$
+by one $(2:1)$-pebbling move, that is, by removing two pebbles from a vertex holding at least two
+pebbles and adding one pebble to an adjacent vertex. If $a \in \hat X_{aabb} \cup X_{abac}$, then
+$b \in \hat X_{aabb} \cup X_{abac}$; and if $a \in X_{aaab} \cup X_{abab} \cup X_{aabc}$, then
+$b \in X_{aaab} \cup X_{abab} \cup X_{aabc}$.
+
+Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
+Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
+Article 24.5.8, Lemma 15. -/
+public theorem c4Pattern_closed_under_moves (a b : Fin 4 → ℕ)
+    (hb : b ∈ pebblingMoves (SimpleGraph.cycleGraph 4) 1 a) :
+    ((C4PatternAABBHat a ∨ C4PatternABAC a) → (C4PatternAABBHat b ∨ C4PatternABAC b)) ∧
+      ((C4PatternAAAB a ∨ C4PatternABAB a ∨ C4PatternAABC a) →
+        (C4PatternAAAB b ∨ C4PatternABAB b ∨ C4PatternAABC b)) := by
+  let balanced (p : Fin 4 → ℕ) := p 0 + p 2 ≡ p 1 + p 3 [MOD 3]
+  let classes (p : Fin 4 → ℕ) :=
+    ((C4PatternAABBHat p ∨ C4PatternABAC p) ↔ balanced p) ∧
+      ((C4PatternAAAB p ∨ C4PatternABAB p ∨ C4PatternAABC p) ↔ ¬ balanced p)
+  -- Classify the 81 possible residue vectors by the sums on the two opposite pairs.
+  have finiteClasses : ∀ r : Fin 4 → Fin 3, classes (fun i => (r i).val) := by
+    dsimp only [classes, balanced, C4PatternAABBHat, C4PatternABAC, C4PatternAAAB,
+      C4PatternABAB, C4PatternAABC]
+    decide
+  have classify (p : Fin 4 → ℕ) : classes p := by
+    have h := finiteClasses (fun i => Fin.ofNat 3 (p i))
+    simpa only [classes, balanced, C4PatternAABBHat, C4PatternABAC, C4PatternAAAB,
+      C4PatternABAB, C4PatternAABC, Fin.val_ofNat, Nat.ModEq, Nat.mod_mod, ← Nat.add_mod]
+      using h
+  -- Each edge meets both pairs, and subtracting two or adding one has the same effect mod 3.
+  have preserved : balanced b ↔ balanced a := by
+    obtain ⟨s, t, hadj, hs, rfl⟩ := (mem_pebblingMoves _ _ _ _).1 hb
+    fin_cases s <;> fin_cases t <;> try exact absurd hadj (by decide)
+    all_goals
+      simp [balanced, pebblingStep, Function.update, Nat.ModEq] at hs ⊢
+      omega
+  rw [(classify a).1, (classify b).1, (classify a).2, (classify b).2, preserved]
+  exact ⟨id, id⟩
 
 /-- **The set $Y_{aabc}$ of $C_4$ positions.** A position $a = (a_0, a_1, a_2, a_3)$ of
 natural-number pebble counts on the vertices $v_0, v_1, v_2, v_3$ of $C_4$, with indices read

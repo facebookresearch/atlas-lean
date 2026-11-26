@@ -29,11 +29,10 @@ A return to a previous orbit value modulo a prime traps all later values in the 
 finite list of residues. This constrains the first place the orbit can depart from
 the translation `x ↦ x - 1`.
 
-The corollary at `±1` (Corollary 4.3 there) is derived from this classification. Every
-polynomial in it except `x - 1` reaches zero within three steps. The reflection
-`u(x) ↦ -u(-x)` of the paper's Fact 3.1 negates every orbit value, so it carries the result
-at `-1` to `x + 1` at `1`. The paper argues in the opposite direction, from its
-classification at `1`.
+Reflection `u(x) ↦ -u(-x)` (Fact 3.1) negates every orbit value and transports the
+classification to `1` (Theorem 4.1). The first three families at each point reach zero
+within three steps. This gives the classification of the locally nilpotent polynomials
+whose orbits never reach zero at `±1` (Corollary 4.3).
 -/
 
 namespace MetaMathlibExt
@@ -412,5 +411,59 @@ public theorem locallyNilpotent_not_nilpotentAt_one_neg_one :
   · rintro rfl
     rw [← hminus]
     exact neg_comp_neg_X_mem_iff.mpr hplus
+
+/-- **Classification of locally nilpotent polynomials at $1$.** A polynomial $u \in \mathbb{Z}[x]$
+of positive degree is locally nilpotent at $1$ if and only if it has one of the following forms,
+for some $p \in \mathbb{Z}[x]$: $(x-1)p(x)$ with $p \ne 0$; $-2x + 4 + p(x)(x-1)(x-2)$;
+$-2x^2 + 7x - 3 + p(x)(x-1)(x-2)(x-3)$; or $u = x + 1$.
+
+Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
+Article A13, Theorem 4.1. -/
+public theorem locallyNilpotentAt_one_classification :
+    {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅} =
+      {u | ∃ p : ℤ[X], p ≠ 0 ∧ u = (X - 1) * p} ∪
+        {u | ∃ p : ℤ[X], u = -2 * X + 4 + p * (X - 1) * (X - 2)} ∪
+        {u | ∃ p : ℤ[X], u = -2 * X ^ 2 + 7 * X - 3 + p * (X - 1) * (X - 2) * (X - 3)} ∪
+        {X + 1} := by
+  ext u
+  have hmem : -(u.comp (-X)) ∈ {v : ℤ[X] | 0 < v.natDegree ∧
+      IsWeaklyLocallyNilpotentAt v (-1) ∅} ↔
+      u ∈ {v : ℤ[X] | 0 < v.natDegree ∧ IsWeaklyLocallyNilpotentAt v 1 ∅} := by
+    simp only [Set.mem_ofPred_eq, natDegree_neg, natDegree_comp, natDegree_X, mul_one,
+      IsWeaklyLocallyNilpotentAt, iterate_neg_comp_neg_X, dvd_neg]
+  rw [← hmem, locallyNilpotentAt_neg_one_classification]
+  have reflect_eq (v : ℤ[X]) : -(u.comp (-X)) = v ↔ u = -(v.comp (-X)) :=
+    ⟨fun h => by rw [← neg_comp_neg_X_involutive u, h],
+      fun h => by rw [h, neg_comp_neg_X_involutive]⟩
+  have reflect_first (p : ℤ[X]) : -(((X + 1) * p).comp (-X)) = (X - 1) * p.comp (-X) := by
+    simp only [mul_comp, add_comp, X_comp, one_comp]
+    ring
+  have reflect_second (p : ℤ[X]) :
+      -((-2 * X - 4 + p * (X + 1) * (X + 2)).comp (-X)) =
+        -2 * X + 4 + -(p.comp (-X)) * (X - 1) * (X - 2) := by
+    simp only [add_comp, sub_comp, mul_comp, neg_comp, ofNat_comp, X_comp, one_comp]
+    ring
+  have reflect_third (p : ℤ[X]) :
+      -((2 * X ^ 2 + 7 * X + 3 + p * (X + 1) * (X + 2) * (X + 3)).comp (-X)) =
+        -2 * X ^ 2 + 7 * X - 3 + p.comp (-X) * (X - 1) * (X - 2) * (X - 3) := by
+    simp only [add_comp, mul_comp, pow_comp, ofNat_comp, X_comp, one_comp]
+    ring
+  have reflect_translation : -((X - 1 : ℤ[X]).comp (-X)) = X + 1 := by
+    simp only [sub_comp, X_comp, one_comp]
+    ring
+  simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_singleton_iff, reflect_eq, reflect_first,
+    reflect_second, reflect_third, reflect_translation]
+  have comp_surj : Function.Surjective (fun p : ℤ[X] => p.comp (-X)) :=
+    (show Function.Involutive (fun p : ℤ[X] => p.comp (-X)) from
+      comp_neg_X_comp_neg_X).surjective
+  have neg_comp_surj : Function.Surjective (fun p : ℤ[X] => -(p.comp (-X))) :=
+    (show Function.Involutive (fun p : ℤ[X] => -(p.comp (-X))) from
+      neg_comp_neg_X_involutive).surjective
+  refine or_congr (or_congr (or_congr ?_ ?_) ?_) Iff.rfl
+  · simpa only [ne_eq, comp_neg_X_eq_zero_iff] using
+      (comp_surj.exists (p := fun p => p ≠ 0 ∧ u = (X - 1) * p)).symm
+  · exact (neg_comp_surj.exists (p := fun p => u = -2 * X + 4 + p * (X - 1) * (X - 2))).symm
+  · exact (comp_surj.exists
+      (p := fun p => u = -2 * X ^ 2 + 7 * X - 3 + p * (X - 1) * (X - 2) * (X - 3))).symm
 
 end MetaMathlibExt

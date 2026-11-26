@@ -47,16 +47,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.GenocchiExplicitWanted
 
-/-- **The Zerroukhat–Khaldi sum $H_{n,m}$.** For natural numbers $n$ and $m$, define the rational
-number
-$$H_{n,m} = (-1)^n \, n \sum_{k=1}^{n-m} U(m+1, k) \, S(n-m, k),$$
-where $U(m+1, k)$ is the Zerroukhat–Khaldi sum $U$, $S(n-m, k)$ is the Stirling number of the
-second kind, and $n - m$ is truncated at $0$, so that $H_{n,m} = 0$ when $m \ge n$. -/
-def zerroH (n m : ℕ) : ℚ :=
-  (-1 : ℚ) ^ n * (n : ℚ) *
-    ∑ k ∈ Finset.Icc 1 (n - m), zerroU (m + 1) k *
-      (Nat.stirlingSecond (n - m) k : ℚ)
-
 /-- **Explicit formula for Genocchi numbers via Stirling numbers.** Let $n$ and $r$ be positive
 integers with $n \ge r + 1$, let $G_n$ be the $n$-th Genocchi number and let $S(a, b)$ denote
 the Stirling numbers of the second kind. For $k \ge 1$ write
@@ -76,37 +66,5 @@ theorem_wanted genocchiNumber_eq_sum (n r : ℕ) (hn : 1 ≤ n)
               ((k + j - 1).factorial : ℚ) / 2 ^ (k + j - 1) *
               (Nat.stirlingSecond r j : ℚ)) *
           (Nat.stirlingSecond (n - r) k : ℚ)
-
-/-- **Bernoulli numbers via forward differences at $0$.** Let $n$ and $r$ be positive integers
-with $n \ge r + 1$, let $B_n$ be the $n$-th Bernoulli number, let $S(a, b)$ denote the Stirling
-numbers of the second kind and let $\Delta^k 0^m$ be the $k$-th forward difference of
-$y \mapsto y^m$ at $0$. For $k \ge 1$ write
-$d_k = \sum_{j=0}^{r} (-1)^{k+j+r+1} \, 2^{r-j} \, \frac{(k+j-1)!}{k!} \, S(r, j)$. Then
-$(-1)^n B_n = \frac{n}{2^n - 1} \sum_{k=1}^{n-r} d_k \, \frac{\Delta^k 0^{n-r}}{2^{k+r}}$.
-
-Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note
-on Explicit Formulas for Bernoulli and Genocchi Numbers",
-Corollary 2. -/
-theorem_wanted neg_one_pow_mul_bernoulli_eq_sum_zero
-    (n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) (hnr : r + 1 ≤ n) :
-    (-1 : ℚ) ^ n * bernoulli n =
-      (n : ℚ) / (2 ^ n - 1) *
-        ∑ k ∈ Finset.Icc 1 (n - r),
-          (∑ j ∈ Finset.range (r + 1),
-            (-1 : ℚ) ^ (k + j + r + 1) * 2 ^ (r - j) *
-              ((k + j - 1).factorial : ℚ) / k.factorial *
-              (Nat.stirlingSecond r j : ℚ)) *
-          (diffPowEval 0 k (n - r) / 2 ^ (k + r))
-
-/-- **A step identity for the Zerroukhat–Khaldi sums $H_{n,m}$.** Let $H_{n,m}$ denote the
-Zerroukhat–Khaldi sum. For all natural numbers $n$ and $r$ with $r \ge 1$ and $n \ge r + 1$,
-$H_{n,r} = H_{n,r-1}$.
-
-Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note
-on Explicit Formulas for Bernoulli and Genocchi Numbers",
-Lemma 3. -/
-theorem_wanted zerroH_eq (n r : ℕ) (hr : 1 ≤ r)
-    (hnr : r + 1 ≤ n) :
-    zerroH n r = zerroH n (r - 1)
 
 end MathlibExt.NumberTheory.GenocchiExplicitWanted

@@ -136,9 +136,10 @@ theorem shallow_water_riemann_invariant_transport
 /-! ## B. Nonpositive-depth control -/
 
 /-- Nonpositive depth rejected: for positive gravity and every depth
-value `d ≤ 0`, there are smooth fields with `h t x = d` whose slice
+value `d ≤ 0`, there are fields with `h t x = d` whose slice
 partials exist and which satisfy both primitive equations at `(t, x)`,
-but for which both paired transport equations fail there. So the
+but for which both paired transport equations fail there (with `√y = 0`
+for `y ≤ 0`, and `deriv` equal to `0` where a slice is not differentiable). So the
 positive-depth admission of `shallow_water_riemann_invariant_transport`
 cannot be weakened to `0 ≤ h t x` or dropped. -/
 lemma exists_nonpos_depth_primitive_not_riemann_transport

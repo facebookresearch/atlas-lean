@@ -46,9 +46,8 @@ nests, quasi-continuity and quasi-regularity depend on the form only through its
 The theorems that give these notions their meaning, Fukushima's construction of a Hunt process
 from a regular Dirichlet form and the Albeverio–Ma–Röckner characterisation of quasi-regular
 Dirichlet forms by right processes, are not stated: Mathlib has no Hunt or right processes, as
-`WantedExt/Probability/DirichletFormWanted.lean` explains. That file states, as wanted theorems,
-that regular forms are quasi-regular (Röckner and Schmuland, Proposition 0.9) and the
-Beurling–Deny correspondence between Markovian closed forms and Markovian resolvents.
+`MathlibExt/Probability/DirichletForm/Resolvent.lean` explains. The proof that regular forms are
+quasi-regular is in `MathlibExt/Probability/DirichletForm/RegularToQuasiRegular.lean`.
 -/
 
 @[expose] public section

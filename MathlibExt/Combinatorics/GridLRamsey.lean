@@ -10,13 +10,16 @@ module
 
 public import Mathlib.Data.Fin.Basic
 public import Mathlib.Data.Finset.Prod
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Combinatorics.HalesJewett
 import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Monochromatic L-shapes in grid colorings
 
-We prove the one-color grid Ramsey bounds and show that sufficiently many blue points
-on one diagonal forced by red points on the main diagonal give a monochromatic L.
+Every finite coloring of a sufficiently large square grid contains a monochromatic L.
+We also prove the one-color bounds and a criterion for a monochromatic L from forced blue points
+on a diagonal.
 -/
 
 namespace MetaMathlibExt
@@ -40,6 +43,51 @@ definition of `R_k(L)` following it. -/
 public def GridLRamseyProperty (k n : ℕ) : Prop :=
   ∀ c : ℕ × ℕ → Fin k, ∃ x y d : ℕ, 0 < x ∧ 0 < y ∧ 0 < d ∧ x + d ≤ n ∧ y + d ≤ n ∧
     c (x, y) = c (x + d, y) ∧ c (x + d, y) = c (x + d, y + d)
+
+/-- **Grid Ramsey theorem for Ls.** Write $[n] = \{1, \dots, n\}$. For every positive integer
+$k$ there is a positive integer $n$ such that every coloring of the grid $[n] \times [n]$ with
+$k$ colors contains a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le n$ and
+$y + d \le n$ such that the points $(x, y)$, $(x + d, y)$ and $(x + d, y + d)$ all have the
+same color.
+
+Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
+Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 1 (quoted there
+from earlier work). -/
+public theorem exists_gridLRamseyProperty (k : ℕ) (hk : 0 < k) :
+    ∃ n : ℕ, 0 < n ∧ GridLRamseyProperty k n := by
+  classical
+  obtain ⟨ι, _, hι⟩ := Combinatorics.Line.exists_mono_in_high_dimension (Fin 3) (Fin k)
+  refine ⟨k + Fintype.card ι, by omega, ?_⟩
+  intro c
+  -- Count the letters 1 and 2 for the horizontal coordinate, and just 2 for the vertical.
+  let coord (p : Fin 3 → Bool) (w : ι → Fin 3) :=
+    k + (Finset.univ.filter fun i => p (w i)).card
+  let hor (a : Fin 3) := a != 0
+  let ver (a : Fin 3) := a == 2
+  obtain ⟨l, color, hcolor⟩ := hι fun w => c (coord hor w, coord ver w)
+  let wild := Finset.univ.filter fun i => l.idxFun i = none
+  have hd : 0 < wild.card := by
+    obtain ⟨i, hi⟩ := l.proper
+    exact Finset.card_pos.mpr ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩⟩
+  let fixed (p : Fin 3 → Bool) := Finset.univ.filter fun i => (l.idxFun i).any p
+  -- Each wildcard contributes one extra count exactly when the chosen letter satisfies p.
+  have eval (p : Fin 3 → Bool) (a : Fin 3) :
+      coord p (l a) = k + (fixed p).card + wild.card * (p a).toNat := by
+    simp only [coord, fixed, wild, Finset.card_filter, Finset.sum_mul, Nat.add_assoc,
+      ← Finset.sum_add_distrib]
+    congr 1
+    apply Finset.sum_congr rfl
+    intro i _
+    cases hi : l.idxFun i <;> cases hp : p a <;> simp [hi, hp]
+  simp only [eval] at hcolor
+  have bound (p : Fin 3 → Bool) (hp : p 2 = true) :
+      k + (fixed p).card + wild.card ≤ k + Fintype.card ι := by
+    have h : coord p (l 2) ≤ k + Fintype.card ι := Nat.add_le_add_left (Finset.card_le_univ _) k
+    simpa only [eval, hp, Bool.toNat_true, Nat.mul_one] using h
+  refine ⟨k + (fixed hor).card, k + (fixed ver).card, wild.card, by omega, by omega, hd,
+    bound hor rfl, bound ver rfl, ?_, ?_⟩
+  · simpa [hor, ver] using (hcolor 0).trans (hcolor 1).symm
+  · simpa [hor, ver] using (hcolor 1).trans (hcolor 2).symm
 
 /-- **Monotonicity of the grid Ramsey property for Ls.** Let $k$, $m$, $n$ be natural numbers
 with $m \le n$. For a natural number $N$ write $[N] = \{1, \dots, N\}$; given a coloring, a

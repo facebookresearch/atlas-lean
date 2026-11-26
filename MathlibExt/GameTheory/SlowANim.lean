@@ -233,6 +233,7 @@ public theorem not_slowANimReducedGraphMove_zero {n : ℕ} (A : Finset ℕ)
   rw [slowANimMoves_zero] at hq
   simp at hq
 
+set_option linter.unusedVariables false in
 /-- **Options without reduction in Slow {n - 1}-Nim.** Let $n \ge 2$, $k = n - 1$ and $A = \{k\}$,
 so that a move removes one token from each of exactly $k$ nonempty stacks. Let $p$ be a reduced
 position of Slow$A$-Nim on $n$ stacks, with $s = (p_1 + \dots + p_n) \bmod 2k$ and $o$ odd stacks.
@@ -248,9 +249,9 @@ fails for $n = 3$ at $p = (0, 1, 1)$, whose only move omits the empty stack.
 Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 5. -/
 public theorem slowANim_n_sub_one_option_of_reduced (n : ℕ) (hn : 2 ≤ n)
-    (p : Fin n → ℕ) (_hp : SlowANimReduced {n - 1} p) (S : Finset (Fin n))
+    (p : Fin n → ℕ) (hp : SlowANimReduced {n - 1} p) (S : Finset (Fin n))
     (hS : S.card = n - 1) (hSp : ∀ i ∈ S, 1 ≤ p i)
-    (_hred : SlowANimReduced {n - 1} (slowANimAfter p S)) (j : Fin n) (hj : j ∉ S) :
+    (hred : SlowANimReduced {n - 1} (slowANimAfter p S)) (j : Fin n) (hj : j ∉ S) :
     (∑ i, slowANimAfter p S i) % (2 * (n - 1)) =
         (if (∑ i, p i) % (2 * (n - 1)) < n - 1 then (∑ i, p i) % (2 * (n - 1)) + (n - 1)
           else (∑ i, p i) % (2 * (n - 1)) - (n - 1)) ∧

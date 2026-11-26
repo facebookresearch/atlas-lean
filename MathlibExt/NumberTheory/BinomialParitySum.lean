@@ -9,13 +9,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Choose.Lucas
+public import MathlibExt.NumberTheory.BinomialModTwoRunLength
+import Mathlib.Combinatorics.Colex
+import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Nat.BitIndices
+import Mathlib.Data.Nat.Bitwise
 
 /-!
-# Binomial parity sums at one less than a power of two
+# Binomial parity sums
 
-We evaluate the binomial parity sum for `n = 2 ^ ℓ - 1` by comparing the binary digits of the
-binomial arguments using Lucas's theorem.
+Lucas's theorem in base two lets us evaluate binomial parity sums by comparing the binary
+digits of the binomial arguments. Here we evaluate a sum at one less than a power of two
+and express another sum as a run length transform.
 -/
 
 namespace MetaMathlibExt
@@ -175,5 +180,95 @@ public theorem sum_choose_two_pow_mul_mod_two_two_pow_sub_one (m ℓ : ℕ) :
     intro k hk
     exact (Nat.mod_two_eq_zero_or_one _).resolve_right fun h₁ =>
       h (hdiv.mp ⟨k, ((hterm k hk).mp h₁).symm⟩)
+
+-- The mask after adding a low bit gains a low bit exactly when the two low bits are both 1.
+private theorem adjacentMask_bit (b : Bool) (n : ℕ) :
+    Nat.bit b n &&& (Nat.bit b n >>> 1) = Nat.bit (b && n.testBit 0) (n &&& (n >>> 1)) := by
+  rw [Nat.shiftRight_eq_div_pow, pow_one, Nat.bit_div_two, ← Nat.land_bit,
+    Nat.bit_testBit_zero_shiftRight_one]
+
+-- The exponent counts pairs in the digits of `n`, in the `c` preceding ones, and at their join.
+private theorem bitRunLengths_prod_pow_two (n c : ℕ) :
+    ((bitRunLengths (Nat.digits 2 n) c).map (fun i => (2 : ℤ) ^ (i - 1))).prod =
+      2 ^ ((n &&& (n >>> 1)).bitIndices.length +
+        if c = 0 then 0 else c - 1 + (n.testBit 0).toNat) := by
+  induction n using Nat.binaryRecFromOne generalizing c with
+  | zero => by_cases hc : c = 0 <;> simp [bitRunLengths, hc]
+  | one =>
+    have hd : Nat.digits 2 1 = [1] := by decide
+    rw [hd]
+    by_cases hc : c = 0 <;> simp [bitRunLengths, hc]
+    omega
+  | bit b n hn ih =>
+    have hbit : Nat.bit b n ≠ 0 := fun h => hn (Nat.bit_eq_zero_iff.mp h).1
+    rw [Nat.digits_eq_cons_digits_div (by decide) hbit, Nat.bit_mod_two, Nat.bit_div_two,
+      adjacentMask_bit, Nat.testBit_bit_zero]
+    cases b
+    · rw [Bool.false_and, Nat.bitIndices_bit_false]
+      by_cases hc : c = 0 <;> simp [bitRunLengths, hc, ih, ← pow_add, add_comm]
+    · rw [Bool.true_and]
+      cases h : n.testBit 0 <;>
+        simp only [Nat.bitIndices_bit_false, Nat.bitIndices_bit_true,
+          List.length_cons, List.length_map] <;>
+        by_cases hc : c = 0 <;> simp [bitRunLengths, ih, h, hc] <;> omega
+
+open sum_choose_two_pow_mul_mod_two_two_pow_sub_one in
+private theorem sum_choose_two_mul_mod_two_eq_pow (n : ℕ) :
+    (∑ k ∈ Finset.range (n + 1), (n.choose (2 * k) * n.choose k) % 2) =
+      2 ^ (n &&& (n >>> 1)).bitIndices.length := by
+  classical
+  let mask := n &&& (n >>> 1)
+  have hselect (k : ℕ) :
+      (n.choose (2 * k) * n.choose k) % 2 = 1 ↔
+        ∀ i, k.testBit i → n.testBit i ∧ n.testBit (i + 1) := by
+    have hpar (a b : ℕ) : a * b % 2 = 1 ↔ a % 2 = 1 ∧ b % 2 = 1 := by
+      rw [Nat.mul_mod]
+      rcases Nat.mod_two_eq_zero_or_one a with ha | ha <;>
+        rcases Nat.mod_two_eq_zero_or_one b with hb | hb <;> simp [ha, hb]
+    rw [hpar, choose_mod_two_eq_one_iff, choose_mod_two_eq_one_iff, ← Nat.bit_false_apply]
+    constructor
+    · rintro ⟨hshift, h⟩ i hi
+      exact ⟨h i hi, hshift (i + 1) (by simpa only [Nat.testBit_bit_succ] using hi)⟩
+    · intro h
+      refine ⟨fun i hi => ?_, fun i hi => (h i hi).1⟩
+      cases i with
+      | zero => simp only [Nat.testBit_bit_zero, Bool.false_eq_true] at hi
+      | succ i => exact (h i (by simpa only [Nat.testBit_bit_succ] using hi)).2
+  -- Each contributing `k` is determined by a subset of the adjacent-pair positions.
+  calc
+    _ = ((Finset.range (n + 1)).filter
+        (fun k => (n.choose (2 * k) * n.choose k) % 2 = 1)).card := by
+      rw [Finset.card_eq_sum_ones, Finset.sum_filter]
+      apply Finset.sum_congr rfl
+      intro k _
+      rcases Nat.mod_two_eq_zero_or_one (n.choose (2 * k) * n.choose k) with h | h <;> simp [h]
+    _ = (Finset.equivBitIndices mask).powerset.card := by
+      apply Finset.card_equiv Finset.equivBitIndices
+      intro k
+      simp only [Finset.mem_filter, Finset.mem_range, Nat.lt_succ_iff, Finset.mem_powerset,
+        Finset.equivBitIndices_apply, Finset.subset_iff, List.mem_toFinset, Nat.mem_bitIndices,
+        mask, Nat.testBit_and, Nat.testBit_shiftRight, Bool.and_eq_true, Nat.add_comm 1, hselect]
+      exact and_iff_right_of_imp fun h => Nat.le_of_testBit fun i hi => (h i hi).1
+    _ = _ := by
+      rw [Finset.card_powerset, Finset.equivBitIndices_apply,
+        List.toFinset_card_of_nodup Nat.bitIndices_nodup]
+
+/-- **Rampersad–Wiebe Theorem 4.** Let $T$ be the run length transform of the sequence $S$ with
+$S(0) = 1$ and $S(i) = 2^{i-1}$ for $i \ge 1$, i.e. of $1, 1, 2, 4, 8, \dots$. Then for every
+natural number $n$, $\sum_{k=0}^{n} \left(\binom{n}{2k} \binom{n}{k} \bmod 2\right) = T(n)$.
+
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
+Sequences*, INTEGERS 24 (2024), Article A73, Theorem 4. -/
+public theorem runLengthTransform_choose_two_mul_pow_two (n : ℕ) :
+    ((∑ k ∈ Finset.range (n + 1), (n.choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
+      runLengthTransform (fun i => if i = 0 then 1 else 2 ^ (i - 1)) n := by
+  rw [sum_choose_two_mul_mod_two_eq_pow, Nat.cast_pow, Nat.cast_ofNat]
+  have hseq : (fun i : ℕ => if i = 0 then (1 : ℤ) else 2 ^ (i - 1)) =
+      fun i => 2 ^ (i - 1) := by
+    funext i
+    by_cases hi : i = 0 <;> simp [hi]
+  rw [hseq, runLengthTransform, binaryRunLengths, bitRunLengths_prod_pow_two]
+  simp
 
 end MetaMathlibExt

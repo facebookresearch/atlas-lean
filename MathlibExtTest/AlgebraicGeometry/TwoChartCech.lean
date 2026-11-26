@@ -16,7 +16,7 @@ public import Mathlib.RingTheory.PrincipalIdealDomain
 
 universe u
 
-theorem exactSource
+private theorem exactSource
     {R : Type u} [CommRing R] [IsNoetherianRing R] {𝒰 : TwoChartCech.Cover.{u, u} R}
     (S : TwoChartCech.Sections.{u, u, u} 𝒰)
     (f : 𝒰.A0) (g : 𝒰.A1) (hfg : 𝒰.ρ0 f * 𝒰.ρ1 g = 1)
@@ -46,7 +46,7 @@ example {R : Type u} [CommRing R] [IsNoetherianRing R]
     htors0 htors1
 
 /-- The cover of `Spec ℤ` by two copies of itself. -/
-@[reducible] noncomputable def trivialCover : TwoChartCech.Cover.{0, 0} ℤ where
+@[reducible] private noncomputable def trivialCover : TwoChartCech.Cover.{0, 0} ℤ where
   A0 := ℤ
   A1 := ℤ
   A01 := ℤ
@@ -54,7 +54,7 @@ example {R : Type u} [CommRing R] [IsNoetherianRing R]
   ρ1 := AlgHom.id ℤ ℤ
 
 /-- The structure sheaf on `trivialCover`. -/
-@[reducible] noncomputable def trivialSections : TwoChartCech.Sections.{0, 0, 0} trivialCover where
+@[reducible] private noncomputable def trivialSections : TwoChartCech.Sections.{0, 0, 0} trivialCover where
   M0 := ℤ
   M1 := ℤ
   M01 := ℤ

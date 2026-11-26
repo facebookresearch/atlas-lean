@@ -1,0 +1,19 @@
+# Dalang–Morton–Willinger theorem
+
+Let $(\Omega, \mathcal F, (\mathcal F_t)_{t=0}^T, \mathbb P)$ be a filtered probability space with finite horizon $T \in \mathbb N$, and $S = (S_t)_{t=0}^T$ an adapted process in $\mathbb R^d$ of discounted asset prices. A self-financing strategy is a predictable process $H = (H_t)_{t=1}^T$ in $\mathbb R^d$, with gains $G_T(H) = \sum_{t=1}^T H_t \cdot (S_t - S_{t-1})$; an arbitrage is an $H$ with $G_T(H) \ge 0$ almost surely and $\mathbb P(G_T(H) > 0) > 0$. Then there is no arbitrage if and only if there is a probability measure $Q \sim \mathbb P$ with bounded density $dQ/d\mathbb P$ under which $S$ is a martingale. No finiteness of $\Omega$ is assumed. The multi-period statement reduces to the [conditional one-period theorem](conditional-one-period-ftap.md): no arbitrage holds if and only if there is no arbitrage given $\mathcal F_{t-1}$ for each increment $S_t - S_{t-1}$. No integrability of the prices under $\mathbb P$ is assumed, so the construction first passes to the equivalent measure $\tilde{\mathbb P}$ with bounded density $d\tilde{\mathbb P}/d\mathbb P = c\, \exp\bigl(-\sum_{t=0}^T |S_t|\bigr)$, $c$ the normalizing constant, under which every $S_t$ is integrable; without this step a bounded density need not make $S$ integrable, as when $S_1 = S_0$ with $S_0$ not integrable. A martingale measure is then built backwards in time. Put $Q_T = \tilde{\mathbb P}$. For $t = T, T-1, \dots, 1$, no arbitrage given $\mathcal F_{t-1}$ is unchanged under the equivalent measure $Q_t$, so the one-period theorem applied on $(\Omega, \mathcal F_t, Q_t)$ with $\mathcal G = \mathcal F_{t-1}$ and $\Delta S = S_t - S_{t-1}$ gives an $\mathcal F_t$-measurable bounded density $Z_t > 0$ with $\mathbb E_{Q_t}[Z_t] = 1$; the measure $Q_{t-1}$ with $dQ_{t-1}/dQ_t = Z_t$ makes $S_t - S_{t-1}$ integrable with $\mathbb E_{Q_{t-1}}[S_t - S_{t-1} \mid \mathcal F_{t-1}] = 0$. This change keeps the later steps: for $s > t$ we have $\mathcal F_t \subseteq \mathcal F_{s-1}$, so $Z_t$ is $\mathcal F_{s-1}$-measurable and Bayes' formula gives $\mathbb E_{Q_{t-1}}[S_s - S_{s-1} \mid \mathcal F_{s-1}] = \mathbb E_{Q_t}[Z_t (S_s - S_{s-1}) \mid \mathcal F_{s-1}] / \mathbb E_{Q_t}[Z_t \mid \mathcal F_{s-1}] = \mathbb E_{Q_t}[S_s - S_{s-1} \mid \mathcal F_{s-1}] = 0$, while bounded densities keep every $S_s$ integrable. A density that is not $\mathcal F_t$-measurable can fail here: in a two-period market with increments $S_1 - S_0 = U$ and $S_2 - S_1 = V$, independent fair signs, and $\mathcal F_1 = \sigma(U)$, the first-step density $1 + \varepsilon V$ keeps the mean of $U$ but gives $V$ conditional mean $\varepsilon$. Then $Q = Q_0$ has the bounded density $dQ/d\mathbb P = (d\tilde{\mathbb P}/d\mathbb P)\, Z_T Z_{T-1} \cdots Z_1$, every $S_t$ is $Q$-integrable, and $S$ is a $Q$-martingale. The one-asset case $d = 1$ is the special case in which the conditional theorem reduces to a sign condition on the conditional law of the increment.
+
+## Depends on
+
+- [Conditional one-period fundamental theorem of asset pricing](conditional-one-period-ftap.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- the equivalence of global and one-period no arbitrage, the preliminary change to a measure under which the prices are integrable, and the backward construction of the bounded density, are stated (proof prerequisite)
+
+## Sources
+
+- R. C. Dalang, A. Morton and W. Willinger, "Equivalent martingale measures and no-arbitrage in stochastic securities market models", *Stochastics and Stochastic Reports* 29(2):185–201, 1990
+- H. Föllmer and A. Schied, *Stochastic Finance: An Introduction in Discrete Time*, de Gruyter, Section 5.2 (the Dalang–Morton–Willinger theorem)
+- Yu. M. Kabanov and C. Stricker, "A teachers' note on no-arbitrage criteria", in *Séminaire de Probabilités XXXV*, Lecture Notes in Mathematics 1755, Springer, 2001, pp. 149–152, Theorem 1

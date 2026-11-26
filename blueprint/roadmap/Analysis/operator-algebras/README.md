@@ -15,4 +15,6 @@ Banach algebras and C*- and von Neumann algebras: exponentials and product formu
 - [Operator monotone and operator convex functions](operator-monotone-and-operator-convex-functions/README.md)
 - [Spectra of elements in C*-algebras](spectra-of-elements-in-c-algebras/README.md)
 - [Completely positive maps](completely-positive-maps/README.md)
-- [Boundary representation of an operator system S ⊆ C*(S): an irreducible representation of C*(S) whose restriction to S has a unique completely positive extension](boundary-representation.md)
+- [Boundary representation of an operator system S ⊆ C\*(S): an irreducible representation of C\*(S) whose restriction to S has a unique completely positive extension](boundary-representation.md)
+- [C*-algebra, not necessarily with an identity element](cstar-algebra.md)
+- [Spectral radius formula in a complex Banach algebra](spectral-radius-formula.md)

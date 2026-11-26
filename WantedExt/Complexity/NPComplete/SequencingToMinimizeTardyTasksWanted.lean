@@ -21,12 +21,12 @@ doi:10.1016/0377-2217(80)90111-3, Theorem 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -51,7 +51,7 @@ Membership in NP: the schedule is a certificate; its start times can be taken be
 length, so they have polynomially many bits. Binary encoding of all numbers.
 
 The tasks are `Fin n`, one per listed pair `(l(t), d(t))`. A one-processor schedule is Garey and
-Johnson's [SS1] notion, reused from `SequencingToMinimizeWeightedTardinessWanted`
+Johnson's [SS1] notion, reused from `SequencingToMinimizeWeightedTardinessDefs`
 (`IsOneProcessorSchedule`, a one-to-one `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying
 `σ(t) ≥ σ(t') + l(t')`). The partial order is given by the list of its pairs `(t, t')` with
 `t < t'`, required to be a strict order (Mathlib's `IsStrictOrder`), as in

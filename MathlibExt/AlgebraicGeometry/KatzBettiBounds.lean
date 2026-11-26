@@ -69,7 +69,7 @@ abbrev CompactAdicCohomology {k : Type u} [Field k] {X : Over (Spec (.of k))}
     ((moduleBoundaryKernel ℚ_[ell] c.closedMap).obj
       (continuousModuleSheaf ℚ_[ell] (ULift.{u + 1} ℚ_[ell]) c.ambient.left)) n
 
-/-- Katz's explicit constant in the Corollary of Theorem 1. -/
+/-- Katz's explicit constant $6 \cdot 2^r (3 + r d)^{N+1}$ in the Corollary of Theorem 1. -/
 def katzBound (N r d : ℕ) : ℕ := 6 * 2 ^ r * (3 + r * d) ^ (N + 1)
 
 end MathlibExt.AlgebraicGeometry.KatzBettiBounds

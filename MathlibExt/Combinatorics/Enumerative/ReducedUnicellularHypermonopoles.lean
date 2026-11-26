@@ -11,12 +11,14 @@ module
 public import Mathlib.Algebra.Group.End
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Logic.Equiv.Fin.Rotate
+public import MathlibExt.Combinatorics.Enumerative.Stirling
 
 /-!
 # Reduced unicellular hypermonopoles
 
-This module proves the no-bud criterion for a hypermap with cyclic vertex permutation
-and gives basic values of the cyclic product numbers.
+This module proves the no-bud criterion for a hypermap with cyclic vertex permutation,
+bounds the number of cycles in a permutation with no buds, and gives basic values of
+the cyclic product numbers.
 -/
 
 @[expose] public section
@@ -82,5 +84,32 @@ public theorem reduced_iff_forall_face_ne_finRotate {n : ℕ}
     (∀ i, α i ≠ i) ↔ ∀ i, (α⁻¹ * finRotate n) i ≠ finRotate n i := by
   rw [(finRotate n).surjective.forall (p := fun i ↦ α i ≠ i)]
   exact forall_congr' fun _ ↦ not_congr (eq_comm.trans α.symm_apply_eq.symm)
+
+/-- **Cycle count of a fixed-point-free permutation.** Let $n \ge 1$ and let $\alpha$ be a
+permutation of $\{0, 1, \dots, n - 1\}$ with no fixed point. Then the number $z(\alpha)$ of
+cycles of $\alpha$ satisfies $1 \le z(\alpha)$ and $2 z(\alpha) \le n$.
+
+This is the source's bound $1 \le z(\alpha) \le n / 2$ for a reduced unicellular
+hypermonopole $(\sigma, \alpha)$ on $n$ points: only $n \ge 1$ (forced by $z(\sigma) = 1$) and
+the absence of buds (fixed points of $\alpha$) are used.
+
+Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
+Integer Sequences 28 (2025), Article 25.3.3, Corollary 11 (`jis-2025-25.3.3-cor-11`). -/
+public theorem cycleCount_bounds_of_reduced {n : ℕ} (hn : 1 ≤ n)
+    (α : Equiv.Perm (Fin n)) (hred : ∀ i, α i ≠ i) :
+    1 ≤ cycleQuotientCount α ∧ 2 * cycleQuotientCount α ≤ n := by
+  constructor
+  · rw [cycleQuotientCount]
+    have : Nonempty (Quotient (Equiv.Perm.SameCycle.setoid α)) :=
+      ⟨Quotient.mk _ (⟨0, hn⟩ : Fin n)⟩
+    exact Nat.card_pos
+  · have : IsEmpty (Function.fixedPoints α) := ⟨fun i ↦ hred i.1 i.2⟩
+    rw [cycleQuotientCount_eq, Fintype.card_of_isEmpty, Nat.add_zero]
+    calc
+      2 * α.cycleType.card = α.cycleType.card • (2 : ℕ) := by
+        rw [nsmul_eq_mul, Nat.cast_id, Nat.mul_comm]
+      _ ≤ α.cycleType.sum :=
+        Multiset.card_nsmul_le_sum fun _ h ↦ Equiv.Perm.two_le_of_mem_cycleType h
+      _ ≤ n := by simpa only [Fintype.card_fin] using α.sum_cycleType_le
 
 end MetaMathlibExt

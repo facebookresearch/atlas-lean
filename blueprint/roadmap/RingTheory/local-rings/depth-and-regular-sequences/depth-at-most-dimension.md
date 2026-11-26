@@ -8,12 +8,20 @@ It suffices to show that $d \le \dim M$ for every $M$-regular sequence $x_1, \do
 
 ## Expansion
 
-For the nonzero finitely generated module $M$ above, a good expansion bounds the length of every finite $M$-regular sequence $x_1, \dots, x_d$ in $\mathfrak m$ by the dimension of the support of $M$: each $x_i$ lowers the dimension of the support of the successive quotient $M/(x_1, \dots, x_{i-1})M$ by at least one, and the final quotient $M/(x_1, \dots, x_d)M$ is nonzero. It identifies the dimension of the support of $M$ with the Krull dimension of $R/\operatorname{ann} M$, using $\operatorname{Supp} M = V(\operatorname{ann} M)$, and then takes the supremum over all such sequences, which for this nonzero $M$ is its depth. A good expansion also links each prerequisite of its statement and proof: the fact that the minimal primes of the support are associated primes; the support of the quotient of a module by an ideal times the module; zero divisors on a module as the union of its associated primes; the depth of a module; finitely generated modules; Krull dimension; local rings; Noetherian rings.
+For the nonzero finitely generated module $M$ above, a good expansion bounds the length of every finite $M$-regular sequence $x_1, \dots, x_d$ in $\mathfrak m$ by the dimension of the support of $M$: each $x_i$ lowers the dimension of the support of the successive quotient $M/(x_1, \dots, x_{i-1})M$ by at least one, and the final quotient $M/(x_1, \dots, x_d)M$ is nonzero. It identifies the dimension of the support of $M$ with the Krull dimension of $R/\operatorname{ann} M$, using $\operatorname{Supp} M = V(\operatorname{ann} M)$, and then takes the supremum over all such sequences, which for this nonzero $M$ is its depth. A good expansion also links each prerequisite of its statement: the depth of a module; local rings; Noetherian rings.
+
+## Depends on
+
+- [Finitely generated module](../../modules/finitely-generated-module.md)
+- [Krull dimension of a commutative semiring](../krull-dimension/krull-dimension.md)
 
 ## Proof depends on
 
 - [Regular sequence on a module](../regular-sequence.md)
 - [Support of a module](../../modules/module-support.md)
+- [Support of the quotient M/IM of a finitely generated module](../../modules/support-quotient-by-ideal-times-module.md)
+- [The zero divisors on a module over a Noetherian ring are the elements of its associated primes](../../noetherian-and-artinian-rings/associated-primes-of-modules/zero-divisors-associated-primes.md)
+- [Minimal primes over the annihilator of a finitely generated module over a Noetherian ring are associated primes](../../noetherian-and-artinian-rings/associated-primes-of-modules/minimal-primes-associated.md)
 
 ## Sources
 

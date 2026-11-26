@@ -47,6 +47,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
 
 set_option autoImplicit false
@@ -89,26 +90,6 @@ theorem_wanted luckyGenPoly_eq_sum (n : ℕ) :
         C ((Nat.card { f : Fin n → Fin n //
           IsParkingFunction n f ∧ luckyCount f = k } : ℕ) : ℚ) *
           X ^ k
-
-/-- **Factorial moments of the number of lucky cars.** Let $n \ge 1$ and $\ell \in \mathbb{N}$, let
-$X(f)$ be the number of lucky cars of a parking function $f$ of length $n$, and let
-$P_n(x) = \frac{1}{n+1} \prod_{i=0}^{n-1} \bigl((n+1-i)x + i\bigr) \in \mathbb{Q}[x]$. Then
-$$\frac{1}{(n+1)^{n-1}} \sum_f X(f)\bigl(X(f)-1\bigr)\cdots\bigl(X(f)-\ell+1\bigr) =
-\frac{P_n^{(\ell)}(1)}{(n+1)^{n-1}},$$
-where $f$ runs over the parking functions of length $n$ and $P_n^{(\ell)}$ is the $\ell$-th
-derivative of $P_n$. Since there are $(n+1)^{n-1}$ parking functions of length $n$, the left side
-is the $\ell$-th falling-factorial moment of $X$ for a uniformly random parking function.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Proposition 6. -/
-theorem_wanted expected_descFactorial_luckyCount (n ℓ : ℕ)
-    (hn : 1 ≤ n) :
-    ((∑ f ∈ Finset.univ.filter (fun f : Fin n → Fin n =>
-        IsParkingFunction n f),
-      ((luckyCount f).descFactorial ℓ : ℚ)) /
-        (n + 1 : ℚ) ^ (n - 1) =
-      (Polynomial.derivative^[ℓ] (luckyGenPoly n)).eval 1 /
-        (n + 1 : ℚ) ^ (n - 1))
 
 /-- **Boundary values of lucky-car counts (Lemma 9).** Let $n \ge 1$, number the cars and spots
 $0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which
@@ -179,16 +160,6 @@ theorem_wanted qInc_eq (n : ℕ) (i j : Fin n) :
     qInc n i j =
       if i = j then catalan i.val * catalan (n - i.val)
       else 0
-
-/-- **Number of ballot paths.** For natural numbers $k \le \ell$, the number of lattice paths
-from $(0,0)$ to $(k, \ell)$ with unit up and right steps that stay on or above the line $y = x$
-is $\frac{\ell - k + 1}{\ell + 1} \binom{k + \ell}{k}$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Lemma 21. -/
-theorem_wanted card_ballotPath (k ℓ : ℕ) (h : k ≤ ℓ) :
-    (Nat.card (BallotPath k ℓ) : ℚ) =
-      ((ℓ - k + 1 : ℚ) / (ℓ + 1)) * Nat.choose (k + ℓ) k
 
 /-- **Decreasing lucky-car counts (Lemma 22).** Number the cars and spots $0, \dots, n-1$, and let
 $q^{\mathrm{dec}}_n(i, j)$ be the number of weakly decreasing parking functions of length $n$ in

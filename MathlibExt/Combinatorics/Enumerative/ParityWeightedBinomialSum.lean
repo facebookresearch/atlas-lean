@@ -99,4 +99,60 @@ public theorem sum_choose_even_two_pow_sub_div (n : ℕ) :
   rw [sum_congr rfl evenTerm, sum_congr rfl oddTerm, sum_sub_distrib, ← mul_sum]
   linarith only [plus, minus, swap]
 
+/-- **Even-index against odd-index reciprocal binomial sums.** For every natural number
+$n \ge 1$,
+$$\sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} =
+\frac{2^{n-1}}{2^n - 1} \sum_{k=1}^{\lceil n/2 \rceil} \frac{1}{k} \binom{n}{2k-1}.$$
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Proposition 3 (`integers-2026-A19-prop-3`). -/
+public theorem sum_choose_even_div_eq_sum_choose_odd_div (n : ℕ) (hn : n ≠ 0) :
+    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) =
+      2 ^ (n - 1) / (2 ^ n - 1) * ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) / k := by
+  -- Evaluate the two parity sums on row `n + 1`, omitting index zero from the even sum.
+  have plus := split_add_pow 1 1 n
+  have minus := split_add_pow (-1) 1 n
+  have sign (k : ℕ) : (-1 : ℚ) ^ (2 * k) = 1 := (even_two.mul_right k).neg_one_pow
+  norm_num [pow_succ (-1 : ℚ), pow_succ (0 : ℚ), sign, sum_neg_distrib] at plus minus
+  rw [pow_succ] at plus
+  have oddRow : ∑ k ∈ range (n / 2 + 1), ((n + 1).choose (2 * k + 1) : ℚ) = 2 ^ n := by
+    linarith only [plus, minus]
+  have evenRow : ∑ k ∈ Icc 1 ((n + 1) / 2), ((n + 1).choose (2 * k) : ℚ) = 2 ^ n - 1 := by
+    linarith only [minus, oddRow]
+  have shift (j : ℕ) : ((n : ℚ) + 1) * n.choose j =
+      ((n + 1).choose (j + 1) : ℚ) * (j + 1) := by
+    exact_mod_cast Nat.add_one_mul_choose_eq n j
+  have hn' : (n : ℚ) + 1 ≠ 0 := by positivity
+  have hL : ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) =
+      (2 : ℚ) ^ n / ((n : ℚ) + 1) := by
+    rw [← oddRow]
+    conv_rhs => rw [div_eq_mul_inv, Finset.sum_mul]
+    refine sum_congr rfl fun k _ ↦ ?_
+    rw [← div_eq_mul_inv]
+    exact (div_eq_div_iff (by positivity) hn').2 (by
+      simpa only [Nat.cast_mul, Nat.cast_ofNat, mul_comm] using shift (2 * k))
+  have hR : ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) / k =
+      2 * ((2 : ℚ) ^ n - 1) / ((n : ℚ) + 1) := by
+    rw [← evenRow, Finset.mul_sum]
+    conv_rhs => rw [div_eq_mul_inv, Finset.sum_mul]
+    refine sum_congr rfl fun k hk ↦ ?_
+    rw [← div_eq_mul_inv]
+    have hk' := (mem_Icc.mp hk).1
+    have he : 2 * k - 1 + 1 = 2 * k := by omega
+    have he' : ((2 * k - 1 : ℕ) : ℚ) + 1 = 2 * (k : ℚ) := by
+      rw [← Nat.cast_add_one, he, Nat.cast_mul, Nat.cast_ofNat]
+    apply (div_eq_div_iff (by positivity) hn').2
+    calc
+      _ = ((n : ℚ) + 1) * n.choose (2 * k - 1) := mul_comm _ _
+      _ = ((n + 1).choose (2 * k) : ℚ) * (2 * (k : ℚ)) := by rw [shift, he, he']
+      _ = _ := by ring
+  have hden : (2 : ℚ) ^ n - 1 ≠ 0 :=
+    sub_ne_zero.mpr (ne_of_gt (one_lt_pow₀ (by norm_num : (1 : ℚ) < 2) hn))
+  have hp : (2 : ℚ) ^ (n - 1) * 2 = 2 ^ n := by
+    rw [← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ n)]
+  rw [hL, hR]
+  calc
+    _ = (2 : ℚ) ^ (n - 1) * 2 / ((n : ℚ) + 1) := by rw [hp]
+    _ = _ := by field_simp [hn', hden]
+
 end MetaMathlibExt

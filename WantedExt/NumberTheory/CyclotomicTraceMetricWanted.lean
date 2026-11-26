@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.CyclotomicTraceMetric
 public import MathlibExt.NumberTheory.SymmetricPowerSums
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricEventuallyAdjoinAddNsmulEq
 
 /-!
 # A trace metric on the `p`-th cyclotomic field
@@ -38,21 +39,6 @@ open IsCyclotomicExtension
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
-/-- **The trace norm is a norm.** Let $p$ be a prime and let $K$ be a $p$-th cyclotomic extension
-of $\mathbb{Q}$, viewed as a $\mathbb{Q}$-vector space. The trace norm $\lVert \cdot \rVert$ on $K$
-is a norm: for all $\alpha, \beta \in K$ and $q \in \mathbb{Q}$, we have
-$\lVert \alpha \rVert = 0$ if and only if $\alpha = 0$,
-$\lVert \alpha + \beta \rVert \le \lVert \alpha \rVert + \lVert \beta \rVert$, and
-$\lVert q \alpha \rVert = |q| \, \lVert \alpha \rVert$.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Theorem 2 (`integers-2025-A10-thm-2`). -/
-public theorem_wanted cyclotomicTraceNorm_isNorm (hp : p.Prime) :
-    (∀ α : K, cyclotomicTraceNorm p α = 0 ↔ α = 0) ∧
-    (∀ α β : K,
-      cyclotomicTraceNorm p (α + β) ≤ cyclotomicTraceNorm p α + cyclotomicTraceNorm p β) ∧
-    ∀ (q : ℚ) (α : K), cyclotomicTraceNorm p (q • α) = |(q : ℝ)| * cyclotomicTraceNorm p α
-
 /-- **Krasner-type lemma for the cyclotomic trace metric.** Let $p$ be a prime and let $K$ be a
 field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with fixed primitive $p$-th
 root of unity $\omega \in K$. Write $d(\alpha, \beta) = \lVert \alpha - \beta \rVert$ for the trace
@@ -72,18 +58,6 @@ public theorem_wanted adjoin_le_adjoin_of_cyclotomicTraceDist_lt (hp : p.Prime)
     (h : ∀ σ : K ≃ₐ[ℚ] K, σ α ≠ α →
       cyclotomicTraceDist p α β < cyclotomicTraceDist p α (σ α) / 2) :
     IntermediateField.adjoin ℚ {α} ≤ IntermediateField.adjoin ℚ {β}
-
-/-- **Primitive elements α + nβ in a prime cyclotomic field.** Let $p$ be a prime and let $K$
-be a $p$-th cyclotomic extension of $\mathbb{Q}$. For all $\alpha, \beta \in K$ there is a
-natural number $n_0$ such that, for every natural number $n \ge n_0$, the subfields
-$\mathbb{Q}(\alpha + n\beta)$ and $\mathbb{Q}(\alpha, \beta)$ of $K$ are equal.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Corollary 1 (`integers-2025-A10-cor-1`). -/
-public theorem_wanted eventually_adjoin_add_nsmul_eq (hp : p.Prime) (α β : K) :
-    ∃ n₀ : ℕ, ∀ n ≥ n₀,
-      IntermediateField.adjoin ℚ {α + (n : K) * β} =
-        IntermediateField.adjoin ℚ {α, β}
 
 /-- **Diameter of the cyclotomic box.** Let $p$ be an odd prime, let $N$ be a natural number, and
 let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with fixed

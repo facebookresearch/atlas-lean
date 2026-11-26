@@ -34,6 +34,7 @@
 ## Inverse probability weighting with a general covariate
 
 - [Inverse probability weighting with a general covariate](integral-ipw-treated-cond-exp.md)
+- [Inverse probability weighting equals standardization](inverse-probability-weighting-equals-standardization.md)
 
 ## Potential outcomes and the local average treatment effect
 
@@ -54,6 +55,20 @@
 - [Reduced form: outcome difference is the complier-weighted effect](arm-mean-outcome-sub.md)
 - [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
 - [Local average treatment effect theorem](wald-estimand-eq-late.md)
+
+## Truncated endpoints at a horizon
+
+- [Event time truncated at a horizon](truncated-endpoint.md)
+- [An event time at or before the horizon is its own truncated endpoint](truncated-endpoint-eq-of-le.md)
+- [An event time at or beyond the horizon truncates to the horizon](truncated-endpoint-eq-of-ge.md)
+- [Truncation changes event times beyond the horizon](truncation-changes-value.md)
+
+## Failures of identifying assumptions and partial identification
+
+- [Violations of parallel trends and their dependence on the outcome scale](parallel-trends-violations-and-scale-dependence.md)
+- [A discontinuous untreated mean produces a jump with no treatment effect](discontinuous-untreated-mean-in-regression-discontinuity.md)
+- [Worst-case bounds for a mean with missing outcomes](worst-case-bounds-for-a-mean-with-missing-outcomes.md)
+- [A defier model in which the Wald ratio is not the complier effect](wald-ratio-with-defiers.md)
 
 ## Related topics
 

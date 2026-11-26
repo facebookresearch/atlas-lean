@@ -44,13 +44,15 @@ stalk and costalk dimension conditions.
   (`boundedConstructible`). The rational notions of this module are their
   specializations at `k = ℚ`. Change of coefficients, exact inverse image and
   derived direct image are in `MathlibExt.AlgebraicGeometry.ConstructibleComplexes`.
-* `PerverseSheafTheory X` is the middle perverse t-structure on the bounded
-  constructible rational complexes, characterized by its support and
-  cosupport conditions. The conditions determine it, so any two instances are
-  equal (`PerverseSheafTheory.instSubsingleton`). Its existence on every
-  complex variety (Beilinson–Bernstein–Deligne) is not proved or requested in
-  this module, which provides no instance: the constructions below assume it,
-  through `[PerverseSheafTheory X]`.
+* `CoefficientPerverseModels.CoefficientPerverseTheory k X` is the middle perverse
+  t-structure on the bounded constructible complexes with coefficients in `k`,
+  characterized by its stalk and costalk support conditions
+  (`CoefficientPerverseModels.stalkSupport`, `CoefficientPerverseModels.costalkSupport`).
+  The conditions determine it, so any two instances are equal
+  (`CoefficientPerverseTheory.instSubsingleton`). `PerverseSheafTheory X` is its case
+  `k = ℚ`. Its existence on every complex variety (Beilinson–Bernstein–Deligne)
+  is not proved or requested in this module, which provides no instance: the
+  constructions below assume it, through `[PerverseSheafTheory X]`.
 
 Given that characterized theory, `PerverseSheaf` is its heart and
 `perverseCohomology` is computed using Mathlib's truncations.
@@ -99,6 +101,10 @@ abbrev IsComplexVariety (X : ComplexScheme) : Prop := IsVariety ℂ X.left
 namespace IsComplexVariety
 
 variable (X : ComplexScheme) [IsComplexVariety X]
+
+/-! The four structure-morphism instances below restate `IsVariety`'s instances for `X.hom`.
+They are not duplicates: `IsVariety` provides them for `X.left ↘ Spec ℂ`, and instance search
+does not find them for `X.hom` (removing them breaks `isReduced` below). -/
 
 instance isSeparated : IsSeparated X.hom :=
   IsVariety.isSeparated (k := ℂ) (X := X.left)
@@ -152,8 +158,8 @@ structure AlgebraicStratification (X : ComplexScheme) where
 attribute [instance] AlgebraicStratification.variety
   AlgebraicStratification.immersion AlgebraicStratification.smooth
 
-/-- The continuous inclusion of an open subspace: Mathlib's
-`TopologicalSpace.Opens.inclusion'`, with the ambient space explicit. -/
+/-- The inclusion of an open subset `U` of a topological space `Z`, as a continuous map from `U`
+with the subspace topology to `Z` (`TopologicalSpace.Opens.inclusion'`). -/
 abbrev openInclusion (Z : TopCat.{0}) (U : Opens Z) : TopCat.of U ⟶ Z :=
   U.inclusion'
 
@@ -253,57 +259,68 @@ def SupportDimensionLE (X : ComplexScheme) (s : Set X.left) (d : ℤ) : Prop :=
   if d < 0 then s = ∅ else
     topologicalKrullDim (closure s) ≤ ((d.toNat : ℕ∞) : WithBot ℕ∞)
 
+end MathlibExt.AlgebraicGeometry.PerverseSheaves
+
+namespace MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
+
+/-! The support conditions and the middle perverse structure over an arbitrary coefficient field.
+They are stated here so that the rational theory below is literally their case `k = ℚ`; the rest of
+the coefficient perverse API is in `MathlibExt.AlgebraicGeometry.CoefficientPerverseModels`. -/
+
+open MathlibExt.AlgebraicGeometry.PerverseSheaves
+
+variable (k : Type) [Field k] (X : ComplexScheme)
+
 /-- The algebraic image of the nonzero stalks of the `j`th cohomology sheaf. -/
-def stalkSupport (X : ComplexScheme) (K : RationalDerived (space X))
-    (j : ℤ) : Set X.left :=
+def stalkSupport (K : ConstructibleComplexes.CoefficientDerived k (space X)) (j : ℤ) :
+    Set X.left :=
   ComplexPoints.schemePoint ''
     {p : space X | ¬ IsZero
       (((DerivedCategory.homologyFunctor _ j).obj K).presheaf.stalk p)}
 
-/-- The rational skyscraper at a complex point, placed in cohomological
+/-- The skyscraper with coefficients in `k` at a complex point, placed in cohomological
 degree zero. -/
-def rationalSkyscraper (X : ComplexScheme) (p : space X) :
-    RationalDerived (space X) := by
+def coefficientSkyscraper (p : space X) :
+    ConstructibleComplexes.CoefficientDerived k (space X) := by
   classical
-  exact (DerivedCategory.singleFunctor _ 0).obj
-    (skyscraperSheaf p (ModuleCat.of ℚ ℚ))
+  exact (DerivedCategory.singleFunctor _ 0).obj (skyscraperSheaf p (ModuleCat.of k k))
 
 /-- The algebraic image of nonzero `j`th costalk cohomology.
 For a closed point `iₚ`, derived adjunction identifies
-`Hom(iₚ* ℚ, K[j])` with `Hʲ(iₚ! K)`. The skyscraper is unshifted and the
+`Hom(iₚ* k, K[j])` with `Hʲ(iₚ! K)`. The skyscraper is unshifted and the
 target is shifted by `+j`. Source: de Cataldo–Migliorini (2009), §2.3. -/
-def costalkSupport (X : ComplexScheme) (K : RationalDerived (space X))
-    (j : ℤ) : Set X.left :=
+def costalkSupport (K : ConstructibleComplexes.CoefficientDerived k (space X)) (j : ℤ) :
+    Set X.left :=
   ComplexPoints.schemePoint ''
-    {p : space X | ¬ Subsingleton (rationalSkyscraper X p ⟶ K⟦j⟧)}
+    {p : space X | ¬ Subsingleton (coefficientSkyscraper k X p ⟶ K⟦j⟧)}
 
-/-- The data of the rational middle perverse t-structure on a complex
+/-- The data of the middle perverse t-structure with coefficients in `k` on a complex
 variety, characterized by its support and cosupport conditions: `K` is in
 `ᵖD^{≤ m}` iff `dim supp Hʲ(K) ≤ m - j` for all `j`, and in `ᵖD^{≥ m}` iff
 `dim {x | Hʲ(iₓ^! K) ≠ 0} ≤ j - m` for all `j`. These conditions determine the
-t-structure (`PerverseSheafTheory.instSubsingleton`). Its existence on every
+t-structure (`CoefficientPerverseTheory.instSubsingleton`). Its existence on every
 complex variety is the theorem of Beilinson–Bernstein–Deligne; no instance is
 provided here.
 Source: de Cataldo–Migliorini (2005), §§3.3, 3.6; (2009), §2.3, (14), (15). -/
-class PerverseSheafTheory (X : ComplexScheme) [IsComplexVariety X] where
+class CoefficientPerverseTheory [IsComplexVariety X] where
   /-- Closure of bounded constructible complexes under shifts and triangles. -/
-  [isTriangulated : (boundedConstructible X).IsTriangulated]
+  [isTriangulated : (ConstructibleComplexes.boundedConstructible k X).IsTriangulated]
   /-- The middle perverse t-structure on the bounded constructible category. -/
   t : CategoryTheory.Triangulated.TStructure
-    (boundedConstructible X).FullSubcategory
+    (ConstructibleComplexes.boundedConstructible k X).FullSubcategory
   /-- Stalk support condition in every degree. -/
   le_iff : ∀ K m, t.le m K ↔ ∀ j,
-    SupportDimensionLE X (stalkSupport X K.obj j) (m - j)
+    SupportDimensionLE X (stalkSupport k X K.obj j) (m - j)
   /-- Costalk support condition in every degree. -/
   ge_iff : ∀ K m, t.ge m K ↔ ∀ j,
-    SupportDimensionLE X (costalkSupport X K.obj j) (j - m)
+    SupportDimensionLE X (costalkSupport k X K.obj j) (j - m)
 
-attribute [instance] PerverseSheafTheory.isTriangulated
+attribute [instance] CoefficientPerverseTheory.isTriangulated
 
 /-- The support and cosupport conditions determine the t-structure, so a
-complex variety has at most one `PerverseSheafTheory`. -/
-instance PerverseSheafTheory.instSubsingleton (X : ComplexScheme) [IsComplexVariety X] :
-    Subsingleton (PerverseSheafTheory X) where
+complex variety has at most one `CoefficientPerverseTheory` for each coefficient field. -/
+instance CoefficientPerverseTheory.instSubsingleton [IsComplexVariety X] :
+    Subsingleton (CoefficientPerverseTheory k X) where
   allEq := by
     rintro ⟨t₁, hle₁, hge₁⟩ ⟨t₂, hle₂, hge₂⟩
     have hle : t₁.le = t₂.le :=
@@ -319,12 +336,22 @@ instance PerverseSheafTheory.instSubsingleton (X : ComplexScheme) [IsComplexVari
     subst ht
     rfl
 
+end MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
+
+namespace MathlibExt.AlgebraicGeometry.PerverseSheaves
+
+/-- The rational middle perverse t-structure: `CoefficientPerverseModels.CoefficientPerverseTheory`
+at `k = ℚ`. Its existence on every complex variety is the theorem of
+Beilinson–Bernstein–Deligne; no instance is provided here. -/
+abbrev PerverseSheafTheory (X : ComplexScheme) [IsComplexVariety X] :=
+  CoefficientPerverseModels.CoefficientPerverseTheory ℚ X
+
 /-- The characterized middle perverse t-structure. -/
 def perverseTStructure (X : ComplexScheme) [IsComplexVariety X]
     [PerverseSheafTheory X] :
     CategoryTheory.Triangulated.TStructure
       (boundedConstructible X).FullSubcategory :=
-  PerverseSheafTheory.t (X := X)
+  CoefficientPerverseModels.CoefficientPerverseTheory.t (k := ℚ) (X := X)
 
 /-- The category of rational perverse sheaves, as the heart of the
 characterized middle perverse t-structure. -/
