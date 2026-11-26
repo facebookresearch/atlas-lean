@@ -49,17 +49,6 @@ public theorem_wanted tendsto_fareyZoom_sub_at_rational {x : ℝ} (hx : 0 ≤ x)
       Filter.atTop
       (nhds ((q : ℝ)⁻¹ * ∑ k ∈ Finset.Icc 1 ⌊(q : ℝ) * x⌋₊, Real.log (q * x / k)))
 
-/-- **Limit of the rescaled Farey staircase increment.** Let $A_n$ be the Farey staircase of order
-$n$ and $D_n = A_n - A_{n-1}$. For every real $x \ge 0$,
-$n^2 D_n(x/n) \to \sum_{k=1}^{\lfloor x \rfloor} (1 - \log(x/k))$ as $n \to \infty$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Theorem 4 (`integers-2024-A37-thm-4`). -/
-public theorem_wanted tendsto_sq_mul_fareyStaircase_sub {x : ℝ} (hx : 0 ≤ x) :
-    Filter.Tendsto
-      (fun n : ℕ => (n : ℝ) ^ 2 * (fareyStaircase n (x / n) - fareyStaircase (n - 1) (x / n)))
-      Filter.atTop (nhds (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, (1 - Real.log (x / k))))
-
 /-- **Floor gaps of Farey staircases are dense above $1 - \log 2$.** For $n \ge 1$ and
 $x \in \mathbb{R}$ let $f_n(x) = \lfloor nx \rfloor - n A_n(x)$, where $A_n$ is the Farey staircase
 of order $n$; thus $f_n(x) = \lfloor nx \rfloor - \sum_{k=1}^n \lfloor kx \rfloor / k$. Every real

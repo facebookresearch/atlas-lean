@@ -31,3 +31,27 @@ example : ∑' n : ℕ, (1 / aeval (1 / 2 : ℝ) (𝔩 (2 * n + 1)) ^ 2 -
   have h := tsum_inv_pow_gibonacciPoly_sub_odd (x := 1 / 2) (by norm_num) (g := 𝔩)
     (Or.inr rfl) (k := 1) (by decide) (lam := 2) (by decide)
   exact h.trans (by norm_num)
+
+-- At x = 1 the Fibonacci polynomials of indices 2 and 4 evaluate to 1 and 3.
+example : ∑' n : ℕ, (1 / aeval (1 : ℝ) (𝔣 (2 * n + 2)) ^ 2 -
+    1 / aeval (1 : ℝ) (𝔣 (2 * n + 2 + 4)) ^ 2) = 10 / 9 := by
+  have h := tsum_inv_pow_gibonacciPoly_sub_even (x := 1) (by norm_num) (g := 𝔣)
+    (Or.inl rfl) (k := 2) (by decide) (lam := 2) (by decide)
+  have hIcc : Finset.Icc 1 (2 : ℕ) = {1, 2} := by decide
+  exact h.trans (by norm_num [hIcc, generalizedFibonacciPolynomial])
+
+-- At x = 1/2 the Lucas polynomials of indices 2 and 4 evaluate to 9/4 and 49/16.
+example : ∑' n : ℕ, (1 / aeval (1 / 2 : ℝ) (𝔩 (2 * n + 2)) -
+    1 / aeval (1 / 2 : ℝ) (𝔩 (2 * n + 2 + 4))) = 340 / 441 := by
+  have h := tsum_inv_pow_gibonacciPoly_sub_even (x := 1 / 2) (by norm_num) (g := 𝔩)
+    (Or.inr rfl) (k := 2) (by decide) (lam := 1) (by decide)
+  have hIcc : Finset.Icc 1 (2 : ℕ) = {1, 2} := by decide
+  simp only [pow_one] at h
+  exact h.trans (by norm_num [hIcc, generalizedFibonacciPolynomial, map_ofNat])
+
+-- The empty initial block has sum zero for either polynomial family.
+example {x : ℝ} (hx : 0 < x) {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩)
+    {lam : ℕ} (hlam : 0 < lam) :
+    ∑' n : ℕ, (1 / aeval x (g (2 * n + 2)) ^ lam - 1 / aeval x (g (2 * n + 2)) ^ lam) = 0 := by
+  simpa only [Nat.mul_zero, Nat.add_zero, Finset.Icc_eq_empty_of_lt (by decide : 0 < 1),
+    Finset.sum_empty] using tsum_inv_pow_gibonacciPoly_sub_even hx hg (k := 0) (by decide) hlam
