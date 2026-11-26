@@ -28,9 +28,10 @@ retains the fraction `(1 + K * (Vs / Vr))⁻¹` of the entering amount. The same
 at each of the `N` contacts. The amount formula includes `N = 0` and zero initial solute;
 the fraction of the initial amount is asserted only for positive initial solute.
 
-Lamm and Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts,
-§1.3 supplies phase-equilibrium and balance context. The fixed-volume linear law here is
-a hypothesis, not a general ternary-phase extraction model. -/
+David Harvey, *Analytical Chemistry 2.1*, §7.7, "Liquid-Liquid Extractions,"
+Eqs. (7.6) and (7.7), gives the corresponding one-step and repeated retention
+fractions. The fixed-volume linear law here is a hypothesis, not a general
+ternary-phase extraction model. -/
 public theorem crosscurrent_amounts (N : ℕ) (Vr Vs K : ℝ)
     (hVr : 0 < Vr) (hVs : 0 < Vs) (hK : 0 < K) (q cr cs : ℕ → ℝ)
     (heq : ∀ k < N, cs k = K * cr k)
