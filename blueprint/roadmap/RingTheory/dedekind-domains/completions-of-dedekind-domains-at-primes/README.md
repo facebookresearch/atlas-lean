@@ -1,6 +1,7 @@
 # Completions of Dedekind domains at primes
 
 - [Extension of a prime to the completed valuation ring](map-as-ideal-eq-maximal-ideal.md)
+- [Adic Completion Integers is Adic Complete](adic-completion-integers-is-adic-complet.md)
 - [Residue map to the completed residue field](completion-residue-map.md)
 - [Kernel of the completed residue map](ker-completion-residue-map.md)
 - [Surjectivity of the completed residue map](surjective-completion-residue-map.md)
