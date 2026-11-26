@@ -96842,6 +96842,7 @@
 "MetaMathlibExt.volume_limsup_lurothPreimage_zero_one": "c1267f559932b3bc",
 "MetaMathlibExt.volume_lurothConsecutiveDigits_zero_one": "8639921a1b434bee",
 "MetaMathlibExt.volume_lurothConsecutiveDigits_zero_one_integral": "d11c1a5ad0662983",
+"MetaMathlibExt.volume_lurothConsecutiveDigits_zero_one_integral.measurePreserving_digitSeq": "61cbee96b2ba79dd",
 "MetaMathlibExt.volume_lurothCylinder": "f509b98d85e6081c",
 "MetaMathlibExt.volume_lurothDigit_ge_zero_one": "5dfab18727face97",
 "MetaMathlibExt.volume_lurothDigits_ge_le": "64f68f98f39ee2b0",
