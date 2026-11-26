@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Cslib.Algorithms.Lean.MergeSort.MergeSort
 public import Cslib.Algorithms.Lean.TimeM
 public import Cslib.Algorithms.Lean.Sort.Merge
 public import Mathlib.Algebra.Group.Nat.Defs
@@ -317,34 +318,33 @@ private theorem selection_time (start finish : ι → τ) (xs : List ι) :
     (selectSorted start finish xs).time = xs.length - 1 := by
   cases xs <;> simp [selectSorted, scan_time]
 
-private theorem generic_merge_time {α : Type} (xs ys : List α) (cmp : α → α → Bool) :
+theorem time_mergeM_le {α : Type} (xs ys : List α) (cmp : α → α → Bool) :
     (List.mergeM xs ys (fun a b => (⟨cmp a b, 1⟩ : TimeM Nat Bool))).time ≤
       xs.length + ys.length := by
   fun_induction List.mergeM with grind
 
-private theorem mergeSortRec_succ_succ (n : Nat) : timeMergeSortRec (n + 2) =
+theorem timeMergeSortRec_add_two (n : Nat) : timeMergeSortRec (n + 2) =
     timeMergeSortRec ((n + 2) / 2) + timeMergeSortRec ((n + 1) / 2 + 1) + (n + 2) := by
   -- The pinned CSLib module does not export this generated recurrence equation.
-  unfold timeMergeSortRec
-  rw [WellFounded.Nat.fix_eq]
-  congr 2
+  rw [timeMergeSortRec]
+  rfl
 
-private theorem generic_mergeSort_time {α : Type} (xs : List α) (cmp : α → α → Bool) :
+theorem time_mergeSortM_le {α : Type} (xs : List α) (cmp : α → α → Bool) :
     (List.mergeSortM xs (fun a b => (⟨cmp a b, 1⟩ : TimeM Nat Bool))).time ≤
       timeMergeSortRec xs.length := by
   fun_induction List.mergeSortM with
   | case1 | case2 => grind [timeMergeSortRec]
   | case3 _ _ _ _ ih2 ih1 =>
     simp only [time_bind]
-    grw [generic_merge_time]
+    grw [time_mergeM_le]
     simp only [ret_mergeSortM, List.length_mergeSort]
     simp only [List.length_cons]
-    rw [mergeSortRec_succ_succ]
+    rw [timeMergeSortRec_add_two]
     grind
 
 private theorem sortFinish_time (finish : ι → τ) (xs : List ι) :
     (sortFinish finish xs).time ≤ xs.length * Nat.clog 2 xs.length := by
-  have h := generic_mergeSort_time (List.finRange xs.toArray.size)
+  have h := time_mergeSortM_le (List.finRange xs.toArray.size)
     (fun a b => decide (finish xs.toArray[a] ≤ finish xs.toArray[b]))
   have hsize : xs.toArray.size = xs.length := by rfl
   have hcost : (sortFinish finish xs).time ≤ timeMergeSortRec xs.length := by

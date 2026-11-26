@@ -86,6 +86,12 @@ def w₂ (i : ℕ) : ℕ := [7, 4, 2, 2, 4].getD (i - 1) 0
 #guard (wisSchedule (fun i => [0, 1].getD (i - 1) 0) (fun i => [1, 2].getD (i - 1) 0)
   (fun i => ([-3, 2].getD (i - 1) 0 : ℤ)) 2).ret = (2, {2})
 
+-- Without positive lengths the recurrence can fail: `[1, 1)` followed by `[0, 1)`, both of weight
+-- `1`, have sorted finish times and are compatible, so the optimum is `2`, but `OPT(2) = 1`.
+#guard wisValue (fun i => [1, 0].getD (i - 1) 0) (fun _ => (1 : ℕ)) (fun _ => (1 : ℕ)) 2 = 1
+#guard wisOpt (fun i => [1, 0].getD (i - 1) 0) (fun _ => (1 : ℕ)) (fun _ => (1 : ℕ))
+  (Finset.Icc 1 2) = 2
+
 /-! ### Binary search -/
 
 -- The last index of `1, …, 4` with finish time at most `x`, or `0`, on finish times `3, 5, 6, 8`.
@@ -94,38 +100,20 @@ def w₂ (i : ℕ) : ℕ := [7, 4, 2, 2, 4].getD (i - 1) 0
 
 /-! ### Consequences of the main theorem -/
 
-/-- An optimal schedule's value is the brute-force optimum `wisOpt` of the existing
-weighted-interval-scheduling API, for natural weights. -/
-theorem value_eq_wisOpt {start finish : ℕ → ℕ} {weight : ℕ → ℕ} {n : ℕ} {S : Finset ℕ}
-    {v : ℕ} (h : IsOptimalSchedule start finish weight n S v) :
-    v = wisOpt start finish weight (Finset.Icc 1 n) := by
-  obtain ⟨hS, hc, hsum, hopt⟩ := h
-  apply le_antisymm
-  · rw [← hsum]
-    apply Finset.le_sup (f := fun F => ∑ a ∈ F, weight a)
-    refine Finset.mem_filter.mpr ⟨Finset.mem_powerset.mpr hS, ?_⟩
-    intro a ha b hb hab
-    exact hc ha hb hab
-  · apply Finset.sup_le
-    intro F hF
-    obtain ⟨hFsub, hFc⟩ := Finset.mem_filter.mp hF
-    exact hopt F (Finset.mem_powerset.mp hFsub) fun a ha b hb hab => hFc a ha b hb hab
-
 /-- For natural weights, the recurrence on sorted intervals of positive length is `wisOpt` on
 every prefix. -/
 example (start finish : ℕ → ℕ) (weight : ℕ → ℕ) (n : ℕ)
     (hpos : ∀ i ∈ Set.Icc 1 n, start i < finish i) (hmono : MonotoneOn finish (Set.Icc 1 n))
     (j : ℕ) (hj : j ≤ n) :
     wisValue start finish weight j = wisOpt start finish weight (Finset.Icc 1 j) :=
-  value_eq_wisOpt ((isOptimalSchedule_wisTrace_and_wisSchedule start finish weight n hpos).1
-    hmono j hj)
+  ((isOptimalSchedule_wisTrace_and_wisSchedule start finish weight n hpos).1 hmono j hj).eq_wisOpt
 
 /-- For natural weights, the algorithm returns `wisOpt` on unsorted intervals of positive
 length. -/
 example (start finish : ℕ → ℕ) (weight : ℕ → ℕ) (n : ℕ)
     (hpos : ∀ i ∈ Set.Icc 1 n, start i < finish i) :
     (wisSchedule start finish weight n).ret.1 = wisOpt start finish weight (Finset.Icc 1 n) :=
-  value_eq_wisOpt (isOptimalSchedule_wisTrace_and_wisSchedule start finish weight n hpos).2.1
+  (isOptimalSchedule_wisTrace_and_wisSchedule start finish weight n hpos).2.1.eq_wisOpt
 
 /-- The algorithm's schedule has its returned value as its weight, for integer times and integer
 weights of either sign. -/
@@ -156,5 +144,11 @@ info: 'Cslib.Algorithms.Lean.TimeM.intervalCompatible_iff_disjoint_Ico' depends 
 -/
 #guard_msgs (whitespace := lax) in
 #print axioms intervalCompatible_iff_disjoint_Ico
+
+/--
+info: 'Cslib.Algorithms.Lean.WeightedIntervalScheduling.IsOptimalSchedule.eq_wisOpt' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs (whitespace := lax) in
+#print axioms IsOptimalSchedule.eq_wisOpt
 
 end Cslib.Algorithms.Lean.WeightedIntervalSchedulingRecurrenceTests

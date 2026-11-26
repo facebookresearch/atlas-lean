@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Lean.DynamicProgramming.WeightedIntervalScheduling
 public import CSLibExt.Algorithms.Lean.Greedy.IntervalScheduling
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Monoid.Defs
@@ -15,12 +16,8 @@ public import Mathlib.Data.Nat.Find
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Order.Interval.Set.Disjoint
 
-import all Cslib.Algorithms.Lean.MergeSort.MergeSort
-import all Cslib.Algorithms.Lean.Sort.Merge
-import all Init.Data.List.Sort.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Set.Monotone
-import Mathlib.Data.List.GetD
 import Mathlib.Data.List.Sort
 
 /-!
@@ -44,7 +41,13 @@ CSLib's monadic merge sort, fills the table bottom-up while computing each `p(j)
 
 The cost model charges one unit for each comparison of two times, in the merge sort and in the
 binary searches, and one unit for each comparison of two weights, one per table entry and one per
-traceback step. Additions of weights, array and list operations, and index arithmetic are free.
+traceback step. Nothing else is charged: additions of weights, array and list operations, and
+index arithmetic are free. The sorted order is stored in an array, as in the unweighted module, so
+that reading the `j`-th interval of the order takes constant time.
+
+The hypothesis `start i < finish i` is needed: for `[1, 1)` followed by `[0, 1)`, both of weight
+`1`, the finish times are sorted and the two intervals are compatible, so the optimum is `2`, but
+`wisValue` gives `1`.
 
 Source: J. Kleinberg and É. Tardos, *Algorithm Design*, Pearson/Addison-Wesley, 2005, with
 K. Wayne's lecture slides for its Sections 6.1–6.2.
@@ -172,6 +175,26 @@ def IsOptimalSchedule (start finish : ℕ → τ) (weight : ℕ → W) (j : ℕ)
     ∀ F ⊆ Finset.Icc 1 j, (F : Set ℕ).Pairwise (IntervalCompatible start finish) →
       ∑ i ∈ F, weight i ≤ v
 
+/-- **The value of an optimal schedule is the brute-force optimum.** For intervals indexed by the
+positive integers with start times $s$ and finish times $f$ in a linear order and natural weights
+$w$, if $S$ is an optimal schedule of the first $j$ intervals with value $v$, then $v$ is the
+brute-force optimum over $\{1, \dots, j\}$: the supremum, over the subsets $F$ of
+$\{1, \dots, j\}$ whose distinct members are pairwise compatible, of $\sum_{i \in F} w(i)$. -/
+theorem IsOptimalSchedule.eq_wisOpt {start finish : ℕ → τ} {weight : ℕ → ℕ} {j : ℕ}
+    {S : Finset ℕ} {v : ℕ} (h : IsOptimalSchedule start finish weight j S v) :
+    v = wisOpt start finish weight (Finset.Icc 1 j) := by
+  obtain ⟨hS, hc, hsum, hopt⟩ := h
+  apply le_antisymm
+  · rw [← hsum]
+    apply Finset.le_sup (f := fun F => ∑ a ∈ F, weight a)
+    refine Finset.mem_filter.mpr ⟨Finset.mem_powerset.mpr hS, ?_⟩
+    intro a ha b hb hab
+    exact hc ha hb hab
+  · apply Finset.sup_le
+    intro F hF
+    obtain ⟨hFsub, hFc⟩ := Finset.mem_filter.mp hF
+    exact hopt F (Finset.mem_powerset.mp hFsub) fun a ha b hb hab => hFc a ha b hb hab
+
 section Optimality
 
 variable [IsOrderedAddMonoid W] {start finish : ℕ → τ} {n : ℕ}
@@ -274,10 +297,12 @@ end Optimality
 
 /-! ### The algorithm -/
 
-/-- **Binary search for the last index whose key is at most a value.** For keys $k(i)$ in a linear
-order, a value $x$ and indices $lo \le hi$, the search returns $lo$ when $lo \ge hi$; otherwise it
-compares $k(m) \le x$ at $m = \lfloor (lo + hi + 1)/2 \rfloor$, charging one unit, and continues on
-$[m, hi]$ if it holds and on $[lo, m - 1]$ otherwise. -/
+/- Binary search used by `wisTable`. It returns `lo` when `lo ≥ hi`; there is no `lo ≤ hi`
+condition. Otherwise it compares `key m ≤ x` at `m = (lo + hi + 1) / 2`, charging one unit, and
+continues on `[m, hi]` if this holds and on `[lo, m - 1]` otherwise; it never reads `key lo`. If
+`lo ≤ hi`, the result lies in `[lo, hi]` whatever the keys, and when `key` is monotone on
+`lo + 1, …, hi` it is the last `i` in that range with `key i ≤ x`, or `lo` if there is none
+(`predSearch_spec`); on unsorted keys it need not be. -/
 def predSearch (key : ℕ → τ) (x : τ) (lo hi : ℕ) : TimeM ℕ ℕ :=
   if h : lo < hi then
     if key ((lo + hi + 1) / 2) ≤ x then do
@@ -291,12 +316,11 @@ def predSearch (key : ℕ → τ) (x : τ) (lo hi : ℕ) : TimeM ℕ ℕ :=
 termination_by hi - lo
 decreasing_by all_goals omega
 
-/-- **Bottom-up table of the weighted interval scheduling recurrence.** For intervals indexed by
-the positive integers with start times $s$, finish times $f$ and weights $w$, the table for $j$ is
-a pair of arrays $(M_0, \dots, M_j)$ and $(P_0, \dots, P_j)$ with $M_0 = P_0 = 0$ and, for
-$1 \le i \le j$, $P_i$ the result of the binary search for the last index $m \le i - 1$ with
-$f(m) \le s(i)$, starting from $[0, i - 1]$, and $M_i = \max(M_{i-1}, w(i) + M_{P_i})$. Each entry
-charges the comparisons of its binary search and one unit for the comparison of weights. -/
+/- Bottom-up table of the recurrence, used by `wisSchedule`: the arrays `M = (M₀, …, Mⱼ)` and
+`P = (P₀, …, Pⱼ)` with `M₀ = P₀ = 0` and, for `1 ≤ i ≤ j`,
+`Pᵢ = predSearch finish (start i) 0 (i - 1)` and `Mᵢ = max Mᵢ₋₁ (weight i + M[Pᵢ])`. Each entry
+charges the comparisons of its binary search and one unit for the comparison of weights.
+`getD … 0` reads an index past the end as `0`; the indices read here are always in range. -/
 def wisTable (start finish : ℕ → τ) (weight : ℕ → W) : ℕ → TimeM ℕ (Array W × Array ℕ)
   | 0 => pure (#[0], #[0])
   | j + 1 => do
@@ -305,11 +329,11 @@ def wisTable (start finish : ℕ → τ) (weight : ℕ → W) : ℕ → TimeM �
     TimeM.tick 1
     return (t.1.push (max (t.1.getD j 0) (weight (j + 1) + t.1.getD p 0)), t.2.push p)
 
-/-- **Traceback through a weighted interval scheduling table.** For weights $w$ and arrays
-$M$ and $P$, the traceback from $0$ returns $\emptyset$; from $j \ge 1$, with
-$q = \min(P_j, j - 1)$, it charges one unit for comparing $M_{j-1} < w(j) + M_q$ and returns
-$\{j\}$ together with the traceback from $q$ if this holds, and the traceback from $j - 1$
-otherwise. -/
+/- Traceback through the table, used by `wisSchedule`. From `0` it returns `∅`; from `j ≥ 1`, with
+`q = min Pⱼ (j - 1)` (the cap makes the recursion terminate on arbitrary arrays, and is never
+reached on the arrays `wisTable` builds), it charges one unit for comparing `Mⱼ₋₁ < weight j + M[q]`
+and returns `{j}` together with the traceback from `q` if this holds, and the traceback from
+`j - 1` otherwise. `getD … 0` reads an index past the end as `0`. -/
 def wisTraceback (weight : ℕ → W) (M : Array W) (P : Array ℕ) : ℕ → TimeM ℕ (Finset ℕ)
   | 0 => pure ∅
   | j + 1 =>
@@ -324,16 +348,22 @@ termination_by j => j
 decreasing_by all_goals omega
 
 /-- **Weighted interval scheduling algorithm.** For intervals $1, \dots, n$ with start times $s$,
-finish times $f$ and weights $w$, the algorithm sorts $1, \dots, n$ by finish time with merge sort,
-charging one unit per comparison of two finish times, into the order
-$\sigma(1), \dots, \sigma(n)$. It then builds the bottom-up table $(M, P)$ for the intervals with
-start times $s \circ \sigma$, finish times $f \circ \sigma$ and weights $w \circ \sigma$, traces
-back through it from $n$, and returns $M_n$ together with the image under $\sigma$ of the
-traced-back set. -/
+finish times $f$ and weights $w$, the algorithm sorts $1, \dots, n$ by finish time with merge sort
+into the order $\sigma(1), \dots, \sigma(n)$ and stores that order in an array. For
+$j = 1, \dots, n$ it finds $P_j$ by binary search: starting from $[lo, hi] = [0, j - 1]$, while
+$lo < hi$ it compares $f(\sigma(m)) \le s(\sigma(j))$ at $m = \lfloor (lo + hi + 1)/2 \rfloor$ and
+continues on $[m, hi]$ if this holds and on $[lo, m - 1]$ otherwise, and it takes $P_j = lo$. It
+sets $M_0 = 0$ and $M_j = \max(M_{j-1}, w(\sigma(j)) + M_{P_j})$. It then traces back from $j = n$:
+while $j \ge 1$, it takes $\sigma(j)$ and continues from $P_j$ if
+$M_{j-1} < w(\sigma(j)) + M_{P_j}$, and continues from $j - 1$ otherwise. It returns $M_n$ and the
+set of intervals taken. It charges one unit for each comparison of two finish times in the merge
+sort, for each comparison $f(\sigma(m)) \le s(\sigma(j))$ in the binary searches, and for each
+comparison of two weights in the table and the traceback; nothing else is charged. -/
 def wisSchedule (start finish : ℕ → τ) (weight : ℕ → W) (n : ℕ) : TimeM ℕ (W × Finset ℕ) := do
   let order ← List.mergeSortM (List.range' 1 n)
     (fun a b => (⟨decide (finish a ≤ finish b), 1⟩ : TimeM ℕ Bool))
-  let σ : ℕ → ℕ := fun i => order.getD (i - 1) 0
+  let sorted := order.toArray
+  let σ : ℕ → ℕ := fun i => sorted.getD (i - 1) 0
   let t ← wisTable (start ∘ σ) (finish ∘ σ) (weight ∘ σ) n
   let S ← wisTraceback (weight ∘ σ) t.1 t.2 n
   return (t.1.getD n 0, S.image σ)
@@ -495,35 +525,6 @@ private theorem wisTraceback_time (weight : ℕ → W) (M : Array W) (P : Array 
         have := ih j (by omega)
         omega
 
--- The next three statements mirror the private merge-sort cost lemmas of
--- `CSLibExt.Algorithms.Lean.Greedy.IntervalScheduling`.
-
-private theorem mergeM_time_le {α : Type} (xs ys : List α) (cmp : α → α → Bool) :
-    (List.mergeM xs ys (fun a b => (⟨cmp a b, 1⟩ : TimeM ℕ Bool))).time ≤
-      xs.length + ys.length := by
-  fun_induction List.mergeM with grind
-
-private theorem timeMergeSortRec_succ_succ (n : ℕ) :
-    Cslib.Algorithms.Lean.TimeM.timeMergeSortRec (n + 2) =
-      Cslib.Algorithms.Lean.TimeM.timeMergeSortRec ((n + 2) / 2) +
-        Cslib.Algorithms.Lean.TimeM.timeMergeSortRec ((n + 1) / 2 + 1) + (n + 2) := by
-  unfold Cslib.Algorithms.Lean.TimeM.timeMergeSortRec
-  rw [WellFounded.Nat.fix_eq]
-  congr 2
-
-private theorem mergeSortM_time_le {α : Type} (xs : List α) (cmp : α → α → Bool) :
-    (List.mergeSortM xs (fun a b => (⟨cmp a b, 1⟩ : TimeM ℕ Bool))).time ≤
-      Cslib.Algorithms.Lean.TimeM.timeMergeSortRec xs.length := by
-  fun_induction List.mergeSortM with
-  | case1 | case2 => grind [Cslib.Algorithms.Lean.TimeM.timeMergeSortRec]
-  | case3 _ _ _ _ ih2 ih1 =>
-    simp only [time_bind]
-    grw [mergeM_time_le]
-    simp only [Cslib.Algorithms.Lean.TimeM.ret_mergeSortM, List.length_mergeSort]
-    simp only [List.length_cons]
-    rw [timeMergeSortRec_succ_succ]
-    grind
-
 /-- An optimal schedule of the reindexed intervals `σ 1, …, σ n` gives one of `1, …, n` when `σ`
 permutes `1, …, n`. -/
 private theorem isOptimalSchedule_image {start finish : ℕ → τ} {weight : ℕ → W} {n : ℕ}
@@ -585,9 +586,11 @@ interval scheduling recurrence and $T$ its traceback.
    with merge sort, fills the table of the recurrence while computing each $p(j)$ by binary
    search, and traces back returns an optimal schedule of the $n$ intervals together with its
    value.
-3. The algorithm is charged at most $2n\lceil \log_2 n \rceil + 2n$ units: one for each comparison
-   of two times in the merge sort and the binary searches, and one for each comparison of two
-   weights in the table and the traceback. -/
+3. The algorithm is charged at most $2n\lceil \log_2 n \rceil + 2n$ units, where
+   $n\lceil \log_2 n \rceil$ is read as $0$ when $n = 0$. It is charged one unit for each
+   comparison of two finish times in the merge sort, for each comparison of a finish time with a
+   start time in the binary searches, and for each comparison of two weights in the table and the
+   traceback; nothing else is charged. -/
 theorem isOptimalSchedule_wisTrace_and_wisSchedule [IsOrderedAddMonoid W]
     (start finish : ℕ → τ) (weight : ℕ → W) (n : ℕ)
     (hpos : ∀ i ∈ Set.Icc 1 n, start i < finish i) :
@@ -618,12 +621,13 @@ theorem isOptimalSchedule_wisTrace_and_wisSchedule [IsOrderedAddMonoid W]
           simpa only [Bool.or_eq_true, decide_eq_true_eq] using le_total (finish a) (finish b))
         (List.range' 1 n)
       simpa [horder] using hs
-    set σ : ℕ → ℕ := fun i => order.getD (i - 1) 0 with hσ
+    set σ : ℕ → ℕ := fun i => order.toArray.getD (i - 1) 0 with hσ
     have hσget : ∀ i (hi : i ∈ Set.Icc 1 n), σ i = order[i - 1]'(by
         rw [hlen]; exact lt_of_lt_of_le (Nat.sub_lt hi.1 one_pos) hi.2) := by
       intro i hi
-      simp only [hσ]
-      exact List.getD_eq_getElem _ _ _
+      simp only [hσ, Array.getD_eq_getD_getElem?, List.getElem?_toArray]
+      rw [List.getElem?_eq_getElem]
+      rfl
     have hmaps : Set.MapsTo σ (Set.Icc 1 n) (Set.Icc 1 n) := by
       intro i hi
       rw [hσget i hi, ← hmem]
@@ -658,7 +662,8 @@ theorem isOptimalSchedule_wisTrace_and_wisSchedule [IsOrderedAddMonoid W]
     rw [htr, hM n le_rfl]
     exact isOptimalSchedule_image hmaps hinj hsurj hopt
   · simp only [wisSchedule, time_bind, time_pure, Nat.add_zero]
-    have h1 := mergeSortM_time_le (List.range' 1 n) (fun a b => decide (finish a ≤ finish b))
+    have h1 := Cslib.Algorithms.Lean.TimeM.time_mergeSortM_le (List.range' 1 n)
+      (fun a b => decide (finish a ≤ finish b))
     have h1' := Cslib.Algorithms.Lean.TimeM.timeMergeSortRec_le n
     simp only [List.length_range'] at h1
     have hT : Cslib.Algorithms.Lean.TimeM.T n = n * Nat.clog 2 n := rfl
