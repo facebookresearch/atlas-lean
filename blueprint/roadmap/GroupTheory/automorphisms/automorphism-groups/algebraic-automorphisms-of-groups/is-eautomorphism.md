@@ -1,4 +1,4 @@
-# e-automorphisms
+# e-automorphisms in the sense of Kourovka Problem 3.7
 
 An automorphism $\sigma$ of a group $G$ is an $e$-automorphism when for any subgroups $A < B$ of $G$ with $\sigma(A) \subseteq A$ and $\sigma(B) \subseteq B$ some $x \in B \setminus A$ satisfies $[x, \sigma] = x^{-1}\sigma(x) \in A$.
 

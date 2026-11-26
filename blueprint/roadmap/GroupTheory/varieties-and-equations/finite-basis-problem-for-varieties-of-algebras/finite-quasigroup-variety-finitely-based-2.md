@@ -1,6 +1,6 @@
 # Some finite quasigroup generates a non-finitely based variety
 
-It is not the case that every finite (equational) quasigroup generates a finitely based variety in the signature $(\cdot, \backslash, /)$: some finite quasigroup has identities not implied by any finite subset of them. Kourovka Problem 2.41(c) has a negative answer.
+It is not the case that every finite (equational) quasigroup generates a finitely based variety in the signature $(\cdot, \backslash, /)$: some finite quasigroup has identities not implied by any finite subset of them. Kourovka Problem 2.41(c) has a negative answer. It is the negation of the proposition on [Kourovka Problem 2.41(c) (finite quasigroups)](finite-quasigroup-variety-finitely-based.md).
 
 ## Sources
 
