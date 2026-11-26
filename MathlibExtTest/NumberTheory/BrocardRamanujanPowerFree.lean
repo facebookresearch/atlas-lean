@@ -25,3 +25,14 @@ example : ((4, 5) : ℕ × ℕ) ∈ {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
   have h7 : 2 ^ 7 ≤ p ^ 7 := Nat.pow_le_pow_left h2 7
   have := Nat.le_of_dvd (by norm_num) hdvd
   omega
+
+-- At `(4, 5)` it is the lower neighbour, `4`, that satisfies the prime-power condition.
+example : ((4, 5) : ℕ × ℕ) ∈ ({(4, 5)} : Set (ℕ × ℕ)) :=
+  brocardRamanujan_primePow_subset (a := (4, 5)) ⟨by decide, Or.inl (by decide)⟩
+
+-- The other two known solutions of the equation fail the prime-power condition.
+example : 5 ! + 1 = 11 ^ 2 ∧ ¬ (IsPrimePow (11 - 1 : ℕ) ∨ IsPrimePow (11 + 1 : ℕ)) := by
+  decide
+
+example : 7 ! + 1 = 71 ^ 2 ∧ ¬ (IsPrimePow (71 - 1 : ℕ) ∨ IsPrimePow (71 + 1 : ℕ)) := by
+  decide
