@@ -5,4 +5,4 @@ Linear algebra of diffusion and flow-based generative models: for Gaussian data,
 - [Score and optimal denoiser for Gaussian data](gaussian-data-score-and-denoiser.md)
 - [Exact probability-flow solution for Gaussian data](gaussian-probability-flow-exact-solution.md)
 - [Divergence is the trace of the Jacobian](divergence-eq-trace-jacobian.md)
-- [Polynomial sampling guarantees for score-based diffusion models](polynomial-sampling-guarantees-for-score-based-diffusion-mod.md)
+- [Sampling guarantees for score-based diffusion models](sampling-guarantees-for-score-based-diffusion-mo/README.md)
