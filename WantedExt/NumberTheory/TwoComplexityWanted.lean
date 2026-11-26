@@ -36,6 +36,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.TwoComplexityLowerBound
 public import MathlibExt.NumberTheory.TwoComplexitySum
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
 
 set_option autoImplicit false
 
@@ -85,17 +86,6 @@ theorem_wanted logb_two_bounds (n : ℕ) (h2n : 2 ∣ n)
     (hn : 1 ≤ n) :
     Real.logb 2 n ≤ (complexityL 2 n : ℝ) ∧
       (complexityL 2 n : ℝ) ≤ 2 * Real.logb 2 n - 1
-
-/-- **Adding a small multiple of $l$ to a multiple of $l^2$.** Write $\|n\|_l$ for the
-$l$-complexity of $n$. Let $l > 1$, let $b \ge 1$ be a multiple of $l^2$, let $a$ be a natural
-number with $a \le l - 1$, and let $n = b + a l$. Then $\|n\|_l = \|b\|_l + a$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Proposition 2. -/
-theorem_wanted complexityL_decomp (l n b a : ℕ) (hl : 1 < l)
-    (hn : n = b + a * l) (hb : l ^ 2 ∣ b) (hb0 : 1 ≤ b)
-    (ha : a ≤ l - 1) :
-    complexityL l n = complexityL l b + a
 
 /-- **Even $n$ with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 1$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 1$ and let $n$ be an even natural number with
