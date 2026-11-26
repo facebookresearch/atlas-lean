@@ -12721,6 +12721,7 @@
   "MathlibExt/NumberTheory/Beatty/CountIncrement": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorFiber": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorFiberIndicator": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
+  "MathlibExt/NumberTheory/Beatty/FloorFiberSets": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorSubTwoIdentity": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorTwoSubIdentity": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/SelfBetween": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},

@@ -22,8 +22,8 @@ For an irrational `α` with `1/(k + 1) < α < 1/k`, the main result
 The proof is direct. The positive integers `n` with `⌊nα⌋ = t` are those in `(t/α, (t + 1)/α)`,
 so there are `⌊(t + 1)/α⌋ - ⌊t/α⌋ = k + ⌊(t + 1)φ⌋ - ⌊tφ⌋` of them, where `φ = α⁻¹ - k` lies in
 `(0, 1)`. The last difference is `1` when some integer `m ≥ 1` lies in `(tφ, (t + 1)φ)`, that is,
-when `t = ⌊m/φ⌋`, and `0` otherwise. Polanco instead iterates the map `α ↦ α/(1 - α)` (Lemma 4.3
-and Corollary 4.3 of arXiv:2305.15361v1).
+when `t = ⌊m/φ⌋`, and `0` otherwise. Polanco instead iterates the map `α ↦ α/(1 - α)`
+(INTEGERS 25 (2025), Article A104, Lemmas 2 and 3 and Corollary 2).
 -/
 
 namespace MetaMathlibExt
@@ -107,19 +107,15 @@ private theorem mem_beattySeq_iff {φ : ℝ} (hφ : 0 < φ) (hirr : Irrational �
 
 end beatty_floor_fiber_card_eq_add_indicator
 
-/-- **Multiplicities of $\lfloor n\alpha\rfloor$ are $k$ plus the indicator of a Beatty set.** Let
-$k$ be a positive integer and let $\alpha$ be an irrational number with
-$1/(k + 1) < \alpha < 1/k$. Then there is a real number $\delta > 0$ such that, writing $D$ for
-the set of the numbers $\lfloor m\delta\rfloor$ for positive integers $m$, every non-negative
-integer $t$ equals $\lfloor n\alpha\rfloor$ for exactly $k + 1$ positive integers $n$ if $t \in D$,
-and for exactly $k$ positive integers $n$ if $t \notin D$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Corollary 2 (`integers-2025-A104-cor-2`). -/
-public theorem beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : ℕ}
+/-- **Explicit Beatty slope for floor-fiber multiplicities.** For irrational `α` with
+`1 / (k + 1) < α < 1 / k`, the slope `γ = (α⁻¹ - k)⁻¹` is irrational and greater than one.
+For every natural number `t`, the number of positive indices `n` with `⌊nα⌋ = t` equals `k + 1`
+if `t` lies in the positive-index Beatty set of `γ`, and `k` otherwise. -/
+public theorem beatty_floor_fiber_card_eq_add_indicator_explicit {α : ℝ} {k : ℕ}
     (hirr : Irrational α) (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
-    ∃ δ : ℝ, 0 < δ ∧ ∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard =
-      k + {beattySeq δ m | m > 0}.indicator (1 : ℤ → ℕ) t := by
+    1 < (α⁻¹ - (k : ℝ))⁻¹ ∧ Irrational (α⁻¹ - (k : ℝ))⁻¹ ∧
+      ∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard =
+        k + {beattySeq (α⁻¹ - (k : ℝ))⁻¹ m | m > 0}.indicator (1 : ℤ → ℕ) t := by
   have hα : 0 < α := lt_trans (by positivity) h1
   -- `1 / 0 = 0` in Lean, so `h2` rules out `k = 0`.
   have hk : (0 : ℝ) < k := by
@@ -128,7 +124,8 @@ public theorem beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : ℕ}
       exact absurd h2 hα.not_gt
     · exact_mod_cast hk
   -- Write `α⁻¹ = k + φ` with `0 < φ < 1` irrational; the Beatty slope is `δ = φ⁻¹`.
-  obtain ⟨φ, hαφ⟩ : ∃ φ : ℝ, α⁻¹ = k + φ := ⟨α⁻¹ - k, by ring⟩
+  let φ : ℝ := α⁻¹ - k
+  have hαφ : α⁻¹ = k + φ := by dsimp [φ]; ring
   have hφ0 : 0 < φ := by
     have : (k : ℝ) < α⁻¹ := by rwa [lt_inv_comm₀ hk hα, ← one_div]
     linarith
@@ -137,7 +134,7 @@ public theorem beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : ℕ}
     linarith
   have hφirr : Irrational φ := by
     simpa [hαφ] using hirr.inv.sub_natCast k
-  refine ⟨φ⁻¹, inv_pos.2 hφ0, fun t ↦ ?_⟩
+  refine ⟨(one_lt_inv₀ hφ0).2 hφ1, hφirr.inv, fun t ↦ ?_⟩
   have hsucc := beatty_floor_fiber_card_eq_add_indicator.floor_div_eq hαφ hφ0.le (t + 1)
   rw [Nat.cast_add_one] at hsucc
   rw [beatty_floor_fiber_card_eq_add_indicator.fiber_eq hα hirr t, ncard_Ioc_nat, hsucc,
@@ -153,5 +150,21 @@ public theorem beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : ℕ}
   · rw [indicator_of_notMem ht]
     have := hmem.not.1 ht
     omega
+
+/-- **Multiplicities of $\lfloor n\alpha\rfloor$ are $k$ plus the indicator of a Beatty set.** Let
+$k$ be a positive integer and let $\alpha$ be an irrational number with
+$1/(k + 1) < \alpha < 1/k$. Then there is a real number $\delta > 0$ such that, writing $D$ for
+the set of the numbers $\lfloor m\delta\rfloor$ for positive integers $m$, every non-negative
+integer $t$ equals $\lfloor n\alpha\rfloor$ for exactly $k + 1$ positive integers $n$ if $t \in D$,
+and for exactly $k$ positive integers $n$ if $t \notin D$.
+
+Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
+INTEGERS 25 (2025), Article A104, Corollary 2 (`integers-2025-A104-cor-2`). -/
+public theorem beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : ℕ}
+    (hirr : Irrational α) (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard =
+      k + {beattySeq δ m | m > 0}.indicator (1 : ℤ → ℕ) t := by
+  obtain ⟨hδ, _, hcard⟩ := beatty_floor_fiber_card_eq_add_indicator_explicit hirr h1 h2
+  exact ⟨_, zero_lt_one.trans hδ, hcard⟩
 
 end MetaMathlibExt
