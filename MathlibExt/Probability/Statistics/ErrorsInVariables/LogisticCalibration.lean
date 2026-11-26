@@ -115,9 +115,9 @@ theorem integral_exp_affine_gaussianReal (α β m : ℝ) (τ2 : ℝ≥0) :
   rw [h, exp_add, exp_add, exp_add]
   ring_nf
 
-/-- The **linear calibration function** `E[X | W = w] = μx + ρ (w - μx)`, for the mean `μx` of
-`X` and the reliability ratio `ρ`. In the classical Gaussian model `X ~ N(μx, σ_x²)`,
-`W = X + U`, `U ~ N(0, σ_u²)`, the ratio is `ρ = attenuationFactor σ_x² σ_u²`. -/
+/-- The **linear calibration function** `w ↦ μx + ρ (w - μx)`, an affine map. In the classical
+Gaussian model with independent `X ~ N(μx, σ_x²)` and `U ~ N(0, σ_u²)`, `σ_x² + σ_u² > 0`,
+`W = X + U` and `ρ = attenuationFactor σ_x² σ_u²`, it is `E[X | W = w]`. -/
 noncomputable def linearCalibration (μx ρ w : ℝ) : ℝ :=
   μx + ρ * (w - μx)
 

@@ -24,7 +24,6 @@
 - [Covariance implied by a factor model](factor-model-cov.md)
 - [Affine reparametrization preserves the factor-model mean](factor-model-mean-transform.md)
 - [Affine reparametrization preserves the factor-model covariance](factor-model-cov-transform.md)
-- [Orthogonal rotation preserves the factor-model covariance](factor-model-cov-mul-orthogonal.md)
 - [Affine reparametrization preserves the Gaussian factor-model law](multivariate-gaussian-factor-model-trans.md)
 - [Common loadings and intercepts determine the affine transform](transform-eq-of-common.md)
 - [Comparing latent means under common loadings and intercepts](transformed-means-agree-iff-of-common.md)

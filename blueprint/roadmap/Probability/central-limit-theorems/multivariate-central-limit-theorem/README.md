@@ -7,4 +7,3 @@
 
 - [Gaussian vectors with a given covariance](exists-has-law-inner-gaussian-real.md)
 - [Multivariate central limit theorem with a constructed limit](exists-tendsto-in-distribution-inv-sqrt.md)
-- [Multivariate central limit theorem](exists-tendsto-in-distribution-sqrt-smul.md)
