@@ -58,7 +58,6 @@ import Mathlib.NumberTheory.FLT.Three
 import Mathlib.NumberTheory.NumberField.CMField
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
-import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
 import Mathlib.NumberTheory.NumberField.Units.Basic
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 import Mathlib.NumberTheory.RamificationInertia.Galois
@@ -130,26 +129,6 @@ theorem isPrincipal_of_isPrincipal_pow_of_coprime
   · rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
     refine ⟨?_, orderOf_dvd_card⟩
     rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]
-
-set_option backward.isDefEq.respectTransparency false in
-
-theorem isRegularPrime_three :
-    haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
-    IsRegularPrime 3 := by
-  rw [IsRegularPrime, IsRegularNumber]
-  convert coprime_one_right _
-  exact classNumber_eq_one_iff.2
-    (IsCyclotomicExtension.Rat.three_pid (CyclotomicField _ ℚ))
-
-set_option backward.isDefEq.respectTransparency false in
-
-theorem isRegularPrime_five :
-    haveI : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
-    IsRegularPrime 5 := by
-  rw [IsRegularPrime, IsRegularNumber]
-  convert coprime_one_right _
-  exact classNumber_eq_one_iff.2
-    (IsCyclotomicExtension.Rat.five_pid (CyclotomicField _ ℚ))
 
 end Port_FLT_Deep_RegularPrimes_lean
 
@@ -1758,17 +1737,6 @@ theorem relativeUnitsMap_mul_apply {f g} (x : RelativeUnits k K) :
     (relativeUnitsMap (f * g)) x = (relativeUnitsMap f (relativeUnitsMap g x)) := by
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
   simp_rw [relativeUnitsMap_mk, map_mul]
-  rfl
-
-noncomputable
-def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) where
-  toFun := relativeUnitsMap
-  map_one' := MonoidHom.ext fun x => relativeUnitsMap_one x
-  map_mul' _ _ := MonoidHom.ext fun x => relativeUnitsMap_mul_apply x
-
-@[scoped simp]
-theorem relativeUnitsMapHom_apply (σ : K →ₐ[k] K) :
-    relativeUnitsMapHom σ = relativeUnitsMap σ :=
   rfl
 
 /-- The automorphism of relative units induced by a Galois automorphism. -/
@@ -3655,24 +3623,6 @@ variable {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]
   [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2)
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ} {m : ℕ}
 
-include hp in
-
-private theorem FltRegular.one_le_m
-    (e : x ^ p + y ^ p = ε * ((hζ.toInteger - 1) ^ (m + 1) * z) ^ p)
-    (hy : ¬hζ.toInteger - 1 ∣ y) (hz : ¬hζ.toInteger - 1 ∣ z) : 1 ≤ m := by
-  exact CaseII.one_le_m hp hζ e hy hz
-
-include hp in
-
-private theorem FltRegular.exists_solution'
-    [Fintype (ClassGroup (𝓞 K))]
-    (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K))
-    (e : x ^ p + y ^ p = ε * ((hζ.toInteger - 1) ^ (m + 1) * z) ^ p)
-    (hy : ¬hζ.toInteger - 1 ∣ y) (hz : ¬hζ.toInteger - 1 ∣ z) :
-    ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ), ¬hζ.toInteger - 1 ∣ y' ∧ ¬hζ.toInteger - 1 ∣ z' ∧
-      x' ^ p + y' ^ p = ε₃ * ((hζ.toInteger - 1) ^ m * z') ^ p := by
-  exact CaseII.exists_solution' hp hζ e hy hz hreg
-
 variable [Fintype (ClassGroup (𝓞 K))] (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 include hp hreg in
@@ -3815,18 +3765,6 @@ end Internal
 
 end FltRegularPort
 
-open scoped NumberField in
-/-- **Fermat's Last Theorem for a regular prime.** Let `p` be an odd prime that is
-coprime to the class number of the canonical `p`-th cyclotomic field
-`CyclotomicField p ℚ`. Then `FermatLastTheoremFor p`: there are no positive integers
-`a`, `b`, `c` with `a ^ p + b ^ p = c ^ p`. -/
-public theorem flt_regular {p : ℕ} [Fact p.Prime]
-    (hreg : p.Coprime (Fintype.card (ClassGroup (𝓞 (CyclotomicField p ℚ)))))
-    (hodd : p ≠ 2) : FermatLastTheoremFor p :=
-  FltRegularPort.Internal.flt_regular_port hreg hodd
-
-
-
 namespace MetaMathlibExt
 
 open scoped NumberField in
@@ -3851,8 +3789,9 @@ public theorem fermatLastTheoremFor_of_regular {p : ℕ} (hp : p.Prime) (hp2 : p
       Fintype.card (ClassGroup (𝓞 (CyclotomicField p ℚ))) :=
     Fintype.card_congr (ClassGroup.mulEquiv
       (NumberField.RingOfIntegers.mapRingEquiv e.toRingEquiv)).toEquiv
-  exact flt_regular (by
+  have hreg' : p.Coprime (Fintype.card (ClassGroup (𝓞 (CyclotomicField p ℚ)))) := by
     rw [Nat.Prime.coprime_iff_not_dvd hp, ← hcard]
-    exact hreg) hp2
+    exact hreg
+  exact FltRegularPort.Internal.flt_regular_port hreg' hp2
 
 end MetaMathlibExt
