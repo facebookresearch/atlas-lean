@@ -53,9 +53,11 @@ def IsBoundaryRestPoint {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (b : ι
   (∀ i, 0 ≤ b i) ∧ ∑ i, b i = 1 ∧ (∃ i, b i = 0) ∧ IsRestPoint (fun z => A *ᵥ z) b
 
 /-- The replicator equation of the matrix game `A` is **permanent**: there is `δ > 0` such that
-every solution `x` on `[0, ∞)` (`IsSolution (fun z => A *ᵥ z) x`) starting in the interior of the
-simplex (every `xᵢ(0) > 0`, `∑ xᵢ(0) = 1`) eventually has every coordinate at least `δ`: some `T`
-has `xᵢ(t) ≥ δ` for all `t ≥ T` and all `i`. -/
+every solution `x` (`IsSolution (fun z => A *ᵥ z) x`) starting in the interior of the simplex
+(every `xᵢ(0) > 0`, `∑ xᵢ(0) = 1`) eventually has every coordinate at least `δ`: some `T` has
+`xᵢ(t) ≥ δ` for all `t ≥ T` and all `i`. Here `IsSolution` asks for two-sided derivatives at
+every `t ≥ 0`, `t = 0` included: a trajectory given only on `[0, ∞)` must be extended to negative
+times with the replicator derivative at `0`. -/
 def IsPermanent {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) : Prop :=
   ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → ι → ℝ, IsSolution (fun z => A *ᵥ z) x → (∀ i, 0 < x 0 i) →
     ∑ i, x 0 i = 1 → ∃ T : ℝ, ∀ t : ℝ, T ≤ t → ∀ i, δ ≤ x t i

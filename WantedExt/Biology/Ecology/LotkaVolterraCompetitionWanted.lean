@@ -78,7 +78,12 @@ variable (p : Params)
 noncomputable def field (z : ℝ × ℝ) : ℝ × ℝ :=
   (p.r₁ * z.1 * (1 - (z.1 + p.α₁₂ * z.2) / p.K₁), p.r₂ * z.2 * (1 - (z.2 + p.α₂₁ * z.1) / p.K₂))
 
-/-- `z` solves the competition equations on `[0, ∞)`: `z'(t) = field (z t)` for every `t ≥ 0`. -/
+/-- **Forward solutions of the competition equations.** `z` solves the competition equations at
+every time `t ≥ 0`: `z'(t) = field (z t)`. The derivative is two-sided (`HasDerivAt`) at `t = 0`
+too, so a trajectory given only on `[0, ∞)` must be extended to negative times with that
+derivative at `0`; one that is only right-differentiable at `0` does not qualify. A solution on an
+open interval containing `[0, ∞)` qualifies, and negative times matter only through the
+derivative at `0`. -/
 def IsSolution (z : ℝ → ℝ × ℝ) : Prop := ∀ t : ℝ, 0 ≤ t → HasDerivAt z (p.field (z t)) t
 
 /-- The candidate algebraic formula

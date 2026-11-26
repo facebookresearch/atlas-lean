@@ -47,8 +47,13 @@ namespace WantedExt.Biology.Ecology.LotkaVolterraNoInteriorEquilibriumWanted
 open Filter Topology Matrix MathlibExt.Biology.Dynamics.Replicator
 open MathlibExt.Biology.Dynamics.ReplicatorLotkaVolterra (lvField)
 
-/-- `y` solves the **Lotka–Volterra system** `yᵢ' = yᵢ (rᵢ + ∑ⱼ Cᵢⱼ yⱼ)` on `[0, ∞)`, with the
-library's field `lvField r C`. -/
+/-- **Forward solutions of the Lotka–Volterra system.** `y` solves `yᵢ' = yᵢ (rᵢ + ∑ⱼ Cᵢⱼ yⱼ)`,
+with the library's field `lvField r C`, at every time `t ≥ 0`. The derivative is two-sided
+(`HasDerivAt`) at `t = 0` too, so a trajectory given only on `[0, ∞)` must be extended to
+negative times with that derivative at `0`; one that is only right-differentiable at `0` does
+not qualify. A solution on an open interval containing `[0, ∞)` qualifies, and negative times
+matter only through the derivative at `0`. This is the convention of `IsSolution` and of the
+hypothesis of `lotkaVolterra_orbitEquiv_replicator`. -/
 def IsLVSolution {ι : Type*} [Fintype ι] (r : ι → ℝ) (C : Matrix ι ι ℝ) (y : ℝ → ι → ℝ) :
     Prop :=
   ∀ t : ℝ, 0 ≤ t → HasDerivAt y (lvField r C (y t)) t
@@ -74,8 +79,10 @@ public theorem_wanted not_mapClusterPt_of_no_interior_eq {ι : Type*} [Fintype �
 let `A` be a real square matrix indexed by a finite type, and suppose the replicator equation
 `xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` (`IsSolution (fun z => A *ᵥ z)`) has no rest point in the interior
 of the simplex: no `z` with every `zᵢ > 0`, `∑ zᵢ = 1` and `IsRestPoint (fun z => A *ᵥ z) z`
-(that is, `zᵢ ((A z)ᵢ - zᵀ A z) = 0` for every `i`). Then every solution `x` on `[0, ∞)` with
-`x(0)` in the interior of the simplex converges to the boundary: `∏ᵢ xᵢ(t) → 0` as `t → ∞`.
+(that is, `zᵢ ((A z)ᵢ - zᵀ A z) = 0` for every `i`). Then every solution `x` with `x(0)` in the
+interior of the simplex converges to the boundary: `∏ᵢ xᵢ(t) → 0` as `t → ∞`. Here `IsSolution`
+asks for two-sided derivatives at every `t ≥ 0`, `t = 0` included: a trajectory given only on
+`[0, ∞)` must be extended to negative times with the replicator derivative at `0`.
 
 Source: Hofbauer and Sigmund (2003), §2.5, Theorem 4 (p. 485). -/
 public theorem_wanted tendsto_boundary_of_no_interior_rest_point {ι : Type*} [Fintype ι]
