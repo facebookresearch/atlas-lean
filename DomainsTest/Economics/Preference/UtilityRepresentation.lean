@@ -51,6 +51,54 @@ theorem tiePref_not_represents_const : ¬ tiePref.Represents (fun _ => 0) := by
     decide
   exact hne hR
 
+private theorem tiePref_counts :
+    (fun x : Fin 3 => (Set.toFinite {y | tiePref.R x y}).toFinset.card) =
+      (![3, 3, 1] : Fin 3 → ℕ) := by
+  let : DecidableRel tiePref.R := fun _ _ => Nat.decLe _ _
+  have h : ∀ x : Fin 3, (Finset.univ.filter (tiePref.R x)).card =
+      (![3, 3, 1] : Fin 3 → ℕ) x := by decide
+  funext x
+  rw [Set.Finite.toFinset_ofPred]
+  exact h x
+
+example :
+    tiePref.R 0 1 ∧ tiePref.R 1 0 ∧ tiePref.R 0 2 ∧ ¬ tiePref.R 2 0 := by
+  have hcmp (x y : Fin 3) : tiePref.R x y ↔
+      (![3, 3, 1] : Fin 3 → ℕ) y ≤ (![3, 3, 1] : Fin 3 → ℕ) x := by
+    have h := (tiePref.lowerContourCount_representation.1 x y).trans Nat.cast_le
+    let count (z : Fin 3) := (Set.toFinite {w | tiePref.R z w}).toFinset.card
+    change (tiePref.R x y ↔ count y ≤ count x) at h
+    rwa [show count = ![3, 3, 1] from tiePref_counts] at h
+  exact ⟨(hcmp 0 1).2 (by decide), (hcmp 1 0).2 (by decide),
+    (hcmp 0 2).2 (by decide), fun hr => (by decide : ¬ (3 : ℕ) ≤ 1) ((hcmp 2 0).1 hr)⟩
+
+example :
+    let A : Set (Fin 3) := {x | x = 0 ∨ x = 2}
+    tiePref.choice A = {0} ∧ (tiePref.choice A).Nonempty := by
+  let A : Set (Fin 3) := {x | x = 0 ∨ x = 2}
+  obtain ⟨heq, hn⟩ := tiePref.lowerContourCount_representation.2 A ⟨0, Or.inl rfl⟩
+  refine ⟨heq.trans ?_, heq.symm ▸ hn⟩
+  let count (x : Fin 3) := (Set.toFinite {y | tiePref.R x y}).toFinset.card
+  change {x | x ∈ A ∧ ∀ y ∈ A, count y ≤ count x} = {0}
+  rw [show count = ![3, 3, 1] from tiePref_counts]
+  ext x
+  change (x = 0 ∨ x = 2) ∧ (∀ y : Fin 3, y = 0 ∨ y = 2 →
+    (![3, 3, 1] : Fin 3 → ℕ) y ≤ (![3, 3, 1] : Fin 3 → ℕ) x) ↔ x = 0
+  revert x
+  decide
+
+example : tiePref.choice ({0, 1} : Set (Fin 3)) = {0, 1} := by
+  let A : Set (Fin 3) := {0, 1}
+  rw [(tiePref.lowerContourCount_representation.2 A ⟨0, Or.inl rfl⟩).1]
+  let count (x : Fin 3) := (Set.toFinite {y | tiePref.R x y}).toFinset.card
+  change {x | x ∈ A ∧ ∀ y ∈ A, count y ≤ count x} = A
+  rw [show count = ![3, 3, 1] from tiePref_counts]
+  ext x
+  change (x = 0 ∨ x = 1) ∧ (∀ y : Fin 3, y = 0 ∨ y = 1 →
+    (![3, 3, 1] : Fin 3 → ℕ) y ≤ (![3, 3, 1] : Fin 3 → ℕ) x) ↔ x = 0 ∨ x = 1
+  revert x
+  decide
+
 end PreferenceExamples
 
 end MathlibExtTest.Economics.Preference.UtilityRepresentation

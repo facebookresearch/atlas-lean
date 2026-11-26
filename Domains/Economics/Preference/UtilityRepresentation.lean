@@ -53,6 +53,41 @@ theorem exists_represents {α : Type*} [Finite α] (P : Preference α) :
       (e.le_iff_le.trans toAntisymmetrization_le_toAntisymmetrization_iff))
   exact h.symm
 
+/-- For a finite preference, the natural-number utility given by the size of each weak lower
+contour represents the preference (via the order-preserving cast to `ℝ` in `Represents`). On every
+nonempty menu, its maximizers are exactly the preference's choices, and this set is nonempty.
+
+Source: J. Levin and P. Milgrom, *Introduction to Choice Theory* (2004), Proposition 3, for the
+background finite representation result. -/
+theorem lowerContourCount_representation {α : Type*} [Finite α] (P : Preference α) :
+    let u : α → ℕ := fun x => (Set.toFinite {y | P.R x y}).toFinset.card
+    P.Represents (fun x => (u x : ℝ)) ∧
+      ∀ A : Set α, A.Nonempty →
+        P.choice A = {x | x ∈ A ∧ ∀ y ∈ A, u y ≤ u x} ∧
+        ({x | x ∈ A ∧ ∀ y ∈ A, u y ≤ u x} : Set α).Nonempty := by
+  let lower (x : α) : Set α := {y | P.R x y}
+  let u (x : α) : ℕ := (Set.toFinite (lower x)).toFinset.card
+  have lower_mono {x y : α} (h : P.R x y) : lower y ⊆ lower x := fun _ hz => P.trans h hz
+  have hrep : P.Represents (fun x => (u x : ℝ)) := by
+    intro x y
+    change P.R x y ↔ (u y : ℝ) ≤ (u x : ℝ)
+    rw [Nat.cast_le]
+    refine ⟨fun h => Finset.card_le_card (Set.Finite.toFinset_mono (lower_mono h)), ?_⟩
+    intro hcard
+    by_contra hxy
+    have hyx := (P.complete x y).resolve_left hxy
+    have hy : y ∈ lower y := (P.complete y y).elim id id
+    have hproper : lower x ⊂ lower y :=
+      lt_of_le_not_ge (lower_mono hyx) (fun hsub => hxy (hsub hy))
+    exact (Finset.card_lt_card (Set.Finite.toFinset_strictMono hproper)).not_ge hcard
+  refine ⟨hrep, fun A hA => ?_⟩
+  have heq : P.choice A = {x | x ∈ A ∧ ∀ y ∈ A, u y ≤ u x} := by
+    ext x
+    change (x ∈ A ∧ ∀ y ∈ A, P.R x y) ↔ (x ∈ A ∧ ∀ y ∈ A, u y ≤ u x)
+    exact and_congr_right fun _ => forall_congr' fun y => imp_congr_right fun _ =>
+      (hrep x y).trans Nat.cast_le
+  exact ⟨heq, heq ▸ P.choice_nonempty (Set.toFinite A) hA⟩
+
 end Preference
 
 end MathlibExt.Economics
