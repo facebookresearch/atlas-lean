@@ -1,4 +1,6 @@
-# Map eq volume of is Add Left Invariant
+# Invariant pushforwards to a unit torus
 
-The pushforward of a probability measure along a map to a unit torus
-is the volume whenever the pushforward is invariant under left addition.
+Let `ι` be a finite index type, `Θ` an additive
+map from an additive commutative group `A` to `UnitAddTorus ι`, and `P` a probability measure on
+`A` for which `Θ` is almost everywhere measurable. If the pushforward of `P` along `Θ` is
+invariant under left addition, it is the volume.

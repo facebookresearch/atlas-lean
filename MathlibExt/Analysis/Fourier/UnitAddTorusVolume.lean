@@ -42,15 +42,16 @@ open MeasureTheory
 
 namespace UnitAddTorus
 
-/-- The volume on a unit torus, the product of the volumes on the unit additive circle, is a
+/-- **The volume on a unit torus is a probability measure.** For a finite index type `ι`, the
+volume on `UnitAddTorus ι`, the product of the volumes on the unit additive circle, is a
 probability measure. -/
 instance (ι : Type*) [Fintype ι] : IsProbabilityMeasure (volume : Measure (UnitAddTorus ι)) :=
   have : IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
     ⟨by rw [AddCircle.measure_univ, ENNReal.ofReal_one]⟩
   inferInstance
 
-/-- A probability measure on a unit torus that is invariant under left addition is the
-volume. -/
+/-- **Uniqueness of the volume on a unit torus.** For a finite index type `ι`, every probability
+measure on `UnitAddTorus ι` that is invariant under left addition is the volume. -/
 theorem eq_volume_of_isAddLeftInvariant {ι : Type*} [Fintype ι] (P : Measure (UnitAddTorus ι))
     [IsProbabilityMeasure P] [P.IsAddLeftInvariant] : P = volume := by
   have : P.IsAddHaarMeasure :=
@@ -60,8 +61,10 @@ theorem eq_volume_of_isAddLeftInvariant {ι : Type*} [Fintype ι] (P : Measure (
       (by rw [measure_univ]; exact ENNReal.one_ne_top)
   exact Measure.isAddHaarMeasure_eq_of_isProbabilityMeasure P volume
 
-/-- The pushforward of a probability measure along a map to a unit torus
-is the volume whenever the pushforward is invariant under left addition. -/
+/-- **Invariant pushforwards to a unit torus.** Let `ι` be a finite index type, `Θ` an additive
+map from an additive commutative group `A` to `UnitAddTorus ι`, and `P` a probability measure on
+`A` for which `Θ` is almost everywhere measurable. If the pushforward of `P` along `Θ` is
+invariant under left addition, it is the volume. -/
 theorem map_eq_volume_of_isAddLeftInvariant {A : Type*} [AddCommGroup A]
     [MeasurableSpace A] {ι : Type*} [Fintype ι] {Θ : A →+ UnitAddTorus ι}
     {P : Measure A} [IsProbabilityMeasure P] (hΘm : AEMeasurable Θ P)

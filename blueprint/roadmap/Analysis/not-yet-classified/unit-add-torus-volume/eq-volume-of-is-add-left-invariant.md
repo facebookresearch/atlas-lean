@@ -1,4 +1,4 @@
-# Eq volume of is Add Left Invariant
+# Uniqueness of the volume on a unit torus
 
-A probability measure on a unit torus that is invariant under left addition is the
-volume.
+For a finite index type `ι`, every probability
+measure on `UnitAddTorus ι` that is invariant under left addition is the volume.
