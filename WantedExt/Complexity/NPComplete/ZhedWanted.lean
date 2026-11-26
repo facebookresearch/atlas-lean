@@ -93,7 +93,8 @@ def ray (n : ℕ) (p d : ℤ × ℤ) : List (ℤ × ℤ) :=
     (onBoard n)
 
 /-- The filled squares after moving a tile at `p` numbered `k` in direction `d`, starting from
-the filled squares `F`: the `k` closest unfilled squares of the ray are added. -/
+the filled squares `F`: the `k` closest unfilled squares of the ray are added, or all of
+them when fewer than `k` remain. -/
 def move (n : ℕ) (F : List (ℤ × ℤ)) (p : ℤ × ℤ) (k : ℕ) (d : ℤ × ℤ) : List (ℤ × ℤ) :=
   F ++ ((ray n p d).filter fun q => decide (q ∉ F)).take k
 
