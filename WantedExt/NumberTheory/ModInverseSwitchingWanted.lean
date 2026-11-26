@@ -50,6 +50,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Nat.GCD.Basic
 public import MathlibExt.NumberTheory.ModInverseSwitching
+public import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsSqAddLe
 
 set_option autoImplicit false
 
@@ -98,20 +99,6 @@ theorem_wanted euclid_bezout_coeffs_abs_le
     (hr0 : r 0 = m / Nat.gcd m n) (hr1 : r 1 = n / Nat.gcd m n)
     (x y : ℤ) (hxy : x * (m : ℤ) + y * (n : ℤ) = (Nat.gcd m n : ℤ)) :
     |s 2| ≤ |x| ∧ |s 1| ≤ |y|
-
-/-- **Rankin's minimality of the Euclidean Bézout pair.** Let $m > n > 1$ be integers, write
-$g = \gcd(m, n)$, and let $(r_i)$, $(s_i)$ and $N$ be Euclidean switching data with
-$r_0 = m/g$ and $r_1 = n/g$. Then for all integers $x$ and $y$ with $xm + yn = g$, we have
-$s_2^2 + s_1^2 \le x^2 + y^2$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Corollary 2. -/
-theorem_wanted euclid_bezout_coeffs_sq_add_le
-    (m n : ℕ) (h : n < m) (hn : 1 < n)
-    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
-    (hr0 : r 0 = m / Nat.gcd m n) (hr1 : r 1 = n / Nat.gcd m n)
-    (x y : ℤ) (hxy : x * (m : ℤ) + y * (n : ℤ) = (Nat.gcd m n : ℤ)) :
-    s 2 ^ 2 + s 1 ^ 2 ≤ x ^ 2 + y ^ 2
 
 /-- **Both first inverses extremal, odd–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be Euclidean
 switching data with $r_0$ and $r_1$ both odd. Then $2|s_1| = r_0 - 1$ and $2|s_2| = r_1 - 1$
