@@ -29,3 +29,29 @@ example (j k : ℕ) (h : j < k) : hyperseqB 0 j k = 0 := by
 -- At a negative parameter the zero factor in row three kills the constant coefficient.
 example : (List.range 4).map (hyperseqB (-1) 3) = [0, -2, 3, -1] := by
   decide +kernel
+
+/-! ### Recurrence, closed form and row sums at nonnegative parameters -/
+
+-- The empty row has one nonzero entry.
+example (n : ℕ) : hyperseqB n 0 0 = 1 ∧ hyperseqB n 0 1 = 0 := by
+  have h := (hyperseqB_recurrence_closed_form_row_sums n).1
+  exact ⟨by simpa using h 0, by simpa using h 1⟩
+
+-- At `n = 1` the recurrence multiplies by `4` when passing from row two to row three.
+example : hyperseqB 1 3 0 = 24 ∧ hyperseqB 1 3 2 = 9 := by
+  obtain ⟨_, hfirst, hstep, _⟩ := hyperseqB_recurrence_closed_form_row_sums 1
+  exact ⟨(hfirst 2).trans (by decide +kernel), (hstep 2 1).trans (by decide +kernel)⟩
+
+-- The closed form includes the signs, powers of `n + 1`, and the empty interval above the diagonal.
+example : hyperseqB 1 3 1 = -26 :=
+  ((hyperseqB_recurrence_closed_form_row_sums 1).2.2.2.1 3 1).trans (by decide +kernel)
+
+example (n j k : ℕ) (h : j < k) : hyperseqB n j k = 0 := by
+  simpa [Finset.Icc_eq_empty_of_lt h] using
+    (hyperseqB_recurrence_closed_form_row_sums n).2.2.2.1 j k
+
+-- The signs in an odd row distinguish the plain and alternating sums.
+example : (∑ k ∈ Finset.range 4, hyperseqB 1 3 k) = 6 ∧
+    (∑ k ∈ Finset.range 4, (-1) ^ k * hyperseqB 1 3 k) = 60 := by
+  obtain ⟨_, _, _, _, hplain, halt⟩ := hyperseqB_recurrence_closed_form_row_sums 1
+  exact ⟨(hplain 3).trans (by decide), (halt 3).trans (by decide)⟩
