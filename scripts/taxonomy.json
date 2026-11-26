@@ -10332,6 +10332,7 @@
   "Domains/Biology/StatisticalGenetics/LDScore": {"to": "Biology/statistical-genetics", "title": "LD-score regression"},
   "Domains/Biology/StatisticalGenetics/LDScoreInflation": {"to": "Biology/statistical-genetics", "title": "LD-score regression"},
   "Domains/Biology/StatisticalGenetics/LatentCausalVariable": {"to": "Biology/statistical-genetics", "title": "Latent causal variable model"},
+  "Domains/Biology/StatisticalGenetics/LiMantelSegregationLiMantelTendstoAe": {"to": "Biology/statistical-genetics", "title": "Li–Mantel segregation ratio under complete ascertainment"},
   "Domains/Biology/StatisticalGenetics/MendelianRandomization": {"to": "Biology/statistical-genetics", "title": "Mendelian randomization"},
   "Domains/Biology/StatisticalGenetics/MixedModel": {"to": "Biology/quantitative-genetics", "title": "Linear mixed models and BLUP"},
   "Domains/Biology/StatisticalGenetics/PolyPhen": {"to": "Biology/bioinformatics", "title": "Profile scores for amino acid substitutions"},
