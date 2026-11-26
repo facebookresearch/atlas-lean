@@ -1,18 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Definitions/Def_CerednikDrinfeld_CartierStructureConstants.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source file at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -20,9 +6,19 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from https://github.com/anthropics/fermats-last-theorem, compared with the
+source file at commit `6e837e75355538c7f80bab5b956861e86c4eacc2`:
+`Definitions/Def_CerednikDrinfeld_CartierStructureConstants.lean`
+(the `MvPolynomial` lemmas and the `CartierLift` declarations, except
+`ringHom_ext` and `eq_liftHom`, which are additions here).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -31,8 +27,7 @@ public import MathlibExt.RingTheory.WittVector.GradedCartierModuleData
 public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 import Mathlib.Algebra.MvPolynomial.Coeff
-import Mathlib.RingTheory.WittVector.Domain
-import Mathlib.RingTheory.WittVector.Identities
+import Mathlib.RingTheory.WittVector.Complete
 
 /-!
 # Lifts of structure constants
@@ -42,10 +37,10 @@ The lift ring of two elements `u v` of a ring `B` over a coefficient ring
 `X u * X v = p`. Structure constants valued in `B` lift to this ring. Given a
 factorization `u * v = p` in `B` and a ring map `j : R →+* B`, the evaluation
 that is `j` on coefficients and sends every variable `X b` to `b` descends to
-the lift ring (`liftHom`). The factorization alone fixes only the images of
-`X u` and `X v`; a homomorphism out of the lift ring is determined by its
-values on the coefficients and on every variable (`ringHom_ext`,
-`eq_liftHom`).
+the lift ring (`liftHom`). The relation constrains only the product of the two
+images; `liftHom` chooses the images `u` and `v` as part of the assignment
+`X b ↦ b`. A homomorphism out of the lift ring is determined by its values on
+the coefficients and on every variable (`ringHom_ext`, `eq_liftHom`).
 -/
 
 @[expose] public section
@@ -65,17 +60,6 @@ private theorem eq_zero_of_C_mul_eq_zero {π : R}
   rw [AddMonoidAlgebra.coeff_zero]
   exact hπ _ he
 
-private theorem exists_eq_C_mul_of_forall_dvd_coeff {π : R}
-    {q : MvPolynomial σ R} (h : ∀ e, π ∣ q.coeff e) :
-    ∃ q₁ : MvPolynomial σ R, q = C π * q₁ := by
-  classical
-  choose c hc using h
-  refine ⟨∑ e ∈ q.support, monomial e (c e), ?_⟩
-  rw [Finset.mul_sum]
-  conv_lhs => rw [as_sum q]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  rw [C_mul_monomial, ← hc e]
-
 private theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R}
     (hπ : ∀ r : R, π * r = 0 → r = 0) (u v : σ) {g : MvPolynomial σ R}
     (h : C π * g ∈ Ideal.span {(X u * X v - C π : MvPolynomial σ R)}) :
@@ -91,7 +75,7 @@ private theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R}
       (fun r : MvPolynomial σ R => r.coeff (e + Finsupp.single u 1 + Finsupp.single v 1)) hXq
     rw [coeff_mul_X, coeff_mul_X, coeff_C_mul] at hc
     exact ⟨_, hc⟩
-  obtain ⟨q₁, rfl⟩ := exists_eq_C_mul_of_forall_dvd_coeff hdvd
+  obtain ⟨q₁, rfl⟩ := (C_dvd_iff_dvd_coeff _ _).2 hdvd
   have hcancel : g + C π * q₁ = q₁ * X u * X v := by
     have h0 : C π * (g + C π * q₁ - q₁ * X u * X v) = 0 := by
       have h2 := hXq
@@ -209,20 +193,17 @@ theorem liftConstants_zero_zero_mul (a : ℕ → Fin 2 → B) :
       liftConstants (p := p) (R := R) a 0 1 = p :=
   liftVar_mul_liftVar _ _
 
-/-- **Multiplication by `p` is injective on `Zp2 p`.** In the Witt vectors
-over the field with `p ^ 2` elements, `p * r = 0` implies `r = 0`. -/
 theorem zp2_natCast_mul_eq_zero [Fact p.Prime] (r : Zp2 p)
-    (h : (p : Zp2 p) * r = 0) : r = 0 := by
-  rcases mul_eq_zero.mp h with h0 | h0
-  · exact absurd h0 (WittVector.p_ne_zero p (GaloisField p 2))
-  · exact h0
+    (h : (p : Zp2 p) * r = 0) : r = 0 :=
+  WittVector.eq_zero_of_p_mul_eq_zero r (by rwa [mul_comm])
 
 /-- **Multiplication by `p` is injective on the lift ring over `Zp2 p`.** In
 the lift ring with coefficients in `Zp2 p`, `p * x = 0` implies `x = 0`. -/
 theorem natCast_mul_eq_zero_zp2 [Fact p.Prime] (u v : B)
     (x : LiftRing p (Zp2 p) u v) (hx : (p : LiftRing p (Zp2 p) u v) * x = 0) :
     x = 0 :=
-  natCast_mul_eq_zero (zp2_natCast_mul_eq_zero (p := p)) u v x hx
+  natCast_mul_eq_zero (fun r h => WittVector.eq_zero_of_p_mul_eq_zero r (by rwa [mul_comm]))
+    u v x hx
 
 end CartierLift
 

@@ -1,18 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Definitions/Def_CerednikDrinfeld_GradedCartierModuleData.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source file at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -20,9 +6,19 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from https://github.com/anthropics/fermats-last-theorem, compared with the
+source file at commit `6e837e75355538c7f80bab5b956861e86c4eacc2`:
+`Definitions/Def_CerednikDrinfeld_GradedCartierModuleData.lean`
+(every declaration except `teichmullerAct` and `teichmullerAct_of_mem`, which
+are additions here).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -147,8 +143,8 @@ theorem teichmullerAct_of_mem (D : GradedCartierModuleData p j) (c : GaloisField
       Submodule.projection_apply_of_mem_left D.isCompl_piece.symm hx, map_zero, zero_add]
     simp
 
-/-- **Piece after `m + 1` shifts.** The graded piece reached from piece `i`
-after `m + 1` shifts: `(m + i + 1) mod 2`. -/
+/-- **Index after `m + 1` shifts.** The index `(m + i + 1) mod 2` of the graded
+piece reached from piece `i` after `m + 1` shifts. -/
 def piIndex (m : ℕ) (i : Fin 2) : Fin 2 :=
   ⟨(m + i + 1) % 2, Nat.mod_lt _ two_pos⟩
 
@@ -179,8 +175,10 @@ def IsSpecialCartierModule (D : GradedCartierModuleData p j) : Prop :=
 /-- **Structure constants of `ϖ`.** For `γ : Fin 2 → M` and
 `a : ℕ → Fin 2 → B`: for every `i` and every `N`,
 `ϖ (γ i) = ∑_{m < N} V^m ([a m i] • γ (piIndex m i)) + V^N h` for some `h`,
-so `ϖ (γ i)` expands in powers of `V` with Teichmüller coefficients `[a m i]`,
-the `m`-th term on the element of the piece reached after `m + 1` shifts. -/
+so `ϖ (γ i)` expands in powers of `V` with Teichmüller coefficients `[a m i]`.
+The index `piIndex m i` of the `m`-th term alternates between `0` and `1`. The
+family `γ` need not be homogeneous; when it is (`γ k ∈ piece k`), the vector
+`γ (piIndex m i)` of the `m`-th term lies in piece `piIndex m i`. -/
 def HasStructureConstants (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M)
     (a : ℕ → Fin 2 → B) : Prop :=
   ∀ (i : Fin 2) (N : ℕ), ∃ h : D.M,

@@ -1,19 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Definitions/Def_CerednikDrinfeld_GradedCartierModuleData.lean` and
-`Definitions/Def_CerednikDrinfeld_GradedCartierNModule.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source files at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -21,9 +6,22 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from https://github.com/anthropics/fermats-last-theorem, compared with the
+source files at commit `6e837e75355538c7f80bab5b956861e86c4eacc2`:
+`Definitions/Def_CerednikDrinfeld_GradedCartierModuleData.lean` and
+`Definitions/Def_CerednikDrinfeld_GradedCartierNModule.lean`
+(every declaration except `isBaseChangeAlong'_iff`,
+`IsBaseChangeAlong'.map_teichmullerAct` and
+`IsBaseChangeAlong.map_teichmullerAct`, which are additions here;
+`IsBaseChangeAlong'` adds the clause `j' = φ.comp j`).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -189,9 +187,9 @@ noncomputable def toLieQuot : D.NMod →ₗ[WittVector p B] D.LieQuot :=
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
     exact ⟨D.ofSigma m, rfl⟩)
 
-/-- **Inclusion of the Frobenius twist.** The `WittVector p B`-linear map from
-the Frobenius twist to the `N`-module sending `m'` to the class of
-`(0, m')`. -/
+/-- **Map from the Frobenius twist.** The `WittVector p B`-linear map from the
+Frobenius twist to the `N`-module sending `m'` to the class of `(0, m')`. It
+need not be injective: it sends `ϖ m` to zero whenever `V m = 0`. -/
 noncomputable def inrSigma : D.Sigma →ₗ[WittVector p B] D.NMod :=
   D.nRel.mkQ.comp (LinearMap.inr _ _ _)
 
@@ -384,8 +382,9 @@ theorem mem_eta_iff (L : D.M →+ D.NMod)
   rw [eta, AddMonoidHom.mem_ker, AddMonoidHom.sub_apply, sub_eq_zero]
   rfl
 
-/-- **Graded pieces of `eta`.** The intersection of `eta` with the `i`-th
-graded piece of the `N`-module. -/
+/-- **Intersection of `eta` with a graded piece of `N`.** The intersection of
+`eta` with `nPiece i`, the `i`-th graded piece of the `N`-module. These
+intersections need not decompose `eta`. -/
 noncomputable def etaPiece (L : D.M →+ D.NMod)
     (hL : ∀ x : D.M, L (D.verschiebung x) = D.nMk (D.varpi x, 0))
     (i : Fin 2) : AddSubgroup D.NMod :=
