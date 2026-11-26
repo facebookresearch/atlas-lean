@@ -9580,6 +9580,7 @@
   "MathlibExt/Analysis/Convex/RobustStochasticApproximation": {"to": "Analysis/convex-analysis-and-variations", "title": "Mirror descent"},
   "MathlibExt/Analysis/Convex/SecondOrderCondition": {"to": "Analysis/convex-analysis-and-variations", "title": "Second-order condition for convexity"},
   "MathlibExt/Analysis/Convex/SelfConcordant": {"to": "Analysis/convex-analysis-and-variations", "title": "Self-concordant functions and barriers"},
+  "MathlibExt/Analysis/Convex/SelfConcordantDerivLeOfIsSelfConcordantBarrier": {"to": "Analysis/convex-analysis-and-variations", "title": "Self-concordant functions and barriers"},
   "MathlibExt/Analysis/Convex/StochasticGradientDescent": {"to": "Analysis/convex-analysis-and-variations", "title": "Gradient descent"},
   "MathlibExt/Analysis/Convex/Straszewicz": {"to": "Geometry/convex-geometry", "title": "Straszewicz's theorem"},
   "MathlibExt/Analysis/Convex/StronglyConvexLowerBound": {"to": "Analysis/convex-analysis-and-variations", "title": "Lower complexity bounds for first-order methods"},
