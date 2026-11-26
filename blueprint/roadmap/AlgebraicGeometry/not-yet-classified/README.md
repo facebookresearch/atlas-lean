@@ -1200,3 +1200,4 @@ Topics added since this subject's fields were last revised.
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
 - [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
+- [Local universal property of a normalized Kummer cover](exists-unique-lift-from-normalization-ku.md)
