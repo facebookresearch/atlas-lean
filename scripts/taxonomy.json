@@ -13147,6 +13147,7 @@
   "MathlibExt/NumberTheory/GaussianIntPrimeClassification": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
   "MathlibExt/NumberTheory/GaussianIntSplitPrimes": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
   "MathlibExt/NumberTheory/GcdArithmeticTerm": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetic terms for the greatest common divisor"},
+  "MathlibExt/NumberTheory/GcdLucasTheoremGcdRadicalExpansionCoeffsEqOneOfCoprime": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/GcdPowAddNegOnePow": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/GelfondSchneider": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Gelfond–Schneider theorem"},
   "MathlibExt/NumberTheory/GenLeonardo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
