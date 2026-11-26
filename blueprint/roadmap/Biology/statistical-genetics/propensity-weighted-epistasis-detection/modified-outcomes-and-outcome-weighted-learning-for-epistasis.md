@@ -1,15 +1,21 @@
 # Modified outcomes and outcome-weighted learning for epistasis
 
 Let $X \in \{0,1,2\}^p$ be a genotype, $A \in \{-1, +1\}$ a binarized target SNP, and $Y$ a phenotype ($Y \in \{0, 1\}$ for case–control). Decompose
+
 $$\mu(X) = \tfrac12\big[\mathbb E(Y \mid A = +1, X) + \mathbb E(Y \mid A = -1, X)\big], \qquad \delta(X) = \tfrac12\big[\mathbb E(Y \mid A = +1, X) - \mathbb E(Y \mid A = -1, X)\big],$$
+
 and write $\delta(X) = \delta_0 + \delta_1(X)$ with $\mathbb E\,\delta_1(X) = 0$: $\delta_0$ is the main effect of $A$ and the SNPs in the support of $\delta_1$ are those in epistasis with $A$. Let $\tilde A = (A+1)/2$ and let $e(X) = \mathbb P(\tilde A = 1 \mid X)$ be the **propensity score**, which is not constant because of linkage disequilibrium.
 
 **Modified outcome identity.** With
+
 $$\tilde Y = Y\Big(\frac{\tilde A}{e(X)} - \frac{1 - \tilde A}{1 - e(X)}\Big),$$
+
 one has $\delta(X) = \tfrac12\,\mathbb E[\tilde Y \mid X]$, so the support of $\delta$ can be estimated by sparse regression of $\tilde Y$ on $X$, without modelling $\mu$.
 
 **Lemma (outcome-weighted learning).** For a non-increasing loss with the logistic form $\phi(u) = \log(1 + e^{-u})$, any minimizer
+
 $$d^* \in \arg\min_{d : \{0,1,2\}^p \to \mathbb R}\ \mathbb E\Big[\frac{Y}{\mathbb P(A \mid X)}\,\phi\big(A\,d(X)\big)\Big]$$
+
 satisfies $d^*(x) = \ln\dfrac{\mathbb E[Y \mid A = +1, X = x]}{\mathbb E[Y \mid A = -1, X = x]}$; hence $d^*$ has the same sign as $\delta$ everywhere, and estimating it is a logistic regression of $A$ on $X$ with sample weights $W = Y/\mathbb P(A \mid X)$.
 
 ## Expansion

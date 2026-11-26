@@ -1,9 +1,13 @@
 # Median-initialized adaptive Lasso for some invalid instruments
 
 In Mendelian randomization with individual-level data, consider $n$ observations of an outcome $y$, an exposure $d$ and $L$ genetic instruments $Z$ in the linear model
+
 $$y = d\beta + Z\alpha + \varepsilon, \qquad d = Z\gamma + v,$$
+
 where $\alpha_j \ne 0$ means instrument $j$ is **invalid** (a direct, pleiotropic effect on $y$). Let $A = \{j : \alpha_j \ne 0\}$ with $|A| = s$, and let $\Gamma = \gamma\beta + \alpha$ be the reduced-form coefficients, so the per-instrument ratios are
+
 $$\pi_j = \frac{\Gamma_j}{\gamma_j} = \beta + \frac{\alpha_j}{\gamma_j}.$$
+
 $\beta$ is identified when the valid instruments form the largest group of equal $\pi_j$; a sufficient condition is $s < L/2$. The Lasso approach (sisVIVE) estimates $\alpha$ by $\ell_1$-penalized regression of $y$ on $Z$ after projecting out $\hat d = Z\hat\gamma$.
 
 **Selection failure of the Lasso.** Consistent selection by the Lasso requires an irrepresentable condition $\|C_{21}C_{11}^{-1}\operatorname{sign}(\alpha_1)\|_\infty < 1$ on the limit $C$ of $n^{-1}\tilde Z^\top \tilde Z$, where $\tilde Z$ is $Z$ with $\hat d$ projected out. This depends on the instrument strengths as well as their correlations: if $|\gamma_1^\top \operatorname{sign}(\alpha_1)| > \|\gamma_2\|_1$ ($\gamma_1$, $\gamma_2$ the first-stage coefficients of the invalid and valid instruments), the condition fails. With equal-strength instruments it fails for some sign configurations of $\alpha$ even when fewer than half the instruments are invalid, so the Lasso can select the wrong instruments even when $\beta$ is identified.

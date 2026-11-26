@@ -1,7 +1,9 @@
 # Semi-linear weights make the minimum spanning tree the true marker order
 
 **Setting.** Let $M = \{l_1,\dots,l_m\}$ be biallelic markers on one linkage group of a doubled-haploid (or backcross, haploid, RIL) mapping population, and let $P_{i,j} \in [0, \tfrac12]$ be the probability that an individual is recombinant between $l_i$ and $l_j$. A pair $(l_i,l_j)$ is **enclosed** in $(l_p,l_q)$ if the chromosomal segment spanned by $l_i,l_j$ lies inside the segment spanned by $l_p,l_q$. The basic genetic law is
+
 $$(l_i,l_j) \text{ enclosed in } (l_p,l_q) \;\Longrightarrow\; P_{i,j} \le P_{p,q}.$$
+
 A pair weight $w : M\times M \to \mathbb{R}$ is **semi-linear** if $w(i,j) \le w(p,q)$ whenever $(l_i,l_j)$ is enclosed in $(l_p,l_q)$. Examples: $w(i,j) = P_{i,j}$, $w(i,j) = \log P_{i,j}$, and $w(i,j) = -[P_{i,j}\log P_{i,j} + (1-P_{i,j})\log(1-P_{i,j})]$, which is increasing on $[0,\tfrac12]$. Let $G$ be the complete graph on $M$ with edge weights $w$.
 
 **Theorem.** If $w$ is semi-linear, then

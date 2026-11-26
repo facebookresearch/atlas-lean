@@ -6,9 +6,13 @@
 
 1. $P[G \mid T] = \sum_{\ell_1 = g_1}^{n} P[G_1, \ell_1 \mid T] / H_{\ell_1}$, where $H_\ell = \ell!(\ell-1)!/2^{\ell-1}$ is the number of orders of the coalescences of $\ell$ lineages above the root, each equally likely.
 2. For all $i$ (with $\ell_i \ge g_i$),
+
 $$P[G_i, \ell_i \mid T] = \sum_{\ell_{i+1} = \max(\ell_i, g_{i+1})}^{n} P[G_i, \ell_i \mid G_{i+1}, \ell_{i+1}, T]\; P[G_{i+1}, \ell_{i+1} \mid T].$$
+
 3. The transition probability for the $m_i$ prescribed coalescences in interval $\tau_i$ is
+
 $$P[G_{i-1}, \ell_{i-1} \mid G_i, \ell_i, T] = \sum_{j=0}^{m_i} \frac{e^{-\lambda_{i,j}(s_{i-1} - s_i)}}{\prod_{k=0,\,k\ne j}^{m_i} (\lambda_{i,k} - \lambda_{i,j})}.$$
+
 4. All $g_i$, $k_{i,j,z}$, $\lambda_{i,j}$ and transition probabilities can be computed in $O(n^5)$ time, so $P[G \mid T]$ is computable in $O(n^5)$ time.
 
 Consequently the probability of an unranked gene tree topology is computable in polynomial time whenever it has polynomially many rankings.

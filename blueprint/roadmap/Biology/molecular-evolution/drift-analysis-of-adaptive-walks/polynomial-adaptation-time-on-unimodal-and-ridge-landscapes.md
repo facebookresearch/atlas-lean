@@ -4,11 +4,17 @@
 
 **Theorem.**
 1. (Unimodal class.) For $N \ge 3$, the drift in fitness satisfies
+
 $$\Delta(x) \ge \delta\,p_{\mathrm{fix}}(\delta)\Big[\frac1n - \Big(1 + \frac1\delta\Big)e^{-2(N-1)\beta\delta}\Big],$$
+
 so if $2(N-1)\beta\delta \ge \ln[(1 + 1/\delta)\,cn]$ for a constant $c > 1$, then $\Delta \ge \gamma\,\delta\,p_{\mathrm{fix}}(\delta)/n$ for a constant $\gamma > 0$ and the expected time to the peak is
+
 $$O\Big(\frac{n}{p_{\mathrm{fix}}(\delta)}\cdot\frac{d}{\delta}\Big).$$
+
 2. (Ridge.) On $f_{\mathrm{ridge}}$ with $N \ge 3$ and $\beta \ge 1/2$,
+
 $$\Delta \ge \frac1n\,p_{\mathrm{fix}}(1)\big[1 - 3e^{-2(N-1)\beta}\big] \ge \frac{6}{8}\cdot\frac{p_{\mathrm{fix}}(1)}{n},$$
+
 and the expected time to reach the peak is $O\big(n^2/p_{\mathrm{fix}}(1)\big)$, for every selection strength above this constant, independent of $n$.
 
 ## Depends on

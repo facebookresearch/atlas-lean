@@ -1,10 +1,13 @@
 # External confounders and causal validity of parent-conditioned tests
 
 In the trio setting (offspring haplotypes $X$, parental haplotypes $A$, phenotype $Y$, SNP group $g$), a random variable $Z$ is an **external confounder** if knowledge of it does not change Mendelian transmission:
+
 $$X \mid (A, Z = z) \overset{d}{=} X \mid (A, Z = z') \qquad \text{for all } z, z'.$$
+
 Ancestry-related environment, socioeconomic factors and every condition arising after conception are external confounders. It follows that $Z \perp\!\!\!\perp X_g \mid (X_{-g}, A)$.
 
 **Theorem.** If $Z$ is an external confounder, then any valid test of $H_0^g : Y \perp\!\!\!\perp X_g \mid (X_{-g}, A)$ is also a valid test of the stronger hypothesis
+
 $$H_0'^g : \; Y \perp\!\!\!\perp X_g \mid (X_{-g}, A, Z).$$
 
 Consequently, in a structural equation model in which genotypes cause the phenotype but not conversely and $Z$ affects $Y$ and possibly $A$, a rejection of $H_0^g$ implies that $X_g$ contains a variant with a causal effect on $Y$, not merely one correlated with $Y$ through $Z$ or through linked variants outside $g$.

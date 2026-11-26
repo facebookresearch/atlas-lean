@@ -1,10 +1,13 @@
 # Genotype-dependent trait variance from unmodelled interaction
 
 **Model.** Let $G \in \{0,1,2\}$ be the minor-allele count at a SNP, $E$ an exposure (environmental or genetic background) with $E$ independent of $G$ and $\operatorname{Var}(E) = 1$, and let the quantitative trait follow
+
 $$Y = \beta_0 + \beta_G G + \beta_E E + \beta_{GE}\,GE + \varepsilon, \qquad \varepsilon \sim N(0,1) \text{ independent of } (G,E).$$
 
 **Proposition.** If $E$ is not measured and $Y$ is analysed against $G$ alone, then
+
 $$\sigma_g^2 = \operatorname{Var}(Y \mid G = g) = (\beta_E + \beta_{GE}\,g)^2 + 1, \qquad g = 0,1,2.$$
+
 Hence the genotype-specific variances are unequal whenever $\beta_{GE} \ne 0$, even if $\beta_G = 0$, and the working model $Y = \beta_0 + \beta_G G + \varepsilon_G$ is heteroscedastic.
 
 ## Expansion

@@ -6,15 +6,21 @@
 - (C2) $Y_I$ is conditionally independent of $g$ given $(Y_U, Y_D)$,
 
 so its likelihood factorizes as
+
 $$p(Y \mid g, \gamma) = p(Y_U)\; p(Y_D \mid Y_U, g)\; p(Y_I \mid Y_U, Y_D).$$
+
 The global null $H_0$ (no association) is $\gamma_0 = (\{1,\dots,d\}, \emptyset, \emptyset)$, with $p(Y \mid g, H_0) = p(Y_U)\,p(Y_D \mid Y_U)\,p(Y_I\mid Y_U, Y_D)$ for any split.
 
 **Proposition (partitions are conditional tests).** With fully specified (prior-integrated) conditional distributions, the Bayes factor of $\gamma$ against $H_0$ is
+
 $$\mathrm{BF}_\gamma = \frac{p(Y \mid g,\gamma)}{p(Y \mid g, H_0)} = \frac{p(Y_D \mid Y_U, g)}{p(Y_D \mid Y_U)},$$
+
 the Bayes factor for association of $Y_D$ with $g$ controlling for $Y_U$ and ignoring $Y_I$. Univariate tests ($D$ one trait, others in $I$), conditional tests ($D$ one trait, others in $U$) and the full multivariate test ($D$ everything) are special cases.
 
 **Model averaging.** With prior weights $w_\gamma \propto \pi(\gamma)$ over non-null partitions, normalized to sum to one, the overall evidence against the global null is
+
 $$\mathrm{BF}_{\mathrm{av}} = \sum_{\gamma \ne \gamma_0} w_\gamma\, \mathrm{BF}_\gamma, \qquad \frac{\Pr(H_0^c \mid Y)}{\Pr(H_0 \mid Y)} = \frac{\pi_0^c}{\pi_0}\,\mathrm{BF}_{\mathrm{av}},$$
+
 and the posterior on $\gamma$ gives marginal probabilities that each trait lies in $U$, $D$ or $I$.
 
 ## Expansion

@@ -1,10 +1,13 @@
 # Diploid migration–selection–mutation balance on an island
 
 An island (for example a cave) population receives immigrants from a mainland (surface) population in which allele $b$ has fixed frequency $Q \in [0,1]$. On the island genotypes have relative fitnesses $w_{bb} = 1 + s$, $w_{Bb} = 1 + hs$, $w_{BB} = 1$ with $s \ge 0$ and dominance $h \in [0,1]$. Each generation, juveniles undergo selection, then a fraction $m \in [0,1]$ of adults is replaced by immigrants, then $B$ mutates to $b$ with probability $u \in [0,1]$, then gametes unite at random. If $q$ is the frequency of $b$,
+
 $$q_j = \frac{(1+s)q^2 + (1+hs)q(1-q)}{(1+s)q^2 + 2(1+hs)q(1-q) + (1-q)^2}, \qquad q_a = (1-m)q_j + mQ, \qquad q' = q_a + (1 - q_a)u .$$
 
 **Equilibria.** For $s > 0$ the equilibria $\Delta q = q' - q = 0$ are the roots in $[0,1]$ of the cubic $g(q) = Aq^3 + Bq^2 + Cq + D$ with
+
 $$A = -s(1 - 2h),\quad B = s\big(1 - m(1-u)(1-Q) - h(3 + u - m(1-u)(1-2Q))\big),$$
+
 $$C = -(m(1-u) + u) + sh\big(1 + u - m(1-u)(1-2Q)\big),\quad D = Qm(1-u) + u .$$
 
 **Protected polymorphism.** $\Delta q = Qm(1-u) + u > 0$ at $q = 0$ unless $Qm = u = 0$, and $\Delta q = -m(1-Q)(1-u) < 0$ at $q = 1$ unless $m = 0$, $Q = 1$ or $u = 1$; so there is either one stable interior equilibrium or three in a stable–unstable–stable arrangement.

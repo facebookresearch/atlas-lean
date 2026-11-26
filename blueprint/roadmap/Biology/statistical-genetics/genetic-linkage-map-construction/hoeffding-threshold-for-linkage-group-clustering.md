@@ -3,9 +3,13 @@
 **Setting.** In a doubled-haploid mapping population of $n$ individuals, markers $l_i$ and $l_j$ on different linkage groups (different chromosomes, or far apart) segregate independently, so each individual is recombinant with probability $P_{i,j} = \tfrac12$ and the recombinant count $d_{i,j}$ (Hamming distance of the two genotype rows) is $\mathrm{Binomial}(n, \tfrac12)$.
 
 **Proposition.** For $0 \le \delta < n/2$,
+
 $$\Pr\big(d_{i,j} \le \delta\big) \;\le\; \exp\!\Big(-\frac{2\,(n/2-\delta)^2}{n}\Big).$$
+
 Hence, given a tolerated error probability $\epsilon$, choosing $\delta$ as the solution of
+
 $$-\frac{2\,(n/2-\delta)^2}{n} = \log \epsilon$$
+
 guarantees that a pair of markers from different linkage groups has $d_{i,j} < \delta$ with probability at most $\epsilon$.
 
 **Clustering rule.** Build the complete graph on the markers with edge weights $d_{i,j}$, delete every edge with $d_{i,j} \ge \delta$, and take the connected components (equivalently, cut the minimum spanning tree at edges of weight $\ge \delta$) as linkage groups.

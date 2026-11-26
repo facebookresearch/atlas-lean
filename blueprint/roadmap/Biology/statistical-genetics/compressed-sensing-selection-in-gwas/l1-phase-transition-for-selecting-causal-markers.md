@@ -1,15 +1,21 @@
 # L1 phase transition for selecting causal markers
 
 **Model.** Phenotypes follow the linear model of quantitative genetics
+
 $$y = Ax + e,$$
+
 with $y \in \mathbb R^n$ the phenotypes of $n$ individuals, $A \in \mathbb R^{n \times p}$ the standardized genotype (sensing) matrix over $p$ markers with $p \gg n$, $x \in \mathbb R^p$ the partial regression coefficients with $s$ nonzero entries, and $e$ residual noise of variance $\sigma_E^2$. Recovery is summarized on the phase plane of $\rho = s/n$ (sparsity relative to sample size) against $\delta = n/p$ (undersampling), both in $(0,1)$, with quality measured by the normalized error $\|x - \hat x\|_2 / \|x\|_2$.
 
 **Proposition 1 (noiseless phase transition).** If $A$ has i.i.d. Gaussian entries and $e = 0$ (heritability $h^2 = 1$), there is a curve $\rho = \rho_{L_1}(\delta)$ such that, as $n, p, s \to \infty$ with $\rho$ and $\delta$ fixed, basis pursuit
+
 $$\hat x = \arg\min \|\hat x\|_1 \quad \text{subject to } A\hat x = y$$
+
 recovers $\hat x = x$ with probability tending to one below the curve and fails with probability tending to one above it.
 
 **Proposition 2 (noisy recovery).** Call $A$ isotropic if $E[A^{\mathsf T}A] = I$ (for genotypes, markers in linkage equilibrium), and let its coherence be the smallest $\gamma$ with $\max_t |a_t|^2 \le \gamma$ for every row $a$. If $A$ is isotropic with coherence $\gamma$ and $n > C\gamma s \log p$ for a constant $C$, the lasso
+
 $$\hat x = \arg\min \|y - A\hat x\|_2^2 + \lambda\|\hat x\|_1$$
+
 with suitable $\lambda$ satisfies $\|\hat x - x\|_2^2 \le \sigma_E^2\, \frac sn\, \mathrm{polylog}(p)$, within a polylogarithmic factor of an oracle that knows the support.
 
 **Empirical boundary.** On real genotype matrices the same sharp transition appears at $h^2 = 1$; for $h^2 \approx 0.5$ the transition is smoothed but complete selection of the nonzeros occurs once $n \approx 30\,s$, a threshold depending only weakly on $p$ and robust to linkage disequilibrium between causal variants and nearby markers.

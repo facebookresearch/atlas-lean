@@ -1,7 +1,9 @@
 # Optimal projection estimator of individual allele frequencies
 
 **Model.** Let $X \in \{0,1,2\}^{m \times n}$ be the genotype matrix of $m$ SNPs in $n$ individuals and $F = \tfrac12 \mathbb{E}[X] \in [0,1]^{m\times n}$ the matrix of individual-specific allele frequencies. The admixture model assumes $\operatorname{rank} F = d \ll n \ll m$ and
+
 $$F = PQ,\qquad P \in [0,1]^{m \times d},\qquad Q \in \mathbb{R}_{\ge 0}^{d\times n},\ \ \textstyle\sum_{i} q_{ij} = 1\ \ \forall j,$$
+
 where row $i$ of $P$ holds the frequencies of SNP $i$ in the $d$ ancestral populations and column $j$ of $Q$ the admixture proportions of individual $j$. Write $\langle Q\rangle$ for the row space of $Q$; since $F = PQ$, every row of $F$ lies in $\langle Q\rangle$. For a subspace $\langle S\rangle$ with orthonormal basis $s_1,\dots,s_k$ (row vectors), let $\operatorname{Proj}_{\langle S\rangle}(X) = X\sum_i s_i^{\mathsf T} s_i$.
 
 **Lemma 1 (unbiasedness).** The estimator $\hat F_{\langle S\rangle} = \tfrac12 \operatorname{Proj}_{\langle S\rangle}(X)$ is unbiased for $F$ if and only if $\langle Q\rangle \subseteq \langle S\rangle$.
@@ -9,7 +11,9 @@ where row $i$ of $P$ holds the frequencies of SNP $i$ in the $d$ ancestral popul
 **Lemma 2 (optimality).** Among all unbiased estimators of this projection form, $\hat F = \tfrac12 \operatorname{Proj}_{\langle Q\rangle}(X)$ minimizes the risk $R(\tilde F, F) = \mathbb{E}\,\|\tilde F - F\|_F^2$.
 
 **Theorem 1 (latent subspace estimation, specialized to the admixture model).** Let $\hat\delta_j = \tfrac1m \sum_i (2x_{ij} - x_{ij}^2)$ and $D = \operatorname{diag}(\hat\delta_1,\dots,\hat\delta_n)$. The top $d$ eigenvectors $v_1,\dots,v_d$ of
+
 $$G = \tfrac1m X^{\mathsf T} X - D$$
+
 span $\langle Q\rangle$ asymptotically: with probability 1, $\lim_{m\to\infty} \langle v_1,\dots,v_d\rangle \,\triangle\, \langle Q\rangle = \emptyset$, and the smallest $n - d$ eigenvalues of $G$ converge to $0$.
 
 **Proposition 1 (anchors give identifiability).** If $P$ has $d$ rows of the form $\delta_i e_i$ with $\delta_i \ne 0$ ("anchor SNPs"), then the factorization $F = PQ$ is unique up to permutation of the ancestral populations; the same holds with $d$ unadmixed "anchor individuals".

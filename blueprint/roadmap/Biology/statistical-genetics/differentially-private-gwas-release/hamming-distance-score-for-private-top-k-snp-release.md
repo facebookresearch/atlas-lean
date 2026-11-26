@@ -1,8 +1,11 @@
 # Hamming distance score for private top-K SNP release
 
 Consider a biallelic SNP in a case–control study with $R$ cases, $S$ controls and $N = R + S$, where cases (controls) have $r_0, r_1, r_2$ ($s_0, s_1, s_2$) individuals with $0, 1, 2$ copies of the minor allele. The **allelic test statistic** (the Cochran–Armitage trend test for an additive model, equal to Pearson's $\chi^2$ on the $2 \times 2$ allele table) is
+
 $$Y_A = \frac{2N\big[(2r_0 + r_1)S - (2s_0 + s_1)R\big]^2}{R\,S\,(2n_0 + n_1)(n_1 + 2n_2)}, \qquad n_g = r_g + s_g .$$
+
 With control data public and $R, S$ fixed, write $x = 2r_0 + r_1$ (major alleles among cases) and $n_{10} = 2s_0 + s_1$; then
+
 $$Y_A(x) = \frac{2N\,(xS - n_{10}R)^2}{R\,S\,(x + n_{10})(2N - x - n_{10})}.$$
 
 **Lemma (monotonicity).** $Y_A$ is increasing in $x$ when $xS - n_{10}R > 0$ and decreasing when $xS - n_{10}R < 0$.

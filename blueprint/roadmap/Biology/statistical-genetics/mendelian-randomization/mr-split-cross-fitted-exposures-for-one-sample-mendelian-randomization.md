@@ -6,14 +6,19 @@ In a one-sample Mendelian randomization study with $N$ individuals, outcome $Y$,
 
 1. In $I_k$, select instruments and estimate their exposure effects $\hat\alpha_{k,j}$; split the selected set into **major** instruments $S_{k,M}$ and **weak** instruments $S_{k,W}$ by a partial $F$-statistic threshold, $F = \frac{(\mathrm{RSS}_r - \mathrm{RSS}_f)/(p-k)}{\mathrm{RSS}_f/(N-p)}$, comparing models with and without each instrument.
 2. In the complementary half $I_{k}^c$, combine the weak instruments into one composite instrument
+
 $$\hat G_{k^c, W} = \sum_{j \in S_{k,W}} \omega_j\, G_{k^c, j}, \qquad \omega_j = \frac{\operatorname{sign}(\hat\alpha_{k,j})\,|\hat\alpha_{k,j}|}{\sum_{j' \in S_{k,W}} |\hat\alpha_{k,j'}|},$$
+
 and regress $X$ on $\{G_{k^c, M}, \hat G_{k^c,W}\}$ in $I_k^c$ to obtain cross-fitted exposures $\hat X_{k^c}$.
 
 Stack $\hat X = (\hat X_1^\top, \hat X_2^\top)^\top \in \mathbb{R}^N$ and estimate on the whole sample
+
 $$\hat\beta = (\hat X^\top \hat X)^{-1} \hat X^\top Y .$$
+
 Repeating over many random splits and taking the median estimate improves robustness to a particular split.
 
 **Theorem.** With a 2-fold random split, the MR-SPLIT estimator is at least as efficient as the cross-fitting estimator that combines cross-fitted composite instruments (CFMR):
+
 $$\operatorname{var}(\hat\beta_{\mathrm{MR\text{-}SPLIT}}) \le \operatorname{var}(\hat\beta_{\mathrm{CFMR}}).$$
 
 ## Depends on

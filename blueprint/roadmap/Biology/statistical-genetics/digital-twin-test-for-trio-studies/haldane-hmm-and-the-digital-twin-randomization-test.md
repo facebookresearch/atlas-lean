@@ -1,13 +1,17 @@
 # Haldane HMM and the digital twin randomization test
 
 Consider $n$ offspring with phased haplotypes $X^m, X^f \in \{0,1\}^{n \times p}$ at $p$ biallelic sites, parental haplotypes $A = (M^a, M^b, F^a, F^b)$, genotypes $\bar X = X^m + X^f$, and phenotype $Y$. For a partition $\mathcal G$ of the sites and $g \in \mathcal G$, the **local null hypothesis** is
+
 $$H_0^g : \; Y \perp\!\!\!\perp X_g \mid (X_{-g}, A).$$
 
 **Haldane HMM.** For one offspring and chromosome, the maternal-origin path $U^m \in \{a, b\}^p$ is a Markov chain with $\mathbb P(U_1^m = a) = \tfrac12$ and
+
 $$\mathbb P(U_j^m = U_{j-1}^m \mid U^m_{1:(j-1)}) = \tfrac12\big(1 + e^{-2 d_j}\big),$$
+
 where $d_j$ is the genetic distance (Morgans) between sites $j-1$ and $j$; given $U^m$, independently $X_j^m = M_j^{U_j^m}$ with probability $1 - \epsilon$ ($\epsilon$ the de novo mutation rate). The paternal haplotype follows the same model with $F$, independently given $A$.
 
 **Digital twin test.** Fix a statistic $T$. Compute $t^* = T((X_{-g}, X_g), Y)$; for $k = 1, \dots, K$ draw a digital twin $\tilde X_g$ from the law of $X_g \mid (X_{-g}, A)$, independently of $(X_g, Y)$, and compute $t_k = T((X_{-g}, \tilde X_g), Y)$; report
+
 $$v = \frac{1 + \#\{k : t^* \le t_k\}}{K + 1}.$$
 
 **Proposition.** If $X \mid A$ follows the Haldane HMM, then under $H_0^g$ the law of $v$ stochastically dominates $\mathrm{Uniform}(0, 1)$: $v$ is a valid finite-sample $p$-value, for any choice of $T$.

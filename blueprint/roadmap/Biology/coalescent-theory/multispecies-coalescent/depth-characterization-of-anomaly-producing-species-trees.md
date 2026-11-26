@@ -1,7 +1,9 @@
 # Depth characterization of anomaly-producing species trees
 
 Consider a rooted binary labelled species tree $\sigma = (\psi, \boldsymbol\lambda)$ with topology $\psi$ on $n$ species and internal branch lengths $\boldsymbol\lambda$ in coalescent units, with one gene lineage sampled per species, evolving under the multispecies coalescent. A labelled gene tree topology $g \ne \psi$ is **anomalous** for $\sigma$ if
+
 $$\mathbb P_\sigma(G = g) > \mathbb P_\sigma(G = \psi).$$
+
 The topology $\psi$ **produces anomalies** if some $\boldsymbol\lambda$ admits an anomalous gene tree. The **depth** of $\psi$ is the maximum, over leaves, of the number of branches on the path from the leaf to the root.
 
 **Theorem.** A labelled species tree topology produces anomalies if and only if its depth is at least $3$; equivalently, if and only if it contains two consecutive internal branches in an ancestor–descendant relationship.

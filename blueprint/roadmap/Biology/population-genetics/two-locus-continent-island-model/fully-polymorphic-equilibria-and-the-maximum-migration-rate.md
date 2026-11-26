@@ -3,10 +3,15 @@
 Use the model, notation and boundary equilibria of [Boundary equilibria of the two-locus continent–island model](boundary-equilibria-of-the-two-locus-continent-island-model.md), with $0 < \alpha \le \beta$ and $\rho > 0$.
 
 **Explicit internal equilibria.** Let $R = \sqrt{(\alpha+\beta+\rho)^2 - 8m\rho}$. The only possible fully polymorphic equilibria are $E_\pm$ with
+
 $$\hat p_\pm = \frac{1}{8\alpha\rho}\Big[\beta^2 - \alpha^2 + 6\alpha\rho - \rho^2 - 4m\rho \pm (\alpha - \beta + \rho)R\Big],$$
+
 $$\hat q_\pm = \frac{1}{8\beta\rho}\Big[\alpha^2 - \beta^2 + 6\beta\rho - \rho^2 - 4m\rho \pm (\beta - \alpha + \rho)R\Big],$$
+
 and $\hat D_\pm$ determined by $\dot p = 0$. They are real iff
+
 $$m \le m^* = \frac{(\alpha+\beta+\rho)^2}{8\rho},$$
+
 and $E_+ = E_-$ iff $m = m^*$.
 
 **Proposition 1 (admissibility).** With $m_C = \alpha+\beta-\rho$ and $m_B = \alpha(1 + (\beta-\alpha)/\rho)$:
