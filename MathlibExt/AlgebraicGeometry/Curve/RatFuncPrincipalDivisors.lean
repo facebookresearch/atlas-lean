@@ -11,6 +11,7 @@ Portions of this file are adapted from:
 
 `Theorems/Thm_AlgebraicCurve_RationalFunctionField_algebraMap_polynomial_mem_of_ne_placeInfty.lean`,
 `P2M/Sol/S_AlgebraicCurve_RationalFunctionField_algebraMap_polynomial_mem_of_ne_placeInfty.lean`,
+`P2M/Sol/S_AlgebraicCurve_residueTheorem_ratFunc_of_perfectField.lean`,
 `P2M/Sol/S_ModularCurve_CharPModel_place_eq_of_ord_pos_of_derivative_evalEval_ne_zero.lean`,
 `Theorems/Thm_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero.lean`,
 `P2M/Sol/S_AlgebraicCurve_RationalFunctionField_ord_ofHeightOneSpectrum_of_span.lean`,
@@ -18,6 +19,7 @@ Portions of this file are adapted from:
 `P2M/Sol/S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap.lean`,
 `Theorems/Thm_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord.lean`,
 `P2M/Sol/S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord.lean`,
+`P2M/Sol/S_AlgebraicCurve_isCurveOver_ratFunc.lean`,
 `P2M/Sol/S_AlgebraicCurve_instIsCurveOverRatFunc.lean`,
 `Theorems/Thm_AlgebraicCurve_RationalFunctionField_hasPrincipalDivisors.lean`
 and
@@ -98,7 +100,8 @@ private theorem finite_setOf_ord_algebraMap_ne_zero {q : K[X]} (hq : q ≠ 0) :
   have hmem := algebraMap_mem_of_ne_placeInfty hinf
   exact Or.inr ⟨hmem, lt_of_le_of_ne (v.ord_nonneg_of_mem (hmem q)) (Ne.symm hv)⟩
 
-/-- A nonzero rational function has nonzero order at only finitely many places. -/
+/-- **Finitely many zeros and poles of a rational function.** A nonzero rational function has
+nonzero order at only finitely many places. -/
 theorem finite_setOf_ord_ne_zero {f : RatFunc K} (hf : f ≠ 0) :
     {v : Place K (RatFunc K) | v.ord f ≠ 0}.Finite := by
   classical
@@ -231,14 +234,16 @@ private theorem degree_eq_zero_of_forall_eq_ord {f : RatFunc K} (D : Divisor K (
   exact h1
 
 variable (K) in
-/-- Every nonzero rational function has a principal divisor of degree zero. -/
+/-- **Principal divisors on the rational function field have degree zero.** Every nonzero
+rational function has a principal divisor of degree zero. -/
 theorem hasPrincipalDivisors : HasPrincipalDivisors K (RatFunc K) :=
   ⟨fun f hf =>
     ⟨Finsupp.ofSupportFinite (fun v : Place K (RatFunc K) => v.ord f)
         (finite_setOf_ord_ne_zero hf),
       fun _ => rfl, degree_eq_zero_of_forall_eq_ord _ fun _ => rfl⟩⟩
 
-/-- Every place of `RatFunc K` has a residue field that is finite over `K`. -/
+/-- **Residue fields of the rational function field are finite.** Every place of `RatFunc K` has
+a residue field that is finite over `K`. -/
 theorem finite_residueField (v : Place K (RatFunc K)) : Module.Finite K v.ResidueField := by
   classical
   have hpos : 0 < v.deg := by
