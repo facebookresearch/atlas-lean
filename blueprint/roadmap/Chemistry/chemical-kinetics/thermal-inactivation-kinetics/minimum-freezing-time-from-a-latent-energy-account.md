@@ -7,9 +7,7 @@ $Q = m\,[c_l(T_0 - T_f) + L + c_s(T_f - T_{\mathrm{end}})]$. If the net rate of 
 $P_{\max} > 0$, and integrates to $Q$, the duration is at least $Q/P_{\max}$. $P_{\max}$ bounds heat extraction, not electrical input,
 which would need a coefficient of performance and heat leaks. Free-boundary freezing models are outside this result.
 
-## Depends on
-
-## Proof depends on
+For duration $d \ge 0$, apply the rate bound on $[0,d]$ and compare the integral with the constant rate $P_{\max}$. This gives a lower bound, not a claim that the bound is attained.
 
 ## Sources
 
