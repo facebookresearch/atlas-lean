@@ -496,8 +496,9 @@ common subsequence of two independent uniformly random binary strings of length 
 Chvátal–Sankoff constant $C_{31a} = \liminf_{n \to \infty} \mathbb{E}[L_n]/n$ satisfies
 $C_{31a} > 0$.
 
-Source: Chvátal--Sankoff (1975), catalogue strict lower bound `> 0`.
-Known literature result; its proof is not supplied here. -/
+Source: Chvátal and Sankoff (1975), §2 ($f(1,2) = 1/2$) and §3 (superadditivity and the limit
+formula (1)). The proof uses the one-bit mean and superadditivity to obtain the stronger bound
+$1/2 \le C_{31a}$ directly for the limit inferior, without invoking convergence. -/
 theorem chvatalSankoffStrictPositive_wanted : chvatalSankoffStrictPositive := by
   have hhalf : (1 : ℝ) / 2 ≤ C31a := by
     apply Filter.le_liminf_of_le
