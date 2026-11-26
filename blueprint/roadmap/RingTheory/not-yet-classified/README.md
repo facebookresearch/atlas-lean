@@ -42,6 +42,7 @@ Topics added since this subject's fields were last revised.
 - [Minimal Graded Resolution](minimal-graded-resolution/README.md)
 - [Miracle Flatness](miracle-flatness/README.md)
 - [Multigraded Hilbert Series](multigraded-hilbert-series/README.md)
+- [Mv Formal Group Rescaled Log](mv-formal-group-rescaled-log/README.md)
 - [Nilpotent](nilpotent/README.md)
 - [Ordinary De Rham Algebra Models](ordinary-de-rham-algebra-models/README.md)
 - [Projective Hilbert Growth](projective-hilbert-growth/README.md)
