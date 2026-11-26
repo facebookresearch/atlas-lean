@@ -2,7 +2,7 @@
 
 Let $P \subset \mathbb{R}^2$ be the boundary curve of a simple polygon, a closed polygonal curve without self-intersections. Then $\mathbb{R}^2 \setminus P$ has at most two connected components.
 
-In the slab-decomposition proof, the vertical lines through the vertices cut $\mathbb{R}^2 \setminus P$ into trapezoids (some unbounded or degenerate). Walking once around $P$ and recording the trapezoids immediately to the left of the walker visits every trapezoid labelled *left*, and consecutive trapezoids in this walk share a vertical wall; so the left trapezoids have a connected union, and symmetrically so do the right ones. Every trapezoid is labelled left or right.
+In the slab-decomposition proof, after a rotation of the plane (a homeomorphism) that gives the vertices distinct $x$-coordinates, the vertical lines through the vertices cut $\mathbb{R}^2 \setminus P$ into trapezoids (some unbounded or degenerate). Walking once around $P$ and recording the trapezoids immediately to the left of the walker visits every trapezoid labelled *left*, and consecutive trapezoids in this walk share a vertical wall; so the left trapezoids have a connected union, and symmetrically so do the right ones. Every trapezoid is labelled left or right.
 
 ## Depends on
 

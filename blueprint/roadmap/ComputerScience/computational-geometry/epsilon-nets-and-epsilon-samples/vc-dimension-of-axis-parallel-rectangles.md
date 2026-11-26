@@ -1,6 +1,6 @@
 # VC dimension of axis-parallel rectangles
 
-A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $X$ (*ranges*). For $Y \subseteq X$ let $R|_Y = \{r \cap Y : r \in R\}$; $Y$ is *shattered* if $R|_Y$ contains every subset of $Y$, and the *VC dimension* of $(X, R)$ is the largest size of a shattered subset of $X$ ($\infty$ if there are arbitrarily large ones). For a finite $x \subseteq X$ and $r \in R$, the *measure* of $r$ is $m(r) = |r \cap x| / |x|$.
+A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $X$ (*ranges*). For $Y \subseteq X$ let $R|_Y = \{r \cap Y : r \in R\}$; $Y$ is *shattered* if $R|_Y$ contains every subset of $Y$, and the *VC dimension* of $(X, R)$ is the largest size of a shattered subset of $X$ ($\infty$ if there are arbitrarily large ones).
 
 The range space $(\mathbb{R}^2, \mathcal{B})$, where $\mathcal{B}$ is the family of closed axis-parallel rectangles $[a, b] \times [c, d]$, has VC dimension $4$: some four points are shattered, and no five points are.
 

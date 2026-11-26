@@ -4,7 +4,7 @@ Let $P = \{p_1, \dots, p_n\}$ be a set of $n \ge 2$ distinct points (*sites*) in
 
 $$V(p_i) = \{q \in \mathbb{R}^2 : \|q - p_i\| \le \|q - p_j\| \text{ for all } j\},$$
 
-the intersection of the $n - 1$ closed half-planes $\{q : \|q - p_i\| \le \|q - p_j\|\}$ bounded by the perpendicular bisectors of $p_i p_j$, hence a convex, possibly unbounded, polygon. A point $q$ has as its *nearest sites* the sites at least distance from it. The *Voronoi diagram* $\mathrm{Vor}(P)$ is the subdivision of the plane into the $n$ cells: its *vertices* are the points with at least three nearest sites, and its *edges* are the maximal segments, rays or lines of points with exactly two nearest sites.
+the intersection of the $n - 1$ closed half-planes $\{q : \|q - p_i\| \le \|q - p_j\|\}$ bounded by the perpendicular bisectors of $p_i p_j$, hence a convex, possibly unbounded, polygon. A point $q$ has as its *nearest sites* the sites at least distance from it. The *Voronoi diagram* $\mathrm{Vor}(P)$ is the subdivision of the plane into the $n$ cells: its *vertices* are the points with at least three nearest sites, and its *edges* are the maximal connected sets of points with exactly two nearest sites, which are relatively open segments, rays or lines; the closure of an edge, its *closed edge*, adds its endpoints, which are vertices. The cells here are closed; the cited notes define open cells (strict inequalities) and take closures for the diagram.
 
 ## Sources
 

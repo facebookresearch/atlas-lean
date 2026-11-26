@@ -50,19 +50,6 @@ public theorem_wanted lucasU_lucasV_sum_choose_cube_alternating (p : ℤ) (n : �
           lucasU ⟨p, -1, by decide⟩ (2 * n - k) * lucasV ⟨p, -1, by decide⟩ k =
       (-1) ^ n * ((3 * n).choose n * (2 * n).choose n : ℕ) * lucasU ⟨p, -1, by decide⟩ (2 * n)
 
-/-- **Squared-binomial convolution of the Lucas sequences U and V.** Let $p$ be an integer and let
-$U$ and $V$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so that $U_0 = 0$, $U_1 = 1$,
-$V_0 = 2$, $V_1 = p$, and both satisfy $X_{j+2} = p X_{j+1} + X_j$. Then for every natural
-number $n$
-$$\sum_{k=0}^{n} \binom{n}{k}^2 U_{n-k} V_k = \binom{2n}{n} U_n.$$
-
-Source: John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order Linearly Recurrent
-Sequences*, The Fibonacci Quarterly 62 (2024), Article 62-1/campbell10202023, Proposition 2.3. -/
-public theorem_wanted lucasU_lucasV_sum_choose_sq (p : ℤ) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (n.choose k : ℤ) ^ 2 * lucasU ⟨p, -1, by decide⟩ (n - k) * lucasV ⟨p, -1, by decide⟩ k =
-      ((2 * n).choose n : ℤ) * lucasU ⟨p, -1, by decide⟩ n
-
 /-- **Even-index Catalan convolution with Lucas sequences.** Let $p$ be an integer, let $U_n$
 and $V_n$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so $U_0 = 0$, $U_1 = 1$, $V_0 = 2$,
 $V_1 = p$ and both satisfy $X_{j+2} = p X_{j+1} + X_j$, and let $C_j$ be the $j$-th Catalan

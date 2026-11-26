@@ -1,14 +1,11 @@
 # The optimum changes with probability at most d/i
 
-Run Seidel's randomized incremental algorithm on $n$ halfspaces in $\mathbb{R}^d$ in general position with a bounded objective, inserted in uniformly random order, and let $p_i$ be the probability that the optimum vertex changes when the $i$-th halfspace is inserted ($d + 1 \le i \le n$). Then $p_i \le d/i$. Indeed the optimum $v_i$ of the first $i$ halfspaces depends only on that set, it is defined by $d$ of them, and it differs from $v_{i-1}$ only if one of these $d$ halfspaces was inserted last, which happens with probability $d/i$.
+Let $h_1, \dots, h_n$ be closed halfspaces in $\mathbb{R}^d$ and $c$ an objective vector such that every program of maximizing $c \cdot x$ over a subset of the constraints containing $h_1, \dots, h_d$ is bounded and, when feasible, has a unique optimal point, which lies on exactly $d$ of the bounding hyperplanes. Seidel's algorithm keeps $h_1, \dots, h_d$ first and inserts $h_{d+1}, \dots, h_n$ in uniformly random order. For $1 \le i \le n - d$, let $p_i$ be the probability that the program after the $i$-th randomly ordered constraint is feasible and its optimal point differs from the one before that insertion. Then $p_i \le d/i$. Indeed the optimal point after the insertion depends only on the set of constraints inserted so far, it lies on exactly $d$ bounding hyperplanes, and it differs from the previous one only if one of these $d$ constraints was the last inserted; at most $d$ of them are among the $i$ randomly ordered constraints, each of which is the last with probability $1/i$.
 
 ## Depends on
 
 - [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md)
 
-## Proof depends on
-
-- [A violated constraint contains the new optimum](a-violated-constraint-contains-the-new-optimum.md)
 
 ## Sources
 

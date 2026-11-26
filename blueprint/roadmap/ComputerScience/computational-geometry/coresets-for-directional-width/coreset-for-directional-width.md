@@ -1,6 +1,6 @@
 # Coreset for directional width
 
-Let $P$ be a finite set of points in $\mathbb{R}^d$. For a unit vector $u$, the *directional width* of $P$ in direction $u$ is
+Let $P$ be a finite nonempty set of points in $\mathbb{R}^d$. For a unit vector $u$, the *directional width* of $P$ in direction $u$ is
 
 $$W_P(u) = \max_{p \in P} (p \cdot u) - \min_{p \in P} (p \cdot u),$$
 

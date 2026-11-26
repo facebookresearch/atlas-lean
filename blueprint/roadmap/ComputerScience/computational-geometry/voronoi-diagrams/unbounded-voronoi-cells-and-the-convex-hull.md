@@ -1,11 +1,10 @@
 # Unbounded Voronoi cells and the convex hull
 
-Let $P$ be a set of $n \ge 2$ sites in $\mathbb{R}^2$. The Voronoi cell $V(p)$ of a site $p \in P$ is unbounded if and only if $p$ lies on the boundary of $\operatorname{conv}(P)$.
+Let $P$ be a set of $n \ge 2$ sites in $\mathbb{R}^2$ and $\operatorname{conv}(P)$ its convex hull, the set of convex combinations of points of $P$. The Voronoi cell $V(p)$ of a site $p \in P$ is unbounded if and only if $p$ lies on the boundary of $\operatorname{conv}(P)$ in $\mathbb{R}^2$. When the sites lie on one line, $\operatorname{conv}(P)$ is a segment equal to its own boundary and every cell is unbounded.
 
 ## Depends on
 
 - [Voronoi diagram of a planar point set](voronoi-diagram.md)
-- [Convex hull of a finite planar point set](../convex-hull-algorithms/convex-hull-of-a-finite-planar-point-set.md)
 
 ## Sources
 

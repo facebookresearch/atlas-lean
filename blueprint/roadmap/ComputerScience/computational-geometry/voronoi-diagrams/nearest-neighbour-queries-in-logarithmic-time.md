@@ -1,6 +1,6 @@
 # Nearest-neighbour queries in logarithmic time
 
-Let $P$ be a set of $n$ points in $\mathbb{R}^2$. In expected $O(n \log n)$ time one can build a data structure of size $O(n)$ that, for any query point $q \in \operatorname{conv}(P)$, finds a nearest neighbour of $q$ in $P$ in $O(\log n)$ time: triangulate the Voronoi diagram restricted to the hull and answer queries by point location in Kirkpatrick's hierarchy.
+Let $P$ be a set of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line. In expected $O(n \log n)$ time one can build a data structure of size $O(n)$ that, for any query point $q \in \operatorname{conv}(P)$, finds a nearest neighbour of $q$ in $P$ in $O(\log n)$ time: triangulate the Voronoi diagram restricted to the hull and answer queries by point location in Kirkpatrick's hierarchy.
 
 ## Depends on
 

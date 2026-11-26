@@ -1,6 +1,6 @@
 # Halfplane discrepancy
 
-Let $P$ be a finite set of points in the unit square $U = [0,1]^2$. For a closed halfplane $h$ let $\mu(h)$ be the area of $h \cap U$ and $\mu_P(h) = |P \cap h| / |P|$. The *discrepancy* of $P$ with respect to $h$ is $\Delta_P(h) = |\mu(h) - \mu_P(h)|$, and the *halfplane discrepancy* of $P$ is $\Delta(P) = \sup_h \Delta_P(h)$, the supremum over all halfplanes. For halfplanes whose boundary passes through points of $P$, each such point may be counted in or out, whichever gives the larger discrepancy.
+Let $P$ be a finite nonempty set of points in the unit square $U = [0,1]^2$. For a closed halfplane $h$ let $\mu(h)$ be the area of $h \cap U$ and $\mu_P(h) = |P \cap h| / |P|$. The *discrepancy* of $P$ with respect to $h$ is $\Delta_P(h) = |\mu(h) - \mu_P(h)|$, and the *halfplane discrepancy* of $P$ is $\Delta(P) = \sup_h \Delta_P(h)$, the supremum over all halfplanes. For halfplanes whose boundary passes through points of $P$, each such point may be counted in or out, whichever gives the larger discrepancy.
 
 ## Sources
 

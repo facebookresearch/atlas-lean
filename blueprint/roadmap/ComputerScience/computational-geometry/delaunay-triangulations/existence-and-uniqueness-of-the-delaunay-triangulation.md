@@ -15,4 +15,4 @@ If no four points of $P$ lie on a common circle, then $P$ has exactly one Delaun
 
 ## Sources
 
-- *Geometric Algorithms*, course slides, Utrecht University, 2023, "Delaunay triangulations", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides9.pdf>: slides 20–21: for points in general position the Delaunay graph is a triangulation, and a triangulation is a Delaunay triangulation exactly when every circumcircle has no point of $P$ in its interior
+- *Geometric Algorithms*, course slides, Utrecht University, 2023, "Delaunay triangulations", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides9.pdf>: slides 21–22: for points in general position the Delaunay graph is a triangulation, and a triangulation is a Delaunay triangulation exactly when every circumcircle has no point of $P$ in its interior

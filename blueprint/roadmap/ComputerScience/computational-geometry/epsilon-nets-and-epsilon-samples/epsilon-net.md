@@ -1,8 +1,8 @@
 # ε-net and ε-sample of a range space
 
-A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $X$ (*ranges*). For $Y \subseteq X$ let $R|_Y = \{r \cap Y : r \in R\}$; $Y$ is *shattered* if $R|_Y$ contains every subset of $Y$, and the *VC dimension* of $(X, R)$ is the largest size of a shattered subset of $X$ ($\infty$ if there are arbitrarily large ones). For a finite $x \subseteq X$ and $r \in R$, the *measure* of $r$ is $m(r) = |r \cap x| / |x|$.
+A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $X$ (*ranges*). For $Y \subseteq X$ let $R|_Y = \{r \cap Y : r \in R\}$; $Y$ is *shattered* if $R|_Y$ contains every subset of $Y$, and the *VC dimension* of $(X, R)$ is the largest size of a shattered subset of $X$ ($\infty$ if there are arbitrarily large ones). For a finite nonempty $x \subseteq X$ and $r \in R$, the *measure* of $r$ is $m(r) = |r \cap x| / |x|$.
 
-For $0 \le \varepsilon \le 1$, a subset $N \subseteq x$ (possibly a multiset) is an *$\varepsilon$-net* for $x$ if every range $r \in R$ with $m(r) \ge \varepsilon$ contains a point of $N$. A subset $C \subseteq x$ (possibly a multiset) is an *$\varepsilon$-sample* for $x$ if $|m(r) - |C \cap r| / |C|| \le \varepsilon$ for every range $r \in R$, counting $C \cap r$ with multiplicity.
+For $0 \le \varepsilon \le 1$, a subset $N \subseteq x$ (possibly a multiset) is an *$\varepsilon$-net* for $x$ if every range $r \in R$ with $m(r) \ge \varepsilon$ contains a point of $N$. A nonempty subset $C \subseteq x$ (possibly a multiset) is an *$\varepsilon$-sample* for $x$ if $|m(r) - |C \cap r| / |C|| \le \varepsilon$ for every range $r \in R$, counting $C \cap r$ with multiplicity.
 
 ## Sources
 

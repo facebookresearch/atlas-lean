@@ -62,7 +62,7 @@ here is the translated Ambrosetti–Rabinowitz geometry: `f a = 0`,
 
 open scoped unitInterval
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- **Critical point.** Let $E$ be a real Banach space and $f : E \to \mathbb{R}$. A point
 $x \in E$ is a critical point of $f$ when the Fréchet derivative of $f$ at $x$ vanishes,
@@ -118,8 +118,8 @@ applications', J. Funct. Anal. 14 (1973) 349–381. Listed as §119 in O. Knill,
 Theorems in Mathematics*
 (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
 leanprover/lean-eval@38361be, problem `mountain_pass`. -/
-public theorem_wanted mountain_pass (f : E → ℝ) (_hf : ContDiff ℝ 1 f) (_hps : PalaisSmale f)
-    {a b : E} {ε r : ℝ} (_hmr : MountainRange f a b ε r) :
+public theorem_wanted mountain_pass [CompleteSpace E] (f : E → ℝ) (_hf : ContDiff ℝ 1 f)
+    (_hps : PalaisSmale f) {a b : E} {ε r : ℝ} (_hmr : MountainRange f a b ε r) :
     ∃ x : E, IsCriticalPoint f x ∧
       f x = mountainPassLevel f a b ∧ ε ≤ mountainPassLevel f a b
 

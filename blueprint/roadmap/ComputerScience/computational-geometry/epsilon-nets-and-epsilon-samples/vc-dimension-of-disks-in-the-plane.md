@@ -1,6 +1,6 @@
 # VC dimension of disks in the plane
 
-A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $X$ (*ranges*). For $Y \subseteq X$ let $R|_Y = \{r \cap Y : r \in R\}$; $Y$ is *shattered* if $R|_Y$ contains every subset of $Y$, and the *VC dimension* of $(X, R)$ is the largest size of a shattered subset of $X$ ($\infty$ if there are arbitrarily large ones). For a finite $x \subseteq X$ and $r \in R$, the *measure* of $r$ is $m(r) = |r \cap x| / |x|$.
+A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $X$ (*ranges*). For $Y \subseteq X$ let $R|_Y = \{r \cap Y : r \in R\}$; $Y$ is *shattered* if $R|_Y$ contains every subset of $Y$, and the *VC dimension* of $(X, R)$ is the largest size of a shattered subset of $X$ ($\infty$ if there are arbitrarily large ones).
 
 The range space $(\mathbb{R}^2, \mathcal{D})$, where $\mathcal{D}$ is the family of closed disks, has VC dimension $3$: some three points are shattered, and no four points are.
 

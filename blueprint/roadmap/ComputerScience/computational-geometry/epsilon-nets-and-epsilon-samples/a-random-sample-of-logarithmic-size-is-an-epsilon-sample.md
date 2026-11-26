@@ -1,10 +1,14 @@
 # A random sample of logarithmic size is an ε-sample
 
-There is a constant $c$ with the following property. Let $(x, R)$ be a finite range space with $n = |x|$ points and VC dimension at most $\delta$, and let $\varepsilon, \varphi \in (0, 1)$. A uniformly random subset $C \subseteq x$ of size $\dfrac{c\,\delta}{\varepsilon^2} \log \dfrac{n}{\varphi}$ is an $\varepsilon$-sample for $x$ with probability at least $1 - \varphi$. The proof applies a Chernoff bound to each of the at most $O(n^\delta)$ distinct ranges and takes a union bound.
+There is a constant $c$ with the following property. Let $(x, R)$ be a finite range space with $n = |x| \ge 1$ points and VC dimension at most $\delta$, where $\delta \ge 1$ is an integer, and let $\varepsilon, \varphi \in (0, 1)$. A subset $C \subseteq x$ chosen uniformly at random among the subsets of size $\min\big(\big\lceil \tfrac{c\,\delta}{\varepsilon^2} \log \tfrac{n}{\varphi} \big\rceil, n\big)$ is an $\varepsilon$-sample for $x$ with probability at least $1 - \varphi$. The proof applies a Chernoff bound to each of the at most $O(n^\delta)$ distinct ranges and takes a union bound.
 
 ## Depends on
 
 - [ε-net and ε-sample of a range space](epsilon-net.md)
+
+## Proof depends on
+
+- [Sauer-Shelah bound on traces](../../not-yet-classified/growth/card-trace-family-le-sum-vc-dim.md)
 
 ## Sources
 

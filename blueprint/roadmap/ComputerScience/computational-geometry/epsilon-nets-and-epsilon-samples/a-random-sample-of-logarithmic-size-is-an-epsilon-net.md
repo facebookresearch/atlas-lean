@@ -1,10 +1,14 @@
 # A random sample of logarithmic size is an ε-net
 
-Let $(x, R)$ be a finite range space with $n = |x|$ points and VC dimension at most $\delta$, and let $\varepsilon, \varphi \in (0, 1)$. A sample $C$ of $m = O\big(\tfrac{\delta}{\varepsilon} \log \tfrac{n}{\varphi}\big)$ independent uniform points of $x$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$: a fixed range with at least $\varepsilon n$ points is missed with probability at most $(1 - \varepsilon)^m \le e^{-\varepsilon m}$, and there are at most $2(ne/\delta)^\delta$ ranges.
+Let $(x, R)$ be a finite range space with $n = |x| \ge 1$ points and VC dimension at most $\delta$, where $\delta \ge 1$ is an integer, and let $\varepsilon, \varphi \in (0, 1)$. There is an integer $m = O\big(\tfrac{\delta}{\varepsilon} \log \tfrac{n}{\varphi}\big)$ such that the multiset $C$ of $m$ independent draws from the uniform distribution on $x$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$: a fixed range with at least $\varepsilon n$ points is missed with probability at most $(1 - \varepsilon)^m \le e^{-\varepsilon m}$, and there are at most $2(ne/\delta)^\delta$ ranges.
 
 ## Depends on
 
 - [ε-net and ε-sample of a range space](epsilon-net.md)
+
+## Proof depends on
+
+- [Sauer-Shelah bound on traces](../../not-yet-classified/growth/card-trace-family-le-sum-vc-dim.md)
 
 ## Sources
 

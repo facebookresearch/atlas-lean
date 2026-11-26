@@ -1,6 +1,6 @@
 # Approximating the diameter with a well-separated pair decomposition
 
-Let $P$ be a set of $n$ points in $\mathbb{R}^d$, for fixed $d$, and let $0 < \varepsilon \le 1$. Take an $s$-WSPD of $P$ of size $O(s^d n)$, as given by the existence theorem, with $s = 4/\varepsilon$, choose a representative point in each set of each pair, and return the pair of representatives at largest distance. Its distance $D'$ satisfies $\operatorname{diam}(P)/(1 + \varepsilon) \le D' \le \operatorname{diam}(P)$, and the computation takes $O(n \log n + n/\varepsilon^d)$ time.
+Let $P$ be a set of $n \ge 2$ points in $\mathbb{R}^d$, for fixed $d$, and let $0 < \varepsilon \le 1$. Take an $s$-WSPD of $P$ of size $O(s^d n)$, as given by the existence theorem, with $s = 4/\varepsilon$, choose a representative point in each set of each pair, and return the pair of representatives at largest distance. Its distance $D'$ satisfies $\operatorname{diam}(P)/(1 + \varepsilon) \le D' \le \operatorname{diam}(P)$, and the computation takes $O(n \log n + n/\varepsilon^d)$ time.
 
 ## Depends on
 

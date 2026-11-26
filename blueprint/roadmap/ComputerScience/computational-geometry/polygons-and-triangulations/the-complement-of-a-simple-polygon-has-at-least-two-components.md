@@ -1,8 +1,8 @@
 # The complement of a simple polygon has at least two components
 
-Let $P \subset \mathbb{R}^2$ be the boundary curve of a simple polygon. For a point $q \notin P$ that lies on no vertical line through a vertex of $P$, let $\pi(q) \in \{0, 1\}$ be the parity of the number of edges of $P$ that meet the upward vertical ray from $q$. Then $\pi$ is constant on the points where it is defined in each connected component of $\mathbb{R}^2 \setminus P$, and both values occur: points just above and just below the relative interior of an edge have different parity. Hence $\mathbb{R}^2 \setminus P$ has at least two connected components.
+Let $P \subset \mathbb{R}^2$ be the boundary curve of a simple polygon. For a point $q \notin P$ that lies on no vertical line through a vertex of $P$, let $\pi(q) \in \{0, 1\}$ be the parity of the number of edges of $P$ that meet the upward vertical ray from $q$. Then $\pi$ is constant on the points where it is defined in each connected component of $\mathbb{R}^2 \setminus P$, and both values occur: points just above and just below the relative interior of a non-vertical edge have different parity. Hence $\mathbb{R}^2 \setminus P$ has at least two connected components.
 
-The proof compares two trapezoids of the slab decomposition that share a vertical wall through a vertex $p_i$: whether the neighbours $p_{i-1}, p_{i+1}$ lie on the same or on opposite sides of the wall, the numbers of edges above the two trapezoids differ by $0$ or $2$.
+After a rotation of the plane, which is a homeomorphism, no two vertices share an $x$-coordinate. The proof compares two trapezoids of the slab decomposition that share a vertical wall through a vertex $p_i$: whether the neighbours $p_{i-1}, p_{i+1}$ lie on the same or on opposite sides of the wall, the numbers of edges above the two trapezoids differ by $0$ or $2$.
 
 ## Depends on
 
