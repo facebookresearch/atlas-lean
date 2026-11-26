@@ -43,17 +43,16 @@ private theorem one_le_subRepCount_univ (G : Type*) [AddCommGroup G] [Fintype G]
 
 /-- A `1`-difference basis covers the group by its pairs, so the group size is at most the
 square of the basis size. -/
-private theorem natCard_le_card_sq_of_basis (G : Type*) [AddCommGroup G] [Fintype G]
+private theorem natCard_le_card_sq_of_basis (G : Type*) [AddCommGroup G]
     [DecidableEq G] (A : Finset G) (hA : ∀ x, 1 ≤ subRepCount A x) :
     Nat.card G ≤ A.card ^ 2 := by
   have hsurj : Function.Surjective (fun p : ↥(A ×ˢ A) => p.1.1 - p.1.2) := by
     intro x
     obtain ⟨p, hp⟩ := Finset.card_pos.mp (hA x)
     exact ⟨⟨p, (Finset.mem_filter.mp hp).1⟩, (Finset.mem_filter.mp hp).2⟩
-  rw [Nat.card_eq_fintype_card]
-  have hcard := Fintype.card_le_of_surjective _ hsurj
-  rw [Fintype.card_coe, Finset.card_product] at hcard
-  calc Fintype.card G ≤ A.card * A.card := hcard
+  have hcard := Nat.card_le_card_of_surjective _ hsurj
+  rw [Nat.card_eq_finsetCard, Finset.card_product] at hcard
+  calc Nat.card G ≤ A.card * A.card := hcard
     _ = A.card ^ 2 := (pow_two _).symm
 
 /-- If a finite abelian group has $q^2$ elements, every $1$-difference basis has at least $q$
@@ -144,7 +143,7 @@ private theorem groupDiffBasisNumber_galoisField_le (p t : ℕ) [Fact p.Prime] (
         congr 1 <;> simp [Fintype.card_pi, ZMod.card, Finset.prod_const]
 
 /-- The error terms $p^{t/2}/p^t$ and $p^{t-t/2}/p^t$ both tend to zero. -/
-private theorem tendsto_err (p : ℕ) (hp1 : (1:ℝ) < p) :
+private theorem tendsto_err (p : ℕ) (hp1 : (1 : ℝ) < p) :
     Tendsto (fun t : ℕ => ((p ^ (t / 2) + p ^ (t - t / 2) : ℕ) : ℝ) / (p : ℝ) ^ t)
       atTop (𝓝 0) := by
   have hp0 : (0:ℝ) < p := zero_lt_one.trans hp1
@@ -256,3 +255,5 @@ public theorem tendsto_groupDiffBasisNumber_galoisField_prod (p : ℕ) [Fact p.P
   exact h2
 
 end
+
+end MetaMathlibExt
