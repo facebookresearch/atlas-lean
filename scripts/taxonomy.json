@@ -11171,6 +11171,7 @@
   "MathlibExt/Combinatorics/Enumerative/SquareGridR2Odd": {"to": "Combinatorics/tilings-board-placements", "title": "Tilings of grids, cylinders and tori up to symmetry"},
   "MathlibExt/Combinatorics/Enumerative/StableMatchingHellCouples": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
   "MathlibExt/Combinatorics/Enumerative/StableMatchingSequences": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
+  "MathlibExt/Combinatorics/Enumerative/StableMatchingSoulmates": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
   "MathlibExt/Combinatorics/Enumerative/StaverIdentity": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Staver's identity"},
   "MathlibExt/Combinatorics/Enumerative/Stirling": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the first kind"},
   "MathlibExt/Combinatorics/Enumerative/StirlingAscPochhammer": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the first kind"},
