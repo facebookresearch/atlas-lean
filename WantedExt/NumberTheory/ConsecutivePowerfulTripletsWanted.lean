@@ -11,7 +11,9 @@ Lemma 2 (`MetaMathlibExt.sq_add_add_one_eq_three_mul_cube_iff`) is proved in
 `MathlibExt.NumberTheory.SqAddAddOneEqThreeMulCube`. Lemma 4
 (`MetaMathlibExt.gcd_sub_one_sq_add_add_one`) is proved in
 `MathlibExt.NumberTheory.CubeFactorGCD`. Lemma 5 (`MetaMathlibExt.cube_sub_cube_eq_two_or_one_iff`)
-is proved in `MathlibExt.NumberTheory.CubeSubCube`.
+is proved in `MathlibExt.NumberTheory.CubeSubCube`. Lemma 8
+(`MetaMathlibExt.cube_sub_mul_cube_eq_one_iff_of_mem`) is proved in
+`MathlibExt.NumberTheory.CubeSubMulCube`.
 -/
 
 module
@@ -22,6 +24,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.CoprimePrimeSquareCubeSplit
 public import MathlibExt.NumberTheory.CubeFactorGCD
 public import MathlibExt.NumberTheory.CubeSubCube
+public import MathlibExt.NumberTheory.CubeSubMulCube
 public import MathlibExt.NumberTheory.CubeSubTwoMulCube
 public import MathlibExt.NumberTheory.PrimeGCDCubeSplit
 public import MathlibExt.NumberTheory.SqAddAddOneEqThreeMulCube
@@ -40,17 +43,6 @@ with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 3
 public theorem_wanted sq_add_add_one_eq_cube_iff (u : ℤ) :
     ((∃ v : ℤ, u ^ 2 + u + 1 = v ^ 3) ↔ u = -19 ∨ u = -1 ∨ u = 0 ∨ u = 18) ∧
       ((∃ v : ℤ, u ^ 2 - u + 1 = v ^ 3) ↔ u = -18 ∨ u = 0 ∨ u = 1 ∨ u = 19)
-
-/-- **Integer solutions of $u^3 - d v^3 = 1$ for $d \in \{4, 18, 36\}$.** Let $d$ be one of the
-integers $4$, $18$, $36$. For all integers $u$ and $v$, $u^3 - d v^3 = 1$ if and only if
-$(u, v) = (1, 0)$.
-
-Source: Jialai She, *Nonexistence of Consecutive Powerful Triplets Around Cubes
-with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 8
-(`integers-2025-A103-lem-8`). -/
-public theorem_wanted cube_sub_mul_cube_eq_one_iff_of_mem {d : ℤ}
-    (hd : d = 4 ∨ d = 18 ∨ d = 36) (u v : ℤ) :
-    u ^ 3 - d * v ^ 3 = 1 ↔ (u, v) = (1, 0)
 
 /-- **$x^3 - 1$ and $x^3 + 1$ are not both a prime square times a cube.** There are no primes
 $p$, $q$ and integers $x$, $a$, $b$ with $x^3 - 1 = p^2 a^3$ and $x^3 + 1 = q^2 b^3$.
