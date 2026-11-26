@@ -13581,6 +13581,7 @@
   "MathlibExt/NumberTheory/ReducedResidueAverage": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAP": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
+  "MathlibExt/NumberTheory/ReducedResidueLongestAPAbsLeastAPLengthPrimePow": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResiduePrimeBound": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/RegularResidues": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Regular integers modulo n"},
