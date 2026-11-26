@@ -30,11 +30,14 @@ import Mathlib.Tactic.Ring
 
 This module proves that the symmetrized extension of a stable string of positive integers is a
 nontrivial symmetry: a rearrangement with the same Gauss–Kuzmin mass that differs both from the
-string and from its reverse.
+string and from its reverse. It also proves that the Gauss–Kuzmin mass of a string of positive
+integers equals the mass of its reverse and equals the absolute value of an explicit base-two
+logarithm in the entries of its convergent matrix.
 
 Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
 Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 5.7 (`integers-2025-A89-lem-5-7`), equations (5.12) and (5.13).
+Lemma 2.5 (`integers-2025-A89-lem-2-5`), equation (2.13), and Lemma 5.7
+(`integers-2025-A89-lem-5-7`), equations (5.12) and (5.13).
 -/
 
 namespace MetaMathlibExt
@@ -302,6 +305,51 @@ private theorem mass_cons_formula (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) (t : 
     hratio, List.length_cons, ← hsdef]
   change |Real.log _| / Real.log 2 = |Real.log _ / Real.log 2|
   rw [abs_div, abs_of_pos hlog2]
+
+/-- **Explicit Gauss–Kuzmin mass of a string.** Let $a$ be a string of $n$ positive integers, let
+$p$, $q'$ and $q$ be the upper-right, lower-left and lower-right entries of its convergent matrix
+$C(a)$, and let $\overleftarrow{a}$ be the reverse of $a$. Then the Gauss–Kuzmin masses satisfy
+$P_{GK}(a) = P_{GK}(\overleftarrow{a})$ and
+$P_{GK}(a) = \left|\log_2\left(1 + \frac{(-1)^n}{(p + q)(q' + q)}\right)\right|$.
+
+Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
+Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
+Lemma 2.5 (`integers-2025-A89-lem-2-5`), equation (2.13). -/
+public theorem gaussKuzminMass_eq_abs_logb (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) :
+    gaussKuzminMass a = gaussKuzminMass a.reverse ∧
+      gaussKuzminMass a = |logb 2 (1 + (-1) ^ a.length / (((convergentMatrix a 0 1 : ℝ) +
+          (convergentMatrix a 1 1 : ℝ)) * ((convergentMatrix a 1 0 : ℝ) +
+          (convergentMatrix a 1 1 : ℝ))))| := by
+  have hformula : ∀ b : List ℕ, (∀ x ∈ b, 0 < x) → gaussKuzminMass b =
+      |Real.logb 2 (1 + (-1 : ℝ) ^ b.length / ((characteristicNumber b : ℤ) : ℝ))| := by
+    intro b hb
+    cases b with
+    | nil =>
+      have hlog2 : (0 : ℝ) < Real.log 2 := Real.log_pos one_lt_two
+      rw [gaussKuzminMass_nil, ← fundInterval_of_lt (zero_lt_one : (0 : ℝ) < 1),
+        integral_fundInterval 0 1 (by norm_num) (by norm_num), characteristicNumber_nil]
+      norm_num
+      rw [abs_of_pos hlog2, div_self hlog2.ne']
+    | cons t b =>
+      exact mass_cons_formula b (fun x hx => hb x (List.mem_cons_of_mem t hx)) t
+        (hb t List.mem_cons_self)
+  have hrev := (convergentMatrix_reverse_append_cons a ha 1 le_rfl).1
+  have e01 : convergentMatrix a.reverse 0 1 = convergentMatrix a 1 0 := by rw [hrev]; simp
+  have e10 : convergentMatrix a.reverse 1 0 = convergentMatrix a 0 1 := by rw [hrev]; simp
+  have e11 : convergentMatrix a.reverse 1 1 = convergentMatrix a 1 1 := by rw [hrev]; simp
+  have hχ : characteristicNumber a.reverse = characteristicNumber a := by
+    simp only [characteristicNumber, e01, e10, e11]
+    ring
+  have hχR : ((characteristicNumber a : ℤ) : ℝ) = ((convergentMatrix a 0 1 : ℝ) +
+      (convergentMatrix a 1 1 : ℝ)) * ((convergentMatrix a 1 0 : ℝ) +
+      (convergentMatrix a 1 1 : ℝ)) := by
+    simp only [characteristicNumber]
+    push_cast
+    ring
+  have hrpos : ∀ x ∈ a.reverse, 0 < x := fun x hx => ha x (List.mem_reverse.mp hx)
+  refine ⟨?_, ?_⟩
+  · rw [hformula a ha, hformula a.reverse hrpos, List.length_reverse, hχ]
+  · rw [hformula a ha, hχR]
 
 private theorem mass_aux (L : List ℕ) (c : ℕ) (hc : 0 < c) (hL : ∀ x ∈ L, 0 < x)
     (hstL : convergentMatrix (L ++ [c]) 0 1 = 2 * convergentMatrix (L ++ [c]) 1 0) :
