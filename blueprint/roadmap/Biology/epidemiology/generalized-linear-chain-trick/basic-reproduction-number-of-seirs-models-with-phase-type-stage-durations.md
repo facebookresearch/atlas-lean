@@ -1,12 +1,14 @@
 # Basic reproduction number of SEIRS models with phase-type stage durations
 
 **Model.** Let the latent period (state E), the infectious period (state I) and the duration of immunity (state R) be phase-type distributed with parameters $(\boldsymbol\alpha_E, \mathbf A_E)$, $(\boldsymbol\alpha_I, \mathbf A_I)$ and $(\boldsymbol\alpha_R, \mathbf A_R)$, of sizes $k_E, k_I, k_R$, and let all individuals die at rate $\mu > 0$. With sub-state vectors $\mathbf x$ (exposed), $\mathbf y$ (infectious) and $\mathbf z$ (recovered), the generalized linear chain trick gives the mean-field SEIRS model
+
 $$\begin{aligned}
 \dot S &= \Lambda(S,\mathbf x,\mathbf y,\mathbf z) - \mu S - \lambda(t) S + \bigl(-\mathbf 1^{\mathsf T}\mathbf A_R^{\mathsf T}\mathbf z\bigr),\\
 \dot{\mathbf x} &= \boldsymbol\alpha_E\, \lambda(t) S + \mathbf A_E^{\mathsf T}\mathbf x - \mu\mathbf x,\\
 \dot{\mathbf y} &= \boldsymbol\alpha_I\bigl(-\mathbf 1^{\mathsf T}\mathbf A_E^{\mathsf T}\mathbf x\bigr) + \mathbf A_I^{\mathsf T}\mathbf y - \mu\mathbf y,\\
 \dot{\mathbf z} &= \boldsymbol\alpha_R\bigl(-\mathbf 1^{\mathsf T}\mathbf A_I^{\mathsf T}\mathbf y\bigr) + \mathbf A_R^{\mathsf T}\mathbf z - \mu\mathbf z,
 \end{aligned}$$
+
 with force of infection $\lambda(t) = \boldsymbol\beta^{\mathsf T}\mathbf y$ (stage-specific transmission rates $\boldsymbol\beta \in \mathbb R_{\ge 0}^{k_I}$) and a smooth birth term $\Lambda \ge 0$ for which the disease-free equilibrium $(S_0, \mathbf 0, \mathbf 0, \mathbf 0)$ is locally asymptotically stable without the pathogen. Put $\mathbf G_E = \mathbf A_E - \mu\mathbf I$ and $\mathbf G_I = \mathbf A_I - \mu\mathbf I$.
 
 **Theorem.** The disease-free equilibrium is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$, where

@@ -1,12 +1,14 @@
 # Reproduction number and immune-delay Hopf bifurcation in a within-host SARS-CoV-2 model
 
 **Model.** Let $T, I, V, E, C$ be uninfected epithelial cells, infected cells, free virus, ACE2 receptor level and cytotoxic T lymphocytes. With latent delay $\tau_1$, immune-activation delay $\tau_2$, drug efficacies $\epsilon_1, \epsilon_2 \in [0,1)$ and nonlytic inhibition $1 + qC$,
+
 $$\begin{aligned}
 \dot T &= \lambda_1 - (1-\epsilon_1)\frac{\beta EVT}{1+qC} - d_T T,\\
 \dot I &= (1-\epsilon_1)\frac{e^{-d_I\tau_1}\beta E(t-\tau_1)V(t-\tau_1)T(t-\tau_1)}{1 + qC(t-\tau_1)} - d_I I - pIC,\\
 \dot V &= (1-\epsilon_2)m d_I I - d_V V, \qquad \dot E = \lambda_2 - \theta\beta EVT - d_E E,\\
 \dot C &= \alpha I(t-\tau_2)C(t-\tau_2)\Big(1 - \frac{C(t-\tau_2)}{C_{\max}}\Big) - d_C C,
 \end{aligned}$$
+
 with positive parameters ($m$ is the burst size per infected-cell lifetime).
 
 **Reproduction number.** For the delay-free system the next-generation method gives

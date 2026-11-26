@@ -1,12 +1,14 @@
 # Sharp extinction–persistence threshold for the switching stochastic SIQRS model
 
 **Model.** Susceptible $S$, infected $I$, quarantined $Q$ and recovered $R$ hosts, with recovered hosts losing immunity, live in an environment $r(t)$ given by an irreducible continuous-time Markov chain on $\mathcal M = \{1,\dots,m_0\}$ with stationary law $\pi$, independent of Brownian motions $W_1,\dots,W_4$:
+
 $$\begin{aligned}
 dS &= \big[A(r) - F(S,I,r)I - \mu(r)S + \gamma_5(r)R\big]dt + \sigma_1(r)S\,dW_1,\\
 dI &= \big[F(S,I,r) - \mu(r) - \gamma_1(r) - \gamma_2(r)\big]I\,dt + \sigma_2(r)I\,dW_2,\\
 dQ &= \big[\gamma_2(r)I - (\mu(r) + \gamma_3(r) + \gamma_4(r))Q\big]dt + \sigma_3(r)Q\,dW_3,\\
 dR &= \big[\gamma_3(r)Q - (\mu(r) + \gamma_5(r))R\big]dt + \sigma_4(r)R\,dW_4,
 \end{aligned}$$
+
 with $\sigma_i \ne 0$. Here $A$ is recruitment, $\mu$ natural death, $\gamma_1$ disease death, $\gamma_2$ quarantine, $\gamma_3$ recovery, $\gamma_4$ death in quarantine, $\gamma_5$ loss of immunity, and $F(S,I,k)$ a general per-infective incidence function (bilinear, saturated, Beddington–DeAngelis and similar forms are allowed). Let $c_2(k) = \mu(k) + \gamma_1(k) + \gamma_2(k)$.
 
 **Threshold.** Without infection the pair $(S, r)$ has a unique invariant probability measure $\nu_0$ on $(0,\infty)\times\mathcal M$. Define the invasion rate of the disease

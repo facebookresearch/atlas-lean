@@ -1,12 +1,14 @@
 # Extinction and persistence in a stochastic SICA model with Lévy jumps
 
 **Model.** The SICA model of HIV/AIDS tracks susceptibles $S$, HIV-infected individuals without AIDS symptoms $I$, chronically infected individuals on antiretroviral treatment $C$, and AIDS patients $A$. Transmission is perturbed by white noise of intensity $\sigma$ and by Lévy jumps with intensity $J(u)$:
+
 $$\begin{aligned}
 dS&=(\Lambda-\beta IS-\mu S)\,dt-\sigma IS\,dW_t-\int_UJ(u)I(t^-)S(t^-)\,\tilde N(dt,du),\\
 dI&=\big(\beta IS-(\rho+\phi+\mu)I+\alpha A+\omega C\big)dt+\sigma IS\,dW_t+\int_UJ(u)I(t^-)S(t^-)\,\tilde N(dt,du),\\
 dC&=\big(\phi I-(\omega+\mu)C\big)dt,\\
 dA&=\big(\rho I-(\alpha+\mu+d)A\big)dt,
 \end{aligned}$$
+
 where $\tilde N$ is a compensated Poisson random measure with finite intensity $\nu$ on $U$. Here $\phi$ is the rate of starting treatment, $\omega$ the rate of treatment failure back to $I$, $\rho$ the rate of progression to AIDS, $\alpha$ the rate of AIDS patients returning to $I$ under treatment, and $d$ the AIDS-induced death rate.
 
 **Theorem.**

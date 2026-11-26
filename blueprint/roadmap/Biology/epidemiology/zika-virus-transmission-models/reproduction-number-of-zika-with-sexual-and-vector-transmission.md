@@ -1,10 +1,12 @@
 # Reproduction number of Zika virus with combined sexual and vector transmission
 
 **Model.** Humans are susceptible ($S$), Zika-infected ($I_z$) or recovered ($R$); mosquitoes are susceptible ($S_m$) or infected ($I_m$):
+
 $$\begin{aligned}
 \dot S &= \Lambda - (\beta_m I_m + \beta_z I_z)S - \mu S, & \dot I_z &= (\beta_m I_m + \beta_z I_z)S - (\mu_z + \delta_z + \mu)I_z, & \dot R &= \delta_z I_z - \mu R,\\
 \dot S_m &= \Lambda_m - \alpha_m I_z S_m - \mu_m S_m, & \dot I_m &= \alpha_m I_z S_m - \mu_m I_m,
 \end{aligned}$$
+
 with recruitment $\Lambda, \Lambda_m$, natural death rates $\mu, \mu_m$, disease death $\mu_z$, recovery $\delta_z$, sexual transmission $\beta_z$, mosquito-to-human transmission $\beta_m$ and human-to-mosquito transmission $\alpha_m$. The disease-free equilibrium is $(\Lambda/\mu, 0, 0, \Lambda_m/\mu_m, 0)$.
 
 **Proposition.** Let $k = \mu_z + \delta_z + \mu$ and

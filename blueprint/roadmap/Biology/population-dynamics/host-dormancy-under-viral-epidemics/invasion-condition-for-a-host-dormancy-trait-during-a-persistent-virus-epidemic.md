@@ -1,6 +1,7 @@
 # Invasion condition for a host dormancy trait during a persistent lytic virus epidemic
 
 **Model.** Two host types compete in a logistic chemostat-like population with virions (type 3). Type 1 hosts are active ($1a$) or infected ($1i$); type 2 hosts are active ($2a$), dormant ($2d$) or infected ($2i$). Active hosts of type $j$ reproduce at rate $\lambda_j$ and die at rate $\mu_1 + C(n_1 + n_2)$, with $0 < \mu_1 < \lambda_2 < \lambda_1$ (dormancy carries a reproductive cost). A virion contacts an active host at rate $D$; for type 1 this always gives infection, while for type 2 a fraction $q$ of contacts instead triggers dormancy (the virion being lost only in the infecting contacts). Infected cells recover at rate $r$ or lyse at rate $v$, releasing $m$ virions; dormant cells resuscitate at rate $\sigma$ and die at rate $\kappa\mu_1$; virions decay at rate $\mu_3$. The individual-based Markov chain $\mathbf{N}^K$, rescaled by the carrying capacity $K$, converges to
+
 $$\begin{aligned}
 \dot n_{1a} &= n_{1a}(\lambda_1 - \mu_1 - C(n_1+n_2) - Dn_3) + r n_{1i}, & \dot n_{1i} &= D n_3 n_{1a} - (r+v)n_{1i},\\
 \dot n_{2a} &= n_{2a}(\lambda_2 - \mu_1 - C(n_1+n_2) - Dn_3) + r n_{2i} + \sigma n_{2d}, & \dot n_{2d} &= qDn_3 n_{2a} - (\kappa\mu_1 + \sigma)n_{2d},\\

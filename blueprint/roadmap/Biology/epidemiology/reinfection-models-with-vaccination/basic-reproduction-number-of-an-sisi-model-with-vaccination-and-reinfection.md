@@ -1,12 +1,14 @@
 # Basic reproduction number of an SISI model with vaccination and reinfection
 
 **Model.** Susceptibles $S$ become primary infections $I_1$. Recovery, or vaccination of a fraction $\upsilon$ of recruits, moves individuals to a partially protected class $S_1$, which can be reinfected into $I_2$ at a reduced rate factor $\delta\in[0,1]$. Both infected classes transmit equally:
+
 $$\begin{aligned}
 \dot S&=(1-\upsilon)\Lambda-\mu S-\beta S(I_1+I_2),\\
 \dot I_1&=\beta S(I_1+I_2)-(\mu+\mu'+\alpha)I_1,\\
 \dot S_1&=\upsilon\Lambda+\alpha(I_1+I_2)-\mu S_1-\delta\beta S_1(I_1+I_2),\\
 \dot I_2&=\delta\beta S_1(I_1+I_2)-(\mu+\mu'+\alpha)I_2,
 \end{aligned}$$
+
 with recruitment $\Lambda$, natural mortality $\mu$, disease mortality $\mu'$ and recovery rate $\alpha$.
 
 **Theorem.**

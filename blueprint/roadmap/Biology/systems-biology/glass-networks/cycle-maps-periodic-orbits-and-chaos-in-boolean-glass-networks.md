@@ -18,10 +18,12 @@ Composing along a cycle of orthants in the state-transition diagram (a directed 
 5. The corresponding periodic orbit of the network has period $\log\lambda$.
 
 **Chaos.** For the 4-variable Boolean Glass network
+
 $$\begin{aligned}
 \dot y_1 &= -y_1 + 2\tilde y_3 - 1, &\dot y_2 &= -y_2 + 2(1 - \tilde y_3 + \tilde y_1\tilde y_3 - \tilde y_1\tilde y_3\tilde y_4) - 1,\\
 \dot y_3 &= -y_3 + 2\big((1-\tilde y_1)(1-\tilde y_4) + \tilde y_2\tilde y_4\big) - 1, &\dot y_4 &= -y_4 + 2\big((1-\tilde y_1)(1-\tilde y_3) + \tilde y_1\tilde y_2\big) - 1,
 \end{aligned}$$
+
 the returning cones of two competing cycles and their images under the cycle maps form a Smale horseshoe-like structure, giving chaotic (aperiodic, sensitively dependent) dynamics with no stable fixed point or periodic orbit.
 
 ## Expansion

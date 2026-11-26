@@ -1,11 +1,13 @@
 # Reproduction number and Lipschitz stability conditions for a delayed SIR model with vaccination and treatment
 
 **Model.** Let $x, y, z$ be susceptible, infected and recovered numbers, with delays $\eta$ (vaccination), $\tau$ (infection) and $\delta$ (treatment):
+
 $$\begin{aligned}
 x' &= a - b f(x,y) - dx - c\,v(x(t-\eta)) + \alpha z,\\
 y' &= b_1 f(x(t-\tau), y) - r\,p(y) - d_1 y,\\
 z' &= r\,p(y(t-\delta)) - \alpha z,
 \end{aligned}$$
+
 with positive constants. The incidence $f$, vaccination $v$ and treatment $p$ are nonnegative and $C^1$, $f(0,y) = f(x,0) = 0$, $f$ and $p$ are increasing, and they satisfy two-sided Lipschitz bounds
 
 $$K_1|x-\bar x| + K_2|y-\bar y| \le |f(x,y) - f(\bar x,\bar y)| \le K_3|x-\bar x| + K_4|y-\bar y|,$$

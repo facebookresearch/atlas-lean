@@ -1,11 +1,13 @@
 # Global stability of the diffusive SEIR model with distributed delay
 
 **Model.** On a bounded smooth domain $\Omega \subset \mathbb R^n$ with homogeneous Neumann boundary conditions,
+
 $$\begin{aligned}
 \partial_t S - k_S\Delta S &= b - \mu S - \beta\int_0^h g(\tau)\,f\big(S(x,t), I(x,t-\tau)\big)\,d\tau,\\
 \partial_t E - k_E\Delta E &= \beta\int_0^h g(\tau)\,f\big(S(x,t), I(x,t-\tau)\big)\,d\tau - (\mu + \alpha)E,\\
 \partial_t I - k_I\Delta I &= \alpha E - (\mu + c + \gamma)I,
 \end{aligned}$$
+
 and $\partial_t R - k_R\Delta R = \gamma I - \mu R$ (decoupled). Here $b$ is recruitment, $\mu$ natural death, $\alpha$ the rate of becoming infectious, $c$ disease death, $\gamma$ recovery, $k_\bullet > 0$ diffusion coefficients and $g \ge 0$ a delay kernel on $[0,h]$ with $\int_0^h g = 1$. The incidence $f$ satisfies $f(0,I) = f(S,0) = 0$ and
 - $(H_1)$ $f$ is strictly increasing in $S$ for fixed $I > 0$ and increasing in $I$ for fixed $S$;
 - $(H_2)$ $f(S,I)/I$ is bounded and decreasing in $I > 0$ for fixed $S$.

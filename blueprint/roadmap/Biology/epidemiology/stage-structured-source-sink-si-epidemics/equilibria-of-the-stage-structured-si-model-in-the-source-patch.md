@@ -1,12 +1,14 @@
 # Equilibria of the stage-structured SI model in the source patch
 
 **Model.** In patch $i \in \{1,2\}$ hosts are susceptible or infected juveniles ($J_{S,i}, J_{I,i}$) and adults ($A_{S,i}, A_{I,i}$), with $N_i$ the total. Infection is lifelong (no recovery), only susceptible adults reproduce, and juveniles mature at rate $\alpha$. In the source patch,
+
 $$\begin{aligned}
 \dot J_{S,1} &= pr\Big(1 - \frac{N_1}{k}\Big)A_{S,1} - \beta_1J_{S,1}\frac{J_{I,1}+A_{I,1}}{N_1} - \alpha J_{S,1} - \mu_SJ_{S,1},\\
 \dot J_{I,1} &= \beta_1J_{S,1}\frac{J_{I,1}+A_{I,1}}{N_1} - \mu_IJ_{I,1},\\
 \dot A_{S,1} &= \alpha J_{S,1} - \beta_1A_{S,1}\frac{J_{I,1}+A_{I,1}}{N_1} - \mu_SA_{S,1},\\
 \dot A_{I,1} &= \beta_1A_{S,1}\frac{J_{I,1}+A_{I,1}}{N_1} - \mu_IA_{I,1},
 \end{aligned}$$
+
 where $r$ is the birth rate, $k$ the carrying capacity, $p$ the fraction of offspring retained in patch $1$ (the fraction $1-p$ recruits into the sink patch $2$, which has the same structure plus this inflow), and $\mu_S, \mu_I$ the death rates of susceptible and infected hosts. Write $R_{0,i} = \beta_i/\mu_I$, $R_\alpha = \alpha/\mu_I$, $R_s = \mu_S/\mu_I$, $R_p = p/\mu_I$.
 
 **Proposition.**

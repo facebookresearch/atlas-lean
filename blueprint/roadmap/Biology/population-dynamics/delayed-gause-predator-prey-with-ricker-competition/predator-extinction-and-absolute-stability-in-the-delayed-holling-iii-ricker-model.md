@@ -1,10 +1,12 @@
 # Predator extinction and absolute stability in the delayed Holling III–Ricker model
 
 **Model.** Prey $x(t)$ and predators $y(t)$ (for example deer and pumas) satisfy
+
 $$\begin{aligned}
 \dot x(t) &= r\Big(1 - \frac{x(t)}{K}\Big)x(t) - \frac{\gamma x(t)^2}{a^2 + x(t)^2}\,y(t),\\
 \dot y(t) &= -\beta y(t) + \frac{\gamma x(t-\tau)^2}{a^2 + x(t-\tau)^2}\,y(t-\tau)\,e^{-y(t-\tau)/N},
 \end{aligned}$$
+
 with logistic prey growth (rate $r$, carrying capacity $K$), a Holling type III functional response (maximal rate $\gamma$, half-saturation $a$), predator mortality $\beta$, a maturation or gestation delay $\tau \ge 0$, and a Ricker factor $e^{-y/N}$ for intraspecific competition among predators. Initial data are non-negative continuous functions on $[-\tau, 0]$.
 
 An equilibrium is *absolutely stable* if it is asymptotically stable for every delay $\tau \ge 0$, and *conditionally stable* if this holds only for $\tau$ in some interval.

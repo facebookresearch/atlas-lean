@@ -1,6 +1,7 @@
 # Extinction and geometric ergodicity of a stochastic SEIQR model with general incidence
 
 **Model.** Susceptible $S$, exposed $E$, infectious $I$, quarantined $Q$ and recovered $R$ individuals evolve under independent Brownian perturbations $B_1, \dots, B_5$:
+
 $$\begin{aligned}
 dS &= \big[b - \beta S\,h(I) - (\eta + \mu + d_3)S\big]dt + \sigma_1 S\,dB_1,\\
 dE &= \big[\beta S\,h(I) - (\lambda + \mu + d_2)E\big]dt + \sigma_2 E\,dB_2,\\
@@ -8,6 +9,7 @@ dI &= \big[\lambda E - (\mu + \nu + \gamma + d_1)I\big]dt + \sigma_3 I\,dB_3,\\
 dQ &= \big[d_3 S + d_2 E + d_1 I - (\mu + \tau)Q\big]dt + \sigma_4 Q\,dB_4,\\
 dR &= \big[\eta S + \tau Q + \gamma I - \mu R\big]dt + \sigma_5 R\,dB_5,
 \end{aligned}$$
+
 with positive constants: recruitment $b$, transmission $\beta$, natural death $\mu$, vaccination $\eta$, quarantine rates $d_1, d_2, d_3$, latency exit $\lambda$, disease death $\nu$, recovery $\gamma$ and quarantine release $\tau$. The incidence $h(I)$ is a general increasing function (for instance $h(x) = x/(1 + 0.01x)$). Write $\tilde S_0 = b/(\eta + \mu + d_3)$ and $\sigma_{\max}^2 = \max_i \sigma_i^2$.
 
 **Theorem.**

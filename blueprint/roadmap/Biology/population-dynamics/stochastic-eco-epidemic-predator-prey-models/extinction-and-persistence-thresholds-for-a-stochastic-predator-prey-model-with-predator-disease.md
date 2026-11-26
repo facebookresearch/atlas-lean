@@ -1,11 +1,13 @@
 # Extinction and persistence thresholds for a stochastic predator–prey model with disease in the predator
 
 **Model.** Let $x$ be the prey density and $S$, $I$ the susceptible and infected generalist-predator densities. With independent Brownian motions $W_1, W_2, W_3$ and positive constants,
+
 $$\begin{aligned}
 dx &= \Big[x(a_1 - b_1 x) - \frac{a x (S+I)}{b + S + I + x}\Big]dt + \sigma_1 x\, dW_1,\\
 dS &= \Big[S\Big(a_2 - \Big(\frac{1}{c + x} + h\Big)(S+I)\Big) - \beta(S,I) S I + \gamma I\Big]dt + \sigma_2 S\, dW_2,\\
 dI &= \big[\beta(S,I) S I - \alpha I\big]dt + \sigma_3 I\, dW_3,
 \end{aligned}$$
+
 with standard incidence $\beta(S,I) = \beta^*/(S + I + k)$. The predator carrying capacity $a_2/(1/(c+x) + h)$ lies between $a_2 c/(1 + hc)$ and $a_2/h$, and recovered predators return to $S$ ($\gamma$ = recovery rate, $\alpha$ = removal rate of infected predators). Note $\beta(S,I)S \le \beta^*$ and $\beta(S,I) I \le \beta^*$.
 
 **Theorem.** For every initial value in $\overline{\mathbb{R}}_+^3$ there is a unique global solution staying in $\overline{\mathbb{R}}_+^3$ (in $\mathbb{R}_+^3$ if the initial value is positive), and $\sup_t \mathbb{E}\,x(t)^\theta < \infty$ for all $\theta \ge 1$. Moreover, for initial values other than the origin:

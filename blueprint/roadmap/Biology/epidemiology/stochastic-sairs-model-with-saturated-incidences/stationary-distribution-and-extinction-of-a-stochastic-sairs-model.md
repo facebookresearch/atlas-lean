@@ -1,11 +1,13 @@
 # Stationary distribution and extinction of a stochastic SAIRS model with saturated incidences
 
 **Model.** Let $S, A, I, R$ be susceptible, asymptomatic, symptomatic and recovered individuals, driven by independent Brownian motions $B_1,\dots,B_4$ with intensities $\sigma_i$:
+
 $$\begin{aligned}
 dS &= \Big[\Lambda - \Big(\frac{\beta_I I}{1+bI} + \frac{\beta_A A}{1+bA}\Big)S - \mu S + \gamma R\Big]dt + \sigma_1 S\,dB_1,\\
 dA &= \Big[\Big(\frac{\beta_I I}{1+bI} + \frac{\beta_A A}{1+bA}\Big)S - (\alpha + \delta_A + \mu)A\Big]dt + \sigma_2 A\,dB_2,\\
 dI &= [\alpha A - (\delta_I + \mu + d)I]dt + \sigma_3 I\,dB_3,\qquad dR = [\delta_A A + \delta_I I - (\gamma + \mu)R]dt + \sigma_4 R\,dB_4,
 \end{aligned}$$
+
 with positive parameters ($\alpha$: progression to symptoms; $\delta_A, \delta_I$: recovery; $d$: disease death; $b$: saturation). Set $m = 4\mu + \alpha + \delta_A + \delta_I + d + \gamma + \tfrac12\sum_{i=1}^4 \sigma_i^2$, $\beta = \min\{\beta_I, \beta_A\}$ and
 
 $$R_0^s = \frac{3}{m}\sqrt[3]{\Lambda\alpha\beta}.$$

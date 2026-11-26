@@ -1,10 +1,12 @@
 # Turing instability of the mean-field survival model for zebrafish stripes
 
 **Model.** On a ring of $N$ cell sites $j \in \mathbb{Z}/N\mathbb{Z}$, let $X_j(t)$ and $M_j(t)$ be the probabilities that site $j$ holds a xanthophore or a melanophore. The (simplified) mean-field survival model is
+
 $$\begin{aligned}
 X_j' &= 1 - X_j - M_j - X_j\,\tfrac{M_{j-1} + M_{j+1}}{2},\\
 M_j' &= (b+1)(1 - X_j) - (b+d+1)M_j - M_j\,\tfrac{X_{j-1} + X_{j+1}}{2} + d\,M_j\,\tfrac{X_{j-h} + X_{j+h}}{2},
 \end{aligned}$$
+
 with kinetic parameters $b, d > 0$ and a long-range interaction distance $1 \le h \le N/2$ (melanophores are sustained by xanthophores $h$ sites away, killed by neighbouring xanthophores, and kill neighbouring xanthophores). Apart from the trivial state $(1,0)$ it has the homogeneous coexistence equilibrium
 
 $$(X^*, M^*) = \Big(\frac{d}{b+d},\ \frac{b}{b+2d}\Big).$$

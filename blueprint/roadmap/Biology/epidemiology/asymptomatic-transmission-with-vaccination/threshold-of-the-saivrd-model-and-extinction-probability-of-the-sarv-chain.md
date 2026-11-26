@@ -1,10 +1,12 @@
 # Threshold of the SAIVRD model and extinction probability of the SARV chain
 
 **Deterministic SAIVRD model.** Susceptible $S$, asymptomatic infectious $A$, symptomatic (isolated) infected $I$, vaccinated $V$, recovered $R$ and dead $D$ satisfy
+
 $$\begin{aligned}
 S' &= B - vS - \tfrac{\beta}{N_0}AS - \mu S, & A' &= \tfrac{\beta}{N_0}AS - (w + \mu)A, & I' &= wA - (\rho + \gamma + \mu)I,\\
 V' &= vS - \mu V, & R' &= \gamma I - \mu R, & D' &= \rho I,
 \end{aligned}$$
+
 with recruitment $B$, vaccination rate $v$, transmission $\beta$ (only asymptomatic cases transmit), reference population $N_0$, death rate $\mu$, symptom onset $w$, disease death $\rho$ and recovery $\gamma$.
 
 **Theorem.**

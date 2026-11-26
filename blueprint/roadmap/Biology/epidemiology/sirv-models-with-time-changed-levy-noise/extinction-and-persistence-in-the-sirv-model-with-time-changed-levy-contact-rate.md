@@ -1,12 +1,14 @@
 # Extinction and persistence in the SIRV model with time-changed Lévy contact rate
 
 **Model.** Susceptible, infected, recovered and vaccinated compartments with total $N = S + I + R + V \le K$ evolve as
+
 $$\begin{aligned}
 dS &= \Big(\lambda H - (\rho + \kappa)S - \frac{\tilde\beta(t)I}{N}S + \alpha V + \gamma R\Big)dt, &
 dI &= \Big(\frac{\tilde\beta(t)I}{N}S + \delta\frac{\tilde\beta(t)I}{N}V - (\kappa_1 + \theta)I\Big)dt,\\
 dR &= \big(\theta I - (\kappa + \gamma)R\big)dt, &
 dV &= \Big(\rho S - (\kappa + \alpha)V - \delta\frac{\tilde\beta(t)I}{N}V\Big)dt,
 \end{aligned}$$
+
 with recruitment $\lambda H$, vaccination rate $\rho$, waning of vaccine-induced ($\alpha$) and natural ($\gamma$) immunity, natural death $\kappa$, death of infected $\kappa_1 \ge \kappa$, recovery $\theta$ and relative susceptibility $\delta \in [0,1]$ of vaccinated hosts. The contact rate is $\tilde\beta(t) = \tilde\beta_{\max}f(\beta(t))$ with $f \in C^2$, $0 < f_{\min} \le f \le 1$, $|f'| \le K_{f'}$, $|f''| \le K_{f''}$ (and a constant $K_{xf'}$ from assumption (f4)), where $\beta$ solves an SDE driven by a signed random measure $\mu$ that combines a time-changed Brownian part $B$ and a time-changed compensated jump part $\tilde H$, with jump coefficient $\sigma_t(z, \beta)$ and random time-change intensities $\lambda^B_t, \lambda^H_t$.
 
 **Time-change representation.** If $W$ is a Brownian motion and $N$ a centred pure-jump Lévy process with Lévy measure $\nu$, both independent of the time changes, then $B$ is conditionally Gaussian with variance given by the time change $\Lambda^B$ exactly when $B_t \overset{d}{=} W_{\Lambda^B_t}$, and analogously the jump part has the law of $N_{\Lambda^H_t}$.

@@ -1,12 +1,14 @@
 # Stability thresholds of the LPAA flour beetle model
 
 **Model.** The LPAA model splits the adult class of the classical larva–pupa–adult (LPA) model of *Tribolium* into newly emerged (callow) adults $A_1$ and mature adults $A_2$. With a two-week time step,
+
 $$\begin{aligned}
 L(t+1)&=bA_2(t)e^{-c_1A_2(t)},\\
 P(t+1)&=(1-\mu_l)L(t),\\
 A_1(t+1)&=(1-\mu_p)P(t),\\
 A_2(t+1)&=A_1(t)e^{-c_2A_2(t)}+(1-\mu_a)A_2(t),
 \end{aligned}$$
+
 where $b>0$ is fecundity, $\mu_l,\mu_p,\mu_a\in(0,1)$ are larval, pupal and adult mortalities, and $c_1,c_2\ge0$ measure cannibalism of eggs and of callow adults by mature adults. The inherent net reproductive number is
 
 $$R_0=\frac{b(1-\mu_l)(1-\mu_p)}{\mu_a}.$$

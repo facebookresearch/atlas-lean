@@ -1,11 +1,13 @@
 # Delay-independent stability thresholds of the delayed SEIQRP model
 
 **Model.** In proportions of a population with equal birth and death rate $b$, let $s, e, i, q, r, p$ be susceptible, exposed, infectious, quarantined, recovered and protected (insusceptible) fractions, with incubation of the infection process modelled by a delay $\tau \ge 0$:
+
 $$\begin{aligned}
 \dot s &= b - \beta s(t-\tau)i(t-\tau) - (\alpha + b)s, & \dot e &= \beta s(t-\tau)i(t-\tau) - (\gamma + b)e,\\
 \dot i &= \gamma e - (\delta + b)i, & \dot q &= \delta i - (\lambda + b)q,\\
 \dot r &= \lambda q - br, & \dot p &= \alpha s - bp,
 \end{aligned}$$
+
 with $\beta$ transmission, $\alpha$ protection, $\gamma$ progression, $\delta$ quarantine and $\lambda$ recovery rates, all positive. The disease-free equilibrium is $\Sigma_0 = (\tfrac{b}{\alpha+b}, 0,0,0,0, \tfrac{\alpha}{\alpha+b})$, the endemic one has $s^+ = (\delta+b)(\gamma+b)/(\beta\gamma)$, and
 
 $$R_0 = \frac{\beta\gamma b}{(\alpha+b)(\delta+b)(\gamma+b)} .$$

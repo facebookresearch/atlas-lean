@@ -1,6 +1,7 @@
 # Quorum-switching Filippov model of colony emigration
 
 **Model.** A social-insect colony of size $N$ moves to a new nest. A fraction $\rho$ of the workers is active, divided into searchers $S$, assessors $A$, leaders (tandem runners) $L$ and carriers $C$, with $S+A+L+C=\rho N$; $P$ counts passive workers already carried. With positive rate constants,
+
 $$\begin{aligned}
 \dot S&=-\alpha_{sa}S-\beta_{ls}SL-\beta_{cs}SC+\alpha_{as}A+\alpha_{ls}L+\alpha_{cs}C,\\
 \dot A&=\alpha_{sa}S+\beta_{ls}SL+\beta_{cs}SC-\alpha_{as}A-\alpha_{al}A,\\
@@ -8,6 +9,7 @@ $$\begin{aligned}
 \dot C&=\alpha_{lc}Q_1L-\alpha_{cs}C,\\
 \dot P&=\beta_{cs}C\,[(1-\rho)N-P],
 \end{aligned}$$
+
 where the *quorum switch* is $Q_1=0$ if $A+L+C<\Theta$ and $Q_1=1$ if $A+L+C>\Theta$, for a quorum threshold $\Theta>0$. Eliminating $S$ gives a three-dimensional Filippov system in $(A,L,C)$ with switching surface $\Sigma=\{A+L+C=\Theta\}$.
 
 **Theorem.**

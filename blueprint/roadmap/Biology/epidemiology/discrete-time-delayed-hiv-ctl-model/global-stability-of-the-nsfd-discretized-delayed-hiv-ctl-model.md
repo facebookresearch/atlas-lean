@@ -11,12 +11,14 @@ $$\mathcal R_0 = \frac{\beta N\lambda}{d\mu}, \qquad \mathcal R_1 = \frac{\beta 
 The equilibria are the infection-free point $E_0 = (\lambda/d, 0,0,0)$, the immune-free infected point $E^* = \big(\tfrac{\mu}{\beta N}, \tfrac{\beta N\lambda - d\mu}{\beta N a}, \tfrac{\beta N\lambda - d\mu}{\beta\mu}, 0\big)$ (positive iff $\mathcal R_0 > 1$), and the CTL-active point $\overline E$ with $\overline X = \tfrac{\lambda c\mu - \beta saN}{dc\mu}$ (positive iff $\mathcal R_1 > 1$).
 
 **Discrete model.** With step $\phi > 0$, $\tau = m\phi$ for an integer $m$, and Mickens' nonstandard finite-difference (NSFD) scheme
+
 $$\begin{aligned}
 \tfrac{X_{n+1}-X_n}{\phi} &= \lambda - dX_{n+1} - \beta X_{n+1}V_n, &
 \tfrac{Y_{n+1}-Y_n}{\phi} &= \beta X_{n-m+1}V_{n-m} - aY_{n+1} - pY_{n+1}Z_n,\\
 \tfrac{V_{n+1}-V_n}{\phi} &= aNY_{n+1} - \mu V_{n+1}, &
 \tfrac{Z_{n+1}-Z_n}{\phi} &= cX_nY_{n+1}Z_n - sZ_{n+1},
 \end{aligned}$$
+
 with nonnegative initial values on $\{-m, \dots, 0\}$ and positive values at $0$, every solution is positive and ultimately bounded, and the equilibria coincide with those of the continuous model.
 
 **Theorem.** For every step size $\phi > 0$:

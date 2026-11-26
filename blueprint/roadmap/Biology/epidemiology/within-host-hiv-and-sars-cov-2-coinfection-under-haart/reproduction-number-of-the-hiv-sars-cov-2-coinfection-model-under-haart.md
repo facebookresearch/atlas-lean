@@ -1,6 +1,7 @@
 # Reproduction number of the HIV–SARS-CoV-2 coinfection model under HAART
 
 **Model.** Healthy target cells $T$, cells infected by HIV only ($I_H$) or SARS-CoV-2 only ($I_S$), coinfected cells $C$, and free virions $V_H, V_S$ satisfy
+
 $$\begin{aligned}
 \dot T &= \lambda - k_1(1-\epsilon_{RT})TV_H - k_2TV_S - \mu T,\\
 \dot I_H &= k_1(1-\epsilon_{RT})TV_H - k_2I_HV_S - \mu I_H,\\
@@ -9,6 +10,7 @@ $$\begin{aligned}
 \dot V_S &= n_S\mu I_S - \sigma_S V_S,\\
 \dot C &= k_1(1-\epsilon_{RT})I_SV_H + k_2I_HV_S - \mu C,
 \end{aligned}$$
+
 with all parameters positive. HAART enters through the efficacies $\epsilon_{RT}, \epsilon_P \in [0,1)$ of reverse-transcriptase and protease inhibitors; $k_1,k_2$ are infection rates, $n_H, n_S$ burst sizes, $\sigma_H,\sigma_S$ clearance rates and $\lambda/\mu$ the cell-free target-cell level.
 
 **Theorem.** Solutions starting in $\mathbb R^6_{\ge0}$ stay non-negative and bounded. The single-virus submodels have reproduction numbers

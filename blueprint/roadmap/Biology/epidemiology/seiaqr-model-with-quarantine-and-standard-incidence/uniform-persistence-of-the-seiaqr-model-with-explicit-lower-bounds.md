@@ -1,11 +1,13 @@
 # Uniform persistence of the SEIAQR quarantine model with explicit lower bounds
 
 **Model.** Let $S, E, I, A, Q, R \ge 0$ be the susceptible, exposed, symptomatic, asymptomatic, quarantined and recovered classes, $N = S+E+I+A+Q+R$, and consider
+
 $$\begin{aligned}
 \dot S &= \lambda - \beta\frac{S}{N}(aE + I + bA) - dS, &\quad \dot E &= \beta\frac{S}{N}(aE + I + bA) - (c+d)E,\\
 \dot I &= pcE - (q_1 + r_1 + d)I, & \dot A &= (1-p)cE - (q_2 + r_2 + d)A,\\
 \dot Q &= q_1 I + q_2 A - (r_3 + d)Q, & \dot R &= r_1 I + r_2 A + r_3 Q - dR,
 \end{aligned}$$
+
 with all parameters positive and $p \in (0,1)$: $\lambda$ is recruitment, $d$ natural death, $\beta$ transmission, $a, b$ the relative infectiousness of exposed and asymptomatic individuals, $c$ the exit rate from latency, $q_i$ quarantine and $r_i$ recovery rates. With $B_i = q_i + r_i + d$ ($i=1,2$), the **control reproduction number** is
 
 $$\mathcal R_c = \frac{a\beta}{c+d} + \frac{pc\beta}{(c+d)B_1} + \frac{bc\beta(1-p)}{(c+d)B_2}.$$
