@@ -9,9 +9,13 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_AlgebraicGeometry_existsUnique_lift_fromNormalization_kummer_of_isAffineOpen.lean`
+`Theorems/Thm_AlgebraicGeometry_existsUnique_lift_fromNormalization_kummer_of_isAffineOpen.lean`,
+`P2M/Sol/S_AlgebraicGeometry_existsUnique_lift_fromNormalization_kummer_of_isAffineOpen.lean`,
+`Theorems/Thm_IsIntegrallyClosed_integralClosure_eq_adjoin_root_X_pow_sub_C_of_isUnit.lean`,
+`P2M/Sol/S_IsIntegrallyClosed_integralClosure_eq_adjoin_root_X_pow_sub_C_of_isUnit.lean`,
+`Theorems/Thm_IsIntegrallyClosed_integralClosure_eq_adjoin_and_etale_and_finite_of_eq_mul_pow.lean`
 and
-`P2M/Sol/S_AlgebraicGeometry_existsUnique_lift_fromNormalization_kummer_of_isAffineOpen.lean`
+`P2M/Sol/S_IsIntegrallyClosed_integralClosure_eq_adjoin_and_etale_and_finite_of_eq_mul_pow.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -93,83 +97,23 @@ private theorem root_fK_pow (n : ℕ) (u : A) :
   rw [h, IsScalarTower.algebraMap_apply A K (AdjoinRoot (fK K n u))]
   rfl
 
-private theorem root_fA_pow (n : ℕ) (u : A) :
-    (AdjoinRoot.root (fA n u)) ^ n = algebraMap A (AdjoinRoot (fA n u)) u := by
-  have h := AdjoinRoot.eval₂_root (fA n u)
-  simp only [eval₂_sub, eval₂_X_pow, eval₂_C] at h
-  rw [sub_eq_zero] at h
-  rw [h]
-  rfl
+-- Base change of `AdjoinRoot (fA n u)` from `A` to `K`: Mathlib's `AdjoinRoot.tensorAlgEquiv`,
+-- with the coefficients moved along `K ⊗[A] A ≃ K`.
+private noncomputable def tensorEquiv (n : ℕ) (u : A) :
+    AdjoinRoot (fA n u) ⊗[A] K ≃ₐ[A] AdjoinRoot (fK K n u) :=
+  (Algebra.TensorProduct.comm A (AdjoinRoot (fA n u)) K).trans
+    (((AdjoinRoot.tensorAlgEquiv (T := K) (fA n u) _ rfl).trans
+      (AdjoinRoot.mapAlgEquiv (Algebra.TensorProduct.rid A K K) _ (fK K n u) (by
+        rw [Polynomial.map_map]
+        simp [Algebra.smul_def]))).restrictScalars A)
 
-private noncomputable def ψ₁ (n : ℕ) (u : A) : AdjoinRoot (fA n u) →ₐ[A] AdjoinRoot (fK K n u) :=
-  AdjoinRoot.liftAlgHom (fA n u) (Algebra.ofId A (AdjoinRoot (fK K n u))) (AdjoinRoot.root (fK K n
-    u)) (by
-    change (fA n u).eval₂ (algebraMap A (AdjoinRoot (fK K n u))) (AdjoinRoot.root (fK K n u)) = 0
-    simp only [eval₂_sub, eval₂_X_pow, eval₂_C, root_fK_pow, sub_self])
-
-private theorem ψ₁_root (n : ℕ) (u : A) : ψ₁ (K := K) n u (AdjoinRoot.root (fA n u)) =
-  AdjoinRoot.root (fK K n u) := by
-  simp [ψ₁]
-
-private noncomputable def ψ (n : ℕ) (u : A) : AdjoinRoot (fA n u) ⊗[A] K →ₐ[A] AdjoinRoot (fK K n
-  u) :=
-  Algebra.TensorProduct.lift (ψ₁ n u) (IsScalarTower.toAlgHom A K (AdjoinRoot (fK K n u)))
-    (fun _ _ => Commute.all _ _)
-
-private theorem ψ_tmul (n : ℕ) (u : A) (s : AdjoinRoot (fA n u)) (k : K) :
-    ψ n u (s ⊗ₜ[A] k) = ψ₁ n u s * algebraMap K (AdjoinRoot (fK K n u)) k := by
-  simp [ψ]
-
-private noncomputable def θ (n : ℕ) (u : A) : AdjoinRoot (fK K n u) →+* AdjoinRoot (fA n u) ⊗[A] K
-  :=
-  AdjoinRoot.lift
-    ((Algebra.TensorProduct.includeRight : K →ₐ[A] AdjoinRoot (fA n u) ⊗[A] K).toRingHom)
-    (AdjoinRoot.root (fA n u) ⊗ₜ[A] (1 : K)) (by
-      simp only [eval₂_sub, eval₂_X_pow, eval₂_C, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-        Algebra.TensorProduct.includeRight_apply]
-      rw [Algebra.TensorProduct.tmul_pow, one_pow, root_fA_pow, Algebra.algebraMap_eq_smul_one,
-        Algebra.algebraMap_eq_smul_one, ← TensorProduct.smul_tmul, sub_self])
-
-private theorem θ_of (n : ℕ) (u : A) (k : K) :
-    θ n u (AdjoinRoot.of (fK K n u) k) = (1 : AdjoinRoot (fA n u)) ⊗ₜ[A] k := by
-  simp [θ]
-
-private theorem θ_root (n : ℕ) (u : A) :
-    θ n u (AdjoinRoot.root (fK K n u)) = AdjoinRoot.root (fA n u) ⊗ₜ[A] (1 : K) := by
-  simp [θ]
-
-private noncomputable def θₐ (n : ℕ) (u : A) : AdjoinRoot (fK K n u) →ₐ[A] AdjoinRoot (fA n u)
-  ⊗[A] K :=
-  { θ n u with
-    commutes' := fun a => by
-      simp only [RingHom.toMonoidHom_eq_coe, OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe,
-        MonoidHom.coe_coe]
-      rw [IsScalarTower.algebraMap_apply A K (AdjoinRoot (fK K n u)), AdjoinRoot.algebraMap_eq,
-        θ_of,
-        Algebra.TensorProduct.algebraMap_apply,
-        Algebra.algebraMap_eq_smul_one (A := AdjoinRoot (fA n u)), TensorProduct.smul_tmul,
-        ← Algebra.algebraMap_eq_smul_one] }
-
-private noncomputable def ψθ (n : ℕ) (u : A) : AdjoinRoot (fK K n u) →ₐ[K] AdjoinRoot (fK K n u) :=
-  { (ψ n u).toRingHom.comp (θ n u) with
-    commutes' := fun k => by
-      simp only [RingHom.toMonoidHom_eq_coe, OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe,
-        MonoidHom.coe_coe, RingHom.coe_comp, Function.comp_apply, AdjoinRoot.algebraMap_eq]
-      rw [θ_of]
-      change ψ n u ((1 : AdjoinRoot (fA n u)) ⊗ₜ[A] k) = _
-      rw [ψ_tmul, map_one, one_mul]
-      rfl }
-
-private theorem ψθ_eq_id (n : ℕ) (u : A) : ψθ (K := K) n u = AlgHom.id K (AdjoinRoot (fK K n u))
-  := by
-  apply AdjoinRoot.algHom_ext
-  change ψ n u (θ n u (AdjoinRoot.root (fK K n u))) = AdjoinRoot.root (fK K n u)
-  rw [θ_root, ψ_tmul, map_one, mul_one, ψ₁_root]
-
-private theorem ψ_θ (n : ℕ) (u : A) (x : AdjoinRoot (fK K n u)) : ψ n u (θ n u x) = x := by
-  have h := congrArg (fun φ : AdjoinRoot (fK K n u) →ₐ[K] AdjoinRoot (fK K n u) => φ x) (ψθ_eq_id
-    (K := K) n u)
-  simpa [ψθ] using h
+omit [IsDomain A] [IsIntegrallyClosed A] [IsFractionRing A K] in
+private theorem tensorEquiv_root (n : ℕ) (u : A) :
+    tensorEquiv (K := K) n u (AdjoinRoot.root (fA n u) ⊗ₜ[A] (1 : K)) =
+      AdjoinRoot.root (fK K n u) := by
+  rw [tensorEquiv, AlgEquiv.trans_apply, Algebra.TensorProduct.comm_tmul,
+    AlgEquiv.restrictScalars_apply, AlgEquiv.trans_apply, AdjoinRoot.tensorAlgEquiv_root,
+    AdjoinRoot.coe_mapAlgEquiv, AdjoinRoot.map_root]
 
 private theorem integralClosure_eq_adjoin (n : ℕ) (u : A) (hn : IsUnit ((n : ℕ) : A)) (hu : IsUnit
   u) :
@@ -187,21 +131,22 @@ private theorem integralClosure_eq_adjoin (n : ℕ) (u : A) (hn : IsUnit ((n : �
   ·
     intro x hx
     have hx' : IsIntegral A x := hx
-    have h1 : IsIntegral A (θₐ n u x) := hx'.map (θₐ n u)
-    have h2 : IsIntegral (AdjoinRoot (fA n u)) (θₐ n u x) := h1.tower_top
-    obtain ⟨s, hs⟩ := mem_range_includeLeft_of_isIntegral (A := A) (K := K) (θₐ n u x) h2
-    have hx_eq : x = ψ₁ n u s := by
-      have := ψ_θ (K := K) n u x
-      change ψ n u (θₐ n u x) = x at this
-      rw [← hs, Algebra.TensorProduct.includeLeftRingHom_apply, ψ_tmul, map_one, mul_one] at this
-      exact this.symm
-    rw [hx_eq]
-    have hrange : (ψ₁ (K := K) n u).range = Algebra.adjoin A {AdjoinRoot.root (fK K n u)} := by
-      rw [← Algebra.map_top, ← AdjoinRoot.adjoinRoot_eq_top, AlgHom.map_adjoin, Set.image_singleton,
-        ψ₁_root]
-    change ψ₁ n u s ∈ (Algebra.adjoin A {AdjoinRoot.root (fK K n u)} : Subalgebra A _)
+    have h1 : IsIntegral A ((tensorEquiv (K := K) n u).symm x) := hx'.map (tensorEquiv n u).symm
+    have h2 : IsIntegral (AdjoinRoot (fA n u)) ((tensorEquiv (K := K) n u).symm x) :=
+      h1.tower_top
+    obtain ⟨s, hs⟩ := mem_range_includeLeft_of_isIntegral (A := A) (K := K) _ h2
+    rw [Algebra.TensorProduct.includeLeftRingHom_apply] at hs
+    have hrange : ((tensorEquiv (K := K) n u).toAlgHom.comp
+        (Algebra.TensorProduct.includeLeft (S := A))).range =
+        Algebra.adjoin A {AdjoinRoot.root (fK K n u)} := by
+      rw [← Algebra.map_top, ← AdjoinRoot.adjoinRoot_eq_top, AlgHom.map_adjoin, Set.image_singleton]
+      simp only [AlgHom.comp_apply, Algebra.TensorProduct.includeLeft_apply,
+        AlgEquiv.toAlgHom_apply, tensorEquiv_root]
+    change x ∈ (Algebra.adjoin A {AdjoinRoot.root (fK K n u)} : Subalgebra A _)
     rw [← hrange]
-    exact ⟨s, rfl⟩
+    refine ⟨s, ?_⟩
+    change tensorEquiv (K := K) n u (s ⊗ₜ[A] (1 : K)) = x
+    rw [hs, AlgEquiv.apply_symm_apply]
   ·
     rw [Algebra.adjoin_le_iff, Set.singleton_subset_iff]
     change IsIntegral A (AdjoinRoot.root (fK K n u))
@@ -233,8 +178,6 @@ variable (F) in
 
 private noncomputable abbrev fv (k : ℕ) (v : B) : F[X] := X ^ k - C (algebraMap B F v)
 
-private noncomputable abbrev fB (k : ℕ) (v : B) : B[X] := X ^ k - C v
-
 private noncomputable abbrev fg (k : ℕ) (g : F) : F[X] := X ^ k - C g
 
 private theorem root_fv_pow (k : ℕ) (v : B) :
@@ -250,55 +193,6 @@ private theorem root_fg_pow (k : ℕ) (g : F) :
   simp only [eval₂_sub, eval₂_X_pow, eval₂_C] at h
   rw [sub_eq_zero] at h
   exact h
-
-private noncomputable def ψ₁ (k : ℕ) (v : B) : AdjoinRoot (fB k v) →ₐ[B] AdjoinRoot (fv F k v) :=
-  AdjoinRoot.liftAlgHom (fB k v) (Algebra.ofId B (AdjoinRoot (fv F k v))) (AdjoinRoot.root (fv F k
-    v)) (by
-    change (fB k v).eval₂ (algebraMap B (AdjoinRoot (fv F k v))) (AdjoinRoot.root (fv F k v)) = 0
-    simp only [eval₂_sub, eval₂_X_pow, eval₂_C, root_fv_pow, sub_eq_zero]
-    rw [IsScalarTower.algebraMap_apply B F (AdjoinRoot (fv F k v))])
-
-private theorem ψ₁_root (k : ℕ) (v : B) : ψ₁ (F := F) k v (AdjoinRoot.root (fB k v)) =
-  AdjoinRoot.root (fv F k v) := by
-  simp [ψ₁]
-
-private theorem ψ₁_mk (k : ℕ) (v : B) (p : B[X]) :
-    ψ₁ (F := F) k v (AdjoinRoot.mk (fB k v) p) = AdjoinRoot.mk (fv F k v) (p.map (algebraMap B F))
-      := by
-  simp only [ψ₁, AdjoinRoot.liftAlgHom_mk, ← Polynomial.aeval_def]
-  exact AdjoinRoot.aeval_eq_of_algebra _ _
-
-private theorem ψ₁_injective (k : ℕ) (v : B) (hk0 : k ≠ 0) : Function.Injective (ψ₁ (F := F) k v)
-  := by
-  rw [injective_iff_map_eq_zero]
-  intro x hx
-  obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective x
-  have hmonic : (fB k v).Monic := Polynomial.monic_X_pow_sub_C v hk0
-
-  have hred : AdjoinRoot.mk (fB k v) p = AdjoinRoot.mk (fB k v) (p %ₘ fB k v) := by
-    rw [AdjoinRoot.mk_eq_mk]
-    refine ⟨p /ₘ fB k v, ?_⟩
-    have := Polynomial.modByMonic_add_div p (fB k v)
-    rw [sub_eq_iff_eq_add, add_comm, this]
-  rw [hred] at hx ⊢
-  set r := p %ₘ fB k v with hr
-  have hdeg : r.degree < (k : WithBot ℕ) := by
-    have h1 := Polynomial.degree_modByMonic_lt p hmonic
-    rwa [Polynomial.degree_X_pow_sub_C (Nat.pos_of_ne_zero hk0)] at h1
-  rw [ψ₁_mk, AdjoinRoot.mk_eq_zero] at hx
-  have hzero : r.map (algebraMap B F) = 0 := by
-    refine Polynomial.eq_zero_of_dvd_of_degree_lt hx ?_
-    rw [Polynomial.degree_X_pow_sub_C (Nat.pos_of_ne_zero hk0)]
-    exact lt_of_le_of_lt (Polynomial.degree_map_le) hdeg
-  have hr0 : r = 0 := by
-    rw [Polynomial.map_eq_zero_iff (IsFractionRing.injective B F)] at hzero
-    exact hzero
-  rw [hr0, map_zero]
-
-private theorem ψ₁_range (k : ℕ) (v : B) :
-    (ψ₁ (F := F) k v).range = Algebra.adjoin B {AdjoinRoot.root (fv F k v)} := by
-  rw [← Algebra.map_top, ← AdjoinRoot.adjoinRoot_eq_top, AlgHom.map_adjoin, Set.image_singleton,
-    ψ₁_root]
 
 section Twist
 
@@ -872,7 +766,7 @@ end KummerChart
 
 set_option maxHeartbeats 8000000 in
 open KummerChart in
-/-- Local universal property of a normalized Kummer cover.
+/-- **Local universal property of a normalized Kummer cover.**
 
 Let `X` be a normal integral scheme, `V` a nonempty affine open, `k` a
 positive integer invertible on `V`, and `u` a unit on `V` whose germ in
