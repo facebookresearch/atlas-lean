@@ -36,9 +36,10 @@ other.
   and of the order from delivering an update to issuing a later one at the same replica, the
   order by which Shapiro et al. define happened-before.
 
-The executions need not be well formed. A receipt that names a position holding no issue
-delivers nothing but still adds a step to happened-before, and a receipt that names a later issue
-is a delivery but adds no step to happened-before; the tests give an example of each.
+The executions need not be well formed. A receipt that names an earlier position holding no
+issue (an earlier receipt), such as a receipt from a delivery, delivers nothing but still adds a
+step to happened-before, and a receipt that names a later issue is a delivery but adds no step to
+happened-before; the tests give an example of each.
 -/
 
 @[expose] public section
@@ -66,11 +67,11 @@ some position $k < j$ holds an event of $r$ that either issues $u_1$ ($k = i_1$)
 This constrains only the order of deliveries within one finite execution: a replica may deliver
 an update more than once, or never. The execution need not be well formed, that is, a receipt
 need not name an earlier position, and happened-before is taken over all of its events. A receipt
-that names a position holding no issue, such as a receipt from a delivery, delivers no update but
-still adds a step to happened-before. Even on a well-formed execution, causal delivery can then
-demand more than it would if happened-before between updates were defined by delivery, as
-Shapiro et al. define it. A receipt that names a later issue delivers that update, and is
-constrained as a delivery, but adds no step to happened-before. -/
+that names an earlier position holding no issue (an earlier receipt), such as a receipt from a
+delivery, delivers no update but still adds a step to happened-before. Even on a well-formed
+execution, causal delivery can then demand more than it would if happened-before between updates
+were defined by delivery, as Shapiro et al. define it. A receipt that names a later issue
+delivers that update, and is constrained as a delivery, but adds no step to happened-before. -/
 def CausalDelivery (tr : List (Event R)) : Prop :=
   ∀ (j i₁ i₂ : ℕ) (ej e₁ e₂ : Event R), tr[j]? = some ej → ej.recvFrom = some i₂ →
     tr[i₂]? = some e₂ → e₂.recvFrom = none → tr[i₁]? = some e₁ → e₁.recvFrom = none →

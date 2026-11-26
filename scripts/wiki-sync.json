@@ -23261,7 +23261,7 @@
 "Cslib.Distributed.Peterson.other": "84825dcc11bb44d9",
 "Cslib.Distributed.Peterson.reachable_init": "5122c1328590a046",
 "Cslib.Distributed.Peterson.step": "790456169448c218",
-"Cslib.Distributed.Replication.CausalDelivery": "1712a666daa56bc8",
+"Cslib.Distributed.Replication.CausalDelivery": "9d8fc8bd62e081b3",
 "Cslib.Distributed.Replication.happensBefore_iff_transGen_delivered": "4803bba888e82b47",
 "Cslib.Distributed.TestAndSetConsensus.Reachable": "53169a4cdb86ab29",
 "Cslib.Distributed.TestAndSetConsensus.Reachable.step": "7ad7a52646e3b7be",

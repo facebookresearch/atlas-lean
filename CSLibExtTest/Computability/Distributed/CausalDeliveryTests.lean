@@ -27,9 +27,9 @@ public import CSLibExt.Computability.Distributed.CausalDelivery
   delivery at position `1`. That receipt delivers nothing, but it makes the update issued at `0`
   happen before the update issued at `3`, although no chain of direct precedence joins them; so
   causal delivery fails when replica `3` delivers the update issued at `3`.
-* `early`: a receipt that names a later issue is a delivery of that update but adds no step to
-  happened-before; delivering an update before the earlier update of the same replica breaks
-  causal delivery.
+* `early`: a receipt that names a later issue is a delivery of that update but is unrelated to
+  that issue by happened-before; delivering an update before the earlier update of the same
+  replica breaks causal delivery.
 -/
 
 @[expose] public section
@@ -190,8 +190,27 @@ def early : List (Event (Fin 2)) :=
 
 example : ¬ WellFormed early := fun h => absurd (h 0 _ 2 rfl rfl) (by decide)
 
-/-- The receipt at position `0` adds no step to happened-before. -/
-example : ¬ HappensBefore early 2 0 := fun h => absurd h.lt (by decide)
+/-- The receipt at position `0` and the issue at position `2` that it names are unrelated by
+happened-before: no chain leads from the receipt to the issue, and none leads back, as steps go
+forward in the execution. -/
+example : ¬ HappensBefore early 0 2 ∧ ¬ HappensBefore early 2 0 := by
+  have h01 : ¬ HappensBefore early 0 1 := by
+    intro h
+    cases h with
+    | single hs =>
+        obtain ⟨-, ei, ej, hi, hj, hp | hr⟩ := hs <;> simp [early] at hi hj <;> subst hi hj <;>
+          simp at *
+    | tail h hs => have := HappensBefore.lt (tr := early) h; have := hs.1; omega
+  refine ⟨fun h => ?_, fun h => absurd h.lt (by decide)⟩
+  cases h with
+  | single hs =>
+      obtain ⟨-, ei, ej, hi, hj, hp | hr⟩ := hs <;> simp [early] at hi hj <;> subst hi hj <;>
+        simp at *
+  | @tail b _ h hs =>
+      have := HappensBefore.lt (tr := early) h
+      have := hs.1
+      obtain rfl : b = 1 := by omega
+      exact h01 h
 
 /-- It is still a delivery: the update issued at `1` happened before the one issued at `2`, and
 replica `1` has delivered nothing before position `0`. -/
