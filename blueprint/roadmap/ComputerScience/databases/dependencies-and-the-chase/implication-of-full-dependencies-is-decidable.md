@@ -14,7 +14,7 @@ only if chasing $\tau$ by $\Sigma$, which always terminates with a unique result
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
-- [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)
+- [Satisfaction of an inclusion dependency](inclusion-dependencies-and-finite-implication.md)
 
 ## Informally uses
 

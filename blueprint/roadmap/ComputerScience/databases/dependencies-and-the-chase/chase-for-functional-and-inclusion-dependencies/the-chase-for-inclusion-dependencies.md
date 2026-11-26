@@ -1,8 +1,8 @@
 # The chase for inclusion dependencies
 
-An inclusion dependency $\sigma = R[i_1, \dots, i_m] \subseteq P[j_1, \dots, j_m]$, with $m \ge 1$, distinct positions $i_1, \dots, i_m$
-of $R$ and distinct positions $j_1, \dots, j_m$ of $P$, holds in a possibly infinite database $D$ if for every tuple
-$\bar a \in R^D$ there is $\bar b \in P^D$ with $(a_{i_1}, \dots, a_{i_m}) = (b_{j_1}, \dots, b_{j_m})$.
+Write an [inclusion dependency](../ind.md) as $\sigma = R[i_1, \dots, i_m] \subseteq P[j_1, \dots, j_m]$, $m \ge 1$, identifying
+the attributes of each relation with its positions, and read its [satisfaction](../inclusion-dependencies-and-finite-implication.md)
+on sets of atoms and on databases whose relations may be infinite.
 
 For an atom $R(\bar u)$ in a set of atoms $S$, let $\mathrm{new}(\sigma, \bar u)$ be the atom $P(v_1, \dots, v_{\mathrm{ar}(P)})$
 with $v_{j_k} = u_{i_k}$ for $k \in [m]$ and, at every other position $\ell$, a fresh variable determined by $\sigma$, $\ell$ and
@@ -18,7 +18,8 @@ $\{R(a, b)\}$ under $R[2] \subseteq R[1]$ is infinite.
 
 ## Depends on
 
-- [Inclusion dependencies and finite implication](../inclusion-dependencies-and-finite-implication.md)
+- [Syntax of an inclusion dependency](../ind.md)
+- [Satisfaction of an inclusion dependency](../inclusion-dependencies-and-finite-implication.md)
 
 ## Sources
 

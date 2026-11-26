@@ -1,7 +1,7 @@
 # Unrestricted implication of inclusion dependencies via the chase
 
-A set $\Sigma$ of inclusion dependencies implies an inclusion dependency $\sigma$ *without restriction*, $\Sigma \models_\infty \sigma$,
-when every possibly infinite database satisfying $\Sigma$ satisfies $\sigma$. For $\sigma = R[i_1, \dots, i_k] \subseteq P[j_1, \dots, j_k]$
+Write $\Sigma \models_\infty \sigma$ when a set $\Sigma$ of inclusion dependencies implies an inclusion dependency $\sigma$
+[without restriction](../implies.md), that is, over all instances, whose relations may be infinite. For $\sigma = R[i_1, \dots, i_k] \subseteq P[j_1, \dots, j_k]$
 let $S_\sigma = \{R(x_1, \dots, x_{\mathrm{ar}(R)})\}$ with distinct variables. Then
 
 $$\Sigma \models_\infty \sigma \iff \mathrm{Chase}(S_\sigma, \Sigma) \models \sigma .$$
@@ -11,6 +11,7 @@ Since finite and unrestricted implication coincide for inclusion dependencies, t
 ## Depends on
 
 - [The chase for inclusion dependencies](the-chase-for-inclusion-dependencies.md)
+- [Unrestricted implication of dependencies](../implies.md)
 
 ## Proof depends on
 
