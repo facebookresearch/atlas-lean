@@ -44,6 +44,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.SuperMZumkeller
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
 
 set_option autoImplicit false
 
@@ -108,15 +109,6 @@ theorem_wanted isSuperMZumkeller_two_pow_mul_prod_primes (k : ℕ)
     (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime) (hs2 : 2 ∉ s)
     (hcard : 3 ≤ s.card) :
     IsSuperMZumkeller ((2 : ℕ) ^ k * ∏ p ∈ s, p)
-
-/-- **$k$-m-perfect numbers with $k$ a positive multiple of $4$ are super-m-Zumkeller.** Let
-$k \ge 2$ be a natural number with $k \equiv 0 \pmod 4$. Then every natural number that is
-$k$-m-perfect is super-m-Zumkeller.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 6. -/
-theorem_wanted isSuperMZumkeller_of_isKMPerfect (k n : ℕ)
-    (hk : 2 ≤ k) (hk4 : k % 4 = 0) (h : IsKMPerfect k n) :
-    IsSuperMZumkeller n
 
 /-- **$4$ is super-m-Zumkeller but not $k$-m-perfect for $k \ge 2$.** The number $4$ is
 super-m-Zumkeller, and for no natural number $k \ge 2$ is $4$ a $k$-m-perfect number. This is the

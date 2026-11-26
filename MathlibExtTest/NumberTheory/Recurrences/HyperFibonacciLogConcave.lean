@@ -57,3 +57,47 @@ example : ¬ ∃ N : ℕ, ∀ n ≥ N, generalizedHyperFibonacci 1 2 1 0 n *
   change generalizedPFibonacci 1 2 1 (2 * N) * generalizedPFibonacci 1 2 1 (2 * N + 2) ≤
     generalizedPFibonacci 1 2 1 (2 * N + 1) ^ 2 at h
   linarith
+
+/-- For `(p, a, b) = (1, 5, 1)` the generalized hyper-Fibonacci numbers of order one begin
+`5, 6, 12, 19, 32, 52, 85`. -/
+example : (List.range 7).map (generalizedHyperFibonacci 1 5 1 1) =
+    [5, 6, 12, 19, 32, 52, 85] := by
+  decide
+
+/-- The general theorem covers initial values that are neither the hyper `p`-Fibonacci nor the
+hyper `p`-Lucas case, here `(p, a, b) = (1, 5, 1)` with `r = 1`. Log-concavity fails at `n = 4`
+(`32 * 85 > 52 ^ 2`), so the threshold the theorem provides exceeds `4`. -/
+example : ∃ N : ℕ, 4 < N ∧ ∀ n ≥ N, 0 < generalizedHyperFibonacci 1 5 1 1 n ∧
+    generalizedHyperFibonacci 1 5 1 1 n * generalizedHyperFibonacci 1 5 1 1 (n + 2) ≤
+      generalizedHyperFibonacci 1 5 1 1 (n + 1) ^ 2 := by
+  obtain ⟨N, hN⟩ := generalizedHyperFibonacci_eventually_logConcave 1 5 1 le_rfl
+    (by norm_num) one_pos 1 le_rfl
+  refine ⟨N, ?_, hN⟩
+  by_contra hN4
+  have hfail : generalizedHyperFibonacci 1 5 1 1 (4 + 1) ^ 2 <
+      generalizedHyperFibonacci 1 5 1 1 4 * generalizedHyperFibonacci 1 5 1 1 (4 + 2) := by
+    decide
+  exact absurd (hN 4 (by omega)).2 (not_le.mpr hfail)
+
+/-- With `a = b = 0` every generalized hyper-Fibonacci number vanishes. -/
+private theorem generalizedHyperFibonacci_zero_zero (p : ℤ) (r n : ℕ) :
+    generalizedHyperFibonacci p 0 0 r n = 0 := by
+  induction r generalizing n with
+  | zero =>
+    induction n using Nat.twoStepInduction with
+    | zero => rfl
+    | one => rfl
+    | more n ih1 ih2 =>
+      change p * generalizedHyperFibonacci p 0 0 0 (n + 1) +
+        generalizedHyperFibonacci p 0 0 0 n = 0
+      rw [ih1, ih2, mul_zero, add_zero]
+  | succ r ih =>
+    change ∑ k ∈ Finset.range (n + 1), p ^ (n - k) * generalizedHyperFibonacci p 0 0 r k = 0
+    simp only [ih, mul_zero, Finset.sum_const_zero]
+
+/-- The hypothesis `0 < b` cannot be dropped: for `a = b = 0` no term is positive. -/
+example : ¬ ∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci 1 0 0 1 n := by
+  rintro ⟨N, hN⟩
+  have h := hN N le_rfl
+  rw [generalizedHyperFibonacci_zero_zero] at h
+  exact lt_irrefl 0 h
