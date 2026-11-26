@@ -68,26 +68,6 @@ public theorem_wanted exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) 
         ∫ x in cfCylinder a, f x = ∫ x in cfCylinder a.reverse, f x) ∧
       ∃ x ∈ Set.Icc (0 : ℝ) 1, f x ≠ 1 / (log 2 * (1 + x))
 
-/-- **Symmetric one-digit extensions fix the density at a rational point.** Let $f$ be a real
-function that is continuous and nonnegative on $[0, 1]$ with $\int_0^1 f(x)\,dx = 1$. Let
-$a = (a_1, \dots, a_n)$ be a string of positive integers, let $p$ and $q$ be the upper-right and
-lower-right entries of its convergent matrix $C(a)$, so that $p/q = [0; a_1, \dots, a_n]$, and let
-$\overleftarrow{a}$ be the reverse of $a$. Write $I(b)$ for the fundamental interval of a string
-$b$, $(a, t)$ for $a$ followed by $t$, and $(t, \overleftarrow{a})$ for $t$ followed by
-$\overleftarrow{a}$. If $\int_{I(a, t)} f(x)\,dx = \int_{I(t, \overleftarrow{a})} f(x)\,dx$ for
-every integer $t \ge 1$, then $f(p/q) = f(0)/(1 + p/q)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 3.1 (`integers-2025-A89-lem-3-1`). -/
-public theorem_wanted density_cfValue_eq_of_append_symmetric (f : ℝ → ℝ)
-    (hf : ContinuousOn f (Set.Icc 0 1)) (hf0 : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ f x)
-    (hf1 : ∫ x in (0 : ℝ)..1, f x = 1) (a : List ℕ) (ha : (∀ x ∈ a, 0 < x))
-    (hsym : ∀ t : ℕ, 1 ≤ t →
-      ∫ x in cfCylinder (a ++ [t]), f x = ∫ x in cfCylinder (t :: a.reverse), f x) :
-    f ((convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ)) = f 0 / (1 +
-        (convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ))
-
 /-- **Reversal symmetry from agreement with the Gauss–Kuzmin measure.** Let $\mu$ be a probability
 measure on $\mathbb{R}$ and let $N \ge 1$. For a string $a$ of positive integers write $I(a)$ for
 its fundamental interval, $P_{GK}(a)$ for its Gauss–Kuzmin measure and $a^{\mathrm{rev}}$ for its
