@@ -84,6 +84,10 @@ through $k \ge 1$, and the conclusion also holds for $x = 0$, whose Grundy numbe
 
 ## References
 
+* Shoei Takahashi, Hikaru Manabe, and Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+  INTEGERS 24 (2024), Article G5, pp. 1–16 (<https://math.colgate.edu/~integers/yg5/yg5.pdf>).
+  Lemma 6(ii), p. 11, gives the growth bound `maximumNimH_succ_le`.
+
 * Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and Josephus Problem*,
   arXiv:2403.19308v1 (2024) (<https://arxiv.org/abs/2403.19308>). Definition 2.1 in Section 2
   defines the mex and the Grundy numbers. In Section 3, Lemma 3.1(i) states that $G(x) = x/k$ when
