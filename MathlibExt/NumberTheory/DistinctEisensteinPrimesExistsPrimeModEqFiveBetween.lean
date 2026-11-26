@@ -17,6 +17,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.CentralBinomLog
 import MathlibExt.NumberTheory.DistinctEisensteinPrimes
 import MathlibExt.NumberTheory.PrimeInterval.Breusch.Theta
 
@@ -179,18 +180,6 @@ private lemma coeff_sum (m : ℕ) : ∑ d ∈ Ioc 0 (6 * m), coeff m d * Λ d =
   unfold coeff
   ring
 
-private lemma log_centralBinom (n : ℕ) : Real.log n.centralBinom =
-    Real.log (2 * n).factorial - 2 * Real.log n.factorial := by
-  have h := Nat.choose_mul_factorial_mul_factorial (show n ≤ 2 * n by omega)
-  rw [show 2 * n - n = n by omega] at h
-  change n.centralBinom * n.factorial * n.factorial = (2 * n).factorial at h
-  have hfac : (n.factorial : ℝ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero n
-  have hbin : (n.centralBinom : ℝ) ≠ 0 := by exact_mod_cast Nat.centralBinom_ne_zero n
-  have he := congrArg (fun k : ℕ => Real.log k) h
-  push_cast at he
-  rw [Real.log_mul (mul_ne_zero hbin hfac) hfac, Real.log_mul hbin hfac] at he
-  linarith
-
 private lemma weightedLog_lower (m : ℕ) (hm : 1 ≤ m) :
     4 * m * Real.log 2 - Real.log (6 * m + 1 : ℕ) ≤
       weightedLog (6 * m) - 2 * weightedLog (3 * m) := by
@@ -206,8 +195,8 @@ private lemma weightedLog_lower (m : ℕ) (hm : 1 ≤ m) :
     (show (m.centralBinom : ℝ) ≤ (4 ^ m : ℕ) by exact_mod_cast hu)
   push_cast at hlr hur
   rw [Real.log_pow, Real.log_mul (by positivity) hb.ne',
-    log_centralBinom] at hlr
-  rw [Real.log_pow, log_centralBinom] at hur
+    MetaMathlibExt.log_centralBinom] at hlr
+  rw [Real.log_pow, MetaMathlibExt.log_centralBinom] at hur
   have hlog4 : Real.log 4 = 2 * Real.log 2 := by
     rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
     norm_num

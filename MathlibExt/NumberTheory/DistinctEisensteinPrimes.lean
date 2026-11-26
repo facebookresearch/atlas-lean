@@ -11,8 +11,10 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.NumberTheory.Chebyshev
+import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 import Mathlib.Tactic.NormNum.Prime
 import MathlibExt.NumberTheory.PrimeInterval.Breusch.Theta
 
@@ -42,6 +44,19 @@ public lemma chi_mul (m n : ℕ) : chi (m * n) = chi m * chi n := by
   have hm := Nat.mod_lt m (by decide : 0 < 3)
   have hn := Nat.mod_lt n (by decide : 0 < 3)
   interval_cases m % 3 <;> interval_cases n % 3 <;> norm_num
+
+/-- `chi` is the Legendre symbol modulo three: `chi n = (n / 3)`, the Legendre symbol
+`legendreSym 3 n` cast to the reals, for every natural number `n`. -/
+public lemma chi_eq_legendreSym (n : ℕ) : chi n = (legendreSym 3 (n : ℤ) : ℝ) := by
+  rw [legendreSym.mod 3 (n : ℤ), ← Int.natCast_mod]
+  have hn := Nat.mod_lt n (by decide : 0 < 3)
+  simp only [chi]
+  interval_cases h : n % 3
+  · simp [legendreSym.at_zero]
+  · simp [legendreSym.at_one]
+  · simp only [Nat.cast_ofNat]
+    rw [legendreSym.at_two (by decide)]
+    norm_num [ZMod.χ₈_nat_eq_if_mod_eight]
 
 /-- For every natural number `n`, the partial sum `∑_{0 < i ≤ n} chi i` equals `1` when
 `n % 3 = 1` and `0` otherwise. -/

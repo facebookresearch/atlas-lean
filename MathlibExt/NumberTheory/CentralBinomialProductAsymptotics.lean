@@ -11,6 +11,7 @@ module
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.NumberTheory.BinomialProductAsymptotics
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry1Powersum
+import MathlibExt.NumberTheory.CentralBinomLog
 import Mathlib.Analysis.SpecialFunctions.Log.Sum
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
@@ -217,17 +218,6 @@ private theorem log_factorial_succ (n : ℕ) :
 private theorem weightedLog_succ (n : ℕ) :
     weightedLog (n + 1) = weightedLog n + (n + 1 : ℝ) * Real.log (n + 1 : ℝ) := by
   simp [weightedLog, Finset.sum_Icc_succ_top (show 1 ≤ n + 1 by omega)]
-
-private theorem log_centralBinom (n : ℕ) :
-    Real.log n.centralBinom = Real.log (2 * n).factorial - 2 * Real.log n.factorial := by
-  have h : (n.centralBinom : ℝ) * n.factorial * n.factorial = (2 * n).factorial := by
-    exact_mod_cast (by simpa [Nat.centralBinom_eq_two_mul_choose, two_mul] using
-      Nat.add_choose_mul_factorial_mul_factorial n n :
-        n.centralBinom * n.factorial * n.factorial = (2 * n).factorial)
-  have hb : (0 : ℝ) < n.centralBinom := by exact_mod_cast n.centralBinom_pos
-  rw [← h, Real.log_mul (by positivity) (by positivity),
-    Real.log_mul hb.ne' (by positivity)]
-  ring
 
 private noncomputable def centralProduct (n : ℕ) : ℝ :=
   ∏ k ∈ Finset.Icc 1 n, (k.centralBinom : ℝ)
