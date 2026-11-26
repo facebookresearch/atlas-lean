@@ -1688,7 +1688,8 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 open Univ
 
 /-- **Multiplication by `n` through division polynomials.** For a nonsingular point `(x, y)`
-of `W`, the Jacobian point `n • (x, y)` has coordinates `(φₙ(x, y), ωₙ(x, y), ψₙ(x, y))`. -/
+of a Weierstrass curve `W` over a field, the Jacobian point `n • (x, y)` has coordinates
+`(φₙ(x, y), ωₙ(x, y), ψₙ(x, y))`. -/
 public theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
     (n • Point.fromAffine (Affine.Point.some x y h)).point = ⟦smulEval W x y n⟧ := by
   have add_point_eq : ∀ (P Q : Jacobian.Point W) (P' Q' : Fin 3 → F),
@@ -1743,7 +1744,8 @@ section Ring
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
-/-- **`ψₙ` squared at a point.** At a point `(x, y)` of `W`, `ψₙ(x, y) ^ 2 = ΨSqₙ(x)`. -/
+/-- **`ψₙ` squared at a point.** For a Weierstrass curve `W` over a commutative ring and a point
+`(x, y)` of `W`, `ψₙ(x, y) ^ 2 = ΨSqₙ(x)`. -/
 public theorem evalEval_ψ_sq {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.ψ n).evalEval x y ^ 2 = (W.ΨSq n).eval x := by
   have hmk : Affine.CoordinateRing.mk W (W.ψ n ^ 2) = Affine.CoordinateRing.mk W (C (W.ΨSq n)) := by
@@ -1754,7 +1756,8 @@ public theorem evalEval_ψ_sq {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) 
   rw [evalEval_sub, evalEval_mul, h0, zero_mul, sub_eq_zero, evalEval_pow, evalEval_C] at h1
   exact h1
 
-/-- **`φₙ` at a point.** At a point `(x, y)` of `W`, `φₙ(x, y) = Φₙ(x)`. -/
+/-- **`φₙ` at a point.** For a Weierstrass curve `W` over a commutative ring and a point `(x, y)`
+of `W`, `φₙ(x, y) = Φₙ(x)`. -/
 public theorem evalEval_φ {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.φ n).evalEval x y = (W.Φ n).eval x := by
   obtain ⟨p, hp⟩ := AdjoinRoot.mk_eq_mk.mp (Affine.CoordinateRing.mk_φ W n)
@@ -1767,8 +1770,8 @@ end Ring
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
 
-/-- **`n`-torsion through `ψₙ`.** A nonsingular point `(x, y)` of `W` satisfies `n • (x, y) = 0`
-exactly when `ψₙ(x, y) = 0`. -/
+/-- **`n`-torsion through `ψₙ`.** A nonsingular point `(x, y)` of a Weierstrass curve `W` over a
+field satisfies `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`. -/
 public theorem smul_eq_zero_iff_evalEval_ψ {x y : F} (h : W.toAffine.Nonsingular x y) (n : ℤ) :
     n • (Affine.Point.some x y h) = 0 ↔ (W.ψ n).evalEval x y = 0 := by
   have key := zsmul_eq_smulEval (W := W) h n

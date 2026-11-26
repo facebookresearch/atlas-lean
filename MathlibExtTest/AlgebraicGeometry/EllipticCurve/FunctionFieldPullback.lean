@@ -69,6 +69,44 @@ example {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgCl
       (n • genericPoint W K).xc :=
   mulPull_genericX' W K _
 
+/-- Translations compose on the generic abscissa: translating by `T` and then by `S` sends
+`genericX W K` to the abscissa of `genericPoint W K + (S + T)`. -/
+example {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K]
+    (W : WeierstrassCurve F) [W.IsElliptic] (S T : (W⁄K).Point) :
+    transEquiv W K S (transEquiv W K T (genericX W K)) =
+      (genericPoint W K + Point.baseChange K (W⁄K).FunctionField (S + T)).xc := by
+  rw [← AlgEquiv.trans_apply, ← transEquiv_add, transEquiv_genericX]
+
+/-- Translation by `0` is the identity, so by `transEquiv_genericX` the abscissa of
+`genericPoint W K + 0` is `genericX W K`. -/
+example {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K]
+    (W : WeierstrassCurve F) [W.IsElliptic] :
+    (genericPoint W K + Point.baseChange K (W⁄K).FunctionField 0).xc = genericX W K := by
+  rw [← transEquiv_genericX, transEquiv_zero, AlgEquiv.coe_refl, id_eq]
+
+open Polynomial in
+/-- The class of `X - x(P)` lies in the place of `P`. -/
+example {F K : Type*} [Field F] [Field K] [Algebra F K] (W : WeierstrassCurve F)
+    (P : (W⁄K).Point) (hP : P ≠ 0) :
+    CoordinateRing.mk (W⁄K) (C (X - C P.xc)) ∈ (placeOf W K P hP).asIdeal := by
+  rw [mem_placeOf_iff, CoordinateRing.evalAt_mk, evalEval_C, eval_sub, eval_X, eval_C, sub_self]
+
+open Polynomial in
+/-- The class of `X - c` lies in the place of `P` only when `c` is the abscissa of `P`. -/
+example {F K : Type*} [Field F] [Field K] [Algebra F K] (W : WeierstrassCurve F)
+    (P : (W⁄K).Point) (hP : P ≠ 0) (c : K)
+    (hc : CoordinateRing.mk (W⁄K) (C (X - C c)) ∈ (placeOf W K P hP).asIdeal) : c = P.xc := by
+  rw [mem_placeOf_iff, CoordinateRing.evalAt_mk, evalEval_C, eval_sub, eval_X, eval_C,
+    sub_eq_zero] at hc
+  exact hc.symm
+
+/-- A place is a proper ideal: the unit `1` is not in it. -/
+example {F K : Type*} [Field F] [Field K] [Algebra F K] (W : WeierstrassCurve F)
+    (P : (W⁄K).Point) (hP : P ≠ 0) :
+    (1 : (W⁄K).CoordinateRing) ∉ (placeOf W K P hP).asIdeal := by
+  rw [mem_placeOf_iff, map_one]
+  exact one_ne_zero
+
 end FunctionFieldPullbackTest
 
 end
