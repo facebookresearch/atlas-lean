@@ -40,7 +40,7 @@ $n$ generators. $\mathrm{IA}(F_n)$ is the subgroup of the automorphism group of 
 the automorphisms $\varphi$ that act trivially on the abelianization $F_n/[F_n, F_n]$, that is,
 such that $\varphi(x)$ and $x$ have the same image in $F_n/[F_n, F_n]$ for every $x \in F_n$. -/
 def iaAut (n : ℕ) : Subgroup (MulAut (FreeGroup (Fin n))) where
-  carrier := {φ | ∀ x, Abelianization.of (φ x) = Abelianization.of x}
+  carrier := {φ | ∀ x, Group.Abelianization.of (φ x) = Group.Abelianization.of x}
   one_mem' _ := rfl
   mul_mem' {φ ψ} hφ hψ x := (hφ (ψ x)).trans (hψ x)
   inv_mem' {φ} hφ x := by
