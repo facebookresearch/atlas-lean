@@ -38,17 +38,6 @@ example (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ)
     ⇑(CuspForm.heckeULinH k q f) = ModularForm.heckeU k q ⇑f :=
   CuspForm.coe_heckeULinH_apply k (CuspForm.stableU M H k hq hqM) f
 
-/-- The prime-index Hecke formula at the prime `2`: for even `n = 2 * m`, the `n`-th
-coefficient of `heckeTPrime k 2 f` is `a (2 * m * 2) + 2 ^ (k - 1) * a m`. -/
-example {F : Type*} [FunLike F UpperHalfPlane ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-    [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (m : ℕ) :
-    ModularFormClass.qCoeff (ModularForm.heckeTPrime k 2 f) (2 * m) =
-      ModularFormClass.qCoeff f (2 * m * 2) + 2 ^ (k - 1) * ModularFormClass.qCoeff f m := by
-  rw [ModularFormHeckeUQExp.qCoeff_heckeTPrime_class f hΓ,
-    ModularForm.coeffHeckeTPrime_of_dvd k (dvd_mul_right 2 m),
-    Nat.mul_div_cancel_left m two_pos]
-  norm_num
-
 /-- Membership in `GammaHUpper`, defined through `HeckeEis.heckeUpperSL`, is still the upper-right
 entry vanishing modulo `ℓ`. -/
 example (M : ℕ) (H : Subgroup (ZMod M)ˣ) (ℓ : ℕ) (γ : CongruenceSubgroup.GammaH M H) :

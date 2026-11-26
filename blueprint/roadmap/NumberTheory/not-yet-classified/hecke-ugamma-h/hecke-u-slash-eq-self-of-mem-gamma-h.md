@@ -1,4 +1,4 @@
 # Hecke U slash eq self of mem Gamma H
 
-For a prime dividing the level, `heckeU` is invariant under slashing by
-elements of the intermediate congruence subgroup.
+Let `M ≠ 0` and let `q` be a prime dividing `M`. If `f : ℍ → ℂ` is invariant under the
+weight-`k` slash action of `GammaH M H`, then so is `heckeU k q f`.
