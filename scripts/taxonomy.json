@@ -14149,6 +14149,7 @@
   "MathlibExt/NumberTheory/TwoComplexitySum": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/TwoNearPerfectPowerOfTwoDivisors": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSq": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
+  "MathlibExt/NumberTheory/TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseFive": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseThree": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoPowAddFifteenPow": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/TwoSetsSumsetSquaresExistsIsSemiMagicRootsFOfPairwiseSumsSquaresQuintuple": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Sets with square pairwise sums"},
