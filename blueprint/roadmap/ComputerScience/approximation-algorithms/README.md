@@ -16,9 +16,13 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Lp based approximation](lp-based-approximation/README.md)
 - [Is Min Approximation](is-min-approximation.md)
 - [Is Max Approximation](is-max-approximation.md)
+- [Optimization Direction](optimization-direction.md)
+- [Approximation Solver](approximation-solver.md)
 - [Expected Value](expected-value.md)
 - [Is Randomized Min Approximation](is-randomized-min-approximation.md)
 - [Is Randomized Max Approximation](is-randomized-max-approximation.md)
+- [Is Max Approximation iff factor](is-max-approximation-iff-factor.md)
+- [Is Randomized Max Approximation iff factor](is-randomized-max-approximation-iff-fact.md)
 - [Approximation algorithms and approximation ratios](approximation-algorithms-and-approximation-ratios.md)
 - [Approx At iff is Max Approximation](approx-at-iff-is-max-approximation.md)
 
