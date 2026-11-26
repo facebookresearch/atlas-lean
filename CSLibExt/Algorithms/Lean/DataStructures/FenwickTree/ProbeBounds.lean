@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.FenwickTree
+-- Use the private implementation equations to connect probes to the unchanged operations.
+import all CSLibExt.Algorithms.Lean.DataStructures.FenwickTree
 
 /-!
 # Fenwick tree index walks and probe bounds
@@ -46,63 +48,85 @@ in visit order. It is empty if $k=0$ or $n=0$, and a request past the end reads 
 public def prefixVisits (n k : Nat) : List Nat :=
   prefixWalk (min k n)
 
+/-- **One step of the Fenwick prefix walk.** For natural array length $n$ and
+requested length $k$, let $j=\min(k,n)$. The visit list is empty if $j=0$. Otherwise it
+starts with $j$, followed by the prefix visits at length $j-\operatorname{lowbit}(j)$
+in the same array. -/
+public theorem prefixVisits_eq (n k : Nat) :
+    prefixVisits n k = if 0 < min k n then
+      min k n :: prefixVisits n (min k n - lowbit (min k n)) else [] := by
+  unfold prefixVisits
+  by_cases h : 0 < min k n
+  · rw [ite_eq_left h, prefixWalk_cons h,
+      Nat.min_eq_left (by omega : min k n - lowbit (min k n) ≤ n)]
+  · have hz : min k n = 0 := by omega
+    rw [ite_eq_right h, hz, prefixWalk_zero]
+
 /-- **Fenwick point-update visits.** For a natural array length $n$ and one-indexed input
 position $i$, list the one-indexed stored entries visited in order, starting from $i$ and
 repeatedly adding the current index's lowest set bit. Only indices in $[1,n]$ are visited:
 if $i=0$ or $i>n$ (including all inputs when $n=0$), the list is empty. An update at a
 zero-indexed array position $p$ uses $i=p+1$. -/
-@[expose] public def updateVisits (n i : Nat) : List Nat :=
-  if 0 < i ∧ i ≤ n then i :: updateVisits n (i + lowbit i) else []
+public def updateVisits (n i : Nat) : List Nat :=
+  if i = 0 then [] else walk n n i
+
+-- Once the fuel covers the remaining distance, its exact value does not affect the list.
+private theorem walk_eq_of_enough_fuel (n i f g : Nat) (hi : 0 < i)
+    (hf : n + 1 - i ≤ f) (hg : n + 1 - i ≤ g) : walk n f i = walk n g i := by
+  by_cases h : i ≤ n
+  · have hp := lowbit_pos hi
+    cases f with
+    | zero => omega
+    | succ f =>
+      cases g with
+      | zero => omega
+      | succ g =>
+        rw [walk_succ, walk_succ, ite_eq_left h, ite_eq_left h,
+          walk_eq_of_enough_fuel n (i + lowbit i) f g (by omega) (by omega) (by omega)]
+  · rw [walk_eq_nil_of_lt (by omega : n < i), walk_eq_nil_of_lt (by omega : n < i)]
 termination_by n + 1 - i
-decreasing_by
-  have := lowbit_pos (show 0 < i from ‹0 < i ∧ i ≤ n›.1)
-  omega
+decreasing_by omega
 
-private theorem updateVisits_cons {n i : Nat} (hi : 0 < i ∧ i ≤ n) :
+/-- **A valid Fenwick update step.** For natural array length $n$ and one-indexed start
+$1\le i\le n$, the visit list starts with $i$, followed by the update visits starting at
+$i+\operatorname{lowbit}(i)$ in the same array. -/
+public theorem updateVisits_cons {n i : Nat} (hi : 0 < i ∧ i ≤ n) :
     updateVisits n i = i :: updateVisits n (i + lowbit i) := by
-  rw [updateVisits, ite_eq_left hi]
+  have hp := lowbit_pos hi.1
+  unfold updateVisits
+  rw [ite_eq_right (by omega : i ≠ 0), ite_eq_right (by omega : i + lowbit i ≠ 0)]
+  cases n with
+  | zero => omega
+  | succ n =>
+    rw [walk_succ (n + 1) n i, ite_eq_left hi.2,
+      walk_eq_of_enough_fuel (n + 1) (i + lowbit i) n (n + 1)
+        (by omega) (by omega) (by omega)]
 
-private theorem updateVisits_nil {n i : Nat} (hi : ¬(0 < i ∧ i ≤ n)) :
+/-- **An invalid Fenwick update start has no visits.** For natural array length $n$ and
+one-indexed start $i$, if $i$ is not in $[1,n]$ then the update visit list is empty. -/
+public theorem updateVisits_nil {n i : Nat} (hi : ¬(0 < i ∧ i ≤ n)) :
     updateVisits n i = [] := by
-  rw [updateVisits, ite_eq_right hi]
+  unfold updateVisits
+  by_cases hz : i = 0
+  · rw [ite_eq_left hz]
+  · rw [ite_eq_right hz, walk_eq_nil_of_lt (by omega : n < i)]
 
-private theorem two_pow_le_lowbit {j e : Nat} (hj : 0 < j) (he : 2 ^ e ∣ j) :
-    2 ^ e ≤ lowbit j := by
-  obtain ⟨k, hk⟩ := lowbit_two_pow hj
-  by_cases h : e ≤ k
-  · rw [hk]
-    exact Nat.pow_le_pow_right (by decide) h
-  have hd : lowbit j * 2 ∣ j := by
-    rw [hk, ← pow_succ]
-    exact Nat.dvd_trans (Nat.pow_dvd_pow 2 (by omega : k + 1 ≤ e)) he
-  have hmod := Nat.mod_eq_zero_of_dvd (Nat.dvd_div_of_mul_dvd hd)
-  have hodd := lowbit_div_odd hj
-  omega
-
-private theorem two_mul_lowbit_le_of_dvd {j x : Nat} (hj : 0 < j) (hx : 0 < x)
-    (h : 2 * lowbit j ∣ x) : 2 * lowbit j ≤ lowbit x := by
+private theorem lowbit_sub_doubles {j : Nat} (hj : 0 < j) (hnext : 0 < j - lowbit j) :
+    2 * lowbit j ≤ lowbit (j - lowbit j) := by
   obtain ⟨e, he⟩ := lowbit_two_pow hj
-  rw [he, ← pow_succ'] at h ⊢
-  exact two_pow_le_lowbit hx h
-
-private theorem two_mul_lowbit_dvd_steps {j : Nat} (hj : 0 < j) :
-    (2 * lowbit j ∣ j - lowbit j) ∧ (2 * lowbit j ∣ j + lowbit j) := by
-  let q := (j / lowbit j) / 2
   have hodd := lowbit_div_odd hj
-  have he : j / lowbit j = 2 * q + 1 := by omega
+  let q := j / lowbit j / 2
+  have hq : j / lowbit j = 2 * q + 1 := by omega
   have hfactor : j = (2 * lowbit j) * q + lowbit j := by
     calc
       j = lowbit j * (j / lowbit j) := (Nat.mul_div_cancel' (lowbit_dvd hj)).symm
-      _ = _ := by rw [he, Nat.mul_add, Nat.mul_one, ← Nat.mul_assoc, Nat.mul_comm (lowbit j) 2]
-  exact ⟨⟨q, by omega⟩, ⟨q + 1, by rw [Nat.mul_succ]; omega⟩⟩
-
-private theorem lowbit_sub_doubles {j : Nat} (hj : 0 < j) (hnext : 0 < j - lowbit j) :
-    2 * lowbit j ≤ lowbit (j - lowbit j) :=
-  two_mul_lowbit_le_of_dvd hj hnext (two_mul_lowbit_dvd_steps hj).1
-
-private theorem lowbit_add_doubles {j : Nat} (hj : 0 < j) :
-    2 * lowbit j ≤ lowbit (j + lowbit j) :=
-  two_mul_lowbit_le_of_dvd hj (by omega) (two_mul_lowbit_dvd_steps hj).2
+      _ = _ := by rw [hq, Nat.mul_add, Nat.mul_one, ← Nat.mul_assoc, Nat.mul_comm (lowbit j) 2]
+  have hdvd : 2 * lowbit j ∣ j - lowbit j := ⟨q, by omega⟩
+  have hpow : 2 ^ (e + 1) ∣ j - lowbit j := by
+    simpa only [pow_succ', ← he] using hdvd
+  calc
+    2 * lowbit j = 2 ^ (e + 1) := by rw [he, pow_succ']
+    _ ≤ _ := two_pow_le_lowbit hnext hpow
 
 private theorem prefixWalk_blocks (j : Nat) :
     (prefixWalk j).reverse.flatMap (fun x => List.range' (x - lowbit x) (lowbit x)) =
@@ -129,18 +153,6 @@ public theorem prefixVisits_blocks (n k : Nat) :
   rw [List.range_eq_range']
   exact prefixWalk_blocks _
 
-private theorem sum_take_eq_range {α : Type*} [AddCommMonoid α] (a : List α) (k : Nat) :
-    (a.take k).sum = ((List.range k).map (fun i => a.getD i 0)).sum := by
-  induction a generalizing k with
-  | nil => simp
-  | cons x a ih =>
-    cases k with
-    | zero => rfl
-    | succ k =>
-      simp only [List.take_succ_cons, List.sum_cons, ih, List.range_succ_eq_map,
-        List.map_cons, List.map_map, List.getD_cons_zero]
-      rfl
-
 /-- **Sum of the visited Fenwick prefix blocks.** For a list $a$ over any additive commutative
 monoid and any requested length $k$, sum the stored block sums of $a$ at the one-indexed
 endpoints visited by the prefix walk of array length $|a|$. This equals the sum of the first
@@ -153,75 +165,39 @@ public theorem sum_prefixVisits_blockSum {α : Type*} [AddCommMonoid α] (a : Li
   rw [List.map_flatMap, List.flatMap, List.sum_flatten, List.map_map] at h
   change (((prefixVisits a.length k).reverse).map (blockSum a)).sum = _ at h
   rw [List.map_reverse, List.sum_reverse] at h
-  rw [h, ← sum_take_eq_range, ← List.take_take, List.take_of_length_le (Nat.le_refl _)]
+  rw [h, ← take_sum_eq, ← List.take_take, List.take_of_length_le (Nat.le_refl _)]
 
-private theorem prefixWalk_bounds_of_mem {k j : Nat} (h : j ∈ prefixWalk k) :
-    0 < j ∧ j ≤ k := by
-  by_cases hk : 0 < k
-  · rw [prefixWalk_cons hk, List.mem_cons] at h
-    rcases h with rfl | h
-    · exact ⟨hk, Nat.le_refl _⟩
-    · have h' := prefixWalk_bounds_of_mem h
-      exact ⟨h'.1, Nat.le_trans h'.2 (Nat.sub_le _ _)⟩
-  · rw [show k = 0 by omega, prefixWalk_zero] at h
-    exact False.elim (List.not_mem_nil h)
-termination_by k
-decreasing_by exact Nat.sub_lt hk (lowbit_pos hk)
+-- The trace is proved against the operational equations, not against `Valid` or `take`.
+private theorem prefixAux_eq_trace {α : Type*} [AddCommMonoid α] (bit : Array α)
+    (fuel k : Nat) (h : k ≤ fuel) :
+    prefixAux bit fuel k = ((prefixWalk k).map (fun j => bit.getD j 0)).sum := by
+  induction fuel generalizing k with
+  | zero =>
+    have hk : k = 0 := by omega
+    subst k
+    rw [prefixWalk_zero]
+    rfl
+  | succ fuel ih =>
+    rw [prefixAux_succ]
+    by_cases hk : k = 0
+    · subst k
+      rw [ite_eq_left rfl, prefixWalk_zero]
+      rfl
+    · have hj : 0 < k := by omega
+      have hp := lowbit_pos hj
+      rw [ite_eq_right hk, prefixWalk_cons hj, List.map_cons, List.sum_cons,
+        ih (k - lowbit k) (by omega)]
 
-/-- **The Fenwick prefix query sums the visited entries.** Let $t$ represent a list $a$ over
-an additive commutative monoid. For every natural requested length $k$, the installed prefix
-query of $t$ is the sum of the stored entries at the endpoints in the prefix visit list for
-length $t.\mathrm{size}=|a|$. The visit list uses only stored positions from $1$ to
-$\min(k,|a|)$, so the dummy entry and out-of-bounds defaults do not contribute. -/
+/-- **The Fenwick prefix query sums the visited entries.** For any Fenwick tree $t$
+over an additive commutative monoid and any natural query length $k$, the result is the
+sum of the stored entries at the one-indexed endpoints in the prefix visit list for length
+$t.\mathrm{size}$ and request $k$. The list records the indices from the query's recursion
+in order, with no representation invariant on the stored array. The query clamps to the tree
+size and the sum is zero if the clamped length is zero. -/
 public theorem prefixSum_eq_sum_prefixVisits {α : Type*} [AddCommMonoid α]
-    (t : FenwickTree α) {a : List α} (hv : Valid t a) (k : Nat) :
-    t.prefixSum k = ((prefixVisits t.size k).map (fun j => t.bit.getD j 0)).sum := by
-  rw [prefixSum_eq_take_sum t hv, size_eq_length_of_valid hv,
-    ← sum_prefixVisits_blockSum a k]
-  congr 1
-  apply List.map_congr_left
-  intro j hj
-  have hb := prefixWalk_bounds_of_mem (show j ∈ prefixWalk (min k a.length) from hj)
-  exact (hv.2 j hb.1 (Nat.le_trans hb.2 (Nat.min_le_right _ _))).symm
-
-private theorem lowbit_dvd_lowbit_of_le {i j : Nat} (hi : 0 < i) (hj : 0 < j)
-    (h : lowbit i ≤ lowbit j) : lowbit i ∣ lowbit j := by
-  obtain ⟨k, hk⟩ := lowbit_two_pow hi
-  obtain ⟨m, hm⟩ := lowbit_two_pow hj
-  rw [hk, hm] at h ⊢
-  exact Nat.pow_dvd_pow 2 ((Nat.pow_le_pow_iff_right (by decide : 1 < 2)).mp h)
-
-private theorem add_le_of_dvd_of_lt {a b p : Nat} (ha : p ∣ a) (hb : p ∣ b) (h : a < b) :
-    a + p ≤ b := by
-  have := Nat.le_of_dvd (by omega : 0 < b - a) (Nat.dvd_sub hb ha)
-  omega
-
--- A jump cannot skip a later endpoint whose block contains the current position.
-private theorem update_step_le_of_contains {i j : Nat} (hi : 0 < i) (hij : i < j)
-    (hcover : j - lowbit j < i) : i + lowbit i ≤ j := by
-  have hj : 0 < j := by omega
-  by_cases h : lowbit i ≤ lowbit j
-  · exact add_le_of_dvd_of_lt (lowbit_dvd hi)
-      (Nat.dvd_trans (lowbit_dvd_lowbit_of_le hi hj h) (lowbit_dvd hj)) hij
-  · have h' := add_le_of_dvd_of_lt
-      (Nat.dvd_trans (lowbit_dvd_lowbit_of_le hj hi (by omega)) (lowbit_dvd hi)) (lowbit_dvd hj) hij
-    omega
-
-private theorem updateVisits_bounds_of_mem {n i j : Nat} (h : j ∈ updateVisits n i) :
-    0 < i ∧ i ≤ j ∧ j ≤ n ∧ j - lowbit j ≤ i - lowbit i := by
-  by_cases hi : 0 < i ∧ i ≤ n
-  · rw [updateVisits_cons hi, List.mem_cons] at h
-    rcases h with rfl | h
-    · exact ⟨hi.1, Nat.le_refl _, hi.2, Nat.le_refl _⟩
-    · obtain ⟨-, hge, hle, hleft⟩ := updateVisits_bounds_of_mem h
-      have := lowbit_add_doubles hi.1
-      exact ⟨hi.1, by omega, hle, by omega⟩
-  · rw [updateVisits_nil hi] at h
-    exact False.elim (List.not_mem_nil h)
-termination_by n + 1 - i
-decreasing_by
-  have := lowbit_pos hi.1
-  omega
+    (t : FenwickTree α) (k : Nat) :
+    t.prefixSum k = ((prefixVisits t.size k).map (fun j => t.bit.getD j 0)).sum :=
+  prefixAux_eq_trace t.bit _ _ (Nat.le_refl _)
 
 /-- **Exact membership in the Fenwick update walk.** For natural length $n$, one-indexed
 input position $i$, and candidate stored endpoint $j$, the update walk visits $j$ if and only
@@ -230,22 +206,17 @@ contains $i$). This condition excludes the dummy endpoint $0$ and is impossible 
 $i=0$ or $i>n$, including every input when $n=0$. -/
 public theorem mem_updateVisits_iff (n i j : Nat) :
     j ∈ updateVisits n i ↔ j ≤ n ∧ j - lowbit j < i ∧ i ≤ j := by
+  by_cases hz : i = 0
+  · simp [updateVisits, hz]
+  have hi : 0 < i := by omega
+  rw [updateVisits, ite_eq_right hz]
   constructor
   · intro h
-    obtain ⟨hpos, hge, hle, hleft⟩ := updateVisits_bounds_of_mem h
-    have := lowbit_pos hpos
+    obtain ⟨hge, hle, hleft⟩ := mem_walk hi h
+    have hp := lowbit_pos hi
     exact ⟨hle, by omega, hge⟩
   · rintro ⟨hjn, hcover, hij⟩
-    have hi : 0 < i ∧ i ≤ n := by omega
-    rw [updateVisits_cons hi, List.mem_cons]
-    by_cases he : j = i
-    · exact Or.inl he
-    · have hstep := update_step_le_of_contains hi.1 (by omega) hcover
-      exact Or.inr ((mem_updateVisits_iff n (i + lowbit i) j).2 ⟨hjn, by omega, hstep⟩)
-termination_by n + 1 - i
-decreasing_by
-  have := lowbit_pos hi.1
-  omega
+    exact mem_walk_of hi hij hjn hcover (by omega)
 
 /-- **Fenwick update visits are strictly increasing.** For any natural array length $n$ and
 one-indexed start $i$, each index in the update visit list is strictly smaller than every
@@ -263,6 +234,27 @@ public theorem updateVisits_pairwise (n i : Nat) : (updateVisits n i).Pairwise (
 termination_by n + 1 - i
 decreasing_by
   have := lowbit_pos hi.1
+  omega
+
+/-- **The Fenwick update writes at the visited endpoints.** For any Fenwick tree $t$ over an
+additive commutative monoid, zero-indexed array position $i$, increment $δ$, and natural
+stored index $j$, reading index $j$ (with default $0$) after the update gives its old value
+plus $δ$ if $j$ belongs to the update visit list for size $t.\mathrm{size}$ and start $i+1$,
+and its old value otherwise. This holds for every stored array, including an empty array,
+without a representation invariant. The list is the one over which the implementation folds;
+each visited index is in bounds and the dummy entry is never visited. If $i\ge t.\mathrm{size}$
+the list is empty. -/
+public theorem getD_add_eq {α : Type*} [AddCommMonoid α] (t : FenwickTree α)
+    (i : Nat) (δ : α) (j : Nat) :
+    (t.add i δ).bit.getD j 0 =
+      t.bit.getD j 0 + (if j ∈ updateVisits t.size (i + 1) then δ else 0) := by
+  unfold updateVisits
+  simp only [Nat.add_one_ne_zero, ite_false]
+  unfold add
+  apply getD_foldl_addAt _ _ (walk_nodup (by omega))
+  intro x hx
+  have hb := mem_walk (by omega : 0 < i + 1) hx
+  unfold size at hb
   omega
 
 private theorem next_level {j x e : Nat} (he : 2 ^ e ≤ lowbit j)
@@ -293,7 +285,7 @@ private theorem updateVisits_length_add_le (n i e : Nat) (hi : 0 < i ∧ i ≤ n
   rw [updateVisits_cons hi, List.length_cons]
   by_cases hnext : 0 < i + lowbit i ∧ i + lowbit i ≤ n
   · have h := updateVisits_length_add_le n (i + lowbit i) (e + 1) hnext
-      (next_level he (lowbit_add_doubles hi.1))
+      (next_level he (two_mul_lowbit_le_lowbit_add hi.1))
     omega
   · rw [updateVisits_nil hnext, List.length_nil]
     have := level_le_log2 hi.1 hi.2 he
@@ -334,8 +326,11 @@ array length $n$, requested prefix length $k$, and one-indexed update position $
   list is empty if $k=0$ or $n=0$ and clamps to the full prefix for $k>n$. The update list
   is empty if $i=0$ or $i>n$. The inequalities also hold with $\operatorname{log2}(0)=0$.
 
-The bounds count visited indices, not running time. For a positive index $j$, the quotient
-$j/\operatorname{lowbit}(j)$ is odd. Adding or subtracting one copy of the low bit makes the
+The prefix trace projects the reads from `prefixSum`'s recursion. The `add` operation at
+zero-indexed position $p$ folds over precisely `updateVisits n (p+1)`, reading and writing
+once per visit. The bounds count visited indices, not running time.
+For a positive index $j$, the quotient $j/\operatorname{lowbit}(j)$ is odd. Adding or subtracting
+one copy of the low bit makes the
 new index a multiple of twice that low bit. On a nonzero next visit the exponent therefore
 strictly increases, and there are only $\lfloor\log_2 n\rfloor+1$ available exponents. -/
 public theorem prefixUpdate_probeBounds (n k i : Nat) :

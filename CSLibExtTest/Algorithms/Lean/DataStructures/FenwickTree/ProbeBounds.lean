@@ -67,13 +67,37 @@ example {α : Type*} [AddCommMonoid α] (a : List α) (k : Nat) :
     ((prefixVisits a.length k).map (blockSum a)).sum = (a.take k).sum :=
   sum_prefixVisits_blockSum a k
 
-example {α : Type*} [AddCommMonoid α] (t : FenwickTree α) {a : List α}
-    (hv : Valid t a) (k : Nat) :
+-- These arrays are not built from an underlying list. The query reads the actual stored
+-- values, and neither operation needs a representation invariant (or a zero dummy).
+private def arbitraryTree : FenwickTree Nat := ⟨#[99, 11, 22, 33, 44, 55, 66, 77]⟩
+
+#guard arbitraryTree.prefixSum 0 == 0
+#guard arbitraryTree.prefixSum 3 == 55
+#guard arbitraryTree.prefixSum 99 == 187
+#guard (arbitraryTree.add 2 5).bit == #[99, 11, 22, 38, 49, 55, 66, 77]
+#guard (arbitraryTree.add 7 5).bit == arbitraryTree.bit
+#guard (arbitraryTree.add 2 0).bit == arbitraryTree.bit
+
+private def emptyStorage : FenwickTree Nat := ⟨#[]⟩
+private def dummyOnly : FenwickTree Nat := ⟨#[99]⟩
+
+#guard emptyStorage.prefixSum 99 == 0
+#guard (emptyStorage.add 0 5).bit == #[]
+#guard dummyOnly.prefixSum 99 == 0
+#guard (dummyOnly.add 0 5).bit == #[99]
+
+example {α : Type*} [AddCommMonoid α] (t : FenwickTree α) (k : Nat) :
     t.prefixSum k = ((prefixVisits t.size k).map (fun j => t.bit.getD j 0)).sum :=
-  prefixSum_eq_sum_prefixVisits t hv k
+  prefixSum_eq_sum_prefixVisits t k
+
+example {α : Type*} [AddCommMonoid α] (t : FenwickTree α) (i j : Nat) (δ : α) :
+    (t.add i δ).bit.getD j 0 =
+      t.bit.getD j 0 + (if j ∈ updateVisits t.size (i + 1) then δ else 0) :=
+  getD_add_eq t i δ j
 
 #print axioms prefixUpdate_probeBounds
 #print axioms sum_prefixVisits_blockSum
 #print axioms prefixSum_eq_sum_prefixVisits
+#print axioms getD_add_eq
 
 end Cslib.Algorithms.Lean.FenwickTree

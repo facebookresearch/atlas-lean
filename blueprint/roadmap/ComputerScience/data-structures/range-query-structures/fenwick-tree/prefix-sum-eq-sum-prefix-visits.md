@@ -1,7 +1,8 @@
 # The Fenwick prefix query sums the visited entries
 
-Let $t$ represent a list $a$ over
-an additive commutative monoid. For every natural requested length $k$, the installed prefix
-query of $t$ is the sum of the stored entries at the endpoints in the prefix visit list for
-length $t.\mathrm{size}=|a|$. The visit list uses only stored positions from $1$ to
-$\min(k,|a|)$, so the dummy entry and out-of-bounds defaults do not contribute.
+Let $t$ be any Fenwick tree over an additive commutative monoid and let $k$ be a natural
+query length. The result of the prefix query is the sum of the entries read at the
+one-indexed endpoints in the [prefix visit list](prefix-visits.md) for length
+$t.\mathrm{size}$ and request $k$. The list records the query recursion’s read indices in order; no representation invariant
+is required. The query clamps to the tree size and the sum is
+zero when the clamped length is zero.

@@ -8,6 +8,11 @@ A [Fenwick tree](fenwick-tree.md) for an array of length $n$ stores a block at e
 2. The update walk is strictly increasing. It visits exactly the endpoints $j\le n$ with $j-\operatorname{lowbit}(j)<i\le j$, so each visited block contains the updated position and no entry is visited twice. The walk is empty for $i=0$ or $i>n$.
 3. For $n>0$, each walk visits at most $\lfloor\log_2 n\rfloor+1$ entries. The same inequalities hold for $n=0$ with the convention $\operatorname{log2}(0)=0$.
 
+The [prefix query](prefix-sum-eq-sum-prefix-visits.md) reads the stored entries of the prefix
+walk. An [update](get-d-add-eq.md) at zero-indexed array position $p$ reads and writes once per
+visit of the update walk starting at $i=p+1$. These correspondences do not assume that the
+storage represents an underlying array.
+
 After dividing a positive endpoint by its low bit, the quotient is odd. Adding or subtracting that low bit therefore makes the next endpoint a multiple of twice the previous low bit. At any nonzero next visit the exponent increases, and no visited endpoint exceeds $n$. This counts index visits, not the cost of arithmetic or of copying a persistent array.
 
 In zero-based stored indices $r=j-1$, subtracting or adding the low bit corresponds to the respective jumps $g(r)-1$ and $h(r)$, where $g(r)=r\mathbin{\&}(r+1)$ and $h(r)=r\mathbin{|}(r+1)$. The stopping index $-1$ for the zero-based prefix walk corresponds to the unvisited endpoint $0$.
