@@ -13,6 +13,7 @@ Topics added since this subject's fields were last revised.
 - [Period Map Hecke](period-map-hecke/README.md)
 - [Phi Gen](phi-gen/README.md)
 - [Projective Northcott](projective-northcott/README.md)
+- [Root Height Bound](root-height-bound/README.md)
 - [Symmetry](symmetry/README.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
