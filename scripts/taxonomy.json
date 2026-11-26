@@ -13008,6 +13008,7 @@
   "MathlibExt/NumberTheory/Digits/Permutiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/PermutipleStrings": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
+  "MathlibExt/NumberTheory/Digits/PermutipleStringsPermutipleEdgeResidueLe": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/PositiveTwoCubeDvd": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/ProdigiousCrtSolution": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Prodigious numbers"},
   "MathlibExt/NumberTheory/Digits/QWeightedTrollopeDelange": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Binary digit sums and the Trollope–Delange formula"},
