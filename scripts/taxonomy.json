@@ -12901,6 +12901,7 @@
   "MathlibExt/NumberTheory/Digits/ReverseDivisibility": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisor": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorCoprime": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
+  "MathlibExt/NumberTheory/Digits/ReverseDivisorExistsDvdReverseDigitsMul": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorFourDigits": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorHasPropertyPStarIffDvd": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorHasPropertyPStarOfDvd": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
