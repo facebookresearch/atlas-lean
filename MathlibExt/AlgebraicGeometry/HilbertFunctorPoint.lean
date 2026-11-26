@@ -58,8 +58,9 @@ namespace HilbertFunctor
 
 universe u
 
-/-- The degree-`d` graded piece of the quotient by a homogeneous ideal `I`:
-the degree-`d` homogeneous submodule modulo its intersection with `I`. -/
+/-- The image of the degree-`d` homogeneous submodule in the quotient by an ideal `I`: that
+submodule modulo its intersection with `I`. When `I` is homogeneous, this is the degree-`d`
+graded piece of the quotient. -/
 abbrev piece {A : Type*} [CommRing A] {n : ℕ} (I : Ideal (MvPolynomial (Fin (n + 1)) A))
     (d : ℕ) : Type _ :=
   ↥(homogeneousSubmodule (Fin (n + 1)) A d) ⧸

@@ -58,7 +58,8 @@ def WeierstrassCurve.IsSemistableModel (W : WeierstrassCurve ℤ) : Prop :=
   ∀ p : ℕ, p.Prime → (p : ℤ) ∣ W.Δ → ¬ (p : ℤ) ∣ W.c₄
 
 /-- A Weierstrass curve over `ℚ` is *peu ramifiée* at `ℓ` with respect to
-`p` when `p` divides the `ℓ`-adic valuation of its discriminant. -/
+`p` when `p` divides `padicValRat ℓ` of its discriminant: the multiplicity of `ℓ` in the
+numerator minus that in the denominator, which is the `ℓ`-adic valuation for prime `ℓ`. -/
 def WeierstrassCurve.IsPeuRamifieeAt (W : WeierstrassCurve ℚ) (p ℓ : ℕ) : Prop :=
   (p : ℤ) ∣ padicValRat ℓ W.Δ
 

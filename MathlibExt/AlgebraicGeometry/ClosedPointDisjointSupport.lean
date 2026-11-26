@@ -79,7 +79,8 @@ end AlgebraicGeometry.Scheme.IdealSheafData
 namespace AlgebraicGeometry
 
 /-- If the closed point of a local ring maps under a closed immersion
-outside the support of an ideal sheaf `J`, then the kernel of the immersion
+outside the support `J.support` of an ideal sheaf `J`, its vanishing locus (the closed
+subscheme cut out by `J`), then the kernel of the immersion
 pulled back to the subscheme cut out by `J` is the top ideal sheaf. It is
 therefore invertible, the resulting closed immersion composed with any map
 to a spectrum is finite, and its rank vanishes at every point. -/
