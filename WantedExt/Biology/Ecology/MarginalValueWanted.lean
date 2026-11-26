@@ -37,21 +37,21 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 namespace WantedExt.Biology.Ecology.MarginalValueWanted
 
-/-- The long-run intake rate `E(t) = ∑ᵢ pᵢ gᵢ(tᵢ) / (τ + ∑ᵢ pᵢ tᵢ)`. -/
+/-- **Long-run intake rate.** The long-run intake rate `E(t) = ∑ᵢ pᵢ gᵢ(tᵢ) / (τ + ∑ᵢ pᵢ tᵢ)`. -/
 noncomputable def intakeRate {ι : Type*} [Fintype ι] (p : ι → ℝ) (g : ι → ℝ → ℝ) (τ : ℝ)
     (t : ι → ℝ) : ℝ :=
   (∑ i, p i * g i (t i)) / (τ + ∑ i, p i * t i)
 
-/-- The standing hypotheses on the gain functions: every `gᵢ` vanishes at `0`, is nondecreasing
-and concave on `[0, ∞)`, and is differentiable on `(0, ∞)`. -/
+/-- **Gain functions.** The standing hypotheses on the gain functions: every `gᵢ` vanishes at `0`,
+is nondecreasing and concave on `[0, ∞)`, and is differentiable on `(0, ∞)`. -/
 def IsGainFamily {ι : Type*} (g : ι → ℝ → ℝ) : Prop :=
   ∀ i, g i 0 = 0 ∧ MonotoneOn (g i) (Set.Ici 0) ∧ ConcaveOn ℝ (Set.Ici 0) (g i) ∧
     DifferentiableOn ℝ (g i) (Set.Ioi 0)
 
-/-- **The marginal value theorem, necessity** (Charnov 1976): let `pᵢ > 0` with `∑ pᵢ = 1`,
-`τ > 0`, and let the gains `gᵢ` vanish at `0`, be nondecreasing and concave on `[0, ∞)` and
-differentiable on `(0, ∞)`. If `t*` with every `tᵢ* > 0` maximizes the intake rate `E` over all
-allocations with every `tᵢ ≥ 0`, then `gᵢ'(tᵢ*) = E(t*)` for every patch type `i`.
+/-- **The marginal value theorem, necessity.** Let `pᵢ > 0` with `∑ pᵢ = 1`, `τ > 0`, and let the
+gains `gᵢ` vanish at `0`, be nondecreasing and concave on `[0, ∞)` and differentiable on `(0, ∞)`.
+If `t*` with every `tᵢ* > 0` maximizes the intake rate `E` over all allocations with every `tᵢ ≥ 0`,
+then `gᵢ'(tᵢ*) = E(t*)` for every patch type `i`.
 
 Sources: Charnov (1976); Wajnberg et al. (2006). -/
 public theorem_wanted deriv_eq_intakeRate_of_isMaxOn {ι : Type*} [Fintype ι] (p : ι → ℝ)
@@ -60,9 +60,9 @@ public theorem_wanted deriv_eq_intakeRate_of_isMaxOn {ι : Type*} [Fintype ι] (
     (hmax : ∀ t : ι → ℝ, (∀ i, 0 ≤ t i) → intakeRate p g τ t ≤ intakeRate p g τ ts) (i : ι) :
     deriv (g i) (ts i) = intakeRate p g τ ts
 
-/-- **The marginal value theorem, sufficiency** (derived): under the hypotheses of the necessity
-statement (`pᵢ > 0`, `∑ pᵢ = 1`, `τ > 0`, gains vanishing at `0`, nondecreasing and concave on
-`[0, ∞)`, differentiable on `(0, ∞)`), if `t*` with every `tᵢ* > 0` satisfies
+/-- **The marginal value theorem, sufficiency.** A derived converse: under the hypotheses of the
+necessity statement (`pᵢ > 0`, `∑ pᵢ = 1`, `τ > 0`, gains vanishing at `0`, nondecreasing and
+concave on `[0, ∞)`, differentiable on `(0, ∞)`), if `t*` with every `tᵢ* > 0` satisfies
 `gᵢ'(tᵢ*) = E(t*)` for every `i`, then `E(t) ≤ E(t*)` for every allocation with every `tᵢ ≥ 0`.
 
 Sources: Charnov (1976); Wajnberg et al. (2006). -/
@@ -72,10 +72,10 @@ public theorem_wanted isMaxOn_of_deriv_eq {ι : Type*} [Fintype ι] (p : ι → 
     (hmv : ∀ i, deriv (g i) (ts i) = intakeRate p g τ ts) :
     ∀ t : ι → ℝ, (∀ i, 0 ≤ t i) → intakeRate p g τ t ≤ intakeRate p g τ ts
 
-/-- **Uniqueness under strict concavity** (derived): under the hypotheses of the sufficiency
-statement, and if moreover every `gᵢ` is strictly concave on `[0, ∞)`, an interior allocation
-`t*` satisfying `gᵢ'(tᵢ*) = E(t*)` for every `i` is the unique maximizer: every allocation `t`
-with every `tᵢ ≥ 0` and `E(t) = E(t*)` equals `t*`.
+/-- **Uniqueness under strict concavity.** A derived complement: under the hypotheses of the
+sufficiency statement, and if moreover every `gᵢ` is strictly concave on `[0, ∞)`, an interior
+allocation `t*` satisfying `gᵢ'(tᵢ*) = E(t*)` for every `i` is the unique maximizer: every
+allocation `t` with every `tᵢ ≥ 0` and `E(t) = E(t*)` equals `t*`.
 
 Sources: Charnov (1976); Wajnberg et al. (2006). -/
 public theorem_wanted eq_of_intakeRate_eq {ι : Type*} [Fintype ι] (p : ι → ℝ)

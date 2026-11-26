@@ -37,27 +37,27 @@ public import Mathlib.Basic.Real.Basic
 
 namespace WantedExt.Biology.Ecology.SchaeferGordonWanted
 
-/-- Schaefer's natural increase `f(P) = k₁ P (L - P)`. -/
+/-- **Natural increase.** Schaefer's natural increase `f(P) = k₁ P (L - P)`. -/
 def naturalIncrease (k₁ L P : ℝ) : ℝ := k₁ * P * (L - P)
 
-/-- **Schaefer's maximum equilibrium catch** (Schaefer 1954): let `k₁ > 0` and `L > 0`. For every
-stock level `P`, the equilibrium catch `f(P) = k₁ P (L - P)` satisfies `f(P) ≤ k₁ L² / 4`, with
-equality if and only if `P = L / 2`.
+/-- **Schaefer's maximum equilibrium catch.** Let `k₁ > 0` and `L > 0`. For every stock level `P`,
+the equilibrium catch `f(P) = k₁ P (L - P)` satisfies `f(P) ≤ k₁ L² / 4`, with equality if and only
+if `P = L / 2`.
 
 Source: Schaefer (1954). -/
 public theorem_wanted naturalIncrease_le (k₁ L : ℝ) (hk₁ : 0 < k₁) (hL : 0 < L) (P : ℝ) :
     naturalIncrease k₁ L P ≤ k₁ * L ^ 2 / 4 ∧ (naturalIncrease k₁ L P = k₁ * L ^ 2 / 4 ↔ P = L / 2)
 
-/-- `(P, E)` is a **bionomic equilibrium** of the Gordon–Schaefer fishery with intrinsic growth
-rate `r`, carrying capacity `K`, catchability `q`, price `π` and cost `c` per unit effort: stock
-and effort are positive, the stock is at equilibrium, `r P (1 - P / K) = q E P`, and the net
-revenue vanishes, `π q E P - c E = 0`. -/
+/-- **Bionomic equilibrium.** `(P, E)` is a bionomic equilibrium of the Gordon–Schaefer fishery with
+intrinsic growth rate `r`, carrying capacity `K`, catchability `q`, price `π` and cost `c` per unit
+effort: stock and effort are positive, the stock is at equilibrium, `r P (1 - P / K) = q E P`, and
+the net revenue vanishes, `π q E P - c E = 0`. -/
 def IsBionomicEquilibrium (r K q π c P E : ℝ) : Prop :=
   0 < P ∧ 0 < E ∧ r * P * (1 - P / K) = q * E * P ∧ π * q * E * P - c * E = 0
 
-/-- **Gordon's bionomic equilibrium** (Gordon 1954, in Gordon–Schaefer form; derived): let
-`r, K, q, π, c > 0`. A bionomic equilibrium exists if and only if `c / (π q) < K`; in that case
-it is unique, with stock `P∞ = c / (π q)` and effort `E∞ = (r / q) (1 - c / (π q K))`.
+/-- **Gordon's bionomic equilibrium.** In the Gordon–Schaefer form of Gordon's (1954) model
+(derived), let `r, K, q, π, c > 0`. A bionomic equilibrium exists if and only if `c / (π q) < K`; in
+that case it is unique, with stock `P∞ = c / (π q)` and effort `E∞ = (r / q) (1 - c / (π q K))`.
 
 Sources: Gordon (1954); Schaefer (1954). -/
 public theorem_wanted bionomicEquilibrium_iff (r K q π c : ℝ) (hr : 0 < r) (hK : 0 < K)

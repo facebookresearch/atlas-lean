@@ -38,24 +38,28 @@ namespace WantedExt.Biology.Ecology.WarOfAttritionWanted
 
 open MeasureTheory
 
-/-- The payoff to a contestant prepared to pay `m` against one prepared to pay `m'`, for a
-resource of value `v`: `v - m'` if `m > m'`, `-m` if `m < m'`, and `v / 2 - m` if `m = m'`. -/
+/-- **War of attrition payoff.** The payoff to a contestant prepared to pay `m` against one prepared
+to pay `m'`, for a resource of value `v`: `v - m'` if `m > m'`, `-m` if `m < m'`, and `v / 2 - m` if
+`m = m'`. -/
 noncomputable def payoff (v m m' : ℝ) : ℝ :=
   if m' < m then v - m' else if m < m' then -m else v / 2 - m
 
-/-- The persistence strategy `I`: Mathlib's exponential law `ProbabilityTheory.expMeasure` with
-rate `v⁻¹`, whose density is `(1/v) e^{-x/v}` for `x ≥ 0` and `0` for `x < 0`. For `v > 0` it is
-a probability law (`ProbabilityTheory.isProbabilityMeasure_expMeasure`) with mean `v`. -/
+/-- **Exponential persistence strategy.** The persistence strategy `I`: Mathlib's exponential law
+`ProbabilityTheory.expMeasure` with rate `v⁻¹`, whose density is `(1/v) e^{-x/v}` for `x ≥ 0` and
+`0` for `x < 0`. For `v > 0` it is a probability law
+(`ProbabilityTheory.isProbabilityMeasure_expMeasure`) with mean `v`. -/
 noncomputable def exponentialStrategy (v : ℝ) : Measure ℝ :=
   ProbabilityTheory.expMeasure v⁻¹
 
-/-- The expected payoff of the pure strategy `m` against the mixed strategy `I`. -/
+/-- **Payoff against a mixed strategy.** The expected payoff of the pure strategy `m` against the
+mixed strategy `I`. -/
 noncomputable def payoffAgainst (v m : ℝ) (μ : Measure ℝ) : ℝ := ∫ x, payoff v m x ∂μ
 
-/-- The expected payoff of the mixed strategy `I` against the pure strategy `m`. -/
+/-- **Payoff of a mixed strategy.** The expected payoff of the mixed strategy `I` against the pure
+strategy `m`. -/
 noncomputable def payoffOf (v : ℝ) (μ : Measure ℝ) (m : ℝ) : ℝ := ∫ x, payoff v x m ∂μ
 
-/-- **No pure ESS** (Maynard Smith 1974, §3): let `v > 0`. For every pure strategy `m ≥ 0` there
+/-- **No pure ESS.** Let `v > 0`. For every pure strategy `m ≥ 0` there
 is a pure mutant `m' ≥ 0`, `m' ≠ m`, that earns strictly more against `m` than `m` earns against
 itself: `E(m', m) > E(m, m)`.
 
@@ -63,15 +67,15 @@ Source: Maynard Smith (1974), §3. -/
 public theorem_wanted no_pure_ess (v : ℝ) (hv : 0 < v) (m : ℝ) (hm : 0 ≤ m) :
     ∃ m' : ℝ, 0 ≤ m' ∧ m' ≠ m ∧ payoff v m m < payoff v m' m
 
-/-- **The exponential strategy equalizes payoffs** (Maynard Smith 1974, §3): let `v > 0`, so that
-the exponential law `I` with rate `v⁻¹` (mean `v`) is a probability measure. Every pure strategy
-`m ≥ 0` earns exactly `0` against it: `E(m, I) = 0`.
+/-- **The exponential strategy equalizes payoffs.** Let `v > 0`, so that the exponential law `I`
+with rate `v⁻¹` (mean `v`) is a probability measure. Every pure strategy `m ≥ 0` earns exactly `0`
+against it: `E(m, I) = 0`.
 
 Source: Maynard Smith (1974), §3. -/
 public theorem_wanted payoffAgainst_exponential (v : ℝ) (hv : 0 < v) :
     ∀ m : ℝ, 0 ≤ m → payoffAgainst v m (exponentialStrategy v) = 0
 
-/-- **Stability against pure mutants** (Maynard Smith 1974, §3): let `v > 0`. For every pure
+/-- **Stability against pure mutants.** Let `v > 0`. For every pure
 mutant `m > 0`, the exponential strategy `I` earns more against `m` than `m` earns against
 itself: `E(m, m) < E(I, m)`.
 

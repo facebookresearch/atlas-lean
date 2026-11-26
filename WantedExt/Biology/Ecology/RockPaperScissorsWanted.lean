@@ -23,7 +23,8 @@ Recorded here: the four equivalences, the closed orbits for `det A = 0`, and con
 heteroclinic cycle for `det A < 0`, for solutions on `[0, ∞)` starting in the interior of `S₃`.
 Solutions are those of the library's replicator equation
 `MathlibExt.Biology.Dynamics.Replicator.IsSolution` (`Domains.Biology.Dynamics.Replicator`) with
-the linear fitness `y ↦ A y`.
+the linear fitness `y ↦ A y`, and a point of the simplex is the library's
+`MathlibExt.Biology.Dynamics.AsymmetricESS.IsMixed` (`Domains.Biology.Dynamics.AsymmetricESS`).
 Asymptotic stability is relative to the simplex; global stability means Lyapunov stability plus
 convergence of every interior solution. Zeeman (1980) and Hofbauer–Sigmund (1998, §7.7) were not
 read; the statement follows Hofbauer and Sigmund (2003).
@@ -36,6 +37,7 @@ doi:10.1090/S0273-0979-03-00988-1, Theorem 2.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.AsymmetricESS
 public import Domains.Biology.Dynamics.Replicator
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
@@ -48,53 +50,56 @@ namespace WantedExt.Biology.Ecology.RockPaperScissorsWanted
 
 open Filter Topology Matrix
 open MathlibExt.Biology.Dynamics
+open MathlibExt.Biology.Dynamics.AsymmetricESS (IsMixed)
 
-/-- The rock–paper–scissors payoff matrix `[[0, -a₂, b₃], [b₁, 0, -a₃], [-a₁, b₂, 0]]` with
-losses `aᵢ` and wins `bᵢ` (indices `0, 1, 2` for strategies `1, 2, 3`). -/
+/-- **Rock–paper–scissors matrix.** The payoff matrix `[[0, -a₂, b₃], [b₁, 0, -a₃], [-a₁, b₂, 0]]`
+with losses `aᵢ` and wins `bᵢ` (indices `0, 1, 2` for strategies `1, 2, 3`). -/
 def rpsMatrix (a b : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![0, -a 1, b 2; b 0, 0, -a 2; -a 0, b 1, 0]
 
-/-- `z` is in the **interior of the simplex** `S₃`: every `zᵢ > 0` and `∑ zᵢ = 1`. -/
+/-- **Interior of the simplex.** `z` is in the interior of the simplex `S₃`: every `zᵢ > 0` and
+`∑ zᵢ = 1`. -/
 def InInterior (z : Fin 3 → ℝ) : Prop := (∀ i, 0 < z i) ∧ ∑ i, z i = 1
 
-/-- `z` is in the **boundary of the simplex** `S₃`: every `zᵢ ≥ 0`, `∑ zᵢ = 1`, and some
-coordinate vanishes. For `S₃` this is the heteroclinic cycle `e₁ → e₂ → e₃ → e₁`. -/
-def InBoundary (z : Fin 3 → ℝ) : Prop := (∀ i, 0 ≤ z i) ∧ ∑ i, z i = 1 ∧ ∃ i, z i = 0
+/-- **Boundary of the simplex.** `z` is in the boundary of the simplex `S₃`: it is a point of the
+simplex (`IsMixed z`: every `zᵢ ≥ 0` and `∑ zᵢ = 1`) and some coordinate vanishes. For `S₃` this
+is the heteroclinic cycle `e₁ → e₂ → e₃ → e₁`. -/
+def InBoundary (z : Fin 3 → ℝ) : Prop := IsMixed z ∧ ∃ i, z i = 0
 
-/-- `z` is **Lyapunov stable** for solutions starting in the simplex: for every `ε > 0` there is
-`δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex and `‖x(0) - z‖ < δ` has
-`‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
+/-- **Lyapunov stability.** `z` is Lyapunov stable for solutions starting in the simplex: for
+every `ε > 0` there is `δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex
+(`IsMixed (x 0)`) and `‖x(0) - z‖ < δ` has `‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
 def IsLyapunovStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin 3 → ℝ,
-    Replicator.IsSolution (fun y => A *ᵥ y) x → (∀ i, 0 ≤ x 0 i) → ∑ i, x 0 i = 1 →
+    Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
       ‖x 0 - z‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - z‖ < ε
 
-/-- `z` is **asymptotically stable**: Lyapunov stable, and there is `δ₀ > 0` such that every
-solution on `[0, ∞)` with `x(0)` in the simplex and `‖x(0) - z‖ < δ₀` converges to `z`. -/
+/-- **Asymptotic stability.** `z` is asymptotically stable: Lyapunov stable, and there is
+`δ₀ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex (`IsMixed (x 0)`) and
+`‖x(0) - z‖ < δ₀` converges to `z`. -/
 def IsAsymptoticallyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
   IsLyapunovStable A z ∧ ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ x : ℝ → Fin 3 → ℝ,
-    Replicator.IsSolution (fun y => A *ᵥ y) x → (∀ i, 0 ≤ x 0 i) → ∑ i, x 0 i = 1 →
+    Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
       ‖x 0 - z‖ < δ₀ → Tendsto x atTop (𝓝 z)
 
-/-- `z` is **globally stable**: Lyapunov stable, and every solution on `[0, ∞)` with `x(0)` in the
-interior of `S₃` converges to `z`. -/
+/-- **Global stability.** `z` is globally stable: Lyapunov stable, and every solution on `[0, ∞)`
+with `x(0)` in the interior of `S₃` converges to `z`. -/
 def IsGloballyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
   IsLyapunovStable A z ∧ ∀ x : ℝ → Fin 3 → ℝ,
     Replicator.IsSolution (fun y => A *ᵥ y) x → InInterior (x 0) → Tendsto x atTop (𝓝 z)
 
-/-- **Unique interior rest point** (Hofbauer and Sigmund 2003, §3): for losses `aᵢ > 0` and wins
-`bᵢ > 0`, the rock–paper–scissors replicator equation has exactly one rest point in the interior
-of `S₃`.
+/-- **Unique interior rest point.** For losses `aᵢ > 0` and wins `bᵢ > 0`, the rock–paper–scissors
+replicator equation has exactly one rest point in the interior of `S₃` (Hofbauer and Sigmund
+2003, §3).
 
 Source: Hofbauer and Sigmund (2003), Theorem 2 and the text before it. -/
 public theorem_wanted existsUnique_interiorRestPoint (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
     (hb : ∀ i, 0 < b i) :
     ∃! z, InInterior z ∧ Replicator.IsRestPoint (fun y => rpsMatrix a b *ᵥ y) z
 
-/-- **Zeeman's equivalences** (Hofbauer and Sigmund 2003, Theorem 2): let `aᵢ > 0`, `bᵢ > 0`, and
-let `z` be the interior rest point of the rock–paper–scissors replicator equation with matrix
-`A`. Then the following are equivalent: (a) `z` is asymptotically stable; (b) `z` is globally
-stable; (c) `det A > 0`; (d) `zᵀ A z > 0`.
+/-- **Zeeman's equivalences.** Let `aᵢ > 0`, `bᵢ > 0`, and let `z` be the interior rest point of
+the rock–paper–scissors replicator equation with matrix `A`. Then the following are equivalent:
+(a) `z` is asymptotically stable; (b) `z` is globally stable; (c) `det A > 0`; (d) `zᵀ A z > 0`.
 
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted zeeman_tfae (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i)
@@ -104,9 +109,9 @@ public theorem_wanted zeeman_tfae (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i) (h
       (IsGloballyStable (rpsMatrix a b) z ↔ 0 < (rpsMatrix a b).det) ∧
       (0 < (rpsMatrix a b).det ↔ 0 < z ⬝ᵥ (rpsMatrix a b *ᵥ z))
 
-/-- **Closed orbits when `det A = 0`** (Hofbauer and Sigmund 2003, Theorem 2): let `aᵢ > 0`,
-`bᵢ > 0` with `det A = 0`. Then every solution on `[0, ∞)` with `x(0)` in the interior of `S₃` is
-periodic: there is `T > 0` with `x(t + T) = x(t)` for every `t ≥ 0`.
+/-- **Closed orbits when `det A = 0`.** Let `aᵢ > 0`, `bᵢ > 0` with `det A = 0`. Then every
+solution on `[0, ∞)` with `x(0)` in the interior of `S₃` is periodic: there is `T > 0` with
+`x(t + T) = x(t)` for every `t ≥ 0`.
 
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted periodic_of_det_eq_zero (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
@@ -114,11 +119,11 @@ public theorem_wanted periodic_of_det_eq_zero (a b : Fin 3 → ℝ) (ha : ∀ i,
     (hx : Replicator.IsSolution (fun y => rpsMatrix a b *ᵥ y) x) (hx₀ : InInterior (x 0)) :
     ∃ T : ℝ, 0 < T ∧ ∀ t : ℝ, 0 ≤ t → x (t + T) = x t
 
-/-- **Convergence to the heteroclinic cycle when `det A < 0`** (Hofbauer and Sigmund 2003,
-Theorem 2): let `aᵢ > 0`, `bᵢ > 0` with `det A < 0`, and let `z` be the interior rest point. Then
-every solution `x` on `[0, ∞)` with `x(0)` in the interior of `S₃` and `x(0) ≠ z` has the
-boundary of `S₃` (the heteroclinic cycle through `e₁, e₂, e₃`) as ω-limit set: `∏ᵢ xᵢ(t) → 0`, and
-every point of the boundary is a cluster point of `x(t)` as `t → ∞`.
+/-- **Convergence to the heteroclinic cycle when `det A < 0`.** Let `aᵢ > 0`, `bᵢ > 0` with
+`det A < 0`, and let `z` be the interior rest point. Then every solution `x` on `[0, ∞)` with
+`x(0)` in the interior of `S₃` and `x(0) ≠ z` has the boundary of `S₃` (the heteroclinic cycle
+through `e₁, e₂, e₃`) as ω-limit set: `∏ᵢ xᵢ(t) → 0`, and every point of the boundary is a
+cluster point of `x(t)` as `t → ∞`.
 
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted omegaLimit_heteroclinic_of_det_neg (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)

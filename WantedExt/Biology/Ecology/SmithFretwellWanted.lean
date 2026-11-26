@@ -32,12 +32,13 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 
 namespace WantedExt.Biology.Ecology.SmithFretwellWanted
 
-/-- Parental fitness `W(s) = (R / s) f(s)` with budget `R` and offspring fitness `f`. -/
+/-- **Parental fitness.** The parental fitness `W(s) = (R / s) f(s)` with budget `R` and offspring
+fitness `f`. -/
 noncomputable def parentalFitness (R : ℝ) (f : ℝ → ℝ) (s : ℝ) : ℝ := R / s * f s
 
-/-- **The Smith–Fretwell tangency condition** (Smith and Fretwell 1974): let `R > 0` and let
-`f : ℝ → ℝ` be any function. If `s* > 0` maximizes parental fitness `W(s) = (R / s) f(s)` over
-all `s > 0`, and `f` is differentiable at `s*`, then `f'(s*) = f(s*) / s*`.
+/-- **The Smith–Fretwell tangency condition.** Let `R > 0` and let `f : ℝ → ℝ` be any function. If
+`s* > 0` maximizes parental fitness `W(s) = (R / s) f(s)` over all `s > 0`, and `f` is
+differentiable at `s*`, then `f'(s*) = f(s*) / s*`.
 
 Source: Smith and Fretwell (1974). -/
 public theorem_wanted deriv_eq_div_of_isMaxOn (R : ℝ) (hR : 0 < R) (f : ℝ → ℝ) (ss : ℝ)
@@ -45,8 +46,8 @@ public theorem_wanted deriv_eq_div_of_isMaxOn (R : ℝ) (hR : 0 < R) (f : ℝ �
     (hf : DifferentiableAt ℝ f ss) :
     deriv f ss = f ss / ss
 
-/-- **The optimal size does not depend on the budget** (Smith and Fretwell 1974): let `R > 0`
-and let `f : ℝ → ℝ` be any function. A size `s* > 0` maximizes parental fitness
+/-- **The optimal size does not depend on the budget.** Let `R > 0` and let `f : ℝ → ℝ` be any
+function. A size `s* > 0` maximizes parental fitness
 `W(s) = (R / s) f(s)` over all `s > 0` if and only if it maximizes `f(s) / s` over all `s > 0`.
 
 Source: Smith and Fretwell (1974). -/

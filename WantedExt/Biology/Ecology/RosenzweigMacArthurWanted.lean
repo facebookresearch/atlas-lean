@@ -46,7 +46,8 @@ namespace WantedExt.Biology.Ecology.RosenzweigMacArthurWanted
 
 open Filter Topology Metric
 
-/-- Parameters of the Rosenzweig–MacArthur model, all positive. -/
+/-- **Rosenzweig–MacArthur parameters.** Parameters of the Rosenzweig–MacArthur model, all
+positive. -/
 structure Params where
   /-- Prey growth rate. -/
   γ : ℝ
@@ -77,23 +78,27 @@ namespace Params
 
 variable (p : Params)
 
-/-- The vector field `(γ S (1 - S/K) - (m/y) x S/(a + S), x (m S/(a + S) - D₀))` at `(S, x)`. -/
+/-- **Rosenzweig–MacArthur vector field.** The vector field
+`(γ S (1 - S/K) - (m/y) x S/(a + S), x (m S/(a + S) - D₀))` at `(S, x)`. -/
 noncomputable def field (z : ℝ × ℝ) : ℝ × ℝ :=
   (p.γ * z.1 * (1 - z.1 / p.K) - p.m / p.y * z.2 * z.1 / (p.a + z.1),
     z.2 * (p.m * z.1 / (p.a + z.1) - p.D₀))
 
-/-- `z` solves the model on `[0, ∞)`: `z'(t) = field (z t)` for every `t ≥ 0`. -/
+/-- **Solution of the model.** `z` solves the model on `[0, ∞)`: `z'(t) = field (z t)` for every
+`t ≥ 0`. -/
 def IsSolution (z : ℝ → ℝ × ℝ) : Prop := ∀ t : ℝ, 0 ≤ t → HasDerivAt z (p.field (z t)) t
 
-/-- The break-even prey density `λ = a / (m / D₀ - 1)`, meaningful when `m > D₀`. -/
+/-- **Break-even prey density.** The break-even prey density `λ = a / (m / D₀ - 1)`, meaningful
+when `m > D₀`. -/
 noncomputable def lam : ℝ := p.a / (p.m / p.D₀ - 1)
 
-/-- The coexistence equilibrium `(λ, x*)` with `x* = (γ y / m) (1 - λ / K) (a + λ)`. -/
+/-- **Coexistence equilibrium.** The coexistence equilibrium `(λ, x*)` with
+`x* = (γ y / m) (1 - λ / K) (a + λ)`. -/
 noncomputable def coexistenceEq : ℝ × ℝ :=
   (p.lam, p.γ * p.y / p.m * (1 - p.lam / p.K) * (p.a + p.lam))
 
-/-- **Case (i): predator extinction** (Cheng 1981, §1): for positive parameters with `m ≤ D₀`,
-or `m > D₀` and `K ≤ λ`, every solution on `[0, ∞)` with `S(0) > 0` and `x(0) > 0` converges to
+/-- **Case (i): predator extinction.** For positive parameters with `m ≤ D₀`, or `m > D₀` and
+`K ≤ λ`, every solution on `[0, ∞)` with `S(0) > 0` and `x(0) > 0` converges to
 `(K, 0)`.
 
 Source: Cheng (1981), §1. -/
@@ -101,10 +106,9 @@ public theorem_wanted tendsto_preyOnly (h : p.m ≤ p.D₀ ∨ (p.D₀ < p.m ∧
     (z : ℝ → ℝ × ℝ) (hz : p.IsSolution z) (h₀₁ : 0 < (z 0).1) (h₀₂ : 0 < (z 0).2) :
     Tendsto z atTop (𝓝 (p.K, 0))
 
-/-- **Case (ii): stable coexistence below the Hopf threshold** (Cheng 1981, §1): for positive
-parameters with `m > D₀` and `λ < K ≤ a + 2λ`, the coexistence equilibrium `(λ, x*)` has both
-coordinates positive and every solution on `[0, ∞)` with `S(0) > 0` and `x(0) > 0` converges to
-it.
+/-- **Case (ii): stable coexistence below the Hopf threshold.** For positive parameters with
+`m > D₀` and `λ < K ≤ a + 2λ`, the coexistence equilibrium `(λ, x*)` has both coordinates positive
+and every solution on `[0, ∞)` with `S(0) > 0` and `x(0) > 0` converges to it.
 
 Source: Cheng (1981), §1. -/
 public theorem_wanted tendsto_coexistenceEq (hm : p.D₀ < p.m) (h₁ : p.lam < p.K)
@@ -113,8 +117,8 @@ public theorem_wanted tendsto_coexistenceEq (hm : p.D₀ < p.m) (h₁ : p.lam < 
       ∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →
         Tendsto z atTop (𝓝 p.coexistenceEq)
 
-/-- **Case (iii): paradox of enrichment and Cheng's unique limit cycle** (Cheng 1981,
-Theorem 1): for positive parameters with `m > D₀` and `K > a + 2λ`,
+/-- **Case (iii): paradox of enrichment and Cheng's unique limit cycle.** For positive parameters
+with `m > D₀` and `K > a + 2λ`,
 (1) the coexistence equilibrium `(λ, x*)` has both coordinates positive and is Lyapunov unstable:
 there is `ε > 0` such that for every `δ > 0` some solution on `[0, ∞)` with positive initial
 densities starts within `δ` of it and is at distance at least `ε` at some time `t ≥ 0`;

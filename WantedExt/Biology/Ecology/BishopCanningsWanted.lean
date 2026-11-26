@@ -26,7 +26,9 @@ primaries of Bishop and Cannings (1976) and Haigh (1975) are paywalled and were 
 statements follow Haigh's 1974 appendix, Taylor and Jonker (1978) and the Encyclopedia of
 Mathematics entry by C. Cannings. The ESS predicate is the library's
 `MathlibExt.Biology.Dynamics.Replicator.IsESS` (`Domains.Biology.Dynamics.ReplicatorStability`),
-for which an ESS is a Nash equilibrium (`IsESS.isNash`).
+for which an ESS is a Nash equilibrium (`IsESS.isNash`), and a mixed strategy is the library's
+`MathlibExt.Biology.Dynamics.AsymmetricESS.IsMixed` (`Domains.Biology.Dynamics.AsymmetricESS`),
+the simplex condition of `IsESS`.
 
 Sources: D. T. Bishop and C. Cannings, "Models of animal conflict", Adv. Appl. Probab. 8 (1976)
 616–621; D. T. Bishop and C. Cannings, "A generalized war of attrition", J. Theor. Biol. 70
@@ -38,6 +40,7 @@ Math. Biosci. 40 (1978) 145–156.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.AsymmetricESS
 public import Domains.Biology.Dynamics.ReplicatorStability
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Matrix.Mul
@@ -49,23 +52,20 @@ namespace WantedExt.Biology.Ecology.BishopCanningsWanted
 
 open Matrix
 open MathlibExt.Biology.Dynamics.Replicator (IsESS)
+open MathlibExt.Biology.Dynamics.AsymmetricESS (IsMixed)
 
-/-- `p` is a **mixed strategy**: every `pᵢ ≥ 0` and `∑ pᵢ = 1` (the same conjunction as in the
-library's `IsESS`). -/
-def IsMixed {ι : Type*} [Fintype ι] (p : ι → ℝ) : Prop := (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1
-
-/-- **Equal payoffs on the support** (Haigh 1974; Bishop and Cannings): let `A` be a real square
-matrix indexed by a finite type and `p` an ESS. Then every pure strategy `i` with `pᵢ > 0` earns
-`(A p)ᵢ = pᵀ A p`, and every pure strategy `j` earns `(A p)ⱼ ≤ pᵀ A p`.
+/-- **Equal payoffs on the support.** Let `A` be a real square matrix indexed by a finite type and
+`p` an ESS. Then every pure strategy `i` with `pᵢ > 0` earns `(A p)ᵢ = pᵀ A p`, and every pure
+strategy `j` earns `(A p)ⱼ ≤ pᵀ A p`.
 
 Sources: Haigh (1974); Bishop and Cannings (1978), Theorem 2. -/
 public theorem_wanted equal_payoffs_on_support {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ)
     (p : ι → ℝ) (hp : IsESS A p) :
     (∀ i, 0 < p i → (A *ᵥ p) i = p ⬝ᵥ (A *ᵥ p)) ∧ ∀ j, (A *ᵥ p) j ≤ p ⬝ᵥ (A *ᵥ p)
 
-/-- **No nested ESS supports** (Bishop and Cannings): let `A` be a real square matrix indexed by a
-finite type and `p` an ESS. If `q` is a mixed strategy with `q ≠ p` whose support is contained in
-the support of `p` (`qᵢ > 0 → pᵢ > 0` for every `i`), then `q` is not an ESS.
+/-- **No nested ESS supports.** Let `A` be a real square matrix indexed by a finite type and `p` an
+ESS. If `q` is a mixed strategy (`IsMixed q`) with `q ≠ p` whose support is contained in the
+support of `p` (`qᵢ > 0 → pᵢ > 0` for every `i`), then `q` is not an ESS.
 
 Sources: Bishop and Cannings (1976); Bishop and Cannings (1978), Theorem 3. -/
 public theorem_wanted not_isESS_of_support_subset {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ)
@@ -73,9 +73,9 @@ public theorem_wanted not_isESS_of_support_subset {ι : Type*} [Fintype ι] (A :
     (hsupp : ∀ i, 0 < q i → 0 < p i) :
     ¬ IsESS A q
 
-/-- **Haigh's condition** (Haigh 1975; Taylor and Jonker 1978): let `A` be a real square matrix
-indexed by a finite type and `p` an ESS. Then `xᵀ A x < 0` for every `x ≠ 0` with `∑ xᵢ = 0`
-whose support is contained in the support of `p` (`xᵢ ≠ 0 → pᵢ > 0` for every `i`).
+/-- **Haigh's condition.** Let `A` be a real square matrix indexed by a finite type and `p` an ESS.
+Then `xᵀ A x < 0` for every `x ≠ 0` with `∑ xᵢ = 0` whose support is contained in the support of
+`p` (`xᵢ ≠ 0 → pᵢ > 0` for every `i`).
 
 Sources: Haigh (1975); Taylor and Jonker (1978). -/
 public theorem_wanted haigh_condition {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (p : ι → ℝ)
@@ -83,8 +83,8 @@ public theorem_wanted haigh_condition {ι : Type*} [Fintype ι] (A : Matrix ι �
     (hsupp : ∀ i, x i ≠ 0 → 0 < p i) :
     x ⬝ᵥ (A *ᵥ x) < 0
 
-/-- **Regular ESS** (Taylor and Jonker 1978): let `A` be a real square matrix indexed by a finite
-type and `p` a mixed strategy such that (1) every pure strategy in the support earns
+/-- **Regular ESS.** Let `A` be a real square matrix indexed by a finite type and `p` a mixed
+strategy (`IsMixed p`) such that (1) every pure strategy in the support earns
 `(A p)ᵢ = pᵀ A p`; (2) every pure strategy outside the support earns `(A p)ⱼ < pᵀ A p`; and
 (3) `xᵀ A x < 0` for every `x ≠ 0` with `∑ xᵢ = 0` and support in the support of `p`. Then `p` is
 an ESS.
