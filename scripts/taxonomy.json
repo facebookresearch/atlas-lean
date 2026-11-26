@@ -12668,6 +12668,7 @@
   "MathlibExt/NumberTheory/DelannoyBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/DelannoyBinomialSum": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/Digits/BasePhiRepresentations": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
+  "MathlibExt/NumberTheory/Digits/BasicReverseDivisors": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/BergmanLucasEvenAdd": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
   "MathlibExt/NumberTheory/Digits/BergmanWordFib": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
   "MathlibExt/NumberTheory/DiagonalCongruenceSolvability": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Small solutions of diagonal congruences"},
