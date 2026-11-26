@@ -1,4 +1,4 @@
-# Speed
+# Speed factor of a processor
 
 The speed factor $s(p) = a / b$ of processor $p$, a rational number, where $(a, b)$ is entry $p$
 of the list of speed factors. Rational division sends $b = 0$ to $0$; well-formedness requires

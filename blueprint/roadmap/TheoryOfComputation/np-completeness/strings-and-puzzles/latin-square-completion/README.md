@@ -10,7 +10,7 @@
 - [SYMMETRIC LATIN SQUARE COMPLETION as a decision problem](symmetric-latin-square-completion-dec.md)
 - [SYMMETRIC LATIN SQUARE COMPLETION is NP-complete](symmetric-latin-square-completion-np-com.md)
 - [Instances of ANOTHER COMPLETION OF A PARTIAL LATIN SQUARE](partial-latin-square-another-completion.md)
-- [Entry](entry.md)
+- [Entries of a partial Latin square](entry.md)
 - [Completions of a partial Latin square](is-completion.md)
 - [Well-formed instances of ANOTHER COMPLETION OF A PARTIAL LATIN SQUARE](well-formed-3.md)
 - [Feasible instances of ANOTHER COMPLETION OF A PARTIAL LATIN SQUARE](partial-latin-square-another-completion-2.md)

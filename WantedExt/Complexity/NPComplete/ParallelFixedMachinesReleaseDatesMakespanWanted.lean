@@ -77,7 +77,8 @@ date `r(t)`. -/
 abbrev ParallelFixedMachinesReleaseDatesMakespanInstance :=
   MultiprocessorSchedulingInstance × List ℕ
 
-/-- The release date `r(t)` of task `t`. -/
+/-- The release date `r(t)` of task `t`: entry `t` of the list of release dates, read as `0` when
+the list has no entry `t`. -/
 def releaseDate (i : ParallelFixedMachinesReleaseDatesMakespanInstance) (t : Task i.1) : ℕ :=
   i.2.getD t 0
 

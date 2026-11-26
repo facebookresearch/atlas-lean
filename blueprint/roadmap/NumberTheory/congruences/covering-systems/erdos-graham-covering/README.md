@@ -1,4 +1,4 @@
-# Erdos Graham Covering
+# A question of Erdős and Graham: non-intersecting numbers and covering densities
 
 - [CD congruence sets of $n$](is-cdcongruence-set-of.md)
 - [Non-intersecting integers](is-non-intersecting.md)

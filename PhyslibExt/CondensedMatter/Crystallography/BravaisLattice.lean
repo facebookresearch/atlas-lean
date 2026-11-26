@@ -115,7 +115,8 @@ noncomputable def cartesianMatrix (v : Fin 3 → EuclideanSpace ℝ (Fin 3)) :
     cartesianMatrix v i j = (v j).ofLp i := by
   simp [cartesianMatrix, Basis.toMatrix_apply]
 
-/-- Every vector is the combination of a basis with its coordinates. -/
+/-- Every vector `x` of the Euclidean space `ℝ³` is the combination of a basis `b` of `ℝ³` with its
+coordinates: `x = ∑ i, b.repr x i • b i`. -/
 lemma eq_sum_repr_smul (b : Basis (Fin 3) ℝ (EuclideanSpace ℝ (Fin 3)))
     (x : EuclideanSpace ℝ (Fin 3)) :
     x = ∑ i, b.repr x i • b i :=

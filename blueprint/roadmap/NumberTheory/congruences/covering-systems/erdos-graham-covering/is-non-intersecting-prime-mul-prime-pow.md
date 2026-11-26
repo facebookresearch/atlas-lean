@@ -6,7 +6,8 @@ Let $p$ and $q$ be distinct primes and $k \ge 1$. Then
 2. for every CD congruence set $\{a(d) \bmod d\}$ of $q p^k$ (one class for each divisor $d > 1$),
    the proportion of the integers $x \in \{1, \dots, N\}$ lying in at least one of the classes
    tends, as $N \to \infty$, to
-   $$\frac{1}{q} + \frac{p^k - 1}{p^k (p - 1)}.$$
+
+    $$\frac{1}{q} + \frac{p^k - 1}{p^k (p - 1)}.$$
 
 ## Sources
 

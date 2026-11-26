@@ -19,7 +19,7 @@
 - [EQUAL CARDINALITY PARTITION is NP-complete](equal-cardinality-partition-np-complete.md)
 - [Instances of PAIRED PARTITION](paired-partition-instance.md)
 - [Well-formed instances of PAIRED PARTITION](well-formed-4.md)
-- [Chosen](chosen.md)
+- [Size of the element chosen from a pair](chosen.md)
 - [Feasible instances of PAIRED PARTITION](paired-partition-feasible.md)
 - [PAIRED PARTITION as a decision problem](paired-partition-dec.md)
 - [PAIRED PARTITION is NP-complete](paired-partition-np-complete.md)

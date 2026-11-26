@@ -1,4 +1,4 @@
-# Graph
+# Graph of an instance of intersection graph for segments on a grid
 
 The graph of an instance of INTERSECTION GRAPH FOR SEGMENTS ON A GRID: the simple graph on the
 vertices $0, \dots, n - 1$, where $n$ is the vertex count of the instance, in which two distinct

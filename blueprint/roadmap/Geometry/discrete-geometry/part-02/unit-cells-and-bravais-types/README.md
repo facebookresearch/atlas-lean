@@ -15,7 +15,7 @@
 - [Sublattice of a Bravais lattice](is-sublattice-of.md)
 - [Conventional cell](conventional-cell.md)
 - [Lattice points per conventional cell](points-per-cell.md)
-- [Lattice Hom](lattice-hom.md)
+- [Lattice vectors of integer cell indices](lattice-hom.md)
 - [Integer indexing of lattice vectors](lattice-equiv-int.md)
 - [The integer indexing sends an index to its lattice vector](coe-lattice-equiv-int.md)
 - [Points per conventional cell as a volume ratio](points-per-cell-eq-volume-ratio.md)

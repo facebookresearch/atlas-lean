@@ -1,8 +1,8 @@
 # Vehicle and routing scheduling
 
 - [Instances of MULTIPLE-DEPOT VEHICLE SCHEDULING](multiple-depot-vehicle-scheduling-instan.md)
-- [Num Trips](num-trips.md)
-- [Depots](depots.md)
+- [Number of trips of a multiple-depot vehicle scheduling instance](num-trips.md)
+- [Depots of a multiple-depot vehicle scheduling instance](depots.md)
 - [Well-formed instances of MULTIPLE-DEPOT VEHICLE SCHEDULING](well-formed.md)
 - [Feasible trip pairs](feasible-pair.md)
 - [Cost of a vehicle schedule](schedule-cost.md)

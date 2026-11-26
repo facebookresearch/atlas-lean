@@ -19,7 +19,7 @@
 - [Well-formed instances of GRAPH COLORING ON DUALLY CHORDAL GRAPHS](well-formed-6.md)
 - [GRAPH COLORING ON DUALLY CHORDAL GRAPHS as a decision problem](graph-coloring-dually-chordal-dec.md)
 - [GRAPH COLORING ON DUALLY CHORDAL GRAPHS is NP-complete](graph-coloring-dually-chordal-np-complet.md)
-- [Colorable Property](colorable-property.md)
+- [The k-colorability graph property](colorable-property.md)
 - [k-COLORABLE INDUCED SUBGRAPH as a decision problem](k-colorable-induced-subgraph-dec.md)
 - [k-COLORABLE INDUCED SUBGRAPH is NP-complete](k-colorable-induced-subgraph-np-complete.md)
 - [Instances of 3-COLORABILITY OF PLANAR GRAPHS OF MAXIMUM DEGREE 4](planar-degree-four-three-colorability-in.md)

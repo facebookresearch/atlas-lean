@@ -1,4 +1,4 @@
-# Graph
+# Graph of a max-cut instance on cographs
 
 The graph of an instance of MAX CUT for cographs with edge weights 1 and 2: the simple graph on
 the vertices $0, \dots, n - 1$, where $n$ is the vertex count of the instance, in which two
