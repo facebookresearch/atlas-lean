@@ -145,4 +145,5 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 17 of 17](part-17/README.md)
 
+- [Standardized Selection](part-17/standardized-selection/README.md)
 - [Spearman-Brown formula for the reliability of a sum](part-17/reliability-sum-spearman-brown.md)
