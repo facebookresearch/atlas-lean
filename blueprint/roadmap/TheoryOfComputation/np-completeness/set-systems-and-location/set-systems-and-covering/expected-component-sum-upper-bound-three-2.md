@@ -1,6 +1,6 @@
-# COMPONENT SUM AT MOST B WITH THREE PARTS is NP-complete
+# COMPONENT SUM AT MOST B WITH THREE PARTS AND 0/1 ENTRIES is NP-complete
 
-The decision problem COMPONENT SUM AT MOST B WITH THREE PARTS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem COMPONENT SUM AT MOST B WITH THREE PARTS AND 0/1 ENTRIES belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

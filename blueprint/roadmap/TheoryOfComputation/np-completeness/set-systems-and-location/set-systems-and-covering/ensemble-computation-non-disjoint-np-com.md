@@ -1,6 +1,6 @@
-# ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS is NP-complete
+# ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS WITH SETS OF SIZE AT MOST THREE is NP-complete
 
-The decision problem ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS WITH SETS OF SIZE AT MOST THREE belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

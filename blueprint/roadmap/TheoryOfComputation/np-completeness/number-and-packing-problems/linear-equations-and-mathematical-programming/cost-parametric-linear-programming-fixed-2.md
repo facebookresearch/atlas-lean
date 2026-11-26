@@ -1,6 +1,6 @@
-# COST-PARAMETRIC LINEAR PROGRAMMING is NP-complete
+# COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q is NP-complete
 
-For every rational number $q > 0$, the decision problem COST-PARAMETRIC LINEAR PROGRAMMING belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+For every rational number $q > 0$, the decision problem COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q, whose accepted instances are the [well-formed and feasible](cost-parametric-linear-programming-fixed.md) instances whose encoded bound equals this $q$, belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

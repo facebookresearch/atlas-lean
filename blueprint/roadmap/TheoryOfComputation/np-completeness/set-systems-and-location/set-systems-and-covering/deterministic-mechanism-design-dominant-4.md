@@ -1,6 +1,6 @@
-# DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES is NP-complete
+# DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES WITH TWO AGENTS is NP-complete
 
-The decision problem DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES WITH TWO AGENTS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

@@ -95,7 +95,7 @@ noncomputable def vectorBinPackingDec :
   | none => false
 
 /-- **VECTOR BIN PACKING is NP-complete.** Source: Woeginger (1997); Garey, Graham, Johnson and
-Yao (1976); Garey and Johnson (1979), [SR1] (the case `d = 1`). -/
+Yao (1976); Garey and Johnson (1979), [SR1] (embedded in dimension `2`). -/
 public theorem_wanted vectorBinPacking_npComplete :
     vectorBinPackingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

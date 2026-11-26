@@ -87,8 +87,9 @@ def WellFormed (i : UnsplittableFlowInstance) : Prop :=
     (i.2.2.2.1.map Prod.fst).Nodup ∧ i.2.2.1 ∉ i.2.2.2.1.map Prod.fst ∧
     (∀ t ∈ i.2.2.2.1, 0 < t.2 ∧ ∀ e ∈ i.2.1, t.2 ≤ e.2.2) ∧ 0 < i.2.2.2.2
 
-/-- One path from `s` to each sink such that every edge `e` carries total demand at most
-`K · c(e)`. -/
+/-- If the source and the sinks are vertices, one path from `s` to each sink such that every
+edge `e` carries total demand at most `K · c(e)`; vacuously true when an endpoint is out of
+range (well-formedness rejects those instances). -/
 def UnsplittableFlowFeasible (i : UnsplittableFlowInstance) : Prop :=
   ∀ (hs : i.2.2.1 < i.1) (ht : ∀ k, (i.2.2.2.1.get k).1 < i.1),
     ∃ paths : (k : Fin i.2.2.2.1.length) →
