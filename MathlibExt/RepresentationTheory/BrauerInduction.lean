@@ -42,7 +42,8 @@ import MathlibExt.RepresentationTheory.SolomonInduction
 Every character of a finite group `G` is an integer combination of characters induced from
 linear characters of subgroups: for every representation `ρ : G →* GL (Fin n) ℂ` there are
 subgroups `H i`, homomorphisms `ψ i : H i →* ℂˣ` and integers `a i` with
-`trace (ρ g) = ∑ i, a i * Ind_{H i}^G (ψ i) g` for all `g`.
+`trace (ρ g) = ∑ i, a i * Ind_{H i}^G (ψ i) g` for all `g`. The subgroups `H i` are arbitrary;
+they are not required to be elementary.
 
 The proof combines Solomon's induction theorem
 (`ClassFunction.exists_one_eq_sum_zsmul_induced_one_of_hyperelementary`), which writes `1` as
@@ -66,7 +67,6 @@ noncomputable section
 
 universe u
 
-open scoped Classical
 open scoped MatrixGroups
 
 namespace BrauerInduction
@@ -83,9 +83,11 @@ private theorem chi_conj (x g : G) : chi ρ (x⁻¹ * g * x) = chi ρ g := by
   rw [Matrix.trace_mul_cycle, ← Units.val_mul, ← Units.val_mul, ← map_mul, ← map_mul,
     mul_inv_cancel, one_mul]
 
+open scoped Classical in
 private def ext (L : Subgroup G) (ψ : L →* ℂˣ) : G → ℂ :=
   fun x => if hx : x ∈ L then ((ψ ⟨x, hx⟩ : ℂˣ) : ℂ) else 0
 
+open scoped Classical in
 private theorem induced_ext_apply (L : Subgroup G) (ψ : L →* ℂˣ) (g : G) :
     ClassFunction.induced L (ext L ψ) g =
       (Nat.card L : ℂ)⁻¹ *
@@ -98,6 +100,7 @@ private theorem induced_ext_apply (L : Subgroup G) (ψ : L →* ℂˣ) (g : G) :
     rw [dite_eq_left hx]
   · rw [ite_eq_right hx, dite_eq_right hx]
 
+open scoped Classical in
 private theorem solomon_complex :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (a : Fin k → ℤ),
       (∀ i, ∃ q : ℕ, q.Prime ∧ ∃ C : Subgroup G, C ≤ H i ∧ IsCyclic C ∧ (Nat.card C).Coprime q ∧
@@ -118,6 +121,7 @@ private theorem solomon_complex :
   simp only [Rat.cast_one, Rat.cast_sum, Rat.cast_mul, Rat.cast_intCast, hcast] at this
   exact this
 
+open scoped Classical in
 private theorem induced_chi_hyper (H : Subgroup G)
     (hH : ∃ q : ℕ, q.Prime ∧ ∃ C : Subgroup G, C ≤ H ∧ IsCyclic C ∧ (Nat.card C).Coprime q ∧
       (∀ h ∈ H, ∀ c ∈ C, h * c * h⁻¹ ∈ C) ∧ (∀ h ∈ H, ∃ m : ℕ, h ^ q ^ m ∈ C)) :
@@ -214,9 +218,11 @@ private theorem main :
 end BrauerProof
 
 open scoped Classical in
-/-- **Brauer's induction theorem.** The character of every representation
-`ρ : G →* GL (Fin n) ℂ` of a finite group is an integer combination of characters induced from
-linear characters `ψ i : H i →* ℂˣ` of subgroups `H i` (each extended by zero off `H i`). -/
+/-- **Brauer's induction theorem for arbitrary subgroups.** For a finite group `G` and a
+complex representation `ρ : G →* GL (Fin n) ℂ`, there are finitely many subgroups `H i`, linear
+characters `ψ i : H i →* ℂˣ` and integers `a i : ℤ` such that the character `g ↦ trace (ρ g)`
+is `∑ i, a i * induced (H i) (ψ i)`, each `ψ i` extended by zero off `H i` and induced over
+`ℂ`. The subgroups `H i` need not be elementary. -/
 public theorem exists_trace_eq_sum_zsmul_induced
     {G : Type u} [Group G] [Fintype G] {n : ℕ} (ρ : G →* GL (Fin n) ℂ) :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (ψ : (i : Fin k) → (H i →* ℂˣ)) (a : Fin k → ℤ),
@@ -226,10 +232,12 @@ public theorem exists_trace_eq_sum_zsmul_induced
   BrauerProof.main ρ
 
 open scoped Classical in
-/-- **Brauer's induction theorem**, with the induced characters written out by the Frobenius
-formula: for every representation `ρ : G →* GL (Fin n) ℂ` of a finite group there are subgroups
-`H i`, linear characters `ψ i : H i →* ℂˣ` and integers `a i` such that, for all `g`,
-`trace (ρ g) = ∑ i, a i * (|H i|⁻¹ * ∑ x, [x⁻¹ * g * x ∈ H i] * ψ i (x⁻¹ * g * x))`. -/
+/-- **Brauer's induction theorem for arbitrary subgroups, Frobenius form.** For a finite group
+`G` and a complex representation `ρ : G →* GL (Fin n) ℂ`, there are finitely many subgroups
+`H i`, not necessarily elementary, linear characters `ψ i : H i →* ℂˣ` and integers `a i : ℤ`
+such that, for all `g`, the induced characters written out by the Frobenius formula over `ℂ`
+give `trace (ρ g) = ∑ i, a i * (|H i|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H i] * ψ i (x⁻¹ * g * x))`.
+-/
 public theorem exists_trace_eq_sum_zsmul_induced_linearCharacter
     {G : Type u} [Group G] [Fintype G] {n : ℕ} (ρ : G →* GL (Fin n) ℂ) :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (ψ : (i : Fin k) → (H i →* ℂˣ)) (a : Fin k → ℤ),

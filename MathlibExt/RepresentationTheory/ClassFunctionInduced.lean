@@ -51,9 +51,9 @@ constant function `1` to `0`.
 
 This file proves the basic algebra of the construction: it is a class function
 (`ClassFunction.induced_conj`), it is additive and `K`-linear, inducing from `⊤`
-fixes class functions, the projection formula
-(`ClassFunction.induced_mul_of_conj_invariant`), and transitivity of induction
-(`ClassFunction.induced_induced`).
+fixes class functions when `|G|` is invertible in `K`, the projection formula
+(`ClassFunction.induced_mul_of_conj_invariant`), and transitivity of induction in
+characteristic zero (`ClassFunction.induced_induced`).
 -/
 
 @[expose] public section
@@ -65,14 +65,17 @@ namespace ClassFunction
 variable {G : Type*} [Group G] [Fintype G] {K : Type*} [Field K]
 
 open scoped Classical in
-/-- The function on `G` induced from the values of `φ` on the subgroup `H`, by the
-Frobenius formula `g ↦ |H|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H] * φ (x⁻¹ * g * x)`, for a field `K`
-in which `|H|` is invertible. When `φ` restricts to a character of a representation of `H`,
-this is the character of the induced representation. -/
+/-- **Induced class function.** For a subgroup `H` of a finite group `G`, a field `K` in which
+the order of `H` is invertible (the instance argument `[NeZero (Nat.card H : K)]`) and
+`φ : G → K`, the normalized Frobenius sum
+`induced H φ g = |H|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H] * φ (x⁻¹ * g * x)`. It uses only the
+values of `φ` on `H`. For `K = ℂ` and `φ` restricting on `H` to the character of a complex
+representation of `H`, it is the character of the induced representation of `G`. -/
 def induced (H : Subgroup G) [NeZero (Nat.card H : K)] (φ : G → K) : G → K :=
   fun g => (Nat.card H : K)⁻¹ * ∑ x : G, if x⁻¹ * g * x ∈ H then φ (x⁻¹ * g * x) else 0
 
-/-- The defining formula of `ClassFunction.induced`, for any decidability instance. -/
+/-- **Frobenius formula for induced class functions.** For every decidability instance for
+membership in `H`, `induced H φ g = |H|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H] * φ (x⁻¹ * g * x)`. -/
 theorem induced_apply (H : Subgroup G) [DecidablePred (· ∈ H)] [NeZero (Nat.card H : K)]
     (φ : G → K) (g : G) :
     induced H φ g =
@@ -81,7 +84,8 @@ theorem induced_apply (H : Subgroup G) [DecidablePred (· ∈ H)] [NeZero (Nat.c
   congr 1
   exact Finset.sum_congr rfl fun x _ => by congr
 
-/-- The induced function depends only on the values of `φ` on `H`. -/
+/-- **Induction depends only on the values on the subgroup.** If `φ ψ : G → K` agree on `H`,
+then `induced H φ = induced H ψ`. -/
 theorem induced_congr (H : Subgroup G) [NeZero (Nat.card H : K)] {φ ψ : G → K}
     (h : ∀ x ∈ H, φ x = ψ x) :
     induced H φ = induced H ψ := by
@@ -94,7 +98,8 @@ theorem induced_congr (H : Subgroup G) [NeZero (Nat.card H : K)] {φ ψ : G → 
   · exact h _ hx
   · rfl
 
-/-- An induced function is a class function. -/
+/-- **Induced functions are class functions.** For all `y g : G`,
+`induced H φ (y⁻¹ * g * y) = induced H φ g`. -/
 theorem induced_conj (H : Subgroup G) [NeZero (Nat.card H : K)] (φ : G → K) (y g : G) :
     induced H φ (y⁻¹ * g * y) = induced H φ g := by
   classical
@@ -149,8 +154,9 @@ theorem induced_sum {ι : Type*} (H : Subgroup G) [NeZero (Nat.card H : K)] (s :
       funext x; simp
     rw [this, induced_add, Pi.add_apply, ih]
 
-/-- The projection formula: multiplying an induced function by a class function `f` is the
-same as inducing the product with `f`. -/
+/-- **Projection formula for induction.** If `f : G → K` is a class function, that is,
+`f (x⁻¹ * g * x) = f g` for all `x g : G`, then
+`induced H φ g * f g = induced H (fun y => φ y * f y) g` for every `g : G`. -/
 theorem induced_mul_of_conj_invariant (H : Subgroup G) [NeZero (Nat.card H : K)] (φ f : G → K)
     (hf : ∀ x g : G, f (x⁻¹ * g * x) = f g) (g : G) :
     induced H φ g * f g = induced H (fun y => φ y * f y) g := by
@@ -163,8 +169,9 @@ theorem induced_mul_of_conj_invariant (H : Subgroup G) [NeZero (Nat.card H : K)]
   · rw [hf]
   · simp
 
-/-- Inducing a class function from the whole group returns it, when `|G|` is invertible in
-`K`. -/
+/-- **Induction from the whole group.** If the order of `G` is invertible in `K` (the instance
+argument `[NeZero (Nat.card (⊤ : Subgroup G) : K)]`) and `φ : G → K` is a class function, then
+`induced ⊤ φ = φ`. -/
 theorem induced_top_of_conj_invariant [NeZero (Nat.card (⊤ : Subgroup G) : K)] (φ : G → K)
     (hφ : ∀ x g : G, φ (x⁻¹ * g * x) = φ g) : induced (⊤ : Subgroup G) φ = φ := by
   classical
@@ -178,8 +185,10 @@ theorem induced_top_of_conj_invariant [NeZero (Nat.card (⊤ : Subgroup G) : K)]
     exact NeZero.ne _
   rw [inv_mul_cancel₀ hG, one_mul]
 
-/-- Transitivity of induction: inducing from `L ≤ H` to `H` and then from `H` to `G` is
-inducing from the image of `L` in `G`. -/
+/-- **Transitivity of induction.** Over a field `K` of characteristic zero, let `H` be a
+subgroup of `G`, `L` a subgroup of `H` and `ψ : H → K`. Inducing `ψ` from `L` to `H`, extending
+the result by zero to `G` and inducing it from `H` to `G` gives the same function as extending
+`ψ` by zero to `G` and inducing it from the image of `L` in `G`. -/
 theorem induced_induced [CharZero K] (H : Subgroup G) [Fintype H] [DecidablePred (· ∈ H)]
     (L : Subgroup H) (ψ : H → K) :
     induced H (fun g => if hg : g ∈ H then induced L ψ ⟨g, hg⟩ else 0) =

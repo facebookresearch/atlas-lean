@@ -70,7 +70,6 @@ is the whole ring because no maximal ideal can contain it: for each prime `p` an
 
 noncomputable section
 
-open scoped Classical
 open MulAction
 
 namespace ClassFunction
@@ -162,6 +161,7 @@ private theorem pc_top : pc (⊤ : Subgroup G) = 1 := by
     exact ⟨inferInstance, ⟨⟨((1 : G) : G ⧸ (⊤ : Subgroup G)), Subsingleton.elim _ _⟩⟩⟩
   rw [this, Nat.cast_one]
 
+open scoped Classical in
 private theorem induced_one_eq_pc (H : Subgroup G) (g : G) :
     ClassFunction.induced H (fun _ => (1 : ℚ)) g = pc H g := by
   rw [ClassFunction.induced_apply, Finset.sum_boole]
@@ -186,6 +186,7 @@ private theorem conj_mem_of_mem_stabilizer (K : Subgroup G) (a : G) {s : G}
   rw [show (s * a)⁻¹ * a = (a⁻¹ * s * a)⁻¹ by group, inv_mem_iff] at hs
   exact hs
 
+open scoped Classical in
 private theorem pc_mul_pc_eq_sum (H K : Subgroup G) (g : G) :
     pc H g * pc K g =
       ∑ ω : orbitRel.Quotient G ((G ⧸ H) × (G ⧸ K)), pc (stabilizer G ω.out) g := by
@@ -239,9 +240,12 @@ private theorem pc_mul_pc_eq_sum (H K : Subgroup G) (g : G) :
     exact x.2.1
   · rw [← hequiv, c.2]
 
-private theorem pc_mul_pc_mem_span (H K : Subgroup G) (T : Set (Subgroup G))
+open scoped Classical in
+omit [Fintype G] in
+private theorem pc_mul_pc_mem_span [Finite G] (H K : Subgroup G) (T : Set (Subgroup G))
     (hT : ∀ (a : G) (S : Subgroup G), (∀ s ∈ S, a⁻¹ * s * a ∈ K) → S ∈ T) :
     pc H * pc K ∈ Submodule.span ℤ (pc '' T) := by
+  have := Fintype.ofFinite G
   have : pc H * pc K = ∑ ω : orbitRel.Quotient G ((G ⧸ H) × (G ⧸ K)),
       pc (stabilizer G ω.out) := by
     funext g
@@ -290,12 +294,14 @@ private theorem mul_mem_span_of_gen (T₁ T₂ : Set (Subgroup G))
   | add x y _ _ hx hy => rw [add_mul]; exact Submodule.add_mem _ (hx hg) (hy hg)
   | smul n x _ hx => rw [smul_mul_assoc]; exact Submodule.smul_mem _ n (hx hg)
 
-private theorem mul_mem_P {f g : G → ℤ} (hf : f ∈ (P : Submodule ℤ (G → ℤ)))
+omit [Fintype G] in
+private theorem mul_mem_P [Finite G] {f g : G → ℤ} (hf : f ∈ (P : Submodule ℤ (G → ℤ)))
     (hg : g ∈ (P : Submodule ℤ (G → ℤ))) : f * g ∈ (P : Submodule ℤ (G → ℤ)) :=
   mul_mem_span_of_gen _ _
     (fun H _ K _ => pc_mul_pc_mem_span H K _ fun _ S _ => Set.mem_univ S) hf hg
 
-private theorem mul_mem_I {f g : G → ℤ} (hf : f ∈ (P : Submodule ℤ (G → ℤ)))
+omit [Fintype G] in
+private theorem mul_mem_I [Finite G] {f g : G → ℤ} (hf : f ∈ (P : Submodule ℤ (G → ℤ)))
     (hg : g ∈ (I : Submodule ℤ (G → ℤ))) : f * g ∈ (I : Submodule ℤ (G → ℤ)) :=
   mul_mem_span_of_gen _ {S : Subgroup G | IsHyper S}
     (fun H _ K hK => pc_mul_pc_mem_span H K _ fun a S hS => IsHyper.of_le_conj hK a S hS) hf hg
@@ -332,10 +338,10 @@ private theorem orderOf_conj' (y z : G) : orderOf (y⁻¹ * z * y) = orderOf z :
   have := orderOf_injective (MulAut.conj y⁻¹).toMonoidHom (MulAut.conj y⁻¹).injective z
   simpa [MulAut.conj_apply] using this
 
-private theorem exists_isHyper_not_dvd (x : G) :
+omit [Fintype G] in
+private theorem exists_isHyper_not_dvd [Finite G] (x : G) :
     ∃ H : Subgroup G, IsHyper H ∧ ¬ (q : ℤ) ∣ pc H x := by
   have hq' : q.Prime := hq.out
-
   set m := orderOf x with hm
   have hm0 : m ≠ 0 := (orderOf_pos x).ne'
   set a := m.factorization q with ha
@@ -350,14 +356,12 @@ private theorem exists_isHyper_not_dvd (x : G) :
   set C := Subgroup.zpowers xr with hC
   have hCcard : Nat.card C = m' := by rw [hC, Nat.card_zpowers, hxr_ord]
   have hCcop : (Nat.card C).Coprime q := by rw [hCcard]; exact hcop.symm
-
   have hCcomm : ∀ c ∈ C, x * c = c * x := by
     intro c hc
     rw [hC, Subgroup.mem_zpowers_iff] at hc
     obtain ⟨k, rfl⟩ := hc
     rw [hxr, ← zpow_natCast, ← zpow_mul]
     exact (Commute.self_zpow x _).eq
-
   set N := Subgroup.normalizer (C : Set G) with hN
   have hCN : C ≤ N := Subgroup.le_normalizer
   have hmemN : ∀ y : G, y ∈ N ↔ ∀ h : G, h ∈ C ↔ y * h * y⁻¹ ∈ C := fun y =>
@@ -375,7 +379,6 @@ private theorem exists_isHyper_not_dvd (x : G) :
           _ = x⁻¹ * (x * (x * h * x⁻¹)) := by rw [hc]
           _ = x * h * x⁻¹ := by group
       rw [e]; exact hh
-
   set CN : Subgroup N := C.subgroupOf N with hCN'
   have hCNnormal : CN.Normal := Subgroup.normal_in_normalizer
   obtain ⟨Q⟩ := (Sylow.nonempty : Nonempty (Sylow q N))
@@ -392,22 +395,19 @@ private theorem exists_isHyper_not_dvd (x : G) :
     rw [hmemH]
     refine ⟨hCN hc, Subgroup.mem_sup_left ?_⟩
     rw [Subgroup.mem_subgroupOf]; exact hc
-
   have hHNmem : ∀ z : N, z ∈ HN → ∃ c ∈ CN, ∃ u ∈ (Q : Subgroup N), c * u = z := by
     intro z hz
     have : (z : N) ∈ ((CN ⊔ (Q : Subgroup N) : Subgroup N) : Set N) := hz
     rw [Subgroup.normal_mul] at this
     obtain ⟨c, hc, u, hu, hcu⟩ := Set.mem_mul.1 this
     exact ⟨c, hc, u, hu, hcu⟩
-
   have hHnorm : ∀ h ∈ H, ∀ c ∈ C, h * c * h⁻¹ ∈ C := fun h hh c hc =>
     ((hmemN h).1 (hHN_le hh) c).1 hc
-
   have hHpow : ∀ h ∈ H, ∃ n : ℕ, h ^ q ^ n ∈ C := by
     intro h hh
     obtain ⟨hN', hz⟩ := (hmemH h).1 hh
     obtain ⟨c, hc, u, hu, hcu⟩ := hHNmem _ hz
-    obtain ⟨n, hn⟩ := Q.isPGroup' ⟨u, hu⟩
+    obtain ⟨n, hn⟩ := Q.isPGroup ⟨u, hu⟩
     refine ⟨n, ?_⟩
     have hun : u ^ q ^ n = 1 := by
       have := congrArg Subtype.val hn
@@ -419,7 +419,6 @@ private theorem exists_isHyper_not_dvd (x : G) :
     simpa using hq1
   have hHyper : IsHyper H := ⟨q, hq', C, hCH, inferInstance, hCcop, hHnorm, hHpow⟩
   refine ⟨H, hHyper, ?_⟩
-
   have hyN : ∀ y : G, y⁻¹ * x * y ∈ H → y ∈ N := by
     intro y hy
     have hw : y⁻¹ * xr * y ∈ H := by rw [hxr, ← conj_pow']; exact H.pow_mem hy _
@@ -454,7 +453,6 @@ private theorem exists_isHyper_not_dvd (x : G) :
           rw [hmap]; simpa [MulAut.conj_apply] using hh
         exact (Subgroup.mem_map_iff_mem (MulAut.conj y⁻¹).injective).1 hh'
     simpa using N.inv_mem hy'
-
   set xN : N := ⟨x, hxN⟩ with hxN'
   have hcount : Nat.card {y : G // y⁻¹ * x * y ∈ H} =
       Nat.card {y : N // y⁻¹ * xN * y ∈ HN} := by
@@ -479,7 +477,6 @@ private theorem exists_isHyper_not_dvd (x : G) :
     have hne : (Nat.card HN : ℤ) ≠ 0 := by exact_mod_cast Nat.card_pos.ne'
     exact mul_left_cancel₀ hne h1
   rw [hpc, pc_apply]
-
   have hcop' : Nat.Coprime m' qa := Nat.Coprime.pow_right a hcop.symm
   obtain ⟨u, v, huv⟩ := Nat.isCoprime_iff_coprime.2 hcop'
   set gq : G := (x ^ m') ^ u with hgq
@@ -496,7 +493,6 @@ private theorem exists_isHyper_not_dvd (x : G) :
   have hgqN : gq ∈ N := by rw [hgq]; exact N.zpow_mem (N.pow_mem hxN _) _
   set gqN : N := ⟨gq, hgqN⟩ with hgqN'
   have hxNdec : xN = gqN * ⟨c₀, hCN hc₀C⟩ := Subtype.ext hxdec
-
   have htriv : ∀ (c : G) (hc : c ∈ C) (t : N ⧸ HN), (⟨c, hCN hc⟩ : N) • t = t := by
     intro c hc t
     induction t using QuotientGroup.induction_on with
@@ -513,7 +509,6 @@ private theorem exists_isHyper_not_dvd (x : G) :
       exact C.inv_mem hc
   have hfix : ∀ t : N ⧸ HN, xN • t = t ↔ gqN • t = t := by
     intro t; rw [hxNdec, mul_smul, htriv c₀ hc₀C]
-
   have hcardfix : Nat.card {t : N ⧸ HN // xN • t = t} =
       Nat.card (fixedPoints (Subgroup.zpowers gqN) (N ⧸ HN)) := by
     apply Nat.card_congr
@@ -555,10 +550,12 @@ private theorem exists_isHyper_not_dvd (x : G) :
 
 end Arith
 
-private theorem one_mem_I : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) := by
+open scoped Classical in
+omit [Fintype G] in
+private theorem one_mem_I [Finite G] : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) := by
+  have := Fintype.ofFinite G
   by_contra h1
   set R := ↥(Psub : Subring (G → ℤ)) with hR
-
   let J : Ideal R :=
     { carrier := {r | (r : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ))}
       add_mem' := fun {a b} ha hb => by
@@ -576,13 +573,11 @@ private theorem one_mem_I : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) 
     have : (1 : R) ∈ J := h ▸ Submodule.mem_top
     exact this
   obtain ⟨𝔪, h𝔪, hJ𝔪⟩ := Ideal.exists_le_maximal J hJ
-
   have := h𝔪
   let kf : Field (R ⧸ 𝔪) := Ideal.Quotient.field 𝔪
   obtain ⟨p, hp⟩ := CharP.exists (R ⧸ 𝔪)
   have := hp
   have hp' : p.Prime ∨ p = 0 := CharP.char_is_prime_or_zero (R ⧸ 𝔪) p
-
   have : Module.Finite ℤ R :=
     Module.Finite.of_injective (Psub : Subring (G → ℤ)).subtype.toAddMonoidHom.toIntLinearMap
       Subtype.val_injective
@@ -598,7 +593,6 @@ private theorem one_mem_I : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) 
       rw [Ideal.mem_comap, Ideal.mem_bot, ← Ideal.Quotient.eq_zero_iff_mem, eq_intCast,
         map_intCast, Int.cast_eq_zero]
     rw [hbot] at hcomap
-
     have h2 : (Ideal.span {(2 : ℤ)} : Ideal ℤ) = ⊤ := by
       apply hcomap.1.2
       rw [bot_lt_iff_ne_bot, Ne, Ideal.span_singleton_eq_bot]
@@ -610,7 +604,6 @@ private theorem one_mem_I : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) 
   have hpm : (algebraMap ℤ R p) ∈ 𝔪 := by
     rw [← Ideal.Quotient.eq_zero_iff_mem, eq_intCast, map_intCast, Int.cast_natCast]
     exact CharP.cast_eq_zero (R ⧸ 𝔪) p
-
   have : Algebra.IsIntegral ℤ (G → ℤ) := Algebra.IsIntegral.of_finite ℤ _
   have : Algebra.IsIntegral R (G → ℤ) := Algebra.IsIntegral.tower_top (R := ℤ)
   have hker : RingHom.ker (algebraMap R (G → ℤ)) ≤ 𝔪 := by
@@ -623,7 +616,6 @@ private theorem one_mem_I : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) 
     intro r
     rw [← h𝔐, Ideal.mem_comap]
     rfl
-
   set e : G → (G → ℤ) := fun x => Pi.single x 1 with he
   obtain ⟨x₀, hx₀⟩ : ∃ x₀ : G, e x₀ ∉ 𝔐 := by
     by_contra hall
@@ -687,7 +679,6 @@ private theorem one_mem_I : (1 : G → ℤ) ∈ (I : Submodule ℤ (G → ℤ)) 
       have : f = f * e x₀ + f * (1 - e x₀) := by ring
       rw [this]
       exact 𝔐.add_mem h2 h3
-
   obtain ⟨H, hH, hndvd⟩ := exists_isHyper_not_dvd p x₀
   have hI : pc H ∈ (I : Submodule ℤ (G → ℤ)) := Submodule.subset_span ⟨H, hH, rfl⟩
   have hm : (⟨pc H, I_le_P hI⟩ : R) ∈ 𝔪 := hJ𝔪 hI
@@ -714,11 +705,11 @@ private theorem main : ∃ (k : ℕ) (H : Fin k → Subgroup G) (a : Fin k → �
 
 end SolomonProof
 
-/-- **Solomon's induction theorem.** For a finite group `G`, the constant function `1` is an
-integer combination of the induced functions `ClassFunction.induced H 1` (permutation
-characters of `G ⧸ H`) over subgroups `H` that are hyperelementary for some prime `q`:
-`H` contains a cyclic subgroup `C` of order prime to `q`, normalized by `H`, such that every
-element of `H` has a `q`-power in `C`. -/
+/-- **Solomon's induction theorem.** For a finite group `G` there are finitely many subgroups
+`H i` and integers `a i : ℤ` with `1 = ∑ i, a i * induced (H i) 1` as functions `G → ℚ`, where
+`induced (H i) 1` is the permutation character of `G` on `G ⧸ H i`, induced over `ℚ`. Each `H i`
+is hyperelementary for some prime `q`: it contains a cyclic subgroup `C` of order prime to `q`,
+normalized by `H i`, such that every element of `H i` has a `q`-power in `C`. -/
 public theorem exists_one_eq_sum_zsmul_induced_one_of_hyperelementary
     {G : Type*} [Group G] [Fintype G] :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (a : Fin k → ℤ),
