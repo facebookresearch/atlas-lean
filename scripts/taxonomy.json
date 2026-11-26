@@ -10331,6 +10331,7 @@
   "Domains/Biology/StatisticalGenetics/LDOutlierTest": {"to": "Biology/statistical-genetics", "title": "Testing LD consistency of association statistics"},
   "Domains/Biology/StatisticalGenetics/LDScore": {"to": "Biology/statistical-genetics", "title": "LD-score regression"},
   "Domains/Biology/StatisticalGenetics/LDScoreInflation": {"to": "Biology/statistical-genetics", "title": "LD-score regression"},
+  "Domains/Biology/StatisticalGenetics/LanderGreenLikelihoodEqForward": {"to": "Biology/statistical-genetics", "title": "Lander–Green multipoint pedigree likelihood"},
   "Domains/Biology/StatisticalGenetics/LatentCausalVariable": {"to": "Biology/statistical-genetics", "title": "Latent causal variable model"},
   "Domains/Biology/StatisticalGenetics/MendelianRandomization": {"to": "Biology/statistical-genetics", "title": "Mendelian randomization"},
   "Domains/Biology/StatisticalGenetics/MixedModel": {"to": "Biology/quantitative-genetics", "title": "Linear mixed models and BLUP"},
