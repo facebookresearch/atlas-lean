@@ -1,10 +1,12 @@
 # Reproduction-number threshold for the SE(R)IRS model
 
 **Model.** In a closed population of size $n$, susceptibles $S$ become exposed $E$ through contact with infectious individuals $I$ and with exposed individuals, who transmit at a reduced relative rate $\alpha \in [0,1]$. Exposed individuals either become infectious at rate $\sigma$ or recover directly (asymptomatic course) at rate $\delta$; infectious individuals recover at rate $\gamma$; immunity wanes at rate $\omega$:
+
 $$\begin{aligned}
 \dot S &= -\beta S(I + \alpha E)/n + \omega R, & \dot E &= \beta S(I + \alpha E)/n - (\sigma + \delta)E,\\
 \dot I &= \sigma E - \gamma I, & \dot R &= \delta E + \gamma I - \omega R,
 \end{aligned}$$
+
 with all parameters positive.
 
 **Theorem.** The basic reproduction number is

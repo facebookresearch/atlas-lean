@@ -1,10 +1,12 @@
 # Competitive reproduction numbers of a two-strain SIR model with vaccination
 
 **Model (integrated immunity).** A population of size $N$ is split into susceptibles $S$, individuals infectious with strain 1 ($I_1$, more transmissible, blocked by immunity) or strain 2 ($I_2$, immune-resistant), and partially immune individuals $R$ (protected against strain 1 only):
+
 $$\begin{aligned}
 \dot S &= -\tfrac{\beta_1}{N}SI_1 - \tfrac{\beta_2}{N}SI_2 - \lambda S + \alpha R, & \dot I_1 &= \tfrac{\beta_1}{N}SI_1 - \gamma I_1,\\
 \dot I_2 &= \tfrac{\beta_2}{N}(S + R)I_2 - \gamma I_2, & \dot R &= \gamma(I_1 + I_2) - \tfrac{\beta_2}{N}RI_2 + \lambda S - \alpha R,
 \end{aligned}$$
+
 with vaccination rate $\lambda$, recovery rate $\gamma$ and immunity loss rate $\alpha$.
 
 **Result.** The strain-specific basic reproduction numbers and the competitive (invasion) reproduction numbers are

@@ -1,10 +1,12 @@
 # Filter-averaged extinction threshold for SIR models with hidden states
 
 **Model.** Let $\alpha(t)\in[0,1]$ be the (unobserved) fraction of hidden-state individuals that are infected, a Markov-Feller signal with unique invariant measure $\mu^*$ and $\int|P_tl-\mu^*(l)|\,d\mu\to0$. It is observed only through $dy(t)=g(\alpha(t))\,dt+dW(t)$, and $\Pi_t(\cdot)=\mathbb{P}[\alpha(t)\in\cdot\mid\mathcal{F}^y_t]$ is the nonlinear (Fujisaki-Kallianpur-Kunita) filter. With independent Brownian motions $B_1,B_2$,
+
 $$\begin{aligned}
 dS&=\Big[a_1-b_1S-I\!\int_0^1\! f(x,S,I)\,\Pi_t(dx)-I\!\int_0^1\! x\,h(x,S,I)\,\Pi_t(dx)\Big]dt+\sigma_1S\,dB_1,\\
 dI&=\Big[-b_2I+I\!\int_0^1\! f(x,S,I)\,\Pi_t(dx)+I\!\int_0^1\! x\,h(x,S,I)\,\Pi_t(dx)\Big]dt+\sigma_2I\,dB_2,
 \end{aligned}$$
+
 where $f,h\ge0$ are Lipschitz incidence functions covering bilinear, Beddington-DeAngelis and Holling II forms ($h$ is the extra transmission by hidden infecteds). Let $\hat\mu$ be the stationary law of the disease-free equation $d\varphi=(a_1-b_1\varphi)dt+\sigma_1\varphi\,dB_1$ and $c_2=b_2+\sigma_2^2/2$.
 
 **Threshold.**

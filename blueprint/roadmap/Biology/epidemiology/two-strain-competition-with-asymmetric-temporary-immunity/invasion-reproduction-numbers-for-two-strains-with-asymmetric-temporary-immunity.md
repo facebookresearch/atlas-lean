@@ -1,6 +1,7 @@
 # Invasion reproduction numbers for two strains with asymmetric temporary immunity
 
 **Model.** A population of constant size $N$ is split into susceptibles $S$, individuals infected with strain $j\in\{1,2\}$ ($I_j$) and individuals temporarily immune after strain $j$ ($R_j$). Strain $j$ has transmission rate $\beta_j$, recovery rate $\gamma_j$ and immunity-waning rate $\sigma_j$ (mean immunity period $\sigma_j^{-1}$). Recovery from strain 1 gives no protection against strain 2, while recovery from strain 2 protects against strain 1 with degree $\epsilon\in[0,1]$:
+
 $$\begin{aligned}
 \dot S&=-\tfrac{S}{N}(\beta_1I_1+\beta_2I_2)+\sigma_1R_1+\sigma_2R_2,\\
 \dot I_1&=\tfrac{\beta_1}{N}I_1\big(S+(1-\epsilon)R_2\big)-\gamma_1I_1,\qquad \dot I_2=\tfrac{\beta_2}{N}I_2(S+R_1)-\gamma_2I_2,\\

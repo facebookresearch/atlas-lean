@@ -1,11 +1,13 @@
 # Global competition outcome in the three-patch Lotka–Volterra stream model
 
 **Model.** Two species with densities $\boldsymbol u = (u_1,u_2,u_3)$ and $\boldsymbol v = (v_1,v_2,v_3)$ live on three patches along a stream (patch $1$ upstream, patch $3$ downstream). They are identical except for their random dispersal rates $d_1, d_2 > 0$ and downstream drift rates $q_1, q_2 > 0$:
+
 $$\begin{aligned}
 u_1' &= -(d_1+q_1)u_1 + d_1u_2 + r_1u_1\left(1 - \tfrac{u_1+v_1}{k_1}\right),\\
 u_2' &= (d_1+q_1)u_1 - (2d_1+q_1)u_2 + d_1u_3 + r_2u_2\left(1 - \tfrac{u_2+v_2}{k_2}\right),\\
 u_3' &= (d_1+q_1)u_2 - d_1u_3 + r_3u_3\left(1 - \tfrac{u_3+v_3}{k_3}\right),
 \end{aligned}$$
+
 and the same equations for $\boldsymbol v$ with $(d_2, q_2)$, where $r_i > 0$ and the carrying capacities decrease downstream: $k_1 > k_2 > k_3 > 0$. Each species alone has a unique globally stable positive equilibrium, giving semitrivial equilibria $(\boldsymbol u^*, \boldsymbol 0)$ and $(\boldsymbol 0, \boldsymbol v^*)$.
 
 **Theorem.** Define

@@ -13,10 +13,12 @@ $$\mathbb{E}[\lambda^*]<\infty,\qquad\mathbb{E}[\lambda_0^*]<\infty$$
 (earlier proofs assumed a deterministic bound $\lambda\le\lambda^*$).
 
 **Statement.** As $N\to\infty$, $(\bar{\mathfrak{S}}^N,\bar{\mathfrak{F}}^N)$ converges in probability, locally uniformly in time, to the unique solution of
+
 $$\begin{aligned}
 \bar{\mathfrak{S}}(t)&=\mathbb{E}\Big[\gamma_0(t)e^{-\int_0^t\gamma_0(r)\bar{\mathfrak{F}}(r)dr}\Big]+\int_0^t\mathbb{E}\Big[\gamma(t-s)e^{-\int_s^t\gamma(r-s)\bar{\mathfrak{F}}(r)dr}\Big]\bar{\mathfrak{S}}(s)\bar{\mathfrak{F}}(s)\,ds,\\
 \bar{\mathfrak{F}}(t)&=\bar\lambda_0(t)+\int_0^t\bar\lambda(t-s)\,\bar{\mathfrak{S}}(s)\bar{\mathfrak{F}}(s)\,ds,
 \end{aligned}$$
+
 with $\bar\lambda=\mathbb{E}\lambda$, $\bar\lambda_0=\mathbb{E}\lambda_0$. With constant susceptibility $\gamma\equiv0$ after infection and $\gamma_0\equiv1$ for initially susceptible individuals this reduces to the varying-infectivity SIR model.
 
 ## Depends on

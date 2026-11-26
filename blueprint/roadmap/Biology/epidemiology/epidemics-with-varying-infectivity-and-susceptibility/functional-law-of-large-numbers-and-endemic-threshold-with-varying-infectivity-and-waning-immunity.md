@@ -4,10 +4,12 @@
 
 **Theorem.**
 1. *(FLLN.)* $(\overline{\mathfrak S}^N, \overline{\mathfrak F}^N) \to (x, y)$ in probability in $D^2$, where $(x, y)$ is the unique solution of
+
 $$\begin{aligned}
 x(t) &= \mathbb E\Bigl[\gamma_0(t)e^{-\int_0^t\gamma_0(r)y(r)dr}\Bigr] + \int_0^t \mathbb E\Bigl[\gamma(t-s)e^{-\int_s^t \gamma(r-s)y(r)dr}\Bigr]x(s)y(s)\,ds,\\
 y(t) &= \bar I(0)\bar\lambda_0(t) + \int_0^t \bar\lambda(t-s)x(s)y(s)\,ds,
 \end{aligned}$$
+
 ($\gamma_0, \lambda_0$ describe the initially infected and initial susceptibilities).
 2. *(Disease-free threshold.)* If $\gamma$ is a.s. nondecreasing and $R_0 < \mathbb E[1/\gamma_*]$, then $(x(t), y(t)) \to (\overline{\mathfrak S}_*, 0)$: the epidemic dies out.
 3. *(Endemic equilibrium.)* If $R_0 > \mathbb E[1/\gamma_*]$, susceptibility reaches $\gamma_*/2$ after an integrable time, and $(x, y)$ converges, then either the limit is disease-free or $x_* = 1/R_0$ and $y_* > 0$ is the unique positive solution of

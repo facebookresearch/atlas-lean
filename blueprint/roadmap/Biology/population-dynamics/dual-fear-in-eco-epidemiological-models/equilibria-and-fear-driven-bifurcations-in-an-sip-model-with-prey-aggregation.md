@@ -1,11 +1,13 @@
 # Equilibria and fear-driven bifurcations in an SIP model with prey aggregation
 
 **Model.** Susceptible prey $S$, infected prey $I$ and predators $P$ satisfy
+
 $$\begin{aligned}
 \dot S&=\frac{b_0S}{1+k_1P}\Big(1-\frac{S+I}{K}\Big)-a_0S-d_0S^rP-\frac{e_0SI}{1+k_2P},\\
 \dot I&=-a_1I+\frac{e_0SI}{1+k_2P}-d_1IP,\\
 \dot P&=-a_2P+d_2S^rP+d_3IP,
 \end{aligned}$$
+
 with positive parameters: prey birth rate $b_0$, carrying capacity $K$, death rates $a_0,a_1,a_2$, transmission rate $e_0$, attack rates $d_0,d_1$, conversion efficiencies $d_2,d_3$, aggregation exponent $r\in(0,1)$ (predation on $S^r$, modelling herd-like aggregation of susceptibles), and the *dual fear* parameters $k_1$ (fear-reduced prey reproduction) and $k_2$ (fear-reduced disease transmission).
 
 **Statements.**

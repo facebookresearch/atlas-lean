@@ -1,11 +1,13 @@
 # Reproduction number of an SIR model with two behavioral susceptible classes
 
 **Model.** A population of size $N$ is split into two susceptible classes with different contact behavior (for example, people who do and do not follow mitigation measures), with transmission rates $\beta_1 > \beta_2 > 0$. Infections are symptomatic ($I_s$) with probability $\lambda$ and asymptomatic ($I_a$) otherwise; asymptomatic cases become symptomatic at rate $\gamma$, and all infected recover at rate $\kappa$:
+
 $$\begin{aligned}
 \dot S_1 &= -\beta_1\tfrac{S_1}{N}(I_a + I_s), \qquad \dot S_2 = -\beta_2\tfrac{S_2}{N}(I_a + I_s),\\
 \dot I_s &= \lambda\Big[\beta_1\tfrac{S_1}{N} + \beta_2\tfrac{S_2}{N}\Big]\,(I_a + I_s) + \gamma I_a - \kappa I_s,\\
 \dot I_a &= (1-\lambda)\Big[\beta_1\tfrac{S_1}{N} + \beta_2\tfrac{S_2}{N}\Big]\,(I_a + I_s) - (\gamma + \kappa)I_a, \qquad \dot R = \kappa(I_a + I_s).
 \end{aligned}$$
+
 Disease-free equilibria are $(\rho N, (1-\rho)N, 0, 0, 0)$, $\rho \in (0,1)$ being the fraction in the higher-contact class.
 
 **Theorem.**

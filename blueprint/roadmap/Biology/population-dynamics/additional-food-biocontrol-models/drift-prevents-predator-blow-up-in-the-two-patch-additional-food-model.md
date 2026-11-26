@@ -1,10 +1,12 @@
 # Drift prevents predator blow-up in the two-patch additional-food model
 
 **Model.** An AF patch $\Omega_1$ (pest $x_1$, predator $y_1$) and a crop field $\Omega_2$ (pest $x_2$, predator $y_2$) are coupled by one-way predator drift at rate $q_1$ out of $\Omega_1$ that arrives in $\Omega_2$ at rate $q_2$:
+
 $$\begin{aligned}
 \dot x_1 &= x_1\left(1 - \frac{x_1}{k_p}\right) - \frac{x_1 y_1}{1 + x_1 + \alpha\xi}, &\quad \dot y_1 &= \epsilon_1\,\frac{x_1 + \xi}{1 + x_1 + \alpha\xi}\, y_1 - \delta_1 y_1 - q_1 y_1,\\
 \dot x_2 &= x_2\left(1 - \frac{x_2}{k_c}\right) - \frac{x_2 y_2}{1 + x_2}, &\quad \dot y_2 &= \epsilon_2\,\frac{x_2}{1 + x_2}\, y_2 - \delta_2 y_2 + q_2 y_1,
 \end{aligned}$$
+
 where AF of quantity $\xi$ and quality $1/\alpha$ is supplied only in $\Omega_1$, and $\epsilon_i > \delta_i$.
 
 **Theorem.** Let $\xi_{\mathrm{critical}} = \delta_1/(\epsilon_1 - \alpha\delta_1)$.
