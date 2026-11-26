@@ -1,0 +1,3 @@
+# Temperature gradient of a heated slab
+
+The temperature gradient of the slab profile is $T'(d) = \frac{T_b - T_s}{L} + \frac{H L}{2k} - \frac{H d}{k}$, with the convention $x/0 = 0$ (a quotient with zero denominator, by $L$ or $k$, is $0$). The slab profile is the conductive geotherm with heat production, so its derivative and the steady heat equation it satisfies are the results on the [gradient of the conductive geotherm](../../../EarthScience/solid-earth-geophysics/conductive-geotherms/geotherm-has-deriv-at.md) and its [curvature and heat equation](../../../EarthScience/solid-earth-geophysics/conductive-geotherms/geotherm-second-deriv.md).
