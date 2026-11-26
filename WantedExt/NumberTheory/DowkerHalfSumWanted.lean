@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.WatsonAlternatingBounds
 public import MathlibExt.NumberTheory.WatsonCoshIntegral
 public import MathlibExt.NumberTheory.WatsonCotangentDerivatives
+public import MathlibExt.NumberTheory.DowkerHalfSumWatsonCosSumSixthLimits
 
 namespace MetaMathlibExt
 
@@ -94,18 +95,6 @@ public theorem_wanted watson_alternating_sharp_bounds
         watsonAlternatingCosecantSum n ∧
       watsonAlternatingCosecantSum n <
         2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ))
-
-/--
-**Vanishing limits of Watson's cosine sum at one sixth and five sixths.** For natural numbers
-$n$ and $\nu$ let $C_n(\nu) = \sum_{l=1}^{n-1} \cos(2 \pi \nu l / n) / \sin(\pi l / n)$. As
-$m \to \infty$ through the natural numbers, $C_{6m}(m) \to 0$ and $C_{6m}(5m) \to 0$.
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 4.
--/
-public theorem_wanted watson_cos_sum_sixth_limits :
-    Tendsto (fun m : ℕ => watsonCosSum (6 * m) m) atTop (𝓝 0) ∧
-      Tendsto (fun m : ℕ => watsonCosSum (6 * m) (5 * m)) atTop (𝓝 0)
 
 end
 
