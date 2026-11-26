@@ -21,6 +21,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Basic
+public import MathlibExt.Probability.NoThreeWayMLECollapsingAIMComputationProblem22
 
 @[expose] public section
 
@@ -44,48 +45,5 @@ is the conjecture for `3 × 3 × 3` tables, the size the list names.
 -/
 
 open Function
-
-/-- The maximum likelihood estimate of the `I × J × K` table of counts `n` exists under the no
-3-way interaction model: some table with strictly positive real cells has the same two-way margins
-as `n` (Haberman's criterion: the margins lie in the relative interior of the marginal cone). -/
-def MLEExists {I J K : ℕ} (n : Fin I → Fin J → Fin K → ℕ) : Prop :=
-  ∃ m : Fin I → Fin J → Fin K → ℝ, (∀ i j k, 0 < m i j k) ∧
-    (∀ i j, ∑ k, m i j k = ∑ k, (n i j k : ℝ)) ∧
-    (∀ i k, ∑ j, m i j k = ∑ j, (n i j k : ℝ)) ∧
-    ∀ j k, ∑ i, m i j k = ∑ i, (n i j k : ℝ)
-
-/-- The collapsing of an `I × J × K` table to a `2 × 2 × 2` table along the maps `a, b, c` that
-merge the levels of each variable into two classes: cell `(α, β, γ)` of the collapsed table is the
-sum of the cells `(i, j, k)` with `a i = α`, `b j = β`, `c k = γ`. -/
-def collapse {I J K : ℕ} (a : Fin I → Fin 2) (b : Fin J → Fin 2) (c : Fin K → Fin 2)
-    (n : Fin I → Fin J → Fin K → ℕ) : Fin 2 → Fin 2 → Fin 2 → ℕ :=
-  fun α β γ => ∑ i, ∑ j, ∑ k, if a i = α ∧ b j = β ∧ c k = γ then n i j k else 0
-
-/-- Conjecture 8 of the AIM workshop list for `3 × 3 × 3` tables: the MLE of a table under the no
-3-way interaction model fails to exist exactly when it fails to exist for some collapsing of the
-table to a `2 × 2 × 2` table (each variable's three levels merged into two nonempty classes). -/
-def mleNonexistenceDetectedByCollapsing333 : Prop :=
-  ∀ n : Fin 3 → Fin 3 → Fin 3 → ℕ, ¬ MLEExists n ↔
-    ∃ (a b c : Fin 3 → Fin 2), Surjective a ∧ Surjective b ∧ Surjective c ∧
-      ¬ MLEExists (collapse a b c n)
-
-/--
-Resolved false: some `3 × 3 × 3` table has no MLE under the no 3-way interaction model although
-every collapsing of it to a `2 × 2 × 2` table has one (Eriksson, as recorded by the list; the
-marginal cone of `3 × 3 × 3` tables has facets not obtained by collapsing, EFRS Table 1). Source:
-AIM workshop Computational algebraic statistics, problem list, Conjecture 8; resolution: AIM
-workshop Computational algebraic statistics, problem list, note after Conjecture 8 (N. Eriksson); N.
-Eriksson, S. E. Fienberg, A. Rinaldo and S. Sullivant, Polyhedral conditions for the nonexistence of
-the MLE for hierarchical log-linear models, J. Symbolic Comput. 41 (2006), 222-233, DOI
-10.1016/j.jsc.2005.04.003, arXiv:math/0405044, list: 'Later in the week, Nicholas Eriksson showed
-that this conjecture is false already for 3 × 3 × 3 tables'; EFRS §4.2 and Table 1: for p = q = r =
-3 not all facets of the marginal cone are obtained by collapsing ('Collapsing' column 3 3 3; 'a
-natural conjecture is that all facets are obtained by collapsing to binary tables ... not all facets
-are obtained by collapsing'); Haberman's theorem and Cor. 3 with its proof: the MLE exists iff the
-margins lie in the relative interior of the marginal cone, iff a strictly positive table has the
-same margins, https://aimath.org/WWN/compalgstat/compalgstat.pdf.
--/
-public theorem_wanted mleNonexistenceDetectedByCollapsing333_refuted :
-    ¬ mleNonexistenceDetectedByCollapsing333
 
 end MathlibExt.Probability.NoThreeWayMLECollapsingAIMComputationProblem22Wanted
