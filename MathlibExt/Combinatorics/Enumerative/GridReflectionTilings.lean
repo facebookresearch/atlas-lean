@@ -17,6 +17,13 @@ import Mathlib.Data.Fin.Tuple.Basic
 
 `rectangularGrid_f_even` counts fixed tilings by choosing one tile per reflected pair of cells.
 For odd width, `rectangularGrid_f_odd` also counts the reflection-invariant tiles on the axis.
+
+## References
+
+Peter Kagey and William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+Journal of Integer Sequences 27 (2024), Article 24.6.1, pp. 13–15, Theorems 22 and 24.
+The rectangular reflection counts are equation (4) of Theorem 22. The proof of `squareGrid_f_odd`
+follows the paper's derivation of equation (9) in Theorem 24 by setting `m = n` in Theorem 22.
 -/
 
 namespace MetaMathlibExt
