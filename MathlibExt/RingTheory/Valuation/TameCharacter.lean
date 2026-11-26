@@ -157,13 +157,7 @@ theorem exists_units_mul_eq_and_residue_eq_tameCharacter_of_mem_inertiaSubgroupI
     mem_decompositionSubgroup_of_mem_inertiaSubgroupIn P hσ
   refine ⟨fun z hz => ?_, fun u => ?_⟩
   · have hσz : σ z ≠ 0 := (map_ne_zero σ).mpr hz
-    have hv : P.valuation (σ z) = P.valuation z :=
-      P.valuation_map_eq_of_mem_decompositionSubgroup hd z
-    have hvz : P.valuation z ≠ 0 := (Valuation.ne_zero_iff _).mpr hz
-    have hmem : σ z / z ∈ P :=
-      (P.valuation_le_one_iff _).mp (by rw [map_div₀, hv, div_self hvz])
-    have hmem' : z / σ z ∈ P :=
-      (P.valuation_le_one_iff _).mp (by rw [map_div₀, hv, div_self hvz])
+    obtain ⟨hmem, hmem'⟩ := apply_div_mem_of_mem_decompositionSubgroup P hd hz
     let a : (↥P)ˣ :=
       ⟨⟨σ z / z, hmem⟩, ⟨z / σ z, hmem'⟩,
         Subtype.ext (show σ z / z * (z / σ z) = 1 by

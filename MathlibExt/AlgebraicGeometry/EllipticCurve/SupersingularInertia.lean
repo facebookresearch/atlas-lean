@@ -63,8 +63,10 @@ this is supersingularity of the reduction of `W` over `AlgebraicClosure (ZMod p)
 subring `P` of `AlgebraicClosure ℚ` over `p`, every nonzero `p`-torsion point has `x`-coordinate
 of valuation `v(p) ^ (-2 / (p ^ 2 - 1))`, and the reduction of `x / (y π)` with
 `π ^ (p ^ 2 - 1) = p` is an additive functional on the `p`-torsion on which inertia acts through
-the tame character. Consequently the residual representation, after any extension of scalars to
-a finite field, has a nonzero vector on which inertia acts through the tame character.
+the tame character. For every finite coefficient field `k` over `𝔽ₚ`, every valuation subring `P`
+of `ℚ̄` above `p`, and every `π` with `π^(p²−1) = p`, there is an embedding `k → κ(P)` such that
+the representation extended along it has a nonzero inertia eigenvector in `κ(P)²` with
+eigencharacter `P.tameCharacter π`.
 
 ## Main results
 
