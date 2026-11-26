@@ -1,6 +1,6 @@
 # A random sample of logarithmic size is an ε-net
 
-Let $(x, R)$ be a finite range space with $n = |x| \ge 1$ points and VC dimension at most $\delta$, where $\delta \ge 1$ is an integer, and let $\varepsilon, \varphi \in (0, 1)$. There is an integer $m = O\big(\tfrac{\delta}{\varepsilon} \log \tfrac{n}{\varphi}\big)$ such that the multiset $C$ of $m$ independent draws from the uniform distribution on $x$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$: a fixed range with at least $\varepsilon n$ points is missed with probability at most $(1 - \varepsilon)^m \le e^{-\varepsilon m}$, and there are at most $2(ne/\delta)^\delta$ ranges.
+Let $(x, R)$ be a finite range space with $n = |x| \ge 1$ points and VC dimension at most $\delta$, where $\delta \ge 1$ is an integer, and let $\varepsilon, \varphi \in (0, 1)$. For the integer $m = \lceil (\delta \ln(n + 1) + \ln(1/\varphi))/\varepsilon \rceil$, the multiset $C$ of $m$ independent draws from the uniform distribution on $x$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$: a fixed range with at least $\varepsilon n$ points is missed with probability at most $(1 - \varepsilon)^m \le e^{-\varepsilon m}$, and the ranges meet $x$ in at most $\sum_{i \le \delta} \binom{n}{i} \le (n + 1)^\delta$ distinct sets.
 
 ## Depends on
 
