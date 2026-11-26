@@ -11266,6 +11266,7 @@
   "MathlibExt/Combinatorics/HarperIsoperimetric": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Harper's isoperimetric inequality"},
   "MathlibExt/Combinatorics/HindmanFiniteSums": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Pairwise sum theorem"},
   "MathlibExt/Combinatorics/HockeyStick": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Hockey-stick identity"},
+  "MathlibExt/Combinatorics/HopcroftKarpAugmentingPathsLengthAddCardInterLe": {"to": "GraphTheory/matchings-and-flows", "title": "Berge's lemma"},
   "MathlibExt/Combinatorics/HowardPotentialPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Potential polynomials"},
   "MathlibExt/Combinatorics/HypergraphChromaticEdgeCountErdosProblem832": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Hypergraph chromatic number"},
   "MathlibExt/Combinatorics/HypergraphColoringShared": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Hypergraph chromatic number"},
