@@ -99,6 +99,39 @@ private theorem returnToRoot : Access original 3 [.left, .parent] original := by
   exact ⟨root, root, [3, 1, 3], rfl, rfl,
     .cons .left (.cons .parentOfLeft (.nil _)), by simp, rfl⟩
 
+-- A nontrivial online strategy: pick the path to each key independently, without rotations.
+private def childMoves (key : Fin 4) : List Primitive :=
+  match key.val with
+  | 0 => [.left, .left]
+  | 1 => [.left]
+  | 2 => [.left, .right]
+  | _ => []
+
+private theorem childMoves_access (key : Fin 4) : Access original key (childMoves key) original := by
+  rcases four_keys key with rfl | rfl | rfl | rfl
+  · refine ⟨root, ⟨0, .nil, .nil, [.left 1 (.node 2 .nil .nil), .left 3 .nil]⟩,
+      [3, 1, 0], rfl, rfl, .cons .left (.cons .left (.nil _)), by simp, rfl⟩
+  · exact ⟨root, child, [3, 1], rfl, rfl, .cons .left (.nil _), by simp, rfl⟩
+  · refine ⟨root, ⟨2, .nil, .nil, [.right 1 (.node 0 .nil .nil), .left 3 .nil]⟩,
+      [3, 1, 2], rfl, rfl, .cons .left (.cons .right (.nil _)), by simp, rfl⟩
+  · exact rootHit
+
+private def fixedTreeStrategy : Strategy original where
+  plan := List.map childMoves
+  legal requests := by
+    induction requests with
+    | nil => exact ⟨original, 0, rfl, rfl⟩
+    | cons key requests ih =>
+        obtain ⟨finish, cost, legal⟩ := ih
+        exact ⟨finish, 1 + (childMoves key).length + cost, original, cost,
+          childMoves_access key, legal, rfl⟩
+
+example : Online fixedTreeStrategy := by
+  intro pref xs ys
+  change ((pref ++ xs).map childMoves).take pref.length =
+    ((pref ++ ys).map childMoves).take pref.length
+  simp only [List.map_append, List.take_left' (List.length_map (as := pref) childMoves)]
+
 -- A legal planner that peeks at the rest of the input, even though the tree at the end of
 -- the first request is identical in the two executions that witness the violation.
 private noncomputable def peeking : Strategy original where
