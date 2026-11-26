@@ -1,7 +1,3 @@
 # Deterministic operations of a trapdoor family
 
-Both public spaces have polynomial-time
-membership tests. The deterministic public and secret maps run in polynomial time. One
-polynomial bounds the system parameter, both keys and every word of both spaces at all generated
-contexts. Correctness holds at every matching pair. These conditions do not select a sampling
-model or imply one-wayness.
+The two membership tests and the public and secret maps run in polynomial time on all inputs. The tests must decide membership correctly for every bitstring at each generated public context: setup can produce the system parameter and key generation there can produce a pair with that public key. One polynomial bounds the lengths of the system parameter, both keys and every word of both spaces for all such pairs. The matching maps satisfy the trapdoor correctness law at every generated pair. These conditions do not select a sampling model or imply one-wayness.

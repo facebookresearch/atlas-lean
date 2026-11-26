@@ -90,11 +90,13 @@ theorem CorrectAt.bijOn_and_rightInvOn {S : Family} {n : ℕ+} {pp pk sk : Bits}
 
 local notation "coins" => (fun m : ℕ => _root_.PMF.map List.ofFn (uniformOfFintype (Fin m → Bool)))
 
-/-- **Deterministic operations of a trapdoor family.** Both public spaces have polynomial-time
-membership tests. The deterministic public and secret maps run in polynomial time. One
-polynomial bounds the system parameter, both keys and every word of both spaces at all generated
-contexts. Correctness holds at every matching pair. These conditions do not select a sampling
-model or imply one-wayness. -/
+/-- **Deterministic operations of a trapdoor family.** The two membership tests and the
+public and secret maps run in polynomial time on all inputs. The tests must decide membership
+correctly for every bitstring at each generated public context: setup can produce the system
+parameter and key generation there can produce a pair with that public key. One polynomial bounds
+the lengths of the system parameter, both keys and every word of both spaces for all such pairs.
+The matching maps satisfy the trapdoor correctness law at every generated pair. These conditions
+do not select a sampling model or imply one-wayness. -/
 structure DeterministicCore : Prop where
   recognize : ∃ (X Y : Index × Bits → Bool), IsPolyTime X ∧ IsPolyTime Y ∧
     ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk → ∀ z : Bits,
@@ -209,14 +211,16 @@ def IsBoundedCoinOneWay (h : S.IsBoundedCoinFunctionScheme) : Prop :=
 open MetaMathlibExt.BitstringEncoding
 
 /-- **Variable-time trapdoor function scheme.** In addition to the deterministic operations,
-size bounds and matching-key inverse law, three fixed, almost-surely terminating efficient
-fair-bit algorithms realize the specified distributions exactly. Setup receives an empty
-auxiliary word. Conditional on any possible system parameter, key generation outputs the
-canonical, injective bitstring encoding of the pair of keys, with the prescribed joint law.
-Given the encoding of the system parameter and the public key, domain sampling is uniform on
-the nonempty finite domain. All three machines also receive the unary security parameter.
-The running-time guarantees cover all auxiliary inputs up to each algorithm's polynomial
-envelope, not merely typical generated keys. -/
+size bounds and matching-key inverse law, three fixed efficient fair-bit algorithms receive the
+unary security parameter. Setup uses an empty auxiliary word and realizes the specified setup
+law. For each system parameter in its support, key generation realizes the prescribed joint law
+of the keys under their canonical, injective bitstring encoding. For every public key occurring
+in a pair in that conditional law's support, the domain is nonempty and the sampler, given the
+encoded system parameter and public key, is exactly uniform on that domain.
+
+These domain requirements apply only at generated public contexts. Almost-sure halting and the
+running-time tail bound apply to every auxiliary word within each algorithm's polynomial
+envelope, including words that do not encode a generated context. -/
 structure IsFunctionScheme : Prop extends S.DeterministicCore where
   setup_law : ∃ P : TailAlgorithm, ∀ n, P.Realizes n [] (S.setup n)
   key_law : ∃ G : TailAlgorithm, ∀ n pp, pp ∈ (S.setup n).support →
