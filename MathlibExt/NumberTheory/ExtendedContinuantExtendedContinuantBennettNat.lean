@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.ExtendedContinuant
+import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
 import Mathlib.Tactic.Ring
 
 /-!
@@ -28,35 +29,10 @@ private theorem continuant_minor (x : ℤ → ℤ) (k n : ℤ) :
     (k.negOnePow : ℤ) * extendedContinuant x (n - k - 2) k =
       extendedContinuant x (n - 2) 0 * extendedContinuant x (k - 3) 1 -
         extendedContinuant x (n - 3) 1 * extendedContinuant x (k - 2) 0 := by
-  let C (b t : ℤ) := extendedContinuant x (t - b - 2) b
-  have recurrence (b t : ℤ) : C b (t + 2) = x t * C b (t + 1) + C b t := by
-    dsimp only [C]
-    convert extendedContinuant_recurrence x (t - b) b using 1 <;> ring_nf
-  let E (t : ℤ) := (k.negOnePow : ℤ) * C k t -
-    (C 0 t * C 1 k - C 1 t * C 0 k)
-  have step (t : ℤ) : E (t + 2) = x t * E (t + 1) + E t := by
-    dsimp only [E]
-    rw [recurrence k t, recurrence 0 t, recurrence 1 t]
-    ring
-  have base : E k = 0 ∧ E (k + 1) = 0 := by
-    constructor
-    · simp [E, C, extendedContinuant_neg_two]
-      ring
-    · have h := extendedContinuant_det x (k - 1)
-      dsimp only [E, C]
-      rw [show k + 1 - k - 2 = -1 by ring, extendedContinuant_neg_one, mul_one]
-      convert sub_eq_zero.mpr h.symm using 1; ring_nf
-  have hn : E n = 0 ∧ E (n + 1) = 0 := by
-    refine Int.inductionOn' n k base (fun t _ ih => ?_) (fun t _ ih => ?_)
-    · refine ⟨ih.2, ?_⟩
-      simpa [show t + 1 + 1 = t + 2 by ring, ih.1, ih.2] using step t
-    · constructor
-      · have h := step (t - 1)
-        simpa [show t - 1 + 2 = t + 1 by ring, ih.1, ih.2] using h.symm
-      · simpa using ih.1
-  have h := sub_eq_zero.mp hn.1
-  simpa [E, C, sub_zero, show n - 1 - 2 = n - 3 by ring,
-    show k - 1 - 2 = k - 3 by ring] using h
+  have h := extendedContinuant_euler x 0 (k - 2) 0 (n - 2)
+  rw [zero_sub, extendedContinuant_neg_one, mul_one, Int.negOnePow_sub,
+    Int.negOnePow_even 2 even_two, mul_one] at h
+  convert h.symm using 2 <;> ring_nf
 
 /-- **Bennett's continuant identity for nonnegative indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
 be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
