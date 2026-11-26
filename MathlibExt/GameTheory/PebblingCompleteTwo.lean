@@ -15,6 +15,19 @@ public import MathlibExt.GameTheory.ImpartialPebblingGame
 
 `pebbling_completeTwo_isN_iff` classifies the winning positions by the parity of the total
 and the congruence of the two piles modulo three.
+
+## References
+
+* Kayla Barker, Mia DeStefano, Eugene Fiorini, Michael Gohn, Joe Miller, Jacob Roeder, and
+  Tony W. H. Wong, *Generalized Impartial Two-player Pebbling Games on $K_3$ and $C_4$*,
+  Journal of Integer Sequences 27 (2024), Article 24.5.8, pp. 1–15
+  (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Wong/wong43.pdf>). Theorem 1(a), p. 3,
+  states both the winning-position classification and the absence of an all-N threshold.
+* Eugene Fiorini, Max Lind, Andrew Woldar, and Tony W. H. Wong,
+  *Characterizing Winning Positions in the Impartial Two-Player Pebbling Game on Complete Graphs*,
+  Journal of Integer Sequences 24 (2021), Article 21.6.4, pp. 1–10
+  (<https://cs.uwaterloo.ca/journals/JIS/VOL24/Wong/wong31.pdf>). Theorem 1(a), p. 3,
+  gives the original winning-position classification, cited as reference [2] by Barker et al.
 -/
 
 namespace MetaMathlibExt
