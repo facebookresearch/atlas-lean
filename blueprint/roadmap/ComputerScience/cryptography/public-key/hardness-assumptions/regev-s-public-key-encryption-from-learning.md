@@ -4,7 +4,7 @@ In Regev's scheme the public key is $(A, b = As + e) \in \mathbb{Z}_q^{m \times 
 
 ## Depends on
 
-- [Learning with errors](learning-with-errors.md)
+- [Decision learning-with-errors assumption](learning-with-errors.md)
 - [Public-key encryption scheme](../../security-games/generic-security-games/pkescheme.md)
 
 ## Expansion
