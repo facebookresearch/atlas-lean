@@ -18,9 +18,12 @@ still differ, even if the epoch's logical start value is correct.
 
 If the logical start value is carried forward as in condition 2 and every readable copy matches
 that start value, then every reader sees the carried value, so any two readers agree. The
-copy-matching condition is separate from token ownership. The model checks these conditions at
-epoch boundaries; it does not specify a protocol for transferring tokens, moving values, or
-invalidating copies within an epoch.
+copy-matching condition is separate from token ownership. The theorem checks the current
+allocation against the given budget only. The caller supplies the preceding snapshots, and
+an entry with a writer contributes its end value even if that snapshot is not coherent. A
+trace with coherent epochs and one fixed budget requires separate hypotheses on the history.
+The model does not specify a protocol for transferring tokens, moving values, or invalidating
+copies within an epoch.
 
 ## Sources
 

@@ -18,12 +18,13 @@ its logical start value comes from the most recent completed read–write epoch.
 value is used until there has been such an epoch. `Epoch.MatchesStart` separately checks the
 values available to readers, so agreement is not built into the representation.
 
-`TokenAllocation.swmr_of_validBudget` proves the permission invariant for the all-tokens write
-rule and the positive-token read rule. The total is fixed across epochs by using the same budget
-at every boundary; unassigned tokens count toward it. The source's bound that the total is at
-least the number of cores is part of the budget, though SWMR only needs positivity and
-conservation. This model does not specify how tokens or values move, or what happens within
-an epoch.
+`TokenAllocation.swmr_of_validBudget` proves the permission invariant for one allocation and
+its budget, including unassigned tokens. The budget is positive and at least the number of
+cores, though this proof only needs positivity and conservation. `epoch_coherence` checks
+only the current allocation. Its `past` is supplied by the caller: any entry with a writer
+contributes its end value, without a check of that entry's SWMR or token budget. A coherent
+trace with a fixed budget would require separate hypotheses on the supplied history. This
+model does not specify how tokens or values move, or what happens within an epoch.
 
 ## Reference
 
