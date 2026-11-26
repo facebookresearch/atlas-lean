@@ -35,6 +35,7 @@ Arch. Exp. Path. Pharmak. 162 (1931) 480–483.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.SpearmanKarber
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Pi
@@ -44,13 +45,6 @@ public import Mathlib.Data.Fintype.Pi
 namespace WantedExt.Biology.StatisticalGenetics.SpearmanKarberWanted
 
 open Finset
-
-/-- The Spearman–Kärber value `∑ᵢ (pᵢ₊₁ - pᵢ) (xᵢ + xᵢ₊₁) / 2` for doses `xᵢ = x₀ + i d`,
-`i = 0, …, k`, and response proportions `p`; for nondecreasing `p` with `p₀ = 0` and `p_k = 1` it
-is the mean of the distribution with mass `pᵢ₊₁ - pᵢ` at `(xᵢ + xᵢ₊₁) / 2`. -/
-noncomputable def spearmanKarber (x₀ d : ℝ) {k : ℕ} (p : Fin (k + 1) → ℝ) : ℝ :=
-  ∑ i : Fin k, (p i.succ - p i.castSucc) *
-    ((x₀ + (i : ℕ) * d) + (x₀ + ((i : ℕ) + 1) * d)) / 2
 
 /-- The binomial probability `C(n, r) Pʳ (1 - P)ⁿ⁻ʳ` of `r` responders among `n` subjects. -/
 noncomputable def binomProb (n : ℕ) (P : ℝ) (r : Fin (n + 1)) : ℝ :=
@@ -66,17 +60,6 @@ noncomputable def expect {k : ℕ} (n : ℕ) (P : Fin (k + 1) → ℝ)
 `rᵢ / n`. -/
 noncomputable def estimator (x₀ d : ℝ) {k : ℕ} (n : ℕ) (r : Fin (k + 1) → Fin (n + 1)) : ℝ :=
   spearmanKarber x₀ d (fun i => ((r i : ℕ) : ℝ) / n)
-
-/-- **Summation by parts** (Irwin and Cheeseman 1939, p. 574): for doses `xᵢ = x₀ + i d`,
-`i = 0, …, k` with `k ≥ 1`, and any proportions `p` with `p₀ = 0` and `p_k = 1`, the
-Spearman–Kärber value equals `x_k - d (½ p₀ + p₁ + ⋯ + p_{k-1} + ½ p_k)`.
-
-Source: Irwin and Cheeseman (1939), p. 574. -/
-public theorem_wanted spearmanKarber_eq (x₀ d : ℝ) (k : ℕ) (hk : 1 ≤ k) (p : Fin (k + 1) → ℝ)
-    (h₀ : p 0 = 0) (hk₁ : p (Fin.last k) = 1) :
-    spearmanKarber x₀ d p =
-      (x₀ + k * d) - d * (p 0 / 2 + ∑ i : Fin (k + 1), (if i = 0 ∨ i = Fin.last k then 0 else p i) +
-        p (Fin.last k) / 2)
 
 /-- **Unbiasedness and exact variance** (Irwin and Cheeseman 1939, p. 574; derived): let `d > 0`,
 `n ≥ 1`, and let the true response probabilities satisfy `0 ≤ Pᵢ ≤ 1`, `P₀ = 0`, `P_k = 1`, and
