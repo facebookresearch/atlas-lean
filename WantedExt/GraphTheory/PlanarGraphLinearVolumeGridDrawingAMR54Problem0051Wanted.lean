@@ -57,7 +57,8 @@ def IsGridDrawing3 {V : Type} (G : SimpleGraph V) (p : V → Fin 3 → ℤ) : Pr
         {toReal (p u), toReal (p v)} ∩ {toReal (p x), toReal (p y)}
 
 /-- The volume of the drawing is at most `N`: some axis-aligned grid box containing all vertex
-points has at most `N` grid points. -/
+points has at most `N` grid points. For the empty vertex type nothing forces `a ≤ b`, so the box
+bounds may be reversed and the condition holds for every `N`. -/
 def HasVolumeAtMost {V : Type} (p : V → Fin 3 → ℤ) (N : ℕ) : Prop :=
   ∃ a b : Fin 3 → ℤ, (∀ v i, a i ≤ p v i ∧ p v i ≤ b i) ∧ ∏ i, (b i - a i + 1) ≤ N
 
