@@ -25,14 +25,22 @@ example : remainderSet 11 = {0, 1, 2, 3} ∧ remainderSet 12 = {0, 2} := by
 example : remainderSet 0 = ∅ ∧ remainderSet 1 = ∅ ∧ remainderSet 2 = {0} := by
   decide
 
+-- The count can also increase by one: the next set is obtained by shifting and adjoining zero.
+example : remainderSet 13 = insert 0 ((remainderSet 12).image (· + 1)) := by
+  decide
+
 -- A drop of `3` from `n = 131`: `132 = 3 · 44 = 4 · 33 = 12 · 11 = 132 · 1` uses the primes
 -- `2, 3, 11, 131`, so four remainders of `131` are not shifted into `S(132)`.
 example : remainderCount 131 = 33 ∧ remainderCount 132 = 30 := by
   decide +kernel
 
--- The main theorem gives drops of any size beyond any bound.
+-- The upper bound is attained at the first nonempty remainder set.
+example : remainderCount 2 ≤ remainderCount 1 + 1 :=
+  remainderCount_consecutive_differences.1 1 (by decide)
+
+-- The consecutive-differences theorem gives drops of any size beyond any bound.
 example : ∃ n ≥ 10 ^ 6, remainderCount (n + 1) + 100 ≤ remainderCount n :=
-  Filter.frequently_atTop.1 (remainderCount_drops_unbounded 100) (10 ^ 6)
+  Filter.frequently_atTop.1 (remainderCount_consecutive_differences.2.2 100) (10 ^ 6)
 
 -- Equivalently, for every `M` the set of `n` with a drop of at least `M` is infinite.
 example (M : ℕ) : {n | remainderCount (n + 1) + M ≤ remainderCount n}.Infinite :=
