@@ -57958,6 +57958,7 @@
 "MathlibExt.Combinatorics.ZeroSubsetSumSqrtErdosProblem540Wanted.sqrtSizeHasZeroSubsetSum_holds": "3accba3e9963fde4",
 "MathlibExt.Combinatorics.ZeroSumFixedLengthTwoResiduesErdosProblem541Wanted.fixedZeroSumLengthTwoResidues": "b183ca3af1581899",
 "MathlibExt.Combinatorics.ZeroSumFixedLengthTwoResiduesErdosProblem541Wanted.fixedZeroSumLengthTwoResidues_holds": "052ca6fc91ddeddd",
+"MathlibExt.Combinatorics.hibiWeightedSimplex_hStar": "0d7161297fafc4c0",
 "MathlibExt.CommHopfAlgCat.coe_ofIso": "e66261c831fa4b5f",
 "MathlibExt.CommHopfAlgCat.pointsFunctor": "a568b0c442ff9cd5",
 "MathlibExt.CommHopfAlgCat.pointsFunctor_map": "7c871ddbca903b1a",

@@ -17,7 +17,11 @@ unimodal.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.HibiSymmetricHStarUnimodal
 public import WantedExt.Combinatorics.WeightedProjectiveSimplexIDPWanted
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
@@ -82,6 +86,46 @@ numbers, Math. Ann. 333 (2005), 787-795, DOI 10.1007/s00208-005-0691-x, arXiv:ma
 for d = 6 (abstract: 'counterexamples to Hibi's conjecture on the unimodality of delta-vectors of
 reflexive polytopes'), https://arxiv.org/abs/math/0504486.
 -/
-public theorem_wanted hibiSymmetricUnimodal_refuted : ¬ hibiSymmetricUnimodal
+public theorem hibiSymmetricUnimodal_refuted : ¬ hibiSymmetricUnimodal := by
+  classical
+  intro hibi
+  -- Use the weighted simplex with vertex set {e₀, …, e₅, −(1, 1, 1, 1, 1, 3)}.
+  let S : Finset (Fin 6 → ℤ) :=
+    insert ![-1, -1, -1, -1, -1, -3] (Finset.univ.image fun i => Pi.single i 1)
+  have hS : latticePolytope S = weightedSimplex ![1, 1, 1, 1, 1, 3] := by
+    unfold latticePolytope S weightedSimplex
+    congr 1
+    rw [Finset.coe_insert, Finset.coe_image, Finset.coe_univ, Set.image_insert_eq,
+      Set.image_image, Set.image_univ, Set.insert_eq, Set.union_comm]
+    congr 1
+    · congr 1
+      funext j i
+      by_cases h : i = j <;> simp [h]
+    · congr 1
+      funext i
+      fin_cases i <;> norm_num
+  let h : Polynomial ℤ := 1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
+    2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6
+  have hStar : IsHStarPolynomial (latticePolytope S) h := by
+    unfold IsHStarPolynomial
+    simp only [ehrhart_eq_latticeEnumerator, Fintype.card_fin, hS]
+    exact hibiWeightedSimplex_hStar.2
+  have hSymm : ∀ i ≤ 6, h.coeff i = h.coeff (6 - i) := by
+    intro i hi
+    interval_cases i <;> norm_num only [h, Polynomial.coeff_add, Polynomial.coeff_one,
+      Polynomial.coeff_X_pow, Polynomial.coeff_X, Polynomial.coeff_ofNat_mul] <;> decide
+  have hDip : h.coeff 2 = 2 ∧ h.coeff 3 = 1 ∧ h.coeff 4 = 2 := by
+    norm_num only [h, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X_pow,
+      Polynomial.coeff_X, Polynomial.coeff_ofNat_mul]
+    decide
+  obtain ⟨h₂, h₃, h₄⟩ := hDip
+  have hdeg : 4 ≤ h.natDegree := Polynomial.le_natDegree_of_ne_zero (by rw [h₄]; decide)
+  have hInterior : (interior (latticePolytope S)).Nonempty := hS ▸ hibiWeightedSimplex_hStar.1
+  obtain ⟨t, _, hinc, hdec⟩ := hibi 6 S hInterior h hStar hSymm
+  by_cases ht : 3 ≤ t
+  · have := hinc 2 3 (by decide) ht
+    omega
+  · have := hdec 3 4 (by omega) (by decide) hdeg
+    omega
 
 end MathlibExt.Combinatorics.HibiSymmetricHStarUnimodalOWR741Problem003Wanted
