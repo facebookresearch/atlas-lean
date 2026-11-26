@@ -22,10 +22,12 @@ authenticated asynchronous point-to-point channels when at most `f` parties are 
 `n > 3 f`:
 
 * the leader sends `⟨v⟩` to all parties;
-* on receiving `⟨v⟩` from the leader, a party sends `⟨echo, v⟩` to all, at most once;
-* a party sends `⟨vote, v⟩` to all, at most once, after receiving `⟨echo, v⟩` from `n - f`
-  distinct parties or `⟨vote, v⟩` from `f + 1` distinct parties;
-* a party delivers `v`, at most once, on receiving `⟨vote, v⟩` from `n - f` distinct parties.
+* on receiving `⟨v⟩` from the leader, a party sends `⟨echo, v⟩` to all, unless it has already
+  sent an echo;
+* a party sends `⟨vote, v⟩` to all, unless it has already sent a vote, after receiving
+  `⟨echo, v⟩` from `n - f` distinct parties or `⟨vote, v⟩` from `f + 1` distinct parties;
+* a party delivers `v` on receiving `⟨vote, v⟩` from `n - f` distinct parties, unless it has
+  already delivered a value.
 
 It satisfies validity (with a non-faulty leader, every non-faulty party eventually delivers
 the leader's input), agreement (non-faulty parties that deliver deliver the same value) and
@@ -66,8 +68,8 @@ receives `n - f` votes for `v` and delivers.
 
 ## Main definitions
 
-* `BrachaKind`, `BrachaState`: the kinds of messages and the global states.
-* `brachaLTS`: the protocol as a transition system, for given `f`, leader and faulty parties.
+* `brachaLTS`: the protocol as a transition system, for given `f`, leader and faulty parties,
+  on the global states `BrachaState` and messages built from `BrachaKind`.
 * `brachaStart`: the initial state, for a given input of the leader.
 * `BrachaFair`: fairness of an infinite execution.
 
@@ -81,7 +83,7 @@ receives `n - f` votes for `v` and delivers.
 * I. Abraham, K. Nayak, *Living with asynchrony: Bracha's reliable broadcast*, Decentralized
   Thoughts, 19 September 2020: the properties, the protocol and the proofs of Claims 1 to 3.
 * G. Bracha, *Asynchronous Byzantine agreement protocols*, Information and Computation 75(2),
-  1987, 130–143.
+  1987, 130–143, doi:10.1016/0890-5401(87)90054-X.
 -/
 
 @[expose] public section
@@ -92,10 +94,9 @@ namespace Cslib.Distributed.Byzantine
 
 open Finset
 
-/-- **Message kinds of Bracha's broadcast.** A message of Bracha's protocol is a pair $(k, v)$
-of a kind $k$ and a value $v$: the leader's proposal $\langle v\rangle$ (kind `init`), an echo
-$\langle \mathrm{echo}, v\rangle$ (kind `echo`) or a vote $\langle \mathrm{vote}, v\rangle$
-(kind `vote`). -/
+/- The kinds of messages of Bracha's broadcast. A message is a pair `(k, v)` of a kind `k` and a
+value `v`: the leader's proposal `⟨v⟩` (kind `init`), an echo `⟨echo, v⟩` (kind `echo`) or a vote
+`⟨vote, v⟩` (kind `vote`). -/
 inductive BrachaKind where
   /-- The leader's proposal `⟨v⟩`. -/
   | init
@@ -107,12 +108,13 @@ inductive BrachaKind where
 
 instance : Fintype BrachaKind := ⟨{.init, .echo, .vote}, fun k => by cases k <;> simp⟩
 
-/-- **Global states of Bracha's broadcast.** For parties $P$ and values $V$, a global state
-records the set of triples $(p, j, m)$ such that a non-faulty party $p$ has sent the message $m$
-to $j$; for each party $i$, the finite set of pairs $(q, m)$ such that $i$ has received $m$ from
-$q$; and the value, if any, that $i$ has echoed, voted for and delivered. -/
+/- The global states of Bracha's broadcast, for parties `P` and values `V`: a set of triples
+`(p, j, m)`, read as: `p` has sent `m` to `j` (the transition system records only the sends of
+non-faulty parties); for each party `i`, the finite set of pairs `(q, m)` such that `i` has
+received `m` from `q`; and the value, if any, that `i` has echoed, voted for and delivered. -/
 structure BrachaState (P V : Type*) where
-  /-- The triples `(p, j, m)` such that the non-faulty party `p` has sent `m` to `j`. -/
+  /-- Triples `(p, j, m)`, read as: `p` has sent `m` to `j`. The transition system records only
+  the sends of non-faulty parties. -/
   sent : Set (P × P × BrachaKind × V)
   /-- The pairs `(q, m)` such that party `i` has received `m` from `q`. -/
   rcvd : P → Finset (P × BrachaKind × V)
@@ -126,12 +128,18 @@ structure BrachaState (P V : Type*) where
 variable {P V : Type*} [Fintype P] [DecidableEq P] [DecidableEq V]
 
 /-- **Bracha's broadcast as a transition system.** Let $n$ be the number of parties, $f$ a
-natural number, `leader` the designated leader and $F$ the set of faulty parties. A stuttering
-step (label `none`) changes nothing. A step labelled $(q, i, (k, v))$ lets a non-faulty party $i$
-receive the message $(k, v)$ from $q$ for the first time. It is possible when $q$ has sent
-$(k, v)$ to $i$, or when $q$ is faulty: a faulty party may send any message to anyone at any
-time, but only under its own name, as the channels are authenticated. Let $r$ be the messages
-$i$ has received, this one included. In the step, $i$
+natural number, `leader` the designated leader and $F$ the set of faulty parties. A message is a
+pair $(k, v)$ of a kind $k$, which is `init` (the leader's proposal), `echo` or `vote`, and a
+value $v$. A state records a set of triples $(p, j, m)$, read as: $p$ has sent $m$ to $j$ (the
+transition system records only the sends of non-faulty parties); for each party $i$, the pairs
+$(q, m)$ such that $i$ has received $m$ from $q$; and the value, if any, that $i$ has echoed,
+voted for and delivered.
+
+A stuttering step (label `none`) changes nothing. A step labelled $(q, i, (k, v))$ lets a
+non-faulty party $i$ receive the message $(k, v)$ from $q$ for the first time. It is possible
+when $q$ has sent $(k, v)$ to $i$, or when $q$ is faulty: a faulty party may send any message to
+anyone at any time, but only under its own name, as the channels are authenticated. Let $r$ be
+the messages $i$ has received, this one included. In the step, $i$
 * echoes $v$, sending $(\mathrm{echo}, v)$ to every party, if it has not echoed yet, $k$ is
   `init` and $q$ is the leader;
 * votes for $v$, sending $(\mathrm{vote}, v)$ to every party, if it has not voted yet and $r$
@@ -166,10 +174,10 @@ def brachaLTS (f : ℕ) (leader : P) (F : Finset P) :
                   Fintype.card P - f ≤ #{p | (p, .vote, v) ∈ insert (q, k, v) (s.rcvd i)}
                 then some v else s.delivered i) }
 
-/-- **Initial state of Bracha's broadcast.** For a leader with input $v$ and a set $F$ of
-faulty parties, no party has received, echoed, voted for or delivered anything; if the leader is
-not in $F$, it has sent its proposal $(\mathrm{init}, v)$ to every party, and otherwise nothing
-has been sent. -/
+/- The initial state of Bracha's broadcast, for a leader with input `input` and a set `F` of
+faulty parties: no party has received, echoed, voted for or delivered anything; if the leader is
+not in `F`, it has sent its proposal `(init, input)` to every party, and otherwise nothing has
+been sent. -/
 def brachaStart (leader : P) (input : V) (F : Finset P) : BrachaState P V where
   sent := {x | leader ∉ F ∧ x.1 = leader ∧ x.2.2 = (.init, input)}
   rcvd _ := ∅
