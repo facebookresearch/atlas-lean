@@ -19,7 +19,7 @@ import Mathlib.Data.Nat.Factorization.Induction
 import Mathlib.Data.Nat.PrimeFin
 
 /-!
-# Biunitary triperfect numbers divisible by `27`
+# Powers of two dividing the biunitary divisor sum
 
 Powers of two dividing the biunitary divisor sum of an odd number: for every odd natural number
 `n`, `2 ^ ω(n)` divides `σ**(n)`, where `ω(n)` is the number of distinct prime factors of `n`
