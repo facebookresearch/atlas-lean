@@ -49,12 +49,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
 
-/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
-divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
-def IsKLNearPerfect (k l n : ℕ) : Prop :=
-  ∃ d, KLNearPerfectWith k l n d
-
 /-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
 $[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
@@ -62,28 +56,12 @@ $\sigma_k(n) + d^k = n^k + 3n$. -/
 def IsDeficientFkPerfect (k n : ℕ) : Prop :=
   IsKLDeficientPerfect k 3 n
 
-/-- **Near $F_k$-perfect numbers.** For natural numbers $k$ and $n$, the number $n$ is near
-$F_k$-perfect when it is $[k,3]$-near-perfect, that is, when some proper divisor $d$ of $n$
-($d \mid n$ and $d < n$) satisfies $\sigma_k(n) = n^k + d^k + 3n$, where
-$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$.
-
-No condition $k > 1$ is imposed here; the results that need it assume it. -/
-def IsNearFkPerfect (k n : ℕ) : Prop :=
-  IsKLNearPerfect k 3 n
-
 /-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
 $\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
 $[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
 $\sigma_2(n) + d^2 = n^2 + 3n$. -/
 def IsDeficientFPerfect (n : ℕ) : Prop :=
   IsKLDeficientPerfect 2 3 n
-
-/-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
-$[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
-satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
-of the squares of the divisors of $n$. -/
-def IsNearFPerfect (n : ℕ) : Prop :=
-  IsKLNearPerfect 2 3 n
 
 /-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
 $F$-perfect.
@@ -295,18 +273,6 @@ theorem_wanted isKLNearPerfect_one_two_mul_prime_pow
     IsKLNearPerfect 1 1 18 ∧
       (IsKLNearPerfect 1 l (2 * p ^ a) → 2 * p ^ a = 18)
 
-/-- **No near $F$-perfect number of the form $2^a p^b$ with $b$ even.** For every prime $p$ and
-all natural numbers $a$ and $b$ with $b$ even, the number $n = 2^a p^b$ is not near $F$-perfect:
-there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where
-$\sigma_2(n)$ is the sum of the squares of the divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 15. -/
-theorem_wanted not_isNearFPerfect_two_pow_mul_prime_pow
-    (p a b : ℕ) (hp : p.Prime) (hb : Even b) :
-    ¬ IsNearFPerfect (2 ^ a * p ^ b)
-
 /-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
 a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
 $p_1^a p_2$ is not deficient $F_k$-perfect.
@@ -319,18 +285,6 @@ theorem_wanted not_isDeficientFkPerfect_prime_pow_mul
     (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
     (hne : p₁ ≠ p₂) :
     ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂)
-
-/-- **No near $F_k$-perfect number of the form $p_1^a p_2$.** Let $k > 1$, let $p_1$ and $p_2$ be
-distinct odd primes and let $a$ be a natural number. Then $p_1^a p_2$ is not near $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 17. -/
-theorem_wanted not_isNearFkPerfect_prime_pow_mul
-    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) :
-    ¬ IsNearFkPerfect k (p₁ ^ a * p₂)
 
 /-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
 an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
