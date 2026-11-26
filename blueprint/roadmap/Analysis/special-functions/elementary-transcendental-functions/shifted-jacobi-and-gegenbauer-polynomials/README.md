@@ -4,4 +4,4 @@
 - [Three-term recurrence for Gegenbauer polynomials](gegenbauer-two-add.md)
 - [Polynomials are integrable against the Jacobi weight](interval-integrable-eval-mul-weight.md)
 - [Norm of the degree-zero shifted Jacobi polynomial](integral-shifted-jacobi-zero-sq.md)
-- [Degree-one shifted Jacobi polynomial](shifted-jacobi-one.md)
+- [Shifted Jacobi polynomial of index one](shifted-jacobi-one.md)

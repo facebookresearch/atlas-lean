@@ -100,7 +100,8 @@ open MathlibExt.Analysis.Numerical.PeriodicLeapfrogStencil
 
 /-! ## A. Grid norms, scaled difference and energy -/
 
-/-- Squared weighted grid norm: `h` times the sum of squares. -/
+/-- Weighted sum of squares `h * ∑ⱼ wⱼ²`, defined for every `h`; for `0 ≤ h` it is the square
+of the weighted grid norm, and for `h < 0` it can be negative. -/
 def weightedNormSq {N : ℕ} (h : ℝ) (w : Fin N → ℝ) : ℝ :=
   weightedInner h w w
 

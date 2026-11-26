@@ -325,9 +325,9 @@ lemma existsUnique_root_of_strictAntiOn {f : ℝ → ℝ} {a b : ℝ} (hab : a �
 
 /-! ## C. Certified bisection -/
 
-/-- One bisection step on the rational bracket `I` with midpoint `m = I.mid`. The decision `true`
-records `0 ≤ f m` and keeps `[I.lower, m]`; the decision `false` records `f m ≤ 0` and keeps
-`[m, I.upper]`. -/
+/-- One bisection step on the rational bracket `I` with midpoint `m = I.mid`: the decision `true`
+keeps `[I.lower, m]` and `false` keeps `[m, I.upper]`, for any function; the evidence for a
+decision (`0 ≤ f m` or `f m ≤ 0`) is recorded separately by `SignCertified`. -/
 def bisectStep : Bool → RatInterval → RatInterval
   | true, I => ⟨I.lower, I.mid⟩
   | false, I => ⟨I.mid, I.upper⟩
@@ -647,7 +647,8 @@ end CertifiedRoot
 
 /-! ## G. Capstone: `x + exp x = 2` -/
 
-/-- The recorded decisions of ten bisection steps for `x + exp x - 2` on `[0, 1]`. -/
+/-- The recorded decisions of ten bisection steps for `x + exp x - 2` on `[0, 1]`:
+`T, F, F, F, T, T, T, F, T, F`. -/
 def equilibriumDecisions : List Bool :=
   [true, false, false, false, true, true, true, false, true, false]
 

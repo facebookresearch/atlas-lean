@@ -1,4 +1,3 @@
-# Heat mode has Deriv At t
+# Time derivative of a single heat mode
 
-Time derivative of the single heat mode
-`u(t, x) = exp(-κ π² t) sin(π x)` at fixed `x`.
+For all real $\kappa$, $x$ and $t$, the single heat mode $u(t, x) = e^{-\kappa \pi^2 t} \sin(\pi x)$ has time derivative $\partial_t u(t, x) = -\kappa \pi^2\, e^{-\kappa \pi^2 t} \sin(\pi x) = -\kappa \pi^2\, u(t, x)$.

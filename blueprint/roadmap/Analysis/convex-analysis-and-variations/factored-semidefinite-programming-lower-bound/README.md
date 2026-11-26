@@ -1,6 +1,6 @@
 # Factored semidefinite-programming lower bound
 
-- [Re trace certificate mul](re-trace-certificate-mul.md)
+- [Real-linearity of the real part of the trace](re-trace-certificate-mul.md)
 - [Factored certificate gives a lower bound for the semidefinite program](factored-certificate-mem-lower-bounds.md)
 
 ## Validation instance (complex-rational, both constraint kinds)

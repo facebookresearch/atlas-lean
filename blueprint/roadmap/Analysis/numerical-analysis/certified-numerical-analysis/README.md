@@ -30,7 +30,7 @@
 
 ## C. Certified bisection
 
-- [Bisect Step](bisect-step.md)
+- [One bisection step](bisect-step.md)
 - [Bisection run](bisect-run.md)
 - [Bisect Step width](bisect-step-width.md)
 - [Bisect Run width](bisect-run-width.md)
@@ -45,7 +45,7 @@
 
 ## F. Provenance records
 
-- [Provenance](provenance.md)
+- [Provenance record of a numerical capstone](provenance.md)
 - [Enclosure](enclosure.md)
 - [Root mem](root-mem.md)
 - [Every root in the bracket is the certified root](eq-root.md)
@@ -53,7 +53,7 @@
 
 ## G. Capstone: `x + exp x = 2`
 
-- [Equilibrium Decisions](equilibrium-decisions.md)
+- [Recorded bisection decisions for x + e^x = 2](equilibrium-decisions.md)
 - [Equilibrium strict Mono](equilibrium-strict-mono.md)
 - [Sign Certified equilibrium](sign-certified-equilibrium.md)
 - [Bisect Run equilibrium Decisions](bisect-run-equilibrium-decisions.md)

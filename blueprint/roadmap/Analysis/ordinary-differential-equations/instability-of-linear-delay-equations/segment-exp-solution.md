@@ -1,3 +1,3 @@
-# Segment exp Solution
+# Segments of an exponential solution
 
-The segments of the exponential path are multiples of the exponential segment.
+For a delay $\tau$, $\kappa \in \mathbb{C}$, a vector $v$ in a complex normed space and $t \in \mathbb{R}$, the segment at time $t$ of the exponential path $s \mapsto e^{s\kappa} v$ (its restriction to $[t - \tau, t]$, reparametrized to $[-\tau, 0]$) is $e^{t\kappa}$ times the exponential segment $\theta \mapsto e^{\theta\kappa} v$ on $[-\tau, 0]$.

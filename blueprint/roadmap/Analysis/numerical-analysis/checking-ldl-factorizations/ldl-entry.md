@@ -1,3 +1,3 @@
-# Ldl entry
+# Entries of an LDL product
 
-Each entry of `L * diagonal d * Lᵀ` is a single sum.
+For a rational $m \times m$ matrix $L$ and a rational vector $d$, every entry of $L\,\operatorname{diag}(d)\,L^{\mathsf T}$ is $(L\,\operatorname{diag}(d)\,L^{\mathsf T})_{ij} = \sum_k L_{ik}\, d_k\, L_{jk}$.

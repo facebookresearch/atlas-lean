@@ -5,7 +5,7 @@
 - [Right Sum](right-sum.md)
 - [Left Partition Sum](left-partition-sum.md)
 - [Left RSIntegrable](left-rsintegrable.md)
-- [Left RSIntegral](left-rsintegral.md)
+- [The left-endpoint Riemann–Stieltjes integral](left-rsintegral.md)
 
 ## Telescoping, constants, and summation by parts
 

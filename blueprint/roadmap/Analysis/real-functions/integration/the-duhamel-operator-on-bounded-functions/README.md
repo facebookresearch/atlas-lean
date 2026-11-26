@@ -3,7 +3,7 @@
 ## The two-tag Riemann–Stieltjes integral for a general integrator
 
 - [Two Tag Sum one right](two-tag-sum-one-right.md)
-- [The two-tag integral with unit second integrator](has-two-tag-rsintegral-one-iff.md)
+- [The two-tag integral with unit right-endpoint factor](has-two-tag-rsintegral-one-iff.md)
 - [Two-tag sums only read the integrator on the interval](two-tag-sum-partition-pts-congr.md)
 
 ## The kernel factors are controlled
@@ -23,8 +23,8 @@
 ## The Duhamel operator on `ℓ^∞([0, τ])`
 
 - [Extension by zero from an interval](extend-icc.md)
-- [Value of the Duhamel operator](psi-fun.md)
-- [Psi Const](psi-const.md)
+- [Raw two-tag value behind the Duhamel operator](psi-fun.md)
+- [Operator-norm constant of the Duhamel operator](psi-const.md)
 - [The Duhamel operator for integrators of bounded variation](psi-of-bv.md)
 - [Sup-norm bound for the Duhamel operator](norm-psi-apply-le.md)
 

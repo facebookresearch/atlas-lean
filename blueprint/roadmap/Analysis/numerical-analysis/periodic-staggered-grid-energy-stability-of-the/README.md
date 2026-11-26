@@ -2,7 +2,7 @@
 
 ## A. Grid norms, scaled difference and energy
 
-- [Squared weighted grid norm](weighted-norm-sq.md)
+- [Weighted sum of squares on the grid](weighted-norm-sq.md)
 - [Pair norm](pair-norm.md)
 - [Scaled Forward Difference](scaled-forward-difference.md)
 

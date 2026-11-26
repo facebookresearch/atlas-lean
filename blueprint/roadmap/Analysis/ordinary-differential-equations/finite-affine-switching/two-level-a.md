@@ -1,3 +1,3 @@
-# Two Level A
+# Linear part of the two-level example
 
-Scalar fixture dynamics `x' = -x + u` (an RC-type averaged converter state).
+The scalar dynamics of the two-level example is the linear map $A(x) = -x$ on $\mathbb{R}$, so the system is $x' = -x + u$ (an RC-type averaged converter state).

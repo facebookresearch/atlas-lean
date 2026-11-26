@@ -1,4 +1,4 @@
 # Gil-Pelaez inversion formula
 
-- [Im cexp mul char Fun](im-cexp-mul-char-fun.md)
-- [Integral sign sub](integral-sign-sub.md)
+- [Imaginary part of a shifted characteristic function](im-cexp-mul-char-fun.md)
+- [Integral of the sign function against a law](integral-sign-sub.md)

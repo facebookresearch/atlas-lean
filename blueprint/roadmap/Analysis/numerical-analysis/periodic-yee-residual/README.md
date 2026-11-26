@@ -6,7 +6,6 @@
 
 ## Staggered samples of a smooth solution
 
-- [Sampled U](sampled-u.md)
 - [Sampled V](sampled-v.md)
 - [Collocated grid samples](collocated-v.md)
 

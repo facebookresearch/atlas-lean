@@ -1,4 +1,3 @@
-# Re trace certificate mul
+# Real-linearity of the real part of the trace
 
-Linearity of `Re ∘ trace` over the certificate matrix:
-`Re tr((C + Σ λᵢ Aᵢ + Σ νⱼ Eⱼ) W) = Re tr(C W) + Σ λᵢ Re tr(Aᵢ W) + Σ νⱼ Re tr(Eⱼ W)`.
+For complex $n \times n$ matrices $C$, $A_i$, $E_j$ and $W$, and **real** multipliers $\lambda_i$ and $\nu_j$, $\operatorname{Re}\operatorname{tr}\big((C + \sum_i \lambda_i A_i + \sum_j \nu_j E_j) W\big) = \operatorname{Re}\operatorname{tr}(C W) + \sum_i \lambda_i \operatorname{Re}\operatorname{tr}(A_i W) + \sum_j \nu_j \operatorname{Re}\operatorname{tr}(E_j W)$. The multipliers must be real, since $\operatorname{Re} \circ \operatorname{tr}$ is only real-linear.

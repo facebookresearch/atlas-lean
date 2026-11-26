@@ -3,7 +3,7 @@
 ## A. Existence of minima on the standard simplex
 
 - [Standard simplex](simplex.md)
-- [Simplex Center](simplex-center.md)
+- [Centre of the standard simplex](simplex-center.md)
 - [Membership in the standard simplex](mem-simplex.md)
 - [The standard simplex is closed](is-closed-simplex.md)
 - [Simplex subset Icc](simplex-subset-icc.md)

@@ -1,3 +1,3 @@
 # Single-mode heat-equation solution
 
-- [Heat mode has Deriv At t](heat-mode-has-deriv-at-t.md)
+- [Time derivative of a single heat mode](heat-mode-has-deriv-at-t.md)

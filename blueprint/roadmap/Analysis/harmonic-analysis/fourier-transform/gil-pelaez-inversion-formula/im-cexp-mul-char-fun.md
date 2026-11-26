@@ -1,3 +1,3 @@
-# Im cexp mul char Fun
+# Imaginary part of a shifted characteristic function
 
-`Im(e^{-i t x} φ_μ(t)) = ∫ sin(t (y - x)) dμ(y)`.
+Let $\mu$ be a probability measure on $\mathbb{R}$ with characteristic function $\varphi_\mu$. For all real $t$ and $x$, $\operatorname{Im}\big(e^{-itx}\varphi_\mu(t)\big) = \int \sin\big(t(y - x)\big)\, d\mu(y)$.

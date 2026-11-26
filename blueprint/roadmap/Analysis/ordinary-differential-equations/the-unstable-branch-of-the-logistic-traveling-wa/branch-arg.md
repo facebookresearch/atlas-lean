@@ -1,3 +1,3 @@
-# Branch Arg
+# Amplitude variable of the unstable branch
 
-The amplitude variable `x(z) = e^{λ₊ z} / 4` of the branch; `0 < x(z) < 1/4` for `z < 0`.
+For $D, r, c, z \in \mathbb{R}$, let $\lambda_+ = \frac{-c + \sqrt{c^2 + 4 r D}}{2D}$ (with $a/0 = 0$) and let the amplitude variable of the branch be $x(z) = \frac{1}{4} e^{\lambda_+ z}$; it is positive for all parameters. When $D > 0$ and $r > 0$, $\lambda_+ > 0$, so $x(z) < 1/4$ for every $z < 0$ ([the bound](branch-arg-lt.md)); without these hypotheses the bound can fail (for $D = 1$, $r = c = 0$, $\lambda_+ = 0$ and $x(z) = 1/4$).
