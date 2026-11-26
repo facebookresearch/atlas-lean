@@ -14,6 +14,15 @@ import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraph
 
 open MetaMathlibExt
 
+-- Translating by 3, the rules 2m and -2m + 1 acquire offsets -3 and 10.
+example (m n : ℤ) :
+    ecsdAdj ![2, -2] ![-3, 10] (m + 3) (n + 3) ↔ ecsdAdj ![2, -2] ![0, 1] m n := by
+  obtain ⟨e, he⟩ := ecsdAdj_shift_relIso ![2, -2] ![0, 1] 3
+  have offsets : (fun i : Fin 2 => ![(0 : ℤ), 1] i - (![(2 : ℤ), -2] i - 1) * 3) =
+      ![-3, 10] := by
+    exact funext (Fin.forall_fin_two.mpr ⟨rfl, rfl⟩)
+  simpa only [he, offsets] using e.map_rel_iff (a := m) (b := n)
+
 -- With shift 3, the rules 2m and -2m + 1 acquire offsets 3 and -10.
 example (m n : ℤ) :
     ecsdAdj ![2, -2] ![3, -10] (-(m + 3)) (-(n + 3)) ↔ ecsdAdj ![2, -2] ![0, 1] m n := by
