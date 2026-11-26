@@ -35,7 +35,9 @@ rank `3`, so they are not counterexamples.
 -/
 
 /-- `G` has rank `3`: its automorphism group is transitive on vertices, on ordered pairs of
-adjacent vertices and on ordered pairs of distinct non-adjacent vertices. -/
+adjacent vertices and on ordered pairs of distinct non-adjacent vertices. The predicate does not
+require the class of edges or the class of non-edges to be nonempty: for example `K₃`, which has
+no two distinct non-adjacent vertices, satisfies it. -/
 def IsRankThree {V : Type*} (G : SimpleGraph V) : Prop :=
   ∀ u v u' v' : V,
     ((u = v ∧ u' = v') ∨ (G.Adj u v ∧ G.Adj u' v') ∨

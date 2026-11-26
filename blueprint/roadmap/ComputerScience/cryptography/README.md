@@ -15,6 +15,7 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Discrete privacy mechanisms](discrete-privacy-mechanisms/README.md)
 - [Hypothesis-testing characterization of differential privacy](hypothesis-testing-characterization-of-different/README.md)
 - [k-fold adaptive composition and group privacy](k-fold-adaptive-composition-and-group-privacy/README.md)
+- [Lower Bounds and Reconstruction Attacks for Differential Privacy](differential-privacy-lower-bounds/README.md)
 - [Measure differential privacy](measure-differential-privacy/README.md)
 - [Privacy-loss random variable and KL bound](privacy-loss-random-variable-and-kl-bound/README.md)
 - [Renyi differential privacy](renyi-differential-privacy/README.md)
