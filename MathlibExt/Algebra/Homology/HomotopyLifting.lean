@@ -57,13 +57,18 @@ private lemma nullHomotopicMap'_hom_eq
   change dNext i h.hom + prevD i h.hom = f.f i
   simpa only [HomologicalComplex.zero_f_apply, add_zero] using (h.comm i).symm
 
-/-- Lift a null-homotopic map through an epimorphism using projective source terms. -/
+/-- In an abelian category `C`, let `P`, `X`, `Y` be complexes of any fixed
+shape, with every term of `P` projective. A specified null homotopy of
+`f : P → Y` and an epimorphism of complexes `e : X → Y` determine a
+lift `P → X`, constructed from lifts of the homotopy components. -/
 def projectiveLift {P X Y : HomologicalComplex C c} {f : P ⟶ Y}
     [∀ i, Projective (P.X i)] (h : Homotopy f 0) (e : X ⟶ Y) [Epi e] : P ⟶ X :=
   nullHomotopicMap' (C := P) (D := X)
     (fun i j _ => Projective.factorThru (h.hom i j) (e.f j))
 
-/-- The lifted map composes with the epimorphism to the prescribed map. -/
+/-- For complexes `P`, `X`, `Y` of a common shape in an abelian category,
+with `P` termwise projective, a null homotopy `h` of `f : P → Y` and
+an epimorphism `e : X → Y`, the lift satisfies `projectiveLift(h,e) ≫ e = f`. -/
 @[reassoc]
 theorem projectiveLift_comp {P X Y : HomologicalComplex C c} {f : P ⟶ Y}
     [∀ i, Projective (P.X i)] (h : Homotopy f 0) (e : X ⟶ Y) [Epi e] :
@@ -71,20 +76,29 @@ theorem projectiveLift_comp {P X Y : HomologicalComplex C c} {f : P ⟶ Y}
   rw [projectiveLift, nullHomotopicMap'_comp]
   simpa only [Projective.factorThru_comp] using nullHomotopicMap'_hom_eq h
 
-/-- The lift carries the null homotopy supplied by its extended components. -/
+/-- For complexes of any fixed shape in an abelian category, if `P` is
+termwise projective, `h` is a null homotopy of `f : P → Y`, and `e : X → Y`
+is epic, the constructed lift `P → X` has a null homotopy obtained from
+the lifted components of `h`. -/
 def projectiveLiftNullHomotopy {P X Y : HomologicalComplex C c} {f : P ⟶ Y}
     [∀ i, Projective (P.X i)] (h : Homotopy f 0) (e : X ⟶ Y) [Epi e] :
     Homotopy (projectiveLift h e) 0 :=
   nullHomotopy' (C := P) (D := X)
     (fun i j _ => Projective.factorThru (h.hom i j) (e.f j))
 
-/-- Extend a null-homotopic map across a monomorphism using injective target terms. -/
+/-- In an abelian category `C`, let `X`, `Y`, `I` be complexes of any fixed
+shape, with every term of `I` injective. A specified null homotopy of
+`f : X → I` and a monomorphism of complexes `m : X → Y` determine an
+extension `Y → I`, constructed from extensions of the homotopy components. -/
 def injectiveExtension {X Y I : HomologicalComplex C c} {f : X ⟶ I}
     [∀ i, Injective (I.X i)] (h : Homotopy f 0) (m : X ⟶ Y) [Mono m] : Y ⟶ I :=
   nullHomotopicMap' (C := Y) (D := I)
     (fun i j _ => Injective.factorThru (h.hom i j) (m.f i))
 
-/-- The extension restricts along the monomorphism to the prescribed map. -/
+/-- For complexes `X`, `Y`, `I` of a common shape in an abelian category,
+with `I` termwise injective, a null homotopy `h` of `f : X → I` and a
+monomorphism `m : X → Y`, the extension satisfies
+`m ≫ injectiveExtension(h,m) = f`. -/
 @[reassoc]
 theorem comp_injectiveExtension {X Y I : HomologicalComplex C c} {f : X ⟶ I}
     [∀ i, Injective (I.X i)] (h : Homotopy f 0) (m : X ⟶ Y) [Mono m] :
@@ -92,7 +106,10 @@ theorem comp_injectiveExtension {X Y I : HomologicalComplex C c} {f : X ⟶ I}
   rw [injectiveExtension, comp_nullHomotopicMap']
   simpa only [Injective.comp_factorThru] using nullHomotopicMap'_hom_eq h
 
-/-- The extension carries the null homotopy supplied by its extended components. -/
+/-- For complexes of any fixed shape in an abelian category, if `I` is
+termwise injective, `h` is a null homotopy of `f : X → I`, and `m : X → Y`
+is monic, the constructed extension `Y → I` has a null homotopy obtained
+from the extended components of `h`. -/
 def injectiveExtensionNullHomotopy {X Y I : HomologicalComplex C c} {f : X ⟶ I}
     [∀ i, Injective (I.X i)] (h : Homotopy f 0) (m : X ⟶ Y) [Mono m] :
     Homotopy (injectiveExtension h m) 0 :=
@@ -103,7 +120,9 @@ end Homotopy
 
 namespace HomologicalComplex
 
-/-- A complex with projective terms and an identity contraction is projective. -/
+/-- In an abelian category, a complex of any given shape whose terms are
+projective and whose identity has a specified null homotopy is projective
+as an object of the category of complexes of that shape. -/
 theorem projective_of_id_homotopic_zero {P : HomologicalComplex C c}
     [∀ i, Projective (P.X i)] (h : Homotopy (𝟙 P) 0) : Projective P where
   factors f e he := by
@@ -113,7 +132,9 @@ theorem projective_of_id_homotopic_zero {P : HomologicalComplex C c}
         ((h.compRight f).trans (Homotopy.ofEq (by simp)))
     exact ⟨hf.projectiveLift e, hf.projectiveLift_comp e⟩
 
-/-- A complex with injective terms and an identity contraction is injective. -/
+/-- In an abelian category, a complex of any given shape whose terms are
+injective and whose identity has a specified null homotopy is injective
+as an object of the category of complexes of that shape. -/
 theorem injective_of_id_homotopic_zero {I : HomologicalComplex C c}
     [∀ i, Injective (I.X i)] (h : Homotopy (𝟙 I) 0) : Injective I where
   factors g m hm := by
@@ -123,12 +144,16 @@ theorem injective_of_id_homotopic_zero {I : HomologicalComplex C c}
         ((h.compLeft g).trans (Homotopy.ofEq (by simp)))
     exact ⟨hg.injectiveExtension m, hg.comp_injectiveExtension m⟩
 
-/-- A contractible complex of projective objects is projective. -/
+/-- In an abelian category, a contractible complex of any given shape
+with projective terms is projective in the category of complexes of that
+shape. Contractibility means that its identity is homotopic to zero. -/
 theorem Contractible.projective {P : HomologicalComplex C c}
     [∀ i, Projective (P.X i)] (h : P.Contractible) : Projective P :=
   projective_of_id_homotopic_zero h.some
 
-/-- A contractible complex of injective objects is injective. -/
+/-- In an abelian category, a contractible complex of any given shape
+with injective terms is injective in the category of complexes of that
+shape. Contractibility means that its identity is homotopic to zero. -/
 theorem Contractible.injective {I : HomologicalComplex C c}
     [∀ i, Injective (I.X i)] (h : I.Contractible) : Injective I :=
   injective_of_id_homotopic_zero h.some

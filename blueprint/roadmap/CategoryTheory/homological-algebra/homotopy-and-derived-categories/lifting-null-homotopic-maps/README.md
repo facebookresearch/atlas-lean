@@ -2,16 +2,16 @@
 
 ## Homotopy
 
-- [Projective Lift](projective-lift.md)
-- [Projective Lift comp](projective-lift-comp.md)
-- [Projective Lift Null Homotopy](projective-lift-null-homotopy.md)
-- [Injective Extension](injective-extension.md)
-- [Comp injective Extension](comp-injective-extension.md)
-- [Injective Extension Null Homotopy](injective-extension-null-homotopy.md)
+- [Null-homotopic maps lift through epimorphisms from projective-term complexes](projective-lift.md)
+- [The null-homotopic projective lift is a genuine lift](projective-lift-comp.md)
+- [The projective lift has its induced null homotopy](projective-lift-null-homotopy.md)
+- [Null-homotopic maps extend across monomorphisms into injective-term complexes](injective-extension.md)
+- [The null-homotopic injective extension is a genuine extension](comp-injective-extension.md)
+- [The injective extension has its induced null homotopy](injective-extension-null-homotopy.md)
 
 ## Homological Complex
 
-- [Projective of id homotopic zero](projective-of-id-homotopic-zero.md)
-- [Injective of id homotopic zero](injective-of-id-homotopic-zero.md)
-- [Projective](projective.md)
-- [Injective](injective.md)
+- [An identity-contracted projective-term complex is projective](projective-of-id-homotopic-zero.md)
+- [An identity-contracted injective-term complex is injective](injective-of-id-homotopic-zero.md)
+- [A contractible projective-term complex is projective](projective.md)
+- [A contractible injective-term complex is injective](injective.md)
