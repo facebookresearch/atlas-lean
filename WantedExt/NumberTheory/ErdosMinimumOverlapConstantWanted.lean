@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundScherkUnpublished1955Holds
 
 @[expose] public section
 
@@ -109,12 +110,6 @@ proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ is at m
 Source: Ye et al. 2026 (SimpleTES); Optimization Problems, Constant 1b. -/
 def upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES : Prop :=
   C₁ᵦ ≤ (380868 : ℝ) / 1000000
-
-/-- **Scherk's lower bound for the minimum-overlap constant (statement).** The statement that the
-continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.
-
-Source: Scherk, unpublished 1955; Optimization Problems, Constant 1b. -/
-def lowerBound_Scherk_unpublished_1955 : Prop := 1 - 1 / Real.sqrt 2 ≤ C₁ᵦ
 
 /-- **The proposition $(4 - \sqrt{6})/5 \le C_{1b}$.** This is the proposition that the continuous
 Erdős minimum-overlap constant $C_{1b}$ satisfies $(4 - \sqrt{6})/5 \le C_{1b}$.
@@ -214,13 +209,6 @@ Erdős minimum-overlap constant $C_{1b}$ is at most $0.380868$.
 Source: Ye et al. 2026 and Optimization Problems 1b. -/
 public theorem_wanted upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES_holds :
   upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES
-
-/-- **Scherk's lower bound for the minimum-overlap constant.** The continuous Erdős
-minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.
-
-Source: Scherk, unpublished 1955, recorded by Optimization Problems 1b. -/
-public theorem_wanted lowerBound_Scherk_unpublished_1955_holds :
-  lowerBound_Scherk_unpublished_1955
 
 /-- **Świerczkowski's lower bound $C_{1b} \ge (4 - \sqrt{6})/5$.** The continuous Erdős
 minimum-overlap constant $C_{1b}$ satisfies $(4 - \sqrt{6})/5 \le C_{1b}$.
