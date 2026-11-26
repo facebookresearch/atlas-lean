@@ -1,7 +1,9 @@
 # Faulhaber polynomial coefficients and Wilson's theorem modulo $p^2$
 
 Let $p = 2l + 1$ be a prime with $l$ a natural number. Then there is a polynomial $F$ with rational coefficients such that
+
 $$\sum_{k=1}^{n} k^p = F\left(\frac{n(n+1)}{2}\right)$$
+
 for every natural number $n$; and every such $F$ satisfies:
 
 1. for $1 \le i \le l$, the coefficient of $a^{i+1}$ in $F(a)$ has $p$-adic norm at most $1$, that is, it is a $p$-adic integer;
