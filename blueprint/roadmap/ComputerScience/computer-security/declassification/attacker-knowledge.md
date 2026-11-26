@@ -9,7 +9,9 @@ memory $M$.
 
 For a command $c$ and a low projection $M^0_L$, let $L(c, M^0_L)$ be the set of low event sequences produced by terminating runs from memories $M$ with $M_L = M^0_L$,
 and $\hat L(c, M^0_L)$ its prefix closure. For $\vec\ell \in \hat L(c, M^0_L)$ the attacker's *knowledge* is the set of possible initial memories
+
 $$k(c, M^0_L, \vec\ell) = \{ M \mid M_L = M^0_L \wedge \exists M', c'.\ \langle M, c\rangle \xrightarrow{\vec\ell}{}^{*} \langle M', c'\rangle \vee \langle M, c\rangle \xrightarrow{\vec\ell}{}^{*} M' \},$$
+
 the *initial knowledge* is $k(c, M^0_L) = \{ M \mid M_L = M^0_L \wedge \exists M', \vec\ell.\ \langle M, c\rangle \xrightarrow{\vec\ell}{}^{*} M'\}$, and the termination-insensitive knowledge is
 $k_\downarrow(c, M^0_L, \vec\ell) = k(c, M^0_L, \vec\ell) \cap k(c, M^0_L)$, with $k_\downarrow(c, M^0_L, \vec\ell_0) = k(c, M^0_L)$ for the empty sequence. A smaller set means that the
 attacker knows more.

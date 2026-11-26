@@ -2,7 +2,9 @@
 
 A [compilation chain](compilation-chains-and-robust-satisfaction.md) satisfies *robust trace equivalence preservation* (RTEP) if source programs that no source context
 can tell apart compile to target programs that no target context can tell apart:
+
 $$\forall \mathsf P_1, \mathsf P_2.\ \big(\forall \mathsf C_S.\ \mathrm{Behav}(\mathsf C_S[\mathsf P_1]) = \mathrm{Behav}(\mathsf C_S[\mathsf P_2])\big) \implies \big(\forall \mathbf C_T.\ \mathrm{Behav}(\mathbf C_T[\mathsf P_1{\downarrow}]) = \mathrm{Behav}(\mathbf C_T[\mathsf P_2{\downarrow}])\big).$$
+
 RTEP is the preservation direction of fully abstract compilation, taking equality of behaviour under all contexts as the program equivalence.
 
 ## Depends on

@@ -1,7 +1,9 @@
 # Robust trace property preservation has a property-free characterization
 
 **Theorem.** A compilation chain satisfies [robust trace property preservation](robust-trace-property-preservation.md) if and only if it satisfies
+
 $$\mathrm{RTC}:\quad \forall \mathsf P.\ \forall \mathbf C_T.\ \forall t.\ \mathbf C_T[\mathsf P{\downarrow}] \rightsquigarrow t \implies \exists \mathsf C_S.\ \mathsf C_S[\mathsf P] \rightsquigarrow t:$$
+
 every trace that a target context can produce with a compiled program is produced by the source program with some source context, which may depend on the trace.
 
 ## Depends on

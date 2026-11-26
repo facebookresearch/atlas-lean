@@ -3,7 +3,9 @@
 A command $c$ of the [language with low events](attacker-knowledge.md) satisfies *gradual release* if for every low projection $M^0_L$ and every
 $\vec\ell_n = \ell_1, \dots, \ell_n \in L(c, M^0_L)$ with $n \ge 1$, of which $\ell_{r_1}, \dots, \ell_{r_m}$ are all the release events (the low events produced by
 $\mathrm{declassify}$ assignments),
+
 $$\forall i.\ 1 \le i \le n \wedge (\forall j.\ r_j \ne i) \implies k_\downarrow(c, M^0_L, \vec\ell_{i-1}) = k_\downarrow(c, M^0_L, \vec\ell_i),$$
+
 with $k_\downarrow(c, M^0_L, \vec\ell_0) = k(c, M^0_L)$. Knowledge may be refined only at release events. Gradual release is a policy on *where* information is
 released, in contrast with what-policies such as [delimited release](../information-flow/delimited-release.md).
 

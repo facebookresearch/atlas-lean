@@ -2,7 +2,9 @@
 
 A [compilation chain](compilation-chains-and-robust-satisfaction.md) satisfies *robust hyperproperty preservation* (RHP) if it preserves robust satisfaction of every
 hyperproperty $H$, a set of sets of traces:
+
 $$\forall H.\ \forall \mathsf P.\ \big(\forall \mathsf C_S.\ \mathrm{Behav}(\mathsf C_S[\mathsf P]) \in H\big) \implies \big(\forall \mathbf C_T.\ \mathrm{Behav}(\mathbf C_T[\mathsf P{\downarrow}]) \in H\big).$$
+
 Hyperproperties such as noninterference relate several traces of one program, so RHP preserves, for example, robust noninterference.
 
 ## Depends on

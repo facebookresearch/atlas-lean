@@ -2,7 +2,9 @@
 
 For a gain function $g$, a prior $\pi$ and a channel $C$ with $V_g(\pi) > 0$, the [g-vulnerabilities](gain-functions-and-g-vulnerability.md) define the *g-entropies*
 $H_g(\pi) = -\log_2 V_g(\pi)$ and $H_g(\pi, C) = -\log_2 V_g(\pi, C)$, the *g-leakage*
+
 $$L_g(\pi, C) = H_g(\pi) - H_g(\pi, C) = \log_2 \frac{V_g(\pi, C)}{V_g(\pi)},$$
+
 and the *g-capacity* $ML_g(C) = \sup_\pi L_g(\pi, C)$. For the identity gain function these are the min-entropy, the min-entropy leakage $L(\pi, C)$ and the
 *min-capacity* $ML(C) = \sup_\pi L(\pi, C)$.
 

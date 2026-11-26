@@ -2,7 +2,9 @@
 
 **Theorem.** For every [channel](information-theoretic-channels.md) $C$ from $\mathcal X$ to $\mathcal Y$, the [min-capacity](g-leakage-and-g-capacity.md), the
 g-capacity for the identity gain function, is
+
 $$ML(C) = \log_2 \sum_{y \in \mathcal Y} \max_{x \in \mathcal X} C[x, y],$$
+
 and it is realized on the uniform prior.
 
 ## Depends on
