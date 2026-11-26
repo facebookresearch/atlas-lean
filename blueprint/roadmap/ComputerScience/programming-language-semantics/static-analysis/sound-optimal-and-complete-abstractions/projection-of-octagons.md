@@ -12,4 +12,4 @@ where a bound is included exactly when it is finite.
 
 ## Sources
 
-- A. Miné, "The octagon abstract domain", *Higher-Order and Symbolic Computation* 19(1):31–100, 2006; preprint arXiv:cs/0703084, <https://arxiv.org/abs/cs/0703084>, Section VI.B, Theorem 6.
+- A. Miné, "The octagon abstract domain", arXiv:cs/0703084v2, 2007, <https://arxiv.org/abs/cs/0703084>, Section VI.B, Theorem 6.

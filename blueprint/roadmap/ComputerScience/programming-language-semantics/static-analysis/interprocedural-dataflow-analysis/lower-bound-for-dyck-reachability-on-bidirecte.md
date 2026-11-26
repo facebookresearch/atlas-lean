@@ -1,6 +1,6 @@
 # Lower bound for Dyck reachability on bidirected graphs
 
-Every algorithm that computes Dyck reachability on bidirected graphs, in the sense of [Dyck reachability](dyck-reachability.md), with $n$ nodes and $m \ge n$ edges takes time $\Omega(m + n \cdot \alpha(n))$ in the worst case, where $\alpha$ is the inverse Ackermann function. So the bound of [the almost-linear algorithm](dyck-reachability-on-bidirected-graphs-in-almo.md) is optimal.
+In the class of separable pointer algorithms for which R. E. Tarjan proved the union-find lower bound, every algorithm that computes Dyck reachability on bidirected graphs, in the sense of [Dyck reachability](dyck-reachability.md), with $n$ nodes and $m \ge n$ edges takes time $\Omega(m + n \cdot \alpha(n))$ in the worst case, where $\alpha$ is the inverse Ackermann function. So within that model the bound of [the almost-linear algorithm](dyck-reachability-on-bidirected-graphs-in-almo.md) is optimal. Chatterjee et al. state the bound without naming the model; on a random-access machine the separated union-find instances of the proof can be solved in linear time by computing connected components.
 
 **Proof idea.** A sequence of union operations followed by find operations on a universe $X$ is encoded as a bidirected graph with a node $z_i$ for the $i$-th union $\mathrm{Union}(x_i, y_i)$ and edges labeled with one closing parenthesis from $z_i$ to $x_i$ and $y_i$; two elements of $X$ are Dyck-reachable from each other exactly when the unions put them in one set. A faster reachability algorithm would beat the lower bound for such separated union-find sequences.
 
@@ -12,7 +12,7 @@ Every algorithm that computes Dyck reachability on bidirected graphs, in the sen
 
 This page becomes ready once this prerequisite is stated:
 
-- The lower bound $\Omega(m \cdot \alpha(n))$ for union-find sequences on a universe of $n$ elements with $m$ operations in which every find follows every union (proof prerequisite; the source reduces it to R. E. Tarjan, "A class of algorithms which require nonlinear time to maintain disjoint sets", *Journal of Computer and System Sciences* 18(2):110–127, 1979, Theorem 4.4).
+- The lower bound $\Omega(m \cdot \alpha(n))$, for separable pointer algorithms, for union-find sequences on a universe of $n$ elements with $m$ operations in which every find follows every union (proof prerequisite; the source reduces it to R. E. Tarjan, "A class of algorithms which require nonlinear time to maintain disjoint sets", *Journal of Computer and System Sciences* 18(2):110–127, 1979, Theorem 4.4).
 
 ## Sources
 

@@ -10,6 +10,11 @@ The right-hand side refers only to semidominators of vertices numbered above $w$
 
 - [Semidominators](semidominators.md)
 
+## Proof depends on
+
+- [Paths lemma for depth-first search](paths-lemma-for-depth-first-search.md)
+- [The semidominator is a proper tree ancestor](the-semidominator-is-a-proper-tree-ancestor.md)
+
 ## Sources
 
 - T. Lengauer and R. E. Tarjan, "A fast algorithm for finding dominators in a flowgraph", *ACM Transactions on Programming Languages and Systems* 1(1):121–141, 1979: Section 2, Theorem 4 (equation (3)) and its proof; Section 3, Step 2 of the algorithm.

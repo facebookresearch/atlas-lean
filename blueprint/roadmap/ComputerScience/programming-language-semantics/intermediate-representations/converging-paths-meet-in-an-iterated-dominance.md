@@ -4,7 +4,7 @@ Let $G$ be a control-flow graph with an entry node from which every node is reac
 $$Z \in \mathrm{DF}^+(\{X\}) \cup \mathrm{DF}^+(\{Y\}),$$
 where $\mathrm{DF}^+$ is the [iterated dominance frontier](dominance-frontiers.md). Consequently, for every set $S$ of nodes, $J(S) \subseteq \mathrm{DF}^+(S)$.
 
-**Proof idea.** Let $X'$ and $Y'$ be the nodes given by [the path lemma](paths-meet-the-iterated-dominance-frontier.md) for the two paths. If $X'$ lies on the path from $Y$, then convergence forces $X' = Z$, and $Z \in \mathrm{DF}^+(\{X\})$ follows; symmetrically if $Y'$ lies on the path from $X$. Otherwise $X'$ strictly dominates every node of the path from $Y$, in particular $Y'$, and symmetrically $Y'$ strictly dominates $X'$, which is impossible.
+**Proof idea.** Let $X'$ and $Y'$ be the nodes given by [the path lemma](paths-meet-the-iterated-dominance-frontier.md) for the two paths. If $X'$ lies on the path from $Y$, then convergence forces $X' = Z$. Either the path lemma already places $Z$ in $\mathrm{DF}^+(\{X\})$, or $Z = X$ and $X$ dominates every node of the path from $X$; then $X$ dominates the predecessor of $Z$ on that path but does not strictly dominate $Z$, so $Z \in \mathrm{DF}(X)$; symmetrically if $Y'$ lies on the path from $X$. Otherwise $X'$ strictly dominates every node of the path from $Y$, in particular $Y'$, and symmetrically $Y'$ strictly dominates $X'$, which is impossible.
 
 ## Depends on
 

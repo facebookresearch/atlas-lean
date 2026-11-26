@@ -11,4 +11,4 @@ so in particular $d_c \ge \mathrm{make}(n)$ for every $n \in c$. Rebuilding is e
 
 ## Sources
 
-- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", *Proceedings of the ACM on Programming Languages* 5(POPL):23, 2021, <https://arxiv.org/abs/2004.03082>, Section 4.1: the interface make, join and modify, the semilattice requirement, the analysis invariant, and Section 4.1.1 on maintaining it during rebuilding.
+- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", arXiv:2004.03082, <https://arxiv.org/abs/2004.03082> (also *Proceedings of the ACM on Programming Languages* 5(POPL):23, 2021), Section 4.1: the interface make, join and modify, the semilattice requirement, the analysis invariant, and Section 4.1.1 on maintaining it during rebuilding.

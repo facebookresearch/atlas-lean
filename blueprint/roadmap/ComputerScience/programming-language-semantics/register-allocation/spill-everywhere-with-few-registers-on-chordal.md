@@ -10,4 +10,4 @@ For every fixed number $r$ of registers, the [spill everywhere problem](the-spil
 
 ## Sources
 
-- F. Bouchez, A. Darte and F. Rastello, "On the complexity of spill everywhere under SSA form", *LCTES 2007*, ACM, 2007; research report RR2007-42, LIP, ENS Lyon, <https://arxiv.org/abs/0710.3642>, Section 3.1, Theorem 4 (dynamic programming on non-spilled variables) with its proof, and the remark that M. Yannakakis and F. Gavril (1987) proved the same result.
+- F. Bouchez, A. Darte and F. Rastello, "On the complexity of spill everywhere under SSA form", research report RR2007-42, LIP, ENS Lyon, arXiv:0710.3642v1, <https://arxiv.org/abs/0710.3642> (also *LCTES 2007*), Section 3, Theorem 4 (dynamic programming on non-spilled variables) with its proof, and the remark that M. Yannakakis and F. Gavril (1987) proved the same result.

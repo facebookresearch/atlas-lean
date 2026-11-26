@@ -15,6 +15,7 @@ The result has the shape of the argument, except that $\mathtt{skip}$ may come f
 ## Depends on
 
 - [Live variables of an IMP command](live-variables-of-an-imp-command.md)
+- [True liveness of an IMP command](true-liveness-of-an-imp-command.md)
 
 ## Sources
 

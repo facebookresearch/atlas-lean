@@ -11,10 +11,6 @@ For coherent DBMs $m^+$ and $n^+$, in the notation of [difference-bound matrices
 - [Difference-bound matrices and octagons](difference-bound-matrices-and-octagons.md)
 - [Strong closure is a normal form for octagons](strong-closure-is-a-normal-form-for-octagons.md)
 
-## Proof depends on
-
-- [Strong closure is a normal form for octagons](strong-closure-is-a-normal-form-for-octagons.md)
-
 ## Sources
 
-- A. Miné, "The octagon abstract domain", *Higher-Order and Symbolic Computation* 19(1):31–100, 2006; preprint arXiv:cs/0703084, <https://arxiv.org/abs/cs/0703084>, Section VI.C, Theorem 7 and the remarks after it.
+- A. Miné, "The octagon abstract domain", arXiv:cs/0703084v2, 2007, <https://arxiv.org/abs/cs/0703084>, Section VI.C, Theorem 7 and the remarks after it.

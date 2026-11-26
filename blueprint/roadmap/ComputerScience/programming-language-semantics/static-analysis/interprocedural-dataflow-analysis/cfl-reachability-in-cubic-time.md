@@ -8,4 +8,4 @@ Fix a context-free grammar for a language $L$. The all-pairs [CFL-reachability](
 
 ## Sources
 
-- T. Reps, "Program analysis via graph reachability", *Information and Software Technology* 40(11–12):701–726, 1998; technical report version, University of Wisconsin, <https://research.cs.wisc.edu/wpis/papers/tr1386.pdf>, Section 3: the normalization of the grammar, the edge-addition patterns of Figure 2, and the cubic bound, which Reps credits to D. Melski and T. Reps, "Interconvertibility of set constraints and context-free language reachability", PEPM 1997.
+- T. Reps, "Program analysis via graph reachability", technical report, University of Wisconsin, <https://research.cs.wisc.edu/wpis/papers/tr1386.pdf> (also *Information and Software Technology* 40(11–12):701–726, 1998), Section 3: the normalization of the grammar, the edge-addition patterns of Figure 2, and the cubic bound, which Reps credits to D. Melski and T. Reps, "Interconvertibility of set constraints and context-free language reachability", PEPM 1997.

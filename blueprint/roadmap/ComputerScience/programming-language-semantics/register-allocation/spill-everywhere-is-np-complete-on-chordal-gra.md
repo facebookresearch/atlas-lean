@@ -10,4 +10,4 @@ The decision version of the [spill everywhere problem](the-spill-everywhere-prob
 
 ## Sources
 
-- F. Bouchez, A. Darte and F. Rastello, "On the complexity of spill everywhere under SSA form", *LCTES 2007*, ACM, 2007; research report RR2007-42, LIP, ENS Lyon, <https://arxiv.org/abs/0710.3642>, Section 3.1, Theorem 3 (NP-completeness on chordal graphs, from M. Yannakakis and F. Gavril, "The maximum k-colorable subgraph problem for chordal graphs", *Information Processing Letters* 24(2):133–137, 1987), and Section 3.2, Theorem 6 (the incremental problem, by reduction from exact cover by 3-sets) with its proof.
+- F. Bouchez, A. Darte and F. Rastello, "On the complexity of spill everywhere under SSA form", research report RR2007-42, LIP, ENS Lyon, arXiv:0710.3642v1, <https://arxiv.org/abs/0710.3642> (also *LCTES 2007*), Section 3, Theorem 3 (NP-completeness on chordal graphs, from M. Yannakakis and F. Gavril, "The maximum k-colorable subgraph problem for chordal graphs", *Information Processing Letters* 24(2):133–137, 1987), and Theorem 6 (the incremental problem, by reduction from exact cover by 3-sets) with its proof.
