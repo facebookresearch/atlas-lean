@@ -105,8 +105,9 @@ where `rhoX = attenuationFactor Var[Tx] Var[Ex]` and
 `rhoY = attenuationFactor Var[Ty] Var[Ey]` are the reliabilities.
 Both bounds are absolute: no signed comparison between `NCov(X, Y)`
 and `NCov(Tx, Ty)` is asserted, since it is false for negative
-covariance without a sign premise.  Zero variance is excluded by the
-positive-variance hypotheses. -/
+covariance without a sign premise.  Zero variance is excluded only for
+the true and observed scores; either error may have zero variance,
+which gives that score reliability one. -/
 theorem abs_normalizedCovariance_le_attenuation {Ω : Type*}
     [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {Tx Ty Ex Ey X Y : Ω → ℝ}

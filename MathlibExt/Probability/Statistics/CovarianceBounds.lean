@@ -25,7 +25,7 @@ open MeasureTheory ProbabilityTheory
 namespace MathlibExt.Probability.Statistics
 
 /-- `2 |Cov(X, Y)| ≤ Var X + Var Y` for square-integrable `X`, `Y`. -/
-theorem two_mul_abs_covariance_le {Ω : Type*} [MeasurableSpace Ω]
+theorem two_mul_abs_covariance_le {Ω : Type*} {m : MeasurableSpace Ω}
     {μ : Measure Ω} [IsFiniteMeasure μ] {X Y : Ω → ℝ} (hX : MemLp X 2 μ)
     (hY : MemLp Y 2 μ) : 2 * |cov[X, Y; μ]| ≤ Var[X; μ] + Var[Y; μ] := by
   have hXX := covariance_self (μ := μ) hX.aestronglyMeasurable.aemeasurable
