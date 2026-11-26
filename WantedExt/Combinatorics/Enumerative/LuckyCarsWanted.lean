@@ -47,6 +47,8 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarPrescriptions
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
 
 set_option autoImplicit false
@@ -56,25 +58,6 @@ set_option autoImplicit false
 namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
 open MetaMathlibExt Polynomial
-
-/-- **Parking functions with prescribed lucky and unlucky cars.** Number the cars and spots
-$0, \dots, n-1$, and let $L$ and $U$ be disjoint sets of cars. The number of parking functions
-of length $n$ in which every car in $L$ is lucky and no car in $U$ is lucky equals
-$$\prod_{i \in L} (n + 1 - i) \cdot \prod_{i \in U} i \cdot (n + 1)^{n - |L| - |U| - 1},$$
-where the power is taken in $\mathbb{Q}$, so the exponent may be negative.
-
-In the paper's numbering of cars from $1$, the factors are $n + 2 - i$ and $i - 1$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Theorem 4. -/
-theorem_wanted card_parking_lucky_on (n : ℕ) (L U : Finset (Fin n))
-    (hLU : Disjoint L U) :
-    (Nat.card { f : Fin n → Fin n // IsParkingFunction n f ∧
-        (∀ i ∈ L, IsLuckyCar f i) ∧
-          (∀ i ∈ U, ¬ IsLuckyCar f i) } : ℚ) =
-      (∏ i ∈ L, ((n + 1 - i.val : ℕ) : ℚ)) *
-        (∏ i ∈ U, (i.val : ℚ)) *
-        ((n + 1 : ℚ)) ^ ((n : ℤ) - L.card - U.card - 1)
 
 /-- **Generating polynomial of lucky cars.** For $n \in \mathbb{N}$ and $0 \le k \le n$, let $c_k$
 be the number of parking functions of length $n$ with exactly $k$ lucky cars. Then in
@@ -89,26 +72,6 @@ theorem_wanted luckyGenPoly_eq_sum (n : ℕ) :
         C ((Nat.card { f : Fin n → Fin n //
           IsParkingFunction n f ∧ luckyCount f = k } : ℕ) : ℚ) *
           X ^ k
-
-/-- **Factorial moments of the number of lucky cars.** Let $n \ge 1$ and $\ell \in \mathbb{N}$, let
-$X(f)$ be the number of lucky cars of a parking function $f$ of length $n$, and let
-$P_n(x) = \frac{1}{n+1} \prod_{i=0}^{n-1} \bigl((n+1-i)x + i\bigr) \in \mathbb{Q}[x]$. Then
-$$\frac{1}{(n+1)^{n-1}} \sum_f X(f)\bigl(X(f)-1\bigr)\cdots\bigl(X(f)-\ell+1\bigr) =
-\frac{P_n^{(\ell)}(1)}{(n+1)^{n-1}},$$
-where $f$ runs over the parking functions of length $n$ and $P_n^{(\ell)}$ is the $\ell$-th
-derivative of $P_n$. Since there are $(n+1)^{n-1}$ parking functions of length $n$, the left side
-is the $\ell$-th falling-factorial moment of $X$ for a uniformly random parking function.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Proposition 6. -/
-theorem_wanted expected_descFactorial_luckyCount (n ℓ : ℕ)
-    (hn : 1 ≤ n) :
-    ((∑ f ∈ Finset.univ.filter (fun f : Fin n → Fin n =>
-        IsParkingFunction n f),
-      ((luckyCount f).descFactorial ℓ : ℚ)) /
-        (n + 1 : ℚ) ^ (n - 1) =
-      (Polynomial.derivative^[ℓ] (luckyGenPoly n)).eval 1 /
-        (n + 1 : ℚ) ^ (n - 1))
 
 /-- **Boundary values of lucky-car counts (Lemma 9).** Let $n \ge 1$, number the cars and spots
 $0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which

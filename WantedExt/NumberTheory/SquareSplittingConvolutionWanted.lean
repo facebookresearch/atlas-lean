@@ -16,6 +16,9 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivisorCountLSeries
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
 
 namespace MetaMathlibExt
 
@@ -65,32 +68,6 @@ public theorem_wanted squareSplitConv_bivariate_iso :
     ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
       ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v
 
-/-- **Möbius function of the square-splitting convolution.** Let $\star$ be the square-splitting
-convolution, $\mathbf{1}$ the constant function $1$ on the positive integers, $\varepsilon$ the
-identity element ($\varepsilon(1) = 1$ and $\varepsilon(n) = 0$ for $n \ne 1$), and let $\mu_\star$
-be any complex-valued arithmetic function with $\mathbf{1} \star \mu_\star = \varepsilon$. Then
-$\mu_\star(n) = \mu(u(n))\,\mu(v(n))$ for every $n \ge 1$, where $\mu$ is the Möbius function,
-$u(n)$ is the product of the primes dividing $n$ to an odd power and $v(n)$ is the positive
-integer with $n = u(n)\,v(n)^2$. For every prime $p$, $\mu_\star(p) = \mu_\star(p^2) = -1$,
-$\mu_\star(p^3) = 1$ and $\mu_\star(p^k) = 0$ for every $k \ge 4$. For every complex $s$ with
-$\operatorname{Re} s > 1$,
-$$\sum_{n \ge 1} \frac{\mu_\star(n)}{n^s} = \prod_p \left(1 - p^{-s} - p^{-2s} + p^{-3s}\right)
-= \frac{1}{\zeta(s)\,\zeta(2s)}.$$
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 3
-(`integers-2026-A56-thm-3`). -/
-public theorem_wanted squareSplitMoebius_formula (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1) :
-    (∀ n ≠ 0, m n = (ArithmeticFunction.moebius (squareSplitU n) : ℂ) *
-      ArithmeticFunction.moebius (squareSplitV n)) ∧
-    (∀ p : ℕ, p.Prime → m p = -1 ∧ m (p ^ 2) = -1 ∧ m (p ^ 3) = 1 ∧
-      ∀ k, 4 ≤ k → m (p ^ k) = 0) ∧
-    ∀ s : ℂ, 1 < s.re →
-      LSeries (fun n => m n) s = ∏' p : Nat.Primes,
-        (1 - ((p : ℕ) : ℂ) ^ (-s) - ((p : ℕ) : ℂ) ^ (-(2 * s)) + ((p : ℕ) : ℂ) ^ (-(3 * s))) ∧
-      LSeries (fun n => m n) s = 1 / (riemannZeta s * riemannZeta (2 * s))
-
 /-- **Inverse of a multiplicative function under the square-splitting convolution.** Let $f$ be a
 multiplicative complex arithmetic function (an arithmetic function $h$ is multiplicative when
 $h(1) = 1$ and $h(mn) = h(m)\, h(n)$ for coprime $m$ and $n$), let $\star$ be the square-splitting
@@ -122,28 +99,6 @@ public theorem_wanted squareSplitConv_inverse_of_isMultiplicative {f : Arithmeti
         g p = -f p / f 1 ^ 2 ∧ g (p ^ 2) = -f (p ^ 2) / f 1 ^ 2 ∧
         g (p ^ 3) = (2 * f p * f (p ^ 2) - f (p ^ 3) * f 1) / f 1 ^ 3
 
-/-- **The square-splitting totient function.** Let $A(n)$ be the set of square-splitting divisors
-of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function with
-$\sum_{d \in A(n)} \varphi_\star(d) = n$ for every $n \ge 1$. Then $\varphi_\star$ is
-multiplicative and $\varphi_\star(1) = 1$. For every prime $p$, $\varphi_\star(p) = p - 1$, and
-for every $b \ge 1$, $\varphi_\star(p^{2b}) = (p^2 - 1)\,p^{2b-2}$ and
-$\varphi_\star(p^{2b+1}) = (p - 1)(p^2 - 1)\,p^{2b-2}$. Moreover, for every $n \ge 1$,
-$$\varphi_\star(n) = \varphi(u(n))\,v(n)^2 \prod_{p \mid v(n)} \left(1 - \frac{1}{p^2}\right),$$
-where $\varphi$ is Euler's totient function, $u(n)$ is the product of the primes dividing $n$ to
-an odd power and $v(n)$ is the positive integer with $n = u(n)\,v(n)^2$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 7
-(`integers-2026-A56-thm-7`). -/
-public theorem_wanted squareSplitTotient_formula (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) :
-    φ.IsMultiplicative ∧ φ 1 = 1 ∧
-    (∀ p : ℕ, p.Prime → φ p = (p : ℤ) - 1 ∧
-      ∀ b, 1 ≤ b → φ (p ^ (2 * b)) = ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2) ∧
-        φ (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2)) ∧
-    ∀ n ≠ 0, (φ n : ℚ) = (squareSplitU n).totient * (squareSplitV n : ℚ) ^ 2 *
-      ∏ p ∈ (squareSplitV n).primeFactors, (1 - 1 / (p : ℚ) ^ 2)
-
 /-- **Average order of the square-splitting totient function.** Let $A(n)$ be the set of
 square-splitting divisors of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function
 with $\sum_{d \in A(n)} \varphi_\star(d) = n$ for every $n \ge 1$. Then the product
@@ -165,33 +120,6 @@ public theorem_wanted squareSplitTotient_sum_asymptotic (φ : ArithmeticFunction
         (∏' p : Nat.Primes,
           (1 - 1 / ((p : ℕ) : ℝ) ^ 2 + (((p : ℕ) : ℝ) - 1) ^ 2 / ((p : ℕ) : ℝ) ^ 5)) / 2 * x ^ 2)
         =O[atTop] fun x => x ^ (1 + ε)
-
-/-- **Dirichlet series of the square-splitting divisor function.** Let $\tau^\star(n) = |A(n)|$ be
-the number of elements of the square-splitting divisor set $A(n)$, and let
-$H(s) = \prod_p (1 - 3p^{-2s} + 2p^{-3s})$, where $p$ runs over the primes. For every complex
-number $s$ with $\operatorname{Re} s > 1$, the series $\sum_{k \ge 0} \tau^\star(p^k) p^{-ks}$
-converges to $(1 + 2p^{-s})/(1 - p^{-2s})^2$ for each prime $p$, and the Dirichlet series
-$\sum_{n \ge 1} \tau^\star(n) n^{-s}$ equals both $\prod_p (1 + 2p^{-s})/(1 - p^{-2s})^2$ and
-$\zeta(s)^2 \zeta(2s)^2 H(s)$. Moreover, for every $s$ with $\operatorname{Re} s > 1/2$ the series
-$\sum_p |-3p^{-2s} + 2p^{-3s}|$ converges (so the product defining $H(s)$ converges absolutely),
-$H$ is holomorphic on the half-plane $\operatorname{Re} s > 1/2$, and $H(1) \ne 0$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 9
-(`integers-2026-A56-thm-9`). -/
-public theorem_wanted squareSplitDivisorCount_LSeries :
-    let τ : ℕ → ℂ := fun n => ((squareSplitDivisors n).card : ℂ)
-    let H : ℂ → ℂ := fun s => ∏' p : Nat.Primes,
-      (1 - 3 * ((p : ℕ) : ℂ) ^ (-(2 * s)) + 2 * ((p : ℕ) : ℂ) ^ (-(3 * s)))
-    (∀ s : ℂ, 1 < s.re →
-      (∀ p : Nat.Primes, HasSum (fun k : ℕ => τ ((p : ℕ) ^ k) * ((p : ℕ) : ℂ) ^ (-(k * s)))
-        ((1 + 2 * ((p : ℕ) : ℂ) ^ (-s)) / (1 - ((p : ℕ) : ℂ) ^ (-(2 * s))) ^ 2)) ∧
-      LSeries (fun n => τ n) s = ∏' p : Nat.Primes,
-        (1 + 2 * ((p : ℕ) : ℂ) ^ (-s)) / (1 - ((p : ℕ) : ℂ) ^ (-(2 * s))) ^ 2 ∧
-      LSeries (fun n => τ n) s = riemannZeta s ^ 2 * riemannZeta (2 * s) ^ 2 * H s) ∧
-    (∀ s : ℂ, 1 / 2 < s.re → Summable (fun p : Nat.Primes =>
-      ‖-3 * ((p : ℕ) : ℂ) ^ (-(2 * s)) + 2 * ((p : ℕ) : ℂ) ^ (-(3 * s))‖)) ∧
-    DifferentiableOn ℂ H {s | 1 / 2 < s.re} ∧ H 1 ≠ 0
 
 /-- **Partial-sum asymptotics for a Riemann zeta quotient times a Dirichlet series.** Let
 $f, g : \mathbb{N} \to \mathbb{C}$ and let $\sigma_0 < 1/2$ be a real number. Suppose that the
