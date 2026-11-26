@@ -42,3 +42,5 @@
 - [Standard data, τ > 0: product rate tends to the Michaelis–Menten rate](tendsto-rate-of-family.md)
 - [The Michaelis–Menten QSSA contract](the-michaelis-menten-qssa-contract-small-paramet/README.md)
 - [Global positive trajectories of the Michaelis–Menten system](global-positive-trajectories-of-the-michaelis-me/README.md)
+- [Eigenvalue-ratio criterion against quasi-steady-state reduction](eigenvalue-ratio-criterion-against-quasi-steady-state-reduction.md)
+- [Matching timescale for the onset of quasi-steady state](matching-timescale-for-the-onset-of-quasi-steady-state.md)

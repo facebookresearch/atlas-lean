@@ -15,3 +15,8 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Clone growth rate from coalescence times](clone-growth-rate-from-coalescence-times/README.md)
+- [Individual-based model of cancer immunotherapy](individual-based-model-of-cancer-immunotherapy/README.md)
+- [Quiescent cancer stem cell in hematopoiesis](quiescent-cancer-stem-cell-in-hematopoiesis/README.md)
+- [Sequential mutations in growing populations](sequential-mutations-in-growing-populations/README.md)
+- [Single cell mutational burden in cell lineage trees](single-cell-mutational-burden-in-cell-lineage-trees/README.md)
