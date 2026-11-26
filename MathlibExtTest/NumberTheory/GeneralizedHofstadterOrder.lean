@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.GeneralizedHofstadterOrder
 
 /-!
-# Tests for generalized Hofstadter prefix counts and image lengths
+# Tests for generalized Hofstadter substitution words, prefix counts, and image lengths
 -/
 
 open MetaMathlibExt
@@ -37,3 +37,16 @@ example : (hofL 3)^[2] 1 = 3 ∧ (hofL 2)^[2] 1 = 3 := by decide
 
 example (j n : ℕ) : (hofL 3)^[j] n ≤ (hofL 2)^[j] n :=
   hofL_iterate_succ_le (by decide : 1 ≤ 2) j n
+
+-- At the smallest positive boundary, the top letter itself is repeated.
+example : (hofTauList 1)^[1] [1] = [1, 1] :=
+  (hofTauList_iterate_self (k := 1) le_rfl 1).1 le_rfl
+
+-- At the common endpoint the zero iterate supplies the final letter.
+example {k : ℕ} (hk : 1 ≤ k) :
+    (hofTauList k)^[k] [k] = (hofTauList k)^[k - 1] [k] ++ [k] := by
+  simpa using (hofTauList_iterate_self hk k).2 le_rfl
+
+-- Beyond the endpoint, the order of the two earlier words matters.
+example : (hofTauList 3)^[4] [3] = [3, 1, 2, 3, 3, 1] :=
+  (hofTauList_iterate_self (k := 3) (by decide) 4).2 (by decide)
