@@ -897,6 +897,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing", "article_id": "af_16ad33e0fae74766f1934edc"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
+{"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
 {"folder": "Probability/not-yet-classified/part-03/confidence-sequence", "to": "Probability/hypothesis-testing/anytime-valid-confidence-sequences", "article_id": "af_acea25baad75e1735e63fe9f"}
 {"page": "Probability/not-yet-classified/part-03/confidence-sequence/bernoulli-null-lr-e-process", "to": "Probability/hypothesis-testing/anytime-valid-confidence-sequences/bernoulli-null-lr-e-process", "article_id": "af_64f55fb8be575fb8546f158c"}
 {"folder": "Probability/not-yet-classified/part-03/confidence-set", "to": "Probability/statistical-estimation/confidence-sets-and-test-inversion", "article_id": "af_f4ef7a6166345f6301964a9b"}

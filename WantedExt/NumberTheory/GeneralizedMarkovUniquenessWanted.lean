@@ -19,24 +19,13 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Finset
-
-/-- **Generalized Markov number.** Let $k$ be a natural number. A natural number $b$ is a
-$k$-generalized Markov number when there are natural numbers $a$ and $c$ such that
-$(a, b, c)$ is a $k$-generalized Markov triple.
-
-Since the $k$-generalized Markov equation is symmetric in its three variables, this is the same
-as $b$ being an entry, in any position, of some $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.2. -/
-public def IsGenMarkovNumber (k b : ℕ) : Prop :=
-  ∃ a c, IsGenMarkovTriple k a b c
 
 /-- **Unique maximal generalized Markov triple.** Let $k$ and $b$ be natural numbers. The number
 $b$ is the maximum of a unique $k$-generalized Markov triple up to order if there is a
@@ -341,15 +330,6 @@ public theorem genCohnS_zero : genCohnS 0 = 0 := by
   ext i j
   fin_cases i <;> fin_cases j <;> simp [genCohnS]
 
-/-- **Generalized Cohn matrices.** Let $k$ be a natural number. An integer $2 \times 2$ matrix
-$P = (p_{ij})$ is a $k$-generalized Cohn matrix if $\det P = 1$, its entry $p_{12}$ is a
-$k$-generalized Markov number, and its trace equals $(3 + 3k) p_{12} - k$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.1. -/
-public def IsGenCohnMatrix (k : ℕ) (P : Matrix (Fin 2) (Fin 2) ℤ) : Prop :=
-  P.det = 1 ∧ ∃ n : ℕ, P 0 1 = n ∧ IsGenMarkovNumber k n ∧ P.trace = (3 + 3 * k) * n - k
-
 /-- **Generalized Cohn triple.** Let $k$ be a natural number and let $S$ be the integer matrix
 with rows $(k, 0)$ and $(3k^2 + 3k, k)$. A triple $(P, Q, R)$ of integer $2 \times 2$ matrices is
 a $k$-generalized Cohn triple associated with natural numbers $(a, b, c)$ when $P$, $Q$ and $R$
@@ -561,20 +541,6 @@ public theorem_wanted IsGenCohnTriple.step {k a b c : ℕ} {P Q R : Matrix (Fin 
     (h : IsGenCohnTriple k P Q R a b c) :
     IsGenCohnTriple k P (P * Q - genCohnS k) Q a ((a ^ 2 + k * a * b + b ^ 2) / c) b ∧
       IsGenCohnTriple k Q (Q * R - genCohnS k) R b ((b ^ 2 + k * b * c + c ^ 2) / a) c
-
-/-- **A product identity for generalized Cohn matrices.** Let $k$ be a natural number, let $M$
-be a $k$-generalized Cohn matrix, and let $E$ be the $2 \times 2$ integer matrix whose only
-nonzero entry is $3 + 3k$, in row $2$ and column $1$. Then $MEM = (\operatorname{tr} M + k)M + E$
-and $M^{-1} E M^{-1} = -(\operatorname{tr} M^{-1} + k)M^{-1} + E$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.7. -/
-public theorem_wanted IsGenCohnMatrix.mul_E_mul {k : ℕ} {M : Matrix (Fin 2) (Fin 2) ℤ}
-    (hM : IsGenCohnMatrix k M) :
-    M * !![0, 0; 3 + 3 * (k : ℤ), 0] * M =
-        (M.trace + (k : ℤ)) • M + !![0, 0; 3 + 3 * (k : ℤ), 0] ∧
-      M⁻¹ * !![0, 0; 3 + 3 * (k : ℤ), 0] * M⁻¹ =
-        (-(M⁻¹.trace + (k : ℤ))) • M⁻¹ + !![0, 0; 3 + 3 * (k : ℤ), 0]
 
 /-- **Vertices of the wide generalized Cohn tree are generalized Cohn triples.** Let $k$ be a
 natural number. For every integer $\ell$ and every path $w$, the vertex of the wide
