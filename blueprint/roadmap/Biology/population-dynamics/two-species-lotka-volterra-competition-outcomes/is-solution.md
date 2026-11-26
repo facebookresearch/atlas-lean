@@ -1,3 +1,8 @@
-# Is Solution
+# Forward solutions of the competition equations
 
-`z` solves the competition equations on `[0, ∞)`: `z'(t) = field (z t)` for every `t ≥ 0`.
+`z` solves the competition equations at
+every time `t ≥ 0`: `z'(t) = field (z t)`. The derivative is two-sided (`HasDerivAt`) at `t = 0`
+too, so a trajectory given only on `[0, ∞)` must be extended to negative times with that
+derivative at `0`; one that is only right-differentiable at `0` does not qualify. A solution on an
+open interval containing `[0, ∞)` qualifies, and negative times matter only through the
+derivative at `0`.

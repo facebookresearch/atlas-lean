@@ -7,7 +7,7 @@
 ## Params
 
 - [Field](field.md)
-- [Is Solution](is-solution.md)
+- [Forward solutions of the competition equations](is-solution.md)
 - [Interior Eq](interior-eq.md)
 - [Stable coexistence](tendsto-interior-eq.md)
 - [Exclusion of species `2`](tendsto-first.md)
