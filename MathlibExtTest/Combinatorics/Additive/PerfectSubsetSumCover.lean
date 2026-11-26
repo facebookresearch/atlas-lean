@@ -23,6 +23,11 @@ example :
   have hs : IsPerfectMCover 2 s := by decide +revert
   exact isPerfectMCover_fst_snd (m := 1) (n := 2) (by decide) (by decide) hs
 
+-- The two singleton index sets both sum to 1, even though the tail is not a perfect cover.
+example : coverCount (Fin.cons (1 : ZMod 4) (![1] : Fin 1 → ZMod 4)) 1 = 2 := by
+  rw [coverCount_cons]
+  decide
+
 /-- A nonzero adjoiner can repeat the value of an existing index. -/
 example : IsPerfectMCover 2 (Fin.cons (1 : ZMod 4) (![1, 2] : Fin 2 → ZMod 4)) := by
   have hs : IsPerfectMCover 1 (![1, 2] : Fin 2 → ZMod 4) := by decide

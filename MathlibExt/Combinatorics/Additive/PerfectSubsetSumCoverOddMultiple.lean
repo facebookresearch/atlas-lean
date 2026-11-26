@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 import Mathlib.Algebra.Ring.Periodic
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCover
 
@@ -21,29 +20,6 @@ Replacing the first entry of a perfect cover by an odd multiple preserves the co
 namespace MetaMathlibExt
 
 open PerfectSubsetSumCover
-
-private theorem coverCount_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
-    {N : ℕ} (s : Fin N → G) (a g : G) :
-    coverCount (Fin.cons a s) g = coverCount s g + coverCount s (g - a) := by
-  let e := Fin.succEmb N
-  have hzero (I : Finset (Fin N)) : (0 : Fin (N + 1)) ∉ I.map e := by simp [e]
-  have huniv : (Finset.univ : Finset (Fin (N + 1))) = insert 0 (Finset.univ.map e) := by
-    rw [Fin.univ_succ, Finset.cons_eq_insert]
-    rfl
-  have hmap : (Finset.univ.map e).powerset = Finset.univ.image (Finset.map e) := by
-    simp only [funext (Finset.map_eq_image e), Finset.powerset_image, Finset.powerset_univ]
-  let hit (I : Finset (Fin (N + 1))) : ℕ :=
-    if (∑ i ∈ I, Fin.cons a s i) = g then 1 else 0
-  -- Partition the index sets by whether they use the first entry.
-  have hsplit : (∑ I, hit I) =
-      (∑ I : Finset (Fin N), hit (I.map e)) +
-        ∑ I : Finset (Fin N), hit (insert 0 (I.map e)) := by
-    conv_lhs => rw [← Finset.powerset_univ, huniv, Finset.sum_powerset_insert (hzero _), hmap]
-    simp only [Finset.sum_image (Finset.map_injective e).injOn]
-  have htail (I : Finset (Fin N)) : (∑ i ∈ I.map e, Fin.cons a s i) = ∑ i ∈ I, s i := by
-    simp [Finset.sum_map, e]
-  simpa only [coverCount, Finset.card_eq_sum_ones, Finset.sum_filter, hit, htail,
-    Finset.sum_insert (hzero _), Fin.cons_zero, add_comm a, ← eq_sub_iff_add_eq] using hsplit
 
 /-- **Replacing an entry of a perfect $2^k$-cover by an odd multiple.** Let $G$ be an abelian
 group, let $k$ and $N$ be natural numbers, and let $a, b, s_1, \dots, s_N \in G$. If the family

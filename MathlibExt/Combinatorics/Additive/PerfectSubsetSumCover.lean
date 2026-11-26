@@ -189,17 +189,17 @@ public theorem zsmul_mem_oddCombinations {G : Type*} [AddCommGroup G] [Decidable
     rw [map_sum]
     exact Finset.sum_congr rfl fun x _ => (mul_zsmul x _ _).symm
 
-/-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
-group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
-family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.
+/-- **Cover count after prepending an entry.** Let $s$ be a finite indexed family in an abelian
+group $G$ and let $g, x \in G$. The number of subsets of indices of $(g, s)$ that sum to $x$ is
+the sum of the cover counts of $x$ and $x - g$ in $s$. These count subsets that omit and contain
+the first index, respectively. No perfectness assumption is needed.
 
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 5
-(`jis-2025-25.7.8-lem-5`). -/
-theorem isPerfectMCover_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
-    {k m : ℕ} {s : Fin k → G} (hs : IsPerfectMCover m s) (g : G) :
-    IsPerfectMCover (2 * m) (Fin.cons g s : Fin (k + 1) → G) := by
-  intro x
+Source: the subset partition in the proof of Lemma 5 of John Greene and Clayton Higgins,
+*Maximal Subset Sums in a Group of Order a Power of 2*, Journal of Integer Sequences 28 (2025),
+Article 25.7.8. -/
+theorem coverCount_cons {G : Type*} [AddCommGroup G] [DecidableEq G] {k : ℕ}
+    (s : Fin k → G) (g x : G) :
+    coverCount (Fin.cons g s) x = coverCount s x + coverCount s (x - g) := by
   let e := Fin.succEmb k
   have hzero (I : Finset (Fin k)) : (0 : Fin (k + 1)) ∉ I.map e := by
     simp [e]
@@ -215,14 +215,24 @@ theorem isPerfectMCover_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
       (∑ I : Finset (Fin k), hit (I.map e)) +
         ∑ I : Finset (Fin k), hit (insert 0 (I.map e)) := by
     conv_lhs => rw [← Finset.powerset_univ, huniv, Finset.sum_powerset_insert (hzero _), hmap]
-    rw [Finset.sum_image (Finset.map_injective e).injOn,
-      Finset.sum_image (Finset.map_injective e).injOn]
+    simp only [Finset.sum_image (Finset.map_injective e).injOn]
   have htail (I : Finset (Fin k)) : (∑ i ∈ I.map e, Fin.cons g s i) = ∑ i ∈ I, s i := by
     simp [Finset.sum_map, e]
-  have hcount : coverCount (Fin.cons g s) x = coverCount s x + coverCount s (x - g) := by
-    simpa only [coverCount, Finset.card_eq_sum_ones, Finset.sum_filter, hit, htail,
-      Finset.sum_insert (hzero _), Fin.cons_zero, add_comm g, ← eq_sub_iff_add_eq] using hsplit
-  rw [hcount, hs x, hs (x - g), two_mul]
+  simpa only [coverCount, Finset.card_eq_sum_ones, Finset.sum_filter, hit, htail,
+    Finset.sum_insert (hzero _), Fin.cons_zero, add_comm g, ← eq_sub_iff_add_eq] using hsplit
+
+/-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
+group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
+family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.
+
+Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 5
+(`jis-2025-25.7.8-lem-5`). -/
+theorem isPerfectMCover_cons {G : Type*} [AddCommGroup G] [DecidableEq G]
+    {k m : ℕ} {s : Fin k → G} (hs : IsPerfectMCover m s) (g : G) :
+    IsPerfectMCover (2 * m) (Fin.cons g s : Fin (k + 1) → G) := by
+  intro x
+  rw [coverCount_cons, hs x, hs (x - g), two_mul]
 
 /-- **Projections of a perfect cover of a direct sum.** Let $H$ and $K$ be finite abelian groups
 with $|H| = 2^m$ and $|K| = 2^n$, and let $s = (s_i)_{i \in \iota}$, indexed by a finite set
