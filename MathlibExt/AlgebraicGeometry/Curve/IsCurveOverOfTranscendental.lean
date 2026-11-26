@@ -68,8 +68,8 @@ import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
 Let `F / K` be a field extension and `x : F` transcendental over `K` with `F` finite over `K(x)`.
 If `F / K(x)` is separable, or if `K` is perfect, then `F` is the function field of a curve over
 `K` in the sense of `AlgebraicCurve.IsCurveOver`: every nonzero function has a principal divisor
-of degree zero, every residue field is finite over `K`, and the Kähler differentials of `F / K`
-are free of rank one.
+of degree zero, every residue field has finite degree over `K`, and the Kähler differentials of
+`F / K` are free of rank one.
 
 ## Main statements
 
@@ -165,7 +165,7 @@ private theorem linearIndependent_lift (w : Place K F') {ι : Type*} [Finite ι]
   exact one_ne_zero hk1
 
 /-- **Residue fields in a finite extension.** In a finite extension `F' / F`, the residue field of
-a place of `F'` is finite over the residue field of its restriction to `F`. -/
+a place of `F'` has finite degree over the residue field of its restriction to `F`. -/
 theorem Place.finite_residueField_restrict (w : Place K F') :
     Module.Finite (w.restrict F).ResidueField w.ResidueField := by
   classical

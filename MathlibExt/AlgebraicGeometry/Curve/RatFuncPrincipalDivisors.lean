@@ -54,7 +54,7 @@ import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyOrd
 # Principal divisors on the rational function field
 
 Every nonzero `f : RatFunc K` has finitely many places of nonzero order, and its divisor has
-degree zero. Every place of `RatFunc K` has a residue field that is finite over `K`.
+degree zero. Every place of `RatFunc K` has a residue field of finite degree over `K`.
 
 ## Main statements
 
@@ -242,8 +242,8 @@ theorem hasPrincipalDivisors : HasPrincipalDivisors K (RatFunc K) :=
         (finite_setOf_ord_ne_zero hf),
       fun _ => rfl, degree_eq_zero_of_forall_eq_ord _ fun _ => rfl⟩⟩
 
-/-- **Residue fields of the rational function field are finite.** Every place of `RatFunc K` has
-a residue field that is finite over `K`. -/
+/-- **Residue fields of the rational function field have finite degree over `K`.** Every place
+of `RatFunc K` has a residue field of finite degree over `K`. -/
 theorem finite_residueField (v : Place K (RatFunc K)) : Module.Finite K v.ResidueField := by
   classical
   have hpos : 0 < v.deg := by
