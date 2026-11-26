@@ -14384,6 +14384,7 @@
   "MathlibExt/Probability/RegularVariation": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
   "MathlibExt/Probability/RegularVariationGeneralizedInverse": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
   "MathlibExt/Probability/RegularVariationKaramata": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
+  "MathlibExt/Probability/Reliability/AnnualPoissonLoss": {"to": "Probability/nonparametric-survival", "title": "Reliability and monitoring"},
   "MathlibExt/Probability/RiffleShuffle": {"to": "Probability/random-walks", "title": "Random walks on finite groups"},
   "MathlibExt/Probability/SampleEmpiricalMeasure": {"to": "Probability/large-deviations", "title": "Sanov's theorem"},
   "MathlibExt/Probability/Sampling/HorvitzThompson": {"to": "Probability/statistical-estimation", "title": "Finite-population survey sampling"},
