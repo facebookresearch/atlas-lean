@@ -24,8 +24,12 @@ direction uses Mathlib's Rayleigh theorem for the symmetric difference of the tw
 
 * Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*, INTEGERS **25**
   (2025), Article A104, pp. 1–19, Theorem 1 (Beatty–Rayleigh).
-* Samuel Beatty, Problem 3173, *American Mathematical Monthly* **33** (1926), p. 159;
-  solutions, *American Mathematical Monthly* **34** (1927), p. 159.
+* Lord Rayleigh (J. W. Strutt), *The Theory of Sound*, 2nd ed., vol. I, Macmillan (1894),
+  p. 123, for the implication from irrationality and the reciprocal identity to the partition.
+* Samuel Beatty, Problem 3173, *American Mathematical Monthly* **33** (1926), p. 159.
+  Solutions (printed as Problem 3177, referring back to 3173), *American Mathematical Monthly*
+  **34** (1927), pp. 159–160. The converse uses the cutoff-counting idea from the joint solution
+  of A. Ostrowski and J. Hyslop on p. 159.
 -/
 
 namespace MetaMathlibExt
