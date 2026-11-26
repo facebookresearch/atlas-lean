@@ -1,0 +1,15 @@
+# Substitution One Color
+
+- [One Color Functor](one-color-functor.md)
+- [Forget One Color Functor](forget-one-color-functor.md)
+- [One Color Unit Iso](one-color-unit-iso.md)
+- [One Color Unit Iso hom app](one-color-unit-iso-hom-app.md)
+- [One Color Unit Iso inv app](one-color-unit-iso-inv-app.md)
+- [One Color Counit Hom](one-color-counit-hom.md)
+- [One Color Counit Inv](one-color-counit-inv.md)
+- [One Color Counit Iso App](one-color-counit-iso-app.md)
+- [One Color Counit Iso](one-color-counit-iso.md)
+- [One Color triangle](one-color-triangle.md)
+- [One Color Equivalence](one-color-equivalence.md)
+- [One Color Equivalence unit Iso](one-color-equivalence-unit-iso.md)
+- [One Color Equivalence counit Iso](one-color-equivalence-counit-iso.md)

@@ -1,0 +1,16 @@
+# Color Blind Associativity
+
+- [Grouping AIso](grouping-aiso.md)
+- [Grouping AHom](grouping-ahom.md)
+- [Grouping BIso](grouping-biso.md)
+- [Grouping BHom](grouping-bhom.md)
+- [Flattened Grouping AIso](flattened-grouping-aiso.md)
+- [Flattened Grouping BIso](flattened-grouping-biso.md)
+- [Assoc Source Iso](assoc-source-iso.md)
+- [Grouping ATo Factors compat](grouping-ato-factors-compat.md)
+- [Grouping BTo Factors compat](grouping-bto-factors-compat.md)
+- [Flatten ATo Flatten B compat](flatten-ato-flatten-b-compat.md)
+- [Assoc Source Iso hom](assoc-source-iso-hom.md)
+- [Associativity Route A compat](associativity-route-a-compat.md)
+- [Collection map total Hom](collection-map-total-hom.md)
+- [Associativity Route B compat](associativity-route-b-compat.md)
