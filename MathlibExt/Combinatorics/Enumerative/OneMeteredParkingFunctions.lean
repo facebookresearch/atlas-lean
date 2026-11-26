@@ -26,6 +26,13 @@ parks in the last spot are as many as the 1-metered parking functions with `m - 
 the counts satisfy `mpf (m + 1) = n * mpf m - mpf (m - 1)` for `1 ≤ m ≤ n`, with `mpf 0 = 1` and
 `mpf 1 = n`, and the formula follows from the roots `(n ± √(n ^ 2 - 4)) / 2` of
 `x ^ 2 - n * x + 1`.
+
+## References
+
+* Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+  Functions*, INTEGERS 25 (2025), Article A73, pp. 1–37. See Lemmas 2–3 (pp. 13–14) for the
+  last-spot counts, Theorem 2 (p. 15) for the recurrence, Corollary 5 (p. 16) for the Binet
+  formula, and Proposition 7 (p. 19) for the three-car count.
 -/
 
 namespace MetaMathlibExt
