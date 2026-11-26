@@ -11,9 +11,9 @@ module
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 import MathlibExt.NumberTheory.MultiplicativeAdditiveThreePairedSquares
+import MathlibExt.NumberTheory.SixAndEightNonzeroSquares
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.VecNotation
-import Mathlib.NumberTheory.SumFourSquares
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
@@ -35,119 +35,6 @@ namespace multiplicative_additive_six_squares_eq_id
 
 private def IsPair (n : ℕ) : Prop :=
   ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ n = a ^ 2 + b ^ 2
-
-private theorem six_squares {n : ℕ} (hn : 26 ≤ n) :
-    ∃ A : Fin 6 → ℕ, (∀ i, A i ≠ 0) ∧ ∑ i, A i ^ 2 = n := by
-  obtain ⟨a, b, c, d, habcd⟩ := Nat.sum_four_squares (n - 26)
-  by_cases ha : a = 0
-  · subst ha
-    by_cases hb : b = 0
-    · subst hb
-      by_cases hc : c = 0
-      · subst hc
-        by_cases hd : d = 0
-        · subst hd
-          refine ⟨![3, 2, 2, 2, 2, 1], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 9 + 4 + 4 + 4 + 4 + 1 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![4, 2, 2, d, 1, 1], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 16 + 4 + 4 + d ^ 2 + 1 + 1 = n
-            norm_num at habcd
-            omega⟩
-      · by_cases hd : d = 0
-        · subst hd
-          refine ⟨![4, 2, c, 2, 1, 1], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 16 + 4 + c ^ 2 + 4 + 1 + 1 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![3, 2, c, d, 2, 3], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 9 + 4 + c ^ 2 + d ^ 2 + 4 + 9 = n
-            norm_num at habcd
-            omega⟩
-    · by_cases hc : c = 0
-      · subst hc
-        by_cases hd : d = 0
-        · subst hd
-          refine ⟨![4, b, 2, 2, 1, 1], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 16 + b ^ 2 + 4 + 4 + 1 + 1 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![3, b, 2, d, 2, 3], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 9 + b ^ 2 + 4 + d ^ 2 + 4 + 9 = n
-            norm_num at habcd
-            omega⟩
-      · by_cases hd : d = 0
-        · subst hd
-          refine ⟨![3, b, c, 2, 2, 3], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 9 + b ^ 2 + c ^ 2 + 4 + 4 + 9 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![1, b, c, d, 3, 4], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change 1 + b ^ 2 + c ^ 2 + d ^ 2 + 9 + 16 = n
-            norm_num at habcd
-            omega⟩
-  · by_cases hb : b = 0
-    · subst hb
-      by_cases hc : c = 0
-      · subst hc
-        by_cases hd : d = 0
-        · subst hd
-          refine ⟨![a, 4, 2, 2, 1, 1], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + 16 + 4 + 4 + 1 + 1 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![a, 3, 2, d, 2, 3], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + 9 + 4 + d ^ 2 + 4 + 9 = n
-            norm_num at habcd
-            omega⟩
-      · by_cases hd : d = 0
-        · subst hd
-          refine ⟨![a, 3, c, 2, 2, 3], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + 9 + c ^ 2 + 4 + 4 + 9 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![a, 1, c, d, 3, 4], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + 1 + c ^ 2 + d ^ 2 + 9 + 16 = n
-            norm_num at habcd
-            omega⟩
-    · by_cases hc : c = 0
-      · subst hc
-        by_cases hd : d = 0
-        · subst hd
-          refine ⟨![a, b, 3, 2, 2, 3], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + b ^ 2 + 9 + 4 + 4 + 9 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![a, b, 1, d, 3, 4], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + b ^ 2 + 1 + d ^ 2 + 9 + 16 = n
-            norm_num at habcd
-            omega⟩
-      · by_cases hd : d = 0
-        · subst hd
-          refine ⟨![a, b, c, 1, 3, 4], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + b ^ 2 + c ^ 2 + 1 + 9 + 16 = n
-            norm_num at habcd
-            omega⟩
-        · refine ⟨![a, b, c, d, 1, 5], fun i ↦ by clear habcd hn; fin_cases i <;> simp_all, by
-            simp only [Fin.sum_univ_six]
-            change a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 + 1 + 25 = n
-            omega⟩
 
 private theorem small_values {f : ArithmeticFunction ℂ} (hf : f.IsMultiplicative)
     (add : ∀ A : Fin 3 → ℕ, (∀ i, IsPair (A i)) → f (∑ i, A i) = ∑ i, f (A i))
@@ -320,7 +207,7 @@ public theorem multiplicative_additive_six_squares_eq_id (f : ArithmeticFunction
     intro hn
     by_cases hlt : n < 26
     · exact small_values hf add h2 n hn hlt
-    obtain ⟨A, hApos, hAsum⟩ := six_squares (Nat.le_of_not_gt hlt)
+    obtain ⟨A, hApos, hAsum⟩ := sum_six_and_eight_nonzero_squares.1 n (by omega)
     have hpos : ∀ i, 0 < A i := fun i ↦ Nat.pos_of_ne_zero (hApos i)
     have hx : ∀ j, 0 < ![A 0, A 2, A 4] j := by
       intro j
