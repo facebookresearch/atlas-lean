@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import MathlibExt.NumberTheory.GaussKuzminSymmetry
 public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
 public import MathlibExt.NumberTheory.GaussKuzminCharacterization
+public import MathlibExt.NumberTheory.GaussKuzminSymmetryNontrivialSymmetryLengthThreeAndInfinite
 public import MathlibExt.NumberTheory.GaussKuzminSymmetryStablePlusNontrivialSymmetry
 
 namespace MetaMathlibExt
@@ -144,18 +145,6 @@ public theorem_wanted isStableString_families :
         IsStableString (t :: a.reverse ++ [2 * t])) ∧
       ∀ n : ℕ, 2 ≤ n →
         {a : List ℕ | a.length = n ∧ (∀ x ∈ a, 0 < x) ∧ IsStableString a}.Infinite
-
-/-- **No nontrivial symmetries in length three, infinitely many from length four.** (i) No string
-of three positive integers has a nontrivial symmetry. (ii) For every $n \ge 4$ there are infinitely
-many strings of $n$ positive integers that have a nontrivial symmetry.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Theorem 3 (`integers-2025-A89-thm-3`). -/
-public theorem_wanted nontrivialSymmetry_length_three_and_infinite :
-    (∀ a : List ℕ, (∀ x ∈ a, 0 < x) → a.length = 3 → ¬ HasNontrivialSymmetry a) ∧
-      ∀ n : ℕ, 4 ≤ n →
-        {a : List ℕ | a.length = n ∧ (∀ x ∈ a, 0 < x) ∧ HasNontrivialSymmetry a}.Infinite
 
 end
 
