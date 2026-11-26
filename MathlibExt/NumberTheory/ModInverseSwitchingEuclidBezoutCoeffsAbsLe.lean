@@ -11,6 +11,7 @@ module
 public import MathlibExt.NumberTheory.ModInverseSwitching
 import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.Data.Int.ModEq
+import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.Nat.GCD.Basic
 import Mathlib.RingTheory.Coprime.Basic
 import Mathlib.RingTheory.Coprime.Lemmas
@@ -36,28 +37,12 @@ DOI 10.5281/zenodo.10821707).
 
 namespace MathlibExt.NumberTheory.ModInverseSwitchingWanted
 
-private theorem abs_le_add_mul_of_two_abs_le {s R t : ℤ} (h : 2 * |s| ≤ R) :
-    |s| ≤ |s + t * R| := by
-  by_cases ht : t = 0
-  · simp [ht]
-  · have hR0 : 0 ≤ R := by
-      have hnn : 0 ≤ |s| := abs_nonneg s
-      linarith
-    have ht1 : (1 : ℤ) ≤ |t| := by
-      have hpos : 0 < |t| := abs_pos.mpr ht
-      omega
-    have htri : |t * R| ≤ |s + t * R| + |s| := by
-      have h := abs_add_le (s + t * R) (-s)
-      rw [abs_neg] at h
-      have heq : s + t * R + -s = t * R := by ring
-      rw [heq] at h
-      exact h
-    have hbig : 2 * |s| ≤ |t * R| := by
-      rw [abs_mul, abs_of_nonneg hR0]
-      have hmul : (1 : ℤ) * R ≤ |t| * R := mul_le_mul_of_nonneg_right ht1 hR0
-      rw [one_mul] at hmul
-      linarith
-    linarith
+-- `ZMod.natAbs_min_of_le_div_two`, for a natural modulus and integers.
+private theorem abs_le_add_mul_of_two_abs_le {n : ℕ} {s t : ℤ} (h : 2 * |s| ≤ (n : ℤ)) :
+    |s| ≤ |s + t * (n : ℤ)| := by
+  rw [Int.abs_eq_natAbs] at h
+  simp only [Int.abs_eq_natAbs]
+  exact_mod_cast ZMod.natAbs_min_of_le_div_two n s (s + t * (n : ℤ)) (by simp) (by omega)
 
 private theorem isLeastAbsInverse_next {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
     (hseq : IsEuclidSwitchSeq r s N) {i : ℕ} (hi : i ≤ N) :
