@@ -12166,6 +12166,7 @@
   "MathlibExt/GroupTheory/SU2Basic": {"to": "GroupTheory/linear-groups", "title": "The special unitary group SU(2)"},
   "MathlibExt/GroupTheory/SU2Conjugacy": {"to": "GroupTheory/linear-groups", "title": "The special unitary group SU(2)"},
   "MathlibExt/GroupTheory/SU2Longitude": {"to": "GroupTheory/linear-groups", "title": "The special unitary group SU(2)"},
+  "MathlibExt/GroupTheory/SchurWeyl": {"to": "RepresentationTheory/lie-and-topological-representations", "title": "Schur–Weyl duality"},
   "MathlibExt/GroupTheory/SchurZassenhaus": {"to": "GroupTheory/extensions-and-cohomology", "title": "Schur–Zassenhaus theorem"},
   "MathlibExt/GroupTheory/ScottishBook112": {"to": "GroupTheory/automorphisms/automorphism-groups", "title": "Class-preserving automorphisms"},
   "MathlibExt/GroupTheory/ScottishBook142": {"to": "GroupTheory/automorphisms/automorphism-groups", "title": "Groups as automorphism groups of relations"},
