@@ -13695,6 +13695,7 @@
   "MathlibExt/NumberTheory/TwoNearPerfectOmittedDivisors": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoComplexitySum": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/TwoNearPerfectPowerOfTwoDivisors": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
+  "MathlibExt/NumberTheory/TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseFive": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoPowAddFifteenPow": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/UnitWeightedZeroSumOfDivPrime": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/NumberTheory/UnitWeightedZeroSumOfEvenUnits": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},

@@ -33,6 +33,7 @@ public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
 public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfect
+public import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseFive
 
 namespace MetaMathlibExt
 
@@ -101,22 +102,6 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_three {k p b : 
     (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) =
       2 * (2 ^ k * p ^ 2) + 1 + 2 ^ b * p ^ 2) :
     2 ^ k * p ^ 2 = 36 ∧ 2 ^ b * p ^ 2 = 18
-
-/-- **$2$-near perfect $2^k p^2$ with omitted divisors $p^m$ and $2^b p^j$.** Let $p$ be an odd
-prime, let each of $m$ and $j$ be $1$ or $2$, and let $b, k$ be integers with $1 \le b \le k$.
-If $n = 2^k p^2$ satisfies $\sigma(n) = 2n + p^m + 2^b p^j$, where $\sigma$ is the
-sum-of-divisors function (that is, $n$ is $2$-near perfect with omitted divisors $p^m$ and
-$2^b p^j$), then $n = 200$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 4
-(`integers-2024-A61-prop-4`). -/
-public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_five {k p m b j : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hm : m = 1 ∨ m = 2) (hb : 1 ≤ b) (hbk : b ≤ k)
-    (hj : j = 1 ∨ j = 2)
-    (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) =
-      2 * (2 ^ k * p ^ 2) + p ^ m + 2 ^ b * p ^ j) :
-    2 ^ k * p ^ 2 = 200
 
 /-- **Classification of prime solutions of $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$.** Let $a \le k$
 be natural numbers and let $p$ be a prime with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$, that is,
