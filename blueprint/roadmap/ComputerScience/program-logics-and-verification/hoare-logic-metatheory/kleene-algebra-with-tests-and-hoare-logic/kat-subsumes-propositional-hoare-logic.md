@@ -7,7 +7,7 @@ In propositional Hoare logic a partial-correctness assertion $\{b\}\, p\, \{c\}$
 - while: $bcp = bcpc \Rightarrow c(bp)^\ast \bar b = c(bp)^\ast \bar b\, \bar b c$;
 - weakening: $b' \le b \wedge bp = bpc \wedge c \le c' \Rightarrow b'p = b'pc'$,
 
-and each of them is a theorem of KAT. Hence every rule derivable in propositional Hoare logic, from premises $\{b_i\}\, p_i\, \{c_i\}$ to a conclusion $\{b\}\, p\, \{c\}$, corresponds to a theorem $b_1 p_1 \bar c_1 = 0 \wedge \dots \wedge b_n p_n \bar c_n = 0 \Rightarrow b p \bar c = 0$ of KAT.
+and each of them is a theorem of KAT. Hence every rule derivable in propositional Hoare logic, from premises $\{b_i\}\, p_i\, \{c_i\}$ to a conclusion $\{b\}\, p\, \{c\}$, corresponds to a theorem $b_1 p_1 \bar c_1 = 0 \wedge \dots \wedge b_n p_n \bar c_n = 0 \Rightarrow b p \bar c = 0$ of KAT. In the relational model the two encodings are the characterizations of partial correctness by [unreachability of the negated postcondition](../../kleene-algebra-with-tests/test-mul-test-compl-eq-bot-iff.md) and by [postcondition absorption](../../kleene-algebra-with-tests/test-mul-eq-test-mul-test-iff.md).
 
 ## Depends on
 
