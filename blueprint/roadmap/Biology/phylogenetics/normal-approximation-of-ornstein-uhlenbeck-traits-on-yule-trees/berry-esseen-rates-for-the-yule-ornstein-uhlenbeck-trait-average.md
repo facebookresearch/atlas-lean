@@ -1,6 +1,8 @@
 # Berry–Esseen rates for the Yule–Ornstein–Uhlenbeck trait average
 
-**Model (YOU).** A phenotypic trait evolves along the branches of a pure-birth (Yule) tree with birth rate $1$, stopped just before the $n$-th speciation event, so that it has $n$ tips. Along each branch the trait follows the Ornstein–Uhlenbeck process $dX=-\alpha X\,dt+\sigma_a\,dW$ with $\alpha,\sigma_a>0$. At a speciation the process is copied into both daughter lineages, which then evolve independently. Let $\overline X_n$ be the average trait over the $n$ tips. Rescale by $\overline Y_n=\overline X_n\sqrt{2\alpha/\sigma_a^2}$ and $\delta=X(0)\sqrt{2\alpha/\sigma_a^2}$. Let $\mathscr G$ be the $\sigma$-algebra of the tree, and put $\mu_n=\mathbb E\overline Y_n$ and $\sigma_n^2=\mathbb E\,\mathbb V(\overline Y_n\mid\mathscr G)$. Write $H_n=\sum_{j\le n}1/j$ and $b_{n,x}=\prod_{j=1}^n\frac{j}{j+x}=\frac{\Gamma(n+1)\Gamma(x+1)}{\Gamma(n+x+1)}$.
+**Model (YOU).** A phenotypic trait evolves along the branches of a pure-birth (Yule) tree with birth rate $1$, stopped just before the $n$-th speciation event, so that it has $n$ tips. Along each branch the trait follows the Ornstein–Uhlenbeck process $dX=-\alpha X\,dt+\sigma_a\,dW$ with $\alpha,\sigma_a>0$.
+
+At a speciation the process is copied into both daughter lineages, which then evolve independently. Let $\overline X_n$ be the average trait over the $n$ tips. Rescale by $\overline Y_n=\overline X_n\sqrt{2\alpha/\sigma_a^2}$ and $\delta=X(0)\sqrt{2\alpha/\sigma_a^2}$. Let $\mathscr G$ be the $\sigma$-algebra of the tree, and put $\mu_n=\mathbb E\overline Y_n$ and $\sigma_n^2=\mathbb E\,\mathbb V(\overline Y_n\mid\mathscr G)$. Write $H_n=\sum_{j\le n}1/j$ and $b_{n,x}=\prod_{j=1}^n\frac{j}{j+x}=\frac{\Gamma(n+1)\Gamma(x+1)}{\Gamma(n+x+1)}$.
 
 **Theorem.**
 

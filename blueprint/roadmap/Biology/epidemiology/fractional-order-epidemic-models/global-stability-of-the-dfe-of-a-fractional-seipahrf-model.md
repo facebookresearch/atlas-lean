@@ -1,6 +1,6 @@
 # Global stability of the disease-free equilibrium of a fractional SEIPAHRF model with super-spreaders
 
-**Model.** For $0<\alpha<1$ let ${}^{C}D^{\alpha}$ be the Caputo derivative $ {}^{C}D^{\alpha}x(t)=\frac{1}{\Gamma(1-\alpha)}\int_0^t (t-s)^{-\alpha}x'(s)\,ds$. A population of constant size $N=S+E+I+P+A+H+R+F$ is split into susceptible $S$, exposed $E$, symptomatic infectious $I$, super-spreaders $P$, asymptomatic $A$, hospitalized $H$, recovered $R$ and dead $F$:
+**Model.** For $0<\alpha<1$ let ${}^{C}D^{\alpha}$ be the Caputo derivative ${}^{C}D^{\alpha}x(t)=\frac{1}{\Gamma(1-\alpha)}\int_0^t (t-s)^{-\alpha}x'(s)\,ds$. A population of constant size $N=S+E+I+P+A+H+R+F$ is split into susceptible $S$, exposed $E$, symptomatic infectious $I$, super-spreaders $P$, asymptomatic $A$, hospitalized $H$, recovered $R$ and dead $F$:
 
 $$
 \begin{aligned}
