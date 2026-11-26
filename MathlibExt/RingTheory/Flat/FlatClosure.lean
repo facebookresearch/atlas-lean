@@ -43,35 +43,11 @@ variable {R : Type u} [CommRing R]
 variable {F : Type v} [Field F] [Algebra R F]
 variable {G : Type w} [CommRing G] [Algebra R G]
 
-/-- The flat closure of a subalgebra `B` of `F ⊗[R] G` (the saturation of `B`
-in `G`): the `R`-subalgebra of elements of `G` whose image `1 ⊗ g` lies in
-`B`. -/
-def flatClosure (B : Subalgebra F (F ⊗[R] G)) : Subalgebra R G where
-  carrier := {g : G | (1 : F) ⊗ₜ[R] g ∈ B}
-  mul_mem' {a b} ha hb := by
-    have h : ((1 : F) ⊗ₜ[R] a) * ((1 : F) ⊗ₜ[R] b) ∈ B := mul_mem ha hb
-    rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul] at h
-    exact h
-  one_mem' := by
-    change (1 : F) ⊗ₜ[R] (1 : G) ∈ B
-    rw [← Algebra.TensorProduct.one_def]
-    exact one_mem B
-  add_mem' {a b} ha hb := by
-    have h : ((1 : F) ⊗ₜ[R] a) + ((1 : F) ⊗ₜ[R] b) ∈ B := add_mem ha hb
-    rw [← TensorProduct.tmul_add] at h
-    exact h
-  zero_mem' := by
-    change (1 : F) ⊗ₜ[R] (0 : G) ∈ B
-    rw [TensorProduct.tmul_zero]
-    exact zero_mem B
-  algebraMap_mem' r := by
-    change (1 : F) ⊗ₜ[R] (algebraMap R G r) ∈ B
-    have h1 : (1 : F) ⊗ₜ[R] (algebraMap R G r)
-        = (algebraMap R F r) ⊗ₜ[R] (1 : G) := by
-      rw [Algebra.algebraMap_eq_smul_one r, TensorProduct.tmul_smul,
-        TensorProduct.smul_tmul', ← Algebra.algebraMap_eq_smul_one]
-    rw [h1, ← Algebra.TensorProduct.algebraMap_apply]
-    exact B.algebraMap_mem _
+/-- The flat closure of an `F`-subalgebra `B` of `F ⊗[R] G`, for a field `F` that is an
+`R`-algebra and a commutative `R`-algebra `G`: the preimage of `B` under `g ↦ 1 ⊗ g`, an
+`R`-subalgebra of `G`. -/
+def flatClosure (B : Subalgebra F (F ⊗[R] G)) : Subalgebra R G :=
+  (B.restrictScalars R).comap Algebra.TensorProduct.includeRight
 
 @[simp]
 lemma mem_flatClosure_iff {B : Subalgebra F (F ⊗[R] G)} {g : G} :
@@ -86,20 +62,24 @@ lemma le_flatClosure_iff {B : Subalgebra F (F ⊗[R] G)} {S : Subalgebra R G} :
     S ≤ flatClosure B ↔ ∀ g ∈ S, (1 : F) ⊗ₜ[R] g ∈ B :=
   Iff.rfl
 
-/-- The flat closure is finitely generated as an `R`-module when `G` is,
-over a Noetherian ring. -/
+/-- Over a Noetherian ring `R`, for a field `F` that is an `R`-algebra and an `R`-algebra `G`
+that is finitely generated as an `R`-module, the flat closure of an `F`-subalgebra of
+`F ⊗[R] G` is finitely generated as an `R`-module. -/
 theorem flatClosure_finite [IsNoetherianRing R] [Module.Finite R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Finite R (flatClosure B) := by
   have : IsNoetherian R G := isNoetherian_of_isNoetherianRing_of_finite R G
   exact Module.Finite.iff_fg.mpr
     (IsNoetherian.noetherian (Subalgebra.toSubmodule (flatClosure B)))
 
-/-- The flat closure is torsion-free when `G` is. -/
+/-- For a field `F` that is an `R`-algebra and an `R`-algebra `G` that is torsion-free as an
+`R`-module, the flat closure of an `F`-subalgebra of `F ⊗[R] G` is torsion-free. -/
 theorem flatClosure_isTorsionFree [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.IsTorsionFree R (flatClosure B) :=
   Function.Injective.moduleIsTorsionFree _ Subtype.coe_injective (fun _ _ => rfl)
 
-/-- Over a PID, the flat closure of a finite torsion-free algebra is free. -/
+/-- Over a principal ideal domain `R`, for a field `F` that is an `R`-algebra and an
+`R`-algebra `G` that is finite and torsion-free as an `R`-module, the flat closure of an
+`F`-subalgebra of `F ⊗[R] G` is a free `R`-module. -/
 theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Free R (flatClosure B) := by
@@ -107,7 +87,9 @@ theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R]
   have := flatClosure_isTorsionFree (R := R) (F := F) (G := G) B
   exact Module.free_of_finite_type_torsion_free'
 
-/-- Over a PID, the flat closure of a finite torsion-free algebra is flat. -/
+/-- Over a principal ideal domain `R`, for a field `F` that is an `R`-algebra and an
+`R`-algebra `G` that is finite and torsion-free as an `R`-module, the flat closure of an
+`F`-subalgebra of `F ⊗[R] G` is a flat `R`-module. -/
 theorem flatClosure_flat [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Flat R (flatClosure B) := by

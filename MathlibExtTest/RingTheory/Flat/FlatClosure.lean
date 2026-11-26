@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.RingTheory.Flat.FlatClosure
+import Mathlib.Algebra.Field.ZMod
 import Mathlib.Data.ZMod.Basic
 
 @[expose] public section
@@ -22,25 +23,26 @@ example {R F G : Type*} [CommRing R] [Field F] [Algebra R F] [CommRing G]
     g ∈ flatClosure B ↔ (1 : F) ⊗ₜ[R] g ∈ B :=
   mem_flatClosure_iff
 
-/-! Concrete closures over `ℤ ⊆ ℚ`. The generic fibre `ℚ ⊗[ℤ] (ℤ × ℤ)` of
-`ℤ × ℤ` is read through its two coordinate evaluations to `ℚ`. -/
+/-! Concrete closures over `ℤ`. The generic fibre `K ⊗[ℤ] (ℤ × ℤ)` of `ℤ × ℤ` over a
+field `K` is read through its two coordinate evaluations to `K`. -/
 
--- The `ℚ`-algebra map `ℚ ⊗[ℤ] (ℤ × ℤ) → ℚ` induced by a coordinate `π`.
-private noncomputable def coordEval (π : ℤ × ℤ →ₐ[ℤ] ℤ) : ℚ ⊗[ℤ] (ℤ × ℤ) →ₐ[ℚ] ℚ :=
-  Algebra.TensorProduct.lift (AlgHom.id ℚ ℚ) ((Algebra.ofId ℤ ℚ).comp π)
+-- The `K`-algebra map `K ⊗[ℤ] (ℤ × ℤ) → K` induced by a coordinate `π`.
+private noncomputable def coordEval (K : Type) [Field K] (π : ℤ × ℤ →ₐ[ℤ] ℤ) :
+    K ⊗[ℤ] (ℤ × ℤ) →ₐ[K] K :=
+  Algebra.TensorProduct.lift (AlgHom.id K K) ((Algebra.ofId ℤ K).comp π)
     fun _ _ => Commute.all _ _
 
-private lemma coordEval_tmul (π : ℤ × ℤ →ₐ[ℤ] ℤ) (q : ℚ) (g : ℤ × ℤ) :
-    coordEval π (q ⊗ₜ g) = q * π g := by
+private lemma coordEval_tmul {K : Type} [Field K] (π : ℤ × ℤ →ₐ[ℤ] ℤ) (q : K)
+    (g : ℤ × ℤ) : coordEval K π (q ⊗ₜ g) = q * π g := by
   simp [coordEval]
 
 -- If `1 ⊗ g` is the constant `q` of the generic fibre, both coordinates of `g`
--- equal `q`.
-private lemma coords_eq_of_algebraMap_eq {g : ℤ × ℤ} {q : ℚ}
-    (h : algebraMap ℚ (ℚ ⊗[ℤ] (ℤ × ℤ)) q = (1 : ℚ) ⊗ₜ[ℤ] g) :
-    (g.1 : ℚ) = q ∧ (g.2 : ℚ) = q := by
-  have h1 := congrArg (coordEval (AlgHom.fst ℤ ℤ ℤ)) h
-  have h2 := congrArg (coordEval (AlgHom.snd ℤ ℤ ℤ)) h
+-- equal `q` in `K`.
+private lemma coords_eq_of_algebraMap_eq {K : Type} [Field K] {g : ℤ × ℤ} {q : K}
+    (h : algebraMap K (K ⊗[ℤ] (ℤ × ℤ)) q = (1 : K) ⊗ₜ[ℤ] g) :
+    (g.1 : K) = q ∧ (g.2 : K) = q := by
+  have h1 := congrArg (coordEval K (AlgHom.fst ℤ ℤ ℤ)) h
+  have h2 := congrArg (coordEval K (AlgHom.snd ℤ ℤ ℤ)) h
   simp only [AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, coordEval_tmul,
     AlgHom.fst_apply, AlgHom.snd_apply, one_mul] at h1 h2
   exact ⟨h1.symm, h2.symm⟩
@@ -91,6 +93,28 @@ example : flatClosure (⊥ : Subalgebra ℚ (ℚ ⊗[ℤ] (ℤ × ZMod 2))) ≠ 
   have h1 : n = 0 := by simpa using congrArg Prod.fst hn
   have h2 := congrArg Prod.snd hn
   simp [h1] at h2
+
+-- The closure is a preimage, not a saturation: over `F = ZMod 2` the element
+-- `1 ⊗ (2, 0) = (2 • 1) ⊗ (1, 0)` is `0`, so `(2, 0) = 2 • (1, 0)` lies in the
+-- closure of `⊥` while `(1, 0)` does not.
+example :
+    ((2, 0) : ℤ × ℤ) ∈ flatClosure (⊥ : Subalgebra (ZMod 2) (ZMod 2 ⊗[ℤ] (ℤ × ℤ))) := by
+  rw [mem_flatClosure_iff]
+  have h : (1 : ZMod 2) ⊗ₜ[ℤ] ((2, 0) : ℤ × ℤ) = 0 := by
+    calc (1 : ZMod 2) ⊗ₜ[ℤ] ((2, 0) : ℤ × ℤ)
+        = (1 : ZMod 2) ⊗ₜ[ℤ] ((2 : ℤ) • ((1, 0) : ℤ × ℤ)) := by norm_num
+      _ = ((2 : ℤ) • (1 : ZMod 2)) ⊗ₜ[ℤ] ((1, 0) : ℤ × ℤ) := (TensorProduct.smul_tmul _ _ _).symm
+      _ = 0 := by rw [show (2 : ℤ) • (1 : ZMod 2) = 0 by decide, TensorProduct.zero_tmul]
+  rw [h]
+  exact zero_mem _
+
+example :
+    ((1, 0) : ℤ × ℤ) ∉ flatClosure (⊥ : Subalgebra (ZMod 2) (ZMod 2 ⊗[ℤ] (ℤ × ℤ))) := by
+  intro h
+  obtain ⟨q, hq⟩ := Algebra.mem_bot.mp (mem_flatClosure_iff.mp h)
+  obtain ⟨h1, h2⟩ := coords_eq_of_algebraMap_eq hq
+  simp only [Int.cast_one, Int.cast_zero] at h1 h2
+  exact one_ne_zero (h1.trans h2.symm)
 
 -- Over the PID `ℤ`, the finite, free and flat conclusions apply to closures in
 -- the finite torsion-free algebra `ℤ × ℤ`.
