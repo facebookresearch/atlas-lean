@@ -38,6 +38,21 @@ example (l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (2 ^ 0) d := by
   have h2 := (klDeficientPerfectWith_one_prime_pow_iff 2 0 l d Nat.prime_two).mp h
   exact absurd h2.2.2.2 (by decide)
 
+-- `18 = 2 ^ 1 * 3 ^ 2` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 18 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    3 1 2 (by decide) (by decide)
+
+-- `2500 = 2 ^ 2 * 5 ^ 4` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 2500 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    5 2 4 (by decide) (by decide)
+
+-- `8 = 2 ^ 3 * 11 ^ 0` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 8 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    11 3 0 (by decide) (by decide)
+
 -- Eight is a prime power, so it is neither deficient `F`-perfect nor near `F`-perfect.
 example : ¬ IsDeficientFPerfect 8 ∧ ¬ IsNearFPerfect 8 := by
   simpa using prime_pow_not_fPerfect 2 3 Nat.prime_two
