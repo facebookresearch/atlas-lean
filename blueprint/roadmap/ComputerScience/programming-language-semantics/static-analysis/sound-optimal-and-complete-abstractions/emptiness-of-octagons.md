@@ -18,4 +18,4 @@ This page becomes ready once these prerequisites are stated:
 
 ## Sources
 
-- A. Miné, "The octagon abstract domain", arXiv:cs/0703084v2, 2007, <https://arxiv.org/abs/cs/0703084>: Section V.A, Theorem 2 (part 1, the negative-cycle criterion, and parts 2 and 3) and the use of the Bellman–Ford algorithm, with the counterexample of Figure 6.
+- A. Miné, "The octagon abstract domain", *Proceedings of the Eighth Working Conference on Reverse Engineering (WCRE 2001)*, IEEE, 2001, pp. 310–319, doi:10.1109/WCRE.2001.957836, author copy <https://arxiv.org/abs/cs/0703084>: Section V.A, Theorem 2 (part 1, the negative-cycle criterion, and parts 2 and 3) and the use of the Bellman–Ford algorithm, with the counterexample of Figure 6.

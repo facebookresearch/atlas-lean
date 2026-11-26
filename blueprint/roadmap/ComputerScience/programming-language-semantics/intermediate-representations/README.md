@@ -4,7 +4,6 @@
 - [Dominators and loops](dominators-and-loops/README.md)
 - [Dominance frontiers](dominance-frontiers.md)
 - [Computing dominance frontiers bottom up](computing-dominance-frontiers-bottom-up.md)
-- [Dominance frontiers by walking up the dominator tree](dominance-frontiers-by-walking-up-the-dominator-tree.md)
 - [Iterated dominance frontiers are iterated joins](iterated-dominance-frontiers-are-iterated-joins.md)
 - [Control dependence](control-dependence.md)
 - [Control dependence from reverse dominance frontiers](control-dependence-from-reverse-dominance-frontiers.md)
