@@ -158,8 +158,8 @@ inductive Step (F : CNF) : State → State → Prop
   | decide {trail : List TrailEntry} {learned : CNF} {literal : Nat × Bool}
       (hvar : literal.1 ∈ F.vars) (hfree : ¬Assigns trail literal.1) :
       Step F ⟨trail, learned, none⟩ ⟨.decided literal :: trail, learned, none⟩
-  /-- Unit propagation: every literal of a current clause other than `literal` is false on the
-  trail, and the variable of `literal` is unassigned. -/
+  /-- Unit propagation: `literal ∈ clause` for a current clause, every literal of the clause other
+  than `literal` is false on the trail, and the variable of `literal` is unassigned. -/
   | propagate {trail : List TrailEntry} {learned : CNF} {clause : CNFClause}
       {literal : Nat × Bool} (hclause : clause ∈ F ++ learned) (hlit : literal ∈ clause)
       (hrest : ∀ m ∈ clause, m ≠ literal → Falsifies trail m)
@@ -181,11 +181,11 @@ inductive Step (F : CNF) : State → State → Prop
       {reason conflict : CNFClause} (hcompl : (literal.1, !literal.2) ∉ conflict) :
       Step F ⟨.propagated literal reason :: trail, learned, some conflict⟩
         ⟨trail, learned, some conflict⟩
-  /-- Backjump: learn the conflict clause, cut the trail back to a suffix `kept` on which every
-  literal of the clause other than `literal` is false and the variable of `literal` is
-  unassigned, and propagate `literal` with the learned clause as its reason. The conflict
-  clause comes from the input or learned clauses by `resolve` steps, so it is
-  resolution-derivable from the input (`Invariant.conflict`). -/
+  /-- Backjump: for `literal`, a literal of the conflict clause, learn the conflict clause, cut
+  the trail back to a suffix `kept` on which every literal of the clause other than `literal` is
+  false and the variable of `literal` is unassigned, and propagate `literal` with the learned
+  clause as its reason. The conflict clause comes from the input or learned clauses by `resolve`
+  steps, so it is resolution-derivable from the input (`Invariant.conflict`). -/
   | backjump {dropped kept : List TrailEntry} {learned : CNF} {conflict : CNFClause}
       {literal : Nat × Bool} (hlit : literal ∈ conflict)
       (hrest : ∀ m ∈ conflict, m ≠ literal → Falsifies kept m)

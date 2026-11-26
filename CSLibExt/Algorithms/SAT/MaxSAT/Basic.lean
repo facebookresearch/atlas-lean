@@ -607,9 +607,10 @@ private lemma exists_var_bound (φ : CNF) :
       omega
 
 open Classical in
-/-- MAX-SAT for canonical CNF formulas: if every clause of `φ` is nonempty,
-some assignment satisfies the clauses at no fewer than half of the positions of
-`φ`. A clause repeated in `φ` counts once per position. -/
+/-- MAX-SAT for CNF formulas: for any `φ : CNF` (a list of clauses of literals over variables
+in `ℕ`) with clause satisfaction `CNFClause.Satisfies` under assignments `ℕ → Bool`, if every
+clause of `φ` is nonempty, some assignment satisfies the clauses at no fewer than half of the
+positions of `φ`. A clause repeated in `φ` counts once per position. -/
 theorem cnf_max_sat_half (φ : CNF) (hφ : ∀ C ∈ φ, C ≠ []) :
     ∃ v : ℕ → Bool, (1 / 2 : ℝ) * φ.length ≤
       (((Finset.univ : Finset (Fin φ.length)).filter
@@ -631,10 +632,11 @@ theorem cnf_max_sat_half (φ : CNF) (hφ : ∀ C ∈ φ, C ≠ []) :
   exact hx
 
 open Classical in
-/-- MAX-E3SAT for canonical CNF formulas: if every clause of `φ` has three
-literals on three distinct variables, some assignment satisfies the clauses at
-no fewer than `7 / 8` of the positions of `φ`. A clause repeated in `φ` counts
-once per position. -/
+/-- MAX-E3SAT for CNF formulas: for any `φ : CNF` (a list of clauses of literals over variables
+in `ℕ`) with clause satisfaction `CNFClause.Satisfies` under assignments `ℕ → Bool`, if every
+clause of `φ` has three literals on three distinct variables, some assignment satisfies the
+clauses at no fewer than `7 / 8` of the positions of `φ`. A clause repeated in `φ` counts once
+per position. -/
 theorem cnf_max_e3sat_seven_eighths (φ : CNF)
     (hφ : ∀ C ∈ φ, C.length = 3 ∧ (C.map Prod.fst).Nodup) :
     ∃ v : ℕ → Bool, (7 / 8 : ℝ) * φ.length ≤
