@@ -72,3 +72,27 @@ example : ∃ P ∈ twoUnramifiedDegreeOnePrimes ℚ,
     exact (by decide : (4 : ZMod 8) ≠ 0) this
 
 end MetaMathlibExt.ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow
+
+namespace MetaMathlibExt
+
+-- An even parameter and a nonintegral x-coordinate with even numerator.
+example (y : ℚ) (h : (fruitWeierstrassCurve (0 : ℚ)).toAffine.Nonsingular (2 / 3) y) :
+    ¬ IsOfFinAddOrder (WeierstrassCurve.Affine.Point.some (2 / 3) y h) :=
+  fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num 0 (by decide) (2 / 3) y h
+    (by decide +kernel)
+
+-- An odd parameter and a negative even numerator in lowest terms.
+example (y : ℚ) (h : (fruitWeierstrassCurve (-1 : ℚ)).toAffine.Nonsingular (-4 / 5) y) :
+    ¬ IsOfFinAddOrder (WeierstrassCurve.Affine.Point.some (-4 / 5) y h) :=
+  fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num (-1) (by decide) (-4 / 5) y h
+    (by decide +kernel)
+
+-- The same curve family does have rational points with odd numerator.
+example : (fruitWeierstrassCurve (1 : ℚ)).toAffine.Nonsingular (101 / 16) (1225 / 64) ∧
+    ¬ 2 ∣ (101 / 16 : ℚ).num := by
+  constructor
+  · rw [WeierstrassCurve.Affine.nonsingular_iff', WeierstrassCurve.Affine.equation_iff]
+    norm_num [fruitWeierstrassCurve, WeierstrassCurve.toAffine]
+  · decide +kernel
+
+end MetaMathlibExt
