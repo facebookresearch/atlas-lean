@@ -12,15 +12,16 @@ public import MathlibExt.NumberTheory.GeneralizedSylvester
 import Mathlib.Data.Nat.ModEq
 
 /-!
-# Sylvester numbers modulo 36
+# Sylvester numbers modulo 36 and 1764
 
 Starting from `S₂ = 7`, the recurrence preserves the residue `7` modulo `36`
-because `7² - 7 + 1 = 43`.
+because `7² - 7 + 1 = 43`. Starting from `S₃ = 43`, it preserves the residue
+`43` modulo `1764` because `43² - 43 + 1 = 1807 = 1764 + 43`.
 
 ## References
 
 * Abderrahim Makki Naciri, *A Note on Sylvester's Sequence*, INTEGERS 24
-  (2024), Article A117, Proposition 1, congruence (6).
+  (2024), Article A117, Proposition 1, congruences (6) and (7).
   <https://math.colgate.edu/~integers/y117/y117.pdf>
 -/
 
@@ -52,5 +53,24 @@ theorem sylvester_modEq_seven_mod_thirty_six
         (Nat.ModEq.sub (Nat.le_self_pow two_ne_zero _) (by decide)
           (ih.pow 2) ih).add_right 1
       _ ≡ 7 [MOD 36] := by decide
+
+/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
+$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
+
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
+theorem sylvester_modEq_forty_three_mod_1764
+    (n : ℕ) (hn : 3 ≤ n) :
+    sylvesterNumber n % 1764 = 43 := by
+  change sylvesterNumber n ≡ 43 [MOD 1764]
+  induction n, hn using Nat.le_induction with
+  | base => decide
+  | succ n _ ih =>
+    calc
+      sylvesterNumber (n + 1) = sylvesterNumber n ^ 2 - sylvesterNumber n + 1 :=
+        Nat.generalizedSylvester_succ 1 n
+      _ ≡ 43 ^ 2 - 43 + 1 [MOD 1764] :=
+        (Nat.ModEq.sub (Nat.le_self_pow two_ne_zero _) (by decide)
+          (ih.pow 2) ih).add_right 1
+      _ ≡ 43 [MOD 1764] := by decide
 
 end MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
