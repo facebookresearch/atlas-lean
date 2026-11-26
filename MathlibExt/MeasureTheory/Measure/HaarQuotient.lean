@@ -107,8 +107,8 @@ private theorem sigmaFinite_of_isClosed (H : Subgroup G)
   infer_instance
 
 /-- For a nonnegative measurable function `f` on a locally compact second
-countable group `G`, integration over a closed subgroup `H` against a
-right-invariant Haar measure gives a measurable function on the quotient
+countable group `G`, integration over a closed subgroup `H` against a Haar
+measure that is also right-invariant gives a measurable function on the quotient
 `H \ G`, evaluated at the chosen representative `q.out`. -/
 public theorem measurable_lintegral_mul_out
     (H : Subgroup G) (hH : IsClosed (H : Set G))
