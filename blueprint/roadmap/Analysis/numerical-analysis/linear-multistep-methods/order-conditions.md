@@ -13,6 +13,7 @@ For example, the trapezium rule $y_{n+1} - y_n = \tfrac{h}{2}(f_{n+1} + f_n)$ ha
 ## Depends on
 
 - [Order of accuracy and error constants of a linear multistep method](order-of-accuracy-and-error-constants.md)
+- [Linear multistep method](linear-multistep-method.md)
 
 ## Sources
 

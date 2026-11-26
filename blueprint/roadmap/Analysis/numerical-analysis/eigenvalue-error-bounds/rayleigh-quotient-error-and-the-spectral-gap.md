@@ -6,6 +6,10 @@ $$|\tilde\lambda - \lambda| \le \frac{\|r\|_2^2}{\delta}.$$
 
 When $|\tilde\lambda - \lambda| < \delta$ this is the [Kato–Temple inequality](kato-temple-inequality.md) for the interval $(\tilde\lambda - \delta, \tilde\lambda + \delta)$, which then contains $\lambda$ and no other eigenvalue. When $|\tilde\lambda - \lambda| = \delta$ (two eigenvalues at the same distance), that interval contains no eigenvalue, and the [residual bound on an eigenvalue-free interval](rayleigh-quotient-residual-lemma.md) gives $\delta^2 \le \|r\|_2^2$, which is the claim.
 
+## Depends on
+
+- [Rayleigh form of an operator](../../../Analysis/operator-theory/eigenvalue-inequalities/courant-fischer-min-max-theorem/rayleigh-form.md)
+
 ## Proof depends on
 
 - [Kato–Temple inequality](kato-temple-inequality.md)

@@ -16,6 +16,10 @@ Here $\|G_J\|_\infty = \max_i \sum_{j \ne i} |a_{ij}|/|a_{ii}|$; the convergence
 
 - [Convergence of stationary iterations](convergence-of-stationary-iterations.md)
 
+## Related topics
+
+- [Jacobi convergence theorem](../../../LinearAlgebra/matrix-decompositions/jacobi-method/jacobi-iteration-converges.md)
+
 ## Sources
 
 - J. W. Demmel, Math 221 (Applied Numerical Linear Algebra), University of California, Berkeley, Fall 2024, typed notes of Lecture 12 (Splitting Methods, 12 November 2024), Theorem 1 (strict row diagonal dominance gives $\|R_{GS}\|_\infty \le \|R_J\|_\infty < 1$), referring for the full proof to J. W. Demmel, *Applied Numerical Linear Algebra*, SIAM, 1997, Theorem 6.2. <https://people.eecs.berkeley.edu/~demmel/ma221_Fall24/Lectures/Lecture_12.txt>

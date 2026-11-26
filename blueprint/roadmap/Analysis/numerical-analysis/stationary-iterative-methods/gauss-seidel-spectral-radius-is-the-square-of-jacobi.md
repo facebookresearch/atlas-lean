@@ -1,10 +1,10 @@
-# For two-cyclic matrices Gauss–Seidel converges twice as fast as Jacobi
+# For two-cyclic matrices the Gauss–Seidel spectral radius is the square of the Jacobi one
 
 Let $A = \begin{pmatrix} D_1 & A_{12} \\ A_{21} & D_2 \end{pmatrix}$ be an $n \times n$ matrix whose diagonal blocks $D_1$ and $D_2$ are nonsingular diagonal matrices, as for a matrix with Property A whose unknowns of the first colour are numbered before those of the second. Then the spectral radii of its [Gauss–Seidel and Jacobi iteration matrices](jacobi-and-gauss-seidel-iteration-matrices.md) satisfy
 
 $$\rho(G_{GS}) = \rho(G_J)^2.$$
 
-So when $\rho(G_J) < 1$, one Gauss–Seidel sweep reduces the error asymptotically as much as two Jacobi sweeps.
+So when $\rho(G_J) < 1$, both iterations converge and the asymptotic convergence rate of Gauss–Seidel, $-\log \rho(G_{GS})$, is twice that of Jacobi: one Gauss–Seidel sweep reduces the error asymptotically as much as two Jacobi sweeps. When $\rho(G_J) \ge 1$ neither converges.
 
 ## Depends on
 

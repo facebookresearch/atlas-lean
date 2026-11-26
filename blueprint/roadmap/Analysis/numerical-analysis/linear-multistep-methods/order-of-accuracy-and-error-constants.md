@@ -15,6 +15,7 @@ with $0^0 = 1$, so that $C_1 = \sum_j j\alpha_j - \sum_j \beta_j = \rho'(1) - \s
 ## Depends on
 
 - [Truncation error and consistency of a linear multistep method](truncation-error-and-consistency.md)
+- [Linear multistep method](linear-multistep-method.md)
 
 ## Sources
 

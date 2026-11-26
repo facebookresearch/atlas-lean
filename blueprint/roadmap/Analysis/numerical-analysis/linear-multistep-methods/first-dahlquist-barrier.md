@@ -8,6 +8,7 @@ Without the stability requirement the $2k + 1$ free coefficients of an implicit 
 
 - [Zero-stability](zero-stability.md)
 - [Order of accuracy and error constants of a linear multistep method](order-of-accuracy-and-error-constants.md)
+- [Linear multistep method](linear-multistep-method.md)
 
 ## Proof depends on
 

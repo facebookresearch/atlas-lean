@@ -7,6 +7,7 @@ An A-stable method applied to $y' = \lambda y$ with $\operatorname{Re} \lambda <
 ## Depends on
 
 - [Absolute stability of a linear multistep method](absolute-stability.md)
+- [Linear multistep method](../linear-multistep-method.md)
 
 ## Sources
 
