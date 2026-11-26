@@ -897,6 +897,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing", "article_id": "af_16ad33e0fae74766f1934edc"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
+{"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
 {"folder": "Combinatorics/not-yet-classified/arc-network", "to": "GraphTheory/matchings-and-flows/flows-on-arc-networks", "article_id": "af_ddea348a078a7c419f2266fb"}
 {"page": "Combinatorics/not-yet-classified/arc-network/is-arc-feasible-proportional-lift", "to": "GraphTheory/matchings-and-flows/flows-on-arc-networks/is-arc-feasible-proportional-lift", "article_id": "af_5ef473b3c5babeb013c8ca41"}
 {"page": "Combinatorics/not-yet-classified/arc-network/is-feasible-flow-aggregate", "to": "GraphTheory/matchings-and-flows/flows-on-arc-networks/is-feasible-flow-aggregate", "article_id": "af_bc1580ab711cc389e3ce7f0b"}
