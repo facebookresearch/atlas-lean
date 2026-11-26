@@ -13784,6 +13784,7 @@
   "MathlibExt/NumberTheory/RoundedQuotientThresholdCounts": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/RunLengthTransformLinearRecurrence": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomial coefficient sums modulo 2"},
   "MathlibExt/NumberTheory/SCullenNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Cullen numbers"},
+  "MathlibExt/NumberTheory/SDiophantineSystemFour": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
   "MathlibExt/NumberTheory/SZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerHarmonicMeanSqLeOfIsSZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerSixDvdOfIsSZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
