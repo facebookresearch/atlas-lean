@@ -1,6 +1,6 @@
 # Node service guarantees
 
-Refinements of the service curve: strict service curves and the nodes that offer them (variable capacity, non-preemptive priority, packet-by-packet GPS), the backlog bounds they improve, and maximum service curves with the output and minimum-delay bounds they give.
+Refinements of the service curve: strict service curves and the variable-capacity nodes that offer them, packet-by-packet GPS, and the backlog bounds that strict and super-additive service curves improve.
 
 - [Strict service curves](strict-service-curves.md)
 - [Strict service curves are service curves](strict-service-curves-are-service-curves.md)

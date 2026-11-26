@@ -6,7 +6,7 @@ $$
 H(x) = \sum_{s=1}^{S} u_s(x_s) - \sum_{l=1}^{L} g_l(f_l), \qquad f_l = \sum_{s} A_{l,s} x_s .
 $$
 
-[Proportional fairness](proportionally-fair-rate-allocations.md) is the case $u_s = \ln$ with $g_l(f) = 0$ for $f < c_l$ and $g_l(f) = +\infty$ for $f \ge c_l$, and weighted proportional fairness the case $u_s = w_s \ln$.
+[Proportional fairness](proportionally-fair-rate-allocations.md) is the case $u_s = \ln$ with $g_l(f) = 0$ for $f \le c_l$ and $g_l(f) = +\infty$ for $f > c_l$ (the source puts the boundary on the other side, which would give every Pareto-efficient allocation the value $-\infty$), and weighted proportional fairness the case $u_s = w_s \ln$.
 
 ## Depends on
 

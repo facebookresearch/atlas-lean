@@ -2,7 +2,7 @@
 
 Let $(f_m)_{m \in \mathbb R_+}$ be increasing, differentiable, strictly concave functions on $[0, \infty)$ such that $\lim_{m \to \infty} f_m'(x + \delta)/f_m'(x) = 0$ for all $x \ge 0$ and $\delta > 0$ (for example $f_m(x) = 1 - (1 + x)^{-m}$, for which the ratio is $((1 + x)/(1 + x + \delta))^{m+1}$), and let $x^m$ be the unique feasible allocation in the [network model](network-model-and-feasible-rate-allocations.md) maximizing $\sum_s f_m(x_s)$, every source using at least one link. If $x^*$ is an accumulation point of $(x^m)$, that is $x^* = \lim_n x^{m_n}$ for some sequence $m_n \to \infty$, then $x^*$ is the [max-min fair](max-min-fair-rate-allocations.md) allocation.
 
-**Proof idea.** Otherwise some source $i$ has no bottleneck under $x^*$; moving a small $\delta$ of rate to $i$ from larger sources $\sigma(l)$ on its saturated links stays feasible near $x^{m_n}$, and changes the objective by at least $\delta f'_{m_n}(x_i^* + 2\delta)\bigl(1 - M f'_{m_n}(x_i^* + 3\delta)/f'_{m_n}(x_i^* + 2\delta)\bigr) > 0$ for large $n$, contradicting optimality.
+**Proof idea.** Otherwise some source $i$ has no bottleneck under $x^*$; moving a small $\delta$ of rate to $i$ from larger sources $\sigma(l)$ on its saturated links stays feasible near $x^{m_n}$, and changes the objective by at least $\delta f'_{m_n}(x_i^* + 2\delta)\bigl(1 - M f'_{m_n}(x_i^* + 3\delta)/f'_{m_n}(x_i^* + 2\delta)\bigr) > 0$ for large $n$, where $M$ is the number of saturated links used by source $i$, contradicting optimality.
 
 ## Depends on
 
