@@ -22,7 +22,9 @@ We prove Reimer's inequality for arbitrary events and product probability weight
 Boolean cube. The proof uses the butterfly argument and partitions pairs of configurations by
 their common coordinates. The linear algebra adapts the archived proofs in
 `Atlas/StatisticalMechanics/Code/Walls/rbtbutterfly.lean` and
-`Atlas/StatisticalMechanics/Code/Walls/rb2butterflyclose.lean`.
+`Atlas/StatisticalMechanics/Code/Walls/rb2butterflyclose.lean`. The proof of the counting bound
+`|A □ B| ≤ |A ∩ flipCfg ⁻¹' B|` follows `Atlas/StatisticalMechanics/Code/Walls/rb3reimerclose.lean`
+in choosing complementary witnesses and using them to construct the butterfly body.
 
 ## Main statements
 

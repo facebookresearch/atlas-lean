@@ -14,8 +14,9 @@ public import MathlibExt.Probability.CorrelationInequalities.ReimerInequality
 /-!
 # Tests for `MathlibExt.Probability.CorrelationInequalities.Reimer`
 
-This module does not prove Reimer's inequality; it states it as the proposition
-`ReimerWprobCore` and proves consequences of it and the monotone special cases. Tested:
+These examples test the decreasing-event inequalities and use `reimer_wprob_core` to instantiate
+the reductions for Bernoulli product measures and arbitrary finite coordinate sets.
+
 * `bk_inequality_decreasing` and `bk_wprob_decreasing` for the decreasing events
   `closed0 = {ω | ¬ ω 0}` and `closed1 = {ω | ¬ ω 1}` on `ConfigSpace (Fin 2)` (both
   `IsDecreasing` hypotheses proved), under Bernoulli(`1/2`) and the uniform weight;
