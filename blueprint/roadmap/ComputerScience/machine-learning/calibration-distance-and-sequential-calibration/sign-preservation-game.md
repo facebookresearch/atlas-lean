@@ -1,6 +1,12 @@
 # The sign-preservation game
 
-The **sign-preservation game** of Qiao and Valiant is a two-player game abstracting online calibration. A state is a vector of integer counters indexed by a finite grid of forecast values; in each round the forecaster selects a grid value $v$ (possibly at random) and the adversary then increments or decrements the counter at $v$ by an amount corresponding to the calibration discrepancy $y - v$, and the forecaster is penalized when it selects a value whose counter has the "wrong" sign relative to the side of $v$ (so that predicting $v$ there would increase the calibration error). In the variant **with reuse** (SPR), the forecaster may additionally return to previously used values under specified rules. Game values of both versions translate into bounds on the minimax $\ell_1$ calibration error.
+The **sign-preservation game with reuse** (SPR) with parameters $n, s \in \mathbb{N}$ is played between Player-P (the pointer) and Player-L (the labeler) on $n$ cells numbered $1, \dots, n$, initially empty. The game lasts at most $s$ rounds. In each round:
+
+1. Player-P may terminate the game; otherwise it points at an empty cell $j \in [n]$.
+2. Knowing $j$, Player-L may remove any of the minus signs in cells to the left of $j$ and any of the plus signs in cells to the right of $j$.
+3. Player-L places a sign, $+$ or $-$, into cell $j$.
+
+Player-P maximizes, and Player-L minimizes, the number of signs remaining at the end; both may randomize, and $\mathrm{opt}(n, s)$ is the optimal expected number of remaining signs. The **sign-preservation game** of Qiao and Valiant is the special case in which Player-P points at each cell at most once and Player-L removes every sign it is allowed to remove. Upper bounds on the game value translate into forecasters with small $\ell_1$ calibration error, and lower bounds into lower bounds on the minimax $\ell_1$ calibration error.
 
 ## Depends on
 

@@ -6,7 +6,7 @@ $$
 \Big(\frac{1}{1 + \ln 2} + \delta\Big)\,\mu(G), \qquad \frac{1}{1 + \ln 2} \approx 0.5906,
 $$
 
-must use $n^{1 + \Omega(1/\log\log n)}$ bits of memory, which exceeds $n \log^{O(1)} n$. Together with the vertex-arrival barrier $1 - 1/e \approx 0.632$, this separates the edge-arrival and vertex-arrival semi-streaming models.
+must use $n^{1 + \Omega(1/\log\log n)}$ bits of memory, which exceeds $n \log^{O(1)} n$. Since a $(1 - 1/e)$-approximation ($1 - 1/e \approx 0.632$) is achievable, and optimal, under vertex arrivals in semi-streaming space, this separates the edge-arrival and vertex-arrival semi-streaming models.
 
 ## Proof sketch
 
@@ -16,12 +16,12 @@ Online preemptive lower bounds string together several copies of a Karp–Vazira
 
 - [Approximate maximum matching and vertex cover in a graph stream](approximate-matching-in-graph-streams.md)
 - [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](semi-streaming-graph-model.md)
+- [No single-pass semi-streaming algorithm beats 1 - 1/e for bipartite matching under vertex arrivals](one-minus-inverse-e-barrier-for-streaming-matching.md)
 
 ## Proof depends on
 
 - [Ruzsa-Szemerédi graphs: edge sets partitioned into large induced matchings](ruzsa-szemeredi-graphs.md)
 - [Dense bipartite Ruzsa-Szemerédi graphs from Behrend's progression-free sets](ruzsa-szemeredi-graphs-from-behrend-sets.md)
-- [No single-pass semi-streaming algorithm beats 1 - 1/e for bipartite matching under vertex arrivals](one-minus-inverse-e-barrier-for-streaming-matching.md)
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Proper learners attain the optimal PAC rate exactly when the dual Helly number is bounded
 
-Under general closure conditions on $H$ (stated by Bousquet, Hanneke, Moran and Zhivotovskiy), there exists a proper learner for $H$ — one that always outputs a concept of $H$ — with sample complexity $O\big((d + \log(1/\delta))/\varepsilon\big)$ for VC dimension $d$ if and only if the dual Helly number of $H$ is finite. Classes with infinite dual Helly number require, for every proper learner, an extra $\log(1/\varepsilon)$ factor in the joint dependence on $\varepsilon$ and $\delta$.
+If the dual Helly number of $H$ is finite, there exists a proper learner for $H$ (one that always outputs a concept of $H$) with sample complexity $O\big((d + \log(1/\delta))/\varepsilon\big)$ for VC dimension $d$, the constant depending on the dual Helly number. Conversely, if $H$ is closed, that is, every set of labelled examples consistent with no concept of $H$ has a finite subset consistent with no concept of $H$, and its dual Helly number is infinite, then every proper learner for $H$ needs an extra $\log(1/\varepsilon)$ factor in the joint dependence on $\varepsilon$ and $\delta$. So for closed classes a proper learner attains the optimal rate if and only if the dual Helly number is finite.
 
 ## Proof sketch
 

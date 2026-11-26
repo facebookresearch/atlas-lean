@@ -12,7 +12,7 @@ $$
 T \le c\cdot\min\Big\{ \exp\big(c'\varepsilon^{-1/6}\big),\; \frac{N}{\log^{12}(N)\,\varepsilon^2} \Big\},
 $$
 
-there is an oblivious adversary with losses in $\{f \in [0,1]^N : \|f\|_1 \le 1\}$ forcing expected distributional swap regret at least $\varepsilon$; equivalently, swap regret $\tilde\Omega\big(\min(1, \sqrt{N/T})\big)$ is unavoidable in that range. (ii) There is an oblivious adversary such that every algorithm has expected (unnormalized) swap regret $\Omega\big(\min\{T/\log T,\; \sqrt{N^{1-o(1)}T}\}\big)$ over $T$ rounds. Hence the number of rounds must be exponential in $1/\varepsilon$ (unless it is nearly linear in $N$), matching the upper bounds.
+there is an oblivious adversary with losses in $\{f \in [0,1]^N : \|f\|_1 \le 1\}$ forcing expected distributional swap regret at least $\varepsilon$; equivalently, swap regret $\tilde\Omega\big(\min(1, \sqrt{N/T})\big)$ is unavoidable in that range. (ii) There is an oblivious adversary such that every algorithm has expected (unnormalized) swap regret $\Omega\big(\min\{T/\log T,\; \sqrt{N^{1-o(1)}T}\}\big)$ over $T$ rounds. Hence the number of rounds must be exponential in a power of $1/\varepsilon$, at least $\exp(\Omega(\varepsilon^{-1/6}))$ (unless it is nearly linear in $N$), qualitatively matching the $(\log(N)/\varepsilon^2)^{O(1/\varepsilon)}$ upper bounds.
 
 ## Proof sketch
 

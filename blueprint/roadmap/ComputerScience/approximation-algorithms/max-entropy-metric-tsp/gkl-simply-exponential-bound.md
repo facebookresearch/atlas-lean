@@ -6,7 +6,7 @@ $$
 \big|\mathbb{E}_\mu[A_I]-\kappa_I\big| \le 1-\epsilon \qquad \text{for all}\ I \subseteq [n],
 $$
 
-then
+where $A_I=\sum_{i \in I}A_i$ and $\kappa_I=\sum_{i \in I}\kappa_i$, then
 
 $$
 \mathbb{P}_\mu[A_1=\kappa_1,\dots,A_n=\kappa_n] \ge \epsilon^{n}\prod_{i:\,\kappa_i > 0}\frac{1}{e\sqrt{\kappa_i}} .

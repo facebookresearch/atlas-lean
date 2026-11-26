@@ -1,6 +1,6 @@
 # The list replicability number of the d-dimensional cube is d and dominates the VC dimension
 
-For every $d \in \mathbb{N}$ the class $\{\pm1\}^d$ of all functions on a $d$-point domain has list replicability number exactly $d$. Consequently $\mathrm{LR}(H) \ge \mathrm{VC}(H)$ for every class $H$, and for every $\rho_0 > 0$ there is a finite class with $0 < \rho(H) < \rho_0$. Since every finite class is $0.99$-replicable with shared randomness, it follows that replicable learners for such classes cannot be derandomized: for deterministic learners replicability and global stability coincide.
+For every $d \in \mathbb{N}$ the class $\{\pm1\}^d$ of all functions on a $d$-point domain has list replicability number exactly $d$. Consequently $\mathrm{LR}(H) \ge \mathrm{VC}(H)$ for every class $H$, and for every $\rho_0 > 0$ there is a finite class with $0 < \rho(H) < \rho_0$. Since every finite class has, for every $\rho > 0$, a $\rho$-replicable learner (agreement probability at least $1-\rho$) that uses shared randomness, it follows that replicable learners for such classes cannot be derandomized: for deterministic learners replicability and global stability coincide.
 
 ## Proof sketch
 

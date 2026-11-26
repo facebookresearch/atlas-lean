@@ -1,6 +1,6 @@
 # Large girth does not improve matroid prophet ratios
 
-For every $k$ there exist a matroid of girth at least $k$ (every circuit has at least $k$ elements) and a prophet inequality instance on it whose optimal competitive ratio is exactly $\frac12$. Hence, unlike for uniform matroids, forbidding small circuits does not allow ratios approaching $1$.
+For every $k$ there exists a matroid of girth at least $k$ (every circuit has at least $k$ elements) whose matroid prophet ratio is $\frac12$: for every $\varepsilon > 0$ some prophet inequality instance on it admits no online policy with ratio above $\frac12 + \varepsilon$. Hence, unlike for uniform matroids, forbidding small circuits does not allow ratios approaching $1$.
 
 ## Proof sketch
 

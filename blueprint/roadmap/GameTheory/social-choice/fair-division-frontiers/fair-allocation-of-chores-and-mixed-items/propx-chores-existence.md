@@ -1,6 +1,6 @@
 # Proportional up to any chore allocations always exist
 
-Let $n$ agents have additive costs $c_i(e) \ge 0$ on a finite set of chores $M$. A complete allocation $X$ is PROPX if for every agent $i$ and every chore $e \in X_i$, $c_i(X_i \setminus \{e\}) \le c_i(M)/n$. For every such instance a PROPX allocation exists and can be computed in polynomial time. In contrast, for goods the analogous notion (each agent's value plus any single unallocated-to-her good reaching $v_i(M)/n$) can fail to be satisfiable.
+Let $n$ agents have additive costs $c_i(e) \ge 0$ on a finite set of chores $M$. A complete allocation $X$ is PROPX if for every agent $i$ and every chore $e \in X_i$, $c_i(X_i \setminus \{e\}) \le c_i(M)/n$. For every such instance a PROPX allocation exists and can be computed in polynomial time. In contrast, for goods with additive values $v_i$ the corresponding notion, $v_i(X_i \cup \{g\}) \ge v_i(M)/n$ for every agent $i$ and every good $g \notin X_i$, can fail to be satisfiable.
 
 ## Proof sketch
 

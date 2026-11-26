@@ -1,6 +1,6 @@
 # Tall-cache assumptions
 
-In the $(Z, L)$ ideal-cache model, a *tall-cache assumption of strength $\varepsilon > 0$* is the hypothesis $Z \ge c\, L^{1+\varepsilon}$ for a constant $c > 0$, i.e. the cache holds many more lines than a line holds words. The *standard tall-cache assumption* is the case $\varepsilon = 1$, $Z = \Omega(L^2)$. A cache-oblivious algorithm is analyzed for all $Z, L$ satisfying the assumption simultaneously, without knowing them.
+In the $(Z, L)$ ideal-cache model, a *tall-cache assumption of strength $\varepsilon > 0$* is the hypothesis $Z \ge c\, L^{1+\varepsilon}$ for a constant $c > 0$, i.e. the cache holds at least $c\,L^{\varepsilon}$ lines. The *standard tall-cache assumption* is the case $\varepsilon = 1$, $Z = \Omega(L^2)$. A cache-oblivious algorithm is analyzed for all $Z, L$ satisfying the assumption simultaneously, without knowing them.
 
 ## Depends on
 

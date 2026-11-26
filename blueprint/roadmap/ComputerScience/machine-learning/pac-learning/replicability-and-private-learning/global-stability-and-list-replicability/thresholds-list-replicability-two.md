@@ -1,6 +1,6 @@
 # Thresholds have list replicability number two despite large Littlestone dimension
 
-For every integer $d \ge 2$, the class of thresholds over $2^d$ points has Littlestone dimension $d$ and list replicability number exactly $2$. More generally, the **proper** list replicability number satisfies $\mathrm{LR}_{\mathrm{p}}(H) \ge \mathrm{HS}(H) - 1$, where $\mathrm{HS}$ is the hollow star number; for $s > 1$ the class of $s$ singletons has hollow star number $s$ and proper list replicability number exactly $s - 1$, while its (improper) list replicability number is $2$, separating proper from improper list replicability.
+For every integer $d \ge 2$, the class of thresholds over $2^d$ points has Littlestone dimension $d$ and list replicability number exactly $2$. More generally, the **proper** list replicability number satisfies $\mathrm{LR}_{\mathrm{p}}(H) \ge \mathrm{HS}(H) - 1$, where $\mathrm{HS}$ is the hollow star number; for $s \ge 3$ the class of $s$ singletons has hollow star number $s$ and proper list replicability number exactly $s - 1$, while its (improper) list replicability number is $2$; for $s \ge 4$ this separates proper from improper list replicability.
 
 ## Proof sketch
 

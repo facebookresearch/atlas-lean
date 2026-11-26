@@ -1,6 +1,6 @@
 # Envy graph and most envious agent of a partial allocation
 
-For a partial allocation $X$ with monotone valuations, the envy graph $E_X$ is the directed graph on the agents with an arc $i \to j$ whenever $v_i(X_j) > v_i(X_i)$. For a set $S$ of goods, an agent $i$ is a most envious agent of $S$ if $v_i(X_i) < v_i(S)$ and, writing $Z_i \subseteq S$ for an inclusion-minimal subset of $S$ with $v_i(Z_i) > v_i(X_i)$, there is no agent $k$ and proper subset $Z' \subsetneq Z_i$ with $v_k(Z') > v_k(X_k)$. An agent $j$ champions a good $g \in P$ with respect to agent $i$ if $j$ is a most envious agent of $X_i \cup \{g\}$.
+For a partial allocation $X$ with monotone valuations, the envy graph $E_X$ is the directed graph on the agents with an arc $i \to j$ whenever $v_i(X_j) > v_i(X_i)$. For a set $S$ of goods that some agent envies, let $\kappa_X(S)$ be the smallest size of a subset $Z \subseteq S$ such that $v_k(Z) > v_k(X_k)$ for some agent $k$; agent $i$ is a most envious agent of $S$ if some $Z \subseteq S$ with $\lvert Z \rvert = \kappa_X(S)$ satisfies $v_i(Z) > v_i(X_i)$. For the set $P$ of unallocated goods, an agent $j$ champions a good $g \in P$ with respect to agent $i$ if $j$ is a most envious agent of $X_i \cup \{g\}$.
 
 ## Depends on
 

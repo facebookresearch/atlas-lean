@@ -1,6 +1,6 @@
 # Maximal matching and MIS require Omega(min(Delta, log n / log log n)) deterministic rounds
 
-Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. Maximal matchings and maximal independent sets cannot be computed in $o\bigl(\Delta + \log\log n / \log\log\log n\bigr)$ rounds by any randomized LOCAL algorithm, nor in $o\bigl(\Delta + \log n / \log\log n\bigr)$ rounds by any deterministic LOCAL algorithm. Since both problems can be solved in $O(\Delta + \log^* n)$ rounds, the dependence on $\Delta$ is optimal.
+Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. Maximal matchings and maximal independent sets cannot be computed in $o\bigl(\min\{\Delta, \log\log n / \log\log\log n\}\bigr)$ rounds by any randomized LOCAL algorithm, nor in $o\bigl(\min\{\Delta, \log n / \log\log n\}\bigr)$ rounds by any deterministic LOCAL algorithm. Since both problems can be solved in $O(\Delta + \log^* n)$ rounds, the dependence on $\Delta$ is optimal.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Optimal post-processing is the identity for proper losses and a threshold for cost-sensitive losses
 
-Let $\ell$ be a loss and $k_\ell(v) \in \arg\min_t \mathbb{E}_{y \sim \mathrm{Ber}(v)}[\ell(t, y)]$ its optimal action for forecast $v$. If $\ell$ is a proper loss (a proper scoring rule, such as squared loss or log loss), then $k_\ell(v) = v$ is optimal; for the cost-sensitive classification loss $\ell(t,y) = c\,\mathbf{1}[t = 1, y = 0] + (1-c)\,\mathbf{1}[t = 0, y = 1]$ with $c \in (0,1)$, the optimal action is the threshold rule $k_\ell(v) = \mathbf{1}[v \ge c]$; and for convex losses $k_\ell$ is a nondecreasing function of $v$. In all cases $k_\ell$ is univariate and data-independent, which is what allows a single omnipredictor to serve every loss.
+Let $\ell$ be a loss and $k_\ell(v) \in \arg\min_t \mathbb{E}_{y \sim \mathrm{Ber}(v)}[\ell(t, y)]$ its optimal action for forecast $v$. If $\ell$ is a proper loss (a proper scoring rule, such as squared loss or log loss), then $k_\ell(v) = v$ is optimal; for the cost-sensitive classification loss $\ell(t,y) = c\,\mathbf{1}[t = 1, y = 0] + (1-c)\,\mathbf{1}[t = 0, y = 1]$ with $c \in (0,1)$, the optimal action is the threshold rule $k_\ell(v) = \mathbf{1}[v \ge c]$; and for convex losses with $\ell(t,1)-\ell(t,0)$ nonincreasing in $t$, $k_\ell$ can be chosen nondecreasing in $v$. In all cases $k_\ell$ is univariate and data-independent, which is what allows a single omnipredictor to serve every loss.
 
 ## Proof sketch
 

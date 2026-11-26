@@ -1,12 +1,12 @@
 # Graph matrices and their norm bounds
 
-Let $G$ be a random graph on $[n]$ with edge indicators $\chi_e(G) \in \{\pm 1\}$. A **shape** $\alpha$ is a small graph with two distinguished ordered vertex tuples $U_\alpha, V_\alpha$. The **graph matrix** $M_\alpha$ has rows and columns indexed by tuples of distinct vertices of $[n]$ of sizes $|U_\alpha|$ and $|V_\alpha|$, with
+Let $G \sim G(n, 1/2)$ be a random graph on $[n]$, so that the edge indicators $\chi_e(G) \in \{\pm 1\}$ are independent and uniform. A **shape** $\alpha$ is a small graph with two distinguished ordered vertex tuples $U_\alpha, V_\alpha$. The **graph matrix** $M_\alpha$ has rows and columns indexed by tuples of distinct vertices of $[n]$ of sizes $|U_\alpha|$ and $|V_\alpha|$, with
 
 $$
 M_\alpha(I, J) = \sum_{\sigma} \prod_{e \in E(\alpha)} \chi_{\sigma(e)}(G),
 $$
 
-summed over injective embeddings $\sigma$ of the vertices of $\alpha$ into $[n]$ mapping $U_\alpha$ to $I$ and $V_\alpha$ to $J$. With high probability $\|M_\alpha\| \le \widetilde{O}\bigl(n^{(|V(\alpha)| - |S_{\min}|)/2}\bigr)$, where $S_{\min}$ is a minimum-size vertex separator of $U_\alpha$ and $V_\alpha$ in $\alpha$.
+summed over injective embeddings $\sigma$ of the vertices of $\alpha$ into $[n]$ mapping $U_\alpha$ to $I$ and $V_\alpha$ to $J$. With high probability $\|M_\alpha\| \le \widetilde{O}\bigl(n^{(|V(\alpha)| - |S_{\min}| + |I_\alpha|)/2}\bigr)$, where $S_{\min}$ is a minimum-size vertex separator of $U_\alpha$ and $V_\alpha$ in $\alpha$ and $I_\alpha$ is the set of isolated vertices of $\alpha$ outside $U_\alpha \cup V_\alpha$.
 
 ## Sources
 

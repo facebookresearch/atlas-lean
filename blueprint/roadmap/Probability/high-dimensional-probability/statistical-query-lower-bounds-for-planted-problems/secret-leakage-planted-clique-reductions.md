@@ -6,10 +6,6 @@ Assume the $k$-partite hypergraph variant of the planted clique conjecture: dete
 
 Leaked partial information about the clique (its partition structure) enables reductions that rotate and recombine the adjacency matrix: Gaussian cloning and rejection kernels transform Bernoulli entries into approximately Gaussian ones, random rotations via combinatorial designs spread the planted structure into the target signal shape, and the leaked partition guarantees that the transformed planted distribution is close in total variation to the target problem's planted distribution while the null maps close to the target null.
 
-## Depends on
-
-- [Hardness of the planted clique problem](../../../TheoryOfComputation/randomized-and-quantum-complexity/hardness-of-the-planted-clique-problem.md)
-
 ## Proof depends on
 
 - [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)

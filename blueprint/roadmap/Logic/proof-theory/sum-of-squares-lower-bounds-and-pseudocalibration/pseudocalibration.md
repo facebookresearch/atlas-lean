@@ -6,7 +6,7 @@ $$
 \tilde{\mathbb{E}}_G[x^S] = \sum_{\substack{T \subseteq \binom{[n]}{2} \\ |T| \le \tau}} \mathbb{E}_{(G', x) \sim \mu}\bigl[x^{S} \chi_T(G')\bigr]\, \chi_T(G),
 $$
 
-where $\chi_T$ are the Fourier characters of $\nu$. It is the low-degree projection of the planted posterior moments, so that $\mathbb{E}_{G \sim \nu}\,\tilde{\mathbb{E}}_G[x^S \cdot f(G)] = \mathbb{E}_{\mu}[x^S f(G)]$ for every low-degree test function $f$.
+where $\chi_T$ are the Fourier characters of $\nu$. It is the low-degree projection of the planted posterior moments, so that $\mathbb{E}_{G \sim \nu}\big[\tilde{\mathbb{E}}_G[x^S]\, f(G)\big] = \mathbb{E}_{(G,x) \sim \mu}[x^S f(G)]$ for every function $f$ of the graph in the span of the characters $\chi_T$ with $|T| \le \tau$.
 
 ## Depends on
 

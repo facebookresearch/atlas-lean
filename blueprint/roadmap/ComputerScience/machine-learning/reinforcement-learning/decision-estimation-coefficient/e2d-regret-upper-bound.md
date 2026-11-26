@@ -9,10 +9,8 @@ $$
 where the supremum ranges over the possible oracle outputs. For a finite model class, an online estimator based on exponential weights with the log loss (tempered aggregation) achieves $\mathbb{E}[\mathrm{Est}_H] \le O(\log|\mathcal{M}|)$ with proper or convex-hull estimates, so that
 
 $$
-\mathbb{E}[\mathrm{Reg}_T] \le O\Big(\inf_{\gamma > 0}\big\{T\cdot\mathrm{dec}_\gamma(\mathrm{co}(\mathcal{M})) + \gamma\log|\mathcal{M}|\big\}\Big),
+\mathbb{E}[\mathrm{Reg}_T] \le O\Big(\inf_{\gamma > 0}\big\{T\cdot\mathrm{dec}_\gamma(\mathrm{co}(\mathcal{M})) + \gamma\log|\mathcal{M}|\big\}\Big).
 $$
-
-and similar bounds hold with covering numbers for infinite classes.
 
 ## Proof sketch
 

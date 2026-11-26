@@ -11,4 +11,4 @@
 - [Polylogarithmic-time deterministic network decomposition](polylogarithmic-deterministic-network-decomposition.md)
 - [Faster deterministic network decomposition in O(log^5 n) rounds](faster-deterministic-network-decomposition.md)
 - [Deterministic ruling sets and hitting sets in polylogarithmic time](deterministic-ruling-sets-hitting-sets.md)
-- [Near-optimal deterministic network decomposition in about log^2 n rounds](near-optimal-deterministic-network-decomposition.md)
+- [Near-optimal deterministic network decomposition in $\tilde O(\log^2 n)$ rounds](near-optimal-deterministic-network-decomposition.md)

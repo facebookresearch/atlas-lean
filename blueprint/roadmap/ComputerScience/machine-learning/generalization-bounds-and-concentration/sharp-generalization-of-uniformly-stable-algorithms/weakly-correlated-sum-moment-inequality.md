@@ -1,6 +1,6 @@
 # Moment inequality for sums of weakly correlated functions
 
-Let $Z = (Z_1, \dots, Z_n)$ be independent random variables and $g_1, \dots, g_n : \mathcal{Z}^n \to \mathbb{R}$ functions such that for every $i$: $\mathbb{E}[g_i(Z) \mid Z_i] \le M$ almost surely, $\mathbb{E}[g_i(Z) \mid Z_{[n] \setminus \{i\}}] = 0$ almost surely, and $g_i$ has bounded differences $\beta$ with respect to every coordinate other than the $i$-th. Then for every $p \ge 2$
+Let $Z = (Z_1, \dots, Z_n)$ be independent random variables and $g_1, \dots, g_n : \mathcal{Z}^n \to \mathbb{R}$ functions such that for every $i$: $|\mathbb{E}[g_i(Z) \mid Z_i]| \le M$ almost surely, $\mathbb{E}[g_i(Z) \mid Z_{[n] \setminus \{i\}}] = 0$ almost surely, and $g_i$ has bounded differences $\beta$ with respect to every coordinate other than the $i$-th. Then for every $p \ge 2$
 
 $$
 \Big\| \sum_{i=1}^n g_i(Z) \Big\|_p \le 12\sqrt{2}\, p\, n \beta \lceil \log_2 n \rceil + 4 M \sqrt{p n},

@@ -1,6 +1,6 @@
 # First welfare theorem: price-supported allocations are fractionally Pareto optimal
 
-Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. If an integral allocation $X$ is supported by a price vector $p > 0$ in the maximum bang-per-buck sense, then $X$ is fractionally Pareto optimal. Conversely, every fPO allocation is supported by some positive price vector.
+Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. Assume every agent values some good positively and every good is valued positively by some agent. If an integral allocation $X$ is supported by a price vector $p > 0$ in the maximum bang-per-buck sense, then $X$ is fractionally Pareto optimal. Conversely, every fPO allocation is supported by some positive price vector.
 
 ## Proof sketch
 

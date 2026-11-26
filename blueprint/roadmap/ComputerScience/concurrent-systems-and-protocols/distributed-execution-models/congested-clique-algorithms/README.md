@@ -1,6 +1,6 @@
 # Congested Clique Algorithms and Lower Bounds
 
-- [MST and verification require roughly sqrt(n) + D rounds in CONGEST](congest-mst-sqrt-n-lower-bound.md)
+- [MST and verification require $\tilde\Omega(\sqrt{n} + D)$ rounds in CONGEST](congest-mst-sqrt-n-lower-bound.md)
 - [The congested clique model](the-congested-clique-model.md)
 - [Lenzen's deterministic constant-round routing and sorting in the congested clique](congested-clique-constant-round-routing.md)
 - [Deterministic constant-round (Delta+1)-colouring in the congested clique](congested-clique-deterministic-colouring.md)

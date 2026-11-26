@@ -1,6 +1,6 @@
 # Deterministic O(sqrt n) worst-case dynamic minimum spanning forest via sparsification
 
-Fully dynamic minimum spanning forest on an $n$-vertex graph with $m$ edges admits a deterministic data structure with $O(\sqrt{m})$ worst-case update time (Frederickson, using topology trees), and, by the sparsification technique of Eppstein, Galil, Italiano and Nissenzweig, a deterministic data structure with $O(\sqrt{n})$ worst-case update time. For more than three decades these were the best worst-case bounds for dynamic connectivity and MSF that hold against adaptive adversaries.
+Fully dynamic minimum spanning forest on an $n$-vertex graph with $m$ edges admits a deterministic data structure with $O(\sqrt{m})$ worst-case update time (Frederickson, using topology trees), and, by the sparsification technique of Eppstein, Galil, Italiano and Nissenzweig, a deterministic data structure with $O(\sqrt{n})$ worst-case update time. For about 25 years, until 2017, these were the best worst-case bounds for dynamic connectivity and MSF that hold against adaptive adversaries.
 
 ## Proof sketch
 

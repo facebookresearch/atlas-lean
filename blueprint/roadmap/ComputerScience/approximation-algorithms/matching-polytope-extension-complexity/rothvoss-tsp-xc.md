@@ -3,7 +3,7 @@
 Let $P_{\mathrm{TSP}}(n) \subseteq \mathbb{R}^{\binom{n}{2}}$ be the convex hull of the indicator vectors of Hamiltonian cycles of $K_n$. There is an absolute constant $c > 0$ with
 
 $$
-\mathrm{xc}(P_{\mathrm{TSP}}(n)) \ge 2^{cn} \qquad \text{for all}\ n \ge 3,
+\mathrm{xc}(P_{\mathrm{TSP}}(n)) \ge 2^{cn} \qquad \text{for all}\ n \ge 4,
 $$
 
 improving the earlier $2^{\Omega(\sqrt{n})}$ bound of Fiorini, Massar, Pokutta, Tiwary and de Wolf; the bound is tight up to the constant in the exponent.

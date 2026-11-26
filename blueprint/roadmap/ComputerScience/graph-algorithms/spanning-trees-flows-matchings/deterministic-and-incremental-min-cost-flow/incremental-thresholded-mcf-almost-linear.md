@@ -1,6 +1,6 @@
 # Incremental thresholded minimum-cost flow in almost-linear total time
 
-There is a deterministic algorithm that, given an incremental directed graph $G = (V, E, \mathbf{u}, \mathbf{c})$ with capacities in $[1, U]$ and costs in $[-C, C]$ where $U, C \le m^{O(1)}$ and $m$ bounds the final number of edges, a demand $\mathbf{d}$ and a threshold $F \ge 0$, reports a flow of cost at most $F$ at the first insertion after which such a flow is feasible. The total running time over all insertions is
+There is a deterministic algorithm that, given an incremental directed graph $G = (V, E, \mathbf{u}, \mathbf{c})$ with capacities in $[1, U]$ and costs in $[-C, C]$ where $U, C \le m^{O(1)}$ and $m$ bounds the final number of edges, a demand $\mathbf{d}$ and a threshold $F \in \mathbb{Z}$, reports a flow of cost at most $F$ at the first insertion after which such a flow is feasible. The total running time over all insertions is
 
 $$
 m\cdot\exp\bigl(O(\log^{167/168} m\log\log m)\bigr).

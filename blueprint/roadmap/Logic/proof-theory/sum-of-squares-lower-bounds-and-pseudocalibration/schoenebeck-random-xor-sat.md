@@ -1,6 +1,6 @@
 # Grigoriev–Schoenebeck: linear-degree SoS lower bounds for random 3-XOR and 3-SAT
 
-For every constant $\Delta$ and every $\varepsilon > 0$ there is $c = c(\Delta, \varepsilon) > 0$ such that, with high probability, a random $3$-XOR instance (respectively random $3$-SAT instance) with $n$ variables and $\Delta n$ constraints has optimum at most $\frac{1}{2} + \varepsilon$ (respectively $\frac{7}{8} + \varepsilon$), but the degree-$c n$ sum-of-squares relaxation assigns it value $1$: there is a degree-$cn$ pseudo-expectation satisfying all constraints exactly.
+For every $\varepsilon > 0$ there is $\Delta_0(\varepsilon)$ such that for every constant $\Delta \ge \Delta_0(\varepsilon)$ there is $c = c(\Delta) > 0$ such that, with high probability, a random $3$-XOR instance (respectively random $3$-SAT instance) with $n$ variables and $\Delta n$ constraints has optimum at most $\frac{1}{2} + \varepsilon$ (respectively $\frac{7}{8} + \varepsilon$), but the degree-$c n$ sum-of-squares relaxation assigns it value $1$: there is a degree-$cn$ pseudo-expectation satisfying all constraints exactly.
 
 ## Proof sketch
 

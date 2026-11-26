@@ -6,7 +6,7 @@ $$
 \tilde O\!\left(\frac{1}{\rho^2 \varepsilon^2 (v - \varepsilon)^2}\right)
 $$
 
-samples, independent of $|X|$. In contrast, every statistical query algorithm for the heavy-hitters problem needs $\Omega(\log |X| / \log(1/\tau))$ queries, so replicable algorithms are strictly more powerful than statistical query algorithms.
+samples, independent of $|X|$. In contrast, every statistical query algorithm for the heavy-hitters problem that uses queries of tolerance $\tau$ needs $\Omega(\log |X| / \log(1/\tau))$ queries, so replicable algorithms are strictly more powerful than statistical query algorithms.
 
 ## Proof sketch
 

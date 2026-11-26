@@ -3,10 +3,10 @@
 For a sequence $z = (z^t)_{t \ge 1}$ in a normed space, define the finite difference $(\Delta z)^t = z^{t+1} - z^t$ and $\Delta^h = \Delta \circ \Delta^{h - 1}$. If all players of a finite game with losses in $[0, 1]$ run Optimistic Hedge with step size $\eta \le c/(m H)$ for a sufficiently small absolute constant $c > 0$ and an integer $H \ge 1$, then for every player $i$ and every $1 \le h \le H$, the loss vectors satisfy
 
 $$
-\bigl\lVert (\Delta^h \ell_i)^t \bigr\rVert_\infty \le \eta^{h}\, h^{O(h)} \quad \text{for all } t,
+\bigl\lVert (\Delta^h \ell_i)^t \bigr\rVert_\infty \le (m\eta)^{h}\, h^{O(h)} \quad \text{for all } t,
 $$
 
-so loss sequences in Optimistic Hedge dynamics vary like analytic functions of time on a scale of $1/\eta$.
+so loss sequences in Optimistic Hedge dynamics vary like analytic functions of time on a scale of $1/(m\eta)$.
 
 ## Proof sketch
 

@@ -6,8 +6,6 @@ $$
 \mu(G) \le 2c\Bigl(1 + \frac{1}{d}\Bigr) \mu(H).
 $$
 
-For a randomized $(c, d, \varepsilon)$-kernel the analogous bound holds for $\mathbb{E}[\mu(H)]$, with an additional factor depending only on $\varepsilon$.
-
 ## Proof sketch
 
 Fix a maximum matching $M^\ast$ of $G$ and build a fractional matching of $H$: give every edge of $H$ value $1/d$, and additionally route $M^\ast$-edges missing from $H$ to the high-degree endpoint guaranteed by the kernel property. Degree bounds keep the vector feasible up to a $(1 + 1/d)$ factor, and its value is at least $\mu(G)/(2c)$ because each missing $M^\ast$-edge has an endpoint of $H$-degree at least $d/c$. Rounding within $H$ costs at most the fractional integrality factor, which an edge-colouring argument controls, giving the stated ratio.

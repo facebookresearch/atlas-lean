@@ -1,6 +1,6 @@
-# MST and verification require roughly sqrt(n) + D rounds in CONGEST
+# MST and verification require $\tilde\Omega(\sqrt{n} + D)$ rounds in CONGEST
 
-In the CONGEST model on $n$-vertex networks of diameter $D$, computing a minimum spanning tree requires $\Omega\bigl(\sqrt{n}/\log n + D\bigr)$ rounds for some networks even when $D = O(\log n)$, and the same lower bound (up to polylogarithmic factors) holds for randomized algorithms and for many verification problems such as checking whether a given subgraph is a spanning tree, connected, or a cut, and for $\alpha$-approximating MST weight for any polynomially bounded $\alpha$. These bounds are tight up to polylogarithmic factors, since MST can be computed in $\tilde O(\sqrt n + D)$ rounds, while in the congested clique MST takes $O(1)$ rounds.
+In the CONGEST model on $n$-vertex networks of diameter $D$, computing a minimum spanning tree requires $\Omega\bigl(\sqrt{n}/\log n + D\bigr)$ rounds for some networks even when $D = O(\log n)$, and the same lower bound (up to polylogarithmic factors) holds for randomized algorithms and for verification problems including checking whether a given subgraph is a spanning tree, connected, or a cut, and for $\alpha$-approximating MST weight for any polynomially bounded $\alpha$. These bounds are tight up to polylogarithmic factors, since MST can be computed in $\tilde O(\sqrt n + D)$ rounds, while in the congested clique MST takes $O(1)$ rounds.
 
 ## Proof sketch
 

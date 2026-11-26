@@ -4,7 +4,7 @@ A permutation $X$ of $[n]$ is the preorder sequence of some binary search tree o
 
 ## Proof sketch
 
-If $X$ is a preorder sequence with root $x_1$, all keys smaller than $x_1$ precede all larger keys, so an occurrence of $231$ would need a larger key followed by a smaller one followed by an even smaller one within the same recursive block, contradicting the same property at the block's root; induct. Conversely, if $X$ avoids $231$, then after $x_1$ the keys smaller than $x_1$ must all precede the larger ones (else a larger key, then a smaller one, then relative to $x_1$ gives $231$), so $X$ splits into two $231$-avoiding blocks that are preorders of the left and right subtrees.
+If $X$ is a preorder sequence with root $x_1$, all keys smaller than $x_1$ precede all larger keys, so an occurrence of $231$ (a key $a$, then a larger key $b$, then a key $c$ smaller than $a$) is impossible: at the root of the smallest recursive block containing all three, $c$ lies in the left part and $b$ in the right part, yet $c$ comes after $b$. Conversely, if $X$ avoids $231$, then after $x_1$ the keys smaller than $x_1$ must all precede the larger ones (else a larger key, then a smaller one, then relative to $x_1$ gives $231$), so $X$ splits into two $231$-avoiding blocks that are preorders of the left and right subtrees.
 
 ## Depends on
 

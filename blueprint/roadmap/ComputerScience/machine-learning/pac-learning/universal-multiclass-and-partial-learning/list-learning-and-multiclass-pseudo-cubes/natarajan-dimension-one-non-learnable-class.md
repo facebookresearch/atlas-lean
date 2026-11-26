@@ -10,9 +10,6 @@ A pseudo-cube in $Y^d$ corresponds to a colored complex whose vertices are (coor
 
 - [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
 - [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
-
-## Proof depends on
-
 - [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
 
 ## Sources

@@ -1,6 +1,6 @@
 # Locality lower bound for approximating minimum vertex cover
 
-Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. Every randomized LOCAL algorithm computing a constant-factor (or even polylogarithmic-factor) approximation of minimum vertex cover, or of minimum dominating set or maximum matching, requires $\Omega\bigl(\min\{\sqrt{\log n / \log\log n},\; \log \Delta / \log\log \Delta\}\bigr)$ rounds on some graph. The same lower bound applies to maximal independent set and maximal matching, which yield $2$-approximate vertex covers.
+Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. Every randomized LOCAL algorithm computing a constant-factor (or even polylogarithmic-factor) approximation of minimum vertex cover, or of minimum dominating set or maximum matching, requires $\Omega\bigl(\min\{\sqrt{\log n / \log\log n},\; \log \Delta / \log\log \Delta\}\bigr)$ rounds on some graph. The same lower bound applies to maximal matching, whose matched vertices form a $2$-approximate vertex cover, and hence to maximal independent set, since a maximal matching is a maximal independent set of the line graph.
 
 ## Proof sketch
 

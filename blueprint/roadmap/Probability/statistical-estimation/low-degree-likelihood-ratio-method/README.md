@@ -8,6 +8,6 @@
 - [Low-degree lower bounds for estimation and recovery](low-degree-estimation-lower-bound.md)
 - [Low-degree threshold of the spiked Wigner model](spiked-wigner-low-degree-threshold.md)
 - [Low-degree conjecture](low-degree-conjecture.md)
-- [Low-degree and sum-of-squares hardness of planted clique below the square root](planted-clique-low-degree-hardness.md)
+- [Low-degree hardness of planted clique below the square root](planted-clique-low-degree-hardness.md)
 - [Low-degree Bayesian estimation reaches the Kesten–Stigum threshold](low-degree-estimation-kesten-stigum.md)
 - [Low-degree hardness of tensor principal component analysis](tensor-pca-low-degree-hardness.md)

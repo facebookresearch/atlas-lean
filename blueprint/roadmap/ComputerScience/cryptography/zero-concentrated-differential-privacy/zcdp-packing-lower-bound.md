@@ -1,6 +1,6 @@
 # Packing lower bounds for zCDP
 
-Let $M$ be $\rho$-zCDP and let $S_1, \dots, S_m$ be datasets that pairwise differ in at most $\ell$ entries. If there are pairwise disjoint events $E_1, \dots, E_m$ with $\Pr[M(S_i) \in E_i] \ge 1/2$ for every $i$, then
+Let $M$ be $\rho$-zCDP and let $S_1, \dots, S_m$ be datasets that pairwise differ in at most $\ell$ entries. If there are pairwise disjoint events $E_1, \dots, E_m$ with $\Pr[M(S_i) \in E_i] \ge 1/2$ for every $i$, then, for $m$ larger than an absolute constant,
 
 $$
 \rho\,\ell^2 \ge \Omega(\log m).

@@ -1,6 +1,6 @@
 # Strings are representable in $O(\delta\log(n/\delta))$ space, optimally
 
-Every string $T$ of length $n$ with substring complexity $\delta$ can be represented in $O(\delta \log\frac{n}{\delta})$ machine words with access to any position in $O(\log\frac{n}{\delta})$ time, and with indexing support for pattern matching in the same asymptotic space. The space is worst-case optimal as a function of $n$ and $\delta$: for all $n$ and $\delta$ there are families of strings with substring complexity at most $\delta$ that require $\Omega(\delta\log\frac{n}{\delta})$ words, i.e. $\Omega(\delta \log\frac{n}{\delta} \log n)$ bits, to distinguish.
+Every string $T$ of length $n$ with substring complexity $\delta$ can be represented in $O(\delta \log\frac{n}{\delta})$ machine words with access to any position in $O(\log\frac{n}{\delta})$ time, and with indexing support for pattern matching in the same asymptotic space. The space is worst-case optimal as a function of $n$ and $\delta$ over alphabets of size polynomial in $n$: for all $n$ and $\delta$ there are such families of strings with substring complexity at most $\delta$ that require $\Omega(\delta\log\frac{n}{\delta})$ words, i.e. $\Omega(\delta \log\frac{n}{\delta} \log n)$ bits, to distinguish (for an alphabet of size $\sigma$ the optimum is $\Theta(\delta\log\frac{n\log\sigma}{\delta\log n})$ words).
 
 ## Proof sketch
 

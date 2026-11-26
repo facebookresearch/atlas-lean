@@ -9,6 +9,7 @@ Packing arguments give $2^{\Omega(n^c)}$ unit vectors with pairwise inner produc
 ## Depends on
 
 - [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
+- [Relations between STAT and VSTAT oracles and their simulation from samples](stat-vstat-relations-and-simulation.md)
 
 ## Proof depends on
 

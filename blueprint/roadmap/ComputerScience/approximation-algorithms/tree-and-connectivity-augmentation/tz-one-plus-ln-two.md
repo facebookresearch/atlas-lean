@@ -4,7 +4,7 @@ For every fixed $\varepsilon > 0$ there is a polynomial-time $(1+\ln 2+\varepsil
 
 ## Proof sketch
 
-Run the relative greedy algorithm with components $\mathcal{K}_\varepsilon$, starting from an optimal up-link solution of weight at most $2\,\mathrm{OPT}$. By the decomposition lemma, while up-links of total weight $W$ remain there is a component of ratio at most $(1+\varepsilon)\mathrm{OPT}/W$. Integrating the resulting differential inequality from $W=\mathrm{OPT}_{\mathrm{up}}$ down to $0$ bounds the total weight added by $(1+\varepsilon)\mathrm{OPT}\ln(\mathrm{OPT}_{\mathrm{up}}/\mathrm{OPT})+\mathrm{OPT} \le (1+\ln 2+\varepsilon)\mathrm{OPT}$.
+Run the relative greedy algorithm with components $\mathcal{K}_\varepsilon$, starting from an optimal up-link solution of weight at most $2\,\mathrm{OPT}$. By the decomposition lemma, while up-links of total weight $W$ remain there is a component of ratio at most $(1+\varepsilon)\mathrm{OPT}/W$. Integrating the resulting differential inequality from $W=\mathrm{OPT}_{\mathrm{up}}$ down to $W=\mathrm{OPT}$, and keeping the remaining up-links, of weight at most $\mathrm{OPT}$, bounds the total weight by $(1+\varepsilon)\mathrm{OPT}\ln(\mathrm{OPT}_{\mathrm{up}}/\mathrm{OPT})+\mathrm{OPT} \le (1+\ln 2+\varepsilon)\mathrm{OPT}$.
 
 ## Depends on
 

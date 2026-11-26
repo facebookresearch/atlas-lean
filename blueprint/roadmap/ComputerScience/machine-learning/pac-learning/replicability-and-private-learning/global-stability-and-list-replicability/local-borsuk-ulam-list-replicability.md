@@ -1,6 +1,6 @@
 # Local Borsuk–Ulam bounds: agnostic list replicability is impossible and finite classes need large lists
 
-(i) **Agnostic impossibility.** Every concept class with at least two concepts that differ on some point and that is not trivial in the sense of the source has $\mathrm{LR}_{\mathrm{agn}}(H) = \infty$, equivalently $\rho_{\mathrm{agn}}(H) = 0$: no agnostic learner is list replicable or globally stable. This contrasts with the realizable setting, where every class of finite Littlestone dimension is list replicable.
+(i) **Agnostic impossibility.** A concept class $H$ has $\mathrm{LR}_{\mathrm{agn}}(H) < \infty$, equivalently $\rho_{\mathrm{agn}}(H) > 0$, if and only if $H$ is finite: every proper agnostic learner for a finite class is list replicable with the list $H$, and for every infinite class no agnostic learner is list replicable or globally stable. This contrasts with the realizable setting, where every class of finite Littlestone dimension is list replicable.
 
 (ii) **Realizable bounds.** For every class, $\mathrm{LR}(H) \ge \max\{\mathrm{VC}(H),\, 1 + \lfloor \mathrm{VC}^*(H)/2 \rfloor\}$, where $\mathrm{VC}^*$ is the dual VC dimension, and both terms are sharp. There are classes of Littlestone dimension $d$ with $\mathrm{LR}(H) \ge 2^{d-1}$, an exponential separation from the Littlestone dimension.
 

@@ -9,13 +9,12 @@ The upper bound uses the boosting construction of Moran and Yehudayoff with the 
 ## Depends on
 
 - [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
-- [Sample compression conjecture](../../sample-compression-conjecture.md)
+- [Generalization bound for sample compression schemes](../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
 
 ## Proof depends on
 
 - [Quasipolynomial Sauer–Shelah–Perles lemma for partial classes](partial-class-quasipolynomial-sauer-lemma.md)
 - [A partial class of VC dimension one with no finite-VC disambiguation](vc-one-partial-class-without-disambiguation.md)
-- [Generalization bound for sample compression schemes](../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
 
 ## Sources
 

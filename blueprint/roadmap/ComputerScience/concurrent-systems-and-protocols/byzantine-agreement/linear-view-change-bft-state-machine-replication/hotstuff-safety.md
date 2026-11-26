@@ -4,7 +4,7 @@ In HotStuff with $n \ge 3f + 1$ replicas, at most $f$ of them Byzantine, and sec
 
 ## Proof sketch
 
-Suppose block $B$ is committed via a three-chain with QCs in views $v, v+1, v+2$. By quorum intersection at least $f + 1$ correct replicas locked on $B$ (or a descendant) when voting in view $v + 1$, and a correct replica only votes for a conflicting proposal whose justifying QC has view higher than its lock. By induction on views above $v$, every QC formed in a view greater than $v + 2$ certifies a descendant of $B$, since forming it needs a vote from one of these locked replicas; hence any later committed block extends $B$.
+Suppose block $B$ is committed via a three-chain with QCs in views $v, v+1, v+2$. By quorum intersection at least $f + 1$ correct replicas locked on $B$ (or a descendant) when voting in view $v + 2$, and a correct replica only votes for a conflicting proposal whose justifying QC has view higher than its lock. By induction on views above $v$, every QC formed in a view greater than $v + 2$ certifies a descendant of $B$, since forming it needs a vote from one of these locked replicas; hence any later committed block extends $B$.
 
 ## Depends on
 

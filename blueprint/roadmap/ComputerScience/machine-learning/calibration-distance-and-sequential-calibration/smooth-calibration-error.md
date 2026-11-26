@@ -6,7 +6,7 @@ $$
 \mathrm{smCE}(\Gamma) = \sup_{w} \mathbb{E}_{(v,y) \sim \Gamma}\big[w(v)\,(y - v)\big],
 $$
 
-the supremum over all $1$-Lipschitz functions $w : [0,1] \to [-1,1]$. The **interval calibration error** $\mathrm{intCE}(\Gamma)$ is the infimum, over partitions of $[0,1]$ into intervals, of the binned calibration error plus the width-weighted cost of the partition, as defined by Błasiok, Gopalan, Hu and Nakkiran. A calibration measure $\mu$ is **$(c,s)$-consistent** if it satisfies robust completeness $\mu \le a\,\mathrm{dCE}^c$ and robust soundness $\mu \ge b\,\mathrm{dCE}^s$ for constants $a, b > 0$ and all distributions and predictors.
+the supremum over all $1$-Lipschitz functions $w : [0,1] \to [-1,1]$. The **interval calibration error** is $\mathrm{intCE}(\Gamma)=\inf_{\mathcal{I}}\Big(\sum_{I\in\mathcal{I}}\big|\mathbb{E}_{(v,y)\sim\Gamma}[(y-v)\mathbf{1}[v\in I]]\big|+\sum_{I\in\mathcal{I}}|I|\,\Pr_{\Gamma}[v\in I]\Big)$, the infimum over partitions $\mathcal{I}$ of $[0,1]$ into intervals, where $|I|$ is the length of $I$. A calibration measure $\mu$ is **$(c,s)$-consistent** if it satisfies robust completeness $\mu \le a\,\mathrm{dCE}^c$ and robust soundness $\mu \ge b\,\mathrm{dCE}^s$ for constants $a, b > 0$ and all distributions and predictors.
 
 ## Depends on
 

@@ -6,7 +6,7 @@ $$
 \Big(\frac{2}{3} + \varepsilon_0\Big)\mu(G).
 $$
 
-This breaks the factor $2/3$ that is the limit of every EDCS-based approach, since there are graphs and EDCSs $H$ with $\mu(H)$ essentially $\frac{2}{3}\mu(G)$.
+This breaks the factor $2/3$ that is the limit of every EDCS-based approach, since there are graphs and EDCSs $H$ with $\mu(H)$ arbitrarily close to $\frac{2}{3}\mu(G)$.
 
 ## Proof sketch
 

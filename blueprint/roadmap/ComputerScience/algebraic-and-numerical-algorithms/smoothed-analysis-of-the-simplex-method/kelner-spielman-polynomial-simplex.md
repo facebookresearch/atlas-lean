@@ -8,6 +8,7 @@ The program is reduced to a related program whose boundedness and optimal vertex
 
 ## Depends on
 
+- [Expected running time](../../randomized-algorithms/average-case-running-time/expected-time.md)
 
 ## Proof depends on
 

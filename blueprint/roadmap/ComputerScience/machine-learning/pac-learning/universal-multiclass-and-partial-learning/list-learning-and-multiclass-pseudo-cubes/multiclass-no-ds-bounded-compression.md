@@ -4,7 +4,7 @@ There is no function $f : \mathbb{N} \to \mathbb{N}$ such that every class $H \s
 
 ## Proof sketch
 
-The construction uses the classes of Natarajan dimension one with large pseudo-cubes and a counting argument: a compression scheme of size $r$ on $n$ points has at most $\binom{n}{\le r}$ reconstruction patterns per label sequence, while the projection of a suitably chosen DS-dimension-one class onto $n$ points has too many realizable labelings with large label sets to be reconstructed from so few patterns. The DS-dimension upper bound of the class guarantees learnability, so learnability and bounded compression separate.
+The construction lifts a partial concept class of VC dimension one that admits no compression scheme of bounded size to a total multiclass class of DS dimension one, by giving each undefined value its own fresh label; a bounded-size compression scheme for the lifted class would yield one for the partial class, and a counting argument rules this out. The DS-dimension upper bound of the class guarantees learnability, so learnability and bounded compression separate.
 
 ## Depends on
 

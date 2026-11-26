@@ -6,7 +6,7 @@ $$
 \mathrm{Reg}_T \le \alpha + \beta \sum_{t = 1}^T \lVert \ell^t - \ell^{t-1} \rVert_\infty^2 - \gamma \sum_{t = 1}^T \lVert x^t - x^{t-1} \rVert_1^2 .
 $$
 
-Optimistic Hedge with step size $\eta$ satisfies RVU with $\alpha = (\log n)/\eta$, $\beta = \eta$ and $\gamma = 1/(4\eta)$; optimistic follow-the-regularized-leader with any strongly convex regularizer satisfies an analogous bound.
+Optimistic Hedge with step size $\eta$ satisfies RVU with $\alpha = (\log n)/\eta$, $\beta = \eta$ and $\gamma = 1/(4\eta)$; more generally, optimistic follow-the-regularized-leader with step size $\eta$ and a regularizer $R$ that is $1$-strongly convex with respect to a norm $\lVert\cdot\rVert$ satisfies RVU with $\alpha = (\max R - \min R)/\eta$, $\beta = \eta$ and $\gamma = 1/(4\eta)$, where the loss differences are measured in the dual norm $\lVert\cdot\rVert_*$ and the iterate differences in $\lVert\cdot\rVert$.
 
 ## Proof sketch
 

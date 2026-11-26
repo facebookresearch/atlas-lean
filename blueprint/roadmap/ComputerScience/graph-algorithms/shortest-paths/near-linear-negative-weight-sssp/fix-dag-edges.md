@@ -4,7 +4,7 @@ Let $G=(V,E,w)$ be a directed graph with integer weights and let $\mathcal{P}=\{
 
 ## Proof sketch
 
-Order the parts topologically in the contracted acyclic graph. Process them in this order and give all vertices of $V_i$ the common price $\phi(V_i)=\max\{\phi(V_j)-w(u,v):(u,v)\in E,\ u\in V_j,\ v\in V_i,\ j\ne i\}$ (or $0$ if there is no entering edge), which makes every edge entering $V_i$ nonnegative. Edges inside $V_i$ keep their nonnegative weight because both endpoints get the same price, and edges leaving $V_i$ are handled when their head part is processed. Each edge is inspected once.
+Order the parts topologically in the contracted acyclic graph. Process them in this order and give all vertices of $V_i$ the common price $\phi(V_i)=\min\big(\{0\}\cup\{\phi(V_j)+w(u,v):(u,v)\in E,\ u\in V_j,\ v\in V_i,\ j\ne i\}\big)$, which makes every edge entering $V_i$ nonnegative. Edges inside $V_i$ keep their nonnegative weight because both endpoints get the same price, and edges leaving $V_i$ are handled when their head part is processed. Each edge is inspected once.
 
 ## Depends on
 

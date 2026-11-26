@@ -1,6 +1,6 @@
 # Thue–Morse words have smallest attractors of size four
 
-Let $t_n$ be the $n$-th Thue–Morse word, of length $2^n$, defined by $t_0 = \mathtt{a}$ and $t_{n+1} = t_n \overline{t_n}$, where the bar exchanges $\mathtt{a}$ and $\mathtt{b}$. Then $\gamma(t_n) = 4$ for every $n \ge 4$. In contrast, the BWT of $t_n$ has $r(t_n) = \Theta(n) = \Theta(\log |t_n|)$ runs, so $\gamma$ can be exponentially smaller than $r$ in the logarithm of the length.
+Let $t_n$ be the $n$-th Thue–Morse word, of length $2^n$, defined by $t_0 = \mathtt{a}$ and $t_{n+1} = t_n \overline{t_n}$, where the bar exchanges $\mathtt{a}$ and $\mathtt{b}$. Then $\gamma(t_n) = 4$ for every $n \ge 4$. In contrast, the BWT of $t_n$ has $r(t_n) = \Theta(n) = \Theta(\log |t_n|)$ runs. So $\gamma = O(1)$ while $r = \Theta(\log |t_n|)$.
 
 ## Proof sketch
 
