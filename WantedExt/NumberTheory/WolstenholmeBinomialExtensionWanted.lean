@@ -15,8 +15,12 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.NumberTheory.AlternatingChooseSums
 public import MathlibExt.NumberTheory.HigherOrderHarmonic
+public import MathlibExt.NumberTheory.WolstenholmeBinomialCongruence
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
+public import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
+public import MathlibExt.NumberTheory.WolstenholmePolynomialParts
 
 /-!
 # Extensions of Wolstenholme's theorem by binomial coefficients
@@ -37,21 +41,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Coefficients of $(x + 1)^{jp} (x^p + 1)^{n-j}$.** Let $n$, $j$ and $k$ be natural numbers and
-$p$ a positive integer, and let $d = \max(n - j, 0)$. Then the coefficient of $x^{kp}$ in the
-polynomial $(x + 1)^{jp} (x^p + 1)^{d}$ is
-$$\sum_{s=0}^{\min(j, k)} \binom{jp}{sp} \binom{d}{k - s}.$$
-
-The source takes $p$ prime; here $p$ is any positive integer.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 2
-(`integers-2026-A32-lem-2`). -/
-public theorem_wanted coeff_add_one_pow_mul_X_pow_add_one_pow (p n j k : ℕ) (hp : 0 < p) :
-    ((X + 1 : ℕ[X]) ^ (j * p) * (X ^ p + 1) ^ (n - j)).coeff (k * p) =
-      ∑ s ∈ Finset.range (j + 1),
-        if s ≤ k then (j * p).choose (s * p) * (n - j).choose (k - s) else 0
 
 /-- **Congruences for $\binom{tp}{p}$ modulo $p^5$, $p^6$ and $p^7$.** Let $p \ge 11$ be a prime
 and $t$ a natural number. Write $H_{p-1}^{(r)} = \sum_{j=1}^{p-1} 1/j^r$ for the harmonic number of
@@ -184,63 +173,6 @@ public theorem_wanted norm_sub_taylor_le_zpow_valuation {p : ℕ} [Fact p.Prime]
 
 /-! ### The general congruence for `binom(np, kp)` -/
 
-/-- **Alternating binomial sum identities.** For an integer $x$ and a natural number $r$ write
-$\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$ for the generalized binomial coefficient. Let $m$, $n$
-and $k$ be natural numbers. Then for every natural number $j \le m$,
-$$\sum_{s=j}^{m} (-1)^{s-j} \binom{n}{s} \binom{s}{j} = (-1)^{m-j} \binom{n}{j} \binom{n-j-1}{m-j}
-= \binom{n}{j} \binom{m-n}{m-j},$$
-and
-$$\sum_{j=0}^{m} (-1)^{m-j} \binom{n}{j} \binom{n-j-1}{m-j} \binom{n-j}{k} =
-\binom{n}{k} \binom{m-k}{m},$$
-$$\sum_{j=0}^{\min(m, k)} (-1)^{m-j} \binom{n}{j} \binom{n-j-1}{m-j} \binom{n-j}{k-j} =
-\binom{n}{k} \binom{k+m-n}{m}.$$
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 3
-(`integers-2026-A32-lem-3`). -/
-public theorem_wanted alternating_choose_sum_identities (m n k : ℕ) :
-    let C : ℤ → ℕ → ℤ := fun x r => Ring.choose x r
-    (∀ j ≤ m, ∑ s ∈ Finset.Icc j m, (-1 : ℤ) ^ (s - j) * C n s * C s j =
-          (-1) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) ∧
-        (-1 : ℤ) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) =
-          C n j * C ((m : ℤ) - n) (m - j)) ∧
-      ∑ j ∈ Finset.range (m + 1),
-          (-1 : ℤ) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) * C ((n : ℤ) - j) k =
-        C n k * C ((m : ℤ) - k) m ∧
-      ∑ j ∈ Finset.range (m + 1),
-          (-1 : ℤ) ^ (m - j) * C n j * C ((n : ℤ) - j - 1) (m - j) *
-            (if j ≤ k then C ((n : ℤ) - j) (k - j) else 0) =
-        C n k * C ((k : ℤ) + m - n) m
-
-/-- **The general congruence for $\binom{np}{kp}$.** Let $p$ be a prime, let $m$ and $k$ be
-natural numbers with $m + 1 < p$, and let $n$ be an integer. For an integer $x$ and a natural
-number $r$ write $\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$, and let $v_p$ be the $p$-adic
-valuation on $\mathbb{Q}$. For natural numbers $j$ and $l$ put
-$$
-c_j = \sum_{s=0}^{\min(j, k)} \binom{jp}{sp} \binom{n-j}{k-s}, \qquad
-d_l = \binom{n}{l} \sum_{j=0}^{l} (-1)^{l-j} \binom{l}{j} c_j,
-$$
-and let $X = \binom{np}{kp} - \binom{n}{k} - (d_1 + \cdots + d_m)$. Then either $X = 0$, or
-$\binom{n}{m+1} \ne 0$ and $v_p(X) \ge m + 1 + v_p\big(\binom{n}{m+1}\big)$. That is,
-$\binom{np}{kp} - \binom{n}{k} \equiv d_1 + \cdots + d_m$ modulo $p^{m+1+v_p(\binom{n}{m+1})}$,
-with equality when $\binom{n}{m+1} = 0$.
-
-The paper allows $n \in \mathbb{Z}_p$; only integers $n$ are covered here.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Theorem 3
-(`integers-2026-A32-thm-3`). -/
-public theorem_wanted ringChoose_mul_prime_sub_congr_sum_d (p m k : ℕ) (n : ℤ) (hp : p.Prime)
-    (hmp : m + 1 < p) :
-    let C : ℤ → ℕ → ℚ := fun x r => ((Ring.choose x r : ℤ) : ℚ)
-    let c : ℕ → ℚ := fun j => ∑ s ∈ Finset.range (j + 1),
-      if s ≤ k then C ((j * p : ℕ) : ℤ) (s * p) * C (n - j) (k - s) else 0
-    let d : ℕ → ℚ := fun l =>
-      C n l * ∑ j ∈ Finset.range (l + 1), (-1) ^ (l - j) * (l.choose j : ℚ) * c j
-    let X : ℚ := C (n * p) (k * p) - C n k - ∑ l ∈ Finset.Icc 1 m, d l
-    X = 0 ∨ (C n (m + 1) ≠ 0 ∧
-      ((m + 1 : ℕ) : ℤ) + padicValRat p (C n (m + 1)) ≤ padicValRat p X)
-
 /-- **Congruence for $\binom{np}{kp}$ with the coefficients $\bar C_{ji}$.** Let $p$ be a prime,
 let $m$ and $k$ be natural numbers with $m + 1 < p$, and let $n$ be an integer. For an integer
 $x$ and a natural number $r$ write $\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$, and set
@@ -313,35 +245,6 @@ public theorem_wanted ringChoose_mul_prime_sub_congr_cprime (p m k : ℕ) (n : �
     X = 0 ∨ (C n (m + 1) ≠ 0 ∧
       ((m + 1 : ℕ) : ℤ) + padicValRat p (C n (m + 1)) ≤ padicValRat p X)
 
-/-- **Divisibility of the polynomial parts by $k(n-k)/2$.** Let $m$ be a natural number and $n$ an
-integer. For an integer $x$ and a natural number $r$ write $\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$,
-and for a rational number $x$ write $(x)_r = x(x-1)\cdots(x-r+1)$ for the falling factorial. Then
-there is a polynomial $Q \in \mathbb{Q}[X]$ such that for every natural number $k$
-$$\binom{m-k}{m} + \binom{k+m-n}{m} + (-1)^{m+1} \binom{n-1}{m} - 1 = \frac{k(n-k)}{2} \, Q(k),$$
-and for all natural numbers $i$ and $j$ with $1 \le i < j$ there is a polynomial
-$Q \in \mathbb{Q}[X]$ such that for every natural number $k$
-$$\frac{(n-k)_{j-i} \, (k)_i + (n-k)_i \, (k)_{j-i}}{j!} \binom{m-n}{\max(m-j, 0)} =
-\frac{k(n-k)}{2} \, Q(k).$$
-
-For $j \le m$ the left-hand sides are the polynomial parts of the coefficients
-$C'_{00}(m, n, k)$ and $C'_{ji}(m, n, k)$ of Theorem 4 (the halving at $j = 2i$ does not affect
-divisibility); agreement at every natural number $k$ amounts to divisibility by $k(n-k)/2$
-in $\mathbb{Q}[k]$.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Proposition 1
-(`integers-2026-A32-prop-1`). -/
-public theorem_wanted exists_polynomial_part_eq_mul_half_mul (m : ℕ) (n : ℤ) :
-    let C : ℤ → ℕ → ℚ := fun x r => ((Ring.choose x r : ℤ) : ℚ)
-    let ff : ℚ → ℕ → ℚ := fun x i => ∏ t ∈ Finset.range i, (x - t)
-    (∃ Q : ℚ[X], ∀ k : ℕ,
-        C ((m : ℤ) - k) m + C ((k : ℤ) + m - n) m + (-1) ^ (m + 1) * C (n - 1) m - 1 =
-          (k : ℚ) * (n - k) / 2 * Q.eval (k : ℚ)) ∧
-      ∀ j i : ℕ, 1 ≤ i → i < j → ∃ Q : ℚ[X], ∀ k : ℕ,
-        (ff ((n : ℚ) - k) (j - i) * ff k i + ff ((n : ℚ) - k) i * ff k (j - i)) / j.factorial *
-            C ((m : ℤ) - n) (m - j) =
-          (k : ℚ) * (n - k) / 2 * Q.eval (k : ℚ)
-
 /-! ### Explicit congruences modulo `p^3`, ..., `p^7` -/
 
 /-- **The congruence for $\binom{np}{kp}$ modulo $p^3$.** Let $p \ge 5$ be a prime, let $k$ be a
@@ -365,21 +268,6 @@ public theorem_wanted ringChoose_mul_prime_sub_congr_pow_three (p k : ℕ) (n : 
     let X : ℚ := C (n * p) (k * p) - C n k -
       (k : ℚ) * (n - k) / 2 * C n k * (((2 * p).choose p : ℚ) - 2)
     X = 0 ∨ (C n 3 ≠ 0 ∧ 3 + padicValRat p (C n 3) ≤ padicValRat p X)
-
-/-- **Equivalent forms of Wolstenholme's congruence.** Let $p \ge 5$ be a prime and let $n$ and
-$k$ be natural numbers. Then the congruences $\binom{2p}{p} \equiv 2$, $\binom{np}{p} \equiv n$ and
-$\binom{np}{kp} \equiv \binom{n}{k}$ modulo $p^3$ are equivalent.
-
-By Wolstenholme's theorem all three hold for every such $p$.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Corollary 2
-(`integers-2026-A32-cor-2`). -/
-public theorem_wanted choose_two_mul_prime_congr_iff_pow_three (p n k : ℕ) (hp : p.Prime)
-    (hp5 : 5 ≤ p) :
-    ((p : ℤ) ^ 3 ∣ ((2 * p).choose p : ℤ) - 2 ↔ (p : ℤ) ^ 3 ∣ ((n * p).choose p : ℤ) - n) ∧
-      ((p : ℤ) ^ 3 ∣ ((n * p).choose p : ℤ) - n ↔
-        (p : ℤ) ^ 3 ∣ ((n * p).choose (k * p) : ℤ) - n.choose k)
 
 /-- **The congruence for $\binom{np}{kp}$ modulo $p^4$ via $\binom{2p}{p}$ and $\binom{3p}{p}$.**
 Let $p \ge 7$ be a prime, let $k$ be a natural number and let $n$ be an integer. For an integer

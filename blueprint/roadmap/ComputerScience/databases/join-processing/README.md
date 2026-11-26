@@ -1,0 +1,18 @@
+# Join processing
+
+- [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)
+- [AGM output-size bound for join queries](agm-output-size-bound-for-join-queries.md)
+- [Yannakakis' algorithm for acyclic join queries](yannakakis-algorithm-for-acyclic-join-queries.md)
+- [AGM tightness and the cost of projection-free join plans](agm-tightness-and-the-cost-of-projection-free-join-plans.md)
+- [One-round MPC lower bound](one-round-mpc-lower-bound.md)
+- [Query hypergraph and fractional vertex covering number](query-hypergraph-and-fractional-vertex-covering-number.md)
+- [Worst-case optimal join algorithms (Generic-Join, NPRR, Leapfrog Triejoin)](worst-case-optimal-join-algorithms.md)
+- [Hypertree decompositions: polynomial evaluation of bounded-width CQs](hypertree-decompositions-polynomial-evaluation-of-bounded-wi.md)
+- [Natural join queries, their hypergraphs and fractional edge covers](natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
+- [Matching databases](matching-databases.md)
+- [MPC(eps) model](mpc-model.md)
+- [Physical join operators refine the logical join](physical-join-operators-refine-the-logical-join.md)
+- [Output-polynomial evaluation of projected acyclic CQs](output-polynomial-evaluation-of-projected-acyclic-cqs.md)
+- [Projected CQ prefix enumeration and correctness](projected-cq-prefix-enumeration-and-correctness.md)
+- [Attempted-extension bound for projected prefix search](attempted-extension-bound-for-projected-prefix-search.md)
+- [Generic-Join computes the full join](generic-join-computes-the-full-join.md)

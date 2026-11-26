@@ -15,6 +15,8 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.PQDiophantineTuples
+public import MathlibExt.NumberTheory.PadicValuationMinTwice
+public import MathlibExt.NumberTheory.SDiophantineSystemFour
 
 /-!
 # `{p, q}`-Diophantine quadruples and quintuples
@@ -25,11 +27,15 @@ distinct positive integers whose pairwise products plus one are `S`-units
 (`MetaMathlibExt.IsSDiophantineTuple`). For a quadruple `(a, b, c, d)` the paper writes
 `s₁ = ab + 1`, `s₂ = ac + 1`, `s₃ = ad + 1`, `s₄ = bc + 1`, `s₅ = bd + 1`, `s₆ = cd + 1`,
 `sᵢ = p ^ αᵢ * q ^ βᵢ`; here `αᵢ` and `βᵢ` are `padicValNat p sᵢ` and `padicValNat q sᵢ`.
-Lemmas 2-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
+Lemmas 5-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
 earlier results.
 
-Proved in `MathlibExt.NumberTheory.PQDiophantineTuples`: Lemma 1
-(`MetaMathlibExt.not_mul_add_one_dvd_mul_add_one`).
+Proved in `MathlibExt.NumberTheory.PQDiophantineTuples`: Lemmas 1 and 3
+(`MetaMathlibExt.not_mul_add_one_dvd_mul_add_one` and `MetaMathlibExt.dvd_gcd_sub_div_gcd`).
+Proved in `MathlibExt.NumberTheory.PadicValuationMinTwice`: Lemma 2
+(`MetaMathlibExt.padicValNat_two_smallest_eq`).
+Proved in `MathlibExt.NumberTheory.SDiophantineSystemFour`: Lemma 4
+(`MetaMathlibExt.not_exists_sDiophantine_system_four`).
 -/
 
 namespace MetaMathlibExt
@@ -84,64 +90,6 @@ theorem isSDiophantineTuple_two_three_five_one_three_eight :
     simp
   rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
     first | exact absurd rfl hab | exact h4 | exact h9 | exact h25
-
-/-- **The two smallest valuations coincide.** Let $\ell$ be a prime and $a, b, c, d$ natural
-numbers. Put $s_1 = ab + 1$, $s_2 = ac + 1$, $s_3 = ad + 1$, $s_4 = bc + 1$, $s_5 = bd + 1$,
-$s_6 = cd + 1$, and let $v_i$ be the $\ell$-adic valuation of $s_i$. Then in each of the tuples
-$(v_2, v_3, v_4, v_5)$, $(v_1, v_2, v_5, v_6)$ and $(v_1, v_3, v_4, v_6)$ the minimum value occurs
-at two different positions.
-
-Taking $\ell = p$ and $\ell = q$ gives the source's statements for the exponents of a
-$\{p, q\}$-Diophantine quadruple. No Diophantine hypothesis is needed: the proof uses only the
-identities $abcd = (s_1 - 1)(s_6 - 1) = (s_2 - 1)(s_5 - 1) = (s_3 - 1)(s_4 - 1)$.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 2, quoting Szalay and Ziegler (2013), Proposition 1
-(`integers-2025-A92-lem-2`). -/
-public theorem_wanted padicValNat_two_smallest_eq {ℓ : ℕ} (hℓ : ℓ.Prime) (a b c d : ℕ) :
-    let v : Fin 6 → ℕ := ![padicValNat ℓ (a * b + 1), padicValNat ℓ (a * c + 1),
-      padicValNat ℓ (a * d + 1), padicValNat ℓ (b * c + 1), padicValNat ℓ (b * d + 1),
-      padicValNat ℓ (c * d + 1)]
-    let minTwice : (Fin 4 → ℕ) → Prop := fun x => ∃ i j, i ≠ j ∧ x i = x j ∧ ∀ k, x i ≤ x k
-    minTwice ![v 1, v 2, v 3, v 4] ∧ minTwice ![v 0, v 1, v 4, v 5] ∧
-      minTwice ![v 0, v 2, v 3, v 5]
-
-/-- **$a$, $b$, $c$, $d$ divide gcds of reduced differences.** Let $a, b, c, d$ be natural numbers
-and put $s_1 = ab + 1$, $s_2 = ac + 1$, $s_3 = ad + 1$, $s_4 = bc + 1$, $s_5 = bd + 1$,
-$s_6 = cd + 1$. For indices $i, j$ let $t_{ij}$ be the integer $(s_j - s_i) / \gcd(s_j, s_i)$.
-Then $a \mid \gcd(t_{12}, t_{13}, t_{23})$, $b \mid \gcd(t_{14}, t_{15}, t_{45})$,
-$c \mid \gcd(t_{24}, t_{26}, t_{46})$ and $d \mid \gcd(t_{35}, t_{36}, t_{56})$ in $\mathbb{Z}$.
-
-The source assumes that $\{a, b, c, d\}$ is $S$-Diophantine; that hypothesis is not needed.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 3, quoting Szalay and Ziegler (2013), Lemma 3
-(`integers-2025-A92-lem-3`). -/
-public theorem_wanted dvd_gcd_sub_div_gcd (a b c d : ℕ) :
-    let s : Fin 6 → ℤ := ![a * b + 1, a * c + 1, a * d + 1, b * c + 1, b * d + 1, c * d + 1]
-    let t : Fin 6 → Fin 6 → ℤ := fun i j => (s j - s i) / gcd (s j) (s i)
-    (a : ℤ) ∣ gcd (gcd (t 0 1) (t 0 2)) (t 1 2) ∧
-      (b : ℤ) ∣ gcd (gcd (t 0 3) (t 0 4)) (t 3 4) ∧
-      (c : ℤ) ∣ gcd (gcd (t 1 3) (t 1 5)) (t 3 5) ∧
-      (d : ℤ) ∣ gcd (gcd (t 2 4) (t 2 5)) (t 4 5)
-
-/-- **The Szalay–Ziegler system (4) has no solutions.** Let $p \ne q$ be odd primes and let
-$a, b, c, d$ be integers with $0 < a < b < c < d$. Then there are no natural numbers
-$\beta_1, \alpha_4, \beta_4, \alpha_2, \alpha_5, \alpha_3, \beta_3, \beta_6$ with
-$ab + 1 = q^{\beta_1}$, $bc + 1 = p^{\alpha_4} q^{\beta_4}$, $ac + 1 = p^{\alpha_2}$,
-$bd + 1 = p^{\alpha_5}$, $ad + 1 = p^{\alpha_3} q^{\beta_3}$ and $cd + 1 = q^{\beta_6}$.
-
-Any solution would make $\{a, b, c, d\}$ a $\{p, q\}$-Diophantine quadruple.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 4, System (4), quoting Szalay and Ziegler, INTEGERS 13
-(2013), Section 4 (`integers-2025-A92-lem-4`). -/
-public theorem_wanted not_exists_sDiophantine_system_four {p q a b c d : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p ≠ q) (ha : 0 < a) (hab : a < b)
-    (hbc : b < c) (hcd : c < d) :
-    ¬∃ β₁ α₄ β₄ α₂ α₅ α₃ β₃ β₆ : ℕ, a * b + 1 = q ^ β₁ ∧ b * c + 1 = p ^ α₄ * q ^ β₄ ∧
-      a * c + 1 = p ^ α₂ ∧ b * d + 1 = p ^ α₅ ∧ a * d + 1 = p ^ α₃ * q ^ β₃ ∧
-      c * d + 1 = q ^ β₆
 
 /-- **Exponent cases for $\{p, q\}$-Diophantine quadruples with $p \equiv 3 \pmod 4$.** Let
 $p \ne q$ be primes with $p \equiv 3 \pmod 4$, and let $a < b < c < d$ be natural numbers such

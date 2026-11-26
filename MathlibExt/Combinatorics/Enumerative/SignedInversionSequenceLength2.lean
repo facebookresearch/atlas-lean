@@ -16,9 +16,9 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
 
-This module defines signed pattern avoidance and proves the five-pattern Wilf-equivalence
-of Theorem 13 from Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of
-Length-2 Signed Patterns*, INTEGERS 26 (2026), Article A74.
+This module defines signed pattern avoidance and proves the Wilf-equivalences
+of Theorems 13 and 16 from Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding
+a Set of Length-2 Signed Patterns*, INTEGERS 26 (2026), Article A74.
 
 A signed inversion sequence of length `n` is `e₁ ⋯ eₙ` with `e_{i+1} ∈ {0, 0̄, 1, 1̄, …, i, ī}`;
 here it is `e : Fin n → ℕ × Bool` with `(e i).1 ≤ i` (zero-based positions), the second
@@ -275,6 +275,94 @@ theorem signedInvSeq_wilf_b1b0_b0b1_b00_b01_1b0 :
         ⟨.lt, true, false⟩, ⟨.gt, false, true⟩} =
       signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, true, true⟩,
           ⟨.lt, true, false⟩, ⟨.gt, false, true⟩} := by
+  funext n
+  apply Nat.card_congr
+  exact {
+    toFun := fun e => ⟨toggle e.val, e.property.1, toggle_avoids _ false e.property.2⟩
+    invFun := fun e => ⟨toggle e.val, e.property.1, toggle_avoids _ true e.property.2⟩
+    left_inv := fun e => Subtype.ext (toggle_involutive e.val)
+    right_inv := fun e => Subtype.ext (toggle_involutive e.val) }
+
+namespace signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0
+
+open signedInvSeq_wilf_b1b0_b0b1_b00_b01_1b0 (Seen toggle)
+
+private abbrev patterns (b : Bool) : Finset SignedPattern2 :=
+  {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩, ⟨.eq, true, b⟩,
+    ⟨.lt, true, false⟩, ⟨.eq, false, true⟩}
+
+variable {n : ℕ}
+
+-- After a bar the magnitude is constant. At equal magnitudes the earlier sign
+-- determines the later sign, according to which equal-letter pattern is forbidden.
+private theorem avoids_iff (e : Fin n → ℕ × Bool) (b : Bool) :
+    (∀ p ∈ patterns b, ¬ SignedInvSeqContains e p) ↔ ∀ i j, i < j →
+      ((e i).2 = true → (e i).1 = (e j).1) ∧
+      ((e i).1 = (e j).1 → (e j).2 = ((e i).2 && !b)) := by
+  have pair_iff (i j : Fin n) :
+      ⟨compare (e i).1 (e j).1, (e i).2, (e j).2⟩ ∉ patterns b ↔
+        ((e i).2 = true → (e i).1 = (e j).1) ∧
+        ((e i).1 = (e j).1 → (e j).2 = ((e i).2 && !b)) := by
+    cases hi : (e i).2 <;> cases hj : (e j).2 <;> cases b <;>
+      simp [patterns, SignedPattern2.mk.injEq, compare_gt_iff_gt, compare_lt_iff_lt] <;> omega
+  constructor
+  · intro h i j hij
+    exact (pair_iff i j).mp fun hm => h _ hm ⟨i, j, hij, rfl, rfl, rfl⟩
+  · rintro h p hm ⟨i, j, hij, ho, hs, ht⟩
+    apply (pair_iff i j).mpr (h i j hij)
+    simpa only [ho, hs, ht] using hm
+
+private theorem toggle_avoids (e : Fin n → ℕ × Bool) (b : Bool)
+    (h : ∀ p ∈ patterns b, ¬ SignedInvSeqContains e p) :
+    ∀ p ∈ patterns (!b), ¬ SignedInvSeqContains (toggle e) p := by
+  rw [avoids_iff] at h ⊢
+  intro i j hij
+  classical
+  by_cases heq : (e i).1 = (e j).1
+  · -- At equal magnitudes a bar has been seen by j exactly when it has been seen at or before i.
+    have hseen : Seen e j ↔ Seen e i ∨ (e i).2 = true := by
+      constructor
+      · rintro ⟨k, hkj, hk, hval⟩
+        rcases lt_trichotomy k i with hki | rfl | hik
+        · exact Or.inl ⟨k, hki, hk, hval.trans heq.symm⟩
+        · exact Or.inr hk
+        · have hsign := (h i k hik).2 (heq.trans hval.symm)
+          exact Or.inr (Bool.and_eq_true_iff.mp (hsign.symm.trans hk)).1
+      · rintro (⟨k, hki, hk, hval⟩ | hi)
+        · exact ⟨k, hki.trans hij, hk, hval.trans heq⟩
+        · exact ⟨i, hij, hi, heq⟩
+    have earlier : Seen e i → (e i).2 = !b := by
+      rintro ⟨k, hki, hk, hval⟩
+      simpa [hk] using (h k i hki).2 hval
+    have later := (h i j hij).2 heq
+    refine ⟨fun _ => heq, fun _ => ?_⟩
+    simp only [toggle, hseen, later]
+    by_cases hs : Seen e i <;> cases hi : (e i).2 <;> cases b <;> simp_all
+  · -- A barred entry at or before i would force the magnitudes at i and j to agree.
+    have hi : (e i).2 = false := Bool.eq_false_iff.mpr fun hb => heq ((h i j hij).1 hb)
+    have hs : ¬ Seen e i := by
+      rintro ⟨k, hki, hk, hval⟩
+      exact heq (hval.symm.trans ((h k j (hki.trans hij)).1 hk))
+    simp [toggle, hi, hs, heq]
+
+end signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0
+
+open signedInvSeq_wilf_b1b0_b0b1_b00_b01_1b0 (toggle toggle_involutive) in
+open signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0 in
+/-- **Mansour–Safadi Theorem 16: a Wilf-equivalence of six-pattern sets.** Length-2 signed
+patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
+for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
+avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
+$\{\bar1\bar0, \bar10, \bar0\bar1, \bar00, \bar01, 0\bar0\} \sim
+\{\bar1\bar0, \bar10, \bar0\bar1, \bar0\bar0, \bar01, 0\bar0\}$.
+
+Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
+Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 16 (`integers-2026-A74-thm-16`). -/
+theorem signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0 :
+    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
+        ⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.eq, false, true⟩} =
+      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
+          ⟨.eq, true, true⟩, ⟨.lt, true, false⟩, ⟨.eq, false, true⟩} := by
   funext n
   apply Nat.card_congr
   exact {

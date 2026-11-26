@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.RingTheory.PowerSeries.BinomialProduct
+import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 import Mathlib.Algebra.Algebra.Rat
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.RingTheory.PowerSeries.Exp
@@ -103,6 +105,35 @@ public theorem binomialProduct_X_pow_mul_inv_pow {K : Type*} [Field K] [CharZero
     rw [Nat.cast_add_choose K]
     field_simp [Nat.factorial_ne_zero]
   conv_rhs => rw [← mul_assoc, ← map_mul, h, map_mul]
+  ac_rfl
+
+/-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
+power series $A(x)$ over $K$ and every $\beta \in K$,
+
+$$A(x) \odot \frac{1}{1 - \beta x} = \frac{1}{1 - \beta x} A\left(\frac{x}{1 - \beta x}\right),$$
+
+where $\odot$ is the binomial product and $A(x/(1 - \beta x))$ is the substitution of the series
+$x/(1 - \beta x)$, which has zero constant term, into $A$.
+
+Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
+Journal of Integer Sequences 27 (2024), Article 24.1.3, Corollary 5 (`jis-2024-24.1.3-cor-5`). -/
+public theorem binomialProduct_inv_one_sub {K : Type*} [Field K] [CharZero K]
+    (A : PowerSeries K) (β : K) :
+    binomialProduct A (1 - C β * X)⁻¹ =
+      (1 - C β * X)⁻¹ * PowerSeries.subst (X * (1 - C β * X)⁻¹) A := by
+  let G : PowerSeries K := (1 - C β * X)⁻¹
+  have hsubst : constantCoeff (X * G) = 0 := by simp
+  have hmono (k : ℕ) : binomialProduct (X ^ k) G = G * (X * G) ^ k := by
+    rw [mul_pow, mul_left_comm, ← pow_succ']
+    simpa [G] using binomialProduct_X_pow_mul_inv_pow k 0 (0 : K) β
+  -- Each coefficient of the substitution involves only finitely many monomials of `A`.
+  ext n
+  change coeff n (binomialProduct A G) = coeff n (G * PowerSeries.subst (X * G) A)
+  rw [coeff_binomialProduct, ← riordan_array_sum_eq_coeff_subst G (X * G) A hsubst n]
+  refine Finset.sum_congr rfl fun k hk ↦ ?_
+  rw [← hmono, coeff_binomialProduct]
+  simp only [coeff_X_pow, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
+    Finset.sum_ite_eq', ite_eq_left hk]
   ac_rfl
 
 end MetaMathlibExt

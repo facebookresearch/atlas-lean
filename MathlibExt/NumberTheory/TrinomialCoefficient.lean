@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Algebra.Polynomial.Coeff
+import Mathlib.Algebra.Polynomial.Derivative
 import Mathlib.Tactic.Ring
 
 /-!
@@ -49,6 +50,43 @@ theorem trinomialCoefficient_one_one : trinomialCoefficient 1 1 = 1 := by
   unfold trinomialCoefficient
   simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X,
     Polynomial.coeff_X_pow]
+
+/-- **Absorption identity for trinomial coefficients.** Write $\binom{n}{k}_2$ for the
+trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For natural numbers $n \ge 1$
+and $k$, $\frac{k}{n} \binom{n}{k}_2 = \binom{n-1}{k-1}_2 + 2 \binom{n-1}{k-2}_2$, where a term
+whose lower index is negative is read as $0$.
+
+Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
+Integer Sequences 28 (2025), Article 25.3.5, Lemma 31 (`jis-2025-25.3.5-lem-31`). -/
+public theorem trinomialCoefficient_absorption (n k : ℕ) (hn : 0 < n) :
+    (k : ℚ) / n * trinomialCoefficient n k =
+      (if 1 ≤ k then (trinomialCoefficient (n - 1) (k - 1) : ℚ) else 0) +
+        2 * (if 2 ≤ k then (trinomialCoefficient (n - 1) (k - 2) : ℚ) else 0) :=
+  open Polynomial in
+  by
+    let p : Polynomial ℕ := 1 + X + X ^ 2
+    -- Multiplying the derivative by `X` lets us compare coefficients at `k`.
+    have hderiv : X * derivative (p ^ n) =
+        C n * (X * p ^ (n - 1) + C 2 * (X ^ 2 * p ^ (n - 1))) := by
+      rw [derivative_pow, Nat.cast_id, show derivative p = 1 + C 2 * X by
+        simp only [p, derivative_add, derivative_one, derivative_X, zero_add, derivative_X_sq]]
+      ring
+    have hcoeff : (X * derivative (p ^ n)).coeff k = k * (p ^ n).coeff k := by
+      cases k with
+      | zero => simp
+      | succ k => simp [coeff_derivative, mul_comm]
+    have hshift : (X * p ^ (n - 1)).coeff k =
+        if 1 ≤ k then (p ^ (n - 1)).coeff (k - 1) else 0 := by
+      simpa only [pow_one] using coeff_X_pow_mul' (p ^ (n - 1)) 1 k
+    have hnat : k * trinomialCoefficient n k =
+        n * ((if 1 ≤ k then trinomialCoefficient (n - 1) (k - 1) else 0) +
+          2 * (if 2 ≤ k then trinomialCoefficient (n - 1) (k - 2) else 0)) := by
+      change k * (p ^ n).coeff k = _
+      rw [← hcoeff, hderiv, coeff_C_mul, coeff_add, coeff_C_mul, hshift, coeff_X_pow_mul']
+      rfl
+    have hnq : (n : ℚ) ≠ 0 := by exact_mod_cast hn.ne'
+    rw [div_mul_eq_mul_div₀, div_eq_iff hnq, mul_comm _ (n : ℚ)]
+    exact_mod_cast hnat
 
 /-- Sun's generalized central trinomial coefficient
 `T_n(b, c) = [xⁿ] (x² + b x + c)ⁿ`.

@@ -10,9 +10,10 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
-public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Nat
-public import MathlibExt.Combinatorics.Enumerative.LonelyMarriageableSingles
+public import MathlibExt.Combinatorics.Enumerative.AbsoluteMaximalSetsOfLanes
+public import MathlibExt.Combinatorics.Enumerative.LonelyMarriageableSinglesLimits
+public import MathlibExt.Combinatorics.Enumerative.LonelySinglesLowerBound
 
 /-!
 # Lonely singles and marriageable singles partitions (statements)
@@ -62,18 +63,6 @@ public theorem_wanted card_nonabsolute_maximalSetsOfLanes (n : ℕ) :
       IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S).card =
       marriageableSinglesCount n
 
-/-- **Absolute maximal sets of lanes are counted by lonely singles partitions.** For every
-$n \ge 0$, the number of absolute maximal sets of lanes of the standard road intersection of
-size $n$ equals $L_n$, the number of noncrossing partitions of $\{0, \dots, n-1\}$ that are not
-marriageable singles partitions.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 18
-(`jis-2025-25.1.1-cor-18`). -/
-public theorem_wanted card_absolute_maximalSetsOfLanes (n : ℕ) :
-    (Finset.univ.filter fun S : Finset (Fin n × Fin n) => IsAbsoluteMaximalSetOfLanes S).card =
-      lonelySinglesCount n
-
 /-- **Maximal sets of lanes without U-turns are counted by lonely singles partitions.** For every
 $n \ge 0$, consider the restricted standard road intersection of size $n$, in which the lane
 $E_iX_j$ from the entry $E_i$ to the exit $X_j$, for $i, j \in \{0, \dots, n-1\}$, is allowed
@@ -100,18 +89,6 @@ Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Propos
 public theorem_wanted lonely_marriageable_strictMono :
     (∀ n, 2 ≤ n → lonelySinglesCount n < lonelySinglesCount (n + 1)) ∧
     ∀ n, 3 ≤ n → marriageableSinglesCount n < marriageableSinglesCount (n + 1)
-
-/-- **The marriageable and lonely singles counts tend to infinity.** Let $M_n$ and $L_n$ be the
-numbers of noncrossing partitions of $\{0, \dots, n-1\}$ that are marriageable singles partitions
-and lonely singles partitions, respectively. Then $M_n \to \infty$ and $L_n \to \infty$ as
-$n \to \infty$.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 21
-(`jis-2025-25.1.1-cor-21`). -/
-public theorem_wanted tendsto_marriageable_lonely_atTop :
-    Filter.Tendsto marriageableSinglesCount Filter.atTop Filter.atTop ∧
-      Filter.Tendsto lonelySinglesCount Filter.atTop Filter.atTop
 
 /-- **Recursive lower bound for marriageable singles partitions.** For every $n \ge 0$,
 $C_n + 3M_n \le M_{n+2}$, where $C_n$ is the number of noncrossing partitions of
@@ -145,25 +122,6 @@ public theorem_wanted noncrossingBlockSingletonCount_formulas (n m : ℕ) :
     ((n, m) ≠ (1, 1) →
       noncrossingBlockSingletonCount n m 1 =
         zeroExtendedChoose n ((m : ℤ) - 1) * zeroExtendedChoose ((n : ℤ) - m - 1) ((m : ℤ) - 2))
-
-/-- **Lower bound for the number of lonely singles partitions.** For every $n \ge 2$, the number
-$L_n$ of lonely singles partitions of $\{0, \dots, n-1\}$ satisfies
-$$
-L_n \ge \sum_{m=1}^{\lfloor n/2 \rfloor} \frac{1}{n-m+1} \binom{n}{m} \binom{n-m-1}{m-1} +
-\sum_{m=2}^{\lfloor (n+1)/2 \rfloor} \binom{n}{m-1} \binom{n-m-1}{m-2},
-$$
-where a binomial coefficient $\binom{a}{b}$ with $a < 0$ or $b < 0$ is taken to be $0$.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 26
-(`jis-2025-25.1.1-prop-26`). -/
-public theorem_wanted lonelySinglesCount_ge_sum (n : ℕ) (hn : 2 ≤ n) :
-    (∑ m ∈ Finset.Icc 1 (n / 2), 1 / ((n : ℚ) - m + 1) * zeroExtendedChoose n m *
-        zeroExtendedChoose ((n : ℤ) - m - 1) ((m : ℤ) - 1)) +
-      (∑ m ∈ Finset.Icc 2 ((n + 1) / 2),
-        (zeroExtendedChoose n ((m : ℤ) - 1) * zeroExtendedChoose ((n : ℤ) - m - 1) ((m : ℤ) - 2) :
-          ℚ)) ≤
-      lonelySinglesCount n
 
 /-- **Lower bound for the number of marriageable singles partitions.** Extend the binomial
 coefficient $\binom{a}{b}$ to all integers $a$, $b$ by setting it to $0$ when $a < 0$ or $b < 0$,

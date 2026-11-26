@@ -23,7 +23,8 @@ curves subbundles of one constant rank do not suffice, so the interface is
 not stated there.) A filtration is a finite chain of actual bundle
 monomorphisms, starting at zero and ending at the specified bundle, whose
 cokernels are vector bundles of positive rank that are semistable with
-strictly decreasing slopes.
+strictly decreasing slopes. The chain is empty exactly for the bundle of
+rank zero, which is the zero sheaf.
 
 Reference: Huybrechts–Lehn, *The Geometry of Moduli Spaces of Sheaves*,
 Section 1.3, https://doi.org/10.1017/CBO9780511711985.
@@ -55,13 +56,13 @@ def IsSemistable {k : Type u} [Field k] {X : Scheme.{u}}
 /-- A Harder–Narasimhan filtration `0 = E₀ ⊂ E₁ ⊂ ⋯ ⊂ Eₙ ≅ E` of a vector bundle
 of rank `r` on a smooth integral proper curve: actual monomorphisms of vector
 bundles of strictly increasing ranks whose cokernels are semistable vector
-bundles with strictly decreasing slopes. -/
+bundles with strictly decreasing slopes. The number of steps `n` is zero exactly
+when `r = 0`, for the zero bundle. -/
 structure Filtration {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] [SmoothOfRelativeDimension 1 f] [IsIntegral X]
     (E : X.Modules) (r : ℕ) where
   /-- The number of steps. -/
   steps : ℕ
-  steps_pos : 0 < steps
   /-- The bundles of the filtration. -/
   bundle : Fin (steps + 1) → X.Modules
   /-- Their ranks. -/

@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.Etale.EquivariantPoints
 set_option autoImplicit false
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {K : Type*} [Field K] {Ω : Type*} [Field Ω] [Algebra K Ω]
     [IsAlgClosed Ω] [Algebra.IsAlgebraic K Ω] [IsGalois K Ω]
     {B : Type*} {C : Type*} [CommRing B] [CommRing C] [Algebra K B] [Algebra K C]
@@ -27,7 +27,7 @@ theorem exactSource
   Algebra.Etale.existsUnique_algHom_forall_comp_eq_of_equivariant Φ hΦ
 
 -- Higher-universe consumer: the same statement with all types in `Type 1`.
-theorem exactSourceUniverse1
+private theorem exactSourceUniverse1
     {K : Type 1} [Field K] {Ω : Type 1} [Field Ω] [Algebra K Ω]
     [IsAlgClosed Ω] [Algebra.IsAlgebraic K Ω] [IsGalois K Ω]
     {B : Type 1} {C : Type 1} [CommRing B] [CommRing C] [Algebra K B] [Algebra K C]

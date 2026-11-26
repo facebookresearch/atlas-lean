@@ -11,9 +11,12 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.MultiplicativeAdditiveEightSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresRigidity
 public import MathlibExt.NumberTheory.MultiplicativeAdditiveThreePairedSquares
+public import MathlibExt.NumberTheory.SixAndEightNonzeroSquares
+public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditivePairedSquaresEqIdOfThreeOrFour
 
 namespace MetaMathlibExt
 
@@ -51,33 +54,6 @@ public theorem_wanted sum_nonzero_squares_iff_not_mem_exceptional (m n : ℕ) (h
           else Set.Ico 1 m ∪
             {m + 1, m + 2, m + 4, m + 5, m + 7, m + 10, m + 13})
 
-/-- **Sums of six and of eight nonzero squares.** Every integer $n \ge 20$ is a sum of $6$
-squares of positive integers, and every integer $n \ge 22$ is a sum of $8$ squares of positive
-integers.
-
-Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
-Squares*, INTEGERS 26 (2026), Article A121, Corollary 1, as extracted inside the Lemma 1
-record (`integers-2026-A121-lem-1`). -/
-public theorem_wanted sum_six_and_eight_nonzero_squares :
-    (∀ n : ℕ, 20 ≤ n → ∃ a : Fin 6 → ℕ, (∀ i, a i ≠ 0) ∧ ∑ i, a i ^ 2 = n) ∧
-      ∀ n : ℕ, 22 ≤ n → ∃ a : Fin 8 → ℕ, (∀ i, a i ≠ 0) ∧ ∑ i, a i ^ 2 = n
-
-/-- **Multiplicative functions additive on six or eight paired squares and nonzero at $2$ are
-the identity.** Let $k \in \{3, 4\}$ and let $f$ be a complex-valued multiplicative function
-with $f(2) \ne 0$ such that
-$$f\Big(\sum_{j=1}^{k} (x_j^2 + y_j^2)\Big) = \sum_{j=1}^{k} f(x_j^2 + y_j^2)$$
-for all positive integers $x_1, \dots, x_k, y_1, \dots, y_k$. Then $f(n) = n$ for every positive
-integer $n$.
-
-Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
-Squares*, INTEGERS 26 (2026), Article A121, Theorem 1 (`integers-2026-A121-thm-1`). -/
-public theorem_wanted multiplicative_additive_paired_squares_eq_id_of_three_or_four
-    (k : ℕ) (hk : k = 3 ∨ k = 4) (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ x y : Fin k → ℕ, (∀ j, 0 < x j) → (∀ j, 0 < y j) →
-      f (∑ j, (x j ^ 2 + y j ^ 2)) = ∑ j, f (x j ^ 2 + y j ^ 2))
-    (h2 : f 2 ≠ 0) :
-    ∀ n : ℕ, 0 < n → f n = n
-
 /-- **Dichotomy for multiplicative functions additive on paired squares.** Let $k \ge 5$ and
 let $f$ be a complex-valued multiplicative function such that
 $$f\Big(\sum_{j=1}^{k} (x_j^2 + y_j^2)\Big) = \sum_{j=1}^{k} f(x_j^2 + y_j^2)$$
@@ -108,21 +84,6 @@ Squares*, INTEGERS 26 (2026), Article A121, Theorem 3 (`integers-2026-A121-thm-3
 public theorem_wanted multiplicative_additive_six_squares_eq_id (f : ArithmeticFunction ℂ)
     (hf : f.IsMultiplicative)
     (hadd : ∀ x y : Fin 3 → ℕ, (∀ j, 0 < x j) → (∀ j, 0 < y j) →
-      f (∑ j, (x j ^ 2 + y j ^ 2)) = ∑ j, f (x j ^ 2 + y j ^ 2))
-    (h2 : f 2 ≠ 0) :
-    ∀ n : ℕ, 0 < n → f n = n
-
-/-- **Multiplicative functions additive on eight paired squares and nonzero at $2$ are the
-identity.** Let $f$ be a complex-valued multiplicative function with $f(2) \ne 0$ such that
-$$f\Big(\sum_{j=1}^{4} (x_j^2 + y_j^2)\Big) = \sum_{j=1}^{4} f(x_j^2 + y_j^2)$$
-for all positive integers $x_1, \dots, x_4, y_1, \dots, y_4$. Then $f(n) = n$ for every positive
-integer $n$.
-
-Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
-Squares*, INTEGERS 26 (2026), Article A121, Theorem 4 (`integers-2026-A121-thm-4`). -/
-public theorem_wanted multiplicative_additive_eight_squares_eq_id (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hadd : ∀ x y : Fin 4 → ℕ, (∀ j, 0 < x j) → (∀ j, 0 < y j) →
       f (∑ j, (x j ^ 2 + y j ^ 2)) = ∑ j, f (x j ^ 2 + y j ^ 2))
     (h2 : f 2 ≠ 0) :
     ∀ n : ℕ, 0 < n → f n = n

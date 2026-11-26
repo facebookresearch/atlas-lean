@@ -47,11 +47,11 @@ nontrivial coupling term. -/
 noncomputable def linearPolicyMatrix (a b d : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![a, b; 0, d]
 
-/-- The candidate fixed point of the affine policy iteration, solved
-explicitly from the triangular system (`x*_2 = c_2 / (1 - d)`, then
-`x*_1 = (c_1 + b x*_2) / (1 - a)`). It satisfies `x* = A x* + c` when
-`a ≠ 1` and `d ≠ 1` (see `linearPolicyMatrix_mulVec_fixedPoint_add`); no
-uniqueness is claimed here. -/
+/-- The candidate fixed point of the affine policy iteration, solved explicitly from the triangular
+system (`x*_2 = c_2 / (1 - d)`, then `x*_1 = (c_1 + b x*_2) / (1 - a)`). It satisfies
+`x* = A x* + c` when `a ≠ 1` and `d ≠ 1` (see `linearPolicyMatrix_mulVec_fixedPoint_add`); no
+uniqueness is claimed here. With the convention `x / 0 = 0`, the second coordinate is `0` when
+`d = 1`, and the first is `0` when `a = 1`. -/
 noncomputable def policyFixedPoint (a b d : ℝ) (c : Fin 2 → ℝ) : Fin 2 → ℝ :=
   ![ (c 0 + b * (c 1 / (1 - d))) / (1 - a), c 1 / (1 - d) ]
 
@@ -78,7 +78,8 @@ theorem linearPolicyMatrix_mulVec_second (a b d : ℝ) :
     ring
   · simp [linearPolicyMatrix, Matrix.mulVec]
 
-/-- Explicit powers of the policy matrix when the eigenvalues differ. -/
+/-- Explicit powers of the policy matrix when the eigenvalues differ:
+`A ^ n = !![a ^ n, b * (a ^ n - d ^ n) / (a - d); 0, d ^ n]`. -/
 theorem linearPolicyMatrix_pow (a b d : ℝ) (had : a ≠ d) (n : ℕ) :
     (linearPolicyMatrix a b d) ^ n =
       !![a ^ n, b * (a ^ n - d ^ n) / (a - d); 0, d ^ n] := by
@@ -129,7 +130,7 @@ theorem tendsto_linearPolicyMatrix_pow (a b d : ℝ) (had : a ≠ d)
     · simp
     · simpa using hd0
 
-/-- The explicit fixed point indeed satisfies `x* = A x* + c`. -/
+/-- For `a ≠ 1` and `d ≠ 1`, the explicit fixed point indeed satisfies `x* = A x* + c`. -/
 theorem linearPolicyMatrix_mulVec_fixedPoint_add (a b d : ℝ) (ha1 : a ≠ 1)
     (hd1 : d ≠ 1) (c : Fin 2 → ℝ) :
     linearPolicyMatrix a b d *ᵥ policyFixedPoint a b d c + c =
@@ -141,7 +142,8 @@ theorem linearPolicyMatrix_mulVec_fixedPoint_add (a b d : ℝ) (ha1 : a ≠ 1)
     simp [policyFixedPoint, linearPolicyMatrix] <;>
     field_simp <;> ring
 
-/-- The iteration error is the matrix power applied to the initial error. -/
+/-- For `a ≠ 1` and `d ≠ 1`, the iteration error is the matrix power applied to the initial
+error. -/
 theorem policyIterate_sub_fixedPoint (a b d : ℝ) (ha1 : a ≠ 1) (hd1 : d ≠ 1)
     (c x0 : Fin 2 → ℝ) (n : ℕ) :
     policyIterate a b d c x0 n - policyFixedPoint a b d c =
@@ -207,7 +209,7 @@ theorem tendsto_policyIterate (a b d : ℝ) (had : a ≠ d)
   simpa using hlim
 
 /-- Concrete policy model: `a = 1/2`, `b = 1/4`, `d = 1/3`, `c = ![1, 1]`,
-starting from `![0, 0]`. The fixed point is `![11/4, 3/2]`. -/
+starting from `![0, 0]`: the iteration converges to the fixed point `![11/4, 3/2]`. -/
 theorem policyIterate_example :
     Tendsto (policyIterate (1 / 2 : ℝ) (1 / 4) (1 / 3) ![1, 1] ![0, 0]) atTop
       (𝓝 ![11 / 4, 3 / 2]) := by

@@ -4,7 +4,12 @@ Let $A$ be a C\*-algebra and $H$ a complex Hilbert space. A representation of $A
 
 ## Expansion
 
-A good expansion of this node links each notion it is built from: closed linear subspaces; C\*-algebras; representations of C\*-algebras; Hilbert spaces; invariant subspaces.
+A good expansion of this node links each notion it is built from: representations of C\*-algebras; Hilbert spaces; invariant subspaces.
+
+## Depends on
+
+- [Closed submodule of a module equipped with a topology](../../../Topology/topological-modules/closed-linear-subspace.md)
+- [C*-algebra, not necessarily with an identity element](../cstar-algebra.md)
 
 ## Sources
 

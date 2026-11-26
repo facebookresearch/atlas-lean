@@ -16,8 +16,13 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity
+
+import Mathlib.Analysis.Convex.Mul
+import MathlibExt.Probability.BrownianQuadraticVariation
+import MathlibExt.Probability.Distributions.GaussianDensity
 
 @[expose] public section
 
@@ -182,5 +187,154 @@ theorem thinShellVarianceConstant_lt_top_of_bound {C : ℝ}
       IsIsotropicLogConcave μ → normalizedRadiusVariance μ ≤ ENNReal.ofReal C) :
     thinShellVarianceConstant < ⊤ := by
   exact lt_of_le_of_lt (thinShellVarianceConstant_le_iff.mpr hC) ENNReal.ofReal_lt_top
+
+section
+
+open ProbabilityTheory WithLp
+open scoped ProbabilityTheory
+
+private theorem isLogConcaveDensity_stdGaussianPDFReal (n : ℕ) :
+    IsLogConcaveDensity (MetaMathlibExt.stdGaussianPDFReal (ι := Fin n)) := by
+  have hc : 0 < ((√(2 * Real.pi)) ^ Fintype.card (Fin n))⁻¹ := by positivity
+  refine ⟨MetaMathlibExt.measurable_stdGaussianPDFReal,
+    MetaMathlibExt.stdGaussianPDFReal_nonneg, ?_⟩
+  intro x y t ht ht₁
+  have hsq : ‖(1 - t) • x + t • y‖ ^ 2 ≤ (1 - t) * ‖x‖ ^ 2 + t * ‖y‖ ^ 2 := by
+    simp only [EuclideanSpace.real_norm_sq_eq, Finset.mul_sum, ← Finset.sum_add_distrib]
+    refine Finset.sum_le_sum fun i _ ↦ ?_
+    change ((1 - t) * x i + t * y i) ^ 2 ≤ (1 - t) * (x i) ^ 2 + t * (y i) ^ 2
+    have hs : ConvexOn ℝ Set.univ (fun s : ℝ ↦ s ^ 2) := by
+      exact (even_two : Even (2 : ℕ)).convexOn_pow
+    exact hs.2 (Set.mem_univ (x i)) (Set.mem_univ (y i)) (sub_nonneg.mpr ht₁.le) ht.le
+      (sub_add_cancel 1 t)
+  change (MetaMathlibExt.stdGaussianPDFReal x) ^ (1 - t) *
+    (MetaMathlibExt.stdGaussianPDFReal y) ^ t ≤
+      MetaMathlibExt.stdGaussianPDFReal ((1 - t) • x + t • y)
+  unfold MetaMathlibExt.stdGaussianPDFReal
+  rw [Real.mul_rpow hc.le (Real.exp_pos _).le, Real.mul_rpow hc.le (Real.exp_pos _).le,
+    ← Real.exp_mul, ← Real.exp_mul, mul_mul_mul_comm, ← Real.rpow_add hc, sub_add_cancel,
+    Real.rpow_one, ← Real.exp_add]
+  apply mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr ?_) hc.le
+  linarith only [hsq]
+
+private lemma integral_sq_gaussianReal : ∫ x, x ^ 2 ∂gaussianReal 0 1 = 1 := by
+  have h := variance_fun_id_gaussianReal (μ := 0) (v := 1)
+  rw [variance_eq_integral (by fun_prop), integral_id_gaussianReal] at h
+  simpa using h
+
+private lemma memLp_sq_gaussianReal : MemLp (fun x : ℝ ↦ x ^ 2) 2 (gaussianReal 0 1) := by
+  rw [memLp_two_iff_integrable_sq (by fun_prop)]
+  simp_rw [← pow_mul]
+  exact integrable_pow_of_mem_interior_integrableExpSet
+    (X := id) (by simp [integrableExpSet_id_gaussianReal]) 4
+
+private lemma variance_sq_gaussianReal : Var[fun x : ℝ ↦ x ^ 2; gaussianReal 0 1] = 2 := by
+  rw [variance_eq_sub memLp_sq_gaussianReal]
+  change (∫ x, (x ^ 2) ^ 2 ∂gaussianReal 0 1) - (∫ x, x ^ 2 ∂gaussianReal 0 1) ^ 2 = 2
+  simp_rw [← pow_mul]
+  norm_num [ProbabilityTheory.integral_pow_four_gaussianReal, integral_sq_gaussianReal]
+
+private lemma measurePreserving_stdGaussian_eval {n : ℕ} (i : Fin n) :
+    MeasurePreserving (fun x : EuclideanSpace ℝ (Fin n) ↦ x i)
+      (stdGaussian (EuclideanSpace ℝ (Fin n))) (gaussianReal 0 1) := by
+  simpa using measurePreserving_eval_multivariateGaussian
+    (μ := (0 : EuclideanSpace ℝ (Fin n))) (S := (1 : Matrix (Fin n) (Fin n) ℝ))
+    (i := i) Matrix.PosSemidef.one
+
+private lemma integral_stdGaussian_eval {n : ℕ} (i : Fin n) :
+    ∫ x, (x : EuclideanSpace ℝ (Fin n)) i ∂stdGaussian (EuclideanSpace ℝ (Fin n)) = 0 := by
+  rw [← integral_id_gaussianReal (μ := 0) (v := 1),
+    ← (measurePreserving_stdGaussian_eval i).map_eq, integral_map]
+  all_goals fun_prop
+
+private lemma stdGaussian_coordinate_memLp {n : ℕ} (i : Fin n) :
+    MemLp (fun x : EuclideanSpace ℝ (Fin n) ↦ x i) 2 (stdGaussian (EuclideanSpace ℝ (Fin n))) :=
+  (memLp_id_gaussianReal' 2 (by simp)).comp_measurePreserving (measurePreserving_stdGaussian_eval i)
+
+private lemma stdGaussian_integral_coordinate_mul {n : ℕ} (i j : Fin n) :
+    (∫ x, (x : EuclideanSpace ℝ (Fin n)) i * x j ∂stdGaussian (EuclideanSpace ℝ (Fin n))) =
+      if i = j then 1 else 0 := by
+  have h := covariance_eval_multivariateGaussian
+    (μ := (0 : EuclideanSpace ℝ (Fin n))) (S := (1 : Matrix (Fin n) (Fin n) ℝ))
+    Matrix.PosSemidef.one i j
+  rw [multivariateGaussian_zero_one, covariance_eq_sub (stdGaussian_coordinate_memLp i)
+    (stdGaussian_coordinate_memLp j), integral_stdGaussian_eval, integral_stdGaussian_eval,
+    mul_zero, sub_zero, Matrix.one_apply] at h
+  exact h
+
+private lemma memLp_norm_sq_stdGaussian (n : ℕ) :
+    MemLp (fun x : EuclideanSpace ℝ (Fin n) ↦ ‖x‖ ^ 2) 2
+      (stdGaussian (EuclideanSpace ℝ (Fin n))) := by
+  simp_rw [EuclideanSpace.real_norm_sq_eq]
+  exact memLp_finsetSum _ fun i _ ↦
+    memLp_sq_gaussianReal.comp_measurePreserving (measurePreserving_stdGaussian_eval i)
+
+private lemma integral_norm_sq_stdGaussian (n : ℕ) :
+    ∫ x : EuclideanSpace ℝ (Fin n), ‖x‖ ^ 2 ∂stdGaussian (EuclideanSpace ℝ (Fin n)) = n := by
+  simp_rw [EuclideanSpace.real_norm_sq_eq]
+  rw [integral_finsetSum]
+  · calc
+      _ = ∑ _i : Fin n, (1 : ℝ) := Finset.sum_congr rfl fun i _ ↦ by
+        rw [← integral_sq_gaussianReal, ← (measurePreserving_stdGaussian_eval i).map_eq,
+          integral_map]
+        all_goals fun_prop
+      _ = n := by simp
+  · exact fun i _ ↦ (stdGaussian_coordinate_memLp i).integrable_sq
+
+private lemma variance_norm_sq_stdGaussian (n : ℕ) :
+    Var[fun x : EuclideanSpace ℝ (Fin n) ↦ ‖x‖ ^ 2; stdGaussian (EuclideanSpace ℝ (Fin n))] =
+      2 * (n : ℝ) := by
+  rw [← map_pi_eq_stdGaussian, variance_map (by fun_prop) (by fun_prop)]
+  have h : (fun x : EuclideanSpace ℝ (Fin n) ↦ ‖x‖ ^ 2) ∘ toLp 2 =
+      ∑ i : Fin n, fun x : Fin n → ℝ ↦ x i ^ 2 := by
+    ext x
+    simp [EuclideanSpace.real_norm_sq_eq]
+  rw [h, variance_sum_pi (X := fun _i x ↦ x ^ 2) (fun _ ↦ memLp_sq_gaussianReal)]
+  simp [variance_sq_gaussianReal, mul_comm]
+
+private lemma evariance_norm_sq_stdGaussian (n : ℕ) :
+    (∫⁻ x : EuclideanSpace ℝ (Fin n), ENNReal.ofReal ((‖x‖ ^ 2 - (n : ℝ)) ^ 2)
+      ∂stdGaussian (EuclideanSpace ℝ (Fin n))) = 2 * (n : ℝ≥0∞) := by
+  rw [← integral_norm_sq_stdGaussian n, ← evariance_eq_lintegral_ofReal,
+    ← ofReal_variance (memLp_norm_sq_stdGaussian n), variance_norm_sq_stdGaussian,
+    ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_natCast]
+  norm_num
+
+/-- **The standard Gaussian has normalized radius variance 2.** For every dimension $n \ge 1$,
+the standard Gaussian measure $\gamma_n$ on $\mathbb{R}^n$ is isotropic log-concave (a probability
+measure with a log-concave Lebesgue density, mean $0$ and identity covariance), and its normalized
+radius variance $\frac{1}{n} \int (|x|^2 - n)^2 \, d\gamma_n(x)$ equals $2$.
+
+Source: Klartag--Lehec, arXiv:2507.15495v1, Introduction. -/
+public theorem stdGaussian_isotropic_variance (n : ℕ) (hn : 0 < n) :
+    IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) ∧
+      normalizedRadiusVariance
+        (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) = 2 := by
+  refine ⟨⟨inferInstance, ?_, ?_, ?_⟩, ?_⟩
+  · exact ⟨MetaMathlibExt.stdGaussianPDFReal, isLogConcaveDensity_stdGaussianPDFReal n,
+      MetaMathlibExt.stdGaussian_eq_withDensity⟩
+  · intro i
+    exact ⟨(stdGaussian_coordinate_memLp i).integrable (by norm_num), integral_stdGaussian_eval i⟩
+  · intro i j
+    exact ⟨(stdGaussian_coordinate_memLp i).integrable_mul (stdGaussian_coordinate_memLp j),
+      stdGaussian_integral_coordinate_mul i j⟩
+  · rw [normalizedRadiusVariance, evariance_norm_sq_stdGaussian]
+    exact ENNReal.mul_div_cancel_right (by exact_mod_cast hn.ne') (by simp)
+
+end
+
+/-- **The thin-shell variance constant is at least 2.** The thin-shell variance constant, the
+supremum in $[0, \infty]$ of the normalized radius variances
+$\frac{1}{n} \int (|x|^2 - n)^2 \, d\mu(x)$ over all dimensions $n \ge 1$ and all isotropic
+log-concave probability measures $\mu$ on $\mathbb{R}^n$, is at least $2$.
+
+The lower bound comes from the standard Gaussian, whose normalized radius variance is $2$ in
+every dimension.
+
+Source: Klartag and Lehec, arXiv:2507.15495v1, Introduction. -/
+public theorem two_le_thinShellVarianceConstant :
+    2 ≤ thinShellVarianceConstant := by
+  obtain ⟨hIso, hVar⟩ := stdGaussian_isotropic_variance 1 Nat.one_pos
+  simpa only [hVar] using normalizedRadiusVariance_le_constant Nat.one_pos hIso
 
 end MathlibExt.Probability.ThinShell

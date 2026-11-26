@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.PermutipleStrings
 public import WantedExt.NumberTheory.Digits.PermutipleWanted
+public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero
 
 /-!
 # A multigraph characterization of permutiple strings (Holt)
@@ -69,35 +70,6 @@ INTEGERS 25 (2025), Article A111, Theorem 6 (`integers-2025-A111-thm-6`). -/
 public theorem_wanted exists_carries_of_isMotherGraphEdge (n b d₁ d₂ : ℕ)
     (h : IsMotherGraphEdge n b d₁ d₂) :
     ∃ c₁ c₂ : ℕ, c₁ ≤ n - 1 ∧ c₂ ≤ n - 1 ∧ (b : ℤ) * c₂ - c₁ = (n : ℤ) * d₂ - d₁
-
-/-- **Hoey-Sloane transitions are transitions of the machine.** Let $1 < n < b$, let
-$e = (d_1, d_2)$ be an edge of the $(n, b)$-mother graph, and let $(c_1, c_2)$ be the Hoey-Sloane
-transition of $e$, that is, $c_1 = \lambda(d_1 + (b - n) d_2)$ and $c_2 = (n d_2 - d_1 + c_1) / b$,
-where $\lambda$ is the least non-negative residue modulo $b$. Then the input $e$ moves state $c_1$
-to state $c_2$ in one transition of the $(n, b)$-Hoey-Sloane machine.
-
-By the uniqueness of Hoey-Sloane transitions (Theorem 5), it is the only transition labelled
-by $e$.
-
-Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
-INTEGERS 25 (2025), Article A111, Definition 6, from Theorems 5 and 6
-(`integers-2025-A111-thm-6`). -/
-public theorem_wanted isHoeySloaneStep_hoeySloaneTransition (n b : ℕ) (hn : 1 < n) (hnb : n < b)
-    (e : ℕ × ℕ) (he : IsMotherGraphEdge n b e.1 e.2) :
-    IsHoeySloaneStep n b (hoeySloaneTransition n b e).1 (hoeySloaneTransition n b e).2 e
-
-/-- **Eulerian circuits through zero yield permutiple strings.** Let $1 < n < b$ and let $I$
-be a multiset of cycles of the $(n, b)$-mother graph, with multiset union of cycle edges
-$C_I$ and multi-image union $\Delta_I$. If $\Delta_I$ has an Eulerian circuit beginning
-and ending at the zero state, then there is an $(n, b)$-permutiple string $s$ whose
-multiset of entries is $C_I$.
-
-Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
-INTEGERS 25 (2025), Article A111, Theorem 7 (`integers-2025-A111-thm-7`). -/
-public theorem_wanted exists_isPermutipleString_of_hasEulerianCircuitFromZero (n b : ℕ) (hn : 1 < n)
-    (hnb : n < b) (cs : Multiset (List ℕ)) (hcs : ∀ vs ∈ cs, IsMotherGraphCycle n b vs)
-    (h : HasEulerianCircuitFromZero (multiImageUnion n b cs)) :
-    ∃ s : List (ℕ × ℕ), (s : Multiset (ℕ × ℕ)) = cycleUnion cs ∧ IsPermutipleString n b s
 
 /-- **$L$-Eulerian criterion for permutiple strings.** Let $1 < n < b$ and let $I$ be a
 multiset of cycles of the $(n, b)$-mother graph, with multiset union of cycle edges $C_I$

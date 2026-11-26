@@ -23,12 +23,12 @@ reduces to `n|1|rⱼ ≥ 0, wⱼ = 1|∑ wⱼTⱼ`).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Defs
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -51,7 +51,7 @@ the weighted sum is `w` times the unweighted one, and it is at most `K` exactly 
 unweighted sum is at most `⌊K / w⌋`. Release times and their constraint `σ(t) ≥ r(t)` are those
 of [SS1]; a one-processor schedule is Garey and Johnson's [SS1] notion (a one-to-one
 `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying `σ(t) ≥ σ(t') + l(t')`), the predicate
-`IsOneProcessorSchedule` reused from `SequencingToMinimizeWeightedTardinessWanted`, and the
+`IsOneProcessorSchedule` reused from `SequencingToMinimizeWeightedTardinessDefs`, and the
 tardiness sum has the same shape as there.
 
 Hardness: Garey and Johnson derive strong NP-completeness from [SS1], which is the case

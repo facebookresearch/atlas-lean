@@ -9,13 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
-import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Data.Matrix.Mul
 
 /-!
 # Explicit formulas for Barry's triangle
 
 The matrix-free formula expresses entries of Barry's triangle as sums of weighted monomials
-over tuples of natural numbers with prescribed sum.
+over tuples of natural numbers with prescribed sum. The matrix power formula obtains the same
+entries from the first column of a power of a lower bidiagonal matrix.
 -/
 
 namespace MetaMathlibExt
@@ -137,7 +138,104 @@ private theorem barryTriangleAux_add (β k d : ℕ) :
       rw [Nat.succ_add, ← Nat.add_succ, ih]
       simp +unfoldPartialApp [Fin.tail, Nat.add_right_comm, Nat.add_assoc]
 
+-- Row i corresponds to column i + 1 of the triangle.
+private def barryTriangleMatrix (a : ℕ) : Matrix (Fin (a - 1)) (Fin (a - 1)) ℕ :=
+  Matrix.of fun i j =>
+    if i = j then ((i : ℕ) + 1) * (a - ((i : ℕ) + 1))
+    else if (i : ℕ) = (j : ℕ) + 1 then 1 else 0
+
+private theorem barryTriangleMatrix_mul_apply (a : ℕ)
+    (X : Matrix (Fin (a - 1)) (Fin (a - 1)) ℕ) (i j : Fin (a - 1)) :
+    (barryTriangleMatrix a * X) i j =
+      ((i : ℕ) + 1) * (a - ((i : ℕ) + 1)) * X i j +
+        (if h : 0 < (i : ℕ) then X ⟨(i : ℕ) - 1, by omega⟩ j else 0) := by
+  rw [Matrix.mul_apply]
+  have hterm (k : Fin (a - 1)) :
+      barryTriangleMatrix a i k * X k j =
+        (if i = k then ((i : ℕ) + 1) * (a - ((i : ℕ) + 1)) * X k j else 0) +
+          (if (i : ℕ) = (k : ℕ) + 1 then X k j else 0) := by
+    by_cases hik : i = k
+    · subst k
+      simp [barryTriangleMatrix]
+    · by_cases h : (i : ℕ) = (k : ℕ) + 1 <;> simp [barryTriangleMatrix, hik, h]
+  simp only [hterm, Finset.sum_add_distrib, Fintype.sum_ite_eq]
+  congr 1
+  by_cases hi : 0 < (i : ℕ)
+  · rw [dite_eq_left hi]
+    let p : Fin (a - 1) := ⟨(i : ℕ) - 1, by omega⟩
+    change _ = X p j
+    rw [Finset.sum_eq_single p]
+    · have hp : (i : ℕ) = (p : ℕ) + 1 := by
+        change (i : ℕ) = (i : ℕ) - 1 + 1
+        omega
+      simp [hp]
+    · intro k _ hk
+      have hne : (i : ℕ) ≠ (k : ℕ) + 1 := by
+        intro h
+        apply hk
+        apply Fin.ext
+        change (k : ℕ) = (i : ℕ) - 1
+        omega
+      simp [hne]
+    · simp
+  · rw [dite_eq_right hi]
+    exact Finset.sum_eq_zero fun k _ => ite_eq_right (by omega)
+
+-- Fixing β + k = a, one multiplication advances n by one in every column.
+private theorem barryTriangleAux_eq_pow_entry (a : ℕ) (ha : 2 ≤ a) (d : ℕ)
+    (i : Fin (a - 1)) :
+    barryTriangleAux (a - ((i : ℕ) + 1)) (d + 1) ((i : ℕ) + 1) =
+      (barryTriangleMatrix a ^ d) i ⟨0, by omega⟩ := by
+  let z : Fin (a - 1) := ⟨0, by omega⟩
+  change _ = (barryTriangleMatrix a ^ d) i z
+  induction d generalizing i with
+  | zero =>
+    rw [pow_zero]
+    by_cases hi : i = z
+    · subst i
+      rw [Matrix.one_apply_eq]
+      rfl
+    · rw [Matrix.one_apply_ne hi]
+      have hz : (i : ℕ) ≠ 0 := fun h => hi (Fin.ext h)
+      exact barryTriangleAux_of_lt _ _ _ (by omega)
+  | succ d ih =>
+    rw [barryTriangleAux_succ_succ, pow_succ', barryTriangleMatrix_mul_apply, ← ih i]
+    by_cases hi : 0 < (i : ℕ)
+    · rw [dite_eq_left hi]
+      let p : Fin (a - 1) := ⟨(i : ℕ) - 1, by omega⟩
+      change _ = _ + (barryTriangleMatrix a ^ d) p z
+      rw [← ih p]
+      have hp : (p : ℕ) + 1 = (i : ℕ) := by
+        change (i : ℕ) - 1 + 1 = (i : ℕ)
+        omega
+      have hβ : a - ((i : ℕ) + 1) + 1 = a - (i : ℕ) := by omega
+      rw [hp, hβ, Nat.mul_comm (a - _) _, Nat.add_comm]
+    · rw [dite_eq_right hi, show (i : ℕ) = 0 by omega]
+      simp [barryTriangleAux]
+
 end BarryTriangle
+
+open BarryTriangle in
+/-- **Matrix power formula for Barry's triangle.** Let $s$ be Barry's triangle recurrence and let
+$2 \le a \le n$. Let $M$ be the $(a - 1) \times (a - 1)$ lower bidiagonal matrix of natural
+numbers with diagonal entries $M_{i,i} = i(a - i)$ for $i = 1, \dots, a - 1$, entries
+$M_{i+1,i} = 1$ just below the diagonal, and all other entries $0$. Then $s(0, n, a)$ is the
+bottom-left entry $(M^{n-2})_{a-1,1}$ of the power $M^{n-2}$.
+
+Source: Khaidarov, *Enumeration of Certain k-Block Partitions of Barry*, Journal of Integer
+Sequences 29 (2026), Article 26.2.8, equation (4), taking the last entry of the resulting vector
+(`jis-2026-26.2.8-abstract-main`). -/
+public theorem barryTriangleAux_eq_matrix_pow (n a : ℕ) (ha : 2 ≤ a) (han : a ≤ n) :
+    barryTriangleAux 0 n a =
+      ((Matrix.of fun i j : Fin (a - 1) =>
+          if i = j then ((i : ℕ) + 1) * (a - ((i : ℕ) + 1))
+          else if (i : ℕ) = (j : ℕ) + 1 then 1 else 0) ^ (n - 2))
+        ⟨a - 2, by omega⟩ ⟨0, by omega⟩ := by
+  obtain ⟨b, rfl⟩ : ∃ b, a = b + 2 := ⟨a - 2, by omega⟩
+  obtain ⟨d, rfl⟩ : ∃ d, n = d + 2 := ⟨n - 2, by omega⟩
+  rw [barryTriangleAux_succ_succ, Nat.zero_mul, Nat.zero_mul, Nat.add_zero]
+  simpa [barryTriangleMatrix, show b + 2 - (b + 1) = 1 by omega] using
+    barryTriangleAux_eq_pow_entry (b + 2) ha d ⟨b, by omega⟩
 
 open BarryTriangle in
 /-- **Matrix-free formula for Barry's triangle.** Let $s$ be Barry's triangle recurrence and let

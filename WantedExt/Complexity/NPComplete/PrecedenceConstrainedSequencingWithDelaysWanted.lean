@@ -24,11 +24,11 @@ non-negative time-lags").
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Logic.Relation
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -50,7 +50,7 @@ The tasks are `0, ..., n - 1`, one listed delay per task, and the edges are list
 `(i, j)`, required to form an acyclic relation (no task reaches itself along edges). Start times
 are written `S(t) = σ(t) + 1` with `σ : T → ℕ`; injectivity of `S` is the one-processor
 condition for unit-time tasks (`IsOneProcessorSchedule` with all lengths `1`, reused from
-`SequencingToMinimizeWeightedTardinessWanted`), the delay constraint reads
+`SequencingToMinimizeWeightedTardinessDefs`), the delay constraint reads
 `σ(tᵢ) + d(tᵢ) < σ(tⱼ)`, and the finish time bound reads `σ(t) + 1 ≤ K`. With all delays equal
 to one value `l` the problem is `1|prec(l); pᵢ = 1|C_max`
 (`PrecedenceTimeLagMakespanWanted`), which gives NP-hardness. Binary encoding of all numbers.

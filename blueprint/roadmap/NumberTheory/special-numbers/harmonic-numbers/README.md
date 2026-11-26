@@ -14,3 +14,4 @@ Harmonic, hyperharmonic and multiple harmonic sums, binomial-harmonic identities
 - [Ramanujan's harmonic sum identities](ramanujan-s-harmonic-sum-identities/README.md)
 - [Higher-order harmonic numbers](higher-harmonic.md)
 - [Sums of harmonic numbers starting from the second are not integers](harmonic-partial-sum-not-int.md)
+- [The derivative of the gamma function at 1 is minus Euler's constant](gamma-derivative-at-one.md)

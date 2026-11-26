@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Basic.Finite.Defs
+public import Mathlib.Data.Finset.Attr
+public import Mathlib.Tactic.TypeStar
 public import Mathlib.Algebra.Group.Action.End
-public import Mathlib.GroupTheory.Finiteness
 public import Mathlib.GroupTheory.GroupAction.Defs
 
 namespace MetaMathlibExt
