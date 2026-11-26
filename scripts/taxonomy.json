@@ -13101,6 +13101,7 @@
   "MathlibExt/NumberTheory/JosephusFixedPointRecurrence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusBaseThreeHalves": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusFixedSuccCases": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
+  "MathlibExt/NumberTheory/FibonacciBinomialSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/KFibonacciAlternatingBinomial": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/KFibonacciBinomialTruncation": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/KFibonacciTruncatedRecurrence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
