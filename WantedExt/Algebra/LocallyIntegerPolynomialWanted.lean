@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 public import MathlibExt.Algebra.Polynomial.InterpolationPolyExchange
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
+public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialComp
 public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
 
@@ -163,16 +164,6 @@ Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (
 Article A41, Theorem 4 (`integers-2025-A41-thm-4`). -/
 public theorem_wanted exists_strictMono_principal_ideals {U : Set ℤ} (hU : U.Infinite) :
     ∃ g : ℕ → lipSubring U, StrictMono fun n => Ideal.span ({g n} : Set (lipSubring U))
-
-/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under composition.** If $f$ and $g$ lie in
-$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
-$\mathbb{Z} \to \mathbb{Z}$, then so does the composite $x \mapsto f(g(x))$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
-public theorem_wanted lip_univ_comp {f g : ↥(Set.univ : Set ℤ) → ℤ}
-    (hf : f ∈ lipSubring Set.univ) (hg : g ∈ lipSubring Set.univ) :
-    (fun x => f ⟨g x, Set.mem_univ _⟩) ∈ lipSubring Set.univ
 
 /-- **Non-polynomial LIP functions on the integers that are small on an infinite set.** Let
 $\tau : \mathbb{N} \to \mathbb{R}$ with $\tau(n) \to +\infty$ as $n \to \infty$. Write
