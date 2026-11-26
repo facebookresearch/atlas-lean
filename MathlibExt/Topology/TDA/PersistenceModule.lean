@@ -31,8 +31,9 @@ spaces (G. Carlsson, *Topology and data*, Bull. AMS 46 (2009), Def. 2.9; W. Craw
 * `IsMatching I J δ`: a `δ`-matching between two families of real intervals, the bottleneck
   matchings of persistence diagrams (Chazal–de Silva–Glisse–Oudot, §4.2) read on the intervals.
 
-The decomposition, uniqueness and stability theorems that use these definitions are recorded in
-`WantedExt.Topology.PersistenceModuleWanted`.
+The decomposition and stability theorems that use these definitions are recorded in
+`WantedExt.Topology.PersistenceModuleWanted`; uniqueness of the barcode is proved in
+`MathlibExt.Topology.TDA.PersistenceBarcodeUnique`.
 -/
 
 @[expose] public section
