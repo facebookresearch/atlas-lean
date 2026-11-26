@@ -1,6 +1,6 @@
 # Katsuno–Mendelzon belief revision: postulates and representation
 
-- [Interpretations of a finite propositional signature](interp.md)
+- [Interpretations of a propositional signature](interp.md)
 - [Hamming distance between interpretations](dalal-dist.md)
 - [Distance of an interpretation to a belief set](dalal-key.md)
 - [Dalal's preorder on interpretations](dalal-le.md)
