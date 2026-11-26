@@ -12,6 +12,8 @@ $F$ is a secure PRF relative to that class, then $G$ is a secure PRG relative to
 distinguisher families: it expands, and every admissible family has negligible PRG advantage.
 
 This is the asymptotic form of Boneh and Shoup, Theorem 4.8. The condition
-$|K_n| < |Y_n|^{\ell(n)}$ is used only for expansion. The efficiency of $F$, of $G$ and of the
-distinguishers is not modelled; any restriction on the distinguishers is what the two classes
-encode.
+$|K_n| < |Y_n|^{\ell(n)}$ is used only for expansion. It comes from the asymptotic PRG security
+`PRGSecure`, which requires expansion, following Katz and Lindell; Boneh and Shoup's
+Theorem 4.8 has no such hypothesis, and their Definition 3.1 of a secure PRG does not require
+expansion. The efficiency of $F$, of $G$ and of the distinguishers is not modelled; any
+restriction on the distinguishers is what the two classes encode.

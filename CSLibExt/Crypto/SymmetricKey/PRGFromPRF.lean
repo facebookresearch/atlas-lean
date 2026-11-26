@@ -29,20 +29,25 @@ Shoup, Section 4.4.4).
   the string `prgOfPRF F x k`. With a uniformly random function the answers at distinct points
   are uniform (`LazySampling.lazyRF_map_fst` and `RandomOracle.map_fst_lazyRF_queryVec`), so it
   shows `A` a uniform string.
-* `prgSecure_prgOfPRF`: the asymptotic form. If a family of keyed functions is `PRFSecure`
-  against a class of distinguisher families containing the reductions, and there are fewer keys
-  than outputs, the family of generators is `PRGSecure`.
+* `prgSecure_prgOfPRF`: the asymptotic form. Suppose that the points are distinct at every
+  security parameter, that there are fewer keys than outputs, that every admissible PRG
+  distinguisher family draws its coins uniformly, and that the family of keyed functions is
+  `PRFSecure` against a class of distinguisher families containing the reductions. Then the
+  family of generators is `PRGSecure`.
 
 **Running time and coins.** `OracleComp` has no running time, so Boneh and Shoup's condition that
 the reduction is an *elementary wrapper* around `A` (about the running time of `A`) is rendered
 by the form of the reduction: besides its `n` queries it runs `A`'s guess once, on the answers,
 with `A`'s own coins. The PRF distinguishers of `Cslib.Crypto.PRF.prfAdvantage` draw their coins
-uniformly from a finite type, so `A` is required to do the same, and the reduction uses `A`'s
-coins as its own.
+uniformly from a finite type and the reduction uses `A`'s coins as its own, which is why `A`'s
+coins are taken uniform on a finite type, as a probabilistic algorithm's are. An equality needs
+some such hypothesis: the coins of a `Distinguisher` may have any distribution, so a PRG advantage
+can be irrational, whereas every PRF advantage is rational.
 
 **Expansion.** The equality of advantages needs no relation between `|K|` and `|Y| ^ n`;
-`|K| < |Y| ^ n` only makes the generator expand, which `PRGSecure` requires, and it is a hypothesis
-of `prgSecure_prgOfPRF` alone.
+`|K| < |Y| ^ n` only makes the generator expand, which `PRGSecure` requires (following Katz and
+Lindell), and it is a hypothesis of `prgSecure_prgOfPRF` alone. Boneh and Shoup's Theorem 4.8 has
+no such hypothesis, and their Definition 3.1 of a secure PRG does not require expansion.
 
 ## References
 
@@ -144,8 +149,13 @@ equals the PRF advantage of $B$ against $F$.
 This is the concrete form of Boneh and Shoup, Theorem 4.8. There is no running-time model: their
 condition that $B$ is an elementary wrapper around $A$ is rendered by the form of $B$, which
 besides its $n$ queries runs $A$ once, on the answers, with $A$'s coins. PRF distinguishers draw
-their coins uniformly from a finite set, which is why $A$ must too. The equality does not need
-$|K| < |Y|^n$, which only makes $G$ expand. -/
+their coins uniformly from a finite set and $B$ uses $A$'s coins as its own, which is why $A$'s
+coins are taken uniform, as a probabilistic algorithm's are. An equality needs some such
+hypothesis: PRG distinguishers may have coins with any distribution, so a PRG advantage can be
+irrational, whereas every PRF advantage is rational. The equality does not need $|K| < |Y|^n$,
+which only makes $G$ expand. That condition comes from the asymptotic PRG security `PRGSecure`,
+which requires expansion, following Katz and Lindell; Boneh and Shoup's Theorem 4.8 has no such
+hypothesis, and their Definition 3.1 of a secure PRG does not require expansion. -/
 theorem prgAdvantage_prgOfPRF_eq (F : K → X → Y) {x : Fin n → X} (hx : Function.Injective x)
     (A : Distinguisher (Fin n → Y) R) (hA : A.coins = Cslib.Probability.PMF.uniformOfFintype R) :
     (∀ r O, (prgOfPRFReduction x A r).queries O = List.ofFn x) ∧
@@ -183,9 +193,11 @@ $F$ is a secure PRF relative to that class, then $G$ is a secure PRG relative to
 distinguisher families: it expands, and every admissible family has negligible PRG advantage.
 
 This is the asymptotic form of Boneh and Shoup, Theorem 4.8. The condition
-$|K_n| < |Y_n|^{\ell(n)}$ is used only for expansion. The efficiency of $F$, of $G$ and of the
-distinguishers is not modelled; any restriction on the distinguishers is what the two classes
-encode. -/
+$|K_n| < |Y_n|^{\ell(n)}$ is used only for expansion. It comes from the asymptotic PRG security
+`PRGSecure`, which requires expansion, following Katz and Lindell; Boneh and Shoup's
+Theorem 4.8 has no such hypothesis, and their Definition 3.1 of a secure PRG does not require
+expansion. The efficiency of $F$, of $G$ and of the distinguishers is not modelled; any
+restriction on the distinguishers is what the two classes encode. -/
 theorem prgSecure_prgOfPRF {K X Y R : ℕ → Type*} [∀ n, Fintype (K n)] [∀ n, Nonempty (K n)]
     [∀ n, Fintype (X n)] [∀ n, DecidableEq (X n)] [∀ n, Fintype (Y n)] [∀ n, Nonempty (Y n)]
     [∀ n, Fintype (R n)] [∀ n, Nonempty (R n)] (F : (n : ℕ) → K n → X n → Y n) {ℓ : ℕ → ℕ}
