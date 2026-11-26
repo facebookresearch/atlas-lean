@@ -4,7 +4,7 @@ For pairs of observations ($T = 2$) the [inconsistency of the maximum-likelihood
 
 $$\hat\sigma^2 = \frac{1}{nT} \sum_{i=1}^n \sum_{t=1}^T (y_{it} - \bar y_i)^2 \sim \frac{\sigma^2}{nT}\, \chi^2_{n(T-1)},$$
 
-so $E\hat\sigma^2 = \sigma^2 (T - 1)/T$, and by the strong law of large numbers $\hat\sigma^2 \to \sigma^2 (T - 1)/T$ almost surely as $n \to \infty$ with $T$ fixed, whatever the $\alpha_i$ (Neyman and Scott 1948, in the form given by Koenker). The likelihood of the within-group deviations, equivalently the likelihood conditional on the sufficient statistics $\bar y_i$ for the $\alpha_i$, gives the consistent estimator $\frac{1}{n(T - 1)} \sum_{i,t} (y_{it} - \bar y_i)^2$.
+so $E\hat\sigma^2 = \sigma^2 (T - 1)/T$, and by the strong law of large numbers $\hat\sigma^2 \to \sigma^2 (T - 1)/T$ almost surely as $n \to \infty$ with $T$ fixed, whatever the $\alpha_i$ (Neyman and Scott 1948, Example 1; Lancaster 2000, Section 2). The likelihood of the within-group deviations, equivalently the likelihood conditional on the sufficient statistics $\bar y_i$ for the $\alpha_i$, gives the consistent estimator $\frac{1}{n(T - 1)} \sum_{i,t} (y_{it} - \bar y_i)^2$ (Lancaster 2000, Sections 2 and 5).
 
 ## Depends on
 
@@ -16,9 +16,9 @@ so $E\hat\sigma^2 = \sigma^2 (T - 1)/T$, and by the strong law of large numbers 
 2. The joint maximum-likelihood estimators and the law of $\hat\sigma^2$.
 3. The almost-sure limit $\sigma^2(T - 1)/T$ by the strong law of large numbers.
 4. The conditional (or marginal) likelihood and its consistent estimator.
-5. Incidental variances $\sigma_i^2$ and the dynamic panel models of the source, as separate statements.
+5. Neyman and Scott's examples with incidental variances $\sigma_i^2$, and the dynamic panel models surveyed by Lancaster (2000, Section 4), as separate statements.
 
 ## Sources
 
-- R. Koenker, Incidental parameters and dynamic bias in panel data, Lecture 18, Economics 536, University of Illinois, 2016.
-- Original result: J. Neyman and E. L. Scott, Consistent estimates based on partially consistent observations, Econometrica 16 (1948), 1–32. <https://doi.org/10.2307/1914288> The inconsistency of the variance estimator follows Koenker's lecture notes.
+- Original result: J. Neyman and E. L. Scott, Consistent estimates based on partially consistent observations, Econometrica 16 (1948), 1–32, Example 1. <https://doi.org/10.2307/1914288>
+- T. Lancaster, The incidental parameter problem since 1948, J. Econometrics 95 (2000), 391–413, Sections 2 and 5. <https://doi.org/10.1016/S0304-4076(99)00044-5>
