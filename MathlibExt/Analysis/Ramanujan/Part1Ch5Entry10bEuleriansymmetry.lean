@@ -108,12 +108,18 @@ private theorem sum_range_two_mul_succ (g : ℕ → ℚ) (m : ℕ)
     rw [ih]
     congr 1
 
-private def eulerEGF : PowerSeries ℚ :=
+/-- **Exponential generating function of the even-index Euler numbers.** The formal power series
+over $\mathbb{Q}$ whose coefficient of $x^n$ is $0$ for odd $n$ and $E_n / n!$ for even $n$, where
+$E_n$ is the even-index Euler number `chapter5EulerEven (n / 2)`; that is,
+$\sum_{m \ge 0} E_{2m} x^{2m} / (2m)!$. -/
+def eulerEGF : PowerSeries ℚ :=
   PowerSeries.mk fun n =>
     if n % 2 = 1 then 0
     else (((chapter5EulerEven (n / 2) : ℤ) : ℚ) / (n.factorial : ℚ))
 
-private def coshPS : PowerSeries ℚ :=
+/-- **Hyperbolic cosine power series.** The formal power series $(e^x + e^{-x}) / 2$ over
+$\mathbb{Q}$, that is, $\cosh x = \sum_{m \ge 0} x^{2m} / (2m)!$. -/
+def coshPS : PowerSeries ℚ :=
   (PowerSeries.exp ℚ + (PowerSeries.rescale (-1)) (PowerSeries.exp ℚ)) *
     PowerSeries.C (2⁻¹ : ℚ)
 
@@ -121,13 +127,18 @@ private def sinhPS : PowerSeries ℚ :=
   (PowerSeries.exp ℚ - (PowerSeries.rescale (-1)) (PowerSeries.exp ℚ)) *
     PowerSeries.C (2⁻¹ : ℚ)
 
-private theorem coeff_eulerEGF (n : ℕ) :
+/-- **Coefficients of the Euler generating function.** For every natural number $n$, the
+coefficient of $x^n$ in `eulerEGF` is $0$ if $n$ is odd and $E_n / n!$ if $n$ is even, where $E_n$
+is `chapter5EulerEven (n / 2)`. -/
+theorem coeff_eulerEGF (n : ℕ) :
     PowerSeries.coeff n eulerEGF =
       if n % 2 = 1 then 0
       else (((chapter5EulerEven (n / 2) : ℤ) : ℚ) / (n.factorial : ℚ)) := by
   simp [eulerEGF, PowerSeries.coeff_mk]
 
-private theorem coeff_coshPS (n : ℕ) :
+/-- **Coefficients of the hyperbolic cosine series.** For every natural number $n$, the
+coefficient of $x^n$ in `coshPS` is $1 / n!$ if $n$ is even and $0$ if $n$ is odd. -/
+theorem coeff_coshPS (n : ℕ) :
     PowerSeries.coeff n coshPS =
       (if n % 2 = 0 then (1 : ℚ) / (n.factorial : ℚ) else 0) := by
   unfold coshPS
@@ -180,7 +191,10 @@ private theorem coeff_sinhPS (n : ℕ) :
       exact Even.neg_one_pow hev
     simp [hn, hpow]
 
-private theorem euler_cosh : eulerEGF * coshPS = 1 := by
+/-- **The even-index Euler numbers generate the hyperbolic secant.** In $\mathbb{Q}[[x]]$,
+`eulerEGF * coshPS = 1`, that is,
+$\left(\sum_{m \ge 0} E_{2m} x^{2m} / (2m)!\right) \cosh x = 1$. -/
+theorem euler_cosh : eulerEGF * coshPS = 1 := by
   ext n
   have hant : (∑ p ∈ Finset.HasAntidiagonal.antidiagonal n,
         PowerSeries.coeff p.1 eulerEGF * PowerSeries.coeff p.2 coshPS) =

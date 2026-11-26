@@ -35,6 +35,12 @@ Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known
 and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler
 Numbers*, INTEGERS 25 (2025), Article A50, Proposition 3, Equation (12)
 (`integers-2025-A50-prop-3`), citing its references [3], [6].
+
+The proof reuses existing formalizations: the generating function `eulerEGF` of the even-index
+Euler numbers, the series `coshPS` and their product identity `euler_cosh` come from
+`MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry`, and the identification
+`sinZeta_quarter_eq_beta` of the sine zeta function at $1/4$ with $\beta$ comes from
+`MathlibExt.Analysis.Ramanujan.Part1Ch7Entry17Bernoullipolysymmetry`.
 -/
 
 namespace MetaMathlibExt
@@ -45,148 +51,6 @@ open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.DirichletBeta
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.Entry17Bernoullipolysymmetry
 open Finset
-
-private theorem eulerEven_recurrenceQ (m : ℕ) :
-    ∑ k ∈ Finset.range (m + 1),
-      ((Nat.choose (2 * m) (2 * k) : ℕ) : ℚ) * ((chapter5EulerEven k : ℤ) : ℚ) =
-      if m = 0 then 1 else 0 := by
-  have h := chapter5EulerEven_recurrence m
-  have h2 : ((∑ k ∈ Finset.range (m + 1),
-      ((Nat.choose (2 * m) (2 * k) : ℕ) : ℤ) * chapter5EulerEven k : ℤ) : ℚ) =
-      ((if m = 0 then (1 : ℤ) else 0 : ℤ) : ℚ) := by rw [h]
-  rw [Int.cast_sum] at h2
-  simp only [Int.cast_mul, Int.cast_natCast] at h2
-  rw [h2]
-  split <;> simp
-
-private theorem sum_range_two_mul_succ (g : ℕ → ℚ) (m : ℕ)
-    (hg : ∀ k, Odd k → g k = 0) :
-    ∑ k ∈ Finset.range (2 * m + 1), g k = ∑ j ∈ Finset.range (m + 1), g (2 * j) := by
-  induction m with
-  | zero => simp
-  | succ m ih =>
-    have h1 : 2 * (m + 1) + 1 = (2 * m + 1) + 2 := by ring
-    have hodd : Odd (2 * m + 1) := ⟨m, by ring⟩
-    conv_lhs => rw [h1, Finset.sum_range_succ, Finset.sum_range_succ, hg _ hodd, add_zero]
-    conv_rhs => rw [Finset.sum_range_succ]
-    rw [ih]
-    congr 1
-
-private noncomputable def eulerEGF : PowerSeries ℚ :=
-  PowerSeries.mk fun n =>
-    if n % 2 = 1 then 0
-    else (((chapter5EulerEven (n / 2) : ℤ) : ℚ) / (n.factorial : ℚ))
-
-private noncomputable def coshPS : PowerSeries ℚ :=
-  (PowerSeries.exp ℚ + (PowerSeries.rescale (-1)) (PowerSeries.exp ℚ)) *
-    PowerSeries.C (2⁻¹ : ℚ)
-
-private theorem coeff_eulerEGF (n : ℕ) :
-    PowerSeries.coeff n eulerEGF =
-      if n % 2 = 1 then 0
-      else (((chapter5EulerEven (n / 2) : ℤ) : ℚ) / (n.factorial : ℚ)) := by
-  simp [eulerEGF, PowerSeries.coeff_mk]
-
-private theorem coeff_coshPS (n : ℕ) :
-    PowerSeries.coeff n coshPS =
-      (if n % 2 = 0 then (1 : ℚ) / (n.factorial : ℚ) else 0) := by
-  unfold coshPS
-  rw [PowerSeries.coeff_mul_C]
-  have h1 : PowerSeries.coeff n
-      (PowerSeries.exp ℚ + (PowerSeries.rescale (-1)) (PowerSeries.exp ℚ)) =
-      (1 : ℚ) / (n.factorial : ℚ) + (-1 : ℚ) ^ n / (n.factorial : ℚ) := by
-    have e1 : PowerSeries.coeff n (PowerSeries.exp ℚ) = (1 : ℚ) / (n.factorial : ℚ) := by
-      rw [PowerSeries.coeff_exp]; simp
-    have e2 : PowerSeries.coeff n ((PowerSeries.rescale (-1)) (PowerSeries.exp ℚ)) =
-        (-1 : ℚ) ^ n / (n.factorial : ℚ) := by
-      rw [PowerSeries.coeff_rescale, PowerSeries.coeff_exp]
-      simp [div_eq_mul_inv]
-    rw [map_add, e1, e2]
-  rw [h1]
-  by_cases hn : n % 2 = 0
-  · have hpow : (-1 : ℚ) ^ n = 1 := Even.neg_one_pow (Nat.even_iff.mpr hn)
-    simp [hn, hpow]
-    field_simp
-    ring
-  · have hodd : (-1 : ℚ) ^ n = -1 := Odd.neg_one_pow (Nat.odd_iff.mpr (by omega))
-    simp only [hn, hodd, ↓reduceIte]
-    have hfact : ((n.factorial : ℕ) : ℚ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero n
-    field_simp
-    ring
-
-private theorem euler_cosh : eulerEGF * coshPS = 1 := by
-  ext n
-  have hant : (∑ p ∈ Finset.HasAntidiagonal.antidiagonal n,
-        PowerSeries.coeff p.1 eulerEGF * PowerSeries.coeff p.2 coshPS) =
-      ∑ k ∈ Finset.range (n + 1),
-        PowerSeries.coeff k eulerEGF * PowerSeries.coeff (n - k) coshPS := by
-    have h := Finset.Nat.sum_antidiagonal_eq_sum_range_succ
-      (fun i j => PowerSeries.coeff i eulerEGF * PowerSeries.coeff j coshPS) n
-    simpa using h
-  rw [PowerSeries.coeff_mul, hant, PowerSeries.coeff_one]
-  by_cases hn : n % 2 = 1
-  · have hn0 : n ≠ 0 := by omega
-    simp only [hn0, ↓reduceIte]
-    apply Finset.sum_eq_zero
-    intro k hk
-    rw [Finset.mem_range] at hk
-    have hkle : k ≤ n := by omega
-    by_cases hk2 : k % 2 = 1
-    · rw [coeff_eulerEGF, ite_eq_left hk2, zero_mul]
-    · have hnk : (n - k) % 2 = 1 := by omega
-      have hne : ¬ ((n - k) % 2 = 0) := by omega
-      rw [coeff_coshPS, ite_eq_right hne, mul_zero]
-  · have hn0 : n % 2 = 0 := by omega
-    have hn2 : n = 2 * (n / 2) := (Nat.two_mul_div_two_of_even (Nat.even_iff.mpr hn0)).symm
-    have hfact_n : ((n.factorial : ℕ) : ℚ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero n
-    have hsum : ∑ k ∈ Finset.range (n + 1),
-          PowerSeries.coeff k eulerEGF * PowerSeries.coeff (n - k) coshPS =
-        ∑ j ∈ Finset.range (n / 2 + 1),
-          PowerSeries.coeff (2 * j) eulerEGF * PowerSeries.coeff (n - 2 * j) coshPS := by
-      have hnr : n + 1 = 2 * (n / 2) + 1 := by omega
-      rw [hnr]
-      apply sum_range_two_mul_succ
-      intro k hkodd
-      rw [coeff_eulerEGF, ite_eq_left (Nat.odd_iff.mp hkodd), zero_mul]
-    rw [hsum]
-    have hterm : ∀ j ∈ Finset.range (n / 2 + 1),
-        PowerSeries.coeff (2 * j) eulerEGF * PowerSeries.coeff (n - 2 * j) coshPS =
-        (((Nat.choose n (2 * j) : ℕ) : ℚ) * ((chapter5EulerEven j : ℤ) : ℚ)) /
-          (n.factorial : ℚ) := by
-      intro j hj
-      rw [Finset.mem_range] at hj
-      have hjn : 2 * j ≤ n := by omega
-      have hj2 : (2 * j) / 2 = j := by omega
-      have hmod1 : ¬ ((2 * j) % 2 = 1) := by omega
-      have hmod2 : (n - 2 * j) % 2 = 0 := by omega
-      rw [coeff_eulerEGF, ite_eq_right hmod1, coeff_coshPS, ite_eq_left hmod2, hj2]
-      have hchoose := Nat.choose_mul_factorial_mul_factorial hjn
-      have hcast : ((Nat.choose n (2 * j) : ℕ) : ℚ) * (((2 * j).factorial : ℕ) : ℚ) *
-          (((n - 2 * j).factorial : ℕ) : ℚ) = ((n.factorial : ℕ) : ℚ) := by
-        exact_mod_cast hchoose
-      have hd1 : (((2 * j).factorial : ℕ) : ℚ) ≠ 0 := by
-        exact_mod_cast Nat.factorial_ne_zero (2 * j)
-      have hd2 : ((((n - 2 * j).factorial : ℕ)) : ℚ) ≠ 0 := by
-        exact_mod_cast Nat.factorial_ne_zero (n - 2 * j)
-      have hAB : ((((2 * j).factorial : ℕ) : ℚ) * ((((n - 2 * j).factorial : ℕ)) : ℚ)) ≠ 0 :=
-        mul_ne_zero hd1 hd2
-      rw [div_mul_div_comm, mul_one, div_eq_div_iff hAB hfact_n]
-      linear_combination -((chapter5EulerEven j : ℤ) : ℚ) * hcast
-    rw [Finset.sum_congr rfl hterm]
-    rw [← Finset.sum_div]
-    have hrec := eulerEven_recurrenceQ (n / 2)
-    rw [← hn2] at hrec
-    by_cases hm : n / 2 = 0
-    · have hn00 : n = 0 := by omega
-      subst hn00
-      simp only [Nat.zero_div, zero_add, range_one, sum_singleton, mul_zero,
-        Nat.choose_self, Nat.cast_one, one_mul, Nat.factorial_zero, div_one,
-        ↓reduceIte, Rat.intCast_eq_one_iff] at hrec ⊢
-      rw [hrec]
-    · have hn00 : n ≠ 0 := by omega
-      simp only [hm, hn00, ↓reduceIte] at hrec ⊢
-      rw [hrec]
-      simp
 
 private noncomputable def bq (t : ℚ) : PowerSeries ℚ :=
   PowerSeries.rescale 4 (PowerSeries.mk fun n =>
@@ -294,48 +158,6 @@ private lemma euler_bernoulli (m : ℕ) :
   field_simp at h ⊢
   linear_combination (1 / 2 : ℚ) * h
 
-private lemma addChar_one : ZMod.stdAddChar (1 : ZMod 4) = Complex.I := by
-  rw [ZMod.stdAddChar_apply, ZMod.toCircle_apply]
-  rw [show (1 : ZMod 4).val = 1 by decide]
-  norm_num
-  convert Complex.exp_pi_div_two_mul_I using 1
-  congr 1
-  ring
-private lemma addChar_three : ZMod.stdAddChar (3 : ZMod 4) = -Complex.I := by
-  rw [show (3 : ZMod 4) = -1 by decide, AddChar.map_neg_eq_inv, addChar_one, Complex.inv_I]
-private lemma betaChar_exp (a : ZMod 4) :
-    chapter7BetaCharacter a = (ZMod.stdAddChar a - ZMod.stdAddChar (-a)) / (2 * Complex.I) := by
-  have h : a = 0 ∨ a = 1 ∨ a = 2 ∨ a = 3 :=
-    (by decide : ∀ a : ZMod 4, a = 0 ∨ a = 1 ∨ a = 2 ∨ a = 3) a
-  rcases h with rfl | rfl | rfl | rfl
-  · simp
-  · rw [betaChar1, show (-1 : ZMod 4) = 3 by decide, addChar_one, addChar_three]
-    field_simp
-    ring
-  · rw [betaChar2, show (-2 : ZMod 4) = 2 by decide, sub_self, zero_div]
-  · rw [betaChar3, show (-3 : ZMod 4) = 1 by decide, addChar_one, addChar_three]
-    field_simp
-    ring
-private lemma beta_eq_sin (s : ℂ) :
-    chapter7DirichletBeta s = HurwitzZeta.sinZeta ((1 / 4 : ℝ) : UnitAddCircle) s := by
-  have h1 := ZMod.LFunction_stdAddChar_eq_expZeta (1 : ZMod 4) s (Or.inl (by decide))
-  have h3 := ZMod.LFunction_stdAddChar_eq_expZeta (3 : ZMod 4) s (Or.inl (by decide))
-  have hc1 : ZMod.toAddCircle (1 : ZMod 4) = ((1 / 4 : ℝ) : UnitAddCircle) := by
-    rw [ZMod.toAddCircle_apply, show (1 : ZMod 4).val = 1 by decide]; norm_num
-  have hc3 : ZMod.toAddCircle (3 : ZMod 4) = -((1 / 4 : ℝ) : UnitAddCircle) := by
-    rw [show (3 : ZMod 4) = -1 by decide, map_neg, hc1]
-  rw [hc1] at h1
-  rw [hc3] at h3
-  rw [HurwitzZeta.sinZeta_eq, ← h1, ← h3]
-  unfold chapter7DirichletBeta ZMod.LFunction
-  have hthree (a : ZMod 4) : 3 * a = -a := by
-    rw [show (3 : ZMod 4) = -1 by decide]
-    ring
-  simp only [one_mul, hthree]
-  simp_rw [betaChar_exp, div_mul_eq_mul_div]
-  rw [← Finset.sum_div]
-  simp_rw [sub_mul, Finset.sum_sub_distrib]
-  ring
 private lemma beta_signed (m : ℕ) (hm : m ≠ 0) :
     chapter7DirichletBeta (2 * m + 1) =
       (Real.pi : ℂ) ^ (2 * m + 1) * ((-1 : ℂ) ^ m * (chapter5EulerEven m : ℂ)) /
@@ -358,7 +180,7 @@ private lemma beta_signed (m : ℕ) (hm : m ≠ 0) :
     apply (eq_div_iff hf4).mpr
     have he' := (eq_div_iff hn).mp he
     linear_combination he'
-  rw [beta_eq_sin, HurwitzZeta.sinZeta_two_mul_nat_add_one hm
+  rw [← sinZeta_quarter_eq_beta, HurwitzZeta.sinZeta_two_mul_nat_add_one hm
     (by constructor <;> norm_num), hB, hb]
   have hfac : (((2 * m + 1).factorial : ℕ) : ℂ) =
       (2 * (m : ℂ) + 1) * ((2 * m).factorial : ℂ) := by
