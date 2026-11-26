@@ -9,4 +9,3 @@
 - [Service Curve concat](service-curve-concat.md)
 - [Conv Curve rate Latency](conv-curve-rate-latency.md)
 - [Delay concat rate Latency](delay-concat-rate-latency.md)
-- [Delay concat rate Latency swap](delay-concat-rate-latency-swap.md)

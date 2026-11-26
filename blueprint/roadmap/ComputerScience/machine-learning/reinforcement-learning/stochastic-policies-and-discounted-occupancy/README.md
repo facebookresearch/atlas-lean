@@ -54,7 +54,6 @@ Stationary stochastic policies on finite discounted Markov decision processes, M
 ## Row-stochastic policies, occupancy and the performance difference lemma
 
 - [Is Row Stochastic](is-row-stochastic.md)
-- [Det Policy](det-policy.md)
 - [Of PMF](of-pmf.md)
 - [State Kernel](state-kernel.md)
 - [Expected reward under a row-stochastic policy](policy-reward-2.md)

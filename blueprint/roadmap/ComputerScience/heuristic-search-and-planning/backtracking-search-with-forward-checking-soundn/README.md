@@ -24,7 +24,6 @@
 
 - [Completeness of backtracking with forward checking](backtrack-fc-complete.md)
 - [Backtrack FC is Some iff](backtrack-fc-is-some-iff.md)
-- [Backtrack FC eq none iff](backtrack-fc-eq-none-iff.md)
 
 ## Search orders
 

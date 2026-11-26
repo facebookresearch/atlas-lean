@@ -1,3 +1,3 @@
 # Cut Leaves
 
-The function $k^{\lfloor d/2 \rfloor}$ of a branching factor $k$ and a height $d$. On a uniform $k$-ary tree that is perfectly ordered, it is the number of leaves alpha-beta evaluates at a cut node of height $d$, a node whose value already fails the window (at most the lower bound at a minimizer node, at least the upper bound at a maximizer node).
+The function $k^{\lfloor d/2 \rfloor}$ of a branching factor $k$ and a height $d$. It is the number of leaves alpha-beta evaluates at a cut node of height $d$ when the tree is uniform of branching factor $k$ and perfectly ordered, the window is strict ($a < b$), and the node's value already fails the window (at most $a$ at a minimizer node, at least $b$ at a maximizer node), as in [the cut and all node counts](alpha-beta-time-cut-all.md). Without the strict window the count can differ: at window $[0, 0]$ a depth-two full binary tree with every leaf worth $1$ stops after a single leaf.
