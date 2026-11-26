@@ -29,8 +29,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.Limits
 public import Mathlib.RingTheory.Localization.Integral
-import Mathlib.Algebra.Polynomial.Lifts
-import Mathlib.RingTheory.Polynomial.ScaleRoots
 
 @[expose] public section
 
@@ -38,7 +36,7 @@ noncomputable section
 
 universe u
 
-open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Polynomial
+open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 namespace AlgebraicCurve
 
@@ -108,46 +106,48 @@ public theorem exists_pow_mul_mem_adjoin {S : Set F} {s : F} (hs : s ∈ S) (hs0
     rw [this]
     exact mul_mem hm hn
 
-public theorem exists_pow_mul_mem_chartAlg {S : Set F} {s : F} (hs : s ∈ S) (hs0 : s ≠ 0) {x : F}
-    (hx : x ∈ chartAlg R F (insert s⁻¹ S)) : ∃ n : ℕ, s ^ n * x ∈ chartAlg R F S := by
-  classical
-  obtain ⟨p, hmonic, hroot⟩ := (mem_chartAlg_iff R F).mp hx
-  have hcoeff : ∀ i, ∃ n : ℕ, s ^ n * (p.coeff i : F) ∈ Algebra.adjoin R S :=
-    fun i => exists_pow_mul_mem_adjoin hs hs0 (p.coeff i).2
-  choose n hn using hcoeff
-  set M : ℕ := ∑ i ∈ Finset.range (p.natDegree + 1), n i with hM
-  have hnM : ∀ i ≤ p.natDegree, n i ≤ M := fun i hi =>
-    Finset.single_le_sum (f := n) (fun _ _ => Nat.zero_le _)
-      (Finset.mem_range.mpr (Nat.lt_succ_of_le hi))
-  set q : F[X] := (p.map (algebraMap (Algebra.adjoin R (insert s⁻¹ S)) F)).scaleRoots (s ^ M)
-    with hq
-  have hqmonic : q.Monic := (Polynomial.monic_scaleRoots_iff _).mpr (hmonic.map _)
-  have hqroot : q.eval (s ^ M * x) = 0 := by
-    rw [hq, Polynomial.scaleRoots_eval_mul, Polynomial.eval_map, hroot, mul_zero]
-  have hqcoeff : ∀ i, q.coeff i ∈ Algebra.adjoin R S := by
-    intro i
-    rw [hq, Polynomial.coeff_scaleRoots, Polynomial.coeff_map, hmonic.natDegree_map]
-    by_cases hi : i < p.natDegree
-    · have hle : n i ≤ M * (p.natDegree - i) := by
-        calc n i ≤ M := hnM i hi.le
-          _ = M * 1 := (mul_one M).symm
-          _ ≤ M * (p.natDegree - i) := Nat.mul_le_mul_left M (Nat.one_le_iff_ne_zero.mpr (by omega))
-      obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le hle
-      have : (s ^ M) ^ (p.natDegree - i) = s ^ k * s ^ n i := by
-        rw [← pow_mul, hk, pow_add, mul_comm]
-      rw [this, Subalgebra.algebraMap_def, Algebra.algebraMap_self_apply,
-        show (p.coeff i : F) * (s ^ k * s ^ n i) = s ^ k * (s ^ n i * (p.coeff i : F)) by ring]
-      exact mul_mem (pow_mem (Algebra.subset_adjoin hs) k) (hn i)
-    · rcases (not_lt.mp hi).lt_or_eq with hlt | heq
-      · rw [Polynomial.coeff_eq_zero_of_natDegree_lt hlt, map_zero, zero_mul]
-        exact zero_mem _
-      · rw [← heq, hmonic.coeff_natDegree, map_one, one_mul, Nat.sub_self, pow_zero]
-        exact one_mem _
-  have hlifts : q ∈ Polynomial.lifts (algebraMap (Algebra.adjoin R S) F) :=
-    (Polynomial.lifts_iff_coeff_lifts q).mpr fun i => ⟨⟨q.coeff i, hqcoeff i⟩, rfl⟩
-  obtain ⟨q', hq'q, -, hq'monic⟩ := Polynomial.lifts_and_natDegree_eq_and_monic hlifts hqmonic
-  refine ⟨M, (mem_chartAlg_iff R F).mpr ⟨q', hq'monic, ?_⟩⟩
-  rw [Polynomial.eval₂_eq_eval_map, hq'q, hqroot]
+public theorem isLocalization_away_adjoin {S T : Set F} {s : F} (hs : s ∈ S) (hs0 : s ≠ 0)
+    (hST : S ⊆ T) (hsT : s⁻¹ ∈ T) (hTS : T ⊆ insert s⁻¹ S) :
+    letI := (Subalgebra.inclusion (Algebra.adjoin_mono (R := R) hST)).toRingHom.toAlgebra
+    IsLocalization.Away (⟨s, Algebra.subset_adjoin hs⟩ : Algebra.adjoin R S)
+      (Algebra.adjoin R T) := by
+  let := (Subalgebra.inclusion (Algebra.adjoin_mono (R := R) hST)).toRingHom.toAlgebra
+  refine (isLocalization_iff _ _).mpr ⟨?_, ?_, ?_⟩
+  · rintro ⟨_, n, rfl⟩
+    rw [RingHom.algebraMap_toAlgebra, map_pow]
+    refine (IsUnit.of_mul_eq_one ⟨s⁻¹, Algebra.subset_adjoin hsT⟩ (Subtype.ext ?_)).pow n
+    exact mul_inv_cancel₀ hs0
+  · intro z
+    obtain ⟨n, hn⟩ := exists_pow_mul_mem_adjoin hs hs0 (Algebra.adjoin_mono hTS z.2)
+    refine ⟨(⟨s ^ n * z, hn⟩, ⟨⟨s, Algebra.subset_adjoin hs⟩ ^ n, n, rfl⟩), Subtype.ext ?_⟩
+    exact mul_comm _ _
+  · intro x y h
+    refine ⟨1, ?_⟩
+    rw [RingHom.algebraMap_toAlgebra] at h
+    rw [Subalgebra.inclusion_injective _ h]
+
+public theorem isLocalization_away_chartIncl {S T : Set F} {s : F} (hs : s ∈ S) (hs0 : s ≠ 0)
+    (hST : S ⊆ T) (hsT : s⁻¹ ∈ T) (hTS : T ⊆ insert s⁻¹ S) :
+    letI := (chartIncl R F hST).toRingHom.toAlgebra
+    IsLocalization.Away (⟨s, subset_chartAlg R F S hs⟩ : chartAlg R F S) (chartAlg R F T) := by
+  let := (chartIncl R F hST).toRingHom.toAlgebra
+  let := (Subalgebra.inclusion (Algebra.adjoin_mono (R := R) hST)).toRingHom.toAlgebra
+  have : IsScalarTower (Algebra.adjoin R S) (Algebra.adjoin R T) F :=
+    .of_algebraMap_eq fun _ => rfl
+  have := isLocalization_away_adjoin (R := R) hs hs0 hST hsT hTS
+  have : IsLocalization.Away
+      (algebraMap (Algebra.adjoin R S) F ⟨s, Algebra.subset_adjoin hs⟩) F :=
+    IsLocalization.away_of_isUnit_of_bijective F (IsUnit.mk0 _ hs0) Function.bijective_id
+  let : Algebra (integralClosure (Algebra.adjoin R S) F) (integralClosure (Algebra.adjoin R T) F) :=
+    (chartIncl R F hST).toRingHom.toAlgebra
+  have : IsScalarTower (integralClosure (Algebra.adjoin R S) F)
+      (integralClosure (Algebra.adjoin R T) F) F :=
+    .of_algebraMap_eq fun _ => rfl
+  have : IsScalarTower (Algebra.adjoin R S) (integralClosure (Algebra.adjoin R S) F)
+      (integralClosure (Algebra.adjoin R T) F) :=
+    .of_algebraMap_eq fun _ => rfl
+  exact IsLocalization.Away.integralClosure (R := Algebra.adjoin R S) (S := F)
+    (Rf := Algebra.adjoin R T) (Sf := F) ⟨s, Algebra.subset_adjoin hs⟩
 
 variable (R F j)
 
@@ -190,48 +190,15 @@ public theorem isUnit_inclInf_jInvChartInf : IsUnit (inclInf R F j (jInvChartInf
 
 public theorem isLocalization_away_inclFin :
     letI := (inclFin R F j).toRingHom.toAlgebra
-    IsLocalization.Away (jChartFin R F j) (chartAlgMid R F j) := by
-  let := (inclFin R F j).toRingHom.toAlgebra
-  refine (isLocalization_iff _ _).mpr ⟨?_, ?_, ?_⟩
-  · rintro ⟨_, n, rfl⟩
-    rw [RingHom.algebraMap_toAlgebra, map_pow]
-    exact (isUnit_inclFin_jChartFin R F j).pow n
-  · intro z
-    have hz : (z : F) ∈ chartAlg R F (insert j⁻¹ {j}) := by
-      rw [show insert j⁻¹ ({j} : Set F) = {j, j⁻¹}
-        from Set.pair_comm _ _]
-      exact z.2
-    obtain ⟨n, hn⟩ := exists_pow_mul_mem_chartAlg (Set.mem_singleton _) (j_ne_zero j) hz
-    refine ⟨(⟨j ^ n * z, hn⟩, ⟨jChartFin R F j ^ n, n, rfl⟩), Subtype.ext ?_⟩
-    simp only [RingHom.algebraMap_toAlgebra, map_pow, Subalgebra.coe_mul, Subalgebra.coe_pow,
-      AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, coe_chartIncl, coe_jChartFin]
-    exact mul_comm _ _
-  · intro x y h
-    refine ⟨1, ?_⟩
-    rw [RingHom.algebraMap_toAlgebra] at h
-    rw [chartIncl_injective R F _ h]
+    IsLocalization.Away (jChartFin R F j) (chartAlgMid R F j) :=
+  isLocalization_away_chartIncl (Set.mem_singleton j) (j_ne_zero j) (sFin_subset F j)
+    (Set.mem_insert_of_mem _ rfl) (Set.pair_comm j j⁻¹).subset
 
 public theorem isLocalization_away_inclInf :
     letI := (inclInf R F j).toRingHom.toAlgebra
-    IsLocalization.Away (jInvChartInf R F j) (chartAlgMid R F j) := by
-  let := (inclInf R F j).toRingHom.toAlgebra
-  refine (isLocalization_iff _ _).mpr ⟨?_, ?_, ?_⟩
-  · rintro ⟨_, n, rfl⟩
-    rw [RingHom.algebraMap_toAlgebra, map_pow]
-    exact (isUnit_inclInf_jInvChartInf R F j).pow n
-  · intro z
-    have hz : (z : F) ∈ chartAlg R F (insert j⁻¹⁻¹ {j⁻¹}) := by
-      rw [inv_inv]; exact z.2
-    obtain ⟨n, hn⟩ := exists_pow_mul_mem_chartAlg (Set.mem_singleton _)
-      (inv_ne_zero (j_ne_zero j)) hz
-    refine ⟨(⟨j⁻¹ ^ n * z, hn⟩, ⟨jInvChartInf R F j ^ n, n, rfl⟩), Subtype.ext ?_⟩
-    simp only [RingHom.algebraMap_toAlgebra, map_pow, Subalgebra.coe_mul, Subalgebra.coe_pow,
-      AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, coe_chartIncl, coe_jInvChartInf]
-    exact mul_comm _ _
-  · intro x y h
-    refine ⟨1, ?_⟩
-    rw [RingHom.algebraMap_toAlgebra] at h
-    rw [chartIncl_injective R F _ h]
+    IsLocalization.Away (jInvChartInf R F j) (chartAlgMid R F j) :=
+  isLocalization_away_chartIncl (Set.mem_singleton j⁻¹) (inv_ne_zero (j_ne_zero j))
+    (sInf_subset F j) (by rw [inv_inv]; exact Set.mem_insert _ _) (by rw [inv_inv])
 
 public abbrev XFin : Scheme.{u} := Spec (CommRingCat.of (chartAlgFin R F j))
 
@@ -378,7 +345,7 @@ public theorem reductionι_toBase (I : Ideal R) :
       reductionToBase R F j I ≫ Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk I)) :=
   pullback.condition
 
-section BaseChange
+section CoefficientExtension
 
 variable (R' : Type u) [CommRing R'] [Algebra R R'] [Algebra R' F] [IsScalarTower R R' F]
 
@@ -399,19 +366,24 @@ public theorem chartAlg_le_restrictScalars (S : Set F) :
     chartAlg R F S ≤ (chartAlg R' F S).restrictScalars R :=
   fun _ hx => chartAlg_le_chartAlg R F R' S hx
 
-public def chartBaseChange (S : Set F) : chartAlg R F S →+* chartAlg R' F S :=
+/-- The inclusion of chart rings `chartAlg R F S → chartAlg R' F S` inside `F` induced by
+extending the coefficient ring along `R → R'`. It is not the scalar extension
+`R' ⊗[R] chartAlg R F S` in general: for `R = ℤ`, `R' = ℤ[T]` acting on `ℚ` by `T ↦ 0` and
+`S = {2}`, both chart rings are `ℤ`, while the scalar extension is `ℤ[T]`. The base change of the
+glued model along `Spec R' → Spec R` is the pullback `baseChange`. -/
+public def chartCoeffIncl (S : Set F) : chartAlg R F S →+* chartAlg R' F S :=
   (Subalgebra.inclusion (chartAlg_le_restrictScalars R F R' S)).toRingHom
 
-@[simp] public theorem coe_chartBaseChange (S : Set F) (x : chartAlg R F S) :
-    (chartBaseChange R F R' S x : F) = x :=
+@[simp] public theorem coe_chartCoeffIncl (S : Set F) (x : chartAlg R F S) :
+    (chartCoeffIncl R F R' S x : F) = x :=
   Subalgebra.coe_inclusion _ x
 
-public theorem chartBaseChange_algebraMap (S : Set F) (r : R) :
-    chartBaseChange R F R' S (algebraMap R (chartAlg R F S) r) =
+public theorem chartCoeffIncl_algebraMap (S : Set F) (r : R) :
+    chartCoeffIncl R F R' S (algebraMap R (chartAlg R F S) r) =
       algebraMap R' (chartAlg R' F S) (algebraMap R R' r) :=
   Subtype.ext (IsScalarTower.algebraMap_apply R R' F r)
 
-end BaseChange
+end CoefficientExtension
 
 end TwoChartIntegralModel
 
