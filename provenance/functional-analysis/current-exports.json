@@ -283,7 +283,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Complex/Subharmonic/AngularSublevel.lean",
-      "exported_sha256": "c0a52cd6176b3ca0f5e561e750fc2f44e5ee04ffac3d2966bbfab55cba8b3829",
+      "exported_sha256": "14530bbd23398185e493c1b20b3a3eeaf6853e64ef8052a1062707e78be48a83",
       "original_sha256": "ba2072d5fe886ababadf2f05570cd977a920129d1d27e1021c07f148c8073f73",
       "ledger": "provenance/functional-analysis/residual-analysis/files-03.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",

@@ -36,13 +36,22 @@ open scoped ENNReal
 
 namespace Complex
 
-/-- Angles in `(0,2π]` whose circle value is strictly below `-K`, for arbitrary real radius and
-threshold. -/
+/-- **Strict angular sublevel set on a zero-centered circle.** For any `u:ℂ→EReal` and real
+`r,K`, define `S=(0,2π]∩{θ | u(r exp(iθ))<−(K:EReal)}`, where `r exp(iθ)=circleMap 0 r θ`
+and the circle has center zero and physical radius `|r|`. The inequality is strict and `K`
+need not be positive. At `r=0`, `S` is the full interval `(0,2π]` if `u(0)<−(K:EReal)`,
+and is empty otherwise. No semicontinuity or measurability hypothesis is imposed by the
+definition. -/
 noncomputable def angularSublevelSet (u : ℂ → EReal) (r K : ℝ) : Set ℝ :=
   Set.Ioc 0 (2 * Real.pi) ∩
     {θ | u (circleMap 0 r θ) < -(K : EReal)}
 
-/-- The unnormalized Lebesgue angular length of the strict sublevel set. -/
+/-- **Lebesgue angular length of a strict circular sublevel set.** For `u:ℂ→EReal` and
+arbitrary real `r,K`, let `S=(0,2π]∩{θ | u(circleMap 0 r θ)<−(K:EReal)}`. Its angular
+length is `ℓ=volume(S)∈ℝ≥0∞`, using unnormalized Lebesgue measure on the real angle
+variable, not division by `2π` or physical arc length. The circle is centered at zero and
+has radius `|r|`. At `r=0`, `ℓ=ENNReal.ofReal(2π)` when `u(0)<−(K:EReal)`, and `ℓ=0`
+otherwise. -/
 noncomputable def angularSublevelLength
     (u : ℂ → EReal) (r K : ℝ) : ℝ≥0∞ :=
   volume (angularSublevelSet u r K)
