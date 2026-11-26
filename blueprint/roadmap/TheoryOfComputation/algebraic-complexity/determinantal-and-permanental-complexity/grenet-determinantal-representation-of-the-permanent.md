@@ -17,4 +17,4 @@ Take the algebraic branching program on the subsets of $\{1,\dots,n\}$ with an a
 
 ## Sources
 
-- Bruno Grenet, "An upper bound for the permanent versus determinant problem", Manuscript, 2011.
+- J. M. Landsberg and Nicolas Ressayre, "Permanent v. determinant: an exponential lower bound assuming symmetry and a potential path towards Valiant's conjecture", Computational Complexity 26 (2017), 325–360, Section 2.2 (arXiv:1508.05788; attributing the $(2^n-1)\times(2^n-1)$ construction to Bruno Grenet, 2011).

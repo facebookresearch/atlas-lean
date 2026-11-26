@@ -12,4 +12,5 @@ In a pebbling of $v$, let $s_i$ be the last moment before $v$ is pebbled at whic
 
 ## Sources
 
-- Jakob Nordström, "New Wine into Old Wineskins: A Survey of Some Pebbling Classics with Supplemental Results", manuscript, version of 19 November 2010, https://people.csail.mit.edu/jakobn/research/PebblingSurveyTMP.pdf (the induction over the height behind Theorem 4.1, for complete binary trees).
+- Michael S. Paterson and Carl E. Hewitt, "Comparative Schematology", Record of the Project MAC Conference on Concurrent Systems and Parallel Computation, ACM, 1970, pp. 119–127.
+- Jakob Nordström, "Pebble Games, Proof Complexity, and Time-Space Trade-offs", Logical Methods in Computer Science 9(3):15, 2013 (the induction behind the complete-binary-tree pebbling lower bound).

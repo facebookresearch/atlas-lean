@@ -12,5 +12,4 @@ During round $j$ the child registers hold $y+\omega^j\tau$, where $y=(\mathrm{va
 
 ## Sources
 
-- James Cook and Ian Mertz, "Tree Evaluation is in Space O(log n · log log n)", Electronic Colloquium on Computational Complexity, report TR23-174, 2023.
-- Oded Goldreich, "On the Cook–Mertz Tree Evaluation procedure", Electronic Colloquium on Computational Complexity, report TR24-109, 2024.
+- James Cook and Ian Mertz, "Tree Evaluation is in Space O(log n · log log n)", Proceedings of the 56th Annual ACM Symposium on Theory of Computing (STOC 2024), pp. 1268–1278 (ECCC TR23-174).
