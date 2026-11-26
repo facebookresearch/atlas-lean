@@ -1,4 +1,5 @@
-# Length foldl merge cons
+# Length of a merge fold, one step
 
-Length unfolds one step along the fold; `length_merge` gives the
-single-step length from the current accumulator.
+For strings $s$, an accumulator $a$ and a list $\ell$ of strings, the length of the left fold of
+the overlap merge along $s :: \ell$ starting from $a$ equals the length of the fold along $\ell$
+starting from the merge of $a$ and $s$.

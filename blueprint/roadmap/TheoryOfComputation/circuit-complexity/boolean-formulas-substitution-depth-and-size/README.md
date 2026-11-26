@@ -8,4 +8,4 @@
 - [Eval subst](eval-subst.md)
 - [Depth subst le](depth-subst-le.md)
 - [Size subst le tight](size-subst-le-tight.md)
-- [Size subst le](size-subst-le.md)
+- [Size of a substituted formula, weaker form](size-subst-le.md)

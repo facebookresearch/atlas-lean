@@ -1,8 +1,6 @@
-# To Std eval
+# Translation to the standard CNF format preserves satisfaction
 
-Core evaluation of the translated formula is true exactly
-when the same assignment satisfies the source Atlas formula.
-
-Atoms are unchanged Nat variables and polarity is preserved;
-covers empty clause (false), empty formula (true), and
-cons/append structure.
+For every assignment $v$ of Boolean values to the natural-number variables and every CNF formula
+$\varphi$, the translation of $\varphi$ into the standard CNF format evaluates to true under $v$
+exactly when $v$ satisfies $\varphi$. Variables are kept unchanged and literal polarity is
+preserved; the empty clause is false and the empty formula is true.
