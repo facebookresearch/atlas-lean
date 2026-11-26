@@ -2,6 +2,8 @@
 
 - [Geometric points detect elements when the generic fiber is reduced](eq-zero-of-forall-alg-hom-apply-eq-zero.md)
 - [Counting algebra homomorphisms from an étale algebra](nat-card-alg-hom-eq-finrank-of-is-alg-cl.md)
+- [A separating family of points detects zero](eq-zero-of-forall-point-eq-zero.md)
+- [A separating family of points detects algebra maps](alg-hom-eq-of-forall-point-comp-eq.md)
 - [Counting algebra homomorphisms of a finite reduced algebra](nat-card-eq-finrank-of-is-reduced-of-is.md)
 - [A tensor vanishing at all pairs of algebraic points is zero](eq-zero-of-forall-lift-apply-eq-zero.md)
 - [Algebra maps from relation-preserving generator assignments](exists-alg-hom-adjoin-of-linear-relation.md)
