@@ -17,6 +17,11 @@ import MathlibExt.Geometry.LatticePointCubeSandwich
 The integer lattice together with its translate by $(1/2,1/2,1/2,1/2)$ supports a packing
 of balls of radius $1/2$. Counting two balls per unit cube gives the lower bound
 $\pi^2/16$ for the optimal packing density.
+
+These centers form the dual lattice $D_4^*$, which is similar to the root lattice $D_4$.
+Baake and Zeiner give generators in these coordinates in *Coincidences in 4 dimensions*,
+§2.1 ([arXiv:0712.0363](https://arxiv.org/abs/0712.0363)). Cohn and Elkies list the center
+density $1/8$ in *New upper bounds on sphere packings I*, Appendix C, Table 3.
 -/
 
 open Filter MeasureTheory Metric Set

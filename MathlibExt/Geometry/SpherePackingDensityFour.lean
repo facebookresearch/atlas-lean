@@ -38,10 +38,10 @@ optimized value finite. No optimum-attainment assertion is made.
 The three displayed upper decimals and the displayed lower decimal are
 approximations to the exact converted expressions, not extra exact bounds.
 The primary tables call their center-density numbers bounds. Their numerical
-certificates have not been replayed here. The four deep bound statements and
-periodic approximation are `theorem_wanted` goals, not proofs or axioms.
-The catalogue states no open exact-value conjecture, so this is a WantedExt
-entry, not an OpenConjectures entry.
+certificates have not been replayed here. The three upper bounds and periodic
+approximation are `theorem_wanted` goals in `WantedExt.Geometry.SpherePackingDensityFourWanted`.
+The lattice packing in `MathlibExt.Geometry.SpherePackingDensityFourLowerBound` gives
+$\pi^2/16 \le \Delta_4$. The catalogue states no conjecture for the exact density.
 -/
 
 noncomputable section
