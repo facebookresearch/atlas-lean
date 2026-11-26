@@ -10344,6 +10344,7 @@
   "Domains/Chemistry/MineralProcessing/TwoProductFormula": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Mineral-processing balances"},
   "Domains/Chemistry/ParticleBalances/AggregationBreakage": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
   "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
+  "Domains/Chemistry/Transport/StirredTankStepResponse": {"to": "Chemistry/chemical-kinetics", "title": "Residence-time distributions"},
   "Domains/Economics/Accounting/BalancedNotCorrect": {"to": "Economics/financial-accounting", "title": "Limits of the trial balance"},
   "Domains/Economics/Accounting/CashConversionCycle": {"to": "Economics/financial-accounting", "title": "Cash conversion cycle"},
   "Domains/Economics/Accounting/CashFlowStatement": {"to": "Economics/financial-accounting", "title": "Cash flow statement"},
