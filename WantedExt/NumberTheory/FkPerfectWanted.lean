@@ -42,6 +42,7 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoMulPrimePow
 
 set_option autoImplicit false
 
@@ -70,13 +71,6 @@ $\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divis
 No condition $k > 1$ is imposed here; the results that need it assume it. -/
 def IsNearFkPerfect (k n : ℕ) : Prop :=
   IsKLNearPerfect k 3 n
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
 
 /-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
 $[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
@@ -252,20 +246,6 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     (ha : 1 < a) :
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
-
-/-- **The only deficient $F$-perfect number of the form $2p^a$ is $6$.** The number $6$ is deficient
-$F$-perfect, and for every prime $p$ and every natural number $a$, if $2p^a$ is deficient
-$F$-perfect then $2p^a = 6$.
-
-The divisor for $6$ is $d = 2$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 12. -/
-theorem_wanted isDeficientFPerfect_two_mul_prime_pow
-    (p a : ℕ) (hp : p.Prime) :
-    IsDeficientFPerfect 6 ∧
-      (IsDeficientFPerfect (2 * p ^ a) → 2 * p ^ a = 6)
 
 /-- **No near $F$-perfect number of the form $2p^a$.** For every prime $p$ and every natural
 number $a$, the number $n = 2p^a$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
