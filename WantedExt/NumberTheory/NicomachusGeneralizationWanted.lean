@@ -43,8 +43,7 @@ its closed form and its recurrence.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import MathlibExt.NumberTheory.NicomachusGeneralization
+public import MathlibExt.NumberTheory.NicomachusConvergents
 
 set_option autoImplicit false
 
@@ -110,19 +109,6 @@ by substituting $-m - 1$ for $m$ in that expansion). -/
 noncomputable def nicomachusPEven (m : ℕ) (x : ℝ) : ℝ :=
   nicomachusPClosed (-(m : ℝ) - 1) x
 
-/-- **The Kim–Stolarsky convergents $\alpha_k$.** The rational numbers $\alpha_k$, for natural
-numbers $k$, are defined by $\alpha_0 = 0$, $\alpha_1 = 1$ and
-$\alpha_{k+1} = \frac{15 + 7\alpha_k}{13 + 6\alpha_k}$ for $k \ge 1$.
-
-For $k \ge 1$, $\alpha_k$ is the continued-fraction convergent $[1; 6, 3, \ldots, 6, 3]$ with
-$2k - 2$ partial quotients after the semicolon (Equation (12) of Kim and Stolarsky); the value
-$\alpha_0 = 0$ is a placeholder. -/
-def nicomachusAlpha : ℕ → ℚ
-  | 0 => 0
-  | 1 => 1
-  | (k + 2) => (15 + 7 * nicomachusAlpha (k + 1)) /
-      (13 + 6 * nicomachusAlpha (k + 1))
-
 /-- **Generalized Nicomachus identity, odd case.** Let $L_{m,o}$ be the odd-case cube sum,
 $R_{m,o}$ the odd-case square and $P_{m,o}$ the odd-case polynomial. For every natural number
 $m \ge 2$ and every real number $x$,
@@ -146,19 +132,6 @@ theorem_wanted nicomachusLEven_sub_REven_eq (m : ℕ) (hm : 2 ≤ m)
     (x : ℝ) :
     nicomachusLEven m x - nicomachusREven m x =
       x * nicomachusPEven m x - x ^ 2 + x ^ 3
-
-/-- **The convergents $\alpha_k$ in terms of the integers $u_k$.** Let $\alpha_k$ be the
-Kim–Stolarsky convergents, with $\alpha_1 = 1$ and
-$\alpha_{k+1} = (15 + 7\alpha_k)/(13 + 6\alpha_k)$ for $k \ge 1$, and let $u_k$ be the
-coefficient of $x^{k-1}$ in the power series expansion of
-$(1 + 502x + x^2)/((1 - x)(1 - 398x + x^2))$. For every integer $k \ge 1$,
-$$\alpha_k = \frac{-1 + \sqrt{11 - \frac{10}{3 + 2u_k}}}{2}.$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Proposition 2. -/
-theorem_wanted nicomachusAlpha_eq (k : ℕ) (hk : 1 ≤ k) :
-    (nicomachusAlpha k : ℝ) =
-      (-1 + Real.sqrt (11 - 10 / (3 + 2 * (nicomachusU k : ℝ)))) / 2
 
 /-- **Kim–Stolarsky balanced quadratic sum.** Let $k \ge 1$, let $\alpha_k$ be the numbers of
 Equation (12) (so $\alpha_1 = 1$ and $\alpha_{k+1} = (15 + 7\alpha_k)/(13 + 6\alpha_k)$), let $u_k$

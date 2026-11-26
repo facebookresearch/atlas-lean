@@ -23,3 +23,5 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [The ring of p-adic integers](p-adic-integers.md)
 - [A p-adic integer is a unit if and only if its p-adic absolute value is 1](p-adic-integers-units-absolute-value-one.md)
 - [The p-adic valuation of a product of nonzero integers is the sum of their p-adic valuations](p-adic-order-integer-additive.md)
+- [Power series identities over complete non-archimedean fields](power-series-identities-over-complete-nonarchimedean-fields.md)
+- [The field of p-adic numbers](p-adic-numbers.md)

@@ -114,26 +114,6 @@ theorem_wanted sum_neg_b_pow_lucasAB_shift (a b : ℂ) (hb : b ≠ 0)
         fibAB a b (n + m + 1) * lucasAB a b (n + m) +
           (-1) ^ n * b ^ (n + 1) * fibAB a b m * lucasAB a b (m - 1))
 
-/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of -b, via Lucas numbers.** Let $a, b$
-be complex numbers with $\Delta = a^2 + 4b \ne 0$, and let $(F_n)$ and $(L_n)$ be the
-$(a, b)$-Fibonacci and $(a, b)$-Lucas numbers. Then for every integer $n \ge 0$,
-$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i} = \frac{L_{2n+1} + (-1)^{n+1} a b^n}{\Delta}$$
-and
-$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i+1} = \frac{L_{2n+2} + 2 (-1)^n b^{n+1}}{\Delta}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 10(a). -/
-theorem_wanted sum_neg_b_pow_fibAB_disc (a b : ℂ)
-    (hΔ : a ^ 2 + 4 * b ≠ 0) (n : ℕ) :
-    (∑ i ∈ Finset.range (n + 1), (-b) ^ (n - i) * fibAB a b (2 * i) =
-      (lucasAB a b (2 * n + 1) + (-1) ^ (n + 1) * a * b ^ n) /
-        (a ^ 2 + 4 * b)) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-b) ^ (n - i) * fibAB a b (2 * i + 1) =
-      (lucasAB a b (2 * n + 2) + (-1) ^ n * 2 * b ^ (n + 1)) /
-        (a ^ 2 + 4 * b))
-
 /-- **Alternating sums of Fibonacci and Lucas numbers.** Let $(F_n)$ and $(L_n)$ be the
 Fibonacci and Lucas numbers, that is, the $(1, 1)$-Fibonacci and $(1, 1)$-Lucas numbers, viewed
 as complex numbers. Then for every integer $n \ge 0$,
@@ -156,29 +136,6 @@ theorem_wanted sum_neg_one_pow_fib (n : ℕ) :
     (∑ i ∈ Finset.range (n + 1),
         (-1 : ℂ) ^ i * lucasAB 1 1 (2 * i + 1) =
       (-1) ^ n * fibAB 1 1 (2 * n + 2))
-
-/-- **Alternating sums of Pell and Pell–Lucas numbers.** Let $(P_n)$ and $(Q_n)$ be the Pell
-and Pell–Lucas numbers, that is, the $(2, 1)$-Fibonacci and $(2, 1)$-Lucas numbers, viewed as
-complex numbers. Then for every integer $n \ge 0$,
-$$\sum_{i=0}^{n} (-1)^i P_{2i} = \frac{(-1)^n Q_{2n+1} - 2}{8}, \qquad
-\sum_{i=0}^{n} (-1)^i Q_{2i} = (-1)^n P_{2n+1} + 1,$$
-$$\sum_{i=0}^{n} (-1)^i P_{2i+1} = \frac{(-1)^n Q_{2n+2} + 2}{8}, \qquad
-\sum_{i=0}^{n} (-1)^i Q_{2i+1} = (-1)^n P_{2n+2}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 10(c). -/
-theorem_wanted sum_neg_one_pow_pell (n : ℕ) :
-    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * fibAB 2 1 (2 * i) =
-      ((-1) ^ n * lucasAB 2 1 (2 * n + 1) - 2) / 8) ∧
-    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i) =
-      (-1) ^ n * fibAB 2 1 (2 * n + 1) + 1) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1) =
-      ((-1) ^ n * lucasAB 2 1 (2 * n + 2) + 2) / 8) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1) =
-      (-1) ^ n * fibAB 2 1 (2 * n + 2))
 
 /-- **Weighted alternating sums of Jacobsthal and Jacobsthal–Lucas numbers.** Let $(J_n)$ and
 $(j_n)$ be the Jacobsthal and Jacobsthal–Lucas numbers, that is, the $(1, 2)$-Fibonacci and

@@ -44,16 +44,25 @@ open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 
 universe u
 
-/-- Rationality is independent of the chosen resolution. -/
+/-- Rationality does not depend on the resolution: let $k$ be an algebraically closed field of
+characteristic zero and $X$ a normal integral $k$-scheme that is separated, locally of finite type
+and quasi-compact. If one resolution $f : Y \to X$ (a proper, locally projective, birational
+morphism from a smooth integral $k$-scheme that is an isomorphism over every open subset of $X$
+smooth over $k$) is rational, that is, $\mathcal{O}_X \to f_* \mathcal{O}_Y$ is an isomorphism and
+$R^i f_* \mathcal{O}_Y = 0$ for $i > 0$, then every resolution of $X$ is rational. -/
 theorem_wanted resolution_independence (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsSeparated X.hom]
     [LocallyOfFiniteType X.hom] [QuasiCompact X.hom] (hX : IsNormalIntegral X.left)
     (R T : ResolutionModel X) (hR : IsRationalResolution R) :
     IsRationalResolution T
 
-/-- Rational singularities are Cohen–Macaulay. (Local Noetherianity follows from local finite
-type over a field; it is stated because stalkwise Cohen–Macaulayness is defined for locally
-Noetherian schemes.) -/
+/-- Rational singularities are Cohen–Macaulay: let $k$ be an algebraically closed field of
+characteristic zero and $X$ a normal integral $k$-scheme that is separated, locally of finite type,
+quasi-compact and locally Noetherian. If $X$ has a rational resolution $f : Y \to X$ (a proper,
+locally projective, birational morphism from a smooth integral $k$-scheme that is an isomorphism
+over every open subset of $X$ smooth over $k$, with $\mathcal{O}_X \to f_* \mathcal{O}_Y$ an
+isomorphism and $R^i f_* \mathcal{O}_Y = 0$ for $i > 0$), then every local ring of $X$ is
+Cohen–Macaulay (its depth equals its dimension). -/
 theorem_wanted rational_isCohenMacaulay (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsSeparated X.hom]
     [LocallyOfFiniteType X.hom] [QuasiCompact X.hom] [IsLocallyNoetherian X.left]
@@ -61,7 +70,13 @@ theorem_wanted rational_isCohenMacaulay (k : Type u) [Field k] [IsAlgClosed k] [
     (R : ResolutionModel X) (hR : IsRationalResolution R) :
     IsCohenMacaulayStalkwise X.left
 
-/-- Canonical higher direct images of a resolution vanish; `X` need not be normal. -/
+/-- Grauert–Riemenschneider vanishing: let $k$ be an algebraically closed field of characteristic
+zero, $X$ an integral proper $k$-scheme (not necessarily normal), $f : Y \to X$ a resolution (a
+proper, locally projective, birational morphism from a smooth integral $k$-scheme that is an
+isomorphism over every open subset of $X$ smooth over $k$) with $Y$ smooth of relative dimension $n$
+over $k$, and $K$ a canonical line on $Y$: a line bundle with natural Serre duality isomorphisms
+$\operatorname{Hom}(F, K) \cong H^n(Y, F)^\vee$ for all vector bundles $F$ on $Y$. Then
+$R^i f_* K = 0$ for all $i > 0$. -/
 theorem_wanted grauertRiemenschneider (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
     (R : ResolutionModel X) (n : ℕ)

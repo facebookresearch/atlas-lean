@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.Order.Floor.Div
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.Data.ZMod.Defs
 import Mathlib.Tactic
@@ -235,5 +236,41 @@ theorem weightedDavenport_singleton_one_zmod_two :
               _ = 0 := by decide)
   rw [weightedDavenport_eq_natCast_sInf _ _ (by rw [hset]; exact Set.nonempty_Ici), hset]
   simp
+
+/-- **A nested ceiling identity for divisors.** For all natural numbers $m, n \ge 2$ with
+$m \mid n$, we have $\lceil n / (\lceil n/(m-1) \rceil - 1) \rceil = m$.
+
+Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
+Constants*, INTEGERS 26 (2026), Article A89, Lemma 1 (`integers-2026-A89-lem-1`). -/
+theorem ceilDiv_ceilDiv_sub_one_sub_one_of_dvd (m n : ℕ) (hm : 2 ≤ m)
+    (hn : 2 ≤ n) (hdvd : m ∣ n) :
+    n ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) = m := by
+  obtain ⟨t, hnt⟩ := hdvd
+  let d := n ⌈/⌉ (m - 1) - 1
+  have hm' : 0 < m - 1 := by omega
+  have ht : 0 < t := by
+    apply Nat.pos_of_ne_zero
+    intro ht0
+    simp [ht0] at hnt
+    omega
+  have hlt : (m - 1) * t < n := by
+    rw [hnt]
+    exact Nat.mul_lt_mul_of_pos_right (by omega) ht
+  have htceil : t < n ⌈/⌉ (m - 1) := by
+    rwa [← not_le, ceilDiv_le_iff_le_mul hm', not_le]
+  have htd : t ≤ d := by dsimp [d]; omega
+  have hd : 0 < d := ht.trans_le htd
+  have hdceil : d < n ⌈/⌉ (m - 1) := by dsimp [d]; omega
+  have hdlt : (m - 1) * d < n := by
+    rwa [← not_le, ← ceilDiv_le_iff_le_mul hm', not_le]
+  have hdn : n ≤ d * m := by
+    rw [hnt, Nat.mul_comm d m]
+    exact Nat.mul_le_mul_left m htd
+  -- The two product bounds pin the outer ceiling to `m`.
+  have hlo : m - 1 < n ⌈/⌉ d := by
+    rwa [← not_le, ceilDiv_le_iff_le_mul hd, Nat.mul_comm d (m - 1), not_le]
+  have hhi := (ceilDiv_le_iff_le_mul hd).mpr hdn
+  change n ⌈/⌉ d = m
+  omega
 
 end MetaMathlibExt

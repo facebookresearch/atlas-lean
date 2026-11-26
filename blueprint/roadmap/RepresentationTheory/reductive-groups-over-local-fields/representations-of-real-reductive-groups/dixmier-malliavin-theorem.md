@@ -15,6 +15,14 @@ $(f * \psi)(y) = \int_G f(x)\psi(x^{-1}y) \, dx$.
    space of smooth vectors is the Gårding subspace. In particular, for a smooth Fréchet
    representation $(\pi, E)$, every vector of $E$ is such a finite sum with $v_i \in E$.
 
+## Depends on
+
+- [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for continuous representations of a Lie group on a Fréchet space, smooth vectors and the integrated action $\pi(f)v$ in item 2
+
+## Proof depends on
+
+- [The Dixmier–Malliavin lemma and factorization along one-parameter subgroups](dixmier-malliavin-lemma-and-factorization.md), for both items: the lemma on $\delta$, with convergence in compactly supported distributions and $f, g$ supported in a prescribed neighbourhood of $0$; for item 1, the factorization of functions along flows assembled into kernels on $G$ in product coordinates; for item 2, the separate vector form, with convergence in the seminorms of $V^\infty$
+
 ## Sources
 
 - M. Francis, "A Dixmier-Malliavin theorem for Lie groupoids", arXiv:2009.13760 (version 1),

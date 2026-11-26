@@ -17,7 +17,7 @@ Theoretical Computer Science 442 (2012), 13-21, doi:10.1016/j.tcs.2010.05.034, T
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Analysis.InnerProductSpace.PiL2

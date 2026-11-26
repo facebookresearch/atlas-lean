@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Group.Indicator
 public import Mathlib.Algebra.Group.Nat.Defs
 public import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Data.Nat.Find
+import Mathlib.Order.MinMax
+import MathlibExt.Data.Nat.DyadicBlock
 
 /-! # The NS property and indicator functions of upper intervals -/
 
@@ -32,6 +34,19 @@ public def HasNSProperty (h : ℕ → ℕ) : Prop :=
   Monotone h ∧ ∀ z z' i : ℕ, 0 < i → z / 2 ^ i = z' / 2 ^ i →
     h z / 2 ^ (i - 1) = h z' / 2 ^ (i - 1)
 
+/-- **Quotients of a truncated NS function by powers of two.** Let $h : \mathbb{N} \to \mathbb{N}$
+have the NS property and let $z, z', k \in \mathbb{N}$ with $k \ge 1$ and
+$\lfloor z' / 2^k \rfloor = \lfloor z / 2^k \rfloor$. Then for every $y \in \mathbb{N}$,
+$\lfloor \min(h(z'), y) / 2^{k-1} \rfloor = \lfloor \min(h(z), y) / 2^{k-1} \rfloor$.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 2 (ii) (`integers-2025-G3-lem-2`). -/
+public theorem HasNSProperty.min_div_two_pow_eq {h : ℕ → ℕ} (hh : HasNSProperty h)
+    {z z' k : ℕ} (hk : 0 < k) (hz : z' / 2 ^ k = z / 2 ^ k) (y : ℕ) :
+    min (h z') y / 2 ^ (k - 1) = min (h z) y / 2 ^ (k - 1) :=
+  min_div_two_pow_eq_of_div_two_pow_eq (hh.2 z' z k hk hz) y
+
 /-- **Constant functions have the NS property.** For every natural number $c$, the constant
 function $\mathbb{N} \to \mathbb{N}$ with value $c$ has the NS property.
 
@@ -39,6 +54,29 @@ Source: characteristic lemma for the NS property of Miyadera, Manabe and Singh,
 INTEGERS 25 (2025), Article G3, Definition 11. -/
 public theorem hasNSProperty_const (c : ℕ) : HasNSProperty fun _ ↦ c :=
   ⟨monotone_const, fun _ _ _ _ _ ↦ rfl⟩
+
+/-- **Constant extension preserves the NS property.** Let $z \in \mathbb{N}$ and let
+$h : \mathbb{N} \to \mathbb{N}$ satisfy $h(a) \le h(b)$ whenever $a \le b \le z$, and
+$\lfloor h(a) / 2^{i-1} \rfloor = \lfloor h(b) / 2^{i-1} \rfloor$ whenever $a, b \le z$,
+$i \ge 1$ and $\lfloor a / 2^i \rfloor = \lfloor b / 2^i \rfloor$. Then the function sending
+$x$ to $h(x)$ for $x \le z$ and to $h(z)$ for $x > z$ has the NS property.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 1 (`integers-2025-G3-lem-1`). -/
+public theorem hasNSProperty_extend_const (z : ℕ) (h : ℕ → ℕ)
+    (hmono : ∀ a b, a ≤ b → b ≤ z → h a ≤ h b)
+    (hns : ∀ a b i : ℕ, a ≤ z → b ≤ z → 0 < i → a / 2 ^ i = b / 2 ^ i →
+      h a / 2 ^ (i - 1) = h b / 2 ^ (i - 1)) :
+    HasNSProperty fun x ↦ if x ≤ z then h x else h z := by
+  suffices HasNSProperty (fun x ↦ h (min x z)) by
+    simpa only [min_def, apply_ite] using this
+  constructor
+  · intro a b hab
+    exact hmono _ _ (min_le_min_right z hab) (min_le_right b z)
+  · intro a b i hi hab
+    exact hns _ _ i (min_le_right a z) (min_le_right b z) hi
+      (min_div_two_pow_eq_of_div_two_pow_eq hab z)
 
 /-- **The identity function lacks the NS property.** The identity function on the natural
 numbers does not have the NS property: $\lfloor 0/2 \rfloor = \lfloor 1/2 \rfloor$, but

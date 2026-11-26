@@ -13,6 +13,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
 
 set_option autoImplicit false
@@ -38,16 +40,6 @@ Sequences 27 (2024), Article 24.2.2, Proposition 1
 public theorem_wanted galeShapleyRounds_of_same_taste (P : PreferenceProfile n)
     (h : ∀ i i' : Fin n, P.1 i = P.1 i') :
     galeShapleyRounds P = n
-
-/-- **When the Gale–Shapley algorithm ends in one round.** Let $n \ge 1$ and let $P$ be a
-preference profile for $n$ men and $n$ women. The men-proposing Gale–Shapley algorithm on $P$ ends
-in exactly one round if and only if every woman is the first choice of exactly one man.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 2
-(`jis-2024-24.2.2-prop-2`). -/
-public theorem_wanted galeShapleyRounds_eq_one_iff (P : PreferenceProfile n) (hn : 0 < n) :
-    galeShapleyRounds P = 1 ↔ ∀ j : Fin n, ∃! i : Fin n, P.1 i ⟨0, hn⟩ = j
 
 /-- **Counting disjoint preference profiles.** Call a preference profile for $n$ men and $n$ women
 disjoint if for every pair of positions $(r, s)$ there is exactly one man–woman pair in which the
@@ -159,17 +151,6 @@ public theorem_wanted mutually_latin_soulmate_profiles_card (n k : ℕ) :
           (∀ r : Fin n, Function.Injective fun j => P.2 j r) ∧ soulmatePairCount P = k} : ℚ) =
       (latinSquareCount n : ℚ) ^ 2 / (n ! : ℚ) * (n.choose k : ℚ) *
         ∑ i ∈ range (n - k + 1), (-1 : ℚ) ^ i * ((n - k)! : ℚ) / (i ! : ℚ)
-
-/-- **At most one hell-couple in a stable matching.** Let $P$ be a preference profile of $n$
-men and $n$ women, and let $\mu$ be a stable matching for $P$, in which man $i$ marries woman
-$\mu(i)$. Then at most one man $i$ forms a hell-couple with his wife $\mu(i)$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 12
-(`jis-2024-24.2.2-prop-12`). -/
-public theorem_wanted hellCouple_subsingleton (P : PreferenceProfile n)
-    (μ : Equiv.Perm (Fin n)) (hμ : IsStableMatching P μ) :
-    {i : Fin n | IsHellCouple P μ i}.Subsingleton
 
 /-- **Profiles with a pair of outcasts.** In a preference profile for $n$ men and $n$ women, a man
 $i$ and a woman $j$ form a pair of outcasts when every man other than $i$ ranks $j$ last and every

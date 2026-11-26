@@ -49,9 +49,10 @@ theorem eq_of_euler_of_discount_mul_gross_eq_one {u : ℝ → ℝ} {β r c₀ c�
   rw [hβr, one_mul] at heuler
   exact hmu.injOn hc₀ hc₁ heuler
 
-/-- Consumption smoothing: with `β (1 + r) = 1` and strictly decreasing marginal
-utility, an unconstrained interior maximizer of two-period lifetime utility
-consumes the same amount in both periods (Atlas roadmap MA04.T03). -/
+/-- Consumption smoothing: with `β (1 + r) = 1`, marginal utility strictly decreasing on
+positive consumption and `u` differentiable at both consumption levels, an interior
+maximizer of two-period lifetime utility over the feasible set consumes the same amount in
+both periods (Atlas roadmap MA04.T03). -/
 theorem consumption_eq_of_discount_mul_gross_eq_one {u : ℝ → ℝ} {β r y₀ y₁ c₀ : ℝ}
     (hmax : IsMaxOn (lifetimeUtility u β r y₀ y₁) (feasibleConsumption r y₀ y₁) c₀)
     (hc₀ : 0 < c₀) (hc₁ : 0 < secondPeriodConsumption r y₀ y₁ c₀)

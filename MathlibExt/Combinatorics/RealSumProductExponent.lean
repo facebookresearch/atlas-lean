@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Order.Monotone
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Optimization Problem 84b: real sum-product exponent
@@ -252,6 +253,106 @@ $A \subset \mathbb{R}$. -/
 def epsilonUniformLowerGrowthCharacterization : Prop :=
   IsGreatest {s : ℝ | HasUniformSumProductLowerGrowth s} sumProductExponent
 
+open Filter
+
+private theorem one_le_sumProductMaxCard {A : Finset ℝ} (hA : A.Nonempty) :
+    1 ≤ sumProductMaxCard A :=
+  (Finset.one_le_card.mpr hA).trans
+    ((Finset.card_le_card_add_left hA).trans (le_max_left _ _))
+
+private theorem card_rpow_le_maxCard_iff {A : Finset ℝ} (hA : 2 ≤ A.card) (t : ℝ) :
+    (A.card : ℝ) ^ t ≤ sumProductMaxCard A ↔ t ≤ sumProductRatio A := by
+  have hcard : (1 : ℝ) < A.card := by exact_mod_cast hA
+  have hmax : 0 < sumProductMaxCard A :=
+    one_le_sumProductMaxCard (Finset.card_pos.mp (by omega))
+  rw [Real.rpow_le_iff_le_log (zero_lt_one.trans hcard) (by exact_mod_cast hmax),
+    sumProductRatio, le_div_iff₀ (Real.log_pos hcard)]
+
+private theorem hasUniformSumProductLowerGrowth_exponent :
+    HasUniformSumProductLowerGrowth sumProductExponent := by
+  intro ε hε
+  let t := sumProductExponent - ε
+  have ht : t < sumProductExponent := sub_lt_self _ hε
+  have htail := eventually_lt_of_lt_liminf ht sumProductLevelMinimum_isBoundedUnder_ge
+  obtain ⟨N, hN⟩ := eventually_atTop.mp ((eventually_ge_atTop 2).and htail)
+  -- Below the cutoff, |A|^t is at most B and the sumset is nonempty.
+  let B := (N : ℝ) ^ max t 0
+  have hNpos : (1 : ℝ) ≤ N := by exact_mod_cast (one_le_two.trans (hN N le_rfl).1)
+  have hB : 1 ≤ B := Real.one_le_rpow hNpos (le_max_right _ _)
+  refine ⟨B⁻¹, inv_pos.mpr (zero_lt_one.trans_le hB), ?_⟩
+  intro A hA
+  have hcard : (1 : ℝ) ≤ A.card := by exact_mod_cast Finset.one_le_card.mpr hA
+  by_cases hn : N ≤ A.card
+  · obtain ⟨h₂, hmin⟩ := hN A.card hn
+    apply (mul_le_of_le_one_left (Real.rpow_nonneg (by positivity) t)
+      (inv_le_one_of_one_le₀ hB)).trans
+    apply (card_rpow_le_maxCard_iff h₂ t).2
+    exact hmin.le.trans ((sumProductLevelMinimum_isLeast A.card).2 ⟨A, rfl, rfl⟩)
+  · have hmax : (1 : ℝ) ≤ sumProductMaxCard A := by exact_mod_cast one_le_sumProductMaxCard hA
+    refine le_trans ?_ hmax
+    apply (inv_mul_le_one₀ (zero_lt_one.trans_le hB)).2
+    exact (Real.rpow_le_rpow_of_exponent_le hcard (le_max_left t 0)).trans
+      (Real.rpow_le_rpow (by positivity) (by exact_mod_cast le_of_not_ge hn) (le_max_right _ _))
+
+private theorem le_sumProductExponent_of_uniformGrowth {s : ℝ}
+    (hs : HasUniformSumProductLowerGrowth s) : s ≤ sumProductExponent := by
+  apply (le_liminf_iff' sumProductLevelMinimum_isBoundedUnder_le.isCoboundedUnder_ge
+    sumProductLevelMinimum_isBoundedUnder_ge).2
+  intro t ht
+  let δ := (s - t) / 2
+  have hδ : 0 < δ := half_pos (sub_pos.mpr ht)
+  obtain ⟨K, hK, hbound⟩ := hs δ hδ
+  -- Eventually n^δ absorbs the reciprocal of the uniform constant.
+  have hgrow : Tendsto (fun n : ℕ => (n : ℝ) ^ δ) atTop atTop :=
+    (tendsto_rpow_atTop hδ).comp tendsto_natCast_atTop_atTop
+  filter_upwards [eventually_ge_atTop 2, hgrow.eventually_ge_atTop K⁻¹] with n hn hlarge
+  obtain ⟨A, rfl, hmin⟩ := (sumProductLevelMinimum_isLeast n).1
+  rw [hmin, ← card_rpow_le_maxCard_iff hn]
+  have hA : A.Nonempty := Finset.card_pos.mp (by omega)
+  have hpos : (0 : ℝ) < A.card := by exact_mod_cast Finset.card_pos.mpr hA
+  calc
+    (A.card : ℝ) ^ t ≤ (K * (A.card : ℝ) ^ δ) * (A.card : ℝ) ^ t :=
+      le_mul_of_one_le_left (Real.rpow_nonneg hpos.le _) ((inv_le_iff_one_le_mul₀' hK).1 hlarge)
+    _ = K * (A.card : ℝ) ^ (s - δ) := by
+      rw [mul_assoc, ← Real.rpow_add hpos, show δ + t = s - δ by dsimp [δ]; ring]
+    _ ≤ sumProductMaxCard A := hbound A hA
+
+/--
+**The real sum-product exponent is the largest uniform growth rate.** For a finite set
+$A \subset \mathbb{R}$ write $A + A$ and $AA$ for the sets of all sums $a + b$ and all products
+$ab$ with $a, b \in A$, and let the real sum-product exponent $C_{84b}$ be the limit inferior, as
+$n \to \infty$, of the least value of $\log \max(|A + A|, |AA|) / \log n$ over sets
+$A \subset \mathbb{R}$ with $|A| = n$. Then $C_{84b}$ is the largest real number $s$ with the
+following property: for every $\varepsilon > 0$ there is a constant $K > 0$ such that
+$K |A|^{s - \varepsilon} \le \max(|A + A|, |AA|)$ for every nonempty finite set
+$A \subset \mathbb{R}$.
+
+Optimization Problems 84b gives this as an equivalent definition of $C_{84b}$.
+
+Source: Paul Erdős and Endre Szemerédi, On sums and products of
+integers, Studies in Pure Mathematics (1983), 213-218,
+https://doi.org/10.1007/978-3-0348-5438-2_19; György Elekes, On the number of sums and products,
+Acta Arithmetica 81 (1997), no. 4, 365-367, https://doi.org/10.4064/aa-81-4-365-367; József
+Solymosi, On the number of sums and products, Bulletin of the London Mathematical Society 37
+(2005), no. 4, 491-494, https://doi.org/10.1112/S0024609305004261; József Solymosi, Bounding
+multiplicative energy by the sumset, Advances in Mathematics 222 (2009), no. 2, 402-408,
+https://doi.org/10.1016/j.aim.2009.04.006; Misha Rudnev and Sophie Stevens, An update on the
+sum-product problem, Mathematical Proceedings of the Cambridge Philosophical Society 173 (2022),
+no. 2, 411-430, https://arxiv.org/abs/2005.11145; Thomas F. Bloom, A history of the sum-product
+problem, https://thomasbloom.org/notes/sumproduct.html; Adam Cushman, A note on the sum-product
+problem and the convex sumset problem, arXiv:2512.13849 (2025),
+https://arxiv.org/abs/2512.13849; Thomas F. Bloom, Will Sawin, Carl Schildkraut, and Dmitrii
+Zhelezov, The sum-product conjecture is false for real numbers, arXiv:2605.28781 (2026),
+https://arxiv.org/abs/2605.28781; Optimization Problems, record 84b, Sum-product exponent for
+the reals, tables of known upper and lower bounds (source commit
+2c1968cd520b60f1cf3cf50749f7285e800e4e15),
+https://github.com/teorth/optimizationproblems/blob/2c1968cd520b60f1cf3cf50749f7285e800e4e15/constants/84b.md.
+Moved from `OpenConjectures/Combinatorics/RealSumProductExponent`.
+-/
+public theorem epsilonUniformLowerGrowthCharacterization_holds :
+    epsilonUniformLowerGrowthCharacterization :=
+  ⟨hasUniformSumProductLowerGrowth_exponent, fun _ hs => le_sumProductExponent_of_uniformGrowth hs⟩
+
 /-- **Statement of the Erdős–Szemerédi conjecture for real sets.** For a finite set
 $A \subset \mathbb{R}$ write $A + A$ and $AA$ for the sets of all sums $a + b$ and all products
 $ab$ with $a, b \in A$, and let the real sum-product exponent $C_{84b}$ be the limit inferior, as
@@ -325,6 +426,48 @@ inferior, as $n \to \infty$, of the least value of $\log \max(|A + A|, |AA|) / \
 $A \subset \mathbb{R}$ with $|A| = n$, is at least $1$. -/
 def trivialLowerBound : Prop :=
   (1 : ℝ) ≤ sumProductExponent
+
+/--
+**Trivial lower bound for the real sum-product exponent.** The real sum-product exponent is at
+least $1$. Here the exponent is $\liminf_{n \to \infty} m(n)$, where $m(n)$ is the infimum of
+$\log \max(|A+A|, |AA|) / \log |A|$ over all sets $A$ of $n$ real numbers, and $A+A$ and $AA$ are
+the sumset and the product set of $A$.
+
+Optimization Problems 84b lists this bound as trivial, since $|A+A| \ge 2|A| - 1$.
+
+Source: Paul Erdős and Endre Szemerédi, On sums and products of
+integers, Studies in Pure Mathematics (1983), 213-218,
+https://doi.org/10.1007/978-3-0348-5438-2_19; György Elekes, On the number of sums and products,
+Acta Arithmetica 81 (1997), no. 4, 365-367, https://doi.org/10.4064/aa-81-4-365-367; József
+Solymosi, On the number of sums and products, Bulletin of the London Mathematical Society 37
+(2005), no. 4, 491-494, https://doi.org/10.1112/S0024609305004261; József Solymosi, Bounding
+multiplicative energy by the sumset, Advances in Mathematics 222 (2009), no. 2, 402-408,
+https://doi.org/10.1016/j.aim.2009.04.006; Misha Rudnev and Sophie Stevens, An update on the
+sum-product problem, Mathematical Proceedings of the Cambridge Philosophical Society 173 (2022),
+no. 2, 411-430, https://arxiv.org/abs/2005.11145; Thomas F. Bloom, A history of the sum-product
+problem, https://thomasbloom.org/notes/sumproduct.html; Adam Cushman, A note on the sum-product
+problem and the convex sumset problem, arXiv:2512.13849 (2025),
+https://arxiv.org/abs/2512.13849; Thomas F. Bloom, Will Sawin, Carl Schildkraut, and Dmitrii
+Zhelezov, The sum-product conjecture is false for real numbers, arXiv:2605.28781 (2026),
+https://arxiv.org/abs/2605.28781; Optimization Problems, record 84b, Sum-product exponent for
+the reals, tables of known upper and lower bounds (source commit
+2c1968cd520b60f1cf3cf50749f7285e800e4e15),
+https://github.com/teorth/optimizationproblems/blob/2c1968cd520b60f1cf3cf50749f7285e800e4e15/constants/84b.md.
+Moved from `OpenConjectures/Combinatorics/RealSumProductExponent`.
+-/
+public theorem trivialLowerBound_holds : trivialLowerBound := by
+  change (1 : ℝ) ≤ Filter.liminf sumProductLevelMinimum Filter.atTop
+  apply Filter.le_liminf_of_le sumProductLevelMinimum_isBoundedUnder_le.isCoboundedUnder_ge
+  filter_upwards [Filter.eventually_ge_atTop 2] with n hn
+  obtain ⟨A, hcard, hvalue⟩ := (sumProductLevelMinimum_isLeast n).1
+  have hA : 2 ≤ A.card := hcard.symm ▸ hn
+  have hAone : (1 : ℝ) < A.card := by exact_mod_cast hA
+  have hAnonempty : A.Nonempty := Finset.card_pos.mp (Nat.zero_lt_two.trans_le hA)
+  -- Translating A by any one of its elements already gives |A| distinct sums.
+  have hsum : A.card ≤ (A + A).card := Finset.card_le_card_add_left hAnonempty
+  have hmax : A.card ≤ sumProductMaxCard A := hsum.trans (Nat.le_max_left _ _)
+  rw [hvalue, sumProductRatio, le_div_iff₀ (Real.log_pos hAone), one_mul]
+  exact Real.log_le_log (zero_lt_one.trans hAone) (by exact_mod_cast hmax)
 
 /-- **Statement of Elekes's lower bound.** For a finite set $A \subset \mathbb{R}$ write $A + A$
 and $AA$ for the sets of all sums $a + b$ and all products $ab$ with $a, b \in A$, and let the real

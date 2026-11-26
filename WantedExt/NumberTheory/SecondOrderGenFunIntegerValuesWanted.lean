@@ -12,8 +12,10 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.LucasSequence
-public import MathlibExt.NumberTheory.SecondOrderGenValue
+public import MathlibExt.NumberTheory.SecondOrderGenValueNeighbors
+public import MathlibExt.NumberTheory.SecondOrderGenValueTrivialFamilies
 public import MathlibExt.NumberTheory.SecondOrderMValue
+public import MathlibExt.NumberTheory.SecondOrderMValueSmallNonneg
 
 /-!
 # Integer values of generating functions of `A_{n+1} = p A_n + A_{n-1}` (wanted statements)
@@ -28,132 +30,6 @@ For `p ≠ 0` the denominator `1 - p x - x²` has no rational root, so `A(x)` is
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Forward part of a second-order sequence.** For integers $p, r, s$, this is the sequence
-$(A^{(r,s)}_n)_{n \ge 0}$ of integers with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
-$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for every natural number $n$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-def secondOrderFwd (p r s : ℤ) : ℕ → ℤ
-  | 0 => r
-  | 1 => s
-  | n + 2 => p * secondOrderFwd p r s (n + 1) + secondOrderFwd p r s n
-
-/-- **Backward part of the two-sided sequence.** For integers $p$, $r$ and $s$, the backward
-part is the sequence $(B_k)_{k \ge 0}$ with $B_0 = s$, $B_1 = r$ and $B_{k+2} = B_k - pB_{k+1}$.
-Thus $B_k$ is the term of index $1 - k$ of the two-sided sequence with $A_0 = r$, $A_1 = s$ and
-$A_{n+1} = pA_n + A_{n-1}$, computed backwards by $A_n = A_{n+2} - pA_{n+1}$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-def secondOrderBwd (p r s : ℤ) : ℕ → ℤ
-  | 0 => s
-  | 1 => r
-  | n + 2 => secondOrderBwd p r s n - p * secondOrderBwd p r s (n + 1)
-
-/-- **Two-sided second-order sequence.** For integers $p$, $r$ and $s$, the two-sided sequence
-$(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ is the integer sequence indexed by $\mathbb{Z}$ with
-$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and $A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$ for
-every integer $n$.
-
-The paper's forward rule "if $n > 1$" is read as $n \ge 1$, as the definition of $A_2$ requires.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-def secondOrderBiSeq (p r s : ℤ) : ℤ → ℤ
-  | (n : ℕ) => secondOrderFwd p r s n
-  | Int.negSucc n => secondOrderBwd p r s (n + 2)
-
-/-- **First values of the two-sided sequence.** For all integers $p$, $r$, $s$, the two-sided
-sequence $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ with initial values $r$ and $s$ satisfies
-$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$, $A^{(r,s)}_2 = ps + r$ and $A^{(r,s)}_{-1} = s - pr$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-theorem secondOrderBiSeq_small (p r s : ℤ) :
-    secondOrderBiSeq p r s 0 = r ∧ secondOrderBiSeq p r s 1 = s ∧
-      secondOrderBiSeq p r s 2 = p * s + r ∧ secondOrderBiSeq p r s (-1) = s - p * r := by
-  refine ⟨rfl, rfl, rfl, ?_⟩
-  show secondOrderBwd p r s 2 = s - p * r
-  rfl
-
-/-- **First initial value of the two-sided sequence.** For all integers $p$, $r$, $s$, the
-two-sided sequence $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ with initial values $r$ and $s$
-satisfies $A^{(r,s)}_0 = r$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-@[simp] theorem secondOrderBiSeq_zero (p r s : ℤ) : secondOrderBiSeq p r s 0 = r := rfl
-
-/-- **Second initial value of the two-sided sequence.** For all integers $p$, $r$, $s$, the
-two-sided sequence $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ with initial values $r$ and $s$
-satisfies $A^{(r,s)}_1 = s$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-@[simp] theorem secondOrderBiSeq_one (p r s : ℤ) : secondOrderBiSeq p r s 1 = s := rfl
-
-/-- **The two-sided sequence satisfies its recurrence at every index.** Let $p$, $r$, $s$ be
-integers and $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ the two-sided sequence for $p$ with initial values
-$A^{(r,s)}_0 = r$ and $A^{(r,s)}_1 = s$. Then
-$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for every integer $n$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-theorem secondOrderBiSeq_add_two (p r s : ℤ) (n : ℤ) :
-    secondOrderBiSeq p r s (n + 2) =
-      p * secondOrderBiSeq p r s (n + 1) + secondOrderBiSeq p r s n := by
-  rcases n with m | m
-  · show secondOrderFwd p r s (m + 2) = p * secondOrderFwd p r s (m + 1) + secondOrderFwd p r s m
-    rfl
-  · rcases m with _ | _ | k
-    · show secondOrderFwd p r s 1 = p * secondOrderFwd p r s 0 + secondOrderBwd p r s 2
-      simp only [secondOrderFwd, secondOrderBwd]
-      ring
-    · show secondOrderFwd p r s 0 = p * secondOrderBwd p r s 2 + secondOrderBwd p r s 3
-      simp only [secondOrderFwd, secondOrderBwd]
-      ring
-    · have h2 : Int.negSucc (k + 2) + 2 = Int.negSucc k := by omega
-      have h1 : Int.negSucc (k + 2) + 1 = Int.negSucc (k + 1) := by omega
-      rw [h2, h1]
-      have e : secondOrderBwd p r s (k + 4) =
-          secondOrderBwd p r s (k + 2) - p * secondOrderBwd p r s (k + 3) := rfl
-      show secondOrderBwd p r s (k + 2) =
-        p * secondOrderBwd p r s (k + 3) + secondOrderBwd p r s (k + 4)
-      rw [e]
-      ring
-
-/-- **Family generated by a rational number.** Let $p$ be an integer and $x_0$ a rational number,
-written $x_0 = r/s$ in lowest terms with $s > 0$, and let $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ be
-the two-sided sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
-$A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$. A rational number $x$ belongs to the family
-generated by $x_0$ when there is an integer $n$ with $A^{(r,s)}_{n+1} \ne 0$ and
-$x = A^{(r,s)}_n / A^{(r,s)}_{n+1}$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1 and Remark 7(ii). -/
-def IsInSecondOrderFamily (p : ℤ) (x₀ x : ℚ) : Prop :=
-  ∃ n : ℤ, secondOrderBiSeq p x₀.num x₀.den (n + 1) ≠ 0 ∧
-    x = (secondOrderBiSeq p x₀.num x₀.den n : ℚ) / secondOrderBiSeq p x₀.num x₀.den (n + 1)
-
-/-- **Every rational number lies in its own family.** For every integer $p$ and every rational
-number $x_0$, $x_0$ belongs to the family generated by $x_0$ for $p$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1. -/
-theorem isInSecondOrderFamily_self (p : ℤ) (x₀ : ℚ) : IsInSecondOrderFamily p x₀ x₀ :=
-  ⟨0, by simp [secondOrderBiSeq, secondOrderFwd], by
-    simp [secondOrderBiSeq, secondOrderFwd, Rat.num_div_den]⟩
 
 /-- **Integer values propagate along a family.** Let $a, b, p$ be integers with $p \ne 0$, let
 $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $r, s$ let
@@ -172,38 +48,6 @@ public theorem_wanted secondOrderGenValue_family_integer (a b p : ℤ) (hp : p �
     (n : ℤ) (hn : secondOrderBiSeq p r s (n + 1) ≠ 0) :
     ∃ z : ℤ, secondOrderGenValue a b p
       ((secondOrderBiSeq p r s n : ℚ) / secondOrderBiSeq p r s (n + 1)) = z
-
-/-- **Two families of integer values.** Let $a, b, p$ be integers with $p \ne 0$, let
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $r, s$ let
-$A^{(r,s)}$ be the two-sided integer sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
-$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for all integers $n$. Then
-$A(A^{(0,1)}_n / A^{(0,1)}_{n+1})$ is an integer for every integer $n \ne -1$, and
-$A(A^{(-b,a)}_n / A^{(-b,a)}_{n+1})$ is an integer for every integer $n$ with
-$A^{(-b,a)}_{n+1} \ne 0$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 2 (`jis-2025-25.8.3-thm-2`). -/
-public theorem_wanted secondOrderGenValue_trivial_families_integer (a b p : ℤ) (hp : p ≠ 0) :
-    (∀ n : ℤ, n ≠ -1 → ∃ z : ℤ, secondOrderGenValue a b p
-      ((secondOrderBiSeq p 0 1 n : ℚ) / secondOrderBiSeq p 0 1 (n + 1)) = z) ∧
-    ∀ n : ℤ, secondOrderBiSeq p (-b) a (n + 1) ≠ 0 → ∃ z : ℤ, secondOrderGenValue a b p
-      ((secondOrderBiSeq p (-b) a n : ℚ) / secondOrderBiSeq p (-b) a (n + 1)) = z
-
-/-- **Neighbours of an integer value.** Let $a, b, p$ be integers with $p \ne 0$ and let
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$. If $r, s$ are coprime integers
-with $r \ne 0$, $s \ne 0$ and $r + ps \ne 0$, and $A(r/s)$ is an integer, then $A(s/(r + ps))$
-and $A((s - pr)/r)$ are integers.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Lemma 6 (`jis-2025-25.8.3-lem-6`). -/
-public theorem_wanted secondOrderGenValue_neighbors_integer (a b p : ℤ) (hp : p ≠ 0) (r s : ℤ)
-    (hr : r ≠ 0)
-    (hs : s ≠ 0) (hrps : r + p * s ≠ 0) (hrs : Int.gcd r s = 1)
-    (hint : ∃ z : ℤ, secondOrderGenValue a b p ((r : ℚ) / s) = z) :
-    (∃ z : ℤ, secondOrderGenValue a b p ((s : ℚ) / (r + p * s)) = z) ∧
-      ∃ z : ℤ, secondOrderGenValue a b p (((s : ℚ) - p * r) / r) = z
 
 /-- **A small value of $M$ in the family of $r/s$ when $abp + a^2 - b^2 < 0$.** Let $a, b, p$ be
 integers with $p \ne 0$ and $abp + a^2 - b^2 < 0$. Let $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$
@@ -229,32 +73,6 @@ public theorem_wanted exists_small_secondOrderMValue_of_neg (a b p : ℤ) (hp : 
     (hnz : ∀ n : ℤ, secondOrderBiSeq p r s n ≠ 0) :
     ∃ n : ℤ, |(secondOrderMValue a b p (secondOrderBiSeq p r s n)
         (secondOrderBiSeq p r s (n + 1)) : ℝ)| ≤ √((-a * b * p - a ^ 2 + b ^ 2 : ℤ) : ℝ)
-
-/-- **A small value of $M$ in the family of $r/s$ when $abp + a^2 - b^2 \ge 0$.** Let $a, b, p$
-be integers with $p \ne 0$ and $abp + a^2 - b^2 \ge 0$. Let
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $u, v$ let
-$M(u, v) = \frac{bu^2 + bv^2 - apu^2 + 2auv}{v^2 - puv - u^2}$, where in both a fraction with
-denominator $0$ is read as $0$. Let $r, s$ be coprime integers with $s \ne 0$ such that $A(r/s)$
-is an integer, and let $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ be the two-sided sequence with
-$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and $A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$ for
-every integer $n$. If $A^{(r,s)}_n \ne 0$ for every integer $n$, then there is an integer $n$
-with $|M(A^{(r,s)}_n, A^{(r,s)}_{n+1})| \le \sqrt{(abp^3 + (a^2 - b^2)p^2)/(p^2 + 4)}$.
-
-The hypothesis that no term vanishes is the paper's assumption before Lemma 8. Without it the
-paper's claim fails: for $(a, b, p) = (-3, -8, 5)$ and $x = 0$, the members $A_n/A_{n+1}$ of the
-family $A^{(0,1)}$ with $A_{n+1} \ne 0$ have $\min |M| = 8$, while
-$(abp^3 + (a^2 - b^2)p^2)/(p^2 + 4) = 1625/29 < 64$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Lemma 10 (`jis-2025-25.8.3-lem-10`). -/
-public theorem_wanted exists_small_secondOrderMValue_of_nonneg (a b p : ℤ) (hp : p ≠ 0)
-    (hnonneg : 0 ≤ a * b * p + a ^ 2 - b ^ 2) (r s : ℤ) (hs : s ≠ 0) (hrs : Int.gcd r s = 1)
-    (hint : ∃ z : ℤ, secondOrderGenValue a b p ((r : ℚ) / s) = z)
-    (hnz : ∀ n : ℤ, secondOrderBiSeq p r s n ≠ 0) :
-    ∃ n : ℤ, |(secondOrderMValue a b p (secondOrderBiSeq p r s n)
-        (secondOrderBiSeq p r s (n + 1)) : ℝ)| ≤
-      √(((a * b * p ^ 3 + (a ^ 2 - b ^ 2) * p ^ 2 : ℤ) : ℝ) / (p ^ 2 + 4))
 
 /-- **Algorithm for integer values of a second-order generating function.** Let $a, b, p$ be
 integers with $p \ne 0$ and $(a, b) \ne (0, 0)$, let $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$

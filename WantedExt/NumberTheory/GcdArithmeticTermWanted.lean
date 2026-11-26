@@ -29,21 +29,6 @@ public theorem_wanted gcd_add_one_eq_floor_div_mod_five (a b : ℕ) (ha : 1 ≤ 
       5 ^ (a * b * (a * b + a + b)) / ((5 ^ (a ^ 2 * b) - 1) * (5 ^ (a * b ^ 2) - 1)) %
         5 ^ (a * b)
 
-/-- **Second arithmetic term for the gcd in base $5$.** For all natural numbers $a, b \ge 1$,
-$$
-\gcd(a, b) = \Big( \big( (-5^{ab(ab+a+b)}) \bmod \big( (5^{a^2 b} - 1)(5^{a b^2} - 1) \big) \big)
-\bmod 5^{ab} \Big) - 2
-$$
-in the integers, where $x \bmod m$ is the remainder of $x$ in $\{0, \dots, m - 1\}$ for $m > 0$,
-also when $x < 0$.
-
-Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
-Common Divisor*, INTEGERS 26 (2026), Article A96, Corollary 1. -/
-public theorem_wanted gcd_eq_neg_emod_emod_five_sub_two (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
-    (Nat.gcd a b : ℤ) =
-      (-(5 : ℤ) ^ (a * b * (a * b + a + b))) %
-            (((5 : ℤ) ^ (a ^ 2 * b) - 1) * ((5 : ℤ) ^ (a * b ^ 2) - 1)) % (5 : ℤ) ^ (a * b) - 2
-
 /-- **The gcd terms in bases $2$, $3$ and $4$.** Let $c \in \{2, 3, 4\}$, let $a, b \ge 1$ be
 natural numbers, and put $E = ab(ab + a + b)$ and $D = (c^{a^2 b} - 1)(c^{a b^2} - 1)$. Then the
 identity

@@ -10,11 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Defs
-public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSum
 public import MathlibExt.NumberTheory.GeneralizedSylvester
+public import MathlibExt.NumberTheory.MillinSeries
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
 
 /-!
 # Reciprocal sums of doubly exponential sequences
@@ -64,19 +64,6 @@ public theorem_wanted eq_sylvester_of_ratio_mem_of_hasSum_one {a : ℕ → ℕ}
     (hsum : HasSum (fun n => 1 / (a n : ℝ)) 1) :
     ∀ n, a n = Nat.generalizedSylvester 1 n
 
-/-- **Characterization of the denominators of the Millin series.** Let $(a_n)_{n \ge 0}$ be a
-sequence of positive integers with $a_n^2 / a_{n+1} \le 2/3$ for all $n$ and
-$\sum_n 1 / a_n = (5 - \sqrt 5) / 2$. Then $a_n = F_{2^{n+1}}$ for all $n \ge 0$, where $F_k$
-is the $k$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$); that is, $a$ is the sequence
-$F_2, F_4, F_8, \ldots$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 2 (`integers-2026-A28-cor-2`). -/
-public theorem_wanted eq_fib_two_pow_of_ratio_le_of_hasSum_millin {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n) (hratio : ∀ n, (a n : ℝ) ^ 2 / a (n + 1) ≤ 2 / 3)
-    (hsum : HasSum (fun n => 1 / (a n : ℝ)) ((5 - √5) / 2)) :
-    ∀ n, a n = Nat.fib (2 ^ (n + 1))
-
 /-- **Doubly exponential floors are Type 2 irrationality sequences for all but countably many
 bases.** For all real numbers $\alpha > 1$ outside a countable set, the sequence
 $(\lfloor \alpha^{2^{n+1}} \rfloor)_{n \ge 0}$ is a Type 2 irrationality sequence: for every
@@ -90,15 +77,6 @@ public theorem_wanted countable_not_type2IrrationalitySequence_floor_pow_two_pow
     Set.Countable {α : ℝ | 1 < α ∧ ¬∀ b : ℕ → ℕ, (∀ n, 0 < b n) →
       Tendsto (fun n => (b n : ℝ) / ⌊α ^ 2 ^ (n + 1)⌋₊) atTop (𝓝 1) →
         ∀ q : ℚ, ¬HasSum (fun n => 1 / (b n : ℝ)) q}
-
-/-- **A vanishing gap stays zero.** Let $r > 0$ be a real number and let $(\varepsilon_n)$ be
-the gap sequence of its pseudo-greedy expansion. For every $n \ge 0$, if $\varepsilon_n = 0$,
-then $\varepsilon_{n+1} = 0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Lemma 3 (`integers-2026-A28-lem-3`). -/
-public theorem_wanted pseudoGreedyGap_succ_eq_zero {r : ℝ} (hr : 0 < r) {n : ℕ}
-    (h : pseudoGreedyGap r n = 0) : pseudoGreedyGap r (n + 1) = 0
 
 /-- **Structure of the pseudo-greedy expansion of a rational.** Let $p$ and $q$ be positive
 integers, let $r = p/q$, and let $(x_n)$, $(a_n)$ and $(\varepsilon_n)$ be the remainder
@@ -139,21 +117,6 @@ public theorem_wanted eventually_pseudoGreedyGap_eq_zero {r : ℚ} (hr : 0 < r)
         -δ ≤ pseudoGreedyGap r n * ∏ k ∈ Finset.range n, (1 - pseudoGreedyGap r k)) ∨
       ∀ᶠ n in atTop, 0 ≤ pseudoGreedyGap r n) :
     ∀ᶠ n in atTop, pseudoGreedyGap r n = 0
-
-/-- **Tails that are pseudo-greedy expansions.** Let $(a_n)_{n \ge 0}$ be a sequence of positive
-integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges. Then there is a
-natural number $N$ such that, with $r = \sum_{k \ge 0} 1 / a_{N+k}$, the tail
-$(a_{N+n})_{n \ge 0}$ is the pseudo-greedy expansion of $r$, and the gap sequence of this
-expansion tends to $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 3 (`integers-2026-A28-cor-3`). -/
-public theorem_wanted exists_tail_eq_pseudoGreedyExpansion {a : ℕ → ℕ} (hpos : ∀ n, 0 < a n)
-    (hratio : Tendsto (fun n => (a n : ℝ) ^ 2 / a (n + 1)) atTop (𝓝 1))
-    (hsum : Summable fun n => 1 / (a n : ℝ)) :
-    ∃ N : ℕ,
-      (∀ n, (a (N + n) : ℤ) = pseudoGreedyExpansion (∑' k, 1 / (a (N + k) : ℝ)) n) ∧
-      Tendsto (pseudoGreedyGap (∑' k, 1 / (a (N + k) : ℝ))) atTop (𝓝 0)
 
 /-- **Erdős–Straus and Badea criterion for the Sylvester recurrence.** Let $(a_n)_{n \ge 0}$ be a
 sequence of positive integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges

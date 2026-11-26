@@ -212,11 +212,15 @@ private theorem parkSpots_last_ne {m : ℕ} (f : Fin m → Fin m) (i : Fin m)
       parkSpotsFrom_last_ne l ∅ (f (Fin.last m)) (Fin.last m) (by simp [l])
         (fun q hq => Or.inr (hmem q hq))
 
-private theorem pref_val_add_one {n : ℕ} {w : Fin (2 * n) → ℕ}
-    (hw : IsStirlingPermutation n w) (i : Fin (2 * n)) : (stirlingPref w i).val + 1 = w i := by
-  obtain ⟨hl, hu⟩ := Finset.mem_Icc.mp (hw.1 i)
+private theorem pref_val_add_one_of_mem {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (i : Fin (2 * n)) (hi : w i ∈ Finset.Icc 1 n) : (stirlingPref w i).val + 1 = w i := by
+  obtain ⟨hl, hu⟩ := Finset.mem_Icc.mp hi
   simp only [stirlingPref, Nat.mod_eq_of_lt (show w i - 1 < 2 * n by omega)]
   omega
+
+private theorem pref_val_add_one {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (i : Fin (2 * n)) : (stirlingPref w i).val + 1 = w i :=
+  pref_val_add_one_of_mem i (hw.1 i)
 
 /-- **Necessary conditions for admissible lucky sets.** Let $n \ge 1$. If $S$ is an
 $n$-admissible lucky set, then $1 \in S$ and $2n \notin S$.
@@ -330,7 +334,9 @@ private theorem missing_spot {m : ℕ} (q : Fin m) (l : List (Fin m)) (occ : Fin
       omega
 
 /-- Every low spot is requested, and every higher spot is reachable by every car. -/
-private theorem spots_surjective {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w) :
+private theorem spots_surjective_of_cover {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hbound : ∀ i, w i ∈ Finset.Icc 1 n)
+    (hcover : ∀ v ∈ Finset.Icc 1 n, ∃ i, w i = v) :
     Function.Surjective (parkSpots (stirlingPref w)) := by
   let prefs := List.ofFn (stirlingPref w)
   have hlen : (parkSpotsFrom prefs ∅).length = 2 * n := by
@@ -341,18 +347,57 @@ private theorem spots_surjective {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsSti
     obtain ⟨hn, hcard⟩ := missing_spot q prefs ∅ (by simp) hmiss
     by_cases hlow : q.val < n
     · have hq : q.val + 1 ∈ Finset.Icc 1 n := Finset.mem_Icc.mpr ⟨by omega, by omega⟩
-      obtain ⟨i, hi⟩ := Finset.card_pos.mp (by rw [hw.2.1 _ hq]; decide)
+      obtain ⟨i, hi⟩ := hcover _ hq
       apply hn (List.mem_ofFn.mpr ⟨i, Fin.ext (Nat.succ.inj ?_)⟩)
-      exact (IsAdmissibleLuckySet.pref_val_add_one hw i).trans (Finset.mem_filter.mp hi).2
+      exact (IsAdmissibleLuckySet.pref_val_add_one_of_mem i (hbound i)).trans hi
     · apply Nat.lt_irrefl (2 * n)
       simpa [prefs] using hcard (List.forall_mem_ofFn_iff.mpr (fun i => by
-        have := IsAdmissibleLuckySet.pref_val_add_one hw i
-        have := (Finset.mem_Icc.mp (hw.1 i)).2
+        have := IsAdmissibleLuckySet.pref_val_add_one_of_mem i (hbound i)
+        have := (Finset.mem_Icc.mp (hbound i)).2
         change (stirlingPref w i).val ≤ q.val
         omega))
   obtain ⟨i, hi, heq⟩ := List.getElem_of_mem hmem
   refine ⟨⟨i, hlen ▸ hi⟩, ?_⟩
   exact (List.getD_eq_getElem _ _ hi).trans heq
+
+private theorem letters_covered {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (v : ℕ) (hv : v ∈ Finset.Icc 1 n) : ∃ i, w i = v := by
+  obtain ⟨i, hi⟩ := Finset.card_pos.mp (by rw [hw.2.1 v hv]; decide)
+  exact ⟨i, (Finset.mem_filter.mp hi).2⟩
+
+private theorem spots_surjective {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w) :
+    Function.Surjective (parkSpots (stirlingPref w)) :=
+  spots_surjective_of_cover hw.1 (letters_covered hw)
+
+/-- A Stirling preference is not greater than the spot assigned by greedy parking. -/
+private theorem pref_le_spot {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hbound : ∀ i, w i ∈ Finset.Icc 1 n) (i : Fin (2 * n)) :
+    w i ≤ stirlingParkSpot w i := by
+  have hpair := prefs_le_spots (List.ofFn (stirlingPref w)) ∅
+  have hi : i.val < (List.ofFn (stirlingPref w)).length := by simp
+  have hj := hpair.length_eq ▸ hi
+  have h := hpair.get hi hj
+  simp only [List.get_eq_getElem, List.getElem_ofFn, Fin.eta] at h
+  rw [← IsAdmissibleLuckySet.pref_val_add_one_of_mem i (hbound i), stirlingParkSpot,
+    parkSpots, List.getD_eq_getElem _ _ hj]
+  exact Nat.succ_le_succ h
+
+/-- The sum of preferences plus total displacement is the sum of all spots. -/
+private theorem displacement_balance {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hbound : ∀ i, w i ∈ Finset.Icc 1 n)
+    (hcover : ∀ v ∈ Finset.Icc 1 n, ∃ i, w i = v) :
+    stirlingTotalDisplacement w + ∑ i, w i = ∑ i : Fin (2 * n), (1 + i.val) := by
+  calc
+    stirlingTotalDisplacement w + ∑ i, w i = ∑ i, stirlingParkSpot w i := by
+      unfold stirlingTotalDisplacement stirlingDisplacement
+      rw [← Finset.sum_add_distrib]
+      exact Finset.sum_congr rfl fun i _ => Nat.sub_add_cancel (pref_le_spot hbound i)
+    _ = ∑ i : Fin (2 * n), (1 + i.val) := by
+      let e := Equiv.ofBijective _ (Finite.surjective_iff_bijective.mp
+        (spots_surjective_of_cover hbound hcover))
+      have sum_spots := e.sum_comp (fun i : Fin (2 * n) => 1 + i.val)
+      change (∑ i, (1 + (parkSpots (stirlingPref w) i).val)) = _ at sum_spots
+      simpa only [stirlingParkSpot, Nat.add_comm _ 1] using sum_spots
 
 end stirlingTotalDisplacement_eq
 
@@ -365,19 +410,8 @@ Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
 Corollary 5.3 (`jis-2024-24.6.7-cor-38`). -/
 public theorem stirlingTotalDisplacement_eq (n : ℕ) (w : Fin (2 * n) → ℕ)
     (hw : IsStirlingPermutation n w) : stirlingTotalDisplacement w = n ^ 2 := by
-  have hpair := stirlingTotalDisplacement_eq.prefs_le_spots (List.ofFn (stirlingPref w)) ∅
-  have hle (i : Fin (2 * n)) : w i ≤ stirlingParkSpot w i := by
-    have hi : i.val < (List.ofFn (stirlingPref w)).length := by simp
-    have hj := hpair.length_eq ▸ hi
-    have h := hpair.get hi hj
-    simp only [List.get_eq_getElem, List.getElem_ofFn, Fin.eta] at h
-    rw [← IsAdmissibleLuckySet.pref_val_add_one hw i, stirlingParkSpot, parkSpots,
-      List.getD_eq_getElem _ _ hj]
-    exact Nat.succ_le_succ h
-  have balance : stirlingTotalDisplacement w + ∑ i, w i = ∑ i, stirlingParkSpot w i := by
-    unfold stirlingTotalDisplacement stirlingDisplacement
-    rw [← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl fun i _ => Nat.sub_add_cancel (hle i)
+  have balance := stirlingTotalDisplacement_eq.displacement_balance hw.1
+    (stirlingTotalDisplacement_eq.letters_covered hw)
   -- Group the preferences by letter, each of which occurs twice.
   have hpref : ∑ i, w i = 2 * ∑ j ∈ Finset.range n, (1 + j) := calc
     ∑ i, w i = ∑ v ∈ Finset.Icc 1 n, ∑ i : Fin (2 * n) with w i = v, v :=
@@ -389,19 +423,336 @@ public theorem stirlingTotalDisplacement_eq (n : ℕ) (w : Fin (2 * n) → ℕ)
       rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range (fun v => v)]
       simp
   -- Split the occupied spots into two blocks of length n. Corresponding spots differ by n.
-  let e := Equiv.ofBijective _ (Finite.surjective_iff_bijective.mp
-    (stirlingTotalDisplacement_eq.spots_surjective hw))
-  have hspots := e.sum_comp (fun i : Fin (2 * n) => 1 + i.val)
-  change (∑ i, (1 + (parkSpots (stirlingPref w) i).val)) = _ at hspots
-  simp_rw [stirlingParkSpot, Nat.add_comm _ 1] at balance
   have hsplit := Finset.sum_range_add (fun j => 1 + j) n n
   rw [← two_mul] at hsplit
-  rw [hspots, Fin.sum_univ_eq_sum_range, hsplit, hpref] at balance
+  rw [Fin.sum_univ_eq_sum_range, hsplit, hpref] at balance
   simp_rw [← Nat.add_left_comm n 1] at balance
   simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
     Nat.cast_id] at balance
   rw [sq]
   omega
+
+/-- **Total displacement of a Stirling permutation is invariant under rearrangement.** Let
+$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $\sigma$ be a permutation
+of $\{1, \dots, 2n\}$. Read words of length $2n$ as parking functions, and let $d(v)$ denote the
+total displacement of a word $v$, the sum of the displacements of its cars. Then the rearranged
+word $w \circ \sigma = w_{\sigma(1)} \cdots w_{\sigma(2n)}$ satisfies $d(w \circ \sigma) = d(w)$.
+
+The rearranged word $w \circ \sigma$ need not be a Stirling permutation.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Lemma 37 (`jis-2024-24.6.7-lem-37`; Lemma 5.2 in arXiv:2403.03280v1), quoting
+Elder, Harris, Kretschmann, and Martínez Mori, Lemma 3.1. -/
+public theorem stirlingTotalDisplacement_comp_perm (n : ℕ) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) (σ : Equiv.Perm (Fin (2 * n))) :
+    stirlingTotalDisplacement (w ∘ σ) = stirlingTotalDisplacement w := by
+  have hcover := stirlingTotalDisplacement_eq.letters_covered hw
+  have original := stirlingTotalDisplacement_eq.displacement_balance hw.1 hcover
+  -- Rearrangement preserves the range of preferences, not necessarily the Stirling condition.
+  have rearranged := stirlingTotalDisplacement_eq.displacement_balance (w := w ∘ σ)
+    (fun i => hw.1 (σ i)) (fun v hv => by
+      obtain ⟨i, hi⟩ := hcover v hv
+      exact ⟨σ.symm i, by simpa only [Function.comp_apply, Equiv.apply_symm_apply] using hi⟩)
+  change stirlingTotalDisplacement (w ∘ σ) + (∑ i, w (σ i)) = _ at rearranged
+  rw [Equiv.sum_comp σ w] at rearranged
+  exact Nat.add_right_cancel (rearranged.trans original.symm)
+
+/-- **Number of cars with zero displacement.** Let $n \ge 1$ and let $w$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. The number of cars
+$i \in \{1, \dots, 2n\}$ with displacement $d(i) = 0$ is at least $1$ and at most $n$.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Corollary 5.6 (`jis-2024-24.6.7-cor-41`). -/
+public theorem stirling_card_zero_displacement (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) :
+    1 ≤ (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ∧
+      (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ≤ n := by
+  constructor
+  · let first : Fin (2 * n) := ⟨0, by omega⟩
+    apply Finset.card_pos.mpr
+    refine ⟨first, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+    rw [stirlingDisplacement, stirlingParkSpot, IsAdmissibleLuckySet.parkSpots_first _ first rfl,
+      IsAdmissibleLuckySet.pref_val_add_one hw, Nat.sub_self]
+  · -- Distinct cars with zero displacement occupy distinct spots in the first half of the lot.
+    have hinj := Finite.injective_iff_surjective.mpr
+      (stirlingTotalDisplacement_eq.spots_surjective hw)
+    calc
+      _ ≤ (Finset.range n).card := by
+        apply Finset.card_le_card_of_injOn (fun i => (parkSpots (stirlingPref w) i).val)
+        · intro i hi
+          have hle : stirlingParkSpot w i ≤ w i :=
+            Nat.sub_eq_zero_iff_le.mp (Finset.mem_filter.mp hi).2
+          exact Finset.mem_range.mpr (hle.trans (Finset.mem_Icc.mp (hw.1 i)).2)
+        · exact (Fin.val_injective.comp hinj).injOn
+      _ = n := Finset.card_range n
+
+namespace ExtremelyLuckyDisplacement
+
+open MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
+
+/-- A skipped spot was already occupied, either initially or by an earlier car in the list. -/
+private theorem skipped_mem {m : ℕ} (l : List (Fin m)) (occ : Finset (Fin m)) (q : Fin m)
+    (i : ℕ) (hp : l.getD i q ≤ q) (hs : q < (parkSpotsFrom l occ).getD i q) :
+    q ∈ occ ∨ ∃ j < i, (parkSpotsFrom l occ).getD j q = q := by
+  induction l generalizing occ i with
+  | nil => simp [parkSpotsFrom] at hs
+  | cons a l ih =>
+    cases i with
+    | zero =>
+      left
+      by_contra hq
+      have hmem : q ∈ Finset.univ.filter (fun s : Fin m => a ≤ s ∧ s ∉ occ) :=
+        Finset.mem_filter.mpr ⟨Finset.mem_univ _, hp, hq⟩
+      have hle : nextFreeSpot occ a ≤ q := by
+        rw [nextFreeSpot, dite_eq_left ⟨q, hmem⟩]
+        exact Finset.min'_le _ _ hmem
+      exact (not_lt_of_ge hle) hs
+    | succ i =>
+      simp only [parkSpotsFrom, List.getD_cons_succ] at hp hs
+      rcases ih _ _ hp hs with hq | ⟨j, hj, hq⟩
+      · rcases Finset.mem_insert.mp hq with heq | hq
+        · exact Or.inr ⟨0, Nat.zero_lt_succ _, heq.symm⟩
+        · exact Or.inl hq
+      · exact Or.inr ⟨j + 1, Nat.succ_lt_succ hj, hq⟩
+
+private theorem spot_injective {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w) :
+    Function.Injective (stirlingParkSpot w) := by
+  intro i j h
+  apply (Finite.surjective_iff_bijective.mp (stirlingTotalDisplacement_eq.spots_surjective hw)).1
+  exact Fin.ext (Nat.add_right_cancel h)
+
+private theorem earlier_of_skipped {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w)
+    {i j : Fin (2 * n)} (hp : w i ≤ stirlingParkSpot w j)
+    (hs : stirlingParkSpot w j < stirlingParkSpot w i) : j < i := by
+  let q := parkSpots (stirlingPref w) j
+  have hp' : (List.ofFn (stirlingPref w)).getD i.val q ≤ q := by
+    rw [List.getD_eq_getElem _ _ (by simp), List.getElem_ofFn, Fin.eta, Fin.le_def]
+    rw [← IsAdmissibleLuckySet.pref_val_add_one hw i] at hp
+    exact Nat.le_of_add_le_add_right hp
+  have hlen : (parkSpotsFrom (List.ofFn (stirlingPref w)) ∅).length = 2 * n := by
+    rw [← (stirlingTotalDisplacement_eq.prefs_le_spots _ _).length_eq, List.length_ofFn]
+  have hi : i.val < (parkSpotsFrom (List.ofFn (stirlingPref w)) ∅).length := hlen.symm ▸ i.isLt
+  have hs' : q < (parkSpotsFrom (List.ofFn (stirlingPref w)) ∅).getD i.val q := by
+    rw [List.getD_eq_getElem _ _ hi, Fin.lt_def]
+    simpa only [q, stirlingParkSpot, parkSpots, List.getD_eq_getElem _ _ hi,
+      Nat.add_lt_add_iff_right] using hs
+  rcases skipped_mem (List.ofFn (stirlingPref w)) ∅ q i.val hp' hs' with h | ⟨k, hk, heq⟩
+  · simp at h
+  · let a : Fin (2 * n) := ⟨k, hk.trans i.isLt⟩
+    have hak : k < (parkSpotsFrom (List.ofFn (stirlingPref w)) ∅).length := hk.trans hi
+    have ha : stirlingParkSpot w a = stirlingParkSpot w j := by
+      rw [stirlingParkSpot, stirlingParkSpot, parkSpots, List.getD_eq_getElem _ _ hak]
+      rw [List.getD_eq_getElem _ _ hak] at heq
+      exact congrArg (fun s : Fin (2 * n) => s.val + 1) heq
+    rw [← spot_injective hw ha]
+    exact hk
+
+private theorem spot_le_iff_lucky {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (hl : (stirlingLuckySet w).card = n) (i : Fin (2 * n)) :
+    stirlingParkSpot w i ≤ n ↔ stirlingParkSpot w i = w i := by
+  let s := Finset.univ.filter (fun j => stirlingParkSpot w j = w j)
+  have hc : s.card = n :=
+    (Finset.card_image_of_injective s (fun a b h => Fin.ext (Nat.add_right_cancel h))).symm.trans hl
+  have hcover : s.image (stirlingParkSpot w) = Finset.Icc 1 n := by
+    apply Finset.eq_of_subset_of_card_le
+    · intro p hp
+      obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hp
+      rw [(Finset.mem_filter.mp hj).2]
+      exact hw.1 j
+    · rw [Finset.card_image_of_injective _ (spot_injective hw), hc, Nat.card_Icc]
+      omega
+  refine ⟨fun hi => ?_, fun hi => hi ▸ (Finset.mem_Icc.mp (hw.1 i)).2⟩
+  have hi' : stirlingParkSpot w i ∈ Finset.Icc 1 n := Finset.mem_Icc.mpr
+    ⟨Nat.succ_pos _, hi⟩
+  rw [← hcover] at hi'
+  obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp hi'
+  rw [spot_injective hw hji] at hj
+  exact (Finset.mem_filter.mp hj).2
+
+private theorem spot_le_of_later {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w)
+    {i j : Fin (2 * n)} (hij : i < j) (h : w i ≤ stirlingParkSpot w j) :
+    stirlingParkSpot w i ≤ stirlingParkSpot w j :=
+  le_of_not_gt (fun hs => (not_lt_of_ge hij.le) (earlier_of_skipped hw h hs))
+
+private theorem second_iff_high {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w)
+    (hl : (stirlingLuckySet w).card = n) (i : Fin (2 * n)) :
+    (∃ j < i, w j = w i) ↔ n < stirlingParkSpot w i := by
+  constructor
+  · rintro ⟨j, hj, hji⟩
+    by_contra! hi
+    have hei := (spot_le_iff_lucky hw hl i).mp hi
+    have hbound : w j ≤ stirlingParkSpot w i := by rw [hji, hei]
+    have hji' := spot_le_of_later hw hj hbound
+    have he := le_antisymm hji' (by simpa only [hei, ← hji] using
+      stirlingTotalDisplacement_eq.pref_le_spot hw.1 j)
+    exact hj.ne (spot_injective hw he)
+  · intro hi
+    let q := stirlingPref w i
+    obtain ⟨j, hj⟩ := stirlingTotalDisplacement_eq.spots_surjective hw q
+    have hpj : stirlingParkSpot w j = w i :=
+      (congrArg (fun s : Fin (2 * n) => s.val + 1) hj).trans
+        (IsAdmissibleLuckySet.pref_val_add_one hw i)
+    have hn := (Finset.mem_Icc.mp (hw.1 i)).2
+    exact ⟨j, earlier_of_skipped hw hpj.ge (by omega),
+      ((spot_le_iff_lucky hw hl j).mp (hpj.le.trans hn)).symm.trans hpj⟩
+
+private theorem spot_eq_at_high {n : ℕ} {w w' : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (hw' : IsStirlingPermutation n w')
+    (hh : ∀ i, n < stirlingParkSpot w' i ↔ n < stirlingParkSpot w i) (i : Fin (2 * n)) :
+    n < stirlingParkSpot w i → stirlingParkSpot w' i = stirlingParkSpot w i := by
+  refine (wellFounded_lt (α := Fin (2 * n))).induction
+    (C := fun k => n < stirlingParkSpot w k → stirlingParkSpot w' k = stirlingParkSpot w k) i ?_
+  intro i ih hi
+  have hi' := (hh i).mpr hi
+  -- If one run skips the other's high spot, it occupied it strictly earlier.
+  have no_skip (v u : Fin (2 * n) → ℕ) (hv : IsStirlingPermutation n v)
+      (hhigh : n < stirlingParkSpot u i)
+      (hprev : ∀ j < i, n < stirlingParkSpot v j → stirlingParkSpot v j = stirlingParkSpot u j)
+      (hinj : Function.Injective (stirlingParkSpot u)) :
+      ¬ stirlingParkSpot u i < stirlingParkSpot v i := by
+    intro hs
+    obtain ⟨j, hj⟩ := stirlingTotalDisplacement_eq.spots_surjective hv
+      (parkSpots (stirlingPref u) i)
+    have he : stirlingParkSpot v j = stirlingParkSpot u i :=
+      congrArg (fun s : Fin (2 * n) => s.val + 1) hj
+    have hb := (Finset.mem_Icc.mp (hv.1 i)).2
+    have hj' := earlier_of_skipped hv (i := i) (j := j) (by omega) (by omega)
+    exact hj'.ne (hinj (by rw [← hprev j hj' (by omega), he]))
+  apply le_antisymm
+  · exact le_of_not_gt (no_skip w' w hw' hi
+      (fun j hj h => ih j hj ((hh j).mp h)) (spot_injective hw))
+  · exact le_of_not_gt (no_skip w w' hw hi'
+      (fun j hj h => (ih j hj h).symm) (spot_injective hw'))
+
+private theorem other_occurrence {n : ℕ} {w : Fin (2 * n) → ℕ} (hw : IsStirlingPermutation n w)
+    (i : Fin (2 * n)) : ∃ j, w j = w i ∧ j ≠ i := by
+  obtain ⟨j, hj, hne⟩ := Finset.exists_mem_ne (by rw [hw.2.1 _ (hw.1 i)]; decide) i
+  exact ⟨j, (Finset.mem_filter.mp hj).2, hne⟩
+
+/-- A discrepancy at a first occurrence forces a larger discrepancy in the same direction. -/
+private theorem mismatch_grows {n : ℕ} {w w' : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (hw' : IsStirlingPermutation n w')
+    (hsecond : ∀ i, (∃ j < i, w' j = w' i) ↔ ∃ j < i, w j = w i)
+    (heq : ∀ i, (∃ j < i, w j = w i) → w' i = w i) {i : Fin (2 * n)} (hi : w i < w' i) :
+    ∃ a, w a < w' a ∧ w' i < w' a := by
+  have hfirst : ¬ ∃ j < i, w' j = w' i := fun hs => hi.ne (heq i ((hsecond i).mp hs)).symm
+  obtain ⟨j, hj, hji⟩ := other_occurrence hw' i
+  have hij : i < j := lt_of_le_of_ne (le_of_not_gt (fun h => hfirst ⟨j, h, hj⟩)) hji.symm
+  have hsj : ∃ k < j, w k = w j := (hsecond j).mp ⟨i, hij, hj.symm⟩
+  have hje := heq j hsj
+  obtain ⟨a, haj, ha⟩ := hsj
+  have hlabel : w a = w' i := ha.trans (hje.symm.trans hj)
+  have hia : i < a := by
+    rcases lt_trichotomy a i with h | rfl | h
+    · exact (not_lt_of_ge hi.le (by
+        simpa only [← ha, hlabel] using hw.2.2 (w j) (hw.1 j) a i j h hij ha rfl)).elim
+    · exact (hi.ne hlabel).elim
+    · exact h
+  have hbig := hw'.2.2 (w' i) (hw'.1 i) i a j hia haj rfl hj
+  exact ⟨a, hlabel ▸ hbig, hbig⟩
+
+private theorem le_of_eq_second {n : ℕ} {w w' : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (hw' : IsStirlingPermutation n w')
+    (hsecond : ∀ i, (∃ j < i, w' j = w' i) ↔ ∃ j < i, w j = w i)
+    (heq : ∀ i, (∃ j < i, w j = w i) → w' i = w i) (i : Fin (2 * n)) : w' i ≤ w i := by
+  by_contra! hi
+  let s := Finset.univ.filter (fun j => w j < w' j)
+  have hs : s.Nonempty := ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩⟩
+  obtain ⟨j, hj, hmax⟩ := Finset.exists_max_image s w' hs
+  obtain ⟨a, ha, hbig⟩ := mismatch_grows hw hw' hsecond heq (Finset.mem_filter.mp hj).2
+  exact (not_lt_of_ge (hmax a (Finset.mem_filter.mpr ⟨Finset.mem_univ _, ha⟩))) hbig
+
+end ExtremelyLuckyDisplacement
+
+/-- **Basic properties of lucky cars.** Let $n \ge 1$ and let $w$ be a Stirling permutation of
+order $n$, read as a parking function of length $2n$. Then (a) car $1$ is lucky; (b) the first
+car $i$ with $w_i = 1$ is lucky; (c) the number of lucky cars of $w$ is at least $1$ and at
+most $n$.
+
+The hypothesis $n \ge 1$ is added: the only Stirling permutation of order $0$ is the empty
+word, which has no cars.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Lemma 5 (`jis-2024-24.6.7-lem-5`). -/
+public theorem stirlingLuckySet_basic (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) :
+    1 ∈ stirlingLuckySet w ∧
+      (∀ i : Fin (2 * n), w i = 1 → (∀ j < i, w j ≠ 1) → i.val + 1 ∈ stirlingLuckySet w) ∧
+      1 ≤ (stirlingLuckySet w).card ∧ (stirlingLuckySet w).card ≤ n := by
+  have hfirst := (IsAdmissibleLuckySet.one_mem_and_two_mul_not_mem n hn _ ⟨w, hw, rfl⟩).1
+  refine ⟨hfirst, ?_, Finset.card_pos.mpr ⟨1, hfirst⟩, ?_⟩
+  · intro i hi hbefore
+    refine Finset.mem_image.mpr ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩, rfl⟩
+    apply le_antisymm _ (stirlingTotalDisplacement_eq.pref_le_spot hw.1 i)
+    rw [hi]
+    by_contra! hspot
+    -- Skipping spot 1 would require an earlier car that also prefers spot 1.
+    let q : Fin (2 * n) := ⟨0, i.pos⟩
+    obtain ⟨j, hj⟩ := stirlingTotalDisplacement_eq.spots_surjective hw q
+    have hjspot : stirlingParkSpot w j = 1 := by simp [stirlingParkSpot, hj, q]
+    have hjlt : j < i := ExtremelyLuckyDisplacement.earlier_of_skipped hw
+      (by rw [hi, hjspot]) (by rwa [hjspot])
+    have hjle := stirlingTotalDisplacement_eq.pref_le_spot hw.1 j
+    rw [hjspot] at hjle
+    exact hbefore j hjlt (le_antisymm hjle (Finset.mem_Icc.mp (hw.1 j)).1)
+  · rw [stirlingLuckySet, Finset.card_image_of_injective _ (fun a b h =>
+      Fin.ext (Nat.add_right_cancel h))]
+    calc
+      _ ≤ (Finset.Icc 1 n).card := by
+        apply Finset.card_le_card_of_injOn w (fun i _ => hw.1 i)
+        intro i hi j hj hij
+        exact ExtremelyLuckyDisplacement.spot_injective hw
+          ((Finset.mem_filter.mp hi).2.trans (hij.trans (Finset.mem_filter.mp hj).2.symm))
+      _ = n := by simp [Nat.card_Icc]
+
+/-- **Extremely lucky Stirling permutations are determined by their displacements.** Let $w$ and
+$w'$ be Stirling permutations of order $n$, and suppose that $w$ is extremely lucky, that is, its
+set $\mathrm{Lucky}(w)$ of lucky cars has exactly $n$ elements. If every car has the same
+displacement in $w'$ as in $w$ (that is, $\mathrm{dis}(w') = \mathrm{dis}(w)$), then $w' = w$.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Theorem 5.8 (`jis-2024-24.6.7-thm-43`). -/
+public theorem extremely_lucky_eq_of_displacement_eq (n : ℕ) (w w' : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) (hw' : IsStirlingPermutation n w')
+    (hl : (stirlingLuckySet w).card = n)
+    (hd : ∀ i, stirlingDisplacement w' i = stirlingDisplacement w i) : w' = w := by
+  have lucky_iff (i : Fin (2 * n)) :
+      stirlingParkSpot w' i = w' i ↔ stirlingParkSpot w i = w i := by
+    have hle := stirlingTotalDisplacement_eq.pref_le_spot hw.1 i
+    have hle' := stirlingTotalDisplacement_eq.pref_le_spot hw'.1 i
+    have eq_iff {a b : ℕ} (h : b ≤ a) : a = b ↔ a - b = 0 :=
+      ⟨fun he => Nat.sub_eq_zero_iff_le.mpr he.le,
+        fun hz => le_antisymm (Nat.sub_eq_zero_iff_le.mp hz) h⟩
+    rw [eq_iff hle', eq_iff hle, ← stirlingDisplacement, ← stirlingDisplacement, hd]
+  have hset : stirlingLuckySet w' = stirlingLuckySet w := by
+    unfold stirlingLuckySet
+    congr 1
+    ext i
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, lucky_iff i]
+  have hl' : (stirlingLuckySet w').card = n := hset ▸ hl
+  have high_iff (i : Fin (2 * n)) : n < stirlingParkSpot w' i ↔ n < stirlingParkSpot w i := by
+    rw [← not_le, ← not_le, ExtremelyLuckyDisplacement.spot_le_iff_lucky hw' hl' i,
+      ExtremelyLuckyDisplacement.spot_le_iff_lucky hw hl i, lucky_iff i]
+  have second_iff (i : Fin (2 * n)) : (∃ j < i, w' j = w' i) ↔ ∃ j < i, w j = w i :=
+    (ExtremelyLuckyDisplacement.second_iff_high hw' hl' i).trans ((high_iff i).trans
+      (ExtremelyLuckyDisplacement.second_iff_high hw hl i).symm)
+  have eq_at_second (i : Fin (2 * n)) (hi : ∃ j < i, w j = w i) : w' i = w i := by
+    have hs := ExtremelyLuckyDisplacement.spot_eq_at_high hw hw' high_iff i
+      ((ExtremelyLuckyDisplacement.second_iff_high hw hl i).mp hi)
+    have h := hd i
+    unfold stirlingDisplacement at h
+    have hle := stirlingTotalDisplacement_eq.pref_le_spot hw.1 i
+    have hle' := stirlingTotalDisplacement_eq.pref_le_spot hw'.1 i
+    omega
+  funext i
+  exact le_antisymm
+    (ExtremelyLuckyDisplacement.le_of_eq_second hw hw' second_iff eq_at_second i)
+    (ExtremelyLuckyDisplacement.le_of_eq_second hw' hw (fun j => (second_iff j).symm)
+      (fun j hj => (eq_at_second j ((second_iff j).mp hj)).symm) i)
 
 end
 

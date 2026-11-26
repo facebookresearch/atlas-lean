@@ -19,7 +19,7 @@ D. Lichtenstein, "Planar formulae and their uses", SIAM Journal on Computing 11(
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding

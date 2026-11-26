@@ -33,3 +33,15 @@ example :
     ∑ k ∈ Icc 1 ((4 + 1) / 2), (Nat.choose 4 (2 * k - 1) : ℚ) * 2 ^ (2 * k - 1) / k = 24 := by
   rw [← sum_choose_even_two_pow_sub_div]
   norm_num [sum_range_succ, Nat.choose]
+
+-- Degree one has just the first odd-index term and a denominator of one.
+example :
+    ∑ k ∈ range (1 / 2 + 1), (Nat.choose 1 (2 * k) : ℚ) / (2 * k + 1) = 1 := by
+  rw [sum_choose_even_div_eq_sum_choose_odd_div 1 (by decide)]
+  norm_num [show Icc 1 ((1 + 1) / 2) = {1} by decide, Nat.choose]
+
+-- In even degree the left sum includes the final even binomial index.
+example :
+    ∑ k ∈ range (4 / 2 + 1), (Nat.choose 4 (2 * k) : ℚ) / (2 * k + 1) = 16 / 5 := by
+  rw [sum_choose_even_div_eq_sum_choose_odd_div 4 (by decide)]
+  norm_num [show Icc 1 ((4 + 1) / 2) = {1, 2} by decide, Nat.choose]

@@ -10,9 +10,12 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PolygonalNumber
+public import MathlibExt.NumberTheory.PolygonalSumParity
 public import MathlibExt.NumberTheory.PracticalNumber
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.PracticalPolygonalSums
+public import MathlibExt.NumberTheory.OddSquareTriangular
+public import MathlibExt.NumberTheory.PracticalPolygonalSumsPracticalAddPolygonalExceptions
 
 /-!
 # Sums of practical numbers and polygonal numbers
@@ -66,30 +69,6 @@ public theorem_wanted isPracticalNumber_mul_of_le_sigma_add_one (m n : ℕ)
     (hm : IsPracticalNumber m) (hn : 0 < n) (hnm : n ≤ sigma 1 m + 1) :
     IsPracticalNumber (m * n)
 
-/-- **Odd squares and triangular numbers.** For every odd natural number $x$, the number
-$(x^2 - 1)/8$ is a triangular number: there is a natural number $k$ with
-$(x^2 - 1)/8 = p_3(k)$, where $p_3(k) = k(k+1)/2$ is the $k$-th $3$-gonal number.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 5
-(arXiv Lemma 3.3; `jis-2024-24.5.1-lem-5`). -/
-public theorem_wanted sq_sub_one_div_eight_eq_triangular (x : ℕ) (hx : Odd x) :
-    ∃ k : ℕ, (x ^ 2 - 1) / 8 = Nat.polygonalNumber 3 k
-
-/-- **Parity of sums of two polygonal numbers.** For a natural number $s > 3$ and a natural
-number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every
-natural number $n > 0$ there are natural numbers $x, y > 0$ such that
-$P_s(x_1) + P_s(y_1) \equiv n \pmod{2}$ for all natural numbers $x_1, y_1 > 0$ with
-$x_1 \equiv x \pmod{4}$ and $y_1 \equiv y \pmod{4}$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 7
-(arXiv Lemma 4.2; `jis-2024-24.5.1-lem-7`). -/
-public theorem_wanted exists_polygonal_add_polygonal_modEq_two (n s : ℕ) (hn : 0 < n)
-    (hs : 3 < s) :
-    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ ∀ x₁ y₁ : ℕ, 0 < x₁ → 0 < y₁ → x₁ ≡ x [MOD 4] → y₁ ≡ y [MOD 4] →
-      Nat.polygonalNumber s x₁ + Nat.polygonalNumber s y₁ ≡ n [MOD 2]
-
 /-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
 For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with
 $x^2 + y^2 \equiv n \pmod{p^k}$ and $p \nmid y$.
@@ -117,23 +96,6 @@ public theorem_wanted exists_prime_polygonal_add_polygonal_modEq_prime_pow (s : 
     (hs : 3 < s) :
     ∃ p : ℕ, p.Prime ∧ p % 4 = 1 ∧ ¬ p ∣ s - 2 ∧ ∀ k n : ℕ, 0 < k → 0 < n →
       ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p ^ k]
-
-/-- **Exceptions to sums of a practical number and polygonal numbers.** (a) Let $s \ge 3$ with
-$s \equiv 0$ or $s \equiv 4 \pmod{12}$. Then there are infinitely many positive integers $n$ that
-cannot be written as $n = q + p_s(m)$ with $q$ a practical number and $m \ge 0$ an integer, where
-$p_s(m)$ is the $m$-th $s$-gonal number. (b) For every natural number $M$ there is a natural
-number $S$ such that for every $t \ge S$ there are at least $M$ positive integers $n$ that cannot
-be written as $n = q + p_t(x) + p_t(y)$ with $q$ a practical number and integers $x, y \ge 0$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Proposition 12
-(arXiv Proposition 4.7; `jis-2024-24.5.1-prop-12`). -/
-public theorem_wanted practical_add_polygonal_exceptions (s : ℕ) :
-    ((3 ≤ s ∧ (s % 12 = 0 ∨ s % 12 = 4)) →
-      {n : ℕ | 0 < n ∧
-        ¬ ∃ q m : ℕ, IsPracticalNumber q ∧ n = q + Nat.polygonalNumber s m}.Infinite) ∧
-    ∀ M : ℕ, ∃ S : ℕ, ∀ t ≥ S, ∃ F : Finset ℕ, M ≤ F.card ∧ ∀ n ∈ F, 0 < n ∧
-      ¬ ∃ q x y : ℕ, IsPracticalNumber q ∧ n = q + Nat.polygonalNumber t x + Nat.polygonalNumber t y
 
 end
 

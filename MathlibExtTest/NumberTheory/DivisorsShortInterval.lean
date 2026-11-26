@@ -22,6 +22,13 @@ example : shortIntervalDivisorCount 1 1 0 = 1 := by
 example (X Y : ℝ) : shortIntervalDivisorCount 0 X Y = 0 := by
   simp [shortIntervalDivisorCount]
 
+-- A positive cutoff rules out the trivial witness n = 1.
+example : ∃ n : ℕ, n ≥ 1000 ∧
+    1 ≤ shortIntervalDivisorCount n ((n : ℝ) ^ (2 / 3 : ℝ))
+      ((n : ℝ) ^ ((2 / 3 : ℝ) - 1 / 3)) :=
+  exists_large_shortIntervalDivisorCount_pos (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) 1000
+
 -- At η = θ² the quadratic stays nonnegative all the way to the cap.
 example {α t : ℝ} (hα : 0 < α) (hα₁ : α ≤ 1) (ht : 0 ≤ t) (ht₁ : t ≤ 1 - α) :
     0 ≤ ((3 / 4 - t) / α) ^ 2 - (9 / 16 - t) / α := by
