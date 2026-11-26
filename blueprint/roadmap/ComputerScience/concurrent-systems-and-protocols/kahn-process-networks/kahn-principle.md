@@ -2,7 +2,7 @@
 
 The system of equations $\Sigma_P = \{ X_i = \tau_i(X_1, \dots, X_n) \mid 1 \le i \le n \}$ of a [Kahn process network](kahn-process-networks.md), whose terms $\tau_i$ are built from continuous operators, has a least solution $(Y_1, \dots, Y_n)$ in the [complete partial order of streams](streams-form-a-complete-partial-order.md), and it is the limit of the iterates
 $$X_i^0 = \Lambda, \qquad X_i^{j+1} = \tau_i(X_1^j, \dots, X_n^j).$$
-This least solution is taken as the histories of the lines of the network, so a network computes a function of its input streams: its behaviour is determinate, whatever the order in which its processes are scheduled.
+This least solution is taken as the histories of the lines of the network, so a network computes a function of its input streams and its behaviour is determinate: a simulation on a sequential machine under a fair scheduler produces the least solution, and an unfair scheduler can only produce prefixes of it.
 
 ## Depends on
 

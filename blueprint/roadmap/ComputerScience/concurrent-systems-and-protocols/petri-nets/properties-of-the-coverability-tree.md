@@ -14,6 +14,7 @@ Because $\omega$ forgets how a place grows, the coverability tree does not decid
 - [The coverability tree](coverability-tree.md)
 - [Boundedness and safeness of Petri nets](boundedness-and-safeness.md)
 - [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Expansion
 

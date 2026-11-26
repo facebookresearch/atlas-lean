@@ -5,6 +5,7 @@ Agents $P$ and $Q$ of the [late transition semantics](late-transition-semantics-
 ## Depends on
 
 - [Strong late bisimilarity](strong-late-bisimilarity.md)
+- [Late transition semantics of the π-calculus](late-transition-semantics-of-the-pi-calculus.md)
 
 ## Sources
 

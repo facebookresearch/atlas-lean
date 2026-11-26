@@ -11,6 +11,7 @@ Each of the following problems for [Petri nets](place-transition-petri-nets.md) 
 
 - [Reachability set and reachability graph](reachability-set-and-reachability-graph.md)
 - [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Sources
 

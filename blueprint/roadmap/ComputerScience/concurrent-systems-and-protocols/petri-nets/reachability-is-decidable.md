@@ -5,6 +5,7 @@ There is an algorithm that decides, given a [Petri net](place-transition-petri-n
 ## Depends on
 
 - [Reachability set and reachability graph](reachability-set-and-reachability-graph.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Expansion
 

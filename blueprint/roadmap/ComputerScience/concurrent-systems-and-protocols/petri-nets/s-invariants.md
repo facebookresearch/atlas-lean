@@ -5,6 +5,7 @@ Let $A$ be the incidence matrix of a pure [Petri net](place-transition-petri-net
 ## Depends on
 
 - [The state equation of a Petri net](state-equation.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Proof depends on
 

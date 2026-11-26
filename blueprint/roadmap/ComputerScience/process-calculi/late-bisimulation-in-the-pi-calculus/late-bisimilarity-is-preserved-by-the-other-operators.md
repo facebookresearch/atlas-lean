@@ -11,6 +11,7 @@ Transitivity is not immediate, because the composition of two strong bisimulatio
 ## Depends on
 
 - [Strong late bisimilarity](strong-late-bisimilarity.md)
+- [Late transition semantics of the π-calculus](late-transition-semantics-of-the-pi-calculus.md)
 
 ## Proof depends on
 

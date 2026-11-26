@@ -6,6 +6,13 @@ The denotational semantics of CSP maps each CSP term $P$, in an environment $\xi
 
 This page is a family. A good expansion states, each on its own page, the clause of every CSP operator over $\mathcal{T}$ (Sections 1.3.1 and 8.2 of the source), over $\mathcal{N}$ (Section 8.3.2) and over $\mathcal{F}$ (Section 8.4), and the fixed-point clause for recursion in each model.
 
+## Depends on
+
+- [The operational semantics of CSP](csp-operational-semantics.md)
+- [The traces model of CSP](the-traces-model.md)
+- [The stable failures model of CSP](the-stable-failures-model.md)
+- [The failures-divergences model of CSP](the-failures-divergences-model.md)
+
 ## Sources
 
 - A. W. Roscoe, *The Theory and Practice of Concurrency*, Prentice Hall, 1997; revised edition 2005, author's online version, <https://www.cs.ox.ac.uk/bill.roscoe/publications/68b.pdf>, Chapter 8: Section 8.2 (relational representation of the operators over $\mathcal{T}$, Theorem 8.2.1), Section 8.3.2 ("Calculating the semantics of processes", including the principle that $\mathcal{N}$ is the standard model for finitely nondeterministic CSP), Section 8.4, and Section 9.4 (environments and the semantic functions $S_T$, $S_F$, $S_N$).

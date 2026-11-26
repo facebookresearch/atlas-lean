@@ -3,12 +3,13 @@
 In the [denotational semantics of CSP](denotational-semantics-of-csp.md) over the [failures-divergences model](the-failures-divergences-model.md) $\mathcal{N}$:
 
 1. every CSP operator other than hiding $\cdot \setminus X$ is fully distributive in each argument, meaning that for each nonempty set $S$ of processes, fixing the other arguments, $F(\bigsqcap S) = \bigsqcap \{ F(P) \mid P \in S \}$; hiding is not fully distributive but satisfies $(P \sqcap Q) \setminus X = (P \setminus X) \sqcap (Q \setminus X)$; hence every operator is monotone with respect to $\sqsubseteq_{FD}$;
-2. if $\Sigma$ is finite, then prefixing $a \to \cdot$, external choice, nondeterministic choice, generalized parallel, sequential composition, renaming and hiding are continuous with respect to $\sqsubseteq_{FD}$.
+2. if $\Sigma$ is finite, then prefixing $a \to \cdot$, external choice $P \mathbin{\Box} Q$, binary nondeterministic choice $P \sqcap Q$, generalized parallel $P \parallel_X Q$, sequential composition, renaming and hiding are continuous with respect to $\sqsubseteq_{FD}$.
 
 ## Depends on
 
 - [Denotational semantics of CSP](denotational-semantics-of-csp.md)
 - [The failures-divergences model is a complete partial order](failures-divergences-model-is-a-cpo.md)
+- [The failures-divergences model of CSP](the-failures-divergences-model.md)
 
 ## Proof depends on
 

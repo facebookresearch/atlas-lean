@@ -5,6 +5,7 @@ The least solution of the system of equations of a [Kahn process network](kahn-p
 ## Depends on
 
 - [The Kahn principle](kahn-principle.md)
+- [Kahn process networks](kahn-process-networks.md)
 
 ## Proof depends on
 

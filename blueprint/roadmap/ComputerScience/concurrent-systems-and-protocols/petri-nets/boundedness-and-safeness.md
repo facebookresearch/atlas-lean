@@ -5,6 +5,7 @@ A [Petri net](place-transition-petri-nets.md) $(N, M_0)$ is *$k$-bounded* if $M(
 ## Depends on
 
 - [Reachability set and reachability graph](reachability-set-and-reachability-graph.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Sources
 

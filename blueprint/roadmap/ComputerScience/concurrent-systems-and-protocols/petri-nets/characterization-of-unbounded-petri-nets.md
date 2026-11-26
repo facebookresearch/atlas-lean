@@ -5,6 +5,7 @@ An ordinary [Petri net](place-transition-petri-nets.md) $(N, M_0)$ is unbounded 
 ## Depends on
 
 - [Boundedness and safeness of Petri nets](boundedness-and-safeness.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Sources
 

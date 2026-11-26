@@ -9,6 +9,9 @@ where $\xi^T$ and $\xi^F$ are the environments obtained by applying $\Phi_T$ and
 - [The operational semantics of CSP](csp-operational-semantics.md)
 - [Traces, failures and divergences of a process](traces-failures-and-divergences-of-a-process.md)
 - [Denotational semantics of CSP](denotational-semantics-of-csp.md)
+- [The traces model of CSP](the-traces-model.md)
+- [The stable failures model of CSP](the-stable-failures-model.md)
+- [The failures-divergences model of CSP](the-failures-divergences-model.md)
 
 ## Proof depends on
 

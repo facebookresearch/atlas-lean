@@ -5,6 +5,7 @@ A member of the [failures-divergences model](the-failures-divergences-model.md) 
 ## Depends on
 
 - [Deterministic processes in CSP](deterministic-processes.md)
+- [The failures-divergences model of CSP](the-failures-divergences-model.md)
 
 ## Proof depends on
 

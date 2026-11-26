@@ -5,6 +5,7 @@ A [Petri net](place-transition-petri-nets.md) $(N, M_0)$ is *live* if for every 
 ## Depends on
 
 - [Reachability set and reachability graph](reachability-set-and-reachability-graph.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Sources
 

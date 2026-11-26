@@ -5,6 +5,7 @@ There is an algorithm that decides, given a [Petri net](place-transition-petri-n
 ## Depends on
 
 - [Boundedness and safeness of Petri nets](boundedness-and-safeness.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Proof depends on
 

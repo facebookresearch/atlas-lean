@@ -6,6 +6,7 @@ In the [denotational semantics of CSP](denotational-semantics-of-csp.md) over th
 
 - [Denotational semantics of CSP](denotational-semantics-of-csp.md)
 - [The stable failures model is a complete lattice](stable-failures-model-is-a-complete-lattice.md)
+- [The stable failures model of CSP](the-stable-failures-model.md)
 
 ## Proof depends on
 

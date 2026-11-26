@@ -9,6 +9,7 @@ since after the input the bound name $y$ may be instantiated to $x$, and then th
 ## Depends on
 
 - [Strong late bisimilarity](strong-late-bisimilarity.md)
+- [Late transition semantics of the π-calculus](late-transition-semantics-of-the-pi-calculus.md)
 
 ## Proof depends on
 

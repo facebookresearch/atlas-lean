@@ -6,6 +6,7 @@ A pure [Petri net](place-transition-petri-nets.md) $N$ with $m$ places is *struc
 
 - [The state equation of a Petri net](state-equation.md)
 - [Boundedness and safeness of Petri nets](boundedness-and-safeness.md)
+- [Place/transition Petri nets](place-transition-petri-nets.md)
 
 ## Proof depends on
 
