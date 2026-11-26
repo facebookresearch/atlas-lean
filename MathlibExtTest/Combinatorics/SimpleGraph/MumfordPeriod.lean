@@ -9,10 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.MumfordPeriod
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 @[expose] public section
 
-open Mumford
+open Mumford CerednikDrinfeld CerednikDrinfeld.Mumford
 
 namespace MumfordPeriodTest
 
@@ -47,49 +49,125 @@ example : True := by
   have hsymm : ∀ x y : ribbonKernel D, P.Q x y = P.Q y x := P.Q_symm
   trivial
 
-/-- The quotient degeneracy data of a graph with a graph action has the
-expected vertex maps on representatives. -/
-example {G W : Type} [Group G] [MulAction G W] (𝒯 : SimpleGraph W)
-    [GraphAction G 𝒯] [∀ d : 𝒯.Dart, Finite (MulAction.stabilizer G d)]
-    (d : 𝒯.Dart) :
-    (quotientDegeneracyData G 𝒯).a (Quotient.mk'' d) = Quotient.mk'' d.fst ∧
-      (quotientDegeneracyData G 𝒯).b (Quotient.mk'' d) =
-        Quotient.mk'' d.snd :=
-  ⟨rfl, rfl⟩
+/-- Two parallel edges from `0` to `1`, with widths `1` and `2`. -/
+private def twoEdges : DegeneracyData (Fin 2) (Fin 2) where
+  a _ := 0
+  b _ := 1
+  w := ![1, 2]
 
-/-- Every group action preserves adjacency in a complete graph. -/
-local instance {G W : Type} [Group G] [MulAction G W] :
-    GraphAction G (⊤ : SimpleGraph W) :=
-  ⟨fun g v w h => by
-    rw [SimpleGraph.top_adj] at h ⊢
-    exact (MulAction.injective g).ne h⟩
+/-- The difference of the two edges lies in the ribbon kernel. -/
+private theorem diff_mem_ribbonKernel :
+    (![1, -1] : Fin 2 → ℤ) ∈ ribbonKernel twoEdges := by
+  rw [mem_ribbonKernel]
+  intro i
+  ext v
+  fin_cases i <;> fin_cases v <;>
+    simp [twoEdges, jointDelta, pushforward, degeneracyMatrix, Matrix.mulVec,
+      dotProduct, Fin.sum_univ_two]
 
-/-- A trivial group has trivial dart stabilizers, so every quotient edge has
-width `1`. -/
-example {G W : Type} [Group G] [Subsingleton G] [MulAction G W]
-    (𝒯 : SimpleGraph W) [GraphAction G 𝒯] (e : QuotEdge G 𝒯) :
-    stabWidth G 𝒯 e = 1 := by
-  apply PNat.eq
-  show Nat.card (MulAction.stabilizer G e.out) = 1
-  exact Nat.card_eq_one_iff_unique.mpr ⟨inferInstance, inferInstance⟩
+/-- The difference of the two edges, as an element of the ribbon kernel. -/
+private def diff : ribbonKernel twoEdges := ⟨_, diff_mem_ribbonKernel⟩
 
-/-- Conjugation by the abelian group of order `2` is a trivial action on the
-complete graph on its two elements, so the stabilizer of each dart is the whole
-group and the width of the quotient edge is `2`. -/
-example (d : (⊤ : SimpleGraph (Multiplicative (ZMod 2))).Dart) :
-    stabWidth (ConjAct (Multiplicative (ZMod 2))) ⊤ (Quotient.mk'' d) = 2 := by
-  have htop :
-      MulAction.stabilizer (ConjAct (Multiplicative (ZMod 2))) d = ⊤ := by
-    ext g
-    simp only [MulAction.mem_stabilizer_iff, Subgroup.mem_top, iff_true]
-    refine SimpleGraph.Dart.ext _ _ (Prod.ext ?_ ?_) <;>
-      simp [ConjAct.smul_def, mul_inv_cancel_comm]
-  rw [stabWidth_mk]
-  apply PNat.eq
-  show Nat.card (MulAction.stabilizer (ConjAct (Multiplicative (ZMod 2))) d) = 2
-  rw [htop, Subgroup.card_top,
-    Nat.card_congr (ConjAct.ofConjAct.toEquiv.trans Multiplicative.toAdd),
-    Nat.card_zmod]
+/-- The `2`-adic valuation on the units of `ℚ`. -/
+private noncomputable def ord₂ : Additive ℚˣ →+ ℤ :=
+  AddMonoidHom.mk' (fun u => padicValRat 2 ((Additive.toMul u : ℚˣ) : ℚ))
+    fun u v => by
+      simp [padicValRat.mul (Units.ne_zero _) (Units.ne_zero _)]
+
+/-- The unit `2` of `ℚ`. -/
+private def two : ℚˣ := Units.mk0 2 two_ne_zero
+
+private theorem ord₂_two : ord₂ (Additive.ofMul two) = 1 := by
+  show padicValRat 2 ((two : ℚˣ) : ℚ) = 1
+  rw [two, Units.val_mk0]
+  exact_mod_cast padicValRat.self (p := 2) one_lt_two
+
+/-- The period datum `Q x y = 2 ^ ⟨x, y⟩` on the two parallel edges, for the
+`2`-adic valuation. -/
+private noncomputable def twoEdgesPeriod : PeriodDatum twoEdges ℚ ℚ ord₂ where
+  Q := (ribbonGram twoEdges).compr₂
+    (LinearMap.toSpanSingleton ℤ (Additive ℚˣ) (Additive.ofMul two))
+  Q_symm x y := by
+    simp only [LinearMap.compr₂_apply, ribbonGram_apply]
+    congr 1
+    exact Finset.sum_congr rfl fun e _ => by ring
+  ord_Q x y := by
+    rw [LinearMap.compr₂_apply, LinearMap.toSpanSingleton_apply, map_zsmul,
+      ord₂_two, smul_eq_mul, mul_one]
+
+/-- A period datum with a nonzero Gram value. On two parallel edges of widths
+`1` and `2`, the difference of the edges lies in the ribbon kernel, its Gram
+value is `1 + 2 = 3`, and the valuation of its period is `3`. -/
+example : ribbonGram twoEdges diff diff = 3 ∧
+    ord₂ (twoEdgesPeriod.Q diff diff) = 3 := by
+  have h : ribbonGram twoEdges diff diff = 3 := by
+    rw [ribbonGram_apply, Fin.sum_univ_two]
+    norm_num [diff, twoEdges]
+  exact ⟨h, (twoEdgesPeriod.ord_Q diff diff).trans h⟩
+
+/-- The trivial action of the trivial group on `Fin 3`. -/
+local instance : MulAction Unit (Fin 3) where
+  smul _ w := w
+  one_smul _ := rfl
+  mul_smul _ _ _ := rfl
+
+local instance : GraphAction Unit (SimpleGraph.pathGraph 3) :=
+  ⟨fun _ _ _ h => h⟩
+
+/-- The dart `0 → 1` of the path `0 - 1 - 2`. -/
+private def d₀₁ : (SimpleGraph.pathGraph 3).Dart :=
+  ⟨(0, 1), by simp [SimpleGraph.pathGraph_adj]⟩
+
+/-- The dart `1 → 0` of the path `0 - 1 - 2`. -/
+private def d₁₀ : (SimpleGraph.pathGraph 3).Dart :=
+  ⟨(1, 0), by simp [SimpleGraph.pathGraph_adj]⟩
+
+/-- The dart `1 → 2` of the path `0 - 1 - 2`. -/
+private def d₁₂ : (SimpleGraph.pathGraph 3).Dart :=
+  ⟨(1, 2), by simp [SimpleGraph.pathGraph_adj]⟩
+
+private theorem eq_of_mk_vert_eq {v w : Fin 3}
+    (h : (Quotient.mk'' v : QuotVert Unit (Fin 3)) = Quotient.mk'' w) :
+    v = w := by
+  rw [Quotient.eq'', MulAction.orbitRel_apply, MulAction.mem_orbit_iff] at h
+  obtain ⟨_, hg⟩ := h
+  exact hg.symm
+
+private theorem eq_of_mk_dart_eq {d d' : (SimpleGraph.pathGraph 3).Dart}
+    (h : (Quotient.mk'' d : QuotEdge Unit (SimpleGraph.pathGraph 3)) =
+      Quotient.mk'' d') :
+    d = d' := by
+  rw [Quotient.eq'', MulAction.orbitRel_apply, MulAction.mem_orbit_iff] at h
+  obtain ⟨_, hg⟩ := h
+  exact hg.symm
+
+/-- `formalU` is not symmetric. Under the trivial action on the path
+`0 - 1 - 2`, the dart `0 → 1` continues by `1 → 2`, so the entry at
+`(0 → 1, 1 → 2)` is `1`, while `1 → 2` does not continue by `0 → 1`, so the
+entry at `(1 → 2, 0 → 1)` is `0`. The entry at `(0 → 1, 1 → 0)` is `0` too,
+because `formalU` does not backtrack. -/
+example [Fintype (QuotEdge Unit (SimpleGraph.pathGraph 3))]
+    [DecidableEq (QuotEdge Unit (SimpleGraph.pathGraph 3))]
+    [Fintype (QuotVert Unit (Fin 3))] [DecidableEq (QuotVert Unit (Fin 3))] :
+    formalU Unit (SimpleGraph.pathGraph 3) (fun _ => inferInstance)
+        (Quotient.mk'' d₀₁) (Quotient.mk'' d₁₂) = 1 ∧
+      formalU Unit (SimpleGraph.pathGraph 3) (fun _ => inferInstance)
+        (Quotient.mk'' d₁₂) (Quotient.mk'' d₀₁) = 0 ∧
+      formalU Unit (SimpleGraph.pathGraph 3) (fun _ => inferInstance)
+        (Quotient.mk'' d₀₁) (Quotient.mk'' d₁₀) = 0 := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [formalU_apply, ite_eq_left]
+    refine ⟨rfl, fun h => ?_⟩
+    have h20 : (2 : Fin 3) = 0 :=
+      congrArg (fun d : (SimpleGraph.pathGraph 3).Dart => d.fst)
+        (eq_of_mk_dart_eq h)
+    exact absurd h20 (by decide)
+  · rw [formalU_apply, ite_eq_right]
+    rintro ⟨h, -⟩
+    exact absurd (eq_of_mk_vert_eq (v := 2) (w := 0) h) (by decide)
+  · rw [formalU_apply, ite_eq_right]
+    rintro ⟨-, h⟩
+    exact h rfl
 
 /-- `U` is the preimage of the torsion of the Jacobian, so it contains the
 period lattice. -/

@@ -30,19 +30,17 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.Algebra.Module.Torsion.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Dart
-public import Mathlib.GroupTheory.GroupAction.Quotient
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.LinearAlgebra.BilinearMap
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.LinearAlgebra.Quotient.Defs
+public import MathlibExt.Combinatorics.SimpleGraph.SchottkyTreeAction
 
 @[expose] public section
 
 noncomputable section
 
-open MulAction
+open MulAction CerednikDrinfeld CerednikDrinfeld.Mumford
 
 namespace Mumford
 
@@ -98,13 +96,6 @@ end Lattice
 section Ribbon
 
 variable {E V : Type*}
-
-/-- Degeneracy data of a quotient graph: two vertex maps (the two ends of
-an edge) and a positive width for every edge. -/
-public structure DegeneracyData (E V : Type*) where
-  a : E → V
-  b : E → V
-  w : E → ℕ+
 
 /-- The incidence matrix of a vertex map. -/
 public def degeneracyMatrix [DecidableEq V] (f : E → V) : Matrix V E ℤ :=
@@ -199,90 +190,50 @@ end Ribbon
 
 section GraphAction
 
-/-- A group action on the vertices of a graph that preserves adjacency. -/
-public class GraphAction (G : Type) [Group G] {W : Type} [MulAction G W]
-    (𝒯 : SimpleGraph W) : Prop where
-  smul_adj : ∀ (g : G) {v w : W}, 𝒯.Adj v w → 𝒯.Adj (g • v) (g • w)
-
 variable {G : Type} [Group G] {W : Type} [MulAction G W] (𝒯 : SimpleGraph W)
   [GraphAction G 𝒯]
 
-public instance dartAction : MulAction G 𝒯.Dart where
-  smul g d := ⟨(g • d.fst, g • d.snd), GraphAction.smul_adj g d.adj⟩
-  one_smul d := SimpleGraph.Dart.ext _ _
-    (Prod.ext (one_smul G d.fst) (one_smul G d.snd))
-  mul_smul g h d := SimpleGraph.Dart.ext _ _
-    (Prod.ext (mul_smul g h d.fst) (mul_smul g h d.snd))
-
-@[simp]
-public theorem smul_dart_fst (g : G) (d : 𝒯.Dart) :
-    (g • d).fst = g • d.fst :=
-  rfl
-
-@[simp]
-public theorem smul_dart_snd (g : G) (d : 𝒯.Dart) :
-    (g • d).snd = g • d.snd :=
-  rfl
-
-public theorem smul_dart_symm (g : G) (d : 𝒯.Dart) :
-    (g • d).symm = g • d.symm :=
-  rfl
-
-/-- Edges of the quotient graph: orbits of darts. -/
-public abbrev QuotEdge (G : Type) [Group G] {W : Type} [MulAction G W]
-    (𝒯 : SimpleGraph W) [GraphAction G 𝒯] :=
-  orbitRel.Quotient G 𝒯.Dart
-
-/-- Vertices of the quotient graph: orbits of vertices. -/
-public abbrev QuotVert (G : Type) [Group G] (W : Type) [MulAction G W] :=
-  orbitRel.Quotient G W
-
-public theorem card_stabilizer_smul (g : G) (d : 𝒯.Dart) :
-    Nat.card (stabilizer G (g • d)) = Nat.card (stabilizer G d) := by
-  rw [stabilizer_smul_eq_stabilizer_map_conj]
-  exact Subgroup.card_map_of_injective (MulAut.conj g).injective
-
 variable (G) in
-/-- The width of a quotient edge: the order of the stabilizer of a dart
-representing it. Dart stabilizers are required to be finite, so the width is
-the stabilizer's cardinality itself. -/
-public def stabWidth [∀ d : 𝒯.Dart, Finite (stabilizer G d)]
-    (e : QuotEdge G 𝒯) : ℕ+ :=
-  ⟨Nat.card (stabilizer G e.out), Nat.card_pos⟩
-
-public theorem stabWidth_mk [∀ d : 𝒯.Dart, Finite (stabilizer G d)]
-    (d : 𝒯.Dart) :
-    stabWidth G 𝒯 (Quotient.mk'' d) =
-      ⟨Nat.card (stabilizer G d), Nat.card_pos⟩ :=
-  PNat.eq (Nat.card_congr
-    (stabilizerEquivStabilizerOfOrbitRel
-      (Quotient.mk_out (s := orbitRel G 𝒯.Dart) d)).toEquiv)
-
-variable (G) in
-/-- Degeneracy data of the quotient graph. -/
-public def quotientDegeneracyData [∀ d : 𝒯.Dart, Finite (stabilizer G d)] :
-    DegeneracyData (QuotEdge G 𝒯) (QuotVert G W) where
-  a := Quotient.map' (fun d : 𝒯.Dart => d.fst)
-    (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
-  b := Quotient.map' (fun d : 𝒯.Dart => d.snd)
-    (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
-  w := stabWidth G 𝒯
-
-variable (G) in
-/-- Edge reversal on the quotient graph. -/
-public def quotientReversal : QuotEdge G 𝒯 → QuotEdge G 𝒯 :=
-  Quotient.map' SimpleGraph.Dart.symm
-    (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
-
-variable (G) in
-/-- The formal monodromy pairing matrix of the quotient graph. -/
-public def formalU [∀ d : 𝒯.Dart, Finite (stabilizer G d)]
+/-- The non-backtracking transition matrix of the quotient graph, indexed by
+its oriented edges (the dart orbits). The entry at `(e, e')` is `1` when `e'`
+starts where `e` ends and `e'` is not the reversal of `e`, and `0` otherwise
+(`formalU_apply`); it is not symmetric in general. It takes finite dart
+stabilizers only because it reads the endpoints from
+`quotientDegeneracyData`. -/
+public def formalU (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d))
     [Fintype (QuotEdge G 𝒯)] [DecidableEq (QuotEdge G 𝒯)]
     [Fintype (QuotVert G W)] [DecidableEq (QuotVert G W)] :
     Matrix (QuotEdge G 𝒯) (QuotEdge G 𝒯) ℤ :=
-  (degeneracyMatrix (quotientDegeneracyData G 𝒯).b).transpose *
-      degeneracyMatrix (quotientDegeneracyData G 𝒯).a
+  (degeneracyMatrix (quotientDegeneracyData G 𝒯 hfin).b).transpose *
+      degeneracyMatrix (quotientDegeneracyData G 𝒯 hfin).a
     - Matrix.of fun e e' => if quotientReversal G 𝒯 e' = e then 1 else 0
+
+/-- The entries of `formalU`: the entry at `(e, e')` is `1` when `e'` starts
+where `e` ends and `e'` is not the reversal of `e`, and `0` otherwise. -/
+public theorem formalU_apply (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d))
+    [Fintype (QuotEdge G 𝒯)] [DecidableEq (QuotEdge G 𝒯)]
+    [Fintype (QuotVert G W)] [DecidableEq (QuotVert G W)]
+    (e e' : QuotEdge G 𝒯) :
+    formalU G 𝒯 hfin e e' =
+      if (quotientDegeneracyData G 𝒯 hfin).b e =
+          (quotientDegeneracyData G 𝒯 hfin).a e' ∧
+        quotientReversal G 𝒯 e' ≠ e then 1 else 0 := by
+  have hrev : ∀ e' : QuotEdge G 𝒯,
+      (quotientDegeneracyData G 𝒯 hfin).b (quotientReversal G 𝒯 e') =
+        (quotientDegeneracyData G 𝒯 hfin).a e' := by
+    intro e'
+    induction e' using Quotient.inductionOn' with
+    | h d => rfl
+  simp only [formalU, Matrix.sub_apply, Matrix.mul_apply,
+    Matrix.transpose_apply, degeneracyMatrix, Matrix.of_apply, ite_mul,
+    one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  by_cases hr : quotientReversal G 𝒯 e' = e
+  · subst hr
+    simp [hrev]
+  · by_cases hb : (quotientDegeneracyData G 𝒯 hfin).b e =
+        (quotientDegeneracyData G 𝒯 hfin).a e'
+    · simp [hb, hr]
+    · simp [hb, hr, Ne.symm hb]
 
 end GraphAction
 
