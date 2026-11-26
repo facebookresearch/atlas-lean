@@ -37,3 +37,19 @@ example : ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ 7 ∧ ¬(z ≡ 0 [ZMOD 4]) :=
   obtain ⟨z, hz, hmod⟩ :=
     exists_int_eq_wilsonQuotientZ_two_mul_sub_one_modEq_zero_iff 4 (by decide)
   exact ⟨z, hz, hmod.not.mpr (by decide)⟩
+
+example : (∃ z : ℤ, (z : ℚ) = wilsonQuotientZ 1) ∧ wilsonQuotientZ 1 = 2 := by
+  refine ⟨exists_int_eq_wilsonQuotientZ (n := 1) (hn := by decide), ?_⟩
+  unfold wilsonQuotientZ wilsonQuotientM
+  decide +kernel
+
+-- The even and odd composite cases have different values.
+example : (∃ z : ℤ, (z : ℚ) = wilsonQuotientZ 4) ∧ wilsonQuotientZ 4 = 1 := by
+  refine ⟨exists_int_eq_wilsonQuotientZ (n := 4) (hn := by decide), ?_⟩
+  unfold wilsonQuotientZ wilsonQuotientM
+  decide +kernel
+
+example : (∃ z : ℤ, (z : ℚ) = wilsonQuotientZ 9) ∧ wilsonQuotientZ 9 = 8065 := by
+  refine ⟨exists_int_eq_wilsonQuotientZ (n := 9) (hn := by decide), ?_⟩
+  unfold wilsonQuotientZ wilsonQuotientM
+  decide +kernel

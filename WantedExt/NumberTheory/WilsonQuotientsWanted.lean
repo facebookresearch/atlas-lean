@@ -52,15 +52,6 @@ Morozov's sign-adjusted quotient. -/
 def wilsonQuotientZPlus (n : ℕ) : ℚ :=
   ∑ k ∈ Finset.range n, wilsonQuotientMPlus k n
 
-/-- **The Wilson quotient sum is an integer.** For every natural number $n \ge 1$, Morozov's
-Wilson quotient sum $Z(n)$ is an integer.
-
-Source: Ivan V. Morozov, "On Quotients of a More General
-Theorem of Wilson", Theorem 1. -/
-theorem_wanted exists_int_eq_wilsonQuotientZ
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ n
-
 /-- **When the sign-adjusted Wilson quotient sum is a natural number.** For every natural number
 $n \ge 1$, Morozov's sign-adjusted Wilson quotient sum $Z^+(n)$ is a natural number if and only
 if $n$ is even, $n = 1$, or $n$ is prime.
