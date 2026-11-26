@@ -30,4 +30,4 @@ The cycle obstruction comes from summing the equilibrium conditions $\mathcal{R}
 
 ## Sources
 
-- C. J. Browne, H. L. Smith, "Dynamics of Virus and Immune Response in Multi-Epitope Network", arXiv:1705.01188 (2017): binary-sequence hypercube model, immunodominance $\mathcal{I}_j$, Proposition on cycles in the hypercube, Theorem 2 (nested network, with the recursion for $\mathcal{Q}_k$), Section on uniform fitness costs for escape on the full $n$-epitope network (Theorem 6 and its proof). <https://doi.org/10.48550/arXiv.1705.01188> Published version: , <https://doi.org/10.1007/s00285-018-1224-z>.
+- C. J. Browne, H. L. Smith, "Dynamics of Virus and Immune Response in Multi-Epitope Network", arXiv:1705.01188 (2017): binary-sequence hypercube model, immunodominance $\mathcal{I}_j$, Proposition on cycles in the hypercube, Theorem 2 (nested network, with the recursion for $\mathcal{Q}_k$), Section on uniform fitness costs for escape on the full $n$-epitope network (Theorem 6 and its proof). <https://doi.org/10.48550/arXiv.1705.01188> Published version: Journal of Mathematical Biology 77 (2018) 1833–1870, <https://doi.org/10.1007/s00285-018-1224-z>.

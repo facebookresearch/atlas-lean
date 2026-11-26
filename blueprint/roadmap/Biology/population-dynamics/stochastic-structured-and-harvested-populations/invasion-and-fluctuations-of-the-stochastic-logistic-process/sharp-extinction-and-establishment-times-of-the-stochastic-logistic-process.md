@@ -17,7 +17,13 @@ $$
 \mathbb{E}_m\big[T_{\lfloor \kappa n \rfloor} \,\big|\, T_{\lfloor \kappa n \rfloor} < T_0\big] \sim \Big(\frac{1}{\lambda(0)-\mu(0)} - \frac{1}{(\lambda'(\kappa)-\mu'(\kappa))\,\kappa}\Big) \ln n .
 $$
 
-3. Conditioned on extinction before reaching carrying capacity, $\mathbb{E}_m[T_0 \mid T_0 < T_{\lfloor \kappa n \rfloor}] \to -\frac{1}{\mu(0)} \ln\big(1 - \rho\big)$.
+3. Conditioned on extinction before reaching carrying capacity, the extinction time converges to that of $m$ independent subcritical lineages, each a linear birth–death process with birth rate $\mu(0)$ and death rate $\lambda(0)$:
+
+$$
+\mathbb{E}_m\big[T_0 \,\big|\, T_0 < T_{\lfloor \kappa n \rfloor}\big] \to \int_0^\infty \big(1 - q_t^m\big)\,dt, \qquad q_t = \frac{\lambda(0)\big(1 - e^{-(\lambda(0)-\mu(0))t}\big)}{\lambda(0) - \mu(0)\,e^{-(\lambda(0)-\mu(0))t}} ,
+$$
+
+where $q_t$ is the probability that one such lineage has died out by time $t$. For $m = 1$ the limit is $-\frac{1}{\mu(0)} \ln(1 - \rho)$; it increases strictly with $m$ (for $\lambda(0) = 2$, $\mu(0) = 1$ it is $\ln 2 \approx 0.693$ for $m = 1$ and $3\ln 2 - 1 \approx 1.079$ for $m = 2$). The source's Proposition 13 prints the $m = 1$ value for every $m$.
 
 ## Depends on
 
@@ -25,7 +31,7 @@ $$
 
 ## Expansion
 
-The mean extinction time of a birth–death chain is an explicit double sum of products of the ratios $\mu_j/\lambda_j$; writing these products as $e^{nV(i/n)}$ and applying Laplace's method around the minimum of $V$ at $\kappa$ gives the Gaussian prefactor $\sqrt{2\pi/(nV''(\kappa))}$ with $V''(\kappa) = \frac{\mu'(\kappa)}{\mu(\kappa)} - \frac{\lambda'(\kappa)}{\lambda(\kappa)}$. The establishment time is the sum of a supercritical branching phase of length $\ln n/(\lambda(0)-\mu(0))$ and a relaxation phase governed by the linearized rate $-(\lambda'(\kappa)-\mu'(\kappa))\kappa$ at carrying capacity.
+The mean extinction time of a birth–death chain is an explicit double sum of products of the ratios $\mu_j/\lambda_j$; writing these products as $e^{nV(i/n)}$ and applying Laplace's method around the minimum of $V$ at $\kappa$ gives the Gaussian prefactor $\sqrt{2\pi/(nV''(\kappa))}$ with $V''(\kappa) = \frac{\mu'(\kappa)}{\mu(\kappa)} - \frac{\lambda'(\kappa)}{\lambda(\kappa)}$. The establishment time is the sum of a supercritical branching phase of length $\ln n/(\lambda(0)-\mu(0))$ and a relaxation phase governed by the linearized rate $-(\lambda'(\kappa)-\mu'(\kappa))\kappa$ at carrying capacity. Conditioning a supercritical branching process on extinction swaps its birth and death rates, and the extinction time of $m$ independent lineages is the maximum of their extinction times, whose law is $q_t^m$; this gives item 3.
 
 ## Sources
 

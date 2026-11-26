@@ -24,4 +24,4 @@ Tracing makes the removal hazard of an individual depend on the history of its i
 
 ## Sources
 
-- Johannes Müller and Bendix Koopmann, "The effect of delay on contact tracing", arXiv:1610.07054 (2016): Section 2, Proposition 2.8 and Remark 2.9 (first-order full tracing), Proposition 2.10 (fixed delay), Proposition 2.11 (exponential delay). <https://doi.org/10.48550/arXiv.1610.07054> Published version: , <https://doi.org/10.1016/j.mbs.2016.10.010>.
+- Johannes Müller and Bendix Koopmann, "The effect of delay on contact tracing", arXiv:1610.07054 (2016): Section 2, Proposition 2.8 and Remark 2.9 (first-order full tracing), Proposition 2.10 (fixed delay), Proposition 2.11 (exponential delay). <https://doi.org/10.48550/arXiv.1610.07054> Published version: Mathematical Biosciences 282 (2016) 204–214, <https://doi.org/10.1016/j.mbs.2016.10.010>.

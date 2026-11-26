@@ -12,7 +12,7 @@ where $n_u$ is the number of leaves below $u$ and $\delta_x$ is the depth of lea
 
 $$\min_T \mathcal{S}(T) = n(k+1) - 2^k,$$
 
-which equals $k\,2^k$ for $n = 2^k$; the sequence of minima starting at $n=1$ is $1,2,5,8,12,16,20,24,\ldots$
+which equals $k\,2^k$ for $n = 2^k$; the sequence of minima starting at $n=1$ is $0,2,5,8,12,16,20,24,\ldots$ (OEIS A003314; a one-leaf tree has no inner vertex, although the source's Remark 4 lists $1$ for $n=1$)
 3. (Minimum, arbitrary) For $n \ge 2$, the star $T_n^{star}$ is the unique rooted tree minimizing $\mathcal{S}$, with $\mathcal{S}(T_n^{star}) = n$.
 
 ## Expansion

@@ -17,7 +17,7 @@ A path is *greedy* if its strategies decrease pointwise in $\eta$ as cost grows,
 2. (Disassortative, $b\ge a>0$.) $R_0$ is the only positive eigenvalue of $T_\mathrm{k}$, simple, and $R_e$ is concave; the vertical path parametrizes the Pareto frontier and the horizontal path the anti-Pareto frontier.
 3. (Complete multipartite, $a=0<b$.) The horizontal path parametrizes the anti-Pareto frontier, and the vertical strategies with cost at most $1-\mu_1$ parametrize the Pareto frontier; the minimal cost of eradication is $1-\mu_1$ (vaccinate everyone outside the largest group) and the largest cost of a totally useless strategy is $0$.
 
-So with assortative mixing it is best to protect the largest (highest-degree) groups first, while with disassortative mixing it is best to vaccinate small groups completely, even though they have the lowest degree.
+So with assortative mixing it is best to protect the largest (highest-degree) groups first, while with disassortative mixing it is best to vaccinate small groups completely, which then have the highest degree.
 
 ## Expansion
 

@@ -22,4 +22,4 @@ While the number of mutants $i$ stays small compared with $N$, $\xi_N(i)\approx 
 
 ## Sources
 
-- T. Chumley, O. Aydogmus, A. Matzavinos and A. Roitershtein, "Moran-type bounds for the fixation probability in a frequency-dependent Wright–Fisher model", arXiv:1609.00838 (2016), <https://doi.org/10.48550/arXiv.1609.00838>. Theorem 10 (limit of the fixation probability), Theorem 2 (summary of the bounds and the limit), Theorem 11 (fixation-time bounds). The ordering $\theta\le q\le\rho$ follows by letting $N\to\infty$ in Theorem 5. Published version: , <https://doi.org/10.1007/s00285-017-1137-2>.
+- T. Chumley, O. Aydogmus, A. Matzavinos and A. Roitershtein, "Moran-type bounds for the fixation probability in a frequency-dependent Wright–Fisher model", arXiv:1609.00838 (2016), <https://doi.org/10.48550/arXiv.1609.00838>. Theorem 10 (limit of the fixation probability), Theorem 2 (summary of the bounds and the limit), Theorem 11 (fixation-time bounds). The ordering $\theta\le q\le\rho$ follows by letting $N\to\infty$ in Theorem 5. Published version: Journal of Mathematical Biology 76 (2018) 1–35, <https://doi.org/10.1007/s00285-017-1137-2>.

@@ -22,4 +22,4 @@ The key step is a one-step exponential-moment inequality: for these $\rho,\theta
 
 ## Sources
 
-- T. Chumley, O. Aydogmus, A. Matzavinos and A. Roitershtein, "Moran-type bounds for the fixation probability in a frequency-dependent Wright–Fisher model", arXiv:1609.00838 (2016), <https://doi.org/10.48550/arXiv.1609.00838>. Theorem 5 (explicit bounds, with the constants of Lemma 4), Corollary 8 (monotonicity), Corollary 9 (large-population consequences), with the model and the standing assumption in Section 2. Published version: , <https://doi.org/10.1007/s00285-017-1137-2>.
+- T. Chumley, O. Aydogmus, A. Matzavinos and A. Roitershtein, "Moran-type bounds for the fixation probability in a frequency-dependent Wright–Fisher model", arXiv:1609.00838 (2016), <https://doi.org/10.48550/arXiv.1609.00838>. Theorem 5 (explicit bounds, with the constants of Lemma 4), Corollary 8 (monotonicity), Corollary 9 (large-population consequences), with the model and the standing assumption in Section 2. Published version: Journal of Mathematical Biology 76 (2018) 1–35, <https://doi.org/10.1007/s00285-017-1137-2>.

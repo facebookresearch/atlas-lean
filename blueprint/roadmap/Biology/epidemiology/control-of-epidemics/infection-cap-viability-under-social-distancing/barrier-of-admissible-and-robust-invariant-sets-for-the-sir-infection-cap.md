@@ -27,4 +27,4 @@ The theory of barriers gives necessary conditions for a trajectory on the bounda
 
 ## Sources
 
-- Willem Esterhuizen, Jean Lévine, Stefan Streif, "Epidemic Management with Admissible and Robust Invariant Sets", arXiv (2021). Definition 3.1, Definition 3.3, Theorem 3.1, Proposition 4.1, Proposition 4.2, Proposition 4.3, Proposition 4.4, Proposition 5.1, Proposition 5.2. <https://doi.org/10.48550/arXiv.2109.05754> Published version: , <https://doi.org/10.1371/journal.pone.0257598>.
+- Willem Esterhuizen, Jean Lévine, Stefan Streif, "Epidemic Management with Admissible and Robust Invariant Sets", arXiv (2021). Definition 3.1, Definition 3.3, Theorem 3.1, Proposition 4.1, Proposition 4.2, Proposition 4.3, Proposition 4.4, Proposition 5.1, Proposition 5.2. <https://doi.org/10.48550/arXiv.2109.05754> Published version: PLOS ONE 16 (2021) e0257598, <https://doi.org/10.1371/journal.pone.0257598>.

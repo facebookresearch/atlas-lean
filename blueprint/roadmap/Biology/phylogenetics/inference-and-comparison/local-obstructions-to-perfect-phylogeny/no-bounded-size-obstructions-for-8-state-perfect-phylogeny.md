@@ -12,4 +12,4 @@ The construction uses taxa $a_1, \dots, a_n, b_1, \dots, b_n$ and two lobster tr
 
 ## Sources
 
-- L. van Iersel, M. Jones, S. Kelk, "A third strike against perfect phylogeny", arXiv:1804.07232 (2018): Introduction (known values $f(2) = 2$, $f(3) = 3$ and the lower bound), Mathematical Definitions (characters, display, compatibility, Conjecture 1), Definitions 2–5 and 18 (the counterexample trees and characters), Theorem 31. <https://doi.org/10.48550/arXiv.1804.07232> Published version: , <https://doi.org/10.1093/sysbio/syz009>.
+- L. van Iersel, M. Jones, S. Kelk, "A third strike against perfect phylogeny", arXiv:1804.07232 (2018): Introduction (known values $f(2) = 2$, $f(3) = 3$ and the lower bound), Mathematical Definitions (characters, display, compatibility, Conjecture 1), Definitions 2–5 and 18 (the counterexample trees and characters), Theorem 31. <https://doi.org/10.48550/arXiv.1804.07232> Published version: Systematic Biology 68 (2019) 814–827, <https://doi.org/10.1093/sysbio/syz009>.

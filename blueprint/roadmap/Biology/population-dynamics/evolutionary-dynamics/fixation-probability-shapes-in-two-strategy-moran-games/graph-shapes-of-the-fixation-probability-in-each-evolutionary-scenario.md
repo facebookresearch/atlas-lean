@@ -34,4 +34,4 @@ Because $f_i$ and $g_i$ are affine in $i$, the ratio $r_i$ is monotone in $i$. I
 
 ## Sources
 
-- E. P. Souza, E. M. Ferreira, A. G. M. Neves, "Fixation probabilities for the Moran process in evolutionary games with two strategies: graph shapes and large population asymptotics", arXiv:1805.00117 (2018): Section 2 (model, fitnesses, recursion for $d_i$, scenario notation, Theorem 1: the $8$ possible scenarios, with a new proof in the proofs appendix), Section 3 (Propositions 1–4, graph shapes). <https://doi.org/10.48550/arXiv.1805.00117> Published version: , <https://doi.org/10.1007/s00285-018-1300-4>.
+- E. P. Souza, E. M. Ferreira, A. G. M. Neves, "Fixation probabilities for the Moran process in evolutionary games with two strategies: graph shapes and large population asymptotics", arXiv:1805.00117 (2018): Section 2 (model, fitnesses, recursion for $d_i$, scenario notation, Theorem 1: the $8$ possible scenarios, with a new proof in the proofs appendix), Section 3 (Propositions 1–4, graph shapes). <https://doi.org/10.48550/arXiv.1805.00117> Published version: Journal of Mathematical Biology 78 (2019) 1033–1065, <https://doi.org/10.1007/s00285-018-1300-4>.

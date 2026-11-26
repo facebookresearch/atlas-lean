@@ -19,4 +19,4 @@ From a branching, build the *$B$-split*: one row for each uncovered pair $(r,v)$
 
 ## Sources
 
-- Ademir Hujdurović, Edin Husić, Martin Milanič, Romeo Rizzi, Alexandru I. Tomescu, "Perfect phylogenies via branchings in acyclic digraphs and a generalization of Dilworth's theorem", arXiv:1701.05492 (2017): Section 1 (definitions of conflict, row split, MCRS and MDCRS), Section 2 (containment digraph, uncovered pairs, irreducible vertices, $B$-split, and the equivalence theorem). <https://doi.org/10.48550/arXiv.1701.05492> Published version: , <https://doi.org/10.1145/3182178>.
+- Ademir Hujdurović, Edin Husić, Martin Milanič, Romeo Rizzi, Alexandru I. Tomescu, "Perfect phylogenies via branchings in acyclic digraphs and a generalization of Dilworth's theorem", arXiv:1701.05492 (2017): Section 1 (definitions of conflict, row split, MCRS and MDCRS), Section 2 (containment digraph, uncovered pairs, irreducible vertices, $B$-split, and the equivalence theorem). <https://doi.org/10.48550/arXiv.1701.05492> Published version: ACM Transactions on Algorithms 14 (2018) 1–26, <https://doi.org/10.1145/3182178>.

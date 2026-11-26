@@ -18,7 +18,7 @@ $$\Bigl(\frac\gamma\beta,\ \frac{1-\kappa-\gamma/\beta}{1+\gamma/\omega},\ \frac
 
 4. The disease-free equilibrium is globally asymptotically stable if and only if $(1-\kappa)\,\beta/\gamma\le1$.
 
-Thus the herd-immunity condition is a condition on confidence, not on roll-out speed: eradication requires $\kappa\ge1-1/\mathcal{R}_0$, and below that confidence level vaccination at any rate $\rho$ only lowers the endemic infected level by the factor $1-\kappa$.
+Thus the herd-immunity condition is a condition on confidence, not on roll-out speed: eradication requires $\kappa\ge1-1/\mathcal{R}_0$, and below that confidence level the endemic infected level $I^*=(1-\kappa-\gamma/\beta)/(1+\gamma/\omega)$ of item 3 does not depend on the roll-out rate $\rho$.
 
 ## Expansion
 

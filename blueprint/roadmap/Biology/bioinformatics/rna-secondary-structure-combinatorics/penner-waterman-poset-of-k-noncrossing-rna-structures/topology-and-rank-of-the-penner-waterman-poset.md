@@ -2,14 +2,14 @@
 
 **Diagrams.** An RNA structure on bases $1, \dots, n$ is encoded by a diagram: arcs $(i, j)$, $i < j$, join paired bases. A base in no arc is a *free site*. The diagram is *$k$-noncrossing* if it has no $k + 1$ pairwise crossing arcs ($k = 1$: secondary structures; $k \ge 2$: pseudoknots), and *binary* if each base lies in at most one arc. An arc is *tautological* if it covers exactly one free site, or if some arc below it covers the same set of free sites. A diagram is *regular* if no two crossing arcs are both incident with the same interval of consecutive non-free sites.
 
-**Penner–Waterman poset.** For $k \ge 1$, $f \ge 3$ and $r \ge 0$, let $\mathcal{P}^r_{f,k}$ be the set of regular binary $k$-noncrossing diagrams with exactly $f$ free sites and at most $r$ tautological arcs, ordered by *arc suppression* (deleting an arc together with its two endpoints). For $k = 1$ this is Penner and Waterman's poset $\mathcal{P}^r_f$ of secondary structures, and $\mathcal{P}^0_f$ is isomorphic to the poset of triangulations of an $(f+1)$-gon.
+**Penner–Waterman poset.** For $k \ge 1$, $f \ge 3$ and $r \ge 0$, let $\mathcal{P}^r_{f,k}$ be the set of regular binary $k$-noncrossing diagrams with at least one arc, exactly $f$ free sites and at most $r$ tautological arcs (the empty diagram is not an element), ordered by *arc suppression* (deleting an arc together with its two endpoints). For $k = 1$ this is Penner and Waterman's poset $\mathcal{P}^r_f$ of secondary structures, and $\mathcal{P}^0_f$ is isomorphic to the poset of triangulations of an $(f+1)$-gon.
 
 **Theorem.** Let $f \ge 3$, $k \ge 1$ and $f \ge 2k$.
 
-1. The geometric realization of $\mathcal{P}^0_{f,k}$ (its order complex) is the join of a simplicial sphere of dimension $k(f - 2k) - 1$ and an $\big((f+1)(k-1) - 1\big)$-simplex.
-2. For every $r \ge 0$, $\mathcal{P}^r_{f,k}$ is pure (all maximal chains have the same length) and has rank $k(2f - 2k + 1) + r - f - 1$.
+1. The geometric realization $|\Delta(\mathcal{P}^0_{f,k})|$ of the order complex of $\mathcal{P}^0_{f,k}$ (vertices the diagrams, faces the nonempty chains) is homeomorphic to the join of a simplicial sphere of dimension $k(f - 2k) - 1$ and an $\big((f+1)(k-1) - 1\big)$-simplex.
+2. For every $r \ge 0$, $\mathcal{P}^r_{f,k}$ is pure: every maximal chain has exactly $N = k(2f - 2k + 1) + r - f - 1$ elements, so its length, the rank in the usual sense, is $N - 1$. Since minimal elements have one arc and each cover relation adds one arc, $N$ is also the largest number of arcs in a diagram of $\mathcal{P}^r_{f,k}$. The source states $N$ as the rank; its proof counts the elements $S_1 \prec \dots \prec S_t$ of a maximal chain, and its Figure 2 ($f = 4$, $k = 1$: ten vertices, ten edges) shows chains of length $1 = N - 1$.
 
-For $k = 1$ the simplex factor is empty and item 1 recovers the Penner–Waterman theorem that the space of RNA secondary structures with $f$ free sites and no tautological arcs is a sphere of dimension $f - 3$.
+For $k = 1$ the simplex factor is empty and item 1 recovers the Penner–Waterman theorem that the space of RNA secondary structures with $f$ free sites and no tautological arcs is a sphere of dimension $f - 3$; consistently, item 2 gives $N = f - 2$ arcs (the diagonals of a triangulation of an $(f+1)$-gon) and chains of length $f - 3$.
 
 ## Expansion
 

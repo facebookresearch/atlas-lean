@@ -24,7 +24,7 @@ then, with $g=\Phi\,u^*(u^*-1)$,
 
 $$\int_0^T\!\!\int_\Omega R^*g\,dx\,dt\ \le\ \int_0^T\!\!\int_\Omega R\,g\,dx\,dt\qquad\text{for all }R\in\mathcal{U}.$$
 
-Since $g\le0$ where $0\le u^*\le1$, the optimal dose is bang-bang: it is concentrated, at the maximal rate $M$, where $\Phi\,u^*(1-u^*)$ is largest, subject to the total-dose budget.
+So $R^*$ minimizes the linear functional $R\mapsto\int_0^T\!\int_\Omega Rg$ over $\mathcal U$, and hence there is a threshold $\lambda^*$ with $R^*=M$ almost everywhere on $\{g<\lambda^*\}$ and $R^*=0$ almost everywhere on $\{g>\lambda^*\}$. Since $g\le0$ where $0\le u^*\le1$, the dose is concentrated, at the maximal rate $M$, where $\Phi\,u^*(1-u^*)$ is largest, subject to the total-dose budget. It is bang-bang when the level set $\{g=\lambda^*\}$ has measure zero; on a level set of positive measure the condition leaves the dose free. For instance, if $u_0\equiv0$ then $u_R\equiv0$ and $J\equiv0$, so every $R\in\mathcal U$ is optimal.
 
 ## Expansion
 

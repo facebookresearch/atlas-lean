@@ -30,4 +30,4 @@ $\mathcal{M} = G_\Pi$ exactly when the vector field points into $G_\Pi$ along it
 
 ## Sources
 
-- Willem Esterhuizen, Jean Lévine, Stefan Streif, "Epidemic Management with Admissible and Robust Invariant Sets", arXiv (2021). Proposition 7.1, Proposition 7.2. <https://doi.org/10.48550/arXiv.2109.05754> Published version: , <https://doi.org/10.1371/journal.pone.0257598>.
+- Willem Esterhuizen, Jean Lévine, Stefan Streif, "Epidemic Management with Admissible and Robust Invariant Sets", arXiv (2021). Proposition 7.1, Proposition 7.2. <https://doi.org/10.48550/arXiv.2109.05754> Published version: PLOS ONE 16 (2021) e0257598, <https://doi.org/10.1371/journal.pone.0257598>.

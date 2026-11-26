@@ -26,4 +26,4 @@ The infection probability comes from conditioning on the number $j$ of infectiou
 
 ## Sources
 
-- Divine Wanduku, "On a family of stochastic SVIR influenza epidemic models and maximum likelihood estimation", arXiv (2019). Theorem 3.1, Theorem 4.1, Lemma 4.1, Theorem 4.2, Theorem 6.1, Corollary 6.1. <https://doi.org/10.48550/arXiv.1901.05315> Published version: , <https://doi.org/10.1007/978-981-15-2286-4_2>.
+- Divine Wanduku, "On a family of stochastic SVIR influenza epidemic models and maximum likelihood estimation", arXiv (2019). Theorem 3.1, Theorem 4.1, Lemma 4.1, Theorem 4.2, Theorem 6.1, Corollary 6.1. <https://doi.org/10.48550/arXiv.1901.05315> Published version: D. Wanduku, C. Newman, O. Jegede, B. Oluyede, "Modeling the stochastic dynamics of influenza epidemics with vaccination control, and the maximum likelihood estimation of model parameters", in Mathematical Modelling in Health, Social and Applied Sciences, Forum for Interdisciplinary Mathematics, Springer (2020) 23–72, <https://doi.org/10.1007/978-981-15-2286-4_2>.

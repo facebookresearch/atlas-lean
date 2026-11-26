@@ -22,4 +22,4 @@ Because all coefficients are nonnegative off the diagonal, the expected populati
 
 ## Sources
 
-- Masaki Ogura, Masashi Wakaiki and Victor M. Preciado, "Dynamic analysis of bet-hedging strategies as a protection mechanism against environmental fluctuations", arXiv:1603.04682 (2016), Section 2 (models $\Sigma_0$, $\Sigma_1$, $\Sigma_2$ and Definition 2.1), Proposition 1.1, Theorem 3.1, Remark 3.2, Lemma 3.3, Proposition 3.6, Assumption 4.1, Proposition 4.2, Theorem 4.3, <https://doi.org/10.48550/arXiv.1603.04682>. Published version: , <https://doi.org/10.1109/CDC.2016.7798903>.
+- Masaki Ogura, Masashi Wakaiki and Victor M. Preciado, "Dynamic analysis of bet-hedging strategies as a protection mechanism against environmental fluctuations", arXiv:1603.04682 (2016), Section 2 (models $\Sigma_0$, $\Sigma_1$, $\Sigma_2$ and Definition 2.1), Proposition 1.1, Theorem 3.1, Remark 3.2, Lemma 3.3, Proposition 3.6, Assumption 4.1, Proposition 4.2, Theorem 4.3, <https://doi.org/10.48550/arXiv.1603.04682>. Published version: 2016 IEEE 55th Conference on Decision and Control (CDC) (2016) 4178–4183, <https://doi.org/10.1109/CDC.2016.7798903>.

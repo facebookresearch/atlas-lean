@@ -14,7 +14,7 @@ $$d^c(\pi,I)\ \ge\ e(\pi)-f(\pi)=eg(\pi).$$
 
 $$d^c(\pi,I)=eg(\pi),$$
 
-and a Hannenhalli–Pevzner type algorithm, repeatedly reversing a reversible pair of highest score in the interleaving graph, produces an optimal sorting sequence. The inequality can be strict in general, e.g. for reduced orientable obstructions such as $(1,\bar2)$ and $(2,1,\bar3,\bar4)$ attached as portions.
+and a Hannenhalli–Pevzner type algorithm, repeatedly reversing a reversible pair of highest score in the interleaving graph, produces an optimal sorting sequence. Without these hypotheses the inequality can be strict, for instance for the embedding schemes of Theorem 1.3 of the source (exactly one non-trivial positive block and one non-trivial negative block) and for the example of its Figure 3.
 
 ## Expansion
 
@@ -22,4 +22,4 @@ A sorting sequence of length $d$ draws the two-vertex scheme on a cylinder: each
 
 ## Sources
 
-- Niloufar Fuladi, Alfredo Hubard, Arnaud de Mesmay, "Degenerate crossing number and signed reversal distance", arXiv:2308.10666: Section 2.4 (sc-reversals and cross-cap drawings), Section 4.1 (Bafna–Pevzner inequality from Euler's formula and the progress lemma), Theorem 4.1 (exactness for reduced non-orientable sc-permutations), Lemmas 4.2–4.3 (interleaving graph), Section 3 and Corollary 1.3 (strictness and counterexample). <https://doi.org/10.48550/arXiv.2308.10666> Published version: Graph Drawing and Network Visualization (GD 2023), Lecture Notes in Computer Science 14465 (2023) 95–109, <https://doi.org/10.1007/978-3-031-49272-3_7>.
+- Niloufar Fuladi, Alfredo Hubard, Arnaud de Mesmay, "Degenerate crossing number and signed reversal distance", arXiv:2308.10666: Section 2.4 (sc-reversals and cross-cap drawings), Section 4.1 (Bafna–Pevzner inequality from Euler's formula, its strictness for the schemes of Theorem 1.3 and Figure 3, and the progress Lemma 4.1), Theorem 4.2 and Lemma 4.3 (exactness for reduced non-orientable sc-permutations), Section 4.3 (interleaving graph), Section 3, Theorem 1.3 and Corollary 1.4 (schemes without perfect cross-cap drawings). <https://doi.org/10.48550/arXiv.2308.10666> Published version: Graph Drawing and Network Visualization (GD 2023), Lecture Notes in Computer Science 14465 (2023) 95–109, <https://doi.org/10.1007/978-3-031-49272-3_7>.

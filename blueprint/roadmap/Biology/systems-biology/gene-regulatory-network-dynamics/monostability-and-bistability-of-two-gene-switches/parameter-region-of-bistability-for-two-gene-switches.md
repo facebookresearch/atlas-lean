@@ -13,7 +13,7 @@ $$
 
 More generally, with $E_n$ the set of $n$-tuples of points sharing the same $G_1$-image and $E_n^>$ the subset where every product of elasticities exceeds $1$: if $(\alpha, \beta) \in G_n(E_n^>)$ there are at least $2n + 1$ equilibria; if there are $2n$ or more equilibria then $(\alpha, \beta) \in G_n(E_n^{\ge})$; and $E_n^> = \emptyset$ forces at most $2n - 1$ equilibria for all $(\alpha, \beta)$.
 
-**Corollary (Hill repressors).** For $f(z) = 1/(1 + z^a)$ and $g(z) = 1/(1 + z^b)$ with $a, b \ge 1$, put $\rho = ab$. If $\rho < 1$ then $E_1^> = \emptyset$ and the switch is monostable for all $\alpha, \beta$. If $\rho \ge 1$, with $x^- = (\rho - 1)^{-1/b}$, $y^- = (\rho - 1)^{-1/a}$ and $r^-(x) = \big( (1 + x^b)/((\rho - 1) x^b - 1) \big)^{1/a}$,
+**Corollary (Hill repressors).** For $f(z) = 1/(1 + z^a)$ and $g(z) = 1/(1 + z^b)$ with $a, b \ge 1$, put $\rho = ab$. If $\rho = 1$, i.e. $a = b = 1$, then $E_1^> = \emptyset$ and the switch is monostable for all $\alpha, \beta$. If $\rho > 1$, with $x^- = (\rho - 1)^{-1/b}$, $y^- = (\rho - 1)^{-1/a}$ and $r^-(x) = \big( (1 + x^b)/((\rho - 1) x^b - 1) \big)^{1/a}$,
 
 $$
 E_1^> = \{ (x, y) \in (x^-, \infty) \times (y^-, \infty) : y > r^-(x) \},

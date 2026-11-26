@@ -20,4 +20,4 @@ Phase-type clocks turn the non-Markovian process into a Markov one: each directe
 
 ## Sources
 
-- Masaki Ogura and Victor M. Preciado, "Stability of SIS spreading processes in networks with non-Markovian transmission and recovery", arXiv:1606.08518 (2016), Definitions 3.1 and 3.3, Assumption 3.4, Theorem 4.3, Corollary 4.6, Proposition 5.1, Theorem 5.2 and Corollary 5.3, <https://doi.org/10.48550/arXiv.1606.08518>. Published version: , <https://doi.org/10.1109/TCNS.2019.2905131>.
+- Masaki Ogura and Victor M. Preciado, "Stability of SIS spreading processes in networks with non-Markovian transmission and recovery", arXiv:1606.08518 (2016), Definitions 3.1 and 3.3, Assumption 3.4, Theorem 4.3, Corollary 4.6, Proposition 5.1, Theorem 5.2 and Corollary 5.3, <https://doi.org/10.48550/arXiv.1606.08518>. Published version: IEEE Transactions on Control of Network Systems 7 (2020) 349–359, <https://doi.org/10.1109/TCNS.2019.2905131>.

@@ -36,4 +36,4 @@ From the recursion $d_{i+1} = r_i^{-1} d_i$, $\pi_i = \big(\sum_{j<i} \prod_{k \
 
 ## Sources
 
-- E. P. Souza, E. M. Ferreira, A. G. M. Neves, "Fixation probabilities for the Moran process in evolutionary games with two strategies: graph shapes and large population asymptotics", arXiv:1805.00117 (2018): Hypothesis 1 (Section 2), Section 4 (definitions of $R$ and $L$), Section 5 (Proposition 5, Theorems 2–4, Corollary 1), Section 6 (Theorems 5 and 6). <https://doi.org/10.48550/arXiv.1805.00117> Published version: , <https://doi.org/10.1007/s00285-018-1300-4>.
+- E. P. Souza, E. M. Ferreira, A. G. M. Neves, "Fixation probabilities for the Moran process in evolutionary games with two strategies: graph shapes and large population asymptotics", arXiv:1805.00117 (2018): Hypothesis 1 (Section 2), Section 4 (definitions of $R$ and $L$), Section 5 (Proposition 5, Theorems 2–4, Corollary 1), Section 6 (Theorems 5 and 6). <https://doi.org/10.48550/arXiv.1805.00117> Published version: Journal of Mathematical Biology 78 (2019) 1033–1065, <https://doi.org/10.1007/s00285-018-1300-4>.

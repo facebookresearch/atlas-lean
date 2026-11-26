@@ -4,7 +4,7 @@
 
 **Theorem (Theorem 1).** For every rooted binary tree $T$ with $n$ leaves:
 1. $I_T$ has a Gröbner basis of homogeneous quadratic binomials with squarefree initial terms (Theorem 34); hence $R_T$ has a regular unimodular triangulation and is normal (Corollary 49).
-2. $R_T$ has exactly $F_n$ vertices, the $n$-th Fibonacci number (Proposition 22).
+2. $R_T$ has exactly $F_{n+1}$ vertices, where $F_1=F_2=1$ are the Fibonacci numbers, so $2$ vertices for $n=2$ and $3$ for $n=3$ (Proposition 22, which writes $F_n$ with the convention $F_0=F_1=1$).
 3. The facets of $R_T$ are given by $x_i \ge 0$ for each internal node $i$, $x_i + x_j \le 1$ for adjacent internal nodes $i,j$, and
 
 $$2\sum_{i \in C} x_i + \sum_{j \in N(C)} x_j \le |C| + 1 \quad \text{for every cluster } C$$

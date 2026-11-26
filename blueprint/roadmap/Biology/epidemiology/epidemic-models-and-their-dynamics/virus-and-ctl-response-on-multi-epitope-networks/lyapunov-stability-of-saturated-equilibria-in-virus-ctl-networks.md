@@ -30,4 +30,4 @@ $$
 
 ## Sources
 
-- C. J. Browne, H. L. Smith, "Dynamics of Virus and Immune Response in Multi-Epitope Network", arXiv:1705.01188 (2017): Section 2 (model and rescaling), Section 3 (equilibria, positivity classes, saturation inequalities, Lyapunov function, Theorem 1 and the global-stability conjecture). <https://doi.org/10.48550/arXiv.1705.01188> Published version: , <https://doi.org/10.1007/s00285-018-1224-z>.
+- C. J. Browne, H. L. Smith, "Dynamics of Virus and Immune Response in Multi-Epitope Network", arXiv:1705.01188 (2017): Section 2 (model and rescaling), Section 3 (equilibria, positivity classes, saturation inequalities, Lyapunov function, Theorem 1 and the global-stability conjecture). <https://doi.org/10.48550/arXiv.1705.01188> Published version: Journal of Mathematical Biology 77 (2018) 1833–1870, <https://doi.org/10.1007/s00285-018-1224-z>.
