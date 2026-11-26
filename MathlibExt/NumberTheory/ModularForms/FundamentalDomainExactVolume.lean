@@ -53,7 +53,8 @@ private lemma density_eq_ofReal_rpow {y : ℝ} (hy : 0 < y) :
 
 namespace UpperHalfPlane
 
-/-- The hyperbolic density integrated over a vertical ray. -/
+/-- The density `1 / y ^ 2` of the hyperbolic measure `dx dy / y ^ 2` integrates to `1 / c`
+over the vertical ray `y ≥ c`, for `c > 0`. -/
 public theorem setLIntegral_Ici_density {c : ℝ} (hc : 0 < c) :
     ∫⁻ y in Set.Ici c, (((1 / ‖y‖₊) ^ 2 : ℝ≥0) : ℝ≥0∞) = ENNReal.ofReal c⁻¹ := by
   rw [← MeasureTheory.setLIntegral_congr
@@ -87,7 +88,8 @@ private lemma continuousOn_inv_sqrt :
     have hpos : (0 : ℝ) < 1 - x ^ 2 := by nlinarith
     exact ne_of_gt (Real.sqrt_pos.mpr hpos)
 
-/-- The arcsine integral over `[-1/2, 1/2]`. -/
+/-- The integral of `1 / √(1 - x ^ 2)` over `[-1/2, 1/2]` is `π / 3`: the antiderivative is
+`arcsin`, and `arcsin (1 / 2) = π / 6`. -/
 public theorem integral_inv_sqrt_one_sub_sq :
     ∫ x in (-(1 / 2) : ℝ)..(1 / 2), (Real.sqrt (1 - x ^ 2))⁻¹ = Real.pi / 3 := by
   have hderiv : ∀ x ∈ Set.uIcc (-(1 / 2) : ℝ) (1 / 2),
@@ -104,7 +106,8 @@ public theorem integral_inv_sqrt_one_sub_sq :
 
 namespace ModularGroup
 
-/-- The lower boundary of the standard fundamental domain, as a graph. -/
+/-- The lower boundary of the standard fundamental domain, an arc of the unit circle, as the
+graph of `x ↦ √(1 - x ^ 2)`. -/
 public def lowerArc (x : ℝ) : ℝ := Real.sqrt (1 - x ^ 2)
 
 @[simp]
@@ -222,7 +225,8 @@ private lemma inner_slice (x : ℝ) :
       exact Set.indicator_of_notMem (fun (h : (x, y) ∈ fundamentalRegion) => hx h.1) _
     rw [hzero, lintegral_zero]
 
-/-- The hyperbolic volume of the standard modular fundamental domain. -/
+/-- The hyperbolic volume of the standard modular fundamental domain `𝒟` is `π / 3`, where the
+upper half-plane carries the invariant measure `dx dy / y ^ 2`. -/
 public theorem volume_fd_eq : volume 𝒟 = ENNReal.ofReal (Real.pi / 3) := by
   rw [UpperHalfPlane.volume_eq_lintegral]
   have hfactor : ∀ z : ℂ, (((1 / ‖z.im‖₊) ^ 2 : ℝ≥0) : ℝ≥0∞) =
