@@ -1,0 +1,110 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Category.Basic
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInfty
+public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Algebra.Algebra.Basic
+
+/-! The actual suspension endofunctor and the canonical scalar suspension
+in any object universe. ULift uses stock norm/ring/complex structures; the
+one plain scalar C-star dictionary below is not registered globally. -/
+
+@[expose] public section
+
+noncomputable section
+
+open CategoryTheory
+open scoped ZeroAtInfty
+
+universe u
+
+namespace NonUnitalCStarAlgCat
+
+/-- The pointwise suspension endofunctor sending A to C₀(ℝ, A). -/
+def suspensionFunctor : NonUnitalCStarAlgCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj A := of C₀(ℝ, A)
+  map f := ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp f
+  map_id A := by
+    exact ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp_id ℝ A
+  map_comp {A B C} f g := by
+    exact ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp_comp
+      (Omega := ℝ) (A := A) (B := B) (C := C) g f
+
+@[simp]
+theorem suspensionFunctor_map_apply {A B : NonUnitalCStarAlgCat.{u}}
+    (f : A ⟶ B) (g : C₀(ℝ, A)) (x : ℝ) :
+    ((show C₀(ℝ, A) →⋆ₙₐ[ℂ] C₀(ℝ, B) from suspensionFunctor.map f) g) x =
+      f (g x) := by
+  exact ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp_apply f g x
+
+/-- The standard higher-universe complex scalar algebra, with unchanged stock norm. -/
+@[instance_reducible]
+private def liftedComplexCStar : CStarAlgebra (ULift.{u} ℂ) where
+  star x := ULift.up (star x.down)
+  star_involutive x := by
+    apply ULift.ext
+    exact star_star x.down
+  star_add x y := by
+    apply ULift.ext
+    exact star_add x.down y.down
+  star_mul x y := by
+    apply ULift.ext
+    exact star_mul x.down y.down
+  star_smul c x := by
+    apply ULift.ext
+    exact star_smul c x.down
+  norm_mul_self_le x := by
+    change ‖x.down‖ * ‖x.down‖ ≤ ‖star x.down * x.down‖
+    exact (CStarRing.norm_star_mul_self (x := x.down)).symm.le
+
+/-- The actual C₀(R,C) scalar algebra in the chosen object universe. -/
+@[no_expose]
+def scalarSuspension : NonUnitalCStarAlgCat.{u} := by
+  letI : CStarAlgebra (ULift.{u} ℂ) := liftedComplexCStar
+  letI : NonUnitalCStarAlgebra (ULift.{u} ℂ) :=
+    CStarAlgebra.toNonUnitalCStarAlgebra (ULift.{u} ℂ)
+  exact of C₀(ℝ, ULift.{u} ℂ)
+
+/-- The higher-universe scalar copy is pinned by the literal pointwise down map. -/
+@[no_expose]
+def scalarSuspensionEquiv : scalarSuspension.{u} ≃⋆ₐ[ℂ] C₀(ℝ, ℂ) := by
+  letI : CStarAlgebra (ULift.{u} ℂ) := liftedComplexCStar
+  letI : NonUnitalCStarAlgebra (ULift.{u} ℂ) :=
+    CStarAlgebra.toNonUnitalCStarAlgebra (ULift.{u} ℂ)
+  change C₀(ℝ, ULift.{u} ℂ) ≃⋆ₐ[ℂ] C₀(ℝ, ℂ)
+  let downHom : ULift.{u} ℂ →⋆ₙₐ[ℂ] ℂ :=
+    { toFun := ULift.down
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl
+      map_mul' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl
+      map_star' := fun _ => rfl }
+  let upHom : ℂ →⋆ₙₐ[ℂ] ULift.{u} ℂ :=
+    { toFun := ULift.up
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl
+      map_mul' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl
+      map_star' := fun _ => rfl }
+  let down : C₀(ℝ, ULift.{u} ℂ) →⋆ₙₐ[ℂ] C₀(ℝ, ℂ) :=
+    ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp downHom
+  let up : C₀(ℝ, ℂ) →⋆ₙₐ[ℂ] C₀(ℝ, ULift.{u} ℂ) :=
+    ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp upHom
+  exact StarAlgEquiv.ofNonUnitalStarAlgHom down up
+    (by
+      apply NonUnitalStarAlgHom.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rfl)
+    (by
+      apply NonUnitalStarAlgHom.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rfl)
+
+end NonUnitalCStarAlgCat
