@@ -38,15 +38,17 @@ import Mathlib.Topology.Algebra.OpenSubgroup
 # Kernels of representations of the absolute Galois group of `ℚ`
 
 If the kernel of a homomorphism from `Gal(ℚ̄/ℚ)` to a finite group contains
-the fixing subgroup of a finite intermediate field, then that kernel is the
-fixing subgroup of a finite Galois intermediate field, whose degree over `ℚ`
-divides the order of the group.
+the fixing subgroup of a finite-dimensional intermediate field, then that
+kernel is the fixing subgroup of a finite Galois intermediate field, whose
+degree over `ℚ` divides the order of the group.
 -/
 
 @[expose] public section
 
-/-- There is a finite Galois intermediate field whose fixing subgroup is
-exactly the kernel of `ρ`, and whose degree divides the order of `G`. -/
+/-- If the kernel of `ρ` contains the fixing subgroup of the finite-dimensional
+intermediate field `M` (which is what makes the kernel open), then there is a
+finite Galois intermediate field whose fixing subgroup is exactly the kernel of
+`ρ`, and whose degree over `ℚ` divides the order of `G`. -/
 theorem GaloisRep.exists_intermediateField_isGalois_fixingSubgroup_eq_ker
     {G : Type*} [Group G] [Finite G]
     (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* G)
@@ -54,12 +56,6 @@ theorem GaloisRep.exists_intermediateField_isGalois_fixingSubgroup_eq_ker
     (hker : M.fixingSubgroup ≤ ρ.ker) :
     ∃ F : IntermediateField ℚ (AlgebraicClosure ℚ), FiniteDimensional ℚ F ∧ IsGalois ℚ F ∧
       F.fixingSubgroup = ρ.ker ∧ Module.finrank ℚ F ∣ Nat.card G := by
-  classical
-  have hnorm : Normal ℚ (AlgebraicClosure ℚ) := inferInstance
-  have hsep : Algebra.IsSeparable ℚ (AlgebraicClosure ℚ) :=
-    ⟨fun x => (minpoly.irreducible (Algebra.IsIntegral.isIntegral x)).separable⟩
-  have : IsGalois ℚ (AlgebraicClosure ℚ) := IsGalois.mk
-  have := hM
   have hopen : IsOpen ((ρ.ker :
       Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)) :
       Set (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)) :=
@@ -76,19 +72,6 @@ theorem GaloisRep.exists_intermediateField_isGalois_fixingSubgroup_eq_ker
       ⟨by change IsOpen (F.fixingSubgroup :
           Set (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)); rw [hfix]; exact hopen,
        by rw [hfix]; exact MonoidHom.normal_ker ρ⟩
-  have : FiniteDimensional ℚ F := hfg.1
-  have : IsGalois ℚ F := hfg.2
   refine ⟨F, hfg.1, hfg.2, hfix, ?_⟩
-  have hk : (AlgEquiv.restrictNormalHom (F := ℚ) (K₁ := AlgebraicClosure ℚ) F).ker = ρ.ker :=
-    (IntermediateField.restrictNormalHom_ker F).trans hfix
-  have h1 : Nat.card (F ≃ₐ[ℚ] F) =
-      Nat.card ((AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) ⧸ ρ.ker) := by
-    rw [← Nat.card_congr (QuotientGroup.quotientKerEquivOfSurjective _
-      (AlgEquiv.restrictNormalHom_surjective (F := ℚ) (E := AlgebraicClosure ℚ)
-        (K₁ := F))).toEquiv]
-    exact Nat.card_congr (QuotientGroup.quotientMulEquivOfEq hk).toEquiv
-  have h2 : Nat.card ((AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) ⧸ ρ.ker) =
-      Nat.card ρ.range :=
-    Nat.card_congr (QuotientGroup.quotientKerEquivRange ρ).toEquiv
-  rw [← IsGalois.card_aut_eq_finrank, h1, h2]
+  rw [IntermediateField.finrank_eq_fixingSubgroup_index, hfix, Subgroup.index_ker]
   exact Subgroup.card_subgroup_dvd_card ρ.range
