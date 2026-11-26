@@ -63,3 +63,4 @@ Topics added since this subject's fields were last revised.
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
 - [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
 - [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
+- [Non-$p$-th powers have nonzero differential](d-ne-zero-of-forall-pow-ne.md)
