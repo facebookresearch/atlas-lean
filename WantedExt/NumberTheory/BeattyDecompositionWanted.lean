@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Rayleigh
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.Beatty.ComplBetween
 public import MathlibExt.NumberTheory.Beatty.CountIncrement
 public import MathlibExt.NumberTheory.Beatty.FloorFiber
 public import MathlibExt.NumberTheory.Beatty.FloorFiberIndicator
@@ -18,6 +19,7 @@ public import MathlibExt.NumberTheory.Beatty.FloorSubTwoIdentity
 public import MathlibExt.NumberTheory.Beatty.FloorTwoSubIdentity
 public import MathlibExt.NumberTheory.Beatty.SelfBetween
 public import MathlibExt.NumberTheory.Beatty.SelfBetweenIncrement
+public import MathlibExt.NumberTheory.BeattyDecompositionBeattyFloorFiberCardEqOrEqSucc
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
 
@@ -54,22 +56,6 @@ public theorem_wanted beatty_complementary_iff_irrational_inv_add_inv {α β : �
         {beattySeq α k | k > 0} ∪ {beattySeq β k | k > 0} = {n : ℤ | 0 < n}) ↔
       (Irrational α ∧ α⁻¹ + β⁻¹ = 1)
 
-/-- **Counting $\beta$-Beatty terms between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$.**
-Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a real number with
-$\alpha^{-1} + \beta^{-1} = 1$, and let $B$ be the set of the numbers $\lfloor k\beta\rfloor$ for
-positive integers $k$. Then for every positive integer $n$, the number of elements of $B$ in the
-open interval $(\lfloor n\alpha\rfloor, \lfloor n\beta\rfloor)$ equals
-$\lfloor n(2 - \alpha)\rfloor$.
-
-By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Theorem 3 (`integers-2025-A104-thm-3`). -/
-public theorem_wanted beatty_card_compl_between_eq_floor {α β : ℝ} (hirr : Irrational α)
-    (hα1 : 1 < α) (hα2 : α < 2) (hαβ : α⁻¹ + β⁻¹ = 1) {n : ℤ} (hn : 0 < n) :
-    ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
-      beattySeq (2 - α) n
-
 /-- **The $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$ form a
 Beatty sequence.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a
 real number with $\alpha^{-1} + \beta^{-1} = 1$, and let $B$ be the set of the numbers
@@ -86,21 +72,6 @@ public theorem_wanted beatty_card_compl_between_isBeatty {α β : ℝ} (hirr : I
     ∃ r : ℝ, 0 < r ∧ r < 1 ∧ ∀ n : ℤ, 0 < n →
       ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
         beattySeq r n
-
-/-- **Multiplicities of the values of $\lfloor n\alpha\rfloor$ for $1/(k + 1) < \alpha < 1/k$.**
-Let $k$ be a positive integer and let $\alpha$ be a real number with
-$1/(k + 1) < \alpha < 1/k$. Then every non-negative integer $t$ equals $\lfloor n\alpha\rfloor$
-for exactly $k$ or exactly $k + 1$ positive integers $n$, there are infinitely many $t$ for which
-it is exactly $k$, and there are infinitely many $t$ for which it is exactly $k + 1$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Lemma 1 (`integers-2025-A104-lem-1`). -/
-public theorem_wanted beatty_floor_fiber_card_eq_or_eq_succ {α : ℝ} {k : ℕ}
-    (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
-    (∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k ∨
-        {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1) ∧
-      {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k}.Infinite ∧
-      {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1}.Infinite
 
 /-- **The values of $\lfloor n\alpha\rfloor$ of each multiplicity form Beatty sets.** Let $k$ be a
 positive integer and let $\alpha$ be an irrational number with $1/(k + 1) < \alpha < 1/k$. Then
