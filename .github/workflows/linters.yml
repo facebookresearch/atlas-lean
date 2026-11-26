@@ -8,10 +8,13 @@ name: Mathlib linters
 #   warnings (scripts/check_syntax_linters.py);
 # - the environment linters of `#lint` on the declarations the pull request
 #   adds (scripts/check_env_linters.py);
-# - the text-based `lint-style` linters (scripts/check_text_linters.py).
+# - the text-based `lint-style` linters (scripts/check_text_linters.py);
+# - the imports that the pull request adds and that agitate, a faster
+#   reimplementation of `lake shake`, would remove
+#   (scripts/check_unused_imports.py).
 # The job is advisory: a finding annotates its line and the job summary, and
 # only a check that cannot run fails it. It builds the changed files once, on
-# top of the build that ci.yml saves from main, and the three checks share that
+# top of the build that ci.yml saves from main, and the checks share that
 # build. It stays out of ci.yml, so a change here never makes a pull request's
 # required checks stale.
 
@@ -28,9 +31,11 @@ on:
       - ".github/workflows/linters.yml"
       - "scripts/lean_changes.py"
       - "scripts/check_*_linters.py"
+      - "scripts/check_unused_imports.py"
       - "scripts/linters_self_test.py"
       - "scripts/test_lean_changes.py"
       - "scripts/test_check_*_linters.py"
+      - "scripts/test_check_unused_imports.py"
       - "scripts/bump/pinned_bump.py"
 
 permissions:
@@ -56,7 +61,8 @@ jobs:
         run: |
           set -euo pipefail
           for tests in test_lean_changes.py test_check_syntax_linters.py \
-              test_check_env_linters.py test_check_text_linters.py; do
+              test_check_env_linters.py test_check_text_linters.py \
+              test_check_unused_imports.py; do
             python3 -m unittest discover -s scripts -p "$tests"
           done
 
@@ -79,7 +85,8 @@ jobs:
           fi
           self_test=false
           if ! git diff --quiet HEAD^1 HEAD -- .github/workflows/linters.yml scripts/lean_changes.py \
-              'scripts/check_*_linters.py' scripts/linters_self_test.py scripts/bump/pinned_bump.py; then
+              'scripts/check_*_linters.py' scripts/check_unused_imports.py scripts/linters_self_test.py \
+              scripts/bump/pinned_bump.py; then
             self_test=true
           fi
           setup=false
@@ -166,6 +173,41 @@ jobs:
         if: ${{ !cancelled() && steps.scope.outputs.lint == 'true' }}
         run: python3 scripts/check_text_linters.py --base HEAD^1 --report-only
 
+      # agitate (https://github.com/thorimur/agitate, Apache-2.0) reimplements
+      # `lake shake` by reading .olean files, which are specific to a
+      # toolchain, so the pinned commit must be one for lean-toolchain. On
+      # another toolchain the step warns and the unused-imports check is
+      # skipped. The build needs only that toolchain and takes seconds, so it
+      # is not cached.
+      - name: Build agitate
+        id: agitate
+        if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.scope.outputs.self_test == 'true') }}
+        env:
+          AGITATE_COMMIT: 3706ab87cb36e47bcd12bea229542ffc68368369
+        run: |
+          set -euo pipefail
+          dir="${RUNNER_TEMP}/agitate"
+          git init --quiet "$dir"
+          git -C "$dir" fetch --quiet --depth 1 https://github.com/thorimur/agitate.git "$AGITATE_COMMIT"
+          git -C "$dir" -c advice.detachedHead=false checkout --quiet FETCH_HEAD
+          test "$(git -C "$dir" rev-parse HEAD)" = "$AGITATE_COMMIT"
+          if ! cmp -s lean-toolchain "$dir/lean-toolchain"; then
+            echo "::warning title=agitate::agitate $AGITATE_COMMIT is for $(cat "$dir/lean-toolchain"), not" \
+              "$(cat lean-toolchain), so unused imports are not checked; pin an agitate commit for" \
+              "this toolchain in .github/workflows/linters.yml."
+            exit 0
+          fi
+          (cd "$dir" && lake build agitate agitate-nonmodule)
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+
+      - name: Report unused imports on added lines
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.agitate.outputs.dir != '' }}
+        env:
+          AGITATE_DIR: ${{ steps.agitate.outputs.dir }}
+        run: python3 scripts/check_unused_imports.py --base HEAD^1 --report-only
+
       - name: Check the checks end to end
         if: ${{ !cancelled() && steps.scope.outputs.self_test == 'true' }}
+        env:
+          AGITATE_DIR: ${{ steps.agitate.outputs.dir }}
         run: python3 scripts/linters_self_test.py

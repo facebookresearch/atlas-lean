@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Run the three linter checks end to end on a probe module, with Lean.
+"""Run the linter checks end to end on a probe module, with Lean.
 
 .github/workflows/linters.yml runs this when a pull request changes the checks.
-It needs a checkout with the Mathlib cache fetched. It commits a probe module
+It needs a checkout with the Mathlib cache fetched, and for the unused-imports
+check a built agitate in $AGITATE_DIR (without one, that check is skipped,
+and the script says so). It commits a probe module
 with known findings on top of HEAD, runs each check against HEAD, then commits
 a second change that only documents an existing probe declaration and runs the
 checks against the first commit. It then moves HEAD back and deletes the probe,
@@ -74,6 +76,10 @@ EXPECTED = {
                               r"unusedArguments: lintersProbeUnused"],
                              [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
                               r"keeps", r"No environment-linter finding on the added declarations"]),
+    # Nothing records that the probe needs Mathlib.Tactic.Ring for Mathlib's linters.
+    "check_unused_imports.py": ([r"unused import[^:]*: agitate finds `import Mathlib\.Tactic\.Ring` "
+                                 r"unused here"],
+                                [r"No changed Lean file of the production libraries adds an import"]),
 }
 # Exit codes after the first and the second commit.
 EXIT_CODES = (1, 0)
@@ -95,6 +101,9 @@ def commit(text: str, message: str) -> str:
 def run_checks(base: str, round_: int) -> bool:
     ok = True
     for script, expected in EXPECTED.items():
+        if script == "check_unused_imports.py" and not os.environ.get("AGITATE_DIR"):
+            print(f"skipped {script} (round {round_ + 1}): AGITATE_DIR names no agitate build")
+            continue
         result = subprocess.run([sys.executable, str(SCRIPTS / script), "--base", base],
                                 cwd=ROOT, capture_output=True, text=True,
                                 env={**os.environ, "GITHUB_ACTIONS": "false"})

@@ -75,8 +75,15 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
   the changed files at the base, so documenting, tagging, editing or moving an existing
   declaration does not report it;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
-  names of added or renamed files.
+  names of added or renamed files;
+- `scripts/check_unused_imports.py`: the added import lines that
+  [agitate](https://github.com/thorimur/agitate), a faster reimplementation of `lake shake`,
+  would remove. Module files are checked with `--keep-public --add-public --keep-implied
+  --keep-prefix`, other files with `agitate-nonmodule --keep-implied --keep-prefix`. It never
+  applies a removal: one can need the smaller imports that agitate suggests adding in its place,
+  which the finding names. The workflow builds agitate from a pinned commit, which must match
+  `lean-toolchain`; locally, pass a built checkout with `--agitate-dir` or `AGITATE_DIR`.
 
 Each takes `--base <ref>` and exits 1 on a finding, 0 with `--report-only` (as CI runs them),
-and 2 when it cannot run. `scripts/linters_self_test.py` runs all three on a probe module;
-CI runs it when a pull request changes them.
+and 2 when it cannot run. `scripts/linters_self_test.py` runs them all on a probe module; CI
+runs it when a pull request changes them.
