@@ -12603,6 +12603,8 @@
   "MathlibExt/NumberTheory/Cyclotomic/TwoPowRamifiedBound": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
   "MathlibExt/NumberTheory/Cyclotomic/RealCyclotomicPolynomial": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
   "MathlibExt/NumberTheory/Cyclotomic/TwoCosAlgebraicDegree": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
+  "MathlibExt/NumberTheory/Cyclotomic/Stickelberger": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Stickelberger endomorphism"},
+  "MathlibExt/NumberTheory/Cyclotomic/UnitsModPowersEigenspace": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Galois action on units modulo p-th powers"},
   "MathlibExt/NumberTheory/CyclotomicTraceMetric": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
   "MathlibExt/NumberTheory/DPRM": {"to": "TheoryOfComputation/undecidable-problems", "title": "Diophantine sets and Hilbert's tenth problem"},
   "MathlibExt/NumberTheory/DeBruijnNewman": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "De Bruijn–Newman constant"},
