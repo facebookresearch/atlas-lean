@@ -18,8 +18,18 @@ public import Mathlib.RingTheory.UniqueFactorizationDomain.Moebius
 /-!
 # Weighted Dirichlet convolution of monic polynomials
 
-This file defines Dirichlet convolution and its partial sums over monic polynomials,
-and proves Camargo's identity for completely multiplicative functions.
+This file defines Dirichlet convolution and its partial sums over monic polynomials.
+It expresses weighted sums as sums of shifted sums and proves Camargo's identity for completely
+multiplicative functions.
+
+## References
+
+* Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
+  Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, pp. 1–31, Section 3,
+  eq. (3), Lemma 4 and Theorem 6.
+* André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications to
+  Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
+  pp. 1–16, Lemma 4 (the integer identity whose proof is adapted in Jaber–Lalín, Lemma 4).
 -/
 
 open Polynomial UniqueFactorizationMonoid
@@ -124,6 +134,38 @@ public theorem monicConvPartialSum_zero {F : Type*} [Field F] (α β : F[X] → 
     rw [← monic_natDegree_le_zero_iff]
     exact and_congr_right fun _ => ⟨fun h => by omega, fun h => by omega⟩
   rw [monicConvPartialSum, hset, finsum_mem_singleton, monicDirichletConv_one]
+
+/-- **Shifted partial sums of a Dirichlet convolution.** Let $F$ be a field, let
+$\alpha, \beta \colon F[T] \to \mathbb{C}$, let $\alpha * \beta$ be their Dirichlet convolution
+over monic divisors, let $f \in F[T]$ and let $n$ be a natural number. Then
+$S_f[\alpha, \beta](n) = \sum_g (\alpha * \beta)(fg)$, the sum over the monic $g \in F[T]$ with
+$\deg f + \deg g \le n$, where $\deg 0 = 0$. This is the paper's sum over $g$ of degree at most
+$n - \deg f$.
+
+The sum is a finitary sum: it is $0$ when infinitely many of its terms are nonzero, which can
+happen only for infinite $F$.
+
+Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
+Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
+public noncomputable def monicConvShiftedSum {F : Type*} [Field F] (α β : F[X] → ℂ)
+    (f : F[X]) (n : ℕ) : ℂ :=
+  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n}, monicDirichletConv α β (f * g)
+
+/-- **Shifted partial sums vanish below $\deg f$.** Let $F$ be a field, let
+$\alpha, \beta \colon F[T] \to \mathbb{C}$ and let $f \in F[T]$. For every natural number
+$n < \deg f$, the shifted partial sum of the Dirichlet convolution satisfies
+$S_f[\alpha, \beta](n) = 0$.
+
+Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
+Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
+public theorem monicConvShiftedSum_of_lt {F : Type*} [Field F] (α β : F[X] → ℂ) {f : F[X]}
+    {n : ℕ} (hn : n < f.natDegree) : monicConvShiftedSum α β f n = 0 := by
+  have hset : {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n} = ∅ := by
+    ext g
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_le]
+    intro _
+    omega
+  rw [monicConvShiftedSum, hset, finsum_mem_empty]
 
 /-- **Weighted convolution sum.** Let $F$ be a field, let $\gamma, \alpha, \beta$ be functions from
 $F[T]$ to $\mathbb{C}$, and write $\alpha * \beta$ for the monic Dirichlet convolution of $\alpha$
@@ -522,6 +564,42 @@ private theorem divisor_sum_eq_pairs [Finite F] (α β : F[X] →* ℂ) {f : F[X
       rw [divisor_coefficient hf]
       split <;> simp [w]
 
+-- Restrict the factorization sum to products divisible by f, reindexed as f * g.
+open Classical in
+private theorem shifted_eq_pairs [Finite F] (α β : F[X] → ℂ) {f : F[X]}
+    (hf : f.Monic) (n : ℕ) :
+    monicConvShiftedSum α β f n =
+      ∑ p ∈ (pairs (n : ℤ)).filter (fun p => f ∣ p.1 * p.2), α p.1 * β p.2 := by
+  have hset : {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n} =
+      {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ (n : ℤ) - f.natDegree} := by
+    ext g
+    simp only [Set.mem_ofPred_eq]
+    exact and_congr_right fun _ => by omega
+  rw [monicConvShiftedSum, hset, finsum_mem_eq_finite_toFinset_sum _ (finite_monics _)]
+  change (∑ g ∈ monics ((n : ℤ) - f.natDegree), monicDirichletConv α β (f * g)) = _
+  calc
+    _ = ∑ h ∈ (monics (n : ℤ)).filter (f ∣ ·), monicDirichletConv α β h := by
+      apply Finset.sum_bij (fun g _ => f * g)
+      · intro g hg
+        obtain ⟨hgm, hgd⟩ := mem_monics.mp hg
+        refine Finset.mem_filter.mpr ⟨mem_monics.mpr ⟨hf.mul hgm, ?_⟩, dvd_mul_right f g⟩
+        rw [natDegree_mul hf.ne_zero hgm.ne_zero]
+        omega
+      · exact fun _ _ _ _ h => mul_left_cancel₀ hf.ne_zero h
+      · intro h hh
+        obtain ⟨hh, hdiv⟩ := Finset.mem_filter.mp hh
+        obtain ⟨hhm, hhd⟩ := mem_monics.mp hh
+        have hgm := monic_quotient hf hhm hdiv
+        have hmul := mul_quotient hf hdiv
+        have hdeg := natDegree_mul hf.ne_zero hgm.ne_zero
+        rw [hmul] at hdeg
+        exact ⟨h /ₘ f, mem_monics.mpr ⟨hgm, by omega⟩, hmul⟩
+      · intro g _
+        rfl
+    _ = _ := by
+      simpa only [Finset.sum_filter, ite_mul, one_mul, zero_mul] using
+        sum_conv_eq_pairs α β (fun h => if f ∣ h then 1 else 0) (n : ℤ)
+
 -- Expand the weight by Möbius inversion, then sum in the opposite order.
 open Classical in
 private theorem sum_weighted_pairs [Finite F] (γ α β : F[X] → ℂ) (k : ℤ) :
@@ -597,5 +675,37 @@ public theorem weightedMonicConvSum_eq_of_completelyMultiplicative {F : Type*} [
   apply Finset.sum_congr rfl
   intro f hf
   rw [divisor_sum_eq_pairs α β (mem_monics.mp hf).1]
+
+open weightedMonicConvSum_eq_of_completelyMultiplicative in
+/-- **Weighted convolution sums as sums of shifted sums.** Let $F$ be a finite field and let
+$\gamma, \alpha, \beta$ be functions from $F[T]$ to $\mathbb{C}$. Write $\alpha * \beta$ for the
+monic Dirichlet convolution, $\mu$ for the Möbius function of $F[T]$, and $\lambda = \gamma * \mu$.
+For a natural number $n$ let $M_{\le n}$ be the set of monic polynomials in $F[T]$ of degree at
+most $n$, let $D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \gamma(f)\,(\alpha * \beta)(f)$
+and, for monic $f$, let
+$S_f(\alpha, \beta; n) = \sum_{g \text{ monic},\ \deg f + \deg g \le n} (\alpha * \beta)(fg)$.
+Then
+$$D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \lambda(f)\, S_f(\alpha, \beta; n).$$
+
+Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
+Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 4
+(`integers-2026-A80-lem-4`). -/
+public theorem weightedMonicConvSum_eq_sum_shifted {F : Type*} [Field F] [Finite F]
+    (γ α β : F[X] → ℂ) (n : ℕ) :
+    weightedMonicConvSum γ α β n =
+      ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n},
+        monicDirichletConv γ (fun g => (moebius g : ℂ)) f * monicConvShiftedSum α β f n := by
+  classical
+  have hset : {f : F[X] | f.Monic ∧ f.natDegree ≤ n} =
+      {f : F[X] | f.Monic ∧ (f.natDegree : ℤ) ≤ (n : ℤ)} := by
+    ext f
+    simp
+  rw [weightedMonicConvSum, hset]
+  simp only [finsum_mem_eq_finite_toFinset_sum _ (finite_monics (F := F) (n : ℤ))]
+  change (∑ f ∈ monics (n : ℤ), _) = ∑ f ∈ monics (n : ℤ), _
+  rw [sum_conv_eq_pairs, sum_weighted_pairs]
+  apply Finset.sum_congr rfl
+  intro f hf
+  rw [shifted_eq_pairs α β (mem_monics.mp hf).1 n]
 
 end MetaMathlibExt

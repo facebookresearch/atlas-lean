@@ -258,38 +258,6 @@ public theorem monicDivisorCount_one_left {F : Type*} [Field F] {f : F[X]} (hf :
   obtain rfl := Subsingleton.elim i 0
   simpa using hprod
 
-/-- **Shifted partial sums of a Dirichlet convolution.** Let $F$ be a field, let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$, let $\alpha * \beta$ be their Dirichlet convolution
-over monic divisors, let $f \in F[T]$ and let $n$ be a natural number. Then
-$S_f[\alpha, \beta](n) = \sum_g (\alpha * \beta)(fg)$, the sum over the monic $g \in F[T]$ with
-$\deg f + \deg g \le n$, where $\deg 0 = 0$. This is the paper's sum over $g$ of degree at most
-$n - \deg f$.
-
-The sum is a finitary sum: it is $0$ when infinitely many of its terms are nonzero, which can
-happen only for infinite $F$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
-public noncomputable def monicConvShiftedSum {F : Type*} [Field F] (α β : F[X] → ℂ)
-    (f : F[X]) (n : ℕ) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n}, monicDirichletConv α β (f * g)
-
-/-- **Shifted partial sums vanish below $\deg f$.** Let $F$ be a field, let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$ and let $f \in F[T]$. For every natural number
-$n < \deg f$, the shifted partial sum of the Dirichlet convolution satisfies
-$S_f[\alpha, \beta](n) = 0$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
-public theorem monicConvShiftedSum_of_lt {F : Type*} [Field F] (α β : F[X] → ℂ) {f : F[X]}
-    {n : ℕ} (hn : n < f.natDegree) : monicConvShiftedSum α β f n = 0 := by
-  have hset : {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n} = ∅ := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_le]
-    intro _
-    omega
-  rw [monicConvShiftedSum, hset, finsum_mem_empty]
-
 /-- **Shifted partial sums for completely multiplicative functions.** Let $F$ be a finite field
 and let $\alpha, \beta \colon F[T] \to \mathbb{C}$ be completely multiplicative, that is, monoid
 homomorphisms from the multiplicative monoid of $F[T]$ to $\mathbb{C}$. Write $\mu$ for the Möbius
@@ -316,24 +284,6 @@ public theorem_wanted monicConvShiftedSum_eq_of_completelyMultiplicative {F : Ty
         ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ d},
           (moebius ℓ : ℂ) * β ℓ * monicConvPartialSum α β ((n : ℤ) - (f * ℓ).natDegree)
 
-/-- **Weighted convolution sums as sums of shifted sums.** Let $F$ be a finite field and let
-$\gamma, \alpha, \beta$ be functions from $F[T]$ to $\mathbb{C}$. Write $\alpha * \beta$ for the
-monic Dirichlet convolution, $\mu$ for the Möbius function of $F[T]$, and $\lambda = \gamma * \mu$.
-For a natural number $n$ let $M_{\le n}$ be the set of monic polynomials in $F[T]$ of degree at
-most $n$, let $D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \gamma(f)\,(\alpha * \beta)(f)$
-and, for monic $f$, let
-$S_f(\alpha, \beta; n) = \sum_{g \text{ monic},\ \deg f + \deg g \le n} (\alpha * \beta)(fg)$.
-Then
-$$D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \lambda(f)\, S_f(\alpha, \beta; n).$$
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 4
-(`integers-2026-A80-lem-4`). -/
-public theorem_wanted weightedMonicConvSum_eq_sum_shifted {F : Type*} [Field F] [Finite F]
-    (γ α β : F[X] → ℂ) (n : ℕ) :
-    weightedMonicConvSum γ α β n =
-      ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n},
-        monicDirichletConv γ (fun g => (moebius g : ℂ)) f * monicConvShiftedSum α β f n
 
 /-- **Convolution of the $B_\kappa$-free indicator with the Möbius function.** Let $F$ be a field
 and let $\kappa$ assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ne 0$ for
