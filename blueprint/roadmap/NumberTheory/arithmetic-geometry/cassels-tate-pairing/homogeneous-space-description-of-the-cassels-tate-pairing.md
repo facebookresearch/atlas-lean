@@ -18,9 +18,20 @@ the function field of $X_{K_s}$.
 2. Let $b' \in H^2(G_K, K_s(X)^\times/K_s^\times)$ be its image under the connecting map of
    $0 \to K_s(X)^\times/K_s^\times \to \operatorname{Div}^0(X_{K_s}) \to \operatorname{Pic}^0(X_{K_s}) \to 0$. As
    $H^3(G_K, K_s^\times) = 0$, $b'$ lifts to $f' \in H^2(G_K, K_s(X)^\times)$.
-3. For every place $v$ the restriction $f'_v \in H^2(G_v, K_{v,s}(X)^\times)$ is the image of a unique
-   $c_v \in \mathrm{Br}(K_v) = H^2(G_v, K_{v,s}^\times)$, because $X$ has a $K_v$-point (one may evaluate $f'_v$ at a
-   point of $X(K_v)$ away from its zeros and poles), and almost all $c_v$ vanish.
+3. For every place $v$, the restriction $f'_v \in H^2(G_v, K_{v,s}(X)^\times)$ is the image of a unique
+   $c_v \in \mathrm{Br}(K_v) = H^2(G_v, K_{v,s}^\times)$.
+   - *Existence.* The image $a'_v$ of $a'$ in $H^1(G_v, \operatorname{Pic}^0(X_{K_{v,s}}))$ is zero, because $a'$ lies in
+     $\text{Ш}(K, A^\vee)$. The image of $f'_v$ in $H^2(G_v, K_{v,s}(X)^\times/K_{v,s}^\times)$ is the restriction $b'_v$ of
+     $b'$, which is the image of $a'_v$ under the local connecting map, hence zero. By the exactness of the local
+     cohomology sequence of $1 \to K_{v,s}^\times \to K_{v,s}(X)^\times \to K_{v,s}(X)^\times/K_{v,s}^\times \to 1$,
+     $f'_v$ comes from $\mathrm{Br}(K_v)$.
+   - *Uniqueness.* Since $X$ has a $K_v$-point, the map $\mathrm{Br}(K_v) \to H^2(G_v, K_{v,s}(X)^\times)$ is injective
+     (Milne, Remark I.6.11). One may then compute $c_v$ by evaluating $f'_v$ at a point of $X(K_v)$ away from its zeros
+     and poles (Poonen–Stoll, §3.1, footnote 5).
+
+   Only finitely many $c_v$ are nonzero: by the comparison below, the $c_v$ are the classes of the local terms of the
+   Albanese–Picard definition (Poonen–Stoll, proof of Proposition 32), and Milne writes the family $(c_v)$ in the
+   direct sum $\bigoplus_v \mathrm{Br}(K_v)$.
 
 Then
 
@@ -35,17 +46,18 @@ definition.
 
 A good expansion has pages for:
 
-- Lang's reciprocity law $D(a, a') = {}^t D(a', a)$ for a divisor $D$ on a product $V \times W$ of varieties and
-  zero-cycles $a$, $a'$ of degree $0$ summing to zero in the Albanese varieties, with disjoint supports (Lang,
-  *Abelian Varieties*, Chapter VI, §4, Theorem 10), which makes the pairings of the Albanese–Picard and
+- Lang's reciprocity law: for a divisor $D$ on a product $V \times W$ of varieties and zero-cycles
+  $a \in Y^0(V_{K_s})$ and $a' \in Y^0(W_{K_s})$, of degree $0$ and summing to zero in the Albanese varieties, with
+  $\operatorname{supp}(a \times a') \cap \operatorname{supp}(D) = \varnothing$ in $V \times W$, the values $D(a, a')$ and
+  ${}^t D(a', a)$ are defined and equal (Lang, *Abelian Varieties*, Chapter VI, §4, Theorem 10, p. 171, as stated in
+  Poonen–Stoll, §2, p. 1114), which makes the pairings of the Albanese–Picard and
   Albanese–Albanese definitions agree on the overlap;
 - Albanese varieties and their degree-$i$ torsors, and the Albanese–Picard pairing on
   $Y^0(V_{K_s}) \times \operatorname{Div}^0(V_{K_s})$, with its independence of the Poincaré divisor by the seesaw
   principle (Poonen–Stoll, §§2 and 3.2);
-- the injectivity of $\mathrm{Br}(K_v) \to H^2(G_v, K_{v,s}(X)^\times)$ when $X(K_v)$ is not empty, from the
-  injectivity of $\mathrm{Br}(Y) \to \mathrm{Br}(k(Y))$ for a smooth variety $Y$ and the section of
-  $\mathrm{Br}(k) \to \mathrm{Br}(Y)$ given by a rational point (Milne, Remark I.6.11, p. 80), which makes $c_v$
-  unique;
+- the injectivity of $\mathrm{Br}(K_v) \to H^2(G_v, K_{v,s}(X)^\times)$ when $X(K_v)$ is not empty, used for the
+  uniqueness in 3, from the injectivity of $\mathrm{Br}(Y) \to \mathrm{Br}(k(Y))$ for a smooth variety $Y$ and the
+  section of $\mathrm{Br}(k) \to \mathrm{Br}(Y)$ given by a rational point (Milne, Remark I.6.11, p. 80);
 - the four comparisons, Poonen–Stoll, Propositions 31 to 34: the Albanese–Picard pairings of a variety $V$ and of
   its Albanese variety agree (Proposition 31); the Albanese–Picard definition for $A$ agrees with the homogeneous
   space definition (Proposition 32); the Albanese–Albanese definition for a divisor $D$ agrees with the
@@ -77,5 +89,5 @@ A good expansion has pages for:
   of $\mathrm{Br}(K_v) \to H^2(G_v, K_{v,s}(X)^\times)$ for a locally trivial $X$), and Remark 6.12 with footnote 16
   (pp. 81–82, a fourth description for Jacobians, and the reference to C. D. Gonzalez-Aviles, J. Math. Sci. Univ.
   Tokyo 10 (2003), 391–419, for its agreement with Proposition 6.9).
-- S. Lang, *Abelian Varieties*, Interscience, 1959: Chapter VI, §4, Theorem 10 (the reciprocity law), as cited by
-  Poonen and Stoll and by Milne, Remark I.3.5.
+- S. Lang, *Abelian Varieties*, Interscience, 1959: Chapter VI, §4, Theorem 10, p. 171 (the reciprocity law), not
+  read here; cited as stated by Poonen and Stoll, §2, p. 1114, and by Milne, Remark I.3.5, p. 44.

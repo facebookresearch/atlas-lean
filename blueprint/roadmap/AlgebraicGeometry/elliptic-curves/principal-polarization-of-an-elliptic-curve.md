@@ -12,51 +12,57 @@ $O$ at infinity, and let $\bar K$ be an algebraic closure of $K$.
    [abelian variety](../abelian-varieties/abelian-scheme.md) of dimension $1$ over $K$ with zero $O$.
 2. The line bundle $L = \mathcal{O}_E((O))$ of the $K$-rational divisor $(O)$ is ample, and the homomorphism
    $\varphi_L \colon E \to E^\vee$ to the [dual abelian variety](../abelian-varieties/dual-abelian-variety.md),
-   $P \mapsto t_P^* L \otimes L^{-1}$, is an isomorphism: a principal
-   [polarization](../abelian-varieties/polarization.md) of $E$, defined over $K$ and coming from a line bundle on $E$
-   over $K$. On points, $\varphi_L(P)$ is the class of $(-P) - (O)$ in
+   $P \mapsto t_P^* L \otimes L^{-1}$, is an isomorphism of abelian varieties over $K$: a principal
+   [polarization](../abelian-varieties/polarization.md) of $E$, coming from a line bundle on $E$ over $K$. On points,
+   since $t_P^* \mathcal{O}_E((O)) = \mathcal{O}_E((-P))$, $\varphi_L(P)$ is the class of $(-P) - (O)$ in
    $\operatorname{Pic}^0(E_{\bar K}) = E^\vee(\bar K)$.
-3. Equivalently, every divisor of degree $0$ on $E_{\bar K}$ is linearly equivalent to $(P) - (O)$ for exactly one
-   $P \in E(\bar K)$, and $P \mapsto$ the class of $(P) - (O)$ is an isomorphism of $\operatorname{Gal}(\bar K/K)$-modules
-   $E(\bar K) \to \operatorname{Pic}^0(E_{\bar K})$, compatible with the group law.
 
-Consequently $\varphi_L$ induces isomorphisms $H^1(K, E) \to H^1(K, E^\vee)$ and, for a number field $K$,
-$\text{Ш}(K, E) \to \text{Ш}(K, E^\vee)$, and identifies the Weil pairing $e_n$ on $E[n] \times E^\vee[n]$ with a pairing
-on $E[n]$.
+Consequently $\varphi_L$ induces isomorphisms of $\operatorname{Gal}(\bar K/K)$-modules $E(\bar K) \to E^\vee(\bar K)$, of
+groups $H^1(K, E) \to H^1(K, E^\vee)$ and, for a number field $K$, $\text{Ш}(K, E) \to \text{Ш}(K, E^\vee)$; and it
+carries the Weil pairing $e_n$ on $E[n] \times E^\vee[n]$ to a pairing on $E[n]$.
+
+That $\varphi_L$ is an isomorphism is proved by its degree, not on points: in characteristic $p$ a homomorphism that
+is bijective on $\bar K$-points need not be an isomorphism (the relative Frobenius of $E$ has degree $p$). By
+Mumford's Riemann–Roch theorem, $\deg \varphi_L = \chi(L)^2$ and $\chi(L) = (D^g)/g!$ for $L = \mathcal{O}(D)$; here
+$g = 1$ and $D = (O)$, so $\chi(L) = \deg (O) = 1$ and $\varphi_L$ is an isogeny of degree $1$, hence an isomorphism.
 
 ## Expansion
 
 A good expansion has pages for:
 
-- the Riemann–Roch theorem for a curve of genus $1$, $\ell(D) = \deg D$ for $\deg D \ge 1$, from which item 3 follows
-  (Silverman, Proposition III.3.4, using Corollary II.5.5);
-- the group law of a Weierstrass cubic as a morphism, which makes $E$ a group variety and so, being a smooth
-  projective connected curve, an abelian variety (Silverman, Theorem III.3.6);
-- the ampleness of a divisor of positive degree on a smooth projective curve, and the identification of
-  $E^\vee(\bar K)$ with $\operatorname{Pic}^0(E_{\bar K})$ (its item 1 on the dual abelian variety), which turn item 3 into
-  item 2.
+- the group law of a Weierstrass cubic as a morphism defined over $K$, which makes $E$ a group variety and so, being
+  a smooth projective geometrically connected curve, an abelian variety (item 1; Milne, *Abelian Varieties*,
+  Introduction, pp. 1–2, over an algebraically closed field, where the group structure transported from
+  $\operatorname{Pic}^0(E)$ by $P \mapsto [P] - [O]$ "agrees with the structure defined by chords and tangents, and hence
+  is defined by polynomials");
+- the ampleness of $(O)$: the functions $1$, $x$, $y$, whose only pole is at $O$, of order at most $3$, give the
+  Weierstrass embedding, so $3(O)$ is very ample and $(O)$ is ample (Milne, *Abelian Varieties*, Example I.6.5,
+  p. 30);
+- the degree argument above, with the vanishing of $\deg \varphi_L$ exactly when $\varphi_L$ is not an isogeny, as
+  in the convention of the page on line bundles on abelian varieties.
 
 ## Depends on
 
 - [Abelian scheme](../abelian-varieties/abelian-scheme.md), for abelian varieties
-- [Dual abelian variety](../abelian-varieties/dual-abelian-variety.md), for $E^\vee$ and $\varphi_L$ (its items 1 and 2)
+- [Dual abelian variety](../abelian-varieties/dual-abelian-variety.md), for $E^\vee$, $E^\vee(\bar K) = \operatorname{Pic}^0(E_{\bar K})$ and $\varphi_L$ (its items 1 and 2)
 - [Polarization](../abelian-varieties/polarization.md), for principal polarizations
 
 ## Proof depends on
 
-- [Standard results of coherent cohomology on projective varieties](../birational-geometry/standard-results-of-coherent-cohomology.md), for the Riemann–Roch polynomial and Serre duality behind the Riemann–Roch theorem on the curve $E$
-- [Dual abelian variety](../abelian-varieties/dual-abelian-variety.md), for $E^\vee(\bar K) = \operatorname{Pic}^0(E_{\bar K})$ (its item 1) and the isogeny $\varphi_L$ for ample $L$ (its item 2)
-- [Abelian varieties are projective](../abelian-varieties/abelian-varieties-are-projective.md), for ample divisors on abelian varieties
+- [Line bundles on abelian varieties](../abelian-varieties/line-bundles-on-abelian-varieties.md), for Mumford's Riemann–Roch theorem $\chi(\mathcal{O}(D)) = (D^g)/g!$ and $\deg \varphi_L = \chi(L)^2$ (its item 2)
+- [Dual abelian variety](../abelian-varieties/dual-abelian-variety.md), for $\varphi_L$ being an isogeny when $L$ is ample (its item 2)
+- [Isogenies of abelian schemes](../abelian-varieties/isogenies-of-abelian-schemes.md), for the degree of an isogeny as the rank of $f_* \mathcal{O}$ (its item 1), so that an isogeny of degree $1$ is an isomorphism
 
 ## Sources
 
-- J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed., Graduate Texts in Mathematics 106, Springer, 2009:
-  Chapter III, Proposition 3.4 (item 3), and Theorem 3.6 (the group law is a morphism); Chapter II,
-  Corollary 5.5 (Riemann–Roch in genus $1$).
+- J. S. Milne, *Elliptic Curves*, BookSurge, 2006, <https://www.jmilne.org/math/Books/ectext6.pdf>: Chapter I,
+  Proposition 4.10, p. 35 (for a nonsingular projective curve $C$ of genus $1$ and $O \in C(k)$, the map
+  $P \mapsto [P] - [O] \colon C(k) \to \operatorname{Pic}^0(C)$ is bijective), with the paragraph after it (the group
+  structure it defines is the chord-and-tangent one).
+- J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008), <https://www.jmilne.org/math/CourseNotes/AV.pdf>:
+  Introduction, pp. 1–3 (the equivalent definitions of an elliptic curve, pp. 1–2, and "In the case of an elliptic
+  curve, $E^\vee = E$", p. 3); Chapter I, Example 6.5, p. 30 (the divisor of the zero element is ample).
 - B. Poonen and M. Stoll, *The Cassels-Tate pairing on polarized abelian varieties*, Ann. of Math. (2) 150 (1999),
   1109–1149, doi:10.2307/121064: Introduction, p. 1110 (for an elliptic curve the pairing on $\text{Ш}(E)$ is
-  alternating, by Cassels), §2, p. 1114 (the convention $\varphi_L(a) = t_a^* L \otimes L^{-1}$), and Corollary 4 (p. 1120,
-  the canonical polarization of a Jacobian, which for genus $1$ is $E$ itself, comes from a rational divisor on a
-  homogeneous space).
-- J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
-  Chapter I, Remark 6.11 (p. 80, elliptic curves as the case of Cassels' original definition).
+  alternating, by Cassels), and §2, p. 1114 (the convention $\varphi_L(a) = t_a^* L \otimes L^{-1}$, and principal
+  polarizations as polarizations that are isomorphisms).

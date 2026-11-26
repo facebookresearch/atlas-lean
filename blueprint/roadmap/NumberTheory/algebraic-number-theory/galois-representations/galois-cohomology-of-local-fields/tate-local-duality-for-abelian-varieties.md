@@ -23,13 +23,15 @@ $\mathbb{Q}/\mathbb{Z}$ by the local invariant map.
     $A(k) \to \mathbb{Q}/\mathbb{Z}$. For $r \ge 2$, $H^r(k, A) = H^r(k, A^\vee) = 0$.
 3. **Compatibility with finite level.** For every $n \ge 1$, let
     $e_n \colon A[n] \times A^\vee[n] \to \mu_n$ be the pairing given by the canonical identification of
-    $A^\vee[n]$ with the Cartier dual of $A[n]$. Through the Kummer sequences
-    $0 \to A[n] \to A \xrightarrow{n} A \to 0$ and $0 \to A^\vee[n] \to A^\vee \xrightarrow{n} A^\vee \to 0$
-    on $\bar k$-points, the pairing of 1 is compatible, up to a sign fixed by the conventions for cup products and
-    connecting maps, with the perfect pairings $H^i(k, A[n]) \times H^{2-i}(k, A^\vee[n]) \to H^2(k, \mu_n)$ of
-    [local Tate duality](local-tate-duality.md) through $e_n$: the connecting map
-    $A^\vee(k)/nA^\vee(k) \to H^1(k, A^\vee[n])$ and the map $H^1(k, A[n]) \to H^1(k, A)[n]$ are adjoint, and so
-    are $A(k)/nA(k) \to H^1(k, A[n])$ and $H^1(k, A^\vee[n]) \to H^1(k, A^\vee)[n]$.
+    $A^\vee[n]$ with the Cartier dual of $A[n]$, and pair $H^1(k, A^\vee[n])$ with $H^1(k, A[n])$ through $e_n$ by
+    [local Tate duality](local-tate-duality.md), in the form of the Yoneda pairing
+    $\operatorname{Ext}^1_k(A[n], \mathbb{G}_m) \times H^1(k, A[n]) \to H^2(k, \mathbb{G}_m)$, which cup product identifies with
+    the duality $H^1(k, A^\vee[n]) \times H^1(k, A[n]) \to H^2(k, \mu_n)$ (Milne, Theorem I.2.1 and Corollary I.2.3).
+    Through the Kummer sequences $0 \to A[n] \to A \xrightarrow{n} A \to 0$ and
+    $0 \to A^\vee[n] \to A^\vee \xrightarrow{n} A^\vee \to 0$ on $\bar k$-points, the pairing of 1 is compatible with these
+    finite-level pairings: the connecting map $A^\vee(k)/nA^\vee(k) \to H^1(k, A^\vee[n])$ is adjoint to the map
+    $H^1(k, A[n]) \to H^1(k, A)[n]$, and the map $H^1(k, A^\vee[n]) \to H^1(k, A^\vee)[n]$ is adjoint to the connecting
+    map $A(k)/nA(k) \to H^1(k, A[n])$.
 4. **The real numbers.** For an abelian variety $A$ over $\mathbb{R}$, with $G = \operatorname{Gal}(\mathbb{C}/\mathbb{R})$,
     the analogous pairing of Tate cohomology groups
 
@@ -45,8 +47,9 @@ A good expansion has pages for:
 
 - the Barsotti–Weil formula $A^\vee(\bar k) = \operatorname{Ext}^1_{\bar k}(A, \mathbb{G}_m)$ and the vanishing of
   $\operatorname{Ext}^r_{\bar k}(A, \mathbb{G}_m)$ for $r \ge 2$ and of $\operatorname{Hom}_{\bar k}(A, \mathbb{G}_m)$, from which the
-  spectral sequence gives $H^r(k, A^\vee) \cong \operatorname{Ext}^{r+1}_k(A, \mathbb{G}_m)$ (Milne, Lemma I.3.1, after Serre's
-  *Groupes algébriques et corps de classes*, VII §3, and Oort);
+  spectral sequence gives $H^r(k, A^\vee) \cong \operatorname{Ext}^{r+1}_k(A, \mathbb{G}_m)$ (Milne, Lemma I.3.1, citing Serre,
+  *Groupes algébriques et corps de classes*, 1959, VII §3, for the Barsotti–Weil formula and Oort, 1966, Proposition
+  12.3, for the vanishing; neither read here);
 - the open subgroup of $A(k)$ of finite index isomorphic to $\mathcal{O}_k^{\dim A}$, given by the logarithm of the
   formal group of $A$, with its consequences $A(k) = A(k)^\wedge$ and
   $\# A(k)/nA(k) = (\mathcal{O}_k : n\mathcal{O}_k)^{\dim A} \cdot \# A(k)[n]$ (Milne, Lemma I.3.3);
@@ -79,7 +82,8 @@ A good expansion has pages for:
   Chapter I, §3: Lemma 3.1 (p. 40), Theorem 3.2 with its proof and Lemma 3.3 (pp. 41–43), Corollary 3.4 (p. 43,
   the statement of items 1 and 2), Remark 3.5 (p. 44, the description of the pairings by a Poincaré divisor and
   their compatibility with the $e_n$-pairings of finite level), Remark 3.7 (p. 46, the archimedean case), and the
-  diagram at the start of the proof of Theorem 3.2 (p. 42, item 3).
+  commutative diagram at the start of the proof of Theorem 3.2, for $r = 1$ (p. 42, item 3); §2, Theorem 2.1 and
+  Corollary 2.3 (pp. 26–28, the finite-level duality as a Yoneda pairing and by cup product).
 - J. Tate, "WC-groups over $\mathfrak{p}$-adic fields", Séminaire Bourbaki, exposé 156 (1957/58), the original
   source of the duality and of the description of the pairing in Milne's Remark I.3.5, as Milne's Notes to
   Chapter I, §3 (p. 48) say.

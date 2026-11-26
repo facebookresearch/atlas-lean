@@ -3,8 +3,8 @@
 Let $K$ be a number field, $A$ an [abelian variety](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md)
 over $K$ with [dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md) $A^\vee$,
 and let $\langle\,,\rangle \colon \text{Ш}(K, A) \times \text{Ш}(K, A^\vee) \to \mathbb{Q}/\mathbb{Z}$ be the
-[Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md). Let $L$ be a line bundle on $A$ defined over
-$K$ (equivalently, $L = \mathcal{O}(D)$ for a $K$-rational divisor $D$ on $A$), and let
+[Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md). Let $D$ be a $K$-rational divisor on $A$,
+$L = \mathcal{O}(D)$ its line bundle, and let
 $\varphi_L \colon A \to A^\vee$ be the homomorphism $a \mapsto t_a^* L \otimes L^{-1}$, which is defined over $K$ and
 induces $\varphi_L \colon \text{Ш}(K, A) \to \text{Ш}(K, A^\vee)$. Then
 

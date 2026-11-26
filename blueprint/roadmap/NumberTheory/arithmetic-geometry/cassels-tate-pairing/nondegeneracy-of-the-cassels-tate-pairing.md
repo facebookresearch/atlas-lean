@@ -32,7 +32,7 @@ the final count:
 1. (Milne, Lemma I.6.15.) An element $(a_v) \in \bigoplus_{v \in S} H^1(K_v, A_m)$ is orthogonal, under the sum of the
    local pairings $\mathrm{inv}_v(a_v \cup a'_v)$, to the image of the Selmer group
    $S^{(m)}_S(K, A^\vee) \subseteq H^1(G_S, A^\vee_m)$ if and only if it is the sum of an element of the image of
-   $\prod_{v \in S} A(K_v)$ and an element of the image of $H^1(G_S, A_m)$; by duality from the Poitou–Tate sequence
+   $\prod_{v \in S} H^0(K_v, A)$ (Tate cohomology at the archimedean places) and an element of the image of $H^1(G_S, A_m)$; by duality from the Poitou–Tate sequence
    for $A_m$ and Tate local duality for $A$.
 2. (Milne, Lemma I.6.16.) If $\text{Ш}_0(K, A)$ denotes the subgroup of elements of $\text{Ш}(K, A)$ that become divisible
    by $m$ in $H^1(G_S, A(K_S))$, there is an exact sequence

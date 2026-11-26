@@ -7,9 +7,10 @@ abelian variety over a number field, which the proof of the
 
 Let $K$ be a number field, $\bar K$ an algebraic closure and $A$ an
 [abelian variety](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md) over $K$. Write
-$H^r(K, A) = H^r(G_K, A(\bar K))$ and, for a place $v$ of $K$, $H^r(K_v, A) = H^r(G_v, A(\bar K_v))$, reached by
-restriction to a decomposition group $G_v$ and the inclusion $A(\bar K) \subseteq A(\bar K_v)$ (with Tate cohomology
-for $r = 0$ at the archimedean places). The **Shafarevich–Tate group** is
+$H^r(K, A) = H^r(G_K, A(\bar K))$ and, for a place $v$ of $K$, $H^r(K_v, A) = H^r(G_v, A(\bar K_v))$ (with Tate
+cohomology for $r = 0$ at the archimedean places). Localization at $v$ is restriction to a decomposition group $G_v$
+followed by the extension of coefficients along $A(\bar K) \subseteq A(\bar K_v)$; on $H^r(K, A[m])$ it is
+restriction followed by $A[m] \subseteq A(\bar K_v)$. The **Shafarevich–Tate group** is
 $\text{Ш}(K, A) = \ker\bigl(H^1(K, A) \to \prod_v H^1(K_v, A)\bigr)$, and for an integer $m \ge 1$ the **$m$-Selmer
 group** is $S^{(m)}(K, A) = \ker\bigl(H^1(K, A[m]) \to \prod_v H^1(K_v, A)\bigr)$, where $A[m] = A[m](\bar K)$.
 
@@ -18,16 +19,29 @@ group** is $S^{(m)}(K, A) = \ker\bigl(H^1(K, A[m]) \to \prod_v H^1(K_v, A)\bigr)
 2. **Selmer sequence.** The Kummer sequence $0 \to A[m] \to A(\bar K) \xrightarrow{m} A(\bar K) \to 0$ gives an exact
    sequence $0 \to A(K)/mA(K) \to S^{(m)}(K, A) \to \text{Ш}(K, A)[m] \to 0$.
 3. **Finiteness.** $S^{(m)}(K, A)$ is finite. Hence $A(K)/mA(K)$ (the weak Mordell–Weil theorem) and
-   $\text{Ш}(K, A)[m]$ are finite, and for every prime $\ell$ the $\ell$-primary part $\text{Ш}(K, A)(\ell)$ is the
-   direct sum of a finite group and a divisible group isomorphic to $(\mathbb{Q}_\ell/\mathbb{Z}_\ell)^{r}$ for some
-   $r \ge 0$; in particular $\text{Ш}(K, A)(\ell)$ modulo its maximal divisible subgroup is finite.
+   $\text{Ш}(K, A)[m]$ are finite, and for every prime $\ell$ the $\ell$-primary part $\text{Ш}(K, A)(\ell)$ is an
+   extension of a finite group by a divisible group isomorphic to $(\mathbb{Q}_\ell/\mathbb{Z}_\ell)^{r}$ for some
+   $r \ge 0$, finite because $\text{Ш}(K, A)[\ell]$ is; in particular $\text{Ш}(K, A)(\ell)$ modulo its maximal divisible subgroup is finite.
 4. **Restricted ramification.** Let $S$ be a finite set of places of $K$ containing the archimedean places, the
    places where $A$ has bad reduction and those above the primes dividing $m$, let $K_S$ be the maximal extension of
    $K$ in $\bar K$ unramified outside $S$ and $G_S = \operatorname{Gal}(K_S/K)$. Then $A[m] \subseteq A(K_S)$,
    multiplication by $m$ is surjective on $A(K_S)$, and inflation identifies the $m$-primary part
    $\text{Ш}(K, A)(m)$ with that of
    $\text{Ш}_S(K, A) = \ker\bigl(H^1(G_S, A(K_S)) \to \bigoplus_{v \in S} H^1(K_v, A)\bigr)$, and $S^{(m)}(K, A)$ with
-   $\ker\bigl(H^1(G_S, A[m]) \to \bigoplus_{v \in S} H^1(K_v, A)\bigr)$.
+   $\ker\bigl(H^1(G_S, A[m]) \to \bigoplus_{v \in S} H^1(K_v, A)\bigr)$. Here the localization of the restricted group
+   is again a restriction, along $G_v \to G_K \to G_S$, followed by the extension of coefficients along
+   $A(K_S) \subseteq A(\bar K_v)$.
+5. **Places of good reduction.** If $A$ has good reduction at a finite place $v$ not above a prime dividing $m$, then
+   $A[m] \subseteq A(K_v^{\mathrm{un}})$, multiplication by $m$ is onto $A(K_v^{\mathrm{un}})$, and
+   $H^1(G_v/I_v, A(K_v^{\mathrm{un}})) = 0$, where $K_v^{\mathrm{un}}$ is the maximal unramified extension of $K_v$ and
+   $I_v$ the inertia group.
+
+These groups are defined with the coefficients $A(\bar K_v)$ at the places. They are therefore not literally the
+groups $\text{Ш}^1(G_S, M)$ of [Tate–Shafarevich groups of Galois modules](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/tate-shafarevich-groups.md),
+which keep the same module $M$ at the places, but their analogues with the coefficients extended locally. What
+compares the two kinds of local groups at a finite place is Milne's Remark I.3.10 (a) (ii): for an abelian variety $A$
+over the fraction field $K'$ of an excellent henselian discrete valuation ring with finite residue field, the map
+$H^1(K', A) \to H^1(\hat K', A)$ to the completion is an isomorphism.
 
 ## Expansion
 
@@ -39,13 +53,14 @@ A good expansion has pages for:
 - the vanishing of $H^1(G_v/I_v, A(K_v^{\mathrm{un}}))$ at a place $v$ of good reduction, by Lang's theorem on torsors
   under connected groups over finite fields and Hensel's lemma (Milne, Proposition I.3.8 and Remark I.3.9);
 - items 1, 2 and 4 from these and the inflation–restriction sequence (Milne, Lemma I.6.3, Propositions I.6.4 and
-  I.6.5, Corollary I.6.6), and item 3 from the finiteness of $H^1(G_S, A[m])$ (Milne, Proposition I.6.2 and Remark
-  I.6.7).
+  I.6.5, Corollary I.6.6, the equality of the Selmer groups following from Corollary I.6.6 and Proposition I.6.4 by
+  the five lemma), item 3 from the finiteness of $H^1(G_S, A[m])$ (Milne, Proposition I.6.2 and Remark I.6.7), and
+  item 5 from the proof of Lemma I.6.1 over the henselian local ring at $v$ and Proposition I.3.8.
 
 ## Depends on
 
 - [Abelian scheme](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties and, through abelian schemes over the local rings, good reduction
-- [Tate–Shafarevich groups of Galois modules](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/tate-shafarevich-groups.md), of which $\text{Ш}(K, A)$ and $\text{Ш}_S(K, A)$ are instances for the discrete modules $A(\bar K)$ and $A(K_S)$
+- [Tate–Shafarevich groups of Galois modules](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/tate-shafarevich-groups.md), the fixed-coefficient analogue of $\text{Ш}(K, A)$ and $\text{Ш}_S(K, A)$, which here extend the coefficients from $A(\bar K)$ or $A(K_S)$ to $A(\bar K_v)$ at each place
 - [Galois groups with restricted ramification and their modules](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/galois-groups-with-restricted-ramification.md), for $K_S$, $G_S$ and the local groups in item 4
 - [Isogenies of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/isogenies-of-abelian-schemes.md), for multiplication by $m$ and the finite group scheme $A[m]$ in the Kummer sequence
 
@@ -59,9 +74,7 @@ A good expansion has pages for:
 ## Sources
 
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
-  Chapter I, §6: Lemma 6.1 (p. 73), Proposition 6.2 (p. 74, the weak Mordell–Weil theorem), Lemma 6.3 (p. 74, item
+  Chapter I, §6: Lemma 6.1 (p. 73, items 4 and 5), Proposition 6.2 (p. 74, the weak Mordell–Weil theorem), Lemma 6.3 (p. 74, item
   1), the definitions of $\text{Ш}_S(K, A)$ and the Selmer groups (pp. 74–75), Proposition 6.4 (p. 75, item 2),
   Proposition 6.5 and Corollary 6.6 (pp. 75–77, item 4), Remark 6.7 (p. 77, item 3); §3, Proposition 3.8 and Remark
-  3.9 (pp. 46–47).
-- J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed., Graduate Texts in Mathematics 106, Springer, 2009:
-  Chapter X, Theorem 4.2 (items 2 and 3 for an isogeny of elliptic curves).
+  3.9 (pp. 46–47, item 5), Remark 3.10 (a) (pp. 47–48, the comparison with the completion).
