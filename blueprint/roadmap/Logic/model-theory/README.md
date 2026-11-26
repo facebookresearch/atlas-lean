@@ -16,4 +16,5 @@ Relations between formal theories and their structures: first-order languages of
 
 - [Beth's definability theorem](beth-definability-theorem.md)
 - [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
+- [Compactness theorem for first-order logic](compactness-theorem-for-first-order-logic.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)

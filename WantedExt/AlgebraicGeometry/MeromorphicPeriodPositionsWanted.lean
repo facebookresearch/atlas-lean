@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionMaps
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
 public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsLocalPositionIffPeriod
+public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodModuleGeneratorMap
 
 /-!
 # Actual source period bridges and Hecke position comparison requests
@@ -23,6 +24,8 @@ Position and lattice requests concern the actual completed global
 comparison, with every representation and every original frame retained.
 The local position comparison `localPosition_iff_period` is proved in
 `MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsLocalPositionIffPeriod`.
+The period module generator map `periodModule_generator_map` is proved in
+`MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodModuleGeneratorMap`.
 
 Source: Fargues--Scholze, arXiv:2102.13459v4, Sections III.3 and VI.1--VI.2.
 No classification or Hecke-stack equivalence is a hypothesis.
@@ -130,21 +133,6 @@ public def_wanted representedPeriodLattice
     PeriodGroupPositionModels.RepresentedLattice p K V.chart.refinement.untilt
       V.scalar V.parameter G ρ
         (periodElement p K R I A T D V d U Q B G H P Aq Bq F h C M left right)
-
-/-- Every lattice generator follows the same original completed coefficient/period square. -/
-public theorem_wanted periodModule_generator_map
-    (n : ℕ) (ρ : Representation E.field G n) (v : Fin n → FormalRing p E.field d U Q) :
-    (PeriodGroupPositionModels.representationMatrix p K V.chart.refinement.untilt
-      V.scalar V.parameter G ρ
-        (periodElement p K R I A T D V d U Q B G H P Aq Bq F h C M left right) :
-          Matrix (Fin n) (Fin n)
-            (FractionRing (DeRhamPlus p V.chart.refinement.untilt.affine.pair)
-              V.parameter.value)).mulVec
-              (fun i ↦ algebraMap _ _
-                (positivePeriod p K R I A T D V d U Q B.toCompletionDictionary (v i))) =
-      fun i ↦ genericPeriodMap p K R I A T D V d U Q B
-        ((framedMatrix p E.field G H P d U Q Aq Bq F h C M left right n ρ).mulVec
-          (fun j ↦ algebraMap _ (GenericRing p E.field d U Q) (v j)) i)
 
 /-- Every change of original integral frames preserves the actual relative position. -/
 public theorem_wanted periodPosition_frame_independence
