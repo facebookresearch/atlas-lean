@@ -48,19 +48,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Restricted period of a Lucas sequence modulo $m$.** For a Lucas sequence $U = U(P, Q)$ and
-a natural number $m$, the least restricted period $\rho_U(m)$ of $U$ modulo $m$ is the least
-$s > 0$ such that $m \mid U_s$ and $U_{s+1}$ is coprime to $m$, and $0$ if there is no such $s$.
-
-In the paper's terms, $U_{s+1} \equiv M \pmod m$ for a multiplier $M$ coprime to $m$; for
-$s = \rho_U(m)$ this $U_{s+1}$ is the multiplier $M_U(m)$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 1, equations
-(1.10) and (1.12). -/
-noncomputable def lucasURestrictedPeriod (params : LucasSequenceParams) (m : ℕ) : ℕ :=
-  sInf {s : ℕ | 0 < s ∧ (m : ℤ) ∣ lucasU params s ∧ IsCoprime (lucasU params (s + 1)) (m : ℤ)}
-
 /-- **Moduli divisible by their Lucas period.** For the Lucas sequence $U$ with integer
 parameters $P$ and $Q \ne 0$ ($U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$), $S(U)$ is
 the set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo
@@ -219,24 +206,6 @@ public theorem_wanted lucasU_two_mul_and_lucasU_dvd (params : LucasSequenceParam
     (∀ n, lucasU params (2 * n + 1) =
       -params.q * lucasU params n ^ 2 + lucasU params (n + 1) ^ 2) ∧
     (∀ m n, m ∣ n → lucasU params m ∣ lucasU params n)
-
-/-- **Periods of second-order recurrences modulo $m$.** Let $U$ be the Lucas sequence with
-integer parameters $P$ and $Q \neq 0$, let $m$ be a positive integer with $\gcd(m, Q) = 1$, and
-write $\pi(m)$ and $\rho(m)$ for the period and the restricted period of $U$ modulo $m$. Then
-$\pi(m) > 0$ and $\rho(m) > 0$, and every integer sequence $w$ with
-$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$ satisfies $w_{n + \pi(m)} \equiv w_n \pmod m$ and
-$w_{n + \rho(m)} \equiv U_{\rho(m) + 1} w_n \pmod m$ for every natural number $n$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.1
-(`integers-2024-A36-thm-1-1`). -/
-public theorem_wanted lucasUPeriod_isPeriod_of_secondOrder (params : LucasSequenceParams)
-    (m : ℕ) (hm : 0 < m) (hmb : IsCoprime (m : ℤ) params.q) (w : ℕ → ℤ)
-    (hw : ∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) :
-    0 < lucasUPeriod params m ∧ 0 < lucasURestrictedPeriod params m ∧
-    (∀ n, w (n + lucasUPeriod params m) ≡ w n [ZMOD m]) ∧
-    (∀ n, w (n + lucasURestrictedPeriod params m) ≡
-      lucasU params (lucasURestrictedPeriod params m + 1) * w n [ZMOD m])
 
 /-- **Periods of Lucas sequences modulo a least common multiple.** Let $U$ be the Lucas sequence
 with integer parameters $P$ and $Q \neq 0$, and write $\pi(m)$ and $\rho(m)$ for its period and

@@ -12,13 +12,16 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Sqrt
 public import MathlibExt.NumberTheory.GeneralizedFrobeniusNumber
 import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Int.GCD
 import Mathlib.Data.Set.Card.Arithmetic
+import Mathlib.Tactic.LinearCombination
 
 /-! # Generalized Frobenius numbers of triangular numbers
 
 The representations by the reduced triangular triple are partitioned by the coefficient of the
 first triangular number. The remaining coefficients represent the residual integer by the reduced
-pair of generators.
+pair of generators. For a coprime pair `a < b` with generalized Frobenius number `g`, if
+`m > g + k * a` then `m - j * a` has at least as many representations as `g + (k - j) * a`.
 -/
 
 namespace MetaMathlibExt
@@ -151,6 +154,84 @@ theorem frobeniusRepCount_triangular_reduced_eq_sum (n : ℕ) (hn : 1 ≤ n) (m 
       2 ≤ n + 1 := by omega
       _ ≤ n * (n + 1) := Nat.le_mul_of_pos_left _ hn) (by decide)
   exact frobeniusRepCount_cons (t n) ht ![t (n + 1) / d₁, t (n + 2) / d₁] m
+
+namespace frobeniusRepCount_pair_sub_ge
+
+/-- Translate a representation by adding `u` to its first coefficient and subtracting `v`
+from its second coefficient. -/
+private theorem count_le_of_translate {a b u v : ℕ} {n m : ℤ}
+    (hsum : n + (u : ℤ) * a = m + (v : ℤ) * b)
+    (hmin : ∀ x y : ℕ, (x : ℤ) * a + (y : ℤ) * b = n → v ≤ y) :
+    frobeniusRepCount ![a, b] n ≤ frobeniusRepCount ![a, b] m := by
+  simp only [frobeniusRepCount, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  apply Set.encard_le_encard_of_injOn (f := fun x : Fin 2 → ℕ => ![x 0 + u, x 1 - v])
+  · intro x hx
+    change (x 0 : ℤ) * a + (x 1 : ℤ) * b = n at hx
+    change ((x 0 + u : ℕ) : ℤ) * a + ((x 1 - v : ℕ) : ℤ) * b = m
+    rw [Nat.cast_add, Nat.cast_sub (hmin _ _ hx)]
+    linear_combination hx + hsum
+  · intro x hx y hy hxy
+    have h₀ : x 0 + u = y 0 + u := congrFun hxy 0
+    have h₁ : x 1 - v = y 1 - v := congrFun hxy 1
+    have hx₁ := hmin _ _ hx
+    have hy₁ := hmin _ _ hy
+    exact funext (Fin.forall_fin_two.mpr ⟨by omega, by omega⟩)
+
+/-- At `g + b` the count increases, so some representation has second coefficient zero. -/
+private theorem dvd_add_generator {a b s : ℕ} {g : ℤ} (hb : 0 < b)
+    (hg : IsGenFrobeniusNumber ![a, b] s g) : (a : ℤ) ∣ g + b := by
+  by_contra h
+  have hle : frobeniusRepCount ![a, b] (g + b) ≤ frobeniusRepCount ![a, b] g := by
+    apply count_le_of_translate (u := 0) (v := 1) (by simp)
+    intro x y hxy
+    by_contra! hy
+    obtain rfl : y = 0 := by omega
+    exact h ⟨x, by simpa [mul_comm] using hxy.symm⟩
+  exact (hg.2 (g + b) (by omega)).not_ge (hle.trans hg.1)
+
+/-- Choose a residue `v < a` for which `d + v * b` is a multiple of `a`. -/
+private theorem exists_shift {a b : ℕ} (ha : 0 < a) (hab : Nat.Coprime a b) (d : ℕ) :
+    ∃ u v : ℕ, v < a ∧ d + v * b = u * a := by
+  obtain ⟨c, rfl⟩ := Nat.exists_eq_succ_of_ne_zero ha.ne'
+  obtain ⟨v, hv, hmod⟩ := Nat.exists_mul_mod_eq_of_coprime (c * d) hab.symm ha.ne'
+  have hdiv : c + 1 ∣ d + v * b := by
+    apply Nat.dvd_of_mod_eq_zero
+    rw [mul_comm v b, Nat.add_mod, hmod, ← Nat.add_mod, add_comm, ← Nat.succ_mul, Nat.mul_mod_right]
+  obtain ⟨u, hu⟩ := hdiv
+  exact ⟨u, v, hv, by simpa [mul_comm (c + 1) u] using hu⟩
+
+end frobeniusRepCount_pair_sub_ge
+
+open frobeniusRepCount_pair_sub_ge in
+/-- **Representation counts above a shifted two-generator Frobenius number.** Let $a < b$ be
+coprime positive integers, let $s$ and $k$ be natural numbers, let $g$ be the generalized Frobenius
+number $g(a, b; s)$, and for an integer $m$ let $d(m; a, b)$ be the number of representations of
+$m$ by $(a, b)$. If $m$ is an integer with $m > g + ka$, then for every natural number $j$,
+$d(m - ja; a, b) \ge d(g + (k - j)a; a, b)$.
+
+Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
+Numbers*, INTEGERS 26 (2026), Article A63, Lemma 4 (`integers-2026-A63-lem-4`), quoted from
+Subwattanachai, *Generalized Frobenius number of three variables*. -/
+theorem frobeniusRepCount_pair_sub_ge (a b : ℕ) (ha : 0 < a) (hab' : a < b)
+    (hab : Nat.Coprime a b) (s k : ℕ) (g : ℤ) (hg : IsGenFrobeniusNumber ![a, b] s g) (m : ℤ)
+    (hm : g + k * a < m) (j : ℕ) :
+    frobeniusRepCount ![a, b] (g + ((k : ℤ) - j) * a) ≤ frobeniusRepCount ![a, b] (m - j * a) := by
+  -- The positive gap can be added by trading fewer than `a` copies of `b` for copies of `a`.
+  let d := (m - (g + k * a)).toNat
+  have hd : (d : ℤ) = m - (g + k * a) := Int.toNat_of_nonneg (by omega)
+  obtain ⟨u, v, hv, huv⟩ := exists_shift ha hab d
+  have hshift : (d : ℤ) + (v : ℤ) * b = (u : ℤ) * a := by exact_mod_cast huv
+  apply count_le_of_translate (u := u) (v := v)
+  · linear_combination hd - hshift
+  · intro x y hxy
+    obtain ⟨q, hq⟩ := dvd_add_generator (a := a) (by omega) hg
+    -- Since `a ∣ g + b`, each source representation has `a ∣ y + 1`, hence `y ≥ a - 1`.
+    have hdiv : (a : ℤ) ∣ ((y : ℤ) + 1) * b := by
+      refine ⟨q + k - j - x, ?_⟩
+      linear_combination hxy + hq
+    have hy : a ∣ (y + 1) := hab.dvd_of_dvd_mul_right (by exact_mod_cast hdiv)
+    have := Nat.le_of_dvd (by omega : 0 < y + 1) hy
+    omega
 
 end
 

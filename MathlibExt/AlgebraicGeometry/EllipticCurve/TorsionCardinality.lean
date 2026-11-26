@@ -54,6 +54,7 @@ import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialMulFormula
 
 @[expose] public section
 
@@ -1862,33 +1863,6 @@ through the division polynomials `ΨSq` and `preΨ`, separates the cases
 -/
 
 
-section PortTorsionSmulFormulaEngine
-
-namespace Deep
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-section Engine
-
-variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve.Affine F)
-
-omit [DecidableEq F] in
-
-private theorem sub_negY_sq_eq_Ψ₂Sq_eval {x y : F} (e : W.Equation x y) :
-    (y - W.negY x y) ^ 2 = (WeierstrassCurve.Ψ₂Sq W).eval x := by
-  rw [equation_iff] at e
-  simp only [negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
-    WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-end Engine
-
-end Deep
-
-end PortTorsionSmulFormulaEngine
-
 section PortGenNetIdentities
 
 namespace Deep
@@ -2560,7 +2534,7 @@ private theorem exists_double_fiber_card [W.IsElliptic] {n : ℕ} (hodd : Odd n)
     have hyne : y₀ ≠ (W.baseChange K).toAffine.negY x y₀ := by
       intro hy
       refine key_Ψ₂ x hx ?_
-      have hsq := sub_negY_sq_eq_Ψ₂Sq_eval ((W.baseChange K).toAffine) hy₀
+      have hsq := sq_sub_negY_eq_eval_Ψ₂Sq hy₀
       rw [← hsq, ← hy, sub_self]
       ring
     rw [Finset.card_image_of_injective _ (fun a b hab => (Prod.ext_iff.mp hab).2)]
