@@ -17,7 +17,7 @@ cyclic if `|Aut G| = φ(n)`?
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Nat.Totient
+public import MathlibExt.GroupTheory.AutomorphismGroupOrderTotient
 
 @[expose] public section
 
@@ -31,37 +31,6 @@ Deaconescu). UnsolvedMath record UM-00701131 (`KOU-15.43`), dataset ulamai/Unsol
 `Aut G` is `MulAut G` and `φ` is `Nat.totient`; both parts are stated for all finite groups in
 `Type`.
 -/
-
-/-- **Deaconescu's totient lower bound conjecture (Kourovka 15.43(a)).** The statement that every
-finite group $G$ satisfies $\varphi(|G|) \le |\mathrm{Aut}(G)|$, where $\varphi$ is Euler's totient
-function and $\mathrm{Aut}(G)$ is the group of automorphisms of $G$. -/
-def totientLeAutOrder : Prop :=
-  ∀ (G : Type) [Group G] [Finite G], (Nat.card G).totient ≤ Nat.card (MulAut G)
-
-/-- **Deaconescu's cyclicity conjecture (Kourovka 15.43(b)).** The statement that every finite group
-$G$ with $|\mathrm{Aut}(G)| = \varphi(|G|)$ is cyclic, where $\varphi$ is Euler's totient function
-and $\mathrm{Aut}(G)$ is the group of automorphisms of $G$. -/
-def autOrderEqTotientImpliesCyclic : Prop :=
-  ∀ (G : Type) [Group G] [Finite G], Nat.card (MulAut G) = (Nat.card G).totient → IsCyclic G
-
-/--
-**Deaconescu's totient lower bound conjecture fails (Kourovka 15.43(a)).** Not every finite group
-$G$ satisfies $\varphi(|G|) \le |\mathrm{Aut}(G)|$: there is a finite group $G$ with
-$|\mathrm{Aut}(G)| < \varphi(|G|)$, where $\varphi$ is Euler's totient function and
-$\mathrm{Aut}(G)$ is the group of automorphisms of $G$.
-
-Bray and Wilson prove more than is stated here: the ratio $|\mathrm{Aut}(G)| / \varphi(|G|)$ can be
-made arbitrarily small.
-
-Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
-Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.43 (M.
-Deaconescu); resolution: J. N. Bray and R. A. Wilson, On the orders of automorphism groups of finite
-groups, Bull. London Math. Soc. 37 (2005), no. 3, 381-385, main results (groups with |Aut G| <
-φ(|G|), infinitely many non-cyclic groups with |Aut G| = φ(|G|), and |Aut G|/φ(|G|) arbitrarily
-small); Kourovka Archive, Problem 15.43 (both answers negative),
-https://webspace.maths.qmul.ac.uk/j.n.bray/web/Publ/AutG/.
--/
-public theorem_wanted totientLeAutOrder_refuted : ¬ totientLeAutOrder
 
 /--
 **Deaconescu's cyclicity conjecture fails (Kourovka 15.43(b)).** Not every finite group $G$ with
