@@ -56,9 +56,21 @@ Representation decisions (modeling choices, not source claims):
 ## Main results
 
 `request_window_unique`, `currentRequest_spec`,
-`receivedWork_stable_after_deadline`, `overflowAt_of_agree_before`,
-`responseTime_of_fulfilled`, `produceSchedule_spec`,
-`produceSchedule_idle_iff`, `receivedWork_mono`.
+`receivedWork_stable_after_deadline`, `feasible_iff_forall_not_overflowAt`,
+`overflowAt_of_agree_before`, `responseTime_of_fulfilled`,
+`produceSchedule_spec`, `produceSchedule_idle_iff`, `receivedWork_mono`,
+`Feasible.runTime_le_period`, `feasible_produceSchedule_iff_of_unique`.
+
+The last two show that feasibility is neither vacuous nor automatic: a
+feasible schedule needs every run-time to be at most its period, and for a
+single task the priority-driven schedule is feasible exactly then.
+
+## References
+
+* C. L. Liu and J. W. Layland, *Scheduling algorithms for multiprogramming in
+  a hard-real-time environment*, J. ACM 20(1), 1973, 46–61: Section 3 (the
+  assumptions, scheduling algorithms and priorities) and Section 4
+  (deadlines, overflow and feasibility).
 -/
 
 @[expose] public section
@@ -207,7 +219,14 @@ def OverflowAt {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) (t : ℕ) : Prop :=
   ∃ i k, deadline tasks i k = t ∧ RequestOverflow tasks sched i k
 
-/-- A schedule is feasible if no request ever overflows. -/
+/-- **Feasible schedules in the Liu–Layland periodic task model.** Time is discrete: slot `t` is
+the interval `[t, t + 1)`. Each task `i` of a finite task set has a run-time `C ≥ 1`, a period
+`T ≥ 1` and a phase; its request `k`, for `k = 0, 1, 2, …`, is made at time `phase + k * T`, and
+its deadline is the time of the next request, `phase + (k + 1) * T`. A schedule executes at most
+one task in each slot. A request is fulfilled if the schedule executes its task in at least `C` of
+the slots from the request up to its deadline, and an overflow occurs at time `t` if `t` is the
+deadline of an unfulfilled request. The schedule is feasible if every request is fulfilled, that
+is, if no overflow ever occurs (`feasible_iff_forall_not_overflowAt`). -/
 def Feasible {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) : Prop :=
   ∀ i k, ¬ RequestOverflow tasks sched i k
@@ -220,6 +239,15 @@ noncomputable def firstOverflow {ι : Type*} [Fintype ι] [DecidableEq ι]
   haveI : DecidablePred (OverflowAt tasks sched) :=
     fun t => Classical.propDecidable (OverflowAt tasks sched t)
   if h : ∃ t, OverflowAt tasks sched t then some (Nat.find h) else none
+
+theorem feasible_iff_forall_not_overflowAt {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (tasks : TaskSet ι) (sched : Schedule ι) :
+    Feasible tasks sched ↔ ∀ t, ¬ OverflowAt tasks sched t := by
+  constructor
+  · rintro h t ⟨i, k, -, hro⟩
+    exact h i k hro
+  · intro h i k hro
+    exact h _ ⟨i, k, rfl, hro⟩
 
 theorem firstOverflow_eq_some_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
     (tasks : TaskSet ι) (sched : Schedule ι) (t : ℕ) :
@@ -633,6 +661,49 @@ theorem receivedWork_mono {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : Ta
   apply Finset.card_le_card
   apply Finset.filter_subset_filter
   apply Finset.Ico_subset_Ico_right
+  omega
+
+private theorem deadline_sub_release {ι : Type*} [Fintype ι] (tasks : TaskSet ι) (i : ι)
+    (k : ℕ) : deadline tasks i k - release tasks i k = (tasks i).T := by
+  simp only [release, deadline, Nat.succ_mul]
+  omega
+
+private theorem receivedWork_le_period {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (tasks : TaskSet ι) (sched : Schedule ι) (i : ι) (k t : ℕ) :
+    receivedWork tasks sched i k t ≤ (tasks i).T := by
+  unfold receivedWork
+  refine (Finset.card_filter_le _ _).trans ?_
+  rw [Nat.card_Ico]
+  have h := deadline_sub_release tasks i k
+  omega
+
+/-- **Feasibility needs every run-time to be at most its period.** If a schedule of a periodic
+task set is feasible, then every task's run-time `C` is at most its period `T`. -/
+theorem Feasible.runTime_le_period {ι : Type*} [Fintype ι] [DecidableEq ι] {tasks : TaskSet ι}
+    {sched : Schedule ι} (h : Feasible tasks sched) (i : ι) : (tasks i).C ≤ (tasks i).T := by
+  by_contra hlt
+  exact h i 0 ((receivedWork_le_period tasks sched i 0 _).trans_lt (not_le.mp hlt))
+
+/-- **Feasibility of a single periodic task.** For a task set with exactly one task, of run-time
+`C` and period `T`, the priority-driven schedule of any priority rule is feasible exactly when
+`C ≤ T`. -/
+theorem feasible_produceSchedule_iff_of_unique {ι : Type*} {π : Type*} [Fintype ι]
+    [LinearOrder ι] [Unique ι] [LinearOrder π] (tasks : TaskSet ι) (rule : PriorityRule ι π) :
+    Feasible tasks (produceSchedule tasks rule) ↔ (tasks default).C ≤ (tasks default).T := by
+  refine ⟨fun h => h.runTime_le_period default, fun hCT i k hro => ?_⟩
+  obtain rfl : i = default := Unique.eq_default i
+  -- An overflowing request is live, so scheduled, in every slot of its window.
+  have hrun : ∀ s ∈ Finset.Ico (release tasks default k) (deadline tasks default k),
+      produceSchedule tasks rule s = some default := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hlive : IsLive tasks (produceSchedule tasks rule) default k s :=
+      ⟨hs.1, hs.2, (receivedWork_mono tasks _ default k s _ hs.2.le).trans_lt hro⟩
+    cases hS : produceSchedule tasks rule s with
+    | none => exact absurd ⟨default, k, hlive⟩ ((produceSchedule_idle_iff tasks rule s).mp hS)
+    | some j => rw [Unique.eq_default j]
+  unfold RequestOverflow receivedWork at hro
+  rw [min_self, Finset.filter_true_of_mem hrun, Nat.card_Ico, deadline_sub_release] at hro
   omega
 
 end Cslib.Scheduling.RealTime
