@@ -52,9 +52,16 @@ universe u v w w'
 
 set_option maxHeartbeats 800000 in
 -- The proof equips three subalgebras with Hopf algebra structures and unfolds them repeatedly.
-/-- Two nested finite spanning Hopf orders agree when their intersections with the Hopf kernel
-of a surjective bialgebra map agree and their images under it agree. The spanning hypothesis
-on `S` is kept from the source statement; the proof does not need it. -/
+-- The spanning hypothesis on `S` (`_hSspan`) is kept from the source statement; the proof does
+-- not use it.
+/-- **Nested Hopf orders with the same kernel and image agree.** Let `R` be a principal ideal
+domain with fraction field `K`, let `A` be a commutative and cocommutative Hopf algebra over `K`
+and `Ā` a commutative Hopf algebra over `K`, both with compatible `R`-algebra structures, and let
+`π : A →ₐc[K] Ā` be a surjective bialgebra map. Let `S ≤ S'` be finite Hopf orders in `A` that
+span `A` over `K`, that is, `R`-subalgebras `T` of `A` that are finite over `R`, stable under the
+antipode, whose comultiplication lands in the image of `T ⊗[R] T` in `A ⊗[K] A`, and whose
+counit takes values in `R`. If `S` and `S'` have the same intersection with the Hopf kernel
+`HopfAlgebra.hopfKer π` and the same image under `π`, then `S = S'`. -/
 theorem eq_of_le_of_comap_hopfKer_eq_of_map_eq
     {R : Type u} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     {K : Type v} [Field K] [Algebra R K] [IsFractionRing R K]

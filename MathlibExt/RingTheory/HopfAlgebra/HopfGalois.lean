@@ -61,9 +61,6 @@ section Surjective
 variable {R : Type u} [CommRing R] {A : Type v} [CommRing A] [HopfAlgebra R A]
   {B : Type w} [CommRing B] [Bialgebra R B] (π : A →ₐc[R] B)
 
-private theorem canAlgHom_tmul_one (a : A) : canAlgHom π (a ⊗ₜ[R] 1) = a ⊗ₜ[R] 1 := by
-  rw [canAlgHom_tmul, map_one, mul_one]
-
 private theorem canAlgHom_antipode_comul (a' : A) :
     canAlgHom π ((HopfAlgebra.antipode R).rTensor A (Coalgebra.comul a'))
       = (1 : A) ⊗ₜ[R] π a' := by
@@ -106,7 +103,10 @@ private theorem canAlgHom_antipode_comul (a' : A) :
     LinearMap.rTensor_tmul, LinearMap.lTensor_tmul]
   simp
 
-/-- For a surjective bialgebra map out of a Hopf algebra, the canonical map is surjective. -/
+/-- **The canonical map of a surjection is surjective.** Let `R` be a commutative ring, `A` a
+commutative Hopf algebra over `R` and `B` a commutative bialgebra over `R`. For a surjective
+bialgebra map `π : A →ₐc[R] B`, the canonical map `HopfAlgebra.canMap π : A ⊗[R] A → A ⊗[R] B`,
+`a ⊗ a' ↦ (a ⊗ 1) * coaction π a'`, is surjective. -/
 theorem canMap_surjective_of_surjective (hπ : Function.Surjective π) :
     Function.Surjective (canMap π) := fun z => by
   induction z with
@@ -114,8 +114,8 @@ theorem canMap_surjective_of_surjective (hπ : Function.Surjective π) :
       obtain ⟨a', ha'⟩ := hπ c
       exact ⟨(a ⊗ₜ[R] (1 : A)) *
           ((HopfAlgebra.antipode R).rTensor A (Coalgebra.comul a')), by
-        rw [canMap_apply, _root_.map_mul, canAlgHom_tmul_one, canAlgHom_antipode_comul, ha',
-          Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]⟩
+        rw [canMap_apply, _root_.map_mul, ← canMap_apply π (a ⊗ₜ[R] 1), canMap_tmul_one,
+          canAlgHom_antipode_comul, ha', Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]⟩
   | add y z hy hz =>
       obtain ⟨py, hy⟩ := hy; obtain ⟨pz, hz⟩ := hz
       exact ⟨py + pz, by rw [map_add, hy, hz]⟩
@@ -147,24 +147,9 @@ private noncomputable def T (φ : Module.Dual R B) : A →ₗ[R] A := G φ ∘�
 
 private theorem T_apply (φ : Module.Dual R B) (a : A) : T π φ a = G φ (coaction π a) := rfl
 
-private theorem coaction_eq_map (a : A) :
-    coaction π a
-      = TensorProduct.map LinearMap.id (π : A →ₐc[R] B).toLinearMap (Coalgebra.comul
-          (R := R) a) := by
-  rw [coaction_apply]
-  induction Coalgebra.comul (R := R) a with
-  | add x y hx hy => simp only [map_add, hx, hy]
-  | tmul x y => simp [Algebra.TensorProduct.map_tmul]; rfl
-
-private theorem coaction_repr {a : A} {ι : Type*} (𝓡 : Coalgebra.Repr R a ι) :
-    coaction π a = ∑ i ∈ 𝓡.index, 𝓡.left i ⊗ₜ[R] π (𝓡.right i) := by
-  rw [coaction_eq_map, ← 𝓡.eq, map_sum]
-  simp only [TensorProduct.map_tmul, LinearMap.id_apply]
-  rfl
-
 private theorem T_repr (φ : Module.Dual R B) {a : A} {ι : Type*} (𝓡 : Coalgebra.Repr R a ι) :
     T π φ a = ∑ i ∈ 𝓡.index, φ (π (𝓡.right i)) • 𝓡.left i := by
-  rw [T_apply, coaction_repr π 𝓡, map_sum]
+  rw [T_apply, HopfKerHopf.coaction_repr π 𝓡, map_sum]
   simp
 
 private theorem T_mul_of_mem (φ : Module.Dual R B) {s : A} (hs : s ∈ hopfKer π) (a : A) :
@@ -189,7 +174,7 @@ private theorem T_mem_hopfKer (φ : Module.Dual R B)
           (a₁ i).left k ⊗ₜ[R] (φ (π (𝓡.right i)) • π ((a₁ i).right k)) := by
     rw [T_repr π φ 𝓡, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_smul, coaction_repr π (a₁ i), Finset.smul_sum]
+    rw [map_smul, HopfKerHopf.coaction_repr π (a₁ i), Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [TensorProduct.tmul_smul]
   have rhs : ∀ i ∈ 𝓡.index, ∑ k ∈ (a₂ i).index,
@@ -261,7 +246,7 @@ private theorem dualBasis (a : A) : ∑ j, ∑ p ∈ sw π hπ j, p.1 * T π (Λ
   have h1 : ∀ j, G (Λ (R := R) j) (((1 : A) ⊗ₜ[R] uΛ j) * coaction π a)
       = ∑ i ∈ 𝓡.index, Λ (R := R) j (uΛ j * π (𝓡.right i)) • 𝓡.left i := by
     intro j
-    rw [coaction_repr π 𝓡, Finset.mul_sum, map_sum]
+    rw [HopfKerHopf.coaction_repr π 𝓡, Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, G_tmul]
   simp_rw [h1]
@@ -378,14 +363,19 @@ open HopfGaloisAux
 variable {R : Type u} [CommRing R] {A : Type v} [CommRing A] [HopfAlgebra R A]
   {B : Type w} [CommRing B] [HopfAlgebra R B] [Module.Finite R B] [Module.Free R B]
 
-/-- A surjective bialgebra map from a commutative Hopf algebra onto a finite free commutative
-Hopf algebra is Hopf-Galois. -/
+/-- **Surjections onto finite free Hopf algebras are Hopf–Galois.** Let `R` be a commutative
+ring, and `A`, `B` commutative Hopf algebras over `R` with `B` finite and free as an `R`-module.
+Every surjective bialgebra map `π : A →ₐc[R] B` is Hopf–Galois (`HopfAlgebra.IsHopfGalois`): its
+canonical map is surjective and its kernel is spanned by the balancing relations over the Hopf
+kernel of `π`. -/
 theorem isHopfGalois_of_surjective (π : A →ₐc[R] B) (hπ : Function.Surjective π) :
     IsHopfGalois π :=
   isHopfGalois π hπ
 
-/-- For a surjective bialgebra map from a commutative Hopf algebra onto a finite free
-commutative Hopf algebra, `A` is finite projective over the Hopf kernel. -/
+/-- **Finite projectivity over the Hopf kernel.** Let `R` be a commutative ring, and `A`, `B`
+commutative Hopf algebras over `R` with `B` finite and free as an `R`-module. For a surjective
+bialgebra map `π : A →ₐc[R] B`, `A` is a finite projective module over the Hopf kernel
+`HopfAlgebra.hopfKer π`. -/
 theorem finite_projective_hopfKer_of_surjective (π : A →ₐc[R] B)
     (hπ : Function.Surjective π) :
     Module.Finite ↥(hopfKer π) A ∧ Module.Projective ↥(hopfKer π) A :=

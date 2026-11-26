@@ -39,10 +39,13 @@ import Mathlib.LinearAlgebra.TensorProduct.Basis
 /-!
 # Images of Hopf orders and their Hopf kernels
 
-The image of a finite spanning Hopf order under a surjective bialgebra map is again a finite
-spanning Hopf order (`HopfOrder.isHopfOrder_map`). For a Hopf order `H` embedded in `A` and a
-compatible map to a Hopf order embedded in `Ā`, the image of the Hopf kernel of the integral map
-is the intersection of `H` with the Hopf kernel over `K` (`HopfOrder.map_hopfKer_eq_inf_hopfKer`).
+Let `R` be a principal ideal domain with fraction field `K`, and let `A` and `Ā` be commutative
+Hopf algebras over `K` with compatible `R`-algebra structures. The image of a finite Hopf order
+in `A` that spans `A` over `K` under a surjective bialgebra map `A → Ā` is a finite Hopf order in
+`Ā` that spans `Ā` over `K` (`HopfOrder.isHopfOrder_map`). For a Hopf algebra `H` over `R`, free
+as an `R`-module and embedded in `A` as a subalgebra `S`, and a compatible map to a free Hopf
+algebra over `R` embedded in `Ā`, the image of the Hopf kernel of the integral map is the
+intersection of `S` with the Hopf kernel over `K` (`HopfOrder.map_hopfKer_eq_inf_hopfKer`).
 -/
 
 @[expose] public section
@@ -51,8 +54,12 @@ open scoped TensorProduct
 
 namespace HopfOrder
 
-/-- The image of a finite spanning Hopf order under a surjective bialgebra map is a finite
-spanning Hopf order. -/
+/-- **The image of a Hopf order is a Hopf order.** Let `R` be a principal ideal domain with
+fraction field `K`, and `A`, `Ā` commutative Hopf algebras over `K` with compatible `R`-algebra
+structures. Let `S` be an `R`-subalgebra of `A` that is finite over `R`, spans `A` over `K`, is
+stable under the antipode, whose comultiplication lands in the image of `S ⊗[R] S` in
+`A ⊗[K] A`, and whose counit takes values in the image of `R`. For a surjective `K`-bialgebra map
+`π : A → Ā`, the image of `S` under `π` has the same five properties in `Ā`. -/
 theorem isHopfOrder_map
     {R : Type*} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
@@ -137,8 +144,14 @@ theorem isHopfOrder_map
     rw [hcu]
     exact hcounit x hx
 
-/-- The Hopf kernel of an integral map between Hopf orders, pushed into `A`, is the intersection
-of the order with the Hopf kernel over the fraction field. -/
+/-- **Hopf kernels of integral maps.** Let `R` be a principal ideal domain with fraction field
+`K`, `A` and `Ā` commutative Hopf algebras over `K` with compatible `R`-algebra structures, and
+`H`, `Hbar` commutative Hopf algebras over `R` that are free as `R`-modules. Let `e : H → A` be
+an injective `R`-algebra map with image `S` such that the comultiplication of `e h` in
+`A ⊗[K] A` is the image of the comultiplication of `h` under `e ⊗ e`, let `π : A → Ā` be a
+`K`-bialgebra map and `q : H → Hbar` an `R`-bialgebra map, and let `ebar : Hbar → Ā` be an
+injective `R`-algebra map with `ebar (q h) = π (e h)` for all `h`. Then the image under `e` of
+the Hopf kernel of `q` is the intersection of `S` with the Hopf kernel of `π`. -/
 theorem map_hopfKer_eq_inf_hopfKer
     {R : Type*} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]

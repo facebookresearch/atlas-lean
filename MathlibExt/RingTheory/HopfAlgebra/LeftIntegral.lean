@@ -34,6 +34,7 @@ public import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
 import Mathlib.LinearAlgebra.Dual.Basis
 import MathlibExt.Algebra.Algebra.HopfAlgebra.ComulAntipode
+import MathlibExt.RingTheory.HopfAlgebra.HopfKer
 import Mathlib.RingTheory.HopfAlgebra.Convolution
 
 /-!
@@ -51,24 +52,6 @@ open Coalgebra HopfAlgebra WithConv
 open scoped TensorProduct Coalgebra.TensorProduct
 
 universe u v w
-
-namespace HopfAlgebra
-open HopfAlgebra
-
-noncomputable section
-
-variable {R : Type u} [CommSemiring R]
-variable {A : Type v} [Semiring A] [HopfAlgebra R A]
-
-private theorem comul_antipode_eq_sum {a : A} {ι𝓡 : Type*} (𝓡 : Coalgebra.Repr R a ι𝓡) :
-    comul (antipode R a)
-      = ∑ i ∈ 𝓡.index, antipode R (𝓡.right i) ⊗ₜ[R] antipode R (𝓡.left i) := by
-  rw [HopfAlgebra.comul_antipode a, ← 𝓡.eq]
-  simp only [map_sum, TensorProduct.map_tmul, TensorProduct.comm_tmul]
-
-end
-
-end HopfAlgebra
 
 namespace HopfAlgebra.LeftIntegral
 
@@ -581,7 +564,7 @@ private theorem dconv_smul (f m : Module.Dual R B) (b : B) {ι𝓡 : Type*}
         = ∑ j ∈ 𝓧.index, ∑ k ∈ (𝓡₁ i).index,
             (𝓧.left j * antipode R ((𝓡₁ i).right k))
               ⊗ₜ[R] (𝓧.right j * antipode R ((𝓡₁ i).left k)) := by
-      rw [Bialgebra.comul_mul, comul_antipode_eq_sum (𝓡₁ i), ← 𝓧.eq, Finset.sum_mul]
+      rw [Bialgebra.comul_mul, HopfKerHopf.comul_antipode_eq_sum (𝓡₁ i), ← 𝓧.eq, Finset.sum_mul]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
@@ -682,8 +665,10 @@ end DualHopfModule
 end HopfAlgebra.LeftIntegral
 
 open HopfAlgebra.LeftIntegral in
-/-- A finite free commutative Hopf algebra has finitely many left integrals `Λ j` and
-elements `u j` with `∑ j, Λ j (u j * b) = ε b` for all `b`. -/
+/-- **Left integrals on a finite free Hopf algebra.** Let `R` be a commutative ring and `B` a
+commutative Hopf algebra over `R` that is finite and free as an `R`-module. There are finitely
+many linear forms `Λ j : B → R` that are left integrals, `(id ⊗ Λ j) (Δ b) = Λ j b • 1` for every
+`b : B`, and elements `u j : B` with `∑ j, Λ j (u j * b) = ε b` for every `b : B`. -/
 theorem HopfAlgebra.exists_leftIntegral_sum_apply_mul_eq_counit {R : Type u} [CommRing R]
     {B : Type v} [CommRing B] [HopfAlgebra R B]
     [Module.Finite R B] [Module.Free R B] :
