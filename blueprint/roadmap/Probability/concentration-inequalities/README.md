@@ -22,3 +22,5 @@ Non-asymptotic tail and moment bounds: Hoeffding, Azuma, McDiarmid, Kim–Vu, Ta
 - [Conditional Hoeffding lemma](has-cond-subgaussian-mgf-of-mem-icc-of-c.md)
 - [Sub-Gaussian bound for martingales with bounded increments](has-subgaussian-mgf-sub-of-abs-sub-le.md)
 - [Azuma's inequality](azuma-inequality.md)
+- [Tail bounds for heterogeneous Bernoulli products](tail-bounds-for-heterogeneous-bernoulli-products/README.md)
+- [Boolean cube moment bounds](boolean-cube-moment-bounds/README.md)

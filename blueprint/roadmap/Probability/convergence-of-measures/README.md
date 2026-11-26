@@ -23,3 +23,7 @@ Weak convergence and convergence in probability, tightness and Prokhorov's theor
 - [Chebyshev consistency](tendsto-in-measure-of-integral-eq-of-eva.md)
 - [Convergence in distribution implies boundedness in probability](exists-forall-measure-lt-norm-le-of-tend.md)
 - [Tightness in `C(\[0,1\])` from a modulus of continuity](tightness-in-c-0-1-from-a-modulus-of-continuity/README.md)
+
+## The Bhattacharyya coefficient
+
+- [The Bhattacharyya coefficient](bhattacharyya-coeff.md)

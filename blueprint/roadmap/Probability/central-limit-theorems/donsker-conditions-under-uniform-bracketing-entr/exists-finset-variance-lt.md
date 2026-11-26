@@ -8,4 +8,4 @@ Then for every $\delta > 0$ there is a finite set $s \subseteq \iota$ such that 
 
 $$\mathrm{Var}_\mu[F_i - F_j] < \delta^2.$$
 
-That is, $F$ is totally bounded in the standard-deviation semimetric $\rho_\mu(f, g) = \sqrt{\mathrm{Var}_\mu[f - g]}$.
+Here $\mathrm{Var}_\mu[f]$ is $0$ when $f \notin L^2(\mu)$. When every $F_i$ is in $L^2(\mu)$, this says that $F$ is totally bounded in the standard-deviation semimetric $\rho_\mu(f, g) = \sqrt{\mathrm{Var}_\mu[f - g]}$.

@@ -7,7 +7,7 @@
 
 $$\mathcal{N}\Big(0, \sum_{s \in I} \sum_{u \in I} c_s c_u \min(s, u)\Big),$$
 
-where the variance is the positive part of the double sum (the double sum is nonnegative, since $\min(s,u)$ is a covariance kernel).
+where the variance is the positive part of the double sum.
 
 Thus $Z$ is a measurable version of the almost surely continuous path map $\omega \mapsto (t \mapsto B_t(\omega))$ restricted to $[0,1]$, with the finite-dimensional Gaussian laws of Brownian motion.
 

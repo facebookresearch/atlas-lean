@@ -8,11 +8,9 @@ These methods keep testing valid when many hypotheses are tested at once, by con
 
 - [Valid p-values and false discovery proportion](valid-p-values-and-false-discovery-proportion/README.md)
 - [Bonferroni correction](bonferroni-correction/README.md)
-- [Boolean cube moment bounds](boolean-cube-moment-bounds/README.md)
 - [Holm–Bonferroni method](holm-bonferroni-method/README.md)
 - [Closed testing principle](closed-testing-principle/README.md)
 - [Benjamini–Hochberg procedure](benjamini-hochberg-procedure/README.md)
-- [Binary unequal-cost Bayes adapter](binary-unequal-cost-bayes-adapter/README.md)
 - [Knockoff filter](knockoff-filter/README.md)
 - [Two-groups model and local false discovery rates](two-groups-model-and-local-false-discovery-rates/README.md)
 
@@ -38,21 +36,11 @@ These procedures base inference on counts, ranks or random reassignments of the 
 
 - [Fisher's exact test](fisher-s-exact-test/README.md)
 - [Exact test for Hardy–Weinberg equilibrium](exact-test-for-hardy-weinberg-equilibrium/README.md)
-- [EXP3 loss estimator](exp3-loss-estimator/README.md)
 - [Mann–Whitney statistic and ROC area](mann-whitney-statistic-and-roc-area/README.md)
-- [Measurable Bayes actions over a finite action space](measurable-bayes-actions-over-a-finite-action-sp/README.md)
 - [Permutation tests](permutation-tests/README.md)
-- [Prefix-dependent finite-horizon probability law](prefix-dependent-finite-horizon-probability-law/README.md)
 - [Split conformal prediction](split-conformal-prediction/README.md)
-- [Tail bounds for heterogeneous Bernoulli products](tail-bounds-for-heterogeneous-bernoulli-products/README.md)
 - [Full conformal prediction](full-conformal-prediction/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)
-- [Continuous distributions, sampling identities and sampling limits](continuous-distributions-sampling-identities-and/README.md)
-- [Densities under a change of variables (normalizing flows)](densities-under-a-change-of-variables-normalizin/README.md)
-- [Dyadic truncation of finite distributions](dyadic-truncation-of-finite-distributions/README.md)
-- [EOS finite-string mass conservation](eos-finite-string-mass-conservation/README.md)
-- [Uniform EOS: geometric tail and certain termination](uniform-eos-geometric-tail-and-certain-terminati/README.md)
-- [Value of information for finite decisions](value-of-information-for-finite-decisions/README.md)
 - [Exact binomial tests and the Clopper–Pearson interval](exact-binomial-tests-and-the-clopper-pearson-int/README.md)
 - [Conformal prediction under covariate shift](conformal-prediction-under-covariate-shift/README.md)
 
@@ -62,25 +50,3 @@ Meta-analysis combines evidence from several studies and measures how much their
 
 - [Meta-analysis](meta-analysis/README.md)
 - [Large-deviation bound for the biased empirical MMD](measure-real-abs-mmd-biased-sub-mmd-gt-l.md)
-
-## Prescribed adjacency patterns
-
-- [Prescribed adjacency patterns](card-adj-pattern.md)
-
-## Finite unequal-cost binary risk
-
-- [Finite unequal-cost binary risk](finite-binary-risk-eq-avg-risk.md)
-
-## Weighted-score Bayes rule for finite binary decisions
-
-- [Weighted-score Bayes rule for finite binary decisions](weighted-score-contribution.md)
-
-## Chebyshev confidence interval for the sample mean
-
-- [Chebyshev confidence interval for the sample mean](chebyshev-sample-mean-interval-failure-b.md)
-
-## The Bhattacharyya coefficient
-
-- [The Bhattacharyya coefficient](bhattacharyya-coeff.md)
-
-## Convergence in distribution implies boundedness in probability

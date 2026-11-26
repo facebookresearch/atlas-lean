@@ -13,3 +13,4 @@ Laws on countable sets, with their mass functions, moments and tails: discrete u
 - [Sums of independent Poisson variables](poisson-distribution/README.md)
 
 - [Finite probability distributions as probability measures](finite-distributions-as-probability-measures/README.md)
+- [Dyadic truncation of finite distributions](dyadic-truncation-of-finite-distributions/README.md)

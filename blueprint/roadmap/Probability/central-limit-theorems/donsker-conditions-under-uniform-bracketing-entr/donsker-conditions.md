@@ -10,7 +10,7 @@ $$P^*\Big( \exists\, i, j :\ \mathrm{Var}_\mu[F_i - F_j] < \delta^2 \ \text{and}
 
 where $P^*$ is the outer measure of $P$.
 
-Here $\mathrm{Var}_\mu[f - g]$ is the square of the standard-deviation semimetric $\rho_\mu(f, g) = \sqrt{\mathrm{Var}_\mu[f - g]}$.
+Here $\mathrm{Var}_\mu[f]$ is $0$ when $f \notin L^2(\mu)$; for $F_i, F_j \in L^2(\mu)$, $\mathrm{Var}_\mu[F_i - F_j]$ is the square of the standard-deviation semimetric $\rho_\mu(F_i, F_j) = \sqrt{\mathrm{Var}_\mu[F_i - F_j]}$.
 
 ## Sources
 
