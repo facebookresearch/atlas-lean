@@ -1062,9 +1062,9 @@ public theorem chu_family_mstd_increasing {k : ℕ} (hk : 0 < k) {M₁ : List �
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ M₁)
     (A - A).card < (A + A).card := by
   rcases hM₁ with rfl | rfl
-  · show (Ashort k - Ashort k).card < (Ashort k + Ashort k).card
+  · change (Ashort k - Ashort k).card < (Ashort k + Ashort k).card
     exact assembly_short k hk
-  · show (Along k - Along k).card < (Along k + Along k).card
+  · change (Along k - Along k).card < (Along k + Along k).card
     exact assembly_long k hk
 
 end
