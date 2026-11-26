@@ -15368,6 +15368,7 @@
   "MathlibExt/Analysis/Fourier/AddCircle/WienerOneOverF": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Absolutely convergent Fourier series"},
   "WantedExt/Analysis/WignerSemicircleWanted": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
   "WantedExt/Analysis/WirsingConstantWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin–Wirsing operator"},
+  "WantedExt/Biology/PopulationGenetics/Levene": {"to": "Biology/population-genetics/selection-migration-and-transmission", "title": "Migration and selection"},
   "WantedExt/Biology/StatisticalGenetics/BernsteinABOWanted": {"to": "Biology/statistical-genetics", "title": "Bernstein's triple-allele law for the ABO blood groups"},
   "WantedExt/Biology/StatisticalGenetics/HendersonInverseWanted": {"to": "Biology/quantitative-genetics", "title": "Henderson's rules for the inverse numerator relationship matrix"},
   "WantedExt/Biology/StatisticalGenetics/LiMantelSegregationWanted": {"to": "Biology/statistical-genetics", "title": "Li–Mantel segregation ratio under complete ascertainment"},
