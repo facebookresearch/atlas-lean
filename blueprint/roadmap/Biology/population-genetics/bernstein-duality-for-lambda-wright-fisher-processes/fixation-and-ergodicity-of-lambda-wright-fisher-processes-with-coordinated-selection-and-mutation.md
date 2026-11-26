@@ -1,11 +1,13 @@
 # Fixation and ergodicity of Λ-Wright–Fisher processes with coordinated selection and mutation
 
 **Model.** In an infinite two-type population, the frequency $X_t$ of type $a$ solves
+
 $$\begin{aligned}
 dX_t ={}& \sqrt{\Lambda(\{0\})X_t(1-X_t)}\,dW_t + \int z\big(\mathbf{1}_{\{u \le X_{t-}\}}(1 - X_{t-}) - \mathbf{1}_{\{u > X_{t-}\}}X_{t-}\big)\tilde N(dt,dz,du)\\
 &+ \big(d_{\mathbf{s}}(X_t) + \theta_a(1 - X_t) - \theta_A X_t\big)dt + \int |z|\big(\mathbf{1}_{\{z \ge 0\}}(1 - X_{t-}) - \mathbf{1}_{\{z<0\}}X_{t-}\big)M(dt,dz)\\
 &+ \int z\,X_{t-}(1 - X_{t-})\,S(dt,dz),
 \end{aligned}$$
+
 with: neutral $\Lambda$-reproduction ($W$ a Brownian motion, $\tilde N$ compensated Poisson with intensity $dt\,z^{-2}\Lambda(dz)\,du$, $\Lambda$ a finite measure on $[0,1]$); frequency-dependent selection $d_{\mathbf{s}}(x) = \sum_{\ell=2}^{\kappa}\beta_\ell\sum_{i=0}^{\ell}\binom{\ell}{i}x^i(1-x)^{\ell-i}\big(p_i^{(\ell)} - \frac{i}{\ell}\big)$, $\beta_\ell \ge 0$, $p_i^{(\ell)} \in [0,1]$, $p_0^{(\ell)} = 0$, $p_\ell^{(\ell)} = 1$ (any drift $x(1-x)\sigma(x)$ with polynomial $\sigma$ has this form); coordinated selection by an environment $S$ with intensity $dt\,|z|^{-1}\mu(dz)$ on $(-1,1)$, which may favour either type (bidirectional selection); individual mutation rates $\theta_a, \theta_A \ge 0$; and coordinated mutation $M$ with intensity $dt\,|z|^{-1}\nu(dz)$.
 
 **Bernstein duality.** Write $H(x, v) = \sum_{i=0}^{n} v_i\binom{n}{i}x^i(1-x)^{n-i}$ for $v \in \mathbb{R}^{n+1}$. There is a Markov process $V$ of Bernstein coefficient vectors of varying length $L_t + 1$, driven by coalescence, branching (selection), mutation and environment operators, such that for all $x \in [0,1]$, $v$ and $t \ge 0$,

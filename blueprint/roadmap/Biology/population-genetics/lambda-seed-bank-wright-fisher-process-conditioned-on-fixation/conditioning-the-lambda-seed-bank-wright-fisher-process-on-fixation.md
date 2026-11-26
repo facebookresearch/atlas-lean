@@ -5,11 +5,13 @@
 $$D = \{\mathbf{z} \in [0,1]^3 : z_1 \le z_3,\ z_2 \le 1 - z_3\}$$
 
 records the active mass of a focal type $\heartsuit$ ($Z_1$), its dormant mass ($Z_2$) and the total active mass ($Z_3$). It is the unique strong solution of
+
 $$\begin{aligned}
 dZ_1 &= (\sigma Z_2 - \alpha Z_1)\,dt + \sqrt{a Z_1 (Z_3 - Z_1)}\,dB_t \\
 &\quad + \int_0^1\!\!\int_0^1 r\Big[(Z_3 - Z_1)\mathbb{1}_{\{u \le Z_1/Z_3\}} - Z_1 \mathbb{1}_{\{u > Z_1/Z_3\}}\Big]\,\widetilde{N}(dt,dr,du),\\
 dZ_2 &= (\alpha Z_1 - \sigma Z_2)\,dt, \qquad dZ_3 = \big(\sigma(1 - Z_3) - \alpha Z_3\big)\,dt,
 \end{aligned}$$
+
 with $\widetilde N$ a compensated Poisson random measure of intensity $dt \otimes r^{-2}\Lambda_0(dr) \otimes du$ (all coefficients evaluated at left limits). Fixation of $\heartsuit$ is the event $\lim_{s \to \infty}(Z_1(s) + Z_2(s)) = 1$.
 
 A **$(\Lambda, \xi, \mathrm{M})$-seed-bank Wright–Fisher process** adds to the $Z_1$ equation coordinated mutations toward $\heartsuit$ that act only while a switching environment $\xi_t \in \{0,1\}$ equals $1$: a drift $b\,\xi_t (Z_3 - Z_1)\,dt$ and jumps converting a fraction $r$ of the non-$\heartsuit$ active mass, $r\,\xi_{t-}(Z_3 - Z_1)$, driven by a mutation measure $\mathrm{M} = b\,\delta_0 + \mathrm{M}_0$.
