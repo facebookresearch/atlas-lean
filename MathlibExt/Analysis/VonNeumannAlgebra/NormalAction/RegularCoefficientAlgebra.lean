@@ -17,12 +17,15 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 /-!
 # Star-algebra laws and Haar covariance of regular coefficients
 
-For a normal action on `M`, the regular-measure coefficient operators `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`
-satisfy `P_(x+y)=P_x+P_y`, `P_(cx)=cP_x`, `P_(xy)=P_xP_y`, `P_1=I` and `P_(x*)=P_x*`. Thus `x ↦
-P_x` is a unital complex star homomorphism on full `Lp H 2 μ`.
+For a normal action on `M`, the regular-measure coefficient operators `P_x ξ =ᵐ[μ] (s ↦
+α_(s⁻¹)(x)ξ(s))` satisfy `P_(x+y)=P_x+P_y`, `P_(cx)=cP_x`, `P_(xy)=P_xP_y`, `P_1=I` and
+`P_(x*)=P_x*`. Thus `x ↦ P_x` is a unital complex star homomorphism on full `Lp H 2 μ`.
 
 For a regular Haar measure, left translations additionally satisfy `λ_g P_x λ_g*=P_(α_g(x))`.
 Haar invariance is needed for this covariance, but not for the preceding algebra laws.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators.
 -/
 
 @[expose] public section
@@ -50,8 +53,11 @@ variable (μ : Measure G) [μ.Regular]
 complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
 action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
 Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
-measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
-for `x,y∈M`, `P_(x+y)=P_x+P_y`. -/
+measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance is not
+assumed. for `x,y∈M`, `P_(x+y)=P_x+P_y`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_add (α : NormalAction G M) (x y : M) :
     regularCoefficient μ α (x + y) = regularCoefficient μ α x + regularCoefficient μ α y := by
   apply ContinuousLinearMap.ext
@@ -72,8 +78,11 @@ theorem regularCoefficient_add (α : NormalAction G M) (x y : M) :
 `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
 normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
 group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
-regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
-assumed. for `c∈ℂ`, `x∈M`, `P_(c • x)=c • P_x`. -/
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance
+is not assumed. for `c∈ℂ`, `x∈M`, `P_(c • x)=c • P_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_smul (α : NormalAction G M) (c : ℂ) (x : M) :
     regularCoefficient μ α (c • x) = c • regularCoefficient μ α x := by
   apply ContinuousLinearMap.ext
@@ -92,8 +101,11 @@ theorem regularCoefficient_smul (α : NormalAction G M) (c : ℂ) (x : M) :
 `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
 normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
 group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
-regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
-assumed. for `x,y∈M`, `P_(xy)=P_x P_y`. -/
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance
+is not assumed. for `x,y∈M`, `P_(xy)=P_x P_y`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_mul (α : NormalAction G M) (x y : M) :
     regularCoefficient μ α (x * y) = regularCoefficient μ α x * regularCoefficient μ α y := by
   apply ContinuousLinearMap.ext
@@ -111,8 +123,11 @@ theorem regularCoefficient_mul (α : NormalAction G M) (x y : M) :
 complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
 action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
 Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
-measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
-`P_1=I_L`. -/
+measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance is not
+assumed. `P_1=I_L`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_one (α : NormalAction G M) :
     regularCoefficient μ α (1 : M) = 1 := by
   apply ContinuousLinearMap.ext
@@ -127,8 +142,11 @@ theorem regularCoefficient_one (α : NormalAction G M) :
 complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
 action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
 Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
-measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
-for `x∈M`, `P_(x*)=P_x*`. -/
+measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance is not
+assumed. for `x∈M`, `P_(x*)=P_x*`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_star (α : NormalAction G M) (x : M) :
     regularCoefficient μ α (star x) = star (regularCoefficient μ α x) := by
   rw [ContinuousLinearMap.star_eq_adjoint]
@@ -149,9 +167,12 @@ theorem regularCoefficient_star (α : NormalAction G M) (x : M) :
 with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
 algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
 is a topological group. Assume `G` is locally compact with its Borel measurable structure,
-and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
-invariance is not assumed. for `x∈M`, `f,g∈C_c(G,H)` and their L² inclusion `i_μ`,
-`⟨P_x(i_μ f),i_μ g⟩=⟨i_μ f,P_(x*)(i_μ g)⟩`. -/
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+Haar invariance is not assumed. for `x∈M`, `f,g∈C_c(G,H)` and their L² inclusion `i_μ`,
+`⟨P_x(i_μ f),i_μ g⟩=⟨i_μ f,P_(x*)(i_μ g)⟩`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_inner_compactSupport (α : NormalAction G M) (x : M)
     (f g : C_c(G, H)) :
     ⟪regularCoefficient μ α x (compactSupportInclusion μ f), compactSupportInclusion μ g⟫_ℂ =
@@ -165,8 +186,11 @@ theorem regularCoefficient_inner_compactSupport (α : NormalAction G M) (x : M)
 `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
 normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
 group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
-regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
-assumed. `regularCoefficientHom μ α : M →⋆ₐ[ℂ] B(L)` sends `x` to `P_x`. -/
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance
+is not assumed. `regularCoefficientHom μ α : M →⋆ₐ[ℂ] B(L)` sends `x` to `P_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientHom (α : NormalAction G M) : M →⋆ₐ[ℂ] (Lp H 2 μ →L[ℂ] Lp H 2 μ) where
   toFun := regularCoefficient μ α
   map_one' := regularCoefficient_one μ α
@@ -192,9 +216,13 @@ variable [μ.IsHaarMeasure]
 group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
 Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
 Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
-structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
-Haar invariance is not assumed. Assume additionally that `μ` is a Haar measure. for `λ_g
-ξ(s)=ξ(g⁻¹s)`, `λ_g P_x λ_g*=P_(α_g(x))` for every `g∈G`, `x∈M`. -/
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦
+α_(s⁻¹)(x)ξ(s))`. Haar invariance is not assumed. Assume additionally that `μ` is a Haar
+measure. for `λ_g ξ =ᵐ[μ] (s ↦ ξ(g⁻¹s))`, `λ_g P_x λ_g*=P_(α_g(x))` for every `g∈G`,
+`x∈M`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_covariance (α : NormalAction G M) (g : G) (x : M) :
     (StronglyContinuousUnitaryRepresentation.haarLeftRegular G μ H g :
         Lp H 2 μ →L[ℂ] Lp H 2 μ) * regularCoefficient μ α x *

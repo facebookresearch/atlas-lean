@@ -12,6 +12,7 @@ Author: @toskua
 module
 
 public import MathlibExt.Analysis.Fourier.CircleFejer
+public import MathlibExt.Analysis.Fourier.AddCircle.CesaroMean
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 public import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
@@ -53,10 +54,7 @@ e_n(x-t)=e_n(x)e_(-n)(t).
 -/
 theorem circleFourier_apply_sub (n : ℤ) (x t : UnitAddCircle) :
     fourier n (x - t) = fourier n x * fourier (-n) t := by
-  rw [sub_eq_add_neg, fourier_apply, zsmul_add, AddCircle.toCircle_add, _root_.Circle.coe_mul]
-  have hn : n • (-t) = (-n) • t := by rw [smul_neg, neg_smul]
-  rw [hn]
-  rfl
+  exact (AddCircle.fourier_sub_eq (T := (1 : ℝ)) n x t).trans (mul_comm _ _)
 
 /-- **Finite Fourier expansion of the Fejér kernel.**
 

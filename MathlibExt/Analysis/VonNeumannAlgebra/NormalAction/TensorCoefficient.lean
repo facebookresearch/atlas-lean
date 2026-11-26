@@ -18,12 +18,15 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalAction.RegularCoeffici
 # Regular coefficients on the Hilbert-first tensor model
 
 Let `α` be a normal action and `μ` a regular measure on the locally compact Borel group. On
-`T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)`, the unitary `U : T ≃ Lp H 2 μ` has pure value `U(ξ⊗f)(s)=f(s) •
-ξ`.
+`T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)`, the unitary `U : T ≃ Lp H 2 μ` has pure value `U(ξ⊗f) =ᵐ[μ] (s
+↦ f(s) • ξ)`.
 
 Transporting the regular coefficient gives `Q_x=U⁻¹P_xU`, a unital complex star representation
 with `‖Q_x‖≤‖x‖`. In L² coordinates it has the almost-everywhere inverse-action formula. Haar
 invariance is not required for these tensor coefficients.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators.
 -/
 
 @[expose] public section
@@ -50,10 +53,13 @@ variable (μ : Measure G) [μ.Regular]
 a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`.
-`regularCoefficientTensor μ α x=Q_x : T →L[ℂ] T`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`.
+`regularCoefficientTensor μ α x=Q_x : T →L[ℂ] T`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientTensor (α : NormalAction G M) (x : M) :
     UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ)) →L[ℂ]
       UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ)) :=
@@ -63,10 +69,13 @@ def regularCoefficientTensor (α : NormalAction G M) (x : M) :
 a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
 normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
 group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
-regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
-assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be `tensorToLpRight μ`,
-with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. `regularCoefficientTensorHom μ α : M
-→⋆ₐ[ℂ] B(T)` sends `x` to `Q_x=U⁻¹P_xU`. -/
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance
+is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`.
+`regularCoefficientTensorHom μ α : M →⋆ₐ[ℂ] B(T)` sends `x` to `Q_x=U⁻¹P_xU`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientTensorHom (α : NormalAction G M) :
     M →⋆ₐ[ℂ] (UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ)) →L[ℂ]
       UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))) :=
@@ -77,10 +86,13 @@ def regularCoefficientTensorHom (α : NormalAction G M) :
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
-`regularCoefficientTensorHom μ α x=regularCoefficientTensor μ α x=Q_x`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
+`regularCoefficientTensorHom μ α x=regularCoefficientTensor μ α x=Q_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 @[simp]
 theorem regularCoefficientTensorHom_apply (α : NormalAction G M) (x : M) :
     regularCoefficientTensorHom μ α x = regularCoefficientTensor μ α x :=
@@ -90,10 +102,13 @@ theorem regularCoefficientTensorHom_apply (α : NormalAction G M) (x : M) :
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
-`‖Q_x‖≤‖x‖`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
+`‖Q_x‖≤‖x‖`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem norm_regularCoefficientTensor_le (α : NormalAction G M) (x : M) :
     ‖regularCoefficientTensor μ α x‖ ≤ ‖x‖ := by
   let E := L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ
@@ -107,10 +122,13 @@ theorem norm_regularCoefficientTensor_le (α : NormalAction G M) (x : M) :
 `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
 normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
 group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
-regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
-assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be `tensorToLpRight μ`,
-with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. for `z∈T`, `U(Q_x z)(s)=α_(s⁻¹)(x)(U
-z(s))` for `μ`-almost every `s`. -/
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance
+is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. for `z∈T`,
+`U(Q_x z)(s)=α_(s⁻¹)(x)(U z(s))` for `μ`-almost every `s`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientTensor_ae_eq (α : NormalAction G M) (x : M)
     (z : UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))) :
     L2.tensorToLpRight μ (regularCoefficientTensor μ α x z) =ᵐ[μ]
@@ -124,10 +142,14 @@ theorem regularCoefficientTensor_ae_eq (α : NormalAction G M) (x : M)
 with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
 algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
 is a topological group. Assume `G` is locally compact with its Borel measurable structure,
-and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
-invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. for `f∈C_c(G,ℂ)` with
-L² inclusion `i_μ` and `ξ∈H`, `U(Q_x(ξ⊗i_μ f))(s)=α_(s⁻¹)(x)(f(s) • ξ)` almost everywhere. -/
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+Haar invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L`
+be `tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. for
+`f∈C_c(G,ℂ)` with L² inclusion `i_μ` and `ξ∈H`, `U(Q_x(ξ⊗i_μ f))(s)=α_(s⁻¹)(x)(f(s) • ξ)`
+almost everywhere.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientTensor_apply_compactSupport_tmul_ae (α : NormalAction G M) (x : M)
     (f : C_c(G, ℂ)) (ξ : H) :
     L2.tensorToLpRight μ
