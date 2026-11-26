@@ -4,4 +4,5 @@ Crossings of rectangles and annuli in bond percolation on $\mathbb{Z}^2$, the bo
 
 - [Rectangle crossings on the square lattice](rectangle-crossings-on-the-square-lattice/README.md)
 - [Russo–Seymour–Welsh theory](russo-seymour-welsh-theory/README.md)
+- [Box crossings in anisotropic percolation](box-crossings-in-anisotropic-percolation/README.md)
 - [Box-crossing property for positively associated measures](box-crossing-property-for-positively-associated/README.md)

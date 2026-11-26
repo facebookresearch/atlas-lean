@@ -52,8 +52,8 @@ variable [ThetaQuotientSources.ContractingAction ℂ]
   (N : NormalFamily MA X.scheme F Z) (C : Chamber N.roots) (L : ChamberCocharacter C)
   (Ch : ∀ j : Fin Z.count, ComponentChamber C L (N.componentRoots j))
 
-/-- Geometry and operators retain the chosen chamber, polarization and original source hypotheses.
-  -/
+/-- Geometry and operators retain the chosen chamber, polarization and original source
+hypotheses. -/
 structure StableEnvelopeGeometry where
   tangent : TorusTangentActionData MT X.scheme
   source_forms : tangent.forms = Source.forms

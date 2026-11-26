@@ -58,8 +58,9 @@ Grönwall's inequality for approximate solutions against the exponential `ω` bo
 by `gronwallBound δ (k / I) ε t`. On the horizon `[0, T]` this reads
 `|φ(t) - ω(t)| ≤ δ exp(k T / I) + ε (I / k) (exp(k T / I) - 1)`, with `δ` in rad/s, `ε` in rad/s²
 and the closed-loop time constant `I / k` in s; a torque residual `ρ = I ε` (N m) turns the second
-term into `(ρ / k) (exp(k T / I) - 1)`. The bound grows with the horizon: it is a finite-horizon
-estimate, not a uniform one. The error is `φ - ω` and the residual is `φ' - f(φ)`. Sign example:
+term into `(ρ / k) (exp(k T / I) - 1)`. For `δ, ε ≥ 0` the bound is nondecreasing in the horizon
+and, unless `δ = ε = 0`, grows with it: it is a finite-horizon estimate, not a uniform one. The
+error is `φ - ω` and the residual is `φ' - f(φ)`. Sign example:
 the straight line `φ(t) = 3/5 - 3 t / 10` starts `1/10` rad/s above `ω₀ = 1/2` (for `I = 2`,
 `k = U_max = 1`), and its residual `-3 t / 20` is negative: the line falls faster than the loop
 would from the same rate. The field is defined at every rate, so no tube or domain-membership
@@ -125,22 +126,28 @@ open Set Mechanics.AttitudePorts
 
 /-! ## A. The saturated rate feedback and the exponential trajectory -/
 
-/-- Saturation of `x` to the interval `[-U_max, U_max]`: `clip(x) = max (-U_max) (min x U_max)`. -/
+/-- Saturation of `x` to the interval `[-U_max, U_max]`: `clip(x) = max (-U_max) (min x U_max)`.
+For `U_max < 0` the value is `-U_max` for every `x`. -/
 def clip (Umax x : ℝ) : ℝ := max (-Umax) (min x Umax)
 
 /-- The body torque `τ_b(ω) = clip(-k ω)` of the rate feedback with gain `k` and limit `U_max`. In
 the reduced wheel model of `AttitudePorts` it is the torque `-u_w` on the body with the wheel
-locked. -/
+locked. In the physical reading `k > 0` and `U_max > 0`; for `U_max < 0` it is `-U_max` at every
+rate. -/
 def bodyTorque (k Umax ω : ℝ) : ℝ := clip Umax (-k * ω)
 
 /-- The wheel command `u_w = -τ_b(ω)`: the commanded rate of the wheel momentum, which takes the
-reaction of the body torque. -/
+reaction of the body torque. In the physical reading `k > 0` and `U_max > 0`; for `U_max < 0` the
+command is `U_max` at every rate. -/
 def wheelCommand (k Umax ω : ℝ) : ℝ := -bodyTorque k Umax ω
 
-/-- The rate trajectory `ω(t) = ω₀ exp(-k t / I)`. -/
+/-- The rate trajectory `ω(t) = ω₀ exp(-k t / I)`. In the physical reading `I > 0` and `k > 0`.
+With the convention `x / 0 = 0`, at `I = 0` it is the constant `ω₀`. -/
 noncomputable def rateTrajectory (I k ω₀ t : ℝ) : ℝ := ω₀ * Real.exp (-k * t / I)
 
-/-- The wheel momentum trajectory `h_w(t) = h₀ + I ω₀ (1 - exp(-k t / I))`. -/
+/-- The wheel momentum trajectory `h_w(t) = h₀ + I ω₀ (1 - exp(-k t / I))`. In the physical
+reading `I > 0` and `k > 0`. With the convention `x / 0 = 0`, at `I = 0` it is the constant
+`h₀`. -/
 noncomputable def wheelMomentum (I k ω₀ h₀ t : ℝ) : ℝ :=
   h₀ + I * ω₀ * (1 - Real.exp (-k * t / I))
 

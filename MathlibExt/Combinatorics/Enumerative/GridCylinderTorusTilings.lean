@@ -31,8 +31,8 @@ rectangular torus, it sums the fixed-tiling counts over all translations.
 On the `n × m` cylinder, applying the shift `x ↦ x + a` and then the reflection
 `x ↦ n - 1 - x` sends the column `x` to `-1 - x - a` modulo `n`, so the columns this map fixes
 are the solutions of `x = -1 - x - a` in `ZMod n`. Kagey and Keehn solve this equation according
-to the parities of `n` and `a`; this file proves the case of an odd modulus, and the case of an
-even modulus with a shift whose representative `a.val` is odd.
+to the parities of `n` and `a.val`; this file proves all three cases: one solution for odd `n`,
+two for even `n` and odd `a.val`, and none when both are even.
 
 ## Main definitions
 
@@ -54,6 +54,8 @@ even modulus with a shift whose representative `a.val` is odd.
 * `MetaMathlibExt.reflection_shift_solutions_even_odd`: for even `n` and odd `a.val`, the
   solutions of `x = -1 - x - a` in `ZMod n` are the residues of the integers
   `(-1 - a.val) / 2` and `(n - 1 - a.val) / 2`.
+* `MetaMathlibExt.reflection_shift_solutions_even_even`: for even `n` and even `a.val`,
+  there are no solutions.
 
 ## Implementation notes
 
@@ -337,6 +339,24 @@ public theorem rectangularTorus_identity {T : Type*} [Fintype T] [DecidableEq T]
         (fun c => ∑ d ∈ n.divisors, d.totient * count c d)
     _ = _ := by simp only [Finset.mul_sum, mul_assoc, count]
 
+/-- **Square-torus fixed points of the identity.** Let $n$ be a positive integer, let $T$ be a
+finite set of tile designs, and let $\sigma$ be the identity permutation of $T$. Let $S$ be the
+sum, over all shifts $v \in (\mathbb{Z}/n\mathbb{Z})^2$, of the number of tilings
+$F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(c + v) = \sigma(F(c))$ for every cell $c$. Then
+$S = \sum_{d_1 \mid n} \sum_{d_2 \mid n} \varphi(d_1) \, \varphi(d_2) \,
+|T|^{n^2/\operatorname{lcm}(d_1, d_2)}$, where $d_1$ and $d_2$ run over the positive divisors of
+$n$ and $\varphi$ is Euler's totient function.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 38. -/
+public theorem squareTorus_identity {T : Type*} [Fintype T] [DecidableEq T]
+    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
+    torusShiftSum n n id σ =
+      ∑ d₁ ∈ n.divisors, ∑ d₂ ∈ n.divisors,
+        Nat.totient d₁ * Nat.totient d₂ *
+          Fintype.card T ^ (n ^ 2 / Nat.lcm d₁ d₂) := by
+  simpa only [pow_two] using rectangularTorus_identity n n σ hσ
+
 /-- **Solution of $x = -1-x-a$ modulo odd $n$.** Let $n$ be a positive odd integer and
 $a \in \mathbb{Z}/n$. Then the set of $x \in \mathbb{Z}/n$ with $x = -1-x-a$ is the singleton
 $\{k(-1-a)\}$, where $k$ is the residue mod $n$ of the integer $(n+1)/2$.
@@ -424,5 +444,30 @@ public theorem reflection_shift_solutions_even_odd (n : ℕ) [NeZero n]
   · rintro (rfl | rfl)
     · linear_combination ha'
     · linear_combination ha' + hk'
+
+/-- **No solutions of $x = -1-x-a$ modulo $n$ when $n$ and $a$ are even.** Let $n$ be a
+positive even integer and $a \in \mathbb{Z}/n$ whose representative in $\{0, \dots, n-1\}$ is
+even. Then no $x \in \mathbb{Z}/n$ satisfies $x = -1-x-a$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Lemma 25. -/
+public theorem reflection_shift_solutions_even_even (n : ℕ) [NeZero n]
+    (a : ZMod n) (hn : Even n) (ha : Even a.val) :
+    {x : ZMod n | x = -1 - x - a} = ∅ := by
+  let f : ZMod n →+* ZMod 2 := ZMod.castHom (even_iff_two_dvd.mp hn) (ZMod 2)
+  have htwo : (2 : ZMod 2) = 0 := by decide
+  have ha₀ : f a = 0 := by
+    change ZMod.cast a = (0 : ZMod 2)
+    rw [← ZMod.natCast_val]
+    exact ha.natCast_zmod_two
+  refine Set.eq_empty_iff_forall_notMem.mpr fun x hx => ?_
+  change x = -1 - x - a at hx
+  have h : 2 * x = -1 - a := by
+    rwa [two_mul, ← eq_sub_iff_add_eq, sub_right_comm]
+  have hzero : (0 : ZMod 2) = 1 := by
+    have hneg : (-1 : ZMod 2) = 1 := by decide
+    simpa only [map_mul, map_ofNat, map_sub, map_neg, map_one, htwo, ha₀, zero_mul,
+      sub_zero, hneg] using congrArg f h
+  exact zero_ne_one hzero
 
 end MetaMathlibExt

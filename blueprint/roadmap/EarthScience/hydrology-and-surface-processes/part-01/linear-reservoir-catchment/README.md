@@ -9,3 +9,8 @@
 - [Storage starting at or below the steady storage stays there](linear-reservoir-storage-le-steady.md)
 - [Storage starting at or above the steady storage stays there](steady-le-linear-reservoir-storage.md)
 - [Storage stays within a capacity bounding initial and steady storage](linear-reservoir-storage-le-capacity.md)
+
+## Variable inflow
+
+- [Linear reservoir with variable inflow](linear-reservoir-with-variable-inflow.md)
+- [Further reservoir routing problems](further-reservoir-routing-problems.md)

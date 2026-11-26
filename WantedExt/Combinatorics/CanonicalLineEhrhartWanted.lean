@@ -15,7 +15,7 @@ public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Basic
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import MathlibExt.Combinatorics.CanonicalLineEhrhart
+public import MathlibExt.Combinatorics.CanonicalLineInterlacing
 public import MathlibExt.Combinatorics.Enumerative.OrdinaryEhrhartCount
 public import WantedExt.Combinatorics.WeightedProjectiveSimplexIDPWanted
 import Mathlib
@@ -28,31 +28,6 @@ open Filter Polynomial Set
 @[expose] public noncomputable section
 
 /-! # Ehrhart polynomials with roots on the canonical line -/
-
-/-- **The basis polynomials $b^d_j$.** For natural numbers $d$ and $j$, $b^d_j$ is the complex
-polynomial $b^d_j = \prod_{i=0}^{d-1} (X + d - j - i)$.
-
-Integer constants are used before mapping to $\mathbb{C}$, avoiding any convention about rising
-versus falling Pochhammer symbols.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of `bᵈⱼ`.
--/
-public def bBasis (d j : ℕ) : Polynomial ℂ :=
-  ∏ i ∈ Finset.range d, (X + C (((d : ℤ) - (j : ℤ) - (i : ℤ) : ℤ) : ℂ))
-
-/-- **Symmetric basis polynomials.** For natural numbers $d$ and $j$, let $b^d_j$ be the complex
-polynomial $\prod_{i=0}^{d-1} (X + d - j - i)$. The polynomial $p^d_j$ is $b^d_j$ if $2j = d$, and
-$b^d_j + b^d_{d-j}$ otherwise, where $d - j$ is truncated at $0$ (so $p^d_j = b^d_j + b^d_0$ when
-$j > d$).
-
-Statements that use $p^d_j$ assume $j \le d$, where the truncation plays no role.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of `pᵈⱼ`.
--/
-public def pBasis (d j : ℕ) : Polynomial ℂ :=
-  if 2 * j = d then bBasis d j else bBasis d j + bBasis d (d - j)
 
 /-- **The basis polynomial $p^1_0$.** The symmetric basis polynomial $p^1_0$ equals the complex
 polynomial $2X + 1$.
@@ -77,21 +52,6 @@ public theorem pBasis_two_zero : pBasis 2 0 = 2 * (X ^ 2 + X + 1) := by
     ring
   rw [hC2]
   ring
-
-/-- **Interlacing lists.** Let $r$ be a binary relation on a type $\alpha$ and let $d \ge 0$.
-A list $(a_1, \dots, a_d)$ interlaces a list $(b_1, \dots, b_{d+1})$ with respect to $r$ when
-$b_1 \mathrel{r} a_1 \mathrel{r} b_2 \mathrel{r} \cdots \mathrel{r} a_d \mathrel{r} b_{d+1}$,
-that is, $b_k \mathrel{r} a_k$ and $a_k \mathrel{r} b_{k+1}$ for $1 \le k \le d$. Two lists
-interlace only when the second has exactly one more entry than the first; in particular the
-empty list interlaces every one-element list.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of interlacing.
--/
-public def ListInterlaces {α : Type*} (r : α → α → Prop) : List α → List α → Prop
-  | [], [_] => True
-  | a :: as, b :: b' :: bs => r b a ∧ r a b' ∧ ListInterlaces r as (b' :: bs)
-  | _, _ => False
 
 /-- **Alternating lists of equal length.** Let $r$ be a binary relation on a type $\alpha$ and
 let $n \ge 0$. A list $(a_1, \dots, a_n)$ alternates with a list $(b_1, \dots, b_n)$ with
@@ -148,27 +108,6 @@ public def RealAlternates (f g : Polynomial ℝ) : Prop :=
         as.length = f.natDegree ∧ bs.length = g.natDegree ∧
         List.Pairwise (· ≤ ·) as ∧ List.Pairwise (· ≤ ·) bs ∧
         (ListAlternates (· ≤ ·) as bs ∨ ListAlternates (· ≤ ·) bs as)
-
-/-- **Interlacing on the canonical line.** A complex polynomial $f$ CL-interlaces a complex
-polynomial $g$ when $f$ and $g$ are nonzero, $\deg g = \deg f + 1$, all roots of $f$ and of $g$
-lie on the canonical line, and, writing $d = \deg f$ and listing the roots with multiplicity as
-$a_1, \dots, a_d$ for $f$ and $b_1, \dots, b_{d+1}$ for $g$, each list sorted by increasing
-imaginary part, they alternate:
-$\operatorname{Im} b_1 \le \operatorname{Im} a_1 \le \operatorname{Im} b_2 \le \cdots \le
-\operatorname{Im} a_d \le \operatorname{Im} b_{d+1}$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of CL-interlacing.
--/
-public def CLInterlaces (f g : Polynomial ℂ) : Prop :=
-  f ≠ 0 ∧ g ≠ 0 ∧ f.natDegree + 1 = g.natDegree ∧
-    ∃ as bs : List ℂ,
-      (as : Multiset ℂ) = f.roots ∧ (bs : Multiset ℂ) = g.roots ∧
-        as.length = f.natDegree ∧ bs.length = g.natDegree ∧
-        (∀ z ∈ as, z ∈ canonicalLine) ∧ (∀ z ∈ bs, z ∈ canonicalLine) ∧
-        List.Pairwise (fun x y => x.im ≤ y.im) as ∧
-        List.Pairwise (fun x y => x.im ≤ y.im) bs ∧
-        ListInterlaces (fun x y => x.im ≤ y.im) as bs
 
 /-- **Real-rooted polynomials.** A real polynomial $f$ has only real roots when $f \ne 0$ and the
 number of real roots of $f$, counted with multiplicity, equals the degree of $f$.
@@ -276,18 +215,6 @@ public def canonicalLineRootSet (d : ℕ) : Set ℂ :=
   {z | z ∈ canonicalLine ∧
     ∃ f : Polynomial ℂ, f.natDegree = d ∧ IsCL f ∧ HasDiamond f ∧ f.IsRoot z}
 
-/-- **Functional equation versus palindromic h-star coefficients.** Let $f$ be a nonzero complex
-polynomial of degree $d$ with $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$. Then
-$f(X-1) = (-1)^d f(-X)$ as polynomials if and only if $h^*_i(f) = h^*_{d-i}(f)$ for every
-$i \le d$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 1 (quoting Corollary 2.2 in Kölbl's [11]).
--/
-public theorem_wanted functionalEquation_iff_hStar_palindromic (f : Polynomial ℂ) (hf : f ≠ 0) :
-    f.comp (X - 1) = C ((-1 : ℂ) ^ f.natDegree) * f.comp (-X) ↔
-      ∀ i ≤ f.natDegree, hStarCoeff f i = hStarCoeff f (f.natDegree - i)
-
 /-- **$p^d_0$ CL-interlaces $p^{d+1}_0$.** For every natural number $d \ge 1$, the symmetric
 basis polynomial $p^d_0$ CL-interlaces $p^{d+1}_0$.
 
@@ -296,21 +223,6 @@ INTEGERS 25 (2025), Article A68, Lemma 4.
 -/
 public theorem_wanted pBasis_zero_interlaces_succ (d : ℕ) (hd : 0 < d) :
     CLInterlaces (pBasis d 0) (pBasis (d + 1) 0)
-
-/-- **CL-interlacing of $p^d_0$ with a perturbation of $p^{d+1}_0$.** For every natural number
-$d \ge 1$ and every real number $w > 0$, the symmetric basis polynomial $p^d_0$ CL-interlaces
-the polynomial $p^{d+1}_0 + w \, (2X + 1) \, p^d_0$.
-
-The orientation follows the numbered statement in the INTEGERS version; the arXiv wording
-differs.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 5.
--/
-public theorem_wanted pBasis_zero_interlaces_perturbation (d : ℕ) (hd : 0 < d)
-    (w : ℝ) (hw : 0 < w) :
-    CLInterlaces (pBasis d 0)
-      (pBasis (d + 1) 0 + C (w : ℂ) * (2 * X + 1) * pBasis d 0)
 
 /-- **Fisk's Leibniz rule for interlacing.** Let $f, f_1, g, g_1$ be real polynomials with
 positive leading coefficients, each having only real roots, such that $f$ and $g$ have no common
