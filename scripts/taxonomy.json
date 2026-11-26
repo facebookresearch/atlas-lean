@@ -1479,6 +1479,7 @@
   "CSLibExt/Computability/Decidability/Undecidable": {"to": "TheoryOfComputation/computability", "title": "Halting problem and Rice's theorem"},
   "CSLibExt/Computability/Distributed/AnonymousRing": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Leader election on anonymous rings"},
   "CSLibExt/Computability/Distributed/Byzantine/Agreement": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine agreement"},
+  "CSLibExt/Computability/Distributed/Byzantine/BrachaBroadcast": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Replication and consistency"},
   "CSLibExt/Computability/Distributed/Byzantine/Impossibility": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine generals problem"},
   "CSLibExt/Computability/Distributed/Byzantine/OralMessages": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine generals problem"},
   "CSLibExt/Computability/Distributed/Byzantine/OralMessagesProtocol": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine generals problem"},
