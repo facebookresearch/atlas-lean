@@ -1,9 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
@@ -13,16 +15,11 @@ Portions of this file are adapted from:
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -35,9 +32,11 @@ import Mathlib.AlgebraicGeometry.PullbackCarrier
 # Gluing data from opens and transition maps
 
 `AlgebraicGeometry.Scheme.GlueData.MkCore` packages gluing data given by schemes `U i`,
-opens `V i j ⊆ U i` and transition maps `t i j : V i j ⟶ V j i` satisfying the cocycle
-condition on triple overlaps, stated with opens instead of pullbacks. `MkCore.glueData`
-turns it into `Scheme.GlueData`.
+opens `V i j ⊆ U i` and transition maps `t i j : V i j ⟶ V j i` such that `V i i` is all of
+`U i`, `t i i` is the identity, `t i j` sends `V i j ∩ V i k` into `V j i ∩ V j k`, and on
+`V i j ∩ V i k` the two routes to `U k`, through `t i j` and `t j k` or through `t i k`, agree.
+These conditions are stated with opens instead of pullbacks. `MkCore.glueData` turns the
+data into `Scheme.GlueData`.
 -/
 
 @[expose] public section
@@ -51,8 +50,10 @@ universe u
 namespace AlgebraicGeometry.Scheme.GlueData
 
 /-- Gluing data for schemes given by opens `V i j` of `U i` and transition maps
-`t i j : V i j ⟶ V j i`, with the cocycle condition stated on triple intersections of
-opens. This is the scheme analogue of `TopCat.GlueData.MkCore`. -/
+`t i j : V i j ⟶ V j i` such that `V i i` is all of `U i` (`V_id`), `t i i` is the identity
+(`t_id`), `t i j` sends `V i j ∩ V i k` into `V j i ∩ V j k` (`t_inter`), and on
+`V i j ∩ V i k` the two routes to `U k`, through `t i j` and `t j k` or through `t i k`, agree
+(`cocycle`). This is the scheme analogue of `TopCat.GlueData.MkCore`. -/
 structure MkCore where
   /-- The index type. -/
   {J : Type u}
