@@ -1,0 +1,3 @@
+# Algebraic second-branch temperature ratio of the normal-shock conditions
+
+The temperature ratio $T_2/T_1$ of the second algebraic root of the normal-shock conditions is the pressure ratio divided by the density ratio. These are algebraic ratios, defined for all real $\gamma$ and $m$ with the convention $x/0 = 0$. For $\gamma > 1$, $m \ge 0$ and a positive upstream state, the second root has positive pressure and temperature exactly when $m > (\gamma - 1)/(2\gamma)$, and the two roots coincide at $m = 1$; positivity alone does not make it a shock, and only $m > 1$ gives the compression shock that satisfies the entropy condition (for example, at $\gamma = 7/5$ and $M_1 = 1/4$ the pressure ratio is $-3/32$).
