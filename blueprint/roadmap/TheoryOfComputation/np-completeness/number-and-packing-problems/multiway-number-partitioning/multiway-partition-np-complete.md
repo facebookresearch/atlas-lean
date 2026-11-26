@@ -12,4 +12,4 @@ $(0)$, for instance, is a yes-instance of PARTITION but has no split into two no
 
 ## Sources
 
-- Michael R. Garey and David S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman, 1979 (PARTITION).
+- Michael R. Garey and David S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman, 1979 (PARTITION [SP12]).

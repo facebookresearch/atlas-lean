@@ -16,3 +16,4 @@ Group axioms and homomorphisms, subgroups and their lattice, cosets and index, n
 - [First isomorphism theorem for groups](first-isomorphism-groups.md)
 - [The image of a group homomorphism is a subgroup](homomorphism-image-subgroup.md)
 - [Characteristically simple groups](characteristically-simple-groups/README.md)
+- [Congruence modulo an element of an additive commutative monoid](congruence-modulo.md)

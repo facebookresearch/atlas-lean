@@ -65,6 +65,38 @@ theorem coordinateEvaluation_injective (K : Type*) [Field K] :
   · simpa [he, coordinatePoint] using congrFun h (false, 0)
   · simpa [he, coordinatePoint] using congrFun h (true, 0)
 
+-- That evaluation is not surjective: its values ignore the redundant coordinate.
+theorem coordinateEvaluation_not_surjective (K : Type*) [Field K] :
+    ¬ Function.Surjective
+      (Algebra.TensorProduct.lift (Algebra.ofId K ((Bool × ℕ) → K))
+        (AlgHom.pi (coordinatePoint K)) (fun _ _ => Commute.all _ _) :
+          K ⊗[K] (K × K) →ₐ[K] ((Bool × ℕ) → K)) := by
+  let ev := Algebra.TensorProduct.lift (Algebra.ofId K ((Bool × ℕ) → K))
+    (AlgHom.pi (coordinatePoint K)) (fun _ _ => Commute.all _ _)
+  have he (x : K ⊗[K] (K × K)) (n : ℕ) : ev x (false, n) = ev x (false, 0) := by
+    induction x using TensorProduct.inductionOn with
+    | tmul r a => simp [ev, coordinatePoint]
+    | add x y hx hy => simp [map_add, hx, hy]
+  intro hs
+  obtain ⟨x, hx⟩ := hs fun p => if p.2 = 0 then 0 else 1
+  have h0 : ev x (false, 0) = 0 := by simpa using congrFun hx (false, 0)
+  have h1 : ev x (false, 1) = 1 := by simpa using congrFun hx (false, 1)
+  rw [he x 1, h0] at h1
+  exact zero_ne_one h1
+
+-- Single-point separation and extensionality need only injectivity, so they apply to this
+-- infinite point family although its evaluation map is not surjective.
+theorem coordinate_eq_zero (K : Type*) [Field K] (a : K × K)
+    (ha : ∀ p, coordinatePoint K p a = 0) : a = 0 :=
+  Algebra.TensorProduct.eq_zero_of_forall_point_eq_zero (coordinatePoint K)
+    (coordinateEvaluation_injective K) a ha
+
+theorem coordinate_algHom_ext (K : Type*) [Field K] {B : Type*} [Semiring B] [Algebra K B]
+    (u u' : B →ₐ[K] K × K)
+    (h : ∀ p, (coordinatePoint K p).comp u = (coordinatePoint K p).comp u') : u = u' :=
+  Algebra.TensorProduct.algHom_eq_of_forall_point_comp_eq (coordinatePoint K)
+    (coordinateEvaluation_injective K) h
+
 theorem tensorMaps_ext
     {K L A P M : Type*} [Field K] [Field L] [Algebra K L]
     [CommRing A] [Algebra K A] (pt : P → A →ₐ[K] L)
