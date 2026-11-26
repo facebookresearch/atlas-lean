@@ -66,7 +66,7 @@ abbrev MinimumSumOfAlphaPowersInstance := List ℕ × ℕ × ℕ
 def WellFormed (i : MinimumSumOfAlphaPowersInstance) : Prop :=
   (∀ a ∈ i.1, 0 < a) ∧ 0 < i.2.1 ∧ i.2.1 ≤ i.1.length ∧ 0 < i.2.2
 
-/-- Some assignment `f : A → Fin K`, not necessarily onto (empty bins contribute `0`), has
+/-- Some assignment `f : A → Fin K`, not necessarily onto (an empty bin's sum is `0`), has
 `∑ⱼ (∑_{f a = j} s(a))^α ≤ J`. -/
 def MinimumSumOfAlphaPowersFeasible (α : ℕ) (i : MinimumSumOfAlphaPowersInstance) : Prop :=
   ∃ f : Fin i.1.length → Fin i.2.1,

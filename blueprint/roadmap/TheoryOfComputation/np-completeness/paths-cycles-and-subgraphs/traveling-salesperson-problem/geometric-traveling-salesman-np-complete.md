@@ -1,6 +1,6 @@
 # GEOMETRIC TRAVELING SALESMAN is NP-complete
 
-The decision problem GEOMETRIC TRAVELING SALESMAN, the language of tours whose sum of [discretized](discrete-dist.md) edge lengths $\lceil \lVert p - q \rVert \rceil$ (each Euclidean edge length rounded up, the return edge included) is at most $B$, belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem GEOMETRIC TRAVELING SALESMAN, the language of encoded instances that have a tour whose sum of [discretized](discrete-dist.md) edge lengths $\lceil \lVert p - q \rVert \rceil$ (each Euclidean edge length rounded up, the return edge included) is at most $B$, belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

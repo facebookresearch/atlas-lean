@@ -17,7 +17,6 @@
 - [Forced grid edges](forced.md)
 - [Feasible instances of GRAND TOUR](grand-tour-feasible.md)
 - [GRAND TOUR as a decision problem](grand-tour-dec.md)
-- [GRAND TOUR is NP-complete](grand-tour-np-complete.md)
 - [Feasible HAMILTONIAN CYCLE (UNDIRECTED) instances](hamiltonian-cycle-undirected-feasible.md)
 - [HAMILTONIAN CYCLE (UNDIRECTED) as a decision problem](hamiltonian-cycle-undirected-dec.md)
 - [HAMILTONIAN CYCLE (UNDIRECTED) is NP-complete](hamiltonian-cycle-undirected-np-complete.md)

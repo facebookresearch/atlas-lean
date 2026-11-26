@@ -1,6 +1,6 @@
-# DOMATIC NUMBER is NP-complete
+# DOMATIC NUMBER FOR FIXED K is NP-complete
 
-For every natural number $K \ge 3$, the decision problem DOMATIC NUMBER belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+For every natural number $K \ge 3$, the [decision problem](domatic-number-fixed-kdec.md) DOMATIC NUMBER FOR FIXED K, whose instances are graphs and whose bound $K$ is fixed, belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
 ## Sources
 

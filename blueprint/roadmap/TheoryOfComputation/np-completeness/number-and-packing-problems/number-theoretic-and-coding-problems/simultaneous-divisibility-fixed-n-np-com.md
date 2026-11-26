@@ -1,6 +1,6 @@
-# SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS is NP-complete
+# SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS WITH n DIVISIBILITIES is NP-complete
 
-For every natural number $n \ge 5$, the decision problem SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+For every natural number $n \ge 5$, the [decision problem](simultaneous-divisibility-fixed-ndec.md) SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS WITH n DIVISIBILITIES, whose instances have exactly $n$ pairs, belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it. The general problem, with the number of pairs part of the input, is not known to be in NP.
 
 ## Sources
 
