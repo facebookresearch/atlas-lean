@@ -6,11 +6,15 @@ $$\begin{aligned}
 &-d\, \partial_y I(t, x, 0) = \mu T - \nu I(t, x, 0), \qquad \partial_t T - D\, \partial_{xx} T = \nu I(t, x, 0) - \mu T, && y = 0,
 \end{aligned}$$
 with $S(0, \cdot) \equiv S_0 > 0$ and nonnegative compactly supported initial infections $I_0 \not\equiv 0$, $T_0$. With $u = \int_0^t T\, ds$, $v = \int_0^t I\, ds$ and $f(v) = S_0(1 - e^{-\beta v}) - \alpha v$, the system becomes
+
 $$\partial_t u - D\, \partial_{xx} u = \nu v(t, x, 0) - \mu u + T_0, \quad \partial_t v - d\, \Delta v = f(v) + I_0, \quad -d\, \partial_y v(t, x, 0) = \mu u - \nu v(t, x, 0).$$
 
 **Theorem (Berestycki, Roquejoffre and Rossi 2020, Theorems 3.4–3.6).** The reduced system has a unique positive bounded stationary solution $(u_\infty^r, v_\infty^r)$, and $(u, v) \to (u_\infty^r, v_\infty^r)$ locally uniformly as $t \to \infty$. If $R_0 = S_0 \beta / \alpha > 1$, there is $c_{\mathrm{SIRT}} > 0$ such that for every $\varepsilon \in (0, c_{\mathrm{SIRT}})$,
+
 $$\lim_{t \to \infty} \max_{|x| \le (c_{\mathrm{SIRT}} - \varepsilon) t} \big| (u, v)(t, x, y) - (u_\infty^r, v_\infty^r)(x, y) \big| = 0, \qquad \lim_{t \to \infty} \max_{|x| \ge (c_{\mathrm{SIRT}} + \varepsilon) t} |(u, v)(t, x, y)| = 0,$$
+
 locally uniformly in $y \ge 0$, and
+
 $$c_{\mathrm{SIRT}} = c_{\mathrm{SIR}} = 2\sqrt{d\, \alpha (R_0 - 1)} \ \text{ if } D \le 2d, \qquad c_{\mathrm{SIRT}} > c_{\mathrm{SIR}} \ \text{ if } D > 2d.$$
 
 ## Depends on

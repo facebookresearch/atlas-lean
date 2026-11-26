@@ -1,13 +1,19 @@
 # Free-boundary limit of the diffusive SIS model with recruitment and disease death
 
 On $(0, L)$ with Neumann boundary conditions, consider the SIS system with recruitment and disease-induced death
+
 $$S_t - d_S S_{xx} = \Lambda - S - \beta(x) S I + \gamma(x) I, \qquad I_t - d_I I_{xx} = \beta(x) S I - (\gamma(x) + \eta(x)) I,$$
+
 with a constant $\Lambda > 0$ and positive Hölder continuous $\beta, \gamma, \eta$. The disease-free equilibrium is $(\Lambda, 0)$. Let
+
 $$h(x) = \frac{\gamma(x) + \eta(x)}{\beta(x)}, \qquad h_{\min} = \min_{[0, L]} h, \qquad \Theta_h = \{x : h(x) = h_{\min}\},$$
+
 and assume $\Lambda > h(x)$ for all $x \in [0, L]$.
 
 **Theorem.** As $d_I \to 0$, along a subsequence every endemic equilibrium $(S, I)$ satisfies $S \to \hat S$ uniformly on $[0, L]$ and $I \to \mu$ weakly for a Radon measure $\mu$, where $\hat S$ solves weakly in $W^{1,2}(0, L)$ the free-boundary problem
+
 $$-d_S \hat S_{xx} = \Lambda - \hat S - \eta(x)\, \mu\big|_{\{x \in [0, L] : \hat S(x) = h(x)\}} \quad \text{in } (0, L).$$
+
 Moreover:
 
 1. $\mu(\{x : \hat S(x) \ne h(x)\}) = 0$ and $\mu(\{x : \hat S(x) = h(x)\}) > 0$;

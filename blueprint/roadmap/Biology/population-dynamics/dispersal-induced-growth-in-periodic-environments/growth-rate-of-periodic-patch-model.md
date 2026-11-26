@@ -3,7 +3,9 @@
 This page covers the setting and the growth-rate characterisation of Katriel (2022), Sections 2.1, 3.1 and 4, used for [dispersal-induced growth](dispersal-induced-growth-all-sink-case.md).
 
 **Model.** Populations $x_i(t)$ on $N$ patches have $2\pi$-periodic continuous local growth rates $r_i(\theta)$, evaluated at $\theta = \omega t$ (frequency $\omega > 0$), and disperse at rate $m \ge 0$:
+
 $$x' = [R(\omega t) + mL]\, x, \qquad R(\theta) = \mathrm{diag}(r_1(\theta), \dots, r_N(\theta)),$$
+
 where $L$ is symmetric, irreducible, has nonnegative off-diagonal entries $L_{ij}$ and zero row sums ($L_{ii} = -\sum_{j \ne i} L_{ij}$). For two patches, $x_1' = r_1(\omega t)x_1 + m(x_2 - x_1)$, $x_2' = r_2(\omega t)x_2 + m(x_1 - x_2)$. Write $\bar r_i = \frac{1}{2\pi}\int_0^{2\pi} r_i$; patch $i$ is a source if $\bar r_i > 0$ and a sink if $\bar r_i < 0$. Let $\lambda(A)$ denote the largest eigenvalue of a symmetric matrix $A$.
 
 **Statement.** For $m > 0$:

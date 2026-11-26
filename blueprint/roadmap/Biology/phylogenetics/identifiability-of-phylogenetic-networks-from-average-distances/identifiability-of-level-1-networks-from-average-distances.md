@@ -3,6 +3,7 @@
 Let $d_N$ denote the tip-to-tip [average distances](average-distance-on-a-phylogenetic-network.md) of a semidirected network $N$ on $X$.
 
 **Theorem (mixed representation, level 1).** Let $N_1, N_2$ be level-1 semidirected networks on $X$ with no $2$- or $3$-cycles, no degree-2 nodes, and internal tree edges of positive length. Let $N_i^*$ be the *mixed network representation* of the zipped-up version of $N_i$, in which each $4$-cycle is replaced by split (undirected) edges and all other tree and hybrid edges and identifiable edge parameters are kept. Then
+
 $$d_{N_1} = d_{N_2} \implies N_1^* = N_2^*.$$
 
 **Corollary.** If $N_1, N_2$ are zipped-up level-1 semidirected networks on $X$ with tree edges of positive length, without $2$-, $3$- or $4$-cycles and without degree-2 nodes, then $d_{N_1} = d_{N_2}$ implies $N_1 = N_2$.

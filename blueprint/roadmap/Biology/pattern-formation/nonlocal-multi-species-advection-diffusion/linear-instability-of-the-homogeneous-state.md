@@ -2,23 +2,31 @@
 
 On the flat torus $\mathbb T = \prod_{h=1}^n [0, L_h]$ (periodic boundary conditions) consider $N$ species with densities
 $u_i(x,t) > 0$ moving by diffusion and nonlocal advection:
+
 $$\frac{\partial u_i}{\partial t} = D_i \Delta u_i + \nabla \cdot \Bigl( u_i \sum_{j=1}^N \gamma_{ij} \nabla (K * u_j) \Bigr), \qquad i = 1, \dots, N,$$
+
 where $D_i > 0$, $\gamma_{ij} \in \mathbb{R}$ ($\gamma_{ij} > 0$: species $i$ moves away from $j$; $\gamma_{ij} < 0$: towards $j$), and the
 detection kernel $K$ is symmetric ($K(x) = K(-x)$), non-negative, with $\|K\|_{L^1} = 1$. The masses $p_i = \int_{\mathbb T} u_i\,dx$ are
 conserved, so $\bar u = (\bar u_1, \dots, \bar u_N)$, $\bar u_i = p_i/|\mathbb T|$, is a homogeneous steady state.
 
 **Proposition (dispersion relation).** Perturbations $u - \bar u = u^{(0)} e^{\lambda t + i\kappa\cdot x}$ with wave vector
 $\kappa = (2\pi q_1/L_1, \dots, 2\pi q_n/L_n)$, $q_h \in \mathbb N$, satisfy to first order $\lambda(\kappa)\, w = |\kappa|^2 \mathcal L(\kappa)\, w$ with
+
 $$\mathcal L(\kappa)_{ii} = -D_i - \gamma_{ii}\bar u_i \hat K(\kappa), \qquad \mathcal L(\kappa)_{ij} = -\gamma_{ij}\bar u_i \hat K(\kappa) \quad (i \ne j),$$
+
 where $\hat K$ is the Fourier transform of $K$. The state $\bar u$ is linearly unstable iff some admissible $\kappa \ne 0$ gives
 $\mathcal L(\kappa)$ an eigenvalue with positive real part. If $\gamma_{ij} = \gamma_{ji}$ and all $\bar u_i$ are equal, $\mathcal L(\kappa)$ is
 symmetric and its eigenvalues are real.
 
 **Two species.** For $N = 2$ the eigenvalues are
+
 $$\lambda^\pm = \tfrac12\Bigl[ -(\gamma_{11}\bar u_1 + \gamma_{22}\bar u_2)\hat K - (D_1 + D_2) \pm \sqrt{\Delta} \Bigr],$$
+
 $$\Delta = \bigl((\gamma_{11}\bar u_1 - \gamma_{22}\bar u_2)^2 + 4\gamma_{12}\gamma_{21}\bar u_1\bar u_2\bigr)\hat K^2 + 2(D_1 - D_2)(\gamma_{11}\bar u_1 - \gamma_{22}\bar u_2)\hat K + (D_1 - D_2)^2,$$
+
 which are real when $\gamma_{12} = \gamma_{21}$. In the symmetric case $p_1 = p_2 = 1$, $L_h = 1$, $D_1 = D_2$, $\gamma_{11} = \gamma_{22}$,
 $\gamma_{12} = \gamma_{21}$, the homogeneous state is linearly unstable iff for some admissible $\kappa \ne 0$
+
 $$-\gamma_{11}\hat K(\kappa) + |\gamma_{12}\hat K(\kappa)| > D_1 .$$
 
 ## Depends on

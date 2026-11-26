@@ -1,10 +1,13 @@
 # Competitive exclusion persists under linear environmental white noise
 
 Let $n$ species with densities $x_i$ compete for $m$ abiotic resources $R_j(x) = \bar R_j - F_j(x)$, where each $F_j \ge 0$ is unbounded with $F_j(0) = 0$, so that the resources eventually get exhausted. Per-capita growth rates are linear in the resources and the environment fluctuates by white noise:
+
 $$dx_i(t) = x_i(t)\Big(-\alpha_i + \sum_{j=1}^m b_{ij} R_j(x(t))\Big)dt + x_i(t) g_i(x(t))\, dE_i(t), \qquad i = 1, \dots, n,$$
+
 where $E(t) = \Gamma^T B(t)$ for a standard Brownian motion $B$ in $\mathbb{R}^n$ and $\Gamma^T\Gamma = \Sigma = (\sigma_{ij})$.
 
 *At least one species goes extinct* means: there is $\alpha > 0$ such that for every $x(0) \in (0, \infty)^n$, almost surely
+
 $$\limsup_{t \to \infty} \frac{\ln \min_i x_i(t)}{t} \le -\alpha.$$
 
 **Theorem.** If $n > m$ and the noise is linear, $g_i \equiv 1$ for all $i$, then for every $x(0) \in (0, \infty)^n$, with probability one at least one species goes extinct.
@@ -16,7 +19,9 @@ Linear noise can still change which species wins. For two species on one resourc
 ## Expansion
 
 Since $n > m$, there is a nonzero $c \in \mathbb{R}^n$ with $\sum_i c_i b_{ij} = 0$ for every resource $j$. By Itô's formula, with $g_i \equiv 1$,
+
 $$d \sum_i c_i \ln x_i = -\sum_i c_i \Big(\alpha_i + \frac{\sigma_{ii}}{2}\Big)dt + \sum_i c_i\, dE_i,$$
+
 so the resource terms cancel exactly and $\sum_i c_i \ln x_i(t)$ is a Brownian motion with constant drift. Under the nondegeneracy $\sum_i c_i(\alpha_i + \sigma_{ii}/2) \ne 0$ the drift is nonzero, while the growth conditions on $R_j$ keep the process from escaping to infinity, so some $\ln x_i$ must go to $-\infty$ at a linear rate. The noise raises each effective death rate from $\alpha_i$ to $\alpha_i + \sigma_{ii}/2$, but leaves the linear dependence on resources intact, which is what makes exclusion survive. The deterministic version ($\Sigma = 0$) is the classical principle that $n$ species cannot coexist on $m < n$ resources.
 
 ## Sources

@@ -7,6 +7,7 @@ $$h_{C|T}(v \mid u) = \frac{\partial}{\partial u}\mathcal C(u, v), \qquad h_{T|C
 so that $F_{C|T}(c \mid t) = h_{C|T}(F_C(c) \mid F_T(t))$. Then
 
 $$F_Y(y) = F_T(y) + F_C(y) - \mathcal C(F_T(y), F_C(y)),$$
+
 $$f_{Y,\Delta}(y, 1) = \bigl\{1 - h_{C|T}(F_C(y) \mid F_T(y))\bigr\} f_T(y), \qquad f_{Y,\Delta}(y, 0) = \bigl\{1 - h_{T|C}(F_T(y) \mid F_C(y))\bigr\} f_C(y).$$
 
 For an Archimedean copula $\mathcal C(u, v) = \psi^{[-1]}(\psi(u) + \psi(v))$ with differentiable generator, $h_{C|T}(v \mid u) = \psi'(u)/\psi'(\psi^{-1}(\psi(u) + \psi(v)))$ and symmetrically for $h_{T|C}$. Under independence ($\mathcal C(u,v) = uv$) the formulas reduce to the classical $f_T(y)\{1 - F_C(y)\}$ and $f_C(y)\{1 - F_T(y)\}$.

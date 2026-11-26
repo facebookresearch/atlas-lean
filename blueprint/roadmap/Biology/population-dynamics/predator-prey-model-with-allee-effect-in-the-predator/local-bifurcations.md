@@ -1,7 +1,9 @@
 # Local bifurcations of the predator–prey model with predator Allee effect
 
 For the [predator–prey model with an Allee effect in the predator](equilibria-and-stability.md),
+
 $$F_1 = x(1-x) - \frac{xy}{\beta+x}, \qquad F_2 = \frac{\alpha xy}{\beta+x}h(y) - my,$$
+
 with $h$ satisfying (A1)–(A5), the following local bifurcations of interior equilibria occur.
 
 **Saddle-node.** Two interior equilibria collide when the nullclines are tangent, $f^1_xf^2_y - f^1_yf^2_x = 0$ (so $\det J = 0$). With $m$ as parameter at $m = m_{SN}$ and equilibrium $\bar E = (\bar x, \bar y)$, the right and left null vectors of $J(\bar E)$ are $v = (1,\ 1-\beta-2\bar x)^\top$ and $w = (\alpha\bar yh'(\bar y),\ 1)^\top$, and the transversality conditions hold for every admissible $h$: $w^\top F_m(\bar E) \ne 0$ and $w^\top D^2F(\bar E)(v,v) < 0$ (using $h'' < 0$). Hence the saddle-node is generic and creates the saddle $E_2^*$ and the node/focus $E_1^*$.

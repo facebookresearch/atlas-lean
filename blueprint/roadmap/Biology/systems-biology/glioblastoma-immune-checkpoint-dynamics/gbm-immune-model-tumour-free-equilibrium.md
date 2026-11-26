@@ -15,7 +15,9 @@ Here $\lambda_C$ and $C_{\max}$ are the tumor growth rate and carrying capacity,
 1. Solutions starting with $C, T, M > 0$ stay positive and bounded; in particular $C(t) \le \max\{C(0), C_{\max}\}$.
 2. There is a unique tumor-free equilibrium $(0, T_0^*, 0)$, where $T_0^*$ is the unique positive root of $d_T\rho T^3 + d_T T - a_T = 0$; $T_0^*$ is increasing in $a_T$ and decreasing in $d_T$ and $\rho$.
 3. The Jacobian at $(0, T_0^*, 0)$ has eigenvalues
+
 $$\lambda_1 = \lambda_C - \eta T_0^*, \qquad \lambda_2 = -\frac{2a_T\rho T_0^*}{(1 + \rho T_0^{*2})^2} - d_T < 0, \qquad \lambda_3 = -d_M < 0.$$
+
 Hence the tumor-free equilibrium is locally asymptotically stable if $\lambda_C < \eta T_0^*$ and a saddle if $\lambda_C > \eta T_0^*$.
 
 ## Depends on

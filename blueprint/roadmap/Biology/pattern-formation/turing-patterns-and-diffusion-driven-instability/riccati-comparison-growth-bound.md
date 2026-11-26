@@ -3,13 +3,17 @@
 This page covers the comparison principle (Theorem 3.1, Corollaries 3.1-3.2 and Theorem 3.2) that Van Gorder, Klika and Krause (2021) use to replace eigenvalue criteria for linear stability on time-dependent domains.
 
 Let $I \subseteq [0, \infty)$ be an interval, $F, G \in C(I)$, and consider
+
 $$\ddot Y + F(t)\, \dot Y + G(t)\, Y = 0 . \qquad (18)$$
 
 **Theorem (growth; Theorem 3.1).** Let $\Phi \in C^2$ with $\Phi(t) > 0$ on $I$. If
+
 $$G(t) \le -\frac{\ddot \Phi}{\Phi} - \frac{\dot \Phi}{\Phi} F(t) \quad \text{for all } t \in I,$$
+
 then (18) has a solution with $|Y(t)| \ge \Phi(t)$ for all $t \in I$ (namely the one with $Y(t_0) = \Phi(t_0)$, $\dot Y(t_0) = \dot\Phi(t_0)$).
 
 **Corollary (exponential and algebraic growth; Corollaries 3.1-3.2).** For a positive $C^2$ scale function $\mu$, taking $\Phi = \mu(t) e^{\delta t}$ or $\Phi = \mu(t) t^{\delta}$ with $\delta > 0$ and letting $\delta \to 0^+$ gives in both cases the same weakest sufficient condition for growth of $Y/\mu$ on $I$:
+
 $$G(t) < -\frac{\ddot \mu}{\mu} - \frac{\dot \mu}{\mu} F(t), \qquad t \in I. \qquad (26)$$
 
 **Theorem (decay complement; Theorem 3.2).** If instead $G(t) > -\ddot\mu/\mu - (\dot\mu/\mu) F(t)$ on $I$, then every solution satisfies $|Y(t)| \le K \mu(t) e^{\delta t}$ and $|Y(t)| \le K \mu(t)(1+t)^{\delta}$ on $I$ for every $\delta > 0$, with $K = O(|Y(t_0)|)$.

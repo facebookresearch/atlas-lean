@@ -7,7 +7,9 @@ Let $W$ be a random vector with law $\mathrm{pr}$, $Y \in \mathbb R$ an outcome,
 **Lemma (Riesz representation).** Under the assumption there is $\alpha_0 \in L_2$ with $\mathbb E\{m(W,\gamma)\} = \mathbb E\{\alpha_0(W)\gamma(W)\}$ for all $\gamma \in \Gamma$. There is a unique *minimal* Riesz representer $\alpha_0^{\min} \in \overline{\Gamma}$, the projection of any $\alpha_0$ onto $\overline\Gamma$, and $[\mathbb E\{\alpha_0^{\min}(W)^2\}]^{1/2} = \bar M \le \bar Q^{1/2}$, where $\bar M$ is the operator norm of $\gamma \mapsto \mathbb E\{m(W,\gamma)\}$.
 
 **Doubly robust moment.** If $\gamma_0$ is the regression (or the projection of $\mathbb E(Y\mid W)$ onto $\Gamma$), then for all $\gamma, \alpha \in \Gamma$
+
 $$\theta_0 = \mathbb E\big[m(W,\gamma_0) + \alpha(W)\{Y-\gamma_0(W)\}\big] = \mathbb E\big[m(W,\gamma) + \alpha_0^{\min}(W)\{Y - \gamma(W)\}\big],$$
+
 so the moment is correct if either nuisance is correct.
 
 Example: for the average treatment effect with $W = (D,X)$, $D \in \{0,1\}$, $m(W,\gamma) = \gamma(1,X)-\gamma(0,X)$ and propensity $\pi_0(x)$, the representer is $\alpha_0(d,x) = d/\pi_0(x) - (1-d)/(1-\pi_0(x))$, giving the augmented inverse-probability-weighted moment.

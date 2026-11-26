@@ -8,9 +8,13 @@ On the lattice $x_j = j\delta$, $j \in \mathbb{Z}$, with time steps $t_n = n\tau
 where $\theta_u, \theta_i \in [0, 1]$.
 
 **Formal limit.** Let $\tau, \delta \to 0$ with $\delta^2/(2\tau) \to D$, and set $D_u = \theta_u D$, $D_i = \theta_i D$. Take logistic growth $G(\rho) = p(1 - \rho/\bar P)$, so that the carrying capacity is $K = \bar P$. Undirected movement gives the reaction-diffusion system
+
 $$\partial_t u = D_u \partial_{xx} u + p u \Big(1 - \frac{u + i}{K}\Big) - \frac{\beta}{K} u i, \qquad \partial_t i = D_i \partial_{xx} i + \frac{\beta}{K} u i - q i,$$
+
 and pressure-driven movement gives the local cross-diffusion system
+
 $$\partial_t u = \frac{D_u}{K} \partial_x\big[u\, \partial_x (u + i)\big] + p u \Big(1 - \frac{u + i}{K}\Big) - \frac{\beta}{K} u i, \qquad \partial_t i = \frac{D_i}{K} \partial_x\big[i\, \partial_x (u + i)\big] + \frac{\beta}{K} u i - q i.$$
+
 In two dimensions the four-neighbour walk with probabilities $\theta_k/4$ (or $\theta_k(\rho_j - \rho_{j+e})_+/(4\bar P)$) needs the scaling $\delta^2/(4\tau) \to D$.
 
 ## Depends on

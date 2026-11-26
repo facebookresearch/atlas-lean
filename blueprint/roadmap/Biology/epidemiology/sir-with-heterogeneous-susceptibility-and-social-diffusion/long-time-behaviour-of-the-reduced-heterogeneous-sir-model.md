@@ -6,11 +6,15 @@ Consider the [reduced heterogeneous SIR model](gaussian-self-similar-sir-reducti
 
 1. $\bar\beta(t) \ge \beta_0$ for all $t \ge 0$, and $(S, I, R) \to (S^\infty, 0, R^\infty)$ with $S^\infty \in [0, 1)$, $R^\infty \in (0, 1]$ and $S^\infty + R^\infty = 1$.
 2. If $\mu_0 > 0$, then $\bar\beta(t)$ stays bounded and converges to
+
 $$\bar\beta^\infty = \beta_0 + \frac{D\beta_1}{\mu_0},$$
+
 and the limits satisfy $\bar\beta^\infty S^\infty \le \gamma$.
 3. If $\mu_0 = 0$ and $D > 0$, then $\bar\beta(t) \to +\infty$, $S^\infty = 0$ and $R^\infty = 1$: everybody is eventually infected.
 4. If $\mu_0 > 0$ and $D = 0$, then $\bar\beta$ is nonincreasing and converges to $\beta_0$; if moreover $\bar\beta(0)S^0 > \gamma$, then $I$ has a unique maximum, and
+
 $$S_\infty^{\mathrm{SIR}, \bar\beta(0)} \le S^\infty \le S_\infty^{\mathrm{SIR}, \beta_0},$$
+
 where $S_\infty^{\mathrm{SIR}, \alpha}$ is the final susceptible fraction of the homogeneous SIR model with constant transmission rate $\alpha$ and the same $\gamma$, $S^0$, $I_0$.
 
 Social diffusion therefore makes the transmission rate eventually increase again toward an equilibrium above $\beta_0$, while without it the heterogeneous epidemic is bracketed by two homogeneous SIR epidemics.

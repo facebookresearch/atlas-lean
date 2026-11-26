@@ -1,9 +1,11 @@
 # Equilibria and invasion speeds of the oncolytic virus infection model
 
 Let $p, q, \beta, K > 0$. The spatially homogeneous version of the [continuum oncolytic virus models](continuum-limits-of-the-oncolytic-virus-agent-based-model.md) is
+
 $$\frac{du}{dt} = p u \Big(1 - \frac{u + i}{K}\Big) - \frac{\beta}{K} u i, \qquad \frac{di}{dt} = \frac{\beta}{K} u i - q i.$$
 
 **Equilibria.** The system has the equilibria $(0, 0)$, $(K, 0)$ and
+
 $$(u^*, i^*) = \Big( \frac{qK}{\beta},\ \frac{pK(\beta - q)}{\beta(\beta + p)} \Big).$$
 
 - $(0, 0)$ has eigenvalues $p$ and $-q$, hence is unstable.

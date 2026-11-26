@@ -10,11 +10,15 @@ $$\begin{aligned}
 \partial_t f_R &= \gamma f_I + \tfrac{1}{\tau} Q_R(f_R),
 \end{aligned}$$
 with local incidence $K(f_S, f_I)(w) = f_S(w) \int_{-1}^1 \kappa(w, w_*) f_I(w_*)\, dw_*$ and
+
 $$\kappa(w, w_*) = \frac{\beta}{4^\alpha}(1 - w)^\alpha (1 - w_*)^\alpha, \qquad \beta, \alpha > 0,$$
+
 so agents with stronger protective opinions transmit and acquire infection less. $Q_J$ are the opinion operators of [the Fokker-Planck opinion model](beta-equilibrium-of-opinion-fokker-planck.md), which conserve mass and mean opinion (symmetric interactions, no-flux boundaries), with $\nu_J = \sigma_J^2/\lambda_J$. With constant $\kappa \equiv \beta$ the masses obey the classical SEIR model (Remark 3).
 
 **Macroscopic system for $\alpha = 1$ (eqs. (15)-(17)).** Integrating in $w$ gives, exactly,
+
 $$\dot\rho_S = -\frac{\beta}{4}(1 - m_S)(1 - m_I)\rho_S \rho_I, \quad \dot\rho_E = \frac{\beta}{4}(1 - m_S)(1 - m_I)\rho_S\rho_I - \sigma_E \rho_E, \quad \dot\rho_I = \sigma_E\rho_E - \gamma\rho_I, \quad \dot\rho_R = \gamma\rho_I,$$
+
 which is not closed because the mean opinions appear. In the fast-opinion regime $\tau \ll 1$, each $f_J$ is near its beta equilibrium with mass $\rho_J$ and mean $m_J$; closing the second moment with $\int w^2 f_J = \rho_J (\nu_J + 2m_J^2)/(2 + \nu_J)$ gives
 $$\begin{aligned}
 \dot m_S &= \frac{\beta}{4} \frac{\nu_S}{2 + \nu_S}(1 - m_I)\rho_I (1 - m_S^2), \\

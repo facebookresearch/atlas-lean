@@ -3,12 +3,17 @@
 Let $O_1,\dots,O_n$ be i.i.d. from $P_0$ in a model $\mathcal M$, let $\psi = \Psi(P)$ be a pathwise differentiable parameter with efficient influence curve $D^*(P)(O)$, and let $\hat P^0$ be an initial (e.g. machine-learning) estimate of the relevant part of $P_0$.
 
 **Targeted maximum likelihood (TMLE).** Choose a parametric *fluctuation* submodel $\{\hat P^0(\epsilon) : \epsilon\}$ through $\hat P^0$ at $\epsilon = 0$ whose score at $\epsilon = 0$ spans $D^*(\hat P^0)$, estimate $\epsilon$ by maximum likelihood, $\hat\epsilon = \arg\max_\epsilon \sum_i \log \hat p^0(\epsilon)(O_i)$, update $\hat P^1 = \hat P^0(\hat\epsilon)$, and iterate until $\hat\epsilon \approx 0$. The TMLE is the plug-in estimate $\hat\psi = \Psi(\hat P^*)$ at the final update $\hat P^*$, which solves the efficient-influence-curve estimating equation
+
 $$\frac1n\sum_{i=1}^n D^*(\hat P^*)(O_i) = 0.$$
+
 Hence, under the usual conditions for asymptotically linear estimators (second-order remainder $o_P(n^{-1/2})$ and a Donsker or sample-splitting condition), $\hat\psi - \psi_0 = n^{-1}\sum_i D^*(P_0)(O_i) + o_P(n^{-1/2})$, so $\hat\psi$ is efficient, and it is doubly robust when the remainder has a product structure.
 
 **Point-treatment example.** For $O = (W, A, Y)$ with binary $A$ and $Y \in [0,1]$, $\psi = \mathbb E_W\{\bar Q(1,W) - \bar Q(0,W)\}$ with $\bar Q(a,w) = \mathbb E(Y\mid A=a,W=w)$ and propensity $g(w) = P(A=1\mid W=w)$. The efficient influence curve is
+
 $$D^*(O) = H_g(A,W)\{Y - \bar Q(A,W)\} + \bar Q(1,W) - \bar Q(0,W) - \psi, \qquad H_g(A,W) = \frac{A}{g(W)} - \frac{1-A}{1-g(W)}.$$
+
 With initial $\hat{\bar Q}^0$ and $\hat g$, the logistic fluctuation $\operatorname{logit}\hat{\bar Q}^0(\epsilon) = \operatorname{logit}\hat{\bar Q}^0 + \epsilon H_{\hat g}$ (the "clever covariate") is fitted by logistic regression of $Y$ on $H_{\hat g}(A,W)$ with offset $\operatorname{logit}\hat{\bar Q}^0(A,W)$; one step suffices, and
+
 $$\hat\psi = \frac1n\sum_{i=1}^n\big\{\hat{\bar Q}^1(1,W_i) - \hat{\bar Q}^1(0,W_i)\big\}.$$
 
 ## Depends on

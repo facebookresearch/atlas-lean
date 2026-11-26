@@ -1,26 +1,39 @@
 # Gumbel limit of the fastest of many independent first passage times
 
 Let $\tau_1, \tau_2, \dots$ be independent and identically distributed nonnegative random variables (first passage times of independent diffusive searchers) with survival function $S(t) = \mathbb{P}(\tau_1 > t)$, and let
+
 $$T_N = \min\{\tau_1, \dots, \tau_N\}$$
+
 be the fastest first passage time among $N$ searchers. Assume the short-time behaviour
+
 $$1 - S(t) \sim A\, t^{p}\, e^{-C/t} \quad \text{as } t \to 0^+,$$
+
 for constants $A > 0$, $C > 0$ and $p \in \mathbb{R}$, where $f \sim g$ means $f/g \to 1$.
 
 Say $X \sim \mathrm{Gumbel}(b, a)$ (location $b \in \mathbb{R}$, scale $a > 0$) when $\mathbb{P}(X > x) = \exp(-\exp((x - b)/a))$ for all $x \in \mathbb{R}$.
 
 **Theorem (Lawley 2020, Theorem 1).** Under these assumptions,
+
 $$\frac{T_N - b_N}{a_N} \xrightarrow{d} X \sim \mathrm{Gumbel}(0, 1) \quad \text{as } N \to \infty,$$
+
 where, if $p = 0$,
+
 $$b_N = \frac{C}{\ln(AN)}, \qquad a_N = \frac{b_N}{\ln(AN)},$$
+
 and, if $p \neq 0$,
+
 $$b_N = \frac{C}{p\, W}, \qquad a_N = \frac{b_N}{p\,(1 + W)}, \qquad W = \begin{cases} W_0\!\left(\tfrac{C}{p} (AN)^{1/p}\right), & p > 0,\\[2pt] W_{-1}\!\left(\tfrac{C}{p} (AN)^{1/p}\right), & p < 0,\end{cases}$$
+
 with $W_0$ and $W_{-1}$ the principal and lower branches of the Lambert $W$ function.
 
 **Theorem (Lawley 2020, Theorem 2).** The same convergence holds, for every $p \in \mathbb{R}$, with the elementary rescalings
+
 $$a_N' = \frac{C}{(\ln N)^2}, \qquad b_N' = \frac{C}{\ln N} + \frac{C p \ln(\ln N)}{(\ln N)^2} - \frac{C \ln(A C^{p})}{(\ln N)^2}.$$
 
 **Theorem (Lawley 2020, Theorem 3).** If in addition $\mathbb{E}[T_N] < \infty$ for some $N \ge 1$, then for every $m \in (0, \infty)$, $\mathbb{E}\big[((T_N - b_N)/a_N)^m\big] \to \mathbb{E}[X^m]$ for $X \sim \mathrm{Gumbel}(0,1)$. In particular
+
 $$\mathbb{E}[T_N] = b_N - \gamma a_N + o(a_N), \qquad \operatorname{Var}(T_N) = \frac{\pi^2}{6} a_N^2 + o(a_N^2),$$
+
 where $\gamma$ is the Euler–Mascheroni constant. Hence $\mathbb{E}[T_N] \sim C / \ln N$.
 
 ## Expansion

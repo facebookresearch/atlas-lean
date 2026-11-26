@@ -5,12 +5,15 @@
 Let $(\mu_t, \beta_t) = \big(n^{-1}\sum_i Y_i(t),\ (X^\top X)^{-1}X^\top Y(t)\big)$ be the population least-squares coefficients of $Y(t)$ on $(\mathbf 1, X)$, $e(t) = Y(t) - \mu_t\mathbf 1 - X\beta_t$ the potential residuals, $H = X(X^\top X)^{-1}X^\top$ and $\kappa = \max_i H_{ii} \in [p/n, 1]$ the maximum leverage.
 
 **Estimator.** For $t \in \{0,1\}$ regress the observed outcomes of arm $t$ on $(1, X_t)$ with intercept $\hat\mu_t$; set $\hat\tau_{\mathrm{adj}} = \hat\mu_1 - \hat\mu_0$ (equivalent to the treatment coefficient in the fully interacted regression of Lin). The asymptotic variance is
+
 $$\sigma_n^2 = n_1^{-1}\sum_{i=1}^n e_i^2(1) + n_0^{-1}\sum_{i=1}^n e_i^2(0) - n^{-1}\sum_{i=1}^n\{e_i(1) - e_i(0)\}^2 .$$
 
 **Assumptions.** (A1) $n/n_1 = O(1)$, $n/n_0 = O(1)$; (A2) $\kappa\log p = o(1)$; (A3) the correlation of $e(1)$ and $e(0)$ exceeds $-1+\eta$ for a fixed $\eta > 0$; (A4) $E_\infty^2/(nE_2) = o(1)$, where $E_2 = n^{-1}\max\{\|e(0)\|_2^2, \|e(1)\|_2^2\}$ and $E_\infty = \max\{\|e(0)\|_\infty, \|e(1)\|_\infty\}$.
 
 **Theorem (expansion and consistency).** Under (A1)–(A2), with $\hat\tau_e = n_1^{-1}\sum_{i\in T_1}e_i(1) - n_0^{-1}\sum_{i\in T_0}e_i(0)$ (mean $0$, variance $\sigma_n^2/n$) and $\Delta = \max_t |n^{-1}\sum_i e_i(t)H_{ii}|$,
+
 $$\hat\tau_{\mathrm{adj}} - \tau = \hat\tau_e + O_P\Big(\Delta + \big[E_2(\kappa^2 p\log p + \kappa)/n\big]^{1/2}\Big),$$
+
 and $\hat\tau_{\mathrm{adj}}$ is consistent if $E_2 = o\{n/(\kappa p + 1)\}$; in particular for fixed $p$ with $E_2 = o(n)$, or diverging $p$ with $E_2 = O(n/p)$.
 
 **Theorem (asymptotic normality).** Under (A1)–(A4), $n^{1/2}(\hat\tau_{\mathrm{adj}} - \tau)/\sigma_n \Rightarrow N(0,1)$ if $\kappa^2 p\log p = o(1)$ and $n\Delta^2 = o(E_2)$; a sufficient condition is $\kappa p = o(1)$, which for $\kappa = O(p/n)$ means $p = o(n^{1/2})$. A debiased estimator $\hat\tau^{\mathrm{de}}_{\mathrm{adj}}$, which subtracts the plug-in leading bias built from $\hat\Delta_t = n_t^{-1}\sum_{i\in T_t}\hat e_iH_{ii}$, is asymptotically $N(0,\sigma_n^2/n)$ under only $\kappa^2p\log p = o(1)$, i.e. $p = o\{n^{2/3}/(\log n)^{1/3}\}$ when $\kappa = O(p/n)$. The HC0–HC3 variance estimators $\hat\sigma^2_{\mathrm{HC}j}$ are asymptotically conservative: $\hat\sigma^2_{\mathrm{HC}j}/\sigma_n^2 \ge 1 - o_P(1)$.

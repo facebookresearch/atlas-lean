@@ -1,7 +1,9 @@
 # Predator–prey model with an Allee effect in the predator: equilibria and stability
 
 **Model.** In dimensionless form, prey $x \ge 0$ and predator $y \ge 0$ satisfy
+
 $$\frac{dx}{dt} = x(1-x) - \frac{xy}{\beta + x}, \qquad \frac{dy}{dt} = \frac{\alpha xy}{\beta + x}\,h(y) - my,$$
+
 with $\alpha, \beta, m > 0$ (Holling type II functional response) and an Allee-effect function $h$ that multiplies the predator's conversion efficiency and satisfies (A1) $h(0) = 0$; (A2) $0 \le h \le 1$; (A3) $h' > 0$; (A4) $h'' < 0$; (A5) $h(y) \to 1$ as $y \to \infty$. Examples: $h(y) = y/(\delta + y)$, $1 - e^{-y/\delta}$, $\tanh(y/\delta)$.
 
 **Boundary equilibria (Proposition 1).** For every $h$ satisfying (A1)–(A5), $E_0 = (0,0)$ is a saddle (eigenvalues $1$ and $-m$) and the predator-free equilibrium $E_1 = (1,0)$ is locally asymptotically stable (eigenvalues $-1$ and $-m$). Thus predator extinction is always locally attracting: the Allee effect is strong.

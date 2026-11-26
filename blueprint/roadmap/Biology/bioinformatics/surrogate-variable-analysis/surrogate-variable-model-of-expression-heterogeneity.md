@@ -3,14 +3,18 @@
 Let $x_{ij}$ be the expression of gene $i \in \{1,\dots,m\}$ on array $j \in \{1,\dots,n\}$, $n < m$, and $y_j$ the primary variable. Suppose
 there are $L$ unmodeled factors whose (arbitrarily nonlinear) effects across arrays are vectors $g_\ell = (g_{\ell 1}, \dots, g_{\ell n})$,
 $\ell = 1, \dots, L$, with gene-specific coefficients $\gamma_{\ell i}$ ($\gamma_{\ell i} = 0$ if factor $\ell$ does not affect gene $i$):
+
 $$x_{ij} = \mu_i + f_i(y_j) + \sum_{\ell=1}^L \gamma_{\ell i}\, g_{\ell j} + e^*_{ij},$$
+
 where the $e^*_{ij}$ are gene-specific noise, approximately independent across genes; the sum captures the dependence across genes
 (*expression heterogeneity*). Since each gene has $n$ observations, at most $n$ such vectors are linearly independent, so $L \le n$
 suffices for any dependence structure.
 
 **Lemma (surrogate variables).** For any vectors $g_1, \dots, g_L \in \mathbb{R}^n$ and coefficients $\gamma_{\ell i}$ there exist
 $K \le L$ mutually orthogonal vectors $h_1, \dots, h_K \in \mathbb{R}^n$ and coefficients $\lambda_{k i}$ with
+
 $$\sum_{\ell=1}^L \gamma_{\ell i}\, g_{\ell j} = \sum_{k=1}^K \lambda_{k i}\, h_{k j} \quad \text{for all } i, j;$$
+
 one choice is the right singular vectors with nonzero singular values of the $m \times n$ matrix with entries
 $\sum_\ell \gamma_{\ell i} g_{\ell j}$. The $h_k$ are called **surrogate variables**; only their span, not the individual factors $g_\ell$,
 needs to be estimated.

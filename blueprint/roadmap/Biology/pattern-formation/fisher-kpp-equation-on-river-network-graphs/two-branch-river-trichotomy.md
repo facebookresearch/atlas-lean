@@ -1,7 +1,9 @@
 # Fisher–KPP advection–diffusion on a two-branch river: steady states and trichotomy
 
 **Model.** The upper branch $R_U = (-\infty,0)$ flows into the lower branch $R_L = (0,\infty)$ with constant flow speeds $\beta_U, \beta_L > 0$ and cross-section areas $a_U, a_L > 0$ satisfying conservation of flow $a_L\beta_L = a_U\beta_U$. With unit diffusion and logistic growth,
+
 $$\partial_tw_i - \partial_{xx}w_i + \beta_i\partial_xw_i = w_i - w_i^2 \quad (i = L,U), \qquad w_L(t,0) = w_U(t,0), \qquad a_U\partial_xw_U(t,0) = a_L\partial_xw_L(t,0),$$
+
 (the last line is the Kirchhoff law, equivalent to flux continuity given conservation of flow), with nonnegative compactly supported initial data $w_0 \not\equiv 0$.
 
 **Theorem (steady states).** For the nonconstant steady states $0 < \varphi_L, \varphi_U < 1$ with junction value $\varphi_L(0) = \varphi_U(0) = \alpha \in (0,1)$:

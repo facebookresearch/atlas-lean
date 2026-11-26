@@ -3,7 +3,9 @@
 In the symmetric three-dimensional reduction of the [eco-evolutionary game with environmental feedback on two communities](two-community-eco-evolutionary-game-and-its-edge-equilibria.md), assume $\theta_1 = \theta_2 = \theta_{12}$ and write $\rho_1 = R_0 - R_1 - T_0 + T_1 - (P_0 - P_1 - S_0 + S_1)\theta_1$.
 
 **Theorem.** All eight corner equilibria are saddles. The interior equilibria are exactly the points of the line segment
+
 $$\mathcal{L}: \quad x^* = \frac{1}{1 + \theta_1}, \qquad n_1^*(1 - \delta) + n_{12}^*\delta = \frac{R_0 - T_0 - P_0\theta_1 + S_0\theta_1}{\rho_1},$$
+
 with $n_1^*, n_{12}^* \in (0, 1)$. Along $\mathcal{L}$ the Jacobian has a zero eigenvalue in the direction of $\mathcal{L}$, and its other two eigenvalues have negative real part whenever the payoff conditions $R_0 > T_0$, $S_0 > P_0$, $R_1 < T_1$, $S_1 < P_1$ and $(P_0 - S_0)(R_1 - T_1) > (P_1 - S_1)(R_0 - T_0)$ hold. In that case $\mathcal{L}$ is a normally attracting line of neutrally stable equilibria, and in the paper's simulations nearby trajectories spiral into it.
 
 Hence, when $\theta_1 = \theta_{12}$ the network structure does not enter the stability requirement, only the position of the attracting set through $\delta$; when $\theta_1 \ne \theta_{12}$ it does, through the windows $\delta_{c,1} < \delta < \delta_{c,2}$ or $\delta_{c,3} < \delta < \delta_{c,4}$.

@@ -3,15 +3,23 @@
 This page covers the main existence result of Li, van Heijster and Marangell (2020) for a reaction-diffusion equation whose diffusivity becomes negative at intermediate densities (forward-backward diffusion modelling aggregation of grouped cells).
 
 **Model.** For $U = U(x,t)$ with $x \in \mathbb{R}$, $t \ge 0$, consider
+
 $$\frac{\partial U}{\partial t} = \frac{\partial}{\partial x}\Big( D(U) \frac{\partial U}{\partial x} \Big) + R(U), \qquad R(U) = \lambda U (1 - U),$$
+
 $$D(U) = D_i (1 - 4U + 3U^2) + D_g (4U - 3U^2),$$
+
 with proliferation rate $\lambda > 0$ and diffusivities of isolated and grouped agents satisfying $D_i > 4 D_g > 0$. This $D$ arises as the continuum limit of a lattice model of isolated and grouped agents (Johnston et al. 2017), here with equal proliferation rates and no death. Under $D_i > 4D_g$, $D$ is convex and
+
 $$D(U) > 0 \ \text{on}\ [0,\alpha) \cup (\beta, 1], \qquad D(U) < 0 \ \text{on}\ (\alpha, \beta),$$
+
 $$\alpha, \beta = \frac{2}{3} \mp \frac{\sqrt{D_i^2 + 4D_g^2 - 5 D_i D_g}}{3 (D_i - D_g)}, \qquad \tfrac13 < \alpha < \tfrac23 < \beta < 1 .$$
+
 In particular $D(0) = D_i$ and $D(1) = D_g$.
 
 **Theorem (Theorem 1 of the source).** For every speed
+
 $$c \ge c^* := 2\sqrt{\lambda D_i}$$
+
 the equation admits a smooth, monotone, nonnegative travelling wave $U(x,t) = u(x - ct)$ with $u(z) \to 1$ as $z \to -\infty$ and $u(z) \to 0$ as $z \to +\infty$.
 
 **Complementary statements (Section 2.2).** Write $c_\beta := 2\sqrt{D'(\beta) R(\beta)}$. Then $c_\beta < c^*$ (Lemma 2), and
@@ -31,7 +39,9 @@ The passage of the travelling-wave orbit through the singular lines $u = \alpha$
 ## Expansion
 
 With $z = x - ct$ and $p = D(u)\, du/dz$ the wave equation becomes the singular system $D(u) u' = p$, $D(u) p' = -cp - D(u)R(u)$, singular on the lines $u = \alpha, \beta$. Rescaling the independent variable by $D(u)\, d\xi = dz$ gives the regular system
+
 $$\frac{du}{d\xi} = p, \qquad \frac{dp}{d\xi} = -cp - D(u) R(u),$$
+
 which has the same orbits but reversed orientation where $D < 0$. Its equilibria are $(0,0), (\alpha,0), (\beta,0), (1,0)$ with eigenvalues $\tfrac12\big(-c \pm \sqrt{c^2 - 4F(u)}\big)$, $F = (DR)'$. Lemma 1: $(1,0)$ and $(\alpha,0)$ are saddles; $(0,0)$ is a stable node iff $c \ge c^*$, and $(\beta,0)$ is a stable node iff $c \ge c_\beta$. Lemma 3: for $c \ge c^*$, the triangle bounded by $p = 0$, $u = \alpha$ and the line $p = -\tfrac{c}{2} u$ is positively invariant, because $c^2/4 \ge \lambda \sup_{(0,\alpha)} D(u)(1-u) = \lambda D_i$. Lemma 4 builds an analogous region through $(\beta,0)$, using $D_i > 4D_g$ to show the required speed is below $c^*$. Poincare-Bendixson then yields heteroclinic orbits $(1,0) \to (\beta,0)$, $(\alpha,0) \to (\beta,0)$ and $(\alpha,0) \to (0,0)$; reversing the middle one and concatenating gives the wave of the original equation.
 
 When instead $D_i < 4D_g$ (so $D > 0$ on $[0,1]$), the same method only brackets the minimal speed: $2\sqrt{\lambda D_i} \le \hat c \le \sup_{u \in (0,1)} 2\sqrt{\lambda (1-u) D(u)}$ (Section 4.1, eq. (38)).

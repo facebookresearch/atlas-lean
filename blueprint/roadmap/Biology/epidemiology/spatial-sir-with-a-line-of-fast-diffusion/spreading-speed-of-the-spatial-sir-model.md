@@ -1,18 +1,27 @@
 # Spreading speed of the spatial SIR model with immobile susceptibles
 
 Let $S(t, X)$ and $I(t, X)$, $X \in \mathbb{R}^2$, be the densities of susceptible and infected individuals in
+
 $$\partial_t I - d\,\Delta I + \alpha I = \beta S I, \qquad \partial_t S = -\beta S I, \qquad t > 0,$$
+
 with diffusivity $d > 0$ of infected individuals, removal rate $\alpha > 0$, transmission rate $\beta > 0$, uniform initial susceptibles $S(0, \cdot) \equiv S_0 > 0$, and a nonnegative, compactly supported initial infection $I(0, \cdot) = I_0 \not\equiv 0$. Put
+
 $$R_0 = \frac{S_0 \beta}{\alpha}, \qquad f(v) = S_0 (1 - e^{-\beta v}) - \alpha v.$$
 
 **Reduction (Berestycki, Roquejoffre and Rossi 2020, Eqs. 3–5).** The cumulative infection $v(t, X) = \int_0^t I(s, X)\, ds$ satisfies $S(t, X) = S_0 e^{-\beta v(t, X)}$ and solves the Fisher–KPP equation with a source,
+
 $$\partial_t v - d\,\Delta v = f(v) + I_0(X), \qquad v(0, \cdot) \equiv 0.$$
+
 The nonlinearity $f$ is concave with $f(0) = 0$ and $f'(0) = \alpha (R_0 - 1)$.
 
 **Theorem (Berestycki, Roquejoffre and Rossi 2020, Theorem 3.3).** Assume $R_0 > 1$ and set
+
 $$c_{\mathrm{SIR}} = 2\sqrt{d\, \alpha (R_0 - 1)}.$$
+
 Let $v_\infty$ be the unique positive bounded stationary solution of $-d \Delta v = f(v) + I_0$ (its limit at infinity is the positive zero $v^*$ of $f$). Then for every $\varepsilon \in (0, c_{\mathrm{SIR}})$,
+
 $$\lim_{t \to \infty} \max_{|X| \le (c_{\mathrm{SIR}} - \varepsilon) t} |v(t, X) - v_\infty(X)| = 0, \qquad \lim_{t \to \infty} \max_{|X| \ge (c_{\mathrm{SIR}} + \varepsilon) t} v(t, X) = 0.$$
+
 So the epidemic invades the plane at asymptotic speed $c_{\mathrm{SIR}} = 2\sqrt{d f'(0)}$, and the final fraction infected far from the epicentre is $1 - e^{-\beta v^*}$.
 
 ## Depends on

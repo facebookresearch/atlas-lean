@@ -1,7 +1,9 @@
 # SIS patch model and its basic reproduction number
 
 Let $\Omega = \{1, \dots, n\}$, $n \ge 2$, be a set of patches. Let $L = (L_{jk})$ be an $n\times n$ connectivity matrix with $L_{jk} \ge 0$ for $j \ne k$ (movement from patch $k$ to patch $j$) and $L_{jj} = -\sum_{k \ne j} L_{kj}$. The SIS patch model is
+
 $$\frac{dS_j}{dt} = d_S\sum_{k\in\Omega} L_{jk}S_k - \frac{\beta_j S_jI_j}{S_j + I_j} + \gamma_j I_j, \qquad \frac{dI_j}{dt} = d_I\sum_{k\in\Omega} L_{jk}I_k + \frac{\beta_j S_jI_j}{S_j + I_j} - \gamma_j I_j, \qquad j \in \Omega,$$
+
 with transmission rates $\beta_j \ge 0$, recovery rates $\gamma_j \ge 0$ and dispersal rates $d_S, d_I > 0$. Assume $L$ is irreducible and quasi-positive (nonnegative off the diagonal), and nonnegative initial data with total population $N = \sum_j (S_j(0) + I_j(0)) > 0$. Then:
 
 1. The total population $\sum_j (S_j(t) + I_j(t)) = N$ is conserved.

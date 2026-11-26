@@ -2,9 +2,12 @@
 
 **Setting.** Each unit has covariates $X$ taking values in a space $\mathcal X$, a binary treatment $Z \in \{0, 1\}$ and potential
 responses $(r_1, r_0)$. The **propensity score** is $e(x) = \Pr(Z = 1 \mid X = x)$. A function $b(X)$ is a **balancing score** if
+
 $$X \perp Z \mid b(X),$$
+
 i.e. the conditional law of $X$ given $b(X)$ is the same for treated and control units. Treatment assignment is **strongly ignorable
 given $X$** if
+
 $$(r_1, r_0) \perp Z \mid X \qquad \text{and} \qquad 0 < e(x) < 1 \ \text{ for all } x .$$
 
 **Theorem.**
@@ -13,7 +16,9 @@ $$(r_1, r_0) \perp Z \mid X \qquad \text{and} \qquad 0 < e(x) < 1 \ \text{ for a
 3. If treatment assignment is strongly ignorable given $X$, it is strongly ignorable given any balancing score $b(X)$:
    $(r_1, r_0) \perp Z \mid b(X)$ and $0 < \Pr(Z=1 \mid b(X)) < 1$.
 4. Consequently, under strong ignorability given $X$, for any balancing score $b$,
+
 $$E\{r_1 \mid b(X), Z = 1\} - E\{r_0 \mid b(X), Z = 0\} = E\{r_1 - r_0 \mid b(X)\},$$
+
 and averaging over the law of $b(X)$ gives the average treatment effect $E(r_1 - r_0)$.
 
 ## Expansion

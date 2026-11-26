@@ -5,6 +5,7 @@ In the [SIS patch model](sis-patch-model-and-its-basic-reproduction-number.md), 
 1. $\displaystyle \min_{j}\frac{\beta_j}{\gamma_j} \le R_0(d_I) \le \max_j \frac{\beta_j}{\gamma_j}$ for all $d_I > 0$;
 2. if $(\beta_1, \dots, \beta_n)$ is not a multiple of $(\gamma_1, \dots, \gamma_n)$, then $R_0(d_I)$ is strictly decreasing on $(0, \infty)$;
 3. the limits are
+
 $$\lim_{d_I \to 0} R_0(d_I) = \max_{j\in\Omega} \frac{\beta_j}{\gamma_j}, \qquad \lim_{d_I\to\infty} R_0(d_I) = \frac{\sum_{j\in\Omega}\alpha_j\beta_j}{\sum_{j\in\Omega}\alpha_j\gamma_j}.$$
 
 For symmetric $L$ the second limit is $\sum_j \beta_j / \sum_j \gamma_j$. In particular, faster movement of infected individuals lowers the reproduction number from the worst patch ratio to the $\alpha$-weighted average.

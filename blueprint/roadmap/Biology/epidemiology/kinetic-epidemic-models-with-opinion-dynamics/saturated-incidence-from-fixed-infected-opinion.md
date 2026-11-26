@@ -5,16 +5,23 @@ This page covers Section 3.2 of Zanella (2023). Notation is as on [the opinion-s
 **Assumption.** Infected agents keep a fixed mean opinion $m_I(t) \equiv \bar m_I \in (0,1)$ (situational awareness).
 
 **Mean susceptible opinion (eq. (18)).** The closed equation $\dot m_S = J(\rho_I)(1 - m_S^2)$ with $J(\rho_I) = \tfrac{\beta}{4}\tfrac{\nu_S}{2 + \nu_S}(1 - \bar m_I)\rho_I \ge 0$ is solved by
+
 $$m_S(t) = \tanh\Big( \operatorname{artanh} m_S^0 + \int_0^t J(\rho_I(s))\, ds \Big) = \frac{e^{2\int_0^t J} - e^{C_0}}{e^{2\int_0^t J} + e^{C_0}}, \qquad C_0 = \log\frac{1 - m_S^0}{1 + m_S^0},$$
+
 for $m_S^0 \in (-1, 1)$, and $m_S \equiv m_S^0$ if $m_S^0 = \pm 1$. So $m_S(t) \in (-1, 1)$ and is nondecreasing.
 
 **Reduced SEIR (eq. (19)).** Substituting into the mass equations gives
+
 $$\dot\rho_S = -\bar\beta H(t)\rho_S\rho_I, \quad \dot\rho_E = \bar\beta H(t)\rho_S\rho_I - \sigma_E\rho_E, \quad \dot\rho_I = \sigma_E\rho_E - \gamma\rho_I, \quad \dot\rho_R = \gamma\rho_I,$$
+
 $$\bar\beta = \frac{\beta}{4}(1 - \bar m_I), \qquad H(t) = 1 - m_S(t) = \frac{2e^{C_0}}{e^{2\int_0^t J} + e^{C_0}} \in (0, 2).$$
+
 $H$ is nonincreasing and decreases faster the more infection has occurred, because $\int_0^t J$ grows with the accumulated prevalence $\int_0^t \rho_I$. The incidence thus saturates with the epidemic's own history, a memory analogue of saturated incidence rates (Capasso and Serio 1978).
 
 **Initial growth.** Near the disease-free state at $t = 0$ ($\rho_S \approx 1$, $\rho_I \approx 0$) the per-capita incidence is $\bar\beta(1 - m_S^0)$, so the linearised infected subsystem has reproduction number
+
 $$R_0 = \frac{\beta(1 - \bar m_I)(1 - m_S^0)}{4\gamma}.$$
+
 The source reports $R_0 = \beta(1 - \bar m_I)/(4\gamma)$, which is this value for an initially neutral susceptible population, $m_S^0 = 0$ (where $H(0) = 1$).
 
 ## Depends on

@@ -2,15 +2,22 @@
 
 In the setting of the [proximal mediation formula](proximal-mediation-formula.md), besides the outcome bridges $h_1, h_0$ consider
 *treatment confounding bridge functions* $q_0(z, x)$ and $q_1(z, m, x)$ solving
+
 $$E\{q_0(Z, X) \mid W, A=0, X\} = \frac{1}{f(A = 0 \mid W, X)},$$
+
 $$E\{q_1(Z, M, X) \mid W, A=1, M, X\}\, f(A=1 \mid W, M, X) = E\{q_0(Z, X) \mid W, A=0, M, X\}\, f(A=0 \mid W, M, X).$$
+
 Each of the alternative representations
+
 $$\psi = E\{\mathbf 1(A=0)\, q_0(Z,X)\, h_1(W,M,X)\} = E\{\mathbf 1(A=1)\, q_1(Z,M,X)\, Y\} = E\{h_0(W,X)\}$$
+
 identifies $\psi = E[Y\{1,M(0)\}]$ under the corresponding existence and completeness conditions.
 
 **Theorem.** Suppose bridge functions $h_1, h_0$ exist at all laws of the semiparametric model, $q_0, q_1$ exist at the true law,
 and $\psi$ is unique. Then
+
 $$\mathrm{IF}_\psi = \mathbf 1(A=1)\, q_1(Z,M,X)\{Y - h_1(W,M,X)\} + \mathbf 1(A=0)\, q_0(Z,X)\{h_1(W,M,X) - h_0(W,X)\} + h_0(W,X) - \psi$$
+
 is an influence function for $\psi$; if moreover the conditional-expectation operators $g \mapsto E\{g(W,M,X)\mid Z, A=1, M, X\}$ and
 $g \mapsto E\{g(W,X)\mid Z, A=0, X\}$ are surjective and all bridges are unique, the semiparametric efficiency bound is
 $E(\mathrm{IF}_\psi^2)$. The estimator solving $\sum_i \mathrm{IF}_\psi(O_i) = 0$ with working models for $(h_1, h_0, q_0, q_1)$ is

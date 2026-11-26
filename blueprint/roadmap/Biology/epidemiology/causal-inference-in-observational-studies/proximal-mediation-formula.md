@@ -16,9 +16,13 @@ $E[Y\{1,M(1)\}] - E[Y\{1,M(0)\}]$ follow.
    $g(U) = 0$ a.s., for square-integrable $g$.
 
 **Theorem.** Suppose there are *outcome confounding bridge functions* $h_1(w, m, x)$ and $h_0(w, x)$ solving the integral equations
+
 $$E(Y \mid Z, A=1, M, X) = \int h_1(w, M, X)\, dF(w \mid Z, A=1, M, X),$$
+
 $$E\{h_1(W, M, X) \mid Z, A=0, X\} = \int h_0(w, X)\, dF(w \mid Z, A=0, X).$$
+
 Then under Assumptions 1–6 the same equations hold with $Z$ replaced by $U$, and
+
 $$\psi = E[Y\{1, M(0)\}] = \iint h_0(w, x)\, dF(w \mid x)\, dF(x).$$
 
 ## Expansion

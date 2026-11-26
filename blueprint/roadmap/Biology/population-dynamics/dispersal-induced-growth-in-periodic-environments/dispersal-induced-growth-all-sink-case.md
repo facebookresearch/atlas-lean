@@ -5,7 +5,9 @@ This page covers Theorem 1 of Katriel (2022). Notation is as on [growth rate of 
 **Definition.** Dispersal-induced growth (DIG) occurs when every patch is a sink ($\bar r_i < 0$ for all $i$) but $\Lambda(m, \omega) > 0$: each population would go extinct in isolation, yet with dispersal all grow exponentially.
 
 **Theorem (all-sink case).** Assume $r_1, \dots, r_N$ are continuous, $2\pi$-periodic, with $\bar r_i < 0$ for all $i$. Let
+
 $$\chi = \frac{1}{2\pi}\int_0^{2\pi} \max_{1 \le i \le N} r_i(\theta)\, d\theta .$$
+
 Then $\lim_{m \to 0^+}\lim_{\omega \to 0^+}\Lambda(m, \omega) = \chi$, and:
 
 - **(I)** if $\chi < 0$, then $\Lambda(m, \omega) < 0$ for all $m, \omega > 0$ (no DIG);

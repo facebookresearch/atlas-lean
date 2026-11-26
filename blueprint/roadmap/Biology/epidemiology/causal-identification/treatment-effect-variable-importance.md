@@ -3,13 +3,19 @@
 Let $Z = (Y, A, X)$ with outcome $Y \in \mathbb R$, binary treatment $A$ and covariates $X \in \mathbb R^p$, and potential outcomes $Y^1, Y^0$. Assume consistency ($A = a \Rightarrow Y = Y^a$), conditional exchangeability ($Y^a \perp A \mid X$) and positivity ($0 < \pi(X) < 1$ a.s., $\pi(x) = P(A = 1 \mid X = x)$), with square-integrable outcomes. Then the CATE $\tau(x) = E(Y^1 - Y^0 \mid X = x) = \mu(1, x) - \mu(0, x)$, $\mu(a, x) = E(Y \mid A = a, X = x)$, is identified. For $s \subseteq \{1, \dots, p\}$ let $\tau_s(x) = E(Y^1 - Y^0 \mid X_{-s} = x_{-s}) = E\{\tau(X) \mid X_{-s} = x_{-s}\}$.
 
 1. For every square-integrable $f$, the (unidentified) mean squared error of predicting the individual effect decomposes as
+
 $$L\{f\} := E[\{Y^1 - Y^0 - f(X)\}^2] = E[\{\tau(X) - f(X)\}^2] + E\{\mathrm{var}(Y^1 - Y^0 \mid X)\},$$
+
 and the second term does not depend on $f$.
 2. The **TE-VIM** of $X_s$ is
+
 $$\Theta_s := L\{\tau_s\} - L\{\tau\} = E[\{\tau(X) - \tau_s(X)\}^2] = \mathrm{var}\{\tau(X)\} - \mathrm{var}\{\tau_s(X)\} \ \ge 0,$$
+
 which is identified; $\Theta_{\{1,\dots,p\}} = \mathrm{var}\{\tau(X)\}$ is the variance of the treatment effect, and $\Psi_s = \Theta_s / \mathrm{var}\{\tau(X)\} \in [0, 1]$ is the share of effect heterogeneity explained by $X_s$ beyond $X_{-s}$.
 3. With the doubly robust pseudo-outcome
+
 $$\varphi(Z) = \frac{A - \pi(X)}{\pi(X)\{1 - \pi(X)\}}\bigl\{Y - \mu(A, X)\bigr\} + \mu(1, X) - \mu(0, X),$$
+
 one has $E\{\varphi(Z) \mid X\} = \tau(X)$ and hence $E\{\varphi(Z) \mid X_{-s}\} = \tau_s(X)$, so $\tau$ and $\tau_s$ can be learned by regressing $\varphi$ (or $\hat\tau(X)$) on $X$ and $X_{-s}$.
 
 ## Expansion

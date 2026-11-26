@@ -13,7 +13,9 @@ This page covers Theorem 2 of Katriel (2022), the source-sink counterpart of [di
 The threshold $\hat m$ is the persistence threshold of the time-averaged system with constant rates $\bar r_i$. Slow temporal variation therefore extends persistence to dispersal rates $\hat m < m < m^*$ at which the averaged system declines. If all $r_i - r_j$ are constant, $R(\theta) = \bar R + r_0(\theta)I$ with $r_0$ of mean zero, and $\Lambda(m, \omega) = \Lambda_\infty(m)$ for every $\omega$.
 
 **Two patches (Example 3).** With $\bar r_1\bar r_2 < 0$, $\Lambda_\infty(m) = \tfrac12\big(\bar r_1 + \bar r_2 + \sqrt{(\bar r_1 - \bar r_2)^2 + 4m^2}\big) - m$ and
+
 $$\hat m = \Big( \frac{1}{\bar r_1} + \frac{1}{\bar r_2} \Big)^{-1} = \frac{\bar r_1 \bar r_2}{\bar r_1 + \bar r_2}.$$
+
 For $r_1(\theta) = -0.1 + 0.3\cos\theta$, $r_2(\theta) = 0.05 - 0.3\cos\theta$: $\hat m = 0.1$ and $m^* \approx 0.990$.
 
 ## Depends on
