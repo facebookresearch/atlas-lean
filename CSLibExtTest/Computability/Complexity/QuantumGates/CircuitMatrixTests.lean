@@ -16,8 +16,8 @@ public import CSLibExt.Computability.Complexity.QuantumGates.ExactGates
 
 Concrete checks for the circuit-matrix API: the `qubitSplit` register layout and
 its agreement with `tensorProd`, the collapse of a tensor factor on zero qubits,
-the empty-circuit matrix, and the requirement of `QGateWellFormed` that a gate's
-first qubit index be below its second.
+the matrices of the empty and of a two-gate circuit, and the requirement of
+`QGateWellFormed` that a gate's first qubit index be below its second.
 -/
 
 @[expose] public section
@@ -48,6 +48,11 @@ theorem bqpInitState_zero (x : List Bool) : bqpInitState x 0 = basisState x :=
 /-- The empty circuit has the identity matrix. -/
 theorem circuitMatrix_nil : circuitMatrix 2 [] = 1 := rfl
 
+/-- The matrix of a two-gate list has the first gate on the right. -/
+theorem circuitMatrix_pair (N : ℕ) (g₁ g₂ : QGate) :
+    circuitMatrix N [g₁, g₂] = gateMatrix N g₂ * gateMatrix N g₁ := by
+  simp [circuitMatrix]
+
 /-- A gate whose first qubit index is not below its second is not well formed:
 the X gate on the low qubit, given the qubits `(1, 0)`, fails the requirement
 `i < j` of `QGateWellFormed`. -/
@@ -65,6 +70,7 @@ theorem xLow_reversed_qubits_not_wellFormed :
 #print axioms tensorProd_qubitSplit_zero_one
 #print axioms bqpInitState_zero
 #print axioms circuitMatrix_nil
+#print axioms circuitMatrix_pair
 #print axioms xLow_reversed_qubits_not_wellFormed
 
 end Cslib.Complexity.Classes.QuantumGates.CircuitMatrixTests

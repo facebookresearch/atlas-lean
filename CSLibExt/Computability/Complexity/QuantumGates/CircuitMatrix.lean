@@ -25,8 +25,9 @@ the matrix-side facts a density-operator reading of circuit vectors consumes.
 
 namespace Cslib.Complexity.Classes
 
-/-- Qubit layout of a register pair: `(p, q)` is the index `p + 2 ^ v * q` of `v + m`
-qubits, the first register on the low-order `v` qubits as in `tensorProd`. -/
+/-- **Qubit layout of a register pair.** The pair `(p, q)` of a `v`-qubit register and an
+`m`-qubit register is the index `p + 2 ^ v * q` of `v + m` qubits: the first register sits on
+the low-order `v` qubits, as in `tensorProd`. -/
 def qubitSplit (v m : ℕ) : Fin (2 ^ v) × Fin (2 ^ m) ≃ Fin (2 ^ (v + m)) :=
   (Equiv.prodComm _ _).trans (MathlibExt.Quantum.BlockEncoding.qubitAncillaEquiv v m)
 
@@ -45,7 +46,8 @@ theorem tensorProd_qubitSplit {v m : ℕ} (φ : Fin (2 ^ v) → ℂ) (χ : Fin (
   simp only [tensorProd]
   exact congrArg₂ (· * ·) (congrArg φ (Fin.ext hmod)) (congrArg χ (Fin.ext hdiv))
 
-/-- Matrix of a gate list: the product of the gate matrices, first gate rightmost. -/
+/-- **Matrix of a gate list.** The product of the gate matrices of a gate list, with the first
+gate rightmost. -/
 noncomputable def circuitMatrix (N : ℕ) (gs : List QGate) :
     Matrix (Fin (2 ^ N)) (Fin (2 ^ N)) ℂ :=
   gs.foldl (fun M g => gateMatrix N g * M) 1

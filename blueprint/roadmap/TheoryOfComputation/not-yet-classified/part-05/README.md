@@ -4,4 +4,3 @@
 
 - [Varieties](part-02/varieties/README.md)
 - [View Serializability](part-02/view-serializability/README.md)
-- [Circuit Matrix](part-02/circuit-matrix/README.md)

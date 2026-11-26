@@ -18,10 +18,10 @@ public import CSLibExt.Computability.Complexity.QuantumGates.CircuitMatrix
 
 A unit circuit vector on `v + m` qubits, read as a density operator on
 the register pair of `qubitSplit v m`; a gate list as a unitary channel
-on that pair, acting on such states exactly as `applyCircuit` acts on
-the vector; and the computational-basis measurement of global qubit
-`0`, whose probability on these states is the circuit acceptance
-probability.
+on that pair, which acts on such states exactly as `applyCircuit` acts on
+the vector when every gate is well formed; and the computational-basis
+measurement of global qubit `0`, whose probability on these states is the
+circuit acceptance probability.
 
 ## ii. Key results
 
@@ -49,7 +49,8 @@ namespace PhyslibExt.QuantumInfo.CircuitBridge
 
 open Cslib.Complexity.Classes
 
-/-- The ket with the coefficients of a unit circuit vector. -/
+/-- **Ket of a unit circuit vector.** The ket whose coefficients are those of a circuit vector
+of squared norm `1`. -/
 def ketOfVec {N : ℕ} (ψ : Fin (2 ^ N) → ℂ) (hψ : sqNorm ψ = 1) : Ket (Fin (2 ^ N)) where
   vec := ψ
   normalized' := by
@@ -67,8 +68,8 @@ lemma ketOfVec_apply {N : ℕ} (ψ : Fin (2 ^ N) → ℂ) (hψ : sqNorm ψ = 1) 
     ketOfVec ψ hψ s = ψ s :=
   rfl
 
-/-- State of a vector on `v + m` qubits on the register pair of `qubitSplit v m`; the
-default state when the vector is not a unit vector. -/
+/-- **State of a circuit vector.** For a unit vector on `v + m` qubits, its pure state, read on
+the register pair of `qubitSplit v m`; for any other vector, the maximally mixed state. -/
 noncomputable def vecState (v m : ℕ) (ψ : Fin (2 ^ (v + m)) → ℂ) :
     MState (Fin (2 ^ v) × Fin (2 ^ m)) :=
   if h : sqNorm ψ = 1 then (MState.pure (ketOfVec ψ h)).relabel (qubitSplit v m) else default
@@ -78,14 +79,15 @@ lemma vecState_of_sqNorm_eq_one {v m : ℕ} {ψ : Fin (2 ^ (v + m)) → ℂ} (h�
   rw [vecState, dite_eq_left hψ]
 
 open scoped Classical in
-/-- Unitary of a gate list; the identity when some gate is not well formed. -/
+/-- **Unitary of a gate list.** The circuit matrix of a gate list, as an element of the unitary
+group, when every gate is well formed; the identity otherwise. -/
 noncomputable def circuitUnitary (N : ℕ) (gs : List QGate) :
     Matrix.unitaryGroup (Fin (2 ^ N)) ℂ :=
   if h : ∀ g ∈ gs, QGateWellFormed N g then ⟨circuitMatrix N gs, circuitMatrix_mem_unitaryGroup h⟩
   else 1
 
-/-- Unitary channel of a gate list on the register pair of `qubitSplit v m`; the identity
-channel when some gate is not well formed. -/
+/-- **Channel of a gate list.** The unitary channel of a gate list on the register pair of
+`qubitSplit v m`; the identity channel when some gate is not well formed. -/
 noncomputable def circuitChannel (v m : ℕ) (gs : List QGate) :
     CPTPMap (Fin (2 ^ v) × Fin (2 ^ m)) (Fin (2 ^ v) × Fin (2 ^ m)) :=
   CPTPMap.ofEquiv (qubitSplit v m).symm ∘ₘ CPTPMap.ofUnitary (circuitUnitary (v + m) gs) ∘ₘ
@@ -145,6 +147,9 @@ private lemma uConj_pure_eq {d : Type*} [Fintype d] [DecidableEq d]
     rw [hfac, hconj]
   rw [hentry i j, MState.pure_apply, hφ i, hφ j]
 
+/-- **A gate-list channel acts as the circuit.** For a well-formed gate list and a unit vector
+`ψ`, the channel of the list sends the state of `ψ` to the state of the circuit's image of
+`ψ`. -/
 lemma circuitChannel_vecState {v m : ℕ} {gs : List QGate}
     (hgs : ∀ g ∈ gs, QGateWellFormed (v + m) g) {ψ : Fin (2 ^ (v + m)) → ℂ}
     (hψ : sqNorm ψ = 1) :
@@ -169,11 +174,13 @@ lemma circuitChannel_vecState {v m : ℕ} {gs : List QGate}
   rw [MState.relabel_relabel, Equiv.symm_trans_self, MState.relabel_refl,
     hUconj, Equiv.symm_symm]
 
-/-- Diagonal projector onto basis states whose global qubit `0` is `1`. -/
+/-- **Projector onto the accepting basis states.** The diagonal projector onto the basis states
+whose global qubit `0` is `1`. -/
 noncomputable def outputProj (v m : ℕ) : HermitianMat (Fin (2 ^ v) × Fin (2 ^ m)) ℂ :=
   HermitianMat.diagonal ℂ fun p => if qBit 0 (qubitSplit v m p).val = 1 then (1 : ℝ) else 0
 
-/-- Computational-basis measurement of global qubit `0`; `true` accepts. -/
+/-- **Measurement of the output qubit.** The computational-basis measurement of global qubit
+`0`; the outcome `true` accepts. -/
 noncomputable def outputPOVM (v m : ℕ) : POVM Bool (Fin (2 ^ v) × Fin (2 ^ m)) where
   mats b := if b then outputProj v m else 1 - outputProj v m
   nonneg := by
@@ -204,6 +211,8 @@ noncomputable def outputPOVM (v m : ℕ) : POVM Bool (Fin (2 ^ v) × Fin (2 ^ m)
     change outputProj v m + (1 - outputProj v m) = 1
     exact add_sub_cancel _ _
 
+/-- **Born rule for the output qubit.** For a unit vector `ψ`, the probability that measuring
+global qubit `0` of the state of `ψ` gives `true` is the acceptance probability of `ψ`. -/
 lemma outputPOVM_measure_vecState {v m : ℕ} {ψ : Fin (2 ^ (v + m)) → ℂ} (hψ : sqNorm ψ = 1) :
     (((outputPOVM v m).measure (vecState v m ψ) true : Prob) : ℝ) =
       Cslib.Complexity.Classes.acceptProb ψ := by
