@@ -39,3 +39,8 @@
 - [Commutes](commutes.md)
 - [Satisfies Rule](satisfies-rule.md)
 - [Stacks 07HY](exists-unique-quotient-de-rham-different.md)
+
+## Cartier modules of multivariate formal groups
+
+- [Cartier module of a formal group law](cartier-module.md)
+- [Endomorphism of the Witt vector addition law](is-endo.md)
