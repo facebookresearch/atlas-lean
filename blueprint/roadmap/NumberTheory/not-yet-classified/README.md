@@ -15,4 +15,4 @@ Topics added since this subject's fields were last revised.
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
 - [Fowler's bound on imaginary quadratic order discriminants](sqrt-abs-discriminant-le-of-gauss-class.md)
-- [Singular Modulus Degree](singular-modulus-degree/README.md)
+- [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
