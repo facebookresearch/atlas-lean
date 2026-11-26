@@ -9,6 +9,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
+public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminantsTorsionIndependent
+public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminantsEvaluationIndependent
 
 /-!
 # Direct construction and independence of actual acyclic torsion
@@ -30,11 +32,6 @@ open MathlibExt.AlgebraicGeometry
 open BoundedProjectiveDeterminants GlobalBoundedDeterminantModels
 open MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
 
-/-- Independence of the literal kernel-basis/lift torsion in the original degree order. -/
-public theorem_wanted torsion_independent (R : Type) [CommRing R]
-    (C : BoundedProjectiveDeterminants.Complex R) (A B : AdaptedBases R C) :
-    acyclicTorsion R C A = acyclicTorsion R C B
-
 variable [FourierMukai.HasDerivedPullbacks.{0}]
   [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
   [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
@@ -47,11 +44,5 @@ public def_wanted canonicalEvaluation (R : CommRingCat.{0}) (I : DeterminantSour
     (T : TermAssembly R C Q)
     (acyclic : ∀ i : ℤ, Function.Surjective (boundaryMap R C i)) :
     CanonicalEvaluation I Q C T
-
-/-- Independence retains the same fixed source assembly and every scalar/cochain input. -/
-public theorem_wanted evaluation_independent (R : CommRingCat.{0}) (I : DeterminantSources)
-    (C : BoundedProjectiveDeterminants.Complex R) (m : ℕ)
-    (Q : Finset (Fin m) → BoundedProjectiveDeterminants.Complex R)
-    (T : TermAssembly R C Q) (E F : CanonicalEvaluation I Q C T) : E.value = F.value
 
 end WantedExt.AlgebraicGeometry.CanonicalKoszulDeterminants
