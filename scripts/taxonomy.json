@@ -1650,6 +1650,7 @@
   "CSLibExt/Crypto/SymmetricKey/EncryptThenMac": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Encrypt-then-MAC"},
   "CSLibExt/Crypto/SymmetricKey/PRF": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom functions"},
   "CSLibExt/Crypto/SymmetricKey/PRG": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom generators"},
+  "CSLibExt/Crypto/SymmetricKey/PRGFromPRF": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom generators"},
   "CSLibExt/Crypto/SymmetricKey/PRP": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom permutations"},
   "CSLibExt/Databases/FunctionalDependencies": {"to": "ComputerScience/databases", "title": "Functional dependencies"},
   "CSLibExt/Databases/NormalForms": {"to": "ComputerScience/databases", "title": "Lossless decomposition and normal forms"},
