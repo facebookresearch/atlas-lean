@@ -47,12 +47,12 @@ it needs the policy to be decidable. Runs are CSLib's `Cslib.FLTS.mtr`, which co
 sequence from the left, as Rushby's $\mathrm{run}$ does.
 
 Purge-based security is meant for transitive policies; intransitive (channel-control) policies
-need an intransitive purge and another unwinding theorem (Rushby, Section 4).
+need an intransitive purge and another unwinding theorem (Rushby, Chapter 4).
 
 ## References
 
 * J. Rushby, *Noninterference, transitivity, and channel-control security policies*, Technical
-  Report CSL-92-02, SRI International, 1992, Section 2.
+  Report CSL-92-02, SRI International, 1992, Chapter 2.
 -/
 
 @[expose] public section

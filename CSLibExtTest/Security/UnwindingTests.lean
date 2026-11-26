@@ -108,11 +108,13 @@ theorem secureMachine_secure : secureMachine.Secure (· ≤ ·) :=
   unwinding secureMachine_outputConsistent secureMachine_stepConsistent
     secureMachine_locallyRespects
 
-/-- An instance of security: the low read after high writes sees only the low writes. -/
+/-- An instance of security: a low read after `[writeLow 2, writeHigh 5, copy]` gives the same
+output as after its purge for the low domain, `[writeLow 2, copy]`. -/
 example :
     secureMachine.output (secureMachine.mtr secureMachine.start [writeLow 2, writeHigh 5, copy])
-      readLow = 2 :=
-  rfl
+        readLow =
+      secureMachine.output (secureMachine.mtr secureMachine.start [writeLow 2, copy]) readLow :=
+  secureMachine_secure [writeLow 2, writeHigh 5, copy] readLow
 
 /-- The key lemma from states that are equivalent for the low domain but not equal. -/
 example :
@@ -136,5 +138,31 @@ example (view : Bool → Setoid (ℕ × ℕ)) :
     ¬(leakyMachine.OutputConsistent view ∧ leakyMachine.StepConsistent view ∧
       leakyMachine.LocallyRespects (· ≤ ·) view) :=
   fun ⟨hout, hstep, hloc⟩ => leakyMachine_not_secure (unwinding hout hstep hloc)
+
+/-! ### A policy that is not reflexive -/
+
+/-- For the empty policy, which is not reflexive, purging deletes every action, so security says
+that every output after a run from the initial state is the output in the initial state. -/
+example {S A O D : Type*} (M : DomainMachine S A O D) :
+    M.Secure (fun _ _ => False) ↔ ∀ α a, M.output (M.mtr M.start α) a = M.output M.start a := by
+  simp [Secure, purge]
+
+/-- The register machine with outputs that ignore the state. -/
+abbrev constantMachine : DomainMachine (ℕ × ℕ) Act ℕ Bool :=
+  { secureMachine with output := fun _ _ => 0 }
+
+/-- The unwinding theorem for the empty policy: with views that relate all states, the machine
+whose outputs ignore the state is secure. -/
+example : constantMachine.Secure fun _ _ => False :=
+  unwinding (view := fun _ => Setoid.ker fun _ => ()) (fun _ _ _ _ => rfl) (fun _ _ _ _ _ => rfl)
+    fun _ _ _ _ => rfl
+
+/-- The secure machine is not secure for the empty policy: a low read after a low write sees the
+written value, not the initial one. -/
+example : ¬secureMachine.Secure fun _ _ => False := by
+  intro h
+  have := h [writeLow 1] readLow
+  revert this
+  decide
 
 end Cslib.Security.DomainMachine.Tests
