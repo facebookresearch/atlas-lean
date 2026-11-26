@@ -1200,4 +1200,4 @@ Topics added since this subject's fields were last revised.
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
 - [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
-- [QMIsogeny](qmisogeny/README.md)
+- [Modular Model Conductor](modular-model-conductor/README.md)
