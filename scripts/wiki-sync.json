@@ -96782,6 +96782,7 @@
 "MetaMathlibExt.sum_trinomialCoefficient_upper_half": "416d01cfd0ff75c8",
 "MetaMathlibExt.sum_two_param_gammaBinom_of_binomial_poly_identity": "08df0cc1677f6ed0",
 "MetaMathlibExt.sum_two_pow_lucasV_div_lucasU_sq_doubling": "1607a794a90acc11",
+"MetaMathlibExt.sum_unitaryDivisors_eq_sum_powerset": "de22f2b16bf09464",
 "MetaMathlibExt.sum_weightedCrossWeight": "00c811ec1c1a3a78",
 "MetaMathlibExt.sum_wittWordContent": "83483ba49bb70826",
 "MetaMathlibExt.summable_abs_mul_log_pow_div_sub": "3ab5e96efa518718",
