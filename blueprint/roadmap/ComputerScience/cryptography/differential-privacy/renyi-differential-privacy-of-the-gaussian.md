@@ -12,7 +12,8 @@ $$
 
 Here $D_\alpha(P \,\|\, Q) = \frac{1}{\alpha - 1} \log \int (dP/dQ)^\alpha \, dQ$ is the
 [Rényi divergence](../../../InformationTheory/information-inequalities/r-nyi-divergence/renyi-div.md),
-with the natural logarithm. It is defined for arbitrary measures through the Radon–Nikodym
+with the natural logarithm, when $P$ is absolutely continuous with respect to $Q$, and $\infty$
+otherwise. It is defined for arbitrary measures through the Radon–Nikodym
 derivative $dP/dQ$, which for these Gaussian laws is the ratio of their densities.
 
 With sensitivity $\Delta = 1$ and variance $v = \sigma^2$ this is Mironov's Corollary 3: the
