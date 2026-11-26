@@ -20,6 +20,14 @@ import all MathlibExt.Combinatorics.Enumerative.PollakPartialParkingFunctions
 We count preferences on a circle with one extra spot. Each car contributes a factor counting
 its permitted preferences, and rotation shows that exactly one in `n + 1` of the circular
 preferences leaves the extra spot empty.
+
+## References
+
+- Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+  *Lucky Cars and Lucky Spots in Parking Functions*, J. Integer Seq. 29 (2026),
+  Article 26.1.1, Theorem 4.
+- The underlying circle-and-rotation argument is due to Pollak, as communicated in
+  J. Riordan, *Ballots and trees*, J. Combin. Theory 6 (1969), 408–411.
 -/
 
 set_option autoImplicit false
