@@ -333,7 +333,7 @@ private theorem twoTasks_not_feasible_of_period_lt (sched : Schedule (Fin 2)) :
   have := h.runTime_le_period 0
   simp [twoTasks] at this
 
-/-- An overflow at a time is an infeasibility, and conversely. -/
+/-- Under every priority rule, the single task `(3, 2)` overflows at some time. -/
 private theorem T5_overflow_somewhere {π : Type*} [LinearOrder π]
     (rule : PriorityRule (Fin 1) π) :
     ∃ t, OverflowAt tasksT5 (produceSchedule tasksT5 rule) t := by
