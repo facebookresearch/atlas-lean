@@ -78,6 +78,45 @@ private theorem existsUnique_apply_eq_adicEval
     fun g hg => huniq g fun C _ _ J hJ x hx =>
       (hg C J hJ x hx).trans (nilpotentEval_eq_adicEval J hJ hx g).symm⟩
 
+/-! The coordinate rule `t C J x = x ()` in one variable. Its naturality holds by definition, and
+the representation theorem identifies its unique representing series as `X ()`. -/
+
+/-- Naturality of the coordinate rule `t C J x = x ()`, proved directly: an algebra map `φ` sends
+the coordinate of `x` to the coordinate of `φ ∘ x`. -/
+private theorem coordinate_natural (R : Type u) [CommRing R] :
+    ∀ (C C' : Type u) [CommRing C] [Algebra R C] [CommRing C'] [Algebra R C']
+      (J : Ideal C) (J' : Ideal C'), IsNilpotent J → IsNilpotent J' →
+      ∀ φ : C →ₐ[R] C', (∀ s ∈ J, φ s ∈ J') →
+        ∀ x : Unit → C, (∀ s, x s ∈ J) → (φ ∘ x) () = φ (x ()) := by
+  intros
+  rfl
+
+/-- The series `X ()` represents the coordinate rule: at every point of a nilpotent ideal it
+evaluates to the coordinate. -/
+private theorem coordinate_eq_nilpotentEval_X {R : Type u} [CommRing R] (C : Type u)
+    [CommRing C] [Algebra R C] (J : Ideal C) (hJ : IsNilpotent J) (x : Unit → C)
+    (hx : ∀ s, x s ∈ J) : x () = nilpotentEval J hJ x hx (X () : MvPowerSeries Unit R) := by
+  rw [← MvPolynomial.coe_X, nilpotentEval_coe, MvPolynomial.aeval_X]
+
+/-- The representation theorem on the coordinate rule: a power series represents the rule exactly
+when it is `X ()`. The forward direction is the uniqueness half of
+`existsUnique_apply_eq_nilpotentEval_of_natural_of_isNilpotent`. -/
+private theorem represents_coordinate_iff {R : Type u} [CommRing R] (f : MvPowerSeries Unit R) :
+    (∀ (C : Type u) [CommRing C] [Algebra R C] (J : Ideal C) (hJ : IsNilpotent J)
+      (x : Unit → C) (hx : ∀ s, x s ∈ J), x () = nilpotentEval J hJ x hx f) ↔ f = X () := by
+  refine ⟨fun hf => (existsUnique_apply_eq_nilpotentEval_of_natural_of_isNilpotent
+    (fun _ _ _ _ x => x ()) (coordinate_natural R)).unique hf coordinate_eq_nilpotentEval_X, ?_⟩
+  rintro rfl
+  exact coordinate_eq_nilpotentEval_X
+
+/-- Over `ℤ`, the series `X () + X ()` does not represent the coordinate rule. -/
+example : ¬ ∀ (C : Type) [CommRing C] [Algebra ℤ C] (J : Ideal C) (hJ : IsNilpotent J)
+    (x : Unit → C) (hx : ∀ s, x s ∈ J),
+      x () = nilpotentEval J hJ x hx (X () + X () : MvPowerSeries Unit ℤ) := by
+  intro h
+  have h2 := congrArg (coeff (Finsupp.single () 1)) ((represents_coordinate_iff _).mp h)
+  simp [coeff_X] at h2
+
 /-- The `AlgHom` is `adicEvalAlgHom` at the nilpotent ideal. -/
 example {R C : Type*} [CommRing R] [CommRing C] [Algebra R C] {σ : Type*}
     [Finite σ] (J : Ideal C) (hJ : IsNilpotent J) [IsAdicComplete J C]

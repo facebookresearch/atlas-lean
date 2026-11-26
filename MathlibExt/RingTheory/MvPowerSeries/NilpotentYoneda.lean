@@ -30,12 +30,30 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.Algebra.MvPolynomial.Eval
-public import Mathlib.Data.Finsupp.Antidiagonal
 public import Mathlib.Data.Finsupp.Weight
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.MvPowerSeries.Basic
 public import MathlibExt.RingTheory.AdicCompletion.Nilpotent
 public import MathlibExt.RingTheory.MvPowerSeries.SpecialFibreCoordinates
+import Mathlib.RingTheory.MvPolynomial.Ideal
+import Mathlib.RingTheory.MvPowerSeries.Trunc
+
+/-!
+# Evaluation of multivariate power series at points of a nilpotent ideal
+
+Let `σ` be a finite type of variables, `C` a commutative `R`-algebra, `J` a nilpotent ideal of
+`C` and `x : σ → C` a point with every coordinate in `J`. Every monomial of large total degree
+vanishes at `x`, so `MvPowerSeries.nilpotentEval J hJ x hx f` evaluates a power series `f` over
+`R` at `x` as a finite sum. It equals the adic evaluation `MvPowerSeries.adicEval J x f` and is
+the underlying function of the `R`-algebra homomorphism `MvPowerSeries.nilpotentEvalAlgHom`.
+
+The main theorem, `MvPowerSeries.existsUnique_apply_eq_nilpotentEval_of_natural_of_isNilpotent`,
+says that a rule assigning an element of `C` to every such `C`, `J` and `x`, naturally in
+ideal-preserving algebra maps, is evaluation of a unique power series. The proof evaluates the
+rule at the points `X s` of the truncated polynomial rings
+`MvPolynomial σ R ⧸ MvPolynomial.idealOfVars σ R ^ N`, whose coefficients below total degree `N`
+determine the series.
+-/
 
 @[expose] public section
 
@@ -45,52 +63,23 @@ namespace MvPowerSeries
 
 variable {R : Type*} [CommRing R] {σ : Type*}
 
-/-- The finite set of monomials whose exponents are all at most `N`,
-realised as first components of antidiagonal pairs. -/
-noncomputable def boundFinset [Finite σ] (N : ℕ) : Finset (σ →₀ ℕ) :=
-  letI : Fintype σ := Fintype.ofFinite σ
-  letI : DecidableEq σ := Classical.decEq σ
-  (Finset.antidiagonal (Finsupp.equivFunOnFinite.symm fun _ : σ => N)).image
-    Prod.fst
-
-theorem mem_boundFinset [Finite σ] {N : ℕ} {d : σ →₀ ℕ} :
-    d ∈ boundFinset N ↔ ∀ s, d s ≤ N := by
-  classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  unfold boundFinset
-  simp only [Finset.mem_image, Finset.mem_antidiagonal, Prod.exists,
-    exists_and_right, exists_eq_right]
-  constructor
-  · rintro ⟨e, he⟩ s
-    have h := Finsupp.ext_iff.mp he s
-    simp only [Finsupp.coe_add, Pi.add_apply, Finsupp.coe_equivFunOnFinite_symm,
-      Function.const_apply] at h
-    omega
-  · intro hd
-    refine ⟨Finsupp.equivFunOnFinite.symm (fun _ : σ => N) - d, ?_⟩
-    ext s
-    simp only [Finsupp.coe_add, Finsupp.coe_tsub, Pi.add_apply, Pi.sub_apply,
-      Finsupp.coe_equivFunOnFinite_symm, Function.const_apply]
-    have hds := hd s
-    omega
-
-/-- Evaluation of a multivariate power series at a point of a nilpotent
-ideal. If `J ^ N = ⊥` and every `x s` lies in `J`, then every monomial of
-degree at least `N` evaluates to `0`, so the evaluation is the finite sum
-over the monomials bounded by `N`. The value does not depend on the chosen
-exponent `N`; see `nilpotentEval_eq_sum`. It is the adic evaluation
-`MvPowerSeries.adicEval` (`nilpotentEval_eq_adicEval`) and the underlying
-function of the algebra homomorphism `nilpotentEvalAlgHom`. -/
+/-- **Evaluation of a power series at a point of a nilpotent ideal.** Let `σ` be a finite type of
+variables, `J` a nilpotent ideal of the `R`-algebra `C`, and `x : σ → C` a point with every
+coordinate `x s` in `J`. Choose `N` with `J ^ N = ⊥`; every monomial of total degree at least `N`
+then vanishes at `x`. The value `nilpotentEval J hJ x hx f` is the finite sum of
+`algebraMap R C (coeff d f) * ∏ s, x s ^ d s` over the monomials `d` of total degree below `N`.
+It does not depend on the choice of `N` (`MvPowerSeries.nilpotentEval_eq_sum`), it equals the
+adic evaluation `MvPowerSeries.adicEval J x f` (`MvPowerSeries.nilpotentEval_eq_adicEval`), and
+it is the underlying function of the algebra homomorphism `MvPowerSeries.nilpotentEvalAlgHom`. -/
 noncomputable def nilpotentEval {C : Type*} [CommRing C] [Algebra R C] [Finite σ]
     (J : Ideal C) (hJ : IsNilpotent J) (x : σ → C) (_hx : ∀ s, x s ∈ J)
     (f : MvPowerSeries σ R) : C :=
-  letI : Fintype σ := Fintype.ofFinite σ
-  ∑ d ∈ boundFinset (Classical.choose hJ),
+  ∑ d ∈ (Finsupp.finite_of_degree_lt (Classical.choose hJ)).toFinset,
     algebraMap R C (coeff d f) * d.prod fun s e => x s ^ e
 
 variable {C : Type*} [CommRing C] [Algebra R C]
 
-private theorem prod_pow_eq_zero_of_le_degree [Finite σ] (J : Ideal C) {N : ℕ}
+private theorem prod_pow_eq_zero_of_le_degree (J : Ideal C) {N : ℕ}
     (hN : J ^ N = ⊥) {x : σ → C} (hx : ∀ s, x s ∈ J) (d : σ →₀ ℕ)
     (hd : N ≤ d.degree) : (d.prod fun s e => x s ^ e) = 0 := by
   have hmem : (d.prod fun s e => x s ^ e) ∈ J ^ d.degree := by
@@ -100,24 +89,14 @@ private theorem prod_pow_eq_zero_of_le_degree [Finite σ] (J : Ideal C) {N : ℕ
   have := hle hmem
   rwa [hN, Submodule.mem_bot] at this
 
-private theorem le_degree_of_not_mem_bound [Finite σ] (N : ℕ)
-    (d : σ →₀ ℕ) (hd : d ∉ boundFinset N) :
-    N ≤ d.degree := by
-  classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  rw [mem_boundFinset] at hd
-  push Not at hd
-  obtain ⟨s, hs⟩ := hd
-  calc N ≤ d s := hs.le
-    _ ≤ d.degree := by
-        rw [Finsupp.degree_apply]
-        by_cases hs0 : s ∈ d.support
-        · exact Finset.single_le_sum (fun i _ => Nat.zero_le _) hs0
-        · rw [Finsupp.notMem_support_iff.mp hs0]; exact Nat.zero_le _
+private theorem le_degree_of_notMem [Finite σ] {N : ℕ} {d : σ →₀ ℕ}
+    (hd : d ∉ (Finsupp.finite_of_degree_lt (σ := σ) N).toFinset) : N ≤ d.degree :=
+  not_lt.mp fun h => hd ((Finsupp.finite_of_degree_lt N).mem_toFinset.mpr h)
 
-/-- The finite sum defining `nilpotentEval` may be taken over any finite
-set of monomials containing all monomials of degree below `N`, where
-`J ^ N = ⊥`. -/
+/-- **Nilpotent evaluation as a sum over any large enough set of monomials.** Let `σ` be a finite
+type of variables. If `J ^ N = ⊥` and every coordinate of `x` lies in `J`, then
+`nilpotentEval J hJ x hx f` is the sum of `algebraMap R C (coeff d f) * ∏ s, x s ^ d s` over any
+finite set `D` of monomials that contains every monomial of total degree below `N`. -/
 theorem nilpotentEval_eq_sum [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
     {N : ℕ} (hN : J ^ N = ⊥) {x : σ → C} (hx : ∀ s, x s ∈ J)
     (f : MvPowerSeries σ R) (D : Finset (σ →₀ ℕ))
@@ -125,25 +104,20 @@ theorem nilpotentEval_eq_sum [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
     nilpotentEval J hJ x hx f = ∑ d ∈ D, algebraMap R C (coeff d f) *
       d.prod fun s e => x s ^ e := by
   classical
-  haveI : Fintype σ := Fintype.ofFinite σ
   have hzero : ∀ {M : ℕ}, J ^ M = ⊥ → ∀ d : σ →₀ ℕ, M ≤ d.degree →
       algebraMap R C (coeff d f) * d.prod (fun s e => x s ^ e) = 0 := by
     intro M hM d hd
     rw [prod_pow_eq_zero_of_le_degree J hM hx d hd, mul_zero]
-  have key1 : (∑ d ∈ boundFinset (Classical.choose hJ),
-        algebraMap R C (coeff d f) * d.prod fun s e => x s ^ e) =
-      ∑ d ∈ boundFinset (Classical.choose hJ) ∪ D,
+  have key1 : nilpotentEval J hJ x hx f =
+      ∑ d ∈ (Finsupp.finite_of_degree_lt (Classical.choose hJ)).toFinset ∪ D,
         algebraMap R C (coeff d f) * d.prod fun s e => x s ^ e :=
-    Finset.sum_subset Finset.subset_union_left (fun d _ hd =>
-      hzero (Classical.choose_spec hJ) d
-        (le_degree_of_not_mem_bound (Classical.choose hJ) d hd))
+    Finset.sum_subset Finset.subset_union_left fun d _ hd =>
+      hzero (Classical.choose_spec hJ) d (le_degree_of_notMem hd)
   have key2 : (∑ d ∈ D, algebraMap R C (coeff d f) *
         d.prod fun s e => x s ^ e) =
-      ∑ d ∈ boundFinset (Classical.choose hJ) ∪ D,
+      ∑ d ∈ (Finsupp.finite_of_degree_lt (Classical.choose hJ)).toFinset ∪ D,
         algebraMap R C (coeff d f) * d.prod fun s e => x s ^ e :=
-    Finset.sum_subset Finset.subset_union_right (fun d _ hd =>
-      hzero hN d (hD d hd))
-  unfold nilpotentEval
+    Finset.sum_subset Finset.subset_union_right fun d _ hd => hzero hN d (hD d hd)
   rw [key1, key2]
 
 theorem nilpotentEval_eq_zero_of_forall_coeff [Finite σ] (J : Ideal C)
@@ -151,10 +125,7 @@ theorem nilpotentEval_eq_zero_of_forall_coeff [Finite σ] (J : Ideal C)
     (hx : ∀ s, x s ∈ J) {f : MvPowerSeries σ R}
     (hf : ∀ d : σ →₀ ℕ, d.degree < N → coeff d f = 0) :
     nilpotentEval J hJ x hx f = 0 := by
-  classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  rw [nilpotentEval_eq_sum J hJ hN hx f _
-    (le_degree_of_not_mem_bound N)]
+  rw [nilpotentEval_eq_sum J hJ hN hx f _ fun d hd => le_degree_of_notMem hd]
   refine Finset.sum_eq_zero fun d _ => ?_
   by_cases hd : d.degree < N
   · rw [hf d hd, map_zero, zero_mul]
@@ -164,11 +135,9 @@ theorem nilpotentEval_mem [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
     {x : σ → C} (hx : ∀ s, x s ∈ J) {f : MvPowerSeries σ R}
     (hf : f.constantCoeff = 0) : nilpotentEval J hJ x hx f ∈ J := by
   classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  obtain ⟨N, hN⟩ := hJ
+  obtain ⟨N, hN⟩ := id hJ
   replace hN : J ^ N = ⊥ := hN
-  show nilpotentEval J ⟨N, hN⟩ x hx f ∈ J
-  rw [nilpotentEval_eq_sum J ⟨N, hN⟩ hN hx f _ (le_degree_of_not_mem_bound N)]
+  rw [nilpotentEval_eq_sum J hJ hN hx f _ fun d hd => le_degree_of_notMem hd]
   refine sum_mem fun d _ => ?_
   by_cases hd : d = 0
   · subst hd
@@ -192,116 +161,46 @@ theorem map_nilpotentEval [Finite σ] {C' : Type*} [CommRing C'] [Algebra R C']
     (hx' : ∀ s, φ (x s) ∈ J') (f : MvPowerSeries σ R) :
     φ (nilpotentEval J hJ x hx f) =
       nilpotentEval J' hJ' (fun s => φ (x s)) hx' f := by
-  classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  obtain ⟨N, hN⟩ := hJ
-  obtain ⟨N', hN'⟩ := hJ'
+  obtain ⟨N, hN⟩ := id hJ
+  obtain ⟨N', hN'⟩ := id hJ'
   have hM : J ^ max N N' = ⊥ := by
     rw [show max N N' = N + (max N N' - N) by omega, pow_add, hN, zero_mul]; rfl
   have hM' : J' ^ max N N' = ⊥ := by
     rw [show max N N' = N' + (max N N' - N') by omega, pow_add, hN', zero_mul]; rfl
-  show φ (nilpotentEval J ⟨N, hN⟩ x hx f) =
-    nilpotentEval J' ⟨N', hN'⟩ (fun s => φ (x s)) hx' f
-  rw [nilpotentEval_eq_sum J ⟨N, hN⟩ hM hx f _ (le_degree_of_not_mem_bound (max N N')),
-    nilpotentEval_eq_sum J' ⟨N', hN'⟩ hM' hx' f _ (le_degree_of_not_mem_bound (max N N'))]
+  rw [nilpotentEval_eq_sum J hJ hM hx f _ fun d hd => le_degree_of_notMem hd,
+    nilpotentEval_eq_sum J' hJ' hM' hx' f _ fun d hd => le_degree_of_notMem hd]
   simp only [map_sum, map_mul, AlgHom.commutes, Finsupp.prod, map_prod, map_pow]
 
-@[simp]
-theorem nilpotentEval_zero [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
-    {x : σ → C} (hx : ∀ s, x s ∈ J) :
-    nilpotentEval J hJ x hx (0 : MvPowerSeries σ R) = 0 := by
-  classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  obtain ⟨N, hN⟩ := hJ
-  exact nilpotentEval_eq_zero_of_forall_coeff J ⟨N, hN⟩ hN hx
-    (fun d _ => by simp)
-
-theorem nilpotentEval_sub [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
-    {x : σ → C} (hx : ∀ s, x s ∈ J) (f g : MvPowerSeries σ R) :
-    nilpotentEval J hJ x hx (f - g) =
-      nilpotentEval J hJ x hx f - nilpotentEval J hJ x hx g := by
-  classical
-  haveI : Fintype σ := Fintype.ofFinite σ
-  obtain ⟨N, hN⟩ := hJ
-  replace hN : J ^ N = ⊥ := hN
-  show nilpotentEval J ⟨N, hN⟩ x hx (f - g) =
-    nilpotentEval J ⟨N, hN⟩ x hx f - nilpotentEval J ⟨N, hN⟩ x hx g
-  rw [nilpotentEval_eq_sum J ⟨N, hN⟩ hN hx (f - g) _
-      (le_degree_of_not_mem_bound N),
-    nilpotentEval_eq_sum J ⟨N, hN⟩ hN hx f _ (le_degree_of_not_mem_bound N),
-    nilpotentEval_eq_sum J ⟨N, hN⟩ hN hx g _ (le_degree_of_not_mem_bound N),
-    ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl fun d _ => ?_
-  rw [map_sub (coeff d), map_sub, sub_mul]
-
-/-- Evaluation of a polynomial, viewed as a power series, at a point of a
-nilpotent ideal agrees with polynomial evaluation when the coefficients
-below the nilpotency exponent agree. -/
-theorem nilpotentEval_eq_aeval_of_forall_coeff [Finite σ] (J : Ideal C)
-    (hJ : IsNilpotent J) {N : ℕ} (hN : J ^ N = ⊥) {x : σ → C}
-    (hx : ∀ s, x s ∈ J) (f : MvPowerSeries σ R) (p : MvPolynomial σ R)
-    (hfp : ∀ d : σ →₀ ℕ, d.degree < N → coeff d f = p.coeff d) :
-    nilpotentEval J hJ x hx f = MvPolynomial.aeval x p := by
-  have h : nilpotentEval J hJ x hx (f - (p : MvPowerSeries σ R)) = 0 := by
-    apply nilpotentEval_eq_zero_of_forall_coeff J hJ hN hx
-    intro d hd
-    rw [map_sub, hfp d hd, MvPolynomial.coeff_coe, sub_self]
-  rw [nilpotentEval_sub] at h
-  have hcoe : nilpotentEval J hJ x hx (p : MvPowerSeries σ R) =
-      MvPolynomial.aeval x p := by
-    classical
-    haveI : Fintype σ := Fintype.ofFinite σ
-    haveI : DecidableEq (σ →₀ ℕ) := Classical.decEq _
-    have key : nilpotentEval J hJ x hx (p : MvPowerSeries σ R) =
-        ∑ d ∈ boundFinset N ∪ p.support, algebraMap R C (p.coeff d) *
-          d.prod fun s e => x s ^ e := by
-      rw [nilpotentEval_eq_sum J hJ hN hx _
-        (boundFinset N ∪ p.support)
-        (fun d hd => le_degree_of_not_mem_bound N d
-          (fun h => hd (Finset.mem_union_left _ h)))]
-      exact Finset.sum_congr rfl fun d _ => by rw [MvPolynomial.coeff_coe]
-    rw [key, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
-    exact (Finset.sum_subset Finset.subset_union_right
-      (fun d _ hd => by
-        rw [MvPolynomial.notMem_support_iff.mp hd, map_zero, zero_mul])).symm
-  rw [hcoe] at h
-  exact sub_eq_zero.mp h
-
-theorem nilpotentEval_coe [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
-    {x : σ → C} (hx : ∀ s, x s ∈ J) (p : MvPolynomial σ R) :
-    nilpotentEval J hJ x hx (p : MvPowerSeries σ R) =
-      MvPolynomial.aeval x p := by
-  obtain ⟨N, hN⟩ := hJ
-  exact nilpotentEval_eq_aeval_of_forall_coeff J ⟨N, hN⟩ hN hx _ p
-    (fun d _ => by rw [MvPolynomial.coeff_coe])
-
-/-- `nilpotentEval` is the adic evaluation `MvPowerSeries.adicEval` at the
-nilpotent ideal: `C` is `J`-adically complete (`IsAdicComplete.of_isNilpotent`),
-the point lies in `J`, hence in `J.radical`, and the adic sum has only the
-finitely many nonzero terms that `nilpotentEval` adds up. -/
+/-- **Nilpotent evaluation is adic evaluation.** For a finite type of variables, a nilpotent
+ideal `J` of the `R`-algebra `C` and a point `x` with every coordinate in `J`,
+`nilpotentEval J hJ x hx f` equals the `J`-adic evaluation `MvPowerSeries.adicEval J x f`: the
+ring `C` is `J`-adically complete (`IsAdicComplete.of_isNilpotent`), the point lies in `J`, hence
+in the radical of `J`, and the adic sum has only the finitely many nonzero terms that
+`nilpotentEval` adds up. -/
 theorem nilpotentEval_eq_adicEval [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
     {x : σ → C} (hx : ∀ s, x s ∈ J) (f : MvPowerSeries σ R) :
     nilpotentEval J hJ x hx f = adicEval J x f := by
-  obtain ⟨N, hN⟩ := hJ
+  obtain ⟨N, hN⟩ := id hJ
   replace hN : J ^ N = ⊥ := hN
   let : UniformSpace R := ⊥
   let : WithIdeal C := ⟨J⟩
-  have hc : IsAdicComplete J C := IsAdicComplete.of_isNilpotent ⟨N, hN⟩
+  have hc : IsAdicComplete J C := IsAdicComplete.of_isNilpotent hJ
   have : CompleteSpace C :=
     ((IsAdic.isAdicComplete_iff (show IsAdic J from rfl)).mp hc).1
   have : T2Space C :=
     ((IsAdic.isAdicComplete_iff (show IsAdic J from rfl)).mp hc).2
   have hsum := hasSum_eval₂ (φ := algebraMap R C) continuous_of_discreteTopology
     (hasEval_of_mem_radical J fun s => Ideal.le_radical (hx s)) f
-  rw [nilpotentEval_eq_sum J ⟨N, hN⟩ hN hx f _ (le_degree_of_not_mem_bound N)]
+  rw [nilpotentEval_eq_sum J hJ hN hx f _ fun d hd => le_degree_of_notMem hd]
   refine (hsum.unique (hasSum_sum_of_ne_finset_zero fun d hd => ?_)).symm
-  rw [prod_pow_eq_zero_of_le_degree J hN hx d
-      (le_degree_of_not_mem_bound N d hd), mul_zero]
+  rw [prod_pow_eq_zero_of_le_degree J hN hx d (le_degree_of_notMem hd), mul_zero]
 
-/-- Evaluation at a point of a nilpotent ideal as an `R`-algebra homomorphism:
-the specialization of `MvPowerSeries.adicEvalAlgHom` to a nilpotent ideal, at
-which `C` is adically complete (`IsAdicComplete.of_isNilpotent`). Its underlying
-function is `nilpotentEval` (`MvPowerSeries.coe_nilpotentEvalAlgHom`). -/
+/-- **Nilpotent evaluation as an algebra homomorphism.** For a finite type of variables `σ`, a
+nilpotent ideal `J` of the `R`-algebra `C` and a point `x` with every coordinate in `J`,
+evaluation at `x` is an `R`-algebra homomorphism `MvPowerSeries σ R →ₐ[R] C`. It is the
+specialization of `MvPowerSeries.adicEvalAlgHom` to the nilpotent ideal `J`, at which `C` is
+adically complete (`IsAdicComplete.of_isNilpotent`), and its underlying function is
+`nilpotentEval J hJ x hx` (`MvPowerSeries.coe_nilpotentEvalAlgHom`). -/
 noncomputable def nilpotentEvalAlgHom [Finite σ] (J : Ideal C)
     (hJ : IsNilpotent J) (x : σ → C) (hx : ∀ s, x s ∈ J) :
     MvPowerSeries σ R →ₐ[R] C :=
@@ -317,6 +216,12 @@ theorem coe_nilpotentEvalAlgHom [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
   exact congrFun (coe_adicEvalAlgHom J fun s => Ideal.le_radical (hx s)) f
 
 @[simp]
+theorem nilpotentEval_zero [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) :
+    nilpotentEval J hJ x hx (0 : MvPowerSeries σ R) = 0 := by
+  rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_zero]
+
+@[simp]
 theorem nilpotentEval_one [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
     {x : σ → C} (hx : ∀ s, x s ∈ J) :
     nilpotentEval J hJ x hx (1 : MvPowerSeries σ R) = 1 := by
@@ -328,34 +233,60 @@ theorem nilpotentEval_add [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
       nilpotentEval J hJ x hx f + nilpotentEval J hJ x hx g := by
   rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_add]
 
+theorem nilpotentEval_sub [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) (f g : MvPowerSeries σ R) :
+    nilpotentEval J hJ x hx (f - g) =
+      nilpotentEval J hJ x hx f - nilpotentEval J hJ x hx g := by
+  rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_sub]
+
 theorem nilpotentEval_mul [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
     {x : σ → C} (hx : ∀ s, x s ∈ J) (f g : MvPowerSeries σ R) :
     nilpotentEval J hJ x hx (f * g) =
       nilpotentEval J hJ x hx f * nilpotentEval J hJ x hx g := by
   rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_mul]
 
+theorem nilpotentEval_coe [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) (p : MvPolynomial σ R) :
+    nilpotentEval J hJ x hx (p : MvPowerSeries σ R) =
+      MvPolynomial.aeval x p :=
+  (nilpotentEval_eq_adicEval J hJ hx _).trans (adicEval_coe J x p)
+
+/-- **Nilpotent evaluation only sees the coefficients below the nilpotency exponent.** Let `σ` be
+a finite type of variables, `J` an ideal of the `R`-algebra `C` with `J ^ N = ⊥`, and `x` a point
+with every coordinate in `J`. If the power series `f` and the polynomial `p` have the same
+coefficient at every monomial of total degree below `N`, then evaluating `f` at `x` gives the
+polynomial evaluation `MvPolynomial.aeval x p`. -/
+theorem nilpotentEval_eq_aeval_of_forall_coeff [Finite σ] (J : Ideal C)
+    (hJ : IsNilpotent J) {N : ℕ} (hN : J ^ N = ⊥) {x : σ → C}
+    (hx : ∀ s, x s ∈ J) (f : MvPowerSeries σ R) (p : MvPolynomial σ R)
+    (hfp : ∀ d : σ →₀ ℕ, d.degree < N → coeff d f = p.coeff d) :
+    nilpotentEval J hJ x hx f = MvPolynomial.aeval x p := by
+  have h : nilpotentEval J hJ x hx (f - (p : MvPowerSeries σ R)) = 0 := by
+    apply nilpotentEval_eq_zero_of_forall_coeff J hJ hN hx
+    intro d hd
+    rw [map_sub, hfp d hd, MvPolynomial.coeff_coe, sub_self]
+  rwa [nilpotentEval_sub, nilpotentEval_coe, sub_eq_zero] at h
+
 universe u
 
 namespace NilpotentYoneda
+
+open MvPolynomial (idealOfVars)
 
 section TestPairs
 
 variable {R : Type u} [CommRing R] {σ : Type}
 
-private noncomputable abbrev varIdeal (R : Type u) [CommRing R] (σ : Type) :
-    Ideal (MvPolynomial σ R) :=
-  Ideal.span (Set.range MvPolynomial.X)
-
 private noncomputable abbrev TestRing (R : Type u) [CommRing R] (σ : Type) (N : ℕ) : Type u :=
-  MvPolynomial σ R ⧸ varIdeal R σ ^ N
+  MvPolynomial σ R ⧸ idealOfVars σ R ^ N
 
 private noncomputable abbrev testIdeal (R : Type u) [CommRing R] (σ : Type) (N : ℕ) :
     Ideal (TestRing R σ N) :=
-  (varIdeal R σ).map (Ideal.Quotient.mk (varIdeal R σ ^ N))
+  (idealOfVars σ R).map (Ideal.Quotient.mk (idealOfVars σ R ^ N))
 
 private noncomputable def xbar (R : Type u) [CommRing R] (σ : Type) (N : ℕ) :
     σ → TestRing R σ N :=
-  fun s => Ideal.Quotient.mk (varIdeal R σ ^ N) (MvPolynomial.X s)
+  fun s => Ideal.Quotient.mk (idealOfVars σ R ^ N) (MvPolynomial.X s)
 
 private theorem testIdeal_pow_eq_bot (N : ℕ) : testIdeal R σ N ^ N = ⊥ := by
   rw [← Ideal.map_pow, Ideal.map_quotient_self]
@@ -363,18 +294,18 @@ private theorem testIdeal_pow_eq_bot (N : ℕ) : testIdeal R σ N ^ N = ⊥ := b
 private theorem isNilpotent_testIdeal (N : ℕ) : IsNilpotent (testIdeal R σ N) :=
   ⟨N, testIdeal_pow_eq_bot N⟩
 
-private theorem X_mem_varIdeal (s : σ) :
-    (MvPolynomial.X s : MvPolynomial σ R) ∈ varIdeal R σ :=
+private theorem X_mem_idealOfVars (s : σ) :
+    (MvPolynomial.X s : MvPolynomial σ R) ∈ idealOfVars σ R :=
   Ideal.subset_span ⟨s, rfl⟩
 
 private theorem xbar_mem (N : ℕ) (s : σ) : xbar R σ N s ∈ testIdeal R σ N :=
-  Ideal.mem_map_of_mem _ (X_mem_varIdeal s)
+  Ideal.mem_map_of_mem _ (X_mem_idealOfVars s)
 
 private noncomputable def rep {N : ℕ} (q : TestRing R σ N) : MvPolynomial σ R :=
   (Ideal.Quotient.mk_surjective q).choose
 
 private theorem mk_rep {N : ℕ} (q : TestRing R σ N) :
-    Ideal.Quotient.mk (varIdeal R σ ^ N) (rep q) = q :=
+    Ideal.Quotient.mk (idealOfVars σ R ^ N) (rep q) = q :=
   (Ideal.Quotient.mk_surjective q).choose_spec
 
 private noncomputable def coeffQ {N : ℕ} (d : σ →₀ ℕ) (q : TestRing R σ N) : R :=
@@ -382,9 +313,9 @@ private noncomputable def coeffQ {N : ℕ} (d : σ →₀ ℕ) (q : TestRing R �
 
 private theorem aeval_xbar (N : ℕ) (p : MvPolynomial σ R) :
     MvPolynomial.aeval (xbar R σ N) p =
-      Ideal.Quotient.mk (varIdeal R σ ^ N) p := by
+      Ideal.Quotient.mk (idealOfVars σ R ^ N) p := by
   have h : MvPolynomial.aeval (xbar R σ N) =
-      Ideal.Quotient.mkₐ R (varIdeal R σ ^ N) := by
+      Ideal.Quotient.mkₐ R (idealOfVars σ R ^ N) := by
     apply MvPolynomial.algHom_ext
     intro s
     simp [xbar]
@@ -396,8 +327,8 @@ private noncomputable def transition {N M : ℕ} (h : N ≤ M) :
   Ideal.Quotient.factorₐ R (Ideal.pow_le_pow_right h)
 
 private theorem transition_mk {N M : ℕ} (h : N ≤ M) (p : MvPolynomial σ R) :
-    transition h (Ideal.Quotient.mk (varIdeal R σ ^ M) p) =
-      Ideal.Quotient.mk (varIdeal R σ ^ N) p :=
+    transition h (Ideal.Quotient.mk (idealOfVars σ R ^ M) p) =
+      Ideal.Quotient.mk (idealOfVars σ R ^ N) p :=
   rfl
 
 private theorem transition_xbar {N M : ℕ} (h : N ≤ M) (s : σ) :
@@ -414,15 +345,15 @@ private theorem transition_mem {N M : ℕ} (h : N ≤ M) {q : TestRing R σ M}
 private noncomputable def evalAt {C : Type u} [CommRing C] [Algebra R C]
     (J : Ideal C) {M : ℕ} (hM : J ^ M = ⊥) (x : σ → C) (hx : ∀ s, x s ∈ J) :
     TestRing R σ M →ₐ[R] C :=
-  Ideal.Quotient.liftₐ (varIdeal R σ ^ M) (MvPolynomial.aeval x) (by
-    have hle : (varIdeal R σ).map (MvPolynomial.aeval x) ≤ J := by
+  Ideal.Quotient.liftₐ (idealOfVars σ R ^ M) (MvPolynomial.aeval x) (by
+    have hle : (idealOfVars σ R).map (MvPolynomial.aeval x) ≤ J := by
       rw [Ideal.map_span]
       refine Ideal.span_le.mpr ?_
       rintro _ ⟨_, ⟨s, rfl⟩, rfl⟩
       simpa using hx s
     intro a ha
     have hmem : MvPolynomial.aeval x a ∈
-        ((varIdeal R σ) ^ M).map (MvPolynomial.aeval x) :=
+        ((idealOfVars σ R) ^ M).map (MvPolynomial.aeval x) :=
       Ideal.mem_map_of_mem _ ha
     rw [Ideal.map_pow] at hmem
     have := (Ideal.pow_right_mono hle M) hmem
@@ -431,7 +362,7 @@ private noncomputable def evalAt {C : Type u} [CommRing C] [Algebra R C]
 private theorem evalAt_mk {C : Type u} [CommRing C] [Algebra R C] (J : Ideal C)
     {M : ℕ} (hM : J ^ M = ⊥) (x : σ → C) (hx : ∀ s, x s ∈ J)
     (p : MvPolynomial σ R) :
-    evalAt J hM x hx (Ideal.Quotient.mk (varIdeal R σ ^ M) p) =
+    evalAt J hM x hx (Ideal.Quotient.mk (idealOfVars σ R ^ M) p) =
       MvPolynomial.aeval x p :=
   rfl
 
@@ -447,7 +378,7 @@ private theorem evalAt_mem {C : Type u} [CommRing C] [Algebra R C] (J : Ideal C)
   obtain ⟨p, hp, rfl⟩ :=
     (Ideal.mem_map_iff_of_surjective _ Ideal.Quotient.mk_surjective).mp hq
   rw [evalAt_mk]
-  have hle : (varIdeal R σ).map (MvPolynomial.aeval x) ≤ J := by
+  have hle : (idealOfVars σ R).map (MvPolynomial.aeval x) ≤ J := by
     rw [Ideal.map_span]
     refine Ideal.span_le.mpr ?_
     rintro _ ⟨_, ⟨s, rfl⟩, rfl⟩
@@ -458,116 +389,36 @@ end TestPairs
 
 section Coefficients
 
-variable {R : Type u} [CommRing R] {σ : Type} [Fintype σ] [DecidableEq σ]
-
-private def lowVanish (R : Type u) [CommRing R] (σ : Type) [DecidableEq σ]
-    (N : ℕ) : Ideal (MvPolynomial σ R) where
-  carrier := {p | ∀ d : σ →₀ ℕ, d.degree < N → p.coeff d = 0}
-  zero_mem' := fun d _ => by simp
-  add_mem' := fun {p q} hp hq d hd => by
-    simp only [Set.mem_setOf_eq] at hp hq
-    rw [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hp d hd, hq d hd, add_zero]
-  smul_mem' := fun q p hp d hd => by
-    simp only [Set.mem_setOf_eq] at hp
-    rw [smul_eq_mul, MvPolynomial.coeff_mul]
-    refine Finset.sum_eq_zero fun ab hab => ?_
-    have hab' : ab.1 + ab.2 = d :=
-      Finset.HasAntidiagonal.mem_antidiagonal.mp hab
-    have hdeg : ab.2.degree ≤ d.degree := by
-      rw [← hab', map_add]; exact Nat.le_add_left _ _
-    rw [hp ab.2 (lt_of_le_of_lt hdeg hd), mul_zero]
-
-omit [Fintype σ] in
-private theorem mem_lowVanish {N : ℕ} {p : MvPolynomial σ R} :
-    p ∈ lowVanish R σ N ↔
-      ∀ d : σ →₀ ℕ, d.degree < N → p.coeff d = 0 :=
-  Iff.rfl
-
-private theorem varIdeal_pow_le_lowVanish (N : ℕ) :
-    varIdeal R σ ^ N ≤ lowVanish R σ N := by
-  induction N with
-  | zero =>
-    intro p _ d hd
-    exact absurd hd (Nat.not_lt_zero _)
-  | succ N ih =>
-    rw [pow_succ]
-    refine Ideal.mul_le.mpr fun p hp q hq => ?_
-    obtain ⟨c, rfl⟩ := (Ideal.mem_span_range_iff_exists_fun).mp hq
-    rw [Finset.mul_sum]
-    refine sum_mem fun s _ => ?_
-    intro d hd
-    rw [← mul_assoc, MvPolynomial.coeff_mul_X']
-    split_ifs with hs
-    · have hmem : p * c s ∈ varIdeal R σ ^ N := Ideal.mul_mem_right _ _ hp
-      apply ih hmem
-      have h1 : (d - Finsupp.single s 1).degree + 1 = d.degree := by
-        have hds : 1 ≤ d s :=
-          Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hs)
-        have hsub : d - Finsupp.single s 1 + Finsupp.single s 1 = d := by
-          ext i
-          simp only [Finsupp.coe_add, Finsupp.coe_tsub, Pi.add_apply,
-            Pi.sub_apply, Finsupp.single_apply]
-          split_ifs with his
-          · subst his; omega
-          · omega
-        conv_rhs => rw [← hsub]
-        rw [map_add, Finsupp.degree_single]
-      omega
-    · rfl
-
-private theorem coeff_eq_zero_of_mem_pow {N : ℕ} {p : MvPolynomial σ R}
-    (hp : p ∈ varIdeal R σ ^ N) {d : σ →₀ ℕ} (hd : d.degree < N) :
-    p.coeff d = 0 :=
-  varIdeal_pow_le_lowVanish N hp d hd
+variable {R : Type u} [CommRing R] {σ : Type}
 
 private theorem coeffQ_mk {N : ℕ} {d : σ →₀ ℕ} (hd : d.degree < N)
     (p : MvPolynomial σ R) :
-    coeffQ d (Ideal.Quotient.mk (varIdeal R σ ^ N) p) =
+    coeffQ d (Ideal.Quotient.mk (idealOfVars σ R ^ N) p) =
       p.coeff d := by
   unfold coeffQ
-  have h : rep (Ideal.Quotient.mk (varIdeal R σ ^ N) p) - p ∈
-      varIdeal R σ ^ N :=
+  have h : rep (Ideal.Quotient.mk (idealOfVars σ R ^ N) p) - p ∈
+      idealOfVars σ R ^ N :=
     Ideal.Quotient.eq.mp (mk_rep _)
-  have h2 : (rep (Ideal.Quotient.mk (varIdeal R σ ^ N) p)).coeff d -
+  have h2 : (rep (Ideal.Quotient.mk (idealOfVars σ R ^ N) p)).coeff d -
       p.coeff d = 0 := by
-    simpa using coeff_eq_zero_of_mem_pow h hd
+    simpa using (MvPolynomial.mem_pow_idealOfVars_iff' N _).mp h d hd
   exact sub_eq_zero.mp h2
 
-private noncomputable def truncPoly (M : ℕ) (f : MvPowerSeries σ R) :
-    MvPolynomial σ R :=
-  ∑ e ∈ boundFinset M, MvPolynomial.monomial e (coeff e f)
-
-private theorem coeff_truncPoly (M : ℕ) (f : MvPowerSeries σ R) (d : σ →₀ ℕ)
-    (hd : d.degree < M) : (truncPoly M f).coeff d = coeff d f := by
-  unfold truncPoly
-  rw [MvPolynomial.coeff_sum]
-  simp only [MvPolynomial.coeff_monomial]
-  rw [Finset.sum_ite_eq' (boundFinset M) d (fun e => coeff e f)]
-  rw [if_pos]
-  rw [mem_boundFinset]
-  intro s
-  calc d s ≤ d.degree := by
-        rw [Finsupp.degree_apply]
-        by_cases hs0 : s ∈ d.support
-        · exact Finset.single_le_sum (fun i _ => Nat.zero_le _) hs0
-        · rw [Finsupp.notMem_support_iff.mp hs0]; exact Nat.zero_le _
-    _ ≤ M := hd.le
-
-private theorem nilpotentEval_xbar (N : ℕ) (f : MvPowerSeries σ R) :
+private theorem nilpotentEval_xbar [Finite σ] (N : ℕ) (f : MvPowerSeries σ R) :
     nilpotentEval (testIdeal R σ N) (isNilpotent_testIdeal N) (xbar R σ N)
         (xbar_mem N) f =
-      Ideal.Quotient.mk (varIdeal R σ ^ N) (truncPoly N f) := by
+      Ideal.Quotient.mk (idealOfVars σ R ^ N) (truncTotal N f) := by
   rw [nilpotentEval_eq_aeval_of_forall_coeff (testIdeal R σ N)
     (isNilpotent_testIdeal N) (testIdeal_pow_eq_bot N) (xbar_mem N) f
-    (truncPoly N f) (fun d hd => (coeff_truncPoly N f d hd).symm), aeval_xbar]
+    (truncTotal N f) (fun d hd => (coeff_truncTotal f hd).symm), aeval_xbar]
 
-private theorem coeffQ_nilpotentEval_xbar {N : ℕ} (f : MvPowerSeries σ R)
+private theorem coeffQ_nilpotentEval_xbar [Finite σ] {N : ℕ} (f : MvPowerSeries σ R)
     {d : σ →₀ ℕ} (hd : d.degree < N) :
     coeffQ d (nilpotentEval (testIdeal R σ N) (isNilpotent_testIdeal N)
       (xbar R σ N) (xbar_mem N) f) = coeff d f := by
-  rw [nilpotentEval_xbar, coeffQ_mk hd, coeff_truncPoly N f d hd]
+  rw [nilpotentEval_xbar, coeffQ_mk hd, coeff_truncTotal f hd]
 
-private theorem eq_of_forall_nilpotentEval_xbar_eq {f f' : MvPowerSeries σ R}
+private theorem eq_of_forall_nilpotentEval_xbar_eq [Finite σ] {f f' : MvPowerSeries σ R}
     (h : ∀ N, nilpotentEval (testIdeal R σ N) (isNilpotent_testIdeal N)
         (xbar R σ N) (xbar_mem N) f =
       nilpotentEval (testIdeal R σ N) (isNilpotent_testIdeal N) (xbar R σ N)
@@ -584,7 +435,7 @@ private theorem coeffQ_transition {N M : ℕ} (h : N ≤ M) (q : TestRing R σ M
   conv_lhs => rw [← mk_rep q, transition_mk]
   rw [coeffQ_mk hd, coeffQ_mk (lt_of_lt_of_le hd h)]
 
-private theorem evalAt_eq_aeval_of_forall_coeffQ {C : Type u} [CommRing C]
+private theorem evalAt_eq_aeval_of_forall_coeffQ [Finite σ] {C : Type u} [CommRing C]
     [Algebra R C] (J : Ideal C) {M : ℕ} (hM : J ^ M = ⊥) (x : σ → C)
     (hx : ∀ s, x s ∈ J) (q : TestRing R σ M) (p : MvPolynomial σ R)
     (hqp : ∀ d : σ →₀ ℕ, d.degree < M → coeffQ d q =
@@ -602,16 +453,14 @@ private theorem evalAt_eq_aeval_of_forall_coeffQ {C : Type u} [CommRing C]
     have h := nilpotentEval_eq_aeval_of_forall_coeff J ⟨M, hM⟩ hM hx
       (0 : MvPowerSeries σ R) (rep q - p) (fun d hd => by
         rw [map_zero, hdiff d hd])
-    rw [show nilpotentEval J ⟨M, hM⟩ x hx (0 : MvPowerSeries σ R) = 0 from
-      nilpotentEval_zero J ⟨M, hM⟩ hx] at h
-    exact h.symm
+    exact h.symm.trans (nilpotentEval_zero J ⟨M, hM⟩ hx)
   rwa [map_sub, sub_eq_zero] at hval
 
 end Coefficients
 
 section Series
 
-variable {R : Type u} [CommRing R] {σ : Type} [Fintype σ] [DecidableEq σ]
+variable {R : Type u} [CommRing R] {σ : Type}
 
 private noncomputable def series
     (t : ∀ (C : Type u) [CommRing C] [Algebra R C], Ideal C → (σ → C) → C) :
@@ -628,7 +477,7 @@ private theorem coeff_series
     {M : ℕ} (d : σ →₀ ℕ) (hd : d.degree < M) :
     coeff d (series t) =
       coeffQ d (t (TestRing R σ M) (testIdeal R σ M) (xbar R σ M)) := by
-  show coeffQ d (t (TestRing R σ (d.degree + 1)) (testIdeal R σ (d.degree + 1))
+  change coeffQ d (t (TestRing R σ (d.degree + 1)) (testIdeal R σ (d.degree + 1))
     (xbar R σ (d.degree + 1))) = _
   have hle : d.degree + 1 ≤ M := hd
   have hnat := ht_nat (TestRing R σ M) (TestRing R σ (d.degree + 1))
@@ -641,7 +490,7 @@ private theorem coeff_series
   rw [hx] at hnat
   rw [hnat, coeffQ_transition hle _ (Nat.lt_succ_self _)]
 
-private theorem apply_eq_nilpotentEval_series
+private theorem apply_eq_nilpotentEval_series [Finite σ]
     (t : ∀ (C : Type u) [CommRing C] [Algebra R C], Ideal C → (σ → C) → C)
     (ht_nat : ∀ (C C' : Type u) [CommRing C] [Algebra R C] [CommRing C']
       [Algebra R C'] (J : Ideal C) (J' : Ideal C'), IsNilpotent J →
@@ -650,23 +499,23 @@ private theorem apply_eq_nilpotentEval_series
     (C : Type u) [CommRing C] [Algebra R C] (J : Ideal C) (hJ : IsNilpotent J)
     (x : σ → C) (hx : ∀ s, x s ∈ J) :
     t C J x = nilpotentEval J hJ x hx (series t) := by
-  obtain ⟨M, hM⟩ := hJ
+  obtain ⟨M, hM⟩ := id hJ
   replace hM : J ^ M = ⊥ := hM
   have hnat := ht_nat (TestRing R σ M) C (testIdeal R σ M) J
-    (isNilpotent_testIdeal M) ⟨M, hM⟩ (evalAt J hM x hx)
+    (isNilpotent_testIdeal M) hJ (evalAt J hM x hx)
     (fun s hs => evalAt_mem J hM x hx hs) (xbar R σ M) (xbar_mem M)
   have hx' : (⇑(evalAt (R := R) (σ := σ) J hM x hx) ∘ xbar R σ M) = x := by
     funext s; exact evalAt_xbar J hM x hx s
   rw [hx'] at hnat
-  rw [hnat, evalAt_eq_aeval_of_forall_coeffQ J hM x hx _ (truncPoly M (series t)),
-    nilpotentEval_eq_aeval_of_forall_coeff J ⟨M, hM⟩ hM hx (series t)
-      (truncPoly M (series t))]
+  rw [hnat, evalAt_eq_aeval_of_forall_coeffQ J hM x hx _ (truncTotal M (series t)),
+    nilpotentEval_eq_aeval_of_forall_coeff J hJ hM hx (series t)
+      (truncTotal M (series t))]
   · intro d hd
-    exact (coeff_truncPoly M (series t) d hd).symm
+    exact (coeff_truncTotal (series t) hd).symm
   · intro d hd
-    rw [coeff_truncPoly M (series t) d hd, coeff_series t ht_nat d hd]
+    rw [coeff_truncTotal (series t) hd, coeff_series t ht_nat d hd]
 
-private theorem eq_series_of_forall_xbar
+private theorem eq_series_of_forall_xbar [Finite σ]
     (t : ∀ (C : Type u) [CommRing C] [Algebra R C], Ideal C → (σ → C) → C)
     (ht_nat : ∀ (C C' : Type u) [CommRing C] [Algebra R C] [CommRing C']
       [Algebra R C'] (J : Ideal C) (J' : Ideal C'), IsNilpotent J →
@@ -685,9 +534,15 @@ end Series
 
 end NilpotentYoneda
 
-/-- A rule assigning to every `R`-algebra `C`, nilpotent ideal `J` in `C`
-and point `x` in `J` an element of `C`, naturally in ideal-preserving
-algebra maps, is evaluation of a unique power series. -/
+/-- **Natural rules on nilpotent points are evaluations of a unique power series.** Let `σ` be a
+finite type of variables and `R` a commutative ring. Suppose `t` assigns an element `t C J x` of
+`C` to every commutative `R`-algebra `C` in the universe of `R`, every ideal `J` of `C` and every
+point `x : σ → C`, naturally in ideal-preserving algebra maps: whenever `J` and `J'` are
+nilpotent, `φ : C →ₐ[R] C'` maps `J` into `J'`, and every coordinate of `x` lies in `J`, then
+`t C' J' (φ ∘ x) = φ (t C J x)`. Then there is exactly one power series `f` in
+`MvPowerSeries σ R` with `t C J x = nilpotentEval J hJ x hx f` for every such `C`, every
+nilpotent ideal `J` of `C` and every point `x` with every coordinate in `J`. The equality is
+asserted only at nilpotent ideals and at points with every coordinate in the ideal. -/
 theorem existsUnique_apply_eq_nilpotentEval_of_natural_of_isNilpotent
     {R : Type u} [CommRing R] {σ : Type} [Finite σ]
     (t : ∀ (C : Type u) [CommRing C] [Algebra R C], Ideal C → (σ → C) → C)
@@ -699,8 +554,6 @@ theorem existsUnique_apply_eq_nilpotentEval_of_natural_of_isNilpotent
       ∀ (C : Type u) [CommRing C] [Algebra R C] (J : Ideal C)
         (hJ : IsNilpotent J) (x : σ → C) (hx : ∀ s, x s ∈ J),
           t C J x = nilpotentEval J hJ x hx f := by
-  classical
-  haveI := Fintype.ofFinite σ
   refine ⟨NilpotentYoneda.series t,
     fun C _ _ J hJ x hx =>
       NilpotentYoneda.apply_eq_nilpotentEval_series t ht_nat C J hJ x hx, ?_⟩
