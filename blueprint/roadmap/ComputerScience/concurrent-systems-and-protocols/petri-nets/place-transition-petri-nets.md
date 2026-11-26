@@ -7,3 +7,4 @@ A transition $t$ is *enabled* at $M$ if $M(p) \ge w(p, t)$ for every input place
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section II and Table 2 (the formal definition and the firing rule), and Section IV-A (firing sequences).
+- J. Esparza and M. Nielsen, "Decidability issues for Petri nets – a survey", BRICS Report Series RS-94-8, Aarhus University, 1994, <https://arxiv.org/abs/2411.01592>, Section 2 (nets, markings, occurrence sequences; ordinary nets, where every arc has weight one).

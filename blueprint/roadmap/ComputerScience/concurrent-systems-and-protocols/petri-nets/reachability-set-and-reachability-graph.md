@@ -9,3 +9,4 @@ In a [Petri net](place-transition-petri-nets.md) $(N, M_0)$, a marking $M$ is *r
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section IV-A ("Reachability").
+- J. Esparza and M. Nielsen, "Decidability issues for Petri nets – a survey", BRICS Report Series RS-94-8, Aarhus University, 1994, <https://arxiv.org/abs/2411.01592>, Section 2 (reachable markings and the reachability graph) and Section 3 (the reachability problem).

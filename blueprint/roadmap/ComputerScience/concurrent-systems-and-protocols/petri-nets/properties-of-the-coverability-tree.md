@@ -28,3 +28,4 @@ This page becomes ready once the proof of termination is linked. It needs:
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section V-A: properties 1)–4) of the coverability tree, and Figs. 18–20 (two nets with the same coverability tree, one live and one not).
+- J. Esparza and M. Nielsen, "Decidability issues for Petri nets – a survey", BRICS Report Series RS-94-8, Aarhus University, 1994, <https://arxiv.org/abs/2411.01592>, Section 3, paragraph "Boundedness" (the coverability tree of Karp and Miller and its non-primitive-recursive size).
