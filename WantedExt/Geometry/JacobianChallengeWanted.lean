@@ -36,6 +36,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Geometry.Manifold.RiemannSurfaceGenus
 
 @[expose] public section
 
@@ -49,9 +50,9 @@ Kevin Buzzard's "Jacobian Challenge" v0.3, posted to leanprover Zulip
 The original source uses anonymous instances; here every `instance` is
 named explicitly so the eval-problem pipeline can address it.
 
-## Main missing definitions
+The genus is supplied by `RiemannSurface.genus`.
 
-* `genus` -- genus of a compact Riemann surface
+## Main missing definitions
 * `Jacobian` -- the Jacobian of a compact Riemann surface
 * `Jacobian.ofCurve` -- the Abel-Jacobi map from a compact Riemann surface to its Jacobian
 * `ContMDiff.degree` -- the degree of a holomorphic map between compact Riemann surfaces.
@@ -81,18 +82,6 @@ universe u v w
 variable {X : Type u} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) ω X]
 
--- data
-/-- **Genus of a compact Riemann surface.** For a compact Riemann surface $X$, that is, a compact
-connected Hausdorff space with a complex-analytic atlas modelled on $\mathbb{C}$, the genus of $X$
-is a natural number.
-
-Source:
-https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
-Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
-public def_wanted genus (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-    [Nonempty X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) ω X] : ℕ
-
--- this proof avoids the hack answer `∀ X, genus X = 0`
 -- Prop
 /-- **A compact Riemann surface has genus zero iff it is a sphere.** Let $X$ be a compact
 Riemann surface, that is, a compact connected Hausdorff space with a complex-analytic atlas
@@ -103,7 +92,7 @@ Source:
 https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted genus_eq_zero_iff_homeo :
-    ❰genus❱ X = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1))
+    RiemannSurface.genus X = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1))
 
 -- data
 /-- **Jacobian of a compact Riemann surface.** For a compact Riemann surface $X$, that is, a
@@ -139,17 +128,17 @@ public instance_wanted instCompactSpace : CompactSpace (❰Jacobian❱ X)
 
 /-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public instance_wanted instChartedSpace :
-    ChartedSpace (Fin (❰genus❱ X) → ℂ) (❰Jacobian❱ X)
+    ChartedSpace (Fin (RiemannSurface.genus X) → ℂ) (❰Jacobian❱ X)
 
 -- Prop
 /-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public instance_wanted instIsManifold :
-    IsManifold (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ)) ω (❰Jacobian❱ X)
+    IsManifold (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus X) → ℂ)) ω (❰Jacobian❱ X)
 
 -- Prop
 /-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public instance_wanted instLieAddGroup :
-    LieAddGroup (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ)) ω (❰Jacobian❱ X)
+    LieAddGroup (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus X) → ℂ)) ω (❰Jacobian❱ X)
 
 /-- **Abel–Jacobi map.** Let $X$ be a compact Riemann surface with Jacobian $J(X)$. Each point
 $P \in X$ gives a map $X \to J(X)$, the Abel–Jacobi map based at $P$.
@@ -168,7 +157,7 @@ https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/J
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted ofCurve_contMDiff (P : X) :
     ContMDiff (modelWithCornersSelf ℂ ℂ)
-      (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ)) ω (❰ofCurve❱ P)
+      (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus X) → ℂ)) ω (❰ofCurve❱ P)
 
 /-- **The Abel–Jacobi map sends the base point to zero.** Let $X$ be a compact Riemann surface
 with Jacobian $J(X)$, an abelian group. For every point $P \in X$, the Abel–Jacobi map
@@ -187,12 +176,13 @@ $X \to J(X)$ based at $P$ is injective.
 Source:
 https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
-public theorem_wanted ofCurve_inj (P : X) : 0 < ❰genus❱ X → Function.Injective (❰ofCurve❱ P)
+public theorem_wanted ofCurve_inj (P : X) :
+    0 < RiemannSurface.genus X → Function.Injective (❰ofCurve❱ P)
 
 -- Lean variant (recorded in `WantedExt/Sources/LeanEval.md`): `Y` and `Z` below are
 -- specialized from the source's independent universes `Type v` / `Type w` to `Type u`.
 -- The current proof-wanted elaborator surfaces one universe per wanted reference in a
--- declaration, so a single statement cannot reference `Jacobian`/`genus` at two distinct
+-- declaration, so a single statement cannot reference `Jacobian` at two distinct
 -- universes (explicit-universe reference syntax is not supported inside `❰…❱`).
 variable {Y : Type u} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [Nonempty Y] [ChartedSpace ℂ Y] [IsManifold (modelWithCornersSelf ℂ ℂ) ω Y]
@@ -223,8 +213,8 @@ https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/J
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pushforward_contMDiff (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
-    ContMDiff (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ))
-      (modelWithCornersSelf ℂ (Fin (❰genus❱ Y) → ℂ)) ω (❰pushforward❱ f hf)
+    ContMDiff (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus X) → ℂ))
+      (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus Y) → ℂ)) ω (❰pushforward❱ f hf)
 
 -- functoriality
 /-- **Pushforward along the identity.** Let $X$ be a compact Riemann surface, that is, a compact,
@@ -283,8 +273,8 @@ https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/J
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pullback_contMDiff (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
-    ContMDiff (modelWithCornersSelf ℂ (Fin (❰genus❱ Y) → ℂ))
-      (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ)) ω (❰pullback❱ f hf)
+    ContMDiff (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus Y) → ℂ))
+      (modelWithCornersSelf ℂ (Fin (RiemannSurface.genus X) → ℂ)) ω (❰pullback❱ f hf)
 
 /-- **Pullback along the identity.** Let $X$ be a compact Riemann surface, that is, a compact,
 connected, Hausdorff complex-analytic manifold of dimension one, and write $J(X)$ for its
