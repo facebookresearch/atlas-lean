@@ -42,6 +42,7 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoPowMulPrimeImp
 
 set_option autoImplicit false
 
@@ -64,13 +65,6 @@ $\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divis
 No condition $k > 1$ is imposed here; the results that need it assume it. -/
 def IsNearFkPerfect (k n : ℕ) : Prop :=
   IsKLNearPerfect k 3 n
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
 
 /-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
 $F$-perfect.
@@ -173,18 +167,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isKLNearPerfect_two_mul_prime (k l p : ℕ)
     (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsKLNearPerfect k l (2 * p)
-
-/-- **Deficient $F$-perfect numbers of the form $2^a p$.** Let $p$ be a prime and $a$ a natural
-number. If $2^a p$ is deficient $F$-perfect, then $p = 3$ and $a = 1$, so the number is $6$.
-
-The number $6$ is indeed deficient $F$-perfect, with $d = 2$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 7. -/
-theorem_wanted isDeficientFPerfect_two_pow_mul_prime_imp
-    (p a : ℕ) (hp : p.Prime) :
-    IsDeficientFPerfect (2 ^ a * p) → p = 3 ∧ a = 1
 
 /-- **$2^a p$ is not $[k,\ell]$-deficient-perfect with divisor $1$ or $p$.** Let $k$, $\ell$, $a$
 be natural numbers with $\ell \ge 1$ and let $p$ be an odd prime. Call $n$
