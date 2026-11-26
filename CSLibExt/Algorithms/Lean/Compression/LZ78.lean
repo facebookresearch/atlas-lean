@@ -14,7 +14,24 @@ public import Mathlib.Computability.Encoding
 /-!
 # LZ78 codec
 
-LZ78 incremental parsing over a list-based dictionary, as an instance of the codec contract `Computability.Encoding` (Ziv-Lempel 1978, Sec. II-III).
+The incremental parsing of J. Ziv and A. Lempel, *Compression of individual sequences via
+variable-rate coding*, IEEE Trans. Inform. Theory 24(5) (1978), 530–536, Section II (the
+parsing (12) and its coding, in the proof of Theorem 2), over a list-based dictionary, as an
+instance of Mathlib's codec contract `Computability.Encoding`.
+
+The parser cuts the input into phrases. Each phrase is the shortest nonempty prefix of the
+unparsed input that is not an earlier phrase; if every nonempty prefix of the unparsed input is
+an earlier phrase, the unparsed input is the last phrase. Each phrase becomes the next dictionary
+entry, and an index points into the dictionary with the empty phrase in front: index `0` is the
+empty phrase and index `j ≥ 1` the `j`-th phrase. A phrase is coded as the token `(i, some a)`,
+where `a` is its last symbol and `i` is the index of the phrase without `a`, except a last phrase
+that repeats an earlier one, which happens when the input ends inside a known phrase: that phrase
+is coded as `(i, none)`, where `i` is its own index. The paper codes that last phrase like the
+others.
+
+`LZ78.decode` is a left inverse of `LZ78.encode`, not a validator: it rejects only dangling
+indices, and it also accepts token lists that `LZ78.encode` never emits, such as an index-only
+token before the end.
 -/
 
 @[expose] public section
@@ -26,135 +43,13 @@ set_option autoImplicit false
 
 universe u
 
+/-- **LZ78 token.** An LZ78 token over a type $A$ is a pair `(i, s)` of a natural number `i` and
+an optional symbol `s : Option A`. It stands for the dictionary entry at index `i`, where index
+`0` is the empty phrase and index `j ≥ 1` is the `j`-th phrase, followed by the symbol `a` when
+`s = some a` and by nothing when `s = none`. `LZ78.encode` emits an index-only token `(i, none)`
+only as its last token, when the input ends inside a known phrase; `LZ78.decode` accepts one at
+any position. -/
 abbrev LZ78.Token (A : Type u) : Type u := ℕ × Option A
-
-/-- Extend a dictionary phrase by an optional symbol. -/
-def LZ78.applySym {A : Type u} (p : List A) : Option A → List A
-  | none => p
-  | some a => p ++ [a]
-
-private theorem LZ78.applySym_none {A : Type u} (p : List A) : LZ78.applySym p none = p := rfl
-
-private theorem LZ78.applySym_some {A : Type u} (p : List A) (a : A) :
-    LZ78.applySym p (some a) = p ++ [a] := rfl
-
-/-- Dictionary index of a phrase: `0` for the empty phrase, position + 1 otherwise. -/
-def LZ78.dictIdx {A : Type u} [DecidableEq A] (dict : List (List A)) (w : List A) : ℕ :=
-  if w = [] then 0
-  else
-    match dict with
-    | [] => 1
-    | d :: ds => if w = d then 1 else LZ78.dictIdx ds w + 1
-
-private theorem LZ78.dictIdx_nil_eq {A : Type u} [DecidableEq A] (dict : List (List A)) :
-    LZ78.dictIdx dict [] = 0 := by
-  unfold LZ78.dictIdx
-  simp
-
-private theorem LZ78.dictIdx_empty {A : Type u} [DecidableEq A] (a : A) (as : List A) :
-    LZ78.dictIdx [] (a :: as) = 1 := by
-  unfold LZ78.dictIdx
-  simp
-
-private theorem LZ78.dictIdx_cons_eq {A : Type u} [DecidableEq A] {d : List A}
-    {ds : List (List A)} {w : List A} (hne : w ≠ []) (heq : w = d) :
-    LZ78.dictIdx (d :: ds) w = 1 := by
-  subst heq
-  unfold LZ78.dictIdx
-  simp [hne]
-
-private theorem LZ78.dictIdx_cons_ne {A : Type u} [DecidableEq A] {d : List A}
-    {ds : List (List A)} {w : List A} (hne : w ≠ []) (hne2 : w ≠ d) :
-    LZ78.dictIdx (d :: ds) w = LZ78.dictIdx ds w + 1 := by
-  rw [LZ78.dictIdx.eq_def]
-  simp [hne, hne2]
-
-private theorem LZ78.dictIdx_ge_one {A : Type u} [DecidableEq A] (dict : List (List A))
-    (w : List A) (hne : w ≠ []) : 1 ≤ LZ78.dictIdx dict w := by
-  induction dict with
-  | nil =>
-    cases w with
-    | nil => exact absurd rfl hne
-    | cons a as => simp [LZ78.dictIdx_empty a as]
-  | cons d ds _ =>
-    by_cases heq : w = d
-    · subst heq
-      simp [LZ78.dictIdx_cons_eq hne rfl]
-    · rw [LZ78.dictIdx_cons_ne hne heq]
-      omega
-
-private theorem LZ78.dictIdx_le_length {A : Type u} [DecidableEq A] (dict : List (List A))
-    (w : List A) (h : w = [] ∨ w ∈ dict) : LZ78.dictIdx dict w ≤ dict.length := by
-  induction dict with
-  | nil =>
-    cases h with
-    | inl hnil =>
-      subst hnil
-      rw [LZ78.dictIdx_nil_eq]
-      exact Nat.zero_le _
-    | inr hmem => simp at hmem
-  | cons d ds ih =>
-    cases h with
-    | inl hnil =>
-      subst hnil
-      rw [LZ78.dictIdx_nil_eq]
-      simp only [List.length_cons]
-      omega
-    | inr hmem =>
-      by_cases hne : w = []
-      · subst hne
-        rw [LZ78.dictIdx_nil_eq]
-        simp only [List.length_cons]
-        omega
-      · by_cases heq : w = d
-        · subst heq
-          rw [LZ78.dictIdx_cons_eq hne rfl]
-          simp only [List.length_cons]
-          omega
-        · rw [LZ78.dictIdx_cons_ne hne heq]
-          simp only [List.length_cons]
-          have hmem' : w ∈ ds := by simpa [heq] using hmem
-          have hle := ih (Or.inr hmem')
-          omega
-
-/-- Look up a dictionary index, with the empty phrase at index `0`. -/
-def LZ78.dictGet {A : Type u} (dict : List (List A)) (i : ℕ) : Option (List A) :=
-  ([] :: dict)[i]?
-
-private theorem LZ78.dictGet_dictIdx {A : Type u} [DecidableEq A] (dict : List (List A))
-    (w : List A) (h : w = [] ∨ w ∈ dict) :
-    LZ78.dictGet dict (LZ78.dictIdx dict w) = some w := by
-  unfold LZ78.dictGet
-  induction dict generalizing w with
-  | nil =>
-    cases h with
-    | inl hnil =>
-      subst hnil
-      simp only [LZ78.dictIdx_nil_eq, List.getElem?_cons_zero]
-    | inr hmem => simp at hmem
-  | cons d ds ih =>
-    cases h with
-    | inl hnil =>
-      subst hnil
-      simp only [LZ78.dictIdx_nil_eq, List.getElem?_cons_zero]
-    | inr hmem =>
-      by_cases hne : w = []
-      · subst hne
-        simp only [LZ78.dictIdx_nil_eq, List.getElem?_cons_zero]
-      · by_cases heq : w = d
-        · subst heq
-          simp only [LZ78.dictIdx_cons_eq hne rfl, List.getElem?_cons_zero,
-            List.getElem?_cons_succ]
-        · have hmem' : w ∈ ds := by simpa [heq] using hmem
-          rw [LZ78.dictIdx_cons_ne hne heq]
-          have ih' := ih w (Or.inr hmem')
-          have hk : 1 ≤ LZ78.dictIdx ds w := LZ78.dictIdx_ge_one ds w hne
-          generalize LZ78.dictIdx ds w = m at ih' hk ⊢
-          cases m with
-          | zero => omega
-          | succ k =>
-            simp only [List.getElem?_cons_succ] at ih' ⊢
-            exact ih'
 
 /-- Every proper prefix of a dictionary phrase is empty or a dictionary phrase. -/
 private def LZ78.PrefixClosed {A : Type u} (dict : List (List A)) : Prop :=
@@ -183,13 +78,25 @@ private theorem LZ78.prefixClosed_append_singleton {A : Type u} (dict : List (Li
     | inl hnil => exact Or.inl hnil
     | inr hmem2 => exact Or.inr (List.mem_append_left _ hmem2)
 
-/-- Take the next LZ78 phrase: extend `cur` through the input while it stays known. -/
+/-- The index of a known phrase is at most the dictionary size. -/
+private theorem LZ78.idxOf_le_length {A : Type u} [DecidableEq A] (dict : List (List A))
+    (w : List A) (h : w = [] ∨ w ∈ dict) : ([] :: dict).idxOf w ≤ dict.length := by
+  have hlt := List.idxOf_lt_length_iff.mpr (List.mem_cons.mpr h)
+  rw [List.length_cons] at hlt
+  omega
+
+/-- **Next LZ78 phrase.** For a list of phrases $D$, a phrase $c$ and a finite list $x$, write
+`ι v` for `([] :: D).idxOf v`, the first position of $v$ in the list $D$ with the empty phrase in
+front (its length $|D| + 1$ when $v$ does not occur). If $x$ is empty, the result is the phrase
+$c$, the token `(ι c, none)` and the empty list. If $x$ is a symbol $a$ followed by a list $x'$,
+the result is that for the phrase `c ++ [a]` and $x'$ when `c ++ [a]` is an entry of $D$, and
+otherwise the phrase `c ++ [a]`, the token `(ι c, some a)` and $x'$. -/
 def LZ78.nextAux {A : Type u} [DecidableEq A] (dict : List (List A)) (cur : List A) :
     List A → List A × LZ78.Token A × List A
-  | [] => (cur, (LZ78.dictIdx dict cur, none), [])
+  | [] => (cur, (([] :: dict).idxOf cur, none), [])
   | a :: rest =>
     if cur ++ [a] ∈ dict then LZ78.nextAux dict (cur ++ [a]) rest
-    else (cur ++ [a], (LZ78.dictIdx dict cur, some a), rest)
+    else (cur ++ [a], (([] :: dict).idxOf cur, some a), rest)
 
 private theorem LZ78.nextAux_append {A : Type u} [DecidableEq A] (dict : List (List A))
     (cur : List A) (x : List A) (w : List A) (t : LZ78.Token A) (rest : List A)
@@ -230,13 +137,13 @@ private theorem LZ78.nextAux_eq_nil {A : Type u} [DecidableEq A] (dict : List (L
 private theorem LZ78.nextAux_token {A : Type u} [DecidableEq A] (dict : List (List A))
     (cur : List A) (x : List A) (w : List A) (t : LZ78.Token A) (rest : List A)
     (h : LZ78.nextAux dict cur x = (w, t, rest)) (hkn : cur = [] ∨ cur ∈ dict) :
-    ∃ cur', (cur' = [] ∨ cur' ∈ dict) ∧ t.1 = LZ78.dictIdx dict cur' ∧
-      w = LZ78.applySym cur' t.2 := by
+    ∃ cur', (cur' = [] ∨ cur' ∈ dict) ∧ t.1 = ([] :: dict).idxOf cur' ∧
+      w = cur' ++ t.2.toList := by
   induction x generalizing cur w t rest with
   | nil =>
     simp only [LZ78.nextAux] at h
     obtain ⟨rfl, rfl, rfl⟩ := h
-    exact ⟨cur, hkn, rfl, rfl⟩
+    exact ⟨cur, hkn, rfl, by simp⟩
   | cons a r ih =>
     simp only [LZ78.nextAux] at h
     by_cases hmem : cur ++ [a] ∈ dict
@@ -245,6 +152,24 @@ private theorem LZ78.nextAux_token {A : Type u} [DecidableEq A] (dict : List (Li
     · rw [ite_eq_right hmem] at h
       obtain ⟨rfl, rfl, rfl⟩ := h
       exact ⟨cur, hkn, rfl, rfl⟩
+
+/-- An index-only token comes only with an exhausted input. -/
+private theorem LZ78.nextAux_rest_eq_nil {A : Type u} [DecidableEq A] (dict : List (List A))
+    (cur : List A) (x : List A) (w : List A) (t : LZ78.Token A) (rest : List A)
+    (h : LZ78.nextAux dict cur x = (w, t, rest)) (hnone : t.2 = none) : rest = [] := by
+  induction x generalizing cur w t rest with
+  | nil =>
+    simp only [LZ78.nextAux] at h
+    obtain ⟨rfl, rfl, rfl⟩ := h
+    rfl
+  | cons a r ih =>
+    simp only [LZ78.nextAux] at h
+    by_cases hmem : cur ++ [a] ∈ dict
+    · rw [ite_eq_left hmem] at h
+      exact ih _ _ _ _ h hnone
+    · rw [ite_eq_right hmem] at h
+      obtain ⟨rfl, rfl, rfl⟩ := h
+      simp at hnone
 
 private theorem LZ78.nextAux_not_mem {A : Type u} [DecidableEq A] (dict : List (List A))
     (cur : List A) (x : List A) (w : List A) (t : LZ78.Token A) (rest : List A)
@@ -304,7 +229,12 @@ private theorem LZ78.nextAux_prefix {A : Type u} [DecidableEq A] (dict : List (L
           exact Or.inl (List.prefix_nil.mp hpre)
         | inr hmem2 => exact hclosed cur hmem2 v hpre heq2
 
-/-- Joint phrase/token recursion over the input with fuel. -/
+/-- **LZ78 phrases and tokens with fuel.** For a list of phrases $D$, a finite list $x$ and a
+natural number $n$ (the fuel), the result is the pair of empty lists when $n = 0$ or $x$ is
+empty. Otherwise, with `(w, t, x')` the next phrase of $x$ from the empty phrase
+(`LZ78.nextAux D [] x`), it is the result for the list `D ++ [w]`, the rest $x'$ and the fuel
+$n - 1$, with $w$ put in front of its phrases and $t$ in front of its tokens. Each step consumes
+at least one symbol, so the fuel $|x| + 1$ parses all of $x$. -/
 def LZ78.parseEncodeAux {A : Type u} [DecidableEq A] (dict : List (List A)) (x : List A) :
     ℕ → List (List A) × List (LZ78.Token A)
   | 0 => ([], [])
@@ -316,6 +246,10 @@ def LZ78.parseEncodeAux {A : Type u} [DecidableEq A] (dict : List (List A)) (x :
       | (w, t, rest) =>
         match LZ78.parseEncodeAux (dict ++ [w]) rest fuel with
         | (phs, toks) => (w :: phs, t :: toks)
+
+private theorem LZ78.parseEncodeAux_nil {A : Type u} [DecidableEq A] (dict : List (List A))
+    (fuel : ℕ) : LZ78.parseEncodeAux dict [] fuel = ([], []) := by
+  cases fuel <;> rfl
 
 private theorem LZ78.aux_length {A : Type u} [DecidableEq A] (dict : List (List A))
     (x : List A) (fuel : ℕ) (phs : List (List A)) (toks : List (LZ78.Token A))
@@ -434,7 +368,7 @@ private theorem LZ78.aux_fst_le {A : Type u} [DecidableEq A] (dict : List (List 
         obtain ⟨cur', hkn', hidx, -⟩ :=
           LZ78.nextAux_token dict [] (a :: r) w0 t0 rest hnext (Or.inl rfl)
         rw [hidx]
-        have hle := LZ78.dictIdx_le_length dict cur' hkn'
+        have hle := LZ78.idxOf_le_length dict cur' hkn'
         omega
       | succ j =>
         rw [List.getElem_cons_succ]
@@ -442,6 +376,43 @@ private theorem LZ78.aux_fst_le {A : Type u} [DecidableEq A] (dict : List (List 
         have ih' := ih _ _ _ _ hsub j hi'
         simp only [List.length_append, List.length_cons, List.length_nil] at ih'
         omega
+
+private theorem LZ78.aux_isSome {A : Type u} [DecidableEq A] (dict : List (List A))
+    (x : List A) (fuel : ℕ) (phs : List (List A)) (toks : List (LZ78.Token A))
+    (heq : LZ78.parseEncodeAux dict x fuel = (phs, toks)) (t : LZ78.Token A)
+    (ht : t ∈ toks.dropLast) : t.2.isSome := by
+  induction fuel generalizing dict x phs toks with
+  | zero =>
+    simp only [LZ78.parseEncodeAux] at heq
+    obtain ⟨rfl, rfl⟩ := heq
+    simp at ht
+  | succ fuel ih =>
+    cases x with
+    | nil =>
+      simp only [LZ78.parseEncodeAux] at heq
+      obtain ⟨rfl, rfl⟩ := heq
+      simp at ht
+    | cons a r =>
+      obtain ⟨w0, t0, rest, hnext⟩ :
+        ∃ w t rest, LZ78.nextAux dict [] (a :: r) = (w, t, rest) := ⟨_, _, _, rfl⟩
+      obtain ⟨phs', toks', hsub⟩ :
+        ∃ phs toks, LZ78.parseEncodeAux (dict ++ [w0]) rest fuel = (phs, toks) := ⟨_, _, rfl⟩
+      simp only [LZ78.parseEncodeAux, hnext, hsub] at heq
+      obtain ⟨rfl, rfl⟩ := heq
+      cases toks' with
+      | nil => simp at ht
+      | cons t1 toks'' =>
+        rw [List.dropLast_cons_cons, List.mem_cons] at ht
+        rcases ht with h0 | ht
+        · subst h0
+          cases hs : t.2 with
+          | some _ => rfl
+          | none =>
+            have hrest := LZ78.nextAux_rest_eq_nil dict [] (a :: r) w0 t rest hnext hs
+            subst hrest
+            rw [LZ78.parseEncodeAux_nil] at hsub
+            simp at hsub
+        · exact ih _ _ _ _ hsub ht
 
 private theorem LZ78.aux_prefix_mem {A : Type u} [DecidableEq A] (dict : List (List A))
     (x : List A) (fuel : ℕ) (phs : List (List A)) (toks : List (LZ78.Token A))
@@ -547,17 +518,22 @@ private theorem LZ78.aux_nodup_dropLast {A : Type u} [DecidableEq A] (dict : Lis
         rw [happ]
         exact ih'
 
-/-- Rebuild phrases from tokens, rejecting dangling indices. -/
+/-- **LZ78 decoding from a dictionary.** For a list of phrases $D$ and a list of tokens, the
+result is `some []` when there are no tokens. For a token `(i, s)` followed by tokens $T$, it is
+`none` when $i > |D|$ (a dangling index). Otherwise, with $p$ the entry at position $i$ of the
+list $D$ with the empty phrase in front and $w$ the phrase `p ++ s.toList` ($p$ followed by the
+symbol of $s$, if any), it is `none` when decoding $T$ from the list `D ++ [w]` fails, and that
+result with $w$ in front otherwise. -/
 def LZ78.decodeAux {A : Type u} (dict : List (List A)) :
     List (LZ78.Token A) → Option (List (List A))
   | [] => some []
   | (i, s) :: ts =>
-    match LZ78.dictGet dict i with
+    match ([] :: dict)[i]? with
     | none => none
     | some p =>
-      match LZ78.decodeAux (dict ++ [LZ78.applySym p s]) ts with
+      match LZ78.decodeAux (dict ++ [p ++ s.toList]) ts with
       | none => none
-      | some ws => some (LZ78.applySym p s :: ws)
+      | some ws => some ((p ++ s.toList) :: ws)
 
 private theorem LZ78.aux_decode {A : Type u} [DecidableEq A] (dict : List (List A))
     (x : List A) (fuel : ℕ) (phs : List (List A)) (toks : List (LZ78.Token A))
@@ -584,68 +560,117 @@ private theorem LZ78.aux_decode {A : Type u} [DecidableEq A] (dict : List (List 
       obtain ⟨i0, s0⟩ := t0
       obtain ⟨cur', hkn', hidx, hww⟩ :=
         LZ78.nextAux_token dict [] (a :: r) w0 (i0, s0) rest hnext (Or.inl rfl)
-      have hidx' : i0 = LZ78.dictIdx dict cur' := hidx
-      have hww' : w0 = LZ78.applySym cur' s0 := hww
-      have hget : LZ78.dictGet dict i0 = some cur' := by
-        rw [hidx']
-        exact LZ78.dictGet_dictIdx dict cur' hkn'
-      simp only [LZ78.decodeAux, hget]
-      cases s0 with
-      | none =>
-        rw [LZ78.applySym_none] at hww' ⊢
-        subst hww'
-        rw [ih _ _ _ _ hsub]
-      | some a =>
-        rw [LZ78.applySym_some] at hww' ⊢
-        subst hww'
-        rw [ih _ _ _ _ hsub]
+      have hget : ([] :: dict)[i0]? = some cur' := by
+        rw [show i0 = ([] :: dict).idxOf cur' from hidx]
+        exact List.getElem?_idxOf (List.mem_cons.mpr hkn')
+      have hww' : w0 = cur' ++ s0.toList := hww
+      subst hww'
+      simp only [LZ78.decodeAux, hget, ih _ _ _ _ hsub]
 
+/-- **LZ78 incremental parsing.** The LZ78 parse of a finite list $x$ is the list of phrases that
+`LZ78.parseEncodeAux [] x (|x| + 1)` returns. Each phrase is the shortest nonempty prefix of the
+unparsed input that is not an earlier phrase; if every nonempty prefix of the unparsed input is
+an earlier phrase, the unparsed input is the last phrase. -/
 def LZ78.parse {A : Type u} [DecidableEq A] (x : List A) : List (List A) :=
   (LZ78.parseEncodeAux [] x (x.length + 1)).1
 
+/-- **LZ78 encoding.** The LZ78 encoding of a finite list $x$ is the list of tokens that
+`LZ78.parseEncodeAux [] x (|x| + 1)` returns, one for each phrase of `LZ78.parse x`, with index
+`0` for the empty phrase and index `j ≥ 1` for the `j`-th phrase. A last phrase that repeats an
+earlier one, which happens exactly when the input ends inside a known phrase, is coded as
+`(i, none)`, where `i` is its own index. Every other phrase is coded as `(i, some a)`, where `a`
+is its last symbol and `i` is the index of the phrase without `a`, the empty phrase or an earlier
+phrase. -/
 def LZ78.encode {A : Type u} [DecidableEq A] (x : List A) : List (LZ78.Token A) :=
   (LZ78.parseEncodeAux [] x (x.length + 1)).2
 
 private theorem LZ78.aux_parse_encode_eq {A : Type u} [DecidableEq A] (x : List A) :
     LZ78.parseEncodeAux [] x (x.length + 1) = (LZ78.parse x, LZ78.encode x) := rfl
 
+/-- **LZ78 decoding.** The LZ78 decoding of a list of tokens reads them in order with a dictionary
+that starts empty. A token `(i, s)` whose index `i` is at most the number of tokens before it is
+decoded to the empty phrase (`i = 0`) or the `i`-th decoded phrase, followed by the symbol `a`
+when `s = some a`; the decoded phrase becomes the next dictionary entry. The result is the
+concatenation of the decoded phrases, or `none` when some token's index exceeds the number of
+tokens before it. Decoding does not check that the tokens are ones `LZ78.encode` emits: it
+accepts an index-only token `(i, none)` at any position, decoding it to the phrase at index `i`
+and adding a copy of that phrase to the dictionary, and a token whose phrase is already in the
+dictionary. -/
 def LZ78.decode {A : Type u} (ts : List (LZ78.Token A)) : Option (List A) :=
   (LZ78.decodeAux [] ts).map List.flatten
 
-theorem LZ78.decode_encode {A : Type u} [DecidableEq A] (x : List A) : LZ78.decode (LZ78.encode x) = some x := by
+/-- **LZ78 decoding inverts encoding.** For every type $A$ with decidable equality and every
+finite list $x$ over $A$, decoding the LZ78 encoding of $x$ returns $x$:
+`LZ78.decode (LZ78.encode x) = some x`. -/
+theorem LZ78.decode_encode {A : Type u} [DecidableEq A] (x : List A) :
+    LZ78.decode (LZ78.encode x) = some x := by
   have hde := LZ78.aux_decode [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x)
   unfold LZ78.decode
   rw [hde, Option.map_some]
   congr 1
-  exact LZ78.aux_flatten [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x) (Nat.lt_succ_self _)
+  exact LZ78.aux_flatten [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x)
+    (Nat.lt_succ_self _)
 
-def LZ78.encoding {A : Type u} [DecidableEq A] : Computability.Encoding (List A) (LZ78.Token A) where
+/-- **LZ78 codec.** The LZ78 encoder `LZ78.encode` and decoder `LZ78.decode`, with the round trip
+`LZ78.decode_encode`, as an instance of Mathlib's `Computability.Encoding` contract for finite
+lists over a type $A$ with decidable equality, with LZ78 tokens as the code alphabet. -/
+def LZ78.encoding {A : Type u} [DecidableEq A] :
+    Computability.Encoding (List A) (LZ78.Token A) where
   encode := LZ78.encode
   decode := LZ78.decode
   decode_encode := LZ78.decode_encode
 
-theorem LZ78.flatten_parse {A : Type u} [DecidableEq A] (x : List A) : (LZ78.parse x).flatten = x := by
-  exact LZ78.aux_flatten [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x) (Nat.lt_succ_self _)
+/-- **LZ78 phrases concatenate to the input.** For every finite list $x$, the concatenation of
+the phrases of the LZ78 parse of $x$ is $x$. -/
+theorem LZ78.flatten_parse {A : Type u} [DecidableEq A] (x : List A) :
+    (LZ78.parse x).flatten = x := by
+  exact LZ78.aux_flatten [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x)
+    (Nat.lt_succ_self _)
 
-theorem LZ78.ne_nil_of_mem_parse {A : Type u} [DecidableEq A] {x w : List A} (hw : w ∈ LZ78.parse x) : w ≠ [] := by
+/-- **LZ78 phrases are nonempty.** For every finite list $x$, every phrase of the LZ78 parse of
+$x$ is nonempty. -/
+theorem LZ78.ne_nil_of_mem_parse {A : Type u} [DecidableEq A] {x w : List A}
+    (hw : w ∈ LZ78.parse x) : w ≠ [] := by
   exact LZ78.aux_ne_nil [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x) w hw
 
-theorem LZ78.nodup_dropLast_parse {A : Type u} [DecidableEq A] (x : List A) : (LZ78.parse x).dropLast.Nodup := by
+/-- **LZ78 phrases are distinct, except possibly the last.** For every finite list $x$, the
+phrases of the LZ78 parse of $x$ other than the last are pairwise distinct. -/
+theorem LZ78.nodup_dropLast_parse {A : Type u} [DecidableEq A] (x : List A) :
+    (LZ78.parse x).dropLast.Nodup := by
   have h := LZ78.aux_nodup_dropLast [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x)
     (Nat.lt_succ_self _) List.nodup_nil LZ78.prefixClosed_nil
   simpa using h
 
-theorem LZ78.prefix_mem_parse {A : Type u} [DecidableEq A] (x : List A) (i : ℕ) (hi : i < (LZ78.parse x).length) {v : List A} (hv : v <+: (LZ78.parse x)[i]) (hne : v ≠ (LZ78.parse x)[i]) : v = [] ∨ v ∈ (LZ78.parse x).take i := by
+/-- **Proper prefixes of an LZ78 phrase are earlier phrases.** For every finite list $x$ and
+every index $i$ below the number of phrases of its LZ78 parse, every proper prefix of the $i$-th
+phrase (counting from $0$) is empty or one of the phrases before it. -/
+theorem LZ78.prefix_mem_parse {A : Type u} [DecidableEq A] (x : List A) (i : ℕ)
+    (hi : i < (LZ78.parse x).length) {v : List A} (hv : v <+: (LZ78.parse x)[i])
+    (hne : v ≠ (LZ78.parse x)[i]) : v = [] ∨ v ∈ (LZ78.parse x).take i := by
   have h := LZ78.aux_prefix_mem [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x)
     LZ78.prefixClosed_nil i hi v hv hne
   simpa using h
 
-theorem LZ78.encoding_encode_length {A : Type u} [DecidableEq A] (x : List A) : ((LZ78.encoding (A := A)).encode x).length = (LZ78.parse x).length := by
+/-- **One LZ78 token per phrase.** For every finite list $x$, the LZ78 codec encodes $x$ into as
+many tokens as the LZ78 parse of $x$ has phrases. -/
+theorem LZ78.encoding_encode_length {A : Type u} [DecidableEq A] (x : List A) :
+    ((LZ78.encoding (A := A)).encode x).length = (LZ78.parse x).length := by
   have h := LZ78.aux_length [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x)
   simpa [LZ78.encoding] using h
 
-theorem LZ78.fst_encode_le {A : Type u} [DecidableEq A] (x : List A) (i : ℕ) (hi : i < (LZ78.encode x).length) : ((LZ78.encode x)[i]).1 ≤ i := by
+/-- **LZ78 token indices point backwards.** For every finite list $x$ and every index $i$ below
+the number of tokens of its LZ78 encoding, the index of the $i$-th token (counting from $0$) is
+at most $i$: it names the empty phrase or one of the $i$ phrases before it. -/
+theorem LZ78.fst_encode_le {A : Type u} [DecidableEq A] (x : List A) (i : ℕ)
+    (hi : i < (LZ78.encode x).length) : ((LZ78.encode x)[i]).1 ≤ i := by
   have h := LZ78.aux_fst_le [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x) i hi
   simpa using h
+
+/-- **Only the last LZ78 token can omit its symbol.** For every finite list $x$, every token of
+the LZ78 encoding of $x$ other than the last carries a symbol: an index-only token `(i, none)`
+can only be the last token. -/
+theorem LZ78.isSome_snd_of_mem_dropLast_encode {A : Type u} [DecidableEq A] {x : List A}
+    {t : LZ78.Token A} (ht : t ∈ (LZ78.encode x).dropLast) : t.2.isSome :=
+  LZ78.aux_isSome [] x (x.length + 1) _ _ (LZ78.aux_parse_encode_eq x) t ht
 
 end Cslib.Algorithms.Lean
