@@ -3,5 +3,6 @@
 Topics added since this subject's fields were last revised.
 
 - [Invariant Fraction Field](invariant-fraction-field/README.md)
-- [Extending a multiplicative assignment on generators to an algebra map](exists-alg-hom-adjoin-apply-eq-of-is-alg.md)
+- [Kernel of a Galois representation as a fixing subgroup](exists-intermediate-field-is-galois-fixi.md)
+- [Kummer Character](kummer-character/README.md)
 - [Semilinear Descent](exists-basis-base-change-forall-apply-eq.md)
