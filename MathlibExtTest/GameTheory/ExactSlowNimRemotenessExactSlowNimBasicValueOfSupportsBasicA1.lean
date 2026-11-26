@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.GameTheory.ExactSlowNimRemotenessExactSlowNimBasicValueOfSupportsBasicA1
+import MathlibExt.GameTheory.ExactSlowNimRemoteness
 
 /-!
 # Tests for moves supported by type (A1) basic vectors
@@ -16,8 +16,8 @@ import MathlibExt.GameTheory.ExactSlowNimRemotenessExactSlowNimBasicValueOfSuppo
 Concrete applications of the M-move equality and the option lower bound.
 
 Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi,
-*On Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1
-(arXiv:2304.06498), Lemma 3.
+*On Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
+Lemma 3 (the journal's numbering).
 -/
 
 namespace MathlibExtTest.GameTheory.ExactSlowNimRemotenessExactSlowNimBasicValueOfSupportsBasicA1

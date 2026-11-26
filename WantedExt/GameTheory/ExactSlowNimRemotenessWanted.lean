@@ -11,7 +11,6 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.GameTheory.ExactSlowNimRemoteness
 public import WantedExt.Combinatorics.SlowANimWanted
-public import MathlibExt.GameTheory.ExactSlowNimRemotenessExactSlowNimBasicValueOfSupportsBasicA1
 
 /-!
 # Remoteness of Exact Slow `k`-NIM with `k + 1` piles
