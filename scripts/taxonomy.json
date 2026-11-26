@@ -11390,6 +11390,7 @@
   "MathlibExt/Combinatorics/Matroid/MixedDegrees": {"to": "Combinatorics/matroid-theory", "title": "Hodge theory for matroids"},
   "MathlibExt/Combinatorics/Matroid/Rado": {"to": "Combinatorics/matroid-theory", "title": "Rado's theorem on independent transversals"},
   "MathlibExt/Combinatorics/Matroid/StrongMason": {"to": "Combinatorics/matroid-theory", "title": "Mason's conjectures on independent sets"},
+  "MathlibExt/Combinatorics/Matroid/WeakMason": {"to": "Combinatorics/matroid-theory", "title": "Mason's conjectures on independent sets"},
   "MathlibExt/Combinatorics/MaximumNimJosephus": {"to": "GameTheory/combinatorial-games", "title": "Maximum Nim"},
   "MathlibExt/Combinatorics/MisereCubeRotationNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
