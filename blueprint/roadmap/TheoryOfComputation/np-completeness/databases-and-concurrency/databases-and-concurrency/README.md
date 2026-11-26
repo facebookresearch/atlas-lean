@@ -97,3 +97,6 @@
 - [THIRD NORMAL FORM TEST is NP-complete](third-normal-form-test-np-complete.md)
 - [Values read by a transaction](read-values.md)
 - [VIEW SERIALIZABILITY as a decision problem](view-serializability-dec.md)
+- [Is Interpretation](is-interpretation.md)
+- [Serial schedule](serial.md)
+- [Multiversion serializability](multiversion-serializability-feasible.md)
