@@ -1,4 +1,4 @@
-# Cassels Tate Pairing
+# Cassels–Tate pairing
 
 - [The Galois module of points of an elliptic curve](elliptic-points-top-rep.md)
 - [The Shafarevich–Tate group of an elliptic curve over a number field](elliptic-tate-shafarevich.md)
