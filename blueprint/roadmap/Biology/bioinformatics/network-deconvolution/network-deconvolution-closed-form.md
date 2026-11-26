@@ -1,12 +1,17 @@
 # Network deconvolution closed form
 
 Let $G_{\mathrm{dir}} \in \mathbb{R}^{p \times p}$ be a matrix of direct dependencies among $p$ variables (genes, residues) with spectral radius $\rho(G_{\mathrm{dir}}) < 1$. The **network convolution model** assumes that an indirect path of length $k$ contributes the product of its direct edge weights, and that observed weights are the sum over all paths:
+
 $$G_{\mathrm{obs}} = G_{\mathrm{dir}} + G_{\mathrm{dir}}^2 + G_{\mathrm{dir}}^3 + \cdots .$$
 
 **Theorem.** Under this model the series converges and
+
 $$G_{\mathrm{obs}} = G_{\mathrm{dir}} (I - G_{\mathrm{dir}})^{-1}, \qquad G_{\mathrm{dir}} = G_{\mathrm{obs}} (I + G_{\mathrm{obs}})^{-1},$$
+
 where $I + G_{\mathrm{obs}}$ is invertible. If $G_{\mathrm{obs}} = U \Sigma_{\mathrm{obs}} U^{-1}$ is diagonalizable with eigenvalues $\lambda^{\mathrm{obs}}_i$, then $G_{\mathrm{dir}} = U \Sigma_{\mathrm{dir}} U^{-1}$ with
+
 $$\lambda^{\mathrm{dir}}_i = \frac{\lambda^{\mathrm{obs}}_i}{1 + \lambda^{\mathrm{obs}}_i}, \qquad \lambda^{\mathrm{obs}}_i = \frac{\lambda^{\mathrm{dir}}_i}{1 - \lambda^{\mathrm{dir}}_i}.$$
+
 For a symmetric observed matrix (correlation or mutual information), $U$ can be taken orthogonal, and a real eigenvalue $\lambda^{\mathrm{dir}} \in (-1, 1)$ corresponds exactly to $\lambda^{\mathrm{obs}} > -\tfrac12$.
 
 ## Expansion

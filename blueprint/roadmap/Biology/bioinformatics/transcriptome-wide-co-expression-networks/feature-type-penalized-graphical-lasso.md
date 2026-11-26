@@ -1,9 +1,13 @@
 # Feature-type-penalized graphical lasso for transcription and splicing networks
 
 For each gene in an RNA-seq dataset, compute its total expression (TE) and the isoform ratios (IR) of its isoforms, the abundance of each isoform divided by the gene's total, dropping each gene's least abundant isoform to avoid the linear dependency $\sum \mathrm{IR} = 1$. After normalization, let $S$ be the sample covariance matrix of all TE and IR features. For a feature $r$ let $\operatorname{gene}(r)$ be its gene and $\operatorname{type}(r) \in \{\mathrm{TE}, \mathrm{IR}\}$ its type. The **transcriptome-wide network** is the support of the estimated precision matrix
+
 $$\hat\Theta = \arg\min_{\Theta \succ 0}\; -\log\det\Theta + \operatorname{tr}(S\Theta) + \|\Lambda \circ \Theta\|_1,$$
+
 where $\circ$ is the elementwise product, $\|\cdot\|_1$ the elementwise $\ell_1$ norm, and the penalty matrix depends on the feature types:
+
 $$\Lambda_{rc} = \begin{cases} \lambda_d & r = c, \\ \lambda_s & r \ne c,\ \operatorname{gene}(r) = \operatorname{gene}(c), \\ \lambda_{tt} & \operatorname{gene}(r) \ne \operatorname{gene}(c),\ \operatorname{type}(r) = \operatorname{type}(c) = \mathrm{TE}, \\ \lambda_{ti} & \operatorname{gene}(r) \ne \operatorname{gene}(c),\ \{\operatorname{type}(r), \operatorname{type}(c)\} = \{\mathrm{TE}, \mathrm{IR}\}, \\ \lambda_{ii} & \operatorname{gene}(r) \ne \operatorname{gene}(c),\ \operatorname{type}(r) = \operatorname{type}(c) = \mathrm{IR}. \end{cases}$$
+
 An edge joins features $r \ne c$ when $\hat\Theta_{rc} \ne 0$. TE–TE edges indicate co-regulated transcription, TE–IR edges indicate a gene whose expression level is associated with another gene's splicing (for example a splicing factor and its target), and IR–IR edges indicate co-regulated splicing.
 
 ## Expansion

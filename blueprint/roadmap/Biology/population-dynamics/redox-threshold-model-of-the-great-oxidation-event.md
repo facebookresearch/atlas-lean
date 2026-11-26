@@ -1,13 +1,19 @@
 # Redox threshold model of the Great Oxidation Event
 
 Two primary producers compete for a limiting nutrient: anoxygenic photosynthetic bacteria with density $x_1$, which need ferrous iron, and cyanobacteria with density $x_2$, which split water and release oxygen. With total density $x = x_1 + x_2$, reproductive rates $r_1, r_2 > 0$, competition coefficient $c > 0$ and small immigration rates $u_1, u_2 > 0$ from refuge niches,
+
 $$\dot x_1 = x_1(r_1 z_1 - c x) + u_1, \qquad \dot x_2 = x_2(r_2 - c x) + u_2,$$
+
 where $z_1$ is the availability of ferrous iron. Oxygen $z_2$ is produced by cyanobacteria and removed at rate $b$ by respiration and geophysical sinks,
+
 $$\dot z_2 = a x_2 - b z_2, \qquad \text{with steady state } z_2 = \frac{a x_2}{b},$$
+
 and oxygen depletes iron, $z_1 = 1/(1 + \alpha z_2)$ at steady state.
 
 Before oxygenation $z_1 \approx 1$ and anoxygenic phototrophs dominate if $r_1 > r_2$. If the oxygen removal rate $b$ declines slowly (over millions of years), oxygen rises slowly and $z_1$ falls until the effective growth rate of anoxygenic phototrophs drops below that of cyanobacteria,
+
 $$r_1 z_1 < r_2,$$
+
 at which point cyanobacteria rapidly take over, oxygen increases sharply and iron availability collapses, locking in the oxic state. A gradual change in a physical parameter thus produces an abrupt ecological transition.
 
 ## Expansion

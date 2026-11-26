@@ -5,11 +5,15 @@ In the setting of the [mutant selection window](mutant-selection-window-and-wild
 1. $\mathrm{WGW} = [0, D_{\mathrm{wt}})$ with $D_{\mathrm{wt}} = \mathrm{IC}_{50}\,(R_{00} - 1)^{1/m}$.
 2. $\{D : R_0'(D) > 1\} = [0, D_{\mathrm{mut}})$ with $D_{\mathrm{mut}} = \rho\, \mathrm{IC}_{50}\,\big(R_{00}(1-s) - 1\big)^{1/m}$.
 3. If $1 - s > \rho^{-m}$, then $R_0'(D) > R_0(D)$ iff $D > D_\times$, where
+
 $$D_\times = \mathrm{IC}_{50} \left(\frac{s}{1 - s - \rho^{-m}}\right)^{1/m};$$
+
 if $1 - s \le \rho^{-m}$ the mutant is never fitter and the MSW is empty.
 4. Hence $\mathrm{MSW} = (D_\times, D_{\mathrm{mut}})$, nonempty iff $D_\times < D_{\mathrm{mut}}$.
 5. With first-order elimination $D(t) = D_0\, 2^{-t/t_{1/2}}$ after a dose $D_0 \ge D_{\mathrm{mut}}$, the time spent in the MSW is
+
 $$t_{\mathrm{MSW}} = t_{1/2} \log_2 \frac{D_{\mathrm{mut}}}{D_\times},$$
+
 independent of the dose, while the wild type starts to grow at $t_{\mathrm{WGW}} = t_{1/2}\log_2(D_0/D_{\mathrm{wt}})$.
 
 ## Depends on

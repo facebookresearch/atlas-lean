@@ -14,7 +14,9 @@ With $F_i$ and $F'_i$ the generating functions built from $R$ and $R'$, let $\ma
 
 1. *Threshold.* In a fully susceptible network ($\nu \equiv 1$), $R'$ has rank one with spectral radius $\dfrac{\beta}{\gamma}\,\dfrac{\langle k^2\rangle - \langle k\rangle}{\langle k\rangle}$, so emergence is possible only if $\dfrac{\beta}{\gamma} > \dfrac{\langle k\rangle}{\langle k^2\rangle - \langle k\rangle}$; at fixed mean degree, greater degree variance lowers the threshold.
 2. *Regular network.* If every node has degree $k$, then $R_0 = \beta k/\gamma$, $R'_0 = \beta(k-1)/\gamma$, $x' = \min(1, 1/R'_0)$ and
+
 $$P_{\mathrm{emerge}} = 1 - \frac{1}{1 + R_0\bigl(1 - x'\bigr)},$$
+
 so $P_{\mathrm{emerge}} \le 1 - 1/R_0$, and $P_{\mathrm{emerge}} = 0$ whenever $R'_0 \le 1$.
 
 ## Depends on

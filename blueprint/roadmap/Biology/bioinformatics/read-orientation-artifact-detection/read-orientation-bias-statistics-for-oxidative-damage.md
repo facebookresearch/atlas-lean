@@ -1,7 +1,9 @@
 # Read-orientation bias statistics for oxidative DNA damage (FoxoG and ArtQ)
 
 In paired-end sequencing, oxidation of guanine to 8-oxoguanine during library preparation produces artifactual $G \to T$ changes observed only in the first read of a pair and the complementary $C \to A$ changes observed only in the second read. For a candidate $C \to A$ / $G \to T$ variant supported by $a$ alternate-allele reads, let $a_{\mathrm{ox}}$ be the number of those reads in the artifact orientation ($G \to T$ on read 1 or $C \to A$ on read 2). The **FoxoG** statistic is
+
 $$\mathrm{FoxoG} = \frac{a_{\mathrm{ox}}}{a} \in [0,1].$$
+
 For a true mutation the read in which the change is seen is unrelated to the change, so $a_{\mathrm{ox}} \sim \mathrm{Binomial}(a, \tfrac12)$ and FoxoG concentrates near $\tfrac12$; for an oxidation artifact FoxoG is near $1$. A filter calls a variant artifactual when FoxoG is high relative to the evidence for the variant, measured by the caller's tumour log-odds score, so that low-allelic-fraction calls with extreme orientation bias are removed while real low-fraction mutations are kept.
 
 At the sample level, base calls at reference $C/G$ sites in the damage-prone context are split into alternate calls consistent with the artifact orientation and the mirror-image alternate calls (the same substitution seen in the opposite read). Assuming that errors from all other sources are symmetric between the two orientations, the excess of artifact-consistent over mirror-image calls, divided by the number of base calls, estimates the per-base error rate due to the artifact; **ArtQ** is this rate on the Phred scale, $\mathrm{ArtQ} = -10\log_{10}(\text{rate})$, so that $\mathrm{ArtQ} > 30$ means fewer than one base in a thousand is affected.

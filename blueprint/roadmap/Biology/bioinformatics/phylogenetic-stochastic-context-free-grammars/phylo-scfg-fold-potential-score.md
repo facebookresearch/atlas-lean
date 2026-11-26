@@ -6,11 +6,15 @@ Let $x$ be a multiple alignment of $m$ homologous sequences with columns $x^{(1)
 - each paired column pair $\bigl(x^{(i)}, x^{(j)}\bigr)$, $(i, j) \in \sigma$, is emitted jointly with probability $P\bigl(x^{(i)}, x^{(j)} \mid T, Q_2\bigr)$ under a di-nucleotide substitution model $Q_2$ on $16$ states that favors compensatory substitutions preserving base pairing,
 
 each column probability being the likelihood of the leaf states on $T$ under the corresponding continuous-time Markov model. Then
+
 $$P(x, \sigma \mid \phi) = P(\sigma \mid \phi) \prod_{i \text{ unpaired}} P\bigl(x^{(i)} \mid T, Q_1\bigr) \prod_{(i,j) \in \sigma} P\bigl(x^{(i)}, x^{(j)} \mid T, Q_2\bigr),$$
+
 and $P(x \mid \phi) = \sum_\sigma P(x, \sigma \mid \phi)$.
 
 **EvoFold.** Use two phylo-SCFGs over the same nucleotide composition: an fRNA model $\phi_{\mathrm{fRNA}}$ with a structural component (folds whose first and last bases pair, emitting from $Q_1$ and $Q_2$) and a non-structural component (emitting from $Q_1$ only), and a background model $\phi_{\mathrm{bg}}$ consisting of the non-structural component alone. The predicted structure is the most probable one, $\hat\sigma = \arg\max_\sigma P(x, \sigma \mid \phi_{\mathrm{fRNA}})$, which may be empty, and the **fold potential score** is the log-likelihood ratio
+
 $$\mathrm{fps}(x) = \log \frac{P(x \mid \phi_{\mathrm{fRNA}})}{P(x \mid \phi_{\mathrm{bg}})},$$
+
 normalized by length when ranking candidates.
 
 ## Depends on

@@ -1,7 +1,9 @@
 # Clonal growth rates from serial cancer cell fractions
 
 Let a circulating tumor population be sampled at times $t_1 < \dots < t_m$ (measured from the start of a therapy at $t = 0$). At each time let $c_k(t_j) \in [0, 1]$ be the [cancer cell fraction](cancer-cell-fraction-estimation/ccf-mle.md) of subclone $k$, estimated from sequencing after correcting allelic fractions for purity and local copy number, and let $A(t_j)$ be the absolute tumor-cell count per unit volume (for leukemia, the absolute lymphocyte count) and $V$ the total volume (for blood, about 5 L). The **clone size** is
+
 $$N_k(t_j) = c_k(t_j)\, A(t_j)\, V.$$
+
 Assume each clone grows or declines exponentially at a constant net rate $r_k$ during therapy, $N_k(t) = N_k(0)\, e^{r_k t}$. Then $\ln N_k(t_j) = \ln N_k(0) + r_k t_j$, and
 
 - with exactly two measurements, $\hat r_k = \dfrac{\ln N_k(t_2) - \ln N_k(t_1)}{t_2 - t_1}$;

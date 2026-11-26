@@ -1,20 +1,27 @@
 # Binomial likelihood for complexity of infection from SNP barcodes
 
 **Model.** A sample contains $C \in \{1, 2, \dots\}$ haploid parasite lineages drawn independently from the population. A barcode consists of biallelic assays $i = 1, \dots, A$ with alternate-allele frequency $p_i \in (0, 1)$, in linkage equilibrium with one another. For assay $i$ the number of lineages carrying the alternate allele is
+
 $$X_i \mid C \sim \operatorname{Binomial}(C, p_i),$$
+
 and the assay reports one of three outcomes: reference only ($X_i = 0$), alternate only ($X_i = C$), or polymorphic ($0 < X_i < C$). Hence
+
 $$\mathbb P(\text{ref} \mid C) = (1 - p_i)^C, \quad \mathbb P(\text{alt} \mid C) = p_i^C, \quad \mathbb P(\text{poly} \mid C) = 1 - (1 - p_i)^C - p_i^C .$$
 
 **Genotyping error.** Let $E$ be a $3 \times 3$ row-stochastic matrix with $E_{gh} = \mathbb P(\text{observed } h \mid \text{true } g)$. The probability of an observed outcome $h$ is $\mathbb P(G_i^* = h \mid C) = \sum_g \mathbb P(G_i = g \mid C)\,E_{gh}$.
 
 **Posterior.** With a prior $\pi(C)$ on $\{1, \dots, C_{\max}\}$ (uniform up to the barcode's detection limit by default), assay independence gives
+
 $$\mathbb P(C \mid G^*) = \frac{\pi(C)\prod_{i} \mathbb P(G_i^* \mid C)}{\sum_{C'} \pi(C')\prod_{i} \mathbb P(G_i^* \mid C')},$$
+
 where failed assays are omitted from the product. The maximum a posteriori value and a credible set summarize the sample's COI. If $p_i$ is unknown it is estimated from presumed single infections (samples with no polymorphic calls) under a $\operatorname{Beta}(1, 1)$ prior, giving $\hat p_i = (k_i + 1)/(n_i + 2)$ for $k_i$ alternate calls among $n_i$ single infections.
 
 **Discriminating power.** For a single error-free assay, $\mathbb P(\text{poly} \mid C)$ increases strictly with $C$ and, for fixed $C \ge 2$, is maximized at $p_i = 1/2$; so assays with high minor-allele frequency and more assays both separate the distributions of the number of polymorphic calls across COI levels.
 
 **Correlated assays.** If $X = \sum_{i=1}^n B_i$ with $B_i \sim \operatorname{Bernoulli}(p)$ and pairwise correlations $\rho_{ij}$, then $\mathbb E X = np$ and
+
 $$\operatorname{Var} X = np(1 - p) + p(1 - p)\sum_{i \ne j}\rho_{ij},$$
+
 so linkage disequilibrium between assays, or relatedness between co-infecting lineages, overdisperses the polymorphic-call count and makes single-sample COI estimates more extreme while leaving population averages approximately unbiased.
 
 ## Expansion

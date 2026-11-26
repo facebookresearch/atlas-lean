@@ -1,21 +1,31 @@
 # Metabolic-labelling kinetics of new and total RNA
 
 **Model.** For one gene in one cell, let $r(t)$ be total RNA and $l(t)$ the RNA labelled since the start $t = 0$ of a labelling pulse (new RNA). With synthesis rate $\alpha \ge 0$, degradation rate $\gamma > 0$ and labelling-efficiency factor $\rho \in (0, 1]$,
+
 $$\dot l = \rho\alpha - \gamma l, \qquad \dot r = \alpha - \gamma r, \qquad l(0) = 0,\ r(0) = r_0 .$$
 
 **Solution.**
+
 $$l(t) = \frac{\rho\alpha}{\gamma}\bigl(1 - e^{-\gamma t}\bigr), \qquad r(t) = r_0 e^{-\gamma t} + \frac{\alpha}{\gamma}\bigl(1 - e^{-\gamma t}\bigr).$$
 
 **One-shot estimator.** If total RNA is at steady state, $r = \alpha/\gamma$, then for a labelling time $t$
+
 $$l = k\, r, \qquad k = \rho\bigl(1 - e^{-\gamma t}\bigr),$$
+
 so $k$ is the zero-intercept slope of $l$ against $r$ across cells. With labelled RNA corrected so that $\rho = 1$,
+
 $$\gamma = -\frac{1}{t}\ln(1 - k), \qquad \alpha = \frac{\gamma\, l}{1 - e^{-\gamma t}} = \frac{\gamma}{k}\, l,$$
+
 and the velocity of total RNA in absolute time units is
+
 $$\dot r = \alpha - \gamma r = \frac{\gamma}{k}\, l - \gamma r .$$
+
 The transcription rate is thus estimated cell by cell from that cell's new RNA, rather than assumed constant within a cell state.
 
 **Two-step estimator for pulse series.** With labelling times $t_1 < \dots < t_J$, the slopes $k(t_j) = 1 - e^{-\gamma t_j}$ increase towards $1$, and
+
 $$-\ln\bigl(1 - k(t_j)\bigr) = \gamma\, t_j ,$$
+
 so $\gamma$ is the slope of a second zero-intercept regression of $-\ln(1 - \hat k_j)$ on $t_j$.
 
 **Chase.** After a long labelling period followed by wash-out, labelled RNA decays as $l(t) = l_0 e^{-\gamma t}$.

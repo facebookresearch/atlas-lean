@@ -1,10 +1,15 @@
 # Expected waiting time to the first k-fold mutant
 
 In the [driver-accumulation Wright–Fisher model](driver-accumulation-wright-fisher-model.md) with $s > 0$, $u d \ll s$ and large $N$, the distribution of error classes is approximately a Gaussian with mean $vt$ and constant variance $\sigma^2$, travelling with speed $v = s\sigma^2$ classes per generation. For constant population size $N$ the speed is approximately
+
 $$v \approx \frac{2 s \log N}{\big(\log \frac{s}{ud}\big)^2},$$
+
 so the expected waiting time until the first cell with $k$ driver mutations appears is
+
 $$t_k \approx \frac{k \big(\log \frac{s}{ud}\big)^2}{2 s \log N}.$$
+
 For a population growing exponentially from $N_{\mathrm{init}}$ to $N_{\mathrm{fin}}$, the waiting time equals that of a constant population of size $N = \sqrt{N_{\mathrm{init}} N_{\mathrm{fin}}}$ (the geometric mean), giving
+
 $$t_k \approx \frac{k \big(\log \frac{s}{ud}\big)^2}{s \log (N_{\mathrm{init}} N_{\mathrm{fin}})}. \qquad (1)$$
 
 Consequences: $t_k$ is linear in $k$, decreases roughly as $1/s$, and depends only logarithmically on the mutation rate $u$, the number of susceptible genes $d$ and the population size. With $d = 100$, $k = 20$, $u = 10^{-7}$ per gene per division and $s = 0.01$, cancer arises within 5–15 years in an adenoma of $10^7$–$10^9$ cells.

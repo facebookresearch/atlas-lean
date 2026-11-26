@@ -7,8 +7,11 @@ Fix one tumour sample and a mutational motif, for example the APOBEC target $\ma
 - $\mathrm{Con}_{TCA}$ and $\mathrm{Con}_{C}$ the numbers of $\mathrm{TCA}$ motifs and of cytosines (both strands) in the 41-mers centred on the mutations of the sample,
 
 with $\mathrm{Mut}_{TCA} > 0$ and $\mathrm{Con}_{TCA}, \mathrm{Mut}_C > 0$. The **enrichment** of mutations at the motif is
+
 $$E_{TCA} = \frac{\mathrm{Mut}_{TCA}/\mathrm{Con}_{TCA}}{\mathrm{Mut}_{C}/\mathrm{Con}_{C}} = \frac{\mathrm{Mut}_{TCA}\, \mathrm{Con}_{C}}{\mathrm{Mut}_{C}\, \mathrm{Con}_{TCA}},$$
+
 and the **minimal number of motif mutations attributable to the motif-specific process** is
+
 $$\mathrm{Min}_{TCA} = \mathrm{Mut}_{TCA} \cdot \frac{E_{TCA} - 1}{E_{TCA}}.$$
 
 **Proposition.** $\mathrm{Min}_{TCA} = \mathrm{Mut}_{TCA} - \mathrm{Mut}_C \,\dfrac{\mathrm{Con}_{TCA}}{\mathrm{Con}_C}$, the excess of observed motif mutations over the count expected if cytosine mutations fell on motifs in proportion to motif abundance. Hence $\mathrm{Min}_{TCA} > 0$ iff $E_{TCA} > 1$, and $\mathrm{Min}_{TCA} \le \mathrm{Mut}_{TCA}$.

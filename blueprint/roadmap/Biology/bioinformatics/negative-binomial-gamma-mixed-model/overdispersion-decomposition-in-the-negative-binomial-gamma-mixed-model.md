@@ -1,12 +1,17 @@
 # Overdispersion decomposition in the negative binomial gamma mixed model
 
 For cell $j$ of subject $i$, let $y_{ij}$ be a gene's raw count, $x_{ij} \in \mathbb{R}^{k+1}$ fixed-effect predictors, $\pi_{ij} > 0$ a known scaling factor (library size), $\beta$ the coefficients and $\phi > 0$ the cell-level dispersion. The **negative binomial gamma mixed model** (NBGMM) is
+
 $$y_{ij} \mid \omega_i \sim \mathrm{NB}\big(\mu_{ij} = \pi_{ij}\, e^{x_{ij}^T \beta}\, \omega_i,\ \phi\big), \qquad \operatorname{Var}(y_{ij} \mid \omega_i) = \mu_{ij} + \mu_{ij}^2/\phi,$$
+
 with independent subject effects $\omega_i \sim \mathrm{Gamma}(\alpha, \lambda)$ (shape $\alpha$, rate $\lambda$) parametrized by a variance component $\sigma^2 > 0$ through
+
 $$\alpha = \frac{1}{e^{\sigma^2} - 1}, \qquad \lambda = \frac{1}{e^{\sigma^2/2}(e^{\sigma^2} - 1)} .$$
 
 **Proposition.** (i) $\omega_i$ has the same mean $e^{\sigma^2/2}$ and variance $e^{\sigma^2}(e^{\sigma^2} - 1)$ as a log-normal $\exp(N(0, \sigma^2))$ effect. (ii) The marginal moments are
+
 $$\mathbb{E}(y_{ij}) = \pi_{ij}\, e^{x_{ij}^T\beta + \sigma^2/2}, \qquad \operatorname{Var}(y_{ij}) = \mathbb{E}(y_{ij}) + \mathbb{E}(y_{ij})^2 \big(e^{\sigma^2} - 1\big) + \mathbb{E}(y_{ij})^2\, \frac{e^{\sigma^2}}{\phi},$$
+
 so the first overdispersion term depends on the subject-level variance component alone, while the second combines cell-level dispersion $\phi$ with $\sigma^2$.
 
 ## Expansion

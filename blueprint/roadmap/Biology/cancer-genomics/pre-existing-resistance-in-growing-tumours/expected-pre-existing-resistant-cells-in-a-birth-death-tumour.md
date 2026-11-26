@@ -1,9 +1,13 @@
 # Expected number of pre-existing resistant cells in a birth–death tumour
 
 Consider a linear birth–death process started from one drug-sensitive cell at time $0$. Every cell divides at rate $b$ and dies at rate $d$, with net growth rate $r = b - d > 0$. Each division of a sensitive cell independently produces one resistant daughter with probability $u$, small enough that its effect on the growth of the sensitive population is negligible ($u \ll 1$); before treatment, resistant cells have the same rates $b$ and $d$ and never revert. Let $S(t)$ and $R(t)$ be the numbers of sensitive and resistant cells. Then $\mathbb E[S(t)] = e^{rt}$ and
+
 $$\mathbb E[R(t)] = \int_0^t u\,b\,e^{rs}\,e^{r(t-s)}\,ds = u\,b\,t\,e^{rt}.$$
+
 At the time $T = (\ln M)/r$ at which the expected sensitive population equals $M$,
+
 $$\mathbb E[R(T)] = \frac{u\,b\,M \ln M}{b - d} = \frac{u\,M \ln M}{1 - d/b}.$$
+
 The expected resistant burden at detection is therefore larger than the naive estimate $uM$ by the factor $\ln M/(1 - d/b)$: mutations that arise early found large clones, and cell death increases the number of divisions needed to reach size $M$.
 
 ## Depends on

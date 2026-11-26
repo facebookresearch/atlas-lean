@@ -1,14 +1,21 @@
 # Splicing kinetics and RNA velocity
 
 **Model.** For one gene in one cell, let $u(t)$ and $s(t)$ be the amounts of unspliced and spliced RNA, with constant transcription rate $\alpha \ge 0$, splicing rate $\beta > 0$ and degradation rate $\gamma > 0$:
+
 $$\dot u = \alpha - \beta u, \qquad \dot s = \beta u - \gamma s, \qquad u(0) = u_0,\ s(0) = s_0 .$$
+
 The **RNA velocity** of the gene is $\dot s = \beta u - \gamma s$.
 
 **Solution.** For $\beta \ne \gamma$,
+
 $$u(t) = u_0 e^{-\beta t} + \frac{\alpha}{\beta}\bigl(1 - e^{-\beta t}\bigr),$$
+
 $$s(t) = s_0 e^{-\gamma t} + \frac{\alpha}{\gamma}\bigl(1 - e^{-\gamma t}\bigr) + \frac{\alpha - \beta u_0}{\gamma - \beta}\bigl(e^{-\gamma t} - e^{-\beta t}\bigr),$$
+
 and for $\beta = \gamma$,
+
 $$s(t) = s_0 e^{-\gamma t} + \frac{\alpha}{\gamma}\bigl(1 - e^{-\gamma t}\bigr) + (\beta u_0 - \alpha)\, t\, e^{-\gamma t}.$$
+
 The steady state is $u^* = \alpha/\beta$, $s^* = \alpha/\gamma$, so on the steady-state line $u^* = \tilde\gamma\, s^*$ with $\tilde\gamma = \gamma/\beta$; a steady-state regression of $u$ on $s$ identifies only the ratio $\tilde\gamma$.
 
 **Labelling experiments.** If labelled species follow the same equations with transcription rate $\rho\alpha$ ($\rho$ a labelling-efficiency factor):

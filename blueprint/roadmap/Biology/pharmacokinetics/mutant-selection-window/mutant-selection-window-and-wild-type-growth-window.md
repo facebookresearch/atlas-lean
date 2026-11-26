@@ -1,9 +1,13 @@
 # Mutant selection window and wild-type growth window
 
 Let $D \ge 0$ be the drug concentration. The basic reproductive ratio of the wild-type virus follows the Hill dose–response curve
+
 $$R_0(D) = \frac{R_{00}}{1 + (D/\mathrm{IC}_{50})^{m}},$$
+
 with drug-free fitness $R_{00} > 1$, half-inhibitory concentration $\mathrm{IC}_{50} > 0$ and slope $m > 0$. A single-point resistant mutant has
+
 $$R_0'(D) = \frac{R_{00}(1-s)}{1 + \big(D/(\rho\, \mathrm{IC}_{50})\big)^{m(1+\sigma)}},$$
+
 where $0 < s < 1$ is the fitness cost of the mutation without drug, $\rho > 1$ the fold change in $\mathrm{IC}_{50}$ and $\sigma \in (-1, 0]$ the fractional change in slope (many mutations reduce the slope). A strain grows when its $R_0 > 1$, and the strain with the larger $R_0$ outcompetes the other. Define
 
 - the **wild-type growth window** $\mathrm{WGW} = \{D : R_0(D) > 1\}$, where therapy fails without resistance;

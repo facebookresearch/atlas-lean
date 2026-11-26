@@ -3,10 +3,13 @@
 **Model.** A population of $N_0$ drug-tolerant cells evolves as a linear birth–death process with birth rate $b$ and death rate $d$, $b > d \ge 0$, so its expected size is $N_0 e^{(b-d)t}$. At each birth, independently, a daughter acquires a specific resistance mutation with probability $\mu \in (0,1)$.
 
 **Birth count.** The expected number of birth events on $[0, T]$ is
+
 $$B(T) = \int_0^T b\,N_0 e^{(b-d)t}\,dt = \frac{b\,N_0\bigl(e^{(b-d)T} - 1\bigr)}{b-d} \;\approx\; \frac{b\,N_0\,e^{(b-d)T}}{b-d} \quad \text{for } (b-d)T \gg 1.$$
 
 **Acquisition probability.** Treating the birth count as fixed at its mean, the probability that at least one resistance mutation has arisen by time $T$ is
+
 $$R(T) = 1 - (1-\mu)^{B(T)} \;\approx\; \mu\,B(T) \quad \text{when } \mu B(T) \ll 1.$$
+
 This is an upper bound on the probability that a resistant lineage is established, since a new resistant cell's lineage may still go extinct.
 
 ## Expansion

@@ -1,11 +1,15 @@
 # Jacobian, acceleration and curvature of a Gaussian-kernel vector field
 
 **Setting.** Let $f:\mathbb R^k \to \mathbb R^k$ be a vector field written as a finite combination of Gaussian kernels centred at control points $\tilde x_1, \dots, \tilde x_m \in \mathbb R^k$,
+
 $$f(x) = \sum_{j=1}^{m} \Gamma(x, \tilde x_j)\, c_j, \qquad \Gamma(x, \tilde x) = \exp\bigl(-w\,\lVert x - \tilde x\rVert^2\bigr),$$
+
 with bandwidth parameter $w > 0$ and coefficient vectors $c_j \in \mathbb R^k$ (the form produced by kernel regression of velocities in a reproducing kernel Hilbert space).
 
 **Jacobian.** Since $\partial_x \Gamma(x, \tilde x) = -2w\,\Gamma(x, \tilde x)\,(x - \tilde x)^{\top}$,
+
 $$J(x) = \frac{\partial f}{\partial x} = -2w \sum_{j=1}^{m} \Gamma(x, \tilde x_j)\, c_j\, (x - \tilde x_j)^{\top} = -2w\, C^{\top} K D,$$
+
 where $C = [c_1, \dots, c_m]^{\top}$, $K = \operatorname{diag}\bigl(\Gamma(x, \tilde x_1), \dots, \Gamma(x, \tilde x_m)\bigr)$ and $D = [x - \tilde x_1, \dots, x - \tilde x_m]^{\top}$.
 
 **Derived quantities at a point $x$** with velocity $v = f(x) \ne 0$:
@@ -13,7 +17,9 @@ where $C = [c_1, \dots, c_m]^{\top}$, $K = \operatorname{diag}\bigl(\Gamma(x, \t
 - divergence $\nabla \cdot f = \operatorname{tr} J$;
 - acceleration along the streamline through $x$, $a = \frac{d}{dt} f(x(t)) = J v$;
 - curvature vector of that streamline,
+
 $$\kappa = \frac{1}{\lVert v\rVert}\frac{d}{dt}\frac{v}{\lVert v\rVert} = \frac{J v\,(v \cdot v) - v\,(v \cdot J v)}{\lVert v\rVert^4};$$
+
 - in dimension $3$, the curl $\nabla \times f$ from the antisymmetric part of $J$.
 
 All are pointwise functions of $v$ and $J(x)$, hence define new vector or scalar fields on state space. An attracting fixed point has $\operatorname{tr} J < 0$ there, but negative divergence does not imply attraction.

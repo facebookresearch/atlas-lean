@@ -7,6 +7,7 @@ Fix a chromosome in one tumour genome, with its segmented copy-number profile an
 2. **Interleaving.** The breakpoints form an [interleaved cluster](interleaved-breakpoint-clusters.md) rather than a nested one.
 
 3. **Equidistribution of join types.** Let the four orientation classes of a join be duplication-like, deletion-like, head-to-head inversion and tail-to-tail inversion, with observed counts $(n_1, n_2, n_3, n_4)$ summing to $n$. Random rejoining of fragments makes the four classes roughly equally likely, so the call requires consistency with $p_1 = p_2 = p_3 = p_4 = 1/4$, tested by the goodness-of-fit statistic
+
 $$X^2 = \sum_{i=1}^{4} \frac{(n_i - n/4)^2}{n/4} \sim \chi^2_3 \quad \text{under the null of equal proportions.}$$
 
 4. **Spatial randomness of breakpoints.** Conditional on the affected region, the breakpoint positions are consistent with a uniform distribution over that region, tested by the usual one-sample goodness-of-fit statistic for uniformity on an interval.

@@ -1,9 +1,13 @@
 # Cori sliding-window estimator of the instantaneous reproduction number
 
 Let $I_t$ be the incidence of infections (or cases) on day $t$ and let $w = (w_s)_{s \ge 1}$ be the serial-interval distribution, $w_s \ge 0$, $\sum_s w_s = 1$. Define the **total infectiousness** $\Lambda_t = \sum_{s \ge 1} w_s I_{t-s}$. Assume the renewal model
+
 $$I_t \mid I_{t-1}, I_{t-2}, \dots \;\sim\; \mathrm{Poisson}(R_t \Lambda_t),$$
+
 and that $R_t$ is constant, equal to $R$, on the window $W_t = \{t - \tau + 1, \dots, t\}$. With a $\mathrm{Gamma}(a, b)$ prior on $R$ (shape $a$, scale $b$), the posterior of $R$ given the incidence is
+
 $$R \mid I \;\sim\; \mathrm{Gamma}\Bigl(a + \sum_{s \in W_t} I_s,\;\; \Bigl(\tfrac{1}{b} + \sum_{s \in W_t} \Lambda_s\Bigr)^{-1}\Bigr),$$
+
 with posterior mean $\bigl(a + \sum_{W_t} I_s\bigr) / \bigl(1/b + \sum_{W_t} \Lambda_s\bigr)$ and posterior coefficient of variation $\bigl(a + \sum_{W_t} I_s\bigr)^{-1/2}$.
 
 **Variant-specific application.** To compare co-circulating variants, split daily infections by variant before applying the estimator: given $S_i$ sequences on day $i$ with observed variant proportions $\pi_i$, draw $Y_i \sim \mathrm{Mult}(S_i, \pi_i)$ and set $P_i = Y_i / S_i$; given $I_i$ estimated infections, draw $Z_i \sim \mathrm{Mult}(I_i, P_i)$. Each bootstrap replicate of the variant series $Z_{i,v}$ yields an $R_t$ trajectory per variant, and ratios $R_t^{(v)} / R_t^{(v')}$ with bootstrap quantiles measure relative transmissibility.

@@ -1,11 +1,15 @@
 # Biexponential model of sensitive and pre-existing resistant cells
 
 **Model.** At the start of a constant-effect treatment ($t = 0$) a tumour contains sensitive cells of total size $a > 0$ and resistant cells of total size $c \ge 0$. Assume each subpopulation grows deterministically and exponentially and independently of the other, the sensitive cells at net rate $b < 0$ and the resistant cells at net rate $d > 0$. Then the total size is
+
 $$V(t) = a\,e^{bt} + c\,e^{dt}, \qquad t \ge 0,$$
+
 and a treatment against which no resistant cells pre-exist corresponds to $c = 0$, $V(t) = a e^{bt}$.
 
 **Nadir and relapse.** $V$ is strictly convex. If $c\,d < a\,|b|$ (the tumour initially shrinks), $V$ has a unique minimum at
+
 $$t^* = \frac{1}{d-b}\,\ln\!\frac{a\,|b|}{c\,d} > 0,$$
+
 after which it grows and is asymptotic to $c\,e^{dt}$; if $c\,d \ge a\,|b|$, $V$ is increasing from the start. The initial resistant fraction $c/(a+c)$ and the rates $b, d$ are identifiable from a time course of $V$ that contains both the decline and the regrowth.
 
 ## Expansion

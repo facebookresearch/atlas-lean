@@ -1,15 +1,21 @@
 # Mixture-of-experts batch correction
 
 **Model.** Cells $i = 1,\dots,N$ have embeddings $Z_i \in \mathbb R^d$, batch indicators $\phi_i \in \{0,1\}^B$, and soft cluster assignments $R_{ki} \ge 0$ with $\sum_k R_{ki} = 1$. Let $\phi_i^* = (1, \phi_i^\top)^\top$ add an intercept and $\Phi^* = [\phi_1^*,\dots,\phi_N^*]$. Conditional on cluster (expert) $k$,
+
 $$Z_i \mid \{\phi_i^*, \text{cluster } k\} \sim N\bigl(W_k^\top\phi_i^*,\ \sigma_k^2 I\bigr),$$
+
 with a $(B+1) \times d$ coefficient matrix $W_k$ whose first row is a batch-independent intercept and whose remaining rows are batch effects.
 
 **Estimation.** Each expert is fitted by weighted ridge regression with weights $R_{k\cdot}$:
+
 $$W_k = \bigl(\Phi^*\operatorname{diag}(R_{k\cdot})\Phi^{*\top} + \Lambda\bigr)^{-1}\Phi^*\operatorname{diag}(R_{k\cdot})\,Z^\top, \qquad \Lambda = \operatorname{diag}(0, \lambda, \dots, \lambda),\ \lambda > 0.$$
+
 The penalty is needed because the one-hot batch columns sum to the intercept, so $\Phi^*\operatorname{diag}(R_{k\cdot})\Phi^{*\top}$ is singular; leaving the intercept unpenalized shrinks only the batch terms toward zero.
 
 **Correction.** Averaging over clusters, $Z_i = \sum_k R_{ki}\bigl[W_{k[0,\cdot]} + W_{k[1:B,\cdot]}^\top\phi_i\bigr] + \epsilon_i$, and the corrected embedding removes only the batch-dependent part:
+
 $$\hat Z_i = Z_i - \sum_k R_{ki}\,W_{k[1:B,\cdot]}^\top\phi_i.$$
+
 Alternating this correction with maximum-diversity soft clustering on $\hat Z$ until assignments stabilize gives the integrated embedding.
 
 ## Depends on

@@ -6,7 +6,9 @@ Keep the donation game with reputations, with benefit $b$, cost $c$, punishment 
 
 1. If $q > c/b$, then $CD$ is efficient.
 2. If $c/b > q > c/(b + \beta)$, then $CP$ is stable, and it is more efficient than $DD$ if and only if
+
 $$q > \frac{\alpha}{b + \beta} \qquad\text{and}\qquad q > \frac{\alpha + \beta - b + c}{\alpha + \beta + b - c};$$
+
 otherwise $DD$ is more efficient than $CP$. If $b < c$, then $DD$ is always more efficient than $CP$.
 3. If $c/(b + \beta) > q$, then $DD$ is the only evolutionarily stable rule.
 

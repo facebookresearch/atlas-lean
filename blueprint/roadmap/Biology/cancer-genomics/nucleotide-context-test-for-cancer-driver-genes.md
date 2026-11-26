@@ -1,7 +1,9 @@
 # Nucleotide-context test for cancer driver genes
 
 Fix a gene $g$ observed in a cohort of tumors, with $s_g$ synonymous and $n_g$ nonsynonymous somatic mutations at positions $\vec p_g = (p_1, \dots, p_{n_g})$. Assign every position $j$ of the gene a **context-dependent mutability** $\lambda_j > 0$ from a background model of passenger mutagenesis fitted to the cohort. Under the null hypothesis that all mutations in $g$ are passengers, the probability of the observed data factorizes into a regional term and a positional term,
+
 $$P\bigl(n_g, \vec p_g \mid s_g; \vec\lambda_g\bigr) = \underbrace{P(n_g \mid s_g)}_{\text{regional mutation rate}} \cdot \underbrace{P\bigl(\vec p_g \mid n_g; \vec\lambda_g\bigr)}_{\text{nucleotide context}},$$
+
 where $P(n_g \mid s_g)$ calibrates the gene's megabase-scale background rate by its synonymous count, and $P(\vec p_g \mid n_g; \vec\lambda_g)$ is the probability that $n_g$ passenger mutations fall at the observed positions, with positions weighted by their mutabilities, so that a configuration concentrated on low-mutability positions is improbable.
 
 **Test.** Simulate random scenarios in which at least $n_g$ nonsynonymous mutations are placed along $g$ under the null model. The $p$-value of $g$ is the fraction of scenarios that have at least $n_g$ nonsynonymous mutations **and** a joint null probability lower than that of the observed data. A gene is thus significant either because it carries too many mutations for its regional rate, or because its mutations sit at positions of low mutability ("unusual" nucleotide contexts) that passengers rarely hit.

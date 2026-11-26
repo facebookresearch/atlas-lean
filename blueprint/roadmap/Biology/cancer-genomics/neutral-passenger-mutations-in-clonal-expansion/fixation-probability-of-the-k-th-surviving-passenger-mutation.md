@@ -3,11 +3,15 @@
 In the multi-type birth–death model of a clonal expansion (birth rate $b$, death rate $d$, $\delta = d/b \in (0,1)$, a new neutral passenger in one daughter cell with probability $u$ per division, infinitely many alleles), label the passengers whose lineages survive as $1, 2, \dots$ in order of appearance. Approximate the population sizes at which surviving passengers arise by a Poisson process of rate $u$ on $[0, M]$ with $M \to \infty$, so the $k$-th one arises at a size $z$ with the $\mathrm{Gamma}(k, u)$ density $u(zu)^{k-1}e^{-zu}/(k-1)!$.
 
 **Fixation.** The $k$-th surviving passenger reaches frequency one exactly when the lineages of all $z$ other cells die out, which has probability $\delta^z$. Hence
+
 $$\rho_k \approx \int_0^\infty \frac{u(zu)^{k-1}e^{-zu}}{(k-1)!}\,\delta^z\,dz = \left(\frac{u}{u-\log\delta}\right)^{k}.$$
+
 Fixation of passenger $k$ implies fixation of passengers $1,\dots,k-1$.
 
 **Frequency distribution.** Combining the same Gamma law with the single-mutation law $\Pr[x \le \alpha \mid z] = 1-(1-\alpha(1-\delta))^z$, the cell fraction $x_k$ of the $k$-th surviving passenger satisfies, for $0 < \alpha < 1$,
+
 $$\Pr[x_k \le \alpha] \approx 1 - \left(1 - \frac{\log\bigl(1-(1-\delta)\alpha\bigr)}{u}\right)^{-k},$$
+
 so $\rho_k = 1 - \lim_{\alpha\uparrow 1}\Pr[x_k \le \alpha]$, and the median fraction is $\min\bigl\{1, (1 - e^{u(1-2^{1/k})})/(1-\delta)\bigr\}$.
 
 ## Depends on

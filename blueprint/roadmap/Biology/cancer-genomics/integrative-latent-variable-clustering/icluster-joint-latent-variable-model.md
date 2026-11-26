@@ -1,9 +1,13 @@
 # iCluster joint latent-variable model
 
 Let $n$ tumours be profiled on $T$ molecular platforms, with centred data matrices $X_t \in \mathbb R^{p_t \times n}$, $t = 1, \dots, T$ (rows are features, columns are tumours). To find $K$ subtypes, iCluster posits a common latent matrix $Z \in \mathbb R^{(K-1) \times n}$ and platform-specific loading matrices $W_t \in \mathbb R^{p_t \times (K-1)}$ with
+
 $$X_t = W_t Z + E_t, \qquad t = 1, \dots, T,$$
+
 where the columns of $Z$ are independent $\mathcal N(0, I_{K-1})$ and the columns of $E_t$ are independent $\mathcal N(0, \Psi_t)$ with $\Psi_t$ diagonal, independent of $Z$ and across platforms. Stacking $X = (X_1; \dots; X_T)$, $W = (W_1; \dots; W_T)$ and $\Psi = \operatorname{diag}(\Psi_1, \dots, \Psi_T)$ gives a Gaussian factor model whose columns satisfy $x \sim \mathcal N(0, WW^\top + \Psi)$. The parameters are estimated by an EM algorithm (with a lasso penalty on $W$ for sparse feature selection), and the posterior mean of the latent variables,
+
 $$\mathbb E[Z \mid X] = W^\top (WW^\top + \Psi)^{-1} X,$$
+
 is clustered into $K$ groups by $k$-means.
 
 ## Expansion

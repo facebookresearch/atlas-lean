@@ -3,7 +3,9 @@
 In the [negative binomial gamma mixed model](overdispersion-decomposition-in-the-negative-binomial-gamma-mixed-model.md), write the negative binomial as a Poisson–gamma mixture: $y_{ij} \mid \omega_i, \upsilon_{ij} \sim \mathrm{Poisson}(\omega_i \upsilon_{ij} c_{ij})$ with $c_{ij} = \pi_{ij} e^{x_{ij}^T\beta}$, cell-level $\upsilon_{ij} \sim \mathrm{Gamma}(\phi, \phi)$ and subject-level $\omega_i \sim \mathrm{Gamma}(\alpha, \lambda)$, all independent.
 
 **Proposition.** Conditionally on the cell-level effects $\upsilon_i = (\upsilon_{i1}, \dots, \upsilon_{in_i})$, the likelihood of subject $i$'s counts after integrating out $\omega_i$ is
+
 $$\int_0^\infty \prod_{j=1}^{n_i} \frac{e^{-\omega c_{ij}\upsilon_{ij}} (\omega c_{ij}\upsilon_{ij})^{y_{ij}}}{y_{ij}!}\, \frac{\lambda^\alpha \omega^{\alpha - 1} e^{-\lambda\omega}}{\Gamma(\alpha)}\, d\omega = \frac{\lambda^\alpha\, \Gamma(Y_i + \alpha)}{\Gamma(\alpha) \prod_j y_{ij}!} \prod_{j} (c_{ij}\upsilon_{ij})^{y_{ij}}\, \Big(\lambda + \sum_j c_{ij}\upsilon_{ij}\Big)^{-(Y_i + \alpha)},$$
+
 where $Y_i = \sum_j y_{ij}$. Moreover, $\omega_i \mid y_i, \upsilon_i \sim \mathrm{Gamma}\big(\alpha + Y_i,\ \lambda + \sum_j c_{ij}\upsilon_{ij}\big)$. Setting all $\upsilon_{ij} = 1$ gives the closed-form (negative multinomial) likelihood of the Poisson gamma mixed model; the full NBGMM likelihood is the expectation of this expression over the $\upsilon_{ij}$.
 
 ## Depends on
