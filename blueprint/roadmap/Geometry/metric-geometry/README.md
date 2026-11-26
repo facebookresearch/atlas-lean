@@ -19,3 +19,7 @@ Geometry of general metric spaces: curvature bounds via comparison, length space
 - [Microscopic Weighting Iff](microscopic-weighting-iff.md)
 - [Microscopic weighting is not equivalent to finite concentration](microscopic-weighting-iff-refuted.md)
 - [No compact set is congruent to a proper subset of itself](no-compact-set-congruent-to-proper-subse.md)
+- [Geodesic spaces and CAT(0) spaces](geodesic-spaces-and-cat-0-spaces/README.md)
+- [Cocompact CAT(0) spaces are almost geodesically complete](cocompact-cat-0-spaces-are-almost-geodesically-c/README.md)
+- [Products of trees in the complex hyperbolic plane](products-of-trees-in-the-complex-hyperbolic-plan/README.md)
+- [Bilipschitz rectification of Delone sets](bilipschitz-rectification-of-delone-sets/README.md)

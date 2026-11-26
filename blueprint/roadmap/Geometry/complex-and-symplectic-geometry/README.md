@@ -8,3 +8,4 @@ Manifolds with complex, almost complex, symplectic or contact structures, Rieman
 - [Newlander–Nirenberg theorem](newlander-nirenberg-theorem/README.md)
 - [Weinstein conjecture](weinstein-conjecture/README.md)
 - [Radó's theorem](rado-riemann-surface.md)
+- [Picard-type theorems for hyperplanes](picard-type-theorems-for-hyperplanes/README.md)
