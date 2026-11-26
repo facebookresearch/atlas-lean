@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Data.Finset.Powerset
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Data.Nat.Fib.Basic
@@ -240,16 +242,30 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `a(n, i; 
 public noncomputable def catalanCapacityDist (n i : ℕ) : ℤ[X] :=
   capacityDist (wordsEndingIn (catalanWords n) i)
 
+private theorem wordCapacity_eq_zero_iff {n : ℕ} (w : Fin n → ℕ) :
+    wordCapacity w = 0 ↔ ∀ k, (∀ j, j < k → w j ≤ w k) ∨ (∀ j, k < j → w j ≤ w k) := by
+  simp only [wordCapacity, Finset.sum_eq_zero_iff, Finset.mem_univ, true_implies,
+    Nat.sub_eq_zero_iff_le, min_le_iff, Finset.sup_le_iff, Finset.mem_filter, true_and]
+
+private theorem wordsEndingIn_succ {n k : ℕ} (S : Finset (Fin (n + 1) → ℕ)) :
+    wordsEndingIn S k = S.filter fun w => w (Fin.last n) = k := by
+  unfold wordsEndingIn
+  refine Finset.filter_congr fun w _ =>
+    ⟨fun ⟨i, hi, hw⟩ => ?_, fun h => ⟨Fin.last n, by simp, h⟩⟩
+  rwa [show i = Fin.last n from Fin.ext (by simp; omega)] at hw
+
+private theorem capacityDist_eval_zero_eq_card {n : ℕ} (S : Finset (Fin n → ℕ)) :
+    (capacityDist S).eval 0 = ((S.filter fun w => wordCapacity w = 0).card : ℤ) := by
+  rw [capacityDist, eval_finsetSum, Finset.card_filter]
+  push_cast
+  refine Finset.sum_congr rfl fun w _ => ?_
+  simp [zero_pow_eq]
+
 namespace catalanCapacityDist_eval_zero
 
 /-! A word has capacity zero exactly when no letter lies strictly below letters on both of its
 sides. Appending a letter at most the current last letter keeps the capacity-zero words, and
 appending a larger letter leaves only the weakly increasing words. -/
-
-private theorem wordCapacity_eq_zero_iff {n : ℕ} (w : Fin n → ℕ) :
-    wordCapacity w = 0 ↔ ∀ k, (∀ j, j < k → w j ≤ w k) ∨ (∀ j, k < j → w j ≤ w k) := by
-  simp only [wordCapacity, Finset.sum_eq_zero_iff, Finset.mem_univ, true_implies,
-    Nat.sub_eq_zero_iff_le, min_le_iff, Finset.sup_le_iff, Finset.mem_filter, true_and]
 
 private theorem wordCapacity_snoc_eq_zero_iff {n : ℕ} (w : Fin n → ℕ) (a : ℕ) :
     wordCapacity (Fin.snoc (α := fun _ => ℕ) w a) = 0 ↔
@@ -351,13 +367,6 @@ private theorem card_filter_last_eq {n : ℕ} (P : (Fin (n + 2) → ℕ) → Pro
     rw [← hw.2.1]
     exact Fin.snoc_init_self w
 
-private theorem wordsEndingIn_succ {n k : ℕ} (S : Finset (Fin (n + 1) → ℕ)) :
-    wordsEndingIn S k = S.filter fun w => w (Fin.last n) = k := by
-  unfold wordsEndingIn
-  refine Finset.filter_congr fun w _ =>
-    ⟨fun ⟨i, hi, hw⟩ => ?_, fun h => ⟨Fin.last n, by simp, h⟩⟩
-  rwa [show i = Fin.last n from Fin.ext (by simp; omega)] at hw
-
 /-- The weakly increasing Catalan words of length $n + 1$ ending in $k + 1$ are counted by
 $\binom{n}{k}$: they rise by one at exactly $k$ of their $n$ steps. -/
 private theorem card_mono : ∀ n k : ℕ,
@@ -445,14 +454,6 @@ private theorem card_zero_eq : ∀ n i : ℕ, 2 ≤ i → i ≤ n →
     rw [Finset.mem_Icc] at hj
     exact card_zero_eq (n + 1) j (by omega) hj.2
 
-private theorem eval_zero_eq_card (n i : ℕ) :
-    (catalanCapacityDist n i).eval 0 =
-      (((wordsEndingIn (catalanWords n) i).filter fun w => wordCapacity w = 0).card : ℤ) := by
-  rw [catalanCapacityDist, capacityDist, eval_finsetSum, Finset.card_filter]
-  push_cast
-  refine Finset.sum_congr rfl fun w _ => ?_
-  simp [zero_pow_eq]
-
 end catalanCapacityDist_eval_zero
 
 open catalanCapacityDist_eval_zero in
@@ -470,10 +471,404 @@ public theorem catalanCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i
     (catalanCapacityDist n i).eval 0 =
       ∑ m ∈ Finset.range (n - i + 1),
         (((n - m - 2).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) : ℕ) : ℤ) := by
-  rw [eval_zero_eq_card, card_zero_eq n i hi hin, Nat.cast_sum]
+  rw [catalanCapacityDist, capacityDist_eval_zero_eq_card, card_zero_eq n i hi hin, Nat.cast_sum]
 
 end
 
 end CatalanCapacity
+
+section SmoothCapacity
+
+open Polynomial
+
+@[expose] public section
+
+/-- **Smooth words.** For $n \ge 0$, the set $\mathcal{R}_n$ of smooth words of length $n$ consists
+of the words $w = w_1 \cdots w_n$ of positive integers with $w_1 = 1$ (when $n \ge 1$) and
+$|w_{i+1} - w_i| \le 1$ for $1 \le i < n$.
+
+The letters of a smooth word of length $n$ are at most $n$, so $\mathcal{R}_n$ is finite.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
+public def smoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
+  (Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun w =>
+    (∀ i : Fin n, i.val = 0 → w i = 1) ∧
+      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1
+
+/-- **Characterization of smooth words.** For a natural number $n$, let $\mathcal{R}_n$ be the
+set of smooth words of length $n$, defined as the words $w = w_1 \cdots w_n$ with letters in
+$\{1, \dots, n\}$ such that $w_1 = 1$ when $n \ge 1$, and $w_{k+1} \le w_k + 1$ and
+$w_k \le w_{k+1} + 1$ for $1 \le k < n$. A word $w = w_1 \cdots w_n$ of natural numbers belongs
+to $\mathcal{R}_n$ if and only if $w_k \ge 1$ for every $k$, $w_1 = 1$ when $n \ge 1$, and
+$w_{k+1} \le w_k + 1$ and $w_k \le w_{k+1} + 1$ for $1 \le k < n$. In particular, the bound
+$w_k \le n$ on the letters is automatic.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
+public theorem mem_smoothWords_iff {n : ℕ} (w : Fin n → ℕ) :
+    w ∈ smoothWords n ↔ (∀ i, 1 ≤ w i) ∧ (∀ i : Fin n, i.val = 0 → w i = 1) ∧
+      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1 := by
+  simp only [smoothWords, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_Icc]
+  constructor
+  · rintro ⟨hb, h0, hg⟩
+    exact ⟨fun i => (hb i).1, h0, hg⟩
+  · rintro ⟨h1, h0, hg⟩
+    have key : ∀ k (hk : k < n), w ⟨k, hk⟩ ≤ k + 1 := by
+      intro k
+      induction k with
+      | zero => intro hk; rw [h0 ⟨0, hk⟩ rfl]
+      | succ k ih =>
+        intro hk
+        have h₁ := (hg ⟨k, by omega⟩ ⟨k + 1, hk⟩ rfl).1
+        have h₂ := ih (by omega)
+        omega
+    refine ⟨fun i => ⟨h1 i, ?_⟩, h0, hg⟩
+    have := key i.val i.isLt
+    rw [Fin.eta] at this
+    omega
+
+/-- **Capacity distribution of smooth words by last letter.** For $n, i \ge 0$, $r(n, i; q)$ is the
+polynomial $\sum_w q^{\operatorname{cap}(w)} \in \mathbb{Z}[q]$, where $w$ runs over the smooth
+words of length $n$ whose last letter is $i$ and $\operatorname{cap}(w)$ is the capacity of $w$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 3, definition of `r(n, i; q)`. -/
+public noncomputable def smoothCapacityDist (n i : ℕ) : ℤ[X] :=
+  capacityDist (wordsEndingIn (smoothWords n) i)
+
+namespace smoothCapacityDist_eval_zero
+
+-- Encode the word by its non-horizontal steps. `stepCount s j` counts the steps before `j`.
+private def steps {n : ℕ} (w : Fin (n + 1) → ℕ) : Finset (Fin n) :=
+  univ.filter fun k => w k.castSucc ≠ w k.succ
+
+private def stepCount {n : ℕ} (s : Finset (Fin n)) (j : Fin (n + 1)) : ℕ :=
+  (s.filter fun k => k.val < j.val).card
+
+private theorem stepCount_mono {n : ℕ} (s : Finset (Fin n)) : Monotone (stepCount s) := by
+  intro j k hjk
+  apply card_le_card
+  intro x hx
+  rw [mem_filter] at hx ⊢
+  exact ⟨hx.1, hx.2.trans_le (Fin.le_def.mp hjk)⟩
+
+private theorem stepCount_zero {n : ℕ} (s : Finset (Fin n)) : stepCount s 0 = 0 := by
+  simp [stepCount]
+
+private theorem stepCount_last {n : ℕ} (s : Finset (Fin n)) :
+    stepCount s (Fin.last n) = s.card := by
+  unfold stepCount
+  rw [filter_eq_self.mpr fun k _ => k.isLt]
+
+private theorem stepCount_succ {n : ℕ} (s : Finset (Fin n)) (k : Fin n) :
+    stepCount s k.succ = stepCount s k.castSucc + if k ∈ s then 1 else 0 := by
+  unfold stepCount
+  by_cases hk : k ∈ s
+  · have heq : (s.filter fun x => x.val < k.succ.val) =
+        insert k (s.filter fun x => x.val < k.castSucc.val) := by
+      ext x
+      simp only [mem_filter, mem_insert, Fin.val_succ, Fin.val_castSucc]
+      have hle : x.val < k.val + 1 ↔ x.val < k.val ∨ x = k := by
+        rw [Fin.ext_iff]
+        omega
+      rw [hle]
+      constructor
+      · rintro ⟨hx, hxlt | rfl⟩
+        · exact Or.inr ⟨hx, hxlt⟩
+        · exact Or.inl rfl
+      · rintro (rfl | ⟨hx, hxlt⟩)
+        · exact ⟨hk, Or.inr rfl⟩
+        · exact ⟨hx, Or.inl hxlt⟩
+    rw [heq, card_insert_of_notMem (by simp), ite_eq_left hk]
+  · have heq : (s.filter fun x => x.val < k.succ.val) =
+        s.filter fun x => x.val < k.castSucc.val := by
+      refine filter_congr fun x hx => ?_
+      have hne : x.val ≠ k.val := fun h => hk (Fin.ext h ▸ hx)
+      simp only [Fin.val_succ, Fin.val_castSucc]
+      omega
+    rw [heq, ite_eq_right hk, add_zero]
+
+-- From the number of non-horizontal steps so far, either count up from 1 or down to `i`.
+private def wordOfSteps {n : ℕ} (i : ℕ) (s : Finset (Fin n)) (j : Fin (n + 1)) : ℕ :=
+  min (stepCount s j + 1) (i + (s.card - stepCount s j))
+
+private theorem mem_smoothWords_last_filter {n i : ℕ} {w : Fin (n + 1) → ℕ} :
+    w ∈ (wordsEndingIn (smoothWords (n + 1)) i).filter (fun w => wordCapacity w = 0) ↔
+      w ∈ smoothWords (n + 1) ∧ w (Fin.last n) = i ∧ wordCapacity w = 0 := by
+  rw [wordsEndingIn_succ]
+  simp only [mem_filter, and_assoc]
+
+-- A maximum splits a zero-capacity word into a weakly increasing and a weakly decreasing part.
+private theorem from_word {n i : ℕ} {w : Fin (n + 1) → ℕ} (hw : w ∈ smoothWords (n + 1))
+    (hlast : w (Fin.last n) = i) (hz : wordCapacity w = 0) :
+    i - 1 ≤ (steps w).card ∧ (steps w).card % 2 = (i - 1) % 2 ∧ wordOfSteps i (steps w) = w := by
+  have hv := (wordCapacity_eq_zero_iff w).mp hz
+  obtain ⟨p, _, hp⟩ := exists_max_image univ w
+    (univ_nonempty : (univ : Finset (Fin (n + 1))).Nonempty)
+  have hpeak (j : Fin (n + 1)) : w j ≤ w p := hp j (mem_univ j)
+  have hinc (j k : Fin (n + 1)) (hjk : j ≤ k) (hkp : k ≤ p) : w j ≤ w k := by
+    rcases hjk.lt_or_eq with hjk | rfl
+    · rcases hkp.lt_or_eq with hkp | rfl
+      · rcases hv k with h | h
+        · exact h j hjk
+        · exact (hpeak j).trans (h p hkp)
+      · exact hpeak j
+    · exact le_rfl
+  have hdec (j k : Fin (n + 1)) (hpj : p ≤ j) (hjk : j ≤ k) : w k ≤ w j := by
+    rcases hjk.lt_or_eq with hjk | rfl
+    · rcases hpj.lt_or_eq with hpj | rfl
+      · rcases hv j with h | h
+        · exact (hpeak k).trans (h p hpj)
+        · exact h k hjk
+      · exact hpeak k
+    · exact le_rfl
+  obtain ⟨hpositive, hfirst, hsmooth⟩ := (mem_smoothWords_iff w).mp hw
+  have hadj (k : Fin n) := hsmooth k.castSucc k.succ rfl
+  have hstep (k : Fin n) : k ∈ steps w ↔ w k.castSucc ≠ w k.succ := by
+    simp [steps]
+  have hup (j : Fin (n + 1)) (hj : j ≤ p) : w j = stepCount (steps w) j + 1 := by
+    induction j using Fin.induction with
+    | zero => rw [hfirst 0 rfl, stepCount_zero]
+    | succ k ih =>
+      have hle : k.castSucc ≤ k.succ := Fin.le_def.mpr (by simp)
+      have hwle := hinc _ _ hle hj
+      have hi := ih (hle.trans hj)
+      obtain ⟨ha, _⟩ := hadj k
+      have hc := stepCount_succ (steps w) k
+      by_cases h : k ∈ steps w
+      · rw [ite_eq_left h] at hc
+        have := (hstep k).mp h
+        omega
+      · rw [ite_eq_right h] at hc
+        have heq : w k.castSucc = w k.succ := by simpa [hstep] using h
+        omega
+  have hdown (j : Fin (n + 1)) (hj : p ≤ j) :
+      w j + stepCount (steps w) j = w p + stepCount (steps w) p := by
+    induction j using Fin.induction with
+    | zero =>
+      have hp0 : p = 0 := le_antisymm hj (Fin.zero_le p)
+      rw [hp0]
+    | succ k ih =>
+      rcases hj.lt_or_eq with hj | rfl
+      · have hj' : p ≤ k.castSucc := Fin.le_def.mpr (by
+          have := Fin.lt_def.mp hj
+          simpa using this)
+        have hle : k.castSucc ≤ k.succ := Fin.le_def.mpr (by simp)
+        have hwle := hdec _ _ hj' hle
+        have hi := ih hj'
+        obtain ⟨_, ha⟩ := hadj k
+        have hc := stepCount_succ (steps w) k
+        by_cases h : k ∈ steps w
+        · rw [ite_eq_left h] at hc
+          have := (hstep k).mp h
+          omega
+        · rw [ite_eq_right h] at hc
+          have heq : w k.castSucc = w k.succ := by simpa [hstep] using h
+          omega
+      · rfl
+  have htotal := hdown (Fin.last n) (Fin.le_last p)
+  rw [hlast, stepCount_last] at htotal
+  have hpup := hup p le_rfl
+  have hbound (j : Fin (n + 1)) : stepCount (steps w) j ≤ (steps w).card := by
+    simpa only [stepCount_last] using stepCount_mono (steps w) (Fin.le_last j)
+  have hi : 1 ≤ i := hlast ▸ hpositive (Fin.last n)
+  refine ⟨by have := hbound p; omega, by omega, ?_⟩
+  funext j
+  have := hbound j
+  unfold wordOfSteps
+  rcases le_total j p with hj | hj
+  · have hc := stepCount_mono (steps w) hj
+    have hu := hup j hj
+    omega
+  · have hc := stepCount_mono (steps w) hj
+    have hd := hdown j hj
+    omega
+
+private theorem from_steps {n i : ℕ} (s : Finset (Fin n)) (hi : 1 ≤ i)
+    (hle : i - 1 ≤ s.card) (hpar : s.card % 2 = (i - 1) % 2) :
+    wordOfSteps i s ∈ smoothWords (n + 1) ∧ wordOfSteps i s (Fin.last n) = i ∧
+      wordCapacity (wordOfSteps i s) = 0 ∧ steps (wordOfSteps i s) = s := by
+  have hbound (j : Fin (n + 1)) : stepCount s j ≤ s.card := by
+    simpa only [stepCount_last] using stepCount_mono s (Fin.le_last j)
+  have hadj (k : Fin n) : wordOfSteps i s k.succ ≤ wordOfSteps i s k.castSucc + 1 ∧
+      wordOfSteps i s k.castSucc ≤ wordOfSteps i s k.succ + 1 := by
+    unfold wordOfSteps
+    have h := stepCount_succ s k
+    split at h <;> omega
+  refine ⟨(mem_smoothWords_iff _).mpr ⟨?_, ?_, ?_⟩, ?_, ?_, ?_⟩
+  · intro j
+    unfold wordOfSteps
+    omega
+  · intro j hj
+    rw [show j = 0 from Fin.ext hj, wordOfSteps, stepCount_zero]
+    omega
+  · intro j k hjk
+    have hj : j.val < n := by omega
+    have ha := hadj ⟨j.val, hj⟩
+    rwa [show (⟨j.val, hj⟩ : Fin n).castSucc = j from Fin.ext rfl,
+      show (⟨j.val, hj⟩ : Fin n).succ = k from Fin.ext hjk.symm] at ha
+  · rw [wordOfSteps, stepCount_last]
+    omega
+  · rw [wordCapacity_eq_zero_iff]
+    intro j
+    unfold wordOfSteps
+    by_cases h : stepCount s j + 1 ≤ i + (s.card - stepCount s j)
+    · left
+      intro k hk
+      have hc := stepCount_mono s hk.le
+      omega
+    · right
+      intro k hk
+      have hc := stepCount_mono s hk.le
+      omega
+  · apply Finset.ext
+    intro k
+    rw [steps]
+    simp only [mem_filter, mem_univ, true_and]
+    have hc := stepCount_succ s k
+    by_cases hk : k ∈ s
+    · have h₁ := hbound k.castSucc
+      have h₂ := hbound k.succ
+      rw [ite_eq_left hk] at hc
+      rw [iff_true_intro hk, iff_true]
+      -- The two branches meet at an integer step count, by the parity condition.
+      unfold wordOfSteps
+      by_cases hup : stepCount s k.succ + 1 ≤ i + (s.card - stepCount s k.succ)
+      · have hup' : stepCount s k.castSucc + 1 ≤ i + (s.card - stepCount s k.castSucc) := by
+          omega
+        rw [min_eq_left hup, min_eq_left hup']
+        omega
+      · have hdown : i + (s.card - stepCount s k.castSucc) ≤ stepCount s k.castSucc + 1 := by
+          omega
+        rw [min_eq_right hdown, min_eq_right (le_of_not_ge hup)]
+        omega
+    · rw [ite_eq_right hk, add_zero] at hc
+      simp [wordOfSteps, hc, hk]
+
+private def eligibleSteps (n i : ℕ) : Finset (Finset (Fin n)) :=
+  (univ : Finset (Fin n)).powerset.filter fun s => i - 1 ≤ s.card ∧ s.card % 2 = (i - 1) % 2
+
+private theorem card_eq_card_eligibleSteps (n i : ℕ) (hi : 1 ≤ i) :
+    ((wordsEndingIn (smoothWords (n + 1)) i).filter (fun w => wordCapacity w = 0)).card =
+      (eligibleSteps n i).card := by
+  have hmem (s : Finset (Fin n)) : s ∈ eligibleSteps n i ↔
+      i - 1 ≤ s.card ∧ s.card % 2 = (i - 1) % 2 := by
+    simp [eligibleSteps]
+  apply Finset.card_nbij' steps (wordOfSteps i)
+  · intro w hw
+    obtain ⟨hw, hlast, hz⟩ := mem_smoothWords_last_filter.mp hw
+    obtain ⟨hle, hpar, _⟩ := from_word hw hlast hz
+    exact (hmem _).mpr ⟨hle, hpar⟩
+  · intro s hs
+    obtain ⟨hle, hpar⟩ := (hmem _).mp hs
+    obtain ⟨hw, hlast, hz, _⟩ := from_steps s hi hle hpar
+    exact mem_smoothWords_last_filter.mpr ⟨hw, hlast, hz⟩
+  · intro w hw
+    obtain ⟨hw, hlast, hz⟩ := mem_smoothWords_last_filter.mp hw
+    exact (from_word hw hlast hz).2.2
+  · intro s hs
+    obtain ⟨hle, hpar⟩ := (hmem _).mp hs
+    exact (from_steps s hi hle hpar).2.2.2
+
+private theorem card_eligibleSteps (n i : ℕ) :
+    (eligibleSteps n i).card =
+      ∑ j ∈ (Icc (i - 1) n).filter (fun j => j % 2 = (i - 1) % 2), n.choose j := by
+  rw [card_eq_sum_card_fiberwise (f := card)
+    (t := (Icc (i - 1) n).filter (fun j => j % 2 = (i - 1) % 2))]
+  · refine sum_congr rfl fun j hj => ?_
+    have hj' := mem_filter.mp hj
+    have hlow := (mem_Icc.mp hj'.1).1
+    have heq : (eligibleSteps n i).filter (fun s => s.card = j) =
+        (univ : Finset (Fin n)).powersetCard j := by
+      ext s
+      simp only [eligibleSteps, mem_filter, mem_powerset, mem_powersetCard, subset_univ, true_and]
+      constructor
+      · exact And.right
+      · intro hs
+        exact ⟨⟨hs.symm ▸ hlow, hs.symm ▸ hj'.2⟩, hs⟩
+    rw [heq, card_powersetCard, card_univ, Fintype.card_fin]
+  · intro s hs
+    obtain ⟨-, hle, hpar⟩ := mem_filter.mp hs
+    exact mem_filter.mpr ⟨mem_Icc.mpr ⟨hle, by simpa using card_le_card (subset_univ s)⟩, hpar⟩
+
+private theorem sum_choose_parity_tail (m k : ℕ) (hkm : k ≤ m) :
+    ∑ j ∈ (Icc (k + 1) (m + 1)).filter (fun j => j % 2 = (k + 1) % 2), (m + 1).choose j =
+      ∑ j ∈ Icc k m, m.choose j := by
+  let P (j : ℕ) := j % 2 = (k + 1) % 2
+  have hflip (j : ℕ) : P (j + 1) ↔ ¬ P j := by
+    dsimp [P]
+    omega
+  have hpascal :
+      ∑ j ∈ (Icc (k + 1) (m + 1)).filter P, (m + 1).choose j =
+        ∑ j ∈ (Icc (k + 1) (m + 1)).filter P, (m.choose (j - 1) + m.choose j) := by
+    refine sum_congr rfl fun j hj => ?_
+    have hjpos : 0 < j := by have := (mem_Icc.mp (mem_filter.mp hj).1).1; omega
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hjpos.ne'
+    simpa only [Nat.succ_sub_one] using Nat.choose_succ_succ m j
+  have hshift :
+      ∑ j ∈ (Icc (k + 1) (m + 1)).filter P, m.choose (j - 1) =
+        ∑ j ∈ (Icc k m).filter (fun j => ¬ P j), m.choose j := by
+    refine sum_bij (fun j _ => j - 1) ?_ ?_ ?_ (fun _ _ => rfl)
+    · intro j hj
+      simp only [mem_filter, mem_Icc] at hj ⊢
+      have hjpos : j - 1 + 1 = j := by omega
+      refine ⟨⟨by omega, by omega⟩, (hflip (j - 1)).1 ?_⟩
+      simpa only [hjpos] using hj.2
+    · intro j hj i hi heq
+      simp only [mem_filter, mem_Icc] at hj hi
+      omega
+    · intro j hj
+      simp only [mem_filter, mem_Icc] at hj
+      refine ⟨j + 1, ?_, by omega⟩
+      exact mem_filter.mpr ⟨mem_Icc.mpr ⟨by omega, by omega⟩, (hflip _).2 hj.2⟩
+  have hkeep :
+      ∑ j ∈ (Icc (k + 1) (m + 1)).filter P, m.choose j =
+        ∑ j ∈ (Icc k m).filter P, m.choose j := by
+    rw [sum_filter, sum_filter]
+    calc
+      _ = ∑ j ∈ Icc k (m + 1), if P j then m.choose j else 0 := by
+        apply sum_subset
+        · intro j hj
+          simp only [mem_Icc] at hj ⊢
+          omega
+        · intro j hj hj'
+          simp only [mem_Icc] at hj hj'
+          have heq : j = k := by omega
+          subst j
+          rw [ite_eq_right (show ¬ P k by dsimp [P]; omega)]
+      _ = _ := by
+        rw [sum_Icc_succ_top (Nat.le_trans hkm (Nat.le_succ m))]
+        have hz : (if P (m + 1) then m.choose (m + 1) else 0) = 0 := by
+          rw [Nat.choose_eq_zero_of_lt (Nat.lt_succ_self m)]
+          split <;> rfl
+        rw [hz, add_zero]
+  change ∑ j ∈ (Icc (k + 1) (m + 1)).filter P, (m + 1).choose j = _
+  rw [hpascal, sum_add_distrib, hshift, hkeep, sum_filter, sum_filter, ← sum_add_distrib]
+  exact sum_congr rfl fun j _ => by
+    dsimp only [P]
+    by_cases hj : j % 2 = (k + 1) % 2 <;> simp [hj]
+
+end smoothCapacityDist_eval_zero
+
+open smoothCapacityDist_eval_zero in
+/-- **Zero-capacity smooth words with a given last letter.** For $2 \le i \le n$, the number of
+smooth words of length $n$ ending in $i$ with capacity $0$, that is, the value at $q = 0$ of their
+capacity distribution $r(n, i; q)$, equals $\sum_{j=i-2}^{n-2} \binom{n-2}{j}$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 6 (`integers-2025-A5-thm-6`). -/
+public theorem smoothCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i ≤ n) :
+    (smoothCapacityDist n i).eval 0 = ∑ j ∈ Finset.Icc (i - 2) (n - 2), ((n - 2).choose j : ℤ) := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 2 := ⟨n - 2, by omega⟩
+  have hpar := sum_choose_parity_tail m (i - 2) (by omega)
+  rw [show i - 2 + 1 = i - 1 by omega] at hpar
+  rw [smoothCapacityDist, capacityDist_eval_zero_eq_card,
+    card_eq_card_eligibleSteps (m + 1) i (by omega), card_eligibleSteps, hpar, Nat.cast_sum,
+    show m + 2 - 2 = m by omega]
+
+end
+
+end SmoothCapacity
 
 end MetaMathlibExt
