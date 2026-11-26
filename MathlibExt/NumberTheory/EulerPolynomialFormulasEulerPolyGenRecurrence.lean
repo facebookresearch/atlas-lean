@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.EulerPolynomialBinomialAverage
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Polynomial.Basic
@@ -16,10 +15,6 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.NumberTheory.BernoulliPolynomials
-public import Mathlib.RingTheory.PowerSeries.Derivative
-public import Mathlib.RingTheory.PowerSeries.Exp
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Order.Interval.Finset.Nat
 
@@ -222,7 +217,8 @@ and $E_m^{(\alpha)}(x)$ the Euler polynomial of order $\alpha$. For every comple
 $\alpha$ and every integer $n \ge 1$, as polynomials in $x$,
 $E_n^{(\alpha)}(x) = (x - \alpha/2) \, E_{n-1}^{(\alpha)}(x) +
 \frac{\alpha}{2} \sum_{k=0}^{n-2} \binom{n-1}{k} (-1)^{n-k} E_{n-1-k}(0) \, E_k^{(\alpha)}(x)$,
-where the sum is empty when $n = 1$.
+where the sum is empty when $n = 1$. The printed equation (21) of the source has $E_{n-k}(0)$
+in place of $E_{n-1-k}(0)$; the index $n-1-k$ used here is the correct one.
 
 Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
 Bencherif, "Generalizations of Several Explicit Formulas
