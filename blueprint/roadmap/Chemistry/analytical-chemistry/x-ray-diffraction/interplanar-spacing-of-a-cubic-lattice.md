@@ -14,4 +14,10 @@ a level $m$ is occupied exactly when $\gcd(|h|,|k|,|l|)$ divides $m$ in $\mathbb
 
 ## Sources
 
-- MIT OpenCourseWare 3.091, *Introduction to Solid-State Chemistry*, fall 2018, Recitation 14, Miller indices and interplanar spacing, <https://ocw.mit.edu/courses/3-091-introduction-to-solid-state-chemistry-fall-2018/>.
+- MIT OpenCourseWare 3.091, *Introduction to Solid-State Chemistry*, fall 2018, Recitation 14, §2, <https://ocw.mit.edu/courses/3-091-introduction-to-solid-state-chemistry-fall-2018/> (cubic spacing formula).
+
+Bézout's identity gives the occupancy criterion: an integer level is occupied exactly when
+the gcd of the indices divides it. For $(2,0,0)$ this means precisely the even levels.
+The plane $2x=2ma$ is the same as $x=ma$, so level $2m$ for $(2,0,0)$ is level $m$ for
+$(1,0,0)$. Consecutive occupied planes thus correspond to levels $m$ and $m+1$ for
+$(1,0,0)$, and the geometric spacing formula gives distance $a$.
