@@ -102,7 +102,15 @@ def Heap.map {V : Type u} (f : V → V) (Γ : Heap V) : Heap V :=
   List.map (fun b => (f b.1, b.2.map f)) Γ
 
 /-- The heap that binds the `i`-th name of `ps` to the `i`-th right-hand side of `bs`, in which
-the `j`-th name bound by `bs` is replaced by the `j`-th name of `ps`. -/
+the `j`-th name bound by `bs` is replaced by the `j`-th name of `ps`.
+
+Both pairings use `List.zip`, which stops at the end of the shorter list. When `ps` has fewer
+names than `bs` has bindings, only the first `ps.length` bindings are allocated, and a bound name
+that is not among the first `ps.length` bound names is left in place; when `ps` has more names,
+the extra names are ignored. A name that `bs` binds more than once is replaced by the name paired
+with its first occurrence. The `let` rule of `Eval` allocates only with exactly one name per
+binding, the names distinct and fresh and the bound names distinct, so none of this arises
+there. -/
 def Binds.alloc {V : Type u} [DecidableEq V] (ps : List V) (bs : Binds V) : Heap V :=
   (ps.zip bs.exprs).map fun b => (b.1, b.2.subst (bs.vars.zip ps))
 
@@ -111,7 +119,21 @@ def Binds.alloc {V : Type u} [DecidableEq V] (ps : List V) (bs : Binds V) : Heap
 
 This is Launchbury's natural semantics for lazy evaluation in Sestoft's revised form, where new
 heap names are chosen in the `let` rule outside the set `A` of names under evaluation, extended
-here so that the first operand of an addition also avoids the names of the second operand. -/
+here so that the first operand of an addition also avoids the names of the second operand.
+
+The judgement places no condition on its configuration. The source semantics starts from a
+closed expression in the empty heap with `A` empty, and every configuration it then reaches is
+good in Sestoft's sense [Ses97, §2.5, Definition 1, Lemma 1]: among other conditions, no bound
+name of the heap or of the expression is in `A` or bound in the heap. Sestoft shows that such an
+evaluation involves no capture [Ses97, §2.5, Proposition 1]; this is not proved here. From a
+configuration that is not good, the naive substitution of the application rule can capture: in
+the heap that binds `p` to `7` and `q` to `2`, with `A` empty, the configuration
+`((λx. λp. x) p) q` is closed and evaluates to `2`, because the argument `p` is captured under
+`λp`, while with the inner binder renamed to a fresh name it evaluates to `7`.
+
+The source semantics also assumes an inexhaustible supply of fresh names. Over a finite type of
+names the `let` rule can run out of them, and the `let` then has no evaluation, as an allocation
+failure: over `Unit`, where `x` is the only name, `let x = 7 in x` has none. -/
 inductive Eval {V : Type u} [DecidableEq V] :
     Finset V → Heap V → Expr V → Heap V → Expr V → ℕ → Prop
   /-- An abstraction is a value. -/
@@ -431,9 +453,9 @@ private theorem closed_num {V : Type u} [DecidableEq V] {S : Finset V} {Θ : Hea
     (hc : Closed S Θ (.num k)) : Closed S Θ (.num k') := by
   simpa [Closed, Expr.fv] using hc
 
-/-- Closedness is preserved, with respect to any set `S`: if every free name of `Γ` and `e` is
-bound in `Γ` or lies in `S`, then every free name of `Δ` and `w` is bound in `Δ` or lies in
-`S`. -/
+/-- If `Eval A Γ e Δ w n`, closedness is preserved, with respect to any set `S`: if every free
+name of `Γ` and `e` is bound in `Γ` or lies in `S`, then every free name of `Δ` and `w` is bound
+in `Δ` or lies in `S`. -/
 theorem Eval.closed {V : Type u} [DecidableEq V] {A : Finset V} {Γ Δ : Heap V}
     {e w : Expr V} {n : ℕ} (h : Eval A Γ e Δ w n) {S : Finset V} (hc : Closed S Γ e) :
     Closed S Δ w := by

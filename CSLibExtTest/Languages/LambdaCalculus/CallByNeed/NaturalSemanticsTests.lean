@@ -13,9 +13,9 @@ public import CSLibExt.Languages.LambdaCalculus.CallByNeed.NaturalSemantics
 /-!
 # Tests for the call-by-need natural semantics
 
-Names are natural numbers. Each positive test gives one evaluation from the empty heap and then
-uses `Eval.unique_up_to_renaming` to show that every evaluation has the same value and the same
-number of additions.
+Names are natural numbers. Each test of sharing, of Launchbury's examples and of mutual
+recursion gives one evaluation from the empty heap and then uses `Eval.unique_up_to_renaming` to
+show that every evaluation has the same value and the same number of additions.
 
 * Sharing: `let u = 3 + 2 in u + u` performs 2 additions, and its final heap binds one new name
   to `5`, while `(3 + 2) + (3 + 2)` performs 3, so the shared `3 + 2` is computed once.
@@ -26,6 +26,10 @@ number of additions.
   an abstraction without additions.
 * Negative controls: the black hole `let x = x in x`, an unbound variable, a numeral applied to a
   variable and an abstraction added to a numeral have no evaluation.
+* Capture boundary: in a heap binding `p` to `7` and `q` to `2`, the closed configuration
+  `((λx. λp. x) p) q`, whose inner binder is also bound in the heap, evaluates to `2` on every
+  evaluation, because naive substitution captures the argument `p`; with the inner binder renamed
+  to a fresh name it evaluates to `7`.
 -/
 
 namespace Cslib.Languages.LambdaCalculus.CallByNeedTests
@@ -209,5 +213,32 @@ theorem lamAdd_stuck (Δ : Heap ℕ) (w : Expr ℕ) (n : ℕ) :
   intro h
   cases h with
   | add h _ => cases h
+
+/-! ### Capture boundary -/
+
+/-- Capture outside the good configurations of the source semantics. In the heap binding `p` to
+`7` and `q` to `2`, with `x`, `p` and `q` named `0`, `1` and `2`, the configuration
+`((λx. λp. x) p) q` is closed, but its inner binder `p` is also bound in the heap. Naive
+substitution captures the argument `p` under `λp`, so every evaluation returns `2`, the value of
+`q`; with the inner binder renamed to the fresh name `3`, the program returns `7`, the value of
+`p`. -/
+theorem capture_boundary :
+    Eval ∅ [(1, .num 7), (2, .num 2)] (.app (.app (.lam 0 (.lam 1 (.var 0))) 1) 2)
+        [(2, .num 2), (1, .num 7)] (.num 2) 0 ∧
+      (∀ Δ w n, Eval ∅ [(1, .num 7), (2, .num 2)]
+        (.app (.app (.lam 0 (.lam 1 (.var 0))) 1) 2) Δ w n → w = .num 2) ∧
+      Eval ∅ [(1, .num 7), (2, .num 2)] (.app (.app (.lam 0 (.lam 3 (.var 0))) 1) 2)
+        [(1, .num 7), (2, .num 2)] (.num 7) 0 := by
+  have h₁ : Eval ∅ [(1, .num 7), (2, .num 2)] (.app (.app (.lam 0 (.lam 1 (.var 0))) 1) 2)
+      [(2, .num 2), (1, .num 7)] (.num 2) 0 := by
+    have h : Eval ∅ [(1, .num 7), (2, .num 2)] (.app (.app (.lam 0 (.lam 1 (.var 0))) 1) 2)
+        _ _ _ := .app (.app .lam .lam) (.var rfl .num)
+    exact h
+  refine ⟨h₁, fun Δ w n h => ?_, ?_⟩
+  · obtain ⟨-, π, -, -, hw⟩ := h₁.unique_up_to_renaming h (by unfold Closed; decide)
+    exact hw
+  · have h : Eval ∅ [(1, .num 7), (2, .num 2)] (.app (.app (.lam 0 (.lam 3 (.var 0))) 1) 2)
+        _ _ _ := .app (.app .lam .lam) (.var rfl .num)
+    exact h
 
 end Cslib.Languages.LambdaCalculus.CallByNeedTests

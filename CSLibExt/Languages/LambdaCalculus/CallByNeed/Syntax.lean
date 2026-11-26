@@ -30,12 +30,21 @@ The syntax is that of Launchbury [Lau93, §3.1], with the numerals and addition 
 [Lau93, §4]; values are as in [Lau93, §3.2]. Names are elements of any type `V` with decidable
 equality, and terms are named, not locally nameless. The normalization of [Lau93, §3.1] is not
 formalized: arguments are variables by construction, and bound variables need not be distinct.
+The source semantics assumes an inexhaustible supply of fresh names. Over a finite type of names
+the `let` rule of the semantics can run out of them, and the `let` then has no evaluation, as an
+allocation failure: over `Unit`, where `x` is the only name, `let x = 7 in x` has none.
 
 Substitution is the naive simultaneous substitution of Sestoft [Ses97, §2.1]: a list of pairs
 `(x, p)` replaces each free occurrence of a name `x` by the name `p`, a binder removes its own
-names from the list, and binders are never renamed. The semantics only substitutes names that
-cannot be captured. `Expr.map` applies a function to every occurrence of a name, binders
-included; for a permutation it is a renaming.
+names from the list, and binders are never renamed, so a substituted name that lands under a
+binder of the same name is captured. Sestoft calls a configuration good for a set of names to
+avoid when, among other conditions, none of its bound names is to be avoided or bound in the heap
+[Ses97, §2.5, Definition 1]; a closed expression in the empty heap, with no names to avoid, is
+good, and its evaluation involves no capture [Ses97, §2.5, Proposition 1]. The judgement `Eval`
+of the semantics places no such condition on its configurations: from a configuration in which a
+bound name of the expression is also bound in the heap, its substitutions can capture. Absence
+of capture is not proved here. `Expr.map` applies a function to every occurrence of a name,
+binders included; for a permutation it is a renaming.
 
 ## References
 
