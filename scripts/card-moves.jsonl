@@ -897,6 +897,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing", "article_id": "af_16ad33e0fae74766f1934edc"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
+{"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
 {"folder": "Physics/not-yet-classified/part-02/correlation-domains", "to": "Physics/thermodynamics-and-heat-transfer/range-guarded-empirical-heat-transfer-correlatio", "article_id": "af_e76d69bb66ac952084eed799"}
 {"page": "Physics/not-yet-classified/part-02/correlation-domains/applies", "to": "Physics/thermodynamics-and-heat-transfer/range-guarded-empirical-heat-transfer-correlatio/applies", "article_id": "af_4e62c0845aa876f46e30d490"}
 {"page": "Physics/not-yet-classified/part-02/correlation-domains/nusselt-correlation", "to": "Physics/thermodynamics-and-heat-transfer/range-guarded-empirical-heat-transfer-correlatio/nusselt-correlation", "article_id": "af_4e9562c75ff911f9b82791d0"}
