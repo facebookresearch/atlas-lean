@@ -61,11 +61,6 @@ def InInterior (z : Fin 3 → ℝ) : Prop := (∀ i, 0 < z i) ∧ ∑ i, z i = 1
 coordinate vanishes. For `S₃` this is the heteroclinic cycle `e₁ → e₂ → e₃ → e₁`. -/
 def InBoundary (z : Fin 3 → ℝ) : Prop := (∀ i, 0 ≤ z i) ∧ ∑ i, z i = 1 ∧ ∃ i, z i = 0
 
-/-- `z` is an **interior rest point**: `z` is in the interior of `S₃` and `(A z)ᵢ = zᵀ A z` for
-every `i`. -/
-def IsInteriorRestPoint (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  InInterior z ∧ ∀ i, (A *ᵥ z) i = z ⬝ᵥ (A *ᵥ z)
-
 /-- `z` is **Lyapunov stable** for solutions starting in the simplex: for every `ε > 0` there is
 `δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex and `‖x(0) - z‖ < δ` has
 `‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
@@ -94,7 +89,7 @@ of `S₃`.
 Source: Hofbauer and Sigmund (2003), Theorem 2 and the text before it. -/
 public theorem_wanted existsUnique_interiorRestPoint (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
     (hb : ∀ i, 0 < b i) :
-    ∃! z, IsInteriorRestPoint (rpsMatrix a b) z
+    ∃! z, InInterior z ∧ Replicator.IsRestPoint (fun y => rpsMatrix a b *ᵥ y) z
 
 /-- **Zeeman's equivalences** (Hofbauer and Sigmund 2003, Theorem 2): let `aᵢ > 0`, `bᵢ > 0`, and
 let `z` be the interior rest point of the rock–paper–scissors replicator equation with matrix
@@ -103,7 +98,8 @@ stable; (c) `det A > 0`; (d) `zᵀ A z > 0`.
 
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted zeeman_tfae (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i)
-    (z : Fin 3 → ℝ) (hz : IsInteriorRestPoint (rpsMatrix a b) z) :
+    (z : Fin 3 → ℝ) (hz : InInterior z)
+    (hrest : Replicator.IsRestPoint (fun y => rpsMatrix a b *ᵥ y) z) :
     (IsAsymptoticallyStable (rpsMatrix a b) z ↔ IsGloballyStable (rpsMatrix a b) z) ∧
       (IsGloballyStable (rpsMatrix a b) z ↔ 0 < (rpsMatrix a b).det) ∧
       (0 < (rpsMatrix a b).det ↔ 0 < z ⬝ᵥ (rpsMatrix a b *ᵥ z))
@@ -127,9 +123,9 @@ every point of the boundary is a cluster point of `x(t)` as `t → ∞`.
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted omegaLimit_heteroclinic_of_det_neg (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
     (hb : ∀ i, 0 < b i) (hdet : (rpsMatrix a b).det < 0) (z : Fin 3 → ℝ)
-    (hz : IsInteriorRestPoint (rpsMatrix a b) z) (x : ℝ → Fin 3 → ℝ)
-    (hx : Replicator.IsSolution (fun y => rpsMatrix a b *ᵥ y) x) (hx₀ : InInterior (x 0))
-    (hne : x 0 ≠ z) :
+    (hz : InInterior z) (hrest : Replicator.IsRestPoint (fun y => rpsMatrix a b *ᵥ y) z)
+    (x : ℝ → Fin 3 → ℝ) (hx : Replicator.IsSolution (fun y => rpsMatrix a b *ᵥ y) x)
+    (hx₀ : InInterior (x 0)) (hne : x 0 ≠ z) :
     Tendsto (fun t => ∏ i, x t i) atTop (𝓝 0) ∧
       ∀ q, InBoundary q → MapClusterPt q atTop x
 
