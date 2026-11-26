@@ -11,7 +11,7 @@ Every simple polygon with $n$ vertices, given as its cyclic list of vertices, ca
 This page becomes ready once:
 
 - Source check: B. Chazelle, "Triangulating a simple polygon in linear time", *Discrete & Computational Geometry* (1991), has not been opened; its statement and its model of computation must be checked before this page is stated as a task.
-- Proof prerequisites: the visibility map (trapezoidal decomposition) of a simple polygon, polygon cutting and conformal submaps, which a good expansion states as separate pages.
+- Proof prerequisites: the visibility map (trapezoidal decomposition) of a simple polygon, polygon cutting and conformal submaps, and the planar separator theorem, which a good expansion states as separate pages.
 
 ## Sources
 
