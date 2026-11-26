@@ -13596,6 +13596,7 @@
   "MathlibExt/NumberTheory/SquareSplittingConvolution": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Square-splitting convolution"},
   "MathlibExt/NumberTheory/SquareSplittingConvolution/DivisorProperties": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Square-splitting convolution"},
   "MathlibExt/NumberTheory/SquareSplittingConvolution/MoebiusInversion": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Square-splitting convolution"},
+  "MathlibExt/NumberTheory/SquareSplittingConvolutionSquareSplitTotientFormula": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Square-splitting convolution"},
   "MathlibExt/NumberTheory/SquarefreeOneModEight": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Generalized fruit equation"},
   "MathlibExt/NumberTheory/SquaresModTwoPow": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/SternBrocotSumTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of two squares via the Stern–Brocot tree"},
