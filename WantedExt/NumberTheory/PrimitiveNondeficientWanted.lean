@@ -32,7 +32,10 @@ both in `ℚ`.
 The paper's Theorem (label `maintheoremboundwithkR`: some
 `p_i^{a_i+1} < 2kR`) is already proved in MathlibExt as
 `MetaMathlibExt.primitive_nondeficient_prime_power_bound` and is
-not restated; this module states the paper's remaining numbered
+not restated. The statement
+`MathlibExt.NumberTheory.PrimitiveNondeficientWanted.max_primeFactor_lt_sqrt_radical_or_exists_pow_lt`
+is proved in `MathlibExt.NumberTheory.PrimitiveNondeficient` and is
+not restated either; this module states the paper's remaining numbered
 lemmas and propositions.
 -/
 module
@@ -47,6 +50,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRadical
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTwoPowMulPrime
 public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
+public import MathlibExt.NumberTheory.PrimitiveNondeficient
 
 set_option autoImplicit false
 
@@ -104,28 +108,5 @@ theorem_wanted exists_pow_factorization_add_one_lt_max
           (2 * ((n.primeFactors.card : ℚ) + 2 + (p₁ : ℚ)) / α)
           ((n.primeFactors.card : ℚ) *
             ((n.primeFactors.card : ℚ) + 1))
-
-/-- **Dichotomy for odd primitive non-deficient numbers.** Let $n$ be an odd primitive
-non-deficient number, that is, a positive integer with $\sigma(n) \ge 2n$ all of whose proper
-divisors $m$ satisfy $\sigma(m) < 2m$, where $\sigma$ is the sum of divisors. Let $k$ be the
-number of distinct prime factors of $n$, let $p_1$ and $p_k$ be its least and greatest prime
-factors, and let $R$ be the product of the distinct primes dividing $n$. Then either
-$p_k < \sqrt{R}$, or some prime $p$ dividing $n$ satisfies $p^{a+1} < (k + 2 + p_1)(p_k - 1)$,
-where $a$ is the exponent of $p$ in $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Proposition
-(label `dichotomywithpk`). -/
-theorem_wanted max_primeFactor_lt_sqrt_radical_or_exists_pow_lt
-    (n p₁ pK : ℕ) (hno : Odd n)
-    (hn : IsPrimitiveNondeficient n)
-    (hp₁ : p₁ ∈ n.primeFactors)
-    (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q)
-    (hpK : pK ∈ n.primeFactors)
-    (hmax : ∀ q ∈ n.primeFactors, q ≤ pK) :
-    (pK : ℝ) < Real.sqrt ((∏ q ∈ n.primeFactors, q : ℕ) : ℝ) ∨
-      ∃ p ∈ n.primeFactors,
-        p ^ (n.factorization p + 1) <
-          (n.primeFactors.card + 2 + p₁) * (pK - 1)
 
 end MathlibExt.NumberTheory.PrimitiveNondeficientWanted
