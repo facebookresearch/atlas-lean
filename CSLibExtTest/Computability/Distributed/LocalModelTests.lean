@@ -18,8 +18,11 @@ public import Mathlib.Data.Fintype.EquivFin
 # Tests for the LOCAL model
 
 * Identifier assignments exist for every finite set of nodes when `c ≥ 1`; with `c = 1` the
-  identifiers are a bijection onto `{1, …, n}`.
+  identifiers are a bijection onto `{1, …, n}`; with `c = 0` two nodes have none.
 * A `0`-round algorithm sees only its own identifier and input.
+* The run is stopped from outside after `t n` rounds: a node that counts rounds outputs `n` for
+  `t = id`, even on a graph with no edges.
+* Sending every neighbour the same message (`LocalAlgorithm.broadcast`) gives the same outputs.
 * An example algorithm: in one round every node learns its degree, the number of messages it
   receives (`degreeAlg_output`); `decide` evaluates it on the path `0 - 1 - 2`.
 * Flooding the largest identifier: on the path `0 - 1 - 2 - 3`, after two rounds node `0` holds
@@ -69,6 +72,14 @@ example (V : Type) [Fintype V] (ids : IdAssignment V 1) :
   obtain ⟨v, hv⟩ := hbij.2 ⟨m, by simpa using hm⟩
   exact ⟨v, trivial, congrArg Subtype.val hv⟩
 
+/-- With `c = 0` the identifiers lie in `{1}`, so two nodes have no identifier assignment. -/
+example : IsEmpty (IdAssignment (Fin 2) 0) := by
+  refine ⟨fun ids => ?_⟩
+  have h0 := ids.coe_mem_Icc 0
+  have h1 := ids.coe_mem_Icc 1
+  simp only [Fintype.card_fin, pow_zero, Set.mem_Icc] at h0 h1
+  exact absurd (ids.injective (by omega : ids 0 = ids 1)) (by decide)
+
 /-! ### Zero rounds -/
 
 /-- A node's output after `0` rounds is a function of its own identifier and input. -/
@@ -96,6 +107,42 @@ theorem degreeAlg_output {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableRe
 
 /-- On the path `0 - 1 - 2` the degrees are `1, 2, 1`. -/
 example : (List.finRange 3).map (degreeAlg.output (fun _ => 1) (pathGraph 3) (idFin 3)
+    fun _ => ()) = [1, 2, 1] := by
+  decide
+
+/-! ### Counting rounds -/
+
+/-- Every node counts the rounds. -/
+def counterAlg : LocalAlgorithm Unit ℕ Unit ℕ where
+  init _ _ := 0
+  send _ _ := ()
+  update s _ := s + 1
+  out s := s
+
+/-- Run for `n` rounds on a network of `n` nodes, `counterAlg` outputs `n` at every node, on any
+graph: the round count `t n` is visible to the output. -/
+theorem counterAlg_output {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {c : ℕ} (ids : IdAssignment V c) (x : V → Unit) (v : V) :
+    counterAlg.output id G ids x v = Fintype.card V := by
+  have h : ∀ k (u : V), counterAlg.stateAfter G ids x k u = k := by
+    intro k
+    induction k with
+    | zero => intro u; rfl
+    | succ k ih =>
+        intro u
+        rw [LocalAlgorithm.stateAfter_succ, ih u]
+        rfl
+  exact h _ v
+
+/-- On the edgeless graph on three nodes, the round counter outputs `3`. -/
+example : counterAlg.output id (⊥ : SimpleGraph (Fin 3)) (idFin 3) (fun _ => ()) 0 = 3 := by
+  decide
+
+/-! ### Sending every neighbour the same message -/
+
+/-- The broadcast form of `degreeAlg` also outputs the degrees `1, 2, 1` on the path
+`0 - 1 - 2`. -/
+example : (List.finRange 3).map (degreeAlg.broadcast.output (fun _ => 1) (pathGraph 3) (idFin 3)
     fun _ => ()) = [1, 2, 1] := by
   decide
 

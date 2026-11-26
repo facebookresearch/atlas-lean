@@ -1,6 +1,6 @@
 # The LOCAL model
 
-In the LOCAL model of distributed computing, the network is a simple graph $G$ on a finite set $V$ of $n$ nodes, each of them a processor. The nodes carry unique identifiers from a range polynomial in $n$: an injective map $\mathrm{id} : V \to \{1, \dots, n^c\}$, for a constant $c \in \mathbb{N}$. Each node $v$ also has an input $x(v)$ from a set $I$.
+In the LOCAL model of distributed computing, the network is a simple graph $G$ on a finite set $V$ of $n$ nodes, each of them a processor. The nodes carry unique identifiers from a range polynomial in $n$: an injective map $\mathrm{id} : V \to \{1, \dots, n^c\}$, for a constant $c \in \mathbb{N}$. For $c = 0$ the range is $\{1\}$, so only networks of at most one node have identifiers. Each node $v$ also has an input $x(v)$ from a set $I$.
 
 An [algorithm](local-algorithm.md) $A$, the same at every node, has a set $S$ of states, a set $M$ of messages and a set $O$ of outputs, and consists of maps $\mathrm{init} : \mathbb{N} \times I \to S$, $\mathrm{send} : S \times \mathbb{N} \to M$, $\mathrm{update} : S \times \mathcal{M}(M) \to S$ and $\mathrm{out} : S \to O$, where $\mathcal{M}(M)$ is the set of finite multisets of elements of $M$. These sets and maps are arbitrary, so messages have unbounded size and the local computation is unrestricted.
 
@@ -8,7 +8,11 @@ Computation proceeds in synchronous rounds. The node $v$ starts in the state $\m
 
 A $t$-round algorithm, for a function $t : \mathbb{N} \to \mathbb{N}$, is one in which every node outputs after $t(n)$ rounds: the output of the node $v$ is $\mathrm{out}(s)$, where $s$ is the state of $v$ after $t(n)$ rounds. Its complexity is $t$ as a function of $n$.
 
-**Relation to the sources.** Linial's processors know their own identifiers at the start, pass messages of unrestricted size to each neighbour in every synchronous time unit, and compute without restriction; his identifiers are positive integers, in most cases a bijection onto $\{1, \dots, n\}$, which is the case $c = 1$ here. The range $\{1, \dots, n^c\}$ is Suomela's, who fixes a constant $c > 1$. Problems without inputs are the case of a one-point set $I$. Messages are addressed by the identifier of their recipient and received as a multiset, without the senders; a node can include its own identifier in its messages.
+**Relation to the sources.** Linial's processors know their own identifiers at time zero, pass messages of unrestricted size to each neighbour in every synchronous time unit, and compute without restriction; his identifiers are positive integers, in most cases a bijection onto $\{1, \dots, n\}$, which is the case $c = 1$ here. The range $\{1, \dots, n^c\}$ is Suomela's, who fixes a constant $c > 1$. Problems without inputs are the case of a one-point set $I$.
+
+A node starts knowing only its identifier and its input. Unlike in Suomela's model, it does not know its degree, and there are no port numbers. The maps of $A$ do not take $n$, but $A$ is a parameter, so a statement may choose the algorithm depending on $n$ or on $G$; Linial's lower bounds hold even if every processor knows $G$ in advance. The run is stopped from outside after $t(n)$ rounds, so the output can depend on $t(n)$: a node that counts rounds outputs $t(n)$, which is $n$ when $t$ is the identity, even on a graph with no edges.
+
+Messages are addressed by the identifier of their recipient. This is no stronger than sending every neighbour the same message: a node in state $s$ can send the map $j \mapsto \mathrm{send}(s, j)$, and the recipient, keeping its identifier in its state, applies it to its own identifier, with the same outputs. Messages are received as a multiset, without the senders; a node can include its own identifier in its messages.
 
 ## Related topics
 
@@ -17,4 +21,4 @@ A $t$-round algorithm, for a function $t : \mathbb{N} \to \mathbb{N}$, is one in
 ## Sources
 
 - N. Linial, "Locality in distributed graph algorithms", *SIAM Journal on Computing* 21(1):193–201, 1992: §1.
-- J. Suomela, *Distributed Algorithms*, Aalto University, 2021, <https://jukkasuomela.fi/da/>: §5.1.
+- J. Suomela, *Distributed Algorithms*, Aalto University, 2021, <https://jukkasuomela.fi/da/>: §4.3.1 (a node's state machine depends on its degree and has one message per port) and §5.1 (identifiers).

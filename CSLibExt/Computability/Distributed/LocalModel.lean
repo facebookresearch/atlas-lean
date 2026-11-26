@@ -24,7 +24,8 @@ are arbitrary functions, so message size and local computation are unrestricted.
 
 * **Network.** A simple graph `G` on a finite type `V` of `n = Fintype.card V` nodes.
 * **Identifiers.** An `IdAssignment V c` gives the nodes distinct identifiers in
-  `{1, …, n ^ c}`, a range polynomial in `n` (Suomela, §5.1).
+  `{1, …, n ^ c}`, a range polynomial in `n` (Suomela, §5.1). For `c = 0` the range is `{1}`, so
+  only networks of at most one node have an identifier assignment.
 * **Inputs.** Each node also has an input from a type `I`; a one-point type models problems
   without inputs.
 * **Algorithms.** A `LocalAlgorithm I S M O` runs at every node: a node with identifier `i` and
@@ -32,9 +33,20 @@ are arbitrary functions, so message size and local computation are unrestricted.
   identifier `j`, and moves to `update s m`, where `m` is the multiset of messages its neighbours
   sent it; a node in state `s` outputs `out s`. The multiset does not record the senders; a node
   can include its identifier in its messages.
+* **Knowledge.** A node starts knowing only its identifier and its input; unlike in Suomela's
+  port-numbering model, it does not know its degree, and there are no ports. The maps of a
+  `LocalAlgorithm` do not take `n`, but the algorithm is a parameter, so a statement may choose it
+  depending on `n` or on the graph (Linial's lower bounds hold even if every processor knows the
+  graph in advance).
+* **Addressing.** Addressing a message by its recipient's identifier is no stronger than sending
+  every neighbour the same message: `LocalAlgorithm.broadcast` sends the map `j ↦ send s j` and
+  lets the recipient apply it to its own identifier, with the same outputs
+  (`LocalAlgorithm.broadcast_output`).
 * **Execution.** `LocalAlgorithm.stateAfter` gives the state of every node after `k` rounds.
 * **Rounds.** For `t : ℕ → ℕ`, the algorithm run as a `t`-round algorithm outputs at each node
-  after `t n` rounds (`LocalAlgorithm.output`); its complexity is `t`.
+  after `t n` rounds (`LocalAlgorithm.output`); its complexity is `t`. The run is stopped from
+  outside, so the output can depend on `t n`: a node that counts rounds outputs `t n`, which is
+  `n` for `t = id`, even on a graph with no edges.
 
 ## Main definitions
 
@@ -47,6 +59,8 @@ are arbitrary functions, so message size and local computation are unrestricted.
 
 ## Main results
 
+* `Cslib.Distributed.LocalModel.LocalAlgorithm.broadcast_output`: sending every neighbour the same
+  message loses nothing.
 * `Cslib.Distributed.LocalModel.LocalAlgorithm.stateAfter_congr_ball`: locality. After `k`
   rounds the state of a node `v` is determined by the identifiers and inputs of the nodes at
   distance at most `k` from `v` and by the neighbours of the nodes at distance less than `k`.
@@ -58,8 +72,8 @@ are arbitrary functions, so message size and local computation are unrestricted.
 * N. Linial, *Locality in distributed graph algorithms*, SIAM Journal on Computing 21(1), 1992,
   pp. 193–201: §1 (the model) and §2 (what a node can know after `t` rounds).
 * J. Suomela, *Distributed Algorithms*, Aalto University, 2021, <https://jukkasuomela.fi/da/>:
-  §4.3 (algorithms as state machines and their execution) and §5.1 (identifiers in
-  `{1, …, n ^ c}`).
+  §4.3.1–4.3.2 (algorithms as state machines and their execution, adapted here without degrees,
+  ports or stopping states) and §5.1 (identifiers in `{1, …, n ^ c}`).
 -/
 
 @[expose] public section
@@ -67,7 +81,8 @@ are arbitrary functions, so message size and local computation are unrestricted.
 namespace Cslib.Distributed.LocalModel
 
 /- Identifiers from a polynomial range: an assignment of identifiers to the `n` nodes of a finite
-type `V`, with exponent `c ∈ ℕ`, is an injective map from `V` to `{1, …, n ^ c}`. -/
+type `V`, with exponent `c ∈ ℕ`, is an injective map from `V` to `{1, …, n ^ c}`. For `c = 0` the
+range is `{1}`, so only types with at most one element have an identifier assignment. -/
 @[nolint docBlame]
 structure IdAssignment (V : Type*) [Fintype V] (c : ℕ) where
   /-- The identifier of each node. -/
@@ -159,6 +174,40 @@ theorem stateAfter_succ (A : LocalAlgorithm I S M O) (G : SimpleGraph V) [Decida
     A.stateAfter G ids x (k + 1) v =
       A.update (A.stateAfter G ids x k v)
         ((G.neighborFinset v).val.map fun u => A.send (A.stateAfter G ids x k u) (ids v)) :=
+  rfl
+
+/- Sending every neighbour the same message loses nothing: `A.broadcast` keeps its identifier in its
+state, sends every neighbour the same message, the map `j ↦ A.send s j`, and applies each map it
+receives to its own identifier. -/
+@[nolint docBlame]
+def broadcast (A : LocalAlgorithm I S M O) : LocalAlgorithm I (ℕ × S) (ℕ → M) O where
+  init i x := (i, A.init i x)
+  send p _ := A.send p.2
+  update p m := (p.1, A.update p.2 (m.map fun f => f p.1))
+  out p := A.out p.2
+
+/- `A.broadcast` sends the same message to every neighbour. -/
+theorem broadcast_send (A : LocalAlgorithm I S M O) (p : ℕ × S) (j j' : ℕ) :
+    A.broadcast.send p j = A.broadcast.send p j' :=
+  rfl
+
+/- After `k` rounds, every node of `A.broadcast` holds its identifier and its state in `A`. -/
+theorem broadcast_stateAfter (A : LocalAlgorithm I S M O) (G : SimpleGraph V) [DecidableRel G.Adj]
+    (ids : V → ℕ) (x : V → I) (k : ℕ) (v : V) :
+    A.broadcast.stateAfter G ids x k v = (ids v, A.stateAfter G ids x k v) := by
+  induction k generalizing v with
+  | zero => rfl
+  | succ k ih =>
+      rw [stateAfter_succ, stateAfter_succ]
+      simp only [ih]
+      simp only [broadcast, Multiset.map_map, Function.comp_def]
+
+/- `A.broadcast` has the same outputs as `A`. -/
+theorem broadcast_output (A : LocalAlgorithm I S M O) (t : ℕ → ℕ) (G : SimpleGraph V)
+    [DecidableRel G.Adj] {c : ℕ} (ids : IdAssignment V c) (x : V → I) (v : V) :
+    A.broadcast.output t G ids x v = A.output t G ids x v := by
+  unfold output
+  rw [broadcast_stateAfter]
   rfl
 
 omit [Fintype V] in
