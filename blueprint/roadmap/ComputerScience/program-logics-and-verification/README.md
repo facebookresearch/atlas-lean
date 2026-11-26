@@ -8,6 +8,8 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Safe backward rules for heap IMP](safe-backward-rules-for-heap-imp/README.md)
 - [Separation logic](separation-logic/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)
+- [Hoare logic for typed traced diagrams](hoare-logic-for-typed-traced-diagrams/README.md)
+- [Verification conditions for annotated traced diagrams](verification-conditions-for-annotated-traced-dia/README.md)
 - [Interactive device state machines](interactive-device-state-machines.md)
 - [Decidable interface correctness criterion](decidable-interface-correctness-criterion.md)
 - [Mode confusion as mental-model divergence](mode-confusion-as-mental-model-divergence.md)
