@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
-public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruences
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesTwo
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 
 /-!
@@ -40,15 +40,6 @@ open PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Congruences modulo 3 and 6 for 2-regular tripartitions.** Let $T_2(m)$ be the number of
-$2$-regular tripartitions of $m$. For every natural number $n$, $3 \mid T_2(3n + 1)$ and
-$6 \mid T_2(3n + 2)$.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86, Corollary 1. -/
-public theorem_wanted regularTripartitionCount_two_mod_three_six (n : ℕ) :
-    3 ∣ regularTripartitionCount 2 (3 * n + 1) ∧ 6 ∣ regularTripartitionCount 2 (3 * n + 2)
 
 /-- **A congruence modulo 6 for 3-regular tripartitions.** Let $T_3(m)$ be the number of
 $3$-regular tripartitions of $m$. For every natural number $n$, $6 \mid T_3(6n + 4)$.
