@@ -1,14 +1,10 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
 /-
-Portions of this file are adapted from:
-
+Adapted from
 `Definitions/Def_AutomorphicForm_ArchDerivCasimir.lean`,
 `Definitions/Def_AutomorphicForm_ArchDerivCasimirComplex.lean`,
 `Definitions/Def_AutomorphicForm_ArchType.lean`,
@@ -19,16 +15,16 @@ and
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source is machine-generated proof code built around a proof-extraction
+framework; the statements and proofs are reused here with that machinery
+removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 The upstream NOTICE also credits:
 Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
-The source is machine-generated proof code built around a proof-extraction
-framework; the statements and proofs are reused here with that machinery
-removed and the names restated in Mathlib style.
 -/
 
 module
@@ -39,7 +35,6 @@ public import MathlibExt.NumberTheory.AutomorphicForm.ConstantTerm
 public import MathlibExt.NumberTheory.AutomorphicForm.FnTwist
 
 import Mathlib.Tactic.Group
-import MathlibExt.NumberTheory.NumberField.AdelicLevel
 
 @[expose] public section
 
@@ -214,117 +209,6 @@ theorem archFlowAtComplex_add {w : InfinitePlace K} (hw : w.IsComplex) (d : Arch
 
 section PlaceComponents
 
-private def archEvalOf (w : InfinitePlace K) : InfiniteAdeleRing K →+* w.Completion where
-  toFun a := a w
-  map_one' := rfl
-  map_mul' _ _ := rfl
-  map_zero' := rfl
-  map_add' _ _ := rfl
-
-private theorem archEvalOf_apply (w : InfinitePlace K) (a : InfiniteAdeleRing K) :
-    archEvalOf K w a = a w :=
-  rfl
-
-private def archComp (w : InfinitePlace K) :
-    GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
-  Matrix.GeneralLinearGroup.map (archEvalOf K w)
-
-private theorem archMatrixUpdate_apply {w v : InfinitePlace K}
-    (m : Matrix (Fin 2) (Fin 2) w.Completion) (i j : Fin 2) :
-    archMatrixUpdate K w m i j v
-      = Function.update
-          (1 : Π v : InfinitePlace K, Matrix (Fin 2) (Fin 2) v.Completion) w m v i j := by
-  have h := (archMatrixPiEquiv K).apply_symm_apply
-    (Function.update (1 : Π v : InfinitePlace K, Matrix (Fin 2) (Fin 2) v.Completion) w m)
-  have hv := congrFun h v
-  exact congrFun (congrFun hv i) j
-
-private theorem archComp_archGLIncl_self (w : InfinitePlace K) (k : GL (Fin 2) w.Completion) :
-    archComp K w (archGLIncl K w k) = k := by
-  refine Matrix.GeneralLinearGroup.ext fun i j => ?_
-  show (archEvalOf K w) (((archGLIncl K w k : GL (Fin 2) (InfiniteAdeleRing K)) :
-        Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j)
-      = (k : Matrix (Fin 2) (Fin 2) w.Completion) i j
-  rw [archEvalOf_apply, show ((archGLIncl K w k : GL (Fin 2) (InfiniteAdeleRing K)) :
-        Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j
-      = archMatrixUpdate K w (k : Matrix (Fin 2) (Fin 2) w.Completion) i j from rfl,
-    archMatrixUpdate_apply]
-  simp
-
-private theorem archComp_archGLIncl_of_ne {v w : InfinitePlace K} (hvw : v ≠ w)
-    (k : GL (Fin 2) w.Completion) :
-    archComp K v (archGLIncl K w k) = 1 := by
-  refine Matrix.GeneralLinearGroup.ext fun i j => ?_
-  show (archEvalOf K v) (((archGLIncl K w k : GL (Fin 2) (InfiniteAdeleRing K)) :
-        Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j)
-      = (1 : Matrix (Fin 2) (Fin 2) v.Completion) i j
-  rw [archEvalOf_apply, show ((archGLIncl K w k : GL (Fin 2) (InfiniteAdeleRing K)) :
-        Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j
-      = archMatrixUpdate K w (k : Matrix (Fin 2) (Fin 2) w.Completion) i j from rfl,
-    archMatrixUpdate_apply]
-  simp [Function.update_of_ne hvw]
-
-private theorem glArch_adelicArchGLIncl (k : GL (Fin 2) (InfiniteAdeleRing K)) :
-    AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K k) = k := by
-  ext i j; rfl
-
-private theorem glFin_adelicArchGLIncl (k : GL (Fin 2) (InfiniteAdeleRing K)) :
-    AdelicLevel.glFin (𝓞 K) K (adelicArchGLIncl K k) = 1 := by
-  ext i j; rfl
-
-private theorem eq_of_glArch_eq_of_glFin_eq {x y : AdelicGL2 (𝓞 K) K}
-    (h₁ : AdelicLevel.glArch (𝓞 K) K x = AdelicLevel.glArch (𝓞 K) K y)
-    (h₂ : AdelicLevel.glFin (𝓞 K) K x = AdelicLevel.glFin (𝓞 K) K y) : x = y := by
-  apply Units.ext
-  apply Matrix.ext
-  intro i j
-  have h₁' := congrArg
-    (fun m : GL (Fin 2) (InfiniteAdeleRing K) =>
-      (m : Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j) h₁
-  have h₂' := congrArg
-    (fun m : GL (Fin 2) (FiniteAdeleRing (𝓞 K) K) =>
-      (m : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 K) K)) i j) h₂
-  exact Prod.ext h₁' h₂'
-
-private theorem eq_of_forall_archComp_eq {g h : GL (Fin 2) (InfiniteAdeleRing K)}
-    (hc : ∀ w : InfinitePlace K, archComp K w g = archComp K w h) : g = h := by
-  apply Units.ext
-  ext i j
-  funext w
-  have := congrArg
-    (fun m : GL (Fin 2) w.Completion => (m : Matrix (Fin 2) (Fin 2) w.Completion) i j) (hc w)
-  exact this
-
-private theorem placed_comm_of_ne {w w' : InfinitePlace K} (hww : w ≠ w')
-    (a : GL (Fin 2) w.Completion) (b : GL (Fin 2) w'.Completion) :
-    adelicArchGLInclAt K w a * adelicArchGLInclAt K w' b
-      = adelicArchGLInclAt K w' b * adelicArchGLInclAt K w a := by
-  refine eq_of_glArch_eq_of_glFin_eq K ?_ ?_
-  · rw [map_mul, map_mul]
-    refine eq_of_forall_archComp_eq K fun v => ?_
-    rw [map_mul, map_mul]
-    show archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w a))) *
-        archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w' b))) =
-      archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w' b))) *
-        archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w a)))
-    rw [glArch_adelicArchGLIncl K (archGLIncl K w a),
-      glArch_adelicArchGLIncl K (archGLIncl K w' b)]
-    by_cases hv : v = w
-    · subst hv
-      rw [archComp_archGLIncl_of_ne K hww, mul_one, one_mul]
-    · rw [archComp_archGLIncl_of_ne K hv, one_mul, mul_one]
-  · rw [map_mul, map_mul,
-      show AdelicLevel.glFin (𝓞 K) K (adelicArchGLInclAt K w a) = 1 from
-        glFin_adelicArchGLIncl K (archGLIncl K w a),
-      show AdelicLevel.glFin (𝓞 K) K (adelicArchGLInclAt K w' b) = 1 from
-        glFin_adelicArchGLIncl K (archGLIncl K w' b)]
-
-private theorem conj_eq_self_of_ne {w w' : InfinitePlace K} (hww : w ≠ w')
-    (f : GL (Fin 2) w'.Completion) (a : GL (Fin 2) w.Completion) :
-    (adelicArchGLInclAt K w' f)⁻¹ * adelicArchGLInclAt K w a * adelicArchGLInclAt K w' f
-      = adelicArchGLInclAt K w a := by
-  rw [mul_assoc, placed_comm_of_ne K hww a f, ← mul_assoc, inv_mul_cancel, one_mul]
-
 private theorem conjR {w : InfinitePlace K} (hw : w.IsReal) (f a : GL (Fin 2) ℝ) :
     (archRealGLAt K hw f)⁻¹ * archRealGLAt K hw a * archRealGLAt K hw f
       = archRealGLAt K hw (f⁻¹ * a * f) := by
@@ -445,13 +329,13 @@ public theorem flowChart_add_single_eq_mul_conj
         · rw [if_neg hww, inv_one, one_mul, mul_one]
           show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
             = adelicArchGLInclAt K w _
-          exact conj_eq_self_of_ne K (Ne.symm hww) _ _
+          exact (adelicArchGLInclAt_commute K hww _ _).inv_mul_cancel
       · simp only [inv_one, one_mul, mul_one]
         have hww : w ≠ w' := fun h => by
           subst h; exact (NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr hw') hw
         show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
           = adelicArchGLInclAt K w _
-        exact conj_eq_self_of_ne K hww _ _
+        exact (adelicArchGLInclAt_commute K (Ne.symm hww) _ _).inv_mul_cancel
     have hL := conj_list_prod (archRealGLAt K hw)
       (((List.ofFn fun i : Fin L₀.length => (flow (L₀.get i) (t i), μ i))).drop (j.val + 1))
       (fun p hp a => by
@@ -483,7 +367,7 @@ public theorem flowChart_add_single_eq_mul_conj
           subst h; exact (NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr hw) hw'
         show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
           = adelicArchGLInclAt K w _
-        exact conj_eq_self_of_ne K hww _ _
+        exact (adelicArchGLInclAt_commute K (Ne.symm hww) _ _).inv_mul_cancel
       · simp only
         by_cases hww : w' = w
         · subst hww
@@ -492,7 +376,7 @@ public theorem flowChart_add_single_eq_mul_conj
         · rw [if_neg hww, inv_one, one_mul, mul_one]
           show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
             = adelicArchGLInclAt K w _
-          exact conj_eq_self_of_ne K (Ne.symm hww) _ _
+          exact (adelicArchGLInclAt_commute K hww _ _).inv_mul_cancel
     have hL := conj_list_prod (archComplexGLAt K hw)
       (((List.ofFn fun i : Fin L₀.length => (flow (L₀.get i) (t i), μ i))).drop (j.val + 1))
       (fun p hp a => by
