@@ -208,6 +208,14 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("          fetch-depth: 2\n          sparse-checkout: /scripts/ci_scope.py\n", job)
         self.assertEqual(job.count("        if: github.event_name == 'pull_request'\n"), 2)
 
+    def test_build_needs_changes_which_only_pull_requests_run(self):
+        text = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        build = text.split("\n  build:\n", 1)[1].split("\n    steps:\n", 1)[0] + "\n"
+        changes = text.split("\n  changes:\n", 1)[1].split("\n    steps:\n", 1)[0] + "\n"
+        self.assertIn("    needs: changes\n    if: ${{ !cancelled() && (github.event_name != 'pull_request' || "
+                      "needs.changes.outputs.build != 'false') }}\n", build)
+        self.assertIn("    if: github.event_name == 'pull_request'\n", changes)
+
     def test_repository_integrity_skips_the_tool_tests_on_pull_requests_only(self):
         job = "\n".join(job_lines("preflight")) + "\n"
         self.assertIn("          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}\n", job)
@@ -241,7 +249,9 @@ class WorkflowTests(unittest.TestCase):
             joined = block.replace("\\\n", " ")
             return [f"{m[1]} {m[2]}" if m[1] else m[4] for m in re.finditer(r"(?m)^" + suite.pattern, joined)]
         self.assertEqual(suites(gated), TOOL_TESTS)
-        self.assertEqual(suites(rest), ALWAYS)
+        # These must run outside the block; a suite in neither list runs too, until it is shown to read only
+        # scripts, workflows and the pins and is moved into the block.
+        self.assertEqual([name for name in ALWAYS if name not in suites(rest)], [])
         # The skipped block holds those suites and nothing else: another command there would be skipped unseen.
         lines = [line for line in gated.replace("\\\n", " ").splitlines() if line.strip()]
         self.assertEqual([line for line in lines if not suite.fullmatch(line)], [])

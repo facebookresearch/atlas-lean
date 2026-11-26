@@ -806,9 +806,11 @@ check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected 
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
-# These suites read more than scripts, workflows and the pins, so they always run: the required checks
+# These suites always run: they read more than scripts, workflows and the pins (the required checks
 # and their list in CONTRIBUTING.md, the build's cache inputs, the task list's graph data, and the
-# queue preflight, which follows this repository's own files.
+# queue preflight, which follows this repository's own files), or have not been shown to read only
+# those.
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_codex_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_scope.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_build_trims.py -v

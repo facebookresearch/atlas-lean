@@ -85,3 +85,49 @@ example : substitutionAutomaton letterMap false [1, 0] = some true ∧
   decide
 
 end MetaMathlibExt.morphIterate_getElem_eq_substitutionAutomaton_tail
+
+namespace MetaMathlibExt.letterAdmissibleSequence_eq_of_weightedLength_eq.Tests
+
+open morphIterate_getElem_eq_substitutionAutomaton_tail
+
+private def onePair : ℕ → List Bool × Bool
+  | 0 => ([true], false)
+  | _ + 1 => ([], false)
+
+private def onePair' : ℕ → List Bool × Bool := fun _ => ([true], false)
+
+-- At depth zero the prefix is nonempty and the two tails need not agree.
+example : onePair 0 = onePair' 0 ∧ onePair 1 ≠ onePair' 1 := by
+  have hs : IsLetterAdmissibleSequence letterMap false onePair 0 :=
+    ⟨isAdmissibleSequence_zero _ _, ⟨[], rfl⟩⟩
+  have hs' : IsLetterAdmissibleSequence letterMap false onePair' 0 :=
+    ⟨isAdmissibleSequence_zero _ _, ⟨[], rfl⟩⟩
+  have hw : (∑ j ∈ Finset.range (0 + 1), (morphIterate letterMap j (onePair j).1).length) = 1 ∧
+      (∑ j ∈ Finset.range (0 + 1), (morphIterate letterMap j (onePair' j).1).length) = 1 := by
+    decide
+  exact ⟨letterAdmissibleSequence_eq_of_weightedLength_eq letterMap letterMap_isSubstitution 0
+    false onePair onePair' hs hs' (hw.1.trans hw.2.symm) 0 (by decide), by decide⟩
+
+private def pathWithTail (i : ℕ) : List Bool × Bool :=
+  if i ≤ 1 then path i else ([], false)
+
+-- At depth one the top word has length one but contributes two to the weight.
+-- The top letter is false; the lower letter is true. The second tail is different.
+example : path 0 = pathWithTail 0 ∧ path 1 = pathWithTail 1 ∧ path 2 ≠ pathWithTail 2 := by
+  have hs : IsLetterAdmissibleSequence letterMap false path 1 := by
+    refine ⟨fun i hi => ?_, ⟨[], rfl⟩⟩
+    obtain rfl : i = 0 := by omega
+    exact ⟨[false], rfl⟩
+  have hs' : IsLetterAdmissibleSequence letterMap false pathWithTail 1 := by
+    refine ⟨fun i hi => ?_, ⟨[], rfl⟩⟩
+    obtain rfl : i = 0 := by omega
+    exact ⟨[false], rfl⟩
+  have hw : (∑ j ∈ Finset.range (1 + 1), (morphIterate letterMap j (path j).1).length) = 2 ∧
+      (∑ j ∈ Finset.range (1 + 1), (morphIterate letterMap j (pathWithTail j).1).length) = 2 := by
+    decide
+  have h := letterAdmissibleSequence_eq_of_weightedLength_eq (η := letterMap)
+    (hη := letterMap_isSubstitution) (k := 1) (b := false) (s := path) (s' := pathWithTail)
+    (hs := hs) (hs' := hs') (hsum := hw.1.trans hw.2.symm)
+  exact ⟨h 0 (by decide), h 1 (by decide), by decide⟩
+
+end MetaMathlibExt.letterAdmissibleSequence_eq_of_weightedLength_eq.Tests
