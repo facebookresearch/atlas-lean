@@ -17,6 +17,7 @@ Places, adeles and ideles, ray class groups, Artin map, Hilbert class fields, Ne
 - [Cohomology of the idèle class group](cohomology-of-idele-classes/README.md)
 - [Global reciprocity law](reciprocity-law/README.md)
 - [Existence theorem](existence-theorem/README.md)
+- [Ring class fields](ring-class-fields/README.md)
 - [Hasse norm theorem for cyclic extensions](hasse-norm-theorem.md)
 - [Chebotarev density theorem](chebotarev-density-theorem.md)
 - [Adelic points of reductive groups: the norm-one subgroup and maximal compact subgroups](adelic-points-of-reductive-groups.md)

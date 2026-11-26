@@ -14,3 +14,4 @@
 - [The ideal of a form is nonzero](form-ideal-ne-zero.md)
 - [Ideal class of a binary quadratic form](class-of-form.md)
 - [Gauss-reduced binary quadratic forms](is-gauss-reduced.md)
+- [Form classes and proper ideal classes of an imaginary quadratic order](form-classes-proper-ideal-classes.md)

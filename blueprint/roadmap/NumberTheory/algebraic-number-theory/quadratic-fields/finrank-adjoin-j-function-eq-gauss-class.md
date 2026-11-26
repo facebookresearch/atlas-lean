@@ -20,6 +20,12 @@ definite forms contains exactly one reduced form, and these form classes corresp
 ideal classes of the order of discriminant $\Delta$ (D. A. Cox, *Primes of the Form
 $x^2 + ny^2$*, 2nd ed., Wiley (2013), Theorems 2.8 and 7.7).
 
+## Informally uses
+
+- [Form classes and proper ideal classes of an imaginary quadratic order](../../quadratic-forms-sums-of-squares/binary-quaternary-forms/binary-quadratic-forms/form-classes-proper-ideal-classes.md): after replacing $(a, b, c)$ by $(-a, -b, -c)$ if needed so that $a > 0$, the lattice $\mathbb{Z} + \mathbb{Z}\tau$ is homothetic to the proper ideal $\mathbb{Z}a + \mathbb{Z}\frac{-b + \sqrt{\Delta}}{2}$ of the order $\mathcal{O}$ of discriminant $\Delta$, so $j(\tau)$ is the $j$-invariant of a proper $\mathcal{O}$-ideal, and the class number $h(\mathcal{O})$ is the Gauss class number $h(\Delta)$
+- [The class equation of an imaginary quadratic order](../adeles-class-field-theory/ring-class-fields/class-equation.md), whose irreducibility over $\mathbb{Q}$ gives $[\mathbb{Q}(j(\tau)) : \mathbb{Q}] = h(\mathcal{O})$
+
 ## Sources
 
 - Guy Fowler, *Some uniform effective results on André–Oort for sums of powers in $\mathbb{C}^n$*, Math. Proc. Cambridge Philos. Soc. 180 (2026), 607–641, [§2·1, pp. 612–613](https://doi.org/10.1017/S0305004125101825): the discriminant of a singular modulus is defined on p. 612, and the degree formula is stated on p. 613.
+- David A. Cox, *Primes of the form* $x^2 + ny^2$*: Fermat, class field theory, and complex multiplication*, 3rd ed., AMS Chelsea Publishing, Providence, RI, 2022, Theorem 11.1 and Proposition 13.2, as cited by Fowler (§2·1, p. 613) for the integrality and irreducibility of the class equation behind the degree formula.
