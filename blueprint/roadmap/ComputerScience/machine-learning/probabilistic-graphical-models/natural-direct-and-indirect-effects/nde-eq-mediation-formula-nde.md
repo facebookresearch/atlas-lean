@@ -1,11 +1,12 @@
 # Identification of the NDE by the mediation formula
 
 **The mediation formula** (P01, Theorem 2 with eq. (17); P14, Corollary 1, eq. (14a)). Let the
-treatment `X` (node `t`) and the mediator `Z` (node `m`) be distinct nodes, `Y` an outcome node read
-through a real function `g`, `W` a set of nodes and `x`, `x*` two treatment values. Assume, for `x'`
-in `{x, x*}` and every mediator value `z`, the four no-confounding conditions, independences under
-the noise law of the counterfactuals `Y_{x'z}` (the outcome under `do(X = x', Z = z)`) and `Z_{x*}`
-(the mediator under `do(X = x*)`) and the factual `X`, `Z`, `W`:
+treatment `X` (node `t`) and the mediator `Z` (node `m`) be distinct nodes of a finite recursive
+structural causal model with values in a finite set and independent noise laws, `Y` an outcome node
+read through a real function `g`, `W` a set of nodes and `x`, `x*` two treatment values. Assume, for
+`x'` in `{x, x*}` and every mediator value `z`, the four no-confounding conditions, independences
+under the noise law of the counterfactuals `Y_{x'z}` (the outcome under `do(X = x', Z = z)`) and
+`Z_{x*}` (the mediator under `do(X = x*)`) and the factual `X`, `Z`, `W`:
 
 - (H1) `Y_{x'z} ⫫ X | W`, no treatment-outcome confounding;
 - (H2) `Y_{x'z} ⫫ Z | X, W`, no mediator-outcome confounding;

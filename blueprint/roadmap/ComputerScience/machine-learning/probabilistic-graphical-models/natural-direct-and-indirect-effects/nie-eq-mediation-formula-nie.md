@@ -1,11 +1,12 @@
 # Identification of the NIE by the mediation formula
 
 **The mediation formula for the NIE** (P01, Theorem 4, eqs. (25)-(26); P14, Corollary 1, eq. (14b)).
-Let the treatment `X` (node `t`) and the mediator `Z` (node `m`) be distinct nodes, `Y` an outcome
-node read through a real function `g`, `W` a set of nodes and `x`, `x*` two treatment values.
-Assume, as independences under the noise law of the counterfactuals `Y_{x*z}` (the outcome under
-`do(X = x*, Z = z)`) and `Z_{x'}` (the mediator under `do(X = x')`) and the factual `X`, `Z`, `W`,
-for every mediator value `z` and for `x'` in `{x, x*}`:
+Let the treatment `X` (node `t`) and the mediator `Z` (node `m`) be distinct nodes of a finite
+recursive structural causal model with values in a finite set and independent noise laws, `Y` an
+outcome node read through a real function `g`, `W` a set of nodes and `x`, `x*` two treatment
+values. Assume, as independences under the noise law of the counterfactuals `Y_{x*z}` (the outcome
+under `do(X = x*, Z = z)`) and `Z_{x'}` (the mediator under `do(X = x')`) and the factual `X`, `Z`,
+`W`, for every mediator value `z` and for `x'` in `{x, x*}`:
 
 - `Y_{x*z} ⫫ X | W`, H1 at `x*` only;
 - `Y_{x*z} ⫫ Z | X, W`, H2 at `x*` only;

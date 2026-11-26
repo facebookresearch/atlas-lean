@@ -1,8 +1,8 @@
 # The mediation formula for the NIE
 
-**The mediation formula for the NIE**, a function of a real weight `P` on full assignments alone.
-For a treatment node `X`, a mediator node `Z`, an outcome node `Y` read through a real function `g`,
-a set `W` of nodes and values `x`, `x*`, it is
+**The mediation formula for the NIE**, a function of a real weight `P` on full assignments alone,
+the nodes taking values in a finite set `α`. For a treatment node `X`, a mediator node `Z`, an
+outcome node `Y` read through a real function `g`, a set `W` of nodes and values `x`, `x*`, it is
 
 `∑_{w,z} m(x*, z, w) [P(x, z, w) / P(x, w) - P(x*, z, w) / P(x*, w)] P(w)`,
 

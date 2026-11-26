@@ -1,7 +1,8 @@
 # Experimental identification of the NDE
 
 **P14, Theorem 1, eq. (13)** (P01, Theorem 1, experimental identification). Let `X` (node `t`) and
-`Z` (node `m`) be nodes, `Y` an outcome node read through a real function `g`, `x`, `x*` two
+`Z` (node `m`) be nodes of a finite recursive structural causal model with values in a finite set
+and independent noise laws, `Y` an outcome node read through a real function `g`, `x`, `x*` two
 treatment values, and `W` a set of nodes inside a set `S` of nodes that contains the parents of each
 of its members and contains neither `t` nor `m`: no member of `W` is a descendant of the treatment
 or of the mediator, a premise stronger than P14's A-1, which excludes only descendants of the

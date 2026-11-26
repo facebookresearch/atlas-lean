@@ -1,25 +1,29 @@
 # Natural direct and indirect effects
 
-For a treatment `X`, a mediator `Z` and an outcome `Y` of a finite recursive structural causal
-model with independent noise laws, the natural direct effect
+For a treatment `X`, a mediator `Z` and an outcome `Y` of a finite recursive structural causal model
+with independent noise laws, the natural direct effect
 `NDE(x, x*; Y) = E(Y_{x, Z_{x*}}) - E(Y_{x*})` changes the treatment from `x*` to `x` while the
 mediator keeps the value it would take under `x*`, and the natural indirect effect
-`NIE(x, x*; Y) = E(Y_{x*, Z_x}) - E(Y_{x*})` changes only the value of the mediator. With covariates
-`W` at their factual values, the mediation formula identifies both from the observational law
-under no-confounding conditions and positivity. For the NDE they are, for `x'` in `{x, x*}` and
-every mediator value `z`: (H1) `Y_{x'z} ⫫ X | W`, no treatment-outcome confounding; (H2)
-`Y_{x'z} ⫫ Z | X, W`, no mediator-outcome confounding; (H3) `Z_{x*} ⫫ X | W`, no
-treatment-mediator confounding; and (H4) `Y_{x'z} ⫫ Z_{x*} | W`, the cross-world condition,
-where `Y_{x'z}` is the outcome under `do(X = x', Z = z)` and `Z_{x*}` the mediator under
-`do(X = x*)`. The NIE needs them at other values, and positivity in another direction, as its
-pages state. Positivity is stated in neither source, and the formula fails without it. When a
-mediator-outcome confounder is affected by the treatment, the NDE is not identified even from all
-interventional laws, as the kite counterexample shows.
+`NIE(x, x*; Y) = E(Y_{x*, Z_x}) - E(Y_{x*})` changes only the value of the mediator. In the
+identification results the nodes take values in a finite set, so that every sum over assignments is
+finite; the noise may take infinitely many values, but its laws have finite support. With covariates
+`W` at their factual values, the mediation formula identifies both from the observational law under
+no-confounding conditions and positivity. For the NDE they are, for `x'` in `{x, x*}` and every
+mediator value `z`: (H1) `Y_{x'z} ⫫ X | W`, no treatment-outcome confounding; (H2)
+`Y_{x'z} ⫫ Z | X, W`, no mediator-outcome confounding; (H3) `Z_{x*} ⫫ X | W`, no treatment-mediator
+confounding; and (H4) `Y_{x'z} ⫫ Z_{x*} | W`, the cross-world condition, where `Y_{x'z}` is the
+outcome under `do(X = x', Z = z)` and `Z_{x*}` the mediator under `do(X = x*)`. The NIE needs them
+at other values, and positivity in another direction, as its pages state. Positivity is stated in
+neither source, and the formula fails without it. When a mediator-outcome confounder is affected by
+the treatment, the NDE is not identified even from all interventional laws, as the kite
+counterexample shows.
 
 The pages cite P01, J. Pearl, *Direct and indirect effects*, UAI 2001, 411-420 (technical report
 R-273, <https://ftp.cs.ucla.edu/pub/stat_ser/R273-U.pdf>), and P14, J. Pearl, *Interpretation and
 identification of causal mediation*, Psychological Methods, 2014 (technical report R-389,
-<https://ftp.cs.ucla.edu/pub/stat_ser/r389.pdf>).
+<https://ftp.cs.ucla.edu/pub/stat_ser/r389.pdf>). They also cite J. Pearl, *Causality*, Cambridge
+University Press, 2000 (Pearl 2000), and C. Avin, I. Shpitser and J. Pearl, *Identifiability of
+path-specific effects*, IJCAI 2005 (Avin, Shpitser and Pearl 2005).
 
 ## Nested counterfactuals and natural effects
 
