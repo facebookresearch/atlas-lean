@@ -12195,6 +12195,7 @@
   "MathlibExt/GroupTheory/FiniteStateConjugacyProblem": {"to": "GroupTheory/geometric-group-theory/branch-and-thompson-groups", "title": "Finite-state automorphisms of rooted trees"},
   "MathlibExt/GroupTheory/FiniteStateFreeProduct": {"to": "GroupTheory/geometric-group-theory/branch-and-thompson-groups", "title": "Finite-state automorphisms of rooted trees"},
   "MathlibExt/GroupTheory/FiniteStateIrreducibleGenerators": {"to": "GroupTheory/geometric-group-theory/branch-and-thompson-groups", "title": "Finite-state automorphisms of rooted trees"},
+  "MathlibExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14": {"to": "GroupTheory/geometric-group-theory/branch-and-thompson-groups", "title": "Amenability and growth of branch groups"},
   "MathlibExt/GroupTheory/FiniteStateTreeAutomorphism": {"to": "GroupTheory/geometric-group-theory/branch-and-thompson-groups", "title": "Finite-state automorphisms of rooted trees"},
   "MathlibExt/GroupTheory/FreeCentralExtensionResiduallyNilpotentKourovka16Problem65": {"to": "GroupTheory/commutators-and-engel-conditions", "title": "Residually nilpotent groups"},
   "MathlibExt/GroupTheory/FreeGroupCayleyHamiltonKourovka17Problem32": {"to": "GroupTheory/free-groups/subgroups-of-free-groups", "title": "Cayley–Hamilton analogue for free groups"},
