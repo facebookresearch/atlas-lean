@@ -32,8 +32,10 @@ is represented by a function `W : ℝ → ℝ → ℝ` of which only the values 
 * `IsConvergentGraphSequence G`: `t(F, Gₙ)` converges for every simple graph `F` (Lovász–Szegedy,
   §2.2; BCLSV, Definition 2.1).
 
-The main theorems of the theory (limit theorem, compactness, uniqueness) are recorded as wanted
-results in `WantedExt.Combinatorics.SimpleGraph.GraphLimitsWanted`.
+The Lovász–Szegedy limit theorem is proved in
+`MathlibExt.Combinatorics.SimpleGraph.GraphLimits.LimitTheorem`; the other main theorems of the
+theory (compactness, uniqueness) are recorded as wanted results in
+`WantedExt.Combinatorics.SimpleGraph.GraphLimitsWanted`.
 -/
 
 @[expose] public section
