@@ -13933,6 +13933,7 @@
   "MathlibExt/NumberTheory/SDiophantineSystemFour": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
   "MathlibExt/NumberTheory/SZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerHarmonicMeanSqLeOfIsSZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
+  "MathlibExt/NumberTheory/SZumkellerNotIsUnitarySZumkellerOfOdd": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerSixDvdOfIsSZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SanfordCoupledRecurrence": {"to": "Analysis/special-functions/bernoulli-polylog-clausen", "title": "Dilogarithm identities"},
