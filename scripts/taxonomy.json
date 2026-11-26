@@ -13677,6 +13677,7 @@
   "MathlibExt/NumberTheory/UnitaryDivisorCount": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/UnitarySpoofLehmer": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/UnitarySpoofLehmerReplicate": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
+  "MathlibExt/NumberTheory/UnitarySpoofLehmerSpoofEvalLeOfIsSpoofLehmerSpoofOfBases": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/ValuationOnePoints": {"to": "NumberTheory/p-adic-numbers", "title": "Points of valuation one of two-variable polynomials"},
   "MathlibExt/NumberTheory/VaughanIdentity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Vaughan's identity"},
   "MathlibExt/NumberTheory/VonMangoldtFermatMultinomial": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
