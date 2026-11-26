@@ -26,8 +26,11 @@ Pascal's identity then gives a binomial expression for the defect at each genera
 ## References
 
 * Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-  INTEGERS 24 (2024), Article A70, pp. 1–31, Theorem 6, Equation (2.13),
-  <https://doi.org/10.5281/zenodo.13331499>.
+  INTEGERS 24 (2024), Article A70, pp. 1–31, Theorem 2, Equation (2.2), and
+  Theorem 6, Equation (2.13), <https://doi.org/10.5281/zenodo.13331499>.
+* Ayhan Dil and István Mező, *A symmetric algorithm for hyperharmonic and Fibonacci numbers*,
+  Applied Mathematics and Computation 206(2) (2008), 942–951, Equation (1),
+  <https://doi.org/10.1016/j.amc.2008.10.013>.
 -/
 
 namespace MetaMathlibExt
