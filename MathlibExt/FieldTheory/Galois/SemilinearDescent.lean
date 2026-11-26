@@ -1,12 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
 Portions of this file are adapted from:
 
 `Theorems/Thm_IsGalois_exists_basis_baseChange_forall_apply_eq_self.lean`
@@ -25,6 +17,12 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+-/
+
+/-
+Modifications (c) 2026 Meta Platforms, Inc. and affiliates:
+the proof-extraction machinery is removed, the names are restated in Mathlib
+style, and the proofs are adapted to Lean and Mathlib v4.36.0.
 -/
 
 module
@@ -177,8 +175,11 @@ private theorem span_inv_eq_top [IsGalois K L] :
 
 end Descent
 
-/-- Galois semilinear descent: a semilinear action of the Galois group on a
-base-changed vector space admits a basis of invariant vectors. -/
+/-- Galois semilinear descent for an induced action: let `L / K` be a finite
+Galois extension, `U` a finite-dimensional `K`-vector space, and `ρ` a
+`K`-linear representation of `Gal(L/K)` on `U`. If each `f σ` is the additive
+map on `L ⊗[K] U` with `f σ (l ⊗ₜ u) = σ l ⊗ₜ ρ σ u`, then `L ⊗[K] U` has an
+`L`-basis of `f`-invariant vectors, indexed by `Fin (finrank K U)`. -/
 public theorem IsGalois.exists_basis_baseChange_forall_apply_eq_self
     {K L : Type*} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L] [IsGalois K L]
     {U : Type*} [AddCommGroup U] [Module K U] [FiniteDimensional K U]
