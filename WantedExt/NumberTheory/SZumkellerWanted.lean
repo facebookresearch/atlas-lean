@@ -38,21 +38,11 @@ public import MathlibExt.NumberTheory.SZumkellerHarmonicMeanSqLeOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
 public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
+public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Sum of squares of unitary divisors.** For every positive integer $n$, the sum of the
-squares of the unitary divisors of $n$ equals $\prod_{p} \left(1 + p^{2k_p}\right)$, where $p$
-ranges over the distinct prime factors of $n$ and $k_p$ is the exponent of $p$ in $n$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 3(i) (quoting Subbarao and
-Warren). -/
-public theorem_wanted sum_sq_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
-    ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 =
-      ∏ p ∈ n.primeFactors, (1 + p ^ (2 * n.factorization p))
 
 /-- **Properties of even s-Zumkeller numbers.** Let $n$ be an even s-Zumkeller number and let
 $\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $\sigma_2(n)$ is
@@ -108,25 +98,6 @@ Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 8. -/
 public theorem_wanted le_of_isSZumkeller_odd_three_dvd (n : ℕ) (h : IsSZumkeller n)
     (ho : Odd n) (h3 : 3 ∣ n) : 12442607161209225 ≤ n
-
-/-- **Lower bounds for unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
-number, let $q$ be the least unitary divisor of $n$ greater than $1$, and for each prime $p$
-dividing $n$ let $k_p$ be the exponent of $p$ in $n$. Then, with both sums over all unitary
-divisors $d$ of $n$ (including $n$ itself), $n^2 (2/q^2 + 1) \le \sum_d d^2$ and
-$2/q^2 + 1 \le \sum_d 1/d^2$. Moreover $2/q^2 + 1 \le \prod_{p \mid n} (1 + p^{2k_p})/p^{2k_p}$,
-the product running over the primes $p$ dividing $n$.
-
-The number $q$ is the smallest of the prime powers $p^{k_p}$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 11. -/
-public theorem_wanted isUnitarySZumkeller_bounds (n q : ℕ) (h : IsUnitarySZumkeller n)
-    (hq : IsLeast {d | d ∈ Nat.unitaryDivisors n ∧ 1 < d} q) :
-    (n : ℚ) ^ 2 * (2 / (q : ℚ) ^ 2 + 1) ≤ ∑ d ∈ Nat.unitaryDivisors n, (d : ℚ) ^ 2 ∧
-      2 / (q : ℚ) ^ 2 + 1 ≤ ∑ d ∈ Nat.unitaryDivisors n, 1 / (d : ℚ) ^ 2 ∧
-      2 / (q : ℚ) ^ 2 + 1 ≤
-        ∏ p ∈ n.primeFactors,
-          (1 + ((p : ℚ) ^ n.factorization p) ^ 2) / ((p : ℚ) ^ n.factorization p) ^ 2
 
 /-- **Unitary divisor counts of unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
 number and let $q$ be the least unitary divisor of $n$ greater than $1$. If $q = 2$, then $n$ has

@@ -15,6 +15,7 @@ public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Data.Nat.DyadicBlock
 public import MathlibExt.GameTheory.ChocolateBarNSProperty
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXor
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorEq
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -82,18 +83,6 @@ Article G3, Lemma 5, equation (19) (`integers-2025-G3-lem-5`). -/
 public theorem_wanted HasNSProperty.image_xor_xor_eq {g h : ℕ → ℕ} (hg : HasNSProperty g)
     (hh : HasNSProperty h) {x y z : ℕ} (hx : x ≤ g z) (hy : y ≤ h z) :
     {c | ∃ w < z, c = x ^^^ y ^^^ w} = {c | ∃ w' < z, c = min (g w') x ^^^ min (h w') y ^^^ w'}
-
-/-- **Nim-sum image identity for one NS function.** Let $g : \mathbb{N} \to \mathbb{N}$ have the
-NS property and let $x, z \in \mathbb{N}$ with $x \le g(z)$. Writing $\oplus$ for the nim-sum
-(bitwise exclusive or) of natural numbers, the sets $\{x \oplus w : w < z\}$ and
-$\{\min(g(w), x) \oplus w : w < z\}$ are equal, where $w$ ranges over the natural numbers.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 5, equation (20) (`integers-2025-G3-lem-5`). -/
-public theorem_wanted HasNSProperty.image_xor_eq {g : ℕ → ℕ} (hg : HasNSProperty g)
-    {x z : ℕ} (hx : x ≤ g z) :
-    {c | ∃ w < z, c = x ^^^ w} = {c | ∃ w' < z, c = min (g w') x ^^^ w'}
 
 /-- **Grundy number of a chocolate bar.** Let $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$. For
 coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and a width $z \in \mathbb{N}$, the position
