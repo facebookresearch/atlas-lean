@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Prime.Basic
-public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.NumberTheory.Divisors
@@ -21,9 +21,9 @@ import Mathlib.Tactic.Ring
 For odd `p`, the divisor sum of `2 * p ^ a` factors as `(1 + 2 ^ 2)` times a
 geometric sum; a size comparison then leaves only `2 * 3 = 6` and `2 * 5 = 10`,
 and `10` is ruled out by direct computation. Powers of two are ruled out
-modulo `4`. This module defines deficient `F`-perfect numbers and proves that
-`6` is deficient `F`-perfect with divisor `2` and is the only such number of
-the form `2 * p ^ a`.
+modulo `4`. This module proves that `6` is deficient `F`-perfect with divisor
+`2` and is the only such number of the form `2 * p ^ a`; deficient `F`-perfect
+numbers are defined in `MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime`.
 
 Full reference: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P.
 Saikia, "On Near `F_k`-Perfect and Deficient `F_k`-Perfect Numbers",
@@ -36,13 +36,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
 
 private theorem not_isDeficientFPerfect_two : ¬ IsDeficientFPerfect 2 := by
   rintro ⟨d, hd, hlt, hsum⟩
