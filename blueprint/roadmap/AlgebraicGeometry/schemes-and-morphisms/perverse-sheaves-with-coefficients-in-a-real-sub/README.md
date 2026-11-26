@@ -1,4 +1,4 @@
-# Real Coefficient Perverse Sheaves
+# Perverse sheaves with coefficients in a real subfield
 
 - [Constant Coefficient](constant-coefficient.md)
 - [Perverse Theory](perverse-theory.md)
