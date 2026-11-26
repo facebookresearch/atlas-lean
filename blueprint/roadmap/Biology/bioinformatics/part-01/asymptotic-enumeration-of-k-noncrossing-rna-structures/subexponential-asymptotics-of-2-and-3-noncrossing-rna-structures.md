@@ -16,9 +16,9 @@ so ${\sf S}_3(n) \asymp n^{-5}\big((5+\sqrt{21})/2\big)^n$. Allowing pseudoknots
 
 Both results come from singularity analysis of the generating function
 
-$$\sum_{n\ge0}{\sf S}_k(n)z^n = \frac{z}{z^2-z+1}\sum_{n\ge0}f_k(2n,0)\left(\frac{z}{z^2-z+1}\right)^{2n},$$
+$$\sum_{n\ge0}{\sf S}_k(n)z^n = \frac{1}{z^2-z+1}\sum_{n\ge0}f_k(2n,0)\left(\frac{z}{z^2-z+1}\right)^{2n},$$
 
-where $f_k(2n,0)$ counts $k$-noncrossing perfect matchings. For $k=2$ the inner series is the Catalan generating function, which has a square-root singularity. This produces the algebraic expansion and, through the Flajolet–Odlyzko transfer theorem, the $n^{-3/2}$ factor. For $k=3$ the matchings are counted by $C_{n+2}C_n - C_{n+1}^2$, whose generating function $\sum_n f_3(2n,0)y^n$ continues analytically as a Legendre function with a single dominant singularity at $y = 1/16$. Composed with $\vartheta(z) = (z/(z^2-z+1))^2$, this gives six singularities of distinct moduli, the dominant one being $\rho_3 = (5-\sqrt{21})/2$, where the expansion is $O\big((\rho_3-z)^4\ln\frac{1}{\rho_3-z}\big)$. The logarithmic case of the transfer theorem, $z^n^r\ln\frac{1}{1-z} \sim K(-1)^r r!/(n(n-1)\cdots(n-r))$ with $r=4$, gives the falling-factorial denominator. The constants $1.1002$ and $10.4724$ are numerical evaluations of the singular expansions.
+where $f_k(2n,0)$ counts $k$-noncrossing perfect matchings. For $k=2$ the inner series is the Catalan generating function, which has a square-root singularity. This produces the algebraic expansion and, through the Flajolet–Odlyzko transfer theorem, the $n^{-3/2}$ factor. For $k=3$ the matchings are counted by $C_{n+2}C_n - C_{n+1}^2$, whose generating function $\sum_n f_3(2n,0)y^n$ continues analytically as a Legendre function with a single dominant singularity at $y = 1/16$. Composed with $\vartheta(z) = (z/(z^2-z+1))^2$, this gives six singularities of distinct moduli, the dominant one being $\rho_3 = (5-\sqrt{21})/2$, where the expansion is $O\big((\rho_3-z)^4\ln\frac{1}{\rho_3-z}\big)$. The logarithmic case of the transfer theorem, $[z^n]\,(1-z)^r\ln\frac{1}{1-z} = (-1)^r r!/(n(n-1)\cdots(n-r))$ for $n>r$, with $r=4$, gives the falling-factorial denominator. The constants $1.1002$ and $10.4724$ are numerical evaluations of the singular expansions.
 
 ## Depends on
 
@@ -31,3 +31,4 @@ where $f_k(2n,0)$ counts $k$-noncrossing perfect matchings. For $k=2$ the inner 
 ## Sources
 
 - E. Y. Jin and C. M. Reidys, "Asymptotic Enumeration of RNA Structures with Pseudoknots", arXiv:0706.3137 (2007), Lemma 2 and Theorems 3–5, <https://doi.org/10.48550/arXiv.0706.3137>.
+- Published version: E. Y. Jin and C. M. Reidys, "Asymptotic Enumeration of RNA Structures with Pseudoknots", Bulletin of Mathematical Biology 70 (2008), 951–970, <https://doi.org/10.1007/s11538-007-9265-2>.

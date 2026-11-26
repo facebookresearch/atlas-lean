@@ -25,3 +25,4 @@ Adding $\kappa I$ makes $A+D(\mathbf p)+\kappa I$ nonnegative and irreducible, s
 ## Sources
 
 - J. M. Newby, "Spontaneous excitability in the Morris–Lecar model with ion channel noise", arXiv:1406.2914 (2014), Section 2 (stochastic hybrid model), Section 3 (WKB approximation, Eqs. for $\mathbb M(\mathbf p)$ and $\mathcal H$) and appendix "Establishing path equivalence" (Perron–Frobenius lemma and path-equivalence theorem), <https://doi.org/10.48550/arXiv.1406.2914>.
+- Published version: J. M. Newby, "Spontaneous Excitability in the Morris–Lecar Model with Ion Channel Noise", SIAM Journal on Applied Dynamical Systems 13 (2014), 1756–1791, <https://doi.org/10.1137/140971385>.

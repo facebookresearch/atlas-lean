@@ -32,6 +32,10 @@ With $M_S=\boldsymbol\kappa(t)M$, the female equation reads $\dot F=(1-r)\rho\bi
 
 - [Critical release rate and residual-fertility threshold in the sex-structured SIT model](critical-release-rate-and-residual-fertility-threshold-in-the-sex-structured-sit-model.md)
 
+## Proof depends on
+
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Sources
 
 - M. S. Aronna, Y. Dumont, "On nonlinear pest/vector control via the Sterile Insect Technique: impact of residual fertility", arXiv:2005.05595 (2020), Section 4 (closed-loop control: Proposition 3 on continuous nonlinear feedback, Theorem 2 on impulsive feedback with synchronized measurements, Theorem 3 on sparse measurements), <https://doi.org/10.48550/arXiv.2005.05595>.

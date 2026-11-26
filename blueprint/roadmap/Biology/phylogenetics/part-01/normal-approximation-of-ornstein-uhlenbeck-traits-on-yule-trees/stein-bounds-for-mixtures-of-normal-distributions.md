@@ -23,3 +23,4 @@ These are the two main theorems and two remarks of Section 2 and the lower-bound
 ## Sources
 
 - K. Bartoszek, T. Erhardsson, "Normal approximation for mixtures of normal distributions and the evolution of phenotypic traits", arXiv:1912.03561 (2019). <https://doi.org/10.48550/arXiv.1912.03561>
+- Published version: K. Bartoszek, T. Erhardsson, "Normal approximation for mixtures of normal distributions and the evolution of phenotypic traits", Advances in Applied Probability 53 (2021), 162–188, <https://doi.org/10.1017/apr.2020.53>.

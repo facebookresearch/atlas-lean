@@ -23,3 +23,4 @@ with eigenvalues $\lambda_1 = 1$ and $\lambda_2 = (n_1 w_1 - n_2 w_2)/N_w$. Unde
 ## Sources
 
 - J. W. Moore, T. C. Dale, T. E. Woolley, "Algebraic framework for determining laminar pattern bifurcations by lateral-inhibition in 2D and 3D bilayer geometries", arXiv:2104.12142 (2021), sections "Theory" (lateral-inhibition model, graph partitioning and network stability) and "Theoretical results" (existence theorem for bilayer laminar patterns). <https://doi.org/10.48550/arXiv.2104.12142>
+- Published version: J. W. Moore, T. C. Dale, T. E. Woolley, "Polarity-driven laminar pattern formation by lateral-inhibition in 2D and 3D bilayer geometries", IMA Journal of Applied Mathematics (2022), <https://doi.org/10.1093/imamat/hxac011>.

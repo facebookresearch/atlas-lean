@@ -21,3 +21,4 @@ The functional equation comes from inclusion–exclusion over $1$-arcs, ${\sf S}
 ## Sources
 
 - E. Y. Jin and C. M. Reidys, "Asymptotic Enumeration of RNA Structures with Pseudoknots", arXiv:0706.3137 (2007), Definition 1, Theorem 1, Lemma 1 and Theorem 2, <https://doi.org/10.48550/arXiv.0706.3137>.
+- Published version: E. Y. Jin and C. M. Reidys, "Asymptotic Enumeration of RNA Structures with Pseudoknots", Bulletin of Mathematical Biology 70 (2008), 951–970, <https://doi.org/10.1007/s11538-007-9265-2>.

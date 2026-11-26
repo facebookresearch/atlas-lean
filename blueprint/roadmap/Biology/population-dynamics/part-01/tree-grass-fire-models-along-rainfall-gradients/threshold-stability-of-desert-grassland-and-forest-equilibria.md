@@ -42,3 +42,4 @@ The Jacobian at each boundary equilibrium is triangular, so stability reduces to
 ## Sources
 
 - Ivric Valaire Yatat Djeumen, Yves Dumont, Anna Doizy, P. Couteron, "On the usefulness of a minimalistic model to study tree-grass biomass distributions along biogeographic gradients in the savanna biome", arXiv:2005.05654: Section 2 (model), Section 3 (thresholds); Appendix A, Theorem 1 (stability of trivial equilibria, hyperbolic case) and Remark 1. <https://doi.org/10.48550/arXiv.2005.05654>
+- Published version: I. V. Yatat Djeumen, Y. Dumont, A. Doizy, P. Couteron, "A minimalistic model of vegetation physiognomies in the savanna biome", Ecological Modelling 440 (2021), 109381, <https://doi.org/10.1016/j.ecolmodel.2020.109381>.

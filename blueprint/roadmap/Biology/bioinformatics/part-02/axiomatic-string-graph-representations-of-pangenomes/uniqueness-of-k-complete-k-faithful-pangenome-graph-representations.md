@@ -31,3 +31,4 @@ The statements are the proposition of Section 2.3 (de Bruijn graphs), the equiva
 ## Sources
 
 - A. Cicherski, N. Dojer, "From de Bruijn graphs to variation graphs – relationships between pangenome models", arXiv:2503.14520 (2025). <https://doi.org/10.48550/arXiv.2503.14520>
+- Published version: A. Cicherski, N. Dojer, "From de Bruijn Graphs to Variation Graphs – Relationships Between Pangenome Models", String Processing and Information Retrieval (SPIRE 2023), Lecture Notes in Computer Science (2023), 114–128, <https://doi.org/10.1007/978-3-031-43980-3_10>.

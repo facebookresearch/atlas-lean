@@ -38,3 +38,4 @@ The first three coefficients vanish by the choice of $a_j$, and $a_1\rho_1+a_2\r
 ## Sources
 
 - F. Ndaïrou and D. F. M. Torres, "Mathematical analysis of a fractional COVID-19 model applied to Wuhan, Spain and Portugal", arXiv:2106.15407 (2021), Section 3 (model), Section 4 (existence and uniqueness theorem) and Section 5 (Eq. for $R_0$ and the global stability theorem), <https://doi.org/10.48550/arXiv.2106.15407>.
+- Published version: F. Ndaïrou and D. F. M. Torres, "Mathematical Analysis of a Fractional COVID-19 Model Applied to Wuhan, Spain and Portugal", Axioms 10 (2021), 135, <https://doi.org/10.3390/axioms10030135>.

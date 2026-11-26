@@ -37,3 +37,4 @@ $\mathcal{R}_0$ is the dominant eigenvalue of $FV^{-1}$, where $F$ has a single 
 ## Sources
 
 - E. Acheampong, E. Okyere, S. Iddi, J. H. K. Bonney, J. A. D. Wattis and R. L. Gomes, "Modelling COVID-19 Transmission Dynamics in Ghana", arXiv:2102.02984 (2021), Section 2 (model), Lemmas 1–2, the $\mathcal{R}_0$ derivation in Section 3, and Theorem 1, <https://doi.org/10.48550/arXiv.2102.02984>.
+- Published version: E. Acheampong, E. Okyere, S. Iddi, J. H. K. Bonney, J. K. K. Asamoah, J. A. D. Wattis and R. L. Gomes, "Mathematical modelling of earlier stages of COVID-19 transmission dynamics in Ghana", Results in Physics 34 (2022), 105193, <https://doi.org/10.1016/j.rinp.2022.105193>.

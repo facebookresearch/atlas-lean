@@ -1,9 +1,12 @@
-# Stochastic epidemic models and statistical inference
+# Testing, control, within-host and vector-borne models
 
-- [Bayesian spatio-temporal disease mapping](bayesian-spatio-temporal-disease-mapping/README.md)
-- [Epidemic inference on dynamic networks](epidemic-inference-on-dynamic-networks/README.md)
-- [Self-exciting point-process epidemic models](self-exciting-point-process-epidemic-models/README.md)
-- [SIR epidemic on a homogeneous tree](sir-epidemic-on-a-homogeneous-tree/README.md)
-- [SIRS model with Lévy jump noise](sirs-model-with-levy-jump-noise/README.md)
-- [Stochastic SIR model with distributed delay and Lévy jumps](stochastic-sir-model-with-distributed-delay-and-levy-jumps/README.md)
-- [Stochastic SIS patch model with migration](stochastic-sis-patch-model-with-migration/README.md)
+- [Crop–vector epidemics with biomass growth and roguing](crop-vector-epidemics-with-biomass-growth-and-roguing/README.md)
+- [CTL-response viral model with distributed delays](ctl-response-viral-model-with-distributed-delays/README.md)
+- [Dengue with vector early-life stage](dengue-with-vector-early-life-stage/README.md)
+- [Feature-dependent optimal quarantine duration](feature-dependent-optimal-quarantine-duration/README.md)
+- [Optimal adaptive testing for epidemic control](optimal-adaptive-testing-for-epidemic-control/README.md)
+- [Principal-agent control of epidemics](principal-agent-control-of-epidemics/README.md)
+- [Projective-plane pooling matrices](projective-plane-pooling-matrices/README.md)
+- [Two-threshold intervention policies in SIR models](two-threshold-intervention-policies-in-sir-models/README.md)
+- [Within-host HIV model with homeostatic proliferation](within-host-hiv-model-with-homeostatic-proliferation/README.md)
+- [Within-host viral dynamics](within-host-viral-dynamics/README.md)

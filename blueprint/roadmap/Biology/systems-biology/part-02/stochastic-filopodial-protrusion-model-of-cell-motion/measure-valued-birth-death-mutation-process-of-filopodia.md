@@ -29,6 +29,10 @@ In particular its law does not depend on the auxiliary ordering used to label in
 
 The total jump rate is at most $c+(\bar r+d)N_t$, so jump times can be defined recursively. Dropping deaths and taking expectations up to the stopping times $\tau_n=\inf\{t:N_t\ge n\}$ gives $\mathbb E[\sup_{s\le t\wedge\tau_n}N_s]\le\mathbb E[N_0]+cT+\bar r\int_0^t\mathbb E[\sup_{u\le s\wedge\tau_n}N_u]\,ds$; Gronwall yields the bound, which forces $\tau_n\to\infty$ and excludes explosion, and Fatou removes the localization. Uniqueness holds because jump times and marks are determined pathwise by the driving measures. Without interaction ($r$ constant), $N_t$ is a linear immigration–birth–death process; with velocity feedback the branching property is lost. Simulated trajectories range from Brownian-like to persistent as the polarization strength increases, and a higher mutation probability lowers territory exploration.
 
+## Proof depends on
+
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Sources
 
 - C. Etchegaray, N. Meunier, "A stochastic model for protrusion activity" (2018), Section 2 (model) and Section 3, Propositions 3.3 and 3.4. <https://doi.org/10.48550/arXiv.1808.00217>

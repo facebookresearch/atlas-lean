@@ -37,6 +37,10 @@ Existence uses the bounded rates. The stopping times $\tau_N$ at which the popul
 
 These are the existence and uniqueness proposition and the Markov property proposition of Section 3 of the source.
 
+## Proof depends on
+
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Sources
 
 - C. Etchegaray, N. Meunier, "Crawling migration under chemical signalling: a stochastic particle model", arXiv:1808.00210 (2018). <https://doi.org/10.48550/arXiv.1808.00210>

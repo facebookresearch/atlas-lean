@@ -29,3 +29,4 @@ which is the displayed left-hand side. Squaring $\sqrt{\cdot} < 2 - a(q_B + q_L)
 ## Sources
 
 - J. W. Moore, T. C. Dale, T. E. Woolley, "Algebraic framework for determining laminar pattern bifurcations by lateral-inhibition in 2D and 3D bilayer geometries", arXiv:2104.12142 (2021), section "Theoretical results" (stability theorem for bilayer laminar patterns, its corollary, and the comparison with the small-gain theorem). <https://doi.org/10.48550/arXiv.2104.12142>
+- Published version: J. W. Moore, T. C. Dale, T. E. Woolley, "Polarity-driven laminar pattern formation by lateral-inhibition in 2D and 3D bilayer geometries", IMA Journal of Applied Mathematics (2022), <https://doi.org/10.1093/imamat/hxac011>.

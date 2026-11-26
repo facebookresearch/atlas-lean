@@ -25,13 +25,15 @@ $$\mathbb E\,N(\tau)=\int_0^\tau E_1(t)\sigma(t)\,dt,\qquad \mathbb E\,N(\tau)^2
 
 where $E_1(t)=1+\int_t^\tau E_1(v)\mu(v)\bar\nu(v-t)\,dv$ and
 
-$$E_2(t)=1+\int_t^\tau E_2(v)\mu(v)\bar\nu(v-t)\,dv+2\int_t^\tau E_1(v)\mu(v)\bar\nu(v-t)\,dv+\Big(\int_t^\tau E_1(v)\mu(v)\bar\nu(v-t)\,dv\Big)^2 .$$
+$$E_2(t)=1+\int_t^\tau E_2(v)\mu(v)\bar\nu(v-t)\,dv+2\int_t^\tau E_1(v)\mu(v)\bar\nu(v-t)\,dv+\mathbb E\Big[\Big(\int_t^\tau E_1(v)\mu(v)\nu(v-t,M_1)\,dv\Big)^2\Big] .$$
 
-Higher moments follow recursively from the functional equation. Unlike the mean-field (SIR-like) description, these quantify the run-to-run variability and early extinction: a single immigrant at time $t$ has no offspring with probability $e^{-R(t)}$.
+The last expectation is over the mark $M_1$; it reduces to $\big(\int_t^\tau E_1(v)\mu(v)\bar\nu(v-t)\,dv\big)^2$ when the kernel does not depend on the mark, and exceeds it by the variance over $M_1$ otherwise.
+
+Higher moments follow recursively from the functional equation. Unlike the mean-field (SIR-like) description, these quantify the run-to-run variability and early extinction: a single immigrant at time $t$ has no offspring with probability $\mathbb E\exp\big(-\int_0^\infty\mu(t+u)\nu(u,M_1)\,du\big)$, which equals $e^{-R(t)}$ when the kernel does not depend on the mark.
 
 ## Expansion
 
-The process is a Poisson cluster process: immigrants form a Poisson process, and each spawns an independent (time-inhomogeneous) Galton–Watson cluster. The Poisson exponential formula gives $\mathbb E\,e^{zN(\tau)}=\exp\int(\mathbb E\,e^{zS_{t,\tau}}-1)\sigma(t)\,dt$. Conditioning a cluster on its root's mark, the root's direct offspring form a Poisson process with intensity $\mu(v)\nu(v-t,M_1)$ and each starts an independent subcluster, which gives the fixed-point equation for $G$; boundedness of $\nu$ and $\mu$ on the finite horizon keeps the cluster sizes exponentially integrable near $z=0$. Differentiating once and twice at $z=0$ gives the renewal-type integral equations for $E_1$ and $E_2$.
+The process is a Poisson cluster process: immigrants form a Poisson process, and each spawns an independent (time-inhomogeneous) Galton–Watson cluster. The Poisson exponential formula gives $\mathbb E\,e^{zN(\tau)}=\exp\int(\mathbb E\,e^{zS_{t,\tau}}-1)\sigma(t)\,dt$. Conditioning a cluster on its root's mark, the root's direct offspring form a Poisson process with intensity $\mu(v)\nu(v-t,M_1)$ and each starts an independent subcluster, which gives the fixed-point equation for $G$; boundedness of $\nu$ and $\mu$ on the finite horizon keeps the cluster sizes exponentially integrable near $z=0$. Differentiating once and twice at $z=0$ gives the renewal-type integral equations for $E_1$ and $E_2$. In the second derivative the exponent $X=\int_t^\tau(G(v,z)-1)\mu(v)\nu(v-t,M_1)\,dv$ contributes $\mathbb E[X''(0)+X'(0)^2]$, so the squared term keeps the expectation over the root's mark; the source's Eq. (15) writes $\nu(v-t)$ without the mark there, which is exact only for a mark-independent kernel.
 
 ## Sources
 

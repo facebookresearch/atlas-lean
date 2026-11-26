@@ -35,3 +35,4 @@ These are Sections 1.2, 2.1–2.2 and 3.1–3.2 of the source, including Proposi
 ## Sources
 
 - A. Ignatieva, J. Hein, P. A. Jenkins, "A characterisation of the reconstructed birth-death process through time rescaling", arXiv:1912.04861 (2019). <https://doi.org/10.48550/arXiv.1912.04861>
+- Published version: A. Ignatieva, J. Hein, P. A. Jenkins, "A characterisation of the reconstructed birth–death process through time rescaling", Theoretical Population Biology 134 (2020), 61–76, <https://doi.org/10.1016/j.tpb.2020.05.001>.

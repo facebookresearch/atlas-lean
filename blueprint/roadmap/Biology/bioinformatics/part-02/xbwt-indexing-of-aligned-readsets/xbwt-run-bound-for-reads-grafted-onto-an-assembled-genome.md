@@ -19,3 +19,4 @@ Exact reads introduce no new contexts: a node of a grafted read and the trunk no
 ## Sources
 
 - T. Gagie, G. Gourdel and G. Manzini, "Compressing and Indexing Aligned Readsets", arXiv:1809.07320 (2018), Section 3 ("Our contribution"): the run-count theorems for exact and erroneous grafted reads, the Wheeler-graph locating theorem and its corollary, <https://doi.org/10.48550/arXiv.1809.07320>.
+- Published version: T. Gagie, G. Gourdel and G. Manzini, "Compressing and Indexing Aligned Readsets", 21st International Workshop on Algorithms in Bioinformatics (WABI 2021), LIPIcs 201, Paper 13, <https://doi.org/10.4230/LIPIcs.WABI.2021.13>.

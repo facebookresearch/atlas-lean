@@ -46,3 +46,4 @@ Solving $(T-N)\lambda/(T\lambda+n) = n_1/n$ is linear in $T$: $T\lambda(n - n_1)
 ## Sources
 
 - L. Cecconi, A. Gandolfi and C. C. A. Sastri, "A New Estimator for the Number of Species in a Population", arXiv:0804.1030 (2008), Sections 2–4 (reconciliation lemma in Section 3; Dirichlet posterior moments in Appendix 1), <https://doi.org/10.48550/arXiv.0804.1030>.
+- Published version: L. Cecconi, A. Gandolfi and C. C. A. Sastri, "A new estimator for the number of species in a population", Sankhyā A 74 (2012), 80–100, <https://doi.org/10.1007/s13171-012-0012-x>.

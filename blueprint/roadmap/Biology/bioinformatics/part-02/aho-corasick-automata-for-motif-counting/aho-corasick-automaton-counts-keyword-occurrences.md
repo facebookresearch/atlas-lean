@@ -21,3 +21,4 @@ By the lemma, after reading the prefix $y = x_1 \cdots x_i$ the automaton sits a
 ## Sources
 
 - M. Lladser, M. D. Betterton and R. Knight, "Multiple pattern matching: A Markov chain approach", arXiv:0704.3221 (2007), Section 4 (definition of Aho–Corasick automata, Lemma 4.3; its Theorem 4.4 counts entries into the terminal states ending in $w$, which misses occurrences such as the example above, so the statement here uses all states ending in $w$ and per-position visits) and Section 5 (Theorem 5.1, Corollary 5.2), <https://doi.org/10.48550/arXiv.0704.3221>; the automaton is from A. V. Aho and M. J. Corasick, "Efficient string matching: an aid to bibliographic search", Communications of the ACM 18 (1975) 333–340, <https://doi.org/10.1145/360825.360855>.
+- Published version: M. E. Lladser, M. D. Betterton and R. Knight, "Multiple pattern matching: a Markov chain approach", Journal of Mathematical Biology 56 (2008), 51–92, <https://doi.org/10.1007/s00285-007-0109-3>.

@@ -32,3 +32,4 @@ These are the branching computation (Section 2), the model definition, and the m
 ## Sources
 
 - Y. Kozitsky, K. Pilorz, "Modeling tumor growth: a simple individual-based model and its analysis", arXiv:2003.09342 (2020). <https://doi.org/10.48550/arXiv.2003.09342>
+- Published version: Y. Kozitsky, K. Pilorz, "Modeling Tumor Growth: A Simple Individual-Based Model and Its Analysis", in *Order, Disorder and Criticality*, vol. 6, World Scientific (2020), 201–221, <https://doi.org/10.1142/9789811216220_0005>.
