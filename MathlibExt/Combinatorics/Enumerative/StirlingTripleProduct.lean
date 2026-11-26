@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
@@ -486,5 +487,116 @@ public theorem symm_triple_ratio_of_logConcave (x : ℕ → ℝ)
       using And.intro (e_case_pj hpos hlc n) (h_case_pj hpos hlc n)
 
 end
+
+section
+
+open Nat
+
+-- Equations (2.1) and (2.2) of Gy, with the row and column left unshifted.
+private theorem stirling_choose_products (m k j : ℕ) (hjk : j ≤ k) (hkm : k ≤ m) :
+    stirlingSecond m j * (m - j).choose (k - j) ≤ stirlingSecond k j * stirlingSecond m k ∧
+    stirlingFirst k j * stirlingFirst m k ≤ stirlingFirst m j * (m - j).choose (k - j) := by
+  induction m generalizing k j with
+  | zero =>
+    obtain rfl : k = 0 := by omega
+    obtain rfl : j = 0 := by omega
+    decide
+  | succ m ih =>
+    obtain rfl | hkm := hkm.eq_or_lt
+    · simp [stirlingSecond_self, stirlingFirst_self]
+    obtain rfl | hjk := hjk.eq_or_lt
+    · simp [stirlingSecond_self, stirlingFirst_self]
+    cases k with
+    | zero => omega
+    | succ k =>
+      cases j with
+      | zero => simp
+      | succ j =>
+        have h₁ := ih (k + 1) (j + 1) (by omega) (by omega)
+        have h₂ := ih k (j + 1) (by omega) (by omega)
+        have h₃ := ih k j (by omega) (by omega)
+        -- Pascal's recurrence for the binomial factor after deleting the last point.
+        have hc : (m - j).choose (k - j) =
+            (m - (j + 1)).choose (k - (j + 1)) + (m - (j + 1)).choose (k - j) := by
+          have hm : m - j = (m - (j + 1)) + 1 := by omega
+          have hk : k - j = (k - (j + 1)) + 1 := by omega
+          rw [hm, hk, choose_succ_succ]
+        simp only [succ_sub_succ_eq_sub] at h₁ ⊢
+        constructor
+        · rw [stirlingSecond_succ_succ m j, stirlingSecond_succ_succ m k]
+          calc
+            _ = (j + 1) * (stirlingSecond m (j + 1) * (m - (j + 1)).choose (k - j)) +
+                (j + 1) * (stirlingSecond m (j + 1) * (m - (j + 1)).choose (k - (j + 1))) +
+                stirlingSecond m j * (m - j).choose (k - j) := by
+                  rw [add_mul]
+                  conv_lhs => arg 1; arg 2; rw [hc]
+                  ring
+            _ ≤ (k + 1) * (stirlingSecond (k + 1) (j + 1) * stirlingSecond m (k + 1)) +
+                (j + 1) * (stirlingSecond k (j + 1) * stirlingSecond m k) +
+                stirlingSecond k j * stirlingSecond m k :=
+              Nat.add_le_add (Nat.add_le_add ((Nat.mul_le_mul_left _ h₁.1).trans
+                (Nat.mul_le_mul_right _ (by omega))) (Nat.mul_le_mul_left _ h₂.1)) h₃.1
+            _ = _ := by
+              rw [mul_add]
+              conv_rhs => arg 2; arg 1; rw [stirlingSecond_succ_succ k j]
+              ring
+        · rw [stirlingFirst_succ_succ m k, stirlingFirst_succ_succ m j]
+          calc
+            _ = m * (stirlingFirst (k + 1) (j + 1) * stirlingFirst m (k + 1)) +
+                k * (stirlingFirst k (j + 1) * stirlingFirst m k) +
+                stirlingFirst k j * stirlingFirst m k := by
+                  rw [mul_add]
+                  conv_lhs => arg 2; arg 1; rw [stirlingFirst_succ_succ k j]
+                  ring
+            _ ≤ m * (stirlingFirst m (j + 1) * (m - (j + 1)).choose (k - j)) +
+                m * (stirlingFirst m (j + 1) * (m - (j + 1)).choose (k - (j + 1))) +
+                stirlingFirst m j * (m - j).choose (k - j) :=
+              Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_left _ h₁.2)
+                ((Nat.mul_le_mul_right _ (by omega : k ≤ m)).trans
+                  (Nat.mul_le_mul_left _ h₂.2))) h₃.2
+            _ = _ := by
+              rw [add_mul]
+              conv_rhs => arg 1; arg 2; rw [hc]
+              ring
+
+private theorem stirling_denominators_pos {m j : ℕ} (hj : 0 < j) (hjm : j ≤ m) :
+    0 < stirlingSecond m j ∧ 0 < stirlingFirst m j := by
+  obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hj)
+  induction m, hjm using Nat.le_induction with
+  | base => simp [stirlingSecond_self, stirlingFirst_self]
+  | succ m hm ih =>
+    rw [stirlingSecond_succ_succ, stirlingFirst_succ_succ]
+    exact ⟨Nat.add_pos_left (Nat.mul_pos (Nat.succ_pos _) ih.1) _,
+      Nat.add_pos_left (Nat.mul_pos (by omega) ih.2) _⟩
+
+end
+
+/-- **Triple products of Stirling numbers bracket the binomial coefficient.** Let $n$, $p$ and
+$j$ be positive integers with $p \le n$. Write $S(m, i)$ for the Stirling number of the second
+kind (the number of partitions of an $m$-element set into $i$ nonempty blocks) and $c(m, i)$ for
+the unsigned Stirling number of the first kind (the number of permutations of $m$ elements with
+exactly $i$ cycles). Then, as rational numbers,
+$\frac{c(p + j, j)\, c(n + j, p + j)}{c(n + j, j)} \le \binom{n}{p} \le
+\frac{S(p + j, j)\, S(n + j, p + j)}{S(n + j, j)}$.
+
+Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
+Article A108, Theorem 2.1 (`integers-2026-A108-thm-2-1`). -/
+public theorem stirling_triple_ratio_bounds_choose {n p j : ℕ} (hp : 0 < p) (hj : 0 < j)
+    (hpn : p ≤ n) :
+    ((n.choose p : ℕ) : ℚ) ≤
+        (Nat.stirlingSecond (p + j) j : ℚ) * Nat.stirlingSecond (n + j) (p + j) /
+          Nat.stirlingSecond (n + j) j ∧
+      (Nat.stirlingFirst (p + j) j : ℚ) * Nat.stirlingFirst (n + j) (p + j) /
+          Nat.stirlingFirst (n + j) j ≤ (n.choose p : ℚ) := by
+  have h := stirling_choose_products (n + j) (p + j) j (by omega) (by omega)
+  rw [Nat.add_sub_cancel, Nat.add_sub_cancel] at h
+  obtain ⟨hs, hf⟩ := stirling_denominators_pos hj (m := n + j) (by omega)
+  constructor
+  · apply (le_div_iff₀ (show 0 < (Nat.stirlingSecond (n + j) j : ℚ) by exact_mod_cast hs)).2
+    rw [mul_comm (n.choose p : ℚ)]
+    exact_mod_cast h.1
+  · apply (div_le_iff₀ (show 0 < (Nat.stirlingFirst (n + j) j : ℚ) by exact_mod_cast hf)).2
+    rw [mul_comm (n.choose p : ℚ)]
+    exact_mod_cast h.2
 
 end MetaMathlibExt
