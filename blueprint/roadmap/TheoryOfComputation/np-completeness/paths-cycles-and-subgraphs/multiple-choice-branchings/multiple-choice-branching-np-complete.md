@@ -1,6 +1,6 @@
 # MULTIPLE CHOICE BRANCHING is NP-complete
 
-The following decision problem is NP-complete: it belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Given a directed graph on $\{0, \dots, n - 1\}$ with positive arc weights, a partition of its arcs into classes and a positive integer $K$, decide whether some set of arcs of total weight at least $K$ is a branching (no directed cycle and no two arcs entering the same vertex) containing at most one arc from each class.
+The following decision problem is NP-complete: it belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Given a directed graph on $\{0, \dots, n - 1\}$ without loops or repeated arcs, with positive arc weights, a partition of its arcs into classes and a positive integer $K$, decide whether some set of arcs of total weight at least $K$ is a branching (no directed cycle and no two arcs entering the same vertex) containing at most one arc from each class.
 
 ## Sources
 

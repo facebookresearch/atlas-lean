@@ -11,7 +11,6 @@
 - [Facility location](facility-location/README.md)
 - [Generalized assignment problem](generalized-assignment-problem/README.md)
 - [Intersection patterns](intersection-patterns/README.md)
-- [Intersection patterns with diagonal 3](intersection-patterns-with-diagonal-3/README.md)
 - [Maximum coverage](maximum-coverage/README.md)
 - [Maximum n-times coverage](maximum-n-times-coverage/README.md)
 - [Minimum test set](minimum-test-set/README.md)

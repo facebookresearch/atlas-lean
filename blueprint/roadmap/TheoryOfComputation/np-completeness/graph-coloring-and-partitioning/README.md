@@ -44,5 +44,4 @@ Vertex, edge, list and precoloring-extension coloring, achromatic number, graph 
 - [Caterpillar arboricity](caterpillar-arboricity/README.md)
 - [Decompositions into copies of a fixed graph](decompositions-into-copies-of-a-fixed-graph/README.md)
 - [Distance-two labelings](distance-two-labelings/README.md)
-- [Distance-two labelings with a fixed span](distance-two-labelings-with-a-fixed-span/README.md)
 - [Polarity in restricted graph classes](polarity-in-restricted-graph-classes/README.md)

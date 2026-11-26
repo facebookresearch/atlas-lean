@@ -1,6 +1,6 @@
 # ORIENTED RADIUS is NP-complete
 
-The following decision problem is NP-complete: it belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Given a simple graph on $\{0, \dots, n - 1\}$, given as an instance of ORIENTED DIAMETER (a vertex count, an edge list and a positive integer $K$), decide whether its edges can be oriented so that some vertex reaches every vertex, and is reached from every vertex, by a directed path of at most $K$ arcs.
+The following decision problem is NP-complete: it belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Given a simple graph on $\{0, \dots, n - 1\}$, given as an instance of ORIENTED DIAMETER (a vertex count, an edge list and a positive integer $K \le n$), decide whether its edges can be oriented so that some vertex reaches every vertex, and is reached from every vertex, by a directed path of at most $K$ arcs.
 
 ## Sources
 
