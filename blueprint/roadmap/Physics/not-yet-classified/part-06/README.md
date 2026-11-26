@@ -6,7 +6,6 @@
 - [Moving Front](moving-front/README.md)
 - [Operating Point Linearization](operating-point-linearization/README.md): the pages of this module are now under Taylor's theorem in several variables.
 - [Passive Load Reflection](passive-load-reflection/README.md): the pages of this module are now under Transmission-line waves, termination and reflection.
-- [Perfect Gas Ports](perfect-gas-ports/README.md)
 - [Physical Error Budgets](physical-error-budgets/README.md)
 - [Physical Failure Events](physical-failure-events/README.md)
 - [Physical Galerkin Error](physical-galerkin-error/README.md)

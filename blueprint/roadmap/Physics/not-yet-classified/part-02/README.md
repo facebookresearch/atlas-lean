@@ -7,7 +7,6 @@
 - [Conduction Ports](conduction-ports/README.md)
 - [Contact And Lubrication](contact-and-lubrication/README.md)
 - [Control Bridge](control-bridge/README.md)
-- [Correlation Domains](correlation-domains/README.md)
 - [Cumulative Inventory](cumulative-inventory/README.md)
 - [DACLevel Error](daclevel-error/README.md): the pages of this module are now under Digital-to-analog converters: level errors and settling.
 - [DCFlow Network Bridge](dcflow-network-bridge/README.md): the pages of this module are now under DC power flow.

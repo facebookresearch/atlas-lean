@@ -1,7 +1,5 @@
 # Part 8 of 10
 
-- [Rotor Ports](rotor-ports/README.md)
-- [Scalar Shock Ports](scalar-shock-ports/README.md)
 - [Scaled Buck Averaging](scaled-buck-averaging/README.md): the pages of this module are now under Buck converter: stored energy and averaging.
 - [Separable Guide Potential](separable-guide-potential/README.md): the pages of this module are now under Separable vacuum Maxwell fields.
 - [Separable Vacuum Maxwell](separable-vacuum-maxwell/README.md): the pages of this module are now under Separable vacuum Maxwell fields.
@@ -10,7 +8,6 @@
 - [Signal Queue](signal-queue/README.md)
 - [Signal Queue Delay](signal-queue-delay/README.md)
 - [Skin Depth Approximation](skin-depth-approximation/README.md): the pages of this module are now under Plane waves in conductors and the skin depth.
-- [Streams](streams/README.md)
 - [Thermal Interfaces](thermal-interfaces/README.md)
 - [Thermal Power Ports](thermal-power-ports/README.md)
 - [Thermal Trace Certificate](thermal-trace-certificate/README.md)

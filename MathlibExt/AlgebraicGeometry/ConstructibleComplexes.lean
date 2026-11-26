@@ -37,7 +37,9 @@ The constructions below are complete. The closure and preservation properties
 of constructibility are requested in
 `WantedExt/AlgebraicGeometry/ConstructibleComplexesWanted.lean`, except
 `localSystem_cokernel`, which is proved in
-`MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel`.
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel`, and
+`localSystem_kernel`, which is proved in
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemKernel`.
 
 ## References
 
