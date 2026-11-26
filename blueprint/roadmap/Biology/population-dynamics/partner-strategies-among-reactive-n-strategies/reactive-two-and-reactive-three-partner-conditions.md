@@ -9,6 +9,7 @@ $$p_{CC} = 1, \qquad \frac{p_{CD} + p_{DC}}{2} \le 1 - \frac{1}{2}\cdot\frac{c}{
 The partners form a three-dimensional polyhedron. It suffices to test two deviations: strict alternation between $C$ and $D$ (second inequality) and ALLD (third). The timing of a single defection in memory does not matter; only the average of $p_{CD}$ and $p_{DC}$ is constrained.
 
 **Reactive-3.** $p$ is a partner if and only if $p_{CCC} = 1$ and
+
 $$\begin{aligned}
 \frac{p_{CDC} + p_{DCD}}{2} &\le 1 - \frac{1}{2}\cdot\frac{c}{b}, &
 \frac{p_{CCD} + p_{CDC} + p_{DCC}}{3} &\le 1 - \frac{1}{3}\cdot\frac{c}{b}, \\
@@ -16,6 +17,7 @@ $$\begin{aligned}
 \frac{p_{CCD} + p_{CDD} + p_{DCC} + p_{DDC}}{4} &\le 1 - \frac{1}{2}\cdot\frac{c}{b}, \\
 p_{DDD} &\le 1 - \frac{c}{b}. &&
 \end{aligned}$$
+
 The five inequalities correspond to the deviations that repeat $CD$, $CCD$, $CDD$, $CCDD$ and $D$. In every case the bound on the average cooperation probability drops by $c/b$ times the fraction of defections in the repeated sequence: for each defection in memory, cooperation must be diminished proportionally.
 
 These conditions are specific to the donation game; for a general prisoner's dilemma more inequalities are needed. Since reactive-2 strategies are reactive-3 strategies that ignore the oldest move, the reactive-2 conditions are a special case of the reactive-3 ones.

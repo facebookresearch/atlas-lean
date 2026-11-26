@@ -5,12 +5,14 @@
 **Strategies.** A memory-one strategy is $p = (p_{CC}, p_{CD}, p_{DC}, p_{DD}) \in [0,1]^4$, where $p_{ij}$ is the probability of cooperating when the player's own last move was $i$ and the co-player's last move was $j$. It is reactive if $p_{CC} = p_{DC}$ and $p_{CD} = p_{DD}$ (only the co-player's move matters), and deterministic if every entry is $0$ or $1$. With implementation errors at rate $\varepsilon$ the effective strategy is $p_\varepsilon = (1-\varepsilon)p + \varepsilon(1-p)$.
 
 **Payoffs.** If player 1 uses $p$ and player 2 uses $q$, the pair of most recent moves $(a_1, a_2) \in \{CC, CD, DC, DD\}$ is a Markov chain with transition matrix
+
 $$M_A = \begin{pmatrix}
 p_{CC}q_{CC} & p_{CC}(1-q_{CC}) & (1-p_{CC})q_{CD} & (1-p_{CC})(1-q_{CD}) \\
 p_{CD}q_{DC} & p_{CD}(1-q_{DC}) & (1-p_{CD})q_{DD} & (1-p_{CD})(1-q_{DD}) \\
 p_{DC}q_{CC} & p_{DC}(1-q_{CC}) & (1-p_{DC})q_{CD} & (1-p_{DC})(1-q_{CD}) \\
 p_{DD}q_{DC} & p_{DD}(1-q_{DC}) & (1-p_{DD})q_{DD} & (1-p_{DD})(1-q_{DD})
 \end{pmatrix}:$$
+
 player 1 reacts to the previous pair, and player 2 then reacts to its own previous move and to player 1's new move. For a stationary distribution $v = v M_A$ with $v = (v_{CC}, v_{CD}, v_{DC}, v_{DD})$, the long-run payoffs are
 
 $$\pi_1 = (v_{CC} + v_{DC})\,b - (v_{CC} + v_{CD})\,c, \qquad \pi_2 = (v_{CC} + v_{CD})\,b - (v_{CC} + v_{DC})\,c .$$
