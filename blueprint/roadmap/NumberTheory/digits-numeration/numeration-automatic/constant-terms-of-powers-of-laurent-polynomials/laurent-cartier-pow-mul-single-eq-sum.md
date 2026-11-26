@@ -9,7 +9,9 @@ $\deg P \le m + 1$, put $T = [-m, m]^r \subset \mathbb{Z}^r$, and let $k < p$ be
 number and $i \in T$. Then
 $\Lambda_p(P^k x^i) = \sum_{j \in T} \mathrm{coef}_{pj - i}[P^k] \, x^j$.
 
-In Kohen's notation $\mathrm{coef}_{pj - i}[P^k]$ is $a^k_{i - pj}$.
+In Kohen's notation $\mathrm{coef}_{pj - i}[P^k]$ is $a^k_{i - pj}$. Kohen states the identity
+over the prime field $\mathbb{F}_p$; here it holds over $\mathbb{Z}$, an integral lift from which
+Kohen's version follows by reducing the coefficients modulo $p$.
 
 ## Sources
 
