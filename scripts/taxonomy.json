@@ -1606,6 +1606,7 @@
   "CSLibExt/Computability/Machines/Turing/Universal/PolyTime": {"to": "TheoryOfComputation/turing-machines/universal-machines", "title": "Clocked universal Turing machine"},
   "CSLibExt/Computability/SatTimeM": {"to": "TheoryOfComputation/np-completeness/cook-levin", "title": "Polynomial-time verifier for SAT"},
   "CSLibExt/Computability/TimeMComplexity": {"to": "TheoryOfComputation/complexity-classes", "title": "Polynomial time in a cost-annotated programming model"},
+  "CSLibExt/Crypto/Framework/AdmissiblePairing": {"to": "ComputerScience/cryptography/public-key", "title": "Advanced encryption and pairings"},
   "CSLibExt/Crypto/Framework/Advantage": {"to": "ComputerScience/cryptography/security-games", "title": "Games and advantages"},
   "CSLibExt/Crypto/Framework/Asymptotic": {"to": "ComputerScience/cryptography/security-games", "title": "Asymptotic security"},
   "CSLibExt/Crypto/Framework/Averaging": {"to": "ComputerScience/cryptography/security-games", "title": "Games and advantages"},
