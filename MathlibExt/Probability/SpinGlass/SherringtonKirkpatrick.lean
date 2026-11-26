@@ -34,7 +34,8 @@ Since `X_{ℓ+1}` depends on `z_0, …, z_ℓ` only through `h + ∑_{p ≤ ℓ}
 computed here on functions of one real variable: `f_{k+1}(y) = log ch y` and
 `f_ℓ(y) = (1 / m_ℓ) log E exp(m_ℓ f_{ℓ+1}(y + z_ℓ))`, so that `X_0 = f_0(h)`.
 
-The Parisi formula and Guerra's bound are recorded in `MathlibExt.Probability.ParisiFormulaWanted`.
+The Parisi formula is recorded in `MathlibExt.Probability.ParisiFormulaWanted`; Guerra's bound is
+proved in `MathlibExt.Probability.SpinGlass.GuerraBound`.
 
 ## References
 
