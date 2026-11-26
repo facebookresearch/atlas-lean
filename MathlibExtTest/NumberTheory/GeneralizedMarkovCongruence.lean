@@ -46,3 +46,19 @@ example (k : ℕ) : genMarkovCongruenceCount k 1009 ≤ 2 :=
 example : genMarkovCongruenceCount 7 9 = 3 := by decide
 
 example : ¬ genMarkovCongruenceCount 7 9 ≤ 2 := by decide
+
+-- The bound is attained modulo 5 ^ 2, with roots 7 and 18.
+example : ((Finset.range (5 ^ 2)).filter fun x => 5 ^ 2 ∣ x ^ 2 + 1) = {7, 18} := by decide
+
+example : genMarkovCongruenceCount 0 (5 ^ 2) = 2 := by decide
+
+example : genMarkovCongruenceCount 0 (5 ^ 2) ≤ 2 :=
+  genMarkovCongruenceCount_prime_pow_le_two (p := 5) (m := 2) (k := 0)
+    (hp := by decide) (hp2 := by decide) (hm := by decide) (hk := by decide)
+
+-- The discriminant is also nonzero modulo 3, but there are no roots modulo 3 ^ 2.
+example : genMarkovCongruenceCount 0 (3 ^ 2) = 0 := by decide
+
+example : genMarkovCongruenceCount 0 (3 ^ 2) ≤ 2 :=
+  genMarkovCongruenceCount_prime_pow_le_two (p := 3) (m := 2) (k := 0)
+    (hp := by decide) (hp2 := by decide) (hm := by decide) (hk := by decide)
