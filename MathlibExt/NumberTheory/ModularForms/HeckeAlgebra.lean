@@ -36,7 +36,7 @@ module
 
 public import Mathlib.RingTheory.Adjoin.Basic
 public import MathlibExt.NumberTheory.ModularForms.CuspFormIntegralLattice
-public import MathlibExt.NumberTheory.ModularForms.PeriodMapHecke
+public import MathlibExt.NumberTheory.ModularForms.HeckeOperator
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
 /-!
