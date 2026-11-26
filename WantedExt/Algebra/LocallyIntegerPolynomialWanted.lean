@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 public import MathlibExt.Algebra.Polynomial.InterpolationPolyExchange
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
+public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialComp
 public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
 
@@ -64,15 +65,6 @@ Article A41, Corollary 1 (`integers-2025-A41-cor-1`). -/
 public theorem_wanted lip_restrict_injective {U V : Set ℤ} (hU : U.Infinite) (hUV : U ⊆ V)
     {f g : V → ℤ} (hf : f ∈ lipSubring V) (hg : g ∈ lipSubring V)
     (h : f ∘ Set.inclusion hUV = g ∘ Set.inclusion hUV) : f = g
-
-/-- **Units of $\mathrm{LIP}(U)$.** For every infinite set $U \subseteq \mathbb{Z}$, the only
-units of the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions on $U$ are the
-constant functions $1$ and $-1$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
-public theorem_wanted lipSubring_units_eq {U : Set ℤ} (hU : U.Infinite)
-    (u : (lipSubring U)ˣ) : u = 1 ∨ u = -1
 
 /-- **Denominator of the top coefficient on a circuit.** Let $f : \mathbb{Z} \to \mathbb{Z}$, and
 for a finite set $Y \subseteq \mathbb{Z}$ write $f_Y \in \mathbb{Q}[x]$ for the interpolation
@@ -124,17 +116,6 @@ public theorem_wanted lipSubring_newton_series {U : Set ℤ} (σ : ℕ ≃ U) :
     ∀ f ∈ lipSubring U, ∃! a : ℕ → ℤ, (fun u : U => ∑ k ∈ Finset.range (σ.symm u + 1),
         a k * ∏ i ∈ Finset.range k, ((u : ℤ) - σ i)) = f
 
-/-- **LIP functions with infinitely many prime values are irreducible.** Let
-$U \subseteq \mathbb{Z}$, and write $\mathrm{LIP}(U)$ for the ring of locally integer polynomial
-functions on $U$: the functions $U \to \mathbb{Z}$ whose restriction to every finite subset of $U$
-agrees with a polynomial with integer coefficients. Let $f \in \mathrm{LIP}(U)$. If $|f(x)|$ is a
-prime number for infinitely many $x \in U$, then $f$ is irreducible in the ring $\mathrm{LIP}(U)$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Theorem 2 (`integers-2025-A41-thm-2`). -/
-public theorem_wanted irreducible_of_infinite_prime_values {U : Set ℤ} (f : lipSubring U)
-    (h : {x : U | ((f : U → ℤ) x).natAbs.Prime}.Infinite) : Irreducible f
-
 /-- **A LIP function bounded by $C|x|^d$ infinitely often is a polynomial.** Let
 $U \subseteq \mathbb{Z}$, let $C$ be a real number and $d \ge 0$ an integer, and let
 $f \in \mathrm{LIP}(U)$. If $|f(x)| \le C|x|^d$ for infinitely many $x \in U$, then there is a
@@ -183,16 +164,6 @@ Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (
 Article A41, Theorem 4 (`integers-2025-A41-thm-4`). -/
 public theorem_wanted exists_strictMono_principal_ideals {U : Set ℤ} (hU : U.Infinite) :
     ∃ g : ℕ → lipSubring U, StrictMono fun n => Ideal.span ({g n} : Set (lipSubring U))
-
-/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under composition.** If $f$ and $g$ lie in
-$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
-$\mathbb{Z} \to \mathbb{Z}$, then so does the composite $x \mapsto f(g(x))$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
-public theorem_wanted lip_univ_comp {f g : ↥(Set.univ : Set ℤ) → ℤ}
-    (hf : f ∈ lipSubring Set.univ) (hg : g ∈ lipSubring Set.univ) :
-    (fun x => f ⟨g x, Set.mem_univ _⟩) ∈ lipSubring Set.univ
 
 /-- **Non-polynomial LIP functions on the integers that are small on an infinite set.** Let
 $\tau : \mathbb{N} \to \mathbb{R}$ with $\tau(n) \to +\infty$ as $n \to \infty$. Write

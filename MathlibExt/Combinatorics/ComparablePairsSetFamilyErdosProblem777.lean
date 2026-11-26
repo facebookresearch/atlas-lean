@@ -489,22 +489,16 @@ there is $N$ such that for every $n \ge N$, every family $F$ of subsets of $\{0,
 with $|F| \le (2 - \varepsilon) 2^{n/2}$ has fewer than $2^n$ comparable pairs, that is, ordered
 pairs $(A, B)$ of members of $F$ with $A \subsetneq B$.
 
-The constant $2$ is sharp. For even $n \ge 4$, fix an $n/2$-element set $H$. The lower cube of
-subsets of $H$ and the upper cube of supersets of $H$ share only $H$, so their union has
-$2^{n/2+1}-1$ members. Of the $2^n$ pairs from the lower cube to the upper cube, only $(H,H)$
-is an equality. For $h \in H$, the pair $(\varnothing,\{h\})$ lies strictly below $H$, giving
-at least $2^n$ strict comparable pairs in total. According to erdosproblems.com/777 the affirmative
-answer follows from the stability theorem (Theorem 1.4) and Corollary 1.5 of Alon, Das, Glebov
-and Sudakov.
+The bound is sharp: for even $n$, a family of $m = 2^{n/2 + 1}$ subsets formed by two stacked
+subcubes has at least $2^n$ comparable pairs. According to erdosproblems.com/777 the affirmative
+answer follows from Theorem 1.4 and Corollary 1.5 of Alon, Das, Glebov and Sudakov.
 
 Source: T. F. Bloom, Erdős Problems, Problem #777, https://www.erdosproblems.com/777 (status
 SOLVED); resolution: N. Alon and P. Frankl, The maximum number of disjoint pairs in a family of
 subsets, Graphs Combin. 1 (1985), 13-21; N. Alon, S. Das, R. Glebov and B. Sudakov, Comparable
-pairs in families of sets, J. Combin. Theory Ser. B (2015), 164-185, arXiv:1411.4196. The latter
-paper states the Alon–Frankl bound as Theorem 1.1
-(https://arxiv.org/html/1411.4196v1#S1.Thmtheorem1). For every integer k ≥ 1 there is β = β(k) > 0
-such that for δ > 0 and m = 2^{(1/(k+1) + δ)n},
-c(n, m) < (1 - 1/k) C(m, 2) + O(m^{2 - β δ^{k+1}}). Daykin and Erdős conjectured the case k = 1.
+pairs in families of sets, J. Combin. Theory Ser. B (2015), 164-185, arXiv:1411.4196, Alon-Frankl
+Theorem 1.4: for every k ≥ 1 there is β(k) > 0 such that for m = 2^{(1/(k+1) + δ)n}, c(n, m) <
+(1 - 1/k) C(m, 2) + O(m^{2 - β δ^{k+1}}), the case k = 1 conjectured by Daykin and Erdős;
 Alon-Frankl Section 6, Example 6.1: the sets meeting the second half of [n] in at most d elements
 or missing at most d elements of the first half form a family of Θ(n^d 2^{n/2}) sets with a
 constant fraction of comparable pairs, disproving a conjecture of Erdős; erdosproblems.com/777:
