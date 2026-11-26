@@ -23,15 +23,22 @@ import Mathlib.Data.Set.Card
 /-!
 # Parity of `k`-full, `l`-free numbers
 
-The odd count is a Dirichlet convolution of the indicator of odd `k`th powers with a correction
-whose first possible nonconstant term at a prime has degree `k + 1`. Its weighted sum is absolutely
-convergent and has positive Euler factors. For the even count, we group by the exact power of two.
+The indicator of odd `k`-full, `l`-free numbers is the Dirichlet convolution of the odd `k`th-power
+indicator with a correction whose first possible nonconstant term at a prime has degree `k + 1`.
+The odd count is the summatory function of this indicator. The weighted sum of the correction
+converges absolutely and equals a positive Euler product.
+
+For the even count, we group by the exact exponent of two as in Srisopha and Srichan (2024, §2,
+equation (7)), generalizing Srichan's exact-exponent bijection (2020, §2, equation (7)).
 
 ## References
 
 * Sunanta Srisopha and Teerapat Srichan, *The Odd/Even Dichotomy for the Set of Numbers That Are
   Both k-Full and l-Free*, INTEGERS 24 (2024), Article A106, pp. 1–7, Theorem 1 and §2,
   equation (7). <https://math.colgate.edu/~integers/y106/y106.pdf>
+* Teerapat Srichan, *The Odd/Even Dichotomy for the Set of Square-Full Numbers*, Applied Mathematics
+  E-Notes 20 (2020), pp. 528–531, §2, equation (7).
+  <https://tea.ntue.edu.tw/~amen/2020/AMEN-200219.pdf>
 -/
 
 namespace MetaMathlibExt
