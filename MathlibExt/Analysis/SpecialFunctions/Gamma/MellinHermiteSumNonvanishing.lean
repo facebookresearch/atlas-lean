@@ -96,15 +96,15 @@ noncomputable def hermiteCoeff (m : ℕ) (a : ℚ) (T : (ℕ × ℕ) × (ℕ × 
 $H : \mathbb{N} \to \mathbb{Z}/2 \to \mathbb{R} \to \mathbb{C}$ and a real shift $s$, the sum
 over the admissible indices $T = ((i, l), (j, k))$ (`hermiteAdmissible m a₃ e`) of
 $$c_T \, \Gamma_{\mathbb{R}}(s + u_3 + l) \, \mathcal{M}(H_{j,\, e + k})(s + k - 1),$$
-where $c_T$ is `hermiteCoeff m a T`, the parity $e + k$ is read in $\mathbb{Z}/2$, and
-$\mathcal{M}$ is the Mellin transform. -/
+where $c_T$ is `hermiteCoeff m a T`, the parity $e + k$ is read in $\mathbb{Z}/2$,
+$\Gamma_{\mathbb{R}}(z) = \pi^{-z/2} \, \Gamma(z/2)$, and $\mathcal{M}$ is the Mellin transform. -/
 noncomputable def hermiteGammaMellinSum (m : ℕ) (a : ℚ) (u₃ : ℂ) (a₃ : ZMod 2) (e : ℤ)
     (H : ℕ → ZMod 2 → ℝ → ℂ) (s : ℝ) : ℂ :=
   ∑ T ∈ hermiteAdmissible m a₃ e, hermiteCoeff m a T *
     Complex.Gammaℝ ((s : ℂ) + u₃ + (T.1.2 : ℂ)) *
       mellin (H T.2.1 ((e : ZMod 2) + (T.2.2 : ZMod 2))) ((s : ℂ) + (T.2.2 : ℂ) - 1)
 
-/-- **Gamma–Mellin Hermite sums do not vanish for large shifts.** Let $m \in \mathbb{N}$,
+/-- **Gamma–Mellin Hermite sums are nonzero at arbitrarily large shifts.** Let $m \in \mathbb{N}$,
 $a \in \mathbb{Q}$ with $a \neq 0$, $u_3 \in \mathbb{C}$, $a_3 \in \mathbb{Z}/2$ and
 $e \in \mathbb{Z}$, and suppose the admissible index set `hermiteAdmissible m a₃ e` is nonempty.
 Let $H : \mathbb{N} \to \mathbb{Z}/2 \to \mathbb{R} \to \mathbb{C}$ be a family whose Mellin
