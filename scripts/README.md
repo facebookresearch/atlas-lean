@@ -65,8 +65,10 @@ optimization and its smoke test are explicit commands, not CI-wide import rewrit
 request adds, so code already on `main` never shows up. It builds the changed Lean files of the
 five production libraries once (`scripts/lean_changes.py build --base <ref>`), then runs:
 
-- `scripts/check_syntax_linters.py`: the warnings of Mathlib's standard linter set, which
-  `lakefile.toml` turns on, on added lines, read from the build with `lake lint`;
+- `scripts/check_syntax_linters.py`: on added lines, the warnings of every linter the build runs,
+  read with `lake lint` (Mathlib's standard set, which `lakefile.toml` turns on, and the linters
+  that Lean, Batteries and Mathlib turn on by default), and the deprecation warnings that Lake
+  replays from the build log;
 - `scripts/check_env_linters.py`: the findings of `#lint`'s environment linters (`runLinter`) on
   the declarations the change adds. A declaration counts as added when the change adds the line
   that declares it, below its docstring and attributes, and no declaration of that name is in

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-"""Report Mathlib's standard linter warnings on the lines a change adds.
+"""Report the linter and deprecation warnings that a change adds.
 
-lakefile.toml builds the production libraries with `linter.mathlibStandardSet`,
-so every build already runs these linters, and Lake keeps their warnings in the
-`.olean` files. This script builds the Lean files that `BASE...HEAD` adds or
-modifies (through one temporary aggregator module per library), reads their
-warnings with `lake lint`, and keeps the warnings on lines the change adds.
-Code that was already in a file is not reported.
+Every build already runs Lean's, Batteries' and Mathlib's default-on linters,
+and the production libraries also run `linter.mathlibStandardSet`, which
+lakefile.toml turns on. Lake keeps their warnings in the `.olean` files. This
+script builds the Lean files that `BASE...HEAD` adds or modifies (through one
+temporary aggregator module per library), reads the warnings of every linter
+with `lake lint`, and keeps those on lines the change adds. Lean does not keep
+deprecation warnings with the linters', so the script also reads them from the
+log that Lake replays when it builds the files. Code that was already in a file
+is not reported.
 
     python3 scripts/check_syntax_linters.py --base origin/main [--report-only]
 
@@ -30,14 +33,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
                           changed_files, in_actions, relative, write_summary)
 
-LINTER_SET = "linter.mathlibStandardSet"
-
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): "
                    r"(?P<severity>warning|error|information): (?P<text>.*)$")
 # A Bool linter prints `false`, a Nat one (`linter.haveLet`) `0`.
 NOTE = re.compile(r"^Note: This linter can be disabled with `set_option (?P<linter>\S+) \S+`$")
 # `lake lint` prints one of these for each target that it lints.
 LINTED = re.compile(r"^-- (?:No environment linters were run|Environment linting passed) for ")
+# How `lake build` prints a message, when it builds a file or replays the file's log.
+BUILD_ENTRY = re.compile(r"^(?P<severity>warning|error|info): (?P<file>\S.*?\.lean):(?P<line>\d+):"
+                         r"(?P<col>\d+): (?P<text>.*)$")
+DEPRECATION = "linter.deprecated"
 
 
 @dataclass(frozen=True)
@@ -86,6 +91,23 @@ def parse_lint_output(text: str, cwd: Path = ROOT) -> list[LintWarning]:
     return list(dict.fromkeys(warnings))
 
 
+def parse_deprecations(text: str, cwd: Path = ROOT) -> list[LintWarning]:
+    """The deprecation warnings in `lake build` output, without repeats.
+
+    Only the first line of each is kept: it names the deprecated declaration and,
+    when there is one, its replacement.
+    """
+    warnings = []
+    for line in text.splitlines():
+        match = BUILD_ENTRY.match(line)
+        if match and match.group("severity") == "warning" and \
+                " has been deprecated" in match.group("text"):
+            warnings.append(LintWarning(relative(match.group("file"), cwd), int(match.group("line")),
+                                        int(match.group("col")), DEPRECATION,
+                                        match.group("text").strip()))
+    return list(dict.fromkeys(warnings))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -97,12 +119,19 @@ def main() -> int:
         print("No Lean file of the production libraries is added or modified.")
         return 0
     added = {file.path: file.added_lines for file in files}
-    print(f"Checking {len(files)} changed Lean file(s) for {LINTER_SET} warnings.")
+    print(f"Checking {len(files)} changed Lean file(s) for linter and deprecation warnings.")
     try:
         with aggregators(files) as targets:
-            result = subprocess.run(
-                ["lake", "lint", "--builtin-only", f"--lint-only={LINTER_SET}", *targets],
-                cwd=ROOT, capture_output=True, text=True)
+            # Lake replays the log of a file it has built already, deprecations included.
+            build = subprocess.run(["lake", "build", *targets], cwd=ROOT, capture_output=True,
+                                   text=True)
+            if build.returncode != 0:
+                print(build.stdout + build.stderr, file=sys.stderr)
+                print("The changed files do not build.", file=sys.stderr)
+                return 2
+            # No `--linters` or `--lint-only`: either would rebuild the files with other options.
+            result = subprocess.run(["lake", "lint", "--builtin-only", *targets], cwd=ROOT,
+                                    capture_output=True, text=True)
     except AggregatorError as error:
         print(error, file=sys.stderr)
         return 2
@@ -110,10 +139,11 @@ def main() -> int:
     if result.returncode not in (0, 1) or len(
             [line for line in output.splitlines() if LINTED.match(line)]) < len(targets):
         print(output, file=sys.stderr)
-        print("The changed files did not build, or `lake lint` did not run.", file=sys.stderr)
+        print("`lake lint` did not run.", file=sys.stderr)
         return 2
 
-    kept = [w for w in parse_lint_output(output) if w.line in added.get(w.path, ())]
+    warnings = parse_lint_output(output) + parse_deprecations(build.stdout + build.stderr)
+    kept = [w for w in warnings if w.line in added.get(w.path, ())]
     level = "warning" if args.report_only else "error"
     for w in kept:
         if in_actions():
@@ -122,13 +152,14 @@ def main() -> int:
         print(f"{w.path}:{w.line}:{w.col}: {w.linter}: {w.message}")
     counts = Counter(w.linter for w in kept)
     if kept:
-        rows = "".join(f"| `{linter}` | {count} |\n" for linter, count in counts.most_common())
-        write_summary(f"### Mathlib linter warnings on added lines\n\n| Linter | Warnings |\n"
-                      f"|---|---:|\n{rows}\n")
-        print(f"{len(kept)} warning(s) on added lines. Fix them, or where a warning is wrong, "
-              f"turn its linter off for that declaration with `set_option <linter> false in`.")
+        rows = "".join(f"| `{linter or 'unnamed'}` | {count} |\n"
+                       for linter, count in counts.most_common())
+        write_summary(f"### Linter and deprecation warnings on added lines\n\n"
+                      f"| Linter | Warnings |\n|---|---:|\n{rows}\n")
+        print(f"{len(kept)} warning(s) on added lines. Fix them, or where a linter's warning is "
+              "wrong, turn it off for that declaration with `set_option <linter> false in`.")
         return 0 if args.report_only else 1
-    print("No Mathlib linter warning on the added lines.")
+    print("No linter or deprecation warning on the added lines.")
     return 0
 
 

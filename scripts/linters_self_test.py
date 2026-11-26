@@ -45,6 +45,16 @@ theorem lintersProbeSemicolon : True := by trivial ; done
 def lintersProbeNoDoc (n : Nat) (m : Nat) : Nat := n + 1
 
 def lintersProbeUnused (n : Nat) (m : Nat) : Nat := n + 1
+
+theorem lintersProbeSimpArg (a b : Nat) : a + b = b + a := by
+  simp [Nat.add_comm, Nat.mul_comm]
+
+theorem lintersProbeNew : True := trivial
+
+@[deprecated lintersProbeNew (since := "2026-11-26")]
+theorem lintersProbeOld : True := trivial
+
+theorem lintersProbeUsesOld : True := lintersProbeOld
 """
 # Only documents an existing declaration, whose unused argument stays.
 DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
@@ -52,8 +62,10 @@ DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
 
 # Each check, and patterns its output must match after the first and the second commit.
 EXPECTED = {
-    "check_syntax_linters.py": ([r"linter\.style\.longLine", r"linter\.style\.cdot"],
-                                [r"No Mathlib linter warning on the added lines"]),
+    "check_syntax_linters.py": ([r"linter\.style\.longLine", r"linter\.style\.cdot",
+                                 r"linter\.unusedSimpArgs",
+                                 r"linter\.deprecated: `lintersProbeOld` has been deprecated"],
+                                [r"No linter or deprecation warning on the added lines"]),
     "check_text_linters.py": ([r"space before a semicolon"],
                               [r"No text-lint error on the added lines"]),
     # The second commit's docstring starts the range of `lintersProbeUnused`, whose unused

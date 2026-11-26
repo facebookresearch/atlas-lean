@@ -2,8 +2,10 @@ name: Mathlib linters
 
 # Mathlib's linters, reported on the code that a pull request adds, so that
 # existing code never shows up:
-# - the standard linter set, which lakefile.toml turns on for the production
-#   libraries, so every build already runs it (scripts/check_syntax_linters.py);
+# - the warnings of every linter that the build runs: Mathlib's standard set,
+#   which lakefile.toml turns on for the production libraries, and the linters
+#   that Lean, Batteries and Mathlib turn on by default; and the deprecation
+#   warnings (scripts/check_syntax_linters.py);
 # - the environment linters of `#lint` on the declarations the pull request
 #   adds (scripts/check_env_linters.py);
 # - the text-based `lint-style` linters (scripts/check_text_linters.py).
@@ -152,7 +154,7 @@ jobs:
         if: steps.scope.outputs.lint == 'true'
         run: python3 scripts/lean_changes.py build --base HEAD^1
 
-      - name: Report Mathlib linter warnings on added lines
+      - name: Report linter and deprecation warnings on added lines
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: python3 scripts/check_syntax_linters.py --base HEAD^1 --report-only
 

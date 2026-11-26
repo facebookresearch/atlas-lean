@@ -44,34 +44,58 @@ Note: This linter can be disabled with `set_option linter.style.show false`
 However, this tactic invocation changed the goal. Please use `change` instead for these purposes.
 
 Note: This linter can be disabled with `set_option linter.style.show false`
+{A}:66:22: warning: This simp argument is unused:
+  Nat.mul_comm
+
+Hint: Omit it from the simp argument list.
+  simp [Nat.add_comm, N̵a̵t̵.̵m̵u̵l̵_̵c̵o̵m̵m̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
 -- No environment linters were run for MathlibExt.LintChanged.
+"""
+
+# What `lake build` prints when it builds or replays a file with a deprecated name.
+BUILD = f"""\
+⚠ [1538/1541] Replayed MathlibExt.A
+warning: MathlibExt/A.lean:65:50: `Nat.lt_succ` has been deprecated: Use `Nat.lt_succ_iff` instead
+
+Note: `Nat.lt_succ_iff` is protected. References to this constant must include its prefix `Nat` even when inside its namespace.
+
+Hint: Replace the deprecated name:
+  Nat.lt_succ_̲i̲f̲f̲
+warning: MathlibExt/A.lean:70:4: `Nat.le_step` has been deprecated: Use `Nat.le_succ_of_le` instead
+warning: MathlibExt/A.lean:65:100: This line exceeds the 100 character limit, please shorten it!
+Build completed successfully (2671 jobs).
 """
 
 FILES = [ChangedFile("MathlibExt/A.lean", "M", frozenset({65})),
          ChangedFile("MathlibExt/B.lean", "M", frozenset({205}))]
 
 
-def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False
-             ) -> tuple[int, str]:
+def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False,
+             build: str = BUILD, build_code: int = 0) -> tuple[int, str]:
     @contextlib.contextmanager
     def fake_aggregators(changed):
         if aggregator_error:
             raise AggregatorError("MathlibExt/LintChanged.lean exists")
         yield ["MathlibExt.LintChanged"]
 
-    result = subprocess.CompletedProcess([], returncode, stdout=output, stderr="")
+    results = [subprocess.CompletedProcess([], build_code, stdout=build, stderr=""),
+               subprocess.CompletedProcess([], returncode, stdout=output, stderr="")]
     out = io.StringIO()
     with patch.object(check, "changed_files", return_value=files), \
             patch.object(check, "aggregators", fake_aggregators), \
-            patch.object(check.subprocess, "run", return_value=result) as run, \
+            patch.object(check.subprocess, "run", side_effect=results) as run, \
             patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}), \
             patch.object(sys, "argv", ["check_syntax_linters.py", "--base", "HEAD^1", *extra]), \
             contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
         code = check.main()
     if files and not aggregator_error:
-        args = run.call_args.args[0]
-        assert args[:4] == ["lake", "lint", "--builtin-only",
-                            "--lint-only=linter.mathlibStandardSet"], args
+        assert run.call_args_list[0].args[0] == ["lake", "build", "MathlibExt.LintChanged"]
+        if build_code == 0:
+            # No linter filter, which would rebuild the files with other options.
+            assert run.call_args_list[1].args[0] == [
+                "lake", "lint", "--builtin-only", "MathlibExt.LintChanged"], run.call_args_list
     return code, out.getvalue()
 
 
@@ -83,9 +107,19 @@ class ParseTests(unittest.TestCase):
             ("MathlibExt/A.lean", 67, 2, "linter.style.cdot"),
             ("MathlibExt/A.lean", 70, 4, "linter.haveLet"),
             ("MathlibExt/B.lean", 207, 6, "linter.style.show"),
+            ("MathlibExt/A.lean", 66, 22, "linter.unusedSimpArgs"),
         ])
         self.assertTrue(warnings[3].message.endswith("instead for these purposes."))
         self.assertNotIn("Note:", warnings[3].message)
+
+    def test_parses_deprecations_from_the_build_log(self):
+        warnings = check.parse_deprecations(BUILD)
+        self.assertEqual([(w.path, w.line, w.col, w.linter, w.message) for w in warnings], [
+            ("MathlibExt/A.lean", 65, 50, "linter.deprecated",
+             "`Nat.lt_succ` has been deprecated: Use `Nat.lt_succ_iff` instead"),
+            ("MathlibExt/A.lean", 70, 4, "linter.deprecated",
+             "`Nat.le_step` has been deprecated: Use `Nat.le_succ_of_le` instead"),
+        ])
 
 
 class MainTests(unittest.TestCase):
@@ -95,8 +129,25 @@ class MainTests(unittest.TestCase):
         # Lean's column 100 is GitHub's column 101.
         self.assertIn("::error file=MathlibExt/A.lean,line=65,col=101,"
                       "title=linter.style.longLine::", out)
+        self.assertIn("::error file=MathlibExt/A.lean,line=65,col=51,title=linter.deprecated::"
+                      "`Nat.lt_succ` has been deprecated", out)
+        self.assertEqual(out.count("title=linter.style.longLine"), 1)
+        self.assertNotIn("A.lean,line=66", out)
         self.assertNotIn("A.lean,line=67", out)
+        self.assertNotIn("A.lean,line=70", out)
         self.assertNotIn("B.lean", out)
+
+    def test_reports_default_on_linters(self):
+        files = [ChangedFile("MathlibExt/A.lean", "M", frozenset({66}))]
+        code, out = run_main(OUTPUT, 1, files)
+        self.assertEqual(code, 1)
+        self.assertIn("::error file=MathlibExt/A.lean,line=66,col=23,title=linter.unusedSimpArgs::"
+                      "This simp argument is unused:%0A  Nat.mul_comm", out)
+
+    def test_fails_when_the_files_do_not_build(self):
+        code, _ = run_main(OUTPUT, 0, build="error: MathlibExt/A.lean:3:0: unknown identifier\n",
+                           build_code=1, extra=["--report-only"])
+        self.assertEqual(code, 2)
 
     def test_report_only_annotates_and_passes(self):
         code, out = run_main(OUTPUT, 1, extra=["--report-only"])
