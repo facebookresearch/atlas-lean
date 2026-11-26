@@ -304,9 +304,9 @@ private theorem ampNormExpand (N : ℕ) (gs : List QGate)
   intro q _
   exact iteMulStarRe _ _ _ _
 
-/-- **Gap as a signed sum of amplitude norms.** For every circuit `gs` and input index `t`, the
-path-pair gap is the sum over basis states `s` of the output sign of `s` times the norm of the
-cleared amplitude `ampNum N gs s t`. -/
+/-- **Gap as a signed sum of squared moduli.** For every circuit `gs` and input index `t`, the
+path-pair gap is the sum over basis states `s` of the output sign of `s` times the squared modulus
+`re ^ 2 + im ^ 2` (`GaussianInt.norm`) of the cleared amplitude `ampNum N gs s t`. -/
 theorem pathPairGap_eq_sum_outSign_norm (N : ℕ) (gs : List QGate) (t : Fin (2 ^ N)) :
     pathPairGap N gs t = ∑ s : Fin (2 ^ N), outSign s * (ampNum N gs s t).norm := by
   unfold pathPairGap
