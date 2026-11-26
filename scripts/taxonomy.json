@@ -10729,6 +10729,7 @@
   "MathlibExt/Combinatorics/ArithmeticalStructureCoconutCount": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/ArithmeticalStructureCoconutSubdivision": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/ArithmeticalStructureCoconutTree": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
+  "MathlibExt/Combinatorics/ArithmeticalStructureCoconutTreeCoconutSmoothPath": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/ArithmeticalStructureCoconutTwoLeaves": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/ArithmeticalStructureStar": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/AssociatedStirlingEulerian": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Associated Stirling–Eulerian numbers"},
