@@ -14264,6 +14264,7 @@
   "MathlibExt/Probability/ScottishBook17": {"to": "Probability/central-limit-theorems", "title": "Poisson's urn theorem and its converse"},
   "MathlibExt/Probability/ScottishBook38": {"to": "GraphTheory/random-graphs", "title": "Connectivity of random k-out graphs"},
   "MathlibExt/Probability/SkorokhodRepresentation": {"to": "Probability/convergence-of-measures", "title": "Skorokhod representation theorem"},
+  "MathlibExt/Probability/SpinGlass/GuerraBound": {"to": "StatisticalMechanics/spin-glasses", "title": "Sherrington–Kirkpatrick model"},
   "MathlibExt/Probability/SpinGlass/SherringtonKirkpatrick": {"to": "StatisticalMechanics/spin-glasses", "title": "Sherrington–Kirkpatrick model"},
   "MathlibExt/Probability/SqMartingaleConvergence": {"to": "Probability/martingales", "title": "Martingale convergence theorems"},
   "MathlibExt/Probability/StableDistribution": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Stable distributions and domains of attraction"},
