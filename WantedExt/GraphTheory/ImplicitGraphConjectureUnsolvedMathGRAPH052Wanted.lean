@@ -56,12 +56,14 @@ under isomorphism). -/
 def IsHereditary (F : GraphFamily) : Prop :=
   ∀ (m n : ℕ) (σ : Fin m ↪ Fin n) (G : SimpleGraph (Fin n)), F n G → F m (G.comap σ)
 
-/-- At most factorial speed of growth: `|Fₙ| ≤ 2 ^ O(n log n)`. -/
+/-- At most factorial speed of growth: `|Fₙ| ≤ 2 ^ O(n log n)`, here `|Fₙ| ≤ 2 ^ (c n (k + 1))`
+with `k = Nat.log 2 n`, which is `⌊log₂ n⌋` for `n ≥ 1`, and `Nat.log 2 0 = 0`. -/
 def HasFactorialSpeed (F : GraphFamily) : Prop :=
   ∃ c : ℕ, ∀ n : ℕ, Nat.card {G : SimpleGraph (Fin n) // F n G} ≤ 2 ^ (c * n * (Nat.log 2 n + 1))
 
 /-- An efficient implicit representation: codes of `O(log n)` bits, here exactly
-`c (⌊log₂ n⌋ + 1)` bits, assigned to the vertices of each member, and a decoder that depends on the
+`c (⌊log₂ n⌋ + 1)` bits with `⌊log₂ n⌋` written `Nat.log 2 n` (so `c` bits at `n = 0`, since
+`Nat.log 2 0 = 0`), assigned to the vertices of each member, and a decoder that depends on the
 family (and on `n`) but not on the graph and decides adjacency of two distinct vertices from their
 codes. -/
 def HasEfficientImplicitRepresentation (F : GraphFamily) : Prop :=
