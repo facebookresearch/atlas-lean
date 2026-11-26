@@ -23246,7 +23246,7 @@
 "Cslib.Distributed.TokenRing.Step": "2f6b0f7be2056afc",
 "Cslib.Distributed.TokenRing.exists_piecewiseLegal_of_steps": "eef77092848b3268",
 "Cslib.Distributed.TokenRing.exists_privileged": "54687422eea646bc",
-"Cslib.Distributed.TokenRing.legit_at_quadratic_bound": "1e43b083ddce6e53",
+"Cslib.Distributed.TokenRing.legit_at_quadratic_bound": "09b253d67346a259",
 "Cslib.Distributed.TokenRing.legit_closed": "0637be9b4f82d9b8",
 "Cslib.Distributed.TokenRing.legit_iff_two_blocks": "dad497d6d9f926b5",
 "Cslib.Distributed.TokenRing.moveVal": "a48b70179db6a980",

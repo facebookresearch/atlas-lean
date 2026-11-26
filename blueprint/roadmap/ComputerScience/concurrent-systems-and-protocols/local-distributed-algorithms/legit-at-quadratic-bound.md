@@ -1,5 +1,6 @@
 # Legit at quadratic bound
 
-On a ring of `m ≥ 1` machines with `m + 1` colors, after `2 * m ^ 2` actual central-daemon
-steps the configuration has exactly one privileged machine. Each subsequent actual step
-preserves unique privilege.
+For any natural number `n`, let `run` be a sequence of configurations of Dijkstra's
+central-daemon token ring on `n + 1` machines with `n + 2` colors. If the transition from
+`run t` to `run (t + 1)` is an actual step for every `t < 2 * (n + 1) ^ 2`, then
+`run (2 * (n + 1) ^ 2)` has exactly one privileged machine.

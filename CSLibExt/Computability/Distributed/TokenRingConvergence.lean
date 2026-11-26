@@ -426,9 +426,10 @@ public theorem self_stabilizes_piecewiseLegal (n : ℕ) :
     (∀ {x y : ZMod (n + 1) → ZMod (n + 2)}, PiecewiseLegal x → Step x y → PiecewiseLegal y) :=
   ⟨exists_piecewiseLegal_of_steps, piecewiseLegal_closed⟩
 
-/-- On a ring of `m ≥ 1` machines with `m + 1` colors, after `2 * m ^ 2` actual central-daemon
-steps the configuration has exactly one privileged machine. Each subsequent actual step
-preserves unique privilege. -/
+/-- For any natural number `n`, let `run` be a sequence of configurations of Dijkstra's
+central-daemon token ring on `n + 1` machines with `n + 2` colors. If the transition from
+`run t` to `run (t + 1)` is an actual step for every `t < 2 * (n + 1) ^ 2`, then
+`run (2 * (n + 1) ^ 2)` has exactly one privileged machine. -/
 public theorem legit_at_quadratic_bound {n : ℕ}
     (run : ℕ → ZMod (n + 1) → ZMod (n + 2))
     (hstep : ∀ t < 2 * (n + 1) ^ 2, Step (run t) (run (t + 1))) :
