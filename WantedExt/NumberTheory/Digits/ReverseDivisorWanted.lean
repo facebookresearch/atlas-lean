@@ -43,6 +43,7 @@ public import MathlibExt.NumberTheory.Digits.ReverseDivisor
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorCoprime
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorFourDigits
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorQuotientFour
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarIffDvd
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarOfDvd
 
 set_option autoImplicit false
@@ -50,15 +51,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Digits.ReverseDivisorWanted
-
-/-- **The positive integers with property $P^*$ are the divisors of $99$.** A natural number
-$n \ge 1$ has property $P^*$ if and only if $n$ divides $99$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Theorem 3. -/
-theorem_wanted hasPropertyPStar_iff_dvd (n : ℕ) (hn : 1 ≤ n) :
-    HasPropertyPStar n ↔ n ∣ 99
 
 /-- **Palindromes with property $P^*$.** Let $n \ge 1$ be a natural number that is a decimal
 palindrome, that is, whose decimal reversal equals $n$. If $n$ has the property $P^*$, then $n$
