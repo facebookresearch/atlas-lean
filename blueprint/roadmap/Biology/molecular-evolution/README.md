@@ -14,3 +14,4 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)

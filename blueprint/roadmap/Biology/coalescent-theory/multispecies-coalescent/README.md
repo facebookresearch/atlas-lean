@@ -118,3 +118,5 @@
 - [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
 - [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
+- [Label-switching unidentifiability of bidirectional introgression](label-switching-unidentifiability-of-bidirectional-introgression.md)
+- [Gene-tree density under the multispecies coalescent with introgression](multispecies-coalescent-with-introgression-gene-tree-density.md)

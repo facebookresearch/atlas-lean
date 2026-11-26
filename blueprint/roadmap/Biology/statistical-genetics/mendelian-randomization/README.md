@@ -43,3 +43,12 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+- [Delta-method and Fieller intervals for the instrumental-variable ratio estimate](fieller-and-delta-method-intervals-for-the-ratio-estimate.md)
+- [Generalized summary-data-based Mendelian randomization (GSMR)](gsmr-generalized-summary-data-mendelian-randomization.md)
+- [HEIDI-outlier test for pleiotropic instruments](heidi-outlier-test-for-pleiotropic-instruments.md)
+- [LIML, GMM and structural mean model estimators of a causal effect](liml-gmm-and-structural-mean-model-estimators.md)
+- [Mediation decomposition in summary-data Mendelian randomization](mendelian-randomization-mediation-decomposition.md)
+- [MR-BMA: Bayesian model averaging for multivariable Mendelian randomization](mr-bma-bayesian-model-averaging-for-multivariable-mr.md)
+- [MRMix normal-mixture Mendelian randomization estimator](mrmix-normal-mixture-estimator.md)
+- [Multi-trait conditional analysis from summary data (mtCOJO)](mtcojo-multi-trait-conditional-analysis-from-summary-data.md)
+- [Principal-component IVW estimator for many correlated instruments](principal-component-ivw-estimator-for-correlated-instruments.md)

@@ -13,3 +13,5 @@
 - [Effective size for an X-linked locus](effective-size-for-x-linked-loci.md)
 
 - [Consistency of the linkage-disequilibrium estimator of effective population size under a calibration hypothesis](ld-based-effective-size-estimator-definition-and.md)
+- [Ancestry-specific effective population size from IBD segments](ancestry-specific-effective-size-from-ibd-segments.md)
+- [Coalescent effective size under random population-size fluctuations](coalescent-effective-size-under-random-population-size-fluctuations.md)

@@ -28,3 +28,11 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
+- [Deleterious substitutions and sweeps](diffusion-theory/deleterious-substitutions-and-sweeps/README.md)
+- [Moment equations for the sample frequency spectrum](diffusion-theory/moment-equations-for-the-sample-frequency-spectrum/README.md)
+- [Forward-time theory of strong background selection](forward-time-theory-of-strong-background-selection/README.md)
+- [Runs of homozygosity](runs-of-homozygosity/README.md)
+- [Selection against introgressed ancestry](selection-against-introgressed-ancestry/README.md)
+- [Resistance to gene drives](selection-migration-and-transmission/resistance-to-gene-drives/README.md)
+- [Selection on microbial growth traits under serial dilution](selection-on-microbial-growth-traits-under-serial-dilution/README.md)
+- [Sweeps and shifts in polygenic adaptation](sweeps-and-shifts-in-polygenic-adaptation/README.md)

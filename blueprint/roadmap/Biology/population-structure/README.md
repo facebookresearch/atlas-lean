@@ -29,3 +29,7 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
+- [Archaic introgression detection](archaic-introgression-detection/README.md)
+- [Estimated effective migration surfaces](estimated-effective-migration-surfaces/README.md)
+- [$Q_{ST}$ and $F_{ST}$ for neutral quantitative traits](qst-and-fst-for-neutral-quantitative-traits/README.md)
+- [Spatial demography from shared coalescence segments](spatial-demography-from-shared-coalescence-segments/README.md)

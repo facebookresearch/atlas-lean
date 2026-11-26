@@ -101,3 +101,8 @@
 - [The shrinkage error is orthogonal to the shrunk estimates](integral-sub-blup-score-mul-blup-score.md)
 - [The shrunk PRS is calibrated when its score term is nonzero](calib-slope-blup.md)
 - [Squared accuracy of the shrunk PRS](accuracy-sq-blup.md)
+- [Heritability-model-informed effect-size priors for polygenic prediction](heritability-model-informed-effect-size-priors-for-polygenic-prediction.md)
+- [Relative accuracy of a polygenic score across ancestries](relative-accuracy-of-a-polygenic-score-across-ancestries.md)
+- [Right-hand-side updating Gibbs sampler from summary statistics](right-hand-side-updating-gibbs-sampler-from-summary-statistics.md)
+- [SBayesR: multiple-regression likelihood on summary statistics with a BayesR mixture prior](sbayesr-summary-statistic-likelihood-with-bayesr-mixture-prior.md)
+- [SumHer: expected association statistics under an annotation-based heritability model](sumher-expected-association-statistics-under-a-heritability-model.md)

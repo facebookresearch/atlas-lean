@@ -27,3 +27,9 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
+- [IBD-based estimation of recent effective population size](ibd-based-estimation-of-recent-effective-size/README.md)
+- [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)
+- [IBS tract length spectrum](ibs-tract-length-spectrum/README.md)
+- [Multiple sequentially markovian coalescent](multiple-sequentially-markovian-coalescent/README.md)
+- [Tree-sequence inference by ancestral haplotype copying](tree-sequence-inference-by-ancestral-haplotype-copying/README.md)
+- [Wright–Fisher versus coalescent genealogies of long genomes](wright-fisher-versus-coalescent-genealogies-of-long-genomes/README.md)

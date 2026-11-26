@@ -6,3 +6,6 @@
 - [Fitness landscapes as mathematical objects](fitness-landscapes-as-explicit-mathematical-obje.md)
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
+- [Maynard Smith's connectivity condition in protein space](maynard-smith-connectivity-condition-in-protein-space.md)
+- [Success probability of a mutant lineage in a fitness valley](success-probability-of-a-mutant-lineage-in-a-fitness-valley.md)
+- [Two-step valley-crossing time and the tunneling threshold](two-step-valley-crossing-time-and-tunneling-threshold.md)

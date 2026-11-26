@@ -40,3 +40,4 @@
 - [Coordinate ascent does not decrease the ELBO](elbo-le-elbo-cavi-step.md)
 - [The ELBO is nondecreasing along coordinate ascent](monotone-elbo-cavi-run.md)
 - [Stationary points of coordinate ascent](is-coord-max-iff.md)
+- [Orthogonal invariance of the linear mixed model likelihood](orthogonal-invariance-of-the-mixed-model-likelihood.md)

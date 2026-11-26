@@ -1,0 +1,18 @@
+# Maximum credible population allele frequency for a Mendelian variant
+
+Consider a Mendelian disorder with population prevalence $\pi$ and a candidate variant with penetrance $\phi \in (0, 1]$. Let the **maximum genetic contribution** $G$ be the largest proportion of cases attributable to any single gene, and the **maximum allelic contribution** $A$ the largest proportion of cases (dominant model) or of a gene's pathogenic alleles (recessive model) attributable to any single variant; both are upper bounds taken from case series or variant databases. Assuming Hardy–Weinberg proportions and that each affected individual's disease is due to the gene in question, a pathogenic allele cannot exceed the **maximum credible population allele frequency**
+$$q_{\max} = \begin{cases} \dfrac{\pi\, A}{2\,\phi}, & \text{dominant (one causal allele per case)},\\[2ex] A\,\sqrt{\dfrac{\pi\, G}{\phi}}, & \text{recessive (biallelic cases)}. \end{cases}$$
+
+To allow for sampling variance in a reference sample of $AN$ genotyped chromosomes, the **maximum tolerated allele count** is the upper one-sided $95\%$ point of a Poisson law with mean $AN \cdot q_{\max}$: the smallest integer $c$ with
+$$\Pr\big(\mathrm{Poisson}(AN \cdot q_{\max}) \le c\big) \ge 0.95 .$$
+A variant observed more than $c$ times (in any major continental subpopulation, using that subpopulation's $AN$) is too common to cause the disorder under the stated architecture. Conversely, a variant's **filtering allele frequency** is the largest population frequency that its observed count still rejects at the $5\%$ level, i.e. the lower one-sided $95\%$ confidence bound on its true frequency; it is disease-independent, and the variant is filtered for a disorder whenever its filtering allele frequency is at least that disorder's $q_{\max}$.
+
+**Example (hypertrophic cardiomyopathy).** With $\pi = 1/500$, $A = 0.02$ (the most common variant explains at most about $2\%$ of cases) and $\phi = 0.5$, $q_{\max} = (1/500)(0.02)/(2 \cdot 0.5) = 4.0 \times 10^{-5}$. With $AN = 121{,}412$ chromosomes the Poisson mean is $4.86$ and the maximum tolerated count is $9$ (it is $5$ for fully penetrant alleles, Poisson mean $2.43$).
+
+## Expansion
+
+Dominant case: cases due to one variant have frequency at least $\pi A$; carriers of a variant at allele frequency $q$ number $2q$ per individual to first order (heterozygotes), of whom a fraction $\phi$ are affected, so $2 q \phi \le \pi A$. Recessive case: cases due to the gene have frequency $\pi G$; under Hardy–Weinberg the probability of carrying two pathogenic alleles of the gene is $q_{\mathrm{gene}}^2$, so $q_{\mathrm{gene}}^2 \phi \le \pi G$, and a single variant accounts for at most a fraction $A$ of the gene's pathogenic alleles, giving $q \le A\sqrt{\pi G/\phi}$. The Poisson step treats the observed allele count as approximately binomial with tiny success probability, and uses the one-sided upper bound because rare-variant frequency spectra are skewed toward lower true frequencies. In the original application this filter removed about two thirds of candidate variants per cardiomyopathy exome while retaining all known pathogenic variants (estimated false-positive rate $< 0.001$), and led to the reclassification of 42 of 601 ClinVar variants reported as pathogenic for the disorder.
+
+## Sources
+
+- N. Whiffin, E. Minikel, R. Walsh et al., "Using high-resolution variant frequencies to empower clinical genome interpretation", Genetics in Medicine (2017), Materials and Methods and Results ("Defining maximum credible population AF", Tables 1–2), <https://doi.org/10.1038/gim.2017.26> (PMC5563454).
