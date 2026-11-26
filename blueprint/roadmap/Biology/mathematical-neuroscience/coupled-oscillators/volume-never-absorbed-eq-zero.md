@@ -10,8 +10,7 @@ Let $N \ge 2$, let $f, g : [0, 1] \to [0, 1]$ satisfy the [state-function](state
 
 ## Proof depends on
 
-- [The return map is injective](return-map-injective.md)
-- [The return map expands volume](return-map-expands-volume.md)
+- [Non-absorbing configurations of a section have measure zero](never-absorbed-section-measure-zero.md)
 - [Null sets pull back through firings](null-sets-pull-back-through-firings.md)
 
 ## Sources
