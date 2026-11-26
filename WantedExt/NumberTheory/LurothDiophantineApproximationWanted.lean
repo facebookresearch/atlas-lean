@@ -157,20 +157,6 @@ public theorem lurothDenominator_two (n : ℕ) :
   | zero => rfl
   | succ n ih => rw [lurothDenominator_succ, ih]; ring
 
-/-- **Lüroth convergent triples.** The set $S$ consists of the triples $(c_n(y), Q_n(y), d_n(y))$
-for $y \in (0, 1]$ and $n \ge 0$, where $d_0(y), d_1(y), \dots$ are the Lüroth digits of $y$
-(indexed from $0$), $Q_n(y) = d_n(y) \prod_{j < n} d_j(y)(d_j(y) - 1)$ is the $n$-th Lüroth
-denominator of this digit sequence, and $c_n(y) = \sum_{k \le n} 1/Q_k(y)$ is its $n$-th Lüroth
-convergent. The first entry is the rational number $c_n(y)$, the second the natural number
-$Q_n(y)$ and the third the digit $d_n(y)$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (16). -/
-public def lurothTripleSet : Set (ℚ × ℕ × ℕ) :=
-  {t | ∃ y ∈ Set.Ioc (0 : ℝ) 1, ∃ n,
-    t = (lurothConvergent (lurothDigitSeq y) n, lurothDenominator (lurothDigitSeq y) n,
-      lurothDigitSeq y n)}
-
 /-- **A Lüroth triple from the expansion of $1$.** Let $S$ be the set of triples
 $(P_n(y)/Q_n(y), Q_n(y), d_n(y))$ for $y \in (0, 1]$ and $n \ge 0$, where $P_n(y)/Q_n(y)$ is the
 $n$-th Lüroth convergent of $y$, $Q_n(y)$ its Lüroth denominator and $d_n(y)$ its $n$-th Lüroth
@@ -206,20 +192,6 @@ public theorem_wanted hausdorffMeasure_limsup_closedBall_of_volume (c r : ℕ �
       limsup (fun n => Metric.closedBall (c n) (r n ^ s)) atTop) = 1) :
     μH[s] (limsup (fun n => Metric.closedBall (c n) (r n)) atTop) = ∞ ∧
       ENNReal.ofReal s ≤ dimH (limsup (fun n => Metric.closedBall (c n) (r n)) atTop)
-
-/-- **Recognising Lüroth convergents.** For $y \in (0, 1]$ and $n \ge 0$ let $P_n(y)/Q_n(y)$ be
-the $n$-th Lüroth convergent of $y$, $Q_n(y)$ its Lüroth denominator and $d_n(y)$ the $n$-th
-Lüroth digit of $y$, and let $S$ be the set of all triples $(P_n(y)/Q_n(y), Q_n(y), d_n(y))$ for
-$y \in (0, 1]$ and $n \ge 0$. If $x \in (0, 1]$ and $(P/Q, Q, d) \in S$ satisfy
-$0 < x - P/Q \le 1/((d - 1) Q)$, then $P/Q$ is a Lüroth convergent of $x$, that is,
-$P/Q = P_n(x)/Q_n(x)$ for some $n$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Proposition 4. -/
-public theorem_wanted exists_lurothConvergent_eq_of_mem_lurothTripleSet (x : ℝ)
-    (hx : x ∈ Set.Ioc 0 1) (t : ℚ × ℕ × ℕ) (ht : t ∈ lurothTripleSet)
-    (hpos : 0 < x - t.1) (hle : x - t.1 ≤ 1 / (((t.2.2 : ℝ) - 1) * t.2.1)) :
-    ∃ n, lurothConvergent (lurothDigitSeq x) n = t.1
 
 /-- **Lüroth $q^{-\tau}$-well approximable numbers as a limsup over convergent triples.** Let
 $\tau \ge 0$ and let $L(\tau)$ be the set of Lüroth $\psi$-well approximable numbers for
