@@ -1,6 +1,6 @@
 # Functions definable in System T
 
-Write $\to_T$ for one-step reduction of System T (β-reduction together with the recursor rules, in any context), $=_T$ for the convertibility it generates, and $\underline{n} = \mathrm{S}^n\,0$ for the numerals. A total function $f : \mathbb{N}^k \to \mathbb{N}$ is *definable in System T* if there is a closed term $F$ with
+Write $\to_T$ for [one-step full reduction](system-t-full-reduction/step.md) of System T (β-reduction together with the recursor rules, in any context), $\to_T^*$ for [multi-step reduction](system-t-full-reduction/steps.md), $=_T$ for the convertibility it generates, and $\underline{n} = \mathrm{S}^n\,0$ for the numerals. A total function $f : \mathbb{N}^k \to \mathbb{N}$ is *definable in System T* if there is a closed term $F$ with
 $\vdash F : \mathrm{nat} \to \cdots \to \mathrm{nat} \to \mathrm{nat}$ ($k$ arguments) such that
 
 $$F\, \underline{m_1} \cdots \underline{m_k} =_T \underline{f(m_1, \dots, m_k)} \quad\text{for all } m_1, \dots, m_k \in \mathbb{N}.$$
@@ -12,11 +12,14 @@ diagonal argument gives a total recursive function that is not definable in Syst
 ## Depends on
 
 - [Gödel's System T](godel-s-system-t.md)
+- [Full reduction of System T](system-t-full-reduction/step.md)
+- [Multi-step reduction of System T](system-t-full-reduction/steps.md)
 
 ## Proof depends on
 
 - [Strong normalization of System T](strong-normalization-of-system-t.md)
 - [Closed normal forms of System T](closed-normal-forms-of-system-t.md)
+- [The System T Ackermann term computes Ackermann's function](system-t-full-reduction/ack-t-steps.md)
 
 ## Sources
 

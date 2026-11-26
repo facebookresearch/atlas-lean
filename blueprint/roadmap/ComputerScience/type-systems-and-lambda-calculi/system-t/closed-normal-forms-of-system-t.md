@@ -1,6 +1,6 @@
 # Closed normal forms of System T
 
-Write $\to_T$ for one-step reduction of System T (β-reduction together with the recursor rules, in any context), $=_T$ for the convertibility it generates, and $\underline{n} = \mathrm{S}^n\,0$ for the numerals. Let $M$ be a closed term of System T in normal form with $\vdash M : \tau$.
+Write $\to_T$ for [one-step full reduction](system-t-full-reduction/step.md) of System T (β-reduction together with the recursor rules, in any context), $\to_T^*$ for [multi-step reduction](system-t-full-reduction/steps.md), $=_T$ for the convertibility it generates, and $\underline{n} = \mathrm{S}^n\,0$ for the numerals. Let $M$ be a closed term of System T in normal form with $\vdash M : \tau$.
 
 1. If $\tau = \mathrm{nat}$, then $M = \underline{n}$ for some $n \in \mathbb{N}$.
 2. If $\tau = \tau_1 \to \tau_2$, then $M$ is an abstraction $\lambda x.\, N$, or a constant or partially applied recursor of that type ($\mathrm{S}$, $\mathrm{R}_A$, $\mathrm{R}_A\, u$ or
@@ -11,6 +11,8 @@ With strong normalization, every closed term of type $\mathrm{nat}$ reduces to a
 ## Depends on
 
 - [Gödel's System T](godel-s-system-t.md)
+- [Full reduction of System T](system-t-full-reduction/step.md)
+- [Multi-step reduction of System T](system-t-full-reduction/steps.md)
 
 ## Proof depends on
 
