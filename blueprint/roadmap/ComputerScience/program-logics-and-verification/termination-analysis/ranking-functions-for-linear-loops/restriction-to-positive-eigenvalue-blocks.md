@@ -10,6 +10,12 @@ terminates on every real input.
 
 - [Real Jordan form](../../../../LinearAlgebra/eigenvalues-and-canonical-forms/jordan-normal-form/real-jordan-form.md)
 
+## Expansion
+
+This page becomes ready once these prerequisites are checked:
+
+- A complete proof of the converse direction, whose key step (the dominant term for large $i$) the source claims without proof (source check)
+
 ## Sources
 
 - A. Tiwari, "Termination of linear programs", *Computer Aided Verification (CAV 2004)*, LNCS 3114, Springer, 2004, pp. 70–82, author copy <https://www.csl.sri.com/users/tiwari/papers/cav04.pdf>, Section 3, Lemma 1 and its proof sketch.

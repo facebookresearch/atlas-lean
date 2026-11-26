@@ -2,7 +2,7 @@
 
 If $R_1, \dots, R_k$ are [H-well-founded](h-well-founded-relations.md) relations on a set $I$, then their union $R_1 \cup \dots \cup R_k$ is H-well-founded.
 
-The theorem is a contrapositive form of the infinite Ramsey theorem for pairs that has an intuitionistic proof; it yields an intuitionistic proof of the termination theorem for disjunctively well-founded transition invariants.
+The theorem, due to Berardi and Steila (RTA-TLCA 2014), is a contrapositive form of the infinite Ramsey theorem for pairs that has an intuitionistic proof; it yields an intuitionistic proof of the termination theorem for disjunctively well-founded transition invariants.
 
 ## Depends on
 

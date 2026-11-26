@@ -8,7 +8,7 @@ with $A$, $A'$ rational $(r+s) \times n$ matrices and $b \in \mathbb{Q}^{r+s}$ (
 
 $$\lambda_1^\top A' = 0, \qquad (\lambda_1^\top - \lambda_2^\top) A = 0, \qquad \lambda_2^\top (A + A') = 0, \qquad \lambda_2^\top b < 0 .$$
 
-For every such pair, $x \mapsto \lambda_2^\top A' x$ is the linear part of a linear ranking function, and every linear ranking function arises from such a pair. Since the conditions form a linear program, existence of a linear ranking function for such a loop is decidable in polynomial time.
+For every such pair, $x \mapsto \lambda_2^\top A' x$ decreases by at least $-\lambda_2^\top b > 0$ on every transition and is bounded below on the guard, so a positive multiple of it, shifted by a constant, is a linear ranking function; conversely every linear ranking function arises in this way from such a pair (the solutions are closed under positive scaling). Since the conditions form a linear program, existence of a linear ranking function for such a loop is decidable in polynomial time.
 
 ## Depends on
 
@@ -18,6 +18,7 @@ For every such pair, $x \mapsto \lambda_2^\top A' x$ is the linear part of a lin
 ## Proof depends on
 
 - [Farkas' lemma for inequality systems](../../../../Geometry/convex-geometry/linear-programming/exists-nonneg-mul-vec-le-iff.md)
+- [Linear programming is in P (Khachiyan)](../../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
 
 ## Sources
 

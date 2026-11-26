@@ -4,7 +4,7 @@ In a [resource algebra](resource-algebras.md) $M$, an element $a$ has a *frame-p
 
 $$\forall c^? \in M^?.\ \mathcal{V}(a \cdot c^?) \Rightarrow \exists b \in B.\ \mathcal{V}(b \cdot c^?),$$
 
-and $a \rightsquigarrow b$ abbreviates $a \rightsquigarrow \{b\}$. Thinking of the frame $c^?$ as the composition of the resources owned by all other threads, possibly none ($c^? = \bot$), a frame-preserving update never invalidates the resources of concurrently running threads. In Iris, ownership $[a]^\gamma$ of ghost state can be changed by a view shift exactly along frame-preserving updates.
+and $a \rightsquigarrow b$ abbreviates $a \rightsquigarrow \{b\}$. Thinking of the frame $c^?$ as the composition of the resources owned by all other threads, possibly none ($c^? = \bot$), a frame-preserving update never invalidates the resources of concurrently running threads. In Iris, ownership $[a]^\gamma$ of ghost state can be changed by a view shift along any frame-preserving update.
 
 ## Depends on
 

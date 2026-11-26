@@ -10,5 +10,5 @@ The proof colours each pair $\{i, j\}$, $i < j$, by the least $l$ with $(s_i, s_
 
 ## Sources
 
-- S. Berardi, P. Oliva and S. Steila, "Proving termination with transition invariants of height ω", arXiv:1407.4692v1, 2014, <https://arxiv.org/abs/1407.4692v1>, Section 1 (the Termination Theorem of Podelski and Rybalchenko is proved classically from Ramsey's theorem through this property of $R_1 \cup \dots \cup R_k$-homogeneous sequences).
+- S. Berardi, P. Oliva and S. Steila, "Proving termination with transition invariants of height ω", arXiv:1407.4692v1, 2014, <https://arxiv.org/abs/1407.4692v1>, Section 1 (the Termination Theorem of Podelski and Rybalchenko is proved classically from Ramsey's theorem); the Ramsey step is Theorem 9.1.2 of Diestel below, applied to the colouring by the least index.
 - R. Diestel, *Graph Theory*, 5th edition, Graduate Texts in Mathematics 173, Springer, 2017, Section 9.1, Theorem 9.1.2.

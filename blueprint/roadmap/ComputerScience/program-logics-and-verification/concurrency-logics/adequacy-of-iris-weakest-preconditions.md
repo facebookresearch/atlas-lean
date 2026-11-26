@@ -20,4 +20,4 @@ This page becomes ready once these prerequisites are stated:
 
 ## Sources
 
-- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151>, Section 6.4, Theorem 6, and Section 7, Theorem 7 (the same statement for the full program logic).
+- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151>, Section 6.4, Theorem 6, and Section 7, Theorem 7 (a variant for the full program logic, with a state interpretation under the update modality).

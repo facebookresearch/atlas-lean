@@ -4,7 +4,7 @@ Let $Q_1, \dots, Q_k$ be the transition polyhedra of a rational multipath [linea
 
 $$\langle f_1, f_2 + 1, \dots, f_d + d - 1 \rangle$$
 
-is a [lexicographic-linear ranking function](lexicographic-linear-ranking-functions.md) for $Q_1, \dots, Q_k$ of the same dimension. Consequently a rational multipath loop has an LLRF if and only if it has a weak LLRF.
+satisfies, for some positive constants $\delta_1, \dots, \delta_d$, the conditions of a [lexicographic-linear ranking function](lexicographic-linear-ranking-functions.md) for $Q_1, \dots, Q_k$ with the required decrease $1$ at component $i$ replaced by $\delta_i$; multiplying it by any $c \ge 1 / \min_i \delta_i$ gives a lexicographic-linear ranking function of the same dimension. Consequently a rational multipath loop has an LLRF if and only if it has a weak LLRF.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ is a [lexicographic-linear ranking function](lexicographic-linear-ranking-functi
 
 ## Sources
 
-- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", arXiv:1208.4041v4, 2025, <https://arxiv.org/abs/1208.4041v4>, Section 5.3, Lemma 5.26 (soundness and completeness of LLRFSYN), Lemma 5.31 (polynomial-time construction of $f_1, \dots, f_d$), Definition 5.32, Lemma 5.33 and Lemma 5.34.
+- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", arXiv:1208.4041v4, 2025, <https://arxiv.org/abs/1208.4041v4>, Section 5.3, Lemma 5.26 (soundness and completeness of LLRFSYN), Lemma 5.31 (polynomial-time construction of $f_1, \dots, f_d$), Definition 5.32, Lemma 5.33, Lemma 5.34 and Example 5.35 (decrements $\delta_i$, conditions (37)–(39)).

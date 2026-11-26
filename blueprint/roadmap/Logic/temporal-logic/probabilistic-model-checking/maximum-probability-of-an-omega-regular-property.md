@@ -4,10 +4,11 @@ Let $M = (S, \bar s, \alpha_M, \delta_M)$ be a [Markov decision process](markov-
 
 $$\Pr^{\max}_{M,s}(\{\pi \mid \mathrm{tr}(\pi) \in L(A)\}) = \Pr^{\max}_{M \otimes A, (s, \bar q)}(\mathit{reach}(T)),$$
 
-where $T$ is the set of states $(s', q')$ that belong to some accepting end component of $M \otimes A$. This reduces LTL and $\omega$-regular model checking of MDPs to end-component detection and maximum reachability.
+where $\mathrm{tr}(\pi)$ is the action trace of $\pi$ as on [regular safety properties](regular-safety-properties.md), and $T$ is the set of states $(s', q')$ that belong to some accepting end component of $M \otimes A$. This reduces LTL and $\omega$-regular model checking of MDPs to end-component detection and maximum reachability.
 
 ## Depends on
 
+- [Regular safety properties](regular-safety-properties.md)
 - [Deterministic Rabin automata](deterministic-rabin-automata.md)
 - [End components](end-components.md)
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
