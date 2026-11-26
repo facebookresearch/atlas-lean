@@ -20,7 +20,12 @@ divisors of `n` and `τ(n)` is their number.  The integer `n` is
 into two disjoint subsets with equal products (encoded by one
 subset `A` whose product equals the product of its complement),
 and *`k`-m-perfect* if `T(n) = n^k`.  Only the seven records of
-this paper that are correct as printed are formalized here.
+this paper that are correct as printed are formalized, here or in
+the modules this file imports;
+`isSuperMZumkeller_prime_pow_iff` is proved in
+`MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff`,
+and `isSuperMZumkeller_prod_primes` is proved in
+`MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes`.
 
 **The paper's Theorems 4, 5, and 7 are false as printed** and
 are deliberately not stated: Theorem 4 fails at `60 = 12·5`
@@ -44,7 +49,10 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.SuperMZumkeller
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerFourNotKmPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes
 
 set_option autoImplicit false
 
@@ -63,25 +71,6 @@ theorem_wanted isSuperMZumkeller_iff (n : ℕ) (hn : 2 ≤ n) :
       ∀ p ∈ n.primeFactors,
         8 ∣ (n.factorization p) * n.divisors.card *
           (divisorProd n).divisors.card
-
-/-- **Super-m-Zumkeller prime powers.** Let $p$ be a prime and $\alpha \ge 1$ an integer. Then
-$p^\alpha$ is super-m-Zumkeller if and only if
-$\alpha \equiv 0, 2, 5, 7, 8, 10, 13$ or $15 \pmod{16}$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 3. -/
-theorem_wanted isSuperMZumkeller_prime_pow_iff (p : ℕ)
-    (hp : p.Prime) (a : ℕ) (ha : 1 ≤ a) :
-    IsSuperMZumkeller (p ^ a) ↔
-      a % 16 ∈ ({0, 2, 5, 7, 8, 10, 13, 15} : Finset ℕ)
-
-/-- **Products of at least three distinct primes are super-m-Zumkeller.** For every finite set
-$S$ of at least three primes, the product $\prod_{p \in S} p$ is super-m-Zumkeller.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers",
-Corollary 1. -/
-theorem_wanted isSuperMZumkeller_prod_primes (s : Finset ℕ)
-    (hs : ∀ p ∈ s, p.Prime) (hcard : 3 ≤ s.card) :
-    IsSuperMZumkeller (∏ p ∈ s, p)
 
 /-- **Odd powers of $2$ times two distinct odd primes are super-m-Zumkeller.** Let $k$ be an odd
 natural number and let $p$ and $q$ be distinct odd primes. Then $2^k p q$ is super-m-Zumkeller.
@@ -109,13 +98,5 @@ theorem_wanted isSuperMZumkeller_two_pow_mul_prod_primes (k : ℕ)
     (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime) (hs2 : 2 ∉ s)
     (hcard : 3 ≤ s.card) :
     IsSuperMZumkeller ((2 : ℕ) ^ k * ∏ p ∈ s, p)
-
-/-- **$4$ is super-m-Zumkeller but not $k$-m-perfect for $k \ge 2$.** The number $4$ is
-super-m-Zumkeller, and for no natural number $k \ge 2$ is $4$ a $k$-m-perfect number. This is the
-paper's counterexample to the converse of Theorem 6.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 6. -/
-theorem_wanted isSuperMZumkeller_four_not_kmPerfect :
-    IsSuperMZumkeller 4 ∧ ∀ k : ℕ, 2 ≤ k → ¬ IsKMPerfect k 4
 
 end MathlibExt.NumberTheory.SuperMZumkellerWanted

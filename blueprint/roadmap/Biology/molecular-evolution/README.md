@@ -14,6 +14,7 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Antibody escape maps from deep mutational scanning](antibody-escape-maps-from-deep-mutational-scanning/README.md)
 - [Accessibility percolation on the unoriented hypercube](accessibility-percolation-on-the-unoriented-hypercube/README.md)
 - [Accessibility percolation with backsteps](accessibility-percolation-with-backsteps/README.md)
 - [Antibiotic time machine problem](antibiotic-time-machine-problem/README.md)
