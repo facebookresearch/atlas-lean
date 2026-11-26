@@ -78,7 +78,8 @@ private theorem implements : decoder.Implements fixture := by
   funext i
   fin_cases i <;> rfl
 
-example : FullyHomomorphic (A := fun _ => bits) (fun _ => fixture) :=
+-- This proves functionality on the basis, not a polynomial-time implementation of the fixture.
+example : EvaluatesBasis (A := fun _ => bits) (fun _ => fixture) :=
   ⟨correct, 13, fun _ => ⟨decoder, by simp [decoder], implements⟩⟩
 
 -- The second coordinate can be true on a single fair tape out of all length-n tapes. Evaluation
@@ -112,9 +113,22 @@ example : ¬ Correct (A := fun _ => bits) broken (fun _ _ => Set.univ) := by
     (fun _ => true) (fun _ => (true, true)) (fun _ => hx)
   simpa [broken, fixture, PMF.pure_map, Circuit.id] using bound
 
--- A zero-gate circuit with a port missing is not a smaller implementation; evaluation must not
--- be allowed to truncate the framed input and merely ignore its last coordinate.
-example : ¬ (DecryptionCircuit.mk 7 5 (.wiring _ ![0, 0, 1, 0, 6])).Implements fixture := by
+-- The last input port carries an unused frame terminator. Removing it changes neither the
+-- computed bits nor the output capacity, but the framed input no longer fits.
+private def shortDecoder : DecryptionCircuit := ⟨7, 5, .wiring _ ![0, 0, 0, 4, 2]⟩
+
+example (sk : Bool) (x : Bool × Bool) :
+    let frame := MetaMathlibExt.BitstringEncoding.delimit
+    let input := frame (bits.secretCode.encode sk) ++ frame (bits.cipherCode.encode x)
+    let output := frame (answer bits.messageCode (fixture.pke.dec sk x))
+    input.length = shortDecoder.inputs + 1 ∧ output.length = shortDecoder.outputs ∧
+      shortDecoder.circuit.eval Boolean.interpretation (fun i => input[i.val]?.getD false) =
+        fun j => output[j.val]?.getD false := by
+  refine ⟨rfl, rfl, ?_⟩
+  funext i
+  fin_cases i <;> rfl
+
+example : ¬ shortDecoder.Implements fixture := by
   intro h
   have impossible : 8 ≤ 7 := (h false (true, false)).1
   omega
@@ -141,7 +155,7 @@ private theorem incompatible (D : DecryptionCircuit) : ¬ (D.Implements fixture 
 
 example (tag : Encoding Boolean.Op Bool) : ¬ LeveledFullyHomomorphic (A := fun _ => bits)
     (fun d _ => if d.val = 1 then fixture else flipped) tag := by
-  rintro ⟨⟨_, D, hD⟩, _⟩
+  rintro ⟨_, _, ⟨_, D, hD⟩, _⟩
   exact incompatible (D 0) ⟨(hD 0).2 1, (hD 0).2 2⟩
 
 -- The same two-gate NOT chain is outside level one and inside level two.
@@ -154,7 +168,7 @@ example : ¬ doubleNot.depth ≤ 1 ∧ doubleNot.depth ≤ 2 := by decide
 example {σ : Signature} {A : ℕ → Spaces σ} {E : ℕ+ → (n : ℕ) → Scheme (A n)}
     {tag : Encoding σ.Op Bool} (h : LeveledFullyHomomorphic E tag) (d : ℕ+) :
     CompactlyEvaluates (E d) fun _ _ => {c | c.depth ≤ d.val} := by
-  obtain ⟨⟨p, D, hD⟩, hc, _⟩ := h
+  obtain ⟨_, _, ⟨p, D, hD⟩, hc, _⟩ := h
   exact ⟨hc d, p, fun n => ⟨D n, (hD n).1, (hD n).2 d⟩⟩
 
 -- No decryption circuit, however wired, can accommodate an unbounded raw ciphertext field.
@@ -167,6 +181,33 @@ example (E : ℕ → Scheme words) : ¬ Compact (A := fun _ => words) E := by
   have cap := (hD false (List.replicate D.inputs false)).1
   simp [words, bits, MetaMathlibExt.BitstringEncoding.length_delimit, encodingList] at cap
   omega
+
+-- With one fair bit, the identity machine on the encoded input halts in one step. The
+-- output is [false,false] or [false,true], not a point mass; false frames the empty argument.
+example : SamplesWithin Turing.SingleTapeTM.idComputer 1 1 []
+    ((Probability.PMF.uniformOfFintype (BitString 1)).map fun r => [false, r 0]) := by
+  refine ⟨_, rfl, fun r => ?_⟩
+  simp only [MetaMathlibExt.BitstringEncoding.delimit, List.ofFn_succ, List.ofFn_zero,
+    List.cons_append, List.nil_append]
+  exact ⟨1, le_rfl, Relation.RelatesInSteps.single rfl⟩
+
+-- An interpretation of the *same* finite gate symbols by constant false cannot compute even
+-- the unary constant true function: it preserves the all-false input valuation.
+private def weak : Interpretation Boolean.signature Bool := fun _ _ => false
+
+private theorem weak_incomplete : ¬ weak.IsComplete := by
+  intro h
+  let z : Fin 1 → Bool := fun _ => false
+  let collapse : Homomorphism weak weak := ⟨fun _ => false, fun _ _ => rfl⟩
+  obtain ⟨c, hc⟩ := h.exists_computes_single (n := 1) (fun _ => true)
+  have h₀ : false = c.eval weak z 0 := congrFun (c.map_eval collapse z) 0
+  have h₁ : c.eval weak z 0 = true := congrFun (hc z) 0
+  exact Bool.noConfusion (h₀.trans h₁)
+
+private abbrev weakBits : Spaces Boolean.signature := { bits with gates := weak }
+
+example (E : ℕ → Scheme weakBits) (tag : Encoding Boolean.Op Bool) :
+    ¬ FullyHomomorphic (A := fun _ => weakBits) E tag := fun h => weak_incomplete (h.2.1 0)
 
 -- The machine must actually halt: even a deterministic point mass cannot be sampled in zero steps.
 example (T : Turing.SingleTapeTM Bool) (arg : List Bool) (k : ℕ) :
