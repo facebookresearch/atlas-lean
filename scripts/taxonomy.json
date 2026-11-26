@@ -11173,6 +11173,7 @@
   "MathlibExt/Combinatorics/Enumerative/TwinPowers": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Pseudo-involutions in the Riordan group"},
   "MathlibExt/Combinatorics/Enumerative/ULDMotzkinNumberOfRankR": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Colored Motzkin paths of rank r"},
   "MathlibExt/Combinatorics/Enumerative/UnateMonotoneBoolean": {"to": "Combinatorics/boolean-functions", "title": "Unate and monotone Boolean functions"},
+  "MathlibExt/Combinatorics/Enumerative/UnicellularHypermonopolesFinRotate": {"to": "Combinatorics/set-partitions", "title": "Reduced unicellular hypermonopoles"},
   "MathlibExt/Combinatorics/Enumerative/UnionClosedOrderly": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Union-closed families"},
   "MathlibExt/Combinatorics/Enumerative/UnrootedBinaryTreeCount": {"to": "Combinatorics/elementary-enumeration", "title": "Counting binary phylogenetic trees"},
   "MathlibExt/Combinatorics/Enumerative/UpperWythoffUnsum": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Anti-recurrence and greedy subsum-free sequences"},
