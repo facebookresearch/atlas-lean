@@ -1744,6 +1744,8 @@
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Substitution": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/SubstitutionLaws": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Syntax": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Simply typed lambda calculus"},
+  "CSLibExt/Languages/LambdaCalculus/EffectHandlers/Basic": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Effect-handling lambda calculus"},
+  "CSLibExt/Languages/LambdaCalculus/EffectHandlers/Substitution": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Effect-handling lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/FOmega": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "System Fω"},
   "CSLibExt/Languages/LambdaCalculus/HindleyMilner/AlgorithmW": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Hindley–Milner type inference"},
   "CSLibExt/Languages/LambdaCalculus/HindleyMilner/Completeness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Hindley–Milner type inference"},
@@ -13154,6 +13156,7 @@
   "MathlibExt/NumberTheory/ExistsUniqueRadicalExpansionCoeffs": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/ExponentialPascalMatrix": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Exponential Riordan arrays of Pascal type"},
   "MathlibExt/NumberTheory/ExtendedContinuant": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
+  "MathlibExt/NumberTheory/ExtendedContinuantConjugateContinuedFractionNotPurelyPeriodic": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtendedContinuantExtendedContinuantEuler": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtendedContinuantOddSilentTerms": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtendedContinuantSilentTermsTableOneModSix": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
@@ -18252,7 +18255,8 @@
   "WantedExt/GroupTheory/VarietySolvableWordProblemGenerationKourovka6Problem17Wanted": {"to": "GroupTheory/presentations-and-decision-problems", "title": "Word problem for groups"},
   "WantedExt/NumberTheory/SidonAsymptoticBasisErdosProblem157Wanted": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
   "WantedExt/NumberTheory/SidonSubsetBoundedRepresentationsErdosProblem772Wanted": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
-  "WantedExt/Probability/AngularSynchronizationShared": {"to": "Probability/high-dimensional-probability", "title": "Angular synchronization"}
+  "WantedExt/Probability/AngularSynchronizationShared": {"to": "Probability/high-dimensional-probability", "title": "Angular synchronization"},
+  "MathlibExt/Combinatorics/SimpleGraph/MulticolorTriangleRamsey": {"to": "GraphTheory/graph-ramsey-theory", "title": "Multicolor triangle Ramsey numbers"}
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",
