@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.RightVFiltrationModels
 public import MathlibExt.AlgebraicGeometry.RightDifferentialCoefficientModels
 public import MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
+public import MathlibExt.AlgebraicGeometry.RightHodgeSourceRequestsActualNearbyEulerComposition
 
 /-!
 # Shared source requests for actual right-D and coefficient-perverse primitives
@@ -18,7 +19,10 @@ public import MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
 The objects, original differential operators, rational V pieces and
 native cokernel maps are fixed by the public source. These requests
 construct their normalized coefficient and graded operators and prove
-their literal Euler identities. They do not assert regular holonomicity,
+their literal Euler identities, except the nearby Euler composition
+`actual_nearby_euler_composition`, which is proved in
+`MathlibExt.AlgebraicGeometry.RightHodgeSourceRequestsActualNearbyEulerComposition`.
+They do not assert regular holonomicity,
 graded polarizability or local mixed-Hodge admissibility.
 
 Source: Saito1307.2140v5, Sections1.1--1.5,2.1,2.2 and2.4;
@@ -62,10 +66,6 @@ variable (k : Type) [CommRing k] [Algebra ℚ k] (M : Type) [TopologicalSpace M]
 
 /-- The original t, partial and right Euler actions descend to their actual native V-cokernels. -/
 def_wanted actual_right_graded_v_operators : GradedVOperators k M O C N V
-
-/-- The nearby right Euler operator is literally the original can followed by var. -/
-theorem_wanted actual_nearby_euler_composition (A : GradedVOperators k M O C N V) :
-    nearbyNilpotent k M O C N V A = A.eulerMap 0
 
 /-- The actual Weyl relation identifies vanishing var-can with partial*t-1. -/
 theorem_wanted actual_vanishing_euler_composition (A : GradedVOperators k M O C N V) :
