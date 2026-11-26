@@ -1,17 +1,20 @@
-# Petechuk's double commutator question has a negative answer (Kourovka 10.46)
+# An integer counterexample to Petechuk's question for elementary transvections (Kourovka 10.46)
 
-There are a
-nontrivial associative ring $R$ with identity, an integer $n \ge 3$ and a matrix
+For some nontrivial associative ring $R$ with identity and integer $n \ge 3$, there exists a matrix
 $\sigma \in \mathrm{GL}_n(R)$ such that for all elementary transvections
 $\tau_1, \tau_2 \in \mathrm{GL}_n(R)$ the matrix $[[\sigma, \tau_1], \tau_2] - 1$ is not nilpotent,
 that is, $[[\sigma, \tau_1], \tau_2]$ is not unipotent. Here $[x, y] = x y x^{-1} y^{-1}$, and an
 elementary transvection is a matrix $1 + r e_{ij}$ with $i \ne j$ and $r \in R$ nonzero, where
 $e_{ij}$ is the matrix unit with $1$ in position $(i, j)$ and $0$ elsewhere.
 
-Muliarchyk (Theorem 1.1) shows the following for every field $k$ and $n \ge 2$. Let $R$ be the
-free associative $k$-algebra on generators $x_{ij}, y_{ij}$ ($1 \le i, j \le n$) modulo the
+The counterexample takes $R = \mathbb{Z}$ and $n = 3$. It refutes only the elementary-transvection
+variant, so it does not answer Petechuk's original question, which allows general transvections.
+
+For the general question, Muliarchyk gives a different counterexample over a noncommutative algebra.
+For every field $k$ and $n \ge 2$, let $R$ be the free associative $k$-algebra on generators
+$x_{ij}, y_{ij}$ ($1 \le i, j \le n$) modulo the
 relations $XY = YX = I$, where $X = (x_{ij})$, $Y = (y_{ij})$ and $I$ is the $n \times n$ identity
-matrix; $R$ is nonzero. Then every nonempty iterated commutator of $X \in \mathrm{GL}_n(R)$ with
+matrix. Then $R$ is nonzero and every nonempty iterated commutator of $X \in \mathrm{GL}_n(R)$ with
 nonidentity unipotent matrices is nonunipotent.
 
 ## Sources
