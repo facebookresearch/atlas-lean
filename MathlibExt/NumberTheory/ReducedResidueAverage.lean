@@ -84,8 +84,24 @@ private theorem lower_bound (m : ℤ) {n : ℕ} (hn : n ≠ 0) :
 
 end average_longestAPLength_of_not_squarefree
 
--- The prime-factor bound alone suffices for the window bounds.
 open average_longestAPLength_of_not_squarefree in
+/-- **Every reduced residue window attains the radical quotient.** Let $n > 1$ be a natural
+number, $\operatorname{rad}(n)$ the product of its distinct prime factors and
+$\operatorname{gpf}(n)$ its largest prime factor, and suppose that
+$\operatorname{gpf}(n) - 1 \le n / \operatorname{rad}(n)$. Then for every integer $m$ the length
+$f_m(n)$ of the longest arithmetic progression with positive common difference contained in the
+set $R_m(n)$ of integers $a$ with $m + 1 \le a \le m + n$ and $\gcd(a, n) = 1$ is
+$n / \operatorname{rad}(n)$.
+
+Source: Phothila, Thoket and Kanasri, *Length of the Longest Arithmetic Progressions in a
+Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6 (the window equality behind
+Corollary 1). -/
+public theorem longestAPLength_eq_div_radical (m : ℤ) {n : ℕ} (hn : 1 < n)
+    (h : n.primeFactors.sup id - 1 ≤ n / radical n) :
+    longestAPLength m n = n / radical n :=
+  le_antisymm (upper_bound m hn h) (lower_bound m (by omega))
+
+-- The prime-factor bound alone suffices for the window bounds.
 set_option linter.unusedVariables false in
 /-- **Average longest progression length for non-squarefree moduli.** Let $n > 1$ be a natural
 number that is not squarefree, $\operatorname{rad}(n)$ the product of its distinct prime factors
@@ -101,9 +117,7 @@ Corollary 1 (`integers-2026-A6-cor-1`). -/
 public theorem average_longestAPLength_of_not_squarefree {n : ℕ} (hn : 1 < n)
     (hsq : ¬ Squarefree n) (h : n.primeFactors.sup id - 1 ≤ n / radical n) :
     (1 / (n : ℚ)) * ∑ m ∈ Finset.range n, (longestAPLength m n : ℚ) = (n : ℚ) / radical n := by
-  have hwindow (m : ℤ) : longestAPLength m n = n / radical n :=
-    le_antisymm (upper_bound m hn h) (lower_bound m (by omega))
-  simp_rw [hwindow]
+  simp_rw [longestAPLength_eq_div_radical _ hn h]
   rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, ← mul_assoc,
     one_div_mul_cancel (by exact_mod_cast (show n ≠ 0 by omega)), one_mul]
   exact Nat.cast_div radical_dvd_self (by exact_mod_cast (radical_ne_zero (a := n)))
