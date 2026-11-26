@@ -14943,6 +14943,7 @@
   "WantedExt/Algebra/RealZerosParityChangeBoundWanted": {"to": "Algebra/zeros-of-polynomials", "title": "Parity-change bound on real zeros"},
   "WantedExt/Algebra/SolvableByRadicalsWanted": {"to": "FieldTheory/galois-theory", "title": "Solvability by radicals"},
   "WantedExt/Algebra/VirtualQuandleWanted": {"to": "Algebra/nonassociative-algebras", "title": "Virtual racks and quandles"},
+  "WantedExt/AlgebraicGeometry/ArakelovGromovInequalityWanted": {"to": "AlgebraicGeometry/arakelov-geometry", "title": "Gromov's inequality"},
   "WantedExt/AlgebraicGeometry/BernsteinWanted": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Bernstein's theorem on sparse polynomial systems"},
   "WantedExt/AlgebraicGeometry/BezoutWanted": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Bézout's theorem"},
   "WantedExt/AlgebraicGeometry/DirectSummandWanted": {"to": "RingTheory/modules", "title": "Direct summand theorem"},
