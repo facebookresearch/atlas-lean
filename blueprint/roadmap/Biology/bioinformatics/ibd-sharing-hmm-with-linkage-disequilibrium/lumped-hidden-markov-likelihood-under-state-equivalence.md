@@ -27,6 +27,12 @@ $$P(x_1, \dots, x_L) = \sum_{[s_1], \dots, [s_L]} P([s_1]) P(x_1 \mid [s_1]) \pr
 so the forward algorithm runs on the classes, in time quadratic in the number of classes rather
 than in $|\mathcal{S}|$.
 
+## Depends on
+
+- [Likelihood of the observations](../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood.md)
+- [The forward algorithm computes the likelihood](../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood-eq-sum-forward.md)
+- [Strong lumpability onto the image of a finite Markov chain](../../../Probability/markov-chains/finite-markov-chains/strong-lumpability-of-finite-markov-chains.md)
+
 ## Expansion
 
 Condition II is ordinary (strong) lumpability of the hidden chain: the class process

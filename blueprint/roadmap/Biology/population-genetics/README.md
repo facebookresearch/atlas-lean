@@ -28,7 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Adaptive introgression with linked deleterious alleles](adaptive-introgression-with-linked-deleterious-alleles/README.md)
-- [Fitness-class dynamics with mutation](fitness-class-dynamics-with-mutation/README.md)
-- [Fixation under demographic fluctuations](fixation-under-demographic-fluctuations/README.md)
-- [Two-locus two-deme migration–selection model](two-locus-two-deme-migration-selection-model/README.md)

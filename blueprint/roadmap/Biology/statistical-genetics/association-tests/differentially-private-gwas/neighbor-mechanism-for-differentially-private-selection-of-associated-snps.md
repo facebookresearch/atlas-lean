@@ -40,6 +40,16 @@ conic with tangent slope in $\{1/2, 1, 2\}$ or on a breakpoint line of $g_1$ or 
 found with a constant number of arithmetic operations per SNP (for $\omega \ge 2N/(2N - 1)$), followed
 by an integer rounding step.
 
+## Depends on
+
+- [Differential privacy](../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
+- [The Laplace mechanism for vector-valued queries](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/laplace-mechanism-pi-differentially-priv.md)
+
+## Proof depends on
+
+- [The exponential mechanism is differentially private](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
+- [Adaptive composition of pure differential privacy](../../../../ComputerScience/cryptography/differential-privacy/comp-prod.md)
+
 ## Expansion
 
 The selection step is an exponential mechanism with score $d_i$: changing one individual changes

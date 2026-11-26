@@ -34,7 +34,7 @@ disequilibria within demes are positive.
 ## Depends on
 
 - [Two-locus two-deme migration–selection model](two-locus-two-deme-migration-selection-dynamics.md)
-- [Migration–selection balance on an island](../selection-migration-and-transmission/migration-and-selection/migration-selection-balance-on-an-island.md)
+- [Migration–selection balance on an island](../migration-selection-balance-on-an-island.md)
 
 ## Expansion
 

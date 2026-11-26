@@ -16,7 +16,11 @@ where $B_i^{\mathrm{in}}$ is the rate at which individuals are born into class $
 
 ## Depends on
 
-- [Fisher's fundamental theorem of natural selection](../natural-selection-fisher-s-theorem-and-the-price/mean-fitness-select-sub.md)
+- [Fisher's fundamental theorem of natural selection](../../natural-selection-fisher-s-theorem-and-the-price/mean-fitness-select-sub.md)
+
+## Proof depends on
+
+- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
 
 ## Expansion
 

@@ -31,6 +31,10 @@ for $k = 1, 2$, on the set where all four gamete frequencies
 $p_k q_k + D_k$, $p_k(1 - q_k) - D_k$, $(1 - p_k) q_k - D_k$, $(1 - p_k)(1 - q_k) + D_k$ are
 nonnegative.
 
+## Depends on
+
+- [Linkage disequilibrium of a two-locus gamete law](../../../linkage-disequilibrium-and-haldane-s-map-functio/linkage-diseq.md)
+
 ## Expansion
 
 Selection acts on each allele frequency directly through the logistic term and indirectly through

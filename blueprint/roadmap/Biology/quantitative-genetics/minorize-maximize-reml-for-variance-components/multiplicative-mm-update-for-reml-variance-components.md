@@ -26,6 +26,10 @@ $$\sigma_k^{2\,(t+1)} = \sigma_k^{2\,(t)} \sqrt{\frac{y^\top P_{\gamma^{(t)}} V_
 
 Positive starting values stay positive, $L_R$ is non-decreasing along the iterates, and a fixed point with all $\sigma_k^2 > 0$ satisfies the REML score equations $y^\top P V_k P y = \mathrm{tr}(P V_k)$.
 
+## Depends on
+
+- [Restricted log-likelihood of an error contrast](../../../Probability/linear-models-multivariate/ordinary-least-squares/restricted-residual-maximum-likelihood-error-con/reml-log-lik.md)
+
 ## Expansion
 
 The surrogate combines two inequalities. The log-determinant part $\log|\Sigma_\gamma| + \log|X^\top \Sigma_\gamma^{-1} X|$ equals $\log|M \Sigma_\gamma M^\top|$ plus a constant for any full-rank $M$ with $M X = 0$, and is concave in $\gamma$, so it lies below its tangent plane at $\gamma^{(t)}$, whose slope in $\sigma_k^2$ is $\mathrm{tr}(P_{\gamma^{(t)}} V_k)$. The quadratic part $y^\top P_\gamma y$ is bounded by a convexity argument applied to the matrix weights $\sigma_k^2 V_k$, giving the term $\sigma_k^{4\,(t)} y^\top P V_k P y / \sigma_k^2$, with equality at $\gamma^{(t)}$. Each step costs one $n \times n$ inversion; when $\sum_k n_k + p \ll n$ (few random-effect levels), the traces and quadratic forms can be computed from the Henderson mixed-model equations instead, and for $K = 2$ a simultaneous diagonalization of $V_1, V_2$ reduces each update to a scalar quadratic. A squared-extrapolation (SQUAREM) step on successive iterates accelerates convergence while keeping the monotonicity check.

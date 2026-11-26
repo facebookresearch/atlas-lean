@@ -31,7 +31,7 @@ $$0 = (1 - r) Q(i,j)^2 + Q(i,j)\Bigl[\sum_{k<j} r^{(i,j)}_{(i,k)} Q(i,k) + \sum_
 
 ## Depends on
 
-- [Haldane's survival probability of a beneficial mutation](../haldane-s-survival-probability-of-a-beneficial-m/README.md)
+- [Haldane's survival probability of a beneficial mutation](../../haldane-s-survival-probability-of-a-beneficial-m/README.md)
 
 ## Expansion
 

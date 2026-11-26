@@ -22,6 +22,10 @@ $$\log P(o = M \mid r, h) = \mathrm{const} - \log\frac{1 - q}{q} \cdot \#\{(i, j
 
 so the maximum likelihood $(h, r)$ is exactly a minimum error correction (MEC) solution: the bipartition of reads and haplotype pair that requires the fewest allele flips.
 
+## Proof depends on
+
+- [Viterbi computes the MAP value](../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/sup-viterbi-eq.md)
+
 ## Expansion
 
 The message $M_j$ is the best log-likelihood of the data at sites $1, \dots, j$ given the origins of the reads that continue to site $j + 1$; reads that end at $j$ are maximized out, and reads starting at $j + 1$ enter the next cluster. This is the Viterbi algorithm on a chain whose state at site $j$ is the origin vector of the spanning reads. Replacing max by sum gives marginal posteriors, which yield per-site confidence scores; this matters because two reads joined by an error-prone site can support two haplotypes (for example $00000$ and $00111$) with equal likelihood, so a phase can be uncertain even where reads overlap. Other variable orderings in the same graphical model give other exact dynamic programs for MEC.

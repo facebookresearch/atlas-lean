@@ -10,6 +10,12 @@ $$\mathrm{FDR}_s = \mathbb{E}\left[ \frac{\sum_{j \in S} \mathbf{1}(H_j \text{ r
 
 A rule that satisfies the monotonicity hypothesis: partition the hypotheses into groups fixed in advance and select the smallest P-value in each group. The data-driven GWAS rule of the source (screen SNPs with marginal P-value at most $\pi$, then repeatedly take the most significant remaining SNP as a cluster representative and discard SNPs whose sample correlation with it exceeds $\rho$) can violate monotonicity for rare P-value configurations, and its $\mathrm{FDR}_s$ control is supported there by simulation rather than by the theorem.
 
+## Depends on
+
+- [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+- [False discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/false-discovery-proportion.md)
+- [Hypothesis imposed by a dependence regime](../../../../Probability/hypothesis-testing/fisher-s-exact-test/holds.md)
+
 ## Expansion
 
 Write $q_k = qk/M$ and $V_i = \mathbf{1}(H_i \text{ rejected})$. For a true null $i$,

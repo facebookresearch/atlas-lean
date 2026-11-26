@@ -1,6 +1,6 @@
 # Bioinformatics
 
-Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.
+Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering, network reconstruction, and haplotype phasing, haplotype blocks and identity-by-descent detection from SNP data.
 
 - [Sequence alignment](sequence-alignment/README.md)
 - [ARACNE gene network reconstruction](aracne-gene-network-reconstruction/README.md)
@@ -24,3 +24,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
+- [IBD sharing HMM with linkage disequilibrium](ibd-sharing-hmm-with-linkage-disequilibrium/README.md)
+- [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
+- [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)
