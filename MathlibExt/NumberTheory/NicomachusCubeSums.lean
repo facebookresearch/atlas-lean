@@ -18,7 +18,7 @@ import Mathlib.Tactic.Ring
 
 Kim and Stolarsky express the difference between a cube sum and a square in terms of a
 polynomial. This module defines the sums, squares and polynomials for both parities and proves
-the even case, `nicomachusLEven_sub_REven_eq`.
+the odd and even identities.
 -/
 
 @[expose] public section
@@ -82,6 +82,34 @@ of the odd-case polynomial $P_{m,o}(x)$ as a polynomial in $m$ (the paper define
 by substituting $-m - 1$ for $m$ in that expansion). -/
 noncomputable def nicomachusPEven (m : ℕ) (x : ℝ) : ℝ :=
   nicomachusPClosed (-(m : ℝ) - 1) x
+
+/-- **Generalized Nicomachus identity, odd case.** Let $L_{m,o}$ be the odd-case cube sum,
+$R_{m,o}$ the odd-case square and $P_{m,o}$ the odd-case polynomial. For every natural number
+$m \ge 2$ and every real number $x$,
+$$L_{m+1,o}(x) - R_{m+1,o}(x) = x \, P_{m,o}(x) - x^2 + x^3.$$
+
+Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
+Three or More-term Generalization of Nicomachus' Identity", Theorem 1. -/
+theorem nicomachusLOdd_sub_ROdd_succ_eq (m : ℕ) (hm : 2 ≤ m)
+    (x : ℝ) :
+    nicomachusLOdd (m + 1) x - nicomachusROdd (m + 1) x =
+      x * nicomachusPOdd m x - x ^ 2 + x ^ 3 := by
+  unfold nicomachusLOdd nicomachusROdd nicomachusPOdd
+  have hindex (n : ℕ) : 2 * (n + 1) - 1 = 2 * n + 1 := by omega
+  simp only [hindex, Nat.add_sub_cancel, nicomachusTriangular]
+  induction m, hm using Nat.le_induction with
+  | base =>
+    norm_num [show Finset.Icc 1 3 = {1, 2, 3} by decide,
+      show Finset.Icc 2 3 = {2, 3} by decide, show Finset.Icc 0 2 = {0, 1, 2} by decide,
+      Finset.sum_insert]
+    ring
+  | succ m hm ih =>
+    -- The two cube sums gain their terms at m + 2, but the polynomial gains its term at m + 1.
+    rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ m + 1 + 1),
+      Finset.sum_Icc_succ_top (by omega : 2 ≤ m + 1 + 1),
+      Finset.sum_Icc_succ_top (Nat.zero_le (m + 1))]
+    push_cast at ih ⊢
+    linear_combination ih
 
 /-- **Generalized Nicomachus identity, even case.** Let $L_{m,e}$ be the even-case cube sum,
 $R_{m,e}$ the even-case square and $P_{m,e}$ the even-case polynomial. For every natural number
