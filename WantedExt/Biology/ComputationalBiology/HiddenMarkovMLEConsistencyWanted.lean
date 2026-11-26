@@ -60,18 +60,20 @@ namespace WantedExt.Biology.ComputationalBiology.HiddenMarkovMLEConsistencyWante
 open MeasureTheory Filter Topology
 open Cslib.MachineLearning.Sequence.HiddenMarkov (HMM likelihood)
 
-/-- A **finite hidden Markov model family** on `r` hidden states and `K` symbols over a
-parameter set `Θ ⊆ ℝ^p`: transition matrices `P θ`, emission matrices `e θ` and initial laws
-`π θ` (raw data; continuity, positivity and stationarity are the assumptions of
-`HMMFamily.Regular`). -/
+/-- **Finite hidden Markov model family.** On `r` hidden states and `K` symbols, over a parameter
+set `Θ ⊆ ℝ^p`: transition weights `P θ`, emission weights `e θ` and initial weights `π θ`, which
+may be any reals (all zero, for example). `HMMFamily.Regular` assumes that on `Θ` they are
+positive transition and emission probabilities and a stationary initial probability vector,
+continuous in `θ`. -/
 structure HMMFamily (p r K : ℕ) where
   /-- The parameter set. -/
   Θ : Set (EuclideanSpace ℝ (Fin p))
-  /-- Transition probabilities `P_θ(x, x')`. -/
+  /-- Transition weights `P_θ(x, x')`; transition probabilities on `Θ` under `HMMFamily.Regular`. -/
   P : EuclideanSpace ℝ (Fin p) → Fin r → Fin r → ℝ
-  /-- Emission probabilities `e_θ(x, y)`. -/
+  /-- Emission weights `e_θ(x, y)`; emission probabilities on `Θ` under `HMMFamily.Regular`. -/
   e : EuclideanSpace ℝ (Fin p) → Fin r → Fin K → ℝ
-  /-- The initial (stationary) law `π_θ`. -/
+  /-- Initial weights `π_θ(x)`; a stationary probability vector of `P_θ` on `Θ` under
+  `HMMFamily.Regular`. -/
   π : EuclideanSpace ℝ (Fin p) → Fin r → ℝ
 
 /-- The **standing assumptions**: `Θ` is nonempty and compact; on `Θ` the maps are continuous,

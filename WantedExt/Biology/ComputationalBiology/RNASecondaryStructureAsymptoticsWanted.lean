@@ -49,6 +49,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Bioinformatics.RNA.PartitionFunction
+public import CSLibExt.Bioinformatics.RNA.Zuker
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 
@@ -70,10 +71,10 @@ noncomputable def S (m n : ℕ) : ℝ :=
 noncomputable def total (m n : ℕ) (f : Finset (ℕ × ℕ) → ℕ) : ℝ :=
   ∑ P ∈ structs m n, (f P : ℝ)
 
-open Classical in
-/-- The number of **components** of `P`: base pairs enclosed by no other pair of `P`. -/
-noncomputable def components (P : Finset (ℕ × ℕ)) : ℕ :=
-  (P.filter fun p => ¬ ∃ q ∈ P, q.1 < p.1 ∧ p.2 < q.2).card
+/-- **Components.** The number of base pairs of `P` enclosed by no other pair of `P`, the exterior
+branches `Cslib.Bioinformatics.RNA.Zuker.exteriorBranches P`. -/
+def components (P : Finset (ℕ × ℕ)) : ℕ :=
+  (Cslib.Bioinformatics.RNA.Zuker.exteriorBranches P).card
 
 open Classical in
 /-- The number of **external points** of `P` on `n` points: unpaired points enclosed by no pair. -/

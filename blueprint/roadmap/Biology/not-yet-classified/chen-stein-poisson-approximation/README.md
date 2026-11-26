@@ -1,8 +1,8 @@
 # Chen Stein Poisson Approximation
 
-- [Poisson Prob](poisson-prob.md)
-- [Poisson Mean](poisson-mean.md)
-- [Stein Sol](stein-sol.md)
+- [Poisson probability](poisson-prob.md)
+- [Poisson expectation](poisson-mean.md)
+- [Stein solution](stein-sol.md)
 - [Stein-solution bounds](stein-sol-bounds.md)
 - [The two forms of the total-variation norm agree](s-sup-integral-eq-tv-dist.md)
 - [Bernoulli Setting](bernoulli-setting.md)

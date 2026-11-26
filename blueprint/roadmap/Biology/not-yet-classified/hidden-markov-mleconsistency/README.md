@@ -1,6 +1,6 @@
 # Hidden Markov MLEConsistency
 
-- [HMMFamily](hmmfamily.md)
+- [Finite hidden Markov model family](hmmfamily.md)
 - [Regular](regular.md)
 - [To HMM](to-hmm.md)
 - [Is Obs Law](is-obs-law.md)

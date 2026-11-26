@@ -6,7 +6,7 @@
 - [Avoid Count](avoid-count.md)
 - [Corr Series](corr-series.md)
 - [The avoidance generating function](avoid-series-mul-eq.md)
-- [Is Uniform Letter Law](is-uniform-letter-law.md)
+- [Uniform letter law](is-uniform-letter-law.md)
 - [Text Law](text-law.md)
 - [Waiting Time](waiting-time.md)
 - [Expected waiting time](lintegral-waiting-time.md)

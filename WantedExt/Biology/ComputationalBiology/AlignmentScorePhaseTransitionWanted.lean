@@ -71,8 +71,10 @@ noncomputable def alignScore (μ δ : ℝ) (I J : List α) (P : Finset (ℕ × �
     μ * (P.filter fun x => I[x.1]? ≠ J[x.2]?).card -
     δ * ((I.length + J.length : ℕ) - 2 * P.card : ℝ)
 
-/-- The **optimal alignment score** `S(I, J)`: the largest score of an alignment of `I` and `J`
-(a finite, nonempty set of values; the empty alignment is allowed). -/
+/-- **Optimal alignment score.** `S(I, J)`, the largest score of an alignment of `I` and `J` (a
+finite, nonempty set of values; the empty alignment is allowed). `Cslib.Algorithms.Lean.nwScore`
+is the integer-valued counterpart, over alignments written as column lists; here the penalties
+`μ` and `δ` are real. -/
 noncomputable def optScore (μ δ : ℝ) (I J : List α) : ℝ :=
   sSup (alignScore μ δ I J '' {P | IsAlignment I.length J.length P})
 
@@ -80,9 +82,10 @@ noncomputable def optScore (μ δ : ℝ) (I J : List α) : ℝ :=
 def window (X : ℕ → α) (i len : ℕ) : List α :=
   (List.range len).map fun k => X (i + 1 + k)
 
-/-- The **local score** `M_n`: the best optimal score over pairs of contiguous regions
+/-- **Local score.** `M_n`, the best optimal score over pairs of contiguous regions
 `X_{i+1} … X_{i+l}` and `Y_{j+1} … Y_{j+l'}` of the first `n` letters (`i + l ≤ n`,
-`j + l' ≤ n`). -/
+`j + l' ≤ n`). `Cslib.Algorithms.Lean.localScore` is the integer-valued counterpart, the largest
+`nwScore` over pairs of infixes. -/
 noncomputable def localScore (μ δ : ℝ) (X Y : ℕ → α) (n : ℕ) : ℝ :=
   sSup ((fun c : ℕ × ℕ × ℕ × ℕ => optScore μ δ (window X c.1 c.2.1) (window Y c.2.2.1 c.2.2.2)) ''
     {c | c.1 + c.2.1 ≤ n ∧ c.2.2.1 + c.2.2.2 ≤ n})
@@ -113,8 +116,9 @@ noncomputable def M (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (n : ℕ) (ω 
 noncomputable def growthConst (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) : ℝ :=
   ⨆ t : ℕ, (∫ ω, globalScore μ δ Z (t + 1) ω ∂P) / (t + 1)
 
-/-- The **rate** `r(q) = inf_{k ≥ 1} -(1/k) log P(S_k ≥ q k)` (equation (7)), used for
-`0 ≤ q ≤ 1`, where every probability in it is positive. -/
+/-- **Rate function.** `r(q) = inf_{k ≥ 1} -(1/k) log P(S_k ≥ q k)` (equation (7)), used for
+`0 ≤ q ≤ 1`. For i.i.d. letters from a countable alphabet with measurable singletons, under a
+probability measure, every probability in it is then at least `P(A₁ = B₁) ^ k > 0`. -/
 noncomputable def rate (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (q : ℝ) : ℝ :=
   ⨅ k : ℕ, -Real.log (P.real {ω | q * (k + 1) ≤ globalScore μ δ Z (k + 1) ω}) / (k + 1)
 

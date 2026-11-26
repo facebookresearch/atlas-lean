@@ -1,4 +1,4 @@
-# Is Uniform Letter Law
+# Uniform letter law
 
-`ν` is the **uniform law** on the finite alphabet `α`: every letter has probability
-`1 / |α|`.
+Every letter has mass `1 / |α|` under `ν`. For a probability measure
+`ν`, as in the theorems below, this says that `ν` is the uniform law on the finite alphabet `α`.

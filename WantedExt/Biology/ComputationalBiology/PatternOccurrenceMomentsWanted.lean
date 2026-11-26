@@ -67,13 +67,16 @@ structure IsStationaryChain (π : V → ℝ) (P : V → V → ℝ) : Prop where
   /-- The initial law is stationary. -/
   stationary : ∀ b, ∑ a, π a * P a b = π b
 
-/-- The probability of the word `w` of length `n ≥ 1` under the chain started from `π`:
-`π(w_0) ∏_{i + 1 < n} P(w_i, w_{i+1})` (and `1` for the empty word). -/
+/-- **Chain weight of a word.** `π(w_0) ∏_{i + 1 < n} P(w_i, w_{i+1})` for a word `w` of length
+`n ≥ 1`, and `1` for the empty word, for any real weights `π` and `P`. When `π` is a probability
+vector and `P` a stochastic matrix (as under `IsStationaryChain π P`), it is the probability of
+`w` under the chain started from `π`. -/
 def markovProb (π : V → ℝ) (P : V → V → ℝ) : ∀ {n : ℕ}, (Fin n → V) → ℝ
   | 0, _ => 1
   | _ + 1, w => π (w 0) * ∏ i : Fin _, P (w i.castSucc) (w i.succ)
 
-/-- The probability of `w` under i.i.d. letters with law `q`: `∏_i q(w_i)`. -/
+/-- **Product weight of a word.** `∏_i q(w_i)` for any real weights `q`. When `q` is a probability
+vector (`q ≥ 0`, total mass `1`), it is the probability of `w` under i.i.d. letters with law `q`. -/
 def bernoulliProb (q : V → ℝ) {n : ℕ} (w : Fin n → V) : ℝ :=
   ∏ i, q (w i)
 
@@ -82,16 +85,19 @@ def autocorrSet {m : ℕ} (H : Fin m → V) : Finset ℕ :=
   (Finset.Icc 1 m).filter fun k => ∀ j : Fin m, j.1 < k → ∀ hj : m - k + j < m,
     H j = H ⟨m - k + j, hj⟩
 
-/-- The Bernoulli probability `P(h_{k+1} … h_m) = ∏_{k ≤ j < m} q(h_{j+1})` of the tail of `H`
-(`0`-based positions `k, …, m - 1`). -/
+/-- **Tail weight.** `P(h_{k+1} … h_m) = ∏_{k ≤ j < m} q(h_{j+1})`, the product of the weights `q`
+of the letters of `H` at the `0`-based positions `k, …, m - 1`. When `q` is a probability vector,
+it is the Bernoulli probability of that tail of `H`. -/
 def tailProb (q : V → ℝ) {m : ℕ} (H : Fin m → V) (k : ℕ) : ℝ :=
   ∏ j : Fin m, if k ≤ j.1 then q (H j) else 1
 
-/-- `A(1) = ∑_{k ∈ HH} P(h_{k+1} … h_m)`. -/
+/-- **Autocorrelation polynomial at 1.** `A(1) = ∑_{k ∈ HH} P(h_{k+1} … h_m)`, the sum of the tail
+weights `tailProb q H k` over the autocorrelation set. -/
 def autocorrAt1 (q : V → ℝ) {m : ℕ} (H : Fin m → V) : ℝ :=
   ∑ k ∈ autocorrSet H, tailProb q H k
 
-/-- `A'(1) = ∑_{k ∈ HH} (m - k) P(h_{k+1} … h_m)`. -/
+/-- **Derivative of the autocorrelation polynomial at 1.**
+`A'(1) = ∑_{k ∈ HH} (m - k) P(h_{k+1} … h_m)`, with the tail weights `tailProb q H k`. -/
 def autocorrDerivAt1 (q : V → ℝ) {m : ℕ} (H : Fin m → V) : ℝ :=
   ∑ k ∈ autocorrSet H, ((m - k : ℕ) : ℝ) * tailProb q H k
 

@@ -1,7 +1,7 @@
 # Shortest Superstring Greedy
 
 - [Overlap](overlap.md)
-- [Merge Str](merge-str.md)
+- [Merge](merge-str.md)
 - [Is Superstring](is-superstring.md)
 - [Substring Free](substring-free.md)
 - [Opt Length](opt-length.md)

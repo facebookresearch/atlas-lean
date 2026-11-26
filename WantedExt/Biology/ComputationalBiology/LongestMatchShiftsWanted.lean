@@ -64,7 +64,8 @@ structure IIDLetters (P : Measure Ω) (Z : ℕ ⊕ ℕ → Ω → α) : Prop whe
   /-- Every letter has the law of `X₁`. -/
   identDistrib : ∀ a, IdentDistrib (Z a) (Z (Sum.inl 1)) P P
 
-/-- The match probability `p = P(X₁ = Y₁)`. -/
+/-- **Match probability.** `p = P(X₁ = Y₁)`, the measure `P.real` of the event that the first
+letters agree: a probability when `P` is a probability measure, as in the theorems below. -/
 noncomputable def matchProb (P : Measure Ω) (Z : ℕ ⊕ ℕ → Ω → α) : ℝ :=
   P.real {ω | Z (Sum.inl 1) ω = Z (Sum.inr 1) ω}
 

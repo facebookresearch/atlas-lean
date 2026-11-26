@@ -66,20 +66,25 @@ open scoped ENNReal NNReal
 
 section Analytic
 
-/-- The Poisson probability `P(Z = w) = e^{-λ} λ^w / w!`. -/
-noncomputable def poissonProb (lam : ℝ) (w : ℕ) : ℝ :=
-  Real.exp (-lam) * lam ^ w / w.factorial
+/-- **Poisson probability.** `P(Z = w)` for `Z` Poisson of mean `λ ≥ 0`: the mass of `{w}` under
+Mathlib's `ProbabilityTheory.poissonMeasure λ`, which is `e^{-λ} λ^w / w!`
+(`ProbabilityTheory.poissonMeasure_real_singleton`). -/
+noncomputable def poissonProb (lam : ℝ≥0) (w : ℕ) : ℝ :=
+  (poissonMeasure lam).real {w}
 
-/-- `E h(Z)` for `Z` Poisson of mean `λ`. -/
-noncomputable def poissonMean (lam : ℝ) (h : ℕ → ℝ) : ℝ :=
-  ∑' w, h w * poissonProb lam w
+/-- **Poisson expectation.** `E h(Z)` for `Z` Poisson of mean `λ ≥ 0`: the integral of `h` against
+`ProbabilityTheory.poissonMeasure λ`, which is `∑_w e^{-λ} λ^w / w! · h(w)`
+(`ProbabilityTheory.integral_poissonMeasure`). -/
+noncomputable def poissonMean (lam : ℝ≥0) (h : ℕ → ℝ) : ℝ :=
+  ∫ w, h w ∂poissonMeasure lam
 
-/-- The **Stein solution** `S g`: `(S g)(0) = 0` and
-`(S g)(w + 1) = -λ⁻¹ P(Z = w)⁻¹ E(g(Z); Z ≤ w)`, the inverse of
+/-- **Stein solution.** For the Poisson law of mean `λ ≥ 0`, `S g` is given by `(S g)(0) = 0` and
+`(S g)(w + 1) = -λ⁻¹ P(Z = w)⁻¹ E(g(Z); Z ≤ w)`. For `λ > 0` it is the inverse of
 `(T f)(w) = w f(w) - λ f(w + 1)` on functions with `E g(Z) = 0`. -/
-noncomputable def steinSol (lam : ℝ) (g : ℕ → ℝ) : ℕ → ℝ
+noncomputable def steinSol (lam : ℝ≥0) (g : ℕ → ℝ) : ℕ → ℝ
   | 0 => 0
-  | w + 1 => -lam⁻¹ * (poissonProb lam w)⁻¹ * ∑ v ∈ Finset.range (w + 1), g v * poissonProb lam v
+  | w + 1 => -(lam : ℝ)⁻¹ * (poissonProb lam w)⁻¹ *
+      ∑ v ∈ Finset.range (w + 1), g v * poissonProb lam v
 
 /-- **Stein-solution bounds** (Arratia, Goldstein and Gordon 1989, Lemma 1, proved in the appendix
 of Barbour and Eagleson 1983): for `λ > 0` and `h : ℕ → ℝ` with `0 ≤ h(w) ≤ 1` for every `w`,
@@ -87,10 +92,11 @@ the function `f = S(h - E h(Z))` satisfies `|f(w + 1) - f(w)| ≤ (1 - e^{-λ})/
 `|f(w)| ≤ min 1 (1.4 λ^{-1/2})` for every `w ≥ 0`.
 
 Source: Arratia, Goldstein and Gordon (1989), Lemma 1. -/
-public theorem_wanted steinSol_bounds (lam : ℝ) (hlam : 0 < lam) (h : ℕ → ℝ)
+public theorem_wanted steinSol_bounds (lam : ℝ≥0) (hlam : 0 < lam) (h : ℕ → ℝ)
     (hh : ∀ w, h w ∈ Set.Icc (0 : ℝ) 1) (w : ℕ) :
     |steinSol lam (fun v => h v - poissonMean lam h) (w + 1) -
-        steinSol lam (fun v => h v - poissonMean lam h) w| ≤ (1 - Real.exp (-lam)) / lam ∧
+        steinSol lam (fun v => h v - poissonMean lam h) w| ≤
+          (1 - Real.exp (-(lam : ℝ))) / lam ∧
       |steinSol lam (fun v => h v - poissonMean lam h) w| ≤ min 1 (1.4 / Real.sqrt lam)
 
 end Analytic

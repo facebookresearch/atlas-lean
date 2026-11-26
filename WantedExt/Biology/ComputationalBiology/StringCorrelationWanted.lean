@@ -88,8 +88,8 @@ public theorem_wanted avoidSeries_mul_eq (A : List α) (hA : A ≠ []) (hq : 2 �
         (PowerSeries.X ^ A.length + (1 - (Fintype.card α : PowerSeries ℤ) * PowerSeries.X) *
           corrSeries A) = corrSeries A
 
-/-- `ν` is the **uniform law** on the finite alphabet `α`: every letter has probability
-`1 / |α|`. -/
+/-- **Uniform letter law.** Every letter has mass `1 / |α|` under `ν`. For a probability measure
+`ν`, as in the theorems below, this says that `ν` is the uniform law on the finite alphabet `α`. -/
 def IsUniformLetterLaw [MeasurableSpace α] (ν : Measure α) : Prop :=
   ∀ a : α, ν {a} = (Fintype.card α : ENNReal)⁻¹
 
