@@ -39,6 +39,7 @@ public import Mathlib.Basic.Real.Basic
 public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 public import MathlibExt.AlgebraicGeometry.Curve.SemistableCharts
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
+import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationOrd
 import Mathlib.Algebra.Order.Field.Power
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -58,8 +59,8 @@ takes at least two distinct absolute values on the annulus, then:
   `C'` after dividing by an integral constant `c'`, the orders at the two nodes have nonnegative
   sum, `|h| ≤ 1` on the annulus (strictly when `|c'| < 1` or the sum is positive), and in the
   balanced case `h` is a unit of absolute value `1` on the annulus.
-* `AlgebraicCurve.Annulus.abv_evalAt_le_max_of_isAttached_both_ends`: a function `g` without
-  poles on the annulus, integral on `C`, and integral on `C'` after dividing by a nonzero
+* `AlgebraicCurve.Annulus.abv_evalAt_le_max_of_isAttached_both_ends`: a nonzero function `g`
+  without poles on the annulus, integral on `C`, and integral on `C'` after dividing by a nonzero
   constant `b`, satisfies `|g| ≤ max 1 |b|` on the annulus, strictly when `|b| ≠ 1`.
 
 This is the maximum principle on a semistable annulus: the absolute value of a regular function
@@ -140,14 +141,16 @@ private theorem abv_evalAt_eq_zpow_of_isAttached
     (An : Annulus A F) (C : ComponentChart A F Fbar) (x : Place (IsLocalRing.ResidueField A) Fbar)
     (hatt : An.IsAttached C x) (f : F) (hf : f ∈ C.integers) (hres : C.residue ⟨f, hf⟩ ≠ 0)
     (hzf : ∀ Q ∈ An.dom, Q.ord f = 0) :
-    ∀ Q ∈ An.dom, 0 < μ (Q.evalAt An.param) ∧ μ (Q.evalAt An.param) < 1 ∧
-      μ (Q.evalAt f) = μ (Q.evalAt An.param) ^ (x.ord (C.residue ⟨f, hf⟩)) := by
+    ∀ Q (hQ : Q ∈ An.dom), 0 < μ (Q.evalAt (An.isRational Q hQ) An.param) ∧
+      μ (Q.evalAt (An.isRational Q hQ) An.param) < 1 ∧
+      μ (Q.evalAt (An.isRational Q hQ) f) =
+        μ (Q.evalAt (An.isRational Q hQ) An.param) ^ (x.ord (C.residue ⟨f, hf⟩)) := by
   intro Q hQ
   obtain ⟨-, hzC, -, hlaw⟩ := hatt
   obtain ⟨hw, hunit⟩ := hlaw f hf hres hzf Q hQ
-  obtain ⟨-, -, ⟨hzA, hzmax⟩, hz0, -⟩ := An.mem_dom Q hQ
-  have hμz1 : μ (Q.evalAt An.param) < 1 := abv_lt_one_of_mem_maximalIdeal_vs μ hμA hzA hzmax
-  have hμz0 : 0 < μ (Q.evalAt An.param) := μ.pos hz0
+  obtain ⟨-, ⟨hzA, hzmax⟩, hz0, -⟩ := An.mem_dom Q hQ
+  have hμz1 := abv_lt_one_of_mem_maximalIdeal_vs μ hμA hzA hzmax
+  have hμz0 := μ.pos hz0
   have hunit1 := abv_eq_one_of_isUnit_vs μ hμA hw hunit
   rw [map_mul, map_zpow₀, zpow_neg] at hunit1
   exact ⟨hμz0, hμz1, (mul_inv_eq_one₀ (zpow_ne_zero _ hμz0.ne')).1 hunit1⟩
@@ -357,13 +360,16 @@ private theorem two_end_profile_bound {ι : Type*} (Z : Finset ι) (m : ι → �
         _ < 1 := by rw [one_mul, mul_one]; exact hlt
     exact ⟨hH.le, fun _ => hH⟩
 
-/-- **Two-end bound on an annulus.** Let `An`, `An'` be annuli with the same places and the same
-nonzero modulus `π`, whose coordinates multiply to `π`, attached to charts `C` at `x` and `C'` at
-`x'`, with the coordinate of `An` taking two distinct absolute values. Let `h` have no poles on the
-annulus, nonzero reduction on `C`, and nonzero reduction on `C'` after dividing by `c' ∈ A`.
-Then the orders of the two reductions at the nodes have nonnegative sum, `μ (h(R)) ≤ 1` at every
-place `R` of the annulus (strictly if `μ c' < 1` or the sum is positive), and if `μ c' = 1` and
-both orders vanish then `h` has order zero and absolute value one on the annulus. -/
+/-- **Two-end bound on an annulus.** Let `μ` be an absolute value on `L` with
+`A = {a | μ a ≤ 1}`, and let `F / L` have principal divisors (every nonzero function has a
+divisor, of degree zero). Let `An`, `An'` be annuli with the same places and the same nonzero
+modulus `π`, whose coordinates multiply to `π`, attached to charts `C` at `x` and `C'` at `x'`,
+with the coordinate of `An` taking two distinct absolute values on the annulus. Let `h` be
+integral for `C` with nonzero reduction there and without poles on the annulus, and let `c' ∈ A`
+be nonzero with `h / c'` integral for `C'` with nonzero reduction there. Then the orders at `x`
+and `x'` of the two reductions have nonnegative sum, `μ (h(R)) ≤ 1` at every place `R` of the
+annulus (strictly if `μ c' < 1` or the sum is positive), and if `μ c' = 1` and both orders vanish
+then `h` has order zero and `μ (h(R)) = 1` at every place `R` of the annulus. -/
 public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_ends
     {L : Type*} [Field L] {A : ValuationSubring L} {F : Type*} [Field F] [Algebra L F]
     [HasPrincipalDivisors L F]
@@ -376,20 +382,23 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     (C : ComponentChart A F Fbar) (x : Place (ResidueField A) Fbar) (hatt : An.IsAttached C x)
     (C' : ComponentChart A F Fbar') (x' : Place (ResidueField A) Fbar')
     (hatt' : An'.IsAttached C' x')
-    (hwide : ∃ Q₁ ∈ An.dom, ∃ Q₂ ∈ An.dom, μ (Q₁.evalAt An.param) ≠ μ (Q₂.evalAt An.param))
+    (hwide : ∃ (Q₁ : Place L F) (hQ₁ : Q₁ ∈ An.dom) (Q₂ : Place L F) (hQ₂ : Q₂ ∈ An.dom),
+      μ (Q₁.evalAt (An.isRational Q₁ hQ₁) An.param) ≠
+        μ (Q₂.evalAt (An.isRational Q₂ hQ₂) An.param))
     (h : F) (hC : h ∈ C.integers) (hres : C.residue ⟨h, hC⟩ ≠ 0)
     (c' : L) (hc'0 : c' ≠ 0) (hc'A : c' ∈ A)
     (hC' : (algebraMap L F c')⁻¹ * h ∈ C'.integers)
     (hres' : C'.residue ⟨(algebraMap L F c')⁻¹ * h, hC'⟩ ≠ 0)
     (hpole : ∀ Q ∈ An.dom, 0 ≤ Q.ord h) :
     0 ≤ x.ord (C.residue ⟨h, hC⟩) + x'.ord (C'.residue ⟨(algebraMap L F c')⁻¹ * h, hC'⟩) ∧
-    (∀ R ∈ An.dom, μ (R.evalAt h) ≤ 1 ∧
+    (∀ (R : Place L F) (hR : R ∈ An.dom), μ (R.evalAt (An.isRational R hR) h) ≤ 1 ∧
       ((μ c' < 1 ∨
           0 < x.ord (C.residue ⟨h, hC⟩) + x'.ord (C'.residue ⟨(algebraMap L F c')⁻¹ * h, hC'⟩)) →
-        μ (R.evalAt h) < 1)) ∧
+        μ (R.evalAt (An.isRational R hR) h) < 1)) ∧
     ((μ c' = 1 ∧ x.ord (C.residue ⟨h, hC⟩) = 0 ∧
         x'.ord (C'.residue ⟨(algebraMap L F c')⁻¹ * h, hC'⟩) = 0) →
-      ∀ R ∈ An.dom, R.ord h = 0 ∧ μ (R.evalAt h) = 1) := by
+      ∀ (R : Place L F) (hR : R ∈ An.dom),
+        R.ord h = 0 ∧ μ (R.evalAt (An.isRational R hR) h) = 1) := by
   classical
   set h' : F := (algebraMap L F c')⁻¹ * h with hh'_def
   set a : ℤ := x.ord (C.residue ⟨h, hC⟩) with ha_def
@@ -426,28 +435,33 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     intro h0
     rw [h0, Place.ord_zero] at hz'ord
     exact zero_ne_one hz'ord
-  have hdomfacts : ∀ Q ∈ An.dom, Q.IsRational ∧ z ∈ Q.toValuationSubring ∧
-      z' ∈ Q.toValuationSubring ∧
-      (∃ hzA : Q.evalAt z ∈ A, (⟨Q.evalAt z, hzA⟩ : A) ∈ IsLocalRing.maximalIdeal A) ∧
-      Q.evalAt z ≠ 0 ∧ 0 < μ (Q.evalAt z) ∧ μ (Q.evalAt z) < 1 ∧ μ π < μ (Q.evalAt z) ∧
-      (∃ m : A, m ∈ IsLocalRing.maximalIdeal A ∧ μ (m : L) < 1 ∧ π = Q.evalAt z * m) := by
+  -- The values of the coordinate on the annulus, extended by `0` to the other places.
+  set cz : Place L F → L := fun Q => if hQ : Q ∈ An.dom then Q.evalAt (An.isRational Q hQ) z else 0
+    with hcz_def
+  have hcz : ∀ Q (hQ : Q ∈ An.dom), Q.evalAt (An.isRational Q hQ) z = cz Q := fun Q hQ => by
+    simp only [hcz_def, dite_eq_left hQ]
+  have hdomfacts : ∀ Q ∈ An.dom, z ∈ Q.toValuationSubring ∧ z' ∈ Q.toValuationSubring ∧
+      (∃ hzA : cz Q ∈ A, (⟨cz Q, hzA⟩ : A) ∈ IsLocalRing.maximalIdeal A) ∧
+      cz Q ≠ 0 ∧ 0 < μ (cz Q) ∧ μ (cz Q) < 1 ∧ μ π < μ (cz Q) ∧
+      (∃ m : A, m ∈ IsLocalRing.maximalIdeal A ∧ μ (m : L) < 1 ∧ π = cz Q * m) := by
     intro Q hQ
-    obtain ⟨hrat, hzreg, ⟨hzA, hzmax⟩, hzne, m, hm, hπm⟩ := An.mem_dom Q hQ
-    obtain ⟨-, hz'reg, -⟩ := An'.mem_dom Q (hdom ▸ hQ)
+    obtain ⟨hzreg, hrest⟩ := An.mem_dom Q hQ
+    rw [← hz_def, ← hπ_def, hcz Q hQ] at hrest
+    obtain ⟨⟨hzA, hzmax⟩, hzne, m, hm, hπm⟩ := hrest
+    obtain ⟨hz'reg, -⟩ := An'.mem_dom Q (hdom ▸ hQ)
     have hμm : μ (m : L) < 1 := abv_lt_one_of_mem_maximalIdeal_vs μ hμA m.2 (by simpa using hm)
-    have hμz : μ (Q.evalAt z) < 1 := abv_lt_one_of_mem_maximalIdeal_vs μ hμA hzA hzmax
-    have hπlt : μ π < μ (Q.evalAt z) := by
-      rw [hπ_def, hπm, map_mul]
-      calc μ (Q.evalAt An.param) * μ (m : L) < μ (Q.evalAt An.param) * 1 :=
-            mul_lt_mul_of_pos_left hμm (μ.pos hzne)
-        _ = μ (Q.evalAt z) := mul_one _
-    exact ⟨hrat, hzreg, hz'reg, ⟨hzA, hzmax⟩, hzne, μ.pos hzne, hμz, hπlt, m, hm, hμm, hπm⟩
-  have hcA : ∀ Q ∈ An.dom, Q.evalAt z ∈ A := fun Q hQ => by
-    obtain ⟨-, -, -, ⟨h1, -⟩, -⟩ := hdomfacts Q hQ
+    have hμz : μ (cz Q) < 1 := abv_lt_one_of_mem_maximalIdeal_vs μ hμA hzA hzmax
+    have hπlt : μ π < μ (cz Q) := by
+      rw [hπm, map_mul]
+      calc μ (cz Q) * μ (m : L) < μ (cz Q) * 1 := mul_lt_mul_of_pos_left hμm (μ.pos hzne)
+        _ = μ (cz Q) := mul_one _
+    exact ⟨hzreg, hz'reg, ⟨hzA, hzmax⟩, hzne, μ.pos hzne, hμz, hπlt, m, hm, hμm, hπm⟩
+  have hcA : ∀ Q ∈ An.dom, cz Q ∈ A := fun Q hQ => by
+    obtain ⟨-, -, ⟨h1, -⟩, -⟩ := hdomfacts Q hQ
     exact h1
-  have hcmax : ∀ Q (hQ : Q ∈ An.dom), (⟨Q.evalAt z, hcA Q hQ⟩ : A) ∈ IsLocalRing.maximalIdeal A :=
+  have hcmax : ∀ Q (hQ : Q ∈ An.dom), (⟨cz Q, hcA Q hQ⟩ : A) ∈ IsLocalRing.maximalIdeal A :=
     fun Q hQ => by
-      obtain ⟨-, -, -, ⟨h1, h2⟩, -⟩ := hdomfacts Q hQ
+      obtain ⟨-, -, ⟨h1, h2⟩, -⟩ := hdomfacts Q hQ
       exact h2
   obtain ⟨D, hD, -⟩ := HasPrincipalDivisors.exists_divisor (K := L) h hh0
   set Z : Finset (Place L F) := D.support.filter (fun Q => Q ∈ An.dom) with hZ_def
@@ -475,45 +489,48 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     have := hpole R hR
     by_contra hne
     exact hRZ ((hZ R).2 ⟨hR, lt_of_le_of_ne this (Ne.symm hne)⟩)
-  have hc0 : ∀ Q ∈ Z, Q.evalAt z ≠ 0 := fun Q hQ => (hdomfacts Q (hZdom Q hQ)).2.2.2.2.1
-  set v : Place L F → F := fun Q => algebraMap L F (Q.evalAt z) - z with hv_def
+  have hc0 : ∀ Q ∈ Z, cz Q ≠ 0 := fun Q hQ => (hdomfacts Q (hZdom Q hQ)).2.2.2.1
+  set v : Place L F → F := fun Q => algebraMap L F (cz Q) - z with hv_def
   have hv0 : ∀ Q ∈ Z, v Q ≠ 0 := by
     intro Q hQ h0
     have h1 := An.ord_param_sub Q (hZdom Q hQ)
-    have : z - algebraMap L F (Q.evalAt z) = -(v Q) := by rw [hv_def]; ring
-    rw [← hz_def, this, h0, neg_zero, Place.ord_zero] at h1
+    have : z - algebraMap L F (cz Q) = -(v Q) := by rw [hv_def]; ring
+    rw [← hz_def, hcz Q (hZdom Q hQ), this, h0, neg_zero, Place.ord_zero] at h1
     exact zero_ne_one h1
   have hvord : ∀ Q ∈ Z, ∀ R ∈ An.dom, R.ord (v Q) = if R = Q then 1 else 0 := by
     intro Q hQ R hR
     have hQd := hZdom Q hQ
-    obtain ⟨hRrat, hzR, -, -, hzRne, -⟩ := hdomfacts R hR
-    obtain ⟨-, -, -, ⟨hzQA, hzQmax⟩, hzQne, -, -, -, mQ, hmQmax, hμmQ, hπmQ⟩ := hdomfacts Q hQd
+    have hRrat := An.isRational R hR
+    obtain ⟨hzR, -, -, hzRne, -⟩ := hdomfacts R hR
+    obtain ⟨-, -, ⟨hzQA, hzQmax⟩, hzQne, -, -, -, mQ, hmQmax, hμmQ, hπmQ⟩ := hdomfacts Q hQd
     split_ifs with hRQ
     · subst hRQ
       have h1 := An.ord_param_sub R hQd
-      have : v R = -(z - algebraMap L F (R.evalAt z)) := by rw [hv_def]; ring
-      rw [this, Place.ord_neg', ← hz_def] at *
+      rw [← hz_def, hcz R hQd] at h1
+      have : v R = -(z - algebraMap L F (cz R)) := by rw [hv_def]; ring
+      rw [this, Place.ord_neg']
       exact h1
     · have hvR : v Q ∈ R.toValuationSubring := sub_mem (R.algebraMap_mem' _) hzR
-      apply R.ord_eq_zero_of_evalAt_ne_zero hvR
-      rw [hv_def, R.evalAt_sub hRrat (R.algebraMap_mem' _) hzR, R.evalAt_algebraMap]
+      apply R.ord_eq_zero_of_evalAt_ne_zero hRrat hvR
+      rw [hv_def, R.evalAt_sub hRrat (R.algebraMap_mem' _) hzR, R.evalAt_algebraMap hRrat,
+        hcz R hR]
       intro h0
       apply hRQ
-      have hval : R.evalAt z = Q.evalAt z := (sub_eq_zero.1 h0).symm
-      obtain ⟨P0, -, huniq⟩ := An.existsUnique_evalAt_eq ⟨Q.evalAt z, hzQA⟩ hzQmax
-        (by simpa using hzQne) ⟨mQ, hmQmax, by simpa [hπ_def, hz_def] using hπmQ⟩
-      have e1 := huniq R ⟨hR, by simpa [hz_def] using hval⟩
-      have e2 := huniq Q ⟨hQd, by simp [hz_def]⟩
+      have hval : cz R = cz Q := (sub_eq_zero.1 h0).symm
+      obtain ⟨P0, -, huniq⟩ := An.existsUnique_evalAt_eq ⟨cz Q, hzQA⟩ hzQmax
+        (by simpa using hzQne) ⟨mQ, hmQmax, by simpa [hπ_def] using hπmQ⟩
+      have e1 := huniq R ⟨hR, by simpa [hz_def] using (hcz R hR).trans hval⟩
+      have e2 := huniq Q ⟨hQd, by simpa [hz_def] using hcz Q hQd⟩
       exact e1.trans e2.symm
   have hvR : ∀ Q ∈ Z, ∀ R ∈ An.dom, v Q ∈ R.toValuationSubring := fun Q hQ R hR =>
-    sub_mem (R.algebraMap_mem' _) (hdomfacts R hR).2.1
+    sub_mem (R.algebraMap_mem' _) (hdomfacts R hR).1
   have hvC : ∀ Q ∈ Z, v Q ∈ C.integers := fun Q hQ =>
     sub_mem ((C.algebraMap_mem_iff _).2 (hcA Q (hZdom Q hQ))) hzC
   have hvres : ∀ Q (hQ : Q ∈ Z), C.residue ⟨v Q, hvC Q hQ⟩ = -C.residue ⟨z, hzC⟩ := by
     intro Q hQ
     have e : (⟨v Q, hvC Q hQ⟩ : C.integers)
-        = ⟨algebraMap L F ((⟨Q.evalAt z, hcA Q (hZdom Q hQ)⟩ : A) : L),
-            (C.algebraMap_mem_iff _).mpr (⟨Q.evalAt z, hcA Q (hZdom Q hQ)⟩ : A).2⟩ - ⟨z, hzC⟩ :=
+        = ⟨algebraMap L F ((⟨cz Q, hcA Q (hZdom Q hQ)⟩ : A) : L),
+            (C.algebraMap_mem_iff _).mpr (⟨cz Q, hcA Q (hZdom Q hQ)⟩ : A).2⟩ - ⟨z, hzC⟩ :=
       Subtype.ext rfl
     rw [e, map_sub, C.residue_algebraMap,
       residue_eq_zero_of_mem_maximalIdeal' _ (hcmax Q (hZdom Q hQ)), map_zero, zero_sub]
@@ -581,42 +598,43 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     by_cases hRZ : R ∈ Z
     · rw [ite_eq_left hRZ, hmQ R hRZ]; ring
     · rw [ite_eq_right hRZ, hordh R hR hRZ]; ring
-  have hslopeC : ∀ R ∈ An.dom, μ (R.evalAt gC) = μ (R.evalAt z) ^ (a - (n : ℤ)) := by
+  have hslopeC : ∀ R (hR : R ∈ An.dom),
+      μ (R.evalAt (An.isRational R hR) gC) = μ (cz R) ^ (a - (n : ℤ)) := by
     intro R hR
     obtain ⟨-, -, h3⟩ :=
       abv_evalAt_eq_zpow_of_isAttached μ hμA An C x hattC gC hgCmem hgCres0 hgCzf R hR
-    rw [h3, hgCord]
+    rw [h3, hgCord, ← hz_def, hcz R hR]
   have hz'unit : IsUnit (⟨z', hz'C'⟩ : C'.integers) := C'.isUnit_of_residue_ne_zero' hz'C' hz'bar0
   have hz'inv : z'⁻¹ ∈ C'.integers := inv_mem_of_isUnit' hz'C' hz'unit
   have hzeq : z = algebraMap L F π * z'⁻¹ := by
     rw [← htwo]; field_simp
-  have htQ : ∀ Q ∈ Z, ∃ ht : z * algebraMap L F (Q.evalAt z)⁻¹ ∈ C'.integers,
+  have htQ : ∀ Q ∈ Z, ∃ ht : z * algebraMap L F (cz Q)⁻¹ ∈ C'.integers,
       C'.residue ⟨_, ht⟩ = 0 := by
     intro Q hQ
-    obtain ⟨-, -, -, -, -, -, -, -, mQ, hmQmax, -, hπmQ⟩ := hdomfacts Q (hZdom Q hQ)
-    have hπc : π * (Q.evalAt z)⁻¹ = (mQ : L) := by
-      rw [hπmQ, mul_comm (Q.evalAt z) (mQ : L), mul_inv_cancel_right₀ (hc0 Q hQ)]
-    have e1 : z * algebraMap L F (Q.evalAt z)⁻¹ = algebraMap L F (mQ : L) * z'⁻¹ := by
+    obtain ⟨-, -, -, -, -, -, -, mQ, hmQmax, -, hπmQ⟩ := hdomfacts Q (hZdom Q hQ)
+    have hπc : π * (cz Q)⁻¹ = (mQ : L) := by
+      rw [hπmQ, mul_comm (cz Q) (mQ : L), mul_inv_cancel_right₀ (hc0 Q hQ)]
+    have e1 : z * algebraMap L F (cz Q)⁻¹ = algebraMap L F (mQ : L) * z'⁻¹ := by
       nth_rewrite 1 [hzeq]
       rw [← hπc, map_mul]
       ring
     have hmem : algebraMap L F (mQ : L) * z'⁻¹ ∈ C'.integers :=
       mul_mem ((C'.algebraMap_mem_iff _).2 mQ.2) hz'inv
     refine ⟨e1 ▸ hmem, ?_⟩
-    have e2 : (⟨z * algebraMap L F (Q.evalAt z)⁻¹, e1 ▸ hmem⟩ : C'.integers)
+    have e2 : (⟨z * algebraMap L F (cz Q)⁻¹, e1 ▸ hmem⟩ : C'.integers)
         = ⟨algebraMap L F (mQ : L), (C'.algebraMap_mem_iff _).mpr mQ.2⟩ * ⟨z'⁻¹, hz'inv⟩ :=
       Subtype.ext e1
     rw [e2, map_mul, C'.residue_algebraMap,
       residue_eq_zero_of_mem_maximalIdeal' _ (by simpa using hmQmax),
       map_zero, zero_mul]
-  set v' : Place L F → F := fun Q => 1 - z * algebraMap L F (Q.evalAt z)⁻¹ with hv'_def
+  set v' : Place L F → F := fun Q => 1 - z * algebraMap L F (cz Q)⁻¹ with hv'_def
   have hv'C : ∀ Q ∈ Z, v' Q ∈ C'.integers := fun Q hQ => sub_mem (one_mem _) (htQ Q hQ).1
   have hv'res : ∀ Q (hQ : Q ∈ Z), C'.residue ⟨v' Q, hv'C Q hQ⟩ = 1 := by
     intro Q hQ
     obtain ⟨ht, htres⟩ := htQ Q hQ
     have e : (⟨v' Q, hv'C Q hQ⟩ : C'.integers) = 1 - ⟨_, ht⟩ := Subtype.ext rfl
     rw [e, map_sub, map_one, htres, sub_zero]
-  have hv'w : ∀ Q ∈ Z, v' Q = algebraMap L F (Q.evalAt z)⁻¹ * v Q := by
+  have hv'w : ∀ Q ∈ Z, v' Q = algebraMap L F (cz Q)⁻¹ * v Q := by
     intro Q hQ
     rw [hv'_def, hv_def]
     simp only []
@@ -627,7 +645,7 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     exact mul_ne_zero ((map_ne_zero (algebraMap L F)).2 (inv_ne_zero (hc0 Q hQ))) (hv0 Q hQ)
   set w' : Place L F → F := fun Q => if Q ∈ Z then (v' Q)⁻¹ else 1 with hw'_def
   have hw'Z : ∀ Q ∈ Z, w' Q = (v' Q)⁻¹ := fun Q hQ => by simp [hw'_def, hQ]
-  have hw'w : ∀ Q, w' Q = (if Q ∈ Z then algebraMap L F (Q.evalAt z) else 1) * w Q := by
+  have hw'w : ∀ Q, w' Q = (if Q ∈ Z then algebraMap L F (cz Q) else 1) * w Q := by
     intro Q
     by_cases hQ : Q ∈ Z
     · rw [hw'Z Q hQ, hwZ Q hQ, ite_eq_left hQ, hv'w Q hQ, mul_inv, map_inv₀, inv_inv]
@@ -668,12 +686,12 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
       Subtype.ext rfl
     rw [e, map_mul, hprodres', mul_one]
   have hgC'res0 : C'.residue ⟨gC', hgC'mem⟩ ≠ 0 := by rw [hgC'res]; exact hres'
-  set κ : L := c'⁻¹ * ∏ Q ∈ Z, Q.evalAt z ^ m Q with hκ_def
+  set κ : L := c'⁻¹ * ∏ Q ∈ Z, cz Q ^ m Q with hκ_def
   have hκ0 : κ ≠ 0 := mul_ne_zero (inv_ne_zero hc'0)
     (Finset.prod_ne_zero_iff.2 fun Q hQ => pow_ne_zero _ (hc0 Q hQ))
   have hgC'eq : gC' = algebraMap L F κ * gC := by
     have hprod : (∏ Q ∈ Z, w' Q ^ m Q) =
-        algebraMap L F (∏ Q ∈ Z, Q.evalAt z ^ m Q) * ∏ Q ∈ Z, w Q ^ m Q := by
+        algebraMap L F (∏ Q ∈ Z, cz Q ^ m Q) * ∏ Q ∈ Z, w Q ^ m Q := by
       rw [map_prod, ← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun Q hQ => ?_
       rw [hw'w Q, ite_eq_left hQ, mul_pow, map_pow]
@@ -684,7 +702,8 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     rw [hdom] at hR
     rw [hgC'eq, R.ord_mul ((map_ne_zero _).2 hκ0) hgC0, R.ord_algebraMap, hgCzf R hR, add_zero]
   have hgC'ord : x'.ord (C'.residue ⟨gC', hgC'mem⟩) = a' := by rw [hgC'res]
-  have hslopeC' : ∀ R ∈ An.dom, μ (R.evalAt gC') = μ (R.evalAt z') ^ a' := by
+  have hslopeC' : ∀ R (hR : R ∈ An.dom),
+      μ (R.evalAt (An.isRational R hR) gC') = μ (R.evalAt (An.isRational R hR) z') ^ a' := by
     intro R hR
     obtain ⟨-, -, h3⟩ := abv_evalAt_eq_zpow_of_isAttached μ hμA An' C' x' hattC' gC' hgC'mem
       hgC'res0 hgC'zf R
@@ -693,39 +712,43 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
   have hgCreg : ∀ R ∈ An.dom, gC ∈ R.toValuationSubring := fun R hR =>
     R.mem_of_ord_nonneg hgC0 (hgCzf R hR).symm.le
   have hprofile : ∀ R ∈ An.dom,
-      μ (R.evalAt z) ^ (a - (n : ℤ) + a') = μ π ^ a' * (μ κ)⁻¹ := by
+      μ (cz R) ^ (a - (n : ℤ) + a') = μ π ^ a' * (μ κ)⁻¹ := by
     intro R hR
-    obtain ⟨hRrat, hzR, hz'R, -, hzRne, hu0, hu1, hπu, -⟩ := hdomfacts R hR
-    have hprod : R.evalAt z' * R.evalAt z = π := by
-      rw [← R.evalAt_mul hRrat hz'R hzR, htwo, R.evalAt_algebraMap]
-    have hz'val : μ (R.evalAt z') = μ π * (μ (R.evalAt z))⁻¹ := by
+    have hRrat := An.isRational R hR
+    obtain ⟨hzR, hz'R, -, hzRne, hu0, hu1, hπu, -⟩ := hdomfacts R hR
+    have hprod : R.evalAt hRrat z' * cz R = π := by
+      rw [← hcz R hR, ← R.evalAt_mul hRrat hz'R hzR, htwo, R.evalAt_algebraMap hRrat]
+    have hz'val : μ (R.evalAt hRrat z') = μ π * (μ (cz R))⁻¹ := by
       rw [← hprod, map_mul, mul_inv_cancel_right₀ hu0.ne']
     have h1 := hslopeC R hR
     have h2 := hslopeC' R hR
     rw [hz'val] at h2
-    have h3 : R.evalAt gC' = κ * R.evalAt gC := by
-      rw [hgC'eq, R.evalAt_mul hRrat (R.algebraMap_mem' _) (hgCreg R hR), R.evalAt_algebraMap]
+    have h3 : R.evalAt hRrat gC' = κ * R.evalAt hRrat gC := by
+      rw [hgC'eq, R.evalAt_mul hRrat (R.algebraMap_mem' _) (hgCreg R hR),
+        R.evalAt_algebraMap hRrat]
     rw [h3, map_mul, h1, mul_zpow, inv_zpow, ← div_eq_mul_inv] at h2
-    have hua' : μ (R.evalAt z) ^ a' ≠ 0 := zpow_ne_zero _ hu0.ne'
+    have hua' : μ (cz R) ^ a' ≠ 0 := zpow_ne_zero _ hu0.ne'
     have hμκ0 : μ κ ≠ 0 := (μ.pos hκ0).ne'
     rw [eq_div_iff hua'] at h2
     rw [zpow_add₀ hu0.ne', eq_mul_inv_iff_mul_eq₀ hμκ0]
-    calc μ (R.evalAt z) ^ (a - (n : ℤ)) * μ (R.evalAt z) ^ a' * μ κ
-        = μ κ * μ (R.evalAt z) ^ (a - (n : ℤ)) * μ (R.evalAt z) ^ a' := by ring
+    calc μ (cz R) ^ (a - (n : ℤ)) * μ (cz R) ^ a' * μ κ
+        = μ κ * μ (cz R) ^ (a - (n : ℤ)) * μ (cz R) ^ a' := by ring
       _ = μ π ^ a' := h2
   obtain ⟨Q₁, hQ₁, Q₂, hQ₂, hne⟩ := hwide
   have hexp : a - (n : ℤ) + a' = 0 := by
     by_contra hne0
     apply hne
-    have hu1 := (hdomfacts Q₁ hQ₁).2.2.2.2.2.1
-    have hu2 := (hdomfacts Q₂ hQ₂).2.2.2.2.2.1
-    have h12 : μ (Q₁.evalAt z) ^ (a - (n : ℤ) + a') = μ (Q₂.evalAt z) ^ (a - (n : ℤ) + a') := by
+    have hu1 := (hdomfacts Q₁ hQ₁).2.2.2.2.1
+    have hu2 := (hdomfacts Q₂ hQ₂).2.2.2.2.1
+    have h12 : μ (cz Q₁) ^ (a - (n : ℤ) + a') = μ (cz Q₂) ^ (a - (n : ℤ) + a') := by
       rw [hprofile Q₁ hQ₁, hprofile Q₂ hQ₂]
+    rw [hcz Q₁ hQ₁, hcz Q₂ hQ₂]
     exact (zpow_left_inj₀ hu1.le hu2.le hne0).1 h12
   have hn : (n : ℤ) = a + a' := by omega
   refine ⟨by omega, ?_, ?_⟩
   · intro R hR
-    obtain ⟨hRrat, hzR, hz'R, -, hzRne, hu0, hu1, hπu, -⟩ := hdomfacts R hR
+    have hRrat := An.isRational R hR
+    obtain ⟨hzR, hz'R, -, hzRne, hu0, hu1, hπu, -⟩ := hdomfacts R hR
     have hfacC : gC * ∏ Q ∈ Z, v Q ^ m Q = h := by
       rw [hgC_def, mul_assoc, ← Finset.prod_mul_distrib]
       rw [Finset.prod_congr rfl (fun Q hQ => by
@@ -734,17 +757,18 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     have hvpowR : ∀ Q ∈ Z, v Q ^ m Q ∈ R.toValuationSubring := fun Q hQ => pow_mem (hvR Q hQ R hR) _
     have hprodR : (∏ Q ∈ Z, v Q ^ m Q) ∈ R.toValuationSubring := prod_mem hvpowR
     have hprodval := R.evalAt_prod hRrat Z (fun Q => v Q ^ m Q) hvpowR
-    have hevalv : ∀ Q ∈ Z, R.evalAt (v Q) = Q.evalAt z - R.evalAt z := fun Q hQ => by
-      rw [hv_def, R.evalAt_sub hRrat (R.algebraMap_mem' _) hzR, R.evalAt_algebraMap]
-    have hμh1 : μ (R.evalAt h) =
-        μ (R.evalAt z) ^ (a - (n : ℤ)) * ∏ Q ∈ Z, μ (Q.evalAt z - R.evalAt z) ^ m Q := by
+    have hevalv : ∀ Q ∈ Z, R.evalAt hRrat (v Q) = cz Q - cz R := fun Q hQ => by
+      rw [hv_def, R.evalAt_sub hRrat (R.algebraMap_mem' _) hzR, R.evalAt_algebraMap hRrat,
+        hcz R hR]
+    have hμh1 : μ (R.evalAt hRrat h) =
+        μ (cz R) ^ (a - (n : ℤ)) * ∏ Q ∈ Z, μ (cz Q - cz R) ^ m Q := by
       rw [← hfacC, R.evalAt_mul hRrat (hgCreg R hR) hprodR, map_mul, hslopeC R hR, hprodval,
         map_prod]
       congr 1
       exact Finset.prod_congr rfl fun Q hQ => by
         rw [R.evalAt_pow hRrat (hvR Q hQ R hR), map_pow, hevalv Q hQ]
-    have hbound1 : μ (R.evalAt h) ≤ μ (R.evalAt z) ^ (a - ((∑ Q ∈ Z, m Q : ℕ) : ℤ)) *
-        ∏ Q ∈ Z, (max (μ (Q.evalAt z)) (μ (R.evalAt z))) ^ m Q := by
+    have hbound1 : μ (R.evalAt hRrat h) ≤ μ (cz R) ^ (a - ((∑ Q ∈ Z, m Q : ℕ) : ℤ)) *
+        ∏ Q ∈ Z, (max (μ (cz Q)) (μ (cz R))) ^ m Q := by
       rw [hμh1, ← hn_def]
       refine mul_le_mul_of_nonneg_left ?_ (zpow_nonneg hu0.le _)
       exact Finset.prod_le_prod₀ (fun Q _ => pow_nonneg (μ.nonneg _) _) fun Q hQ =>
@@ -763,38 +787,40 @@ public theorem Annulus.ord_residue_add_nonneg_and_abv_le_one_of_isAttached_both_
     have hprodval' := R.evalAt_prod hRrat Z (fun Q => v' Q ^ m Q) hv'powR
     have hgC'reg : gC' ∈ R.toValuationSubring := by
       rw [hgC'eq]; exact mul_mem (R.algebraMap_mem' _) (hgCreg R hR)
-    have hevalv' : ∀ Q ∈ Z, R.evalAt (v' Q) = 1 - R.evalAt z * (Q.evalAt z)⁻¹ := fun Q hQ => by
-      rw [hv'_def, R.evalAt_sub hRrat (one_mem _) (mul_mem hzR (R.algebraMap_mem' _)), R.evalAt_one,
-        R.evalAt_mul hRrat hzR (R.algebraMap_mem' _), R.evalAt_algebraMap]
-    have hprodQ : R.evalAt z' * R.evalAt z = π := by
-      rw [← R.evalAt_mul hRrat hz'R hzR, htwo, R.evalAt_algebraMap]
-    have hz'val : μ (R.evalAt z') = μ π / μ (R.evalAt z) := by
+    have hevalv' : ∀ Q ∈ Z, R.evalAt hRrat (v' Q) = 1 - cz R * (cz Q)⁻¹ := fun Q hQ => by
+      rw [hv'_def, R.evalAt_sub hRrat (one_mem _) (mul_mem hzR (R.algebraMap_mem' _)),
+        R.evalAt_one hRrat, R.evalAt_mul hRrat hzR (R.algebraMap_mem' _),
+        R.evalAt_algebraMap hRrat, hcz R hR]
+    have hprodQ : R.evalAt hRrat z' * cz R = π := by
+      rw [← hcz R hR, ← R.evalAt_mul hRrat hz'R hzR, htwo, R.evalAt_algebraMap hRrat]
+    have hz'val : μ (R.evalAt hRrat z') = μ π / μ (cz R) := by
       rw [← hprodQ, map_mul, mul_div_cancel_right₀ _ hu0.ne']
-    have hμh2 : μ (R.evalAt h) = μ c' * (μ π / μ (R.evalAt z)) ^ a' *
-        ∏ Q ∈ Z, μ (1 - R.evalAt z * (Q.evalAt z)⁻¹) ^ m Q := by
+    have hμh2 : μ (R.evalAt hRrat h) = μ c' * (μ π / μ (cz R)) ^ a' *
+        ∏ Q ∈ Z, μ (1 - cz R * (cz Q)⁻¹) ^ m Q := by
       rw [← hfacC', R.evalAt_mul hRrat (R.algebraMap_mem' _) (mul_mem hgC'reg hprodR'),
-        R.evalAt_algebraMap, R.evalAt_mul hRrat hgC'reg hprodR', map_mul, map_mul, hslopeC' R hR,
+        R.evalAt_algebraMap hRrat, R.evalAt_mul hRrat hgC'reg hprodR', map_mul, map_mul,
+        hslopeC' R hR,
         hz'val, hprodval', map_prod, mul_assoc]
       congr 2
       exact Finset.prod_congr rfl fun Q hQ => by
         rw [R.evalAt_pow hRrat (hv'R Q hQ), map_pow, hevalv' Q hQ]
-    have hbound2 : μ (R.evalAt h) ≤ μ c' * (μ π / μ (R.evalAt z)) ^ a' *
-        ∏ Q ∈ Z, (max 1 (μ (R.evalAt z) / μ (Q.evalAt z))) ^ m Q := by
+    have hbound2 : μ (R.evalAt hRrat h) ≤ μ c' * (μ π / μ (cz R)) ^ a' *
+        ∏ Q ∈ Z, (max 1 (μ (cz R) / μ (cz Q))) ^ m Q := by
       rw [hμh2]
       refine mul_le_mul_of_nonneg_left ?_
         (mul_nonneg (μ.nonneg _) (zpow_nonneg (div_nonneg hμπ0.le hu0.le) _))
       refine Finset.prod_le_prod₀ (fun Q _ => pow_nonneg (μ.nonneg _) _) fun Q hQ => ?_
       refine pow_le_pow_left₀ (μ.nonneg _) ?_ _
-      have := abv_sub_le_max μ hμA (1 : L) (R.evalAt z * (Q.evalAt z)⁻¹)
+      have := abv_sub_le_max μ hμA (1 : L) (cz R * (cz Q)⁻¹)
       rw [map_one, map_mul, map_inv₀] at this
       rw [div_eq_mul_inv]
       exact this
-    have hγ : ∀ Q ∈ Z, μ π < μ (Q.evalAt z) ∧ μ (Q.evalAt z) < 1 := fun Q hQ => by
-      obtain ⟨-, -, -, -, -, -, h7, h8, -⟩ := hdomfacts Q (hZdom Q hQ)
+    have hγ : ∀ Q ∈ Z, μ π < μ (cz Q) ∧ μ (cz Q) < 1 := fun Q hQ => by
+      obtain ⟨-, -, -, -, -, h7, h8, -⟩ := hdomfacts Q (hZdom Q hQ)
       exact ⟨h8, h7⟩
     have hncast : ((∑ Q ∈ Z, m Q : ℕ) : ℤ) = a + a' := by rw [← hn_def]; exact hn
-    exact two_end_profile_bound Z m (fun Q => μ (Q.evalAt z)) (μ π) (μ (R.evalAt z)) (μ c')
-      (μ (R.evalAt h))
+    exact two_end_profile_bound Z m (fun Q => μ (cz Q)) (μ π) (μ (cz R)) (μ c')
+      (μ (R.evalAt hRrat h))
       a a' hμπ0 hπu hu1 hγ hmpos hμc'0 hμc'1 hncast hbound1 hbound2
   · rintro ⟨hμc', ha0, ha'0⟩ R hR
     have hn0 : n = 0 := by omega
@@ -830,10 +856,13 @@ public theorem Annulus.abv_evalAt_le_max_of_isAttached_both_ends
     (C : ComponentChart A F Fbar) (x : Place (ResidueField A) Fbar) (hatt : An.IsAttached C x)
     (C' : ComponentChart A F Fbar') (x' : Place (ResidueField A) Fbar')
     (hatt' : An'.IsAttached C' x')
-    (hwide : ∃ Q₁ ∈ An.dom, ∃ Q₂ ∈ An.dom, μ (Q₁.evalAt An.param) ≠ μ (Q₂.evalAt An.param))
+    (hwide : ∃ (Q₁ : Place L F) (hQ₁ : Q₁ ∈ An.dom) (Q₂ : Place L F) (hQ₂ : Q₂ ∈ An.dom),
+      μ (Q₁.evalAt (An.isRational Q₁ hQ₁) An.param) ≠
+        μ (Q₂.evalAt (An.isRational Q₂ hQ₂) An.param))
     (g : F) (hg0 : g ≠ 0) (hpole : ∀ Q ∈ An.dom, 0 ≤ Q.ord g)
     (hgC : g ∈ C.integers) (b : L) (hb0 : b ≠ 0) (hgC' : (algebraMap L F b)⁻¹ * g ∈ C'.integers) :
-    ∀ R ∈ An.dom, μ (R.evalAt g) ≤ max 1 (μ b) ∧ (μ b ≠ 1 → μ (R.evalAt g) < max 1 (μ b)) := by
+    ∀ (R : Place L F) (hR : R ∈ An.dom), μ (R.evalAt (An.isRational R hR) g) ≤ max 1 (μ b) ∧
+      (μ b ≠ 1 → μ (R.evalAt (An.isRational R hR) g) < max 1 (μ b)) := by
   classical
   obtain ⟨-, hzC, hzord, -⟩ := id hatt
   obtain ⟨-, hz'C', hz'ord, -⟩ := id hatt'
@@ -844,29 +873,33 @@ public theorem Annulus.abv_evalAt_le_max_of_isAttached_both_ends
   have hbL : algebraMap L F b ≠ 0 := (map_ne_zero _).2 hb0
   set g' : F := (algebraMap L F b)⁻¹ * g with hg'
   have hg'0 : g' ≠ 0 := mul_ne_zero (inv_ne_zero hbL) hg0
-  have hdomR : ∀ R ∈ An.dom,
-      R.IsRational ∧ z ∈ R.toValuationSubring ∧ z' ∈ R.toValuationSubring ∧
-      R.evalAt z ≠ 0 ∧ R.evalAt z' ≠ 0 ∧ R.evalAt z' * R.evalAt z = π := by
+  have hdomR : ∀ R (hR : R ∈ An.dom),
+      z ∈ R.toValuationSubring ∧ z' ∈ R.toValuationSubring ∧
+      R.evalAt (An.isRational R hR) z ≠ 0 ∧ R.evalAt (An.isRational R hR) z' ≠ 0 ∧
+      R.evalAt (An.isRational R hR) z' * R.evalAt (An.isRational R hR) z = π := by
     intro R hR
-    obtain ⟨hrat, hzR, -, hzR0, -⟩ := An.mem_dom R hR
-    obtain ⟨-, hz'R, -, hz'R0, -⟩ := An'.mem_dom R (hdom ▸ hR)
-    have hprod : R.evalAt z' * R.evalAt z = π := by
-      rw [← R.evalAt_mul hrat hz'R hzR, htwo, R.evalAt_algebraMap]
-    exact ⟨hrat, hzR, hz'R, hzR0, hz'R0, hprod⟩
-  have hwide' : ∃ Q₁ ∈ An'.dom, ∃ Q₂ ∈ An'.dom,
-      μ (Q₁.evalAt An'.param) ≠ μ (Q₂.evalAt An'.param) := by
+    have hrat := An.isRational R hR
+    obtain ⟨hzR, -, hzR0, -⟩ := An.mem_dom R hR
+    obtain ⟨hz'R, -, hz'R0, -⟩ := An'.mem_dom R (hdom ▸ hR)
+    have hprod : R.evalAt hrat z' * R.evalAt hrat z = π := by
+      rw [← R.evalAt_mul hrat hz'R hzR, htwo, R.evalAt_algebraMap hrat]
+    exact ⟨hzR, hz'R, hzR0, hz'R0, hprod⟩
+  have hwide' : ∃ (Q₁ : Place L F) (hQ₁ : Q₁ ∈ An'.dom) (Q₂ : Place L F) (hQ₂ : Q₂ ∈ An'.dom),
+      μ (Q₁.evalAt (An'.isRational Q₁ hQ₁) An'.param) ≠
+        μ (Q₂.evalAt (An'.isRational Q₂ hQ₂) An'.param) := by
     obtain ⟨Q₁, hQ₁, Q₂, hQ₂, hne⟩ := hwide
     refine ⟨Q₁, hdom ▸ hQ₁, Q₂, hdom ▸ hQ₂, ?_⟩
-    have key : ∀ R ∈ An.dom, μ (R.evalAt An'.param) * μ (R.evalAt z) = μ π := by
+    have key : ∀ R (hR : R ∈ An.dom), μ (R.evalAt (An.isRational R hR) An'.param) *
+        μ (R.evalAt (An.isRational R hR) z) = μ π := by
       intro R hR
-      obtain ⟨-, -, -, -, -, hp⟩ := hdomR R hR
+      obtain ⟨-, -, -, -, hp⟩ := hdomR R hR
       rw [← map_mul]; exact congrArg μ hp
     intro heq; apply hne
     have h1 := key Q₁ hQ₁
     have h2 := key Q₂ hQ₂
     rw [heq] at h1
     have h12 := h1.trans h2.symm
-    have hne0 : μ (Q₂.evalAt An'.param) ≠ 0 := by
+    have hne0 : μ (Q₂.evalAt (An.isRational Q₂ hQ₂) An'.param) ≠ 0 := by
       intro h0; rw [h0, zero_mul] at h2; exact hμπ0.ne h2
     exact mul_left_cancel₀ hne0 h12
   obtain ⟨c₁, hc₁g, hc₁res⟩ := C.exists_smul_mem g hg0
@@ -924,18 +957,20 @@ public theorem Annulus.abv_evalAt_le_max_of_isAttached_both_ends
   have hpole₀ : ∀ R ∈ An.dom, 0 ≤ R.ord h₀ := fun R hR => by rw [hordh₀ R hR]; exact hpole R hR
   have hpole₁ : ∀ R ∈ An'.dom, 0 ≤ R.ord h₁ := fun R hR => by
     rw [hordh₁ R (hdom ▸ hR)]; exact hpole R (hdom ▸ hR)
-  have hval : ∀ R ∈ An.dom, g ∈ R.toValuationSubring ∧
-      μ (R.evalAt h₀) = μ c₁ * μ (R.evalAt g) ∧
-        μ (R.evalAt h₁) = μ c₂ * (μ b)⁻¹ * μ (R.evalAt g) := by
+  have hval : ∀ R (hR : R ∈ An.dom), g ∈ R.toValuationSubring ∧
+      μ (R.evalAt (An.isRational R hR) h₀) = μ c₁ * μ (R.evalAt (An.isRational R hR) g) ∧
+        μ (R.evalAt (An.isRational R hR) h₁) =
+          μ c₂ * (μ b)⁻¹ * μ (R.evalAt (An.isRational R hR) g) := by
     intro R hR
-    obtain ⟨hrat, -⟩ := hdomR R hR
+    have hrat := An.isRational R hR
     have hgR : g ∈ R.toValuationSubring := R.mem_of_ord_nonneg hg0 (hpole R hR)
     refine ⟨hgR, ?_, ?_⟩
-    · rw [hsm₁, R.evalAt_mul hrat (R.algebraMap_mem' _) hgR, R.evalAt_algebraMap, map_mul]
+    · rw [hsm₁, R.evalAt_mul hrat (R.algebraMap_mem' _) hgR, R.evalAt_algebraMap hrat, map_mul]
     · rw [hsm₂, hg', ← mul_assoc, ← map_inv₀, ← map_mul,
-        R.evalAt_mul hrat (R.algebraMap_mem' _) hgR, R.evalAt_algebraMap, map_mul, map_mul,
+        R.evalAt_mul hrat (R.algebraMap_mem' _) hgR, R.evalAt_algebraMap hrat, map_mul, map_mul,
         map_inv₀]
   intro R hR
+  have hRrat := An.isRational R hR
   obtain ⟨hgR, hv₀, hv₁⟩ := hval R hR
   have hμb0 : 0 < μ b := μ.pos hb0
   have hμc₁0 : 0 < μ c₁ := μ.pos hc₁0
@@ -949,19 +984,19 @@ public theorem Annulus.abv_evalAt_le_max_of_isAttached_both_ends
       μ hμA An An' hdom hmod hmod0 htwo C x hatt C' x' hatt' hwide h₀ hc₁g hc₁res c'' hc''0 hc''A
       hC'₀ hres'₀ hpole₀
     obtain ⟨hle1, hstrict⟩ := hb' R hR
-    have hg1 : μ (R.evalAt g) ≤ 1 := by
-      calc μ (R.evalAt g) = 1 * μ (R.evalAt g) := (one_mul _).symm
-        _ ≤ μ c₁ * μ (R.evalAt g) := mul_le_mul_of_nonneg_right hμc₁ (μ.nonneg _)
-        _ = μ (R.evalAt h₀) := hv₀.symm
+    have hg1 : μ (R.evalAt hRrat g) ≤ 1 := by
+      calc μ (R.evalAt hRrat g) = 1 * μ (R.evalAt hRrat g) := (one_mul _).symm
+        _ ≤ μ c₁ * μ (R.evalAt hRrat g) := mul_le_mul_of_nonneg_right hμc₁ (μ.nonneg _)
+        _ = μ (R.evalAt hRrat h₀) := hv₀.symm
         _ ≤ 1 := hle1
     refine ⟨hg1.trans (le_max_left _ _), fun hb1 => ?_⟩
     rcases hμc₁.lt_or_eq with hgt1 | heq1
-    · by_cases hg00 : R.evalAt g = 0
+    · by_cases hg00 : R.evalAt hRrat g = 0
       · rw [hg00, map_zero]; exact lt_of_lt_of_le one_pos (le_max_left _ _)
-      · have hpos : 0 < μ (R.evalAt g) := μ.pos hg00
-        calc μ (R.evalAt g) = 1 * μ (R.evalAt g) := (one_mul _).symm
-          _ < μ c₁ * μ (R.evalAt g) := mul_lt_mul_of_pos_right hgt1 hpos
-          _ = μ (R.evalAt h₀) := hv₀.symm
+      · have hpos : 0 < μ (R.evalAt hRrat g) := μ.pos hg00
+        calc μ (R.evalAt hRrat g) = 1 * μ (R.evalAt hRrat g) := (one_mul _).symm
+          _ < μ c₁ * μ (R.evalAt hRrat g) := mul_lt_mul_of_pos_right hgt1 hpos
+          _ = μ (R.evalAt hRrat h₀) := hv₀.symm
           _ ≤ 1 := hle1
           _ ≤ max 1 (μ b) := le_max_left _ _
     · rcases lt_or_gt_of_ne hb1 with hblt | hbgt
@@ -972,7 +1007,7 @@ public theorem Annulus.abv_evalAt_le_max_of_isAttached_both_ends
                 exact inv_le_one_of_one_le₀ hμc₂
             _ = μ b := mul_one _
             _ < 1 := hblt
-        have h1 : μ (R.evalAt h₀) < 1 := hstrict (Or.inl hc''lt)
+        have h1 : μ (R.evalAt hRrat h₀) < 1 := hstrict (Or.inl hc''lt)
         rw [hv₀, ← heq1, one_mul] at h1
         exact h1.trans_le (le_max_left _ _)
       · exact hg1.trans_lt (lt_max_of_lt_right hbgt)
@@ -991,15 +1026,16 @@ public theorem Annulus.abv_evalAt_le_max_of_isAttached_both_ends
       μ hμA An' An hdom.symm hmod.symm hmod0' htwo' C' x' hatt' C x hatt hwide' h₁ hc₂g hc₂res d
       hd0 hdA hC₁ hres₁ hpole₁
     obtain ⟨-, hstrict⟩ := hb' R (hdom ▸ hR)
-    have h1 : μ (R.evalAt h₁) < 1 := hstrict (Or.inl hμd)
+    have h1 : μ (R.evalAt hRrat h₁) < 1 := hstrict (Or.inl hμd)
     rw [hv₁] at h1
-    have hglt : μ (R.evalAt g) < μ b := by
-      have h2 : μ c₂ * (μ b)⁻¹ * μ (R.evalAt g) * (μ b * (μ c₂)⁻¹) < 1 * (μ b * (μ c₂)⁻¹) :=
+    have hglt : μ (R.evalAt hRrat g) < μ b := by
+      have h2 : μ c₂ * (μ b)⁻¹ * μ (R.evalAt hRrat g) * (μ b * (μ c₂)⁻¹) < 1 * (μ b * (μ c₂)⁻¹) :=
         mul_lt_mul_of_pos_right h1 (mul_pos hμb0 (inv_pos.2 hμc₂0))
-      have h3 : μ c₂ * (μ b)⁻¹ * μ (R.evalAt g) * (μ b * (μ c₂)⁻¹) = μ (R.evalAt g) := by
+      have h3 :
+          μ c₂ * (μ b)⁻¹ * μ (R.evalAt hRrat g) * (μ b * (μ c₂)⁻¹) = μ (R.evalAt hRrat g) := by
         field_simp
       rw [h3, one_mul] at h2
-      calc μ (R.evalAt g) < μ b * (μ c₂)⁻¹ := h2
+      calc μ (R.evalAt hRrat g) < μ b * (μ c₂)⁻¹ := h2
         _ ≤ μ b * 1 := mul_le_mul_of_nonneg_left (inv_le_one_of_one_le₀ hμc₂) hμb0.le
         _ = μ b := mul_one _
     exact ⟨hglt.le.trans (le_max_right _ _), fun _ => hglt.trans_le (le_max_right _ _)⟩

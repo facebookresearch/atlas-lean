@@ -45,8 +45,18 @@ of the curve over `A` is described by charts and annuli:
   with coordinate `param`, modulus `π`, the order-one property of `z - z(P)`, and the unit
   principle on the annulus.
 * `AlgebraicCurve.Annulus.IsAttached An C x` says that the annulus `An` abuts the component of
-  `C` at the node `x`, with the coordinate reducing to a uniformizer at `x` and absolute values
-  of units on the annulus governed by their order at `x`.
+  `C` at the node `x`: the coordinate `z` of `An` is integral for `C` and its reduction has order
+  one at `x`, and every function `f` integral for `C`, with nonzero reduction `f̄` and no zeros or
+  poles on the annulus, is a unit of `A` times `z ^ (ord_x f̄)` at every place of the annulus.
+
+## Implementation notes
+
+The source evaluates functions at every place through `Function.invFun`. Here
+`AlgebraicCurve.Place.evalAt` takes a proof that the place is rational, and at rational places
+its values are the source's. `ComponentChart.pointwise` names its rationality hypothesis, and
+`Annulus` records the rationality of its places as its own field `isRational` (the first
+conjunct of the source's `mem_dom`), which its later fields and `Annulus.IsAttached` pass to
+`Place.evalAt`.
 -/
 
 @[expose] public section
@@ -90,12 +100,12 @@ structure ComponentChart where
   placeMap_not_mem_nodes : ∀ P ∈ dom, placeMap P ∉ nodes
   /-- Reduction commutes with evaluation at rational places of the chart, for functions regular
   on the whole fibre over the reduced point. -/
-  pointwise : ∀ P ∈ dom, P.IsRational → ∀ (f : F) (hf : f ∈ integers),
+  pointwise : ∀ P ∈ dom, ∀ hP : P.IsRational, ∀ (f : F) (hf : f ∈ integers),
     (∀ w ∈ dom, placeMap w = placeMap P → f ∈ w.toValuationSubring) →
       ∃ (hm : (residue ⟨f, hf⟩ : Fbar) ∈ (placeMap P).toValuationSubring)
-        (h : P.evalAt f ∈ A),
+        (h : P.evalAt hP f ∈ A),
         algebraMap (IsLocalRing.ResidueField A) (placeMap P).ResidueField
-            (IsLocalRing.residue A ⟨P.evalAt f, h⟩)
+            (IsLocalRing.residue A ⟨P.evalAt hP f, h⟩)
           = IsLocalRing.residue (placeMap P).toValuationSubring ⟨residue ⟨f, hf⟩, hm⟩
   /-- Away from the nodes, pushing forward the divisor of `f` on the chart gives the divisor of
   the reduction of `f`. -/
@@ -114,36 +124,48 @@ structure Annulus where
   modulus : A
   /-- The modulus lies in the maximal ideal of `A`. -/
   modulus_mem : modulus ∈ maximalIdeal A
-  /-- At every place of the annulus the coordinate takes a nonzero value in the maximal ideal of
-  `A` dividing the modulus by an element of the maximal ideal. -/
-  mem_dom : ∀ P ∈ dom, P.IsRational ∧ param ∈ P.toValuationSubring ∧
-    (∃ h : P.evalAt param ∈ A, (⟨P.evalAt param, h⟩ : A) ∈ maximalIdeal A) ∧
-    P.evalAt param ≠ 0 ∧ ∃ m ∈ maximalIdeal A, (modulus : L) = P.evalAt param * m
-  /-- Every admissible value of the coordinate is taken at exactly one place of the annulus. -/
+  /-- Every place of the annulus is rational. -/
+  isRational : ∀ P ∈ dom, P.IsRational
+  /-- At every place of the annulus the coordinate is regular and takes a nonzero value in the
+  maximal ideal of `A` dividing the modulus by an element of the maximal ideal. -/
+  mem_dom : ∀ (P : Place L F) (hP : P ∈ dom), param ∈ P.toValuationSubring ∧
+    (∃ h : P.evalAt (isRational P hP) param ∈ A,
+      (⟨P.evalAt (isRational P hP) param, h⟩ : A) ∈ maximalIdeal A) ∧
+    P.evalAt (isRational P hP) param ≠ 0 ∧
+    ∃ m ∈ maximalIdeal A, (modulus : L) = P.evalAt (isRational P hP) param * m
+  /-- Every admissible value of the coordinate, a nonzero `c` in the maximal ideal of `A` that
+  divides the modulus by an element of the maximal ideal, is taken at exactly one place of the
+  annulus. -/
   existsUnique_evalAt_eq : ∀ c : A, c ∈ maximalIdeal A → (c : L) ≠ 0 →
     (∃ m ∈ maximalIdeal A, (modulus : L) = c * m) →
-      ∃! P : Place L F, P ∈ dom ∧ P.evalAt param = c
+      ∃! P : Place L F, ∃ hP : P ∈ dom, P.evalAt (isRational P hP) param = c
   /-- The coordinate is a local parameter at each place of the annulus. -/
-  ord_param_sub : ∀ P ∈ dom, P.ord (param - algebraMap L F (P.evalAt param)) = 1
-  /-- A function without zeros or poles on the annulus is a constant times a power of the
-  coordinate times a unit, uniformly on the annulus. -/
+  ord_param_sub : ∀ (P : Place L F) (hP : P ∈ dom),
+    P.ord (param - algebraMap L F (P.evalAt (isRational P hP) param)) = 1
+  /-- A nonzero function without zeros or poles on the annulus is a constant times a power of
+  the coordinate times a unit, uniformly on the annulus. -/
   unit_principle : ∀ f : F, f ≠ 0 → (∀ P ∈ dom, P.ord f = 0) →
     ∃ (m : ℤ) (c : L), c ≠ 0 ∧
-      ∀ P ∈ dom, ∃ h : P.evalAt f * c⁻¹ * (P.evalAt param) ^ (-m) ∈ A, IsUnit (⟨_, h⟩ : A)
+      ∀ (P : Place L F) (hP : P ∈ dom),
+        ∃ h : P.evalAt (isRational P hP) f * c⁻¹ * (P.evalAt (isRational P hP) param) ^ (-m) ∈ A,
+          IsUnit (⟨_, h⟩ : A)
 
 namespace Annulus
 
 variable {A F Fbar}
 
-/-- The annulus `An` is attached to the component chart `C` at the node `x`: the coordinate is
-integral for `C` and reduces to a uniformizer at `x`, and every unit on the annulus with nonzero
-reduction has absolute value `|z|^(ord_x)` there, up to a unit of `A`. -/
+/-- The annulus `An` is attached to the component chart `C` at the node `x`: `x` is a node of `C`,
+the coordinate `z` of `An` is integral for `C` and its reduction has order one at `x`, and every
+function `f` integral for `C`, with nonzero reduction `f̄` and no zeros or poles on the annulus,
+satisfies `f(P) = u · z(P) ^ (ord_x f̄)` with `u` a unit of `A`, at every place `P` of the
+annulus. -/
 def IsAttached (An : Annulus A F) (C : ComponentChart A F Fbar)
     (x : Place (IsLocalRing.ResidueField A) Fbar) : Prop :=
   x ∈ C.nodes ∧ ∃ hz : An.param ∈ C.integers, x.ord (C.residue ⟨An.param, hz⟩) = 1 ∧
     ∀ (f : F) (hf : f ∈ C.integers), C.residue ⟨f, hf⟩ ≠ 0 → (∀ P ∈ An.dom, P.ord f = 0) →
-      ∀ P ∈ An.dom,
-        ∃ h : P.evalAt f * (P.evalAt An.param) ^ (-(x.ord (C.residue ⟨f, hf⟩))) ∈ A,
+      ∀ (P : Place L F) (hP : P ∈ An.dom),
+        ∃ h : P.evalAt (An.isRational P hP) f *
+            (P.evalAt (An.isRational P hP) An.param) ^ (-(x.ord (C.residue ⟨f, hf⟩))) ∈ A,
           IsUnit (⟨_, h⟩ : A)
 
 end Annulus
