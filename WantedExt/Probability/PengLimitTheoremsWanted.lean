@@ -16,7 +16,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Topology.EMetricSpace.Lipschitz
 
 /-!
-# Peng's law of large numbers and central limit theorem under sublinear expectations
+# Wanted: Peng's law of large numbers under sublinear expectations
 
 In a sublinear expectation space, i.i.d. means: `Y_{i+1} =ᵈ Y_i` and `Y_{i+1}` is independent
 from `(Y_1, …, Y_i)`, in the one-sided sense of
@@ -33,6 +33,7 @@ lives in `MathlibExt.Probability.PengCentralLimitTheorem`, which this module imp
 The hypotheses of both theorems are satisfiable with genuine uncertainty (`μ_ < μ̄`, `σ_ < σ̄`):
 Peng, arXiv:1002.4546v1, Chapter II, Proposition 1.7 constructs a G-normal random variable for
 every admissible `G`, and the product spaces of Chapter I, Proposition 3.15 carry i.i.d. sequences.
+The tests for these theorems exhibit only zero-variance witnesses under Dirac expectations.
 
 ## References
 
