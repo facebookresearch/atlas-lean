@@ -969,6 +969,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/DynamicTable/Delete": {"to": "ComputerScience/data-structures/linear-structures", "title": "Dynamic table"},
   "CSLibExt/Algorithms/Lean/DataStructures/EulerTourTree": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Euler tour tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/FenwickTree": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Fenwick tree"},
+  "CSLibExt/Algorithms/Lean/DataStructures/FenwickTree/ProbeBounds": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Fenwick tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/FibonacciHeap": {"to": "ComputerScience/data-structures/heaps", "title": "Fibonacci heap"},
   "CSLibExt/Algorithms/Lean/DataStructures/FibonacciHeap/DecreaseKey": {"to": "ComputerScience/data-structures/heaps", "title": "Fibonacci heap"},
   "CSLibExt/Algorithms/Lean/DataStructures/FractionalCascading": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Fractional cascading"},
