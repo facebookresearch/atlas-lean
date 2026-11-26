@@ -3,7 +3,9 @@
 For all $n, h \ge 0$ there is an $(n, h)$-[universal tree](universal-trees.md) of size $f(n, h)$, where
 $f(n, 0) = 1$, $f(0, h) = 0$ and
 $f(n, h) = f(n, h - 1) + f(\lfloor n/2 \rfloor, h) + f(n - 1 - \lfloor n/2 \rfloor, h)$ for $n, h \ge 1$. Moreover
+
 $$f(n, h) \le n \binom{h - 1 + \lfloor \log_2 n \rfloor}{\lfloor \log_2 n \rfloor},$$
+
 which is quasipolynomial in $n$ and $h$, and polynomial in $n$ when $h = O(\log n)$ (Jurdziński and Lazić).
 
 ## Depends on
