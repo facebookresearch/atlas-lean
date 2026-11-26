@@ -101343,6 +101343,7 @@
 "ProbabilityTheory.binomialLik_hasMLR": "e95e834096c7435c",
 "ProbabilityTheory.binomialTail_mono": "09e9d96cf041c8a7",
 "ProbabilityTheory.binomial_real_Ici_mono": "9501890fb61d60aa",
+"ProbabilityTheory.birthDeathBalanceWeights_normalized": "9c6c9c89fcda1aed",
 "ProbabilityTheory.blackwellMacQueen": "170ec0081709a082",
 "ProbabilityTheory.blackwellMacQueen_succ_pi": "cf43504a8137efff",
 "ProbabilityTheory.blackwellMacQueen_tiePartition": "59afcaec00a1713a",
