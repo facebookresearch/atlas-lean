@@ -251,45 +251,15 @@ private theorem natMod_natCast (t p j : ℕ) : ((t : ℤ).natMod (p ^ j)) = t % 
   unfold Int.natMod
   rw [← Nat.cast_pow, ← Int.natCast_emod, Int.toNat_natCast]
 
-/-- Every divisor of `q ^ e * M` is a `q`-power times a divisor of `M`. -/
-private theorem eq_prime_pow_mul_of_dvd (d L q M e : ℕ) (hq : q.Prime)
-    (hL : L ≠ 0) (he : L.factorization q = e) (hM : L = q ^ e * M) (hd : d ∣ L) :
-    ∃ j u, j ≤ e ∧ u ∣ M ∧ d = q ^ j * u := by
+/-- Every divisor of `L` is a `q`-power times a divisor of the `q`-free part of `L`. -/
+private theorem eq_prime_pow_mul_of_dvd (d L q : ℕ) (hL : L ≠ 0) (hd : d ∣ L) :
+    ∃ j u, j ≤ L.factorization q ∧ u ∣ L / q ^ L.factorization q ∧ d = q ^ j * u := by
   have hd0 : d ≠ 0 := by
     rintro rfl
     exact hL (zero_dvd_iff.mp hd)
-  have hle : d.factorization q ≤ e := by
-    have hle' := (Nat.factorization_le_iff_dvd hd0 hL).mpr hd
-    rw [← he]
-    exact hle' q
-  have hdecomp : d = q ^ d.factorization q * (d / q ^ d.factorization q) := by
-    rw [mul_comm]
-    exact (Nat.div_mul_cancel (Nat.ordProj_dvd d q)).symm
-  refine ⟨d.factorization q, d / q ^ d.factorization q, hle, ?_, hdecomp⟩
-  have hqj0 : 0 < q ^ d.factorization q := pow_pos hq.pos _
-  have hM' : q ^ d.factorization q * (d / q ^ d.factorization q) ∣ q ^ e * M := by
-    rwa [← hdecomp, ← hM]
-  have hexp : q ^ e = q ^ d.factorization q * q ^ (e - d.factorization q) :=
-    calc q ^ e = q ^ (d.factorization q + (e - d.factorization q)) := by
-            rw [Nat.add_sub_cancel' hle]
-          _ = q ^ d.factorization q * q ^ (e - d.factorization q) :=
-            pow_add _ _ _
-  rw [hexp, mul_assoc] at hM'
-  have hcancel : d / q ^ d.factorization q ∣ q ^ (e - d.factorization q) * M :=
-    (mul_dvd_mul_iff_left hqj0.ne').mp hM'
-  have hnq : ¬ q ∣ d / q ^ d.factorization q := by
-    intro hqdvd
-    have hqdvd' : q ^ (d.factorization q + 1) ∣ d := by
-      have h2 := mul_dvd_mul_left (q ^ d.factorization q) hqdvd
-      rw [← hdecomp] at h2
-      rwa [pow_succ]
-    have hle2 := (hq.pow_dvd_iff_le_factorization hd0).mp hqdvd'
-    omega
-  have hcop : (d / q ^ d.factorization q).Coprime (q ^ (e - d.factorization q)) := by
-    have h1 : q.Coprime (d / q ^ d.factorization q) :=
-      (hq.coprime_iff_not_dvd).mpr hnq
-    exact Nat.Coprime.pow_right _ h1.symm
-  exact hcop.dvd_of_dvd_mul_left hcancel
+  exact ⟨d.factorization q, d / q ^ d.factorization q,
+    (Nat.factorization_le_iff_dvd hd0 hL).mpr hd q, Nat.ordCompl_dvd_ordCompl_of_dvd hd q,
+    (Nat.ordProj_mul_ordCompl_eq_self d q).symm⟩
 
 /-- The new residue for `d`: the old residue mod the `p`-free part, re-encoded mod `p`. -/
 private def newRes (res : ℕ → ℤ) (p q : ℕ) (d : ℕ) : ℤ :=
@@ -347,26 +317,6 @@ private theorem exists_lift_modEq (x : ℤ) (b M Q : ℕ) (hcop : M.Coprime Q) :
   exact ⟨crtVal (b : ℤ) x M a, crtVal_modEq_left _ _ _ _,
     crtVal_modEq_right _ _ _ _ _ _ hBez⟩
 
-/-- Congruences mod coprime `U` and `P` combine to a congruence mod `U * P`. -/
-private theorem modEq_mul_of_coprime (x s : ℤ) (U P : ℕ) (hu0 : U ≠ 0)
-    (hP0 : P ≠ 0) (h1 : x ≡ s [ZMOD (U : ℤ)]) (h2 : x ≡ s [ZMOD (P : ℤ)])
-    (hcop : U.Coprime P) : x ≡ s [ZMOD ((U * P : ℕ) : ℤ)] := by
-  rw [Int.modEq_iff_dvd] at h1 h2 ⊢
-  rw [Nat.cast_mul]
-  obtain ⟨a, b, hBez⟩ := exists_bezout U P hcop
-  have hdvd1 : (U : ℤ) * (P : ℤ) ∣ (U : ℤ) * ((s - x) * a) := by
-    rw [mul_dvd_mul_iff_left (by omega : (U : ℤ) ≠ 0)]
-    exact dvd_mul_of_dvd_left h2 a
-  have hdvd2 : (U : ℤ) * (P : ℤ) ∣ (P : ℤ) * ((s - x) * b) := by
-    rw [mul_comm (U : ℤ) (P : ℤ), mul_dvd_mul_iff_left (by omega : (P : ℤ) ≠ 0)]
-    exact dvd_mul_of_dvd_left h1 b
-  have hsum : (s - x : ℤ)
-      = (U : ℤ) * ((s - x) * a) + (P : ℤ) * ((s - x) * b) := by
-    conv_lhs => rw [← mul_one (s - x), ← hBez]
-    ring
-  rw [hsum]
-  exact dvd_add hdvd1 hdvd2
-
 /-- **Replacing the largest prime factor of the modulus set.** Let $m, L \in \mathbb{N}$, let
 $p \ge m$ be a prime with $p \nmid L$, let $q > p$ be the largest prime dividing $L$, and write
 $\nu_q(L)$ for the exponent of $q$ in $L$. Suppose there are residues $r_d \in \mathbb{Z}$, one
@@ -393,25 +343,16 @@ public theorem exists_covering_divisors_replace_largest_prime {m p q L : ℕ}
     simp only [Nat.divisors_zero, Finset.filter_empty, Finset.image_empty] at hcov
     obtain ⟨c, hc, _⟩ := hcov 0
     exact (Finset.notMem_empty c hc).elim
-  · set e := L.factorization q with he
-    set M := L / q ^ e with hM
+  · set e := L.factorization q
+    set M := L / q ^ e
     have hq2 : 2 ≤ q := hq.two_le
     have hp2 : 2 ≤ p := hp.two_le
-    have hqe_dvd : q ^ e ∣ L := Nat.ordProj_dvd L q
-    have hLM : L = q ^ e * M := by
-      rw [hM, mul_comm, Nat.div_mul_cancel hqe_dvd]
+    have hLM : L = q ^ e * M := (Nat.ordProj_mul_ordCompl_eq_self L q).symm
     have hM0 : M ≠ 0 := by
       intro hcon
       rw [hcon, mul_zero] at hLM
       exact hL0 hLM
-    have hqM : ¬ q ∣ M := by
-      intro hqdvd
-      have hqdvd' : q ^ (e + 1) ∣ L := by
-        rw [pow_succ, hLM]
-        exact mul_dvd_mul_left _ hqdvd
-      have hle := (hq.pow_dvd_iff_le_factorization hL0).mp hqdvd'
-      rw [← he] at hle
-      omega
+    have hqM : ¬ q ∣ M := Nat.not_dvd_ordCompl hq hL0
     have hpM : ¬ p ∣ M := by
       intro hpdvd
       have hM_dvd : M ∣ L := by
@@ -448,7 +389,7 @@ public theorem exists_covering_divisors_replace_largest_prime {m p q L : ℕ}
         rw [Finset.mem_filter, Nat.mem_divisors] at hdmem
         obtain ⟨⟨hdvd, -⟩, hdm⟩ := hdmem
         obtain ⟨j, u, hje, huM, rfl⟩ :=
-          eq_prime_pow_mul_of_dvd d L q M e hq hL0 he.symm hLM hdvd
+          eq_prime_pow_mul_of_dvd d L q hL0 hdvd
         refine ⟨j, u, hje, huM, hdm, ?_, ?_⟩
         · exact (hyM.symm.of_dvd (Int.natCast_dvd_natCast.mpr huM)).trans
             (hyc.of_dvd (Int.natCast_dvd_natCast.mpr (dvd_mul_left u (q ^ j))))
@@ -509,8 +450,9 @@ public theorem exists_covering_divisors_replace_largest_prime {m p q L : ℕ}
       have hcop' : u.Coprime (p ^ j) := by
         have h1 : p.Coprime u := (hp.coprime_iff_not_dvd).mpr hpu
         exact Nat.Coprime.pow_right _ h1.symm
-      have hcomb := modEq_mul_of_coprime x (newRes res p q (p ^ j * u)) u (p ^ j)
-        hu0 hP0.ne' hxU hxP hcop'
+      have hcomb : x ≡ newRes res p q (p ^ j * u) [ZMOD ((u * p ^ j : ℕ) : ℤ)] := by
+        rw [Nat.cast_mul]
+        exact (Int.modEq_and_modEq_iff_modEq_mul (by simpa using hcop')).mp ⟨hxU, hxP⟩
       rw [mul_comm u (p ^ j)] at hcomb
       refine ⟨(newRes res p q (p ^ j * u), p ^ j * u),
         Finset.mem_image_of_mem _ ?_, hcomb⟩
