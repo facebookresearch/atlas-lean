@@ -34,27 +34,6 @@ open PowerSeries
 
 @[expose] public section
 
-/-- **The gamma coefficients of the generalized Eulerian polynomials have nonnegative integer
-coefficients.** Fix $n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial.
-There are natural numbers $c_{k,i,j}$, for $k, i, j \ge 0$, such that, writing
-$\gamma_{n,k}(q, t) = \sum_{i=0}^{n} \sum_{j=0}^{n} c_{k,i,j} q^i t^j$, for all rational numbers
-$q, t, x, y$ with $x \ne y$,
-$$
-P_n(q, t; x, y) = \sum_{k=0}^{\lfloor n/2 \rfloor} \gamma_{n,k}(q, t) x^k y^k (x + y)^{n - 2k}.
-$$
-That is, the gamma coefficients $\gamma_{n,k}$ are polynomials in $q$ and $t$ with nonnegative
-integer coefficients.
-
-Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4
-(`jis-2024-24.1.5-thm-4`). -/
-public theorem_wanted generalizedEulerianP_gamma_nonneg (n : ℕ) :
-    ∃ c : ℕ → ℕ → ℕ → ℕ, ∀ q t x y : ℚ, x ≠ y →
-      generalizedEulerianP q t x y n =
-        ∑ k ∈ Finset.range (n / 2 + 1),
-          (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
-            (c k i j : ℚ) * q ^ i * t ^ j) * x ^ k * y ^ k * (x + y) ^ (n - 2 * k)
-
 /-- **The gamma coefficients of the generalized Eulerian polynomials count permutations.** Fix
 $n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial. For a permutation $w$
 of $\{0, 1, \dots, n-1\}$ write $\mathrm{cyc}(w)$ for its number of cycles (fixed points counted

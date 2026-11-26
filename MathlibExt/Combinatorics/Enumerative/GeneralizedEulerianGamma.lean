@@ -677,6 +677,179 @@ public theorem generalizedEulerianP_eq_sum_perm (q t x y : ℚ) (hxy : x ≠ y) 
   rw [generalizedEulerianP_eq_sum_perm.coefficient q t hxy n]
   exact Finset.sum_congr rfl fun w _ ↦ generalizedEulerianP_eq_sum_perm.const_weight q t x y w
 
+namespace generalizedEulerianP_gamma_nonneg
+
+open generalizedEulerianP_eq_sum_perm
+
+-- A summand records powers of q, t, x + y, xy and the logarithmic slope, in that order.
+-- Its multiplicity is independent of all four parameters.
+private structure Term where
+  count : ℕ
+  qDeg : ℕ
+  tDeg : ℕ
+  linearDeg : ℕ
+  quadDeg : ℕ
+  slopeDeg : ℕ
+
+private noncomputable def Term.eval (m : Term) (q t x y : ℚ) : Series :=
+  C ((m.count : ℚ) * q ^ m.qDeg * t ^ m.tDeg * (x + y) ^ m.linearDeg * (x * y) ^ m.quadDeg) *
+    slope x y ^ m.slopeDeg
+
+-- The first two branches differentiate the generating series. The remaining three
+-- differentiate the slope power using s' = s² + (x + y)s + xy.
+private def Term.step (m : Term) (a : Fin 5) : Term :=
+  if a = 0 then { m with qDeg := m.qDeg + 1, slopeDeg := m.slopeDeg + 1 }
+  else if a = 1 then { m with qDeg := m.qDeg + 1, tDeg := m.tDeg + 1, linearDeg := m.linearDeg + 1 }
+  else if a = 2 then { m with count := m.count * m.slopeDeg, slopeDeg := m.slopeDeg + 1 }
+  else if a = 3 then { m with count := m.count * m.slopeDeg, linearDeg := m.linearDeg + 1 }
+  else
+    { m with
+      count := m.count * m.slopeDeg
+      quadDeg := m.quadDeg + 1
+      slopeDeg := m.slopeDeg - 1 }
+
+private lemma deriv_slope_pow {x y : ℚ} (hxy : x ≠ y) (l : ℕ) :
+    derivative (slope x y ^ l) = (l : Series) *
+      (slope x y ^ (l + 1) + C (x + y) * slope x y ^ l + C (x * y) * slope x y ^ (l - 1)) := by
+  cases l with
+  | zero => simp
+  | succ l =>
+    rw [derivative_pow, deriv_slope hxy]
+    simp only [Nat.succ_sub_one, map_add, map_mul, pow_succ]
+    ring
+
+private lemma Term.derivative_eval (m : Term) (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) :
+    derivative (m.eval q t x y * generalizedEulerianSeries q t x y) =
+      ∑ a : Fin 5, (m.step a).eval q t x y * generalizedEulerianSeries q t x y := by
+  rw [Derivation.leibniz, Term.eval, Derivation.leibniz, derivative_C, deriv_slope_pow hxy,
+    deriv_series q t hxy]
+  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero, add_zero]
+  norm_num [Term.step, Term.eval, smul_eq_mul, pow_succ, map_mul]
+  ring
+
+-- Both parameter degrees grow by at most one per step. A nonzero term gains one unit
+-- of weight: in the last branch one slope factor is replaced by the weight-two factor xy.
+private def Term.Valid (n : ℕ) (m : Term) : Prop :=
+  m.count ≠ 0 → m.qDeg ≤ n ∧ m.tDeg ≤ n ∧ m.linearDeg + 2 * m.quadDeg + m.slopeDeg = n
+
+private lemma Term.valid_step {n : ℕ} {m : Term} (hm : m.Valid n) (a : Fin 5) :
+    (m.step a).Valid (n + 1) := by
+  fin_cases a <;> norm_num [Term.Valid, Term.step, mul_ne_zero_iff] at *
+  all_goals
+    intro h
+    obtain ⟨hi, hj, hd⟩ := hm h
+    omega
+
+-- A history chooses one summand of the product rule at each differentiation.
+private def term : (n : ℕ) → (Fin n → Fin 5) → Term
+  | 0, _ => ⟨1, 0, 0, 0, 0, 0⟩
+  | n + 1, a => (term n fun i ↦ a i.succ).step (a 0)
+
+private lemma term_valid (n : ℕ) (a : Fin n → Fin 5) : (term n a).Valid n := by
+  induction n with
+  | zero => simp [term, Term.Valid]
+  | succ n ih => exact Term.valid_step (ih fun i ↦ a i.succ) (a 0)
+
+private lemma iterate_eq (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) (n : ℕ) :
+    derivative^[n] (generalizedEulerianSeries q t x y) =
+      ∑ a : Fin n → Fin 5, (term n a).eval q t x y * generalizedEulerianSeries q t x y := by
+  classical
+  induction n with
+  | zero => simp [Finset.univ_unique, term, Term.eval]
+  | succ n ih =>
+    rw [Function.iterate_succ_apply', ih, map_sum]
+    simp_rw [Term.derivative_eval _ q t hxy]
+    conv_rhs =>
+      rw [← (Fin.consEquiv (fun _ : Fin (n + 1) ↦ Fin 5)).sum_comp
+        (fun a ↦ (term (n + 1) a).eval q t x y * generalizedEulerianSeries q t x y),
+        Fintype.sum_prod_type_right]
+    simp [term]
+
+private def survivors (n : ℕ) : Finset (Fin n → Fin 5) :=
+  Finset.univ.filter fun a ↦ (term n a).count ≠ 0 ∧ (term n a).slopeDeg = 0
+
+private def Term.key (m : Term) : ℕ × ℕ × ℕ := (m.quadDeg, m.qDeg, m.tDeg)
+
+private lemma coefficient_eq (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) (n : ℕ) :
+    generalizedEulerianP q t x y n =
+      ∑ a ∈ survivors n,
+        ((term n a).count : ℚ) * q ^ (term n a).qDeg * t ^ (term n a).tDeg *
+          (x * y) ^ (term n a).quadDeg * (x + y) ^ (n - 2 * (term n a).quadDeg) := by
+  rw [generalizedEulerianP, ← constantCoeff_iterate_derivative, iterate_eq q t hxy]
+  simp only [map_sum, map_mul, const_series q t hxy, mul_one, survivors, Finset.sum_filter,
+    Term.eval, constantCoeff_C, map_pow, generalizedEulerianP_eq_sum_perm.const_slope]
+  refine Finset.sum_congr rfl fun a _ ↦ ?_
+  by_cases hc : (term n a).count = 0
+  · simp [hc]
+  by_cases hs : (term n a).slopeDeg = 0
+  · have hd := ((term_valid n a) hc).2.2
+    have hb : (term n a).linearDeg = n - 2 * (term n a).quadDeg := by omega
+    simp [hc, hs, hb]
+    ring
+  · simp [hs, zero_pow]
+
+private def gammaCoeff (n k i j : ℕ) : ℕ :=
+  ∑ a ∈ (survivors n).filter (fun a ↦ (term n a).key = (k, i, j)), (term n a).count
+
+private lemma grouped (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) (n : ℕ) :
+    generalizedEulerianP q t x y n =
+      ∑ k ∈ Finset.range (n / 2 + 1),
+        (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
+          (gammaCoeff n k i j : ℚ) * q ^ i * t ^ j) * x ^ k * y ^ k * (x + y) ^ (n - 2 * k) := by
+  let indices : Finset (ℕ × ℕ × ℕ) :=
+    Finset.range (n / 2 + 1) ×ˢ (Finset.range (n + 1) ×ˢ Finset.range (n + 1))
+  let weight : ℕ × ℕ × ℕ → ℚ := fun (k, i, j) ↦
+    q ^ i * t ^ j * (x * y) ^ k * (x + y) ^ (n - 2 * k)
+  have hm : ∀ a ∈ survivors n, (term n a).key ∈ indices := by
+    intro a ha
+    obtain ⟨hc, hs⟩ := (Finset.mem_filter.mp ha).2
+    obtain ⟨hi, hj, hd⟩ := (term_valid n a) hc
+    simp only [indices, Term.key, Finset.mem_product, Finset.mem_range]
+    omega
+  calc
+    _ = ∑ a ∈ survivors n, ((term n a).count : ℚ) * weight (term n a).key := by
+      rw [coefficient_eq q t hxy]
+      exact Finset.sum_congr rfl fun a _ ↦ by simp only [Term.key, weight]; ring
+    _ = ∑ b ∈ indices, ∑ a ∈ (survivors n).filter (fun a ↦ (term n a).key = b),
+          ((term n a).count : ℚ) * weight (term n a).key :=
+      (Finset.sum_fiberwise_of_maps_to hm _).symm
+    _ = ∑ b ∈ indices,
+          ((∑ a ∈ (survivors n).filter (fun a ↦ (term n a).key = b), (term n a).count : ℕ) : ℚ) *
+            weight b := by
+      refine Finset.sum_congr rfl fun b _ ↦ ?_
+      rw [Nat.cast_sum, Finset.sum_mul]
+      exact Finset.sum_congr rfl fun a ha ↦ by rw [(Finset.mem_filter.mp ha).2]
+    _ = _ := by
+      simp only [indices, Finset.sum_product, weight, mul_pow, Finset.sum_mul, gammaCoeff]
+      refine Finset.sum_congr rfl fun k _ ↦ Finset.sum_congr rfl fun i _ ↦
+        Finset.sum_congr rfl fun j _ ↦ ?_
+      ring
+
+end generalizedEulerianP_gamma_nonneg
+
+/-- **The gamma coefficients of the generalized Eulerian polynomials have nonnegative integer
+coefficients.** Fix $n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial.
+There are natural numbers $c_{k,i,j}$, for $k, i, j \ge 0$, such that, writing
+$\gamma_{n,k}(q, t) = \sum_{i=0}^{n} \sum_{j=0}^{n} c_{k,i,j} q^i t^j$, for all rational numbers
+$q, t, x, y$ with $x \ne y$,
+$$
+P_n(q, t; x, y) = \sum_{k=0}^{\lfloor n/2 \rfloor} \gamma_{n,k}(q, t) x^k y^k (x + y)^{n - 2k}.
+$$
+That is, the gamma coefficients $\gamma_{n,k}$ are polynomials in $q$ and $t$ with nonnegative
+integer coefficients.
+
+Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4
+(`jis-2024-24.1.5-thm-4`). -/
+public theorem generalizedEulerianP_gamma_nonneg (n : ℕ) :
+    ∃ c : ℕ → ℕ → ℕ → ℕ, ∀ q t x y : ℚ, x ≠ y →
+      generalizedEulerianP q t x y n =
+        ∑ k ∈ Finset.range (n / 2 + 1),
+          (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
+            (c k i j : ℚ) * q ^ i * t ^ j) * x ^ k * y ^ k * (x + y) ^ (n - 2 * k) := by
+  exact ⟨generalizedEulerianP_gamma_nonneg.gammaCoeff n,
+    fun q t x y hxy ↦ generalizedEulerianP_gamma_nonneg.grouped q t hxy n⟩
+
 end
 
 end MetaMathlibExt
