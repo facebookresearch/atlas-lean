@@ -2,7 +2,7 @@
 
 In the LOCAL model of distributed computing, the network is a simple graph $G$ on a finite set $V$ of $n$ nodes, each of them a processor. The nodes carry unique identifiers from a range polynomial in $n$: an injective map $\mathrm{id} : V \to \{1, \dots, n^c\}$, for a constant $c \in \mathbb{N}$. Each node $v$ also has an input $x(v)$ from a set $I$.
 
-An algorithm $A$, the same at every node, has a set $S$ of states, a set $M$ of messages and a set $O$ of outputs, and consists of maps $\mathrm{init} : \mathbb{N} \times I \to S$, $\mathrm{send} : S \times \mathbb{N} \to M$, $\mathrm{update} : S \times \mathcal{M}(M) \to S$ and $\mathrm{out} : S \to O$, where $\mathcal{M}(M)$ is the set of finite multisets of elements of $M$. These sets and maps are arbitrary, so messages have unbounded size and the local computation is unrestricted.
+An [algorithm](local-algorithm.md) $A$, the same at every node, has a set $S$ of states, a set $M$ of messages and a set $O$ of outputs, and consists of maps $\mathrm{init} : \mathbb{N} \times I \to S$, $\mathrm{send} : S \times \mathbb{N} \to M$, $\mathrm{update} : S \times \mathcal{M}(M) \to S$ and $\mathrm{out} : S \to O$, where $\mathcal{M}(M)$ is the set of finite multisets of elements of $M$. These sets and maps are arbitrary, so messages have unbounded size and the local computation is unrestricted.
 
 Computation proceeds in synchronous rounds. The node $v$ starts in the state $\mathrm{init}(\mathrm{id}(v), x(v))$. In each round, every node $u$, in state $s_u$, sends the message $\mathrm{send}(s_u, \mathrm{id}(w))$ to each neighbour $w$; then every node $v$ receives the multiset $m_v$ of the messages its neighbours sent it and moves to the state $\mathrm{update}(s_v, m_v)$.
 
