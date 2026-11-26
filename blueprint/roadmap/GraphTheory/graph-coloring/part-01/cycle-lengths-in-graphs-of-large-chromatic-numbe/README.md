@@ -1,6 +1,8 @@
 # Cycle lengths in graphs of large chromatic number
 
 - [Erdős Problem 751](conjecture.md)
+- [Bondy–Vince theorem, minimum degree three](exists-cycle-lengths-lt-le-add-two-of-th.md)
+- [Bondy–Vince theorem, graphs that are not 3-colourable](exists-cycle-lengths-lt-le-add-two-of-no.md)
 - [Erdős Problem 751 is false](conjecture-refuted.md)
 - [Edge-disjoint cycles on a common vertex set](has-edge-disjoint-cycles-on-common-verti.md)
 - [Erdős Problem 641 (edge-disjoint cycles on the same vertices)](chromatic-forces-common-vertex-cycles.md)

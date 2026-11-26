@@ -23,6 +23,7 @@ Topics added since this subject's fields were last revised.
 - [Cyclic Row Exactness](cyclic-row-exactness/README.md)
 - [Cyclic SBI](cyclic-sbi/README.md)
 - [De Rham](de-rham/README.md)
+- [Dedekind Fibre](dedekind-fibre/README.md)
 - [Delta Ring](delta-ring/README.md)
 - [Derived Adic Completeness](derived-adic-completeness/README.md)
 - [Derived Module Scalar Operations](derived-module-scalar-operations/README.md)
