@@ -1,25 +1,12 @@
 # Homomorphic encryption: correctness and compactness
 
-A homomorphic encryption scheme $\mathcal{E}$ consists of key generation, encryption, decryption and an evaluation algorithm $\mathrm{Evaluate}(pk, C, \Psi)$ for
-circuits $C$ in a class $\mathcal{C}_\mathcal{E}$, where $\lambda$ is the security parameter.
+A homomorphic encryption scheme **compactly evaluates** a class of circuits if it is both correct for that class and compact. Let $\lambda$ be the security parameter. In addition to [key generation, encryption and decryption](../../security-games/generic-security-games/pkescheme.md), the scheme has a public algorithm $\mathrm{Evaluate}(pk,C,\Psi)$. The gate set and its interpretation on messages specify what the single-output circuit $C$ computes. The class may specify the permitted circuits separately at each parameter and input arity. Fresh ciphertexts decrypt correctly.
 
-- $\mathcal{E}$ is *correct* for circuits in $\mathcal{C}_\mathcal{E}$ if for every key pair $(sk, pk)$ output by key generation, every $C \in \mathcal{C}_\mathcal{E}$ with $t$ inputs, all
-  plaintexts $\pi_1, \dots, \pi_t$ and all ciphertexts $\Psi = (\psi_1, \dots, \psi_t)$ with $\psi_i \leftarrow \mathrm{Encrypt}(pk, \pi_i)$, the ciphertext $\psi \leftarrow \mathrm{Evaluate}(pk, C, \Psi)$
-  decrypts to $C(\pi_1, \dots, \pi_t)$, except with negligible probability over the coins of $\mathrm{Evaluate}$.
-- $\mathcal{E}$ is *compact* if there is a polynomial $f$ such that for every $\lambda$ its decryption algorithm is computed by a circuit $D_\mathcal{E}$ of size at most $f(\lambda)$.
-- $\mathcal{E}$ *compactly evaluates* the circuits in $\mathcal{C}_\mathcal{E}$ if it is compact and correct for them, and it is *fully homomorphic* if it compactly evaluates all
-  circuits.
-- A family $\{\mathcal{E}^{(d)} : d \in \mathbb{Z}^+\}$ is *leveled fully homomorphic* if all $\mathcal{E}^{(d)}$ use the same decryption circuit, $\mathcal{E}^{(d)}$ compactly evaluates all
-  circuits of depth at most $d$ over a specified set of gates, and the algorithms of $\mathcal{E}^{(d)}$ run in time polynomial in $\lambda$, $d$ and, for
-  $\mathrm{Evaluate}$, the size of the circuit.
+- **Correctness.** There is one negligible function $\varepsilon$ of $\lambda$ with the following property. Fix any generated pair $(pk,sk)$, any permitted $t$-input circuit $C$, any messages $m_1,\ldots,m_t$, and **any** ciphertexts $x_i$ in the support of $\mathrm{Encrypt}(pk,m_i)$. The probability that decryption of $\mathrm{Evaluate}(pk,C,(x_i))$ rejects or differs from $C(m_1,\ldots,m_t)$ is at most $\varepsilon(\lambda)$. Only the evaluator's coins are sampled in this probability; a rare but supported input ciphertext is not discounted.
+- **Compactness.** There is one polynomial $p$ such that, at every $\lambda$, a Boolean circuit of size at most $p(\lambda)$ computes decryption on every secret key and ciphertext in the declared spaces. Its input and output representations are fixed. Count input and output ports as well as gates: projection from an arbitrarily long ciphertext is not a constant-size decryption interface. Neither the circuit nor its size bound depends on the circuit being evaluated. Without this condition, evaluation could simply return $(C,\Psi)$ and leave the work to decryption.
 
-Compactness bounds the decryption circuit, and hence the length of evaluated ciphertexts, independently of the evaluated circuit; without it the
-trivial scheme whose evaluation outputs $(C, \Psi)$ would be correct.
-
-## Depends on
-
-- [Public-key encryption scheme](../../security-games/generic-security-games/pkescheme.md)
+[Full homomorphism](fully-homomorphic.md) means compact evaluation of *all* circuits over the specified gate set, without a depth bound. [Leveled full homomorphism](leveled-fully-homomorphic.md) instead has a scheme for each positive $d$. One polynomially bounded decryption circuit at each $\lambda$, with the same bit representations, serves *every* level. For each $d$, correctness is required through depth $d$ inclusive. The four algorithms must also run in uniform polynomial time in $\lambda$ and $d$, and for evaluation, in the size of the circuit as well. Circuit description length counts its input arity, gates, wiring and output; for a fixed finite gate basis this is polynomially equivalent to counting input nodes and gates. Neither notion asserts secrecy.
 
 ## Sources
 
-- C. Gentry, *A fully homomorphic encryption scheme*, PhD thesis, Stanford University, 2009, <https://crypto.stanford.edu/craig/craig-thesis.pdf>: Section 2.1, Definitions 2.1.1–2.1.5 and the remark on trivial schemes before Definition 2.1.2.
+- C. Gentry, [*A Fully Homomorphic Encryption Scheme*](https://crypto.stanford.edu/craig/craig-thesis.pdf), Stanford PhD thesis (2009), §2.1. The setup is on printed p. 27 (PDF p. 37); Definitions 2.1.1–2.1.4 and the observation about forwarding the circuit are on printed p. 28 (PDF p. 38); the leveled definition, 2.1.5, is on printed p. 29 (PDF p. 39).

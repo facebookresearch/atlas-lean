@@ -1,4 +1,16 @@
 # Homomorphic encryption
 
 - [Homomorphic encryption: correctness and compactness](homomorphic-encryption-correctness-and.md)
+- [Message, secret-key and ciphertext spaces](spaces.md)
+- [Public-key scheme with evaluation](scheme.md)
+- [Correctness for a circuit class](correct.md)
+- [Decryption result encoding](answer.md)
+- [Decryption circuit](decryption-circuit.md)
+- [Computing decryption](implements.md)
+- [Compactness](compact.md)
+- [Full homomorphism](fully-homomorphic.md)
+- [Circuit description](circuit-code.md)
+- [Sampling a distribution within a time bound](samples-within.md)
+- [Polynomial running time across levels](polynomial-time.md)
+- [Leveled full homomorphism](leveled-fully-homomorphic.md)
 - [Gentry's bootstrapping theorem](gentry-s-bootstrapping-theorem.md)
