@@ -6,4 +6,6 @@
 - [Variable changes biject affine solutions](affine-equation-equiv.md)
 - [Variable changes biject rational points](point-equiv.md)
 - [Variable changes preserve the point count](nat-card-point-eq.md)
+- [Variable changes transform nonsingular points](nonsingular-map-affine-coordinates-iff.md)
+- [Variable changes give additive equivalences of points](variable-change-add-equiv.md)
 - [The ideal of a point on a Weierstrass curve is nonzero](xyideal-ne-bot.md)
