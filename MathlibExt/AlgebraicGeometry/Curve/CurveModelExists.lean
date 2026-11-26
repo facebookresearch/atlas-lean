@@ -44,7 +44,9 @@ import Mathlib.FieldTheory.SeparablyGenerated
 Let `K` be an infinite perfect field and `L / K` a field extension containing an element `x`,
 transcendental over `K`, with `L` finite over `K(x)`. Then `L / K` has a curve model
 (`AlgebraicCurve.CurveModel.nonempty_of_perfectField`): a smooth proper integral curve over `K`
-with function field `L` whose closed points are the places of `L / K`.
+with function field `L`, whose closed points correspond to the places of `L / K`, the local ring
+at each closed point being the valuation ring of its place, and in which every finite set of
+points lies in an affine open.
 
 Since `K` is perfect, `L` has a separating transcendence basis `{t}` over `K`, and the curve model
 is the two-chart scheme `AlgebraicCurve.CurveModel.glued K t`
@@ -188,7 +190,9 @@ private theorem finiteDimensional_algEquiv {K : Type u} [Field K] {L L' : Type*}
 
 /-- A field extension `L / K` of an infinite perfect field that is finite over `K(x)` for some
 `x ∈ L` transcendental over `K` has a curve model: a smooth proper integral curve over `K` with
-function field `L` whose closed points are the places of `L / K`. -/
+function field `L`, whose closed points correspond to the places of `L / K`, the local ring at
+each closed point being the valuation ring of its place, and in which every finite set of points
+lies in an affine open. -/
 theorem nonempty_of_perfectField (K : Type u) (L : Type v) [Field K] [PerfectField K]
     [Infinite K] [Field L] [Algebra K L]
     (hfg : ∃ x : L, Transcendental K x ∧

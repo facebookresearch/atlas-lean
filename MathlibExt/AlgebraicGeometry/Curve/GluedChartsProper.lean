@@ -37,7 +37,8 @@ import Mathlib.Algebra.GCDMonoid.IntegrallyClosed
 /-!
 # Properness of the two-chart model
 
-The two-chart scheme `AlgebraicCurve.CurveModel.glued K t` is proper over `Spec K`
+For nonzero `t` with `L` finite and separable over `K(t)`, the two-chart scheme
+`AlgebraicCurve.CurveModel.glued K t` is proper over `Spec K`
 (`AlgebraicCurve.CurveModel.isProper_gluedToBase`): it is quasi-compact and quasi-separated of
 finite type, and satisfies the existence and uniqueness parts of the valuative criterion.
 -/
@@ -307,7 +308,8 @@ variable (A : Subalgebra K L) (ιA : Spec (CommRingCat.of A) ⟶ glued K t) [IsO
   (S : ValuativeCommSq (gluedToBase K t)) (p : Spec (CommRingCat.of A))
   (φ : (glued K t).presheaf.stalk (ιA.base p) ⟶ CommRingCat.of S.K)
 
-/-- The stalk of the glued scheme at a point of an open chart `Spec A`. -/
+/-- For an open immersion `ιA` of `Spec A` into the glued scheme, the isomorphism between the
+stalk of the glued scheme at `ιA p` and the stalk of `Spec A` at `p`. -/
 def stalkChartEquiv :
     (glued K t).presheaf.stalk (ιA.base p) ≃+* (Spec (CommRingCat.of A)).presheaf.stalk p :=
   (asIso (ιA.stalkMap p)).commRingCatIsoToRingEquiv
@@ -474,6 +476,8 @@ private theorem hasLift_closed (A : Subalgebra K L) [Algebra.FiniteType K A]
   exact hasLift_of_range K t S (specializes_refl _) φ h₁ fun s =>
     φ_mem_range K t A ιA ιA_toBase S p φ h₁ _
 
+/-- For nonzero `t` with `L` finite and separable over `K(t)`, the structure morphism of the glued
+scheme satisfies the existence part of the valuative criterion. -/
 theorem valuativeCriterion_existence : ValuativeCriterion.Existence (gluedToBase K t) := by
   intro S
   rcases mem_range_ι₀_or_mem_range_ιInf K t (S.i₁.base (closedPoint S.K)) with ⟨p, hp⟩ | ⟨q, hq⟩
@@ -604,6 +608,8 @@ private theorem false_of_liftStruct_cross (S : ValuativeCommSq (gluedToBase K t)
   exact (maximalIdeal S.R).ne_top_iff_one.mp (maximalIdeal.isMaximal S.R).ne_top
     (hone' ▸ Ideal.mul_mem_right _ _ ht₁)
 
+/-- For nonzero `t`, the structure morphism of the glued scheme satisfies the uniqueness part of the
+valuative criterion. -/
 theorem valuativeCriterion_uniqueness : ValuativeCriterion.Uniqueness (gluedToBase K t) := by
   intro S
   refine ⟨fun l₁ l₂ => ?_⟩
@@ -628,6 +634,8 @@ section Proper
 variable [Algebra.IsSeparable K⟮t⟯ L] [Fact (t ≠ 0)] [FiniteDimensional K⟮t⟯ L]
     [FiniteDimensional K⟮t⁻¹⟯ L] [Algebra.IsSeparable K⟮t⁻¹⟯ L]
 
+/-- For nonzero `t` with `L` finite and separable over `K(t)`, the glued scheme is proper over
+`Spec K`. -/
 instance isProper_gluedToBase : IsProper (gluedToBase K t) :=
   IsProper.of_valuativeCriterion (gluedToBase K t)
     ((ValuativeCriterion.iff).mpr

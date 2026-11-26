@@ -185,7 +185,7 @@ section Glue
 
 variable [Fact (t ≠ 0)]
 
-/-- The scheme glued from the charts of `{t}` and `{t⁻¹}` along their overlap. -/
+/-- For nonzero `t`, the scheme glued from the charts of `{t}` and `{t⁻¹}` along their overlap. -/
 def glued : Scheme.{u} := pushout (f₀ K t) (fInf K t)
 
 /-- The inclusion of the chart of `{t}` into the glued scheme. -/
@@ -316,6 +316,8 @@ instance isIntegral_glued : IsIntegral (glued K t) := by
     exact hA.closure
   exact isIntegral_of_irreducibleSpace_of_isReduced _
 
+/-- Over a perfect field `K`, for transcendental `t` with `L` finite and separable over `K(t)`, the
+glued scheme is smooth of relative dimension one over `Spec K`. -/
 theorem smoothOfRelativeDimension_one_gluedToBase [PerfectField K] (ht : Transcendental K t) :
     SmoothOfRelativeDimension 1 (gluedToBase K t) :=
   smoothOfRelativeDimension_one_gluedToBase_of_charts K t
@@ -337,7 +339,7 @@ instance isFractionRing_overlap_functionField :
     IsFractionRing (chartRing K ({t, t⁻¹} : Set L)) (XOverlap K t).functionField :=
   functionField_isFractionRing_of_affine (CommRingCat.of (chartRing K ({t, t⁻¹} : Set L)))
 
-/-- `L` is the function field of the overlap chart. -/
+/-- For `L` finite over `K(t)`, `L` is the function field of the overlap chart. -/
 def overlapFunctionFieldAlgEquiv :
     L ≃ₐ[chartRing K ({t, t⁻¹} : Set L)] (XOverlap K t).functionField :=
   IsLocalization.algEquiv (nonZeroDivisors (chartRing K ({t, t⁻¹} : Set L))) L _
@@ -374,7 +376,8 @@ def gluedFunctionFieldIsoOverlap :
   (glued K t).presheaf.stalkCongr (.of_eq (ιU_genericPoint K t).symm) ≪≫
     asIso ((ιU K t).stalkMap (genericPoint (XOverlap K t)))
 
-/-- The identification of `L` with the function field of the glued scheme. -/
+/-- For nonzero `t` with `L` finite over `K(t)`, the identification of `L` with the function field
+of the glued scheme. -/
 def gluedFunctionFieldEquiv : L ≃+* (glued K t).functionField :=
   (overlapFunctionFieldAlgEquiv K t).toRingEquiv.trans
     (gluedFunctionFieldIsoOverlap K t).commRingCatIsoToRingEquiv.symm
@@ -566,7 +569,9 @@ private theorem specMap_genericPoint :
       genericPoint (Spec (CommRingCat.of A)) :=
   genericPoint_eq_of_isOpenImmersion _
 
-/-- The map to `L` from the stalk at `p` of an open chart `Spec A` of the glued scheme. -/
+/-- For `L` finite over `K(t)` and a `K`-subalgebra `A` of `L` such that `i` makes the overlap
+chart an open subscheme of `Spec A`, the map to `L` from the stalk of `Spec A` at `p`, through the
+function field of the overlap chart. -/
 def thetaHom (p : Spec (CommRingCat.of A)) : (Spec (CommRingCat.of A)).presheaf.stalk p →+* L :=
   ((overlapFunctionFieldAlgEquiv K t).symm : (XOverlap K t).functionField →+* L).comp
     (((Spec.map (CommRingCat.ofHom i.toRingHom)).stalkMap (genericPoint (XOverlap K t))).hom.comp
@@ -670,7 +675,8 @@ omit [Algebra.IsSeparable K⟮t⟯ L] [Fact (t ≠ 0)] [FiniteDimensional K⟮t�
 theorem transcendental_inv (ht : Transcendental K t) : Transcendental K t⁻¹ :=
   fun h => ht (IsAlgebraic.inv_iff.mp h)
 
-/-- The height-one prime of the chart ring of `{t}` at a closed point of the first chart. -/
+/-- For transcendental `t`, the height-one prime of the chart ring of `{t}` at a closed point of
+the first chart. -/
 def primeOfι₀ (ht : Transcendental K t) (x₀ : X₀ K t)
     (hx : (ι₀ K t).base x₀ ∈ closedPoints (glued K t)) :
     HeightOneSpectrum (chartRing K ({t} : Set L)) :=
@@ -678,7 +684,8 @@ def primeOfι₀ (ht : Transcendental K t) (x₀ : X₀ K t)
     (isMaximal_iff_ne_bot K t ht _).mp ((PrimeSpectrum.isClosed_singleton_iff_isMaximal x₀).mp
       ((ι₀_mem_closedPoints_iff K t x₀).mp hx))⟩
 
-/-- The height-one prime of the chart ring of `{t⁻¹}` at a closed point of the second chart. -/
+/-- For transcendental `t`, the height-one prime of the chart ring of `{t⁻¹}` at a closed point of
+the second chart. -/
 def primeOfιInf (ht : Transcendental K t) (xi : XInf K t)
     (hx : (ιInf K t).base xi ∈ closedPoints (glued K t)) :
     HeightOneSpectrum (chartRing K ({t⁻¹} : Set L)) :=
@@ -700,7 +707,8 @@ theorem mem_range_ιInf_of_not_mem_range_ι₀ {x : glued K t}
   (mem_range_ι₀_or_mem_range_ιInf K t x).resolve_left h
 
 open scoped Classical in
-/-- The place of `L / K` attached to a closed point of the glued scheme. -/
+/-- For transcendental `t` with `L` finite and separable over `K(t)`, the place of `L / K`
+attached to a closed point of the glued scheme. -/
 def gluedPlaceOfPoint (ht : Transcendental K t) (x : closedPoints (glued K t)) : Place K L :=
   if h : x.1 ∈ Set.range (ι₀ K t).base then
     Place.ofHeightOneSpectrum (K := K)
@@ -841,10 +849,15 @@ theorem gluedPlaceOfPoint_surjective (ht : Transcendental K t) :
     rw [gluedPlaceOfPoint_of_not_mem K t ht _ hnot xi rfl, ← h𝔮]
     rfl
 
+/-- For transcendental `t` with `L` finite and separable over `K(t)`, the map attaching a place of
+`L / K` to each closed point of the glued scheme is a bijection. -/
 theorem gluedPlaceOfPoint_bijective (ht : Transcendental K t) :
     Function.Bijective (gluedPlaceOfPoint K t ht) :=
   ⟨gluedPlaceOfPoint_injective K t ht, gluedPlaceOfPoint_surjective K t ht⟩
 
+/-- For transcendental `t` with `L` finite and separable over `K(t)`, the local ring of the glued
+scheme at a closed point, carried into `L` by the identification of the function field with `L`, is
+the valuation ring of the place attached to that point. -/
 theorem range_stalk_eq_gluedPlaceOfPoint (ht : Transcendental K t) (x : closedPoints (glued K t)) :
     (((gluedFunctionFieldEquiv K t).symm : (glued K t).functionField ≃+* L).toRingHom.comp
         (algebraMap ((glued K t).presheaf.stalk x.1) (glued K t).functionField)).range =

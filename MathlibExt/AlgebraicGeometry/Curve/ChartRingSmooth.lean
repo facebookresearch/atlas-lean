@@ -266,7 +266,8 @@ private theorem rank_kaehler_chartRing_localization_away_eq_one (hs : Transcende
   rw [rank_kaehler_eq_of_formallyEtale K (Localization.Away t) L (nonZeroDivisors _) le_rfl]
   exact_mod_cast rank_kaehler_eq_one_of_isSeparable K s hs
 
-/-- Over a perfect field, the chart ring of `{s}` is formally smooth over `K`. -/
+/-- Over a perfect field `K`, the chart ring of `{s}` is formally smooth over `K` when `L` is
+finite and separable over `K(s)`. -/
 theorem formallySmooth_chartRing [PerfectField K] :
     FormallySmooth K (chartRing K ({s} : Set L)) := by
   rw [← smoothLocus_eq_univ_iff, Set.eq_univ_iff_forall]

@@ -264,8 +264,8 @@ theorem centre_ne_bot (O : ValuationSubring L) (hK : ∀ a : K, algebraMap K L a
     valuation_eq_one_of_not_mem_centre K s O hK hs hbc, div_one]
   exact valuation_coe_le_one K s O hK hs a
 
-/-- The height-one prime of the chart ring of `{s}` at which a nontrivial valuation subring
-containing `K` and `s` is centred. -/
+/-- For `L` finite over `K(s)`, the height-one prime of the chart ring of `{s}` at which a
+nontrivial valuation subring containing `K` and `s` is centred. -/
 def primeOfValuationSubring (O : ValuationSubring L) (hK : ∀ a : K, algebraMap K L a ∈ O)
     (hs : s ∈ O) (hO : O ≠ ⊤) : HeightOneSpectrum (chartRing K ({s} : Set L)) :=
   ⟨centre K s O hK hs, inferInstance, centre_ne_bot K s O hK hs hO⟩
@@ -302,7 +302,8 @@ theorem mem_ofHeightOneSpectrum (𝔭 : HeightOneSpectrum (chartRing K ({s} : Se
   exact 𝔭.valuation_le_one (K := L)
     (⟨s, subset_chartRing K ({s} : Set L) (Set.mem_singleton s)⟩ : chartRing K ({s} : Set L))
 
-/-- Height-one primes of the chart ring of `{s}` are the places at which `s` is integral. -/
+/-- When `L` is finite and separable over `K(s)`, the height-one primes of the chart ring of `{s}`
+are the places of `L / K` at which `s` is integral. -/
 def primeEquivChartPlaces : HeightOneSpectrum (chartRing K ({s} : Set L)) ≃ chartPlaces K s :=
   Equiv.ofBijective
     (fun 𝔭 => ⟨Place.ofHeightOneSpectrum (K := K) 𝔭, mem_ofHeightOneSpectrum K s 𝔭⟩)

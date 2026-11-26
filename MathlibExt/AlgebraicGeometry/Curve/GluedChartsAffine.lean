@@ -35,10 +35,10 @@ public import MathlibExt.AlgebraicGeometry.Curve.GluedChartsProper
 /-!
 # Affine opens of the two-chart model
 
-For `a ∈ K` with `t ≠ a`, the union of the loci `t ≠ a` in the first chart and `1 - a t⁻¹ ≠ 0` in
-the second chart is an affine open of `AlgebraicCurve.CurveModel.glued K t`. Over an infinite field
-every finite set of points avoids one of these conditions, so it lies in an affine open
-(`AlgebraicCurve.CurveModel.finset_subset_affineOpen_glued`).
+Let `t` be nonzero with `L` finite over `K(t)`. For `a ∈ K` with `t ≠ a`, the union of the loci
+`t ≠ a` in the first chart and `1 - a t⁻¹ ≠ 0` in the second chart is an affine open of
+`AlgebraicCurve.CurveModel.glued K t`. Over an infinite field every finite set of points lies in
+one of these affine opens (`AlgebraicCurve.CurveModel.finset_subset_affineOpen_glued`).
 -/
 
 set_option backward.isDefEq.respectTransparency.types false
@@ -622,6 +622,8 @@ section Packaging
 
 variable [Infinite K] [Fact (t ≠ 0)] [FiniteDimensional K⟮t⟯ L]
 
+/-- **Finite sets of points lie in affine opens.** For an infinite field `K` and nonzero `t` with
+`L` finite over `K(t)`, every finite set of points of the glued scheme lies in an affine open. -/
 public theorem finset_subset_affineOpen_glued :
     ∀ F : Finset (glued K t), ∃ U : (glued K t).Opens, IsAffineOpen U ∧ ∀ x ∈ F, x ∈ U := by
   intro F

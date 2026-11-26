@@ -64,9 +64,11 @@ def baseToFunctionField {K : Type u} [Field K] {C : Scheme.{u}} [IsIntegral C]
   (C.presheaf.germ ⊤ (genericPoint C) trivial).hom.comp
     (c.appTop.hom.comp (Scheme.ΓSpecIso (CommRingCat.of K)).inv.hom)
 
-/-- A curve model of `L / K`: a smooth proper integral curve over `K` with function field `L`,
-whose closed points are the places of `L / K` and in which finite sets of points lie in affine
-opens. -/
+/-- A curve model of `L / K`: an integral scheme `C`, proper and smooth of relative dimension one
+over `Spec K`, with a `K`-isomorphism of `L` with the function field of `C` and a bijection from
+the closed points of `C` to the places of `L / K` under which the local ring at each closed point
+is the valuation ring of its place, such that every finite set of points of `C` lies in an affine
+open. -/
 structure CurveModel (K : Type u) [Field K] (L : Type v) [Field L] [Algebra K L] where
   /-- The underlying scheme. -/
   C : Scheme.{u}
