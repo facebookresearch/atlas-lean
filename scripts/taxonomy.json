@@ -14362,6 +14362,7 @@
   "MathlibExt/SetTheory/Cardinal/LargeCardinal/WeaklyCompact": {"to": "SetTheory/large-cardinals", "title": "Weakly compact cardinals"},
   "MathlibExt/SetTheory/Cardinal/SimpleGraph": {"to": "SetTheory/infinitary-combinatorics", "title": "Partition calculus"},
   "MathlibExt/SetTheory/Cardinal/SingularCardinals": {"to": "SetTheory/cardinal-arithmetic", "title": "Singular cardinals hypothesis"},
+  "MathlibExt/SetTheory/Determinacy/BaireProperty": {"to": "SetTheory/determinacy", "title": "Regularity of sets of reals from determinacy"},
   "MathlibExt/SetTheory/Determinacy/GaleStewart": {"to": "SetTheory/determinacy", "title": "Gale–Stewart games"},
   "MathlibExt/SetTheory/Determinacy/NonDetermined": {"to": "SetTheory/determinacy", "title": "Non-determined games"},
   "MathlibExt/SetTheory/Determinacy/PerfectSet": {"to": "SetTheory/determinacy", "title": "Regularity of sets of reals from determinacy"},
