@@ -321,7 +321,19 @@ private lemma catalanExp_even_E_eq (E : ℕ → ℤ)
         simp only [Nat.choose_self, Nat.cast_one, one_mul] at hEoriented hQ
         linarith
 
-private lemma catalanExp_bernoulli_quarter_eq (E : ℕ → ℤ)
+/-- **Odd Bernoulli polynomials at one quarter via Euler numbers.**
+Let $E : \mathbb{N} \to \mathbb{Z}$ satisfy $E_0 = 1$ and
+$\sum_{j=0}^{\lfloor n/2 \rfloor} \binom{n}{2j} E_{n-2j} = 0$ for every positive integer $n$.
+Then for every integer $m \ge 0$, the Bernoulli polynomial of degree $2m+1$ satisfies
+
+$$B_{2m+1}(1/4) = -\frac{(2m+1) E_{2m}}{4^{2m+1}}.$$
+
+The Bernoulli polynomial addition formula at $1/4 \pm 1/4$ gives the Euler recurrence for the
+scaled odd values.
+
+Source: Zhi-Hong Sun, *Super congruences involving Bernoulli and Euler polynomials*,
+proof of Theorem 3.2, [p. 16](https://arxiv.org/pdf/1407.0636v6#page=16). -/
+public lemma EulerNumbers.bernoulli_eval_quarter_of_recurrence (E : ℕ → ℤ)
     (hE : E 0 = 1 ∧ ∀ n : ℕ, 0 < n →
       (∑ j ∈ Finset.range (n / 2 + 1),
         (n.choose (2 * j) : ℤ) * E (n - 2 * j)) = 0) (m : ℕ) :
@@ -420,7 +432,7 @@ private lemma catalanExp_second_even_coefficient (E : ℕ → ℤ)
     have h := Polynomial.bernoulli_eval_one_add (2 * r + 1) (1 / 4 : ℚ)
     norm_num at h ⊢
     simpa only [B, show 2 * r + 1 - 1 = 2 * r by omega] using h
-  have hB := catalanExp_bernoulli_quarter_eq E hE r
+  have hB := EulerNumbers.bernoulli_eval_quarter_of_recurrence E hE r
   change B = -(2 * r + 1 : ℚ) * (E (2 * r) : ℚ) /
     (4 : ℚ) ^ (2 * r + 1) at hB
   have htwo : (2 : ℚ) ^ (4 * r + 2) = (4 : ℚ) ^ (2 * r + 1) := by

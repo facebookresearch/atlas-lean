@@ -286,6 +286,72 @@ public theorem admissibleSequence_weightedLength_lt {A : Type*} (η : A → List
     List.length_append]
   omega
 
+/-- **Admissible sequences are determined by their weighted length.** Let $\eta$ be a
+substitution on an alphabet $A$, let $b \in A$ and $k \in \mathbb{N}$, and let
+$(m_i, a_i)_{i = 0, \dots, k}$ and $(m'_i, a'_i)_{i = 0, \dots, k}$ be two $b$-admissible
+sequences with $\sum_{j=0}^{k} |\eta^j(m_j)| = \sum_{j=0}^{k} |\eta^j(m'_j)|$. Then
+$(m_i, a_i) = (m'_i, a'_i)$ for every $i \le k$.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.4 (Dumont and Thomas, Lemma 1.3). -/
+public theorem letterAdmissibleSequence_eq_of_weightedLength_eq {A : Type*}
+    (η : A → List A) (hη : IsSubstitution η) (k : ℕ) (b : A) (s s' : ℕ → List A × A)
+    (hs : IsLetterAdmissibleSequence η b s k) (hs' : IsLetterAdmissibleSequence η b s' k)
+    (hsum : ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s j).1).length =
+      ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s' j).1).length) :
+    ∀ i ≤ k, s i = s' i := by
+  have top (n : ℕ) (x : A) (hu : IsLetterAdmissibleSequence η x s n)
+      (hv : IsLetterAdmissibleSequence η x s' n)
+      (hw : ∑ j ∈ Finset.range (n + 1), (morphIterate η j (s j).1).length =
+        ∑ j ∈ Finset.range (n + 1), (morphIterate η j (s' j).1).length) : s n = s' n := by
+    -- The common weight lies in the half-open interval for either top pair.
+    have notShorter {u v : ℕ → List A × A}
+        (hu : IsLetterAdmissibleSequence η x u n) (hv : IsLetterAdmissibleSequence η x v n)
+        (hw : ∑ j ∈ Finset.range (n + 1), (morphIterate η j (u j).1).length =
+          ∑ j ∈ Finset.range (n + 1), (morphIterate η j (v j).1).length) :
+        ¬ (u n).1.length < (v n).1.length := by
+      intro hlt
+      have hvPrefix : (v n).1 <+: η x :=
+        List.IsPrefix.trans ⟨[(v n).2], rfl⟩ hv.2
+      have hPrefix : (u n).1 ++ [(u n).2] <+: (v n).1 :=
+        List.prefix_of_prefix_length_le hu.2 hvPrefix (by
+          simpa only [List.length_append, List.length_singleton] using Nat.succ_le_of_lt hlt)
+      obtain ⟨rest, hrest⟩ := hPrefix
+      have himage : morphIterate η n ((u n).1 ++ [(u n).2]) <+:
+          morphIterate η n (v n).1 := by
+        refine ⟨morphIterate η n rest, ?_⟩
+        rw [← morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_append, hrest]
+      have hbound := admissibleSequence_weightedLength_lt η hη u n hu.1
+      rw [hw, Finset.sum_range_succ] at hbound
+      have hlen := himage.length_le
+      omega
+    have hlen : (s n).1.length = (s' n).1.length :=
+      le_antisymm (Nat.le_of_not_gt (notShorter hv hu hw.symm))
+        (Nat.le_of_not_gt (notShorter hu hv hw))
+    have hlen' : ((s n).1 ++ [(s n).2]).length = ((s' n).1 ++ [(s' n).2]).length := by
+      simp [hlen]
+    have heq := (List.prefix_of_prefix_length_le hu.2 hv.2 hlen'.le).eq_of_length hlen'
+    obtain ⟨hm, ha⟩ := List.append_inj heq hlen
+    exact Prod.ext hm (by simpa using ha)
+  induction k generalizing b with
+  | zero =>
+    intro i hi
+    obtain rfl : i = 0 := Nat.eq_zero_of_le_zero hi
+    exact top 0 b hs hs' hsum
+  | succ k ih =>
+    have htop := top (k + 1) b hs hs' hsum
+    have hshort : IsLetterAdmissibleSequence η (s (k + 1)).2 s k :=
+      ⟨fun i hi => hs.1 i (Nat.lt_succ_of_lt hi), hs.1 k k.lt_succ_self⟩
+    have hshort' : IsLetterAdmissibleSequence η (s (k + 1)).2 s' k := by
+      rw [htop]
+      exact ⟨fun i hi => hs'.1 i (Nat.lt_succ_of_lt hi), hs'.1 k k.lt_succ_self⟩
+    simp only [Finset.sum_range_succ (n := k + 1), htop] at hsum
+    intro i hi
+    rcases Nat.eq_or_lt_of_le hi with rfl | hi
+    · exact htop
+    · exact ih (s (k + 1)).2 hshort hshort' (Nat.add_right_cancel hsum) i
+        (Nat.le_of_lt_succ hi)
+
 /-- **Two-sided periodic points.** Let $\eta$ map each letter of an alphabet $A$ to a finite
 word over $A$, extended to finite words by concatenation, with iterates $\eta^j$; let
 $u = (u_i)_{i \in \mathbb{Z}}$ be a two-sided word over $A$ and let $p$ be a natural number.
