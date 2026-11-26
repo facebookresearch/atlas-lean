@@ -19,3 +19,4 @@
 - [Reachability union is open](is-open-reach-union.md)
 - [Complement of the reachability union is relatively open](exists-nhds-inter-subset-diff.md)
 - [Points joined in the free set lie in reachable cells](reachable-of-joined-in.md)
+- [Cell-graph reachability iff path-connectivity](reachable-iff-joined-in.md)

@@ -11,6 +11,7 @@
 - [Simple polygon](poly.md)
 - [Bounded polygonal workspace](workspace.md)
 - [Union of hole regions](hole-union.md)
+- [Free space of a polygonal workspace](free-space.md)
 - [Hole union of no holes](hole-union-nil.md)
 - [Hole union of a nonempty list](hole-union-cons.md)
 - [Union of closed hole regions is closed](is-closed-hole-union.md)

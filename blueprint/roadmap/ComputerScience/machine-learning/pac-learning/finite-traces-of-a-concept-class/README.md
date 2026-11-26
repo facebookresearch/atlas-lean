@@ -6,3 +6,4 @@
 - [Finite traces of a list equal its trace family](finite-traces-eq-trace-family.md)
 - [Shattering by the trace family is shattering by the class](shatters-trace-family-iff.md)
 - [Restriction to a finite sample does not increase VC dimension](vc-dim-trace-family-le.md)
+- [Sauer-Shelah bound on traces](card-trace-family-le-sum-vc-dim.md)

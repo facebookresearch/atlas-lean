@@ -4,6 +4,10 @@
 
 - [Extended observation stream on the observed indices](extend-apply-le.md)
 
+## Proof helpers for the finite real-valued total
+
+- [One-step recurrence for the hidden Markov joint law](joint-prob-snoc.md)
+
 ## Probability distributions
 
 - [Initial-state distribution of a normalized hidden Markov model](init-pmf.md)

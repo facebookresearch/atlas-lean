@@ -2,6 +2,7 @@
 
 ## Weights and the evidence-clamped proposal
 
+- [Lw Weight](lw-weight.md)
 - [Likelihood weight without evidence is one](lw-weight-empty.md)
 - [Probability of evidence in a Bayesian network](evidence-prob.md)
 - [Posterior mean in a Bayesian network](posterior-mean.md)
@@ -19,5 +20,8 @@
 - [Expected weighted integrand under the clamped proposal](integral-proposal-lw-weight-mul.md)
 - [Likelihood-weighting estimate](lw-estimate.md)
 - [Self-normalized likelihood-weighting estimate](lw-self-normalized.md)
+- [The likelihood-weighting numerator is unbiased](integral-lw-estimate.md)
 - [Expected likelihood-weighting estimate of one is the evidence probability](integral-lw-estimate-one.md)
+- [Consistency of the likelihood-weighting numerator](tendsto-lw-estimate.md)
+- [Self-normalized likelihood weighting is consistent](tendsto-lw-self-normalized.md)
 - [One-sample self-normalized likelihood weighting](integral-lw-self-normalized-one.md)

@@ -6,3 +6,4 @@
 - [Comparator bound is attained on an interval](comparator-attained.md)
 - [Online play is unchanged by flipping the current sign](play-at-flip.md)
 - [Online play has mean zero against random signs](online-play-expectation-zero.md)
+- [Lower bound for online convex optimization](oco-lower-bound.md)
