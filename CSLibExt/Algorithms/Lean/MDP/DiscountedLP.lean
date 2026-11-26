@@ -93,8 +93,8 @@ section Correspondence
 variable [DecidableEq S] (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
   {π : S → A → ℝ} (hπ : IsRowStochastic π)
 
-/-- For any test reward, expectation against the rescaled occupancy is its weighted policy
-value. Changing the reward leaves the occupancy unchanged. -/
+/-- The linear pairing of a test reward with the rescaled occupancy is the sum of its policy
+values weighted by the initial weights `w`. Changing the reward leaves the occupancy unchanged. -/
 private theorem pair_occupancy (w : S → ℝ) (g : S → A → ℝ) :
     ∑ p, occupancy M γ hM hγ0 hγ1 π hπ w p / (1 - γ) * g p.1 p.2 =
       ∑ s, w s * stochPolicyValue { M with reward := g } γ hM hγ0 hγ1 π hπ s := by
