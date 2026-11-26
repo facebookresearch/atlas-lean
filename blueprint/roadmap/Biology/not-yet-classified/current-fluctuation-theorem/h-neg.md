@@ -21,6 +21,7 @@ of `Q` and makes no statement about probabilities.
 ## Proof depends on
 
 - [Existence and symmetry of the current generating function](q-symm.md)
+- [`H` as a supremum](h-eq-i-sup.md)
 
 ## Sources
 

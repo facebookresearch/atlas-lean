@@ -30,7 +30,9 @@ The expectation is written through the tilted generator, as in the source's proo
 `L_λ(ω', ω) = W(ω → ω') exp(-∑_l λ_l s_l(ω, ω'))` for `ω' ≠ ω`, where `s_l(ω, ω')` is `+1` for the
 jump `a_l → b_l`, `-1` for `b_l → a_l` and `0` otherwise, and `L_λ(ω, ω) = -∑_{ω' ≠ ω} W(ω → ω')`,
 the expectation from the initial state `ω₀` is `∑_{ω'} (exp(t L_λ))(ω', ω₀)` (the Feynman–Kac
-representation), which is taken as the definition. `H` takes values in `[-∞, ∞]`. Not recorded here:
+representation), which is taken as the definition. `H` is the extended-real Legendre transform
+`legendreTransform` of `-Q` at `-α`, with the chords numbered by `Fin (Fintype.card ι)`;
+`SchnakenbergNetwork.H_eq_iSup` gives it as the supremum above, in `[-∞, ∞]`. Not recorded here:
 the version for macroscopic currents with several mechanisms (equation (69)) and the large-deviation
 statement about probabilities (equations (71) and (74)), which needs the Gärtner–Ellis theorem.
 
@@ -47,12 +49,14 @@ public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Data.EReal.Operations
+public import MathlibExt.Probability.LegendreTransform
 
 @[expose] public section
 
 namespace WantedExt.Biology.Biophysics.CurrentFluctuationTheoremWanted
 
-open Filter Topology
+open Filter Topology MathlibExt.Probability.LegendreTransform
+open scoped InnerProductSpace
 
 variable {Ω ι : Type*} [Fintype Ω] [DecidableEq Ω] [Fintype ι]
 
@@ -125,10 +129,42 @@ noncomputable def SchnakenbergNetwork.Q (M : SchnakenbergNetwork Ω ι) (ω₀ :
     ℝ :=
   limUnder atTop fun t : ℝ => -(1 / t) * Real.log (M.genFun lam t ω₀)
 
-/-- **Legendre transform of `Q`.** `H(α) = sup_λ [Q(λ) - λ·α]`, in `[-∞, ∞]`. -/
+/-- **Legendre transform of `Q`.** `H(α) = Λ^*(-α)` for `Λ = -Q`, where
+`Λ^*(x) = sup_y (⟨y, x⟩ - Λ(y))` is the extended-real Legendre transform on `ℝ^d`, `d = |ι|`, with
+the chords numbered `0, …, d - 1`; equivalently `H(α) = sup_λ [Q(λ) - λ·α]`, in `[-∞, ∞]`. -/
 noncomputable def SchnakenbergNetwork.H (M : SchnakenbergNetwork Ω ι) (ω₀ : Ω) (α : ι → ℝ) :
     EReal :=
-  ⨆ lam : ι → ℝ, ((M.Q ω₀ lam - ∑ l, lam l * α l : ℝ) : EReal)
+  legendreTransform
+    (fun y : EuclideanSpace ℝ (Fin (Fintype.card ι)) =>
+      -((M.Q ω₀ fun l => y (Fintype.equivFin ι l) : ℝ) : EReal))
+    (WithLp.toLp 2 fun i => -α ((Fintype.equivFin ι).symm i))
+
+/-- **`H` as a supremum.** For every initial state `ω₀` and every `α`,
+`H(α) = sup_λ [Q(λ) - λ·α]` in `[-∞, ∞]`, the supremum taken over all real `λ`. -/
+theorem SchnakenbergNetwork.H_eq_iSup (M : SchnakenbergNetwork Ω ι) (ω₀ : Ω) (α : ι → ℝ) :
+    M.H ω₀ α = ⨆ lam : ι → ℝ, ((M.Q ω₀ lam - ∑ l, lam l * α l : ℝ) : EReal) := by
+  rw [SchnakenbergNetwork.H, legendreTransform_eq_iSup]
+  set e := Fintype.equivFin ι
+  let φ : (ι → ℝ) ≃ EuclideanSpace ℝ (Fin (Fintype.card ι)) :=
+    { toFun := fun lam => WithLp.toLp 2 fun i => lam (e.symm i)
+      invFun := fun y l => y (e l)
+      left_inv := fun lam => by funext l; simp only [Equiv.symm_apply_apply]
+      right_inv := fun y => by ext i; simp only [Equiv.apply_symm_apply] }
+  rw [← φ.iSup_comp]
+  congr 1
+  funext lam
+  have hQ : (fun l => (φ lam) (e l)) = lam := by
+    funext l
+    simp only [Equiv.coe_fn_mk, Equiv.symm_apply_apply, φ]
+  have hinner : ⟪φ lam, WithLp.toLp 2 fun i => -α (e.symm i)⟫_ℝ = -∑ l, lam l * α l := by
+    rw [PiLp.inner_apply]
+    simp only [Equiv.coe_fn_mk, RCLike.inner_apply, conj_trivial, neg_mul,
+      Finset.sum_neg_distrib, neg_inj, φ]
+    exact (Equiv.sum_comp e.symm (fun l => α l * lam l)).trans
+      (Finset.sum_congr rfl fun l _ => mul_comm _ _)
+  rw [hQ, hinner, ← EReal.coe_neg, ← EReal.coe_sub]
+  congr 1
+  ring
 
 /-- **Existence and symmetry of the current generating function** (Andrieux and Gaspard 2007,
 equation (39) of arXiv:cond-mat/0512254): for a valid Schnakenberg network on a finite nonempty
