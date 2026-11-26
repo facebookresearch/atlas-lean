@@ -14,6 +14,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.NumberTheory.IteratedRemainderSet
 public import MathlibExt.NumberTheory.PrimeSquareTail
 public import MathlibExt.NumberTheory.RemainderSet
+public import MathlibExt.NumberTheory.RemainderSetBoundsCardLeastPrimeFactorIntervalError
 
 /-!
 # Bounds for sets of remainders (statements)
@@ -27,8 +28,10 @@ structural lemmas, its `O(log log n)` drop bound, and its iterated-set bounds ar
 `WantedExt` and `MathlibExt` may not import `FormalizedPapers`, so the set is restated in
 `MathlibExt.NumberTheory.RemainderSet`, which also proves the unbounded drops. This file states
 the remaining results that `FormalizedPapers` does not prove: the asymptotic
-`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and two
-auxiliary analytic lemmas. The inverse-prime-square tail bound is proved in
+`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and one
+auxiliary analytic lemma; the other auxiliary analytic lemma, `card_leastPrimeFactor_interval_error`,
+is proved in `MathlibExt.NumberTheory.RemainderSetBoundsCardLeastPrimeFactorIntervalError`.
+The inverse-prime-square tail bound is proved in
 `MathlibExt.NumberTheory.PrimeSquareTail`. The iterated remainder sets `S_j(n)` are defined, and
 Lemma 19 (`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is proved, in
 `MathlibExt.NumberTheory.IteratedRemainderSet`.
@@ -96,24 +99,6 @@ public theorem_wanted remainderCount_consecutive_differences :
       (∃ C : ℝ, ∀ᶠ n : ℕ in Filter.atTop,
         (remainderCount n : ℝ) - C * Real.log (Real.log n) ≤ remainderCount (n + 1)) ∧
       ∀ M : ℕ, ∃ᶠ n in Filter.atTop, remainderCount (n + 1) + M ≤ remainderCount n
-
-/-- **Counting integers with a given least prime factor in an interval.** Let $a$ and $t$ be
-positive integers and let $p$ be a prime. Let $N$ be the number of integers $m$ with
-$a + 1 \le m \le a + t$ that are divisible by $p$ and by no prime $q < p$. Then
-
-$$\left| N - \frac{t}{p} \prod_{q < p,\ q \text{ prime}} \left(1 - \frac{1}{q}\right) \right|
-\le 2^{\pi(p-1)}$$
-
-where $\pi$ is the prime-counting function.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 6 (`lem:Dp`). -/
-public theorem_wanted card_leastPrimeFactor_interval_error {a t p : ℕ} (ha : 0 < a)
-    (ht : 0 < t) (hp : p.Prime) :
-    |((((Finset.Icc (a + 1) (a + t)).filter
-          (fun m => p ∣ m ∧ ∀ q < p, q.Prime → ¬ q ∣ m)).card : ℕ) : ℝ) -
-        t * (1 / (p : ℝ)) * ∏ q ∈ (Finset.range p).filter Nat.Prime, (1 - 1 / (q : ℝ))| ≤
-      2 ^ Nat.primeCounting (p - 1)
 
 /-- **Upper bound $1.3\, n / \log n$ for the prime-counting function.** For every natural
 number $n \ge 2$, the number $\pi(n)$ of primes at most $n$ satisfies
