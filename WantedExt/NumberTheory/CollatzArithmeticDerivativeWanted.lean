@@ -38,6 +38,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
 
 namespace MetaMathlibExt
 
@@ -134,16 +135,6 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 public theorem_wanted IsCompatibleSemiprimePair.odd {p q r s : ℕ}
     (h : IsCompatibleSemiprimePair p q r s) :
     Odd p ∧ Odd q ∧ Odd r ∧ Odd s
-
-/-- **Bounds on the factors of compatible semiprimes.** Suppose the semiprimes $pq$ and $rs$ are
-compatible, where $q < p$. Then $r \ge 241$, $s \ge 241$, $3q < r < 3p$ and $3q < s < 3p$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Lemma 11
-(`jis-2025-25.1.8-lem-11`). -/
-public theorem_wanted IsCompatibleSemiprimePair.bounds {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) (hqp : q < p) :
-    241 ≤ r ∧ 241 ≤ s ∧ 3 * q < r ∧ 3 * q < s ∧ r < 3 * p ∧ s < 3 * p
 
 /-- **Compatible semiprimes modulo 5.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
 $2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then one of $p, q$ is
