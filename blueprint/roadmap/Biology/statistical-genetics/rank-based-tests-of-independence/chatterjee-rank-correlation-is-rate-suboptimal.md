@@ -3,9 +3,13 @@
 Let $(X^{(1)}_i, X^{(2)}_i)$, $i = 1,\dots,n$, be i.i.d. copies of a real pair with continuous marginals, and test $H_0 : X^{(1)} \perp\!\!\!\perp X^{(2)}$. Sort the sample so that $X^{(1)}_{[1]} \le \dots \le X^{(1)}_{[n]}$ and let $r_{[i]} = \sum_j \mathbf 1\{X^{(2)}_{[j]} \le X^{(2)}_{[i]}\}$ be the rank of the concomitant.
 
 **Chatterjee's coefficient.** Without ties,
+
 $$\xi_n = 1 - \frac{3\sum_{i=1}^{n-1}|r_{[i+1]} - r_{[i]}|}{n^2-1},$$
+
 computable in $O(n\log n)$ time, which consistently estimates the Dette–Siburg–Stoimenov measure
+
 $$\xi = \frac{\int \operatorname{var}[\mathbb E\{\mathbf 1(X^{(2)} \ge x)\mid X^{(1)}\}]\,dF_2(x)}{\int\operatorname{var}\{\mathbf 1(X^{(2)} \ge x)\}\,dF_2(x)},$$
+
 which vanishes iff $X^{(1)} \perp\!\!\!\perp X^{(2)}$ (for continuous $F$) and equals $1$ iff $X^{(2)}$ is a measurable function of $X^{(1)}$. Comparators are Hoeffding's $D = \int\{F - F_1F_2\}^2\,dF$, the Blum–Kiefer–Rosenblatt $R$ and the Bergsma–Dassios–Yanagimoto $\tau^*$, with rank estimators $D_n, R_n, \tau^*_n$.
 
 **Local alternatives.** (A) *Rotation:* $X = A_\Delta Y$ with $A_\Delta = \begin{pmatrix}1 & \Delta\\ \Delta & 1\end{pmatrix}$ and independent mean-zero $Y^{(1)},Y^{(2)}$ with absolutely continuous densities, finite second moments and finite Fisher information in the log-derivatives (e.g. Gaussian or $t_\nu$, $\nu > 2$). (B) *Mixture:* $F_X = (1-\Delta)F_1F_2 + \Delta G$ with a fixed dependent, compactly supported $G \ll F_1F_2$. In both, $H_{1,n}(\Delta_0)$ takes $\Delta = \Delta_0 n^{-1/2}$.

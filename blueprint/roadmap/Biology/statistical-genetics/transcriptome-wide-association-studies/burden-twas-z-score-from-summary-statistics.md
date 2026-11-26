@@ -1,10 +1,13 @@
 # Burden TWAS Z-score from GWAS summary statistics
 
 Let a gene $g$ have expression weights $\hat w_{lg}$ on SNPs $l$ in its prediction model $\mathrm{Model}_g$ (for BGW-TWAS, $\hat w_{lg} = \widehat{\mathrm{PP}}_l\, \hat w_l$; see [Bayesian GReX](bayesian-genetically-regulated-expression.md)). From a GWAS based on single-variant tests take, for each SNP, the marginal effect $\hat\beta_l$, its standard error $\mathrm{SE}(\hat\beta_l)$ and $Z_l = \hat\beta_l / \mathrm{SE}(\hat\beta_l)$. From a reference panel of matching ancestry let $V = \operatorname{Cov}(X)$ be the genotype covariance matrix of the model SNPs, $\hat\sigma_l^2 = V_{ll}$ the genotype variance of SNP $l$, and
+
 $$\hat\sigma_g^2 = \hat w^{\top} V \hat w$$
+
 the variance of the imputed expression.
 
 **Definition (S-PrediXcan burden statistic, used by BGW-TWAS).**
+
 $$Z_g = \sum_{l \in \mathrm{Model}_g} \hat w_{lg}\, \frac{\hat\sigma_l}{\hat\sigma_g}\, Z_l = \frac{\sum_{l \in \mathrm{Model}_g} \hat w_{lg}\, \hat\sigma_l\, Z_l}{\sqrt{\hat w^{\top} V \hat w}}.$$
 
 **Proposition.** Suppose that under the null hypothesis of no association the vector $(Z_l)_{l \in \mathrm{Model}_g}$ is multivariate normal with mean zero and covariance equal to the SNP correlation matrix $R$, $R_{lm} = V_{lm} / (\hat\sigma_l \hat\sigma_m)$, and the weights are fixed (estimated from an independent reference sample). Then $Z_g \sim \mathcal{N}(0, 1)$ under the null.

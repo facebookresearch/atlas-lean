@@ -3,12 +3,16 @@
 Let $\hat\beta_1, \dots, \hat\beta_J$ be estimates of effects $\beta_1, \dots, \beta_J$ with standard errors $\hat s_1, \dots, \hat s_J > 0$. The adaptive shrinkage (ash) model assumes:
 
 1. **Unimodal prior.** The $\beta_j$ are independent draws from
+
 $$g(\cdot\,; \pi) = \pi_0\,\delta_0 + \sum_{k=1}^K \pi_k\,\mathcal N(0, \sigma_k^2),$$
+
 where $\sigma_1 < \dots < \sigma_K$ is a fixed, large and dense grid of positive numbers and $\pi = (\pi_0, \dots, \pi_K)$ are nonnegative mixture proportions summing to $1$.
 2. **Normal likelihood.** $\hat\beta_j \mid \beta_j \sim \mathcal N(\beta_j, \hat s_j^2)$ independently.
 
 Then, with $\sigma_0 := 0$, the $\hat\beta_j$ are independent with marginal likelihood
+
 $$L(\pi) = \prod_{j=1}^J \sum_{k=0}^K \pi_k\,\mathcal N\big(\hat\beta_j; 0, \sigma_k^2 + \hat s_j^2\big),$$
+
 which is a concave function of $\pi$ on the simplex, so $\hat\pi$ solves a convex optimization problem. Given $\hat\pi$, each posterior $p(\beta_j \mid \hat\beta_j, \hat s_j, \hat\pi)$ is a mixture of a point mass at $0$ and $K$ normal distributions. In practice $\hat\pi$ maximizes a penalized likelihood that keeps $\hat\pi_0$ as large as the data allow, to avoid underestimating the null proportion.
 
 ## Expansion

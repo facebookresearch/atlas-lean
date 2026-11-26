@@ -3,11 +3,16 @@
 **Model.** In the two-sample summary-data setting of the
 [profile-likelihood estimator](mr-profile-likelihood-estimator-under-weak-instruments.md), allow pleiotropic direct effects
 $\alpha_j = \Gamma_j - \beta_0\gamma_j \overset{\text{iid}}{\sim} N(0, \tau_0^2)$, so that
+
 $$\hat\Gamma_j \sim N(\gamma_j \beta_0,\ \sigma_{Yj}^2 + \tau_0^2), \qquad \hat\gamma_j \sim N(\gamma_j, \sigma_{Xj}^2), \qquad j = 1, \dots, p.$$
+
 The profile score in $\tau^2$ of the profile likelihood is biased, so the maximum likelihood estimator is inconsistent. The
 **adjusted profile score** (APS) is $\psi = (\psi_1, \psi_2)$ with
+
 $$\psi_1(\beta,\tau^2) = \sum_{j=1}^p \frac{(\hat\Gamma_j - \beta\hat\gamma_j)\bigl(\hat\Gamma_j \sigma_{Xj}^2 \beta + \hat\gamma_j(\sigma_{Yj}^2 + \tau^2)\bigr)}{(\sigma_{Xj}^2\beta^2 + \sigma_{Yj}^2 + \tau^2)^2},$$
+
 $$\psi_2(\beta,\tau^2) = \sum_{j=1}^p \sigma_{Xj}^2\, \frac{(\hat\Gamma_j - \beta\hat\gamma_j)^2 - (\sigma_{Xj}^2\beta^2 + \sigma_{Yj}^2 + \tau^2)}{(\sigma_{Xj}^2\beta^2 + \sigma_{Yj}^2 + \tau^2)^2},$$
+
 and the APS estimator $(\hat\beta, \hat\tau^2)$ is a nontrivial finite root of $\psi(\beta,\tau^2) = 0$. Every summand of $\psi_1$ and
 $\psi_2$ has mean zero at $(\beta_0, \tau_0^2)$.
 

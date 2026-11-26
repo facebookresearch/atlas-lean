@@ -3,13 +3,19 @@
 Let $M$ (exposure) and $Y$ (outcome) be two traits with GWAS summary statistics $(\hat\beta_{M,j}, \hat s_{M,j})$ and $(\hat\beta_{Y,j}, \hat s_{Y,j})$ at variants $j = 1, \dots, p$, and true marginal associations $\beta_{M,j}, \beta_{Y,j}$. The CAUSE model assumes:
 
 1. **Measurement model.** With a sample-overlap correlation $\rho \in (-1, 1)$,
+
 $$\begin{pmatrix}\hat\beta_{M,j}\\ \hat\beta_{Y,j}\end{pmatrix} \Bigm| \beta_{M,j}, \beta_{Y,j} \sim \mathcal N_2\!\left(\begin{pmatrix}\beta_{M,j}\\ \beta_{Y,j}\end{pmatrix}, S_j(\rho)\right), \qquad S_j(\rho) = \begin{pmatrix} \hat s_{M,j}^2 & \rho\, \hat s_{M,j}\hat s_{Y,j} \\ \rho\, \hat s_{M,j}\hat s_{Y,j} & \hat s_{Y,j}^2 \end{pmatrix}.$$
+
 2. **Structural model.** With independent indicators $Z_j \sim \mathrm{Bernoulli}(q)$ marking variants that act on $M$ through a heritable shared factor $U$ (scaled to have unit effect on $M$),
+
 $$\beta_{Y,j} = \gamma\, \beta_{M,j} + Z_j\, \eta\, \beta_{M,j} + \theta_j,$$
+
 where $\gamma$ is the causal effect of $M$ on $Y$, $\eta$ is the effect of $U$ on $Y$ (correlated pleiotropy) and $\theta_j$ is an uncorrelated pleiotropic effect.
 
 Integrating out $Z_j$ gives the two-component likelihood
+
 $$p\big(\hat\beta_{M,j}, \hat\beta_{Y,j} \mid \beta_{M,j}, \theta_j, \gamma, \eta, q\big) = q\, \mathcal N_2\!\left(\begin{pmatrix}\beta_{M,j}\\ (\gamma+\eta)\beta_{M,j} + \theta_j\end{pmatrix}, S_j(\rho)\right) + (1 - q)\, \mathcal N_2\!\left(\begin{pmatrix}\beta_{M,j}\\ \gamma\beta_{M,j} + \theta_j\end{pmatrix}, S_j(\rho)\right),$$
+
 each normal density evaluated at $(\hat\beta_{M,j}, \hat\beta_{Y,j})$. If $q = 0$ and $\theta_j \equiv 0$ the model reduces to $\beta_{Y,j} = \gamma\beta_{M,j}$, the proportionality assumed by inverse-variance-weighted MR. Causality is tested by comparing the *sharing* model ($\gamma = 0$, $\eta$ and $q$ free) with the *causal* model ($\gamma$ free).
 
 ## Depends on

@@ -10,8 +10,11 @@ Fix $M$ biallelic or multiallelic markers and a finite multiset $\mathcal H$ of 
 Each edge $e$ is a *localized haplotype cluster*: the set of haplotypes whose path traverses $e$. Write $n(e)$ for the number of haplotypes traversing $e$ and $n_p(e)$ for the number traversing the parent node of $e$. Let $L_m$ be the set of edges whose child node is at level $m$.
 
 **Induced HMM.** $G$ defines a hidden Markov model whose hidden state at marker $m$ is an edge $e \in L_m$ and whose emitted symbol is the label of $e$ (emitted with probability $1$). Its initial and transition probabilities are
+
 $$P(e) = \frac{n(e)}{n_p(e)} \ \text{if the parent of } e \text{ is the root, } 0 \text{ otherwise},$$
+
 $$P(e_1 \mid e_2) = \frac{n(e_1)}{n_p(e_1)} \ \text{if the parent node of } e_1 \text{ is the child node of } e_2, \ 0 \text{ otherwise}.$$
+
 Each row is a probability vector because the counts of the outgoing edges of a node sum to the node count. Transition probabilities depend on $e_2$ only through its child node, so edges merging into a common node (which model historical recombination) share their future: given the cluster at marker $m$, the alleles at markers $m+1, m+2, \dots$ are independent of the alleles at markers $m, m-1, \dots$ (the Markov property defining the clusters).
 
 ## Expansion

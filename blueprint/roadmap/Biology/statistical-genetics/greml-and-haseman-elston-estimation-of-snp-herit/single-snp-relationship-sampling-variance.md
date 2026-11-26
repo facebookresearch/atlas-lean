@@ -5,7 +5,9 @@ Let $x \in \{0, 1, 2\}$ and $x'$ be the allele counts of two individuals at a bi
 1. the off-diagonal single-SNP relationship $A_{jk} = w w'$ has mean $0$ and variance exactly $1$, for every $p$;
 2. the naive diagonal $w^2$ has mean $1$ and variance $\dfrac{1 - 2pq}{2pq}$, which grows without bound as $p \to 0$ or $p \to 1$;
 3. the GCTA diagonal estimator
+
 $$\tilde A_{jj} = 1 + \frac{x^2 - (1 + 2p)x + 2p^2}{2pq}$$
+
 has mean $1$ and variance exactly $1$, for every $p$.
 
 Averaging over $N$ independent SNPs therefore gives relationship estimates whose sampling variance is $1/N$ both off and on the diagonal.

@@ -1,11 +1,17 @@
 # Local false discovery rate and local false sign rate
 
 In the [adaptive shrinkage model](adaptive-shrinkage-unimodal-mixture-model.md) with fitted $\hat\pi$, define for each effect $j$ the **local false discovery rate**
+
 $$\mathrm{lfdr}_j = \Pr(\beta_j = 0 \mid \hat\beta, \hat s, \hat\pi),$$
+
 and the **local false sign rate**
+
 $$\mathrm{lfsr}_j = \min\big[\Pr(\beta_j \ge 0 \mid \hat\beta, \hat s, \hat\pi),\ \Pr(\beta_j \le 0 \mid \hat\beta, \hat s, \hat\pi)\big],$$
+
 the posterior probability of getting the sign of $\beta_j$ wrong if forced to declare it positive or negative. Then
+
 $$\mathrm{lfdr}_j \le \mathrm{lfsr}_j \le \tfrac12 + \tfrac12\,\mathrm{lfdr}_j .$$
+
 For a set $\Gamma \subseteq \{1, \dots, J\}$ of effects whose signs are declared, $\frac{1}{|\Gamma|}\sum_{j\in\Gamma}\mathrm{lfsr}_j$ estimates the proportion of sign errors among them, the analogue of the false discovery rate.
 
 ## Depends on

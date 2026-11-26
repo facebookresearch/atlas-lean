@@ -1,9 +1,13 @@
 # CAUSE marginal likelihood as a bivariate normal scale mixture
 
 In the [CAUSE model](cause-summary-statistic-model.md), suppose the per-variant effects $(\beta_{M,j}, \theta_j)$ are independent draws from the mixture
+
 $$p(\beta_{M,j}, \theta_j \mid \Omega) = \sum_{k=0}^K \pi_k\, \mathcal N_2\!\left(\begin{pmatrix}\beta_{M,j}\\ \theta_j\end{pmatrix}; \begin{pmatrix}0\\0\end{pmatrix}, \Sigma_k\right), \qquad \Sigma_k = \begin{pmatrix} \sigma_{k,1}^2 & 0\\ 0 & \sigma_{k,2}^2\end{pmatrix},$$
+
 with pre-specified $\Sigma_k$ and mixing proportions $\pi_k \ge 0$ summing to $1$ ($\Omega = \{\pi_k, \Sigma_k\}$). For $x \in \mathbb R$ let $A(x) = \begin{pmatrix}1 & 0\\ x & 1\end{pmatrix}$. Then the marginal density of the summary statistics is
+
 $$p\big(\hat\beta_{M,j}, \hat\beta_{Y,j} \mid \gamma, \eta, q, \Omega, \rho\big) = q \sum_{k=0}^K \pi_k\, \mathcal N_2\!\big(0,\; A(\gamma+\eta)\Sigma_k A(\gamma+\eta)^{\top} + S_j(\rho)\big) + (1-q)\sum_{k=0}^K \pi_k\, \mathcal N_2\!\big(0,\; A(\gamma)\Sigma_k A(\gamma)^{\top} + S_j(\rho)\big),$$
+
 each density evaluated at $(\hat\beta_{M,j}, \hat\beta_{Y,j})$. Treating variants as independent, the likelihood of all summary statistics is the product of these densities over $j$.
 
 ## Depends on

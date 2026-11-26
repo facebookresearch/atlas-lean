@@ -2,7 +2,9 @@
 
 Let $P_1$ and $P_2$ be the p-values of the [fastBAT and mBAT tests](mbat-and-fastbat-set-based-tests.md) for the same gene region. The
 **mBAT-combo** statistic is the equal-weight aggregated Cauchy combination
+
 $$T = \frac12 \sum_{i=1}^2 \tan\{(0.5 - P_i)\pi\}, \qquad P_{\text{combo}} = \frac12 - \frac{\arctan T}{\pi}.$$
+
 If $P_i$ is uniform on $(0,1)$, then $\tan\{(0.5 - P_i)\pi\}$ is standard Cauchy. Because a weighted average (weights summing to one)
 of standard Cauchy variables is again standard Cauchy when they are independent, and remains approximately standard Cauchy in the
 upper tail under arbitrary dependence of the underlying Gaussian test statistics (Liu and Xie 2020), $P_{\text{combo}}$ is a valid

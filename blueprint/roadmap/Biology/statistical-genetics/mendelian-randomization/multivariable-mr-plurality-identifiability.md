@@ -4,7 +4,9 @@ Consider $L$ exposures and an outcome, and $m$ independent genetic instruments. 
 $b_{X i} = (b_{X_1 i}, \dots, b_{X_L i})^\top \in \mathbb{R}^L$, $b_{X i} \ne 0$, be its true marginal
 associations with the exposures and $b_{Y i} \in \mathbb{R}$ its true marginal association with the outcome.
 The multivariable summary-data model is
+
 $$b_{Y i} = r_i + \theta_1 b_{X_1 i} + \dots + \theta_L b_{X_L i}, \qquad i = 1, \dots, m,$$
+
 where $\theta = (\theta_1, \dots, \theta_L)^\top$ are the direct causal effects and $r_i$ is the pleiotropic
 effect of instrument $i$ (instrument $i$ is *valid* iff $r_i = 0$). Let the ground truth be $(\theta^*, r^*)$,
 with valid set $V^* = \{ i : r_i^* = 0 \}$ and $m_0 = |V^*|$. A solution is admissible if it is obtained from a
@@ -12,6 +14,7 @@ largest set of instruments with $r_i = 0$.
 
 **Assumption (multivariable plurality).** The matrix $B_{V^*} = [b_{X i}^\top]_{i \in V^*} \in \mathbb{R}^{m_0 \times L}$
 has full column rank $L$ (so $m_0 \ge L$), and
+
 $$|V^*| > \max_{c \in \mathbb{R}^L,\ c \ne 0} \bigl|\{ i : r_i^* = b_{X i}^\top c \}\bigr| .$$
 
 **Theorem.** Given $\{(b_{Y i}, b_{X i})\}_{i=1}^m$, the parameters $(\theta^*, r^*)$ are identifiable (the admissible

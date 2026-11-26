@@ -1,9 +1,13 @@
 # The sisVIVE estimator
 
 In the setting of [identification with some invalid instruments](identification-with-some-invalid-instruments.md), with data $Y \in \mathbb R^n$, $D \in \mathbb R^n$ and $Z \in \mathbb R^{n\times L}$ of full column rank, let $P_Z = Z(Z^\top Z)^{-1}Z^\top$ be the projection onto the column space of $Z$. The ideal estimator under the bound $s < U$ is the $\ell_0$-constrained problem
+
 $$\min_{\alpha, \beta}\; \tfrac12\big\|P_Z(Y - Z\alpha - D\beta)\big\|_2^2 \quad \text{subject to } \|\alpha\|_0 < U,$$
+
 which is combinatorial. The **some invalid, some valid instrumental variable estimator** (sisVIVE) replaces it by its convex $\ell_1$ relaxation in Lagrangian form: for a tuning parameter $\lambda > 0$,
+
 $$(\hat\alpha_\lambda, \hat\beta_\lambda) \in \arg\min_{\alpha \in \mathbb R^L,\, \beta \in \mathbb R}\; \tfrac12\big\|P_Z(Y - Z\alpha - D\beta)\big\|_2^2 + \lambda\|\alpha\|_1 .$$
+
 The estimated invalid instruments are $\operatorname{supp}(\hat\alpha_\lambda)$ and $\hat\beta_\lambda$ estimates the causal effect. If the valid set were known and $\alpha$ restricted to the invalid coordinates, the unpenalized minimizer would be the two-stage least-squares estimator using the valid instruments.
 
 ## Depends on

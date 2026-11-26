@@ -4,9 +4,13 @@
 $\hat\Gamma_j \sim N(\Gamma_j, \sigma_{Yj}^2)$ be the exposure and outcome GWAS coefficients, with known variances and all
 $2p$ estimates mutually independent (two-sample design). Assume no pleiotropy: $\Gamma_j = \beta_0 \gamma_j$ for every $j$.
 Profiling the nuisance parameters $\gamma = (\gamma_1,\dots,\gamma_p)$ out of the Gaussian log-likelihood gives
+
 $$\ell(\beta) = -\frac12 \sum_{j=1}^p \frac{(\hat\Gamma_j - \beta \hat\gamma_j)^2}{\sigma_{Xj}^2 \beta^2 + \sigma_{Yj}^2},$$
+
 and the profile-likelihood (limited-information maximum likelihood) estimator is $\hat\beta = \arg\max_\beta \ell(\beta)$, a root of the profile score
+
 $$\psi(\beta) = \sum_{j=1}^p \frac{(\hat\Gamma_j - \beta\hat\gamma_j)(\hat\Gamma_j \sigma_{Xj}^2 \beta + \hat\gamma_j \sigma_{Yj}^2)}{(\sigma_{Xj}^2\beta^2 + \sigma_{Yj}^2)^2}.$$
+
 Let $n = \min(n_X, n_Y)$ and assume $\sigma_{Xj}^2, \sigma_{Yj}^2 \in [c/n, C/n]$ for constants $0 < c \le C$, and
 $\|\gamma\|_2^2 = O(1)$. Define the average instrument strength $\kappa = \frac1p \sum_{j} \gamma_j^2/\sigma_{Xj}^2$.
 

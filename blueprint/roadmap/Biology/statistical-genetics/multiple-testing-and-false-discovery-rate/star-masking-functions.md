@@ -1,6 +1,7 @@
 # Accumulation and masking functions for STAR
 
 An **accumulation function** is a non-decreasing bounded $h:[0,1]\to[0,\infty)$ with $\int_0^1 h(p)\,dp = 1$. A **masking function** for $h$ is a measurable $g:[0,1]\to[0,1]$ such that, for $u \sim \mathrm{Unif}[0,1]$,
+
 $$\mathbb{E}[h(u) \mid g(u)] = \mathbb{E}[h(u)] = 1 \quad \text{almost surely}. \tag{2}$$
 
 **Proposition (conservative nulls).** If $(h,g)$ satisfy (2) and a null $p$-value $p$ has a non-decreasing density on $[0,1]$, then $\mathbb{E}[h(p) \mid g(p)] \ge 1$ almost surely.

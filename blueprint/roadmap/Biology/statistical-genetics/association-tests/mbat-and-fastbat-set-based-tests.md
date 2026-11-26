@@ -4,7 +4,9 @@ Let $z = (z_1, \dots, z_m)^\top$ be the GWAS $z$-scores of $m$ SNPs in a gene re
 null hypothesis that no SNP in the set is associated with the trait, $z \sim N(0, R)$.
 
 **Lemma (quadratic forms of a Gaussian vector).** If $x \sim N(0, \Sigma)$ and $A$ is symmetric, then
+
 $$Q(x) = x^\top A x \overset{d}{=} \sum_{i=1}^m \Lambda_i\, \chi^2_{1,i},$$
+
 where $\Lambda_1 \ge \dots \ge \Lambda_m$ are the eigenvalues of $\Sigma A$ and the $\chi^2_{1,i}$ are independent central chi-squared
 variables with one degree of freedom. If $\Sigma$ is invertible and $A = \Sigma^{-1}$, then $Q(x) \sim \chi^2_m$.
 
@@ -12,12 +14,15 @@ variables with one degree of freedom. If $\Sigma$ is invertible and $A = \Sigma^
 - *fastBAT:* $T_{\mathrm{fastBAT}} = z^\top z \overset{d}{=} \sum_i \lambda_i \chi^2_{1,i}$ under the null, with $\lambda_i$ the eigenvalues of $R$.
 - *mBAT:* with the spectral decomposition of the positive part of $R$, $R^- = U D^{-1} U^\top$, $D = \operatorname{diag}(\lambda_1,\dots,\lambda_p)$
   the $p$ positive eigenvalues and $U \in \mathbb{R}^{m\times p}$ orthonormal eigenvectors,
+
 $$T_{\mathrm{mBAT}} = z^\top R^- z = \sum_{i=1}^p \lambda_i^{-1} (U_i^\top z)^2 \sim \chi^2_p \quad \text{under the null.}$$
 
 **Interpretation.** With standardized genotypes $X \in \mathbb{R}^{n\times m}$, true joint effects $\beta$ and unit phenotypic variance,
 the variance explained by the set is $V_g = \beta^\top R \beta$, and the marginal estimates satisfy $b = R\beta + e$ with
 $\operatorname{Var}(e) = R/n$. Substituting $\beta \approx R^{-1} b$ gives $V_g \approx b^\top R^{-1} b$ and, since $z = \sqrt n\, b$,
+
 $$T_{\mathrm{mBAT}} = n\, b^\top R^{-1} b \approx n V_g,$$
+
 so mBAT tests for nonzero joint variance explained, and is not attenuated by *masking* (marginal effects cancelling because two
 causal effects have the same sign while their LD correlation is negative, or opposite signs while it is positive).
 

@@ -1,15 +1,23 @@
 # Weak-instrument bias of the two-stage least-squares estimator toward the confounded association
 
 **Model.** Let $Z \in \mathbb{R}^{n \times L}$ be a fixed matrix of $L$ genetic instruments with full column rank and projection $P_Z = Z(Z^{\top}Z)^{-1}Z^{\top}$. The exposure and outcome satisfy
+
 $$x = Z\gamma + v, \qquad y = \beta x + u,$$
+
 where the pairs $(u_i, v_i)$ are independent across individuals with mean zero, $\operatorname{Var}(v_i) = \sigma_v^2$ and $\operatorname{Cov}(u_i, v_i) = \sigma_{uv}$; a nonzero $\sigma_{uv}$ represents confounding of the exposure–outcome association, and instrument validity is the assumption that $Z$ is independent of $(u, v)$. The two-stage least-squares (2SLS) estimator and the concentration parameter are
+
 $$\hat\beta_{\mathrm{2SLS}} = \frac{x^{\top}P_Z\, y}{x^{\top}P_Z\, x}, \qquad \mu^2 = \frac{\gamma^{\top}Z^{\top}Z\gamma}{\sigma_v^2}.$$
+
 The first-stage $F$-statistic for $H_0 : \gamma = 0$ has expectation approximately $1 + \mu^2/L$.
 
 **Proposition (first-order weak-instrument bias, as used by Burgess and Thompson 2011).** Exactly,
+
 $$\hat\beta_{\mathrm{2SLS}} - \beta = \frac{x^{\top}P_Z u}{x^{\top}P_Z x}, \qquad \mathbb{E}[x^{\top}P_Z u] = L\,\sigma_{uv}, \qquad \mathbb{E}[x^{\top}P_Z x] = \gamma^{\top}Z^{\top}Z\gamma + L\,\sigma_v^2 .$$
+
 Approximating the mean of the ratio by the ratio of means,
+
 $$\mathbb{E}\big[\hat\beta_{\mathrm{2SLS}}\big] - \beta \approx \frac{\sigma_{uv}}{\sigma_v^2} \cdot \frac{L}{\mu^2 + L} \approx \frac{\sigma_{uv}}{\sigma_v^2} \cdot \frac{1}{\mathbb{E}[F]}.$$
+
 Since the ordinary least-squares estimator of $\beta$ has asymptotic bias $\sigma_{uv}/\operatorname{Var}(x_i)$, which is close to $\sigma_{uv}/\sigma_v^2$ when the instruments explain a small share of exposure variance (the usual Mendelian randomization setting), the 2SLS bias has the same sign as the confounded observational bias and the **relative bias** is approximately $1/\mathbb{E}[F]$. Consequences: bias vanishes as $\mu^2 \to \infty$; for a fixed total instrument strength $\mu^2$, adding weak instruments (increasing $L$) increases the bias even though it lowers the variance; and $\mathbb{E}[F] \ge 10$ corresponds to relative bias of roughly $10\%$ or less.
 
 ## Depends on

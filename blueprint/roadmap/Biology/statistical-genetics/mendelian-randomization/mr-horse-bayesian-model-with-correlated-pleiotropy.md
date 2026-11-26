@@ -14,7 +14,9 @@ Properties of the prior:
 
 - Marginally $\alpha_j\mid\phi_j,\tau\sim N(0,\phi_j^2\tau^2)$ with half-Cauchy $\phi_j$ and $\tau$, so the $\alpha_j$ have a horseshoe prior: valid instruments ($\alpha_j=0$) are shrunk strongly toward $0$ while large pleiotropic effects escape shrinkage.
 - The model covers valid instruments ($\alpha_j=0$), uncorrelated pleiotropy ($\alpha_j\ne0$, $\rho_j=0$, the InSIDE case) and correlated pleiotropy ($\alpha_j\ne0$, $\rho_j\ne0$, InSIDE violated). Conditioning the bivariate normal prior gives
+
   $$\mathbb E[\alpha_j\mid\beta_{Xj}]=\frac{\rho_j\phi_j\tau}{s_X}(\beta_{Xj}-\mu),\qquad \operatorname{Var}(\alpha_j\mid\beta_{Xj})=(1-\rho_j^2)\phi_j^2\tau^2,$$
+
   so with $\rho_j\ne0$ the pleiotropic effect co-varies with instrument strength.
 - The model uses $\sigma_{Xj}$, so it accounts for uncertainty in the variant–exposure associations (weak instruments), unlike the inverse-variance-weighted model $\hat\beta_{Yj}\sim N(\theta\hat\beta_{Xj},\sigma_{Yj}^2)$.
 

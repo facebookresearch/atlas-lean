@@ -4,7 +4,9 @@ Let $\hat z \in \mathbb R^m$ be single-SNP $z$-scores and $R$ the $m \times m$ S
 
 1. the marginal likelihood of $\gamma$ is $p(\hat z \mid \gamma) = N(\hat z \mid 0, R + R \Sigma_\gamma R)$;
 2. if $R_{CC}$ is invertible, the Bayes factor against the null configuration depends only on the causal SNPs:
+
 $$\mathrm{BF}(\gamma : \mathrm{NULL}) = \frac{N(\hat z \mid 0, R + R\Sigma_\gamma R)}{N(\hat z \mid 0, R)} = \frac{N\bigl(\hat z_C \mid 0, R_{CC} + n s_\lambda^2 R_{CC} R_{CC}\bigr)}{N(\hat z_C \mid 0, R_{CC})};$$
+
 3. if $R$ is invertible and $a = R^{-1} \hat z$, then $\det(I_m + \Sigma_\gamma R) = \det(I_k + n s_\lambda^2 R_{CC})$, and the quadratic form $\hat z^\top (R + R\Sigma_\gamma R)^{-1} \hat z = \hat z^\top b$ where $b_N = a_N$ and $(I_k + n s_\lambda^2 R_{CC}) b_C = a_C - n s_\lambda^2 R_{CN} a_N$; evaluation costs $O(k^3)$ rather than $O(m^3)$.
 
 With the prior $p(\gamma) = p_k / \binom{m}{k}$ for a distribution $(p_k)_{k=1}^{K}$ on the number of causal SNPs, the unnormalized posterior is $p_k \binom{m}{k}^{-1} \mathrm{BF}(\gamma : \mathrm{NULL})$.

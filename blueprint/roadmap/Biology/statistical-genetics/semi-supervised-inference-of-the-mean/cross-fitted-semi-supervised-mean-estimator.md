@@ -16,9 +16,13 @@ $$\hat\theta^{(k)} = \hat\mu^{(k)\top}\hat\beta^{(-k)} + N^{-1}\sum_{i \in I_k}\
 
 1. Under (C1) and (C3), $\hat\theta - \theta = O_P(n^{-1/2})$.
 2. Under (C1) and (C4), if $\sigma_\varepsilon^2 + \tau b^2 > c$ for some $c > 0$, then
+
 $$n^{1/2}(\hat\theta - \theta) \to N(0, \sigma_\varepsilon^2 + \tau b^2) \quad \text{in distribution.}$$
+
 3. Under (C1) and (C4), with cross-fitted residuals $\hat\varepsilon_i$ and $\hat\sigma_\varepsilon^2 = n^{-1}\sum_{i=1}^n \hat\varepsilon_i^2$, one has $\hat\sigma_\varepsilon^2 \to \sigma_\varepsilon^2$ and $\hat b^2 \to b^2$ in probability, and
+
 $$\hat\theta \pm z_{1-\alpha/2}\{\hat\sigma_\varepsilon^2/n + \hat b^2/(m+n)\}^{1/2}$$
+
 is an asymptotically valid level-$(1-\alpha)$ confidence interval for $\theta$.
 
 Since $\operatorname{var}(n^{1/2}\bar Y) = \sigma_Y^2 = \sigma_\varepsilon^2 + b^2$, the unlabeled data reduce the asymptotic variance by $(1-\tau)b^2$; with $\tau = 0$ the variance equals that attainable with the covariate law known. Only consistency of $\hat\beta$, at any rate, is needed for valid inference.

@@ -4,10 +4,13 @@ Let $X_k$ and $Y_k$ $(k = 1, \dots, K)$ be published estimates of the associatio
 
 1. **Uncorrelated variants, non-overlapping samples.** $X_k \sim \mathcal N(\xi_k, \sigma_{Xk}^2)$ and $Y_k \sim \mathcal N(\beta_L\xi_k, \sigma_{Yk}^2)$, all independent.
 2. **Correlated variants.** $X \sim \mathcal N_K(\xi, \Sigma_X)$ and $Y \sim \mathcal N_K(\beta_L\xi, \Sigma_Y)$ independently, with
+
 $$(\Sigma_X)_{ij} = \sigma_{Xi}\sigma_{Xj}\rho_{ij}, \qquad (\Sigma_Y)_{ij} = \sigma_{Yi}\sigma_{Yj}\rho_{ij}.$$
+
 3. **Overlapping samples.** $(X, Y) \sim \mathcal N_{2K}\!\left(\begin{pmatrix}\xi\\ \beta_L\xi\end{pmatrix}, \begin{pmatrix}\Sigma_X & \Sigma_{XY}\\ \Sigma_{YX} & \Sigma_Y\end{pmatrix}\right)$ with $(\Sigma_{XY})_{ij} = \theta\,\sigma_{Xi}\sigma_{Yj}\rho_{ij}$ and $\Sigma_{YX} = \Sigma_{XY}^\top$, where $\theta$ is the correlation between the two association estimates.
 
 Estimates of $\beta_L$ follow by maximizing the likelihood (or by Bayesian methods). In model 1, if the $X_k$ are treated as exact ($\sigma_{Xk} \to 0$, so $\xi_k = X_k$), the maximum likelihood estimate of $\beta_L$ is the inverse-variance-weighted estimate
+
 $$\hat\beta_{\mathrm{IVW}} = \frac{\sum_k X_k Y_k \sigma_{Yk}^{-2}}{\sum_k X_k^2 \sigma_{Yk}^{-2}}.$$
 
 ## Depends on

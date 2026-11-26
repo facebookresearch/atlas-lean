@@ -4,8 +4,11 @@ In the setting of [constrained maximum-likelihood MR](constrained-maximum-likeli
 
 1. **Pleiotropy step.** Order the standardized residuals $(\hat\beta_{Yi} - \theta^{(k)} b_{Xi}^{(k)})^2 / \hat\sigma_{Yi}^2$ decreasingly; for the $K$ largest set $r_i^{(k+1)} = \hat\beta_{Yi} - \theta^{(k)} b_{Xi}^{(k)}$, and set $r_i^{(k+1)} = 0$ for the rest.
 2. **Exposure-effect step.**
+
 $$b_{Xi}^{(k+1)} = \frac{\hat\beta_{Xi}/\hat\sigma_{Xi}^2 + \theta^{(k)} (\hat\beta_{Yi} - r_i^{(k+1)})/\hat\sigma_{Yi}^2}{1/\hat\sigma_{Xi}^2 + (\theta^{(k)})^2/\hat\sigma_{Yi}^2}.$$
+
 3. **Causal-effect step.**
+
 $$\theta^{(k+1)} = \frac{\sum_{i=1}^m (\hat\beta_{Yi} - r_i^{(k+1)})\, b_{Xi}^{(k+1)} / \hat\sigma_{Yi}^2}{\sum_{i=1}^m (b_{Xi}^{(k+1)})^2 / \hat\sigma_{Yi}^2}.$$
 
 Each step exactly maximizes the log-likelihood $L$ over its block with the others fixed (step 1 over $\{r_i\}$ under the $\ell_0$ constraint), so $L$ is nondecreasing along the iterates. At a fixed point an instrument with $r_i \ne 0$ has $\hat\beta_{Yi} - r_i = \theta b_{Xi}$, so its terms in step 3 are satisfied by any $\theta$ and it does not inform the estimate of $\theta$.
