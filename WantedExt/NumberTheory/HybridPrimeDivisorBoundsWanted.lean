@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
 public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
 public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
 public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsHybridBoundPrimeDivisors
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsLtSixteenIffProdFirstPrimesLt
 
 namespace MetaMathlibExt
 
@@ -45,14 +46,6 @@ public theorem_wanted prime_hybrid_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (hx 
         1 + (∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) *
             ∏ j ∈ Finset.range ((x ^ p - 1).primeFactors.card - k),
               Nat.nth (fun ρ => ρ.Prime ∧ Nat.ModEq p ρ 1) j ≤ x ^ p
-
-/-- **Primorials below powers of sixteen.** For every positive integer $w$, we have $w < 16$ if and
-only if the product $p_1 p_2 \cdots p_w$ of the first $w$ primes is less than $16^w$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 10 (`integers-2026-A95-prop-10`). -/
-public theorem_wanted lt_sixteen_iff_prod_first_primes_lt {w : ℕ} (hw : 0 < w) :
-    w < 16 ↔ ∏ i ∈ Finset.range w, Nat.nth Nat.Prime i < 16 ^ w
 
 /-- The ramified bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with primes `p_1 < ⋯ < p_m` (the ordering
 the source fixes at the start of its Section 5), `x > 1`, `ω_n = ω(x^n - 1)`, and, with
