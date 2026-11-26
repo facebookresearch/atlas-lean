@@ -19,6 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Probability.Distributions.Cauchy
 public import Mathlib.Probability.Independence.Basic
+public import MathlibExt.Probability.CauchySelfNormalizedBoundAIMProbabilityProblem23
 
 @[expose] public section
 
@@ -39,32 +40,5 @@ and is not formalized; the AimPL remark records that the inequality itself is kn
 -/
 
 open MeasureTheory ProbabilityTheory
-
-/-- AimPL Stein's method and applications in high-dimensional statistics, Problem 1.15, as a
-claim: for i.i.d. standard Cauchy `X₁, X₂, …` with `S_t = ∑_{i ≤ t} X_i` and
-`V_t = ∑_{i ≤ t} X_i²`, and all `m, x ≥ 0`, `P(∃ t, S_t / (V_t + m) > x) ≤ exp(-2 m x²)`. -/
-def cauchySelfNormalizedBound : Prop :=
-  ∀ (Ω : Type) [MeasureSpace Ω] [IsProbabilityMeasure (volume : Measure Ω)] (X : ℕ → Ω → ℝ),
-    (∀ i, Measurable (X i)) → iIndepFun X → (∀ i, volume.map (X i) = cauchyMeasure 0 1) →
-    ∀ m x : ℝ, 0 ≤ m → 0 ≤ x →
-      volume {ω | ∃ t : ℕ,
-        x < (∑ i ∈ Finset.range t, X i ω) / (∑ i ∈ Finset.range t, X i ω ^ 2 + m)} ≤
-        ENNReal.ofReal (Real.exp (-2 * m * x ^ 2))
-
-/--
-Resolved true: Howard, Ramdas, McAuliffe and Sekhon prove that i.i.d. standard Cauchy increments
-satisfy `P(∃ t, S_t / (V_t + m) ≥ x) ≤ exp(-2 m x²)` for all `x, m > 0` (de la Peña's
-self-normalized bound for symmetric increments needs no moments), and the AimPL remark records the
-inequality as known; for `m = 0` or `x = 0` the bound is `1`. Source: AimPL: Stein's method and
-applications in high-dimensional statistics, Problem 1.15, http://aimpl.org/steinhd/1/ (remark: the
-inequality is Example 4 of arXiv:1808.03204 and holds for any symmetric increments); resolution: S.
-R. Howard, A. Ramdas, J. McAuliffe and J. Sekhon, Time-uniform Chernoff bounds via nonnegative
-supermartingales, Probab. Surv. 17 (2020), 257-317, arXiv:1808.03204, Example 5 (Cauchy increments)
-of arXiv v8, eq. (4.24) (Example 4 in the version the AimPL remark cites): for i.i.d. standard
-Cauchy increments and any x, m > 0, P(∃ t ∈ ℕ : S_t / ([S]_t + m) ≥ x) ≤ exp(-2 m x²), [S]_t = ∑
-ΔS_i², from de la Peña's bound for conditionally symmetric increments (Lemma 3(d)) and Corollary 6,
-https://doi.org/10.1214/18-PS321.
--/
-public theorem_wanted cauchySelfNormalizedBound_holds : cauchySelfNormalizedBound
 
 end MathlibExt.Probability.CauchySelfNormalizedBoundAIMProbabilityProblem23Wanted
