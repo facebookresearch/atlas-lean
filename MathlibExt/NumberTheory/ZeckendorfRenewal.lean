@@ -19,8 +19,10 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Renewal of the Zeckendorf odometer's invariant measure
 
-After an admissible prefix ending in zero, the remaining digits have the original cylinder
-probabilities. The proof derives the masses of these prefixes from odometer invariance.
+The theorem `zeckOdometer_invariant_measure_renewal` proves Hosten's renewal law
+(Proposition 3.2 in arXiv:2309.14285v2). After an admissible prefix ending in zero, the
+remaining digits have the original cylinder probabilities. A prefix ending in one forces
+one more zero before renewal. The proof derives the prefix masses from odometer invariance.
 -/
 
 namespace MetaMathlibExt
