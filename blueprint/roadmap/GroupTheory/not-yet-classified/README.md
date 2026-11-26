@@ -11,3 +11,4 @@ Topics added since this subject's fields were last revised.
 - [Integral Root Coinvariants](integral-root-coinvariants/README.md)
 - [Perfect Normal Closure](perfect-normal-closure/README.md)
 - [Sum](sum/README.md)
+- [Class size times centralizer order, for every group](mk-set-of-is-conj-mul-mk-centralizer.md)
