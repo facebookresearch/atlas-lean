@@ -20,9 +20,18 @@ The operator of the identity element of `Gal(Q̄_p/Q_p)` on the rational pro-ét
 cohomology of the geometric fibre, inverse image along `id_X × Spec 1`
 (`etaleGalois_one`), is the identity.
 
-Reference: Peter Scholze, *p-adic Hodge theory for rigid-analytic varieties*,
-Corollary 1.8, p. 4, and preceding Theorem 1.6 for Galois equivariance;
-the algebraic scheme case follows by the comparisons described on p. 5.
+The identity operator comes from pullback along `id_X × Spec 1`, and this pullback acts as the
+identity on `Ext`; the argument works for an arbitrary scheme `X` over `Q_p` and uses no
+comparison theorem. The base change `id_X × Spec 1` is the identity morphism of the geometric
+fibre (`galoisSchemeOperator_one`). Pullback of coefficient sheaves along an identity morphism is
+naturally isomorphic to the identity functor, compatibly with the comparison maps of the
+continuous coefficient sheaf and of the constant unit sheaf, so the induced map on `Ext`, and
+hence on cohomology, is the identity.
+
+Background: Peter Scholze, *p-adic Hodge theory for rigid-analytic varieties*, studies the Galois
+action on the cohomology of proper smooth rigid-analytic varieties (Theorem 1.6, Corollary 1.8),
+and its GAGA remark concerns proper smooth algebraic varieties. These results are context
+only; the statement here is for arbitrary schemes and does not depend on them.
 https://arxiv.org/abs/1205.3463
 -/
 
