@@ -1,3 +1,3 @@
 # Order of the planar mirror
 
-Let $m = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$ be the reflection across the $x$-axis. Then $m^2 = I$ and $m^m \ne I$ for $0 < m < 2$.
+Let $M = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$ be the reflection across the $x$-axis. Then $M^2 = I$ and $M^k \ne I$ for every natural number $k$ with $0 < k < 2$.

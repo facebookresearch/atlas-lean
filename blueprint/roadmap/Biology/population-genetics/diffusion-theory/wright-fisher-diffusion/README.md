@@ -47,3 +47,6 @@
 - [Robertson's limit of artificial selection](robertson-s-limit-of-artificial-selection.md)
 
 - [The neutral Gegenbauer series identifies the Wright–Fisher kernel](identification-of-the-kimura-series-with-the-neu.md)
+
+- [Loss of alleles and invariance of faces in the K-allele diffusion](loss-of-alleles-and-face-invariance-in-the-k-allele-diffusion.md)
+- [Laplace transform of the absorption time of the neutral Wright–Fisher diffusion](laplace-transform-of-the-absorption-time.md)

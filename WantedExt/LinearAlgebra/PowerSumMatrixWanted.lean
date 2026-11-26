@@ -20,7 +20,12 @@ of a power of a real `2 × 2` matrix in terms of its
 trace and determinant; both parities were verified
 exactly over random rational matrices for `m ≤ 5`.
 Lemma 3 is the Beta integral
-`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`.
+`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`
+for positive integers `r`; it is proved for every `r : ℕ`
+(at `r = 0` both sides are `1`) as
+`intervalIntegral.integral_pow_one_sub_pow` in
+`MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct`
+and re-exported here.
 
 Lemmas 1 and 2 decompose `S(n, k) = 1^k + ⋯ + n^k`
 into traces of `diag(i, 2s + 1 - i)`, `s = ⌊n/2⌋`;
@@ -39,6 +44,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct
 
 set_option autoImplicit false
 
@@ -75,16 +81,6 @@ theorem_wanted trace_pow_two (M : Matrix (Fin 2) (Fin 2) ℝ)
                 (Nat.factorial (2 * m + 1 - 2 * r) : ℝ))) *
             M.det ^ r * Matrix.trace M ^ (2 * m + 1 - 2 * r)
 
-/-- **Integral of $x^r (1 - x)^r$ over $[0, 1]$.** For every natural number $r$ (including
-$r = 0$),
-$$\int_0^1 x^r (1 - x)^r \, dx = \frac{1}{(2r + 1) \binom{2r}{r}}.$$
-
-Source: Peiran Ding, Yanjun Zhu and Lei Wang, "A New
-Formula for the Sum of Integer Powers Based on
-Elementary Matrix Theory", Lemma 3. -/
-theorem_wanted integral_pow_one_sub_pow (r : ℕ) :
-    (∫ x in (0 : ℝ)..1, x ^ r * (1 - x) ^ r) =
-      1 / ((2 * r + 1 : ℝ) * (Nat.choose (2 * r) r : ℝ))
 
 
 /-- **Lemma 1**: for a positive integer `k` and an even

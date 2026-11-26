@@ -43,3 +43,6 @@
 
 - [Diploid two-locus viability selection followed by meiosis](two-locus-viability-selection-with-recombination.md)
 - [A uniform weak-selection bound on two-locus linkage disequilibrium](two-locus-ld-contraction-under-weak-selection.md)
+
+- [Quasi-linkage equilibrium dynamics of allele frequencies under weak selection](quasi-linkage-equilibrium-under-weak-selection.md)
+- [Two-locus quasi-linkage equilibrium approximation](two-locus-quasi-linkage-equilibrium-approximatio.md)
