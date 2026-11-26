@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.PrimeDvdPowAddOfDvdRadicalCoeffsGcd
 public import MathlibExt.NumberTheory.RadicalCoefficientCommonPrime
 public import MathlibExt.NumberTheory.RadicalCoefficientGcdStep
 public import MathlibExt.NumberTheory.GcdLucasTheoremGcdRadicalExpansionCoeffsEqOne
+public import MathlibExt.NumberTheory.GcdLucasTheoremGcdSqrtExpansionCoeffs
 
 /-!
 # Greatest common divisors of radical-expansion coefficients and Lucas's theorem
@@ -37,32 +38,6 @@ lines and are not restated.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Gcd of the coefficients of $(u + \sqrt{v})^n$.** Let $u, v$ be coprime positive integers
-with $\sqrt{v}$ irrational, let $a_n, b_n$ (for natural $n$) be integers with
-$(u + \sqrt{v})^n = a_n + b_n \sqrt{v}$ for every $n \ge 1$, and let $D_n \ge 0$ be the greatest
-common divisor of $a_n$ and $b_n$. Then for every $n \ge 1$:
-(a) if $u^2 - v$ is odd, then $D_n = 1$;
-(b) if $u^2 - v \equiv 2 \pmod 4$, then $D_{2n-1} = 2^{n-1}$ and $D_{2n} = 2^n$;
-(c) if $u^2 - v \equiv 4 \pmod 8$, then $D_{3n-2} = 2^{3n-3}$, $D_{3n-1} = 2^{3n-2}$ and
-$D_{3n} = 2^{3n}$;
-(d) if $u^2 - v \equiv 0 \pmod 8$, then $D_n = 2^{n-1}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Theorem 17
-(`jis-2025-25.2.2-thm-17`). -/
-public theorem_wanted gcd_sqrt_expansion_coeffs {u v : ℕ} (hu : 0 < u) (hv : 0 < v)
-    (huv : u.Coprime v) (hirr : Irrational (Real.sqrt v)) (a b : ℕ → ℤ)
-    (hab : ∀ n, 1 ≤ n → ((u : ℝ) + Real.sqrt v) ^ n = a n + b n * Real.sqrt v) :
-    (Odd ((u : ℤ) ^ 2 - v) → ∀ n, 1 ≤ n → Int.gcd (a n) (b n) = 1) ∧
-    (((u : ℤ) ^ 2 - v) % 4 = 2 → ∀ n, 1 ≤ n →
-      Int.gcd (a (2 * n - 1)) (b (2 * n - 1)) = 2 ^ (n - 1) ∧
-        Int.gcd (a (2 * n)) (b (2 * n)) = 2 ^ n) ∧
-    (((u : ℤ) ^ 2 - v) % 8 = 4 → ∀ n, 1 ≤ n →
-      Int.gcd (a (3 * n - 2)) (b (3 * n - 2)) = 2 ^ (3 * n - 3) ∧
-        Int.gcd (a (3 * n - 1)) (b (3 * n - 1)) = 2 ^ (3 * n - 2) ∧
-        Int.gcd (a (3 * n)) (b (3 * n)) = 2 ^ (3 * n)) ∧
-    (((u : ℤ) ^ 2 - v) % 8 = 0 → ∀ n, 1 ≤ n → Int.gcd (a n) (b n) = 2 ^ (n - 1))
 
 /-- **Gcd of the coefficients of $(u + v^{1/p})^n$ for an odd prime $p$.** Let $p$ be an odd
 prime, let $u, v$ be coprime positive integers such that $\theta = v^{1/p}$, the positive real

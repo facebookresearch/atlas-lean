@@ -5,12 +5,7 @@ Let $S$ be a set of first-order clauses without equality, read as universally cl
 ## Depends on
 
 - [Terms for unification](../first-order-unification/term.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- N-ary ranked-signature adapter for curried unification (statement prerequisite)
+- [Unification of ranked terms through the curried encoding](../first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Sources
 

@@ -34,7 +34,9 @@ keeps the model nonempty; only eventual values matter for the limit), with the n
 
 open Classical in
 /-- The proportion of Hamiltonian graphs among the graphs on `Fin n` with exactly `M` edges (the
-uniform model `G(n, M)`). -/
+uniform model `G(n, M)`). For `M > n.choose 2` there is no such graph, and the value `0` is a
+convention (division by zero). Mathlib's `IsHamiltonian` counts the single-vertex graph as
+Hamiltonian. -/
 noncomputable def hamiltonianProportion (n M : ℕ) : ℝ :=
   ((Finset.univ.filter fun G : SimpleGraph (Fin n) =>
       G.edgeFinset.card = M ∧ G.IsHamiltonian).card : ℝ) /
