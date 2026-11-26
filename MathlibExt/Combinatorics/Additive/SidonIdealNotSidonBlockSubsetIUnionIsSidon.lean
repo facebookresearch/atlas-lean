@@ -21,9 +21,8 @@ import Mathlib.Tactic.Ring
 /-!
 # A block not covered by few Sidon sets
 
-The block `Block(n, C, M, K)` with `M = C * 2 ^ n + 1` and
-`K = (n - 1) * C(n, 2) + 1` is not contained in the union of any `n - 1`
-Sidon subsets of `ℕ`.
+For `n ≥ 1` and `C ≥ 1`, the block `Block(n, C, M, K)` with `M = C * 2 ^ n + 1` and
+`K = (n - 1) * C(n, 2) + 1` is not contained in the union of any `n - 1` Sidon subsets of `ℕ`.
 -/
 
 namespace MetaMathlibExt
@@ -35,10 +34,10 @@ private theorem collision_for_fixed_l {n C M K : ℕ} (hn : 0 < n)
     (hSub : sidonBlock n C M K ⊆ ⋃ j, S j)
     {l : ℕ} (hl1 : 1 ≤ l) (hlK : l ≤ K) :
     ∃ j, ∃ k1 k2, k1 < k2 ∧ k2 < n ∧
-      M * l + C * 2 ^ k1 ∈ S j ∧ M * l + C * 2 ^ k2 ∈ S j := by
-  have hex : ∀ k : Fin n, ∃ j, M * l + C * 2 ^ (k.val) ∈ S j := by
+      M ^ l + C * 2 ^ k1 ∈ S j ∧ M ^ l + C * 2 ^ k2 ∈ S j := by
+  have hex : ∀ k : Fin n, ∃ j, M ^ l + C * 2 ^ (k.val) ∈ S j := by
     intro k
-    have hmem : M * l + C * 2 ^ (k.val) ∈ sidonBlock n C M K :=
+    have hmem : M ^ l + C * 2 ^ (k.val) ∈ sidonBlock n C M K :=
       ⟨k.val, k.isLt, l, hl1, hlK, rfl⟩
     have hmem2 := hSub hmem
     simp only [Set.mem_iUnion] at hmem2
@@ -73,7 +72,7 @@ private theorem pair_eq_of_set_eq {p q r s : ℕ} (hpq : p < q) (hrs : r < s)
 
 /-- **A block not covered by few Sidon sets.** Let $n \ge 1$ and $C \ge 1$ be natural
 numbers, and put $M = C \cdot 2^n + 1$ and $K = (n - 1)\binom{n}{2} + 1$. Then the block
-$\mathrm{Block}(n, C, M, K) = \{M l + C \cdot 2^k : 0 \le k < n,\ 1 \le l \le K\}$ is not
+$\mathrm{Block}(n, C, M, K) = \{M^l + C \cdot 2^k : 0 \le k < n,\ 1 \le l \le K\}$ is not
 contained in the union of any $n - 1$ Sidon subsets of $\mathbb{N}$.
 
 Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
@@ -96,9 +95,11 @@ public theorem not_sidonBlock_subset_iUnion_isSidon {n C : ℕ} (hn : 0 < n)
     exact Fin.elim0 j
   · set M : ℕ := C * 2 ^ n + 1 with hM
     set K : ℕ := (n - 1) * n.choose 2 + 1 with hK
-    have hMpos : 0 < M := by simp [hM]
+    have hM2 : 2 ≤ M := by
+      have : 0 < C * 2 ^ n := Nat.mul_pos hC (Nat.two_pow_pos n)
+      omega
     have key : ∀ i : Fin K, ∃ j, ∃ k1 k2, k1 < k2 ∧ k2 < n ∧
-        M * (i.val + 1) + C * 2 ^ k1 ∈ S j ∧ M * (i.val + 1) + C * 2 ^ k2 ∈ S j := by
+        M ^ (i.val + 1) + C * 2 ^ k1 ∈ S j ∧ M ^ (i.val + 1) + C * 2 ^ k2 ∈ S j := by
       intro i
       have hl1 : 1 ≤ i.val + 1 := Nat.le_add_left 1 i.val
       have hlK : i.val + 1 ≤ K := Nat.succ_le_of_lt i.isLt
@@ -137,18 +138,18 @@ public theorem not_sidonBlock_subset_iUnion_isSidon {n C : ℕ} (hn : 0 < n)
       intro hcon
       apply hne
       exact Fin.val_inj.mp (Nat.succ_inj.mp hcon)
-    have h21 : M * (i2.val + 1) + C * 2 ^ k1 i1 ∈ S (j i1) := by
+    have h21 : M ^ (i2.val + 1) + C * 2 ^ k1 i1 ∈ S (j i1) := by
       rw [hpair.1, hj]
       exact hmem1 i2
-    have h22 : M * (i2.val + 1) + C * 2 ^ k2 i1 ∈ S (j i1) := by
+    have h22 : M ^ (i2.val + 1) + C * 2 ^ k2 i1 ∈ S (j i1) := by
       rw [hpair.2, hj]
       exact hmem2 i2
     have h11 := hmem1 i1
     have h12 := hmem2 i1
-    have hsum : M * (i1.val + 1) + C * 2 ^ k1 i1 +
-        (M * (i2.val + 1) + C * 2 ^ k2 i1) =
-        M * (i1.val + 1) + C * 2 ^ k2 i1 +
-        (M * (i2.val + 1) + C * 2 ^ k1 i1) := by ring
+    have hsum : M ^ (i1.val + 1) + C * 2 ^ k1 i1 +
+        (M ^ (i2.val + 1) + C * 2 ^ k2 i1) =
+        M ^ (i1.val + 1) + C * 2 ^ k2 i1 +
+        (M ^ (i2.val + 1) + C * 2 ^ k1 i1) := by ring
     have hsid := hSidon (j i1) _ h11 _ h22 _ h12 _ h21 hsum
     rcases hsid with ⟨hac, -⟩ | ⟨had, -⟩
     · have hCpow : C * 2 ^ k1 i1 = C * 2 ^ k2 i1 := by omega
@@ -157,8 +158,8 @@ public theorem not_sidonBlock_subset_iUnion_isSidon {n C : ℕ} (hn : 0 < n)
       have hkk : k1 i1 = k2 i1 :=
         Nat.pow_right_injective (le_refl 2) hpow
       exact (ne_of_lt (hlt i1)) hkk
-    · have hMl : M * (i1.val + 1) = M * (i2.val + 1) := by omega
-      have hll : i1.val + 1 = i2.val + 1 := Nat.mul_left_cancel hMpos hMl
+    · have hMl : M ^ (i1.val + 1) = M ^ (i2.val + 1) := by omega
+      have hll : i1.val + 1 = i2.val + 1 := Nat.pow_right_injective hM2 hMl
       exact hlne hll
 
 end
