@@ -1,8 +1,8 @@
-# Frobenius Power Dense
+# Conjugated Frobenius powers modulo a subgroup
 
-Every `σ` has the same image modulo `H` as a conjugate of a power of a Frobenius
-element at a prime outside `S`: there are a prime `ℓ ∉ S`, a valuation subring `A`
-lying over `ℓ`, a Frobenius element `τ` for `A` at `ℓ`, an element `g` and an exponent
-`n` with `g * τ ^ n * g⁻¹ * σ⁻¹ ∈ H`. For `H` the kernel of a representation, this says
-that every image `ρ σ` is the image of a conjugated Frobenius power. Despite the name,
-this is not topological density: no closure is taken.
+For every `σ` there are a prime `ℓ ∉ S`,
+a valuation subring `A` of `AlgebraicClosure ℚ` lying over `ℓ`, an element `τ` that is
+Frobenius at `ℓ` for `A`, an element `g` and an exponent `n` with `g * τ ^ n * g⁻¹ * σ⁻¹ ∈ H`,
+that is, `σ` lies in the coset `H * (g * τ ^ n * g⁻¹)`. For `H` the kernel of a
+representation `ρ`, this says that every image `ρ σ` is the image of a conjugated Frobenius
+power. Despite the name, this is not topological density: no closure is taken.

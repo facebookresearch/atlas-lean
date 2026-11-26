@@ -1,3 +1,4 @@
-# Hecke Torsion
+# Hecke torsion
 
-The submodule of elements annihilated by the ideal `𝔪`.
+The submodule of the elements `x : J` with `t • x = 0` for every
+`t ∈ 𝔪`.
