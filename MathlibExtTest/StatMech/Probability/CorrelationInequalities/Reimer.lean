@@ -9,26 +9,30 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.Reimer
+public import MathlibExt.Probability.CorrelationInequalities.ReimerInequality
 
 /-!
 # Tests for `MathlibExt.Probability.CorrelationInequalities.Reimer`
 
-This module does not prove Reimer's inequality; it states it as the proposition
-`ReimerWprobCore` and proves consequences of it and the monotone special cases. Tested:
+These examples test the decreasing-event inequalities and use `reimer_wprob_core` to instantiate
+the reductions for Bernoulli product measures and arbitrary finite coordinate sets.
+
 * `bk_inequality_decreasing` and `bk_wprob_decreasing` for the decreasing events
   `closed0 = {ω | ¬ ω 0}` and `closed1 = {ω | ¬ ω 1}` on `ConfigSpace (Fin 2)` (both
   `IsDecreasing` hypotheses proved), under Bernoulli(`1/2`) and the uniform weight;
 * `reimer_wprob_zero` (no coordinates, arbitrary events);
 * `flipCfg` computed at a configuration, and `flipCfg_flipCfg`;
-* `reimer_inequality_of_core`: only restated with the hypothesis `ReimerWprobCore`, since that
-  hypothesis is Reimer's theorem itself and is not proved in the library.
+* `reimer_inequality_of_core`: restated with the hypothesis `ReimerWprobCore`;
+* `reimer_inequality_of_core` and `reimer_wprob_general_of_core` instantiated unconditionally
+  with `reimer_wprob_core`, which proves `ReimerWprobCore`
+  (`MathlibExt.Probability.CorrelationInequalities.ReimerInequality`).
 -/
 
 @[expose] public section
 
 namespace MathlibExtTest.StatMech.Probability.CorrelationInequalities.Reimer
 
-open _root_.StatMech
+open _root_.StatMech _root_.MathlibExt.Probability.ReimerInequalityWanted
 
 /-- The event "coordinate `0` is closed" on two coordinates. -/
 def closed0 : Set (ConfigSpace (Fin 2)) := {ω | ω 0 = false}
@@ -83,12 +87,29 @@ example (ω : ConfigSpace (Fin 2)) : flipCfg (flipCfg ω) = ω := flipCfg_flipCf
 -- The flip of the decreasing event `closed0` is increasing (`isIncreasing_flip_preimage`).
 example : IsIncreasing (flipCfg ⁻¹' closed0) := isIncreasing_flip_preimage isDecreasing_closed0
 
--- `reimer_inequality_of_core`, restated: it needs `ReimerWprobCore` (Reimer's theorem for all
--- `n`), which the library does not prove, so it cannot be instantiated unconditionally.
+-- `reimer_inequality_of_core`, restated with its hypothesis `ReimerWprobCore` (Reimer's theorem
+-- for all `n`).
 example (h : ReimerWprobCore) (A B : Set (ConfigSpace (Fin 2))) :
     (bernoulliProductMeasure (E := Fin 2) (1 / 2) (by norm_num)).real (disjointOccurrence A B)
       ≤ (bernoulliProductMeasure (E := Fin 2) (1 / 2) (by norm_num)).real A
         * (bernoulliProductMeasure (E := Fin 2) (1 / 2) (by norm_num)).real B :=
   reimer_inequality_of_core h _ A B
+
+-- `reimer_inequality_of_core` instantiated unconditionally: `reimer_wprob_core` proves
+-- `ReimerWprobCore`.
+example (A B : Set (ConfigSpace (Fin 2))) :
+    (bernoulliProductMeasure (E := Fin 2) (1 / 2) (by norm_num)).real (disjointOccurrence A B)
+      ≤ (bernoulliProductMeasure (E := Fin 2) (1 / 2) (by norm_num)).real A
+        * (bernoulliProductMeasure (E := Fin 2) (1 / 2) (by norm_num)).real B :=
+  reimer_inequality_of_core reimer_wprob_core _ A B
+
+-- `reimer_wprob_general_of_core` instantiated unconditionally, on the coordinate set `Bool`
+-- (not of the form `Fin n`) with a nonuniform weight.
+example (A B : Set (ConfigSpace Bool)) :
+    wprob (fun (_ : Bool) (b : Bool) => if b then (1 / 3 : ℝ) else 2 / 3) (disjointOccurrence A B)
+      ≤ wprob (fun (_ : Bool) (b : Bool) => if b then (1 / 3 : ℝ) else 2 / 3) A
+        * wprob (fun (_ : Bool) (b : Bool) => if b then (1 / 3 : ℝ) else 2 / 3) B :=
+  reimer_wprob_general_of_core reimer_wprob_core _
+    (fun _ b => by cases b <;> norm_num) (fun _ => by norm_num) A B
 
 end MathlibExtTest.StatMech.Probability.CorrelationInequalities.Reimer
