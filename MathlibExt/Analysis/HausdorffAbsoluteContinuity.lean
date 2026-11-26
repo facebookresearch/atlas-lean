@@ -430,10 +430,8 @@ and only if there is a real constant $C$ such that
 $(\Delta^k m_\mu)_n \le C \, (\Delta^k m_\lambda)_n$ for all multi-indices $k \le n$
 (coordinatewise), where $\Delta^k$ is the iterated backward difference.
 
-Source: O. Knill, *Some fundamental theorems in mathematics*, arXiv:1807.08416v4, §115, p. 52,
-compares two probability measures on the cube. Here the second is Lebesgue measure on the cube.
-For background on the interval moment problem, see F. Hausdorff (1921, 1923) and Shohat–Tamarkin,
-*The Problem of Moments*. Via leanprover/lean-eval@38361be, problem
+Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*.
+Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem
 `hausdorff_absolute_continuity`. -/
 public theorem hausdorff_absolute_continuity {d : ℕ}
     (μ : Measure (EuclideanSpace ℝ (Fin d)))
