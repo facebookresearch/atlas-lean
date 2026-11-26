@@ -50,9 +50,9 @@
 
 ## Normal-shock jump conditions and branch ratios
 
-- [Density ratio across a normal shock](shock-density-ratio.md)
-- [Pressure ratio across a normal shock](shock-pressure-ratio.md)
-- [Temperature ratio across a normal shock](shock-temperature-ratio.md)
+- [Algebraic second-branch density ratio of the normal-shock conditions](shock-density-ratio.md)
+- [Algebraic second-branch pressure ratio of the normal-shock conditions](shock-pressure-ratio.md)
+- [Algebraic second-branch temperature ratio of the normal-shock conditions](shock-temperature-ratio.md)
 - [Normal-shock jump conditions](is-normal-shock-jump.md)
 
 ## The two normal-shock branches

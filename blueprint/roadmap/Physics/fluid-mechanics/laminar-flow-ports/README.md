@@ -2,8 +2,8 @@
 
 ## Calculus in affine coordinates
 
-- [Derivatives in affine coordinates](fderiv-comp-vadd.md)
-- [Directional derivatives in coordinates are inner products with the gradient](fderiv-comp-vadd-eq-inner-grad.md)
+- [Fréchet derivatives in affine coordinates](fderiv-comp-vadd.md)
+- [Fréchet derivatives in coordinates are inner products with the gradient](fderiv-comp-vadd-eq-inner-grad.md)
 - [Gradients in affine coordinates](gradient-comp-vadd.md)
 - [The convective term in coordinates](fderiv-comp-vadd-velocity-eq-convective.md)
 - [Integral curves in affine coordinates](is-mintegral-curve-on-iff-coord.md)
