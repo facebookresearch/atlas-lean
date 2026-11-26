@@ -16,15 +16,18 @@ import Mathlib.Tactic
 # Cleared-denominator path-pair gap and the sign lemma
 
 Clearing the Gaussian-rational denominators of a circuit's path-sum
-expansion gives integer path weights. The accept-minus-reject sum over
-pairs of paths with a common end (`pathPairGap`) then equals the squared
-denominator scale times `2 * acceptProb - 1` on BQP initial states, so its
-sign is the sign of the acceptance probability minus `1 / 2`. This is the
-counting form of the standard path-integral argument behind
-`BQP ⊆ P^#P`; no complexity-class inclusion is proved here.
+expansion gives Gaussian-integer path weights. For a circuit of well-formed
+gates (unitary 2-local gates, `QGateWellFormed`) run on the BQP initial state
+`bqpInitState x a`, the accept-minus-reject sum over pairs of paths with a
+common end (`pathPairGap`, for paths from the initial index
+`bqpInitIndex x a`) equals the squared product of the gate denominators times
+`2 * acceptProb - 1`, so its sign is the sign of the acceptance probability
+minus `1 / 2`. Unitarity is needed: it makes the total cleared weight equal to
+that squared product. This is the counting form of the path-sum sign argument
+behind `BQP ⊆ PP`; this module proves no complexity-class inclusion.
 
 Source: S. Aaronson, MIT 6.845 Quantum Complexity Theory, Lecture 4,
-Sec. 2.4 (path sums) and Sec. 2.6 (sign argument, an informal sketch);
+Sec. 2.4 (path sums) and Sec. 2.6 (`BQP ⊆ PP`, the sign argument, an informal sketch);
 R. de Wolf, Quantum Computing: Lecture Notes, arXiv:1907.09415, Ch. 13.3.
 Atlas gates have complex entries, so path pairs are weighted by the real
 part of `pathNum p * star (pathNum q)`.
@@ -37,18 +40,18 @@ namespace Cslib.Complexity.Classes
 set_option autoImplicit false
 
 
-/-- **Signed numerator of an encoded rational**, `0` when the stored denominator is `0` (the
-encoded value is then `0` while the numerator field may be nonzero). Together with `ratDenom`,
-`toRat e = ratNum e / ratDenom e`. -/
+/-- **Signed numerator of an encoded rational.** The numerator field with the stored sign, or `0`
+when the stored denominator is `0` (the encoded value is then `0` while the numerator field may be
+nonzero). Together with `ratDenom`, `toRat e = ratNum e / ratDenom e`. -/
 def ratNum (e : RatEnc) : ℤ :=
   if e.2.2 = 0 then 0 else if e.1 then -(e.2.1 : ℤ) else (e.2.1 : ℤ)
 
-/-- **Cofactor of an entry:** the product of the denominator factors
+/-- **Cofactor of an entry.** The product of the denominator factors
 `ratDenom p.1 * ratDenom p.2` of the entries of `es` other than the one at index `k`. -/
 def entryCofactor (es : List (RatEnc × RatEnc)) (k : ℕ) : ℕ :=
   ((es.eraseIdx k).map (fun p => ratDenom p.1 * ratDenom p.2)).prod
 
-/-- **Scaled entry:** the Gaussian-integer numerator of entry `k` of `es` over the product of all
+/-- **Scaled entry.** The Gaussian-integer numerator of entry `k` of `es` over the product of all
 entry denominators, and `0` past the end of the list. Uses only multiplication, so it needs no
 division. -/
 def entryNumAt (es : List (RatEnc × RatEnc)) (k : ℕ) : GaussianInt :=
@@ -57,7 +60,7 @@ def entryNumAt (es : List (RatEnc × RatEnc)) (k : ℕ) : GaussianInt :=
       ratNum p.2 * ((ratDenom p.1 * entryCofactor es k : ℕ) : ℤ)⟩
   | none => 0
 
-/-- **Scaled gate entry:** entry `(s, t)` of `gateMatrix N g` times `gateDenom g`, as a Gaussian
+/-- **Scaled gate entry.** Entry `(s, t)` of `gateMatrix N g` times `gateDenom g`, as a Gaussian
 integer, computed from the encoded entry list. -/
 def gateEntryNum (N : ℕ) (g : QGate) (s t : Fin (2 ^ N)) : GaussianInt :=
   if (∀ k : Fin N, k.val ≠ g.1 → k.val ≠ g.2.1 →
@@ -66,7 +69,7 @@ def gateEntryNum (N : ℕ) (g : QGate) (s t : Fin (2 ^ N)) : GaussianInt :=
       qIdx2 (qBit g.1 t.val, qBit g.2.1 t.val))
   else 0
 
-/-- **Cleared-denominator amplitude:** the recursion of `ampSum` with every gate entry replaced by
+/-- **Cleared-denominator amplitude.** The recursion of `ampSum` with every gate entry replaced by
 its scaled numerator `gateEntryNum`. -/
 def ampNum (N : ℕ) : List QGate → Fin (2 ^ N) → Fin (2 ^ N) → GaussianInt
   | [], s, t => if s = t then 1 else 0
@@ -79,29 +82,31 @@ def pathEnd (N : ℕ) :
   | [], _, t => t
   | _ :: gs, p, _ => pathEnd N gs (Fin.tail p) (p 0)
 
-/-- **Weight of a computational path:** the product of the scaled gate entries along it. -/
+/-- **Weight of a computational path.** The product of the scaled gate entries along it. -/
 def pathNum (N : ℕ) :
     (gs : List QGate) → (Fin gs.length → Fin (2 ^ N)) → Fin (2 ^ N) → GaussianInt
   | [], _, _ => 1
   | g :: gs, p, t => pathNum N gs (Fin.tail p) (p 0) * gateEntryNum N g (p 0) t
 
-/-- **Output sign:** `1` on accepting basis states (qubit `0` is `1`), `-1` on the others. -/
+/-- **Output sign.** `1` on accepting basis states (qubit `0` is `1`), `-1` on the others. -/
 def outSign {N : ℕ} (s : Fin (2 ^ N)) : ℤ := if qBit 0 s.val = 1 then 1 else -1
 
-/-- **Accept-minus-reject path-pair gap:** the sum, over pairs of paths with a common end, of the
-output sign of that end times the real part of `pathNum p * star (pathNum q)`. -/
+/-- **Accept-minus-reject path-pair gap.** The sum, over pairs of paths from the input index `t`
+with a common end, of the output sign of that end times the real part of
+`pathNum p * star (pathNum q)`. -/
 def pathPairGap (N : ℕ) (gs : List QGate) (t : Fin (2 ^ N)) : ℤ :=
   ∑ p : Fin gs.length → Fin (2 ^ N), ∑ q : Fin gs.length → Fin (2 ^ N),
     if pathEnd N gs p t = pathEnd N gs q t then
       outSign (pathEnd N gs p t) * (pathNum N gs p t * star (pathNum N gs q t)).re
     else 0
 
-/-- **Accepting cleared weight:** the sum of the norms of the scaled amplitudes at accepting basis
-states. -/
+/-- **Accepting cleared weight.** The sum of the norms `re ^ 2 + im ^ 2` of the cleared amplitudes
+`ampNum N gs s t` over the accepting basis states `s` (qubit `0` is `1`). -/
 def accWeight (N : ℕ) (gs : List QGate) (t : Fin (2 ^ N)) : ℤ :=
   ∑ s : Fin (2 ^ N), if qBit 0 s.val = 1 then (ampNum N gs s t).norm else 0
 
-/-- The basis index of a bitstring fits in any register that contains it. -/
+/-- **Basis index in a padded register.** The basis index `qNumOf x` of a bitstring `x` is less
+than `2 ^ (x.length + a)` for every number `a` of ancilla qubits. -/
 theorem qNumOf_lt_two_pow_add (x : List Bool) (a : ℕ) :
     qNumOf x < 2 ^ (x.length + a) := by
   have h : qNumOf x < 2 ^ x.length := by
@@ -113,8 +118,8 @@ theorem qNumOf_lt_two_pow_add (x : List Bool) (a : ℕ) :
   calc qNumOf x < 2 ^ x.length := h
     _ ≤ 2 ^ (x.length + a) := Nat.pow_le_pow_right (by norm_num) (by omega)
 
-/-- **Basis index of the BQP initial state:** `bqpInitState x a` is the basis vector at this
-index. -/
+/-- **Basis index of the BQP initial state.** The index `qNumOf x` in a register of
+`x.length + a` qubits; `bqpInitState x a` is the basis vector at this index. -/
 def bqpInitIndex (x : List Bool) (a : ℕ) : Fin (2 ^ (x.length + a)) :=
   ⟨qNumOf x, qNumOf_lt_two_pow_add x a⟩
 
@@ -182,7 +187,8 @@ private theorem toComplex_mul_scaled_entry (p : RatEnc × RatEnc) (cf D : ℕ)
     push_cast
     field_simp [hd1R, hd2R]
 
-/-- Scaling a gate-matrix entry by the gate denominator gives the scaled entry. -/
+/-- **Gate entries times the gate denominator.** For every gate `g`, entry `(s, t)` of
+`gateMatrix N g` times `gateDenom g` is the Gaussian integer `gateEntryNum N g s t`. -/
 theorem gateMatrix_mul_gateDenom (N : ℕ) (g : QGate) (s t : Fin (2 ^ N)) :
     gateMatrix N g s t * ((gateDenom g : ℕ) : ℂ) = (gateEntryNum N g s t : ℂ) := by
   simp only [gateMatrix, gateEntryNum]
@@ -209,7 +215,9 @@ theorem gateMatrix_mul_gateDenom (N : ℕ) (g : QGate) (s t : Fin (2 ^ N)) :
   · rw [ite_eq_right h, ite_eq_right h, zero_mul]
     exact (map_zero GaussianInt.toComplex).symm
 
-/-- The cleared amplitude is the path-sum amplitude times the product of gate denominators. -/
+/-- **Cleared and path-sum amplitudes.** For every circuit `gs`, the cleared amplitude
+`ampNum N gs s t` is the path-sum amplitude `ampSum N gs s t` times the product of the gate
+denominators. -/
 theorem ampNum_eq_ampSum_mul (N : ℕ) (gs : List QGate) (s t : Fin (2 ^ N)) :
     (ampNum N gs s t : ℂ) = ampSum N gs s t * ((gs.map gateDenom).prod : ℂ) := by
   induction gs generalizing s t with
@@ -235,15 +243,15 @@ private theorem sum_fun_fin_succ {α M : Type*} [Fintype α] [AddCommMonoid M] {
   rw [← Equiv.sum_comp (Fin.consEquiv fun _ => α) F, Fintype.sum_prod_type]
   rfl
 
-/-- **Integer path expansion:** the cleared amplitude is the sum of the weights of the paths that
-end at the output index. -/
+/-- **Integer path expansion.** The cleared amplitude `ampNum N gs s t` is the sum of the weights
+`pathNum` of the paths from the input index `t` that end at the output index `s`. -/
 theorem ampNum_eq_sum_pathNum (N : ℕ) (gs : List QGate) (s t : Fin (2 ^ N)) :
     ampNum N gs s t = ∑ p : Fin gs.length → Fin (2 ^ N),
       if pathEnd N gs p t = s then pathNum N gs p t else 0 := by
   induction gs generalizing s t with
   | nil =>
     simp only [ampNum, pathEnd, pathNum]
-    show (if s = t then (1 : GaussianInt) else 0) =
+    change (if s = t then (1 : GaussianInt) else 0) =
       ∑ _ : Fin 0 → Fin (2 ^ N), if t = s then (1 : GaussianInt) else 0
     simp only [Fintype.sum_unique]
     simp only [eq_comm (a := s) (b := t)]
@@ -258,15 +266,16 @@ private theorem gaussNorm_eq_re_mul_star (a : GaussianInt) :
   have h2 := congrArg Zsqrtd.re h
   simpa [Zsqrtd.re_intCast] using h2
 
-private theorem gaussReSumFinset {ι : Type*} [DecidableEq ι]
+private theorem gaussReSumFinset {ι : Type*}
     (s : Finset ι) (f : ι → GaussianInt) :
     (∑ i ∈ s, f i).re = ∑ i ∈ s, (f i).re := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | insert a t hat ih =>
     rw [Finset.sum_insert hat, Finset.sum_insert hat, Zsqrtd.re_add, ih]
 
-private theorem gaussReSum {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem gaussReSum {ι : Type*} [Fintype ι]
     (f : ι → GaussianInt) :
     (∑ i, f i).re = ∑ i, (f i).re :=
   gaussReSumFinset Finset.univ f
@@ -295,7 +304,9 @@ private theorem ampNormExpand (N : ℕ) (gs : List QGate)
   intro q _
   exact iteMulStarRe _ _ _ _
 
-/-- The path-pair gap is the output-signed sum of the norms of the cleared amplitudes. -/
+/-- **Gap as a signed sum of amplitude norms.** For every circuit `gs` and input index `t`, the
+path-pair gap is the sum over basis states `s` of the output sign of `s` times the norm of the
+cleared amplitude `ampNum N gs s t`. -/
 theorem pathPairGap_eq_sum_outSign_norm (N : ℕ) (gs : List QGate) (t : Fin (2 ^ N)) :
     pathPairGap N gs t = ∑ s : Fin (2 ^ N), outSign s * (ampNum N gs s t).norm := by
   unfold pathPairGap
@@ -378,7 +389,7 @@ private theorem bqpInitState_eq_ite_index (x : List Bool) (a : ℕ)
         exact Nat.mod_eq_of_lt hlt
       · rw [hv]
         exact Nat.div_eq_zero_iff.mpr (Or.inr hlt)
-  show (if s.val % 2 ^ x.length = qNumOf x then (1 : ℂ) else 0) *
+  change (if s.val % 2 ^ x.length = qNumOf x then (1 : ℂ) else 0) *
       (if s.val / 2 ^ x.length = 0 then 1 else 0) =
     if s = bqpInitIndex x a then 1 else 0
   by_cases h1 : s.val % 2 ^ x.length = qNumOf x
@@ -399,7 +410,11 @@ private theorem applyCircuit_bqpInitState_eq_ampSum {gs : List QGate} (x : List 
   rw [Finset.sum_ite_eq']
   simp
 
-/-- **Explicit scaled acceptance:** the explicit witness for `acceptProb_scaled_nat`. -/
+/-- **Explicit scaled acceptance.** For a circuit `gs` of well-formed gates (unitary 2-local
+gates, `QGateWellFormed`) run on the BQP initial state `bqpInitState x a`, the squared product of
+the gate denominators times the acceptance probability equals the accepting cleared weight
+`accWeight` for paths from the initial index `bqpInitIndex x a`. This is the explicit form of
+`acceptProb_scaled_nat`. -/
 theorem acceptProb_scaled_eq_accWeight {gs : List QGate} (x : List Bool) (a : ℕ)
     (hgs : ∀ g ∈ gs, QGateWellFormed (x.length + a) g) :
     ((gs.map gateDenom).prod : ℝ) ^ 2 *
@@ -435,7 +450,11 @@ private theorem sum_norm_ampNum_bqpInitIndex {gs : List QGate} (x : List Bool) (
     simp only [Int.cast_pow, Int.cast_natCast]
   exact_mod_cast h2
 
-/-- **Integer gap identity:** twice the accepting weight minus the total weight. -/
+/-- **Integer gap identity.** For a circuit `gs` of well-formed gates (unitary 2-local gates,
+`QGateWellFormed`) run on the BQP initial state `bqpInitState x a`, the path-pair gap for paths
+from the initial index `bqpInitIndex x a` equals twice the accepting cleared weight minus the
+squared product of the gate denominators. By unitarity, that square is the total cleared
+weight. -/
 theorem pathPairGap_eq_two_mul_accWeight_sub {gs : List QGate} (x : List Bool) (a : ℕ)
     (hgs : ∀ g ∈ gs, QGateWellFormed (x.length + a) g) :
     pathPairGap (x.length + a) gs (bqpInitIndex x a) =
@@ -453,7 +472,10 @@ theorem pathPairGap_eq_two_mul_accWeight_sub {gs : List QGate} (x : List Bool) (
   rw [Finset.sum_sub_distrib, ← Finset.mul_sum, sum_norm_ampNum_bqpInitIndex _ _ hgs,
     accWeight]
 
-/-- **Gap and acceptance probability.** -/
+/-- **Gap and acceptance probability.** For a circuit `gs` of well-formed gates (unitary 2-local
+gates, `QGateWellFormed`) run on the BQP initial state `bqpInitState x a`, the path-pair gap for
+paths from the initial index `bqpInitIndex x a` equals the squared product of the gate
+denominators times `2 * acceptProb - 1`. -/
 theorem pathPairGap_eq {gs : List QGate} (x : List Bool) (a : ℕ)
     (hgs : ∀ g ∈ gs, QGateWellFormed (x.length + a) g) :
     (pathPairGap (x.length + a) gs (bqpInitIndex x a) : ℝ) =
@@ -471,7 +493,10 @@ theorem pathPairGap_eq {gs : List QGate} (x : List Bool) (a : ℕ)
   rw [h1r, hPC, ← h2]
   ring
 
-/-- **Sign lemma:** the path-pair gap has the sign of the acceptance probability minus `1 / 2`. -/
+/-- **Sign lemma.** For a circuit `gs` of well-formed gates (unitary 2-local gates,
+`QGateWellFormed`) run on the BQP initial state `bqpInitState x a`, the path-pair gap for paths
+from the initial index `bqpInitIndex x a` has the sign of the acceptance probability minus
+`1 / 2`. -/
 theorem sign_pathPairGap {gs : List QGate} (x : List Bool) (a : ℕ)
     (hgs : ∀ g ∈ gs, QGateWellFormed (x.length + a) g) :
     SignType.sign (pathPairGap (x.length + a) gs (bqpInitIndex x a)) =
@@ -501,7 +526,10 @@ theorem sign_pathPairGap {gs : List QGate} (x : List Bool) (a : ℕ)
           (bqpInitState x a)) - 1 / 2) := by
         rw [sign_pos hCpos, one_mul]
 
-/-- The path-pair gap is positive exactly when acceptance exceeds `1 / 2`. -/
+/-- **Positive gap and acceptance above one half.** For a circuit `gs` of well-formed gates
+(unitary 2-local gates, `QGateWellFormed`) run on the BQP initial state `bqpInitState x a`, the
+path-pair gap for paths from the initial index `bqpInitIndex x a` is positive exactly when the
+acceptance probability exceeds `1 / 2`. -/
 theorem pathPairGap_pos_iff {gs : List QGate} (x : List Bool) (a : ℕ)
     (hgs : ∀ g ∈ gs, QGateWellFormed (x.length + a) g) :
     0 < pathPairGap (x.length + a) gs (bqpInitIndex x a) ↔
@@ -518,8 +546,11 @@ theorem pathPairGap_pos_iff {gs : List QGate} (x : List Bool) (a : ℕ)
   rw [← Int.cast_pos (R := ℝ), hreal, mul_pos_iff_of_pos_left hD]
   constructor <;> intro h <;> linarith
 
-/-- **BQP form of the sign lemma:** a `BQP` language has a witness circuit family whose
-path-pair gap is positive exactly on yes-instances. -/
+/-- **BQP form of the sign lemma.** Every language `L` in `BQP` has a polynomial-time computable
+family of circuits of well-formed gates (unitary 2-local gates, `QGateWellFormed`), with
+polynomially many ancilla qubits and gates, such that for every input `x` the path-pair gap of
+the circuit for `x`, for paths from the initial index of `x`, is positive exactly when `L x` is
+true. -/
 theorem exists_pathPairGap_of_mem_BQP {L : List Bool → Bool} (hL : L ∈ BQP) :
     ∃ a s : Polynomial ℕ, ∃ gates : List Bool → List QGate,
       IsPolyTime gates ∧

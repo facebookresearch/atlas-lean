@@ -61,6 +61,20 @@ def idGate01 : QGate :=
 def idGate01Long : QGate :=
   (0, 1, idGate01.2.2 ++ [((false, 1, 3), (true, 2, 5))])
 
+/-- The `e^{iπ/4} H` gate on qubit `1` (spectator qubit `0`). -/
+def omegaGateHigh01 : QGate :=
+  (0, 1, QuantumGates.entriesOf
+    (QuantumGates.onHigh QuantumGates.omegaH))
+
+/-- The Pauli `Y` matrix, which is not symmetric. -/
+def yMatrix : Matrix (Fin 2) (Fin 2) QuantumGates.GRat :=
+  !![QuantumGates.gaussRatEnc 0 0, QuantumGates.gaussRatEnc 0 (-1);
+     QuantumGates.gaussRatEnc 0 1, QuantumGates.gaussRatEnc 0 0]
+
+/-- The `Y` gate on qubit `0` (spectator qubit `1`). -/
+def yGate01 : QGate :=
+  (0, 1, QuantumGates.entriesOf (QuantumGates.onLow yMatrix))
+
 /-- Empty circuit, scale `1`: gaps on both inputs, plus the degenerate register. -/
 theorem gap_empty :
     pathPairGap (1 + 1) [] (bqpInitIndex [true] 1) = 1 ∧
@@ -129,6 +143,21 @@ theorem long_scale :
     gateDenom idGate01Long = 15 ∧
       pathPairGap (1 + 1) [idGate01Long]
         (bqpInitIndex [true] 1) = 225 := by
+  refine ⟨?_, ?_⟩ <;> decide +kernel
+
+/-- Only paths with a common end pair up: `omegaGateHigh01` sends `|00⟩` to equal amplitudes at the
+two rejecting states `0` and `2`, so the gap is `-D ^ 2`; pairing all paths would give
+`-2 * D ^ 2`. -/
+theorem gap_common_end :
+    pathPairGap (1 + 1) [omegaGateHigh01] (bqpInitIndex [false] 1) = -(2 ^ 32) ∧
+      accWeight (1 + 1) [omegaGateHigh01] (bqpInitIndex [false] 1) = 0 := by
+  refine ⟨?_, ?_⟩ <;> decide +kernel
+
+/-- Orientation: a path reads gate entry `(output, input)`. `Y |0⟩ = i |1⟩`, so the cleared
+amplitude at `1` is `i`; reading entry `(input, output)` would give `-i`. -/
+theorem y_orientation :
+    ampNum (1 + 1) [yGate01] 1 (bqpInitIndex [false] 1) = ⟨0, 1⟩ ∧
+      ampNum (1 + 1) [yGate01] 0 (bqpInitIndex [false] 1) = 0 := by
   refine ⟨?_, ?_⟩ <;> decide +kernel
 
 /-- Semantic anchor, empty circuit: the gap is `2 * acceptProb - 1` at scale `1`. -/
@@ -204,7 +233,8 @@ theorem acceptprob_A1_true :
     norm_num
   exact (pathPairGap_pos_iff [true] 1 hgs).mp hpos
 
-/-- Boundary acceptance is exactly one half. -/
+/-- Boundary acceptance is exactly one half, read off the sign lemma: the gap is `0`, so the sign
+of `acceptProb - 1 / 2` is `0`. -/
 theorem acceptprob_boundary :
     acceptProb (applyCircuit (1 + 1) [xGate01, omegaGate01]
       (bqpInitState [false] 1)) = 1 / 2 := by
@@ -222,18 +252,50 @@ theorem acceptprob_boundary :
   have hgap : pathPairGap ([false].length + 1) [xGate01, omegaGate01]
       (bqpInitIndex [false] 1) = 0 := by
     decide +kernel
-  have hD : ([xGate01, omegaGate01].map gateDenom).prod = 2 ^ 16 := by
+  have hsign := sign_pathPairGap [false] 1 hgs
+  rw [hgap, sign_zero, eq_comm, sign_eq_zero_iff, sub_eq_zero] at hsign
+  exact hsign
+
+/-- The gap identity on the interfering circuit: gap `-D ^ 2` with `D = 2 ^ 32` forces acceptance
+`0` on input `[false]`, which `acceptprob_A1_false` gets from the accepting weight instead. -/
+theorem acceptprob_A1_false_of_gap :
+    acceptProb (applyCircuit (1 + 1) [omegaGate01, omegaGate01]
+      (bqpInitState [false] 1)) = 0 := by
+  show acceptProb (applyCircuit ([false].length + 1) [omegaGate01, omegaGate01]
+      (bqpInitState [false] 1)) = 0
+  have hgs : ∀ g ∈ [omegaGate01, omegaGate01],
+      QGateWellFormed ([false].length + 1) g := by
+    intro g hg
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hg
+    rcases hg with rfl | rfl
+    · exact QuantumGates.qGateWellFormed_onLow QuantumGates.omegaH
+        QuantumGates.omegaH_unitary (by decide) (by decide)
+    · exact QuantumGates.qGateWellFormed_onLow QuantumGates.omegaH
+        QuantumGates.omegaH_unitary (by decide) (by decide)
+  have hgap : pathPairGap ([false].length + 1) [omegaGate01, omegaGate01]
+      (bqpInitIndex [false] 1) = -(2 ^ 64) := by
+    decide +kernel
+  have hD : ([omegaGate01, omegaGate01].map gateDenom).prod = 2 ^ 32 := by
     decide +kernel
   have heq := pathPairGap_eq [false] 1 hgs
   rw [hgap, hD] at heq
-  simp only [Int.cast_zero, Nat.cast_pow, Nat.cast_ofNat] at heq
-  have hring : ((2 : ℝ) ^ 16) ^ 2 = (2 : ℝ) ^ 32 := by ring
-  rw [hring] at heq
-  have hne : (2 : ℝ) ^ 32 ≠ 0 := by norm_num
-  have h2 : 2 * acceptProb (applyCircuit ([false].length + 1)
-      [xGate01, omegaGate01] (bqpInitState [false] 1)) - 1 = 0 :=
-    (mul_eq_zero.mp heq.symm).resolve_left hne
+  push_cast at heq
   linarith
+
+/-- The BQP form of the sign lemma separates instances by the sign of the gap: for a `BQP`
+language, the gap of the witness family is positive on yes-instances and at most `0` on
+no-instances. -/
+theorem gap_sign_of_mem_BQP {L : List Bool → Bool} (hL : L ∈ BQP) :
+    ∃ a : Polynomial ℕ, ∃ gates : List Bool → List QGate, ∀ x,
+      (L x = true →
+        0 < pathPairGap (x.length + a.eval x.length) (gates x)
+          (bqpInitIndex x (a.eval x.length))) ∧
+      (L x = false →
+        pathPairGap (x.length + a.eval x.length) (gates x)
+          (bqpInitIndex x (a.eval x.length)) ≤ 0) := by
+  obtain ⟨a, -, gates, -, -, -, h⟩ := exists_pathPairGap_of_mem_BQP hL
+  refine ⟨a, gates, fun x => ⟨(h x).mp, fun hx => not_lt.mp fun hpos => ?_⟩⟩
+  simp [(h x).mpr hpos] at hx
 
 /-- Semantic anchor at the boundary: gap `0` matches `D ^ 2 * (2 * p - 1)`. -/
 theorem anchor_boundary :
