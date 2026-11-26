@@ -11,3 +11,4 @@ Exact pattern matching (naive, finite automaton, Knuth-Morris-Pratt, Boyer-Moore
 - [String matching with finite automata](string-matching-with-finite-automata/README.md)
 - [Z algorithm](z-algorithm/README.md)
 - [Boyer–Moore string-search algorithm](boyer-moore-string-search-algorithm/README.md)
+- [String matching specifications](string-matching-specifications/README.md)

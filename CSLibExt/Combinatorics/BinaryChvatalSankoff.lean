@@ -488,9 +488,10 @@ common subsequence of two independent uniformly random binary strings of length 
 Chvátal–Sankoff constant $C_{31a} = \liminf_{n \to \infty} \mathbb{E}[L_n]/n$ satisfies
 $C_{31a} > 0$.
 
-Source: Chvátal--Sankoff (1975), catalogue strict lower bound `> 0`.
-Known literature result; its proof is not supplied here. -/
+Source: Chvátal--Sankoff (1975), catalogue strict lower bound `> 0`. -/
 theorem chvatalSankoffStrictPositive_wanted : chvatalSankoffStrictPositive := by
+  -- Two of the four pairs of one-bit strings have a common bit, so `E[L₁] = 1/2`. Superadditivity
+  -- then gives `E[L_n] ≥ n/2` for every `n`, so the limit inferior is at least `1/2`.
   have hlower (n : ℕ) : (1 / 2 : ℝ) * n ≤ expectedLCSLength n := by
     induction n with
     | zero => simpa using expectedLCSLength_nonneg 0
