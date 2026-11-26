@@ -15,17 +15,22 @@ public import CSLibExt.Bioinformatics.Alignment.SmithWaterman
 # Traceback for the Needleman–Wunsch and Smith–Waterman tables
 
 The tables of `NeedlemanWunschTable` and `SmithWaterman` return scores only. Here every row is kept
-(`nwTable`, `swTable`) and an alignment is read back by the traceback of Smith and Waterman (1981):
-step to a neighbouring cell from which the recurrence attains the current value (diagonal, then up,
-then left) and emit the column. The global traceback runs from the last cell to `(0, 0)`; the local
-one starts at a largest cell (`argmaxCell`) and stops at the first cell equal to `0`. Gaps are
-linear, as in `SequenceAlignment`.
+(`nwTable`, `swTable`) and an alignment is read back by a traceback: from the current cell, step to
+a neighbouring cell from which the recurrence attains the current value and emit the column. The
+global traceback runs from the last cell to `(0, 0)`. The local one follows Smith and Waterman
+(1981), who start at a largest cell and stop at a cell equal to `0`; it starts at the first largest
+cell in row-major order (`argmaxCell`) and stops at the first cell equal to `0` that it reaches.
+The paper fixes only that start and stop: the order among tied predecessors (diagonal, then up,
+then left) and the choice of the first largest cell are this file's. Gaps are linear, as in
+`SequenceAlignment`.
 
 ## Cost model
 
-The tracebacks convert the table and the two sequences to arrays once, in time linear in their
-size, and then read each cell and letter in constant time: after the `O(|xs| |ys|)` table, their at
-most `|xs| + |ys|` steps cost `O(|xs| + |ys|)`.
+Let `m = |xs|` and `n = |ys|`. Building a table, converting it to an array of arrays, and, for the
+local traceback, scanning it for its first largest cell each inspect all `(m + 1) (n + 1)` cells,
+also when a sequence is empty, so each takes time `O((m + 1) (n + 1))`. The walk itself converts
+the two sequences to arrays and then takes at most `m + n` steps, each reading its cells and
+letters in constant time: time `O(m + n + 1)`.
 
 ## References
 
@@ -41,23 +46,26 @@ namespace Cslib.Bioinformatics.Alignment.Traceback
 
 open Cslib.Algorithms.Lean
 
-/-- The entry `T[i][j]` of a table stored as an array of rows, read in constant time (`0` outside
-the table). -/
+/-- **Table entry.** The entry `T[i][j]` of a table stored as an array of rows, read in constant
+time; it is `0` outside the table. -/
 def cell (T : Array (Array ℤ)) (i j : ℕ) : ℤ := (T.getD i #[]).getD j 0
 
-/-- Every row `F[0], …, F[|xs|]` of the Needleman–Wunsch table, row `0` being `j * gap`. -/
+/-- **Needleman–Wunsch table.** Every row `F[0], …, F[|xs|]` of the Needleman–Wunsch table of
+`xs` and `ys`, row `0` being `F[0][j] = j * gap`. -/
 def nwTable {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : List (List ℤ) :=
   xs.scanl (fun row a => NeedlemanWunsch.nextRow σ gap a ys row)
     ((List.range (ys.length + 1)).map fun j : ℕ => gap * (j : ℤ))
 
-/-- Every row `H[0], …, H[|xs|]` of the Smith–Waterman table, row `0` being zero. -/
+/-- **Smith–Waterman table.** Every row `H[0], …, H[|xs|]` of the Smith–Waterman table of `xs`
+and `ys`, row `0` being zero. -/
 def swTable {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : List (List ℤ) :=
   xs.scanl (fun row a => SmithWaterman.nextRow σ gap a ys row) (0 :: ys.map fun _ => 0)
 
-/-- Global traceback from cell `(i, j)` with fuel `n`; `acc` holds the columns already emitted.
-Interior cells step diagonally if `T[i-1][j-1] + σ` gives the cell, else up if `T[i-1][j] + gap`
-does, else left. The table and the sequences are arrays, so a step reads its cells and letters in
-constant time. -/
+/-- **Global traceback from a cell.** The global traceback from cell `(i, j)` of the table `T` with
+fuel `n`, where `acc` holds the columns already emitted. A cell of the top row steps left and one
+of the left column steps up; an interior cell steps diagonally if `T[i-1][j-1] + σ` gives the
+cell, else up if `T[i-1][j] + gap` does, else left. The table and the sequences are arrays, so a
+step reads its cells and letters in constant time. -/
 def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → Alignment α
   | 0, _, _, acc => acc
@@ -81,27 +89,24 @@ def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Arr
         nwTraceAux σ gap T xs ys n (i + 1) j ((none, some b) :: acc)
     | _, _ => acc
 
-/-- **Needleman–Wunsch traceback**: the alignment read back from the full table, from cell
-`(|xs|, |ys|)` to cell `(0, 0)`. The table and the sequences are converted to arrays once. -/
+/-- **Needleman–Wunsch traceback.** The global alignment of `xs` and `ys` read back from the full
+Needleman–Wunsch table, from cell `(|xs|, |ys|)` to cell `(0, 0)`, with the table and the
+sequences converted to arrays once. -/
 def nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : Alignment α :=
   nwTraceAux σ gap ((nwTable σ gap xs ys).map List.toArray).toArray xs.toArray ys.toArray
     (xs.length + ys.length) xs.length ys.length []
 
-/-- The position `(i, j)` of a first largest entry of a table, scanning rows top to bottom and
-each row left to right; `(0, 0)` when the table has no entry. -/
+/-- **First largest cell.** The position `(i, j)` of the first largest entry of a table in
+row-major order (rows top to bottom, each row left to right): `List.argmax` of the entries
+`((i, j), T[i][j])` listed in that order, which keeps the first of tied entries. It is `(0, 0)`
+when the table has no entry. -/
 def argmaxCell (T : List (List ℤ)) : ℕ × ℕ :=
-  ((T.zipIdx.foldl
-    (fun best rowi =>
-      rowi.1.zipIdx.foldl
-        (fun best vj =>
-          match best with
-          | some b => if b.2 < vj.1 then some ((rowi.2, vj.2), vj.1) else best
-          | none => some ((rowi.2, vj.2), vj.1))
-        best)
-    (none : Option ((ℕ × ℕ) × ℤ))).map Prod.fst).getD (0, 0)
+  (((T.zipIdx.flatMap fun rowi => rowi.1.zipIdx.map fun vj => ((rowi.2, vj.2), vj.1)).argmax
+    Prod.snd).map Prod.fst).getD (0, 0)
 
-/-- Local traceback: stop at a cell equal to `0` or on the border and return its position and the
-emitted columns; otherwise step as in `nwTraceAux`, in constant time per step. -/
+/-- **Local traceback from a cell.** The local traceback from cell `(i, j)` of the table `T` with
+fuel `n`: stop at a cell equal to `0` or on the border and return its position and the emitted
+columns; otherwise step as in `nwTraceAux`, in constant time per step. -/
 def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → ℕ × ℕ × Alignment α
   | 0, i, j, acc => (i, j, acc)
@@ -119,17 +124,35 @@ def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Arr
         swTraceAux σ gap T xs ys n (i + 1) j ((none, some b) :: acc)
     | _, _ => (i + 1, j + 1, acc)
 
-/-- **Smith–Waterman traceback**: start at a largest cell `(i₁, j₁)` of the full table and trace
-back to the first cell `(i₀, j₀)` equal to `0`. The result is `((i₀, i₁), (j₀, j₁), A)`: the
-alignment `A` of the infixes `(xs.take i₁).drop i₀` and `(ys.take j₁).drop j₀`. The table and the
-sequences are converted to arrays once. -/
-def swTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
-    (ℕ × ℕ) × (ℕ × ℕ) × Alignment α :=
+/-- **Local alignment with its bounds.** The output of a local traceback: the bounds of an infix
+`(xs.take xEnd).drop xStart` of a first sequence `xs`, the bounds of an infix
+`(ys.take yEnd).drop yStart` of a second sequence `ys`, and an alignment. The structure does not
+constrain its fields; `swTraceback_spec` proves that `swTraceback` returns valid bounds and an
+alignment of the two infixes. -/
+structure LocalAlignment (α : Type*) where
+  /-- The start of the infix of the first sequence. -/
+  xStart : ℕ
+  /-- The end of the infix of the first sequence, exclusive. -/
+  xEnd : ℕ
+  /-- The start of the infix of the second sequence. -/
+  yStart : ℕ
+  /-- The end of the infix of the second sequence, exclusive. -/
+  yEnd : ℕ
+  /-- The alignment of the two infixes. -/
+  alignment : Alignment α
+  deriving DecidableEq, Repr
+
+/-- **Smith–Waterman traceback.** Start at the first largest cell `(i₁, j₁)` of the full
+Smith–Waterman table of `xs` and `ys` and trace back to the first cell `(i₀, j₀)` equal to `0`.
+The result is the alignment of the infixes `(xs.take i₁).drop i₀` and `(ys.take j₁).drop j₀`,
+with `xStart = i₀`, `xEnd = i₁`, `yStart = j₀` and `yEnd = j₁`. The table and the sequences are
+converted to arrays once. -/
+def swTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : LocalAlignment α :=
   let T := swTable σ gap xs ys
   let e := argmaxCell T
   let r := swTraceAux σ gap (T.map List.toArray).toArray xs.toArray ys.toArray
     (e.1 + e.2) e.1 e.2 []
-  ((r.1, e.1), (r.2.1, e.2), r.2.2)
+  { xStart := r.1, xEnd := e.1, yStart := r.2.1, yEnd := e.2, alignment := r.2.2 }
 
 private theorem scan_rows {α β : Type*} (f : List α → β) (step : β → α → β)
     (hstep : ∀ (px : List α) (a : α), step (f px) a = f (px ++ [a]))
@@ -141,7 +164,8 @@ private theorem scan_rows {α β : Type*} (f : List α → β) (step : β → α
     rw [List.scanl_cons, hstep, ih, List.inits_cons]
     simp [List.map_map, Function.comp_def, List.append_assoc]
 
-/-- Row `i` of the Needleman–Wunsch table is `j ↦ nwScore (xs.take i) (ys.take j)`. -/
+/-- **Rows of the Needleman–Wunsch table.** Row `i` of the Needleman–Wunsch table is
+`j ↦ nwScore (xs.take i) (ys.take j)`, for `i ≤ |xs|` and `j ≤ |ys|`. -/
 theorem nwTable_eq {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     nwTable σ gap xs ys = xs.inits.map fun px => ys.inits.map (nwScore σ gap px) := by
   have hrow :
@@ -158,7 +182,8 @@ theorem nwTable_eq {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : Li
     (fun row a => NeedlemanWunsch.nextRow σ gap a ys row)
     (fun px a => NeedlemanWunsch.nextRow_eq σ gap a px ys) xs []
 
-/-- Row `i` of the Smith–Waterman table is `j ↦ swCellScore (xs.take i) (ys.take j)`. -/
+/-- **Rows of the Smith–Waterman table.** Row `i` of the Smith–Waterman table is
+`j ↦ swCellScore (xs.take i) (ys.take j)`, for `i ≤ |xs|` and `j ≤ |ys|`. -/
 theorem swTable_eq {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     swTable σ gap xs ys = xs.inits.map fun px => ys.inits.map (swCellScore σ gap px) := by
   have hrow : (0 :: ys.map fun _ => (0 : ℤ)) =
@@ -338,7 +363,8 @@ private theorem nw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
             simp [alignmentScore, columnScore]
             omega
 
-/-- The global traceback is an alignment of `xs` and `ys`. -/
+/-- **The global traceback is an alignment.** The Needleman–Wunsch traceback is an alignment of
+`xs` and `ys`. -/
 theorem isAlignment_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     IsAlignment (nwTraceback σ gap xs ys) xs ys := by
   have h := nw_worker σ gap xs ys xs.length ys.length le_rfl le_rfl
@@ -346,7 +372,8 @@ theorem isAlignment_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ
     (by simp [IsAlignment])
   simpa [nwTraceback, tab] using h.1
 
-/-- **The global traceback attains the table value**, for every `σ` and `gap`. -/
+/-- **The global traceback attains the table value.** For every `σ` and `gap`, the
+Needleman–Wunsch traceback scores `nwTab`, the last cell of the table. -/
 theorem alignmentScore_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     alignmentScore σ gap (nwTraceback σ gap xs ys) = NeedlemanWunsch.nwTab σ gap xs ys := by
   have h := nw_worker σ gap xs ys xs.length ys.length le_rfl le_rfl
@@ -356,8 +383,8 @@ theorem alignmentScore_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : 
   rw [NeedlemanWunsch.nwTab_eq_nwScore]
   simpa [nwTraceback, tab, alignmentScore_nil] using h.2
 
-/-- **The global traceback is an optimal global alignment**: no alignment of `xs` and `ys`
-scores more. -/
+/-- **The global traceback is an optimal global alignment.** For every `σ` and `gap`, no alignment
+of `xs` and `ys` scores more than the Needleman–Wunsch traceback. -/
 theorem alignmentScore_le_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α)
     (A : Alignment α) (hA : IsAlignment A xs ys) :
     alignmentScore σ gap A ≤ alignmentScore σ gap (nwTraceback σ gap xs ys) := by
@@ -460,141 +487,58 @@ private theorem sw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
               simp [alignmentScore, columnScore]
               omega
 
-private theorem fold_bounds {α β : Type*} (score : β → ℤ) (values : α → List ℤ)
-    (step : Option β → α → Option β)
-    (hmono : ∀ b a v, (∃ r, b = some r ∧ v ≤ score r) →
-      ∃ r, step b a = some r ∧ v ≤ score r)
-    (hvalue : ∀ b a v, v ∈ values a → ∃ r, step b a = some r ∧ v ≤ score r)
-    (xs : List α) (seed : Option β) :
-    (∀ v, (∃ r, seed = some r ∧ v ≤ score r) →
-      ∃ r, xs.foldl step seed = some r ∧ v ≤ score r) ∧
-      ∀ a ∈ xs, ∀ v ∈ values a, ∃ r, xs.foldl step seed = some r ∧ v ≤ score r := by
-  induction xs generalizing seed with
-  | nil => simp
-  | cons a xs ih =>
-    obtain ⟨hseed, hall⟩ := ih (step seed a)
-    refine ⟨fun v hv => hseed v (hmono seed a v hv), ?_⟩
-    intro b hb v hv
-    rcases List.mem_cons.mp hb with rfl | hb
-    · exact hseed v (hvalue seed b v hv)
-    · exact hall b hb v hv
-
-private theorem row_best_bounds (rowi : List ℤ × ℕ) (seed : Option ((ℕ × ℕ) × ℤ)) :
-    let r := rowi.1.zipIdx.foldl
-      (fun best vj => match best with
-        | some b => if b.2 < vj.1 then some ((rowi.2, vj.2), vj.1) else best
-        | none => some ((rowi.2, vj.2), vj.1)) seed
-    (∀ v, (∃ b, seed = some b ∧ v ≤ b.2) → ∃ b, r = some b ∧ v ≤ b.2) ∧
-      ∀ v ∈ rowi.1, ∃ b, r = some b ∧ v ≤ b.2 := by
-  have h := fold_bounds (fun b : (ℕ × ℕ) × ℤ => b.2)
-    (fun vj : ℤ × ℕ => [vj.1])
-    (fun best vj => match best with
-      | some b => if b.2 < vj.1 then some ((rowi.2, vj.2), vj.1) else best
-      | none => some ((rowi.2, vj.2), vj.1))
-    (by
-      intro b a v hv
-      obtain ⟨r, rfl, hr⟩ := hv
-      dsimp only
-      split
-      · rename_i h
-        exact ⟨_, rfl, le_trans hr (le_of_lt h)⟩
-      · exact ⟨_, rfl, hr⟩)
-    (by
-      intro b a v hv
-      simp only [List.mem_singleton] at hv
-      subst v
-      cases b with
-      | none => exact ⟨_, rfl, le_rfl⟩
-      | some b =>
-        dsimp only
-        split
-        · exact ⟨_, rfl, le_rfl⟩
-        · rename_i h
-          exact ⟨_, rfl, le_of_not_gt h⟩)
-    rowi.1.zipIdx seed
-  refine ⟨h.1, ?_⟩
-  intro v hv
-  obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.mp hv
-  have hm : (rowi.1[j], j) ∈ rowi.1.zipIdx := by
-    have hm := List.getElem_mem (l := rowi.1.zipIdx) (n := j) (by simp; omega)
-    rw [List.getElem_zipIdx] at hm
-    simpa using hm
-  exact h.2 _ hm _ (by simp)
+private theorem mem_entries (T : List (List ℤ)) (i j : ℕ) (v : ℤ) :
+    ((i, j), v) ∈
+        T.zipIdx.flatMap (fun rowi => rowi.1.zipIdx.map fun vj => ((rowi.2, vj.2), vj.1)) ↔
+      ∃ (hi : i < T.length) (hj : j < T[i].length), v = T[i][j] := by
+  constructor
+  · intro hc
+    obtain ⟨⟨row, i'⟩, hrowi, hc⟩ := List.mem_flatMap.mp hc
+    obtain ⟨⟨v', j'⟩, hvj, he⟩ := List.mem_map.mp hc
+    simp only [Prod.mk.injEq] at he
+    obtain ⟨⟨rfl, rfl⟩, rfl⟩ := he
+    have hrow := List.mem_zipIdx_iff_getElem?.mp hrowi
+    have hv := List.mem_zipIdx_iff_getElem?.mp hvj
+    dsimp only at hrow hv
+    obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp hrow
+    obtain ⟨hj, rfl⟩ := List.getElem?_eq_some_iff.mp hv
+    exact ⟨hi, hj, rfl⟩
+  · rintro ⟨hi, hj, rfl⟩
+    refine List.mem_flatMap.mpr ⟨(T[i], i), ?_, List.mem_map.mpr ⟨(T[i][j], j), ?_, rfl⟩⟩
+    · exact List.mem_zipIdx_iff_getElem?.mpr (List.getElem?_eq_getElem hi)
+    · exact List.mem_zipIdx_iff_getElem?.mpr (List.getElem?_eq_getElem hj)
 
 private theorem argmax_spec (T : List (List ℤ)) (m n : ℕ)
     (hrows : T.length = m + 1) (hcols : ∀ row ∈ T, row.length = n + 1) :
     (argmaxCell T).1 ≤ m ∧ (argmaxCell T).2 ≤ n ∧
       ∀ i j, i ≤ m → j ≤ n →
         cell (tab T) i j ≤ cell (tab T) (argmaxCell T).1 (argmaxCell T).2 := by
-  let update := fun (best : Option ((ℕ × ℕ) × ℤ)) (rowi : List ℤ × ℕ) =>
-    rowi.1.zipIdx.foldl
-      (fun best vj => match best with
-        | some b => if b.2 < vj.1 then some ((rowi.2, vj.2), vj.1) else best
-        | none => some ((rowi.2, vj.2), vj.1)) best
-  let P := fun b : Option ((ℕ × ℕ) × ℤ) =>
-    ∀ r, b = some r → r.1.1 ≤ m ∧ r.1.2 ≤ n ∧ r.2 = cell (tab T) r.1.1 r.1.2
-  have hvalid : P (T.zipIdx.foldl update none) := by
-    apply List.foldlRecOn
-    · intro r hr
-      cases hr
-    · intro best hbest rowi hr
-      obtain ⟨-, hri, hrow⟩ := List.mem_zipIdx hr
-      simp only [Nat.zero_add, Nat.sub_zero] at hri hrow
-      have hrmem : rowi.1 ∈ T := by
-        rw [hrow]
-        exact List.getElem_mem hri
-      have hlen := hcols rowi.1 hrmem
-      change P (rowi.1.zipIdx.foldl _ best)
-      apply List.foldlRecOn
-      · exact hbest
-      · intro b hb vj hv
-        obtain ⟨-, hvj, hval⟩ := List.mem_zipIdx hv
-        simp only [Nat.zero_add, Nat.sub_zero] at hvj hval
-        have hei : rowi.2 ≤ m := by omega
-        have hej : vj.2 ≤ n := by omega
-        have hcell : cell (tab T) rowi.2 vj.2 = vj.1 := by
-          rw [cell_get T rowi.2 vj.2 hri (by simpa [← hrow] using hvj)]
-          simpa [hrow] using hval.symm
-        cases b with
-        | none =>
-          intro r hr
-          cases hr
-          exact ⟨hei, hej, hcell.symm⟩
-        | some b =>
-          dsimp only
-          split
-          · intro r hr
-            cases hr
-            exact ⟨hei, hej, hcell.symm⟩
-          · exact hb
-  have hbound := fold_bounds (fun b : (ℕ × ℕ) × ℤ => b.2)
-    (fun rowi : List ℤ × ℕ => rowi.1) update
-    (fun b a => (row_best_bounds a b).1)
-    (fun b a v hv => (row_best_bounds a b).2 v hv) T.zipIdx none
-  have hentry : ∀ i j, i ≤ m → j ≤ n →
-      ∃ r, T.zipIdx.foldl update none = some r ∧ cell (tab T) i j ≤ r.2 := by
-    intro i j hi hj
-    have hir : i < T.length := by omega
-    have hjr : j < T[i].length := by
-      have := hcols T[i] (List.getElem_mem hir)
-      omega
-    have hm : (T[i], i) ∈ T.zipIdx := by
-      have hm := List.getElem_mem (l := T.zipIdx) (n := i) (by simp; omega)
-      rw [List.getElem_zipIdx] at hm
-      simpa using hm
-    rw [cell_get T i j hir hjr]
-    exact hbound.2 (T[i], i) hm T[i][j] (List.getElem_mem hjr)
-  obtain ⟨r, hr, -⟩ := hentry 0 0 (Nat.zero_le _) (Nat.zero_le _)
-  obtain ⟨hi, hj, hs⟩ := hvalid r hr
-  have he : argmaxCell T = r.1 := by
-    change ((T.zipIdx.foldl update none).map Prod.fst).getD (0, 0) = r.1
-    simp [hr]
+  let E := T.zipIdx.flatMap fun rowi => rowi.1.zipIdx.map fun vj => ((rowi.2, vj.2), vj.1)
+  have hlen : ∀ i (hi : i < T.length), T[i].length = n + 1 := fun i hi =>
+    hcols T[i] (List.getElem_mem hi)
+  have h0 : ((0, 0), T[0][0]'(by rw [hlen 0 (by omega)]; omega)) ∈ E :=
+    (mem_entries T 0 0 _).2 ⟨by omega, by rw [hlen 0 (by omega)]; omega, rfl⟩
+  obtain ⟨⟨⟨i₀, j₀⟩, v₀⟩, hr⟩ : ∃ r, E.argmax Prod.snd = some r := by
+    cases h : E.argmax Prod.snd with
+    | none =>
+      rw [List.argmax_eq_none] at h
+      rw [h] at h0
+      cases h0
+    | some r => exact ⟨r, rfl⟩
+  obtain ⟨hi, hj, hv⟩ := (mem_entries T i₀ j₀ v₀).1 (List.argmax_mem (Option.mem_def.2 hr))
+  have he : argmaxCell T = (i₀, j₀) := by
+    change ((E.argmax Prod.snd).map Prod.fst).getD (0, 0) = (i₀, j₀)
+    rw [hr]
+    rfl
   rw [he]
-  refine ⟨hi, hj, ?_⟩
-  intro i j hi hj
-  obtain ⟨b, hb, hle⟩ := hentry i j hi hj
-  have hbr : b = r := Option.some.inj (hb.symm.trans hr)
-  simpa [hbr, hs] using hle
+  have hjn := hlen i₀ hi
+  refine ⟨show i₀ ≤ m by omega, show j₀ ≤ n by omega, ?_⟩
+  intro i j hi' hj'
+  have hir : i < T.length := by omega
+  have hjr : j < T[i].length := by rw [hlen i hir]; omega
+  rw [cell_get T i j hir hjr, cell_get T i₀ j₀ hi hj, ← hv]
+  exact List.le_of_mem_argmax (f := Prod.snd) ((mem_entries T i j _).2 ⟨hir, hjr, rfl⟩)
+    (Option.mem_def.2 hr)
 
 private theorem sw_maximum {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (xs ys : List α) :
@@ -623,17 +567,20 @@ private theorem sw_maximum {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
       ← List.prefix_iff_eq_take.mp hp.1, ← List.prefix_iff_eq_take.mp hp.2] at h
     exact h
 
-/-- **The local traceback returns an alignment of two infixes with score `swTab`**, for every
-`σ` and `gap`. -/
+/-- **Bounds, validity and score of the local traceback.** For every `σ` and `gap`, the
+Smith–Waterman traceback returns bounds `xStart ≤ xEnd ≤ |xs|` and `yStart ≤ yEnd ≤ |ys|` and an
+alignment of the infixes `(xs.take xEnd).drop xStart` and `(ys.take yEnd).drop yStart` that scores
+`swTab`, the largest cell of the table. -/
 theorem swTraceback_spec {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
-    (swTraceback σ gap xs ys).1.1 ≤ (swTraceback σ gap xs ys).1.2 ∧
-      (swTraceback σ gap xs ys).1.2 ≤ xs.length ∧
-      (swTraceback σ gap xs ys).2.1.1 ≤ (swTraceback σ gap xs ys).2.1.2 ∧
-      (swTraceback σ gap xs ys).2.1.2 ≤ ys.length ∧
-      IsAlignment (swTraceback σ gap xs ys).2.2
-        ((xs.take (swTraceback σ gap xs ys).1.2).drop (swTraceback σ gap xs ys).1.1)
-        ((ys.take (swTraceback σ gap xs ys).2.1.2).drop (swTraceback σ gap xs ys).2.1.1) ∧
-      alignmentScore σ gap (swTraceback σ gap xs ys).2.2 = SmithWaterman.swTab σ gap xs ys := by
+    (swTraceback σ gap xs ys).xStart ≤ (swTraceback σ gap xs ys).xEnd ∧
+      (swTraceback σ gap xs ys).xEnd ≤ xs.length ∧
+      (swTraceback σ gap xs ys).yStart ≤ (swTraceback σ gap xs ys).yEnd ∧
+      (swTraceback σ gap xs ys).yEnd ≤ ys.length ∧
+      IsAlignment (swTraceback σ gap xs ys).alignment
+        ((xs.take (swTraceback σ gap xs ys).xEnd).drop (swTraceback σ gap xs ys).xStart)
+        ((ys.take (swTraceback σ gap xs ys).yEnd).drop (swTraceback σ gap xs ys).yStart) ∧
+      alignmentScore σ gap (swTraceback σ gap xs ys).alignment =
+        SmithWaterman.swTab σ gap xs ys := by
   let e := argmaxCell (swTable σ gap xs ys)
   have hm := sw_maximum σ gap xs ys
   have hw := sw_worker σ gap xs ys e.1 e.2 hm.1 hm.2.1
@@ -644,12 +591,12 @@ theorem swTraceback_spec {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs y
   simp only [e, hm.2.2, alignmentScore_nil, add_zero] at hs
   simpa [swTraceback, e, tab] using hs
 
-/-- **The local traceback is an optimal local alignment** (`gap ≤ 0`): no alignment of any pair
-of infixes of `xs` and `ys` scores more. -/
+/-- **The local traceback is an optimal local alignment.** For `gap ≤ 0`, no alignment of any pair
+of infixes of `xs` and `ys` scores more than the alignment that `swTraceback` returns. -/
 theorem alignmentScore_le_swTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (hgap : gap ≤ 0)
     (xs ys xs' ys' : List α) (hx : xs' <:+: xs) (hy : ys' <:+: ys) (A : Alignment α)
     (hA : IsAlignment A xs' ys') :
-    alignmentScore σ gap A ≤ alignmentScore σ gap (swTraceback σ gap xs ys).2.2 := by
+    alignmentScore σ gap A ≤ alignmentScore σ gap (swTraceback σ gap xs ys).alignment := by
   obtain ⟨px, hxs, hpx⟩ := List.infix_iff_suffix_prefix.mp hx
   obtain ⟨py, hys, hpy⟩ := List.infix_iff_suffix_prefix.mp hy
   have hmem : (xs', ys') ∈ infixPairs xs ys :=
