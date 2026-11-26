@@ -13864,6 +13864,7 @@
   "MathlibExt/Probability/CorrelationInequalities/ReimerDoubledEvents": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Doubled ground set in Reimer's proof"},
   "MathlibExt/Probability/CorrelationInequalities/ReimerDownCompressionPairs": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Down-compression and disjoint pairs"},
   "MathlibExt/Probability/CorrelationInequalities/ReimerFamilyEvents": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Reimer's inequality"},
+  "MathlibExt/Probability/CorrelationInequalities/ReimerInequality": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Reimer's inequality"},
   "MathlibExt/Probability/CorrelationInequalities/ReimerIteratedCompression": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Down-compression and disjoint pairs"},
   "MathlibExt/Probability/CorrelationInequalities/ReimerMixedMonotone": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Reimer's inequality"},
   "MathlibExt/Probability/CorrelationInequalities/ReimerSpecialCases": {"to": "Probability/correlation-inequalities/reimer-inequality", "title": "Reimer's inequality"},
