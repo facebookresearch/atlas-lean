@@ -34,6 +34,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.SZumkeller
 public import MathlibExt.NumberTheory.SumSquaredDivisorsProduct
 public import MathlibExt.NumberTheory.UnitaryDivisorCount
+public import MathlibExt.NumberTheory.SZumkellerIsSZumkellerEvenProps
 
 namespace MetaMathlibExt
 
@@ -49,18 +50,6 @@ Warren). -/
 public theorem_wanted sum_sq_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
     ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 =
       ∏ p ∈ n.primeFactors, (1 + p ^ (2 * n.factorization p))
-
-/-- **Properties of even s-Zumkeller numbers.** Let $n$ be an even s-Zumkeller number and let
-$\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $\sigma_2(n)$ is
-even, some odd prime $p$ divides $n$ with an odd exponent in the prime factorization of $n$, and
-$3n^2 \le 2\sigma_2(n)$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 1. -/
-public theorem_wanted isSZumkeller_even_props (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
-    Even (ArithmeticFunction.sigma 2 n) ∧
-      (∃ p ∈ n.primeFactors, Odd p ∧ Odd (n.factorization p)) ∧
-      3 * n ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n
 
 /-- **Even s-Zumkeller numbers have at least twelve divisors.** If $n$ is an even s-Zumkeller
 number, then $n$ has at least $12$ positive divisors.
