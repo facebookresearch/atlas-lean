@@ -13370,7 +13370,6 @@
   "MathlibExt/NumberTheory/LehmerBoundsFormula": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/LehmerBoundsMonotonicity": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/LeonardoPTilings": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
-  "MathlibExt/NumberTheory/LeonardoPTilingsCardLeonardoPTilings": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LexMinimalExtensionMonoid": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/LeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LeonardoPFibonacciSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},

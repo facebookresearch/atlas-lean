@@ -12,13 +12,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
-public import MathlibExt.NumberTheory.IncompleteLeonardoP
-public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
-public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
-public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoP
 public import MathlibExt.NumberTheory.LeonardoPTilings
-public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
 import Mathlib.Data.Set.Card
 
 /-!
@@ -57,16 +52,6 @@ private theorem map_sum_append_true (p : ℕ) (bs : List Bool) :
     ((bs ++ [true]).map fun b => if b then p + 1 else 1).sum =
       (bs.map fun b => if b then p + 1 else 1).sum + (p + 1) := by
   simp
-
--- Every tail is empty or ends in a last piece.
-private theorem eq_nil_or_append_singleton (bs : List Bool) :
-    bs = [] ∨ ∃ bs' b, bs = bs' ++ [b] := by
-  induction bs with
-  | nil => exact Or.inl rfl
-  | cons b bs ih =>
-      rcases ih with rfl | ⟨bs', b', rfl⟩
-      · exact Or.inr ⟨[], b, rfl⟩
-      · exact Or.inr ⟨b :: bs', b', rfl⟩
 
 -- A tail of weight `0` is empty.
 private theorem eq_nil_of_map_sum_eq_zero (p : ℕ) (bs : List Bool)
@@ -129,7 +114,7 @@ private theorem union_tiltABC (p n : ℕ) :
   simp only [tiltA, tiltB, tiltC, Set.mem_ofPred_eq, Set.mem_union]
   constructor
   · intro ht
-    rcases eq_nil_or_append_singleton t.2 with h | ⟨bs, b, h⟩
+    rcases List.eq_nil_or_concat' t.2 with h | ⟨bs, b, h⟩
     · exact Or.inr ⟨ht, h⟩
     · cases b
       · exact Or.inl (Or.inl ⟨ht, bs, h⟩)
@@ -142,9 +127,7 @@ private theorem disjoint_tiltAB (p n : ℕ) : Disjoint (tiltA p n) (tiltB p n) :
   obtain ⟨-, bs, hbs⟩ := hA
   obtain ⟨-, bs', hbs'⟩ := hBmem
   have h : bs ++ [false] = bs' ++ [true] := by rw [← hbs, hbs']
-  have h2 := congrArg List.reverse h
-  simp only [List.reverse_append] at h2
-  simp at h2
+  simp at h
 
 private theorem disjoint_tiltAC (p n : ℕ) : Disjoint (tiltA p n) (tiltC p n) := by
   rw [Set.disjoint_left]
