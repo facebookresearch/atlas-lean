@@ -1,10 +1,10 @@
 # A regular expression has finitely many derivatives modulo ACI
 
 Let $\sim$ be the least congruence on regular expressions that makes $+$ associative, commutative and idempotent:
-$r + (s + t) \sim (r + s) + t$, $r + s \sim s + r$ and $r + r \sim r$, closed under reflexivity, symmetry, transitivity, $+$, $\cdot$ and $^*$. For every regular expression $r$
-over $\Sigma$, the set $\{[\partial_w r]_\sim : w \in \Sigma^*\}$ of [derivatives](brzozowski-derivatives.md) of $r$ up to $\sim$ is finite (Brzozowski). Since $\sim$-equivalent
+$r + (s + t) \sim (r + s) + t$, $r + s \sim s + r$ and $r + r \sim r$, closed under reflexivity, symmetry, transitivity, $+$, $\cdot$ and $^*$. Extend the [derivative](brzozowski-derivatives.md) by a letter to words by $\partial_\varepsilon r = r$ and $\partial_{wa} r = \partial_a(\partial_w r)$. For every regular expression $r$
+over $\Sigma$, the set $\{[\partial_w r]_\sim : w \in \Sigma^*\}$ of derivatives of $r$ up to $\sim$ is finite (Brzozowski). Since $\sim$-equivalent
 expressions have the same language and $\sim$ is preserved by derivatives, these classes are the states of a deterministic finite automaton
-with initial state $[r]_\sim$, transitions $[s]_\sim \xrightarrow{a} [\partial_a s]_\sim$ and accepting states the nullable classes, which recognizes $L(r)$; without the
+with initial state $[r]_\sim$, transitions $[s]_\sim \xrightarrow{a} [\partial_a s]_\sim$ and accepting states the classes of the expressions $s$ with $\mathrm{matchEpsilon}(s)$, that is, whose language contains the empty word, which recognizes $L(r)$; without the
 quotient the derivatives of $a^*$ are already pairwise distinct. Comparing the derivative automata of two expressions decides their
 equivalence.
 
