@@ -2,7 +2,7 @@
 
 Let $A$ be a real symmetric $n \times n$ matrix with positive diagonal entries, and let $0 < \omega < 2$. Then the [SOR iteration](sor-iteration.md) with parameter $\omega$ converges for every starting vector $x_0$ (and every right-hand side) if and only if $A$ is positive definite.
 
-In particular, for a symmetric positive definite matrix the Gauss–Seidel iteration ($\omega = 1$) always converges. For such matrices the range $0 < \omega < 2$ is also necessary: SOR converges for every starting vector if and only if $0 < \omega < 2$.
+In particular, for a symmetric positive definite matrix the Gauss–Seidel iteration ($\omega = 1$) always converges. For such matrices the range $0 < \omega < 2$ is also necessary: SOR converges for every right-hand side and every starting vector if and only if $0 < \omega < 2$.
 
 ## Depends on
 

@@ -1,0 +1,3 @@
+# Transportation delay between two machines in UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS
+
+An instance of UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS is a pair of an OPEN-SHOP SCHEDULING instance $(m, J, K)$, with machines $0, \dots, m-1$, and a list $T$ of lists of natural numbers, the delay matrix. For machines $k$ and $l$, the transportation delay $t_{kl}$ from machine $k$ to machine $l$ is the entry at position $l$ of the row at position $k$ of $T$, and $0$ when that entry is missing. That the matrix is $m \times m$, symmetric, with zero diagonal, is a condition of a well-formed instance, not of this definition.
