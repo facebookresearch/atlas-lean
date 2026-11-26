@@ -1,0 +1,16 @@
+# Siphon Prime Decomposition
+
+- [Is Siphon](is-siphon.md)
+- [Is Minimal Siphon](is-minimal-siphon.md)
+- [Mono](mono.md)
+- [Ideal I](ideal-i.md)
+- [Ideal J](ideal-j.md)
+- [Ideal M](ideal-m.md)
+- [Prod Ideal](prod-ideal.md)
+- [Var Set](var-set.md)
+- [Is Minimal Var Set](is-minimal-var-set.md)
+- [All Species Occur](all-species-occur.md)
+- [Is Strongly Connected](is-strongly-connected.md)
+- [Minimal siphons from the binomial ideal `I_G`](is-minimal-siphon-iff-ideal-i.md)
+- [Minimal siphons from `J_G`](is-minimal-siphon-iff-ideal-j.md)
+- [Minimal siphons from the monomial ideal `M_G`](is-minimal-siphon-iff-ideal-m.md)
