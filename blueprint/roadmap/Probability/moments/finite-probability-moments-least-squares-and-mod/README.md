@@ -3,12 +3,12 @@
 ## A. Expectation and events
 
 - [Expectation under a finite weight](expectation.md)
-- [Probability of an event under a finite weight](prob.md)
+- [Weight of an event under a finite weight](prob.md)
 - [Expectation of a constant](expectation-const.md)
 - [Expectation is linear](expectation-linear.md)
-- [Expectation of an indicator is the probability of the event](expectation-indicator.md)
-- [Total probability for a two-set partition](prob-inter-add-prob-sdiff.md)
-- [Law of total probability](sum-prob-filter-eq.md)
+- [Expectation of an indicator is the weight of the event](expectation-indicator.md)
+- [Additivity of event weights over a two-set partition](prob-inter-add-prob-sdiff.md)
+- [Additivity of event weights over the fibres of a map](sum-prob-filter-eq.md)
 - [Normalizing a weight by its total gives total mass one](sum-div-sum-eq-one.md)
 - [Expectation under a normalized weight](expectation-div-sum.md)
 
@@ -31,8 +31,8 @@
 ## D. Product weights and independence
 
 - [Expectation of a product under a product weight](expectation-prod-mul.md)
-- [Probabilities of product events under a product weight](prob-prod.md)
-- [Independence implies zero covariance](covariance-prod-eq-zero.md)
+- [Event weights of product events under a product weight](prob-prod.md)
+- [Zero covariance under a product weight](covariance-prod-eq-zero.md)
 - [Zero covariance does not imply independence](exists-covariance-eq-zero-prob-ne.md)
 
 ## E. Comparison with `PMF` moments
@@ -50,11 +50,11 @@
 - [The sample mean as an expectation under the empirical weight](sample-mean-eq-expectation.md)
 - [The divide-by-n sample variance as a variance under the empirical weight](sample-var-eq-variance.md)
 - [The empirical weight of a nonempty finite index set sums to one](sum-inv-card-eq-one.md)
-- [Expectation of a product over distinct i.i.d. coordinates](expectation-pi-prod.md)
-- [The i.i.d. weight of a finite distribution sums to one](sum-pi-prod-eq-one.md)
-- [Each coordinate of an i.i.d. sample has the common law](expectation-pi-eval.md)
-- [Expectation of a product of two distinct i.i.d. coordinates](expectation-pi-eval-mul-eval.md)
-- [Expectation of the sample mean of an i.i.d. sample](expectation-sample-mean.md)
+- [Expectation of a product over distinct coordinates under a product weight](expectation-pi-prod.md)
+- [The product weight of a weight of total one sums to one](sum-pi-prod-eq-one.md)
+- [Each coordinate under a product weight has the common expectation](expectation-pi-eval.md)
+- [Expectation of a product of two distinct coordinates under a product weight](expectation-pi-eval-mul-eval.md)
+- [Expectation of the sample mean under a product weight](expectation-sample-mean.md)
 - [Bessel's correction](expectation-sample-var-unbiased.md)
 
 ## G. Least squares for a line
@@ -104,7 +104,7 @@
 
 ## J. Conditioning on an event of positive mass
 
-- [Weights conditioned on an event of positive probability](cond-weights.md)
+- [Weights conditioned on an event of positive weight](cond-weights.md)
 - [Conditioned weights form a distribution](cond-weights-is-distribution.md)
 - [Probability of an event under conditioned weights](prob-cond-weights.md)
 - [Positive weights give every nonempty event positive mass](prob-pos-iff-nonempty.md)
