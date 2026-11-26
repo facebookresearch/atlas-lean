@@ -32,6 +32,24 @@ example {K : Type*} [Field K] [NumberField K] {ℓ : ℕ} {α : 𝓞 K}
     1 < Ideal.absNorm (Ideal.span {α}) :=
   hα.1
 
+-- Check the published API from the proved module alone.
+example {K : Type*} [Field K] [NumberField K]
+    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n : ℕ)
+    (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K ℓ)
+    (hn : quadPrimeNorm K n ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α})) :
+    ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → Ideal.absNorm P ≤ quadPrimeNorm K n → α ∈ P :=
+  mem_prime_of_mem_quadSchatunowskySet hK hK1 ℓ n α hα hn
+
+-- The cutoff includes ideals of norm exactly `quadPrimeNorm K n`, even when `ℓ = 0`.
+example {K : Type*} [Field K] [NumberField K]
+    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (n : ℕ)
+    (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K 0)
+    (hn : quadPrimeNorm K n < Ideal.absNorm (Ideal.span {α}))
+    (P : Ideal (𝓞 K)) (hP : P.IsPrime) (hPbot : P ≠ ⊥)
+    (hPnorm : Ideal.absNorm P = quadPrimeNorm K n) : α ∈ P :=
+  mem_prime_of_mem_quadSchatunowskySet hK hK1 0 n α hα
+    (by simpa only [Nat.zero_add, pow_one] using hn) P hP hPbot hPnorm.le
+
 -- The proved statement, restated verbatim, is the one in the proved module.
 private theorem quadSchatunowskySet_norm_bound_and_finite_restated {K : Type*} [Field K]
     [NumberField K]
