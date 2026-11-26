@@ -1,3 +1,5 @@
-# Kummer Root
+# Kummer root
 
-A chosen `p`-th root of a unit of `F` in the algebraic closure.
+For a prime `p` and a unit `x` of an intermediate
+field `F` of `AlgebraicClosure ℚ / ℚ`, a chosen `p`-th root of `x` in
+`AlgebraicClosure ℚ`.

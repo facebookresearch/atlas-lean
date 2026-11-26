@@ -2,5 +2,5 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Semilinear Descent](exists-basis-base-change-forall-apply-eq.md)
 - [Kummer Character](kummer-character/README.md)
+- [Semilinear Descent](exists-basis-base-change-forall-apply-eq.md)
