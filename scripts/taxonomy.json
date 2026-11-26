@@ -10521,6 +10521,7 @@
   "MathlibExt/Combinatorics/AccessibleSetsRecurrence": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/Combinatorics/AcyclicLinksIntervalDecomposition": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Partitionable and interval-decomposable complexes"},
   "MathlibExt/Combinatorics/Additive/AlonFurediCover": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
+  "MathlibExt/Combinatorics/Additive/AlternatingSumDifferenceDominated": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Alternating sum- and difference-dominated sets"},
   "MathlibExt/Combinatorics/Additive/AtLeastDistinctSumset": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/BalogSzemerediGowers": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Freiman and Balog–Szemerédi–Gowers theorems"},
   "MathlibExt/Combinatorics/Additive/Basis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Asymptotic additive bases"},
