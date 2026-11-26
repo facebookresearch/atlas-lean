@@ -1,0 +1,3 @@
+# Branch decompositions of width at most K
+
+For an edge list $E = (e_0, \dots, e_{\ell - 1})$ on $\{0, \dots, n - 1\}$ and a natural number $K$, a pair $(T, \tau)$ of a tree $T$ on $\{0, \dots, m - 1\}$ and a map $\tau$ from the positions of $E$ to the vertices of $T$ is a branch decomposition of width at most $K$ when every vertex of $T$ has degree $1$ or $3$, $\tau$ is a bijection onto the leaves of $T$, and for every edge $xy$ of $T$, with $A$ the entries of $E$ whose leaves are reachable from $x$ once $xy$ is removed, at most $K$ vertices of $\{0, \dots, n - 1\}$ are endpoints both of an entry in $A$ and of an entry not in $A$.
