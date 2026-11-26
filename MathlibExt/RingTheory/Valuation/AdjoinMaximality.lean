@@ -1,12 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
 Portions of this file are adapted from:
 
 `Theorems/Thm_Subring_isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valuationSubring.lean`,
@@ -29,6 +21,14 @@ framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
 -/
 
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
 module
 
 public import Mathlib.Algebra.Algebra.Subalgebra.Basic
@@ -42,6 +42,7 @@ public import Mathlib.RingTheory.Noetherian.Basic
 public import Mathlib.RingTheory.Valuation.ValuationSubring
 import Mathlib.RingTheory.DiscreteValuationRing.TFAE
 import Mathlib.RingTheory.Jacobson.Ring
+import Mathlib.RingTheory.LocalRing.LocalSubring
 import Mathlib.RingTheory.Localization.Submodule
 import MathlibExt.RingTheory.Valuation.ValuationSubringNotField
 
@@ -77,107 +78,59 @@ private theorem eq_or_eq_top_of_toSubring_le_of_isDiscreteValuationRing
 
 
 
--- The localization of `S` at `P` inside `F`: the fractions `s / t` with `t ∉ P`. For a `Subring`
--- it equals Mathlib's `(LocalSubring.ofPrime S P).toSubring`; this version accepts any subring
--- class (it is applied to `O[B]`) and its carrier is the fraction condition of the localization
--- hypothesis of `Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valuationSubring`.
-private def locSubring {F : Type*} [Field F] {σ : Type*} [SetLike σ F] [SubringClass σ F] (S : σ) (P
-  : Ideal ↥S) [P.IsPrime] : Subring F where
-  carrier := {x | ∃ s t : ↥S, t ∉ P ∧ x * (t : F) = (s : F)}
-  mul_mem' := by
-    rintro x y ⟨s, t, ht, hx⟩ ⟨s', t', ht', hy⟩
-    refine ⟨s * s', t * t', fun h => (‹P.IsPrime›.mem_or_mem h).elim ht ht', ?_⟩
-    push_cast
-    calc x * y * ((t : F) * t') = (x * t) * (y * t') := by ring
-      _ = s * s' := by rw [hx, hy]
-  one_mem' := ⟨1, 1, fun h => ‹P.IsPrime›.ne_top ((Ideal.eq_top_iff_one _).mpr h), by simp⟩
-  add_mem' := by
-    rintro x y ⟨s, t, ht, hx⟩ ⟨s', t', ht', hy⟩
-    refine ⟨s * t' + s' * t, t * t', fun h => (‹P.IsPrime›.mem_or_mem h).elim ht ht', ?_⟩
-    push_cast
-    calc (x + y) * ((t : F) * t') = (x * t) * t' + (y * t') * t := by ring
-      _ = s * t' + s' * t := by rw [hx, hy]
-  zero_mem' := ⟨0, 1, fun h => ‹P.IsPrime›.ne_top ((Ideal.eq_top_iff_one _).mpr h), by simp⟩
-  neg_mem' := by
-    rintro x ⟨s, t, ht, hx⟩
-    exact ⟨-s, t, ht, by push_cast; rw [neg_mul, hx]⟩
+private theorem mem_ofPrime_of_mul_eq {F : Type*} [Field F] (A : Subring F) (P : Ideal A)
+    [P.IsPrime] {x : F} (s t : A) (ht : t ∉ P) (h : x * (t : F) = (s : F)) :
+    x ∈ (LocalSubring.ofPrime A P).toSubring := by
+  simp only [LocalSubring.ofPrime, LocalSubring.range_toSubring]
+  refine ⟨IsLocalization.mk' (Localization.AtPrime P) s (⟨t, ht⟩ : P.primeCompl), ?_⟩
+  rw [IsLocalization.lift_mk'_spec]
+  simp only [Subring.coe_subtype]
+  rw [← h, mul_comm]
 
-private theorem mem_locSubring {F : Type*} [Field F] {σ : Type*} [SetLike σ F] [SubringClass σ F] (S
-  : σ) (P : Ideal ↥S) [P.IsPrime] (x : F) :
-    x ∈ locSubring S P ↔ ∃ s t : ↥S, t ∉ P ∧ x * (t : F) = (s : F) := Iff.rfl
+private theorem exists_mul_eq_of_mem_ofPrime {F : Type*} [Field F] (A : Subring F)
+    (P : Ideal A) [P.IsPrime] {x : F} (hx : x ∈ (LocalSubring.ofPrime A P).toSubring) :
+    ∃ s t : A, t ∉ P ∧ x * (t : F) = (s : F) := by
+  simp only [LocalSubring.ofPrime, LocalSubring.range_toSubring] at hx
+  obtain ⟨y, rfl⟩ := hx
+  obtain ⟨⟨s, t⟩, rfl⟩ := IsLocalization.mk'_surjective P.primeCompl y
+  refine ⟨s, t, t.2, ?_⟩
+  have h := (IsLocalization.lift_mk'_spec (M := P.primeCompl) (S := Localization.AtPrime P)
+    (g := A.subtype) (by simp [Ideal.primeCompl, not_imp_not]) s _ t).mp rfl
+  simp only [Subring.coe_subtype] at h
+  rw [h, mul_comm]
 
-private theorem le_locSubring {F : Type*} [Field F] {σ : Type*} [SetLike σ F] [SubringClass σ F] (S
-  : σ) (P : Ideal ↥S) [P.IsPrime] : ∀ x : F, x ∈ S → x ∈ locSubring S P :=
-  fun x hx => ⟨⟨x, hx⟩, 1, fun h => ‹P.IsPrime›.ne_top ((Ideal.eq_top_iff_one _).mpr h), by simp⟩
+private theorem inv_notMem_ofPrime {F : Type*} [Field F] (A : Subring F) (P : Ideal A)
+    [P.IsPrime] (p : A) (hp : p ∈ P) (hp0 : (p : F) ≠ 0) :
+    (p : F)⁻¹ ∉ (LocalSubring.ofPrime A P).toSubring := fun hinv =>
+  (IsLocalization.AtPrime.isUnit_to_map_iff (LocalSubring.ofPrime A P).toSubring P p).mp
+    (IsUnit.of_mul_eq_one ⟨_, hinv⟩ (Subtype.ext (mul_inv_cancel₀ hp0))) hp
 
-private theorem inv_not_mem_locSubring {F : Type*} [Field F] {σ : Type*} [SetLike σ F] [SubringClass
-  σ F] (S : σ) (P : Ideal ↥S) [P.IsPrime]
-    (p : ↥S) (hp : p ∈ P) (hp0 : (p : F) ≠ 0) : (p : F)⁻¹ ∉ locSubring S P := by
-  rintro ⟨s, t, ht, h⟩
-  apply ht
-  have : t = p * s := by
-    apply Subtype.ext
-    push_cast
-    rw [← h, ← mul_assoc, mul_inv_cancel₀ hp0, one_mul]
-  rw [this]
-  exact P.mul_mem_right _ hp
-
-private theorem eq_bot_of_locSubring_eq_top {F : Type*} [Field F] {σ : Type*} [SetLike σ F]
-  [SubringClass σ F] (S : σ) (P : Ideal ↥S) [P.IsPrime]
-    (h : locSubring S P = ⊤) : P = ⊥ := by
+private theorem eq_bot_of_ofPrime_eq_top {F : Type*} [Field F] (A : Subring F) (P : Ideal A)
+    [P.IsPrime] (h : (LocalSubring.ofPrime A P).toSubring = ⊤) : P = ⊥ := by
   rw [eq_bot_iff]
   intro p hp
   by_contra hp0
   have hp0' : (p : F) ≠ 0 := fun h0 => hp0 (by rw [Submodule.mem_bot]; exact Subtype.ext h0)
-  exact inv_not_mem_locSubring S P p hp hp0' (h.symm ▸ Subring.mem_top ((p : F)⁻¹))
+  exact inv_notMem_ofPrime A P p hp hp0' (h.symm ▸ Subring.mem_top ((p : F)⁻¹))
 
-private theorem isNoetherianRing_of_presentation {F : Type*} [Field F] {σ : Type*} [SetLike σ F]
-  [SubringClass σ F] (B : σ) [IsNoetherianRing ↥B]
-    (𝔮 : Ideal ↥B) [𝔮.IsPrime] (V : ValuationSubring F)
-    (hV : ∀ f : F, f ∈ V ↔ ∃ b c : ↥B, c ∉ 𝔮 ∧ f * (c : F) = (b : F)) : IsNoetherianRing ↥V := by
-  have hBV : ∀ b : ↥B, (b : F) ∈ V := fun b =>
-    (hV b).mpr ⟨b, 1, fun h => ‹𝔮.IsPrime›.ne_top ((Ideal.eq_top_iff_one _).mpr h), by simp⟩
-  let φ : ↥B →+* ↥V :=
-    { toFun := fun b => ⟨b, hBV b⟩
-      map_one' := rfl
-      map_mul' := fun _ _ => rfl
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-  let : Algebra ↥B ↥V := φ.toAlgebra
-  have hφ : ∀ b : ↥B, ((algebraMap ↥B ↥V b : ↥V) : F) = b := fun _ => rfl
-  have : IsLocalization 𝔮.primeCompl ↥V :=
-    { map_units := by
-        rintro ⟨c, hc⟩
-        have hc' : c ∉ 𝔮 := hc
-        have hcinv : (c : F)⁻¹ ∈ V := by
-          rcases eq_or_ne (c : F) 0 with h0 | h0
-          · rw [h0, inv_zero]; exact zero_mem V
-          · exact (hV _).mpr ⟨1, c, hc', by push_cast; rw [inv_mul_cancel₀ h0]⟩
-        have hc0 : (c : F) ≠ 0 := by
-          intro h0; apply hc'; have : c = 0 := Subtype.ext h0; rw [this]; exact zero_mem 𝔮
-        exact isUnit_iff_exists_inv.mpr ⟨⟨_, hcinv⟩, Subtype.ext (by
-          change (c : F) * (c : F)⁻¹ = 1
-          exact mul_inv_cancel₀ hc0)⟩
-      surj := by
-        intro v
-        obtain ⟨b, c, hc, h⟩ := (hV v).mp v.2
-        exact ⟨⟨b, ⟨c, hc⟩⟩, Subtype.ext h⟩
-      exists_of_eq := by
-        intro x y h
-        have h' : ((algebraMap ↥B ↥V x : ↥V) : F) = ((algebraMap ↥B ↥V y : ↥V) : F) := congrArg (fun
-          w : ↥V => (w : F)) h
-        rw [hφ, hφ] at h'
-        exact ⟨1, by rw [Subtype.ext h']⟩ }
-  exact IsLocalization.isNoetherianRing 𝔮.primeCompl ↥V inferInstance
+private theorem isNoetherianRing_of_presentation {F : Type*} [Field F] (A : Subring F)
+    [IsNoetherianRing A] (P : Ideal A) [P.IsPrime] (V : ValuationSubring F)
+    (hV : ∀ f : F, f ∈ V ↔ ∃ b c : A, c ∉ P ∧ f * (c : F) = (b : F)) : IsNoetherianRing ↥V := by
+  have hVR : V.toSubring = (LocalSubring.ofPrime A P).toSubring := by
+    ext f
+    exact (hV f).trans ⟨fun ⟨b, c, hc, h⟩ => mem_ofPrime_of_mul_eq A P b c hc h,
+      exists_mul_eq_of_mem_ofPrime A P⟩
+  have : IsNoetherianRing (LocalSubring.ofPrime A P).toSubring :=
+    IsLocalization.isNoetherianRing P.primeCompl _ inferInstance
+  exact isNoetherianRing_of_ringEquiv _ (RingEquiv.subringCongr hVR).symm
 
-private theorem isDVR_or_eq_top_of_presentation {F : Type*} [Field F] {σ : Type*} [SetLike σ F]
-  [SubringClass σ F] (B : σ) [IsNoetherianRing ↥B]
-    (𝔮 : Ideal ↥B) [𝔮.IsPrime] (V : ValuationSubring F)
-    (hV : ∀ f : F, f ∈ V ↔ ∃ b c : ↥B, c ∉ 𝔮 ∧ f * (c : F) = (b : F)) :
+private theorem isDVR_or_eq_top_of_presentation {F : Type*} [Field F] (A : Subring F)
+    [IsNoetherianRing A] (P : Ideal A) [P.IsPrime] (V : ValuationSubring F)
+    (hV : ∀ f : F, f ∈ V ↔ ∃ b c : A, c ∉ P ∧ f * (c : F) = (b : F)) :
     IsDiscreteValuationRing ↥V ∨ V = ⊤ := by
   by_cases hf : IsField ↥V
   · exact Or.inr (not_ne_iff.mp fun hV => ValuationSubring.not_isField_of_ne_top F hV hf)
-  · have hN : IsNoetherianRing ↥V := isNoetherianRing_of_presentation B 𝔮 V hV
+  · have hN : IsNoetherianRing ↥V := isNoetherianRing_of_presentation A P V hV
     have : ValuationRing ↥V := inferInstance
     have htf := IsDiscreteValuationRing.TFAE (R := ↥V) hf
     exact Or.inl ((htf.out 1 2).mpr (inferInstance : ValuationRing ↥V))
@@ -223,21 +176,22 @@ private theorem blockB
     convert h1 using 1
     rfl
   obtain ⟨V, hV, hndom⟩ := hcomp 𝔮 h𝔮p hle h𝔮
-  let R := locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ
-  have hR : ∀ f : F, f ∈ R ↔ ∃ s t : ↥(Algebra.adjoin ↥O (B : Set F)), t ∉ ℜ ∧ f * (t : F) = (s : F)
-    := fun f => mem_locSubring _ ℜ f
+  let R := (LocalSubring.ofPrime (Algebra.adjoin ↥O (B : Set F)).toSubring ℜ).toSubring
   have hVR : V.toSubring ≤ R := by
     intro f hf
     obtain ⟨b, c, hc, h⟩ := (hV f).mp hf
-    exact (hR f).mpr ⟨inclB O B b, inclB O B c, hc, by simpa using h⟩
+    exact mem_ofPrime_of_mul_eq (Algebra.adjoin ↥O (B : Set F)).toSubring ℜ (inclB O B b)
+      (inclB O B c) hc (by simpa using h)
   have hOS : ∀ x : F, x ∈ O → x ∈ (Algebra.adjoin ↥O (B : Set F)) := fun x hx => by
     have := Subalgebra.algebraMap_mem (Algebra.adjoin ↥O (B : Set F)) (⟨x, hx⟩ : ↥O); exact this
-  have hOR : O ≤ R := fun x hx => le_locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ x (hOS x hx)
+  have hOR : O ≤ R := fun x hx =>
+    LocalSubring.le_ofPrime (Algebra.adjoin ↥O (B : Set F)).toSubring ℜ (hOS x hx)
   have hmR : ∀ g : ↥O, g ∈ maximalIdeal ↥O → (⟨(g : F), hOS g g.2⟩ : ↥(Algebra.adjoin ↥O (B : Set
     F))) ∈ ℜ := by
     intro g hg
     exact (hℜ g).mp hg
-  rcases isDVR_or_eq_top_of_presentation B 𝔮 V hV with hDVR | hVtop
+  rcases @isDVR_or_eq_top_of_presentation F _ B.toSubring ‹IsNoetherianRing ↥B› 𝔮 h𝔮p V hV with
+    hDVR | hVtop
   · have := hDVR
     rcases eq_or_eq_top_of_toSubring_le_of_isDiscreteValuationRing V R hVR with hRV | hRtop
     · apply hndom
@@ -250,9 +204,10 @@ private theorem blockB
         intro h1
         have hinv : (g : F)⁻¹ ∈ V := by apply V.mem_of_valuation_le_one; rw [map_inv₀, h1, inv_one]
         have hinvR : (g : F)⁻¹ ∈ R := hVR hinv
-        exact inv_not_mem_locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ ⟨(g : F), hOS g g.2⟩ (hmR g
-          hg) h0 hinvR
-    · have hℜbot : ℜ = ⊥ := eq_bot_of_locSubring_eq_top (Algebra.adjoin ↥O (B : Set F)) ℜ hRtop
+        exact inv_notMem_ofPrime (Algebra.adjoin ↥O (B : Set F)).toSubring ℜ ⟨(g : F), hOS g g.2⟩
+          (hmR g hg) h0 hinvR
+    · have hℜbot : ℜ = ⊥ :=
+        eq_bot_of_ofPrime_eq_top (Algebra.adjoin ↥O (B : Set F)).toSubring ℜ hRtop
       have h𝔮bot : 𝔮 = ⊥ := by
         rw [h𝔮def, hℜbot, Ideal.comap_bot_of_injective]
         intro x y hxy; exact Subtype.ext (congrArg (fun w : ↥(Algebra.adjoin ↥O (B : Set F)) => (w :
@@ -286,8 +241,8 @@ private theorem blockB
     have h0 : (g : F) ≠ 0 := by
       intro h0; apply hgn; rw [h0, ValuationSubring.mem_nonunits_iff, map_zero]; exact zero_lt_one
     have hinvR : (g : F)⁻¹ ∈ R := hVR (hVtop ▸ ValuationSubring.mem_top _)
-    exact inv_not_mem_locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ ⟨(g : F), hOS g g.2⟩ (hmR g hg)
-      h0 hinvR
+    exact inv_notMem_ofPrime (Algebra.adjoin ↥O (B : Set F)).toSubring ℜ ⟨(g : F), hOS g g.2⟩
+      (hmR g hg) h0 hinvR
 
 
 /-- Maximality of a prime of `O[B]` lying over the maximal ideal of `O`.

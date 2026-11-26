@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The consumers reproduce the theorem type from
+`Theorems/Thm_Subring_isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valuationSubring.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2, generalized from `Type` to `Type*`.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 public import MathlibExt.RingTheory.Valuation.AdjoinMaximality
