@@ -20,4 +20,4 @@ For the arrival curve operator it is the packetized greedy shaper; for a leaky b
 
 ## Sources
 
-- J.-Y. Le Boudec, "A theory of traffic regulators for deterministic networks with application to interleaved regulators", *IEEE/ACM Transactions on Networking* 26(6):2721–2733, 2018; arXiv:1801.08477, <https://arxiv.org/abs/1801.08477>, Section IV.A, Theorem 2, equation (44), with its proof in the appendix, and Section IV.C (the packetized greedy shaper and the leaky bucket shaper).
+- J.-Y. Le Boudec, "A theory of traffic regulators for deterministic networks with application to interleaved regulators", *IEEE/ACM Transactions on Networking* 26(6):2721–2733, 2018; arXiv:1801.08477, <https://arxiv.org/abs/1801.08477>; section, theorem and equation numbers are those of the arXiv version, Section IV.A, Theorem 2, equation (44), with its proof in the appendix, and Section IV.C (the packetized greedy shaper and the leaky bucket shaper).

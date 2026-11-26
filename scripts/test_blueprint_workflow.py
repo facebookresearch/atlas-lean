@@ -76,7 +76,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         # skip: the card and Mathlib pages jobs have no condition, and the two deployment jobs only the publication one.
         later = {"mathlib-pages": ["changes", "wiki", "mathlib"], "cards": "wiki",
                  "deploy": ["changes", "wiki"], "promote": ["changes", "deploy", "mathlib-pages"]}
-        self.assertEqual(set(jobs), {"changes", "tests", "wiki", "mathlib", *later})
+        self.assertEqual(set(jobs), {"changes", "scope", "tests", "wiki", "mathlib", *later})
         for name, needs in later.items():
             self.assertEqual(jobs[name]["needs"], needs)
         for name in ("mathlib-pages", "cards"):
@@ -123,7 +123,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh", "scripts/cards.py",
             # Their tests.
             "scripts/test_generate_wiki_navigation.py", "scripts/test_generate_wiki_docstrings.py",
-            "scripts/test_sync_wiki.py", "scripts/test_import_mathgraph.py",
+            "scripts/test_sync_wiki.py", "scripts/test_graph_batch.py", "scripts/test_import_mathgraph.py",
             "scripts/test_extract_v2_lean_dependencies.py", "scripts/test_extract_mathlib_graph.py",
             "scripts/test_check_blueprint_site_navigation.py", "scripts/test_site_chrome.py",
             "scripts/test_blueprint_workflow.py", "scripts/test_blueprint_taxonomy.py",
@@ -361,8 +361,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         # their own, with the steps of the jobs that own them.
         jobs = self.workflow["jobs"]
         tests = jobs["tests"]
-        self.assertEqual((tests["name"], tests["needs"], tests["if"]),
-                         ("test the site scripts", "changes", "needs.changes.outputs.build == 'false'"))
+        self.assertEqual((tests["name"], tests["needs"], tests["if"]), (
+            "test the site scripts", ["changes", "scope"],
+            "${{ !cancelled() && needs.changes.outputs.build == 'false' && needs.scope.outputs.site_tests != 'false' }}"))
         self.assertNotIn("permissions", tests)
         # The wiki job's first three steps: its checkout, the Autoform pin and uv.
         self.assertEqual(tests["steps"][:3], jobs["wiki"]["steps"][:3])
@@ -1167,13 +1168,31 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main"):
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main",
+                  changed: str | None = None, event: str = "pull_request", lean: bool = True):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
-        and exits with *status*; returns the result, the job summary and the arguments uv got."""
+        and exits with *status*, in a repository whose HEAD changes the files *changed* names, beside a README and,
+        when *lean*, a Lean file, from the commit BASE names; with a git that fails when *changed* is None. Returns the
+        result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         (root / "bin").mkdir()
+        base = "b" * 40
+        if changed is None:
+            (root / "bin" / "git").write_text("#!/bin/sh\nexit 128\n")
+            (root / "bin" / "git").chmod(0o755)
+        else:
+            git = lambda *args: subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t",
+                                                *args], check=True, capture_output=True, text=True).stdout.strip()
+            git("init", "-q", "-b", "main")
+            git("commit", "-q", "--allow-empty", "-m", "base")
+            base = git("rev-parse", "HEAD")
+            for path in [*(["MathlibExt/Algebra/Changed.lean"] if lean else []), "README.md", *changed.split()]:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text("changed\n")
+            git("add", "-A")
+            git("commit", "-q", "-m", "change")
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
@@ -1183,9 +1202,10 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         summary = root / "summary.md"
         result = subprocess.run(
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
-            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
+            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": base,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch,
+                                      "EVENT": event})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
@@ -1235,6 +1255,53 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
             self.assertIn(f"The check could not run (exit {status})", summary)
             self.assertNotIn("merge-base", summary)
+
+    def test_a_lean_change_or_a_merge_group_is_held_only_to_the_errors(self):
+        # A Lean pull request changes no graph file but links files, which it changes only for the declarations it
+        # renames, moves or removes, and a merge group holds others' changes: their missing pages are the next
+        # graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles), so the check passes and asks for no sync.
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        pages = '{"in_step": false, "errors": [], "missing": ["Ext.fresh"], "changed": ["Ext.edited (Algebra/edited.md)"]}'
+        for changed, event in (("", "pull_request"), ("blueprint/links/Algebra.jsonl", "pull_request"),
+                               ("blueprint/roadmap/Algebra/fresh.md", "merge_group")):
+            with self.subTest(changed=changed, event=event):
+                result, summary, _ = self.run_check(1, pages, changed=changed, event=event)
+                self.assertEqual(result.returncode, 0)
+                self.assertNotIn("::warning", result.stdout)
+                self.assertIn("the next graph-sync\nbatch writes its new declarations' pages", summary)
+                self.assertNotIn("merge-base", summary)
+                # The pages whose docstring changed are still listed, for the reviewer.
+                self.assertIn("for the reviewer to check", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+        # What the errors name is the change's to fix, by hand: the summary shows them alone, with no command that
+        # would write the sync's output.
+        errors = ('{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone", "two\\n```"], '
+                  '"changed": ["Ext.edited (Algebra/edited.md)"]}')
+        for event in ("pull_request", "merge_group"):
+            with self.subTest(event=event):
+                result, summary, _ = self.run_check(1, errors, changed="", event=event)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind",
+                              result.stdout)
+                self.assertIn("\n    blueprint/links/Algebra.jsonl:3 links Ext.gone\n    two\n    ```\n", summary)
+                self.assertIn("A Lean pull request runs no sync", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+                self.assertNotIn("In step: no", summary)
+                self.assertNotIn("error: a link", summary)
+                self.assertNotIn("merge-base", summary)
+        # A graph pull request, which changes other graph files (the links' defaults or a page count) or links files
+        # with no Lean, or a change git cannot read, is held to the sync.
+        for changed, lean in (("blueprint/links/Algebra.jsonl scripts/taxonomy.json", True),
+                              ("blueprint/links/_defaults.json", True), ("blueprint/roadmap/Algebra/fresh.md", True),
+                              ("blueprint/links/Algebra.jsonl", False), (None, True)):
+            with self.subTest(changed=changed, lean=lean):
+                result, summary, _ = self.run_check(1, pages, changed=changed, lean=lean)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::The graph is not in step", result.stdout)
+                self.assertIn('--base "$(git merge-base FETCH_HEAD HEAD)"', summary)
+                self.assertIn("    In step: no\n", summary)
+                self.assertNotIn("for the reviewer to check", summary)
 
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's

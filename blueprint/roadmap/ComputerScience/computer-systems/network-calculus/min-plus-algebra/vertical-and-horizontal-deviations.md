@@ -6,7 +6,7 @@ $$
 v(f, g) = \sup_{t \ge 0} \{ f(t) - g(t) \}, \qquad h(f, g) = \sup_{t \ge 0} \inf \{ d \ge 0 : f(t) \le g(t + d) \} .
 $$
 
-So $h(f, g)$ is the smallest $d \ge 0$ with $f(t) \le g(t + d)$ for all $t \ge 0$, and $v(f, g) = (f \oslash g)(0)$, $h(f, g) = \inf\{d \ge 0 : (f \oslash g)(-d) \le 0\}$.
+So $h(f, g)$ is the infimum of the $d \ge 0$ with $f(t) \le g(t + d)$ for all $t \ge 0$; the infimum need not be attained (for $f = 1$ on $[0, \infty)$ and $g = 1$ on $(1, \infty)$, $0$ elsewhere, $h(f, g) = 1$ but $f(0) > g(1)$), and $v(f, g) = (f \oslash g)(0)$, $h(f, g) = \inf\{d \ge 0 : (f \oslash g)(-d) \le 0\}$.
 
 ## Depends on
 

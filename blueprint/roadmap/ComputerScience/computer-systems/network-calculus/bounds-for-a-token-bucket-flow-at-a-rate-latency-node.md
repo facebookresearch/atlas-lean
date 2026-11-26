@@ -1,6 +1,6 @@
 # Bounds for a token-bucket flow at a rate-latency node
 
-Assume a flow with the affine [arrival curve](arrival-curves.md) $\gamma_{r,b}$ is served by a node that offers the rate-latency [service curve](service-curves.md) $\beta_{R,T}$, with $r \le R$. Then the backlog is at most $b + rT$, the virtual delay is at most $T + b/R$, and the output flow has the arrival curve $\gamma_{r, b + rT}$: the node increases the burstiness of the flow by $rT$. If $r > R$, the backlog and delay bounds are infinite. With $T = 0$, a flow constrained by one leaky bucket and served at a constant rate $R \ge r$ needs a buffer of $b$: $r$ is the minimum rate required to serve the flow, and $b$ the buffer required to serve it at any constant rate at least $r$.
+Assume a flow with the affine [arrival curve](arrival-curves.md) $\gamma_{r,b}$ is served by a node that offers the rate-latency [service curve](service-curves.md) $\beta_{R,T}$, with $r \le R$ and $R > 0$. Then the backlog is at most $b + rT$, the virtual delay is at most $T + b/R$, and the output flow has the arrival curve $\gamma_{r, b + rT}$: the node increases the burstiness of the flow by $rT$. If $r > R$, the backlog and delay bounds are infinite. With $T = 0$, a flow constrained by one leaky bucket and served at a constant rate $R \ge r$ needs a buffer of $b$: $r$ is the minimum rate required to serve the flow, and $b$ the buffer required to serve it at any constant rate at least $r$.
 
 ## Depends on
 

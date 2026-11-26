@@ -18,4 +18,4 @@ the worst-case delay of the combination, over all packets, is that of $S$ alone.
 
 ## Sources
 
-- J.-Y. Le Boudec, "A theory of traffic regulators for deterministic networks with application to interleaved regulators", *IEEE/ACM Transactions on Networking* 26(6):2721–2733, 2018; arXiv:1801.08477, <https://arxiv.org/abs/1801.08477>, Section V.B, Theorem 5, equation (50), with its proof.
+- J.-Y. Le Boudec, "A theory of traffic regulators for deterministic networks with application to interleaved regulators", *IEEE/ACM Transactions on Networking* 26(6):2721–2733, 2018; arXiv:1801.08477, <https://arxiv.org/abs/1801.08477>; section, theorem and equation numbers are those of the arXiv version, Section V.B, Theorem 5, equation (50), with its proof.

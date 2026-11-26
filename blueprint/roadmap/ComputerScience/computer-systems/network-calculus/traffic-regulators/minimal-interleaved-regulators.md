@@ -18,4 +18,4 @@ The FIFO system mapping $(A, L, F)$ to $(D, L, F)$, the *minimal interleaved reg
 
 ## Sources
 
-- J.-Y. Le Boudec, "A theory of traffic regulators for deterministic networks with application to interleaved regulators", *IEEE/ACM Transactions on Networking* 26(6):2721–2733, 2018; arXiv:1801.08477, <https://arxiv.org/abs/1801.08477>, Section V.A, Theorem 4, equation (49), with its proof in the appendix and the head-of-line implementation described after it.
+- J.-Y. Le Boudec, "A theory of traffic regulators for deterministic networks with application to interleaved regulators", *IEEE/ACM Transactions on Networking* 26(6):2721–2733, 2018; arXiv:1801.08477, <https://arxiv.org/abs/1801.08477>; section, theorem and equation numbers are those of the arXiv version, Section V.A, Theorem 4, equation (49), with its proof in the appendix and the head-of-line implementation described after it.

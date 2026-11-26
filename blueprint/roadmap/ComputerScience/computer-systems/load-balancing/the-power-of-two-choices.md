@@ -14,5 +14,4 @@ with high probability. Compared with the order $\ln n/\ln \ln n$ for one random 
 
 ## Sources
 
-- M. Mitzenmacher, *The Power of Two Choices in Randomized Load Balancing*, PhD thesis, University of California, Berkeley, 1996, <https://www.eecs.harvard.edu/~michaelm/postscripts/mythesis.pdf>, Section 1.2, Theorem 1.1 with its proof, presented there following Azar, Broder, Karlin and Upfal.
-- Y. Azar, A. Z. Broder, A. R. Karlin and E. Upfal, "Balanced allocations", *SIAM Journal on Computing* 29(1):180–200, 1999, where the theorem is proved.
+- Y. Azar, A. Z. Broder, A. R. Karlin and E. Upfal, "Balanced allocations", *SIAM Journal on Computing* 29(1):180–200, 1999, Section 3, Theorem 3.2 with its proof, and Section 1, Theorem 1.1 (the general case $m \ge n$ and the comparison with one choice).

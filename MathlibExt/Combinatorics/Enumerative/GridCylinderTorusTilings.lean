@@ -339,6 +339,24 @@ public theorem rectangularTorus_identity {T : Type*} [Fintype T] [DecidableEq T]
         (fun c => ∑ d ∈ n.divisors, d.totient * count c d)
     _ = _ := by simp only [Finset.mul_sum, mul_assoc, count]
 
+/-- **Square-torus fixed points of the identity.** Let $n$ be a positive integer, let $T$ be a
+finite set of tile designs, and let $\sigma$ be the identity permutation of $T$. Let $S$ be the
+sum, over all shifts $v \in (\mathbb{Z}/n\mathbb{Z})^2$, of the number of tilings
+$F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(c + v) = \sigma(F(c))$ for every cell $c$. Then
+$S = \sum_{d_1 \mid n} \sum_{d_2 \mid n} \varphi(d_1) \, \varphi(d_2) \,
+|T|^{n^2/\operatorname{lcm}(d_1, d_2)}$, where $d_1$ and $d_2$ run over the positive divisors of
+$n$ and $\varphi$ is Euler's totient function.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 38. -/
+public theorem squareTorus_identity {T : Type*} [Fintype T] [DecidableEq T]
+    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
+    torusShiftSum n n id σ =
+      ∑ d₁ ∈ n.divisors, ∑ d₂ ∈ n.divisors,
+        Nat.totient d₁ * Nat.totient d₂ *
+          Fintype.card T ^ (n ^ 2 / Nat.lcm d₁ d₂) := by
+  simpa only [pow_two] using rectangularTorus_identity n n σ hσ
+
 /-- **Solution of $x = -1-x-a$ modulo odd $n$.** Let $n$ be a positive odd integer and
 $a \in \mathbb{Z}/n$. Then the set of $x \in \mathbb{Z}/n$ with $x = -1-x-a$ is the singleton
 $\{k(-1-a)\}$, where $k$ is the residue mod $n$ of the integer $(n+1)/2$.

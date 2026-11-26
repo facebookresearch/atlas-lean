@@ -6,5 +6,5 @@ A *preemptive schedule* of finitely many jobs $J_1, \dots, J_n$ on one processor
 
 ## Sources
 
-- J. Goossens, S. Funk and S. Baruah, *Priority-driven scheduling of periodic task systems on multiprocessors*, technical report TR01-024, Department of Computer Science, University of North Carolina at Chapel Hill, <http://www.cs.unc.edu/techreports/01-024.pdf>; published in *Real-Time Systems* 25(2–3):187–205, 2003, Section 2.1: jobs $J_j = (r_j, e_j, d_j)$ that need $e_j$ units of execution over $[r_j, d_j)$.
+- J. Goossens, S. Funk and S. Baruah, *Priority-driven scheduling of periodic task systems on multiprocessors*, technical report TR01-024, Department of Computer Science, University of North Carolina at Chapel Hill, <http://www.cs.unc.edu/techreports/01-024.pdf>; published in *Real-Time Systems* 25(2–3):187–205, 2003; the section, theorem and footnote numbers below are those of the technical report, Section 2.1: jobs $J_j = (r_j, e_j, d_j)$ that need $e_j$ units of execution over $[r_j, d_j)$.
 - M. Sojka, *Deadline-driven scheduling*, lecture slides for Real-Time Systems, Czech Technical University in Prague, 22 November 2023, <https://rtime.felk.cvut.cz/psr/prednasky/3/03-rts.pdf>, slide 7: independent jobs with arbitrary release times and deadlines, preemption allowed.

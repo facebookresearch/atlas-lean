@@ -1,6 +1,6 @@
 # Min-plus convolution and deconvolution
 
-Let $\mathcal F$ be the set of wide-sense increasing functions $f : \mathbb R \to [0, +\infty]$ (so $f(s) \le f(t)$ for $s \le t$) with $f(t) = 0$ for $t < 0$; in continuous time the functions are taken left-continuous, and in discrete time $t$ ranges over the integers. Sums and pointwise minima of functions are taken pointwise, and $f \le g$ means $f(t) \le g(t)$ for all $t$.
+Let $\mathcal F$ be the set of wide-sense increasing functions $f : \mathbb R \to [0, +\infty]$ (so $f(s) \le f(t)$ for $s \le t$) with $f(t) = 0$ for $t < 0$, with time continuous and no continuity assumed. The source also takes these functions left-continuous; that convention is not used here, since it would exclude $\varepsilon$ (equal to $+\infty$ for $t \ge 0$) and right-continuous flows, and sub-additive closures need not preserve it. Time is continuous on these pages; the source's discrete-time setting, with integer parameters, is not treated. Sums and pointwise minima of functions are taken pointwise, and $f \le g$ means $f(t) \le g(t)$ for all $t$.
 
 The *min-plus convolution* of $f, g \in \mathcal F$ is
 
