@@ -62,7 +62,7 @@ public theorem stichtenothGenusExists_of_isCurveOver {K : Type*} {F : Type*} [Fi
     (hC : ConstantsAreBase K F) : StichtenothGenusExists K F := by
   classical
   obtain ⟨x, htr, hfd, hsep⟩ := IsCurveOver.exists_separating_transcendental (K := K) (F := F)
-  obtain ⟨_, _, _, _⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
+  obtain ⟨_, _, _, _, -, -⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
   exact RationalFunctionField.stichtenothGenusExists K F hC
 
 end AlgebraicCurve
