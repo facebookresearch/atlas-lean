@@ -11,9 +11,7 @@ module
 public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Analysis.Complex.Polynomial.Basic
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import MathlibExt.NumberTheory.Recurrences.DecomposableFormLinearRecurrenceExistsDecomposableFormEvalEqPowOfLinearRecurrence
 
 /-!
 # Decomposable forms on consecutive terms of a linear recurrence
@@ -29,122 +27,6 @@ Linear Recurrences*, Journal of Integer Sequences 27 (2024), Article 24.3.5, Cor
 
 namespace MetaMathlibExt
 
-private def bilateral (E : LinearRecurrence ℂ) : Submodule ℂ (ℤ → ℂ) where
-  carrier := {u | ∀ n : ℤ, u (n + E.order) = ∑ i, E.coeffs i * u (n + (i : ℕ))}
-  zero_mem' := by simp
-  add_mem' {u v} hu hv n := by
-    simp [hu n, hv n, mul_add, Finset.sum_add_distrib]
-  smul_mem' a u hu n := by
-    simp [hu n, Finset.mul_sum, mul_left_comm]
-
-private def tail (E : LinearRecurrence ℂ) (n : ℤ) : bilateral E →ₗ[ℂ] E.solSpace where
-  toFun u := ⟨fun t ↦ u.val (n + t), fun t ↦ by simpa [add_assoc] using u.prop (n + t)⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-
-private def shift (E : LinearRecurrence ℂ) : Module.End ℂ E.solSpace where
-  toFun u := ⟨fun t ↦ u.val (1 + t), fun t ↦ by simpa [add_assoc] using u.prop (1 + t)⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
-
-private theorem shift_pow_tail (E : LinearRecurrence ℂ) (u : bilateral E) (n : ℤ)
-    (k : ℕ) : (shift E ^ k) (tail E n u) = tail E (n + k) u := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [pow_succ', mul_apply_eq_comp, ih]
-    ext t
-    change u.val (n + k + ↑(1 + t)) = u.val (n + ↑(k + 1) + t)
-    apply congrArg u.val
-    push_cast
-    omega
-
-private theorem ker_tail (E : LinearRecurrence ℂ) : (tail E 0).ker = ⊥ := by
-  let := Module.Finite.of_basis E.basis
-  let d := Module.finrank ℂ E.solSpace
-  apply LinearMap.ker_eq_bot'.2
-  intro u hu
-  ext n
-  by_cases hn : 0 ≤ n
-  · simpa [tail, Int.toNat_of_nonneg hn] using
-      congrArg (fun v : E.solSpace ↦ v.val n.toNat) hu
-  · let m := (-n).toNat
-    have hm : (m : ℤ) = -n := Int.toNat_of_nonneg (by omega)
-    have hk : tail E (n - d) u ∈ (shift E ^ (d + m)).ker := by
-      rw [LinearMap.mem_ker, shift_pow_tail, Nat.cast_add, hm]
-      have heq : n - ↑d + (↑d + -n) = 0 := by omega
-      rwa [heq]
-    have hz := Module.End.ker_pow_le_ker_pow_finrank (shift E) (d + m) hk
-    change (shift E ^ d) (tail E (n - d) u) = 0 at hz
-    rw [shift_pow_tail, sub_add_cancel] at hz
-    simpa [tail] using congrArg (fun v : E.solSpace ↦ v.val 0) hz
-
-private theorem bilateral_geometric_step (E : LinearRecurrence ℂ) (u : bilateral E)
-    (r : ℂ) (hnat : ∀ t : ℕ, u.val t = r ^ t) (n : ℤ) :
-    u.val (n + 1) = u.val n * r := by
-  let u' : bilateral E := ⟨fun m ↦ u.val (1 + m), fun m ↦ by
-    simpa [add_assoc] using u.prop (1 + m)⟩
-  have hstep : u' = r • u := by
-    apply LinearMap.ker_eq_bot.1 (ker_tail E)
-    ext t
-    change u.val (1 + (0 + (t : ℤ))) = r * u.val (0 + (t : ℤ))
-    simpa [pow_succ', hnat, add_comm (1 : ℤ)] using hnat (t + 1)
-  simpa [u', add_comm, mul_comm] using congrArg (fun w : bilateral E ↦ w.val n) hstep
-
-private theorem bilateral_geometric_eq_zpow (E : LinearRecurrence ℂ) (u : bilateral E)
-    (r : ℂ) (hnat : ∀ t : ℕ, u.val t = r ^ t) (n : ℤ) : u.val n = r ^ n := by
-  have step := bilateral_geometric_step E u r hnat
-  have hzero : u.val 0 = 1 := by simpa using hnat 0
-  have hr₀ : r ≠ 0 := by
-    intro hr₀
-    simpa [hr₀, hzero] using step (-1)
-  induction n using Int.induction_on with
-  | zero => simpa using hzero
-  | succ n ih => rw [step, ih, zpow_add_one₀ hr₀]
-  | pred n ih =>
-    apply mul_right_cancel₀ hr₀
-    rw [← step, ← zpow_add_one₀ hr₀, sub_add_cancel, ih]
-
-private theorem root_linear_form (E : LinearRecurrence ℂ) (g : Fin E.order → bilateral E)
-    (hind : LinearIndependent ℂ g) (r : ℂ) (hr : E.charPoly.IsRoot r) :
-    ∃ L : MvPolynomial (Fin E.order) ℂ, L.IsHomogeneous 1 ∧
-      ∀ n : ℤ, MvPolynomial.eval (fun j ↦ (g j).val n) L = r ^ n := by
-  classical
-  let := Module.Finite.of_basis E.basis
-  let B := basisOfLinearIndependentOfCardEqFinrank' _ (hind.map' _ (ker_tail E))
-    (Module.finrank_eq_card_basis E.basis).symm
-  let v : E.solSpace := ⟨fun t ↦ r ^ t, (E.geom_sol_iff_root_charPoly r).2 hr⟩
-  let c := B.repr v
-  let u : bilateral E := ∑ j, c j • g j
-  have hu : tail E 0 u = v := by
-    simpa [u, c, B, Function.comp_def] using B.sum_repr v
-  have hnat (t : ℕ) : u.val t = r ^ t := by
-    simpa [tail, v] using congrArg (fun w : E.solSpace ↦ w.val t) hu
-  refine ⟨∑ j, MvPolynomial.C (c j) * MvPolynomial.X j, ?_, fun n ↦ ?_⟩
-  · exact MvPolynomial.IsHomogeneous.sum _ _ _ fun j _ ↦
-      MvPolynomial.isHomogeneous_C_mul_X _ _
-  · simpa [u, Submodule.coe_sum, Finset.sum_apply] using
-      bilateral_geometric_eq_zpow E u r hnat n
-
-private theorem roots_product (E : LinearRecurrence ℂ) :
-    ∃ r : Fin E.order → ℂ, (∀ i, E.charPoly.IsRoot (r i)) ∧
-      ∏ i, r i = (-1) ^ E.order * E.charPoly.coeff 0 := by
-  classical
-  let rs := E.charPoly.roots.toList
-  have hd := Polynomial.natDegree_eq_of_degree_eq_some (E.charPoly_degree_eq_order)
-  have hs := IsAlgClosed.splits E.charPoly
-  have hlen : rs.length = E.order :=
-    (Multiset.length_toList _).trans (hs.natDegree_eq_card_roots.symm.trans hd)
-  let r (i : Fin E.order) : ℂ := rs.get (Fin.cast hlen.symm i)
-  have hlist : List.ofFn r = rs :=
-    (List.ofFn_congr hlen rs.get).symm.trans (List.ofFn_get rs)
-  refine ⟨r, fun i ↦ ?_, ?_⟩
-  · apply Polynomial.isRoot_of_mem_roots
-    exact Multiset.mem_toList.1 (List.get_mem rs (Fin.cast hlen.symm i))
-  · rw [← List.prod_ofFn, hlist,
-      hs.coeff_zero_eq_prod_roots_of_monic E.charPoly_monic, hd, ← mul_assoc, ← mul_pow]
-    simp [rs]
-
 @[expose] public section
 
 /-- **Decomposable forms on consecutive terms of one recurrence sequence.** Let
@@ -157,6 +39,10 @@ product $F = L_1 \cdots L_k$ satisfies $F(G_n, G_{n+1}, \dots, G_{n+k-1}) = ((-1
 for every $n \in \mathbb{Z}$.
 
 For $k \ge 1$ we have $\chi(0) = -\gamma_0$, so the right side is $((-1)^{k+1} \gamma_0)^n$.
+The source's standing assumptions $k \ge 2$ and minimal order (so $\gamma_0 \ne 0$) are omitted:
+the statement holds for every $k$ and every $\gamma_0$. It asks for the recurrence at every
+$n \in \mathbb{Z}$, which for $\gamma_0 \ne 0$ is the source's recurrence for $n \ge 0$ extended
+backwards.
 
 Source: Kálmán Győry, Attila Pethő and László Szalay, *Decomposable Forms Generated by
 Linear Recurrences*, Journal of Integer Sequences 27 (2024), Article 24.3.5, Corollary 3
@@ -169,24 +55,15 @@ public theorem exists_decomposable_form_eval_shifts_eq_pow
     ∃ L : Fin E.order → MvPolynomial (Fin E.order) ℂ, (∀ i, (L i).IsHomogeneous 1) ∧
       ∀ n : ℤ, MvPolynomial.eval (fun j : Fin E.order => G (n + (j : ℕ))) (∏ i, L i) =
         ((-1) ^ E.order * E.charPoly.coeff 0) ^ n := by
-  classical
-  let g (j : Fin E.order) : bilateral E := ⟨fun n ↦ G (n + (j : ℕ)), fun n ↦ by
-    simpa [add_assoc, add_comm, add_left_comm] using hG (n + (j : ℕ))⟩
-  let ev : bilateral E →ₗ[ℂ] (Fin E.order → ℂ) :=
-    { toFun := fun u i ↦ u.val (i : ℕ)
+  let ev : (ℤ → ℂ) →ₗ[ℂ] (Fin E.order → ℂ) :=
+    { toFun := fun u i ↦ u (i : ℕ)
       map_add' := fun _ _ ↦ rfl
       map_smul' := fun _ _ ↦ rfl }
-  have hi : LinearIndependent ℂ g := by
-    apply LinearIndependent.of_comp ev
-    simpa [ev, g, Function.comp_def, Nat.cast_add, add_comm] using hind
-  obtain ⟨r, hr, hprod⟩ := roots_product E
-  choose L hL heval using fun i ↦ root_linear_form E g hi (r i) (hr i)
-  refine ⟨L, hL, fun n ↦ ?_⟩
-  change MvPolynomial.eval (fun j ↦ (g j).val n) (∏ i, L i) =
-    ((-1) ^ E.order * E.charPoly.coeff 0) ^ n
-  rw [map_prod]
-  simp_rw [heval]
-  rw [Finset.prod_zpow, hprod]
+  refine exists_decomposable_form_eval_eq_pow_of_linearRecurrence E
+    (fun j n ↦ G (n + (j : ℕ))) (fun j n ↦ ?_) ?_
+  · simpa [add_assoc, add_comm, add_left_comm] using hG (n + (j : ℕ))
+  · apply LinearIndependent.of_comp ev
+    simpa [ev, Function.comp_def, Nat.cast_add, add_comm] using hind
 
 end
 
