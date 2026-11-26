@@ -9,6 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.ModularCurve.ComponentGroup
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fintype.EquivFin
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 open ModularCurve
 
@@ -32,6 +36,80 @@ example (D D' : Fin 2 → ℤ) :
 example : Module.Dual ℤ (characterLattice (Fin 2)) →ₗ[ℤ]
     componentGroup (fun _ : Fin 2 => 1) :=
   componentGroupProj _
+
+/-! ### The cokernel of the Gram map on `Fin 2` -/
+
+/-- The character lattice of `Fin 2`: the two values cancel. -/
+private theorem mem_characterLattice_fin2 (x : Fin 2 → ℤ) :
+    x ∈ characterLattice (Fin 2) ↔ x 1 = -x 0 := by
+  rw [mem_characterLattice, Fin.sum_univ_two]
+  omega
+
+/-- The generator `(1, -1)` of the character lattice of `Fin 2`. -/
+private def genFin2 : characterLattice (Fin 2) :=
+  ⟨![1, -1], by simp [mem_characterLattice_fin2]⟩
+
+/-- The value at index `0`, a functional on the character lattice. -/
+private def evalFin2 : Module.Dual ℤ (characterLattice (Fin 2)) :=
+  (LinearMap.proj 0).comp (characterLattice (Fin 2)).subtype
+
+/-- With widths `e 0, e 1`, the Gram pairing on the character lattice of
+`Fin 2` is `e 0 + e 1` times the product of the index-`0` values. -/
+private theorem gramMap_fin2 (e : Fin 2 → ℕ) (x y : characterLattice (Fin 2)) :
+    gramMap e x y = ((e 0 : ℤ) + e 1) * (x.1 0 * y.1 0) := by
+  have hx := (mem_characterLattice_fin2 x.1).1 x.2
+  have hy := (mem_characterLattice_fin2 y.1).1 y.2
+  rw [gramMap_apply, Fin.sum_univ_two, hx, hy]
+  ring
+
+/-- The class of `n` times the index-`0` functional vanishes in the
+cokernel exactly when `e 0 + e 1` divides `n`. -/
+private theorem componentGroupProj_smul_evalFin2_eq_zero_iff (e : Fin 2 → ℕ) (n : ℤ) :
+    componentGroupProj e (n • evalFin2) = 0 ↔ ((e 0 : ℤ) + e 1) ∣ n := by
+  rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, LinearMap.mem_range]
+  constructor
+  · rintro ⟨y, hy⟩
+    have h := LinearMap.congr_fun hy genFin2
+    rw [gramMap_fin2] at h
+    simp [evalFin2, genFin2] at h
+    exact ⟨y.1 0, by linarith⟩
+  · rintro ⟨k, rfl⟩
+    refine ⟨k • genFin2, LinearMap.ext fun x => ?_⟩
+    rw [gramMap_fin2]
+    simp [evalFin2, genFin2]
+    ring
+
+/-- Unit widths: the class of the index-`0` functional has order `2`. -/
+example : componentGroupProj (fun _ : Fin 2 => 1) evalFin2 ≠ 0 ∧
+    componentGroupProj (fun _ : Fin 2 => 1) ((2 : ℤ) • evalFin2) = 0 := by
+  refine ⟨?_, (componentGroupProj_smul_evalFin2_eq_zero_iff _ 2).2 (by norm_num)⟩
+  simpa using (componentGroupProj_smul_evalFin2_eq_zero_iff (fun _ => 1) 1).not.2 (by norm_num)
+
+/-- Zero widths: the Gram map vanishes and `n ↦ n • evalFin2` gives a
+bijection from `ℤ` onto the cokernel, which is therefore infinite. -/
+example : Function.Bijective
+    fun n : ℤ => componentGroupProj (fun _ : Fin 2 => 0) (n • evalFin2) := by
+  refine ⟨fun n m h => ?_, fun q => ?_⟩
+  · have h0 : componentGroupProj (fun _ : Fin 2 => 0) ((n - m) • evalFin2) = 0 := by
+      rw [sub_smul, map_sub]
+      exact sub_eq_zero.2 h
+    rw [componentGroupProj_smul_evalFin2_eq_zero_iff] at h0
+    simpa [sub_eq_zero] using h0
+  · obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ q
+    refine ⟨f genFin2, congrArg (Submodule.Quotient.mk (p := _)) (LinearMap.ext fun x => ?_)⟩
+    have hx : x = x.1 0 • genFin2 := by
+      ext i
+      fin_cases i <;> simp [genFin2, (mem_characterLattice_fin2 x.1).1 x.2]
+    conv_rhs => rw [hx]
+    simp [evalFin2, mul_comm]
+
+example : Infinite (componentGroup (fun _ : Fin 2 => 0)) := by
+  refine Infinite.of_injective (fun n : ℤ => componentGroupProj _ (n • evalFin2)) fun n m h => ?_
+  have h0 : componentGroupProj (fun _ : Fin 2 => 0) ((n - m) • evalFin2) = 0 := by
+    rw [sub_smul, map_sub]
+    exact sub_eq_zero.2 h
+  rw [componentGroupProj_smul_evalFin2_eq_zero_iff] at h0
+  simpa [sub_eq_zero] using h0
 
 /-- A character evaluated at constant weights is trivial. -/
 example (a : characterLattice (Fin 2)) (c : Multiplicative ℤ) :

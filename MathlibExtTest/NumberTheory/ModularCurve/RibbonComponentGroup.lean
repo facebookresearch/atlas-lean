@@ -258,6 +258,95 @@ example : ribbonComponentGroupMap squareData
   rw [ribbonComponentGroupMap_scalarHecke, show heckeScalar prime5 = 6 from rfl,
     ribbonComponentGroupProj_smul_evalSq_eq_zero_iff]
 
+/-! ### Hecke data alone does not act on the component group -/
+
+/-- Three edges of width `1` over one vertex. -/
+private def tripleData : DegeneracyData (Fin 3) (Fin 1) where
+  a := fun _ => 0
+  b := fun _ => 0
+  w := fun _ => 1
+
+/-- Both pushforwards of the triple datum add up the three edge values. -/
+private theorem jointDelta_tripleData (i : Fin 2) (x : Fin 3 → ℤ) :
+    jointDelta tripleData i x = fun _ => x 0 + x 1 + x 2 := by
+  funext v
+  fin_cases i <;> fin_cases v <;>
+    simp [jointDelta, pushforward_apply, tripleData, Fin.sum_univ_three]
+
+/-- The triple kernel: the three edge values add up to zero. -/
+private theorem mem_ribbonKernel_tripleData (x : Fin 3 → ℤ) :
+    x ∈ ribbonKernel tripleData ↔ x 0 + x 1 + x 2 = 0 := by
+  simp [mem_ribbonKernel, jointDelta_tripleData, funext_iff]
+
+/-- The shear `x ↦ x + x 0 • (0, 1, -1)` on the edges. -/
+private def shearMat : Matrix (Fin 3) (Fin 3) ℤ := !![1, 0, 0; 1, 1, 0; -1, 0, 1]
+
+private theorem shearMat_mulVecLin (x : Fin 3 → ℤ) :
+    shearMat.mulVecLin x = ![x 0, x 0 + x 1, -x 0 + x 2] := by
+  funext i
+  fin_cases i <;> simp [shearMat, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+
+/-- The shear preserves both pushforwards of the triple datum. -/
+private theorem jointDelta_tripleData_shear (i : Fin 2) (x : Fin 3 → ℤ) :
+    jointDelta tripleData i (shearMat.mulVecLin x) = jointDelta tripleData i x := by
+  rw [jointDelta_tripleData, jointDelta_tripleData, shearMat_mulVecLin]
+  funext _
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+    Matrix.tail_cons]
+  ring
+
+/-- The shear, with identity vertex matrices and no bad prime, satisfies
+every field of `HeckeData`. -/
+private def shearHecke : HeckeData tripleData where
+  T _ := shearMat
+  Tv _ := 1
+  comm _ _ := Commute.refl _
+  commv _ _ := Commute.refl _
+  S := ∅
+  good_equivariant _ _ _ _ := by
+    rw [jointDelta_tripleData_shear, Matrix.mulVecLin_one, LinearMap.id_apply]
+  kernel_stable _ _ hx i := by rw [jointDelta_tripleData_shear, hx i]
+
+/-- The Hecke endomorphism of the shear package on the triple kernel. -/
+private theorem coe_heckeKernelMap_shearHecke (ℓ : Nat.Primes) (x : ribbonKernel tripleData) :
+    (heckeKernelMap shearHecke ℓ x : Fin 3 → ℤ) = ![x.1 0, x.1 0 + x.1 1, -x.1 0 + x.1 2] :=
+  shearMat_mulVecLin x.1
+
+/-- The kernel element `(1, 0, -1)`. -/
+private def uTri : ribbonKernel tripleData :=
+  ⟨![1, 0, -1], by simp [mem_ribbonKernel_tripleData]⟩
+
+/-- The kernel element `(0, 1, -1)`. -/
+private def vTri : ribbonKernel tripleData :=
+  ⟨![0, 1, -1], by simp [mem_ribbonKernel_tripleData]⟩
+
+/-- The ribbon Gram pairing of the triple datum is the dot product. -/
+private theorem ribbonGram_tripleData (x y : ribbonKernel tripleData) :
+    ribbonGram tripleData x y = x.1 0 * y.1 0 + x.1 1 * y.1 1 + x.1 2 * y.1 2 := by
+  rw [ribbonGram_apply, Fin.sum_univ_three]
+  simp [tripleData]
+
+/-- `HeckeData` alone does not act on the ribbon component group: the
+shear package satisfies every field of `HeckeData`, but its Hecke
+endomorphism of the triple kernel has no adjoint for the ribbon Gram
+pairing, so `ribbonComponentGroupMap` does not apply to it. The dual of
+the shear sends the Gram image of `(1, 0, -1)`, with values `(2, 1)` on
+`(1, 0, -1), (0, 1, -1)`, to the functional with values `(3, 1)`, which
+is not in the Gram image. -/
+example (ℓ : Nat.Primes) :
+    ¬ ∃ A : ribbonKernel tripleData →ₗ[ℤ] ribbonKernel tripleData,
+      ∀ x y, ribbonGram tripleData (A x) y =
+        ribbonGram tripleData x (heckeKernelMap shearHecke ℓ y) := by
+  rintro ⟨A, hadj⟩
+  obtain ⟨y, hy⟩ := LinearMap.mem_range.1 (ribbonGram_range_map_dualMap_le tripleData A _ hadj
+    (Submodule.mem_map_of_mem (LinearMap.mem_range_self (ribbonGram tripleData) uTri)))
+  have hu := LinearMap.congr_fun hy uTri
+  have hv := LinearMap.congr_fun hy vTri
+  have hy0 := (mem_ribbonKernel_tripleData y.1).1 y.2
+  simp only [LinearMap.dualMap_apply, ribbonGram_tripleData, coe_heckeKernelMap_shearHecke] at hu hv
+  simp [uTri, vTri] at hu hv
+  omega
+
 /-! ### Matchings -/
 
 /-- The vertex swap of `K₂,₂`, which exchanges edges `0 ↔ 3` and

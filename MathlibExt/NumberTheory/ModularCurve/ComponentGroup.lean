@@ -112,12 +112,17 @@ def gramMap (e : ι → ℕ) :
     gramMap e D D' = ∑ x : ι, (e x : ℤ) * (D.1 x * D'.1 x) := by
   simp only [gramMap, LinearMap.domRestrict₁₂_apply, widthPairing_apply]
 
-/-- The component group: the cokernel of the Gram map, presented as the
-quotient of the dual lattice by the range of the Gram map. -/
+/-- The cokernel of the Gram map, presented as the quotient of the dual
+lattice by the range of the Gram map. This is the general cokernel,
+defined for all widths; the component group of a curve with toric
+reduction is the case of positive widths. A zero width can make the
+cokernel infinite: for two indices of width zero the Gram map vanishes
+and the cokernel is `ℤ`. -/
 abbrev componentGroup (e : ι → ℕ) :=
   Module.Dual ℤ (characterLattice ι) ⧸ LinearMap.range (gramMap e)
 
-/-- The projection from the dual lattice to the component group. -/
+/-- The projection from the dual lattice to the cokernel
+`componentGroup e`. -/
 abbrev componentGroupProj (e : ι → ℕ) :
     Module.Dual ℤ (characterLattice ι) →ₗ[ℤ] componentGroup e :=
   (LinearMap.range (gramMap e)).mkQ

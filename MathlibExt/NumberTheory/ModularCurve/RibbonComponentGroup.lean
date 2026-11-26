@@ -144,7 +144,10 @@ theorem ribbonGram_range_map_dualMap_le [Fintype E] [DecidableEq V]
   exact hadj x y
 
 /-- The endomorphism of the ribbon component group induced by an
-adjoint pair. -/
+adjoint pair: `hadj` makes `B` the adjoint of `A` for the ribbon Gram
+pairing, and the map is induced by the dual of `B`. For a Hecke
+endomorphism `heckeKernelMap H ℓ` the adjoint is an extra hypothesis:
+the fields of `HeckeData` do not provide one. -/
 def ribbonComponentGroupMap [Fintype E] [DecidableEq V]
     (D : DegeneracyData E V)
     (A B : ribbonKernel D →ₗ[ℤ] ribbonKernel D)
@@ -157,7 +160,11 @@ def ribbonComponentGroupMap [Fintype E] [DecidableEq V]
       (Submodule.mem_map_of_mem hf))
 
 /-- Hecke data: commuting Hecke matrices on edges and vertices,
-equivariant under the degeneracy maps away from a finite bad set. -/
+equivariant under the degeneracy maps away from a finite bad set. The
+fields give an action on the ribbon kernel only (`heckeKernelMap`): they
+do not make the edge matrices adjoint for the ribbon Gram pairing, so
+the action need not descend to the ribbon component group. Descent
+(`ribbonComponentGroupMap`) takes an adjoint as an extra hypothesis. -/
 structure HeckeData [Fintype E] [Fintype V] [DecidableEq V]
     (D : DegeneracyData E V) where
   /-- Hecke matrices on edges. -/
@@ -188,7 +195,10 @@ theorem ribbonKernel_stable [Fintype E] [Fintype V] [DecidableEq V]
   rw [mem_ribbonKernel] at hx ⊢
   exact H.kernel_stable ℓ x hx
 
-/-- The Hecke endomorphism of the ribbon kernel. -/
+/-- The Hecke endomorphism of the ribbon kernel. It descends to the
+ribbon component group only together with an adjoint for the ribbon Gram
+pairing, which `HeckeData` does not provide; see
+`ribbonComponentGroupMap`. -/
 def heckeKernelMap [Fintype E] [Fintype V] [DecidableEq V]
     {D : DegeneracyData E V} (H : HeckeData D) (ℓ : Nat.Primes) :
     ribbonKernel D →ₗ[ℤ] ribbonKernel D :=
