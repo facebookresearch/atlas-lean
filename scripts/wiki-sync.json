@@ -66185,6 +66185,7 @@
 "MathlibExt.NumberTheory.FkPerfectWanted.isDeficientFPerfect_two_mul_prime_pow": "a0dc29290ea921bf",
 "MathlibExt.NumberTheory.FkPerfectWanted.isDeficientFPerfect_two_pow_mul_prime_imp": "29751219ce12ea1d",
 "MathlibExt.NumberTheory.FkPerfectWanted.isKLDeficientPerfect_prime_pow_imp": "8c6c114833a87986",
+"MathlibExt.NumberTheory.FkPerfectWanted.isKLDeficientPerfect_prime_pow_two_iff": "5895061e69333f71",
 "MathlibExt.NumberTheory.FkPerfectWanted.isKLDeficientPerfect_prime_pow_two_imp": "cb7fcec1518e029b",
 "MathlibExt.NumberTheory.FkPerfectWanted.isKLDeficientPerfect_two": "bf6a14326eb0c51f",
 "MathlibExt.NumberTheory.FkPerfectWanted.isKLNearPerfect_one_two_mul_prime_pow": "ffdfb8d9ae5e6ed7",
