@@ -14,3 +14,6 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Allele age proxies from linked variation](allele-age-proxies-from-linked-variation/README.md)
+- [Directional selection in ancient DNA time transects](directional-selection-in-ancient-dna-time-transects/README.md)
+- [Localizing the favored mutation in a sweep](localizing-the-favored-mutation-in-a-sweep/README.md)

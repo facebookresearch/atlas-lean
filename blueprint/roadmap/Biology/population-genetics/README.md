@@ -28,3 +28,11 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
+- [Dynamical limits to adaptation](dynamical-limits-to-adaptation/README.md)
+- [Gamma renewal model of chiasma interference](gamma-renewal-model-of-chiasma-interference/README.md)
+- [HLA haplotype coverage of peptide vaccines](hla-haplotype-coverage-of-peptide-vaccines/README.md)
+- [Moran process in heterogeneous environments](moran-process-in-heterogeneous-environments/README.md)
+- [Mutation burden after a population bottleneck](mutation-burden-after-a-population-bottleneck/README.md)
+- [Non-reproductive workers in haplodiploid colonies](non-reproductive-workers-in-haplodiploid-colonies/README.md)
+- [Queen control in haplodiploid colonies](queen-control-in-haplodiploid-colonies/README.md)
+- [Sheltered load around a balanced polymorphism](sheltered-load-around-a-balanced-polymorphism/README.md)
