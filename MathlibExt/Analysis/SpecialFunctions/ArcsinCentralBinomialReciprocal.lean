@@ -942,16 +942,19 @@ private lemma SH_eq (y : ℝ) (hy : |y| < 1) : Sfun y = Hfun y := by
   linarith [hLy]
 
 /--
-Arcsin power series via central binomial reciprocals.
+**Lehmer's central binomial series for arcsin.** For every real number $x$ with $|x| < 1$, the
+series
+$$\sum_{m=1}^{\infty} \frac{(2x)^{2m}}{m \binom{2m}{m}}$$
+converges unconditionally, and its sum is $\dfrac{2x}{\sqrt{1 - x^2}} \arcsin x$.
+
+The source attributes the identity to D. H. Lehmer.
+
+Proves `Wanted` entry `arcsin_central_binomial_reciprocal_series`.
 
 Source: B. Sury, Tianming Wang, and Feng-Zhen Zhao, "Identities
 Involving Reciprocals of Binomial Coefficients," Journal of Integer
 Sequences 7 (2004), Article 04.2.8, Theorem, lines 365–371,
 https://cs.uwaterloo.ca/journals/JIS/VOL7/Sury/sury99.tex
-
-The source attributes the identity to D. H. Lehmer. The sum over
-`m ≥ 1` is indexed by `m + 1` over `ℕ`.
-Proves `Wanted` entry `arcsin_central_binomial_reciprocal_series`.
 -/
 theorem arcsin_central_binomial_reciprocal_series
     (x : ℝ)

@@ -63,6 +63,20 @@ example : killedGreen (3 / 4) (1 / 2) =
     (2 * pattersonAux1 (1 / 2) / ((1 - 1 / 2) * (1 / 2))) * pattersonAux2 (3 / 4) :=
   killedGreen_eq_aux_right (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
+/-- The two Appendix solutions have Wronskian `-1` at an interior point. -/
+example : GreenKernel.wronskian pattersonAux1 pattersonAux2 (1 / 2) = -1 :=
+  pattersonAux_wronskian ⟨by norm_num, by norm_num⟩
+
+/-- Patterson's kernel is the generic two-solution Green kernel below the diagonal. -/
+example : killedGreen (1 / 4) (1 / 2) =
+    GreenKernel.kernel pattersonAux1 pattersonAux2 (fun y => 2 / y ^ 2) (1 / 4) (1 / 2) :=
+  killedGreen_eq_greenKernel ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
+
+/-- Patterson's kernel is the generic two-solution Green kernel above the diagonal. -/
+example : killedGreen (3 / 4) (1 / 2) =
+    GreenKernel.kernel pattersonAux1 pattersonAux2 (fun y => 2 / y ^ 2) (3 / 4) (1 / 2) :=
+  killedGreen_eq_greenKernel ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
+
 /-- The killed Green function is positive at an interior point. -/
 example : 0 < killedGreen (1 / 4) (1 / 2) :=
   killedGreen_pos ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩

@@ -70,9 +70,11 @@ variable {S : Type*} [MeasurableSpace S]
 
 section LiftKernel
 
-/-- Lift the Markov kernel `κ : S → S` to a kernel on tuples `(x₀, …, xₙ)` by reading off the
-last coordinate `xₙ` and applying `κ`. This is the form required by the Ionescu–Tulcea trajectory
-construction. -/
+/-- **Lifting a kernel to histories.** For a kernel $\kappa$ from a measurable space $S$ to itself
+and $n \in \mathbb{N}$, the lifted kernel from $S^{\{0, \dots, n\}}$ to $S$ sends a history
+$(x_0, \dots, x_n)$ to $\kappa(x_n, \cdot)$: it reads off the last coordinate and applies $\kappa$.
+
+This is the form of kernel used by the Ionescu–Tulcea trajectory construction. -/
 noncomputable def markovLiftKernel (κ : Kernel S S) (n : ℕ) :
     Kernel ((i : ↥(Finset.Iic n)) → S) S :=
   κ.comap (fun x => x ⟨n, Finset.mem_Iic.mpr le_rfl⟩) (measurable_pi_apply _)
@@ -88,8 +90,12 @@ section CanonicalMeasure
 
 variable (κ : Kernel S S) [IsMarkovKernel κ] (μ : Measure S) [IsProbabilityMeasure μ]
 
-/-- The canonical measure `P_μ` on path space `ℕ → S` of the Markov chain with initial
-distribution `μ` and transition kernel `κ`, built via the Ionescu–Tulcea trajectory measure. -/
+/-- **Canonical Markov chain measure.** Let $\kappa$ be a Markov kernel from a measurable space
+$S$ to itself and let $\mu$ be a measure on $S$. The canonical Markov chain measure $P_\mu$ is the
+measure on the path space $S^{\mathbb{N}}$ given by the Ionescu–Tulcea theorem for the initial
+measure $\mu$ and, at each time $n$, the kernel sending a history $(x_0, \dots, x_n)$ to
+$\kappa(x_n, \cdot)$. When $\mu$ is a probability measure, $P_\mu$ is the law of the Markov chain
+with initial distribution $\mu$ and transition kernel $\kappa$. -/
 noncomputable def markovChainMeasure : Measure (ℕ → S) :=
   Kernel.trajMeasure (X := fun _ : ℕ => S) μ (markovLiftKernel κ)
 
@@ -99,8 +105,11 @@ instance markovChainMeasure.isProbabilityMeasure :
   unfold markovChainMeasure; infer_instance
 
 omit [IsProbabilityMeasure μ] in
-/-- Under the canonical Markov-chain measure, the law of the initial state `ω 0` is the initial
-distribution `μ`. -/
+/-- **Initial distribution of the canonical Markov chain measure.** Let $\kappa$ be a Markov
+kernel from a measurable space $S$ to itself and let $\mu$ be a measure on $S$. Under the
+canonical Markov chain measure $P_\mu$ on $S^{\mathbb{N}}$ with initial measure $\mu$ and
+transition kernel $\kappa$, the law of the initial coordinate is $\mu$: the pushforward of $P_\mu$
+along $\omega \mapsto \omega_0$ equals $\mu$. -/
 theorem markovChainMeasure_initial_distribution :
     Measure.map (fun (ω : ℕ → S) => ω 0) (markovChainMeasure κ μ) = μ := by
   have h_decomp : (fun (f : ℕ → S) => f 0) =
@@ -118,9 +127,13 @@ theorem markovChainMeasure_initial_distribution :
     (MeasurableEquiv.piUnique (fun _ : ↥(Finset.Iic (0 : ℕ)) => S)).symm.measurable,
     MeasurableEquiv.self_comp_symm, Measure.map_id]
 
-/-- Under the canonical Markov-chain measure, the regular conditional distribution of the next
-state `X_{n+1}` given the history `(X₀, …, Xₙ)` agrees almost everywhere with the lifted
-transition kernel `markovLiftKernel κ n`. This is the defining Markov property. -/
+/-- **Markov property of the canonical Markov chain measure.** Let $S$ be a nonempty standard
+Borel space, let $\kappa$ be a Markov kernel from $S$ to $S$, let $\mu$ be a probability measure
+on $S$, and let $P_\mu$ be the canonical Markov chain measure on $S^{\mathbb{N}}$ with initial
+distribution $\mu$ and transition kernel $\kappa$. Write $X_n(\omega) = \omega_n$. For every
+$n \in \mathbb{N}$, the regular conditional distribution of $X_{n+1}$ given $(X_0, \dots, X_n)$
+under $P_\mu$ agrees with the lifted kernel $(x_0, \dots, x_n) \mapsto \kappa(x_n, \cdot)$ for
+almost every $(x_0, \dots, x_n)$ with respect to the law of $(X_0, \dots, X_n)$ under $P_\mu$. -/
 theorem markovChainMeasure_condDistrib (n : ℕ)
     [StandardBorelSpace S] [Nonempty S] :
     condDistrib (fun (x : ℕ → S) => x (n + 1)) (Preorder.frestrictLe n)
@@ -133,16 +146,16 @@ end CanonicalMeasure
 
 section ExistenceTheorem
 
-/-- **Markov chain construction theorem.**
+/-- **Markov chain construction theorem.** Let $S$ be a nonempty standard Borel space, let
+$\kappa$ be a Markov kernel from $S$ to $S$ and let $\mu$ be a probability measure on $S$. Then
+there is a probability measure $P$ on the path space $S^{\mathbb{N}}$ such that, writing
+$X_n(\omega) = \omega_n$ for the coordinates, the law of $X_0$ under $P$ is $\mu$, and for every
+$n \in \mathbb{N}$ the regular conditional distribution of $X_{n+1}$ given $(X_0, \dots, X_n)$
+under $P$ agrees with the kernel $(x_0, \dots, x_n) \mapsto \kappa(x_n, \cdot)$ for almost every
+$(x_0, \dots, x_n)$ with respect to the law of $(X_0, \dots, X_n)$ under $P$.
 
-Given a Markov transition kernel `κ : S → S` and an initial distribution `μ` on a standard Borel
-space `S`, there exists a probability measure `P` on path space `ℕ → S` such that
-* the law of `ω 0` under `P` is `μ`, and
-* for every `n`, the conditional law of `ω (n+1)` given the past `(ω 0, …, ω n)` is the
-  transition kernel `κ` applied to the current state.
-
-That is, the sequence `(X₀, X₁, …)` sampled from `P` is a Markov chain with initial distribution
-`μ` and transitions `κ`. -/
+That is, the coordinate process $(X_0, X_1, \dots)$ under $P$ is a Markov chain with initial
+distribution $\mu$ and transition kernel $\kappa$. -/
 theorem markov_chain_construction
     (κ : Kernel S S) [IsMarkovKernel κ]
     (μ : Measure S) [IsProbabilityMeasure μ]

@@ -105,31 +105,39 @@ open Clocked
 
 /-! ### Time classes on codes -/
 
-/-- `c.DecidesWithin L t`: on every input `x`, the code `c` halts within `t |x|` steps, and the
-tape from the head rightwards, without trailing blanks, is the symbol `bitSym (L x)` of the
-answer. -/
+/-- **Deciding within a time bound.** A code $c$ decides a decision problem $L$ within the time
+bound $t : \mathbb{N} \to \mathbb{N}$ when, on every bit list $x$, the machine of $c$ started on the
+input word of $x$ halts within $t(|x|)$ steps, and its tape from the head rightwards, without
+trailing blanks, is the single symbol of the answer $L(x)$: $2$ for true and $1$ for false. -/
 def Code.DecidesWithin (c : Code) (L : DecisionProblem) (t : ℕ → ℕ) : Prop :=
   ∀ x, c.evalSteps x (t x.length) = some [bitSym (L x)]
 
-/-- `CodeTime t`: the decision problems that some code decides within `t |x|` steps on every
-input `x`. -/
+/-- **Time classes on codes.** For $t : \mathbb{N} \to \mathbb{N}$, $\mathrm{CodeTime}(t)$ is
+the class of decision problems $L$ such that some code decides $L$ within $t(|x|)$ steps on
+every input $x$. -/
 def CodeTime (t : ℕ → ℕ) : DecisionComplexityClass :=
   {L | ∃ c : Code, c.DecidesWithin L t}
 
-/-- A code that decides `L` within `t` decides it within every larger bound. -/
+/-- **Deciding within a larger time bound.** If a code $c$ decides a decision problem $L$
+within a time bound $t : \mathbb{N} \to \mathbb{N}$, and $t' : \mathbb{N} \to \mathbb{N}$
+satisfies $t(n) \le t'(n)$ for every $n$, then $c$ decides $L$ within $t'$. -/
 theorem Code.DecidesWithin.mono {c : Code} {L : DecisionProblem} {t t' : ℕ → ℕ}
     (h : c.DecidesWithin L t) (ht : t ≤ t') : c.DecidesWithin L t' :=
   fun x ↦ Code.evalSteps_mono (h x) (ht x.length)
 
-/-- **Monotonicity.** Time classes grow with the time bound. -/
+/-- **Monotonicity of time classes on codes.** Let $t, t' : \mathbb{N} \to \mathbb{N}$ with
+$t(n) \le t'(n)$ for every $n$. Then every decision problem that some code decides within
+$t(|x|)$ steps on every input $x$ is decided by some code within $t'(|x|)$ steps on every
+input $x$: $\mathrm{CodeTime}(t) \subseteq \mathrm{CodeTime}(t')$. -/
 theorem codeTime_mono {t t' : ℕ → ℕ} (ht : t ≤ t') : CodeTime t ⊆ CodeTime t' :=
   fun _ ⟨c, hc⟩ ↦ ⟨c, hc.mono ht⟩
 
 /-! ### Time classes are not empty -/
 
-/-- A code that answers `false` on every input: in state `0` it moves right over the input
-symbols `1` and `2`, and on the first blank it writes `bitSym false = 1` and enters the state
-`1`, which has no row and so halts. -/
+/-- **The constant-false code.** The code whose table has a single row, for state $0$: on the
+blank $0$ it writes the symbol $1$, the symbol of the bit false, and enters state $1$; on the input
+symbols $1$ and $2$ it moves right and stays in state $0$; on every other symbol it halts. State $1$
+has no row, so the machine halts there. This code answers false on every input. -/
 def Code.constFalse : Code := ⟨[[some (1, 3), some (0, 1), some (0, 1)]]⟩
 
 /-- The run of `Code.constFalse` from the start of the rest `v` of its input. -/
@@ -146,20 +154,28 @@ private theorem constFalse_iterate (v : List Bool) (L : List ℕ) :
     rw [hs, ih]
     simp [input]
 
-/-- `Code.constFalse` decides the empty language within `n + 1` steps. -/
+/-- **The constant-false code decides the empty language.** Let $c$ be the code whose table has
+one row, for state $0$: on the input symbols $1$ and $2$ it moves right and stays in state $0$,
+and on the blank $0$ it writes $1$, the symbol of the bit $\mathrm{false}$, and enters state
+$1$, which has no row, so that $c$ halts. Then $c$ decides the empty language within $n + 1$
+steps on every input of length $n$. -/
 theorem Code.constFalse_decidesWithin : Code.constFalse.DecidesWithin (fun _ ↦ false) (· + 1) := by
   intro x
   rw [Code.evalSteps_eq_some_iff_output, Code.cfgAfter, Code.init, constFalse_iterate x []]
   exact ⟨rfl, rfl⟩
 
-/-- **Time classes are not empty**: the empty language is in `CodeTime f` as soon as
-`n + 1 ≤ f n`. -/
+/-- **Time classes are not empty once the bound exceeds the input length.** Let
+$f : \mathbb{N} \to \mathbb{N}$ satisfy $n + 1 \le f(n)$ for every $n$. Then the empty language, the
+decision problem that answers false on every bit list, belongs to the time class of $f$: some code
+decides it within $f(|x|)$ steps on every input $x$, where $|x|$ is the length of $x$. -/
 theorem const_false_mem_codeTime {f : ℕ → ℕ} (hf : ∀ n, n + 1 ≤ f n) :
     (fun _ ↦ false) ∈ CodeTime f :=
   ⟨Code.constFalse, Code.constFalse_decidesWithin.mono hf⟩
 
-/-- **Some step is needed.** `CodeTime f` is empty when `f 0 = 0`: with no step on the empty
-input, the tape stays blank and holds no answer bit. -/
+/-- **Some step is needed.** Let $f : \mathbb{N} \to \mathbb{N}$ with $f(0) = 0$. Then no
+decision problem is decided by a code within $f(|x|)$ steps on every input $x$: the time class
+$\mathrm{CodeTime}(f)$ is empty. With no step on the empty input, the tape stays blank and
+holds no answer bit. -/
 theorem codeTime_eq_empty {f : ℕ → ℕ} (hf : f 0 = 0) : CodeTime f = ∅ := by
   refine Set.eq_empty_iff_forall_notMem.2 fun L ⟨c, hc⟩ ↦ ?_
   have h := hc []
@@ -220,7 +236,9 @@ private theorem entryNums_injective : Function.Injective entryNums := by
       obtain ⟨rfl, rfl, rfl, rfl, h⟩ := h
       rw [ih h]
 
-/-- Codes with the same code stack have the same table lookups. -/
+/-- **The code stack determines the table lookups.** If two codes $c$ and $c'$ have the same
+code stack, then for every state $q$ and every symbol $a$, the table entry of $c$ at $(q, a)$
+equals the table entry of $c'$ at $(q, a)$. -/
 theorem Code.lookup_eq_of_codeCells_eq {c c' : Code} (h : codeCells c = codeCells c') :
     c.lookup = c'.lookup := by
   have he : entries c = entries c' := entryNums_injective (cells_injective h)
@@ -257,7 +275,10 @@ private theorem cell_append (n : ℕ) (r : List Bool) :
     cell n ++ r = List.replicate n true ++ false :: r := by
   simp [cell]
 
-/-- `readUnaryLength` reads one cell. -/
+/-- **Reading a unary length prefix reads one cell.** For bit lists $x$ and $r$ and a natural
+number $n$, reading a unary length prefix of $x$ returns $n$ together with the rest $r$ if and
+only if $x$ is the cell of $n$ (that is, $n$ copies of $\mathrm{true}$ followed by
+$\mathrm{false}$) followed by $r$. -/
 theorem readUnaryLength_eq_some_iff_cell {x r : List Bool} {n : ℕ} :
     readUnaryLength x = some (n, r) ↔ x = cell n ++ r := by
   rw [readUnaryLength_eq_some_iff, cell_append]
@@ -270,8 +291,11 @@ private theorem length_lt_of_readUnaryLength {x r : List Bool} {n : ℕ}
   simp [cell]
   omega
 
-/-- The numbers whose cells are the bit list, if any: the inverse of `Clocked.cells`, reading one
-cell at a time with `Cslib.CookLevin.readUnaryLength`. -/
+/-- **Decoding a list of cells.** For a bit list $x$, the list of natural numbers $l$ whose
+cells are $x$, if there is one, and nothing otherwise. Here the cells of $l$ are its numbers
+written in order, each number $n$ as $n$ copies of $\mathrm{true}$ followed by one
+$\mathrm{false}$; distinct lists have distinct cells. The decoder reads one cell at a time
+with the unary length reader. -/
 def cellsDecode (x : List Bool) : Option (List ℕ) :=
   match x with
   | [] => some []
@@ -286,22 +310,30 @@ def cellsDecode (x : List Bool) : Option (List ℕ) :=
       (cellsDecode r).map (n :: ·)
 termination_by x.length
 
-/-- The entries whose numbers are the list, four numbers per entry, if any: the inverse of
-`Clocked.entryNums`. -/
+/-- **Reading entries from numbers.** A list of natural numbers is read as a list of entries
+$(q, a, q', s)$, four consecutive numbers per entry, if possible: the empty list gives no entries;
+a list that starts with $q, a, q', s$ and continues with $l$ gives the entry $(q, a, q', s)$
+followed by the entries read from $l$, if that succeeds; and the reading fails when the length of
+the list is not a multiple of $4$. -/
 def entriesOfNums : List ℕ → Option (List (ℕ × ℕ × ℕ × ℕ))
   | [] => some []
   | q :: a :: q' :: s :: l => (entriesOfNums l).map ((q, a, q', s) :: ·)
   | _ => none
 
-/-- `keysAscendFrom pq pa es`: the keys `(q, a)` of the entries strictly increase in
-lexicographic order, starting at `(pq, pa)` or above. -/
+/-- **Ascending keys of a list of entries.** For natural numbers $p_q$, $p_a$ and a list of
+entries $(q, a, q', s) \in \mathbb{N}^4$, this Boolean test is true exactly when the keys
+$(q, a)$ of the entries strictly increase in lexicographic order and the first key, if there is
+one, is at least $(p_q, p_a)$ in that order. -/
 def keysAscendFrom (pq pa : ℕ) : List (ℕ × ℕ × ℕ × ℕ) → Bool
   | [] => true
   | e :: es => decide (pq < e.1 ∨ pq = e.1 ∧ pa ≤ e.2.1) && keysAscendFrom e.1 (e.2.1 + 1) es
 
-/-- The code of a list of entries: its table has a row for every state and a column for every
-symbol below the sums of the states and the symbols of the entries plus one, and each position
-holds the first entry with its key (`Clocked.findEntry`). -/
+/-- **The code of a list of entries.** Let $E$ be a list of entries $(q, a, q', s)$ of natural
+numbers, and let $Q$ and $M$ be the sums, over the entries of $E$ counted with multiplicity, of
+$q + 1$ and of $a + 1$ respectively. The code of $E$ has a table with $Q$ rows and $M$
+columns, and for $q < Q$ and $a < M$ its position $(q, a)$ holds $(q', s)$ for the first entry
+$(q, a, q', s)$ of $E$ with key $(q, a)$, and is empty (halting) if $E$ has no entry with that
+key. -/
 def codeOfEntries (es : List (ℕ × ℕ × ℕ × ℕ)) : Code :=
   ⟨(List.range (es.map fun e ↦ e.1 + 1).sum).map fun q ↦
     (List.range (es.map fun e ↦ e.2.1 + 1).sum).map fun a ↦ findEntry q a es⟩
@@ -500,24 +532,34 @@ open Diag
 
 /-! ### The diagonal language -/
 
-/-- The code encoded by the bits `x`: if `x` is a code stack (`Clocked.codeCells`, the code as
-the clocked universal machine reads it), that is, the cells of entries `(q, a, q', s)` whose
-keys `(q, a)` strictly increase, the code of these entries (`codeOfEntries`); `none` otherwise.
-Codes with the same code stack have the same clocked semantics
-(`Code.evalSteps_eq_of_codeCells_eq`). -/
+/-- **Decoding a code stack.** For a bit list $x$, the decoding of $x$ as a code is defined as
+follows. Write the cell of a number $n$ for the $n$ bits true followed by one bit false, and the
+cells of a list of numbers for the cells of its numbers in order. If $x$ is the cells of a list
+$l$ of natural numbers (such an $l$ is unique), the length of $l$ is a multiple of $4$, and the
+keys $(q, a)$ of the entries $(q, a, q', s)$ formed by the consecutive groups of four numbers of
+$l$ strictly increase in lexicographic order, then the decoding of $x$ is the code of these
+entries. Otherwise the decoding returns no code.
+
+The code stack of a code is the cells of the numbers $q, a, q', s$ of its entries
+$(q, a, q', s)$, listed by increasing key $(q, a)$; codes with the same code stack have the same
+clocked evaluator. -/
 def decodeCodeCells (x : List Bool) : Option Code :=
   ((cellsDecode x).bind entriesOfNums).bind fun es ↦
     if keysAscendFrom 0 0 es then some (codeOfEntries es) else none
 
-/-- **The diagonal language** (Sipser, proof of Theorem 9.10): `diag f x` holds iff `x` encodes a
-code (`decodeCodeCells`) that does not halt on `x` within `f |x|` steps with the answer `true`.
-Bit lists that encode no code are not in the language. -/
+/-- **The diagonal language.** For $f : \mathbb{N} \to \mathbb{N}$, the diagonal language of $f$
+holds at a bit list $x$ iff $x$ encodes a code $c$ and the clocked evaluator, running $c$ on $x$
+for at most $f(|x|)$ steps, does not return the output $[2]$, the symbol of the answer true:
+either $c$ does not halt on $x$ within $f(|x|)$ steps, or it halts with another output. Bit lists
+that encode no code are not in the language. This is the diagonal language of the proof of
+Sipser's Theorem 9.10. -/
 def diag (f : ℕ → ℕ) : DecisionProblem := fun x ↦
   match decodeCodeCells x with
   | none => false
   | some c => decide (c.evalSteps x (f x.length) ≠ some [bitSym true])
 
-/-- A decoded code has the bit list as its code stack. -/
+/-- **Decoding inverts the code stack.** For every bit list $x$ and every code $c$, if $x$
+decodes to $c$, then the code stack of $c$ is $x$. -/
 theorem codeCells_of_decodeCodeCells_eq_some {x : List Bool} {c : Code}
     (h : decodeCodeCells x = some c) :
     codeCells c = x := by
@@ -526,8 +568,8 @@ theorem codeCells_of_decodeCodeCells_eq_some {x : List Bool} {c : Code}
   obtain ⟨es, ⟨l, rfl, rfl⟩, hk, rfl⟩ := h
   rw [codeCells, entries_codeOfEntries ((keysAscendFrom_iff 0 0 es).1 hk).1]
 
-/-- **Code stacks are recognized.** `decodeCodeCells x` is defined iff `x` is the code stack of a
-code. -/
+/-- **Code stacks are recognized.** For every bit list $x$, the decoding of $x$ as a code
+succeeds iff $x$ is the code stack of some code. -/
 theorem isSome_decodeCodeCells_iff (x : List Bool) :
     (decodeCodeCells x).isSome ↔ ∃ c : Code, codeCells c = x := by
   constructor
@@ -545,8 +587,10 @@ theorem isSome_decodeCodeCells_iff (x : List Bool) :
     rw [hd]
     rfl
 
-/-- **Code stacks, entry by entry.** `decodeCodeCells x` is defined iff `x` is the cells of the
-numbers of entries whose keys strictly increase. -/
+/-- **Code stacks, entry by entry.** A bit list $x$ encodes a code (its decoding succeeds) iff
+there is a list of entries $(q, a, q', s)$ of natural numbers whose keys $(q, a)$ strictly
+increase in lexicographic order, such that $x$ is the list of cells of the numbers of these
+entries, four numbers per entry. -/
 theorem isSome_decodeCodeCells_iff_entries (x : List Bool) : (decodeCodeCells x).isSome ↔
     ∃ es, x = cells (entryNums es) ∧ keysAscendFrom 0 0 es = true := by
   constructor
@@ -561,21 +605,26 @@ theorem isSome_decodeCodeCells_iff_entries (x : List Bool) : (decodeCodeCells x)
     have h2 : entriesOfNums (entryNums es) = some es := (entriesOfNums_eq_some _ _).2 rfl
     simp only [decodeCodeCells, h1, Option.bind_some, h2, hk, ↓reduceIte, Option.isSome_some]
 
-/-- Every code stack decodes to a code with that code stack. -/
+/-- **Code stacks decode to codes with the same code stack.** For every code $c$, decoding the code
+stack of $c$ succeeds and returns a code $c'$ whose code stack equals the code stack of $c$. -/
 theorem decodeCodeCells_codeCells (c : Code) :
     ∃ c', decodeCodeCells (codeCells c) = some c' ∧ codeCells c' = codeCells c := by
   obtain ⟨c', hc'⟩ := Option.isSome_iff_exists.1 ((isSome_decodeCodeCells_iff _).2 ⟨c, rfl⟩)
   exact ⟨c', hc', codeCells_of_decodeCodeCells_eq_some hc'⟩
 
-/-- **The diagonal language on a code stack.** On the code stack of `c`, `diag f` holds iff `c`
-does not halt there within `f` steps with the answer `true`. -/
+/-- **The diagonal language on a code stack.** For every time bound
+$f : \mathbb{N} \to \mathbb{N}$ and every code $c$ with code stack $x$, the bit list $x$ belongs to
+the diagonal language for $f$ iff it is not the case that $c$, run on $x$, halts within $f(|x|)$
+steps with output the single symbol $2$ of the bit true. -/
 theorem diag_codeCells (f : ℕ → ℕ) (c : Code) :
     diag f (codeCells c) =
       decide (c.evalSteps (codeCells c) (f (codeCells c).length) ≠ some [bitSym true]) := by
   obtain ⟨c', hd, hc'⟩ := decodeCodeCells_codeCells c
   simp only [diag, hd, Code.evalSteps_eq_of_codeCells_eq hc']
 
-/-- Bit lists that are no code stack are not in the diagonal language. -/
+/-- **Bit lists that encode no code are outside the diagonal language.** For every
+$f : \mathbb{N} \to \mathbb{N}$ and every bit list $x$ that is the code stack of no code, $x$ is not
+in the diagonal language of $f$. -/
 theorem diag_eq_false {f : ℕ → ℕ} {x : List Bool} (hx : ∀ c : Code, codeCells c ≠ x) :
     diag f x = false := by
   have hd : decodeCodeCells x = none := by
@@ -584,10 +633,15 @@ theorem diag_eq_false {f : ℕ → ℕ} {x : List Bool} (hx : ∀ c : Code, code
     | some c => exact absurd (codeCells_of_decodeCodeCells_eq_some h) (hx c)
   simp only [diag, hd]
 
-/-- **The diagonal language through the universal machine.** On the code stack of `c`, `diag f`
-holds iff the clocked universal machine, which writes `encOut (c.evalSteps x T)` from
-`encIn c x T` (`Clocked.nonempty_univPolyTime`), does not write the answer `true` from
-`encIn c (codeCells c) (f |codeCells c|)`. -/
+/-- **The diagonal language through the universal machine.** For every time bound
+$f : \mathbb{N} \to \mathbb{N}$ and every code $c$ with code stack $x$, the bit list $x$ belongs to
+the diagonal language for $f$ iff the output encoding of the result of running $c$ on $x$ for at
+most $f(|x|)$ steps differs from the output encoding of the result whose output is the single
+symbol $2$ of the bit true.
+
+The clocked universal machine reads the input encoding of a code, an input and a clock $T$ and
+writes the output encoding of the result of running the code on the input for at most $T$ steps,
+so the condition is read from its output on $c$, $x$ and $f(|x|)$. -/
 theorem diag_codeCells_eq_encOut (f : ℕ → ℕ) (c : Code) :
     diag f (codeCells c) = decide
       (encOut (c.evalSteps (codeCells c) (f (codeCells c).length)) ≠
@@ -595,9 +649,10 @@ theorem diag_codeCells_eq_encOut (f : ℕ → ℕ) (c : Code) :
   rw [diag_codeCells]
   simp only [ne_eq, encOut_injective.eq_iff]
 
-/-- **The diagonal argument** (from the proof of Sipser's Theorem 9.10): no code decides
-`diag f` within `f` steps. A code `c` deciding it would, on its own code stack, answer the opposite
-of `diag f`. -/
+/-- **The diagonal argument.** For every $f : \mathbb{N} \to \mathbb{N}$, the diagonal language of
+$f$ is not in the time class of $f$ on codes: no code decides it on every input $x$ within
+$f(|x|)$ steps. This is the argument from the proof of Sipser's Theorem 9.10: a code $c$ deciding
+it would, on its own code stack, answer the opposite of the diagonal language of $f$. -/
 theorem diag_not_mem_codeTime (f : ℕ → ℕ) : diag f ∉ CodeTime f := by
   rintro ⟨c, hc⟩
   have h := hc (codeCells c)
@@ -611,25 +666,32 @@ theorem diag_not_mem_codeTime (f : ℕ → ℕ) : diag f ∉ CodeTime f := by
     rw [eq_comm, decide_eq_true_iff] at hd
     exact hd h
 
-/-- **A hierarchy within codes, given an upper bound.** If `f ≤ g` and `diag f` is decided within
-`g`, then `CodeTime f` is a proper subclass of `CodeTime g`. -/
+/-- **A hierarchy within codes, given an upper bound.** Let $f, g : \mathbb{N} \to \mathbb{N}$
+with $f(n) \le g(n)$ for every $n$, and for a time bound $t$ let $\mathrm{CodeTime}(t)$ be the
+class of decision problems that some code decides within $t(|x|)$ steps on every input $x$.
+If the diagonal language $\mathrm{diag}(f)$ belongs to $\mathrm{CodeTime}(g)$, then
+$\mathrm{CodeTime}(f)$ is a proper subclass of $\mathrm{CodeTime}(g)$. -/
 theorem codeTime_ssubset_of_diag_mem {f g : ℕ → ℕ} (hfg : f ≤ g) (h : diag f ∈ CodeTime g) :
     CodeTime f ⊂ CodeTime g :=
   (Set.ssubset_iff_of_subset (codeTime_mono hfg)).2 ⟨diag f, h, diag_not_mem_codeTime f⟩
 
 /-! ### The upper bound, up to the reformatting machine -/
 
-/-- The universal machine's argument for `diag f` on `x`: the code encoded by `x`, the input `x`
-and the clock `f |x|`; for a bit list that encodes no code, the code with no transitions on the
-input `[true]`, which halts at once with the answer `true`, so that `diag f` reads `false`. -/
+/-- **The universal machine's argument for the diagonal language.** For a time bound
+$f : \mathbb{N} \to \mathbb{N}$ and a bit list $x$, the argument is a triple of a code, an input and
+a clock. If $x$ decodes to a code $c$, it is $(c, x, f(|x|))$. Otherwise it is the code with the
+empty table, the input consisting of the single bit true, and the clock $0$; that code halts at
+once with the answer true, so that the diagonal answer is false there. -/
 def diagArg (f : ℕ → ℕ) (x : List Bool) : Code × List Bool × ℕ :=
   match decodeCodeCells x with
   | some c => (c, x, f x.length)
   | none => (⟨[]⟩, [true], 0)
 
-/-- **The reformatting function in bits.** The universal machine's input for `diag f` on `x` is
-`cell (f |x|) ++ cells (input x) ++ false :: x.reverse` when `x` is a code stack, and a fixed
-list otherwise. -/
+/-- **The reformatting function in bits.** For $f : \mathbb{N} \to \mathbb{N}$ and a bit list $x$,
+the input bits of the clocked universal machine on its argument for the diagonal language of $f$
+on $x$ are, when $x$ encodes a code, the cell of $f(|x|)$, then the cells of the input symbols of
+$x$, then the bit false, then $x$ reversed; when $x$ encodes no code, they are the fixed list
+$[\mathrm{false}, \mathrm{true}, \mathrm{true}, \mathrm{false}, \mathrm{false}]$. -/
 theorem encIn_diagArg (f : ℕ → ℕ) (x : List Bool) :
     encIn (diagArg f x).1 (diagArg f x).2.1 (diagArg f x).2.2 =
       if (decodeCodeCells x).isSome then
@@ -641,18 +703,24 @@ theorem encIn_diagArg (f : ℕ → ℕ) (x : List Bool) :
   · simp only [diagArg, hd, Option.isSome_some, ↓reduceIte, encIn,
       codeCells_of_decodeCodeCells_eq_some hd]
 
-/-- The answer of `diag` read from a clocked result: `true` unless the result is the answer
-`true`. -/
+/-- **The diagonal answer.** For a clocked result $o$, either a timeout or the output of a halted
+run, the diagonal answer of $o$ is false if $o$ is the output consisting of the single symbol $2$,
+the symbol of the bit true, and true otherwise, including on a timeout. -/
 def diagAnswer (o : Option (List ℕ)) : Bool := decide (o ≠ some [bitSym true])
 
-/-- The answer read from the universal machine's output: `true` unless the output is
-`encOut (some [bitSym true])`. -/
+/-- **The diagonal answer read from the encoded output.** For every clocked result $o$, either a
+timeout or the output of a halted run, the diagonal answer of $o$ is true exactly when the output
+encoding of $o$ differs from the output encoding of the result whose output is the single symbol
+$2$ of the bit true, which is the bit list true, true, true, false. -/
 theorem diagAnswer_eq_decide_encOut (o : Option (List ℕ)) :
     diagAnswer o = decide (encOut o ≠ encOut (some [bitSym true])) := by
   simp only [diagAnswer, ne_eq, encOut_injective.eq_iff]
 
-/-- **`diag f` through the universal function.** `diag f` is the answer read from the clocked
-evaluator on `diagArg f`. -/
+/-- **The diagonal language through the clocked evaluator.** For every
+$f : \mathbb{N} \to \mathbb{N}$ and every bit list $x$, let $(c, y, T)$ be the universal machine's
+argument for the diagonal language of $f$ on $x$. Then the diagonal language of $f$ holds at $x$
+iff the clocked evaluator, running $c$ on $y$ for at most $T$ steps, does not return the output
+$[2]$, the symbol of the answer true. -/
 theorem diag_eq_comp (f : ℕ → ℕ) :
     diag f = diagAnswer ∘ (fun a : Code × List Bool × ℕ ↦ a.1.evalSteps a.2.1 a.2.2) ∘
       diagArg f := by
@@ -664,7 +732,9 @@ namespace Diag.Readout
 
 open Function MetaMathlibExt.TM2Program
 
-/-- The stacks of the readout machine: the input `X` and the output `O`. -/
+/-- **Stacks of the readout machine.** The readout machine, which reads the answer of the
+diagonal language off the output of the clocked universal machine, has exactly two stacks: the
+input stack $X$ and the output stack $O$. -/
 inductive K | X | O
   deriving DecidableEq
 
@@ -673,8 +743,11 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .O], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The labels: `r0` to `r3` read the bits of `encOut (some [bitSym true])`, `r4` checks that
-nothing follows, `hit` and `miss` write the answer, `done` stops. -/
+/-- **Labels of the readout machine.** The readout machine has eight labels: $r_0$, $r_1$,
+$r_2$ and $r_3$ read in turn the bits $\mathrm{true}, \mathrm{true}, \mathrm{true},
+\mathrm{false}$, which encode, at the output of the clocked universal machine, a halt whose
+output is the single symbol of the bit $\mathrm{true}$; $r_4$ checks that no bit follows;
+$\mathrm{hit}$ and $\mathrm{miss}$ write the answer; and $\mathrm{done}$ stops. -/
 inductive Lab | r0 | r1 | r2 | r3 | r4 | hit | miss | done
   deriving DecidableEq
 
@@ -683,15 +756,23 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
   elems := ⟨↑[Lab.r0, .r1, .r2, .r3, .r4, .hit, .miss, .done], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Every stack holds bits. -/
+/-- **Stack alphabet of the readout machine.** Every stack of the readout machine, namely
+the input stack $X$ and the output stack $O$, has the alphabet of bits. -/
 abbrev Γ : K → Type := fun _ => Bool
 
-/-- Pop a bit of `X`; go to `next` if it is `b`, to `miss` otherwise. -/
+/-- **Expecting a bit in the readout machine.** For a bit $b$ and a label $\ell$, the statement
+that pops the top of the input stack $X$ and goes to $\ell$ if the popped symbol is $b$, and to the
+label miss otherwise, including when $X$ is empty. -/
 def expect (b : Bool) (next : Lab) : TM2.Stmt Γ Lab Bool :=
   .pop .X (fun _ o ↦ o == some b) (.branch id (.goto fun _ ↦ next) (.goto fun _ ↦ .miss))
 
-/-- The program: compare the input with `encOut (some [bitSym true]) = [true, true, true, false]`
-and write `false` on a match, `true` otherwise. -/
+/-- **Program of the readout machine.** The readout machine pops the bits of its input stack
+$X$ one at a time and compares them with $\mathrm{true}, \mathrm{true}, \mathrm{true},
+\mathrm{false}$, which encode, at the output of the clocked universal machine, a halt whose
+output is the single symbol of the bit $\mathrm{true}$. If the input is exactly this list, it
+pushes $\mathrm{false}$ onto its output stack $O$; otherwise (at the first bit that differs,
+when the input ends early, or when a fifth bit follows) it pushes $\mathrm{true}$. Then it
+halts. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .r0 => expect true .r1
   | .r1 => expect true .r2
@@ -702,7 +783,11 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
   | .miss => .push .O (fun _ ↦ true) (.goto fun _ ↦ .done)
   | .done => .halt
 
-/-- The readout machine as a host component. -/
+/-- **The readout machine as a host component.** The component machine whose stacks are the
+input $X$ and the output $O$, each over the alphabet of bits, whose labels and program are
+those of the readout machine, which checks whether $X$ holds exactly
+$(\mathrm{true}, \mathrm{true}, \mathrm{true}, \mathrm{false})$ and pushes $\mathrm{false}$ on
+$O$ if so and $\mathrm{true}$ otherwise, and whose list of stacks is $(X, O)$. -/
 abbrev comp : Complexity.Host.Comp where
   K := K
   Γ := Γ
@@ -713,8 +798,13 @@ abbrev comp : Complexity.Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- **The readout run.** From the bits `l` on `X`, the machine stops at `done` within `6` steps
-with the bit `l ≠ encOut (some [bitSym true])` on `O`. -/
+/-- **The readout run.** Let $l$ be a bit list, and start the readout machine at the label
+$r_0$ with its internal Boolean variable set to $\mathrm{false}$, $l$ on the input stack $X$ and
+the output stack $O$ empty. Then the machine reaches the label $\mathrm{done}$ within $6$ steps,
+and $O$ then holds exactly one bit, which is $\mathrm{true}$ if and only if
+$l \ne [\mathrm{true}, \mathrm{true}, \mathrm{true}, \mathrm{false}]$, the list that encodes, at
+the output of the clocked universal machine, a halt whose output is the single symbol of the bit
+$\mathrm{true}$. -/
 theorem run (l : List Bool) :
     ∃ v S', RunLe prog 6 ⟨some .r0, false, update (fun _ ↦ []) .X l⟩ ⟨some .done, v, S'⟩ ∧
       S' .O = [decide (l ≠ encOut (some [bitSym true]))] := by
@@ -726,7 +816,12 @@ theorem run (l : List Bool) :
     | exact ⟨_, _, ⟨5, by norm_num, rfl⟩, rfl⟩
     | exact ⟨_, _, ⟨6, le_rfl, rfl⟩, rfl⟩
 
-/-- The readout machine on raw bits, in the reduction host. -/
+/-- **The readout on raw bits in polynomial time.** A finite multi-stack Turing machine, whose
+input and output alphabets are identified with the bits, together with a polynomial time bound,
+such that for every bit list $l$, given $l$ as its input, it halts within the bound, evaluated at
+$|l|$, with output the one-bit list $[b]$, where $b$ is true if and only if $l$ differs from the
+output encoding of the result whose output is the single symbol $2$ of the bit true, that is,
+from the list true, true, true, false. -/
 noncomputable def bitsPolyTime :
     TM2ComputableInPolyTime (fun l : List Bool ↦ l) (fun l : List Bool ↦ l)
       (fun l ↦ [decide (l ≠ encOut (some [bitSym true]))]) :=
@@ -735,8 +830,12 @@ noncomputable def bitsPolyTime :
       obtain ⟨v, S', hr, hO⟩ := run l
       exact ⟨v, S', by simpa using hr, by simpa using hO⟩
 
-/-- **The readout in polynomial time.** A `FinTM2` reads `encOut o` and writes the bit
-`diagAnswer o`. -/
+/-- **The readout in polynomial time.** A finite multi-stack Turing machine, given the output
+encoding $\mathrm{encOut}(o)$ of a result $o$ of the clocked universal function (a list of
+symbols, or a timeout), outputs the one-bit list $[\mathrm{diagAnswer}(o)]$ within a number
+of steps polynomial in the length of $\mathrm{encOut}(o)$. Here $\mathrm{diagAnswer}(o)$ is
+$\mathrm{true}$ unless $o$ is a halt whose output is the single symbol of the bit
+$\mathrm{true}$. -/
 noncomputable def polyTime : TM2ComputableInPolyTime encOut (fun b : Bool ↦ [b]) diagAnswer where
   toTM2ComputableAux := bitsPolyTime.toTM2ComputableAux
   time := bitsPolyTime.time
@@ -746,11 +845,17 @@ noncomputable def polyTime : TM2ComputableInPolyTime encOut (fun b : Bool ↦ [b
 
 end Diag.Readout
 
-/-- **The upper bound, given the reformatting machine.** If a `FinTM2` writes the universal
-machine's input `encIn` of `diagArg f x` from the bits `x` in polynomial time, then a `FinTM2`
-decides `diag f` in polynomial time: the reformatting machine, then the clocked universal machine
-(`Clocked.nonempty_univPolyTime`), then the readout machine, composed by
-`TM2Composition.compComputable`. -/
+/-- **The diagonal language in polynomial time, given the reformatting machine.** Let
+$f : \mathbb{N} \to \mathbb{N}$. Suppose that a finite multi-stack Turing machine, the
+reformatting machine, computes in polynomial time, from a bit list $x$ given as itself, the
+input $\mathrm{encIn}(c, y, T)$ of the clocked universal machine, where
+$(c, y, T) = \mathrm{diagArg}_f(x)$ is the argument of the clocked universal function for the
+diagonal language $\mathrm{diag}_f$ on $x$. Then a finite multi-stack Turing machine computes
+$\mathrm{diag}_f$ in polynomial time: on every bit list $x$, given as itself, it outputs the
+one-bit list $[\mathrm{diag}_f(x)]$.
+
+The machine runs the reformatting machine, then the clocked universal machine, then the
+readout machine. -/
 theorem nonempty_diag_polyTime {f : ℕ → ℕ}
     (hR : TM2ComputableInPolyTime (fun x : List Bool ↦ x)
       (fun a : Code × List Bool × ℕ ↦ encIn a.1 a.2.1 a.2.2) (diagArg f)) :

@@ -89,12 +89,15 @@ open scoped Nat
 namespace MathlibExt.Biology.Omics.HierarchicalCount
 
 /-- The Poisson likelihood of a count `k` at rate `r` and size factor (exposure) `s`:
-`P(k ∣ r) = e^{-s r} (s r)ᵏ / k!`, the mass of `k` under `Po(s r)`. -/
+`P(k ∣ r) = e^{-s r} (s r)ᵏ / k!` for real `s, r` (with `0⁰ = 1`), the mass of `k` under `Po(s r)`
+when `s r ≥ 0`. -/
 noncomputable def poissonExposureLik (s : ℝ) (k : ℕ) (r : ℝ) : ℝ :=
   exp (-(s * r)) * (s * r) ^ k / k !
 
-/-- The marginal (prior-predictive) likelihood of a count `k` under the hierarchy
-`k ∣ λ ~ Po(s λ)`, `λ ~ Gamma(a, b)`: `∫ P(k ∣ r) dGamma(a, b)(r)`. -/
+/-- The marginal (prior-predictive) likelihood of a count `k` under the hierarchy `k ∣ λ ~ Po(s λ)`,
+`λ ~ Gamma(a, b)`: `∫ P(k ∣ r) dGamma(a, b)(r)`, a Bochner integral that is `0` when the integrand
+is not integrable. It is a probability for `a, b > 0` and `s ≥ 0`; for other `a` or `b`,
+`gammaMeasure a b` is not a probability measure. -/
 noncomputable def marginalLik (a b s : ℝ) (k : ℕ) : ℝ :=
   ∫ r, poissonExposureLik s k r ∂gammaMeasure a b
 
@@ -148,13 +151,14 @@ theorem posterior_eq_gammaPDFReal {a b s : ℝ} (ha : 0 < a) (hb : 0 < b) (hs : 
   rw [he, mul_pow]
   field_simp
 
-/-- The posterior mean `(a + k) / (b + s)` of the rate `λ` after observing `k ~ Po(s λ)` under
-the prior `λ ~ Gamma(a, b)`. -/
+/-- The posterior mean `(a + k) / (b + s)` of the rate `λ` after observing `k ~ Po(s λ)` under the
+prior `λ ~ Gamma(a, b)`. It is defined for all real `a, b, s`, with `x / 0 = 0` when `b + s = 0`; it
+is the mean of the posterior `Gamma(a + k, b + s)` for `a, b > 0` and `s ≥ 0`. -/
 noncomputable def posteriorMean (a b s : ℝ) (k : ℕ) : ℝ := (a + k) / (b + s)
 
-/-- The shrinkage weight `w = s / (b + s)` on the per-cell estimate `k / s`; the prior mean
-`a / b` gets weight `1 - w = b / (b + s)`. It depends only on the prior rate `b` and the size
-factor `s`. -/
+/-- The shrinkage weight `w = s / (b + s)` on the per-cell estimate `k / s`; the prior mean `a / b`
+gets weight `1 - w = b / (b + s)`. It depends only on the prior rate `b` and the size factor `s`,
+and is `0` when `b + s = 0`, by `x / 0 = 0`. -/
 noncomputable def shrinkageWeight (b s : ℝ) : ℝ := s / (b + s)
 
 /-- The posterior law `Gamma(a + k, b + s)` has mean `posteriorMean a b s k`. -/
@@ -173,14 +177,14 @@ theorem shrinkageWeight_mem_Ioo {b s : ℝ} (hb : 0 < b) (hs : 0 < s) :
   have hbs : 0 < b + s := by linarith
   refine ⟨div_pos hs hbs, (div_lt_one hbs).2 (by linarith)⟩
 
-/-- `1 - w = b / (b + s)`. -/
+/-- `1 - w = b / (b + s)` for `b + s > 0`. -/
 theorem one_sub_shrinkageWeight {b s : ℝ} (hbs : 0 < b + s) :
     1 - shrinkageWeight b s = b / (b + s) := by
   rw [shrinkageWeight]; field_simp; ring
 
-/-- **The posterior mean is a convex shrinkage combination.** For `b, s > 0`, the posterior mean
-is `w · (k / s) + (1 - w) · (a / b)` with `w = s / (b + s)`: the per-cell estimate `k / s` shrunk
-toward the prior mean `a / b`. -/
+/-- **The posterior mean is a convex shrinkage combination.** For real `a` and `b, s > 0`, the
+posterior mean is `w · (k / s) + (1 - w) · (a / b)` with `w = s / (b + s)`: for `a > 0`, the
+per-cell estimate `k / s` shrunk toward the prior mean `a / b`. -/
 theorem posteriorMean_eq_shrinkage {a b s : ℝ} (hb : 0 < b) (hs : 0 < s) (k : ℕ) :
     posteriorMean a b s k =
       shrinkageWeight b s * (k / s) + (1 - shrinkageWeight b s) * (a / b) := by
@@ -189,8 +193,8 @@ theorem posteriorMean_eq_shrinkage {a b s : ℝ} (hb : 0 < b) (hs : 0 < s) (k : 
   field_simp
   ring
 
-/-- The posterior mean lies on the segment between the prior mean `a / b` and the per-cell
-estimate `k / s`. -/
+/-- For real `a` and `b, s > 0`, the posterior mean lies on the segment between the prior mean
+`a / b` and the per-cell estimate `k / s`. -/
 theorem posteriorMean_mem_segment {a b s : ℝ} (hb : 0 < b) (hs : 0 < s) (k : ℕ) :
     posteriorMean a b s k ∈ segment ℝ (a / b) (k / s) := by
   obtain ⟨hw0, hw1⟩ := shrinkageWeight_mem_Ioo hb hs
@@ -198,22 +202,23 @@ theorem posteriorMean_mem_segment {a b s : ℝ} (hb : 0 < b) (hs : 0 < s) (k : �
   rw [posteriorMean_eq_shrinkage hb hs, smul_eq_mul, smul_eq_mul]
   ring
 
-/-- **Zero count.** With `k = 0` the per-cell estimate is `0` and the posterior mean is the
-shrunk prior mean `(1 - w) (a / b) = a / (b + s)`. -/
+/-- **Zero count.** For real `a` and `b, s > 0`, with `k = 0` the per-cell estimate is `0` and the
+posterior mean is the shrunk prior mean `(1 - w) (a / b) = a / (b + s)`. -/
 theorem posteriorMean_zero {a b s : ℝ} (hb : 0 < b) (hs : 0 < s) :
     posteriorMean a b s 0 = (1 - shrinkageWeight b s) * (a / b) := by
   simpa using posteriorMean_eq_shrinkage (a := a) hb hs 0
 
-/-- **Zero count, strict bounds.** A zero count gives a posterior mean that is strictly
-positive (the rate is not estimated as `0`) and strictly below the prior mean. -/
+/-- **Zero count, strict bounds.** For `a, b, s > 0`, a zero count gives a posterior mean that is
+strictly positive (the rate is not estimated as `0`) and strictly below the prior mean. -/
 theorem posteriorMean_zero_mem_Ioo {a b s : ℝ} (ha : 0 < a) (hb : 0 < b) (hs : 0 < s) :
     posteriorMean a b s 0 ∈ Set.Ioo 0 (a / b) := by
   have hbs : 0 < b + s := by linarith
   simp only [posteriorMean, Nat.cast_zero, add_zero]
   exact ⟨div_pos ha hbs, div_lt_div_of_pos_left ha hb (by linarith)⟩
 
-/-- **No-shrinkage limit, weight.** As the prior rate `b → 0⁺` (prior variance `a / b² → ∞` at
-fixed prior mean), the shrinkage weight tends to `1`. -/
+/-- **No-shrinkage limit, weight.** For `s > 0`, as the prior rate `b → 0⁺` the shrinkage weight
+tends to `1`. At a fixed prior mean `m = a / b` this is the limit of prior variance
+`a / b² = m / b → ∞`. -/
 theorem tendsto_shrinkageWeight_zero {s : ℝ} (hs : 0 < s) :
     Tendsto (fun b => shrinkageWeight b s) (𝓝[>] 0) (𝓝 1) := by
   have h : Tendsto (fun b => s / (b + s)) (𝓝 0) (𝓝 (s / (0 + s))) :=
@@ -258,12 +263,14 @@ theorem tendsto_posteriorMean_priorVariance_zero {m s : ℝ} (hm : 0 < m) (hs : 
 
 /-! ### Empirical Bayes: method-of-moments hyperparameters -/
 
-/-- Method-of-moments shape estimate `â = M² / (V - M)` from a count mean `M` and variance `V`.
-It inverts the negative binomial variance law `V = M + M² / a`. -/
+/-- Method-of-moments shape estimate `â = M² / (V - M)` from a count mean `M` and variance `V`. It
+inverts the negative binomial variance law `V = M + M² / a` for `0 < M < V`; at `V = M` it is `0`,
+by `x / 0 = 0`. -/
 noncomputable def momShape (M V : ℝ) : ℝ := M ^ 2 / (V - M)
 
-/-- Method-of-moments rate estimate `b̂ = s M / (V - M)` for size factor `s`, from a count mean
-`M` and variance `V`. It inverts `M = s a / b` at `a = momShape M V`. -/
+/-- Method-of-moments rate estimate `b̂ = s M / (V - M)` for size factor `s`, from a count mean `M`
+and variance `V`. It inverts `M = s a / b` at `a = momShape M V` for `s > 0` and `0 < M < V`; at
+`V = M` it is `0`, by `x / 0 = 0`. -/
 noncomputable def momRate (s M V : ℝ) : ℝ := s * M / (V - M)
 
 /-- **Defining equations of the moment estimator.** If the counts are overdispersed
@@ -304,7 +311,8 @@ theorem mom_marginal_moments {a b s : ℝ} (ha : 0 < a) (hb : 0 < b) (hs : 0 < s
   exact (eq_mom_of_moment_equations ha hb hs rfl rfl).imp Eq.symm Eq.symm
 
 /-- The empirical-Bayes posterior mean: the posterior mean `(â + k) / (b̂ + s)` with the
-hyperparameters replaced by their moment estimates from a count mean `M` and variance `V`. -/
+hyperparameters replaced by their moment estimates from a count mean `M` and variance `V`, with
+`x / 0 = 0` in each quotient. The intended domain is `s > 0` and `0 < M < V`. -/
 noncomputable def ebPosteriorMean (s M V : ℝ) (k : ℕ) : ℝ :=
   posteriorMean (momShape M V) (momRate s M V) s k
 
@@ -320,18 +328,19 @@ theorem ebPosteriorMean_eq_shrinkage {s M V : ℝ} (hs : 0 < s) (hM : 0 < M) (hM
   congr 2
   rw [momShape, momRate]; field_simp
 
-/-- The sample mean `M̂ₙ = n⁻¹ ∑_{i<n} Xᵢ` of the first `n` counts. -/
+/-- The sample mean `M̂ₙ = n⁻¹ ∑_{i<n} Xᵢ` of the first `n` counts; it is `0` for `n = 0`. -/
 noncomputable def sampleMean {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
   (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, X i ω
 
 /-- The (biased, divisor `n`) sample variance `V̂ₙ = n⁻¹ ∑_{i<n} Xᵢ² - M̂ₙ²` of the first `n`
-counts. -/
+counts; it is `0` for `n = 0`. -/
 noncomputable def sampleVar {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
   (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, X i ω ^ 2 - sampleMean X n ω ^ 2
 
-/-- Deterministic core of consistency: the moment estimates and the empirical-Bayes posterior
-mean are continuous at overdispersed moments, so they converge when the sample mean and
-second moment converge. -/
+/-- Deterministic core of consistency: along any filter, if `Mn → M` and `Qn → Q` with `s > 0` and
+`0 < M < Q - M²`, the moment estimates and the empirical-Bayes posterior mean at the mean `Mn` and
+the variance `Qn - Mn²` converge to their values at `M` and `Q - M²`: they are continuous at
+overdispersed moments. -/
 theorem tendsto_mom_of_tendsto {ι : Type*} {l : Filter ι} {Mn Qn : ι → ℝ} {M Q s : ℝ}
     (hs : 0 < s) (hM : 0 < M) (hMV : M < Q - M ^ 2) (hMn : Tendsto Mn l (𝓝 M))
     (hQn : Tendsto Qn l (𝓝 Q)) :
@@ -349,14 +358,14 @@ theorem tendsto_mom_of_tendsto {ι : Type*} {l : Filter ι} {Mn Qn : ι → ℝ}
   refine ⟨hA, hB, fun k => ?_⟩
   exact (hA.add tendsto_const_nhds).div (hB.add tendsto_const_nhds) (by linarith)
 
-/-- **Strong consistency of the empirical-Bayes hyperparameters.** Let `X₀, X₁, …` be pairwise
-independent, identically distributed real random variables (e.g. counts) with finite second
-moment (`X₀` a.e.-strongly measurable with `X₀²` integrable, which gives `X₀` integrable on the
-probability space) whose mean and second moment are those of the hierarchy's marginal law
-`NB(a, s a / b)`: `E X₀ = s a / b` and `E X₀² = μ + μ² / a + μ²` with `μ = s a / b`. Then almost
-surely the moment estimates computed from the first `n` observations converge to `(a, b)`, and
-for every count `k` the empirical-Bayes posterior mean converges to the oracle posterior mean
-`(a + k) / (b + s)`.
+/-- **Strong consistency of the empirical-Bayes hyperparameters.** Let `μ` be a probability measure,
+`a, b, s > 0`, and `X₀, X₁, …` pairwise independent, identically distributed real random variables
+(e.g. counts) with finite second moment (`X₀` a.e.-strongly measurable with `X₀²` integrable, which
+gives `X₀` integrable on the probability space) whose mean and second moment are those of the
+hierarchy's marginal law `NB(a, s a / b)`: `E X₀ = m` and `E X₀² = m + m² / a + m²` with
+`m = s a / b`. Then almost surely the moment estimates computed from the first `n` observations
+converge to `(a, b)`, and for every count `k` the empirical-Bayes posterior mean converges to the
+oracle posterior mean `(a + k) / (b + s)`.
 
 The moment hypotheses are where the count model enters: they are exactly the pmf-level facts
 `ProbabilityTheory.hasSum_mul_negBinomialReal` and `ProbabilityTheory.hasSum_sq_negBinomialReal`

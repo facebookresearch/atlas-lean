@@ -21,7 +21,7 @@ doi:10.15807/jorsj.34.354 (NP-hard in the ordinary sense).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted

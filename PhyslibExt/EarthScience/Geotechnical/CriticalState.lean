@@ -105,7 +105,7 @@ def modifiedCamClayElasticDomain (M pc : ℝ) : Set (ℝ × ℝ) :=
 `M, pc > 0` the semi-axes are `pc / 2` and `M * pc / 2`
 (in signed generality with `M ≠ 0` the geometric lengths
 are `|pc| / 2` and `|M * pc| / 2`). At `M = 0` the
-identity reduces to `q ^ 2 ≤ 0`: the domain is the line
+condition `F ≤ 0` reduces to `q ^ 2 ≤ 0`: the domain is the line
 `q = 0` with `p` unbounded, and there is no finite `p`
 semi-axis. -/
 lemma modifiedCamClayYield_eq_translated_ellipse (M pc p q : ℝ) :
@@ -388,7 +388,7 @@ lemma modifiedCamClayPlasticVolumetricIncrement_pos_of_gt
 For symmetric (Cauchy) stress this is `√(3 J₂)` (see
 `deviatoricInvariant_eq_sqrt_neg_stressInvariant2_deviatoric`);
 for a nonsymmetric matrix it is the Frobenius extension,
-not `J₂`. -/
+not `√(3 J₂)`. -/
 noncomputable def deviatoricInvariant (σ : Matrix (Fin 3) (Fin 3) ℝ) : ℝ :=
   Real.sqrt (3 / 2 * ((deviatoricStress σ)ᵀ * deviatoricStress σ).trace)
 

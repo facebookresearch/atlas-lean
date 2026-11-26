@@ -56,7 +56,8 @@ theorem monoprotic_acid_h_unique {K C h : ℝ} (hK : 0 < K) (hC : 0 < C)
     rw [← Real.sqrt_sq (le_of_lt hpos), hsq]
   linarith
 
-/-- The candidate root is positive and satisfies the equilibrium equation. -/
+/-- For `K > 0` and `C > 0`, the candidate root `(-K + sqrt (K ^ 2 + 4 * K * C)) / 2` is
+positive and satisfies the equilibrium equation `h ^ 2 + K * h - K * C = 0`. -/
 theorem monoprotic_acid_h_exists {K C : ℝ} (hK : 0 < K) (hC : 0 < C) :
     0 < (-K + Real.sqrt (K ^ 2 + 4 * K * C)) / 2 ∧
       ((-K + Real.sqrt (K ^ 2 + 4 * K * C)) / 2) ^ 2
