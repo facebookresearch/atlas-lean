@@ -30,3 +30,6 @@
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
+- [Colonization time of the Moran process on graphs](colonization-time-of-the-moran-process-on-graphs.md)
+- [Excursion decomposition of allelic replacement in the Moran model](excursion-decomposition-of-allelic-replacement-in-the-moran-model.md)
+- [Pure-death duality and spectral transition probabilities of the Moran model with mutation](pure-death-duality-and-spectral-transition-probabilities-of-the-moran-model-with-mutation.md)

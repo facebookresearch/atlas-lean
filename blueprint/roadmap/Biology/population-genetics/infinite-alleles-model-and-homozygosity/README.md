@@ -13,3 +13,4 @@
 - [Stationary identity by descent in the circular stepping-stone model](circular-stepping-stone-model-exact-stationary-i.md)
 
 - [Parent-independent finite-alleles mutation on the coalescent genealogy](parent-independent-finite-alleles-mutation-on-th.md)
+- [Central limit theorem for the homozygosity of the hierarchical Dirichlet process](central-limit-theorem-for-homozygosity-of-the-hierarchical-dirichlet-process.md)
