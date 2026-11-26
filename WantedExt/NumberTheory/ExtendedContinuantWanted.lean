@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
 public import MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms
 public import MathlibExt.NumberTheory.ExtendedContinuantSilentTermsTableOneModSix
 public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantBennett
+public import MathlibExt.NumberTheory.ExtendedContinuantConjugateContinuedFractionNotPurelyPeriodic
 public import MathlibExt.NumberTheory.ExtendedContinuantOneSilentTerms
 
 /-!
@@ -65,20 +66,6 @@ public theorem_wanted extendedContinuant_bennett_nat (x : ℤ → ℤ) (k ℓ m 
         extendedContinuant x ((k : ℤ) - m - 2) m +
       ((m + k : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - m - 2) m *
         extendedContinuant x ((ℓ : ℤ) - k - 2) k = 0
-
-/-- **The conjugate continued fraction is not purely periodic.** Let $P$, $Q$ and $D$ be integers
-with $D > 0$ not a perfect square and $Q > 0$, and let $\bar\alpha = (P - \sqrt{D})/Q$. Then the
-simple continued fraction $[a_0; a_1, a_2, \dots]$ of $\bar\alpha$, which is infinite because
-$\bar\alpha$ is irrational, is not purely periodic: there is no integer $s \ge 1$ with
-$a_{n+s} = a_n$ for all $n \ge 0$. Here $a_0 = \lfloor \bar\alpha \rfloor$ is included.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Lemma 3. -/
-public theorem_wanted conjugate_continuedFraction_not_purelyPeriodic (P Q D : ℤ) (hD : 0 < D)
-    (hsq : ¬ IsSquare D) (hQ : 0 < Q) :
-    ¬ ∃ s : ℕ, 0 < s ∧ ∀ n : ℕ,
-      (GenContFract.IntFractPair.stream (((P : ℝ) - √(D : ℝ)) / Q) (n + s)).map (·.b) =
-        (GenContFract.IntFractPair.stream (((P : ℝ) - √(D : ℝ)) / Q) n).map (·.b)
 
 end
 
