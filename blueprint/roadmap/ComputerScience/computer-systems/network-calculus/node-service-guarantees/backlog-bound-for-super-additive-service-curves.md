@@ -1,6 +1,6 @@
 # Backlog bound for super-additive service curves
 
-Assume that a lossless node offers a [service curve](../service-curves.md) $\beta$ to a flow with a sub-additive [arrival curve](../arrival-curves.md) $\alpha$, that $\beta$ is super-additive ($\beta(s + t) \ge \beta(s) + \beta(t)$), and that $\alpha(u_0) \le \beta(u_0)$ for some $u_0 > 0$. Then for every $t$
+Assume that a lossless node offers a [service curve](../service-curves.md) $\beta$ to a flow with a finite sub-additive [arrival curve](../arrival-curves.md) $\alpha$ ($\alpha(t) < \infty$ for every $t$, so that the differences below are defined), that $\beta$ is super-additive ($\beta(s + t) \ge \beta(s) + \beta(t)$), and that $\alpha(u_0) \le \beta(u_0)$ for some $u_0 > 0$. Then for every $t$
 
 $$
 R(t) - R^*(t) \le \sup_{0 \le u < u_0} [R(t) - R(t - u) - \beta(u)] \le \sup_{0 \le u < u_0} [\alpha(u) - \beta(u)] .

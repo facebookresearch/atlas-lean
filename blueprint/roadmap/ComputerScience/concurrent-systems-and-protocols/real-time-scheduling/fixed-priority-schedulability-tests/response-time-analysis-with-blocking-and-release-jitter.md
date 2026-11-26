@@ -6,7 +6,7 @@ $$
 r_i = C_i + B_i + \sum_{j \in hp(i)} \left\lceil \frac{r_i + J_j}{T_j} \right\rceil C_j ,
 $$
 
-computed by iterating from $r_i^0 = 0$. If $J_i + r_i \le D_i$, then every job of $\tau_i$ completes within $J_i + r_i$ of its arrival, that is, within $r_i$ of its release.
+if one exists; the iteration from $r_i^0 = 0$ reaches it, and may be stopped once an iterate exceeds $D_i - J_i$, since then no solution satisfies the test. If a solution exists and $J_i + r_i \le D_i$, then every job of $\tau_i$ completes within $J_i + r_i$ of its arrival, that is, within $r_i$ of its release.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Backlog bound for strict service curves
 
-Assume that a lossless node offers a [strict service curve](strict-service-curves.md) $\beta$ to a flow with [arrival curve](../arrival-curves.md) $\alpha$, that the input and output [cumulative functions](../cumulative-flows-backlog-and-virtual-delay.md) $R$ and $R^*$ are left-continuous, the source's convention, so that the backlog vanishes at the start of every backlogged period, and that $\alpha(u_0) \le \beta(u_0)$ for some $u_0 > 0$. Then every backlogged period lasts at most $u_0$, and for every $t$
+Assume that a lossless node offers a [strict service curve](strict-service-curves.md) $\beta$ to a flow with a finite [arrival curve](../arrival-curves.md) $\alpha$ ($\alpha(t) < \infty$ for every $t$, so that the differences below are defined), that the input and output [cumulative functions](../cumulative-flows-backlog-and-virtual-delay.md) $R$ and $R^*$ are left-continuous, the source's convention, so that the backlog vanishes at the start of every backlogged period, and that $\alpha(u_0) \le \beta(u_0)$ for some $u_0 > 0$. Then every backlogged period lasts at most $u_0$, and for every $t$
 
 $$
 R(t) - R^*(t) \le \sup_{0 \le u < u_0} [R(t) - R(t - u) - \beta(u)] \le \sup_{0 \le u < u_0} [\alpha(u) - \beta(u)] .
