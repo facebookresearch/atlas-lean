@@ -16,7 +16,6 @@ public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmega
 public import MathlibExt.NumberTheory.KFull
 public import MathlibExt.NumberTheory.LSeries.LindelofOfRiemannHypothesis
-public import MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmegaInvZetaLeRpowOfRiemannHypothesis
 
 /-!
 # Venkatasubbareddy–Sankaranarayanan, `2^{ω(n)}` on squareful integers — wishlist
@@ -28,10 +27,8 @@ factorizations of `F(s) = ∑_{n squareful} 2^{ω(n)} n^{-s}` through zeta produ
 (Lemmas 1 and 2), with squareful expressed as `Nat.IsKFull 2`, and the Lindelöf bound for `ζ`
 under the Riemann hypothesis (the bound for `ζ` in Lemma 8). The bound for `1/ζ` under the
 Riemann hypothesis in Lemma 8, `MetaMathlibExt.inv_zeta_le_rpow_of_riemannHypothesis`, is proved
-in
-`MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmegaInvZetaLeRpowOfRiemannHypothesis`.
-A positive integer `n` is squareful
-when `p ∣ n` implies `p^2 ∣ n` for every prime `p`; `n = 1` is squareful. The
+in `MathlibExt.NumberTheory.LSeries.LindelofOfRiemannHypothesis`. A positive integer `n` is
+squareful when `p ∣ n` implies `p^2 ∣ n` for every prime `p`; `n = 1` is squareful. The
 paper's Lemma 7 (`N(T) ≪ T log T`) is implied by
 `MetaMathlibExt.bellotti_wong_zero_count_bound`.
 -/

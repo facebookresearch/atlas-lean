@@ -52,6 +52,11 @@ The proof is the classical argument through a holomorphic logarithm of `ζ`.
   on the line `re s = 1 / 2 - δ` by `|t| ^ (δ + ε)`, and the three-lines theorem on the strip
   `1 / 2 - δ ≤ re s ≤ 1 / 2 + δ`, applied to `ζ(s) exp ((s - it₀) ^ 2)`, covers
   `1 / 2 ≤ σ ≤ 1 / 2 + δ`.
+
+The same bound on `g` gives `‖ζ(σ + it)⁻¹‖ = exp (-re g) ≤ |t| ^ ε` for `1 / 2 + δ ≤ σ ≤ 1`, so
+`MetaMathlibExt.inv_zeta_le_rpow_of_riemannHypothesis` proves, under the Riemann hypothesis, that
+for every `1 / 2 < σ ≤ 1` and `ε > 0` there are constants `C` and `t₀` with
+`‖ζ(σ + it)⁻¹‖ ≤ C |t| ^ ε` for all `|t| ≥ t₀`.
 -/
 
 open Complex
@@ -765,7 +770,8 @@ private theorem pi_sq_div_six_sub_one_le : Real.pi ^ 2 / 6 - 1 ≤ 2 / 3 := by
 private theorem norm_riemannZeta_le_exp (hRH : RiemannHypothesis) {δ : ℝ} (hδ0 : 0 < δ)
     (hδ1 : δ ≤ 1 / 4) :
     ∃ K a : ℝ, a < 1 ∧ ∀ σ t : ℝ, 1 / 2 + δ ≤ σ → σ ≤ 1 → 4 ≤ |t| →
-      ‖riemannZeta (σ + t * I)‖ ≤ Real.exp (K * Real.log |t| ^ a) := by
+      ‖riemannZeta (σ + t * I)‖ ≤ Real.exp (K * Real.log |t| ^ a) ∧
+        ‖(riemannZeta (σ + t * I))⁻¹‖ ≤ Real.exp (K * Real.log |t| ^ a) := by
   set a : ℝ := Real.log (7 / 2 - δ) / Real.log (7 / 2 - δ / 2) with ha_def
   have hl1 : 0 < Real.log (7 / 2 - δ) := Real.log_pos (by linarith)
   have hl2 : 0 < Real.log (7 / 2 - δ / 2) := Real.log_pos (by linarith)
@@ -950,15 +956,20 @@ private theorem norm_riemannZeta_le_exp (hRH : RiemannHypothesis) {δ : ℝ} (h�
       _ = 6 * (252 / δ) ^ a * Real.log |t| ^ a := by ring
   have hzR : z ∈ ball c R := by
     rw [mem_ball, dist_eq_norm, hzc]; linarith
-  rw [← hge z hzR, Complex.norm_exp]
-  exact Real.exp_le_exp.mpr ((Complex.re_le_norm _).trans hgz)
+  -- `‖ζ z‖ = exp (re g z)` and `‖(ζ z)⁻¹‖ = exp (-re g z)`, and `|re g z| ≤ ‖g z‖`.
+  rw [← hge z hzR]
+  refine ⟨?_, ?_⟩
+  · rw [Complex.norm_exp]
+    exact Real.exp_le_exp.mpr ((Complex.re_le_norm _).trans hgz)
+  · rw [← Complex.exp_neg, Complex.norm_exp]
+    exact Real.exp_le_exp.mpr ((Complex.re_le_norm (-g z)).trans (by simpa using hgz))
 
-/-- Under RH, the Lindelöf bound `‖ζ(σ + it)‖ ≤ |t| ^ ε` holds uniformly for
-`1/2 + δ ≤ σ ≤ 1` and large `|t|`. -/
+/-- Under RH, the Lindelöf bound `‖ζ(σ + it)‖ ≤ |t| ^ ε` and the reciprocal bound
+`‖ζ(σ + it)⁻¹‖ ≤ |t| ^ ε` hold uniformly for `1/2 + δ ≤ σ ≤ 1` and large `|t|`. -/
 private theorem lindelof_right (hRH : RiemannHypothesis) {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 4)
     {ε : ℝ} (hε : 0 < ε) :
     ∃ t₁ : ℝ, 4 ≤ t₁ ∧ ∀ σ t : ℝ, 1 / 2 + δ ≤ σ → σ ≤ 1 → t₁ ≤ |t| →
-      ‖riemannZeta (σ + t * I)‖ ≤ |t| ^ ε := by
+      ‖riemannZeta (σ + t * I)‖ ≤ |t| ^ ε ∧ ‖(riemannZeta (σ + t * I))⁻¹‖ ≤ |t| ^ ε := by
   obtain ⟨K, a, ha1, hK⟩ := norm_riemannZeta_le_exp hRH hδ0 hδ1
   set L₀ : ℝ := max 1 ((|K| / ε) ^ (1 / (1 - a))) with hL₀
   refine ⟨max 4 (Real.exp L₀), le_max_left _ _, ?_⟩
@@ -968,7 +979,8 @@ private theorem lindelof_right (hRH : RiemannHypothesis) {δ : ℝ} (hδ0 : 0 < 
   have hL : L₀ ≤ Real.log |t| := by
     rw [Real.le_log_iff_exp_le ht0]; exact (le_max_right _ _).trans ht
   have hL1 : 1 ≤ Real.log |t| := (le_max_left _ _).trans hL
-  refine (hK σ t hσ1 hσ2 ht4).trans ?_
+  suffices hexp : Real.exp (K * Real.log |t| ^ a) ≤ |t| ^ ε from
+    ⟨(hK σ t hσ1 hσ2 ht4).1.trans hexp, (hK σ t hσ1 hσ2 ht4).2.trans hexp⟩
   rw [Real.rpow_def_of_pos ht0]
   apply Real.exp_le_exp.mpr
   set L := Real.log |t| with hLdef
@@ -1058,6 +1070,7 @@ private theorem lindelof_critical (hRH : RiemannHypothesis) {δ ε : ℝ} (hδ0 
     ∃ C t₂ : ℝ, 1 ≤ t₂ ∧ ∀ σ t : ℝ, 1 / 2 - δ ≤ σ → σ ≤ 1 / 2 + δ → t₂ ≤ |t| →
       ‖riemannZeta (σ + t * I)‖ ≤ C * |t| ^ (δ + ε) := by
   obtain ⟨t₁, ht₁, hR⟩ := lindelof_right hRH hδ0 hδ1 hε
+  replace hR := fun σ t h₁ h₂ h₃ => (hR σ t h₁ h₂ h₃).1
   obtain ⟨CΓ, hΓ⟩ := norm_Gamma_mul_cos_le hδ0.le (by linarith)
   set C' : ℝ := max CΓ 0 with hC'
   have hC'0 : 0 ≤ C' := le_max_right _ _
@@ -1292,8 +1305,32 @@ public theorem zeta_le_rpow_of_riemannHypothesis (hRH : RiemannHypothesis)
     exact h.trans (mul_le_mul (le_max_left _ _) hpow hpos hmax0)
   · push Not at hσ
     have h := hR σ t hσ.le hσ2 ((le_max_left _ _).trans ht)
-    calc ‖riemannZeta (σ + t * I)‖ ≤ |t| ^ ε₀ := h
+    calc ‖riemannZeta (σ + t * I)‖ ≤ |t| ^ ε₀ := h.1
       _ ≤ 1 * |t| ^ ε := by rw [one_mul]; exact hpow
       _ ≤ max C 1 * |t| ^ ε := mul_le_mul_of_nonneg_right (le_max_right _ _) (by positivity)
+
+open zeta_le_rpow_of_riemannHypothesis in
+/-- **Bound for $1/\zeta$ from the Riemann hypothesis.** Assume the Riemann hypothesis, and let
+$1/2 < \sigma \le 1$ and $\varepsilon > 0$ be real. Then there are real constants $C$ and $t_0$,
+depending on $\sigma$ and $\varepsilon$, such that $|1/\zeta(\sigma + it)| \le C |t|^{\varepsilon}$
+for every real $t$ with $|t| \ge t_0$.
+
+Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
+Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
+(2024), Article A110, Lemma 8 (`integers-2024-A110-lem-8`). The paper credits the lemma to
+E. C. Titchmarsh, *The Theory of the Riemann Zeta-Function*, 2nd edition, revised by
+D. R. Heath-Brown, Clarendon Press, Oxford, 1986. -/
+public theorem inv_zeta_le_rpow_of_riemannHypothesis (hRH : RiemannHypothesis)
+    (σ : ℝ) (hσ : 1 / 2 < σ) (hσ1 : σ ≤ 1) (ε : ℝ) (hε : 0 < ε) :
+    ∃ C t₀ : ℝ, ∀ t : ℝ, t₀ ≤ |t| → ‖(riemannZeta (σ + t * I))⁻¹‖ ≤ C * |t| ^ ε := by
+  let δ : ℝ := min (σ - 1 / 2) (1 / 4)
+  have hδ0 : 0 < δ := lt_min (by linarith) (by norm_num)
+  have hδ1 : δ ≤ 1 / 4 := min_le_right _ _
+  have hδσ : 1 / 2 + δ ≤ σ := by
+    have := min_le_left (σ - 1 / 2) (1 / 4)
+    linarith
+  obtain ⟨t₁, _, ht₁⟩ := lindelof_right hRH hδ0 hδ1 hε
+  refine ⟨1, t₁, fun t ht => ?_⟩
+  simpa using (ht₁ σ t hδσ hσ1 ht).2
 
 end MetaMathlibExt
