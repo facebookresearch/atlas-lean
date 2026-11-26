@@ -8,7 +8,7 @@ For a list $p = (p_1, \dots, p_m) \in [0,1]^m$ let $\mathrm{PB}(p)$ denote the P
 
 ## Proof sketch
 
-A Bernoulli($q$) coin dominates a Bernoulli($p$) coin when $p \le q$, and domination is closed under independent sums, giving items 1 and 2. For item 3, $\sum_t \Pr[\mathrm{Bin}(t,p) < r]$ is the expected number of trials before the $r$-th success in an infinite Bernoulli sequence, which is $r/p$ by linearity over the $r$ geometric waiting times.
+A Bernoulli($q$) coin dominates a Bernoulli($p$) coin when $p \le q$, and domination is closed under independent sums, giving items 1 and 2. For item 3, $\sum_t \Pr[\mathrm{Bin}(t,p) < r]$ is the expected number of trials up to and including the $r$-th success in an infinite Bernoulli sequence, which is $r/p$ by linearity over the $r$ geometric waiting times.
 
 ## Depends on
 

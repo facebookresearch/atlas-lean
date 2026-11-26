@@ -12,10 +12,6 @@ fraction. Equivalently, if $2r$ independent votes are each correct with probabil
 
 For a fixed set $T$ of at least $r$ wrong positions out of $2r$, the probability that exactly the positions in $T$ are wrong is at most $\varepsilon^{|T|}(1-\varepsilon)^{2r - |T|} \le (\varepsilon(1-\varepsilon))^r$, since $\varepsilon \le 1 - \varepsilon$. There are at most $2^{2r} = 4^r$ such sets, giving $(4\varepsilon(1-\varepsilon))^r$.
 
-## Depends on
-
-- [Majority-vote error amplification](../../../TheoryOfComputation/not-yet-classified/part-01/part-04/bppamplification/bpp-majority-amplify.md)
-
 ## Sources
 
 - E. Kushilevitz and N. Nisan, "Communication Complexity", Cambridge University Press, 1997.

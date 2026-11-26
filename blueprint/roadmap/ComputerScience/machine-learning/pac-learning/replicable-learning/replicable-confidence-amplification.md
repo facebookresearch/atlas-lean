@@ -7,7 +7,7 @@ Let $A$ be $\rho$-replicable over $\mathcal{D}$ and run it $2(r+1)$ times on dis
 
 ## Proof sketch
 
-Replicability follows from block composition and post-processing. The majority errs only if at least $r+1$ of $2(r+1)$ independent runs err, which has probability at most $\binom{2(r+1)}{r+1}\beta_0^{r+1}(1-\beta_0)^{r+1} \le (4\beta_0(1-\beta_0))^{r+1}$; the median lies in the target interval whenever a strict majority of runs do.
+Replicability follows from block composition and post-processing. The majority errs only if at least $r+1$ of $2(r+1)$ independent runs err, which has probability at most $\sum_{j \ge r+1}\binom{2(r+1)}{j}\beta_0^{j}(1-\beta_0)^{2(r+1)-j} \le 2^{2(r+1)}\beta_0^{r+1}(1-\beta_0)^{r+1} = (4\beta_0(1-\beta_0))^{r+1}$, since $\beta_0 \le 1/2$ gives $\beta_0^{j}(1-\beta_0)^{2(r+1)-j} \le \beta_0^{r+1}(1-\beta_0)^{r+1}$ for $j \ge r+1$; the median lies in the target interval whenever a strict majority of runs do.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # The Dósa-Sgall weighting for First Fit
 
-Give an item of size $a$ (capacity $C$) the weight $\frac{6}{5}\frac{a}{C}$ plus a **bonus** equal to $0.4$ if $a > C/2$, $0.1$ if $C/3 \le a \le C/2$, $\frac35\big(\frac{a}{C} - \frac16\big)$ if $C/6 < a < C/3$, and $0$ otherwise. Then every bin of total size at most $C$ has total weight at most $1.7$, while the bins of any First Fit packing with $FF$ bins have total weight at least $FF - 0.8$ (in scaled integer form, $10\,FF \le 17 \cdot W + 8$ for total weight $W$).
+Give an item of size $a$ (capacity $C$) the weight $\frac{6}{5}\frac{a}{C}$ plus a **bonus** equal to $0.4$ if $a > C/2$, $0.1$ if $C/3 \le a \le C/2$, $\frac35\big(\frac{a}{C} - \frac16\big)$ if $C/6 < a < C/3$, and $0$ otherwise. Then every bin of total size at most $C$ has total weight at most $1.7$, while the items of any instance that First Fit packs into $FF$ bins have total weight at least $FF - 3$ (Dósa and Sgall, Section 1.2).
 
 ## Proof sketch
 

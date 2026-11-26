@@ -10,7 +10,6 @@ Pad Roth's three-by-three market with $n - 3$ mutually top-ranked dummy pairs, w
 
 - [Stable matching mechanism](../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/is-stable-mechanism.md)
 - [Strategy-proof matching mechanism](../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/is-strategy-proof.md)
-- [Roth's impossibility theorem](../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/not-exists-stable-strategy-proof.md)
 
 ## Proof depends on
 

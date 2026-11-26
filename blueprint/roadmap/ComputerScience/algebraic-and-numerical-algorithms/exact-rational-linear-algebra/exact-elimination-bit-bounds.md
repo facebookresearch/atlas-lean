@@ -1,6 +1,6 @@
 # Polynomial bit-length bounds for exact rational elimination
 
-For an $m \times n$ rational matrix whose entries have numerators and denominators of absolute value at most $2^{\beta}$, fraction-free elimination computes its reduced row echelon form, rank, and (for a consistent system $Ax = b$) a rational solution, such that every intermediate integer has absolute value at most $(n!) \, 2^{n\beta'}$ for $\beta' = O(\beta + \log(mn))$; in particular all intermediate numbers have bit length polynomial in the input size, and Gaussian elimination over $\mathbb{Q}$ runs in polynomial time (Schrijver, Theorem 3.2).
+For an $m \times n$ rational matrix whose entries have numerators and denominators of absolute value at most $2^{\beta}$, fraction-free elimination computes its reduced row echelon form, rank, and (for a consistent system $Ax = b$) a rational solution, such that every intermediate integer has absolute value at most $(n!) \, 2^{n\beta'}$ for $\beta' = O(\beta + \log(mn))$; in particular all intermediate numbers have bit length polynomial in the input size, and Gaussian elimination over $\mathbb{Q}$ runs in polynomial time (Schrijver, Chapter 3).
 
 ## Proof sketch
 

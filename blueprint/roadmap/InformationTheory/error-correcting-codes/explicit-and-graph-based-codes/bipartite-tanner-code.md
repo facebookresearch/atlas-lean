@@ -5,7 +5,6 @@ Let $B$ be a $D$-regular bipartite multigraph between finite sets $L$ and $R$, p
 ## Depends on
 
 - [Linear code](../linear-codes/linear-code.md)
-- [Expander code distance](../expander-code-distance.md)
 
 ## Sources
 

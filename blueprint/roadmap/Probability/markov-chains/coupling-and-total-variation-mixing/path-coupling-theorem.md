@@ -1,6 +1,6 @@
 # Bubley-Dyer path coupling theorem
 
-Let $P$ be a Markov kernel on a finite set $S$, $N$ a neighbor relation on $S$ and $\rho : S \times S \to [0,\infty)$ with $\rho(x,x) = 0$, $\rho(x,y) \ge 1$ for $x \ne y$, and such that every pair $x \ne y$ has a neighbor $z$ of $x$ with $\rho(x,y) = \rho(x,z) + \rho(z,y)$ (as for the path metric of $N$ with edge lengths at least one). Suppose that for every neighboring pair $(x,y)$ there is a coupling $(X_1, Y_1)$ of $P(x,\cdot)$ and $P(y,\cdot)$ with $\mathbb{E}[\rho(X_1,Y_1)] \le \kappa\,\rho(x,y)$, where $\kappa = e^{-\alpha}$, $\alpha > 0$. Then for all $x, y$ and $t$,
+Let $P$ be a Markov kernel on a finite set $S$, $N$ a neighbor relation on $S$ and $\rho : S \times S \to [0,\infty)$ with $\rho(x,x) = 0$, $\rho(x,y) \ge 1$ for $x \ne y$, and such that every pair $x \ne y$ has a neighbor $z \ne x$ of $x$ with $\rho(x,y) = \rho(x,z) + \rho(z,y)$ (as for the path metric of $N$ with edge lengths at least one). Suppose that for every neighboring pair $(x,y)$ there is a coupling $(X_1, Y_1)$ of $P(x,\cdot)$ and $P(y,\cdot)$ with $\mathbb{E}[\rho(X_1,Y_1)] \le \kappa\,\rho(x,y)$, where $\kappa = e^{-\alpha}$, $\alpha > 0$. Then for all $x, y$ and $t$,
 
 $$
 \|P^t(x,\cdot) - P^t(y,\cdot)\|_{TV} \le \kappa^t \rho(x,y).

@@ -6,7 +6,7 @@ $$
 \max \sum_{t,j} b_{tj}\, x_{tj} \quad \text{s.t.} \quad \sum_t b_{tj} x_{tj} \le B_j \ \forall j, \quad \sum_j x_{tj} \le 1 \ \forall t, \quad x \ge 0,
 $$
 
-whose dual minimizes $\sum_j B_j \alpha_j + \sum_t \beta_t$ subject to $\beta_t \ge b_{tj}(1 - \alpha_j)$, $\alpha, \beta \ge 0$. Weak duality and complementary slackness hold, and the keyword-multiplicity form with demands $r_i$ is equivalent to the unit-demand form. The **bid ratio** is the least $R$ with $b_{tj} \le R\, B_j$ for all $t, j$.
+whose dual minimizes $\sum_j B_j \alpha_j + \sum_t \beta_t$ subject to $\beta_t \ge b_{tj}(1 - \alpha_j)$, $\alpha, \beta \ge 0$. Weak duality and complementary slackness hold. The **bid ratio** is the least $R$ with $b_{tj} \le R\, B_j$ for all $t, j$.
 
 ## Depends on
 

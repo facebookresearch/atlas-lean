@@ -1,12 +1,12 @@
 # The AKS primality test runs in polylogarithmic word-RAM time
 
-Consider the AKS procedure on input $n$: reject if $n < 2$ or $n$ is a perfect power; find the least $r \ge 2$ with $\gcd(r, n) = 1$ and $\mathrm{ord}_r(n) > \lceil \log_2 n \rceil^2$ (or with $1 < \gcd(r, n) < n$); reject if $1 < \gcd(a, n) < n$ for some $a \le r$; accept if $n \le r$; otherwise accept exactly when $(X + a)^n \equiv X^n + a$ in $(\mathbb{Z}/n\mathbb{Z})[X]/(X^r - 1)$ for all $1 \le a \le \lfloor \sqrt{\varphi(r)} \rceil \lceil \log_2 n \rceil$.
+Consider the AKS procedure on input $n$: reject if $n < 2$ or $n$ is a perfect power; find the least $r \ge 2$ with $\gcd(r, n) = 1$ and $\mathrm{ord}_r(n) > (\log_2 n)^2$ (or with $1 < \gcd(r, n) < n$); reject if $1 < \gcd(a, n) < n$ for some $a \le r$; accept if $n \le r$; otherwise accept exactly when $(X + a)^n \equiv X^n + a$ in $(\mathbb{Z}/n\mathbb{Z})[X]/(X^r - 1)$ for all $1 \le a \le \lfloor \sqrt{\varphi(r)} \log_2 n \rfloor$.
 
-There is a deterministic word-RAM program implementing this procedure that decides primality of $n$ (stored in one input word) in $(\log n)^{O(1)}$ instructions at every word size $w$ with $2^w$ polynomially larger than $n$; the instruction count is bounded by an explicit polynomial in $\log_2 n$.
+There is a deterministic word-RAM program implementing this procedure that decides primality of $n$ (stored in one input word) in $(\log n)^{O(1)}$ instructions at every word size $w$ with $2^w > n^2 + n$; the instruction count is bounded by an explicit polynomial in $\log_2 n$.
 
 ## Proof sketch
 
-Correctness is the AKS theorem. The search for $r$ stops below $\lceil \log_2 n \rceil^5$ by the small-modulus lemma, the gcd and totient loop costs $O(r \log n)$, and each congruence test costs $O(r^2 \log n)$ ring operations, with $O(\sqrt{r} \log n)$ tests.
+Correctness is the AKS theorem. The search for $r$ stops at some $r \le \max\{3, \lceil \log_2 n \rceil^5\}$ by the small-modulus lemma, the gcd and totient loop costs $O(r \log n)$, and each congruence test costs $O(r^2 \log n)$ ring operations, with $O(\sqrt{r} \log n)$ tests.
 
 ## Depends on
 

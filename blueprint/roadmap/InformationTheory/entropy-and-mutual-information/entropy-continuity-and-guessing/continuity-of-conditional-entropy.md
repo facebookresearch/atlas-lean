@@ -10,13 +10,12 @@ a bound independent of $|\beta|$. Consequently $H(X\mid Y)_Q \ge t$ implies $H(X
 
 ## Proof sketch
 
-With $d = \delta(P,Q)$, write $P + d\Delta^- = Q + d\Delta^+$ where $\Delta^\pm$ are the normalized positive and negative parts of $P - Q$, and view both sides as the mixture $\Omega$ with weights $\frac{1}{1+d}, \frac{d}{1+d}$. Concavity and the mixture bound for conditional entropy applied to both decompositions of $\Omega$ give $(1+d)^{-1}|H_P - H_Q| \le \frac{d}{1+d}\log_2|\alpha| + h_2(d/(1+d))$. Monotonicity of the modulus on $[0,1]$ passes from $d$ to $\varepsilon$; for mutual information write $I(A;B\mid C) = H(A\mid C) - H(A\mid C,B)$ and apply the bound twice.
+With $d = \delta(P,Q)$, write $P + d\Delta^- = Q + d\Delta^+$ where $\Delta^\pm$ are the normalized positive and negative parts of $P - Q$, and view both sides as the mixture $\Omega$ with weights $\frac{1}{1+d}, \frac{d}{1+d}$. Concavity and the mixture bound for conditional entropy applied to both decompositions of $\Omega$ give $(1+d)^{-1}|H_P - H_Q| \le \frac{d}{1+d}\log_2|\alpha| + h_2(d/(1+d))$. Monotonicity of the modulus on $[0,1]$ passes from $d$ to $\varepsilon$; for mutual information write $I(A;B\mid C) = H(A\mid C) - H(A\mid C,B)$ and apply the same decomposition to both terms with the same $\Delta^\pm$: the main terms combine into $d\,(I(A;B\mid C)_{\Delta^+} - I(A;B\mid C)_{\Delta^-})$, at most $d\log_2|A|$ in absolute value, while the two binary-entropy terms add.
 
 ## Depends on
 
 - [Conditional entropy of a finite joint law](../conditional-entropy-and-mutual-information/finite-conditional-entropy.md)
 - [Conditional mutual information of a finite joint law](../conditional-mutual-information/finite-conditional-mutual-information.md)
-- [Fannes–Audenaert inequality](../../../QuantumInformation/quantum-states-distances-and-entropy/fannesaudenaert-inequality.md)
 
 ## Proof depends on
 

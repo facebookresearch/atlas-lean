@@ -16,5 +16,4 @@ Bound the hitting time across one edge: the return time to $v$ is $n$ (component
 
 ## Sources
 
-- S. Arora, B. Barak, "Computational Complexity: A Modern Approach", web draft of 2007-01-08, 2007.
 - S. Arora, B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009.

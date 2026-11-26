@@ -1,6 +1,6 @@
 # Concentration of the common neighborhood of a planted seed
 
-In $G(n, 1/2, S)$, let $T \subseteq S$ and let $N(T)$ be the common neighborhood of $T$ (vertices outside $T$ adjacent to all of $T$). Then $|N(T)| = |S| - |T| + Z$, where $Z$ is a sum of $n - |S|$ independent indicators, each of mean $2^{-|T|}$. Hence for every $\varepsilon \ge 0$,
+In $G(n, 1/2, S)$ with $|S| < n$, let $T \subseteq S$ and let $N(T)$ be the common neighborhood of $T$ (vertices outside $T$ adjacent to all of $T$). Then $|N(T)| = |S| - |T| + Z$, where $Z$ is a sum of $n - |S|$ independent indicators, each of mean $2^{-|T|}$. Hence for every $\varepsilon \ge 0$,
 
 $$
 \Pr\Bigl[|N(T)| \ge |S| - |T| + \frac{n - |S|}{2^{|T|}} + \varepsilon\Bigr] \le \exp\Bigl(-\frac{2\varepsilon^2}{n - |S|}\Bigr),

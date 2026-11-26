@@ -4,7 +4,7 @@ For $p \in \{1, 2\}$, every bucket width $w > 0$, radius $r > 0$ and approximati
 
 ## Proof sketch
 
-For $p$-stable $\nu$ with symmetric unimodal density $f$, $p_w(\delta) = \int_0^w \frac{1}{\delta} f(t/\delta)(1 - t/w)\, dt$, which is positive and strictly decreasing in $\delta$. Strict monotonicity gives $p_2 < p_1$ and hence $\rho < 1$, and the failure bound is the general LSH bound for measurable seed laws.
+For $p$-stable $\nu$ with symmetric unimodal density $f$, $p_w(\delta) = \int_0^w \frac{2}{\delta} f(t/\delta)(1 - t/w)\, dt$ for $\delta > 0$ (the factor $2$ comes from the density $\frac{2}{\delta}f(t/\delta)$ of $|\langle a, x - y\rangle|$), which is positive and strictly decreasing in $\delta$. Strict monotonicity gives $p_2 < p_1$ and hence $\rho < 1$, and the failure bound is the general LSH bound for measurable seed laws.
 
 ## Depends on
 

@@ -3,14 +3,14 @@
 Suppose negative triangle detection on tripartite graphs with $m$ vertices per part can be performed at cost at most $c\, m^{3 - \delta}$ for some constants $c \ge 0$ and $0 < \delta \le 2$. Then the $(\min,+)$ product of two $n \times n$ matrices with entries in $\{-W, \dots, W\} \cup \{+\infty\}$ can be computed at cost at most
 
 $$
-544\, c\, \lceil \log_2(2W + 2) \rceil\, n^{3 - \delta/3}.
+544\, c\, \lceil \log_2(4W + 2) \rceil\, n^{3 - \delta/3}.
 $$
 
 Combined with the converse reduction, negative triangle detection, the $(\min,+)$ product and all-pairs shortest paths are equivalent under subcubic reductions for polynomially bounded weights.
 
 ## Proof sketch
 
-Compose the three steps: finding by halving, APNT by blocking with block size $s = n^{\delta/3}$, and simultaneous binary search. With $t = n/s$ blocks, APNT costs $O((t^3 + n^2) s^{3-\delta})$, which is $O(n^{3 - \delta/3})$.
+Compose the three steps: finding by halving, APNT by blocking with block size $s = n^{1/3}$, and simultaneous binary search. With $t = n/s$ blocks, APNT costs $O((t^3 + n^2) s^{3-\delta})$, which is $O(n^{3 - \delta/3})$.
 
 ## Depends on
 

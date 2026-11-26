@@ -1,6 +1,6 @@
 # The blocking lemma for deferred acceptance
 
-Let $\mu_0$ be the proposer-optimal stable matching (the outcome of proposer-proposing deferred acceptance) and $\mu$ any matching. If the set $Q$ of proposers who strictly prefer $\mu$ to $\mu_0$ is nonempty, then $\mu$ is blocked by a pair $(x, \mu(q))$ with $q \in Q$ and $x \notin Q$. The same holds for strict, possibly incomplete preference lists with unequal sides. Consequently no coalition of proposers can all gain by misreporting under deferred acceptance (group strategy-proofness in the strong sense for proposers).
+Let $\mu_0$ be the proposer-optimal stable matching (the outcome of proposer-proposing deferred acceptance) and $\mu$ any matching. If the set $Q$ of proposers who strictly prefer $\mu$ to $\mu_0$ is nonempty, then $\mu$ is blocked by a pair $(x, \mu(q))$ with $q \in Q$ and $x \notin Q$. The same holds for strict, possibly incomplete preference lists with unequal sides, provided $\mu$ is individually rational (no agent is matched to a partner it finds unacceptable). Consequently no coalition of proposers can all strictly gain by misreporting under deferred acceptance (weak group strategy-proofness for proposers; the strong form fails, since one proposer can misreport to help another without losing anything itself).
 
 ## Proof sketch
 

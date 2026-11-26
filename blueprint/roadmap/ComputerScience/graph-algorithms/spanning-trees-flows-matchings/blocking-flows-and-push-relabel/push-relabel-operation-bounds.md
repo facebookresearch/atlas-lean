@@ -1,6 +1,6 @@
 # Operation bounds for generic push-relabel
 
-Start from the preflow that saturates all arcs out of $s$, with $h(s) = |V|$ and $h \equiv 0$ elsewhere, and apply admissible push and relabel operations in any order. Then the labeling stays valid, every active vertex has a residual path back to $s$, and labels never exceed $2|V| - 1$. Consequently the run performs at most $(|V| - 2)(2|V| - 1)$ relabels, at most $|V|$ saturating pushes per pair of antiparallel arcs, and at most $(|V| - 2)(2|V| - 1) + (2|V| - 1)|V||A_s|$ nonsaturating pushes, where $A_s$ is the set of symmetric arc pairs. When no operation applies, the preflow is a maximum flow and the vertices that can reach $t$ residually give a minimum cut.
+Start from the preflow that saturates all arcs out of $s$, with $h(s) = |V|$ and $h \equiv 0$ elsewhere, and apply admissible push and relabel operations in any order. Then the labeling stays valid, every active vertex has a residual path back to $s$, and labels never exceed $2|V| - 1$. Consequently the run performs at most $(|V| - 2)(2|V| - 1)$ relabels, at most $2|V| - 1$ saturating pushes per pair of antiparallel arcs (at most $|V|$ along each arc), and at most $(|V| - 2)(2|V| - 1) + (2|V| - 1)^2|A_s|$ nonsaturating pushes, where $A_s$ is the set of symmetric arc pairs. When no operation applies, the preflow is a maximum flow and the vertices that can reach $t$ residually give a minimum cut.
 
 ## Proof sketch
 

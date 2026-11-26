@@ -6,11 +6,7 @@ $$
 X[i] + Y[j] = Z[i + j].
 $$
 
-The one-array version asks for $i, j$ with $a[i] + a[j] = a[i+j]$. Three arrays can be packed into one array of length $O(N)$ with entries enlarged by a constant factor so that solutions correspond.
-
-## Depends on
-
-- [Distinct-position 3SUM](distinct-position-three-sum.md)
+The one-array version asks for $i, j$ with $a[i] + a[j] = a[i+j]$. Three arrays reduce to one: with $B = \max_i \max(|X[i]|, |Y[i]|, |Z[i]|)$ and $T = 3B + 1$, the array $a$ of length $4N$ with $a[4i+1] = X[i] + T$, $a[4i+2] = Y[i] + 3T$, $a[4i+3] = Z[i] + 4T$ and $a[4i] = 20T$ has a solution $a[i'] + a[j'] = a[i' + j']$, $i' + j' < 4N$, if and only if $(X, Y, Z)$ has a solution.
 
 ## Sources
 

@@ -10,7 +10,7 @@ Tuned form: if $R$ is $\sigma$-strongly convex on $K$ with $R(y) - R(z) \le D^2$
 
 ## Proof sketch
 
-Consecutive iterates minimize objectives that differ by the convex function $\ell_t$, and both objectives are $\mu$-strongly convex; comparing the two first-order optimality conditions gives $\mu\|x_t - x_{t+1}\|^2 \le \ell_t(x_t) - \ell_t(x_{t+1}) \le L_t\|x_t - x_{t+1}\|$, hence the stability term is at most $L_t^2/\mu$, and a sharper argument with the strong-convexity gap gives $L_t^2/(2\mu)$. Insert into the be-the-leader lemma. The tuned form balances $D^2/\eta$ against $\eta L^2T/(2\sigma)$.
+Write $F_t = \psi + \sum_{s<t}\ell_s$, so $x_t$ minimizes the $\mu$-strongly convex $F_t$ over $K$. The be-the-leader telescoping in its strengthened form gives the identity $\sum_{t<T}(\ell_t(x_t) - \ell_t(u)) = \psi(u) - \psi(x_0) + \sum_{t<T}\big(F_{t+1}(x_t) - F_{t+1}(x_{t+1})\big) + F_T(x_T) - F_T(u)$, and $F_T(x_T) - F_T(u) \le 0$. Strong convexity of $F_t$ at its minimizer gives $F_t(x_t) - F_t(x_{t+1}) \le -\frac{\mu}{2}\|x_t - x_{t+1}\|^2$, so $F_{t+1}(x_t) - F_{t+1}(x_{t+1}) \le L_t\|x_t - x_{t+1}\| - \frac{\mu}{2}\|x_t - x_{t+1}\|^2 \le L_t^2/(2\mu)$. (The plain stability term $\ell_t(x_t) - \ell_t(x_{t+1})$ can equal $L_t^2/\mu$, e.g. $\psi(x) = \mu x^2/2$, $\ell_0(x) = -L x$ on $\mathbb{R}$.) The tuned form balances $D^2/\eta$ against $\eta L^2T/(2\sigma)$.
 
 ## Depends on
 

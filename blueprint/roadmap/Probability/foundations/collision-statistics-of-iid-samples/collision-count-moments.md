@@ -12,10 +12,6 @@ These are the moments behind collision-based uniformity and closeness testers.
 
 Write both counts through occurrence counts $N_a(x) = \#\{i : x_i = a\}$: $C = \sum_a \binom{N_a}{2}$ and $D = \sum_a N_a(x)N_a(y)$. The joint moments of occurrence counts of i.i.d. samples follow by peeling off one draw at a time; independence of $x$ and $y$ factorizes the cross terms. Collecting terms by the pattern of coinciding indices gives the formulas.
 
-## Depends on
-
-- [Uniform distribution on a finite type](../../distributions/discrete/discrete-uniform-distribution/uniform-fintype.md)
-
 ## Sources
 
 - Ilias Diakonikolas, Themis Gouleakis, John Peebles and Eric Price, "Collision-Based Testers are Optimal for Uniformity and Closeness", Chicago Journal of Theoretical Computer Science, 2019.

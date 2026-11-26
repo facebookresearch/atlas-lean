@@ -24,6 +24,5 @@ For (1), every set of at most half the vertices of a connected graph has a leavi
 ## Sources
 
 - O. Reingold, "Undirected Connectivity in Log-Space", Journal of the ACM, 2008.
-- S. Arora, B. Barak, "Computational Complexity: A Modern Approach", web draft of 2007-01-08, 2007.
 - S. Arora, B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009.
 - S. Hoory, N. Linial, A. Wigderson, "Expander Graphs and Their Applications", Bulletin of the American Mathematical Society, 2006.

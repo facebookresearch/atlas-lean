@@ -4,11 +4,7 @@ For a finite set $S$ of integers and a modulus $M \ge 1$, let $\mathrm{coll}(S, 
 
 ## Proof sketch
 
-Summing over $p \in Q$, each colliding pair of distinct integers is counted by at most $\Lambda$ primes, so some $p$ has at most $\Lambda |S|^2/|Q|$ collisions; repeating for $q$ among the residue classes mod $p$ squares the saving.
-
-## Depends on
-
-- [Distinct-position 3SUM](distinct-position-three-sum.md)
+Summing over $p \in Q$, each colliding pair of distinct integers is counted by at most $\Lambda$ primes, so averaging $\sum_S \mathrm{coll}(S, p)/|S|^2$ over $p \in Q$ gives one $p$ with $\mathrm{coll}(S, p) \le 3\Lambda|S|^2/|Q|$ for all three sets; averaging over $q \in Q$ the number of these pairs whose difference $q$ also divides gives $\mathrm{coll}(S, pq) \le 9\Lambda^2|S|^2/|Q|^2$. Every heavy element lies in a colliding pair, and $|Q|^2 \ge 18 n \Lambda^2$ gives the heavy-element bound.
 
 ## Sources
 

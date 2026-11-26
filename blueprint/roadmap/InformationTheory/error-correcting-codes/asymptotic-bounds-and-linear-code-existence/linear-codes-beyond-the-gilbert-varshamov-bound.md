@@ -4,7 +4,7 @@ For every $0 < \varepsilon < 1/2$ there are constants $c > 0$, $K$ and $N$ such 
 
 $$|C| \cdot \sum_{1 \le i < d} \binom{n}{i} \ge c\, n\, 2^n,$$
 
-that is, $\Omega(n)$ times the Gilbert-Varshamov bound $2^n / (V + 1)$.
+that is, with $V = \sum_{1 \le i < d}\binom{n}{i}$, $\Omega(n)$ times the Gilbert-Varshamov bound $2^n / (V + 1)$.
 
 ## Proof sketch
 

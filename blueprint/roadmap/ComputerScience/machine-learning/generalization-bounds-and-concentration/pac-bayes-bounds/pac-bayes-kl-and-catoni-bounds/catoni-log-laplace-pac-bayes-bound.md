@@ -10,7 +10,7 @@ equivalently $\mathbb{E}_Q L_D \le \Phi_c^{-1}\big(\mathbb{E}_Q L_S + (\mathrm{K
 
 ## Proof sketch
 
-For each $\theta$, convexity of $u \mapsto e^{-cu}$ on $[0,1]$ gives $\mathbb{E}_S\, e^{mc(\Phi_c(L_D(\theta)) - L_S(\theta))} \le 1$, with no factor depending on $m$. Integrating over the prior, Markov's inequality, and the Donsker-Varadhan change of measure with Jensen's inequality for the convex $\Phi_c$ give the bound for all posteriors at once. The realizable case takes $c \to \infty$ in the linearized form.
+For each $\theta$, convexity of $u \mapsto e^{-cu}$ on $[0,1]$ gives $\mathbb{E}_S\, e^{mc(\Phi_c(L_D(\theta)) - L_S(\theta))} \le 1$, with no factor depending on $m$. Integrating over the prior, Markov's inequality, and the Donsker-Varadhan change of measure with Jensen's inequality for the convex $\Phi_c$ give the bound for all posteriors at once. The realizable case cannot take $c \to \infty$ in the linearized form (the high-probability event depends on $c$); instead repeat the argument with $\mathbb{E}_S\, e^{m L_D(\theta)}\mathbf{1}[L_S(\theta) = 0] \le e^{m L_D(\theta)}(1 - L_D(\theta))^m \le 1$ and apply the change of measure to posteriors concentrated on $\{L_S = 0\}$, which are exactly those with $\mathbb{E}_Q L_S = 0$.
 
 ## Depends on
 

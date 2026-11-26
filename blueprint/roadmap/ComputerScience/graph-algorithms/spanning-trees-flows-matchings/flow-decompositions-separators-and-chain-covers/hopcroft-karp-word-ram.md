@@ -1,10 +1,10 @@
 # Hopcroft-Karp in O((m + r + |E|) sqrt(nu)) word-RAM time
 
-There is a deterministic word-RAM program that, given a bipartite graph with $m$ left vertices, $r$ right vertices and edge set $E$ in compressed sparse row form, computes a maximum matching and a minimum vertex cover of equal size in $O\big((m + r + |E|)\sqrt{\nu}\,\big)$ instructions, where $\nu$ is the maximum matching size; hence $O\big((m + r + |E|)\sqrt{\min(m, r)}\big)$. For a dense $0/1$ matrix input the bound is $O\big((m + r)^2 \sqrt{\nu}\big)$.
+There is a deterministic word-RAM program that, given a bipartite graph with $m$ left vertices, $r$ right vertices and edge set $E$ in compressed sparse row form, computes a maximum matching and a minimum vertex cover of equal size in $O\big((m + r + |E|)\sqrt{\nu + 1}\,\big)$ instructions, where $\nu$ is the maximum matching size; hence $O\big((m + r + |E|)\sqrt{\min(m, r) + 1}\big)$. For a dense $0/1$ matrix input the bound is $O\big((m + r)^2 \sqrt{\nu + 1}\big)$.
 
 ## Proof sketch
 
-Each phase is one breadth-first layering and one iterative depth-first augmentation pass in linear time, and there are at most $2\lfloor \sqrt{\nu} \rfloor$ phases by the Hopcroft-Karp phase bound.
+Each phase is one breadth-first layering and one iterative depth-first augmentation pass in linear time, and there are at most $2\lfloor \sqrt{\nu} \rfloor$ augmenting phases by the Hopcroft-Karp phase bound, plus one final search that finds no augmenting path.
 
 ## Depends on
 

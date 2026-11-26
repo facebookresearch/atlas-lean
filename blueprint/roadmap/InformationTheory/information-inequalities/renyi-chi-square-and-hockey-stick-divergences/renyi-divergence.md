@@ -14,10 +14,6 @@ $$
 
 equal to $+\infty$ when $M_\alpha = +\infty$ (in particular whenever the support of $p$ is not contained in that of $q$). Equivalently $M_\alpha(p\|q) = \sum_x q(x)^{1-\alpha} p(x)^\alpha$ on the support of $q$.
 
-## Depends on
-
-- [Rényi differential privacy of the Gaussian mechanism](../../../ComputerScience/cryptography/differential-privacy/renyi-differential-privacy-of-the-gaussian.md)
-
 ## Sources
 
 - A. Renyi, "On Measures of Entropy and Information", Proceedings of the Fourth Berkeley Symposium on Mathematical Statistics and Probability, Vol. 1, University of California Press, 1961.

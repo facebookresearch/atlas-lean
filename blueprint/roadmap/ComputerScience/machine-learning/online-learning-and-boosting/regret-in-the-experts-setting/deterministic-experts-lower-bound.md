@@ -4,7 +4,7 @@ Let $X$ have $N \ge 1$ actions and let $D$ be any deterministic online algorithm
 
 ## Proof sketch
 
-The adversary gives loss $1$ to the action $D$ is about to play and $0$ to every other action; it can do so because the action is determined by the past. The algorithm loses $1$ per round, the total loss $T$ is spread over $N$ actions, and choosing the order carefully makes the least-loaded action receive exactly $\lfloor T/N \rfloor$.
+The adversary gives loss $1$ to the action $D$ is about to play, which it can do because the action is determined by the past, so $D$ loses $1$ per round. It also gives loss $1$ to an action, and $0$ otherwise, exactly when that action's cumulative loss plus the number of remaining rounds (including the current one) equals $\lfloor T/N \rfloor$; call such an action forced. A forced action stays forced and ends with cumulative loss exactly $\lfloor T/N \rfloor$, and every action ends with at least $\lfloor T/N \rfloor$. If no action is ever forced, the losses are exactly $D$'s plays, whose total $T$ is spread over $N$ actions, so the least-loaded action has at most $T/N$, hence exactly $\lfloor T/N \rfloor$.
 
 ## Depends on
 

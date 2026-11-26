@@ -6,10 +6,6 @@ An integer $n \ge 2$ is a **perfect power** if $n = a^b$ for integers $a \ge 2$,
 
 If $n = a^b$ with $a \ge 2$ then $2^b \le n$. For fixed $b$ the map $t \mapsto t^b$ is strictly increasing, so $n$ is a $b$-th power exactly when its integer $b$-th root raised to the $b$-th power returns $n$.
 
-## Depends on
-
-- [The primality decision problem](../../../TheoryOfComputation/polynomial-time-problems/aks-primality-test/primes-dec.md)
-
 ## Sources
 
 - M. Agrawal, N. Kayal and N. Saxena, "PRIMES is in P", Annals of Mathematics 160(2), 2004.

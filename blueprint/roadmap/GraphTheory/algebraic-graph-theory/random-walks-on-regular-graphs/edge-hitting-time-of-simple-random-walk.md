@@ -18,5 +18,4 @@ The degree measure $\pi(x) = \deg(x)/2|E|$ is stationary, and Kac's lemma gives 
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Chapters 6-7, public draft (February 2007), 2007.
 - O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

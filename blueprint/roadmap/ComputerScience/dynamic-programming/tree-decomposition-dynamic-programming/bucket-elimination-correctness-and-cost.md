@@ -1,6 +1,6 @@
 # Correctness and cost of bucket elimination
 
-For any elimination order covering all variables, bucket elimination returns the contraction $\sum_{\sigma} \prod_{\phi} \phi(\sigma)$ of the factor network (in particular the number of solutions of a CSP, or the partition function of a weighted CSP). The number of live factors never increases along the order, and the total number of semiring operations is at most the sum over buckets of $d^{\,|\text{joint scope}|} \cdot |\text{bucket}|$, hence at most $\ell \cdot |F| \cdot d^{\,w^* + 1}$ for induced width $w^*$. On the word RAM with unit-cost multiplication, the same bound holds for instructions up to a constant factor, at word sizes that hold all intermediate entries.
+For any elimination order covering all variables, bucket elimination returns the contraction $\sum_{\sigma} \prod_{\phi} \phi(\sigma)$ of the factor network (in particular the number of solutions of a CSP, or the partition function of a weighted CSP). If every variable lies in the scope of some initial factor, the number of live factors never increases along the order, and the total number of semiring operations is at most the sum over buckets of $d^{\,|\text{joint scope}|} \cdot |\text{bucket}|$, hence at most $\ell \cdot |F| \cdot d^{\,w^* + 1}$ for induced width $w^*$. On the word RAM with unit-cost multiplication, the same bound holds for instructions up to a constant factor, at word sizes that hold all intermediate entries.
 
 ## Proof sketch
 

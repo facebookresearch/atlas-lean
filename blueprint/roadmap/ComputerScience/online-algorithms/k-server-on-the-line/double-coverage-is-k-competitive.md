@@ -6,7 +6,7 @@ $$
 \mathrm{cost}_{\mathrm{DC}}(s_0, \sigma) \le k \cdot \mathrm{cost}(S) + b(s_0),
 $$
 
-where the additive term $b(s_0) = \sum_{i<j} |s_{0,i} - s_{0,j}|$ (the initial pairwise spread) depends only on the start, and is $0$ when all servers start at one point. Together with the general lower bound this shows that the deterministic competitive ratio of the $k$-server problem on the line is exactly $k$. Double Coverage is not $(c, b)$-competitive with a single additive constant $b$ valid for all starting configurations.
+where the additive term $b(s_0) = \sum_{i<j} |s_{0,i} - s_{0,j}|$ (the initial pairwise spread) depends only on the start, and is $0$ when all servers start at one point. Together with the general lower bound this shows that the deterministic competitive ratio of the $k$-server problem on the line is exactly $k$. For $k \ge 2$, Double Coverage is not $(k, b)$-competitive with a single additive constant $b$ valid for all starting configurations: from servers at $0, 9, 18, \dots, 9(k-1)$, the requests $3, 9, 18, \dots, 9(k-1)$ cost Double Coverage $6k - 3$ against an offline cost of $3$, and scaling the line makes the excess unbounded.
 
 ## Proof sketch
 

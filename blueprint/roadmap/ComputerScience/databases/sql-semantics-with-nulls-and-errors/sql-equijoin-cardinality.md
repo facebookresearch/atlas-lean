@@ -11,7 +11,6 @@ where $K_1$, $K_2$ are the lists of non-null key values of the two results and $
 ## Depends on
 
 - [SQL queries with bag semantics and strict evaluation](sql-query-bag-semantics.md)
-- [AGM output-size bound for join queries](../join-processing/agm-output-size-bound-for-join-queries.md)
 
 ## Proof depends on
 

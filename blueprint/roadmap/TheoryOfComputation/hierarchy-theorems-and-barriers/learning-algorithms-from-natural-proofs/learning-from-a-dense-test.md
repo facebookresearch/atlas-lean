@@ -3,13 +3,13 @@
 Let $e, g, h \ge 0$ be precision exponents, $k = k(e,g) = 2^{e + \lceil\log_2(6g + 3e + 36)\rceil + 9}$, and let $D$ be a Boolean function on strings of $2^\ell$ bits such that
 
 1. (density) $D$ accepts at least a $2^{\ell + 1 - g}$ fraction of all $2^{2^\ell}$ strings;
-2. (usefulness) for every $f \in C$, $D$ rejects every output of the Nisan-Wigderson generator of $\mathrm{Amp}(f) = (f^k)^{GL}$ built from a fixed polynomial design on $kn + k$ bits with seed length $2^\ell$.
+2. (usefulness) for every $f \in C$, $D$ rejects every output of the Nisan-Wigderson generator of $\mathrm{Amp}(f) = (f^k)^{GL}$ built from a fixed polynomial design on $kn + k$ bits with output length $2^\ell$.
 
 Then a learner composed of the Nisan-Wigderson reconstruction on $\neg D$, the amplification reconstruction and one outer best-of selection learns $C$ with membership queries under the uniform distribution with error $2^{-e}$ and confidence $1 - 2^{-h}$, using at most $(h+1)\,2^{2\ell + 10g + 6e + 59}$ queries.
 
 ## Proof sketch
 
-The negated test distinguishes the generator of $\mathrm{Amp}(f)$ from uniform with advantage at least $2^{\ell+1-g}$, so one run of the Nisan-Wigderson reconstruction is a weak learner for $\mathrm{Amp}(f)$ with advantage about $2^{-g}$ relative to the output length. The amplification reconstruction converts it into a learner for $f$ with error $2^{-(e+1)}$ that succeeds with probability $\gamma\delta_0^2/8$, and a single best-of selection over enough runs raises the confidence to $1 - 2^{-h}$. The parameter inequalities are checked for the explicit choices of $k$, mask count and decoder sizes.
+The negated test distinguishes the generator of $\mathrm{Amp}(f)$ from uniform with advantage at least $2^{\ell+1-g}$, so one run of the Nisan-Wigderson reconstruction is a weak learner for $\mathrm{Amp}(f)$ with advantage $2^{\ell+1-g}/(2 \cdot 2^\ell) = 2^{-g}$, the distinguishing advantage divided by twice the output length. The amplification reconstruction converts it into a learner for $f$ with error $2^{-(e+1)}$ that succeeds with probability $\gamma\delta_0^2/8$, and a single best-of selection over enough runs raises the confidence to $1 - 2^{-h}$. The parameter inequalities are checked for the explicit choices of $k$, mask count and decoder sizes.
 
 ## Depends on
 

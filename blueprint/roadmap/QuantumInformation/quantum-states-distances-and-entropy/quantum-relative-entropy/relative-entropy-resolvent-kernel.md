@@ -14,10 +14,6 @@ $$
 
 with terms whose denominator vanishes read as $0$ (their numerator vanishes too).
 
-## Depends on
-
-- [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
-
 ## Sources
 
 - M. B. Ruskai, "Another short and elementary proof of strong subadditivity of quantum entropy", Reports on Mathematical Physics 60(1):1-12, 2007.

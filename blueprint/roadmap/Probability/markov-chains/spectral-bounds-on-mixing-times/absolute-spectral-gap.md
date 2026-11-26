@@ -1,6 +1,6 @@
 # Absolute spectral gap and l2 contraction factor of a reversible chain
 
-Let $P$ be a Markov kernel on a finite set $S$, reversible with respect to a distribution $\pi$, and let $\langle f, g\rangle_\pi = \sum_x \pi(x) f(x) g(x)$ and $(Pf)(x) = \sum_y P(x,y) f(y)$. Over the nonzero functions $f$ with $\sum_x \pi(x) f(x) = 0$, define the *contraction factor*
+Let $P$ be a Markov kernel on a finite set $S$, reversible with respect to a distribution $\pi$ with $\pi(x) > 0$ for all $x$, and let $\langle f, g\rangle_\pi = \sum_x \pi(x) f(x) g(x)$ and $(Pf)(x) = \sum_y P(x,y) f(y)$. Over the nonzero functions $f$ with $\sum_x \pi(x) f(x) = 0$, define the *contraction factor*
 
 $$
 \lambda_\ast = \sup_f \frac{|\langle f, Pf\rangle_\pi|}{\langle f, f\rangle_\pi} = \sup_f \sqrt{\frac{\langle Pf, Pf\rangle_\pi}{\langle f, f\rangle_\pi}},

@@ -1,6 +1,6 @@
 # Minimum description length bound with description length in nats
 
-Let $X$, $Y$ be measurable spaces, $C$ a class of hypotheses $X \to Y$ with measurable misclassification sets, and $d : C \to \{0,1\}^*$ a prefix-free description (no description of a hypothesis is a proper prefix of the description of a different one); write $|d(h)|$ for its length in bits. For every distribution $D$ on $X \times Y$, $m > 0$ and $\delta > 0$, with probability at least $1 - \delta$ over $S \sim D^m$, every $h \in C$ satisfies
+Let $X$, $Y$ be measurable spaces, $C$ a class of hypotheses $X \to Y$ with measurable misclassification sets, and $d : C \to \{0,1\}^*$ a prefix-free description (for distinct $h \ne h'$, $d(h)$ is not a prefix of $d(h')$; in particular $d$ is injective); write $|d(h)|$ for its length in bits. For every distribution $D$ on $X \times Y$, $m > 0$ and $\delta > 0$, with probability at least $1 - \delta$ over $S \sim D^m$, every $h \in C$ satisfies
 
 $$
 |L_S(h) - L_D(h)| \le \sqrt{\frac{|d(h)| \ln 2 + \ln(2/\delta)}{2m}},

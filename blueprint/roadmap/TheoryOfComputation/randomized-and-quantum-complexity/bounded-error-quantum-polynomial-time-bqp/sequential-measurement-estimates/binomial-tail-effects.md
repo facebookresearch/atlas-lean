@@ -10,7 +10,7 @@ and consequently for every state $\varphi$ with $\operatorname{Re}\varphi(X)\ge1
 
 ## Proof sketch
 
-By functional calculus it suffices to prove the scalar inequality on $[0,1]$. For $x\le1-\theta$ the right side is at least $1$; for $x>1-\theta$ the mean $kx$ exceeds $(1-\theta)k\ge d+\theta k/2$, and a Chernoff bound bounds the lower tail by $e^{-\theta^2k/2}$. Applying the state preserves the order.
+By functional calculus it suffices to prove the scalar inequality on $[0,1]$. For $x\le\theta$ the right side is at least $1$; for $x>\theta$ the mean $kx$ exceeds $\theta k\ge d+\theta k/2$, and Hoeffding's inequality bounds the lower tail by $e^{-2(\theta k/2)^2/k} = e^{-\theta^2k/2}$. Applying the state preserves the order.
 
 ## Depends on
 

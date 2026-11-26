@@ -5,7 +5,7 @@ Let $(C, A, B, M, D)$ be random variables on finite sets defined on a common fin
 1. (Chain rules) $I((D, A); B \mid C) = I(D; B\mid C) + I(A; B \mid C, D)$, and symmetrically in the second argument.
 2. (Conditional data processing) If $S = f(A)$ and $R = g(B)$ hold almost surely for functions $f, g$, then $I(S; R \mid C) \le I(A; B \mid C)$.
 3. (Messages) If $I(M; B \mid C, A) = 0$, then $I(A; B \mid C, M) \le I(A; B \mid C)$.
-4. (Private coins) If $R_0, R_1$ are independent of each other and of $(A, B)$, then $I((A, R_0); (B, R_1)) = I(A; B)$.
+4. (Private coins) If $R_0$, $R_1$ and $(A, B)$ are mutually independent, then $I((A, R_0); (B, R_1)) = I(A; B)$.
 5. (Uniform fibers) If for every supported $a$ the conditional law of $B$ given $A = a$ is uniform on a set of size $c$, then $I(A; B) = H(B) - \log_2 c$.
 
 ## Proof sketch

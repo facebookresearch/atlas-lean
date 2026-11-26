@@ -16,7 +16,6 @@ Assume finite divergence and let $d = \|\rho-\sigma\|_1$, attained as $\operator
 
 - [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
 - [Trace norm and trace distance](../density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
-- [Pinsker's inequality for the total variation norm](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/of-real-tv-dist-sq-div-two-le-kl-div.md)
 
 ## Proof depends on
 

@@ -1,6 +1,6 @@
 # Reading an optimal dual solution from the final simplex dictionary
 
-For a linear program $\max\{c^\top x : Ax = b,\ x \ge 0\}$ over a linearly ordered field represented by a dictionary (for example the slack dictionary of $\max\{c^\top x : Ax \le b, x \ge 0\}$ with $b \ge 0$), if the simplex method with Bland's rule stops at an optimal dictionary, then minus the reduced costs of the slack variables form a vector $y \ge 0$ with $A^\top y \ge c$ and $b^\top y$ equal to the optimal value; that is, an optimal dual solution, certifying strong duality. Applied to the linear program of a finite zero-sum game, this computes the value and optimal mixed strategies of both players.
+For a linear program $\max\{c^\top x : Ax \le b,\ x \ge 0\}$ with $b \ge 0$ over a linearly ordered field, represented by its slack dictionary, if the simplex method with Bland's rule stops at an optimal dictionary, then minus the reduced costs of the slack variables form a vector $y \ge 0$ with $A^\top y \ge c$ and $b^\top y$ equal to the optimal value; that is, an optimal dual solution, certifying strong duality. Applied to the linear program of a finite zero-sum game, this computes the value and optimal mixed strategies of both players.
 
 ## Proof sketch
 

@@ -20,5 +20,4 @@ Regularity makes the uniform law stationary; if $\pi$ is stationary then $\pi(v)
 
 ## Sources
 
-- S. Arora, B. Barak, "Computational Complexity: A Modern Approach", web draft of 2007-01-08, 2007.
 - S. Arora, B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009.

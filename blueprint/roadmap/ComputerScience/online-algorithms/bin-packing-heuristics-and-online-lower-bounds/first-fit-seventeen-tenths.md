@@ -4,15 +4,11 @@ For every instance and every packing $Q$ of the same items, First Fit uses $FF$ 
 
 ## Proof sketch
 
-Compare the total weight of all items under the Dósa-Sgall weighting: at most $1.7\,|Q|$ by the per-bin upper bound, and at least $FF - 0.8$ by the First Fit amortization.
+By the theorem of Dósa and Sgall, $FF \le \lfloor 1.7\,\mathrm{OPT} \rfloor \le 1.7\,|Q|$.
 
 ## Depends on
 
 - [Next Fit and First Fit](next-fit-and-first-fit.md)
-
-## Proof depends on
-
-- [The Dósa-Sgall weighting for First Fit](dosa-sgall-weighting.md)
 
 ## Sources
 

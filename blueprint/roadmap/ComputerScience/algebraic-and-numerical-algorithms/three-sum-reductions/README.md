@@ -1,6 +1,5 @@
 # Reductions for 3SUM
 
-- [Distinct-position 3SUM](distinct-position-three-sum.md)
 - [Choosing a hashing modulus with few heavy elements](chan-he-modulus-choice.md)
 - [Convolution-3SUM](convolution-three-sum.md)
 - [Distinct-position 3SUM as finitely many three-set problems](three-sum-as-three-set-problems.md)

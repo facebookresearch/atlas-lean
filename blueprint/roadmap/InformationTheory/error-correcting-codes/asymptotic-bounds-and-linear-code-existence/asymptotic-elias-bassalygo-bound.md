@@ -1,6 +1,6 @@
 # The asymptotic Elias-Bassalygo bound
 
-Let $q \ge 2$, $H_q$ the $q$-ary entropy (in nats, divided by $\ln q$ to give $q$-ary units) and $J_q(\delta) = (1 - 1/q)\bigl(1 - \sqrt{1 - q\delta/(q - 1)}\bigr)$ the $q$-ary Johnson radius. For a code $C$ of length $n \ge 1$ with minimum distance at least $d \le n$ and an integer $e$ with $e/n < J_q(d/n)$,
+Let $q \ge 2$, $H_q$ the $q$-ary entropy (in nats, divided by $\ln q$ to give $q$-ary units) and $J_q(\delta) = (1 - 1/q)\bigl(1 - \sqrt{1 - q\delta/(q - 1)}\bigr)$ the $q$-ary Johnson radius. For a code $C$ of length $n \ge 1$ with minimum distance at least $d$, where $d \le (1 - 1/q)\, n$, and an integer $e$ with $e/n < J_q(d/n)$,
 
 $$\mathrm{rate}(C) = \frac{\log_q |C|}{n} \le 1 - H_q\!\left(\frac en\right) + \frac{\log_q\bigl((q - 1)\, n\, d\, (n + 1)\bigr)}{n}.$$
 

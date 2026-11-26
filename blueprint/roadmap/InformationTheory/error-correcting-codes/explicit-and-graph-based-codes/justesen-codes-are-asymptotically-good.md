@@ -4,7 +4,7 @@ For a field with $q = 2^b$ elements and every $r \ge 0$, the Justesen code of ou
 
 $$\Bigl(q - K - \sum_{j=0}^{r} \binom{2b}{j}\Bigr)(r + 1).$$
 
-For $b = 16 s$ with $s \ge 1$ and $K = 2^{16 s - 1}$, the code is a binary code of length $n = 32 s (2^{16 s} - 1)$, rate about $1/4$, and minimum distance $d$ with $n \le 128 d$. Hence the Justesen codes form an explicit asymptotically good family of binary codes: lengths tend to infinity while rate and relative distance stay bounded below by positive constants.
+For $b = 16 s$ with $s \ge 1$ and $K = 2^{16 s - 1}$, the code is a binary code of length $n = 32 s (2^{16 s} - 1)$, rate $q/(4(q - 1)) > 1/4$ (with $q = 2^{16 s}$), and minimum distance $d$ with $n \le 128 d$. Hence the Justesen codes form an explicit asymptotically good family of binary codes: lengths tend to infinity while rate and relative distance stay bounded below by positive constants.
 
 ## Proof sketch
 

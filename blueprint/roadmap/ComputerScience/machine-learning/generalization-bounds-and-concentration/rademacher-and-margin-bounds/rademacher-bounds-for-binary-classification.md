@@ -6,7 +6,7 @@ $$
 \mathrm{err}_D(h) \le \mathrm{err}_S(h) + R_m(\sigma(C)) + \sqrt{\frac{\ln(1/\delta)}{2m}},
 $$
 
-and the data-dependent bound with $\hat{R}_{S_X}(\sigma(C))$ and $3\sqrt{\ln(2/\delta)/(2m)}$. Bounding the Rademacher complexity through the growth function gives $\mathrm{err}_D(h) \le \mathrm{err}_S(h) + \sqrt{2\ln\Pi_C(m)/m} + \sqrt{\ln(1/\delta)/(2m)}$, and, if every shattered set has at most $d \le m$ points, $\sqrt{2d\ln(em/d)/m}$ in place of the middle term. For an empirical risk minimizer $A$, with probability at least $1 - \delta$, $\mathrm{err}_D(A(S)) \le \mathrm{err}_D(c) + R_m(\sigma(C)) + \sqrt{2\ln(2/\delta)/m}$ for every $c \in C$.
+and the data-dependent bound with $\hat{R}_{S_X}(\sigma(C))$ and $3\sqrt{\ln(2/\delta)/(2m)}$. Bounding the Rademacher complexity through the growth function gives $\mathrm{err}_D(h) \le \mathrm{err}_S(h) + \sqrt{2\ln\Pi_C(m)/m} + \sqrt{\ln(1/\delta)/(2m)}$, and, if every shattered set has at most $d$ points with $1 \le d \le m$, $\sqrt{2d\ln(em/d)/m}$ in place of the middle term. For an empirical risk minimizer $A$, with probability at least $1 - \delta$, $\mathrm{err}_D(A(S)) \le \mathrm{err}_D(c) + R_m(\sigma(C)) + \sqrt{2\ln(2/\delta)/m}$ for every $c \in C$.
 
 ## Proof sketch
 

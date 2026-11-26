@@ -5,7 +5,6 @@ A **housing mechanism** maps each profile of reported strict preferences to an a
 ## Depends on
 
 - [Shapley-Scarf housing markets](../../../GameTheory/matching-markets/housing-markets/shapley-scarf-housing-markets.md)
-- [Dominant-strategy incentive compatibility](../../../GameTheory/mechanism-design/revelation-principle/is-dominant-strategy-incentive-compatibl.md)
 
 ## Sources
 

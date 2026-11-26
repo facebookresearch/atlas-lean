@@ -21,7 +21,6 @@ Fix a supported history $h$ at step $k$ and center the next value at its conditi
 ## Depends on
 
 - [Finite-horizon adaptive discrete process and its supermartingales](finite-horizon-adaptive-discrete-process.md)
-- [Azuma's inequality](../azuma-inequality.md)
 
 ## Proof depends on
 

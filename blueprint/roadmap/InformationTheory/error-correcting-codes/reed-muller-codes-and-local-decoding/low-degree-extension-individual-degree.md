@@ -16,7 +16,6 @@ Each $L_a$ is the Lagrange basis polynomial of degree $|H| - 1$ that is $1$ at $
 
 ## Depends on
 
-- [Multilinear extension of a Boolean function](../../../TheoryOfComputation/hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
 - [Lagrange interpolant](../../../Analysis/approximation-theory/lagrange-interpolation/eval-interpolant.md)
 
 ## Proof depends on

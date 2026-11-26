@@ -13,7 +13,6 @@ and for $\varepsilon > 0$ the *mixing time* $t_{\mathrm{mix}}(\varepsilon) = \mi
 - [Stochastic matrix](../kolmogorov-s-criterion-for-reversibility/stochastic-matrix.md)
 - [Stationary distribution](../kolmogorov-s-criterion-for-reversibility/is-stationary.md)
 - [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
-- [Being $1/4$-mixed at a given time](../mixing-times-of-markov-chains/is-mixed-at.md)
 
 ## Sources
 

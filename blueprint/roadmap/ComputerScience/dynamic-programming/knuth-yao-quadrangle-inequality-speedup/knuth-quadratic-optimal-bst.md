@@ -4,7 +4,7 @@ Fill the table of the interval recurrence by increasing interval length, but for
 
 ## Proof sketch
 
-Correctness is root monotonicity; for each length $d$, $\sum_i (K(i+1, i+d) - K(i, i+d-1) + 1)$ telescopes to at most $n + d$.
+Correctness is root monotonicity; for each length $d \ge 2$, $\sum_{i=0}^{n-d} (K(i+1, i+d) - K(i, i+d-1) + 1)$ telescopes to $K(n-d+1, n) - K(0, d-1) + n - d + 1 \le 2n$.
 
 ## Depends on
 

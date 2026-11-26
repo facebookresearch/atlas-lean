@@ -11,7 +11,6 @@ with the conventions $0 \ln(0/a) = 0$ and $a\ln(a/0) = +\infty$ for $a > 0$. It 
 ## Depends on
 
 - [Kullback–Leibler divergence of finite probability laws](../../entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-to-measure.md)
-- [Binary Pinsker inequality on the closed interval](../binary-pinsker-of-mem-icc.md)
 
 ## Sources
 

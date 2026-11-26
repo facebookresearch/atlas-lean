@@ -4,7 +4,7 @@ Let $X$ be any set and $f : X \to [a, b]$. For every $\varepsilon, \rho, \beta >
 
 ## Proof sketch
 
-By Hoeffding's inequality two independent empirical means are within $t$ of the mean, hence within $2t$ of each other, except with probability $4e^{-2mt^2/(b-a)^2}$. The rounding lemma bounds the disagreement by $2t/w + 1/N$ plus that failure probability, and rounding moves the estimate by at most $w/2$; choose $w \approx \varepsilon$, then $t$, $N$ and $m$ accordingly.
+By Hoeffding's inequality two independent empirical means are within $t$ of the mean, hence within $2t$ of each other, except with probability $4e^{-2mt^2/(b-a)^2}$. The rounding lemma bounds the disagreement by $2t/w + 1/N$ plus that failure probability, and rounding moves the estimate by at most $w/2$; choose $w = \varepsilon$ and $t \le \varepsilon/2$ with $2t/w \le \rho/3$, then $N \ge 3/\rho$ and $m$ large enough that $4e^{-2mt^2/(b-a)^2} \le \min(\rho/3, \beta)$.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Correlated agreement and proximity gap for Reed-Solomon codes on parameterized curves (unique-decoding regime)
 
-Let $\mathrm{RS}_k \subseteq \mathbb{F}^n$ be a Reed-Solomon code at distinct points, $2e + k \le n$, and $u_0, \dots, u_d \in \mathbb{F}^n$. If more than $d n$ scalars $z \in S$ make the curve point $\sum_{j=0}^{d} z^j u_j$ lie within Hamming distance $e$ of $\mathrm{RS}_k$, then $u_0, \dots, u_d$ have $e$-correlated agreement with $\mathrm{RS}_k$, with a greatest agreement set of size at least $n - e$ and unique agreeing codewords. Over a finite field, for every $u_0, \dots, u_d$ either every curve point is $e$-close to $\mathrm{RS}_k$ or at most $d n$ scalars are.
+Let $\mathrm{RS}_k \subseteq \mathbb{F}^n$ be a Reed-Solomon code at distinct points, $2e + k \le n$, and $u_0, \dots, u_d \in \mathbb{F}^n$. If more than $d n$ scalars $z \in \mathbb{F}$ make the curve point $\sum_{j=0}^{d} z^j u_j$ lie within Hamming distance $e$ of $\mathrm{RS}_k$, then $u_0, \dots, u_d$ have $e$-correlated agreement with $\mathrm{RS}_k$, with a greatest agreement set of size at least $n - e$ and unique agreeing codewords. Over a finite field, for every $u_0, \dots, u_d$ either every curve point is $e$-close to $\mathrm{RS}_k$ or at most $d n$ scalars are.
 
 ## Proof sketch
 

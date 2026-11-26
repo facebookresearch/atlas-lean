@@ -4,7 +4,7 @@ Let the output set $\mathcal{Y}$ be finite with $M = |\mathcal{Y}|$ elements, li
 
 ## Proof sketch
 
-By Hoeffding's inequality, all $M$ empirical frequencies are within $\delta$ of the true output probabilities except with probability $2Me^{-2k\delta^2}$ per run. Some good output has probability above $(1-\beta_0)/M$ while every bad one has probability below $\beta_0$, so the window $[a,b)$ separates them. Two runs output differently only if a shared threshold falls between corresponding frequencies, which the threshold-rounding lemma bounds per element.
+By Hoeffding's inequality, all $M$ empirical frequencies are within $\delta$ of the true output probabilities except with probability $2Me^{-2k\delta^2}$ per run. Some good output has probability at least $(1-\beta_0)/M$ while every bad one has probability at most $\beta_0$, so the window $[a,b)$ separates them. Two runs output differently only if a shared threshold falls between corresponding frequencies, which the threshold-rounding lemma bounds per element.
 
 ## Depends on
 

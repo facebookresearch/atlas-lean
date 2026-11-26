@@ -8,7 +8,7 @@ Consequently, for a family of codes with lengths $n_s \to \infty$ and relative d
 
 ## Proof sketch
 
-Let $m$ be the largest length with $(q - 1)m < q d$. Partition $C$ by its values on $n - m$ coordinates; each of the at most $q^{n-m}$ parts is a code of length $m$ with distance at least $d$, to which the finite Plotkin bound applies, bounding it by about $q d$. Taking logarithms gives the finite bound, and dividing by $n_s$ the asymptotic one.
+Let $m$ be the largest length with $(q - 1)m < q d$. Partition $C$ by its values on $n - m$ coordinates; each of the at most $q^{n-m}$ parts is a code of length $m$ with distance at least $d$, to which the finite Plotkin bound applies, bounding it by $q d/(q d - (q - 1)m) \le q d$. Taking logarithms gives the finite bound, and dividing by $n_s$ the asymptotic one.
 
 ## Depends on
 

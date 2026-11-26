@@ -15,7 +15,6 @@ By Markov's inequality, $\Pr[X \ge \varepsilon] \le \exp(\frac{v}{b^2}(e^{sb} - 
 ## Depends on
 
 - [Bennett's one-step moment generating function bound](bennett-one-step-mgf-bound.md)
-- [Bernstein's inequality for bounded variables, upper tail](../sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-bernstein.md)
 
 ## Proof depends on
 

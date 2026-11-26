@@ -5,7 +5,6 @@ A **Hospitals-Residents** market has residents $r$ and hospitals $h$ with quotas
 ## Depends on
 
 - [Stable matching](../stable-marriage-problem/is-stable-matching.md)
-- [Many-to-one stable matching reduces to one-to-one by quota slots](../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/college-admissions-reduces-to-marriage.md)
 
 ## Sources
 

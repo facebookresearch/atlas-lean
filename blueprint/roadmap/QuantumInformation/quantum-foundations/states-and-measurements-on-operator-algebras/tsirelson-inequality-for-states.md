@@ -15,7 +15,6 @@ In the GNS pre-inner-product space of $\varphi$ the elements become vectors $a_x
 ## Depends on
 
 - [States on star-ordered algebras, state-dependent norm and approximation](algebraic-states-and-state-dependent-norm.md)
-- [Classical and entangled values of the CHSH game](../classical-and-entangled-values-of-the-chsh-game.md)
 
 ## Proof depends on
 

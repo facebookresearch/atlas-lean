@@ -8,7 +8,7 @@ In particular, if $d = 7$ and $\mu \le 7/10$, every cut with $n/3 \le |S| \le 2n
 
 ## Proof sketch
 
-The sharp mixing lemma applied to $S$ and the complement of its neighbourhood gives Tanner's estimate. The exterior neighbours of $S$ are covered by the neighbourhoods of the vertices indexing a row basis of the cut matrix, each contributing at most $d$ vertices; so the number of exterior neighbours, bounded below by Tanner's estimate, is at most $d\cdot\operatorname{cutrank}(S)$. Plugging in $d = 7$, $\mu \le 7/10$ and $n/3 \le s \le 2n/3$ gives $41$.
+The sharp mixing lemma applied to $S$ and the complement of its neighbourhood gives Tanner's estimate. The exterior neighbours of $S$ are covered by the neighbourhoods of the vertices indexing a row basis of the cut matrix, each contributing at most $d$ vertices; so the number of exterior neighbours, bounded below by Tanner's estimate, is at most $d\cdot\operatorname{cutrank}(S)$. The cut matrix of $V \setminus S$ is the transpose of that of $S$, so $\operatorname{cutrank}(S) = \operatorname{cutrank}(V \setminus S)$ and one may assume $n/3 \le s \le n/2$; plugging in $d = 7$ and $\mu \le 7/10$ on that range gives $41$ (directly at $s = 2n/3$ the bound only guarantees $n/52$).
 
 ## Depends on
 

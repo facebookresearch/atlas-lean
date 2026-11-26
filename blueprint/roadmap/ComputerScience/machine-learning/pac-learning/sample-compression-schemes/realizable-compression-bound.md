@@ -15,7 +15,6 @@ Fix one of the at most $(m+1)^k$ possible index lists $J$. The reconstructed hyp
 ## Depends on
 
 - [Labelled sample compression scheme](labelled-sample-compression-scheme.md)
-- [Generalization bound for sample compression schemes](../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
 
 ## Sources
 

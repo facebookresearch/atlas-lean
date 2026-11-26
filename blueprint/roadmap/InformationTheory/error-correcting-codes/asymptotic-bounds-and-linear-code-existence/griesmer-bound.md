@@ -1,6 +1,6 @@
 # The Griesmer bound for linear codes
 
-Let $C$ be a linear code of length $n$ and dimension $k$ over a finite field with $q$ elements, with minimum distance at least $d$. Then
+Let $C$ be a linear code of length $n$ and dimension $k$ over a finite field with $q$ elements, with minimum distance at least $d \ge 1$. Then
 
 $$\sum_{i=0}^{k-1} \Bigl\lceil \frac{d}{q^i} \Bigr\rceil \le n.$$
 
@@ -8,7 +8,7 @@ Since the sum is at least $d + k - 1$, this refines the Singleton bound $k + d \
 
 ## Proof sketch
 
-Summing the weights of the $q$ translates $x - a c$ over $a \in \mathbb{F}_q$ gives $q\,\mathrm{wt}(x|_{c = 0}) + (q - 1)\mathrm{wt}(c)$, and each translate other than one has weight at least $d$; this bounds the residual distance. Taking $c$ of minimum weight $d$, the residual code has length $n - d$, dimension $k - 1$ and distance at least $\lceil d/q \rceil$, and induction on $k$ gives the sum.
+Summing the weights of the $q$ translates $x - a c$ over $a \in \mathbb{F}_q$ gives $q\,\mathrm{wt}(x|_{c = 0}) + (q - 1)\mathrm{wt}(c)$, and when $x|_{c = 0} \ne 0$ we have $x \notin \mathrm{span}(c)$, so all $q$ translates are nonzero codewords of weight at least $d$; this bounds the residual distance. Taking $c$ of minimum weight $d$, the residual code has length $n - d$, dimension $k - 1$ and distance at least $\lceil d/q \rceil$, and induction on $k$ gives the sum.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Agnostic sample compression generalization bounds
 
-Let $\kappa$ be a general sample compression scheme of size $k$ with measurable reconstruction, $D$ any distribution on $X \times \beta$, $m > k$ and $\delta > 0$. For a sample $S \sim D^m$ let $J$ be the set of distinct kept indices, $h_S$ the reconstructed hypothesis and $q$ its error rate on the held-out examples $S_i$, $i \notin J$. Put $c = (k\ln(m+1) + \ln(1/\delta))/(m-k)$. With probability at least $1 - \delta$:
+Let $\kappa$ be a general sample compression scheme of size $k$ with measurable reconstruction, $D$ any distribution on $X \times \beta$, $m > k$ and $\delta > 0$. For a sample $S \sim D^m$ let $J$ be the set of distinct kept indices, $h_S$ the reconstructed hypothesis and $q$ its error rate on the held-out examples $S_i$, $i \notin J$. Put $c = (k\ln(m+1) + \ln(1/\delta))/(m-k)$. Each of the following holds with probability at least $1 - \delta$:
 
 1. $|q - \mathrm{err}_D(h_S)| < \sqrt{(k\ln(m+1) + \ln(2/\delta))/(2(m-k))}$;
 2. $\mathrm{err}_D(h_S) \le q + c + \sqrt{c^2 + 2qc}$, and hence $\mathrm{err}_D(h_S) \le q + \sqrt{2qc} + 2c$.

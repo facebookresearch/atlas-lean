@@ -4,7 +4,7 @@ Let $S$ be a finite set with $|S| \le 2^n$. For each level $j \in \{0, \dots, n\
 
 1. If every level with $|S|/2^j \ge 8$ answers yes, every level with $|S|/2^j \le 1/8$ answers no, and level $0$ answers yes exactly when $S \neq \emptyset$, then the estimate $E$ satisfies $|S|/16 \le E \le 8|S|$.
 2. The majority answers satisfy these conditions except with probability at most $(n+1)(8/9)^r$; hence with $r = 12(n+1)$ the estimate is within a factor $16$ below and $8$ above $|S|$ with probability at least $3/4$.
-3. (Relative error) Applying the estimator to the Cartesian power $S^{k}$ with $k = 7p$ copies and taking the integer $k$-th root of $16E$ gives an estimate $\hat s$ with $|S| \le \hat s \le (1 + 1/p)|S|$, except with probability at most $2^{-t}$ when each level uses $2r$ trials with $r = 6(n + 1 + t)$, where $|S|^k \le 2^n$.
+3. (Relative error) Applying the estimator to the Cartesian power $S^{k}$ with $k = 7p$ copies for an integer $p \ge 1$ and taking the integer $k$-th root of $16E$ gives an estimate $\hat s$ with $|S| \le \hat s \le (1 + 1/p)|S|$, except with probability at most $2^{-t}$ when each level uses $2r$ trials with $r = 6(n + 1 + t)$, where $|S|^k \le 2^n$.
 
 ## Proof sketch
 

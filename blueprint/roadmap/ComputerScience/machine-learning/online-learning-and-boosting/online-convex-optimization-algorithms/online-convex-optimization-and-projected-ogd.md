@@ -4,10 +4,6 @@ In online convex optimization over a set $K$ in a real inner product space $E$, 
 
 A Pythagorean projection onto $K$ is a map $\Pi : E \to K$ with $\|\Pi(y) - z\| \le \|y - z\|$ for all $y \in E$, $z \in K$ (the metric projection onto a nonempty closed convex set is one). Projected online gradient descent with step sizes $\eta_t > 0$ starts at $x_0 \in K$ and sets $x_{t+1} = \Pi(x_t - \eta_t\, g_t(x_t))$.
 
-## Depends on
-
-- [Anytime regret of online gradient descent](../../../not-yet-classified/online-gradient-descent-anytime/ogd-regret-anytime.md)
-
 ## Sources
 
 - Martin Zinkevich, "Online Convex Programming and Generalized Infinitesimal Gradient Ascent", Proceedings of the Twentieth International Conference on Machine Learning (ICML), 2003.

@@ -1,6 +1,6 @@
 # Next Fit and First Fit use fewer than 2 OPT bins
 
-Every two consecutive bins produced by Next Fit, and every two bins produced by First Fit, are jointly overfull. A packing with $m$ bins in which consecutive bins are jointly overfull holds total size more than $C \lfloor m/2 \rfloor$, so it uses fewer than $2\,\mathrm{OPT}$ bins; in particular Next Fit and First Fit use at most $2\,\mathrm{OPT} - 1$ bins.
+Every two consecutive bins produced by Next Fit, and every two bins produced by First Fit, are jointly overfull. A packing with $m \ge 2$ bins in which consecutive bins are jointly overfull holds total size more than $C \lfloor m/2 \rfloor$, so it uses fewer than $2\,\mathrm{OPT}$ bins; in particular, on every nonempty instance, Next Fit and First Fit use at most $2\,\mathrm{OPT} - 1$ bins.
 
 ## Proof sketch
 

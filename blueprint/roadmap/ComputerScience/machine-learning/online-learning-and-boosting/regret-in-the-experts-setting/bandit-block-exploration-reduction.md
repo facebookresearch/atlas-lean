@@ -2,7 +2,7 @@
 
 In the partial-information (multi-armed bandit) experts model, an oblivious adversary fixes losses $\ell_t \in [0,1]^X$ for $N = |X| \ge 1$ arms, and the learner observes only the loss of the arm it plays.
 
-Generic form: let $m \ge 1$, $K$ blocks with $Km \le T$, and let $H$ be a full-information algorithm with external regret at most $R$ over $K$ rounds on $[0,1]$ losses. In each block, explore every arm once at a uniformly random collision-free position (so each arm's position is uniform in the block), use the observed losses as unbiased estimates of the block averages, play $H$'s distribution on the other $m - N$ rounds, and play uniformly on the leftover $T - Km$ rounds. Then the expected loss is at most $L_{\min}^T + NK + (T - Km) + mR$.
+Generic form: let $m \ge N$, $K$ blocks with $Km \le T$, and let $H$ be a full-information algorithm with external regret at most $R$ over $K$ rounds on $[0,1]$ losses. In each block, explore every arm once at a uniformly random collision-free position (so each arm's position is uniform in the block), use the observed losses as unbiased estimates of the block averages, play $H$'s distribution on the other $m - N$ rounds, and play uniformly on the leftover $T - Km$ rounds. Then the expected loss is at most $L_{\min}^T + NK + (T - Km) + mR$.
 
 Tuned form: if, for every $K$, $H_K$ has regret at most $C\sqrt{K \ln N}$ with $C \ge 0$, then for $T \ge N$, $K = \lfloor (T/N)^{2/3} \rfloor$ and $m = \lfloor T/K \rfloor$, the expected loss is at most
 

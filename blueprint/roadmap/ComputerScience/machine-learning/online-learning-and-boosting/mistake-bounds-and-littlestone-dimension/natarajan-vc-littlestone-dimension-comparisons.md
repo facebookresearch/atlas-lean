@@ -5,7 +5,7 @@ Let $C$ be a class of functions $X \to Y$.
 1. $\mathrm{Ndim}(C) \le \mathrm{Ldim}(C)$; for Boolean classes this gives $\mathrm{VCdim}(C) \le \mathrm{Ldim}(C) = \mathrm{opt}(C)$. In particular infinite Natarajan or VC dimension forces infinite Littlestone dimension.
 2. If $X$ is finite, $\mathrm{Ldim}(C) \le |X|$ for every label set $Y$; equality holds for the class of all functions $X \to Y$ whenever $|Y| \ge 2$.
 
-Item 2 improves on the halving bound $\lfloor\log_2 |Y|^{|X|}\rfloor$ when $|Y| \ge 3$.
+Item 2 improves on the halving bound $\lfloor\log_2 |Y|^{|X|}\rfloor$ when $|Y| \ge 3$ and $|X| \ge 2$.
 
 ## Proof sketch
 

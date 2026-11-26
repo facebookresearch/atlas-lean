@@ -15,7 +15,6 @@ By the XOR lemma, $\delta(q_0, q_1)$ lies between the direct-product lower bound
 ## Depends on
 
 - [XOR construction of two distributions](xor-construction.md)
-- [Statistical honest-verifier zero knowledge](../../../ComputerScience/cryptography/signatures-and-protocols/zero-knowledge-proofs/stat-hvzk.md)
 
 ## Proof depends on
 

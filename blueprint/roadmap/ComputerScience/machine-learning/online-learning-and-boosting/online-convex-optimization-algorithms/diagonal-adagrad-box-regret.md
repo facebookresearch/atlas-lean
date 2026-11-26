@@ -6,7 +6,7 @@ $$
 \sum_{t<T}(f_t(x_t) - f_t(u)) \le \sqrt2\, D\sum_{i \in I}\sqrt{\varepsilon + \sum_{t<T} g_t(x_t)_i^2} - \frac{D}{\sqrt2}\,|I|\sqrt{\varepsilon}.
 $$
 
-This improves on the dense bound $\sqrt{|I|\sum_i\sum_t g_{t,i}^2}$ when gradients are sparse.
+For $\varepsilon = 0$ this is at most the dense bound $\sqrt2\, D\sqrt{|I|\sum_i\sum_t g_{t,i}^2}$ by Cauchy-Schwarz, and improves on it when gradients are sparse.
 
 ## Proof sketch
 

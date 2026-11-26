@@ -1,6 +1,6 @@
 # Word-size-dependent branching factor for fusion trees
 
-Choose the branching factor $B$ as the largest power of two with $16 B^5 \le w$ when $w > 512$, and $B = 2$ otherwise. Then $B \ge 2$, the packed sketches and the comparison products of a node with $B$ keys fit in one $w$-bit word, and the multiway predecessor tree built with branching $B$ on $n$ keys has height at most $14(1 + \log_w n)$, with the same constant for every word size.
+Choose the branching factor $B$ as the largest power of two with $16 B^5 \le w$ when $w > 512$, and $B = 2$ otherwise. Then $B \ge 2$, for every $w \ge 5$ the packed sketches and the comparison products of a node with $B$ keys fit in one $w$-bit word, and the multiway predecessor tree built with branching $B$ on $n \ge 1$ keys has height at most $14(1 + \log_w n)$, with the same constant for every word size.
 
 ## Proof sketch
 

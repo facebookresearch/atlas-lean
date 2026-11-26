@@ -3,7 +3,7 @@
 Let $\mu$ be a $\sigma$-finite measure on a measurable space $Z$ and $m \ge 1$. For $\sigma \in \{0,1\}^m$ let $\mathrm{sw}_\sigma : Z^m \times Z^m \to Z^m \times Z^m$ exchange the $i$-th coordinates of the two samples for every $i$ with $\sigma_i = 1$.
 
 1. Each $\mathrm{sw}_\sigma$ preserves $\mu^m \otimes \mu^m$.
-2. For every measurable $J \subseteq Z^m \times Z^m$, $2^m (\mu^m \otimes \mu^m)(J) = \int \#\{\sigma : \mathrm{sw}_\sigma(z) \in J\}\, d(\mu^m \otimes \mu^m)(z)$. Hence, if for every double sample $z$ at most $2^m K$ of the $2^m$ swaps of $z$ lie in $J$, then $(\mu^m \otimes \mu^m)(J) \le K$.
+2. For every measurable $J \subseteq Z^m \times Z^m$, $2^m (\mu^m \otimes \mu^m)(J) = \int \#\{\sigma : \mathrm{sw}_\sigma(z) \in J\}\, d(\mu^m \otimes \mu^m)(z)$. Hence, if $\mu$ is a probability measure and for every double sample $z$ at most $2^m K$ of the $2^m$ swaps of $z$ lie in $J$, then $(\mu^m \otimes \mu^m)(J) \le K$.
 3. (Ghost sample.) For probability measures $\nu, \nu'$ on $Z^m$, a measurable $J$, a set $B \subseteq Z^m$ and $c \ge 0$: if $\nu'(\{T : (S, T) \in J\}) \ge c$ for every $S \in B$, then $c\,\nu(B) \le (\nu \otimes \nu')(J)$.
 
 ## Proof sketch

@@ -1,6 +1,6 @@
 # Independence-query count of matroid intersection
 
-Run the augmenting-path matroid intersection algorithm with one independence oracle for each matroid on $n$ distinct candidate elements. A phase starting from a common independent set $I$ makes exactly $2(n - |I|)(1 + |I|)$ independence queries (building the source, sink and exchange arcs), breadth-first search being free; since there are at most $r + 1$ phases for $r$ the size of a maximum common independent set, the total is $O(n r^2)$.
+Run the augmenting-path matroid intersection algorithm with one independence oracle for each matroid on $n$ distinct candidate elements. A phase starting from a common independent set $I$ makes exactly $2(n - |I|)(1 + |I|)$ independence queries (building the source, sink and exchange arcs), breadth-first search being free; since there are at most $r + 1$ phases for $r$ the size of a maximum common independent set, the total is $O(n (r + 1)^2)$.
 
 ## Depends on
 
