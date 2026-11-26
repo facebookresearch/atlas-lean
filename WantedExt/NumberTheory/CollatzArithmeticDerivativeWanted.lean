@@ -61,18 +61,6 @@ public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
       (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
       ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
 
-/-- **Positive solutions of the Collatz arithmetic differential equation are composite.** Let
-$D$ be the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$
-with $D(C(n)) = C(D(n))$ is composite, that is, $n > 1$ and $n$ is not prime.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 3 (`jis-2025-25.1.8-prop-3`). -/
-public theorem_wanted composite_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
-    (h : arithmeticDerivative (collatzAccelerated n) =
-      collatzAccelerated (arithmeticDerivative n)) :
-    1 < n ∧ ¬ n.Prime
-
 /-- **Prime tetrations where the arithmetic derivative and the Collatz map commute.** Let $D$ be
 the arithmetic derivative and $C$ the accelerated Collatz map. For a prime $p$,
 $D(C(p^p)) = C(D(p^p))$ if and only if $C(p^p) = q^q$ for some prime $q$.
