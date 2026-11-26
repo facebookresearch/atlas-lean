@@ -1,13 +1,12 @@
-# For $m_s > 0$ and $m_w \ge 0$, $X = w/(1-w)$ and $w = X/(1+X)$
+# For $m_s > 0$ and $m_w \ge 0$, $X = w/(1-w)$
 
-If $m_s > 0$ and $m_w \ge 0$, the [dry-basis](../../../EarthScience/hydrology-and-surface-processes/part-02/soil-phase-relations/gravimetric-water-content.md) and [wet-basis](wet-basis.md) moisture
+If $m_s > 0$ and $m_w \ge 0$, the [dry-basis](dry-basis.md) and [wet-basis](wet-basis.md) moisture
 contents $X = m_w / m_s$ and $w = m_w / (m_w + m_s)$ of the same material satisfy
 
-$$X = \frac{w}{1 - w}, \qquad w = \frac{X}{1 + X} .$$
+$$X = \frac{w}{1 - w} .$$
 
-Under these hypotheses $0 \le w < 1$ and $X \ge 0$, so both denominators are positive. The
-hypothesis $m_w \ge 0$ matters only at $m_w = -m_s$, where $w = 0$ by the convention $x / 0 = 0$
-while $X = -1$. Without dry solids, $m_s = 0 < m_w$, the second form fails: $w = 1$, while the
-convention $x / 0 = 0$ gives $X = 0$ and $X / (1 + X) = 0$.
+Under these hypotheses $0 \le w < 1$, so the denominator is positive. The hypothesis $m_w \ge 0$
+matters only at $m_w = -m_s$, where $w = 0$ by the convention $x / 0 = 0$ while $X = -1$.
 
-The other form has its own page: [Wet basis from dry basis](wet-basis-dry-basis-inv.md).
+The inverse conversion has its own page:
+[For $m_s > 0$ and $m_w \ge 0$, $w = X/(1+X)$](wet-basis-dry-basis-inv.md).
