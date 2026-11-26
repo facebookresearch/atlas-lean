@@ -12,6 +12,7 @@ public import MathlibExt.NumberTheory.SquareSplittingConvolution
 public import Mathlib.Data.Nat.Totient
 public import Mathlib.Data.Nat.PrimeFin
 import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
+import MathlibExt.NumberTheory.ArithmeticFunction.JordanTotient
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -410,50 +411,20 @@ private theorem rhsFun_mul {m n : ℕ} (h : m.Coprime n) :
 private theorem rhsFun_isMultiplicative : rhsFun.IsMultiplicative :=
   ⟨rhsFun_one, rhsFun_mul⟩
 
--- The cast of `φ` to a rational-valued arithmetic function.
-private def phiQ (φ : ArithmeticFunction ℤ) : ArithmeticFunction ℚ :=
-  ⟨fun n => (φ n : ℚ), by simp⟩
-
-private theorem phiQ_apply (φ : ArithmeticFunction ℤ) (n : ℕ) : phiQ φ n = (φ n : ℚ) := rfl
-
-private theorem phiQ_one (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) : phiQ φ 1 = 1 := by
-  show ((φ 1 : ℤ) : ℚ) = 1
-  rw [phi_one φ hφ, Int.cast_one]
-
-private theorem phiQ_mul (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) {m n : ℕ} (h : m.Coprime n) :
-    phiQ φ (m * n) = phiQ φ m * phiQ φ n := by
-  show ((φ (m * n) : ℤ) : ℚ) = (φ m : ℚ) * (φ n : ℚ)
-  rw [phi_mul_of_coprime φ hφ h, Int.cast_mul]
-
-private theorem phiQ_isMultiplicative (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) : (phiQ φ).IsMultiplicative :=
-  ⟨phiQ_one φ hφ, phiQ_mul φ hφ⟩
-
 -- The square-part factor at a prime power.
 private theorem psi_prime_pow (p b : ℕ) (hp : p.Prime) (hb : 1 ≤ b) :
     ((p ^ b : ℕ) : ℚ) ^ 2 * ∏ q ∈ (p ^ b).primeFactors, (1 - 1 / (q : ℚ) ^ 2)
       = ((p : ℚ) ^ 2 - 1) * (p : ℚ) ^ (2 * b - 2) := by
-  have hb0 : b ≠ 0 := by omega
-  rw [Nat.primeFactors_prime_pow hb0 hp, Finset.prod_singleton, Nat.cast_pow]
-  have hp0 : (p : ℚ) ≠ 0 := by exact_mod_cast hp.pos.ne'
-  have hp2 : (p : ℚ) ^ 2 ≠ 0 := pow_ne_zero 2 hp0
-  have hpp : (p : ℚ) ^ 2 * (1 - 1 / (p : ℚ) ^ 2) = (p : ℚ) ^ 2 - 1 := by
-    rw [mul_sub, mul_one, mul_one_div, div_self hp2]
-  have hsplit : ((p : ℚ) ^ b) ^ 2 = (p : ℚ) ^ (2 * b - 2) * (p : ℚ) ^ 2 := by
-    have hbb : ((p : ℚ) ^ b) ^ 2 = (p : ℚ) ^ (2 * b) := by rw [← pow_mul, mul_comm]
-    rw [hbb]
-    conv_lhs => rw [show 2 * b = (2 * b - 2) + 2 from by omega]
-    rw [pow_add]
-  rw [hsplit, mul_assoc, hpp]
-  ring
+  rw [← ArithmeticFunction.jordanTotient_eq_rational_prod (pow_ne_zero _ hp.ne_zero),
+    ArithmeticFunction.jordanTotient_prime_pow hp (by omega),
+    show 2 * (b - 1) = 2 * b - 2 by omega, Nat.cast_mul, Nat.cast_sub (Nat.one_le_pow _ _ hp.pos),
+    Nat.cast_pow, Nat.cast_pow, Nat.cast_one, mul_comm]
 
 -- Agreement on even prime powers.
 private theorem agree_even (φ : ArithmeticFunction ℤ)
     (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p b : ℕ) (hp : p.Prime)
-    (hb : 1 ≤ b) : phiQ φ (p ^ (2 * b)) = rhsFun (p ^ (2 * b)) := by
-  rw [phiQ_apply, rhsFun_apply, ite_eq_right (pow_ne_zero _ hp.pos.ne')]
+    (hb : 1 ≤ b) : (φ : ArithmeticFunction ℚ) (p ^ (2 * b)) = rhsFun (p ^ (2 * b)) := by
+  rw [ArithmeticFunction.intCoe_apply, rhsFun_apply, ite_eq_right (pow_ne_zero _ hp.pos.ne')]
   rw [phi_prime_pow_even φ hφ p b hp hb]
   have hm2 : (2 * b) % 2 = 0 := by omega
   have hd2 : (2 * b) / 2 = b := by omega
@@ -464,8 +435,8 @@ private theorem agree_even (φ : ArithmeticFunction ℤ)
 -- Agreement on odd prime powers.
 private theorem agree_odd (φ : ArithmeticFunction ℤ)
     (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p b : ℕ) (hp : p.Prime) :
-    phiQ φ (p ^ (2 * b + 1)) = rhsFun (p ^ (2 * b + 1)) := by
-  rw [phiQ_apply, rhsFun_apply, ite_eq_right (pow_ne_zero _ hp.pos.ne')]
+    (φ : ArithmeticFunction ℚ) (p ^ (2 * b + 1)) = rhsFun (p ^ (2 * b + 1)) := by
+  rw [ArithmeticFunction.intCoe_apply, rhsFun_apply, ite_eq_right (pow_ne_zero _ hp.pos.ne')]
   have hm2 : (2 * b + 1) % 2 = 1 := by omega
   have hd2 : (2 * b + 1) / 2 = b := by omega
   rw [squareSplitU_prime_pow _ _ hp, squareSplitV_prime_pow _ _ hp, hm2, hd2, pow_one,
@@ -488,10 +459,10 @@ private theorem agree_odd (φ : ArithmeticFunction ℤ)
 -- Agreement on all prime powers.
 private theorem agree_prime_pow (φ : ArithmeticFunction ℤ)
     (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p i : ℕ) (hp : p.Prime) :
-    phiQ φ (p ^ i) = rhsFun (p ^ i) := by
+    (φ : ArithmeticFunction ℚ) (p ^ i) = rhsFun (p ^ i) := by
   cases i with
   | zero =>
-    rw [pow_zero, phiQ_one φ hφ, rhsFun_one]
+    rw [pow_zero, ((phi_isMultiplicative φ hφ).intCast (R := ℚ)).1, rhsFun_one]
   | succ i =>
     have hmod : (i + 1) % 2 = 0 ∨ (i + 1) % 2 = 1 := by omega
     cases hmod with
@@ -533,12 +504,12 @@ public theorem squareSplitTotient_formula (φ : ArithmeticFunction ℤ)
     exact ⟨phi_prime φ hφ p hp, fun b hb => ⟨phi_prime_pow_even φ hφ p b hp hb,
       phi_prime_pow_odd φ hφ p b hp hb⟩⟩
   · intro n hn
-    have hFG : phiQ φ = rhsFun :=
-      (ArithmeticFunction.IsMultiplicative.eq_iff_eq_on_prime_powers (phiQ φ)
-        (phiQ_isMultiplicative φ hφ) rhsFun rhsFun_isMultiplicative).mpr
+    have hFG : (φ : ArithmeticFunction ℚ) = rhsFun :=
+      (ArithmeticFunction.IsMultiplicative.eq_iff_eq_on_prime_powers (φ : ArithmeticFunction ℚ)
+        (phi_isMultiplicative φ hφ).intCast rhsFun rhsFun_isMultiplicative).mpr
         (agree_prime_pow φ hφ)
-    have hnod : phiQ φ n = rhsFun n := by rw [hFG]
-    rw [phiQ_apply, rhsFun_apply, ite_eq_right hn] at hnod
+    have hnod : (φ : ArithmeticFunction ℚ) n = rhsFun n := by rw [hFG]
+    rw [ArithmeticFunction.intCoe_apply, rhsFun_apply, ite_eq_right hn] at hnod
     exact hnod
 
 end MetaMathlibExt
