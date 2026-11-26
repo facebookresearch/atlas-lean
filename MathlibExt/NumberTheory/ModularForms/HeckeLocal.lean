@@ -35,6 +35,8 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import MathlibExt.NumberTheory.ModularForms.HeckeAlgebra
+import Mathlib.RingTheory.Flat.Localization
+import Mathlib.RingTheory.LocalRing.Module
 import Mathlib.RingTheory.Localization.Submodule
 import MathlibExt.RingTheory.AdicCompletion.ModuleFinite
 import MathlibExt.RingTheory.LocalRing.FiniteAlgebraDecomposition
@@ -45,22 +47,27 @@ import MathlibExt.RingTheory.LocalRing.FiniteAlgebraDecomposition
 Let `θ` be a ring homomorphism from the Hecke algebra `CuspForm.heckeAlgebra N 2 S`
 to the residue field of a complete discrete valuation ring `𝒪`. Restricting the
 Hecke algebra to the integral lattice of weight-two cusp forms and extending
-scalars to `𝒪` gives a finite free `𝒪`-algebra; `CuspForm.heckeLocal N S 𝒪 θ` is
-its localization at the maximal ideal cut out by `θ`. Assuming an integral
-structure, it is a complete local ring, finite and free over `𝒪`.
+scalars to `𝒪` gives a finite free `𝒪`-algebra. `CuspForm.heckeLocal N S 𝒪 θ` is
+its localization at the image of the complement of the kernel of the residual
+character induced by `θ`, and it is finite and free over `𝒪`. When the kernel of
+the base-changed restriction map lies in the kernel of the residual character, this
+is the localization at the maximal ideal cut out by `θ`; otherwise it is the zero
+ring. An integral structure gives that kernel containment, and then the local Hecke
+algebra is a complete local ring.
 
 ## Main declarations
 
 * `CuspForm.heckeLocal`: the localized Hecke algebra.
 * `CuspForm.heckeLocal.π`: the canonical map from the Hecke algebra.
-* `CuspForm.heckeLocal.residue_pi`: `π` reduces to `θ` modulo the maximal ideal.
+* `CuspForm.heckeLocal.residue_pi`: under an integral structure, `π` reduces to `θ`
+  modulo the maximal ideal.
 -/
 
 @[expose] public section
 
 noncomputable section
 
-universe u v
+universe u
 
 open scoped TensorProduct
 
@@ -99,34 +106,21 @@ private theorem hasUniqueDiv_cuspForm :
 omit [NeZero N] in
 private theorem intLattice.isTorsionFree : Module.IsTorsionFree ℤ ↥(intLattice N 2) := by
   have := hasUniqueDiv_cuspForm N
-  exact Function.Injective.moduleIsTorsionFree Subtype.val Subtype.val_injective fun _ _ => rfl
+  infer_instance
 
 theorem intLattice.moduleFree : Module.Free ℤ ↥(intLattice N 2) := by
   have := intLattice.moduleFinite N
   have := intLattice.isTorsionFree N
   exact Module.free_of_finite_type_torsion_free'
 
-omit [NeZero N] in
-private theorem intLattice.isTorsionFree_end :
-    Module.IsTorsionFree ℤ (Module.End ℤ ↥(intLattice N 2)) where
-  isSMulRegular n hn f g hfg := LinearMap.ext fun x => by
-    have := intLattice.isTorsionFree N
-    have h := LinearMap.congr_fun hfg x
-    simp only [LinearMap.smul_apply] at h
-    exact Module.IsTorsionFree.isSMulRegular hn h
-
 instance heckeLatticeAlgebra.instModuleFinite : Module.Finite ℤ ↥(heckeLatticeAlgebra N S) := by
   have := intLattice.moduleFinite N
   have := intLattice.moduleFree N
   exact Module.Finite.of_injective (heckeLatticeAlgebra N S).val.toLinearMap Subtype.val_injective
 
-private theorem heckeLatticeAlgebra.isTorsionFree :
-    Module.IsTorsionFree ℤ ↥(heckeLatticeAlgebra N S) := by
-  have := intLattice.isTorsionFree_end N
-  exact Function.Injective.moduleIsTorsionFree Subtype.val Subtype.val_injective fun _ _ => rfl
-
 instance heckeLatticeAlgebra.instModuleFree : Module.Free ℤ ↥(heckeLatticeAlgebra N S) := by
-  have := heckeLatticeAlgebra.isTorsionFree N S
+  have := intLattice.isTorsionFree N
+  have : Module.IsTorsionFree ℤ ↥(heckeLatticeAlgebra N S) := Subalgebra.instIsTorsionFree _
   exact Module.free_of_finite_type_torsion_free'
 
 /-- The Hecke algebra maps onto its image on the integral lattice. -/
@@ -194,8 +188,12 @@ character. -/
 def heckeLocalSubmonoid : Submonoid (heckeBaseAlgebra N S 𝒪) :=
   (heckeCharKernel N S 𝒪 θ).primeCompl.map (latticeBaseChange N S 𝒪)
 
-/-- The local Hecke algebra: the localization of `heckeBaseAlgebra N S 𝒪` at the maximal
-ideal cut out by `θ`. -/
+/-- The local Hecke algebra: the localization of `heckeBaseAlgebra N S 𝒪` at
+`heckeLocalSubmonoid N S 𝒪 θ`, the image of the complement of the kernel of the residual
+character. When the kernel of `latticeBaseChange N S 𝒪` lies in the kernel of the residual
+character, as it does under an integral structure (`HasIntegralStructure N 2`), this is the
+localization at the maximal ideal `heckeLocalIdeal N S 𝒪 θ` cut out by `θ`; otherwise the
+submonoid contains `0` and the localization is the zero ring. -/
 def heckeLocal : Type u :=
   Localization (heckeLocalSubmonoid N S 𝒪 θ)
 
@@ -352,73 +350,6 @@ end Structure
 section TrioEngines
 
 
-private lemma trio_isTorsionFree_finsupp (R : Type u) [CommRing R] (ι : Type v) :
-    Module.IsTorsionFree R (ι →₀ R) where
-  isSMulRegular r hr f g hfg := Finsupp.ext fun a => hr.isSMulRegular (M := R) (by
-    have h := congrArg (fun h => h a) hfg
-    simpa [Finsupp.smul_apply] using h)
-
-private lemma trio_isTorsionFree_of_free (R : Type u) [CommRing R] (B : Type v) [AddCommGroup B]
-    [Module R B] [Module.Free R B] : Module.IsTorsionFree R B := by
-  have := trio_isTorsionFree_finsupp R (Module.Free.ChooseBasisIndex R B)
-  set b := Module.Free.chooseBasis R B with hb
-  exact Function.Injective.moduleIsTorsionFree (⇑b.repr) b.repr.injective
-    fun r m => map_smul b.repr r m
-
-private lemma trio_surjective_atPrime {R : Type u} [CommRing R] [IsLocalRing R]
-    [IsNoetherianRing R] [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
-    (B : Type v) [CommRing B] [Algebra R B] [Module.Finite R B] (P : MaximalSpectrum B) :
-    Function.Surjective (algebraMap B (Localization.AtPrime P.asIdeal)) := by
-  classical
-  obtain ⟨-, hbij, -, -⟩ :=
-    Algebra.finite_maximalSpectrum_and_bijective_localization_of_module_finite (𝒪 := R) B
-  intro z
-  obtain ⟨b, hb⟩ := hbij.2 (Function.update 0 P z)
-  refine ⟨b, ?_⟩
-  have h := congrFun hb P
-  simp only [Function.update_self] at h
-  exact h
-
-private lemma trio_isTorsionFree_atPrime {R : Type u} [CommRing R] [IsLocalRing R]
-    [IsNoetherianRing R] [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
-    (B : Type v) [CommRing B] [Algebra R B] [Module.Finite R B] [Module.Free R B]
-    (P : MaximalSpectrum B) :
-    Module.IsTorsionFree R (Localization.AtPrime P.asIdeal) := by
-  classical
-  obtain ⟨-, hbij, -, -⟩ :=
-    Algebra.finite_maximalSpectrum_and_bijective_localization_of_module_finite (𝒪 := R) B
-  have htfB : Module.IsTorsionFree R B := trio_isTorsionFree_of_free R B
-  set Φ : B →ₗ[R] ∀ Q : MaximalSpectrum B, Localization.AtPrime Q.asIdeal :=
-    { toFun := fun a Q => algebraMap B (Localization.AtPrime Q.asIdeal) a
-      map_add' := fun a b => funext fun Q => map_add _ a b
-      map_smul' := fun c a => funext fun Q => by
-        simp only [RingHom.id_apply, Pi.smul_apply, Algebra.smul_def, map_mul,
-          ← IsScalarTower.algebraMap_apply] } with hPhidef
-  have hPhibij : Function.Bijective Φ := hbij
-  have hsingle : Function.Injective
-      (Pi.single (M := fun Q : MaximalSpectrum B => Localization.AtPrime Q.asIdeal) P) := by
-    intro x y hxy
-    have h := congrFun hxy P
-    simpa using h
-  set e := LinearEquiv.ofBijective Φ hPhibij with hedef
-  set g : Localization.AtPrime P.asIdeal →ₗ[R] B :=
-    e.symm.toLinearMap ∘ₗ
-      LinearMap.single R (fun Q : MaximalSpectrum B => Localization.AtPrime Q.asIdeal) P
-    with hgdef
-  have hginj : Function.Injective g := e.symm.injective.comp hsingle
-  exact Function.Injective.moduleIsTorsionFree (⇑g) hginj fun r m => map_smul g r m
-
-private lemma trio_free_atPrime {R : Type u} [CommRing R] [IsDomain R] [IsLocalRing R]
-    [IsPrincipalIdealRing R] [IsNoetherianRing R]
-    [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
-    (B : Type v) [CommRing B] [Algebra R B] [Module.Finite R B] [Module.Free R B]
-    (P : MaximalSpectrum B) : Module.Free R (Localization.AtPrime P.asIdeal) := by
-  obtain ⟨-, -, hfin, -⟩ :=
-    Algebra.finite_maximalSpectrum_and_bijective_localization_of_module_finite (𝒪 := R) B
-  have := hfin P
-  have := trio_isTorsionFree_atPrime (R := R) B P
-  exact Module.free_of_finite_type_torsion_free'
-
 omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] in
 private lemma trio_moduleFinite_base : Module.Finite 𝒪 (heckeBaseAlgebra N S 𝒪) :=
   inferInstanceAs (Module.Finite 𝒪 (𝒪 ⊗[ℤ] ↥(heckeLatticeAlgebra N S)))
@@ -481,18 +412,10 @@ instance heckeLocal.instModuleFinite : Module.Finite 𝒪 (heckeLocal N S 𝒪 �
     exact Module.Finite.equiv (e.toLinearEquiv.restrictScalars 𝒪)
 
 instance heckeLocal.instModuleFree : Module.Free 𝒪 (heckeLocal N S 𝒪 θ) := by
-  rcases trio_subsingleton_or_ker_le N S 𝒪 θ with hsub | hker
-  · have := hsub
-    exact Module.Free.of_subsingleton 𝒪 (heckeLocal N S 𝒪 θ)
-  · have := trio_moduleFinite_base N S 𝒪
-    have := trio_moduleFree_base N S 𝒪
-    have hPmax : (heckeLocalIdeal N S 𝒪 θ).IsMaximal := heckeLocalIdeal_isMaximal N S 𝒪 θ hker
-    have hloc := trio_isLocalization_atPrime N S 𝒪 θ hker
-    have := trio_free_atPrime (R := 𝒪) (heckeBaseAlgebra N S 𝒪)
-      ⟨heckeLocalIdeal N S 𝒪 θ, hPmax⟩
-    have e := IsLocalization.algEquiv (heckeLocalIdeal N S 𝒪 θ).primeCompl
-      (Localization.AtPrime (heckeLocalIdeal N S 𝒪 θ)) (heckeLocal N S 𝒪 θ)
-    exact Module.Free.of_equiv (e.toLinearEquiv.restrictScalars 𝒪)
+  have := trio_moduleFree_base N S 𝒪
+  have : Module.Flat 𝒪 (heckeLocal N S 𝒪 θ) :=
+    inferInstanceAs (Module.Flat 𝒪 (Localization (heckeLocalSubmonoid N S 𝒪 θ)))
+  exact Module.free_of_flat_of_isLocalRing
 
 instance heckeLocal.instIsLocalRing [Fact (HasIntegralStructure N 2)] :
     IsLocalRing (heckeLocal N S 𝒪 θ) :=
@@ -509,8 +432,8 @@ instance heckeLocal.instIsLocalHom [Fact (HasIntegralStructure N 2)] :
 
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] in
-/-- The image of a Hecke operator in the local Hecke algebra reduces, modulo the
-maximal ideal, to the value of the residual Hecke character. -/
+/-- Under an integral structure, the image of a Hecke operator in the local Hecke algebra
+reduces, modulo its maximal ideal, to the value of the residual Hecke character. -/
 theorem heckeLocal.residue_pi [Fact (HasIntegralStructure N 2)] (t : ↥(heckeAlgebra N 2 S)) :
     IsLocalRing.residue (heckeLocal N S 𝒪 θ) (heckeLocal.π N S 𝒪 θ t) =
       IsLocalRing.ResidueField.map (algebraMap 𝒪 (heckeLocal N S 𝒪 θ)) (θ t) := by

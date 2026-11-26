@@ -48,7 +48,9 @@ example {N : ℕ} [NeZero N] (k : ℤ) :
     CuspForm.heckeAlgebra N k {2} ≤ CuspForm.heckeAlgebra N k ∅ :=
   CuspForm.heckeAlgebra_mono (Set.empty_subset _)
 
-/-- The primes in `S` are left out: away from every prime, the Hecke algebra is just `ℤ`. -/
+/-- The primes in `S` are left out: away from every prime, the Hecke algebra is the bottom
+`ℤ`-subalgebra, the image of the scalars. That image is the zero ring when there are no
+nonzero cusp forms, as in odd weight. -/
 example {N : ℕ} [NeZero N] (k : ℤ) : CuspForm.heckeAlgebra N k Set.univ = ⊥ := by
   have h : CuspForm.heckeGenerators N k Set.univ = ∅ :=
     Set.eq_empty_of_forall_notMem fun _ hT => by
