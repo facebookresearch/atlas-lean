@@ -61,7 +61,8 @@ entries, and `K = 3`. -/
 def WellFormed (i : ExpectedComponentSumInstance) : Prop :=
   ExpectedComponentSumZeroOne.WellFormed i ∧ i.2.2.1 = 3
 
-/-- Some partition of `C` into `K` non-empty disjoint sets has component sum at most `B`. -/
+/-- Some assignment of the list positions of `C` onto `K` nonempty parts (a vector listed twice
+occupies two positions) has component sum at most `B`. -/
 def UpperBoundFeasible (i : ExpectedComponentSumInstance) : Prop :=
   ∃ f : Fin i.2.1.length → Fin i.2.2.1, Function.Surjective f ∧
     componentSum i.1 i.2.1 f ≤ i.2.2.2

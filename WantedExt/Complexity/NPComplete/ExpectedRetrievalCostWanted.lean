@@ -67,12 +67,14 @@ def toRat (q : ℕ × ℕ) : ℚ := (q.1 : ℚ) / q.2
 def latency (m : ℕ) (i j : Fin m) : ℕ :=
   if (i : ℕ) < j then j - i - 1 else m - i + j - 1
 
-/-- `p(Rᵢ)`: the total probability of the records that `f` places in sector `i`. -/
+/-- `p(Rᵢ)`: the sum of the listed weights of the records that `f` places in sector `i` (a
+probability for normalised weights, as `WellFormed` requires). -/
 def sectorProb (inst : ExpectedRetrievalCostInstance) (f : Fin inst.1.length → Fin inst.2.1)
     (i : Fin inst.2.1) : ℚ :=
   ∑ r : Fin inst.1.length, if f r = i then toRat inst.1[r] else 0
 
-/-- The expected retrieval cost `∑_{i, j} p(Rᵢ) · p(Rⱼ) · d(i, j)` of the allocation `f`. -/
+/-- The weighted latency sum `∑_{i, j} p(Rᵢ) · p(Rⱼ) · d(i, j)` of the allocation `f`, the
+expected retrieval cost for normalised record probabilities. -/
 def retrievalCost (inst : ExpectedRetrievalCostInstance)
     (f : Fin inst.1.length → Fin inst.2.1) : ℚ :=
   ∑ i : Fin inst.2.1, ∑ j : Fin inst.2.1,

@@ -70,7 +70,8 @@ def componentSum (m : ℕ) (C : List (List ℕ)) {K : ℕ} (f : Fin C.length →
   ∑ k : Fin K, Finset.univ.sup fun j : Fin m =>
     ∑ c ∈ Finset.univ.filter (fun c => f c = k), (C.get c).getD j 0
 
-/-- Some partition of `C` into `K` non-empty disjoint sets has component sum at least `B`. -/
+/-- Some assignment of the list positions of `C` onto `K` nonempty parts (a vector listed twice
+occupies two positions) has component sum at least `B`. -/
 def ExpectedComponentSumFeasible (i : ExpectedComponentSumInstance) : Prop :=
   ∃ f : Fin i.2.1.length → Fin i.2.2.1, Function.Surjective f ∧
     i.2.2.2 ≤ componentSum i.1 i.2.1 f

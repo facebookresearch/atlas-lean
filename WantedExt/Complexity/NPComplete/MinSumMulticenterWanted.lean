@@ -101,9 +101,9 @@ def OnGraph (i : MinSumMulticenterInstance) (p : Fin i.1 × Fin i.1 × ℝ) : Pr
   (p.1 = p.2.1 ∧ p.2.2 = 0) ∨
     ((Graph i).Adj p.1 p.2.1 ∧ 0 ≤ p.2.2 ∧ p.2.2 ≤ edgeLength i s(p.1, p.2.1))
 
-/-- The shortest-path distance from vertex `v` to the point `p = (a, b, t)` is at most `r`: some
-walk reaches `a` with total length plus `t` at most `r`, or reaches `b` with total length plus
-`l({a, b}) - t` at most `r`. -/
+/-- Some walk reaches `a` with total length plus `t` at most `r`, or reaches `b` with total length
+plus `l({a, b}) - t` at most `r`. For a point `p = (a, b, t)` of the network (`OnGraph`) this
+says the shortest-path distance from `v` to `p` is at most `r`. -/
 def DistLE (i : MinSumMulticenterInstance) (v : Fin i.1) (p : Fin i.1 × Fin i.1 × ℝ)
     (r : ℝ) : Prop :=
   (∃ W : (Graph i).Walk v p.1, (walkLength i W : ℝ) + p.2.2 ≤ r) ∨

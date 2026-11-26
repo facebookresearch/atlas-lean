@@ -80,7 +80,8 @@ abbrev AgentData := List (ℕ × ℕ) × List (List RatCode)
 abbrev DeterministicMechanismDesignDominantStrategiesInstance :=
   ℕ × AgentData × AgentData × List (List (List RatCode)) × RatCode
 
-/-- The prior probability `pᵢ(θ)` of type `θ`. -/
+/-- The listed weight `pᵢ(θ)` of type `θ` (`0` when missing), a prior probability when the
+agent's weights sum to `1`. -/
 def prior (a : AgentData) (θ : ℕ) : ℚ := probVal (a.1.getD θ (0, 1))
 
 /-- The utility `uᵢ(θ, o)` of an agent of type `θ` for outcome `o`. -/
@@ -118,7 +119,8 @@ def IsDominantStrategyImplementation
     ∀ (θ₁ : Fin i.2.1.1.length) (θ₂ θ₂' : Fin i.2.2.1.1.length),
       utility i.2.2.1 θ₂ (o θ₁ θ₂') ≤ utility i.2.2.1 θ₂ (o θ₁ θ₂)
 
-/-- The expected objective `E[g(θ₁, θ₂, o(θ₁, θ₂))]` under the independent priors. -/
+/-- The prior-weighted sum of `g(θ₁, θ₂, o(θ₁, θ₂))`, the expectation under the independent
+priors when both priors are probability distributions. -/
 def expectedObjective (i : DeterministicMechanismDesignDominantStrategiesInstance)
     (o : Mechanism i) : ℚ :=
   ∑ θ₁ : Fin i.2.1.1.length, ∑ θ₂ : Fin i.2.2.1.1.length,
