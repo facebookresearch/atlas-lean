@@ -11,3 +11,4 @@ The automorphism group as an object: orders of automorphism groups, realizing gr
 - [Orders of automorphism groups](orders-of-automorphism-groups/README.md)
 - [Outer automorphisms of poly-infinite-cyclic groups](outer-automorphisms-of-poly-infinite-cyclic-grou/README.md)
 - [Groups with finitely many automorphism orbits](has-finitely-many-automorphism-orbits.md)
+- [Symmetric group: the group of permutations of a set](symmetric-group.md)
