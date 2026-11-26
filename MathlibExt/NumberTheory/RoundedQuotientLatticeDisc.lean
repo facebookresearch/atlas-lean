@@ -171,4 +171,29 @@ public theorem card_lattice_disc_two_mul (n : ℕ) :
   exact_mod_cast (show (Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * n} : ℤ) =
     4 * (roundQuotientOddCount n : ℤ) + 4 * (n : ℤ) + 1 by omega)
 
+/-- **The rounding sequence parity count drops by at most one.** For every natural number $n$,
+the rounding sequence parity count $\mathcal{R}$ satisfies
+$\mathcal{R}_{n+1} \ge \mathcal{R}_n - 1$.
+
+Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
+Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
+Article 24.2.5, Corollary 19 (`jis-2024-24.2.5-cor-19`). -/
+public theorem roundQuotientOddCount_sub_one_le_succ (n : ℕ) :
+    (roundQuotientOddCount n : ℤ) - 1 ≤ roundQuotientOddCount (n + 1) := by
+  let finiteDisc (N : ℕ) : Finite {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ (N : ℤ)} :=
+    Finite.of_equiv _ (discEquivSigma N).symm
+  let : Finite {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * n} := by
+    simpa only [Nat.cast_mul, Nat.cast_ofNat] using finiteDisc (2 * n)
+  let : Finite {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * ((n + 1 : ℕ) : ℤ)} := by
+    simpa only [Nat.cast_mul, Nat.cast_ofNat] using finiteDisc (2 * (n + 1))
+  let inclusion : {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * n} ↪
+      {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * ((n + 1 : ℕ) : ℤ)} :=
+    ⟨fun p => ⟨p.val, p.property.trans (by omega)⟩, by
+      intro a b h
+      have hval := congrArg Subtype.val h
+      exact Subtype.ext hval⟩
+  have h := Nat.card_le_card_of_injective inclusion inclusion.injective
+  rw [card_lattice_disc_two_mul (n := n), card_lattice_disc_two_mul (n := n + 1)] at h
+  omega
+
 end MetaMathlibExt

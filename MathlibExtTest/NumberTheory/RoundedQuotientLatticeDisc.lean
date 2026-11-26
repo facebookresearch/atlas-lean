@@ -27,4 +27,26 @@ example : Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * (18 : ℤ)} = 11
   have h : 4 * roundQuotientOddCount 18 + 4 * 18 + 1 = 113 := by decide +kernel
   exact (card_lattice_disc_two_mul (n := 18)).trans h
 
+-- The empty sequence gives an integer lower bound of -1, not a truncated subtraction.
+example : -1 ≤ (roundQuotientOddCount 1 : ℤ) := by
+  have h₀ : roundQuotientOddCount 0 = 0 := by decide +kernel
+  simpa only [h₀, Nat.cast_zero, zero_sub, zero_add] using
+    roundQuotientOddCount_sub_one_le_succ (n := 0)
+
+-- The bound is sharp: the count can decrease by exactly one.
+example : (roundQuotientOddCount 6 : ℤ) = (roundQuotientOddCount 5 : ℤ) - 1 := by
+  have h₅ : roundQuotientOddCount 5 = 4 := by decide +kernel
+  have h₆ : roundQuotientOddCount 6 = 3 := by decide +kernel
+  refine le_antisymm ?_ (roundQuotientOddCount_sub_one_le_succ (n := 5))
+  rw [h₅, h₆]
+  decide
+
+-- At k = 4, 6/k = 3/2 rounds up to 2; at k = 6 it rounds to 1.
+example : round ((6 : ℚ) / 4) = 2 ∧ round ((6 : ℚ) / 6) = 1 := by decide +kernel
+
+-- The same comparison in naturals puts the +1 on the successor side.
+example (n : ℕ) : roundQuotientOddCount n ≤ roundQuotientOddCount (n + 1) + 1 := by
+  have h := roundQuotientOddCount_sub_one_le_succ (n := n)
+  omega
+
 end MetaMathlibExt
