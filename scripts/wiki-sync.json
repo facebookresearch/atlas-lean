@@ -34474,6 +34474,7 @@
 "HopfAlgebra.canMap_surjective_of_surjective": "9d05625ebbfc7177",
 "HopfAlgebra.coaction": "28257b07f8d0822b",
 "HopfAlgebra.comul_antipode": "9038630aa8b2ce8c",
+"HopfAlgebra.convPow_finrank_eq_one_of_isCocomm": "0e16ad83ed6e13e3",
 "HopfAlgebra.evalPointsAlgHom": "c839594dfa67e0cc",
 "HopfAlgebra.evalPointsAlgHom_includeRight": "408c03c7df6c7e9d",
 "HopfAlgebra.exists_comp_antipode_convMul_eq_one": "152bac8b776d35cc",
