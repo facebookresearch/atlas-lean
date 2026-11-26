@@ -3,6 +3,7 @@
 σ, τ, φ, Jordan and Dedekind ψ, unitary and biunitary divisors, gcd-sums, Ramanujan sums, totient multiplicities and values.
 
 - [Euler's totient function](euler-totient.md)
+- [Lower bound $\varphi(n) \ge \sqrt{n/2}$ for Euler's totient](totient-ge-sqrt-half.md)
 
 ## [Part 1 of 2](part-01/README.md)
 
