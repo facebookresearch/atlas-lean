@@ -1,0 +1,5 @@
+# Adelic `PGL(2)`
+
+The quotient of `GL (Fin 2) (AdeleRing R K)` by its centre, the scalar
+matrices. As an abbreviation, it carries the quotient group structure, the quotient topology and
+Mathlib's instances for quotient groups.

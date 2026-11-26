@@ -2,6 +2,7 @@
 
 Topics added since this subject's fields were last revised.
 
+- [Adelic Box](adelic-box/README.md)
 - [Adelic Lift](adelic-lift/README.md)
 - [Adelic Periodization](adelic-periodization/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
