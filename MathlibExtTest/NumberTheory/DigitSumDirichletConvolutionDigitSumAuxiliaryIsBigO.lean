@@ -34,9 +34,17 @@ example (x : ℝ) : ∃ C : ℝ, |trollopeDelangeFluctuation 3 x| ≤ C :=
 example : digitSumRemainder 7 =O[atTop] log :=
   (digitSum_auxiliary_isBigO 7 (by norm_num)).2.2.1
 
+-- The base-four fluctuation integral `G` is `O(log x)`.
+example : digitSumFluctuationIntegral 4 =O[atTop] log :=
+  (digitSum_auxiliary_isBigO 4 (by norm_num)).2.2.2.1
+
 -- The base-two double fluctuation integral is `O(log x ^ 2)`.
 example : digitSumFluctuationDoubleIntegral 2 =O[atTop] (fun x => log x ^ 2) :=
   (digitSum_auxiliary_isBigO 2 le_rfl).2.2.2.2.1
+
+-- The base-six remainder integral `K` is bounded at infinity.
+example : digitSumRemainderIntegral 6 =O[atTop] (fun _ => (1 : ℝ)) :=
+  (digitSum_auxiliary_isBigO 6 (by norm_num)).2.2.2.2.2.1
 
 -- The base-five double remainder integral is `O(log x)`.
 example : digitSumRemainderDoubleIntegral 5 =O[atTop] log :=

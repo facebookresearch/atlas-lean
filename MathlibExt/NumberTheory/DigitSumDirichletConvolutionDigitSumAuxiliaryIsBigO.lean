@@ -57,102 +57,17 @@ namespace digitSum_auxiliary_bounds
 
 open MeasureTheory intervalIntegral
 
-private noncomputable def centeredFract (t : ℝ) : ℝ := Int.fract t - 1 / 2
-
-private lemma centeredFract_intervalIntegrable (a b : ℝ) :
-    IntervalIntegrable centeredFract volume a b := by
-  have hfloor : Monotone (fun t : ℝ => (⌊t⌋ : ℝ)) := fun _ _ h => by
-    exact Int.cast_le.mpr (Int.floor_le_floor h)
-  exact ((continuous_id.intervalIntegrable a b).sub hfloor.intervalIntegrable).sub
-    intervalIntegrable_const
-
--- The centered fractional part has mean zero, so its primitive is continuous and periodic.
-private lemma centeredFract_primitive_bounded :
-    ∃ C : ℝ, ∀ x : ℝ, |∫ t in 0..x, centeredFract t| ≤ C := by
-  have hmean : (∫ t in (0 : ℝ)..1, centeredFract t) = 0 := by
-    calc
-      _ = ∫ t in (0 : ℝ)..1, t - 1 / 2 := by
-        apply integral_congr_Ioo_of_le zero_le_one
-        intro t ht
-        rw [centeredFract, Int.fract_eq_self.mpr ⟨ht.1.le, ht.2⟩]
-      _ = 0 := by
-        rw [intervalIntegral.integral_sub (f := fun t : ℝ => t) (g := fun _ => 1 / 2)
-          (continuous_id.intervalIntegrable 0 1) intervalIntegrable_const]
-        norm_num
-  have hp : Function.Periodic centeredFract 1 := fun x => by simp [centeredFract]
-  have hprim : Function.Periodic (fun x : ℝ => ∫ t in 0..x, centeredFract t) 1 := by
-    intro x
-    simpa [hmean] using hp.intervalIntegral_add_eq_add 0 x centeredFract_intervalIntegrable
-  obtain ⟨C, hC⟩ := (hprim.isBounded_of_continuous one_ne_zero
-    (continuous_primitive centeredFract_intervalIntegrable 0)).exists_norm_le
-  exact ⟨C, fun x => hC _ ⟨x, rfl⟩⟩
-
--- Delange's integrand is `q` times the centered fractional part at `t` minus the same
--- function at `q * t`, so Delange's function is bounded.
-private lemma integral_bounded {q : ℕ} (hq : 2 ≤ q) :
-    ∃ C : ℝ, ∀ x : ℝ, |trollopeDelangeIntegral q x| ≤ C := by
-  obtain ⟨C, hC⟩ := centeredFract_primitive_bounded
-  have hq₀ : 0 < (q : ℝ) := by exact_mod_cast (by omega : 0 < q)
-  refine ⟨q * C + (q : ℝ)⁻¹ * C, fun x => ?_⟩
-  have heq : trollopeDelangeIntegral q x =
-      q * (∫ t in 0..x, centeredFract t) - (q : ℝ)⁻¹ * ∫ t in 0..q * x, centeredFract t := by
-    calc
-      _ = ∫ t in 0..x, q * centeredFract t - centeredFract (q * t) := by
-        apply integral_congr
-        intro t _
-        simp only [centeredFract, Int.fract]
-        ring
-      _ = _ := by
-        have hscaled : IntervalIntegrable (fun t => centeredFract (q * t)) volume 0 x := by
-          simpa [hq₀.ne'] using (centeredFract_intervalIntegrable 0 (x * q)).comp_mul_left
-            (c := (q : ℝ))
-        rw [intervalIntegral.integral_sub ((centeredFract_intervalIntegrable 0 x).const_mul _)
-          hscaled,
-          intervalIntegral.integral_const_mul, integral_comp_mul_left centeredFract hq₀.ne']
-        simp
-  rw [heq]
-  apply (abs_sub _ _).trans
-  rw [abs_mul, abs_mul, abs_of_pos hq₀, abs_of_pos (inv_pos.mpr hq₀)]
-  gcongr <;> apply hC
-
+-- `digitSum_reciprocal_fluctuation_sum_le.series_bounded` with a nonnegative constant.
 private lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x : ℝ, |trollopeDelangeSeries q x| ≤ C := by
-  obtain ⟨C, hC⟩ := integral_bounded hq
-  have hC0 : 0 ≤ C := (abs_nonneg _).trans (hC 0)
-  have hq₁ : 1 < (q : ℝ) := by exact_mod_cast (show 1 < q from hq)
-  have hgeom := hasSum_geometric_of_lt_one (inv_nonneg.mpr (by positivity : 0 ≤ (q : ℝ)))
-    (inv_lt_one_of_one_lt₀ hq₁)
-  have hsub : (0:ℝ) ≤ 1 - (q : ℝ)⁻¹ := by
-    have hq1 : (q : ℝ)⁻¹ < 1 := inv_lt_one_of_one_lt₀ hq₁
-    linarith
-  refine ⟨C * (1 - (q : ℝ)⁻¹)⁻¹, mul_nonneg hC0 (inv_nonneg.mpr hsub), fun x => ?_⟩
-  unfold trollopeDelangeSeries
-  rw [← Real.norm_eq_abs]
-  apply tsum_of_norm_bounded (hgeom.mul_left C)
-  intro r
-  simp only [Real.norm_eq_abs, abs_div,
-    abs_of_nonneg (show 0 ≤ (q : ℝ) ^ r by positivity), inv_pow, ← div_eq_mul_inv]
-  exact div_le_div_of_nonneg_right (hC _) (by positivity)
+  obtain ⟨C, hC⟩ := digitSum_reciprocal_fluctuation_sum_le.series_bounded hq
+  exact ⟨C, (abs_nonneg _).trans (hC 0), hC⟩
 
+-- `digitSum_reciprocal_fluctuation_sum_le.fluctuation_bddAbove` as a nonnegative uniform bound.
 private lemma fluctuation_bounded {q : ℕ} (hq : 2 ≤ q) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x : ℝ, |trollopeDelangeFluctuation q x| ≤ C := by
-  obtain ⟨C, hC0, hC⟩ := series_bounded hq
-  have hq₁ : 1 ≤ (q : ℝ) := by exact_mod_cast (by omega : 1 ≤ q)
-  have hq1 : (0:ℝ) ≤ ((q : ℝ) - 1) / 2 := by
-    have hq2 : (2:ℝ) ≤ q := by exact_mod_cast hq
-    linarith
-  refine ⟨((q : ℝ) - 1) / 2 + q * C,
-    add_nonneg hq1 (mul_nonneg (Nat.cast_nonneg q) hC0), fun t => ?_⟩
-  have h₀ : 0 ≤ 1 + (⌊t⌋ : ℝ) - t := by linarith [Int.lt_floor_add_one t]
-  have h₁ : 1 + (⌊t⌋ : ℝ) - t ≤ 1 := by linarith [Int.floor_le t]
-  have hpow : (q : ℝ) ^ (1 + (⌊t⌋ : ℝ) - t) ≤ q := by
-    simpa using Real.rpow_le_rpow_of_exponent_le hq₁ h₁
-  unfold trollopeDelangeFluctuation
-  apply (abs_add_le _ _).trans
-  rw [abs_mul, abs_mul, abs_of_nonneg hq1, abs_of_nonneg h₀,
-    abs_of_nonneg (Real.rpow_nonneg (Nat.cast_nonneg q) _)]
-  exact add_le_add (mul_le_of_le_one_right hq1 h₁)
-    (mul_le_mul hpow (hC _) (abs_nonneg _) (Nat.cast_nonneg q))
+  obtain ⟨C, hC⟩ := digitSum_reciprocal_fluctuation_sum_le.fluctuation_bddAbove hq
+  exact ⟨C, (abs_nonneg _).trans (hC ⟨0, rfl⟩), fun x => hC ⟨x, rfl⟩⟩
 
 private lemma digitSum_le {q n : ℕ} (hq : 2 ≤ q) (hn : n ≠ 0) :
     ((Nat.digits q n).sum : ℝ) ≤ ((q : ℝ) - 1) * ((Nat.log q n : ℝ) + 1) := by
@@ -286,17 +201,9 @@ private lemma abs_fluctuationIntegral_le {q : ℕ} {CF : ℝ}
   exact hle.trans_eq hint
 
 private lemma log_le_two_rpow_half {u : ℝ} (hu : 1 ≤ u) : Real.log u ≤ 2 * u ^ (1/2 : ℝ) := by
-  have hu0 : (0:ℝ) < u := by linarith
-  have hsqrt : √u = u ^ (1/2 : ℝ) := Real.sqrt_eq_rpow u
-  have h1 : Real.log √u ≤ √u - 1 := Real.log_le_sub_one_of_pos (Real.sqrt_pos.mpr hu0)
-  have h2 : Real.log u = 2 * Real.log √u := by
-    rw [Real.log_sqrt hu0.le]
-    ring
-  rw [h2]
-  have h1' : Real.log √u ≤ u ^ (1/2 : ℝ) := by
-    rw [← hsqrt]
-    linarith
-  linarith
+  have h := Real.log_le_rpow_div (x := u) (ε := 1/2) (by linarith) (by norm_num)
+  have h2 : u ^ (1/2 : ℝ) / (1/2) = 2 * u ^ (1/2 : ℝ) := by ring
+  exact h.trans_eq h2
 
 private lemma abs_fluctuationDoubleIntegral_le {q : ℕ} {CF : ℝ} (hCF0 : 0 ≤ CF)
     (hCF : ∀ x : ℝ, |trollopeDelangeFluctuation q x| ≤ CF) :
