@@ -34,6 +34,19 @@ public def HasNSProperty (h : ℕ → ℕ) : Prop :=
   Monotone h ∧ ∀ z z' i : ℕ, 0 < i → z / 2 ^ i = z' / 2 ^ i →
     h z / 2 ^ (i - 1) = h z' / 2 ^ (i - 1)
 
+/-- **Quotients of a truncated NS function by powers of two.** Let $h : \mathbb{N} \to \mathbb{N}$
+have the NS property and let $z, z', k \in \mathbb{N}$ with $k \ge 1$ and
+$\lfloor z' / 2^k \rfloor = \lfloor z / 2^k \rfloor$. Then for every $y \in \mathbb{N}$,
+$\lfloor \min(h(z'), y) / 2^{k-1} \rfloor = \lfloor \min(h(z), y) / 2^{k-1} \rfloor$.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 2 (ii) (`integers-2025-G3-lem-2`). -/
+public theorem HasNSProperty.min_div_two_pow_eq {h : ℕ → ℕ} (hh : HasNSProperty h)
+    {z z' k : ℕ} (hk : 0 < k) (hz : z' / 2 ^ k = z / 2 ^ k) (y : ℕ) :
+    min (h z') y / 2 ^ (k - 1) = min (h z) y / 2 ^ (k - 1) :=
+  min_div_two_pow_eq_of_div_two_pow_eq (hh.2 z' z k hk hz) y
+
 /-- **Constant functions have the NS property.** For every natural number $c$, the constant
 function $\mathbb{N} \to \mathbb{N}$ with value $c$ has the NS property.
 
