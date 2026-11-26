@@ -36,6 +36,16 @@ example : 15 * fiboCatalan 2 - 2 * fiboCatalan 3 = 5 := by
   norm_num [Nat.fib, MetaMathlibExt.fibonacciFactorial] at h
   exact h
 
+example : fibonomial 1 2 = 0 := by simp [fibonomial]
+
+example : fibonomial 3 1 / (Nat.fib 3 : ℚ) = 1 := by
+  rw [← (fib_mul_factorialQuotient_eq_and_isInt 1 le_rfl).1]
+  norm_num [MetaMathlibExt.fibonacciFactorial, Nat.fib]
+
+example : ∃ k : ℤ, (k : ℚ) = fibonomial 7 3 / (Nat.fib 5 : ℚ) := by
+  obtain ⟨h, hk⟩ := fib_mul_factorialQuotient_eq_and_isInt 3 (by decide)
+  simpa only [h] using hk
+
 open MvPolynomial
 
 example : lucasPoly 0 * lucasPoly 2 - lucasPoly 2 * lucasPoly 0 = 0 := by
