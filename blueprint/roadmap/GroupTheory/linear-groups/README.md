@@ -14,7 +14,6 @@ Groups of matrices over fields and rings: SL2, PGL2 and SU(2) and their conjugac
 - [Jordan's theorem on finite linear groups](jordan-linear-groups.md)
 - [Malcev's theorem on linear groups](malcev-residually-finite.md)
 - [Order of the general linear group over a finite field](card-general-linear-group-finite-field.md)
-- [Selberg's lemma, unique-roots form](selberg-finite-index-has-unique-roots.md)
 - [Selberg's lemma](selberg-finite-index-torsion-free.md)
 - [Stable sets of linear automorphisms](has-stable-series.md)
 - [Generation of the special linear group by elementary transvections](generation-of-special-linear-groups-by-transvections.md)
@@ -22,4 +21,3 @@ Groups of matrices over fields and rings: SL2, PGL2 and SU(2) and their conjugac
 - [Every square matrix is a product of transvections and a diagonal matrix](transvection-diagonal-factorization.md)
 - [Relative roots, root space decompositions and root subgroups of reductive groups](relative-root-systems-and-root-subgroups.md)
 - [Unipotent groups in characteristic zero: central series, exponential map and sections](unipotent-groups-in-characteristic-zero.md)
-- [Discrete projective actions](discrete-projective-actions/README.md)

@@ -7,5 +7,3 @@ Shannon entropy, conditional entropy, mutual information and Kullback–Leibler 
 - [Conditional mutual information](conditional-mutual-information/README.md)
 - [Chow–Liu trees](chow-liu-trees/README.md)
 - [Method of types](method-of-types/README.md)
-- [Gaussian entropy](gaussian-entropy/README.md)
-- [Mutual information on finite types, in nats](mutual-information-on-finite-types-in-nats/README.md)

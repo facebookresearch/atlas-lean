@@ -17,4 +17,3 @@ Relations between formal theories and their structures: first-order languages of
 - [Beth's definability theorem](beth-definability-theorem.md)
 - [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
-- [Ehrenfeucht–Fraïssé games on finite binary relations](ehrenfeucht-fra-ss-games-on-finite-binary-relati/README.md)

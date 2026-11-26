@@ -8,7 +8,6 @@ Factorizations of matrices (QR, singular value, polar, Schur and LU decompositio
 - [LU decomposition](lu-decomposition/README.md)
 - [Randomized range finder](randomized-range-finder/README.md)
 - [Singular value decomposition](singular-value-decomposition/README.md)
-- [Two-level unitary decomposition](two-level-unitary-decomposition/README.md)
 - [Arnoldi and Lanczos iterations](arnoldi-and-lanczos-iterations/README.md)
 - [GMRES](gmres/README.md)
 - [QR factorization](qr-factorization/README.md)
@@ -29,4 +28,3 @@ Factorizations of matrices (QR, singular value, polar, Schur and LU decompositio
 - [Principal component analysis](../../Probability/linear-models-multivariate/principal-component-analysis/README.md)
 - [Rounding error analysis](../../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md)
 - [Communication lower bounds](../../ComputerScience/algebraic-and-numerical-algorithms/communication-lower-bounds/README.md)
-- [Complex iwasawa](complex-iwasawa/README.md)
