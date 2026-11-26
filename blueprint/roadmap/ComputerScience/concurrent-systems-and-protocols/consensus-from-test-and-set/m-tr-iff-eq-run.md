@@ -1,4 +1,3 @@
-# M Tr iff eq run
+# Executions of test-and-set consensus are determined by their schedule
 
-Steps are deterministic: the execution from `init` along a schedule `σ` ends exactly in
-`run inp σ`.
+Fix the inputs of the two processes, a schedule $\sigma$ (a finite list of processes) and a global state $s$ of the two-process test-and-set consensus protocol. The labelled transition system of the protocol has an execution from the initial state along $\sigma$ that ends in $s$ if and only if $s$ is the state reached along $\sigma$, obtained by letting the processes of $\sigma$ take one atomic step each, in order. So the execution along $\sigma$ exists and ends in that state, and no execution along $\sigma$ ends anywhere else.
