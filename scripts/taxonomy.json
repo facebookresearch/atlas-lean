@@ -13525,6 +13525,7 @@
   "MathlibExt/NumberTheory/SecondOrderGenValueTrivialFamilies": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderMValue": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderMValueSmallNonneg": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
+  "MathlibExt/NumberTheory/LeonardoLogBalanced": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "MathlibExt/NumberTheory/SelbergLambdaSquaredBound": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Selberg sieve"},
   "MathlibExt/NumberTheory/SelbergSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Selberg sieve"},
   "MathlibExt/NumberTheory/Sequences/GeneralizedEuclidSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Generalized Euclid sequences"},
