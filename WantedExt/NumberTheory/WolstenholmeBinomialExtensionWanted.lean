@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.HigherOrderHarmonic
 public import MathlibExt.NumberTheory.WolstenholmeBinomialCongruence
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 public import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
+public import MathlibExt.NumberTheory.WolstenholmePolynomialParts
 
 /-!
 # Extensions of Wolstenholme's theorem by binomial coefficients
@@ -243,35 +244,6 @@ public theorem_wanted ringChoose_mul_prime_sub_congr_cprime (p m k : ℕ) (n : �
       (C00 + ∑ j ∈ Finset.Icc 2 m, ∑ i ∈ Finset.Icc 1 (j / 2), Cp j i * C ((j * p : ℕ) : ℤ) (i * p))
     X = 0 ∨ (C n (m + 1) ≠ 0 ∧
       ((m + 1 : ℕ) : ℤ) + padicValRat p (C n (m + 1)) ≤ padicValRat p X)
-
-/-- **Divisibility of the polynomial parts by $k(n-k)/2$.** Let $m$ be a natural number and $n$ an
-integer. For an integer $x$ and a natural number $r$ write $\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$,
-and for a rational number $x$ write $(x)_r = x(x-1)\cdots(x-r+1)$ for the falling factorial. Then
-there is a polynomial $Q \in \mathbb{Q}[X]$ such that for every natural number $k$
-$$\binom{m-k}{m} + \binom{k+m-n}{m} + (-1)^{m+1} \binom{n-1}{m} - 1 = \frac{k(n-k)}{2} \, Q(k),$$
-and for all natural numbers $i$ and $j$ with $1 \le i < j$ there is a polynomial
-$Q \in \mathbb{Q}[X]$ such that for every natural number $k$
-$$\frac{(n-k)_{j-i} \, (k)_i + (n-k)_i \, (k)_{j-i}}{j!} \binom{m-n}{\max(m-j, 0)} =
-\frac{k(n-k)}{2} \, Q(k).$$
-
-For $j \le m$ the left-hand sides are the polynomial parts of the coefficients
-$C'_{00}(m, n, k)$ and $C'_{ji}(m, n, k)$ of Theorem 4 (the halving at $j = 2i$ does not affect
-divisibility); agreement at every natural number $k$ amounts to divisibility by $k(n-k)/2$
-in $\mathbb{Q}[k]$.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Proposition 1
-(`integers-2026-A32-prop-1`). -/
-public theorem_wanted exists_polynomial_part_eq_mul_half_mul (m : ℕ) (n : ℤ) :
-    let C : ℤ → ℕ → ℚ := fun x r => ((Ring.choose x r : ℤ) : ℚ)
-    let ff : ℚ → ℕ → ℚ := fun x i => ∏ t ∈ Finset.range i, (x - t)
-    (∃ Q : ℚ[X], ∀ k : ℕ,
-        C ((m : ℤ) - k) m + C ((k : ℤ) + m - n) m + (-1) ^ (m + 1) * C (n - 1) m - 1 =
-          (k : ℚ) * (n - k) / 2 * Q.eval (k : ℚ)) ∧
-      ∀ j i : ℕ, 1 ≤ i → i < j → ∃ Q : ℚ[X], ∀ k : ℕ,
-        (ff ((n : ℚ) - k) (j - i) * ff k i + ff ((n : ℚ) - k) i * ff k (j - i)) / j.factorial *
-            C ((m : ℤ) - n) (m - j) =
-          (k : ℚ) * (n - k) / 2 * Q.eval (k : ℚ)
 
 /-! ### Explicit congruences modulo `p^3`, ..., `p^7` -/
 
