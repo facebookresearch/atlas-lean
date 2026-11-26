@@ -11,6 +11,9 @@ Lazebnik, Ustimenko and Woldar (Discrete Math. 1999), per Füredi–Simonovits
 get bipartite $C_{10}$-free graphs (hence also $C_9$-free) with
 $4(n/5)^{6/5} > 0.5798\, n^{6/5}$ edges for infinitely many $n$, refuting the case $k = 5$.
 
+For $k = 3$, the ratio is at least $8/7$ for infinitely many $n$ by the
+[lower bound from doubling the lines of the Wenger graph](extremal-number-three-lower.md).
+
 ## Sources
 
 - Zoltán Füredi and Miklós Simonovits, The history of degenerate (bipartite) extremal graph problems, in Erdős Centennial, Bolyai Soc. Math. Stud. 25 (2013), arXiv:1306.5167, https://arxiv.org/abs/1306.5167.

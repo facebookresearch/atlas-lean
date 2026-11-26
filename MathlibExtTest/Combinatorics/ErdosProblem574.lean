@@ -39,7 +39,7 @@ example : (SimpleGraph.cycleGraph 5).Free (Wenger.blowGraph (K := ZMod 2)) :=
 example : (SimpleGraph.cycleGraph 6).Free (Wenger.blowGraph (K := ZMod 2)) :=
   Wenger.blowGraph_free_six
 
-/-- Two adjacent pairs in the Wenger graph over `ZMod 2`. -/
+/-- An adjacent point-line pair in the Wenger graph over `ZMod 2`. -/
 example : Wenger.adj ((0, 0, 0) : ZMod 2 × ZMod 2 × ZMod 2) (0, 0, 0) := ⟨by decide, by decide⟩
 
 /-- A nonadjacent pair in the Wenger graph over `ZMod 2`. -/

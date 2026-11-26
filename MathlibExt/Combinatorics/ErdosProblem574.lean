@@ -407,7 +407,8 @@ theorem blowGraph_free_six : (SimpleGraph.cycleGraph 6).Free (blowGraph (K := K)
 lines in $K^3$ and replace each line of the Wenger graph by two copies with the same neighbors.
 The resulting graph contains no copy of $C_5$, since every edge joins a point to a line copy.
 
-Source: The bipartition into points and line copies. -/
+Source: Cioabă, Lazebnik and Li, *On the Spectrum of Wenger Graphs*, arXiv:1402.3341,
+§1 (the point-line bipartition of the finite Wenger graph). -/
 theorem blowGraph_free_five : (SimpleGraph.cycleGraph 5).Free (blowGraph (K := K)) := by
   rintro ⟨f⟩
   have hadj : ∀ i j : Fin 5, (SimpleGraph.cycleGraph 5).Adj i j →
@@ -442,8 +443,10 @@ theorem blowGraph_free_five : (SimpleGraph.cycleGraph 5).Free (blowGraph (K := K
 /-- **Wenger line with prescribed first coordinate through a point.** Over any field $K$,
 points and lines are triples in $K^3$. Given a point $p=(p_1,p_2,p_3)$ and $b\in K$, the unique
 line adjacent to $p$ with first coordinate $b$ is $(b,p_1b-p_2,p_1b^2-p_3)$.
+The two incidence equations determine the remaining line coordinates.
 
-Source: Solving the Wenger incidence equations for the last two line coordinates. -/
+Source: Cioabă, Lazebnik and Li, *On the Spectrum of Wenger Graphs*, arXiv:1402.3341,
+equation (1) over finite fields, with the point and line classes interchanged. -/
 def wline (p : K × K × K) (b : K) : K × K × K := (b, p.1 * b - p.2.1, p.1 * b ^ 2 - p.2.2)
 
 private theorem wline_adj (p : K × K × K) (b : K) : adj p (wline p b) := by
@@ -458,8 +461,10 @@ private theorem wline_eq {p l : K × K × K} (h : adj p l) : l = wline p l.1 := 
 points and lines are triples in $K^3$. Given a line $\ell=(\ell_1,\ell_2,\ell_3)$ and $a\in K$,
 the unique point adjacent to $\ell$ with first coordinate $a$ is
 $(a,a\ell_1-\ell_2,a\ell_1^2-\ell_3)$.
+The two incidence equations determine the remaining point coordinates.
 
-Source: Solving the Wenger incidence equations for the last two point coordinates. -/
+Source: Cioabă, Lazebnik and Li, *On the Spectrum of Wenger Graphs*, arXiv:1402.3341,
+equation (1) over finite fields, with the point and line classes interchanged. -/
 def wpoint (l : K × K × K) (a : K) : K × K × K := (a, a * l.1 - l.2.1, a * l.1 ^ 2 - l.2.2)
 
 private theorem wpoint_adj (l : K × K × K) (a : K) : adj (wpoint l a) l := by
@@ -576,9 +581,11 @@ private theorem blowGraph_edgeFinset_card :
 omit [DecidableEq K] in
 /-- **Edge count of the one-sided blow-up of the Wenger graph.** Let $K$ be a finite field
 of order $q$. Take points and lines in $K^3$ and replace each line of the Wenger graph by two
-copies with the same neighbors. The resulting graph has exactly $2q^4$ edges.
+copies with the same neighbors. Each of the $2q^3$ line copies has $q$ incident points,
+so the resulting graph has exactly $2q^4$ edges.
 
-Source: Counting the $q$ incident points for each of the $2q^3$ line copies. -/
+Source: Cioabă, Lazebnik and Li, *On the Spectrum of Wenger Graphs*, arXiv:1402.3341,
+§1 (the size of each vertex class and the degree of the finite Wenger graph). -/
 theorem blowGraph_edgeSet_ncard :
     (blowGraph (K := K)).edgeSet.ncard = 2 * (Fintype.card K) ^ 4 := by
   classical

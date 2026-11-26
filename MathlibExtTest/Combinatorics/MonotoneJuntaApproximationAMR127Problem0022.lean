@@ -47,8 +47,8 @@ example (ε : ℝ) (hε : 0 < ε) (n : ℕ) (f : (Fin n → Bool) → Bool) :
   · simp only [ne_eq, not_true_eq_false, Finset.filter_false, Finset.card_empty, Nat.cast_zero]
     exact mul_nonneg hε.le (pow_nonneg zero_le_two n)
 
-/-- A coordinate projection (dictator) is monotone, has Boolean degree one, and is a junta on
-its own coordinate, so it satisfies the conclusion of the conjecture with `C = 0`. -/
+/-- A coordinate projection (dictator) is monotone and depends only on its own coordinate,
+so it satisfies the conclusion of the conjecture with `C = 0`. -/
 example (ε : ℝ) (hε : 0 < ε) (n : ℕ) (i : Fin n) :
     Monotone (fun x : Fin n → Bool => x i) ∧
       ∃ (J : Finset (Fin n)) (g : (Fin n → Bool) → Bool),

@@ -6,4 +6,4 @@ The resulting graph contains no copy of $C_5$, since every edge joins a point to
 
 ## Sources
 
-- The bipartition into points and line copies.
+- Cioabă, Lazebnik and Li, *On the Spectrum of Wenger Graphs*, arXiv:1402.3341, §1 (the point-line bipartition of the finite Wenger graph).
