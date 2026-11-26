@@ -1,6 +1,5 @@
 # Part 2 of 2
 
-- [Proper Scoring](proper-scoring/README.md)
 - [Regret](regret/README.md)
 - [Regret Blum Mansour](regret-blum-mansour/README.md)
 - [Regret Blum Mansour Bound](regret-blum-mansour-bound/README.md)

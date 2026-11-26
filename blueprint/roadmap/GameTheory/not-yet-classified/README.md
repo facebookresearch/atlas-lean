@@ -18,7 +18,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 2 of 2](part-02/README.md)
 
-- [Proper Scoring](part-02/proper-scoring/README.md)
 - [Regret](part-02/regret/README.md)
 - [Regret Blum Mansour](part-02/regret-blum-mansour/README.md)
 - [Regret Blum Mansour Bound](part-02/regret-blum-mansour-bound/README.md)
@@ -28,4 +27,4 @@ Topics added since this subject's fields were last revised.
 - [Truthful Scheduling](part-02/truthful-scheduling/README.md)
 - [Voting Rules](part-02/voting-rules/README.md)
 - [Zero Sum Optimal](part-02/zero-sum-optimal/README.md)
-- [Nisan-Ronen lower bound (factor 2)](part-02/exists-task-count-not-is-approximate-of.md)
+- [Nisan–Ronen lower bound (factor 2)](part-02/exists-task-count-not-is-approximate-of.md)
