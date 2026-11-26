@@ -7,3 +7,4 @@
 - [Least Herbrand model of a definite logic program](least-herbrand-model-of-a-definite-logic-program.md)
 - [SLD resolution](sld-resolution.md)
 - [Completeness of SLD resolution](completeness-of-sld-resolution-for-ground-atoms.md)
+- [Soundness of SLD resolution](soundness-of-sld-resolution.md)

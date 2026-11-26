@@ -18,3 +18,4 @@
 - [Strong normalization of CCω](strong-normalization.md)
 - [Consistency of CCω](consistency.md)
 - [Consistency of the calculus of constructions from normalization](consistency-of-the-calculus-of-constructions.md)
+- [Beta reduction on pure type system pseudo-terms is confluent](beta-reduction-on-pure-type-system-pseudo-terms.md)

@@ -15,7 +15,7 @@ open CategoryTheory Abelian Limits
 
 universe w v u
 
-theorem exactSource_shortExact {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{w} C]
+private theorem exactSource_shortExact {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{w} C]
     {S : ShortComplex C} (hS : S.ShortExact) :
     hS.extClass = 0 ↔ ∃ s : S.X₃ ⟶ S.X₂, s ≫ S.g = 𝟙 S.X₃ :=
   CategoryTheory.ShortComplex.ShortExact.extClass_eq_zero_iff_exists_section_g hS

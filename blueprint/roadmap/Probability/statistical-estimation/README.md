@@ -24,3 +24,4 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Process quality and monitoring](process-quality-and-monitoring/README.md)
 - [Data assimilation](data-assimilation/README.md)
 - [Risk and Bayes risk of an estimator](risk-and-bayes-risk-of-an-estimator/README.md)
+- [Item response models](item-response-models/README.md)

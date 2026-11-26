@@ -118,3 +118,49 @@ example : ¬ IsUlamWord [false, true, false] := by
     ((isUlamWord_zeros_one_zeros_iff 1 1).1 h)
 
 end MetaMathlibExt.isUlamWord_zeros_one_zeros_iff
+
+namespace MetaMathlibExt.card_ulam_zeros_one_zeros
+
+-- With no padding, the only candidate is the singleton [true].
+example : ((Finset.range 1).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (1 - 1 - a) false)).card = 1 :=
+  card_ulam_zeros_one_zeros (n := 1) (hn := by decide)
+
+-- For 6 letters the Pascal row index is 5 = 101₂, with two nonadjacent set bits.
+example : ((Finset.range 6).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (6 - 1 - a) false)).card = 4 :=
+  card_ulam_zeros_one_zeros (n := 6) (hn := by decide)
+
+-- Check the actual positions independently against the recursive word predicate.
+example : ((Finset.range 6).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (6 - 1 - a) false)) =
+      {0, 1, 4, 5} := by
+  decide
+
+end MetaMathlibExt.card_ulam_zeros_one_zeros
+
+namespace MetaMathlibExt.two_mul_add_four_le_ulamWordCount
+
+-- Compute the exact count independently at the first admissible length.
+example : ulamWordCount 6 = 26 := by decide
+
+-- Check the boundary and representatives of the three cases through the public API.
+example : 16 ≤ ulamWordCount 6 :=
+  two_mul_add_four_le_ulamWordCount (n := 6) (hn := by decide)
+
+example : 18 ≤ ulamWordCount 7 :=
+  two_mul_add_four_le_ulamWordCount (n := 7) (hn := by decide)
+
+example : 20 ≤ ulamWordCount 8 :=
+  two_mul_add_four_le_ulamWordCount (n := 8) (hn := by decide)
+
+example : 22 ≤ ulamWordCount 9 :=
+  two_mul_add_four_le_ulamWordCount (n := 9) (hn := by decide)
+
+-- Test representative words independently of the lower-bound theorem.
+example : IsUlamWord [false, true, false, true, false, false] ∧
+    IsUlamWord [false, false, true, false, false, false, false] ∧
+    IsUlamWord [false, false, true, true, true, true, false, false, false] := by
+  decide
+
+end MetaMathlibExt.two_mul_add_four_le_ulamWordCount
