@@ -4,4 +4,4 @@
 
 - [Varieties](part-02/varieties/README.md)
 - [View Serializability](part-02/view-serializability/README.md)
-- [Per Label Measurement](part-02/per-label-measurement/README.md)
+- [Threshold Counter](part-02/threshold-counter/README.md)
