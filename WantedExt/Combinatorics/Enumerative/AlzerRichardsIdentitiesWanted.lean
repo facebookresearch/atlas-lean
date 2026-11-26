@@ -24,6 +24,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsReciprocalSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsSabarIdentity
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsSignedStirlingSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsVanishingStirlingSum
 public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 
@@ -47,21 +48,6 @@ namespace MetaMathlibExt
 
 open Finset Polynomial
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry (chapter5EulerEven)
-
-/-- **Vanishing alternating Stirling sums with $\binom{r+m}{k}$.** Write $S(n, k)$ for the
-Stirling numbers of the second kind. For every natural number $m \ge 1$ and every natural number
-$r$,
-$$
-\sum_{k=0}^{r+m} (-1)^k \frac{\binom{r+m}{k}}{\binom{r+k}{k}} S(r+k, k) = 0.
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 3, Equation (5). -/
-theorem_wanted sum_choose_div_choose_mul_stirlingSecond_eq_zero {m : ℕ} (hm : 1 ≤ m)
-    (r : ℕ) :
-    ∑ k ∈ range (r + m + 1), (-1 : ℚ) ^ k *
-        (((r + m).choose k : ℚ) / ((r + k).choose k : ℚ)) *
-          (Nat.stirlingSecond (r + k) k : ℚ) = 0
 
 /-- **Alternating Stirling sums with $\binom{n+1}{k+2}$.** Write $S(n, k)$ for the Stirling
 numbers of the second kind and $B_n$ for the Bernoulli numbers, with $B_1 = -1/2$. Let
