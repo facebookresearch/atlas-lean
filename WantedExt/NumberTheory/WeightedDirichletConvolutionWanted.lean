@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.BigOperators.HomogeneousGeomSum
+public import MathlibExt.NumberTheory.ArithmeticFunction.BFreeIndicator
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
 public import MathlibExt.NumberTheory.ArithmeticFunction.WeightedDirichletConvolution
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
@@ -23,78 +24,6 @@ open ArithmeticFunction Filter Asymptotics
 open scoped ArithmeticFunction.Moebius
 
 @[expose] public section
-
-open scoped Classical in
-/-- **Indicator of $B_\kappa$-free integers.** Let $\kappa$ be a function from the natural numbers
-to the natural numbers (only its values $\kappa(p)$ at primes $p$ matter) and let $B_\kappa$ be
-the set of prime powers $p^{\kappa(p)}$. A natural number $n$ is $B_\kappa$-free if $n \ge 1$ and
-no $p^{\kappa(p)}$ with $p$ prime divides $n$. The indicator $q_{B_\kappa}$ is the integer-valued
-arithmetic function with $q_{B_\kappa}(n) = 1$ if $n$ is $B_\kappa$-free and
-$q_{B_\kappa}(n) = 0$ otherwise.
-
-The paper indexes the exponents by the position of the prime ($b_i = p_i^{\kappa_i}$); here
-$\kappa$ is indexed by the prime itself. For constant $\kappa = k$ this is the indicator $q_k$ of
-$k$-free integers.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equations (2), (11), (12). -/
-public noncomputable def bFreeIndicator (κ : ℕ → ℕ) : ArithmeticFunction ℤ :=
-  ⟨fun n => if n ≠ 0 ∧ ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ n then 1 else 0, by simp⟩
-
-open scoped Classical in
-/-- **Values of the $B_\kappa$-free indicator.** Let $\kappa$ be a function from the natural
-numbers to the natural numbers. For every natural number $n$, the indicator $q_{B_\kappa}$ of
-$B_\kappa$-free integers satisfies $q_{B_\kappa}(n) = 1$ if $n \ne 0$ and no $p^{\kappa(p)}$ with
-$p$ prime divides $n$, and $q_{B_\kappa}(n) = 0$ otherwise.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equations (11), (12). -/
-public theorem bFreeIndicator_apply (κ : ℕ → ℕ) (n : ℕ) :
-    bFreeIndicator κ n = if n ≠ 0 ∧ ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ n then 1 else 0 :=
-  rfl
-
-open scoped Classical in
-/-- **The integer $1$ is $B_\kappa$-free.** Let $\kappa$ be a function from the natural numbers
-to the natural numbers with $\kappa(p) \ge 1$ for every prime $p$. Then the indicator
-$q_{B_\kappa}$ of $B_\kappa$-free integers satisfies $q_{B_\kappa}(1) = 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equation (12). -/
-public theorem bFreeIndicator_one {κ : ℕ → ℕ} (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) :
-    bFreeIndicator κ 1 = 1 := by
-  have h : ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ 1 := by
-    intro p hp hdvd
-    have h1 : p ^ κ p = 1 := Nat.dvd_one.mp hdvd
-    have h2 : p ^ 1 ≤ p ^ κ p := Nat.pow_le_pow_right hp.pos (hκ p hp)
-    rw [pow_one] at h2
-    have h3 := hp.two_le
-    omega
-  rw [bFreeIndicator_apply, ite_eq_left_iff]
-  intro hc
-  exact absurd ⟨one_ne_zero, h⟩ hc
-
-open scoped Classical in
-/-- **The prime power $p^{\kappa(p)}$ is not $B_\kappa$-free.** Let $\kappa$ be a function from
-the natural numbers to the natural numbers and let $p$ be a prime. Then the indicator
-$q_{B_\kappa}$ of $B_\kappa$-free integers satisfies $q_{B_\kappa}(p^{\kappa(p)}) = 0$.
-
-No positivity of $\kappa(p)$ is assumed; for $\kappa(p) = 0$ the statement is
-$q_{B_\kappa}(1) = 0$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equation (12). -/
-public theorem bFreeIndicator_prime_pow {κ : ℕ → ℕ} {p : ℕ} (hp : p.Prime) :
-    bFreeIndicator κ (p ^ κ p) = 0 := by
-  have : ¬ (p ^ κ p ≠ 0 ∧ ∀ q : ℕ, q.Prime → ¬ q ^ κ q ∣ p ^ κ p) := by
-    rintro ⟨-, h⟩
-    exact h p hp dvd_rfl
-  rw [bFreeIndicator_apply, ite_eq_right_iff]
-  intro hc
-  exact absurd hc this
 
 /-- **Gcd expansion of a convolution of completely multiplicative functions at a product.** Let
 $u$ and $v$ be complex-valued completely multiplicative arithmetic functions, meaning
@@ -162,28 +91,6 @@ public theorem_wanted weighted_sum_dirichletConvolution_eq {u v : ArithmeticFunc
       ∑ r ∈ Finset.Icc 1 ⌊x⌋₊, (w * (μ : ArithmeticFunction ℂ)) r *
         ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
           ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
-
-open scoped Classical in
-/-- **The $B_\kappa$-free indicator convolved with the Möbius function.** Let $\kappa$ be a
-function from the natural numbers to the natural numbers with $\kappa(p) \ge 1$ for every prime
-$p$, let $q_{B_\kappa}$ be the indicator of $B_\kappa$-free integers, let $\mu$ be the Möbius
-function and let $*$ denote Dirichlet convolution. Let $n \ge 1$ be a natural number with prime
-factorization $n = \prod_p p^{e_p}$. If $\kappa(p)$ divides $e_p$ for every prime $p$, then
-$(q_{B_\kappa} * \mu)(n) = \mu(n^{1/\kappa})$, where $n^{1/\kappa} = \prod_p p^{e_p/\kappa(p)}$;
-otherwise $(q_{B_\kappa} * \mu)(n) = 0$.
-
-The source indexes the exponents by the position of the prime ($\kappa_i$ for the $i$-th prime
-$p_i$) and requires $b_i = p_i^{\kappa_i} > 1$, which is the hypothesis $\kappa(p) \ge 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 5, Equation (22) (`integers-2024-A75-lem-5`). -/
-public theorem_wanted bFreeIndicator_mul_moebius_apply {κ : ℕ → ℕ}
-    (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) {n : ℕ} (hn : 1 ≤ n) :
-    (bFreeIndicator κ * μ) n =
-      if ∀ p : ℕ, κ p ∣ n.factorization p then
-        μ (n.factorization.prod fun p e => p ^ (e / κ p))
-      else 0
 
 /-- **The $B_\kappa$-free indicator twisted by the principal character, convolved with $\mu$.**
 Let $\kappa$ be a function from the natural numbers to the natural numbers with $\kappa(p) \ge 1$

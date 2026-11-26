@@ -12541,6 +12541,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/AlderTotient": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Alder's totient function"},
   "MathlibExt/NumberTheory/ArithmeticFunction/Antimultiplicative": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Antimultiplicative arithmetic functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/ArithmeticFunctionPerpendicularity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Antimultiplicative arithmetic functions"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/BFreeIndicator": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Weighted sums of Dirichlet convolutions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BinomialPowerRealizability": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryDivisor": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Biunitary divisors"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryDivisorParity": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
