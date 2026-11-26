@@ -13647,6 +13647,7 @@
   "MathlibExt/NumberTheory/SparseAdmissiblePowerSets": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Admissible sets with no prime translate"},
   "MathlibExt/NumberTheory/SpectralNormUnitBall": {"to": "NumberTheory/p-adic-numbers", "title": "Spectral norm on algebraic extensions"},
   "MathlibExt/NumberTheory/SpoofLehmerFactorization": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
+  "MathlibExt/NumberTheory/SpoofLehmerFactorizationLehmerEquationSolutionsFinite": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/SpoofLehmerFactorizationSpoofLehmerBaseNotModEqOnePrime": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/SpoofLehmerResidues": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/SquareModEight": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Squares modulo powers of two"},
