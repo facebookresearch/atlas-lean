@@ -2,7 +2,7 @@
 
 **Ville's maximal inequality** (countable time). For a nonnegative real supermartingale `M`
 on a finite measure space and `a > 0`, the measure of the event that the path ever reaches `a`
-satisfies `a · μ{∃ n, a ≤ M n} ≤ ∫ M 0 ∂μ`. No martingale, normalization, integrable-supremum or
+satisfies `a · μ{∃ n, a ≤ M n} ≤ E[M 0]`. No martingale, normalization, integrable-supremum or
 uniform-integrability hypothesis is needed.
 
 ## Sources
