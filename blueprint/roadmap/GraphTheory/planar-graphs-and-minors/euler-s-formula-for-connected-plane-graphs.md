@@ -17,5 +17,6 @@ This page becomes ready once:
 
 ## Sources
 
+- R. Diestel, *Graph Theory*, 6th ed., Graduate Texts in Mathematics 173, Springer, 2025, Chapter 4 (Planar graphs), <https://diestel-graph-theory.com/>: Theorem 4.2.9 (Euler's formula $n - m + \ell = 2$ for a connected plane graph, whose edges are polygonal arcs)
 - *Geometric Algorithms*, course slides, Utrecht University, 2023, "Voronoi diagrams", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides7_combined.pdf>: slide 14 (Euler's formula for planar graphs: a connected planar graph with $n_v$ vertices, $n_e$ edges and $n_f$ faces satisfies $n_v - n_e + n_f = 2$)
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 11, footnote to the size of the Voronoi diagram (Euler's formula $v - e + f = 2$ for planar graphs)

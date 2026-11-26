@@ -4,4 +4,5 @@ Fix integers $N \ge 1$ and $d \ge 1$. A *$d$-th order algebraic decision tree* o
 
 ## Sources
 
+- D. G. Kirkpatrick and R. Seidel, "The ultimate planar convex hull algorithm?", *SIAM Journal on Computing* 15(1) (1986), 287–299, <https://doi.org/10.1137/0215021>: Section 5, the definition of a $d$-th order algebraic decision tree (internal nodes labelled by polynomials of degree at most $d$, three outgoing edges for $<$, $=$ and $>$, leaves labelled YES or NO) and of deciding membership in a set $W$
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 3, "Lower Bound (Optional)": the $d$-th order algebraic decision tree, its three-way sign tests and the orientation test as a degree-two polynomial

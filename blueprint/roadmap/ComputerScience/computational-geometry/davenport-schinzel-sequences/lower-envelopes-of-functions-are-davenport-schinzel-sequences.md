@@ -8,4 +8,5 @@ Let $F = \{f_1, \dots, f_n\}$ be continuous real functions on a common interval 
 
 ## Sources
 
+- D. Halperin and M. Sharir, "Arrangements", Chapter 28 of *Handbook of Discrete and Computational Geometry*, 3rd ed., J. E. Goodman, J. O'Rourke and C. D. Tóth (eds.), CRC Press, 2017, <https://doi.org/10.1201/9781315119601>: Section 28.10, for $n$ continuous functions on the real line, each pair meeting in at most $s$ points, the sequence of indices attaining the lower envelope from left to right is an $(n, s)$ Davenport–Schinzel sequence
 - *Computational Geometry*, lecture notes, ETH Zürich, autumn 2013, Chapter 12 (Davenport–Schinzel sequences), <https://ti.inf.ethz.ch/ew/courses/CG13/lecture/Chapter%2012.pdf>: Observation 12.3 and the definition of the lower envelope sequence before it (maximal pieces on each of which a single function defines the envelope; the shortest-sequence form here fixes how ties are counted)
