@@ -42,6 +42,7 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 
 set_option autoImplicit false
 
@@ -71,29 +72,12 @@ No condition $k > 1$ is imposed here; the results that need it assume it. -/
 def IsNearFkPerfect (k n : ℕ) : Prop :=
   IsKLNearPerfect k 3 n
 
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
-
 /-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
 $[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
 satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
 of the squares of the divisors of $n$. -/
 def IsNearFPerfect (n : ℕ) : Prop :=
   IsKLNearPerfect 2 3 n
-
-/-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
-$F$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Corollary 2. -/
-theorem_wanted not_isDeficientFPerfect_of_prime (p : ℕ)
-    (hp : p.Prime) :
-    ¬ IsDeficientFPerfect p
 
 /-- **Primes are not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers with
 $\ell \ge 1$ and let $p$ be a prime. Then $p$ is not $[k,\ell]$-near-perfect.
