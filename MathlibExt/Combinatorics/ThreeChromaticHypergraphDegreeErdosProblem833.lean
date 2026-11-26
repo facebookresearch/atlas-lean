@@ -25,6 +25,18 @@ The symmetric Lovász local lemma gives an exponential lower bound on the larges
 of a uniform hypergraph that admits no proper two-coloring. We take `c = 1 / 16` in Erdős
 Problem 833. For `r ≤ 8`, it suffices that some two edges meet. For larger `r`, independently
 color each vertex with one of two colors and avoid all monochromatic edges.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/ThreeChromaticHypergraphDegreeErdosProblem833Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #833, https://www.erdosproblems.com/833 (status
+PROVED). UnsolvedMath record UM-30007053 (`EP-833`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Hypergraphs are finite (on `Fin n`; by compactness this loses nothing); chromatic number `3` is
+`3`-colorable and not `2`-colorable. The open-ended 'determine `f(r)`' on the page is not
+formalized. Compared with the formal-conjectures statement `ErdosProblems/833.lean` (equivalent; no
+code imported).
 -/
 
 @[expose] public section

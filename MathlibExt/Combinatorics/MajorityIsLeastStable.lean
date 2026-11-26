@@ -26,6 +26,25 @@ For `n = 2k + 1`, choose a vertex `p` whose coordinates sum to one. The weights
 `n - 1 - pᵢ` give a linear threshold function that reverses majority at just `p` and
 its antipode. Its level-one Fourier weight is strictly smaller than majority's exactly
 when the central binomial coefficient `(2k choose k)` exceeds `n`, which holds for `k ≥ 2`.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/MajorityIsLeastStableAMR127Problem0009Wanted.lean`:
+
+Source: R. O'Donnell, Open problems in analysis of Boolean functions, arXiv:1204.6447 (2012),
+'Majority Is Least Stable Conjecture' (Benjamini, Kalai, Schramm). UnsolvedMath record UM-00800440
+(`AMR-127-0009`), dataset ulamai/UnsolvedMath v1.8.0.
+
+The cube `{-1, 1}ⁿ` and Fourier coefficients are MathlibExt's `BooleanCube` (`true` is `1`,
+`boolFourierCoeff n f S = E_x[f(x) χ_S(x)]`). A linear threshold function is `x ↦ sgn(w₀ + Σᵢ wᵢ
+xᵢ)` with `sgn z = 1` for `z ≥ 0` and `-1` for `z < 0`, the convention of Biswas and Sarkar (raising
+`w₀` slightly gives the same class with nonzero arguments). The noise stability is given by its
+Fourier formula `Stab_ρ[f] = Σ_S ρ^{|S|} f̂(S)²` (O'Donnell, Analysis of Boolean Functions, Theorem
+2.49; Biswas–Sarkar, §2). Biswas and Sarkar prove the conjecture for `n = 1, 3` and refute it for
+every odd `n ≥ 5`, so the target is stated for some odd `n ≥ 5` and refuted, which is stronger than
+refuting the conjecture as posed; the cases `n = 1, 3` are not formalized. The list's remarks after
+the conjecture (a weaker noise-sensitivity version, the `ρ → 0` consequence) are related questions,
+not part of the conjecture.
 -/
 
 @[expose] public section
