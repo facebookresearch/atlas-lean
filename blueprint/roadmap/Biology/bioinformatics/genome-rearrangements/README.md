@@ -7,7 +7,6 @@
 - [The DCJ distance formula](dcj-distance.md)
 - [Identity](identity.md)
 - [Framed](framed.md)
-- [Is Adj](is-adj.md)
 - [Is Reversal](is-reversal.md)
 - [Removal](removal.md)
 - [Has Decreasing Strip](has-decreasing-strip.md)
