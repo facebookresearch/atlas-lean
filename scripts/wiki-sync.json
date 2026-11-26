@@ -22460,7 +22460,7 @@
 "Cslib.Databases.AcyclicSchema.HasJoinTree": "1f689bff898d88a0",
 "Cslib.Databases.AcyclicSchema.IsEar": "c5861873dfaf1d3e",
 "Cslib.Databases.AcyclicSchema.PairwiseConsistent": "94209c5631c74fe3",
-"Cslib.Databases.AcyclicSchema.acyclicSchema_characterizations": "398b2d0960398430",
+"Cslib.Databases.AcyclicSchema.acyclicSchema_characterizations": "48b23aa03e35c37d",
 "Cslib.Databases.AcyclicSchema.exists_terminal_earRemoval": "17203275a8a8910f",
 "Cslib.Databases.AcyclicSchema.finite_fullJoin": "8d995ea66b595376",
 "Cslib.Databases.AcyclicSchema.fullJoin": "f0425eaff537871f",

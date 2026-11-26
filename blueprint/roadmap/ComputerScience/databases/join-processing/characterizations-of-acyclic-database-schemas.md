@@ -21,11 +21,12 @@ The nonempty *schemes* follow the hyperedge convention of §6.4 (p. 130); the na
 No connectivity or nonempty-*extent* hypothesis is needed. Disjoint schemes may be neighbours with an empty tree-edge label.
 An empty extent makes the full join empty; global consistency then requires every extent to be empty.
 
-These are the first four properties of the source theorem. Its fifth property characterizes the same schemas by articulation sets:
+These are properties (1)–(4) of Abiteboul–Hull–Vianu, Theorem 6.4.5. Its fifth property characterizes the same schemas by articulation sets:
 reduce the hypergraph by discarding properly contained edges; every connected restriction with more than one edge must have an articulation set.
 Restriction here intersects the edges with the chosen vertex set, discards empty intersections and reduces again.
 An articulation set is an intersection of two distinct edges whose deletion increases the number of connected components.
 
 ## Sources
 
+- C. Beeri, R. Fagin, D. Maier and M. Yannakakis, [“On the Desirability of Acyclic Database Schemes”](https://doi.org/10.1145/2402.322389), *Journal of the ACM* 30(3), 479–513 (1983), Theorem 3.4, p. 488 (restated p. 492). Conditions (7), (8) and (9) concern pairwise-to-global consistency, full reducers and join trees; (4) is success of Graham's algorithm. The proof on p. 494 constructs a single reducer from an ordering of the schemes. Condition (10), called the running intersection property in the paper, is an ordering criterion distinct from the join-tree path condition in (9).
 - S. Abiteboul, R. Hull and V. Vianu, [*Foundations of Databases*](https://webdam.di.ens.fr/Alice/pdfs/all.pdf), Addison-Wesley, 1995, §6.4: properties (1)–(3), pp. 128–129; ears, Algorithm 6.4.4 and property (4), p. 131; property (5) and Theorem 6.4.5, p. 132 (PDF p. 134); proof sketch, pp. 132–134, and Exercises 6.28 and 6.30, p. 141.

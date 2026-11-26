@@ -19,8 +19,11 @@ relational algebra: `Expr.Conforms` requires each stored row to be defined exact
 relation's scheme. The common value domain is the natural numbers. The union of the schemes,
 not an ambient set of unused attributes, is the heading of the full join.
 
-Reference: S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, §6.4,
-properties (1)–(4), Algorithm 6.4.4 and Theorem 6.4.5.
+Beeri, Fagin, Maier and Yannakakis, *On the Desirability of Acyclic Database Schemes*,
+J. ACM 30 (1983), Theorem 3.4 (p. 488), connect pairwise-to-global consistency (7),
+full reducers (8) and join trees (9) with the success of Graham's algorithm (4).
+The ear-deletion rule here is Algorithm 6.4.4 of Abiteboul, Hull and Vianu,
+*Foundations of Databases*, §6.4; their Theorem 6.4.5 uses this form of reduction.
 -/
 
 @[expose] public section
