@@ -1657,6 +1657,7 @@
   "CSLibExt/Crypto/SymmetricKey/PRG": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom generators"},
   "CSLibExt/Crypto/SymmetricKey/PRP": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom permutations"},
   "CSLibExt/Databases/FunctionalDependencies": {"to": "ComputerScience/databases", "title": "Functional dependencies"},
+  "CSLibExt/Databases/JoinEdgeCovers": {"to": "ComputerScience/databases", "title": "Join processing"},
   "CSLibExt/Databases/NormalForms": {"to": "ComputerScience/databases", "title": "Lossless decomposition and normal forms"},
   "CSLibExt/Databases/RelationalAlgebra": {"to": "ComputerScience/databases", "title": "Relational algebra"},
   "CSLibExt/Databases/Serializability": {"to": "ComputerScience/databases", "title": "Conflict serializability"},

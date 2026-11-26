@@ -16,3 +16,4 @@
 - [Projected CQ prefix enumeration and correctness](projected-cq-prefix-enumeration-and-correctness.md)
 - [Attempted-extension bound for projected prefix search](attempted-extension-bound-for-projected-prefix-search.md)
 - [Generic-Join computes the full join](generic-join-computes-the-full-join.md)
+- [Edge covers of full joins](edge-covers/README.md)
