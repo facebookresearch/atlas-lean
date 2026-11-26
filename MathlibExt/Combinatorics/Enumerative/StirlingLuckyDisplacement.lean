@@ -676,7 +676,7 @@ word, which has no cars.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Lemma 2.1 (`jis-2024-24.6.7-lem-5`). -/
+Lemma 5 (`jis-2024-24.6.7-lem-5`). -/
 public theorem stirlingLuckySet_basic (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
     (hw : IsStirlingPermutation n w) :
     1 ∈ stirlingLuckySet w ∧
