@@ -12,5 +12,6 @@ Ramsey's theorem for sets and hypergraphs (including size Ramsey numbers and Par
 - [Pairwise sum theorem](pairwise-sum-theorem/README.md)
 - [Piecewise syndetic sets](piecewise-syndetic-sets/README.md)
 - [Size Ramsey numbers of hypergraphs](size-ramsey-numbers-of-hypergraphs/README.md)
+- [Euclidean Ramsey configurations](is-euclidean-ramsey.md)
 - [Finite Ramsey theorem for pairs](ramsey-two-uniform.md)
 - [Strengthened finite Ramsey theorem (Paris–Harrington principle)](paris-harrington.md)

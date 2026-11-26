@@ -6624,3 +6624,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/arc-network/README.md"}], "id": "af_ddea348a078a7c419f2266fb", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/arc-network-demand/README.md"}], "id": "af_2a5b9a7fd45248486a478989", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/arc-network-walk/README.md"}], "id": "af_e93f0709fb1f201e5ec793a4", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/ramsey-theory/structural-ramsey/is-euclidean-ramsey.md"}], "id": "af_8f8b2c6ab203c9767e4ca2ba", "object": [{"location": {"declaration": "IsEuclideanRamsey"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}, "org.autoform": {"origin": "cited"}}}
