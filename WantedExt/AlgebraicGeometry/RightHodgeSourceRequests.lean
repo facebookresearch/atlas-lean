@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.RightVFiltrationModels
 public import MathlibExt.AlgebraicGeometry.RightDifferentialCoefficientModels
 public import MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
+public import MathlibExt.AlgebraicGeometry.RightHodgeSourceRequestsActualGradedEulerLocalNilpotence
 
 /-!
 # Shared source requests for actual right-D and coefficient-perverse primitives
@@ -18,7 +19,10 @@ public import MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
 The objects, original differential operators, rational V pieces and
 native cokernel maps are fixed by the public source. These requests
 construct their normalized coefficient and graded operators and prove
-their literal Euler identities. They do not assert regular holonomicity,
+their literal Euler identities; the local nilpotence of the graded Euler
+operators is proved in
+`MathlibExt.AlgebraicGeometry.RightHodgeSourceRequestsActualGradedEulerLocalNilpotence`.
+They do not assert regular holonomicity,
 graded polarizability or local mixed-Hodge admissibility.
 
 Source: Saito1307.2140v5, Sections1.1--1.5,2.1,2.2 and2.4;
@@ -70,12 +74,5 @@ theorem_wanted actual_nearby_euler_composition (A : GradedVOperators k M O C N V
 /-- The actual Weyl relation identifies vanishing var-can with partial*t-1. -/
 theorem_wanted actual_vanishing_euler_composition (A : GradedVOperators k M O C N V) :
     vanishingNilpotent k M O C N V A = A.eulerMap (-1)
-
-/-- The Euler nilpotence on original V lifts gives actual local nilpotence on the native grade. -/
-theorem_wanted actual_graded_euler_local_nilpotence (A : GradedVOperators k M O C N V)
-    (a : ℚ) (x : M) :
-    ∃ U : Opens M, x ∈ U ∧ ∃ r : ℕ, 0 < r ∧
-      ∀ (W : Opens M), W ≤ U → ∀ s : (gradedV k M O C N V a).val.obj (op W),
-        ((((A.eulerMap a).asHom.val.app (op W)).hom)^[r]) s = 0
 
 end WantedExt.AlgebraicGeometry.RightHodgeSourceRequests
