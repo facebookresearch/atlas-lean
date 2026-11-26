@@ -1,8 +1,7 @@
 # Identifiers from a polynomial range
 
-An assignment of identifiers to the `n` nodes of a
-finite type `V`, with exponent `c ∈ ℕ`: an injective map from `V` to `{1, …, n ^ c}`.
+Let $V$ be a finite set of $n$ nodes and $c \in \mathbb{N}$. An identifier assignment for $V$ with exponent $c$ is an injective map $\mathrm{id} : V \to \{1, \dots, n^c\}$: the nodes carry distinct identifiers from a range polynomial in $n$.
 
 ## Sources
 
-- J. Suomela, *Distributed Algorithms*, Aalto University, 2021, §5.1.
+- J. Suomela, *Distributed Algorithms*, Aalto University, 2021, <https://jukkasuomela.fi/da/>: §5.1.

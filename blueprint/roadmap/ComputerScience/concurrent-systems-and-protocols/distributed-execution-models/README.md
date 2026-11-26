@@ -9,7 +9,7 @@
 - [Execution in the LOCAL model](state-after.md)
 - [The LOCAL model](the-local-model.md)
 - [Locality in the LOCAL model](state-after-congr-ball.md)
-- [Locality of the output of a `t`-round algorithm](output-congr-ball.md)
+- [Locality of the output of a $t$-round algorithm](output-congr-ball.md)
 - [Weak and strong fairness](weak-and-strong-fairness.md)
 - [Asynchronous message-passing systems](asynchronous-message-passing-systems.md)
 - [Consistent cuts and their lattice](consistent-cuts-and-their-lattice.md)
