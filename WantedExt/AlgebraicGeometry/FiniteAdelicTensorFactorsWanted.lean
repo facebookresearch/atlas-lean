@@ -9,13 +9,16 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.FiniteAdelicTensorFactors
+public import MathlibExt.AlgebraicGeometry.FiniteAdelicTensorFactorsCompletedPlaceNorm
 
 /-!
 # Finite-extension local factor construction and normalization requests
 
 These requests use the whole completed tensor algebra. Residue rank alone
 must not replace nilpotent composition length. No separability is assumed.
-The complete-field comparison preserves the original tensor scalar maps.
+The complete-field comparison, now proved in
+`MathlibExt.AlgebraicGeometry.FiniteAdelicTensorFactorsCompletedPlaceNorm`,
+preserves the original tensor scalar maps.
 Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.1.
 -/
 
@@ -40,11 +43,5 @@ public theorem_wanted tensorNorm (K E F : Type) [Field K] [Field E] [Field F]
     [Algebra K E] [Algebra K F] [FiniteDimensional K E]
     (D : Factorization K E F) (a : E) :
     algebraMap K F (Algebra.norm K a) = factorNorm D a
-
-/-- Complete isometric residue realizations give the length-and-rank norm formula. -/
-public theorem_wanted completedPlaceNorm (K E F : Type) [Field K] [Field E]
-    [NormedField F] [CompleteSpace F] [Algebra K E] [Algebra K F]
-    [FiniteDimensional K E] (D : Factorization K E F) (C : CompletionData D) (a : E) :
-    ‖algebraMap K F (Algebra.norm K a)‖ = completedNorm D C a
 
 end WantedExt.AlgebraicGeometry.FiniteAdelicTensorFactors
