@@ -30,12 +30,14 @@ local instance stageZero {E : Type w} [Category.{z} E]
     [HasZeroObject E] [WaldhausenCategoryWithoutGluing E] (n : ℕ) : HasZeroObject (Stage E n) :=
   generalStageHasZeroObject E n
 
+/-- Use the original relative Waldhausen structure at every stage degree in these tests. -/
 local instance stageValue {E : Type w} [Category.{z} E]
     [HasZeroObject E] [WaldhausenCategoryWithoutGluing E] (n : ℕ) : WaldhausenCategoryWithoutGluing (Stage E n) :=
   generalStageWaldhausenCategory E n
 
 variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
+/-- Use the original relative Waldhausen structure on cofiber sequences in these tests. -/
 local instance cofiberValue : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
   CofiberSequenceCategory.relativeWaldhausenCategory C
 

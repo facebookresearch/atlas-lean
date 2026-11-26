@@ -290,8 +290,16 @@ theorem associativityRouteA_compat (O : SymmetricCollection V)
   slice_lhs 3 4 => rw [hOuter]
 
 omit [FiniteTensor V] in
-/-- The color-blind lift identifies the colored associativity relabelling with the ordinary one. -/
+/-- Forgetting colors sends the total associativity input equivalence to the ordinary
+associativity relabelling. -/
 @[simp]
+theorem map_totalHom (O : SymmetricCollection V) (d : ColoredAssocData Color) :
+    O.map (FinBijGroupoid.homOfEquiv d.totalHom.inputEquiv) =
+      O.relabelIso (forgetColorsAssocData Color d).totalIso :=
+  rfl
+
+omit [FiniteTensor V] in
+/-- The color-blind lift identifies the colored associativity relabelling with the ordinary one. -/
 theorem collection_map_totalHom (O : SymmetricCollection V)
     (d : ColoredAssocData Color) :
     (collection Color O).map d.totalHom =

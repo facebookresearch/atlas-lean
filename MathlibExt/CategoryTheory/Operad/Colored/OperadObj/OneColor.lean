@@ -317,13 +317,11 @@ abbrev colorizeFunctor : OperadObj V ⥤ ColoredOperadObj PUnit V :=
   ColoredOperadObj.ColorBlind.functor PUnit
 
 /-- Colorization acts on objects by `colorizeObj`. -/
-@[simp]
 theorem colorizeFunctor_obj (O : OperadObj V) :
     colorizeFunctor.obj O = colorizeObj O :=
   rfl
 
 /-- Colorization acts on morphisms by `colorizeHom`. -/
-@[simp]
 theorem colorizeFunctor_map {O P : OperadObj V} (F : O ⟶ P) :
     colorizeFunctor.map F = colorizeHom F :=
   rfl

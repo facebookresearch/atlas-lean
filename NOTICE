@@ -327,3 +327,121 @@ Files:
   MathlibExtTest/CategoryTheory/CategoryBar/SimplicialReplacementTests.lean
 
 Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/CategoryTheory/Monoidal/FiniteCube.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/FiniteTensorColimits.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/FiniteTensorInterfaces.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/OfSymmetric.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/UnitCopower.lean
+  MathlibExt/CategoryTheory/Operad/Tensor/CreatedColimits.lean
+  MathlibExt/CategoryTheory/Operad/Tensor/FreeAlgebra.lean
+  MathlibExt/CategoryTheory/Operad/Tensor/FreeAlgebraConstruction.lean
+  MathlibExtTest/CategoryTheory/Operad/Tensor/AlgebraRestriction.lean
+
+Source: fairinternal/formal-math@290ce6981c6a215c5892666d549a63ed130bd178
+
+Files:
+  MathlibExt/CategoryTheory/Waldhausen/SConstruction/StageOneZeroObjectFunctor.lean
+  MathlibExt/CategoryTheory/Waldhausen/ZeroObjectReplacement.lean
+  MathlibExtTest/CategoryTheory/Waldhausen/SConstruction/StageOneZeroObjectFunctorTests.lean
+  MathlibExtTest/CategoryTheory/Waldhausen/ZeroObjectReplacementTests.lean
+
+Author: @toskua
+
+Files:
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/FiniteFamily.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/FiniteTensor.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/FiniteTensorPreserving.lean
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/Types.lean
+  MathlibExt/CategoryTheory/Operad/Colored/Algebra/Analytic/Indexing.lean
+  MathlibExt/CategoryTheory/Operad/Colored/FiniteSet/AssocULift.lean
+  MathlibExt/CategoryTheory/Operad/Colored/FiniteSet/Basic.lean
+  MathlibExt/CategoryTheory/Operad/Colored/FiniteSet/ColorBlind.lean
+  MathlibExt/CategoryTheory/Operad/Colored/FiniteSet/ULift.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/Associativity.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/Basic.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/ColorBlind.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/ColorBlindAssociativity.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/ColorBlindData.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/ColorBlindUnit.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/FiniteTensorPreserving.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/Hom.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/Indexing.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/OneColor.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/OneColorAssociativity.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/OneColorData.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/OneColorUnit.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/SourceHomNaturality.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/Unit.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/UnitInsertCommute.lean
+  MathlibExt/CategoryTheory/Operad/Colored/OperadObj/UnitLaws.lean
+  MathlibExt/CategoryTheory/Operad/Colored/SubstitutionAssociativity.lean
+  MathlibExt/CategoryTheory/Operad/Colored/SubstitutionData.lean
+  MathlibExt/CategoryTheory/Operad/Colored/SubstitutionOneColor.lean
+  MathlibExt/CategoryTheory/Operad/Colored/SubstitutionUnit.lean
+  MathlibExt/CategoryTheory/Operad/FiniteSet/Assoc.lean
+  MathlibExt/CategoryTheory/Operad/FiniteSet/Basic.lean
+  MathlibExt/CategoryTheory/Operad/FiniteSet/Elementwise.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/Associativity.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/Basic.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/Hom.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/Indexing.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/Unit.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/UnitInsertionNaturality.lean
+  MathlibExt/CategoryTheory/Operad/OperadObj/UnitLaws.lean
+  MathlibExtTest/CategoryTheory/Monoidal/Unbiased/FiniteFamilyPublicApi.lean
+  MathlibExtTest/CategoryTheory/Monoidal/Unbiased/FiniteTensorPreservingPublicApi.lean
+  MathlibExtTest/CategoryTheory/Monoidal/Unbiased/FiniteTensorPublicApi.lean
+  MathlibExtTest/CategoryTheory/Monoidal/Unbiased/TypesInterchangePublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/Algebra/Analytic/Indexing.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/Algebra/Analytic/IndexingPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/FiniteSet/AssocULiftPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/FiniteSet/BasicPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/FiniteSet/ColorBlindPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/FiniteSet/ULiftPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/AssociativityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/BasicPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/ColorBlindAssociativityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/ColorBlindDataPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/ColorBlindPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/ColorBlindUnitPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/FiniteTensorPreservingPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/HomPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/IndexingPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/OneColorAssociativityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/OneColorDataPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/OneColorPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/OneColorUnitPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/SourceHomNaturalityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/UnitInsertCommutePublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/UnitLawsPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/OperadObj/UnitPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/SubstitutionAssociativityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/SubstitutionDataPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/SubstitutionOneColorPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/Colored/SubstitutionUnitPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/FiniteSet/AssocPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/FiniteSet/BasicPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/FiniteSet/ElementwisePublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/AssociativityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/BasicPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/HomPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/IndexingPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/IsoOfCollectionIsoPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/UnitInsertionNaturalityPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/UnitLawsPublicApi.lean
+  MathlibExtTest/CategoryTheory/Operad/OperadObj/UnitPublicApi.lean
+
+Author: @toskua, Avocado
+
+Files:
+  MathlibExt/CategoryTheory/Monoidal/Unbiased/FiniteTensorReindexShapes.lean
+
+Author: @toskua, Avocado
+Authors: toskua-Avocado
+
+Files:
+  MathlibExt/CategoryTheory/Operad/Tensor/AlgebraRestriction.lean
+
+Author: @toskua, Codex

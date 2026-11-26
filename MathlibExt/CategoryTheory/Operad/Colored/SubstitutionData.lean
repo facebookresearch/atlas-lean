@@ -223,7 +223,14 @@ theorem totalProfileFunctor_map {d e : ColoredSubstitutionData Color} (f : d ⟶
     totalProfileFunctor.map f = totalProfileMap f :=
   rfl
 
+/-- Flattening a substitution morphism acts on inputs by the dependent sum of its component
+equivalences. -/
 @[simp]
+theorem totalProfileMap_inputEquiv {d e : ColoredSubstitutionData Color} (f : d ⟶ e) :
+    (totalProfileMap f).inputEquiv =
+      Equiv.sigmaCongr f.innerHom.equiv (fun i => (f.innerHom.hom i).inputEquiv) :=
+  rfl
+
 theorem totalProfileFunctor_map_inputEquiv {d e : ColoredSubstitutionData Color} (f : d ⟶ e) :
     (totalProfileFunctor.map f).inputEquiv =
       Equiv.sigmaCongr f.innerHom.equiv (fun i => (f.innerHom.hom i).inputEquiv) :=

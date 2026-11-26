@@ -47,8 +47,10 @@ private theorem mapIsZero_of_equivalence
 variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
 local instance originalStageZero : HasZeroObject (Stage C 2) := generalStageHasZeroObject C 2
+/-- The degree-two stage carries the original relative Waldhausen structure. -/
 local instance originalStageValue : WaldhausenCategoryWithoutGluing (Stage C 2) :=
   generalStageWaldhausenCategory C 2
+/-- The cofiber category carries its original relative Waldhausen structure. -/
 local instance originalCofiberValue : WaldhausenCategoryWithoutGluing (CofiberSequenceCategory C) :=
   CofiberSequenceCategory.relativeWaldhausenCategory C
 

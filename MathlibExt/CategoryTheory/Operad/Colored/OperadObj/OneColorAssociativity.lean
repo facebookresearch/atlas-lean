@@ -115,7 +115,6 @@ theorem colorizeAssociativityRouteA_compat (O : SymmetricCollection V)
 
 omit [FiniteTensor V] in
 /-- Colorization identifies the colored associativity relabelling with the ordinary one. -/
-@[simp]
 theorem colorizeCollection_map_totalHom (O : SymmetricCollection V)
     (d : ColoredAssocData PUnit) :
     (colorizeCollection O).map d.totalHom =

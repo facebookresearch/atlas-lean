@@ -504,13 +504,11 @@ theorem id_comparisonIso (V : Type u₁) [Category.{v₁} V] [FiniteTensor V] :
   rfl
 
 /-- The identity-preserving comparison has identity forward components. -/
-@[simp]
 theorem id_comparisonIso_hom_app (X : FiniteFamily V) :
     (id V).comparisonIso.hom.app X = 𝟙 _ :=
   identityComparisonIso_hom_app X
 
 /-- The identity-preserving comparison has identity inverse components. -/
-@[simp]
 theorem id_comparisonIso_inv_app (X : FiniteFamily V) :
     (id V).comparisonIso.inv.app X = 𝟙 _ :=
   identityComparisonIso_inv_app X
@@ -791,7 +789,6 @@ theorem comp_comparisonIso
   rfl
 
 /-- Forward comparison components for composite preserving values. -/
-@[simp]
 theorem comp_comparisonIso_hom_app
     {U : Type u₃} [Category.{v₃} U] [FiniteTensor U]
     {F : V ⥤ W} {G : W ⥤ U} (p : Preserving F) (q : Preserving G)
@@ -802,7 +799,6 @@ theorem comp_comparisonIso_hom_app
   compComparisonIso_hom_app p q X
 
 /-- Inverse comparison components for composite preserving values. -/
-@[simp]
 theorem comp_comparisonIso_inv_app
     {U : Type u₃} [Category.{v₃} U] [FiniteTensor U]
     {F : V ⥤ W} {G : W ⥤ U} (p : Preserving F) (q : Preserving G)

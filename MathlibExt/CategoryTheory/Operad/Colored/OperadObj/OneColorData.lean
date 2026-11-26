@@ -259,19 +259,16 @@ theorem colorizeAssocData_innerData (d : AssocData) :
 abbrev uncolorAssocData (d : ColoredAssocData PUnit) : AssocData :=
   ColoredOperadObj.ColorBlind.forgetColorsAssocData PUnit d
 
-@[simp]
 theorem uncolorAssocData_middleData (d : ColoredAssocData PUnit) :
     (uncolorAssocData d).middleData =
       ColoredSubstitutionData.forgetOneColorFunctor.obj d.middleData :=
   rfl
 
-@[simp]
 theorem uncolorAssocData_outerAfterInnerData (d : ColoredAssocData PUnit) :
     (uncolorAssocData d).outerAfterInnerData =
       ColoredSubstitutionData.forgetOneColorFunctor.obj d.outerAfterInnerData :=
   rfl
 
-@[simp]
 theorem uncolorAssocData_innerData (d : ColoredAssocData PUnit) :
     (uncolorAssocData d).innerData =
       ColoredSubstitutionData.forgetOneColorFunctor.obj d.innerData :=

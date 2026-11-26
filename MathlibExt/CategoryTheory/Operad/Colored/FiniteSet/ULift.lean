@@ -111,11 +111,24 @@ theorem liftUnit_down (O : ColoredSetOperad.{u, 0} Color) (c : Color)
   rfl
 
 /-- Lifted substitution projects to the original substitution. -/
-@[simp]
 theorem liftSubstitution_down (O : ColoredSetOperad.{u, 0} Color)
     (d : ColoredSubstitutionData Color)
     (ops : (ColoredOperadObj.substitutionSource (liftCollection.{u, v} O)).obj d) :
     ((liftSubstitution.{u, v} O).app d ops).down =
+      O.subst.app d (fun o ↦ (ops o).down) :=
+  rfl
+
+/-- Evaluating lifted substitution on the tensor of its factors and projecting down gives the
+original substitution. -/
+@[simp]
+theorem liftSubstitution_apply_down (O : ColoredSetOperad.{u, 0} Color)
+    (d : ColoredSubstitutionData Color)
+    (ops : (ColoredOperadObj.substitutionSource (liftCollection.{u, v} O)).obj d) :
+    (ConcreteCategory.hom
+      (X := (FiniteTensor.tensor (V := Type v)).obj
+        ((ColoredOperadObj.substitutionFactors (liftCollection.{u, v} O)).obj d))
+      (Y := (liftCollection.{u, v} O).obj d.totalProfile)
+      ((liftSubstitution.{u, v} O).app d) ops).down =
       O.subst.app d (fun o ↦ (ops o).down) :=
   rfl
 

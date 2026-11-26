@@ -76,10 +76,21 @@ theorem sourceToOrdinary_some (O : SetOperad.{v}) (d : ColoredSubstitutionData C
   with_unfolding_all rfl
 
 /-- Substitution in the color-blind lift is ordinary substitution on the same factor family. -/
-@[simp]
 theorem obj_subst_app (O : SetOperad.{v}) (d : ColoredSubstitutionData Color)
     (x : (ColoredOperadObj.substitutionSource (collection Color O.toCollection)).obj d) :
     (obj Color O).subst.app d x =
+      O.subst.app d.toSubstitutionData (sourceToOrdinary Color O d x) :=
+  rfl
+
+/-- Color-blind substitution, evaluated as a map from the tensor of its factors, is ordinary
+substitution after the source comparison. -/
+@[simp]
+theorem obj_subst_apply (O : SetOperad.{v}) (d : ColoredSubstitutionData Color)
+    (x : (ColoredOperadObj.substitutionSource (collection Color O.toCollection)).obj d) :
+    ConcreteCategory.hom
+      (X := (FiniteTensor.tensor (V := Type v)).obj
+        ((ColoredOperadObj.substitutionFactors (collection Color O.toCollection)).obj d))
+      (Y := O.toCollection.eval d.totalProfile.inputs) ((obj Color O).subst.app d) x =
       O.subst.app d.toSubstitutionData (sourceToOrdinary Color O d x) :=
   rfl
 

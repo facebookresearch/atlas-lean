@@ -34,7 +34,6 @@ universe w v
 variable {V : Type w} [Category.{v} V] [FiniteTensor V]
 
 /-- The outer-profile map for a colorized right-unit shape is the identity. -/
-@[simp]
 theorem rightUnitOuterHom_oneColor (I : FintypeCat) :
     ColoredSubstitutionData.rightUnitOuterHom
         (ColoredProfile.oneColorFunctor.obj ⟨I⟩) =
@@ -43,7 +42,6 @@ theorem rightUnitOuterHom_oneColor (I : FintypeCat) :
   rfl
 
 /-- The outer-profile map for a colorized left-unit shape is the identity. -/
-@[simp]
 theorem leftUnitOuterHom_oneColor (I : FintypeCat) :
     ColoredSubstitutionData.leftUnitOuterHom
         (ColoredProfile.oneColorFunctor.obj ⟨I⟩) =
