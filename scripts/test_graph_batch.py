@@ -4,6 +4,7 @@ whose main merges pull requests, with copies of the real scripts. Run with a Pyt
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import shutil
@@ -22,6 +23,14 @@ else:
 
 SCRIPTS = Path(__file__).resolve().parent
 ROOT = SCRIPTS.parent
+
+
+def rendered(text: str) -> str:
+    """A description of plain lines as GitHub renders it: paragraphs at blank lines, their lines joined by <br>."""
+    paragraphs = [part for part in text.replace("\r\n", "\n").split("\n\n") if part.strip()]
+    return "\n".join('<p dir="auto">' + "<br>\n".join(html.escape(line.strip(), quote=False)
+                                                       for line in part.strip("\n").split("\n")) + "</p>"
+                     for part in paragraphs)
 
 
 class Trailers(unittest.TestCase):
@@ -66,6 +75,28 @@ class PlaceLines(unittest.TestCase):
             with self.subTest(hidden=hidden):
                 self.assertEqual(batch.place_lines(hidden + "Place: MathlibExt/A/G -> Algebra/rings\n"),
                                  ["MathlibExt/A/G -> Algebra/rings"])
+
+    def test_descriptions_read_with_gh(self) -> None:
+        tools = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tools, True)
+        answer = {"data": {"repository": {
+            "p1": {"number": 1, "body": "Place: A/B -> C/d\n", "bodyHTML": "<p>Place: A/B -&gt; C/d</p>",
+                   "mergedAt": "2026-11-26T10:00:00Z", "lastEditedAt": None, "mergeCommit": {"oid": "a" * 40}},
+            "p2": {"number": 2, "body": "Edited\n", "bodyHTML": "<p>Edited</p>", "mergedAt": "2026-11-26T10:00:00Z",
+                   "lastEditedAt": "2026-11-26T11:00:00Z", "mergeCommit": {"oid": "b" * 40}},
+            "p3": {"number": 3, "body": "Elsewhere\n", "bodyHTML": "<p>Elsewhere</p>",
+                   "mergedAt": "2026-11-26T10:00:00Z", "lastEditedAt": None, "mergeCommit": {"oid": "f" * 40}}}}}
+        (tools / "gh").write_text(f"#!/bin/sh\ncat <<'EOF'\n{json.dumps(answer)}\nEOF\n")
+        (tools / "gh").chmod(0o755)
+        path = os.environ["PATH"]
+        os.environ["PATH"] = f"{tools}:{path}"
+        self.addCleanup(os.environ.__setitem__, "PATH", path)
+        found = batch.fetch_bodies([(1, "a" * 40), (2, "b" * 40), (3, "c" * 40)])
+        # A pull request whose merge commit is not main's is left out; one edited after its merge is marked.
+        self.assertEqual(sorted(found), [1, 2])
+        self.assertEqual((found[1], found[1].html, found[1].edited), ("Place: A/B -> C/d\n", "<p>Place: A/B -&gt; C/d</p>",
+                                                                      False))
+        self.assertTrue(found[2].edited)
 
     def test_the_lines_github_shows_as_plain_text(self) -> None:
         # As GitHub renders descriptions: lines joined into a paragraph with <br>, entities escaped.
@@ -309,7 +340,9 @@ class Batches(unittest.TestCase):
         """Run the tool. verify runs from main, as a batch's reviewer runs it: with the batch at HEAD, from the commit
         it was made on, and back after (unless *from_batch*)."""
         bodies = self.root.parent / f"{self.root.name}-bodies.json"
-        bodies.write_text(json.dumps(self.bodies))
+        # A description given as plain lines comes with its rendering, as gh gives it.
+        bodies.write_text(json.dumps({number: {"body": value, "html": rendered(value)} if isinstance(value, str)
+                                      else value for number, value in self.bodies.items()}))
         self.addCleanup(bodies.unlink, True)
         extra = ["--bodies", str(bodies)] if args[0] in ("make", "verify") else []
         command = [sys.executable, str(self.root / "scripts" / "graph_batch.py"), *args, *extra]
@@ -808,6 +841,12 @@ class Batches(unittest.TestCase):
         # A description edited after the merge: its lines are left out.
         self.merge(9, lambda: self.module("MathlibExt/Algebra/Edited.lean", ["edited_one"]))
         self.bodies["9"] = {"body": "Place: MathlibExt/Algebra/Edited -> Algebra/rings\n", "edited": True}
+        self.merge(12, lambda: self.module("MathlibExt/Algebra/Escaped.lean", ["escaped_one"]))
+        self.bodies["12"] = {"body": "Place: MathlibExt/Algebra/Escaped -\\> Algebra/rings\n",
+                             "html": '<p dir="auto">Place: MathlibExt/Algebra/Escaped -&gt; Algebra/rings</p>'}
+        # A description given with no rendering places nothing.
+        self.merge(11, lambda: self.module("MathlibExt/Algebra/NoHtml.lean", ["no_html_one"]))
+        self.bodies["11"] = {"body": "Place: MathlibExt/Algebra/NoHtml -> Algebra/rings\n"}
         # A line the Markdown reader would take but GitHub shows inside a code block, beside one it shows as text.
         self.merge(10, lambda: (self.module("MathlibExt/Algebra/Coded.lean", ["coded_one"]),
                                 self.module("MathlibExt/Algebra/Shown.lean", ["shown_one"])))
@@ -820,6 +859,7 @@ class Batches(unittest.TestCase):
         placements = self.placements()
         self.assertEqual({key: value for key, value in placements.items() if key not in TAXONOMY["placements"]}, {
             "MathlibExt/Algebra/Shown": {"to": "Algebra/rings", "title": "Shown"},
+            "MathlibExt/Algebra/Escaped": {"to": "Algebra/rings", "title": "Escaped"},
             "MathlibExt/Algebra/Rule5/Basic": {"to": "Algebra/rings", "title": "Rule5"},
             "MathlibExt/Algebra/Moved": {"to": "Algebra/rings", "title": "Folder topic"},
             "MathlibExt/Algebra/New": {"to": "Algebra/rings", "title": "Old topic"},
@@ -843,6 +883,11 @@ class Batches(unittest.TestCase):
         self.assertIn("#9: its `Place:` lines are left out: its description was edited after the merge", text)
         self.assertIn("- `MathlibExt/Algebra/Edited`: in `Algebra/not-yet-classified/`", text)
         self.assertIn("#10: 1 `Place:` line(s) left out: GitHub does not show them as lines of plain text", text)
+        self.assertIn("#11: its `Place:` lines are left out: its rendering is not known", text)
+        self.assertIn("- `MathlibExt/Algebra/NoHtml`: in `Algebra/not-yet-classified/`", text)
+        # A line written with an escape is read as GitHub shows it, with no note.
+        self.assertEqual(placements["MathlibExt/Algebra/Escaped"], {"to": "Algebra/rings", "title": "Escaped"})
+        self.assertNotIn("#12:", text)
         self.assertIn("- `MathlibExt/Algebra/Coded`: in `Algebra/not-yet-classified/`", text)
         self.assertIn("- `MathlibExt/Algebra/Rule1`: in `Algebra/not-yet-classified/`", text)
         result = self.tool("verify")

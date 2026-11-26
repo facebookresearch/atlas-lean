@@ -3,7 +3,7 @@
 `main` since the last batch (docs/BLUEPRINT.md, Graph-sync batches).
 
     python3 scripts/graph_batch.py make [--base REV] [--bodies FILE] [--body FILE]
-    python3 scripts/graph_batch.py verify [REV] [--bodies FILE] [--body FILE]
+    python3 scripts/graph_batch.py verify REV [--bodies FILE] [--body FILE]
     python3 scripts/graph_batch.py base [REV]
 
 make runs on a clean checkout of `main` and commits the batch on top of it: one commit that changes only
@@ -27,11 +27,10 @@ description it recomputes, which the batch's reviewer reads instead of the pull 
 base prints the last batch on REV (`HEAD` by default) and the commit the next batch starts from.
 
 make and verify read the descriptions of the pull requests merged since the base with `gh`, unless --bodies gives
-them as JSON (see read_bodies). A description is untrusted text: only its `Place:` lines are read, as GitHub's
-rendering shows them as lines of plain text (visible_lines; from the Markdown when the rendering is not known, see
-place_lines), none of a description edited after the merge (see parse_place); each counts only for a module that the
-pull request's own merge changed, that no placement covers and that has no page outside that topic yet, under a field
-or subfield the taxonomy has.
+them as JSON (see read_bodies). A description is untrusted text: only its `Place:` lines are read, those GitHub's
+rendering shows as lines of plain text (visible_lines), none of a description edited after the merge or given with no
+rendering (see parse_place); each counts only for a module that the pull request's own merge changed, that no
+placement covers and that has no page outside that topic yet, under a field or subfield the taxonomy has.
 
 Run it with a Python that has Autoform installed, as sync_wiki.py.
 """
@@ -250,9 +249,9 @@ def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, Body]:
 
 
 def read_bodies(path: Path) -> dict[int, Body]:
-    """Descriptions given as JSON: {"<number>": "<description>"}, or {"<number>": {"body": "<description>", "edited":
-    true, "html": "<GitHub's rendering>"}}, "edited" for one edited after the merge and "html" when its rendering is
-    known."""
+    """Descriptions given as JSON: {"<number>": {"body": "<description>", "html": "<GitHub's rendering>", "edited":
+    true}}, "edited" for one edited after the merge. A description given with no rendering ({"<number>":
+    "<description>"}, or no "html") places nothing: only the rendering says which lines GitHub shows."""
     data = json.loads(path.read_text(encoding="utf-8"))
     bodies = {}
     for number, value in (data.items() if isinstance(data, dict) else []):
@@ -269,10 +268,10 @@ def read_bodies(path: Path) -> dict[int, Body]:
 
 
 def place_lines(text: str) -> list[str]:
-    """The values of a description's `Place:` lines, read from its Markdown, when GitHub's rendering is not known
-    (visible_lines reads that, and is what counts): lines of their own, as Markdown ends lines (at a line feed or a
-    carriage return only), indented by less than four columns, outside fenced code blocks and HTML comments, which the
-    rendered description does not show as text. A fence closes only on a line of at most three spaces, a run
+    """The values of a description's `Place:` lines, read from its Markdown, for the notes on lines GitHub's rendering
+    does not show (visible_lines reads that, and only it counts): lines of their own, as Markdown ends lines (at a line
+    feed or a carriage return only), indented by less than four columns, outside fenced code blocks and HTML comments,
+    which the rendered description does not show as text. A fence closes only on a line of at most three spaces, a run
     of its own character at least as long, and nothing after it but spaces and tabs; a line holding `<!--` anywhere
     opens a comment that runs to the next `-->`."""
     found, fence, comment = [], None, False
@@ -356,6 +355,14 @@ def visible_lines(rendered: str) -> list[str]:
     parser.feed(rendered)
     parser.close()
     return [match.group(1) for line in parser.lines if (match := PLACE.fullmatch(line))]
+
+
+def placed_module(value: str) -> str | None:
+    """The module a `Place:` line's value names, or None if it names none (parse_place)."""
+    try:
+        return parse_place(value)[0]
+    except ValueError:
+        return None
 
 
 def parse_place(value: str) -> tuple[str, str, str | None]:
@@ -564,16 +571,20 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     for number, commit in merged_pull_requests(base, head):
         if number not in bodies:
             continue
-        # GitHub's rendering, when known, says which lines it shows as plain text; the Markdown, a reading of it.
+        # Only GitHub's rendering says which lines it shows as plain text; the Markdown's reading serves the notes.
         rendered = getattr(bodies[number], "html", None)
         written = place_lines(bodies[number])
-        lines = visible_lines(rendered) if rendered is not None else written
+        lines = visible_lines(rendered) if rendered is not None else []
         if not lines and not written:
             continue
         if getattr(bodies[number], "edited", False):
             plan.notes.append(f"#{number}: its `Place:` lines are left out: its description was edited after the merge")
             continue
-        if hidden := [value for value in written if value not in lines]:
+        if rendered is None:
+            plan.notes.append(f"#{number}: its `Place:` lines are left out: its rendering is not known")
+            continue
+        shown = {placed_module(value) for value in lines}
+        if hidden := [value for value in written if (module := placed_module(value)) and module not in shown]:
             plan.notes.append(f"#{number}: {len(hidden)} `Place:` line(s) left out: GitHub does not show them as "
                               "lines of plain text")
         own = {module for path in changed_between(f"{commit}^1", commit) if (module := library_module(path))}
@@ -1054,7 +1065,7 @@ def main(argv: list[str]) -> int:
     making.add_argument("--body", type=Path, metavar="FILE",
                         help="write a description for the pull request, outside the checkout")
     verifying = commands.add_parser("verify", help="check that a commit is exactly the batch make writes")
-    verifying.add_argument("commit", nargs="?", default="HEAD", metavar="REV")
+    verifying.add_argument("commit", metavar="REV", help="the batch's head commit")
     verifying.add_argument("--bodies", type=Path, metavar="FILE", help="the pull requests' descriptions, as JSON")
     verifying.add_argument("--body", type=Path, metavar="FILE",
                            help="also write the description verify recomputes, outside the checkout")

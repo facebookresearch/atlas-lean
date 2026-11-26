@@ -624,8 +624,9 @@ python3 scripts/graph_batch.py make --body ../batch.md
 ```
 
 `make` runs on a clean checkout, with Autoform installed as for the sync, and
-reads the merged pull requests' descriptions with `gh`, logged in (`--bodies
-FILE` gives them as JSON instead). Write the description outside the
+reads the merged pull requests' descriptions and GitHub's rendering of them
+with `gh`, logged in (`--bodies FILE` gives them as JSON instead; a description
+given without its rendering places nothing). Write the description outside the
 checkout, as above: a file left in it stops the next `make`. It starts from
 the commit the last batch brought the graph up to, which that batch's commit
 names in a `Graph-sync-through:` trailer (`python3 scripts/graph_batch.py
