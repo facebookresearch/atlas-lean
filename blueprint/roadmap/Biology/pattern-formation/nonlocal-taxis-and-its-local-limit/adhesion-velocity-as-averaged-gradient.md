@@ -11,7 +11,7 @@ $$\mathcal T_rw(x)=\frac{1}{r\,|B_r|}\int_0^1\!\!\int_{B_r}F_r(|\xi|)\,\frac{\xi
 Then:
 
 1. for $u\in W^{1,1}(\Omega)$ and $r\in(0,r_0]$, $\mathcal A_ru=\mathcal T_r(\nabla u)$ almost everywhere in $\Omega_r$;
-2. $\mathcal T_r$ is a bounded linear operator on $(L^p(\Omega))^n$ for every $p\in[1,\infty]$ and is self-adjoint in the sense $\int_\Omega\mathcal T_rw_1\cdot w_2=\int_\Omega w_1\cdot\mathcal T_rw_2$;
+2. $\mathcal T_r$ is a bounded linear operator on $(L^p(\Omega))^n$ for every $p\in[1,\infty]$, and for $p\in[1,\infty]$ with conjugate exponent $p'$ (so $1/p+1/p'=1$) it is symmetric with respect to the $L^p$–$L^{p'}$ pairing: $\int_\Omega\mathcal T_rw_1\cdot w_2\,dx=\int_\Omega w_1\cdot\mathcal T_rw_2\,dx$ for all $w_1\in(L^p(\Omega))^n$ and $w_2\in(L^{p'}(\Omega))^n$; for $p=2$ this is self-adjointness on the Hilbert space $(L^2(\Omega))^n$;
 3. for $p\in[1,\infty)$ and $w\in(L^p(\Omega))^n$, $\mathcal T_rw\to w$ in $(L^p(\Omega))^n$ as $r\to0$, and $\|\mathcal T_r\|_{\mathcal L((L^2)^n)}\to1$.
 
 ## Expansion

@@ -12,6 +12,10 @@ Hence the trajectory $t \mapsto C(t)$ depends on $(\lambda, d, K)$ only through 
 
 ## Depends on
 
+This node has no prerequisites.
+
+## Proof depends on
+
 - [Explicit solution of the logistic equation](logistic.md)
 
 ## Expansion

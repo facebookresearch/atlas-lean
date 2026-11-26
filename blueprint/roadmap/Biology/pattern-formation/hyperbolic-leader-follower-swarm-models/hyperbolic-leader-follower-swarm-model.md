@@ -10,13 +10,17 @@ $$\lambda^{i^\pm} = \lambda_1 + \lambda_2\, f(y^{i^\pm}), \qquad f(y) = \tfrac12
 
 so the rate rises from the baseline $\lambda_1$ toward $\lambda_1 + \lambda_2$ with the perceived signal $y$.
 
-**Nonlocal signals** (Eqs. 5–7). With total densities $u = u^+ + u^-$, $v = v^+ + v^-$ and kernels $K_r, K_a, K_l$ on $(0, \infty)$,
+**Nonlocal signals** (Eqs. 5–6). With total densities $u = u^+ + u^-$, $v = v^+ + v^-$ and kernels $K_r, K_a, K_l$ on $(0, \infty)$,
 
 $$Q_r^{i^\pm} = q_r \int_0^\infty K_r(s)\big[(u + v)(x \pm s) - (u + v)(x \mp s)\big]\, ds, \qquad Q_a^{i^\pm} = -q_a \int_0^\infty K_a(s)\big[(u + v)(x \pm s) - (u + v)(x \mp s)\big]\, ds,$$
 
-$$Q_l^{i^\pm} = q_l \int_0^\infty K_l(s)\, P^i(u^\pm, v^\pm)\, ds .$$
+Repulsion and attraction act identically on both groups. The groups differ in alignment (Eqs. 9–10): leaders ignore the swarm and receive a constant bias toward the target in the $+$ direction, while followers react to oncoming individuals,
 
-Repulsion and attraction act identically on both groups; the groups differ only in alignment: followers align with the oncoming swarm, while leaders replace alignment by a bias toward the target (direction bias, speed bias or conspicuousness, Table 1).
+$$Q_l^{v^\pm} = \mp 2q_l\,\varepsilon\int_0^\infty K_l(s)\,ds,$$
+
+$$Q_l^{u^\pm} = q_l\int_0^\infty K_l(s)\big[u^\mp(x \pm s) + \alpha^\mp v^\mp(x \pm s) - u^\pm(x \mp s) - \alpha^\pm v^\pm(x \mp s)\big]\, ds .$$
+
+The three leader biases of Table 1 act in different terms: the **orientation bias** $\varepsilon \ge 0$ enters leader turning through $Q_l^{v^\pm}$ (for $\varepsilon > 0$ it lowers the turning signal of $v^+$ and raises that of $v^-$); the **speed bias** $\beta_+ \ne \beta_-$ enters leader transport in Eq. 1; and the **conspicuousness bias** $\alpha^+ \ne \alpha^-$ (weights $\alpha^\pm \ge 0$, with $\alpha^\pm = 1$ for leaders indistinguishable from followers) enters follower turning through $Q_l^{u^\pm}$.
 
 **Conservation.** On the periodic domain the turning terms cancel pairwise, so the follower mass $\int (u^+ + u^-)\, dx$ and the leader mass $\int (v^+ + v^-)\, dx$ are separately conserved.
 

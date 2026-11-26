@@ -16,13 +16,9 @@ $$\sum_{i=1}^{N_\theta} A_h(i) = 1, \qquad \sum_{j \in I_\lambda} \sum_{i=1}^{N_
 
 then the interaction terms sum to zero over $(i, j)$, so pedestrians are created or destroyed only through the boundary: $\partial_t \rho + \mathrm{div}_{\mathbf x} \sum_{i,j} \mathbf v_i f_{ij} = 0$.
 
-## Depends on
-
-- [SEIR epidemic model](../../epidemiology/seir-epidemic-model/README.md)
-
 ## Expansion
 
-Summing the first bracket over $i$ and $j$ gives $\sum_{h,j} f_{hj} - \rho = 0$. Summing the second gives $\sum_{h,k,s,r} f_{hs} f_{kr} - \rho^2 = \rho^2 - \rho^2 = 0$. Moments of $f_{ij}$ over directions recover macroscopic compartment densities, so the model couples an SEIR-type contagion law to evacuation dynamics in which exposure accumulates where crowding is high, for instance near exits.
+Summing the first bracket over $i$ and $j$ gives $\sum_{h,j} f_{hj} - \rho = 0$. Summing the second gives $\sum_{h,k,s,r} f_{hs} f_{kr} - \rho^2 = \rho^2 - \rho^2 = 0$. Moments of $f_{ij}$ over directions recover macroscopic compartment densities, so the model couples an [SEIR-type](../seir-epidemic-model/README.md) contagion law to evacuation dynamics in which exposure accumulates where crowding is high, for instance near exits.
 
 ## Sources
 

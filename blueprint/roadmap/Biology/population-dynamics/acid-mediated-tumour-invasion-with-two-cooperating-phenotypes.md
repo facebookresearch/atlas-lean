@@ -15,11 +15,20 @@ with positive parameters $\delta$ (acid toxicity to stroma), $\rho_T, \rho_L, \D
 **Homogeneous steady states.** Besides healthy tissue $\mathrm{SS0} = (1, 0, 0, 0, M^*)$ with arbitrary $M^*$, the relevant tumour states are
 - $\mathrm{SS1} = (0, 1, 0, 1, M^*)$: acid producers only, matrix intact;
 - $\mathrm{SS2} = (0, 0, 1, 0, 0)$: matrix degraders only;
-- $\mathrm{SS3} = \big(0,\ T_A^*,\ T_M^*,\ T_A^*,\ 0\big)$ with $T_A^* = \dfrac{1 - c_{M,A}}{1 - c_{M,A} c_{A,M}}$, $T_M^* = \dfrac{1 - c_{A,M}}{1 - c_{M,A} c_{A,M}}$: coexistence of both phenotypes with stroma and matrix eradicated.
+- $\mathrm{SS3} = \big(0,\ T_A^*,\ T_M^*,\ T_A^*,\ 0\big)$: coexistence of both phenotypes with stroma and matrix eradicated. Positive solutions $(T_A^*, T_M^*) \in (0, \infty)^2$ to the linear system $T_A + c_{M,A} T_M = 1$, $c_{A,M} T_A + T_M = 1$ exist in three cases:
+  - if $c_{M,A} < 1$ and $c_{A,M} < 1$, or if $c_{M,A} > 1$ and $c_{A,M} > 1$, there is a unique positive coexistence state $T_A^* = \dfrac{1 - c_{M,A}}{1 - c_{M,A} c_{A,M}}$, $T_M^* = \dfrac{1 - c_{A,M}}{1 - c_{M,A} c_{A,M}}$;
+  - if $c_{M,A} = c_{A,M} = 1$, the fractions are $0/0$ and the coexistence equilibria form the open segment $T_A^* + T_M^* = 1$ with $T_A^*, T_M^* > 0$;
+  - otherwise (when $c_{M,A}$ and $c_{A,M}$ lie on opposite sides of $1$, or exactly one equals $1$), no strictly positive coexistence state exists.
 
-**Linear stability** (spatially homogeneous perturbations). Every state with $M^* > 0$ has a zero eigenvalue in the $M$ direction, since without $T_M$ any matrix level is stationary. At $\mathrm{SS1}$ the remaining eigenvalues are $1 - \delta$ (stroma), $\rho_T(1 - c_{A,M})$ (invasion by $T_M$), $-\rho_T$ and $-\rho_L$, so $\mathrm{SS1}$ is stable exactly when $\delta > 1$ and $c_{A,M} > 1$. At $\mathrm{SS3}$ the stroma eigenvalue is $1 - \delta T_A^*$, the matrix eigenvalue is $-\kappa T_M^* < 0$, and the $(T_A, T_M)$ block is the Lotka–Volterra competition Jacobian, stable exactly when $c_{A,M} < 1$ and $c_{M,A} < 1$; so $\mathrm{SS3}$ is stable when both competition coefficients are below one and $\delta T_A^* > 1$. $\mathrm{SS2}$ is unstable to stroma regrowth (eigenvalue $1$), and for the parameter ranges studied the mixed states with stroma are unstable. Hence an invading front can only connect healthy tissue to $\mathrm{SS1}$ or $\mathrm{SS3}$.
+**Linear stability** (spatially homogeneous perturbations). Every state with $M^* > 0$ has a zero eigenvalue in the $M$ direction, since without $T_M$ any matrix level is stationary; hence linear stability of such states is at best neutral along $M$ rather than strictly asymptotically stable. At $\mathrm{SS1}$ the remaining four eigenvalues are $1 - \delta$ (stroma), $\rho_T(1 - c_{A,M})$ (invasion by $T_M$), $-\rho_T$ and $-\rho_L$, so all four transverse eigenvalues are negative exactly when $\delta > 1$ and $c_{A,M} > 1$. When $\mathrm{SS3}$ exists with $c_{M,A}, c_{A,M} \ne 1$, the stroma eigenvalue is $1 - \delta T_A^*$, the matrix eigenvalue is $-\kappa T_M^* < 0$, and the $(T_A, T_M)$ block is the Lotka–Volterra competition Jacobian, which has both eigenvalues negative when $c_{A,M} < 1$ and $c_{M,A} < 1$ and is a saddle when $c_{A,M} > 1$ and $c_{M,A} > 1$; thus $\mathrm{SS3}$ is linearly asymptotically stable exactly when $c_{A,M} < 1$, $c_{M,A} < 1$ and $\delta T_A^* > 1$ (along the singular line $c_{A,M} = c_{M,A} = 1$ there is an additional zero eigenvalue along $T_A + T_M = 1$). $\mathrm{SS2}$ is unstable to stroma regrowth (eigenvalue $1$), and for the parameter ranges studied the mixed states with stroma are unstable. Hence an invading front can only connect healthy tissue to $\mathrm{SS1}$ or $\mathrm{SS3}$.
 
 ## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
 
 ## Expansion
 

@@ -17,18 +17,24 @@ $$\tilde\delta=\frac{K_AK_B(r_A-1)(r_B-1)(r_A-r_B)}{\bigl(K_A(r_B-1)+K_B(r_A-1)\
 
 If $r_A=r_B$, or $K_Ar_A(r_B-1)=K_Br_B(r_A-1)$, or $\tilde\delta\notin(0,1]$, then $\delta=0$ is the only zero of $H$; otherwise the zeros of $H$ on $[0,1]$ are exactly $0$ and $\tilde\delta$.
 3. **Four response scenarios (Theorem 1).** Assume $1<r_B<r_A$ and set $c=\sqrt{r_A}(r_B-1)/\bigl(\sqrt{r_B}(r_A-1)\bigr)$, so $0<c<1$. With $\delta_{\max}$ the explicit maximizer location defined in the source:
-   - if $c\le K_B/K_A<1$ and $\delta_{\max}\notin(0,1)$, $H$ is positive on $(0,1]$ and strictly increasing on $[0,1]$ (monotonically beneficial);
-   - if $c\le K_B/K_A<1$ and $\delta_{\max}\in(0,1)$, $H$ is positive, strictly increasing on $[0,\delta_{\max})$ and strictly decreasing on $(\delta_{\max},1]$ (unimodally beneficial);
+   - if $c\le K_B/K_A<1$ and $\delta_{\max}\notin(0,1)$, $H$ is positive on $(0,1]$ and strictly increasing on $[0,1]$ (monotonically beneficial); this case forces $K_B/K_A>c$;
+   - if $c\le K_B/K_A<1$ and $\delta_{\max}\in(0,1)$, $H$ is positive on $(0,1)$, strictly increasing on $[0,\delta_{\max})$ and strictly decreasing on $(\delta_{\max},1]$ (unimodally beneficial). At the endpoint, $H(1)>0$ if $K_B/K_A>c$ and $H(1)=0$ if $K_B/K_A=c$: for example $(r_A,r_B,K_A,K_B)=(8,2,7,2)$ has $K_B/K_A=c=2/7$ and, by the closed forms below, $(N_A(1),N_B(1))=(3,6)$, so $H(1)=0$;
    - if $K_B/K_A<c$, then $0<\delta_{\max}<\tilde\delta<1$ and $H$ is positive and increasing on $(0,\delta_{\max})$, positive and decreasing on $(\delta_{\max},\tilde\delta)$, and negative and decreasing on $(\tilde\delta,1]$ (beneficial turning detrimental);
    - if $K_B/K_A>1$, $H$ is negative and strictly decreasing on $(0,1]$ (monotonically detrimental).
 
-If $r_A=r_B$, $H$ is negative and strictly decreasing on $(0,1]$ for every $K_A\ne K_B$ (Remark 1). When $H$ is increasing on all of $[0,1]$ (case $r_A>r_B$, $K_A>K_B$), the maximal total is attained at $\delta=1$, where (Corollary 1)
+If $r_A=r_B$, $H$ is negative and strictly decreasing on $(0,1]$ for every $K_A\ne K_B$ (Remark 1). The fixed point at $\delta=1$ is (Corollary 1)
 
-$$N_A(1)=\frac{K_AK_B(r_Ar_B-1)}{K_Ar_A(r_B-1)+K_B(r_A-1)},\qquad N_B(1)=\frac{K_AK_B(r_Ar_B-1)}{K_A(r_B-1)+K_Br_B(r_A-1)}.$$
+$$N_A(1)=\frac{K_AK_B(r_Ar_B-1)}{K_Ar_A(r_B-1)+K_B(r_A-1)},\qquad N_B(1)=\frac{K_AK_B(r_Ar_B-1)}{K_A(r_B-1)+K_Br_B(r_A-1)},$$
+
+and in the monotonically beneficial scenario the maximal total population size is attained there.
 
 ## Depends on
 
 - [Two-patch Beverton–Holt model with symmetric dispersal](two-patch-beverton-holt-model-with-dispersal.md)
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
 
 ## Expansion
 

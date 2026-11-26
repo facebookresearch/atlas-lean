@@ -4,7 +4,7 @@ Let $r_A,r_B>0$, $0<K_A<K_B$ and $\delta\ge0$. The continuous-time two-patch log
 
 $$\frac{dN_A}{dt}=r_AN_A\Bigl(1-\frac{N_A}{K_A}\Bigr)-\delta(N_A-N_B),\qquad \frac{dN_B}{dt}=r_BN_B\Bigl(1-\frac{N_B}{K_B}\Bigr)-\delta(N_B-N_A).$$
 
-For each $\delta\ge0$ it has a unique globally attracting positive equilibrium $(N_A(\delta),N_B(\delta))$ with $K_A<N_A(\delta)<N_B(\delta)<K_B$ for $\delta>0$. Let $H(\delta)=N_A(\delta)+N_B(\delta)-(K_A+K_B)$. Then
+For each $\delta\ge0$ it has a unique positive equilibrium $(N_A(\delta),N_B(\delta))$, with $K_A<N_A(\delta)<N_B(\delta)<K_B$ for $\delta>0$. For $\delta>0$ it attracts every solution with nonnegative, not identically zero initial data; at $\delta=0$ the patches decouple, both axes are invariant, and the equilibrium $(K_A,K_B)$ attracts exactly the solutions with both initial densities positive. Let $H(\delta)=N_A(\delta)+N_B(\delta)-(K_A+K_B)$. Then
 
 $$H(0)=0,\qquad H(\infty):=\lim_{\delta\to\infty}H(\delta)=\frac{(K_B-K_A)(r_BK_A-r_AK_B)}{r_BK_A+r_AK_B},\qquad H'(0^+)=\frac{(K_B-K_A)(r_B-r_A)}{r_Ar_B}.$$
 
@@ -19,11 +19,15 @@ If $r_A=r_B$, $H$ is negative and strictly decreasing on $(0,\infty)$ with $H'(0
 
 ## Depends on
 
-- [Response of total population size to dispersal in the two-patch Beverton–Holt model](dispersal-response-of-total-size-in-the-beverton-holt-two-patch-model.md)
+This node has no prerequisites.
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
 
 ## Expansion
 
-At $\delta=0$ the equilibrium is $(K_A,K_B)$ and the logistic slopes there are $-r_A$ and $-r_B$. Implicit differentiation gives $N_A'(0)=(K_B-K_A)/r_A$ and $N_B'(0)=(K_A-K_B)/r_B$, whose sum is $H'(0^+)$. As $\delta\to\infty$ the patches equalize at the common value $N$ solving $r_AN(1-N/K_A)+r_BN(1-N/K_B)=0$, that is $N=(r_A+r_B)K_AK_B/(r_AK_B+r_BK_A)$, and $2N-K_A-K_B$ simplifies to $H(\infty)$. The scenario boundaries come from the signs of $H'(0^+)$, $H(\infty)$ and the large-$\delta$ derivative criterion. The four scenarios mirror the discrete-time ones; the discrete-time threshold $\kappa=(r_B+r_Ar_B-2)/(r_A+r_Ar_B-2)$ for $\delta\in[0,1/2]$ plays the role of $\kappa$ (Proposition 2).
+At $\delta=0$ the equilibrium is $(K_A,K_B)$ and the logistic slopes there are $-r_A$ and $-r_B$. Implicit differentiation gives $N_A'(0)=(K_B-K_A)/r_A$ and $N_B'(0)=(K_A-K_B)/r_B$, whose sum is $H'(0^+)$. As $\delta\to\infty$ the patches equalize at the common value $N$ solving $r_AN(1-N/K_A)+r_BN(1-N/K_B)=0$, that is $N=(r_A+r_B)K_AK_B/(r_AK_B+r_BK_A)$, and $2N-K_A-K_B$ simplifies to $H(\infty)$. The scenario boundaries come from the signs of $H'(0^+)$, $H(\infty)$ and the large-$\delta$ derivative criterion. The four scenarios mirror the discrete-time ones; the discrete-time threshold $\kappa=(r_B+r_Ar_B-2)/(r_A+r_Ar_B-2)$ for $\delta\in[0,1/2]$ plays the role of $\kappa$ (Proposition 2). The discrete-time counterpart is the [two-patch Beverton–Holt response](dispersal-response-of-total-size-in-the-beverton-holt-two-patch-model.md), which is not used here.
 
 ## Sources
 

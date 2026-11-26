@@ -16,11 +16,16 @@ $$p_{\mathrm{est}}(2) = \frac14 - \frac34 r + \frac14\sqrt{9 - 6r + 9r^2 - 8r_2}
 
 ## Depends on
 
-- [Probability of evolutionary rescue from de novo mutations](probability-of-evolutionary-rescue-from-de-novo-mutations.md)
+This node has no prerequisites.
+
+## Proof depends on
+
+- [Limiting extinction probability in the supercritical case](../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-lt.md)
+- [Certain extinction in the critical and subcritical cases](../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-le.md)
 
 ## Expansion
 
-The extinction probabilities satisfy the first-step equations of the branching process: a type-$i$ cell first dies (probability $\mu_i/(\lambda_i + \mu_i)$) or divides into an unordered daughter pair. For $n = 2$ a heterozygote ($i = 1$) produces two heterozygotes with probability $\binom21\binom21/\binom42 = 2/3$ and one mutant homozygote plus one doomed wild type with probability $1/3$, while a mutant homozygote is a single-type birth–death process with $q_2 = r_2$. The equation $(1 + r)q_1 = r + \tfrac23 q_1^2 + \tfrac13 r_2$ is the quadratic $2q_1^2 - 3(1+r)q_1 + 3r + r_2 = 0$, whose smaller root gives the displayed $1 - q_1$. Random segregation creates "segregational drift": each division of a heterozygote can lower the number of mutant copies in one daughter, so without dosage effects establishment becomes less likely as $n$ grows, even though mutational supply grows with $n$.
+The extinction probabilities satisfy the first-step equations of the branching process: a type-$i$ cell first dies (probability $\mu_i/(\lambda_i + \mu_i)$) or divides into an unordered daughter pair. For $n = 2$ a heterozygote ($i = 1$) produces two heterozygotes with probability $\binom21\binom21/\binom42 = 2/3$ and one mutant homozygote plus one doomed wild type with probability $1/3$, while a mutant homozygote is a single-type birth–death process with $q_2 = r_2$. The equation $(1 + r)q_1 = r + \tfrac23 q_1^2 + \tfrac13 r_2$ is the quadratic $2q_1^2 - 3(1+r)q_1 + 3r + r_2 = 0$, whose smaller root gives the displayed $1 - q_1$. Random segregation creates "segregational drift": each division of a heterozygote can lower the number of mutant copies in one daughter, so without dosage effects establishment becomes less likely as $n$ grows, even though mutational supply grows with $n$. The establishment probability computed here is the factor $p_{\mathrm{est}}$ in the [rescue probability](probability-of-evolutionary-rescue-from-de-novo-mutations.md).
 
 ## Sources
 

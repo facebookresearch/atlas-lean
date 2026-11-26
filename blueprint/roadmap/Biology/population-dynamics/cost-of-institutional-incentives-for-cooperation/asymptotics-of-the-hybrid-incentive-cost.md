@@ -10,24 +10,36 @@ $$H_{N,a,b} = \sum_{j=1}^{N-1}\frac{1}{j(N-j)}\min\Big(\frac{j}{a}, \frac{N-j}{b
 
 $$\lim_{N\to\infty} H_{N,a,b} = H_{a,b} = \frac1a\ln\frac{a+b}{b} + \frac1b\ln\frac{a+b}{a}.$$
 
-Consequently $E_{\mathrm{mix}}(\theta)$ grows quadratically in $N$; explicitly $\frac{N^2\theta}{2}\big(H_{N,a,b} + \frac{1}{\max(a,b)(N-1)}\big) \le E_{\mathrm{mix}}(\theta) \le N(N-1)\theta\big(H_{N,a,b} + \frac{1}{\min(a,b)}\lfloor\frac{N-1}{2}\rfloor\big)$.
+Consequently, for fixed $\theta > 0$, $E_{\mathrm{mix}}(\theta)$ grows quadratically in $N$; explicitly, for $N \ge 3$,
+
+$$\frac{N^2\theta}{2}\Big(H_{N,a,b} + \frac{1}{\max(a,b)(N-1)}\Big) \le E_{\mathrm{mix}}(\theta) \le N(N-1)\theta\Big(H_{N,a,b} + \frac{1}{\min(a,b)\lfloor (N-1)/2\rfloor}\Big),$$
+
+and for $N = 2$ the only transient state is left with probability $1/4$ per update, so $E_{\mathrm{mix}}(\theta) = 4\theta/\max(a,b)$ exactly, for every $\beta$.
 2. *Neutral drift limit.* $\lim_{\beta\to0}E_{\mathrm{mix}}(\theta) = \theta N^2 H_{N,a,b}$.
-3. *Strong selection limit.* $\lim_{\beta\to\infty}E_{\mathrm{mix}}(\theta) = \frac{N^2\theta}{2}\big(H_{N,a,b} + \frac{1}{a(N-1)}\big)$ for $\theta < -\delta$ and $\frac{N^2\theta}{2}\big(H_{N,a,b} + \frac{1}{b(N-1)}\big)$ for $\theta > -\delta$.
+3. *Strong selection limit.*
+
+$$\lim_{\beta\to\infty}E_{\mathrm{mix}}(\theta) = \begin{cases} \dfrac{N^2\theta}{2}\Big(H_{N,a,b} + \dfrac{1}{N-1}\min\Big(\dfrac1a, \dfrac{N-1}{b}\Big)\Big), & \theta < -\delta, \\[2ex] \dfrac{N^2\theta}{2}\Big(H_{N,a,b} + \dfrac{1}{N-1}\min\Big(\dfrac{N-1}{a}, \dfrac1b\Big)\Big), & \theta > -\delta. \end{cases}$$
+
+The minima do not simplify in general: at $(N,a,b) = (4,1,10)$ the first endpoint term is $1/10$, not $1/(a(N-1)) = 1/3$. At $\theta = -\delta$ the transition probabilities are neutral for every $\beta$, so $E_{\mathrm{mix}}(-\delta) = -\delta N^2 H_{N,a,b}$ as in part 2.
 4. *Infinite population limit.* For the donation game with cost $c$,
 
 $$\lim_{N\to\infty}\frac{E_{\mathrm{mix}}(\theta)}{N^2\theta H_{a,b}/2} = 1 + e^{-\beta|\theta - c|},$$
 
 and for the public goods game $c$ is replaced by $c(1 - r/n)$.
 
-**Phase transition ($a = b$).** There is an explicit threshold $\beta^* > 0$, defined through a pair of polynomials in $u = e^{x}$, such that $\theta \mapsto E_{\mathrm{mix}}(\theta)$ is non-decreasing for $\beta \le \beta^*$, so the optimal incentive is the smallest admissible one, $\theta^* = \theta_0(\omega)$; for $\beta > \beta^*$ the cost is not monotone, and for small $N$ it increases, decreases and increases again, so the optimum is the cheaper of $\theta_0$ and the interior local minimizer.
+**Phase transition ($a = b$, $N \ge 3$).** Admissible incentives are $\theta \ge \theta_{\min} = \max(0, \theta_0(\omega))$. There is an explicit threshold $\beta^* > 0$, defined through a pair of polynomials in $u = e^{x}$, such that $\theta \mapsto E_{\mathrm{mix}}(\theta)$ is non-decreasing for $\beta \le \beta^*$, so the optimal incentive is the smallest admissible one, $\theta^* = \theta_{\min}$; for $\beta > \beta^*$ the cost is not monotone, and for small $N$ it increases, decreases and increases again, so the optimum is $\theta_{\min}$ or, if the interior local minimizer is admissible (at least $\theta_{\min}$), the cheaper of the two. The case $N = 2$ is excluded: there $E_{\mathrm{mix}}(\theta) = 4\theta/a$ is linear at every selection intensity, so $\theta^* = \theta_{\min}$ and no transition occurs.
 
 ## Depends on
 
 - [Hybrid reward–punishment incentives and the cooperation threshold](hybrid-incentive-cost-and-cooperation-threshold.md)
 
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
-In the neutral limit the transition probabilities are $u_{i,i\pm1} = i(N-i)/(2N^2)$; the jump chain is a simple symmetric walk with Green's function $2i(N-j)/N$ ($i \le j$), and the expected sojourn per visit is $N^2/(i(N-i))$, which gives $n_{1j} + n_{N-1,j} = 2N^2/(j(N-j))$ and hence part 2. For part 1, $\min(j/a, (N-j)/b)/(j(N-j))$ equals $1/(a(N-j))$ below the crossover $j^* = Na/(a+b)$ and $1/(bj)$ above it; the two harmonic tails converge to $\frac1a\ln\frac{N}{N-j^*}$ and $\frac1b\ln\frac{N}{j^*}$, which gives $H_{a,b}$ and, unlike the separate reward or punishment problems (which carry the harmonic number $\sim\ln N$), no logarithmic growth. In the strong-selection limit the chain moves deterministically toward full cooperation when $\theta > -\delta$ and toward full defection when $\theta < -\delta$, so only one boundary term survives.
+In the neutral limit the transition probabilities are $u_{i,i\pm1} = i(N-i)/(2N^2)$; the jump chain is a simple symmetric walk with Green's function $2i(N-j)/N$ ($i \le j$), and the expected sojourn per visit is $N^2/(i(N-i))$, which gives $n_{1j} + n_{N-1,j} = 2N^2/(j(N-j))$ and hence part 2. For part 1, $\min(j/a, (N-j)/b)/(j(N-j))$ equals $1/(a(N-j))$ below the crossover $j^* = Na/(a+b)$ and $1/(bj)$ above it; the two harmonic tails converge to $\frac1a\ln\frac{N}{N-j^*}$ and $\frac1b\ln\frac{N}{j^*}$, which gives $H_{a,b}$ and, unlike the separate reward or punishment problems (which carry the harmonic number $\sim\ln N$), no logarithmic growth. In the strong-selection limit the chain moves deterministically toward full cooperation when $\theta > -\delta$ and toward full defection when $\theta < -\delta$. For $\theta > -\delta$ the walk from $1$ visits every $j$ once, with mean sojourn $N^2/(j(N-j))$, and the walk from $N-1$ visits only $j = N-1$, adding the boundary term $\frac{N^2}{N-1}\min\big(\frac{N-1}{a}, \frac1b\big)$; for $\theta < -\delta$ the roles are reversed and the extra term sits at $j = 1$, weighted by $\min\big(\frac1a, \frac{N-1}{b}\big)$. For $N = 2$, $u_{1,0} + u_{1,2} = 1/4$ for every $\beta$, so $n_{11} = 4$ and $E_{\mathrm{mix}} = \frac{\theta}{2}(4 + 4)\min(1/a, 1/b)$.
 
 ## Sources
 

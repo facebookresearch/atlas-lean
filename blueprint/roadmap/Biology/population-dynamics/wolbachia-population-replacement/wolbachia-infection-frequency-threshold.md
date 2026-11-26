@@ -20,6 +20,14 @@ $$y = \frac{b_I - \delta_I + \delta_U}{b_U - b_I + \delta_I - \delta_U}\, x \qqu
 
 is the separatrix between the basins of attraction of $E_1$ (above) and $E_2$ (below).
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 Differentiating $p = x/(x + y)$ gives $p' = (x'y - xy')/(x + y)^2$; the common density-dependent term $d(x + y)$ cancels, leaving the per-capita growth difference $(b_I - \delta_I) - (b_U (1 - p) - \delta_U)$. Because this difference is increasing in $p$, the frequency dynamics is bistable with the unstable interior point $p^*$, the classical invasion threshold of cytoplasmic incompatibility. At an interior equilibrium the $x$-equation forces $x + y = \kappa$ and the frequency equation forces $p = p^*$, which yields $E_3$.

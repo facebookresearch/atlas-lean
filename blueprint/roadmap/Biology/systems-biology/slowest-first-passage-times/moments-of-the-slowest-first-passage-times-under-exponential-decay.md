@@ -20,10 +20,14 @@ These are the exact moments of the $(k+1)$-st largest of $N$ exponential variabl
 
 - [Gumbel-type limit of the slowest first passage times](gumbel-type-limit-of-the-slowest-first-passage-times.md)
 
+## Proof depends on
+
+- [Gumbel-type limit of the slowest first passage times](gumbel-type-limit-of-the-slowest-first-passage-times.md)
+
 ## Expansion
 
-$\mathbb E[Y_k] = -\mathbb E\ln(E_1 + \dots + E_{k+1}) = -\psi(k+1) = \gamma - H_k$ and $\operatorname{Var}(Y_k) = \psi'(k+1)$, because $E_1 + \dots + E_{k+1}$ is Gamma$(k+1, 1)$. Part 2 uses Rényi's representation of exponential order statistics, $T_{N-k,N} \approx \lambda^{-1}\bigl(\ln A + \sum_{i=1}^{N-k} E_i/(i+k)\bigr)$, after coupling $\tau$ with an exponential variable through its survival function.
+$\mathbb E[Y_k] = -\mathbb E\ln(E_1 + \dots + E_{k+1}) = -\psi(k+1) = \gamma - H_k$ and $\operatorname{Var}(Y_k) = \psi'(k+1)$, because $E_1 + \dots + E_{k+1}$ is Gamma$(k+1, 1)$. Part 2 compares moment integrals rather than coupling samples. Writing $\mathbb E[(\lambda T_{N-k,N} - \ln A)^m]$ (up to an exponentially small contribution from $\lambda T_{N-k,N} < \ln A$) as $\int_0^\infty m t^{m-1}\,\mathbb P(\lambda T_{N-k,N} - \ln A > t)\,dt$ and inserting the exact binomial law with $S(t + \ln A/\lambda) = e^{-\lambda t} + O(e^{-\beta t})$, the integrand differs from the one for $N$ independent unit-rate exponential variables by terms controlled by the $O(e^{-\beta t})$ remainder. For the exponential variables Rényi's representation gives the moments exactly: the $(k+1)$-st largest has the law of $\sum_{i=1}^{N-k} E_i/(i+k)$, with mean $H_N - H_k$ and variance $\psi'(k+1) - \psi'(N+1)$.
 
 ## Sources
 
-- S. D. Lawley and J. Johnson, *Slowest first passage times, redundancy, and menopause timing*, J. Math. Biol. (2023), <https://doi.org/10.1007/s00285-023-01921-9>; arXiv:2206.09255. Theorems 2 and 4.
+- S. D. Lawley and J. Johnson, *Slowest first passage times, redundancy, and menopause timing*, J. Math. Biol. (2023), <https://doi.org/10.1007/s00285-023-01921-9>; arXiv:2206.09255. Numbering as in arXiv v2: Theorems 2 and 4 and, for part 2, the proof of Theorem 4 in the appendix, Equations (94)–(100) (journal version: Theorems 2 and 3, Appendix A.1).

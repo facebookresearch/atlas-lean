@@ -18,7 +18,7 @@ where $\tau>0$ is the mean traction per cell, $\lambda\ge0$ the contact inhibiti
 
 $$\mathcal L_b[\partial_{xx}u]=\mathcal L_a\Bigl[s\rho u-\partial_x\Bigl(\frac{\tau n}{1+\lambda n^2}(\rho+\beta\partial_{xx}\rho)\Bigr)\Bigr],$$
 
-with periodic boundary conditions on $n,\partial_xn,\rho,\partial_{xx}\rho,u,\partial_xu$, which make all fluxes and the total stress periodic.
+with periodic boundary conditions: $n$, $\rho$ and $u$ are smooth functions of $x$ that are periodic with period $L-\ell$ (equivalently, the problem is posed on a circle of length $L-\ell$), so that all their $x$-derivatives, the cell flux $D\partial_xn-n(\alpha\partial_x\rho+\partial_tu)$, the ECM flux $\rho\,\partial_tu$ and the total stress are periodic. Matching only the endpoint values of $n,\partial_xn,\rho,\partial_{xx}\rho,u,\partial_xu$ is not enough: on $[0,1]$ the fields $n=1$, $u=0$, $\rho=1+x(1-x)$ satisfy those equalities, but $\partial_x\rho$ takes the values $1$ and $-1$ at the two ends, so the haptotactic flux differs.
 
 ## Expansion
 

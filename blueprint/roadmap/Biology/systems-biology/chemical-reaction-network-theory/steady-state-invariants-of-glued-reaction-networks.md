@@ -12,9 +12,7 @@ Let $N = N_1 \cup N_2$ be obtained by **gluing** $N_1$ and $N_2$ over complexes 
 1. $\varphi_i(I_N) = I_{N_i}$;
 2. $\varphi_i\big(I_N \cap \mathbb{Q}[\kappa; x_{j_1}, \dots, x_{j_l}]\big) \subseteq I_{N_i} \cap \mathbb{Q}[\kappa(i); x_{j_1}, \dots, x_{j_l}]$, i.e. $\varphi_i(I_N^{\mathrm{elim}}) \subseteq I_{N_i}^{\mathrm{elim}}$: every invariant of the glued network specializes to an invariant of each piece.
 
-The containment in 2 can be strict. For $N_1 = \{X_1 \xrightarrow{\kappa_1} X_2\}$, $N_2 = \{X_2 \xrightarrow{\kappa_2} X_1\}$ glued over complexes into $N = \{X_1 \rightleftharpoons X_2\}$, one has $I_N = \langle -\kappa_1 x_1 + \kappa_2 x_2 \rangle$, $I_{N_2} = \langle \kappa_2 x_2 \rangle$, and eliminating $x_1$ gives $I_N^{\mathrm{elim}(x_1)} = \langle 0 \rangle$ while $I_{N_2}^{\mathrm{elim}(x_1)} = \langle \kappa_2 x_2 \rangle$; so $\varphi_2(I_N^{\mathrm{elim}}) = \langle 0 \rangle \subsetneq I_{N_2}^{\mathrm{elim}}$. Hence invariants of the pieces cannot in general be recovered from those of the whole network.
-
-## Depends on
+The containment in 2 can be strict. For $N_1 = \{X_1 \xrightarrow{\kappa_1} X_2\}$, $N_2 = \{X_2 \xrightarrow{\kappa_2} X_1\}$ glued over complexes into $N = \{X_1 \rightleftharpoons X_2\}$, one has $I_N = \langle -\kappa_1 x_1 + \kappa_2 x_2 \rangle$, $I_{N_2} = \langle \kappa_2 x_2 \rangle$, and eliminating $x_1$ gives $I_N^{\mathrm{elim}(x_1)} = \langle 0 \rangle$ while $I_{N_2}^{\mathrm{elim}(x_1)} = \langle \kappa_2 x_2 \rangle$; so $\varphi_2(I_N^{\mathrm{elim}}) = \langle 0 \rangle \subsetneq I_{N_2}^{\mathrm{elim}}$. Hence, after elimination, the observable invariants of a piece cannot in general be recovered by specializing the observable invariants of the whole network. The full steady-state ideals, by contrast, are recovered by specialization, by item 1; the strict containment concerns only elimination ideals.
 
 ## Expansion
 

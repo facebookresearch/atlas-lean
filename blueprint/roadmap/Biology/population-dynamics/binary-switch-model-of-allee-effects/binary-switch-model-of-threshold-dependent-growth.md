@@ -12,19 +12,23 @@ a five-parameter family $(r, R, \alpha, \beta, M)$ in place of the thirteen rate
 
 **Logistic reduction.** If there is no switch, $r = R$ and $\alpha = \beta$, then for every $M$
 
-$$\frac{dC}{dt} = r(1 - \alpha)\, C\Bigl(1 - \frac{C}{1 - \alpha}\Bigr),$$
+$$\frac{dC}{dt} = rC(1 - \alpha - C).$$
 
-logistic growth with intrinsic rate $r(1-\alpha)$ and carrying capacity $1 - \alpha$.
+For $r > 0$ and $\alpha < 1$ this is logistic growth with intrinsic rate $r(1-\alpha)$ and carrying capacity $1 - \alpha$. For $\alpha = 1$ it is $dC/dt = -rC^2$, and for $r = 0$ it vanishes identically.
 
-The right-hand side of (4) is $C$ times a polynomial of degree at most six in $C$; the source shows that at most three equilibria lie in $(0, 1]$, and that the switch produces weak Allee, strong Allee, logistic-like and extinction regimes.
+The right-hand side of (4) is $C$ times a polynomial of degree at most six in $C$. That polynomial can vanish identically, for example when $r = R = 0$, or when $r = 0$, $R > 0$, $M = 5$ and $\beta = 0$; then every density in $[0, 1]$ is an equilibrium. Excluding such identically zero cases, the source shows that at most three equilibria lie in $(0, 1]$, and that the switch produces weak Allee, strong Allee, logistic-like and extinction regimes.
 
 ## Depends on
 
-- [Explicit solution of the logistic equation](../logistic-growth-equation/logistic.md)
+This node has no prerequisites.
+
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
 
 ## Expansion
 
-For the logistic reduction use $\binom5n \frac{6}{6-n} = \binom6n$ and the binomial theorem: $\sum_{n=0}^5 \binom5n C^n(1-C)^{5-n} = 1$ and $\sum_{n=0}^5 \binom6n C^n(1-C)^{5-n} = (1 - C^6)/(1 - C)$. Hence the per-capita rate is $r(1 - C) - r\alpha(1 - C^6) - r\alpha C^6 = r(1 - \alpha) - rC$. The factor $(1 - C)$ in (1) is the probability that a chosen neighbouring site is empty, and $\binom5n C^n(1-C)^{5-n}$ the probability that the proliferating individual has $n$ occupied neighbours among the other five.
+For the logistic reduction use $\binom5n \frac{6}{6-n} = \binom6n$ and the binomial theorem: $\sum_{n=0}^5 \binom5n C^n(1-C)^{5-n} = 1$ and $\sum_{n=0}^5 \binom6n C^n(1-C)^{5-n} = (1 - C^6)/(1 - C)$. Hence the per-capita rate is $r(1 - C) - r\alpha(1 - C^6) - r\alpha C^6 = r(1 - \alpha) - rC$, which gives $dC/dt = rC(1 - \alpha - C)$ without dividing by $1 - \alpha$. The factor $(1 - C)$ in (1) is the probability that a chosen neighbouring site is empty, and $\binom5n C^n(1-C)^{5-n}$ the probability that the proliferating individual has $n$ occupied neighbours among the other five. Where $r > 0$ and $\alpha < 1$, the reduced equation is the logistic equation, whose [explicit solution](../logistic-growth-equation/logistic.md) then applies.
 
 ## Sources
 

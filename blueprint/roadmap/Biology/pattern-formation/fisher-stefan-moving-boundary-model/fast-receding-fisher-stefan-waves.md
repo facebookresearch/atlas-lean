@@ -24,10 +24,14 @@ Receding waves therefore require $-1 < \kappa < 0$, and the front becomes a boun
 
 - [Invading and receding Fisher–Stefan travelling waves](fisher-stefan-travelling-waves.md)
 
+## Proof depends on
+
+- [Invading and receding Fisher–Stefan travelling waves](fisher-stefan-travelling-waves.md)
+
 ## Expansion
 
 With $z = \zeta/c$, $U_z = cU_\zeta$ and $U_{zz} = c^2U_{\zeta\zeta}$, giving the inner equation. At leading order $U_0'' + U_0' = 0$ with the boundary conditions gives $U_0 = 1 - e^{-\zeta}$, which matches the outer solution. The next order solves $U_1'' + U_1' = -U_0(1-U_0) = -e^{-\zeta} + e^{-2\zeta}$, and the displayed $U_1$ satisfies it with $U_1(0) = 0$. Then $U'(0) = c\,(U_0'(0) + c^{-2}U_1'(0) + \dots) = c\,(1 + \tfrac{1}{2c^2} + \dots)$, so $\kappa = -c/U'(0) = -1 + \tfrac{1}{2c^2} + O(c^{-4})$. Solving $\kappa + 1 \approx 1/(2c^2)$ with $c < 0$ gives the inverse relation; the paper also gives the $O(c^{-4})$ term, which is accurate already for $c < -2$.
 
 ## Sources
 
-- M. El-Hachem, S. W. McCue and M. J. Simpson, "Invading and receding sharp-fronted travelling waves", Bulletin of Mathematical Biology (2021), Section 3.3.3, Equations (29)–(44), <https://doi.org/10.1007/s11538-021-00862-y>.
+- M. El-Hachem, S. W. McCue and M. J. Simpson, "Invading and receding sharp-fronted travelling waves", Bulletin of Mathematical Biology (2021), <https://doi.org/10.1007/s11538-021-00862-y>. Numbering as in the preprint arXiv:2008.00662v3 (<https://arxiv.org/abs/2008.00662>): Section 3.3.3, Equations (29)–(44).

@@ -10,7 +10,7 @@ with basal activation $k>0$, Hill-type positive feedback of strength $\gamma>0$ 
 
 $$w=\int_\Omega(u+v)\,dx$$
 
-is constant in time, so $w$ acts as a parameter and $v$ can be eliminated in terms of $u$ and $w$.
+is constant in time, so $w$ acts as a parameter. Conservation fixes only $\int_\Omega v\,dx=w-\int_\Omega u\,dx$, not the field $v(x,t)$: two inactive fields with the same integral can give different local reaction rates $f(u,v)$. In the reduced (well-mixed or local-perturbation) description, where the fast inactive pool is treated as spatially uniform, $v$ is eliminated as $v=\big(w-\int_\Omega u\,dx\big)/|\Omega|$.
 
 A non-conservative extension adds degradation of active and synthesis of inactive GTPase, $\partial_tu=\delta\nabla^2u+f-\theta u$, $\partial_tv=\nabla^2v-f+\alpha$; it has the unique homogeneous equilibrium $u_*=\alpha/\theta$, $v_*=(\alpha+\eta u_*)/A(u_*)$ with $A(u)=k+\gamma u^n/(1+u^n)$.
 
@@ -20,4 +20,4 @@ Adding the two equations and integrating over $\Omega$ gives $\frac{d}{dt}\int_\
 
 ## Sources
 
-- Y. Liu, E. G. Rens, L. Edelstein-Keshet, "Spots, stripes, and spiral waves in models for static and motile cells: GTPase patterns in cells", J. Math. Biol. 82 (2021), article 28, Section 2.1, Equations (1) and (3), Section 4.3 Equation (4), <https://doi.org/10.1007/s00285-021-01550-0>, PMCID PMC7929972.
+- Y. Liu, E. G. Rens, L. Edelstein-Keshet, "Spots, stripes, and spiral waves in models for static and motile cells: GTPase patterns in cells", J. Math. Biol. 82 (2021), article 28, Section 2.1, Equations (1) and (3), Section 3 (elimination of $v$ in the reduced system), Section 4.3 Equation (4), <https://doi.org/10.1007/s00285-021-01550-0>, PMCID PMC7929972.

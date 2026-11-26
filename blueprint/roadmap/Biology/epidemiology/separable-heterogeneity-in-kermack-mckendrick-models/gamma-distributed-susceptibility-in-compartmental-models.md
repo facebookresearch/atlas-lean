@@ -24,9 +24,13 @@ As $p \to \infty$ (no heterogeneity) these reduce to the homogeneous model.
 
 - [Separable static heterogeneity by redefining the depletion function](separable-static-heterogeneity-by-redefining-the-depletion-function.md)
 
+## Proof depends on
+
+- [Moment generating function of the gamma distribution](../../../Probability/distributions/continuous/gamma-distribution/gamma-mgf/mgf-gamma-measure-of-lt.md): at shape $p$ and rate $p$ with argument $-w$, giving $\int e^{-\xi w}\Phi(d\xi) = (1 + w/p)^{-p}$, and at shape $p + 1$ and rate $p$, giving $\int \xi e^{-\xi w}\Phi(d\xi) = (1 + w/p)^{-p-1}$.
+
 ## Expansion
 
-With $a(\xi) = \xi$, $\Psi(w) = N\int c(\xi)(1 - e^{-\xi w})\Phi(d\xi)$ is expressed through $\hat\Phi$ and its derivatives: $\int e^{-\xi w}\Phi(d\xi) = (1 + w/p)^{-p}$ and $\int \xi e^{-\xi w}\Phi(d\xi) = (1 + w/p)^{-p-1}$, which gives both closed forms. Since $\dot w = \bar F$, $\dot s_{\mathrm{tot}} = \hat\Phi'(w)\bar F = -(1 + w/p)^{-p-1}\bar F = -\bar F s_{\mathrm{tot}}^{1+1/p}$, and $\Psi'(w)$ written as a power of $s_{\mathrm{tot}}$ gives $H$. The power-law depletion $s^{1+1/p}$ is the classical device for gamma-distributed frailty in epidemic models, here derived systematically and valid for any compartmental structure $(U, \Sigma, V)$.
+With $a(\xi) = \xi$, $\Psi(w) = N\int c(\xi)(1 - e^{-\xi w})\Phi(d\xi)$ is expressed through $\hat\Phi$ and its derivatives: $\int e^{-\xi w}\Phi(d\xi) = (1 + w/p)^{-p}$ and $\int \xi e^{-\xi w}\Phi(d\xi) = (1 + w/p)^{-p-1}$, which gives both closed forms; the second holds because $\xi\,\Phi(d\xi)$ is the gamma distribution with shape $p + 1$ and rate $p$, the mean of $\Phi$ being $1$. Since $\dot w = \bar F$, $\dot s_{\mathrm{tot}} = \hat\Phi'(w)\bar F = -(1 + w/p)^{-p-1}\bar F = -\bar F s_{\mathrm{tot}}^{1+1/p}$, and $\Psi'(w)$ written as a power of $s_{\mathrm{tot}}$ gives $H$. The power-law depletion $s^{1+1/p}$ is the classical device for gamma-distributed frailty in epidemic models, here derived systematically and valid for any compartmental structure $(U, \Sigma, V)$.
 
 ## Sources
 

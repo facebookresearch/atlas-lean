@@ -18,6 +18,14 @@ $$\Omega=\Bigl\{x\in\mathbb{R}_+^5:\ x_1+x_2\le k_{CD},\ x_3\le\frac{q+\beta\psi
 
 is positively invariant for the scaled system.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Expansion
 
 Nonnegativity holds because each right-hand side is nonnegative on the corresponding coordinate face. Dropping the nonpositive lysis, killing and $(1-\mu)$ losses gives $\dot x_1+\dot x_2\le(rx_1+r'x_2)(1-(x_1+x_2)/k_{CD})$, so $x_1+x_2$ cannot cross $k_{CD}$; the logistic immune equation keeps $x_4\le1$. Then $\mathcal I(x_3)\le\psi$, $u_1\le1$ and $x_1\le k_{CD}$ give $\dot x_3\le(\beta\psi k_{CD}+q)-\omega x_3$, which bounds $x_3$, and the same for $x_5$.

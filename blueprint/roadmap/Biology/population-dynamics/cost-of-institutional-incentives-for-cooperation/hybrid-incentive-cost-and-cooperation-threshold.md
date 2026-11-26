@@ -14,22 +14,25 @@ and $E_r$, $E_p$ with $j/a$, respectively $(N-j)/b$, in place of the minimum.
 
 $$\frac{\rho_{D,C}}{\rho_{C,D}} = e^{\beta(N-1)(\delta + \theta)},$$
 
-so the long-run frequency of cooperation $\rho_{D,C}/(\rho_{D,C} + \rho_{C,D})$ is at least $\omega \in (0,1)$ if and only if
+Here $\rho_{D,C}$ and $\rho_{C,D}$ are absorption probabilities of the chain at $N$ from state $1$ and at $0$ from state $N-1$. The absorbing chain alone does not determine a long-run frequency; in the limit of rare mutation, with a single mutant equally likely to arise in either monomorphic state (symmetric mutation), the population alternates between the two monomorphic states and the long-run frequency of cooperation is $\rho_{D,C}/(\rho_{D,C} + \rho_{C,D})$. Under this assumption it is at least $\omega \in (0,1)$ if and only if
 
 $$\theta \ge \theta_0(\omega) = \frac{1}{(N-1)\beta}\log\frac{\omega}{1-\omega} - \delta .$$
 
-The design problem is to minimize $E_{\mathrm{mix}}(\theta)$ over $\theta \ge \theta_0(\omega)$.
+Since incentives are nonnegative, the design problem is to minimize $E_{\mathrm{mix}}(\theta)$ over $\theta \ge \max(0, \theta_0(\omega))$.
 
-**Proposition (hybrid incentives are cheaper).** For all $\theta$, $E_{\mathrm{mix}}(\theta) \le \min\{E_r(\theta), E_p(\theta)\}$. If $b/a \le 1/(N-1)$ then $E_{\mathrm{mix}} = E_r$ (pure reward is optimal), and if $b/a \ge N-1$ then $E_{\mathrm{mix}} = E_p$ (pure punishment is optimal); in between the hybrid scheme is strictly cheaper.
+**Proposition (hybrid incentives are cheaper).** For all $\theta$, $E_{\mathrm{mix}}(\theta) \le \min\{E_r(\theta), E_p(\theta)\}$. If $b/a \le 1/(N-1)$ then $E_{\mathrm{mix}} = E_r$ (pure reward is optimal), and if $b/a \ge N-1$ then $E_{\mathrm{mix}} = E_p$ (pure punishment is optimal); if $1/(N-1) < b/a < N-1$, then $E_{\mathrm{mix}}(\theta) < \min\{E_r(\theta), E_p(\theta)\}$ for every $\theta > 0$. At $\theta = 0$ all three costs vanish, so there are no strict savings there.
 
 ## Depends on
 
+This node has no prerequisites.
+
+## Proof depends on
+
 - [Moran Fixation](../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
-- [Rest point of the replicator equation](../replicator-dynamics/is-rest-point.md)
 
 ## Expansion
 
-For a birth–death chain, $\rho_{D,C}/\rho_{C,D} = \prod_{k=1}^{N-1} u_{k,k-1}/u_{k,k+1}$, and each factor is $(1 + e^{\beta(\delta+\theta)})/(1 + e^{-\beta(\delta+\theta)}) = e^{\beta(\delta+\theta)}$; requiring $e^{\beta(N-1)(\delta+\theta)} \ge \omega/(1-\omega)$ gives $\theta_0$. The cost comparison is termwise: $\min(j/a, (N-j)/b)$ is at most each argument. The minimum equals $j/a$ for every $j \le N-1$ iff it does at $j = N-1$, i.e. $(N-1)/a \le 1/b$, and symmetrically for punishment. The hybrid scheme requires the institution to observe the current number of cooperators.
+For a birth–death chain, $\rho_{D,C}/\rho_{C,D} = \prod_{k=1}^{N-1} u_{k,k+1}/u_{k,k-1}$, and by Eq. (1) each factor is $(1 + e^{\beta(\delta+\theta)})/(1 + e^{-\beta(\delta+\theta)}) = e^{\beta(\delta+\theta)}$. Equivalently, the forward-to-backward ratio is the constant $e^{\beta(\delta+\theta)}$, so both fixation probabilities are [Moran fixation probabilities](../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md) with fitness $e^{\pm\beta(\delta+\theta)}$; requiring $e^{\beta(N-1)(\delta+\theta)} \ge \omega/(1-\omega)$ gives $\theta_0$. The cost comparison is termwise: $\min(j/a, (N-j)/b)$ is at most each argument, and every entry $n_{1j}, n_{N-1,j}$ is positive because every transient state is reachable from every other. In the intermediate range $j/a > (N-j)/b$ at $j = N-1$ and $j/a < (N-j)/b$ at $j = 1$, so for $\theta > 0$ both inequalities are strict. The minimum equals $j/a$ for every $j \le N-1$ iff it does at $j = N-1$, i.e. $(N-1)/a \le 1/b$, and symmetrically for punishment. The hybrid scheme requires the institution to observe the current number of cooperators. The deterministic infinite-population counterpart of the strategy dynamics is the replicator equation, whose [rest points](../replicator-dynamics/is-rest-point.md) are not used here.
 
 ## Sources
 

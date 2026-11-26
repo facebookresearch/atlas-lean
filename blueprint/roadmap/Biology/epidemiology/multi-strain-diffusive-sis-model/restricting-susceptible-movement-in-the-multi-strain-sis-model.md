@@ -20,13 +20,9 @@ Thus the total infected population at equilibrium is of order $d_S$ and vanishes
 
 For one strain with $d_S = 0$ and $\min R_1 > 1$, the unique endemic equilibrium is $I_e = N/\int_\Omega \frac{R_1}{R_1 - 1}$, $S_e = I_e/(R_1 - 1)$, and it attracts every positive solution.
 
-## Depends on
-
-- [Threshold dynamics of the multi-strain diffusive SIS model](threshold-dynamics-of-the-multi-strain-diffusive-sis-model.md)
-
 ## Expansion
 
-With $d_S = 0$ the $S$ equation is an ODE in each point; on the safety region the infected classes cannot sustain themselves locally, and the mass constraint couples the regions through the diffusing infected classes. The single-strain equilibrium follows from setting $\beta_1 S/(S + I) = \gamma_1$ pointwise, which gives $S = I/(R_1 - 1)$ with $I$ constant (Neumann problem $d_1 \Delta I = 0$), and fixing the constant by the total mass $N$.
+These results complement the [threshold dynamics](threshold-dynamics-of-the-multi-strain-diffusive-sis-model.md) of the same model, whose basic reproduction number does not depend on $d_S$. With $d_S = 0$ the $S$ equation is an ODE in each point; on the safety region the infected classes cannot sustain themselves locally, and the mass constraint couples the regions through the diffusing infected classes. The single-strain equilibrium follows from setting $\beta_1 S/(S + I) = \gamma_1$ pointwise, which gives $S = I/(R_1 - 1)$ with $I$ constant (Neumann problem $d_1 \Delta I = 0$), and fixing the constant by the total mass $N$.
 
 ## Sources
 

@@ -16,6 +16,10 @@ With $\mu \equiv 1$, $\lambda_{\mathrm{hom}} = 1 + s$ and $\lambda_{\mathrm{het}
 - [Establishment of a mutation on a multicopy plasmid under random segregation](establishment-on-multicopy-plasmids-under-random-segregation.md)
 - [Probability of evolutionary rescue from de novo mutations](probability-of-evolutionary-rescue-from-de-novo-mutations.md)
 
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 Rescue with $n = 2$ is more likely iff $2p_{\mathrm{est}}(2) > p_{\mathrm{est}}(1)$. In case 1 put $h = \mu_{\mathrm{hom}}/\lambda_{\mathrm{hom}} < 1$ and $r = \mu_{\mathrm{het}}/\lambda_{\mathrm{het}}$; squaring $\sqrt{9 - 6r + 9r^2 - 8h} > 1 - 2h + 3r$ reduces to $(1-h)(2+h) > 3r(1-h)$, i.e. $r < (2+h)/3$, which is the displayed condition. In case 2 put $r = \mu_1/\lambda_1 < 1$ and $r_2 = \mu_2/\lambda_2 \le r$: $p_{\mathrm{est}}(2) > 1 - r$ reduces to $8r^2 > 8r_2$, and $2p_{\mathrm{est}}(2) > 1 - r$ follows from $9 - 14r + 9r^2 > (1 + r)^2$, i.e. $8(1-r)^2 > 0$. Without dosage effects the doubled mutational supply wins only if heterozygotes keep at least about a third of the homozygote's Malthusian fitness; with dosage effects the second copy always helps unless it carries a cost.

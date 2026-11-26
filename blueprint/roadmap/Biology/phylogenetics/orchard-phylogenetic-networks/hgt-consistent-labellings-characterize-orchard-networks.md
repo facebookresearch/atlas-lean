@@ -12,11 +12,12 @@ Arcs whose endpoints receive equal labels are called horizontal.
 
 **Theorem (non-binary case).** A network is orchard if and only if some binary resolution of it (a binary network that contracts to it) admits an HGT-consistent labelling.
 
-**Corollary.** Deleting all horizontal arcs of an HGT-consistent labelling leaves a base tree, so every binary orchard network is tree-based. The converse fails: a tree-based network containing a crown, nodes $u_1,\dots,u_k,v_1,\dots,v_k$ with arcs $(u_i,v_i)$ and $(u_i,v_{i+1})$ (indices mod $k$), admits no HGT-consistent labelling and is not orchard.
+**Corollary.** Deleting all horizontal arcs of an HGT-consistent labelling of a binary network leaves a support tree: a rooted spanning tree whose leaves are exactly the leaves of the network. Its old arc endpoints can have in-degree and out-degree one; suppressing those vertices gives a base tree, so every binary orchard network is [tree-based](../classes-of-phylogenetic-networks/tree-based-networks-and-support-trees.md). The converse fails: a tree-based network containing a crown, nodes $u_1,\dots,u_k,v_1,\dots,v_k$ with arcs $(u_i,v_i)$ and $(u_i,v_{i+1})$ (indices mod $k$), admits no HGT-consistent labelling and is not orchard.
 
 ## Depends on
 
 - [Orchard networks and cherry picking](orchard-networks-and-cherry-picking.md)
+- [Tree-based networks and support trees](../classes-of-phylogenetic-networks/tree-based-networks-and-support-trees.md)
 
 ## Expansion
 
@@ -24,7 +25,9 @@ Arcs whose endpoints receive equal labels are called horizontal.
 
 *Labelling implies orchard.* Take an internal node $x$ with maximal label. If $x$ is a reticulation, its child is a leaf and the parent sharing its label has a leaf as its other child, which gives a reticulated cherry. If $x$ is a tree node, either it has a reticulation child with equal label (again a reticulated cherry) or two leaf children (a cherry); two reticulation children would violate property 2. The restriction of $t$ to the reduced network is still HGT-consistent, so induction reduces $N$ to one leaf.
 
-*Crown.* Property 3 forces $t(u_1)=t(v_1)$; then property 2 gives $t(u_1)<t(v_2)$, so property 3 forces $t(u_2)=t(v_2)$, and inductively $t(u_1)<t(u_2)<\dots<t(u_k)<t(u_1)$, a contradiction. The non-binary case combines the binary theorem with the fact that a network is orchard if and only if some binary resolution is.
+*Support tree.* By property 3 each reticulation keeps exactly one incoming arc, and by property 1 no arc into a tree node or leaf is horizontal, so after the deletion every non-root node has in-degree one; by property 2 every internal node keeps a child, so no new leaf appears.
+
+*Crown.* The parents of $v_1$ are $u_1$ and $u_k$, and the reflection $u_i\mapsto u_{1-i}$, $v_i\mapsto v_{2-i}$ (indices mod $k$) maps the crown to itself and exchanges them. Property 3 makes exactly one of them share the label of $v_1$; applying the reflection if necessary, assume without loss of generality that $t(u_1)=t(v_1)$. Then property 2 gives $t(u_1)<t(v_2)$, so property 3 at $v_2$ forces $t(u_2)=t(v_2)$, and inductively $t(u_1)<t(u_2)<\dots<t(u_k)<t(v_1)=t(u_1)$, a contradiction. The non-binary case combines the binary theorem with the fact that a network is orchard if and only if some binary resolution is.
 
 ## Sources
 

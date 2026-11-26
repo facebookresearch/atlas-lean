@@ -4,7 +4,7 @@ Consider the [phenotype-structured tumour model](phenotype-structured-model-of-h
 
 $$R(S_o,S_g,S_l,\rho,y_1,y_2)=\frac{\gamma_oS_o}{\alpha_o+S_o}\big(1-\varphi_o(S_o)\big)+\frac{\gamma_gS_g}{\alpha_g+S_g}\varphi_o(S_o)-\eta_o\big(y_2-\varphi_o(S_o)\big)^2-\eta_l\big(y_1-\varphi_l(S_l)\big)^2-\kappa\rho,$$
 
-where $\varphi_o,\varphi_l:\mathbb R_+\to[0,1]$. Suppose spontaneous phenotypic changes and random motility act on slower time scales than proliferation and death. Then, by a formal time-scale separation and asymptotic argument, the steady-state local phenotypic distribution $n_\infty(x,\cdot)$ is unimodal and its density $\rho_\infty$ and mean traits $\mu_{1,\infty},\mu_{2,\infty}$ satisfy, at each $x\in[0,L]$,
+where $\varphi_o,\varphi_l:\mathbb R_+\to[0,1]$. Suppose spontaneous phenotypic changes and random motility act on slower time scales than proliferation and death. Then, by a formal time-scale separation and asymptotic argument, the steady-state local phenotypic distribution $n_\infty(x,\cdot)$ is unimodal and, at each $x\in[0,L]$ where the steady-state density $\rho_\infty(x)$ is positive (so that the mean traits $\mu_{1,\infty},\mu_{2,\infty}$ are defined), the density and mean traits satisfy
 
 $$R=0,\qquad \partial_{y_1}R=0,\qquad \partial_{y_2}R=0\quad\text{at }(y_1,y_2)=(\mu_{1,\infty},\mu_{2,\infty}),$$
 

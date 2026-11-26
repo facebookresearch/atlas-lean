@@ -1,6 +1,6 @@
 # Tree-child networks
 
-Let $X$ be a non-empty finite set of taxa. A **rooted binary phylogenetic network** on $X$ is a rooted directed acyclic graph $N = (V, E)$ without parallel arcs such that the root has in-degree $0$ and out-degree $2$; the vertices of out-degree $0$ have in-degree $1$ and form the leaf set $X$; every other vertex is either a *tree vertex* (in-degree $1$, out-degree $2$) or a *reticulation* (in-degree $2$, out-degree $1$). A vertex $v$ is *visible* if some leaf $x$ has the property that every directed path from the root to $x$ passes through $v$.
+Let $X$ be a non-empty finite set of taxa. If $|X| = 1$, the only **rooted binary phylogenetic network** on $X$ is the single vertex labelled by the element of $X$, which is both root and leaf. If $|X| \ge 2$, a **rooted binary phylogenetic network** on $X$ is a rooted directed acyclic graph $N = (V, E)$ without parallel arcs such that the root has in-degree $0$ and out-degree $2$; the vertices of out-degree $0$ have in-degree $1$ and form the leaf set $X$; every other vertex is either a *tree vertex* (in-degree $1$, out-degree $2$) or a *reticulation* (in-degree $2$, out-degree $1$). A vertex $v$ is *visible* if some leaf $x$ has the property that every directed path from the root to $x$ passes through $v$.
 
 **Definition.** $N$ is **tree-child** if every non-leaf vertex has a child that is a tree vertex or a leaf.
 

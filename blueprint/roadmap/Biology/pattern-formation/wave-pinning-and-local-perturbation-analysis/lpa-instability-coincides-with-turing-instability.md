@@ -15,11 +15,14 @@ Consequently the LPA-unstable regime is exactly the Turing-unstable regime, whil
 ## Depends on
 
 - [Local perturbation analysis of fast–slow reaction–diffusion systems](local-perturbation-analysis-of-fast-slow-reaction-diffusion.md)
-- [Turing patterns and diffusion-driven instability](../turing-patterns-and-diffusion-driven-instability/README.md)
+
+## Proof depends on
+
+- [Local perturbation analysis of fast–slow reaction–diffusion systems](local-perturbation-analysis-of-fast-slow-reaction-diffusion.md)
 
 ## Expansion
 
-The first two Turing conditions say the steady state is stable for the well-mixed system. With $\delta=0$,
+Item 1 is the [Turing](../turing-patterns-and-diffusion-driven-instability/README.md) condition with the slow diffusivity set to $0$ and the fast one kept at $1$, while item 2 uses the LPA system, in which the fast species is uniform; the theorem says the two limits give the same instability criterion. The first two Turing conditions say the steady state is stable for the well-mixed system. With $\delta=0$,
 
 $$\det\big(J_{WM}-Dq^2\big)=\det J_{WM}-q^2\,\partial_uf,$$
 

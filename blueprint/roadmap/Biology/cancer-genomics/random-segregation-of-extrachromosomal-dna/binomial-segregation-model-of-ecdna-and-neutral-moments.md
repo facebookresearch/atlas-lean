@@ -14,6 +14,10 @@ and $N(t) = N(0)e^{t}$. Let $M_l(t) = \sum_k k^l \rho_k(t)$ be the copy-number m
 
 Starting from one cell with one copy, $M_1 \equiv 1$ and $M_2(t) = 1 + t \approx t$. Under neutrality the mean copy number stays fixed while the copy-number distribution spreads and a growing fraction of cells loses ecDNA altogether. In a simplified two-population (ecDNA-positive versus ecDNA-free) description of neutral growth, the fraction of ecDNA-positive cells decays like $f_+(t) = 2/(2+t)$.
 
+## Proof depends on
+
+- [Second moment of the binomial law](../../../Probability/distributions/discrete/binomial-distribution/integral-sq-map-cast-binomial.md): with $n = 2i$ and $p = 1/2$, the second moment $i^2 + i/2$.
+
 ## Expansion
 
 Each division removes one cell of type $i$ and adds two daughters, each with marginal law $\mathrm{Bin}(2i, 1/2)$; this gives the equation for $N_k$. Summing over $k$ gives $dN/dt = N$, and dividing by $N$ gives the density equation. For the moments, a $\mathrm{Bin}(2i, 1/2)$ variable has mean $i$ and second moment $i^2 + i/2$. Hence $\sum_k k\,(d\rho_k/dt) = -2M_1 + 2M_1 = 0$, and $\sum_k k^2 (d\rho_k/dt) = -2M_2 + 2(M_2 + M_1/2) = M_1$. Random segregation is the source of the linear-in-time variance; an equal split would keep every cell at its starting copy number. The paper checks these predictions against stochastic Gillespie simulations, live-cell imaging of segregation and single-cell copy-number distributions.

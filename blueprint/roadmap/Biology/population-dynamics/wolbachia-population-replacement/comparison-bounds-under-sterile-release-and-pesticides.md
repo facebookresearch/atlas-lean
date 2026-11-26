@@ -16,6 +16,10 @@ $$Y(t) \to 0 \quad (t \to \infty), \qquad Y_1(t) \le Y(t) \le Y_2(t) \quad \text
 
 - [Wolbachia infection-frequency threshold](wolbachia-infection-frequency-threshold.md)
 
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 Since $y/(x + y + R) = \frac{1}{1 + K(t)} \cdot \frac{y}{x + y}$, release acts as a time-varying reduction of the uninfected birth rate to $b_U/(1 + K(t)) \in (\bar b_U, \hat b_U)$. The frequency equations $p_i' = p_i(1 - p_i)(b_I - \delta_I + \delta_U - \beta_i(1 - p_i))$ are ordered in the birth parameter $\beta_i$, and a first-crossing-time argument shows that the trajectories, and then the uninfected numbers, can never cross, which gives the sandwich bounds.

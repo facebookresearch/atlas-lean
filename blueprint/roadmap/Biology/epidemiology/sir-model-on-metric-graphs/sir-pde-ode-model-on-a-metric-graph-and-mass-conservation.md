@@ -18,13 +18,13 @@ $$M(t) = \sum_{e\in\mathcal E} \int_{\Omega_e} u_e(t,x)\, dx + \sum_{v\in\mathca
 
 is constant: $M(t) = M^0$ for all $t \ge 0$.
 
-## Depends on
+## Proof depends on
 
-- [Final-size equation (Kermack–McKendrick 1927)](../kermack-mckendrick-sir-model/final-size-eq.md) (the single-vertex case $\mathcal G = (\{v\}, \emptyset)$ is the classical SIR model)
+- [Gronwall inequality in integral form](../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md): for uniqueness, applied to the difference of two solutions.
 
 ## Expansion
 
-At a vertex, $(S_v + I_v + R_v)' = \langle A_v \mathbf u_v, \mathbf 1\rangle - \langle \Lambda_v \mathbf I_v, \mathbf 1\rangle$. On the edges, integrating the heat equation gives $m'(t) = \sum_e d_e [\partial_x u_e]_{\partial\Omega_e} = \sum_v \langle D_v \partial_n \mathbf u_v, \mathbf 1\rangle = \sum_v \langle \Lambda_v \mathbf I_v - A_v \mathbf u_v - N_v \mathbf u_v, \mathbf 1 \rangle$, and $\langle N_v \mathbf u_v, \mathbf 1\rangle = 0$ because the columns of $N_v$ sum to zero. The two contributions cancel. Existence is proved by an iteration that alternates the vertex ODEs and the edge heat equations with inhomogeneous Robin data, using the column and row diagonal dominance of $K_v$ for a priori bounds; uniqueness follows from a Gronwall estimate.
+At a vertex, $(S_v + I_v + R_v)' = \langle A_v \mathbf u_v, \mathbf 1\rangle - \langle \Lambda_v \mathbf I_v, \mathbf 1\rangle$. On the edges, integrating the heat equation gives $m'(t) = \sum_e d_e [\partial_x u_e]_{\partial\Omega_e} = \sum_v \langle D_v \partial_n \mathbf u_v, \mathbf 1\rangle = \sum_v \langle \Lambda_v \mathbf I_v - A_v \mathbf u_v - N_v \mathbf u_v, \mathbf 1 \rangle$, and $\langle N_v \mathbf u_v, \mathbf 1\rangle = 0$ because the columns of $N_v$ sum to zero. The two contributions cancel. Existence is proved by an iteration that alternates the vertex ODEs and the edge heat equations with inhomogeneous Robin data, using the column and row diagonal dominance of $K_v$ for a priori bounds; uniqueness follows from a Gronwall estimate. Without edges, the vertex equations reduce to the classical SIR model at each vertex, whose [final-size equation](../kermack-mckendrick-sir-model/final-size-eq.md) the metric-graph final-size relation generalises.
 
 ## Sources
 

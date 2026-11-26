@@ -18,6 +18,14 @@ $$\pi = \frac{pT_a}{pT_a + (1-p)T_r}.$$
 
 With the two owner states above, $\pi = p(1 + \lambda_i t_w)/(1 + \lambda_i t_w + (1-p)\lambda_h t_h)$, and the overall active fraction is $\pi\rho_a + (1-\pi)\rho_r = 1/(1 + \lambda_i t_w + (1-p)\lambda_h t_h)$.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+- [Long-run fraction of up time of an alternating renewal process](../../../Probability/nonparametric-survival/reliability-and-monitoring/long-run-fraction-of-up-time-of-an-alternating-renewal-process.md)
+
 ## Expansion
 
 This is the renewal–reward theorem. A cycle consists of a search, with mean $1/\Lambda$, and the waiting time after the event that ends it, with mean $\sum_k(\lambda_k/\Lambda)t_k$. The expected reward per cycle is $\sum_k(\lambda_k/\Lambda)i_k$. The long-run rate is reward per cycle over cycle length; multiplying both by $\Lambda$ gives the formula. The active fraction is the search share of the cycle, $(1/\Lambda)/(1/\Lambda + \sum_k(\lambda_k/\Lambda)t_k)$. The state probabilities follow from the same argument applied to the alternating process of behavioural states. The paper treats the population-level active proportion as equal to the individual-level time fraction, citing an earlier theorem for this class of models (large population, no synchronization).

@@ -21,6 +21,11 @@ So this integrodifference formulation cannot express an effect of the temporal s
 - [Integrodifference Klausmeier model and its consistency with the PDE model](integrodifference-klausmeier-model-and-consistency.md)
 - [Diffusion-driven instability (Turing 1952)](../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
 
+## Proof depends on
+
+- [Integrodifference Klausmeier model and its consistency with the PDE model](integrodifference-klausmeier-model-and-consistency.md)
+- [Diffusion-driven instability (Turing 1952)](../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
+
 ## Expansion
 
 Convolution becomes multiplication under the Fourier transform, so the linearized map acts on each wavenumber by the matrix $J(k)$; with symmetric kernels $\hat\phi, \hat\phi_1$ are real and the Jury conditions for a real $2\times2$ matrix ($|\det J| < 1$, $1 - \operatorname{tr} J + \det J > 0$, $1 + \operatorname{tr} J + \det J > 0$) characterize $|\lambda| < 1$; violating the last two gives the displayed instability condition. With Laplace kernels, $\hat\phi$ is rational in $k^2$, so $1 + \det J - |\operatorname{tr} J|$ becomes a rational function of $k^2$ whose sign change is a polynomial condition. Under the scalings ($a^2 = 1/T$ for $\phi$, and the corresponding width for $\phi_1$) the factors of $T$ cancel and the condition reduces to the PDE's Turing condition, which together with consistency as $T \to 0^+$ explains why the threshold coincides with the local model's.

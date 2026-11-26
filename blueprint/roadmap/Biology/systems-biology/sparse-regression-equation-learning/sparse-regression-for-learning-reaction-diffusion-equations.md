@@ -14,16 +14,12 @@ the nonzero entries of $\xi$ naming the terms present. For example, $\xi = (0, D
 
 **Facts used in post-processing and estimation.**
 
-1. *Conservation form.* $u_{xx} = (u_x)_x$, and $u_x^2 + u u_{xx} = (u u_x)_x$; so a learned transport part containing $u_x^2$ is in flux form exactly when $u u_{xx}$ appears with the same coefficient, and an isolated $u_x^2$ term is removed.
+1. *Conservation form.* $u_{xx} = (u_x)_x$, $u_x^2 + u u_{xx} = (u u_x)_x$ and $2u u_x^2 + u^2 u_{xx} = (u^2 u_x)_x$. Hence, for a quadratic diffusivity $D(u) = a + bu + cu^2$, one has $\bigl(D(u)u_x\bigr)_x = a\,u_{xx} + b\,\bigl(u_x^2 + u u_{xx}\bigr) + c\,\bigl(2u u_x^2 + u^2 u_{xx}\bigr)$, so a learned second-order transport part $\xi_{u_{xx}} u_{xx} + \xi_{u_x^2} u_x^2 + \xi_{u u_{xx}} u u_{xx} + \xi_{u u_x^2} u u_x^2 + \xi_{u^2 u_{xx}} u^2 u_{xx}$ has this flux form exactly when $\xi_{u_x^2} = \xi_{u u_{xx}}$ and $\xi_{u u_x^2} = 2\xi_{u^2 u_{xx}}$. Restricted to the two terms $u_x^2$ and $u u_{xx}$, flux form holds exactly when their coefficients are equal; in post-processing an isolated $u_x^2$ term is removed and the pair $u_x^2$, $u u_{xx}$ is kept when both are recovered.
 2. *Known form.* If $u$ solves $u_t = D u_{xx} + r u(1-u)$ exactly, then with the two-column library $\Theta = [u(1-u),\ u_{xx}]$ the least-squares problem $\min_\xi \|u_t - \Theta\xi\|_2$ has residual $0$ at $\xi = (r, D)$, and this minimizer is unique whenever the two columns are linearly independent on the sampled points. Parameters are thus estimated without solving the PDE; uncertainty is quantified by repeating the fit on random half-samples of the grid (subagging).
-
-## Depends on
-
-- [Fisher–KPP travelling waves](../../pattern-formation/fisher-kpp-travelling-waves/README.md)
 
 ## Expansion
 
-The product rule gives $(u u_x)_x = u_x^2 + u u_{xx}$. In part 2 the residual vector vanishes at $(r, D)$, and the normal equations $\Theta^\top\Theta \xi = \Theta^\top u_t$ have a unique solution exactly when $\Theta$ has full column rank. With few time samples or noisy data the estimated derivatives are biased, which is why pruning and repeated splitting are needed in practice.
+The product rule gives $(u u_x)_x = u_x^2 + u u_{xx}$ and $(u^2u_x)_x = 2uu_x^2 + u^2u_{xx}$. The regression needs only the form of the Fisher–KPP equation, not results about its [travelling waves](../../pattern-formation/fisher-kpp-travelling-waves/README.md). In part 2 the residual vector vanishes at $(r, D)$, and the normal equations $\Theta^\top\Theta \xi = \Theta^\top u_t$ have a unique solution exactly when $\Theta$ has full column rank. With few time samples or noisy data the estimated derivatives are biased, which is why pruning and repeated splitting are needed in practice.
 
 ## Sources
 

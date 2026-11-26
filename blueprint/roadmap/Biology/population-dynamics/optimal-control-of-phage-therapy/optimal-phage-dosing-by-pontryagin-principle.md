@@ -20,6 +20,10 @@ where $P_U$ is the Euclidean projection onto $U$.
 
 - [Phage therapy model with resistance and innate immunity](phage-therapy-model-with-resistance-and-innate-immunity.md)
 
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 The Hamiltonian $H=\lambda^\top f(x,u)+\theta_B(x_1+x_2)+\frac{\theta_u}2\|u\|_2^2$ depends on $u$ only through $q\lambda_3u_1+q\lambda_5u_2+\frac{\theta_u}2\|u\|^2$, because the controls enter only the phage equations, additively. Pontryagin's principle requires $u^*(t)$ to minimize $H$ over $U$; completing the square, this is minimizing $\frac{\theta_u}2\|u-\hat u\|^2$ over the convex set $U$, whose unique solution is the projection $P_U(\hat u)$. A negative costate $\lambda_3^*$ (more sensitive-targeting phage lowers future cost) therefore turns on $u_1$, and the simplex constraint forces trade-offs between the two phages when both are wanted. The source computes the optimal schedules by a projected gradient method.

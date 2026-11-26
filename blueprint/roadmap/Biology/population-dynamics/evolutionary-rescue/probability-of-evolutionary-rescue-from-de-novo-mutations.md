@@ -8,6 +8,14 @@ $$P_{\mathrm{rescue}} \approx 1 - \exp\Big(-\int_0^\infty \nu\lambda_0 N(t)\,p_{
 
 In particular, for a gene on $n$ plasmid copies with wild-type rates independent of $n$, rescue is more likely with copy number $n_1$ than with $n_2$ if and only if $n_1 p_{\mathrm{est}}(n_1) > n_2 p_{\mathrm{est}}(n_2)$.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 The number of successful mutations is Poisson with mean equal to the integrated intensity, and rescue fails exactly when this number is zero, so $P_{\mathrm{rescue}} = 1 - e^{-\text{mean}}$. The integral of the exponentially decaying wild-type population is $\bar N/(\mu_0 - \lambda_0)$. The comparison across copy numbers follows because $1 - e^{-x}$ is strictly increasing and every other factor is common. The approximation ignores mutants already present (standing variation), assumes at most one mutated copy per division, and treats establishment as independent of the declining wild type, which is accurate when $\bar N$ is large and mutants are rare.

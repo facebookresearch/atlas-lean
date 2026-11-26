@@ -6,9 +6,13 @@ $$S(T) = \sum_{x \text{ leaf}} \delta_T(x) = \sum_{v \in \mathring V(T)} \kappa_
 
 **Lemma (characterization of Sackin-minimal trees, due to Fischer and quoted in the source).** Let $T = (T_a, T_b)$ be bifurcating with $n \ge 2$ leaves, $n_a \ge n_b$, and $k_n = \lceil \log_2 n \rceil$. Then $T$ has minimum Sackin index among bifurcating trees with $n$ leaves if and only if $T_a$ and $T_b$ have minimum Sackin index and $n_a - n_b \le \min\{n - 2^{k_n - 1},\ 2^{k_n} - n\}$.
 
-**Proposition.** For every $n \ge 1$, every bifurcating tree with $n$ leaves that attains the minimum Colless index also attains the minimum Sackin index. The converse fails: some Sackin-minimal trees are not Colless-minimal, so the Colless index is the finer of the two as a criterion for "most balanced".
+**Proposition.** For every $n \ge 1$, every bifurcating tree with $n$ leaves that attains the [minimum Colless index](minimum-colless-index.md) also attains the minimum Sackin index. The converse fails: some Sackin-minimal trees are not Colless-minimal, so the Colless index is the finer of the two as a criterion for "most balanced".
 
 ## Depends on
+
+- [Minimum Colless index](minimum-colless-index.md)
+
+## Proof depends on
 
 - [Characterization of minimal Colless trees](characterization-of-minimal-colless-trees.md)
 

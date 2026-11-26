@@ -22,6 +22,14 @@ $$\kappa(\theta) = -\theta^3 + m\theta^2 + \gamma m\theta + a\gamma^3, \qquad m 
 
 4. $\kappa$ has a unique positive root $\theta_H > \theta_t$, and the system undergoes a Hopf bifurcation at $\theta = \theta_H$: for $\theta > \theta_H$ the coexistence state loses stability to oscillations.
 
+## Depends on
+
+This node has no prerequisites.
+
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 The characteristic polynomial of the Jacobian at $E_+$ is $\lambda^3 + P_2\lambda^2 + P_1\lambda + P_0$ with $P_2 = C^* + a + \gamma$, $P_1 = C^*\bigl(a + \gamma + \theta(1 - C^*)/(\theta + \gamma)\bigr)$ and $P_0 = \theta C^*(1 - C^*)$, all positive for $0 < C^* < 1$. By Routh–Hurwitz, stability reduces to $H(\theta) = P_2 P_1 - P_0 > 0$, and substituting $C^* = a\gamma/\theta$ gives $H(\theta) = \frac{a\gamma}{\theta^2(\theta + \gamma)}\kappa(\theta)$. Descartes' rule of signs gives $\kappa$ exactly one positive root, and since $\kappa$ has negative leading coefficient, $\kappa < 0$ beyond it. The derivative $dH/d\theta$ is $-a\gamma$ times a polynomial with positive coefficients over a positive denominator, so it never vanishes, and Liu's criterion ($H(\theta_H) = 0$, $H'(\theta_H) \ne 0$, $P_0 \ne 0$) yields the Hopf bifurcation. In the spatial model these kinetic oscillations generate hollow-ring, target and dispersed infection patterns; the hollow ring is the pattern associated with tumour eradication.

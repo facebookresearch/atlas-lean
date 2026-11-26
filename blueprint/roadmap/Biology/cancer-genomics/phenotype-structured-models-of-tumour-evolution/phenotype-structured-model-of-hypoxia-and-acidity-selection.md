@@ -4,9 +4,13 @@ Let $x\in[0,L]$ be the distance from a blood vessel at $x=0$ and let $y=(y_1,y_2
 
 $$\partial_t n=\beta_n\,\partial_{xx} n+\theta\,\Delta_y n+R\big(S_o,S_g,S_l,\rho,y\big)\,n,\qquad (t,x,y)\in(0,T]\times(0,L)\times(0,1)^2,$$
 
-with zero-flux conditions at $x=0$, $x=L$ and on $\partial[0,1]^2$, where $\beta_n>0$ is the cell motility, $\theta>0$ is the rate of spontaneous phenotypic changes, and
+with zero-flux conditions at $x=0$, $x=L$ and on $\partial[0,1]^2$, where $\beta_n>0$ is the cell motility and $\theta>0$ is the rate of spontaneous phenotypic changes. The cell density is
 
-$$\rho(t,x)=\int_{[0,1]^2}n\,dy,\qquad \mu_i(t,x)=\frac{1}{\rho}\int_{[0,1]^2}y_i\,n\,dy\quad(i=1,2).$$
+$$\rho(t,x)=\int_{[0,1]^2}n\,dy,$$
+
+and, at points where $\rho(t,x)>0$, the mean phenotypic traits are
+
+$$\mu_i(t,x)=\frac{1}{\rho(t,x)}\int_{[0,1]^2}y_i\,n\,dy\quad(i=1,2).$$
 
 The fitness landscape is
 
@@ -18,7 +22,11 @@ The abiotic concentrations of oxygen $S_o$, glucose $S_g$ and lactate $S_l$ sati
 
 $$\partial_t S_o=\beta_o\partial_{xx}S_o-\lambda_oS_o-\zeta_o p_o\rho,\qquad \partial_t S_g=\beta_g\partial_{xx}S_g-\lambda_gS_g-\zeta_g p_g\rho,\qquad \partial_t S_l=\beta_l\partial_{xx}S_l-\lambda_lS_l+\zeta_l p_g\rho,$$
 
-with Dirichlet data at the vessel ($S_o=\bar S_o$, $S_g=\bar S_g$, $S_l=\underline S_l$ at $x=0$), Dirichlet data for oxygen and glucose and a zero-flux condition for lactate at $x=L$. Lactate is produced in proportion to glycolytic proliferation, which couples acidity to hypoxia.
+with the boundary conditions, for all $t>0$,
+
+$$S_o(t,0)=\bar S_o,\quad S_g(t,0)=\bar S_g,\quad S_l(t,0)=\underline S_l,\qquad S_o(t,L)=\underline S_o,\quad S_g(t,L)=\underline S_g,\quad \partial_xS_l(t,L)=0,$$
+
+where the vessel values satisfy $\bar S_o>O_M$, $\bar S_g>0$ and $0<\underline S_l<L_m$, and the values far from the vessel satisfy $0<\underline S_o<O_m$ and $0<\underline S_g<\bar S_g$. Oxygen and glucose thus enter only through the vessel, which is well oxygenated, and the far end is hypoxic; lactate is flushed out only through the vessel, where its level is below the acidity threshold, and the zero-flux condition models its accumulation far from the vessel. Lactate is produced in proportion to glycolytic proliferation, which couples acidity to hypoxia.
 
 ## Expansion
 
