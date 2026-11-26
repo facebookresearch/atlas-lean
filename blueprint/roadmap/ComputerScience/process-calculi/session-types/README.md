@@ -4,6 +4,7 @@ Session types for the π-calculus: binary protocols and their duality, linear en
 
 - [Finite binary sessions](finite-binary-sessions/README.md)
 - [Linear endpoint typing for the π-calculus](linear-endpoint-typing-for-the-calculus/README.md)
+- [Multiparty session types: finite synchronous subject reduction and session fidelity](multiparty-session-types-finite-synchronous-subj/README.md)
 - [Subject reduction for endpoint typing](subject-reduction-for-endpoint-typing/README.md)
 - [Global progress for session typing with priorities](global-progress-for-session-typing-with-prioriti/README.md)
 - [Session typing up to protocol equivalence](session-typing-up-to-protocol-equivalence/README.md)

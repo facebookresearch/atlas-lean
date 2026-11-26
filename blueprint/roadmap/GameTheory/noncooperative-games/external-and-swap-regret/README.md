@@ -8,3 +8,8 @@
 - [Average Regret](average-regret.md)
 - [Expected Loss sub weighted Cumulative le external Regret](expected-loss-sub-weighted-cumulative-le.md)
 - [External Regret add round Const](external-regret-add-round-const.md)
+- [Cumulative loss](cumulative-loss.md)
+- [Expected loss](expected-loss.md)
+- [External regret](external-regret.md)
+- [Swap regret](swap-regret.md)
+- [External regret is at most swap regret](external-regret-le-swap-regret.md)

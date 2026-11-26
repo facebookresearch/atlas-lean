@@ -1,5 +1,7 @@
-# Is Maximin Strategy
+# Maximin strategy of a zero-sum matrix game
 
-`p` is an optimal (maximin) mixed strategy of the row player in the zero-sum matrix game `A`
-(row player receives `p ⬝ᵥ (A *ᵥ q)`): the payoff `p` guarantees against every column strategy
-equals the maximin value.
+Let $A$ be an $m \times n$ real matrix, read as the zero-sum game in which the row player, playing the mixed strategy $p \in \Delta_m$ against the column player's $q \in \Delta_n$, receives $p^{\mathsf T} A q$ and the column player pays it; $\Delta_k$ is the set of probability vectors in $\mathbb{R}^k$, which is empty when $k = 0$. A row strategy $p \in \Delta_m$ is maximin when
+
+$$\inf_{q \in \Delta_n} p^{\mathsf T} A q = \sup_{p' \in \Delta_m} \inf_{q \in \Delta_n} p'^{\mathsf T} A q.$$
+
+Infima and suprema are those of real numbers, totalised: over an empty or unbounded set, $\inf$ and $\sup$ take the value $0$. For $n \ge 1$ the inner infimum is over a nonempty bounded set, and it is the least payoff $p$ guarantees against every column strategy; the condition says $p$ guarantees the maximin value. For $n = 0$ the column player has no strategy, both sides are $0$, and every row strategy is maximin, with no opponent strategy attaining the bound.

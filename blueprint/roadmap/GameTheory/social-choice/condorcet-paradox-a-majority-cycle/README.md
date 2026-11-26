@@ -24,3 +24,6 @@
 - [Condorcet cycle](condorcet-cycle.md)
 - [Exists majority Prefers not transitive](exists-majority-prefers-not-transitive.md)
 - [Exists no condorcet Winner](exists-no-condorcet-winner.md)
+- [Majority cycle](is-majority-cycle.md)
+- [Condorcet profile](condorcet-profile.md)
+- [Condorcet paradox](exists-is-majority-cycle.md)

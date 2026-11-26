@@ -16,3 +16,7 @@
 - [Leftmost is Strategyproof](leftmost-is-strategyproof.md)
 - [Leftmost is Approx Max Cost two](leftmost-is-approx-max-cost-two.md)
 - [Two le of is Strategyproof is Approx Max Cost](two-le-of-is-strategyproof-is-approx-max.md)
+- [Group strategyproof facility location](is-group-strategyproof.md)
+- [Lower median of a profile](median.md)
+- [The median mechanism is group strategyproof](median-is-group-strategyproof.md)
+- [The median mechanism is strategyproof](median-is-strategyproof.md)

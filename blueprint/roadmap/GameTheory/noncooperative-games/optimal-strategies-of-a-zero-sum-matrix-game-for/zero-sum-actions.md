@@ -1,4 +1,3 @@
-# Zero Sum Actions
+# Action sets of a two-player zero-sum game
 
-Action sets of the two-player zero-sum game: player `false` (row) plays `Fin m`,
-player `true` (column) plays `Fin n`.
+For natural numbers $m$ and $n$, the two-player game encoding an $m \times n$ zero-sum matrix game has players $\mathsf{false}$ (row) and $\mathsf{true}$ (column); the row player chooses an action in $\{0, \ldots, m-1\}$ and the column player one in $\{0, \ldots, n-1\}$.

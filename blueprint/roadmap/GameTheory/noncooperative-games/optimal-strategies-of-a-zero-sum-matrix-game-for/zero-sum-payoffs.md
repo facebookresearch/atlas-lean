@@ -1,4 +1,3 @@
-# Zero Sum Payoffs
+# Payoffs of the two-player encoding of a zero-sum matrix game
 
-The two-player payoff encoding of a zero-sum matrix game: the row player
-(`false`) receives `A (a false) (a true)`, the column player (`true`) pays it.
+For an $m \times n$ real matrix $A$ and a pure profile $a$ of the [two-player game](zero-sum-actions.md), the row player receives $A_{a_{\mathrm{row}}, a_{\mathrm{col}}}$ and the column player receives $-A_{a_{\mathrm{row}}, a_{\mathrm{col}}}$.

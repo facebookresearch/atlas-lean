@@ -16,3 +16,4 @@
 
 - [Value bellman](value-bellman.md)
 - [One Shot Incentives](one-shot-incentives.md)
+- [The one-shot incentive inequalities of grim trigger, in closed form](one-shot-incentives-iff.md)

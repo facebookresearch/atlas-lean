@@ -13,3 +13,6 @@
 - [Agent dev agree](agent-dev-agree.md)
 - [Cond Interim congr](cond-interim-congr.md)
 - [Is Bayes Nash iff](is-bayes-nash-iff.md)
+- [Bayesian game](bayesian-game.md)
+- [Bayesian Nash equilibrium](is-bayes-nash.md)
+- [Bayesian equilibrium as Nash equilibrium of the agent form](is-bayes-nash-iff-is-nash-agent-form.md)
