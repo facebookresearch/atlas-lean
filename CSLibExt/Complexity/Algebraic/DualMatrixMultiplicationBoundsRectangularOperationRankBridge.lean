@@ -377,16 +377,20 @@ private structure Tape (I : Type) (F : Type u) [Field F] where
 private def wires {F : Type u} [Field F] {I : Type} (p : Tape I F) : Set (Value I F) :=
   {f | ∃ a : ArithmeticOperand F I p.size, ∀ x, a.evaluate x (fun j => p.value j x) = f x}
 
-private theorem wires_node {F : Type u} [Field F] {I : Type} (p : Tape I F) {i : ℕ} (hi : i < p.size) :
+private theorem wires_node {F : Type u} [Field F] {I : Type} (p : Tape I F) {i : ℕ}
+    (hi : i < p.size) :
     p.value i ∈ wires p := ⟨.node ⟨i, hi⟩, fun _ => rfl⟩
 
-private theorem wires_const {F : Type u} [Field F] {I : Type} (p : Tape I F) (a : F) : (fun _ => a) ∈ wires p :=
+private theorem wires_const {F : Type u} [Field F] {I : Type} (p : Tape I F) (a : F) :
+    (fun _ => a) ∈ wires p :=
   ⟨.constant a, fun _ => rfl⟩
 
-private theorem wires_input {F : Type u} [Field F] {I : Type} (p : Tape I F) (i : I) : (fun x => x i) ∈ wires p :=
+private theorem wires_input {F : Type u} [Field F] {I : Type} (p : Tape I F) (i : I) :
+    (fun x => x i) ∈ wires p :=
   ⟨.input i, fun _ => rfl⟩
 
-private theorem append_gate {F : Type u} [Field F] {I : Type} (p : Tape I F) (g : ArithmeticGate F I p.size) (f : Value I F)
+private theorem append_gate {F : Type u} [Field F] {I : Type} (p : Tape I F)
+    (g : ArithmeticGate F I p.size) (f : Value I F)
     (hg : ∀ x, g.evaluate x (fun j => p.value j x) = f x) :
     ∃ q : Tape I F, q.size = p.size + 1 ∧ wires p ⊆ wires q ∧ f ∈ wires q := by
   let v (i : ℕ) := if i = p.size then f else p.value i
@@ -411,11 +415,13 @@ private theorem append_gate {F : Type u} [Field F] {I : Type} (p : Tape I F) (g 
       exact (congrFun (old i.isLt) x).trans (ha x)
   · simpa only [q, last] using wires_node q (i := p.size) (Nat.lt_succ_self _)
 
-private def Builds {F : Type u} [Field F] {I : Type} (s : Set (Value I F)) (n : ℕ) (t : Set (Value I F)) : Prop :=
+private def Builds {F : Type u} [Field F] {I : Type} (s : Set (Value I F)) (n : ℕ)
+    (t : Set (Value I F)) : Prop :=
   ∀ p : Tape I F, s ⊆ wires p → ∃ q : Tape I F,
     q.size ≤ p.size + n ∧ wires p ⊆ wires q ∧ t ⊆ wires q
 
-private theorem free {F : Type u} [Field F] {I : Type} {s t : Set (Value I F)} (h : t ⊆ s) : Builds s 0 t :=
+private theorem free {F : Type u} [Field F] {I : Type} {s t : Set (Value I F)}
+    (h : t ⊆ s) : Builds s 0 t :=
   fun p hp => ⟨p, by simp, Set.Subset.rfl, h.trans hp⟩
 
 private theorem weaken {F : Type u} [Field F] {I : Type} {s t t' : Set (Value I F)} {n m : ℕ}
@@ -438,7 +444,8 @@ private theorem both {F : Type u} [Field F] {I : Type} {s t v : Set (Value I F)}
   obtain ⟨r, hr, hqr, hv⟩ := b q (hp.trans hpq)
   exact ⟨r, by omega, hpq.trans hqr, Set.union_subset (ht.trans hqr) hv⟩
 
-private theorem family {F : Type u} [Field F] {I : Type} {J : Type} [Fintype J] {s : Set (Value I F)}
+private theorem family {F : Type u} [Field F] {I : Type} {J : Type} [Fintype J]
+    {s : Set (Value I F)}
     {t : J → Set (Value I F)} {n : J → ℕ} (h : ∀ j, Builds s (n j) (t j)) :
     Builds s (∑ j, n j) (⋃ j, t j) := by
   classical
@@ -458,7 +465,8 @@ private def Op.act {F : Type u} [Field F] {I : Type} (op : Op) (a b : Value I F)
   | .sub => a - b
   | .mul => a * b
 
-private theorem one_gate {F : Type u} [Field F] {I : Type} {s : Set (Value I F)} (op : Op) {a b : Value I F}
+private theorem one_gate {F : Type u} [Field F] {I : Type} {s : Set (Value I F)} (op : Op)
+    {a b : Value I F}
     (ha : a ∈ s) (hb : b ∈ s) : Builds s 1 {op.act a b} := by
   intro p hp
   obtain ⟨v, hv⟩ := hp ha
