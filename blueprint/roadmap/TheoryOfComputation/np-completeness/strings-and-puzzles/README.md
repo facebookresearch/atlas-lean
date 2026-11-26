@@ -2,8 +2,14 @@
 
 String problems (closest string, longest common subsequence, shortest common supersequence) and puzzles (Sudoku, Nonogram, Akari, Minesweeper, Latin square completion).
 
+- [AC-matching](ac-matching/README.md)
 - [Akari](akari/README.md)
+- [All or Nothing puzzle](all-or-nothing-puzzle/README.md)
+- [Battleships puzzle](battleships-puzzle/README.md)
 - [Bounded Post correspondence problem](bounded-post-correspondence-problem/README.md)
+- [Bus Out](bus-out/README.md)
+- [Choco Banana](choco-banana/README.md)
+- [Circular consecutive sets](circular-consecutive-sets/README.md)
 - [Closest string](closest-string/README.md)
 - [Distinguishing string selection](distinguishing-string-selection/README.md)
 - [Domino tatami covering](domino-tatami-covering/README.md)
@@ -20,6 +26,12 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Heyawake](heyawake/README.md)
 - [Hotaru Beam](hotaru-beam/README.md)
 - [Incomplete perfect phylogeny haplotyping](incomplete-perfect-phylogeny-haplotyping/README.md)
+- [Consecutive sets](consecutive-sets/README.md)
+- [Consensus patterns](consensus-patterns/README.md)
+- [Corral (Bag)](corral-bag/README.md)
+- [Country Road](country-road/README.md)
+- [Cryptarithm puzzle](cryptarithm-puzzle/README.md)
+- [Deltoidal trihexagonal Slither Link](deltoidal-trihexagonal-slither-link/README.md)
 - [Iterated shuffle membership](iterated-shuffle-membership/README.md)
 - [Lambek calculus derivability](lambek-calculus-derivability/README.md)
 - [Latin square completion](latin-square-completion/README.md)
