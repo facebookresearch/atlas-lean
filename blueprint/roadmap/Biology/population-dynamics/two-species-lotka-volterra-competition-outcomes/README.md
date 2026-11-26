@@ -6,7 +6,7 @@
 
 ## Params
 
-- [Field](field.md)
+- [The competition vector field](field.md)
 - [Forward solutions of the competition equations](is-solution.md)
 - [The competition equations as a Lotka–Volterra system](is-solution-iff-is-lvsolution.md)
 - [Interior Eq](interior-eq.md)
