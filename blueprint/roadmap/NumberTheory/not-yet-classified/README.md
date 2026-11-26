@@ -4,6 +4,7 @@ Topics added since this subject's fields were last revised.
 
 - [Adelic Lift](adelic-lift/README.md)
 - [Adelic Periodization](adelic-periodization/README.md)
+- [Component Group](component-group/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Fundamental Domain Exact Volume](fundamental-domain-exact-volume/README.md)
 - [Hecke Operator](hecke-operator/README.md)
@@ -13,6 +14,7 @@ Topics added since this subject's fields were last revised.
 - [Local Level One](local-level-one/README.md)
 - [Period Map Hecke](period-map-hecke/README.md)
 - [Projective Northcott](projective-northcott/README.md)
+- [Ribbon Component Group](ribbon-component-group/README.md)
 - [Root Height Bound](root-height-bound/README.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
