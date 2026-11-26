@@ -21338,6 +21338,8 @@
 "Cslib.Crypto.Birthday.div_one_add_le_collisionProb": "c67840392d26b3a0",
 "Cslib.Crypto.Birthday.half_le_collisionProb": "fef1d5215b6146b6",
 "Cslib.Crypto.Birthday.one_sub_exp_le_collisionProb": "c0c2fa546f6f2038",
+"Cslib.Crypto.BoundedUniversalHashing.IsBoundedUniversal": "a701db9d2a7de158",
+"Cslib.Crypto.BoundedUniversalHashing.collisionProbability": "6434d0fd8860c874",
 "Cslib.Crypto.EncryptThenMac.SimState": "96c77e3e9234bc2f",
 "Cslib.Crypto.EncryptThenMac.TblInv": "9447f3828e1bf0da",
 "Cslib.Crypto.EncryptThenMac.apply_true_bind_le": "ad812955c5991739",
