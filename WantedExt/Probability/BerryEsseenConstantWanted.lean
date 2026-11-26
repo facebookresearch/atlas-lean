@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.BerryEsseenConstant
+public import MathlibExt.Probability.BerryEsseenLeftCDF
 public import Batteries.Util.ProofWanted
 
 /-!
@@ -201,24 +202,6 @@ The actual subclass consists of centered variance-one two-point laws. The full
 Schulz primary proof has not been acquired or verified in this lane. -/
 def schulz2016BernoulliOptimum : Prop := bernoulliValue = esseenConstant
 
-/-- **Statement of the Kolmogorov distance via left-continuous distribution functions.** This is
-the proposition that for every probability measure $\mu$ on $\mathbb{R}$ with mean $0$, variance
-$1$ and finite third absolute moment and every integer $n \ge 1$, if $S_n = X_1 + \dots + X_n$ for
-independent random variables $X_1, X_2, \dots$ each with law $\mu$, then
-$$
-\sup_{x \in \mathbb{R}} \bigl|P(S_n/\sqrt{n} < x) - \Phi(x)\bigr|
-= \sup_{x \in \mathbb{R}} \bigl|P(S_n/\sqrt{n} \le x) - \Phi(x)\bigr|,
-$$
-where $\Phi$ is the standard normal distribution function.
-
-Source: the right-CDF catalogue definition and retained Shevtsova2011
-lines 104-108, which explicitly use a left-continuous CDF. This probability
-bridge is requested, not inferred by replacing strict with non-strict events. -/
-def leftRightCDFErrorEquivalence : Prop :=
-  ∀ μ : Measure ℝ, IsStandardizedLaw μ → ∀ n : ℕ+,
-    sSup (Set.range (fun x : ℝ ↦
-      |(normalizedLaw μ n).real (Set.Iio x) - normalCDF x|)) = kolmogorovError μ n
-
 /-- **Zolotarev's upper bound for the Berry–Esseen constant.** The Berry–Esseen constant $C_0$ is
 at most $0.82$. Here $C_0$ is the infimum of the real numbers $C$ such that for every
 probability measure $\mu$ on $\mathbb{R}$ with mean $0$, variance $1$ and finite third absolute
@@ -378,18 +361,5 @@ $C_B = (\sqrt{10} + 3)/(6\sqrt{2\pi})$.
 
 Source: catalogue C19a, Bernoulli/binomial comment, Schulz2016. -/
 theorem_wanted schulz2016BernoulliOptimum_holds : schulz2016BernoulliOptimum
-
-/-- **Kolmogorov distance via left-continuous distribution functions.** Let $\mu$ be a probability
-measure on $\mathbb{R}$ with mean $0$, variance $1$ and finite third absolute moment, let $n \ge 1$
-be an integer, and let $S_n = X_1 + \dots + X_n$ for independent random variables $X_1, X_2, \dots$
-each with law $\mu$. Then
-$$
-\sup_{x \in \mathbb{R}} \bigl|P(S_n/\sqrt{n} < x) - \Phi(x)\bigr|
-= \sup_{x \in \mathbb{R}} \bigl|P(S_n/\sqrt{n} \le x) - \Phi(x)\bigr|,
-$$
-where $\Phi$ is the standard normal distribution function.
-
-Source: catalogue C19a right CDF and Shevtsova2011's explicit left convention. -/
-theorem_wanted leftRightCDFErrorEquivalence_holds : leftRightCDFErrorEquivalence
 
 end BerryEsseenWanted
