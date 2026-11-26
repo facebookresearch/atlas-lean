@@ -1,6 +1,5 @@
 # Multicolour Ramsey numbers
 
-- [Monochromatic triangle in an edge colouring](has-mono-triangle.md)
 - [Monochromatic clique of given size in an edge colouring](has-mono-clique.md)
 - [The multicolour Ramsey number $R(3, 3, n)$](ramsey-three-three.md)
 - [Erdős Problem 553 ($R(3, 3, n)$ versus $R(3, n)$)](ramsey-three-three-ratio-tends-to-infini.md)

@@ -1,7 +1,6 @@
 # Size Ramsey numbers
 
 - [Colour class of an edge colouring](colour-class.md)
-- [Graphs arrowing a path](arrows-path.md)
 - [Size Ramsey numbers of paths grow superlinearly (Oberwolfach question, part (a))](size-ramsey-path-superlinear.md)
 - [Size Ramsey numbers of paths are subquadratic (Oberwolfach question, part (b))](size-ramsey-path-subquadratic.md)
 - [Size Ramsey numbers of paths do not grow superlinearly](size-ramsey-path-superlinear-refuted.md)
