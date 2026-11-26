@@ -21,7 +21,7 @@ for the unique $i$ such that the $L$-algebra map $\sigma \otimes 1 \colon K \oti
 extending $\sigma$ factors through $q_i$. For $L = \mathbb{Q}_p$: if $\psi(r_{\mathbb{Q}_p}(x)) = x^{-n}$ near $1$,
 then every $w_\sigma$ is $n$; for the cyclotomic character, $K = \mathbb{Q}_p$, whose weight is $1$, this gives $n = 1$.
 
-A good expansion has pages for the two steps of Conrad's proof that no page states: that restricting a
+A good expansion has pages for the two steps of Conrad's proof: that restricting a
 Hodge–Tate representation of $G_L$ to $G_{F'}$ for a finite extension $F'/L$ keeps it Hodge–Tate with the same
 Hodge–Tate numbers (Brinon–Conrad, Theorem 2.4.6, p. 20: $F' \otimes_L D_L(W) \cong D_{F'}(W)$ as graded
 $F'$-vector spaces); and the Galois-theoretic description of the embeddings $\sigma$ whose $L$-algebra map

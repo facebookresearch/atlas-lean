@@ -10,7 +10,7 @@ The result is Tate's. Conrad deduces the equivalence from Serre's account after 
 representation $K$ is semisimple, as one sees after extending scalars to $\overline{\mathbb{Q}}_p$.
 
 A good expansion has pages for the two descent steps from $G_F$, for a finite Galois extension $F$ of
-$\mathbb{Q}_p$ containing $K$ and $L$, to $G_L$, which no page states:
+$\mathbb{Q}_p$ containing $K$ and $L$, to $G_L$:
 
 - for locally algebraic implies Hodge–Tate: a $C_L$-representation of $G_L$ is Hodge–Tate if and only if it is
   Hodge–Tate as a representation of $G_F$ (Brinon–Conrad, Theorem 2.4.6, p. 20);
