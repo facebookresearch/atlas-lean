@@ -32298,6 +32298,7 @@
 "FiberBundle.extend_model_space": "bc08901f18e6a179",
 "FiberBundle.mdifferentiableAt_extend_model_space": "6f407e5a38961c18",
 "FibonacciNormEquation.fibonacci_norm_eq_one_or_neg_one_iff": "78b7f543e35d1d9a",
+"Field.exists_finrank_eq_pow_and_fieldRange_eq_iterateFrobenius_of_isPurelyInseparable": "afeca78bfb478e5c",
 "Fin.append_comp_swap_castAdd": "3241a18639054081",
 "Fin.append_comp_swap_natAdd": "2bf48c875426b507",
 "Fin.coe_finRotate_pow": "b4d0532c2e3c2e7b",
