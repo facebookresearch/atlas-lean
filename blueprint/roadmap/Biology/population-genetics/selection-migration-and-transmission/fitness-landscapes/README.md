@@ -6,3 +6,4 @@
 - [Fitness landscapes as mathematical objects](fitness-landscapes-as-explicit-mathematical-obje.md)
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
+- [Reciprocal sign epistasis lower bound on the number of fitness peaks](reciprocal-sign-epistasis-lower-bound-on-the-number-of-fitness-peaks.md)

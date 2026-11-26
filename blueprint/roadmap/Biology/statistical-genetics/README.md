@@ -25,3 +25,8 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Stratified LD-score regression](stratified-ld-score-regression/README.md)
 - [Testing LD consistency of association statistics](testing-ld-consistency-of-association-statistics/README.md)
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
+- [Information-theoretic detection of genetic interactions](information-theoretic-detection-of-genetic-interactions/README.md)
+- [Positional burrows wheeler transform](positional-burrows-wheeler-transform/README.md)
+- [Second-order group knockoffs](second-order-group-knockoffs/README.md)
+- [Significant closed connected subgraphs in bacterial GWAS](significant-closed-connected-subgraphs-in-bacterial-gwas/README.md)
+- [State-space reduction of inheritance HMMs](state-space-reduction-of-inheritance-hmms/README.md)
