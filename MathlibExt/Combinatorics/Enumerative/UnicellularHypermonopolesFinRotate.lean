@@ -264,13 +264,13 @@ private theorem descPochhammer_eq_stirlingFirst_sum (m : ℕ) :
     descPochhammer ℚ m = ∑ k ∈ Finset.range (m + 1),
       C ((-1 : ℚ) ^ (m + k) * Nat.stirlingFirst m k) * X ^ k := by
   have h : descPochhammer ℚ m = C ((-1 : ℚ) ^ m) * (ascPochhammer ℚ m).comp (-X) := by
-    induction m with
-    | zero => simp
-    | succ m ih =>
-      rw [descPochhammer_succ_right, ascPochhammer_succ_right, mul_comp, add_comp, X_comp,
-        natCast_comp, pow_succ, map_mul, ih]
-      simp only [map_neg, map_one]
-      ring
+    have he := ascPochhammer_eval_neg_eq_descPochhammer ℚ[X] X m
+    rw [← ascPochhammer_map (C : ℚ →+* ℚ[X]), ← descPochhammer_map (C : ℚ →+* ℚ[X]),
+      eval_map, eval_map] at he
+    change (ascPochhammer ℚ m).comp (-X) = (-1 : ℚ[X]) ^ m * (descPochhammer ℚ m).comp X at he
+    rw [comp_X] at he
+    rw [he, map_pow, map_neg, map_one, ← mul_assoc, ← mul_pow]
+    simp
   rw [h, ← Nat.sum_stirlingFirst_mul_X_pow, ← coe_compRingHom_apply, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   rw [coe_compRingHom_apply, mul_X_pow_comp, natCast_comp, ← neg_one_mul (X : ℚ[X]),
