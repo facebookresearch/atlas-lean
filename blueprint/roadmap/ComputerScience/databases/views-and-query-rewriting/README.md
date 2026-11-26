@@ -1,0 +1,10 @@
+# Views and query rewriting
+
+- [Rewritings of conjunctive queries using views](rewritings-of-conjunctive-queries-using-views.md)
+- [A query has a rewriting using a view exactly when its Boolean projection is contained in the view's](existence-of-a-rewriting-using-a-view.md)
+- [Complexity of deciding whether a rewriting using views exists](complexity-of-deciding-whether-a-rewriting-exists.md)
+- [Locally minimal rewritings reuse the query's atoms and variables](locally-minimal-rewritings-reuse-the-query-atoms.md)
+- [Locally minimal complete rewritings have at most as many atoms as the query](complete-rewritings-have-at-most-as-many-atoms-as-the-query.md)
+- [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
+- [Complete rewriting is NP-complete even without repeated relation names](complete-rewriting-is-np-complete-without-repeated-relations.md)
+- [Complete rewriting of unions of conjunctive queries is NP-complete](complete-rewriting-of-ucqs-is-np-complete.md)
