@@ -9,7 +9,6 @@ Operational and denotational semantics of programming languages and correctness 
 - [Dataflow analysis by Kleene iteration](dataflow-analysis-by-kleene-iteration/README.md)
 - [Liveness and dead-assignment elimination for IMP](liveness-and-dead-assignment-elimination-for-imp/README.md)
 - [Nominal sets](nominal-sets/README.md)
-- [Normal forms of the untyped lambda calculus](normal-forms-of-the-untyped-lambda-calculus/README.md)
 - [Operational semantics of IMP](operational-semantics-of-imp/README.md)
 - [Compiling IMP to a stack machine](compiling-imp-to-a-stack-machine/README.md)
 - [Denotational semantics of IMP](denotational-semantics-of-imp/README.md)

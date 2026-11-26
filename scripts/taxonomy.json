@@ -1751,7 +1751,6 @@
   "CSLibExt/Languages/LambdaCalculus/HindleyMilner/Completeness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Hindley–Milner type inference"},
   "CSLibExt/Languages/LambdaCalculus/HindleyMilner/Typing": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Hindley–Milner type inference"},
   "CSLibExt/Languages/LambdaCalculus/LocallyNameless/Untyped/GraphModel": {"to": "ComputerScience/programming-language-semantics", "title": "Models of the untyped lambda calculus"},
-  "CSLibExt/Languages/LambdaCalculus/LocallyNameless/Untyped/NormalForm": {"to": "ComputerScience/programming-language-semantics", "title": "Normal forms of the untyped lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/Named/Untyped/LocallyNamelessBridge": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Named and locally nameless terms"},
   "CSLibExt/Languages/LambdaCalculus/PCF/Adequacy": {"to": "ComputerScience/programming-language-semantics", "title": "PCF and computational adequacy"},
   "CSLibExt/Languages/LambdaCalculus/PCF/BigStep": {"to": "ComputerScience/programming-language-semantics", "title": "PCF and computational adequacy"},
