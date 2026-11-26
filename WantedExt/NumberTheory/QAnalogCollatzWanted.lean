@@ -15,7 +15,6 @@ public import MathlibExt.NumberTheory.QCollatzConjugacy
 public import MathlibExt.NumberTheory.QCollatzParityFlip
 public import MathlibExt.NumberTheory.QCollatzPerturbation
 public import MathlibExt.NumberTheory.QAnalogCollatzQCollatzFixedPointsAndTwoCycle
-public import MathlibExt.NumberTheory.QAnalogCollatzQCollatzConjugateTwoAdicCollatz
 
 namespace MetaMathlibExt
 
