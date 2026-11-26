@@ -80,13 +80,13 @@ section RealFunctionField
 
 open Polynomial
 
-/-- The places of `ℝ(X)` at points have residue degree `1`, so they are `ℝ`-rational. -/
+/-- **Points of `ℝ(X)` as rational places.** The places of `ℝ(X)` at points have residue degree
+`1`, so they are `ℝ`-rational. -/
 private def pointPlace (a : ℝ) : RationalPlace ℝ (RatFunc ℝ) :=
   ⟨RationalFunctionField.placeOfPoint ℝ a,
-    (Algebra.finrank_eq_one_iff_bijective_algebraMap.mp
-      (RationalFunctionField.deg_placeOfPoint ℝ a)).2⟩
+    (Place.isRational_iff_deg_eq_one _).mpr (RationalFunctionField.deg_placeOfPoint ℝ a)⟩
 
--- Two points of `ℝ(X)` glued to a node.
+-- A single node, made of the rational places of `ℝ(X)` at `0` and at `1`.
 example (c : ℝˣ) :
     GluedPic0.nodeUnit {(pointPlace 0, pointPlace 1)} (fun _ => Additive.ofMul c) = 0 :=
   GluedPic0.nodeUnit_const _ c
@@ -104,17 +104,12 @@ private theorem irreducible_X_sq_add_one : Irreducible (X ^ 2 + 1 : ℝ[X]) := b
   rw [IsRoot, eval_add, eval_pow, eval_X, eval_one] at hx
   nlinarith [sq_nonneg x]
 
--- Boundary: the place of `ℝ(X)` at `X ^ 2 + 1` has residue degree `2`, so `ℝ` does not map onto
--- its residue field: it is not a `RationalPlace` and cannot be a node.
-example : ¬ Function.Surjective
-    (algebraMap ℝ (RationalFunctionField.finitePlace ℝ irreducible_X_sq_add_one).ResidueField) :=
-  fun hs => by
-    have h := Algebra.finrank_eq_one_iff_bijective_algebraMap.mpr
-      ⟨(algebraMap ℝ _).injective, hs⟩
-    have hdeg := RationalFunctionField.deg_finitePlace ℝ irreducible_X_sq_add_one
-    rw [natDegree_X_sq_add_one] at hdeg
-    change (RationalFunctionField.finitePlace ℝ irreducible_X_sq_add_one).deg = 1 at h
-    omega
+-- Boundary: the place of `ℝ(X)` at `X ^ 2 + 1` has residue degree `2`, so it is not rational:
+-- it is not a `RationalPlace` and cannot be a node.
+example : ¬ (RationalFunctionField.finitePlace ℝ irreducible_X_sq_add_one).IsRational := by
+  rw [Place.isRational_iff_deg_eq_one, RationalFunctionField.deg_finitePlace,
+    natDegree_X_sq_add_one]
+  decide
 
 end RealFunctionField
 
