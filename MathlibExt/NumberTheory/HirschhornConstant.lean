@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.BinomialProductAsymptotics
-import all MathlibExt.NumberTheory.CentralBinomialProductAsymptotics
+import MathlibExt.NumberTheory.CentralBinomialProductAsymptotics
 
 /-!
 # Hirschhorn's constant
@@ -22,7 +22,7 @@ the log factorial and the weighted sum of logarithms, then use their Euler–Mac
 namespace MetaMathlibExt
 
 open Filter Topology
-open tendsto_prod_centralBinom_catalan_div
+open LogFactorialExpansion
 
 namespace tendsto_hirschhorn_constant
 
