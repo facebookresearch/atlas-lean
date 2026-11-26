@@ -178,3 +178,18 @@ example :
   · exact ⟨Equiv.swap 0 1, by decide⟩
 
 end MetaMathlibExt.boolFunClassCount_varPerm_unate_le
+
+-- With no variables, both constant functions are non-degenerate.
+example :
+    Nat.card {f : (Fin 0 → Bool) → Bool // IsNondegenerateBoolFun f ∧ IsUnateBoolFun f} = 2 := by
+  rw [(card_unate_boolFun_relations 0).1, pow_zero, one_mul]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable, the identity is the only balanced monotone function.
+example : Nat.card {f : (Fin 1 → Bool) → Bool //
+    IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ 1} ≤ 2 := by
+  refine (card_unate_boolFun_relations 1).2.2.2.trans ?_
+  rw [Nat.card_eq_fintype_card]
+  decide

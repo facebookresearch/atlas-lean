@@ -33,14 +33,14 @@ Check that each added or changed module is in the correct top-level library.
 - `MathlibExt` contains reusable, completed mathematics. It must not contain
   proof holes, custom axioms, or imports from another project library.
 - `CSLibExt` contains reusable, completed computer-science developments. It
-  may import `MathlibExt`, but must not import `PhyslibExt`, `WantedExt`, or
-  any test library.
+  may import `MathlibExt`, but must not import `PhyslibExt`, `Domains`,
+  `WantedExt`, or any test library.
 - `PhyslibExt` contains reusable, completed physics developments that extend
   Physlib. It may import `MathlibExt` and `CSLibExt`, but must not import
-  `WantedExt` or any test library. It follows Physlib's conventions: files are
-  organized by physics, every definition has a docstring, module documentation
-  uses Physlib's numbered headings, and `theorem` is reserved for results that
-  are well known in the physics literature (`lemma` otherwise).
+  `Domains`, `WantedExt`, or any test library. It follows Physlib's conventions:
+  files are organized by physics, every definition has a docstring, module
+  documentation uses Physlib's numbered headings, and `theorem` is reserved for
+  results that are well known in the physics literature (`lemma` otherwise).
 - `Domains` contains proved models specific to an application domain. It may import
   `MathlibExt`, `CSLibExt`, and `PhyslibExt`, never `WantedExt` or tests. None of
   those three foundation libraries may import `Domains`. Classify by the public
@@ -48,8 +48,10 @@ Check that each added or changed module is in the correct top-level library.
 - `DomainsTest` mirrors `Domains` and may import it and its three foundations.
 - `WantedExt` contains established results with deferred Lean work, expressed
   with direct `theorem_wanted` or `def_wanted` declarations. Each such module
-  directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt` and
-  `CSLibExt`.
+  directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt`,
+  `CSLibExt`, `PhyslibExt`, and `Domains`, but never tests. Reuse the proved
+  models' definitions when stating deferred results. No proved library or test
+  library may import `WantedExt`.
 - `MathlibExtTest` contains tests, benchmarks, and diagnostics for public
   `MathlibExt` APIs. Production libraries must not import it.
 - `CSLibExtTest` contains tests and diagnostics for public `CSLibExt` APIs. It
@@ -78,13 +80,22 @@ Check that each added or changed module is in the correct top-level library.
   encodings or thin wrappers.
 - Check imports, namespaces, argument order, implicit parameters, simp behavior,
   typeclass inference, and proof dependence on unstable implementation details.
+- Check every dependency declaration you suggest against the pinned versions
+  (`lean-toolchain`, `lake-manifest.json`), not against its use in this
+  repository, and leave out any you cannot check. Never ask an author to switch
+  to a deprecated declaration; in `@[deprecated] alias old := new`, `old` is
+  the deprecated one. For example, in Mathlib v4.36.0,
+  `eLpNorm_one_eq_lintegral_eNorm` is current and
+  `eLpNorm_one_eq_lintegral_enorm` is its deprecated alias.
 - Credit primary mathematical sources and copied or closely adapted
   formalizations.
 
 ## Tests and repository integrity
 
-- Require focused `MathlibExtTest` coverage for nontrivial reusable definitions,
-  instances, notation, tactics, executable behavior, or meaningful edge cases.
+- Require focused coverage in the proved library's matching test library
+  (`MathlibExtTest`, `CSLibExtTest`, `PhyslibExtTest`, or `DomainsTest`) for
+  nontrivial reusable definitions, instances, notation, tactics, executable
+  behavior, or meaningful edge cases.
 - Reject `sorry`, `sorryAx`, `admit`, project-declared axioms, `native_decide`,
   unsafe escapes, forbidden imports, unrelated changes, and irreproducible
   provenance in all root libraries.
