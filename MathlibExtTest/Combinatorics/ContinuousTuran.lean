@@ -46,6 +46,25 @@ example (P : Set (ℝ × ℝ)) {m : ℝ} (hm : m ≤ 0) : opx m P = 0 := by
 
 end MetaMathlibExt.opx_mono_left
 
+namespace MetaMathlibExt.opx_mono_of_containsPattern
+
+-- A larger pattern is harder to avoid: a subpattern has the smaller continuous Turán number.
+example (n : ℝ) {P Q : Set (ℝ × ℝ)} (hPQ : P ⊆ Q) : opx n P ≤ opx n Q :=
+  opx_mono_of_containsPattern n
+    ⟨id, id, fun _ _ _ _ _ => le_rfl, fun _ _ _ _ _ => le_rfl, fun _ hp => hPQ hp⟩
+
+-- Stretching a pattern by a factor of two can only increase its continuous Turán number.
+example (n : ℝ) (P : Set (ℝ × ℝ)) : opx n P ≤ opx n ((fun p => (2 : ℝ) • p) '' P) := by
+  refine opx_mono_of_containsPattern n ⟨fun x => 2 * x, fun y => 2 * y, ?_, ?_, ?_⟩
+  · intro p _ q _ hlt
+    linarith
+  · intro p _ q _ hlt
+    linarith
+  · intro p hp
+    exact ⟨p, hp, by ext <;> simp⟩
+
+end MetaMathlibExt.opx_mono_of_containsPattern
+
 namespace MetaMathlibExt.osat_singleton_and_opx_singleton
 
 -- The point can lie outside the square.
