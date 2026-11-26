@@ -24,7 +24,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.Data.Set.Finite.Basic
-import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.NumberTheory.CarmichaelNumber
 import Mathlib.Order.Monotone.Basic
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
@@ -39,8 +39,10 @@ satisfies $a^{n-1} \equiv 1 \pmod n$ for every $a$ coprime to $n$, and has base-
 sum $p$ at each of its three prime factors $p$. The main result is
 `infinite_primary_carmichael_of_primeKTuples`.
 
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Theorem 2 (`integers-2026-A102-thm-2`).
+Sources: Samuel S. Wagstaff, Jr., *Primary Carmichael Numbers*, INTEGERS 22 (2022),
+Article A55, Lemma 1, Corollary 1 and Theorem 1; and Ballot's restatement, Christian Ballot,
+*On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102, Theorem 2
+(`integers-2026-A102-thm-2`).
 -/
 
 namespace MetaMathlibExt
@@ -93,40 +95,6 @@ private theorem chernick_mem {y : ℕ} (hp : (6 * y + 7).Prime) (hq : (12 * y + 
   have hdvdP : (6 * y + 7) ∣ N := ⟨(12 * y + 13) * (18 * y + 19), by rw [hNdef]; ring⟩
   have hdvdQ : (12 * y + 13) ∣ N := ⟨(6 * y + 7) * (18 * y + 19), by rw [hNdef]; ring⟩
   have hdvdR : (18 * y + 19) ∣ N := ⟨(6 * y + 7) * (12 * y + 13), by rw [hNdef]; ring⟩
-  have hcarm : ∀ a : ℕ, a.Coprime N → a ^ (N - 1) ≡ 1 [MOD N] := by
-    intro a ha
-    have haP : a.Coprime (6 * y + 7) := ha.of_dvd_right hdvdP
-    have haQ : a.Coprime (12 * y + 13) := ha.of_dvd_right hdvdQ
-    have haR : a.Coprime (18 * y + 19) := ha.of_dvd_right hdvdR
-    have hP : a ^ (N - 1) ≡ 1 [MOD (6 * y + 7)] := by
-      obtain ⟨k, hk⟩ := hd1
-      have hF := Nat.ModEq.pow_card_sub_one_eq_one hp haP
-      have he : a ^ (N - 1) = (a ^ ((6 * y + 7) - 1)) ^ k := by rw [hk, pow_mul]
-      rw [he]
-      calc (a ^ ((6 * y + 7) - 1)) ^ k ≡ 1 ^ k [MOD (6 * y + 7)] := hF.pow k
-        _ = 1 := one_pow k
-    have hQ : a ^ (N - 1) ≡ 1 [MOD (12 * y + 13)] := by
-      obtain ⟨k, hk⟩ := hd2
-      have hF := Nat.ModEq.pow_card_sub_one_eq_one hq haQ
-      have he : a ^ (N - 1) = (a ^ ((12 * y + 13) - 1)) ^ k := by rw [hk, pow_mul]
-      rw [he]
-      calc (a ^ ((12 * y + 13) - 1)) ^ k ≡ 1 ^ k [MOD (12 * y + 13)] := hF.pow k
-        _ = 1 := one_pow k
-    have hR : a ^ (N - 1) ≡ 1 [MOD (18 * y + 19)] := by
-      obtain ⟨k, hk⟩ := hd3
-      have hF := Nat.ModEq.pow_card_sub_one_eq_one hr haR
-      have he : a ^ (N - 1) = (a ^ ((18 * y + 19) - 1)) ^ k := by rw [hk, pow_mul]
-      rw [he]
-      calc (a ^ ((18 * y + 19) - 1)) ^ k ≡ 1 ^ k [MOD (18 * y + 19)] := hF.pow k
-        _ = 1 := one_pow k
-    have hPQ : a ^ (N - 1) ≡ 1 [MOD (6 * y + 7) * (12 * y + 13)] := by
-      rw [← Nat.modEq_and_modEq_iff_modEq_mul hcopPQ]
-      exact ⟨hP, hQ⟩
-    have hPQR : a ^ (N - 1) ≡ 1 [MOD ((6 * y + 7) * (12 * y + 13)) * (18 * y + 19)] := by
-      rw [← Nat.modEq_and_modEq_iff_modEq_mul hcopPQR]
-      exact ⟨hPQ, hR⟩
-    rw [← hNdef] at hPQR
-    exact hPQR
   have hpf : N.primeFactors = {(6 * y + 7), (12 * y + 13), (18 * y + 19)} := by
     ext s
     simp only [Nat.mem_primeFactors, Finset.mem_insert, Finset.mem_singleton]
@@ -142,6 +110,29 @@ private theorem chernick_mem {y : ℕ} (hp : (6 * y + 7).Prime) (hq : (12 * y + 
       · exact ⟨hp, hdvdP, hN0⟩
       · exact ⟨hq, hdvdQ, hN0⟩
       · exact ⟨hr, hdvdR, hN0⟩
+  have hsqf : Squarefree N := by
+    rw [hNdef, Nat.squarefree_mul hcopPQR, Nat.squarefree_mul hcopPQ]
+    exact ⟨⟨hp.prime.squarefree, hq.prime.squarefree⟩, hr.prime.squarefree⟩
+  have h2N : 2 < N := by
+    have e : (2 : ℕ) * 2 * 2 ≤ N := mul_le_mul_three hp2 hq2 hr2
+    omega
+  have hkor : N.IsCarmichael := by
+    refine Nat.isCarmichael_iff_korselt.mpr ⟨h2N, hNp, hsqf, fun s hs hsN => ?_⟩
+    have hmem : s ∈ N.primeFactors := Nat.mem_primeFactors.mpr ⟨hs, hsN, hN0⟩
+    rw [hpf] at hmem
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
+    rcases hmem with rfl | rfl | rfl
+    · exact hd1
+    · exact hd2
+    · exact hd3
+  have hcarm : ∀ a : ℕ, a.Coprime N → a ^ (N - 1) ≡ 1 [MOD N] := by
+    intro a ha
+    have ha1 : 1 ≤ a := by
+      rcases Nat.eq_zero_or_pos a with rfl | h
+      · rw [Nat.coprime_zero_left] at ha
+        omega
+      · exact h
+    exact (Nat.probablePrime_iff_modEq N ha1).mp (hkor.probablePrime_of_coprime ha)
   have hmem1 : (6 * y + 7) ∉ ({(12 * y + 13), (18 * y + 19)} : Finset ℕ) := by
     simp only [Finset.mem_insert, Finset.mem_singleton]; omega
   have hmem2 : (12 * y + 13) ∉ ({(18 * y + 19)} : Finset ℕ) := by
@@ -207,8 +198,10 @@ numbers $n > 1$ such that $a^{n-1} \equiv 1 \pmod n$ for every natural number $a
 $n$ has exactly three distinct prime factors, and for every prime $p \mid n$ the sum of the
 base-$p$ digits of $n$ equals $p$.
 
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Theorem 2 (`integers-2026-A102-thm-2`). -/
+Sources: Samuel S. Wagstaff, Jr., *Primary Carmichael Numbers*, INTEGERS 22 (2022),
+Article A55, Lemma 1, Corollary 1 and Theorem 1; and Ballot's restatement, Christian Ballot,
+*On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102, Theorem 2
+(`integers-2026-A102-thm-2`). -/
 public theorem infinite_primary_carmichael_of_primeKTuples
     (hk : ∀ l : List (ℤ × ℤ), (∀ ab ∈ l, 1 ≤ ab.1) →
       (∀ ℓ : ℕ, ℓ.Prime → ∃ x : ℤ, ¬ (ℓ : ℤ) ∣ (l.map fun ab => ab.1 * x + ab.2).prod) →
