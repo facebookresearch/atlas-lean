@@ -43,6 +43,7 @@ Topics added since this subject's fields were last revised.
 - [Miracle Flatness](miracle-flatness/README.md)
 - [Multigraded Hilbert Series](multigraded-hilbert-series/README.md)
 - [Nilpotent](nilpotent/README.md)
+- [Nilpotent Yoneda](nilpotent-yoneda/README.md)
 - [Ordinary De Rham Algebra Models](ordinary-de-rham-algebra-models/README.md)
 - [Projective Hilbert Growth](projective-hilbert-growth/README.md)
 - [Resolution Cotangent](resolution-cotangent/README.md)
