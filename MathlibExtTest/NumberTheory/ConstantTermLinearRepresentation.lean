@@ -138,3 +138,28 @@ example :
   obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single Nat.prime_two 1 2
   refine ⟨s, fun n hn => ?_⟩
   exact (congrArg (fun M : Matrix T T (ZMod 2) => M i j) (hs n hn)).trans (by decide +revert)
+
+-- Modulo 8, the initial dilation sends -1 to -2. That entry eventually vanishes,
+-- and the origin entry of each stabilized power is 1.
+example :
+    let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-2 : ℤ) 2
+    let A := Matrix.of fun i j : ↥T => if i.val = (2 : ℕ) • j.val then (1 : ZMod 8) else 0
+    let i : ↥T := ⟨fun _ => -2, by decide⟩
+    let j : ↥T := ⟨fun _ => -1, by decide⟩
+    let z : ↥T := ⟨0, by decide⟩
+    A i j = 1 ∧ ∃ s : ℕ, ∀ n ≥ s, (A ^ n) i j = 0 ∧ (A ^ n) z z = 1 := by
+  intro T A i j z
+  refine ⟨by decide +revert, ?_⟩
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single_zmod Nat.prime_two 3 (by decide) 1 2
+  refine ⟨s, fun n hn => ⟨?_, ?_⟩⟩
+  · exact (congrArg (fun M : Matrix T T (ZMod 8) => M i j) (hs n hn)).trans (by decide +revert)
+  · exact (congrArg (fun M : Matrix T T (ZMod 8) => M z z) (hs n hn)).trans (by decide +revert)
+
+-- A zero-width box has only the origin: the stabilized matrix is the identity.
+example :
+    let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-(0 : ℤ)) 0
+    let A := Matrix.of fun i j : ↥T => if i.val = (3 : ℕ) • j.val then (1 : ZMod 9) else 0
+    ∃ s : ℕ, ∀ n ≥ s, A ^ n = 1 := by
+  intro T A
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single_zmod Nat.prime_three 2 (by decide) 1 0
+  exact ⟨s, fun n hn => (hs n hn).trans (by decide +revert)⟩
