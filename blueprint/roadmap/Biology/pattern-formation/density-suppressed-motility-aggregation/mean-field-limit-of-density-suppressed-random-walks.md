@@ -17,6 +17,7 @@ $$\partial_t\varrho=\Delta\big(F(W*\varrho)\,\varrho\big),\qquad F=\tfrac12G^2,$
 which is also the diffusive limit of the kinetic Fokker–Planck equation of the second-order model, with local temperature $T=G(W*\varrho)^2/(2H(W*\varrho))$.
 
 **Theorem.** Let $F$ be bounded, nonnegative, nonincreasing and $C^1$ with globally Lipschitz derivative, and $W$ sufficiently smooth.
+
 1. For $\varrho_0\in L^2(\mathbb R^d)\cap\mathcal P(\mathbb R^d)$ and $T>0$ there is a weak solution $\varrho\in L^\infty(0,T;L^2)\cap L^\infty(0,T;\mathcal P)\cap H^1(0,T;H^{-1})$ with $F(W*\varrho)\varrho\in L^2(0,T;H^1)$.
 2. For any probability measure $\varrho_0\in\mathcal P(\mathbb R^d)$ there is a very weak (distributional) solution $\varrho\in L^\infty(0,T;\mathcal P)$.
 3. If $G(s)=0$ for all $s\ge s_0$ and $W$ is continuous, every atomic measure $\varrho=\sum_{i=1}^Nc_i\delta_{x_i}$ with $c_iW(0)>s_0$ for all $i$ is a stationary distributional solution.

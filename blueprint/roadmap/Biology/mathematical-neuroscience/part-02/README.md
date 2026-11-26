@@ -1,0 +1,18 @@
+# Spiking neurons, coding, learning and control
+
+- [Coincidence detection by integrate-and-fire neurons](coincidence-detection-by-integrate-and-fire-neurons/README.md)
+- [Doubly stochastic renewal spiking model](doubly-stochastic-renewal-spiking-model/README.md)
+- [Dynamic causal strength for transient neural events](dynamic-causal-strength-for-transient-neural-events/README.md)
+- [Gibbs measures for conductance-based spike trains](gibbs-measures-for-conductance-based-spike-trains/README.md)
+- [Grid-cell-driven place-cell perceptrons](grid-cell-driven-place-cell-perceptrons/README.md)
+- [Hawkes network recovery with hidden nodes](hawkes-network-recovery-with-hidden-nodes/README.md)
+- [Higher-order spiking coordination](higher-order-spiking-coordination/README.md)
+- [Hopf map and Listing's law](hopf-map-and-listing-s-law/README.md)
+- [Level-invariant adaptive-threshold neurons](level-invariant-adaptive-threshold-neurons/README.md)
+- [Myopic control of neural dynamics](myopic-control-of-neural-dynamics/README.md)
+- [Successor representations from local learning rules](successor-representations-from-local-learning-rules/README.md)
+- [Synaptic weight resolution of threshold neurons](synaptic-weight-resolution-of-threshold-neurons/README.md)
+- [Time-fractional calcium diffusion with excess buffer](time-fractional-calcium-diffusion-with-excess-buffer/README.md)
+- [Time-optimal selective spiking control](time-optimal-selective-spiking-control/README.md)
+- [Turing completeness of STDP networks](turing-completeness-of-stdp-networks/README.md)
+- [Variational sensitivity of rhythmic motor systems](variational-sensitivity-of-rhythmic-motor-systems/README.md)

@@ -11,6 +11,7 @@ with null standard deviation $\sigma(x^S,c)=\sqrt{m_1(m-m_1)}\,f(c)$, where $f(c
 **Problems.** *Max k-set log-rank:* find $S\subseteq G$ with $|S|=k$ maximizing $w(S)$. *Max connected k-set log-rank:* additionally, given an interaction graph $I=(G,E)$, require $S$ to induce a connected subgraph.
 
 **Statement.**
+
 1. The max k-set log-rank problem is NP-hard.
 2. The max connected k-set log-rank problem is NP-hard already on graphs that contain at least one vertex of degree $O(n^{1/c})$ for a constant $c>1$; in particular it is NP-hard on general graphs (take $I$ complete).
 

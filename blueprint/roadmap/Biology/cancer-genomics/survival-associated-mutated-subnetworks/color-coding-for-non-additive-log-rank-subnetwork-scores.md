@@ -9,6 +9,7 @@ $$
 where $w$ is the normalized log-rank score of the subnetwork. One coloring costs $O(m|E|4^k)$, and $L$ colorings cost $O(Lm|E|4^k)$.
 
 **Statements.**
+
 1. *Colorfulness is not sufficient.* For every $k\ge 3$ there are instances and colorings for which the optimum OPT is colorful but is not found. More strongly, for any optimal colorful connected subnetwork $S$ of size $k\ge 3$ and any color-coding algorithm that forms colorset size $i$ by merging two subnetworks of smaller colorset size, adding three suitably colored neighbors to $S$ can make the algorithm miss $S$.
 2. *Planted subnetwork guarantee.* Suppose there is a connected $D$, $|D|=k$, with unnormalized score $w(D)\ge cm$; each $g\in D$ satisfies $w(D)-w(D\setminus\{g\})\ge c'm/k$ and $w(\{g\})>0$; and every gene outside $D$ is mutated independently in each patient with its own probability, independently of survival and censoring. If $m\in\Omega\bigl(k^4(k+\varepsilon)\ln n\bigr)$ and $O(\ln(1/\delta)e^k)$ colorings are used, the algorithm returns $D$ with probability at least $1-n^{-\varepsilon}-\delta$.
 

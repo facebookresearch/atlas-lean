@@ -16,6 +16,10 @@ Let $u_R^*(m)$ be the singular resistance level of [Interior equilibrium of sens
 
 **Corollary (competition-ratio diagram).** When $c_S(m)>0$, set $\Gamma=e^{gu_R^*}c_R(u_R^*,m)/c_S(m)$. A stable fully resistant equilibrium requires $\alpha_{RR}/\alpha_{SR}<\Gamma$; at least one stable fully sensitive equilibrium exists when $\Gamma<\alpha_{RS}/\alpha_{SS}<r_{\max}/c_S(m)$ and none when $\alpha_{RS}/\alpha_{SS}>r_{\max}/c_S(m)$; and when $\alpha_{RR}/\alpha_{SR}>\Gamma$ and $\alpha_{RS}/\alpha_{SS}<\Gamma$ the stable state is the interior one.
 
+## Depends on
+
+- [Interior equilibrium of sensitive–resistant Darwinian dynamics](interior-equilibrium-of-sensitive-resistant-darwinian-dynamics.md)
+
 ## Expansion
 
 On each face the Jacobian is block triangular, so the eigenvalues are the diagonal growth rates of the missing types plus the curvature $\sigma\partial_v^2G$ of the fitness landscape at the current strategy. With $x_S=0$, the conditions $G=0$ and $\partial_vG=0$ combine into $\Xi(u_R,m)=0$, so by Lemma 1 the fully resistant strategy coincides with the interior singular strategy and inherits $k+bu_R^*<2b/g$. The invasion eigenvalue of sensitive cells there is $c_S-c_{SS}\alpha_{SR}x_R^\ddagger$, which equals $c_{SS}Dx_S^*/\alpha_{RR}$ after substituting $x_R^\ddagger$. In the fully sensitive state the strategy equation need not coincide with $\Xi=0$ because $x_R=0$ removes the constraint $G=0$; the resistance level is set by the sensitive population's competitive pressure. The resulting picture in the plane of competition ratios $(\alpha_{RS}/\alpha_{SS},\alpha_{RR}/\alpha_{SR})$ separates interior, fully sensitive, fully resistant and bistable outcomes.

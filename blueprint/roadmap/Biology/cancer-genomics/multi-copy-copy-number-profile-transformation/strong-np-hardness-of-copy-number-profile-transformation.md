@@ -11,6 +11,7 @@ so a lost position can never be regained. A cost function $f:\mathbb N\times\mat
 **Theorem.** For every deletion-permissive unit-cost function $f$, the CNP-transformation problem is strongly NP-hard, even when $u$ and $v$ have no null (zero) positions, and even if only deletions are used.
 
 **Supporting facts.** For CNPs $u,v$ with no null positions and $w=u-v$:
+
 - (Monotonicity) $d_f(u,v)\ge d_f(u-\{i\},v-\{i\})$ for every position $i$ and every $f$.
 - (Amp-first reordering) if $u\langle E\rangle=v$, then every reordering of $E$ that puts all amplifications before all deletions also transforms $u$ into $v$.
 - (Staircase bound) if $w$ has a staircase $[a,b]$, i.e. $0<w_a<w_{a+1}<\dots<w_b$, of length $k=b-a+1$, then $d_f(u,v)\ge k$ for every unit-cost $f$.

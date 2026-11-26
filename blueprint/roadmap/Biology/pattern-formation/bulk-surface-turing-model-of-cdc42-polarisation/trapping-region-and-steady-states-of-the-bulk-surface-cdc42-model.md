@@ -16,7 +16,7 @@ $$\mathcal A=\{(u,v)\ge(0,0):\ u+v\le\min(c_{\max},m)\}.$$
 2. *(Trapping region.)* $\mathcal A$ is positively invariant for the homogeneous system. This is not claimed for the full PDE.
 3. *(Steady states.)* The homogeneous system has $0$, $2$, $4$ or $6$ positive steady states, and nonnegative parameters guarantee at least one steady state in $\mathcal A$. A steady state $(u^*,v^*)\in\mathcal A$ that admits diffusion-driven instability satisfies the necessary condition
 
-$$c_2<\min(c_{\max},m),\qquad u^*\in\bigl(c_2,\ \min(c_{\max},m)\bigr).$$
+$$\sqrt{c_2}<\min(c_{\max},m),\qquad u^*\in\bigl(\sqrt{c_2},\ \min(c_{\max},m)\bigr).$$
 
 **Classic and non-classic instability.** Classic diffusion-driven instability turns a stable node of the homogeneous system into an unstable node once diffusion is added. In the non-classic case the stable node becomes a saddle, which can occur even for equal membrane diffusivities ($d=1$), where classic Turing patterns are impossible. Numerical maps of the $(c_{-1},c_2)$ and $(c_1,c_2)$ planes suggest that the non-classic region is the limit $d\to1$ of the classic one.
 
@@ -27,7 +27,7 @@ $$c_2<\min(c_{\max},m),\qquad u^*\in\bigl(c_2,\ \min(c_{\max},m)\bigr).$$
 
 ## Expansion
 
-The two bounds in $\mathcal A$ encode that the cytosolic pool $\bar V$ and the remaining membrane capacity $c_{\max}-(\bar u+\bar v)$ are nonnegative. Invariance means trajectories of the homogeneous system cannot leave $\mathcal A$ through its boundary. At a steady state, $f(u^*,v^*)=0$ gives $v^*=u^*/(c_2+u^{*2})$, and substituting this into $q_0=0$ leaves a single polynomial equation in $u^*$. The necessary condition bounds a pattern-forming steady state below by the activation parameter $c_2$, and above by the membrane capacity and the cytosolic supply. Simulations show that the number of poles grows with $\gamma$, and that pole size shrinks while peak active Cdc42 grows as $d$ increases. The proofs of items 1–3 are in the paper's Supplementary Text 1.3–1.6.
+The two bounds in $\mathcal A$ encode that the cytosolic pool $\bar V$ and the remaining membrane capacity $c_{\max}-(\bar u+\bar v)$ are nonnegative. Invariance means trajectories of the homogeneous system cannot leave $\mathcal A$ through its boundary. At a steady state, $f(u^*,v^*)=0$ gives $v^*=u^*/(c_2+u^{*2})$, and substituting this into $q_0=0$ leaves a single polynomial equation in $u^*$. Then $f_u=-1+2u^*v^*=(u^{*2}-c_2)/(c_2+u^{*2})$ and $f_v=c_2+u^{*2}>0$, while diffusion-driven instability needs the activator to be self-enhancing, $f_u>0$, that is $u^*>\sqrt{c_2}$. So the necessary condition bounds a pattern-forming steady state below by $\sqrt{c_2}$, and above by the membrane capacity and the cytosolic supply. Simulations show that the number of poles grows with $\gamma$, and that pole size shrinks while peak active Cdc42 grows as $d$ increases. The proofs of items 1–3 are in the paper's Supplementary Text 1.3–1.6.
 
 ## Sources
 
