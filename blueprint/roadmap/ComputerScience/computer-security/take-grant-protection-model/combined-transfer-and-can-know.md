@@ -9,6 +9,7 @@ An *rwtg-path* joins consecutive vertices by edges whose labels contain $r$, $w$
 $\{\vec t, \overleftarrow t, \vec g, \overleftarrow g, \vec r, \overleftarrow r, \vec w, \overleftarrow w\}$ as for [tg-paths](tg-paths-islands-spans-and-bridges.md). An
 rwtg-path $v_0, \dots, v_k$ ($k > 0$) whose first vertex $v_0$ is a subject is an *rw-initial span* if it has an associated word in $\vec t^{\,*} \vec w$ and an
 *rw-terminal span* if it has an associated word in $\vec t^{\,*} \vec r$. The languages of *bridges* and *connections* are
+
 $$B = \vec t^{\,*} \cup \overleftarrow t^{\,*} \cup \vec t^{\,*} \vec g\, \overleftarrow t^{\,*} \cup \vec t^{\,*} \overleftarrow g\, \overleftarrow t^{\,*}, \qquad
 C = \vec t^{\,*} \vec r \cup \overleftarrow w\, \overleftarrow t^{\,*} \cup \vec t^{\,*} \vec r\, \overleftarrow w\, \overleftarrow t^{\,*}.$$
 

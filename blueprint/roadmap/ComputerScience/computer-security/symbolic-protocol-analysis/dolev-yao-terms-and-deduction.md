@@ -5,8 +5,11 @@ signature $\mathcal F_{\mathrm{std}} = \{\mathrm{senc}, \mathrm{aenc}, \mathrm{p
 $\mathrm{senc}(t_1, t_2)$, asymmetric encryption $\mathrm{aenc}(t_1, t_2)$, pairing $\langle t_1, t_2\rangle = \mathrm{pair}(t_1, t_2)$ and the public key $\mathrm{pk}(t)$ of a private key $t$;
 $\mathrm{st}(t)$ is the set of subterms of $t$. An *inference rule* $\frac{u_1 \cdots u_n}{u}$ relates terms with variables, and an inference system is a set of rules.
 The *Dolev–Yao inference system* $\mathcal I_{\mathrm{DY}}$ has the composition rules
+
 $$\frac{x \quad y}{\langle x, y\rangle} \qquad \frac{x \quad y}{\mathrm{senc}(x, y)} \qquad \frac{x \quad y}{\mathrm{aenc}(x, y)}$$
+
 and the decomposition rules
+
 $$\frac{\langle x, y\rangle}{x} \qquad \frac{\langle x, y\rangle}{y} \qquad \frac{\mathrm{senc}(x, y) \quad y}{x} \qquad \frac{\mathrm{aenc}(x, \mathrm{pk}(y)) \quad y}{x}.$$
 
 A term $t$ is *deducible* from a set of terms $S$ in an inference system $\mathcal I$, written $S \vdash_{\mathcal I} t$, if there is a proof tree whose leaves are labelled

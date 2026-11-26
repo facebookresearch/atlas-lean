@@ -10,7 +10,9 @@ traces are $\sim_\ell$-equivalent whenever both terminate, and *strongly indisti
 A *fair attack* is a declassify-free command built from $\mathbf{skip}$, sequencing, assignments $v := e$, conditionals and loops whose variables all have one level
 $\ell$ with $C(\ell) \sqsubseteq C(A)$ and $I(A) \sqsubseteq I(\ell)$. A *high-integrity context* $c[\vec\bullet]$ is a command with holes $\bullet$, and $c[\vec a]$ fills them with
 attacks. The context $c[\vec\bullet]$ is *robust* with respect to fair attacks at level $A$ if for all memories $M_1, M_2$ and fair-attack vectors $\vec a, \vec a'$,
+
 $$\langle M_1, c[\vec a]\rangle \cong_{(C(A), \top_I)} \langle M_2, c[\vec a]\rangle \implies \langle M_1, c[\vec a']\rangle \approx_{(C(A), \top_I)} \langle M_2, c[\vec a']\rangle:$$
+
 an active attacker who changes the attack code learns nothing about secrets beyond what a passive attacker observing $c[\vec a]$ learns.
 
 ## Depends on

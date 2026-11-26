@@ -7,7 +7,9 @@ $\mathrm{Obs}(C, L) = \{\vec\alpha \mid \langle C, LH\rangle \xrightarrow{\vec\a
 $k(C, L, \vec\alpha) = \{H \mid \langle C, LH\rangle \xrightarrow{\vec\alpha}\}$, the set of secrets consistent with the observation.
 
 $C$ satisfies *termination-insensitive noninterference* (TINI) if whenever $\vec\ell\ell \in \mathrm{Obs}(C, L)$ with $\ell$ an output,
+
 $$k(C, L, \vec\ell\ell) = \bigcup_{\ell'} k(C, L, \vec\ell\ell'),$$
+
 the union over outputs $\ell'$: the value of each output teaches nothing beyond the fact that some output occurs, while observing divergence is unrestricted.
 It generalizes the batch-job condition of [Volpano–Smith–Irvine noninterference](noninterference-for-the-volpanosmithirvine-type.md), which ignores
 nonterminating runs and intermediate outputs, and is weaker than requiring $k(C, L, \vec\ell\alpha) = k(C, L, \vec\ell)$ for every observation, the

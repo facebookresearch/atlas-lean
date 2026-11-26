@@ -7,7 +7,9 @@ $u$ and sequence $\alpha$, where $\mathrm{ipurge}$ is the [intransitive purge](i
 
 Let $HT(A^*)$ be the smallest set containing $A^*$ and closed under forming triples $(x, y, z)$. For each domain $u$ define $\mathrm{ta}_u : A^* \to HT(A^*)$ by
 $\mathrm{ta}_u(\epsilon) = \epsilon$ and, for $\alpha \in A^*$ and $a \in A$,
+
 $$\mathrm{ta}_u(\alpha a) = \begin{cases} \mathrm{ta}_u(\alpha) & \text{if } \mathrm{dom}(a) \not\rightsquigarrow u,\\ (\mathrm{ta}_u(\alpha), \mathrm{ta}_{\mathrm{dom}(a)}(\alpha), a) & \text{if } \mathrm{dom}(a) \rightsquigarrow u.\end{cases}$$
+
 $\mathrm{ta}_u(\alpha)$ is the most information that the policy allows $u$ to have about the actions in $\alpha$: an interfering action may transmit everything its own
 domain may know, together with the fact that it was performed. $M$ is *TA-secure* for $\rightsquigarrow$ if $\mathrm{ta}_u(\alpha) = \mathrm{ta}_u(\alpha')$ implies
 $\mathrm{obs}_u(s_0 \cdot \alpha) = \mathrm{obs}_u(s_0 \cdot \alpha')$ for all domains $u$ and all $\alpha, \alpha' \in A^*$.

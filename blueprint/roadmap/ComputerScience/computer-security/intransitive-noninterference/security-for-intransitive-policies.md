@@ -4,7 +4,9 @@ Let $M$ be a system with states, initial state $s_0$, actions $A$, outputs, tran
 $\mathrm{dom}(a)$, as in the [unwinding theorem for noninterference](../information-flow/unwinding-theorem-for-noninterference.md), and write $\mathrm{do}(\alpha) = \mathrm{run}(s_0, \alpha)$ and
 $\mathrm{test}(\alpha, a) = \mathrm{output}(\mathrm{do}(\alpha), a)$. Let $\rightsquigarrow$ be a reflexive, possibly intransitive, policy on domains. $M$ is *secure for* $\rightsquigarrow$
 in the intransitive sense of Haigh and Young, as reformulated by Rushby, if
+
 $$\mathrm{test}(\alpha, a) = \mathrm{test}(\mathrm{ipurge}(\alpha, \mathrm{dom}(a)), a)$$
+
 for every action sequence $\alpha$ and action $a$, with $\mathrm{ipurge}$ the [intransitive purge](intransitive-purge.md). For a transitive policy this is the purge-based
 notion of security.
 
