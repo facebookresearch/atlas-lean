@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.FramedMeromorphicGroupModels
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.MeromorphicGroupFactorizationMeromorphicGroupFactorizationUnique
+public import MathlibExt.AlgebraicGeometry.MeromorphicGroupFactorizationPuncturedParameterUnit
 
 /-!
 # Actual finite-pole G-factorization and coefficient restriction requests
@@ -42,17 +43,6 @@ open MathlibExt.AlgebraicGeometry
 open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
 open AnalyticMeromorphicCoordinates MeromorphicCoefficientCompletion
 open FramedMeromorphicGroupModels
-
-/-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
-$U$ a puncture of $d$ (an open embedding with isomorphic stalks onto the complement of the image
-of $d$), and assume that $d$ has a Cartier atlas (`CartierAtlas`: it is a closed embedding with
-surjective stalk maps, covered by pole charts). Then for every pole chart $Q$ of $d$
-(`PoleChart`), its parameter $t$ restricts to a unit on the punctured chart of $Q$. -/
-public theorem_wanted punctured_parameter_unit
-    (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
-    {X D : ESpace p E} (d : D ⟶ X) (U : Puncture p E d)
-    (A : CartierAtlas p E d U) (Q : PoleChart p E d U) :
-    IsUnit (sectionMap p E Q.puncture.map Q.parameter)
 
 /-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
 $U$ a puncture of $d$, and assume that $d$ has a Cartier atlas (`CartierAtlas`). Let $Q$ be a pole
