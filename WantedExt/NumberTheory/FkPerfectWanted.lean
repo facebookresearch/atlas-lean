@@ -43,6 +43,7 @@ public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
+public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoTwoPowMul
 
 set_option autoImplicit false
 
@@ -135,17 +136,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isNearFPerfect_two_pow_mul_prime
     (p a : ℕ) (hp : p.Prime) :
     ¬ IsNearFPerfect (2 ^ a * p)
-
-/-- **No $[2,\ell]$-near-perfect number of the form $2^a p$.** Let $\ell$ and $a$ be natural
-numbers with $\ell \ge 1$, and let $p$ be an odd prime. Then $2^a p$ is not
-$[2,\ell]$-near-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 10. -/
-theorem_wanted not_isKLNearPerfect_two_two_pow_mul
-    (l p a : ℕ) (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
-    ¬ IsKLNearPerfect 2 l (2 ^ a * p)
 
 /-- **For $a \ge 2$, $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$ or $p$.** Let $k$,
 $\ell$, $a$ be natural numbers with $\ell \ge 1$ and $a \ge 2$, and let $p$ be an odd prime. Call
