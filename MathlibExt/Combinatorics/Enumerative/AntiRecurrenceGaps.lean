@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import MathlibExt.Combinatorics.Enumerative.AntiBonacci
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -644,6 +645,315 @@ public theorem antiRecurrence_mem_Icc_of_bounded (a : List ℕ) (ha : ∀ x ∈ 
     have hj' : j < capacity a := lt_of_lt_of_le hj hmul
     rw [complement_eq_entry ha hk hb' hτ, hindex, entry_at hk hτ t hj', ite_eq_right (by omega),
       Nat.add_zero, Nat.mul_comm (width a), Nat.add_assoc]
+
+namespace AntiRecurrenceGaps
+
+variable {a : List ℕ}
+
+-- A positive weighted block with at least two entries strictly exceeds each of its entries.
+private theorem lt_weighted_sum (ha : ∀ x ∈ a, 0 < x) (hk : 1 < a.length)
+    (b : Fin a.length → ℕ) (hb : ∀ i, 0 < b i) (j : Fin a.length) :
+    b j < ∑ i : Fin a.length, a[i] * b i := by
+  let i : Fin a.length := if j = ⟨0, by omega⟩ then ⟨1, hk⟩ else ⟨0, by omega⟩
+  have hij : i ≠ j := by
+    dsimp [i]
+    split
+    · rename_i h
+      rw [h]
+      exact fun he => Nat.one_ne_zero (congrArg Fin.val he)
+    · exact Ne.symm ‹_›
+  have hle : b j ≤ a[j] * b j := by
+    have hp : 0 < a[j] := ha _ (List.getElem_mem j.isLt)
+    simpa only [Nat.one_mul] using Nat.mul_le_mul_right (b j) hp
+  have hi : 0 < a[i] * b i := Nat.mul_pos (ha _ (List.getElem_mem i.isLt)) (hb i)
+  have hsum : a[i] * b i + a[j] * b j ≤ ∑ t : Fin a.length, a[t] * b t := by
+    simpa only [Finset.sum_insert (Finset.notMem_singleton.mpr hij), Finset.sum_singleton] using
+      Finset.sum_le_sum_of_subset_of_nonneg (f := fun t : Fin a.length => a[t] * b t)
+        (Finset.subset_univ ({i, j} : Finset (Fin a.length))) (fun _ _ _ => Nat.zero_le _)
+  omega
+
+private theorem block_entry_notMem (m : ℕ) (s : Finset ℕ) {j : ℕ} (hj : j < m) :
+    (antiRecurrenceBlock m s).getD j 0 ∉ s := by
+  induction m generalizing s j with
+  | zero => omega
+  | succ m ih =>
+    cases j with
+    | zero => exact antiTribonacciMex_notMem s
+    | succ j =>
+      intro h
+      exact ih (insert (antiTribonacciMex s) s) (by omega : j < m)
+        (Finset.mem_insert_of_mem h)
+
+private theorem mex_le_block_entry (m : ℕ) (s : Finset ℕ) {j : ℕ} (hj : j < m) :
+    antiTribonacciMex s ≤ (antiRecurrenceBlock m s).getD j 0 :=
+  le_trans (Nat.le_add_right ..)
+    ((block_spacing m s _ (Finset.Subset.refl _)).2 j hj).1
+
+private theorem block_entry_lt (m : ℕ) (s : Finset ℕ) {i j : ℕ} (hij : i < j) (hj : j < m) :
+    (antiRecurrenceBlock m s).getD i 0 < (antiRecurrenceBlock m s).getD j 0 := by
+  induction m generalizing s i j with
+  | zero => omega
+  | succ m ih =>
+    cases j with
+    | zero => omega
+    | succ j =>
+      let u := insert (antiTribonacciMex s) s
+      cases i with
+      | zero =>
+        change antiTribonacciMex s < (antiRecurrenceBlock m u).getD j 0
+        have hmex : antiTribonacciMex s < antiTribonacciMex u := by
+          refine lt_of_le_of_ne (mex_mono (Finset.subset_insert _ _)) fun h => ?_
+          exact antiTribonacciMex_notMem u (h ▸ Finset.mem_insert_self _ _)
+        exact hmex.trans_le (mex_le_block_entry m u (by omega))
+      | succ i => exact ih u (by omega : i < j) (by omega)
+
+private theorem complement_index (m : ℕ) :
+    (m / a.length) * a.length + m % a.length = m := by
+  rw [Nat.mul_comm]
+  exact Nat.div_add_mod _ _
+
+private theorem complement_strictMono (hk : 0 < a.length) :
+    StrictMono (fun m => antiRecurrenceComplement a (m + 1)) := by
+  apply strictMono_nat_of_lt_succ
+  intro m
+  let r := m / a.length
+  let j := m % a.length
+  have hj : j < a.length := Nat.mod_lt _ hk
+  have hm : r * a.length + j = m := complement_index (a := a) m
+  have he := complement_entry a r j hj
+  rw [hm] at he
+  by_cases h : j + 1 < a.length
+  · have hn := complement_entry a r (j + 1) h
+    rw [← Nat.add_assoc, hm] at hn
+    rw [he, hn]
+    exact block_entry_lt _ _ (Nat.lt_succ_self _) h
+  · have hn := complement_entry a (r + 1) 0 hk
+    have hindex : (r + 1) * a.length + 0 = m + 1 := by rw [Nat.succ_mul]; omega
+    rw [hindex] at hn
+    rw [he, hn]
+    let s := (antiRecurrenceState a r).2
+    let t := (antiRecurrenceState a (r + 1)).2
+    have hsub : s ∪ (antiRecurrenceBlock a.length s).toFinset ⊆ t := Finset.subset_insert _ _
+    have hleft := ((block_spacing _ _ _ hsub).2 j hj).2
+    have hright := mex_le_block_entry a.length t hk
+    change (antiRecurrenceBlock a.length s).getD j 0 < (antiRecurrenceBlock a.length t).getD 0 0
+    omega
+
+private theorem complement_pos (hk : 0 < a.length) (m : ℕ) :
+    0 < antiRecurrenceComplement a (m + 1) := by
+  have hj := Nat.mod_lt m hk
+  rw [← complement_index (a := a) m, complement_entry a _ _ hj]
+  exact (antiTribonacciMex_pos _).trans_le (mex_le_block_entry _ _ hj)
+
+-- During a block the used set consists of earlier sums and the complement entries chosen so far.
+private def prefixUsed (A B : ℕ → ℕ) (r m x : ℕ) : Prop :=
+  (∃ i < r, A i = x) ∨ ∃ i < m, B i = x
+
+private theorem prefix_succ (f : ℕ → ℕ) (n x : ℕ) :
+    (∃ i < n + 1, f i = x) ↔ x = f n ∨ ∃ i < n, f i = x := by
+  constructor
+  · rintro ⟨i, hi, e⟩
+    rcases Nat.lt_or_eq_of_le (Nat.le_of_lt_succ hi) with h | rfl
+    · exact Or.inr ⟨i, h, e⟩
+    · exact Or.inl e.symm
+  · rintro (rfl | ⟨i, hi, e⟩)
+    · exact ⟨n, Nat.lt_succ_self _, rfl⟩
+    · exact ⟨i, by omega, e⟩
+
+private theorem prefix_state_succ {A B : ℕ → ℕ} {r : ℕ}
+    (hs : ∀ x, x ∈ (antiRecurrenceState a r).2 ↔ prefixUsed A B r (r * a.length) x)
+    (hb : (antiRecurrenceState a (r + 1)).1 = (List.range' (r * a.length) a.length).map B)
+    (hA : antiRecurrence a (r + 1) = A r) (x : ℕ) :
+    x ∈ (antiRecurrenceState a (r + 1)).2 ↔ prefixUsed A B (r + 1) ((r + 1) * a.length) x := by
+  change x ∈ insert (antiRecurrence a (r + 1))
+    ((antiRecurrenceState a r).2 ∪ (antiRecurrenceState a (r + 1)).1.toFinset) ↔ _
+  have he (i : ℕ) : i ∈ List.range' (r * a.length) a.length ↔
+      r * a.length ≤ i ∧ i < (r + 1) * a.length := by
+    rw [List.mem_range'_1, Nat.succ_mul]
+  simp only [hA, hb, Finset.mem_insert, Finset.mem_union, List.mem_toFinset, hs,
+    List.mem_map, he, prefixUsed, prefix_succ A r x]
+  constructor
+  · rintro (h | (h | ⟨i, hi, e⟩) | ⟨i, ⟨_, hi⟩, e⟩)
+    · exact Or.inl (Or.inl h)
+    · exact Or.inl (Or.inr h)
+    · exact Or.inr ⟨i, by rw [Nat.succ_mul]; omega, e⟩
+    · exact Or.inr ⟨i, hi, e⟩
+  · rintro ((h | h) | ⟨i, hi, e⟩)
+    · exact Or.inl h
+    · exact Or.inr (Or.inl (Or.inl h))
+    · by_cases h : i < r * a.length
+      · exact Or.inr (Or.inl (Or.inr ⟨i, h, e⟩))
+      · exact Or.inr (Or.inr ⟨i, ⟨by omega, hi⟩, e⟩)
+
+private theorem canonical_block (a : List ℕ) (r : ℕ) :
+    (antiRecurrenceState a (r + 1)).1 =
+      (List.range' (r * a.length) a.length).map (fun i => antiRecurrenceComplement a (i + 1)) := by
+  have hl : (antiRecurrenceState a (r + 1)).1.length = a.length := block_length _ _
+  apply List.ext_getElem
+  · simp [hl]
+  · intro j hj _
+    have hj' : j < a.length := hl ▸ hj
+    simp only [List.getElem_map, List.getElem_range', Nat.one_mul, complement_entry a r j hj',
+      List.getD_eq_getElem _ _ hj]
+
+private theorem canonical_state (a : List ℕ) (r x : ℕ) :
+    x ∈ (antiRecurrenceState a r).2 ↔
+      prefixUsed (fun i => antiRecurrence a (i + 1))
+        (fun i => antiRecurrenceComplement a (i + 1)) r (r * a.length) x := by
+  induction r generalizing x with
+  | zero => simp [antiRecurrenceState, prefixUsed]
+  | succ r ih => exact prefix_state_succ ih (canonical_block a r) rfl x
+
+private theorem canonical_cover (ha : ∀ x ∈ a, 0 < x) (hk : 1 < a.length) {x : ℕ} (hx : 0 < x) :
+    x ∈ Set.range (fun i => antiRecurrence a (i + 1)) ↔
+      x ∉ Set.range (fun i => antiRecurrenceComplement a (i + 1)) := by
+  have hp : 0 < a.length := by omega
+  have hmono := complement_strictMono (a := a) hp
+  constructor
+  · rintro ⟨r, rfl⟩ ⟨m, e⟩
+    change antiRecurrenceComplement a (m + 1) = antiRecurrence a (r + 1) at e
+    let t := m / a.length
+    let j := m % a.length
+    have hj : j < a.length := Nat.mod_lt _ hp
+    have hm : t * a.length + j = m := complement_index (a := a) m
+    by_cases ht : r < t
+    · have hmem : antiRecurrence a (r + 1) ∈ (antiRecurrenceState a t).2 :=
+        (canonical_state a t _).mpr (Or.inl ⟨r, ht, rfl⟩)
+      have he := complement_entry a t j hj
+      rw [hm, e] at he
+      exact block_entry_notMem a.length (antiRecurrenceState a t).2 hj (he ▸ hmem)
+    · let l : Fin a.length := ⟨a.length - 1, by omega⟩
+      have hsum := lt_weighted_sum ha hk
+        (fun i => antiRecurrenceComplement a (r * a.length + i + 1))
+        (fun _ => complement_pos hp _) l
+      rw [← weighted_sum] at hsum
+      have hmul := Nat.mul_le_mul_right a.length (show t ≤ r by omega)
+      have hle : m ≤ r * a.length + (l : ℕ) := by dsimp [l]; omega
+      exact (lt_of_le_of_lt (hmono.monotone hle) hsum).ne e
+  · intro hn
+    let s := (antiRecurrenceState a x).2
+    have hlarge (n : ℕ) : n < antiRecurrenceComplement a (n + 1) := by
+      induction n with
+      | zero => exact complement_pos hp 0
+      | succ n ih => exact lt_of_le_of_lt (Nat.succ_le_of_lt ih) (hmono (Nat.lt_succ_self n))
+    have hmul : x ≤ x * a.length := by
+      simpa only [Nat.mul_one] using Nat.mul_le_mul_left x hp
+    have he := complement_entry a x 0 hp
+    have hhead : (antiRecurrenceBlock a.length s).getD 0 0 = antiTribonacciMex s := by
+      obtain ⟨l, h⟩ := Nat.exists_eq_succ_of_ne_zero hp.ne'
+      rw [h]
+      rfl
+    change antiRecurrenceComplement a (x * a.length + 0 + 1) =
+      (antiRecurrenceBlock a.length s).getD 0 0 at he
+    have hlt := lt_of_le_of_lt hmul (hlarge (x * a.length))
+    rw [Nat.add_zero, hhead] at he
+    rw [he] at hlt
+    have hxmem : x ∈ s := by
+      by_contra h
+      exact (not_le_of_gt hlt) (antiTribonacciMex_le_of_notMem s hx h)
+    rcases (canonical_state a x x).mp hxmem with ⟨i, _, h⟩ | ⟨i, _, h⟩
+    · exact ⟨i, h⟩
+    · exact (hn ⟨i, h⟩).elim
+
+-- Any complementary increasing pair must make the same mex choices within a block.
+private theorem block_eq_of_prefix {A B : ℕ → ℕ}
+    (hA : StrictMono A) (hB : StrictMono B) (hpos : ∀ i, 0 < B i)
+    (hcover : ∀ x, 0 < x → (x ∈ Set.range A ↔ x ∉ Set.range B)) (l : ℕ)
+    {r m : ℕ} {s : Finset ℕ} (hs : ∀ x, x ∈ s ↔ prefixUsed A B r m x)
+    (hlt : ∀ j < l, B (m + j) < A r) :
+    antiRecurrenceBlock l s = (List.range' m l).map B := by
+  induction l generalizing m s with
+  | zero => rfl
+  | succ l ih =>
+    have hbound : B m < A r := by simpa only [Nat.add_zero] using hlt 0 (Nat.zero_lt_succ l)
+    have hmex : antiTribonacciMex s = B m := by
+      apply mex_eq (hpos m)
+      · intro h
+        rcases (hs _).mp h with ⟨i, _, e⟩ | ⟨i, hi, e⟩
+        · exact (hcover _ (hpos m)).mp ⟨i, e⟩ ⟨m, rfl⟩
+        · exact (hB hi).ne e
+      · intro x hx hxm
+        apply (hs _).mpr
+        by_cases h : x ∈ Set.range B
+        · obtain ⟨i, rfl⟩ := h
+          exact Or.inr ⟨i, hB.lt_iff_lt.mp hxm, rfl⟩
+        · obtain ⟨i, rfl⟩ := (hcover x hx).mpr h
+          exact Or.inl ⟨i, hA.lt_iff_lt.mp (hxm.trans hbound), rfl⟩
+    rw [antiRecurrenceBlock, hmex, List.range'_succ, List.map_cons]
+    congr 1
+    apply ih
+    · intro x
+      simp only [Finset.mem_insert, hs, prefixUsed, prefix_succ B m x]
+      exact or_left_comm
+    · intro j hj
+      simpa only [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using hlt (j + 1) (by omega)
+
+private theorem block_matches {A B : ℕ → ℕ} (ha : ∀ x ∈ a, 0 < x) (hk : 1 < a.length)
+    (hA : StrictMono A) (hB : StrictMono B) (hpos : ∀ i, 0 < B i)
+    (hcover : ∀ x, 0 < x → (x ∈ Set.range A ↔ x ∉ Set.range B))
+    (hsum : ∀ r, A r = ∑ j : Fin a.length, a[j] * B (r * a.length + j)) (r : ℕ) :
+    (antiRecurrenceState a (r + 1)).1 = (List.range' (r * a.length) a.length).map B ∧
+      antiRecurrence a (r + 1) = A r := by
+  have step (r : ℕ)
+      (h : ∀ x, x ∈ (antiRecurrenceState a r).2 ↔ prefixUsed A B r (r * a.length) x) :
+      (antiRecurrenceState a (r + 1)).1 = (List.range' (r * a.length) a.length).map B ∧
+        antiRecurrence a (r + 1) = A r := by
+    have hb : (antiRecurrenceState a (r + 1)).1 = (List.range' (r * a.length) a.length).map B :=
+      block_eq_of_prefix hA hB hpos hcover a.length h (fun j hj => by
+        rw [hsum r]
+        exact lt_weighted_sum ha hk (fun i => B (r * a.length + i)) (fun _ => hpos _) ⟨j, hj⟩)
+    exact ⟨hb, by rw [antiRecurrence, hb, range_weighted_sum, hsum r]⟩
+  have go (r : ℕ) : ∀ x, x ∈ (antiRecurrenceState a r).2 ↔
+      prefixUsed A B r (r * a.length) x := by
+    induction r with
+    | zero => simp [antiRecurrenceState, prefixUsed]
+    | succ r ih => exact prefix_state_succ ih (step r ih).1 (step r ih).2
+  exact step r (go r)
+
+end AntiRecurrenceGaps
+
+open AntiRecurrenceGaps in
+/-- **Characterization of anti-recurrence sequences.** Let $a = (a_1, \dots, a_k)$ be a linear
+form with positive integer coefficients and $k > 1$, with anti-recurrence numbers
+$A_1, A_2, \dots$ and non-anti-recurrence numbers $B_1, B_2, \dots$. Let $(x_i)_{i \ge 0}$ and
+$(y_i)_{i \ge 0}$ be sequences of natural numbers. Then $x$ and $y$ are strictly increasing, every
+$y_i$ is positive, every positive integer is a term of exactly one of $x$ and $y$, and
+$x_i = \sum_{j=1}^{k} a_j y_{ik+j-1}$ for all $i$, if and only if $x_i = A_{i+1}$ and
+$y_i = B_{i+1}$ for all $i$.
+
+Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS 26 (2026),
+Article A24, Lemma 2 (`integers-2026-A24-lem-2`). -/
+public theorem antiRecurrence_unique (a : List ℕ) (ha : ∀ x ∈ a, 0 < x)
+    (hk : 1 < a.length) (A B : ℕ → ℕ) :
+    (StrictMono A ∧ StrictMono B ∧ (∀ i, 0 < B i) ∧
+        (∀ m, 0 < m → (m ∈ Set.range A ↔ m ∉ Set.range B)) ∧
+        ∀ i, A i = ∑ j : Fin a.length, a[j] * B (i * a.length + j)) ↔
+      (A = fun i => antiRecurrence a (i + 1)) ∧ B = fun i => antiRecurrenceComplement a (i + 1)
+    := by
+  constructor
+  · rintro ⟨hA, hB, hpos, hcover, hsum⟩
+    have hmatch := block_matches ha hk hA hB hpos hcover hsum
+    refine ⟨funext (fun r => (hmatch r).2.symm), funext (fun m => ?_)⟩
+    have hp : 0 < a.length := by omega
+    let r := m / a.length
+    let j := m % a.length
+    have hj : j < a.length := Nat.mod_lt _ hp
+    have he := complement_entry a r j hj
+    have hm : r * a.length + j = m := complement_index (a := a) m
+    rw [hm, (hmatch r).1] at he
+    have hlen : j < ((List.range' (r * a.length) a.length).map B).length := by simpa
+    simpa only [List.getD_eq_getElem _ _ hlen, List.getElem_map, List.getElem_range', Nat.one_mul,
+      hm] using he.symm
+  · rintro ⟨rfl, rfl⟩
+    have hp : 0 < a.length := by omega
+    have htrace : 0 < a.sum := hp.trans_le (length_le_trace ha)
+    refine ⟨?_, complement_strictMono hp, complement_pos hp, fun _ => canonical_cover ha hk,
+      weighted_sum a⟩
+    apply strictMono_nat_of_lt_succ
+    intro r
+    have hgap := (antiRecurrence_add_length_mul_sum_le a ha hk (n := r + 1) (by omega)).1
+    have hcapacity := Nat.mul_pos hp htrace
+    omega
 
 end
 
