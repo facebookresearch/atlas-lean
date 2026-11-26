@@ -768,13 +768,16 @@ set_option maxHeartbeats 8000000 in
 open KummerChart in
 /-- **Local universal property of a normalized Kummer cover.**
 
-Let `X` be a normal integral scheme, `V` a nonempty affine open, `k` a
-positive integer invertible on `V`, and `u` a unit on `V` whose germ in
-the function field is `g / h ^ k`. For a section `T` of the normalization
-of the Kummer cover `X ^ k - g` over `V` mapping to the specified root
-section, a map `z : Z ⟶ X` which factors through `V` together with a
-`k`-th root of the pulled-back unit lifts uniquely to the normalization,
-with the prescribed value on `T`. -/
+Let `X` be a normal integral scheme with function field `K`, `V` a nonempty affine open, `k` a
+natural number invertible on `V`, `h ≠ 0` an element of `K`, and `u` a unit on `V` whose germ
+at every point of `V` maps to `g / h ^ k` in `K`. Let `Y` be the normalization of `X` in
+`Spec K[t]/(t ^ k - g)`, with structure map `π : Y ⟶ X`, and let `ρ` be the class of `t`.
+Take a section `T` of `Y` over `π ⁻¹ᵁ V` whose pullback along `Spec K[t]/(t ^ k - g) ⟶ Y` is
+the restriction of `h⁻¹ * ρ`: the root normalized so that its `k`-th power is `g / h ^ k`, the
+image of `u`, and not `g`. Then a morphism `z : Z ⟶ X` with `z ⁻¹ᵁ V = ⊤`, together with a
+global section `τ` of `Z` whose restriction to `z ⁻¹ᵁ V` has `k`-th power `z.app V u`, lifts to
+a unique `s : Z ⟶ Y` with `s ≫ π = z` such that `s.app (π ⁻¹ᵁ V) T` is the restriction of
+`τ`. -/
 public theorem AlgebraicGeometry.existsUnique_lift_fromNormalization_kummer_of_isAffineOpen
     {X : Scheme.{u}} [IsIntegral X]
     (hnorm : ∀ x : X, IsIntegrallyClosed (X.presheaf.stalk x))
