@@ -34684,6 +34684,7 @@
 "JaccardLattice.jaccardDist_eq_div": "5c8edc93e3e73b87",
 "JaccardLattice.jaccardDist_triangle": "336b7f92abf731bf",
 "JaccardLattice.jaccardDist_triangle_of_gilbertCondition": "1f02c90967d337a2",
+"KaehlerDifferential.D_ne_zero_of_forall_pow_ne": "1f861286b619abb5",
 "KaehlerDifferential.D_ne_zero_of_transcendental": "94edb344fd68306d",
 "KaehlerDifferential.DeRham.E": "8a931da308140704",
 "KaehlerDifferential.DeRham.Ext": "75563f21c59b7cf9",

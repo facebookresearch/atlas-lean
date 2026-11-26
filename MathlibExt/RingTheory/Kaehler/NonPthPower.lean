@@ -31,7 +31,7 @@ module
 public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.FieldTheory.KummerPolynomial
 import Mathlib.RingTheory.Etale.Kaehler
-import Mathlib.RingTheory.Etale.Field
+import Mathlib.RingTheory.Unramified.Field
 import Mathlib.RingTheory.Kaehler.Polynomial
 
 @[expose] public section
@@ -41,26 +41,24 @@ open Polynomial IntermediateField
 /-!
 # Kähler differentials of a non-`p`-th power
 
-In a field `k` of exponential characteristic `p`, an element that is not a
-`p`-th power has nonzero differential in `Ω[k⁄⊥]`.
+For a prime `p` and a field `k` of exponential characteristic `p`, an element of
+`k` that is not a `p`-th power has nonzero differential in `Ω[k⁄⊥]`, the Kähler
+differentials of `k` over its prime subfield `⊥`.
 -/
 
 namespace KaehlerDifferential
 
-/-- If `c` is not a `p`-th power in a field `k` of exponential
-characteristic `p`, then `D ⊥ k c ≠ 0` in the Kähler differentials of `k`
-over the prime subfield. -/
+/-- **Non-$p$-th powers have nonzero differential.** Let $p$ be a prime and let $k$ be a
+field of exponential characteristic $p$, so that $k$ has characteristic $p$. If $c \in k$ is
+not a $p$-th power in $k$, then $dc \neq 0$ in $\Omega_{k/\mathbb{F}_p}$, the Kähler
+differentials of $k$ over its prime subfield $\mathbb{F}_p$. -/
 public theorem D_ne_zero_of_forall_pow_ne
     {k : Type*} [Field k] (p : ℕ) (hp : p.Prime) [ExpChar k p]
     (c : k) (hc : ∀ b : k, b ^ p ≠ c) :
     KaehlerDifferential.D (⊥ : Subfield k) k c ≠ 0 := by
   classical
   have : Fact p.Prime := ⟨hp⟩
-  have hchark : CharP k p := by
-    cases ‹ExpChar k p› with
-    | zero => exact absurd hp Nat.not_prime_one
-    | prime hprime => assumption
-  have := hchark
+  have : CharP k p := (expChar_prime_iff k hp).mp ‹_›
   set 𝒮 : Set (Set k) :=
     {F | (∃ F' : Subfield k, (F' : Set k) = F) ∧ (∀ y : k, y ^ p ∈ F) ∧ c ∉ F} with h𝒮
   set F₀ : Subfield k := (frobenius k p).fieldRange with hF₀
@@ -165,10 +163,7 @@ public theorem D_ne_zero_of_forall_pow_ne
     have hfr : Module.finrank F k = p := by
       rw [← IntermediateField.finrank_top', ← htop, hdeg c hcF]
     have : Module.Finite F k := Module.finite_of_finrank_pos (by rw [hfr]; exact hp.pos)
-    have : Algebra.EssFiniteType F k := inferInstance
-    have := Algebra.FormallyEtale.of_formallyUnramified_of_field F k
-    have hsep : Algebra.IsSeparable F k :=
-      (Algebra.FormallyEtale.iff_isSeparable F k).mp ‹_›
+    have hsep : Algebra.IsSeparable F k := Algebra.FormallyUnramified.isSeparable F k
     have hcsep : IsSeparable F c := Algebra.IsSeparable.isSeparable F c
     rw [IsSeparable, hmin c hcF, Polynomial.Separable] at hcsep
     have hder : derivative (X ^ p - C (⟨c ^ p, hFpow c⟩ : F)) = 0 := by
