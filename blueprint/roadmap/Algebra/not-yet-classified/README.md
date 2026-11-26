@@ -30,6 +30,7 @@ Topics added since this subject's fields were last revised.
 - [Equivalence](equivalence/README.md)
 - [Exact Functor Connecting](exact-functor-connecting/README.md)
 - [Exactness Transport](exactness-transport/README.md)
+- [Exterior Power](exterior-power/README.md)
 - [Filtered Colimit Exactness](filtered-colimit-exactness/README.md)
 - [Filtered Interleaving](filtered-interleaving/README.md)
 - [Filtered Kernel Representatives](filtered-kernel-representatives/README.md)
