@@ -43,21 +43,6 @@ public theorem_wanted dumontThomas_numeration {A : Type*} (η : A → List A)
           ((List.range (k' + 1)).reverse.map fun j => morphIterate η j (s' j).1).flatten) →
         k' = k ∧ ∀ i ≤ k, s' i = s i
 
-/-- **Admissible sequences are determined by their weighted length.** Let $\eta$ be a
-substitution on an alphabet $A$, let $b \in A$ and $k \in \mathbb{N}$, and let
-$(m_i, a_i)_{i = 0, \dots, k}$ and $(m'_i, a'_i)_{i = 0, \dots, k}$ be two $b$-admissible
-sequences with $\sum_{j=0}^{k} |\eta^j(m_j)| = \sum_{j=0}^{k} |\eta^j(m'_j)|$. Then
-$(m_i, a_i) = (m'_i, a'_i)$ for every $i \le k$.
-
-Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
-ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.4 (Dumont and Thomas, Lemma 1.3). -/
-public theorem_wanted letterAdmissibleSequence_eq_of_weightedLength_eq {A : Type*}
-    (η : A → List A) (hη : IsSubstitution η) (k : ℕ) (b : A) (s s' : ℕ → List A × A)
-    (hs : IsLetterAdmissibleSequence η b s k) (hs' : IsLetterAdmissibleSequence η b s' k)
-    (hsum : ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s j).1).length =
-      ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s' j).1).length) :
-    ∀ i ≤ k, s i = s' i
-
 /-- **Decomposition of a proper prefix of an iterated image.** Let $\eta$ be a substitution on
 an alphabet $A$, let $\ell \ge 1$ and $a \in A$, and let $m$ be a proper prefix of
 $\eta^\ell(a)$, that is, a prefix of strictly smaller length. Then there are words $m'$ and

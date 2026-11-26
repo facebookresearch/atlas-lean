@@ -13,13 +13,15 @@ public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.ConditionalProbability
 public import Mathlib.Probability.Process.Stopping
 public import MathlibExt.Probability.BrownianHittingTime
+public import MathlibExt.Probability.Process.BrownianStrongMarkovMapISupEqMapAbs
 
 /-!
 # Wanted: the strong Markov property of Brownian motion and its consequences
 
 The strong Markov property of real Brownian motion (Mathlib's `IsBrownianReal`) at a stopping time
 of its natural filtration, and the two consequences that Le Gall's ENS notes derive from it right
-away: the reflection principle (with the law of the running maximum) and the law of the hitting
+away: the reflection principle (the law of the running maximum is in
+`MathlibExt.Probability.Process.BrownianStrongMarkovMapISupEqMapAbs`) and the law of the hitting
 time of a level. The statements assume that every path is continuous, as in the notes, so that
 suprema over `[0, t]` and hitting times are the classical ones. The repository proves the simple
 Markov property for processes with independent increments
@@ -68,14 +70,5 @@ theorem_wanted IsBrownianReal.reflection_principle {Ω : Type*} [MeasurableSpace
     (hcont : ∀ ω, Continuous fun t ↦ B t ω) {t : ℝ≥0} (ht : 0 < t) {a b : ℝ} (ha : 0 ≤ a)
     (hba : b ≤ a) :
     P {ω | a ≤ ⨆ s : Set.Icc (0 : ℝ≥0) t, B s ω ∧ B t ω ≤ b} = P {ω | 2 * a - b ≤ B t ω}
-
-/-- **The running maximum has the law of `|B_t|`.** For a Brownian motion `B` with continuous
-paths and measurable coordinates and `t > 0`, `S_t = sup_{s ≤ t} B s` has the same law as
-`|B_t|` (Le Gall, ENS notes *Intégration, Probabilités et Processus Aléatoires*,
-Théorème 14.5.2, second assertion). -/
-theorem_wanted IsBrownianReal.map_iSup_eq_map_abs {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P) (hBm : ∀ t, Measurable (B t))
-    (hcont : ∀ ω, Continuous fun t ↦ B t ω) {t : ℝ≥0} (ht : 0 < t) :
-    P.map (fun ω ↦ ⨆ s : Set.Icc (0 : ℝ≥0) t, B s ω) = P.map (fun ω ↦ |B t ω|)
 
 end MathlibExt.Probability.BrownianStrongMarkovWanted
