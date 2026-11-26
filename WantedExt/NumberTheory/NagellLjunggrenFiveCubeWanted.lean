@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.NagellLjunggrenFiveCube
 
 namespace MetaMathlibExt
 
@@ -32,14 +33,6 @@ public theorem_wanted nagell_ljunggren_exponent_structure (x y n q : ℕ) (hx : 
       (x, y, n, q) ≠ (18, 7, 3, 3)) :
     29 ≤ n.minFac ∧ ArithmeticFunction.cardFactors n ≤ 4 ∧ (q = 3 → n.Prime) ∧
       (q ∣ n → n = q)
-
-/-- **The Nagell–Ljunggren cube equation when $5 \mid n$.** There are no natural numbers
-$x \ge 2$, $y \ge 2$ and $n \ge 3$ with $5 \mid n$ such that $(x^n - 1)/(x - 1) = y^3$.
-
-Source: Tran Duc Son, *On the Nagell--Ljunggren Equation \frac{x^{5}-1}{x-1}=y^{3}*,
-INTEGERS 26 (2026), Article A44, Corollary 1 (`integers-2026-A44-cor-1`). -/
-public theorem_wanted nagell_ljunggren_cube_of_five_dvd (x y n : ℕ) (hx : 2 ≤ x) (hy : 2 ≤ y)
-    (hn : 3 ≤ n) (h5 : 5 ∣ n) : (x ^ n - 1) / (x - 1) ≠ y ^ 3
 
 end
 
