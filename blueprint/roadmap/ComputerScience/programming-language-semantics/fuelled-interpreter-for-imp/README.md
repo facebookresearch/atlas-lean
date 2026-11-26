@@ -1,0 +1,16 @@
+# Fuelled interpreter for IMP
+
+- [Fuelled evaluator for IMP commands](exec.md)
+- [The fuelled IMP evaluator fails at fuel zero](exec-zero.md)
+- [The fuelled IMP evaluator on skip](exec-skip.md)
+- [The fuelled IMP evaluator on an assignment](exec-assign.md)
+- [The fuelled IMP evaluator fails on a sequence whose first part fails](exec-seq-none.md)
+- [The fuelled IMP evaluator on a sequence whose first part succeeds](exec-seq-some.md)
+- [The fuelled IMP evaluator on a conditional with a true guard](exec-ite-true.md)
+- [The fuelled IMP evaluator on a conditional with a false guard](exec-ite-false.md)
+- [The fuelled IMP evaluator on a while loop with a false guard](exec-while-false.md)
+- [The fuelled IMP evaluator fails on a while loop whose body fails](exec-while-true-none.md)
+- [The fuelled IMP evaluator reruns a while loop after a successful body](exec-while-true-some.md)
+- [Soundness of the fuelled IMP evaluator for big-step semantics](exec-sound.md)
+- [Successful runs of the fuelled IMP evaluator persist at larger fuel](exec-mono.md)
+- [Completeness of the fuelled IMP evaluator for big-step semantics](exists-fuel-of-big-step.md)
