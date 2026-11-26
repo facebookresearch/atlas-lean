@@ -53,7 +53,11 @@ property with the passage from such a space to a continuous function of two vari
   uniform choices from finite sets), which keeps the relevant character sums of order
   `n * (3 / 2) ^ n` instead of `2 ^ n`.
 * *A nuclear trace.* The column `Ψ n g`, for a point `g` of level `n`, is an explicit
-  combination of vectors of levels `n` and `n + 1`, with sup norm at most
+  combination of the vectors `e (n + 1) i` and, for `n > 0`, `e n j`. These generating vectors
+  have indices `n + 1` and `n`, but the coordinate support of the column is one level wider:
+  since `e k l` with `k > 0` has its `τ`-part on level `k - 1`, the column `Ψ n g` is supported
+  on levels `n - 1`, `n` and `n + 1` for `n > 0`, and on levels `0` and `1` for `n = 0`
+  (compare (2.4)–(2.6) in Casazza, García and Johnson). Its sup norm is at most
   `(4 * n + 11) * (3 / 4) ^ n`. With the weights `2 ^ (-(n + 2))`, the trace
   `∑ (n, g), 2 ^ (-(n + 2)) * Ψ n g (n, g)` equals `1`, while
   `∑ (n, g), 2 ^ (-(n + 2)) * v (n, g) * Ψ n g = 0` for every vector `v` in the span of the
@@ -1202,8 +1206,13 @@ Book; refuted via P. Enflo's counterexample to the approximation problem in
 Banach spaces, Acta Math. 130 (1973), 309–317, DOI 10.1007/BF02392270; see the
 commentary in R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser,
 2015). This is the original bivariate-function form of the problem, distinct
-from the approximation-property consequence already in
-`EnfloWanted.lean`.
+from its consequence for the approximation property. The proof adapts
+A. M. Davie's construction of a Banach space failing the approximation
+property, The approximation problem for Banach spaces, Bull. London Math. Soc.
+5 (1973), 261–266, DOI 10.1112/blms/5.3.261, as reproduced in Section 2 of
+P. G. Casazza, C. L. García, W. B. Johnson, An example of an asymptotically
+Hilbertian space which fails the approximation property, arXiv:math/0006134,
+with real Walsh characters in place of complex group characters.
 -/
 theorem mazur153_refuted : ¬ ScottishBookProblem153Claim := by
   obtain ⟨Ψ, hbd, hsupp, htr0, htr1, hU⟩ := exists_davie
