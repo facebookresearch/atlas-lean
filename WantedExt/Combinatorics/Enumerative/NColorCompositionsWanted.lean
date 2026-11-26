@@ -42,8 +42,9 @@ conditions read literally without end segments, the string
 
 Proved in `MathlibExt.Combinatorics.Enumerative.NColorCompositions`,
 which this module imports: the partial-sum identities for `t(3k)`
-(`trib_three_mul`) and `t(3k+1)` (`trib_three_mul_add_one`), and the identities
-for `t(n) + t(n-2)` (`trib_add_two_sub_three_mul` and `trib_add_two_sub_three_mul_add_two`).
+(`trib_three_mul`) and `t(3k+1)` (`trib_three_mul_add_one`), the identities
+for `t(n) + t(n-2)` (`trib_add_two_sub_three_mul` and `trib_add_two_sub_three_mul_add_two`),
+and the identity `t(n) = t(n-2) + 2 ∑_{i=3}^{n} t(n-i)` (`trib_eq_add_sum`).
 The tribonacci numbers `tribNat` and `trib` moved there as well, with
 unchanged names, bodies and docstrings.
 
@@ -241,18 +242,6 @@ Theorem 5. -/
 theorem_wanted nonempty_equiv_colorCompAllowed_two_twoTypeComp
     (n : ℕ) :
     Nonempty (ColorCompAllowed 2 (n + 2) ≃ TwoTypeComp n)
-
-/-- **Tribonacci numbers from $t(n-2)$ and a partial sum.** Let $t$ be the tribonacci numbers
-with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
-extended by $t(n) = 0$ for $n < 0$. For every integer $n \ge 3$,
-$$t(n) = t(n-2) + 2 \sum_{i=3}^{n} t(n-i).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Proposition 6. -/
-theorem_wanted trib_eq_add_sum (n : ℤ) (hn : 3 ≤ n) :
-    trib n = trib (n - 2) +
-      2 * ∑ i ∈ Finset.Icc 3 n, trib (n - i)
 
 /-- **Tribonacci numbers from $t(n-1)$ and alternate earlier terms.** Let $t$ be the tribonacci
 numbers with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for

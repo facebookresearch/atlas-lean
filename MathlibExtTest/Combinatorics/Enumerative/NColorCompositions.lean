@@ -106,4 +106,25 @@ example : trib (3 * ((2 : ℕ) : ℤ) + 2) = 37 := by
   rw [trib_three_mul_add_two (k := 2)]
   decide
 
+-- At `n = 3` the sum has the single term `t(0)`: `t(3) = t(1) + 2 t(0) = 2`.
+example : trib 3 = trib 1 + 2 * trib 0 ∧ trib 3 = 2 := by
+  refine ⟨?_, by decide⟩
+  simpa using trib_eq_add_sum 3 le_rfl
+
+-- At `n = 6` the sum runs over `t(3), t(2), t(1), t(0)`: `t(6) = 3 + 2 · 4 = 11`.
+example : trib 6 = trib 4 + 2 * (trib 3 + trib 2 + trib 1 + trib 0) := by
+  have h := trib_eq_add_sum 6 (by decide)
+  rw [h]
+  decide
+
+-- An independent check by evaluation of the cases `3 ≤ n ≤ 12`.
+example : ∀ n : ℕ, n < 13 → 3 ≤ n →
+    trib (n : ℤ) = trib ((n : ℤ) - 2) + 2 * ∑ i ∈ Finset.Icc 3 (n : ℤ), trib ((n : ℤ) - i) := by
+  decide
+
+-- The hypothesis `3 ≤ n` cannot be dropped: at `n = 0` the sum is empty and `t(-2) = 0`,
+-- but `t(0) = 1`.
+example : trib 0 ≠ trib (0 - 2) + 2 * ∑ i ∈ Finset.Icc (3 : ℤ) 0, trib (0 - i) := by
+  decide
+
 end MathlibExtTest.NColorCompositions
