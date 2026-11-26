@@ -1,0 +1,3 @@
+# Communication bound
+
+Fix a verifier and a finite claim range with a fixed bitstring encoding. Let $C$ be a single upper bound on the bit length of every encoded claim; such a constant exists because the range is finite. On an input of length $n$, let $k(n)$ be the number of message slots after the claim and $w(n)$ the bit capacity of each slot. For every deterministic strategy and every tape, even one of a non-scheduled length, the initial claim and all actually transmitted payloads together contain at most $C+k(n)w(n)$ bits. Both schedules are polynomials in $n$, so this is one polynomial bound for all inputs, strategies and tapes. The tags and end markers in a local machine view are not transmitted payload bits.
