@@ -10,7 +10,7 @@ possibly infinite chase of $q$ by $\Sigma$, explored one atom at a time.
 ## Depends on
 
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
-- [Inclusion dependencies and finite implication](../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
+- [Satisfaction of an inclusion dependency](../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
 - [Polynomial space for decision problems](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pspace.md)
 - [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 

@@ -14,7 +14,7 @@ a published proof and cites it with its locator under `## Sources`.
 ## Depends on
 
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
-- [Inclusion dependencies and finite implication](../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
+- [Satisfaction of an inclusion dependency](../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
 
 ## Sources
 
