@@ -18,3 +18,4 @@ Arithmetic of finite groups through orders: cyclic numbers and groups of a given
 - [Subgroups with all prime divisors of a simple group](subgroups-with-all-prime-divisors-of-a-simple-gr/README.md)
 - [Thompson's problem on groups of the same type](thompson-s-problem-on-groups-of-the-same-type/README.md)
 - [Totient sums of element orders](totient-sums-of-element-orders/README.md)
+- [The integer powers of a group element that equal the identity are the multiples of its order](element-order-divides-exponent.md)

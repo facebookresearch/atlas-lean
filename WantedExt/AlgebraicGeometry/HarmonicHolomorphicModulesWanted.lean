@@ -9,13 +9,18 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSectionCalculus
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
 
 All ordinary support requests concern the fixed public section formulas.
-The cotangent section calculus `holomorphic_cotangent_section_calculus` is now proved in
+The holomorphic coefficient sheaf condition
+`holomorphic_coefficient_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`.
+The holomorphic cotangent section calculus
+`holomorphic_cotangent_section_calculus` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSectionCalculus`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
@@ -41,10 +46,6 @@ theorem_wanted holomorphic_bar_multiplication
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     (B : SmoothComplexBundle n M r)
     (h : HermitianMetric B) (A : SmoothConnection B) : BarMultiplicationCalculus B h A
-
-/-- The actual holomorphic scalar ring has the ordinary local sheaf condition. -/
-theorem_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
-  MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M
 
 /-- The same actual cotangent-form presheaves satisfy the ordinary gluing condition. -/
 theorem_wanted holomorphic_cotangent_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
