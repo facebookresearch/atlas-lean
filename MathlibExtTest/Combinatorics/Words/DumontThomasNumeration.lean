@@ -131,3 +131,39 @@ example : path 0 = pathWithTail 0 ∧ path 1 = pathWithTail 1 ∧ path 2 ≠ pat
   exact ⟨h 0 (by decide), h 1 (by decide), by decide⟩
 
 end MetaMathlibExt.letterAdmissibleSequence_eq_of_weightedLength_eq.Tests
+
+namespace MetaMathlibExt.seedAutomaton_neutral_padding.Tests
+
+private def double : Unit → List Unit := fun _ => [(), ()]
+
+private theorem unitPoint : IsPeriodicPointWithGrowingSeed double (fun _ => ()) 1 := by
+  have hgrow : Filter.Tendsto (fun k => (morphIterate double k [()]).length)
+      Filter.atTop Filter.atTop := by
+    refine Filter.tendsto_atTop_atTop.mpr fun n => ⟨n, fun k hk => ?_⟩
+    have hlen (a : Unit) : (double a).length = 2 := rfl
+    simpa [morphIterate_length_of_uniform hlen] using hk.trans (Nat.lt_two_pow_self (n := k)).le
+  have hper : IsTwoSidedPeriodicPoint double (fun _ => ()) 1 :=
+    ⟨le_rfl, fun _ _ _ => Subsingleton.elim _ _, fun _ _ _ => Subsingleton.elim _ _⟩
+  refine ⟨⟨fun _ => List.cons_ne_nil _ _, (), hgrow⟩, ⟨hper, ?_⟩, hgrow, hgrow⟩
+  intro q hq
+  exact (show IsTwoSidedPeriodicPoint double (fun _ => ()) q from hq).one_le
+
+-- Insert two padding blocks after either sign, keeping the nonempty suffix.
+example : seedAutomaton double () () [0, 0, 0, 1] = some () ∧
+    seedAutomaton double () () [1, 1, 1, 0] = some () := by
+  have hzero := (seedAutomaton_neutral_padding (η := double) (u := fun _ => ())
+    (p := 1) (hu := unitPoint) (v := [1]) (i := 2)).1 (by decide)
+  have hone := (seedAutomaton_neutral_padding double (fun _ => ()) 1 unitPoint [0] 2).2
+    (by decide)
+  exact ⟨hzero.trans rfl, hone.trans rfl⟩
+
+private def fibonacci (a : Fin 2) : List (Fin 2) := if a = 0 then [0, 1] else [0]
+
+-- From the negative Fibonacci seed, two copies of `01` return to the seed; `10` is rejected.
+example : lastLetterDigits fibonacci 2 1 = [0, 1] ∧
+    seedAutomaton fibonacci 1 0 (1 :: ((List.replicate 2 (lastLetterDigits fibonacci 2 1)).flatten
+      ++ [0])) = some 0 ∧
+    seedAutomaton fibonacci 1 0 [1, 1, 0, 0] = none := by
+  decide
+
+end MetaMathlibExt.seedAutomaton_neutral_padding.Tests
