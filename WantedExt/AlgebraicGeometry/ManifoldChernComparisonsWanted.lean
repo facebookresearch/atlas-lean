@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.ManifoldRationalChernModels
+public import MathlibExt.AlgebraicGeometry.ManifoldChernComparisonsNativeSmoothSingularSource
 
 /-!
 # Wanted native singular/de Rham and rational Chern comparisons
@@ -31,10 +32,6 @@ open MathlibExt.AlgebraicGeometry.ManifoldRationalChernModels
 open scoped Manifold ContDiff
 
 variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
-
-/-- The native simplex affine maps preserve this exact smooth extension predicate. -/
-theorem_wanted native_smooth_singular_source [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] :
-  SmoothSingularSource (n := n) (M := M)
 
 variable [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
   [ExteriorTheory ℝ (Coordinates n) M] [SmoothSingularSource (n := n) (M := M)]
