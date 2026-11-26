@@ -13,6 +13,24 @@ import MathlibExt.NumberTheory.CompletelyAdditiveHeight
 
 open MetaMathlibExt
 
+-- The product range is empty at level one.
+example {H : ℕ → ℕ} (hH : IsHeightFunction H) :
+    {m : ℕ | 0 < m ∧ H m = 1} = {p : ℕ | p.Prime ∧ H p = 1} := by
+  rw [heightLevel_eq_products_union_primes hH (by decide : 1 ≤ 1)]
+  ext m
+  constructor
+  · rintro (⟨ℓ, hpos, hbound, _⟩ | hp)
+    · omega
+    · exact hp
+  · exact Or.inr
+
+-- A prime square attains the upper bound on the height of the extracted factor.
+example {H : ℕ → ℕ} (hH : IsHeightFunction H) {p : ℕ} (hp : p.Prime) :
+    p ^ 2 ∈ {m : ℕ | 0 < m ∧ H m = 2 * H p} := by
+  have hpH := hH.prime_pos p hp
+  rw [heightLevel_eq_products_union_primes hH (by omega : 1 ≤ 2 * H p)]
+  exact Or.inl ⟨H p, hpH, by omega, p, p, hp, rfl, hp.pos, by omega, pow_two p⟩
+
 -- The profile starts at level one, even when its unused zeroth entry is nonzero.
 example (a : ℕ) : profilePartialSum (fun k => if k = 0 then a else 1) 0 = 0 := by
   simp [profilePartialSum]
