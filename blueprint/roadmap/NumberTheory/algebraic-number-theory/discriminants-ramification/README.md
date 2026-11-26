@@ -17,6 +17,7 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Odlyzko's root discriminant bound in degree at least 18](odlyzko-root-discr-ge.md)
 - [Order of the inertia group](card-inertia-eq-ramification-idx-in-mul.md)
 - [Ramification groups of local fields](ramification-groups-of-local-fields.md)
+- [Upper numbering of ramification groups](upper-numbering-of-ramification-groups.md)
 - [Units small away from the diagonal generate a subgroup of finite index](finite-index-closure-range-of-lt-one-off.md)
 - [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](dirichlet-unit-theorem.md)
 - [Dirichlet's S-unit theorem](s-unit-theorem.md)
