@@ -5,6 +5,8 @@ In the Liu–Layland periodic task model with $m \ge 1$ periodic tasks (over int
 ## Depends on
 
 - [The Liu–Layland periodic task model](the-liu-layland-periodic-task-model.md)
+- [Preemptive priority-driven schedules](produce-schedule.md)
+- [Fixed-priority rules](is-fixed-priority.md)
 
 ## Proof depends on
 
