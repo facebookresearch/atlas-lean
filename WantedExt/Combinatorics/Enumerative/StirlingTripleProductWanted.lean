@@ -30,24 +30,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Triple products of Stirling numbers bracket the binomial coefficient.** Let $n$, $p$ and
-$j$ be positive integers with $p \le n$. Write $S(m, i)$ for the Stirling number of the second
-kind (the number of partitions of an $m$-element set into $i$ nonempty blocks) and $c(m, i)$ for
-the unsigned Stirling number of the first kind (the number of permutations of $m$ elements with
-exactly $i$ cycles). Then, as rational numbers,
-$\frac{c(p + j, j)\, c(n + j, p + j)}{c(n + j, j)} \le \binom{n}{p} \le
-\frac{S(p + j, j)\, S(n + j, p + j)}{S(n + j, j)}$.
-
-Source: René Gy, *On Certain Products of Three Stirling Numbers*, INTEGERS 26 (2026),
-Article A108, Theorem 2.1 (`integers-2026-A108-thm-2-1`). -/
-public theorem_wanted stirling_triple_ratio_bounds_choose {n p j : ℕ} (hp : 0 < p) (hj : 0 < j)
-    (hpn : p ≤ n) :
-    ((n.choose p : ℕ) : ℚ) ≤
-        (Nat.stirlingSecond (p + j) j : ℚ) * Nat.stirlingSecond (n + j) (p + j) /
-          Nat.stirlingSecond (n + j) j ∧
-      (Nat.stirlingFirst (p + j) j : ℚ) * Nat.stirlingFirst (n + j) (p + j) /
-          Nat.stirlingFirst (n + j) j ≤ (n.choose p : ℚ)
-
 /-- **Gy's triple-ratio inequalities for log-convex sequences.** Let $n$, $p$ and $j$ be
 positive integers, at least two of which equal $1$, and let $x_1, x_2, \dots$ be positive reals
 with $x_k^2 \le x_{k-1} x_{k+1}$ for all $k \ge 2$. For $m \ge 0$ write $e_i(m)$ and $h_i(m)$ for
