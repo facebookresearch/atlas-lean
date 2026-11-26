@@ -1,11 +1,13 @@
 # Reproduction number of an SIS model with private and social phases
 
 **Model.** A community of constant size $N$ has non-commuters, fraction $1 - p$, who always stay in the **private phase** (their residential district), and commuters, fraction $p \in (0,1)$, who alternate between the private phase and a **social phase** at a central place. Write $(\bar S, \bar I)$ for non-commuters, $(S, I)$ for commuters in the private phase and $(\tilde S, \tilde I)$ for commuters in the social phase. Commuters switch private $\to$ social at rate $m_{rc}$ and social $\to$ private at rate $m_{cr}$ (separately for susceptibles and infectives), with one-day cycles $1/m_{rc} + 1/m_{cr} = 1$, so $\tau = 1/m_{cr} \in (0,1)$ is the daily fraction of time in the social phase. Infection forces are $\Lambda$ in the private phase (complete mixing of non-commuters and private-phase commuters) and $\tilde\Lambda$ in the social phase; recovery at rate $\rho < 1$ per day happens only in the private phase, and recovered individuals are susceptible again:
+
 $$\begin{aligned}
 \dot{\bar S} &= -\Lambda \bar S + \rho \bar I, & \dot{\bar I} &= \Lambda \bar S - \rho \bar I,\\
 \dot S &= -\Lambda S + \rho I - m^S_{rc} S + m^S_{cr}\tilde S, & \dot I &= \Lambda S - \rho I - m^I_{rc} I + m^I_{cr}\tilde I,\\
 \dot{\tilde S} &= -\tilde\Lambda \tilde S + m^S_{rc} S - m^S_{cr}\tilde S, & \dot{\tilde I} &= \tilde\Lambda \tilde S + m^I_{rc} I - m^I_{cr}\tilde I .
 \end{aligned}$$
+
 At the disease-free equilibrium $\bar S_0^* = (1-p)N$, $S_0^* = (1 - \tau_S)pN$, $\tilde S_0^* = \tau_S pN$. Let $\lambda_0^*$ and $\tilde\lambda_0^*$ be the derivatives of $\Lambda$ and $\tilde\Lambda$ with respect to infectives there ($\beta\kappa$ and $\beta K$ for mass-action incidence with contact coefficients $\kappa$, $K$; $\beta\omega/(\bar S_0^* + S_0^*)$ and $\beta\Omega/\tilde S_0^*$ for ratio-dependent incidence).
 
 **Theorem.** With

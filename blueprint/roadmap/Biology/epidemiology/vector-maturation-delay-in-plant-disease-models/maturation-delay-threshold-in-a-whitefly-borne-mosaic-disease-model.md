@@ -1,10 +1,12 @@
 # Maturation-delay threshold in a whitefly-borne mosaic disease model
 
 **Model.** Let $x, y$ be healthy and infected plants, and $v_2, v_3$ susceptible and infected mature vectors (whiteflies). Healthy plants grow logistically with rate $r$ and capacity $k$; plants are removed at rate $\mu$, infected plants additionally at rate $\alpha$. Vectors mature after a fixed delay $\tau$, surviving maturation with probability $e^{-c\tau}$ ($c$ is the vector death rate), and recruitment is Ricker-like with carrying capacity proportional to plant density. Transmission is frequency dependent:
+
 $$\begin{aligned}
 \dot x &= r x\Big(1 - \frac{x+y}{k}\Big) - \frac{\lambda x v_3}{x+y} - \mu x, \qquad \dot y = \frac{\lambda x v_3}{x+y} - (\mu + \alpha) y,\\
 \dot v_2 &= b\,V(t-\tau)\exp\!\Big(-\frac{V(t-\tau)}{a P(t-\tau)}\Big)e^{-c\tau} - \frac{\beta v_2 y}{x+y} - c v_2, \qquad \dot v_3 = \frac{\beta v_2 y}{x+y} - c v_3,
 \end{aligned}$$
+
 with $V = v_2 + v_3$, $P = x + y$, and nonnegative history on $[-\tau, 0]$. Solutions are nonnegative and enter the bounded set $\{x + y \le M,\ v_2 + v_3 \le N\}$.
 
 Write $\bar b = b e^{-c\tau}$. For $r > \mu$ and $\bar b > c$ the disease-free state is $\bar x = k(r - \mu)/r$, $\bar v_2 = a\bar x \ln(\bar b/c)$, and

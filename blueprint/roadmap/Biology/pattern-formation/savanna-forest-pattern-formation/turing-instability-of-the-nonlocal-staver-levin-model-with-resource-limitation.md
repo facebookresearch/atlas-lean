@@ -1,12 +1,14 @@
 # Turing instability of the nonlocal Staver–Levin model with resource limitation
 
 **Model.** Let $G, S, T, F \ge 0$ be the local proportions of grass, savanna saplings, savanna trees and forest trees at $x \in \mathbb R$, with $G + S + T + F = 1$. Fire spreads from burning grass with kernel $w$; forest and savanna seeds disperse with kernels $J_F, J_T$. The spatial Staver–Levin model is
+
 $$\begin{aligned}
 \partial_t G &= \mu S + \nu T + \phi(w * G)F - \alpha G(J_F * F) - \beta G(J_T * T),\\
 \partial_t S &= -\mu S - \omega(w * G)S - \alpha S(J_F * F) + \beta G(J_T * T),\\
 \partial_t T &= -\nu T + \omega(w * G)S - \alpha T(J_F * F),\\
 \partial_t F &= \alpha(G + S + T)(J_F * F) - \phi(w * G)F,
 \end{aligned}$$
+
 where the kernels are even probability densities (H1–H2), and the fire responses $\omega$ (sapling recruitment) and $\phi$ (forest mortality) are step functions of flammable cover with thresholds $\theta_1, \theta_2 \in (0,1)$ (H3). With resource limitation on forest growth with competition kernel $R$ and constraint $r \in (0,1]$, the grass–forest subsystem ($F = 1 - G$) reduces to
 
 $$\partial_t G = (1 - G)\,\phi(w * G) - \alpha G\big(1 - J_F * G\big)\Big(1 - \tfrac1r + \tfrac1r R * G\Big).$$

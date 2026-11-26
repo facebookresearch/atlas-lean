@@ -1,11 +1,13 @@
 # Backward bifurcation in the Ross–Macdonald model with quarantine
 
 **Model.** Humans (constant total $H$) are susceptible, infectious $I_h$ or quarantined $Q_h$; mosquitoes (constant total $V$, $m = V/H$) are susceptible or infectious $I_v$. Mosquitoes bite at constant rate $a$ (standard incidence), with transmission probabilities $b$ (mosquito to human) and $c$ (human to mosquito). A fraction $\theta$ of infectious humans is detected and quarantined at rate $\gamma_1$, the rest recover at rate $\gamma$; quarantined humans recover at rate $\gamma_2$ and receive a fraction $1 - \sigma$ of bites, $\sigma \in [0,1]$. Bites are redistributed to the non-quarantined population, giving
+
 $$\begin{aligned}
 I_h' &= ab\,\frac{I_v}{H - \sigma Q_h}\,(H - I_h - Q_h) - \big(\theta\gamma_1 + (1-\theta)\gamma\big) I_h,\\
 Q_h' &= \theta \gamma_1 I_h - \gamma_2 Q_h,\\
 I_v' &= ac\,\frac{I_h + (1-\sigma) Q_h}{H - \sigma Q_h}\,(V - I_v) - \mu I_v .
 \end{aligned}$$
+
 For $\theta = 0$ this is the classical Ross–Macdonald model with $\mathcal R_0 = \sqrt{a^2 b c m/(\gamma\mu)}$ and global threshold dynamics.
 
 **Reproduction number.** The next-generation matrix gives

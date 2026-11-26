@@ -1,10 +1,12 @@
 # Residual-fertility ceiling and critical release rate for sterile insect releases
 
 **Wild population with re-mating.** Let $A$ be immature stages (larvae and pupae), $M$ wild males, $F_W$ once-mated and $F_{WW}$ twice-mated fertile females. With carrying capacity $K$, maturation rate $\nu_A$, immature death rate $\mu_A$, female sex ratio $r$, female death rates $\mu_F$, $\mu_{F,WW}$, egg-laying rates $b_W$, $b_{WW}$ and re-mating rate $\delta \ge 0$,
+
 $$\begin{aligned}
 \dot A &= (b_W F_W + b_{WW} F_{WW})\bigl(1 - A/K\bigr) - (\nu_A + \mu_A) A, & \dot M &= (1-r)\nu_A A - \mu_M M,\\
 \dot F_W &= r\nu_A A - (\delta + \mu_F) F_W, & \dot F_{WW} &= \delta F_W - \mu_{F,WW} F_{WW}.
 \end{aligned}$$
+
 The **basic offspring number** is
 
 $$\mathcal R(\delta) = \frac{b_W r \nu_A}{(\nu_A + \mu_A)(\mu_F + \delta)} + \frac{\delta}{\mu_F + \delta}\,\frac{b_{WW} r\nu_A}{\mu_{F,WW}(\nu_A + \mu_A)} = \mathcal N(\delta)\left(1 + \frac{b_{WW}\,\delta}{b_W\,\mu_{F,WW}}\right),$$

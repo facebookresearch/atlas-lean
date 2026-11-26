@@ -3,12 +3,14 @@
 A **phase-type distribution** $\mathrm{PH}(\vec\alpha, A)$ is the absorption time of a continuous-time Markov chain with $n$ transient states, initial distribution $\vec\alpha$ over them and transient rate matrix $A$ ($a_{ij} \ge 0$ for $i \ne j$, $a_{jj} < 0$), with exit-rate vector $-A\vec 1$. Its mean is $\vec\alpha^{T}(-A)^{-1}\vec 1$, and phase-type laws are dense among distributions on $(0,\infty)$.
 
 **Model.** Juveniles $J$, biting-stage adults $\vec B = (B_1, \dots, B_n)^T$, ovipositing adults $V$ and resting adults $R$ obey
+
 $$\begin{aligned}
 \dot J &= \varphi(V, J) - (\rho_J + \mu_J) J, &
 \dot{\vec B} &= (\rho_J J + \gamma_R R)\,\vec\alpha + A^{T}\vec B - \mu \vec B,\\
 \dot V &= -(A\vec 1)^{T}\vec B - (\gamma_V + \mu) V, &
 \dot R &= \gamma_V V - (\gamma_R + \mu) R,
 \end{aligned}$$
+
 so the biting dwell time is $\mathrm{PH}(\vec\alpha, A)$ (linear chain trick). Here $\rho_J$ is maturation, $\mu_J, \mu$ are death rates, $\gamma_V, \gamma_R$ are the rates of leaving oviposition and rest, and the recruitment $\varphi(V,J)$ satisfies regularity assumptions with $\phi_V = \partial_V\varphi(0,0)$ and $\phi_J = \partial_J\varphi(0,0)$.
 
 Define

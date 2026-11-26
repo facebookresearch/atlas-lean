@@ -5,11 +5,13 @@
 $$\lambda_P = \frac{\beta_P P}{P_0 + \epsilon P}, \qquad \lambda_M = \frac{\beta_M M}{M_0 + \epsilon M},$$
 
 the schistosomiasis-only system is
+
 $$\begin{aligned}
 S_H' &= \Lambda_H + \omega I_B - (\lambda_P + \mu_H) S_H, & I_B' &= \lambda_P S_H - (\mu_H + \omega + d_B) I_B,\\
 M' &= N_E \gamma\, I_B - \mu_M M, & P' &= \theta I_S - \mu_P P,\\
 S_S' &= \Lambda_S - (\lambda_M + \mu_S) S_S, & I_S' &= \lambda_M S_S - (\mu_S + d_S) I_S,
 \end{aligned}$$
+
 with all parameters positive ($N_E \gamma$ is the effective miracidial output per infected human, $\theta$ the cercarial output per infected snail). The disease-free equilibrium is $(\Lambda_H/\mu_H, 0, 0, \Lambda_S/\mu_S, 0, 0)$.
 
 **Threshold.** Define
