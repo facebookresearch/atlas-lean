@@ -27,8 +27,9 @@ public import Domains.Biology.StatisticalGenetics.SpearmanKarber
 
 In a quantal bioassay, doses on an equally spaced (log-)scale `xᵢ = x₀ + i d`
 are given to `n` subjects each; at dose `i` the true response probability is `Pᵢ`
-and the observed proportion is `rᵢ / n` for a binomial count `rᵢ`. This file defines
-the Spearman–Kärber value `spearmanKarber`, the binomial point mass `binomProb`,
+and the observed proportion is `rᵢ / n` for a binomial count `rᵢ`. Using the Spearman–Kärber
+value `spearmanKarber` of `Domains.Biology.StatisticalGenetics.SpearmanKarber`, this file
+defines the binomial point mass `binomProb`,
 the expectation `expect` over independent binomial counts at the different doses,
 and the estimator `estimator` computed from the counts. It proves `expect_variance`:
 the estimator is unbiased for the mean of the interpolated tolerance distribution,
