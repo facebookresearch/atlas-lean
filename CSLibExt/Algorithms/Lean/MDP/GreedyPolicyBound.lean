@@ -26,6 +26,9 @@ acted on by one-step lookahead the constant is `2 γ / (1 - γ)`:
 * `optimalValue_sub_policyValue_greedy_valueIteration_le`: after `n` steps of value iteration
   from `V`, the greedy policy is within `2 γ / (1 - γ) * dist V (T V) * γ ^ n / (1 - γ)` of
   optimal in every state (compare AJKS Theorem 1.12, stated for Q-value iteration).
+* `dist_optimalValue_policyValue_le_of_greedy`: any deterministic policy `π` with `T_π W = T W`,
+  whatever its choice among tied maximizing actions, satisfies
+  `‖V* - V^π‖∞ ≤ 2 γ / (1 - γ) * ‖V* - W‖∞` (Munos 2007, equation (2.3)).
 -/
 
 @[expose] public section
