@@ -28,8 +28,6 @@ variable (k : Type) [CommRing k] [Algebra ℚ k] (M : Type) [TopologicalSpace M]
   [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
   [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
   [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-  [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-  [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
   (C : CoordinateDerivation k M O) (N : RightModule k M O)
   (V : RationalVFiltration k M O C N)
 

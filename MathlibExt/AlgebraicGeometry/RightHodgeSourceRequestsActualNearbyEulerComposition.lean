@@ -57,12 +57,9 @@ private theorem can_eq (k : Type) [CommRing k] [Algebra ℚ k] (M : Type)
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-    [∀ U : Opens M,
-      ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V)
-    (h01 : (0:ℚ) - 1 = -1) :
+    (h01 : (0 : ℚ) - 1 = -1) :
     can k M O C N V A = A.partialMap 0 ≫ eqToHom (congrArg (gradedV k M O C N V) h01) := by
   have hObj : gradedV k M O C N V (0 - 1) = vanishingUnipotent k M O C N V :=
     congrArg (gradedV k M O C N V) h01
@@ -76,12 +73,9 @@ private theorem var_eq (k : Type) [CommRing k] [Algebra ℚ k] (M : Type)
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-    [∀ U : Opens M,
-      ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V)
-    (h11 : (-1:ℚ) + 1 = 0) :
+    (h11 : (-1 : ℚ) + 1 = 0) :
     var k M O C N V A = A.coordinateMap (-1) ≫ eqToHom (congrArg (gradedV k M O C N V) h11) := by
   have hObj : gradedV k M O C N V (-1 + 1) = nearbyUnipotent k M O C N V :=
     congrArg (gradedV k M O C N V) h11
@@ -105,9 +99,6 @@ private theorem gradedProjection_transport (k : Type) [CommRing k] [Algebra ℚ 
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-    [∀ U : Opens M,
-      ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (a b : ℚ) (h : a = b) (W : Opens M)
     (t : (V.term a).toSheafOfModules.val.obj (op W)) :
@@ -122,9 +113,6 @@ private theorem inclusion_transport (k : Type) [CommRing k] [Algebra ℚ k]
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-    [∀ U : Opens M,
-      ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (a b : ℚ) (h : a = b) (W : Opens M)
     (t : (V.term a).toSheafOfModules.val.obj (op W)) :
@@ -139,16 +127,13 @@ public theorem actual_nearby_euler_composition (k : Type) [CommRing k] [Algebra 
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-    [∀ U : Opens M,
-      ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V) :
     nearbyNilpotent k M O C N V A = A.eulerMap 0 := by
   have hEpi : Epi (gradedProjection k M O C N V 0) :=
     CategoryTheory.Limits.coequalizer.π_epi
-  have h01 : (0:ℚ) - 1 = -1 := by simp
-  have h11 : (-1:ℚ) + 1 = 0 := by simp
+  have h01 : (0 : ℚ) - 1 = -1 := by simp
+  have h11 : (-1 : ℚ) + 1 = 0 := by simp
   have hcan' := can_eq k M O C N V A h01
   have hvar' := var_eq k M O C N V A h11
   have h : gradedProjection k M O C N V 0 ≫ (nearbyNilpotent k M O C N V A).asHom =
