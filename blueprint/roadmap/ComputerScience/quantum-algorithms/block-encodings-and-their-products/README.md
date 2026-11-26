@@ -12,3 +12,5 @@
 - [Product of block-encodings under a norm bound](mul-of-norm-le.md)
 - [Merging two qubit ancilla registers](qubit-ancilla-equiv.md)
 - [Product of qubit block-encodings](mul-2.md)
+- [Block encoding](is-block-encoding.md)
+- [Trivial block encoding](trivial-encoding.md)

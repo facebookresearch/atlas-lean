@@ -1,8 +1,3 @@
 # Photon count law of a CT design
 
-For finite index types `ι` (rays) and `κ` (cells), source intensities `I0 :
-ι → ℝ≥0`, a real design matrix `A : Matrix ι κ ℝ` and attenuation
-coefficients `x : κ → ℝ`, the photon law is the probability measure on count
-vectors `ι → ℕ` that is the product over rays `j` of Poisson distributions
-with rates `I0 j * exp(-(A *ᵥ x) j)`: independent Poisson counts, one per
-ray.
+For rays $j \in \iota$ and cells $\kappa$, both finite, take nonnegative source intensities $I_0(j)$, a real design matrix $A \in \mathbb{R}^{\iota \times \kappa}$ and attenuation coefficients $x \in \mathbb{R}^{\kappa}$. The photon law at $x$ is the probability distribution on count vectors $n \in \mathbb{N}^{\iota}$ under which the counts of the rays are independent and the count of ray $j$ is Poisson with mean the [transmitted rate](transmitted-rate.md) $I_0(j)\, e^{-(A x)_j}$ of the monochromatic Beer–Lambert model.
