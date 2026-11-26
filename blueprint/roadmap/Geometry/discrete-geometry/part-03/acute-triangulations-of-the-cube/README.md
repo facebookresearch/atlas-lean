@@ -1,6 +1,6 @@
 # Acute triangulations of the cube
 
-Points lie in [Euclidean 3-space $\mathbb{R}^3$](../../part-04/lines-in-three-dimensional-euclidean-space/e3.md).
+Points lie in [Euclidean 3-space $\mathbb{R}^3$](../../../curves-and-surfaces/f-ry-milnor-theorem/space.md).
 
 - [The unit cube $[0,1]^3$](std-cube.md)
 - [Component of a vector orthogonal to another](vec-orth.md)

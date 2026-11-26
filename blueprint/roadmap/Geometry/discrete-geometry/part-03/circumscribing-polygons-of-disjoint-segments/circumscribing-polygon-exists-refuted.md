@@ -12,5 +12,5 @@ Equivalently, some family of pairwise disjoint nondegenerate segments in the pla
 
 ## Sources
 
-- S. K. Ghosh and P. P. Goswami, "Unsolved problems in visibility graphs of points, segments and polygons", ACM Computing Surveys 46 (2013), Conjecture 16 (A. Mirzaian), arXiv:1012.5187.
+- S. K. Ghosh and P. P. Goswami, "Unsolved problems in visibility graphs of points, segments and polygons", arXiv:1012.5187v4, Conjecture 9 (A. Mirzaian), https://arxiv.org/abs/1012.5187v4.
 - M. Urabe and M. Watanabe, "On a counterexample to a conjecture of Mirzaian", Computational Geometry 2 (1992), 51–53, https://doi.org/10.1016/0925-7721(92)90020-S.

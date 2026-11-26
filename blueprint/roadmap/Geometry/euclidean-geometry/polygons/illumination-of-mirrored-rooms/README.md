@@ -1,6 +1,6 @@
 # Illumination of mirrored rooms
 
-- [The Euclidean plane $\mathbb{R}^2$](plane.md)
+- [The Euclidean plane](../../isometries-and-symmetry/classification-of-plane-isometries/plane.md)
 - [Cyclic successor of an index](cyclic-succ.md)
 - [Walls of a polygonal room](wall-segment.md)
 - [Polygonal rooms](polygonal-room.md)

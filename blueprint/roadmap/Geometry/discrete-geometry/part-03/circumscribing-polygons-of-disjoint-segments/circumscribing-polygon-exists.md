@@ -8,4 +8,4 @@ Mirzaian's conjecture, for segments that are not all collinear. Let $m \in \math
 
 ## Sources
 
-- S. K. Ghosh and P. P. Goswami, "Unsolved problems in visibility graphs of points, segments and polygons", ACM Computing Surveys 46 (2013), Conjecture 16 (A. Mirzaian), arXiv:1012.5187.
+- S. K. Ghosh and P. P. Goswami, "Unsolved problems in visibility graphs of points, segments and polygons", arXiv:1012.5187v4, Conjecture 9 (A. Mirzaian), https://arxiv.org/abs/1012.5187v4.

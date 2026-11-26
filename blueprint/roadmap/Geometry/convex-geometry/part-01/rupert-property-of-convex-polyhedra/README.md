@@ -1,6 +1,6 @@
 # Rupert property of convex polyhedra
 
-Points lie in [Euclidean 3-space $\mathbb{R}^3$](../../../discrete-geometry/part-04/lines-in-three-dimensional-euclidean-space/e3.md).
+Points lie in [Euclidean 3-space $\mathbb{R}^3$](../../../curves-and-surfaces/f-ry-milnor-theorem/space.md).
 
 - [Projection of $\mathbb{R}^3$ to the plane](proj.md)
 - [Rupert's property](is-rupert.md)

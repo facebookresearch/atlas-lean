@@ -1,4 +1,4 @@
-# Finsler metrics with the same oriented geodesics
+# Every geodesic of one Finsler metric is a reparametrized geodesic of another
 
 Let $F_1$ and $F_2$ be Finsler metrics on a smooth surface $M$. Every unparameterized geodesic of $F_1$ is a geodesic of $F_2$ if for every geodesic $\gamma : \mathbb{R} \to M$ of $F_1$ there is an orientation-preserving reparametrization $\varphi : \mathbb{R} \to \mathbb{R}$ (an order isomorphism, that is, an increasing bijection) such that $\gamma \circ \varphi$ is a geodesic of $F_2$.
 

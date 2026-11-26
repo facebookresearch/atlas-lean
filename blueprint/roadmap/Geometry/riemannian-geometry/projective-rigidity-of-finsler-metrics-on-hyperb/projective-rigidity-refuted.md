@@ -6,7 +6,7 @@ $$F_1(v) = c\, F_2(v) + \beta(v) \qquad \text{for every } v \in TM.$$
 
 A Finsler metric on $M$ is a continuous function $F : TM \to \mathbb{R}$ that is $C^\infty$ off the zero section, positive on nonzero vectors, positively homogeneous of degree one on each fiber and strongly convex; it need not be reversible. A geodesic of $F$ is a curve $\gamma : \mathbb{R} \to M$ for which there is a speed $c \ge 0$ such that, locally around every time, $d_F(\gamma(t_1), \gamma(t_2)) = c\,(t_2 - t_1)$ for $t_1 \le t_2$, where $d_F$ is the forward distance of $F$. A closed $1$-form is a function on $TM$ that is locally the differential of a smooth function.
 
-In other words, some closed surface carrying a hyperbolic metric has two Finsler metrics with the same oriented unparameterized geodesics that are not related by a positive scaling plus a closed $1$-form.
+In other words, some closed surface carrying a hyperbolic metric has two Finsler metrics $F_1$, $F_2$ such that every geodesic of $F_1$, after an orientation-preserving reparametrization, is a geodesic of $F_2$, but $F_1$ is not a positive multiple of $F_2$ plus a closed $1$-form.
 
 ## Sources
 
