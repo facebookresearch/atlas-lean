@@ -20,8 +20,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Clone-size distributions indexed by clone size](clone-size-distributions-indexed-by-clone-size/README.md)
 - [Estrogen-driven breast cancer treatment models](estrogen-driven-breast-cancer-treatment-models/README.md)
 - [Go-or-grow tumor invasion with multiple taxis](go-or-grow-tumor-invasion-with-multiple-taxis/README.md)
-- [Hele-Shaw limit of tumor growth](hele-shaw-limit-of-tumor-growth/README.md)
-- [Inverse problems for phase-field tumour models](inverse-problems-for-phase-field-tumour-models/README.md)
 - [Multi-state perfect phylogeny mixtures](multi-state-perfect-phylogeny-mixtures/README.md)
 - [Mutation frequencies in Yule cell populations](mutation-frequencies-in-yule-cell-populations/README.md)
 - [Reconstruction of early prostate tumour states](reconstruction-of-early-prostate-tumour-states/README.md)

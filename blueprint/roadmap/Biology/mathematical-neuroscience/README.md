@@ -10,6 +10,3 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
 - [Coupled biological oscillators](coupled-oscillators/README.md)
-- [Heteroclinic sequences in firing-rate networks](heteroclinic-sequences-in-firing-rate-networks/README.md)
-- [Microglia–amyloid chemotaxis](microglia-amyloid-chemotaxis/README.md)
-- [Phase response curves of coupled oscillators](phase-response-curves-of-coupled-oscillators/README.md)

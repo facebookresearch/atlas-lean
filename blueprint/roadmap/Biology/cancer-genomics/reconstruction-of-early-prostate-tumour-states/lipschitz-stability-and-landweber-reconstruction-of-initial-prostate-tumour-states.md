@@ -28,4 +28,4 @@ Backward reconstruction for a parabolic system is severely ill posed in general;
 
 ## Sources
 
-- Elena Beretta, Cecilia Cavaterra, Matteo Fornoni and Guillermo Lorenzo, "Iterative algorithms for the reconstruction of early states of prostate cancer growth", arXiv:2409.12844 (2024), Section 2, Section 3 (Theorems 3.1 and 3.2) and Section 4 (Proposition 4.2, Theorem 4.5), <https://doi.org/10.48550/arXiv.2409.12844>.
+- Elena Beretta, Cecilia Cavaterra, Matteo Fornoni, Guillermo Lorenzo and Elisabetta Rocca, "Iterative algorithms for the reconstruction of early states of prostate cancer growth", arXiv:2409.12844 (2024), Section 2, Section 3 (Theorems 3.1 and 3.2) and Section 4 (Proposition 4.2, Theorem 4.5), <https://doi.org/10.48550/arXiv.2409.12844>.

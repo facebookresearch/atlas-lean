@@ -18,3 +18,20 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
+
+## Further results
+
+- [Algebraic matroid certificates of generic identifiability](algebraic-matroid-certificates-of-generic-identifiability/README.md)
+- [Alignment-free phylogeny from k-mer counts](alignment-free-phylogeny-from-k-mer-counts/README.md)
+- [Ancestral state reconstruction on star trees](ancestral-state-reconstruction-on-star-trees/README.md)
+- [Dollo-$k$ characters](dollo-k-characters/README.md)
+- [Maximum agreement subtrees of balanced trees](maximum-agreement-subtrees-of-balanced-trees/README.md)
+- [Monotonicity of consensus methods](monotonicity-of-consensus-methods/README.md)
+- [Root ancestral configurations of matching gene and species trees](root-ancestral-configurations-of-matching-gene-and-species-trees/README.md)
+- [Sample complexity of quartet methods under the DLCoal model](sample-complexity-of-quartet-methods-under-dlcoal/README.md)
+- [Sequence-length requirements of distance methods](sequence-length-requirements-of-distance-methods/README.md)
+- [Split-sum conditions for the BHV Fréchet mean](split-sum-conditions-for-the-bhv-frechet-mean/README.md)
+- [Trace reconstruction on trees](trace-reconstruction-on-trees/README.md)
+- [Tropical geometry of equidistant tree space](tropical-geometry-of-equidistant-tree-space/README.md)
+- [Uniformization stable Markov models](uniformization-stable-markov-models/README.md)
+- [Weighted SCJ small parsimony for ancestral gene orders](weighted-scj-small-parsimony-for-ancestral-gene-orders/README.md)

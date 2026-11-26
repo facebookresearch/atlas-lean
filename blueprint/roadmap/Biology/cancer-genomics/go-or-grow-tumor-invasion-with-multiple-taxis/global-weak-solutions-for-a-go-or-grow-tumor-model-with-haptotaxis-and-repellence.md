@@ -22,4 +22,4 @@ whose dissipation controls $D|\nabla m|^2/m$, $m|\nabla v|^2/(1+v)^2$ and $m|\na
 
 ## Sources
 
-- Niklas Kolbe, Nikolaos Sfakianakis, Christian Stinner and Christina Surulescu, "Modeling multiple taxis: tumor invasion with phenotypic heterogeneity, haptotaxis, and unilateral interspecies repellence", arXiv:2005.01444 (2020), Section 3, system (3.0), Lemma 3.4, Proposition 3.6 and Theorem 3.2, <https://doi.org/10.48550/arXiv.2005.01444>.
+- Niklas Kolbe, Nikolaos Sfakianakis, Christian Stinner, Christina Surulescu and Jonas Lenz, "Modeling multiple taxis: tumor invasion with phenotypic heterogeneity, haptotaxis, and unilateral interspecies repellence", arXiv:2005.01444 (2020), Section 3, system (3.0), Lemma 3.4, Proposition 3.6 and Theorem 3.2, <https://doi.org/10.48550/arXiv.2005.01444>.

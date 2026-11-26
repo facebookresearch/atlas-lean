@@ -16,4 +16,4 @@ The adjacency graph $A(G_1,G_2)$ has one vertex per adjacency or telomere of eac
 
 ## Sources
 
-- Lora Bailey, Heather Smith Blake, Garner Cochran and Nathan Fox, "Complexity and Enumeration in Models of Genome Rearrangement", arXiv:2305.01851 (2023), Section 1 (Theorems 1.1 and 1.3), Section 2 (Definitions 2.1–2.4), Section 3 (Theorem 3.1 on all-crowns sorting scenarios), Sections 4–5, <https://doi.org/10.48550/arXiv.2305.01851>.
+- Lora Bailey, Heather Smith Blake, Garner Cochran, Nathan Fox, Michael Levet, Reem Mahmoud, Elizabeth Matson, Inne Singgih, Grace Stadnyk, Xinyi Wang and Alexander Wiedemann, "Complexity and Enumeration in Models of Genome Rearrangement", arXiv:2305.01851 (2023), Section 1 (Theorems 1.1 and 1.3), Section 2 (Definitions 2.1–2.4), Section 3 (Theorem 3.1 on all-crowns sorting scenarios), Sections 4–5, <https://doi.org/10.48550/arXiv.2305.01851>.

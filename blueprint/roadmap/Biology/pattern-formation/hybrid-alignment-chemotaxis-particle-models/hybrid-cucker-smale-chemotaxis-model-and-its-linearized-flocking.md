@@ -22,4 +22,4 @@ Alignment alone (Cucker–Smale) yields velocity consensus but not spatial aggre
 
 ## Sources
 
-- Ezio Di Costanzo, Marta Menci, Eleonora Messina and Roberto Natalini, "A hybrid mathematical model of collective motion under alignment and chemotaxis", arXiv:1507.02980 (2015), Section 2 (model and explicit signal), Theorems 1–2 and Proposition 1 (existence and uniqueness), Section 5 (linearized system and Theorem 3), <https://doi.org/10.48550/arXiv.1507.02980>.
+- Ezio Di Costanzo, Marta Menci, Eleonora Messina, Roberto Natalini and Antonia Vecchio, "A hybrid mathematical model of collective motion under alignment and chemotaxis", arXiv:1507.02980 (2015), Section 2 (model and explicit signal), Theorems 1–2 and Proposition 1 (existence and uniqueness), Section 5 (linearized system and Theorem 3), <https://doi.org/10.48550/arXiv.1507.02980>.

@@ -17,6 +17,10 @@ $$\mathbb{P}(\sigma_2 > \beta_2t) \to \exp\Big(-c^{(d+1)/(d+2)}\int_0^t\Big(1 - 
 
 Together with the regimes where the first mutation is rate-limiting ($N\mu_1\sigma_2 \Rightarrow W$), the sum-of-exponentials regime $\mu_2/\mu_1 \to c$ under fast sweeps, the nucleation regime of comparable time scales, and the [critical regime](critical-scaling-limit-of-spatial-mutation-waiting-times.md), these cover all eleven parameter regimes for $\sigma_2$.
 
+## Depends on
+
+- [Critical scaling limit of spatial mutation waiting times](critical-scaling-limit-of-spatial-mutation-waiting-times.md)
+
 ## Expansion
 
 At time $t$, a point is covered by type $1$ with probability $q(t) = 1 - \exp(-\gamma_d\mu_1\alpha^dt^{d+1}/(d+1))$, since type-$1$ mutations born at time $r$ cover a ball of volume $\gamma_d(\alpha(t-r))^d$. When many independent small regions exist, the covered volume concentrates at $Nq(t)$ and

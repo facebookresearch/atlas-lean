@@ -1,0 +1,26 @@
+# Combinatorial phylogenetics
+
+Combinatorics of trees and networks: phylogenetic diversity and tree shape and balance indices, rearrangement spaces and distances of phylogenetic networks, hybridization numbers, orientation and tree-based networks, split systems, and best match graphs in orthology inference.
+
+- [Agreement distance of unrooted phylogenetic networks](agreement-distance-of-unrooted-phylogenetic-networks/README.md)
+- [Best match graph editing by unsatisfiable relations](best-match-graph-editing-by-unsatisfiable-relations/README.md)
+- [Binary-explainable best match graphs](binary-explainable-best-match-graphs/README.md)
+- [Cherries and pitchforks in rooted versus unrooted trees](cherries-and-pitchforks-in-rooted-versus-unrooted-trees/README.md)
+- [Completion of two-colored best match graphs](completion-of-two-colored-best-match-graphs/README.md)
+- [Hierarchically colored cographs in orthology inference](hierarchically-colored-cographs-in-orthology-inference/README.md)
+- [Hierarchy-preserving order on rooted trees](hierarchy-preserving-order-on-rooted-trees/README.md)
+- [Least resolved trees of two-colored best match graphs](least-resolved-trees-of-two-colored-best-match-graphs/README.md)
+- [NNI connectivity of tree-based networks](nni-connectivity-of-tree-based-networks/README.md)
+- [Network hybridization via cherry picking](network-hybridization-via-cherry-picking/README.md)
+- [Orientation of undirected phylogenetic networks](orientation-of-undirected-phylogenetic-networks/README.md)
+- [Proximity of unrooted networks to tree-based](proximity-of-unrooted-networks-to-tree-based/README.md)
+- [Quadratic Colless index](quadratic-colless-index/README.md)
+- [Ranked tree-child networks](ranked-tree-child-networks/README.md)
+- [Rearrangement spaces of unrooted phylogenetic networks](rearrangement-spaces-of-unrooted-phylogenetic-networks/README.md)
+- [Shao–Sokal B2 balance index](shao-sokal-b2-balance-index/README.md)
+- [Symmetry nodes index](symmetry-nodes-index/README.md)
+- [Tree-child hybridization number](tree-child-hybridization-number/README.md)
+- [Tree-metrizable HGT networks](tree-metrizable-hgt-networks/README.md)
+- [Universal tree sets and split incompatibility](universal-tree-sets-and-split-incompatibility/README.md)
+- [Yule variances of tree balance indices](yule-variances-of-tree-balance-indices/README.md)
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
