@@ -16,7 +16,7 @@ universe u
 
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_frobTwo
+private theorem exactSource_frobTwo
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
@@ -54,7 +54,7 @@ theorem exactSource_frobTwo
     hFr n Fr₂ hFr₂
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_algHom
+private theorem exactSource_algHom
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
