@@ -1,0 +1,3 @@
+# Example derivation trees carry the binary tree weight
+
+The ambiguous example grammar has one nonterminal $A$, which is its start symbol, one terminal $a$, and the two rules $A \to A\,A$ and $A \to a$. For a real weight $q(r)$ on each rule $r$, the weight of a leaf $A \to a$ is $q(A \to a)$, and the weight of a node is $q(A \to B\,C)$ times the weights of its two subtrees. Let the rule weights give $p$ to $A \to A\,A$ and $q$ to $A \to a$. For every one-nonterminal binary tree, the weight of the derivation tree of the same shape equals the binary tree's weight, which is $q$ for a leaf and $p$ times the weights of the two subtrees for a node.

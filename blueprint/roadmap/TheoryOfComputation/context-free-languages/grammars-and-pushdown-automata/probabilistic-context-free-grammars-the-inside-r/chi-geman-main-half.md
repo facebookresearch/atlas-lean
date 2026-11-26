@@ -1,0 +1,3 @@
+# The Chi and Geman bound: cutoff sums stay at most one half
+
+For reals $p, q$, the cutoff sums $S_h$ are defined by $S_0 = 0$, $S_1 = 0$ and $S_{h+1} = q + p\,S_h^2$ for $h \ge 1$; by the index shift, $S_{h+1}$ is the total weight of the one-nonterminal trees of depth at most $h$, where a leaf has weight $q$ and a node weight $p$ times the weights of its subtrees. For $p = 2/3$ and $q = 1/3$, every cutoff sum satisfies $S_h \le 1/2$, because $\tfrac13 + \tfrac23 \cdot (\tfrac12)^2 = \tfrac12$. So although these weights are normalized, the trees of any bounded depth carry total weight at most $1/2$ (Chi and Geman, 1998).
