@@ -11,7 +11,7 @@
 - [Ctr Decrypt](ctr-decrypt.md)
 - [Ctr Decrypt ctr Encrypt](ctr-decrypt-ctr-encrypt.md)
 - [Counter mode](ctr-scheme.md)
-- [Correctness](ctr-scheme-correct.md)
+- [Correctness of counter mode](ctr-scheme-correct.md)
 - [Query Vec](query-vec.md)
 - [Run query Vec](run-query-vec.md)
 - [Ctr Enc Q](ctr-enc-q.md)
@@ -30,7 +30,7 @@
 - [The challenge is a one-time pad on a fresh counter range](ctr-cpa-guess-flip.md)
 - [Ctr Comp](ctr-comp.md)
 - [Fresh counter ranges give an exact half guessing chance](ctr-two-mul-card-wins.md)
-- [Card not ctr Fresh](card-not-ctr-fresh.md)
+- [Few challenge counters overlap the query counters](card-not-ctr-fresh.md)
 - [Counter-mode reduction against a random function](ctr-prf-rand-le.md)
 - [Counter mode is CPA-secure, concrete bound](ctr-cpa-advantage-le.md)
 

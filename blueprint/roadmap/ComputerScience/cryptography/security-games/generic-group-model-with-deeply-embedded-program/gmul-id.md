@@ -1,3 +1,3 @@
 # Gmul id
 
-The identity label is a right identity, for every encoding.
+Let `1 < q`. The identity label is a right identity, for every encoding.

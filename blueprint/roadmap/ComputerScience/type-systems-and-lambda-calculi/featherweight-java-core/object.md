@@ -1,3 +1,7 @@
 # Object
 
-Predeclared root Object, never a table entry (Lecture #30).
+Predeclared root Object, never a table entry.
+
+## Sources
+
+- Cornell University, CS 4110 Programming Languages and Logics, Lecture #30: Featherweight Java (Fall 2014), https://www.cs.cornell.edu/courses/cs4110/2014fa/lectures/lecture30.pdf.

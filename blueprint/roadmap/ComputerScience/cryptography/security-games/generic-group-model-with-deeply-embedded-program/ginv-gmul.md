@@ -1,3 +1,3 @@
 # Ginv gmul
 
-Left inverse law, for every encoding.
+Let `1 < q`. Left inverse law, for every encoding.

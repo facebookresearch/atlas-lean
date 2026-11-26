@@ -1,6 +1,6 @@
 # HMAC forgery is invariant under injective message encodings
 
-Let the chaining values `S` be finite and nonempty with decidable equality and
+Let the chaining values `S` have decidable equality and
 the messages `X` have decidable equality. For an injective encoding `enc : X →
 List Bool` and a forger `A` against the HMAC scheme on `enc`, the forgery
 experiment of HMAC on all bit strings against `A` relabeled along `enc` equals

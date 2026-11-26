@@ -1,4 +1,4 @@
 # Embedding preserves the output distribution
 
-Proved once, by induction, and reused by
-every `ofCoins` equality.
+For every oracle `O` and computation `c`, evaluating `embed c` against
+`withSampleOracle Smp O` gives the same output distribution as evaluating `c` against `O`.

@@ -1,3 +1,3 @@
 # Gmul assoc
 
-Represented multiplication is associative, for every encoding.
+Let `1 < q`. Represented multiplication is associative, for every encoding.
