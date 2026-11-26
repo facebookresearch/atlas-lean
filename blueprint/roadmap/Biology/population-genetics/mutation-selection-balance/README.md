@@ -50,5 +50,4 @@
 
 - [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
 - [The mutational load with epistatic gene interactions](multilocus-epistatic-mutation-load.md)
-- [Deterministic and stochastic descriptions of mutation–selection balance](mutation-selection-drift-comparisons.md)
 - [Mutation load in finite populations](finite-population-mutation-load.md)

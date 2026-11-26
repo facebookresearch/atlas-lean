@@ -4,7 +4,7 @@ Let $X$ be a regular diffusion on $[0, 1]$ with accessible endpoints, absorption
 
 $$Lm_n = -n\,m_{n-1} \quad \text{on } (0, 1), \qquad m_n(0) = m_n(1) = 0, \qquad n \ge 1,$$
 
-which for $n = 1$ is the equation $L\,E[\tau] = -1$ with zero boundary values of the lecture notes on one-dimensional diffusions (equation (4.8)). For the neutral Wright–Fisher diffusion, $m_1(x) = -2[x\log x + (1 - x)\log(1 - x)]$, the Kimura–Ohta mean absorption time. Moments conditioned on fixation satisfy the same recursion with the fixation-conditioned sojourn density $G(x, y)u(y)/u(x)$ in place of $G$, where $u$ is the fixation probability; they differ from the unconditional moments and must be kept separate from them.
+which for $n = 1$ is the equation $L\,E[\tau] = -1$ with zero boundary values (Karlin and Taylor 1981, Chapter 15). For the neutral Wright–Fisher diffusion, $m_1(x) = -2[x\log x + (1 - x)\log(1 - x)]$, the Kimura–Ohta mean absorption time (Kimura and Ohta 1969; Ewens 2004, Chapter 4). Moments conditioned on fixation satisfy the same recursion with the fixation-conditioned sojourn density $G(x, y)u(y)/u(x)$ in place of $G$, where $u$ is the fixation probability, as in the conditional mean fixation time of Kimura and Ohta (1969); they differ from the unconditional moments and must be kept separate from them.
 
 ## Depends on
 
@@ -23,4 +23,6 @@ which for $n = 1$ is the equation $L\,E[\tau] = -1$ with zero boundary values of
 
 ## Sources
 
-- *One dimensional diffusions and boundary conditions*, lecture 17 of the course Stochastic methods for physics and biology, University of Helsinki, spring 2012, Section 4.2.
+- S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York, 1981, Chapter 15.
+- M. Kimura and T. Ohta, The average number of generations until fixation of a mutant gene in a finite population, Genetics 61 (1969), 763–771. <https://doi.org/10.1093/genetics/61.3.763>
+- W. J. Ewens, *Mathematical Population Genetics I. Theoretical Introduction*, 2nd ed., Springer, New York, 2004, Chapter 4.

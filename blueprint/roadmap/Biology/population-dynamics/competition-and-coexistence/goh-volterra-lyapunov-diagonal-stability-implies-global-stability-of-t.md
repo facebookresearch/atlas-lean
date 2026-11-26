@@ -4,7 +4,7 @@ For the generalized Lotka–Volterra system $\dot x_i = x_i (r_i + (Ax)_i)$, $i 
 
 $$\dot V = \tfrac12 (x - x^*)^\top (WA + A^\top W)(x - x^*) < 0 \qquad (x \ne x^*),$$
 
-so $x^*$ is globally asymptotically stable in the open positive orthant: it is stable, and every solution starting in the open orthant converges to $x^*$ (Allesina, Theoretical Community Ecology, Sec. 3.3.6, where the computation is carried out for $W = I$; for general $W$ the identity below is direct). The identity uses $r = -Ax^*$: $\dot V = \sum_i w_i (x_i - x_i^*)(r_i + (Ax)_i) = \sum_i w_i (x_i - x_i^*)(A(x - x^*))_i$.
+so $x^*$ is globally asymptotically stable in the open positive orthant: it is stable, and every solution starting in the open orthant converges to $x^*$ (Goh 1977). The identity uses $r = -Ax^*$: $\dot V = \sum_i w_i (x_i - x_i^*)(r_i + (Ax)_i) = \sum_i w_i (x_i - x_i^*)(A(x - x^*))_i$.
 
 ## Proof depends on
 
@@ -20,5 +20,4 @@ so $x^*$ is globally asymptotically stable in the open positive orthant: it is s
 
 ## Sources
 
-- S. Allesina, *Theoretical Community Ecology*, lecture notes, University of Chicago, Lecture 3, Secs. 3.3.5–3.3.6.
-- Original result: B. S. Goh, Global stability in many-species systems, Am. Nat. 111 (1977), 135–143. <https://doi.org/10.1086/283144> The Lyapunov function and the global stability statement follow Allesina's notes, which attribute the function to Goh.
+- Original result: B. S. Goh, Global stability in many-species systems, Am. Nat. 111 (1977), 135–143. <https://doi.org/10.1086/283144>

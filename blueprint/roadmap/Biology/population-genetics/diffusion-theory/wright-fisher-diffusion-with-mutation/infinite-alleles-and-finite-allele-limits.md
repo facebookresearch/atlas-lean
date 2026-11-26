@@ -1,12 +1,12 @@
 # Infinite-alleles limits of finite-allele diffusions
 
-Etheridge (lecture notes, Section 6) treats the neutral $K$-allele Wright–Fisher diffusion in which each gene mutates at total rate $u$ to each of the other $K - 1$ types, $K \ge 2$, with equal probability; with $N$ genes its stationary law is the symmetric Dirichlet distribution with parameter $\varepsilon = 2Nu/(K - 1)$ (her equation (20)), and the order statistics of the frequencies have the density of her equation (21). Kingman proved that the law of the first $j$ order statistics converges as $K \to \infty$ for every $j$, and the limit is the Poisson–Dirichlet distribution, which describes the ranked frequencies of the infinitely-many-alleles model (same section, with the representation of the Dirichlet law by normalized independent gamma variables).
+Consider the neutral $K$-allele Wright–Fisher diffusion in which each gene mutates at total rate $u$ to each of the other $K - 1$ types, $K \ge 2$, with equal probability; with $N$ genes its stationary law is the symmetric Dirichlet distribution with parameter $\varepsilon = 2Nu/(K - 1)$ (Wright 1949). Kingman (1975) proved that if $K \to \infty$ with $K\varepsilon \to \theta$, the law of the first $j$ order statistics of the frequencies converges for every $j$, and the limit is the Poisson–Dirichlet distribution with parameter $\theta$, which describes the ranked frequencies of the infinitely-many-alleles model (Kingman 1975, using the representation of the Dirichlet law by normalized independent gamma variables; Watterson 1976; Ethier and Kurtz 1981, where the limit theorem is obtained as a corollary of the convergence of the diffusions).
 
-The expected homozygosity follows from the Dirichlet moments: for the symmetric Dirichlet law with parameter $\varepsilon$ on $K$ types, $E[X_i] = 1/K$ and $\mathrm{Var}[X_i] = (1/K)(1 - 1/K)/(K\varepsilon + 1)$ (Wikipedia, *Dirichlet distribution*), so
+The expected homozygosity follows from the Dirichlet moments: for the symmetric Dirichlet law with parameter $\varepsilon$ on $K$ types, $E[X_i] = 1/K$ and $\mathrm{Var}[X_i] = (1/K)(1 - 1/K)/(K\varepsilon + 1)$ (Kotz, Balakrishnan and Johnson 2000, Chapter 49), so
 
 $$\sum_{i=1}^KE[X_i^2] = \frac{1 + \varepsilon}{1 + K\varepsilon}.$$
 
-With $\varepsilon = \theta/(K - 1)$ and $\theta = 2Nu$ fixed, $K\varepsilon \to \theta$ and $\varepsilon \to 0$, so the homozygosity tends to $1/(1 + \theta)$, the Kimura–Crow value. These limits connect the finite-allele Dirichlet equilibrium with the stationary Fleming–Viot measure, whose ranked atom masses are Poisson–Dirichlet.
+With $\varepsilon = \theta/(K - 1)$ and $\theta = 2Nu$ fixed, $K\varepsilon \to \theta$ and $\varepsilon \to 0$, so the homozygosity tends to $1/(1 + \theta)$, the Kimura–Crow value (Kimura and Crow 1964). These limits connect the finite-allele Dirichlet equilibrium with the stationary Fleming–Viot measure, whose ranked atom masses are Poisson–Dirichlet.
 
 ## Depends on
 
@@ -23,5 +23,9 @@ With $\varepsilon = \theta/(K - 1)$ and $\theta = 2Nu$ fixed, $K\varepsilon \to 
 
 ## Sources
 
-- A. Etheridge, *Diffusion process models in mathematical genetics*, lecture notes, University of Oxford, Section 6 (equations (18)–(21) and the following discussion).
-- Wikipedia, Dirichlet distribution, moments. <https://en.wikipedia.org/wiki/Dirichlet_distribution>
+- J. F. C. Kingman, Random discrete distributions, J. R. Stat. Soc. Ser. B 37 (1975), 1–22.
+- G. A. Watterson, The stationary distribution of the infinitely-many neutral alleles diffusion model, J. Appl. Probab. 13 (1976), 639–651.
+- S. N. Ethier and T. G. Kurtz, The infinitely-many-neutral-alleles diffusion model, Adv. Appl. Probab. 13 (1981), 429–452.
+- S. Wright, Adaptation and selection, in *Genetics, Paleontology and Evolution* (G. L. Jepsen, E. Mayr and G. G. Simpson, eds.), Princeton University Press (1949), 365–389.
+- S. Kotz, N. Balakrishnan and N. L. Johnson, *Continuous Multivariate Distributions, Vol. 1: Models and Applications*, 2nd ed., Wiley (2000), Chapter 49.
+- M. Kimura and J. F. Crow, The number of alleles that can be maintained in a finite population, Genetics 49 (1964), 725–738. <https://doi.org/10.1093/genetics/49.4.725>

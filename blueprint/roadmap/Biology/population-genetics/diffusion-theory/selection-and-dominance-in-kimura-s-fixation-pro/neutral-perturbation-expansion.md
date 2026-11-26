@@ -1,6 +1,6 @@
 # Second-order expansion of Kimura's fixation probability in σ
 
-For the Wright–Fisher diffusion with genic selection and scaled selection coefficient $\sigma$, Kimura's fixation probability from frequency $x$ is $u_\sigma(x) = (1 - e^{-2\sigma x})/(1 - e^{-2\sigma})$ for $\sigma \ne 0$ and $u_0(x) = x$; with $\sigma = 2Ns$ this is the diffusion approximation $(1 - e^{-4Nsx})/(1 - e^{-4Ns})$ of Felsenstein (Section VII.8, equation (VII-91)). Then
+For the Wright–Fisher diffusion with genic selection and scaled selection coefficient $\sigma$, Kimura's fixation probability from frequency $x$ is $u_\sigma(x) = (1 - e^{-2\sigma x})/(1 - e^{-2\sigma})$ for $\sigma \ne 0$ and $u_0(x) = x$; with $\sigma = 2Ns$ this is Kimura's diffusion formula $(1 - e^{-4Nsx})/(1 - e^{-4Ns})$ for genic selection (Kimura 1962, equation (8)). Kimura (1962, equation (9)) expands it in powers of $2Ns$ for $|2Ns| < \pi$ with Bernoulli-polynomial coefficients; its first three terms give
 
 $$u_\sigma(x) = x + \sigma\,x(1 - x) + \frac{\sigma^2}{3}\,x(1 - x)(1 - 2x) + O(\sigma^3)$$
 
@@ -21,5 +21,4 @@ uniformly in $x \in [0, 1]$. Derivation: $1 - e^{-2\sigma x} = 2\sigma x\bigl(1 
 
 ## Sources
 
-- J. Felsenstein, Theoretical Evolutionary Genetics, course text, University of Washington, Section VII.8, equations (VII-84)–(VII-92).
-- Original result: M. Kimura, On the probability of fixation of mutant genes in a population, Genetics 47 (1962), 713–719. <https://doi.org/10.1093/genetics/47.6.713> The fixation probability formula follows Felsenstein, Section VII.8.
+- Original result: M. Kimura, On the probability of fixation of mutant genes in a population, Genetics 47 (1962), 713–719, equations (7)–(9). <https://doi.org/10.1093/genetics/47.6.713>

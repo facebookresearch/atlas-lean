@@ -1,8 +1,8 @@
 # Mutation and substitution loads as path functionals
 
-Consider a biallelic locus whose allele frequency $X$ follows a regular diffusion on $[0, 1]$ with accessible endpoints, absorption time $\tau$, fixation probability $u$ and Green's function $G$, so that $E_p\int_0^\tau g(X_t)\,dt = \int_0^1G(p, \xi)g(\xi)\,d\xi$ for continuous $g$ (Etheridge, lecture notes, Theorem 4.4). A load is the integral of a fitness deficit along the path. For a deleterious mutant with genotype fitnesses $1$, $1 - hs$, $1 - s$ for zero, one and two copies under Hardy–Weinberg proportions, the reduction of mean fitness at frequency $x$ is $d(x) = 2hsx(1 - x) + sx^2$; for an advantageous allele with fitnesses $1$, $1 + hs$, $1 + s$, the deficit relative to the fittest genotype, the reference of the substitutional load (Wikipedia, *Genetic load*, section on substitutional load), is $d(x) = s - 2hsx(1 - x) - sx^2$.
+Consider a biallelic locus whose allele frequency $X$ follows a regular diffusion on $[0, 1]$ with accessible endpoints, absorption time $\tau$, fixation probability $u$ and Green's function $G$, so that $E_p\int_0^\tau g(X_t)\,dt = \int_0^1G(p, \xi)g(\xi)\,d\xi$ for continuous $g$ (Karlin and Taylor 1981, Chapter 15, Section 3; Ewens 2004, Chapter 4). A load is the integral of a fitness deficit along the path. For a deleterious mutant with genotype fitnesses $1$, $1 - hs$, $1 - s$ for zero, one and two copies under Hardy–Weinberg proportions, the reduction of mean fitness at frequency $x$ is $d(x) = 2hsx(1 - x) + sx^2$; for an advantageous allele with fitnesses $1$, $1 + hs$, $1 + s$, the deficit relative to the fittest genotype, the reference of the substitutional load (Haldane 1957; Kimura and Maruyama 1969), is $d(x) = s - 2hsx(1 - x) - sx^2$.
 
-The following definitions and identities are derived. The total deficit of one origin at $p = 1/M$, with $M$ gene copies, is $E_p\int_0^\tau d(X_t)\,dt = \int_0^1G(p, \xi)d(\xi)\,d\xi$. Since the conditional probability of eventual fixation given the path up to $t < \tau$ is $u(X_t)$, the part carried by origins that fix is
+The following definitions and identities are derived; the split of the substitutional load into the load of all origins and the load conditioned on fixation, with the latter computed from the fixation-conditioned diffusion, is that of Ewens (1972). The total deficit of one origin at $p = 1/M$, with $M$ gene copies, is $E_p\int_0^\tau d(X_t)\,dt = \int_0^1G(p, \xi)d(\xi)\,d\xi$. Since the conditional probability of eventual fixation given the path up to $t < \tau$ is $u(X_t)$, the part carried by origins that fix is
 
 $$E_p\Bigl[\int_0^\tau d(X_t)\,dt;\ X_\tau = 1\Bigr] = \int_0^1G(p, \xi)\,d(\xi)\,u(\xi)\,d\xi,$$
 
@@ -23,5 +23,8 @@ and its quotient by $u(p)$, the integral of $d$ against the fixation-conditioned
 
 ## Sources
 
-- A. Etheridge, *Diffusion process models in mathematical genetics*, lecture notes, University of Oxford, Section 4 (Theorem 4.4).
-- Wikipedia, Genetic load, section on substitutional load. <https://en.wikipedia.org/wiki/Genetic_load>
+- S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press (1981), Chapter 15, Section 3.
+- W. J. Ewens, *Mathematical Population Genetics I: Theoretical Introduction*, 2nd ed., Springer (2004), Chapter 4.
+- J. B. S. Haldane, The cost of natural selection, J. Genet. 55 (1957), 511–524.
+- M. Kimura and T. Maruyama, The substitutional load in a finite population, Heredity 24 (1969), 101–114.
+- W. J. Ewens, Concepts of substitutional load in finite populations, Theor. Popul. Biol. 3 (1972), 153–161. <https://doi.org/10.1016/0040-5809(72)90024-X>

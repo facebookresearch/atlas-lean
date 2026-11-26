@@ -5,7 +5,7 @@ On the simplex $\Delta_K = \{x \in [0, 1]^K : \sum_i x_i = 1\}$, $K \ge 2$, let 
 1. $L$ is symmetric in $L^2(\pi)$ on polynomials, $\int g\,Lf\,d\pi = \int f\,Lg\,d\pi$, so the diffusion started from $\pi$ is reversible;
 2. $\pi$ is the unique stationary law of the diffusion on $\Delta_K$.
 
-In the source's parametrization each lineage mutates at rate $\theta/2$ to type $j$ with probability $\pi_j > 0$, so $\theta_j = \theta\pi_j$; the source states the Dirichlet equilibrium (Birkner, Remark 2.2.16) and, for two types, that the $\mathrm{Beta}(\theta_1, \theta_0)$ law is the unique equilibrium (Fact 2.1.1). Sampling from the stationary population is treated in [sampling consistency and exchangeability](sampling-consistency-and-exchangeability.md).
+With each lineage mutating at rate $\theta/2$ to type $j$ with probability $\pi_j > 0$, $\theta_j = \theta\pi_j$. The Dirichlet equilibrium is Wright's (1949), and for two types the Beta law (Wright 1931). For a finite type space this diffusion is the Fleming–Viot process with parent-independent (uniform) mutation, whose stationary law Ethier and Kurtz (1993) show to be unique and reversible; Li, Shiga and Yao (1999) prove the converse, that for irreducible mutation reversibility forces the mutation to be parent-independent. Sampling from the stationary population is treated in [sampling consistency and exchangeability](sampling-consistency-and-exchangeability.md).
 
 ## Depends on
 
@@ -23,4 +23,7 @@ In the source's parametrization each lineage mutates at rate $\theta/2$ to type 
 
 ## Sources
 
-- M. Birkner, *Stochastic population models*, lecture notes, Johannes Gutenberg-Universität Mainz, 2025/26, Remark 2.2.16, Fact 2.1.1 and Observation 2.1.2.
+- S. Wright, Adaptation and selection, in *Genetics, Paleontology and Evolution* (G. L. Jepsen, E. Mayr and G. G. Simpson, eds.), Princeton University Press (1949), 365–389.
+- S. Wright, Evolution in Mendelian populations, Genetics 16 (1931), 97–159. <https://doi.org/10.1093/genetics/16.2.97>
+- S. N. Ethier and T. G. Kurtz, Fleming–Viot processes in population genetics, SIAM J. Control Optim. 31 (1993), 345–386. <https://doi.org/10.1137/0331019>
+- Z. Li, T. Shiga and L. Yao, A reversibility problem for Fleming–Viot processes, Electron. Commun. Probab. 4 (1999), 65–76.

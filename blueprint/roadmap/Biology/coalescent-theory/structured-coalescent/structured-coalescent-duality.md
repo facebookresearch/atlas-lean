@@ -1,14 +1,14 @@
 # Duality between structured diffusions and the structured coalescent
 
-In Etheridge's description of a subdivided population (RIMS lectures II), demes $i \in I$ have effective sizes $N_e(i)$, a proportion $m_{ij}$ of deme $i$ migrates to deme $j$ each generation, and migration is conservative, $\sum_jN_e(i)m_{ij} = \sum_jN_e(j)m_{ji}$. Let the sizes and migration proportions depend on a scaling parameter $N$, with limiting relative sizes and scaled migration rates
+Consider a subdivided population in which demes $i \in I$ have effective sizes $N_e(i)$, a proportion $m_{ij}$ of deme $i$ migrates to deme $j$ each generation, and migration is conservative, $\sum_jN_e(i)m_{ij} = \sum_jN_e(j)m_{ji}$. Let the sizes and migration proportions depend on a scaling parameter $N$, with limiting relative sizes and scaled migration rates
 
 $$c_i = \lim_{N \to \infty}\frac{N_e(i)}{N} \in (0, \infty), \qquad M_{ij} = \lim_{N \to \infty} N m_{ij} \in [0, \infty),$$
 
-so that conservative migration becomes $\sum_jc_iM_{ij} = \sum_jc_jM_{ji}$. With time in units of $N$ generations, simultaneous migration and coalescence and multiple mergers have probability of order $1/N^2$, and the frequencies $p_i$ of an allele $a$ converge to Kimura's stepping-stone system of Wright–Fisher diffusions coupled by migration,
+so that conservative migration becomes $\sum_jc_iM_{ij} = \sum_jc_jM_{ji}$. With time in units of $N$ generations, simultaneous migration and coalescence and multiple mergers have probability of order $1/N^2$, and the frequencies $p_i$ of an allele $a$ converge to the stepping-stone system of Wright–Fisher diffusions coupled by migration,
 
 $$dp_i = \sum_j\frac{c_j}{c_i}M_{ji}(p_j - p_i)\,dt + \sqrt{\frac{p_i(1 - p_i)}{c_i}}\,dW_i,$$
 
-with independent Brownian motions $W_i$. The ancestral lineages of a sample follow the structured coalescent $n = (n_i)_{i\in I}$: a lineage in deme $i$ moves to deme $j$, $n_i \mapsto n_i - 1$ and $n_j \mapsto n_j + 1$, at rate $n_ic_jM_{ji}/c_i$, and two lineages in deme $i$ coalesce, $n_i \mapsto n_i - 1$, at rate $n_i(n_i - 1)/(2c_i)$. With $p^n = \prod_{i\in I}p_i^{n_i}$, the two processes are dual:
+with independent Brownian motions $W_i$ (the stepping-stone model of Kimura and Weiss 1964). The ancestral lineages of a sample follow the structured coalescent $n = (n_i)_{i\in I}$: a lineage in deme $i$ moves to deme $j$, $n_i \mapsto n_i - 1$ and $n_j \mapsto n_j + 1$, at rate $n_ic_jM_{ji}/c_i$, and two lineages in deme $i$ coalesce, $n_i \mapsto n_i - 1$, at rate $n_i(n_i - 1)/(2c_i)$; under conservative migration $c_jM_{ji}/c_i$ is the backward migration rate from deme $i$ to deme $j$, and this is the structured coalescent of Notohara (1990) and Wilkinson-Herbots (1998, Eq. (3)), up to the normalization of the scaled migration rates. With $p^n = \prod_{i\in I}p_i^{n_i}$, the two processes are dual (Notohara 1990):
 
 $$E\bigl[p_t^{n_0}\bigr] = E\bigl[p_0^{n_t}\bigr],$$
 
@@ -29,4 +29,6 @@ that is, the probability that a sample of $n_i(0)$ genes from each deme $i$ at t
 
 ## Sources
 
-- A. Etheridge, Some mathematical models from population genetics II. Adding space, lecture slides, RIMS, Kyoto, September 2023 (University of Oxford), slides on the structured Wright–Fisher model, the structured coalescent, Kimura's stepping stone model and its duality.
+- Original result: M. Notohara, The coalescent and the genealogical process in geographically structured population, J. Math. Biol. 29 (1990), 59–75. <https://doi.org/10.1007/BF00173909>
+- H. M. Wilkinson-Herbots, Genealogy and subpopulation differentiation under various models of population structure, J. Math. Biol. 37 (1998), 535–585, Section 2, Eq. (3).
+- M. Kimura and G. H. Weiss, The stepping stone model of population structure and the decrease of genetic correlation with distance, Genetics 49 (1964), 561–576. <https://doi.org/10.1093/genetics/49.4.561>

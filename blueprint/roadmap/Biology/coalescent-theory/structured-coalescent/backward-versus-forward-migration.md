@@ -4,7 +4,7 @@ Consider demes $1, \dots, d$ with $N_1, \dots, N_d$ adults, in which, each gener
 
 $$b_{ji} = \frac{N_i f_{ij}}{\sum_k N_k f_{kj}}.$$
 
-These backward probabilities, not the forward contributions, are the migration probabilities of the structured coalescent, and $b_{ji} = f_{ij}$ fails in general: the backward matrix depends on the deme sizes. This is a direct derivation. Coop (Population and Quantitative Genetics, Chapter 6) uses the backward description in the island–mainland model: a fraction $m$ of the island's individuals have parents from the mainland, so a lineage sampled on the island moves to the mainland with probability $m$ per generation, while migrants from the small island are a negligible fraction of the large mainland and are ignored for lineages sampled there; with coalescence probability $1/(2N_I)$ per generation on the island, two island lineages coalesce before either migrates with probability $\frac{1/(2N_I)}{1/(2N_I) + 2m}$ when $m \ll 1$, which gives $F_{IM} = 1/(1 + 4N_I m)$. In the island model with equal deme sizes and symmetric exchange, the backward rates are symmetric, as in the two-lineage island rates.
+These backward probabilities, not the forward contributions, are the migration probabilities of the structured coalescent, and $b_{ji} = f_{ij}$ fails in general: the backward matrix depends on the deme sizes. This is the relation between forward and backward migration rates of Bürger (2014, Section 3.2) under constant deme proportions. In the island–mainland model, a fraction $m$ of the island's individuals have parents from the mainland, so a lineage sampled on the island moves to the mainland with probability $m$ per generation, while migrants from the small island are a negligible fraction of the large mainland and are ignored for lineages sampled there; with coalescence probability $1/(2N_I)$ per generation on the island, two island lineages coalesce before either migrates with probability $\frac{1/(2N_I)}{1/(2N_I) + 2m}$ when $m \ll 1$, which gives $F_{IM} = 1/(1 + 4N_I m)$, Wright's (1931) value for an island receiving a fraction $m$ of migrants each generation. In the island model with equal deme sizes and symmetric exchange, the backward rates are symmetric, as in the two-lineage island rates.
 
 ## Depends on
 
@@ -19,4 +19,5 @@ These backward probabilities, not the forward contributions, are the migration p
 
 ## Sources
 
-- G. Coop, *Population and Quantitative Genetics*, lecture notes, University of California, Davis, Chapter 6 (Neutral Diversity and Population Structure), section A simple model of migration between an island and the mainland.
+- R. Bürger, A survey of migration-selection models in population genetics, Discrete Contin. Dyn. Syst. Ser. B 19 (2014), 883–959, Section 3.2 (The relation between forward and backward migration rates). <https://doi.org/10.3934/dcdsb.2014.19.883>
+- S. Wright, Evolution in Mendelian populations, Genetics 16 (1931), 97–159. <https://doi.org/10.1093/genetics/16.2.97>

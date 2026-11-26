@@ -1,6 +1,6 @@
 # Charnov's marginal value theorem
 
-Charnov's (1976) rule, in his formulation, is that "the predator should leave the patch it is presently in when the marginal capture rate in the patch drops to the average capture rate for the habitat"; graphically, the optimal residence time is where the line from the expected travel time is tangent to the gain curve (marginal value theorem article). In the multi-patch form: a forager meets patches of types $i = 1, \dots, k$ with probabilities $p_i > 0$, spends a mean travel time $\tau > 0$ between patches, and gains $g_i(t)$ from residence time $t$ in a patch of type $i$, where each $g_i : [0, \infty) \to [0, \infty)$ is differentiable, increasing and concave with $g_i(0) = 0$. Its long-run intake rate is
+Charnov's (1976) rule is that "the predator should leave the patch it is presently in when the marginal capture rate in the patch drops to the average capture rate for the habitat"; graphically, the optimal residence time is where the line from the point $(-\tau, 0)$, one mean travel time before arrival, is tangent to the gain curve (Stephens and Krebs 1986, Chapter 3). In Charnov's multi-patch form: a forager meets patches of types $i = 1, \dots, k$ with probabilities $p_i > 0$, spends a mean travel time $\tau > 0$ between patches, and gains $g_i(t)$ from residence time $t$ in a patch of type $i$, where each $g_i : [0, \infty) \to [0, \infty)$ is differentiable, increasing and concave with $g_i(0) = 0$. Its long-run intake rate is
 
 $$E(t_1, \dots, t_k) = \frac{\sum_i p_i\, g_i(t_i)}{\tau + \sum_i p_i t_i}.$$
 
@@ -15,5 +15,5 @@ Since $\partial_{t_i} E = p_i\,(g_i'(t_i) - E)/(\tau + \sum_j p_j t_j)$, every m
 
 ## Sources
 
-- Marginal value theorem, Wikipedia. <https://en.wikipedia.org/wiki/Marginal_value_theorem>
-- Original result: E. L. Charnov, Optimal foraging, the marginal value theorem, Theor. Popul. Biol. 9 (1976), 129–136. <https://doi.org/10.1016/0040-5809(76)90040-X> The leaving rule follows the quotation in the marginal value theorem article.
+- Original result: E. L. Charnov, Optimal foraging, the marginal value theorem, Theor. Popul. Biol. 9 (1976), 129–136. <https://doi.org/10.1016/0040-5809(76)90040-X>
+- D. W. Stephens and J. R. Krebs, *Foraging Theory*, Princeton University Press, 1986, Chapter 3.
