@@ -645,7 +645,9 @@ later one, which would skip Lean. Then it:
    as the sync puts any unplaced module; one in a folder that is no subject
    gets no pages, and placing it later is a graph pull request that also runs
    the sync over the whole project ([Maintaining articles](#maintaining-articles))
-   to write them;
+   to write them. For the same reason it never places a module older than the
+   base in such a folder, whose older declarations the scoped sync would leave
+   without pages;
 2. drops the placement of each module that no longer exists, as a file or as a
    folder;
 3. runs the scoped sync over every Lean change since the base, on `main`'s wiki
@@ -669,11 +671,14 @@ its name (its folder's, for a name such as `Basic`), as its topic's title,
 unless it takes declarations from a module placed in the same field, whose
 topic it then joins. A line counts only for a module that its pull request's
 merge changed and that nothing places yet. `make` reads the lines after the
-merge, as untrusted text, and leaves out those in fenced code blocks and HTML
-comments.
+merge, as untrusted text: only lines of their own, indented by at most three
+spaces, outside fenced code blocks and HTML comments, and none of a
+description edited after its pull request merged, which no review of the merge
+saw.
 
-`--body FILE` writes the pull request's description: the placements, each with
-where it comes from; the placements dropped; the new modules left unplaced,
+A batch's description has `Graph: batch` and names no issue
+([Graph PRs](../CONTRIBUTING.md#graph-prs)). `--body FILE` writes it: the
+placements, each with where it comes from; the placements dropped; the new modules left unplaced,
 and the changed ones that get no pages, in a folder with no subject; what
 `make` left for an editor (lines it could not follow, modules it could not
 place); the sync's own items for an editor, such as part-list lines its refresh
@@ -697,14 +702,19 @@ writes:
 
 From a newer `main`, it also checks that the batch still merges cleanly into
 it, placing each module once, and that the scoped check finds nothing the
-merge breaks, such as a second page for one declaration.
+merge breaks, such as a second page for one declaration. Then it runs the sync
+as `make` does and prints the description it recomputes (`--body FILE` writes
+it too).
 
-The batch's reviewer runs `verify` on the exact head, then reads the
-placements and the notes. The pages are the sync's, made from docstrings that
-the Lean pull requests' reviews covered. For each page under "Pages to check",
-the reviewer compares the page with its declaration's new docstring, and opens
-a page-problem issue for one that no longer matches: once the batch writes the
-new digest, no sync reports that page again.
+The batch's reviewer runs `verify` on the exact head and reads what it prints,
+not the pull request's description, which whoever opens the pull request can
+edit: the placements and where each comes from, the placements dropped, the
+notes, the sync's items for an editor and the pages to check. The pages are the
+sync's, made from docstrings that the Lean pull requests' reviews covered. For
+each page under "Pages to check", the reviewer compares the page with its
+declaration's new docstring, and opens a page-problem issue for one that no
+longer matches: once the batch writes the new digest, no sync reports that page
+again.
 
 A batch is never updated. When `verify`, run from an up-to-date `main`, fails,
 or when the merge queue removes the batch, close it and make the next one from
