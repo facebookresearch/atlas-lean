@@ -12,10 +12,14 @@ where $\mathfrak{p}$ runs over the nonzero prime ideals of $\mathcal{O}_K$, with
 $\|y\|_{\mathfrak{p}} = N(\mathfrak{p})^{-v_{\mathfrak{p}}(y)}$ for $y \ne 0$ and
 $\|0\|_{\mathfrak{p}} = 0$, and $\sigma$ runs over all $[K : \mathbb{Q}]$ field embeddings of $K$
 into $\mathbb{C}$, so that a pair of complex conjugate embeddings contributes twice. By the product
-formula $h_2(P)$ does not depend on the choice of coordinates, and it does not depend on $K$.
-Equivalently, $[K : \mathbb{Q}] \, h_2(P)$ is the Arakelov degree of $P^* \mathcal{O}(1)$ over
-$\operatorname{Spec} \mathcal{O}_K$, with $\mathcal{O}(1)$ given the Fubini–Study metric
-$\|X_j\|(x) = |x_j| / (\sum_i |x_i|^2)^{1/2}$ at each embedding.
+formula $\sum_{\mathfrak{p}} \log \|a\|_{\mathfrak{p}} + \sum_{\sigma} \log |\sigma(a)| = 0$
+for $a \in K^\times$, the height $h_2(P)$ does not depend on the choice of coordinates, and it does not
+depend on $K$. Equivalently, $[K : \mathbb{Q}] \, h_2(P)$ is the arithmetic degree
+$\widehat{\deg}(\varepsilon_P^* \overline{\mathcal{O}(1)})$ for the morphism $\varepsilon_P \colon
+\operatorname{Spec} \mathcal{O}_K \to \mathbb{P}^N_{\mathbb{Z}}$ extending $P$, with
+$\mathcal{O}(1)$ given the Fubini–Study metric $\|X_j\|(x) = |x_j| / (\sum_i |x_i|^2)^{1/2}$ at
+each embedding; when $K$ is the residue field of $P$, this is the height of the Zariski closure of
+$P$ in $\mathbb{P}^N_{\mathbb{Z}}$ for this metric, not divided by $[K : \mathbb{Q}]$.
 
 With the maximum $\max_i |\sigma(x_i)|$ in place of the $\ell^2$ norm at the embeddings one gets
 the usual absolute logarithmic Weil height $h(P)$, and $h(P) \le h_2(P) \le h(P) + \frac{1}{2}
@@ -24,11 +28,13 @@ particular $h_2(P) \ge 0$.
 
 ## Depends on
 
-This node has no prerequisites.
+- [Height of a cycle](../../AlgebraicGeometry/arakelov-geometry/height-of-a-cycle.md), for the
+  arithmetic degree of a point of $\mathbb{P}^N_{\mathbb{Z}}$ with the Fubini–Study metric
 
 ## Proof depends on
 
-This node has no prerequisites.
+- [Principal Arakelov divisors have size one](../../AlgebraicGeometry/arakelov-geometry/arakelov-divisors/size-principal.md),
+  for the product formula, which makes $h_2(P)$ independent of the coordinates
 
 ## Sources
 

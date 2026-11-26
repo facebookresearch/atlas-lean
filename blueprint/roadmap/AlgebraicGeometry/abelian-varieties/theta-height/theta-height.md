@@ -4,18 +4,21 @@ Let $r \ge 2$ be an even integer, $A$ an [abelian variety](../abelian-scheme.md)
 over $\overline{\mathbb{Q}}$, and $L$ an ample line bundle on $A$ that is
 [symmetric](../../not-yet-classified/canonical-polarization-data/is-symmetric.md),
 $[-1]^* L \cong L$, and defines a principal [polarization](../polarization.md): $\varphi_L \colon A
-\to A^\vee$ is an isomorphism. Choose a number field $K \subset \overline{\mathbb{Q}}$ over which
-$A$ and $L$ are defined and all the points of $A$ of order dividing $r^2$ are rational, and a
-[theta embedding of level $r$](theta-structure.md) $\Theta \colon A \to \mathbb{P}_K^{r^{2g} - 1}$
-attached to $L$. The **theta height** of $A$ with respect to $L$ is
+\to A^\vee$ is an isomorphism. Choose a
+[theta embedding of level $r$](theta-structure.md) $\Theta \colon A \to
+\mathbb{P}_{\overline{\mathbb{Q}}}^{r^{2g} - 1}$ attached to $L$, constructed over the algebraically
+closed field $\overline{\mathbb{Q}}$, so that $\Theta(0) \in \mathbb{P}^{r^{2g} - 1}(\overline{\mathbb{Q}})$.
+The **theta height** of $A$ with respect to $L$ is
 
 $$h_\Theta(A, L) = h_2(\Theta(0)),$$
 
 the [$\ell^2$-height](../../../NumberTheory/heights-mahler-measure/l2-height-of-projective-points.md)
 of the image of the origin. The point $\Theta(0)$ is determined by $(A, L)$ up to the action of
 the finite group $G$ of the theta embedding, which permutes the coordinates and multiplies them by
-roots of unity and so changes no $\|\cdot\|_{\mathfrak{p}}$ and no $\ell^2$ norm; and the
-$\ell^2$-height does not depend on $K$. So $h_\Theta(A, L) \ge 0$ depends only on $(A, L)$ up to
+roots of unity and so changes no $\|\cdot\|_{\mathfrak{p}}$ and no $\ell^2$ norm; the
+$\ell^2$-height is computed in any number field containing a set of homogeneous coordinates of
+$\Theta(0)$, which may be larger than a field over which $A$, $L$ and the points of order dividing
+$r^2$ are defined (see the theta embedding page). So $h_\Theta(A, L) \ge 0$ depends only on $(A, L)$ up to
 isomorphism over $\overline{\mathbb{Q}}$ and on $r$, which the notation leaves implicit.
 
 Pazuki also describes $\Theta(0)$ analytically (§2.3.4, pp. 30–31): for an embedding

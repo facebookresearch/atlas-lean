@@ -1,6 +1,6 @@
 # Pazuki's comparison of the theta height and the Faltings height
 
-This node is still to be broken down: its statement is exact, and its proof is most of Pazuki's
+This node is still to be broken down. Its statement is exact; its proof is most of Pazuki's
 article.
 
 Let $g \ge 1$ be an integer and $r \ge 2$ an even integer. Let $K$ be a number field, $A$ an
@@ -8,7 +8,9 @@ Let $g \ge 1$ be an integer and $r \ge 2$ an even integer. Let $K$ be a number f
 $A$ that is [symmetric](../../not-yet-classified/canonical-polarization-data/is-symmetric.md),
 $[-1]^* L \cong L$, and defines a principal [polarization](../polarization.md): $\varphi_L \colon A
 \to A^\vee$ is an isomorphism. Let $h_\Theta(A, L)$ be the [theta height](theta-height.md) of level
-$r$ of $(A, L)$, and let $h_F(A)$ be the
+$r$ of the base change of $(A, L)$ to $\overline{\mathbb{Q}}$ along an embedding $K \to
+\overline{\mathbb{Q}}$; it does not depend on the embedding, as Galois conjugation preserves the
+$\ell^2$-height. Let $h_F(A)$ be the
 [stable Faltings height](../../not-yet-classified/faltings-height/faltings-height.md) of $A$, in
 Faltings' normalization. Pazuki's Definition 2.1 gives $\omega$ the metrics
 $\|\alpha\|_\sigma^2 = \frac{i^{g^2}}{(2\pi)^g} \int_{A_\sigma(\mathbb{C})} \alpha \wedge
@@ -19,8 +21,8 @@ $$h_F^{\mathrm{Del}}(A) = h_F(A) + \frac{g}{2} \log \pi,$$
 
 the height $h(A)$ of Gaudron and Rémond. Put
 
-$$H_\Theta = \max\{h_\Theta(A, L), 1\}, \qquad H_F = \max\{h_F^{\mathrm{Del}}(A), 1\} = \max\Bigl\{h_F(A)
-+ \frac{g}{2} \log \pi, 1\Bigr\}.$$
+$$H_\Theta = \max\{h_\Theta(A, L), 1\}, \qquad H_F = \max\{h_F^{\mathrm{Del}}(A), 1\} =
+\max\Bigl\{h_F(A) + \frac{g}{2} \log \pi, 1\Bigr\}.$$
 
 Then
 
@@ -36,7 +38,7 @@ the two statements agree. Items (1) and (3) of the corollary, the bound $|h_\The
 \frac{1}{2} h_F^{\mathrm{Del}}(A)| \le C_1(g, r) \log(H_\Theta + 2)$ and the comparison with the
 modified Faltings height of Pazuki's Definition 2.2, are not part of this page.
 
-A good expansion follows Pazuki and has pages for: his Theorem 1.1, the comparison
+A good expansion follows Pazuki and states and links: his Theorem 1.1, the comparison
 $m(r, g) \le h_\Theta(A, L) - \frac{1}{2} h_F^{\mathrm{Del}}(A) - \frac{1}{4 [K : \mathbb{Q}]}
 \sum_{\sigma} \log \det (\operatorname{Im} \tau_\sigma) \le M(r, g)$ with explicit $m(r, g)$ and
 $M(r, g)$, for period matrices $\tau_\sigma$ in the Siegel fundamental domain $\mathfrak{F}_g$
