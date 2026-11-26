@@ -86331,6 +86331,7 @@
 "MetaMathlibExt.MultipleZeta.zWord": "8c70d13bcd872f0c",
 "MetaMathlibExt.MultipleZeta.zWordPNat": "42b6f66280a5d0af",
 "MetaMathlibExt.MvPolynomial.omegaAlgHom": "dcb57663b402eddf",
+"MetaMathlibExt.NagellLjunggren.eq_of_succ_mul_cube_sub_mul_cube_eq_one": "a92c8d2328741932",
 "MetaMathlibExt.Nat.VPartition": "2b678fe588bd35eb",
 "MetaMathlibExt.Nat.cast_fermatNumber_succ": "b3dc7229bb3b9083",
 "MetaMathlibExt.Nat.delannoy": "85296c837f43e0b2",
