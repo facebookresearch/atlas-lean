@@ -12,15 +12,21 @@ public import Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy
 public import Mathlib.AlgebraicTopology.DoldKan.HomotopyEquivalence
 
 /-!
-# Original simplicial homotopies on the native normalized Moore complex
+# Simplicial homotopies on normalized Moore complexes
 
-Native Moore inclusion, the original alternating map and the native
-normalization projection reconstruct the existing normalized map.
-Sandwiching the existing alternating chain homotopy therefore gives a
-homotopy between those actual normalized maps. No homotopy or comparison
-law is added to a simplicial morphism as a caller supplied certificate.
-Reference: Mathlib SimplicialObject.Homotopy.toChainHomotopy and native
-Dold--Kan inclusion/projection. Source UNEXECUTED.
+Let C be an abelian category, X and Y simplicial objects, and f,g : X ⟶ Y. Write A for the
+alternating face-map complex and N for the normalized Moore complex. The Moore inclusion i_X :
+N(X) → A(X) and normalization projection p_Y : A(Y) → N(Y) satisfy N(f) = i_X ≫ A(f) ≫ p_Y.
+
+A simplicial homotopy H from f to g induces an alternating chain homotopy whose degree n
+component is −Σᵢ₌₀ⁿ (−1)ⁱHᵢ. Composing it with i_X and p_Y gives a chain homotopy from N(f) to
+N(g), so their homology maps agree in every natural degree. The construction also identifies
+the normalized augmentation with the augmentation of the alternating complex after Moore
+inclusion.
+
+The alternating homotopy and the normalization maps are those of
+Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy and
+Mathlib.AlgebraicTopology.DoldKan.HomotopyEquivalence.
 -/
 
 @[expose] public section
@@ -37,7 +43,11 @@ namespace CategoryTheory.SimplicialObject
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {X Y : SimplicialObject C}
 
-/-- The native normalized map is its original inclusion/alternating/projection composite. -/
+/-- Factorization of the normalized simplicial map.
+
+Let C be abelian and f : X ⟶ Y a simplicial morphism. Its normalized Moore chain map is (i_X ≫
+A(f)) ≫ p_Y, where i_X includes N(X) in the alternating face-map complex A(X) and p_Y projects
+A(Y) onto N(Y). -/
 theorem inclusion_alternating_projection (f : X ⟶ Y) :
     (inclusionOfMooreComplexMap X ≫ (alternatingFaceMapComplex C).map f) ≫
       DoldKan.PInftyToNormalizedMooreComplex Y = (normalizedMooreComplex C).map f := by
@@ -51,8 +61,13 @@ theorem inclusion_alternating_projection (f : X ⟶ Y) :
       ((congrArg (fun m => (normalizedMooreComplex C).map f ≫ m) hid).trans
         (Category.comp_id _)))
 
-/-- Normalizing the original augmentation and then contracting the constant point
-is the original normalized augmentation map. -/
+/-- Normalization of an augmented simplicial object.
+
+Let X be an augmented simplicial object in an abelian category, with augmentation a : X.left →
+const(X.right). Apply normalization to a, then Moore inclusion and the alternating
+augmentation of const(X.right). The resulting map to the chain complex concentrated in degree
+zero at X.right is i_X ≫ ε_X, the Moore inclusion followed by the alternating augmentation of
+X itself. -/
 @[reassoc]
 theorem normalized_augmentation_to_constant (X : SimplicialObject.Augmented C) :
     (normalizedMooreComplex C).map X.hom ≫
@@ -87,7 +102,13 @@ namespace Homotopy
 
 variable {f g : X ⟶ Y}
 
-/-- The actual native normalized chain homotopy induced by the original simplicial prism. -/
+/-- Normalized chain homotopy from a simplicial prism.
+
+Let C be abelian and H a simplicial homotopy from f : X ⟶ Y to g. Its alternating chain
+homotopy is composed on the left with the Moore inclusion i_X and on the right with the
+normalization projection p_Y. The factorization N(f) = i_X ≫ A(f) ≫ p_Y and its analogue for g
+identify the endpoints with the normalized maps. The signed component before normalization is
+−Σᵢ₌₀ⁿ (−1)ⁱHᵢ in degree n to n+1. -/
 def toNormalizedChainHomotopy (H : SimplicialObject.Homotopy f g) :
     _root_.Homotopy ((normalizedMooreComplex C).map f)
       ((normalizedMooreComplex C).map g) :=
@@ -96,7 +117,12 @@ def toNormalizedChainHomotopy (H : SimplicialObject.Homotopy f g) :
       (DoldKan.PInftyToNormalizedMooreComplex Y)).trans
         (_root_.Homotopy.ofEq (inclusion_alternating_projection g)))
 
-/-- All native normalized homology maps respect the earned original prism. -/
+/-- Equality of normalized homology maps under simplicial homotopy.
+
+For simplicial morphisms f,g : X ⟶ Y in an abelian category and a simplicial homotopy H from f
+to g, their normalized Moore maps induce equal maps on homology in every natural degree n. The
+equality follows from the normalized chain homotopy obtained by composing the alternating
+prism with the Moore inclusion and projection. -/
 theorem normalized_homologyMap_eq (H : SimplicialObject.Homotopy f g) (n : ℕ) :
     HomologicalComplex.homologyMap ((normalizedMooreComplex C).map f) n =
       HomologicalComplex.homologyMap ((normalizedMooreComplex C).map g) n :=

@@ -1,3 +1,6 @@
-# Reindexed Exact Input Sequence obj
+# Underlying twice-mapped short exact sequence
 
-No complex or coefficient is changed: the object is literally two maps.
+For additive short-exact-sequence-preserving `L : W → A` and
+`R : A → B` between preadditive categories, and a short exact
+`S` in `W`, the underlying short complex of the reindexed input to
+`T : B → D` is precisely `(S.map L).map R`.

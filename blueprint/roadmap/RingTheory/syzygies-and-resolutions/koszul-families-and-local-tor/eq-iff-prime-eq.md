@@ -1,4 +1,6 @@
-# Eq iff prime eq
+# Koszul Euler factors are determined by their primes
 
-Two bundled prime factors are equal exactly when their primes are equal;
-the finite-length field is proof-irrelevant.
+Koszul Euler factors are determined by their primes.
+
+Two bundled factors for the same family are equal exactly when their prime components are
+equal.

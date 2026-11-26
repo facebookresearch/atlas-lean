@@ -1,3 +1,6 @@
-# Annihilator Quotient Module mk smul
+# Quotient scalar class acts by its representative
 
-Every original R scalar value is retained by the actual descended action.
+Quotient scalar class acts by its representative.
+
+With the quotient action defined by `annihilatorQuotientModule`, `(Ideal.Quotient.mk I r) • m
+= r • m` for every `r : R` and `m : M`.

@@ -16,10 +16,18 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import Mathlib.CategoryTheory.Preadditive.Opposite
 
 /-!
-# Actual dual evaluation of a finite additive frame
+# Contravariant evaluation of finite split frames
 
-Contravariant additive functors send the finite projection/injection identities
-to inverse evaluation maps. The construction uses those maps directly.
+Let C,D be preadditive and F : Cᵒᵖ ⥤ D additive. A finite frame for A consists of objects f_i
+and maps ι_i : f_i → A, π_i : A → f_i with ι_i ≫ π_i = id_{f_i}, ι_i ≫ π_j = 0 for i ≠ j and
+Σ_i π_i ≫ ι_i = id_A. Given isomorphisms e_i : F(f_i) ≅ g_i and the biproduct of the g_i,
+evaluation defines F(A) ≅ ⨁ᵢg_i.
+
+The hom is the lift of F((ι_i).op) ≫ e_i.hom; its inverse is the descendant of e_i.inv ≫
+F((π_i).op). Contravariance reverses the total frame identity and additivity preserves its
+finite sum. A presentation ⨁ᵢf_i ≅ A transports the injections and projections before this
+evaluation. Empty finite frames are included, and indexing, object and morphism universes
+remain independent.
 -/
 
 @[expose] public section
@@ -31,8 +39,11 @@ open CategoryTheory CategoryTheory.Limits Opposite
 universe u₁ u₂ v₁ v₂ w
 namespace CategoryTheory.DualFiniteFrame
 
-/-- The opposite of the actual finite frame's total identity is its dual total
-identity, with no condition on the index universe. -/
+/-- Opposite total identity of a finite frame.
+
+For a finite family f_i in a preadditive category and maps ι_i : f_i → A, π_i : A → f_i
+satisfying Σ_i π_i ≫ ι_i = id_A, the opposite category satisfies Σ_i (ι_i).op ≫ (π_i).op =
+id_{op A}. Taking opposites reverses each composition and preserves the finite additive sum. -/
 theorem finiteFrame_op_total {C : Type u₁} [Category.{v₁} C] [Preadditive C]
     (I : Type w) [Fintype I] {A : C} (f : I → C)
     (ι : ∀ i, f i ⟶ A) (π : ∀ i, A ⟶ f i)
@@ -41,9 +52,13 @@ theorem finiteFrame_op_total {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   apply Quiver.Hom.unop_inj
   simpa only [unop_sum, unop_comp, Quiver.Hom.unop_op, unop_id] using htotal
 
-/-- A genuine finite frame gives a dual evaluation isomorphism for an additive
-contravariant functor. Its hom and inverse are the actual projection/injection
-maps, and the empty frame is included. -/
+/-- Evaluation isomorphism of a finite split frame.
+
+Let F : Cᵒᵖ ⥤ D be additive between preadditive categories. Given a finite frame (ι_i,π_i) of
+A with orthogonal splitting and total identity, component isomorphisms e_i : F(f_i) ≅ g_i and
+the biproduct of g, form F(A) ≅ ⨁g. Its hom has components F((ι_i).op) ≫ e_i.hom and its
+inverse has components e_i.inv ≫ F((π_i).op). The construction also covers an empty index
+type. -/
 def finiteFrameDualEvaluationIso {C : Type u₁} [Category.{v₁} C] [Preadditive C]
     {D : Type u₂} [Category.{v₂} D] [Preadditive D]
     (F : Cᵒᵖ ⥤ D) [F.Additive] (I : Type w) [Fintype I]
@@ -82,7 +97,11 @@ def finiteFrameDualEvaluationIso {C : Type u₁} [Category.{v₁} C] [Preadditiv
     · rw [hdifferent j i h]
       simp [Ne.symm h]
 
-/-- The dual evaluation isomorphism has the original generator values. -/
+/-- Projection equation for finite-frame evaluation.
+
+For an additive contravariant functor F, a finite split frame of A and component
+identifications e_i : F(f_i) ≅ g_i, the evaluation comparison E : F(A) ≅ ⨁g satisfies E.hom ≫
+biproduct.π g i = F((ι_i).op) ≫ e_i.hom. -/
 theorem finiteFrameDualEvaluationIso_hom_projection {C : Type u₁} [Category.{v₁} C]
     [Preadditive C] {D : Type u₂} [Category.{v₂} D] [Preadditive D]
     (F : Cᵒᵖ ⥤ D) [F.Additive] (I : Type w) [Fintype I]
@@ -95,8 +114,12 @@ theorem finiteFrameDualEvaluationIso_hom_projection {C : Type u₁} [Category.{v
     (finiteFrameDualEvaluationIso F I f g ι π hsame hdifferent htotal e).hom ≫ biproduct.π g i =
       F.map (ι i).op ≫ (e i).hom := biproduct.lift_π _ _
 
-/-- An actual finite-biproduct presentation transports its frame before genuine
-dual evaluation. The hom still uses the transported original injections. -/
+/-- Evaluation of a finite biproduct presentation.
+
+Let frame : ⨁f ≅ A be a finite biproduct presentation in a preadditive category and F : Cᵒᵖ ⥤
+D additive. With identifications F(f_i) ≅ g_i and the biproduct of g defined, transport the
+frame by injections biproduct.ι f i ≫ frame.hom and projections frame.inv ≫ biproduct.π f i.
+Their evaluation gives F(A) ≅ ⨁g. -/
 def transportedFiniteFrameDualEvaluationIso {C : Type u₁} [Category.{v₁} C]
     [Preadditive C] {D : Type u₂} [Category.{v₂} D] [Preadditive D]
     (F : Cᵒᵖ ⥤ D) [F.Additive] (I : Type w) [Fintype I]
@@ -118,8 +141,11 @@ def transportedFiniteFrameDualEvaluationIso {C : Type u₁} [Category.{v₁} C]
     rw [← Preadditive.comp_sum, ← Preadditive.sum_comp, biproduct.total]
     simp
 
-/-- The transported-frame dual hom retains direct precomposition by each
-original transported injection. -/
+/-- Projection formula for evaluation of a transported frame.
+
+For a finite presentation frame : ⨁f ≅ A, additive contravariant F and component isomorphisms
+e_i : F(f_i) ≅ g_i, the transported comparison E satisfies E.hom ≫ biproduct.π g i =
+F((biproduct.ι f i ≫ frame.hom).op) ≫ e_i.hom. -/
 theorem transportedFiniteFrameDualEvaluationIso_hom_projection
     {C : Type u₁} [Category.{v₁} C] [Preadditive C]
     {D : Type u₂} [Category.{v₂} D] [Preadditive D]
@@ -130,8 +156,11 @@ theorem transportedFiniteFrameDualEvaluationIso_hom_projection
       F.map (biproduct.ι f i ≫ frame.hom).op ≫ (duals i).hom :=
   biproduct.lift_π _ _
 
-/-- The transported-frame inverse is direct precomposition by the actual
-transported original projection. -/
+/-- Injection formula for the inverse transported-frame evaluation.
+
+For the evaluation E : F(A) ≅ ⨁g of a finite presentation frame : ⨁f ≅ A, biproduct.ι g i ≫
+E.inv = e_i.inv ≫ F((frame.inv ≫ biproduct.π f i).op). Thus its inverse is defined by the
+transported projection maps under the additive contravariant functor F. -/
 theorem transportedFiniteFrameDualEvaluationIso_inv_injection
     {C : Type u₁} [Category.{v₁} C] [Preadditive C]
     {D : Type u₂} [Category.{v₂} D] [Preadditive D]

@@ -1,4 +1,6 @@
-# Top Cut Connecting f
+# The component formula of the top-cut connecting map
 
-Every component of the actual connecting map uses the literal
-original differential and the earned original degreewise splitting.
+The component formula of the top-cut connecting map.
+
+The component at j is the section of the splitting at j, followed by K.d j (j+1), followed by
+the retraction at j+1.

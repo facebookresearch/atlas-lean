@@ -1,3 +1,5 @@
-# Small Etale Inverse Image right triangle
+# Inverse image unit and counit satisfy the right triangle
 
-The right triangle identity for every actual original common-universe sheaf.
+Inverse image unit and counit satisfy the right triangle.
+
+The unit at `f_*R`, followed by direct image of the counit at `R`, is the identity on `f_*R`.

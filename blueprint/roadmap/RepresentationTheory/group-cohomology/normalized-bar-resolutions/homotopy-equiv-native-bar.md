@@ -1,3 +1,7 @@
-# Homotopy Equiv Native Bar
+# Homotopy equivalence with the inhomogeneous bar complex
 
-Normalization is a homotopy equivalence with the actual native bar complex.
+Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The projection and corrected section give the homotopy equivalence
+Q≃B. The composite on Q is the identity.

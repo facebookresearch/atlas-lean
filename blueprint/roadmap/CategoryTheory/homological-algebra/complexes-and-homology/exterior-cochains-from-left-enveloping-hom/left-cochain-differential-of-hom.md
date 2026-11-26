@@ -1,3 +1,6 @@
-# Left Cochain Differential of hom
+# The Hom-coordinate equation for the exterior cochain differential
 
-Hom cochains commute with the transported differential.
+The Hom-coordinate equation for the exterior cochain differential.
+
+The coordinate image of an enveloping Hom cochain commutes with its differential: exterior
+transport of the Hom boundary equals the exterior differential of its coordinate image.

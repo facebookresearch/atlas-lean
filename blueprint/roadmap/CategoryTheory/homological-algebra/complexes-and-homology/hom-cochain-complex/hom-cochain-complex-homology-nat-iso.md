@@ -1,3 +1,6 @@
-# Hom Cochain Complex Homology Nat Iso
+# Chain homotopy equivalence gives natural Hom cohomology isomorphisms
 
-Natural iso `Hⁿ(Hom(L, -)) ≅ Hⁿ(Hom(K, -))` from `e : K ≃ L`, natural in `G`.
+Chain homotopy equivalence gives natural Hom cohomology isomorphisms.
+
+For a homotopy equivalence `K ≃ L` and natural degree `n`, the coefficient functors `H^n
+Hom(L,-)` and `H^n Hom(K,-)` are naturally isomorphic.

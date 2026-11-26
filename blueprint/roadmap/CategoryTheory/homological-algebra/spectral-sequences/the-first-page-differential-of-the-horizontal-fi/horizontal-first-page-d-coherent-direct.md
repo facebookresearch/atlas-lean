@@ -1,4 +1,6 @@
-# Horizontal First Page d coherent Direct Column
+# The first-page differential in coherent direct-column coordinates
 
-Under the coherent direct-column identifications, the actual differential
-on the spectral sequence's first page is the coherent connecting map.
+The first-page differential in coherent direct-column coordinates.
+
+The differential from `(p+1,q)` to `(p,q)` corresponds to the coherent-window connecting map
+under the source and target direct-column isomorphisms.

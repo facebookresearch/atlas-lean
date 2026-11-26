@@ -1,5 +1,6 @@
-# Erase Idx erase Idx of Fn
+# Ordered deletion of two tuple entries
 
-If `i ≤ j`, deleting the entry `j + 1` and then the entry `i` from
-`List.ofFn v` keeps the same ordered tuple as first removing `i` and then
-removing `j` from the shortened tuple.
+For `v : Fin (n + 2) → α` and `i,j : Fin (n + 1)` with `i ≤ j`, delete
+original position `j.val + 1` and then position `i.val`. The resulting list
+is `List.ofFn (j.removeNth (i.castSucc.removeNth v))`; the latter removes `i`
+first and then the shifted higher position `j` from the shortened tuple.

@@ -1,4 +1,6 @@
-# Composite Coordinates
+# Successive right-module tensor output in associator source coordinates
 
-Native uniqueness of the integer action identifies the bundled
-composite with the original associator source, without changing its factors.
+Successive right-module tensor output in associator source coordinates.
+
+The successive tensor-functor output at `A` is isomorphic to `assocSourceObj R S P Q A`, the
+left-associated balanced quotient with its right `R`-action.

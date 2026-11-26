@@ -1,3 +1,5 @@
-# Transport
+# Equality transport of page-unit data
 
-Equal integer notation transports only the page index of the same original unit data.
+Equality transport of page-unit data.
+
+Transport unit data along an equality r=r′.

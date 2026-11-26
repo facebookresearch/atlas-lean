@@ -1,3 +1,6 @@
-# Left Cochain Differential zero apply
+# The positive coefficient action in cochain degree zero
 
-Degree zero is exactly the original positive Lie action on coefficients.
+The positive coefficient action in cochain degree zero.
+
+For a degree-zero cochain `f` and `x ∈ L`, its differential evaluated on the one-element wedge
+is `ι(x) • f(1)`, where `1` denotes the empty exterior wedge.

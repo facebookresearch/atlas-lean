@@ -25,12 +25,23 @@ public import MathlibExt.RingTheory.Morita.Finite
 public import Mathlib.CategoryTheory.Linear.LinearFunctor
 
 /-!
-# Finite-module tensor functors of noncommutative bimodules
+# Bimodule tensor on finite-module categories
 
-Left finiteness of the coefficient makes the balanced tensor functor
-finite-module-valued. Right-module Tor₁ vanishing implies preservation of
-short exact sequences in the ambient module categories.
-The acting rings are arbitrary associative rings.
+Let `R` and `S` be associative rings and `E` an `S`-left, `R`-right bimodule. If `E` is
+finitely generated over `S`, then `E ⊗_R -` takes finite left `R`-modules to finite left
+`S`-modules. The induced functor is additive. Vanishing of `Tor¹_R(E, N)` for every left
+`R`-module `N` makes the ambient tensor functor preserve short exact sequences.
+
+For a `T`-left, `S`-right bimodule `F`, tensoring by `F ⊗_S E` is naturally isomorphic to
+successive tensoring by `E` and `F`, with `[[f ⊗ e] ⊗ m] ↦ [f ⊗ [e ⊗ m]]`. Left finiteness and
+right Tor-one vanishing pass to the composite under the corresponding hypotheses. The regular
+coefficient gives `[r ⊗ m] ↦ r • m`, and bimodule maps give coefficient natural
+transformations.
+
+Bimodule equivalences `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S` give finite coefficients, right Tor-one
+vanishing, and a Morita equivalence that restricts to finite-module categories. The rings,
+coefficients, and module carriers here lie in the same universe `u`; each tensor is the
+integer-ground balanced quotient.
 -/
 
 @[expose] public section
@@ -51,7 +62,10 @@ variable {R S : Type u} [Ring R] [Ring S]
   (E : Type u) [AddCommGroup E] [Module S E] [Module Rᵐᵒᵖ E]
   [SMulCommClass S Rᵐᵒᵖ E]
 
-/-- Original tensor output is finite over S when its coefficient and input are finite. -/
+/-- Finite coefficient and finite input give finite tensor output.
+
+Let `E` be an `S`-left, `R`-right bimodule, finite over `S`. If the left `R`-module `N` is
+finitely generated, then `E ⊗_R N` is finitely generated over `S`. -/
 theorem isFG_bimoduleTensor [Module.Finite S E] (N : ModuleCat.{u} R)
     (hN : isFG R N) :
     isFG S ((BalancedTensor.Left.functor ℤ R S E).obj N) := by
@@ -66,14 +80,20 @@ theorem isFG_bimoduleTensor [Module.Finite S E] (N : ModuleCat.{u} R)
   change P d
   exact (congrArg P (Subsingleton.elim d₀ d)).mp h₀
 
-/-- Forgetting the actual outer module retains the existing original group tensor functor. -/
+/-- Forgetting the outer action gives the balanced tensor group functor.
+
+The functor `E ⊗_R -` to left `S`-modules, followed by forgetting to additive groups, equals
+the group-valued balanced tensor functor with right `R`-coefficient `E`. -/
 theorem bimoduleTensor_comp_forgetToGroup :
     BalancedTensor.Left.functor ℤ R S E ⋙
         forget₂ (ModuleCat.{u} S) AddCommGrpCat.{u} =
       (BalancedTensor.groupBifunctor R).obj (ModuleCat.of Rᵐᵒᵖ E) := by
   rfl
 
-/-- The actual S-module tensor functor preserves finite colimits by its original group action. -/
+/-- Bimodule tensor preserves finite colimits.
+
+For an `S`-left, `R`-right bimodule `E`, the functor `E ⊗_R - : ModuleCat R ⥤ ModuleCat S`
+preserves finite colimits. -/
 theorem bimoduleTensor_preservesFiniteColimits :
     PreservesFiniteColimits
       (BalancedTensor.Left.functor ℤ R S E : ModuleCat.{u} R ⥤ ModuleCat.{u} S) := by
@@ -84,7 +104,10 @@ theorem bimoduleTensor_preservesFiniteColimits :
     infer_instance
   exact preservesFiniteColimits_of_reflects_of_preserves F U
 
-/-- Canonical right-module Tor₁ vanishing gives finite limit preservation of this same tensor. -/
+/-- Right Tor-one vanishing makes bimodule tensor preserve finite limits.
+
+If `Tor¹_R(E, N)` vanishes for every left `R`-module `N`, then the left-module-valued functor
+`E ⊗_R -` preserves finite limits. -/
 theorem bimoduleTensor_preservesFiniteLimits_of_torFirst_one
     (hE : ∀ N : ModuleCat.{u} R,
       IsZero (((BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ E)).obj N)) :
@@ -98,7 +121,10 @@ theorem bimoduleTensor_preservesFiniteLimits_of_torFirst_one
       R (ModuleCat.of Rᵐᵒᵖ E)).2 hE
   exact preservesFiniteLimits_of_reflects_of_preserves F U
 
-/-- Every given original short exact row stays short exact under right-flat bimodule tensor. -/
+/-- Bimodule tensor preserves short exact sequences under right flatness.
+
+Suppose `Tor¹_R(E, N) = 0` for every left `R`-module `N`. Mapping a short exact sequence in
+`ModuleCat R` through `E ⊗_R -` gives a short exact sequence in `ModuleCat S`. -/
 theorem shortExact_bimoduleTensor_of_torFirst_one
     (hE : ∀ N : ModuleCat.{u} R,
       IsZero (((BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ E)).obj N))
@@ -118,26 +144,39 @@ variable {R S : Type u} [Ring R] [Ring S]
   (E : Type u) [AddCommGroup E] [Module S E] [Module Rᵐᵒᵖ E]
   [SMulCommClass S Rᵐᵒᵖ E] [Module.Finite S E]
 
-/-- The existing actual tensor functor restricted to the original finite-module categories. -/
+/-- Tensor by a left-finite bimodule on finite-module categories.
+
+For an `S`-left, `R`-right bimodule `E` that is finite over `S`, restrict `E ⊗_R -` to a
+functor `FGModuleCat R ⥤ FGModuleCat S`. Finite generation of each output follows from finite
+generation of the input and of `E` over `S`. -/
 def bimoduleTensor : FGModuleCat.{u} R ⥤ FGModuleCat.{u} S :=
   (ModuleCat.isFG (R := S)).lift
     (forget₂ (FGModuleCat.{u} R) (ModuleCat.{u} R) ⋙
       ModuleCat.BalancedTensor.Left.functor ℤ R S E)
     (fun X => ModuleCat.isFG_bimoduleTensor E X.obj X.property)
 
-/-- The original output object is literally that of the existing bimodule tensor functor. -/
+/-- Underlying module of the finite bimodule tensor object.
+
+For a finite `R`-module object `X`, the underlying `S`-module of `(FGModuleCat.bimoduleTensor
+E).obj X` is the output of the ambient functor `E ⊗_R -` on `X.obj`. -/
 @[simp]
 theorem bimoduleTensor_obj_obj (X : FGModuleCat.{u} R) :
     ((bimoduleTensor E).obj X).obj =
       (ModuleCat.BalancedTensor.Left.functor ℤ R S E).obj X.obj := rfl
 
-/-- Every native finite-module morphism maps through the same original quotient map. -/
+/-- Underlying map of the finite bimodule tensor functor.
+
+For a morphism `f : X ⟶ Y` of finite `R`-module objects, the underlying morphism of its tensor
+image is the ambient bimodule tensor map of `f.hom`. -/
 @[simp]
 theorem bimoduleTensor_map_hom {X Y : FGModuleCat.{u} R} (f : X ⟶ Y) :
     ((bimoduleTensor E).map f).hom =
       (ModuleCat.BalancedTensor.Left.functor ℤ R S E).map f.hom := rfl
 
-/-- Every original pure class follows the actual finite-module tensor map. -/
+/-- Finite bimodule tensor map on pure classes.
+
+A finite-module morphism `f : X ⟶ Y` induces `[e ⊗ x] ↦ [e ⊗ f x]` on the integer-ground
+balanced quotients defining tensor by `E`. -/
 theorem bimoduleTensor_map_mk {X Y : FGModuleCat.{u} R} (f : X ⟶ Y) (e : E) (x : X) :
     letI : Module ℤ X := Module.compHom X (algebraMap ℤ R)
     letI : Module ℤ Y := Module.compHom Y (algebraMap ℤ R)
@@ -148,7 +187,11 @@ theorem bimoduleTensor_map_mk {X Y : FGModuleCat.{u} R} (f : X ⟶ Y) (e : E) (x
   let : Module ℤ Y := Module.compHom Y (algebraMap ℤ R)
   exact ModuleCat.BalancedTensor.Left.map_mk ℤ R S E f.hom e x
 
-/-- Forgetting finite generation recovers the whole original module tensor functor. -/
+/-- Finite bimodule tensor commutes with forgetting finite generation.
+
+Tensoring in the finite-module categories and then forgetting to `ModuleCat S` is naturally
+isomorphic to forgetting the source to `ModuleCat R` and applying the ambient bimodule tensor
+functor. -/
 def bimoduleTensorCompForgetIso :
     bimoduleTensor E ⋙ forget₂ (FGModuleCat.{u} S) (ModuleCat.{u} S) ≅
       forget₂ (FGModuleCat.{u} R) (ModuleCat.{u} R) ⋙
@@ -158,7 +201,9 @@ def bimoduleTensorCompForgetIso :
       ModuleCat.BalancedTensor.Left.functor ℤ R S E)
     (fun X => ModuleCat.isFG_bimoduleTensor E X.obj X.property)
 
-/-- Additivity is inherited from the earned additivity of the original tensor functor. -/
+/-- Finite-module bimodule tensor is additive.
+
+The finite-module-valued functor `FGModuleCat.bimoduleTensor E` preserves sums of morphisms. -/
 instance bimoduleTensor_additive : (bimoduleTensor (R := R) (S := S) E).Additive where
   map_add := by
     intro X Y f g
@@ -168,7 +213,11 @@ instance bimoduleTensor_additive : (bimoduleTensor (R := R) (S := S) E).Additive
         (ModuleCat.BalancedTensor.Left.functor ℤ R S E).map g.hom
     exact Functor.map_add _
 
-/-- The actual finite-module tensor preserves every given ambient short exact row. -/
+/-- Finite bimodule tensor preserves ambient short exactness.
+
+Suppose the right `R`-module `E` has zero `Tor¹` against every left module. A short complex of
+finite `R`-modules that is short exact after forgetting to `ModuleCat R` remains short exact
+in `ModuleCat S` after applying finite bimodule tensor and forgetting. -/
 theorem bimoduleTensor_forget_shortExact_of_torFirst_one
     (hE : ∀ N : ModuleCat.{u} R,
       IsZero (((ModuleCat.BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ E)).obj N))
@@ -190,7 +239,11 @@ variable {R S T : Type u} [Ring R] [Ring S] [Ring T]
   [Module S E] [Module Rᵐᵒᵖ E] [SMulCommClass S Rᵐᵒᵖ E]
   [Module T F] [Module Sᵐᵒᵖ F] [SMulCommClass T Sᵐᵒᵖ F]
 
-/-- Tensor by the original composite coefficient, with its computed endpoint actions. -/
+/-- Tensor functor of the composite bimodule coefficient.
+
+Let `E` be `S`-left and `R`-right, and `F` be `T`-left and `S`-right. Their balanced tensor `F
+⊗_S E` has induced left `T`- and right `R`-actions. Tensoring with it gives a functor from
+left `R`-modules to left `T`-modules. -/
 def bimoduleTensorCompositeFunctor : ModuleCat.{u} R ⥤ ModuleCat.{u} T := by
   let C := TensorProduct.Balanced ℤ S F E
   letI : Module T C := TensorProduct.Balanced.leftModule ℤ S T F E
@@ -203,7 +256,10 @@ def bimoduleTensorCompositeFunctor : ModuleCat.{u} R ⥤ ModuleCat.{u} T := by
     Module.intModule_smulCommClass (dM := AddCommGroup.toIntModule C)
   exact BalancedTensor.Left.functor ℤ R T C
 
-/-- The original left-parenthesized triple in tensor by the composite coefficient. -/
+/-- Pure triple in tensor by the composite coefficient.
+
+For `f : F`, `e : E`, and `m : M`, this element is `[[f ⊗ e] ⊗ m]` in `(F ⊗_S E) ⊗_R M`, with
+the induced endpoint actions on the composite coefficient. -/
 def bimoduleTensorCompPure (M : ModuleCat.{u} R) (f : F) (e : E) (m : M) :
     (bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).obj M := by
   letI : Module ℤ M := Module.compHom M (algebraMap ℤ R)
@@ -212,7 +268,9 @@ def bimoduleTensorCompPure (M : ModuleCat.{u} R) (f : F) (e : E) (m : M) :
   letI : Module ℤ C := AddCommGroup.toIntModule C
   exact TensorProduct.Balanced.mk ℤ R C M (TensorProduct.Balanced.mk ℤ S F E f e) m
 
-/-- The same ordered triple in the actual successive module tensor functors. -/
+/-- Pure triple in successive bimodule tensor functors.
+
+For `f : F`, `e : E`, and `m : M`, this element is `[f ⊗ [e ⊗ m]]` in `F ⊗_S (E ⊗_R M)`. -/
 def bimoduleTensorDoublePure (M : ModuleCat.{u} R) (f : F) (e : E) (m : M) :
     (BalancedTensor.Left.functor ℤ R S E ⋙ BalancedTensor.Left.functor ℤ S T F).obj M := by
   letI : Module ℤ M := Module.compHom M (algebraMap ℤ R)
@@ -220,7 +278,11 @@ def bimoduleTensorDoublePure (M : ModuleCat.{u} R) (f : F) (e : E) (m : M) :
   letI : Module ℤ D := Module.compHom D (algebraMap ℤ S)
   exact TensorProduct.Balanced.mk ℤ S F D f (TensorProduct.Balanced.mk ℤ R E M e m)
 
-/-- The actual associator comparison with both original integer-coordinate readouts. -/
+/-- Associator together with its pure-triple formula.
+
+For a left `R`-module `M`, this data constructs an isomorphism `(F ⊗_S E) ⊗_R M ≅ F ⊗_S (E ⊗_R
+M)` in `ModuleCat T` and records that its forward map sends `[[f ⊗ e] ⊗ m]` to `[f ⊗ [e ⊗
+m]]`. -/
 def bimoduleTensorCompData (M : ModuleCat.{u} R) :
     {i : (bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).obj M ≅
         (BalancedTensor.Left.functor ℤ R S E ⋙ BalancedTensor.Left.functor ℤ S T F).obj M //
@@ -294,20 +356,29 @@ def bimoduleTensorCompData (M : ModuleCat.{u} R) :
   rw [hA]
   exact d.2 f e m
 
-/-- The whole original module Iso relating composite and successive tensoring. -/
+/-- Associator for composite bimodule tensor objects.
+
+The module isomorphism `(F ⊗_S E) ⊗_R M ≅ F ⊗_S (E ⊗_R M)` is obtained from the balanced
+tensor associator with the endpoint module actions. -/
 def bimoduleTensorCompIso (M : ModuleCat.{u} R) :
     (bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).obj M ≅
       (BalancedTensor.Left.functor ℤ R S E ⋙ BalancedTensor.Left.functor ℤ S T F).obj M :=
   (bimoduleTensorCompData (S := S) (T := T) E F M).1
 
-/-- Composite tensoring retains the same ordered three pure factors under the actual comparison. -/
+/-- Composite bimodule associator on pure triples.
+
+The forward composite coefficient isomorphism sends `bimoduleTensorCompPure E F M f e m` to
+`bimoduleTensorDoublePure E F M f e m`, preserving the order `f, e, m`. -/
 theorem bimoduleTensorCompIso_pure (M : ModuleCat.{u} R) (f : F) (e : E) (m : M) :
     (bimoduleTensorCompIso (S := S) (T := T) E F M).hom.hom
         (bimoduleTensorCompPure (S := S) (T := T) E F M f e m) =
       bimoduleTensorDoublePure (S := S) (T := T) E F M f e m :=
   (bimoduleTensorCompData (S := S) (T := T) E F M).2 f e m
 
-/-- Ordered triple pure classes determine a map from the actual composite tensor object. -/
+/-- Pure triples determine additive maps from a composite tensor.
+
+Two additive maps from `(F ⊗_S E) ⊗_R M` to an additive commutative monoid are equal if they
+agree on every pure triple `[[f ⊗ e] ⊗ m]`. -/
 theorem bimoduleTensorCompHom_ext (M : ModuleCat.{u} R)
     {A : Type*} [AddCommMonoid A]
     {f g : (bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).obj M →+ A}
@@ -327,7 +398,10 @@ theorem bimoduleTensorCompHom_ext (M : ModuleCat.{u} R)
     exact h a b m
   exact DFunLike.congr_fun hc c
 
-/-- The composite-coefficient tensor acts on the original module factor in every pure triple. -/
+/-- Composite coefficient tensor map on pure triples.
+
+For a module morphism `g : M ⟶ N`, tensoring by `F ⊗_S E` sends `[[f ⊗ e] ⊗ m]` to `[[f ⊗ e] ⊗
+g m]`. -/
 theorem bimoduleTensorCompositeFunctor_map_pure {M N : ModuleCat.{u} R} (g : M ⟶ N)
     (f : F) (e : E) (m : M) :
     ((bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).map g).hom
@@ -347,7 +421,9 @@ theorem bimoduleTensorCompositeFunctor_map_pure {M N : ModuleCat.{u} R} (g : M �
   exact BalancedTensor.Left.map_mk ℤ R T C g
     (TensorProduct.Balanced.mk ℤ S F E f e) m
 
-/-- The actual successive functors preserve the same triple and given original module map. -/
+/-- Successive bimodule tensor map on pure triples.
+
+For `g : M ⟶ N`, the successive tensor functors send `[f ⊗ [e ⊗ m]]` to `[f ⊗ [e ⊗ g m]]`. -/
 theorem bimoduleTensorDouble_map_pure {M N : ModuleCat.{u} R} (g : M ⟶ N)
     (f : F) (e : E) (m : M) :
     ((BalancedTensor.Left.functor ℤ R S E ⋙ BalancedTensor.Left.functor ℤ S T F).map g).hom
@@ -373,7 +449,10 @@ theorem bimoduleTensorDouble_map_pure {M N : ModuleCat.{u} R} (g : M ⟶ N)
       (TensorProduct.Balanced.mk ℤ S F A f a) = TensorProduct.Balanced.mk ℤ S F B f b
   exact hOuter.trans (congrArg (fun x : B => TensorProduct.Balanced.mk ℤ S F B f x) hInner)
 
-/-- The whole original module functors compose through the earned actual tensor associator. -/
+/-- Tensor by a composite coefficient equals successive tensoring naturally.
+
+The associator gives a natural isomorphism from tensoring by `F ⊗_S E` to the composite of
+tensoring first by `E` and then by `F`. -/
 def bimoduleTensorCompNatIso :
     bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F ≅
       BalancedTensor.Left.functor ℤ R S E ⋙ BalancedTensor.Left.functor ℤ S T F :=
@@ -392,7 +471,11 @@ def bimoduleTensorCompNatIso :
     rw [bimoduleTensorCompositeFunctor_map_pure, bimoduleTensorCompIso_pure,
       bimoduleTensorCompIso_pure, bimoduleTensorDouble_map_pure])
 
-/-- Canonical right flatness is earned for the actual composite coefficient from both factors. -/
+/-- Composite of right-flat bimodule coefficients is right-flat.
+
+Assume `Tor¹_R(E, -)` and `Tor¹_S(F, -)` vanish for all respective left modules. Then
+tensoring by `F ⊗_S E` preserves finite limits, and the induced right `R`-module on `F ⊗_S E`
+has zero `Tor¹_R` against every left module. -/
 theorem bimoduleTensor_composite_flat
     (hE : ∀ N : ModuleCat.{u} R,
       IsZero (((BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ E)).obj N))
@@ -437,7 +520,10 @@ variable {R S T : Type u} [Ring R] [Ring S] [Ring T]
   [Module T F] [Module Sᵐᵒᵖ F] [SMulCommClass T Sᵐᵒᵖ F]
   [Module.Finite S E] [Module.Finite T F]
 
-/-- The same original composite coefficient tensor functor on the native finite categories. -/
+/-- Composite coefficient tensor on finite-module categories.
+
+If `E` is finite over `S` and `F` is finite over `T`, the coefficient `F ⊗_S E` is finite over
+`T`. Its tensor functor restricts to `FGModuleCat R ⥤ FGModuleCat T`. -/
 def bimoduleTensorCompositeFunctor : FGModuleCat.{u} R ⥤ FGModuleCat.{u} T := by
   let C := TensorProduct.Balanced ℤ S F E
   letI : Module T C := TensorProduct.Balanced.leftModule ℤ S T F E
@@ -447,7 +533,9 @@ def bimoduleTensorCompositeFunctor : FGModuleCat.{u} R ⥤ FGModuleCat.{u} T := 
   letI : Module.Finite T C := TensorProduct.Balanced.finite_left S T F E
   exact bimoduleTensor (R := R) (S := T) C
 
-/-- Additivity of the composite coefficient functor is that of the same original finite tensor. -/
+/-- Composite coefficient tensor on finite modules is additive.
+
+The finite-module tensor functor with coefficient `F ⊗_S E` preserves addition of morphisms. -/
 instance bimoduleTensorCompositeFunctor_additive :
     (bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).Additive := by
   let C := TensorProduct.Balanced ℤ S F E
@@ -459,7 +547,10 @@ instance bimoduleTensorCompositeFunctor_additive :
   change (bimoduleTensor (R := R) (S := T) C).Additive
   infer_instance
 
-/-- The actual module associator restricts to the same original finite-module objects. -/
+/-- Finite-module associator for composite coefficients.
+
+For a finite left `R`-module `M`, the ambient isomorphism `(F ⊗_S E) ⊗_R M ≅ F ⊗_S (E ⊗_R M)`
+is an isomorphism in `FGModuleCat T`, using left finiteness of both coefficients. -/
 def bimoduleTensorCompIso (M : FGModuleCat.{u} R) :
     (bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F).obj M ≅
       (bimoduleTensor (R := R) (S := S) E ⋙ bimoduleTensor (R := S) (S := T) F).obj M := by
@@ -470,7 +561,10 @@ def bimoduleTensorCompIso (M : FGModuleCat.{u} R) :
       hom_inv_id := by apply ObjectProperty.hom_ext; exact i.hom_inv_id
       inv_hom_id := by apply ObjectProperty.hom_ext; exact i.inv_hom_id }
 
-/-- The whole finite-module tensor functors compose through the actual associator. -/
+/-- Finite composite coefficient tensor equals successive tensoring naturally.
+
+For left-finite coefficients `E` and `F`, tensor by `F ⊗_S E` on finite modules is naturally
+isomorphic to tensoring by `E` followed by tensoring by `F`. -/
 def bimoduleTensorCompNatIso :
     bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F ≅
       bimoduleTensor (R := R) (S := S) E ⋙ bimoduleTensor (R := S) (S := T) F :=
@@ -485,7 +579,10 @@ namespace ModuleCat
 
 variable (R : Type u) [Ring R]
 
-/-- Projectivity of the original right coefficient earns its canonical Tor₁ flatness condition. -/
+/-- Projective right coefficient has zero Tor one against every left module.
+
+If the right `R`-module `E` is projective as an `Rᵐᵒᵖ`-module, then `Tor¹_R(E, N)` is zero for
+every left `R`-module `N`. -/
 theorem bimoduleTensor_torFirst_one_of_projective (E : Type u) [AddCommGroup E]
     [Module Rᵐᵒᵖ E] [Module.Projective Rᵐᵒᵖ E] :
     ∀ N : ModuleCat.{u} R,
@@ -497,7 +594,10 @@ theorem bimoduleTensor_torFirst_one_of_projective (E : Type u) [AddCommGroup E]
   have h : PreservesFiniteLimits F := Functor.preservesFiniteLimits_of_preservesHomology F
   exact (BalancedTensor.groupBifunctor_obj_preservesFiniteLimits_iff_torFirst_one R P).1 h
 
-/-- The actual regular right module is projective, so its original tensor is right flat. -/
+/-- Regular right module has zero Tor one.
+
+For every left `R`-module `N`, `Tor¹_R(R, N)` is zero when `R` is given its regular right
+action. -/
 theorem bimoduleTensor_torFirst_one_regular :
     ∀ N : ModuleCat.{u} R,
       IsZero (((BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ R)).obj N) := by
@@ -511,7 +611,10 @@ namespace FGModuleCat
 
 variable (R : Type u) [Ring R]
 
-/-- The original regular-factor unitor and its pure value, with actual integer coordinates. -/
+/-- Regular coefficient unitor with its scalar-action formula.
+
+For a finite left `R`-module `M`, this data constructs an isomorphism `R ⊗_R M ≅ M` in the
+finite-module category and records its forward formula `[r ⊗ m] ↦ r • m`. -/
 def bimoduleTensorUnitData (M : FGModuleCat.{u} R) :
     letI : Module ℤ R := AddCommGroup.toIntModule R
     letI : Module ℤ M := Module.compHom M (algebraMap ℤ R)
@@ -589,12 +692,17 @@ def bimoduleTensorUnitData (M : FGModuleCat.{u} R) :
   rw [c.2]
   exact TensorProduct.Balanced.leftUnitor_mk ℤ R M r m
 
-/-- The actual regular-factor unitor on the original finite-module tensor object. -/
+/-- Regular bimodule tensor is the finite-module identity object.
+
+The regular coefficient gives an isomorphism from `(FGModuleCat.bimoduleTensor R).obj M` to
+the finite left module `M`. -/
 def bimoduleTensorUnitIso (M : FGModuleCat.{u} R) :
     (bimoduleTensor (R := R) (S := R) R).obj M ≅ M :=
   (bimoduleTensorUnitData R M).1
 
-/-- The regular unitor applies the original R action to every actual ordered pure class. -/
+/-- Finite-module regular unitor on pure classes.
+
+The forward map of the regular coefficient unitor sends `[r ⊗ m]` to `r • m`. -/
 theorem bimoduleTensorUnitIso_mk (M : FGModuleCat.{u} R) (r : R) (m : M) :
     letI : Module ℤ R := AddCommGroup.toIntModule R
     letI : Module ℤ M := Module.compHom M (algebraMap ℤ R)
@@ -602,7 +710,10 @@ theorem bimoduleTensorUnitIso_mk (M : FGModuleCat.{u} R) (r : R) (m : M) :
         (TensorProduct.Balanced.mk ℤ R R M r m) = r • m :=
   (bimoduleTensorUnitData R M).2 r m
 
-/-- The whole original regular-bimodule tensor functor is naturally the identity. -/
+/-- Regular coefficient tensor is naturally the finite-module identity.
+
+The regular unitor gives a natural isomorphism from `FGModuleCat.bimoduleTensor R` to the
+identity functor on `FGModuleCat R`. -/
 def bimoduleTensorUnitNatIso :
     bimoduleTensor (R := R) (S := R) R ≅ 𝟭 (FGModuleCat.{u} R) :=
   NatIso.ofComponents (bimoduleTensorUnitIso R) (by
@@ -630,7 +741,10 @@ variable {R S : Type u} [Ring R] [Ring S]
   {E E' : Type u} [AddCommGroup E] [AddCommGroup E']
   [Module S E] [Module S E'] [Module Rᵐᵒᵖ E] [Module Rᵐᵒᵖ E']
 
-/-- An actual bimodule equivalence transports the canonical right-module Tor₁ flatness condition. -/
+/-- Coefficient equivalence transports right Tor-one vanishing.
+
+Let `e : E ≃ₗ[S] E'` also preserve the right `R`-action. If `Tor¹_R(E, N)` is zero for every
+left `R`-module `N`, then `Tor¹_R(E', N)` is zero for every such `N`. -/
 theorem bimoduleTensor_torFirst_one_of_equiv (e : E ≃ₗ[S] E')
     (hR : ∀ (r : R) (x : E), e (MulOpposite.op r • x) = MulOpposite.op r • e x)
     (hE : ∀ N : ModuleCat.{u} R,
@@ -664,7 +778,10 @@ variable {R S : Type u} [Ring R] [Ring S]
   [SMulCommClass S Rᵐᵒᵖ E'']
   [Module.Finite S E] [Module.Finite S E'] [Module.Finite S E'']
 
-/-- The actual quotient coefficient map between the two original finite tensor outputs. -/
+/-- Coefficient map on each finite tensor object.
+
+An `S`-linear map `f : E → E'` preserving the right `R`-action induces a morphism `E ⊗_R M ⟶
+E' ⊗_R M` in the finite `S`-module category. -/
 def bimoduleTensorCoefficientComponent (f : E →ₗ[S] E')
     (hR : ∀ (r : R) (e : E), f (op r • e) = op r • f e) (M : FGModuleCat.{u} R) :
     (bimoduleTensor (S := S) E).obj M ⟶ (bimoduleTensor (S := S) E').obj M := by
@@ -678,7 +795,9 @@ def bimoduleTensorCoefficientComponent (f : E →ₗ[S] E')
     (TensorProduct.Balanced.mapLeft f₀ (LinearMap.id : M →ₗ[ℤ] M)
       (fun r e => hR r e) (fun _ _ => rfl) (fun s e => f.map_smul s e))⟩
 
-/-- The coefficient map retains both ordered pure factors, applying only the given bimodule map. -/
+/-- Finite tensor coefficient map on pure classes.
+
+The component induced by a compatible coefficient map `f` sends `[e ⊗ m]` to `[f e ⊗ m]`. -/
 theorem bimoduleTensorCoefficientComponent_mk (f : E →ₗ[S] E')
     (hR : ∀ (r : R) (e : E), f (op r • e) = op r • f e)
     (M : FGModuleCat.{u} R) (e : E) (m : M) :
@@ -693,7 +812,10 @@ theorem bimoduleTensorCoefficientComponent_mk (f : E →ₗ[S] E')
   exact TensorProduct.Balanced.mapLeft_mk f₀ (LinearMap.id : M →ₗ[ℤ] M)
     (fun r e => hR r e) (fun _ _ => rfl) (fun s e => f.map_smul s e) e m
 
-/-- An actual bimodule map gives a natural transformation of the original finite tensor functors. -/
+/-- Bimodule coefficient map as a finite tensor natural transformation.
+
+An `S`-linear coefficient map preserving the right `R`-action induces a natural transformation
+from tensoring by `E` to tensoring by `E'` on finite left `R`-modules. -/
 def bimoduleTensorTransformation (f : E →ₗ[S] E')
     (hR : ∀ (r : R) (e : E), f (op r • e) = op r • f e) :
     bimoduleTensor (R := R) (S := S) E ⟶ bimoduleTensor (R := R) (S := S) E' where
@@ -713,7 +835,10 @@ def bimoduleTensorTransformation (f : E →ₗ[S] E')
     rw [bimoduleTensor_map_mk, bimoduleTensorCoefficientComponent_mk,
       bimoduleTensorCoefficientComponent_mk, bimoduleTensor_map_mk]
 
-/-- Identity coefficient maps give the whole identity natural transformation. -/
+/-- Identity coefficient gives the identity finite tensor transformation.
+
+The natural transformation induced by the identity map on `E` is the identity of
+`FGModuleCat.bimoduleTensor E`. -/
 @[simp]
 theorem bimoduleTensorTransformation_id :
     bimoduleTensorTransformation (R := R) (LinearMap.id : E →ₗ[S] E) (fun _ _ => rfl) =
@@ -730,7 +855,10 @@ theorem bimoduleTensorTransformation_id :
   rw [bimoduleTensorCoefficientComponent_mk]
   rfl
 
-/-- Coefficient transformations compose through the actual original quotient coefficient maps. -/
+/-- Finite tensor coefficient transformations preserve composition.
+
+For compatible bimodule maps `f : E → E'` and `g : E' → E''`, the transformation of `g.comp f`
+equals the transformation of `f` followed by that of `g`. -/
 theorem bimoduleTensorTransformation_comp (f : E →ₗ[S] E') (g : E' →ₗ[S] E'')
     (hF : ∀ (r : R) (e : E), f (op r • e) = op r • f e)
     (hG : ∀ (r : R) (e : E'), g (op r • e) = op r • g e) :
@@ -754,7 +882,10 @@ theorem bimoduleTensorTransformation_comp (f : E →ₗ[S] E') (g : E' →ₗ[S]
     bimoduleTensorCoefficientComponent_mk]
   rfl
 
-/-- An actual bimodule equivalence gives an earned natural isomorphism of finite tensor functors. -/
+/-- Bimodule coefficient equivalence gives a finite tensor natural isomorphism.
+
+An `S`-linear equivalence `E ≃ₗ[S] E'` preserving the right `R`-action induces a natural
+isomorphism between their tensor functors on finite left `R`-modules. -/
 def bimoduleTensorIso (e : E ≃ₗ[S] E')
     (hR : ∀ (r : R) (x : E), e (op r • x) = op r • e x) :
     bimoduleTensor (R := R) (S := S) E ≅ bimoduleTensor (R := R) (S := S) E' := by
@@ -818,7 +949,12 @@ variable (R S P Q : Type u) [Ring R] [Ring S] [AddCommGroup P] [AddCommGroup Q]
     ∀ (s : S) (x : TensorProduct.Balanced ℤ R Q P), b (s • x) = s * b x)
 
 include a ha b hb in
-/-- Original invertible-bimodule contractions earn finiteness and right-flatness on both sides. -/
+/-- Invertible bimodule contractions give finiteness and right flatness.
+
+Let `P` be `R`-left and `S`-right and `Q` be `S`-left and `R`-right. Given bimodule
+equivalences `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S`, the left modules `P` and `Q` are finite, and
+their right coefficients have zero `Tor¹` against every left module over `S` and `R`,
+respectively. -/
 theorem bimoduleTensorMorita_properties :
     Module.Finite R P ∧ Module.Finite S Q ∧
       (∀ N : ModuleCat.{u} S,
@@ -836,7 +972,10 @@ theorem bimoduleTensorMorita_properties :
 
 open scoped ModuleCat.Algebra
 
-/-- Package the existing original left-module tensor equivalence as the canonical Morita input. -/
+/-- Morita equivalence from two invertible bimodule contractions.
+
+Bimodule equivalences `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S` construct a Morita equivalence over the
+integer ground ring. Its functor is `Q ⊗_R -` and its inverse is `P ⊗_S -`. -/
 def bimoduleTensorMoritaEquivalence : MoritaEquivalence ℤ R S := by
   letI : CategoryTheory.Linear ℤ (ModuleCat.{u} R) := ModuleCat.Algebra.instLinear
   letI : CategoryTheory.Linear ℤ (ModuleCat.{u} S) := ModuleCat.Algebra.instLinear
@@ -874,12 +1013,18 @@ def bimoduleTensorMoritaEquivalence : MoritaEquivalence ℤ R S := by
         rw [int_smul_eq_zsmul dX z f, int_smul_eq_zsmul dY z (F.map f)]
         exact F.mapAddHom.map_zsmul z f }
 
-/-- The canonical Morita equivalence retains the whole original Q⊗R− functor. -/
+/-- Forward functor of the contraction-based Morita equivalence.
+
+The forward functor of `bimoduleTensorMoritaEquivalence R S P Q a ha b hb` is tensoring left
+`R`-modules by the `S`-left, `R`-right coefficient `Q`. -/
 theorem bimoduleTensorMoritaEquivalence_functor :
     (bimoduleTensorMoritaEquivalence R S P Q a ha b hb).eqv.functor =
       (BalancedTensor.Left.functor ℤ R S Q : ModuleCat.{u} R ⥤ ModuleCat.{u} S) := rfl
 
-/-- Its original inverse is precisely the existing P⊗S− functor. -/
+/-- Inverse functor of the contraction-based Morita equivalence.
+
+The inverse functor of the bimodule contraction Morita equivalence is tensoring left
+`S`-modules by the `R`-left, `S`-right coefficient `P`. -/
 theorem bimoduleTensorMoritaEquivalence_inverse :
     (bimoduleTensorMoritaEquivalence R S P Q a ha b hb).eqv.inverse =
       (BalancedTensor.Left.functor ℤ S R P : ModuleCat.{u} S ⥤ ModuleCat.{u} R) := rfl
@@ -904,24 +1049,36 @@ variable (R S P Q : Type u) [Ring R] [Ring S] [AddCommGroup P] [AddCommGroup Q]
     letI := TensorProduct.Balanced.rightModule ℤ R S Q P
     ∀ (s : S) (x : TensorProduct.Balanced ℤ R Q P), b (s • x) = s * b x)
 
-/-- The same original forward tensor on finite modules, with coefficient finiteness earned. -/
+/-- Forward Morita tensor functor on finite modules.
+
+The bimodule contractions give finite generation of `Q` over `S`, so tensoring by `Q`
+restricts to a functor `FGModuleCat R ⥤ FGModuleCat S`. -/
 def bimoduleTensorMoritaFunctor : FGModuleCat.{u} R ⥤ FGModuleCat.{u} S :=
   letI := (ModuleCat.bimoduleTensorMorita_properties R S P Q a ha b hb).2.1
   bimoduleTensor (R := R) (S := S) Q
 
-/-- The same original inverse tensor on finite modules, with its earned left finiteness. -/
+/-- Inverse Morita tensor functor on finite modules.
+
+The bimodule contractions give finite generation of `P` over `R`, so tensoring by `P`
+restricts to a functor `FGModuleCat S ⥤ FGModuleCat R`. -/
 def bimoduleTensorMoritaInverseFunctor : FGModuleCat.{u} S ⥤ FGModuleCat.{u} R :=
   letI := (ModuleCat.bimoduleTensorMorita_properties R S P Q a ha b hb).1
   bimoduleTensor (R := S) (S := R) P
 
-/-- Canonical Morita restriction is the whole actual finite-module coefficient tensor. -/
+/-- Forward finite tensor functor agrees with the Morita restriction.
+
+The finite-module functor tensoring by `Q` equals the forward functor of the finite-module
+equivalence induced by the contraction-based Morita equivalence. -/
 theorem bimoduleTensorMoritaFunctor_eq :
     bimoduleTensorMoritaFunctor R S P Q a ha b hb =
       (ModuleCat.bimoduleTensorMoritaEquivalence
         R S P Q a ha b hb).fgModuleCatEquivalence.functor :=
   rfl
 
-/-- The inverse canonical Morita restriction retains the whole actual inverse tensor functor. -/
+/-- Inverse finite tensor functor agrees with the Morita restriction.
+
+The finite-module functor tensoring by `P` equals the inverse functor of the finite-module
+equivalence induced by the contraction-based Morita equivalence. -/
 theorem bimoduleTensorMoritaInverseFunctor_eq :
     bimoduleTensorMoritaInverseFunctor R S P Q a ha b hb =
       (ModuleCat.bimoduleTensorMoritaEquivalence

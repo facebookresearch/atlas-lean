@@ -1,3 +1,5 @@
-# Tensor Obj Single Zero Iso hom naturality₁
+# Naturality of the single-zero comparison in the chain complex
 
-The tensor/single-zero comparison is natural in the chain complex.
+Naturality of the single-zero comparison in the chain complex.
+
+A chain map f commutes with the tensor-single comparison and degreewise right tensoring by A.

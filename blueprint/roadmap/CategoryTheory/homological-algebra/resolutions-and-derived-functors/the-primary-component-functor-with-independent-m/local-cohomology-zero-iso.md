@@ -1,3 +1,6 @@
-# Local Cohomology Zero Iso
+# Zeroth local cohomology is the power-torsion functor
 
-Earned left exactness makes the native zero-degree comparison invertible.
+Zeroth local cohomology is the power-torsion functor.
+
+Since `Γ_I` is left exact, its degree-zero right-derived functor is naturally isomorphic to
+`Γ_I`, assuming the chosen module category has injective resolutions.

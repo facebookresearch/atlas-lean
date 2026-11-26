@@ -1,3 +1,6 @@
-# Field Canonical Residue Closure is Sep Closure
+# Canonical residue closure is a separable closure of the base field
 
-This actual canonical residue closure is a separable closure of the original field.
+Canonical residue closure is a separable closure of the base field.
+
+With the transported `k`-algebra structure, the residue-field separable closure satisfies
+`IsSepClosure k`.

@@ -1,3 +1,6 @@
-# Integral Convolution Element rat
+# The integral labeling element at a rational parameter
 
-The integral labeling sum at rational coefficients is the same original sorting sum.
+The integral labeling element at a rational parameter.
+
+For n,m ≥ 0, the signed stable-sort sum in ℚ[Sₙ] equals the Eulerian convolution element
+Λₙ(m), with m viewed as a rational number.

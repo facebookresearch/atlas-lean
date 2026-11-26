@@ -1,3 +1,6 @@
-# Ring Change Map
+# Endpoint ring change gives the restricted balanced tensor map
 
-Both ring changes act through the native semilinear quotient map and native restriction.
+For φ:R→R′, ψ:S→S′ and f:B→Res_(φ,ψ)(B′),
+the map on a right R′-module A′ is
+Res_(φᵒᵖ)(A′)⊗_R B→Res_(ψᵒᵖ)(A′⊗_(R′)B′).
+It applies f to B and leaves the underlying input A′ fixed.

@@ -1,3 +1,6 @@
-# Cyclic Exterior Weibel Chain Map zero pure
+# The degree-zero one-factor cyclic representative
 
-Degree zero is the one-factor Connes representative, with no degree sign.
+The degree-zero one-factor cyclic representative.
+
+The canonical-tail map sends the exterior generator `x` in degree zero to the cyclic
+representative with coefficient `x` and empty tail.

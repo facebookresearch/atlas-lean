@@ -1,3 +1,6 @@
-# Tensor Monad Hom
+# Internal monoid morphism induces a tensor monad morphism
 
-The tensor-monad morphism induced by a morphism of internal monoids.
+Internal monoid morphism induces a tensor monad morphism.
+
+The components `f.hom ▷ X` define a natural transformation respecting tensor-monad unit and
+multiplication.

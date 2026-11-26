@@ -1,3 +1,5 @@
-# Field Finite Galois Inclusion
+# A subfield inclusion gives a reverse étale spectrum arrow
 
-Every subfield inclusion gives the original spectrum arrow in the reverse direction.
+For finite Galois intermediate fields L≤M inside Ω, the field inclusion L → M induces Spec(M)
+→ Spec(L) over Spec(k). This is the morphism fieldFiniteGaloisEtale(M) →
+fieldFiniteGaloisEtale(L), with the direction reversed from the inclusion.

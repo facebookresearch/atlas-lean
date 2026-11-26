@@ -17,14 +17,26 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
 /-!
-# Native arbitrary-variable polynomial Koszul resolution
+# The polynomial-variable Koszul resolution over an arbitrary coefficient ring
 
-The complex and quotient augmentation are the original native Koszul
-constructions. Every positive cycle is supported on finitely many exterior
-coordinates, whose variable family is proved weakly regular. The actual
-constant-coefficient kernel identifies the original quotient with the
-canonical coefficient module. No Lie/PBW, finite variable set, field,
-characteristic, regularity certificate or exactness certificate is a premise.
+Let R be a commutative ring, I an arbitrary variable type and
+P = R[X_i | i ∈ I]. Put V = I →₀ P, with basis e_i, and let
+x : V → P send e_i to X_i. The variable Koszul complex has
+K_n = ⋀_P^n V and differential
+∂(e_(i₀) ∧ ⋯ ∧ e_(iₙ)) =
+∑_(j=0)^n (−1)^j X_(iⱼ) e_(i₀) ∧ ⋯ ∧ ê_(iⱼ) ∧ ⋯ ∧ e_(iₙ).
+
+Every positive-degree cycle is a boundary, and every term is free and
+projective as a P-module. These results hold for arbitrary I: each
+exterior element involves only finitely many variables.
+
+The variable ideal J = (X_i | i ∈ I) is the kernel of constant-coefficient
+evaluation ε : P → R, so P/J ≅ R. Give R its P-module structure through
+ε. The degree-zero augmentation K_0 ≅ P → R evaluates every variable
+at zero; it is a quasi-isomorphism to R concentrated in degree zero.
+It gives a projective resolution of the lifted coefficient module
+ULift^H R in ModuleCat^H(P), where H = max(u,v) for the independent
+worlds of R and I.
 -/
 
 @[expose] public section
@@ -45,9 +57,11 @@ local notation "P" => MvPolynomial I R
 local notation "V" => (I →₀ P)
 local notation "x" => finsuppFunctional P (MvPolynomial.X : I → P)
 
-/-- The genuine Koszul complex of all polynomial variables is exact in every
-positive degree over an arbitrary commutative coefficient ring and an
-arbitrary ambient variable type. -/
+/-- For a commutative ring R and arbitrary variable type I, put
+P = MvPolynomial I R and V = I →₀ P, with functional x(e_i) = X_i.
+If z ∈ ⋀_P^(k+1) V satisfies ∂_k(z) = 0, then there is
+w ∈ ⋀_P^(k+2) V with ∂_(k+1)(w) = z, for every k ≥ 0.
+The variable family I need not be finite. -/
 theorem polynomialVariables_exact_cycles
     (k : ℕ) (z : ⋀[MvPolynomial I R]^(k + 1) (I →₀ MvPolynomial I R))
     (hz : differential (MvPolynomial I R) (I →₀ MvPolynomial I R)
@@ -59,53 +73,80 @@ theorem polynomialVariables_exact_cycles
   exact finsupp_exact_cycles_of_finite_isWeaklyRegular (MvPolynomial I R) MvPolynomial.X
     (fun f hf => MvPolynomial.isWeaklyRegular_X_of_injective R f hf) k z hz
 
-/-- The actual variable Koszul complex over its original polynomial ring. -/
+/-- For a commutative ring R and arbitrary I, the polynomial
+Koszul complex over P = MvPolynomial I R has degree-n term
+⋀_P^n(I →₀ P) and differential determined by x(e_i) = X_i.
+It is an ℕ-indexed chain complex in ModuleCat^max(u,v)(P). -/
 abbrev polynomialComplex : ChainComplex (ModuleCat.{max u v} P) ℕ :=
   finsuppComplex P (MvPolynomial.X : I → P)
 
-/-- Every term of the original variable complex is a native projective module. -/
+/-- For a commutative ring R, arbitrary I and n ≥ 0, the
+degree-n term ⋀_P^n(I →₀ P) of the variable Koszul complex is
+a projective object of ModuleCat^max(u,v)(P), where
+P = MvPolynomial I R. -/
 theorem polynomialComplex_projective (n : ℕ) :
     CategoryTheory.Projective ((polynomialComplex (I := I) R).X n) :=
   finsuppComplex_projective P MvPolynomial.X n
 
-/-- Every term is genuinely free, for any ambient variable cardinality. -/
+/-- For a commutative ring R, arbitrary I and n ≥ 0, the
+P-module in degree n of the variable Koszul complex is free,
+with P = MvPolynomial I R. The exterior power of the free
+variable module I →₀ P is taken in all degrees. -/
 theorem polynomialComplex_free (n : ℕ) : Module.Free P ((polynomialComplex (I := I) R).X n) :=
   finsuppComplex_free P MvPolynomial.X n
 
-/-- Positive-degree exactness of the original native variable complex. -/
+/-- For a commutative ring R, arbitrary I and k ≥ 0, the
+Koszul complex of the variables X_i in P = MvPolynomial I R
+is exact at degree k+1. Thus its positive-degree homology vanishes. -/
 theorem polynomialComplex_exactAt (k : ℕ) :
     (polynomialComplex (I := I) R).ExactAt (k + 1) :=
   finsuppComplex_exactAt_of_finite_isWeaklyRegular P MvPolynomial.X
     (fun f hf => MvPolynomial.isWeaklyRegular_X_of_injective R f hf) k
 
-/-- The original variable quotient augmentation is an actual quasi-isomorphism. -/
+/-- For a commutative ring R and arbitrary I, let
+P = MvPolynomial I R, V = I →₀ P and x(e_i) = X_i.
+The Koszul augmentation to ULift^max(u,v)(P/(X_i)) concentrated
+in degree zero is a quasi-isomorphism of P-module complexes. -/
 theorem polynomialQuotientAugmentation_quasiIso : QuasiIso (augmentation P V x) :=
   finsuppAugmentation_quasiIso_of_finite_isWeaklyRegular P MvPolynomial.X
     (fun f hf => MvPolynomial.isWeaklyRegular_X_of_injective R f hf)
 
-/-- The actual original quotient resolution, before the coefficient-target
-identification. Positive exactness and projective terms are earned above. -/
+/-- For a commutative ring R and arbitrary I, the variable Koszul
+complex, with its quotient augmentation, is a projective resolution
+of ULift^max(u,v)(P/(X_i)) as a P-module, where
+P = MvPolynomial I R. Its terms are the exterior powers of I →₀ P. -/
 def polynomialQuotientProjectiveResolution :
     ProjectiveResolution (ModuleCat.of P (ULift.{max u v} (P ⧸ ideal P V x))) :=
   finsuppProjectiveResolutionOfFiniteIsWeaklyRegular P MvPolynomial.X
     (fun f hf => MvPolynomial.isWeaklyRegular_X_of_injective R f hf)
 
-/-- The variable range ideal equals the actual constant-coefficient kernel. -/
+/-- For a commutative ring R and arbitrary I, the image ideal of
+x : (I →₀ P) →ₗ[P] P, x(e_i) = X_i, equals ker(ε), where
+P = MvPolynomial I R and ε(p) is the constant coefficient of p.
+Equivalently, (X_i | i ∈ I) = ker(ε). -/
 theorem polynomialIdeal_eq_kerConstantCoeff :
     ideal P V x = RingHom.ker (MvPolynomial.constantCoeff : P →+* R) := by
   rw [finsuppIdeal_eq_span]
   exact MvPolynomial.idealOfVars_eq_ker_constantCoeff R I
 
-/-- Original coefficients as a native polynomial module via evaluation X=0. -/
+/-- For a commutative ring R and arbitrary I, regard R as a
+module over P = MvPolynomial I R by p • r = ε(p)r, where ε is
+constant-coefficient evaluation. This coefficient module has its
+carrier in the world u of R. -/
 abbrev polynomialConstants : ModuleCat.{u} P :=
   (ModuleCat.restrictScalars (MvPolynomial.constantCoeff : P →+* R)).obj (ModuleCat.of R R)
 
-/-- Actual native coefficient carrier lift to the complex's true maximum universe. -/
+/-- For a commutative ring R in world u and arbitrary variable
+type I in world v, the coefficient target is ULift^max(u,v) R,
+with P = MvPolynomial I R acting through constant-coefficient
+evaluation. It is an object of ModuleCat^max(u,v)(P). -/
 abbrev polynomialTarget : ModuleCat.{max u v} P :=
   (ModuleCat.uliftFunctor.{max u v, u} P).obj (polynomialConstants (I := I) R)
 
-/-- The original generated-ideal quotient is the original coefficient ring,
-through native ideal equality and the native first isomorphism theorem. -/
+/-- For a commutative ring R and arbitrary I, constant-coefficient
+evaluation induces the ring equivalence P/(X_i | i ∈ I) ≃ R,
+where P = MvPolynomial I R. It sends the quotient class of p to
+ε(p) and has inverse r ↦ [C(r)]. -/
 def polynomialQuotientRingEquiv : (P ⧸ ideal P V x) ≃+* R :=
   (Ideal.quotientEquivAlgOfEq P (polynomialIdeal_eq_kerConstantCoeff (I := I) R)).toRingEquiv.trans
     ((MvPolynomial.constantCoeff : P →+* R).quotientKerEquivOfRightInverse
@@ -122,8 +163,10 @@ theorem polynomialQuotientRingEquiv_mk (p : P) :
   rw [Ideal.quotientEquivAlgOfEq_mk]
   rfl
 
-/-- That computed quotient equivalence is linear for the actual polynomial
-augmentation action on the original coefficient ring. -/
+/-- For a commutative ring R and arbitrary I, the quotient
+equivalence P/(X_i) ≃ R is P-linear when R is given the action
+p • r = ε(p)r. The forward value is [p] ↦ ε(p), with
+P = MvPolynomial I R and ε constant-coefficient evaluation. -/
 def polynomialQuotientEquiv : (P ⧸ ideal P V x) ≃ₗ[P] polynomialConstants (I := I) R :=
   { (polynomialQuotientRingEquiv (I := I) R).toAddEquiv with
     map_smul' := by
@@ -134,16 +177,21 @@ def polynomialQuotientEquiv : (P ⧸ ideal P V x) ≃ₗ[P] polynomialConstants 
           polynomialQuotientRingEquiv (I := I) R (Ideal.Quotient.mk (ideal P V x) p)
       rw [polynomialQuotientRingEquiv_mk, polynomialQuotientRingEquiv_mk, map_mul] }
 
-/-- Actual native up/down on the quotient and coefficient targets, with the
-original computed polynomial-linear quotient equivalence between them. -/
+/-- For a commutative ring R in world u and arbitrary I in
+world v, the polynomial-linear quotient equivalence induces
+ULift^max(u,v)(P/(X_i)) ≅ ULift^max(u,v) R in ModuleCat(P).
+The coefficient action on R is constant-coefficient evaluation. -/
 def polynomialQuotientTargetIso :
     ModuleCat.of P (ULift.{max u v} (P ⧸ ideal P V x)) ≅ polynomialTarget (I := I) R :=
   ((ULift.moduleEquiv : ULift.{max u v} (P ⧸ ideal P V x) ≃ₗ[P] P ⧸ ideal P V x).trans
     ((polynomialQuotientEquiv (I := I) R).trans
       (ULift.moduleEquiv : polynomialTarget (I := I) R ≃ₗ[P] polynomialConstants (I := I) R).symm)).toModuleIso
 
-/-- The original variable Koszul augmentation with the canonical original
-coefficient target, through the actual native target isomorphism. -/
+/-- For a commutative ring R and arbitrary I, the variable
+Koszul augmentation is the chain map to the complex concentrated
+at degree zero in ULift^max(u,v) R, with P acting through ε.
+Its degree-zero value is constant-coefficient evaluation after
+the identification ⋀_P^0(I →₀ P) ≅ P. -/
 def polynomialAugmentation : polynomialComplex (I := I) R ⟶
     (ChainComplex.single₀ (ModuleCat.{max u v} P)).obj (polynomialTarget (I := I) R) :=
   augmentation P V x ≫ (ChainComplex.single₀ (ModuleCat.{max u v} P)).map
@@ -155,7 +203,11 @@ theorem polynomialAugmentation_f_zero : (polynomialAugmentation (I := I) R).f 0 
   rw [polynomialAugmentation, HomologicalComplex.comp_f, augmentation_f_zero]
   rfl
 
-/-- The actual degree-zero scalar is evaluated at zero in every variable. -/
+/-- For a commutative ring R and arbitrary I, let
+P = MvPolynomial I R and V = I →₀ P. On z ∈ ⋀_P^0 V, the
+variable Koszul augmentation has value up(ε(s)), where
+s is the scalar corresponding to z under ⋀_P^0 V ≅ P and ε
+evaluates every variable at zero. -/
 theorem polynomialAugmentation_apply (z : ⋀[P]^0 V) :
     ((polynomialAugmentation (I := I) R).f 0).hom z =
       ULift.up (MvPolynomial.constantCoeff (exteriorPower.zeroEquiv P V z)) := by
@@ -167,8 +219,11 @@ theorem polynomialAugmentation_apply (z : ⋀[P]^0 V) :
     (Ideal.Quotient.mk (ideal P V x) (exteriorPower.zeroEquiv P V z))) = _
   rw [polynomialQuotientRingEquiv_mk]
 
-/-- The actual arbitrary-variable polynomial Koszul projective resolution of
-canonical original coefficients. No finite or regularity/exactness input is supplied. -/
+/-- For a commutative ring R and arbitrary I, the variable
+Koszul complex with its constant-coefficient augmentation is
+a projective resolution of ULift^max(u,v) R as a
+P = MvPolynomial I R module. Its nth term is ⋀_P^n(I →₀ P),
+and the P-action on the target is through ε. -/
 def polynomialProjectiveResolution : ProjectiveResolution (polynomialTarget (I := I) R) where
   complex := polynomialComplex (I := I) R
   projective := polynomialComplex_projective R

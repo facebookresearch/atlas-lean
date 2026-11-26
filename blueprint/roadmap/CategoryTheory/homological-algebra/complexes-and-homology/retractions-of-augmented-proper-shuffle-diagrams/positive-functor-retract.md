@@ -1,3 +1,6 @@
-# Positive Functor Retract
+# The positive proper-shuffle functor as a positive Hochschild retract
 
-The original positive quotient is a native retract of the original positive Hochschild diagram.
+The positive proper-shuffle functor as a positive Hochschild retract.
+
+Positive-index restriction carries the full section–projection retraction to a retraction of
+the corresponding positive chain functors.

@@ -1,3 +1,8 @@
-# Shuffle projection zero of degenerate left
+# Projected shuffle vanishes for a degenerate first tuple
 
-Projection of an existing shuffle with a degenerate left input is zero.
+Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+If a has an identity entry, the output of its full shuffle with b
+is killed by the degree p+q nonidentity projection.

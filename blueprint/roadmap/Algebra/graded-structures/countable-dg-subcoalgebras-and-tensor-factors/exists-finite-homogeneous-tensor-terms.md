@@ -1,3 +1,6 @@
-# Exists finite homogeneous Tensor Terms
+# Every tensor element has finite homogeneous spanning support
 
-Every native tensor element uses finitely many actual homogeneous pure tensors.
+Every tensor element has finite homogeneous spanning support.
+
+For z in total degree n, there is a finite set of homogeneous tensor terms whose values have z
+in their R-span.

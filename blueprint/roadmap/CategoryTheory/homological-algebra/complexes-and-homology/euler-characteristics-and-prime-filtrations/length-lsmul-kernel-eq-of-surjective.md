@@ -1,4 +1,5 @@
-# Length lsmul kernel eq of surjective
+# Multiplication kernel lengths agree under a surjective algebra map
 
-Under a surjective algebra map, the multiplication-kernel length is
-unchanged by passing from the source ring to the target ring.
+Multiplication kernel lengths agree under a surjective algebra map.
+
+For surjective S → A, the length over S of the scalar kernel on A equals its length over A.

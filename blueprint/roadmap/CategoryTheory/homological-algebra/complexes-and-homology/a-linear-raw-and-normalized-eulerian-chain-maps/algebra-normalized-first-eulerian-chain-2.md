@@ -1,3 +1,7 @@
-# Algebra Normalized First Eulerian Chain Map f
+# The normalized lowest-weight chain projector has component p̄ₙ
 
-The normalized first chain map keeps the original normalized first operator.
+The normalized lowest-weight chain projector has component p̄ₙ.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the nth
+component of algebraNormalizedFirstEulerianChainMap is
+algebraNormalizedFirstEulerianOperator(n).

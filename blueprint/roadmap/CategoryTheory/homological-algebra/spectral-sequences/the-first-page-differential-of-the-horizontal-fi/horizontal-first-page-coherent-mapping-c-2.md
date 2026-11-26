@@ -1,3 +1,6 @@
-# Horizontal First Page Coherent Mapping Cone To Direct Column quasi Iso
+# The quasi-isomorphism from a coherent window cone to its direct column
 
-The mapping-cone-to-column comparison is a quasi-isomorphism.
+The quasi-isomorphism from a coherent window cone to its direct column.
+
+The coherent filtration map is monic, so its cone-to-cokernel map and direct-column comparison
+give a quasi-isomorphism.

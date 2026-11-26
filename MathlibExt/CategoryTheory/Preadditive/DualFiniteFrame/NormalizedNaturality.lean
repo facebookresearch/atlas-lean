@@ -14,10 +14,18 @@ module
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Pasting
 
 /-!
-# Naturality of normalized genuine dual comparisons
+# Naturality of normalized dual comparisons
 
-Actual restriction duality and commuting-square naturality transport the
-earned finite-frame comparison naturality to the original restricted sheaves.
+Let P:C → D, R:C → A, S:D → B and Q:A → B form a functor square
+ρ:S∘P ≅ Q∘R. Dual functors G,H,J,K on the four categories have
+natural comparisons η_R:R∘G ≅ J∘Rᵒᵖ and
+η_S:S∘H ≅ K∘Sᵒᵖ. A local comparison at R(M) can then be normalized
+around this square to an isomorphism S(P(G(M))) ≅ S(H(P(M))).
+
+For a map φ:M → N, a commuting square between the two local comparisons
+gives the corresponding naturality square for the normalized comparisons.
+The categories are arbitrary and have independent object and morphism
+universes.
 -/
 
 @[expose] public section
@@ -32,8 +40,14 @@ namespace CategoryTheory.DualFiniteFrame
 variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
   {A : Type u₃} [Category.{v₃} A] {B : Type u₄} [Category.{v₄} B]
 
-/-- The original normalized local comparison is natural for every original
-morphism whenever its earned local comparison is natural. -/
+/-- Let P:C → D, R:C → A, S:D → B, Q:A → B and ρ:S∘P ≅ Q∘R.
+Let G,H,J,K be contravariant functors on C,D,A,B, with
+η_R:R∘G ≅ J∘Rᵒᵖ and η_S:S∘H ≅ K∘Sᵒᵖ.
+For φ:M → N and local isomorphisms
+c_X:Q(J(R(X))) ≅ K(Q(R(X))) for X=M,N, suppose
+c_M∘Q(J((Rφ)ᵒᵖ))=K((Q(Rφ))ᵒᵖ)∘c_N.
+Define E_X=η_S,PX⁻¹∘K(ρ_Xᵒᵖ)∘c_X∘Q(η_R,X)∘ρ_GX.
+Then E_M∘S(P(G(φᵒᵖ)))=S(H((Pφ)ᵒᵖ))∘E_N. -/
 theorem normalizedDualComparison_naturality
     (P : C ⥤ D) (R : C ⥤ A) (S : D ⥤ B) (Q : A ⥤ B) (ρ : P ⋙ S ≅ R ⋙ Q)
     (G : Cᵒᵖ ⥤ C) (H : Dᵒᵖ ⥤ D) (J : Aᵒᵖ ⥤ A) (K : Bᵒᵖ ⥤ B)

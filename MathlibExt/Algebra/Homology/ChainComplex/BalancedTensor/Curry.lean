@@ -16,11 +16,17 @@ public import MathlibExt.Algebra.Homology.ChainComplex.ModuleHomCochainComplex
 public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.GroupAdjunction
 
 /-!
-# Actual signed currying on the full tensor-total Hom cochains
+# Signed currying of full integer tensor–Hom cochains
 
-All cochains are the native products. Currying is the existing balanced
-tensor–Hom map, applied to each original tensor summand. The inner total
-degree supplies the actual triangular sign required by the source convention.
+Let `P` and `Q` be integer chain complexes of right and left `R`-modules, and let `I` be a
+cochain complex of additive groups. Write chain degree `p` as cochain degree `-p`. The inner
+Hom consists of additive maps from `Q` to `I`, with right `R`-action by domain precomposition;
+the outer Hom consists of right `R`-linear maps from `P`. The tensor-total and iterated Hom
+cochains use full products over integer degrees.
+
+For a degree-`n` cochain `f`, put `b = a + n` and `d = c + b`. Its curried coordinate on `x ∈
+P_(-a)` and `y ∈ Q_(-c)` is `θ(b) • f_(a+c,d)([x ⊗ y])`, where `θ(b) = Int.triangularSign b =
+(-1)^(b*(b+1)/2)`. This inner-degree sign is defined for every integer `b`.
 -/
 
 @[expose] public section
@@ -40,7 +46,12 @@ variable (R : Type u) [Ring R]
 
 local notation "HI" => moduleHomCochainComplex R Q I
 
-/-- The original sum-to-product currying map, with the required inner-degree sign. -/
+/-- Signed currying in each integer total-Hom degree.
+
+For a degree-`n` Hom cochain from the negative-index cochain view of `P ⊗_R Q` to `I`, curry
+each tensor summand and multiply the inner Hom component of degree `b` by `Int.triangularSign
+b`. The result is a degree-`n` cochain from the cochain view of `P` to
+`moduleHomCochainComplex R Q I`. -/
 def curryCochain (n : ℤ) (f : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n) :
     CochainComplex.HomComplex.Cochain
@@ -62,7 +73,12 @@ def curryCochain (n : ℤ) (f : CochainComplex.HomComplex.Cochain
           f.v (a + T.p) T.q (by have := T.hpq; omega))
     exact ModuleCat.ofHom (LinearMap.pi component))
 
-/-- Every native product component has the original pure-tensor value and the actual sign. -/
+/-- Evaluation formula for signed tensor–Hom currying.
+
+Let `a + n = b` and `c + b = d`. For `x : P.X (-a)` and `y : Q.X (-c)`, the curried cochain
+evaluated in outer coordinate `(a, b)` and inner coordinate `(c, d)` equals
+`Int.triangularSign b` times `f.v (a + c) d` evaluated on the total class `[x ⊗ y]` in chain
+degree `-(a + c)`. -/
 theorem curryCochain_v (n : ℤ) (f : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n)
     (a b : ℤ) (hab : a + n = b) (c d : ℤ) (hcd : c + b = d)

@@ -10,10 +10,13 @@ LICENSE file in the root directory of this source tree.
 module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleLongExactSequence
 
-/-! # Functoriality of the canonical étale long exact sequence
+/-!
+# Functoriality of small étale cohomology windows
 
-Every component is the actual cohomology map of the same original sequence
-morphism. The sequence functor supplies all squares and both functor laws.
+A morphism of short exact common-universe sheaf sequences acts on the cohomology windows by
+its three component cohomology maps in degree `n` and again in degree `n + 1`. These maps
+commute with every arrow of the window, including its connecting map, and preserve identity
+and composition.
 -/
 
 @[expose] public section
@@ -23,13 +26,19 @@ open CategoryTheory
 universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The canonical sequence functor in each adjacent pair of degrees. -/
+/-- Cohomology window functor of short exact sheaf sequences.
+
+For fixed natural degree `n`, the small étale six-term cohomology windows define a functor on
+short exact sheaf sequences. -/
 def smallEtaleLongSequenceFunctor (X : Scheme.{u}) (n : ℕ) :
     ShortExactSequence (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) ⥤
       ComposableArrows AddCommGrpCat.{max u w} 5 :=
   Sheaf.H.longSequenceFunctor n (n + 1) rfl
 
-/-- The six components are the original sheaf-morphism cohomology maps. -/
+/-- Six cohomology component formulas for a window morphism.
+
+The six components of a sequence morphism are the cohomology maps of its first, second, and
+third sheaf components in degree `n`, followed by the same three maps in degree `n + 1`. -/
 def SmallEtaleLongSequenceComponents (X : Scheme.{u}) (n : ℕ)
     {S T : ShortExactSequence (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})}
     (α : S ⟶ T) : Prop :=
@@ -48,13 +57,18 @@ def SmallEtaleLongSequenceComponents (X : Scheme.{u}) (n : ℕ)
   m.app 4 = H₁.map α.hom.τ₂ ∧
   m.app 5 = H₁.map α.hom.τ₃
 
-/-- The stock sequence morphism has those same literal six components. -/
+/-- Cohomology window functor has the displayed component maps.
+
+Every morphism image under the window functor satisfies its six cohomology component formulas. -/
 theorem smallEtaleLongSequenceFunctor_components (X : Scheme.{u}) (n : ℕ)
     {S T : ShortExactSequence (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})}
     (α : S ⟶ T) : SmallEtaleLongSequenceComponents.{u, w} X n α :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- Actual components, all commuting squares, and identity/composition laws. -/
+/-- Cohomology window maps satisfy naturality and functor laws.
+
+The window functor has the given object and component formulas, commutes with every window
+arrow, and preserves identity sequence maps and composition. -/
 theorem original_small_etale_long_exact_sequence_functoriality (X : Scheme.{u}) (n : ℕ) :
     let C := ShortExactSequence (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     let F := smallEtaleLongSequenceFunctor.{u, w} X n

@@ -1,3 +1,5 @@
-# Localized Diagonal Family
+# The family of equations in the local ring
 
-The original diagonal equations in the actual local ring.
+The family of equations in the local ring.
+
+Send each a_i to its image in R_p.

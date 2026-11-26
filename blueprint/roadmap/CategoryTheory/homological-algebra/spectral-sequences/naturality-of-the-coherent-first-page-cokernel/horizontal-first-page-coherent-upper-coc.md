@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Upper Cochain Map Of Bicomplex
+# A bicomplex map acts on the coherent upper stage
 
-The map on the upper endpoint of a coherent first-page window induced by
-a bicomplex map.
+For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the upper endpoint map of the coherent
+column-p window is F_p(f), reindexed as an integer cochain map.
+The upper stage contains horizontal columns at most p.

@@ -1,3 +1,6 @@
-# Homology Presentation Iso trans
+# Composition of augmented homology-family comparisons
 
-Composing original presentation isomorphisms composes their homology comparisons.
+Composition of augmented homology-family comparisons.
+
+The comparison induced by e followed by f equals the composite of their induced homology-
+family comparisons.

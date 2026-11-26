@@ -14,17 +14,14 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.GroupTheory.SchreierTransversal
 
 /-!
-# Arbitrary-degree Schreier cochain transfer
+# Schreier cochain transfer in every degree
 
-Iterating the Schreier representative update along a tuple of group
-elements produces, at each coordinate, the corresponding subgroup factor.
-This file packages that scan for `Fin n` tuples and defines the standard
-chosen-transversal cochain-transfer formula in every degree.
+Let H ≤ G have finite index, let T be a right transversal and let A be a k-linear
+G-representation over a commutative ring. For g : Fin n → G, start at t₀ = t and write tᵢgᵢ =
+aᵢtᵢ₊₁ with aᵢ ∈ H and tᵢ₊₁ ∈ T. The transfer formula is cor_Tⁿ(f)(g) = ∑ₜ ρ(t⁻¹)f(a₀,…,aₙ₋₁).
 
-The construction is a graded family of linear maps.  Compatibility with the
-arbitrary inhomogeneous differential, descent to cohomology, independence
-of the transversal, and comparison with Shapiro corestriction are separate
-theorems.
+This gives a linear map from inhomogeneous H-cochains to G-cochains for every n, including n =
+0. At n = 1 it agrees with the ordinary single-factor Schreier formula.
 -/
 
 @[expose] public section
@@ -42,12 +39,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite representatives for arbitrary-degree cochain transfer.
+
+The finite-index hypothesis gives a finite enumeration of the right transversal used in every
+degree-n transfer sum. -/
 noncomputable local instance corestrictionArbitraryRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Chosen-transversal inhomogeneous cochain transfer in arbitrary degree. -/
+/-- The finite-tuple Schreier cochain map in each degree.
+
+For f : Hⁿ → A and g : Gⁿ, sum ρ(t⁻¹)f(a₀,…,aₙ₋₁) over t ∈ T, where the aᵢ are the successive
+subgroup factors of the Schreier scan starting at t. The map is k-linear. -/
 noncomputable def corestrictionCochain (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     ((Fin n → H) → A) →ₗ[k] ((Fin n → G) → A) where
@@ -61,6 +64,10 @@ noncomputable def corestrictionCochain (A : Rep k G)
     simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- The finite-tuple formula for arbitrary-degree transfer.
+
+The transfer of f at g is ∑ₜ ρ(t⁻¹)f(T.schreierFactorTuple t g), with the ordered subgroup
+factors of the representative scan. -/
 @[simp]
 theorem corestrictionCochain_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
@@ -70,8 +77,10 @@ theorem corestrictionCochain_apply (A : Rep k G)
         A.ρ (t : G)⁻¹ (f (T.schreierFactorTuple t g)) :=
   rfl
 
-/-- In degree one, the arbitrary tuple formula is the existing Schreier
-cochain transfer. -/
+/-- Agreement with the single-factor degree-one formula.
+
+For f : H → A and g ∈ G, the degree-one tuple transfer of x ↦ f(x₀) on the constant one-entry
+tuple g equals corestrictionCochainOne A T f g. -/
 theorem corestrictionCochain_one_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H → A) (g : G) :

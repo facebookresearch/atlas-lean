@@ -1,3 +1,6 @@
-# Is Zero hom Cochain Complex Homology Functor of single
+# Homotopy-single chain complex has no other Hom cohomology
 
-`H^n(Hom(K, -))` vanishes for `n ≠ j` when `K ≃ single_j R`.
+Homotopy-single chain complex has no other Hom cohomology.
+
+For a homotopy equivalence `K ≃ A[j]` and `n ≠ j`, the degree-`n` Hom cochain cohomology
+coefficient functor of `K` is zero.

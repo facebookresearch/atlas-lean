@@ -1,3 +1,6 @@
-# Hom Tensor Co Chain Left Functor
+# Triple-input functor for Hom followed by tensor
 
-The actual original source functor T(H(P,J),U).
+Triple-input functor for Hom followed by tensor.
+
+The left functor takes `(P, J, U)` to `Hom_R(P,J) ⊗_R U`, with the first input contravariant
+and the other two covariant.

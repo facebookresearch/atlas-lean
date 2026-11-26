@@ -14,12 +14,20 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.Bimodule.MoritaCoordinates
 
 /-!
-# Morita equivalence of bimodule categories
+# Morita equivalence of enveloping-module categories
 
-The two tensor functors use coefficient orders `Q–M–P` and `P–N–Q`.
-Their return isomorphisms contract the outer tensor pairs and respect the
-supplied bimodule actions. The resulting equivalence retains this counit
-and adjusts the unit to satisfy the triangle identity.
+Let R,S be rings in independent universes r,s and P:(R,S), Q:(S,R) bimodules with carriers in v.
+Let α:P⊗_S Q≃R be right R-linear and left R-compatible, and β:Q⊗_R P≃S be right S-linear and
+left S-compatible. Each contraction identifies the corresponding composite tensor functor with
+the identity.
+
+The equivalence has forward functor F(X)=(Q⊗_R X)⊗_R P and inverse G(Y)=(P⊗_S Y)⊗_S Q. Its
+counit ε_Y:F(GY)→Y is the β-return contraction. Its unit is obtained from η⁰_X=κ_{α,X}⁻¹ by the
+composite η_X=η⁰_X≫G(ε_{FX}⁻¹)≫GF((η⁰_X)⁻¹). This is the adjusted unit satisfying the triangle
+law with the retained counit.
+
+The α-return sends the ordered class p₀,q₀,x,p₁,q₁ to α(p₀⊗q₀)•x•α(p₁⊗q₁). The β-counit has the
+symmetric q₀,p₀,y,q₁,p₁ formula, with the enveloping scalar action of S.
 -/
 
 @[expose] public section
@@ -45,7 +53,12 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
     ∀ (r : R) (b : TensorProduct.Balanced ℤ S P Q), u (r • b) = r * u b)
 
 include u hu in
-/-- The earned complete return to the original native enveloping-module object. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. For X∈ModuleCat_v(R⊗_ℤRᵒᵖ), there is an isomorphism κ_{α,X}:G(FX)≅X.
+It compares the composite with the raw return, contracts both P⊗_S Q pairs using α, and
+identifies the reconstructed endpoint module with X. -/
 def returnIso (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     ((tensorFunctor R S P Q) ⋙ (tensorFunctor S R Q P)).obj X ≅ X := by
   letI := ModuleCat.Bimodule.leftModule R X
@@ -54,9 +67,13 @@ def returnIso (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
   exact (returnCoordinates R S P Q X).trans
     ((rawReturnModuleIso R S P Q X u hu).trans (ModuleCat.Bimodule.reconstructedIso R X))
 
-/-- The actual return contracts the two outer pairs and uses the original stored R-bimodule
-action. -/
-@[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
+-- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. For X in the R-enveloping module category, κ_{α,X} sends
+(p₀⊗((q₀⊗x)⊗p₁))⊗q₁ to (α(p₀⊗q₀)⊗op(α(p₁⊗q₁)))•x. The action on x is its given E_R-action. -/
+@[simp, nolint simpNF]
 theorem returnIso_mk (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
     (p₀ : P) (q₀ : Q) (x : X) (p₁ : P) (q₁ : Q) :
     letI := ModuleCat.Bimodule.leftModule R X
@@ -89,7 +106,11 @@ theorem returnIso_mk (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
         (u (mk ℤ S P Q p₀ q₀)) (op (u (mk ℤ S P Q p₁ q₁))) x)))
 
 include u hu in
-/-- The actual composite contraction is natural in the original native bimodule morphism. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. The isomorphisms κ_{α,X}:G(FX)≅X form a natural isomorphism GF≅Id on
+ModuleCat_v(R⊗_ℤRᵒᵖ). For f:X→Y, (GF)(f)≫κ_{α,Y}.hom=κ_{α,X}.hom≫f. -/
 def returnNatIso :
     (tensorFunctor R S P Q) ⋙ (tensorFunctor S R Q P) ≅
       𝟭 (ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :=
@@ -143,7 +164,13 @@ variable
     ∀ (s : S) (b : TensorProduct.Balanced ℤ R Q P), w (s • b) = s * w b)
 
 include u hu w hw in
-/-- The actual bimodule-category equivalence from the two invertible contractions. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. Let β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b), preserving both
+S-actions. There is an equivalence ModuleCat_v(R⊗_ℤRᵒᵖ)≃ModuleCat_v(S⊗_ℤSᵒᵖ) with functor F and
+inverse G. Its counit is the β-return natural isomorphism FG≅Id, and its unit is the adjusted
+unit obtained from the inverse α-return and this counit. -/
 def equivalence :
     ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ) ≌ ModuleCat.{v} (S ⊗[ℤ] Sᵐᵒᵖ) :=
   CategoryTheory.Equivalence.mk (tensorFunctor R S P Q) (tensorFunctor S R Q P)
@@ -157,18 +184,35 @@ theorem equivalence_functor : (equivalence R S P Q u hu w hw).functor =
 theorem equivalence_inverse : (equivalence R S P Q u hu w hw).inverse =
     tensorFunctor S R Q P := rfl
 
-/-- Native adjointification keeps the actual symmetric return counit. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. Let β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b), preserving both
+S-actions. The equivalence counit FG≅Id on the S-enveloping module category equals the β-return
+natural isomorphism κ_β. Its component at Y contracts the two outer Q⊗_R P pairs and applies the
+resulting S-enveloping scalar to y. -/
 theorem equivalence_counitIso : (equivalence R S P Q u hu w hw).counitIso =
     returnNatIso S R Q P w hw := rfl
 
-/-- The actual chosen unit is the native adjointified unit, not an assumed normalized
-contraction. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. Let β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b), preserving both
+S-actions. Put η⁰_X=κ_{α,X}⁻¹:X→G(FX) and ε_Y=κ_{β,Y}:F(GY)→Y. The chosen unit has component
+η_X=η⁰_X≫G(ε_{FX}⁻¹)≫GF((η⁰_X)⁻¹):X→G(FX). It is the adjointified unit determined by those two
+natural isomorphisms. -/
 theorem equivalence_unitIso : (equivalence R S P Q u hu w hw).unitIso =
     Equivalence.adjointifyη (returnNatIso R S P Q u hu).symm
       (returnNatIso S R Q P w hw) := rfl
 
-/-- The retained counit has the original two-contraction coefficient value. -/
-@[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
+-- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus α
+preserves both R-actions. Let β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b), preserving both
+S-actions. For Y∈ModuleCat_v(S⊗_ℤSᵒᵖ), the counit sends (q₀⊗((p₀⊗y)⊗q₁))⊗p₁ to
+(β(q₀⊗p₀)⊗op(β(q₁⊗p₁)))•y. Both Q⊗_R P pairs are contracted in the displayed order. -/
+@[simp, nolint simpNF]
 theorem equivalence_counitIso_mk (Y : ModuleCat.{v} (S ⊗[ℤ] Sᵐᵒᵖ))
     (q₀ : Q) (p₀ : P) (y : Y) (q₁ : Q) (p₁ : P) :
     letI := ModuleCat.Bimodule.leftModule S Y

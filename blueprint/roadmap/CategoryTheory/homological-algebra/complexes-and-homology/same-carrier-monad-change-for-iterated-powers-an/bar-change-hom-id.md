@@ -1,5 +1,5 @@
-# Bar Change Hom id
+# The identity monad change is the bar restriction isomorphism
 
-Genuine identity law: `barChangeHom (𝟙 T)` equals the identity-restriction iso hom.
-
-Derived functorially from `barChangeDataHom_id` via `Data.toSimplicialFunctor`.
+Let T be a monad on C, R : C → D a right T-module, and L : A → C a left T-module. The
+simplicial bar-change map induced by id_T equals the forward identity-restriction isomorphism
+from B(id_T*R,T,id_T*L) to B(R,T,L). This is an equality of simplicial morphisms.

@@ -16,12 +16,17 @@ public import Mathlib.CategoryTheory.CofilteredSystem
 public import Mathlib.CategoryTheory.Functor.OfSequence
 
 /-!
-# Mittag--Leffler inverse sequences
+# Mittag–Leffler inverse sequences and compatible sections
 
-This file specializes Mathlib's `Functor.IsMittagLeffler` to inverse
-sequences.  It gives the numerical range-stabilization criterion, invariance
-under natural isomorphism, an eventually-surjective criterion, and existence
-of a section for levelwise-nonempty Type-valued towers.
+For a concrete inverse tower F, the sequential Mittag–Leffler condition is eventual
+stabilization of the ranges into each fixed level: for every n, some m ≥ n has Im(F_k → F_n) =
+Im(F_m → F_n) for all k ≥ m. It is the Mittag–Leffler condition on the underlying Type-valued
+functor and is invariant under natural isomorphism.
+
+For towers of types, successor maps that are surjective from a fixed stage onward imply this
+condition. A Mittag–Leffler tower whose levels are all nonempty has a compatible section. The
+section is constructed recursively in the stabilized ranges. Concrete carrier, object and
+morphism universes remain independent.
 -/
 
 @[expose] public section
@@ -41,13 +46,19 @@ variable {C : Type u} [Category.{v} C]
   {FC : C → C → Type*} {CC : C → Type w}
   [∀ X Y, FunLike (FC X Y) (CC X) (CC Y)] [ConcreteCategory.{w} C FC]
 
-/-- A concrete inverse sequence is sequentially Mittag--Leffler when its
-underlying Type-valued functor is Mittag--Leffler. -/
+/-- Mittag–Leffler condition for a concrete inverse tower.
+
+For F : ℕᵒᵖ ⥤ C in a concrete category, IsSequentialMittagLeffler F means that F followed by
+the forgetful functor to types is Mittag–Leffler. Equivalently, the ranges of maps from later
+stages into each fixed stage eventually stabilize. -/
 abbrev IsSequentialMittagLeffler (F : ℕᵒᵖ ⥤ C) : Prop :=
   (F ⋙ forget C).IsMittagLeffler
 
-/-- For an inverse sequence, the Mittag--Leffler condition is equivalent to
-eventual stabilization of the ranges into every fixed level. -/
+/-- Range-stabilization criterion for a concrete tower.
+
+A concrete inverse tower F is sequentially Mittag–Leffler exactly when, for every n, there is
+m ≥ n such that Im(F_k → F_n) = Im(F_m → F_n) for all k ≥ m. The images are ranges of the
+underlying functions of the tower maps. -/
 theorem isSequentialMittagLeffler_iff_range_stabilizes
     (F : ℕᵒᵖ ⥤ C) :
     F.IsSequentialMittagLeffler ↔
@@ -84,7 +95,11 @@ section Iso
 
 variable {J : Type u} [Category.{v} J] {F G : J ⥤ Type w}
 
-/-- The Mittag--Leffler condition is invariant under natural isomorphism. -/
+/-- Transport of the Mittag–Leffler condition by natural isomorphism.
+
+For Type-valued functors F,G on any category J, a natural isomorphism e : F ≅ G carries a
+Mittag–Leffler condition on F to one on G. Its component bijections identify the relevant
+ranges and commute with every transition map. -/
 theorem IsMittagLeffler.of_iso (h : F.IsMittagLeffler) (e : F ≅ G) :
     G.IsMittagLeffler := by
   intro j
@@ -105,8 +120,10 @@ theorem IsMittagLeffler.of_iso (h : F.IsMittagLeffler) (e : F ≅ G) :
       have he := ConcreteCategory.congr_hom (e.inv_hom_id_app i) x
       simpa only [ConcreteCategory.comp_apply, ConcreteCategory.id_apply] using he
 
-/-- Naturally isomorphic Type-valued functors satisfy the Mittag--Leffler
-condition simultaneously. -/
+/-- Equivalence of Mittag–Leffler conditions under natural isomorphism.
+
+For Type-valued functors F,G on any category J and a natural isomorphism F ≅ G, F is
+Mittag–Leffler if and only if G is Mittag–Leffler. -/
 theorem isMittagLeffler_iff_of_iso (e : F ≅ G) :
     F.IsMittagLeffler ↔ G.IsMittagLeffler :=
   ⟨fun h => h.of_iso e, fun h => h.of_iso e.symm⟩
@@ -117,8 +134,11 @@ section TypeTower
 
 variable (F : ℕᵒᵖ ⥤ Type w)
 
-/-- If the successor transitions are surjective from `N` onward, every
-transition between stages at least `N` is surjective. -/
+/-- Surjectivity of all transitions beyond a surjective tail.
+
+Let F be an inverse tower of types and suppose every successor transition F_{n+1} → F_n is
+surjective for n ≥ N. If N ≤ m ≤ k, then the transition F_k → F_m is surjective, since it is a
+finite composite of such successor maps. -/
 theorem surjective_map_of_eventually_surjective_transition
     {N m k : ℕ}
     (h : ∀ n : ℕ, N ≤ n → Function.Surjective
@@ -139,8 +159,10 @@ theorem surjective_map_of_eventually_surjective_transition
       rw [heq, F.map_comp, types_comp]
       exact ih.comp hs
 
-/-- If all successor transitions of an inverse sequence are surjective from
-some point onward, then the sequence is Mittag--Leffler. -/
+/-- Mittag–Leffler condition from eventual successor surjectivity.
+
+For an inverse tower of types, if there exists N such that every F_{n+1} → F_n is surjective
+for n ≥ N, the tower is Mittag–Leffler. Into a fixed level n, ranges stabilize after max(n,N). -/
 theorem isMittagLeffler_of_eventually_surjective_transition
     (h : ∃ N : ℕ, ∀ n : ℕ, N ≤ n → Function.Surjective
       (F.map (homOfLE (Nat.le_succ n)).op)) :
@@ -163,8 +185,11 @@ theorem isMittagLeffler_of_eventually_surjective_transition
   refine ⟨z, ?_⟩
   simpa only [F.map_comp, types_comp, comp_apply] using congrArg (F.map f) hz
 
-/-- A levelwise-nonempty Mittag--Leffler inverse sequence of types has a
-compatible section. -/
+/-- Compatible section of a nonempty Mittag–Leffler tower.
+
+Let F be a Mittag–Leffler inverse tower of types whose every level is nonempty. Then there
+exists a family x_n ∈ F_n satisfying F_{n+1} → F_n on x_{n+1} equals x_n, and hence a section
+of the full tower. Recursion in the nonempty stabilized ranges provides the family. -/
 theorem nonempty_sections_of_isMittagLeffler
     (h : F.IsMittagLeffler) [∀ j : ℕᵒᵖ, Nonempty (F.obj j)] :
     Nonempty F.sections := by

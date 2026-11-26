@@ -1,4 +1,6 @@
-# Sequence Comparison
+# Cohomology and derived section windows are isomorphic
 
-Compare the windows of five arrows for small étale cohomology and derived global sections
-in degrees n and n + 1.
+Cohomology and derived section windows are isomorphic.
+
+The six canonical cohomology comparison isomorphisms identify the small étale long-sequence
+window with the window of right-derived sections and its transported boundary.

@@ -20,14 +20,16 @@ public import Mathlib.RingTheory.Regular.Flat
 public import Mathlib.RingTheory.Localization.Module
 
 /-!
-# Actual local Tor groups from regular intersection equations
+# Local Tor computed by a localized regular-family Koszul complex
 
-The actual local ring map is induced by the original coefficient map and
-the original support prime. Flat localization preserves the proved regular
-sequence. The native Tor groups over that local source ring are therefore
-the original local Koszul homology on the literal images of the equations.
-For a surjective support coefficient map, its actual local map is also
-surjective, giving equality of the module lengths used by Serre.
+Let f : R → S be a map of commutative rings, p a prime of S and q=f⁻¹p. A weakly regular
+family a in R remains weakly regular in R_q. The induced map R_q → S_p identifies
+Tor_j^{R_q}(S_p,R_q/(a)) with the homology of the localized image-family Koszul complex,
+restricted to R_q.
+
+If f is surjective, the local map is surjective and the Tor length over R_q equals the Koszul
+homology length over S_p. For noetherian S and p minimal over the image-family ideal, these
+lengths are finite, vanish above the family size, and give the same signed local Euler sum.
 -/
 
 @[expose] public section
@@ -44,20 +46,25 @@ universe u
 
 variable (R S : Type u) [CommRing R] [CommRing S]
 
-/-- The actual coefficient algebra between the original local rings. -/
+/-- The coefficient algebra between the two local rings.
+
+Use the canonical local ring homomorphism R_q → S_p induced by f and q=p.comap f. -/
 @[instance_reducible]
 def localRegularCoefficientAlgebra (f : R →+* S) (p : Ideal S) [p.IsPrime] :
     Algebra (Localization.AtPrime (p.comap f)) (Localization.AtPrime p) :=
   (Localization.localRingHom (p.comap f) p f rfl).toAlgebra
 
-/-- The actual original equations localized in the source local ring. -/
+/-- The family localized in the source local ring.
+
+Send each a_i to its image under R → R_q. -/
 def localRegularFamilyCoefficients
     {n : ℕ} (f : R →+* S) (a : Fin n → R) (p : Ideal S) [p.IsPrime] :
     Fin n → Localization.AtPrime (p.comap f) :=
   fun i => algebraMap R (Localization.AtPrime (p.comap f)) (a i)
 
-/-- Flat localization of the actual source ring preserves its proved
-regular coefficient sequence. -/
+/-- Weak regularity survives source localization.
+
+A weakly regular family in R remains weakly regular after localization at q. -/
 theorem localRegularFamily_isWeaklyRegular
     {n : ℕ} (f : R →+* S) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -74,8 +81,9 @@ theorem localRegularFamily_isWeaklyRegular
   rw [hlist] at h
   exact h
 
-/-- The actual local map sends the original localized equation to the
-localization of its original image. No compatibility equation is supplied. -/
+/-- The family images under the local coefficient map.
+
+Mapping the source-localized family to S_p gives the localized images of f(a_i). -/
 theorem localRegularFamily_mapped_eq
     {n : ℕ} (f : R →+* S) (a : Fin n → R) (p : Ideal S) [p.IsPrime] :
     letI := localRegularCoefficientAlgebra R S f p
@@ -87,8 +95,10 @@ theorem localRegularFamily_mapped_eq
   funext i
   exact Localization.localRingHom_to_map (p.comap f) p f rfl (a i)
 
-/-- Native Tor over the actual local ambient ring is the actual local
-Koszul homology of the original image equations. -/
+/-- The local Tor-to-Koszul homology isomorphism.
+
+For weakly regular a, Tor_j^{R_q}(S_p,R_q/(a)) is isomorphic to the restricted S_p-Koszul
+homology of the localized image family. -/
 def localRegularFamilyTorIso
     {n : ℕ} (f : R →+* S) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -112,8 +122,10 @@ def localRegularFamilyTorIso
   rw [localRegularFamily_mapped_eq] at e
   exact e
 
-/-- The original native Tor object, defined from the actual local
-coefficient map and original quotient, independently of regularity. -/
+/-- The local Tor module of the regular-family quotient.
+
+Take Tor_j over R_q with first coefficient S_p and second coefficient the quotient of R_q by
+the localized family ideal. -/
 abbrev localRegularFamilyTorObject
     {n : ℕ} (f : R →+* S) (a : Fin n → R) (p : Ideal S) [p.IsPrime] (j : ℕ) :
     letI := localRegularCoefficientAlgebra R S f p
@@ -127,8 +139,10 @@ abbrev localRegularFamilyTorObject
             (familyFunctional (Localization.AtPrime (p.comap f))
               (localRegularFamilyCoefficients R S f a p)))))
 
-/-- Along the actual local map of a surjective support map, native Tor
-and local Koszul homology have the same module lengths. -/
+/-- Local Tor and image-family homology have equal lengths under surjectivity.
+
+For surjective f, the Tor length over R_q equals the image-family Koszul homology length over
+S_p. -/
 theorem localRegularFamilyTor_length_eq
     {n : ℕ} (f : R →+* S) (hf : Function.Surjective f) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -151,9 +165,10 @@ theorem localRegularFamilyTor_length_eq
       ModuleCat.restrictScalars_length_eq (Localization.localRingHom (p.comap f) p f rfl)
         (Localization.localRingHom_surjective f hf p) H
 
-/-- At an actual generic intersection support, every original local Tor
-group has finite length. Its finiteness follows from the actual minimal
-prime, the actual quotient map, and the proved regular resolution. -/
+/-- Finite local Tor lengths at a minimal image-family prime.
+
+For noetherian S, surjective f, weakly regular a and p minimal over its image ideal, the local
+Tor module has finite length in every degree. -/
 theorem localRegularFamilyTor_length_ne_top
     [IsNoetherianRing S] {n : ℕ} (f : R →+* S) (hf : Function.Surjective f) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -166,9 +181,9 @@ theorem localRegularFamilyTor_length_ne_top
   exact AlgebraicGeometry.FiniteCorrespondenceIntersection.localizedDiagonalKoszul_homology_length_ne_top
     S (fun i => f (a i)) p hp j
 
-/-- The original local Tor groups vanish above the actual length of the
-regular coefficient sequence. This cutoff is proved from the original
-projective Koszul resolution. -/
+/-- The local regular-family Tor vanishes above the family size.
+
+For a family of size n, its local Tor module is zero for j>n. -/
 theorem localRegularFamilyTor_isZero_above
     {n : ℕ} (f : R →+* S) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -187,8 +202,10 @@ theorem localRegularFamilyTor_isZero_above
     Functor.map_isZero _ hH
   exact IsZero.of_iso hTarget (localRegularFamilyTorIso R S f a ha p j)
 
-/-- Serre's actual finite alternating sum of original local Tor lengths
-for these proved regular intersection equations. -/
+/-- The local regular-family Tor Euler sum.
+
+Under the stated minimal-prime finiteness hypotheses, sum (−1)^j times the Tor lengths for
+0≤j≤n. -/
 def localRegularFamilyTorEuler
     [IsNoetherianRing S] {n : ℕ} (f : R →+* S) (hf : Function.Surjective f) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))
@@ -201,8 +218,10 @@ def localRegularFamilyTorEuler
     (Module.length (Localization.AtPrime (p.comap f))
       (localRegularFamilyTorObject R S f a p j)).toNat
 
-/-- The genuine original local Tor multiplicity equals the Euler
-invariant of the actual local Koszul complex on the image equations. -/
+/-- The local Tor Euler sum equals the localized image-family Koszul sum.
+
+The signed Tor length sum equals the signed local Koszul homology length sum of the images
+f(a_i), with the stated regularity, surjectivity and minimal-prime assumptions. -/
 theorem localRegularFamilyTorEuler_eq_localizedDiagonalKoszulEuler
     [IsNoetherianRing S] {n : ℕ} (f : R →+* S) (hf : Function.Surjective f) (a : Fin n → R)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn a))

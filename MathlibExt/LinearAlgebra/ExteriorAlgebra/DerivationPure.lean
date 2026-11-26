@@ -15,10 +15,14 @@ public import Mathlib.LinearAlgebra.Alternating.Uncurry.Fin
 /-!
 # Exterior derivations on pure words
 
-The exterior derivation induced by an endomorphism acts on a pure word by
-applying that endomorphism to each factor in turn and adding the results.
-Moving the modified factor to the front gives the equivalent signed formula.
-Both equations hold over every commutative ring and arbitrary module.
+For a commutative ring R, an R-module M and g ∈ End_R(M), the induced degree-zero derivation
+acts on x₀∧…∧xₙ₋₁ by summing the words in which one xᵢ is replaced by g(xᵢ). No sign occurs
+while that factor remains in its position.
+
+Moving the modified factor to the first position gives the equivalent formula ∑ᵢ(-1)^i
+g(xᵢ)∧x₀∧…∧x̂ᵢ∧…∧xₙ, with the other factors in their inherited order. The sign comes from moving
+across the i preceding exterior factors. These formulas hold for arbitrary R and M under the
+stated commutative-ring hypothesis.
 -/
 
 @[expose] public section
@@ -34,8 +38,9 @@ namespace ExteriorAlgebra
 variable (R : Type u) [CommRing R]
 variable (M : Type v) [AddCommGroup M] [Module R M]
 
-/-- An exterior derivation acts on a pure word by replacing each factor
-with its image under the endomorphism, then summing those words. -/
+/-- Let R be a commutative ring, M an R-module and g ∈ End_R(M). Let D_g be the degree-zero exterior
+derivation induced by g. For n : ℕ and v : Fin n → M, D_g(v₀∧…∧vₙ₋₁)=∑ᵢv₀∧…∧g(vᵢ)∧…∧vₙ₋₁. The
+modified factor remains at position i. For n=0, this is D_g(1)=0 and the sum is empty. -/
 theorem derivation_ιMulti (g : Module.End R M) (n : ℕ) (v : Fin n → M) :
     derivation R M g (ιMulti R n v) =
       ∑ i : Fin n, ιMulti R n (Function.update v i (g (v i))) := by
@@ -58,8 +63,9 @@ theorem derivation_ιMulti (g : Module.End R M) (n : ℕ) (v : Fin n → M) :
           Fin.tail_update_succ v i (g (v i.succ))
         rw [ιMulti_succ_apply, h0, ht]
 
-/-- The same pure-word formula with each modified factor placed at the
-front, including the sign of its permutation past the preceding factors. -/
+/-- Let R be a commutative ring, M an R-module and g ∈ End_R(M). Let D_g be the degree-zero exterior
+derivation induced by g. For v : Fin(n+1) → M, D_g(v₀∧…∧vₙ)=∑ᵢ(-1)^i g(vᵢ)∧removeᵢ(v). The
+deleted tail keeps its inherited order, and the coefficient (-1)^i is taken in R. -/
 theorem derivation_ιMulti_eq_sum_vecCons
     (g : Module.End R M) (n : ℕ) (v : Fin (n + 1) → M) :
     derivation R M g (ιMulti R (n + 1) v) =

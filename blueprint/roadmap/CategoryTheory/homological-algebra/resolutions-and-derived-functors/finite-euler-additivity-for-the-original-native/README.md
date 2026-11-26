@@ -2,17 +2,17 @@
 
 ## Universe Tensor
 
-- [Raw Native Tor Euler Sum](raw-native-tor-euler-sum.md)
-- [Raw Native Tor Euler Sum zero](raw-native-tor-euler-sum-zero.md)
-- [Raw Native Tor Euler Sum eq of vanishing](raw-native-tor-euler-sum-eq-of-vanishing.md)
-- [Raw Native Tor Euler Sum symm](raw-native-tor-euler-sum-symm.md)
-- [Native Tor length relation succ](native-tor-length-relation-succ.md)
-- [Native Tor length relation zero](native-tor-length-relation-zero.md)
-- [Raw Native Tor Euler Sum short Exact Second](raw-native-tor-euler-sum-short-exact-sec.md)
-- [Raw Native Tor Euler Sum short Exact Second of finite](raw-native-tor-euler-sum-short-exact-sec-2.md)
-- [Raw Native Tor Euler Sum short Exact First](raw-native-tor-euler-sum-short-exact-fir.md)
-- [Raw Native Tor Euler Sum short Exact First of finite](raw-native-tor-euler-sum-short-exact-fir-2.md)
+- [The raw Tor cutoff sum naturalizes each extended module length](raw-native-tor-euler-sum.md)
+- [The zero Tor cutoff has empty Euler sum](raw-native-tor-euler-sum-zero.md)
+- [Any two eventual-vanishing cutoffs give the same raw Tor sum](raw-native-tor-euler-sum-eq-of-vanishing.md)
+- [Canonical Tor symmetry preserves the cutoff length sum](raw-native-tor-euler-sum-symm.md)
+- [Positive Tor degrees satisfy the two-adjacent-boundary range-length identity](native-tor-length-relation-succ.md)
+- [The degree-zero Tor length relation retains only the first connecting range](native-tor-length-relation-zero.md)
+- [A zero cutoff Tor term gives Euler additivity in the second variable](raw-native-tor-euler-sum-short-exact-sec.md)
+- [Finite Tor data with separate cutoffs give second-variable Euler additivity](raw-native-tor-euler-sum-short-exact-sec-2.md)
+- [Tor symmetry gives first-variable Euler additivity at a zero cutoff term](raw-native-tor-euler-sum-short-exact-fir.md)
+- [Separate finite Tor cutoffs give Euler additivity in the first variable](raw-native-tor-euler-sum-short-exact-fir-2.md)
 
 ## Category Theory
 
-- [Tor Euler Characteristic eq raw Native Tor Euler Sum](tor-euler-characteristic-eq-raw-native-t.md)
+- [The finite Tor Euler characteristic equals its guarded raw cutoff expression](tor-euler-characteristic-eq-raw-native-t.md)

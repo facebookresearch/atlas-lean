@@ -1,3 +1,5 @@
-# Minimal Support Primes
+# The minimal primes of a module's support
 
-The entire family of primes minimal in the actual module support.
+The minimal primes of a module's support.
+
+Take the subtype of prime-spectrum points minimal among those in Supp(N).

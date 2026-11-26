@@ -14,16 +14,16 @@ module
 public import Mathlib.RepresentationTheory.Homological.GroupHomology.LowDegree
 
 /-!
-# First homology of an oriented infinite cyclic group
+# Oriented first homology of an infinite cyclic group
 
-A chosen equivalence `G ≃* Multiplicative ℤ` identifies the first homology
-of `G` with trivial coefficients in a commutative ring `k` with `k` itself.
-The comparison is normalized so that the selected positive generator carrying
-a coefficient `a` maps to `a`.
+Let k be a commutative ring and e:G≅*Multiplicative ℤ a chosen
+orientation of an infinite cyclic group G. With trivial coefficients k,
+H₁(G,k) is k-linearly isomorphic to k.
 
-The construction refines Mathlib's additive equivalence
-`groupHomology.H1AddEquivOfIsTrivial` to a `k`-linear isomorphism. Its
-representative formula records the image of every native degree-one cycle.
+A degree-one cycle supported at g with coefficient a maps to e(g).toAdd•a.
+For a finitely supported cycle f, the value is ∑_g e(g).toAdd•f(g).
+The chosen positive generator e⁻¹(1) therefore carries coefficient a
+to a. No characteristic assumption on k is needed.
 -/
 
 @[expose] public section
@@ -40,8 +40,12 @@ open scoped TensorProduct
 
 namespace groupHomology
 
-/-- First homology with trivial coefficients in `k` of a group identified
-with `Multiplicative ℤ`, normalized by the chosen identification. -/
+/-- Let k be a commutative ring, G a group and e:G≅*Multiplicative ℤ
+a chosen orientation of the infinite cyclic group. Coefficients are
+the trivial representation k_triv.
+This is the k-linear isomorphism H₁(G,k_triv)≅k whose
+generator convention sends the chosen positive generator with
+coefficient a to a. -/
 noncomputable def H1IsoOfMulEquivInt
     (k G : Type u) [CommRing k] [Group G]
     (e : G ≃* Multiplicative ℤ) :
@@ -80,8 +84,11 @@ noncomputable def H1IsoOfMulEquivInt
       simpa only [map_smul, I.hom_inv_id_apply] using hf (I.hom z)
   exact (E.toLinearEquiv hsmul).toModuleIso
 
-/-- The oriented first-homology comparison sends a native single cycle to
-the coefficient multiplied by its integer coordinate. -/
+/-- Let k be a commutative ring, G a group and e:G≅*Multiplicative ℤ
+a chosen orientation of the infinite cyclic group. Coefficients are
+the trivial representation k_triv.
+The degree-one class supported at g with coefficient a maps to
+e(g).toAdd•a, where the scalar is integer multiplication in k. -/
 @[simp]
 theorem H1IsoOfMulEquivInt_hom_H1π_single
     (k G : Type u) [CommRing k] [Group G]
@@ -102,8 +109,11 @@ theorem H1IsoOfMulEquivInt_hom_H1π_single
   rw [AddEquiv.trans_apply, H1AddEquivOfIsTrivial_single]
   simp
 
-/-- The oriented first-homology comparison on every native cycle
-representative. -/
+/-- Let k be a commutative ring, G a group and e:G≅*Multiplicative ℤ
+a chosen orientation of the infinite cyclic group. Coefficients are
+the trivial representation k_triv.
+For a finitely supported cycle f:G→₀k, the oriented H₁
+comparison has value ∑_g e(g).toAdd•f(g). -/
 @[simp]
 theorem H1IsoOfMulEquivInt_hom_H1π
     (k G : Type u) [CommRing k] [Group G]
@@ -121,8 +131,11 @@ theorem H1IsoOfMulEquivInt_hom_H1π
   | single g a =>
       simpa using H1IsoOfMulEquivInt_hom_H1π_single k G e g a
 
-/-- The positive generator selected by `e` carries every coefficient to
-that coefficient. -/
+/-- Let k be a commutative ring, G a group and e:G≅*Multiplicative ℤ
+a chosen orientation of the infinite cyclic group. Coefficients are
+the trivial representation k_triv.
+The class supported at e⁻¹(Multiplicative.ofAdd(1)) with
+coefficient a maps to a. -/
 @[simp]
 theorem H1IsoOfMulEquivInt_generator
     (k G : Type u) [CommRing k] [Group G]

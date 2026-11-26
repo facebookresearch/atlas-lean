@@ -18,13 +18,25 @@ public import MathlibExt.CategoryTheory.Limits.Shapes.SequentialMittagLefflerLim
 public import Mathlib.Algebra.Homology.ShortComplex.Ab
 public import Mathlib.Algebra.Homology.SpectralObject.EpiMono
 /-!
-# Stable images and the original kernel-filtration graded quotient
+# Stable images and restriction-kernel graded quotients
 
-Compatible classes in the finite kernel towers lift through the actual
-limiting total cone. The chosen-limit projection has the native eventual
-image by Mittag--Leffler. This identifies stabilized finite interval images
-with the image of the original total restriction kernel, preserving its
-literal restriction and quotient maps.
+For a sequential inverse tower G of abelian groups and compatible maps
+γ:G → const(M), the kernel of the restriction from a limiting cone point
+to M is the limit of the stage kernels Ker(γ_k).
+If that kernel tower is Mittag–Leffler, its projection image at stage zero
+equals every sufficiently late transition image. Finite stage groups
+supply the Mittag–Leffler condition.
+
+For an abelian-group spectral object S on a preorder with endpoints,
+take an antitone sequence a_k of left cuts and a₀≤c.
+The right-interval tower is G_k=H_Sⁿ(a_k,⊤), with restrictions to
+H_Sⁿ(c,⊤) and full-endpoint cone point A=H_Sⁿ(⊥,⊤).
+If this cone is limiting and the kernel image is attained at R, the
+window E_Sⁿ(a_R,a₀,c,⊤) is canonically the graded quotient F_c/F_{a₀},
+where F_i=Ker(A → H_Sⁿ(i,⊤)).
+A finite right endpoint d≥c gives the same comparison when
+H_S^{n−1}(d,⊤)=0. This yields the skeletal page comparison with cuts
+a_k=−p−1−k. The group-carrier and cut-index universes are independent.
 -/
 
 @[expose] public section
@@ -44,12 +56,16 @@ namespace CategoryTheory.Limits
 
 variable {G : ℕᵒᵖ ⥤ AddCommGrpCat.{u}} {M : AddCommGrpCat.{u}}
 
-/-- The actual index tail of an original inverse sequence. -/
+/-- For N∈ℕ, consider the opposite order category ℕᵒᵖ.
+
+The tail-index functor sends stage k to N+k and sends a transition to the corresponding transition between shifted stages. -/
 abbrev stableImageTailIndex (N : ℕ) : ℕᵒᵖ ⥤ ℕᵒᵖ where
   obj j := op (N + j.unop)
   map f := (homOfLE (Nat.add_le_add_left (leOfHom f.unop) N)).op
 
-/-- The original projections from tail stages back to the same unshifted indices. -/
+/-- Let G be a sequential inverse tower of abelian groups and N∈ℕ.
+
+The natural map from the shifted tower (G_{N+k})_k to G has stage-k component G_{N+k} → G_k. -/
 def stableImageTailProjection (G : ℕᵒᵖ ⥤ AddCommGrpCat.{u}) (N : ℕ) :
     stableImageTailIndex N ⋙ G ⟶ G where
   app j := G.map (homOfLE (show j.unop ≤ N + j.unop by omega)).op
@@ -59,16 +75,21 @@ def stableImageTailProjection (G : ℕᵒᵖ ⥤ AddCommGrpCat.{u}) (N : ℕ) :
       G.map (homOfLE (show i.unop ≤ N + i.unop by omega)).op ≫ G.map f
     rw [← G.map_comp, ← G.map_comp] <;> congr 1 <;> subsingleton
 
-/-- The same original total cone restricted to an actual index tail. -/
+/-- Let G be a sequential inverse tower of abelian groups and c a cone with coordinates π_k:A → G_k.
+
+For N∈ℕ, the restricted tail cone has the same point A and coordinates π_{N+k}:A → G_{N+k}. -/
 abbrev stableImageTailCone (c : Cone G) (N : ℕ) : Cone (stableImageTailIndex N ⋙ G) :=
   c.whisker (stableImageTailIndex N)
 
-/-- Extend compatible tail coordinates using the actual earlier-stage restrictions. -/
+/-- Let G be an inverse tower of abelian groups and d a cone on its tail (G_{N+k})_k.
+
+The extended cone on G has the same point and stage-k coordinate d_k followed by G_{N+k} → G_k. -/
 abbrev stableImageTailConeExtend (N : ℕ) (d : Cone (stableImageTailIndex N ⋙ G)) : Cone G :=
   ⟨d.pt, d.π ≫ stableImageTailProjection G N⟩
 
-/-- Restricting the actual total limiting cone to an index tail preserves
-the limiting property and every literal original evaluation. -/
+/-- Let G be an inverse tower of abelian groups and c a limiting cone over G.
+
+For every N∈ℕ, restriction to the stages N+k is a limiting cone over the tail tower, retaining the original coordinates at those stages. -/
 def stableImageTailConeIsLimit (c : Cone G) (hc : IsLimit c) (N : ℕ) :
     IsLimit (stableImageTailCone c N) where
   lift d := hc.lift (stableImageTailConeExtend N d)
@@ -87,7 +108,11 @@ def stableImageTailConeIsLimit (c : Cone G) (hc : IsLimit c) (N : ℕ) :
         rw [← Category.assoc, hj]
       _ = hc.lift (stableImageTailConeExtend N d) ≫ c.π.app j := by rw [hc.fac]; rfl
 
-/-- The actual pointwise kernels of compatible restrictions to a fixed cut. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k).
+
+The inverse kernel tower has stage k equal to K_k and transitions induced by those of G through the compatible restriction kernels. -/
 def stableImageKernelTower (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) : ℕᵒᵖ ⥤ AddCommGrpCat.{u} where
   obj j := kernel (γ.app j)
   map {i j} f := kernel.map (γ.app i) (γ.app j) (G.map f) (𝟙 M)
@@ -99,14 +124,23 @@ def stableImageKernelTower (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) : ℕᵒ
     apply (cancel_mono (kernel.ι (γ.app k))).mp
     simp [G.map_comp, Category.assoc]
 
-/-- The original kernel inclusions form an actual natural transformation. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k).
+
+The stage inclusions K_k↪G_k form a natural transformation K → G. -/
 def stableImageKernelInclusion (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) :
     stableImageKernelTower γ ⟶ G where
   app j := kernel.ι (γ.app j)
   naturality i j f := by
     exact kernel.lift_ι _ _ _
 
-/-- Restriction of the total cone to the fixed lower cut. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M.
+
+The restriction ρ:A → M is π₀ followed by γ₀; by compatibility it equals γ_k∘π_k at every stage k. -/
 def stableImageConeRestriction (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) (c : Cone G) : c.pt ⟶ M :=
   c.π.app (op 0) ≫ γ.app (op 0)
 
@@ -117,8 +151,12 @@ theorem stableImageCone_lower_eq (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
   rw [← hγ, ← Category.assoc, c.w f]
   rfl
 
-/-- The original total restriction kernel, with its compatible maps to all
-actual finite-stage kernels. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M.
+
+The kernel Ker(ρ) carries a cone over the kernel tower K. Its coordinate into K_k is induced by π_k and the inclusion Ker(ρ)↪A. -/
 def stableImageKernelCone (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) (c : Cone G) :
     Cone (stableImageKernelTower γ) where
   pt := kernel (stableImageConeRestriction γ c)
@@ -142,13 +180,21 @@ theorem stableImageKernelCone_π_ι (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
       kernel.ι (stableImageConeRestriction γ c) ≫ c.π.app j :=
   kernel.lift_ι _ _ _
 
-/-- Forget the kernel conditions while retaining the same original cone coordinates. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k).
+
+A cone d over K gives a cone over G by composing each coordinate d.pt → K_k with K_k↪G_k. -/
 def stableImageKernelConeForget (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
     (d : Cone (stableImageKernelTower γ)) : Cone G :=
   ⟨d.pt, d.π ≫ stableImageKernelInclusion γ⟩
 
-/-- A compatible kernel cone lifts through the actual total limit and then
-through the original total restriction kernel. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M. Assume c is limiting.
+
+For any cone d over K, the unique lift of its underlying G-cone to A factors through Ker(ρ), giving a map d.pt → Ker(ρ). -/
 def stableImageKernelConeLift (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
     (c : Cone G) (hc : IsLimit c) (d : Cone (stableImageKernelTower γ)) :
     d.pt ⟶ (stableImageKernelCone γ c).pt :=
@@ -174,8 +220,12 @@ theorem stableImageKernelConeLift_fac (γ : G ⟶ (Functor.const ℕᵒᵖ).obj 
     stableImageKernelConeLift_ι, hc.fac]
   rfl
 
-/-- The original total restriction kernel is the actual limit of the finite
-kernel tower. Only the original total-cone limit is supplied. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M. Assume c is limiting.
+
+The induced cone with point Ker(ρ) is limiting for the stage-kernel tower K. -/
 def stableImageKernelConeIsLimit (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
     (c : Cone G) (hc : IsLimit c) : IsLimit (stableImageKernelCone γ c) where
   lift := stableImageKernelConeLift γ c hc
@@ -194,7 +244,12 @@ def stableImageKernelConeIsLimit (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
         rw [stableImageKernelConeLift_ι, hc.fac]
         rfl
 
-/-- The original total kernel and the actual chosen kernel-tower limit. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M. Assume c is limiting.
+
+The canonical isomorphism Ker(ρ) ≅ lim K compares the induced kernel cone with the chosen inverse limit of the kernel tower. -/
 def stableImageKernelLimitIso (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
     (c : Cone G) (hc : IsLimit c) :
     kernel (stableImageConeRestriction γ c) ≅ limit (stableImageKernelTower γ) :=
@@ -207,7 +262,12 @@ theorem stableImageKernelLimitIso_hom_π (γ : G ⟶ (Functor.const ℕᵒᵖ).o
       (stableImageKernelCone γ c).π.app j :=
   IsLimit.conePointUniqueUpToIso_hom_comp _ _ _
 
-/-- The actual evaluation of the original total restriction kernel. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M.
+
+The evaluation edge Ker(ρ) → G₀ is the inclusion into A followed by the stage-zero cone coordinate π₀. -/
 def stableImageKernelConeEdge (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) (c : Cone G) :
     kernel (stableImageConeRestriction γ c) ⟶ G.obj (op 0) :=
   kernel.ι (stableImageConeRestriction γ c) ≫ c.π.app (op 0)
@@ -242,8 +302,12 @@ theorem stableImageKernelEdge_range_congr {A M Q : AddCommGrpCat.{u}}
   cases h
   rfl
 
-/-- Mittag--Leffler and an attained actual kernel image identify the
-original total-kernel evaluation with that finite-stage evaluation. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Let c be a cone over G with point A and coordinates π_k.
+Set ρ=γ₀∘π₀:A → M. Assume c is limiting and K is Mittag–Leffler.
+
+If the eventual image in K₀ is attained by K_R → K₀, then the image of Ker(ρ) → G₀ equals the image of K_R → K₀ ↪ G₀. -/
 theorem stableImageKernelConeEdge_range
     (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M) (c : Cone G) (hc : IsLimit c)
     (hML : (stableImageKernelTower γ).IsSequentialMittagLeffler) (R : ℕ)
@@ -263,8 +327,11 @@ theorem stableImageKernelConeEdge_range
   rw [← hfac, stableImageRange_comp_of_epi]
   exact stableImageRange_postcomp_eq _ _ _ hπ
 
-/-- Existing Mittag--Leffler gives an attained actual kernel image at
-every sufficiently late index. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k). Assume K is Mittag–Leffler.
+
+There exists N such that for every R≥N, the eventual image in K₀ equals the image of K_R → K₀. -/
 theorem stableImageKernelTower_attainedRange
     (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
     (hML : (stableImageKernelTower γ).IsSequentialMittagLeffler) :
@@ -279,8 +346,11 @@ theorem stableImageKernelTower_attainedRange
   have he : (homOfLE hR).op ≫ f = (homOfLE (Nat.zero_le R)).op := Subsingleton.elim _ _
   simpa only [he] using h
 
-/-- Finite actual stage groups earn Mittag--Leffler for their actual
-restriction kernels through the existing finite-image criterion. -/
+/-- Let G be a sequential inverse tower of abelian groups, M an abelian
+group, and γ:G → const(M) a compatible family of restriction maps.
+Write K_k=Ker(γ_k).
+
+If every group G_k has a finite underlying set, then the kernel tower K is Mittag–Leffler. -/
 theorem stableImageKernelTower_isMittagLeffler_of_finite
     (γ : G ⟶ (Functor.const ℕᵒᵖ).obj M)
     (hFinite : ∀ j : ℕᵒᵖ, _root_.Finite (G.obj j)) :
@@ -305,11 +375,19 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {ι : Type v} [Preorder ι] [OrderBot ι] [OrderTop ι]
 variable (S : SpectralObject AddCommGrpCat.{u} ι)
 
-/-- The actual absolute interval above a cut. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+The right-interval group B_i=H_Sⁿ(i,⊤). -/
 def stableImageRightObject (n : ℤ) (i : ι) : AddCommGrpCat.{u} :=
   (S.H n).obj (mk₁ (stableIntervalRight i))
 
-/-- The original restriction between two absolute cut intervals. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i≤j, the restriction B_i → B_j induced by the inclusion of the upper interval j≤⊤ into i≤⊤. -/
 def stableImageRightMap (n : ℤ) {i j : ι} (hij : i ≤ j) :
     stableImageRightObject S n i ⟶ stableImageRightObject S n j :=
   (S.H n).map (twoδ₁Toδ₀ (homOfLE hij) (stableIntervalRight j)
@@ -333,12 +411,20 @@ theorem stableImageRightMap_comp (n : ℤ) {i j k : ι} (hij : i ≤ j) (hjk : j
   dsimp only [stableImageRightMap]
   rw [← (S.H n).map_comp] <;> congr 1 <;> subsingleton
 
-/-- The native window with the actual top endpoint. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₁≤i₂, the top-endpoint page window W=E_Sⁿ(i₀≤i₁≤i₂≤⊤). -/
 def stableImagePageWindow (n : ℤ) {i₀ i₁ i₂ : ι} (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) :
     AddCommGrpCat.{u} :=
   S.E (homOfLE h₀₁) (homOfLE h₁₂) (stableIntervalRight i₂) (n - 1) n (n + 1)
 
-/-- The native window embeds into the original absolute middle-cut group. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₁≤i₂, the canonical inclusion E_Sⁿ(i₀,i₁,i₂,⊤) → B_{i₁} of the page-window image into the right-interval group. -/
 def stableImagePageWindowToRight (n : ℤ) {i₀ i₁ i₂ : ι} (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) :
     stableImagePageWindow S n h₀₁ h₁₂ ⟶ stableImageRightObject S n i₁ :=
   S.ιE (homOfLE h₀₁) (homOfLE h₁₂) (stableIntervalRight i₂) (n - 1) n (n + 1) ≫
@@ -349,7 +435,11 @@ instance stableImagePageWindowToRight_mono (n : ℤ) {i₀ i₁ i₂ : ι}
   dsimp only [stableImagePageWindowToRight]
   infer_instance
 
-/-- Actual relative classes map onto the native window. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₁≤i₂, the canonical map from relative classes H_Sⁿ(i₀,i₂) onto E_Sⁿ(i₀,i₁,i₂,⊤). -/
 def stableImagePageWindowFromRelative (n : ℤ) {i₀ i₁ i₂ : ι} (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) :
     (S.H n).obj (mk₁ (homOfLE (h₀₁.trans h₁₂))) ⟶ stableImagePageWindow S n h₀₁ h₁₂ :=
   S.toCycles (homOfLE h₀₁) (homOfLE h₁₂) (homOfLE (h₀₁.trans h₁₂)) (by subsingleton) n ≫
@@ -360,12 +450,20 @@ instance stableImagePageWindowFromRelative_epi (n : ℤ) {i₀ i₁ i₂ : ι}
   dsimp only [stableImagePageWindowFromRelative]
   infer_instance
 
-/-- The original triple LES whose image is the finite absolute restriction kernel. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₂, the exact short complex H_Sⁿ(i₀,i₂) → B_{i₀} → B_{i₂} from the interval triple i₀≤i₂≤⊤. -/
 def stableImageIntervalKernelSequence (n : ℤ) {i₀ i₂ : ι} (h₀₂ : i₀ ≤ i₂) :
     ShortComplex AddCommGrpCat.{u} :=
   S.sc₂ (homOfLE h₀₂) (stableIntervalRight i₂) (stableIntervalRight i₀) (by subsingleton) n
 
-/-- Actual relative classes cover the original absolute restriction kernel. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₂, the map H_Sⁿ(i₀,i₂) → Ker(B_{i₀} → B_{i₂}) induced by interval exactness; it covers the restriction kernel. -/
 def stableImageIntervalKernelLift (n : ℤ) {i₀ i₂ : ι} (h₀₂ : i₀ ≤ i₂) :
     (S.H n).obj (mk₁ (homOfLE h₀₂)) ⟶ kernel (stableImageRightMap S n h₀₂) :=
   (stableImageIntervalKernelSequence S n h₀₂).toCycles ≫
@@ -389,7 +487,11 @@ theorem stableImageIntervalKernelLift_ι (n : ℤ) {i₀ i₂ : ι} (h₀₂ : i
         kernel.ι (stableImageIntervalKernelSequence S n h₀₂).g = _
   simp only [Category.assoc, ShortComplex.cyclesIsoKernel, kernel.lift_ι, ShortComplex.toCycles_i]
 
-/-- Both original relative-class maps give the same absolute restriction. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₁≤i₂, relative classes mapped through E_Sⁿ(i₀,i₁,i₂,⊤) into B_{i₁} give the same map as their lift to Ker(B_{i₀} → B_{i₂}), followed by its inclusion into B_{i₀} and restriction to B_{i₁}. -/
 theorem stableImagePageWindowFromRelative_comp_right
     (n : ℤ) {i₀ i₁ i₂ : ι} (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) :
     stableImagePageWindowFromRelative S n h₀₁ h₁₂ ≫ stableImagePageWindowToRight S n h₀₁ h₁₂ =
@@ -413,8 +515,11 @@ theorem stableImagePageWindowFromRelative_comp_right
   dsimp only [stableImageRightMap]
   rw [← (S.H n).map_comp, ← (S.H n).map_comp] <;> congr 1 <;> subsingleton
 
-/-- A native finite window has the image of the actual finite restriction
-kernel, by the original triple LES and original edge maps. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₀≤i₁≤i₂, the image of E_Sⁿ(i₀,i₁,i₂,⊤) → B_{i₁} equals the image of Ker(B_{i₀} → B_{i₂}) → B_{i₀} → B_{i₁}. -/
 theorem stableImagePageWindowToRight_range
     (n : ℤ) {i₀ i₁ i₂ : ι} (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) :
     Set.range (stableImagePageWindowToRight S n h₀₁ h₁₂) =
@@ -422,14 +527,24 @@ theorem stableImagePageWindowToRight_range
   rw [← stableImageRange_comp_of_epi (stableImagePageWindowFromRelative S n h₀₁ h₁₂),
     stableImagePageWindowFromRelative_comp_right, stableImageRange_comp_of_epi]
 
-/-- The original absolute cut intervals on an antitone sequence of finite left cuts. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For an antitone sequence a:ℕ → ι, the inverse right-interval tower has stage k equal to B_{a_k}, with restriction transitions induced by a_m≤a_k for k≤m. -/
 def stableImageRightTower (n : ℤ) (a : ℕ → ι) (ha : Antitone a) : ℕᵒᵖ ⥤ AddCommGrpCat.{u} where
   obj j := stableImageRightObject S n (a j.unop)
   map f := stableImageRightMap S n (ha (leOfHom f.unop))
   map_id j := stableImageRightMap_id S n (a j.unop)
   map_comp f g := (stableImageRightMap_comp S n _ _).symm
 
-/-- Literal restriction of every absolute finite interval to the fixed lower cut. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k.
+
+The compatible restrictions G_k=B_{a_k} → B_c form the natural transformation γ:G → const(B_c). -/
 def stableImageTowerRestriction (n : ℤ) (a : ℕ → ι) (ha : Antitone a)
     (c : ι) (hc : a 0 ≤ c) :
     stableImageRightTower S n a ha ⟶ (Functor.const ℕᵒᵖ).obj (stableImageRightObject S n c) where
@@ -440,7 +555,11 @@ def stableImageTowerRestriction (n : ℤ) (a : ℕ → ι) (ha : Antitone a)
       stableImageRightMap S n ((ha (Nat.zero_le i.unop)).trans hc) ≫ 𝟙 _
     rw [stableImageRightMap_comp, Category.comp_id]
 
-/-- The actual full-endpoint total group with its original restriction coordinates. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For an antitone sequence a:ℕ → ι, the natural cone over the right-interval tower has point A=H_Sⁿ(⊥,⊤) and stage-k coordinate A → B_{a_k}. -/
 def stableImageTotalCone (n : ℤ) (a : ℕ → ι) (ha : Antitone a) :
     Cone (stableImageRightTower S n a ha) where
   pt := stableImageRightObject S n (⊥ : ι)
@@ -460,7 +579,13 @@ theorem stableImageTotalCone_restriction (n : ℤ) (a : ℕ → ι) (ha : Antito
       stableImageRightMap S n (bot_le : (⊥ : ι) ≤ c) :=
   stableImageRightMap_comp S n _ _
 
-/-- The original stable-cut to finite-window map. Only the left endpoint changes. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k.
+
+For R∈ℕ, the stable-to-finite map E_Sⁿ(⊥,a₀,c,⊤) → E_Sⁿ(a_R,a₀,c,⊤) changes only the left endpoint by the canonical window-indexing map. -/
 def stableImagePageComparison (n : ℤ) (a : ℕ → ι) (ha : Antitone a)
     (c : ι) (hc : a 0 ≤ c) (R : ℕ) :
     stableImagePageWindow S n (bot_le : (⊥ : ι) ≤ a 0) hc ⟶
@@ -495,7 +620,13 @@ instance stableImagePageComparison_mono (n : ℤ) (a : ℕ → ι) (ha : Antiton
     (c : ι) (hc : a 0 ≤ c) (R : ℕ) : Mono (stableImagePageComparison S n a ha c hc R) :=
   mono_of_mono_fac (stableImagePageComparison_comp_right S n a ha c hc R)
 
-/-- The stable endpoint window has the image of the original total kernel. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k.
+
+The image of E_Sⁿ(⊥,a₀,c,⊤) → B_{a₀} equals the image of the total restriction kernel F_c → A → B_{a₀}. -/
 theorem stableImageStableWindow_range
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c) :
     Set.range (stableImagePageWindowToRight S n (bot_le : (⊥ : ι) ≤ a 0) hc) =
@@ -509,7 +640,13 @@ theorem stableImageStableWindow_range
     (stableImageTotalCone_restriction S n a ha c hc)
   exact h.symm
 
-/-- The finite window has the image of the corresponding actual kernel-tower map. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k.
+
+For R∈ℕ, the image of E_Sⁿ(a_R,a₀,c,⊤) → B_{a₀} equals the image of K_R → K₀ ↪ B_{a₀}. -/
 theorem stableImageFiniteWindow_range
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c) (R : ℕ) :
     Set.range (stableImagePageWindowToRight S n (ha (Nat.zero_le R)) hc) =
@@ -523,8 +660,15 @@ theorem stableImageFiniteWindow_range
     (stableImageKernelTower (stableImageTowerRestriction S n a ha c hc)).obj (op R) ⟶
       stableImageRightObject S n (a 0) => Set.range f) h).symm
 
-/-- Actual total-limit lifting and attained kernel images earn an
-isomorphism on the original stable-cut to finite-window map. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k. Assume this full-endpoint cone is limiting and K is
+Mittag–Leffler. Fix R∈ℕ at which the image of K_R → K₀ equals the
+eventual image in K₀.
+
+The canonical stable-to-finite window map E_Sⁿ(⊥,a₀,c,⊤) → E_Sⁿ(a_R,a₀,c,⊤) is an isomorphism. -/
 theorem stableImagePageComparison_isIso
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
     (hTotal : IsLimit (stableImageTotalCone S n a ha))
@@ -556,8 +700,13 @@ theorem stableImagePageComparison_isIso
     (AddCommGrpCat.epi_iff_surjective _).mpr hSurj
   exact isIso_of_mono_of_epi _
 
-/-- Finite original stage groups and the actual total limit earn the
-stable-cut/window comparison for every sufficiently late finite left cut. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k. Assume the full-endpoint cone is limiting and every G_k has a finite underlying set.
+
+There is N such that for every R≥N, the canonical stable-to-finite window map E_Sⁿ(⊥,a₀,c,⊤) → E_Sⁿ(a_R,a₀,c,⊤) is an isomorphism. -/
 theorem stableImagePageComparison_eventually_isIso_of_finite
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
     (hTotal : IsLimit (stableImageTotalCone S n a ha))
@@ -568,8 +717,15 @@ theorem stableImagePageComparison_eventually_isIso_of_finite
   obtain ⟨N, hN⟩ := stableImageKernelTower_attainedRange (stableImageTowerRestriction S n a ha c hc) hML
   exact ⟨N, fun R hR => stableImagePageComparison_isIso S n a ha c hc hTotal hML R (hN R hR)⟩
 
-/-- A stabilized native window is canonically the graded piece of the
-original total restriction-kernel filtration. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k. Assume this full-endpoint cone is limiting and K is
+Mittag–Leffler. Fix R∈ℕ at which the image of K_R → K₀ equals the
+eventual image in K₀.
+
+The canonical isomorphism E_Sⁿ(a_R,a₀,c,⊤) ≅ F_c/F_{a₀}, obtained from the inverse stable-to-finite map and the endpoint kernel-graded comparison. -/
 def stableImageKernelGradedIso
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
     (hTotal : IsLimit (stableImageTotalCone S n a ha))
@@ -600,8 +756,15 @@ theorem stableImageKernelGradedIso_comparison
   simp only [stableImageKernelGradedIso, Iso.trans_hom, Iso.symm_hom, asIso_inv,
     ← Category.assoc, IsIso.hom_inv_id, Category.id_comp]
 
-/-- A native finite right endpoint is padded by its actual indexing map;
-only the already earned omitted-right interval zero is required. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k. Assume this full-endpoint cone is limiting and K is
+Mittag–Leffler. Fix R∈ℕ at which the image of K_R → K₀ equals the
+eventual image in K₀. Let d≥c and assume H_S^{n−1}(d,⊤)=0.
+
+The canonical comparison E_Sⁿ(a_R,a₀,c,d) ≅ F_c/F_{a₀}, padding only its right endpoint before the stable-image comparison. -/
 def stableImageFiniteWindowKernelGradedIso
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
     (hTotal : IsLimit (stableImageTotalCone S n a ha))
@@ -619,7 +782,11 @@ def stableImageFiniteWindowKernelGradedIso
     (ha (Nat.zero_le R)) hc hcd le_top (n - 1) n (n + 1) hRight (by omega) (by omega) ≪≫
       stableImageKernelGradedIso S n a ha c hc hTotal hML R hR
 
-/-- Equality of literal indexing cuts transports only the native window. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For ordered cut chains i₀≤i₁≤i₂≤i₃ and j₀≤j₁≤j₂≤j₃ with iₐ=jₐ for all four cuts, the canonical identification E_Sⁿ(i₀,i₁,i₂,i₃) ≅ E_Sⁿ(j₀,j₁,j₂,j₃). -/
 def stableImageWindowEqIso (n : ℤ) {i₀ i₁ i₂ i₃ j₀ j₁ j₂ j₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
     (h₀₁' : j₀ ≤ j₁) (h₁₂' : j₁ ≤ j₂) (h₂₃' : j₂ ≤ j₃)
@@ -629,7 +796,11 @@ def stableImageWindowEqIso (n : ℤ) {i₀ i₁ i₂ i₃ j₀ j₁ j₂ j₃ : 
   subst j₀ j₁ j₂ j₃
   exact Iso.refl _
 
-/-- Identify stable interval kernel graded objects after equality of their two endpoints. -/
+/-- Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i).
+
+For i₁≤i₂ and j₁≤j₂ with i₁=j₁ and i₂=j₂, the canonical identification F_{i₂}/F_{i₁} ≅ F_{j₂}/F_{j₁}. -/
 def stableImageKernelGradedEqIso (n : ℤ) {i₁ i₂ j₁ j₂ : ι}
     (h : i₁ ≤ i₂) (h' : j₁ ≤ j₂) (e₁ : i₁ = j₁) (e₂ : i₂ = j₂) :
     S.stableIntervalKernelGraded n h ≅ S.stableIntervalKernelGraded n h' := by
@@ -642,7 +813,9 @@ namespace CategoryTheory.Abelian.SpectralObject
 
 variable (S : SpectralObject AddCommGrpCat.{u} EInt)
 
-/-- The actual integer left cuts of successive page windows at column `p`. -/
+/-- For a column p∈ℤ and k∈ℕ, regard integer cuts as elements of EInt.
+
+The skeletal left-cut sequence is a_k=−(p+1)−k, an antitone sequence whose k-th cut is the left endpoint of page k+1. -/
 def stableImageSkeletalLeftCuts (p : ℤ) (k : ℕ) : EInt := ((-(p + 1) - (k : ℤ) : ℤ) : EInt)
 
 theorem stableImageSkeletalLeftCuts_antitone (p : ℤ) : Antitone (stableImageSkeletalLeftCuts p) := by
@@ -653,8 +826,14 @@ theorem stableImageSkeletalLeftCuts_antitone (p : ℤ) : Antitone (stableImageSk
 theorem stableImageSkeletal_middle (p : ℤ) : stableImageSkeletalLeftCuts p 0 ≤ ((-p : ℤ) : EInt) := by
   simp [stableImageSkeletalLeftCuts]
 
-/-- The original native skeletal page is the graded original kernel
-filtration once the actual kernel image has stabilized. -/
+/-- Let S be an EInt-indexed abelian-group spectral object, p,q∈ℤ and n=p+q.
+Put a_k=−p−1−k, c=−p, G_k=H_Sⁿ(a_k,+∞) and
+K_k=Ker(G_k → H_Sⁿ(c,+∞)). Assume the full-endpoint cone
+H_Sⁿ(−∞,+∞) → G is limiting and K is Mittag–Leffler.
+Let R attain the eventual image in K₀ and assume
+H_S^{n−1}(−p+R,+∞)=0.
+
+The canonical page comparison E_{R+1}^{p,q} ≅ FᵖA_n/Fᵖ⁺¹A_n, where A_n=H_Sⁿ(−∞,+∞) and FᵖA_n=Ker(A_n → H_Sⁿ(−p,+∞)). -/
 def stableImageSkeletalPageGradedIso (p q : ℤ)
     (hTotal : IsLimit (stableImageTotalCone S (p + q) (stableImageSkeletalLeftCuts p)
       (stableImageSkeletalLeftCuts_antitone p)))

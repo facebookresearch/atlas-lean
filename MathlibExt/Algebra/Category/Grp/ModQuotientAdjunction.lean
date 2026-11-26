@@ -16,16 +16,15 @@ public import MathlibExt.Algebra.Category.Grp.ModQuotient
 public import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-# The quotient-by-multiples adjunction
+# Quotient by multiples is left adjoint to scalar forgetting
 
-The functor `A ↦ A / ell A` from additive commutative groups to
-`ZMod ell`-modules is left adjoint to the additive-group forgetful functor.
-Indeed, every additive map from `A` to a `ZMod ell`-module kills
-`ell`-multiples and therefore descends uniquely through the quotient.
+For a natural ℓ, let Q_ℓ(A)=A/ℓA with its canonical ZMod(ℓ)-module structure. Every additive map
+g:A→U(M) to a ZMod(ℓ)-module kills ℓA and descends uniquely to a linear map Q_ℓ(A)→M. This gives
+a natural bijection Hom_{ZMod(ℓ)}(Q_ℓ(A),M)≃Hom_Ab(A,U(M)).
 
-Consequently the mod-`ell` quotient functor preserves all colimits, in
-particular cokernels.  This packages the right exactness needed by
-coefficient-reduction arguments in homology.
+Thus Q_ℓ is left adjoint to the underlying abelian-group functor. It preserves colimits,
+including cokernels, giving the right-exact coefficient reduction functor in the same carrier
+universe.
 -/
 
 @[expose] public section
@@ -40,7 +39,9 @@ namespace AddCommGrpCat
 
 universe u
 
-/-- Every additive map into a `ZMod ell`-module kills `ell`-multiples. -/
+/-- Let ℓ∈ℕ, A be an abelian group in universe u, and M a ZMod(ℓ)-module with carrier in u. Write
+Q_ℓ(A)=A/ℓA and U for the abelian-group forgetful functor. For an additive map g:A→U(M), the
+subgroup ℓA is contained in ker(g). Indeed g(ℓa)=ℓg(a)=0 because M is a ZMod(ℓ)-module. -/
 theorem multiples_le_ker_of_zmod (ell : ℕ) {A : AddCommGrpCat.{u}}
     {M : ModuleCat.{u} (ZMod ell)}
     (g : A ⟶ (forget₂ (ModuleCat (ZMod ell)) AddCommGrpCat).obj M) :
@@ -53,8 +54,10 @@ theorem multiples_le_ker_of_zmod (ell : ℕ) {A : AddCommGrpCat.{u}}
   rw [map_zsmul]
   simpa using ZModModule.char_nsmul_eq_zero ell (show M from g y)
 
-/-- Descent of an additive homomorphism into a `ZMod ell`-module through
-the quotient by `ell`-multiples. -/
+/-- Let ℓ∈ℕ, A be an abelian group in universe u, and M a ZMod(ℓ)-module with carrier in u. Write
+Q_ℓ(A)=A/ℓA and U for the abelian-group forgetful functor. For g:A→U(M), the descended map
+ḡ:Q_ℓ(A)→M is ZMod(ℓ)-linear and satisfies ḡ([a])=g(a) for every a∈A. An additive map into M
+kills ℓA, so this quotient descent is well defined and unique. -/
 noncomputable def modQuotientDesc (ell : ℕ) {A : AddCommGrpCat.{u}}
     {M : ModuleCat.{u} (ZMod ell)}
     (g : A ⟶ (forget₂ (ModuleCat (ZMod ell)) AddCommGrpCat).obj M) :
@@ -84,7 +87,10 @@ theorem modQuotientDesc_mk (ell : ℕ) {A : AddCommGrpCat.{u}}
       (QuotientAddGroup.mk' (multiples A ell) x) = g x
   exact QuotientAddGroup.lift_mk' _ _ x
 
-/-- The hom-set equivalence underlying the quotient-by-`ell` adjunction. -/
+/-- Let ℓ∈ℕ, A be an abelian group in universe u, and M a ZMod(ℓ)-module with carrier in u. Write
+Q_ℓ(A)=A/ℓA and U for the abelian-group forgetful functor. The hom-set equivalence
+Hom_{ZMod(ℓ)}(Q_ℓ(A),M)≃Hom_Ab(A,U(M)) sends f to f∘q_A. Its inverse sends g to its quotient
+descent ḡ, characterized by ḡ(q_A(a))=g(a). -/
 noncomputable def modQuotientHomEquiv (ell : ℕ)
     (A : AddCommGrpCat.{u}) (M : ModuleCat.{u} (ZMod ell)) :
     ((modQuotientFunctor ell).obj A ⟶ M) ≃
@@ -112,8 +118,9 @@ noncomputable def modQuotientHomEquiv (ell : ℕ)
       (modQuotientMk A ell x) = g x
     exact modQuotientDesc_mk ell g x
 
-/-- Quotient by `ell`-multiples is left adjoint to forgetting the
-`ZMod ell`-module structure. -/
+/-- For any natural ℓ, Q_ℓ:Ab_u→ModuleCat_u(ZMod(ℓ)), A↦A/ℓA, is left adjoint to the abelian-group
+forgetful functor U. The adjunction bijection sends f:Q_ℓ(A)→M to f∘q_A:A→U(M), and sends an
+additive g to its unique linear quotient descent. -/
 noncomputable def modQuotientAdjunction (ell : ℕ) :
     modQuotientFunctor ell ⊣
       forget₂ (ModuleCat (ZMod ell)) AddCommGrpCat :=
@@ -140,7 +147,9 @@ noncomputable def modQuotientAdjunction (ell : ℕ) :
         intro x
         rfl }
 
-/-- The quotient-by-`ell` functor preserves all colimits. -/
+/-- For ℓ∈ℕ, the functor Q_ℓ from abelian groups to ZMod(ℓ)-modules preserves colimits. If c is a
+colimit cocone of an abelian-group diagram D, then its image Q_ℓ(c) is a colimit cocone of
+Q_ℓ∘D. This follows from the quotient-by-multiples adjunction. -/
 noncomputable instance modQuotientFunctor_preservesColimits (ell : ℕ) :
     PreservesColimitsOfSize (modQuotientFunctor ell) :=
   (modQuotientAdjunction ell).leftAdjoint_preservesColimits

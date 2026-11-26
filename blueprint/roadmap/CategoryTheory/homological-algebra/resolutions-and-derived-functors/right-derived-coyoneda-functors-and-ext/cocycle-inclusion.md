@@ -1,3 +1,5 @@
-# Cocycle Inclusion
+# Inclusion of resolution cocycles into the Hom group
 
-The inclusion of cocycles into the degree-`n` term.
+Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The cocycle inclusion sends the degree-`n` subgroup into
+`Hom_C(X,I^n)` by its underlying morphism.

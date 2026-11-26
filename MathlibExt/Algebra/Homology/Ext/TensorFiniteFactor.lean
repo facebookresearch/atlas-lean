@@ -22,17 +22,15 @@ public import Mathlib.Algebra.Category.ModuleCat.Ext.HasExt
 public import Mathlib.RingTheory.Flat.Basic
 
 /-!
-# Finite projective coefficient tensor factors in Ext
+# Finite projective tensor factors in Ext coefficients
 
-Let `R → S` be a homomorphism of commutative rings, `P` an `R`-module, and
-`N,U` `S`-modules. Tensoring an Ext class with `u : U` gives its native
-postcomposition along `n ↦ n ⊗ u`. A finite projective `S`-module `U` makes
-this comparison bijective in every degree.
+For σ : R → S between commutative rings, an R-module P and S-modules N,U, the comparison
+Ext_Rⁿ(P,res N) ⊗_S U → Ext_Rⁿ(P,res(N ⊗_S U)) sends x ⊗ u to postcomposition of x with the
+coefficient map n ↦ n ⊗ u.
 
-The proof uses the Hom complex of a projective resolution over `R`. Its
-terms have their coefficient `S`-actions, and the semilinear Hom comparison
-is an isomorphism degree by degree. Tensoring over `S` is exact because `U`
-is projective over `S`. The source module and the ring map are unrestricted.
+If U is finitely generated and projective over S, this comparison is an S-linear equivalence
+in every degree. The carrier-independent version lifts P,N,U to the displayed common height,
+retaining their original ring and module universes and the Ext carrier universe.
 -/
 
 @[expose] public section
@@ -53,7 +51,10 @@ section Comparison
 
 variable [HasExt.{w} (ModuleCat.{v} R)]
 
-/-- The canonical coefficient tensor comparison on native Ext over `R`. -/
+/-- The Ext coefficient tensor comparison.
+
+Tensor an Ext class with u by postcomposing it along N → N ⊗_S U, n ↦ n ⊗ u. This gives an
+S-linear comparison with U as the second tensor factor. -/
 def extTensorComparison (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S) (n : ℕ) :
     letI := extCoefficientModule σ P N n
     letI := extCoefficientModule σ P (of S (N ⊗[S] U)) n
@@ -66,7 +67,10 @@ def extTensorComparison (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S) (n : ℕ) 
       (TensorProduct.mk S N U).flip
   exact TensorProduct.lift ((extCoefficientHomMap σ P N (of S (N ⊗[S] U)) n).comp c).flip
 
-/-- A pure tensor is native Ext postcomposition along the coefficient inclusion. -/
+/-- The Ext tensor comparison on a pure tensor.
+
+The image of x ⊗ u is x composed with the degree-zero class of the restricted coefficient map
+n ↦ n ⊗ u. -/
 @[simp]
 theorem extTensorComparison_tmul (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S)
     (n : ℕ) (x : Abelian.Ext.{w} P ((restrictScalars σ).obj N) n) (u : U) :
@@ -356,8 +360,10 @@ section FiniteFactor
 
 variable [EnoughProjectives (ModuleCat.{v} R)] [HasExt.{w} (ModuleCat.{v} R)]
 
-/-- A finite projective `S`-module tensor factor makes native `R`-module Ext
-postcomposition bijective, in an independent Ext carrier universe. -/
+/-- A finite projective coefficient factor makes the Ext comparison bijective.
+
+If U is finitely generated and projective over S, extTensorComparison is bijective for every
+degree n. -/
 theorem extTensorComparison_bijective (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S)
     [Module.Finite S U] [Module.Projective S U] (n : ℕ) :
     letI := extCoefficientModule σ P N n
@@ -403,8 +409,10 @@ theorem extTensorComparison_bijective (P : ModuleCat.{v} R) (N U : ModuleCat.{v}
   rw [← he]
   exact e.bijective
 
-/-- Native Ext with an arbitrary `R`-module source commutes with a finite
-projective coefficient tensor factor over `S`. -/
+/-- The Ext equivalence for a finite projective tensor factor.
+
+For finite projective U, the coefficient tensor comparison gives an S-linear equivalence
+Ext_Rⁿ(P,res N) ⊗_S U ≃ Ext_Rⁿ(P,res(N ⊗_S U)). -/
 def extTensorFiniteFactorEquiv (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S)
     [Module.Finite S U] [Module.Projective S U] (n : ℕ) :
     letI := extCoefficientModule σ P N n
@@ -414,6 +422,9 @@ def extTensorFiniteFactorEquiv (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S)
   LinearEquiv.ofBijective (extTensorComparison σ P N U n)
     (extTensorComparison_bijective σ P N U n)
 
+/-- The linear map of the finite-factor Ext equivalence.
+
+The underlying map of the equivalence is extTensorComparison. -/
 @[simp]
 theorem extTensorFiniteFactorEquiv_toLinearMap (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S)
     [Module.Finite S U] [Module.Projective S U] (n : ℕ) :
@@ -422,6 +433,9 @@ theorem extTensorFiniteFactorEquiv_toLinearMap (P : ModuleCat.{v} R) (N U : Modu
     (extTensorFiniteFactorEquiv σ P N U n).toLinearMap =
       extTensorComparison σ P N U n := rfl
 
+/-- The finite-factor Ext equivalence on a pure tensor.
+
+The equivalence sends x ⊗ u to postcomposition with the degree-zero coefficient map n ↦ n ⊗ u. -/
 @[simp]
 theorem extTensorFiniteFactorEquiv_tmul (P : ModuleCat.{v} R) (N U : ModuleCat.{v} S)
     [Module.Finite S U] [Module.Projective S U] (n : ℕ)
@@ -434,8 +448,11 @@ theorem extTensorFiniteFactorEquiv_tmul (P : ModuleCat.{v} R) (N U : ModuleCat.{
 
 end FiniteFactor
 
-/-- The coefficient tensor comparison at any common lift height, with
-independent original module carriers and independent Ext carrier universe. -/
+/-- The finite-factor Ext equivalence with independent carrier heights.
+
+Lift P,N,U to the common height max(h,r,s,p,q,t) and apply the finite projective factor
+equivalence there. The R and S worlds, all three original carrier worlds and the Ext universe
+remain separately specified. -/
 def extTensorFiniteFactorEquivAt.{h, r, s, p, q, t, w}
     {R : Type r} {S : Type s} [CommRing R] [CommRing S] (σ : R →+* S)
     (P : Type p) [AddCommGroup P] [Module R P]

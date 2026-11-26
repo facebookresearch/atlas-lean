@@ -1,3 +1,6 @@
-# Field Coind Canonical Complex Functor
+# Functor of canonical coinduction complexes
 
-The actual original alternating coinduction complex, functorial in its same coefficient.
+Functor of canonical coinduction complexes.
+
+The coinduction-monad coresolution functor followed by alternating cofaces gives the canonical
+cochain-complex functor.

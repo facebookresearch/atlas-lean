@@ -1,3 +1,6 @@
-# Small Etale Godement Coresolution Term Iso
+# Godement term is a skyscraper product of stalks
 
-Every actual Godement degree is the original skyscraper product of an iterated stalk family.
+Godement term is a skyscraper product of stalks.
+
+The degree-`n` cosimplicial term is isomorphic to the skyscraper product of the stalk family
+of `T^n Q`.

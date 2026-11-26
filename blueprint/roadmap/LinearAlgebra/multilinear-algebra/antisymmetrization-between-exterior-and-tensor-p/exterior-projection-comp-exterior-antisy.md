@@ -1,4 +1,6 @@
-# Exterior Projection comp exterior Antisymmetrization
+# The exterior projection of antisymmetrization is multiplication by n!
 
-The actual tensor projection composed with antisymmetrization is `n!`, with no
-characteristic, freeness, flatness or finiteness hypothesis on the coefficient module.
+The exterior projection of antisymmetrization is multiplication by n!.
+
+For a commutative ring k and any k-module V, Qₙ ∘ Aₙ = n! · id on ⋀ⁿV. The formula requires
+no invertibility of n! in k.

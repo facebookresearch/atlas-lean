@@ -21,13 +21,18 @@ public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Sheafification
 public import Mathlib.Topology.Sheaves.Sheafify
 
 /-!
-# Stalks of sheafification as linear equivalences
+# Stalk comparison for module sheafification
 
-The stalk of identity-ring module sheafification identified with the original
-presheaf-module stalk (`sheafificationStalkLinearEquiv`), and the stalk-map
-linear API (`stalkMapLinear`). All declarations here are original to this
-repository; they build on Mathlib's presheaf-of-modules sheafification and
-stalk APIs (J. Riou, A. Yang).
+Let R be a sheaf of rings on a topological space X, and assume the stated weak sheafification
+and locally bijective characterization for additive presheaves. For an R-module presheaf M,
+its sheafification unit u : M → aM induces an isomorphism on every stalk, linear over the
+stalk ring R_x.
+
+The comparison defined here is aM_x ≃_{R_x} M_x; its inverse is the stalk map of u. On a germ
+of a section s, that inverse sends germ_M(s) to germ_aM(u(s)). For a module-presheaf morphism
+φ, the induced stalk map is R_x-linear and sends germ(s) to germ(φ(s)).
+
+Mathlib presheaf-of-modules sheafification and stalk APIs (J. Riou, A. Yang).
 -/
 
 open _root_.CategoryTheory CategoryTheory _root_.TopCat TopCat
@@ -46,8 +51,10 @@ namespace PresheafOfModules
 section StalkEquiv
 
 
-/-- Identifies the stalk of identity-ring module sheafification with the
-original presheaf-module stalk, as modules over the stalk of the ring sheaf. -/
+/-- The linear comparison from a sheafified stalk to the presheaf stalk.
+
+At x ∈ X, the stalk of aM is linearly equivalent over R_x to the stalk of M. The inverse
+equivalence is induced by the sheafification unit. -/
 noncomputable def sheafificationStalkLinearEquiv :
     ↥(TopCat.Presheaf.stalk
         ((PresheafOfModules.sheafification (R := R) (𝟙 R.obj)).obj M).val.presheaf x)
@@ -141,10 +148,10 @@ section StalkMapLinearSection
 
 variable {R : X.Presheaf RingCat.{u}}
 
-/-- Reusable module-linear stalk map for a morphism of presheaves of modules.
+/-- The linear stalk map of a module-presheaf morphism.
 
-The underlying additive map is `(stalkFunctor AddCommGrpCat x).map
-((toPresheaf R).map φ)`. -/
+For a ring presheaf R and φ : M → N, the induced map M_x → N_x is a morphism of modules over
+the stalk ring R_x. -/
 noncomputable def stalkMapLinear {M N : PresheafOfModules.{u} R} (φ : M ⟶ N)
     (x : X) :
     ModuleCat.of ↥(R.stalk x) ↥(TopCat.Presheaf.stalk M.presheaf x) ⟶
@@ -204,7 +211,9 @@ variable (R : X.Presheaf RingCat.{u})
 
 omit [HasWeakSheafify (Opens.grothendieckTopology X) AddCommGrpCat.{u}] in
 omit [(Opens.grothendieckTopology X).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- Reusable computation: `stalkMapLinear` sends germs to germs. -/
+/-- The linear stalk map on a section germ.
+
+For x ∈ V and s ∈ M(V), φ_x(germ_M(s)) = germ_N(φ_V(s)). -/
 theorem stalkMapLinear_germ {M N : PresheafOfModules.{u} R} (φ : M ⟶ N)
     (x : X) (V : TopologicalSpace.Opens X) (hxV : x ∈ V) (s : M.obj (Opposite.op V)) :
     (stalkMapLinear φ x) (TopCat.Presheaf.germ M.presheaf V x hxV s)
@@ -217,8 +226,10 @@ end StalkMapLinearGermSection
 
 section SheafificationSymmSection
 
-/-- The inverse sheafification-stalk equivalence is the stalk map along the
-sheafification adjunction unit. -/
+/-- The inverse stalk comparison is the sheafification-unit map.
+
+For m ∈ M_x, the inverse of aM_x ≃ M_x sends m to its image under the linear stalk map of M →
+aM. -/
 theorem sheafificationStalkLinearEquiv_symm_apply (M : PresheafOfModules.{u} R.obj)
     (x : X) (m : ↥(TopCat.Presheaf.stalk M.presheaf x)) :
     (PresheafOfModules.sheafificationStalkLinearEquiv R M x).symm m =
@@ -241,8 +252,10 @@ theorem sheafificationStalkLinearEquiv_symm_apply (M : PresheafOfModules.{u} R.o
     ((PresheafOfModules.sheafificationAdjunction (𝟙 R.obj)).unit.app M) x V hxV s
   exact hL.trans hrhs.symm
 
-/-- Germ form: the inverse equivalence sends the germ of a section to the germ
-of its image under the sheafification unit. -/
+/-- The inverse sheafification comparison on germs.
+
+For a section s over an open neighborhood V of x, the inverse stalk comparison sends germ_M(s)
+to the germ in aM of the unit image of s. -/
 theorem sheafificationStalkLinearEquiv_symm_germ (M : PresheafOfModules.{u} R.obj)
     (x : X) (V : TopologicalSpace.Opens X) (hxV : x ∈ V)
     (s : M.obj (Opposite.op V)) :

@@ -1,3 +1,5 @@
-# Field Prescribed Point Monad
+# The prescribed closure-point stalk–skyscraper monad
 
-The actual prescribed Ω point monad, stored on the same original sheaf category.
+Let Ω be a prescribed separable closure of a field k. The geometric point Spec(Ω) → Spec(k)
+gives a stalk–skyscraper adjunction at coefficient height max(u,w). Its induced monad on the
+same sheaf category is fieldPrescribedPointMonad.

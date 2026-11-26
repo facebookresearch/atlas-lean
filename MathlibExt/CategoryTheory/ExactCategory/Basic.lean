@@ -18,38 +18,23 @@ public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 public import Mathlib.CategoryTheory.Limits.Shapes.ZeroObjects
 
 
+/- The exact-structure axioms retain kernel and cokernel universal properties as
+Nonempty witnesses; the corresponding helper definitions choose these witnesses. -/
+
 /-!
-# Exact categories
-An exact structure on an additive category specifies its admissible kernel-cokernel pairs.
+# Quillen exact structures
 
-Every admissible exact sequence is a kernel-cokernel pair: for `S : ShortComplex C` with
-`IsAdmissibleExact S`, `S.f` is a kernel of `S.g` and `S.g` is a cokernel of `S.f`,
-witnessed by `Nonempty (IsLimit (KernelFork.ofι S.f S.zero))` and
-`Nonempty (IsColimit (CokernelCofork.ofπ S.g S.zero))` (existence, data-independent).
+An additive category `C` has a zero object and binary biproducts. A Quillen
+exact structure selects admissible kernel–cokernel short complexes, contains
+split exact sequences, and is closed under isomorphisms. Its admissible
+monomorphisms and epimorphisms are closed under composition; pushout of an
+admissible mono and pullback of an admissible epi exist and remain admissible.
 
-## Main definitions
-* `CategoryTheory.ExactCategory`
-* `CategoryTheory.ExactCategory.IsAdmissibleMono`
-* `CategoryTheory.ExactCategory.IsAdmissibleEpi`
+All admissibility statements refer to the chosen exact structure on `C`.
+An additive category can have more than one such structure.
 
-## Main results
-* `CategoryTheory.ExactCategory.IsAdmissibleMono.mono`
-* `CategoryTheory.ExactCategory.IsAdmissibleEpi.epi`
-* `isAdmissibleMono_id` / `IsAdmissibleMono.id` — identities are admissible monos
-* `isAdmissibleMono_of_isIso` / `of_isIso` — isomorphisms are admissible monos
-* `IsAdmissibleMono.fromZero` — every `0 ⟶ X` is an admissible mono
-* `instIsMultiplicativeAdmissibleMonos` / `instRespectsIsoAdmissibleMonos` — admissible monos
-  are multiplicative and respect isos
-
-## Implementation notes
-* Mathlib encodes an additive category by `[Preadditive C]`, `[HasZeroObject C]`,
-  and `[HasBinaryBiproducts C]`.
-* An additive category may support more than one exact structure,
-  encoded by `[ExactCategory C]` structure.
-* `admissibleMono_pushout` and `admissibleEpi_pullback` assert the existence and admissibility.
-* Admissible exact sequences are kernel-cokernel pairs in the sense of Quillen:
-  existence of `S.f` as kernel of `S.g` and `S.g` as cokernel of `S.f`
-  (`Nonempty (IsLimit ...)` / `Nonempty (IsColimit ...)`), data-independent.
+For an admissible exact sequence `X → Y → Z`, the first map is a kernel
+of the second and the second is a cokernel of the first.
 
 ## References
 * [C. Weibel, *The K-book: Chapter II.7*][weibel-k-book]
@@ -68,42 +53,70 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C]
 variable (C)
 
-/-- Monomorphisms appearing in admissible exact sequences -/
+/-- For a preadditive category `C` and a predicate `P` on its short
+complexes, this morphism property consists of the maps occurring as
+the first leg of a short complex satisfying `P`. -/
 def admissibleMonosOf (P : ShortComplex C → Prop) : MorphismProperty C :=
   fun _ Y i => ∃ (Z : C) (p : Y ⟶ Z) (w : i ≫ p = 0), P (ShortComplex.mk i p w)
 
-/-- Epimorphisms appearing in admissible exact sequences -/
+/-- For a preadditive category `C` and a predicate `P` on its short
+complexes, this morphism property consists of the maps occurring as
+the second leg of a short complex satisfying `P`. -/
 def admissibleEpisOf (P : ShortComplex C → Prop) : MorphismProperty C :=
   fun Y _ p => ∃ (X : C) (i : X ⟶ Y) (w : i ≫ p = 0), P (ShortComplex.mk i p w)
 
-/-- Exact structure on an additive category in the sense of Quillen -/
+/-- A Quillen exact structure on a preadditive category `C` with a zero
+object and binary biproducts specifies admissible kernel–cokernel
+short complexes, including split pairs, with closure under isomorphism,
+composition, and the admissible pushout and pullback axioms. -/
 class ExactCategory (C : Type u) [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] where
-  /-- The class of admissible exact sequences -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, the
+admissible-exact predicate selects short complexes `S : X → Y → Z`
+whose two maps form an admissible kernel–cokernel pair. -/
   IsAdmissibleExact : ShortComplex C → Prop
-  /-- Admissible exact sequences are SES -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, every
+admissible exact short complex `S` is short exact: its first map is
+monic, its second map epic, and their composite is zero with exact
+middle term. -/
   shortExact_of_isAdmissibleExact : ∀ ⦃S : ShortComplex C⦄, IsAdmissibleExact S → S.ShortExact
-  /-- Every admissible exact sequence is a kernel: `S.f` is a kernel of `S.g` (existence). -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, if `S` is
+admissible exact, `S.f : S.X₁ → S.X₂` is a kernel of
+`S.g : S.X₂ → S.X₃`. Every morphism killed by `S.g` factors uniquely through `S.f`. -/
   isLimit_kernelFork : ∀ ⦃S : ShortComplex C⦄, IsAdmissibleExact S →
     Nonempty (IsLimit (KernelFork.ofι S.f S.zero))
-  /-- Every admissible exact sequence is a cokernel: `S.g` is a cokernel of `S.f` (existence). -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, if `S` is
+admissible exact, `S.g : S.X₂ → S.X₃` is a cokernel of
+`S.f : S.X₁ → S.X₂`. Every morphism killing `S.f` factors uniquely through `S.g`. -/
   isColimit_cokernelCofork : ∀ ⦃S : ShortComplex C⦄, IsAdmissibleExact S →
     Nonempty (IsColimit (CokernelCofork.ofπ S.g S.zero))
-  /-- Admissible exact sequences are closed under isomorphisms -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, an
+isomorphism of short complexes `S ≅ T` carries admissible exactness
+of `S` to admissible exactness of `T`. -/
   isAdmissibleExact_of_iso : ∀ ⦃S T : ShortComplex C⦄, (S ≅ T) → IsAdmissibleExact S →
     IsAdmissibleExact T
-  /-- Split exact sequences are admissible -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, the split
+sequence `X → X ⊞ Y → Y`, with maps `biprod.inl` and `biprod.snd`,
+is admissible exact for every pair of objects `X`, `Y`. -/
   isAdmissibleExact_split : ∀ (X Y : C),
     IsAdmissibleExact (ShortComplex.mk (biprod.inl : X ⟶ X ⊞ Y) biprod.snd (by simp))
-  /-- Admissible monomorphisms are closed under composition -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, the
+composite of two composable admissible monomorphisms is again
+an admissible monomorphism. -/
   admissibleMono_comp : (admissibleMonosOf C IsAdmissibleExact).IsStableUnderComposition
-  /-- Admissible epimorphisms are closed under composition -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, the
+composite of two composable admissible epimorphisms is again
+an admissible epimorphism. -/
   admissibleEpi_comp : (admissibleEpisOf C IsAdmissibleExact).IsStableUnderComposition
-  /-- Admissible monomorphisms are closed under pushouts along any morphisms -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, every
+admissible mono `i : X → Y` and arbitrary `f : X → X′` admit
+a pushout `Y → P ← X′`; the resulting map `X′ → P` is admissible monic. -/
   admissibleMono_pushout : ∀ (X Y : C) (i : X ⟶ Y), admissibleMonosOf C IsAdmissibleExact i →
     ∀ (X' : C) (f : X ⟶ X'), ∃ (P : C) (inl : X' ⟶ P) (inr : Y ⟶ P),
       IsPushout f i inl inr ∧ admissibleMonosOf C IsAdmissibleExact inl
-  /-- Admissible epimorphisms are closed under pullbacks along any morphisms -/
+  /-- In an additive category `C` with a chosen Quillen exact structure, every
+admissible epi `p : Y → Z` and arbitrary `g : Z′ → Z` admit
+a pullback `Y ← P → Z′`; the resulting map `P → Z′` is admissible epic. -/
   admissibleEpi_pullback : ∀ (Y Z : C) (p : Y ⟶ Z), admissibleEpisOf C IsAdmissibleExact p →
     ∀ (Z' : C) (g : Z' ⟶ Z), ∃ (P : C) (fst : P ⟶ Z') (snd : P ⟶ Y),
       IsPullback fst snd g p ∧ admissibleEpisOf C IsAdmissibleExact fst
@@ -112,40 +125,58 @@ namespace ExactCategory
 
 variable {C} [ExactCategory C]
 
-/-- An admissible monomorphism -/
+/-- In an additive category `C` with a chosen Quillen exact structure, a map
+`i : X → Y` is admissible monic when it is the first map of an
+admissible exact short complex `X → Y → Z` for some `Z`. -/
 def IsAdmissibleMono {X Y : C} (i : X ⟶ Y) : Prop := admissibleMonosOf C IsAdmissibleExact i
 
-/-- An admissible epimorphism -/
+/-- In an additive category `C` with a chosen Quillen exact structure, a map
+`p : Y → Z` is admissible epic when it is the second map of an
+admissible exact short complex `X → Y → Z` for some `X`. -/
 def IsAdmissibleEpi {Y Z : C} (p : Y ⟶ Z) : Prop := admissibleEpisOf C IsAdmissibleExact p
 
-/-- The first map of an admissible exact short complex is an admissible mono. -/
+/-- In an additive category `C` with a chosen Quillen exact structure, the
+first map `S.f` of an admissible exact short complex `S` is an
+admissible monomorphism. -/
 lemma isAdmissibleMono_f {S : ShortComplex C} (hS : IsAdmissibleExact S) :
     IsAdmissibleMono S.f :=
   ⟨S.X₃, S.g, S.zero, hS⟩
 
-/-- The second map of an admissible exact short complex is an admissible epi. -/
+/-- In an additive category `C` with a chosen Quillen exact structure, the
+second map `S.g` of an admissible exact short complex `S` is an
+admissible epimorphism. -/
 lemma isAdmissibleEpi_g {S : ShortComplex C} (hS : IsAdmissibleExact S) :
     IsAdmissibleEpi S.g :=
   ⟨S.X₁, S.f, S.zero, hS⟩
 
-/-- Kernel universal property of an admissible exact sequence (chosen witness). -/
+/-- In an additive category `C` with a chosen Quillen exact structure, an
+admissible exact short complex `S` determines a kernel universal
+property for `S.f` against `S.g`, with the given zero composite. -/
 noncomputable def isLimit_kernelFork_of_isAdmissibleExact {S : ShortComplex C}
     (hS : IsAdmissibleExact S) : IsLimit (KernelFork.ofι S.f S.zero) :=
   (ExactCategory.isLimit_kernelFork hS).some
 
-/-- Cokernel universal property of an admissible exact sequence (chosen witness). -/
+/-- In an additive category `C` with a chosen Quillen exact structure, an
+admissible exact short complex `S` determines a cokernel universal
+property for `S.g` against `S.f`, with the given zero composite. -/
 noncomputable def isColimit_cokernelCofork_of_isAdmissibleExact {S : ShortComplex C}
     (hS : IsAdmissibleExact S) : IsColimit (CokernelCofork.ofπ S.g S.zero) :=
   (ExactCategory.isColimit_cokernelCofork hS).some
 
-/-- An admissible-mono first leg plus a cokernel colimit second leg imply admissible exactness.
+/- Proof implementation note.
+An admissible-mono first leg plus a cokernel colimit second leg imply admissible exactness.
 
 For `S : ShortComplex C`, `hf : IsAdmissibleMono S.f` and
 `hc : IsColimit (CokernelCofork.ofπ S.g S.zero)` suffice for `IsAdmissibleExact S`.
 Unpacks `hf` to `W, p, w, hS'`, reuses the canonical cokernel comparison
 `hc'.coconePointUniqueUpToIso hc`, derives the second-leg equation with
 `IsColimit.comp_coconePointUniqueUpToIso_hom`, then transports with
-`ShortComplex.isoMk` and `isAdmissibleExact_of_iso`. -/
+`ShortComplex.isoMk` and `isAdmissibleExact_of_iso`.
+-/
+
+/-- In an additive category `C` with a chosen Quillen exact structure, let
+`S : X → Y → Z` be a short complex. If `S.f` is admissible
+monic and `S.g` is a cokernel of `S.f`, then `S` is admissible exact. -/
 theorem isAdmissibleExact_of_isAdmissibleMono_isColimit {S : ShortComplex C}
     (hf : IsAdmissibleMono S.f)
     (hc : IsColimit (CokernelCofork.ofπ S.g S.zero)) :
@@ -160,12 +191,16 @@ theorem isAdmissibleExact_of_isAdmissibleMono_isColimit {S : ShortComplex C}
     ShortComplex.isoMk (Iso.refl S.X₁) (Iso.refl S.X₂) e (by simp) (by simpa using h_e_hom.symm)
   exact isAdmissibleExact_of_iso h_iso hS'
 
-/-- An admissible monomorphism is a monomorphism -/
+/-- In an additive category `C` with a chosen Quillen exact structure, every
+admissible monomorphism `i : X → Y` is a monomorphism in the
+underlying category `C`. -/
 lemma IsAdmissibleMono.mono {X Y : C} {i : X ⟶ Y} (hi : IsAdmissibleMono i) : Mono i := by
   obtain ⟨Z, g, w, hS⟩ := hi
   exact (shortExact_of_isAdmissibleExact hS).mono_f
 
-/-- An admissible epimorphism is an epimorphism -/
+/-- In an additive category `C` with a chosen Quillen exact structure, every
+admissible epimorphism `p : Y → Z` is an epimorphism in the
+underlying category `C`. -/
 lemma IsAdmissibleEpi.epi {Y Z : C} {p : Y ⟶ Z} (hp : IsAdmissibleEpi p) : Epi p := by
   obtain ⟨X, f, w, hS⟩ := hp
   exact (shortExact_of_isAdmissibleExact hS).epi_g
@@ -182,11 +217,19 @@ private lemma isAdmissibleExact_id (X : C) :
       (by dsimp [S_split]; simp) (by dsimp [S_split]; simp)
   exact isAdmissibleExact_of_iso h_iso.symm h_split
 
-/-- Identities are admissible monos via `X ⟶ X ⊞ 0` and `isAdmissibleExact_of_iso`. -/
+/- Proof implementation note.
+Identities are admissible monos via `X ⟶ X ⊞ 0` and `isAdmissibleExact_of_iso`.
+-/
+
+/-- In an additive category `C` with a chosen Quillen exact structure, the
+identity of any object `X` is an admissible monomorphism, as
+the first map of a split admissible sequence. -/
 lemma isAdmissibleMono_id (X : C) : IsAdmissibleMono (𝟙 X) :=
   ⟨(0 : C), (0 : X ⟶ (0 : C)), by simp, isAdmissibleExact_id X⟩
 
-/-- Isomorphisms are admissible monos; transports identity case along `𝟙 ≫ f`. -/
+/-- In an additive category `C` with a chosen Quillen exact structure, every
+isomorphism `f : X → Y` is an admissible monomorphism; admissible
+kernel maps are stable under isomorphism of arrows. -/
 lemma isAdmissibleMono_of_isIso {X Y : C} (f : X ⟶ Y) [IsIso f] :
     IsAdmissibleMono f := by
   have h_id : IsAdmissibleExact (ShortComplex.mk (𝟙 X) (0 : X ⟶ (0 : C)) (by simp)) :=
@@ -199,13 +242,21 @@ lemma isAdmissibleMono_of_isIso {X Y : C} (f : X ⟶ Y) [IsIso f] :
   have h_f : IsAdmissibleExact S_f := isAdmissibleExact_of_iso h_iso h_id
   exact ⟨(0 : C), (0 : Y ⟶ (0 : C)), by simp, h_f⟩
 
-/-- Admissible monos are multiplicative: identities are admissible and admissible monos compose. -/
+/-- In an additive category `C` with a chosen Quillen exact structure, the
+admissible-monomorphism property is multiplicative: identities
+and composites of admissible monomorphisms are admissible. -/
 instance instIsMultiplicativeAdmissibleMonos :
     (admissibleMonosOf C IsAdmissibleExact).IsMultiplicative where
   id_mem X := isAdmissibleMono_id X
   comp_mem f g hf hg := admissibleMono_comp.comp_mem f g hf hg
 
-/-- Admissible monos respect isomorphisms, via `respectsIso_of_isStableUnderComposition`. -/
+/- Proof implementation note.
+Admissible monos respect isomorphisms, via `respectsIso_of_isStableUnderComposition`.
+-/
+
+/-- In an additive category `C` with a chosen Quillen exact structure, the
+admissible-monomorphism property is invariant under isomorphisms
+of arrows, including changes of either endpoint by an isomorphism. -/
 instance instRespectsIsoAdmissibleMonos :
     (admissibleMonosOf C IsAdmissibleExact).RespectsIso := by
   have h : (admissibleMonosOf C IsAdmissibleExact).IsStableUnderComposition :=
@@ -215,14 +266,32 @@ instance instRespectsIsoAdmissibleMonos :
 
 namespace IsAdmissibleMono
 
-/-- Identity is an admissible mono (ergonomic alias). -/
+/- Proof implementation note.
+Identity is an admissible mono (ergonomic alias).
+-/
+
+/-- In an additive category `C` with a chosen Quillen exact structure, the
+identity `𝟙 X` of each object `X` is an admissible monomorphism
+coming from its split kernel–cokernel sequence. -/
 lemma id (X : C) : IsAdmissibleMono (𝟙 X) := isAdmissibleMono_id X
 
-/-- Isomorphism is an admissible mono (ergonomic alias). -/
+/- Proof implementation note.
+Isomorphism is an admissible mono (ergonomic alias).
+-/
+
+/-- In an additive category `C` with a chosen Quillen exact structure, an
+isomorphism `f : X → Y` is an admissible monomorphism, obtained
+by transporting the identity kernel map. -/
 lemma of_isIso {X Y : C} (f : X ⟶ Y) [IsIso f] : IsAdmissibleMono f :=
   isAdmissibleMono_of_isIso f
 
-/-- Every map `0 ⟶ X` is an admissible mono, via `0 ⟶ 0 ⊞ X` and the zero biproduct iso. -/
+/- Proof implementation note.
+Every map `0 ⟶ X` is an admissible mono, via `0 ⟶ 0 ⊞ X` and the zero biproduct iso.
+-/
+
+/-- In an additive category `C` with a chosen Quillen exact structure, every
+morphism `0 → X` from a zero object is an admissible monomorphism,
+as in the split admissible sequence `0 → X → X`. -/
 lemma fromZero {X : C} (f : (0 : C) ⟶ X) : IsAdmissibleMono f := by
   have h_inl : IsAdmissibleMono (biprod.inl : (0 : C) ⟶ (0 : C) ⊞ X) :=
     ⟨X, biprod.snd, by simp, isAdmissibleExact_split (0 : C) X⟩

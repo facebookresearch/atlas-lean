@@ -15,11 +15,12 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOne
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOneTwoFunctoriality
 
 /-!
-# Functoriality of right-associated triple cups
+# Naturality of right-associated triple cups
 
-The right-associated triple cup formed from three degree-one classes, and its
-explicit cocycle representative, commute with one coefficient morphism
-applied in all three inputs.
+Let `k,G : Type`, with `k` a commutative ring and `G` a group. An equivariant map `φ : C → D`
+preserves the right-associated cup `x ∪ (y ∪ z)` of three degree-one classes after applying `φ
+⊗ (φ ⊗ φ)` to its coefficients. The same equation holds for the explicit three-cocycles, whose
+value is `x(g) ⊗ (g·y(h) ⊗ (gh)·z(j))`.
 -/
 
 @[expose] public section
@@ -34,8 +35,9 @@ namespace groupCohomology
 
 variable {G : Type} [Group G]
 
-/-- A right-associated triple cup is natural under one coefficient
-morphism applied in all three inputs. -/
+/-- For `k,G : Type` with `k` a commutative ring and `G` a group, let `C,D : Rep k G`, `φ : C →
+D`, and `x,y,z ∈ H¹(G,C)`. Then `(φ ⊗ (φ ⊗ φ))_* (x ∪ (y ∪ z)) = (φ_*x) ∪ ((φ_*y) ∪ (φ_*z))`
+in `H³(G,D ⊗ (D ⊗ D))`, with the inner cup `cupOneOne` and outer cup `cupOneTwo`. -/
 theorem map_nestedCupOneOne
     {k : Type} [CommRing k] {C D : Rep k G}
     (phi : C ⟶ D) (x y z : H1 C) :
@@ -48,8 +50,10 @@ theorem map_nestedCupOneOne
           (map (MonoidHom.id G) phi 1 z)) := by
   rw [map_cupOneTwo_of_hom, map_cupOneOne]
 
-/-- The explicit right-associated triple-cup cocycle is natural under one
-coefficient morphism applied in all three inputs. -/
+/-- For `k,G : Type` with `k` a commutative ring and `G` a group, let `C,D : Rep k G`, `φ : C →
+D`, and `x,y,z ∈ Z¹(G,C)`. Applying `mapCocycles₃ (id G) (φ ⊗ (φ ⊗ φ))` to `cupCocycleOneTwo C
+(C ⊗ C) x (cupCocycleOneOne C C y z)` equals the same right-associated cocycle cup formed from
+the three images under `mapCocycles₁ (id G) φ`. -/
 theorem mapCocycles₃_nestedCupOneOne
     {k : Type} [CommRing k] {C D : Rep k G}
     (phi : C ⟶ D) (x y z : cocycles₁ C) :

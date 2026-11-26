@@ -16,10 +16,20 @@ public import Mathlib.CategoryTheory.Sites.Point.Monoidal
 public import Mathlib.CategoryTheory.Monoidal.Limits.Colimits
 
 /-!
-# Tensor coefficients on small étale sites
+# Integer tensor coefficients on the small étale site
 
-The tensor presheaf takes the integer tensor product of section groups.
-Its sheafification is the tensor coefficient sheaf.
+Let X be a scheme of universe u and take additive-group presheaves or sheaves in universe
+max(u,w). The tensor presheaf has section group F(U)⊗_ℤ G(U), with tensor restrictions. Its
+sheafification is the tensor coefficient sheaf, and the sheafification unit maps each tensor
+of local sections into that sheaf.
+
+For any point p of the small étale topology in the same coefficient height, the stalk of the
+tensor presheaf, and then of the tensor sheaf, is canonically isomorphic to the tensor of the
+two stalks. The map sends the germ of a⊗b to the tensor of the germs. These maps are natural
+in both coefficients and preserve their identities and composition.
+
+The terminal identity étale object also gives a natural map Γ(F)⊗_ℤ Γ(G) → Γ(F⊗G), computed by
+tensoring the terminal section values and applying the sheafification unit.
 -/
 
 @[expose] public section
@@ -31,7 +41,9 @@ open scoped TensorProduct
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The sectionwise integer tensor product of the original coefficient presheaves. -/
+/-- Let X be a scheme of universe u and F,G additive-group presheaves on X.Etale with coefficient
+universe max(u,w). Define their tensor presheaf by (F⊗G)(U)=F(U)⊗_ℤ G(U). A presheaf arrow
+acts by the tensor of the two restriction maps. -/
 def smallEtaleTensorPresheaf (X : Scheme.{u})
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
     X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w} where
@@ -61,28 +73,37 @@ def smallEtaleTensorPresheaf (X : Scheme.{u})
         rfl
     | add a b ha hb => simp only [map_add, ha, hb]
 
-/-- Restriction of an original pure tensor is the tensor of the original restrictions. -/
+/-- For additive-group presheaves F,G on the small étale category of X, an arrow f : U → V in
+X.Etaleᵒᵖ, and sections a∈F(U), b∈G(U), the tensor presheaf restriction sends a⊗b to
+F(f)(a)⊗G(f)(b), with tensor product over ℤ. -/
 theorem smallEtaleTensorPresheaf_map_tmul (X : Scheme.{u})
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w})
     {U V : X.Etaleᵒᵖ} (f : U ⟶ V) (a : F.obj U) (b : G.obj U) :
     (smallEtaleTensorPresheaf.{u, w} X F G).map f (a ⊗ₜ[ℤ] b) =
       (F.map f a) ⊗ₜ[ℤ] (G.map f b) := rfl
 
-/-- The actual tensor coefficient sheaf is the sheafification of the sectionwise tensor. -/
+/-- Let X be a scheme and F,G sheaves of additive groups in universe max(u,w) on its small étale
+topology. Define F⊗G as the sheafification of the presheaf U ↦ F(U)⊗_ℤ G(U). This is the
+underived integer tensor coefficient sheaf. -/
 def smallEtaleTensorSheaf (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w} :=
   (presheafToSheaf X.smallEtaleTopology AddCommGrpCat.{max u w}).obj
     (smallEtaleTensorPresheaf.{u, w} X F.obj G.obj)
 
-/-- The original section tensors enter the actual tensor sheaf by the sheafification unit. -/
+/-- For additive-group sheaves F,G on the small étale site of X and U∈X.Etaleᵒᵖ, the
+sheafification unit defines F(U)⊗_ℤ G(U) → (F⊗G)(U). This is the component at U of the unit
+for the sectionwise tensor presheaf. -/
 def smallEtaleTensorSheafSectionMap (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : X.Etaleᵒᵖ) :
     AddCommGrpCat.of (F.obj.obj U ⊗[ℤ] G.obj.obj U) ⟶
       (smallEtaleTensorSheaf.{u, w} X F G).obj.obj U :=
   (toSheafify X.smallEtaleTopology (smallEtaleTensorPresheaf.{u, w} X F.obj G.obj)).app U
 
-/-- The actual sheafification map respects the tensor of every original restriction. -/
+/-- Let F,G be additive-group sheaves on X's small étale site and η_U their local tensor-to-sheaf
+map. For f : U → V in X.Etaleᵒᵖ, tensoring the two restrictions followed by η_V equals η_U
+followed by the restriction of the tensor sheaf. This is the naturality equation of the
+sheafification unit. -/
 theorem smallEtaleTensorSheafSectionMap_naturality (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     {U V : X.Etaleᵒᵖ} (f : U ⟶ V) :
@@ -93,7 +114,10 @@ theorem smallEtaleTensorSheafSectionMap_naturality (X : Scheme.{u})
   (toSheafify X.smallEtaleTopology (smallEtaleTensorPresheaf.{u, w} X F.obj G.obj)).naturality f
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Original local tensor germs map to the tensor of the two original geometric germs. -/
+/-- Let X be a scheme, p a point of its small étale topology of universe max(u,w), and F,G
+additive-group presheaves of that height. Local germ maps define (F⊗G)_p → F_p⊗_ℤ G_p, sending
+the germ of a⊗b from a pointed étale neighborhood to germ(a)⊗germ(b). Compatibility with
+restrictions defines the map from the stalk colimit. -/
 def smallEtalePointTensorStalkMap (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
@@ -126,8 +150,9 @@ def smallEtalePointTensorStalkMap (X : Scheme.{u})
         rw [p.toPresheafFiber_w_apply, p.toPresheafFiber_w_apply]
       exact congrArg (fun l => AddCommGrpCat.ofHom l.toAddMonoidHom) h)
 
-/-- The actual point tensor comparison has the prescribed value on every original pure tensor
-germ. -/
+/-- For a point p of X's small étale topology, presheaves F,G, a neighborhood U with x∈p(U), and
+a∈F(U), b∈G(U), the tensor stalk map satisfies [a⊗b]_{U,x} ↦ [a]_{U,x}⊗[b]_{U,x}. The
+coefficient tensor is over ℤ. -/
 theorem smallEtalePointTensorStalkMap_tmul (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (U : X.Etale) (x : p.fiber.obj U)
@@ -148,8 +173,10 @@ theorem smallEtalePointTensorStalkMap_tmul (X : Scheme.{u})
   exact ConcreteCategory.congr_hom h (a ⊗ₜ[ℤ] b)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The literal tensor-of-germs comparison is invertible for the same actual filtered point
-fiber. -/
+/-- Let p be a point of the small étale topology of a scheme X and F,G additive-group presheaves
+in universe max(u,w). The canonical tensor-of-germs map (F⊗G)_p → F_p⊗_ℤ G_p is an
+isomorphism. Filtered point fibers and the colimit compatibility of integer tensor products
+give this invertibility without a coefficient flatness hypothesis. -/
 theorem smallEtalePointTensorStalkMap_isIso (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
@@ -179,7 +206,10 @@ theorem smallEtalePointTensorStalkMap_isIso (X : Scheme.{u})
   rw [h]
   exact e.isIso_hom
 
-/-- The actual tensor stalk isomorphism uses the original tensor-of-germs map. -/
+/-- For a scheme X, a point p of its small étale topology, and additive-group presheaves F,G, the
+tensor-of-germs map gives a canonical isomorphism (F⊗G)_p ≅ F_p⊗_ℤ G_p. The tensor on the left
+is the sectionwise presheaf tensor, and the forward map sends pure local tensor germs to
+tensors of germs. -/
 def smallEtalePointTensorStalkIso (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
@@ -191,7 +221,10 @@ def smallEtalePointTensorStalkIso (X : Scheme.{u})
     smallEtalePointTensorStalkMap_isIso.{u, w} X p F G
   exact asIso (smallEtalePointTensorStalkMap.{u, w} X p F G)
 
-/-- The stalk of the actual tensor sheaf is the tensor of the two original stalks. -/
+/-- Let X be a scheme, p a point of its small étale topology, and F,G additive-group sheaves in
+universe max(u,w). There is a canonical isomorphism (F⊗G)_p ≅ F_p⊗_ℤ G_p for the sheafified
+tensor. It combines invariance of stalks under sheafification with the tensor-presheaf stalk
+isomorphism. -/
 def smallEtalePointTensorSheafStalkIso (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
@@ -203,7 +236,9 @@ def smallEtalePointTensorSheafStalkIso (X : Scheme.{u})
     smallEtalePointTensorStalkIso.{u, w} X p F.obj G.obj
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Original pure section tensors have the tensor of the actual original germ values. -/
+/-- For a point p of X's small étale topology, sheaves F,G, a neighborhood U with x∈p(U), and
+local sections a,b, map a⊗b into the tensor sheaf using its section map. The germ of that
+section under the tensor-sheaf stalk isomorphism is [a]_{U,x}⊗[b]_{U,x}. -/
 theorem smallEtalePointTensorSheafStalkIso_section_tmul (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
@@ -231,7 +266,9 @@ theorem smallEtalePointTensorSheafStalkIso_section_tmul (X : Scheme.{u})
   exact (congrArg (smallEtalePointTensorStalkIso.{u, w} X p F.obj G.obj).hom hv).trans
     (smallEtalePointTensorStalkMap_tmul.{u, w} X p F.obj G.obj U x a b)
 
-/-- Two original presheaf maps induce the actual binary integer tensor map. -/
+/-- Let X be a scheme and f : F → F′, g : G → G′ maps of additive-group presheaves on its small
+étale category. Define F⊗_ℤ G → F′⊗_ℤ G′ sectionwise by f_U⊗g_U. Naturality of f and g makes
+this a presheaf morphism. -/
 def smallEtaleTensorPresheafMap (X : Scheme.{u})
     {F F' G G' : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -255,7 +292,9 @@ def smallEtaleTensorPresheafMap (X : Scheme.{u})
       rw [hf, hg]
     exact congrArg (fun l => AddCommGrpCat.ofHom l.toAddMonoidHom) he
 
-/-- Two original sheaf maps induce the actual map of tensor coefficient sheaves. -/
+/-- For additive-group sheaves on the small étale site of X and morphisms f : F → F′, g : G → G′,
+sheafifying their sectionwise tensor map gives F⊗G → F′⊗G′. The source and target tensors are
+sheafifications of the integer section tensors. -/
 def smallEtaleTensorSheafMap (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -263,8 +302,9 @@ def smallEtaleTensorSheafMap (X : Scheme.{u})
   (presheafToSheaf X.smallEtaleTopology AddCommGrpCat.{max u w}).map
     (smallEtaleTensorPresheafMap.{u, w} X f.hom g.hom)
 
-/-- Every original pure tensor section is mapped to the tensor of its original coefficient
-images. -/
+/-- Let f : F → F′ and g : G → G′ be additive-group sheaf maps on X's small étale site. At U,
+applying their tensor sheaf map to the image of a⊗b under the sheafification unit gives the
+unit image of f_U(a)⊗g_U(b). -/
 theorem smallEtaleTensorSheafMap_section_tmul (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') (U : X.Etaleᵒᵖ)
@@ -278,7 +318,9 @@ theorem smallEtaleTensorSheafMap_section_tmul (X : Scheme.{u})
   exact (ConcreteCategory.congr_hom h (a ⊗ₜ[ℤ] b)).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor-of-germs map commutes with every original pair of coefficient morphisms. -/
+/-- For a point p of X's small étale topology and presheaf maps f : F → F′, g : G → G′, let c be
+the tensor-of-germs map. Then (f⊗g)_p ≫ c_{F′,G′} = c_{F,G} ≫ (f_p⊗g_p). Both sides map the
+tensor presheaf stalk to F′_p⊗_ℤ G′_p. -/
 theorem smallEtalePointTensorStalkMap_naturality (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     {F F' G G' : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}}
@@ -343,7 +385,9 @@ theorem smallEtalePointTensorStalkMap_naturality (X : Scheme.{u})
     (hr.symm.trans (Category.assoc _ _ _)))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual sheaf tensor stalk isomorphism commutes with original coefficient maps. -/
+/-- Let p be a point of X's small étale topology and f : F → F′, g : G → G′ additive-group sheaf
+maps. For the tensor stalk isomorphism e, the equation is (f⊗g)_p ≫ e_{F′,G′}.hom =
+e_{F,G}.hom ≫ (f_p⊗g_p). The coefficient tensor is over ℤ. -/
 theorem smallEtalePointTensorSheafStalkIso_naturality (X : Scheme.{u})
     (p : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology)
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
@@ -373,7 +417,9 @@ theorem smallEtalePointTensorSheafStalkIso_naturality (X : Scheme.{u})
           (Category.assoc _ _ _).symm)))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor presheaf map respects original coefficient composition. -/
+/-- For composable presheaf morphisms f₁ : F₁ → F₂, f₂ : F₂ → F₃ and g₁ : G₁ → G₂, g₂ : G₂ → G₃ on
+X's small étale category, the composite tensor map (f₁⊗g₁)≫(f₂⊗g₂) equals (f₁≫f₂)⊗(g₁≫g₂). All
+tensors are sectionwise over ℤ. -/
 theorem smallEtaleTensorPresheafMap_comp (X : Scheme.{u})
     {F₁ F₂ F₃ G₁ G₂ G₃ : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}}
     (f₁ : F₁ ⟶ F₂) (f₂ : F₂ ⟶ F₃) (g₁ : G₁ ⟶ G₂) (g₂ : G₂ ⟶ G₃) :
@@ -386,7 +432,9 @@ theorem smallEtaleTensorPresheafMap_comp (X : Scheme.{u})
       (f₁.app U).hom.toIntLinearMap (g₁.app U).hom.toIntLinearMap).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor sheaf map respects original coefficient composition. -/
+/-- For composable additive-group sheaf maps f₁,f₂ and g₁,g₂ on X's small étale topology, the
+tensor sheaf maps satisfy (f₁⊗g₁)≫(f₂⊗g₂)=(f₁≫f₂)⊗(g₁≫g₂). This is equality of maps between
+the sheafified sectionwise tensors. -/
 theorem smallEtaleTensorSheafMap_comp (X : Scheme.{u})
     {F₁ F₂ F₃ G₁ G₂ G₃ : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f₁ : F₁ ⟶ F₂) (f₂ : F₂ ⟶ F₃) (g₁ : G₁ ⟶ G₂) (g₂ : G₂ ⟶ G₃) :
@@ -398,7 +446,9 @@ theorem smallEtaleTensorSheafMap_comp (X : Scheme.{u})
       (congrArg S.map (smallEtaleTensorPresheafMap_comp.{u, w} X f₁.hom f₂.hom g₁.hom g₂.hom))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor presheaf map preserves the original identities. -/
+/-- Let X be a scheme and F,G additive-group presheaves on its small étale category. The tensor
+presheaf map induced by id_F and id_G is the identity of the sectionwise integer tensor
+presheaf F⊗G. -/
 theorem smallEtaleTensorPresheafMap_id (X : Scheme.{u})
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
     smallEtaleTensorPresheafMap.{u, w} X (𝟙 F) (𝟙 G) = 𝟙 _ := by
@@ -410,14 +460,18 @@ theorem smallEtaleTensorPresheafMap_id (X : Scheme.{u})
     AddCommGrpCat.ofHom l.toAddMonoidHom) h
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor sheaf map preserves the original identities. -/
+/-- For additive-group sheaves F,G on the small étale topology of X, the tensor sheaf map induced
+by their identities is the identity of the sheafified tensor coefficient object. -/
 theorem smallEtaleTensorSheafMap_id (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheafMap.{u, w} X (𝟙 F) (𝟙 G) = 𝟙 _ := by
   let S := presheafToSheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
   exact (congrArg S.map (smallEtaleTensorPresheafMap_id.{u, w} X F.obj G.obj)).trans (S.map_id _)
 
-/-- Original global sections have the actual binary map to sections of the tensor sheaf. -/
+/-- Let X be a scheme and F,G additive-group sheaves in universe max(u,w) on its small étale
+topology. The terminal identity étale object gives Γ(F)⊗_ℤ Γ(G) → Γ(F⊗G): evaluate the two
+global sections at that terminal object, tensor their values, map by the sheafification unit,
+and return through the terminal-to-global section isomorphism. -/
 def smallEtaleGammaTensorMap (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     AddCommGrpCat.of
@@ -449,7 +503,10 @@ private theorem tensorSectionIsoValue.{s} (A B D E H : AddCommGrpCat.{s})
       g.hom.toIntLinearMap).toAddMonoidHom) q e) (a ⊗ₜ[ℤ] b)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The global-section tensor map has the literal product of original terminal-section values. -/
+/-- For additive-group sheaves F,G on X's small étale site and global sections a,b, let
+s_F(a),s_G(b) be their values at id_X under the terminal-section isomorphisms. The image of
+a⊗b under smallEtaleGammaTensorMap is the global section corresponding to the
+sheafification-unit image of s_F(a)⊗s_G(b) at id_X. -/
 theorem smallEtaleGammaTensorMap_tmul (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     (a : (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).obj F)
@@ -472,7 +529,9 @@ theorem smallEtaleGammaTensorMap_tmul (X : Scheme.{u})
     (S.app (smallEtaleTensorSheaf.{u, w} X F G)) a b
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original global-section tensor map is natural in every pair of sheaf coefficient maps. -/
+/-- Let X be a scheme, f : F → F′ and g : G → G′ additive-group sheaf morphisms, and c the global
+tensor map. Then (Γ(f)⊗Γ(g))≫c_{F′,G′}=c_{F,G}≫Γ(f⊗g). This compares the maps Γ(F)⊗_ℤ Γ(G) →
+Γ(F′⊗G′). -/
 theorem smallEtaleGammaTensorMap_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :

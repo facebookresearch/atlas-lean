@@ -1,3 +1,5 @@
-# Cancellation Nat Iso inv tmul
+# The inverse categorical cancellation on generators
 
-The categorical inverse has the actual native original-carrier formula.
+The inverse categorical cancellation on generators.
+
+At L, the inverse natural comparison sends m ⊗_R l to m ⊗_S (1 ⊗_R l).

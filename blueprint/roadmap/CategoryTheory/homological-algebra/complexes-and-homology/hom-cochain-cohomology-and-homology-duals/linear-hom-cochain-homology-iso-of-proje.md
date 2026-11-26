@@ -1,5 +1,6 @@
-# Linear Hom Cochain Homology Iso Of Projective Terms And Homology
+# The projective-terms-and-homology isomorphism uses the canonical restriction-and-descent map
 
-The universal-coefficient isomorphism for a complex whose terms and homology
-objects are projective, whose forward map is the canonical Hom-cochain
-comparison.  It exposes no chosen splitting.
+Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For a chain complex K with K_i and H_iK projective for every
+i, M∈C and n∈ℕ, this is the canonical isomorphism H^nHom_C(K,M)≅Hom_C(H_nK,M). Its forward map
+is Φ_n, sending a cochain cocycle class to the morphism it induces on chain homology.

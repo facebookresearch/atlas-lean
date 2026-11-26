@@ -15,19 +15,22 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensorRight.Universe
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.TransportComparison
 
 /-!
-# Tor comparisons from the original source category
+# Tor comparisons after enlarging the module universe
 
-The original right-module category is assumed to have projective resolutions,
-and its actual native universe lift is assumed to preserve projective objects.
-These are the capabilities used by source precomposition. Ring smallness in the
-original carrier universe is not required here. The established sufficient-world
-comparisons retain their smallness hypotheses and are not changed by this module.
+Let `R : Type r` and `S : Type s` be associative rings and `B : Type v` an `R`-left, `S`-right
+bimodule. Put `λ = max r v z`. Assume `ModuleCat.{v} Rᵐᵒᵖ` has projective resolutions and its
+lift to carrier universe `λ` preserves projective objects.
 
-The comparison is the composition of exact target postcomposition, derivation of
-the actual whole-output tensor isomorphism, and native source precomposition.
-Its augmentation, connecting morphism and coefficient squares use those same
-three comparisons. The outer ring needs no smallness or projective resolutions;
-the coefficient module need not be projective.
+Tor computed in the source module category, followed by lifting the right `S`-module output,
+is naturally isomorphic to the larger-universe Tor construction on the lifted inputs and
+coefficient. The comparison combines exact target lifting, the tensor coordinate isomorphism,
+and source lifting. It respects the degree-zero tensor augmentation and the connecting
+morphisms.
+
+These isomorphisms compare the six-term Tor windows of short exact sequences and commute with
+maps of such sequences and bimodule coefficients. The unlifted windows also have their derived
+sequence and coefficient maps. The ring, outer ring, coefficient, and auxiliary lift universes
+remain independent.
 -/
 
 @[expose] public section
@@ -49,7 +52,12 @@ variable (B' : Type vGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   [SMulCommClass R Sᵐᵒᵖ B']
   (f : B →ₗ[R] B') (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- The whole-output tensor comparison respects the actual original coefficient map. -/
+/-- Lifted tensor comparison is natural in bimodule coefficients.
+
+For an `R`-linear coefficient map `f : B → B'` preserving the right `S`-action, the tensor
+coefficient transformation in the larger universe followed by the target tensor comparison
+equals the source tensor comparison followed by lifting the unlifted coefficient
+transformation. -/
 theorem tensorOriginalLiftIsoAt_natural_coefficient.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -93,7 +101,11 @@ section OriginalWindows
 
 variable [HasProjectiveResolutions (ModuleCat.{vGlobal} Rᵐᵒᵖ)]
 
-/-- Native derived input maps give the map between the original exact windows. -/
+/-- Map of source-universe Tor windows from a short-complex morphism.
+
+Assume projective resolutions for right `R`-modules in the source carrier universe. A morphism
+`φ : Q ⟶ Q'` between short exact complexes induces a morphism of their six-term Tor windows in
+degrees `n + 1` and `n`, with the derived maps on the three objects in each degree. -/
 def originalTorLongSequenceMap (n : ℕ)
     (Q Q' : ShortComplex (ModuleCat.{vGlobal} Rᵐᵒᵖ)) (φ : Q ⟶ Q')
     (hQ : Q.ShortExact) (hQ' : Q'.ShortExact) :
@@ -127,7 +139,11 @@ variable (B' : Type vGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   [SMulCommClass R Sᵐᵒᵖ B']
   (f : B →ₗ[R] B') (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- Native derivation of an original coefficient morphism maps the whole exact window. -/
+/-- Bimodule coefficient map on a source-universe Tor window.
+
+Assuming source projective resolutions, an `R`-linear coefficient map preserving the right
+`S`-action induces a morphism between the six-term Tor windows for `B` and `B'` at a fixed
+short exact sequence. -/
 def originalTorLongSequenceCoefficientMap (n : ℕ)
     (Q : ShortComplex (ModuleCat.{vGlobal} Rᵐᵒᵖ)) (hQ : Q.ShortExact) :
     LeftDerivedDelta.LDlongSequence (tensorFunctor R S B) n Q hQ ⟶
@@ -150,7 +166,12 @@ section ProjectiveLift
 variable [HasProjectiveResolutions (ModuleCat.{vGlobal} Rᵐᵒᵖ)]
   [(ModuleCat.uliftFunctor.{max rGlobal vGlobal zGlobal, vGlobal} Rᵐᵒᵖ).PreservesProjectiveObjects]
 
-/-- Actual source capabilities compare original Tor with Tor derived in the larger universe. -/
+/-- Source Tor after output lifting as larger-universe Tor.
+
+Put `λ = max r v z`. If the source right-module category has projective resolutions and
+`ModuleCat.uliftFunctor.{λ,v} Rᵐᵒᵖ` preserves projective objects, then `torFunctor R S B n`
+followed by lifting the right `S`-module output is naturally isomorphic to
+`torFunctorAt.{z,r,s,v,v} R S B n`. -/
 def torOriginalWorldIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -169,7 +190,12 @@ def torOriginalWorldIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring 
     (tensorOriginalLiftIsoAt.{z, r, s, v} R S B) n
 
 
-/-- The hom is the actual postcomposition, tensor and source-precomposition factorization. -/
+/-- Factorization of the Tor comparison across module universes.
+
+Under the source resolution and projective-lift assumptions, the forward comparison is the
+derived exact-target-lift isomorphism, followed by left derivation of the inverse tensor
+comparison, followed by the source-precomposition isomorphism for the projective-preserving
+lift. -/
 theorem torOriginalWorldIsoAt_hom.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -187,7 +213,11 @@ theorem torOriginalWorldIsoAt_hom.{z, r, s, v} (R : Type r) (S : Type s) [Ring R
         (NatIso.leftDerived (tensorOriginalLiftIsoAt R S B).symm n).hom ≫
           (Functor.leftDerivedPrecompIso U G n).hom := rfl
 
-/-- The comparison preserves the canonical augmentation and the actual original tensor. -/
+/-- Universe comparison respects the degree-zero Tor augmentation.
+
+Under the source resolution and projective-lift assumptions, the degree-zero Tor comparison
+followed by the larger-universe zero-Tor and tensor coordinates equals the lifted source
+degree-zero augmentation. -/
 theorem torOriginalWorldIsoAt_hom_zero.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -217,7 +247,12 @@ theorem torOriginalWorldIsoAt_hom_zero.{z, r, s, v} (R : Type r) (S : Type s) [R
         (Category.comp_id _))))
 
 
-/-- Source capabilities suffice for the comparison of the actual connecting morphisms. -/
+/-- Universe comparison commutes with the Tor connecting morphism.
+
+For a short exact complex `Q`, compare `Tor_(n+1)(Q.X₃)` and `Tor_n(Q.X₁)` across the module
+universes. The larger connecting morphism after the degree-`n + 1` comparison equals the
+lifted source connecting morphism followed by the degree-`n` comparison, under the source
+resolution and projective-lift assumptions. -/
 theorem torOriginalWorldIsoAt_hom_delta.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -240,7 +275,11 @@ theorem torOriginalWorldIsoAt_hom_delta.{z, r, s, v} (R : Type r) (S : Type s) [
   exact Functor.leftDerivedTransportIso_hom_LDdelta U V F G e n Q hQ
 
 
-/-- The whole original exact window is compared using these same six object isomorphisms. -/
+/-- Isomorphism of Tor windows across module universes.
+
+Assume source projective resolutions and that the source right-module lift to `λ = max r v z`
+preserves projective objects. For a short exact sequence `Q`, the lifted six-term source Tor
+window in degrees `n + 1` and `n` is isomorphic to the larger-universe Tor window. -/
 def torOriginalWorldLongSequenceIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -260,7 +299,12 @@ def torOriginalWorldLongSequenceIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ri
   · exact β.hom.naturality Q.f
   · exact β.hom.naturality Q.g
 
-/-- The original boundary followed by the original tensor augmentation has the same value. -/
+/-- Universe comparison respects the Tor-one boundary into tensor.
+
+Under the source resolution and projective-lift assumptions, the map from larger-universe
+`Tor₁(Q.X₃)` to the tensor object at `Q.X₁`, transported by the Tor and tensor comparison
+coordinates, equals the lift of the source connecting morphism in degree zero followed by its
+zero-Tor isomorphism. -/
 theorem torOriginalWorldBoundaryToTensorAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -294,7 +338,12 @@ theorem torOriginalWorldBoundaryToTensorAt.{z, r, s, v} (R : Type r) (S : Type s
         ((Category.assoc d (ε ≫ q) e).trans
           ((congrArg (fun f => d ≫ f) h₀).trans (V.map_comp _ _).symm))))
 
-/-- Maps of original short exact sequences commute with the whole window comparison. -/
+/-- Tor-window universe comparison is natural in short exact sequences.
+
+For a morphism between short exact complexes `Q` and `Q'`, the lifted source Tor-window map
+followed by the comparison for `Q'` equals the comparison for `Q` followed by the larger-
+universe window map. The source projective-resolution and projective-lift assumptions are
+retained. -/
 theorem torOriginalWorldLongSequenceIsoAt_natural_sequence.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -321,7 +370,11 @@ variable (B' : Type vGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   [SMulCommClass R Sᵐᵒᵖ B']
   (f : B →ₗ[R] B') (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- The comparison is natural in the actual original coefficient morphism. -/
+/-- Tor universe comparison is natural in a bimodule coefficient map.
+
+Under the source resolution and projective-lift assumptions, an `R`-linear coefficient map
+preserving the right `S`-action commutes with the degree-`n` Tor comparison. Lift the source
+coefficient transformation and compare with its larger-universe transformation. -/
 theorem torOriginalWorldIsoAt_natural_coefficient.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -352,7 +405,12 @@ theorem torOriginalWorldIsoAt_natural_coefficient.{z, r, s, v} (R : Type r) (S :
     (tensorOriginalLiftIsoAt_natural_coefficient R S B B' f hf) n
 
 
-/-- Actual coefficient morphisms commute with the original-world exact-window comparison. -/
+/-- Tor-window universe comparison is natural in coefficients.
+
+For a fixed short exact sequence and a compatible map `B → B'`, the lifted source coefficient
+map of Tor windows followed by the comparison for `B'` equals the comparison for `B` followed
+by the larger-universe coefficient window map, under the source resolution and projective-lift
+assumptions. -/
 theorem torOriginalWorldLongSequenceIsoAt_natural_coefficient.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type v) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]

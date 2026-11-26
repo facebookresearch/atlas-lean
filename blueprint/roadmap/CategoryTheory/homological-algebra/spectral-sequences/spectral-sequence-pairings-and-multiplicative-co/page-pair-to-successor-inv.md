@@ -1,3 +1,6 @@
-# Page Pair To successor inv
+# The inverse successor square for a specified page product
 
-The inverse original successor comparison computes the actual homology product at equal positions.
+The inverse successor square for a specified page product.
+
+Returning a next-page product through the output inverse successor equals returning both
+inputs and applying the homology product.

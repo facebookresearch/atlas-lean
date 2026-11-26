@@ -1,3 +1,6 @@
-# Normalized Coefficient Differential Form Chain Map
+# The normalized coefficient differential-form chain projection
 
-Native normalized descent of the original raw projection to coefficient forms.
+The normalized coefficient differential-form chain projection.
+
+The coefficient-form chain map descends through Hochschild normalization by its vanishing on
+every unit degeneracy.

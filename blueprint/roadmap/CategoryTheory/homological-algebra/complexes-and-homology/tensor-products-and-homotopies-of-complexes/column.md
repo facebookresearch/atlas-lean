@@ -1,4 +1,6 @@
-# Column
+# The second-direction column complex
 
-The vertical column of a raw anticommuting bicomplex, retaining the
-original second differential and arbitrary source shapes.
+The second-direction column complex.
+
+Fix the first degree i₁ and use the objects K.X(i₁,i₂) with the second differential d₂, in
+shape c₂.

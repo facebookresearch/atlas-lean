@@ -1,3 +1,5 @@
-# Pair Coordinate Homology To Quotient Kernel
+# The induced map from pair coordinate homology
 
-The cycle map descends to coordinate degree-one homology.
+The induced map from pair coordinate homology.
+
+Descend the second-coordinate quotient map through the coordinate boundary quotient.

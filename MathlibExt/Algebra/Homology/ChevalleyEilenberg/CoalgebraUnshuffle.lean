@@ -15,12 +15,21 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.UnshuffleCoproduct
 import Lean.Elab.Tactic.Omega
 
 /-!
-# Unshuffle formulas for the Chevalley–Eilenberg coproduct
+# Exterior unshuffles in the Chevalley–Eilenberg chain coproduct
 
-Diagonal expansion and the shuffle-coset bijection identify the homogeneous
-coproduct components with the exterior unshuffle maps. This gives the finite
-unshuffle formula for the chain coproduct and its coderivation equation in
-every degree.
+Let R be commutative and L an R-Lie algebra. In source degree p+q,
+the projected coproduct is the exterior unshuffle
+U_{p,q}:Λ_R^{p+q}L→Λ_R^pL⊗_RΛ_R^qL.
+For an ordered wedge, it sums over p-element subsets I and their
+complements J, with both blocks in increasing order. The coefficient
+is the sign of the permutation whose ordered blocks are (I,J).
+
+Under p+q=n, write U_{n;p,q} for the same map with source Λ_R^nL.
+Then
+U_{n;p,q}d_n=(d_p⊗id)U_{n+1;p+1,q}
++(−1)^p(id⊗d_q)U_{n+1;p,q+1}.
+The chain coproduct is ∑_{p+q=n} ι_{p,q}U_{p,q}, including both
+empty-block terms. All coefficients are integral.
 -/
 
 @[expose] public section
@@ -37,7 +46,14 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- In every bidegree, the projected coproduct is the native general unshuffle. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+In degree n=p+q, the projected primitive coproduct is the
+exterior unshuffle: c_{p+q;p,q}=U_{p,q}. Its two blocks retain
+their internal order and have the unshuffle permutation sign. -/
 theorem coproductComponent_eq_unshuffle (p q : ℕ) :
     coproductComponent R L (p + q) p q = exteriorPower.unshuffle R L p q := by
   apply LinearMap.ext
@@ -45,7 +61,13 @@ theorem coproductComponent_eq_unshuffle (p q : ℕ) :
   rw [coproductComponent_apply]
   exact LinearMap.congr_fun (exteriorPower.projectedCoproduct_eq_unshuffle R L p q) a
 
-/-- Arithmetic transport of the unshuffle source degree. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+For a specified equality p+q=n, the exterior unshuffle gives
+U_{n;p,q}:Λ_R^nL→Λ_R^pL⊗Λ_R^qL with that source degree. -/
 def unshuffleOfSumEq (n p q : ℕ) (h : p + q = n) :
     (⋀[R]^n L) →ₗ[R] ((⋀[R]^p L) ⊗[R] (⋀[R]^q L)) := by
   subst n
@@ -56,7 +78,15 @@ theorem coproductComponent_eq_unshuffleOfSumEq (n p q : ℕ) (h : p + q = n) :
   subst n
   exact coproductComponent_eq_unshuffle R L p q
 
-/-- The all-degree unshuffle differential equation, with both empty blocks included. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+For p+q=n, the unshuffle differential square is
+U_{n;p,q}d_n=(d_p⊗id)U_{n+1;p+1,q}
++(−1)^p(id⊗d_q)U_{n+1;p,q+1}.
+This includes p=0 and q=0. -/
 theorem unshuffle_boundary (n p q : ℕ) (h : p + q = n) :
     (unshuffleOfSumEq R L n p q h).comp (differential R L n) =
       ((differential R L p).rTensor (⋀[R]^q L)).comp
@@ -67,7 +97,14 @@ theorem unshuffle_boundary (n p q : ℕ) (h : p + q = n) :
     ← coproductComponent_eq_unshuffleOfSumEq, ← coproductComponent_eq_unshuffleOfSumEq]
   exact coproductComponent_boundary R L n p q
 
-/-- The native CE chain coproduct has the full finite general-unshuffle formula. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Write π_p:E→Λ_R^pL for the homogeneous projection and
+d_p:Λ_R^{p+1}L→Λ_R^pL for the restricted boundary.
+On a decomposable n-fold wedge, the chain coproduct is
+∑_{p=0}^{n} ι_{p,n−p}U_{n;p,n−p}(w), where each ι
+includes the corresponding tensor summand in total degree n. -/
 theorem nativeComplexComul_apply_ιMulti (n : ℕ) (w : Fin n → L) :
     ((nativeComplexComul R L).f n).hom (exteriorPower.ιMulti R n w) =
       ∑ p : Fin (n + 1),

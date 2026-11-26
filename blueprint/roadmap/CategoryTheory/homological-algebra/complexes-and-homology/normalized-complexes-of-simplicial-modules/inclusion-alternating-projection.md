@@ -1,3 +1,7 @@
-# Inclusion alternating projection
+# Factorization of the normalized simplicial map
 
-The native normalized map is its original inclusion/alternating/projection composite.
+Factorization of the normalized simplicial map.
+
+Let C be abelian and f : X ⟶ Y a simplicial morphism. Its normalized Moore chain map is (i_X ≫
+A(f)) ≫ p_Y, where i_X includes N(X) in the alternating face-map complex A(X) and p_Y projects
+A(Y) onto N(Y).

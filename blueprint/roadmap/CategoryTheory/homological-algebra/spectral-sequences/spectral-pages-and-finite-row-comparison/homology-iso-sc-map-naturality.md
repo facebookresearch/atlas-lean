@@ -1,4 +1,6 @@
-# Homology Iso Sc' map naturality
+# Naturality of homology comparison at specified neighboring indices
 
-The actual homology comparison with specified neighboring indices is
-natural for the original complex map, by the native short-complex natural isomorphism.
+Naturality of homology comparison at specified neighboring indices.
+
+For prev(j)=i and next(j)=k, the homology comparison with the three-term complex commutes with
+a complex morphism.

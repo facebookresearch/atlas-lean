@@ -56,14 +56,19 @@ def cotangentDiagram : SimplicialObject (ModuleCat.{max u v w} k) :=
 def augmentation : diagram k B M ⟶ cotangentDiagram k B M ⋙ ChainComplex.single₀ (ModuleCat.{max u v w} k) :=
   simplicialAugmentation k B M (resolution k B)
 
-/-- Original degree p uses the original preceding-polynomial-power generator carrier. -/
-abbrev «variables» (p : ℕ) : Type (max u v) := (CommAlgCat.polynomialPower k p).obj B
+/-- For a commutative ℚ-algebra `k`, a commutative `k`-algebra `B`, and `p : ℕ`,
+this is the carrier of the `p`th iterated polynomial-power object of `B`. It is
+the generator type presenting degree `p` of the canonical polynomial resolution. -/
+abbrev polynomialVariables (p : ℕ) : Type (max u v) := (CommAlgCat.polynomialPower k p).obj B
+
+-- Legacy spelling for the same generator carrier.
+abbrev «variables» (p : ℕ) : Type (max u v) := polynomialVariables k B p
 
 /-- The canonical degree isomorphism earns every original column comparison. -/
 theorem augmentation_column_quasiIso (p : ℕ) :
     _root_.QuasiIso ((augmentation k B M).app (op ⦋p⦌)) :=
   simplicialAugmentation_app_quasiIso_of_polynomialPresentation k B M (resolution k B)
-    (op ⦋p⦌) («variables» k B p) (CommAlgCat.polynomialResolutionObjIso k B p)
+    (op ⦋p⦌) (polynomialVariables k B p) (CommAlgCat.polynomialResolutionObjIso k B p)
 
 /-- The nonnegative bicomplex of original shifted proper quotient columns. -/
 def bicomplex : HomologicalComplex₂ (ModuleCat.{max u v w} k) (.down ℕ) (.down ℕ) :=

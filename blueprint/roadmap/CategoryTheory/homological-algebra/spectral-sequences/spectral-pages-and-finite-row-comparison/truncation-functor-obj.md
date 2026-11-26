@@ -1,3 +1,5 @@
-# Truncation Functor obj
+# Objects of the truncation functor
 
-The functor retains the actual restricted sequence as its object.
+Objects of the truncation functor.
+
+Its value at S is S.truncate r₁.

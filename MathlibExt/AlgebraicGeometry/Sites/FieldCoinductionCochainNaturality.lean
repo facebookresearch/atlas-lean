@@ -13,10 +13,28 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldContinuousCohomologyDerive
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementCoindCochainComparison
 public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionCoefficientNaturality
 
-/-! Actual original field native comparison proof components. -/
+/-!
+# Coinduction invariants and continuous coefficient maps
 
-/-! Original qualified proof block: FieldCoindCoefficientConnector -/
-/-! Actual coefficient boundaries of the original coinduction invariant complex. -/
+Apply invariants to the cosimplicial coinduction coresolution and take its alternating coface
+complex. This complex is naturally isomorphic to continuous homogeneous cochains of the same
+discrete field coefficient.
+
+Coefficient maps commute with the term and complex comparisons. Coefficient-exact sequences
+give short exact sequences of these complexes, and their cohomology connecting maps agree
+through the comparison.
+-/
+
+/-!
+# Coefficient maps of invariant coinduction
+
+The term comparisons identify invariant coinduction maps with maps of continuous homogeneous
+cochains.
+-/
+/-!
+In each cochain degree, coefficient maps commute with the coinduction-to-homogeneous term
+isomorphisms.
+-/
 
 @[expose] public section
 section
@@ -29,7 +47,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The actual invariant alternating complex of the fixed coinduction monad. -/
+/-- Functor of invariant coinduction cochains.
+
+Form the coinduction monad coresolution, apply invariants cosimplicially, and take the
+alternating coface complex. -/
 abbrev fieldCoindInvariantComplexFunctor :
     DiscreteAbelianAction.{u, max u w} Gal(Ω/k) ⥤ CochainComplex AddCommGrpCat.{max u w} ℕ :=
   Monad.coresolutionFunctor (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) ⋙
@@ -38,7 +59,10 @@ abbrev fieldCoindInvariantComplexFunctor :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Each degree map of the fixed original comparison is the actual invariant coinduction term map. -/
+/-- Invariant coinduction comparison in each degree.
+
+The forward component is the underlying additive invariants map of the coinduction
+coresolution term isomorphism. -/
 theorem fieldCoindInvariantCochainIso_hom_f
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (n : ℕ) :
     (fieldCoindInvariantCochainIso.{u, w} k Ω M).hom.f n =
@@ -52,7 +76,10 @@ theorem fieldCoindInvariantCochainIso_hom_f
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The coefficient map in each actual coinduction invariant degree is its original term map. -/
+/-- Invariant coinduction coefficient map in each degree.
+
+A coefficient morphism acts by invariants of its monad-coresolution component, followed by
+forgetting to additive groups. -/
 theorem fieldCoindInvariantComplexFunctor_map_f
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) (n : ℕ) :
     ((fieldCoindInvariantComplexFunctor.{u, w} k Ω).map f).f n =
@@ -64,7 +91,10 @@ theorem fieldCoindInvariantComplexFunctor_map_f
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The SAME original native coefficient complex keeps the stock identity-group resolution map. -/
+/-- Continuous homogeneous coefficient map in each degree.
+
+The coefficient cochain map is the underlying invariants map of the homogeneous resolution map
+with identity group homomorphism. -/
 theorem fieldNativeCoefficientComplex_map_f
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) (n : ℕ) :
     ((ContinuousCohomology.discreteCoefficientCochainFunctor.{u, w}
@@ -80,7 +110,10 @@ theorem fieldNativeCoefficientComplex_map_f
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine original coinduction degree square follows from its checked term comparison. -/
+/-- Term comparison commutes with coefficient maps.
+
+In each natural degree, the invariant-coinduction coefficient map followed by comparison
+equals comparison followed by the continuous-cochain coefficient map. -/
 theorem fieldCoindInvariantCochainIso_coefficient_component
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) (n : ℕ) :
     ((fieldCoindInvariantComplexFunctor.{u, w} k Ω).map f).f n ≫
@@ -95,7 +128,9 @@ theorem fieldCoindInvariantCochainIso_coefficient_component
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The fixed original comparison is natural in every actual coefficient map. -/
+/-- Invariant coinduction complex comparison is natural.
+
+The entire cochain comparison square commutes with every discrete Galois coefficient morphism. -/
 theorem fieldCoindInvariantCochainIso_coefficient_naturality
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) :
     (fieldCoindInvariantComplexFunctor.{u, w} k Ω).map f ≫
@@ -107,7 +142,10 @@ theorem fieldCoindInvariantCochainIso_coefficient_naturality
   funext n
   exact fieldCoindInvariantCochainIso_coefficient_component.{u, w} k Ω f n
 
-/-- The same actual coefficient-complex comparison as a natural isomorphism. -/
+/-- Natural isomorphism from invariant coinduction to continuous cochains.
+
+The coefficient-natural term comparisons assemble to a natural isomorphism of the two cochain-
+complex functors. -/
 def fieldCoindInvariantCochainNatIso :
     fieldCoindInvariantComplexFunctor.{u, w} k Ω ≅
       ContinuousCohomology.discreteCoefficientCochainFunctor.{u, w}
@@ -118,8 +156,15 @@ def fieldCoindInvariantCochainNatIso :
 end AlgebraicGeometry.Scheme.DerivedSections
 end
 
-/-! Original qualified proof block: FieldCoindCoefficientDelta -/
-/-! Actual coefficient connecting maps of the same original coinduction invariant complex. -/
+/-!
+# Connecting maps of invariant coinduction
+
+Coefficient-exact sequences give short exact sequences of the two cochain complexes.
+-/
+/-!
+The cohomology connecting morphisms in degrees `n` and `n+1` commute with the natural cochain
+comparison.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -143,6 +188,9 @@ variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
+/-- Invariant coinduction cochain functor is additive.
+
+The invariant-coinduction complex functor preserves addition of coefficient morphisms. -/
 instance fieldCoindInvariantComplexFunctor_additive :
     (fieldCoindInvariantComplexFunctor.{u, w} k Ω).Additive := by
   let F := ContinuousCohomology.discreteCoefficientCochainFunctor.{u, w}
@@ -155,8 +203,10 @@ instance fieldCoindInvariantComplexFunctor_additive :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Genuine original coefficient exactness gives a true short exact sequence of the
-actual coinduction invariant complexes, through the fixed natural comparison. -/
+/-- Coefficient exactness gives an exact invariant coinduction sequence.
+
+A sequence satisfying the continuous-coefficient exactness predicate maps to a short exact
+sequence of invariant-coinduction cochain complexes. -/
 theorem fieldCoindInvariantComplex_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{u, max u w} Gal(Ω/k)))
     (hS : ContinuousCohomology.DiscreteCoefficientExact.{u, w}
@@ -169,8 +219,11 @@ theorem fieldCoindInvariantComplex_shortExact
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual homology connector of the fixed coinduction invariant complexes
-agrees with the SAME original native coefficient cochain connector. -/
+/-- Invariant coinduction and continuous connecting maps agree.
+
+For a coefficient-exact sequence, its invariant-coinduction connecting map followed by the
+degree-`n+1` comparison equals the degree-`n` comparison followed by the continuous-cochain
+connecting map. -/
 theorem fieldCoindInvariantCochainIso_coefficient_connecting
     (S : ShortComplex (DiscreteAbelianAction.{u, max u w} Gal(Ω/k)))
     (hS : ContinuousCohomology.DiscreteCoefficientExact.{u, w}

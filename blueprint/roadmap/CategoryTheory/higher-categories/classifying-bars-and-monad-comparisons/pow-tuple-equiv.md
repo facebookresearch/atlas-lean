@@ -1,9 +1,6 @@
-# Pow Tuple Equiv
+# Tuple coordinates for iterated powers at the point
 
-Head-first power equivalence, via the generalized reader at `PUnit`.
+Tuple coordinates for iterated powers at the point.
 
-`(monadPow (tensorMonad G) n).obj PUnit` is the left-nested product
-`G × (G × ... × PUnit)`; `t 0` is the outermost factor. Defining it through
-`powTupleGen` keeps a single recursion principle: every tuple interaction
-(zero/last/middle faces, degeneracies) is proved once for general `X` and
-specialized here by dropping the terminal `PUnit` factor.
+The equivalence Tⁿ(PUnit) ≃ (Fin n → G) removes the final point coordinate from the
+generalized power equivalence. The outermost G-factor is coordinate 0.

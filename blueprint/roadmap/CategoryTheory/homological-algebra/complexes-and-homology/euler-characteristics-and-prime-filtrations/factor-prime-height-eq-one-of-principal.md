@@ -1,4 +1,6 @@
-# Euler characteristics and prime filtrations
+# A contributing factor of a regular principal quotient has height one
 
-Each nonzero-contributing Euler factor of an original regular
-principal quotient has an original prime of height one.
+A contributing factor of a regular principal quotient has height one.
+
+For a ∈ nonZeroDivisors R, b in the maximal ideal and the stated support-dimension bound, a
+prime factor of the decomposition of R/(a) that excludes b has ideal height 1.

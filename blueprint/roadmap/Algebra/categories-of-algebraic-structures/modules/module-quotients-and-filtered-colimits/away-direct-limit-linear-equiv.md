@@ -1,4 +1,5 @@
-# Away Direct Limit Linear Equiv
+# The linear equivalence between the direct limit and away localization
 
-The sequential direct limit is canonically linearly equivalent to the
-localized module away from `r`.
+The linear equivalence between the direct limit and away localization.
+
+Identify the two localized-module models through their universal properties.

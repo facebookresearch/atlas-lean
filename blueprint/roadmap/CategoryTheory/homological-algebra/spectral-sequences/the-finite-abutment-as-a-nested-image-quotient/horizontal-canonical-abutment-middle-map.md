@@ -1,3 +1,4 @@
-# Horizontal Canonical Abutment Middle Map
+# Inclusion of consecutive cuts around a column
 
-Inclusion of the two consecutive filtration stages around column `p`.
+For p : ℕ, horizontalCanonicalAbutmentMiddleMap is the EInt inclusion ℓ→p for ℓ=(p:ℤ)−1. In
+particular the lower cut at p=0 is the integer -1.

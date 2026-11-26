@@ -1,3 +1,5 @@
-# Original identity coefficients give the actual tensor...
+# The identity coefficient gives the identity tensor transformation
 
-Original identity coefficients give the actual tensor identity at every raw input.
+For an (R,S)-bimodule B, the tensor coefficient
+transformation of id_B is id on Tensor_z(−,B).
+It fixes both factors of every lifted balanced class.

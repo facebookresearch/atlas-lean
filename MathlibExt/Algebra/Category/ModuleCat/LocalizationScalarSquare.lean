@@ -16,12 +16,15 @@ public import MathlibExt.Algebra.Category.ModuleCat.LocalizationColimits
 public import Mathlib.RingTheory.Localization.Module
 
 /-!
-# Scalar restriction in an actual localization square
+# Scalar extension and restriction in a localization square
 
-Localizing a coefficient module over an algebra at the image of a
-base submonoid agrees with localizing its base-ring restriction.
-The comparison retains the actual scalar maps of the commuting square.
-Neither scalar map from the base ring is required to be surjective.
+Consider a commuting square of commutative rings R → A, R → R′, A → A′ and R′ → A′, with maps
+φ,γ,δ,ψ satisfying ψγ = δφ. Assume γ localizes R at a submonoid T and δ localizes A at the
+image φ(T).
+
+For an A-module M, there is a natural R′-linear isomorphism R′ ⊗_R (M restricted along φ) ≅
+(A′ ⊗_A M) restricted along ψ. It sends r ⊗ m to ψ(r) ⊗ m and in particular preserves the
+element inserted as 1 ⊗ m. The scalar maps are the specified maps of the square.
 -/
 
 public section
@@ -39,8 +42,11 @@ variable (R A R' A' : Type u) [CommRing R] [CommRing A] [CommRing R'] [CommRing 
 variable (φ : R →+* A) (γ : R →+* R') (δ : A →+* A') (ψ : R' →+* A')
 variable (T : Submonoid R) (h : ψ.comp γ = δ.comp φ)
 
-/-- The two actual scalar-extension modules in a localization square
-are isomorphic over the original localized base ring. -/
+/-- The module comparison in a commuting localization square.
+
+If γ and δ are the localizations at T and φ(T), respectively, scalar extension along γ after
+restriction along φ is naturally identified with scalar extension along δ followed by
+restriction along ψ. -/
 def localizationScalarSquareIso
     (hR : letI : Algebra R R' := γ.toAlgebra; IsLocalization T R')
     (hA : letI : Algebra A A' := δ.toAlgebra; IsLocalization (T.map φ) A')
@@ -87,8 +93,9 @@ def localizationScalarSquareIso
   exact eE.toModuleIso ≪≫ e.toModuleIso ≪≫
     (restrictScalars ψ).mapIso eN.symm.toModuleIso
 
-/-- The genuine localization-square comparison preserves the original
-module element inserted by the scalar-extension unit. -/
+/-- The localization-square comparison on inserted module elements.
+
+For m ∈ M, the comparison sends 1 ⊗_R m to 1 ⊗_A m. -/
 theorem localizationScalarSquareIso_hom_one_tmul
     (hR : letI : Algebra R R' := γ.toAlgebra; IsLocalization T R')
     (hA : letI : Algebra A A' := δ.toAlgebra; IsLocalization (T.map φ) A')
@@ -146,7 +153,10 @@ theorem localizationScalarSquareIso_hom_one_tmul
     ((congrArg (fun x => eN.symm x) hm).trans
       ((congrArg (fun x => eN.symm x) hN.symm).trans (eN.symm_apply_apply _)))
 
-/-- The comparison has the actual localized scalar on every pure tensor. -/
+/-- The localization-square comparison on pure tensors.
+
+For r ∈ R′ and m ∈ M, the comparison sends r ⊗_R m to ψ(r) ⊗_A m in the target restricted
+R′-module. -/
 theorem localizationScalarSquareIso_hom_tmul
     (hR : letI : Algebra R R' := γ.toAlgebra; IsLocalization T R')
     (hA : letI : Algebra A A' := δ.toAlgebra; IsLocalization (T.map φ) A')
@@ -165,7 +175,10 @@ theorem localizationScalarSquareIso_hom_tmul
     ((e.hom.hom.map_smul r _).trans
       ((congrArg (fun x : (restrictScalars ψ).obj ((extendScalars δ).obj M) => r • x) hm).trans hN))
 
-/-- The actual comparison commutes with every coefficient-module map. -/
+/-- Naturality of the localization-square comparison in the coefficient module.
+
+For an A-linear map f : M → N, the comparison commutes with extending the restricted map along
+γ and with restricting the extended map along δ. -/
 theorem localizationScalarSquareIso_hom_naturality
     (hR : letI : Algebra R R' := γ.toAlgebra; IsLocalization T R')
     (hA : letI : Algebra A A' := δ.toAlgebra; IsLocalization (T.map φ) A')
@@ -187,8 +200,10 @@ theorem localizationScalarSquareIso_hom_naturality
   exact ((congrArg (fun x => eN.hom x) hE).trans hN).trans
     (((congrArg (fun x => (restrictScalars ψ).map ((extendScalars δ).map f) x) hM).trans hF).symm)
 
-/-- Localization of the base restriction and restriction of the
-localized coefficient are naturally isomorphic for the actual square. -/
+/-- The natural isomorphism of localization and restriction functors.
+
+For the specified localization square, restrictScalars φ followed by extendScalars γ is
+naturally isomorphic to extendScalars δ followed by restrictScalars ψ. -/
 def localizationScalarSquareNatIso
     (hR : letI : Algebra R R' := γ.toAlgebra; IsLocalization T R')
     (hA : letI : Algebra A A' := δ.toAlgebra; IsLocalization (T.map φ) A') :

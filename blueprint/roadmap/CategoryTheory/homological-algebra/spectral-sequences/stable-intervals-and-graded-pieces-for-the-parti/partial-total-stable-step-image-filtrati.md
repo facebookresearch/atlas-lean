@@ -1,4 +1,6 @@
-# Partial Total Stable Step Image Filtration Iso
+# The image-filtration coordinate of a nonnegative stable step
 
-The generic selected spectral image at a finite stage, identified with
-the corresponding partial-total homology filtration step.
+The image-filtration coordinate of a nonnegative stable step.
+
+The stable-step image at stage `s` identifies with the partial-total homology filtration
+subobject in degree `n`.

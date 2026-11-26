@@ -16,16 +16,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeThree
 
 /-!
-# The chosen-transversal H1 x H2 to H3 cup projection formula
+# The degree-one by degree-two cup projection formula
 
-For a `G`-one-cocycle `x` and an `H`-two-cocycle `y`, this file constructs
-an explicit degree-two cochain whose boundary measures the difference
-between the transfer of `res(x) cup y` and `x cup cor(y)`.  It then proves
-the corresponding representative and class-level projection formulas.
+Let H ≤ G have finite index and choose a right transversal T. For a G-one-cocycle x with
+values in A and an H-two-cocycle y with values in B, define K²(g,h) = ∑ₜ ρ_A(t⁻¹)x(t) ⊗
+ρ_B(t⁻¹)y(a(t,g),a(r(t,g),h)).
 
-The right transversal remains explicit.  No independence of that choice,
-canonical degree-three corestriction, field-theoretic, Kummer, norm-residue,
-or Bloch--Kato claim is made.
+The cochain identity is cor_T³(x|H ∪ y) = x ∪ cor_T²(y) − d²K². Passing to degree-three
+classes gives cor_T(res(x) ∪ y) = x ∪ cor_T(y), with A ⊗ B in that coefficient order and the
+canonical comparison of its restriction with A|H ⊗ B|H.
 -/
 
 @[expose] public section
@@ -44,12 +43,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for the one-by-two cup projection formula.
+
+The finite-index hypothesis gives a finite enumeration of T for the binary tensor-valued
+comparison sum. -/
 noncomputable local instance cupOneTwoProjectionTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The degree-two cochain measuring the failure of the `(1,2)` cup
-projection formula to hold strictly on cochains. -/
+/-- The degree-two cochain measuring the cup projection difference.
+
+For arbitrary x : G → A and y : H × H → B, sum ρ_A(t⁻¹)x(t) ⊗ ρ_B(t⁻¹)y(a(t,g),a(r(t,g),h))
+over t ∈ T. -/
 noncomputable def cupProjectionHomotopyOneTwo
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A) (y : H × H → B) : G × G → (A ⊗ B : Rep k G) :=
@@ -59,6 +64,10 @@ noncomputable def cupProjectionHomotopyOneTwo
         (y (T.schreierFactor t p.1,
           T.schreierFactor (T.schreierRep t p.1) p.2))
 
+/-- Values of the one-by-two projection cochain.
+
+At (g,h), K² is the inverse-weighted tensor sum of x(t) and y on the two successive subgroup
+factors of the Schreier scan. -/
 @[simp]
 theorem cupProjectionHomotopyOneTwo_apply
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
@@ -78,8 +87,10 @@ private theorem tensor_rho_tmul_one_two
   change TensorProduct.map (A.ρ g) (B.ρ g) (a ⊗ₜ[k] b) = _
   rw [TensorProduct.map_tmul]
 
-/-- The three non-leading terms of the degree-two homotopy boundary combine
-by the subgroup two-cocycle identity. -/
+/-- The two-cocycle identity in the projection comparison sum.
+
+For an H-two-cocycle y, K²(gh,i) − K²(g,hi) + K²(g,h) equals the sum with first factor
+ρ_A(t⁻¹)x(t) and second factor ρ_B(g r(t,g)⁻¹)y on the remaining two-factor scan. -/
 theorem cupProjectionHomotopyOneTwo_cocycle_terms
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A)
@@ -129,8 +140,10 @@ theorem cupProjectionHomotopyOneTwo_cocycle_terms
       rw [htmul]
     _ = u ⊗ₜ[k] q₀ := add_sub_cancel_right _ _
 
-/-- Acting on the degree-two homotopy reindexes through the Schreier
-permutation of the transversal. -/
+/-- The tensor action on the one-by-two projection cochain.
+
+Applying g to K²(h,i) and reindexing by u = r(t,g) gives terms ρ_A(gu⁻¹)x(u) ⊗
+ρ_B(gu⁻¹)y(a(u,h),a(r(u,h),i)). -/
 theorem rho_cupProjectionHomotopyOneTwo
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A) (y : H × H → B) (g h i : G) :
@@ -170,8 +183,10 @@ theorem rho_cupProjectionHomotopyOneTwo
               (y (T.schreierFactor t h,
                 T.schreierFactor (T.schreierRep t h) i))) |>.symm
 
-/-- The cup with the transferred degree-two right factor, written as the
-corresponding reindexed transversal sum. -/
+/-- The cup product with a transferred two-cochain.
+
+At (g,h,i), the cup of x with cor_T²(y) is the sum of x(g) ⊗ ρ_B(g r(t,g)⁻¹)y on the remaining
+two-factor scan. -/
 theorem cupCochainOneTwo_corestrictionCochainTwo
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A) (y : H × H → B) (g h i : G) :
@@ -208,8 +223,11 @@ theorem cupCochainOneTwo_corestrictionCochainTwo
               (y (T.schreierFactor t h,
                 T.schreierFactor (T.schreierRep t h) i))) |>.symm
 
-/-- A transferred restricted `(1,2)` cup summand split into the projection
-term and the two homotopy terms. -/
+/-- The transferred one-by-two cup summand.
+
+The cocycle identity for x expands an inverse-weighted restricted cup summand into the target
+cup term plus the comparison term from x(t) minus the translated comparison term from
+x(r(t,g)). -/
 theorem corestrictionCupOneTwo_term
     (A B : Rep k G) (T : H.RightTransversal)
     (x : cocycles₁ A)
@@ -262,9 +280,10 @@ theorem corestrictionCupOneTwo_term
   rw [hB, rho_inv_schreierFactor_cocycle A T x t g,
     TensorProduct.sub_tmul, TensorProduct.add_tmul]
 
-/-- Cochain-level `(1,2)` projection formula.  The transferred restricted
-cup is the cup with the transferred right factor minus the boundary of the
-explicit degree-two homotopy. -/
+/-- The one-by-two cochain projection identity with its boundary.
+
+For the stated one- and two-cocycles, cor_T³(x|H ∪ y) = x ∪ cor_T²(y) −
+d²(cupProjectionHomotopyOneTwo A B T x y). -/
 theorem corestrictionCochainThree_cup_one_two
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : cocycles₁ A)
@@ -318,7 +337,10 @@ theorem corestrictionCochainThree_cup_one_two
   simp only [Pi.sub_apply, d₂₃_hom_apply]
   abel
 
-/-- Representative-level chosen-transversal `(1,2)` projection formula. -/
+/-- The cup projection formula on one- and two-cocycle representatives.
+
+The transferred degree-three class of res(x) ∪ y equals the class of x cupped with the
+transferred two-cocycle y, using the canonical restriction–tensor coefficient comparison. -/
 theorem corestrictionH3OfRightTransversal_cupCocycleOneTwo
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : cocycles₁ A)
@@ -348,8 +370,10 @@ theorem corestrictionH3OfRightTransversal_cupCocycleOneTwo
   rw [map_neg, corestrictionCochainThree_cup_one_two]
   abel
 
-/-- Chosen-transversal H1 x H2 to H3 projection formula:
-`cor(res(x) cup y) = x cup cor(y)`. -/
+/-- The one-by-two projection formula on cohomology classes.
+
+For x ∈ H¹(G,A) and y ∈ H²(H,B|H), cor_T(res(x) ∪ y) = x ∪ cor_T(y) in H³(G,A ⊗ B), with the
+specified restriction–tensor comparison. -/
 theorem corestrictionH3OfRightTransversal_cupOneTwo
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : H1 A) (y : H2 (Rep.res (Subgroup.subtype H) B)) :

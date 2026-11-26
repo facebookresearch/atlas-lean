@@ -1,4 +1,6 @@
-# Alg Hom mem separable Closure
+# Finite étale algebra maps land in the relative separable closure
 
-A map out of any actual finite étale algebra lands in the relative closure.
-Its prime kernel is used even when the original map is not injective.
+Finite étale algebra maps land in the relative separable closure.
+
+For a finite étale `k`-algebra `A`, every value of a `k`-algebra map `A → Ψ` belongs to
+`separableClosure k Ψ`.

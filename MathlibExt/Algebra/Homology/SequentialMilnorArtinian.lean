@@ -12,16 +12,20 @@ public import MathlibExt.Algebra.Category.ModuleCat.MittagLefflerArtinian
 public import MathlibExt.Algebra.Category.ModuleCat.SequentialMittagLeffler
 
 /-!
-# Artinian inverse systems and the actual Milnor edge
+# Artinian towers and Milnor edge isomorphisms
 
-The preceding homology tower controls the kernel of the actual Milnor edge.
-Vanishing of its concrete sequential `lim¹` makes that edge an isomorphism.
-Artinian module homology supplies this vanishing through native Mittag--Leffler.
-Degreewise Artinian terms additionally make the actual DIFFERENCE epi through
-the existing module and degreewise APIs. Original transitions need not be epi.
+Let C be abelian with exact countable products and sequential inverse limits.
+For a tower K with epic product difference Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁)
+and c.Rel(i,j), vanishing of the concrete lim¹ of H_iK makes the Milnor
+edge H_j(lim K) → lim(H_jK) an isomorphism, natural in towers and preserving
+the homology maps of their stage projections.
 
-The relation between the preceding and current degrees remains explicit.
-No global limit-preserves-homology instance is introduced.
+For R-module complexes over an arbitrary ring, Artinian homology in degree i
+gives the Mittag–Leffler condition and lim¹ vanishing. Artinian terms in that
+single degree suffice because homology is a subquotient. If the terms are
+Artinian in every degree, the product difference is also epic, giving the
+edge isomorphism from the degreewise Artinian hypotheses alone.
+The ring, module-carrier and complex-index universes are independent.
 -/
 
 @[expose] public section
@@ -43,7 +47,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   [HasCountableProducts C] [CountableAB4Star C]
   [HasLimitsOfShape ℕᵒᵖ C]
 
-/-- Vanishing of the preceding concrete lim-one makes the actual Milnor edge iso. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+The canonical edge H_j(lim K) → lim(H_jK) is an isomorphism. -/
 theorem isIso_sequentialMilnorEdge_of_isZero
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (hK : Epi (sequentialDifference K))
     (i j : ι) (hij : c.Rel i j)
@@ -57,7 +66,12 @@ theorem isIso_sequentialMilnorEdge_of_isZero
   simpa only [sequentialMilnorShortComplex_g, sequentialMilnorShortComplex_X₂,
     sequentialMilnorShortComplex_X₃] using h
 
-/-- The canonical comparison is the isomorphism of the actual Milnor edge. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+The canonical isomorphism H_j(lim K) ≅ lim(H_jK) with the Milnor edge as forward map. -/
 def sequentialMilnorIsoOfIsZero
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (hK : Epi (sequentialDifference K))
     (i j : ι) (hij : c.Rel i j)
@@ -67,7 +81,12 @@ def sequentialMilnorIsoOfIsZero
     isIso_sequentialMilnorEdge_of_isZero K hK i j hij h₁
   exact asIso (sequentialMilnorEdge K hK i j hij)
 
-/-- The forward comparison is exactly the actual Milnor edge. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+The forward map of the comparison H_j(lim K) ≅ lim(H_jK) equals the canonical Milnor edge. -/
 @[simp]
 theorem sequentialMilnorIsoOfIsZero_hom
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (hK : Epi (sequentialDifference K))
@@ -76,7 +95,12 @@ theorem sequentialMilnorIsoOfIsZero_hom
     (sequentialMilnorIsoOfIsZero K hK i j hij h₁).hom =
       sequentialMilnorEdge K hK i j hij := rfl
 
-/-- Each forward coordinate is the actual homology map of the limit projection. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+For every stage n, the forward comparison followed by lim(H_jK) → H_j(Kₙ) equals H_j of the stage projection lim K → Kₙ. -/
 @[reassoc]
 theorem sequentialMilnorIsoOfIsZero_hom_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (hK : Epi (sequentialDifference K))
@@ -88,7 +112,12 @@ theorem sequentialMilnorIsoOfIsZero_hom_π
   simpa only [sequentialMilnorIsoOfIsZero_hom] using
     sequentialMilnorEdge_π K hK i j hij n
 
-/-- The inverse comparison retains the actual stage projections. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+For every stage n, H_j(lim K → Kₙ) composed after the inverse comparison equals the stage projection lim(H_jK) → H_j(Kₙ). -/
 @[reassoc (attr := simp)]
 theorem sequentialMilnorIsoOfIsZero_inv_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (hK : Epi (sequentialDifference K))
@@ -103,7 +132,11 @@ theorem sequentialMilnorIsoOfIsZero_inv_π
       (Iso.inv_hom_id_assoc (sequentialMilnorIsoOfIsZero K hK i j hij h₁)
         (limit.π (sequentialHomologyTower K j) (op n)))
 
-/-- The comparison is natural through the actual maps on limits and homology. -/
+/-- Let C be abelian with exact countable products and sequential limits,
+and α:K → L a map of towers of complexes of shape c. Suppose both
+product differences are epic, c.Rel(i,j), and lim¹(H_iK),lim¹(H_iL)
+are zero objects. Their comparisons ε_K,ε_L satisfy
+ε_L ∘ H_j(lim α)=lim(H_jα) ∘ ε_K. -/
 @[reassoc]
 theorem sequentialMilnorIsoOfIsZero_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -124,7 +157,10 @@ section Modules
 
 variable {R : Type u} [Ring R] {ι : Type v} {c : ComplexShape ι}
 
-/-- Artinian degree-i objects give native ML of the existing degree tower. -/
+/-- Let R be an arbitrary ring and K an inverse tower of R-module complexes
+of any shape c. If each stage term Kₙᵢ is Artinian, then the tower of
+degree-i terms is Mittag–Leffler: its later-stage images in each fixed
+stage eventually stabilize. -/
 theorem isMittagLeffler_sequentialDegreeTower_of_isArtinian
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c) (i : ι)
     (h : ∀ n : ℕ, IsArtinian R ((K.obj (op n)).X i)) :
@@ -133,7 +169,9 @@ theorem isMittagLeffler_sequentialDegreeTower_of_isArtinian
   rintro ⟨n⟩
   exact h n
 
-/-- Artinian homology objects give native ML of the existing homology tower. -/
+/-- Let R be an arbitrary ring and K an inverse tower of R-module complexes
+of any shape c. If H_i(Kₙ) is Artinian at every stage n, its inverse
+homology tower H_iK is Mittag–Leffler. -/
 theorem isMittagLeffler_sequentialHomologyTower_of_isArtinian
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c) (i : ι)
     (h : ∀ n : ℕ, IsArtinian R ((K.obj (op n)).homology i)) :
@@ -142,7 +180,9 @@ theorem isMittagLeffler_sequentialHomologyTower_of_isArtinian
   rintro ⟨n⟩
   exact h n
 
-/-- A single degree of Artinian terms supplies ML of its homology tower. -/
+/-- Let R be an arbitrary ring and K an inverse tower of R-module complexes
+of any shape c. If Kₙᵢ is Artinian for each stage n, then its subquotient
+H_i(Kₙ) is Artinian and the homology tower H_iK is Mittag–Leffler. -/
 theorem isMittagLeffler_sequentialHomologyTower_of_isArtinian_degree
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c) (i : ι)
     (h : ∀ n : ℕ, IsArtinian R ((K.obj (op n)).X i)) :
@@ -152,7 +192,9 @@ theorem isMittagLeffler_sequentialHomologyTower_of_isArtinian_degree
   have : IsArtinian R ((K.obj (op n)).X i) := h n
   exact (K.obj (op n)).isArtinian_homology_of_isArtinian_degree i
 
-/-- Degreewise Artinian terms make the actual complex-level DIFFERENCE epi. -/
+/-- For an inverse tower K of R-module complexes of any shape over an
+arbitrary ring R, if every term Kₙᵃ is Artinian, then the complex product
+difference Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic. -/
 theorem epi_sequentialDifference_of_degreewise_isArtinian
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
     (h : ∀ (i : ι) (n : ℕ), IsArtinian R ((K.obj (op n)).X i)) :
@@ -163,7 +205,11 @@ theorem epi_sequentialDifference_of_degreewise_isArtinian
 
 variable [CountableAB4Star (ModuleCat.{w} R)]
 
-/-- Preceding Artinian homology suffices, keeping the explicit difference-epi gate. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes. Assume exact countable products in the module
+category, Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+
+If H_i(Kₙ) is Artinian for every stage n, then the canonical Milnor edge H_j(lim K) → lim(H_jK) is an isomorphism. -/
 theorem isIso_sequentialMilnorEdge_of_isArtinian_homology
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
     (hK : Epi (sequentialDifference K)) (i j : ι) (hij : c.Rel i j)
@@ -174,7 +220,11 @@ theorem isIso_sequentialMilnorEdge_of_isArtinian_homology
       (sequentialHomologyTower K i)
       (isMittagLeffler_sequentialHomologyTower_of_isArtinian K i h))
 
-/-- A single preceding degree of Artinian terms also suffices with the same gate. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes. Assume exact countable products in the module
+category, Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+
+If Kₙᵢ is Artinian for every stage n, then the canonical Milnor edge H_j(lim K) → lim(H_jK) is an isomorphism. -/
 theorem isIso_sequentialMilnorEdge_of_isArtinian_degree
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
     (hK : Epi (sequentialDifference K)) (i j : ι) (hij : c.Rel i j)
@@ -185,7 +235,11 @@ theorem isIso_sequentialMilnorEdge_of_isArtinian_degree
       (sequentialHomologyTower K i)
       (isMittagLeffler_sequentialHomologyTower_of_isArtinian_degree K i h))
 
-/-- The actual edge is iso when every degree of the tower is Artinian. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes with every term Kₙᵃ Artinian as an R-module.
+Assume exact countable products in the module category and c.Rel(i,j).
+
+The degreewise Artinian condition makes Δ_K epic, and the resulting canonical Milnor edge H_j(lim K) → lim(H_jK) is an isomorphism. -/
 theorem isIso_sequentialMilnorEdge_of_degreewise_isArtinian
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
     (h : ∀ (a : ι) (n : ℕ), IsArtinian R ((K.obj (op n)).X a))
@@ -195,7 +249,11 @@ theorem isIso_sequentialMilnorEdge_of_degreewise_isArtinian
   isIso_sequentialMilnorEdge_of_isArtinian_degree K
     (epi_sequentialDifference_of_degreewise_isArtinian K h) i j hij (h i)
 
-/-- The comparison for preceding Artinian homology is the actual Milnor edge iso. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes. Assume exact countable products in the module
+category, Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+
+If each H_i(Kₙ) is Artinian, the canonical comparison H_j(lim K) ≅ lim(H_jK) is the isomorphism of the Milnor edge. -/
 def sequentialMilnorIsoOfIsArtinianHomology
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
     (hK : Epi (sequentialDifference K)) (i j : ι) (hij : c.Rel i j)
@@ -206,7 +264,11 @@ def sequentialMilnorIsoOfIsArtinianHomology
       (sequentialHomologyTower K i)
       (isMittagLeffler_sequentialHomologyTower_of_isArtinian K i h))
 
-/-- The degreewise convenience comparison keeps the actual chosen endpoints and edge. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes with every term Kₙᵃ Artinian as an R-module.
+Assume exact countable products in the module category and c.Rel(i,j).
+
+The canonical comparison H_j(lim K) ≅ lim(H_jK), using the epic difference supplied by the Artinian terms and the Milnor edge. -/
 def sequentialMilnorIsoOfDegreewiseIsArtinian
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
     (h : ∀ (a : ι) (n : ℕ), IsArtinian R ((K.obj (op n)).X a))
@@ -218,7 +280,11 @@ def sequentialMilnorIsoOfDegreewiseIsArtinian
       (sequentialHomologyTower K i)
       (isMittagLeffler_sequentialHomologyTower_of_isArtinian_degree K i (h i)))
 
-/-- The preceding-homology comparison has the actual edge as its forward map. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes. Assume exact countable products in the module
+category, Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+
+If each H_i(Kₙ) is Artinian, the forward map of the canonical Artinian-homology comparison equals the named Milnor edge. -/
 @[simp]
 theorem sequentialMilnorIsoOfIsArtinianHomology_hom
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)
@@ -227,7 +293,11 @@ theorem sequentialMilnorIsoOfIsArtinianHomology_hom
     (sequentialMilnorIsoOfIsArtinianHomology K hK i j hij h).hom =
       sequentialMilnorEdge K hK i j hij := rfl
 
-/-- The degreewise comparison has the actual edge as its forward map. -/
+/-- Let R be an arbitrary ring, c a complex shape and K an inverse tower
+of R-module complexes with every term Kₙᵃ Artinian as an R-module.
+Assume exact countable products in the module category and c.Rel(i,j).
+
+The forward map of the degreewise Artinian comparison equals the Milnor edge formed with the epic difference supplied by the Artinian terms. -/
 @[simp]
 theorem sequentialMilnorIsoOfDegreewiseIsArtinian_hom
     (K : ℕᵒᵖ ⥤ HomologicalComplex (ModuleCat.{w} R) c)

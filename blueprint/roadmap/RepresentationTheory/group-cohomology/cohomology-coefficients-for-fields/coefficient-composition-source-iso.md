@@ -1,3 +1,7 @@
-# Coefficient Composition Source Iso
+# Identification of iterated restriction sources
 
-The stock restriction composition fixes the actual source of the composite coefficient arrow.
+Identification of iterated restriction sources.
+
+For e and f, the unit module restricted along the composite Galois map is canonically
+isomorphic to the source for e restricted along the Galois map for f. This comparison
+preserves coefficient elements.

@@ -1,3 +1,6 @@
-# Hom Coordinates apply
+# Forward coefficient Hom coordinate preserves evaluation
 
-The actual coordinate equivalence keeps each original function value.
+Forward coefficient Hom coordinate preserves evaluation.
+
+For a coefficient Hom element `f` and `x : N`, the additive map corresponding to `f` under
+`homCoordinates R N I` evaluates at `x` as `f x`.

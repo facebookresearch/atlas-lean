@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Functor eq
+# Forward finite tensor functor agrees with the Morita restriction
 
-Canonical Morita restriction is the whole actual finite-module coefficient tensor.
+Forward finite tensor functor agrees with the Morita restriction.
+
+The finite-module functor tensoring by `Q` equals the forward functor of the finite-module
+equivalence induced by the contraction-based Morita equivalence.

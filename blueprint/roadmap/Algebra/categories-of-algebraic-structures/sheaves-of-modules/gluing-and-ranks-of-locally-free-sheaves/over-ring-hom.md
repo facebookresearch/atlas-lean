@@ -1,6 +1,7 @@
-# Over Ring Hom
+# Ring-sheaf morphism on a slice site
 
-Ring map over `X` inducing the fiber pullback functor
-`SheafOfModules (S.over X) ⥤ SheafOfModules (R.over (F.obj X))`.
-It is the pushforward of `φ` along `Over.forget X`, reindexed along
-`Over.post F ⋙ Over.forget = Over.forget ⋙ F`.
+Let `F : C' ⥤ C` be continuous between sites `(C',K)` and `(C,J)`, with ring sheaves `S` on
+`K` and `R` on `J`, of carrier universe `u`. Assume every `Over.post F : Over X → Over(F.obj
+X)` is continuous for the slice topologies. For `φ : S → F_*R` and `X∈C'`, `overRingHom φ X`
+is the induced map `S.over X → (Over.post F)_*(R.over(F.obj X))`, obtained from `φ` along
+`Over.forget X` and the canonical reindexing identity.

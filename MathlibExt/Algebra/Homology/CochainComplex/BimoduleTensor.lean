@@ -14,17 +14,16 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-# The original cochain tensor of a noncommutative bimodule
+# Cochain tensoring by a noncommutative bimodule
 
-The degreewise functor is the canonical prolongation of the existing
-left-module balanced tensor. Terms, differentials and cochain maps retain
-the original quotient and its actual commuting outer action. Its raw
-carrier formulas have independent ring, coefficient and module universes.
+Let R,S be rings and E a left S-module and right R-module with commuting actions. The balanced
+tensor E⊗_R− extends degreewise to integer cochain complexes. Its terms carry the outer
+S-action, its differential sends [e,x] to [e,dx], and cochain maps act on the second factor.
+The raw construction allows independent ring, bimodule, and input carrier universes.
 
-The existing integral Tor₁ criterion earns exactness in its original
-common-universe module categories. Canonical preservation of kernels and
-cokernels gives the homology comparison and preservation of actual
-quasi-isomorphisms. No homology comparison or derived outcome is an input.
+In the common-universe setting R,S,E : Type u, vanishing of the balanced Tor₁^R(E,N) for every
+N ∈ ModuleCat.{u} R gives preservation of homology. The resulting comparison H^j(E⊗K) ≅
+E⊗H^j(K) is natural, and tensoring preserves quasi-isomorphisms at each degree and globally.
 -/
 
 @[expose] public section
@@ -48,29 +47,40 @@ variable {R : Type uR} {S : Type uS} [Ring R] [Ring S]
   (E : Type uE) [AddCommGroup E] [Module S E] [Module Rᵐᵒᵖ E]
   [SMulCommClass S Rᵐᵒᵖ E]
 
-/-- Apply the original module tensor in each original cochain degree. -/
+/-- Let R,S be rings, E a left S-module and right R-module whose actions commute, and K an integer
+cochain complex of left R-modules. Apply E⊗_R− degreewise to define a functor to integer
+cochain complexes of left S-modules. For E in universe uE and input terms in uM, the output
+has universe max(uE,uM), independently of the ring universes. The S-action is s·[e,x]=[s·e,x]. -/
 abbrev bimoduleTensorCochain :
     CochainComplex (ModuleCat.{uM} R) ℤ ⥤
       CochainComplex (ModuleCat.{max uE uM} S) ℤ :=
   (BalancedTensor.Left.functor ℤ R S E).mapHomologicalComplex (.up ℤ)
 
-/-- Every term is the existing balanced tensor object with its given outer S action. -/
+/-- For rings R,S, a commuting left-S/right-R bimodule E, an integer cochain complex K of
+R-modules, and j ∈ ℤ, the jth term of bimoduleTensorCochain(E)(K) is exactly the balanced
+left-module tensor functor applied to K^j. Its carrier is E⊗_R K^j with the outer S-action. -/
 theorem bimoduleTensorCochain_obj_X (K : CochainComplex (ModuleCat.{uM} R) ℤ) (j : ℤ) :
     ((bimoduleTensorCochain (S := S) E).obj K).X j =
       (BalancedTensor.Left.functor ℤ R S E).obj (K.X j) := rfl
 
-/-- Every original differential is mapped by that same balanced tensor functor. -/
+/-- Let R,S be rings, E a commuting left-S/right-R bimodule, and K an integer cochain complex of
+R-modules. For i,j ∈ ℤ, the differential of E⊗_R K from i to j equals the balanced tensor
+functor applied to d_K^{i,j}. Thus it acts on the second factor and retains the coefficient E. -/
 theorem bimoduleTensorCochain_obj_d (K : CochainComplex (ModuleCat.{uM} R) ℤ) (i j : ℤ) :
     ((bimoduleTensorCochain (S := S) E).obj K).d i j =
       (BalancedTensor.Left.functor ℤ R S E).map (K.d i j) := rfl
 
-/-- Every original cochain-map component is the actual quotient map of the module component. -/
+/-- For a commuting left-S/right-R bimodule E over rings R,S and a cochain map f : K → L of
+integer R-module complexes, the jth component of E⊗_R f is the balanced tensor functor applied
+to f^j. This is an S-linear map E⊗_R K^j → E⊗_R L^j. -/
 theorem bimoduleTensorCochain_map_f {K L : CochainComplex (ModuleCat.{uM} R) ℤ}
     (f : K ⟶ L) (j : ℤ) :
     ((bimoduleTensorCochain (S := S) E).map f).f j =
       (BalancedTensor.Left.functor ℤ R S E).map (f.f j) := rfl
 
-/-- The original differential acts on the module factor of every ordered pure class. -/
+/-- Let R,S be rings, E a commuting left-S/right-R bimodule, K an integer R-module cochain
+complex, i,j ∈ ℤ, e ∈ E, and x ∈ K^i. The differential sends the balanced class [e,x] to
+[e,d_K^{i,j}(x)]. The balancing is over R and the ground additive tensor is over ℤ. -/
 theorem bimoduleTensorCochain_d_mk (K : CochainComplex (ModuleCat.{uM} R) ℤ)
     (i j : ℤ) (e : E) (x : K.X i) :
     letI : Module ℤ (K.X i) := Module.compHom (K.X i) (algebraMap ℤ R)
@@ -82,7 +92,9 @@ theorem bimoduleTensorCochain_d_mk (K : CochainComplex (ModuleCat.{uM} R) ℤ)
   let : Module ℤ (K.X j) := Module.compHom (K.X j) (algebraMap ℤ R)
   exact BalancedTensor.Left.map_mk ℤ R S E (K.d i j) e x
 
-/-- An actual original cochain map preserves the coefficient in every pure tensor component. -/
+/-- For rings R,S, a commuting left-S/right-R bimodule E, and a cochain map f : K → L, the jth
+tensor component sends [e,x] ∈ E⊗_R K^j to [e,f^j(x)] ∈ E⊗_R L^j. The left S-action remains on
+the coefficient E. -/
 theorem bimoduleTensorCochain_map_mk {K L : CochainComplex (ModuleCat.{uM} R) ℤ}
     (f : K ⟶ L) (j : ℤ) (e : E) (x : K.X j) :
     letI : Module ℤ (K.X j) := Module.compHom (K.X j) (algebraMap ℤ R)
@@ -94,7 +106,9 @@ theorem bimoduleTensorCochain_map_mk {K L : CochainComplex (ModuleCat.{uM} R) �
   let : Module ℤ (L.X j) := Module.compHom (L.X j) (algebraMap ℤ R)
   exact BalancedTensor.Left.map_mk ℤ R S E (f.f j) e x
 
-/-- The original zero cochain remains zero under the actual degreewise tensor. -/
+/-- Let R,S be rings and E a commuting left-S/right-R bimodule. The image of the zero integer
+R-module cochain complex under E⊗_R− is a zero object in the S-module cochain category. This
+follows from the additive balanced tensor functor and requires no flatness condition. -/
 theorem bimoduleTensorCochain_zero :
     IsZero ((bimoduleTensorCochain (R := R) (S := S) E).obj
       (0 : CochainComplex (ModuleCat.{uM} R) ℤ)) :=
@@ -112,7 +126,10 @@ variable {R S : Type u} [Ring R] [Ring S]
 
 include hE
 
-/-- The canonical right-flatness input earns preservation of the original module homology. -/
+/-- Let R,S,E have carrier universe u, with R,S rings and E a commuting left-S/right-R bimodule.
+Suppose the balanced Tor object (torFirst R 1)(E,N) is zero for every N ∈ ModuleCat.{u} R.
+Then E⊗_R− : ModuleCat.{u} R → ModuleCat.{u} S preserves homology. The Tor₁ condition is on
+the right R-module E, not its left S-action. -/
 theorem bimoduleTensor_preservesHomology :
     (BalancedTensor.Left.functor ℤ R S E :
       ModuleCat.{u} R ⥤ ModuleCat.{u} S).PreservesHomology := by
@@ -121,7 +138,10 @@ theorem bimoduleTensor_preservesHomology :
   let : PreservesFiniteColimits F := bimoduleTensor_preservesFiniteColimits E
   infer_instance
 
-/-- Homology of the actual tensor cochain is the actual tensor of its original homology. -/
+/-- Let R,S be rings and E a commuting left-S/right-R bimodule, all in universe u. Assume
+(torFirst R 1)(E,N)=0 for every N ∈ ModuleCat.{u} R. For an integer cochain complex K in
+ModuleCat.{u} R and j ∈ ℤ, the canonical homology comparison is an isomorphism H^j(E⊗_R K) ≅
+E⊗_R H^j(K) in ModuleCat.{u} S. -/
 def bimoduleTensorCochainHomologyIso (K : CochainComplex (ModuleCat.{u} R) ℤ) (j : ℤ) :
     ((bimoduleTensorCochain (S := S) E).obj K).homology j ≅
       (BalancedTensor.Left.functor ℤ R S E).obj (K.homology j) := by
@@ -129,7 +149,10 @@ def bimoduleTensorCochainHomologyIso (K : CochainComplex (ModuleCat.{u} R) ℤ) 
   let : F.PreservesHomology := bimoduleTensor_preservesHomology E hE
   exact (K.sc j).mapHomologyIso F
 
-/-- The original homology square is natural for every actual original cochain map. -/
+/-- Let R,S be rings and E a commuting left-S/right-R bimodule, all in universe u, with
+Tor₁^R(E,N)=0 for every N ∈ ModuleCat.{u} R. For a cochain map f : K → L and j ∈ ℤ, let e_K
+and e_L be H^j(E⊗−) ≅ E⊗H^j(−). Then H^j(E⊗f) ≫ e_L.hom = e_K.hom ≫ (E⊗H^j(f)). This is an
+equality of S-module maps. -/
 theorem bimoduleTensorCochainHomologyIso_hom_naturality
     {K L : CochainComplex (ModuleCat.{u} R) ℤ} (f : K ⟶ L) (j : ℤ) :
     HomologicalComplex.homologyMap ((bimoduleTensorCochain (S := S) E).map f) j ≫
@@ -141,7 +164,10 @@ theorem bimoduleTensorCochainHomologyIso_hom_naturality
   exact ShortComplex.mapHomologyIso_hom_naturality
     ((HomologicalComplex.shortComplexFunctor (ModuleCat.{u} R) (.up ℤ) j).map f) F
 
-/-- Exact tensor preserves a quasi-isomorphism at each original integer degree. -/
+/-- For rings R,S and a commuting left-S/right-R bimodule E in universe u, suppose Tor₁^R(E,N)=0
+for every N ∈ ModuleCat.{u} R. If a map f : K → L of integer R-module cochain complexes is a
+quasi-isomorphism at j, then E⊗_R f is a quasi-isomorphism at j in S-modules. The homology
+comparison identifies its map with E⊗H^j(f). -/
 theorem bimoduleTensorCochain_quasiIsoAt
     {K L : CochainComplex (ModuleCat.{u} R) ℤ} (f : K ⟶ L) (j : ℤ) [QuasiIsoAt f j] :
     QuasiIsoAt ((bimoduleTensorCochain (S := S) E).map f) j := by
@@ -149,7 +175,10 @@ theorem bimoduleTensorCochain_quasiIsoAt
   let : F.PreservesHomology := bimoduleTensor_preservesHomology E hE
   exact HomologicalComplex.quasiIsoAt_map_of_preservesHomology f F j
 
-/-- The actual right-flat tensor preserves every actual original quasi-isomorphism. -/
+/-- Let R,S,E share universe u, with R,S rings and E a commuting left-S/right-R bimodule. Assume
+Tor₁^R(E,N)=0 for every N ∈ ModuleCat.{u} R. If f : K → L is a quasi-isomorphism of integer
+R-module cochain complexes, then the degreewise map E⊗_R f is a quasi-isomorphism of S-module
+cochain complexes in every integer degree. -/
 theorem bimoduleTensorCochain_quasiIso
     {K L : CochainComplex (ModuleCat.{u} R) ℤ} (f : K ⟶ L) [QuasiIso f] :
     QuasiIso ((bimoduleTensorCochain (S := S) E).map f) := by

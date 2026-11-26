@@ -1,4 +1,5 @@
-# Quot SMul Top d
+# The reduced chain differential is the induced quotient-ring-linear morphism
 
-The differential of the quotient complex is induced by the original
-differential.
+Let R be a commutative ring in u, C a chain complex in ModuleCat_v(R) on an additive
+right-cancellative index semigroup I with 1 in w, and x∈R. For i,j∈I, its reduced differential
+is the module morphism induced by Q_x(d_C(i,j)).

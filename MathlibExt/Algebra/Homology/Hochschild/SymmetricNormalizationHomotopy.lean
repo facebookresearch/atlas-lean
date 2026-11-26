@@ -13,13 +13,20 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricCoefficients
 public import MathlibExt.AlgebraicTopology.SimplicialObject.NormalizedQuotient
 
 /-!
-# Symmetric Hochschild normalization homotopy equivalence
+# Homotopy equivalence for symmetric Hochschild normalization
 
-Full Hochschild normalization has its projection as forward map
-and an exact chain section as inverse. The section-projection
-composite is homotopic to the identity through the Dold–Kan
-quotient homotopy. Proper-shuffle descent uses the rational
-Eulerian relation kernels.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible symmetric coefficient
+module. The factorwise quotient projection Cₙ(A,M) → C̄ₙ(A,M), applying A → A/(k·1) to each
+tail, is the forward map of a chain homotopy equivalence.
+
+The inverse section is obtained by identifying the normalized bar quotient with its Moore
+complex, including that Moore complex into the alternating-face bar complex, and returning to
+raw tensor coordinates. The section followed by normalization is exactly the identity of the
+normalized complex. Normalization followed by the section is homotopic to the identity of the
+raw complex through the quotient normalization homotopy. These statements require no rationality
+or coefficient-flatness hypothesis.
+
+For Hochschild normalization, see J.-L. Loday, Cyclic Homology, second edition, §1.1.
 -/
 
 @[expose] public section
@@ -35,7 +42,12 @@ variable (k : Type u) (A : Type v) (M : Type w) [CommRing k] [CommRing A]
   [Algebra k A] [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The raw/bar and normalized tensor coordinates transport the normalization homotopy. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let C and C̄ be the raw and normalized Hochschild chain complexes over
+k, indexed by ℕ. Transporting the simplicial bar normalization homotopy equivalence through the
+raw and normalized tensor coordinate isomorphisms gives normalizationHomotopyEquiv :
+HomotopyEquiv C C̄. Its forward map is the factorwise quotient projection and its inverse is the
+Moore-complex section. -/
 def normalizationHomotopyEquiv :
     HomotopyEquiv (chainComplex k A M) (normalizedChainComplex k A M) := by
   letI := opModule A M
@@ -51,12 +63,21 @@ def normalizationHomotopyEquiv :
     exact (Category.assoc _ _ _).symm
   exact h.copy (Homotopy.ofEq hforward)
 
-/-- The transported equivalence retains the original factorwise normalization map. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let C and C̄ be the raw and normalized Hochschild chain complexes over
+k, indexed by ℕ. The forward map of normalizationHomotopyEquiv k A M equals
+normalizationProjection k A M, which applies A → A/(k·1) to each algebra tail and leaves the
+coefficient unchanged. -/
 theorem normalizationHomotopyEquiv_hom :
     (normalizationHomotopyEquiv k A M).hom = normalizationProjection k A M :=
   rfl
 
-/-- Its inverse has the original normalized tensor, native Moore and raw-bar coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let C and C̄ be the raw and normalized Hochschild chain complexes over
+k, indexed by ℕ. The inverse map first takes normalized tensor coordinates to the normalized
+quotient of the coefficient bar, then uses its isomorphism to the Moore complex, includes the
+Moore complex into the alternating-face bar complex, and returns to raw tensor coordinates
+through chainComplexIso.inv. -/
 theorem normalizationHomotopyEquiv_inv :
   letI := opModule A M
   letI := actionsComm A M
@@ -69,7 +90,10 @@ theorem normalizationHomotopyEquiv_inv :
       (chainComplexIso k A M).inv :=
   rfl
 
-/-- The transported inverse is an exact right inverse to normalization. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let C and C̄ be the raw and normalized Hochschild chain complexes over
+k, indexed by ℕ. If s = (normalizationHomotopyEquiv k A M).inv and π = normalizationProjection k
+A M, then s ≫ π = 𝟙 C̄ as chain maps. -/
 @[reassoc]
 theorem normalizationHomotopyEquiv_inv_hom :
     (normalizationHomotopyEquiv k A M).inv ≫ normalizationProjection k A M =
@@ -98,7 +122,11 @@ theorem normalizationHomotopyEquiv_inv_hom :
   rw [← Category.assoc r p e.hom, hr, Category.id_comp]
   exact e.inv_hom_id
 
-/-- The contraction homotopy is retained in the original coefficient complex. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let C and C̄ be the raw and normalized Hochschild chain complexes over
+k, indexed by ℕ. There is a chain homotopy from normalizationProjection k A M followed by
+(normalizationHomotopyEquiv k A M).inv to the identity of chainComplex k A M. This is the
+quotient normalization homotopy transported to the tensor complex. -/
 def normalizationHomotopy :
     Homotopy (normalizationProjection k A M ≫ (normalizationHomotopyEquiv k A M).inv)
       (𝟙 (chainComplex k A M)) :=

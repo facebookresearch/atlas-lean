@@ -17,14 +17,15 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Exterior derivations induced by linear endomorphisms
 
-A linear endomorphism of a module extends uniquely to an ordinary derivation
-of its exterior algebra. The construction uses `CliffordAlgebra.foldr'` with
-zero quadratic form, so it applies over every commutative ring and does not
-require a basis. It is linear in the endomorphism, preserves exterior degree,
-and preserves commutators.
+Let R be a commutative ring and M an R-module. Every R-linear endomorphism g of M extends to a
+unique ordinary R-linear derivation D_g of E=ExteriorAlgebra(R,M), with D_g(r)=0 and
+D_g(ι(x))=ι(gx). Its Leibniz law is D_g(ab)=D_g(a)b+aD_g(b), with the product order unchanged.
+Since D_g preserves exterior degree, it has degree zero and no Koszul sign occurs in this law.
 
-The ambient exterior algebra is generally noncommutative. The derivations
-are represented by linear endomorphisms with their proved Leibniz equation.
+The assignment g ↦ D_g is R-linear, preserves commutators and is natural for module maps
+intertwining the endomorphisms. It therefore gives a homomorphism between the commutator Lie
+algebras of End_R(M) and End_R(E). No basis or characteristic assumption is required, and
+source, target-module and ring universes are arbitrary.
 -/
 
 @[expose] public section
@@ -116,26 +117,35 @@ private theorem derivationAux_smul (r : R) (g : Module.End R M) :
       simp only [LinearMap.smul_apply, derivationAux_ι_mul, map_smul,
         ha, Algebra.smul_mul_assoc, Algebra.mul_smul_comm, smul_add]
 
-/-- Extend a linear endomorphism to the derivation that acts on each
-exterior generator by that endomorphism. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. The assignment g ↦ D_g is
+R-linear from End_R(M) to End_R(E). It is characterized by D_g(r)=0 on scalars, D_g(ι(x))=ι(gx)
+on generators and the ordinary Leibniz law D_g(ab)=D_g(a)b+aD_g(b). -/
 def derivation : Module.End R M →ₗ[R] Module.End R (ExteriorAlgebra R M) where
   toFun := private derivationAux R M
   map_add' := by exact derivationAux_add R M
   map_smul' := by exact derivationAux_smul R M
 
-/-- The induced derivation vanishes on scalars. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For r ∈ R,
+D_g(algebraMap(r))=0. -/
 @[simp]
 theorem derivation_algebraMap (g : Module.End R M) (r : R) :
     derivation R M g (algebraMap R (ExteriorAlgebra R M) r) = 0 :=
   derivationAux_algebraMap R M g r
 
-/-- The induced derivation vanishes on the multiplicative identity. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For every g ∈ End_R(M),
+D_g(1_E)=0. -/
 @[simp]
 theorem derivation_one (g : Module.End R M) :
     derivation R M g 1 = 0 := by
   simpa only [map_one] using derivation_algebraMap R M g 1
 
-/-- The generator recursion for the induced exterior derivation. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For x ∈ M and a ∈ E,
+D_g(ι(x)·a)=ι(gx)·a+ι(x)·D_g(a). The product order is retained and there is no graded sign
+because D_g has degree zero. -/
 @[simp]
 theorem derivation_ι_mul (g : Module.End R M) (x : M)
     (a : ExteriorAlgebra R M) :
@@ -143,15 +153,18 @@ theorem derivation_ι_mul (g : Module.End R M) (x : M)
       ι R (g x) * a + ι R x * derivation R M g a :=
   derivationAux_ι_mul R M g x a
 
-/-- The induced derivation agrees with the supplied endomorphism on
-exterior generators. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For x ∈ M, D_g(ι(x))=ι(gx). -/
 @[simp]
 theorem derivation_ι (g : Module.End R M) (x : M) :
     derivation R M g (ι R x) = ι R (g x) := by
   simpa only [mul_one, derivation_one, mul_zero, add_zero] using
     derivation_ι_mul R M g x 1
 
-/-- The ordinary Leibniz equation in the exterior algebra. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For all a,b ∈ E,
+D_g(ab)=D_g(a)b+aD_g(b). The exterior algebra may be noncommutative; this degree-zero derivation
+uses the indicated order of products. -/
 theorem derivation_mul (g : Module.End R M) (a b : ExteriorAlgebra R M) :
     derivation R M g (a * b) =
       derivation R M g a * b + a * derivation R M g b := by
@@ -165,8 +178,9 @@ theorem derivation_mul (g : Module.End R M) (a b : ExteriorAlgebra R M) :
       rw [mul_assoc, derivation_ι_mul, ha, derivation_ι_mul]
       noncomm_ring
 
-/-- A derivation of the exterior algebra is determined by its action on
-scalars and its generator recursion. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. If an R-linear endomorphism D:E
+→ E vanishes on every scalar and satisfies D(ι(x)a)=ι(gx)a+ι(x)D(a) for all x,a, then D=D_g. -/
 theorem derivation_unique (g : Module.End R M)
     (D : Module.End R (ExteriorAlgebra R M))
     (hR : ∀ r : R, D (algebraMap R (ExteriorAlgebra R M) r) = 0)
@@ -180,7 +194,9 @@ theorem derivation_unique (g : Module.End R M)
   | add a b ha hb => rw [map_add, map_add, ha, hb]
   | ι_mul a x ha => rw [hι, derivation_ι_mul, ha]
 
-/-- The induced derivation preserves each homogeneous exterior degree. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For n : ℕ and a ∈ E with a ∈
+∧ⁿ_RM, one has D_g(a) ∈ ∧ⁿ_RM. Thus the induced derivation has exterior degree zero. -/
 theorem derivation_mem_exteriorPower (g : Module.End R M) (n : ℕ)
     (a : ExteriorAlgebra R M) (ha : a ∈ ⋀[R]^n M) :
     derivation R M g a ∈ ⋀[R]^n M := by
@@ -199,8 +215,9 @@ theorem derivation_mem_exteriorPower (g : Module.End R M) (n : ℕ)
         (Submodule.mul_mem_mul (LinearMap.mem_range_self _ (g x)) ha)
         (Submodule.mul_mem_mul (LinearMap.mem_range_self _ x) ih)
 
-/-- Extending endomorphisms to exterior derivations preserves their
-commutator. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. For g,h ∈ End_R(M),
+D_{g∘h-h∘g}=D_g∘D_h-D_h∘D_g as R-linear endomorphisms of E. -/
 theorem derivation_commutator (g h : Module.End R M) :
     derivation R M (g.comp h - h.comp g) =
       (derivation R M g).comp (derivation R M h) -
@@ -218,8 +235,9 @@ theorem derivation_commutator (g h : Module.End R M) :
       simp only [LinearMap.sub_apply, LinearMap.comp_apply, map_sub,
         derivation_ι_mul, map_add]; noncomm_ring
 
-/-- Exterior derivations are natural for linear maps intertwining the
-endomorphisms on the two modules. -/
+/-- Let R be a commutative ring and M,N be R-modules in arbitrary universes. If f:M →ₗ[R] N,
+g∈End_R(M), h∈End_R(N) satisfy f∘g=h∘f, then ExteriorAlgebra.map(f)∘D_g =
+D_h∘ExteriorAlgebra.map(f). -/
 theorem derivation_naturality
     {N : Type w} [AddCommGroup N] [Module R N]
     (f : M →ₗ[R] N) (g : Module.End R M) (h : Module.End R N)
@@ -243,8 +261,10 @@ section Lie
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-/-- The extension to exterior derivations, bundled as a Lie homomorphism
-between the native commutator Lie algebras of endomorphisms. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. The R-linear extension End_R(M)
+→ End_R(E), g ↦ D_g, is a homomorphism of the commutator Lie algebras with bracket
+[g,h]=g∘h-h∘g. -/
 def derivationLieHom :
     Module.End R M →ₗ⁅R⁆ Module.End R (ExteriorAlgebra R M) where
   __ := derivation R M
@@ -254,8 +274,9 @@ def derivationLieHom :
         derivation R M h * derivation R M g
     simpa only [Module.End.mul_eq_comp] using derivation_commutator R M g h
 
-/-- Forgetting the commutator compatibility recovers the same linear
-extension to exterior derivations. -/
+/-- Let R be a commutative ring, M an R-module with additive inverses and E=ExteriorAlgebra(R,M).
+For g ∈ End_R(M), write D_g for its induced exterior derivation. The underlying R-linear map of
+derivationLieHom R M equals derivation R M, sending g to D_g. -/
 @[simp]
 theorem derivationLieHom_toLinearMap :
     (derivationLieHom R M).toLinearMap = derivation R M :=

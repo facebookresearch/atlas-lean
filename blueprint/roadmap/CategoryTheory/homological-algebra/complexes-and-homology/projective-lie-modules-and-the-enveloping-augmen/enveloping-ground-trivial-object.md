@@ -1,3 +1,5 @@
-# Enveloping Ground Trivial Object
+# The ground module of trivial enveloping coefficients
 
-The original trivial enveloping module after the same exact restriction.
+The ground module of trivial enveloping coefficients.
+
+The trivial enveloping module is restricted to an `R`-module through the scalar inclusion.

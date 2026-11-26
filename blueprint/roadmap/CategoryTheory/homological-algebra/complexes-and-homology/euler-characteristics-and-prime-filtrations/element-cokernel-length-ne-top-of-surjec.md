@@ -1,4 +1,5 @@
-# Element Cokernel length ne top of surjective
+# A finite multiplication cokernel descends to a quotient module
 
-A surjection transports finite length of the multiplication cokernel to
-the target module.
+A finite multiplication cokernel descends to a quotient module.
+
+For a surjective module map M₂ → M₃, finite length of M₂/rM₂ implies finite length of M₃/rM₃.

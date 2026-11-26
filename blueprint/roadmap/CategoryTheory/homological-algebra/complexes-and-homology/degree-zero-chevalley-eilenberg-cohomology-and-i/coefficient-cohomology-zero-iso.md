@@ -1,4 +1,5 @@
-# Coefficient Cohomology Zero Iso
+# The lifted invariant comparison for represented Lie coefficients
 
-Native Lie coefficients have the same canonical categorical comparison,
-using only the native lift of their original invariant carrier.
+For a compatible left Lie module X over an R-Lie algebra L,
+with R commutative, the categorical comparison is
+H^0(L,Rep(X))≅U^{max{u,v,w}}X^L in the cochain module category.

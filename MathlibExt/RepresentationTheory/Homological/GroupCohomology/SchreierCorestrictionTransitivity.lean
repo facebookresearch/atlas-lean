@@ -15,15 +15,17 @@ public import MathlibExt.GroupTheory.SchreierTransversalComposition
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierCorestrictionNaturality
 
 /-!
-# Transitivity prerequisites for finite-index Schreier corestriction
+# Transitivity of corestriction in degrees one and two
 
-For a subgroup `H ≤ G`, a subgroup `K ≤ H`, and right transversals for both
-steps, multiplying representatives gives a right transversal for
-`K.map H.subtype ≤ G`.  This file packages that product transversal and its
-Schreier decomposition, then uses transversal independence to compare direct
-and iterated corestriction.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `K ≤ H` finite index.
+Put `J=K.map H.subtype` and let `q : K ≃* J` be the canonical image equivalence. Right
+transversals `S` for `K ≤ H` and `T` for `H ≤ G` have a product transversal for `J ≤ G`, with
+representatives `s t` in this order.
 
-No field-theoretic, Kummer, or norm-residue claim is made here.
+The product-transversal transfer equals the successive cochain, cocycle, and cohomology
+transfers through `H`, in degrees one and two. The coefficient isomorphism `q^*(Res_J A) ≅
+Res_K(Res_H A)` makes the two subgroup presentations agree. For canonical corestriction,
+`cor_J^G = cor_H^G ∘ cor_K^H ∘ q^*` in both degrees.
 -/
 
 @[expose] public section
@@ -44,14 +46,16 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G} {K : Subgroup H}
 
-/-- A finite-index right transversal has finitely many actual representatives. -/
+/-- For a group `M`, a finite-index subgroup `J ≤ M`, and a right transversal `T`, the subtype `(T
+: Set M)` has a finite enumeration. This local `Fintype` structure supplies the finite
+representative sets for transfer sums. -/
 noncomputable local instance corestrictionTransitivityRightTransversalFintype
     {M : Type u} [Group M] {J : Subgroup M}
     (T : J.RightTransversal) [J.FiniteIndex] : Fintype (T : Set M) :=
   @Fintype.ofFinite (T : Set M) (T.2.finite_right)
 
-/-- The image of a finite-index subgroup of a finite-index subgroup has
-finite index in the ambient group. -/
+/-- Let `G` be a group, `H ≤ G` a finite-index subgroup, and `K ≤ H` finite index in `H`. Then
+`K.map H.subtype ≤ G` has finite index in `G`. Its index is the product `[H:K] [G:H]`. -/
 theorem finiteIndex_map_subtype [K.FiniteIndex] [H.FiniteIndex] :
     (K.map H.subtype).FiniteIndex :=
   ⟨by
@@ -63,8 +67,10 @@ noncomputable local instance corestrictionTransitivityMapFiniteIndex
     [K.FiniteIndex] [H.FiniteIndex] : (K.map H.subtype).FiniteIndex :=
   finiteIndex_map_subtype
 
-/-- Restricting from `G` to the image of `K` and then along the canonical
-equivalence agrees with successive restriction through `H`. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `K ≤ H`, and `A : Rep k G`. Put `J=K.map
+H.subtype` and `q=K.equivMapOfInjective H.subtype H.subtype_injective : K ≃* J`. The
+isomorphism `mapSubtypeResIso A : q^*(Res_J A) ≅ Res_K(Res_H A)` is the identity on the
+underlying coefficient module. -/
 noncomputable def mapSubtypeResIso (A : Rep k G) :
     Rep.res
         (K.equivMapOfInjective H.subtype H.subtype_injective).toMonoidHom
@@ -77,8 +83,10 @@ theorem mapSubtypeResIso_hom_apply (A : Rep k G)
     (x : A) : (mapSubtypeResIso (H := H) (K := K) A).hom x = x :=
   rfl
 
-/-- Cochain-level transitivity for the compatible product right
-transversal in degree one. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Set `J=K.map H.subtype` and let `q : K ≃* J` be its image equivalence. For right
+transversals `S` of `K` in `H`, `T` of `H` in `G`, and any `f : J → A`, `Tr_{S.product T}^A f
+= Tr_T^A(Tr_S^{Res_H A}(f ∘ q))`. The representatives of the product transversal are `s t`. -/
 theorem corestrictionCochainOne_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -129,8 +137,11 @@ theorem corestrictionCochainOne_product (A : Rep k G)
       intro t _
       rw [map_sum]
 
-/-- Cocycle-level transitivity for the compatible product right transversal
-in degree one. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype`, let `q : K ≃* J`, and set `τ=(mapSubtypeResIso A).hom`.
+For right transversals `S,T` of the two inclusions and `f ∈ Z¹(J,Res_J A)`, `Tr^Z_{S.product
+T} f = Tr_T^Z(Tr_S^Z(mapCocycles₁ q τ f))`, with coefficients `A` and `Res_H A` on the outer
+and inner sums. -/
 theorem corestrictionCocyclesOne_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -151,8 +162,10 @@ theorem corestrictionCocyclesOne_product (A : Rep k G)
           (K.equivMapOfInjective H.subtype H.subtype_injective k))) g
   exact congrFun (corestrictionCochainOne_product A S T f) g
 
-/-- Chosen-transversal degree-one corestriction is transitive for compatible
-product transversals. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype`, let `q : K ≃* J`, and set `τ=(mapSubtypeResIso A).hom`.
+For right transversals `S` of `K` in `H`, `T` of `H` in `G`, and `x ∈ H¹(J,Res_J A)`,
+`cor_{S.product T}^A x = cor_T^A(cor_S^{Res_H A}(map q τ 1 x))`. -/
 theorem corestrictionH1OfRightTransversal_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -176,8 +189,10 @@ theorem corestrictionH1OfRightTransversal_product (A : Rep k G)
       exact congrArg (groupCohomology.H1π A)
         (corestrictionCocyclesOne_product A S T f)
 
-/-- Canonical degree-one finite-index corestriction is transitive along a
-subgroup chain. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype`, let `q : K ≃* J` be the canonical image equivalence, and
+let `τ=(mapSubtypeResIso A).hom` compare `q^*(Res_J A)` with `Res_K(Res_H A)`. For `x ∈
+H¹(J,Res_J A)`, `cor_J^G x = cor_H^G(cor_K^H(map q τ 1 x))`. -/
 theorem corestrictionH1_trans (A : Rep k G)
     [K.FiniteIndex] [H.FiniteIndex]
     (x : groupCohomology.H1
@@ -196,8 +211,10 @@ theorem corestrictionH1_trans (A : Rep k G)
       (Rep.res (Subgroup.subtype H) A) S]
   exact corestrictionH1OfRightTransversal_product A S T x
 
-/-- Cochain-level transitivity for the compatible product right
-transversal in degree two. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype` and let `q : K ≃* J`. For right transversals `S` of `K` in
+`H`, `T` of `H` in `G`, and any `f : J × J → A`, `Tr_{S.product T}^A f = Tr_T^A(Tr_S^{Res_H
+A}(f ∘ q²))`. The product representatives are `s t` in that order. -/
 theorem corestrictionCochainTwo_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -274,8 +291,11 @@ theorem corestrictionCochainTwo_product (A : Rep k G)
       intro t _
       rw [map_sum]
 
-/-- Cocycle-level transitivity for the compatible product right transversal
-in degree two. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype`, let `q : K ≃* J`, and set `τ=(mapSubtypeResIso A).hom`.
+For right transversals `S,T` of the two inclusions and `f ∈ Z²(J,Res_J A)`, `Tr^Z_{S.product
+T} f = Tr_T^Z(Tr_S^Z(mapCocycles₂ q τ f))`, using coefficients `A` and `Res_H A` for the outer
+and inner transfers. -/
 theorem corestrictionCocyclesTwo_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -298,8 +318,10 @@ theorem corestrictionCocyclesTwo_product (A : Rep k G)
       (g₁, g₂)
   exact congrFun (corestrictionCochainTwo_product A S T f) (g₁, g₂)
 
-/-- Chosen-transversal degree-two corestriction is transitive for compatible
-product transversals. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Set `J=K.map H.subtype`, let `q : K ≃* J`, and set `τ=(mapSubtypeResIso A).hom`.
+For right transversals `S` of `K` in `H`, `T` of `H` in `G`, and `x ∈ H²(J,Res_J A)`,
+`cor_{S.product T}^A x = cor_T^A(cor_S^{Res_H A}(map q τ 2 x))`. -/
 theorem corestrictionH2OfRightTransversal_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -323,8 +345,10 @@ theorem corestrictionH2OfRightTransversal_product (A : Rep k G)
       exact congrArg (groupCohomology.H2π A)
         (corestrictionCocyclesTwo_product A S T f)
 
-/-- Canonical degree-two finite-index corestriction is transitive along a
-subgroup chain. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype`, let `q : K ≃* J` be the image equivalence, and put
+`τ=(mapSubtypeResIso A).hom : q^*(Res_J A) → Res_K(Res_H A)`. For `x ∈ H²(J,Res_J A)`,
+`cor_J^G x = cor_H^G(cor_K^H(map q τ 2 x))`. -/
 theorem corestrictionH2_trans (A : Rep k G)
     [K.FiniteIndex] [H.FiniteIndex]
     (x : groupCohomology.H2

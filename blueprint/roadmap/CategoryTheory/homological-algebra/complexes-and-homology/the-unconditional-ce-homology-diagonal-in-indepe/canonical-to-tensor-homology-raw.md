@@ -1,4 +1,6 @@
-# Canonical To Tensor Homology Raw
+# The carrier-universe CE diagonal into tensor-square homology
 
-The CE homology diagonal into homology of the tensor square, with independent ring and Lie
-carrier universes.
+The carrier-universe CE diagonal into tensor-square homology.
+
+The graded homology map of the CE chain coproduct has source `H(C)` and target `H(C ⊗ C)` in
+the joint carrier universe.

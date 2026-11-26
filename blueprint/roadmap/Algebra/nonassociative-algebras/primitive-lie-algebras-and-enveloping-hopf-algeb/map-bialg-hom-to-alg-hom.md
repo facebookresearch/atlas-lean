@@ -1,3 +1,5 @@
-# Map Bialg Hom to Alg Hom
+# The algebra map of the induced bialgebra morphism
 
-Forgetting the bialgebra structure recovers the canonical enveloping algebra map.
+The algebra map of the induced bialgebra morphism.
+
+Its underlying algebra homomorphism is the canonical enveloping map.

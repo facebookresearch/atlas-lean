@@ -1,3 +1,6 @@
-# Original coordinate laws
+# The restriction and coefficient coordinate laws hold
 
-Every compatible embedding pair supplies all coordinates without a restriction certificate.
+The restriction and coefficient coordinate laws hold.
+
+Every compatible embedding pair between Galois extensions satisfies all the restriction, unit-
+map and coefficient-height formulas collected in OriginalCoordinateLaws.

@@ -1,3 +1,6 @@
-# EBar Degree Homeomorph s
+# A universal-bar degeneracy in tuple coordinates
 
-EBar degeneracies insert the unit after the outer regular coordinate.
+A universal-bar degeneracy in tuple coordinates.
+
+The degeneracy at i inserts the monoid identity at position i+1 of the universal-bar tuple,
+after its regular leading coordinate.

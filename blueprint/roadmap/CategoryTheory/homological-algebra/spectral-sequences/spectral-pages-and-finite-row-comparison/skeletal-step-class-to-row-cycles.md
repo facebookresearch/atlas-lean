@@ -1,3 +1,6 @@
-# Skeletal Step Class To Row Cycles
+# The step-class map to a first-page row's cycles
 
-The interval class maps to cycles of its first-page row.
+The step-class map to a first-page row's cycles.
+
+Lift the skeletal first-page class at (p,q) and use the row-cycle comparison to obtain
+degree-p row cycles.

@@ -1,4 +1,5 @@
-# Delta At Pos epsilon At Pos succ
+# The second counit identity after a comultiplication insertion
 
-Counit cancels comultiplication at the `succ` position. Dual of
-`Monad.muAtPos_etaAtPos_succ`.
+The second counit identity after a comultiplication insertion.
+
+Comultiplication at position `i` followed by counit contraction at `i.succ` is the identity.

@@ -1,6 +1,6 @@
-# Small Etale Canonical Geometric Points Common cover
+# Canonical geometric fibers detect covering sieves
 
-An actual sieve is covering if its arrows lift every element of each
-original common-universe geometric fiber. This is the cover criterion used
-to construct the preceding conservative family, with no common-universe
-local-bijectivity certificate.
+Canonical geometric fibers detect covering sieves.
+
+If every fiber element at every canonical common-universe point lifts through an arrow of a
+sieve on an étale object, that sieve is covering in the small étale topology.

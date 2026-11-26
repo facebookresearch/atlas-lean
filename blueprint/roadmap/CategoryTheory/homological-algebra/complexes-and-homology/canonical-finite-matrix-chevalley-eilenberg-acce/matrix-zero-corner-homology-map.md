@@ -1,3 +1,6 @@
-# Matrix Zero Corner Homology Map
+# The matrix CE homology map of zero extension
 
-The homology map is a map of the zero-corner chain map.
+The matrix CE homology map of zero extension.
+
+The size inclusion `m ≤ n` induces the homology map of its zero-extension chain map in degree
+`d`.

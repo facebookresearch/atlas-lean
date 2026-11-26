@@ -1,3 +1,5 @@
-# Countable Span Basis
+# A basis of the span indexed by selected generators
 
-Basis of the honest original span, with index among the original generators.
+A basis of the span indexed by selected generators.
+
+The chosen linearly independent subset of g supplies a basis of the submodule span of g.

@@ -1,3 +1,6 @@
-# Eventual Ranges Map app val
+# Values of a restricted eventual-image diagram map
 
-Restricting a diagram map preserves its underlying component value.
+Values of a restricted eventual-image diagram map.
+
+The j-component of eventualRangesMap α sends an eventual-range element x to the underlying
+element α_j(x).

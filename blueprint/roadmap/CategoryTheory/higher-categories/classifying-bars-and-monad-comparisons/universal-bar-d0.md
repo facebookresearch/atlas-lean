@@ -1,3 +1,6 @@
-# Universal Bar d0
+# First boundary face of the regular universal bar
 
-Zeroth face of the total bar is the outer iterated action.
+First boundary face of the regular universal bar.
+
+The first face is the canonical two-sided boundary map for the regular outer module and the
+point left module.

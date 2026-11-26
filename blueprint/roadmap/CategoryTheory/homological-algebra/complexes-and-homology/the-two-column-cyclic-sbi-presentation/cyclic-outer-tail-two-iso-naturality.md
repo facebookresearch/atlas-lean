@@ -1,3 +1,6 @@
-# Cyclic Outer Tail Two Iso naturality
+# Naturality of cyclic bicomplex period-two restriction
 
-The canonical outer period-two comparison commutes with the nonunital map.
+Naturality of cyclic bicomplex period-two restriction.
+
+The outer-tail comparison commutes with the bicomplex maps induced by nonunital algebra
+homomorphisms.

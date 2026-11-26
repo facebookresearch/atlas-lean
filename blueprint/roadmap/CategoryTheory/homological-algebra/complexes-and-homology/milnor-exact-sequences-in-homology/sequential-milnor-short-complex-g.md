@@ -1,4 +1,9 @@
-# Sequential Milnor Short Complex g
+# Second map of the canonical Milnor sequence
 
-The Milnor edge is the actual homology map of the limit-to-product map,
-factored through the kernel and the chosen inverse limit of homologies.
+Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The second map of the canonical Milnor short complex is the edge H_j(lim K) → lim(H_jK), whose stage projections are H_j(lim K → Kₙ).

@@ -12,13 +12,12 @@ module
 public import MathlibExt.Algebra.Homology.HomologicalComplex.SplitDegreeCoherence
 
 /-!
-# Pointwise cycles and homology splitting maps through functors
+# Functorial cycles retractions and homology sections
 
-The actual native mapped cycles/homology isomorphisms identify the normalized
-cycle retraction, earned homology inclusion and homology cycle section. Only
-the original and mapped selected homology and local left-homology preservation
-are needed. Local left/right preservation earns mapped homology through the
-existing companion API. No global homology or abelian premise occurs.
+For an additive functor preserving the left homology construction of a
+selected degreewise short complex, the canonical cycles and homology
+comparison isomorphisms identify the normalized splitting retractions,
+inclusions and sections before and after applying the functor.
 -/
 
 @[expose] public section
@@ -74,7 +73,12 @@ local instance (F : C ⥤ D) [F.Additive] (i : ι)
   change ((F.mapHomologicalComplex c).obj K).HasHomology i
   infer_instance
 
-/-- The actual native mapped cycle isomorphism identifies the normalized cycle retractions. -/
+/--
+Let C,D be preadditive categories, K a c-complex with splitting s, and F:C⥤D additive. Assume
+K and F(K) have homology at i and F preserves left homology of Sᵢ=(K_prev(i)→Kᵢ→K_next(i)).
+Let α_Z:Zᵢ(FK)≅F(ZᵢK) and α_H:Hᵢ(FK)≅F(HᵢK) be the canonical comparisons. For the normalized
+cycles retraction rᵢ:Kᵢ→ZᵢK, F(rᵢ)≫α_Z.inv equals the cycles retraction of s.map F.
+-/
 @[reassoc]
 lemma cyclesRetraction_map (s : Splitting K) (F : C ⥤ D) [F.Additive] (i : ι)
     [K.HasHomology i] [((F.mapHomologicalComplex c).obj K).HasHomology i]
@@ -100,7 +104,13 @@ lemma cyclesRetraction_map (s : Splitting K) (F : C ⥤ D) [F.Additive] (i : ι)
     _ = (s.map F).cyclesRetraction i ≫ ((F.mapHomologicalComplex c).obj K).iCycles i :=
       ((s.map F).cyclesRetraction_iCycles i).symm
 
-/-- The actual native mapped homology isomorphism identifies the earned homology inclusions. -/
+/--
+Let C,D be preadditive categories, K a c-complex with splitting s, and F:C⥤D additive. Assume
+K and F(K) have homology at i and F preserves left homology of Sᵢ=(K_prev(i)→Kᵢ→K_next(i)).
+Let α_Z:Zᵢ(FK)≅F(ZᵢK) and α_H:Hᵢ(FK)≅F(HᵢK) be the canonical comparisons. For the normalized
+homology inclusion ℓᵢ:HᵢK→Kᵢ, α_H.inv≫ℓᵢ(FK)=F(ℓᵢ), where the mapped inclusion is constructed
+from s.map F.
+-/
 @[reassoc]
 lemma homologyInclusionComponent_map (s : Splitting K) (F : C ⥤ D) [F.Additive] (i : ι)
     [K.HasHomology i] [((F.mapHomologicalComplex c).obj K).HasHomology i]
@@ -155,7 +165,12 @@ lemma homologyInclusionComponent_map (s : Splitting K) (F : C ⥤ D) [F.Additive
     _ = (mπ ≫ ((K.sc i).mapHomologyIso F).hom) ≫ F.map I :=
       congrArg (fun f => f ≫ F.map I) hH.symm
 
-/-- The earned homology cycle sections commute with the actual native comparison maps. -/
+/--
+Let C,D be preadditive categories, K a c-complex with splitting s, and F:C⥤D additive. Assume
+K and F(K) have homology at i and F preserves left homology of Sᵢ=(K_prev(i)→Kᵢ→K_next(i)).
+Let α_Z:Zᵢ(FK)≅F(ZᵢK) and α_H:Hᵢ(FK)≅F(HᵢK) be the canonical comparisons. For the
+homology-to-cycles section tᵢ:HᵢK→ZᵢK, F(tᵢ)≫α_Z.inv=α_H.inv≫tᵢ(FK).
+-/
 @[reassoc]
 lemma homologyCycleSection_map (s : Splitting K) (F : C ⥤ D) [F.Additive] (i : ι)
     [K.HasHomology i] [((F.mapHomologicalComplex c).obj K).HasHomology i]

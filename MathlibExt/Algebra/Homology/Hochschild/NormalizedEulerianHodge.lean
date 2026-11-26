@@ -15,15 +15,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.NormalizedEulerianOperators
 public import MathlibExt.LinearAlgebra.TensorPower.PermutationActionNaturality
 
 /-!
-# Rational normalized Hodge decomposition
+# The rational Hodge decomposition of normalized chains
 
-Over a rational ground algebra, the
-normalized coefficient Eulerian chain
-projectors are finite, orthogonal and
-complete in each degree. Their images
-decompose the normalized complex and
-homology, naturally under factorwise
-normalization without coefficient flatness.
+Let `k` be a commutative `ℚ`-algebra, `A` a commutative `k`-algebra, and `M` a compatible
+symmetric `A`-module. The normalized Eulerian chain projectors are orthogonal and locally
+finite: in degree `n`, only weights `0 ≤ i ≤ n` can occur and their sum is the identity.
+Weight zero is the identity in degree zero and vanishes in positive degrees.
+
+The image complexes give a coproduct decomposition of the normalized chain complex and of its
+homology. The forward maps are the sums of image inclusions and their induced homology maps.
+Factorwise normalization intertwines the full and normalized Eulerian projectors, both on
+chains and on homology.
 -/
 
 @[expose] public section
@@ -46,7 +48,9 @@ local instance : SMulCommClass A Aᵐᵒᵖ M := actionsComm A M
 local instance : SMulCommClass k Aᵐᵒᵖ M := kOpComm k A M
 local instance : IsScalarTower k Aᵐᵒᵖ M := kOpTower k A M
 
-/-- The degree-zero projector is the original identity, not a zero positive-degree convention. -/
+/-- The normalized Eulerian projector in degree zero.
+
+The weight-zero operator on the degree-zero normalized coefficient module is the identity. -/
 theorem normalizedEulerianOperator_degree_zero :
     normalizedEulerianOperator k A M 0 0 = LinearMap.id := by
   classical
@@ -59,18 +63,26 @@ theorem normalizedEulerianOperator_degree_zero :
     omega
   simpa only [Fintype.sum_unique, hval] using h
 
-/-- Positive original degrees have zero weight-zero component. -/
+/-- Vanishing of normalized weight zero in positive degrees.
+
+For `n>0`, the weight-zero normalized Eulerian operator is zero. -/
 theorem normalizedEulerianOperator_zero_weight (n : ℕ) (hn : 0 < n) :
     normalizedEulerianOperator k A M n 0 = 0 := by
   unfold normalizedEulerianOperator Equiv.Perm.eulerianElement
   simp_rw [Equiv.Perm.eulerianCoefficient_zero_weight n _ hn, MonoidAlgebra.single_zero]
   rw [Finset.sum_const_zero, map_zero]
 
-/-- The native normalized chain projector retains its original coefficient-word component. -/
+/-- The component formula for a normalized Eulerian chain projector.
+
+The degree-`n` component of the weight-`i` chain map is the normalized Eulerian operator
+`E_n^i`. -/
 theorem normalizedEulerianChainMap_f (n i : ℕ) :
     ((normalizedEulerianChainMap k A M i).f n).hom = normalizedEulerianOperator k A M n i := rfl
 
-/-- Native normalized chain composition is the orthogonal projector law. -/
+/-- Orthogonality of normalized Eulerian chain projectors.
+
+The composite of weight-`i` and weight-`j` chain maps is the weight-`i` map if `i=j`, and zero
+otherwise. -/
 theorem normalizedEulerianChainMap_comp (i j : ℕ) :
     normalizedEulerianChainMap k A M i ≫ normalizedEulerianChainMap k A M j =
       if i = j then normalizedEulerianChainMap k A M i else 0 := by
@@ -90,14 +102,19 @@ theorem normalizedEulerianChainMap_comp (i j : ℕ) :
     change (normalizedEulerianOperator k A M n j).comp (normalizedEulerianOperator k A M n i) = 0
     exact (normalizedEulerianOperator_comp k A M n j i).trans (if_neg (Ne.symm h))
 
-/-- Every normalized component has its original tensor-degree support. -/
+/-- The degree support of a normalized Eulerian chain projector.
+
+The degree-`n` component of weight `i` is zero whenever `n<i`. -/
 theorem normalizedEulerianChainMap_support (n i : ℕ) (h : n < i) :
     (normalizedEulerianChainMap k A M i).f n = 0 := by
   apply ModuleCat.hom_ext
   rw [normalizedEulerianChainMap_f, normalizedEulerianOperator_outside k A M n i h]
   rfl
 
-/-- Native normalized finite completeness gives exactly the original degree identity. -/
+/-- The degreewise completeness of normalized Eulerian chain maps.
+
+The sum of their degree-`n` components over `0 ≤ i ≤ n` is the identity on the normalized
+chain term. -/
 theorem normalizedEulerianChainMap_sum (n : ℕ) :
     (∑ i : Fin (n + 1), (normalizedEulerianChainMap k A M i.val).f n) =
       𝟙 ((normalizedChainComplex k A M).X n) := by
@@ -106,11 +123,16 @@ theorem normalizedEulerianChainMap_sum (n : ℕ) :
   change (∑ i : Fin (n + 1), normalizedEulerianOperator k A M n i.val) = LinearMap.id
   exact normalizedEulerianOperator_sum k A M n
 
-/-- The normalized weight complex is the native image of its original chain projector. -/
+/-- The normalized Eulerian image complex of one weight.
+
+For `i ∈ ℕ`, this is the image of the normalized Eulerian weight-`i` chain projector. -/
 def normalizedEulerianImageComplex (i : ℕ) : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   image (normalizedEulerianChainMap k A M i)
 
-/-- The sum of normalized image inclusions gives the full native Hodge complex isomorphism. -/
+/-- The coproduct decomposition of normalized Hochschild chains by weight.
+
+The coproduct of normalized Eulerian image complexes is isomorphic to the normalized
+Hochschild complex, using local finiteness and the complete orthogonal projector family. -/
 def normalizedHodgeComplexIso :
     (∐ (fun i : ℕ => normalizedEulerianImageComplex k A M i)) ≅ normalizedChainComplex k A M :=
   HomologicalComplex.locallyFiniteIdempotentImageComplexIso
@@ -118,12 +140,18 @@ def normalizedHodgeComplexIso :
     (normalizedEulerianChainMap_comp k A M) id
     (normalizedEulerianChainMap_support k A M) (normalizedEulerianChainMap_sum k A M)
 
-/-- The original normalized image inclusions are retained as the forward decomposition map. -/
+/-- The image-inclusion map of the normalized Hodge decomposition.
+
+The forward chain isomorphism is induced from the coproduct by the image inclusion of each
+normalized Eulerian chain projector. -/
 theorem normalizedHodgeComplexIso_hom :
     (normalizedHodgeComplexIso k A M).hom =
       Sigma.desc (fun i => image.ι (normalizedEulerianChainMap k A M i)) := rfl
 
-/-- The normalized image homologies give the native Hodge homology coproduct. -/
+/-- The normalized Hodge coproduct decomposition on homology.
+
+In every degree `n`, the coproduct of the homology objects of the normalized Eulerian image
+complexes is isomorphic to normalized Hochschild homology. -/
 def normalizedHodgeHomologyIso (n : ℕ) :
     (∐ (fun i : ℕ => (normalizedEulerianImageComplex k A M i).homology n)) ≅
       (normalizedChainComplex k A M).homology n :=
@@ -132,17 +160,25 @@ def normalizedHodgeHomologyIso (n : ℕ) :
     (normalizedEulerianChainMap_comp k A M) id
     (normalizedEulerianChainMap_support k A M) (normalizedEulerianChainMap_sum k A M) n
 
-/-- The original normalized Hodge decomposition map is homology of its native image inclusions. -/
+/-- The homology-inclusion map of the normalized Hodge decomposition.
+
+The forward homology decomposition map is induced by the homology maps of the normalized
+Eulerian image inclusions. -/
 theorem normalizedHodgeHomologyIso_hom (n : ℕ) :
     (normalizedHodgeHomologyIso k A M n).hom = Sigma.desc
       (fun i => HomologicalComplex.homologyMap (image.ι (normalizedEulerianChainMap k A M i)) n) := rfl
 
-/-- The original normalized Hodge homology projector. -/
+/-- The normalized Eulerian projector on a homology degree.
+
+Take the degree-`n` homology map of the weight-`i` normalized chain projector. -/
 def normalizedEulerianHomologyProjector (n i : ℕ) :
     (normalizedChainComplex k A M).homology n ⟶ (normalizedChainComplex k A M).homology n :=
   HomologicalComplex.homologyMap (normalizedEulerianChainMap k A M i) n
 
-/-- Its homology projections retain the orthogonal projector law. -/
+/-- Orthogonality of normalized Eulerian homology projectors.
+
+In a fixed homology degree, the weight projectors compose to the same projector for equal
+weights and to zero for distinct weights. -/
 theorem normalizedEulerianHomologyProjector_comp (n i j : ℕ) :
     normalizedEulerianHomologyProjector k A M n i ≫ normalizedEulerianHomologyProjector k A M n j =
       if i = j then normalizedEulerianHomologyProjector k A M n i else 0 := by
@@ -153,7 +189,10 @@ theorem normalizedEulerianHomologyProjector_comp (n i j : ℕ) :
   · exact HomologicalComplex.homologyMap_zero
       (K := normalizedChainComplex k A M) (L := normalizedChainComplex k A M) (i := n)
 
-/-- The original quotient chain projection intertwines every raw and normalized Eulerian projector. -/
+/-- The chain-level Eulerian naturality of normalization.
+
+The full weight-`i` chain projector followed by normalization equals normalization followed by
+the normalized weight-`i` projector. -/
 @[reassoc]
 theorem normalizationProjection_eulerian (i : ℕ) :
     eulerianChainMap k A M i ≫ normalizationProjection k A M =
@@ -172,7 +211,10 @@ theorem normalizationProjection_eulerian (i : ℕ) :
   exact TensorPower.coefficientRationalPermutationAction_naturality n
     (Equiv.Perm.eulerianElement n i) (ModuleCat.Algebra.Hochschild.unitSubmodule k A).mkQ LinearMap.id
 
-/-- Native homology of the quotient map preserves the original Hodge weights. -/
+/-- The homology-level Eulerian naturality of normalization.
+
+The normalization homology map intertwines the full and normalized Eulerian projectors of the
+same weight. -/
 @[reassoc]
 theorem normalizationHomology_eulerian (n i : ℕ) :
     eulerianHomologyProjector k A M n i ≫

@@ -14,12 +14,20 @@ public import MathlibExt.Algebra.Homology.Hochschild.Matrix.ConnesTrace
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CyclicAlternatizationWorkingHeight
 
 /-!
-# The original generalized Connes matrix trace at a native common height
+# The Connes quotient trace in independent coefficient worlds
 
-The trace is carried through the native module universe lift and the
-native Connes cokernel comparison. Its representative equation is the
-original generalizedTrace equation. Both original coefficient worlds are
-retained in the quotient and tensor coefficient squares.
+Let k be a commutative ring and A an associative unital k-algebra, in
+independent carrier worlds u and v. For an additional height z, lift
+the cyclic bicomplex and its first-column cokernel to H = max(u,v,z).
+The generalized matrix trace induces
+T^H : Cλ^H(Mat_r(A)) → Cλ^H(A). On lifted tensor representatives,
+T_n^H(q_n^Mat(up(x))) = q_n^A(up(T_n(x))), where T_n is the
+closed-cycle generalized trace and Cλ is the quotient by 1−t.
+
+For a k-algebra B in an independent world w and a unital k-algebra map
+f : A → B, put both quotient complexes at H = max(u,v,w,z).
+The square T_B^H ∘ Cλ^H(Mat_r(f)) = Cλ^H(f) ∘ T_A^H commutes.
+No equality between the coefficient carrier worlds is required.
 -/
 
 @[expose] public section
@@ -35,7 +43,11 @@ namespace ModuleCat.Algebra.Hochschild.Matrix
 
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- The original Connes trace, transported through native working-height cokernel comparisons. -/
+/-- For a commutative ring k, a k-algebra A, r ≥ 0 and
+H = max(u,v,z), generalized trace defines
+Cλ^H(Mat_r(A)) → Cλ^H(A). The complexes are the first-column cyclic
+cokernels at height H, and their degree maps take a lifted matrix
+tensor class to the class of its lifted generalized trace. -/
 def connesTraceAtHeight (r : ℕ) :
     NonUnital.connesComplexAtHeight.{u,v,z} k (Matrix (Fin r) (Fin r) A) ⟶
       NonUnital.connesComplexAtHeight.{u,v,z} k A :=
@@ -44,7 +56,11 @@ def connesTraceAtHeight (r : ℕ) :
       (ComplexShape.down ℕ)).map (connesTrace k A r) ≫
         (NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom
 
-/-- The native higher trace keeps the original generalized tensor representative at every degree. -/
+/-- For a k-algebra A, r,n ≥ 0, H = max(u,v,z) and
+x ∈ Mat_r(A) ⊗[k] Mat_r(A)^⊗n, the chosen-height trace satisfies
+T_n^H(q_n^Mat(up(x))) = q_n^A(up(T_n(x))).
+Here the up maps lift the coefficient-first tensor terms to height H,
+and T_n sums the entries around every closed matrix-index cycle. -/
 theorem connesTraceAtHeight_projection_apply (r n : ℕ)
     (x : Matrix (Fin r) (Fin r) A ⊗[k] TensorPower k n (Matrix (Fin r) (Fin r) A)) :
     ((connesTraceAtHeight.{u,v,z} k A r).f n).hom
@@ -106,7 +122,12 @@ theorem connesTraceAtHeight_projection_apply (r n : ℕ)
 
 variable {B : Type w} [Ring B] [Algebra k B]
 
-/-- The original generalized trace is natural across independent original coefficient worlds. -/
+/-- For a commutative ring k, k-algebras A and B in independent
+carrier worlds v and w, a unital k-algebra map f : A → B and r ≥ 0,
+put all complexes at H = max(u,v,w,z). The square
+Cλ^H(f) ∘ T_A^H = T_B^H ∘ Cλ^H(Mat_r(f))
+commutes from Cλ^H(Mat_r(A)) to Cλ^H(B).
+The extra lift height z is arbitrary. -/
 theorem connesTraceAtHeight_naturality (f : A →ₐ[k] B) (r : ℕ) :
     connesTraceAtHeight.{u,v,max u v w z} k A r ≫
         NonUnital.connesComplexHomAtHeight.{u,v,w,z} k A f.toNonUnitalAlgHom =

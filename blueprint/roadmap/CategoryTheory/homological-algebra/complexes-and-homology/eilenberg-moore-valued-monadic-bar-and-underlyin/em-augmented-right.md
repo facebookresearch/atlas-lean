@@ -1,3 +1,4 @@
-# Em Augmented right
+# The free-bar augmentation target is the constant algebra functor
 
-The augmentation target is the constant functor at `alg`.
+Let T be a monad on C and alg a T-algebra. The target of emAugmented(alg) is emTarget(alg),
+the constant functor Discrete PUnit → T.Algebra at alg.

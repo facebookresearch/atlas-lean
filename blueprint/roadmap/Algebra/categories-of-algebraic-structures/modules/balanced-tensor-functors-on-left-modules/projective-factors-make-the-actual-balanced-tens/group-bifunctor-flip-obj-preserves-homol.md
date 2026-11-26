@@ -1,4 +1,6 @@
-# Group Bifunctor flip obj preserves Homology of projective
+# Tensor functor with a projective left factor preserves homology
 
-The same exactness statement for a projective second factor retains the
-original right-module first variable and its actual group tensor functor.
+Tensor functor with a projective left factor preserves homology.
+
+For a categorically projective left `R`-module `P`, the group-valued balanced tensor functor
+`- ⊗_R P` preserves homology.

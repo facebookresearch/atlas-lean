@@ -1,4 +1,6 @@
-# Field Etale Continuous Equiv field original map
+# Field change comparison uses group restriction and stalk transport
 
-The field map is the original cochain restriction followed by the actual
-field-change stalk coefficient map, on the same source and target native models.
+Field change comparison uses group restriction and stalk transport.
+
+The continuous field pullback is the homogeneous-cochain restriction map for the induced
+continuous Galois-group homomorphism followed by the field-change stalk-module isomorphism.

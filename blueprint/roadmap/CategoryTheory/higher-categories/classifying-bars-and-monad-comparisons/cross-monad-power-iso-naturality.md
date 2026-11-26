@@ -1,3 +1,6 @@
-# Cross Monad Power Iso naturality
+# Monad power comparison is natural in the object
 
-Every original coefficient map commutes with the iterated comparison.
+Monad power comparison is natural in the object.
+
+The image under `J` of the power map commutes with the power comparison and the `S`-power map
+of `J.map f`.

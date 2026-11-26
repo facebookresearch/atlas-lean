@@ -1,3 +1,5 @@
-# Conjugate map square
+# Conjugated morphism satisfies its coordinate square
 
-Cancel the same target comparison from a conjugated map equality.
+Conjugated morphism satisfies its coordinate square.
+
+If `e.hom ≫ b ≫ f.inv = a`, then `a ≫ f.hom = e.hom ≫ b`.

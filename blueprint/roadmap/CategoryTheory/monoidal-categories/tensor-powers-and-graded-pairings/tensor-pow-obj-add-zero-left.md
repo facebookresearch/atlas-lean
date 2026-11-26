@@ -1,4 +1,5 @@
-# Tensor Pow Obj add zero left
+# Left zero block splitting agrees with the left unitor
 
-Left-unit coherence: unfolding `tensorPowObj_add X 0 n` then the left unitor
-is transport along `0 + n = n`.
+Left zero block splitting agrees with the left unitor.
+
+Splitting `0+n` and applying the left unitor gives the power-index equality transport to `n`.

@@ -1,5 +1,7 @@
-# Nerve Homotopy Map As Small Down eq ordinary
+# The transported cylinder for a universe-zero object category
 
-On the ACTUAL original finite-object/Ring-Hom source chart, the
-canonical down value cylinder is the WHOLE original ordinary AsSmall
-cylinder, with both actual categories/F/G/transformation pinned.
+The transported cylinder for a universe-zero object category.
+
+For C with objects in Type 0 and morphisms in universe u, and D with objects and morphisms in
+universe u, the AsSmall.down cylinder equals the ordinary nerve cylinder of the left-whiskered
+transformation.

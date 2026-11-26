@@ -1,3 +1,5 @@
-# Exact Sequence Four Short Complex short Exact
+# The extracted middle sequence is short exact
 
-The short complex extracted from five exact terms is short exact.
+The extracted middle sequence is short exact.
+
+For the exact five-object sequence, coker(A₀ → A₁) → A₂ → ker(A₃ → A₄) is short exact.

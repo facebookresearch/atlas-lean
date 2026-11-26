@@ -19,23 +19,21 @@ public import Mathlib.RingTheory.Ideal.Cotangent
 public import Mathlib.RingTheory.TensorProduct.Basic
 
 /-!
-# The first-order associated-graded layer of a flat module
+# Multiplication and tensor-valued first-order linearization
 
-For an ideal `I` and module `M`, multiplication induces a canonical
-surjection
+Let `R` be a commutative ring, `I` an ideal, and `M` an `R`-module. Multiplication induces a
+surjective `R/I`-linear map `(M/IM) ⊗[R/I] (I/I²) → IM/I²M`, given by `[m] ⊗ [i] ↦ [i • m]`.
+It is an equivalence when `M` is flat.
 
-`(M / IM) ⊗[ R / I ] (I / I²) → IM / I(IM)`.
+For a flat `M`, multiplication also identifies `I ⊗[R] M` with `IM`; the tensors coming from
+`I² ⊆ I` correspond exactly to `I²M` inside `IM`.
 
-It is an equivalence when `M` is flat. The definition is canonical and
-basis-free. This file also packages the resulting tensor-valued
-linearization of maps whose range lies in an ideal multiple.
+If `N` is flat and an `R`-linear map `f : M → N` has range in `IN`, composing its first-order
+layer map with the inverse multiplication equivalence gives `M/IM → (N/IN) ⊗[R/I] (I/I²)`.
+Applying multiplication to this tensor-valued linearization recovers the class `[f m]` in
+`IN/I²N`.
 
-## Main declarations
-
-* `Ideal.firstOrderMul`
-* `Ideal.firstOrderMulEquiv`
-* `Ideal.firstOrderLayerEquiv`
-* `LinearMap.linearizationAtIdeal`
+References: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapters 2 and 10.
 -/
 
 @[expose] public section
@@ -162,9 +160,10 @@ private def firstOrderMulBilinear (I : Ideal R)
     (I • ⊤ : Submodule R M) (I • ⊤ : Submodule R I)
     (firstOrderMulRaw_left_ker I M) (firstOrderMulRaw_right_ker I M)
 
-/-- Multiplication gives the canonical map from the tensor product of the
-degree-zero module piece and the cotangent space to the first-order module
-layer. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M` an `R`-module. Multiplication defines
+the `R/I`-linear map `(M/IM) ⊗[R/I] I.Cotangent → I.FirstOrderModuleLayer M`, where
+`I.Cotangent = I/I²` and the target is `IM/I²M`. It sends `[m] ⊗ I.toCotangent i` to the class
+of `(i : R) • m`. -/
 def firstOrderMul (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] :
     (M ⧸ (I • ⊤ : Submodule R M)) ⊗[R ⧸ I] I.Cotangent
@@ -201,8 +200,9 @@ theorem firstOrderMul_mk_tmul_toCotangent (I : Ideal R)
   rw [firstOrderMul]
   rfl
 
-/-- The multiplication map onto the first-order layer is always
-surjective. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, `firstOrderMul I M : (M/IM)
+⊗[R/I] (I/I²) → IM/I²M` is surjective. Every first-order class is a sum of products `[i • m]`
+and therefore has a preimage in this tensor product. -/
 theorem firstOrderMul_surjective (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] :
     Function.Surjective (firstOrderMul I M) := by
@@ -231,7 +231,8 @@ theorem firstOrderMul_surjective (I : Ideal R)
   refine ⟨t, ht.trans ?_⟩
   congr 1
 
-/-- The canonical multiplication map `I ⊗ M → M`. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, `tensorSMulMap I M : I ⊗[R]
+M →ₗ[R] M` is multiplication, with `i ⊗ m ↦ (i : R) • m`. -/
 def tensorSMulMap (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] :
     I ⊗[R] M →ₗ[R] M :=
@@ -244,7 +245,8 @@ theorem tensorSMulMap_tmul (I : Ideal R)
     tensorSMulMap I M (i ⊗ₜ[R] m) = i.1 • m := by
   simp [tensorSMulMap]
 
-/-- The range of the multiplication map is the ideal multiple `IM`. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, the range of `tensorSMulMap
+I M : I ⊗[R] M → M` is exactly `IM = I • (⊤ : Submodule R M)`. -/
 theorem tensorSMulMap_range (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] :
     LinearMap.range (tensorSMulMap I M) =
@@ -252,8 +254,9 @@ theorem tensorSMulMap_range (I : Ideal R)
   rw [tensorSMulMap, LinearMap.range_comp]
   exact Submodule.map_range_rTensor_subtype_lid
 
-/-- For a flat module, tensoring the ideal inclusion identifies `I ⊗ M`
-with the ideal multiple `IM`. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M` a flat `R`-module. Multiplication gives
+the `R`-linear equivalence `I ⊗[R] M ≃ₗ[R] IM`, sending `i ⊗ m` to the element of `IM` with
+underlying value `(i : R) • m`. -/
 @[no_expose]
 def tensorSMulEquiv (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Flat R M] :
@@ -286,8 +289,10 @@ theorem tensorSMulEquiv_tmul (I : Ideal R)
   rw [tensorSMulEquiv]
   rfl
 
-/-- Under `tensorSMulEquiv`, tensoring the submodule `I² ⊆ I` maps
-exactly onto `I(IM)`. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M` a flat `R`-module. Under
+`tensorSMulEquiv I M : I ⊗[R] M ≃ IM`, the image of the tensor inclusion `(I • ⊤ : Submodule R
+I) ⊗[R] M → I ⊗[R] M` is exactly `(I • ⊤ : Submodule R IM)`. Thus the tensors from `I² ⊆ I`
+correspond to `I(IM) = I²M` inside `IM`. -/
 theorem tensorSMulEquiv_map_range (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Flat R M] :
     Submodule.map (tensorSMulEquiv I M).toLinearMap
@@ -392,8 +397,9 @@ private theorem firstOrderQuotientEquiv_tmul
   rw [tensorSMulEquiv_tmul]
   congr 1
 
-/-- For a flat module, the canonical multiplication map is a linear
-equivalence from the tensor product to the first-order layer. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M` a flat `R`-module. The multiplication
+map is the `R/I`-linear equivalence `(M/IM) ⊗[R/I] (I/I²) ≃ₗ[R/I] IM/I²M`, with `[m] ⊗ [i] ↦
+[i • m]`. -/
 @[no_expose]
 def firstOrderMulEquiv (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Flat R M] :
@@ -431,8 +437,9 @@ private theorem firstOrderMulEquiv_mk_tmul_toCotangent
   rw [firstOrderSourceEquiv_mk_tmul_toCotangent,
     firstOrderQuotientEquiv_tmul]
 
-/-- The forward map of `firstOrderMulEquiv` is the canonical multiplication
-map. -/
+/-- For an ideal `I` in a commutative ring `R` and a flat `R`-module `M`, the underlying linear
+map of `firstOrderMulEquiv I M` is `firstOrderMul I M`. Both maps have source `(M/IM) ⊗[R/I]
+(I/I²)`, target `IM/I²M`, and value `[m] ⊗ [i] ↦ [i • m]`. -/
 theorem firstOrderMulEquiv_toLinearMap (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Flat R M] :
     (firstOrderMulEquiv I M).toLinearMap = firstOrderMul I M := by
@@ -443,16 +450,17 @@ theorem firstOrderMulEquiv_toLinearMap (I : Ideal R)
   exact (firstOrderMulEquiv_mk_tmul_toCotangent I M m i).trans
     (firstOrderMul_mk_tmul_toCotangent I M m i).symm
 
-/-- The canonical first-order multiplication map is bijective for a flat
-module. -/
+/-- For an ideal `I` in a commutative ring `R` and a flat `R`-module `M`, `firstOrderMul I M :
+(M/IM) ⊗[R/I] (I/I²) → IM/I²M` is bijective. -/
 theorem firstOrderMul_bijective_of_flat (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Flat R M] :
     Function.Bijective (firstOrderMul I M) := by
   rw [← firstOrderMulEquiv_toLinearMap]
   exact (firstOrderMulEquiv I M).bijective
 
-/-- The first-order layer of a flat module as the tensor product of its
-degree-zero reduction with the cotangent space. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M` a flat `R`-module. This is the inverse
+`R/I`-linear equivalence `IM/I²M ≃ₗ[R/I] (M/IM) ⊗[R/I] (I/I²)` to first-order multiplication.
+In particular, the class `[i • m]` maps to `[m] ⊗ [i]`. -/
 @[no_expose]
 def firstOrderLayerEquiv (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Flat R M] :
@@ -460,7 +468,10 @@ def firstOrderLayerEquiv (I : Ideal R)
       (M ⧸ (I • ⊤ : Submodule R M)) ⊗[R ⧸ I] I.Cotangent :=
   (firstOrderMulEquiv I M).symm
 
-/-- Naturality of canonical multiplication into the first-order layer. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. Write
+`f̄ : M/IM → N/IN` for reduction modulo `I`, `gr₁(f) : IM/I²M → IN/I²N` for the induced layer
+map, and `μ_M, μ_N` for first-order multiplication. Then `gr₁(f) ∘ μ_M = μ_N ∘ (f̄ ⊗
+id_(I/I²))`. -/
 theorem firstOrderMul_naturality (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -485,7 +496,10 @@ theorem firstOrderMul_naturality (I : Ideal R)
   apply Subtype.ext
   exact f.map_smul i.1 m
 
-/-- Naturality of the inverse first-order equivalence for flat modules. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be flat `R`-modules, and `f : M →ₗ[R] N`.
+If `E_M, E_N` denote the inverse first-order equivalences and `f̄, gr₁(f)` the reduced and
+layer maps, then `(f̄ ⊗ id_(I/I²)) ∘ E_M = E_N ∘ gr₁(f)` as maps `IM/I²M → (N/IN) ⊗[R/I]
+(I/I²)`. -/
 theorem firstOrderLayerEquiv_naturality (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M] [Module.Flat R M]
     {N : Type w} [AddCommGroup N] [Module R N] [Module.Flat R N]
@@ -518,8 +532,10 @@ namespace LinearMap
 
 variable {R : Type u} [CommRing R]
 
-/-- Tensor-valued first-order linearization of a map whose range lies in an
-ideal multiple of a flat target. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M,N` be `R`-modules with `N` flat. If `f :
+M →ₗ[R] N` has range contained in `IN`, this is the `R/I`-linear map `M/IM → (N/IN) ⊗[R/I]
+(I/I²)` obtained by taking `[m] ↦ [f m]` in `IN/I²N` and then applying the inverse first-order
+multiplication equivalence for `N`. -/
 @[no_expose]
 def linearizationAtIdeal (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
@@ -530,8 +546,10 @@ def linearizationAtIdeal (I : Ideal R)
       (N ⧸ (I • ⊤ : Submodule R N)) ⊗[R ⧸ I] I.Cotangent :=
   (I.firstOrderLayerEquiv N).toLinearMap.comp (f.linearizedLayer I hf)
 
-/-- Applying canonical first-order multiplication after tensor-valued
-linearization recovers the raw first-order layer map. -/
+/-- Let `R` be a commutative ring, `I` an ideal, and `M,N` be `R`-modules with `N` flat. For an
+`R`-linear map `f : M → N` whose range lies in `IN`, composing its tensor-valued linearization
+with `firstOrderMul I N` gives its layer-valued linearization: `μ_N ∘ λ_I(f) =
+f.linearizedLayer I hf`. -/
 theorem firstOrderMul_comp_linearizationAtIdeal (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N] [Module.Flat R N]
@@ -550,8 +568,10 @@ theorem firstOrderMul_comp_linearizationAtIdeal (I : Ideal R)
     f.linearizedLayer I hf x
   exact (I.firstOrderMulEquiv N).apply_symm_apply _
 
-/-- Representative formula for tensor-valued first-order linearization after
-canonical multiplication. -/
+/-- Let `R` be a commutative ring, `I` an ideal, and `M,N` be `R`-modules with `N` flat. If `f : M
+→ₗ[R] N` has range in `IN`, then for every `x : M`, `firstOrderMul I N (f.linearizationAtIdeal
+I hf [x])` is the class `[f x]` in `IN/I²N`. Here `hf` is the range inclusion and `[x]` is the
+quotient class in `M/IM`. -/
 @[simp]
 theorem firstOrderMul_linearizationAtIdeal_mk (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
@@ -611,7 +631,10 @@ private theorem linearizedLayer_naturality (I : Ideal R)
         (a.reduceModIdeal I (Submodule.Quotient.mk x)) := by
       rw [LinearMap.reduceModIdeal_apply]
 
-/-- Naturality square for first-order tensor-valued linearization. -/
+/-- Let `R` be a commutative ring, `I` an ideal, and `M,M',N,N'` be `R`-modules with `N,N'` flat.
+Let `d : M → N`, `e : M' → N'`, `a : M → M'`, and `b : N → N'` be `R`-linear maps with `b ∘ d
+= e ∘ a`, `d(M) ⊆ IN`, and `e(M') ⊆ IN'`. For the reduced maps `ā,b̄` modulo `I`, their
+tensor-valued linearizations satisfy `(b̄ ⊗ id_(I/I²)) ∘ λ_I(d) = λ_I(e) ∘ ā`. -/
 theorem linearizationAtIdeal_naturality (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N] [Module.Flat R N]

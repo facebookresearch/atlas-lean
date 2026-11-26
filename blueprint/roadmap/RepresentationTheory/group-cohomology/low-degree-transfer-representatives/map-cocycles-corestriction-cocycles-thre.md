@@ -1,4 +1,6 @@
-# Map Cocycles₃ corestriction Cocycles Three
+# Coefficient maps commute with transferred three-cocycles
 
-Representative-level coefficient naturality for chosen-transversal
-degree-three transfer.
+Coefficient maps commute with transferred three-cocycles.
+
+Mapping a transferred H-three-cocycle by φ equals transferring its image under the restricted
+coefficient morphism.

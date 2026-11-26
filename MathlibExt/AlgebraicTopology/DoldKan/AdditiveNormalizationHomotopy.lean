@@ -6,19 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
--- SOURCE-ONLY additive normalization and the original prism homotopy; Native has not been run.
+-- Normalization of simplicial homotopies commutes with additive functors.
 module
 
 public import MathlibExt.AlgebraicTopology.DoldKan.AdditiveNormalization
 public import MathlibExt.AlgebraicTopology.SimplicialObject.NormalizedChainHomotopy
 
 /-!
-# The canonical additive normalization isomorphism preserves the actual prism homotopy
+# Additive transport of normalized simplicial homotopies
 
-The native negative alternating sum commutes with the additive functor.
-The existing Moore inclusion and projection comparisons then transport the
-actual normalized homotopy components. The original simplicial homotopy
-is fixed data; no homotopy compatibility law is supplied by the caller.
+Let F : C ⥤ D be an additive functor between abelian categories, whose object and morphism
+universes are independent. Write A(X) for the alternating face-map complex, N(X) for the
+normalized Moore complex, i_X : N(X) → A(X) for its inclusion and p_X : A(X) → N(X) for the
+normalization projection. The comparison isomorphisms e_X : F(N(X)) ≅ N(X ⋙ F) and t_X :
+F(A(X)) ≅ A(X ⋙ F) commute with i_X and p_X.
+
+A simplicial homotopy H from f to g induces alternating components h_{n,n+1} = −Σᵢ₌₀ⁿ (−1)ⁱHᵢ
+and h_{n,m} = 0 for m ≠ n+1. Its normalized components are i_X,n ≫ h_{n,m} ≫ p_Y,m. Additivity
+transports the signed sums, and the inclusion and projection comparisons identify these
+components with the normalized homotopy of H whiskered by F.
+
+The sign convention is that of Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy.
 -/
 
 @[expose] public section
@@ -38,7 +46,12 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {D : Type uD} [Category.{vD} D] [Abelian D]
   (F : C ⥤ D) [F.Additive]
 
-/-- The same native normalization projection commutes with additive transport. -/
+/-- Normalization projection under additive functors.
+
+Let F : C ⥤ D be additive between abelian categories and X a simplicial object of C. For the
+canonical Moore comparison e_X and alternating comparison t_X, the projections satisfy F(p_X)
+≫ e_X.hom = t_X.hom ≫ p_{X⋙F}. Here F acts on chain complexes degreewise and p is the
+normalization projection. -/
 @[reassoc]
 theorem mooreCompMapIso_projection (X : SimplicialObject C) :
     (F.mapHomologicalComplex (ComplexShape.down ℕ)).map (PInftyToNormalizedMooreComplex X) ≫
@@ -60,7 +73,12 @@ theorem mooreCompMapIso_projection (X : SimplicialObject C) :
   rw [Category.assoc, PInftyToNormalizedMooreComplex_comp_inclusionOfMooreComplexMap]
   exact map_PInfty F X
 
-/-- Native negative alternating-sum components commute with the same additive functor. -/
+/-- Additive transport of alternating homotopy components.
+
+Let H be a simplicial homotopy from f to g in an abelian category C and F : C ⥤ D an additive
+functor to an abelian category. If t_X and t_Y are the alternating-complex comparison
+isomorphisms, then F(h_H(n,m)) ≫ t_Y,m = t_X,n ≫ h_{H⋙F}(n,m) for every n,m : ℕ. The shifted
+component h_H(n,n+1) is −Σᵢ₌₀ⁿ (−1)ⁱHᵢ; all other components are zero. -/
 theorem alternatingTransport_homotopy
     {X Y : SimplicialObject C} {f g : X ⟶ Y} (H : SimplicialObject.Homotopy f g) (n m : ℕ) :
     F.map (H.toChainHomotopy.hom n m) ≫ ((alternatingFaceMapComplexCompMapHomologicalComplexIso F).app Y).hom.f m =
@@ -78,8 +96,13 @@ theorem alternatingTransport_homotopy
   · rw [SimplicialObject.Homotopy.ToChainHomotopy.hom_eq_zero _ _ _ hn,
       SimplicialObject.Homotopy.ToChainHomotopy.hom_eq_zero _ _ _ hn, Functor.map_zero]
 
-/-- The original normalized prism homotopy is transported through the canonical
-normalization isomorphisms, including every nonzero shifted component. -/
+/-- Additive transport of normalized homotopy components.
+
+For an additive functor F between abelian categories and a simplicial homotopy H from f to g,
+the canonical Moore comparisons e_X and e_Y satisfy F(h_Hᴺ(n,m)) ≫ e_Y,m = e_X,n ≫
+h_{H⋙F}ᴺ(n,m) for all natural degrees n,m. The normalized component h_Hᴺ is the composite of
+the Moore inclusion, the signed alternating homotopy component and the normalization
+projection. -/
 @[reassoc]
 theorem mooreCompMapIso_homotopy
     {X Y : SimplicialObject C} {f g : X ⟶ Y} (H : SimplicialObject.Homotopy f g) (n m : ℕ) :

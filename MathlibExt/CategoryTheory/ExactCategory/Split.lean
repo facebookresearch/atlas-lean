@@ -16,11 +16,16 @@ public import MathlibExt.CategoryTheory.ExactCategory.Functor
 public import MathlibExt.Algebra.Homology.ShortComplex.SplittingComp
 
 /-!
-# The canonical split exact structure
+# The split exact structure of an additive category
 
-For an additive category `C` (encoded by `Preadditive`, `HasZeroObject`,
-`HasBinaryBiproducts`), a short complex is declared exact when it admits a
-splitting. This defines an exact structure.
+Let C be preadditive with a zero object and binary biproducts. Declaring a short complex
+admissible exact precisely when it has a splitting defines an exact category structure. A
+splitting gives a short exact sequence, and this property is invariant under short-complex
+isomorphisms.
+
+Every chosen exact structure admits split short complexes. Additive functors preserve
+splittings, so an additive functor from the split exact structure to any exact target category
+is exact.
 -/
 
 @[expose] public section
@@ -34,19 +39,25 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C] [HasZeroObject C]
 
 namespace CategoryTheory.ExactCategory
 
-/-- A short complex is split admissible exact iff it admits a splitting. -/
+/-- For a short complex S₁ →^f S₂ →^g S₃ in a preadditive category C, define split admissible
+exactness by Nonempty(S.Splitting). A splitting has maps r : S₂ → S₁ and s : S₃ → S₂ with
+f≫r=id, s≫g=id, and r≫f+g≫s=id_{S₂}. -/
 def isSplitAdmissibleExact (S : ShortComplex C) : Prop :=
   Nonempty S.Splitting
 
 omit [HasBinaryBiproducts C] in
-/-- A split admissible exact short complex is short exact. -/
+/-- Let C be preadditive with a zero object and S a short complex. If S admits a splitting, then
+S.ShortExact: its first map is monic, its second map is epic, and the sequence is exact. A
+binary-biproduct hypothesis is not required for this implication. -/
 theorem shortExact_of_isSplitAdmissibleExact {S : ShortComplex C}
     (h : isSplitAdmissibleExact S) : S.ShortExact := by
   obtain ⟨s⟩ := h
   exact s.shortExact
 
 omit [HasZeroObject C] [HasBinaryBiproducts C] in
-/-- Being split admissible exact is stable under isomorphisms of short complexes. -/
+/-- For short complexes S,T in a preadditive category C and an isomorphism e : S ≅ T, if S has a
+splitting then T has a splitting. The maps of the splitting are transported through the three
+component isomorphisms of e. -/
 theorem isSplitAdmissibleExact_of_iso {S T : ShortComplex C} (e : S ≅ T)
     (h : isSplitAdmissibleExact S) : isSplitAdmissibleExact T := by
   obtain ⟨s⟩ := h
@@ -376,7 +387,9 @@ end PushoutPullback
 
 section ExactStructure
 
-/-- Any split short complex is admissible exact for the ambient exact structure. -/
+/-- Let D be preadditive with a zero object, binary biproducts, and a chosen ExactCategory
+structure. If a short complex S of D admits a splitting s, then IsAdmissibleExact S. Thus
+split sequences belong to every such exact structure. -/
 theorem isAdmissibleExact_of_splitting {D : Type u₂} [Category.{v₂} D] [Preadditive D]
     [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
     {S : ShortComplex D} (s : S.Splitting) : IsAdmissibleExact S := by
@@ -403,9 +416,11 @@ theorem isAdmissibleExact_of_splitting {D : Type u₂} [Category.{v₂} D] [Prea
     isAdmissibleExact_split S.X₁ S.X₃
   exact isAdmissibleExact_of_iso e.symm h_adm
 
-/-- The split exact structure on an additive category: a short complex is admissible exact
-iff it splits. This is a `def`, not a global instance, so importing `Split` does not
-silently equip every additive category with an `ExactCategory` instance. -/
+/- The split exact structure is provided as a definition, so callers can choose it explicitly. -/
+/-- Let C be a preadditive category with a zero object and binary biproducts. Define an
+ExactCategory structure in which a short complex S is admissible exact if and only if S has a
+splitting. The kernel, cokernel, composition, pushout, and pullback axioms are those of split
+exact sequences. -/
 @[instance_reducible]
 def splitExactCategory : ExactCategory C where
   IsAdmissibleExact := isSplitAdmissibleExact
@@ -470,17 +485,22 @@ variable {F : C ⥤ D} [F.Additive]
 
 omit [HasZeroObject C] [HasBinaryBiproducts C] [HasZeroObject D]
      [HasBinaryBiproducts D] in
-/-- Additive functors preserve split admissible exactness. -/
+/-- Let C,D be preadditive categories and F : C → D additive. If a short complex S in C has a
+splitting, then S.map F has a splitting in D. Applying F to the splitting maps preserves their
+identity and sum equations. -/
 theorem isSplitAdmissibleExact_map (S : ShortComplex C)
     (h : isSplitAdmissibleExact S) :
     isSplitAdmissibleExact (S.map F) := by
   obtain ⟨s⟩ := h
   exact ⟨s.map F⟩
 
-/-- Local split instance for exactness results in this section. -/
+/- Equip C locally with the split exact structure for this section. -/
 local instance : ExactCategory C := splitExactCategory
 
-/-- Every additive functor out of the split exact structure is exact. -/
+/-- Let C be preadditive with a zero object and binary biproducts, equipped with its split exact
+structure. Let E have those additive structures and a chosen ExactCategory structure. Every
+additive functor F : C → E is exact: it takes each source admissible sequence to a split
+sequence, which is admissible in the target. -/
 theorem isExact_splitSource {E : Type u₃} [Category.{v₃} E] [Preadditive E]
     [HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
     (F : C ⥤ E) [F.Additive] : F.IsExact :=

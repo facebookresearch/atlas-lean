@@ -1,5 +1,7 @@
-# Original Intrinsic Ambient Tor Iso left mul
+# The intrinsic ambient comparison preserves V multiplication
 
-The full original intrinsic comparison preserves actual V
-multiplication through the rearrangement, both flat adjoining reductions,
-and the original coefficient maps, in every native degree.
+For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For v∈V, the comparison satisfies
+φ_intr(L_intr,v(z))=L_middle,v(φ_intr(z)).

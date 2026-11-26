@@ -1,3 +1,5 @@
-# Matrix Coalgebra
+# The exterior coalgebra complex of finite matrix CE chains
 
-The canonical CE coalgebra, specialized to the finite matrix Lie algebra.
+The exterior coalgebra complex of finite matrix CE chains.
+
+Specialize the canonical CE coalgebra to the finite matrix Lie algebra.

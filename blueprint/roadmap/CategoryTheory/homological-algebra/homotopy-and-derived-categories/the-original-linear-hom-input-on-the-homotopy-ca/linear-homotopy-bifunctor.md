@@ -1,4 +1,7 @@
-# Linear Homotopy Bifunctor
+# Linear Hom bifunctor of integer homotopy categories
 
-The original product Hom on both native homotopy categories. The first
-input remains opposite, and its quotient lift earns all source map classes.
+Linear Hom bifunctor of integer homotopy categories.
+
+Linear Hom descends in both variables to a bifunctor from the opposite homotopy category of
+`C`-cochains and its covariant homotopy category to the homotopy category of `R`-module
+cochains.

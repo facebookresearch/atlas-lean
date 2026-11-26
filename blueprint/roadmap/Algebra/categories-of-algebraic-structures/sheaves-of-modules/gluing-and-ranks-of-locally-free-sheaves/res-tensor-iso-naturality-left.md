@@ -1,3 +1,7 @@
-# Res Tensor Iso naturality left
+# Left-factor naturality of the slice tensor comparison
 
-Left-whisker naturality of `RestrictSheafification.ofTensorIso`: oplax `δ`-naturality.
+Let `(C₀,J₀,R₀)` be a commutative ringed site at universe `u`, with monoidal additive
+sheafification and the locally-bijective comparison on the base and additive sheafification,
+locally-bijective comparison, and underlying-ring sheaf comparisons on all slices. For `U∈C₀`,
+`F_U=restrictSheaf R₀ U`, and `f : A → A'`, the tensor comparison `δ` satisfies `F_U(f ⊗ 𝟙 B)
+≫ δ_{A',B} = δ_{A,B} ≫ (F_U(f) ⊗ 𝟙 F_U(B))`.

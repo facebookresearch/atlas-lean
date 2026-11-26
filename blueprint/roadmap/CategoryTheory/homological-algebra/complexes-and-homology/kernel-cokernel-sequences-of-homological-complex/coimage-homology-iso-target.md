@@ -1,4 +1,5 @@
-# Coimage Homology Iso Target
+# The coimage-to-target homology isomorphism under a quasi-isomorphism
 
-A quasi-isomorphism from the coimage of a chain map to its target
-induces the canonical homology isomorphism.
+The coimage-to-target homology isomorphism under a quasi-isomorphism.
+
+If coim(f) → L is a quasi-isomorphism, its degree-i homology map gives H_i(coim f) ≅ H_i(L).

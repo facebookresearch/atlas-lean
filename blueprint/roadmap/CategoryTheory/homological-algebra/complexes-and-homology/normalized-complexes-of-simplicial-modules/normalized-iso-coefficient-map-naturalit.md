@@ -1,4 +1,6 @@
-# Normalized Iso coefficient Map naturality
+# The normalized lift comparison square for coefficient maps
 
-The same existing normalized tensor-lift isomorphisms respect the actual
-original-output coefficient map for independently sized original modules.
+The normalized lift comparison square for coefficient maps.
+
+The normalized map of the common-height coefficient lift followed by the target normalized
+comparison equals the source comparison followed by outputNormalizedMap.

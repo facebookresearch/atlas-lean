@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal mul Equiv hom apply
+# Elementwise simultaneous group and coefficient transport
 
-Simultaneous ambient-group and coefficient naturality of arbitrary-degree
-chosen-transversal corestriction.
+Elementwise simultaneous group and coefficient transport.
+
+For φ : e* A → B, the pullback-and-coefficient image of an e(T)-transferred class equals the
+T-transfer of its subgroup pullback with the restricted coefficient morphism.

@@ -12,11 +12,18 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldFiniteGaloisNeighborhoods
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleGeometricStalkExactness
 public import Mathlib.CategoryTheory.Filtered.Final
 
-/-! # The finite Galois section colimit and the original geometric stalk
+/-!
+# Finite Galois section colimits and geometric stalks
 
-The finite fields lie inside the prescribed separable closure. The original
-étale objects and their arrows are retained; only geometric point indices
-and original coefficient sections are lifted to the common universe.
+Let k,Ω be fields of universe u with Ω a prescribed separable closure. The functor from finite
+Galois subfields L⊆Ω to opposite pointed étale neighborhoods is fully faithful and final.
+Raising the geometric fiber to height max(u,w) lifts only its pointing coordinates and
+preserves the underlying étale objects and arrows.
+
+For an additive-group sheaf Q of that height, the directed diagram L ↦ Q(Spec L), with
+restriction maps for L⊆M, has a colimit canonically isomorphic to the geometric stalk at
+Spec(Ω). Stage inclusions correspond to germs, naturally in Q. If Q begins with smaller
+coefficients of universe w, applying ULift^u once gives the same formulas on lifted sections.
 -/
 @[expose] public section
 noncomputable section
@@ -28,7 +35,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- A pointed original spectrum arrow is the unique inclusion of the same subfields. -/
+/-- Let k,Ω be fields with Ω a prescribed separable closure. The functor from finite Galois
+intermediate fields to opposite geometric neighborhoods is full: every pointed spectrum
+morphism between its values is induced by an inclusion of the same subfields. Its underlying
+spectrum map respects the inclusions into Ω. -/
 instance fieldFiniteGaloisNeighborhoodFunctor_full :
     (fieldFiniteGaloisNeighborhoodFunctor k Ω).Full where
   map_surjective {L M} a := by
@@ -67,32 +77,44 @@ instance fieldFiniteGaloisNeighborhoodFunctor_full :
     rw [← hinc]
     exact hμ
 
-/-- Finality follows from genuine original refinements and filtered neighborhoods. -/
+/-- For a field k and prescribed separable closure Ω, the finite Galois neighborhood functor into
+the opposite geometric-neighborhood category is final. Every pointed étale neighborhood has a
+finite Galois refinement, and the filtered-neighborhood and full-faithful properties give the
+connectedness required for colimit comparison. -/
 instance fieldFiniteGaloisNeighborhoodFunctor_final :
     (fieldFiniteGaloisNeighborhoodFunctor k Ω).Final :=
   Functor.final_of_exists_of_isFiltered_of_fullyFaithful
     (fieldFiniteGaloisNeighborhoodFunctor k Ω)
     (fieldFiniteGaloisNeighborhoodFunctor_refines k Ω)
 
-/-- The already constructed equivalence enlarges only the original point indices. -/
+/-- Let k,Ω be fields in universe u with Ω a separable closure. The geometric-neighborhood
+category is equivalent to the category of elements of the common-height geometric fiber at
+max(u,w). The forward functor keeps the étale object and replaces its pointing z by up(z). -/
 abbrev fieldGeometricElementsLiftEquivalence :
     FieldGeometricNeighborhoods k Ω ≌
       (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).fiber.Elements :=
   smallEtaleGeometricElementsLiftEquivalence.{u, w} (Spec.algebraMap k Ω)
 
-/-- Its forward object is the same original neighborhood with its pointing lifted. -/
+/-- For a prescribed geometric point of Spec(k), a neighborhood a=(U,z) is sent by
+fieldGeometricElementsLiftEquivalence to (U,up(z)). The lift raises the fiber index to the
+coefficient working height max(u,w), while the étale object remains U. -/
 theorem fieldGeometricElementsLiftEquivalence_obj (a : FieldGeometricNeighborhoods k Ω) :
     (fieldGeometricElementsLiftEquivalence.{u, w} k Ω).functor.obj a =
       Functor.elementsMk _ a.obj (ULift.up a.val) := rfl
 
-/-- Its projection retains all original étale objects and arrows. -/
+/-- Let Ω be a prescribed separable closure of k. Composing the forward point-index lift
+equivalence with the category-of-elements projection to the small étale category equals the
+projection from the unlifted neighborhood category. This is equality of functors on both
+objects and étale morphisms. -/
 theorem fieldGeometricElementsLiftEquivalence_comp_projection :
     (fieldGeometricElementsLiftEquivalence.{u, w} k Ω).functor ⋙
         Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w}
           (Spec.algebraMap k Ω)).fiber =
       Functor.Elements.π (fieldGeometricPoint k Ω).fiber := rfl
 
-/-- The same original finite subfields in the actual common point diagram. -/
+/-- For k and a prescribed separable closure Ω, compose the finite Galois neighborhood functor
+with the opposite of the point-index lift equivalence. This gives a functor into the opposite
+common-height neighborhood category, preserving Spec(L) and lifting its geometric pointing. -/
 abbrev fieldFiniteGaloisCommonNeighborhoodFunctor :=
   fieldFiniteGaloisNeighborhoodFunctor k Ω ⋙
     (fieldGeometricElementsLiftEquivalence.{u, w} k Ω).functor.op
@@ -101,7 +123,9 @@ instance fieldFiniteGaloisCommonNeighborhoodFunctor_final :
     (fieldFiniteGaloisCommonNeighborhoodFunctor.{u, w} k Ω).Final := by
   infer_instance
 
-/-- Forget the pointing without changing any original object or restriction arrow. -/
+/-- Let Ω be a prescribed separable closure of k. Project the common-height finite Galois
+neighborhood functor to the opposite small étale category. It sends L to Spec(L) and an
+inclusion L⊆M to the presheaf-direction arrow corresponding to Spec(M) → Spec(L). -/
 abbrev fieldFiniteGaloisSectionsIndex :=
   fieldFiniteGaloisCommonNeighborhoodFunctor.{u, w} k Ω ⋙
     (Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w}
@@ -112,7 +136,9 @@ theorem fieldFiniteGaloisSectionsIndex_original :
       fieldFiniteGaloisNeighborhoodFunctor k Ω ⋙
         (Functor.Elements.π (fieldGeometricPoint k Ω).fiber).op := rfl
 
-/-- The actual original sections of every literal common-universe sheaf. -/
+/-- For a small-étale additive-group sheaf Q on Spec(k) of universe max(u,w), define the diagram
+on finite Galois subfields L⊆Ω by L ↦ Q(Spec L). Its map for L⊆M is the restriction Q(Spec L)
+→ Q(Spec M) along the subfield spectrum arrow. -/
 abbrev fieldFiniteGaloisSectionDiagram
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
   fieldFiniteGaloisSectionsIndex.{u, w} k Ω ⋙ Q.obj
@@ -129,7 +155,10 @@ theorem fieldFiniteGaloisSectionDiagram_map
     (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q).map f =
       Q.obj.map (fieldFiniteGaloisInclusion k Ω (leOfHom f)).op := rfl
 
-/-- Existence is derived from the already existing stalk colimit, one sheaf at a time. -/
+/-- Let Ω be a prescribed separable closure of k and Q an additive-group small-étale sheaf of
+height max(u,w). The diagram L ↦ Q(Spec L) over finite Galois intermediate fields has a
+colimit. Existence follows by finality from the geometric stalk colimit, for this specified
+sheaf diagram. -/
 instance fieldFiniteGaloisSectionDiagram_hasColimit
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     HasColimit (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q) :=
@@ -138,7 +167,10 @@ instance fieldFiniteGaloisSectionDiagram_hasColimit
       (Spec.algebraMap k Ω)).fiber).op ⋙ Q.obj)
     (fieldFiniteGaloisCommonNeighborhoodFunctor.{u, w} k Ω)
 
-/-- One fixed additive comparison to the same actual common geometric stalk. -/
+/-- For a field k, prescribed separable closure Ω, and additive-group small-étale sheaf Q of
+height max(u,w), finality gives colim_{L⊆Ω finite Galois} Q(Spec L) ≅ Q_{arη}. The stalk is
+the common-height geometric stalk of Spec(Ω) → Spec(k), and the comparison uses the same
+section restrictions. -/
 def fieldFiniteGaloisStalkIso
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     colimit (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q) ≅
@@ -148,7 +180,10 @@ def fieldFiniteGaloisStalkIso
     ((Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w}
       (Spec.algebraMap k Ω)).fiber).op ⋙ Q.obj)
 
-/-- Every original stage injection goes to precisely its original germ. -/
+/-- Let Q be an additive-group sheaf on the small étale site of Spec(k), Ω a prescribed separable
+closure, and L a finite Galois subfield. The stage map Q(Spec L) → colim_L Q(Spec L) followed
+by fieldFiniteGaloisStalkIso equals the germ map at the inclusion Spec(Ω) → Spec(L), with its
+pointing lifted to the common height. -/
 @[reassoc]
 theorem fieldFiniteGaloisStalkIso_ι_hom
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
@@ -162,7 +197,10 @@ theorem fieldFiniteGaloisStalkIso_ι_hom
     ((Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w}
       (Spec.algebraMap k Ω)).fiber).op ⋙ Q.obj) L
 
-/-- The inverse comparison uses those same original germ injections. -/
+/-- Let k be a field, Ω a prescribed separable closure, Q an additive-group small-étale sheaf of
+height max(u,w), and L a finite Galois subfield. The germ map Q(Spec L) → Q_{arη}, at the
+lift Spec(Ω) → Spec(L), followed by the inverse finite Galois stalk isomorphism equals the
+section-stage inclusion into colim_L Q(Spec L). -/
 @[reassoc]
 theorem fieldFiniteGaloisStalkIso_germ_inv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
@@ -176,14 +214,19 @@ theorem fieldFiniteGaloisStalkIso_germ_inv
     ((Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w}
       (Spec.algebraMap k Ω)).fiber).op ⋙ Q.obj) L
 
-/-- The map is the genuine induced colimit map of every original sheaf component. -/
+/-- Let k have a prescribed separable closure Ω and τ : Q → Q′ be a small-étale additive-group
+sheaf morphism of height max(u,w). Its section components τ_{Spec L} form a natural
+transformation of the finite Galois diagrams, whose induced colimit map is
+fieldFiniteGaloisStalkColimitMap(τ). -/
 def fieldFiniteGaloisStalkColimitMap
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q') :
     colimit (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q) ⟶
       colimit (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q') :=
   colimMap (Functor.whiskerLeft (fieldFiniteGaloisSectionsIndex.{u, w} k Ω) τ.hom)
 
-/-- This construction is a functor on every literal common-universe sheaf and map. -/
+/-- For k and prescribed separable closure Ω, the assignment Q ↦ colim_L Q(Spec L) defines a
+functor from small-étale additive-group sheaves of height max(u,w) to AddCommGrpCat of that
+height. Its maps are induced by the sectionwise sheaf-morphism components. -/
 def fieldFiniteGaloisStalkColimit :
     Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ⥤
       AddCommGrpCat.{max u w} where
@@ -198,7 +241,10 @@ def fieldFiniteGaloisStalkColimit :
     intro L
     simp [fieldFiniteGaloisStalkColimitMap, Category.assoc]
 
-/-- The same stage maps commute with the comparison for every sheaf morphism. -/
+/-- Let Ω be a prescribed separable closure of k, τ : Q → Q′ a small-étale additive-group sheaf
+map, and e_Q,e_Q′ the finite Galois section-colimit isomorphisms. Then
+colim(τ)≫e_Q′.hom=e_Q.hom≫τ_{arη}. This is an equality of additive-group maps from the
+section colimit to the geometric stalk. -/
 theorem fieldFiniteGaloisStalkIso_naturality
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q') :
     fieldFiniteGaloisStalkColimitMap.{u, w} k Ω τ ≫
@@ -213,14 +259,19 @@ theorem fieldFiniteGaloisStalkIso_naturality
   exact ((smallEtaleGeometricPointCommon.{u, w}
     (Spec.algebraMap k Ω)).toPresheafFiber_naturality τ.hom _ _).symm
 
-/-- The fixed natural additive isomorphism on the full original common sheaf category. -/
+/-- For k,Ω with IsSepClosure k Ω, the functor taking additive-group sheaves of height max(u,w) to
+their finite Galois section colimit is naturally isomorphic to the common geometric stalk
+functor. Its component at Q is fieldFiniteGaloisStalkIso(Q). -/
 def fieldFiniteGaloisStalkNatIso :
     fieldFiniteGaloisStalkColimit.{u, w} k Ω ≅
       smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω) :=
   NatIso.ofComponents (fieldFiniteGaloisStalkIso.{u, w} k Ω)
     (fieldFiniteGaloisStalkIso_naturality.{u, w} k Ω)
 
-/-- The original coefficient sheaf is lifted once; its original section has its same germ. -/
+/-- For a small-étale additive-group sheaf F of coefficient universe w, lift its coefficients by
+ULift^u to height max(u,w). If c∈F(Spec L) for a finite Galois subfield L⊆Ω, the
+colimit-to-stalk comparison sends the stage element up(c) to its geometric germ in the lifted
+sheaf at the inclusion point Spec(Ω) → Spec(L). -/
 theorem fieldFiniteGaloisStalkIso_original_section
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (L : FiniteGaloisIntermediateField k Ω)
@@ -236,7 +287,10 @@ theorem fieldFiniteGaloisStalkIso_original_section
     (fieldFiniteGaloisStalkIso_ι_hom.{u, w} k Ω
       ((liftCoefficients.{u, w} (Spec (.of k))).obj F) L) (ULift.up c)
 
-/-- Every original coefficient map uses the same once-lifted natural comparison. -/
+/-- Let Ω be a prescribed separable closure of k, f : F → F′ a small-étale sheaf map with
+coefficient universe w, and Lc the ULift^u coefficient functor. For the finite Galois colimit
+maps C and stalk maps S, C(Lc(f))≫e_{Lc(F′)}=e_{Lc(F)}≫S(Lc(f)). The same natural comparison
+is used at height max(u,w). -/
 theorem fieldFiniteGaloisStalkIso_original_naturality
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F') :
     fieldFiniteGaloisStalkColimitMap.{u, w} k Ω
@@ -250,12 +304,16 @@ theorem fieldFiniteGaloisStalkIso_original_naturality
   fieldFiniteGaloisStalkIso_naturality.{u, w} k Ω
     ((liftCoefficients.{u, w} (Spec (.of k))).map f)
 
-/-- Its forward arrows remain the same actual original étale arrows. -/
+/-- For k,Ω with IsSepClosure k Ω and a neighborhood morphism f : a → b, the forward map of
+fieldGeometricElementsLiftEquivalence has underlying étale arrow f.hom. Only the pointing
+coordinates are lifted; the site arrow itself is unchanged. -/
 theorem fieldGeometricElementsLiftEquivalence_map
     {a b : FieldGeometricNeighborhoods k Ω} (f : a ⟶ b) :
     ((fieldGeometricElementsLiftEquivalence.{u, w} k Ω).functor.map f).hom = f.hom := rfl
 
-/-- The finite subfield has its same original pointing in the common diagram. -/
+/-- Let Ω be a prescribed separable closure of k and L a finite Galois subfield. The common-height
+neighborhood functor takes L to the opposite of (Spec(L),up(z_L)), where z_L is the geometric
+lift induced by L⊆Ω. The étale object is the same spectrum over k. -/
 theorem fieldFiniteGaloisCommonNeighborhoodFunctor_obj
     (L : FiniteGaloisIntermediateField k Ω) :
     (fieldFiniteGaloisCommonNeighborhoodFunctor.{u, w} k Ω).obj L =
@@ -263,13 +321,17 @@ theorem fieldFiniteGaloisCommonNeighborhoodFunctor_obj
         (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).fiber
         (fieldFiniteGaloisEtale k Ω L) (ULift.up (fieldFiniteGaloisPoint k Ω L))) := rfl
 
-/-- Every common pointed arrow is the same original subfield restriction arrow. -/
+/-- For finite Galois subfields L≤M inside a prescribed separable closure Ω, the common-height
+functor map has underlying reverse neighborhood arrow Spec(M) → Spec(L), exactly
+fieldFiniteGaloisInclusion(L≤M). Point-index lifting does not modify this arrow. -/
 theorem fieldFiniteGaloisCommonNeighborhoodFunctor_map
     {L M : FiniteGaloisIntermediateField k Ω} (f : L ⟶ M) :
     ((fieldFiniteGaloisCommonNeighborhoodFunctor.{u, w} k Ω).map f).unop.hom =
       fieldFiniteGaloisInclusion k Ω (leOfHom f) := rfl
 
-/-- The fixed comparison is an actual additive equivalence of the original section colimit. -/
+/-- For a field k, prescribed separable closure Ω, and small-étale additive-group sheaf Q of
+height max(u,w), the categorical stalk isomorphism gives an additive equivalence between the
+section colimit colim_L Q(Spec L) and the common geometric stalk Q_{arη}. -/
 def fieldFiniteGaloisStalkAddEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (colimit (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q) :
@@ -277,7 +339,9 @@ def fieldFiniteGaloisStalkAddEquiv
       (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).obj Q :=
   (fieldFiniteGaloisStalkIso.{u, w} k Ω Q).addCommGroupIsoToAddEquiv
 
-/-- Every original common-coefficient section is sent to its actual geometric germ. -/
+/-- Let Ω be a prescribed separable closure of k, Q a small-étale additive-group sheaf, L a finite
+Galois subfield, and c∈Q(Spec L). The additive equivalence sends the colimit class ι_L(c) to
+the germ of c at the inclusion Spec(Ω) → Spec(L), with the common-height pointing. -/
 theorem fieldFiniteGaloisStalkAddEquiv_ι
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (L : FiniteGaloisIntermediateField k Ω)
@@ -288,7 +352,9 @@ theorem fieldFiniteGaloisStalkAddEquiv_ι
       (fieldFiniteGaloisEtale k Ω L) (ULift.up (fieldFiniteGaloisPoint k Ω L)) Q.obj c :=
   ConcreteCategory.congr_hom (fieldFiniteGaloisStalkIso_ι_hom.{u, w} k Ω Q L) c
 
-/-- Its inverse recovers the original injection of every such germ. -/
+/-- For k,Ω as a field and its prescribed separable closure, Q a small-étale additive-group sheaf,
+and c∈Q(Spec L), the inverse additive stalk equivalence sends the geometric germ of c to
+ι_L(c) in the finite Galois section colimit. -/
 theorem fieldFiniteGaloisStalkAddEquiv_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (L : FiniteGaloisIntermediateField k Ω)
@@ -299,7 +365,9 @@ theorem fieldFiniteGaloisStalkAddEquiv_germ
     colimit.ι (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q) L c :=
   ConcreteCategory.congr_hom (fieldFiniteGaloisStalkIso_germ_inv.{u, w} k Ω Q L) c
 
-/-- Each colimit stage map is the actual original sheaf component. -/
+/-- Let Ω be a prescribed separable closure of k, τ : Q → Q′ a small-étale sheaf map, and L a
+finite Galois subfield. The section-colimit map satisfies ι_L^Q≫C(τ)=τ_{Spec L}≫ι_L^{Q′}. Thus
+every stage map is the specified sheaf-morphism component. -/
 @[reassoc]
 theorem fieldFiniteGaloisStalkColimitMap_ι
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q')
@@ -310,7 +378,9 @@ theorem fieldFiniteGaloisStalkColimitMap_ι
         colimit.ι (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q') L :=
   ι_colimMap (Functor.whiskerLeft (fieldFiniteGaloisSectionsIndex.{u, w} k Ω) τ.hom) L
 
-/-- All sheaf maps commute with the same additive comparison on every colimit element. -/
+/-- For a field k, prescribed separable closure Ω, and a sheaf morphism τ : Q → Q′, let C(τ) be
+its finite Galois colimit map and S(τ) its stalk map. For any colimit element c,
+e_{Q′}(C(τ)(c))=S(τ)(e_Q(c)), where e is the additive colimit-to-stalk equivalence. -/
 theorem fieldFiniteGaloisStalkAddEquiv_naturality
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q')
     (c : (colimit (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q) :
@@ -321,7 +391,9 @@ theorem fieldFiniteGaloisStalkAddEquiv_naturality
         (fieldFiniteGaloisStalkAddEquiv.{u, w} k Ω Q c) :=
   ConcreteCategory.congr_hom (fieldFiniteGaloisStalkIso_naturality.{u, w} k Ω τ) c
 
-/-- The same original map after one coefficient lift acts literally on its original stage. -/
+/-- Let Ω be a prescribed separable closure of k, f : F → F′ a small-étale sheaf map of
+coefficient universe w, and c∈F(Spec L). After the single ULift^u coefficient lift, the
+induced colimit map sends ι_L(up(c)) to ι_L′(up(f_{Spec L}(c))). -/
 theorem fieldFiniteGaloisStalkColimitMap_original_ι
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F')
     (L : FiniteGaloisIntermediateField k Ω)
@@ -336,7 +408,13 @@ theorem fieldFiniteGaloisStalkColimitMap_original_ι
   ConcreteCategory.congr_hom (fieldFiniteGaloisStalkColimitMap_ι.{u, w} k Ω
     ((liftCoefficients.{u, w} (Spec (.of k))).map f) L) (ULift.up c)
 
-/-- All original and common indexing coordinates, and internally derived colimit existence. -/
+/-- Let k have universe u and Ω be its prescribed separable closure. This proposition asserts that
+the finite Galois neighborhood functor is full, faithful, and final; the point-index lift
+takes (U,z) to (U,up(z)) and keeps its arrows; the common-height subfield functor is final
+with those same lifted spectra and inclusion arrows; forgetting its pointing equals the
+unlifted section-index functor; and for every small-étale sheaf Q of coefficient height
+max(u,w), the diagram has a colimit, object Q(Spec L), and restriction map Q(Spec L) → Q(Spec
+M) for L≤M. -/
 def FieldFiniteGaloisColimitLaws : Prop :=
   (fieldFiniteGaloisNeighborhoodFunctor k Ω).Full ∧
   (fieldFiniteGaloisNeighborhoodFunctor k Ω).Faithful ∧
@@ -369,7 +447,14 @@ def FieldFiniteGaloisColimitLaws : Prop :=
     (fieldFiniteGaloisSectionDiagram.{u, w} k Ω Q).map f =
       Q.obj.map (fieldFiniteGaloisInclusion k Ω (leOfHom f)).op
 
-/-- The one fixed additive natural comparison retains all original germs and all maps. -/
+/-- For a field k and prescribed separable closure Ω, let C be the finite Galois section-colimit
+functor, S the common geometric stalk, e their natural isomorphism, and Lc the ULift^u
+coefficient functor. This proposition asserts that e has the specified stalk-isomorphism
+components; C preserves identities and composition; its additive equivalence sends ι_L(c) to
+the inclusion-point germ and its inverse recovers ι_L(c); C(τ) commutes with each stage
+component τ_{Spec L} and with e on every element; and all these germ, naturality, and
+stage-map formulas hold for Lc(F), sending up(c) and up(f(c)) at the same finite subfield
+stage. -/
 def FieldFiniteGaloisStalkLaws : Prop :=
   let C := fieldFiniteGaloisStalkColimit.{u, w} k Ω
   let S := smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)
@@ -424,8 +509,11 @@ def FieldFiniteGaloisStalkLaws : Prop :=
       colimit.ι (fieldFiniteGaloisSectionDiagram.{u, w} k Ω (Lc.obj F')) L
         (ULift.up (f.hom.app (op (fieldFiniteGaloisEtale k Ω L)) c))
 
-/-- Full finality, colimit existence and the one natural additive stalk comparison,
-including every original coefficient sheaf after exactly one canonical lift. -/
+/-- Let k be a field and Ω its prescribed separable closure. The finite Galois neighborhood
+functors have the full, faithful, and final properties and the specified point-index lifts;
+every section diagram Q(Spec L) has its colimit; and the canonical natural additive comparison
+identifies that colimit with the geometric stalk, preserving germs, sheaf maps, and single
+coefficient lifts. Both FieldFiniteGaloisColimitLaws and FieldFiniteGaloisStalkLaws hold. -/
 theorem original_field_finite_galois_stalk_colimit :
     FieldFiniteGaloisColimitLaws.{u, w} k Ω ∧ FieldFiniteGaloisStalkLaws.{u, w} k Ω := by
   refine ⟨?_, ?_⟩

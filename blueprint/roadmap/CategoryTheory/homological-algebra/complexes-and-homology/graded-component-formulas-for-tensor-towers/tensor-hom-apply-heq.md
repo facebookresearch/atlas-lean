@@ -1,8 +1,7 @@
-# Tensor Hom apply heq
+# Heterogeneous congruence of a graded tensor-map component
 
-Heterogeneous congruence for a graded tensor-map component.
+Heterogeneous congruence of a graded tensor-map component.
 
-Rewrite direction: after a complex tensor component has been rewritten to
-`GradedObject.Monoidal.tensorHom`, use this lemma to replace the two input
-graded maps by `HEq`-equal shallow maps without unfolding the tensor object.
-`GradedTensorTowerTests` contains a direct heterogeneous client.
+If the four endpoint graded objects of `f` and `g` equal those of `f'` and `g'`, and the
+corresponding factor maps are heterogeneously equal, their tensor maps are heterogeneously
+equal in every degree `j`. The source and target graded tensors are assumed to exist.

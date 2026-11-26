@@ -1,4 +1,5 @@
-# Localization Scalar Square Iso hom one tmul
+# The localization-square comparison on inserted module elements
 
-The genuine localization-square comparison preserves the original
-module element inserted by the scalar-extension unit.
+The localization-square comparison on inserted module elements.
+
+For m ∈ M, the comparison sends 1 ⊗_R m to 1 ⊗_A m.

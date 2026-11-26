@@ -1,4 +1,6 @@
-# Left Exact Homology Edge map naturality
+# Naturality of homology edges in the short complex
 
-The forward homology edge is natural in short-complex morphisms without
-assuming preservation of homology or cokernels.
+Let C,D have zero morphisms and F:C → D preserve zero morphisms and
+finite limits. For a short-complex morphism φ:S → T, choose homology
+of S,T and their F-images. The homology edges satisfy
+ε_T∘H(F(φ))=F(H(φ))∘ε_S.

@@ -1,3 +1,5 @@
-# Matrix Cyclic Weibel Degree Map pure
+# The degree-sign formula on a pure matrix wedge
 
-The pure-wedge formula is `(-1)^n` times the normalized tail trace formula.
+The degree-sign formula on a pure matrix wedge.
+
+The canonical-convention degree map is `(-1)^n` times the closed-cycle tail-alternation map.

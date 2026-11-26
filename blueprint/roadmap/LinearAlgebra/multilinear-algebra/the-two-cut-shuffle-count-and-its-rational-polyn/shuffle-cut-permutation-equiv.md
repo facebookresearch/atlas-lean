@@ -1,3 +1,6 @@
-# Shuffle Cut Permutation Equiv
+# All cut-indexed shuffles as permutations with compatible cuts
 
-The full finite index is genuinely the permutation together with its compatible original cut.
+All cut-indexed shuffles as permutations with compatible cuts.
+
+For n ≥ 0, the disjoint union of (p,q)-shuffles over weak cuts p+q=n is equivalent to pairs
+(σ,c) with σ ∈ Sₙ and c ∈ CompatibleTwoCuts(σ).

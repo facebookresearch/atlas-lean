@@ -1,4 +1,6 @@
-# Partial Total Spectral Sequence Page One Two Iso
+# First-page homology identifies with the second-page object
 
-The page-one-to-page-two isomorphism in bidegree `(p, q)`, with the bound
-witnesses fixed by the displayed source and target pages.
+First-page homology identifies with the second-page object.
+
+For natural `p` and `q`, identify first-page homology at `(p, q)` and the second-page object
+there through their common spectral interval coordinate. This gives `H(E¹)_(p,q) ≅ E²_(p,q)`.

@@ -15,15 +15,17 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoria
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Shapiro
 
 /-!
-# Cyclic permutation coefficients as coinduced representations
+# Cyclic permutation coefficients and coinduction
 
-For a surjective character `chi : G → Multiplicative (ZMod ell)`, the
-cyclic permutation representation `ZMod ell → A` is canonically isomorphic
-to coinduction of `A` restricted to `ker chi`.  The comparison is explicit:
+Let k be a commutative ring, G a group and
+χ:G→Multiplicative(ZMod ℓ) a surjective character. Put H=ker χ.
+The cyclic coefficient Pχ(A) is isomorphic to Coind_H^G(Res_H^G A).
 
-`p ↦ (g ↦ g · p(chi(g)))`.
-
-This is the algebraic Shapiro bridge used by cyclic coefficient filtrations.
+The forward function is p↦(g↦g•p(χ_add(g))).
+For a chosen lift s_i of i∈ZMod ℓ, the inverse has value
+i↦s_i⁻¹•F(s_i). The diagonal corresponds to the Res⊣Coind unit.
+Taking cohomology and Shapiro gives Hⁿ(G,Pχ(A))≅Hⁿ(H,Res_H A)
+for all n. The statements allow every ℓ, including ℓ=0.
 -/
 
 @[expose] public section
@@ -39,7 +41,9 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- A chosen lift in `G` of a cyclic-character value. -/
+/-- For a surjective character χ:G→Multiplicative(ZMod ℓ),
+this chooses s_i∈G with χ(s_i)=Multiplicative.ofAdd(i)
+for each i∈ZMod ℓ. -/
 noncomputable def cyclicCharacterLift
     {ell : ℕ}
     (chi : G →* Multiplicative (ZMod ell))
@@ -54,8 +58,13 @@ theorem cyclicCharacterLift_spec
     chi (cyclicCharacterLift chi hsurj i) = Multiplicative.ofAdd i :=
   Function.surjInv_eq hsurj _
 
-/-- Explicit linear equivalence from cyclic permutation coefficients to
-coinduction from the character kernel. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+The k-linear equivalence Pχ(A)≅Coind_H^G(Res_H A) sends
+p to F(g)=g•p(χ_add(g)).
+Its inverse uses a lift s_i and has p(i)=s_i⁻¹•F(s_i). -/
 noncomputable def cyclicPermutationCoinducedLinearEquiv
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))
@@ -115,8 +124,12 @@ noncomputable def cyclicPermutationCoinducedLinearEquiv
     change A.ρ (g * s⁻¹) (F.1 s) = F.1 g
     rw [← show (h : G) = g * s⁻¹ from rfl, ← hF, hgs]
 
-/-- The forward cyclic-permutation/coinduction comparison evaluated at an
-ambient group element. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+The forward coinduced function has point value
+F_p(g)=g•p(χ_add(g)). -/
 @[simp]
 theorem cyclicPermutationCoinducedLinearEquiv_apply
     (ell : ℕ)
@@ -131,8 +144,12 @@ theorem cyclicPermutationCoinducedLinearEquiv_apply
     unfold cyclicPermutationCoinducedLinearEquiv
     rfl
 
-/-- The cyclic permutation representation is isomorphic to coinduction from
-the kernel of the cyclic character. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+The explicit linear equivalence is G-equivariant and gives
+the representation isomorphism Pχ(A)≅Coind_H^G(Res_H A). -/
 noncomputable def cyclicPermutationCoinducedIso
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))
@@ -170,8 +187,12 @@ theorem cyclicPermutationCoinducedIso_hom_apply
       cyclicPermutationCoinducedLinearEquiv
     rfl
 
-/-- Under the cyclic-permutation/coinduction comparison, the diagonal is
-the restriction--coinduction adjunction unit. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+The constant diagonal A→Pχ(A) followed by the coinduction
+isomorphism is the unit A→Coind_H^G(Res_H A) of Res_H⊣Coind_H^G. -/
 theorem cyclicPermutationDiagonal_comp_coinducedIso
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))
@@ -198,8 +219,12 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Cohomology transport from a cyclic permutation coefficient to its
-explicit coinduced model. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+The coefficient isomorphism induces
+Hⁿ(G,Pχ(A))≅Hⁿ(G,Coind_H^G(Res_H A)) for every n∈ℕ. -/
 noncomputable def cyclicPermutationCoinducedCohomologyIso
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))
@@ -228,8 +253,12 @@ theorem cyclicPermutationCoinducedCohomologyIso_hom
         (Rep.cyclicPermutationCoinducedIso ell chi hsurj A).hom n :=
   rfl
 
-/-- Shapiro equivalence for a cyclic permutation coefficient, obtained from
-the explicit comparison with coinduction from the character kernel. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+Composing the coefficient comparison with Shapiro gives
+Hⁿ(G,Pχ(A))≅Hⁿ(H,Res_H A) in every degree n∈ℕ. -/
 noncomputable def cyclicPermutationShapiroIso
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))
@@ -241,8 +270,13 @@ noncomputable def cyclicPermutationShapiroIso
 
 -- Unfolding the projective-resolution Shapiro comparison is expensive.
 set_option backward.isDefEq.respectTransparency false in
-/-- The cyclic permutation Shapiro map is coefficient transport to
-coinduction followed by ordinary Shapiro. -/
+/-- Let k be a commutative ring and G a group in universe u,
+and let A be a k-linear G-representation with coefficient carrier u.
+Let χ:G→Multiplicative(ZMod ℓ) be surjective and H=ker χ.
+Write Pχ(A)=ZMod ℓ→A with (g•p)(i)=g•p(i+χ_add(g)).
+The forward Shapiro map is the G-cohomology map of
+Pχ(A)→Coind_H^G(Res_H A), followed by the usual coinduced
+Shapiro isomorphism to H-cohomology. -/
 theorem cyclicPermutationShapiroIso_hom
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))

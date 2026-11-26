@@ -1,7 +1,7 @@
 # The actual two-variable balanced tensor functor
 
-- [Bifunctor](bifunctor.md)
-- [Bifunctor map mk](bifunctor-map-mk.md)
-- [Group Bifunctor](group-bifunctor.md)
-- [Group Bifunctor map mk](group-bifunctor-map-mk.md)
-- [Group Bifunctor obj map mk](group-bifunctor-obj-map-mk.md)
+- [Balanced tensor as a bifunctor to integer modules](bifunctor.md)
+- [Right-variable map in the integer-valued tensor bifunctor](bifunctor-map-mk.md)
+- [Balanced tensor as a bifunctor to additive groups](group-bifunctor.md)
+- [Right-variable map in the group-valued tensor bifunctor](group-bifunctor-map-mk.md)
+- [Left-variable map in the group-valued tensor bifunctor](group-bifunctor-obj-map-mk.md)

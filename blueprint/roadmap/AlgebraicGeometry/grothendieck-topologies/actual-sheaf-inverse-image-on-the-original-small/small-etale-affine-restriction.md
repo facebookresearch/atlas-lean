@@ -1,3 +1,5 @@
-# Small Etale Affine Restriction
+# Restriction of abelian sheaves to the affine étale basis
 
-Actual restriction of common-universe sheaves to the original affine basis.
+Restriction of abelian sheaves to the affine étale basis.
+
+Restrict common-universe abelian sheaves on `Y` along the affine étale basis functor.

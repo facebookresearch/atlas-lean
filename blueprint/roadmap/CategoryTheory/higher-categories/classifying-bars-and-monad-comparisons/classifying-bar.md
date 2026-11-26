@@ -1,8 +1,6 @@
-# Classifying Bar
+# Classifying two sided bar of an internal monoid
 
-Strict classifying bar `B(*, M, *)` over a point datum.
+Classifying two sided bar of an internal monoid.
 
-`Pt` carries the point left `ModObj M` instance and the explicit right
-action `ractPt`; both sides of the bar use it. The construction is the
-existing `monoidalBar` specialization, so every simplicial identity and
-computation rule is inherited from the general two-sided bar core.
+Form `B(Pt,M,Pt)` from the given right action on the outer point object and left module
+structure on the inner point object.

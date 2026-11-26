@@ -1,5 +1,5 @@
-# Homology Map eq zero of component
+# A zero chain component induces a zero homology component
 
-A zero central component of an actual chain map induces a zero
-homology map in that degree. This uses the original cycle mono and the
-original homology quotient epi.
+For nonnegative R-module chain complexes A,B over a
+commutative ring R, if f:A→B has f_n=0, then H_n(f)=0.
+This conclusion depends only on the selected degree-n component.

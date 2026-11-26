@@ -1,5 +1,7 @@
-# Sign Twist Equivalence
+# The equivalence of anticommuting and commuting bicomplexes
 
-The general equivalence between raw anticommuting bicomplexes and
-Mathlib's commuting `HomologicalComplex₂`, for any horizontal sign which
-changes sign along the first complex shape.
+The equivalence of anticommuting and commuting bicomplexes.
+
+For ε : I₁ → ℤˣ changing sign along c₁-relations, sign multiplication in the second
+differential gives an equivalence between the two bicomplex categories, with the same objects
+in each bidegree.

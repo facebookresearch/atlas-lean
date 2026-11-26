@@ -1,4 +1,5 @@
-# Of quotient noetherian
+# Pair homology length data from a finite noetherian quotient
 
-Over a Noetherian ring, finite length of the two-generator quotient alone
-supplies the complete finite-length homology package.
+Pair homology length data from a finite noetherian quotient.
+
+For noetherian R, finite length of R/(f,g) supplies all three homology finiteness conditions.

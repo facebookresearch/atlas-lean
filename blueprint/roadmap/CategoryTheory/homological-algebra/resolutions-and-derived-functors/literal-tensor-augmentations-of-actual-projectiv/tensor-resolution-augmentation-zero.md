@@ -1,4 +1,6 @@
-# Ι tensor Resolution Augmentation zero
+# Resolution tensor augmentation on the degree-zero summand
 
-The original degree-zero tensor representative maps by both original
-augmentation maps, in their original order.
+Resolution tensor augmentation on the degree-zero summand.
+
+The `(0, 0)` inclusion into the tensor total followed by its augmentation is the tensor
+product of `P.π.f 0` and `Q.π.f 0`.

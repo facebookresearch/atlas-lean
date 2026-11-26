@@ -1,6 +1,6 @@
-# Stalk Map Linear
+# The linear stalk map of a module-presheaf morphism
 
-Reusable module-linear stalk map for a morphism of presheaves of modules.
+The linear stalk map of a module-presheaf morphism.
 
-The underlying additive map is `(stalkFunctor AddCommGrpCat x).map
-((toPresheaf R).map φ)`.
+For a ring presheaf R and φ : M → N, the induced map M_x → N_x is a morphism of modules over
+the stalk ring R_x.

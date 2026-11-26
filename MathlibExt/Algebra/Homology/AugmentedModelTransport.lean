@@ -13,14 +13,16 @@ public import Mathlib.AlgebraicTopology.AlternatingFaceMapComplex
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Native normalization and homology transport of augmented presentations
+# Normalization and homology of augmented presentations
 
-An original augmented simplicial or cosimplicial presentation includes its
-augmentation or coaugmentation as a native comma-category morphism. Mapping
-both sides by the native complex and homology functors keeps this map.
-Natural isomorphisms of the original presentations therefore induce the
-computed complex and homology comparisons, with identity, inverse and
-composition preserved. No derived comparison isomorphism is an input.
+In an abelian category E, an augmented simplicial object has a map X → const(A). Dold–Kan
+normalization maps it to N(X) → N(const(A)); degree-n homology then maps both sides of this
+augmentation. A coaugmented cosimplicial object const(A) → X similarly gives a map of
+alternating-coface cochain complexes and of their degree-n cohomology.
+
+For families of these presentations, a natural isomorphism induces the corresponding
+normalized-complex or homology-family isomorphism. The induced comparisons preserve identity,
+inverse and composition, retaining the augmentation or coaugmentation map.
 -/
 
 @[expose] public section
@@ -33,25 +35,35 @@ namespace CategoryTheory.SimplicialObject.Augmented
 
 variable {E : Type*} [Category* E] [Abelian E]
 
-/-- The actual augmented presentation, mapped on both sides by native Dold--Kan normalization. -/
+/-- Dold–Kan normalization of an augmented simplicial object.
+
+Apply normalization to both the simplicial object and its augmentation X → const(A), obtaining
+N(X) → N(const(A)). -/
 def normalizedAugmentationFunctor : Augmented E ⥤
     Comma (𝟭 (ChainComplex E ℕ))
       (SimplicialObject.const E ⋙ CategoryTheory.Abelian.DoldKan.N (A := E)) :=
   Comma.map (F₁ := CategoryTheory.Abelian.DoldKan.N (A := E)) (F₂ := 𝟭 E)
     (F := CategoryTheory.Abelian.DoldKan.N (A := E)) (Iso.refl _).hom (Iso.refl _).hom
 
-/-- The normalized left object is computed from the original simplicial presentation. -/
+/-- The source complex of a normalized augmentation.
+
+The left object of the normalized augmentation is the Dold–Kan normalized complex of X.left. -/
 theorem normalizedAugmentationFunctor_obj_left (X : Augmented E) :
     (normalizedAugmentationFunctor.obj X).left =
       CategoryTheory.Abelian.DoldKan.N.obj X.left := rfl
 
-/-- The normalized augmentation is the native map of the original augmentation. -/
+/-- The map of a normalized augmentation.
+
+The normalized augmentation morphism is N applied to the simplicial augmentation X.hom. -/
 theorem normalizedAugmentationFunctor_obj_hom (X : Augmented E) :
     (normalizedAugmentationFunctor.obj X).hom =
       CategoryTheory.Abelian.DoldKan.N.map X.hom := by
   simp [normalizedAugmentationFunctor]
 
-/-- Fixed-degree homology keeps both sides of the actual normalized augmentation. -/
+/-- Degreewise homology of a normalized augmentation.
+
+Apply degree-n homology to both sides of N(X) → N(const(A)), retaining the resulting morphism
+in the augmented comma-category presentation. -/
 def homologyAugmentationFunctor (n : ℕ) : Augmented E ⥤
     Comma (𝟭 E) (SimplicialObject.const E ⋙ CategoryTheory.Abelian.DoldKan.N (A := E) ⋙
       HomologicalComplex.homologyFunctor E (ComplexShape.down ℕ) n) :=
@@ -61,27 +73,40 @@ def homologyAugmentationFunctor (n : ℕ) : Augmented E ⥤
 
 variable {J : Type*} [Category* J] {P Q : J ⥤ Augmented E}
 
-/-- Original augmented-presentation isomorphisms induce the native normalized family comparison. -/
+/-- The normalized comparison of augmented presentation families.
+
+For e : P ≅ Q between families of augmented simplicial objects, postcomposition with
+normalizedAugmentationFunctor gives their normalized family isomorphism. -/
 def normalizedPresentationIso (e : P ≅ Q) :
     P ⋙ normalizedAugmentationFunctor ≅ Q ⋙ normalizedAugmentationFunctor :=
   Functor.isoWhiskerRight e normalizedAugmentationFunctor
 
-/-- The original augmented-presentation isomorphism gives its computed homology family comparison. -/
+/-- The homology comparison of augmented presentation families.
+
+For e : P ≅ Q and degree n, postcomposition with homologyAugmentationFunctor n gives the
+family comparison on the homology of both sides of the augmentation. -/
 def homologyPresentationIso (e : P ≅ Q) (n : ℕ) :
     P ⋙ homologyAugmentationFunctor n ≅ Q ⋙ homologyAugmentationFunctor n :=
   Functor.isoWhiskerRight e (homologyAugmentationFunctor n)
 
-/-- Identity augmented presentations yield the native identity comparison. -/
+/-- Identity of the augmented homology-family comparison.
+
+An identity presentation isomorphism induces the identity homology-family isomorphism. -/
 theorem homologyPresentationIso_refl (P : J ⥤ Augmented E) (n : ℕ) :
     homologyPresentationIso (Iso.refl P) n = Iso.refl (P ⋙ homologyAugmentationFunctor n) :=
   Functor.isoWhiskerRight_refl P (homologyAugmentationFunctor n)
 
-/-- Inverses of the original presentation isomorphisms are preserved. -/
+/-- Inverses of augmented homology-family comparisons.
+
+The inverse comparison induced by e is the comparison induced by e⁻¹. -/
 theorem homologyPresentationIso_symm (e : P ≅ Q) (n : ℕ) :
     (homologyPresentationIso e n).symm = homologyPresentationIso e.symm n :=
   Functor.isoWhiskerRight_symm e (homologyAugmentationFunctor n)
 
-/-- Composing original presentation isomorphisms composes their homology comparisons. -/
+/-- Composition of augmented homology-family comparisons.
+
+The comparison induced by e followed by f equals the composite of their induced homology-
+family comparisons. -/
 theorem homologyPresentationIso_trans {R : J ⥤ Augmented E}
     (e : P ≅ Q) (f : Q ≅ R) (n : ℕ) :
     homologyPresentationIso (e ≪≫ f) n = homologyPresentationIso e n ≪≫ homologyPresentationIso f n :=
@@ -93,14 +118,20 @@ namespace CategoryTheory.CosimplicialObject.Augmented
 
 variable {E : Type*} [Category* E] [Abelian E]
 
-/-- The original coaugmentation mapped by the native alternating-coface complex functor. -/
+/-- The alternating-coface complex of a coaugmented presentation.
+
+Apply the alternating-coface complex functor to const(A) → X, obtaining a map from the
+constant-object cochain complex to that of X. -/
 def cochainCoaugmentationFunctor : Augmented E ⥤
     Comma (CosimplicialObject.const E ⋙ AlgebraicTopology.alternatingCofaceMapComplex E)
       (𝟭 (CochainComplex E ℕ)) :=
   Comma.map (F₁ := 𝟭 E) (F₂ := AlgebraicTopology.alternatingCofaceMapComplex E)
     (F := AlgebraicTopology.alternatingCofaceMapComplex E) (Iso.refl _).hom (Iso.refl _).hom
 
-/-- Fixed-degree cohomology retains both sides of the original coaugmentation. -/
+/-- Degreewise cohomology of a coaugmented presentation.
+
+Apply degree-n cohomology to both sides of the alternating-coface complex map determined by
+the coaugmentation. -/
 def cohomologyCoaugmentationFunctor (n : ℕ) : Augmented E ⥤
     Comma (CosimplicialObject.const E ⋙ AlgebraicTopology.alternatingCofaceMapComplex E ⋙
       HomologicalComplex.homologyFunctor E (ComplexShape.up ℕ) n) (𝟭 E) :=
@@ -110,27 +141,40 @@ def cohomologyCoaugmentationFunctor (n : ℕ) : Augmented E ⥤
 
 variable {J : Type*} [Category* J] {P Q : J ⥤ Augmented E}
 
-/-- The actual coaugmented-presentation isomorphism induces the native cochain family comparison. -/
+/-- The cochain comparison of coaugmented presentation families.
+
+For a natural isomorphism e : P ≅ Q, postcomposition with cochainCoaugmentationFunctor gives
+an isomorphism of their cochain presentations. -/
 def cochainPresentationIso (e : P ≅ Q) :
     P ⋙ cochainCoaugmentationFunctor ≅ Q ⋙ cochainCoaugmentationFunctor :=
   Functor.isoWhiskerRight e cochainCoaugmentationFunctor
 
-/-- The native cohomology family comparison comes from the original coaugmented presentation. -/
+/-- The cohomology comparison of coaugmented presentation families.
+
+For e : P ≅ Q and n ≥ 0, apply the cohomology-coaugmentation functor to obtain the comparison
+of both coaugmentation sides. -/
 def cohomologyPresentationIso (e : P ≅ Q) (n : ℕ) :
     P ⋙ cohomologyCoaugmentationFunctor n ≅ Q ⋙ cohomologyCoaugmentationFunctor n :=
   Functor.isoWhiskerRight e (cohomologyCoaugmentationFunctor n)
 
-/-- Identity presentations retain the original identity cohomology comparison. -/
+/-- Identity of the coaugmented cohomology-family comparison.
+
+The identity presentation isomorphism induces the identity cohomology comparison. -/
 theorem cohomologyPresentationIso_refl (P : J ⥤ Augmented E) (n : ℕ) :
     cohomologyPresentationIso (Iso.refl P) n = Iso.refl (P ⋙ cohomologyCoaugmentationFunctor n) :=
   Functor.isoWhiskerRight_refl P (cohomologyCoaugmentationFunctor n)
 
-/-- Inverse coaugmented presentation isomorphisms retain their computed inverse comparisons. -/
+/-- Inverses of coaugmented cohomology-family comparisons.
+
+The inverse induced cohomology comparison is the comparison induced by the inverse
+presentation isomorphism. -/
 theorem cohomologyPresentationIso_symm (e : P ≅ Q) (n : ℕ) :
     (cohomologyPresentationIso e n).symm = cohomologyPresentationIso e.symm n :=
   Functor.isoWhiskerRight_symm e (cohomologyCoaugmentationFunctor n)
 
-/-- The cohomology comparison retains composition of the original presentation isomorphisms. -/
+/-- Composition of coaugmented cohomology-family comparisons.
+
+Composing presentation isomorphisms composes the resulting cohomology-family comparisons. -/
 theorem cohomologyPresentationIso_trans {R : J ⥤ Augmented E}
     (e : P ≅ Q) (f : Q ≅ R) (n : ℕ) :
     cohomologyPresentationIso (e ≪≫ f) n =

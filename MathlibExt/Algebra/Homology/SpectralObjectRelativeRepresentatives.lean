@@ -17,11 +17,15 @@ public import MathlibExt.AlgebraicTopology.AtiyahHirzebruch.EndpointStabilizatio
 public import MathlibExt.AlgebraicTopology.AtiyahHirzebruch.AbutmentFiltration
 
 /-!
-# Relative representatives of original spectral-object windows
+# Relative representatives of spectral-object intervals
 
-The original map from a long relative interval to cycles and then to their
-boundary quotient commutes with the actual original index maps. Endpoint
-padding can therefore be compared with the actual relative quotient.
+For i₀≤i₁≤i₂≤i₃, the map H_n(i₀,i₂) to cycles and then the boundary quotient gives the
+relative representative in the E object. It is natural in four-cut diagrams and in equality
+presentations of the middle cut.
+
+With bottom and top indices, step classes map to these finite representatives. Vanishing of
+the two outer endpoint groups identifies them with stable intervals and the kernel-filtration
+graded quotient, with all neighboring cohomological degrees explicit.
 -/
 
 @[expose] public section
@@ -39,12 +43,16 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {ι : Type w} [Preorder ι] (Y : SpectralObject C ι)
 
-/-- The original long relative interval projects to the actual cycle/boundary window. -/
+/-- The relative interval representative of a four-cut quotient.
+
+Map H_n(i₀,i₂) to cycles for i₀→i₁→i₂ and then project to E(i₀,i₁,i₂,i₃;n). -/
 def relativeRepresentative {i₀ i₁ i₂ i₃ : ι} (f₁ : i₀ ⟶ i₁) (f₂ : i₁ ⟶ i₂) (f₃ : i₂ ⟶ i₃) (n : ℤ) :
     (Y.H n).obj (mk₁ (f₁ ≫ f₂)) ⟶ Y.E f₁ f₂ f₃ (n - 1) n (n + 1) (by omega) rfl :=
   Y.toCycles f₁ f₂ (f₁ ≫ f₂) rfl n ≫ Y.πE f₁ f₂ f₃ (n - 1) n (n + 1) (by omega) rfl
 
-/-- The actual original index maps commute with the original relative representatives. -/
+/-- Relative representatives commute with four-cut maps.
+
+A morphism of four-cut diagrams carries the representative by its endpoint maps at i₀ and i₂. -/
 lemma relativeRepresentative_map {i₀ i₁ i₂ i₃ j₀ j₁ j₂ j₃ : ι}
     (f₁ : i₀ ⟶ i₁) (f₂ : i₁ ⟶ i₂) (f₃ : i₂ ⟶ i₃)
     (g₁ : j₀ ⟶ j₁) (g₂ : j₁ ⟶ j₂) (g₃ : j₂ ⟶ j₃)
@@ -65,7 +73,10 @@ lemma relativeRepresentative_map {i₀ i₁ i₂ i₃ j₀ j₁ j₂ j₃ : ι}
         ((congrArg (fun z => z ≫ Y.πE g₁ g₂ g₃ (n - 1) n (n + 1) (by omega) rfl) hcy).trans
           (Category.assoc _ _ _))))
 
-/-- Equal middle indices identify the original window objects by equality transport. -/
+/-- Equality transport of a relative middle cut.
+
+An equality i₁=i₁′ gives the canonical isomorphism between the two presentations of the
+relative E object. -/
 def relativeMiddleIndexIso (n : ℤ) {i₀ i₁ i₁' i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
     (h₀₁' : i₀ ≤ i₁') (h₁₂' : i₁' ≤ i₂) (h : i₁ = i₁') :
@@ -74,6 +85,9 @@ def relativeMiddleIndexIso (n : ℤ) {i₀ i₁ i₁' i₂ i₃ : ι}
   subst i₁'
   exact Iso.refl _
 
+/-- The map of the equal-middle-cut comparison.
+
+The forward relative comparison is the equality transport morphism. -/
 lemma relativeMiddleIndexIso_hom (n : ℤ) {i₀ i₁ i₁' i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
     (h₀₁' : i₀ ≤ i₁') (h₁₂' : i₁' ≤ i₂) (h : i₁ = i₁') :
@@ -84,7 +98,10 @@ lemma relativeMiddleIndexIso_hom (n : ℤ) {i₀ i₁ i₁' i₂ i₃ : ι}
 
 variable [OrderBot ι] [OrderTop ι]
 
-/-- The original endpoint relative step restricts to the finite window's original representatives. -/
+/-- The map from a bottom-to-cut step to a finite representative.
+
+Map H_n(⊥,i₂) to the four-cut E object using its canonical relative representative and the
+left-cut change. -/
 def stepToFiniteRepresentative (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃) :
     Y.stableIntervalStep n i₂ ⟶
@@ -94,7 +111,10 @@ def stepToFiniteRepresentative (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
   exact (Y.H n).map β ≫ Y.relativeRepresentative (homOfLE h₀₁) (homOfLE h₁₂) (homOfLE h₂₃) n
 
 omit [OrderTop ι] in
-/-- Equality transport of a middle index retains the original full relative representatives. -/
+/-- Step representatives respect equal middle cuts.
+
+The equality comparison of the middle index carries the step representative to its equal-index
+presentation. -/
 lemma stepToFiniteRepresentative_middleIso (n : ℤ) {i₀ i₁ i₁' i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
     (h₀₁' : i₀ ≤ i₁') (h₁₂' : i₁' ≤ i₂) (h : i₁ = i₁') :
@@ -104,7 +124,10 @@ lemma stepToFiniteRepresentative_middleIso (n : ℤ) {i₀ i₁ i₁' i₂ i₃ 
   subst i₁'
   exact Category.comp_id _
 
-/-- Actual endpoint padding carries original relative representatives to the original stable quotient. -/
+/-- The finite step representative agrees with its padded stable class.
+
+Under H_{n+1}(⊥,i₀)=0 and H_{n−1}(i₃,⊤)=0, endpoint padding carries the finite representative
+to the stable step class. -/
 lemma stepToFiniteRepresentative_padding (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
     (hleft : IsZero ((Y.H (n + 1)).obj (mk₁ (homOfLE (bot_le : (⊥ : ι) ≤ i₀)))))
@@ -145,7 +168,10 @@ private lemma quotient_comparison {S I T Q R K : C} (s : S ⟶ T) (t : S ⟶ I) 
     s ≫ (e ≪≫ k).hom = t ≫ b.hom ≫ qK := by
   rw [← hS, Iso.trans_hom, Category.assoc, ← Category.assoc j e.hom k.hom, hJ, hK]
 
-/-- The original stable relative quotient computes the genuine kernel-filtration grade projection. -/
+/-- The stable step class in a kernel-filtration graded quotient.
+
+The stable-to-graded comparison is the step-to-image map, the image-to-kernel identification
+and the canonical graded quotient projection. -/
 lemma stableIntervalStepToStable_graded (n : ℤ) {i₁ i₂ : ι} (h₁₂ : i₁ ≤ i₂) :
     Y.stableIntervalStepToStable n h₁₂ ≫ (Y.stableIntervalKernelGradedIso n h₁₂).hom =
     Y.stableIntervalStepToImage n i₂ ≫ (Y.stableIntervalImageKernelIso n i₂).hom ≫
@@ -159,7 +185,10 @@ lemma stableIntervalStepToStable_graded (n : ℤ) {i₁ i₂ : ι} (h₁₂ : i�
     (Y.stableIntervalImageToStable_comp_iso_hom n h₁₂)
     (Y.stableIntervalImageKernelGradedIso_π n h₁₂)
 
-/-- The actual finite-window grade comparison preserves the original full relative representatives. -/
+/-- The finite step representative in a kernel-graded coordinate.
+
+Under endpoint vanishing, the finite-window graded comparison gives the same image and graded
+quotient representative as the stable step. -/
 lemma stepToFiniteRepresentative_graded (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
     (hleft : IsZero ((Y.H (n + 1)).obj (mk₁ (homOfLE (bot_le : (⊥ : ι) ≤ i₀)))))
@@ -180,7 +209,10 @@ lemma stepToFiniteRepresentative_graded (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
     ((Category.assoc f p.hom e.hom).symm.trans
       ((congrArg (fun z => z ≫ e.hom) hp).trans (Y.stableIntervalStepToStable_graded n h₁₂)))
 
-/-- The original native page equality isomorphisms retain an equal choice of middle index. -/
+/-- Skeletal page charts respect equal normalized middle cuts.
+
+Replacing two middle-cut presentations equal to the skeletal core index gives the same page
+chart after equality transport. -/
 lemma skeletalPageXIso_middleNormalization (S : SpectralObject C EInt)
     (r : ℤ) (hr : 1 ≤ r) (pq : ℤ × ℤ) (i₀ i₁ i₁' i₂ i₃ : EInt)
     (h₀ : i₀ = skeletalPageCore.i₀ r pq) (h₁ : i₁ = skeletalPageCore.i₁ pq)

@@ -1,3 +1,8 @@
-# Raw Projection eq zero iff
+# Kernel of the nonidentity tuple projection
 
-Kernel membership is exactly membership in the literal degeneracy span.
+Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+For f∈B_n, the degree projection is zero exactly when
+f belongs to the degeneracy submodule D_n.

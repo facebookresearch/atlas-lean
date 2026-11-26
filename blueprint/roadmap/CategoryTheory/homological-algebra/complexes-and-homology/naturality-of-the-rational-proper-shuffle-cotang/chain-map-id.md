@@ -1,3 +1,4 @@
-# Chain Map id
+# Identity law for proper-shuffle quotient chain maps
 
-The original identity parameter maps give the quotient identity.
+Let k be commutative, A a commutative k-algebra and M an A-module with induced k-action. The
+chain map on positiveQuotient(A,M) induced by id_A and id_M is the identity.

@@ -14,7 +14,13 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementCanonicalTensorPai
 public import MathlibExt.AlgebraicGeometry.Sites.FieldPointSkyscraperTensorPairing
 public import MathlibExt.CategoryTheory.Adjunction.ComparisonMonadIso
 
-/-! # The actual canonical-to-prescribed skyscraper tensor pairing comparison -/
+/-!
+# Tensor pairing comparison for field skyscrapers
+
+The natural isomorphism from the canonical field-point skyscraper functor to the prescribed
+one preserves the binary pairing map. This compares the maps from the tensor of two
+skyscrapers to the skyscraper of the integer tensor of their coefficients.
+-/
 
 @[expose] public section
 noncomputable section
@@ -27,8 +33,10 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine canonical/prescribed skyscraper comparison preserves the actual tensor-counit
-pairing. -/
+/-- Field skyscraper comparison preserves the binary tensor pairing.
+
+The canonical skyscraper pairing followed by the comparison at `M ⊗[ℤ] N` equals tensoring its
+components at `M` and `N` followed by the prescribed pairing. -/
 theorem fieldCanonicalSkyscraperIso_tensorPairing (M N : AddCommGrpCat.{max u w}) :
     let s := fieldCanonicalSkyscraperIso.{u, w} k Ω default
     fieldCanonicalPointSkyscraperTensorPairing.{u, w} k M N ≫

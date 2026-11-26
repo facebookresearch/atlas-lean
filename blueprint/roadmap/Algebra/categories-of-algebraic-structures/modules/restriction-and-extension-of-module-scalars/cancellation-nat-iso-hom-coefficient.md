@@ -1,3 +1,6 @@
-# Cancellation Nat Iso hom coefficient
+# Coefficient naturality of forward tensor cancellation
 
-The original cancellation is natural in every actual S-linear coefficient map.
+Coefficient naturality of forward tensor cancellation.
+
+For g : M → N, the coefficient map on M ⊗_S (S ⊗_R L) followed by cancellation for N equals
+cancellation for M followed by g ⊗ id_L.

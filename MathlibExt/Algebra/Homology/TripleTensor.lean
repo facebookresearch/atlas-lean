@@ -18,10 +18,27 @@ module
 public import MathlibExt.Algebra.Homology.TensorUnitor
 
 /-!
-# Triple tensor products of homological complexes
+# Homogeneous inclusions and associators for triple tensor complexes
 
-This file records the homogeneous inclusions, extensionality principles,
-naturality formulas, and associator formula for triple tensor products.
+Let C be a preadditive monoidal category whose tensor functor is additive
+in both variables. Let I be an additive monoid with decidable equality,
+c a complex shape on I with compatible tensor signs, and K₁,K₂,K₃
+complexes of shape c.
+
+When the component coproducts defining the indicated tensor products
+exist, a tridegree (i₁,i₂,i₃) with i₁+i₂+i₃ = j gives inclusions
+(K₁_(i₁) ⊗ K₂_(i₂)) ⊗ K₃_(i₃) → ((K₁⊗K₂)⊗K₃)_j
+and K₁_(i₁) ⊗ (K₂_(i₂) ⊗ K₃_(i₃)) → (K₁⊗(K₂⊗K₃))_j.
+These inclusions factor through the corresponding binary inclusions
+and are natural for maps of all three complexes.
+
+For the associator, assume both tensor parenthesizations exist,
+− ⊗ K₃_(i₃) preserves every coproduct of K₁_(i₁) ⊗ K₂_(i₂)
+with i₁+i₂ fixed, and K₁_(i₁) ⊗ − preserves every coproduct of
+K₂_(i₂) ⊗ K₃_(i₃) with i₂+i₃ fixed. On a tridegree inclusion the
+complex associator is the associator of the three component objects;
+the inverse satisfies the reverse equation. The category object,
+morphism and degree-index universes are independent.
 -/
 
 @[expose] public section
@@ -43,7 +60,13 @@ variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [Preadditive C]
   {c : ComplexShape I} [c.TensorSigns]
   (K₁ K₂ K₃ : HomologicalComplex C c)
 
-/-- The tridegree inclusion into the left-associated tensor product of complexes. -/
+/-- In a preadditive monoidal category with tensor additive
+in both variables, let K₁,K₂,K₃ have a common shape c with tensor
+signs on an additive monoid I with decidable equality. If K₁⊗K₂ and (K₁⊗K₂)⊗K₃ exist,
+then i₁+i₂+i₃ = j gives the component coproduct inclusion
+(K₁_(i₁) ⊗ K₂_(i₂)) ⊗ K₃_(i₃) → ((K₁⊗K₂)⊗K₃)_j.
+The required existence conditions concern the tensor coproducts in
+each degree. -/
 noncomputable abbrev ιTensorObj₃Left
     [HasTensor K₁ K₂] [HasTensor (tensorObj K₁ K₂) K₃]
     (i₁ i₂ i₃ j : I) (h : i₁ + i₂ + i₃ = j) :
@@ -52,7 +75,12 @@ noncomputable abbrev ιTensorObj₃Left
   mapBifunctor₁₂.ι (curriedTensor C) (curriedTensor C)
     K₁ K₂ K₃ c c i₁ i₂ i₃ j h
 
-/-- The tridegree inclusion into the right-associated tensor product of complexes. -/
+/-- In a preadditive monoidal category with tensor additive
+in both variables, let K₁,K₂,K₃ have a common shape c with tensor
+signs on an additive monoid I with decidable equality. If K₂⊗K₃ and K₁⊗(K₂⊗K₃) exist,
+then i₁+i₂+i₃ = j gives the component coproduct inclusion
+K₁_(i₁) ⊗ (K₂_(i₂) ⊗ K₃_(i₃)) → (K₁⊗(K₂⊗K₃))_j,
+using associativity of addition to group i₂+i₃. -/
 noncomputable abbrev ιTensorObj₃Right
     [HasTensor K₂ K₃] [HasTensor K₁ (tensorObj K₂ K₃)]
     (i₁ i₂ i₃ j : I) (h : i₁ + i₂ + i₃ = j) :
@@ -161,7 +189,16 @@ theorem ιTensorObj₃Left_associator_hom
   exact ι_mapBifunctorAssociatorX_hom
     (curriedAssociatorNatIso C) K₁ K₂ K₃ c c c i₁ i₂ i₃ j h
 
-/-- Right-associated inclusion commutes with the inverse associator. -/
+/-- For complexes K₁,K₂,K₃ in a preadditive monoidal category
+with additive tensor, on an additive degree monoid with decidable equality
+and a tensor-sign shape, assume both
+parenthesizations exist. Assume also that tensoring by K₃_(i₃) on
+the right preserves the K₁,K₂ degree coproducts and tensoring by
+K₁_(i₁) on the left preserves the K₂,K₃ degree coproducts.
+For i₁+i₂+i₃ = j, the inverse complex associator satisfies
+α_K⁻¹ ∘ ι_R = ι_L ∘ α_(K₁_(i₁),K₂_(i₂),K₃_(i₃))⁻¹.
+Both paths map the right-associated component tensor to the
+degree-j left-associated tensor complex. -/
 @[reassoc]
 theorem ιTensorObj₃Right_associator_inv
     (K₁ K₂ K₃ : HomologicalComplex C c)

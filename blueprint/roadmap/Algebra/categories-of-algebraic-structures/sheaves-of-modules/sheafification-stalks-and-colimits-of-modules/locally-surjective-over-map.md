@@ -1,7 +1,5 @@
-# Locally Surjective over Map
+# Local surjectivity under restriction along a base arrow
 
-Local surjectivity is preserved by `overMap` along an arrow of the base
-site. This mirrors `locallySurjective_over` (which handles `overFunctor`,
-i.e. pushforward along `Over.forget`); here we push forward along `Over.map g`.
-Both are `Presheaf.isLocallySurjective_whisker` for the cocontinuous
-`Over.forget` / `Over.map` functors.
+Let `(D,K)` be a site, `S` a ring sheaf, `g : X → Y`, and `f : M → N` a module-sheaf morphism
+over `S.over Y`. If its underlying additive presheaf map is locally surjective on `K.over Y`,
+then `(SheafOfModules.overMap S g).map f` is locally surjective on `K.over X`.

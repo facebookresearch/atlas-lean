@@ -1,4 +1,6 @@
-# Integer Product Right Tensor Comparison
+# Integer-product comparison with the tensor factor on the right
 
-The actual comparison for an original Hom product followed by the tensor
-factor: each original product projection is tensored with the identity of U.
+Integer-product comparison with the tensor factor on the right.
+
+For any `U`, tensor each product projection with `U` to define `(∏ i : ℤ, N i) ⊗_R U →ₗ[R] ∏ i
+: ℤ, N i ⊗_R U`. On a pure tensor it gives the family `i ↦ x i ⊗ u`.

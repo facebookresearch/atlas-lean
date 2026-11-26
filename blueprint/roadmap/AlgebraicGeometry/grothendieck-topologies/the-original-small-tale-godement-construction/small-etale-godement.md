@@ -1,3 +1,5 @@
-# Small Etale Godement
+# Godement endofunctor on abelian sheaves
 
-The actual Godement endofunctor is the same stalk family followed by its skyscraper product.
+Godement endofunctor on abelian sheaves.
+
+Apply the canonical stalk-family functor and then the product-of-skyscrapers functor.

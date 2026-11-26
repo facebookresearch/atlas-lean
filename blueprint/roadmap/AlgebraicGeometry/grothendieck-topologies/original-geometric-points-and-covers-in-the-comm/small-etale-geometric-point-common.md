@@ -1,4 +1,6 @@
-# Small Etale Geometric Point Common
+# Geometric point with lifted fiber values
 
-The prescribed original geometric point, with its fiber elements lifted
-to the common universe and all point conditions derived internally.
+Geometric point with lifted fiber values.
+
+Lift the fiber sets of the small étale geometric point to universe `max u w`; their cofiltered
+and initially small elements category defines the common-universe point.

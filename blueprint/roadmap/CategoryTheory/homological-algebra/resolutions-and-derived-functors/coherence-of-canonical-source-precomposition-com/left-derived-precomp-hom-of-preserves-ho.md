@@ -1,4 +1,7 @@
-# Left Derived Precomp Hom Of Preserves Homology comp
+# Directional left-derived comparisons respect source-change composition
 
-Exact source changes compose in every degree. The associator is derived as an natural
-transformation; preservation of projectives is unnecessary.
+Let `C,D,E,A` be abelian, with projective resolutions in `C,D,E`,
+`U : C → D`, `V : D → E` additive and preserving homology, and
+`L : E → A` additive. The directional comparison for `V` at `U(X)`
+followed by that for `U` at `X` equals the comparison for `U ⋙ V`
+followed by the derived source associator.

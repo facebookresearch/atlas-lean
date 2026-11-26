@@ -14,13 +14,14 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.SplittingProjection
 public import MathlibExt.Algebra.Homology.HomologicalComplex.SplitExactFunctor
 
 /-!
-# Coherence of degree decompositions
+# Projectors in the three coordinates of a split degree
 
-The selected kernel and cokernel universal properties construct the
-degreewise biproducts. Their coordinate maps give three orthogonal
-projectors whose sum is the identity. The homology coordinate agrees with
-the normalized homology projector. These comparisons are pointwise and
-require no global homology or biproduct structure.
+For a splitting, the boundary, homology and outgoing coordinate
+projection–inclusion composites are respectively the normalized incoming
+projector, complementary projector and outgoing projector. Their sum is
+the identity. The complementary projector is the homology diagonal in
+the degree decomposition and is preserved by additive functors under
+the stated local homology hypotheses.
 -/
 
 @[expose] public section
@@ -34,7 +35,11 @@ universe u v w uD vD
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι : Type w} {c : ComplexShape ι} {K : HomologicalComplex C c}
 
-/-- The general normalized projector is the actual native pointwise homology coordinate. -/
+/--
+Let K be a c-complex in a preadditive category C, s a splitting, and i a degree with homology.
+The complementary normalized projector in degree i equals rᵢ≫πᵢ≫ℓᵢ, where rᵢ:Kᵢ→Zᵢ is the
+cycles retraction, πᵢ:Zᵢ→Hᵢ the quotient and ℓᵢ:Hᵢ→Kᵢ the normalized homology inclusion.
+-/
 lemma normalizedHomologyProjector_f_eq_pointwise (s : Splitting K) (i : ι)
     [K.HasHomology i] :
     s.normalizedHomologyProjector.f i =
@@ -46,7 +51,13 @@ section DegreeCoordinates
 variable (s : Splitting K) (i : ι) [K.HasHomology i]
   [HasKernel (K.homologyπ i)] [HasCokernel (K.iCycles i)]
 
-/-- The actual incoming coordinate projection/inclusion gives the native incoming projector. -/
+/--
+Let K be a c-complex in a preadditive category C, s a splitting, and i a degree with homology.
+Assume ker(πᵢ)=Bᵢ and coker(jᵢ)=Qᵢ exist, where jᵢ:Zᵢ→Kᵢ is the cycle inclusion. Let
+e:Kᵢ≅(Bᵢ⊞Hᵢ)⊞Qᵢ be the canonical decomposition furnished by s. Projecting to Bᵢ by e and
+including it back by e^{-1} gives prevD i s.normalize.hom, the normalized incoming-boundary
+projector.
+-/
 lemma degreeDecompositionIso_boundary_projector :
     letI := s.hasBoundaryHomologyBiproduct i
     letI := s.hasDegreeDecompositionBiproduct i
@@ -58,7 +69,13 @@ lemma degreeDecompositionIso_boundary_projector :
   rw [s.degreeDecompositionIso_hom_boundary i, s.degreeDecompositionIso_boundary_inv i]
   simpa only [Category.assoc] using s.boundaryKernelProjection_term i
 
-/-- The actual homology coordinate projection/inclusion gives the general normalized projector. -/
+/--
+Let K be a c-complex in a preadditive category C, s a splitting, and i a degree with homology.
+Assume ker(πᵢ)=Bᵢ and coker(jᵢ)=Qᵢ exist, where jᵢ:Zᵢ→Kᵢ is the cycle inclusion. Let
+e:Kᵢ≅(Bᵢ⊞Hᵢ)⊞Qᵢ be the canonical decomposition furnished by s. Projection to Hᵢ followed by
+its inverse-coordinate inclusion is the degree-i complementary projector
+s.normalizedHomologyProjector.f i.
+-/
 lemma degreeDecompositionIso_homology_projector :
     letI := s.hasBoundaryHomologyBiproduct i
     letI := s.hasDegreeDecompositionBiproduct i
@@ -70,7 +87,13 @@ lemma degreeDecompositionIso_homology_projector :
   rw [s.degreeDecompositionIso_hom_homology i, s.degreeDecompositionIso_homology_inv i]
   simpa only [Category.assoc] using (s.normalizedHomologyProjector_f_eq_pointwise i).symm
 
-/-- The actual outgoing coordinate projection/inclusion gives the native outgoing projector. -/
+/--
+Let K be a c-complex in a preadditive category C, s a splitting, and i a degree with homology.
+Assume ker(πᵢ)=Bᵢ and coker(jᵢ)=Qᵢ exist, where jᵢ:Zᵢ→Kᵢ is the cycle inclusion. Let
+e:Kᵢ≅(Bᵢ⊞Hᵢ)⊞Qᵢ be the canonical decomposition furnished by s. Projection to Qᵢ followed by
+its inverse-coordinate inclusion gives dNext i s.normalize.hom, the normalized outgoing
+projector.
+-/
 lemma degreeDecompositionIso_outgoing_projector :
     letI := s.hasBoundaryHomologyBiproduct i
     letI := s.hasDegreeDecompositionBiproduct i
@@ -82,7 +105,13 @@ lemma degreeDecompositionIso_outgoing_projector :
   rw [s.degreeDecompositionIso_hom_outgoing i, s.degreeDecompositionIso_outgoing_inv i]
   exact s.outgoingCokernelProjectionSection i
 
-/-- The three actual native coordinate projectors reconstruct the original term identity. -/
+/--
+Let K be a c-complex in a preadditive category C, s a splitting, and i a degree with homology.
+Assume ker(πᵢ)=Bᵢ and coker(jᵢ)=Qᵢ exist, where jᵢ:Zᵢ→Kᵢ is the cycle inclusion. Let
+e:Kᵢ≅(Bᵢ⊞Hᵢ)⊞Qᵢ be the canonical decomposition furnished by s. The sum of the three coordinate
+projection–inclusion endomorphisms of Kᵢ is 1_{Kᵢ}. Thus the boundary, homology and outgoing
+coordinates reconstruct every term.
+-/
 lemma degreeDecompositionIso_coordinate_identity :
     letI := s.hasBoundaryHomologyBiproduct i
     letI := s.hasDegreeDecompositionBiproduct i
@@ -98,7 +127,13 @@ lemma degreeDecompositionIso_coordinate_identity :
     s.degreeDecompositionIso_outgoing_projector i, normalizedHomologyProjector_f]
   abel
 
-/-- In the earned native coordinates, the general projector is precisely the homology diagonal. -/
+/--
+Let K be a c-complex in a preadditive category C, s a splitting, and i a degree with homology.
+Assume ker(πᵢ)=Bᵢ and coker(jᵢ)=Qᵢ exist, where jᵢ:Zᵢ→Kᵢ is the cycle inclusion. Let
+e:Kᵢ≅(Bᵢ⊞Hᵢ)⊞Qᵢ be the canonical decomposition furnished by s. Conjugating the normalized
+complementary projector by e gives the diagonal projection onto Hᵢ in (Bᵢ⊞Hᵢ)⊞Qᵢ: it is
+identity on Hᵢ and zero on the boundary and outgoing coordinates.
+-/
 lemma degreeDecompositionIso_normalizedHomologyProjector :
     letI := s.hasBoundaryHomologyBiproduct i
     letI := s.hasDegreeDecompositionBiproduct i
@@ -114,7 +149,12 @@ end DegreeCoordinates
 
 variable {D : Type uD} [Category.{vD} D] [Preadditive D]
 
-/-- Actual native pointwise homology-coordinate projectors commute with an additive base functor. -/
+/--
+Let C,D be preadditive categories, K a c-complex with splitting s, and F:C⥤D additive. Fix i
+with homology in K and assume F preserves both left and right homology of
+Sᵢ=(K_prev(i)→Kᵢ→K_next(i)). Then F(rᵢ≫πᵢ≫ℓᵢ) equals the homology-coordinate projector of the
+mapped splitting s.map F.
+-/
 lemma pointwiseHomologyProjectionInclusion_map (s : Splitting K) (F : C ⥤ D) [F.Additive]
     (i : ι) [K.HasHomology i]
     [F.PreservesLeftHomologyOf (K.sc i)] [F.PreservesRightHomologyOf (K.sc i)] :

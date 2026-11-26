@@ -15,14 +15,14 @@ public import
 public import MathlibExt.Algebra.Homology.FirstQuadrantSecondPageMap
 
 /-!
-# Naturality of restricted first-page rows
+# Naturality of fixed first-page rows
 
-A bicomplex map on the first page restricts to every fixed vertical-degree
-row.  The canonical comparison between row homology and full first-page
-homology is natural for this restricted map.
+Let `f : K → L` be a map of first-quadrant bicomplexes in an abelian category. Its first-page
+map restricts to the row with fixed vertical degree `q`, whose displayed degree `p` is
+bidegree `(p,q)`.
 
-This file contains no normalized-row, vertical-homology, successor-page,
-second-page, or Bousfield--Kan comparison.
+The restricted maps preserve identity and composition. The homology comparison from a row to
+the full first-page complex is natural for these maps.
 -/
 
 @[expose] public section
@@ -42,7 +42,9 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The map between fixed first-page rows induced by a bicomplex map. -/
+/-- The fixed-row first-page map of a bicomplex morphism.
+
+Restrict the first-page map along the embedding `p ↦ (p,q)` for a fixed vertical degree `q`. -/
 noncomputable def horizontalFirstPageRowMapOfBicomplex
     (f : K ⟶ L) (q : ℕ) :
     horizontalFirstPageRowComplex K q ⟶
@@ -51,8 +53,9 @@ noncomputable def horizontalFirstPageRowMapOfBicomplex
     (horizontalPageMapOfBicomplex f 1 (le_refl 1))
     (horizontalFirstPageRowEmbedding q)
 
-/-- Components of the restricted row map are the corresponding page-one map
-components. -/
+/-- The components of a restricted first-page row map.
+
+The displayed degree-`p` component is the first-page map component at `(p,q)`. -/
 @[simp]
 theorem horizontalFirstPageRowMapOfBicomplex_f
     (f : K ⟶ L) (p q : ℕ) :
@@ -60,6 +63,9 @@ theorem horizontalFirstPageRowMapOfBicomplex_f
       (horizontalPageMapOfBicomplex f 1 (le_refl 1)).f (p, q) :=
   rfl
 
+/-- The identity map of a fixed first-page row.
+
+The identity bicomplex map induces the identity on each restricted first-page row. -/
 @[simp]
 theorem horizontalFirstPageRowMapOfBicomplex_id
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -69,6 +75,9 @@ theorem horizontalFirstPageRowMapOfBicomplex_id
   rw [horizontalPageMapOfBicomplex_id]
   exact HomologicalComplex.restrictionMap_id _ _
 
+/-- Composition of restricted first-page row maps.
+
+The row map of a composite bicomplex morphism equals the composite of the row maps. -/
 @[reassoc, simp]
 theorem horizontalFirstPageRowMapOfBicomplex_comp
     (f : K ⟶ L) (g : L ⟶ M) (q : ℕ) :
@@ -82,8 +91,10 @@ theorem horizontalFirstPageRowMapOfBicomplex_comp
     (φ' := horizontalPageMapOfBicomplex g 1 (le_refl 1))
     (e := horizontalFirstPageRowEmbedding q)
 
-/-- Homology of a restricted first-page row is naturally identified with
-homology of the full first page at the corresponding bidegree. -/
+/-- Naturality of the inverse first-page row-homology comparison.
+
+The full first-page homology map at `(p,q)` commutes with the inverse comparison to row
+homology and the degree-`p` row homology map. -/
 @[reassoc]
 theorem horizontalFirstPageRowHomologyIso_inv_naturality_of_bicomplex
     (f : K ⟶ L) (p q : ℕ) :

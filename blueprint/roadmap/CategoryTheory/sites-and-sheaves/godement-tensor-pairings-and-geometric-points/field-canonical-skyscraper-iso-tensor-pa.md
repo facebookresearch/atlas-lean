@@ -1,4 +1,6 @@
-# Godement tensor pairings and geometric points
+# Field skyscraper comparison preserves the binary tensor pairing
 
-The genuine canonical/prescribed skyscraper comparison preserves the actual tensor-counit
-pairing.
+Field skyscraper comparison preserves the binary tensor pairing.
+
+The canonical skyscraper pairing followed by the comparison at `M ⊗[ℤ] N` equals tensoring its
+components at `M` and `N` followed by the prescribed pairing.

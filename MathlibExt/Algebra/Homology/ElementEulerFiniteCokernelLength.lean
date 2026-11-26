@@ -14,12 +14,13 @@ module
 
 public import MathlibExt.Algebra.Homology.ElementEuler
 
-/-! # Principal quotient lengths across a finite-length cokernel
+/-!
+# Multiplication cokernel lengths with a finite-length quotient
 
-Multiplication has zero Euler characteristic on a finite-length module.
-Short-exact additivity then compares principal quotient lengths across an
-injection with finite-length cokernel, provided multiplication is injective
-on both original modules. No branch normalization data is assumed.
+Multiplication by r on a finite-length module has kernel and cokernel of equal length, so its
+Euler characteristic is zero. In a short exact sequence M₁ → M₂ → M₃, if multiplication is
+injective on M₁ and M₂, M₁/rM₁ has finite length and M₃ has finite length, then M₁/rM₁ and
+M₂/rM₂ have equal lengths.
 -/
 
 @[expose] public section
@@ -29,8 +30,9 @@ universe u v
 namespace Module
 variable (R : Type u) [CommRing R]
 
-/-- A multiplication endomorphism of a finite-length module has equal
-actual kernel and cokernel lengths. -/
+/-- Multiplication kernel and cokernel lengths on a finite-length module.
+
+If M has finite length, ker μ_r and coker μ_r have equal R-length for every r. -/
 theorem length_lsmul_kernel_eq_cokernel_of_module_length
     (M : Type v) [AddCommGroup M] [Module R M]
     (r : R) (hM : Module.length R M ≠ ⊤) :
@@ -63,8 +65,9 @@ theorem length_lsmul_kernel_eq_cokernel_of_module_length
     _ = Module.length R (M ⧸ (LinearMap.lsmul R M r).range) :=
       ENat.natCast_toNat h.cokernel_ne_top
 
-/-- Every endomorphism given by multiplication on a finite-length module has
-zero cokernel-minus-kernel Euler characteristic. -/
+/-- The one-element Euler characteristic of a finite-length module is zero.
+
+For finite-length M, χ_r(M)=0 for every r. -/
 theorem elementEulerCharacteristic_eq_zero_of_module_length
     (M : Type v) [AddCommGroup M] [Module R M]
     (r : R) (hM : Module.length R M ≠ ⊤)
@@ -73,9 +76,10 @@ theorem elementEulerCharacteristic_eq_zero_of_module_length
   unfold elementEulerCharacteristic
   rw [length_lsmul_kernel_eq_cokernel_of_module_length R M r hM, sub_self]
 
-/-- In an actual short exact sequence with finite-length right module,
-regular multiplication on the first two modules gives equal actual
-principal quotient lengths. Finiteness of the second quotient is derived. -/
+/-- Cokernel lengths across an exact sequence with finite-length quotient.
+
+Under injective multiplication on the left and middle terms, finite left cokernel length and
+finite right-module length give equal left and middle cokernel lengths. -/
 theorem length_lsmul_cokernel_eq_of_shortExact
     {M₁ M₂ M₃ : Type v}
     [AddCommGroup M₁] [Module R M₁]

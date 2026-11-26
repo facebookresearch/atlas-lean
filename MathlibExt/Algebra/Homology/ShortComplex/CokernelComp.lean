@@ -12,7 +12,14 @@ public import Mathlib.CategoryTheory.Abelian.DiagramLemmas.KernelCokernelComp
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 
 /-!
-Positions 3–5 of Mathlib's `kernelCokernelCompSequence` exact sequence.
+# Cokernels of a composable pair
+
+In an abelian category C, composable maps X —f→ Y —g→ Z give the exact
+cokernel sequence Coker(f) → Coker(g∘f) → Coker(g).
+The first map is induced by g and the second by the identity of Z;
+their projection equations are a∘π_f=π_gf∘g and b∘π_gf=π_g.
+The second map is always epic. If g is monic, the first map is monic
+and the sequence is short exact.
 -/
 
 @[expose] public section
@@ -24,28 +31,34 @@ namespace CategoryTheory.ShortComplex
 variable {C : Type*} [Category* C] [Abelian C]
   {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z)
 
-/-- Direct short-complex tail of `kernelCokernelCompSequence` (positions 3–5). -/
+/-- Let C be abelian and f:X → Y, g:Y → Z composable morphisms.
+Write π_f,π_gf,π_g for the respective cokernel projections.
+
+The short complex Coker(f) —a→ Coker(g∘f) —b→ Coker(g), where a is induced by g and b by the identity of Z. -/
 @[reducible]
 noncomputable def cokernelCompSequence : ShortComplex C :=
   (kernelCokernelCompSequence f g).sc
     (kernelCokernelCompSequence_exact f g).toIsComplex 3
 
-/-- Exactness at position 3, inherited for `cokernelCompSequence`. -/
+/-- Let C be abelian and f:X → Y, g:Y → Z composable morphisms.
+Write π_f,π_gf,π_g for the respective cokernel projections.
+
+The sequence Coker(f) → Coker(g∘f) → Coker(g) is exact at its middle term. -/
 theorem cokernelCompSequence_exact :
     (cokernelCompSequence f g).Exact :=
   (kernelCokernelCompSequence_exact f g).exact 3
 
-/-- Epi at the tail, inherited from the final map of `kernelCokernelCompSequence`. -/
+/-- Let C be abelian and f:X → Y, g:Y → Z composable morphisms.
+Write π_f,π_gf,π_g for the respective cokernel projections.
+
+The final quotient map Coker(g∘f) → Coker(g) is an epimorphism. -/
 instance cokernelCompSequence_epi : Epi (cokernelCompSequence f g).g :=
   inferInstanceAs (Epi ((kernelCokernelCompSequence f g).map' 4 5))
 
-/-- When `g` is mono, the first map of the cokernel tail is mono.
+/-- Let C be abelian and f:X → Y, g:Y → Z composable morphisms.
+Write π_f,π_gf,π_g for the respective cokernel projections.
 
-If `g` is mono, the connecting map `δ f g` vanishes. For the position-2
-short complex `S` of `kernelCokernelCompSequence`, this means `S.f = 0`.
-Exactness at position 2 then gives monicity of `S.g`, which is definitionally
-the first map of `cokernelCompSequence`. Hence the tail starts with a mono
-when `g` is mono. -/
+If g is a monomorphism, the induced map Coker(f) → Coker(g∘f) is a monomorphism. -/
 instance cokernelCompSequence_mono [Mono g] :
     Mono (cokernelCompSequence f g).f := by
   have hδ : kernelCokernelCompSequence.δ f g = 0 := by
@@ -61,10 +74,10 @@ instance cokernelCompSequence_mono [Mono g] :
     (S.exact_iff_mono hS_f_zero).mp hS_exact
   exact hMono
 
-/-- When `g` is mono, the cokernel tail is short exact.
+/-- Let C be abelian and f:X → Y, g:Y → Z composable morphisms.
+Write π_f,π_gf,π_g for the respective cokernel projections.
 
-This follows from exactness, monicity of the first map when `g` is mono,
-and epicness of the last map. -/
+If g is monic, 0 → Coker(f) → Coker(g∘f) → Coker(g) → 0 is short exact. -/
 theorem cokernelCompSequence_shortExact [Mono g] :
     (cokernelCompSequence f g).ShortExact :=
   ShortExact.mk' (cokernelCompSequence_exact f g) inferInstance inferInstance

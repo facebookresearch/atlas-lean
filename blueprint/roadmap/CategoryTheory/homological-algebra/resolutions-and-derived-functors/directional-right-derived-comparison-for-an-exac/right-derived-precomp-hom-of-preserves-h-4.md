@@ -1,3 +1,6 @@
-# Right Derived Precomp Hom Of Preserves Homology naturality functor
+# Directional source comparison is natural in the coefficient functor
 
-The directional source comparison is natural in an actual, noninvertible output-functor map.
+Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L,M : D → A` additive.
+For `α : L → M`, the directional comparisons satisfy
+`R^n(U ⋙ α) ≫ η_M = η_L ≫ (U ⋙ R^nα)`.

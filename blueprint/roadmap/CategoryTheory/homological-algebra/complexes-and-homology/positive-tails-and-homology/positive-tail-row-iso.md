@@ -1,3 +1,5 @@
-# Positive Tail Row Iso
+# Short-complex comparison in positive tail degrees
 
-Every positive-tail row above degree zero is the original shifted row.
+Let C be abelian, K a nonnegative chain complex and n a natural number. The short complex
+T(K)_\{n+2\} → T(K)_\{n+1\} → T(K)_n is canonically isomorphic to K_\{n+3\} → K_\{n+2\} → K_\{n+1\}, with
+identity reindexing components.

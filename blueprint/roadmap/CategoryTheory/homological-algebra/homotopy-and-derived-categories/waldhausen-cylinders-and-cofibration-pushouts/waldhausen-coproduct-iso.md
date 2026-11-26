@@ -1,4 +1,8 @@
-# Waldhausen Coproduct Iso
+# Exact functors commute with the chosen coproduct functor
 
-The original exact functor preserves the actual original chosen binary
-coproduct functor, with the entire stock comparison and naturality retained.
+Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The natural isomorphism F∘⊔_A ≅ ⊔_B∘(F×F), with components given by the canonical coproduct cocone comparisons.

@@ -16,13 +16,15 @@ public import Mathlib.Algebra.Homology.Embedding.RestrictionHomology
 public import Mathlib.Algebra.Homology.SpectralSequence.Basic
 
 /-!
-# Integer rows of a cohomological first page
+# Integer rows and second-page homology
 
-The first-page differential has bidegree `(1, 0)`. Restriction along the
-integer-row embedding gives an integer cochain complex with the original
-objects, differentials, and maps. Its homology comparison is the native
-homological-complex restriction comparison, followed by the spectral
-sequence successor isomorphism to the second page.
+For a cohomological spectral sequence with d_r of bidegree (r,1−r), the first differential has
+degree (1,0). Restricting E₁ to the integer row q gives a cochain complex with objects
+E₁^{p,q} and its existing differential.
+
+The row restriction compares its degree-p homology with the first-page homology at (p,q), and
+the spectral successor isomorphism identifies it with E₂^{p,q}. Page maps restrict to row
+maps, preserving identity and composition.
 -/
 
 @[expose] public section
@@ -39,7 +41,9 @@ universe u v
 
 namespace ComplexShape
 
-/-- The inclusion of one integer row in the first-page bidegree shape. -/
+/-- The integer row embedding of the first-page shape.
+
+Embed p into (p,q), carrying p→p+1 to the bidegree change (1,0). -/
 def embeddingUpIntRow (q : ℤ) :
     (ComplexShape.up ℤ).Embedding (ComplexShape.up' (⟨1, 0⟩ : ℤ × ℤ)) :=
   ComplexShape.Embedding.mk' _ _ (fun p => (p, q))
@@ -64,23 +68,33 @@ namespace CategoryTheory.SpectralSequence
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (S : SpectralSequence C (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1)
 
-/-- The original first-page objects and differential on one integer coefficient row. -/
+/-- The integer cochain complex of a first-page row.
+
+Restrict E₁ to bidegrees (p,q) with fixed q. -/
 def firstPageRow (q : ℤ) : CochainComplex C ℤ :=
   (S.page 1).restriction (ComplexShape.embeddingUpIntRow q)
 
 variable {S}
 variable {T : SpectralSequence C (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1}
 
-/-- The actual fixed-first-page map restricts to each coefficient row. -/
+/-- The row map induced by a first-page morphism.
+
+Restrict a morphism E₁(S) → E₁(T) along the integer row embedding. -/
 def firstPageRowMap (φ : S.page 1 ⟶ T.page 1) (q : ℤ) :
     S.firstPageRow q ⟶ T.firstPageRow q :=
   HomologicalComplex.restrictionMap φ (ComplexShape.embeddingUpIntRow q)
 
+/-- The row restriction of an identity page map.
+
+The identity on E₁ restricts to the identity row map. -/
 @[simp]
 theorem firstPageRowMap_id (S : SpectralSequence C
     (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1) (q : ℤ) :
     firstPageRowMap (𝟙 (S.page 1)) q = 𝟙 (S.firstPageRow q) := rfl
 
+/-- Composition of first-page row restrictions.
+
+The row restriction of a composite page map is the composite of the row restrictions. -/
 @[simp]
 theorem firstPageRowMap_comp
     {U : SpectralSequence C (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1}
@@ -89,7 +103,9 @@ theorem firstPageRowMap_comp
 
 variable (S)
 
-/-- The row's homology agrees with the actual first-page homology at its bidegree. -/
+/-- The homology comparison between a row and its bidegree.
+
+The degree-p homology of the row q is isomorphic to H(E₁) at (p,q). -/
 def firstPageRowHomologyIso (p q : ℤ) :
     (S.firstPageRow q).homology p ≅ (S.page 1).homology (p, q) := by
   have hpRow : (ComplexShape.up ℤ).prev p = p - 1 :=
@@ -107,7 +123,9 @@ def firstPageRowHomologyIso (p q : ℤ) :
   exact (S.page 1).restrictionHomologyIso (ComplexShape.embeddingUpIntRow q)
     (p - 1) p (p + 1) hpRow hnRow rfl rfl rfl hpPage hnPage
 
-/-- The integer row homology is the actual native second page. -/
+/-- The first-page row homology is the second-page object.
+
+Combine restriction homology with the successor comparison to obtain Hᵖ(E₁^{*,q}) ≅ E₂^{p,q}. -/
 def firstPageRowSecondPageIso (p q : ℤ) :
     (S.firstPageRow q).homology p ≅ (S.page 2).X (p, q) :=
   S.firstPageRowHomologyIso p q ≪≫ S.iso 1 2 (p, q) rfl (by omega)

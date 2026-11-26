@@ -16,13 +16,17 @@ public import MathlibExt.CategoryTheory.Waldhausen.BinaryCoproductFunctor
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Cobase squares and cofibrancy of the actual Waldhausen coproduct maps
+# Coproduct cobase-change squares and cofibrations
 
-The existing canonical coproduct cobase square transports along the
-colimit-apex isomorphisms to the actual derived coproduct cocones.
-Flipping the two cofans gives the second summand case from the same proof.
-Original cofibration stability and map composition then prove cofibrancy
-of the full coproduct functor map.
+In a category with a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms, use the coproducts supplied by zero-source
+pushouts. For any f:X → X′, the map f⊔1_Y lies in the pushout square
+between the first injections X → X⊔Y and X′ → X′⊔Y.
+Changing the second summand gives the analogous square.
+
+If f and g are cofibrations, these squares and composition show that
+f⊔g is a cofibration. Thus the coproduct functor sends pairs of
+cofibrations to cofibrations.
 -/
 
 public section
@@ -83,8 +87,11 @@ private theorem isPushoutOfBinaryCofans {X X' Y : C}
   · exact hm
   · simpa only [Iso.refl_hom, Category.id_comp] using heL'
 
-/-- Changing the first summand gives an actual pushout of its injection,
-using the original derived coproduct apex and map. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For any f:X → X′ and fixed Y, the square with maps ι_X:X → X⊔Y, f:X → X′, f⊔1_Y:X⊔Y → X′⊔Y and ι_X′:X′ → X′⊔Y is a pushout. -/
 theorem binaryCoproductMap_inl_isPushout {X X' : C} (f : X ⟶ X') (Y : C) :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone C (pair X Y)).cocone;
     let c' : BinaryCofan X' Y := (binaryCoproductColimitCocone C (pair X' Y)).cocone;
@@ -95,8 +102,11 @@ theorem binaryCoproductMap_inl_isPushout {X X' : C} (f : X ⟶ X') (Y : C) :
     f (binaryCoproductMap C f (𝟙 Y)) (binaryCoproductMap_inl C f (𝟙 Y))
     ((binaryCoproductMap_inr C f (𝟙 Y)).trans (Category.id_comp _))
 
-/-- Changing the second summand gives the other actual injection
-pushout, by the same colimit transport applied to flipped cofans. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For fixed X and any g:Y → Y′, the square between the second injections Y → X⊔Y and Y′ → X⊔Y′, with vertical maps g and 1_X⊔g, is a pushout. -/
 theorem binaryCoproductMap_inr_isPushout (X : C) {Y Y' : C} (g : Y ⟶ Y') :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone C (pair X Y)).cocone;
     let c' : BinaryCofan X Y' := (binaryCoproductColimitCocone C (pair X Y')).cocone;
@@ -107,8 +117,11 @@ theorem binaryCoproductMap_inr_isPushout (X : C) {Y Y' : C} (g : Y ⟶ Y') :
     g (binaryCoproductMap C (𝟙 X) g) (binaryCoproductMap_inr C (𝟙 X) g)
     ((binaryCoproductMap_inl C (𝟙 X) g).trans (Category.id_comp _))
 
-/-- Original component cofibrations induce a cofibration on the actual
-derived coproduct, by the two cobase squares and their composition. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For cofibrations f:X → X′ and g:Y → Y′, the induced map f⊔g:X⊔Y → X′⊔Y′ is a cofibration. -/
 theorem binaryCoproductMap_isCofibration {X Y X' Y' : C}
     (f : X ⟶ X') (g : Y ⟶ Y') (hf : IsCofibration f) (hg : IsCofibration g) :
     IsCofibration (binaryCoproductMap C f g) := by
@@ -125,8 +138,11 @@ theorem binaryCoproductMap_isCofibration {X Y X' Y' : C}
   rw [hcomp]
   exact (WaldhausenCategoryWithoutGluing.cofibrations (C := C)).comp_mem _ _ h₁ h₂
 
-/-- The actual coproduct functor preserves the original component
-cofibrations, with both object transports included in its whole map. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For a pair morphism (f,g):(X,Y) → (X′,Y′) with both components cofibrations, its image under the chosen coproduct functor C×C → C is a cofibration. -/
 theorem waldhausenCoproductFunctor_map_isCofibration {p q : C × C} (f : p ⟶ q)
     (hf : IsCofibration f.1) (hg : IsCofibration f.2) :
     IsCofibration ((waldhausenCoproductFunctor C).map f) := by

@@ -1,4 +1,5 @@
-# Product Set
+# The set of product representatives
 
-The set of products of representatives from two successive right
-transversals.
+The set of product representatives.
+
+This is the subset of G consisting of all st with s ∈ S and t ∈ T.

@@ -8,7 +8,7 @@ Vector spaces and modules, linear maps and their invariants such as trace, dual 
 - [Quotient Hom classified by the actual annihilator](quotient-hom-classified-by-the-actual-annihilato/README.md)
 - [Similarity invariants of linear maps](similarity-invariants-of-linear-maps/README.md)
 - [Trace is additive over an invariant subspace](trace-on-invariant-subspaces/README.md)
-- [Bijectivity of an actual comparison through a retraction](comparison-bijective-of-retract.md)
+- [A retract of a bijective linear comparison is bijective](comparison-bijective-of-retract.md)
 - [Evaluation of an affine function at two points](evaluation-of-affine-functions/README.md)
 - [Hom detects exact sequences ending in a surjection](hom-detects-exactness/README.md)
 - [Rank of a product of matrices](rank-of-a-matrix-product/README.md)

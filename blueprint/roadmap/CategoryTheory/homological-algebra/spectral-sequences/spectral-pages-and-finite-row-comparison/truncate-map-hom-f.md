@@ -1,3 +1,5 @@
-# Truncate Map hom f
+# The retained component map is unchanged
 
-Retained degree components are the actual original native components.
+The retained component map is unchanged.
+
+Every component of a truncated page map is the original component.

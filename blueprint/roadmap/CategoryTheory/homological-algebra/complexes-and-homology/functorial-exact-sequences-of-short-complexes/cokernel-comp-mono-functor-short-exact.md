@@ -1,5 +1,5 @@
-# Cokernel Comp Mono Functor short Exact
+# Short exactness of the functorial cokernel triple
 
-Pointwise short exactness of the mono-filtered cokernel-comp triple.
-Reuses `cokernelCompSequence_shortExact` after installing the object's
-`Mono (S.map' 1 2)` instance.
+Let C be abelian and X —f→ Y —g→ Z a composable pair of complexes of
+shape c with g monic. Its functorial cokernel triple
+Coker(f) → Coker(g∘f) → Coker(g) is short exact.

@@ -12,12 +12,15 @@ public import MathlibExt.Algebra.Homology.UniverseKunneth.Coalgebra
 public import MathlibExt.CategoryTheory.Monoidal.PointedComonFunctor
 
 /-!
-# The existing original-field homology functor on pointed comonoids
+# Homology of coaugmented comonoids over a field
 
-Specialize the general native pointed-comonoid functor to the already earned
-original-field Künneth monoidal structure. Its inverse unit comparison is
-the existing scalar `unitMap`; the underlying objects and point maps agree
-with the existing `coaugmented` producer.
+The Künneth monoidal structure over a field makes homology a functor on pointed comonoids,
+from chain comonoids under the trivial tensor-unit comonoid to graded comonoids under its
+homology counterpart.
+
+The transported point is the scalar unit map followed by homology of the chain point. The
+output agrees by an identity-component isomorphism with the direct homology coaugmentation
+construction, retaining the field and module universe heights.
 -/
 
 @[expose] public section
@@ -38,15 +41,21 @@ attribute [local instance] ComonObj.instTensorUnit
 local instance : HasFiniteBiproducts (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
     (C := ModuleCat.UniverseScalarRestriction.Modules.{u, v} k)
-/-- The existing monoidal-closed structure over the original field and module height. -/
+/-- The closed tensor structure of the field module category.
+
+Use the monoidal closed structure at the specified field and module heights. -/
 local instance instMonoidalClosedModules :
     MonoidalClosed (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u, v} (R := k)
 
-/-- The original-field monoidal structure is the existing earned Künneth structure. -/
+/-- The field Künneth monoidal structure on homology.
+
+Use the field tensor-homology comparison to give homology its monoidal functor structure. -/
 local instance homologyMonoidal : (homologyFunctor.{u, v} (R := k)).Monoidal := monoidalOfField.{u, v}
 
-/-- The inverse unit comparison is exactly the existing original-field scalar unit map. -/
+/-- The inverse homology unit comparison is the scalar unit map.
+
+The inverse oplax unit comparison equals unitMap. -/
 theorem homology_unit_inv :
     inv (Functor.OplaxMonoidal.η (homologyFunctor.{u, v} (R := k))) = unitMap.{u, v} (R := k) := by
   let H := homologyFunctor.{u, v} (R := k)
@@ -56,13 +65,18 @@ theorem homology_unit_inv :
     exact Functor.Monoidal.ε_η H
   exact h.symm
 
-/-- Specialization of the existing general pointed transport to original-field homology. -/
+/-- The homology functor on pointed comonoids.
+
+Apply the monoidal homology functor to comonoids with a point from the trivial tensor-unit
+comonoid. -/
 def coaugmentedFunctor :
     Under (Comon.trivial (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ)) ⥤
       Under (Comon.trivial (GradedObject ℕ (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k))) :=
   (homologyFunctor.{u, v} (R := k)).mapPointedComon
 
-/-- The transported point is the existing canonical original-field homology coaugmentation. -/
+/-- The point of the homology comonoid.
+
+Its point is unitMap followed by homology of the chain coaugmentation. -/
 theorem coaugmentedFunctor_obj_point
     (A : Under (Comon.trivial (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ))) :
     ((coaugmentedFunctor.{u, v} (k := k)).obj A).hom.hom =
@@ -71,14 +85,19 @@ theorem coaugmentedFunctor_obj_point
   exact h.trans (congrArg
     (fun u => u ≫ (homologyFunctor.{u, v} (R := k)).map A.hom.hom) homology_unit_inv)
 
-/-- The original pointed chain map has its stored native tensor-unit comonoid laws. -/
+/-- The stored chain point preserves comultiplication and counit.
+
+The point map of an under-object is a comonoid morphism from the tensor unit. -/
 theorem pointedChainMapIsComonHom
     (A : Under (Comon.trivial (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ))) :
     letI : ComonObj A.right.X := A.right.comon
     IsComonHom (show 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ) ⟶
       A.right.X from A.hom.hom) := A.hom.isComonHom_hom
 
-/-- The existing original-field producer applied to the actual point, with its native laws. -/
+/-- The direct pointed homology construction.
+
+Apply the homology coaugmentation construction to the chain comonoid and its supplied point
+map. -/
 def coaugmentedExistingPointed
     (A : Under (Comon.trivial (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ))) :
     Under (Comon.trivial (GradedObject ℕ (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k))) := by
@@ -87,7 +106,10 @@ def coaugmentedExistingPointed
   letI : IsComonHom η := pointedChainMapIsComonHom A
   exact coaugmented.{u, v} A.right.X η
 
-/-- The canonical native point comparison identifies the output with the existing producer. -/
+/-- The comparison of the two pointed homology constructions.
+
+The functorial and direct outputs are isomorphic through the identity on the homology
+comonoid. -/
 def coaugmentedFunctorObjIso
     (A : Under (Comon.trivial (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ))) :
     (coaugmentedFunctor.{u, v} (k := k)).obj A ≅ coaugmentedExistingPointed A := by
@@ -96,7 +118,9 @@ def coaugmentedFunctorObjIso
   simp only [Comon.comp_hom']
   exact coaugmentedFunctor_obj_point A
 
-/-- The underlying pointed map remains the original homology map of the original chain morphism. -/
+/-- The underlying map of pointed homology functoriality.
+
+A pointed chain morphism is sent to its homology map on the comonoid carriers. -/
 theorem coaugmentedFunctor_map_hom
     {A B : Under (Comon.trivial (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u, v} k) ℕ))}
     (f : A ⟶ B) :

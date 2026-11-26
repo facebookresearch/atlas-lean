@@ -1,3 +1,5 @@
-# Two Sided Cobar obj map
+# The pointwise carrier-map formula for two-sided cobar
 
-Pointwise morphisms on simplex objects.
+The pointwise carrier-map formula for two-sided cobar.
+
+A morphism `f : a → b` acts in degree `n` by `R.map(G^n.map(L.map(f)))`.

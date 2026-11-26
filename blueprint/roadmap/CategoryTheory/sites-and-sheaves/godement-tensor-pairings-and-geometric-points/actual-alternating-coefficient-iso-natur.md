@@ -1,3 +1,6 @@
-# Actual Alternating Coefficient Iso naturality
+# Alternating coface coefficient comparison is natural
 
-The same actual identity components preserve every original cosimplicial arrow.
+Alternating coface coefficient comparison is natural.
+
+The identity-component comparison commutes with maps of cosimplicial objects and their images
+under the additive functor.

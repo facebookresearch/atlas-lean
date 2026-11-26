@@ -1,3 +1,6 @@
-# Small Etale Direct Image Comp Iso naturality
+# Direct image composition comparison is natural in sheaf maps
 
-Composite direct-image comparison preserves every original sheaf morphism.
+Direct image composition comparison is natural in sheaf maps.
+
+A sheaf morphism commutes with the comparison from successive direct images to direct image
+along the composite.

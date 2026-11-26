@@ -1,7 +1,11 @@
 # Actual positive-tail and shifted-homology matrix CE accessors
 
-- [Matrix Positive Tail](matrix-positive-tail.md)
-- [Matrix Positive Tail Map](matrix-positive-tail-map.md)
-- [Matrix Positive Tail Cycles Iso](matrix-positive-tail-cycles-iso.md)
-- [Matrix Positive Tail Homology Iso](matrix-positive-tail-homology-iso.md)
-- [Matrix Positive Tail Homology Iso naturality](matrix-positive-tail-homology-iso-natura.md)
+- [The positive exterior tail of a finite matrix CE complex](matrix-positive-tail.md)
+- [The positive-tail map of a finite matrix size inclusion](matrix-positive-tail-map.md)
+- [The shifted component of a matrix positive-tail size map](matrix-positive-tail-map-f.md)
+- [The exterior formula for a positive-tail matrix size map](matrix-positive-tail-map-pure.md)
+- [The cycle comparison for positive matrix CE tails](matrix-positive-tail-cycles-iso.md)
+- [The homology comparison for positive matrix CE tails](matrix-positive-tail-homology-iso.md)
+- [The inclusion formula for the positive-tail cycle comparison](matrix-positive-tail-cycles-iso-i.md)
+- [The projection formula for the positive-tail homology comparison](matrix-positive-tail-homology-iso-2.md)
+- [Naturality of the positive-tail matrix homology comparison](matrix-positive-tail-homology-iso-natura.md)

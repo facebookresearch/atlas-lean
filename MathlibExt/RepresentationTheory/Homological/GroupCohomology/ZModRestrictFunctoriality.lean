@@ -15,13 +15,14 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRe
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 
 /-!
-# Functoriality of low-degree scalar restriction
+# Naturality of low-degree integral scalar restriction
 
-The low-degree comparisons from `ZMod n` coefficients to integral
-scalar-restricted coefficients commute with simultaneous restriction of the
-acting group and an equivariant coefficient morphism.
-
-The statements include `n = 0`.
+Let n∈ℕ, ψ:G→H a group homomorphism and t:Res_ψ(A)→B an
+equivariant map of ZMod n-representations.
+The scalar-restriction comparisons commute with the maps on degree-one
+and degree-two cocycles and cohomology.
+Both the original and integral maps apply ψ to group coordinates
+and t to coefficient values. The formulas include n=0.
 -/
 
 @[expose] public section
@@ -38,8 +39,12 @@ variable {G H : Type} [Group G] [Group H]
 variable (n : ℕ) {A : Rep (ZMod n) H} {B : Rep (ZMod n) G}
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Scalar restriction commutes with the representative map on degree-one
-cocycles for an arbitrary group homomorphism. -/
+/-- Let n∈ℕ, G,H be groups, A a ZMod n-representation of H,
+B one of G, ψ:G→H a group homomorphism and
+t:Res_ψ(A)→B an equivariant coefficient map.
+Scalar restriction to ℤ keeps the coefficient values and group actions.
+For a degree-one cocycle z, χ_B¹(Z¹(ψ,t)(z))=
+Z¹(ψ,Res(t))(χ_A¹(z)). -/
 theorem cocycles₁ZModRestrictIntEquiv_mapCocycles₁
     (f : G →* H) (phi : Rep.res f A ⟶ B) (z : cocycles₁ A) :
     cocycles₁ZModRestrictIntEquiv n B (mapCocycles₁ f phi z) =
@@ -50,8 +55,12 @@ theorem cocycles₁ZModRestrictIntEquiv_mapCocycles₁
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Scalar restriction commutes with the representative map on degree-two
-cocycles for an arbitrary group homomorphism. -/
+/-- Let n∈ℕ, G,H be groups, A a ZMod n-representation of H,
+B one of G, ψ:G→H a group homomorphism and
+t:Res_ψ(A)→B an equivariant coefficient map.
+Scalar restriction to ℤ keeps the coefficient values and group actions.
+For a degree-two cocycle z, χ_B²(Z²(ψ,t)(z))=
+Z²(ψ,Res(t))(χ_A²(z)). -/
 theorem cocycles₂ZModRestrictIntEquiv_mapCocycles₂
     (f : G →* H) (phi : Rep.res f A ⟶ B) (z : cocycles₂ A) :
     cocycles₂ZModRestrictIntEquiv n B (mapCocycles₂ f phi z) =
@@ -62,8 +71,12 @@ theorem cocycles₂ZModRestrictIntEquiv_mapCocycles₂
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The degree-one scalar-restriction equivalence is natural for an
-arbitrary group homomorphism and compatible coefficient map. -/
+/-- Let n∈ℕ, G,H be groups, A a ZMod n-representation of H,
+B one of G, ψ:G→H a group homomorphism and
+t:Res_ψ(A)→B an equivariant coefficient map.
+Scalar restriction to ℤ keeps the coefficient values and group actions.
+The additive first-cohomology comparisons satisfy
+χ_B¹∘H¹(ψ,t)=H¹(ψ,Res(t))∘χ_A¹. -/
 theorem H1ZModRestrictIntAddEquiv_map_of_hom
     (f : G →* H) (phi : Rep.res f A ⟶ B) (x : H1 A) :
     H1ZModRestrictIntAddEquiv n B (map f phi 1 x) =
@@ -79,8 +92,12 @@ theorem H1ZModRestrictIntAddEquiv_map_of_hom
         (cocycles₁ZModRestrictIntEquiv_mapCocycles₁ n f phi z)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The degree-two scalar-restriction equivalence is natural for an
-arbitrary group homomorphism and compatible coefficient map. -/
+/-- Let n∈ℕ, G,H be groups, A a ZMod n-representation of H,
+B one of G, ψ:G→H a group homomorphism and
+t:Res_ψ(A)→B an equivariant coefficient map.
+Scalar restriction to ℤ keeps the coefficient values and group actions.
+The additive second-cohomology comparisons satisfy
+χ_B²∘H²(ψ,t)=H²(ψ,Res(t))∘χ_A². -/
 theorem H2ZModRestrictIntAddEquiv_map_of_hom
     (f : G →* H) (phi : Rep.res f A ⟶ B) (x : H2 A) :
     H2ZModRestrictIntAddEquiv n B (map f phi 2 x) =

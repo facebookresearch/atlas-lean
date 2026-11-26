@@ -1,4 +1,6 @@
-# Partial Total E₁Connecting Differential
+# The connecting-map model between adjacent first-page rows
 
-The connecting-map model for the first-page differential from row
-`m+1` to row `m` in vertical degree `q`.
+The connecting-map model between adjacent first-page rows.
+
+The successor-step connecting morphism followed by projection onto the preceding signed row
+gives a map from total-row homology degree `m+1+q` to degree `m+q`.

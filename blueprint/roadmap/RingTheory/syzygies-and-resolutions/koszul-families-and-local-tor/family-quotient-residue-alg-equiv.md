@@ -1,4 +1,6 @@
-# Family Quotient Residue Alg Equiv
+# The family quotient algebra identified with the residue field
 
-The quotient by a finite family spanning the maximal ideal is the
-residue field, as an `R`-algebra.
+The family quotient algebra identified with the residue field.
+
+For a maximal-ideal spanning family, R modulo its Koszul ideal is R-algebra equivalent to the
+residue field.

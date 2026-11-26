@@ -16,16 +16,21 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantTotalMap
 public import MathlibExt.Algebra.Homology.Functor
 
 /-!
-# Localizing first-quadrant total complexes
+# Localization of first-quadrant totals and their homology
 
-Module localization commutes naturally with first-quadrant totalization.
-Since localization is exact, it also commutes with the homology of those
-total complexes.  The chain comparison is the generic finite-coproduct
-comparison, and the homology comparison additionally uses the standard
-exact-functor homology isomorphism.
+Let R be a commutative ring, S a multiplicative submonoid and
+L(M)=S⁻¹M the module localization functor to S⁻¹R-modules.
+For a nonnegative homological bicomplex K in ModuleCat^u(R),
+localization commutes naturally with its finite-antidiagonal total:
+L(Tot(K)) ≅ Tot(LK).
 
-This file is generic infrastructure.  In particular, it does not assert that
-any particular Bousfield--Kan bicomplex carries a compatible module action.
+Since localization is exact, it also gives
+L(H_n(Tot(K))) ≅ H_n(Tot(LK)) for every n≥0, naturally in K.
+If the second page of the objectwise-localized bicomplex LK
+vanishes in every positive horizontal degree, its zero-column
+edge gives E²_(0,n)(LK) ≅ L(H_n(Tot(K))).
+The concentration condition is imposed on that actual localized
+bicomplex and its horizontal-filtration spectral sequence.
 -/
 
 @[expose] public section
@@ -43,23 +48,29 @@ variable {R : Type u} [CommRing R] (S : Submonoid R)
 local notation "L" => ModuleCat.localizedModuleFunctor S
 local notation "c" => ComplexShape.down ℕ
 
-/-- Localization commutes naturally with the total complex of a
-first-quadrant module-valued bicomplex. -/
+/-- For a commutative ring R, a submonoid S and nonnegative
+homological R-module bicomplexes, localization gives the natural
+chain isomorphism S⁻¹Tot(K) ≅ Tot(S⁻¹K).
+The total uses the finite antidiagonals p+q=n in each degree. -/
 noncomputable abbrev localizedFirstQuadrantTotalNatIso :
     firstQuadrantMapAfterTotalFunctor L ≅
       firstQuadrantTotalAfterMapFunctor L :=
   firstQuadrantMapTotalNatIso L
 
-/-- Localization of total homology, as a functor of a first-quadrant
-bicomplex. -/
+/-- For a commutative ring R, a submonoid S and n≥0, the
+total-homology localization functor sends a nonnegative
+homological R-module bicomplex K to S⁻¹H_n(Tot(K)).
+Its target category is ModuleCat^u(S⁻¹R). -/
 noncomputable abbrev localizedFirstQuadrantTotalHomologyFunctor (n : ℕ) :
     HomologicalComplex₂ (ModuleCat.{u} R) c c ⥤
       ModuleCat.{u} (Localization S) :=
   totalFunctor (ModuleCat.{u} R) c c c ⋙
     HomologicalComplex.homologyFunctor (ModuleCat.{u} R) c n ⋙ L
 
-/-- Homology of the totalized objectwise localization, as a functor of a
-first-quadrant bicomplex. -/
+/-- For a commutative ring R, a submonoid S and n≥0, the
+objectwise-localized total-homology functor sends K to
+H_n(Tot(S⁻¹K)), where K is a nonnegative homological bicomplex
+in ModuleCat^u(R). -/
 noncomputable abbrev localizedFirstQuadrantBicomplexTotalHomologyFunctor
     (n : ℕ) :
     HomologicalComplex₂ (ModuleCat.{u} R) c c ⥤
@@ -69,8 +80,11 @@ noncomputable abbrev localizedFirstQuadrantBicomplexTotalHomologyFunctor
     HomologicalComplex.homologyFunctor
       (ModuleCat.{u} (Localization S)) c n
 
-/-- Localization of total homology is the homology of the totalized
-objectwise-localized bicomplex. -/
+/-- For a commutative ring R, a submonoid S, a nonnegative
+homological R-module bicomplex K and n≥0, there is an isomorphism
+S⁻¹H_n(Tot(K)) ≅ H_n(Tot(S⁻¹K)).
+It combines exactness of module localization with the natural
+finite-total comparison. -/
 noncomputable def localizedFirstQuadrantTotalHomologyIso
     (K : HomologicalComplex₂ (ModuleCat.{u} R) c c) (n : ℕ) :
     (L).obj ((K.total c).homology n) ≅
@@ -81,7 +95,10 @@ noncomputable def localizedFirstQuadrantTotalHomologyIso
       (ModuleCat.{u} (Localization S)) c n).mapIso
         (firstQuadrantMapTotalIso L K)
 
-/-- Natural form of the localized total-homology comparison. -/
+/-- For a commutative ring R, a submonoid S and n≥0, the
+isomorphisms S⁻¹H_n(Tot(K)) ≅ H_n(Tot(S⁻¹K)) form a natural
+isomorphism of functors on nonnegative homological R-module
+bicomplexes. -/
 noncomputable def localizedFirstQuadrantTotalHomologyNatIso (n : ℕ) :
     localizedFirstQuadrantTotalHomologyFunctor S n ≅
       localizedFirstQuadrantBicomplexTotalHomologyFunctor S n := by
@@ -120,12 +137,12 @@ theorem localizedFirstQuadrantTotalHomologyNatIso_app
       localizedFirstQuadrantTotalHomologyIso S K n :=
   rfl
 
-/-- If the second page of the objectwise-localized bicomplex is concentrated
-in horizontal degree zero, its surviving edge is the localization of the
-original total homology.
-
-The concentration hypothesis concerns the actual mapped bicomplex, not only
-an abstract localization of the original second-page objects. -/
+/-- For a commutative ring R, a submonoid S and a nonnegative
+homological R-module bicomplex K, suppose E²_(p,q)(S⁻¹K) is zero
+for every p≥1 and q≥0. Then
+E²_(0,n)(S⁻¹K) ≅ S⁻¹H_n(Tot(K)) for all n≥0.
+The premise concerns the second page of the objectwise-localized
+bicomplex, with its actual localized differentials. -/
 noncomputable def localizedHorizontalSecondPageZeroColumnTotalHomologyIso
     (K : HomologicalComplex₂ (ModuleCat.{u} R) c c) (n : ℕ)
     (hpos : ∀ p q : ℕ, 1 ≤ p → IsZero

@@ -1,4 +1,6 @@
-# Nerve Prism Map app
+# Product-chain coordinates of a nerve prism
 
-The value of a nerve prism map at a simplex is `Φ` applied to the
-first simplex paired with the order map of the second.
+Product-chain coordinates of a nerve prism.
+
+The prism of Φ sends a pair (c,t) to Φ applied to the product chain c × t, where t is the
+order map of the standard-simplex coordinate.

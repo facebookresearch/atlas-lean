@@ -16,12 +16,15 @@ public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.RingTheory.Finiteness.Basic
 
 /-!
-# Finiteness of a natural coproduct with a zero tail
+# Finite generation of a natural coproduct with a zero tail
 
-The actual coproduct is a quotient of its finite initial subcoproduct when
-all modules above a fixed natural bound are zero. The module and coefficient
-universes are independent; only a ring, finite initial summands and a zero
-tail are required.
+Let R be a ring in universe u and M_r left R-modules with carriers in an independent universe v,
+indexed by natural r. If every M_r with r≤N is finitely generated and every M_r with r>N is
+zero, then ⊕_{r∈ℕ}M_r is finitely generated.
+
+The inclusion from the finite initial coproduct ⊕_{r=0}^N M_r has a right inverse defined by
+retaining the initial legs and sending the zero tail to zero. Thus the natural coproduct is a
+quotient of a finitely generated module.
 -/
 
 @[expose] public section
@@ -36,8 +39,10 @@ namespace ModuleCat
 universe u v
 variable {R : Type u} [Ring R]
 
-/-- A natural coproduct is finite when its initial summands are finite and
-every summand above the fixed bound is zero. -/
+/-- Let R be a ring in universe u, M:ℕ→ModuleCat_v(R), and N a natural number, with coefficient
+universe v independent of u. Assume M_r is finitely generated over R for every r≤N and is a zero
+object for every r>N. Then the coproduct ⊕_{r∈ℕ}M_r is finitely generated as a left R-module;
+the finite initial coproduct covers it through its canonical legs. -/
 theorem coproduct_finite_of_zero_above
     (M : ℕ → ModuleCat.{v} R) (N : ℕ)
     (hM : ∀ r : ℕ, r ≤ N → Module.Finite R (M r))

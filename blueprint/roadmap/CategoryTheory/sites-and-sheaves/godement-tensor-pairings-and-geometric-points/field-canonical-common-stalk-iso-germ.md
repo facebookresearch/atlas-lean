@@ -1,4 +1,6 @@
-# Field Canonical Common Stalk Iso germ
+# Field stalk comparison preserves geometric germ coordinates
 
-Every original prescribed-point germ becomes the same original germ at its actual
-canonical-point image.
+Field stalk comparison preserves geometric germ coordinates.
+
+The prescribed-point germ followed by the stalk comparison equals the canonical-point germ at
+the image fiber element.

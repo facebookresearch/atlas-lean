@@ -2,21 +2,21 @@
 
 ## Splitting
 
-- [Op](op.md)
-- [Op hom](op-hom.md)
-- [Unop](unop.md)
-- [Unop hom](unop-hom.md)
-- [Unop op](unop-op.md)
-- [Op unop](op-unop.md)
-- [Map op](map-op.md)
+- [Opposite of a generalized-inverse splitting](op.md)
+- [Components of the opposite splitting](op-hom.md)
+- [Splitting transported out of the opposite category](unop.md)
+- [Components of the unop splitting](unop-hom.md)
+- [Opposite followed by unop restores splitting data](unop-op.md)
+- [Unop followed by opposite restores splitting data](op-unop.md)
+- [Functor mapping commutes with opposite splitting](map-op.md)
 
 ## Homological Complex
 
-- [Op](op-2.md)
-- [Unop](unop-2.md)
-- [Is Split op iff](is-split-op-iff.md)
+- [Opposite complexes preserve splitness](op-2.md)
+- [Unop complexes preserve splitness](unop-2.md)
+- [Splitness is equivalent under opposite duality](is-split-op-iff.md)
 
 ## Splitting
 
-- [Normalize op hom comp hom](normalize-op-hom-comp-hom.md)
-- [Normalize op h d h](normalize-op-h-d-h.md)
+- [Opposite normalization retains square-zero composites](normalize-op-hom-comp-hom.md)
+- [Opposite normalization retains the reflexive inverse law](normalize-op-h-d-h.md)

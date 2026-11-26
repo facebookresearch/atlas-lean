@@ -1,4 +1,6 @@
-# Dg Coalgebra Neighbors
+# The finite differential and tensor-factor neighborhood
 
-One closure step adds the actual differential and both factors of a finite original tensor
-support.
+The finite differential and tensor-factor neighborhood.
+
+For a homogeneous x, include d(x) in the next degree and both homogeneous factors of every
+term in the chosen finite support of Δ(x).

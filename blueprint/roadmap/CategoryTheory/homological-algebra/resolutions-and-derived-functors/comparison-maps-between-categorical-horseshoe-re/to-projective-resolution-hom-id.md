@@ -1,4 +1,5 @@
-# To Projective Resolution Hom id
+# Identity on the middle projective resolution
 
-The identity horseshoe comparison is the identity morphism of the
-middle resolution.
+For horseshoe data in an abelian category `C`, the middle
+projective-resolution morphism induced by the identity horseshoe
+comparison is the identity of the middle resolution.

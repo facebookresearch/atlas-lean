@@ -1,3 +1,5 @@
-# Act
+# The scalar action on an additive module presheaf
 
-The action of the presheaf of rings on a presheaf of modules, written on the left.
+The scalar action on an additive module presheaf.
+
+At U, the map R(U) ⊗_ℤ M(U) → M(U) sends r ⊗ m to r·m.

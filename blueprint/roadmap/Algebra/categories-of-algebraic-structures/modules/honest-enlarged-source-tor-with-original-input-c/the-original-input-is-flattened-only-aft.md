@@ -1,3 +1,6 @@
-# The original input is flattened only after native Tor...
+# Increasing Tor height preserves the independent source category
 
-The original input is flattened only after native Tor derivation in sufficient worlds.
+For rings R,S and an (R,S)-bimodule B, the output lift
+of T_(n,z):ModuleCat^a(Rᵒᵖ)→ModuleCat^Γ_z(Sᵒᵖ)
+is naturally isomorphic to T_(n,max(z,t)) at Γ′.
+The source remains the original carrier category in world a.

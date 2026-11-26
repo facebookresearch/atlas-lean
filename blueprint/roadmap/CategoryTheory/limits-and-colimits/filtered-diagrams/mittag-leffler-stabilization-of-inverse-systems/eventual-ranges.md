@@ -1,3 +1,6 @@
-# Eventual Ranges
+# The diagram restricted to its eventual image submodules
 
-Restrict a module diagram to its native eventual ranges.
+The diagram restricted to its eventual image submodules.
+
+For cofiltered-or-empty J, take the eventual range module at each j and restrict each
+transition map to these submodules.

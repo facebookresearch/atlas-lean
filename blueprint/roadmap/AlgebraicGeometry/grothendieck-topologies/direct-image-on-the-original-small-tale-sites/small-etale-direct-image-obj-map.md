@@ -1,4 +1,6 @@
-# Small Etale Direct Image obj map
+# Direct image restrictions use the base changed arrow
 
-Restriction along an actual small-site map is the original restriction
-along its actual base-change map.
+Direct image restrictions use the base changed arrow.
+
+The restriction along an étale arrow `g` is the restriction of `F` along `smallEtaleBaseChange
+f` applied to `g`.

@@ -1,4 +1,6 @@
-# Acyclic Objects
+# Acyclic objects for Waldhausen weak equivalences
 
-The objects receiving a weak map from the original chosen zero object.
-For the larger weak structure in localization, this is the source's `Cʷ`.
+Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout data.
+
+An object Q is acyclic when the unique map 0 → Q is a weak equivalence.

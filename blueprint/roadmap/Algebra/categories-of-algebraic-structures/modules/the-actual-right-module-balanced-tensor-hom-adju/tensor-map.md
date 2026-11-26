@@ -1,3 +1,6 @@
-# Tensor Map
+# Right-module map on the first balanced tensor factor
 
-Actual first-factor morphisms act through the existing quotient map.
+Right-module map on the first balanced tensor factor.
+
+A right `R`-module morphism `f : A ⟶ A'` induces a right `S`-module morphism `A ⊗_R B ⟶ A' ⊗_R
+B`.

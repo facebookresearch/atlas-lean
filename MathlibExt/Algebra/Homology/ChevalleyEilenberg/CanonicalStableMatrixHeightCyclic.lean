@@ -12,13 +12,20 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CanonicalStableMatr
 public import MathlibExt.Algebra.Homology.HomologicalComplex.MapHomologyIso
 
 /-!
-# Universe lifts of stable matrix cyclic homology maps
+# Stable Lie-to-cyclic homology maps at a chosen carrier height
 
-For a unital algebra over a commutative rational algebra, the stable matrix Lie-homology map
-to cyclic homology transports through the homology comparison for module universe lifting.
+Let k be a commutative ℚ-algebra, A an associative unital k-algebra
+and H = max(u,v,z). Let U lift k-modules from max(u,v) to H.
+The termwise-lift homology comparison
+χ_K : H_(n+1)(U(K)) ≅ U(H_(n+1)(K))
+transports the stable matrix map Θ_n to
+H_(n+1)(C_*^H(Mat_∞(A))) → U(HC_n(A)).
 
-The target is the universe lift of cyclic homology, and every finite matrix stage retains its
-homology comparison.
+The finite matrix maps are transported by the same comparison,
+and the chosen-height finite Lie inclusion square commutes:
+Θ_n^H ∘ H_(n+1)(C_*^H(i_m)) = Θ_(m,n)^H.
+The target is the lift of cyclic homology of A, and the ring,
+algebra and extra-height worlds are independent.
 -/
 
 @[expose] public section
@@ -35,7 +42,11 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable (k : Type u) [CommRing k] [Algebra ℚ k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- Homology comparison transports the canonical stable matrix HC map. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and H = max(u,v,z), the chosen-height map is
+H_(n+1)(C_*^H(Mat_∞(A))) → U(HC_n(A)).
+It is U(Θ_n) composed after the homology comparison
+H_(n+1)(U(C_*(Mat_∞(A)))) ≅ U(H_(n+1)(C_*(Mat_∞(A)))). -/
 def canonicalStableMatrixCyclicHomologyMapAtHeight (n : ℕ) :
     (canonicalStableMatrixCEComplexAtHeight.{u,v,z} k A).homology (n + 1) ⟶
       (ModuleCat.uliftFunctor.{max u v z, max u v} k).obj
@@ -44,7 +55,11 @@ def canonicalStableMatrixCyclicHomologyMapAtHeight (n : ℕ) :
     (ComplexShape.down ℕ) (n + 1)).app (canonicalStableMatrixCEComplex k A)).hom ≫
       (ModuleCat.uliftFunctor.{max u v z, max u v} k).map (canonicalStableMatrixCyclicHomologyMap k A n)
 
-/-- The same comparison carries every finite matrix HC map to this working height. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A, H = max(u,v,z) and m,n ≥ 0, the finite matrix map is
+H_(n+1)(C_*^H(Mat_m(A))) → U(HC_n(A)).
+It transports the size-m trace map by the termwise-lift homology
+comparison for C_*(Mat_m(A)). -/
 def matrixCyclicHomologyMapAtHeight (m n : ℕ) :
     (matrixComplexAtHeight.{u,v,z} k A m).homology (n + 1) ⟶
       (ModuleCat.uliftFunctor.{max u v z, max u v} k).obj
@@ -53,7 +68,11 @@ def matrixCyclicHomologyMapAtHeight (m n : ℕ) :
     (ComplexShape.down ℕ) (n + 1)).app (matrixComplex k A m)).hom ≫
       (ModuleCat.uliftFunctor.{max u v z, max u v} k).map (matrixCyclicHomologyMap k A m n)
 
-/-- Canonical working-height inclusions retain every finite lambda-to-HC map. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A, H = max(u,v,z) and m,n ≥ 0, the lifted trace maps
+satisfy Θ_n^H ∘ H_(n+1)(C_*^H(i_m)) = Θ_(m,n)^H.
+Both paths go from finite matrix CE homology in degree n+1
+to U(HC_n(A)). -/
 theorem canonicalStableMatrixCyclicHomologyMapAtHeight_finite (m n : ℕ) :
     HomologicalComplex.homologyMap (canonicalStableMatrixCEInclusionAtHeight.{u,v,z} k A m) (n + 1) ≫
         canonicalStableMatrixCyclicHomologyMapAtHeight.{u,v,z} k A n =

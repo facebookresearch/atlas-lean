@@ -1,4 +1,6 @@
-# Lsmul eq restrict Scalars algebra Map
+# Scalar multiplication agrees with restriction of algebra multiplication
 
-Multiplication by a scalar from the source ring is the restriction of
-multiplication by its image in the target ring.
+Scalar multiplication agrees with restriction of algebra multiplication.
+
+For an algebra S → A, multiplication by s on the S-module A equals the restriction of
+multiplication by its image in A.

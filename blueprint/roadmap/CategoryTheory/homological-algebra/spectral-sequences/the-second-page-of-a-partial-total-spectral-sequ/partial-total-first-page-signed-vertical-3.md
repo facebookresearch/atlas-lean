@@ -1,3 +1,7 @@
-# Partial Total First Page Signed Vertical Homology Iso inv f
+# Inverse component of the signed first-page row comparison
 
-Inverse components of the signed first-page row isomorphism.
+Inverse component of the signed first-page row comparison.
+
+The degree-`p` inverse component of the signed first-page row isomorphism is
+`(B.totalRowHomologyIso p q).inv` followed by `(B.partialTotalSpectralSequenceFirstPageRowIso
+p q).inv`.

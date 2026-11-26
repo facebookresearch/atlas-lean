@@ -15,14 +15,20 @@ public import MathlibExt.Algebra.Homology.SequentialMilnor
 public import MathlibExt.CategoryTheory.Limits.Shapes.SequentialSplitDifference
 
 /-!
-# Milnor sequences from actual degreewise split transitions
+# Milnor sequences from degreewise split transitions
 
-Specified sections of the actual adjacent maps earn epimorphy of the standard
-product difference of complexes. The existing sequential Milnor construction
-then gives the exact sequence with its original lim¹ and inverse-limit endpoints.
-Its naturality needs no compatibility between choices of transition sections.
-Exact countable products are needed for the homology comparison, not for the
-recursive difference section.
+Let C be abelian with countable products and K an inverse tower of complexes
+of any shape c. For each degree a and stage n, choose
+sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ with tₙᵃ∘sₙᵃ=1.
+The finite recursive solutions of the degreewise difference equations
+make Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) epic.
+
+If countable products are exact and sequential inverse limits exist, every
+c.Rel(i,j) gives the canonical short exact Milnor sequence
+0 → lim¹(H_iK) → H_j(lim K) → lim(H_jK) → 0.
+Its edge retains the homology maps of stage projections. For independently
+chosen degreewise sections on two towers, every tower map induces the
+canonical morphism of these sequences, respecting identities and composition.
 -/
 
 @[expose] public section
@@ -38,11 +44,18 @@ universe u v w
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {ι : Type w} {c : ComplexShape ι} [HasCountableProducts C]
 
-/-- Actual sections in each degree suffice; they need not be maps of complexes. -/
+/-- For an inverse tower K of complexes of any shape in an abelian category
+with countable products, the family of reverse component maps
+sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ. These maps can serve as degreewise sections when
+tₙᵃ∘sₙᵃ=1; the family itself consists only of maps between terms. -/
 abbrev SequentialDegreeSections (K : ℕᵒᵖ ⥤ HomologicalComplex C c) :=
   ∀ (i : ι) (n : ℕ), (K.obj (op n)).X i ⟶ (K.obj (op (n + 1))).X i
 
-/-- Degreewise finite recursive solutions make the original complex difference epi. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n.
+
+The product difference Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, by finite recursive solutions of its component equations. -/
 theorem epi_sequentialDifference_of_degree_sections
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
     (hs : ∀ (i : ι) (n : ℕ),
@@ -53,7 +66,12 @@ theorem epi_sequentialDifference_of_degree_sections
 
 variable [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C]
 
-/-- The canonical Milnor sequence, with its difference-epi gate earned from original sections. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+The canonical Milnor short complex lim¹(H_iK) → H_j(lim K) → lim(H_jK), with epimorphy of Δ_K supplied by the degreewise sections. -/
 def sequentialMilnorOfDegreeSections
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
     (hs : ∀ (a : ι) (n : ℕ),
@@ -61,7 +79,12 @@ def sequentialMilnorOfDegreeSections
     (i j : ι) (hij : c.Rel i j) : ShortComplex C :=
   sequentialMilnorShortComplex K (epi_sequentialDifference_of_degree_sections K s hs) i j hij
 
-/-- The resulting exactness is inherited from the actual Milnor LES construction. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+The Milnor sequence supplied by the degreewise sections is short exact. -/
 theorem sequentialMilnorOfDegreeSections_shortExact
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
     (hs : ∀ (a : ι) (n : ℕ),
@@ -71,7 +94,12 @@ theorem sequentialMilnorOfDegreeSections_shortExact
   sequentialMilnorShortComplex_shortExact K
     (epi_sequentialDifference_of_degree_sections K s hs) i j hij
 
-/-- The left endpoint is concrete lim¹ of the preceding homology tower. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+The left term of the sequence is the concrete cokernel lim¹(H_iK)=Coker(Δ_{H_iK}). -/
 @[simp]
 theorem sequentialMilnorOfDegreeSections_X₁
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
@@ -81,7 +109,12 @@ theorem sequentialMilnorOfDegreeSections_X₁
     (sequentialMilnorOfDegreeSections K s hs i j hij).X₁ =
       sequentialLimOne (sequentialHomologyTower K i) := rfl
 
-/-- The middle is the actual homology of the original tower limit. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+The middle term of the sequence is H_j(lim K). -/
 @[simp]
 theorem sequentialMilnorOfDegreeSections_X₂
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
@@ -90,7 +123,12 @@ theorem sequentialMilnorOfDegreeSections_X₂
     (i j : ι) (hij : c.Rel i j) :
     (sequentialMilnorOfDegreeSections K s hs i j hij).X₂ = (limit K).homology j := rfl
 
-/-- The right endpoint is the original chosen limit of the current homology tower. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+The right term of the sequence is lim(H_jK). -/
 @[simp]
 theorem sequentialMilnorOfDegreeSections_X₃
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
@@ -100,7 +138,12 @@ theorem sequentialMilnorOfDegreeSections_X₃
     (sequentialMilnorOfDegreeSections K s hs i j hij).X₃ =
       limit (sequentialHomologyTower K j) := rfl
 
-/-- The canonical edge retains each actual homology projection. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+For every stage n, the sequence edge followed by lim(H_jK) → H_j(Kₙ) equals H_j of lim K → Kₙ. -/
 @[reassoc]
 theorem sequentialMilnorOfDegreeSections_g_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
@@ -112,7 +155,12 @@ theorem sequentialMilnorOfDegreeSections_g_π
       homologyMap (limit.π K (op n)) j :=
   sequentialMilnorEdge_π K (epi_sequentialDifference_of_degree_sections K s hs) i j hij n
 
-/-- The exact sequences remain natural even when the section choices do not commute. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and α:K → L a map of inverse towers.
+Choose degreewise sections s for K and t for L, each a right inverse
+of its adjacent transition, and assume c.Rel(i,j).
+
+The canonical morphism of the two Milnor short complexes induced by α, using the epic differences supplied by the respective sections. -/
 def sequentialMilnorOfDegreeSectionsMap
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
     (s : SequentialDegreeSections K) (t : SequentialDegreeSections L)
@@ -125,7 +173,12 @@ def sequentialMilnorOfDegreeSectionsMap
     (epi_sequentialDifference_of_degree_sections K s hs)
     (epi_sequentialDifference_of_degree_sections L t ht) α i j hij
 
-/-- The left map of sequence maps is the original induced concrete lim¹ map. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and α:K → L a map of inverse towers.
+Choose degreewise sections s for K and t for L, each a right inverse
+of its adjacent transition, and assume c.Rel(i,j).
+
+The first component of this sequence morphism is lim¹(H_iα), induced by the degree-i homology tower map. -/
 @[simp]
 theorem sequentialMilnorOfDegreeSectionsMap_τ₁
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -136,7 +189,12 @@ theorem sequentialMilnorOfDegreeSectionsMap_τ₁
     (sequentialMilnorOfDegreeSectionsMap s t hs ht α i j hij).τ₁ =
       sequentialLimOneMap (sequentialHomologyTowerMap α i) := rfl
 
-/-- The middle is homology of the actual limit map. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and α:K → L a map of inverse towers.
+Choose degreewise sections s for K and t for L, each a right inverse
+of its adjacent transition, and assume c.Rel(i,j).
+
+The middle component of this sequence morphism is H_j(lim α). -/
 @[simp]
 theorem sequentialMilnorOfDegreeSectionsMap_τ₂
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -147,7 +205,12 @@ theorem sequentialMilnorOfDegreeSectionsMap_τ₂
     (sequentialMilnorOfDegreeSectionsMap s t hs ht α i j hij).τ₂ =
       homologyMap (limMap α) j := rfl
 
-/-- The right map is the actual map between limits of homology towers. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and α:K → L a map of inverse towers.
+Choose degreewise sections s for K and t for L, each a right inverse
+of its adjacent transition, and assume c.Rel(i,j).
+
+The right component of this sequence morphism is lim(H_jα). -/
 @[simp]
 theorem sequentialMilnorOfDegreeSectionsMap_τ₃
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -158,7 +221,12 @@ theorem sequentialMilnorOfDegreeSectionsMap_τ₃
     (sequentialMilnorOfDegreeSectionsMap s t hs ht α i j hij).τ₃ =
       limMap (sequentialHomologyTowerMap α j) := rfl
 
-/-- Changing no tower map gives the actual identity of the canonical Milnor sequence. -/
+/-- Let C be abelian with countable products, c any complex shape and K an
+inverse tower of complexes. Let sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ satisfy
+tₙᵃ∘sₙᵃ=1 for every degree a and stage n. Assume countable products in C are exact, sequential inverse
+limits exist, and c.Rel(i,j).
+
+The sequence morphism induced by the identity of K, with its fixed degreewise sections, is the identity of its Milnor sequence. -/
 @[simp]
 theorem sequentialMilnorOfDegreeSectionsMap_id
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (s : SequentialDegreeSections K)
@@ -169,7 +237,11 @@ theorem sequentialMilnorOfDegreeSectionsMap_id
   sequentialMilnorShortComplexMap_id K
     (epi_sequentialDifference_of_degree_sections K s hs) i j hij
 
-/-- Composition is independent of any coherence of the chosen sections. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L,M inverse towers with independently
+chosen degreewise sections of every adjacent transition.
+For c.Rel(i,j) and maps α:K → L, β:L → M, the Milnor sequence morphism
+of β∘α equals the composite of the morphisms of α and β. -/
 @[reassoc]
 theorem sequentialMilnorOfDegreeSectionsMap_comp
     {K L M : ℕᵒᵖ ⥤ HomologicalComplex C c}

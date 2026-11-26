@@ -15,15 +15,21 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientULiftTra
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping.NativeCoefficients
 
 /-!
-# Coefficient homology and Tor in independent universes
+# CE coefficient homology and Tor across separate carriers
 
-Universe lifts place Lie coefficients and their Chevalley–Eilenberg complexes in a common
-module category while retaining the ground-ring action. Compatible Lie and coefficient maps
-induce homology maps and canonical derived balanced-tensor maps.
+For a Lie coefficient M in its own carrier universe, lift only the coefficient to a common
+height H containing the scalar, Lie and both potential coefficient universes. The
+coefficient-lift comparison identifies the lift of H_n(CE(L,M)) with H_n of CE for the lifted
+coefficient.
 
-When the underlying Lie modules are free over the commutative ground ring, the coefficient
-homology-to-Tor comparisons are natural through these transports. Lie and coefficient carrier
-universes may be independent.
+Represent that lifted coefficient as a right enveloping module and take the left-derived
+balanced tensor functor at the lifted trivial left module. When L is free, the CE/Tor
+comparison gives both a categorical isomorphism on the lifted homology object and an R-linear
+equivalence from the exact unlifted homology carrier.
+
+Compatible Lie and coefficient maps define the CE and derived tensor maps independently. The
+comparisons commute with both maps, and their degree-zero square retains the canonical
+coefficient coinvariant and scalar-unit tensor map.
 -/
 
 @[expose] public section
@@ -43,21 +49,30 @@ variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The coefficient-carrier lift at a working universe containing both possible Lie and
-coefficient carrier universes. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). rawLieCoefficientLiftAt is M_H = CoefficientULift.obj M in
+LieModuleCat.{H} R L, with the transported R and Lie actions. -/
 def rawLieCoefficientLiftAt (M : LieModuleCat.{w} R L) : LieModuleCat.{max u v v' w w' z} R L :=
   LieModuleCat.CoefficientULift.obj.{u, v, w, max u v v' w w' z} R L M
 
-/-- Explicit lift of the homology input, transported to CE of the coefficient lift in the
-sufficient working universe. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). For n : ℕ, rawCoefficientHomologyTransportAt identifies
+ULift_H(H_n(CE(L,M))) with H_n(CE(L,M_H)), by the coefficient-carrier lift comparison. -/
 def rawCoefficientHomologyTransportAt (M : LieModuleCat.{w} R L) (n : ℕ) :
     (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
       ((coefficientComplex R L M).homology n) ≅
       (coefficientComplex R L (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)).homology n :=
   coefficientHomologyCoefficientLiftIso.{u, v, w, max u v v' w w' z} R L M n
 
-/-- Linear input/output transport of the lower-universe homology carrier, without placing it
-directly in a larger module category. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). For n : ℕ, rawCoefficientHomologyTransportEquivAt is the R-linear
+equivalence H_n(CE(L,M)) ≃ₗ[R] H_n(CE(L,M_H)), including its input/output up/down coordinates. -/
 def rawCoefficientHomologyTransportEquivAt (M : LieModuleCat.{w} R L) (n : ℕ) :
     (coefficientComplex R L M).homology n ≃ₗ[R]
       (coefficientComplex R L (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)).homology n :=
@@ -67,8 +82,11 @@ local instance rawCoefficientTensor_additive {A : Type v} [Ring A] [Algebra R A]
     (M : ModuleCat.{a} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, v, a, b} R A M).Additive :=
   ModuleCat.BalancedTensor.additive R A M
 
-/-- The Tor object of the raw coefficient at the common working universe, with its explicit
-coefficient-carrier lift. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). rawLieCoefficientTorAt M n is (F_H.leftDerived n).obj T_H in
+ModuleCat.{H} R. The coefficient and trivial input are their explicit lifts. -/
 def rawLieCoefficientTorAt (M : LieModuleCat.{w} R L) (n : ℕ) : (ModuleCat.{max u v v' w w' z} R) :=
   (((ModuleCat.BalancedTensor.functor R U
     (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -76,8 +94,12 @@ def rawLieCoefficientTorAt (M : LieModuleCat.{w} R L) (n : ℕ) : (ModuleCat.{ma
         ModuleCat.{max u v v' w w' z} U ⥤ (ModuleCat.{max u v v' w w' z} R)).leftDerived n).obj
           (liftedEnvelopingTrivial.{u, v, max u v v' w w' z} R L))
 
-/-- The categorical CE/Tor comparison on the lift of the raw homology object, using the exact CE
-lift comparison. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). Assume Module.Free R L. For n : ℕ, rawCoefficientHomologyIsoTorAt
+identifies the module lift of H_n(CE(L,M)) with rawLieCoefficientTorAt M n, by coefficient
+homology transport followed by the represented-coefficient resolution comparison. -/
 def rawCoefficientHomologyIsoTorAt [Module.Free R L] (M : LieModuleCat.{w} R L) (n : ℕ) :
     (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
       ((coefficientComplex R L M).homology n) ≅
@@ -86,14 +108,23 @@ def rawCoefficientHomologyIsoTorAt [Module.Free R L] (M : LieModuleCat.{w} R L) 
     nativeCoefficientHomologyIsoTor.{u, v, v', max w w' z} R L
       (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M) n
 
-/-- Categorical output transport to the lift of the raw homology object. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). Assume Module.Free R L. For n : ℕ, rawCoefficientTorIsoHomologyAt is the
+inverse of rawCoefficientHomologyIsoTorAt, from Tor_H to the lift of H_n(CE(L,M)). -/
 def rawCoefficientTorIsoHomologyAt [Module.Free R L] (M : LieModuleCat.{w} R L) (n : ℕ) :
     rawLieCoefficientTorAt.{u, v, v', w, w', z} R L M n ≅
       (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
         ((coefficientComplex R L M).homology n) :=
   (rawCoefficientHomologyIsoTorAt.{u, v, v', w, w', z} R L M n).symm
 
-/-- The exact raw homology carrier computes Tor through input up and the categorical comparison. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). Assume Module.Free R L. For n : ℕ, rawCoefficientHomologyEquivTorAt maps
+H_n(CE(L,M)) R-linearly to rawLieCoefficientTorAt M n by input up followed by the categorical
+comparison. -/
 def rawCoefficientHomologyEquivTorAt [Module.Free R L] (M : LieModuleCat.{w} R L) (n : ℕ) :
     (coefficientComplex R L M).homology n ≃ₗ[R]
       rawLieCoefficientTorAt.{u, v, v', w, w', z} R L M n :=
@@ -106,15 +137,23 @@ theorem rawCoefficientHomologyEquivTorAt_apply [Module.Free R L]
     rawCoefficientHomologyEquivTorAt.{u, v, v', w, w', z} R L M n a =
       (rawCoefficientHomologyIsoTorAt.{u, v, v', w, w', z} R L M n).hom (ULift.up a) := rfl
 
-/-- Tor output down returns to the exact lower-universe homology carrier by the inverse
-independent-universe linear equivalence. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). Assume Module.Free R L. For n : ℕ, rawCoefficientTorEquivHomologyAt is
+the inverse R-linear equivalence from Tor_H to H_n(CE(L,M)). -/
 def rawCoefficientTorEquivHomologyAt [Module.Free R L] (M : LieModuleCat.{w} R L) (n : ℕ) :
     rawLieCoefficientTorAt.{u, v, v', w, w', z} R L M n ≃ₗ[R]
       (coefficientComplex R L M).homology n :=
   (rawCoefficientHomologyEquivTorAt.{u, v, v', w, w', z} R L M n).symm
 
-/-- The raw-carrier degree-zero input transport retains the canonical lifted coefficient
-coinvariant/unit comparison. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra, M : LieModuleCat.{w} R L and H =
+max u v v' w w' z. Let M_H be its coefficient-carrier lift, N_H its right
+U_R(L)-representation and T_H the lifted trivial left enveloping module. Put F_H(X) =
+Balanced(R,U,N_H,X). Assume Module.Free R L. Let Φ_H be the categorical CE/Tor comparison, d₀
+= F_H.fromLeftDerivedZero at T_H, c_T the trivial-input lift cancellation and t_H the
+coefficient homology transport. Then Φ_H,0.hom ≫ d₀ ≫ c_T equals t_H,0.hom followed by
+nativeCoefficientHomologyZeroTensorIso for M_H. -/
 theorem rawCoefficientHomologyIsoTorAt_zero_canonical [Module.Free R L]
     (M : LieModuleCat.{w} R L) :
     let M₁ := rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M
@@ -143,8 +182,10 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L')
   (M : LieModuleCat.{w} R L) (M' : LieModuleCat.{w'} R L')
   (h : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f M')
 
-/-- The coefficient map on the two independent coefficient lifts, at the same maximum working
-universe. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : M →ₗ⁅R,L⁆ f* M' with Lie carriers v,v' and
+coefficient carriers w,w'. Use H = max u v v' w w' z and the represented right enveloping
+coefficient modules of the two coefficient lifts. rawLieCoefficientMapAt sends ULift.up m to
+ULift.up(h(m)) as a Lie-module map M_H → f* M'_H. -/
 def rawLieCoefficientMapAt :
     rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M →ₗ⁅R,L⁆
       LieModuleCat.restrictObj f (rawLieCoefficientLiftAt.{u, v', v, w', w, z} R L' M') :=
@@ -154,8 +195,11 @@ def rawLieCoefficientMapAt :
 theorem rawLieCoefficientMapAt_up (m : M) :
     rawLieCoefficientMapAt.{u, v, v', w, w', z} R L f M M' h (ULift.up m) = ULift.up (h m) := rfl
 
-/-- The carrier-universe CE homology map, transported only by the Chevalley–Eilenberg
-whole-complex maps and homology up/down comparisons. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : M →ₗ⁅R,L⁆ f* M' with Lie carriers v,v' and
+coefficient carriers w,w'. Use H = max u v v' w w' z and the represented right enveloping
+coefficient modules of the two coefficient lifts. For n : ℕ, rawCoefficientHomologyMapAt maps
+the module lift of H_n(CE(L,M)) to that of H_n(CE(L',M')), using the CE chain map and
+canonical homology-lift comparisons. -/
 def rawCoefficientHomologyMapAt (n : ℕ) :
     (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
       ((coefficientComplex R L M).homology n) ⟶
@@ -163,14 +207,20 @@ def rawCoefficientHomologyMapAt (n : ℕ) :
       ((coefficientComplex R L' M').homology n) :=
   coefficientRawHomologyMapAt.{u, v, w, z, v', w'} R L f M M' h n
 
-/-- Raw CE homology map with the independently sized source and target carriers; its definition
-uses only CE maps and lifts. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : M →ₗ⁅R,L⁆ f* M' with Lie carriers v,v' and
+coefficient carriers w,w'. Use H = max u v v' w w' z and the represented right enveloping
+coefficient modules of the two coefficient lifts. rawOriginalCoefficientHomologyMapAt is the
+R-linear map H_n(CE(L,M)) → H_n(CE(L',M')) obtained by input up, rawCoefficientHomologyMapAt
+and output down. -/
 def rawOriginalCoefficientHomologyMapAt (n : ℕ) :
     (coefficientComplex R L M).homology n →ₗ[R] (coefficientComplex R L' M').homology n :=
   coefficientOriginalHomologyMapAt.{u, v, w, z, v', w'} R L f M M' h n
 
-/-- The canonical Tor map comes from the independently defined derived scalar-change square on the
-lifted coefficient data. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : M →ₗ⁅R,L⁆ f* M' with Lie carriers v,v' and
+coefficient carriers w,w'. Use H = max u v v' w w' z and the represented right enveloping
+coefficient modules of the two coefficient lifts. For n : ℕ, rawLieCoefficientTorMapAt maps
+the two Tor_H objects via the right coefficient representations and canonical UEA.map f
+scalar-change square. -/
 def rawLieCoefficientTorMapAt (n : ℕ) :
     rawLieCoefficientTorAt.{u, v, v', w, w', z} R L M n ⟶
       rawLieCoefficientTorAt.{u, v', v, w', w, z} R L' M' n :=
@@ -179,8 +229,11 @@ def rawLieCoefficientTorMapAt (n : ℕ) :
     (rawLieCoefficientLiftAt.{u, v', v, w', w, z} R L' M')
     (rawLieCoefficientMapAt.{u, v, v', w, w', z} R L f M M' h) n
 
-/-- Full raw-carrier joint naturality: both coefficient carrier universes remain independent and
-both sides use their carrier transports. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : M →ₗ⁅R,L⁆ f* M' with Lie carriers v,v' and
+coefficient carriers w,w'. Use H = max u v v' w w' z and the represented right enveloping
+coefficient modules of the two coefficient lifts. If L and L' are free over R, the lifted CE
+homology map followed by the target CE/Tor comparison equals the source comparison followed by
+rawLieCoefficientTorMapAt in every degree. -/
 theorem rawCoefficientHomologyIsoTorAt_naturality [Module.Free R L] [Module.Free R L'] (n : ℕ) :
     rawCoefficientHomologyMapAt.{u, v, v', w, w', z} R L f M M' h n ≫
       (rawCoefficientHomologyIsoTorAt.{u, v', v, w', w, z} R L' M' n).hom =
@@ -239,8 +292,11 @@ theorem rawCoefficientHomologyIsoTorAt_naturality [Module.Free R L] [Module.Free
     (hCalc.trans (congrArg (fun q => q ≫
       rawLieCoefficientTorMapAt.{u, v, v', w, w', z} R L f M M' h n) hSource).symm)
 
-/-- Full raw-carrier joint naturality as an equality of ground-linear maps across independent raw
-coefficient/homology universes. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : M →ₗ⁅R,L⁆ f* M' with Lie carriers v,v' and
+coefficient carriers w,w'. Use H = max u v v' w w' z and the represented right enveloping
+coefficient modules of the two coefficient lifts. If L and L' are free, Φ_target ∘
+rawOriginalCoefficientHomologyMapAt = rawLieCoefficientTorMapAt ∘ Φ_source as R-linear maps on
+the unlifted homology carriers, where Φ is rawCoefficientHomologyEquivTorAt. -/
 theorem rawCoefficientHomologyEquivTorAt_naturality [Module.Free R L] [Module.Free R L'] (n : ℕ) :
     (rawCoefficientHomologyEquivTorAt.{u, v', v, w', w, z} R L' M' n).toLinearMap.comp
       (rawOriginalCoefficientHomologyMapAt.{u, v, v', w, w', z} R L f M M' h n) =

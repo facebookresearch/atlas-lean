@@ -1,3 +1,5 @@
-# Page Homology Window Iso successor
+# The page homology window chart agrees with the successor isomorphism
 
-This is the native successor isomorphism, followed by the next-page window iso.
+The page homology window chart agrees with the successor isomorphism.
+
+The spectral successor followed by its page chart is the page homology window isomorphism.

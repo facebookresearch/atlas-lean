@@ -1,4 +1,5 @@
-# First Page Row Homology Pair naturality
+# The signed row comparison preserves homology products
 
-The signed component square descends through the actual row homology
-cokernels. Its only product premise concerns the original first page.
+The signed row comparison preserves homology products.
+
+The induced homology maps carry the product with the same normalization sign (−1)^{q p′}.

@@ -1,4 +1,6 @@
-# Unit Iso
+# The unit comparison for lifted-scalar restriction
 
-The actual offset-v unit map uses the identity on the lifted carrier,
-with scalar compatibility checked through the actual up multiplication.
+The unit comparison for lifted-scalar restriction.
+
+The lifted regular unit of the ground-scalar tensor category is isomorphic to the restriction
+of the regular unit over `ULift.{v} R`. Both maps retain the lifted scalar value.

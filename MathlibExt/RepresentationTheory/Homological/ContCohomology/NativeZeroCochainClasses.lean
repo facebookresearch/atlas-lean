@@ -13,10 +13,35 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldCoinductionCochainNaturali
 
 public import MathlibExt.AlgebraicGeometry.Sites.AlternatingCofaceCoefficientComparison
 
-/-! Actual original field native comparison proof components. -/
+/-!
+# Degree-zero cohomology and invariant coaugmentation
 
-/-! Original qualified proof block: CoindInvariantAlternatingComm -/
-/-! Exact identity-component commutation of the actual additive coinduction invariant complex. -/
+For a separable closure Ω/k and a discrete continuous Galois module M,
+taking invariants commutes with the alternating-coface complex of its
+coinduction coresolution. The comparison has identity degree components
+and is natural in M. The invariant coaugmentation gives closed
+degree-zero cochains, whose continuous homogeneous values are constant.
+
+More generally, a closed degree-zero morphism transports through a cochain
+map in any abelian category. For a topological representation of a profinite
+group, invariant coefficients define constant zero-cycles and their classes
+are the inverse of the canonical H⁰-to-invariants isomorphism.
+For topological ℤ-coefficients, forgetting to abelian groups preserves
+the degree-zero cycle projection through the canonical homology comparison.
+-/
+
+/-!
+# Alternating cofaces and invariant coefficients
+
+For discrete continuous Galois modules, the additive invariant functor
+can be applied before or after forming the alternating-coface complex.
+-/
+/-!
+Let Ω/k be a separable closure, G its Galois group and M a discrete
+continuous abelian G-module in c=max(u,w).
+Alt(F(Cores_T(M))) ≅ F(Alt(Cores_T(M))) identifies the same degree
+objects and alternating coface maps, with F=Inv_G.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -31,8 +56,14 @@ variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual field invariants complex identifies with invariants of the same
-canonical coinduction complex, with no new choice of cochain maps. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+The canonical cochain isomorphism
+Alt(F(Cores_T(M))) ≅ F(Alt(Cores_T(M)))
+commutes taking invariants with the alternating coface construction.
+Its degree terms are identified without changing their maps. -/
 def fieldCoindInvariantCanonicalIso
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (fieldCoindInvariantComplexFunctor.{u, w} k Ω).obj M ≅
@@ -47,12 +78,24 @@ def fieldCoindInvariantCanonicalIso
     (Monad.coresolution (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same canonical field commutation has identity degree components. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+In every degree n, the forward component of the invariant/alternating
+cochain comparison is the identity of the common degree object. -/
 theorem fieldCoindInvariantCanonicalIso_hom_f
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (n : ℕ) :
     (fieldCoindInvariantCanonicalIso.{u, w} k Ω M).hom.f n = 𝟙 _ := rfl
 
-/-- The actual coefficient map of invariants-after-coinduction as a fixed functor composition. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+The coefficient functor M ↦ F(Alt(Cores_T(M))) takes values in
+nonnegative cochain complexes of abelian groups in c.
+It applies coinduction, the alternating complex and then invariants
+degreewise. -/
 abbrev fieldCoindInvariantMappedFunctor :
     DiscreteAbelianAction.{u, max u w} Gal(Ω/k) ⥤ CochainComplex AddCommGrpCat.{max u w} ℕ :=
   fieldCoindCanonicalComplexFunctor.{u, w} k Ω ⋙
@@ -60,7 +103,12 @@ abbrev fieldCoindInvariantMappedFunctor :
       (ComplexShape.up ℕ)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same identity component comparison is natural in the literal coinduction coefficient functor. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+The invariant/alternating comparisons form a natural isomorphism
+between M ↦ Alt(F(Cores_T(M))) and M ↦ F(Alt(Cores_T(M))). -/
 def fieldCoindInvariantCanonicalNatIso :
     fieldCoindInvariantComplexFunctor.{u, w} k Ω ≅ fieldCoindInvariantMappedFunctor.{u, w} k Ω := by
   unfold fieldCoindInvariantComplexFunctor fieldCoindInvariantMappedFunctor fieldCoindCanonicalComplexFunctor
@@ -69,7 +117,12 @@ def fieldCoindInvariantCanonicalNatIso :
     (actualAlternatingCoefficientNatIso
       (DiscreteAbelianAction.invariantsFunctor.{u, max u w} (G := Gal(Ω/k))))
 
-/-- The fixed natural comparison keeps identity maps on every actual degree object. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+Every forward degree n map of the natural invariant/alternating
+complex comparison is the identity. -/
 theorem fieldCoindInvariantCanonicalNatIso_hom_f
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (n : ℕ) :
     ((fieldCoindInvariantCanonicalNatIso.{u, w} k Ω).hom.app M).f n = 𝟙 _ := rfl
@@ -77,8 +130,17 @@ theorem fieldCoindInvariantCanonicalNatIso_hom_f
 end AlgebraicGeometry.Scheme.DerivedSections
 end
 
-/-! Original qualified proof block: FieldCoindCoaugmentationCycle -/
-/-! Actual constant coaugmentation cycle normalization for the SAME field native H0 map. -/
+/-!
+# Invariant coaugmentation cycles
+
+The coaugmentation of a Galois coefficient's coinduction coresolution
+restricts to its invariant coefficients and gives a degree-zero cycle.
+-/
+/-!
+For Ω/k a separable closure and M a discrete continuous Galois module,
+the constant coaugmentation M → T(M), followed by invariants, gives
+M^G → Z⁰(Alt(Inv_G(Cores_T(M)))).
+-/
 @[expose] public section
 section
 noncomputable section
@@ -90,7 +152,14 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The genuine canonical coaugmentation cycle on the actual invariants of the original coefficient. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+The invariant part of the constant coaugmentation defines
+M^G → Z⁰(Alt(F(Cores_T(M)))).
+It is the cycle lift of the invariant coaugmentation, transported
+through the canonical invariant/alternating complex comparison. -/
 def fieldCoindInvariantCoaugmentationCycle
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (fieldInvariantFunctor.{u, w} k Ω).obj M ⟶
@@ -112,8 +181,17 @@ def fieldCoindInvariantCoaugmentationCycle
 end AlgebraicGeometry.Scheme.DerivedSections
 end
 
-/-! Original qualified proof block: CoaugmentationCycleTransport -/
-/-! Actual cycle transport along the original comparison of augmented cochain complexes. -/
+/-!
+# Degree-zero cycles under a cochain map
+
+A cochain morphism sends a closed degree-zero morphism to a closed
+degree-zero morphism, retaining its underlying composite.
+-/
+/-!
+Let C be an abelian category, a:L→K a map of nonnegative cochain
+complexes and x:A→L⁰ satisfy d_L⁰∘x=0.
+The cycle induced in K has underlying morphism a₀∘x.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -124,7 +202,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The actual cycle transported through a cochain comparison retains its original vector. -/
+/-- Let C be an abelian category, K,L nonnegative cochain complexes,
+a:L→K, and x:A→L⁰ with d_L⁰∘x=0.
+Lifting x to cycles and applying Z⁰(a), then including into K⁰,
+equals a₀∘x. Object and morphism universes may be independent. -/
 theorem transport_liftCycles_i
     {K L : CochainComplex C ℕ} (a : L ⟶ K) {A : C} (x : A ⟶ L.X 0)
     (hx : x ≫ L.d 0 1 = 0) :
@@ -135,10 +216,19 @@ theorem transport_liftCycles_i
 end HomologicalComplex
 end
 
-/-! Original qualified proof block: FieldCoindH0VectorCurrent -/
+/-!
+# Constant cochains in the continuous Galois model
+
+The coinduction coaugmentation and the continuous homogeneous comparison
+send an invariant coefficient to the same constant cochain.
+-/
 @[expose] public section
 section
-/-! Characteristic of the actual invariant coaugmentation cycle through the fixed original cochain map. -/
+/-!
+For a discrete continuous Galois module M, the invariant
+coaugmentation followed by the homogeneous cochain comparison has
+value g↦x on an invariant coefficient x∈M^G.
+-/
 public section
 noncomputable section
 set_option autoImplicit false
@@ -149,7 +239,13 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The original stored augmented unit map reaches the SAME original cochain degree. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+The degree-zero coaugmentation map M^G → C⁰_cts(G,M) is the
+invariant image of M→T(M) followed by the canonical coinduction/
+homogeneous cochain comparison. -/
 def fieldCoindNativeCoaugmentationVectorCurrent
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (fieldInvariantFunctor.{u, w} k Ω).obj M ⟶
@@ -158,7 +254,13 @@ def fieldCoindNativeCoaugmentationVectorCurrent
   (fieldInvariantFunctor.{u, w} k Ω).map ((fieldCoindCanonicalCoaugmentation.{u, w} k Ω M).f 0) ≫
     (fieldCoindInvariantCochainIso.{u, w} k Ω M).hom.f 0
 
-/-- The original augmented native cochain vector has its literal comparison composite. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+The invariant degree-zero coaugmentation is precisely the composite
+M^G → Inv_G(T(M)) → C⁰_cts(G,M) given by invariant coaugmentation
+and the degree-zero cochain comparison. -/
 theorem fieldCoindNativeCoaugmentationVectorCurrent_eq
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     fieldCoindNativeCoaugmentationVectorCurrent.{u, w} k Ω M =
@@ -169,7 +271,12 @@ theorem fieldCoindNativeCoaugmentationVectorCurrent_eq
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual native degree-zero coaugmentation has the literal constant coefficient value. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G=Gal(Ω/k), c=max(u,w), and M a discrete continuous G-module with
+abelian coefficients in c. Let T be continuous coinduction and
+F=Inv_G the additive invariant functor.
+For x∈M^G and g∈G, the continuous degree-zero coaugmentation
+has value c_x(g)=x. -/
 theorem fieldCoindNativeCoaugmentationVectorCurrent_value
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (x : (fieldInvariantFunctor.{u, w} k Ω).obj M) (g : Gal(Ω/k)) :
@@ -181,8 +288,17 @@ theorem fieldCoindNativeCoaugmentationVectorCurrent_value
 end AlgebraicGeometry.Scheme.DerivedSections
 end
 
-/-! Original qualified proof block: NativeZeroCycleInclusion -/
-/-! The actual generic invariant coefficient enters native H0 through the original constant cocycle. -/
+/-!
+# Invariant coefficients as homogeneous zero-cycles
+
+For a topological representation of a profinite group, an invariant
+coefficient gives a closed constant homogeneous degree-zero cochain.
+-/
+/-!
+Let R be a ring with a topology, G a profinite group and X a
+topological R-representation. The map X^G→Z⁰(C_hom(G,X)) takes an
+invariant x to the constant function g↦x; its class gives H⁰_cts(G,X).
+-/
 @[expose] public section
 section
 noncomputable section
@@ -195,13 +311,19 @@ variable {R : Type r} [Ring R] [TopologicalSpace R]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual constant invariant cocycle in the SAME native homogeneous complex. -/
+/-- Let R be a ring with a topology, G a profinite group and X a
+topological R-representation. The map X^G → Z⁰(C_hom(G,X)) sends
+x to the constant homogeneous zero-cycle g↦x.
+The scalar, group and carrier universes are independent. -/
 def zeroCycleInclusion (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, r, v} R G) :
     (TopRep.invariantsFunctor R G).obj X ⟶ (TopRep.homogeneousCochains X).cycles 0 :=
   (TopModuleCat.ofIso (ContinuousCohomology.d₀kerIso X)).inv ≫
     (ContinuousCohomology.cocycles₀Iso X).inv
 
-/-- The native constant cocycle projection is the SAME stock zeroIso inverse. -/
+/-- For a ring R with a topology, a profinite G and a topological
+R-representation X, let z:X^G→Z⁰(C_hom(G,X)) be the constant-cycle
+inclusion. Its projection to cohomology is
+π∘z=zeroIso_X⁻¹ : X^G→H⁰_cts(G,X). -/
 theorem zeroCycleInclusion_projection
     (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, r, v} R G) :
     zeroCycleInclusion G X ≫ ContinuousCohomology.π X 0 = (ContinuousCohomology.zeroIso X).inv := by
@@ -210,8 +332,17 @@ theorem zeroCycleInclusion_projection
 end ContinuousCohomology
 end
 
-/-! Original qualified proof block: NativeZeroCycleForgetNormalization -/
-/-! Actual native H0 projection after the exact coefficient-forgetting homology comparison. -/
+/-!
+# Degree-zero homology after forgetting topology
+
+The exact functor from topological ℤ-modules to abelian groups identifies
+cycle and homology objects through their canonical comparisons.
+-/
+/-!
+For the homogeneous complex K of a topological ℤ-representation,
+the cycle and homology comparisons for the underlying-group functor U
+commute with the degree-zero projection Z⁰(K)→H⁰(K).
+-/
 @[expose] public section
 section
 noncomputable section
@@ -223,8 +354,12 @@ namespace ContinuousCohomology
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every genuine cycle of the actual original homogeneous complex retains its native
-identity-evaluation H0 class after forgetting topology and scalar structure. -/
+/-- Let G be a profinite group, X a topological ℤ-representation with
+carrier max(v,w), K its homogeneous complex and U the underlying-group
+functor. For any abelian-group map c:A→U(Z⁰K), transport to Z⁰(UK),
+project to H⁰(UK), then compare with U(H⁰K).
+This composite equals U(π_K)∘c. Thus the canonical cycle/homology
+comparisons preserve every represented degree-zero class. -/
 theorem discreteForgetZeroCycle_class
     (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, 0, v} ℤ G)
     (A : AddCommGrpCat.{max v w}) (c : A ⟶

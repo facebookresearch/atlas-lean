@@ -1,6 +1,6 @@
-# Epsilon At Pos
+# Counit insertion at a comonad-power position
 
-Counit insertion at an arbitrary raw position:
-`(G^{n+1}).obj X ⟶ (G^n).obj X`. The base case is `G.ε`; position zero maps
-`G.ε` under `G^{n+1}`; later positions recurse under `G`. Counts from the
-left-comodule end.
+Counit insertion at a comonad-power position.
+
+For `i : Fin (n+1)`, insert `ε` into `G^(n+1)(X)` to obtain `G^n(X)`, counting positions from
+the left-comodule end.

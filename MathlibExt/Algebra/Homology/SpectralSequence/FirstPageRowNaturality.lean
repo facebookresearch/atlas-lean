@@ -15,13 +15,14 @@ module
 public import MathlibExt.Algebra.Homology.SpectralSequence.FirstPageRow
 public import MathlibExt.Algebra.Homology.GenericSpectralSequenceMapCompatibility
 /-!
-# Naturality of the actual first-page row homology
+# Naturality of row and second-page homology comparisons
 
-The row extraction uses the original native differential. Its chosen
-short complex is compared with the native bidegree short complex by the
-identity on all three original objects. Naturality of the actual homology
-functor and of the native spectral-sequence successor gives the canonical
-row homology comparison with the actual second page.
+The three-term complex of the row at (p−1,p,p+1) is identified with the first-page complex at
+(p−1,q),(p,q),(p+1,q) by identity components. These comparisons commute with first-page maps.
+
+The resulting homology comparison is natural for every first-page morphism. For a morphism of
+spectral sequences, its successor compatibility gives naturality of the row-homology
+isomorphism with E₂.
 -/
 
 @[expose] public section
@@ -42,8 +43,10 @@ namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {ι : Type uι} {c : ComplexShape ι} {K L : HomologicalComplex C c}
 
-/-- The actual homology comparison with specified neighboring indices is
-natural for the original complex map, by the native short-complex natural isomorphism. -/
+/-- Naturality of homology comparison at specified neighboring indices.
+
+For prev(j)=i and next(j)=k, the homology comparison with the three-term complex commutes with
+a complex morphism. -/
 @[reassoc]
 theorem homologyIsoSc'_map_naturality (φ : K ⟶ L) (i j k : ι)
     (hi : c.prev j = i) (hk : c.next j = k) :
@@ -63,8 +66,10 @@ namespace CategoryTheory.SpectralSequence
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {S T : SpectralSequence C (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1}
 
-/-- The row and native first-page short complexes use identical original
-objects at the chosen neighboring indices. -/
+/-- The identity three-term comparison of a first-page row.
+
+Identify the row complex at p−1,p,p+1 with the first-page complex at the corresponding
+bidegrees, using identity maps on all three objects. -/
 def firstPageRowScIso (S : SpectralSequence C
     (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1) (p q : ℤ) :
     (S.firstPageRow q).sc' (p - 1) p (p + 1) ≅
@@ -73,7 +78,10 @@ def firstPageRowScIso (S : SpectralSequence C
     (by simp only [Iso.refl_hom, Category.id_comp, Category.comp_id]; rfl)
     (by simp only [Iso.refl_hom, Category.id_comp, Category.comp_id]; rfl)
 
-/-- The identity short-complex comparison commutes with the actual first-page map. -/
+/-- The row three-term comparison commutes with page maps.
+
+A first-page map and its row restriction form a commuting square with the identity three-term
+comparisons. -/
 theorem firstPageRowScIso_naturality (φ : S.page 1 ⟶ T.page 1) (p q : ℤ) :
     (HomologicalComplex.shortComplexFunctor' C (ComplexShape.up ℤ) (p - 1) p (p + 1)).map
         (firstPageRowMap φ q) ≫ (T.firstPageRowScIso p q).hom =
@@ -84,8 +92,10 @@ theorem firstPageRowScIso_naturality (φ : S.page 1 ⟶ T.page 1) (p q : ℤ) :
     simp [firstPageRowScIso, firstPageRowMap, ComplexShape.embeddingUpIntRow,
       ComplexShape.Embedding.mk']
 
-/-- The canonical actual row homology comparison is natural for each
-original first-page map. -/
+/-- Naturality of the first-page row homology isomorphism.
+
+For a first-page morphism φ, its row homology map followed by the target comparison equals the
+source comparison followed by H(φ) at (p,q). -/
 @[reassoc]
 theorem firstPageRowHomologyIso_naturality (φ : S.page 1 ⟶ T.page 1) (p q : ℤ) :
     HomologicalComplex.homologyMap (firstPageRowMap φ q) p ≫
@@ -139,8 +149,10 @@ theorem firstPageRowHomologyIso_naturality (φ : S.page 1 ⟶ T.page 1) (p q : �
   rw [hPageNat]
   simp only [Iso.inv_hom_id_assoc]
 
-/-- A genuine native spectral-sequence morphism preserves the canonical
-actual row homology identification with the actual native second page. -/
+/-- Naturality of the row comparison with the second page.
+
+For a spectral-sequence morphism, the first-row homology map commutes with the canonical E₂
+comparison and the second-page component map. -/
 @[reassoc]
 theorem firstPageRowSecondPageIso_naturality (φ : S ⟶ T) (p q : ℤ) :
     HomologicalComplex.homologyMap (firstPageRowMap (φ.hom 1 le_rfl) q) p ≫

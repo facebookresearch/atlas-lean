@@ -24,7 +24,17 @@ public import Mathlib.CategoryTheory.Sites.Monoidal
 public import Mathlib.CategoryTheory.Sites.Whiskering
 
 /-!
-# The monoidal structure on sheaves of modules
+# Monoidal structure on sheaves of modules
+
+Let `(C,J)` be a site and `R : Sheaf J CommRingCat.{u}`. Assume weak sheafification of
+abelian-group-valued presheaves, the identification of its equivalences with locally bijective
+maps, monoidality of the equivalence class `J.W`, and preservation of the sheaf condition by
+`CommRingCat → RingCat`.
+
+Localization of the monoidal category of module presheaves gives a monoidal structure on
+module sheaves over the underlying ring sheaf of `R`. Tensor products are obtained by
+sheafifying the presheaf tensor product. Additive extensionality on pure tensors and threefold
+pure tensors supplies the equalities of tensor maps.
 -/
 
 universe u
@@ -33,7 +43,10 @@ open CategoryTheory MonoidalCategory TensorProduct
 
 variable {C : Type*} [Category* C] {J : GrothendieckTopology C}
 
-/-- Additive maps from a tensor product agree if they agree on all pure tensors. -/
+/-- Let `R` be a commutative semiring, `M,N` be `R`-semimodules with additive commutative monoids,
+and `P₂` an additive commutative monoid. For any function-like type `F` of additive maps `M
+⊗[R] N → P₂`, maps `g,h : F` satisfying `g(x ⊗ y)=h(x ⊗ y)` for every `x∈M`, `y∈N` are equal.
+Scalar-linearity of the maps into `P₂` is not required. -/
 private theorem TensorProduct.extAdd {R : Type*} [CommSemiring R] {M N P₂ : Type*}
     [AddCommMonoid M] [AddCommMonoid N] [AddCommMonoid P₂] [Module R M] [Module R N]
     {F : Type*} [FunLike F (M ⊗[R] N) P₂] [AddMonoidHomClass F (M ⊗[R] N) P₂]
@@ -41,8 +54,11 @@ private theorem TensorProduct.extAdd {R : Type*} [CommSemiring R] {M N P₂ : Ty
   apply DFunLike.ext _ _ fun t ↦ t.inductionOn H fun x y ha hb ↦ by
     simp only [map_add, ha, hb]
 
-/-- Additive maps from a threefold tensor product agree if they agree on
-all pure tensors. -/
+/-- Let `R,R₂` be commutative semirings, `M` an `R`- and `R₂`-semimodule with commuting scalar
+actions, `N` an `R`-semimodule, and `M₂` an `R₂`-semimodule. All three underlying additive
+monoids are commutative. For an additive commutative monoid `P₃` and a function-like type `F`
+of additive maps `(M ⊗[R] N) ⊗[R₂] M₂ → P₃`, equality on every `(x ⊗ y) ⊗ z` implies equality
+of `g,h : F`. The `R₂`-action on the first tensor product is induced through `M`. -/
 private theorem TensorProduct.ext_threefoldAdd {R R₂ : Type*} [CommSemiring R]
     [CommSemiring R₂] {M N M₂ P₃ : Type*}
     [AddCommMonoid M] [AddCommMonoid N] [AddCommMonoid M₂] [AddCommMonoid P₃]
@@ -102,8 +118,11 @@ variable (R : Sheaf J CommRingCat.{u})
 variable [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
 variable [HasWeakSheafify J Ab.{u}] [J.HasSheafCompose (forget₂ CommRingCat.{u} RingCat.{u})]
 
-/-- The monoidal structure on the category of sheaves of modules over a sheaf of commutative
-rings, obtained by localizing the monoidal category of presheaves of modules. -/
+/-- Let `C` be a category, `J` a Grothendieck topology, and `R : Sheaf J CommRingCat.{u}`. Assume
+`J.W` on abelian presheaves is monoidal, `J.WEqualsLocallyBijective Ab.{u}`, `HasWeakSheafify
+J Ab.{u}`, and `J.HasSheafCompose (forget₂ CommRingCat.{u} RingCat.{u})`. Then
+`SheafOfModules.{u}` over the underlying ring sheaf `(sheafCompose J (forget₂ ..)).obj R` is a
+monoidal category, obtained by localizing tensor products of module presheaves. -/
 noncomputable instance monoidalCategory :
     MonoidalCategory (SheafOfModules.{u} ((sheafCompose J (forget₂ ..)).obj R)) :=
   inferInstanceAs <| MonoidalCategory <| LocalizedMonoidal

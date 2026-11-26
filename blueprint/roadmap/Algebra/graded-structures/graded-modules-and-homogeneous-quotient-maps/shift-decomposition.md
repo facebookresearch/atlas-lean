@@ -1,3 +1,6 @@
-# Shift Decomposition
+# The direct-sum decomposition of shifted homogeneous components
 
-The grading of `M` shifted by `n`: the `i`-th piece is `M_{i + n}`.
+The direct-sum decomposition of shifted homogeneous components.
+
+The family i ↦ M_{i+n} has the direct-sum decomposition obtained by translating integer
+indices in the decomposition of M.

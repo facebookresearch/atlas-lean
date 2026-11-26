@@ -1,4 +1,5 @@
-# Small Etale Base Change Id
+# Identity comparison for small étale base change
 
-The canonical identity comparison, lifted from the stock over-category
-identity comparison through the actual fully faithful étale forgetful functor.
+For a scheme X, base change along id_X is naturally isomorphic
+to the identity functor of Etale(X). On an étale X-scheme U, the comparison
+is the canonical identification X ×_X U ≅ U.

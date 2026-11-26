@@ -1,4 +1,6 @@
-# Schreier Corestriction eq of right Transversal
+# Every right transversal computes canonical corestriction
 
-The canonical explicit Schreier corestriction is computed by every
-chosen right transversal.
+Every right transversal computes canonical corestriction.
+
+For any finite right transversal T, the canonical degree-n corestriction equals
+corestrictionOfRightTransversal A T n.

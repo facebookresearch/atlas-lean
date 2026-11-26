@@ -1,4 +1,6 @@
-# Dual Bicone Unit Hom decompose
+# Dual evaluation decomposes by the finite frame
 
-The genuine unit transpose law expands dual evaluation on every original
-unit-source morphism through the actual finite frame.
+Let C be preadditive, G:Cᵒᵖ → C additive, and e:G(U) ≅ U satisfy
+e∘G(qᵒᵖ)=q∘e for every endomorphism q of U.
+For a finite bilimit bicone b of copies of U and v:U → b.pt,
+e∘G(vᵒᵖ)=∑ᵢ(π_i∘v)∘e∘G(ι_iᵒᵖ).

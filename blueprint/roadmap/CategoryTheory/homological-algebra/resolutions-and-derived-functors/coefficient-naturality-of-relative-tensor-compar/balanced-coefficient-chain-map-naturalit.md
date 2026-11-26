@@ -1,3 +1,5 @@
-# Balanced Coefficient Chain Map naturality
+# Coefficient chain maps are natural in the left complex
 
-Coefficient naturality is a literal chain-map square for every original map.
+Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. For a chain map `f : Q → P`, the coefficient chain maps
+commute with `M ⊗[R] f` and `M′ ⊗[R] f`.

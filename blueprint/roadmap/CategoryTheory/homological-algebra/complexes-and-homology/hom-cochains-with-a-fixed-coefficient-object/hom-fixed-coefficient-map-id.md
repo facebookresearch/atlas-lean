@@ -1,3 +1,4 @@
-# Hom Fixed Coefficient Map id
+# Identity law for fixed-coefficient Hom
 
-Original identity maps induce the identity fixed-coefficient Hom map.
+Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+The identity maps of P and M induce the identity cochain map on Hom(P,M).

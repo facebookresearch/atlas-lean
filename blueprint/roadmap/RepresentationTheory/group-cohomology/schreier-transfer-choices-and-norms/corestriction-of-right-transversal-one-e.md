@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal one eq
+# Agreement of general and degree-one cohomology transfers
 
-The former chosen-transversal `H¹` transfer is the degree-one
-specialization of the arbitrary-degree cohomology transfer.
+Agreement of general and degree-one cohomology transfers.
+
+The underlying linear map of the general chosen-transversal transfer in degree one is
+corestrictionH1OfRightTransversal A T.

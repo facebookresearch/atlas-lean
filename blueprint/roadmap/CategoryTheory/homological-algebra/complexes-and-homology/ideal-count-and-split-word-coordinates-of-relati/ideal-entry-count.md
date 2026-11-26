@@ -1,3 +1,5 @@
-# Ideal Entry Count
+# The ideal-entry count of an algebra word
 
-The number of original word entries in the original ideal.
+Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. For a : Fin n → A, idealEntryCount k A I a is the number of i : Fin n with a_i ∈
+I.toSubmodule.

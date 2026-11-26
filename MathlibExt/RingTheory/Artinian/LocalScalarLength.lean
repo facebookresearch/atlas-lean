@@ -18,17 +18,16 @@ public import Mathlib.RingTheory.LocalRing.Length
 public import Mathlib.RingTheory.HopkinsLevitzki
 
 /-!
-# Residue-weighted length over an arbitrary local base ring
+# Residue-degree weights in local scalar length
 
-A finite Artinian algebra over a local ring has actual prime-localization
-factors, including every nilpotent multiplicity. The finite local maps
-are derived from their true integral scalar homomorphisms. The original
-base-ring length is the sum of local ring lengths weighted by the finite
-degrees of their genuine residue fields over the base residue field.
+Let R be a commutative local ring and A a commutative Artinian R-algebra finite as an
+R-module. Each prime localization A_p is finite over R, and the integral scalar homomorphism R
+→ A_p is local. It induces the residue-field action κ(R) → κ(A_p).
 
-The base ring need not be a field or act faithfully on the algebra. This
-is the local scalar calculation for principal-divisor quotients on
-singular curves. Zero algebras give the empty sum.
+Write f_p = dim_{κ(R)} κ(A_p). Restriction of scalars gives ℓ_R(A_p) = ℓ_{A_p}(A_p) · f_p, and
+the Artinian product decomposition yields ℓ_R(A) = Σ_p ℓ_{A_p}(A_p) · f_p. A natural-number
+form records the same finite lengths and degrees. The ring and algebra universes are
+independent.
 -/
 
 @[expose] public section
@@ -43,7 +42,11 @@ namespace IsArtinianRing
 variable (R : Type u) (A : Type v) [CommRing R] [CommRing A] [Algebra R A]
   [Module.Finite R A] [IsArtinianRing A]
 
-/-- The actual Artinian prime localization remains finite over the original base ring. -/
+/-- Finite scalar module structure on an Artinian prime localization.
+
+If A is a commutative Artinian R-algebra finite over R, then A_p is finite over R for every p
+∈ Spec A. The Artinian localization map A → A_p is surjective, so finite generation descends
+to the localization. -/
 local instance primeLocalizationFinite (p : PrimeSpectrum A) :
     Module.Finite R (Localization.AtPrime p.asIdeal) :=
   Module.Finite.of_surjective
@@ -52,26 +55,40 @@ local instance primeLocalizationFinite (p : PrimeSpectrum A) :
 
 variable [IsLocalRing R]
 
-/-- The true scalar homomorphism into a prime factor is local, including nonfaithful quotients. -/
+/-- Local scalar homomorphism into an Artinian prime factor.
+
+For a finite commutative Artinian R-algebra A with R local, the scalar map R → A_p is a local
+homomorphism. The map is integral by finite generation, and both source and prime-localization
+target are local rings. -/
 local instance primeLocalizationIsLocalHom (p : PrimeSpectrum A) :
     IsLocalHom (algebraMap R (Localization.AtPrime p.asIdeal)) := by
   have h : (algebraMap R (Localization.AtPrime p.asIdeal)).IsIntegral :=
     algebraMap_isIntegral_iff.mpr inferInstance
   exact h.isLocalHom_of_isLocalRing
 
-/-- The actual residue-field degree at a prime Artinian factor, over the original base residue field. -/
+/-- Residue-field degree at a prime Artinian factor.
+
+For a finite Artinian algebra A over a commutative local ring R, define f_p = dim_{κ(R)}
+κ(A_p), using the residue-field scalar structure induced by the local map R → A_p. -/
 def residueDegreeAtPrime (p : PrimeSpectrum A) : ℕ :=
   Module.finrank (IsLocalRing.ResidueField R)
     (IsLocalRing.ResidueField (Localization.AtPrime p.asIdeal))
 
-/-- The prime residue degree is computed in the actual canonical residue-field scalar structure. -/
+/-- Finrank formula for the prime residue degree.
+
+The degree residueDegreeAtPrime R A p is Module.finrank over κ(R) of κ(A_p), with its induced
+residue-field algebra structure. -/
 theorem residueDegreeAtPrime_eq_finrank (p : PrimeSpectrum A) :
     residueDegreeAtPrime R A p =
       Module.finrank (IsLocalRing.ResidueField R)
         (IsLocalRing.ResidueField (Localization.AtPrime p.asIdeal)) :=
   rfl
 
-/-- The original base-ring length is the genuine sum of local multiplicities times actual residue degrees. -/
+/-- Local multiplicity and residue-degree formula for scalar length.
+
+For a finite commutative Artinian algebra A over a local ring R, ℓ_R(A) = Σ_{p∈Spec A}
+ℓ_{A_p}(A_p) · f_p in ℕ∞, where f_p = dim_{κ(R)} κ(A_p). The local ring lengths retain all
+nilpotent multiplicities. -/
 theorem length_eq_sum_primeSpectrum_mul_residueDegree :
     letI : Fintype (PrimeSpectrum A) := Fintype.ofFinite (PrimeSpectrum A)
     Module.length R A = ∑ p : PrimeSpectrum A,
@@ -86,7 +103,11 @@ theorem length_eq_sum_primeSpectrum_mul_residueDegree :
   rw [Module.length_eq_finrank] at h
   exact h
 
-/-- Natural-valued scalar length retains every actual local nilpotent multiplicity and residue-field degree. -/
+/-- Natural-number local multiplicity and residue-degree formula.
+
+For a finite Artinian algebra A over a commutative local ring R, ℓ_R(A).toNat = Σ_p
+ℓ_{A_p}(A_p).toNat · f_p. The local lengths are finite and the residue degrees use the scalar
+maps induced from R. -/
 theorem length_toNat_eq_sum_primeSpectrum_mul_residueDegree :
     letI : Fintype (PrimeSpectrum A) := Fintype.ofFinite (PrimeSpectrum A)
     (Module.length R A).toNat = ∑ p : PrimeSpectrum A,

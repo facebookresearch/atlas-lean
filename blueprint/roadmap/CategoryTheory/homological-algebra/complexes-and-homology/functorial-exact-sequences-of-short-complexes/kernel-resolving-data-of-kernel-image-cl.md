@@ -1,3 +1,7 @@
-# Kernel Resolving Data Of Kernel Image Closure
+# Kernel-resolving data from essential-image closure
 
-The whole family satisfies the original kernel-resolving carrier without a resolution input.
+Kernel-resolving data from essential-image closure.
+
+For a fully faithful additive functor F from a preadditive category to an abelian category,
+closure of its essential image under kernels of epimorphisms supplies a KernelLift for each f
+whose image F(f) is epic. These lifts satisfy the kernelOfEpi clause of KernelResolvingData F.

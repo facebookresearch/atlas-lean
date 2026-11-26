@@ -1,9 +1,9 @@
 # The exterior-power kernel of a surjective module map
 
-- [Kernel Slot Words](kernel-slot-words.md)
-- [Kernel Slot Words eq span](kernel-slot-words-eq-span.md)
-- [Quotient Kernel Word](quotient-kernel-word.md)
-- [Quotient Kernel Word invariant](quotient-kernel-word-invariant.md)
-- [Descended Kernel Word](descended-kernel-word.md)
-- [Descended Kernel Word comp](descended-kernel-word-comp.md)
-- [Ker exterior Power map](ker-exterior-power-map.md)
+- [The span of exterior words with a kernel slot](kernel-slot-words.md)
+- [The generators of kernel-slot relations](kernel-slot-words-eq-span.md)
+- [The alternating word modulo kernel-slot relations](quotient-kernel-word.md)
+- [The quotient word depends only on slot images](quotient-kernel-word-invariant.md)
+- [The quotient word descends along a surjection](descended-kernel-word.md)
+- [Lifting an image tuple recovers its exterior class](descended-kernel-word-comp.md)
+- [The surjective exterior-map kernel is the slot span](ker-exterior-power-map.md)

@@ -1,5 +1,6 @@
-# Local Regular Family Tor length ne top
+# Finite local Tor lengths at a minimal image-family prime
 
-At an actual generic intersection support, every original local Tor
-group has finite length. Its finiteness follows from the actual minimal
-prime, the actual quotient map, and the proved regular resolution.
+Finite local Tor lengths at a minimal image-family prime.
+
+For noetherian S, surjective f, weakly regular a and p minimal over its image ideal, the local
+Tor module has finite length in every degree.

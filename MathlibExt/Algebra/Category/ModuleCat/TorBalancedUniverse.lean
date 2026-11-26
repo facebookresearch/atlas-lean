@@ -20,12 +20,14 @@ public import Mathlib.CategoryTheory.Monoidal.Tor
 public import Mathlib.RingTheory.Length
 
 /-!
-# Canonical balance and braiding of the original native Tor
+# Symmetry of Tor over a commutative ring
 
-The existing derived-bifunctor balance compares the two original resolution
-variables. Deriving the actual tensor braiding then exchanges them. These
-canonical natural isomorphisms retain the original native Tor objects and
-arbitrary ring and module universes.
+Let `R : Type u` be a commutative ring and work with module carriers in universe `max u v`.
+The balance isomorphism between the two resolution variables, followed by the derived tensor
+braiding, gives a natural symmetry `Tor_q^R(M, N) ≅ Tor_q^R(N, M)` in every natural degree.
+
+This symmetry gives equality of the module lengths of the two Tor objects. The length
+statement includes infinite lengths and imposes no finite-length hypothesis.
 -/
 
 @[expose] public section
@@ -41,8 +43,10 @@ namespace ModuleCat.UniverseTensor
 
 variable (R : Type u) [CommRing R]
 
-/-- Canonical balance followed by the derived original braiding gives the
-full two-variable native Tor symmetry in the actual module universe. -/
+/-- Tor bifunctor is naturally isomorphic to its variable flip.
+
+For every natural `q`, balance of the two tensor derivations and the derived braiding give a
+natural isomorphism from the Tor bifunctor to its flip in `ModuleCat.{max u v} R`. -/
 def nativeTorSymmetryNatIso (q : ℕ) :
     Tor (ModuleCat.{max u v} R) q ≅ (Tor (ModuleCat.{max u v} R) q).flip := by
   let C := ModuleCat.{max u v} R
@@ -87,15 +91,19 @@ def nativeTorSymmetryNatIso (q : ℕ) :
         exact Module.Flat.rTensor_exact P hS) q
   exact E ≪≫ B
 
-/-- The canonical symmetry component keeps the original ordered native Tor
-objects, with independent ring and coefficient-carrier universes. -/
+/-- Symmetry isomorphism of two Tor module objects.
+
+For modules `M` and `N` in `ModuleCat.{max u v} R`, evaluate the Tor symmetry to obtain
+`Tor_q^R(M, N) ≅ Tor_q^R(N, M)`. -/
 def nativeTorSymmetry (M N : ModuleCat.{max u v} R) (q : ℕ) :
     (((Tor (ModuleCat.{max u v} R) q).obj M).obj N) ≅
       (((Tor (ModuleCat.{max u v} R) q).obj N).obj M) :=
   ((nativeTorSymmetryNatIso R q).app M).app N
 
-/-- The actual native Tor terms have equal lengths in the two original
-Serre intersection orientations. -/
+/-- Module length of Tor is symmetric in its two inputs.
+
+For every natural `q`, `Module.length R (Tor_q^R(M, N)) = Module.length R (Tor_q^R(N, M))`.
+The equality follows from the linear equivalence induced by Tor symmetry. -/
 theorem nativeTor_length_symm (M N : ModuleCat.{max u v} R) (q : ℕ) :
     Module.length R (((Tor (ModuleCat.{max u v} R) q).obj M).obj N) =
       Module.length R (((Tor (ModuleCat.{max u v} R) q).obj N).obj M) :=

@@ -1,3 +1,6 @@
-# Field Mapped Injective Resolution Hom augmentation
+# Mapped resolution morphism respects coaugmentation
 
-The mapped morphism commutes with the actual full single-object augmentations.
+Mapped resolution morphism respects coaugmentation.
+
+The mapped morphism commutes with the mapped coaugmentations and the single-complex map of the
+geometric-fiber coefficient morphism.

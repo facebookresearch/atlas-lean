@@ -1,3 +1,5 @@
-# Truncation Functor refl
+# The unchanged-start truncation functor is the identity
 
-Restriction to the same starting page is the native identity functor.
+The unchanged-start truncation functor is the identity.
+
+At r₀=r₁, the truncation functor is the identity.

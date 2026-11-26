@@ -1,3 +1,5 @@
-# Page Homology Unit right unital
+# The unit homology class is a right unit
 
-The actual homology quotient product retains the original right unit law.
+The unit homology class is a right unit.
+
+Its product with every homology object equals the right unitor.

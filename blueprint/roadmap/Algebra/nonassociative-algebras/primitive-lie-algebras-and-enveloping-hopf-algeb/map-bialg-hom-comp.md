@@ -1,3 +1,5 @@
-# Map Bialg Hom comp
+# Composition of enveloping bialgebra morphisms
 
-Composition of Lie morphisms induces composition of bialgebra morphisms.
+Composition of enveloping bialgebra morphisms.
+
+The bialgebra map of a composite Lie morphism is the composite of the induced maps.

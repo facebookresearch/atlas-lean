@@ -1,3 +1,5 @@
-# Coaugmented Functor obj point
+# The point of the homology comonoid
 
-The transported point is the existing canonical original-field homology coaugmentation.
+The point of the homology comonoid.
+
+Its point is unitMap followed by homology of the chain coaugmentation.

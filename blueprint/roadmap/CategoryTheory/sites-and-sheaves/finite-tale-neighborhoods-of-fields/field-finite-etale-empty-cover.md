@@ -1,3 +1,5 @@
-# Field Finite Etale empty cover
+# The empty family covers the empty finite-étale spectrum
 
-The empty family is a covering of the original empty spectrum object.
+For a field k, the empty family indexed by Fin 0 generates a covering sieve on
+fieldFiniteEtaleEmptyObject(k). Its spectrum is empty, so the empty union of spectral ranges
+is its full point set.

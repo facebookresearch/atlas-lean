@@ -1,5 +1,5 @@
 # The stable matrix module as a colimit
 
-- [Matrix Module Functor](matrix-module-functor.md)
-- [Canonical Stable Matrix Module Cocone](canonical-stable-matrix-module-cocone.md)
-- [Canonical Stable Matrix Module Is Colimit](canonical-stable-matrix-module-is-colimi.md)
+- [The diagram of finite matrix modules](matrix-module-functor.md)
+- [The finite inclusion cocone on the stable matrix module](canonical-stable-matrix-module-cocone.md)
+- [Stable matrix modules satisfy the directed colimit universal property](canonical-stable-matrix-module-is-colimi.md)

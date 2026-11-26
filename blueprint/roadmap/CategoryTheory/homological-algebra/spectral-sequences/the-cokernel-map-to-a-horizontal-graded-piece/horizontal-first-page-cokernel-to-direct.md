@@ -1,4 +1,6 @@
-# Horizontal First Page Cokernel To Direct Column
+# The direct-column factor of a categorical filtration cokernel
 
-Canonical map from the consecutive-stage cokernel to the `p`th direct
-column presentation.
+The direct-column factor of a categorical filtration cokernel.
+
+In an abelian category, the zero-composite projection descends to a map from the cokernel of
+the first-page filtration map to the direct column.

@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Adjunction Core
+# Natural Hom correspondence for the field stalk adjunction
 
-The genuine Hom correspondence has both naturality laws on the fixed functors.
+Natural Hom correspondence for the field stalk adjunction.
+
+The equivariant Hom bijection with its source and coefficient naturality gives the adjunction
+Hom data.

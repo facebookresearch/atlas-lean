@@ -1,3 +1,7 @@
-# Length self eq of ring Equiv
+# Length of regular modules under a ring equivalence
 
-A ring equivalence preserves the length of the regular module.
+Length of regular modules under a ring equivalence.
+
+For a ring equivalence e : R ≃+* S between commutative rings, the regular-module lengths
+satisfy ℓ_R(R) = ℓ_S(S). The equivalence transports the module structure and the scalar
+action.

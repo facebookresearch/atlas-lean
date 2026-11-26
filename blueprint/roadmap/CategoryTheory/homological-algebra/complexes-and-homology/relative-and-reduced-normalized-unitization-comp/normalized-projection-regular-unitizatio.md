@@ -1,3 +1,6 @@
-# Normalized Projection regular Unitization Map
+# The normalization square for a map between unitizations
 
-The complete original chain-map square is retained.
+The normalization square for a map between unitizations.
+
+The regular chain map induced by a unital homomorphism followed by normalization equals
+normalization followed by the induced normalized chain map.

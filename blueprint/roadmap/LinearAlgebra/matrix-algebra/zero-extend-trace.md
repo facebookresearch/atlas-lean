@@ -1,3 +1,5 @@
-# Trace under zero extension of matrices
+# Top-left zero extension preserves matrix trace
 
-The true top-left zero extension preserves trace, including the empty source matrix.
+For an additive commutative monoid A, natural numbers r≤s and B:Matrix(Fin r,Fin r,A),
+trace(zeroExtend(B))=trace(B). The added diagonal entries are zero, and the equality includes
+the empty source matrix r=0.

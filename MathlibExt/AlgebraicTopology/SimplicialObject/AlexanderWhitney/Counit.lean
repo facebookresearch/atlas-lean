@@ -14,10 +14,17 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.AlexanderWhitney.Coh
 public import Mathlib.Algebra.Homology.AlternatingConst
 
 /-!
-# Counit laws for the Alexander--Whitney chain map
+# Alexander–Whitney counits and the oplax alternating-face functor
 
-This file defines the augmentation of the alternating-face complex of the
-monoidal unit and proves the two generic Alexander--Whitney counit laws.
+Let C be a preadditive monoidal category with a zero object and finite coproducts, and tensoring
+additive and finite-coproduct-preserving in both variables. The alternating-face complex of the
+constant simplicial tensor unit has a canonical map ε to the chain tensor unit. Its degree-zero
+component is identity and every positive-degree component is zero.
+
+The Alexander–Whitney maps satisfy AW_{I,X}≫(ε⊗id)≫λ_{A(X)}=A(λ_X) and
+AW_{X,I}≫(id⊗ε)≫ρ_{A(X)}=A(ρ_X). Together with naturality and associator coassociativity, these
+give A an oplax monoidal structure with counit ε and tensor comparison AW. No invertibility of
+the tensor comparison is assumed, and the category universes are independent.
 -/
 
 @[expose] public section
@@ -55,8 +62,12 @@ private lemma whiskerLeft_zero' (A : C) {B D : C} :
   change ((curriedTensor C).obj A).map (0 : B ⟶ D) = 0
   exact Functor.map_zero ((curriedTensor C).obj A) B D
 
-/-- The augmentation from the alternating-face complex of the monoidal unit
-to the monoidal unit chain complex. -/
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. Let I be the simplicial tensor unit, constant at the tensor unit of C. This
+counit ε:A(I)→I_chain is the canonical augmentation to the nonnegative chain tensor unit. It is
+identity in degree zero and zero in positive degrees. -/
 noncomputable def alternatingMapCounit :
     (AlgebraicTopology.alternatingFaceMapComplex C).obj
         (𝟙_ (SimplicialObject C)) ⟶
@@ -64,16 +75,31 @@ noncomputable def alternatingMapCounit :
   AlgebraicTopology.AlternatingFaceMapComplex.ε.app
     (SimplicialObject.Augmented.const.obj (𝟙_ C))
 
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. The component ε_0 of ε:A(I_simp)→I_chain equals the identity of the tensor unit
+of C under the canonical degree-zero identifications. -/
 @[simp]
 theorem alternatingMapCounit_f_zero :
     (alternatingMapCounit (C := C)).f 0 = 𝟙 _ := by
   simp [alternatingMapCounit]
 
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. For n∈ℕ, the counit ε:A(I_simp)→I_chain has ε_{n+1}=0. The target chain tensor
+unit is concentrated in degree zero. -/
 @[simp]
 theorem alternatingMapCounit_f_succ (n : ℕ) :
     (alternatingMapCounit (C := C)).f (n + 1) = 0 := by
   simp [alternatingMapCounit]
 
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. For n∈ℕ with n≠0, the component ε_n of the tensor-unit augmentation
+A(I_simp)→I_chain is zero. -/
 theorem alternatingMapCounit_f_ne_zero (n : ℕ) (hn : n ≠ 0) :
     (alternatingMapCounit (C := C)).f n = 0 := by
   cases n with
@@ -139,7 +165,12 @@ private lemma rightCounitTerm_eq_zero (X : SimplicialObject C) (n : ℕ)
   rw [rightCounitTerm, alternatingMapCounit_f_ne_zero _ hq]
   simp only [whiskerLeft_zero', comp_zero, zero_comp]
 
-/-- The Alexander--Whitney map satisfies the left counit law. -/
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. For a simplicial X, AW_{I,X}≫(ε⊗id_{A(X)})≫λ_{A(X)}=A(λ_X). The source is
+A(I⊗X), and the target is A(X); the left unitor on each side is in its simplicial or chain
+tensor category. -/
 theorem alternatingMap_left_counit (X : SimplicialObject C) :
     alternatingMap (𝟙_ (SimplicialObject C)) X ≫
         HomologicalComplex.tensorHom (alternatingMapCounit (C := C)) (𝟙 _) ≫
@@ -168,7 +199,8 @@ theorem alternatingMap_left_counit (X : SimplicialObject C) :
   · have hback : backFace X (p := 0) (q := n) (n := n) (Nat.zero_add n) =
         𝟙 (X.obj (Opposite.op (SimplexCategory.mk n))) := by
       simpa only [backFace] using X.δ₀Iter_zero n
-    simp [frontFace, hback, Category.assoc]
+    simp [frontFace, hback]
+    rfl
   · intro x hx
     rcases x with ⟨x, hxlt⟩
     have hxval : x ≠ 0 := by
@@ -181,7 +213,12 @@ theorem alternatingMap_left_counit (X : SimplicialObject C) :
     rw [alternatingMapCounit_f_succ]
     simp only [zero_whiskerRight', zero_comp, comp_zero]
 
-/-- The Alexander--Whitney map satisfies the right counit law. -/
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. For a simplicial X, AW_{X,I}≫(id_{A(X)}⊗ε)≫ρ_{A(X)}=A(ρ_X). The source is
+A(X⊗I), with the chain right unitor and the image of the simplicial right unitor giving the same
+target map. -/
 theorem alternatingMap_right_counit (X : SimplicialObject C) :
     alternatingMap X (𝟙_ (SimplicialObject C)) ≫
         HomologicalComplex.tensorHom (𝟙 _) (alternatingMapCounit (C := C)) ≫
@@ -221,8 +258,13 @@ private lemma chainId_tensorHom (K : ChainComplex C ℕ)
     HomologicalComplex.tensorHom (𝟙 K) f = K ◁ f := by
   exact MonoidalCategory.id_tensorHom K f
 
-/-- The alternating-face chain functor is oplax monoidal via the
-Alexander--Whitney chain map and its canonical augmentation. -/
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. The functor A has an oplax monoidal structure whose unit map is
+ε:A(I_simp)→I_chain and whose tensor map is AW_{X,Y}:A(X⊗Y)→A(X)⊗A(Y). Its axioms are the
+two-variable naturality, associator coassociativity and left/right counit equations of those
+maps. -/
 noncomputable instance alternatingFaceMapComplexOplaxMonoidal :
     (AlgebraicTopology.alternatingFaceMapComplex C).OplaxMonoidal where
   η := alternatingMapCounit

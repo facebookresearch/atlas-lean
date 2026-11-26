@@ -1,3 +1,6 @@
-# Homology Zero Linear Equiv naturality
+# Preservation of scalar homology coordinates by CE model maps
 
-The scalar coordinates of degree-zero homology are preserved by every CE model morphism.
+Preservation of scalar homology coordinates by CE model maps.
+
+The degree-zero homology map of every model morphism retains the scalar coordinate under the
+source and target linear equivalences.

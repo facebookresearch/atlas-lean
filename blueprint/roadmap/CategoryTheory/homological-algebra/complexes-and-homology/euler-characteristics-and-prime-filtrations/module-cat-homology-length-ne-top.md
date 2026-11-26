@@ -1,3 +1,5 @@
-# Module Cat homology length ne top
+# Finite middle length gives finite homology length
 
-Finite middle-module length earns finite length of the actual homology.
+Finite middle length gives finite homology length.
+
+If the middle module of S has finite length, its homology has finite length.

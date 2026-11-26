@@ -12,11 +12,22 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldEquivariantStalkCounitIsom
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGeometricStalkConservativity
 public import Mathlib.CategoryTheory.Adjunction.FullyFaithful
 
-/-! # The original field-sheaf and continuous Galois-module equivalence
+/-!
+# Étale sheaves and discrete Galois modules over a field
 
-The functors, point, chosen closure and original-index inverse are the same
-constructed objects. The actual counit and first triangle give an invertible
-stalk image of the unit; prescribed-stalk conservativity gives the unit itself.
+Let Ω/k be a separable closure of fields in universe u and c = max(u, w).
+The geometric-stalk functor E at Spec Ω → Spec k is an equivalence
+between AddCommGrpCat c-valued sheaves on the small étale site of Spec k
+and discrete abelian groups with continuous G = Gal(Ω/k)-action.
+
+Its inverse Φ takes a module M to the sheaf U ↦ Map_G(U(Ω), M).
+Restriction precomposes with the map on geometric lifts, while a module
+morphism postcomposes the equivariant function. The unit sends a section a
+to z ↦ germ_z(a), and the counit sends the germ of a function h at z
+to h(z). These maps are natural isomorphisms satisfying both triangle
+identities. On a finite étale k-algebra A the inverse value is
+Map_G(Hom_(k-alg)(A, Ω), M). The same unit formula applies after lifting
+coefficients from universe w to c.
 -/
 @[expose] public section
 noncomputable section
@@ -27,8 +38,15 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The first actual triangle identifies the image of the original unit with
-the inverse of the SAME original counit component. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For every coefficient sheaf Q, E(η_Q) = ε_(E(Q))⁻¹.
+The stalk image of the unit is the inverse of the evaluation counit. -/
 theorem fieldEquivariantStalkUnit_map_eq_counit_inv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
@@ -45,7 +63,15 @@ theorem fieldEquivariantStalkUnit_map_eq_counit_inv
     _ = (a ≫ b) ≫ inv b := (Category.assoc _ _ _).symm
     _ = inv b := by rw [h, Category.id_comp]
 
-/-- The SAME original stalk functor reflects invertibility of its actual unit. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For every coefficient sheaf Q, the unit η_Q : Q → Φ(E(Q))
+is an isomorphism of étale sheaves. -/
 instance fieldEquivariantStalkUnit_isIso
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     IsIso ((fieldEquivariantStalkUnit.{u, w} k Ω).app Q) := by
@@ -55,7 +81,16 @@ instance fieldEquivariantStalkUnit_isIso
     infer_instance
   exact isIso_of_reflects_iso _ (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
 
-/-- The genuine equivalence uses the SAME original stalk and literal inverse sheaf. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+These functors give the equivalence
+Sheaf((Spec k)_ét, AddCommGrpCat c) ≌ D_G,
+where D_G is the category of discrete continuous G-modules. -/
 def fieldSheafGaloisEquivalence :
     Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ≌
       DiscreteAbelianAction.{u, max u w} Gal(Ω/k) :=
@@ -69,17 +104,41 @@ theorem fieldSheafGaloisEquivalence_inverse :
     (fieldSheafGaloisEquivalence.{u, w} k Ω).inverse =
       fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω := rfl
 
-/-- Its actual unit is exactly the original invariant germ unit, without replacement. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+The unit of the sheaf–Galois equivalence is η : id → Φ E,
+the geometric-germ reconstruction map. -/
 theorem fieldSheafGaloisEquivalence_unit_hom :
     (fieldSheafGaloisEquivalence.{u, w} k Ω).unitIso.hom =
       fieldEquivariantStalkUnit.{u, w} k Ω := rfl
 
-/-- Its actual counit is exactly the original evaluation arrow. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+The counit of the sheaf–Galois equivalence is ε : E Φ → id,
+the evaluation map on equivariant-function germs. -/
 theorem fieldSheafGaloisEquivalence_counit_hom :
     (fieldSheafGaloisEquivalence.{u, w} k Ω).counitIso.hom =
       fieldEquivariantStalkCounit.{u, w} k Ω := rfl
 
-/-- Both original triangles hold for the constructed equivalence maps. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For every coefficient sheaf Q, the triangle equation is
+ε_(E(Q)) ∘ E(η_Q) = id_(E(Q)). -/
 theorem fieldSheafGaloisEquivalence_left_triangle
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldSheafGaloisEquivalence.{u, w} k Ω).functor.map
@@ -96,7 +155,16 @@ theorem fieldSheafGaloisEquivalence_right_triangle
         ((fieldSheafGaloisEquivalence.{u, w} k Ω).counitIso.hom.app M) = 𝟙 _ :=
   fieldEquivariantStalk_right_triangle.{u, w} k Ω M
 
-/-- The unit retains every actual original section and its original point germ. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For a coefficient sheaf Q, U ∈ Etale(Spec k), z ∈ U(Ω), and
+a ∈ Q(U), the unit section has value
+η_Q,U(a)(z) = germ_(U,z)(a). -/
 theorem fieldSheafGaloisEquivalence_unit_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -108,7 +176,15 @@ theorem fieldSheafGaloisEquivalence_unit_germ
         U (ULift.up z) Q.obj c :=
   fieldEquivariantStalkUnit_germ.{u, w} k Ω Q U z c
 
-/-- The counit retains every original germ and its literal invariant-function value. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For M ∈ D_G and h ∈ Φ(M)(U), the counit evaluates a germ:
+ε_M(germ_(U,z)(h)) = h(z). -/
 theorem fieldSheafGaloisEquivalence_counit_germ
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -119,13 +195,31 @@ theorem fieldSheafGaloisEquivalence_counit_germ
         (ULift.up z) ((fieldSheafGaloisEquivalence.{u, w} k Ω).inverse.obj M).obj h) = h z :=
   fieldEquivariantStalkCounit_germ.{u, w} k Ω M U z h
 
-/-- The full original-site inverse value is the literal equivariant-function group. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For every étale k-scheme U, the inverse sheaf value Φ(M)(U)
+is the abelian group of G-equivariant functions U(Ω) → M,
+with pointwise addition. -/
 theorem fieldSheafGaloisEquivalence_inverse_value
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (U : (Spec (.of k)).Etale) :
     ((fieldSheafGaloisEquivalence.{u, w} k Ω).inverse.obj M).obj.obj (op U) =
       AddCommGrpCat.of (FieldEquivariantFunctions.{u, w} k Ω U M) := rfl
 
-/-- Every original-site inverse restriction retains actual geometric-fiber precomposition. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For an étale map r : V → U and h : U(Ω) → M equivariant,
+restriction in Φ(M) has value
+(h|_V)(z) = h(r(z)) for z ∈ V(Ω). -/
 theorem fieldSheafGaloisEquivalence_inverse_restrict
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     {U V : (Spec (.of k)).Etale} (r : V ⟶ U)
@@ -136,7 +230,16 @@ theorem fieldSheafGaloisEquivalence_inverse_restrict
         h ((fieldGeometricPoint k Ω).fiber.map r z) :=
   fieldInvariantSkyscraperInverseSheaf_restrict_apply.{u, w} k Ω M r h z
 
-/-- Every original module map is the SAME original pointwise additive function. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For an equivariant additive map t : M → N, the inverse sheaf
+morphism Φ(t) sends an equivariant section h on U to t ∘ h.
+Its value at z is t(h(z)). -/
 theorem fieldSheafGaloisEquivalence_inverse_map
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N)
     (U : (Spec (.of k)).Etale) (h : FieldEquivariantFunctions.{u, w} k Ω U M)
@@ -146,7 +249,17 @@ theorem fieldSheafGaloisEquivalence_inverse_map
       DiscreteAbelianAction.homToAdd t (h z) :=
   fieldInvariantSkyscraperInverseSheaf_map_apply.{u, w} k Ω t U h z
 
-/-- Every finite-algebra value is the SAME original Hom_G formula, including product algebras. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For a finite étale k-algebra A, this additive equivalence identifies
+Φ(M)(Spec A) with Map_G(Hom_(k-alg)(A, Ω), M).
+The group acts on algebra embeddings by postcomposition and on M
+through its given continuous action. -/
 @[nolint defsWithUnderscore]
 def fieldSheafGaloisEquivalence_finite_value
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
@@ -156,7 +269,17 @@ def fieldSheafGaloisEquivalence_finite_value
       ((A.unop →ₐ[k] Ω) →[Gal(Ω/k)] DiscreteAbelianAction.underlying M) :=
   fieldInvariantFiniteEtaleSectionsEquiv.{u, w} k Ω M A
 
-/-- Every original finite-algebra arrow is the actual embedding precomposition. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For a map b : B → A of finite étale k-algebras and an equivariant
+section h on Spec B, restriction to Spec A has value
+ξ ↦ h(ξ ∘ b) for ξ : A →ₐ[k] Ω, under the finite étale value
+equivalences. -/
 theorem fieldSheafGaloisEquivalence_finite_restrict
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     {A B : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ} (r : A ⟶ B)
@@ -168,7 +291,16 @@ theorem fieldSheafGaloisEquivalence_finite_restrict
       fieldSheafGaloisEquivalence_finite_value.{u, w} k Ω M B h (ξ.comp r.unop.hom.hom) :=
   fieldInvariantFiniteEtaleSectionsEquiv_restrict.{u, w} k Ω M r h ξ
 
-/-- Every original module arrow uses its SAME additive postcomposition on finite values. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For a G-module morphism t : M → N and finite étale k-algebra A,
+the finite étale value equivalences identify Φ(t)_A with
+pointwise postcomposition h ↦ t ∘ h. -/
 theorem fieldSheafGaloisEquivalence_finite_map
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N)
     (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ)
@@ -181,7 +313,17 @@ theorem fieldSheafGaloisEquivalence_finite_map
         (fieldSheafGaloisEquivalence_finite_value.{u, w} k Ω M A h ξ) :=
   fieldInvariantFiniteEtaleSectionsEquiv_map.{u, w} k Ω t A h ξ
 
-/-- The original coefficient specialization goes through the ONE existing lift. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+For an étale sheaf F with coefficients in universe w, lift it
+to c = max(u, w). The equivalence unit on a lifted section ULift.up(a)
+over U has value at z equal to the germ of ULift.up(a) at the lifted
+geometric coordinate z. -/
 theorem fieldSheafGaloisEquivalence_original_unit_germ
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -195,7 +337,19 @@ theorem fieldSheafGaloisEquivalence_original_unit_germ
       (ULift.up z) ((liftCoefficients.{u, w} (Spec (.of k))).obj F).obj (ULift.up c) :=
   fieldEquivariantStalkUnit_original_germ.{u, w} k Ω F U z c
 
-/-- The complete field equivalence keeps both actual functors and every original source law. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+This proposition records the stalk and equivariant-function inverse
+functors, their invertible unit and counit, both triangle identities
+and their naturality. It includes the germ formulas η(a)(z) = germ_z(a)
+and ε(germ_z(h)) = h(z), the inverse sheaf's restriction and coefficient
+maps, the finite étale algebra value equivalences with their maps,
+and the unit formula for coefficients lifted from w to c. -/
 def OriginalFieldSheafGaloisEquivalenceLaws : Prop :=
   let E := fieldSheafGaloisEquivalence.{u, w} k Ω
   let T := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
@@ -268,7 +422,17 @@ def OriginalFieldSheafGaloisEquivalenceLaws : Prop :=
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).toPresheafFiber
       U (ULift.up z) ((liftCoefficients.{u, w} (Spec (.of k))).obj F).obj (ULift.up c)
 
-/-- The full original field-sheaf/Galois-module equivalence source unit. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Φ send a G-module M to the sheaf of G-equivariant functions
+U(Ω) → M on étale k-schemes U. Write η and ε for the unit and counit
+of E ⊣ Φ.
+The stalk and equivariant-function inverse form an equivalence with
+the stated unit, counit, both triangles and naturality. Its section
+and germ formulas hold on all étale objects, on finite étale algebra
+objects, and after coefficient lifting from w to c. -/
 theorem original_field_sheaf_galois_equivalence :
     OriginalFieldSheafGaloisEquivalenceLaws.{u, w} k Ω := by
   refine ⟨rfl, rfl, rfl, rfl, (fun Q => inferInstance), (fun M => inferInstance),

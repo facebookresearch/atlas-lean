@@ -1,4 +1,6 @@
-# Hom Additive Transformation
+# Coefficient Hom precomposition after forgetting integer scalars
 
-The source's additive Hom transformation, obtained by the native
-forgetful functor, with no changed Hom carrier or supplied comparison.
+Coefficient Hom precomposition after forgetting integer scalars.
+
+Forget the integer-opposite module structure of the coefficient Hom precomposition
+transformation to obtain a natural transformation valued in additive groups.

@@ -1,3 +1,5 @@
-# Horizontal Natural Direct Column Projection Map
+# The finite-stage cochain projection onto its direct column
 
-The natural-stage top-column projections form a cochain map.
+The finite-stage cochain projection onto its direct column.
+
+Assemble the supported component maps and zero unsupported components into a cochain map.

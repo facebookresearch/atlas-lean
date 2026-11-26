@@ -1,3 +1,5 @@
-# The original tensor comparison has the same equal-height...
+# The common-output tensor comparison is identity at equal heights
 
-The original tensor comparison has the same equal-height identity.
+For an (R,S)-bimodule B, comparing Tensor_z with itself
+after lifting its whole output to Ω=max(r,a,b,z,u) gives
+the identity natural isomorphism.

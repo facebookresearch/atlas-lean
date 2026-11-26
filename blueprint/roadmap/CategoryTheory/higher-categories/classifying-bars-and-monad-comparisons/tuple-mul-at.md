@@ -1,7 +1,6 @@
-# Tuple Mul At
+# Multiplication of adjacent tuple entries
 
-Multiply-adjacent tuple: collapse entries `m` and `m + 1` of a head-first
-tuple via pinned Mathlib `Fin.contractNth` at `m.castSucc` with `(· * ·)`.
-Below keeps the entry (`Fin.contractNth_apply_of_lt`), at multiplies the pair
-(`Fin.contractNth_apply_of_eq`), above shifts down
-(`Fin.contractNth_apply_of_gt`).
+Multiplication of adjacent tuple entries.
+
+For t : Fin (n+1) → G and m : Fin n, contract coordinates m and m+1 by the ordered product
+tₘtₘ₊₁, producing a tuple of length n.

@@ -6,18 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
--- SOURCE-ONLY native additive-functor cofiber component bridge; Native has not been run.
 module
 
 public import Mathlib.Algebra.Homology.HomotopyCofiber
 
 /-!
-# Original cofiber map components under an additive functor
+# Additive functors and components of maps out of cofibers
 
-The existing native additive-functor cofiber isomorphism returns every
-actual cofiber morphism with its original source and target inclusion
-components. These formulas use the native cofiber, with arbitrary category
-and complex-shape worlds, and no caller compatibility certificate.
+Let H:C → D be an additive functor between preadditive categories with
+binary biproducts, and let c be an arbitrary complex shape with decidable
+differential relation. For φ:F → G there is a canonical comparison
+ε:H(Cofib(φ)) ≅ Cofib(H(φ)).
+
+For a cofiber map q:Cofib(φ) → K, set
+q′=H(q) ∘ ε⁻¹:Cofib(H(φ)) → H(K).
+Precomposing q′ with either the shifted-source inclusion or the target
+inclusion gives H applied to the corresponding component of q.
+The categories and shape index have independent universes.
 -/
 
 @[expose] public section
@@ -35,7 +40,12 @@ variable {C : Type uC} [Category.{vC} C] [Preadditive C] [HasBinaryBiproducts C]
   (H : C ⥤ D) [H.Additive]
   {F G K : HomologicalComplex C c} (φ : F ⟶ G) (q : homotopyCofiber φ ⟶ K)
 
-/-- The native transported cofiber map retains its actual shifted-source component. -/
+/-- Let H:C → D be additive, where C and D are preadditive with binary
+biproducts, and let c have decidable differential relation.
+For φ:F → G and q:Cofib(φ) → K, write
+ε:H(Cofib(φ)) ≅ Cofib(H(φ)) and q′=H(q)∘ε⁻¹.
+If c.Rel(j,i), the shifted-source inclusions satisfy
+q′ⱼ ∘ inl_{Hφ}(i,j) = H(qⱼ ∘ inl_φ(i,j)). -/
 @[reassoc]
 theorem inlX_mapHomologicalComplexObjIso_inv_comp (i j : ι) (hji : c.Rel j i) :
     inlX ((H.mapHomologicalComplex c).map φ) i j hji ≫
@@ -45,7 +55,12 @@ theorem inlX_mapHomologicalComplexObjIso_inv_comp (i j : ι) (hji : c.Rel j i) :
       (mapHomologicalComplexObjXIso φ H j).inv ≫ H.map (q.f j) = _
   rw [inlX_mapHomologicalComplexObjXIso_inv_assoc, H.map_comp]
 
-/-- The native transported cofiber map retains its actual target component. -/
+/-- Let H:C → D be additive between preadditive categories with binary
+biproducts, and let c have decidable differential relation.
+For φ:F → G and q:Cofib(φ) → K, put
+q′=H(q)∘ε⁻¹ using ε:H(Cofib(φ)) ≅ Cofib(H(φ)).
+The target components satisfy, in every degree i,
+q′ᵢ ∘ inr_{Hφ}(i) = H(qᵢ ∘ inr_φ(i)). -/
 @[reassoc]
 theorem inrX_mapHomologicalComplexObjIso_inv_comp (i : ι) :
     inrX ((H.mapHomologicalComplex c).map φ) i ≫

@@ -14,12 +14,21 @@ public import MathlibExt.RepresentationTheory.Homological.ContCohomology.Coinduc
 public import MathlibExt.Algebra.Category.ModuleCat.Topology.Homology
 public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
 
-/-! # Positive continuous cohomology of actual injective field modules
+/-!
+# Continuous cohomology of injective discrete Galois modules
 
-The coefficient is the same discrete continuous module in the common
-universe. Its actual constant-function inclusion into compact-open
-coinduction splits by injectivity. The existing coinduced contraction then
-makes every positive homogeneous cochain cycle an actual boundary.
+Let k and Ω be fields in universe u, with Ω a separable closure of k,
+G = Gal(Ω/k), and c = max(u, w). A coefficient is a discrete abelian group
+in universe c with continuous G-action. For an injective object I of
+this action category, the equivariant constant-function map
+I → C(G, I) splits in the same category.
+
+The coinduced coefficient C(G, I) has the diagonal action
+(g • φ)(x) = g • φ(g⁻¹x) and the compact-open topology.
+Its comparison with the topological ℤ-representation preserves the
+constant-function inclusion and the splitting. Thus Hⁿ_cts(G, I) is zero
+for n > 0, and each closed homogeneous cochain in degree n + 1 is
+the differential of a cochain in degree n.
 -/
 
 @[expose] public section
@@ -33,33 +42,58 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The stock identity comparison retains the actual coinduced coefficient module. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For I ∈ D, the discrete coinduced object viewed as a topological
+ℤ-representation is isomorphic to C(G, I) with compact-open topology
+and diagonal action (g • φ)(x) = g • φ(g⁻¹x).
+The isomorphism preserves the underlying continuous functions. -/
 def fieldCoinductionTopRepIso (I : FieldCohomologyModule.{u, w} k Ω) :
     DiscreteAbelianAction.toTopRep.obj (DiscreteAbelianAction.coind.{u, w}.obj I) ≅
       (DiscreteAbelianAction.toTopRep.obj I).coind₁ :=
   TopRep.toActionFromAction (DiscreteAbelianAction.toTopRep.obj I).coind₁
 
-/-- The actual discrete constant inclusion is the original TopRep constant inclusion. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For I ∈ D, the discrete constant-function inclusion I → Coind(I),
+followed by the coinduction comparison in topological ℤ-representations,
+is the constant-function inclusion I → C(G, I). -/
 theorem fieldCoinductionTopRepIso_iota (I : FieldCohomologyModule.{u, w} k Ω) :
     DiscreteAbelianAction.toTopRep.map (DiscreteAbelianAction.coindIota.{u, w}.app I) ≫
         (fieldCoinductionTopRepIso.{u, w} k Ω I).hom =
       TopRep.coind₁ι.app (DiscreteAbelianAction.toTopRep.obj I) := by
   rfl
 
-/-- Injectivity supplies a genuine equivariant module retraction of the same inclusion. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+If I is injective in D, this equivariant additive retraction
+r : Coind(I) → I splits the constant-function inclusion i : I → Coind(I).
+Injectivity is taken in the discrete continuous G-action category. -/
 def fieldInjectiveCoinducedRetraction
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] :
     DiscreteAbelianAction.coind.{u, w}.obj I ⟶ I :=
   Injective.factorThru (𝟙 I) (DiscreteAbelianAction.coindIota.{u, w}.app I)
 
-/-- The splitting equation holds in the original discrete continuous action category. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective I ∈ D, the coinduced retraction r and constant-function
+inclusion i satisfy r ∘ i = id_I as morphisms of D. -/
 theorem fieldInjectiveCoinduced_iota_retraction
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] :
     DiscreteAbelianAction.coindIota.{u, w}.app I ≫
         fieldInjectiveCoinducedRetraction.{u, w} k Ω I = 𝟙 I :=
   Injective.comp_factorThru (𝟙 I) (DiscreteAbelianAction.coindIota.{u, w}.app I)
 
-/-- Retain the actual splitting arrow through the stock coefficient comparison. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective I ∈ D, the discrete equivariant retraction
+Coind(I) → I gives a continuous equivariant map C(G, I) → I in
+topological ℤ-representations, after the coinduction comparison. -/
 def fieldInjectiveTopRepRetraction
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] :
     (DiscreteAbelianAction.toTopRep.obj I).coind₁ ⟶
@@ -67,7 +101,12 @@ def fieldInjectiveTopRepRetraction
   (fieldCoinductionTopRepIso.{u, w} k Ω I).inv ≫
     DiscreteAbelianAction.toTopRep.map (fieldInjectiveCoinducedRetraction.{u, w} k Ω I)
 
-/-- The transported arrow splits the SAME original TopRep constant inclusion. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective I ∈ D, the continuous equivariant retraction
+s : C(G, I) → I satisfies s ∘ const = id_I in the topological
+ℤ-representation category. -/
 theorem fieldInjectiveTopRep_iota_retraction
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] :
     TopRep.coind₁ι.app (DiscreteAbelianAction.toTopRep.obj I) ≫
@@ -91,7 +130,12 @@ theorem fieldInjectiveTopRep_iota_retraction
       simp only [Category.assoc, Iso.hom_inv_id_assoc]
     _ = 𝟙 (P.obj I) := hP
 
-/-- Every positive degree of the EXISTING continuous homogeneous cohomology is zero. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective object I ∈ D and n ∈ ℕ, the continuous homogeneous
+cohomology group Hⁿ⁺¹_cts(G, I) is a zero object.
+ -/
 theorem fieldInjectiveContinuousCohomology_succ_isZero
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] (n : ℕ) :
     IsZero (continuousCohomology.{0, u, w} (n + 1)
@@ -104,7 +148,11 @@ theorem fieldInjectiveContinuousCohomology_succ_isZero
     (fieldInjectiveTopRepRetraction.{u, w} k Ω I)
     (fieldInjectiveTopRep_iota_retraction.{u, w} k Ω I) n
 
-/-- Every actual positive-degree cohomology element is the original zero element. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective object I ∈ D, n ∈ ℕ and
+x ∈ Hⁿ⁺¹_cts(G, I), one has x = 0. -/
 theorem fieldInjectiveContinuousCohomology_eq_zero
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] (n : ℕ)
     (x : continuousCohomology.{0, u, w} (n + 1)
@@ -115,7 +163,13 @@ theorem fieldInjectiveContinuousCohomology_eq_zero
     (fieldInjectiveContinuousCohomology_succ_isZero.{u, w} k Ω I n).eq_of_tgt _ _
   exact congrArg (fun f : A ⟶ A => f.hom x) h
 
-/-- Every original positive homogeneous cycle is the differential of a predecessor cochain. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective object I ∈ D and n ∈ ℕ, let z be a closed
+homogeneous continuous cochain in degree n + 1.
+There exists a degree n cochain b with d(b) = z, where z is viewed
+in the cochain term by the cycle inclusion. -/
 theorem fieldInjectiveContinuousCohomology_cycle_boundary
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] (n : ℕ)
     (z : (TopRep.homogeneousCochains (DiscreteAbelianAction.toTopRep.obj I)).cycles (n + 1)) :
@@ -130,7 +184,16 @@ theorem fieldInjectiveContinuousCohomology_cycle_boundary
     (K.homologyπ_eq_zero_iff_exists_boundary n (n + 1) (by simp) z).mp hz
   exact ⟨b, hb.symm⟩
 
-/-- All splitting and original homogeneous cochain laws for the same actual injective. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For an injective I ∈ D, this proposition records the monic
+constant inclusion i, the discrete and topological coinduction
+identifications, and their retractions r and s with r ∘ i = id and
+s ∘ const = id. It also records preservation of the underlying function
+and retraction values, vanishing of Hⁿ⁺¹_cts(G, I) for every n ∈ ℕ,
+and the existence of a predecessor cochain b with d(b) = z for every
+degree n + 1 cycle z. -/
 def OriginalFieldInjectiveContinuousCochainAcyclicityLaws
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] : Prop :=
   let P := DiscreteAbelianAction.toTopRep.{u, max u w} (G := Gal(Ω/k))
@@ -155,7 +218,14 @@ def OriginalFieldInjectiveContinuousCochainAcyclicityLaws
   ∀ (n : ℕ) (z : K.cycles (n + 1)),
     ∃ b : K.X n, (K.d n (n + 1)).hom b = (K.iCycles (n + 1)).hom z
 
-/-- The whole all-field, independent-coefficient, all-positive-degree acyclicity source unit. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+Every injective I ∈ D has the stated coinduction identifications and
+splittings in both the discrete action and topological representation
+categories. In all positive degrees its continuous cohomology is zero,
+and every homogeneous cycle has a predecessor whose differential is that cycle.
+The coefficient groups have universe c, independently of the field universe u. -/
 theorem original_field_injective_continuous_cochain_acyclicity
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] :
     OriginalFieldInjectiveContinuousCochainAcyclicityLaws.{u, w} k Ω I := by

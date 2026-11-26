@@ -1,4 +1,5 @@
-# Pair Homology Zero length eq quotient
+# The length of pair degree-zero homology
 
-The length of degree-zero homology of a two-generator Koszul complex is
-the length of the quotient by the two generated coefficients.
+The length of pair degree-zero homology.
+
+Its R-length equals ℓ_R(R/(f,g)).

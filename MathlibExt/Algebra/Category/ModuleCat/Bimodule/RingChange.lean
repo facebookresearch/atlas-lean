@@ -14,13 +14,22 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 public import MathlibExt.Algebra.Module.NatInt
 
 /-!
-# Native bimodule restriction with independent endpoint rings
+# Endpoint restriction and semilinear maps of bimodules
 
-An R–S bimodule is the existing native category object over
-`R ⊗[ℤ] Sᵐᵒᵖ`. Its endpoint restrictions commute by multiplication of the
-two tensor inclusions. Changing R and S uses the native tensor algebra map
-and `ModuleCat.restrictScalars`. Semilinear maps are characterized by the
-two original endpoint equations, with independent carrier universes.
+Let R,S be arbitrary rings. An (R,S)-bimodule is a module over
+E_(R,S)=R⊗[ℤ]Sᵒᵖ. Restricting along the two tensor inclusions gives
+its left R- and right S-actions; they commute, and
+(r⊗t)•x=r•(t•x). Conversely, commuting endpoint actions on an
+additive commutative group define this enveloping-ring module.
+
+For ring maps φ:R→R′ and ψ:S→S′, the enveloping map sends
+r⊗t to φ(r)⊗ψᵒᵖ(t). Restriction along this map is coherent with
+identity and composition and changes only the endpoint actions.
+
+An enveloping-semilinear map is equivalent to an additive map satisfying
+both endpoint equations f(r•x)=φ(r)•f(x) and
+f(t•x)=ψᵒᵖ(t)•f(x). This is a bijection of Hom sets.
+All endpoint-ring and coefficient carrier worlds are independent.
 -/
 
 @[expose] public section
@@ -37,35 +46,47 @@ namespace ModuleCat.Bimodule.RingChange
 variable {R : Type r} {S : Type s} [Ring R] [Ring S]
   {R' : Type r'} {S' : Type s'} [Ring R'] [Ring S']
 
-/-- The actual map of the two native enveloping rings, without commutative endpoints. -/
+/-- For ring homomorphisms φ:R→R′ and ψ:S→S′, the
+enveloping map E_(R,S)→E_(R′,S′) is the tensor map
+φ⊗ψᵒᵖ over ℤ. The endpoint rings may be noncommutative. -/
 def envelopingRingHom (φ : R →+* R') (ψ : S →+* S') :
     R ⊗[ℤ] Sᵐᵒᵖ →+* R' ⊗[ℤ] S'ᵐᵒᵖ :=
   (Algebra.TensorProduct.map φ.toIntAlgHom ψ.op.toIntAlgHom).toRingHom
 
-/-- Pure enveloping scalars retain their two separately mapped endpoints. -/
+/-- For φ:R→R′, ψ:S→S′, r∈R and t∈Sᵒᵖ,
+the enveloping map sends r⊗t to φ(r)⊗ψᵒᵖ(t).
+The right endpoint is carried through the opposite ring map. -/
 theorem envelopingRingHom_tmul (φ : R →+* R') (ψ : S →+* S')
     (r : R) (t : Sᵐᵒᵖ) :
     envelopingRingHom φ ψ (r ⊗ₜ[ℤ] t) = φ r ⊗ₜ[ℤ] ψ.op t :=
   Algebra.TensorProduct.map_tmul φ.toIntAlgHom ψ.op.toIntAlgHom r t
 
-/-- The native endpoint restriction along the first tensor inclusion. -/
+/-- For B∈ModuleCat(E_(R,S)), restriction along
+r↦r⊗1 gives its left R-module structure.
+The coefficient carrier world is independent of the two ring worlds. -/
 def leftModule (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) : Module R B :=
   Module.compHom B
     (Algebra.TensorProduct.includeLeftRingHom : R →+* R ⊗[ℤ] Sᵐᵒᵖ)
 
-/-- The native endpoint restriction along the second tensor inclusion. -/
+/-- For B∈ModuleCat(E_(R,S)), restriction along
+t↦1⊗t gives its Sᵒᵖ-module structure, hence its right
+S-action on the same carrier. -/
 def rightModule (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) : Module Sᵐᵒᵖ B :=
   Module.compHom B
     (Algebra.TensorProduct.includeRight : Sᵐᵒᵖ →ₐ[ℤ] R ⊗[ℤ] Sᵐᵒᵖ).toRingHom
 
-/-- The original integer action is native restriction of the stored enveloping action. -/
+/-- For an E_(R,S)-module B, scalar restriction along
+ℤ→E_(R,S) gives its integer module structure on the
+underlying additive commutative group. -/
 def groundModule (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) : Module ℤ B :=
   Module.compHom B (Int.castRingHom (R ⊗[ℤ] Sᵐᵒᵖ))
 
-/-- The actual two endpoint actions commute; no commuting-action conclusion is an input. -/
+/-- For a module B over E_(R,S), the left R- and right
+S-actions obtained from the tensor inclusions commute:
+r•(t•x)=t•(r•x), r∈R and t∈Sᵒᵖ. -/
 theorem commute (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) :
     letI := leftModule R S B
@@ -80,7 +101,9 @@ theorem commute (R : Type r) (S : Type s) [Ring R] [Ring S]
   apply congrArg (fun z : R ⊗[ℤ] Sᵐᵒᵖ => z • x)
   simp only [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
 
-/-- The original pure enveloping scalar is the ordered pair of endpoint actions. -/
+/-- For an E_(R,S)-module B, the action of r⊗t on x is
+r•(t•x), using its restricted left R- and right S-actions.
+This is the ordered factorization of the tensor-ring action. -/
 theorem smul_tmul (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (r : R) (t : Sᵐᵒᵖ) (x : B) :
     B.isModule.smul (r ⊗ₜ[ℤ] t) x =
@@ -97,8 +120,10 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S] (M : Type b)
   [AddCommGroup M] [dM : Module ℤ M] [dR : Module R M] [dS : Module Sᵐᵒᵖ M]
   [SMulCommClass R Sᵐᵒᵖ M]
 
-/-- Combine the given original actions with the native module constructor.
-The supplied integer dictionary is passed explicitly and its towers are earned. -/
+/-- For an additive commutative group M with specified
+integer, left R- and right S-module structures, suppose the
+two endpoint actions commute. Then M is a module over
+E_(R,S), with (r⊗t)•x=r•(t•x). -/
 def moduleOfActions : Module (R ⊗[ℤ] Sᵐᵒᵖ) M :=
   @TensorProduct.Algebra.module ℤ R Sᵐᵒᵖ M
     inferInstance (inferInstance : AddCommMonoid M) dM
@@ -107,26 +132,35 @@ def moduleOfActions : Module (R ⊗[ℤ] Sᵐᵒᵖ) M :=
     (Module.intModule_isScalarTower (Algebra.toModule : Module ℤ Sᵐᵒᵖ) dM)
     inferInstance
 
-/-- Bundle the given carrier and the earned native enveloping module. -/
+/-- For an additive commutative group M with commuting
+left R- and right S-actions and its specified ℤ-module action,
+the enveloping action makes M an object of ModuleCat^b(E_(R,S)).
+Its carrier is M. -/
 def ofActions : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ) :=
   letI := moduleOfActions R S M
   ModuleCat.of (R ⊗[ℤ] Sᵐᵒᵖ) M
 
-/-- The first native restriction recovers the actual given left module dictionary. -/
+/-- For the enveloping module built from specified commuting
+actions on M, restricting to the left R endpoint recovers
+the given Module R M structure. -/
 theorem ofActions_leftModule : leftModule R S (ofActions R S M) = dR := by
   apply Module.ext'
   intro r x
   change dR.smul r (dS.smul (1 : Sᵐᵒᵖ) x) = dR.smul r x
   exact congrArg (dR.smul r) (dS.one_smul x)
 
-/-- The second native restriction recovers the actual given right module dictionary. -/
+/-- For the enveloping module built from specified commuting
+actions on M, restricting to Sᵒᵖ recovers the given
+right S-module structure on M. -/
 theorem ofActions_rightModule : rightModule R S (ofActions R S M) = dS := by
   apply Module.ext'
   intro t x
   change dR.smul (1 : R) (dS.smul t x) = dS.smul t x
   exact dR.one_smul (dS.smul t x)
 
-/-- Native integer restriction also recovers the supplied original integer dictionary. -/
+/-- For the enveloping module formed from specified endpoint
+actions on M, integer scalar restriction recovers the
+given ℤ-module structure. -/
 theorem ofActions_groundModule : groundModule R S (ofActions R S M) = dM := by
   apply Module.ext'
   intro c x
@@ -148,7 +182,9 @@ variable (φ : R →+* R') (ψ : S →+* S')
   (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ))
   (B' : ModuleCat.{b'} (R' ⊗[ℤ] S'ᵐᵒᵖ))
 
-/-- A native semilinear enveloping map restricts to the original left actions. -/
+/-- For φ:R→R′ and ψ:S→S′, a map B→B′ semilinear along
+φ⊗ψᵒᵖ gives a φ-semilinear map between the restricted
+left endpoint modules. Its underlying additive function is unchanged. -/
 def toLeftSemilinearMap (f : B →ₛₗ[envelopingRingHom φ ψ] B') :
     letI := leftModule R S B
     letI := leftModule R' S' B'
@@ -163,7 +199,9 @@ def toLeftSemilinearMap (f : B →ₛₗ[envelopingRingHom φ ψ] B') :
   rw [envelopingRingHom_tmul, map_one] at h
   exact h
 
-/-- The second endpoint restriction is semilinear for the actual opposite ring map. -/
+/-- For φ:R→R′ and ψ:S→S′, a map B→B′ semilinear along
+the enveloping map gives a ψᵒᵖ-semilinear map between
+the right endpoint modules on the same carriers. -/
 def toRightSemilinearMap (f : B →ₛₗ[envelopingRingHom φ ψ] B') :
     letI := rightModule R S B
     letI := rightModule R' S' B'
@@ -178,7 +216,9 @@ def toRightSemilinearMap (f : B →ₛₗ[envelopingRingHom φ ψ] B') :
   rw [envelopingRingHom_tmul, map_one] at h
   exact h
 
-/-- Its left scalar equation refers to the original endpoint module data. -/
+/-- For an enveloping-semilinear map f:B→B′ along
+φ⊗ψᵒᵖ, the left actions satisfy
+f(r•x)=φ(r)•f(x) for every r∈R and x∈B. -/
 theorem map_left_smul (f : B →ₛₗ[envelopingRingHom φ ψ] B') (r : R) (x : B) :
     f ((leftModule R S B).smul r x) =
       (leftModule R' S' B').smul (φ r) (f x) := by
@@ -190,7 +230,9 @@ theorem map_left_smul (f : B →ₛₗ[envelopingRingHom φ ψ] B') (r : R) (x :
   rw [envelopingRingHom_tmul, map_one] at h
   exact h
 
-/-- Its right scalar equation likewise uses the original opposite endpoint. -/
+/-- For an enveloping-semilinear map f:B→B′ along
+φ⊗ψᵒᵖ, the right actions satisfy
+f(t•x)=ψᵒᵖ(t)•f(x) for every t∈Sᵒᵖ and x∈B. -/
 theorem map_right_smul (f : B →ₛₗ[envelopingRingHom φ ψ] B')
     (t : Sᵐᵒᵖ) (x : B) :
     f ((rightModule R S B).smul t x) =
@@ -203,7 +245,10 @@ theorem map_right_smul (f : B →ₛₗ[envelopingRingHom φ ψ] B')
   rw [envelopingRingHom_tmul, map_one] at h
   exact h
 
-/-- The two original equivariance equations earn native enveloping semilinearity. -/
+/-- For an additive map f:B→B′, assume
+f(r•x)=φ(r)•f(x) and f(t•x)=ψᵒᵖ(t)•f(x)
+for all endpoint scalars. Then f is semilinear over
+E_(R,S)→E_(R′,S′), without a separate enveloping-linearity premise. -/
 def ofSemilinearMap (f : B →+ B')
     (hL : ∀ (r : R) (x : B), f ((leftModule R S B).smul r x) =
       (leftModule R' S' B').smul (φ r) (f x))
@@ -227,11 +272,17 @@ def ofSemilinearMap (f : B →+ B')
     exact (congrArg f hSource).trans
       ((f.map_add _ _).trans ((congrArg₂ (fun a b : B' => a + b) hz hw).trans hTarget.symm))
 
-/-- The map constructed from the original endpoint equations keeps the original function. -/
+/-- For an additive map f satisfying the left and right
+endpoint semilinearity equations, the resulting
+enveloping-semilinear map sends x to f(x). -/
 theorem ofSemilinearMap_apply (f : B →+ B') (hL hR) (x : B) :
     ofSemilinearMap φ ψ B B' f hL hR x = f x := rfl
 
-/-- Complete characterization of the native semilinear bimodule maps. -/
+/-- For ring maps φ:R→R′ and ψ:S→S′, enveloping-semilinear
+maps B→B′ are in bijection with additive maps satisfying
+the φ-left and ψᵒᵖ-right scalar equations.
+The coefficient carrier worlds b,b′ are independent,
+and the correspondence is a plain equivalence of sets. -/
 def semilinearEquiv :
     (B →ₛₗ[envelopingRingHom φ ψ] B') ≃
       {f : B →+ B' //
@@ -254,12 +305,16 @@ def semilinearEquiv :
 
 end SemilinearMaps
 
-/-- Restriction is the native module category functor along the earned tensor ring map. -/
+/-- For φ:R→R′ and ψ:S→S′, restriction along
+φ⊗ψᵒᵖ gives ModuleCat^b(E_(R′,S′))→ModuleCat^b(E_(R,S)).
+It retains the coefficient carrier and restricts both endpoint actions. -/
 abbrev restrictFunctor (φ : R →+* R') (ψ : S →+* S') :
     ModuleCat.{b} (R' ⊗[ℤ] S'ᵐᵒᵖ) ⥤ ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ) :=
   ModuleCat.restrictScalars (envelopingRingHom φ ψ)
 
-/-- Simultaneous enveloping restriction has the genuine original left ring restriction. -/
+/-- For an E_(R′,S′)-module B′, its left R-action after
+enveloping restriction is r•x=φ(r)•x.
+This is the left endpoint module restricted along φ. -/
 theorem restrict_leftModule (φ : R →+* R') (ψ : S →+* S')
     (B' : ModuleCat.{b} (R' ⊗[ℤ] S'ᵐᵒᵖ)) :
     letI := leftModule R' S' B'
@@ -271,7 +326,9 @@ theorem restrict_leftModule (φ : R →+* R') (ψ : S →+* S')
     B'.isModule.smul (φ r ⊗ₜ[ℤ] (1 : S'ᵐᵒᵖ)) x
   rw [envelopingRingHom_tmul, map_one]
 
-/-- The actual right endpoint restriction is independently along `ψ.op`. -/
+/-- For an E_(R′,S′)-module B′, its right S-action after
+enveloping restriction is t•x=ψᵒᵖ(t)•x.
+This is its right endpoint module restricted along ψᵒᵖ. -/
 theorem restrict_rightModule (φ : R →+* R') (ψ : S →+* S')
     (B' : ModuleCat.{b} (R' ⊗[ℤ] S'ᵐᵒᵖ)) :
     letI := rightModule R' S' B'
@@ -283,7 +340,8 @@ theorem restrict_rightModule (φ : R →+* R') (ψ : S →+* S')
     B'.isModule.smul ((1 : R') ⊗ₜ[ℤ] ψ.op t) x
   rw [envelopingRingHom_tmul, map_one]
 
-/-- Identity endpoint maps recover the native enveloping identity ring map. -/
+/-- For rings R,S, the enveloping map induced by id_R
+and id_S is id on R⊗[ℤ]Sᵒᵖ. -/
 theorem envelopingRingHom_id :
     envelopingRingHom (RingHom.id R) (RingHom.id S) = RingHom.id (R ⊗[ℤ] Sᵐᵒᵖ) := by
   apply RingHom.ext
@@ -295,7 +353,9 @@ theorem envelopingRingHom_id :
 
 variable {R'' : Type r''} {S'' : Type s''} [Ring R''] [Ring S'']
 
-/-- The composite tensor ring map changes each noncommutative endpoint in its own order. -/
+/-- For composable endpoint maps φ,φ′ and ψ,ψ′,
+(φ′⊗ψ′ᵒᵖ)∘(φ⊗ψᵒᵖ) is the enveloping map of
+φ′∘φ and ψ′∘ψ. All ring worlds are independent. -/
 theorem envelopingRingHom_comp (φ : R →+* R') (ψ : S →+* S')
     (φ' : R' →+* R'') (ψ' : S' →+* S'') :
     (envelopingRingHom φ' ψ').comp (envelopingRingHom φ ψ) =
@@ -310,14 +370,19 @@ theorem envelopingRingHom_comp (φ : R →+* R') (ψ : S →+* S')
     rfl
   | add z w hz hw => rw [map_add, map_add, hz, hw, map_add]
 
-/-- The identity coherence is the native carrier-preserving restriction isomorphism. -/
+/-- Restriction along id_R and id_S is naturally
+isomorphic to the identity functor on E_(R,S)-modules.
+The component maps retain the underlying coefficient values. -/
 def restrictId :
     restrictFunctor (RingHom.id R) (RingHom.id S) ≅
       𝟭 (ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) :=
   ModuleCat.restrictScalarsId' (envelopingRingHom (RingHom.id R) (RingHom.id S))
     envelopingRingHom_id
 
-/-- Composition coherence is native scalar restriction along the proved composite map. -/
+/-- For R→R′→R″ and S→S′→S″, restriction along the
+composite endpoint maps is naturally isomorphic to first
+restricting from R″,S″ to R′,S′ and then to R,S.
+The coefficient carrier is unchanged. -/
 def restrictComp (φ : R →+* R') (ψ : S →+* S')
     (φ' : R' →+* R'') (ψ' : S' →+* S'') :
     restrictFunctor (φ'.comp φ) (ψ'.comp ψ) ≅
@@ -326,13 +391,17 @@ def restrictComp (φ : R →+* R') (ψ : S →+* S')
     (envelopingRingHom (φ'.comp φ) (ψ'.comp ψ))
     (envelopingRingHom_comp φ ψ φ' ψ').symm
 
-/-- The restriction composition comparison is the actual identity on each coefficient. -/
+/-- For an E_(R″,S″)-module B″, the forward component
+identifying composite endpoint restriction with two successive
+restrictions sends every x∈B″ to itself. -/
 theorem restrictComp_hom_apply (φ : R →+* R') (ψ : S →+* S')
     (φ' : R' →+* R'') (ψ' : S' →+* S'')
     (B'' : ModuleCat.{b} (R'' ⊗[ℤ] S''ᵐᵒᵖ)) (x : B'') :
     ((restrictComp φ ψ φ' ψ').hom.app B'').hom x = x := rfl
 
-/-- Its inverse has the same carrier identity. -/
+/-- For an E_(R″,S″)-module B″, the inverse component
+of the endpoint restriction-composition isomorphism sends
+every underlying value x to itself. -/
 theorem restrictComp_inv_apply (φ : R →+* R') (ψ : S →+* S')
     (φ' : R' →+* R'') (ψ' : S' →+* S'')
     (B'' : ModuleCat.{b} (R'' ⊗[ℤ] S''ᵐᵒᵖ)) (x : B'') :

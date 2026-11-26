@@ -15,11 +15,14 @@ public import Mathlib.Algebra.Homology.Opposite
 public import MathlibExt.CategoryTheory.Functor.Opposite
 
 /-!
-# Mapping an opposite complex through a functor
+# Opposite complexes and termwise functor mapping
 
-The native unop complex and mapHomologicalComplex commute by the actual
-identity maps on every coefficient. Only zero morphisms and their preservation
-are needed; no additivity, homology or global limit assumption is used.
+Let C,D be categories with zero morphisms and F:C→D preserve zero morphisms. The unop functor
+sends an object of (HomologicalComplex(Cᵒᵖ,c))ᵒᵖ to a complex in C with reversed shape c.symm.
+
+Unop followed by termwise F is naturally isomorphic to termwise Fᵒᵖ followed by unop. Both
+constructions have degree-i coefficient F(unop(K_i)), and the comparison and inverse are
+identities in every degree. This uses only the stated zero-morphism assumptions.
 -/
 
 @[expose] public section
@@ -36,7 +39,11 @@ variable {C : Type uC} [Category.{vC} C] [HasZeroMorphisms C]
   {D : Type uD} [Category.{vD} D] [HasZeroMorphisms D]
   {ι : Type w} (F : C ⥤ D) [F.PreservesZeroMorphisms] (c : ComplexShape ι)
 
-/-- Native unop commutes with the mapped complex through the original coefficient maps. -/
+/-- Let C,D be categories with zero morphisms in independent object/morphism universes
+(uC,vC),(uD,vD), F:C→D preserve zero morphisms, and c a complex shape on I in w. On objects
+K∈(HomologicalComplex(Cᵒᵖ,c))ᵒᵖ, the functors unop_C followed by F on shape c.symm and the
+opposite of termwise Fᵒᵖ followed by unop_D are naturally isomorphic. Both have degree-i object
+F(unop(K_i)), with identity component maps. -/
 def unopFunctorCompMapIso :
     unopFunctor C c ⋙ F.mapHomologicalComplex c.symm ≅
       ((F.op).mapHomologicalComplex c).op ⋙ unopFunctor D c :=
@@ -53,13 +60,19 @@ def unopFunctorCompMapIso :
         𝟙 _ ≫ F.map ((f.unop.f i).unop)
       rw [Category.comp_id, Category.id_comp])
 
-/-- The comparison retains the actual coefficient object in every degree. -/
+/-- Let C,D be categories with zero morphisms in independent object/morphism universes
+(uC,vC),(uD,vD), F:C→D preserve zero morphisms, and c a complex shape on I in w. For
+K∈(HomologicalComplex(Cᵒᵖ,c))ᵒᵖ and i∈I, the degree-i component of the forward comparison
+between the two unop/mapping functors is id_{F(unop(K_i))}. -/
 @[simp]
 theorem unopFunctorCompMapIso_hom_app_f
     (K : (HomologicalComplex Cᵒᵖ c)ᵒᵖ) (i : ι) :
     ((unopFunctorCompMapIso F c).hom.app K).f i = 𝟙 _ := rfl
 
-/-- The inverse comparison likewise uses identity coefficient maps. -/
+/-- Let C,D be categories with zero morphisms in independent object/morphism universes
+(uC,vC),(uD,vD), F:C→D preserve zero morphisms, and c a complex shape on I in w. For
+K∈(HomologicalComplex(Cᵒᵖ,c))ᵒᵖ and i∈I, the inverse comparison has degree-i component
+id_{F(unop(K_i))}, with the same reversed shape c.symm. -/
 @[simp]
 theorem unopFunctorCompMapIso_inv_app_f
     (K : (HomologicalComplex Cᵒᵖ c)ᵒᵖ) (i : ι) :

@@ -1,3 +1,5 @@
-# Normalized Eulerian Homology Projector
+# The normalized Eulerian projector on a homology degree
 
-The original normalized Hodge homology projector.
+The normalized Eulerian projector on a homology degree.
+
+Take the degree-`n` homology map of the weight-`i` normalized chain projector.

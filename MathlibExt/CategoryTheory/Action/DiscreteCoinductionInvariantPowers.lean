@@ -12,7 +12,20 @@ public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionShortExact
 public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionCoresolution
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.CoinductionInvariantExactness
 
-/-! # Exact original invariant-coinduction terms and actual monad powers -/
+/-!
+# Exactness of coinduction powers and their fixed points
+
+Let G be a compact, totally disconnected topological group in universe g, with discrete
+continuous abelian coefficients in W=max(g,w). The coinduction monad T preserves additive
+morphism operations. If a coefficient row is short exact after forgetting the action, every
+power T^n preserves its short exactness, both on the underlying abelian groups and in the action
+category.
+
+Evaluation at 1 identifies (TA)^G with the underlying coefficient group A. Consequently,
+applying fixed points after any positive power T^{n+1} preserves these short exact coefficient
+rows. The natural reassociation T^{n+1}A≅T(T^n A) relates the power functors and the evaluation
+comparisons; no exactness of the fixed-point functor on arbitrary actions is required.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -22,14 +35,22 @@ namespace CategoryTheory.DiscreteAbelianAction
 variable (G : Type g) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [CompactSpace G] [TotallyDisconnectedSpace G]
 
-/-- The original invariants functor preserves actual Hom addition. -/
+/-- Let G be a group with a topology in universe g and let discrete continuous abelian actions have
+coefficient universe W=max(g,w). The fixed-point functor F:A↦A^G is additive: for parallel
+equivariant additive maps f,h:A→B, F(f+h)=F(f)+F(h). Each map is the restriction of the
+coefficient map to fixed elements. -/
 instance invariants_additive : (invariantsFunctor.{g, max g w} (G := G)).Additive where
   map_add := by
     intro A B f h
     ext c
     rfl
 
-/-- The original invariant-coinduced group is the same coefficient group by identity evaluation. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For A, the group isomorphism
+e_A:F(TA)≅UA evaluates an invariant continuous function at the identity. A fixed function
+satisfies c(g)=g•c(1), so its value at 1 determines the entire function and every a∈A gives the
+invariant function g↦g•a. -/
 def coindInvariantsIso (A : DiscreteAbelianAction.{g, max g w} G) :
     invariantsFunctor.obj (coind.{g, w}.obj A) ≅ (forget.{g, max g w} G).obj A := by
   let X := toTopRep.obj A
@@ -40,12 +61,21 @@ def coindInvariantsIso (A : DiscreteAbelianAction.{g, max g w} G) :
   exact (Q.mapIso ((TopRep.invariantsFunctor ℤ G).mapIso (coindToTopRepIso.{g, w} G A))) ≪≫
     (forget₂ (ModuleCat.{max g w} ℤ) AddCommGrpCat.{max g w}).mapIso e
 
-/-- Evaluation has the actual identity value of the original coinduced function. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For c∈F(TA), the forward
+isomorphism e_A:F(TA)≅UA satisfies e_A.hom(c)=c(1). The element c is an invariant continuous
+function G→A for the diagonal coinduction action. -/
 theorem coindInvariantsIso_hom_apply (A : DiscreteAbelianAction.{g, max g w} G)
     (c : invariantsFunctor.obj (coind.{g, w}.obj A)) :
     (coindInvariantsIso.{g, w} G A).hom c = coindFunction.{g, w} A c.val 1 := rfl
 
-/-- The original invariant-coinduced exact sequence is the coefficient exact sequence. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. Let S=(A --a→ B --b→ C) be a
+short complex of actions whose underlying abelian-group row U(S) is short exact. Then F(TS) is
+short exact. The three evaluation isomorphisms e_A,e_B,e_C:F(T(-))≅U(-) form an isomorphism from
+F(TS) to U(S), preserving both arrows. -/
 theorem coindInvariants_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, max g w} G))
     (hS : (S.map (forget.{g, max g w} G)).ShortExact) :
@@ -57,7 +87,11 @@ theorem coindInvariants_shortExact
     (by ext c; rfl) (by ext c; rfl)
   exact ShortComplex.shortExact_of_iso e.symm hS
 
-/-- Every stored actual monad power is additive through the original coinduction functor. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For every n≥0, the
+endofunctor T^n is additive. Thus T^n(f+h)=T^n(f)+T^n(h) for parallel coefficient morphisms,
+including n=0 where T^0 is the identity functor. -/
 instance coindMonadPower_additive (n : ℕ) : (Monad.monadPow (coindMonad.{g, w} G) n).Additive := by
   induction n with
   | zero => change (𝟭 _).Additive; infer_instance
@@ -65,14 +99,22 @@ instance coindMonadPower_additive (n : ℕ) : (Monad.monadPow (coindMonad.{g, w}
     change (coind.{g, w} ⋙ Monad.monadPow (coindMonad.{g, w} G) n).Additive
     infer_instance
 
-/-- Zero preservation is supplied at the explicit original group and coefficient ranks. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For every n≥0 and every pair
+of coefficient actions A,B, the power functor T^n sends the zero morphism A→B to the zero
+morphism T^n A→T^n B. This follows from additivity of T^n. -/
 instance coindMonadPower_preservesZero (n : ℕ) :
     (Monad.monadPow (coindMonad.{g, w} G) n).PreservesZeroMorphisms := by
   let : (Monad.monadPow (coindMonad.{g, w} G) n).Additive :=
     coindMonadPower_additive.{g, w} G n
   infer_instance
 
-/-- Every actual monad power retains the given short-exact underlying coefficient sequence. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. If S is a short complex of
+actions and U(S) is short exact in abelian groups, then U(T^n S) is short exact for every n≥0.
+Its arrows are U(T^n a) and U(T^n b) on the same n-fold coinduced coefficient objects. -/
 theorem coindPower_forget_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, max g w} G))
     (hS : (S.map (forget.{g, max g w} G)).ShortExact) (n : ℕ) :
@@ -85,7 +127,12 @@ theorem coindPower_forget_shortExact
       (forget.{g, max g w} G)).ShortExact
     exact ih (S.map coind.{g, w}) (coind_forget_shortExact.{g, w} S hS)
 
-/-- Every actual positive or zero monad power is genuinely short exact in the original category. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For a short complex S=(A --a→
+B --b→ C) with U(S) short exact, the row T^n A --T^n a→ T^n B --T^n b→ T^n C is short exact in
+discrete continuous actions for every n≥0. Underlying short exactness supplies the kernel,
+cokernel, monicity, and epicity properties. -/
 theorem coindPower_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, max g w} G))
     (hS : (S.map (forget.{g, max g w} G)).ShortExact) (n : ℕ) :
@@ -93,7 +140,12 @@ theorem coindPower_shortExact
   shortExact_of_forget_shortExact.{g, max g w} (G := G) _
     (coindPower_forget_shortExact.{g, w} G S hS n)
 
-/-- The actual successor-power isomorphism is natural after the original invariant functor. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For n≥0, let
+α_A^n:T^{n+1}A≅T(T^n A) be the canonical power reassociation. For an action morphism f:A→B,
+F(T^{n+1}f)≫F((α_B^n).hom)=F((α_A^n).hom)≫F(T(T^n f)). Both paths are maps F(T^{n+1}A)→F(T(T^n
+B)). -/
 theorem coindPowerSucc_invariants_naturality (n : ℕ)
     {A B : DiscreteAbelianAction.{g, max g w} G} (f : A ⟶ B) :
     (invariantsFunctor.{g, max g w} (G := G)).map
@@ -110,8 +162,12 @@ theorem coindPowerSucc_invariants_naturality (n : ℕ)
     ((congrArg (fun a => F.map a) (Monad.monadPow_succ_obj_eq_naturality T n f)).trans
       (F.map_comp _ _))
 
-/-- All positive monad-power invariant terms retain the actual original exact coefficient
-sequence. -/
+/-- Let G be a compact, totally disconnected topological group in universe g and let discrete
+continuous abelian coefficients lie in W=max(g,w). Write U for the functor to abelian groups, T
+for diagonal coinduction, and F for the fixed-point functor A↦A^G. For a short complex S of
+actions with U(S) short exact and every n≥0, the abelian-group row F(T^{n+1}S) is short exact.
+Reassociation identifies it with F(T(T^n S)), and identity evaluation identifies the latter row
+with the short exact underlying row U(T^n S). The exponent is positive. -/
 theorem coindPowerInvariants_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, max g w} G))
     (hS : (S.map (forget.{g, max g w} G)).ShortExact) (n : ℕ) :

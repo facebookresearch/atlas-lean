@@ -1,4 +1,6 @@
-# Of Homological Complex₂
+# The signed conversion from a commuting bicomplex
 
-Undo the sign twist on a commuting Mathlib bicomplex.  Integer units are
-self-inverse, so the same sign is used in both directions.
+The signed conversion from a commuting bicomplex.
+
+Keep the objects and first differential of a commuting bicomplex and multiply its second
+differential in degree i₁ by ε(i₁). The squares become anticommuting.

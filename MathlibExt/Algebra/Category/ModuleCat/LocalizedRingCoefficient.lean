@@ -14,7 +14,16 @@ module
 
 public import MathlibExt.Algebra.Category.ModuleCat.LocalizationUnderSurjection
 
-/-! # Actual localized ring coefficients under a surjective scalar map -/
+/-!
+# Localized ring coefficients under a surjective scalar map
+
+Let f : R → S be a surjective map of commutative rings, let p be a prime ideal of S and put q
+= f⁻¹p. Localizing the R-module obtained by restricting a lifted copy of S at q gives the
+restriction of a lifted copy of S_p along the canonical local ring map R_q → S_p.
+
+The isomorphism retains the separate ring universes and the coefficient lift height
+max(u,v,m).
+-/
 
 @[expose] public section
 noncomputable section
@@ -25,8 +34,11 @@ open CategoryTheory
 namespace ModuleCat
 universe u v m
 
-/-- Localizing the actual restricted ring coefficient gives its original
-localized ring coefficient with the literal local scalar map. -/
+/-- The localized restricted ring-coefficient isomorphism.
+
+For surjective f : R → S and prime p ⊆ S, the localization at q = p.comap f of the restricted
+lifted S-module is isomorphic to the lifted S_p-module restricted along
+Localization.localRingHom q p f. -/
 def localizedRingCoefficientIso
     (R : Type u) (S : Type v) [CommRing R] [CommRing S]
     (f : R →+* S) (hf : Function.Surjective f) (p : Ideal S) [p.IsPrime] :

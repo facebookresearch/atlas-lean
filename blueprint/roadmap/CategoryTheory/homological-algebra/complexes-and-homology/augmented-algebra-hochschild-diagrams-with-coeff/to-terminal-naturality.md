@@ -1,3 +1,6 @@
-# To Terminal naturality
+# The terminal naturality equation for augmented coefficients
 
-The original stored Over equation proves naturality of the terminal augmentation.
+The terminal naturality equation for augmented coefficients.
+
+For `f : P → Q` over `B`, composing `f` with the terminal map of `Q` equals the terminal map
+of `P`. The equation does not require a rational scalar structure.

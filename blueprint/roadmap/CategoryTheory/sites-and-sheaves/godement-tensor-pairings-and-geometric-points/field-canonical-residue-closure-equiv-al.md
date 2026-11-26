@@ -1,3 +1,6 @@
-# Field Canonical Residue Closure Equiv algebra Map
+# Residue closure equivalence preserves base field elements
 
-The actual comparison sends the original base-field values to their prescribed Ω values.
+Residue closure equivalence preserves base field elements.
+
+The equivalence sends the image of any `a : k` under the canonical closure algebra map to its
+image in `Ω`.

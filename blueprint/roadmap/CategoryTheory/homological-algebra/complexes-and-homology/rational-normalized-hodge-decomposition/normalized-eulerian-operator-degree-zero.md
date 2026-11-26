@@ -1,3 +1,5 @@
-# Normalized Eulerian Operator degree zero
+# The normalized Eulerian projector in degree zero
 
-The degree-zero projector is the original identity, not a zero positive-degree convention.
+The normalized Eulerian projector in degree zero.
+
+The weight-zero operator on the degree-zero normalized coefficient module is the identity.

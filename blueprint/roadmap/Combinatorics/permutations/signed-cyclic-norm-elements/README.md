@@ -1,6 +1,6 @@
 # Signed cyclic norm elements
 
-- [Signed Cyclic Norm Element](signed-cyclic-norm-element.md)
-- [Signed Cyclic Norm Element inverse](signed-cyclic-norm-element-inverse.md)
-- [Head Fixing Group Ring Map](head-fixing-group-ring-map.md)
-- [Head Fixing Group Ring Map single](head-fixing-group-ring-map-single.md)
+- [The signed cyclic norm](signed-cyclic-norm-element.md)
+- [Inverse rotations give the same norm](signed-cyclic-norm-element-inverse.md)
+- [The fixed-head group-ring homomorphism](head-fixing-group-ring-map.md)
+- [The fixed-head map preserves coefficients](head-fixing-group-ring-map-single.md)

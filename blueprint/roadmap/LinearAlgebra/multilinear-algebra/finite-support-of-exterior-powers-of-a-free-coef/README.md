@@ -2,12 +2,12 @@
 
 ## Finsupp
 
-- [Finset Include](finset-include.md)
-- [Finset Restrict](finset-restrict.md)
-- [Finset Restrict comp include](finset-restrict-comp-include.md)
-- [Finset Include restrict of support subset](finset-include-restrict-of-support-subse.md)
+- [Extension by zero from finite coordinates](finset-include.md)
+- [Restriction to a finite coordinate set](finset-restrict.md)
+- [Restriction retracts finite-coordinate inclusion](finset-restrict-comp-include.md)
+- [Supported vectors are recovered after restriction](finset-include-restrict-of-support-subse.md)
 
 ## Exterior Power
 
-- [Map finset Include injective](map-finset-include-injective.md)
-- [Exists preimage finset](exists-preimage-finset.md)
+- [Finite-coordinate inclusion stays injective on exterior powers](map-finset-include-injective.md)
+- [Every exterior element has finite coordinate support](exists-preimage-finset.md)

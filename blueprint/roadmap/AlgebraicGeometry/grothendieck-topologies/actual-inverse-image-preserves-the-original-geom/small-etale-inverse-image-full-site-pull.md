@@ -1,4 +1,6 @@
-# Small Etale Inverse Image Full Site Pullback Iso
+# Affine inverse image agrees with full site sheaf pullback
 
-The actual affine construction is the same left adjoint as the chosen
-full original-site pullback; no full-site presheaf Kan premise is needed.
+Affine inverse image agrees with full site sheaf pullback.
+
+The affine-basis inverse-image functor is naturally isomorphic to sheaf pullback along the
+full small étale base-change functor.

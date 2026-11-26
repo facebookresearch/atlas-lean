@@ -1,4 +1,5 @@
-# Pair differential one injective
+# Regularity of the first element makes the top differential injective
 
-The top two-generator Koszul differential is injective when the first
-coefficient acts injectively on the ring.
+Regularity of the first element makes the top differential injective.
+
+If multiplication by f on R is injective, the map c ↦ c(−g,f) is injective.

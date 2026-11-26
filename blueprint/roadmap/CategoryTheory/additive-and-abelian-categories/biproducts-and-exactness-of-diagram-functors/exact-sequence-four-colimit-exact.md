@@ -1,5 +1,6 @@
-# Exact Sequence Four Colimit exact
+# Exact colimits preserve an exact five-object sequence
 
-Exact colimits preserve exactness of five-object composable sequences.
-Filtered applications obtain `HasExactColimitsOfShape` from their AB5
-instances.
+Exact colimits preserve an exact five-object sequence.
+
+If C is abelian and colimits of shape J are exact, the pointwise colimit of F : J →
+ExactSequences C 4 is exact.

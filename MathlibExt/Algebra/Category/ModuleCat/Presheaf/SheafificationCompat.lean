@@ -16,10 +16,13 @@ public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Localization
 /-!
 # Sheafification over a sheaf of commutative rings
 
-The canonical identity comparison on the underlying ring presheaves is
-locally injective and locally surjective. It induces the sheafification
-functor `PresheafOfModules.sheafificationCommId` for module presheaves over
-a sheaf of commutative rings.
+Let R be a sheaf of commutative rings on a site (C,J). Forgetting commutativity gives a sheaf
+of rings with the same section rings; the identity comparison of the underlying ring
+presheaves is locally injective and locally surjective.
+
+Under the stated weak sheafification, locally bijective characterization for additive
+presheaves, and preservation of sheaves by the ring-forgetful functor, this comparison defines
+sheafification from R-module presheaves to module sheaves over the underlying ring sheaf.
 -/
 
 @[expose] public section
@@ -35,8 +38,10 @@ namespace CategoryTheory.Sheaf
 
 variable [J.HasSheafCompose (forget₂ CommRingCat.{u} RingCat.{u})] (R : Sheaf J CommRingCat.{u})
 
-/-- The α argument for `PresheafOfModules.sheafification` when the presheaf of rings is
-a sheaf of commutative rings. -/
+/-- The identity comparison of underlying ring presheaves.
+
+For a commutative ring sheaf R, its underlying ring presheaf is identified with the presheaf
+underlying its ring-valued sheaf composition. The comparison morphism is the identity. -/
 def commRingCatForget₂Id :
     R.obj ⋙ forget₂ _ RingCat.{u} ⟶ ((sheafCompose J (forget₂ ..)).obj R).obj :=
   𝟙 _
@@ -54,7 +59,11 @@ namespace PresheafOfModules
 -- Upstream scopes this in a `section`; here it precedes `sheafificationCommId` only.
 variable [HasWeakSheafify J AddCommGrpCat.{v}]
 
-/-- The sheafification functor for presheaves of modules over `R`. -/
+/-- Module sheafification over a commutative ring sheaf.
+
+Using the identity comparison of underlying ring presheaves, sheafify R-module presheaves to
+module sheaves over the corresponding ring sheaf, under the stated site and weak-
+sheafification assumptions. -/
 noncomputable abbrev sheafificationCommId [J.HasSheafCompose (forget₂ CommRingCat.{u} RingCat.{u})]
     (R : Sheaf J CommRingCat.{u}) :
     PresheafOfModules.{v} (R.obj ⋙ forget₂ ..) ⥤

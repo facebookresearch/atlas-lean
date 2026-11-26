@@ -1,4 +1,5 @@
-# Small Etale Direct Image additive
+# Small étale direct image is additive
 
-Additivity comes from the stock additive precomposition and full-subcategory
-lift providers, in every independent coefficient universe.
+Small étale direct image is additive.
+
+Direct image preserves sums of abelian-sheaf morphisms.

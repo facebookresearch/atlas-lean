@@ -1,4 +1,6 @@
-# Schreier Corestriction two eq
+# The second degree of canonical corestriction
 
-The canonical arbitrary-degree map recovers canonical degree-two
-corestriction.
+The second degree of canonical corestriction.
+
+The underlying linear map of canonical Schreier corestriction in degree two equals
+corestrictionH2 A.

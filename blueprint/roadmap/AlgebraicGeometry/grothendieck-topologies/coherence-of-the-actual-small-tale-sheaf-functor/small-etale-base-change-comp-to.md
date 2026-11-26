@@ -1,3 +1,6 @@
-# Small Etale Base Change Comp To
+# Base change comparison for an identified composite
 
-The same canonical base-change comparison with an explicitly named composite.
+Base change comparison for an identified composite.
+
+For `fg = f ≫ g`, the pullback composition isomorphism gives `baseChange fg ≅ baseChange g ⋙
+baseChange f`.

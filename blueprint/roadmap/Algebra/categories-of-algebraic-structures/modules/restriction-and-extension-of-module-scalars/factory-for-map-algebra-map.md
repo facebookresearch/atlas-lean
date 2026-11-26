@@ -1,3 +1,6 @@
-# Factory For Map algebra Map
+# Agreement with tensoring through the algebra map
 
-An actual structural algebra and its structural map give the same tensor family.
+Agreement with tensoring through the algebra map.
+
+For an existing algebra structure R → S, factoryForMap at algebraMap R S equals the
+coefficient tensor bifunctor of that structure.

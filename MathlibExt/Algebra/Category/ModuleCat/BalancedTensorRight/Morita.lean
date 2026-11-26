@@ -20,16 +20,21 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Unitors
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Contraction
 
 /-!
-# Module equivalences from invertible bimodule contractions
+# Morita return maps for right-module tensor functors
 
-The comparison maps are the balanced tensor associator followed by a
-bimodule contraction and a unitor. The scalar rings may be noncommutative
-and have independent universes; the coefficient carriers and module
-categories use the common carrier universe `v`.
+Let `R` and `S` be associative rings with independent universes. Let `P` be an `R`-left,
+`S`-right bimodule and `Q` an `S`-left, `R`-right bimodule, with coefficient and module
+carriers in universe `v`. The tensor functors `- ⊗_R P` and `- ⊗_S Q` act between the right
+module categories.
 
-The contractions are bimodule isomorphisms. Adjointification constructs
-the triangle identity while retaining the tensor functors and specified
-counit.
+The balanced associator identifies `(A ⊗_R P) ⊗_S Q` with `A ⊗_R (P ⊗_S Q)`. A bimodule
+equivalence `u : P ⊗_S Q ≅ R` contracts the latter to `A`, with `[[a ⊗ p] ⊗ q] ↦ op (u([p ⊗
+q])) • a`. More generally, a bimodule equivalent to the regular `R`-bimodule gives a tensor
+unitor, including for a given integer-module structure on its carrier.
+
+A second bimodule equivalence `Q ⊗_R P ≅ S` supplies the other return isomorphism. They define
+a categorical equivalence of right-module categories whose counit is the specified `S`-return
+map and whose unit is adjointified from the inverse `R`-return map.
 -/
 
 @[expose] public section
@@ -56,7 +61,11 @@ variable [givenIntegerModule : Module ℤ B]
   (he : ∀ (r : R) (b : B), e (r • b) = r * e b)
 
 include e he in
-/-- Contract the original quotient, retaining its given integer action. -/
+/-- Right-module contraction with a given integer coefficient action.
+
+Let `B` be an `R`-bimodule with a given integer-module structure and a right-linear
+equivalence `e : B ≃ₗ[Rᵐᵒᵖ] R` preserving the left `R`-action. For each right module `A`,
+contraction gives `Balanced ℤ R A B ≃ₗ[Rᵐᵒᵖ] A`. -/
 def contractionLinearRaw (A : ModuleCat.{v} Rᵐᵒᵖ) :
     letI := Module.intModule_smulCommClass (S := Rᵐᵒᵖ) (M := B) (dM := givenIntegerModule)
     letI := rightModule ℤ R R A B
@@ -92,7 +101,10 @@ def contractionLinearRaw (A : ModuleCat.{v} Rᵐᵒᵖ) :
   change E (rightAction ℤ R R A B t x) = t • E x
   exact DFunLike.congr_fun h x
 
-/-- The contraction has the original right-action value on pure classes. -/
+/-- Raw right-module contraction on pure classes.
+
+With the given integer-module coefficient action, the contraction associated to `e` sends `[a
+⊗ b]` to `op (e b) • a`. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem contractionLinearRaw_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (a : A) (b : B) :
     letI := Module.intModule_smulCommClass (S := Rᵐᵒᵖ) (M := B) (dM := givenIntegerModule)
@@ -117,29 +129,44 @@ variable (e : B ≃ₗ[Rᵐᵒᵖ] R)
   (he : ∀ (r : R) (b : B), e (r • b) = r * e b)
 
 include e he in
-/-- Contract the actual tensor-functor object, with its canonical integer action. -/
+/-- Right-module contraction in the tensor-object coordinates.
+
+For an `R`-bimodule equivalent to the regular bimodule, contraction gives a right `R`-linear
+equivalence from `tensorObj R R B A` to `A`. -/
 def contractionLinear (A : ModuleCat.{v} Rᵐᵒᵖ) :
     tensorObj R R B A ≃ₗ[Rᵐᵒᵖ] A :=
   contractionLinearRaw R B e he A
 
+/-- Tensor-object right-module contraction on pure classes.
+
+The contraction equivalence in the tensor-object coordinates satisfies `[a ⊗ b] ↦ op (e b) •
+a`. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem contractionLinear_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (a : A) (b : B) :
     contractionLinear R B e he A (mk ℤ R A B a b) = op (e b) • a :=
   contractionLinearRaw_mk R B e he A a b
 
 include e he in
-/-- The actual component iso does not require the regular ring object to
-live in the module carrier universe. -/
+/-- Categorical right-module contraction isomorphism.
+
+Bundle the right-linear contraction from `A ⊗_R B` to `A` as an isomorphism in `ModuleCat
+Rᵐᵒᵖ`, using a bimodule equivalence `B ≅ R`. -/
 def contractionIso (A : ModuleCat.{v} Rᵐᵒᵖ) : tensorObj R R B A ≅ A :=
   (contractionLinear R B e he A).toModuleIso
 
+/-- Categorical right-module contraction on pure classes.
+
+The forward categorical contraction map sends the balanced class `[a ⊗ b]` to `op (e b) • a`. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem contractionIso_hom_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (a : A) (b : B) :
     (contractionIso R B e he A).hom.hom (mk ℤ R A B a b) = op (e b) • a :=
   contractionLinear_mk R B e he A a b
 
 include e he in
-/-- Bimodule contraction is natural in the original right-module variable. -/
+/-- Regular-equivalent coefficient tensor is naturally the right-module identity.
+
+A bimodule equivalence `B ≅ R` gives a natural isomorphism `tensorFunctor R R B ≅ 𝟭 (ModuleCat
+Rᵐᵒᵖ)` through its contraction maps. -/
 def contractionNatIso : tensorFunctor R R B ≅ 𝟭 (ModuleCat.{v} Rᵐᵒᵖ) :=
   NatIso.ofComponents (contractionIso R B e he) (by
     intro A A' f
@@ -162,21 +189,28 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
   [Module R P] [Module Sᵐᵒᵖ P] [SMulCommClass R Sᵐᵒᵖ P]
   [Module S Q] [Module Rᵐᵒᵖ Q] [SMulCommClass S Rᵐᵒᵖ Q]
 
-/-- The pure triple class in the actual composite tensor functor. The
-integer action on its bundled inner factor is the native canonical action. -/
+/-- Pure triple in the right-module return composite.
+
+For `a : A`, `p : P`, and `q : Q`, this element is `[[a ⊗ p] ⊗ q]` in the composite that
+tensors first by `P` and then by `Q`. -/
 def compositeMk (A : ModuleCat.{v} Rᵐᵒᵖ) (a : A) (p : P) (q : Q) :
     ((tensorFunctor R S P) ⋙ (tensorFunctor S R Q)).obj A := by
   let X := tensorObj R S P A
   letI : Module ℤ X := AddCommGroup.toIntModule X
   exact mk ℤ S X Q (mk ℤ R A P a p) q
 
-/-- Bundle the original left parentheses with their computed right action. -/
+/-- Left-associated right-module return tensor object.
+
+Bundle `(A ⊗_R P) ⊗_S Q` as a right `R`-module, with the outer right action induced from `Q`. -/
 def assocSourceObj (A : ModuleCat.{v} Rᵐᵒᵖ) : ModuleCat.{v} Rᵐᵒᵖ :=
   letI := rightModule ℤ R S A P
   letI := rightModule ℤ S R (TensorProduct.Balanced ℤ R A P) Q
   ModuleCat.of Rᵐᵒᵖ (assocSource ℤ R S A P Q)
 
-/-- Bundle the original right parentheses with the twice-computed action. -/
+/-- Right-associated right-module return tensor object.
+
+Bundle `A ⊗_R (P ⊗_S Q)` as a right `R`-module, using the induced left and right `R`-actions
+on the composite coefficient `P ⊗_S Q`. -/
 def assocTargetObj (A : ModuleCat.{v} Rᵐᵒᵖ) : ModuleCat.{v} Rᵐᵒᵖ :=
   letI := leftModule ℤ S R P Q
   letI := rightModule ℤ S R P Q
@@ -184,8 +218,10 @@ def assocTargetObj (A : ModuleCat.{v} Rᵐᵒᵖ) : ModuleCat.{v} Rᵐᵒᵖ :=
   letI := rightModule ℤ R R A (TensorProduct.Balanced ℤ S P Q)
   ModuleCat.of Rᵐᵒᵖ (assocTarget ℤ R S A P Q)
 
-/-- Native uniqueness of the integer action identifies the bundled
-composite with the original associator source, without changing its factors. -/
+/-- Successive right-module tensor output in associator source coordinates.
+
+The successive tensor-functor output at `A` is isomorphic to `assocSourceObj R S P Q A`, the
+left-associated balanced quotient with its right `R`-action. -/
 def compositeCoordinates (A : ModuleCat.{v} Rᵐᵒᵖ) :
     ((tensorFunctor R S P) ⋙ (tensorFunctor S R Q)).obj A ≅
       assocSourceObj R S P Q A := by
@@ -200,7 +236,10 @@ def compositeCoordinates (A : ModuleCat.{v} Rᵐᵒᵖ) :
     ModuleCat.of Rᵐᵒᵖ (TensorProduct.Balanced ℤ S X Q)
   exact eqToIso (congrArg K (Subsingleton.elim d₀ d))
 
-/-- The earned dictionary comparison preserves each literal triple class. -/
+/-- Right-module composite coordinate on pure triples.
+
+The forward coordinate map sends the composite-functor element represented by `a, p, q` to the
+left-associated class `[[a ⊗ p] ⊗ q]`. -/
 @[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_obj simplifies LHS
 theorem compositeCoordinates_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
     (a : A) (p : P) (q : Q) :
@@ -226,7 +265,10 @@ theorem compositeCoordinates_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
     rfl
   exact hz d₀ d (Subsingleton.elim d₀ d)
 
-/-- The given raw associator is right-linear for the actual outer actions. -/
+/-- Right-linear balanced associator for the return tensor.
+
+The balanced associator is an `Rᵐᵒᵖ`-linear equivalence from `(A ⊗_R P) ⊗_S Q` to `A ⊗_R (P
+⊗_S Q)` with the induced outer actions. -/
 def associationLinear (A : ModuleCat.{v} Rᵐᵒᵖ) :
     assocSourceObj R S P Q A ≃ₗ[Rᵐᵒᵖ] assocTargetObj R S P Q A := by
   letI := rightModule ℤ R S A P
@@ -239,6 +281,9 @@ def associationLinear (A : ModuleCat.{v} Rᵐᵒᵖ) :
   exact (assoc ℤ R S A P Q).toAddEquiv.toLinearEquiv
     (fun t x => assoc_right_smul ℤ R S A P Q R t x)
 
+/-- Right-linear associator on nested pure classes.
+
+The right-linear associator sends `[[a ⊗ p] ⊗ q]` to `[a ⊗ [p ⊗ q]]`. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem associationLinear_mk_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
     (a : A) (p : P) (q : Q) :
@@ -251,13 +296,20 @@ theorem associationLinear_mk_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
   let := leftModule ℤ S R P Q
   exact assoc_mk_mk ℤ R S A P Q a p q
 
-/-- Reassociation on the actual bundled composite tensor object. -/
+/-- Categorical associator for the right-module return composite.
+
+The successive tensor-functor output at `A` is isomorphic to `assocTargetObj R S P Q A` by the
+composite coordinate followed by the right-linear balanced associator. -/
 def compositeAssociationIso (A : ModuleCat.{v} Rᵐᵒᵖ) :
     ((tensorFunctor R S P) ⋙ (tensorFunctor S R Q)).obj A ≅
       assocTargetObj R S P Q A :=
   (compositeCoordinates R S P Q A).trans
     (associationLinear R S P Q A).toModuleIso
 
+/-- Categorical right return associator on pure triples.
+
+The categorical return associator sends the successive tensor element `[[a ⊗ p] ⊗ q]` to `[a ⊗
+[p ⊗ q]]`. -/
 @[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_obj simplifies LHS
 theorem compositeAssociationIso_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
     (a : A) (p : P) (q : Q) :
@@ -281,7 +333,11 @@ variable
     ∀ (r : R) (x : TensorProduct.Balanced ℤ S P Q), u (r • x) = r * u x)
 
 include u hu in
-/-- Contract the reassociated pair using the given bimodule isomorphism. -/
+/-- Right-module return isomorphism from a composite coefficient contraction.
+
+Given a bimodule equivalence `u : P ⊗_S Q ≅ R`, associate the successive tensor output and
+then contract its composite coefficient. This gives an isomorphism from `(A ⊗_R P) ⊗_S Q` to
+`A`. -/
 def compositeContractionIso (A : ModuleCat.{v} Rᵐᵒᵖ) :
     ((tensorFunctor R S P) ⋙ (tensorFunctor S R Q)).obj A ≅ A := by
   letI := leftModule ℤ S R P Q
@@ -291,7 +347,10 @@ def compositeContractionIso (A : ModuleCat.{v} Rᵐᵒᵖ) :
   exact (compositeAssociationIso R S P Q A).trans
     (contractionLinearRaw R (TensorProduct.Balanced ℤ S P Q) u hu A).toModuleIso
 
-/-- The return map has the literal pairing value on the original ordered factors. -/
+/-- Right-module composite return map on pure triples.
+
+The return map defined by `u` sends `[[a ⊗ p] ⊗ q]` to `op (u([p ⊗ q])) • a`, retaining the
+right-action order. -/
 @[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_obj simplifies LHS
 theorem compositeContractionIso_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
     (a : A) (p : P) (q : Q) :
@@ -307,7 +366,10 @@ theorem compositeContractionIso_mk (A : ModuleCat.{v} Rᵐᵒᵖ)
   rw [compositeAssociationIso_mk, contractionLinearRaw_mk]
 
 include u hu in
-/-- The actual bimodule contraction is natural in the right-module variable. -/
+/-- Right-module composite contraction is natural.
+
+The contraction maps give a natural isomorphism from `tensorFunctor R S P ⋙ tensorFunctor S R
+Q` to the identity on right `R`-modules. -/
 def compositeContractionNatIso :
     (tensorFunctor R S P) ⋙ (tensorFunctor S R Q) ≅
       𝟭 (ModuleCat.{v} Rᵐᵒᵖ) :=
@@ -377,31 +439,50 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
     ∀ (s : S) (x : TensorProduct.Balanced ℤ R Q P), w (s • x) = s * w x)
 
 include u hu w hw in
-/-- The actual right-module equivalence from the two invertible bimodule
-contractions. Its triangle is earned by native adjointification. -/
+/-- Right-module Morita equivalence from two bimodule contractions.
+
+Bimodule equivalences `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S` construct `ModuleCat Rᵐᵒᵖ ≌ ModuleCat
+Sᵐᵒᵖ`, with forward tensor coefficient `P` and inverse tensor coefficient `Q`. -/
 def equivalence : ModuleCat.{v} Rᵐᵒᵖ ≌ ModuleCat.{v} Sᵐᵒᵖ :=
   CategoryTheory.Equivalence.mk (tensorFunctor R S P) (tensorFunctor S R Q)
     (compositeContractionNatIso R S P Q u hu).symm
     (compositeContractionNatIso S R Q P w hw)
 
+/-- Forward right-module Morita functor is tensor by P.
+
+The forward functor of the contraction-based right-module equivalence is `tensorFunctor R S
+P`, namely `- ⊗_R P`. -/
 @[simp]
 theorem equivalence_functor : (equivalence R S P Q u hu w hw).functor =
     tensorFunctor R S P := rfl
 
+/-- Inverse right-module Morita functor is tensor by Q.
+
+The inverse functor of the contraction-based right-module equivalence is `tensorFunctor S R
+Q`, namely `- ⊗_S Q`. -/
 @[simp]
 theorem equivalence_inverse : (equivalence R S P Q u hu w hw).inverse =
     tensorFunctor S R Q := rfl
 
-/-- Native adjointification keeps the earned counit unchanged. -/
+/-- Counit of the right-module Morita equivalence is its S-return contraction.
+
+The counit is `compositeContractionNatIso S R Q P w hw`, constructed from the bimodule
+equivalence `Q ⊗_R P ≅ S`. -/
 theorem equivalence_counitIso : (equivalence R S P Q u hu w hw).counitIso =
     compositeContractionNatIso S R Q P w hw := rfl
 
-/-- The chosen unit is the actual native refinement of the input contraction. -/
+/-- Unit of the right-module Morita equivalence is adjointified.
+
+The unit is `Equivalence.adjointifyη` of the inverse `R`-return contraction and the specified
+`S`-return counit. The tensor functors and counit are retained. -/
 theorem equivalence_unitIso : (equivalence R S P Q u hu w hw).unitIso =
     Equivalence.adjointifyη (compositeContractionNatIso R S P Q u hu).symm
       (compositeContractionNatIso S R Q P w hw) := rfl
 
-/-- The unchanged counit has the book's ordered contraction formula. -/
+/-- Right-module Morita counit evaluates the S-contraction.
+
+For a right `S`-module `A`, the counit sends `[[a ⊗ q] ⊗ p]` to `op (w([q ⊗ p])) • a`, where
+`w : Q ⊗_R P ≅ S` is the second bimodule equivalence. -/
 @[simp, nolint simpNF] -- stated with the equivalence for rw; equivalence_functor simplifies LHS
 theorem equivalence_counitIso_mk (A : ModuleCat.{v} Sᵐᵒᵖ)
     (a : A) (q : Q) (p : P) :

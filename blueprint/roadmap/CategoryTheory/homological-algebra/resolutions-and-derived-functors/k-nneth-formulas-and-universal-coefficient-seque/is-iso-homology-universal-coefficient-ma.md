@@ -1,4 +1,6 @@
-# Is Iso homology Universal Coefficient Map of field
+# The canonical coefficient map is an isomorphism over a field
 
-Over a field, the canonical homological universal-coefficient map is an
-isomorphism.
+The canonical coefficient map is an isomorphism over a field.
+
+For a field k, every chain complex K and coefficient A have an isomorphism H_n(K) ⊗ A → H_n(K
+⊗ A[0]).

@@ -1,3 +1,6 @@
-# Step To Finite Representative padding
+# The finite step representative agrees with its padded stable class
 
-Actual endpoint padding carries original relative representatives to the original stable quotient.
+The finite step representative agrees with its padded stable class.
+
+Under H_{n+1}(⊥,i₀)=0 and H_{n−1}(i₃,⊤)=0, endpoint padding carries the finite representative
+to the stable step class.

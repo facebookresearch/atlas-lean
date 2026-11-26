@@ -1,3 +1,6 @@
-# Mapping Cylinder Zero Source Iso inv
+# Target inclusion in the bounded zero-source comparison
 
-The inverse is the bounded target endpoint inclusion.
+For a bounded cochain map f:F → G in a preadditive category C with
+binary biproducts and zero source F, the inverse of the canonical bounded
+comparison Cyl(f) ≅ G equals the component at f of the natural target
+endpoint inclusion.

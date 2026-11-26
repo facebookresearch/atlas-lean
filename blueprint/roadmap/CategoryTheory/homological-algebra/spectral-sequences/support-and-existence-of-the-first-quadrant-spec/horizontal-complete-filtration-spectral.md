@@ -1,4 +1,7 @@
-# Horizontal Complete Filtration Spectral Object H is Zero of epi f
+# An epic stage component has zero interval homology in that degree
 
-If a complete-filtration cochain map is epic in degree `n`, then the
-corresponding mapping-cone homology object is zero.
+For a nonnegative homological bicomplex K in an abelian
+category and i≤j in EInt, if the extended cochain map F_i → F_j
+is epic in degree n∈ℤ, then
+H^n(Cone(F_i → F_j)) is a zero object.
+The complete-filtration map is monic as a cochain map.

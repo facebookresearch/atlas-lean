@@ -1,3 +1,5 @@
-# Field Equivariant Stalk right triangle
+# Equivariant field stalk adjunction satisfies the right triangle
 
-The second triangle belongs to those SAME actual functors and original maps.
+Equivariant field stalk adjunction satisfies the right triangle.
+
+The unit at the inverse sheaf followed by its image of the coefficient counit is the identity.

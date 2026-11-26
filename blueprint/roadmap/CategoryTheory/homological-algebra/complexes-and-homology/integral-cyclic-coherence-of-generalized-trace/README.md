@@ -2,9 +2,9 @@
 
 ## Cyclic
 
-- [Generalized Trace cyclic](generalized-trace-cyclic.md)
+- [Generalized trace commutes with signed cyclic rotation](generalized-trace-cyclic.md)
 
 ## Stabilization
 
-- [Generalized Trace zero Extend](generalized-trace-zero-extend.md)
-- [Generalized Trace comp zero Extend](generalized-trace-comp-zero-extend.md)
+- [Zero extension preserves every generalized trace value](generalized-trace-zero-extend.md)
+- [Generalized trace is invariant under the zero-extension tensor map](generalized-trace-comp-zero-extend.md)

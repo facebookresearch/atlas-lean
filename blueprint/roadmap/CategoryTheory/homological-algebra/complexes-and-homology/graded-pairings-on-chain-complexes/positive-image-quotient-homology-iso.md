@@ -1,3 +1,8 @@
-# Positive Image Quotient Homology Iso
+# Low homology of the both-positive image quotient
 
-The pointwise quotient comparison is induced by the original quotient projection.
+Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+For n<2, the image quotient projection gives
+H_n(K₃)≅H_n(Q_J).

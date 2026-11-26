@@ -17,11 +17,14 @@ public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.Algebra.Category.Grp.Ulift
 
 /-!
-# Carrier-sized colimits of the original module universe lift
+# Carrier-universe colimits under module lifting
 
-The actual module lift preserves the original scalar ring. Its underlying
-additive-group functor is the original group lift. Carrier-sized colimit
-preservation follows through the original additive forgetful functors.
+For a ring R, module lifting M ↦ ULift M retains the scalar ring and commutes with forgetting
+to additive abelian groups. The comparison has identity maps on the lifted carriers.
+
+For modules with carrier universe m, the lift to max(m,z) preserves colimits indexed by
+categories with object and morphism universes m. The ring universe r is independent of both
+carrier and lift heights.
 -/
 
 public section
@@ -36,7 +39,10 @@ universe z m r
 
 variable (R : Type r) [Ring R]
 
-/-- The underlying original additive groups of the module and group lifts agree. -/
+/-- Module lifting commutes with forgetting to additive groups.
+
+Lifting R-modules and then forgetting gives a functor naturally isomorphic to forgetting first
+and lifting the additive groups, with identity components. -/
 def uliftFunctorForget₂AddCommGrpIso :
     uliftFunctor.{z, m} R ⋙ forget₂ (ModuleCat.{max m z} R) AddCommGrpCat.{max m z} ≅
       forget₂ (ModuleCat.{m} R) AddCommGrpCat.{m} ⋙ AddCommGrpCat.uliftFunctor.{z, m} :=
@@ -46,12 +52,17 @@ def uliftFunctorForget₂AddCommGrpIso :
     ext x
     rfl)
 
-/-- Both underlying coefficient comparisons are the identity on the actual lifted carrier. -/
+/-- Elements under the module-to-additive-group lift comparison.
+
+Both the forward and inverse components of the comparison send each lifted element to itself. -/
 theorem uliftFunctorForget₂AddCommGrpIso_apply (M : ModuleCat.{m} R) (x : ULift.{z} M) :
     (uliftFunctorForget₂AddCommGrpIso.{z, m} R).hom.app M x = x ∧
       (uliftFunctorForget₂AddCommGrpIso.{z, m} R).inv.app M x = x := ⟨rfl, rfl⟩
 
-/-- The original module lift preserves colimits in the source carrier universe. -/
+/-- Preservation of carrier-size colimits by module lifting.
+
+For source carrier universe m, the module lift preserves colimits of size (m,m), with target
+carrier height max(m,z) and the same scalar ring R. -/
 noncomputable instance uliftFunctor_preservesCarrierColimits :
     PreservesColimitsOfSize.{m, m} (uliftFunctor.{z, m} R) := by
   let U := uliftFunctor.{z, m} R

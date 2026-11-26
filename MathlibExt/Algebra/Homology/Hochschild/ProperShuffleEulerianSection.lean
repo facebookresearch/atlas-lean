@@ -14,12 +14,21 @@ public import MathlibExt.Algebra.Homology.Hochschild.EulerianChainMaps
 public import MathlibExt.Algebra.Homology.Hochschild.ProperShuffleCotangentMap
 
 /-!
-# The Eulerian section of the proper-shuffle complex
+# Eulerian section of the proper-shuffle quotient
 
-Over a ground ring containing ℚ, the zero-plus-first
-Eulerian projector gives a ground-linear chain section
-of the proper quotient projection. Both weights are
-retained before positive-index restriction.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible symmetric
+coefficient module. The sum of the weight-zero and weight-one Eulerian chain projectors has
+kernel equal, degree by degree, to the both-positive coefficient shuffle relation submodule. The
+quotient-to-image isomorphism therefore defines a section [x] ↦ Eₙx of each proper quotient
+term.
+
+The Eulerian boundary identities make these sections a chain map. Projection followed by the
+section is the weight-zero-plus-one projector; the section followed by projection is the
+identity on the proper quotient. Consequently the proper quotient is a retract of Hochschild
+chains. Both weights are retained before restricting to positive indices.
+
+For the Eulerian decomposition and its relation to proper Harrison shuffles, see J.-L. Loday,
+Cyclic Homology, second edition, §§4.2 and 4.5.
 -/
 
 @[expose] public section
@@ -37,21 +46,32 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The full first ground-linear chain projector retains the original coefficient in degree zero. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. firstEulerianChainMap is eulerianChainMap k A M 0 + eulerianChainMap k A
+M 1, an endomorphism of the Hochschild chain complex. It retains both Eulerian weights zero and
+one, including the degree-zero coefficient term. -/
 def firstEulerianChainMap : chainComplex k A M ⟶ chainComplex k A M :=
   eulerianChainMap k A M 0 + eulerianChainMap k A M 1
 
-/-- Each component is the original zero-plus-first coefficient Eulerian operator. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. In degree n : ℕ, the underlying linear map of firstEulerianChainMap is
+firstEulerianOperator k A M n, the sum of the coefficient Eulerian operators of weights zero and
+one. -/
 theorem firstEulerianChainMap_f (n : ℕ) :
     ((firstEulerianChainMap k A M).f n).hom = firstEulerianOperator k A M n := rfl
 
-/-- The section uses the native quotient-to-range equivalence and range inclusion. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. The both-positive shuffle relation submodule Sₙ equals the kernel of the
+retained Eulerian operator Eₙ. The quotient-to-range isomorphism followed by range inclusion
+gives a k-linear map Pₙ = Cₙ(A,M)/Sₙ → Cₙ(A,M), sending [x] to Eₙx. -/
 def properEulerianSectionLevel (n : ℕ) :
     (positiveQuotient k A M).X n →ₗ[k] M ⊗[k] TensorPower k n A :=
   (LinearMap.range (firstEulerianOperator k A M n)).subtype.comp
     (firstEulerianQuotientLevelEquiv k A M n).toLinearMap
 
-/-- The section of each original quotient class is exactly its original first Eulerian projection. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. For n : ℕ and x ∈ M ⊗[k] A^{⊗n}, properEulerianSectionLevel k A M n
+sends the class of x modulo rawPositiveRelations to firstEulerianOperator k A M n x. -/
 theorem properEulerianSectionLevel_mkQ (n : ℕ) (x : M ⊗[k] TensorPower k n A) :
     properEulerianSectionLevel k A M n ((rawPositiveRelations k A M n).mkQ x) =
       firstEulerianOperator k A M n x := by
@@ -61,7 +81,10 @@ theorem properEulerianSectionLevel_mkQ (n : ℕ) (x : M ⊗[k] TensorPower k n A
   rw [Submodule.quotEquivOfEq_mk]
   exact LinearMap.quotKerEquivRange_apply_mk _ x
 
-/-- The Eulerian boundary square assembles the section into a chain map. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. The degreewise maps [x] ↦ Eₙx form a chain map properEulerianSection :
+positiveQuotient k A M → chainComplex k A M, because the retained Eulerian operators commute
+with the Hochschild boundary. -/
 def properEulerianSection : positiveQuotient k A M ⟶ chainComplex k A M :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (properEulerianSectionLevel k A M n)) (by
     intro n
@@ -95,11 +118,17 @@ def properEulerianSection : positiveQuotient k A M ⟶ chainComplex k A M :=
     exact (congrArg d hf₁).trans
       (hE.trans (hf₀.symm.trans (congrArg f₀ hδ.symm))))
 
-/-- Every native section component is the original quotient-to-first-image map. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. For every n : ℕ, the nth component of properEulerianSection has
+underlying linear map properEulerianSectionLevel k A M n, the
+quotient-to-retained-Eulerian-image section. -/
 theorem properEulerianSection_f (n : ℕ) :
     ((properEulerianSection k A M).f n).hom = properEulerianSectionLevel k A M n := rfl
 
-/-- The raw quotient projection followed by this section is the first chain projector. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. The composite chainComplex k A M → positiveQuotient k A M → chainComplex
+k A M, with maps properShuffleProjection and properEulerianSection, equals firstEulerianChainMap
+k A M. -/
 @[reassoc]
 theorem properShuffleProjection_eulerianSection :
     properShuffleProjection k A M ≫ properEulerianSection k A M = firstEulerianChainMap k A M := by
@@ -111,14 +140,19 @@ theorem properShuffleProjection_eulerianSection :
   apply LinearMap.ext
   exact properEulerianSectionLevel_mkQ k A M n
 
-/-- Actual Eulerian orthogonality makes the original full first operator idempotent. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. firstEulerianChainMap composed with itself equals firstEulerianChainMap.
+The weight-zero and weight-one Eulerian projectors are idempotent and mutually orthogonal. -/
 theorem firstEulerianChainMap_idempotent :
     firstEulerianChainMap k A M ≫ firstEulerianChainMap k A M = firstEulerianChainMap k A M := by
   simp only [firstEulerianChainMap, Preadditive.comp_add, Preadditive.add_comp,
     eulerianChainMap_comp, ite_true, ite_eq_right (by omega : (0 : ℕ) ≠ 1),
     ite_eq_right (by omega : (1 : ℕ) ≠ 0), add_zero, zero_add]
 
-/-- The original proper quotient is an retract of the original Hochschild complex. -/
+/-- Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. properEulerianSection k A M followed by properShuffleProjection k A M is
+the identity of positiveQuotient k A M. Thus the both-positive proper-shuffle quotient is a
+retract of the Hochschild chain complex. -/
 @[reassoc]
 theorem properEulerianSection_projection :
     properEulerianSection k A M ≫ properShuffleProjection k A M = 𝟙 (positiveQuotient k A M) := by

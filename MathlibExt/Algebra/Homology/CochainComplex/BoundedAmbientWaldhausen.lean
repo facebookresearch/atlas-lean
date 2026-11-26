@@ -18,13 +18,19 @@ public import MathlibExt.CategoryTheory.ExactCategory.Abelian
 public import MathlibExt.CategoryTheory.Waldhausen.Gluing
 
 /-!
-# Waldhausen structure from ambient cohomology
+# Bounded complexes with ambient quasi-isomorphism weak equivalences
 
-On bounded cochain complexes in an exact category, cofibrations are
-degreewise admissible monomorphisms. An additive exact functor to an abelian
-category defines weak equivalences by quasi-isomorphisms of the mapped
-complexes. Degreewise admissible pushouts give the pushout and gluing
-axioms for these classes.
+Let E be a preadditive exact category with a zero object and binary biproducts,
+let A be an abelian category, and let F:E → A be additive. On bounded
+integer-indexed cochain complexes in E, take degreewise admissible
+monomorphisms as cofibrations and maps inducing isomorphisms on all cohomology
+objects after applying F as weak equivalences.
+
+These classes give the cofibration, pushout and weak-equivalence axioms, and
+the weak equivalences satisfy two-out-of-three. If F is also exact, a map
+between admissible pushout squares that is a weak equivalence on the three
+span vertices is a weak equivalence on the pushout apices. The categories
+E and A may have independent object and morphism universes.
 -/
 
 @[expose] public section
@@ -44,19 +50,27 @@ variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable (F : E ⥤ A) [F.Additive] [F.IsExact]
 
 omit [F.IsExact] [ExactCategory E] [HasBinaryBiproducts E] [HasZeroObject E] in
-/-- Weak equivalences are the inverse image of ambient quasi-isomorphisms. -/
+/-- For an additive functor F:E → A from a preadditive category E to an
+abelian category A, the weak-equivalence property on bounded integer-indexed
+cochain complexes consists of maps f:X → Y for which the termwise image F(f)
+induces an isomorphism on every cohomology object in A. -/
 def ambientWeakEquivalences : MorphismProperty (Bounded E) :=
   (HomologicalComplex.quasiIso A (.up ℤ)).inverseImage
     (ι E ⋙ F.mapHomologicalComplex (.up ℤ))
 
 omit [F.IsExact] [ExactCategory E] [HasBinaryBiproducts E] [HasZeroObject E] in
-/-- Ambient weak equivalences satisfy the two-out-of-three property. -/
+/-- Let F:E → A be additive, with E preadditive and A abelian. For composable
+maps of bounded integer-indexed cochain complexes, if any two of the maps
+and their composite induce isomorphisms on every cohomology object after
+applying F, then the third does as well. -/
 theorem ambientWeakEquivalences_hasTwoOutOfThree :
     (ambientWeakEquivalences F).HasTwoOutOfThreeProperty := by
   dsimp only [ambientWeakEquivalences]
   infer_instance
 
-/-- Maps from the zero bounded complex are degreewise admissible. -/
+/-- In a preadditive exact category E with a zero object and binary
+biproducts, every map from the zero bounded cochain complex to a bounded
+cochain complex X is degreewise an admissible monomorphism. -/
 theorem degreewiseAdmissibleMonomorphisms_zero (X : Bounded E) (f : (0 : Bounded E) ⟶ X) :
     degreewiseAdmissibleMonomorphisms E f := by
   intro j
@@ -70,7 +84,12 @@ theorem degreewiseAdmissibleMonomorphisms_zero (X : Bounded E) (f : (0 : Bounded
   simpa only [Iso.hom_inv_id_assoc] using hcomp
 
 omit [F.IsExact] in
-/-- Waldhausen structure with degreewise admissible cofibrations and ambient quasi-isomorphisms. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts, A an abelian category, and F:E → A an additive functor.
+The cofibration and weak-equivalence structure on bounded integer-indexed
+cochain complexes has degreewise admissible monomorphisms as cofibrations
+and maps whose termwise F-images are quasi-isomorphisms as weak equivalences.
+Pushouts along cofibrations exist and have cofibration cobase-change legs. -/
 @[instance_reducible, no_expose]
 def ambientWaldhausenCategory : WaldhausenCategoryWithoutGluing (Bounded E) where
   cofibrations := degreewiseAdmissibleMonomorphisms E
@@ -90,19 +109,28 @@ def ambientWaldhausenCategory : WaldhausenCategoryWithoutGluing (Bounded E) wher
     exact ⟨P, inC, inB, hP.flip, hadm⟩
 
 omit [F.IsExact] in
-/-- Cofibrations are exactly the degreewise admissible monomorphisms. -/
+/-- For an additive functor F:E → A, where E is a preadditive exact category
+with a zero object and binary biproducts and A is abelian, a map f:X → Y of
+bounded cochain complexes is an ambient cofibration if and only if every
+component fⱼ is an admissible monomorphism in E. -/
 theorem ambient_isCofibration_iff {X Y : Bounded E} (f : X ⟶ Y) :
     letI := ambientWaldhausenCategory F
     IsCofibration f ↔ ∀ j : ℤ, IsAdmissibleMono (f.hom.f j) := Iff.rfl
 
 omit [F.IsExact] in
-/-- Weak equivalences are exactly ambient quasi-isomorphisms. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts, A an abelian category, and F:E → A additive. A map f:X → Y
+of bounded cochain complexes is an ambient weak equivalence if and only if
+the cochain map with components F(fⱼ) is a quasi-isomorphism in A. -/
 theorem ambient_isWeakEquivalence_iff {X Y : Bounded E} (f : X ⟶ Y) :
     letI := ambientWaldhausenCategory F
     IsWeakEquivalence f ↔ QuasiIso ((F.mapHomologicalComplex (.up ℤ)).map f.hom) := Iff.rfl
 
 omit [F.IsExact] in
-/-- The Waldhausen weak equivalences satisfy the two-out-of-three property. -/
+/-- For an additive functor F:E → A from a preadditive exact category with
+a zero object and binary biproducts to an abelian category, the weak
+equivalences in the ambient Waldhausen structure on bounded cochain
+complexes satisfy two-out-of-three. -/
 theorem ambientWaldhausen_hasTwoOutOfThree :
     letI := ambientWaldhausenCategory F
     (WaldhausenCategoryWithoutGluing.weakEquivalences
@@ -110,8 +138,14 @@ theorem ambientWaldhausen_hasTwoOutOfThree :
   let _ := ambientWaldhausenCategory F
   exact ambientWeakEquivalences_hasTwoOutOfThree F
 
-/-- A map of admissible pushout squares whose vertex maps are weak equivalences
-induces a weak equivalence of the apices. -/
+/-- Let F:E → A be an additive exact functor, with E a preadditive exact
+category with a zero object and binary biproducts and A abelian.
+For a commuting map between two pushout squares of bounded cochain complexes,
+assume the distinguished maps A → B and A′ → B′ are degreewise admissible.
+If the three maps between the span vertices become quasi-isomorphisms
+after termwise application of F, then the induced map between the pushout
+apices also becomes a quasi-isomorphism. This is the ambient Waldhausen
+gluing axiom. -/
 theorem ambientWaldhausen_gluing :
     letI := ambientWaldhausenCategory F
     WaldhausenGluingAxiom (C := Bounded E) := by

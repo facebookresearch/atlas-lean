@@ -12,7 +12,12 @@ module
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.LongExact
 
 /-!
-## Every split projective horseshoe computes the SAME left-derived boundary
+# Independence of the projective horseshoe boundary
+
+For an additive functor between abelian categories with projective
+resolutions in the source, every compatible projective horseshoe with
+endpoint coordinates computes the canonical left-derived connecting
+map, regardless of its endpoint and middle-resolution choices.
 -/
 @[expose] public section
 noncomputable section
@@ -24,10 +29,11 @@ namespace CategoryTheory.ProjectiveResolution.HorseshoeData
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/--
-The original boundary is independent of the split horseshoe and endpoint resolutions used to
-compute it.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact,
+`P₁,P₃` any endpoint projective resolutions, and `H` horseshoe data
+with endpoint coordinates. Its boundary `L_(n+1)F(X₃) → L_nF(X₁)`
+equals the canonical left-derived boundary of `S`. -/
 theorem delta_eq_native {S : ShortComplex C} {hS : S.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
     (H : HorseshoeData hS P₁ P₃) (sH : H.Spec)

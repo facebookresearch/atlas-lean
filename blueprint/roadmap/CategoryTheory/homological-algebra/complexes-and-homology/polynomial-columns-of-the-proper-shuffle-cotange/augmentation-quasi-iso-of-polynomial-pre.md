@@ -1,4 +1,7 @@
-# Augmentation quasi Iso of polynomial Presentation
+# A polynomial presentation gives a cotangent-column quasi-isomorphism
 
-An original polynomial presentation earns the same column quasi-isomorphism
-by native isomorphism transport.
+A polynomial presentation gives a cotangent-column quasi-isomorphism.
+
+For a commutative ℚ-algebra k, a compatible B-module M and an augmented algebra A → B, an
+algebra isomorphism A ≅ k[σ] implies that its proper-shuffle cotangent augmentation is a
+quasi-isomorphism.

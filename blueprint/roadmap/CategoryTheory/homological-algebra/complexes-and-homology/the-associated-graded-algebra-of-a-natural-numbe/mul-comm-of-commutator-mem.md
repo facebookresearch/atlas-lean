@@ -1,4 +1,7 @@
-# Mul comm of commutator mem
+# Degree-lowering commutators make the associated graded commutative
 
-The native associated graded product is commutative when actual filtered
-commutators lie in the preceding ambient stage.
+Degree-lowering commutators make the associated graded commutative.
+
+If every commutator of elements in `F n` and `F m` lies in `lower F (n + m)`, then `x * y = y
+* x` for all associated-graded elements `x` and `y`. The conclusion follows from commutativity
+of symbols and additive generation.

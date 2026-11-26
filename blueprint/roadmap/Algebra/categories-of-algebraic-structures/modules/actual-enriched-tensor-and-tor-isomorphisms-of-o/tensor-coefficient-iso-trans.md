@@ -1,3 +1,6 @@
-# Tensor Coefficient Iso trans
+# Tensor coefficient isomorphisms preserve equivalence composition
 
-The actual tensor coefficient isomorphism preserves original equivalence composition.
+Tensor coefficient isomorphisms preserve equivalence composition.
+
+The tensor isomorphism for `e`, followed by that for `e'`, equals the tensor isomorphism
+induced by `e.trans e'`, with its composite right-action compatibility.

@@ -1,3 +1,6 @@
-# Coefficient Object Of Actions right
+# Constructed coefficient object retains its given right action
 
-The right restriction likewise recovers the original right S action.
+Constructed coefficient object retains its given right action.
+
+Restricting the coefficient object of `B` along the right inclusion gives the same scalar
+values `s • x` as the given right `S`-action.

@@ -1,4 +1,7 @@
-# Original small etale direct image
+# Direct image formulas and functor laws
 
-One actual additive, left exact direct-image functor has all the literal
-section, restriction, sheaf-morphism, and functor-law formulas simultaneously.
+Direct image formulas and functor laws.
+
+For any scheme morphism, direct image is additive and left exact, has the base-change formulas
+for sections, restrictions, and sheaf-map components, and preserves identity maps and
+composition.

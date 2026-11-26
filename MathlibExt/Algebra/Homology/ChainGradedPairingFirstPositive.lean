@@ -12,12 +12,15 @@ module
 public import MathlibExt.Algebra.Homology.ChainGradedPairingStrictPositive
 
 /-!
-# A positive algebra factor acting on the entire coefficient complex
+# A pairing restricted to a positive first factor
 
-Only the first factor is restricted to positive degrees. The second factor
-retains degree zero. This is the actual image interpretation of I·D for a
-graded augmentation ideal I and its full module D. It is kept distinct from
-the existing both-positive decomposable quotient.
+Let `P : K₁ ⊗ K₂ ⟶ K₃` be a pairing of nonnegative chain complexes in an
+abelian category with a preadditive monoidal structure. If `K₁.d 1 0 = 0`,
+the positive stupid truncation of `K₁` includes as a subcomplex. Restricting
+`P` along this inclusion retains the components with `p > 0`, `q ≥ 0` and
+`p + q = n` in total degree `n`. Its cokernel quotients `K₃` by this image.
+The second factor includes degree zero, unlike a both-positive restriction.
+The construction is functorial in compatible morphisms of pairings.
 -/
 
 @[expose] public section
@@ -37,11 +40,15 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 local notation "e₊" => ComplexShape.positiveNatEmbedding
 
-/-- Restrict only the algebra factor, retaining the full coefficient complex. -/
+/-- For a pairing `P : K₁ ⊗ K₂ ⟶ K₃` with `K₁.d 1 0 = 0`, restrict its
+first factor to the positive stupid truncation of `K₁` and retain all of `K₂`.
+Thus the allowed bidegrees are `p > 0` and `q ≥ 0`, rather than both positive. -/
 def firstPositivePairing : ChainGradedPairing (K₁.stupidTrunc e₊) K₂ K₃ :=
   tensorHom (K₁.positiveStupidTruncInclusion h₁) (𝟙 K₂) ≫ P
 
-/-- Components use the actual positive first inclusion and unchanged second factor. -/
+/-- In bidegree `(p, q)` with `p + q = n`, the first-positive pairing is the
+original component of `P` preceded by the tensor product of the degree-`p`
+positive-truncation inclusion and the identity on `K₂.X q`. -/
 theorem firstPositivePairing_pairAt (p q n : ℕ) (h : p + q = n) :
     ιTensorObj (K₁.stupidTrunc e₊) K₂ p q n h ≫ (firstPositivePairing P h₁).f n =
       ((K₁.positiveStupidTruncInclusion h₁).f p ⊗ₘ (𝟙 K₂ : K₂ ⟶ K₂).f q) ≫
@@ -52,10 +59,14 @@ theorem firstPositivePairing_pairAt (p q n : ℕ) (h : p + q = n) :
     (by simp only [firstPositivePairing, Category.comp_id]) p q
   simpa only [pair, id_f, Category.comp_id] using hc.symm
 
-/-- The native quotient by the action of the entire positive first factor. -/
+/-- The cokernel chain complex of `P` restricted to its positive first factor,
+assuming `K₁.d 1 0 = 0`. It quotients `K₃` by the image of all components
+with `p > 0` and `q ≥ 0`; degree-zero second-factor components are included. -/
 def firstPositiveCokernel : ChainComplex C ℕ := cokernel (firstPositivePairing P h₁)
 
-/-- The native projection of the original target to the first-positive cokernel. -/
+/-- The canonical chain map from `K₃` to the cokernel of the first-positive
+restriction of `P : K₁ ⊗ K₂ ⟶ K₃`, for `K₁.d 1 0 = 0`. Its composite
+with the restricted pairing vanishes. -/
 def firstPositiveProjection : K₃ ⟶ firstPositiveCokernel P h₁ :=
   cokernel.π (firstPositivePairing P h₁)
 
@@ -69,7 +80,10 @@ variable {L₁ L₂ L₃ : ChainComplex C ℕ} (Q : ChainGradedPairing L₁ L₂
   (hf : tensorHom f₁ f₂ ≫ Q = P ≫ f₃)
 
 include hf in
-/-- A pairing morphism preserves the one-positive-factor action. -/
+/-- Suppose the chain maps `(f₁, f₂, f₃)` preserve pairings `P` and `Q`, and
+the first complexes of both pairings have zero differential from degree one
+to zero. Their first-positive restrictions commute with the positive
+truncation of `f₁`, the full map `f₂`, and the target map `f₃`. -/
 theorem firstPositivePairing_naturality :
     tensorHom (stupidTruncMap f₁ e₊) f₂ ≫ firstPositivePairing Q g₁ =
       firstPositivePairing P h₁ ≫ f₃ := by
@@ -91,7 +105,10 @@ theorem firstPositivePairing_naturality :
       tensorHom (K₁.positiveStupidTruncInclusion h₁) (𝟙 K₂) ≫ g) hf
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The actual native cokernel map, with no supplied quotient comparison. -/
+/-- Compatible chain maps `(f₁, f₂, f₃)` between pairings `P` and `Q` induce
+a chain map between their first-positive cokernels. Both first complexes
+must have zero differential from degree one to zero; the induced map is
+the cokernel map of the restricted pairing square. -/
 def firstPositiveCokernelMap : firstPositiveCokernel P h₁ ⟶ firstPositiveCokernel Q g₁ :=
   cokernel.map (firstPositivePairing P h₁) (firstPositivePairing Q g₁)
     (tensorHom (stupidTruncMap f₁ e₊) f₂) f₃
@@ -103,13 +120,17 @@ theorem firstPositiveProjection_map :
 
 end Maps
 
-/-- A target chain map induces the actual map to the quotient by its image of the action. -/
+/-- A chain map `f : K₃ ⟶ L` induces a map from the first-positive cokernel
+of `P` to that of `P` followed by `f`. The latter cokernel quotients `L`
+by the image under `f` of the first-positive pairing. -/
 def firstPositiveCokernelPostcompMap {L : ChainComplex C ℕ} (f : K₃ ⟶ L) :
     firstPositiveCokernel P h₁ ⟶ firstPositiveCokernel (P.postcomp f) h₁ :=
   firstPositiveCokernelMap P h₁ (P.postcomp f) h₁ (𝟙 K₁) (𝟙 K₂) f
     (by simp only [tensorHom_id_id, Category.id_comp]; rfl)
 
-/-- The pushed-forward ideal-image quotient retains the actual target map. -/
+/-- For a target chain map `f : K₃ ⟶ L`, projection to the first-positive
+cokernel followed by the induced cokernel map equals `f` followed by
+projection to the first-positive cokernel of `P` followed by `f`. -/
 theorem firstPositiveProjection_postcompMap {L : ChainComplex C ℕ} (f : K₃ ⟶ L) :
     firstPositiveProjection P h₁ ≫ firstPositiveCokernelPostcompMap P h₁ f =
       f ≫ firstPositiveProjection (P.postcomp f) h₁ :=

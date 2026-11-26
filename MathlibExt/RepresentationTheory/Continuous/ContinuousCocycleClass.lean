@@ -17,35 +17,17 @@ public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Basic
 public import Mathlib.Topology.Algebra.Module.TransferInstance
 
 /-!
-# Continuous degree-one cocycle class from an inhomogeneous cocycle
+# Homogenization and classes of continuous one-cocycles
 
-For a `TopRep k G` and a function `c : G → X` satisfying the additive
-inhomogeneous equation `c (g * h) = X.ρ g (c h) + c g`, this file builds the
-homogeneous degree-one cochain with values `Ψ x y = X.ρ x (c (x⁻¹ * y))`.
+For a topological group G acting on a topological k-module X, associate to c : G → X the
+homogeneous function Ψ(x,y) = ρ(x)c(x⁻¹y). Joint continuity of this function is an explicit
+hypothesis. It is diagonally equivariant; if c(gh) = ρ(g)c(h) + c(g), then its homogeneous
+differential Ψ(y,z) − Ψ(x,z) + Ψ(x,y) vanishes.
 
-Main constructions:
-* `homOneCochain`: the invariant homogeneous degree-one cochain in
-  `TopRep.homogeneousCochains`.
-* `homOneCochain_val_apply`: transparent computation of its values.
-* `homOneCochain_mem_ker`: it lies in the kernel of the degree-one differential,
-  using the cocycle equation.
-* `oneCocycleMor`: the packaged cycle in `ContinuousCohomology.cocycles`
-  via `HomologicalComplex.liftCycles`.
-* `oneCohomClassMor`: its image under `ContinuousCohomology.π` in
-  `continuousCohomology`.
-
-Orientation: inhomogeneous `c (g * h) = X.ρ g (c h) + c g`; homogeneous
-`Ψ x y = X.ρ x (c (x⁻¹ * y))` with diagonal invariance
-`Ψ (g * x) (g * y) = X.ρ g (Ψ x y)` and kernel identity
-`Ψ y z - Ψ x z + Ψ x y = 0`.
-
-Continuity is taken as an explicit hypothesis on the uncurried map
-`(x, y) ↦ X.ρ x (c (x⁻¹ * y))`; continuity of `c` alone is not used.
-Currying happens only after that hypothesis is supplied.
-
-Nonclaims: no identification of ordinary, continuous, or étale degree-one
-objects; no finite-quotient comparison; no Kummer isomorphism; no motivic
-comparison; no higher-weight statement.
+The cycle and its continuous-cohomology class are packaged as linear maps from a universe-
+raised copy of k, sending a scalar r to r·Ψ. A difference of cycles that is a boundary gives
+equal classes. Conversely, a rank-one cycle map with zero class factors through the degree-
+zero differential.
 -/
 
 @[expose] public section
@@ -59,12 +41,11 @@ variable {k : Type u} {G : Type v} [Ring k] [Group G] [TopologicalSpace k]
 
 namespace ContinuousCohomology
 
-/-- Homogeneous degree-one cochain from an inhomogeneous cocycle.
+/-- Homogenization of a continuous two-variable function.
 
-Given `c` with `c (g * h) = X.ρ g (c h) + c g` and continuity of the uncurried
-`Ψ`, this packages `Ψ x y = X.ρ x (c (x⁻¹ * y))` as an invariant element of
-`TopRep.homogeneousCochains`. Reuses `TopRep.homogeneousCochains` and
-`ContRepresentation.coind₁_apply_apply` for the invariance computation. -/
+For c : G → X with jointly continuous Ψ(x,y) = ρ(x)c(x⁻¹y), this is the invariant homogeneous
+degree-one cochain Ψ. Diagonal equivariance follows from the group action; the cocycle
+equation for c is required separately to make Ψ a cycle. -/
 noncomputable def homOneCochain (X : TopRep k G) (c : G → X)
     (hcont : Continuous (fun p : G × G => X.ρ p.1 (c (p.1⁻¹ * p.2)))) :
     (TopRep.homogeneousCochains X).X 1 :=
@@ -89,8 +70,10 @@ noncomputable def homOneCochain (X : TopRep k G) (c : G → X)
       _ = X.ρ x (c (x⁻¹ * y)) := by rw [hgx]⟩
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- Transparent values of `homOneCochain`. Needed downstream for kernel and
-comparison arguments. -/
+/-- Values of the homogenized cochain.
+
+For x,y ∈ G, the homogeneous cochain associated to c has value ρ(x)c(x⁻¹y), under the
+specified joint-continuity hypothesis. -/
 @[simp]
 theorem homOneCochain_val_apply (X : TopRep k G) (c : G → X)
     (hcont : Continuous (fun p : G × G => X.ρ p.1 (c (p.1⁻¹ * p.2))))
@@ -99,17 +82,10 @@ theorem homOneCochain_val_apply (X : TopRep k G) (c : G → X)
   rfl
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- The homogeneous cochain lies in the kernel of the degree-one differential.
+/-- The homogeneous cycle equation for a one-cocycle.
 
-Uses `TopRep.homogeneousCochains.d_apply`, `TopRep.hom_d_succ`,
-`TopRep.hom_ofHom`, `TopRep.d_zero`,
-`ContRepresentation.coind₁ι_toFun`, `ContRepresentation.coind₁Map_toFun`, and
-pointwise continuous-map lemmas, plus the cocycle equation.
-
-The proof first reduces to the subtype kernel membership, derives the pointwise
-cocycle identity `hF`, unfolds the homogeneous differential at `.hom`, applies
-three-argument function extensionality, and only then evaluates the coinduction
-terms pointwise so the pointwise identity closes the goal. -/
+If c(gh) = ρ(g)c(h) + c(g) and Ψ(x,y) = ρ(x)c(x⁻¹y) is jointly continuous, then d¹Ψ = 0. In
+coordinates the equation is Ψ(y,z) − Ψ(x,z) + Ψ(x,y) = 0. -/
 theorem homOneCochain_mem_ker (X : TopRep k G) (c : G → X)
     (hcocycle : ∀ g h : G, c (g * h) = X.ρ g (c h) + c g)
     (hcont : Continuous (fun p : G × G => X.ρ p.1 (c (p.1⁻¹ * p.2)))) :
@@ -172,16 +148,27 @@ theorem homOneCochain_mem_ker (X : TopRep k G) (c : G → X)
     exact h
   exact LinearMap.mem_ker.mp hker
 
-/-- Universe-raised scalar down-map reusing `ContinuousLinearEquiv.ulift`. -/
+/-- The continuous scalar map from a raised universe.
+
+This continuous k-linear map sends an element of ULift k to its underlying scalar in k. It is
+the forward map of the canonical continuous linear equivalence. -/
 noncomputable def uliftDown : ULift.{w, u} k →L[k] k :=
   (ContinuousLinearEquiv.ulift).toContinuousLinearMap
 
 -- File-local named instance reusing the pinned transfer lemma, registered locally
 -- so it reaches TC search at the `TopModuleCat.of/ofHom` sites below.
+/-- Continuous scalar multiplication on the lifted scalar module.
+
+The canonical continuous linear equivalence ULift k ≃L[k] k transports continuity of scalar
+multiplication to the universe-raised scalar carrier. -/
 local instance uliftContinuousSMul : ContinuousSMul k (ULift.{w, u} k) :=
   ContinuousLinearEquiv.ulift.continuousSMul
 
-/-- Packaged degree-one cycle via `HomologicalComplex.liftCycles`. -/
+/-- The rank-one map determined by a continuous one-cocycle.
+
+For an inhomogeneous cocycle c with jointly continuous homogenization Ψ, this map from ULift k
+to the degree-one continuous cycles sends r to the cycle with included cochain r.down·Ψ. The
+lift and coefficient carrier have the explicitly stated independent universe levels. -/
 noncomputable def oneCocycleMor (X : TopRep.{max v (max u w), u, v} k G) (c : G → X)
     (hcocycle : ∀ g h : G, c (g * h) = X.ρ g (c h) + c g)
     (hcont : Continuous (fun p : G × G => X.ρ p.1 (c (p.1⁻¹ * p.2)))) :
@@ -199,7 +186,10 @@ noncomputable def oneCocycleMor (X : TopRep.{max v (max u w), u, v} k G) (c : G 
         (r.down • homOneCochain.{u, v, max u w} X c hcont) = 0
       rw [map_smul, homOneCochain_mem_ker.{u, v, max u w} X c hcocycle hcont, smul_zero])
 
-/-- Resulting continuous cohomology class via `ContinuousCohomology.π`. -/
+/-- The cohomology map determined by a continuous one-cocycle.
+
+Compose the rank-one cycle map r ↦ r.down·Ψ with the degree-one homology projection. The
+resulting map from ULift k to continuous H¹ sends the lifted scalar 1 to the class of Ψ. -/
 noncomputable def oneCohomClassMor (X : TopRep.{max v (max u w), u, v} k G) (c : G → X)
     (hcocycle : ∀ g h : G, c (g * h) = X.ρ g (c h) + c g)
     (hcont : Continuous (fun p : G × G => X.ρ p.1 (c (p.1⁻¹ * p.2)))) :
@@ -207,14 +197,11 @@ noncomputable def oneCohomClassMor (X : TopRep.{max v (max u w), u, v} k G) (c :
   oneCocycleMor X c hcocycle hcont ≫ ContinuousCohomology.π.{u, v, max u w} X 1
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- Generic degree-one boundary equality corollary for continuous cohomology.
+/-- Equal classes for cycles differing by a boundary.
 
-If two degree-one cycles differ by a boundary, `z₁ - z₂ = b ≫ d 0 1`,
-their classes under `homologyπ 1` agree. Uses the Mathlib boundary-vanishing
-lemma `HomologicalComplex.liftCycles_homologyπ_eq_zero_of_boundary` via
-subtraction and `sub_eq_zero`; no finite comparison or ordinary-H1 bridge is used.
-
-Nonclaims: no Kummer, motivic, étale, or isomorphism statement. -/
+Let z₁,z₂ : A → C¹ be degree-one cycle maps in the homogeneous continuous cochain complex. If
+z₁ − z₂ = b ≫ d⁰ for a map b : A → C⁰, their lifts to cycles have the same image under the
+degree-one homology projection. -/
 theorem homogeneousCochains_boundary_class_eq
     (X : TopRep k G) {A : TopModuleCat k}
     (z₁ z₂ : A ⟶ (TopRep.homogeneousCochains X).X 1)
@@ -249,24 +236,11 @@ theorem homogeneousCochains_boundary_class_eq
     rw [← Preadditive.sub_comp, ← hsub_lift, hvan]
   exact sub_eq_zero.mp hsub_class
 
-/-- Rank-one zero-class boundary converse for continuous degree-one cohomology.
+/-- A zero rank-one class has a degree-zero boundary map.
 
-Given a homogeneous degree-one element `y` with rank-one cocycle morphism
-`z = ofHom ((toSpanSingleton k y).comp uliftDown)`, a cycle proof `hz`, and a zero-class
-hypothesis `hzero` for the lifted cycle under `homologyπ 1`, there is an
-explicit degree-zero rank-one morphism `w` with `z = w ≫ d 0 1`.
-
-Reuses `HomologicalComplex.homologyIsCokernel 0 1`,
-`TopModuleCat.isColimitCoker` with `TopModuleCat.cokerπ`,
-`CategoryTheory.IsColimit.comp_coconePointUniqueUpToIso_hom`,
-`HomologicalComplex.liftCycles` with `K.toCycles` and `K.homologyπ`,
-`Submodule.Quotient.mk_eq_zero`, `HomologicalComplex.liftCycles_i`,
-`HomologicalComplex.toCycles_i`, and
-`ContinuousLinearMap.toSpanSingleton` round-trip facts. The rank-one domain is
-the universe-raised `TopModuleCat.of k (ULift k)`.
-
-Nonclaims: no Kummer, motivic, etale, or comparison statement; rank-one
-domain only; no higher-weight statement. -/
+For a homogeneous one-cochain y, let z : ULift k → C¹ send r to r.down·y. If z is a cycle map
+and its induced map to H¹ is zero, then there exists w : ULift k → C⁰ with z = w ≫ d⁰. The
+domain remains the universe-raised scalar module specified in the statement. -/
 theorem rankOne_zeroClass_eq_boundary
     (X : TopRep.{max v (max u w), u, v} k G)
     (y : (TopRep.homogeneousCochains.{u, v, max u w} X).X 1)

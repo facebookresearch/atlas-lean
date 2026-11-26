@@ -1,5 +1,7 @@
-# Horizontal Complete Succ Direct Column Section d
+# The horizontal boundary formula for successive complete-stage sections
 
-On vertical cycles, the cochain differential of the complete-stage
-section is the horizontal bicomplex differential followed by the preceding
-column section and the next complete filtration map.
+The horizontal boundary formula for successive complete-stage sections.
+
+On direct-column cycles from column `p+2`, the complete-stage differential is the horizontal
+map to column `p+1`, followed by that column's section and next complete filtration map. The
+cochain degrees are `-(p+2)-q` and `-(p+1)-q`.

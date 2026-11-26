@@ -1,4 +1,6 @@
-# Map Tensor Pow Obj Iso hom comp tensor Pow Obj One Iso
+# Strong monoidal power comparison agrees with the one factor coordinate
 
-At weight one, the strong-monoidal tensor-power comparison followed by the
-canonical left-unitor is the image of the canonical weight-one isomorphism.
+Strong monoidal power comparison agrees with the one factor coordinate.
+
+At power one, comparison followed by the target one-factor coordinate equals the functor image
+of the source one-factor coordinate.

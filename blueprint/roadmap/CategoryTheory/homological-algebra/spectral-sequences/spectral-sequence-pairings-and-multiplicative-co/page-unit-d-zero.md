@@ -1,3 +1,5 @@
-# Page Unit d zero
+# A two-sided page unit is a cycle
 
-The original native Leibniz rule and both actual unit laws force the unit differential to vanish.
+A two-sided page unit is a cycle.
+
+The left and right unit laws imply u followed by the outgoing page differential is zero.

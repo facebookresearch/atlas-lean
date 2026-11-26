@@ -14,25 +14,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Topology.Homology
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Concrete homology quotients in `TopModuleCat`
+# Homology quotients of topological module complexes
 
-The homology projection of a `TopModuleCat`-valued homological complex is
-surjective on underlying carriers.  A cycle maps to zero exactly when its
-included cochain is an explicit boundary from the predecessor degree.
+Let `R` be a ring with a topology, and let `K` be a homological complex of topological
+`R`-modules in an arbitrary complex shape. The projection from cycles to homology is
+surjective on carriers, and its kernel consists of the cycles whose included element is a
+boundary from the predecessor term.
 
-If the middle term of the complex is discrete, then the selected homology
-object is discrete.  This is proved by comparing selected cycles with the
-explicit subspace kernel and selected homology with the explicit
-quotient-topology cokernel.
-
-These statements use the concrete quotient model of cokernels in
-`TopModuleCat`; they do not infer surjectivity from a categorical epimorphism.
-
-## Main declarations
-
-* `HomologicalComplex.discreteTopology_homology`
-* `HomologicalComplex.homologyπ_surjective`
-* `HomologicalComplex.homologyπ_eq_zero_iff_exists_boundary`
+The homology topology is identified with the quotient topology of the cycle subspace by these
+boundaries. Consequently, a discrete middle term gives discrete homology. Scalar, complex-
+index, and module-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -75,8 +66,10 @@ private theorem exists_homology_coker_iso (i j : ι) (hPrev : c.prev j = i) :
   rw [hHomologyLeg, hConcreteLeg] at hbase
   exact hbase.symm
 
-/-- If the middle term of a `TopModuleCat`-valued homological complex is
-discrete, then its categorically selected homology object is discrete. -/
+/-- Discrete middle term gives discrete topological homology.
+
+If `K.X i` has discrete topology, then the selected homology object `K.homology i` is
+discrete. -/
 theorem discreteTopology_homology (i : ι)
     [DiscreteTopology (K.X i)] :
     DiscreteTopology (K.homology i) := by
@@ -103,8 +96,10 @@ theorem discreteTopology_homology (i : ι)
   exact eHomology.toContinuousLinearEquiv.toHomeomorph.discreteTopology_iff.mpr
     hCoker
 
-/-- The homology projection of a `TopModuleCat`-valued homological complex is
-surjective on underlying carriers when `i` is the predecessor of `j`. -/
+/-- Topological homology projection is surjective on carriers.
+
+For indices with `c.prev j = i`, the map `K.homologyπ j` from cycles to homology is surjective
+as a function. -/
 theorem homologyπ_surjective (i j : ι) (hPrev : c.prev j = i) :
     Function.Surjective (K.homologyπ j) := by
   obtain ⟨e, hcomparison⟩ := K.exists_homology_coker_iso i j hPrev
@@ -119,8 +114,10 @@ theorem homologyπ_surjective (i j : ι) (hPrev : c.prev j = i) :
   simpa only [← ConcreteCategory.comp_apply, Category.assoc,
     Iso.hom_inv_id, Category.comp_id, ConcreteCategory.id_apply] using hz''
 
-/-- A cycle has zero homology class exactly when its included cochain is the
-differential of a cochain in the predecessor degree. -/
+/-- Zero homology class is an explicit predecessor boundary.
+
+For `c.prev j = i` and `z : K.cycles j`, its homology class is zero exactly when there is `b :
+K.X i` with the cycle inclusion equal to `(K.d i j) b`. -/
 theorem homologyπ_eq_zero_iff_exists_boundary
     (i j : ι) (hPrev : c.prev j = i) (z : K.cycles j) :
     K.homologyπ j z = 0 ↔

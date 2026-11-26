@@ -1,6 +1,6 @@
-# Eq sum localized Length mul
+# Euler factors weighted by their generic multiplicities
 
-Group the prime-factor sum by prime.  For every factor which contributes
-nontrivially, it suffices to know that its prime is minimal in the module
-support; its repetition count is then the corresponding localized module
-length.
+Euler factors weighted by their generic multiplicities.
+
+If every factor excluding r satisfies the stated minimal-support condition, χ_r(M) is the sum
+over distinct factors of ℓ_{R_p}(M_p) times the factor Euler value.

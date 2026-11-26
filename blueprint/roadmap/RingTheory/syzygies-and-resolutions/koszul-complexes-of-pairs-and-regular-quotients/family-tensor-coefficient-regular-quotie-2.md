@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Regular Quotient Projection quasi Iso
+# The last-quotient Koszul projection is a quasi-isomorphism under regularity
 
-An actual regular last coefficient gives the native quotient
-quasi-isomorphism, without any finiteness premise on intermediate homology.
+The last-quotient Koszul projection is a quasi-isomorphism under regularity.
+
+If the last family element is regular on M, the coefficient quotient projection is a
+quasi-isomorphism.

@@ -13,13 +13,16 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AugmentedExactCompar
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.PrecompositionNaturality
 
 /-!
-# Directional left-derived comparison for exact source restriction
+# Directional left-derived comparison under source change
 
-An additive homology-preserving functor U sends a target-ring projective resolution to an exact
-augmented complex. The source-ring projective resolution maps into that complex. This gives the
-canonical directional map `U ⋙ L.leftDerived n ⟶ (U ⋙ L).leftDerived n` even when U does not
-preserve projectives. If U does preserve projectives, it is exactly the inverse of the existing
-precomposition isomorphism.
+Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive.
+For a resolution `P` of `X`, the image `U(P)` is an exact augmented
+complex resolving `U(X)`. A projective resolution of `U(X)` maps into
+it, giving the natural comparison `U ⋙ L_nL → L_n(U ⋙ L)`.
+If `U` preserves projectives, this is the inverse of the canonical
+precomposition isomorphism. Degree-zero augmentations and coefficient
+transformations commute with the directional comparison.
 -/
 
 @[expose] public section
@@ -37,7 +40,9 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {D : Type u'} [Category.{v'} D] [Abelian D]
   {E : Type u''} [Category.{v''} E] [Abelian E]
 
-/-- The original mapped augmentation, without assigning projectivity to its image terms. -/
+/-- For abelian `C,D` and additive `U : C → D`, a chain augmentation
+`π : K → X[0]` induces `U(K) → U(X)[0]`, using the natural
+identification of the mapped degree-zero single complex. -/
 def mapChainAugmentation (U : C ⥤ D) [U.Additive]
     {X : C} {K : ChainComplex C ℕ} (π : K ⟶ (ChainComplex.single₀ C).obj X) :
     (U.mapHomologicalComplex (ComplexShape.down ℕ)).obj K ⟶
@@ -45,7 +50,9 @@ def mapChainAugmentation (U : C ⥤ D) [U.Additive]
   (U.mapHomologicalComplex (ComplexShape.down ℕ)).map π ≫
     (HomologicalComplex.singleMapHomologicalComplex U (ComplexShape.down ℕ) 0).hom.app X
 
-/-- The mapped augmentation keeps its original degree-zero image. -/
+/-- For abelian `C,D`, additive `U : C → D`, and an augmentation
+`π : K → X[0]`, the degree-zero component of its mapped augmentation
+is `U(π₀)`. -/
 theorem mapChainAugmentation_f_zero (U : C ⥤ D) [U.Additive]
     {X : C} {K : ChainComplex C ℕ} (π : K ⟶ (ChainComplex.single₀ C).obj X) :
     (mapChainAugmentation U π).f 0 = U.map (π.f 0) := by
@@ -60,14 +67,19 @@ theorem mapChainAugmentation_f_zero (U : C ⥤ D) [U.Additive]
       ((congrArg (fun z => U.map (π.f 0) ≫ z)
         (Category.comp_id (𝟙 (U.obj X)))).trans (Category.comp_id _))
 
-/-- Homology preservation earns an exact mapped augmented complex; no projectivity is claimed. -/
+/-- For abelian `C,D` and additive homology-preserving `U : C → D`,
+a quasi-isomorphism `π : K → X[0]` induces a quasi-isomorphism
+`U(K) → U(X)[0]`. -/
 theorem mapChainAugmentation_quasiIso (U : C ⥤ D) [U.Additive] [U.PreservesHomology]
     {X : C} {K : ChainComplex C ℕ} (π : K ⟶ (ChainComplex.single₀ C).obj X)
     [QuasiIso π] : QuasiIso (mapChainAugmentation U π) := by
   unfold mapChainAugmentation
   infer_instance
 
-/-- Mapping an augmentation square retains that same original square. -/
+/-- For abelian `C,D` and additive `U : C → D`, suppose
+`π : K → X[0]`, `π′ : K′ → Y[0]`, `a : K → K′`, `f : X → Y`
+satisfy `a ≫ π′ = π ≫ f[0]`. Their mapped augmentations satisfy
+`U(a) ≫ U(π′) = U(π) ≫ U(f)[0]`. -/
 theorem mapChainAugmentation_naturality (U : C ⥤ D) [U.Additive]
     {X Y : C} {K K' : ChainComplex C ℕ}
     (π : K ⟶ (ChainComplex.single₀ C).obj X)
@@ -87,7 +99,11 @@ theorem mapChainAugmentation_naturality (U : C ⥤ D) [U.Additive]
   exact (congrArg (fun z => (U.mapHomologicalComplex (ComplexShape.down ℕ)).map π ≫ z) hσ).trans
     (Category.assoc _ _ _).symm
 
-/-- The complex-composition map keeps the original opcycles augmentation. -/
+/-- Let `C,D,E` be abelian, `U : C → D`, `L : D → E` additive,
+and `P` a projective resolution of `X`. Under the natural complex-
+composition identification, the degree-zero opcycles augmentation
+of `(U ⋙ L)(P)` agrees with that of `L(U(P))` obtained from the
+mapped augmentation of `P`. -/
 theorem mapChainAugmentation_opcycles_composition
     (U : C ⥤ D) [U.Additive] (L : D ⥤ E) [L.Additive]
     {X : C} (P : ProjectiveResolution X) :
@@ -107,7 +123,10 @@ theorem mapChainAugmentation_opcycles_composition
   rw [Category.id_comp, mapChainAugmentation_f_zero]
   rfl
 
-/-- Composition of the complex functors carries the original degree-zero augmentation. -/
+/-- Let `C,D,E` be abelian, `U : C → D`, `L : D → E` additive,
+and `P` a projective resolution of `X`. Under the complex-composition
+identification, the map `H₀((U ⋙ L)(P)) → L(U(X))` induced by the
+augmentation agrees with the map from `H₀(L(U(P)))`. -/
 theorem mapChainAugmentation_homologyZero_composition
     (U : C ⥤ D) [U.Additive] (L : D ⥤ E) [L.Additive]
     {X : C} (P : ProjectiveResolution X) :
@@ -130,7 +149,10 @@ section Derived
 variable [HasProjectiveResolutions C] [HasProjectiveResolutions D]
   (U : C ⥤ D) [U.Additive] [U.PreservesHomology] (L : D ⥤ E) [L.Additive]
 
-/-- The source projective resolution maps into the exact image of any target resolution. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. A supplied projective resolution `P` of `X` computes the map
+`L_nL(U(X)) → L_n(U ⋙ L)(X)` by comparison from a projective
+resolution of `U(X)` into the exact augmented complex `U(P)`. -/
 def leftDerivedPrecompHomWithResolution (n : ℕ) {X : C} (P : ProjectiveResolution X) :
     (L.leftDerived n).obj (U.obj X) ⟶ ((U ⋙ L).leftDerived n).obj X := by
   letI : QuasiIso (mapChainAugmentation U P.π) := mapChainAugmentation_quasiIso U P.π
@@ -142,7 +164,10 @@ def leftDerivedPrecompHomWithResolution (n : ℕ) {X : C} (P : ProjectiveResolut
     (HomologicalComplex.homologyFunctor E (ComplexShape.down ℕ) n).map
       (χ.hom.app P.complex) ≫ (P.isoLeftDerivedObj (U ⋙ L) n).inv
 
-/-- Resolution maps earn input naturality of the directional comparison. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. For `f : X → Y` and resolutions `P,Q` of `X,Y`, the
+computed comparisons commute with `L_nL(U(f))` and
+`L_n(U ⋙ L)(f)`. -/
 theorem leftDerivedPrecompHomWithResolution_naturality (n : ℕ)
     {X Y : C} (f : X ⟶ Y) (P : ProjectiveResolution X) (Q : ProjectiveResolution Y) :
     (L.leftDerived n).map (U.map f) ≫ leftDerivedPrecompHomWithResolution U L n Q =
@@ -203,7 +228,9 @@ theorem leftDerivedPrecompHomWithResolution_naturality (n : ℕ)
       ((U ⋙ L).leftDerived n).map f
   exact (s₁.horiz_comp (s₂.horiz_comp s₃)).w.symm
 
-/-- The target-ring resolution choice does not change the directional map. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. Any two projective resolutions `P,Q` of `X` give the same
+map `L_nL(U(X)) → L_n(U ⋙ L)(X)`. -/
 theorem leftDerivedPrecompHomWithResolution_independent (n : ℕ) {X : C}
     (P Q : ProjectiveResolution X) :
     leftDerivedPrecompHomWithResolution U L n P =
@@ -211,24 +238,28 @@ theorem leftDerivedPrecompHomWithResolution_independent (n : ℕ) {X : C}
   have h := leftDerivedPrecompHomWithResolution_naturality U L n (𝟙 X) P Q
   simpa only [Functor.map_id, Category.id_comp, Category.comp_id] using h.symm
 
-/-- The canonical directional left-derived comparison for an exact source functor. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. The objectwise comparisons form a natural transformation
+`U ⋙ L_nL → L_n(U ⋙ L)` in every degree `n`. -/
 def leftDerivedPrecompHomOfPreservesHomology (n : ℕ) :
     U ⋙ L.leftDerived n ⟶ (U ⋙ L).leftDerived n where
   app X := leftDerivedPrecompHomWithResolution U L n (projectiveResolution X)
   naturality {X Y} f := leftDerivedPrecompHomWithResolution_naturality U L n f
     (projectiveResolution X) (projectiveResolution Y)
 
-/-- Every target-ring resolution computes the same canonical component. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. At `X`, the canonical directional comparison is computed
+by any projective resolution `P` of `X`. -/
 theorem leftDerivedPrecompHomOfPreservesHomology_app (n : ℕ) {X : C}
     (P : ProjectiveResolution X) :
     (leftDerivedPrecompHomOfPreservesHomology U L n).app X =
       leftDerivedPrecompHomWithResolution U L n P :=
   leftDerivedPrecompHomWithResolution_independent U L n (projectiveResolution X) P
 
-/--
-When source precomposition genuinely preserves projectives, this directional comparison is exactly
-the existing inverse isomorphism.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. If `U` also preserves projective objects, the directional
+comparison `U ⋙ L_nL → L_n(U ⋙ L)` is the inverse map of the
+canonical left-derived precomposition isomorphism. -/
 theorem leftDerivedPrecompHomOfPreservesHomology_eq_inv
     [U.PreservesProjectiveObjects] (n : ℕ) :
     leftDerivedPrecompHomOfPreservesHomology U L n = (leftDerivedPrecompIso U L n).inv := by
@@ -258,10 +289,10 @@ theorem leftDerivedPrecompHomOfPreservesHomology_eq_inv
         (Iso.refl (U ⋙ L)) (ComplexShape.down ℕ)).hom.app P.complex) ≫
       (P.isoLeftDerivedObj (U ⋙ L) n).inv) h'
 
-/--
-The directional comparison retains the degree-zero augmentation. L is only additive; U alone
-preserves homology.
--/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. The directional comparison in degree zero followed by
+`L₀(U ⋙ L) → U ⋙ L` equals the canonical augmentation
+`U ⋙ L₀L → U ⋙ L`. -/
 theorem leftDerivedPrecompHomOfPreservesHomology_zero_augmentation :
     leftDerivedPrecompHomOfPreservesHomology U L 0 ≫ (U ⋙ L).fromLeftDerivedZero =
       whiskerLeft U L.fromLeftDerivedZero := by
@@ -302,7 +333,9 @@ theorem leftDerivedPrecompHomOfPreservesHomology_zero_augmentation :
         leftDerivedObjToAugmentedHom_zero_augmentation L
           ((U.mapHomologicalComplex (ComplexShape.down ℕ)).obj P.complex) ρ (𝟙 (U.obj X))
 
-/-- An additive-functor transformation commutes with the directional comparison. -/
+/-- Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. For additive `M : D → E` and `τ : L → M`, the directional
+comparisons satisfy `(U ⋙ L_nτ) ≫ η_M = η_L ≫ L_n(U ⋙ τ)`. -/
 theorem leftDerivedPrecompHomOfPreservesHomology_naturality_functor
     {M : D ⥤ E} [M.Additive] (τ : L ⟶ M) (n : ℕ) :
     whiskerLeft U (NatTrans.leftDerived τ n) ≫

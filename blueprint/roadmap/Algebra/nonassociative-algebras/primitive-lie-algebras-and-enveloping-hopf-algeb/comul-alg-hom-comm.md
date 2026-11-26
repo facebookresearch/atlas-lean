@@ -1,3 +1,6 @@
-# Comul Alg Hom comm
+# The enveloping coproduct is invariant under tensor exchange
 
-Swapping the two tensor factors fixes the enveloping coproduct algebra map.
+The enveloping coproduct is invariant under tensor exchange.
+
+Composing the coproduct algebra map with the tensor commutation equivalence leaves it
+unchanged.

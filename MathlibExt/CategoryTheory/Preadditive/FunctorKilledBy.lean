@@ -14,7 +14,14 @@ module
 public import MathlibExt.CategoryTheory.Preadditive.KilledBy
 public import Mathlib.CategoryTheory.Preadditive.FunctorCategory
 
-/-! # Torsion of the actual components determines torsion of a functor object -/
+/-!
+# Componentwise annihilation in a functor category
+
+Let C be any category and D a preadditive category. The functor category
+C ⥤ D is preadditive, with addition of natural transformations computed
+at each object. If m∈ℕ annihilates the identity of every value F(X),
+then it annihilates the identity natural transformation of F.
+-/
 
 @[expose] public section
 noncomputable section
@@ -25,7 +32,9 @@ namespace CategoryTheory.Preadditive
 variable {C : Type u} [Category.{v} C]
   {D : Type u'} [Category.{v'} D] [Preadditive D]
 
-/-- A functor object is killed by `m` if every actual value object is killed by `m`. -/
+/-- Let C be a category, D preadditive, F:C → D a functor and m∈ℕ.
+If m•1_{F(X)}=0 for every X in C, then m•1_F=0 as a natural
+transformation in the preadditive functor category: F is killed by m. -/
 theorem isKilledBy_functor_of_components (F : C ⥤ D) (m : ℕ)
     (hF : ∀ X, IsKilledBy (F.obj X) m) : IsKilledBy F m := by
   change m • (𝟙 F : F ⟶ F) = 0

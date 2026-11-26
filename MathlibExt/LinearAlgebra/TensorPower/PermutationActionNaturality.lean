@@ -13,13 +13,14 @@ module
 public import MathlibExt.LinearAlgebra.TensorPower.PermutationRepresentation
 
 /-!
-# Native coefficient group-algebra action across independent worlds
+# Naturality of coefficient permutation actions
 
-The original neutral permutation naturality applies to every actual
-group-algebra element, by its finite coefficient expansion. Original
-coefficient maps and uniform tail maps may have independent universes.
-The rational specialization only changes the coefficient ring through its
-actual ground map; no rational premise is attached to the neutral law.
+Let k be a commutative ring, M,N,V,W k-modules, and f : M → N, g : V → W k-linear maps. The map
+T = f ⊗ g⊗n intertwines the actions of every x ∈ k[Sₙ] on the coefficient tensor modules. If k
+is a ℚ-algebra, the same identity holds for x ∈ ℚ[Sₙ] after extending its coefficients to k. All
+four modules may have independent universes.
+
+This follows from tensor functoriality; see N. Bourbaki, Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -37,7 +38,10 @@ variable {k : Type u} [CommRing k]
   {M : Type z} [AddCommGroup M] [Module k M]
   {N : Type t} [AddCommGroup N] [Module k N]
 
-/-- Every group-algebra action commutes with original independent coefficient and tail maps. -/
+/-- Naturality of a group-algebra action on coefficient tensors.
+
+For a commutative ring k, k-linear maps f : M → N and g : V → W, and x ∈ k[Sₙ], T = f ⊗ g⊗n
+satisfies T ∘ ρₙ,M,V(x) = ρₙ,N,W(x) ∘ T. Each permutation fixes the coefficient factor. -/
 theorem coefficientPermutationGroupAlgebraAction_naturality (n : ℕ)
     (x : MonoidAlgebra k (Equiv.Perm (Fin n))) (g : V →ₗ[k] W) (f : M →ₗ[k] N) :
     (TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n => g))).comp
@@ -54,7 +58,11 @@ theorem coefficientPermutationGroupAlgebraAction_naturality (n : ℕ)
 
 variable [Algebra ℚ k]
 
-/-- Actual rational coefficient action is natural across the original independent coefficient and tail worlds. -/
+/-- Naturality of the rational permutation action.
+
+For a commutative ℚ-algebra k, k-linear maps f : M → N and g : V → W, and x ∈ ℚ[Sₙ], T = f ⊗
+g⊗n intertwines the two actions of x after scalar extension to k. The modules may lie in
+independent universes. -/
 theorem coefficientRationalPermutationAction_naturality (n : ℕ)
     (x : MonoidAlgebra ℚ (Equiv.Perm (Fin n))) (g : V →ₗ[k] W) (f : M →ₗ[k] N) :
     (TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n => g))).comp

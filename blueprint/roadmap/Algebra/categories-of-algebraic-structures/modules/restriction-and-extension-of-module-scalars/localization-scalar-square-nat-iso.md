@@ -1,4 +1,6 @@
-# Localization Scalar Square Nat Iso
+# The natural isomorphism of localization and restriction functors
 
-Localization of the base restriction and restriction of the
-localized coefficient are naturally isomorphic for the actual square.
+The natural isomorphism of localization and restriction functors.
+
+For the specified localization square, restrictScalars φ followed by extendScalars γ is
+naturally isomorphic to extendScalars δ followed by restrictScalars ψ.

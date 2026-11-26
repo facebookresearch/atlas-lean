@@ -1,3 +1,5 @@
-# Pair Top Boundary Vector
+# The oriented top boundary vector
 
-Coordinate vector of the top two-generator Koszul differential.
+The oriented top boundary vector.
+
+For the pair (f,g), the top differential vector is (−g,f).

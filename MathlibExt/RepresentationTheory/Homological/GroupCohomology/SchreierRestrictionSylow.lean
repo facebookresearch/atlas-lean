@@ -15,16 +15,12 @@ public import Mathlib.GroupTheory.Sylow
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierRestrictionCorestriction
 
 /-!
-# Low-degree restriction to Sylow subgroups
+# Degree-one and degree-two restriction to Sylow subgroups
 
-For a finite group and a Sylow `p`-subgroup, the subgroup index is prime to
-`p`.  It is therefore a unit in `ZMod (p ^ d)` for positive `d`.  The
-restriction/corestriction formula makes restriction injective on `H¹` and
-`H²` with arbitrary `ZMod (p ^ d)`-linear coefficients.
-
-These results are restricted to positive prime-power moduli.  No assertion
-is made for a composite modulus with several prime factors, and no
-degree-three restriction theorem is claimed.
+Let `G : Type` be a finite group, `p` a prime, `d : ℕ` positive, and `P` a Sylow `p`-subgroup.
+The index `[G:P]` is a unit in `ZMod (p^d)`. Hence, for any `ZMod (p^d)`-representation `A`,
+the restriction maps `H¹(G,A) → H¹(P,Res A)` and `H²(G,A) → H²(P,Res A)` are injective. Each
+restriction detects vanishing and equality of classes.
 -/
 
 @[expose] public section
@@ -40,15 +36,17 @@ namespace groupCohomology
 variable {G : Type} [Group G] [Finite G]
 variable {p d : ℕ} [hp : Fact p.Prime]
 
-/-- The index of a Sylow `p`-subgroup is a unit modulo every positive power
-of `p`. -/
+/-- Let `G : Type` be a finite group, `p : ℕ` prime, `P : Sylow p G`, and `d : ℕ` with `0 < d`.
+Then `IsUnit (P.index : ZMod (p ^ d))`; equivalently, the subgroup index `[G:P]` is invertible
+modulo `p^d`, since `p` does not divide this index. -/
 theorem sylowIndex_isUnit_zmod_primePower
     (P : Sylow p G) (hd : 0 < d) :
     IsUnit (P.index : ZMod (p ^ d)) :=
   (ZMod.isUnit_natCast_iff_not_dvd_pow hp.out hd).2 P.not_dvd_index
 
-/-- Restriction to a Sylow subgroup is injective on `H¹` with coefficients
-over a positive prime-power `ZMod`. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. The map `res_P¹ : H¹(G,A) → H¹(P,Rep.res (Subgroup.subtype P) A)`
+induced by the subgroup inclusion and the identity coefficient morphism is injective. -/
 theorem restrictionH1_injective_sylow_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d) :
     Function.Injective
@@ -57,8 +55,9 @@ theorem restrictionH1_injective_sylow_primePower
   restrictionH1_injective_of_isUnit_index A
     (sylowIndex_isUnit_zmod_primePower P hd)
 
-/-- Restriction to a Sylow subgroup is injective on `H²` with coefficients
-over a positive prime-power `ZMod`. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. The map `res_P² : H²(G,A) → H²(P,Rep.res (Subgroup.subtype P) A)`
+induced by the subgroup inclusion and the identity coefficient morphism is injective. -/
 theorem restrictionH2_injective_sylow_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d) :
     Function.Injective
@@ -67,8 +66,9 @@ theorem restrictionH2_injective_sylow_primePower
   restrictionH2_injective_of_isUnit_index A
     (sylowIndex_isUnit_zmod_primePower P hd)
 
-/-- A degree-one class is zero exactly when its restriction to a Sylow
-subgroup is zero. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x ∈ H¹(G,A)`, `res_P¹(x) = 0 ↔ x = 0`, where `res_P¹` is induced
+by the subgroup inclusion `P → G` with the identity coefficient map. -/
 theorem restrictionH1_sylow_eq_zero_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (x : H1 A) :
@@ -80,8 +80,9 @@ theorem restrictionH1_sylow_eq_zero_iff_primePower
   · rintro rfl
     exact map_zero _
 
-/-- Two degree-one classes are equal exactly when their restrictions to a
-Sylow subgroup are equal. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x,y ∈ H¹(G,A)`, `res_P¹(x) = res_P¹(y) ↔ x = y`, where restriction
+is along the subgroup inclusion with the identity coefficient morphism. -/
 theorem restrictionH1_sylow_eq_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (x y : H1 A) :
@@ -90,8 +91,9 @@ theorem restrictionH1_sylow_eq_iff_primePower
       x = y :=
   (restrictionH1_injective_sylow_primePower A P hd).eq_iff
 
-/-- A degree-two class is zero exactly when its restriction to a Sylow
-subgroup is zero. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x ∈ H²(G,A)`, `res_P²(x) = 0 ↔ x = 0`, where `res_P²` is induced
+by the subgroup inclusion `P → G` and the identity coefficient morphism. -/
 theorem restrictionH2_sylow_eq_zero_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (x : H2 A) :
@@ -103,8 +105,9 @@ theorem restrictionH2_sylow_eq_zero_iff_primePower
   · rintro rfl
     exact map_zero _
 
-/-- Two degree-two classes are equal exactly when their restrictions to a
-Sylow subgroup are equal. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x,y ∈ H²(G,A)`, `res_P²(x) = res_P²(y) ↔ x = y`, where restriction
+is along the subgroup inclusion with the identity coefficient morphism. -/
 theorem restrictionH2_sylow_eq_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (x y : H2 A) :

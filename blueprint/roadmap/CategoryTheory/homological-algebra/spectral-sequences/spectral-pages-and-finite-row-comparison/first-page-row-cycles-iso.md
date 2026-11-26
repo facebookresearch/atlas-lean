@@ -1,3 +1,6 @@
-# First Page Row Cycles Iso
+# The cycles comparison of a first-page row
 
-First-page row cycles identify with cycles at the corresponding page position.
+The cycles comparison of a first-page row.
+
+Identify degree-p row cycles with first-page cycles at (p,q) through the three-term
+comparison.

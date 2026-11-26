@@ -1,4 +1,4 @@
 # Comparison arrows with identical inferred endpoints
 
-- [Comparison Arrows](comparison-arrows.md)
-- [Comparison Arrows Of Maps](comparison-arrows-of-maps.md)
+- [Two parallel comparison morphisms](comparison-arrows.md)
+- [Comparison pair from parallel maps](comparison-arrows-of-maps.md)

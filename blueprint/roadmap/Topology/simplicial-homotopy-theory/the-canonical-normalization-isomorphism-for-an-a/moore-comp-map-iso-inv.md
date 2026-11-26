@@ -1,4 +1,6 @@
-# Moore Comp Map Iso inv
+# The inverse map of additive normalized Moore comparison
 
-The actual inverse is the target inclusion, inverse alternating transport
-and the original normalization projection mapped by the additive functor.
+The inverse map of additive normalized Moore comparison.
+
+The inverse map `N(FX) → F(NX)` is the target Moore inclusion, inverse alternating-complex
+transport, and `F` of the source Moore projection.

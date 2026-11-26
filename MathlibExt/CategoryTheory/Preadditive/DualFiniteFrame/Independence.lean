@@ -15,11 +15,18 @@ public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Transport
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Naturality
 
 /-!
-# Independence of transported finite-frame comparisons
+# Independence of finite-frame contravariant comparisons
 
-The two original frames may have different ranks. Their transported points
-are the same original object, and the earned arbitrary-morphism naturality
-at its identity proves equality of their genuine comparisons.
+Let F : C ⥤ D be additive between preadditive categories, G,H additive contravariant
+endofunctors, and U,V coefficient objects with u : F(U) ≅ V, e_G : G(U) ≅ U and e_H : H(V) ≅
+V. Assume G(q.op) ≫ e_G.hom = e_G.hom ≫ q for every endomorphism q of U, and the corresponding
+equation for H and endomorphisms of V.
+
+Suppose finite bilimit bicones a and b of copies of U have points identified with the same
+object M. Transport each bicone along its identification to M. Their canonical comparison maps
+F(G(M)) → H(F(M)) agree, even when their finite index sets have different cardinalities.
+Naturality at id_M gives this frame independence; the category worlds and indexing universe
+remain independent.
 -/
 
 @[expose] public section
@@ -35,8 +42,13 @@ namespace CategoryTheory.DualFiniteFrame
 variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 
-/-- Transporting two actual finite frames to the same original object gives
-the same canonical dual comparison, even when the finite ranks differ. -/
+/-- Equality of comparisons from two transported finite frames.
+
+Let F : C ⥤ D be additive between preadditive categories, G : Cᵒᵖ ⥤ C and H : Dᵒᵖ ⥤ D
+additive, with u : F(U) ≅ V, e_G : G(U) ≅ U and e_H : H(V) ≅ V. Suppose G(q.op) ≫ e_G.hom =
+e_G.hom ≫ q for all q : U → U and H(q.op) ≫ e_H.hom = e_H.hom ≫ q for all q : V → V. For
+finite bilimit bicones a,b of copies of U with a.pt ≅ M and b.pt ≅ M, transport both to M. The
+resulting comparison homs F(G(M)) → H(F(M)) are equal; the two finite index sets may differ. -/
 theorem transportedFrameComparison_independent
     (F : C ⥤ D) [F.Additive] (G : Cᵒᵖ ⥤ C) [G.Additive]
     (H : Dᵒᵖ ⥤ D) [H.Additive]

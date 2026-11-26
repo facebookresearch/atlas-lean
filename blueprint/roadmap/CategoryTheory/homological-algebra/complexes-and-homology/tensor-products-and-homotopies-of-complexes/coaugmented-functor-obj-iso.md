@@ -1,3 +1,6 @@
-# Coaugmented Functor Obj Iso
+# The comparison of the two pointed homology constructions
 
-The canonical native point comparison identifies the output with the existing producer.
+The comparison of the two pointed homology constructions.
+
+The functorial and direct outputs are isomorphic through the identity on the homology
+comonoid.

@@ -1,4 +1,7 @@
-# Quasi Iso map Arrow Hom down Nat
+# Quasi-isomorphism of cofibers from a square of chain maps
 
-A commutative square of down-Nat chain maps that is a quasi-isomorphism
-on both vertical sides induces a quasi-isomorphism on homotopy cofibers.
+Let C be abelian and let a:K → K′, b:L → L′ form a commuting square
+between nonnegative chain maps f:K → L and g:K′ → L′.
+If a and b are quasi-isomorphisms, the induced map
+Cofib(f) → Cofib(g), using the chain-shape predecessors n+1,
+is a quasi-isomorphism.

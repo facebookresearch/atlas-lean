@@ -1,3 +1,5 @@
-# Small Etale Direct Image map id
+# Direct image preserves identity sheaf maps
 
-The stock induced sheaf functor preserves actual identity morphisms.
+Direct image preserves identity sheaf maps.
+
+Applying direct image to an identity morphism gives the identity of the direct-image sheaf.

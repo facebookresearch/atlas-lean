@@ -1,4 +1,7 @@
-# Tensor Pow Obj pow Map bridge
+# Map equation for recursive and monoidal tensor powers
 
-Generic and DG power maps agree across the bridges: bridge, then generic
-map, equals DG map, then bridge. By induction from the whiskered bridge.
+Map equation for recursive and monoidal tensor powers.
+
+Under the cochain monoidal hypotheses, let B_X,n : P_n(X) ≅ Q_n(X) be the canonical object
+comparison. For g : X → Y, B_X,n.hom ≫ Q_n(g) = P_n(g) ≫ B_Y,n.hom. Both power maps follow the
+same left-associated recursion.

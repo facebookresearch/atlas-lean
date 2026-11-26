@@ -1,6 +1,6 @@
 # Linear Hom Cochain Evaluation
 
-- [Linear Hom Cochain Evaluation Graded Pairing](linear-hom-cochain-evaluation-graded-pai.md)
-- [Linear Hom Cochain Evaluation Homology](linear-hom-cochain-evaluation-homology.md)
-- [Tensor homologyπ comp linear Hom Cochain Evaluation Homology](tensor-homology-comp-linear-hom-cochain.md)
-- [Linear Hom Cochain Evaluation Homology π apply](linear-hom-cochain-evaluation-homology-a.md)
+- [Hom cochains pair with chains by evaluation into the coefficient single complex](linear-hom-cochain-evaluation-graded-pai.md)
+- [Evaluation descends to linear Hom cohomology paired with matching chain homology](linear-hom-cochain-evaluation-homology.md)
+- [The evaluation pairing on homology is characterized by its quotient projections](tensor-homology-comp-linear-hom-cochain.md)
+- [A cochain cycle evaluated on a chain-cycle class gives its underlying value](linear-hom-cochain-evaluation-homology-a.md)

@@ -23,7 +23,11 @@ namespace CategoryTheory.CohomologicalDeltaFunctor
 variable {A B D : Type*} [Category A] [Preadditive A]
 variable [Category B] [Preadditive B] [Category D] [Preadditive D]
 
-/-- An exact-input coefficient isomorphism gives the same original delta comparison. -/
+/-- Let `A`, `B`, `D` be preadditive categories, `R,R′ : A → B`
+additive functors preserving short exact sequences, and `e : R ≅ R′`.
+For a cohomological δ-functor `T : B → D`, the two precomposed
+δ-functors along `R` and `R′` are isomorphic, through the comparisons
+induced by `e` in every degree. -/
 def precomposeChangeIso (R R' : A ⥤ B) [R.Additive] [R'.Additive]
     (hR : ∀ S : ShortComplex A, S.ShortExact → (S.map R).ShortExact)
     (hR' : ∀ S : ShortComplex A, S.ShortExact → (S.map R').ShortExact)
@@ -61,7 +65,11 @@ open CategoryTheory
 namespace CategoryTheory.CohomologicalDeltaFunctor
 variable {A D : Type*} [Category A] [Preadditive A] [Category D] [Preadditive D]
 
-/-- Component identities transport the same connector square. -/
+/-- For cohomological δ-functors `S,T : A → D` between preadditive
+categories, suppose an isomorphism `e : S ≅ T` has degree components
+the chosen natural isomorphisms `c_q`. For a short exact sequence
+`Z : X₁ → X₂ → X₃`, their connecting maps satisfy
+`δ_S,q ≫ c_(q+1)(X₁) = c_q(X₃) ≫ δ_T,q`. -/
 theorem iso_connecting_eq_components {S T : CohomologicalDeltaFunctor A D}
     (e : S ≅ T) (c : ∀ q, S.T q ≅ T.T q)
     (hc : ∀ q, Hom.app e.hom q = (c q).hom)

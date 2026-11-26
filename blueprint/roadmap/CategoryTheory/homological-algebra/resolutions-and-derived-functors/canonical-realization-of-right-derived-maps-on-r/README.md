@@ -2,26 +2,26 @@
 
 ## Category Theory
 
-- [Resolution realization square](resolution-realization-square.md)
-- [Resolution realization choice](resolution-realization-choice.md)
+- [Transporting a commuting map square through two presentations](resolution-realization-square.md)
+- [Canonical presentation changes commute with transported maps](resolution-realization-choice.md)
 
 ## Functor
 
-- [Precomp native resolution formula](precomp-native-resolution-formula.md)
-- [Precomp native resolution iso](precomp-native-resolution-iso.md)
+- [Presented precomposition map on an arbitrary injective resolution](precomp-native-resolution-formula.md)
+- [Isomorphism formula for a presented resolution precomposition map](precomp-native-resolution-iso.md)
 
 ## Category Theory
 
-- [Resolution nat Iso app](resolution-nat-iso-app.md)
-- [Resolution native eq](resolution-native-eq.md)
-- [Homology object presentation](homology-object-presentation.md)
+- [Evaluation of a composed and whiskered coefficient isomorphism](resolution-nat-iso-app.md)
+- [Equal resolutions give the same presented right-derived comparison](resolution-native-eq.md)
+- [Homology-functor evaluation is the chosen homology object](homology-object-presentation.md)
 
 ## Injective Resolution
 
-- [Actual Homology Resolution Iso](actual-homology-resolution-iso.md)
-- [Homology Resolution Presentation Iso](homology-resolution-presentation-iso.md)
-- [Actual Homology Resolution Iso presentation](actual-homology-resolution-iso-presentat.md)
+- [Presented right-derived object as actual resolution cohomology](actual-homology-resolution-iso.md)
+- [Cohomology presentation isomorphism for equal resolutions](homology-resolution-presentation-iso.md)
+- [Presentation transport preserves the canonical resolution comparison](actual-homology-resolution-iso-presentat.md)
 
 ## Category Theory
 
-- [Resolution realization naturality](resolution-realization-naturality.md)
+- [Naturality of maps transported through source and target presentations](resolution-realization-naturality.md)

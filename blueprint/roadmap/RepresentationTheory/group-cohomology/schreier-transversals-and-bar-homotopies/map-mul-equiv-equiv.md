@@ -1,5 +1,6 @@
-# Map Mul Equiv Equiv
+# The subgroup equivalence induced by a group equivalence
 
-The canonical equivalence from a subgroup to its image under a
-multiplicative equivalence, with the image written using the underlying
-monoid homomorphism.
+The subgroup equivalence induced by a group equivalence.
+
+For e : G ≃* G′ and H ≤ G, restriction of e gives the multiplicative equivalence H ≃* e(H).
+The source and target group universe levels are independent.

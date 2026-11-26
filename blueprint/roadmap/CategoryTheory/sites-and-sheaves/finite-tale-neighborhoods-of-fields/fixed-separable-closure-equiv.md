@@ -1,4 +1,6 @@
-# Fixed Separable Closure Equiv
+# Prescribed separable closure identifies with the relative closure
 
-The actual embedding identifies the source closure with the relative
-separable closure in the same possibly transcendental target.
+Prescribed separable closure identifies with the relative closure.
+
+A `k`-algebra map `σ : Ω → Ψ` from a separable closure gives a `k`-algebra equivalence `Ω ≃
+separableClosure k Ψ`, with underlying map into `Ψ` equal to `σ`.

@@ -1,3 +1,6 @@
-# B Complex d natural
+# Naturality of the full Hochschild boundary
 
-The full boundary is natural under nonunital maps, with no unit requirement.
+Let k be commutative, A,B nonunital associative rings with
+k-bilinear multiplication in independent carrier universes v,w,
+and f : A → B multiplicative and k-linear.
+The full boundaries satisfy F_n b^A_{n+1} = b^B_{n+1} F_{n+1}.

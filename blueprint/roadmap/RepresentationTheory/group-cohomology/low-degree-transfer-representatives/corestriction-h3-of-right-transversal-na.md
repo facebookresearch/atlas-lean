@@ -1,4 +1,6 @@
-# Corestriction H3 Of Right Transversal naturality apply
+# Coefficient naturality on an arbitrary degree-three class
 
-Elementwise coefficient naturality of chosen-transversal degree-three
-corestriction.
+Coefficient naturality on an arbitrary degree-three class.
+
+For x ∈ H³(H,A|H), mapping its transferred class into H³(G,B) equals transferring its
+restricted coefficient image in H³(H,B|H).

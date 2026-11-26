@@ -1,4 +1,4 @@
-# Finite Power Polynomial coefficients eq
+# Natural scalar evaluations determine all coefficients
 
-Equality at all actual natural rational values separates the actual finite scalar
-coefficients.
+For `N : ℕ` and `a,b : Fin N → ℚ`, if `∑ i, a i * m^i.val = ∑ i, b i * m^i.val` in `ℚ` for
+every `m : ℕ`, then `a=b`.

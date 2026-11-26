@@ -1,3 +1,5 @@
-# Small Etale Affine Restriction Equivalence
+# Equivalence between full and affine étale sheaf categories
 
-The fixed actual affine restriction equivalence, constructed internally.
+Equivalence between full and affine étale sheaf categories.
+
+Bundle affine étale restriction and its inverse as a categorical equivalence.

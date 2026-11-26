@@ -1,3 +1,6 @@
-# Coefficient Tensor Functor
+# Coefficient modules as a functor to additive tensor functors
 
-The native coefficient functor retains both actions rather than storing a desired square.
+Coefficient modules as a functor to additive tensor functors.
+
+The assignment from coefficient objects to their additive tensor functors, and from
+coefficient morphisms to their tensor natural transformations, defines a functor.

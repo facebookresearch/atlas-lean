@@ -1,3 +1,6 @@
-# Native Coefficient Level Iso naturality
+# Naturality of the coefficient cotangent tensor comparison
 
-Every original Over operator preserves the tensor-cancellation cotangent comparison.
+Naturality of the coefficient cotangent tensor comparison.
+
+For an algebra map over `B`, the ground coefficient tensor map followed by the target
+comparison equals the source comparison followed by the lifted coefficient cotangent map.

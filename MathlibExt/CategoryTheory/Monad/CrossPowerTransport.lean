@@ -11,7 +11,16 @@ module
 
 public import MathlibExt.CategoryTheory.Monad.Coresolution
 
-/-! # Intertwining monad powers and their original insertion maps -/
+/-!
+# Monad power comparisons across a functor
+
+A natural isomorphism `T ⋙ J ≅ J ⋙ S` compares `J(T^n F)` with `S^n(J F)` for all finite
+powers. The recursive coordinates are natural in `F`.
+
+If the comparison also respects monad units, it commutes with unit insertion at every
+position. Composition of three compatible coordinate squares gives the final comparison
+square, including reversal of the last isomorphism.
+-/
 
 @[expose] public section
 noncomputable section
@@ -21,8 +30,9 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.Monad
 
-/-- A genuine intertwining functor isomorphism iterates to the same original
-monad powers in the two categories. -/
+/-- Finite monad powers compare across an intertwining functor.
+
+Recursively use `T ⋙ J ≅ J ⋙ S` to give `J(T^n F) ≅ S^n(J F)`, with identity at power zero. -/
 def crossMonadPowerIso {C : Type uC} [Category.{vC} C]
     {D : Type uD} [Category.{vD} D] (T : Monad C) (S : Monad D) (J : C ⥤ D)
     (e : T.toFunctor ⋙ J ≅ J ⋙ S.toFunctor) :
@@ -33,7 +43,10 @@ def crossMonadPowerIso {C : Type uC} [Category.{vC} C]
       (Monad.monadPow S n).mapIso (e.app F)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original coefficient map commutes with the iterated comparison. -/
+/-- Monad power comparison is natural in the object.
+
+The image under `J` of the power map commutes with the power comparison and the `S`-power map
+of `J.map f`. -/
 theorem crossMonadPowerIso_naturality {C : Type uC} [Category.{vC} C]
     {D : Type uD} [Category.{vD} D] (T : Monad C) (S : Monad D) (J : C ⥤ D)
     (e : T.toFunctor ⋙ J ≅ J ⋙ S.toFunctor) (n : ℕ) {F G : C} (f : F ⟶ G) :
@@ -56,7 +69,10 @@ theorem crossMonadPowerIso_naturality {C : Type uC} [Category.{vC} C]
         ← Functor.map_comp, hn, Functor.map_comp, ← Category.assoc]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine unit square gives every original unit-insertion square. -/
+/-- Monad power comparison respects every unit insertion.
+
+If the intertwining isomorphism carries the `T`-unit to the `S`-unit, the comparison commutes
+with unit insertion at every position in a finite power. -/
 theorem crossMonadPowerIso_etaAtPos {C : Type uC} [Category.{vC} C]
     {D : Type uD} [Category.{vD} D] (T : Monad C) (S : Monad D) (J : C ⥤ D)
     (e : T.toFunctor ⋙ J ≅ J ⋙ S.toFunctor)
@@ -97,7 +113,10 @@ theorem crossMonadPowerIso_etaAtPos {C : Type uC} [Category.{vC} C]
           rw [← Category.assoc, ih j (T.obj F), Category.assoc, ← hn, ← Category.assoc]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Three genuine coordinate squares compose through the same comparison isos. -/
+/-- Three compatible coordinate squares compose.
+
+Two forward coordinate squares and a third square with reversed endpoint isomorphism give the
+commutative square for the composite coordinate isomorphism. -/
 theorem threeCoordinateSquares {C : Type uC} [Category.{vC} C]
     {A₀ A₁ B₀ B₁ C₀ C₁ D₀ D₁ : C}
     (f : A₀ ⟶ A₁) (g : B₀ ⟶ B₁) (h : C₀ ⟶ C₁) (k : D₀ ⟶ D₁)

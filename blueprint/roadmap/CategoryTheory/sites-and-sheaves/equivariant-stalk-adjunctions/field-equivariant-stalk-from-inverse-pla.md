@@ -1,3 +1,6 @@
-# Field Equivariant Stalk From Inverse Plain
+# Underlying stalk map of an inverse sheaf map
 
-Every sheaf arrow into R(M) gives the original ordinary stalk arrow by the SAME inclusion.
+Underlying stalk map of an inverse sheaf map.
+
+Compose the inverse-sheaf map with its skyscraper projection and apply the ordinary point Hom
+correspondence in reverse.

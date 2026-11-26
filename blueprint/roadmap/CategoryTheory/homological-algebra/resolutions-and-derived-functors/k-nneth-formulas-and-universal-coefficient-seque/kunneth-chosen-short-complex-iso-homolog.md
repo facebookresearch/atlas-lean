@@ -1,4 +1,6 @@
-# Kunneth Chosen Short Complex Iso Homology UCT
+# The comparison from the chosen Künneth sequence to the coefficient sequence
 
-The chosen Künneth short complex is isomorphic to the chosen homological
-UCT short complex with its textbook endpoints.
+The comparison from the chosen Künneth sequence to the coefficient sequence.
+
+The tensor-source and Tor-source isomorphisms give an isomorphism of the two chosen short
+complexes.

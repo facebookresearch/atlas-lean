@@ -1,4 +1,7 @@
-# Partial Total Horizontal Row F
+# Horizontal row component from the partial-total splitting
 
-In total degree `n+1`, the horizontal map from the new signed row of the
-`(m+1)`st filtration stage to the old signed row in degree `n`.
+Horizontal row component from the partial-total splitting.
+
+The map from `(B.totalRow (m + 1)).X (n + 1)` to `(B.totalRow m).X n` is the new-row section
+followed by the differential of `B.partialTotal (m + 1)`, the retraction to `B.partialTotal
+m`, and the row-`m` quotient projection.

@@ -1,4 +1,6 @@
-# Ext Tensor Comparison bijective
+# A finite projective coefficient factor makes the Ext comparison bijective
 
-A finite projective `S`-module tensor factor makes native `R`-module Ext
-postcomposition bijective, in an independent Ext carrier universe.
+A finite projective coefficient factor makes the Ext comparison bijective.
+
+If U is finitely generated and projective over S, extTensorComparison is bijective for every
+degree n.

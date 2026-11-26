@@ -1,3 +1,5 @@
-# Cyclic Connes Augmentation f
+# The rows of the bicomplex Connes augmentation
 
-Every augmentation component is the original row-to-cokernel map.
+For a nonunital k-algebra A and q ≥ 0, the outer degree-q
+component of the bicomplex Connes augmentation is the horizontal
+row augmentation to Cλ_q(A) concentrated in position zero.

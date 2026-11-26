@@ -1,3 +1,6 @@
-# Top Monad Pow Tuple Homeomorph bar Mu At Pos
+# Power coordinates of bar multiplication at a position
 
-`barMuAtPos` contracts entries at its public head-first index.
+Power coordinates of bar multiplication at a position.
+
+The bar multiplication at index j contracts tuple entries j and j+1 in their displayed order
+and retains the base coordinate.

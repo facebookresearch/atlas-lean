@@ -1,3 +1,5 @@
-# Map comul Alg Hom
+# Enveloping maps preserve the bialgebra coproduct
 
-Canonical enveloping maps preserve the native bialgebra coproducts.
+Enveloping maps preserve the bialgebra coproduct.
+
+The tensor square of the enveloping map commutes with the coproduct algebra maps.

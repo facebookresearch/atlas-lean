@@ -1,4 +1,5 @@
-# Tensor Pow Obj Head Tail Iso
+# Finite tensor power separates its first factor
 
-The canonical decomposition of a positive tensor power into its first
-factor and the remaining positive tensor power.
+Finite tensor power separates its first factor.
+
+Recursively reassociate power `n+2` as `X ⊗ X^(n+1)`.

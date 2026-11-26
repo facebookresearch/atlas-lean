@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Homotopy Inclusion
+# Inclusion of the bounded finite-factor homotopy triples
 
-The native inclusion retains every homotopy map and forgets only the finite-U qualification.
+Inclusion of the bounded finite-factor homotopy triples.
+
+The full-subcategory inclusion retains all morphisms between triples with the prescribed
+third-factor property.

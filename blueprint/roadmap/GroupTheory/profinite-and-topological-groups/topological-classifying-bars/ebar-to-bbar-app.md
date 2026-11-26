@@ -1,3 +1,6 @@
-# EBar To BBar app
+# Components of the universal-to-classifying bar map
 
-Components of the topological universal-bundle map are evaluations of the strict map.
+Components of the universal-to-classifying bar map.
+
+Each component is the evaluation of the canonical two-sided bar map obtained by augmenting the
+regular outer G-factor to the point.

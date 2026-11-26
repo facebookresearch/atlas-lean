@@ -1,3 +1,6 @@
-# Small Etale Godement Cochain Complex
+# Godement cochains with alternating coface differential
 
-The actual alternating-coface Godement cochain complex on the original sheaf category.
+Godement cochains with alternating coface differential.
+
+Apply the alternating coface-map complex construction to the cosimplicial Godement
+coresolution.

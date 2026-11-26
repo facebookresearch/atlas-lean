@@ -1,4 +1,6 @@
-# Horizontal Complete Direct Column Section Component projection
+# The projection identity of a complete direct-column section
 
-The complete-stage section is a right inverse of the corresponding
-direct-column projection component.
+The projection identity of a complete direct-column section.
+
+The section component followed by its direct-column projection is the identity in the
+supported degree.

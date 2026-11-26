@@ -13,14 +13,13 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.CategoryTheory.Abelian.Basic
 
 /-!
-# Positive tails and homology
+# Positive tails and shifted homology
 
-The positive tail sends degree `n` to degree `n + 1` of the given complex.
-If the boundary from degree one to degree zero vanishes, the cokernel of
-`d 2 1` identifies the tail's degree-zero homology with degree-one homology
-of the original complex. Positive degrees use the corresponding shifted
-short complexes. The comparisons preserve cycle inclusions and homology
-projections.
+For a category C with zero morphisms, the positive tail T(K) of a nonnegative chain complex has
+T(K)_n = K_{n+1} and differential d_K,n+2,n+1. Chain maps restrict to their components one
+degree higher. In an abelian category, if d_K,1,0 = 0, there are natural isomorphisms Z_n(T(K))
+≅ Z_{n+1}(K) and H_n(T(K)) ≅ H_{n+1}(K). At n = 0 both homology objects are the cokernel of
+d_K,2,1; the isomorphisms commute with cycle inclusions and homology projections.
 -/
 
 @[expose] public section
@@ -39,7 +38,9 @@ section
 
 variable [HasZeroMorphisms C]
 
-/-- The actual nonnegative chain complex with degree `n` equal to original degree `n+1`. -/
+/-- Let C be a category with zero morphisms and K a natural-number-indexed chain complex. Its
+positive tail T(K) has degree-n term K_{n+1} and differential T(K)_{n+1} → T(K)_n equal to
+d_K,n+2,n+1. This construction imposes no condition on d_K,1,0. -/
 def positiveTail (K : ChainComplex C ℕ) : ChainComplex C ℕ :=
   ChainComplex.of (fun n => K.X (n + 1))
     (fun n => K.d (n + 2) (n + 1)) (fun _ => by simp)
@@ -52,7 +53,9 @@ theorem positiveTail_d_succ (K : ChainComplex C ℕ) (n : ℕ) :
     (positiveTail K).d (n + 1) n = K.d (n + 2) (n + 1) := by
   simp only [positiveTail, ChainComplex.of_d]
 
-/-- Actual chain maps restrict functorially to the actual positive tails. -/
+/-- Let C be a category with zero morphisms and f : K → L a map of nonnegative chain complexes. The
+positive-tail map T(f) : T(K) → T(L) has degree-n component f_{n+1}; it respects the tail
+differentials and is functorial in f. -/
 def positiveTailMap {K L : ChainComplex C ℕ} (f : K ⟶ L) : positiveTail K ⟶ positiveTail L :=
   ChainComplex.ofHom (fun n => f.f (n + 1))
     (fun n => by
@@ -81,7 +84,9 @@ section
 
 variable [Abelian C]
 
-/-- Every positive-tail row above degree zero is the original shifted row. -/
+/-- Let C be abelian, K a nonnegative chain complex and n a natural number. The short complex
+T(K)_{n+2} → T(K)_{n+1} → T(K)_n is canonically isomorphic to K_{n+3} → K_{n+2} → K_{n+1}, with
+identity reindexing components. -/
 def positiveTailRowIso (K : ChainComplex C ℕ) (n : ℕ) :
     (positiveTail K).sc' (n + 2) (n + 1) n ≅ K.sc' (n + 3) (n + 2) (n + 1) :=
   ShortComplex.isoMk (eqToIso (by rfl)) (eqToIso (by rfl)) (eqToIso (by rfl))
@@ -96,20 +101,25 @@ def positiveTailRowIso (K : ChainComplex C ℕ) (n : ℕ) :
       exact (Category.id_comp _).trans
         ((positiveTail_d_succ K n).symm.trans (Category.comp_id _).symm))
 
-/-- At degree zero the tail cycles and homology use the native cokernel data. -/
+/-- Let C be abelian and K a nonnegative chain complex. For the degree-zero short complex T(K)₁ →
+T(K)₀ → T(K)₀, whose second map is zero, the chosen homology data have cycles T(K)₀ = K₁ and
+homology coker(d_K,2,1), with the identity cycle inclusion and the cokernel projection. -/
 def positiveTailZeroData (K : ChainComplex C ℕ) :
     ((positiveTail K).sc' 1 0 0).LeftHomologyData :=
   ShortComplex.LeftHomologyData.ofHasCokernel _ (by
     change (positiveTail K).d 0 0 = 0
     exact (positiveTail K).shape 0 0 (by decide))
 
-/-- When the original degree-one differential vanishes, its native data
-uses the original cokernel of the incoming differential. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+The short complex K₂ → K₁ → K₀ has cycles K₁ and homology coker(d_K,2,1), with identity cycle
+inclusion and the cokernel projection as its homology data. -/
 def originalOneData (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
     (K.sc' 2 1 0).LeftHomologyData :=
   ShortComplex.LeftHomologyData.ofHasCokernel _ hK
 
-/-- The native cokernel comparison follows from the actual tail differential. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+The homology objects in positiveTailZeroData K and originalOneData K are canonically isomorphic
+via the identical incoming map d_K,2,1 : K₂ → K₁. -/
 def positiveTailZeroCokernelIso (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
     (positiveTailZeroData K).H ≅ (originalOneData K hK).H := by
   exact cokernel.mapIso ((positiveTail K).sc' 1 0 0).f (K.d 2 1)
@@ -126,7 +136,10 @@ private theorem positiveTailZeroCokernelIso_π (K : ChainComplex C ℕ) (hK : K.
         (𝟙 (K.X 1) ≫ cokernel.π (K.d 2 1)) _ = cokernel.π (K.d 2 1)
   exact (cokernel.π_desc _ _ _).trans (Category.id_comp _)
 
-/-- Cycles of every explicit tail row identify with the original shifted cycles. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+For each natural number n, the cycles of T(K)_{n+1} → T(K)_n → T(K)_{n−1} are isomorphic to the
+cycles of K_{n+2} → K_{n+1} → K_n. Here n−1 is natural-number subtraction; at n = 0 the
+vanishing hypothesis identifies both cycle objects with K₁. -/
 def positiveTailExplicitCyclesIso (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
     ∀ n : ℕ, ((positiveTail K).sc' (n + 1) n (n - 1)).cycles ≅
       (K.sc' (n + 2) (n + 1) n).cycles
@@ -134,7 +147,10 @@ def positiveTailExplicitCyclesIso (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
   | n + 1 => by
       exact ShortComplex.cyclesMapIso (positiveTailRowIso K n)
 
-/-- Homology of every explicit tail row identifies with the original shifted homology. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+For every natural number n, the homology of T(K)_{n+1} → T(K)_n → T(K)_{n−1} is isomorphic to
+that of K_{n+2} → K_{n+1} → K_n. In degree zero this is the comparison of their cokernels of
+d_K,2,1. -/
 def positiveTailExplicitHomologyIso (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) :
     ∀ n : ℕ, ((positiveTail K).sc' (n + 1) n (n - 1)).homology ≅
       (K.sc' (n + 2) (n + 1) n).homology
@@ -199,28 +215,36 @@ private theorem positiveTailExplicitHomologyIso_π (K : ChainComplex C ℕ) (hK 
           ShortComplex.homologyMap (positiveTailRowIso K n).hom
       exact (ShortComplex.homologyπ_naturality (positiveTailRowIso K n).hom).symm
 
-/-- The actual positive-tail cycles identify with the original cycles one degree higher. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+For every natural number n, positiveTailCyclesIso gives the canonical isomorphism Z_n(T(K)) ≅
+Z_{n+1}(K). -/
 def positiveTailCyclesIso (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTail K).cycles n ≅ K.cycles (n + 1) :=
   (positiveTail K).cyclesIsoSc' (n + 1) n (n - 1) (by simp) (by cases n <;> simp) ≪≫
     positiveTailExplicitCyclesIso K hK n ≪≫
       (K.cyclesIsoSc' (n + 2) (n + 1) n (by simp [Nat.add_assoc]) (by simp)).symm
 
-/-- The actual positive-tail homology identifies with the original native homology one degree higher. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+For every natural number n, positiveTailHomologyIso gives the canonical isomorphism H_n(T(K)) ≅
+H_{n+1}(K). -/
 def positiveTailHomologyIso (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTail K).homology n ≅ K.homology (n + 1) :=
   (positiveTail K).homologyIsoSc' (n + 1) n (n - 1) (by simp) (by cases n <;> simp) ≪≫
     positiveTailExplicitHomologyIso K hK n ≪≫
       (K.homologyIsoSc' (n + 2) (n + 1) n (by simp [Nat.add_assoc]) (by simp)).symm
 
-/-- The cycles comparison is pinned by the actual native inclusion into original degree `n+1`. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+For n ∈ ℕ and e_Z : Z_n(T(K)) ≅ Z_{n+1}(K), the cycle inclusions satisfy e_Z.hom ≫ i_Z,K,n+1 =
+i_Z,T(K),n as maps to K_{n+1}. -/
 theorem positiveTailCyclesIso_i (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTailCyclesIso K hK n).hom ≫ K.iCycles (n + 1) = (positiveTail K).iCycles n := by
   simp only [positiveTailCyclesIso, Iso.trans_hom, Iso.symm_hom, Category.assoc]
   rw [HomologicalComplex.cyclesIsoSc'_inv_iCycles, positiveTailExplicitCyclesIso_i]
   exact HomologicalComplex.cyclesIsoSc'_hom_iCycles _ _ _ _ _ _
 
-/-- The homology comparison is pinned by the actual epic cycle projection. -/
+/-- Let C be an abelian category and K a natural-number-indexed chain complex in C with d_K,1,0 = 0.
+For n ∈ ℕ, let e_Z and e_H be the tail cycle and homology isomorphisms. Their projections
+satisfy e_Z.hom ≫ π_K,n+1 = π_T(K),n ≫ e_H.hom. -/
 theorem positiveTailHomologyIso_π (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (n : ℕ) :
     (positiveTailCyclesIso K hK n).hom ≫ K.homologyπ (n + 1) =
       (positiveTail K).homologyπ n ≫ (positiveTailHomologyIso K hK n).hom := by
@@ -259,7 +283,8 @@ theorem positiveTailHomologyIso_π (K : ChainComplex C ℕ) (hK : K.d 1 0 = 0) (
     _ = _ := by simp only [Category.assoc]
 
 
-/-- Positive-tail cycle comparisons are natural under actual chain maps. -/
+/-- Let C be abelian, f : K → L a map of nonnegative chain complexes, and assume d_K,1,0 = d_L,1,0 =
+0. For n ∈ ℕ, the cycle isomorphisms satisfy Z_n(T(f)) ≫ e_Z,L,n = e_Z,K,n ≫ Z_{n+1}(f). -/
 theorem positiveTailCyclesIso_naturality {K L : ChainComplex C ℕ} (f : K ⟶ L)
     (hK : K.d 1 0 = 0) (hL : L.d 1 0 = 0) (n : ℕ) :
     HomologicalComplex.cyclesMap (positiveTailMap f) n ≫ (positiveTailCyclesIso L hL n).hom =
@@ -277,7 +302,8 @@ theorem positiveTailCyclesIso_naturality {K L : ChainComplex C ℕ} (f : K ⟶ L
   exact hl.trans hr.symm
 
 
-/-- Positive-tail homology comparisons are natural under actual chain maps. -/
+/-- Let C be abelian, f : K → L a map of nonnegative chain complexes, and assume d_K,1,0 = d_L,1,0 =
+0. For n ∈ ℕ, the homology isomorphisms satisfy H_n(T(f)) ≫ e_H,L,n = e_H,K,n ≫ H_{n+1}(f). -/
 theorem positiveTailHomologyIso_naturality {K L : ChainComplex C ℕ} (f : K ⟶ L)
     (hK : K.d 1 0 = 0) (hL : L.d 1 0 = 0) (n : ℕ) :
     HomologicalComplex.homologyMap (positiveTailMap f) n ≫ (positiveTailHomologyIso L hL n).hom =

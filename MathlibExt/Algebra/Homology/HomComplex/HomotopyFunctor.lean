@@ -15,12 +15,19 @@ public import MathlibExt.Algebra.Homology.HomComplex.LinearHomotopy
 public import Mathlib.Algebra.Homology.HomotopyCategory
 
 /-!
-# The original linear Hom input on the homotopy category
+# Linear Hom cochains on homotopy categories
 
-Native quotient lifting uses the actual linear postcomposition homotopy.
-Objects remain the original linear Hom complexes; maps remain their
-original quotient classes. The first-variable maps are the original
-linear precomposition classes, lifted as native natural transformations.
+Let `R` be a ring and `C` an `R`-linear preadditive category, with independent scalar, object,
+and morphism universes. Full-product integer Hom cochains form a cochain complex of
+`R`-modules in the morphism universe of `C`.
+
+For fixed source complex `P`, postcomposition with homotopic target maps gives the same map in
+the module homotopy category. Thus the linear Hom functor descends in its target.
+Precomposition is natural and depends only on the homotopy class of the source map.
+
+These constructions give a bifunctor from the opposite source homotopy category and the target
+homotopy category to the homotopy category of `R`-module cochains. Its maps are the quotient
+classes of linear precomposition and postcomposition on the full Hom complexes.
 -/
 
 @[expose] public section
@@ -38,7 +45,10 @@ universe uR uC vC
 variable (R : Type uR) [Ring R]
   {C : Type uC} [Category.{vC} C] [Preadditive C] [Linear R C]
 
-/-- Actual postcomposition is well defined modulo the native homotopy relation. -/
+/-- Linear Hom target maps respect homotopy after quotienting.
+
+For fixed cochain source `P`, homotopic maps `g₀, g₁ : L ⟶ L'` induce equal maps after
+applying the linear Hom functor and quotienting in the `R`-module homotopy category. -/
 theorem linearHomotopyInput_respects (P : CochainComplex C ℤ)
     (L L' : CochainComplex C ℤ) (g₀ g₁ : L ⟶ L')
     (h : homotopic C (.up ℤ) g₀ g₁) :
@@ -48,7 +58,11 @@ theorem linearHomotopyInput_respects (P : CochainComplex C ℤ)
         HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)).map g₁ :=
   HomotopyCategory.eq_of_homotopy _ _ (linearComplexMapPostHomotopy R P h.some)
 
-/-- The actual native quotient lift, with no alternate underived Hom model. -/
+/-- Linear Hom with fixed source descends to the target homotopy category.
+
+For a cochain complex `P` in an `R`-linear preadditive category, the functor `Hom_C(P,-)`
+descends from target cochains to their homotopy category, valued in the homotopy category of
+`R`-module cochains. -/
 def linearHomotopyFunctor (P : CochainComplex C ℤ) :
     HomotopyCategory C (.up ℤ) ⥤ HomotopyCategory (ModuleCat.{vC} R) (.up ℤ) :=
   CategoryTheory.Quotient.lift (homotopic C (.up ℤ))
@@ -56,19 +70,29 @@ def linearHomotopyFunctor (P : CochainComplex C ℤ) :
       HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ))
     (linearHomotopyInput_respects R P)
 
-/-- Its original complex input factors by the native quotient-lift Iso. -/
+/-- Fixed-source linear Hom descent has its quotient factorization.
+
+The source homotopy quotient followed by the descended Hom functor is naturally isomorphic to
+the cochain linear Hom functor followed by the module homotopy quotient. -/
 def linearHomotopyFunctorFactors (P : CochainComplex C ℤ) :
     HomotopyCategory.quotient C (.up ℤ) ⋙ linearHomotopyFunctor R P ≅
       ((linearFunctor R C).obj (Opposite.op P)) ⋙
         HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ) :=
   CategoryTheory.Quotient.lift.isLift _ _ (linearHomotopyInput_respects R P)
 
+/-- Object of the descended fixed-source Hom functor.
+
+At the homotopy quotient of `L`, the descended functor gives the quotient of `linearComplex R
+P L`. -/
 @[simp]
 theorem linearHomotopyFunctor_obj (P L : CochainComplex C ℤ) :
     (linearHomotopyFunctor R P).obj ((HomotopyCategory.quotient C (.up ℤ)).obj L) =
       (HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)).obj (linearComplex R P L) := rfl
 
-/-- Every original target map keeps precisely its original quotient class. -/
+/-- Target map of descended Hom is the postcomposition class.
+
+For a target cochain map `g`, the descended functor on its quotient class is the quotient
+image of `linearComplexMap R (𝟙 P) g`. -/
 @[simp]
 theorem linearHomotopyFunctor_map (P : CochainComplex C ℤ)
     {L L' : CochainComplex C ℤ} (g : L ⟶ L') :
@@ -76,7 +100,10 @@ theorem linearHomotopyFunctor_map (P : CochainComplex C ℤ)
       (HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)).map
         (linearComplexMap R (𝟙 P) g) := rfl
 
-/-- Original source precomposition, lifted by native quotient natural-transformation lifting. -/
+/-- Source precomposition gives a transformation of descended Hom functors.
+
+A cochain map `f : P' ⟶ P` induces a natural transformation from the descended Hom functor
+with source `P` to that with source `P'`. -/
 def linearHomotopyPrecomp {P P' : CochainComplex C ℤ} (f : P' ⟶ P) :
     linearHomotopyFunctor R P ⟶ linearHomotopyFunctor R P' :=
   CategoryTheory.Quotient.natTransLift (homotopic C (.up ℤ))
@@ -85,6 +112,10 @@ def linearHomotopyPrecomp {P P' : CochainComplex C ℤ} (f : P' ⟶ P) :
         (HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)) ≫
       (linearHomotopyFunctorFactors R P').inv)
 
+/-- Descended source-precomposition component is its linear Hom map class.
+
+At homotopy object `L`, the precomposition transformation is the quotient class of
+`linearComplexMap R f (𝟙 L.as)`. -/
 @[simp]
 theorem linearHomotopyPrecomp_app {P P' : CochainComplex C ℤ} (f : P' ⟶ P)
     (L : HomotopyCategory C (.up ℤ)) :
@@ -96,7 +127,10 @@ theorem linearHomotopyPrecomp_app {P P' : CochainComplex C ℤ} (f : P' ⟶ P)
         (linearComplexMap R f (𝟙 L.as)) ≫ 𝟙 _ = _
   simp only [Category.id_comp, Category.comp_id]
 
-/-- The curried actual Hom input retains the original first-variable maps. -/
+/-- Contravariant source functor of target-descended linear Hom.
+
+The assignment of a source cochain complex to its descended target Hom functor is a functor
+from the opposite cochain category. -/
 def linearHomotopySourceFunctor : (CochainComplex C ℤ)ᵒᵖ ⥤
     HomotopyCategory C (.up ℤ) ⥤ HomotopyCategory (ModuleCat.{vC} R) (.up ℤ) where
   obj P := linearHomotopyFunctor R P.unop
@@ -125,7 +159,10 @@ def linearHomotopySourceFunctor : (CochainComplex C ℤ)ᵒᵖ ⥤
       ((HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)).map_comp
         (linearComplexMap R f.unop (𝟙 L)) (linearComplexMap R g.unop (𝟙 L)))
 
-/-- Homotopic original source maps also have precisely the same quotient class. -/
+/-- Homotopic source maps give equal descended Hom transformations.
+
+If cochain maps `f₀, f₁ : P' ⟶ P` are homotopic, then `linearHomotopyPrecomp R f₀ =
+linearHomotopyPrecomp R f₁`. -/
 theorem linearHomotopyPrecomp_eq_of_homotopy {P P' : CochainComplex C ℤ}
     {f₀ f₁ : P' ⟶ P} (h : Homotopy f₀ f₁) :
     linearHomotopyPrecomp R f₀ = linearHomotopyPrecomp R f₁ := by
@@ -134,8 +171,10 @@ theorem linearHomotopyPrecomp_eq_of_homotopy {P P' : CochainComplex C ℤ}
   simp only [linearHomotopyPrecomp_app]
   exact HomotopyCategory.eq_of_homotopy _ _ (linearComplexMapPreHomotopy R h L.as)
 
-/-- The right opposite of the original source functor respects the native
-homotopy relation, before the source variable is quotiented. -/
+/-- Source Hom functor respects homotopy with its opposite variance.
+
+Two homotopic source cochain maps have equal images under the opposite-variance form of the
+source Hom functor. This gives the source quotient compatibility. -/
 theorem linearHomotopySourceRightOp_respects (P P' : CochainComplex C ℤ)
     (f₀ f₁ : P ⟶ P') (h : homotopic C (.up ℤ) f₀ f₁) :
     (linearHomotopySourceFunctor R (C := C)).rightOp.map f₀ =
@@ -145,14 +184,21 @@ theorem linearHomotopySourceRightOp_respects (P P' : CochainComplex C ℤ)
     (fun a : linearHomotopyFunctor R P' ⟶ linearHomotopyFunctor R P => a.op)
     (linearHomotopyPrecomp_eq_of_homotopy R h.some)
 
-/-- The original product Hom on both native homotopy categories. The first
-input remains opposite, and its quotient lift earns all source map classes. -/
+/-- Linear Hom bifunctor of integer homotopy categories.
+
+Linear Hom descends in both variables to a bifunctor from the opposite homotopy category of
+`C`-cochains and its covariant homotopy category to the homotopy category of `R`-module
+cochains. -/
 def linearHomotopyBifunctor : (HomotopyCategory C (.up ℤ))ᵒᵖ ⥤
     HomotopyCategory C (.up ℤ) ⥤ HomotopyCategory (ModuleCat.{vC} R) (.up ℤ) :=
   (CategoryTheory.Quotient.lift (homotopic C (.up ℤ))
     (linearHomotopySourceFunctor R (C := C)).rightOp
       (linearHomotopySourceRightOp_respects R)).leftOp
 
+/-- Object formula for the homotopy linear Hom bifunctor.
+
+For homotopy objects `P` and `L`, the bifunctor value is the module homotopy quotient of
+`linearComplex R P.as L.as`. -/
 @[simp]
 theorem linearHomotopyBifunctor_obj_obj
     (P L : HomotopyCategory C (.up ℤ)) :
@@ -160,7 +206,10 @@ theorem linearHomotopyBifunctor_obj_obj
       (HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)).obj
         (linearComplex R P.as L.as) := rfl
 
-/-- Each original first-variable map retains its actual precomposition class. -/
+/-- Source component of the homotopy Hom bifunctor.
+
+For `f : P' ⟶ P`, the source-variable transformation at `L` is the quotient class of
+`linearComplexMap R f (𝟙 L.as)`. -/
 @[simp]
 theorem linearHomotopyBifunctor_map_app {P P' : CochainComplex C ℤ} (f : P' ⟶ P)
     (L : HomotopyCategory C (.up ℤ)) :
@@ -170,7 +219,10 @@ theorem linearHomotopyBifunctor_map_app {P P' : CochainComplex C ℤ} (f : P' �
         (linearComplexMap R f (𝟙 L.as)) :=
   linearHomotopyPrecomp_app R f L
 
-/-- Each original second-variable map retains its actual postcomposition class. -/
+/-- Target map of the homotopy Hom bifunctor.
+
+For fixed homotopy source `P` and target cochain map `g : L ⟶ L'`, the target map is the
+quotient image of `linearComplexMap R (𝟙 P.as) g`. -/
 @[simp]
 theorem linearHomotopyBifunctor_obj_map (P : HomotopyCategory C (.up ℤ))
     {L L' : CochainComplex C ℤ} (g : L ⟶ L') :
@@ -179,8 +231,10 @@ theorem linearHomotopyBifunctor_obj_map (P : HomotopyCategory C (.up ℤ))
       (HomotopyCategory.quotient (ModuleCat.{vC} R) (.up ℤ)).map
         (linearComplexMap R (𝟙 P.as) g) := rfl
 
-/-- The simultaneous map is the quotient class of the same original
-precomposition and postcomposition map. -/
+/-- Two-variable homotopy Hom map is the class of the linear Hom map.
+
+For `f : P' ⟶ P` and `g : L ⟶ L'`, the uncurried homotopy Hom bifunctor sends their quotient
+classes to the quotient class of `linearComplexMap R f g`. -/
 theorem linearHomotopyBifunctor_uncurry_map
     {P P' L L' : CochainComplex C ℤ} (f : P' ⟶ P) (g : L ⟶ L') :
     (CategoryTheory.Functor.uncurry.obj (linearHomotopyBifunctor R (C := C))).map

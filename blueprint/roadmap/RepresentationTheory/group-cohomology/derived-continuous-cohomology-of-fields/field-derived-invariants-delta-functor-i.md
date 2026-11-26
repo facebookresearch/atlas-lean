@@ -1,3 +1,5 @@
-# Field Derived Invariants Delta Functor is Universal
+# Right derived field invariants are universal
 
-Genuine injective effacement makes this actual derived family universal.
+Right derived field invariants are universal.
+
+The delta functor of right-derived field invariants is universal.

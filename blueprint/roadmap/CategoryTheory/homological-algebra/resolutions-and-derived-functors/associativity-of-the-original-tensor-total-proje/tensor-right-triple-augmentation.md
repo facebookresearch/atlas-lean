@@ -1,3 +1,6 @@
-# Tensor Right Triple Augmentation
+# Right-parenthesized tensor augmentation of three complexes
 
-The literal right-parenthesized augmentation of three original chain complexes.
+Right-parenthesized tensor augmentation of three complexes.
+
+The three augmentations give `P ⊗ (Q ⊗ U) → (M ⊗ (N ⊗ V))[0]` by right-parenthesized
+tensoring.

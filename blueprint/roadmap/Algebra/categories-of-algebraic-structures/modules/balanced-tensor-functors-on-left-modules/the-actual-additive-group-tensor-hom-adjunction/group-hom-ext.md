@@ -1,3 +1,6 @@
-# Group Hom ext
+# Pure balanced classes determine an additive tensor map
 
-Original tensor representatives determine additive-group morphisms of the tensor object.
+Pure balanced classes determine an additive tensor map.
+
+Two additive maps from `M ⊗_R N` to `I` are equal if they agree on `[m ⊗ n]` for all `m` and
+`n`.

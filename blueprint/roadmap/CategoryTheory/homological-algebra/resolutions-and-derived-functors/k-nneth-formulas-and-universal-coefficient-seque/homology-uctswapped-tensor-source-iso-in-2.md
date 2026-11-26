@@ -1,4 +1,6 @@
-# Homology UCTSwapped Tensor Source Iso inv naturality
+# Naturality of the inverse swapped tensor-source comparison
 
-The inverse swapped single-coefficient tensor-source coordinate is
-natural in the chain complex and coefficient module.
+Naturality of the inverse swapped tensor-source comparison.
+
+Coefficient and chain maps commute with the inverse swapped comparison and its Künneth
+tensor-source map.

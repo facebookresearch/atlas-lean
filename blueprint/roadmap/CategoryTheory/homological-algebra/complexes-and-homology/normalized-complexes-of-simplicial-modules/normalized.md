@@ -1,3 +1,6 @@
-# Normalized
+# The family of normalized coefficient tensors
 
-Native tensor/whiskering/normalization, as a functor of original coefficient families.
+The family of normalized coefficient tensors.
+
+Send a simplicial module X to the coefficient functor M ↦ N(M ⊗_R X), using the coefficient-
+first tensor bifunctor and normalized Moore complex.

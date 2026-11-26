@@ -1,4 +1,6 @@
-# Partial Total Zero Column Page To Stable eq page Two Coordinate
+# The coordinate formula for the zero-column page-to-stable map
 
-The page-to-stable map is the page-two coordinate followed by the
-stable-side comparison and stable tail.
+The coordinate formula for the zero-column page-to-stable map.
+
+The map is the page-two coordinate followed by the inverse source presentation and stable-tail
+map.

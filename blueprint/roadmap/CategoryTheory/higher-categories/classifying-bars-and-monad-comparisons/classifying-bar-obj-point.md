@@ -1,6 +1,5 @@
-# Classifying Bar obj point
+# Degree object of the classifying bar
 
-Pointwise degree formula for the classifying bar, inherited.
+Degree object of the classifying bar.
 
-Degree `n` at the point is `Pt` tensored on the left with the `n`-fold
-tensor-monad power applied to `Pt`.
+At degree `n` and the indexing point, the object is `Pt ⊗ (T_M^n.obj Pt)`.

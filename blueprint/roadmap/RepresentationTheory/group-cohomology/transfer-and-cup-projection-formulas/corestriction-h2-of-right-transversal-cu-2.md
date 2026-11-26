@@ -1,5 +1,6 @@
-# Corestriction H2 Of Right Transversal cup One One
+# The one-by-one projection formula on cohomology classes
 
-Chosen-transversal H¹×H¹→H² projection formula:
-`cor(res(x) ∪ y) = x ∪ cor(y)`.  The coefficient comparison is the
-identity-on-carriers restriction/tensor isomorphism.
+The one-by-one projection formula on cohomology classes.
+
+For x ∈ H¹(G,A) and y ∈ H¹(H,B|H), cor_T(res(x) ∪ y) = x ∪ cor_T(y) in H²(G,A ⊗ B), using the
+canonical restriction–tensor coefficient comparison.

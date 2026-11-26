@@ -1,6 +1,6 @@
 # Homogeneous projection under multiplication by a polynomial variable
 
-- [Homogeneous Component mul X](homogeneous-component-mul-x.md)
-- [Homogeneous Component zero mul X](homogeneous-component-zero-mul-x.md)
-- [Homogeneous Component mem restrict Total Degree](homogeneous-component-mem-restrict-total.md)
-- [Mem restrict Total Degree iff highest Component zero](mem-restrict-total-degree-iff-highest-co.md)
+- [A variable shifts homogeneous components by one](homogeneous-component-mul-x.md)
+- [A variable multiple has zero constant homogeneous component](homogeneous-component-zero-mul-x.md)
+- [A homogeneous component lies in its total-degree cutoff](homogeneous-component-mem-restrict-total.md)
+- [The top homogeneous component detects the previous degree cutoff](mem-restrict-total-degree-iff-highest-co.md)

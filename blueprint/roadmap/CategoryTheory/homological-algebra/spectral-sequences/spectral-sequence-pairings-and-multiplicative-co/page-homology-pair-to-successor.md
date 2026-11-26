@@ -1,3 +1,5 @@
-# Page Homology Pair To successor
+# The specified-output homology product agrees with the next page
 
-The original successor isomorphism preserves the equal-position actual homology product.
+The specified-output homology product agrees with the next page.
+
+The successor isomorphisms carry the homology product to the next-page product.

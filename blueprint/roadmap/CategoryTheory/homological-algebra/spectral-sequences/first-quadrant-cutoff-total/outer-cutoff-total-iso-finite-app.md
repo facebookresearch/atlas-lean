@@ -1,3 +1,6 @@
-# Outer Cutoff Total Iso Finite app
+# The cochain isomorphism has the prescribed degreewise comparison
 
-Application of the chain-level cutoff-total isomorphism.
+For a cohomological bicomplex K in an abelian category,
+the degree-n component isomorphism of
+Tot(B^(r)) ≅ extend_(t_r)D_r is the cutoff-total object comparison
+whose forward map retains the q=r branch and whose inverse includes it.

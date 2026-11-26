@@ -1,3 +1,5 @@
-# Page Cycles Pair To i
+# The specified-output cycle product preserves inclusion
 
-The original native cycle inclusion computes the equal-position cycle product.
+The specified-output cycle product preserves inclusion.
+
+Its cycle inclusion equals the tensor of input inclusions followed by the page product.

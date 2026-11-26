@@ -1,3 +1,6 @@
-# Tor Zero Iso hom
+# Degree-zero Tor comparison is the tensor augmentation
 
-Its forward map is the existing native augmentation-induced map.
+Degree-zero Tor comparison is the tensor augmentation.
+
+The forward map of `torZeroIso R S B` is the canonical transformation `fromLeftDerivedZero` of
+the tensor functor.

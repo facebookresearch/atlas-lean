@@ -1,4 +1,6 @@
-# Enveloping Projective Resolution
+# The enveloping projective resolution of the trivial module
 
-The original enveloping CE complex resolves its original trivial
-enveloping module. The augmentation is the canonical enveloping augmentation.
+The enveloping projective resolution of the trivial module.
+
+For `Module.Free R L`, this projective resolution has the enveloping Chevalley–Eilenberg
+complex and its canonical augmentation to the trivial `U_R(L)`-module.

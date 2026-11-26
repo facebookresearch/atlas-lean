@@ -16,12 +16,17 @@ public import Mathlib.Algebra.Module.Bimodule
 public import MathlibExt.Algebra.Module.NatInt
 
 /-!
-# Original actions of native enveloping-module objects
+# Endpoint actions of enveloping-ring modules
 
-An object of `ModuleCat (R ⊗[ℤ] Rᵐᵒᵖ)` has its two actual endpoint actions
-by restriction along the native tensor inclusions. Their recombination by
-`TensorProduct.Algebra.module` recovers the stored original module. No new
-bimodule category, action model, or comparison is given as data.
+Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ its bimodule enveloping ring. An E_R-module X with
+carrier in universe v has left R-action a•x=(a⊗1)•x and right R-action x•b=(1⊗op(b))•x. These
+endpoint actions commute, and their combined action on a pure tensor recovers (a⊗op(b))•x.
+
+Recombining the restricted actions gives the same E_R-module action. The corresponding module
+objects are isomorphic by identity coefficient maps, and morphisms transport through these
+isomorphisms with the same values. Conversely, commuting left and right R-actions on an abelian
+group induce an E_R-action whose endpoint restrictions recover those given actions. Integer
+scalar compatibility follows from the canonical integer action on an abelian group.
 -/
 
 @[expose] public section
@@ -37,17 +42,23 @@ namespace ModuleCat.Bimodule
 
 variable (R : Type r) [Ring R]
 
-/-- The original left action is restriction along the first native tensor inclusion. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. The left R-module structure is restriction along a↦a⊗1:R→E_R. Thus a
+acts on x by the E_R-scalar a⊗1, with the same additive carrier as X. -/
 def leftModule (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) : Module R X :=
   Module.compHom X
     (Algebra.TensorProduct.includeLeftRingHom : R →+* R ⊗[ℤ] Rᵐᵒᵖ)
 
-/-- The original right action is restriction along the second native tensor inclusion. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. The Rᵒᵖ-module structure is restriction along b↦1⊗b:Rᵒᵖ→E_R. For
+b=op(c), this is the right R-action x•c=(1⊗op(c))•x on the same carrier. -/
 def rightModule (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) : Module Rᵐᵒᵖ X :=
   Module.compHom X
     (Algebra.TensorProduct.includeRight : Rᵐᵒᵖ →ₐ[ℤ] R ⊗[ℤ] Rᵐᵒᵖ).toRingHom
 
-/-- The endpoint restrictions of the given native enveloping action commute. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. Let L_a(x)=(a⊗1)•x and R_b(x)=(1⊗b)•x for a∈R,b∈Rᵒᵖ. Then
+L_a(R_b(x))=R_b(L_a(x)) for every x∈X, giving commuting scalar actions of R and Rᵒᵖ. -/
 theorem commute (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     letI := leftModule R X
     letI := rightModule R X
@@ -61,7 +72,9 @@ theorem commute (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
   apply congrArg (fun z : R ⊗[ℤ] Rᵐᵒᵖ => z • x)
   simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
-/-- The original stored pure enveloping scalar is the two actual endpoint actions. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. For a∈R,b∈Rᵒᵖ,x∈X, the restricted endpoint actions satisfy
+L_a(R_b(x))=(a⊗b)•x. The right-hand action is the E_R-module action of X. -/
 theorem smul_tmul (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
     (a : R) (b : Rᵐᵒᵖ) (x : X) :
     (leftModule R X).smul a ((rightModule R X).smul b x) =
@@ -71,7 +84,10 @@ theorem smul_tmul (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
   apply congrArg (fun z : R ⊗[ℤ] Rᵐᵒᵖ => z • x)
   simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
-/-- Recombine the actual endpoint restrictions with the native module constructor. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. Combine the left and right restricted actions to define an E_R-module on
+the same abelian group. Its pure-tensor action is (a⊗b)•x=L_a(R_b(x)); the commuting endpoint
+actions make this a module action. -/
 def reconstructedModule (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     Module (R ⊗[ℤ] Rᵐᵒᵖ) X := by
   letI := leftModule R X
@@ -79,7 +95,10 @@ def reconstructedModule (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
   letI := commute R X
   exact TensorProduct.Algebra.module
 
-/-- The native reconstructed module acts by the original stored scalar function. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. For every z∈E_R and x∈X, the action reconstructed from the endpoint
+restrictions satisfies z•_{rec}x=z•_X x. The identity holds for all tensor scalars, extending
+the pure-tensor formula by additivity. -/
 theorem reconstructedModule_smul (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
     (z : R ⊗[ℤ] Rᵐᵒᵖ) (x : X) :
     (reconstructedModule R X).smul z x = X.isModule.smul z x := by
@@ -98,18 +117,27 @@ theorem reconstructedModule_smul (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
       _ = X.isModule.smul z x + X.isModule.smul w x := congrArg₂ (· + ·) hz hw
       _ = X.isModule.smul (z + w) x := (X.isModule.add_smul z w x).symm
 
-/-- Equality of the actual stored native module data is earned from its original action. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. The E_R-module structure obtained by combining the left and right
+restrictions is equal to the E_R-module structure of X. Both structures use the same additive
+group and the same scalar function on every z∈E_R. -/
 theorem reconstructedModule_eq (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     reconstructedModule R X = X.isModule :=
   Module.ext' _ _ (reconstructedModule_smul R X)
 
-/-- The native category object with the same carrier and the recombined module. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. Regard the carrier of X as an E_R-module by combining its endpoint
+restrictions. This produces an object X_rec∈ModuleCat_v(E_R), with the same additive coefficient
+group and carrier universe. -/
 def reconstructedObject (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ) :=
   letI := reconstructedModule R X
   ModuleCat.of (R ⊗[ℤ] Rᵐᵒᵖ) X
 
-/-- The actual identity-coordinate iso to the original native object. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. There is an isomorphism e_X:X_rec≅X whose forward and inverse maps send
+x to x. The equality of the reconstructed and given scalar actions makes both identity
+coefficient maps E_R-linear. -/
 def reconstructedIso (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     reconstructedObject R X ≅ X where
   hom := @ModuleCat.ofHom (R ⊗[ℤ] Rᵐᵒᵖ) _
@@ -145,7 +173,10 @@ theorem reconstructedIso_hom_apply (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) (
 theorem reconstructedIso_inv_apply (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) (x : X) :
     (reconstructedIso R X).inv.hom x = x := rfl
 
-/-- The actual original morphism transported to the recombined native modules. -/
+/-- Let R be a ring in universe r and E_R=R⊗_ℤRᵒᵖ. Let X be an E_R-module with carrier in an
+independent universe v. For an E_R-module morphism f:X→Y, the induced morphism X_rec→Y_rec is
+e_X.hom≫f≫e_Y.inv, where e_X,e_Y are the identity-coefficient reconstruction isomorphisms. Its
+value on every x is f(x). -/
 def reconstructedMap {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     reconstructedObject R X ⟶ reconstructedObject R Y :=
   (reconstructedIso R X).hom ≫ f ≫ (reconstructedIso R Y).inv
@@ -154,8 +185,10 @@ def reconstructedMap {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y)
 theorem reconstructedMap_apply {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)}
     (f : X ⟶ Y) (x : X) : (reconstructedMap R f).hom x = f.hom x := rfl
 
-/-- The native algebra ground field and the original supplied integer
-module field are compatible with the fixed original ring action. -/
+/-- Let R be a ring in universe r and M an abelian group in universe v with a chosen ℤ-module
+structure and an R-module structure. The integer scalar tower ℤ→R→M is compatible:
+(n•r)•m=n•(r•m) for n∈ℤ,r∈R,m∈M, with the canonical integer action on R. This holds for the
+supplied integer action on M. -/
 theorem int_isScalarTower (M : Type v) [AddCommGroup M]
     [d : Module ℤ M] [dRM : Module R M] :
     @IsScalarTower ℤ R M (Algebra.toModule : Module ℤ R).toSMul
@@ -172,7 +205,9 @@ variable (M : Type v) [AddCommGroup M] [givenIntegerModule : Module ℤ M]
 include givenIntegerModule
 
 omit [IsScalarTower ℤ R M] [IsScalarTower ℤ Rᵐᵒᵖ M] in
-/-- The first restriction of the native tensor module recovers the given left action. -/
+/-- Let R be a ring in universe r and M an abelian group in universe v with an integer module
+structure and commuting R- and Rᵒᵖ-module structures. Combine these actions into an
+R⊗_ℤRᵒᵖ-module. Restriction along a↦a⊗1 is equal to the given R-module structure on M. -/
 theorem leftModule_ofTensor :
     letI : IsScalarTower ℤ R M := AddCommGroup.intIsScalarTower
     letI : IsScalarTower ℤ Rᵐᵒᵖ M := AddCommGroup.intIsScalarTower
@@ -199,7 +234,9 @@ theorem leftModule_ofTensor :
   exact congrArg (fun x : M => r • x) (one_smul Rᵐᵒᵖ m)
 
 omit [IsScalarTower ℤ R M] [IsScalarTower ℤ Rᵐᵒᵖ M] in
-/-- The second restriction likewise recovers the original right action. -/
+/-- Let R be a ring in universe r and M an abelian group in universe v with an integer module
+structure and commuting R- and Rᵒᵖ-module structures. The combined R⊗_ℤRᵒᵖ-module restricts
+along b↦1⊗b to exactly the given Rᵒᵖ-module structure. -/
 theorem rightModule_ofTensor :
     letI : IsScalarTower ℤ R M := AddCommGroup.intIsScalarTower
     letI : IsScalarTower ℤ Rᵐᵒᵖ M := AddCommGroup.intIsScalarTower

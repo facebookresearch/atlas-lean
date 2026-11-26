@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Comp Iso naturality
+# Inverse image composition comparison is natural in sheaf maps
 
-Composite inverse-image comparison preserves every original sheaf morphism.
+Inverse image composition comparison is natural in sheaf maps.
+
+A sheaf morphism commutes with the comparison from successive inverse images to inverse image
+along the composite.

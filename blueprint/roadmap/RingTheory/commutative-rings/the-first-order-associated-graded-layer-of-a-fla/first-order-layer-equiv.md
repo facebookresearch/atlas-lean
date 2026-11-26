@@ -1,4 +1,5 @@
-# First Order Layer Equiv
+# Tensor coordinates on a flat first-order layer
 
-The first-order layer of a flat module as the tensor product of its
-degree-zero reduction with the cotangent space.
+Let `R` be a commutative ring, `I : Ideal R`, and `M` a flat `R`-module. This is the inverse
+`R/I`-linear equivalence `IM/I²M ≃ₗ[R/I] (M/IM) ⊗[R/I] (I/I²)` to first-order multiplication.
+In particular, the class `[i • m]` maps to `[m] ⊗ [i]`.

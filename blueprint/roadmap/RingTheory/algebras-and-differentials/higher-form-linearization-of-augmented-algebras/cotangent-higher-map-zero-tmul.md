@@ -1,3 +1,5 @@
-# Cotangent Higher Map zero tmul
+# The regular tensor formula in cotangent weight zero
 
-The printed regular-module formula in weight zero, with the original algebra map.
+The regular tensor formula in cotangent weight zero.
+
+For `f : P → Q` over `A`, the weight-zero map sends `a ⊗ p` to `a ⊗ f(p)`.

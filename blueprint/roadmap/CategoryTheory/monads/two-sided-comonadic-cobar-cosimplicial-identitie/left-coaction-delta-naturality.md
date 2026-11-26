@@ -1,4 +1,6 @@
-# Left Coaction delta naturality
+# Naturality of comultiplication insertion along a left coaction
 
-Left coaction commutes with interior comultiplication. Instance of
-`deltaAtPos_naturality`.
+Naturality of comultiplication insertion along a left coaction.
+
+Applying a power of the left coaction commutes with the insertion maps at `L(a)` and
+`G(L(a))`.

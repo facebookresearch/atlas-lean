@@ -1,3 +1,6 @@
-# Canonical Equiv
+# Cohomology comparison in every natural degree
 
-One common-universe family, with the actual section map at zero and C's family thereafter.
+Cohomology comparison in every natural degree.
+
+Use the terminal-section comparison in degree zero and the normalized positive comparison in
+degree `n + 1` to define `H^q(X,Q) ≃+ R^qΓ(Q)` for every natural `q`.

@@ -1,3 +1,5 @@
-# Bimodule Tensor Double map pure
+# Successive bimodule tensor map on pure triples
 
-The actual successive functors preserve the same triple and given original module map.
+Successive bimodule tensor map on pure triples.
+
+For `g : M ⟶ N`, the successive tensor functors send `[f ⊗ [e ⊗ m]]` to `[f ⊗ [e ⊗ g m]]`.

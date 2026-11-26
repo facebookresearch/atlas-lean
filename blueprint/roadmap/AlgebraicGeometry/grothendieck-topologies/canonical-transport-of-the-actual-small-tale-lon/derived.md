@@ -1,3 +1,6 @@
-# Derived
+# Right derived global sections in a fixed natural degree
 
-The value on Q of the right derived global sections functor in degree q.
+Right derived global sections in a fixed natural degree.
+
+For a common-universe sheaf `Q`, evaluate the degree-`q` right-derived global-sections functor
+at `Q`.

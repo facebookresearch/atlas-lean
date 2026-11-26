@@ -1,4 +1,7 @@
-# Canonical Stable Matrix Cyclic Connes Homology Map
+# The stable matrix Lie homology map to Connes homology
 
-The cyclic trace map from stable matrix Lie homology in degree n + 1 to Connes homology in
-degree n.
+For a commutative ℚ-algebra k, an associative unital
+k-algebra A and n ≥ 0, the map
+Γ_n : H_(n+1)(C_*(Mat_∞(A))) → H_n(Cλ(A))
+is H_n(W) ∘ s_n⁻¹, where W is the signed positive-tail trace
+and s_n is the positive-tail homology shift.

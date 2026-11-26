@@ -1,3 +1,6 @@
-# Field Derived Sections Invariants Iso resolution iso
+# Derived comparison factors through resolution cohomology
 
-The field family agrees with the actual arbitrary-resolution isomorphism.
+Derived comparison factors through resolution cohomology.
+
+The forward derived comparison is the source resolution isomorphism, the section-to-invariant
+resolution isomorphism, and the inverse mapped-resolution isomorphism.

@@ -17,15 +17,16 @@ public import MathlibExt.Algebra.Homology.SpectralObject.StepClassToPage
 public import MathlibExt.AlgebraicTopology.AtiyahHirzebruch.SkeletalFirstPageRowsNaturality
 
 /-!
-# Products on actual first-page rows and their homology
+# First-page row products and second-page comparisons
 
-The row cycle kernels retain the original first-page inclusions. Their
-homology uses the original row cokernels and the canonical comparison with
-the native second page. Products are induced from the original interval
-pairing and descend through those actual cycle and homology maps.
+The product on first-page bidegrees induces maps on integer row cycles and on their homology
+quotients. The row cycle inclusions and homology projections agree with those of the page, so
+the descended row product is the native page homology product and is identified with the E₂
+product.
 
-All row and cochain degrees are integers. A comparison of coefficient rows
-uses genuine cochain isomorphisms, including their differential equations.
+For supplied cochain isomorphisms from rows q,q′ and q+q′ to row-zero models, a product
+comparison with sign (−1)^{q p′} descends to cycle and homology products and then to E₂. All
+row and horizontal degrees remain arbitrary integers.
 -/
 
 @[expose] public section
@@ -44,15 +45,21 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (S : SpectralSequence C
   (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1)
 
-/-- Row objects are the original objects at their native bidegrees. -/
+/-- The object in an integer first-page row.
+
+Its degree-p object is E₁^{p,q}. -/
 theorem firstPageRow_X (q p : ℤ) :
     (S.firstPageRow q).X p = (S.page 1).X (p, q) := rfl
 
-/-- Row differentials are the original native first-page differentials. -/
+/-- The differential of an integer first-page row.
+
+Its differential is the existing page differential between (p,q) and (p′,q). -/
 theorem firstPageRow_d (q p p' : ℤ) :
     (S.firstPageRow q).d p p' = (S.page 1).d (p, q) (p', q) := rfl
 
-/-- The inverse of the original landed row-cycle comparison retains the cycle inclusion. -/
+/-- The inverse row cycle comparison preserves inclusion.
+
+The inverse page-to-row cycle map followed by row inclusion equals page cycle inclusion. -/
 @[reassoc]
 theorem firstPageRowCyclesIso_inv_i (p q : ℤ) :
     (S.firstPageRowCyclesIso p q).inv ≫ (S.firstPageRow q).iCycles p =
@@ -61,7 +68,10 @@ theorem firstPageRowCyclesIso_inv_i (p q : ℤ) :
   rw [Iso.hom_inv_id_assoc]
   exact (S.firstPageRowCyclesIso_hom_i p q).symm
 
-/-- The inverse of the original landed cycle comparison retains the homology projection. -/
+/-- The inverse row cycle comparison preserves projection.
+
+The inverse cycle comparison, row homology projection and row homology chart recover the page
+projection. -/
 @[reassoc]
 theorem firstPageRowCyclesIso_inv_π (p q : ℤ) :
     (S.firstPageRowCyclesIso p q).inv ≫ (S.firstPageRow q).homologyπ p ≫
@@ -75,8 +85,9 @@ variable {S}
 variable {T : SpectralSequence C
   (fun r => ComplexShape.up' (⟨r, 1 - r⟩ : ℤ × ℤ)) 1}
 
-/-- The native second-page comparison induced by a genuine cochain row
-isomorphism. The row isomorphism includes its actual differential compatibility. -/
+/-- The second-page comparison of two isomorphic row complexes.
+
+A cochain isomorphism between row q of S and row r of T induces E₂^{p,q}(S) ≅ E₂^{p,r}(T). -/
 def firstPageRowSecondPageIsoOfIso (q r : ℤ)
     (i : S.firstPageRow q ≅ T.firstPageRow r) (p : ℤ) :
     (S.page 2).X (p, q) ≅ (T.page 2).X (p, r) :=
@@ -84,8 +95,9 @@ def firstPageRowSecondPageIsoOfIso (q r : ℤ)
     (HomologicalComplex.homologyFunctor C (ComplexShape.up ℤ) p).mapIso i ≪≫
       T.firstPageRowSecondPageIso p r
 
-/-- The comparison uses the original row-to-second-page maps and the actual
-homology map of the row isomorphism. -/
+/-- The row-isomorphism E₂ comparison is its homology map.
+
+The row-to-E₂ charts commute with homology of the supplied cochain isomorphism. -/
 @[reassoc]
 theorem firstPageRowSecondPageIsoOfIso_homology (q r : ℤ)
     (i : S.firstPageRow q ≅ T.firstPageRow r) (p : ℤ) :
@@ -104,16 +116,19 @@ variable [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft A)
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)]
 variable {X Y Z : SpectralObject C EInt} (P : IntervalPairing X Y Z)
 
-/-- The original native first-page product on the two integer rows. Its
-total-degree Leibniz sign is determined by the first row degree `p + q`. -/
+/-- The raw first-page product on two integer rows.
+
+Pair row q in horizontal degree p with row q′ in degree p′ to obtain row q+q′ in degree p+p′. -/
 abbrev firstPageRowPair (q q' p p' : ℤ) :
     ((X.skeletalSpectralSequence).firstPageRow q).X p ⊗
       ((Y.skeletalSpectralSequence).firstPageRow q').X p' ⟶
         ((Z.skeletalSpectralSequence).firstPageRow (q + q')).X (p + p') :=
   P.pagePair 1 le_rfl (p, q) (p', q')
 
-/-- The actual product on row cycle kernels induced by the original
-native first-page cycle product. -/
+/-- The first-page row product on cycle objects.
+
+Use the row-to-page cycle comparisons, the page cycle product and the output inverse row
+comparison. -/
 def firstPageRowCyclesPair (q q' p p' : ℤ) :
     ((X.skeletalSpectralSequence).firstPageRow q).cycles p ⊗
       ((Y.skeletalSpectralSequence).firstPageRow q').cycles p' ⟶
@@ -123,7 +138,10 @@ def firstPageRowCyclesPair (q q' p p' : ℤ) :
       P.pageCyclesPair 1 le_rfl (p, q) (p', q') ≫
         ((Z.skeletalSpectralSequence).firstPageRowCyclesIso (p + p') (q + q')).inv
 
-/-- The row cycle product retains both original cycle inclusions. -/
+/-- The row cycle product preserves inclusion.
+
+The output row inclusion equals the tensor of input inclusions followed by the raw row
+product. -/
 @[reassoc]
 theorem firstPageRowCyclesPair_i (q q' p p' : ℤ) :
     P.firstPageRowCyclesPair q q' p p' ≫
@@ -160,8 +178,9 @@ theorem firstPageRowCyclesPair_i (q q' p p' : ℤ) :
                 ((X.skeletalSpectralSequence).firstPageRowCyclesIso_hom_i p q)
                 ((Y.skeletalSpectralSequence).firstPageRowCyclesIso_hom_i p' q')))))
 
-/-- The native page-homology product expressed in the actual row homology
-objects. Its quotient formula will identify it with row cokernel descent. -/
+/-- The row homology product transported from page homology.
+
+Use row homology comparisons to transport the page-1 homology product back to row homology. -/
 def firstPageRowNativeHomologyPair (q q' p p' : ℤ) :
     ((X.skeletalSpectralSequence).firstPageRow q).homology p ⊗
       ((Y.skeletalSpectralSequence).firstPageRow q').homology p' ⟶
@@ -171,8 +190,10 @@ def firstPageRowNativeHomologyPair (q q' p p' : ℤ) :
       P.pageHomologyPair 1 le_rfl (p, q) (p', q') ≫
         ((Z.skeletalSpectralSequence).firstPageRowHomologyIso (p + p') (q + q')).inv
 
-/-- The actual row homology projections retain the original native cycle
-product and its homology projection. -/
+/-- The transported row homology product preserves projection.
+
+The tensor of row homology projections followed by the product equals the row cycle product
+followed by output projection. -/
 @[reassoc]
 theorem firstPageRowNativeHomologyPair_π (q q' p p' : ℤ) :
     (((X.skeletalSpectralSequence).firstPageRow q).homologyπ p ⊗ₘ
@@ -191,8 +212,9 @@ theorem firstPageRowNativeHomologyPair_π (q q' p p' : ℤ) :
   rw [← tensorHom_comp_tensorHom_assoc, P.pageHomologyPair_π]
   rfl
 
-/-- Both actual row boundaries vanish after the row cycle product and its
-actual homology projection. -/
+/-- Row boundary products vanish after homology projection.
+
+Both incoming row-boundary sources paired with cycles are killed by the output projection. -/
 theorem firstPageRowCyclesPair_boundaries_zero (q q' p p' : ℤ) :
     coprod.desc
       (((X.skeletalSpectralSequence).firstPageRow q).toCycles (p - 1) p ▷
@@ -206,8 +228,9 @@ theorem firstPageRowCyclesPair_boundaries_zero (q q' p p' : ℤ) :
   · simp [tensorHom_def, ← comp_whiskerRight_assoc]
   · simp [tensorHom_def', ← whiskerLeft_comp_assoc]
 
-/-- The product descended through the original row cycle and boundary
-cokernels, with no tensor-homology isomorphism assumed. -/
+/-- The row homology product obtained by cokernel descent.
+
+Descend the row cycle product through its two boundary cokernels. -/
 def firstPageRowHomologyPair (q q' p p' : ℤ) :
     ((X.skeletalSpectralSequence).firstPageRow q).homology p ⊗
       ((Y.skeletalSpectralSequence).firstPageRow q').homology p' ⟶
@@ -221,7 +244,10 @@ def firstPageRowHomologyPair (q q' p p' : ℤ) :
       ((Z.skeletalSpectralSequence).firstPageRow (q + q')).homologyπ (p + p'))
     (by exact P.firstPageRowCyclesPair_boundaries_zero q q' p p')
 
-/-- The row product's quotient formula uses the actual homology projections. -/
+/-- The descended row homology product preserves projections.
+
+The tensor of input projections followed by the descended product equals the cycle product
+followed by output projection. -/
 @[reassoc]
 theorem firstPageRowHomologyPair_π (q q' p p' : ℤ) :
     (((X.skeletalSpectralSequence).firstPageRow q).homologyπ p ⊗ₘ
@@ -231,7 +257,9 @@ theorem firstPageRowHomologyPair_π (q q' p p' : ℤ) :
         ((Z.skeletalSpectralSequence).firstPageRow (q + q')).homologyπ (p + p') := by
   apply HomologicalComplex.tensor_homologyπ_comp_tensorHomologyDesc
 
-/-- Row cokernel descent agrees with the actual native homology product. -/
+/-- The two row homology product constructions agree.
+
+Cokernel descent gives the same product as transport from native page homology. -/
 theorem firstPageRowHomologyPair_eq_native (q q' p p' : ℤ) :
     P.firstPageRowHomologyPair q q' p p' = P.firstPageRowNativeHomologyPair q q' p p' := by
   apply HomologicalComplex.tensor_homologyπ_hom_ext
@@ -241,8 +269,9 @@ theorem firstPageRowHomologyPair_eq_native (q q' p p' : ℤ) :
       (by apply (ComplexShape.up ℤ).prev_eq'; change p' - 1 + 1 = p'; omega)
   rw [P.firstPageRowHomologyPair_π, P.firstPageRowNativeHomologyPair_π]
 
-/-- The original row-to-second-page isomorphisms carry the actual descended
-row product to the original native second-page product. -/
+/-- The row homology product agrees with the second-page product.
+
+The row-to-E₂ isomorphisms carry the row homology product to pagePair at r=2. -/
 @[reassoc]
 theorem firstPageRowHomologyPair_secondPage (q q' p p' : ℤ) :
     P.firstPageRowHomologyPair q q' p p' ≫
@@ -282,8 +311,10 @@ variable
 
 include hpair
 
-/-- A proved signed first-page component square induces the same square
-on the actual row cycle kernels. -/
+/-- The signed row comparison preserves cycle products.
+
+Under the given cochain row isomorphisms and product square, cycle products transform with
+sign (−1)^{q p′}. -/
 @[reassoc]
 theorem firstPageRowCyclesPair_naturality (p p' : ℤ) :
     P.firstPageRowCyclesPair q q' p p' ≫
@@ -307,8 +338,9 @@ theorem firstPageRowCyclesPair_naturality (p p' : ℤ) :
       HomologicalComplex.cyclesMap_i, HomologicalComplex.cyclesMap_i]
   conv_lhs => rw [← Category.assoc, tensorHom_comp_tensorHom]
 
-/-- The signed component square descends through the actual row homology
-cokernels. Its only product premise concerns the original first page. -/
+/-- The signed row comparison preserves homology products.
+
+The induced homology maps carry the product with the same normalization sign (−1)^{q p′}. -/
 @[reassoc]
 theorem firstPageRowHomologyPair_naturality (p p' : ℤ) :
     P.firstPageRowHomologyPair q q' p p' ≫
@@ -338,9 +370,10 @@ theorem firstPageRowHomologyPair_naturality (p p' : ℤ) :
       HomologicalComplex.homologyπ_naturality, HomologicalComplex.homologyπ_naturality,
       ← tensorHom_comp_tensorHom_assoc, hQ]
 
-/-- The original native second-page products commute with the comparisons
-induced by a proved signed E1 row square. Both interval pairings remain
-independent inputs, and the Koszul factor uses the original coefficient degree. -/
+/-- The signed row product comparison on the second page.
+
+The E₂ maps induced by the row isomorphisms intertwine the page products with sign (−1)^{q
+p′}. -/
 @[reassoc]
 theorem firstPageRowProductComparison_secondPage (p p' : ℤ) :
     P.pagePair 2 (by omega) (p, q) (p', q') ≫

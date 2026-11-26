@@ -1,4 +1,6 @@
-# Partial Total Stable Abutment Homology Iso
+# The total-homology coordinate of a stable-interval abutment
 
-The canonical stable-interval abutment object is ordinary total homology
-for the partial-total spectral object.
+The total-homology coordinate of a stable-interval abutment.
+
+The stable-interval abutment at cochain degree `-n` is isomorphic to degree-`n` homology of
+the full bicomplex total.

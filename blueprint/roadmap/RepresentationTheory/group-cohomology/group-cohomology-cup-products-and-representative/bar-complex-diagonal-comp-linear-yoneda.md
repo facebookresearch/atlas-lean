@@ -1,5 +1,9 @@
-# Bar Complex Diagonal comp linear Yoneda Pairing Desc Of Eq
+# Bar diagonal paired in a chosen bidegree
 
-After projection to a chosen bidegree, the bar diagonal is the
-corresponding front/back Alexander--Whitney split, with the two cochains
-transported from the bar resolution to the standard resolution.
+Let `G` be a group, `k` a commutative ring, `μ : M ⊗ N → P` a morphism of `k`-representations,
+`n : ℕ`, and `s : Fin (n + 1)`. For bar cochains `φ : B_s → M` and `ψ : B_{n-s} → N`,
+composing the degree-`n` bar diagonal with the `(s,n-s)` pairing descriptor equals the
+following composite: transport `B_n` to the standard resolution, apply the linearized
+simplicial diagonal and its front/back faces of degrees `s` and `n-s`, apply the transported
+cochains `e.inv_s ≫ φ` and `e.inv_{n-s} ≫ ψ`, and then apply `μ`. Here `B` is the bar complex
+and `e : B ≅ Rep.standardComplex k G`.

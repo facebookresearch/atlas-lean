@@ -1,3 +1,6 @@
-# Top Monad Pow Tuple Homeomorph mu At Pos
+# Power coordinates of monad multiplication at a position
 
-`muAtPos` contracts the corresponding adjacent entries of the head-first tuple.
+Power coordinates of monad multiplication at a position.
+
+For j : Fin n, multiplying at monad position j contracts tuple entries at index n−1−j and
+retains the base coordinate. The reversed index reflects the monad-position convention.

@@ -1,3 +1,5 @@
-# Page Cycles Pair associativity
+# Page associativity passes to the cycle products
 
-Actual cycle kernel inclusions retain the associativity of the original native page product.
+Page associativity passes to the cycle products.
+
+An associative page product induces the corresponding associative triple cycle product.

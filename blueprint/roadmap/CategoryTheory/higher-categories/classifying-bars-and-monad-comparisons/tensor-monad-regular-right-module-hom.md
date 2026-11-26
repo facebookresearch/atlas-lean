@@ -1,4 +1,6 @@
-# Tensor Monad Regular Right Module Hom
+# Monoid map induces a restricted regular right module map
 
-The induced monad morphism as a morphism from the regular source module to the regular target
-module restricted along it.
+Monoid map induces a restricted regular right module map.
+
+The monad morphism gives a map from the source regular right module to the target regular
+module restricted along that morphism.

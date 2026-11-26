@@ -1,3 +1,5 @@
-# Map Bialg Hom
+# The bialgebra morphism induced by a Lie morphism
 
-A Lie morphism induces a bialgebra morphism through the canonical enveloping algebra map.
+The bialgebra morphism induced by a Lie morphism.
+
+Bundle the canonical enveloping algebra map with its coproduct and counit compatibilities.

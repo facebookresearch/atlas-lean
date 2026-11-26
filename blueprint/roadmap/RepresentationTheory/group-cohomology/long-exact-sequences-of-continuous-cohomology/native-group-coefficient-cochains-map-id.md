@@ -1,3 +1,5 @@
-# Native Group Coefficient Cochains Map id
+# Identity of the homogeneous group and coefficient cochain map
 
-The original identity group and coefficient maps give the actual identity cochain map.
+For a ring k with a topology, profinite G and coefficient X,
+the homogeneous cochain map induced by id_G and id_X is the
+identity of C_hom(G,X).

@@ -1,3 +1,6 @@
-# Matrix Coinvariant Projection ker
+# The action-span kernel of the matrix coinvariant projection
 
-The projection has exactly the source's action-span kernel.
+The action-span kernel of the matrix coinvariant projection.
+
+In degree `n`, the kernel is the ground span of all right-adjoint action values of scalar
+special-linear matrices.

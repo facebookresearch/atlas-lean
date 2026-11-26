@@ -1,3 +1,4 @@
-# Coresolution Augmented Functor map left
+# The coaugmentation-point map is the given object morphism
 
-The point component of the actual augmented coresolution map is the original morphism.
+For a monad T on C and f : X → Y, the point component of coresolutionAugmentedFunctor(T)(f)
+equals f. Thus the functorial coaugmentation retains the starting morphism.

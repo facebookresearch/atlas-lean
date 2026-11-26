@@ -1,3 +1,6 @@
-# Coefficient Map continuous
+# Continuity of the coefficient morphism on carriers
 
-Continuity is carried by the same coefficient arrow, not a separate certificate.
+Continuity of the coefficient morphism on carriers.
+
+The additive function underlying coefficientMap e is continuous between the discrete unit
+coefficient carriers.

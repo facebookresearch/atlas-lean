@@ -1,4 +1,6 @@
-# First Page Row Sc Iso
+# The identity three-term comparison of a first-page row
 
-The row and native first-page short complexes use identical original
-objects at the chosen neighboring indices.
+The identity three-term comparison of a first-page row.
+
+Identify the row complex at p−1,p,p+1 with the first-page complex at the corresponding
+bidegrees, using identity maps on all three objects.

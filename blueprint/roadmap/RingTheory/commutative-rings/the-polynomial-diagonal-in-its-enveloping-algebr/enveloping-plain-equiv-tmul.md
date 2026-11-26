@@ -1,3 +1,4 @@
-# Enveloping Plain Equiv tmul
+# The opposite coordinate is removed on pure tensors
 
-The actual right opposite coordinate is unop, with the original order retained.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `a,b : A`, `envelopingPlainEquiv k σ (a ⊗ op(b)) = a ⊗ b` in `A ⊗[k] A`.

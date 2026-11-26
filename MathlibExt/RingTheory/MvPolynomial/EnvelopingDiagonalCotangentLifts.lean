@@ -13,16 +13,23 @@ public import MathlibExt.Algebra.Homology.KoszulComplexPolynomialDiagonal
 public import MathlibExt.RingTheory.Kaehler.PolynomialExterior
 
 /-!
-# Polynomial diagonal lifts and their actual cotangent images
+# Diagonal lifts and polynomial differentials
 
-The original multiplication kernel supplies a finitely supported lift of
-the diagonal difference of every polynomial. The diagonal lift represents
-the differential of that polynomial after multiplication of its enveloping
-coefficients. Consequently a polynomial algebra map has a lift on
-Koszul generators whose reduced coordinates are its actual Jacobian.
+For a commutative ring `k` and a type `σ`, let `A = k[σ]`, `E = A ⊗[k] Aᵐᵒᵖ`, and `µ(a ⊗
+op(b)) = a*b`. Define `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)` and `F(w) = ∑ i, w_i δ_i` for `w : σ
+→₀ E`.
 
-The lift is chosen from a proved kernel/range equality. Neither a desired
-chain comparison nor a desired homology isomorphism is an input.
+Every polynomial difference `Δp = p ⊗ op(1) - 1 ⊗ op(p)` has a finitely supported lift `w`
+with `F(w) = Δp`. The cotangent reduction is `C(w) = ∑ i, µ(w_i) dX_i`, and every such lift
+satisfies `C(w) = dp`.
+
+For a polynomial algebra map `g : k[σ] →ₐ[k] k[τ]`, chosen lifts of `Δ(g X_i)` extend to a
+semilinear map on free enveloping-coordinate modules. It intertwines the diagonal functionals.
+Its cotangent reductions are `d(g X_i)`, with coefficients `∂g(X_i)/∂X_j` in the target
+variable basis.
+
+References: Loday, *Cyclic Homology*, Sections 1.1 and 3.2; Hochschild, Kostant and Rosenberg,
+*Differential forms on regular affine algebras*, Transactions of the AMS 102 (1962), 383–408.
 -/
 
 @[expose] public section
@@ -42,24 +49,29 @@ local notation "V" => σ →₀ E
 local notation "Ω" => KaehlerDifferential k A
 local notation "x" => KoszulComplex.finsuppFunctional E (diagonalDifference k σ)
 
-/-- The original diagonal difference of an arbitrary polynomial, in the
-same enveloping carrier as the variable diagonal differences. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `p : A`, `polynomialOuterDifference k σ p` is `Δp = p ⊗ op(1) - 1 ⊗ op(p)` in `E`. -/
 def polynomialOuterDifference (p : A) : E :=
   p ⊗ₜ[k] MulOpposite.op (1 : A) - (1 : A) ⊗ₜ[k] MulOpposite.op p
 
-/-- Multiplication kills every original polynomial diagonal difference. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For every `p : A`, diagonal multiplication `µ(a ⊗ op(b)) = a*b` satisfies
+`µ(polynomialOuterDifference k σ p) = 0`. -/
 theorem diagonalMultiplication_polynomialOuterDifference (p : A) :
     diagonalMultiplication k σ (polynomialOuterDifference k σ p) = 0 := by
   simp only [polynomialOuterDifference, map_sub, diagonalMultiplication_tmul,
     mul_one, one_mul, sub_self]
 
-/-- The negative of the native tensor derivation has the left-minus-right
-sign convention of the original polynomial Koszul functional. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. This is the `k`-linear map `θ : E → Ω¹(A/k)` defined by `θ(a ⊗ op(b)) = -a db`. The
+negative sign makes `θ(p ⊗ op(1) - 1 ⊗ op(p)) = dp`. -/
 def envelopingCotangentLinear : E →ₗ[k] Ω :=
   -(((KaehlerDifferential.D k A).tensorProductTo.restrictScalars k).comp
     (envelopingPlainEquiv k σ).toAlgHom.toLinearMap)
 
-/-- Literal evaluation on the two original enveloping factors. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `a,b : A`, `envelopingCotangentLinear k σ (a ⊗ op(b)) = -(a • D k A b)` in
+`Ω¹(A/k)`. -/
 theorem envelopingCotangentLinear_tmul (a b : A) :
     envelopingCotangentLinear k σ (a ⊗ₜ[k] MulOpposite.op b) =
       -(a • KaehlerDifferential.D k A b) := by
@@ -67,7 +79,9 @@ theorem envelopingCotangentLinear_tmul (a b : A) :
     (envelopingPlainEquiv k σ (a ⊗ₜ[k] MulOpposite.op b))) = _
   rw [envelopingPlainEquiv_tmul, Derivation.tensorProductTo_tmul]
 
-/-- The original diagonal difference is the actual universal differential. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For every `p : A`, the map `θ(a ⊗ op(b)) = -a db` satisfies
+`θ(polynomialOuterDifference k σ p) = D k A p`. -/
 theorem envelopingCotangentLinear_outerDifference (p : A) :
     envelopingCotangentLinear k σ (polynomialOuterDifference k σ p) =
       KaehlerDifferential.D k A p := by
@@ -76,8 +90,11 @@ theorem envelopingCotangentLinear_outerDifference (p : A) :
   simp only [Derivation.map_one_eq_zero, smul_zero, neg_zero, one_smul,
     zero_sub, neg_neg]
 
-/-- The native tensor derivation gives the original multiplication-relative
-Leibniz law on the enveloping ring. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For `e,z : E`, the signed cotangent map
+satisfies `θ(e*z) = µ(e) • θ(z) + µ(z) • θ(e)`, where `θ = envelopingCotangentLinear k σ` and
+the coefficients act on `Ω` as elements of `A`. -/
 theorem envelopingCotangentLinear_mul (e z : E) :
     envelopingCotangentLinear k σ (e * z) =
       diagonalMultiplication k σ e • envelopingCotangentLinear k σ z +
@@ -90,26 +107,37 @@ theorem envelopingCotangentLinear_mul (e z : E) :
         (-((KaehlerDifferential.D k A).tensorProductTo (envelopingPlainEquiv k σ e)))
   rw [map_mul, Derivation.tensorProductTo_mul, neg_add, smul_neg, smul_neg]
 
-/-- The actual coefficient of a lifted variable differential. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For `i : σ`, this is the `k`-linear map `E
+→ Ω` with `e ↦ µ(e) • D k A (X_i)`. -/
 def diagonalCotangentSingle (i : σ) : E →ₗ[k] Ω :=
   (((LinearMap.id : A →ₗ[A] A).smulRight
     (KaehlerDifferential.D k A (MvPolynomial.X i))).restrictScalars k).comp
       (diagonalMultiplication k σ).toLinearMap
 
-/-- Finitely supported diagonal coordinates give their actual universal
-differential by multiplying their original enveloping coefficients. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. The `k`-linear map `C : V → Ω` sends `w`
+to `∑ i ∈ supp(w), µ(w_i) • D k A (X_i)`. -/
 def diagonalCotangentCoordinates : V →ₗ[k] Ω :=
   Finsupp.lsum ℕ (diagonalCotangentSingle k σ)
 
-/-- A literal single diagonal coordinate maps to its coefficient times `dX`. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For `i : σ` and `e : E`,
+`diagonalCotangentCoordinates k σ (Finsupp.single i e) = µ(e) • D k A (X_i)`. -/
 theorem diagonalCotangentCoordinates_single (i : σ) (e : E) :
     diagonalCotangentCoordinates k σ (Finsupp.single i e) =
       diagonalMultiplication k σ e • KaehlerDifferential.D k A (MvPolynomial.X i) := by
   rw [diagonalCotangentCoordinates, Finsupp.lsum_single]
   rfl
 
-/-- The diagonal coordinate map is the actual conormal differential of
-the original Koszul functional. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. The cotangent coordinate map equals the
+composite `C = θ ∘ F`, where `θ(a ⊗ op(b)) = -a db`. In code, `diagonalCotangentCoordinates k
+σ = (envelopingCotangentLinear k σ).comp (F.restrictScalars k)`. -/
 theorem diagonalCotangentCoordinates_eq :
     diagonalCotangentCoordinates k σ =
       (envelopingCotangentLinear k σ).comp ((x).restrictScalars k) := by
@@ -125,8 +153,11 @@ theorem diagonalCotangentCoordinates_eq :
   rw [envelopingCotangentLinear_outerDifference, diagonalMultiplication_difference,
     zero_smul, add_zero]
 
-/-- The already proved diagonal multiplication kernel gives a literal
-finitely supported lift of every original polynomial difference. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For every `p : A`, there exists `w : V`
+with `F(w) = p ⊗ op(1) - 1 ⊗ op(p)`. Thus the polynomial diagonal difference is an
+enveloping-linear combination of the variable diagonal differences. -/
 theorem exists_diagonalCotangentLift (p : A) :
     ∃ w : V, x w = polynomialOuterDifference k σ p := by
   have h : polynomialOuterDifference k σ p ∈
@@ -135,24 +166,36 @@ theorem exists_diagonalCotangentLift (p : A) :
     exact diagonalMultiplication_polynomialOuterDifference k σ p
   exact h
 
-/-- Choose a lift from the earned kernel/range equality. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For each `p : A`, choose a finitely
+supported vector `w_p : V` satisfying `F(w_p) = p ⊗ op(1) - 1 ⊗ op(p)`. The function
+`diagonalCotangentLift k σ` returns this chosen preimage. -/
 def diagonalCotangentLift (p : A) : V :=
   Classical.choose (exists_diagonalCotangentLift k σ p)
 
-/-- The chosen lift satisfies the original diagonal relation. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For every `p : A`,
+`F(diagonalCotangentLift k σ p) = p ⊗ op(1) - 1 ⊗ op(p)`. -/
 theorem diagonalCotangentLift_equation (p : A) :
     x (diagonalCotangentLift k σ p) = polynomialOuterDifference k σ p :=
   Classical.choose_spec (exists_diagonalCotangentLift k σ p)
 
-/-- Every lift has the same actual differential coordinates.
-This is independent of the choice of a diagonal preimage. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. If `p : A` and `w : V` satisfy `F(w) = p ⊗
+op(1) - 1 ⊗ op(p)`, then `diagonalCotangentCoordinates k σ w = D k A p`. -/
 theorem diagonalCotangentCoordinates_of_lift (p : A) (w : V)
     (hw : x w = polynomialOuterDifference k σ p) :
     diagonalCotangentCoordinates k σ w = KaehlerDifferential.D k A p := by
   rw [diagonalCotangentCoordinates_eq, LinearMap.comp_apply, LinearMap.restrictScalars_apply,
     hw, envelopingCotangentLinear_outerDifference]
 
-/-- The actual chosen diagonal lift reduces to the original polynomial differential. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Write `µ : E → A` for diagonal multiplication, `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`, `F(w)
+= ∑ i, w_i δ_i` on `V = σ →₀ E`, and `Ω = Ω¹(A/k)`. For every `p : A`,
+`diagonalCotangentCoordinates k σ (diagonalCotangentLift k σ p) = D k A p`. -/
 theorem diagonalCotangentLift_coordinates (p : A) :
     diagonalCotangentCoordinates k σ (diagonalCotangentLift k σ p) =
       KaehlerDifferential.D k A p :=
@@ -162,12 +205,16 @@ section AlgebraMaps
 
 variable {σ} (τ : Type v') (g : MvPolynomial σ k →ₐ[k] MvPolynomial τ k)
 
-/-- The actual algebra map on the two original enveloping factors. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. This is the `k`-algebra homomorphism `F_g`, with `a ⊗ op(b) ↦ g(a) ⊗ op(g(b))`. -/
 def polynomialEnvelopingMap : PolynomialEnveloping k σ →ₐ[k] PolynomialEnveloping k τ :=
   Algebra.TensorProduct.map g g.op
 
-/-- The original variable diagonal difference maps to the difference of
-the actual image polynomial. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `i : σ`, `F_g(δ_i) = Δ(g(X_i))`, where `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)` and
+`Δp = p ⊗ op(1) - 1 ⊗ op(p)` in the appropriate enveloping algebra. -/
 theorem polynomialEnvelopingMap_difference (i : σ) :
     polynomialEnvelopingMap k τ g (diagonalDifference k σ i) =
       polynomialOuterDifference k τ (g (MvPolynomial.X i)) := by
@@ -175,8 +222,10 @@ theorem polynomialEnvelopingMap_difference (i : σ) :
   simp only [polynomialEnvelopingMap, diagonalDifference, polynomialOuterDifference,
     map_sub, Algebra.TensorProduct.map_tmul, hOp, map_one]
 
-/-- Multiplication of the two original factors commutes with the actual
-algebra map, without changing its coefficient ring. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `e : E_σ`, `µ_τ(F_g e) = g(µ_σ e)`, where `µ_σ,µ_τ` are the diagonal
+multiplication augmentations. -/
 theorem polynomialEnvelopingMap_multiplication (e : PolynomialEnveloping k σ) :
     diagonalMultiplication k τ (polynomialEnvelopingMap k τ g e) =
       g (diagonalMultiplication k σ e) := by
@@ -190,11 +239,19 @@ theorem polynomialEnvelopingMap_multiplication (e : PolynomialEnveloping k σ) :
       rw [h, map_mul]
   | add e e' he he' => simp only [map_add, he, he']
 
-/-- A diagonal generator lift for an arbitrary polynomial algebra map. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `i : σ`, choose `L_i : τ →₀ E_τ` with `F_τ(L_i) = Δ(g(X_i))`, where `F_τ(w)
+= ∑ j, w_j δ_j`. This chosen target diagonal vector is `polynomialDiagonalGeneratorLift k τ g
+i`. -/
 def polynomialDiagonalGeneratorLift (i : σ) : τ →₀ PolynomialEnveloping k τ :=
   diagonalCotangentLift k τ (g (MvPolynomial.X i))
 
-/-- The lift covers the image of the original diagonal generator. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `i : σ`, the target diagonal functional satisfies
+`F_τ(polynomialDiagonalGeneratorLift k τ g i) = F_g(δ_i)`. Here `F_τ(w) = ∑ j, w_j δ_j` and
+`δ_i` is the source left-minus-right variable difference. -/
 theorem polynomialDiagonalGeneratorLift_equation (i : σ) :
     KoszulComplex.finsuppFunctional (PolynomialEnveloping k τ) (diagonalDifference k τ)
       (polynomialDiagonalGeneratorLift k τ g i) =
@@ -202,15 +259,19 @@ theorem polynomialDiagonalGeneratorLift_equation (i : σ) :
   rw [polynomialEnvelopingMap_difference]
   exact diagonalCotangentLift_equation k τ _
 
-/-- Reduction of the generator lift is the actual Jacobian
-column, expressed intrinsically as the differential of the image polynomial. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `i : σ`, cotangent reduction of `polynomialDiagonalGeneratorLift k τ g i` is
+`D k (k[τ]) (g(X_i))`. Its coordinate at a target variable `j : τ` is `∂g(X_i)/∂X_j`. -/
 theorem polynomialDiagonalGeneratorLift_coordinates (i : σ) :
     diagonalCotangentCoordinates k τ (polynomialDiagonalGeneratorLift k τ g i) =
       KaehlerDifferential.D k (MvPolynomial τ k) (g (MvPolynomial.X i)) :=
   diagonalCotangentLift_coordinates k τ _
 
-/-- The actual semilinear image of a single enveloping coefficient times
-an original diagonal generator. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `i : σ`, write `L_i = polynomialDiagonalGeneratorLift k τ g i`. This is the
+`F_g`-semilinear map `E_σ →ₛₗ[F_g] (τ →₀ E_τ)` given by `e ↦ F_g(e) • L_i`. -/
 def polynomialDiagonalGeneratorSingle (i : σ) :
     PolynomialEnveloping k σ →ₛₗ[(polynomialEnvelopingMap k τ g).toRingHom]
       (τ →₀ PolynomialEnveloping k τ) where
@@ -226,22 +287,29 @@ def polynomialDiagonalGeneratorSingle (i : σ) :
         (smul_smul (polynomialEnvelopingMap k τ g e)
           (polynomialEnvelopingMap k τ g e') (polynomialDiagonalGeneratorLift k τ g i)).symm
 
-/-- Extend the earned generator lifts semilinearly on the actual free
-enveloping coordinate modules. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. The chosen image-generator lifts `L_i` define an `F_g`-semilinear map `(σ →₀
+E_σ) →ₛₗ[F_g] (τ →₀ E_τ)`, with `w ↦ ∑ i ∈ supp(w), F_g(w_i) • L_i`. -/
 def polynomialDiagonalGeneratorMap :
     (σ →₀ PolynomialEnveloping k σ) →ₛₗ[(polynomialEnvelopingMap k τ g).toRingHom]
       (τ →₀ PolynomialEnveloping k τ) :=
   Finsupp.lsum ℕ (polynomialDiagonalGeneratorSingle k τ g)
 
-/-- Literal evaluation on an original free coordinate. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. For `i : σ` and `e : E_σ`, `polynomialDiagonalGeneratorMap k τ g (Finsupp.single
+i e) = F_g(e) • polynomialDiagonalGeneratorLift k τ g i`. -/
 theorem polynomialDiagonalGeneratorMap_single (i : σ) (e : PolynomialEnveloping k σ) :
     polynomialDiagonalGeneratorMap k τ g (Finsupp.single i e) =
       polynomialEnvelopingMap k τ g e • polynomialDiagonalGeneratorLift k τ g i := by
   rw [polynomialDiagonalGeneratorMap, Finsupp.lsum_single]
   rfl
 
-/-- The actual semilinear generator map intertwines the original diagonal
-functionals, as required for the full Koszul chain map. -/
+/-- Let `k` be a commutative ring, `σ,τ` types, and `g : k[σ] →ₐ[k] k[τ]` a polynomial algebra
+homomorphism. Write `E_σ = k[σ] ⊗[k] k[σ]ᵐᵒᵖ`, `E_τ = k[τ] ⊗[k] k[τ]ᵐᵒᵖ`, and `F_g = g ⊗ g.op
+: E_σ → E_τ`. Let `G_g` be the semilinear generator map and `F_σ,F_τ` the diagonal functionals
+`w ↦ ∑ i, w_i δ_i`. For every `w : σ →₀ E_σ`, `F_τ(G_g w) = F_g(F_σ w)`. -/
 theorem polynomialDiagonalGeneratorMap_functional (w : σ →₀ PolynomialEnveloping k σ) :
     KoszulComplex.finsuppFunctional (PolynomialEnveloping k τ) (diagonalDifference k τ)
       (polynomialDiagonalGeneratorMap k τ g w) =

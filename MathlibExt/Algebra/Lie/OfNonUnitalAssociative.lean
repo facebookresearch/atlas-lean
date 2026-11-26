@@ -18,15 +18,16 @@ import Mathlib.Tactic.Abel
 /-!
 # Commutator Lie algebras of nonunital associative algebras
 
-The bracket is the original multiplication commutator on the original carrier.
-The constructors are reducible non-instances, following Mathlib's convention
-for associative rings, so no unrelated existing Lie bracket is replaced.
-Nonunital algebra maps retain their actual underlying linear maps.
+A nonunital associative ring A has commutator bracket [x,y]=xy−yx. Distributivity makes the
+bracket additive in both variables, and associativity gives [x,[y,z]]=[[x,y],z]+[y,[x,z]]. Thus
+it defines a Lie ring on the same additive group. If k is commutative and A is a k-module with
+(r•x)y=r•(xy)=x(r•y), this bracket is k-bilinear and gives a Lie algebra over k.
 
-This is the carrier/map input needed for the stable matrix Lie algebra in
-Loday--Quillen, *Cyclic homology and the Lie algebra homology of matrices*,
-Comment. Math. Helv. 59 (1984), Section 6. No unit is assigned to a stable
-matrix algebra and no cyclic/primitive-homology theorem is asserted here.
+A k-linear multiplicative map between such nonunital algebras is a Lie morphism with the same
+underlying function and linear map. Conversion preserves identities and composition, with
+independent universes for k and the algebra carriers. This commutator construction applies to
+the nonunital matrix algebras considered in Loday–Quillen, “Cyclic homology and the Lie algebra
+homology of matrices”, Comment. Math. Helv. 59 (1984), Section 6.
 -/
 
 @[expose] public section
@@ -41,7 +42,10 @@ namespace LieRing
 
 variable {A : Type v} [NonUnitalRing A]
 
-/-- A nonunital associative ring carries its actual multiplication commutator bracket. -/
+/-- Let A be a nonunital associative ring. The bracket [x,y]=xy−yx defines a Lie ring on its
+additive group: it is additive in each variable, satisfies [x,x]=0, and obeys
+[x,[y,z]]=[[x,y],z]+[y,[x,z]]. The construction uses ring distributivity and associativity and
+supplies no multiplicative unit. -/
 @[instance_reducible]
 def ofNonUnitalAssociativeRing : LieRing A where
   bracket x y := x * y - y * x
@@ -69,7 +73,9 @@ namespace LieRing
 
 variable {A : Type v} [NonUnitalRing A]
 
-/-- The chosen nonunital associative Lie bracket is the original commutator. -/
+/-- For a nonunital associative ring A equipped with its commutator Lie-ring structure and x,y∈A,
+the chosen bracket satisfies [x,y]=xy−yx. This equality identifies the Lie operation with the
+two products in the same nonunital ring. -/
 theorem of_nonunital_associative_ring_bracket (x y : A) : ⁅x, y⁆ = x * y - y * x := rfl
 
 end LieRing
@@ -79,7 +85,10 @@ namespace LieAlgebra
 variable {k : Type u} [CommRing k] {A : Type v} [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The existing scalar action makes the nonunital multiplication commutator k-bilinear. -/
+/-- Let k be a commutative ring and A a nonunital associative ring with a k-module structure
+satisfying (r•x)y=r•(xy)=x(r•y). The commutator Lie ring of A is a Lie algebra over k: in
+particular [x,r•y]=r•[x,y], and additivity together with skew symmetry gives bilinearity in both
+variables. The scalar ring and algebra carrier may lie in independent universes. -/
 @[instance_reducible]
 def ofNonUnitalAssociativeAlgebra : LieAlgebra k A where
   lie_smul r x y := by
@@ -99,7 +108,11 @@ variable {A : Type v} {B : Type w} {C : Type z}
   [IsScalarTower k A A] [IsScalarTower k B B] [IsScalarTower k C C]
   [SMulCommClass k A A] [SMulCommClass k B B] [SMulCommClass k C C]
 
-/-- A genuine nonunital algebra map preserves the original commutator Lie brackets. -/
+/-- Let k be a commutative ring and A,B nonunital associative rings with k-module structures such
+that (r•x)y=r•(xy)=x(r•y) in each ring. Their commutator brackets are [x,y]=xy−yx. A k-linear
+multiplicative map f:A→B defines this k-linear Lie morphism on the same carriers, because
+f(xy−yx)=f(x)f(y)−f(y)f(x). Its underlying linear map is the linear map of f. The universes of
+k,A,B are independent. -/
 def toLieHom (f : A →ₙₐ[k] B) : A →ₗ⁅k⁆ B :=
   { (f : A →ₗ[k] B) with
     map_lie' := by
@@ -107,22 +120,33 @@ def toLieHom (f : A →ₙₐ[k] B) : A →ₗ⁅k⁆ B :=
       change f (x * y - y * x) = f x * f y - f y * f x
       simp only [map_sub, map_mul] }
 
-/-- The Lie map is exactly the original function. -/
+/-- Let k be a commutative ring and A,B nonunital associative rings with k-module structures such
+that (r•x)y=r•(xy)=x(r•y) in each ring. Their commutator brackets are [x,y]=xy−yx. For a
+nonunital k-algebra morphism f:A→B and x∈A, the induced Lie morphism sends x to f(x). The
+equality identifies the map on the given algebra carriers. -/
 @[simp]
 theorem toLieHom_apply (f : A →ₙₐ[k] B) (x : A) : f.toLieHom x = f x := rfl
 
-/-- No scalar or carrier map is changed by the conversion. -/
+/-- Let k be a commutative ring and A,B nonunital associative rings with k-module structures such
+that (r•x)y=r•(xy)=x(r•y) in each ring. Their commutator brackets are [x,y]=xy−yx. For a
+nonunital k-algebra morphism f:A→B, the underlying k-linear map of its induced Lie morphism
+equals the k-linear map of f. The conversion uses the same scalar actions and additive maps. -/
 @[simp]
 theorem toLieHom_toLinearMap (f : A →ₙₐ[k] B) :
     f.toLieHom.toLinearMap = (f : A →ₗ[k] B) := rfl
 
-/-- The actual nonunital identity becomes the native Lie identity. -/
+/-- Let k be commutative and A a nonunital associative ring with a k-module structure satisfying
+(r•x)y=r•(xy)=x(r•y). Converting the nonunital k-algebra identity A→A to a Lie morphism gives
+the identity of the commutator Lie algebra A. -/
 @[simp]
 theorem toLieHom_id : (NonUnitalAlgHom.id k A).toLieHom = (LieHom.id : A →ₗ⁅k⁆ A) := by
   ext x
   rfl
 
-/-- Conversion commutes with actual nonunital composition. -/
+/-- Let k be commutative and A,B,C nonunital associative k-algebras whose scalar actions satisfy
+(r•x)y=r•(xy)=x(r•y). For nonunital algebra maps f:A→B and g:B→C, the Lie morphism induced by
+g∘f equals the composite of the Lie morphisms induced by f and g. All four scalar and carrier
+universes are independent. -/
 @[simp]
 theorem toLieHom_comp (g : B →ₙₐ[k] C) (f : A →ₙₐ[k] B) :
     (g.comp f).toLieHom = g.toLieHom.comp f.toLieHom := by

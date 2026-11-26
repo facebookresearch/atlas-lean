@@ -17,10 +17,17 @@ public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 public import Mathlib.Algebra.Homology.Single
 
 /-!
-# Honest complexes of homogeneous submodules
+# Differential-stable homogeneous submodules
 
-Degreewise submodules preserved by the actual differential give an honest
-cochain complex and a degreewise injective chain-map inclusion.
+Let R be a commutative ring and C an integer-indexed cochain complex of
+R-modules. A homogeneous subcomplex consists of submodules Sₙ⊆Cⁿ
+such that d_Cⁿ(Sₙ)⊆Sₙ₊₁. Restricting the differentials gives a cochain
+complex with terms Sₙ and a monomorphic inclusion into C.
+
+If m:K → L is a monomorphism of cochain complexes and f:T → L takes
+every element of Tⁿ into the range of mₙ, the inverse of mₙ onto its
+range gives degree maps Tⁿ → Kⁿ. They commute with the differentials
+and assemble into a cochain map lifting f through m.
 -/
 
 @[expose] public section
@@ -34,9 +41,13 @@ universe u
 variable {R : Type u} [CommRing R]
 variable (C : CochainComplex (ModuleCat.{u} R) ℤ)
 
-/-- Degreewise original submodules preserved by the original differential. -/
+/-- For a commutative ring R and an integer-indexed cochain complex C of
+R-modules, a homogeneous subcomplex is a family of submodules Sₙ⊆Cⁿ
+satisfying d_Cⁿ(x)∈Sₙ₊₁ for every x∈Sₙ and integer n. -/
 structure HomogeneousSubcomplex where
-  /-- The given submodule of the carrier in each degree. -/
+  /-- For a homogeneous subcomplex S of an integer-indexed R-module cochain
+complex C over a commutative ring, the submodule Sₙ⊆Cⁿ in each
+integer degree n. -/
   piece : ∀ n : ℤ, Submodule R (C.X n)
   d_mem : ∀ (n : ℤ) (x : C.X n), x ∈ piece n →
     (C.d n (n + 1)).hom x ∈ piece (n + 1)
@@ -45,7 +56,10 @@ namespace HomogeneousSubcomplex
 
 variable {C} (S : HomogeneousSubcomplex C)
 
-/-- Restriction of the original differential to the actual degreewise submodules. -/
+/-- Let R be commutative and S a homogeneous subcomplex of an
+integer-indexed R-module cochain complex C. The differential Sₙ → Sₙ₊₁
+is the restriction of d_Cⁿ, taking x to d_Cⁿ(x); differential stability
+ensures that its value belongs to Sₙ₊₁. -/
 def differential (n : ℤ) : ModuleCat.of R (S.piece n) ⟶ ModuleCat.of R (S.piece (n + 1)) :=
   ModuleCat.ofHom (((C.d n (n + 1)).hom.comp (S.piece n).subtype).codRestrict
     (S.piece (n + 1)) (fun x => S.d_mem n x x.property))
@@ -60,12 +74,16 @@ lemma differential_comp_differential (n : ℤ) :
   exact congrArg (fun f : C.X n ⟶ C.X (n + 1 + 1) => f.hom x.val)
     (C.d_comp_d n (n + 1) (n + 1 + 1))
 
-/-- The actual cochain complex of the homogeneous submodules. -/
+/-- For a homogeneous subcomplex S of an integer-indexed R-module cochain
+complex C over a commutative ring, the cochain complex with term Sₙ
+in degree n and differential given by the restriction of d_Cⁿ. -/
 def complex : CochainComplex (ModuleCat.{u} R) ℤ :=
   CochainComplex.of (fun n => ModuleCat.of R (S.piece n))
     S.differential S.differential_comp_differential
 
-/-- The original degreewise subtype maps form an honest chain-map inclusion. -/
+/-- For a commutative ring R and a homogeneous subcomplex S of an
+integer-indexed R-module cochain complex C, the cochain map S → C
+whose n-th component is the submodule inclusion Sₙ↪Cⁿ. -/
 def inclusion : S.complex ⟶ C :=
   CochainComplex.ofHom (fun n => ModuleCat.ofHom (S.piece n).subtype) (fun n => by
     simp only [complex, CochainComplex.of_d]
@@ -90,7 +108,11 @@ variable {K L T : CochainComplex (ModuleCat.{u} R) ℤ}
 variable (m : K ⟶ L) [Mono m] (f : T ⟶ L)
   (hf : ∀ (n : ℤ) (x : T.X n), (f.f n).hom x ∈ LinearMap.range (m.f n).hom)
 
-/-- The actual linear inverse from the range of each original monic degree map. -/
+/-- Let R be commutative, m:K → L a monomorphism of integer-indexed
+R-module cochain complexes, and f:T → L a cochain map. Suppose
+fₙ(x)∈im(mₙ) for every n and x∈Tⁿ. The degree-n lift Tⁿ → Kⁿ
+is the composite of fₙ, regarded as a map into im(mₙ), with the inverse
+of the injective map mₙ:Kⁿ → im(mₙ). -/
 def liftThroughMonoDegree (n : ℤ) : T.X n ⟶ K.X n :=
   ModuleCat.ofHom ((LinearEquiv.ofInjective (m.f n).hom
     ((ModuleCat.mono_iff_injective _).mp inferInstance)).symm.toLinearMap.comp
@@ -104,8 +126,11 @@ lemma liftThroughMonoDegree_fac (n : ℤ) :
   exact congrArg Subtype.val ((LinearEquiv.ofInjective (m.f n).hom
     ((ModuleCat.mono_iff_injective _).mp inferInstance)).apply_symm_apply ⟨(f.f n).hom x, hf n x⟩)
 
-/-- Pointwise membership in the range of an original monic chain map gives an honest chain-map
-lift. -/
+/-- Let R be commutative, m:K → L a monomorphism of integer-indexed
+R-module cochain complexes, and f:T → L a cochain map satisfying
+fₙ(Tⁿ)⊆im(mₙ) in every degree. The cochain lift T → K obtained
+by the inverse of mₙ onto its range in each degree; its composite
+with m equals f. -/
 def liftThroughMono : T ⟶ K :=
   CochainComplex.ofHom (liftThroughMonoDegree m f hf) (fun n => by
     apply (cancel_mono (m.f (n + 1))).mp

@@ -1,5 +1,5 @@
 # Generalized Connes matrix trace at a native common height
 
-- [Connes Trace At Height](connes-trace-at-height.md)
-- [Connes Trace At Height projection apply](connes-trace-at-height-projection-apply.md)
-- [Connes Trace At Height naturality](connes-trace-at-height-naturality.md)
+- [The Connes matrix trace at a chosen height](connes-trace-at-height.md)
+- [The lifted Connes trace on a tensor representative](connes-trace-at-height-projection-apply.md)
+- [Naturality of the lifted Connes trace across coefficient worlds](connes-trace-at-height-naturality.md)

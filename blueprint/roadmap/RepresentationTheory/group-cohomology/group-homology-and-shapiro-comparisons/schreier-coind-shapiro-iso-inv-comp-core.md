@@ -1,4 +1,6 @@
-# Schreier Coind Shapiro Iso inv comp corestriction Counit
+# Inverse Shapiro followed by the counit is corestriction
 
-Explicit inverse Shapiro followed by the finite-index counit is the
-chosen-transversal Schreier corestriction in every degree.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `n : ℕ`. For `S_T=schreierCoindShapiroIso H (Res_H A) T n` and
+`ε_A=corestrictionCounit H A`, `S_T.inv ≫ map (id G) ε_A n = corestrictionOfRightTransversal A
+T n` as maps `H^n(H,Res_H A) → H^n(G,A)`.

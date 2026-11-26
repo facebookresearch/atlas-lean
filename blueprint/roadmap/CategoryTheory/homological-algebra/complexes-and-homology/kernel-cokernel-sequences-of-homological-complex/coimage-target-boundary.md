@@ -1,4 +1,6 @@
-# Coimage Target Boundary
+# The connecting map with the coimage term transported to the target
 
-Connecting morphism with the coimage homology term transported to the
-target of the original chain map.
+The connecting map with the coimage term transported to the target.
+
+Under the stated quasi-isomorphism, precompose the coimage connecting map with H_i(L) →
+H_i(coim f).

@@ -12,12 +12,17 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferArbitraryIndependence
 
 /-!
-# Pulling Schreier transversals back along surjective homomorphisms
+# Schreier transfer and pullback along a surjective homomorphism
 
-A surjective group homomorphism identifies the right cosets of a subgroup
-with the right cosets of its full preimage.  Choosing lifts of the
-representatives therefore pulls a right transversal back to the source.
-This is the transversal input for corestriction--inflation compatibility.
+A surjective group homomorphism π : G′ → G identifies the right cosets of H ≤ G with those of
+π⁻¹H. Choosing lifts of a right transversal T gives a right transversal T′ for π⁻¹H, and π
+identifies their representatives. The representative updates, full tuple scans and subgroup
+factor tuples commute with π.
+
+For finite-index H and a G-representation A, pullback of the T-transfer equals the T′-transfer
+of the pulled-back cochain. This yields commuting squares on cochain complexes and in every
+cohomology degree. Independence of the transversal gives the corresponding canonical
+corestriction-inflation identity.
 -/
 
 @[expose] public section
@@ -34,8 +39,10 @@ universe u
 variable {G G' : Type u} [Group G] [Group G']
 variable {H : Subgroup G}
 
-/-- Chosen lift of the target-transversal representative of a source right
-coset. -/
+/-- A lifted representative of a preimage right coset.
+
+For surjective π : G′ → G and right transversal T of H, choose a π-preimage of the
+T-representative of the image of a right coset of π⁻¹H. -/
 noncomputable def comapSurjectiveRep
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal)
@@ -43,8 +50,10 @@ noncomputable def comapSurjectiveRep
   Function.surjInv hpi
     (T.2.toRightFun (pi (Quotient.out q)))
 
-/-- The chosen lifted representative maps to the selected target
-representative. -/
+/-- The image of the selected lifted representative.
+
+Applying π to the chosen representative of a preimage coset gives the T-representative of its
+image coset. -/
 @[simp]
 theorem map_comapSurjectiveRep
     (pi : G' →* G) (hpi : Function.Surjective pi)
@@ -54,8 +63,9 @@ theorem map_comapSurjectiveRep
       T.2.toRightFun (pi (Quotient.out q)) :=
   Function.surjInv_eq hpi _
 
-/-- The chosen lift represents the source coset from which it was
-constructed. -/
+/-- The chosen lift represents its preimage coset.
+
+The quotient class of comapSurjectiveRep π hπ T q is q in the right quotient by π⁻¹H. -/
 theorem mk_comapSurjectiveRep
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal)
@@ -73,8 +83,9 @@ theorem mk_comapSurjectiveRep
       exact T.2.toRightFun_mul_inv_mem (pi (Quotient.out q))
     _ = q := q.out_eq'
 
-/-- Pull a right transversal back along a surjective group homomorphism by
-choosing one lift of each selected target representative. -/
+/-- The right transversal pulled back along a surjection.
+
+The chosen lifts of the T-representatives form a right transversal for H.comap π in G′. -/
 noncomputable def comapSurjective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) :
@@ -83,8 +94,9 @@ noncomputable def comapSurjective
     Subgroup.isComplement_range_right
       (mk_comapSurjectiveRep pi hpi T)⟩
 
-/-- Every representative in the pulled-back transversal maps into the
-original transversal. -/
+/-- Lifted representatives map into the target transversal.
+
+If s belongs to the pulled-back transversal in G′, then π(s) belongs to T in G. -/
 theorem map_mem_of_mem_comapSurjective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal)
@@ -94,14 +106,19 @@ theorem map_mem_of_mem_comapSurjective
   rw [map_comapSurjectiveRep]
   exact (T.2.toRightFun (pi (Quotient.out q))).property
 
-/-- Map a pulled-back transversal representative to the corresponding
-target representative. -/
+/-- The map from lifted representatives to target representatives.
+
+The pulled-back transversal maps to T by s ↦ π(s), with membership in T given by its
+construction. -/
 noncomputable def comapSurjectiveRepMap
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) :
     ((comapSurjective pi hpi T : Set G')) → (T : Set G) :=
   fun s => ⟨pi s, map_mem_of_mem_comapSurjective pi hpi T s s.property⟩
 
+/-- Ambient coordinates of the representative projection.
+
+The underlying value in G of comapSurjectiveRepMap π hπ T s is π(s). -/
 @[simp]
 theorem coe_comapSurjectiveRepMap
     (pi : G' →* G) (hpi : Function.Surjective pi)
@@ -110,8 +127,10 @@ theorem coe_comapSurjectiveRepMap
     (comapSurjectiveRepMap pi hpi T s : G) = pi (s : G') :=
   rfl
 
-/-- Mapping representatives from the pulled-back transversal is
-injective. -/
+/-- Injectivity of the projection on lifted representatives.
+
+Two representatives in the chosen pulled-back transversal with the same image under π are
+equal. -/
 theorem comapSurjectiveRepMap_injective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) :
@@ -131,8 +150,10 @@ theorem comapSurjectiveRepMap_injective
   exact congrArg Subtype.val (huniq.unique
     (y₁ := s₁) (y₂ := s₂) (by simp) hrel)
 
-/-- Every target-transversal representative is the image of a unique
-pulled-back representative. -/
+/-- Surjectivity of the projection on lifted representatives.
+
+Every representative t ∈ T is the image under π of a representative in the pulled-back
+transversal. -/
 theorem comapSurjectiveRepMap_surjective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) :
@@ -162,8 +183,9 @@ theorem comapSurjectiveRepMap_surjective
     (y₁ := T.2.toRightFun (pi (Quotient.out q))) (y₂ := t)
     (T.2.mul_inv_toRightFun_mem (pi (Quotient.out q))) hrel)
 
-/-- The pulled-back and target transversal representative types are
-canonically equivalent by the surjective homomorphism. -/
+/-- The equivalence between lifted and target representatives.
+
+The map s ↦ π(s) identifies the pulled-back right transversal for π⁻¹H with T. -/
 noncomputable def comapSurjectiveRepEquiv
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) :
@@ -172,6 +194,9 @@ noncomputable def comapSurjectiveRepEquiv
     ⟨comapSurjectiveRepMap_injective pi hpi T,
       comapSurjectiveRepMap_surjective pi hpi T⟩
 
+/-- Coordinates of the lifted-transversal equivalence.
+
+The representative corresponding to s under the equivalence with T has ambient value π(s). -/
 @[simp]
 theorem coe_comapSurjectiveRepEquiv
     (pi : G' →* G) (hpi : Function.Surjective pi)
@@ -180,8 +205,9 @@ theorem coe_comapSurjectiveRepEquiv
     (comapSurjectiveRepEquiv pi hpi T s : G) = pi (s : G') :=
   rfl
 
-/-- Schreier representative update commutes with a surjective homomorphism
-for the pulled-back transversal. -/
+/-- Schreier representative updates commute with a surjection.
+
+Projecting the representative update of s by g ∈ G′ equals updating π(s) by π(g) in T. -/
 theorem map_comapSurjective_schreierRep
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal)
@@ -220,8 +246,10 @@ theorem map_comapSurjective_schreierRep
     (y₁ := rS') (y₂ := rT) hrSmem hrTmem
   exact Subtype.ext (congrArg Subtype.val heq)
 
-/-- The complete representative scan commutes with a surjective
-homomorphism for the pulled-back transversal. -/
+/-- Complete representative scans commute with a surjection.
+
+Projecting each step of a tuple scan in the lifted transversal gives the T-scan of the
+coordinatewise image tuple under π. -/
 theorem map_comapSurjective_schreierRepScan
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) {n : ℕ}
@@ -238,8 +266,10 @@ theorem map_comapSurjective_schreierRepScan
       rw [schreierRepScan_get_succ, schreierRepScan_get_succ]
       rw [map_comapSurjective_schreierRep, ih]
 
-/-- Every factor in the complete Schreier scan maps to the corresponding
-factor for the target transversal. -/
+/-- Subgroup factor tuples commute with a surjection.
+
+The image under π of each factor in the π⁻¹H-scan is the corresponding H-factor of the
+projected tuple scan. -/
 theorem map_comapSurjective_schreierFactorTuple
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) {n : ℕ}
@@ -270,8 +300,11 @@ universe u
 variable {k G G' : Type u} [CommRing k] [Group G] [Group G']
 variable {H : Subgroup G}
 
-/-- Restriction through the preimage-subgroup map agrees with successive
-restriction through the ambient homomorphism. -/
+/-- The coefficient identification for two successive restrictions.
+
+For π : G′ → G, the representation restricted first to H then along π : π⁻¹H → H is isomorphic
+to the representation pulled back to G′ then restricted to π⁻¹H. The comparison is the
+identity on coefficient elements. -/
 noncomputable def comapSubgroupResIso
     (pi : G' →* G) (H : Subgroup G) (A : Rep k G) :
     Rep.res (pi.subgroupComap H)
@@ -279,12 +312,18 @@ noncomputable def comapSubgroupResIso
       Rep.res (H.comap pi).subtype (Rep.res pi A) :=
   eqToIso (by rfl)
 
+/-- Values of the preimage-subgroup coefficient comparison.
+
+The forward coefficient comparison sends each x ∈ A to x. -/
 @[simp]
 theorem comapSubgroupResIso_hom_apply
     (pi : G' →* G) (H : Subgroup G) (A : Rep k G) (x : A) :
     (comapSubgroupResIso pi H A).hom x = x :=
   rfl
 
+/-- The linear map of the preimage-subgroup coefficient comparison.
+
+The underlying linear map of comapSubgroupResIso π H A is the identity. -/
 @[simp]
 theorem comapSubgroupResIso_hom_toLinearMap
     (pi : G' →* G) (H : Subgroup G) (A : Rep k G) :
@@ -293,12 +332,18 @@ theorem comapSubgroupResIso_hom_toLinearMap
   intro x
   exact comapSubgroupResIso_hom_apply pi H A x
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite target representatives for surjective pullback.
+
+For finite-index H, the target transversal T is finitely enumerated for the pullback-transfer
+comparison. -/
 noncomputable local instance surjectivePullbackTargetTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite lifted representatives for surjective pullback.
+
+For surjective π and finite-index H, the pulled-back transversal of π⁻¹H is finitely
+enumerated. -/
 noncomputable local instance surjectivePullbackSourceTransversalFintype
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (T : H.RightTransversal) [H.FiniteIndex] :
@@ -306,8 +351,10 @@ noncomputable local instance surjectivePullbackSourceTransversalFintype
   @Fintype.ofFinite (T.comapSurjective pi hpi : Set G')
     ((T.comapSurjective pi hpi).2.finite_right)
 
-/-- Chosen-transversal cochain corestriction commutes with inflation along a
-surjective homomorphism when the subgroup is pulled back by preimage. -/
+/-- The tuple transfer formula under surjective pullback.
+
+Pullback along π of the T-transfer equals transfer with the lifted transversal of the cochain
+pulled back along π : π⁻¹H → H, with coefficients π* A. -/
 theorem corestrictionCochain_comapSurjective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
@@ -356,8 +403,10 @@ theorem corestrictionCochain_comapSurjective
         exact (T.map_comapSurjective_schreierFactorTuple
           pi hpi s g i).symm
 
-/-- Pullback along a surjective homomorphism commutes with
-chosen-transversal corestriction as a square of cochain complexes. -/
+/-- The cochain-complex square for surjective pullback.
+
+Transfer from H to G followed by cochain pullback along π equals pullback to π⁻¹H, with the
+canonical coefficient comparison, followed by transfer to G′ using the lifted transversal. -/
 theorem corestrictionCochains_comapSurjective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
@@ -373,8 +422,10 @@ theorem corestrictionCochains_comapSurjective
     (corestrictionCochain_comapSurjective pi hpi A T n f) g
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Pullback along a surjective homomorphism commutes with
-chosen-transversal corestriction in every cohomological degree. -/
+/-- The chosen-transfer square for inflation along a surjection.
+
+In every degree n, transfer from H to G followed by pullback along π equals subgroup pullback
+to π⁻¹H followed by transfer with the pulled-back transversal to G′. -/
 theorem corestrictionOfRightTransversal_comapSurjective
     (pi : G' →* G) (hpi : Function.Surjective pi)
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
@@ -389,9 +440,11 @@ theorem corestrictionOfRightTransversal_comapSurjective
     congrArg (fun q => HomologicalComplex.homologyMap q n)
       (corestrictionCochains_comapSurjective pi hpi A T)
 
-/-- Canonical arbitrary-degree Schreier corestriction commutes with
-inflation along a surjective ambient homomorphism and its subgroup
-preimage. -/
+/-- Canonical corestriction commutes with surjective inflation.
+
+For surjective π : G′ → G and finite-index H ≤ G, inflation after canonical corestriction
+equals canonical corestriction from π⁻¹H after the subgroup inflation, with the identity
+coefficient comparison. -/
 @[reassoc]
 theorem schreierCorestriction_comapSurjective
     (pi : G' →* G) (hpi : Function.Surjective pi)

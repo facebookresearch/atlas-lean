@@ -17,18 +17,16 @@ public import Mathlib.Topology.Separation.Connected
 public import Mathlib.Topology.Separation.Regular
 
 /-!
-# Algebraic and continuous-action bridges for topological representations
+# Continuity and fixed vectors of topological representations
 
-This file gives three small bridges from `TopRep` to existing Mathlib APIs.
-`TopRep.forgetToRep` forgets coefficient topology while retaining the same
-linear group action.  The standard `Action.IsContinuous` property on
-`TopRep.toActionTopModFunc` gives continuity of the literal `TopRep` action
-function.  For a discrete coefficient carrier, it also makes fixed sets open
-and therefore lets one refine an open normal subgroup so that it fixes any
-prescribed finite set.
+Let k be a topological ring and G a topological monoid. For a topological representation X,
+the continuous-action condition on its associated action is continuity of (g,x) ↦ ρ(g)x. When
+G is a group, forgetting coefficient topology gives the algebraic representation with the same
+linear action.
 
-No parallel continuity predicate or global action, topology, or continuity
-instance is introduced.
+For discrete coefficients and a continuous action, each vector has an open stabilizer. If G is
+also compact and totally disconnected, any open normal subgroup can be refined to an open
+normal subgroup fixing a prescribed finite set of vectors.
 -/
 
 @[expose] public section
@@ -47,8 +45,10 @@ section LiteralAction
 
 variable {G : Type v} [Monoid G] [TopologicalSpace G]
 
-/-- The standard continuous-action property gives continuity of the literal
-`TopRep` action function. -/
+/-- Joint continuity of the representation action.
+
+For a topological monoid G and a topological representation X over k, the continuous-action
+property of the associated action implies continuity of G × X → X, (g,x) ↦ ρ(g)x. -/
 theorem continuous_action
     {X : TopRep.{w} k G}
     (hX : ((TopRep.toActionTopModFunc (k := k) (G := G)).obj X).IsContinuous) :
@@ -73,8 +73,11 @@ end LiteralAction
 
 variable {G : Type v} [Group G] [TopologicalSpace G]
 
-/-- Forget the coefficient topology of a topological representation while
-retaining its algebraic linear group action. -/
+/-- The algebraic representation underlying a topological representation.
+
+For a topological group G and topological ring k, this functor sends X to its k-linear
+representation and sends each continuous intertwiner to the same linear intertwiner. The
+coefficient carrier and group action are retained. -/
 def forgetToRep : TopRep.{w} k G ⥤ Rep.{w} k G where
   obj X := Rep.of X.ρ.toRepresentation
   map f := Rep.ofHom f.hom.toIntertwiningMap
@@ -85,14 +88,20 @@ def forgetToRep : TopRep.{w} k G ⥤ Rep.{w} k G where
     apply Rep.hom_ext
     rfl
 
+/-- Additivity of forgetting coefficient topology.
+
+The functor from topological representations to algebraic representations preserves sums of
+morphisms, since it sends continuous intertwiners to their underlying linear maps. -/
 instance forgetToRep_additive :
     (forgetToRep (k := k) (G := G)).Additive where
   map_add {X Y} {f g} := by
     apply Rep.hom_ext
     rfl
 
-/-- Under the standard continuous-action property, the subgroup fixing one
-vector of a discrete topological representation is open. -/
+/-- Open stabilizers of discrete coefficient vectors.
+
+If X has discrete topology and its associated G-action is continuous, then for each x ∈ X the
+subset of g with ρ(g)x = x is open in G. -/
 theorem isOpen_fixedBy_of_action_isContinuous
     {X : TopRep.{w} k G} [DiscreteTopology X]
     (hX : ((TopRep.toActionTopModFunc (k := k) (G := G)).obj X).IsContinuous)
@@ -109,8 +118,11 @@ theorem isOpen_fixedBy_of_action_isContinuous
   change IsOpen {g : G | X.ρ g x = x}
   exact hopen
 
-/-- In a profinite group, one can refine an open normal subgroup so that it
-fixes every vector in a prescribed finite set. -/
+/-- An open normal subgroup fixing finitely many vectors.
+
+Let G be a compact totally disconnected topological group acting continuously on a discrete
+coefficient representation X. For every open normal subgroup U and finite set s ⊆ X, there is
+an open normal subgroup V ≤ U such that ρ(v)x = x for all v ∈ V and x ∈ s. -/
 theorem exists_openNormal_le_fix_finset_of_action_isContinuous
     [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G]
     {X : TopRep.{w} k G} [DiscreteTopology X]

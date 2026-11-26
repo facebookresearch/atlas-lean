@@ -14,31 +14,22 @@ public import MathlibExt.CategoryTheory.Monoidal.TensorPowerFunctor
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOneAnyAssociativity
 
 /-!
-# Positive iterated cups in group cohomology
+# Ordered positive iterated cups
 
-This file recursively cups a nonempty finite family of degree-one group
-cohomology classes.  A family indexed by `Fin (n + 1)` produces a class in
-degree `n + 1` with coefficient the canonical left-associated tensor power
-`TensorPower.tensorPowObj A (n + 1)`.
+Let k be a commutative ring, G a group, and A a k-linear representation in universe u. A
+nonempty tuple x₀,…,x_n∈H¹(G,A) has an ordered iterated cup L_n(x) in H^{n+1}(G,P_{n+1}(A)),
+where P₀=I and P_{m+1}=P_m⊗A.
 
-At weight one, the coefficient is transported through the canonical
-isomorphism `tensorPowObj A 1 ≅ A`.  At every successor weight, the preceding
-class is cupped with the final input; the recursive definitions of tensor
-powers and degree addition make the target definitional.
+The one-factor comparison P₁(A)≅A transports x₀ into the weight-one coefficient. At each
+successor, cup the preceding prefix with the final class. This gives a k-multilinear map in all
+n+1 inputs. It is natural in coefficient morphisms and in simultaneous group restriction and
+coefficient maps.
 
-Weight zero is intentionally absent: this construction does not assume or
-manufacture a degree-zero cup unit.
-
-## Main declarations
-
-* `groupCohomology.iteratedCupClassSucc`
-* `groupCohomology.iteratedCupMultilinearSucc`
-* `groupCohomology.iteratedCupClassSucc_zero`
-* `groupCohomology.iteratedCupClassSucc_succ`
-* `groupCohomology.iteratedCupClassSucc_naturality`
-* `groupCohomology.iteratedCupClassSucc_naturality_of_hom`
-* `groupCohomology.iteratedCupClassSucc_weightTwo`
-* `groupCohomology.iteratedCupClassSucc_weightThree`
+Canonical reassociation P_{n+2}(A)≅A⊗P_{n+1}(A) expresses L_{n+1} as the first class cupped with
+the iterated tail. The two-factor and three-factor formulas recover ordinary binary and triple
+cups with their coefficient isomorphisms. If the binary cup of any adjacent input pair is zero,
+the complete ordered iterated cup is zero. All weights are positive, and reassociation
+introduces no permutation of inputs.
 -/
 
 @[expose] public section
@@ -56,9 +47,10 @@ namespace groupCohomology
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- The left-associated iterated cup as a multilinear map on a nonempty
-finite family of degree-one classes.  The natural parameter `n` represents
-weight `n + 1`. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For n≥0, there is a k-multilinear map (H¹(G,A))^{Fin(n+1)}→H^{n+1}(G,P_{n+1}(A)). At weight
+one it is the coefficient transport by (P₁(A)≅A)⁻¹. The successor cups the preceding n+1 inputs
+with the final degree-one class, retaining their order and left-associated tensor coefficient. -/
 noncomputable def iteratedCupMultilinearSucc (A : Rep k G) :
     ∀ (n : ℕ),
       MultilinearMap k (fun _ : Fin (n + 1) => groupCohomology A 1)
@@ -82,13 +74,20 @@ noncomputable def iteratedCupMultilinearSucc (A : Rep k G) :
           (n + 1) 1).hom).compMultilinearMap
           (iteratedCupMultilinearSucc A n) |>.uncurryRight
 
-/-- Evaluation of the positive iterated-cup multilinear map. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For every
+n≥0 and tuple x indexed by {0,…,n}, L_n(x) is evaluation of the k-multilinear iterated-cup map
+on those inputs. The target degree and number of coefficient factors are both n+1. -/
 noncomputable def iteratedCupClassSucc (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology A 1) :
     groupCohomology (TensorPower.tensorPowObj A (n + 1)) (n + 1) :=
   iteratedCupMultilinearSucc A n x
 
-/-- Weight-one computation rule for `iteratedCupClassSucc`. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For x∈H¹(G,A), let s:P₁(A)≅A be the canonical one-factor isomorphism. Then
+L₀([x])=(s.inv)_*(x) in H¹(G,P₁(A)). The parameter zero denotes one input and cohomological
+degree one. -/
 @[simp]
 theorem iteratedCupClassSucc_zero
     (A : Rep k G) (x : Fin 1 → groupCohomology A 1) :
@@ -97,8 +96,11 @@ theorem iteratedCupClassSucc_zero
         (TensorPower.tensorPowObjOneIso A).inv 1).hom (x 0) :=
   rfl
 
-/-- Successor computation rule: cup the preceding prefix with the final
-degree-one class. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0
+and x₀,…,x_{n+1}∈H¹(G,A), L_{n+1}(x)=L_n(x₀,…,x_n)∪x_{n+1}. The cup has degrees (n+1,1) and
+coefficient P_{n+1}(A)⊗A=P_{n+2}(A). -/
 @[simp]
 theorem iteratedCupClassSucc_succ
     (A : Rep k G) (n : ℕ)
@@ -109,7 +111,11 @@ theorem iteratedCupClassSucc_succ
           x (Fin.last (n + 1))) :=
   rfl
 
-/-- Pointwise-equal input families have equal iterated cup classes. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0
+and tuples x,y indexed by {0,…,n}, if x_i=y_i for every i, then L_n(x)=L_n(y) in
+H^{n+1}(G,P_{n+1}(A)). -/
 theorem iteratedCupClassSucc_congr
     (A : Rep k G) (n : ℕ)
     {x y : Fin (n + 1) → groupCohomology A 1}
@@ -119,7 +125,11 @@ theorem iteratedCupClassSucc_congr
   funext i
   exact h i
 
-/-- Additivity of the iterated cup in any selected input coordinate. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0, a
+tuple x, an index 0≤i≤n, and a,b∈H¹(G,A), one has L_n(x[i:=a+b])=L_n(x[i:=a])+L_n(x[i:=b]) in
+H^{n+1}(G,P_{n+1}(A)). All other entries are retained. -/
 theorem iteratedCupClassSucc_update_add
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology A 1) (i : Fin (n + 1))
@@ -129,7 +139,11 @@ theorem iteratedCupClassSucc_update_add
         iteratedCupClassSucc A n (Function.update x i b) :=
   (iteratedCupMultilinearSucc A n).map_update_add x i a b
 
-/-- Scalar linearity of the iterated cup in any selected input coordinate. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0, a
+tuple x, 0≤i≤n, c∈k, and a∈H¹(G,A), L_n(x[i:=c•a])=c•L_n(x[i:=a]). The remaining entries and
+tensor-coefficient order are retained. -/
 theorem iteratedCupClassSucc_update_smul
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology A 1) (i : Fin (n + 1))
@@ -139,7 +153,10 @@ theorem iteratedCupClassSucc_update_smul
   (iteratedCupMultilinearSucc A n).map_update_smul x i c a
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Coefficient naturality of the arbitrary positive iterated cup. -/
+/-- Let k be a commutative ring, G a group, A,B k-linear G-representations, and f:A→B an equivariant
+k-linear map, in universe u. For n≥0, its tensor-power map P_{n+1}(f) induces
+(P_{n+1}(f))_*L_n^A(x)=L_n^B(f_*x₀,…,f_*x_n). The outer map has degree n+1 and each input map
+degree one. -/
 theorem iteratedCupClassSucc_naturality
     {A B : Rep k G} (f : A ⟶ B) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology A 1) :
@@ -192,8 +209,11 @@ theorem iteratedCupClassSucc_naturality
       rw [hApply, ih]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Joint group-and-coefficient naturality of the arbitrary positive
-iterated cup. -/
+/-- Let k be a commutative ring, f:G→H a group homomorphism, A an H-representation, and φ:Res_f A→B
+a coefficient morphism, in universe u. For n≥0, let Φ_{n+1}:Res_f(P_{n+1}(A))→P_{n+1}(B) be the
+induced tensor-power coefficient map. Then
+map_{f,Φ_{n+1}}(L_n^A(x))=L_n^B(map_{f,φ}(x₀),…,map_{f,φ}(x_n)), with degree n+1 on the left and
+degree one on each input. -/
 theorem iteratedCupClassSucc_naturality_of_hom
     {H : Type u} [Group H] {A : Rep k H} {B : Rep k G}
     (f : G →* H) (phi : Rep.res f A ⟶ B) (n : ℕ)
@@ -261,8 +281,9 @@ theorem iteratedCupClassSucc_naturality_of_hom
       rw [hApply, ih]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The weight-two iterated cup is the ordinary cup of its two inputs,
-transported to the canonical second tensor power. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For x₁,x₂∈H¹(G,A) and q₂:P₂(A)≅A⊗A, L₁([x₁,x₂])=(q₂.inv)_*(x₁∪x₂). The ordinary cup lies in
+H²(G,A⊗A), and the inverse comparison transports it to H²(G,P₂(A)). -/
 theorem iteratedCupClassSucc_weightTwo
     (A : Rep k G) (x₁ x₂ : groupCohomology A 1) :
     iteratedCupClassSucc A 1 ![x₁, x₂] =
@@ -281,8 +302,10 @@ theorem iteratedCupClassSucc_weightTwo
   exact hApply.symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The weight-two iterated cup decomposes as its first class cupped with
-the normalized weight-one tail. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Let ψ₀:P₂(A)≅A⊗P₁(A) be the first-factor tensor comparison. For x₀,x₁∈H¹(G,A),
+(ψ₀.hom)_*L₁([x₀,x₁])=x₀∪L₀([x₁]) in H²(G,A⊗P₁(A)). The tail uses the inverse one-factor
+coefficient isomorphism. -/
 theorem iteratedCupClassSucc_headTail_zero
     (A : Rep k G) (x₀ x₁ : groupCohomology A 1) :
     (map (MonoidHom.id G)
@@ -308,9 +331,12 @@ theorem iteratedCupClassSucc_headTail_zero
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Mapping a positive iterated cup to its head--tail coefficient
-decomposition gives the target-normalized cup of the first class with the
-iterated tail. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0, x
+indexed by {0,…,n+1}, and ψ_n:P_{n+2}(A)≅A⊗P_{n+1}(A), one has
+(ψ_n.hom)_*L_{n+1}(x)=x₀∪L_n(x₁,…,x_{n+1}). The resulting degree is n+2 and the ordered tail has
+n+1 inputs. -/
 theorem iteratedCupClassSucc_headTail
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 2) → groupCohomology A 1) :
@@ -384,9 +410,12 @@ theorem iteratedCupClassSucc_headTail
       all_goals rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Cup on the left by the head class, paired through the inverse
-head--tail coefficient isomorphism, reconstructs the full positive
-iterated cup. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0
+and x₀,…,x_{n+1}, let ψ_n:P_{n+2}(A)≅A⊗P_{n+1}(A). The degree-(n+1) left-cup map by x₀, paired
+through ψ_n.inv, sends L_n(x₁,…,x_{n+1}) to L_{n+1}(x). Equivalently (ψ_n.inv)_*(x₀∪L_n(tail
+x))=L_{n+1}(x). -/
 theorem cupOneClassMap_iteratedCupClassSucc_tail
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 2) → groupCohomology A 1) :
@@ -404,8 +433,9 @@ theorem cupOneClassMap_iteratedCupClassSucc_tail
   rw [map_id]
   rfl
 
-/-- If the normalized weight-two iterated cup is zero, then the underlying
-binary cup is zero before coefficient normalization. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For x₁,x₂∈H¹(G,A), if L₁([x₁,x₂])=0 in H²(G,P₂(A)), then x₁∪x₂=0 in H²(G,A⊗A). The canonical
+isomorphism P₂(A)≅A⊗A recovers the binary cup from its tensor-power coefficient transport. -/
 theorem cup_eq_zero_of_iteratedCupClassSucc_weightTwo_eq_zero
     (A : Rep k G) (x₁ x₂ : groupCohomology A 1)
     (hzero : iteratedCupClassSucc A 1 ![x₁, x₂] = 0) :
@@ -428,8 +458,9 @@ theorem cup_eq_zero_of_iteratedCupClassSucc_weightTwo_eq_zero
   simpa only [map_zero] using hzero
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Cupping after transport into the canonical second tensor power is the
-transport of the unnormalized cup. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Let q₂:P₂(A)≅A⊗A, u∈H²(G,A⊗A), and x∈H¹(G,A). Then ((q₂.inv)_*u)∪x=(q₂.inv⊗id_A)_*(u∪x) in
+H³(G,P₂(A)⊗A). The right-hand cup is formed first with coefficient (A⊗A)⊗A. -/
 theorem cup_tensorPowObjTwoIso_inv_apply
     (A : Rep k G) (u : groupCohomology (A ⊗ A) 2)
     (x : groupCohomology A 1) :
@@ -463,8 +494,9 @@ private theorem cup_assoc_one_one_one_apply
   exact h
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Mapping the coefficient associator and then normalizing the right tensor
-cube is the direct normalization of the left tensor cube. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Let q₂:P₂(A)≅A⊗A and e₃:A⊗(A⊗A)≅P₃(A) be the right-cube comparison. For z∈H³(G,(A⊗A)⊗A),
+(q₂.inv⊗id_A)_*z=(e₃.hom)_*((α_{A,A,A}.hom)_*z). Both sides lie in H³(G,P₃(A)). -/
 theorem tensorPowObjThreeRightIso_map_assoc_apply
     (A : Rep k G) (z : groupCohomology ((A ⊗ A) ⊗ A) 3) :
     (map (MonoidHom.id G)
@@ -485,8 +517,10 @@ theorem tensorPowObjThreeRightIso_map_assoc_apply
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The weight-three iterated cup agrees with the right-associated triple
-cup after the canonical coefficient normalization. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For x₁,x₂,x₃∈H¹(G,A) and e₃:A⊗(A⊗A)≅P₃(A), L₂([x₁,x₂,x₃])=(e₃.hom)_*(x₁∪(x₂∪x₃)) in
+H³(G,P₃(A)). The inner cup has degree two and coefficient A⊗A, and the outer cup has degrees
+(1,2). -/
 theorem iteratedCupClassSucc_weightThree
     (A : Rep k G) (x₁ x₂ x₃ : groupCohomology A 1) :
     iteratedCupClassSucc A 2 ![x₁, x₂, x₃] =
@@ -510,8 +544,11 @@ theorem iteratedCupClassSucc_weightThree
   rw [hAssoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- A zero binary cup in the final two slots kills the full left-associated
-iterated cup. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0
+and a tuple x₀,…,x_{n+1}, if x_n∪x_{n+1}=0 in H²(G,A⊗A), then L_{n+1}(x)=0 in
+H^{n+2}(G,P_{n+2}(A)). The final two entries are adjacent in the retained input order. -/
 theorem iteratedCupClassSucc_eq_zero_of_last_cup
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 2) → groupCohomology A 1)
@@ -588,8 +625,12 @@ theorem iteratedCupClassSucc_eq_zero_of_last_cup
       change leftClass = 0
       exact hLeft
 
-/-- A zero binary cup in any adjacent pair of slots kills the full iterated
-cup. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Write P_m(A) for the canonical left-associated tensor power, with P₀=I and P_{m+1}=P_m⊗A, and
+L_n(x)∈H^{n+1}(G,P_{n+1}(A)) for the ordered iterated cup of n+1 classes x_i∈H¹(G,A). For n≥0,
+x₀,…,x_n, and an index i with i+1<n+1, if x_i∪x_{i+1}=0 in H²(G,A⊗A), then L_n(x)=0 in
+H^{n+1}(G,P_{n+1}(A)). This requires a consecutive pair and introduces no permutation of the
+tuple. -/
 theorem iteratedCupClassSucc_eq_zero_of_adjacent_cup
     (A : Rep k G) :
     ∀ (n : ℕ) (x : Fin (n + 1) → groupCohomology A 1)

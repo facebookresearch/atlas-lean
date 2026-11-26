@@ -18,14 +18,17 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Square
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRingsExact
 
 /-!
-# Lie-map naturality of coefficient homology and Tor
+# Naturality of coefficient homology and enveloping Tor
 
-A Lie homomorphism and a compatible semilinear map of right enveloping modules induce a
-canonical Tor map from the balanced-tensor square and exact scalar restriction.
+Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, U = U_R(L), U′ = U_R(L′), and σ =
+U_R(f). For right modules N over U and N′ over U′, a σ-semilinear map g satisfies g(m·u) =
+g(m)·σ(u). It induces N ⊗_U σ*X → N′ ⊗_{U′} X by [m,x] ↦ [g(m),x]. Deriving this natural
+transformation and using the augmentation-module map defines the Tor map in every degree.
 
-When both underlying Lie modules are free over the commutative ground ring, their coefficient
-Chevalley–Eilenberg resolutions compute this map, giving naturality of the homology-to-Tor
-comparison in every degree.
+The Lie carriers may have universes v and v′; both coefficient modules and the tensor
+categories use H = max(u,v,v′,w). If both L and L′ are free over R, tensor cancellation
+identifies the lifted enveloping resolution complexes with the coefficient Chevalley–Eilenberg
+complexes, and the homology-to-Tor comparison is natural for f and g.
 -/
 
 @[expose] public section
@@ -65,8 +68,11 @@ local instance restrictionAt_preservesHomology {A : Type v} [Ring A]
 local instance identityAt_preservesHomology :
     (𝟭 (ModuleCat.{z} R)).PreservesHomology := Functor.preservesHomologyOfExact _
 
-/-- Ground restriction through the scalar-linear enveloping algebra map has the target module's
-ground action. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, U = U_R(L), U′ = U_R(L′), and σ =
+U_R(f). For X ∈ ModuleCat_H(U′), H = max(u,v,v′,w), restricting X first along σ and then along
+R → U gives an R-module R-linearly equivalent to the restriction along R → U′. This
+equivalence is the identity on the additive carrier. Its scalar compatibility is
+σ(algebraMap_R,U(r)) = algebraMap_R,U′(r). -/
 def restrictedEnvelopingGroundEquiv (X : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L'))) :
     (ModuleCat.restrictScalars (algebraMap R U)).obj
       ((ModuleCat.restrictScalars.{max u v v' w} ((UniversalEnvelopingAlgebra.map R f).toRingHom)).obj X) ≃ₗ[R]
@@ -82,8 +88,11 @@ def restrictedEnvelopingGroundEquiv (X : (ModuleCat.{max u v v' w} (UniversalEnv
         X.isModule.toDistribMulAction.toMulAction.toSMul a (show X from x))
           ((UniversalEnvelopingAlgebra.map R f).commutes r) }
 
-/-- The underived scalar-change tensor component, using the semilinear map of the balanced
-quotient. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, and σ : U_R(L) → U_R(L′) its enveloping
+algebra map. Put H = max(u,v,v′,w), and let N and N′ be right enveloping modules in
+ModuleCat_H. A σ-semilinear map g : N → N′, satisfying g(m·u) = g(m)·σ(u), gives an R-module
+morphism N ⊗_{U_R(L)} σ*X → N′ ⊗_{U_R(L′)} X for each X ∈ ModuleCat_H(U_R(L′)). It sends [m,x]
+to [g(m),x]; the second factor uses the identity comparison of the two ground R-actions. -/
 def rightTensorLieComponent (X : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L'))) :
   (ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
   ModuleCat.{max u v v' w} R).obj
@@ -121,7 +130,11 @@ theorem rightTensorLieComponent_mk (X : (ModuleCat.{max u v v' w} (UniversalEnve
     (rightCoefficientGroundMap R L f g) (restrictedEnvelopingGroundEquiv R L f X).toLinearMap
     (fun u m => g.map_smulₛₗ (op u) m) (fun _ _ => rfl) m x
 
-/-- The tensor square for joint Lie and right coefficient maps. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, σ = U_R(f), and g : N → N′ a
+σ-semilinear map of right enveloping modules in the common category universe H =
+max(u,v,v′,w). Set F(X) = N ⊗_{U_R(L)} X and G(Y) = N′ ⊗_{U_R(L′)} Y. The maps α_X : F(σ*X) →
+G(X), [m,x] ↦ [g(m),x], form a natural transformation σ* ⋙ F → G ⋙ Id. For a U_R(L′)-linear
+map a : X → Y, F(σ*a) ≫ α_Y = α_X ≫ G(a). -/
 def rightTensorLieTransformation :
   (ModuleCat.restrictScalars.{max u v v' w} ((UniversalEnvelopingAlgebra.map R f).toRingHom)) ⋙
   (ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
@@ -168,8 +181,12 @@ def rightTensorLieTransformation :
           hTarget).symm)
 
 
-/-- The canonical left-variable Tor map is derivation of the tensor square, independently of CE
-homology. Exact restriction is sufficient. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, and g : N → N′ a U_R(f)-semilinear map
+of right enveloping modules in universe H = max(u,v,v′,w). Write F(X) = N ⊗_{U_R(L)} X, G(Y) =
+N′ ⊗_{U_R(L′)} Y, and T_H(L), T_H(L′) for the lifted augmentation modules. For n ∈ ℕ, define
+(L_nF)(T_H(L)) → (L_nG)(T_H(L′)) by first applying L_nF to T_H(L) → U_R(f)*T_H(L′), then
+applying the derived natural transformation of [m,x] ↦ [g(m),x]. Scalar restriction is exact;
+no freeness of either Lie algebra is required to define this map. -/
 def rightEnvelopingTorLieMapAt (n : ℕ) :
     ((ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
       ModuleCat.{max u v v' w} R).leftDerived n).obj (liftedEnvelopingTrivial.{u, v, max u v v' w} R L) ⟶
@@ -204,8 +221,11 @@ section ResolutionComputation
 variable [Module.Free R L] [Module.Free R L']
 
 
-/-- The exact CE resolution after common-universe lift and application of the fixed-right tensor
-functor. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). If Q_H is the lifted enveloping projective resolution of the
+augmentation module, define the chain complex F(Q_H) in ModuleCat_H(R), where F(X) = N ⊗_U X.
+In degree n its term is N ⊗_U Q_H,n and its differential is F applied to the resolution
+differential. The tensor functor is additive; no exactness of this tensor complex is asserted. -/
 def rightTensorEnvelopingComplexAt : ChainComplex (ModuleCat.{max u v v' w} R) ℕ := by
   letI :
     (ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
@@ -216,7 +236,11 @@ def rightTensorEnvelopingComplexAt : ChainComplex (ModuleCat.{max u v v' w} R) �
       ModuleCat.{max u v v' w} R).mapHomologicalComplex (ComplexShape.down ℕ)).obj
       (liftedEnvelopingProjectiveResolution.{u, v, max u v v' w} R L).complex
 
-/-- Up/down coordinates in the exact canonical ground scalar structure. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and U = U_R(L). Put H = max(u,v,v′,w), and
+let Q_H be the lifted enveloping projective resolution. For n ∈ ℕ, restricting Q_H,n along R →
+U gives an R-module R-linearly equivalent to the ground term Λⁿ_R L ⊗_R U of the enveloping
+complex. The forward map removes the whole-term universe lift and the inverse adds it, with
+the R-action obtained by restriction from the U-action. -/
 def liftedEnvelopingGroundEquiv (n : ℕ) :
     (ModuleCat.restrictScalars (algebraMap R U)).obj
       ((liftedEnvelopingProjectiveResolution.{u, v, max u v v' w} R L).complex.X n) ≃ₗ[R]
@@ -228,7 +252,11 @@ def liftedEnvelopingGroundEquiv (n : ℕ) :
   exact (ULift.moduleEquiv : ULift.{max u v v' w} ((envelopingComplex R L).X n) ≃ₗ[U]
     (envelopingComplex R L).X n).restrictScalars R
 
-/-- The tensor cancellation coordinates after lift. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). For n ∈ ℕ, the balanced tensor of N with the lifted resolution
+term Q_H,n is R-linearly equivalent to Λⁿ_R L ⊗_R N, equipped with the left Lie action [x,m] =
+−m·ι(x). The coordinate map sends [m,up(a ⊗ b)] to a ⊗ (m·b). Its inverse sends a ⊗ m to
+[m,up(a ⊗ 1)]. -/
 def rightTensorCoordinatesAt (n : ℕ) :
     (rightTensorEnvelopingComplexAt.{u, v, v', w} R L N).X n ≃ₗ[R] (rightEnvelopingCoefficientComplex R L N).X n :=
   (TensorProduct.Balanced.congr (LinearEquiv.refl R N) (liftedEnvelopingGroundEquiv.{u, v, v', w} R L n)
@@ -292,8 +320,12 @@ theorem rightTensorCoordinatesAt_d (n : ℕ) :
           (congrArg (coefficientDifferential R L (rightCoefficients R L N) n) hRight.symm))
 
 
-/-- The exact CE coefficient complex is the lifted resolution tensor, through the cancellation
-coordinates. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). Tensor cancellation gives a chain isomorphism N ⊗_U Q_H ≅
+C_*(L;N), where Q_H is the lifted enveloping projective resolution and the exterior-first
+coefficient complex uses [x,m] = −m·ι(x). Its degree-n component is [m,up(a ⊗ b)] ↦ a ⊗ (m·b),
+with inverse a ⊗ m ↦ [m,up(a ⊗ 1)]. These components commute with the differentials C_{n+1} →
+C_n. -/
 def rightTensorCoefficientIsoAt :
     rightTensorEnvelopingComplexAt.{u, v, v', w} R L N ≅ rightEnvelopingCoefficientComplex R L N :=
   HomologicalComplex.Hom.isoOfComponents
@@ -305,7 +337,12 @@ def rightTensorCoefficientIsoAt :
       rw [coefficientComplex_d_succ]
       exact (rightTensorCoordinatesAt_d.{u, v, v', w} R L N j).symm)
 
-/-- The coefficient CE homology computes Tor in the common module-category universe. -/
+/-- Let R be a commutative ring, L a free R-Lie module, U = U_R(L), and N a right U-module in
+universe H = max(u,v,v′,w). For every n ∈ ℕ, H_n(C_*(L;N)) ≅ (L_nF)(T_H), where C_*(L;N) uses
+the left action [x,m] = −m·ι(x), F(X) = N ⊗_U X, and T_H is the lifted augmentation module.
+The forward map applies homology to the inverse tensor-cancellation chain isomorphism C_*(L;N)
+≅ F(Q_H), then uses the inverse resolution-to-left-derived comparison. The right coefficient N
+need not be flat. -/
 def rightCoefficientHomologyIsoTorAt (n : ℕ) :
     (rightEnvelopingCoefficientComplex R L N).homology n ≅
       ((ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
@@ -316,7 +353,11 @@ def rightCoefficientHomologyIsoTorAt (n : ℕ) :
       (ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
       ModuleCat.{max u v v' w} R) n).symm
 
-/-- The chain map inserted into the independent canonical derived square. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map between free R-modules, and g : N → N′ a
+U_R(f)-semilinear map of right enveloping modules in universe H = max(u,v,v′,w). Let Q_H and
+Q′_H be their lifted enveloping resolutions and F(X) = N ⊗_{U_R(L)} X, G(Y) = N′ ⊗_{U_R(L′)}
+Y. The chain map F(Q_H) → G(Q′_H) first applies F to the lifted enveloping Lie map Q_H →
+U_R(f)*Q′_H, then applies the tensor transformation [m,x] ↦ [g(m),x] degreewise. -/
 def rightTensorLieResolutionMapAt :
     rightTensorEnvelopingComplexAt.{u, v, v', w} R L N ⟶ rightTensorEnvelopingComplexAt.{u, v', v, w} R L' N' :=
   ((ModuleCat.BalancedTensor.functor R U N : (ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)) ⥤
@@ -332,8 +373,12 @@ def rightTensorLieResolutionMapAt :
       (rightTensorLieTransformation R L f N N' g)).app
         (liftedEnvelopingProjectiveResolution.{u, v', max u v v' w} R L').complex
 
-/-- Cancellation commutes with the joint CE Lie/coefficient map. The semilinear enveloping algebra
-action law is used on its pure representatives. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map between free R-modules, and g : N → N′ a
+U_R(f)-semilinear map of right enveloping modules in common universe H = max(u,v,v′,w). Let d
+be the induced map between their tensor resolution complexes, e and e′ the tensor-cancellation
+isomorphisms to their coefficient complexes, and c the coefficient chain map with components
+Λⁿ(f) ⊗ g. Then d ≫ e′.hom = e.hom ≫ c. The balancing compatibility is g(m·u) =
+g(m)·U_R(f)(u). -/
 theorem rightTensorCoefficientIsoAt_lie_naturality :
     rightTensorLieResolutionMapAt R L f N N' g ≫ (rightTensorCoefficientIsoAt.{u, v', v, w} R L' N').hom =
       (rightTensorCoefficientIsoAt.{u, v, v', w} R L N).hom ≫ rightEnvelopingCoefficientLieComplexMap R L f g := by
@@ -390,8 +435,12 @@ theorem rightTensorCoefficientIsoAt_lie_naturality :
                       (hLeft.trans ((congrArg (fun t : rightCoefficients R L' N' =>
                         exteriorPower.map n f.toLinearMap x ⊗ₜ[R] t) hAction).trans hRight.symm))
 
-/-- Full Lie/coefficient naturality of the CE/Tor computation. The Tor map is the independently
-defined scalar-change derived square. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map between free R-modules, and g : N → N′ a
+U_R(f)-semilinear map of right enveloping modules in universe H = max(u,v,v′,w). Let c :
+C_*(L;N) → C_*(L′;N′) have degree-n component Λⁿ(f) ⊗ g, let Φ_n and Φ′_n be the coefficient
+homology-to-Tor isomorphisms, and let t_n be the Tor map defined by the derived
+balanced-tensor square and augmentation-module map. For every n ∈ ℕ, H_n(c) ≫ Φ′_n.hom =
+Φ_n.hom ≫ t_n. The Lie algebras may have distinct carrier universes v and v′. -/
 theorem rightCoefficientHomologyIsoTorAt_lie_naturality (n : ℕ) :
     HomologicalComplex.homologyMap (rightEnvelopingCoefficientLieComplexMap R L f g) n ≫
       (rightCoefficientHomologyIsoTorAt.{u, v', v, w} R L' N' n).hom =

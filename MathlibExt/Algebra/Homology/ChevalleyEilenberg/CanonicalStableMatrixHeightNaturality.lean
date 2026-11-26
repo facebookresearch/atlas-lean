@@ -11,13 +11,20 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CanonicalStableMatrixHeightComparison
 
 /-!
-# Naturality of lifted stable matrix Chevalley–Eilenberg colimits
+# Independent-algebra naturality of the lifted stable CE colimit
 
-An algebra homomorphism induces maps on finite matrix complexes, their directed colimits, and
-the Chevalley–Eilenberg complexes of stable matrix Lie algebras. The colimit isomorphisms
-commute with these maps after universe lifting.
+Let k be a commutative ring and f : A → B a unital k-algebra map
+between associative algebras in independent worlds v,w. At
+H = max(u,v,w,z), entrywise finite matrix maps give a map S^H(f)
+between the lifted finite CE colimits and a map C^H(f) between
+the lifted CE complexes of Mat_∞(A) and Mat_∞(B).
 
-Coefficient algebras may have independent carrier universes.
+Let E_A,E_B be the chosen-height finite-to-stable CE isomorphisms.
+Their squares satisfy C^H(f) ∘ E_A = E_B ∘ S^H(f) and
+E_B⁻¹ ∘ C^H(f) = S^H(f) ∘ E_A⁻¹.
+The corresponding square on homology commutes in every degree.
+The common height retains the ring and both algebra worlds and
+the arbitrary additional height z.
 -/
 
 @[expose] public section
@@ -35,13 +42,19 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   {B : Type w} [Ring B] [Algebra k B]
 
-/-- The finite coefficient transformation gives the common-height colimit map. -/
+/-- For a commutative ring k, a unital k-algebra map f : A → B
+and H = max(u,v,w,z), the finite entrywise matrix CE maps induce
+S^H(f) : colim_m C_*^H(Mat_m(A)) → colim_m C_*^H(Mat_m(B)).
+The algebra carrier worlds v,w are independent. -/
 def stableMatrixCoefficientMapAtHeight (f : A →ₐ[k] B) :
     stableMatrixCEComplexAtHeight.{u,v,max u v w z} k A ⟶
       stableMatrixCEComplexAtHeight.{u,w,max u v w z} k B :=
   colimMap (matrixCoefficientNatTransAtHeight.{u,v,w,z} k A f)
 
-/-- Every finite coefficient map is retained at its common height. -/
+/-- For a unital k-algebra map f : A → B and
+H = max(u,v,w,z), the induced colimit map S^H(f) satisfies
+S^H(f) ∘ ι_(A,m)^H = ι_(B,m)^H ∘ C_*^H(Mat_m(f)).
+The equality holds for every finite matrix size m ≥ 0. -/
 @[reassoc]
 theorem stableMatrixCoefficientMapAtHeight_ι (f : A →ₐ[k] B) (m : ℕ) :
     colimit.ι (matrixComplexFunctorAtHeight.{u,v,max u v w z} k A) m ≫
@@ -50,7 +63,11 @@ theorem stableMatrixCoefficientMapAtHeight_ι (f : A →ₐ[k] B) (m : ℕ) :
         colimit.ι (matrixComplexFunctorAtHeight.{u,w,max u v w z} k B) m :=
   ι_colimMap (matrixCoefficientNatTransAtHeight.{u,v,w,z} k A f) m
 
-/-- The full-height canonical CE model comparison preserves the coefficient square. -/
+/-- For a commutative ring k, a unital k-algebra map f : A → B
+and H = max(u,v,w,z), let E_A,E_B be the chosen-height
+finite-to-stable CE isomorphisms. Their forward maps satisfy
+C^H(f) ∘ E_A = E_B ∘ S^H(f), from the lifted A-colimit to
+the lifted stable Lie CE complex for B. -/
 @[reassoc]
 theorem canonicalStableMatrixCEIsoAtHeight_naturality (f : A →ₐ[k] B) :
     (canonicalStableMatrixCEIsoAtHeight.{u,v,max u v w z} k A).hom ≫
@@ -92,7 +109,11 @@ theorem canonicalStableMatrixCEIsoAtHeight_naturality (f : A →ₐ[k] B) :
         stableMatrixCEComplexAtHeight.{u,w,max u v w z} k B => q ≫ eB.hom) ht.symm
     _ = _ := Category.assoc a s eB.hom
 
-/-- The inverse model comparison retains the same independent-universe coefficient square. -/
+/-- For a commutative ring k, a unital k-algebra map f : A → B
+and H = max(u,v,w,z), the inverse model comparisons satisfy
+E_B⁻¹ ∘ C^H(f) = S^H(f) ∘ E_A⁻¹.
+The source is C_*^H(Mat_∞(A)) and the target is the lifted finite
+CE colimit for B, with independent algebra worlds. -/
 @[reassoc]
 theorem canonicalStableMatrixCEIsoAtHeight_inv_naturality (f : A →ₐ[k] B) :
     canonicalStableMatrixCoefficientCEMapAtHeight.{u,v,w,z} k A f ≫
@@ -103,7 +124,11 @@ theorem canonicalStableMatrixCEIsoAtHeight_inv_naturality (f : A →ₐ[k] B) :
   rw [← Category.assoc, canonicalStableMatrixCEIsoAtHeight_naturality, Category.assoc,
     Iso.hom_inv_id, Category.comp_id, ← Category.assoc, Iso.hom_inv_id, Category.id_comp]
 
-/-- Homology retains the common-height canonical coefficient comparison. -/
+/-- For a commutative ring k, a unital k-algebra map f : A → B,
+H = max(u,v,w,z) and n ≥ 0, the homology square satisfies
+H_n(C^H(f)) ∘ H_n(E_A) = H_n(E_B) ∘ H_n(S^H(f)).
+The comparison maps are the chosen-height finite-to-stable CE
+isomorphisms, and the algebra worlds are independent. -/
 theorem canonicalStableMatrixCEIsoAtHeight_homology_naturality (f : A →ₐ[k] B) (n : ℕ) :
     HomologicalComplex.homologyMap (canonicalStableMatrixCEIsoAtHeight.{u,v,max u v w z} k A).hom n ≫
         HomologicalComplex.homologyMap

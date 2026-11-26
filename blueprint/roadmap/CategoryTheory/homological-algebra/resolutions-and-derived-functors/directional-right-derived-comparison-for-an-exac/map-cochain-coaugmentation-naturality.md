@@ -1,3 +1,6 @@
-# Map Cochain Coaugmentation naturality
+# Source change preserves coaugmentation squares
 
-The original coaugmentation square survives the source change.
+For abelian `C`, `D` and additive `U : C → D`, suppose
+`ι : X[0] → K`, `κ : Y[0] → K′`, `f : X → Y` and `a : K → K′`
+satisfy `ι ≫ a = f[0] ≫ κ`. Their induced coaugmentations satisfy
+`U(ι) ≫ U(a) = U(f)[0] ≫ U(κ)`.

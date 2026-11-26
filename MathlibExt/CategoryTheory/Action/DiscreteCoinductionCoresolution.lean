@@ -16,13 +16,22 @@ public import Mathlib.AlgebraicTopology.AlternatingFaceMapComplex
 public import Mathlib.RepresentationTheory.Homological.ContCohomology.Basic
 
 /-!
-# The original continuous coinduction monad and its coresolution
+# Continuous coinduction coresolutions and homogeneous resolutions
 
-Transport the actual forget/coinduction adjunction along the original untwist.
-The underlying functor remains the existing continuous coinduction, the unit
-is its existing constant inclusion, and multiplication evaluates both function
-coordinates at the same group element. Monad powers retain the original
-continuous homogeneous-resolution coefficients and their stored modules.
+Let G be a compact, totally disconnected topological group in universe u. Discrete continuous
+abelian coefficients lie in W=max(u,w), and J sends these actions to continuous
+ℤ-representations. The diagonal coinduction monad T has constant-function unit and
+multiplication F↦(g↦F(g)(g)).
+
+The comparison J(T^n A)≅C^n(JA) identifies the monad coresolution in degree n with the shifted
+homogeneous resolution term C^{n+1}(JA). In outer-to-inner function-coordinate order, cofaces
+omit a coordinate and codegeneracies repeat adjacent coordinates. The cochain differential in
+degree n is the sum of the n+2 cofaces with signs (-1)^i. The degree comparisons give an
+isomorphism of the full nonnegative cochain complexes and send the coaugmentation to the
+constant-function inclusion.
+
+For continuous representations, the coface formulas require only a topological group. The
+diagonal and codegeneracies require compactness, independently of total disconnectedness.
 -/
 
 @[expose] public section
@@ -37,30 +46,48 @@ namespace CategoryTheory.DiscreteAbelianAction
 variable (G : Type u) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [CompactSpace G] [TotallyDisconnectedSpace G]
 
-/-- The stock representation/action equivalence retains the exact original coinduction
-coefficient. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). For a coefficient action A, the
+comparison j_A:J(TA)≅C(JA) identifies the two continuous function spaces C(G,JA). Its forward
+and inverse maps leave every function value unchanged, and both carry the action
+(h•F)(g)=h•F(h⁻¹g). -/
 def coindToTopRepIso (A : DiscreteAbelianAction.{u, max u w} G) :
     toTopRep.obj (coind.{u, w}.obj A) ≅ (toTopRep.obj A).coind₁ :=
   TopRep.toActionFromAction ((toTopRep.obj A).coind₁)
 
-/-- The original coefficient conversion retains every coinduced function value. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Let j_A:J(TA)≅C(JA) compare
+discrete-action coinduction with representation coinduction. For every continuous coinduced
+function F:G→A and g∈G, (j_A.hom F)(g)=F(g). -/
 theorem coindToTopRepIso_hom_apply (A : DiscreteAbelianAction.{u, max u w} G)
     (z : underlying (coind.{u, w}.obj A)) (g : G) :
     ((coindToTopRepIso.{u, w} G A).hom.hom z) g = coindFunction.{u, w} A z g := rfl
 
-/-- The original coefficient conversion has the literal inverse function values. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Let j_A:J(TA)≅C(JA) compare
+discrete-action coinduction with representation coinduction. For F∈C(JA) and g∈G, the inverse
+comparison satisfies (j_A.inv F)(g)=F(g). -/
 theorem coindToTopRepIso_inv_apply (A : DiscreteAbelianAction.{u, max u w} G)
     (z : (toTopRep.obj A).coind₁) (g : G) :
     coindFunction.{u, w} A ((coindToTopRepIso.{u, w} G A).inv.hom z) g = z g := rfl
 
-/-- The original coinduction comparison preserves every actual coefficient arrow. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For an equivariant additive coefficient morphism f:A→B, the
+isomorphisms j_A:J(TA)≅C(JA) satisfy J(Tf)≫j_B.hom=j_A.hom≫C(Jf). Both paths apply f pointwise
+to the same continuous functions. -/
 theorem coindToTopRepIso_naturality {A B : DiscreteAbelianAction.{u, max u w} G}
     (f : A ⟶ B) :
     toTopRep.map (coind.{u, w}.map f) ≫ (coindToTopRepIso.{u, w} G B).hom =
       (coindToTopRepIso.{u, w} G A).hom ≫ (TopRep.coind₁Functor ℤ G).map (toTopRep.map f) := by
   rfl
 
-/-- The actual monad unit becomes the stock constant inclusion in the original representation. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For every A, let η_A:A→TA be the monad unit and ι_{JA}:JA→C(JA)
+the constant-function inclusion. Then J(η_A)≫j_A.hom=ι_{JA}, where j_A:J(TA)≅C(JA). -/
 theorem coindToTopRepIso_unit (A : DiscreteAbelianAction.{u, max u w} G) :
     toTopRep.map ((coindMonad.{u, w} G).η.app A) ≫ (coindToTopRepIso.{u, w} G A).hom =
       (TopRep.coind₁ι (k := ℤ) (G := G)).app (toTopRep.obj A) := by
@@ -68,8 +95,11 @@ theorem coindToTopRepIso_unit (A : DiscreteAbelianAction.{u, max u w} G) :
     toTopRep.map f ≫ (coindToTopRepIso.{u, w} G A).hom) (coindMonad_unit.{u, w} G A)
   exact h.trans (by rfl)
 
-/-- The original nested resolution coface inserts a constant coordinate at its specified
-position. -/
+/-- Let G be a topological group in universe u and X a continuous ℤ-representation with coefficient
+universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For n≥0 and 0≤i≤n,
+c_i^n:R_n(X)→R_{n+1}(X) inserts a constant function coordinate. The outer coface c_0^n is the
+constant inclusion of R_n(X), and c_{i+1}^{n+1}=C(c_i^n). Thus, in nested-function coordinates,
+c_i^n ignores the newly inserted i-th coordinate. -/
 def coindResolutionCoface (X : TopRep.{max u w, 0, u} ℤ G) :
     (n : ℕ) → Fin (n + 1) → (TopRep.resolutionX X n ⟶ TopRep.resolutionX X (n + 1))
   | 0, _ => (TopRep.coind₁ι (k := ℤ) (G := G)).app X
@@ -80,14 +110,21 @@ def coindResolutionCoface (X : TopRep.{max u w, 0, u} ℤ G) :
         (coindResolutionCoface X n ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
 
 omit [CompactSpace G] [TotallyDisconnectedSpace G] in
-/-- The first original coface is the stock constant-coordinate inclusion. -/
+/-- Let G be a topological group in universe u and X a continuous ℤ-representation with coefficient
+universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For every n≥0,
+c_0^n:R_n(X)→R_{n+1}(X) is the constant-function inclusion ι_{R_n(X)}. It sends a nested
+function F to the function g↦F, so the new outer G-coordinate does not change its value. -/
 theorem coindResolutionCoface_zero (X : TopRep.{max u w, 0, u} ℤ G) (n : ℕ) :
     coindResolutionCoface.{u, w} G X n 0 =
       (TopRep.coind₁ι (k := ℤ) (G := G)).app (TopRep.resolutionX X n) := by
   cases n <;> rfl
 
 omit [CompactSpace G] [TotallyDisconnectedSpace G] in
-/-- Successive original cofaces are the actual coinduced preceding operators. -/
+/-- Let G be a topological group in universe u and X a continuous ℤ-representation with coefficient
+universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For n≥0 and
+i∈{0,…,n}, the nested-resolution cofaces obey c_{i+1}^{n+1}=C(c_i^n). Here
+c_i^n:R_n(X)→R_{n+1}(X), and applying C gives a morphism R_{n+1}(X)→R_{n+2}(X) that inserts the
+coordinate one position farther inward. -/
 theorem coindResolutionCoface_succ (X : TopRep.{max u w, 0, u} ℤ G) (n : ℕ)
     (i : Fin (n + 1)) :
     coindResolutionCoface.{u, w} G X (n + 1) i.succ =
@@ -95,7 +132,11 @@ theorem coindResolutionCoface_succ (X : TopRep.{max u w, 0, u} ℤ G) (n : ℕ)
 
 omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The alternating original cofaces give exactly the stock continuous-resolution differential. -/
+/-- Let G be a topological group in universe u and X a continuous ℤ-representation with coefficient
+universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For n≥0, the
+homogeneous resolution differential d_X(n):R_n(X)→R_{n+1}(X) is Σ_{i=0}^n (-1)^i c_i^n. The sign
+uses the outer-to-inner coface index i; in particular d_X(0) is the constant inclusion, and
+d_X(n+1)=ι_{R_{n+1}(X)}-C(d_X(n)). -/
 theorem coindResolutionCoface_sum (X : TopRep.{max u w, 0, u} ℤ G) (n : ℕ) :
     (∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val • coindResolutionCoface.{u, w} G X n i) =
       TopRep.d X n := by
@@ -153,7 +194,13 @@ private theorem barEtaSuccInPowers {C : Type u₀} [Category.{v₀} C]
   simp only [Monad.barEtaAtPos, Fin.rev_succ]
   exact etaCastSuccInPowers T n i.rev A
 
-/-- Monad powers have the original nested continuous-resolution coefficients. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For A and n≥0, E_A^n:J(T^n A)≅R_n(JA) identifies n-fold monad
+coinduction with n nested representation coinductions. The degree-zero comparison is the
+identity, and E_A^{n+1} is the canonical reassociation J(T^{n+1}A)≅J(T(T^n A)), followed by
+j_{T^n A} and C(E_A^n). -/
 def coindPowerToTopRepIso (A : DiscreteAbelianAction.{u, max u w} G) :
     (n : ℕ) → toTopRep.obj ((Monad.monadPow (coindMonad.{u, w} G) n).obj A) ≅
       TopRep.resolutionX (toTopRep.obj A) n
@@ -163,16 +210,24 @@ def coindPowerToTopRepIso (A : DiscreteAbelianAction.{u, max u w} G) :
       coindToTopRepIso.{u, w} G ((Monad.monadPow (coindMonad.{u, w} G) n).obj A) ≪≫
       (TopRep.coind₁Functor ℤ G).mapIso (coindPowerToTopRepIso A n)
 
-/-- The actual degree object of the canonical coresolution is the original shifted resolution
-term. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let K_A be the cosimplicial monad coresolution, with
+κ_A^n:K_A^n≅T^{n+1}A. In degree n≥0, the comparison e_A^n:J(K_A^n)≅R_{n+1}(JA) is J(κ_A^n)
+followed by E_A^{n+1}. Its target is degree n of the shifted homogeneous resolution. -/
 def coindCoresolutionTermIso (A : DiscreteAbelianAction.{u, max u w} G) (n : ℕ) :
     toTopRep.obj ((Monad.coresolution (coindMonad.{u, w} G) A).obj (SimplexCategory.mk n)) ≅
       TopRep.resolution'X (toTopRep.obj A) n :=
   toTopRep.mapIso (Monad.coresolutionObjIso (coindMonad.{u, w} G) A n) ≪≫
     coindPowerToTopRepIso.{u, w} G A (n + 1)
 
-/-- The successor comparison uses the actual power commutation and original coinduction
-comparison. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let α_A^n:T^{n+1}A≅T(T^n A) be the canonical reassociation of
+powers and j_B:J(TB)≅C(JB). For n≥0, the forward comparison satisfies
+(E_A^{n+1}).hom=J((α_A^n).hom)≫j_{T^n A}.hom≫C((E_A^n).hom). -/
 theorem coindPowerToTopRepIso_succ_hom (A : DiscreteAbelianAction.{u, max u w} G)
     (n : ℕ) :
     (coindPowerToTopRepIso.{u, w} G A (n + 1)).hom =
@@ -198,7 +253,12 @@ private theorem threeSquareComposite {C : Type u₀} [Category.{v₀} C]
     _ = (e₀ ≫ f₀ ≫ g₀) ≫ d := by simp only [Category.assoc]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The outer original unit insertion becomes the native constant coface in every degree. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For n≥0, write u_0^n:T^n A→T^{n+1}A for the outer unit
+insertion. The power comparisons satisfy J(u_0^n)≫(E_A^{n+1}).hom=(E_A^n).hom≫ι_{R_n(JA)}. Thus
+the outer monad coface becomes the constant-coordinate inclusion. -/
 theorem coindPowerToTopRepIso_coface_zero (A : DiscreteAbelianAction.{u, max u w} G)
     (n : ℕ) :
     toTopRep.map (Monad.barEtaAtPos (coindMonad.{u, w} G) n 0 A) ≫
@@ -232,7 +292,12 @@ theorem coindPowerToTopRepIso_coface_zero (A : DiscreteAbelianAction.{u, max u w
       (coindPowerToTopRepIso.{u, w} G A n).hom).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every actual monad unit insertion becomes the corresponding original continuous coface. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For n≥0 and 0≤i≤n, let u_i^n:T^n A→T^{n+1}A be the monad unit
+insertion in coface position i. Then J(u_i^n)≫(E_A^{n+1}).hom=(E_A^n).hom≫c_i^n, with
+c_i^n:R_n(JA)→R_{n+1}(JA) indexed from the outer function coordinate inward. -/
 theorem coindPowerToTopRepIso_coface (A : DiscreteAbelianAction.{u, max u w} G)
     (n : ℕ) (i : Fin (n + 1)) :
     toTopRep.map (Monad.barEtaAtPos (coindMonad.{u, w} G) n i A) ≫
@@ -279,14 +344,24 @@ theorem coindPowerToTopRepIso_coface (A : DiscreteAbelianAction.{u, max u w} G)
           ((TopRep.coind₁Functor ℤ G).map (coindPowerToTopRepIso.{u, w} G A (n + 1)).hom)
           hp hj hh
 
-/-- The actual degree comparison first uses the canonical monad-power coordinates. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For the monad coresolution K_A and κ_A^n:K_A^n≅T^{n+1}A, the
+degree-n comparison e_A^n:J(K_A^n)≅R_{n+1}(JA) has forward map
+(e_A^n).hom=J((κ_A^n).hom)≫(E_A^{n+1}).hom, for every n≥0. -/
 theorem coindCoresolutionTermIso_hom (A : DiscreteAbelianAction.{u, max u w} G) (n : ℕ) :
     (coindCoresolutionTermIso.{u, w} G A n).hom =
       toTopRep.map (Monad.coresolutionObjIso (coindMonad.{u, w} G) A n).hom ≫
         (coindPowerToTopRepIso.{u, w} G A (n + 1)).hom := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every actual canonical coresolution coface is the original native continuous coface. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let e_A^n:J(K_A^n)≅R_{n+1}(JA) be the monad coresolution term
+comparison. For n≥0 and 0≤i≤n+1, the cosimplicial coface δ_i:K_A^n→K_A^{n+1} satisfies
+J(δ_i)≫(e_A^{n+1}).hom=(e_A^n).hom≫c_i^{n+1}. -/
 theorem coindCoresolution_coface (A : DiscreteAbelianAction.{u, max u w} G)
     (n : ℕ) (i : Fin (n + 2)) :
     toTopRep.map ((Monad.coresolution (coindMonad.{u, w} G) A).map (SimplexCategory.δ i)) ≫
@@ -321,8 +396,13 @@ theorem coindCoresolution_coface (A : DiscreteAbelianAction.{u, max u w} G)
     _ = _ := (Category.assoc _ _ _).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The canonical alternating differential is exactly the original shifted continuous
-differential. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For the cosimplicial monad coresolution K_A, put
+D_n=Σ_{i=0}^{n+1}(-1)^i J(δ_i):J(K_A^n)→J(K_A^{n+1}). The term comparisons
+e_A^n:J(K_A^n)≅R_{n+1}(JA) satisfy D_n≫(e_A^{n+1}).hom=(e_A^n).hom≫d_{JA}(n+1). No additional
+degree sign enters this comparison. -/
 theorem coindCoresolution_differential (A : DiscreteAbelianAction.{u, max u w} G) (n : ℕ) :
     AlgebraicTopology.AlternatingCofaceMapComplex.objD
         ((Monad.coresolution (coindMonad.{u, w} G) A) ⋙ toTopRep) n ≫
@@ -348,8 +428,13 @@ private theorem alternatingComplexSuccessor {C : Type u₀} [Category.{v₀} C]
     (AlgebraicTopology.AlternatingCofaceMapComplex.objD X) n
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The exact differentials of the two original full complexes commute with the degree
-comparison. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let L_A be the alternating-coface cochain complex of J(K_A),
+indexed by ℕ, and let R'_A have term R_{n+1}(JA) in degree n and differential d_{JA}(n+1). For
+every n≥0, L_A.d_{n,n+1}≫(e_A^{n+1}).hom=(e_A^n).hom≫R'_A.d_{n,n+1}, where e_A^n is the
+coresolution term comparison. -/
 theorem coindCoresolution_complex_differential (A : DiscreteAbelianAction.{u, max u w} G)
     (n : ℕ) :
     ((AlgebraicTopology.alternatingCofaceMapComplex (TopRep.{max u w, 0, u} ℤ G)).obj
@@ -366,8 +451,13 @@ theorem coindCoresolution_complex_differential (A : DiscreteAbelianAction.{u, ma
       (congrArg (fun f => (coindCoresolutionTermIso.{u, w} G A n).hom ≫ f) ht.symm))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical coinduction coresolution computes the original shifted native
-resolution. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). The alternating-coface complex of J(K_A) is isomorphic to the
+nonnegative cochain complex R'_A with degree-n term R_{n+1}(JA) and differential
+Σ_{i=0}^{n+1}(-1)^i c_i^{n+1}. The degree-n component is e_A^n:J(K_A^n)≅R_{n+1}(JA), for every
+n≥0. -/
 def coindCoresolutionComplexIso (A : DiscreteAbelianAction.{u, max u w} G) :
     (AlgebraicTopology.alternatingCofaceMapComplex (TopRep.{max u w, 0, u} ℤ G)).obj
         ((Monad.coresolution (coindMonad.{u, w} G) A) ⋙ toTopRep) ≅
@@ -383,7 +473,11 @@ def coindCoresolutionComplexIso (A : DiscreteAbelianAction.{u, max u w} G) :
       exact (coindCoresolution_complex_differential.{u, w} G A i).symm)
 
 omit [TotallyDisconnectedSpace G] in
-/-- The actual native diagonal evaluates both continuous coordinates at the same group element. -/
+/-- Let G be a compact topological group in universe u and X a continuous ℤ-representation with
+coefficient universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). The
+equivariant continuous additive map Δ_X:C(CX)→CX evaluates a nested function on the diagonal:
+(Δ_X F)(g)=F(g)(g). Its continuity uses the diagonal G→G×G and the continuous uncurrying of
+continuous functions on the compact group. -/
 def coindResolutionDiagonal (X : TopRep.{max u w, 0, u} ℤ G) : X.coind₁.coind₁ ⟶ X.coind₁ := by
   letI : Module ℤ X := X.hV2
   letI : Module ℤ X.coind₁ := X.coind₁.hV2
@@ -397,13 +491,19 @@ def coindResolutionDiagonal (X : TopRep.{max u w, 0, u} ℤ G) : X.coind₁.coin
       cont := (ContinuousMap.continuous_precomp δ).comp ContinuousMap.continuous_uncurry }
 
 omit [TotallyDisconnectedSpace G] in
-/-- The diagonal is the literal original two-coordinate evaluator on every native vector. -/
+/-- Let G be a compact topological group in universe u and X a continuous ℤ-representation with
+coefficient universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For
+F∈C(CX) and g∈G, the diagonal morphism Δ_X:C(CX)→CX satisfies (Δ_X F)(g)=F(g)(g). This formula
+uses the same group element in the outer and inner function coordinates. -/
 theorem coindResolutionDiagonal_apply (X : TopRep.{max u w, 0, u} ℤ G)
     (z : X.coind₁.coind₁) (g : G) :
     ((coindResolutionDiagonal.{u, w} G X).hom z) g = z g g := rfl
 
 omit [TotallyDisconnectedSpace G] in
-/-- The native diagonal commutes with every actual continuous coefficient arrow. -/
+/-- Let G be a compact topological group in universe u and X a continuous ℤ-representation with
+coefficient universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For a
+continuous equivariant ℤ-linear map f:X→Y, the diagonal morphisms obey C(Cf)≫Δ_Y=Δ_X≫C(f). Both
+paths take F:G→C(G,X) to the function g↦f(F(g)(g)). -/
 theorem coindResolutionDiagonal_naturality {X Y : TopRep.{max u w, 0, u} ℤ G}
     (f : X ⟶ Y) :
     (TopRep.coind₁Functor ℤ G).map ((TopRep.coind₁Functor ℤ G).map f) ≫
@@ -411,8 +511,12 @@ theorem coindResolutionDiagonal_naturality {X Y : TopRep.{max u w, 0, u} ℤ G}
       coindResolutionDiagonal.{u, w} G X ≫ (TopRep.coind₁Functor ℤ G).map f := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual transported multiplication is the original native diagonal, not a new coefficient
-map. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let j_A:J(TA)≅C(JA), μ_A:T(TA)→TA, and Δ_{JA}:C(C(JA))→C(JA) be
+diagonal evaluation. The comparison of multiplication is
+J(μ_A)≫j_A.hom=j_{TA}.hom≫C(j_A.hom)≫Δ_{JA}. It sends F to g↦F(g)(g). -/
 theorem coindToTopRepIso_mul (A : DiscreteAbelianAction.{u, max u w} G) :
     toTopRep.map ((coindMonad.{u, w} G).μ.app A) ≫ (coindToTopRepIso.{u, w} G A).hom =
       (coindToTopRepIso.{u, w} G (coind.{u, w}.obj A)).hom ≫
@@ -430,7 +534,10 @@ theorem coindToTopRepIso_mul (A : DiscreteAbelianAction.{u, max u w} G) :
   exact coindMonad_mul_apply.{u, w} G A z g
 
 omit [TotallyDisconnectedSpace G] in
-/-- Original native codegeneracies repeat the selected adjacent function coordinates. -/
+/-- Let G be a compact topological group in universe u and X a continuous ℤ-representation with
+coefficient universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For n≥0
+and 0≤i<n, s_i^n:R_{n+1}(X)→R_n(X) repeats the i-th function coordinate in two adjacent
+positions. The family in degree zero is empty; s_0^{n+1}=Δ_{R_n(X)}, and s_{i+1}^{n+1}=C(s_i^n). -/
 def coindResolutionCodegeneracy (X : TopRep.{max u w, 0, u} ℤ G) :
     (n : ℕ) → Fin n → (TopRep.resolutionX X (n + 1) ⟶ TopRep.resolutionX X n)
   | 0, i => Fin.elim0 i
@@ -440,13 +547,21 @@ def coindResolutionCodegeneracy (X : TopRep.{max u w, 0, u} ℤ G) :
         (coindResolutionCodegeneracy X n ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
 
 omit [TotallyDisconnectedSpace G] in
-/-- The first original codegeneracy is the literal outer diagonal. -/
+/-- Let G be a compact topological group in universe u and X a continuous ℤ-representation with
+coefficient universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For n≥0,
+the first codegeneracy s_0^{n+1}:R_{n+2}(X)→R_{n+1}(X) equals Δ_{R_n(X)}. A function of two
+outer coordinates is evaluated with those coordinates equal, while all n inner coordinates are
+retained. -/
 theorem coindResolutionCodegeneracy_zero (X : TopRep.{max u w, 0, u} ℤ G) (n : ℕ) :
     coindResolutionCodegeneracy.{u, w} G X (n + 1) 0 =
       coindResolutionDiagonal.{u, w} G (TopRep.resolutionX X n) := rfl
 
 omit [TotallyDisconnectedSpace G] in
-/-- Every later native codegeneracy is the actual coinduced preceding diagonal operator. -/
+/-- Let G be a compact topological group in universe u and X a continuous ℤ-representation with
+coefficient universe W=max(u,w). Write C for continuous coinduction and R_n(X)=C^n(X). For n≥0
+and 0≤i≤n, the codegeneracy recursion is s_{i+1}^{n+2}=C(s_i^{n+1}). Since
+s_i^{n+1}:R_{n+2}(X)→R_{n+1}(X), its coinduction merges the next pair of adjacent coordinates
+inside the outer coordinate. -/
 theorem coindResolutionCodegeneracy_succ (X : TopRep.{max u w, 0, u} ℤ G) (n : ℕ)
     (i : Fin (n + 1)) :
     coindResolutionCodegeneracy.{u, w} G X (n + 2) i.succ =
@@ -775,8 +890,12 @@ private theorem coindMapFullTypedSquare
     IR (L.map e₀ ≫ J₀ ≫ F.map IP) (F.map d) he hS hR
 
 set_option backward.isDefEq.respectTransparency.types true in
-/-- The outer original multiplication insertion becomes the literal native diagonal in every
-degree. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For n≥0, let m_0^{n+1}:T^{n+2}A→T^{n+1}A be the outer
+multiplication insertion. Then J(m_0^{n+1})≫(E_A^{n+1}).hom=(E_A^{n+2}).hom≫Δ_{R_n(JA)}. The
+right side repeats the outer two homogeneous function coordinates. -/
 theorem coindPowerToTopRepIso_codegeneracy_zero
     (A : DiscreteAbelianAction.{u, max u w} G) (n : ℕ) :
     toTopRep.map (Monad.barMuAtPos (coindMonad.{u, w} G) (n + 1) 0 A) ≫
@@ -799,8 +918,13 @@ theorem coindPowerToTopRepIso_codegeneracy_zero
     (coindPowerSuccHomNormalized.{u, w} G A (n + 1))
 
 set_option backward.isDefEq.respectTransparency.types true in
-/-- Every actual source-ordered multiplication insertion becomes its original native
-codegeneracy. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For n≥0 and 0≤i≤n, let m_i^{n+1}:T^{n+2}A→T^{n+1}A be
+multiplication in codegeneracy position i. Then
+J(m_i^{n+1})≫(E_A^{n+1}).hom=(E_A^{n+2}).hom≫s_i^{n+1}, where s_i^{n+1}:R_{n+2}(JA)→R_{n+1}(JA)
+repeats adjacent coordinates. -/
 theorem coindPowerToTopRepIso_codegeneracy
     (A : DiscreteAbelianAction.{u, max u w} G) (n : ℕ) (i : Fin (n + 1)) :
     toTopRep.map (Monad.barMuAtPos (coindMonad.{u, w} G) (n + 1) i A) ≫
@@ -856,8 +980,12 @@ theorem coindPowerToTopRepIso_codegeneracy
         exact hResult
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every actual canonical coresolution codegeneracy repeats the corresponding original native
-coordinate. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let e_A^n:J(K_A^n)≅R_{n+1}(JA) compare the monad coresolution
+terms. For n≥0 and 0≤i≤n, the cosimplicial codegeneracy σ_i:K_A^{n+1}→K_A^n obeys
+J(σ_i)≫(e_A^n).hom=(e_A^{n+1}).hom≫s_i^{n+1}. -/
 theorem coindCoresolution_codegeneracy (A : DiscreteAbelianAction.{u, max u w} G)
     (n : ℕ) (i : Fin (n + 1)) :
     toTopRep.map ((Monad.coresolution (coindMonad.{u, w} G) A).map (SimplexCategory.σ i)) ≫
@@ -902,7 +1030,12 @@ private theorem coindPowerOneHom (A : DiscreteAbelianAction.{u, max u w} G) :
   rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual degree-zero comparison retains the original native coinduction coordinates. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). The degree-zero monad coresolution term is TA. Its comparison
+e_A^0:J(K_A^0)≅R_1(JA)=C(JA) satisfies (e_A^0).hom=j_A.hom, where j_A:J(TA)≅C(JA) preserves
+continuous function values. -/
 theorem coindCoresolutionTermIso_zero_hom (A : DiscreteAbelianAction.{u, max u w} G) :
     (coindCoresolutionTermIso.{u, w} G A 0).hom = (coindToTopRepIso.{u, w} G A).hom := by
   let L := toTopRep.{u, max u w} (G := G)
@@ -914,7 +1047,12 @@ theorem coindCoresolutionTermIso_zero_hom (A : DiscreteAbelianAction.{u, max u w
     ((Category.id_comp _).trans (coindPowerOneHom.{u, w} G A))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical coaugmentation is the original continuous constant inclusion. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). Let a_A:A→K_A^0 be the degree-zero coaugmentation of the
+augmented monad coresolution. Its term comparison e_A^0:J(K_A^0)≅C(JA) satisfies
+J(a_A)≫(e_A^0).hom=ι_{JA}, the continuous constant-function inclusion JA→C(JA). -/
 theorem coindCoresolution_coaugmentation (A : DiscreteAbelianAction.{u, max u w} G) :
     toTopRep.map ((Monad.coresolutionAugmented (coindMonad.{u, w} G) A).hom.app
       (SimplexCategory.mk 0)) ≫ (coindCoresolutionTermIso.{u, w} G A 0).hom =
@@ -928,7 +1066,12 @@ theorem coindCoresolution_coaugmentation (A : DiscreteAbelianAction.{u, max u w}
       (coindToTopRepIso_unit.{u, w} G A))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original coaugmentation vector has the same value at every group element. -/
+/-- Let G be a compact, totally disconnected topological group in universe u, with discrete
+continuous abelian coefficients in universe W=max(u,w). Write T for diagonal continuous
+coinduction, J for the functor to continuous ℤ-representations, C for representation
+coinduction, and R_n(X)=C^n(X). For the degree-zero coaugmentation a_A:A→K_A^0 and comparison
+e_A^0:J(K_A^0)≅C(JA), every a∈A and g∈G satisfy ((J(a_A)≫(e_A^0).hom)(a))(g)=a. The coefficient
+does not depend on the group coordinate. -/
 theorem coindCoresolution_coaugmentation_apply (A : DiscreteAbelianAction.{u, max u w} G)
     (a : underlying A) (g : G) :
     ((toTopRep.map ((Monad.coresolutionAugmented (coindMonad.{u, w} G) A).hom.app

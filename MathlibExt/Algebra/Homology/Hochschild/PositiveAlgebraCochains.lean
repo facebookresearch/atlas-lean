@@ -15,13 +15,23 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.ChangeObjects
 public import Mathlib.LinearAlgebra.TensorProduct.Lift
 
 /-!
-# Algebra-linear cochains on proper shuffle quotients
+# Algebra-linear cochains on regular proper-shuffle quotients
 
-The regular chain coefficient is A, its tensor tails are over k
-and cochain values lie in an A-module M. The complex Hom_A(-, M)
-of the proper quotient identifies with ground-linear tensor
-cochains annihilating the proper shuffle relations. Canonical
-whole-module lifts accommodate independent carrier universes.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. In degree n,
+let Qₙ be A ⊗_k A^{⊗n} modulo the images of shuffle pairings with both input degrees positive.
+The A-linear quotient cochains Hom_A(Qₙ,M) identify with k-linear maps F : A^{⊗n} → M whose
+extension F̃(a₀ ⊗ w) = a₀·F(w) annihilates these relations. Equivalently F vanishes on every
+both-positive signed shuffle word.
+
+The quotient boundary induces a coboundary by precomposition. In tensor coordinates it is the
+signed Hochschild coboundary with the two endpoint coefficient actions and all internal adjacent
+products. The quotient Hom and tensor-cochain descriptions are isomorphic as cochain complexes
+and have isomorphic cohomology in every n : ℕ. Postcomposition makes the Hom construction and
+its cohomology functorial in the A-module target. Canonical whole-module universe lifts
+accommodate k, A and M without identifying their universes.
+
+For the proper-shuffle relations defining Harrison cochains, see J.-L. Loday, Cyclic Homology,
+second edition, §4.2.
 -/
 
 @[expose] public section
@@ -38,7 +48,10 @@ variable (k : Type u) (A : Type v) (M : Type w) [CommRing k] [CommRing A]
   [Algebra k A] [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The ordinary tensor-cochain condition is annihilation of the regular proper relation set. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. properAlgebraCochains in degree n is the A-submodule of k-linear maps F :
+A^{⊗n} → M whose A-linear extension F̃(a₀ ⊗ w) = a₀·F(w) vanishes on Sₙ. -/
 def properAlgebraCochains (n : ℕ) : Submodule A (TensorPower k n A →ₗ[k] M) where
   carrier := {F | ∀ x ∈ algebraPositiveRelations k A A n, F.liftBaseChange A x = 0}
   zero_mem' := by
@@ -55,7 +68,11 @@ def properAlgebraCochains (n : ℕ) : Submodule A (TensorPower k n A →ₗ[k] M
     change (LinearMap.liftBaseChangeEquiv A (a • F)) x = 0
     rw [map_smul, LinearMap.smul_apply, hF x hx, smul_zero]
 
-/-- Ordinary proper-shuffle cochains are exactly the tensor cochains annihilating the signed words. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. A k-linear map F : A^{⊗n} → M belongs to properAlgebraCochains exactly when,
+for all p,q > 0 with p+q=n and words a,b of lengths p,q, F vanishes on the signed (p,q)-shuffle
+sum ∑s sign(s)·⊗ⱼ(append(a,b)(s⁻¹j)), transported along p+q=n. -/
 theorem mem_properAlgebraCochains_iff (n : ℕ) (F : TensorPower k n A →ₗ[k] M) :
     F ∈ properAlgebraCochains k A M n ↔
       ∀ (p q : ℕ) (h : p + q = n), 0 < p → 0 < q →
@@ -122,7 +139,11 @@ theorem mem_properAlgebraCochains_iff (n : ℕ) (F : TensorPower k n A →ₗ[k]
       simpa only [TensorPower.cast_refl, LinearEquiv.refl_apply] using hword
     rw [hzero, smul_zero]
 
-/-- Native base-change Hom adjunction followed by the quotient universal property. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. The tensor–Hom adjunction and quotient universal property give an A-linear
+equivalence Hom_A(Qₙ,M) ≅ properAlgebraCochains k A M n. It sends φ to F(w) = φ([1 ⊗ w]); its
+inverse sends F to [a₀ ⊗ w] ↦ a₀·F(w). -/
 def properAlgebraCochainEquiv (n : ℕ) :
     (((A ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A A n) →ₗ[A] M) ≃ₗ[A]
       properAlgebraCochains k A M n where
@@ -176,7 +197,10 @@ def properAlgebraCochainEquiv (n : ℕ) :
     rw [LinearMap.smul_comp, map_smul]
     rfl
 
-/-- Forward degree coordinates are evaluation on the original coefficient head one. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. For φ : Qₙ →ₗ[A] M and t : Fin n → A, the tensor cochain corresponding to φ has
+value φ([1 ⊗ ⊗ⱼtⱼ]) on the tensor word ⊗ⱼtⱼ. -/
 theorem properAlgebraCochainEquiv_tprod (n : ℕ)
     (φ : ((A ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A A n) →ₗ[A] M)
     (t : Fin n → A) :
@@ -185,7 +209,10 @@ theorem properAlgebraCochainEquiv_tprod (n : ℕ)
   exact LinearMap.liftBaseChangeEquiv_symm_apply A
     (φ.comp (algebraPositiveRelations k A A n).mkQ) (PiTensorProduct.tprod k t)
 
-/-- The inverse coordinates retain the original A-linear coefficient value. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. For F ∈ properAlgebraCochains, a₀ ∈ A and t : Fin n → A, the inverse
+equivalence evaluates at [a₀ ⊗ ⊗ⱼtⱼ] as a₀·F(⊗ⱼtⱼ). -/
 theorem properAlgebraCochainEquiv_symm_tprod (n : ℕ)
     (F : properAlgebraCochains k A M n) (a0 : A) (t : Fin n → A) :
     (properAlgebraCochainEquiv k A M n).symm F
@@ -193,30 +220,46 @@ theorem properAlgebraCochainEquiv_symm_tprod (n : ℕ)
       a0 • F.val (PiTensorProduct.tprod k t) :=
   LinearMap.liftBaseChange_tmul A F.val _ _
 
-/-- The regular quotient is lifted by the native whole-module universe functor. -/
+/-- Let k and A be commutative rings with a k-algebra structure on A, and let Q be the regular
+proper-shuffle quotient chain complex. If k and A lie in universes u,v and a coefficient target
+is to lie in universe w, lift Q componentwise into the common universe max(u,v,w), retaining its
+A-module structure and differential. -/
 def regularAlgebraPositiveQuotientForHom : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   ((ModuleCat.uliftFunctor.{w, max u v} A).mapHomologicalComplex (ComplexShape.down ℕ)).obj
     (algebraPositiveQuotientComplex k A A)
 
-/-- Native linear Hom_A of the regular quotient complex. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. Apply the contravariant Hom_A(-,M) cochain construction to the regular proper
+quotient chain complex, lifting its terms and M to their common universe. The result is an
+ℕ-indexed cochain complex of A-modules whose degree-n term is the lifted Hom_A(Qₙ,M). -/
 def nativePositiveAlgebraCochainComplex : CochainComplex (ModuleCat.{max u v w} A) ℕ :=
   (HomologicalComplex.linearHomCochainComplexFunctor A (ModuleCat.{max u v w} A)
     (ModuleCat.of A (ULift.{max u v} M))).obj
       (Opposite.op (regularAlgebraPositiveQuotientForHom.{u, v, w} k A))
 
-/-- Covariance in the A-module cochain target is the native linear Hom bifunctor. -/
+/-- Let k be a commutative ring and A a commutative k-algebra. For the regular proper quotient chain
+complex Q, the construction N ↦ Hom_A(Q,N) is a functor from A-modules in the common coefficient
+universe to ℕ-indexed A-module cochain complexes. A target map f : N → N′ acts by
+postcomposition φ ↦ f ∘ φ. -/
 def nativePositiveAlgebraCochainFunctor :
     ModuleCat.{max u v w} A ⥤ CochainComplex (ModuleCat.{max u v w} A) ℕ :=
   HomologicalComplex.linearHomCochainComplexBifunctor A (ModuleCat.{max u v w} A) ⋙
     (evaluation _ _).obj (Opposite.op (regularAlgebraPositiveQuotientForHom.{u, v, w} k A))
 
-/-- Every cohomology degree varies functorially in the original A-module target. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and Q its regular proper-shuffle quotient
+chain complex. For each n : ℕ, N ↦ Hⁿ(Hom_A(Q,N)) is a functor on A-modules in the common
+coefficient universe, induced by postcomposition in the target. -/
 def nativePositiveAlgebraCohomologyFunctor (n : ℕ) :
     ModuleCat.{max u v w} A ⥤ ModuleCat.{max u v w} A :=
   HomologicalComplex.linearHomCochainComplexHomologyFunctor A (ModuleCat.{max u v w} A)
     (regularAlgebraPositiveQuotientForHom.{u, v, w} k A) n
 
-/-- Native whole-level ULift coordinates are the original algebra-linear quotient cochains. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. In degree n : ℕ, transporting through the canonical lifts of Qₙ and M gives an
+A-linear equivalence from the degree-n term of nativePositiveAlgebraCochainComplex to Qₙ →ₗ[A]
+M. -/
 def positiveAlgebraCochainLevelEquiv (n : ℕ) :
     (nativePositiveAlgebraCochainComplex k A M).X n ≃ₗ[A]
       (((A ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A A n) →ₗ[A] M) where
@@ -254,13 +297,21 @@ def positiveAlgebraCochainLevelEquiv (n : ℕ) :
   map_add' φ ψ := rfl
   map_smul' a φ := rfl
 
-/-- The Hom_A complex in literal original-world quotient-cochain coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. Transport the lifted Hom cochain complex through
+positiveAlgebraCochainLevelEquiv in each degree. This gives a cochain complex with degree-n term
+Hom_A(Qₙ,M) and coboundary given by precomposition with the quotient differential Qₙ₊₁ → Qₙ. -/
 def positiveAlgebraCochainComplex : CochainComplex (ModuleCat.{max u v w} A) ℕ :=
   (nativePositiveAlgebraCochainComplex k A M).changeObjects
     (fun n => (positiveAlgebraCochainLevelEquiv k A M n).toModuleIso)
 
 omit [Module k M] [SMulCommClass k A M] [IsScalarTower k A M] in
-/-- Its differential is precomposition with the A-linear quotient differential. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. For φ : Qₙ →ₗ[A] M and x ∈ Qₙ₊₁, the coboundary satisfies (δφ)(x) = φ(d_Qx),
+where d_Q is algebraPositiveQuotientDifferential k A A n. No additional sign is introduced by
+passage from chain degrees to cochain degrees. -/
 theorem positiveAlgebraCochainComplex_d_apply (n : ℕ)
     (φ : ((A ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A A n) →ₗ[A] M)
     (x : (A ⊗[k] TensorPower k (n + 1) A) ⧸ algebraPositiveRelations k A A (n + 1)) :
@@ -284,18 +335,30 @@ theorem positiveAlgebraCochainComplex_d_apply (n : ℕ)
   rw [ChainComplex.of_d]
   rfl
 
-/-- Transport to the conventional ground-linear tensor cochains satisfying the proper relations. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. Transport the quotient Hom cochain complex through properAlgebraCochainEquiv in
+every degree. The resulting degree-n term is the A-module of k-linear tensor cochains F : A^{⊗n}
+→ M annihilating all both-positive shuffle relations. -/
 def properAlgebraCochainComplex : CochainComplex (ModuleCat.{max u v w} A) ℕ :=
   (positiveAlgebraCochainComplex k A M).changeObjects
     (fun n => (properAlgebraCochainEquiv k A M n).toModuleIso)
 
-/-- The Hom_A complex and its conventional tensor-cochain representation agree as complexes. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. The degreewise equivalences φ ↦ (w ↦ φ([1 ⊗ w])) give an isomorphism from
+positiveAlgebraCochainComplex to properAlgebraCochainComplex, preserving their coboundaries. -/
 def properAlgebraCochainComplexIso :
     positiveAlgebraCochainComplex k A M ≅ properAlgebraCochainComplex k A M :=
   (positiveAlgebraCochainComplex k A M).changeObjectsIso
     (fun n => (properAlgebraCochainEquiv k A M n).toModuleIso)
 
-/-- The complete source coboundary is evaluated by the original signed Hochschild faces. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. For F ∈ properAlgebraCochains in degree n and t : Fin(n+1) → A, the coboundary
+is (δF)(⊗t) = ∑ⱼ₌₀ⁿ⁺¹ (-1)ʲ F̃(faceⱼ(1 ⊗ ⊗t)), with F̃(a₀ ⊗ w) = a₀·F(w). The first face
+contributes t₀·F(t₁,…,tₙ), internal faces multiply adjacent entries, and the last contributes
+(-1)ⁿ⁺¹tₙ·F(t₀,…,tₙ₋₁). -/
 theorem properAlgebraCochainComplex_d_tprod (n : ℕ)
     (F : properAlgebraCochains k A M n) (t : Fin (n + 1) → A) :
   letI := opModule A A
@@ -350,11 +413,18 @@ theorem properAlgebraCochainComplex_d_tprod (n : ℕ)
     intro j _
     exact map_zsmul (F.val.liftBaseChange A) _ _)
 
-/-- Actual algebra-linear proper-shuffle cohomology in every nonnegative degree. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. For n : ℕ, positiveAlgebraCohomology is the nth cohomology A-module of the
+quotient-cochain complex Hom_A(Q,M), with differential given by precomposition with the regular
+proper quotient boundary. -/
 def positiveAlgebraCohomology (n : ℕ) : ModuleCat.{max u v w} A :=
   (positiveAlgebraCochainComplex k A M).homology n
 
-/-- The tensor-cochain representation induces the all-degree cohomology isomorphism. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. For each n : ℕ, the cochain isomorphism properAlgebraCochainComplexIso induces
+an isomorphism from positiveAlgebraCohomology k A M n to Hⁿ(properAlgebraCochainComplex k A M). -/
 def properAlgebraCohomologyIso (n : ℕ) :
     positiveAlgebraCohomology k A M n ≅ (properAlgebraCochainComplex k A M).homology n :=
   (HomologicalComplex.homologyFunctor (ModuleCat.{max u v w} A) (ComplexShape.up ℕ) n).mapIso

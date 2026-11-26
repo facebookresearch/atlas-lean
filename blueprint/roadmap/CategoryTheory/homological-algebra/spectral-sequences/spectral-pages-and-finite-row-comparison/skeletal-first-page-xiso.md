@@ -1,3 +1,5 @@
-# Skeletal First Page XIso
+# First-page object as a relative interval
 
-The first page is the middle relative interval in total degree `p + q`.
+For an EInt-indexed spectral object X in an abelian category, the
+canonical first-page isomorphism
+E₁^{p,q} ≅ H_X^{p+q}(−p−1,−p) at every integer pair (p,q).

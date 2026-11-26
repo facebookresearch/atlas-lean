@@ -1,5 +1,6 @@
-# Epsilon At Pos deg deg
+# The ordered counit insertion identity
 
-Codegeneracy-codegeneracy law for `epsilonAtPos`: for `i ≤ j`, the two
-orders of successive counit insertions agree. Dual of
-`Monad.etaAtPos_deg_deg`.
+The ordered counit insertion identity.
+
+For `i ≤ j`, contracting at `i` and then `j` equals contracting at `j+1` and then `i`, with
+the stated power degrees.

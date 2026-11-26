@@ -1,3 +1,6 @@
-# Bimodule Tensor Coefficient Component
+# Coefficient map on each finite tensor object
 
-The actual quotient coefficient map between the two original finite tensor outputs.
+Coefficient map on each finite tensor object.
+
+An `S`-linear map `f : E → E'` preserving the right `R`-action induces a morphism `E ⊗_R M ⟶
+E' ⊗_R M` in the finite `S`-module category.

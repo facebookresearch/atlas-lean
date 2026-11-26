@@ -1,4 +1,4 @@
 # Existence of Cartan–Eilenberg resolution data
 
-- [Of](of.md)
-- [Nonempty](nonempty.md)
+- [Choosing a Cartan–Eilenberg resolution from projective resolutions](of.md)
+- [Existence of Cartan–Eilenberg resolutions](nonempty.md)

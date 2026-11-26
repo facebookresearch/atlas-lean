@@ -1,3 +1,4 @@
-# Module Internal Grade finite
+# Finite generation passes to a module coordinate range
 
-Finite module summands give finite canonical coordinate ranges.
+For a ring A, an index type ι with decidable equality and A-modules M i, a finitely generated
+summand M i gives a finitely generated A-module moduleInternalGrade A ι M i.

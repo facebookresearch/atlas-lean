@@ -1,3 +1,4 @@
-# Is Zero homology extend Up Nat neg
+# Zero homology in negative extended degrees
 
-The extended cochain complex has zero homology in negative degrees.
+Let C be an abelian category and K a natural cochain complex extended by zero to integer
+degrees. For z<0, assuming the extension has homology at z, its homology object Hᶻ is zero.

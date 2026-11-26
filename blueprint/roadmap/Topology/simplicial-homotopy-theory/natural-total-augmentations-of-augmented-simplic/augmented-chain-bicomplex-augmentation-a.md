@@ -1,3 +1,6 @@
-# Augmented Chain Bicomplex Augmentation App
+# The bicomplex augmentation of a simplicial chain diagram
 
-The original augmented chain square assembles the actual flipped bicomplex map.
+The bicomplex augmentation of a simplicial chain diagram.
+
+The horizontal single-zero augmentations assemble into a map from the flipped alternating
+bicomplex to the bicomplex of the augmentation target concentrated in inner degree zero.

@@ -1,3 +1,6 @@
-# Step Class To E identity hom
+# The step-class map when both outer arrows are identities
 
-For identity outer intervals, `E ≅ H` sends the class map to interval restriction.
+The step-class map when both outer arrows are identities.
+
+The E-to-H comparison identifies the map with the corresponding bottom-to-cut H_n interval
+map.

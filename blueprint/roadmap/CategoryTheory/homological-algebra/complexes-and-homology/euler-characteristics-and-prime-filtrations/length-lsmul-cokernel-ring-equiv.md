@@ -1,4 +1,5 @@
-# Length lsmul cokernel ring Equiv
+# Regular multiplication cokernel lengths under a ring equivalence
 
-A ring equivalence preserves the length of a principal multiplication
-cokernel.
+Regular multiplication cokernel lengths under a ring equivalence.
+
+A ring equivalence R ≃ S identifies the length of R/rR with the length of S/e(r)S.

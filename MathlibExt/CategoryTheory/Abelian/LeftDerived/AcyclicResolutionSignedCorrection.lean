@@ -12,8 +12,17 @@ module
 
 public import MathlibExt.CategoryTheory.Abelian.AcyclicResolutionNormalizationSign
 
-/-!
+/- Proof implementation note.
 ## # Canonical natural scalar correction of the retained acyclic comparison
+-/
+
+/-!
+# Natural scalar normalization of acyclic comparisons
+
+The scalar `σ_n=(-1)^(n(n+1)/2)` defines a natural automorphism
+of any functor into a preadditive category. For a right-exact
+additive functor on an abelian category with projective resolutions,
+it corrects the acyclic comparison to the canonical projective comparison.
 -/
 
 @[expose] public section
@@ -26,19 +35,37 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C]
 variable {D : Type u'} [Category.{v'} D] [Preadditive D]
 
-/-- The triangular scalar correction is natural on any original degree functor. -/
+/- Proof implementation note.
+The triangular scalar correction is natural on any original degree functor.
+-/
+
+/-- For any functor `G : C → D`, where `C` is a category and
+`D` preadditive, `σ_n=(-1)^(n(n+1)/2)` defines a natural
+automorphism of `G` by scalar multiplication on each `G(X)`. -/
 def acyclicResolutionNormalizationIso (G : C ⥤ D) (n : ℕ) : G ≅ G :=
   NatIso.ofComponents (fun X =>
     ProjectiveResolution.acyclicResolutionNormalizationIso (G.obj X) n) (fun f => by
       dsimp only [ProjectiveResolution.acyclicResolutionNormalizationIso]
       rw [comp_zsmul, zsmul_comp, Category.comp_id, Category.id_comp])
 
-/-- Every component is the exact original triangular scalar on the original functor object. -/
+/- Proof implementation note.
+Every component is the exact original triangular scalar on the original functor object.
+-/
+
+/-- For a functor `G : C → D` with `D` preadditive, the
+component at `X` of its degree-`n` normalization automorphism
+is `σ_n • 𝟙 G(X)`, where `σ_n=(-1)^(n(n+1)/2)`. -/
 theorem acyclicResolutionNormalizationIso_hom_app (G : C ⥤ D) (n : ℕ) (X : C) :
     (G.acyclicResolutionNormalizationIso n).hom.app X =
       ProjectiveResolution.acyclicResolutionNormalizationSign n • 𝟙 (G.obj X) := rfl
 
-/-- The correction commutes with every original coefficient natural transformation. -/
+/- Proof implementation note.
+The correction commutes with every original coefficient natural transformation.
+-/
+
+/-- For functors `G,H : C → D` into a preadditive category and
+any natural transformation `α : G → H`, the normalization
+automorphisms commute with `α`: `σ_n(G) ≫ α = α ≫ σ_n(H)`. -/
 theorem acyclicResolutionNormalizationIso_naturality_transformation
     {G H : C ⥤ D} (α : G ⟶ H) (n : ℕ) :
     (G.acyclicResolutionNormalizationIso n).hom ≫ α =
@@ -54,8 +81,16 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse of the SAME retained projective acyclic comparison has the SAME proved triangular
-sign. -/
+/- Proof implementation note.
+The inverse of the SAME retained projective acyclic comparison has the SAME proved triangular
+sign.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`P` resolving `X` with every term `F`-acyclic. In degree `n`,
+the inverse acyclic comparison is `σ_n` times the inverse
+canonical projective comparison. -/
 theorem normalizationAcyclicProjective_inv {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q i : ℕ, IsZero ((F.leftDerived (i + 1)).obj (P.complex.X q))) (n : ℕ) :
@@ -70,7 +105,15 @@ theorem normalizationAcyclicProjective_inv {X : C} (P : ProjectiveResolution X)
   rw [normalizationAcyclicProjective_hom, zsmul_comp, comp_zsmul, smul_smul,
     Iso.inv_hom_id, acyclicResolutionNormalizationSign_mul_self, one_zsmul]
 
-/-- Correct the retained projective acyclic iso by its canonical natural source scalar. -/
+/- Proof implementation note.
+Correct the retained projective acyclic iso by its canonical natural source scalar.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`P` an `F`-acyclic projective resolution of `X`. Composing the
+acyclic comparison with the source normalization `σ_n` gives
+a comparison `L_nF(X) ≅ H_n(F(P))`. -/
 def normalizedAcyclicProjectiveComparison {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q i : ℕ, IsZero ((F.leftDerived (i + 1)).obj (P.complex.X q))) (n : ℕ) :
@@ -80,7 +123,15 @@ def normalizedAcyclicProjectiveComparison {X : C} (P : ProjectiveResolution X)
     F.leftDerivedObjIsoHomologyOfAcyclicResolution P.complex P.π hP n
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The canonical corrected comparison is literally the SAME projective comparison in every degree. -/
+/- Proof implementation note.
+The canonical corrected comparison is literally the SAME projective comparison in every degree.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`P` an `F`-acyclic projective resolution of `X`. The corrected
+comparison has forward map equal to `P.isoLeftDerivedObj F n`
+in every degree `n`. -/
 theorem normalizedAcyclicProjectiveComparison_hom {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q i : ℕ, IsZero ((F.leftDerived (i + 1)).obj (P.complex.X q))) (n : ℕ) :
@@ -93,7 +144,11 @@ theorem normalizedAcyclicProjectiveComparison_hom {X : C} (P : ProjectiveResolut
     smul_smul, acyclicResolutionNormalizationSign_mul_self, one_zsmul]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The exact coefficient boundary has the forced adjacent-degree scalar compatibility. -/
+/-- Let `C`, `D` be abelian with projective resolutions in `C`,
+`F : C → D` additive, and `S : X₁ → X₂ → X₃` short exact.
+The left-derived boundary `L_(n+1)F(X₃) → L_nF(X₁)`
+commutes with source and target normalization up to the
+adjacent scalar `(-1)^(n+1)`. -/
 theorem normalizationNativeLeftBoundary_scalar (F : C ⥤ D) [F.Additive]
     (S : ShortComplex.ShortExactSequences C) (n : ℕ) :
     (acyclicResolutionNormalizationIso ((F.leftDerived (n + 1)).obj S.obj.X₃) (n + 1)).hom ≫

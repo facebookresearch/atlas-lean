@@ -1,5 +1,6 @@
-# Right Transversal Equiv Codomain
+# A kernel transversal identified with a quotient homomorphism codomain
 
-A right transversal for the kernel of a surjection is equivalent to its
-codomain.  The inverse in the formula reflects that a right transversal for
-`H` becomes a system of left-coset representatives after inversion.
+A kernel transversal identified with a quotient homomorphism codomain.
+
+For a surjective f : G → Q, a right transversal for ker(f) is equivalent to Q. The equivalence
+uses inversion to pass from right to left quotient conventions.

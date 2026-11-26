@@ -30,13 +30,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Free
 public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.LocallyFree
 
 /-!
-# Gluing locally free sheaves from free presentations
+# Local freeness from free presentations on a cover
 
-For a cover of the terminal object, suppose each restriction of a module
-sheaf is isomorphic to a free sheaf on an index type `Ix i`. The transported
-free generators give local freeness. The index types may vary over the cover
-and may be infinite. If each `Ix i` is equivalent to `Fin n`, the same cover
-and generating sections give local freeness of rank `n`.
+Let `(C,J)` be a site, `R : Sheaf J RingCat.{u}`, and `M` a module sheaf. Suppose a family `X
+: I → C` covers the top and each restriction `M.over (X i)` is isomorphic to a free sheaf on
+an index type `Ix i`. Under weak additive sheafification and the locally-bijective comparison
+on all slice sites, `M` is locally free. The local basis sets may vary and may be infinite.
+
+With additive sheafification on the slice sites and a fixed `n : ℕ`, if every `Ix i` is
+equivalent to `Fin n`, the same local free presentations show that `M` is locally free of rank
+`n`.
 -/
 
 @[expose] public section
@@ -55,11 +58,11 @@ section Gluing
 variable [∀ X, HasWeakSheafify (J.over X) AddCommGrpCat.{u}]
   [∀ X, (J.over X).WEqualsLocallyBijective AddCommGrpCat.{u}]
 
-/-- A sheaf of modules presented by free sheaves over a cover is locally
-free. Each chart contributes the tautological generators transported along
-its iso via Mathlib's `GeneratingSections.equivOfIso`; the resulting
-local generator data is shrunk into the site universe by
-`LocalGeneratorsData.isLocallyFree`. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`. Assume weak additive sheafification and `WEqualsLocallyBijective` on every
+`J.over X`. For `M : SheafOfModules.{u} R`, a covering family `X : I → C` with `I : Type w`,
+sets `Ix i : Type u`, and isomorphisms `free_{R.over(X i)}(Ix i) ≅ M.over (X i)`, the sheaf
+`M` is locally free. -/
 theorem IsLocallyFree.of_free_isos {M : SheafOfModules.{u} R} {I : Type w}
     (X : I → C) (hX : J.CoversTop X) (Ix : I → Type u)
     (e : ∀ i, _root_.SheafOfModules.free (R := R.over (X i)) (Ix i) ≅ M.over (X i)) :
@@ -97,10 +100,11 @@ variable {C : Type u₁} [Category.{v₁} C] {J : GrothendieckTopology C}
   [∀ X, HasSheafify (J.over X) AddCommGrpCat.{u}]
   [∀ X, (J.over X).WEqualsLocallyBijective AddCommGrpCat.{u}]
 
-/-- A sheaf presented by finite-rank free sheaves over a cover is locally
-free of that rank: each chart contributes the tautological generators
-transported along its iso, and the rank data is the given index
-equivalences. Ranked analogue of `IsLocallyFree.of_free_isos`. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`. Assume `HasSheafify` for additive presheaves and `WEqualsLocallyBijective` on
+every `J.over X`. For `M : SheafOfModules.{u} R`, `n : ℕ`, a cover `X : I → C` with `I : Type
+u₁`, sets `Ix i : Type u`, and isomorphisms `free_{R.over(X i)}(Ix i) ≅ M.over (X i)`, if
+every `Ix i` admits an equivalence with `Fin n`, then `IsLocallyFreeOfRank M n`. -/
 theorem IsLocallyFreeOfRank.of_free_isos {M : SheafOfModules.{u} R} {n : ℕ}
     {I : Type u₁} (X : I → C) (hX : J.CoversTop X) (Ix : I → Type u)
     (e : ∀ i, _root_.SheafOfModules.free (R := R.over (X i)) (Ix i) ≅ M.over (X i))

@@ -1,4 +1,5 @@
-# Length lsmul kernel eq cokernel of module length
+# Multiplication kernel and cokernel lengths on a finite-length module
 
-A multiplication endomorphism of a finite-length module has equal
-actual kernel and cokernel lengths.
+Multiplication kernel and cokernel lengths on a finite-length module.
+
+If M has finite length, ker μ_r and coker μ_r have equal R-length for every r.

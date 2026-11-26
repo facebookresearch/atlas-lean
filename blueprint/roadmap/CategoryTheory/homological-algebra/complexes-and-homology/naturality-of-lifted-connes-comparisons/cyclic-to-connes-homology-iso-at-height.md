@@ -1,3 +1,6 @@
-# Cyclic To Connes Homology Iso At Height hom eq
+# The rational isomorphism has the lifted projection as its forward map
 
-The native first-column projection is the exact hom of the prescribed rational comparison.
+For a commutative ℚ-algebra k, a nonunital k-algebra A with
+k-bilinear multiplication and H = max(u,v,z), the forward map of
+ULift^H HC_n(A) ≅ H_n(Cλ_A^H) equals the chosen-height homology
+map of the first-column projection, for every n ≥ 0.

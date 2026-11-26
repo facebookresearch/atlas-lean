@@ -1,3 +1,6 @@
-# Small Etale Affine Sheaf Adjunction
+# Affine sheaf pullback is left adjoint to affine direct image
 
-The affine construction has the actual affine direct image as right adjoint.
+Affine sheaf pullback is left adjoint to affine direct image.
+
+The affine sheaf pullback construction is left adjoint to continuous sheaf pushforward along
+affine base change.

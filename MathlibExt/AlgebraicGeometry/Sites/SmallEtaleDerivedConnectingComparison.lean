@@ -24,7 +24,10 @@ variable {C : Type c} [Category.{vc} C] [Abelian C] [HasExt.{e} C]
   {A B : C}
 
 omit [HasExt C] in
-/-- The original augmentation is a literal resolution cocycle. -/
+/-- Let C be an abelian category with Ext groups in a given carrier
+universe, R an injective resolution of B, and f : A → B a morphism.
+The augmented map ι⁰ ∘ f : A → R⁰ is a degree-zero cocycle:
+d⁰ ∘ ι⁰ ∘ f = 0. Object, morphism and Ext universes may be independent. -/
 theorem augmentation_cycle (R : InjectiveResolution B) (f : A ⟶ B) :
     (f ≫ R.ι.f 0) ≫ R.cocomplex.d 0 1 = 0 := by
   calc
@@ -34,7 +37,11 @@ theorem augmentation_cycle (R : InjectiveResolution B) (f : A ⟶ B) :
       R.ι_f_zero_comp_complex_d
     _ = 0 := comp_zero
 
-/-- The actual augmentation represents the original degree-zero Ext morphism. -/
+/-- Let C be an abelian category with Ext groups in a given carrier
+universe, R an injective resolution of B, and f : A → B.
+The Ext⁰(A, B) class represented by the cocycle ι⁰ ∘ f equals
+the degree-zero extension class of f. No global choice of injective
+resolutions beyond the given R is required. -/
 theorem extMk_augmentation (R : InjectiveResolution B) (f : A ⟶ B) :
     R.extMk (f ≫ R.ι.f 0) 1 rfl (augmentation_cycle R f) = Abelian.Ext.mk₀ f := by
   let z := CochainComplex.HomComplex.Cocycle.fromSingleMk
@@ -105,7 +112,12 @@ namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 
 variable (X : Scheme.{u})
 
-/-- The literal Γ-cycle of an augmentation is the actual zero-derived section. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+For f : ℤ_X → Q, the class of the augmented degree-zero cocycle
+ι⁰ ∘ f in R⁰Γ_X(Q) is the image of its global section under
+Γ_X(Q) → R⁰Γ_X(Q). The global section is obtained by evaluating f on 1. -/
 theorem cycleClass_augmentation_zero
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     (f : integralSheaf.{u, w} X ⟶ Q) :
@@ -137,7 +149,12 @@ theorem cycleClass_augmentation_zero
   rw [hz]
   exact hzero.symm
 
-/-- The original comparison has exactly the accepted degree-zero section normalization. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+In degree zero, the Ext-to-derived-sections comparison and the
+canonical cohomological delta-functor comparison coincide as additive
+equivalences H⁰(X, Q) ≅ R⁰Γ_X(Q). -/
 theorem originalComparison_zero
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     originalComparison.{u, w} X Q 0 = CanonicalLongExactSequence.canonicalEquiv.{u, w} X Q 0 := by
@@ -186,8 +203,12 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
-/-- In every degree the actual size/Hom/section comparison is exactly the
-SAME existing canonical étale Γ family, including its original zero normalization. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+For every q ∈ ℕ, the Ext-to-derived-sections comparison equals
+the canonical long-exact-sequence comparison
+Hᑫ(X, Q) ≅ RᑫΓ_X(Q). Both use coefficient universe c. -/
 theorem originalComparison_eq
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ) :
     originalComparison.{u, w} X Q q =
@@ -196,8 +217,14 @@ theorem originalComparison_eq
   | zero => exact originalComparison_zero.{u, w} X Q
   | succ n => exact originalComparison_positive.{u, w} X Q n
 
-/-- The same canonical family sends every original representative to its
-literal Γ cycle class, uniformly in all degrees including zero. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+Let I_Q be the chosen nonnegative injective resolution of Q and
+f : ℤ_X → I_Q^q satisfy d ∘ f = 0.
+The canonical equivalence Hᑫ(X, Q) ≅ RᑫΓ_X(Q) sends the extension
+class of f to the class of the corresponding global-section cycle
+in Γ_X(I_Q), followed by the resolution comparison. -/
 theorem canonicalEquiv_extMk
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X q)
@@ -209,8 +236,10 @@ theorem canonicalEquiv_extMk
   exact originalComparison_extMk.{u, w} X Q q f hf
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The SAME canonical Γ family intertwines the actual original covariant
-Yoneda connecting map with the actual native Γ horseshoe connector in every degree. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and
+S : 0 → Q₁ → Q₂ → Q₃ → 0 a short exact sequence of coefficient sheaves.
+For ξ ∈ Hᑫ(X, Q₃), the canonical comparisons α commute with connecting
+maps: δ_(RΓ)(α_Q₃(ξ)) = α_Q₁(δ_et(ξ)) in degree q + 1. -/
 theorem canonicalEquiv_connecting
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}))
     (hS : S.ShortExact) (q : ℕ)
@@ -237,8 +266,11 @@ theorem canonicalEquiv_connecting
         hboundary.symm)))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The existing transported étale boundary is literally the original native
-Γ connector; no connecting equality is supplied as a premise. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and S a
+short exact sequence of AddCommGrpCat c-valued étale sheaves.
+The connecting map obtained by transporting the étale Yoneda boundary
+to derived global sections equals the right-derived-functor connecting
+map RᑫΓ_X(S₃) → Rᑫ⁺¹Γ_X(S₁). -/
 theorem derivedBoundary_eq_canonicalConnecting
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}))
     (hS : S.ShortExact) (q : ℕ) :

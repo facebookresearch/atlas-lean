@@ -1,3 +1,4 @@
-# Em Underlying Pairing pairing app
+# Every forgotten pairing component is the algebra action
 
-The underlying pairing component is the algebra structure map.
+For a monad T on C, a T-algebra alg=(A,a), and a point of Discrete PUnit, the component of
+emUnderlyingPairing(alg) equals a : T(A) → A.

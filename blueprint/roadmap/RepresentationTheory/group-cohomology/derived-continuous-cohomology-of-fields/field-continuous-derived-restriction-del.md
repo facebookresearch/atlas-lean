@@ -1,4 +1,6 @@
-# Field Continuous Derived Restriction delta square
+# Continuous and derived restriction comparison square
 
-The independent right-derived restriction and the original cochain restriction
-commute with the fixed comparison as whole morphisms of delta functors.
+Continuous and derived restriction comparison square.
+
+Restriction on continuous delta functors followed by the target comparison equals the source
+comparison followed by derived-invariant restriction.

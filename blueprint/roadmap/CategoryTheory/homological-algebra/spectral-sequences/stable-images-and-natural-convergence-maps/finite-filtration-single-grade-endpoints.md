@@ -1,3 +1,7 @@
-# Finite Filtration single Grade endpoints
+# Endpoints at the single possible graded degree
 
-If a finite decreasing filtration has only one nonzero quotient, that quotient has full endpoints.
+Let C be abelian, B an object and F:ℤ → Subobject(B) decreasing.
+For N∈ℕ assume F⁰=B and F^{N+1}=0, and fix n∈ℤ.
+Assume GrᵖF=Coker(Fᵖ⁺¹↪Fᵖ) is zero for every integer p≠n.
+
+The two endpoints of the possibly surviving graded degree are Fⁿ=B and Fⁿ⁺¹=0.

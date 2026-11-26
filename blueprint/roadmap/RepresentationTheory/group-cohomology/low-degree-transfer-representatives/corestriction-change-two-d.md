@@ -1,4 +1,5 @@
-# Corestriction Change Two d₂₃
+# The reversed degree-three transfer difference is an explicit boundary
 
-The differential of the explicit degree-two prism cochain is the
-`U`-transfer minus the `T`-transfer.
+The reversed degree-three transfer difference is an explicit boundary.
+
+For an H-three-cocycle z, d²(corestrictionChangeTwo A T U z) = cor_U³(z) − cor_T³(z).

@@ -1,5 +1,6 @@
-# Induced Bar Linear Yoneda Iso
+# The induction-adjunction isomorphism of bar Hom-cochain complexes
 
-Degreewise induction adjunction, assembled into an isomorphism between
-the subgroup bar linear-Hom complex and the ambient linear-Hom complex of
-the induced bar resolution.
+The induction-adjunction isomorphism of bar Hom-cochain complexes.
+
+For A a G-representation, the degreewise adjunction Hom_H(B_H,A|H) ≃ Hom_G(ind B_H,A)
+assembles into an isomorphism of linear Yoneda cochain complexes.

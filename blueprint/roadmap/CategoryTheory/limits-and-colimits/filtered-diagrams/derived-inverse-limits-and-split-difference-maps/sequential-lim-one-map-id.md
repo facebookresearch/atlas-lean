@@ -1,3 +1,6 @@
-# Sequential Lim One Map id
+# Identity law for sequential lim-one maps
 
-The induced map on concrete sequential `lim¹` preserves identities.
+Identity law for sequential lim-one maps.
+
+For a tower A in a preadditive category with countable products and cokernels, the induced map
+lim¹(id_A) is the identity of lim¹ A.

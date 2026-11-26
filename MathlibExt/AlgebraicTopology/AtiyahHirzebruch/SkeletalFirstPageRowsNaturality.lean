@@ -15,8 +15,16 @@ module
 public import MathlibExt.Algebra.Homology.SpectralSequence.FirstPageRowNaturality
 
 /-!
-# Compatibility import
+# Naturality of first-page row homology
 
-The generic declarations retain their original qualified names in
-`MathlibExt.Algebra.Homology.SpectralSequence.FirstPageRowNaturality`.
+In an abelian category, consider spectral sequences with differential of bidegree (r,1−r),
+starting at page 1. For fixed q the first-page row has objects E₁^{p,q} and differential
+E₁^{p,q} → E₁^{p+1,q}. Its three-term complex at p−1,p,p+1 is identified with the
+corresponding three-term complex of the full first page by identity components.
+
+These comparisons commute with first-page maps. On homology they identify the row homology
+with E₂^{p,q}, naturally for spectral-sequence maps using their successor-page compatibility.
+This import provides the definitions in
+MathlibExt.Algebra.Homology.SpectralSequence.FirstPageRowNaturality; the category and indexing
+universes remain independent.
 -/

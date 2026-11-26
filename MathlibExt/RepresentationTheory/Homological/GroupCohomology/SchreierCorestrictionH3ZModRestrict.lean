@@ -14,12 +14,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRe
 public import MathlibExt.RepresentationTheory.Rep.ZModRestrictRes
 
 /-!
-# Degree-three corestriction and integral scalar restriction
+# Integral scalar restriction and degree-three corestriction
 
-Canonical finite-index `H³` corestriction commutes with restriction of
-scalars from `ZMod n` to `ℤ`.  The comparison is proved first on explicit
-three-cocycles and then on cohomology through the representative-preserving
-scalar-restriction equivalence.  The statements include `n = 0`.
+Let `G : Type` be a group, `H ≤ G` a finite-index subgroup, `n : ℕ`, and `A : Rep (ZMod n) G`.
+Write `J(A) = Rep.zmodRestrictInt n A` for restriction of scalars along `ℤ → ZMod n`. The
+additive equivalences on three-cocycles and degree-three cohomology commute with finite-index
+transfer.
+
+The coefficient isomorphism `θ : J(Res A) ≅ Res(J(A))` is inserted on the subgroup side. Thus
+`E_A(cor_A³ x) = cor_{J(A)}³(θ_* E_{Res A}(x))`. These statements hold for every `n`,
+including `n = 0`.
 -/
 
 @[expose] public section
@@ -34,13 +38,19 @@ namespace groupCohomology
 
 variable {G : Type} [Group G] {H : Subgroup G}
 
-/-- A finite enumeration of a finite-index subgroup's chosen right transversal. -/
+/-- For a group `G : Type`, a finite-index subgroup `H ≤ G`, and a right transversal `T` for `H`,
+the subtype of representatives `(T : Set G)` has a finite enumeration. This local `Fintype`
+instance enumerates that finite set for the degree-three transfer sum. -/
 noncomputable local instance corestrictionH3ZModRestrictTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Scalar restriction commutes with chosen-transversal transfer on
-degree-three cocycles. -/
+/-- Let `G : Type` be a group, `H ≤ G` finite index, `n : ℕ`, `A : Rep (ZMod n) G`, and `T` a
+right transversal. Write `J(A) = Rep.zmodRestrictInt n A`, `E_A =
+cocycles₃ZModRestrictIntEquiv n A`, and `θ = (zmodRestrictIntResIso n (Subgroup.subtype H)
+A).hom`. For `z ∈ Z³(H,Res A)`, `E_A(corestrictionCocyclesThree A T z) =
+corestrictionCocyclesThree (J(A)) T (mapCocycles₃ (id H) θ (E_{Res A} z))`. The scalar
+restriction is along `ℤ → ZMod n` and includes `n = 0`. -/
 theorem cocycles₃ZModRestrictIntEquiv_corestrictionCocyclesThree
     (n : ℕ) (A : Rep (ZMod n) G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -67,8 +77,11 @@ theorem cocycles₃ZModRestrictIntEquiv_corestrictionCocyclesThree
   intro t _
   rfl
 
-/-- Forward scalar restriction commutes with canonical degree-three
-corestriction. -/
+/-- Let `G : Type` be a group, `H ≤ G` finite index, `n : ℕ`, and `A : Rep (ZMod n) G`. Put `J(A)
+= Rep.zmodRestrictInt n A`, `E_A = H3ZModRestrictIntAddEquiv n A`, and `θ =
+(zmodRestrictIntResIso n (Subgroup.subtype H) A).hom : J(Res A) → Res(J(A))`. For `x ∈
+H³(H,Res A)`, `E_A(corestrictionH3 A x) = corestrictionH3 (J(A)) (map (id H) θ 3 (E_{Res A}
+x))`. The identity holds for all `n`, including zero. -/
 theorem H3ZModRestrictIntAddEquiv_corestrictionH3
     (n : ℕ) (A : Rep (ZMod n) G) [H.FiniteIndex]
     (x : H3 (Rep.res (Subgroup.subtype H) A)) :

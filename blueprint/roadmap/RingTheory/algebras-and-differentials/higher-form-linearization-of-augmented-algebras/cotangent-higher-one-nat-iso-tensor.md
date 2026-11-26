@@ -1,3 +1,6 @@
-# Cotangent Higher One Nat Iso tensor
+# The coordinate formula for the weight-one comparison
 
-The actual degree-one isomorphism sends the original coefficient word to a ⊗ dp.
+The coordinate formula for the weight-one comparison.
+
+The weight-one comparison sends `a ⊗ dp` to the differential generator `a ⊗ dp` of the
+cotangent module.

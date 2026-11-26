@@ -1,3 +1,5 @@
-# Away Transition
+# The power transition in an away-localization system
 
-Transition from stage `i` to stage `j`: multiply by `r^(j-i)`.
+The power transition in an away-localization system.
+
+For i≤j, map x to r^{j−i}·x.

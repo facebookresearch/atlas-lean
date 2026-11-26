@@ -1,3 +1,6 @@
-# Matrix Cyclic Degree Map zero Corner
+# Stability of the finite matrix cyclic degree map under zero extension
 
-Finite zero corners leave the complete exterior-to-cyclic trace component unchanged.
+Stability of the finite matrix cyclic degree map under zero extension.
+
+Extending all matrix factors by zeros and applying the larger-size degree map gives the
+smaller-size map.

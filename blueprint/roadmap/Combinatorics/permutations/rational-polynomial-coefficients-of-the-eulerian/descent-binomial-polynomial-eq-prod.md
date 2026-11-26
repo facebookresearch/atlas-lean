@@ -1,3 +1,5 @@
-# Descent Binomial Polynomial eq prod
+# Rising-factorial product formula
 
-The native rising-factorial form is exactly the original finite factor product.
+For `n,d : ℕ`, the rational polynomial satisfies `descentBinomialPolynomial n d = C((n!:ℚ)⁻¹)
+* ∏ j ∈ Finset.range n, (X + C((j:ℚ)-(d:ℚ)))`. The subtraction in each factor is in `ℚ`; the
+product is `1` for `n=0`.

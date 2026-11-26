@@ -14,12 +14,16 @@ module
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.FiniteFactorInverse
 
 /-!
-# The original Hom–tensor Iso for a bounded finite-projective tensor factor
+# Hom–tensor isomorphism for a bounded finite projective factor
 
-The concrete signed inverse makes the actual original degree comparison
-bijective. Its existing differential square assembles the object Iso, before
-taking homology. The first Hom source and Hom target are arbitrary, and the
-ring and original module-carrier worlds remain independent.
+For integer cochain complexes `P`, `J`, and `U` of modules over a commutative ring, assume
+every term of `U` is finite and categorically projective and that `U` vanishes below an
+integer `L` and above an integer `N`.
+
+The signed comparison `Hom_R(P,J) ⊗_R U → Hom_R(P,J ⊗_R U)` is then an isomorphism of cochain
+complexes. Its degreewise inverse is the sum of the factor-degree inverse pieces over `[L,
+N]`. The complexes `P` and `J` have no boundedness or projectivity hypothesis; scalar and
+module-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -37,7 +41,11 @@ variable (R : Type u) [CommRing R]
   (P J U : CochainComplex (ModuleCat.{v} R) ℤ)
   [∀ b : ℤ, CategoryTheory.Projective (U.X b)] [∀ b : ℤ, Module.Finite R (U.X b)]
 
-/-- The original signed degree map has its earned bounded-U inverse. -/
+/-- Degreewise Hom–tensor isomorphism for a bounded finite projective factor.
+
+Under finite projectivity of all `U^b` and vanishing below `L` and above `N`, the degree-`n`
+signed Hom–tensor comparison is an isomorphism. Its inverse is the finite sum
+`homTensorFiniteFactorInverseDegree ... L N n`. -/
 def finiteFactorHomTensorXIso (L N : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))
     (hUhi : ∀ b : ℤ, N < b → IsZero (U.X b)) (n : ℤ) :
@@ -54,8 +62,10 @@ def finiteFactorHomTensorXIso (L N : ℤ)
       intro z
       exact homTensorFiniteFactorInverseDegree_leftInverse R P J U L N n hUlo hUhi z)).toModuleIso
 
-/-- The actual cochain object Iso uses the same signed original degree maps
-and the original differential square. -/
+/-- Cochain Hom–tensor isomorphism for a bounded finite projective factor.
+
+The degreewise signed comparison isomorphisms commute with differentials and give `Hom_R(P,J)
+⊗_R U ≅ Hom_R(P,J ⊗_R U)`, using bounds and finite projectivity only on `U`. -/
 def finiteFactorHomTensorIso (L N : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))
     (hUhi : ∀ b : ℤ, N < b → IsZero (U.X b)) :
@@ -67,8 +77,9 @@ def finiteFactorHomTensorIso (L N : ℤ)
       subst m
       exact homTensorDegree_comm R P J U n)
 
-/-- Its hom is the actual original unrestricted cochain comparison, including
-the original source-index signs and all original noninvertible variable maps. -/
+/-- Forward bounded-factor isomorphism is the signed Hom–tensor map.
+
+The forward morphism of `finiteFactorHomTensorIso` equals `homTensorComparison R P J U`. -/
 theorem finiteFactorHomTensorIso_hom (L N : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))
     (hUhi : ∀ b : ℤ, N < b → IsZero (U.X b)) :
@@ -77,8 +88,10 @@ theorem finiteFactorHomTensorIso_hom (L N : ℤ)
   intro n
   rfl
 
-/-- The inverse component is exactly the signed finite sum of the original
-projected integer-product/coefficient inverses and native coprojections. -/
+/-- Inverse bounded-factor isomorphism is the finite inverse sum.
+
+In integer degree `n`, the inverse component of the Hom–tensor isomorphism is
+`homTensorFiniteFactorInverseDegree R P J U L N n`. -/
 theorem finiteFactorHomTensorIso_inv_f (L N : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))
     (hUhi : ∀ b : ℤ, N < b → IsZero (U.X b)) (n : ℤ) :

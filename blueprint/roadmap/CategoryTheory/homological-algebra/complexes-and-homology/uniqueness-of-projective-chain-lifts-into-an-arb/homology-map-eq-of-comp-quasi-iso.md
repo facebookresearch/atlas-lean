@@ -1,4 +1,5 @@
-# Homology Map eq of comp quasi Iso
+# Equality of homology maps after projective homotopy cancellation
 
-Maps into any actual augmentation resolution have equal homology maps
-when they cover the same original augmentation.
+Let C be an abelian category. Let P,Q,T be ℕ-indexed chain complexes with every Pₙ projective.
+If q : Q → T is a quasi-isomorphism and f,g : P → Q satisfy q ∘ f=q ∘ g, then Hₙ(f)=Hₙ(g) for
+every n ∈ ℕ, by the resulting homotopy.

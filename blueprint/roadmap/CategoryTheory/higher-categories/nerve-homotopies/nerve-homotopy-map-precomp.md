@@ -1,3 +1,6 @@
-# Nerve Homotopy Map precomp
+# Precomposition of nerve cylinder maps
 
-The cylinder map commutes with precomposition.
+Precomposition of nerve cylinder maps.
+
+For K : B → C, precomposing the cylinder map of α by N(K) × id agrees with the cylinder map
+classified by the left-whiskered transformation Kα.

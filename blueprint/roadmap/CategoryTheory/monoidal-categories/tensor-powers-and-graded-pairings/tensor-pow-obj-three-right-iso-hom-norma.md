@@ -1,4 +1,6 @@
-# Tensor Pow Obj Three Right Iso hom normalized
+# Triple coordinate in one factor unitor form
 
-Fully normalized forward morphism of the right-associated tensor-cube
-comparison.
+Triple coordinate in one factor unitor form.
+
+The forward triple coordinate uses the inverse associator and two successive one-factor
+inverse tensor maps.

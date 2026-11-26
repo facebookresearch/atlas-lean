@@ -1,4 +1,6 @@
-# Sheafification Stalk Linear Equiv
+# The linear comparison from a sheafified stalk to the presheaf stalk
 
-Identifies the stalk of identity-ring module sheafification with the
-original presheaf-module stalk, as modules over the stalk of the ring sheaf.
+The linear comparison from a sheafified stalk to the presheaf stalk.
+
+At x ∈ X, the stalk of aM is linearly equivalent over R_x to the stalk of M. The inverse
+equivalence is induced by the sheafification unit.

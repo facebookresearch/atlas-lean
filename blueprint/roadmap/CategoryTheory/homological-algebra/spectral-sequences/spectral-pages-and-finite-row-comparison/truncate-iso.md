@@ -1,3 +1,5 @@
-# Truncate iso
+# The retained successor homology comparison is unchanged
 
-Successor homology identifications are the original native isomorphisms.
+The retained successor homology comparison is unchanged.
+
+For r+1=r′, use the original successor isomorphism.

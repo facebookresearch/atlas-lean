@@ -13,12 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.IdealCou
 public import Mathlib.LinearAlgebra.Quotient.Basic
 
 /-!
-# Ideal-count subcomplexes and graded quotients
+# Naive ideal-count subcomplexes and their associated complexes
 
-The count stages are subcomplexes of the
-relative Hochschild b complex. Their differentials
-are restrictions and quotient descents of b,
-with the bottom submodule at the lower stage p = 0.
+For the relative naive quotient kernel, the stages F_p,n require at least n + 1 − p ideal
+entries and are preserved by the full Hochschild b boundary. The predecessor L_p is zero at p
+= 0 and F_(p−1) otherwise, so it is also a subcomplex.
+
+Restricting b defines the filtered and predecessor complexes, with their component inclusion
+maps. Quotienting F_p,n by L_p,n viewed inside it defines the associated complex. Its
+differential is induced by the restricted boundary, and the quotient projections form a chain
+map which kills the predecessor inclusion.
 -/
 
 @[expose] public section
@@ -45,7 +49,10 @@ private theorem originalNaiveBoundary_square (n : ℕ)
   simpa only [ModuleCat.hom_comp, LinearMap.comp_apply,
     ModuleCat.hom_zero, LinearMap.zero_apply] using h
 
-/-- The original lower stage is an submodule of its own count stage. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For p,n : ℕ, L_p,n ≤ F_p,n. -/
 theorem naiveLowerWordFiltration_le (p n : ℕ) :
     naiveLowerFiltration k A I p n ≤ naiveWordFiltration k A I p n := by
   by_cases hp : p = 0
@@ -53,7 +60,11 @@ theorem naiveLowerWordFiltration_le (p n : ℕ) :
   · simpa only [naiveLowerFiltration, ite_eq_right hp] using
       (naiveWordFiltration_mono k A I (Nat.sub_le p 1) n)
 
-/-- Lower-stage stability follows from the same original b closure, including p=0. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For p,n : ℕ, the image of L_p,n+1 under K_b.d (n + 1) n lies in L_p,n, including
+the zero predecessor at p = 0. -/
 theorem naiveLowerWordFiltration_d (p n : ℕ) :
     (naiveLowerFiltration k A I p (n + 1)).map
         ((relativeNaiveComplex k A I).d (n + 1) n).hom ≤
@@ -64,7 +75,11 @@ theorem naiveLowerWordFiltration_d (p n : ℕ) :
   · simpa only [naiveLowerFiltration, ite_eq_right hp] using
       (naiveWordFiltration_d k A I (p - 1) n)
 
-/-- The original b map restricted to its original count stages. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveStageD p n : F_p,n+1 →ₗ[k] F_p,n is the relative kernel boundary with its
+domain and codomain restricted to these stages. -/
 def naiveStageD (p n : ℕ) :
     naiveWordFiltration k A I p (n + 1) →ₗ[k] naiveWordFiltration k A I p n :=
   LinearMap.codRestrict (naiveWordFiltration k A I p n)
@@ -72,7 +87,11 @@ def naiveStageD (p n : ℕ) :
       (naiveWordFiltration k A I p (n + 1)))
     (fun x => (Submodule.map_le_iff_le_comap.mp (naiveWordFiltration_d k A I p n)) x.property)
 
-/-- The original b map restricted to its original lower stages. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveLowerStageD p n : L_p,n+1 →ₗ[k] L_p,n is the restriction of the relative
+boundary to the lower stages. -/
 def naiveLowerStageD (p n : ℕ) :
     naiveLowerFiltration k A I p (n + 1) →ₗ[k] naiveLowerFiltration k A I p n :=
   LinearMap.codRestrict (naiveLowerFiltration k A I p n)
@@ -103,12 +122,20 @@ private theorem naiveLowerStageD_square (p n : ℕ) :
       (((relativeNaiveComplex k A I).d (n + 2) (n + 1)).hom x.val) = 0
   exact originalNaiveBoundary_square k A I n x.val
 
-/-- The original count stage, with its native restricted differential. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveFilteredWordComplex p has degree-n module F_p,n and successor differential
+naiveStageD p n. Its square-zero law is inherited from K_b. -/
 def naiveFilteredWordComplex (p : ℕ) : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (naiveWordFiltration k A I p n))
     (fun n => ModuleCat.ofHom (naiveStageD k A I p n)) (by exact naiveStageD_square k A I p)
 
-/-- The lower original stage, with bottom submodules at p=0. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveLowerWordComplex p has degree-n module L_p,n and differential naiveLowerStageD
+p n; at p = 0 all these modules are zero. -/
 def naiveLowerWordComplex (p : ℕ) : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (naiveLowerFiltration k A I p n))
     (fun n => ModuleCat.ofHom (naiveLowerStageD k A I p n))
@@ -136,7 +163,11 @@ private theorem naiveLowerWordComplex_d (p n : ℕ) :
   ChainComplex.of_d (fun m => ModuleCat.of k (naiveLowerFiltration k A I p m))
     (fun m => ModuleCat.ofHom (naiveLowerStageD k A I p m)) n
 
-/-- Restriction retains the original boundary value on every original stage vector. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For x : F_p,n+1, inclusion of the filtered differential's value into K_b.X n equals
+K_b.d (n + 1) n applied to x.val. -/
 theorem naiveFilteredWordComplex_d_val (p n : ℕ)
     (x : naiveWordFiltration k A I p (n + 1)) :
     (naiveWordFiltration k A I p n).subtype
@@ -145,7 +176,11 @@ theorem naiveFilteredWordComplex_d_val (p n : ℕ)
   rw [naiveFilteredWordComplex_d]
   rfl
 
-/-- The original subtype inclusion is a map to the original relative complex. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveFilteredWordInclusion p : naiveFilteredWordComplex p ⟶ K_b has degree-n
+component F_p,n.subtype. -/
 def naiveFilteredWordInclusion (p : ℕ) :
     naiveFilteredWordComplex k A I p ⟶ relativeNaiveComplex k A I :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (naiveWordFiltration k A I p n).subtype)
@@ -161,7 +196,11 @@ theorem naiveFilteredWordInclusion_f (p n : ℕ) :
     (naiveFilteredWordInclusion k A I p).f n =
       ModuleCat.ofHom (naiveWordFiltration k A I p n).subtype := rfl
 
-/-- The lower-to-stage map uses the original submodule inclusion. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveLowerWordInclusion p maps naiveLowerWordComplex p to naiveFilteredWordComplex
+p by the component inclusions L_p,n ≤ F_p,n. -/
 def naiveLowerWordInclusion (p : ℕ) :
     naiveLowerWordComplex k A I p ⟶ naiveFilteredWordComplex k A I p :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
@@ -174,7 +213,11 @@ def naiveLowerWordInclusion (p : ℕ) :
       apply Subtype.ext
       rfl)
 
-/-- Increasing the original index gives its count-stage chain inclusion. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For p ≤ q, naiveFilteredWordMap maps naiveFilteredWordComplex p to
+naiveFilteredWordComplex q using the inclusions F_p,n ≤ F_q,n in every degree. -/
 def naiveFilteredWordMap {p q : ℕ} (h : p ≤ q) :
     naiveFilteredWordComplex k A I p ⟶ naiveFilteredWordComplex k A I q :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom
@@ -187,7 +230,11 @@ def naiveFilteredWordMap {p q : ℕ} (h : p ≤ q) :
       apply Subtype.ext
       rfl)
 
-/-- The restricted original b map descended to the quotient layers. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveLayerD p n maps F_p,n+1/L_p,n+1 to F_p,n/L_p,n by the quotient map induced
+from naiveStageD p n and lower-stage preservation. -/
 def naiveLayerD (p n : ℕ) :
     naiveWordLayer k A I p (n + 1) →ₗ[k] naiveWordLayer k A I p n :=
   ((naiveLowerFiltration k A I p (n + 1)).comap
@@ -221,7 +268,11 @@ private theorem naiveLayerD_square (p n : ℕ) :
     exact originalNaiveBoundary_square k A I n x.val
   rw [hs, map_zero]
 
-/-- The native associated-graded complex has exactly the original quotients. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveAssociatedWordComplex p has degree-n object F_p,n modulo the inverse image of
+L_p,n inside F_p,n, and differential naiveLayerD p n. -/
 def naiveAssociatedWordComplex (p : ℕ) : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of k (naiveWordLayer k A I p n))
     (fun n => ModuleCat.ofHom (naiveLayerD k A I p n)) (by exact naiveLayerD_square k A I p)
@@ -237,7 +288,11 @@ private theorem naiveAssociatedWordComplex_d (p n : ℕ) :
   ChainComplex.of_d (fun m => ModuleCat.of k (naiveWordLayer k A I p m))
     (fun m => ModuleCat.ofHom (naiveLayerD k A I p m)) n
 
-/-- The original module-quotient projections are a chain map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveAssociatedWordProjection p maps naiveFilteredWordComplex p to
+naiveAssociatedWordComplex p by naiveWordLayerProjection p n in degree n. -/
 def naiveAssociatedWordProjection (p : ℕ) :
     naiveFilteredWordComplex k A I p ⟶ naiveAssociatedWordComplex k A I p :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (naiveWordLayerProjection k A I p n))
@@ -248,7 +303,11 @@ def naiveAssociatedWordProjection (p : ℕ) :
       intro x
       exact naiveLayerD_projection k A I p n x)
 
-/-- The quotient differential computes the original restricted boundary before projection. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For x : F_p,n+1, the associated differential of [x] is [naiveStageD p n x] in
+F_p,n/L_p,n. -/
 theorem naiveAssociatedWordComplex_d_projection (p n : ℕ)
     (x : naiveWordFiltration k A I p (n + 1)) :
     ((naiveAssociatedWordComplex k A I p).d (n + 1) n).hom
@@ -263,7 +322,11 @@ theorem naiveAssociatedWordProjection_f (p n : ℕ) :
     (naiveAssociatedWordProjection k A I p).f n =
       ModuleCat.ofHom (naiveWordLayerProjection k A I p n) := rfl
 
-/-- Every lower-stage vector has zero image under the original quotient projection. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. naiveLowerWordInclusion p ≫ naiveAssociatedWordProjection p = 0 as a chain map from
+the predecessor complex to the associated complex. -/
 theorem naiveLowerWordInclusion_projection (p : ℕ) :
     naiveLowerWordInclusion k A I p ≫ naiveAssociatedWordProjection k A I p = 0 := by
   apply HomologicalComplex.hom_ext

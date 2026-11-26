@@ -1,10 +1,10 @@
 # Kernels of split complementary projectors
 
-- [Inclusion comp split Complement](inclusion-comp-split-complement.md)
-- [Split Complement Is Kernel](split-complement-is-kernel.md)
-- [Kernel Split Complement Iso](kernel-split-complement-iso.md)
-- [Kernel Split Complement Iso hom ι](kernel-split-complement-iso-hom.md)
-- [Kernel Split Complement Iso inv ι](kernel-split-complement-iso-inv.md)
-- [Kernel Split Complement Iso hom](kernel-split-complement-iso-hom-2.md)
-- [Kernel Split Complement Iso inv naturality](kernel-split-complement-iso-inv-naturali.md)
-- [Kernel Split Complement Iso naturality](kernel-split-complement-iso-naturality.md)
+- [The retract inclusion is killed by its complement](inclusion-comp-split-complement.md)
+- [Kernel universal property of a split complement](split-complement-is-kernel.md)
+- [Kernel identifies with the split retract](kernel-split-complement-iso.md)
+- [Forward kernel comparison respects the inclusion](kernel-split-complement-iso-hom.md)
+- [Inverse kernel comparison preserves the inclusion](kernel-split-complement-iso-inv.md)
+- [Forward kernel comparison through the retraction](kernel-split-complement-iso-hom-2.md)
+- [Naturality of the inverse retract–kernel comparison](kernel-split-complement-iso-inv-naturali.md)
+- [Naturality of the forward kernel–retract comparison](kernel-split-complement-iso-naturality.md)

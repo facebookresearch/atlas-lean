@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit inverse add
+# Inverse field counit is additive
 
-The inverse is the actual additive function on its original stored module carriers.
+Inverse field counit is additive.
+
+The inverse counit sends a sum of coefficient elements to the sum of their inverse images.

@@ -1,3 +1,5 @@
-# Skeletal First Page Zero Row Cut Iso
+# The zero-row first-page object as a short interval
 
-The interval coordinate for row zero, with total degree transported along `n + 0 = n`.
+The zero-row first-page object as a short interval.
+
+Identify its degree-n object with H_n(−n−1,−n), retaining the n+0=n transport.

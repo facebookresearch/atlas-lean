@@ -1,3 +1,5 @@
-# Tensor Component Projection ι
+# The selected summand is retained by the tensor projection
 
-The actual selected tensor-total summand is retained by the canonical projection.
+The selected summand is retained by the tensor projection.
+
+Its coprojection followed by the projection is the identity.

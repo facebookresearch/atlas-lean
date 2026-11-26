@@ -13,12 +13,15 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.Basic
 public import Mathlib.Algebra.Homology.HomologicalBicomplex
 
 /-!
-# The bicomplex of a Cartan--Eilenberg resolution
+# The Cartan–Eilenberg bicomplex
 
-The two stored horseshoe rows determine maps between the projective
-resolutions of consecutive chain objects.  These maps form a chain complex of
-chain complexes; flipping its two indices gives the resolution-degree-first
-bicomplex used by the Künneth construction.
+Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution. The chosen
+resolutions Rⱼ of the terms Lⱼ have lifted chain maps Dⱼ : Rⱼ₊₁ → Rⱼ covering d_L^{j+1,j}. The
+maps factor through the boundary and cycles horseshoes and satisfy Dⱼ ∘ Dⱼ₊₁=0.
+
+These resolutions form a chain complex of chain complexes. Its flipped bicomplex has first index
+the resolution degree a, second index the original degree j, and entry Rⱼ,ₐ. Every entry is
+projective.
 -/
 
 @[expose] public section
@@ -39,8 +42,10 @@ variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
 namespace CartanEilenbergResolution
 
-/-- The original-chain differential lifted between the chosen term
-resolutions. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For every
+j ∈ ℕ, the original differential Lⱼ₊₁ → Lⱼ lifts to a chain map Dⱼ : Rⱼ₊₁.complex → Rⱼ.complex
+between the stored term resolutions. -/
 noncomputable def termDifferential (j : ℕ) :
     (P.termResolution (j + 1)).complex ⟶
       (P.termResolution j).complex :=
@@ -48,8 +53,11 @@ noncomputable def termDifferential (j : ℕ) :
     (P.cyclesHorseshoe j).i ≫
     (P.termHorseshoe j).i
 
-/-- The lifted differential is the projection to boundaries followed by the
-two canonical horseshoe inclusions. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The
+lifted map Dⱼ projects Rⱼ₊₁ to the resolution of its outgoing boundary, includes that boundary
+resolution in Cⱼ, and then includes Cⱼ in Rⱼ. This three-map composite is the chosen term
+differential. -/
 @[reassoc]
 theorem termDifferential_eq (j : ℕ) :
     P.termDifferential j =
@@ -58,7 +66,10 @@ theorem termDifferential_eq (j : ℕ) :
         (P.termHorseshoe j).i :=
   rfl
 
-/-- Consecutive lifted original-chain differentials compose to zero. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The
+consecutive lifted differentials satisfy Dⱼ ∘ Dⱼ₊₁=0 as chain maps of projective term
+resolutions. -/
 @[reassoc]
 theorem termDifferential_comp (j : ℕ) :
     P.termDifferential (j + 1) ≫ P.termDifferential j = 0 := by
@@ -75,8 +86,10 @@ private theorem baseDifferential (j : ℕ) :
   exact L.toCycles_i (j + 1) j
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The lifted differential commutes with the augmentations to the original
-chain differential. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. If πⱼ :
+Rⱼ.complex → Lⱼ[0] are the stored augmentations, then πⱼ ∘ Dⱼ = (d_L^{j+1,j})[0] ∘ πⱼ₊₁. Thus Dⱼ
+covers the original chain differential. -/
 @[reassoc]
 theorem termDifferential_comp_π (j : ℕ) :
     P.termDifferential j ≫ (P.termResolution j).π =
@@ -106,8 +119,10 @@ theorem termDifferential_comp_π (j : ℕ) :
   rw [reassoc_of% hA]
   rw [← Functor.map_comp, ← Functor.map_comp, baseDifferential]
 
-/-- The lifted differential as a morphism of projective resolutions over the
-original differential. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For each
+j, the lifted term differential Dⱼ together with its augmentation square is a morphism of
+projective resolutions over d_L^{j+1,j} : Lⱼ₊₁ → Lⱼ. -/
 noncomputable def termDifferentialHom (j : ℕ) :
     ProjectiveResolution.Hom
       (P.termResolution (j + 1)) (P.termResolution j)
@@ -124,8 +139,10 @@ theorem termDifferentialHom_hom (j : ℕ) :
     (P.termDifferentialHom j).hom = P.termDifferential j :=
   rfl
 
-/-- The chain complex, in original degree, of chosen term-resolution
-complexes. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The
+term-resolution complexes Rⱼ.complex and their lifted maps Dⱼ form a chain complex indexed by
+original degree j, with values in the category of nonnegative chain complexes. -/
 noncomputable def termComplex :
     ChainComplex (ChainComplex C ℕ) ℕ :=
   ChainComplex.of
@@ -146,8 +163,11 @@ theorem termComplex_d (j : ℕ) :
     (fun k => (P.termResolution k).complex)
     (fun k => P.termDifferential k) j
 
-/-- The Cartan--Eilenberg bicomplex, indexed first by resolution degree and
-second by the original chain degree. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. Flipping
+the two indices of this chain complex gives the Cartan–Eilenberg bicomplex, with entry
+(a,j)=Rⱼ.complexₐ. Its first axis is resolution degree a and its second is original chain degree
+j, both with down-ℕ shape. -/
 noncomputable def bicomplex :
     HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   HomologicalComplex₂.flip P.termComplex
@@ -171,7 +191,10 @@ theorem bicomplex_d₂ (a j : ℕ) :
   change (P.termComplex.d (j + 1) j).f a = _
   rw [P.termComplex_d j]
 
-/-- Every object of the Cartan--Eilenberg bicomplex is projective. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For every
+pair a,j ∈ ℕ, the entry Rⱼ.complexₐ of the Cartan–Eilenberg bicomplex is a projective object of
+C. -/
 theorem bicomplex_projective (a j : ℕ) :
     Projective ((P.bicomplex.X a).X j) := by
   change Projective ((P.termResolution j).complex.X a)

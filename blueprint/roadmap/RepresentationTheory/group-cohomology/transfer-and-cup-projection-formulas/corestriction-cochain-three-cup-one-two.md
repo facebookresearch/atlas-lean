@@ -1,5 +1,6 @@
-# Corestriction Cochain Three cup one two
+# The one-by-two cochain projection identity with its boundary
 
-Cochain-level `(1,2)` projection formula.  The transferred restricted
-cup is the cup with the transferred right factor minus the boundary of the
-explicit degree-two homotopy.
+The one-by-two cochain projection identity with its boundary.
+
+For the stated one- and two-cocycles, cor_T³(x|H ∪ y) = x ∪ cor_T²(y) −
+d²(cupProjectionHomotopyOneTwo A B T x y).

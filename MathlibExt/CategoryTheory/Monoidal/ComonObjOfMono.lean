@@ -15,10 +15,17 @@ module
 public import Mathlib.CategoryTheory.Monoidal.Comon_
 
 /-!
-# Comonoid structure on a tensor-stable subobject
+# Comonoids from tensor-compatible maps
 
-An original comultiplication that factors through the tensor square of a
-monomorphism induces actual comonoid laws by tensor monomorphism cancellation.
+Let C be monoidal, X a comonoid and m : K → X a map. Suppose δ : K → K ⊗ K satisfies δ ≫ (m ⊗
+m) = m ≫ Δ_X. If id_𝟙 ⊗ m, m ⊗ id_𝟙 and m ⊗ (m ⊗ m) are monic, then δ and ε_K = m ≫ ε_X give a
+comonoid on K. The counit laws and coassociativity follow by canceling these specified tensor
+maps against the corresponding laws on X. The map m is then a comonoid morphism.
+
+More generally, if m : Y → Z and g ≫ m are comonoid morphisms and m ⊗ m is monic, then g : X →
+Y is a comonoid morphism. The comultiplication equation follows by tensor-square cancellation
+and the counit equation by compatibility with m. The object and morphism universes remain
+independent.
 -/
 
 @[expose] public section
@@ -31,7 +38,11 @@ universe u v
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
 variable {K X : C} [ComonObj X]
 
-/-- Restrict an actual comonoid to a subobject stable under its original comultiplication. -/
+/-- Comonoid structure induced by tensor compatibility and cancellation.
+
+Let X be a comonoid in a monoidal category, m : K → X and δ : K → K ⊗ K with δ ≫ (m ⊗ m) = m ≫
+Δ_X. Assuming id_𝟙 ⊗ m, m ⊗ id_𝟙 and m ⊗ (m ⊗ m) are monic, set Δ_K = δ and ε_K = m ≫ ε_X.
+Cancellation of these tensor maps proves the counit and coassociativity laws. -/
 @[instance_reducible]
 def ofTensorStableMono (m : K ⟶ X) (δ : K ⟶ K ⊗ K)
     (hδ : δ ≫ (m ⊗ₘ m) = m ≫ ComonObj.comul)
@@ -86,6 +97,11 @@ def ofTensorStableMono (m : K ⟶ X) (δ : K ⟶ K ⊗ K)
             rw [← Category.assoc (δ ⊗ₘ 𝟙 K), hR]
             simp only [← Category.assoc, hδ])
 
+/-- Comonoid compatibility of the inducing map.
+
+With δ ≫ (m ⊗ m) = m ≫ Δ_X and the three specified monic tensor maps, equip K with the induced
+comonoid structure Δ_K = δ and ε_K = m ≫ ε_X. Then m : K → X is a comonoid morphism,
+preserving both comultiplication and counit. -/
 lemma ofTensorStableMono_isComonHom (m : K ⟶ X) (δ : K ⟶ K ⊗ K)
     (hδ : δ ≫ (m ⊗ₘ m) = m ≫ ComonObj.comul)
     [Mono (𝟙 (𝟙_ C) ⊗ₘ m)] [Mono (m ⊗ₘ 𝟙 (𝟙_ C))]
@@ -103,7 +119,11 @@ open MonoidalCategory
 variable {C : Type*} [Category* C] [MonoidalCategory C]
 variable {X Y Z : C} [ComonObj X] [ComonObj Y] [ComonObj Z]
 
-/-- An original factor is a comonoid map when its tensor-square comparison is monic. -/
+/-- Comonoid compatibility detected by a tensor-square comparison.
+
+Let X,Y,Z be comonoids in a monoidal category, g : X → Y and m : Y → Z. If m and g ≫ m are
+comonoid morphisms and m ⊗ m is monic, then g is a comonoid morphism. The counit equation
+follows through m, while cancellation of m ⊗ m proves the comultiplication equation. -/
 lemma isComonHom_of_postcomp_tensorMono (g : X ⟶ Y) (m : Y ⟶ Z)
     [IsComonHom m] [IsComonHom (g ≫ m)] [Mono (m ⊗ₘ m)] : IsComonHom g := by
   constructor

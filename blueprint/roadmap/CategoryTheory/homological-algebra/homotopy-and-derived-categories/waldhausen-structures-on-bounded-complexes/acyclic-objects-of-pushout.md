@@ -1,4 +1,6 @@
-# Acyclic Objects of pushout
+# Acyclic objects are closed under cofibration pushouts
 
-Original gluing from the all-zero square proves acyclicity of the
-given pushout apex from the three original acyclic span objects.
+Let C have a zero object and Waldhausen cofibration/weak-equivalence
+data satisfying gluing. For a pushout of i:X → Y and f:X → Z,
+with i a cofibration, if 0 → X, 0 → Y and 0 → Z are weak equivalences,
+then 0 → P is a weak equivalence for its pushout apex P.

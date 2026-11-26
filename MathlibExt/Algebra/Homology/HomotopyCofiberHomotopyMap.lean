@@ -14,20 +14,26 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.HomologySequenceLemmas
 
 /-!
-# Homotopy squares and the original homotopy cofiber
+# Homotopy squares and maps of homotopy cofibers
 
-The native cofiber descendant constructs the map of a homotopy square.
-Its component formulas retain the actual two vertical maps and homotopy.
-For nonnegative chain complexes, the native cofiber of the zero-target
-map supplies the quotient of the target inclusion. The ordinary binary
-biproduct decomposition proves this short complex degreewise split.
-The existing homology-sequence comparison then proves that a homotopy
-square with quasi-isomorphisms on both vertical sides induces a
-quasi-isomorphism on the same native cofibers.
+Let C be preadditive with binary biproducts, and let c have decidable
+differential relation and a predecessor in every degree. For complex maps
+φ:F → G and ψ:F′ → G′, maps a:F → F′ and b:G → G′, and a homotopy
+H:b∘φ ∼ ψ∘a, there is an induced map M:Cofib(φ) → Cofib(ψ).
+In degree j with c.Rel(j,i), its biproduct coordinates are
+(x,y) ↦ (aᵢ(x),Hᵢⱼ(x)+bⱼ(y)).
+The homotopy occurs with a positive sign. A commuting square with its
+zero-component homotopy gives the ordinary arrow-induced cofiber map.
 
-This extends the native cochain mapping-cone API to general complex shapes
-and nonnegative chain complexes. It introduces no alternative cone model.
+If C has a zero object, the target inclusion and projection to Cofib(F → 0)
+form the sequence G → Cofib(φ) → Cofib(F → 0), split in every degree.
+The homotopy square induces a map of these sequences with components
+b, M and the zero-target cofiber map induced by a.
 
+For an abelian category the target sequence is short exact.
+For nonnegative chain complexes, if a and b are quasi-isomorphisms then
+M is a quasi-isomorphism. The constructions use an arbitrary shape; its index universe is independent
+of the category object and morphism universes.
 -/
 
 @[expose] public section
@@ -51,7 +57,15 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (a : F ⟶ F') (b : G ⟶ G')
   (H : _root_.Homotopy (φ ≫ b) (a ≫ ψ))
 
-/-- The actual nullhomotopy into the target cofiber of a homotopy square. -/
+/-- Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+The nullhomotopy of the composite F → G → G′ → Cofib(ψ),
+using b and the target cofiber inclusion, obtained by composing H with
+that inclusion and the canonical nullhomotopy of ψ followed by its
+cofiber inclusion. -/
 def mapOfHomotopyNull :
     _root_.Homotopy (φ ≫ (b ≫ inr ψ)) 0 :=
   (_root_.Homotopy.ofEq ((Category.assoc φ b (inr ψ)).symm)).trans
@@ -60,17 +74,39 @@ def mapOfHomotopyNull :
         (((inrCompHomotopy ψ hc).compLeft a).trans
           (_root_.Homotopy.ofEq (comp_zero : a ≫ 0 = 0)))))
 
-/-- Map the native cofibers using the actual vertical maps and homotopy. -/
+/-- Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+The induced cofiber map M:Cofib(φ) → Cofib(ψ), obtained from b
+on the target and the nullhomotopy of inr_ψ∘b∘φ.
+For c.Rel(j,i), its degree-j coordinates are
+(x,y)↦(aᵢ(x),Hᵢⱼ(x)+bⱼ(y)). -/
 def mapOfHomotopy : homotopyCofiber φ ⟶ homotopyCofiber ψ :=
   desc φ (b ≫ inr ψ) (mapOfHomotopyNull φ ψ hc a b H)
 
-/-- The actual right vertical map is retained strictly. -/
+/-- Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+For the induced cofiber map M, the target inclusions commute with b:
+M ∘ inr_φ = inr_ψ ∘ b as maps G → Cofib(ψ). -/
 @[reassoc]
 theorem inr_mapOfHomotopy :
     inr φ ≫ mapOfHomotopy φ ψ hc a b H = b ≫ inr ψ :=
   inr_desc φ (b ≫ inr ψ) (mapOfHomotopyNull φ ψ hc a b H)
 
-/-- The homotopy is the only off-diagonal component of the native cone map. -/
+/-- Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+For c.Rel(j,i), the shifted-source component of the induced map M is
+Mⱼ ∘ inl_φ(i,j)
+= inr_ψ(j) ∘ Hᵢⱼ + inl_ψ(i,j) ∘ aᵢ.
+Thus the homotopy component is the positive off-diagonal term. -/
 @[reassoc]
 theorem inlX_mapOfHomotopy (i j : ι) (hji : c.Rel j i) :
     inlX φ i j hji ≫ (mapOfHomotopy φ ψ hc a b H).f j =
@@ -81,7 +117,13 @@ theorem inlX_mapOfHomotopy (i j : ι) (hji : c.Rel j i) :
     _root_.Homotopy.compLeft_hom, Pi.zero_apply, zero_add, add_zero,
     inrCompHomotopy_hom ψ hc i j hji, inr_f]
 
-/-- The original target component is retained in each native cone degree. -/
+/-- Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+In every degree j the target component of the induced map M satisfies
+Mⱼ ∘ inr_φ(j) = inr_ψ(j) ∘ bⱼ. -/
 @[reassoc]
 theorem inrX_mapOfHomotopy (j : ι) :
     inrX φ j ≫ (mapOfHomotopy φ ψ hc a b H).f j =
@@ -89,7 +131,11 @@ theorem inrX_mapOfHomotopy (j : ι) :
   simpa only [HomologicalComplex.comp_f, inr_f] using
     congrArg (fun f => f.f j) (inr_mapOfHomotopy φ ψ hc a b H)
 
-/-- A strict square recovers the existing native arrow-cofiber map. -/
+/-- Let C be preadditive with binary biproducts and let c have decidable
+differential relation and a predecessor in every degree.
+For φ:F → G, ψ:F′ → G′ and maps a:F → F′, b:G → G′ satisfying
+b∘φ=ψ∘a, the cofiber map formed with the equality's zero-component
+homotopy equals the map induced by this commuting arrow square. -/
 theorem mapOfHomotopy_ofEq (h : φ ≫ b = a ≫ ψ) :
     mapOfHomotopy φ ψ hc a b (_root_.Homotopy.ofEq h) =
       mapArrowHom φ ψ hc (Arrow.homMk' a b h.symm) := by
@@ -114,11 +160,16 @@ section TargetSequence
 
 variable [HasZeroObject C]
 
-/-- Use the native zero-target cofiber, without a second suspension model. -/
+/-- In a preadditive category C with a zero object and binary biproducts,
+for a complex F of shape c with decidable differential relation, the
+zero-target cofiber Cofib(0:F → 0). -/
 abbrev zeroTarget (F : HomologicalComplex C c) :=
   homotopyCofiber (0 : F ⟶ (HomologicalComplex.zero : HomologicalComplex C c))
 
-/-- The quotient map is the native cofiber map of the actual zero-target square. -/
+/-- Let C be preadditive with a zero object and binary biproducts, and let
+c have decidable differential relation. For a complex map φ:F → G,
+the commuting square from φ to the zero-target map F → 0 whose
+source side is 1_F and whose target side is G → 0. -/
 def targetProjectionArrow :
     Arrow.mk φ ⟶ Arrow.mk (0 : F ⟶ (HomologicalComplex.zero : HomologicalComplex C c)) :=
   Arrow.homMk' (𝟙 F) (0 : G ⟶ (HomologicalComplex.zero : HomologicalComplex C c)) (by simp)
@@ -146,7 +197,11 @@ theorem inlX_targetProjection (i j : ι) (hji : c.Rel j i) :
       inlX (0 : F ⟶ (HomologicalComplex.zero : HomologicalComplex C c)) i j hji at h
   exact h.trans (by simp only [HomologicalComplex.id_f, Category.id_comp])
 
-/-- The target inclusion and native zero-target quotient form a short complex. -/
+/-- Let C be preadditive with a zero object and binary biproducts, c have
+decidable differential relation and a predecessor in every degree,
+and φ:F → G be a complex map. The short complex
+G —inr_φ→ Cofib(φ) —p_φ→ Cofib(F → 0),
+where p_φ is induced by the square (1_F,G → 0); its composite is zero. -/
 abbrev targetShortComplex : ShortComplex (HomologicalComplex C c) :=
   ShortComplex.mk (inr φ) (targetProjection φ hc) (by
     have h := inr_mapArrowHom hc (targetProjectionArrow φ)
@@ -155,14 +210,23 @@ abbrev targetShortComplex : ShortComplex (HomologicalComplex C c) :=
         inr (0 : F ⟶ (HomologicalComplex.zero : HomologicalComplex C c)) at h
     exact h.trans (by simp only [zero_comp]))
 
-/-- The quotient has a pointwise section; this is not asserted natural in degrees. -/
+/-- Let C be preadditive with a zero object and binary biproducts, c have
+decidable differential relation, and φ:F → G be a complex map.
+For each degree j, the map Cofib(F → 0)ⱼ → Cofib(φ)ⱼ that includes
+the shifted-source coordinate. If j has no outgoing shape relation,
+it is zero. -/
 def targetSection (j : ι) : (zeroTarget F).X j ⟶ (homotopyCofiber φ).X j :=
   if hj : c.Rel j (c.next j) then
     fstX (0 : F ⟶ (HomologicalComplex.zero : HomologicalComplex C c)) j (c.next j) hj ≫
       inlX φ (c.next j) j hj
   else 0
 
-/-- Native cofiber coordinates compute the pointwise splitting of the target sequence. -/
+/-- Let C be preadditive with a zero object and binary biproducts, c have
+decidable differential relation and a predecessor in every degree,
+and φ:F → G be a complex map. The sequence
+Gⱼ → Cofib(φ)ⱼ → Cofib(F → 0)ⱼ has a splitting in each degree j:
+the retraction onto Gⱼ is the target-coordinate projection and the
+section from the zero-target cofiber includes the shifted-source coordinate. -/
 def targetShortComplexSplitting (j : ι) :
     ((targetShortComplex φ hc).map (HomologicalComplex.eval C c j)).Splitting where
   r := sndX φ j
@@ -201,7 +265,11 @@ def targetShortComplexSplitting (j : ι) :
     · simp only [r, i, targetSection, dite_eq_right hj, comp_zero, add_zero, sndX_inrX φ j hj]
       rfl
 
-/-- The source vertical map induces the existing native map of zero-target cofibers. -/
+/-- Let C be preadditive with a zero object and binary biproducts and let
+c have decidable differential relation and a predecessor in every
+degree. For a complex map a:F → F′, the induced map
+Cofib(F → 0) → Cofib(F′ → 0), given by the arrow square with source
+map a and the unique map of zero targets. -/
 def zeroTargetMap (a : F ⟶ F') : zeroTarget F ⟶ zeroTarget F' :=
   mapArrowHom
     (0 : F ⟶ (HomologicalComplex.zero : HomologicalComplex C c))
@@ -221,7 +289,16 @@ theorem inlX_zeroTargetMap (a : F ⟶ F') (i j : ι) (hji : c.Rel j i) :
       HomologicalComplex.zero) (by simp)
   exact inlX_mapArrowHom hc s i j hji
 
-/-- The homotopy square induces the original strict map of target short complexes. -/
+/-- Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+Assume also that C has a zero object. The induced morphism between
+G → Cofib(φ) → Cofib(F → 0) and
+G′ → Cofib(ψ) → Cofib(F′ → 0) has first component b,
+middle component M(a,b,H), and third component the zero-target
+cofiber map induced by a. -/
 def targetShortComplexMap :
     targetShortComplex φ hc ⟶ targetShortComplex ψ hc where
   τ₁ := b
@@ -256,7 +333,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {F G : HomologicalComplex C c} (φ : F ⟶ G)
   (hc : ∀ j : ι, ∃ i, c.Rel i j)
 
-/-- The target sequence is short exact, earned from its computed binary biproduct coordinates. -/
+/-- Let C be abelian and c a complex shape with decidable differential
+relation and a predecessor in every degree. For a complex map
+φ:F → G, the sequence
+0 → G → Cofib(φ) → Cofib(F → 0) → 0
+with its target inclusion and zero-target projection is short exact. -/
 theorem targetShortComplex_shortExact :
     (targetShortComplex φ hc).ShortExact :=
   HomologicalComplex.shortExact_of_degreewise_shortExact _
@@ -266,7 +347,10 @@ section DownNat
 
 variable {F G F' G' : ChainComplex C ℕ}
 
-/-- Quasi-isomorphism of native zero-target cofibers follows from the original source map. -/
+/-- In an abelian category C, if a:F → F′ is a quasi-isomorphism of
+nonnegative chain complexes, the induced zero-target cofiber map
+Cofib(F → 0) → Cofib(F′ → 0), using the predecessors n+1,
+is a quasi-isomorphism. -/
 theorem quasiIso_zeroTargetMap_downNat (a : F ⟶ F') (ha : QuasiIso a) :
     QuasiIso (zeroTargetMap (fun j : ℕ => ⟨j + 1, by simp⟩) a) := by
   let Z : ChainComplex C ℕ := HomologicalComplex.zero
@@ -279,7 +363,11 @@ theorem quasiIso_zeroTargetMap_downNat (a : F ⟶ F') (ha : QuasiIso a) :
     infer_instance
   exact quasiIso_mapArrowHom_downNat q ha hRight
 
-/-- An actual homotopy square of nonnegative chain maps preserves native cone quasi-isomorphisms. -/
+/-- Let C be abelian, φ:F → G and ψ:F′ → G′ maps of nonnegative
+chain complexes, and a:F → F′, b:G → G′ quasi-isomorphisms.
+For any homotopy H:b∘φ ∼ ψ∘a, the induced map
+M(a,b,H):Cofib(φ) → Cofib(ψ), using predecessors n+1,
+is a quasi-isomorphism. -/
 theorem quasiIso_mapOfHomotopy_downNat
     {φ : F ⟶ G} {ψ : F' ⟶ G'} (a : F ⟶ F') (b : G ⟶ G')
     (H : _root_.Homotopy (φ ≫ b) (a ≫ ψ))

@@ -15,7 +15,16 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.Algebra.Homology.ShortComplex.Abelian
 
-/-! # The actual homology tail preserves a proved comparison of cochain maps -/
+/-!
+# Homology composition from a cochain-map comparison
+
+Let C be an abelian category with independent object and morphism universes u,v. For nonnegative
+cochain complexes A,B,D and maps e:A→B, f:B→D, t:A→D with e≫f=t, homology functoriality gives
+H^n(e)≫H^n(f)=H^n(t).
+
+A specified tail map τ:H^n(B)→H^n(D) equal to H^n(f) therefore satisfies H^n(e)≫τ=H^n(t). The
+construction records this equality as lifted proof data.
+-/
 
 @[expose] public section
 set_option autoImplicit false
@@ -24,7 +33,9 @@ open CategoryTheory CategoryTheory.Limits
 namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- A true homology-tail formula and a true cochain-map comparison determine their actual composite in all degrees. -/
+/-- Let C be an abelian category in object and morphism universes u,v, and A,B,D nonnegative cochain
+complexes. For e:A→B, f:B→D, t:A→D, and n≥0, suppose e≫f=t and τ:H^n(B)→H^n(D) equals H^n(f).
+Then H^n(e)≫τ=H^n(t), provided as lifted proof data. -/
 def liftedTailComposition {A B D : CochainComplex C ℕ}
     (e : A ⟶ B) (f : B ⟶ D) (t : A ⟶ D) (n : ℕ)
     (tail : B.homology n ⟶ D.homology n)

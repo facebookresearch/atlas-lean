@@ -1,3 +1,6 @@
-# Field Mapped Injective Resolution Hom hom
+# Mapped resolution morphism is the termwise fiber map
 
-Every actual source-resolution map is literally mapped by the SAME T.
+Mapped resolution morphism is the termwise fiber map.
+
+The underlying cochain map of a mapped resolution morphism is the termwise geometric-fiber
+image of the given resolution morphism.

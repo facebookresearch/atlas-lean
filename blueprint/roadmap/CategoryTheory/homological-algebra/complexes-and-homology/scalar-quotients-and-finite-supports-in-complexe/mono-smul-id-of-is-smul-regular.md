@@ -1,4 +1,5 @@
-# Mono smul id of is SMul Regular
+# Injective scalar multiplication makes the scalar module endomorphism monic
 
-Native module scalar monicity is earned from actual module scalar
-regularity. The carrier and the coefficient ring have independent worlds.
+Let R be a commutative ring in u, M∈ModuleCat_v(R), and a∈R. If multiplication m↦a•m is
+injective on M, then a•id_M is mono in the module category. The ring and carrier universes are
+independent.

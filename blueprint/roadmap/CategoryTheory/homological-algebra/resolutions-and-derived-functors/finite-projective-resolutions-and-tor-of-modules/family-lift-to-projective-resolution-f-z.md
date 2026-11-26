@@ -1,4 +1,6 @@
-# Family Lift To Projective Resolution f zero comp
+# The projective-resolution lift commutes with degree-zero augmentation
 
-The degree-zero component of the Koszul-family comparison has the
-expected augmentation factorization.
+The projective-resolution lift commutes with degree-zero augmentation.
+
+Its degree-zero map followed by the target augmentation equals the Koszul augmentation
+followed by q.

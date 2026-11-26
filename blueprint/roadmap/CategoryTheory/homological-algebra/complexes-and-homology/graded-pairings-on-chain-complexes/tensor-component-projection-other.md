@@ -1,3 +1,5 @@
-# Tensor Component Projection other
+# Other tensor summands are killed by the selected projection
 
-Every other original tensor-total summand is annihilated by the canonical projection.
+Other tensor summands are killed by the selected projection.
+
+For i+j=p+q with (i,j)≠(p,q), the corresponding coprojection has zero composite.

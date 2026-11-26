@@ -1,3 +1,8 @@
-# Sequential Milnor Iso Of Is Zero hom
+# Forward map of the vanishing-lim-one comparison
 
-The forward comparison is exactly the actual Milnor edge.
+Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+The forward map of the comparison H_j(lim K) ≅ lim(H_jK) equals the canonical Milnor edge.

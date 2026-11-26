@@ -1,3 +1,6 @@
-# Cohomology Zero Iso Kernel
+# The canonical isomorphism with the first differential kernel
 
-The actual degree-zero cohomology object is the native kernel of its differential.
+The canonical isomorphism with the first differential kernel.
+
+With a chosen kernel of d⁰, identify H⁰(K) with ker(d⁰) through their common kernel universal
+property.

@@ -18,12 +18,16 @@ public import Mathlib.CategoryTheory.Equivalence
 public import MathlibExt.Algebra.Module.NatInt
 
 /-!
-# Native bimodule tensor functors from a Morita pair
+# Tensor functors between enveloping-module categories
 
-The categories are the original native enveloping-module categories. The
-object is the original `(Q ⊗_R M) ⊗_R P`, with its computed outer actions.
-The original module reconstruction and coefficient map preserve native
-carriers and morphism values. No category equivalence is given as data.
+Let R,S be rings in universes r,s, and let P be an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in universe v. For an R-bimodule M, the coefficient tensor F(M)=(Q⊗_R M)⊗_R P has left
+S-action on Q and right S-action on P.
+
+These actions define an S⊗_ℤSᵒᵖ-module. They give a functor
+ModuleCat_v(R⊗_ℤRᵒᵖ)→ModuleCat_v(S⊗_ℤSᵒᵖ), whose map on f:M→N sends (q⊗m)⊗p to (q⊗f(m))⊗p. The
+two endpoint rings and the coefficient carrier universe remain independent. This tensor functor
+is defined for any such P,Q.
 -/
 
 @[expose] public section
@@ -51,7 +55,10 @@ variable (M : Type v) [AddCommGroup M] [givenIntegerModule : Module ℤ M]
   [Module R M] [Module Rᵐᵒᵖ M] [SMulCommClass R Rᵐᵒᵖ M]
 
 include P Q in
-/-- Bundle the actual coefficient tensor with its earned native enveloping action. -/
+/-- Let R,S be rings in independent universes r,s. Let P be an (R,S)-bimodule and Q an
+(S,R)-bimodule, with abelian carriers in universe v and commuting endpoint actions. For an
+R-bimodule M in v, F(M)=(Q⊗_R M)⊗_R P is an object of ModuleCat_v(S⊗_ℤSᵒᵖ). The left S-action
+acts on q and the right S-action on p: (s⊗t)•((q⊗m)⊗p)=((s•q)⊗m)⊗(t•p), for t∈Sᵒᵖ. -/
 def tensorObject : ModuleCat.{v} (S ⊗[ℤ] Sᵐᵒᵖ) := by
   letI := TensorProduct.Balanced.Morita.coefficientModule ℤ R S Q M P
   exact ModuleCat.of (S ⊗[ℤ] Sᵐᵒᵖ)
@@ -60,7 +67,10 @@ def tensorObject : ModuleCat.{v} (S ⊗[ℤ] Sᵐᵒᵖ) := by
 end OriginalActions
 
 include P Q in
-/-- The actual tensor object of the given native R-bimodule. -/
+/-- Let R,S be rings in independent universes r,s. Let P be an (R,S)-bimodule and Q an
+(S,R)-bimodule, with abelian carriers in universe v and commuting endpoint actions. For
+X∈ModuleCat_v(R⊗_ℤRᵒᵖ), restrict its endpoint actions and form F(X)=(Q⊗_R X)⊗_R P. The outer Q
+and P actions make it an S⊗_ℤSᵒᵖ-module in the same coefficient carrier universe v. -/
 def tensorObj (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     ModuleCat.{v} (S ⊗[ℤ] Sᵐᵒᵖ) := by
   letI := ModuleCat.Bimodule.leftModule R X
@@ -68,7 +78,11 @@ def tensorObj (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
   letI := ModuleCat.Bimodule.commute R X
   exact tensorObject R S P Q X
 
-/-- The original native morphism acts only on the middle coefficient. -/
+/-- Let R,S be rings in independent universes r,s. Let P be an (R,S)-bimodule and Q an
+(S,R)-bimodule, with abelian carriers in universe v and commuting endpoint actions. For f:X→Y in
+ModuleCat_v(R⊗_ℤRᵒᵖ), the induced S⊗_ℤSᵒᵖ-linear map F(X)→F(Y) is id_Q⊗f⊗id_P on the
+left-associated balanced tensor. Its outer factors are retained, and its pure coefficient value
+is (q⊗f(x))⊗p. -/
 def tensorMap {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     tensorObj R S P Q X ⟶ tensorObj R S P Q Y := by
   letI := ModuleCat.Bimodule.leftModule R X
@@ -90,8 +104,13 @@ def tensorMap {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     (TensorProduct.Balanced.Morita.coefficientMap
       (k := ℤ) (R := R) (S := S) (Q := Q) (M := X) (N := Y) (P := P) g)
 
-/-- Pure triples retain the original middle map, with both outer factors fixed. -/
-@[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
+-- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
+/-- Let R,S be rings in independent universes r,s. Let P be an (R,S)-bimodule and Q an
+(S,R)-bimodule, with abelian carriers in universe v and commuting endpoint actions. For f:X→Y in
+the R-enveloping module category and q∈Q,x∈X,p∈P, the tensor map satisfies F(f)((q⊗_R x)⊗_R
+p)=(q⊗_R f(x))⊗_R p. Both sides are classes in the balanced tensor F(Y), with the endpoint
+actions restricted from X,Y. -/
+@[simp, nolint simpNF]
 theorem tensorMap_mk {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y)
     (q : Q) (x : X) (p : P) :
     letI := ModuleCat.Bimodule.leftModule R X
@@ -136,7 +155,10 @@ theorem tensorMap_mk {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y)
       (TensorProduct.Balanced.mk ℤ R Q Y q y) p) hg)
 
 include P Q in
-/-- The actual native bimodule tensor functor, with both functor laws earned. -/
+/-- Let R,S be rings in independent universes r,s. Let P be an (R,S)-bimodule and Q an
+(S,R)-bimodule, with abelian carriers in universe v and commuting endpoint actions. The functor
+F:ModuleCat_v(R⊗_ℤRᵒᵖ)→ModuleCat_v(S⊗_ℤSᵒᵖ) has F(X)=(Q⊗_R X)⊗_R P and F(f)=id_Q⊗f⊗id_P. Its
+maps preserve identity morphisms and composition, using the same computed outer S-actions. -/
 def tensorFunctor :
     ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ) ⥤ ModuleCat.{v} (S ⊗[ℤ] Sᵐᵒᵖ) where
   obj := tensorObj R S P Q

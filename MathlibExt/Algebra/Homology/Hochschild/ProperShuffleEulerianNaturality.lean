@@ -16,14 +16,15 @@ public import Mathlib.Algebra.Homology.QuasiIso
 /-!
 # Naturality of rational proper-shuffle sections
 
-Compatible algebra and coefficient
-maps commute with the zero-plus-first
-Eulerian projector. The proper quotient
-projection and section are natural,
-giving arrow retracts of the original
-Hochschild maps. Rational ground
-structure and independent carrier
-universes are retained.
+Let `k` be a commutative `ℚ`-algebra, let `g : A → B` be a homomorphism of commutative
+`k`-algebras, and let `f : M → N` be ground-linear with `f(a • m) = g(a) • f(m)`. The induced
+coefficient Hochschild map commutes with the Eulerian projector which is weight zero in degree
+zero and weight one in positive degrees.
+
+The quotient by both-positive shuffle relations has a rational Eulerian section. This section
+is natural in the compatible pair `(g,f)`, so the induced proper-quotient chain map is an
+arrow retract of the coefficient Hochschild chain map. The scalar, algebra, and coefficient
+universes remain independent.
 -/
 
 @[expose] public section
@@ -43,7 +44,10 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   [SMulCommClass k A M] [SMulCommClass k B N]
   [IsScalarTower k A M] [IsScalarTower k B N]
 
-/-- Original coefficient and algebra maps preserve the original full first chain projector. -/
+/-- Naturality of the zero-plus-first Eulerian chain projector.
+
+A compatible algebra map `g` and coefficient map `f` commute with the full first Eulerian
+chain projector at the source and target. -/
 @[reassoc]
 theorem firstChainMap_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
@@ -58,7 +62,10 @@ theorem firstChainMap_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (ModuleCat.Algebra.Hochschild.linearMap g.toNonUnitalAlgHom f n).comp (firstEulerianOperator k A M n)
   exact (firstOperator_naturality k g f n).symm
 
-/-- Surjectivity of the quotient projection makes the original section natural. -/
+/-- Naturality of the proper-shuffle Eulerian section.
+
+For compatible algebra and coefficient maps, applying the proper-quotient map and then the
+target Eulerian section equals the source section followed by the coefficient Hochschild map. -/
 @[reassoc]
 theorem section_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
@@ -88,7 +95,10 @@ theorem section_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
   have hn := congrArg (fun t : chainComplex k A M ⟶ chainComplex k B N => t.f n) h
   simpa only [HomologicalComplex.comp_f, Category.assoc] using hn
 
-/-- The original quotient map is an arrow retract of the original Hochschild map. -/
+/-- The proper-shuffle map as an arrow retract of a Hochschild map.
+
+The natural Eulerian sections and quotient projections exhibit the proper-quotient chain map
+induced by `(g,f)` as an arrow retract of the associated coefficient Hochschild chain map. -/
 def mapRetract (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
     RetractArrow (chainMap k g f hf) (originalAlgebraCoefficientChainMap k g f hf) where

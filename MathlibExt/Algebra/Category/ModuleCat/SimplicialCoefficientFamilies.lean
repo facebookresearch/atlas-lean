@@ -13,17 +13,16 @@ public import MathlibExt.Algebra.Category.ModuleCat.TensorBifunctor
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 
 /-!
-# Native coefficient families on original simplicial module diagrams
+# Normalized tensor families of simplicial modules
 
-The native tensor bifunctor, native whiskering functors and Moore
-normalization form one functor from the original diagram to its coefficient
-family. All actual diagram maps and coefficient maps remain the original
-maps on these native models. A fixed original prism gives a
-parameter-natural normalized chain homotopy.
+For a commutative ring R, a simplicial R-module diagram X and a coefficient module M, form the
+coefficient-first tensor diagram M ⊗_R X and its normalized Moore chain complex N(M ⊗_R X).
+Varying X gives a functor to coefficient families, and varying M gives their coefficient maps.
 
-Ring, diagram-carrier and coefficient universes are independent. There is
-no flatness, projectivity or naturality certificate input, and no new
-complex or tensor construction.
+A simplicial homotopy H between maps X → Y induces normalized chain homotopies for every M.
+Their components are natural in coefficient maps: h_M(n,m) followed by the Y-coefficient map
+equals the X-coefficient map followed by h_N(n,m). The ring, diagram-carrier and coefficient-
+carrier universe levels are independent.
 -/
 
 @[expose] public section
@@ -38,7 +37,10 @@ namespace ModuleCat.SimplicialCoefficientFamilies
 
 variable (R : Type u) [CommRing R]
 
-/-- Native tensor/whiskering/normalization, as a functor of original coefficient families. -/
+/-- The family of normalized coefficient tensors.
+
+Send a simplicial module X to the coefficient functor M ↦ N(M ⊗_R X), using the coefficient-
+first tensor bifunctor and normalized Moore complex. -/
 def normalized : SimplicialObject (ModuleCat.{v} R) ⥤
     (ModuleCat.{t} R ⥤ ChainComplex (ModuleCat.{max v t} R) ℕ) :=
   CategoryTheory.Functor.whiskeringLeft SimplexCategoryᵒᵖ
@@ -52,27 +54,38 @@ def normalized : SimplicialObject (ModuleCat.{v} R) ⥤
       (ChainComplex (ModuleCat.{max v t} R) ℕ)).obj
         (normalizedMooreComplex (ModuleCat.{max v t} R))
 
-/-- Every family object is the same original coefficient tensor before native normalization. -/
+/-- The normalized family at a coefficient module.
+
+The value at X and M is the normalized Moore complex of X followed by the functor M ⊗_R −. -/
 theorem obj_obj (X : SimplicialObject (ModuleCat.{v} R)) (M : ModuleCat.{t} R) :
     ((normalized R).obj X).obj M =
       (normalizedMooreComplex (ModuleCat.{max v t} R)).obj
         (X ⋙ (ModuleCat.tensorBifunctorAt.{u, t, v} R).obj M) := rfl
 
-/-- Diagram arrows are exactly the original coefficient-first normalized arrows. -/
+/-- The normalized map of a simplicial diagram morphism.
+
+For f : X → Y and fixed M, the family map is normalization of the simplicial map obtained by
+tensoring f on the left with M. -/
 theorem map_app {X Y : SimplicialObject (ModuleCat.{v} R)} (f : X ⟶ Y)
     (M : ModuleCat.{t} R) :
     ((normalized R).map f).app M =
       (normalizedMooreComplex (ModuleCat.{max v t} R)).map
         (Functor.whiskerRight f ((ModuleCat.tensorBifunctorAt.{u, t, v} R).obj M)) := rfl
 
-/-- Coefficient arrows are exactly the original tensor natural-transformation components. -/
+/-- The normalized map of a coefficient morphism.
+
+For a : M → N and fixed X, the coefficient-family map is normalization of the simplicial map a
+⊗ id_X. -/
 theorem obj_map (X : SimplicialObject (ModuleCat.{v} R))
     {M N : ModuleCat.{t} R} (a : M ⟶ N) :
     ((normalized R).obj X).map a =
       (normalizedMooreComplex (ModuleCat.{max v t} R)).map
         (Functor.whiskerLeft X ((ModuleCat.tensorBifunctorAt.{u, t, v} R).map a)) := rfl
 
-/-- The fixed original prism produces a natural normalized homotopy of the actual coefficient maps. -/
+/-- Coefficient naturality of normalized simplicial homotopies.
+
+For a fixed simplicial homotopy H and a coefficient map a : M → N, its normalized components
+satisfy h_M(n,m) ≫ N_Y(a)_m = N_X(a)_n ≫ h_N(n,m), for all n,m ∈ ℕ. -/
 theorem homotopy_naturality {X Y : SimplicialObject (ModuleCat.{v} R)}
     {f g : X ⟶ Y} (H : SimplicialObject.Homotopy f g)
     {M N : ModuleCat.{t} R} (a : M ⟶ N) (n m : ℕ) :

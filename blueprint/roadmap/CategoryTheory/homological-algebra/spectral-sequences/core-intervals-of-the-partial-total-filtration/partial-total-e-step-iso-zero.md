@@ -1,4 +1,6 @@
-# Partial Total E₁Step Iso Zero
+# The zero-column core interval in partial-total coordinates
 
-At filtration degree zero, the core interval `-1 ⟶ 0` is isomorphic to
-the zero-stage partial-total step.
+The zero-column core interval in partial-total coordinates.
+
+The increasing interval `-1 → 0` is isomorphic to the zero-stage partial-total step from the
+zero complex.

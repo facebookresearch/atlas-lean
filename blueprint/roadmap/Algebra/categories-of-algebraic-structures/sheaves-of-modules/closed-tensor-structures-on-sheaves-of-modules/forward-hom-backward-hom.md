@@ -1,4 +1,6 @@
-# Forward Hom backward Hom
+# Inverse law on the tensor of free sheaves
 
-Forward then backward is the identity, by colimit induction on the outer
-cofan and then the inner cofan.
+Let `(C,J,R)` be a commutative ringed site at universe `u` with weak additive sheafification,
+monoidal `J.W`, and the locally-bijective and underlying-ring comparisons. For `A,B : Type u`,
+`forwardHom R A B ≫ backwardHom R A B = 𝟙 (free A ⊗ free B)`, with all free sheaves over the
+underlying ring sheaf of `R`.

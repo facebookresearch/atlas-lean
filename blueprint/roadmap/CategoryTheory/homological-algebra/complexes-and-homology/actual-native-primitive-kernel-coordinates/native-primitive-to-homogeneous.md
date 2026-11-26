@@ -1,3 +1,5 @@
-# Native Primitive To Homogeneous
+# The chain map from the primitive kernel to homogeneous coordinates
 
-The primitive kernel maps to its homogeneous primitive coordinates.
+The chain map from the primitive kernel to homogeneous coordinates.
+
+Restrict each primitive kernel inclusion component to the homogeneous primitive submodule.

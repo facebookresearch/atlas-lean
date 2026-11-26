@@ -1,7 +1,6 @@
-# Iterated Slice Equiv inverse
+# Top covers under the iterated-slice equivalence
 
-Transport a `CoversTop` cover along the inverse of the iterated-slice
-equivalence: a cover of `Over U.left` for `J.over U.left` maps to a cover
-of `Over U` for `(J.over X).over U` under
-`(Over.iteratedSliceEquiv U).inverse`, using that this inverse is a dense
-subsite for the two slice topologies.
+Let J be a Grothendieck topology on C, X an object and U an object
+of C/X. A top cover Y_i of C/U.left for J/U.left is sent by the
+inverse canonical equivalence C/U.left ≃ (C/X)/U to a top cover
+for the iterated slice topology (J/X)/U.

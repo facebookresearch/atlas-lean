@@ -1,3 +1,5 @@
-# Quotient Map inclusion
+# The quotient vanishes on an ideal element
 
-The actual original ideal inclusion and quotient have zero composite.
+The quotient vanishes on an ideal element.
+
+For `x : I`, the residue class of its inclusion in `A` is zero.

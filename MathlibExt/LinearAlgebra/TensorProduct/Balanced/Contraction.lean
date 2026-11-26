@@ -16,14 +16,21 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Unitors
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Actions
 
 /-!
-# Contraction by the original invertible balanced coefficient
+# Contraction of a balanced tensor factor
 
-The maps are the existing balanced congruence followed by the actual
-unitors. Their input coefficient equivalence is mathematical contraction
-data; the tensor equivalence, inverse and outer-action equations are earned.
-Original integer dictionaries of unbundled intermediate tensors are retained.
-The regular factor uses the native algebra integer dictionary; changing
-the integer linearity proof retains the original additive equivalence.
+Let R be a ring, with no commutativity assumption. If C is a right R-module
+and B a left R-module equipped with an additive equivalence e : B ≅ R
+satisfying e(r b) = r e(b), then contraction gives
+C ⊗_R B ≅ C, [c ⊗ b] ↦ c e(b).
+Its inverse sends c to [c ⊗ e⁻¹(1)]. Dually, a right R-module B with
+e(b r) = e(b) r gives B ⊗_R C ≅ C for a left R-module C.
+
+The integer-ground versions respect any supplied integer-module structures.
+For a commutative ground ring k and a k-algebra R, compatible k-actions and
+a k-linear e give k-linear contractions. A left outer action on C commuting
+with its right R-action is preserved by right-factor contraction; over k,
+that outer action must also commute with k. Scalar and module universes
+remain independent.
 -/
 
 @[expose] public section
@@ -45,7 +52,11 @@ variable (C : Type c) (B : Type b) [AddCommGroup C] [AddCommGroup B]
   (e : B ≃ₗ[ℤ] R) (he : ∀ (r : R) (b : B), e (r • b) = r * e b)
 
 include e he in
-/-- The actual right-factor contraction, on the original raw ground modules. -/
+/-- Let R be a ring, C a right R-module and B a left R-module, with
+additive commutative group structures and supplied integer-module structures.
+Suppose e : B ≃ₗ[ℤ] R satisfies e(r b) = r e(b).
+This integer-linear contraction C ⊗_R B ≅ C sends [c ⊗ b] to c e(b)
+and has inverse c ↦ [c ⊗ e⁻¹(1)]. -/
 def rightContraction : TensorProduct.Balanced ℤ R C B ≃ₗ[ℤ] C := by
   letI dR : Module ℤ R := (Algebra.toModule : Module ℤ R)
   let eR := e.toAddEquiv.toIntLinearEquiv (modM := dB) (modM₂ := dR)
@@ -93,7 +104,11 @@ theorem rightContraction_mk (c : C) (b : B) :
 variable (S : Type s) [Semiring S] [dSC : Module S C]
   [SMulCommClass S Rᵐᵒᵖ C]
 
-/-- Contraction retains the actual independent left outer action. -/
+/-- Let R be a ring, C a right R-module and B a left R-module with
+supplied integer-module structures, and let e : B ≃ₗ[ℤ] R satisfy
+e(r b) = r e(b). If a semiring S acts on C on the left and that action
+commutes with the right R-action, the induced action on C ⊗_R B is
+preserved by contraction: contraction(s • x) = s • contraction(x). -/
 theorem rightContraction_left_smul (s : S) (x : TensorProduct.Balanced ℤ R C B) :
     letI : @SMulCommClass S ℤ C dSC.toSMul dC.toSMul :=
       Module.intModule_smulCommClass (dS := dSC.toDistribMulAction.toDistribSMul) (dM := dC)
@@ -126,7 +141,11 @@ variable (B : Type b) (C : Type c) [AddCommGroup B] [AddCommGroup C]
   (he : ∀ (r : R) (b : B), e (op r • b) = e b * r)
 
 include e he in
-/-- The actual left-factor contraction, retaining the original raw ground data. -/
+/-- Let R be a ring, B a right R-module and C a left R-module, with
+additive commutative group structures and supplied integer-module structures.
+Suppose e : B ≃ₗ[ℤ] R satisfies e(b r) = e(b) r.
+This integer-linear contraction B ⊗_R C ≅ C sends [b ⊗ c] to e(b) c
+and has inverse c ↦ [e⁻¹(1) ⊗ c]. -/
 def leftContraction : TensorProduct.Balanced ℤ R B C ≃ₗ[ℤ] C := by
   letI dR : Module ℤ R := (Algebra.toModule : Module ℤ R)
   let eR := e.toAddEquiv.toIntLinearEquiv (modM := dB) (modM₂ := dR)
@@ -187,7 +206,11 @@ variable (C : Type c) (B : Type b) [AddCommGroup C] [AddCommGroup B]
   (e : B ≃ₗ[k] R) (he : ∀ (r : R) (b : B), e (r • b) = r * e b)
 
 include e he in
-/-- Contract the actual right factor over the original compatible ground. -/
+/-- Let k be a commutative ring, R a k-algebra which is a ring,
+C a right R-module with compatible k-action, and B a left R-module
+with a k-module structure. Given e : B ≃ₗ[k] R with e(r b) = r e(b),
+this k-linear contraction C ⊗_R B ≅ C sends [c ⊗ b] to c e(b)
+and has inverse c ↦ [c ⊗ e⁻¹(1)]. -/
 def rightContraction : TensorProduct.Balanced k R C B ≃ₗ[k] C := by
   have h : ∀ (r : R) (b : B), e (r • b) = r • e b := by
     intro r b
@@ -214,7 +237,12 @@ variable (S : Type s) [Semiring S] [Module S C]
   [SMulCommClass S k C] [SMulCommClass S Rᵐᵒᵖ C]
 omit [IsScalarTower k R B] in
 
-/-- The contraction retains the independent commuting left outer action. -/
+/-- Let k be a commutative ring, R a k-algebra which is a ring,
+C a right R-module with compatible k-action, and B a left R-module
+with a k-module structure and e : B ≃ₗ[k] R satisfying e(r b) = r e(b).
+If a semiring S acts on C on the left, commuting with k and the right
+R-action, right-factor contraction satisfies
+contraction(s • x) = s • contraction(x) for the induced action on C ⊗_R B. -/
 theorem rightContraction_left_smul (s : S) (x : TensorProduct.Balanced k R C B) :
     letI := leftModule k R S C B
     rightContraction k R C B e he (s • x) = s • rightContraction k R C B e he x := by
@@ -243,7 +271,11 @@ variable (B : Type b) (C : Type c) [AddCommGroup B] [AddCommGroup C]
   (e : B ≃ₗ[k] R) (he : ∀ (r : R) (b : B), e (op r • b) = e b * r)
 
 include e he in
-/-- Contract the actual left factor through the existing k-linear unitor. -/
+/-- Let k be a commutative ring, R a k-algebra which is a ring,
+B a right R-module with a k-module structure, and C a left R-module
+with compatible k-action. Given e : B ≃ₗ[k] R with e(b r) = e(b) r,
+this k-linear contraction B ⊗_R C ≅ C sends [b ⊗ c] to e(b) c
+and has inverse c ↦ [e⁻¹(1) ⊗ c]. -/
 def leftContraction : TensorProduct.Balanced k R B C ≃ₗ[k] C := by
   have h : ∀ (r : R) (b : B), e (op r • b) = op r • e b := by
     intro r b

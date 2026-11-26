@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Id Iso
+# Inverse image along the identity is the identity functor
 
-The actual identity inverse image is the adjunction mate of the same direct-image identity.
+Inverse image along the identity is the identity functor.
+
+The identity direct-image comparison and adjunction give a natural isomorphism from identity
+inverse image to the identity sheaf functor.

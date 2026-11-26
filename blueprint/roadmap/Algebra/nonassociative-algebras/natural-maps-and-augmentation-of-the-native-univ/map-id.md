@@ -1,3 +1,5 @@
-# Map id
+# Enveloping maps preserve the identity Lie map
 
-Enveloping maps preserve identities on the actual quotient algebra.
+For a commutative ring R and an R-Lie algebra L, the
+enveloping-algebra map induced by id_L is id_(U_R(L)) as an
+R-algebra homomorphism.

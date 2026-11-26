@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit germ
+# Field stalk counit evaluates an equivariant section
 
-The actual counit sends the original germ [U,z,h] to the literal value h(z).
+Field stalk counit evaluates an equivariant section.
+
+The counit sends the germ of a section `h` at `z` to `h z`.

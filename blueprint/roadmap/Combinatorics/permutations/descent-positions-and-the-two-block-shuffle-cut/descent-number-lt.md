@@ -1,3 +1,4 @@
-# Descent Number lt
+# Descent count is below positive length
 
-Every positive homogeneous degree has strictly fewer actual descents than letters.
+Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. If `0<n`, then `descentNumber σ < n`, since at most
+the `n-1` successor positions can be descents.

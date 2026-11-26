@@ -1,4 +1,6 @@
-# Homology Universal Coefficient Map koszul braiding
+# The coefficient map commutes with Koszul tensor braiding
 
-The canonical coefficient map commutes with swapping the chain-complex
-and degree-zero coefficient factors through the Koszul braiding.
+The coefficient map commutes with Koszul tensor braiding.
+
+The canonical coefficient map followed by the chain tensor braiding on homology equals the
+module tensor braid followed by the swapped Künneth coefficient map.

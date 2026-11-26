@@ -1,3 +1,5 @@
-# Right Tensor Coordinates symm tmul
+# The inverse right tensor coordinates on a pure coefficient tensor
 
-The inverse inserts the original unit in the regular UEA factor.
+The inverse right tensor coordinates on a pure coefficient tensor.
+
+The inverse sends `w ⊗ m` to the balanced class represented by `m ⊗ (w ⊗ 1)`.

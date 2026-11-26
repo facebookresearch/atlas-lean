@@ -1,3 +1,6 @@
-# Field Stalk Skyscraper Hom Equiv symm diagonal
+# Diagonal skyscraper action transposes with the inverse stalk action
 
-Transposition of the SAME diagonal is the actual inverse stalk action and module action.
+Diagonal skyscraper action transposes with the inverse stalk action.
+
+Postcomposition by the diagonal skyscraper map for `g` transposes to precomposition by the
+stalk action of `g⁻¹`, followed by the coefficient action of `g`.

@@ -1,3 +1,5 @@
-# Inst Symmetric Category Ab mathlib Ext
+# Tensor symmetry of abelian groups
 
-The tensor symmetry on additive groups.
+The integer-tensor monoidal category of abelian groups in universe
+`u` is symmetric: applying the tensor-factor exchange twice is the
+identity. This compatibility name denotes the same symmetric structure.

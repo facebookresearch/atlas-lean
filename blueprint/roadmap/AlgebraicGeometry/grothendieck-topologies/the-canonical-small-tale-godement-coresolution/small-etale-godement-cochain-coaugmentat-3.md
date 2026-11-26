@@ -1,3 +1,5 @@
-# Small Etale Godement Cochain Coaugmentation exact
+# Godement coaugmentation is exact at its degree zero term
 
-The original unit and first Godement differential form the actual exact augmentation row.
+Godement coaugmentation is exact at its degree zero term.
+
+The short complex `Q → C⁰ → C¹` formed by the unit and first Godement differential is exact.

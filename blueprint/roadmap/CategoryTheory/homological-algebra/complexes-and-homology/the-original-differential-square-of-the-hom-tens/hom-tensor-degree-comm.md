@@ -1,3 +1,6 @@
-# Hom Tensor Degree comm
+# Signed Hom–tensor degree maps commute with differentials
 
-The original degree maps commute with the actual two native differentials.
+Signed Hom–tensor degree maps commute with differentials.
+
+For every integer `n`, the degree-`n` comparison followed by the target differential equals
+the source differential followed by the degree-`n + 1` comparison.

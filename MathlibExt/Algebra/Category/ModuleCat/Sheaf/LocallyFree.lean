@@ -20,15 +20,20 @@ public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.Monoidal
 public import MathlibExt.CategoryTheory.Sites.CoversTop
 
 /-!
-# Locally free of fixed rank — general ringed site
+# Local freeness of prescribed finite rank
 
-Fixed-rank locally free sheaves of modules over a general ringed site, and
-their closure properties (biproducts, pullbacks, tensors).
+Let `(C,J)` be a site and `R : Sheaf J RingCat.{u}`. Local free generator data have rank `n :
+ℕ` when every chart's generator index set is equivalent to `Fin n`. A module sheaf is locally
+free of rank `n` when it admits such data; forgetting the cardinality equivalences gives local
+freeness.
 
-When `M` is locally free of rank `n`, it is in particular locally free
-(`IsLocallyFree`), but the converse is not true: `IsLocallyFree` permits
-arbitrary and locally varying ranks, potentially infinite bases.
-Hence fixed-rank and arbitrary APIs are kept separately.
+The pullback theorem uses continuous final functors on the base and slice sites, right
+adjoints for the coefficient pushforwards, and comparisons between local and global pullback
+of the given sheaf. Additive sheafification and locally-bijective comparison hypotheses are
+imposed on the slice sites.
+
+The tensor statements use a commutative ring sheaf and a common universe for the site, scalar
+rings, and module carriers.
 -/
 
 @[expose] public section
@@ -53,10 +58,12 @@ namespace SheafOfModules
 
 namespace LocalGeneratorsData
 
-/-- Ranked local-freeness data: local generator data that is locally free and
-whose charts all have finite rank `n`. Bundles the data form of
-`IsLocallyFreeOfRank` for sites where the rank must be witnessed
-chart by chart. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` be a topology, and `R : Sheaf J
+RingCat.{u}`, with additive sheafification and the locally-bijective comparison on all slices.
+For `M : SheafOfModules.{u} R`, `q : LocalGeneratorsData.{u₁} M`, and `n : ℕ`,
+`IsLocallyFreeOfRankData q n` consists of `q.IsLocallyFreeData` and equivalences
+`(q.generators i).I ≃ Fin n` for every chart `i`. The fields are `isLocallyFreeData` and
+`rank_eq`. -/
 class _root_.SheafOfModules.LocalGeneratorsData.IsLocallyFreeOfRankData {M : SheafOfModules.{u} R}
     (q : _root_.SheafOfModules.LocalGeneratorsData.{u₁} M) (n : ℕ) : Prop where
   isLocallyFreeData : q.IsLocallyFreeData
@@ -64,8 +71,11 @@ class _root_.SheafOfModules.LocalGeneratorsData.IsLocallyFreeOfRankData {M : She
 
 end LocalGeneratorsData
 
-/-- Local freeness with a generating family of uniform finite cardinality.
-Such a rank need not be unique, for example on an empty site or over the zero ring. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` be a topology, and `R : Sheaf J
+RingCat.{u}`, with additive sheafification and the locally-bijective comparison on all slices.
+For `M : SheafOfModules.{u} R` and `n : ℕ`, `IsLocallyFreeOfRank M n` means that some local
+generator data `q : LocalGeneratorsData.{u₁} M` are locally free and have every chart's
+generator index set equivalent to `Fin n`. -/
 class IsLocallyFreeOfRank (M : SheafOfModules.{u} R) (n : semiOutParam ℕ) : Prop where
   exists_isLocallyFreeOfRankData :
     ∃ q : _root_.SheafOfModules.LocalGeneratorsData.{u₁} M,
@@ -77,9 +87,11 @@ omit [HasSheafify J AddCommGrpCat.{u}]
     HasWeakSheafify ((J.over X).over Y) AddCommGrpCat.{u}]
   [∀ (X : C) (Y : Over X),
     ((J.over X).over Y).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- Fixed-rank local freeness yields unranked local freeness, by typeclass
-search as well as by explicit application. There is no reverse instance, so
-no loop. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` be a topology, and `R : Sheaf J
+RingCat.{u}`. Assume additive sheafification and the locally-bijective comparison on each
+`J.over X`. For `M : SheafOfModules.{u} R` and `n : ℕ`, local freeness of rank `n` implies
+`SheafOfModules.IsLocallyFree M`, by retaining the local free generator data and forgetting
+their fixed-cardinality equivalences. -/
 instance (priority := 100) isLocallyFree_of_isLocallyFreeOfRank
     {M : SheafOfModules.{u} R}
     {n : ℕ} [IsLocallyFreeOfRank (R := R) M n] :
@@ -98,15 +110,11 @@ omit [HasSheafify J AddCommGrpCat.{u}]
     HasWeakSheafify ((J.over X).over Y) AddCommGrpCat.{u}]
   [∀ (X : C) (Y : Over X),
     ((J.over X).over Y).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- Comma cover: given a `K`-cover `X` of the source site and a continuous final
-functor `F`, the family of objects of `C` equipped with a map into some
-`F.obj (X i)` covers the top in `J`. The image family `F.obj ∘ X` does not cover
-in general; the comma refinement is what carries pullback data.
-
-This is distinct from `CategoryTheory.GrothendieckTopology.CoversTop.overComma`
-(in `MathlibExt.CategoryTheory.Sites.CoversTop`): that lemma refines a cover of
-the *same* site over a slice object, while this one transports a cover along a
-*change of site* (`F : C' ⥤ C`), producing the pullback-chart cover. -/
+/-- Let `(C,J)` and `(C',K)` be sites, with `C : Type u₁`, `C' : Type u`, and morphism universe
+`v₁`. Let `F : C' ⥤ C` be continuous from `K` to `J` and final. If `X : I → C'` satisfies
+`K.CoversTop X`, then `(i,Y) ↦ Y.left`, indexed by `i∈I` and `Y∈Over(F.obj(X i))`, satisfies
+`J.CoversTop`. This is the covering family of objects admitting a map into an image of the
+given cover. -/
 private theorem coversTop_comma {C' : Type u} [Category.{v₁} C']
     {K : GrothendieckTopology C'} {F : C' ⥤ C}
     [Functor.IsContinuous F K J] [F.Final]
@@ -127,10 +135,11 @@ private theorem coversTop_comma {C' : Type u} [Category.{v₁} C']
   simp only [Sieve.mem_ofObjects_iff]
   exact ⟨⟨i, Over.mk (hu ≫ F.map w)⟩, ⟨𝟙 Z⟩⟩
 
-/-- Ring map over `X` inducing the fiber pullback functor
-`SheafOfModules (S.over X) ⥤ SheafOfModules (R.over (F.obj X))`.
-It is the pushforward of `φ` along `Over.forget X`, reindexed along
-`Over.post F ⋙ Over.forget = Over.forget ⋙ F`. -/
+/-- Let `F : C' ⥤ C` be continuous between sites `(C',K)` and `(C,J)`, with ring sheaves `S` on
+`K` and `R` on `J`, of carrier universe `u`. Assume every `Over.post F : Over X → Over(F.obj
+X)` is continuous for the slice topologies. For `φ : S → F_*R` and `X∈C'`, `overRingHom φ X`
+is the induced map `S.over X → (Over.post F)_*(R.over(F.obj X))`, obtained from `φ` along
+`Over.forget X` and the canonical reindexing identity. -/
 noncomputable def overRingHom {C' : Type u} [Category.{v₁} C']
     {K : GrothendieckTopology C'} {S : Sheaf K RingCat.{u}}
     {F : C' ⥤ C} [Functor.IsContinuous F K J]
@@ -147,8 +156,13 @@ omit [HasSheafify J AddCommGrpCat.{u}]
     HasWeakSheafify ((J.over X).over Y) AddCommGrpCat.{u}]
   [∀ (X : C) (Y : Over X),
     ((J.over X).over Y).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- Coproduct and biproduct rank formulas are given in
-`MathlibExt.Algebra.Category.ModuleCat.Sheaf.LocallyFreeRank`. -/
+/-- Let `(C,J)` and `(C',K)` be sites, with `C : Type u₁`, `C' : Type u`, morphism universe `v₁`,
+and pullbacks in `C`. Let `R,S` be ring sheaves of carrier universe `u`, with additive
+sheafification and the locally-bijective comparison on all slices of both sites. Let `F : C' ⥤
+C` and each `Over.post F` be continuous and final. For `φ : S → F_*R`, assume the module
+pushforward along `φ` and each `overRingHom φ X` is a right adjoint. If `M` is locally free of
+rank `n` over `S` and each `X∈C'` has an isomorphism `pullback(overRingHom φ X)(M.over X) ≅
+(pullback φ M).over(F.obj X)`, then `pullback φ M` is locally free of rank `n` over `R`. -/
 theorem isLocallyFreeOfRank_pullback
     [HasPullbacks C]
     {C' : Type u} [Category.{v₁} C']
@@ -294,7 +308,14 @@ theorem isLocallyFree_pullback
     _root_.SheafOfModules.LocalGeneratorsData
       ((_root_.SheafOfModules.pullback φ).obj M)).shrink, hshrink⟩
 
-/-! ### Tensor products over a commutative ring structure sheaf -/
+/-!
+## Tensor products over a commutative ring sheaf
+
+In this section the site objects and morphisms, ring sections, and module carriers have
+universe `u`. The tensor comparisons use monoidal additive sheafification and its slice
+comparisons. With pullbacks and binary products in the site, tensor products of locally free
+sheaves are locally free, and fixed finite ranks multiply.
+-/
 
 section Tensor
 
@@ -324,7 +345,12 @@ variable (U : C₀)
 
 namespace RestrictSheafification
 
-/-- Every sheaf of modules is the sheafification of its underlying presheaf of modules. -/
+/-- Let `C₀ : Type u` have morphism universe `u`, `J₀` be a Grothendieck topology, and `R₀ : Sheaf
+J₀ CommRingCat.{u}`. Assume additive sheafification, the locally-bijective comparison, and
+preservation of the sheaf condition by `CommRingCat → RingCat`. For a module sheaf `A` over
+the underlying ring sheaf, `counitIso R₀ A : S_{R₀}(U_{R₀} A) ≅ A` is the sheafification
+counit isomorphism. Here `S_{R₀}=PresheafOfModules.sheafificationCommId R₀`, and `U_{R₀}`
+forgets to module presheaves and reindexes by `Sheaf.commRingCatForget₂Id R₀`. -/
 noncomputable abbrev counitIso
     (A : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)) :
@@ -342,8 +368,12 @@ omit [(J₀.W (A := Ab.{u})).IsMonoidal]
   [∀ (X : C₀) (Y : Over X),
     ((J₀.over X).over Y).WEqualsLocallyBijective Ab.{u}]
   [HasPullbacks C₀] [HasBinaryProducts C₀] in
-/-- Inverse-counit naturality: `f ≫ inv B' = inv B ≫ L.map (R.map f)`.
-Kept for `sheafTensor_whisker_eq_of_presheaf_tensorHom` below. -/
+/-- Let `(C₀,J₀)` be a site with object, morphism, ring, and module universe `u`, and `R₀` a
+commutative ring sheaf. Assume additive sheafification, the locally-bijective comparison, and
+the underlying-ring sheaf comparison. For module sheaves `B,B'` and `f : B → B'`, `f ≫
+ε_{B'}⁻¹ = ε_B⁻¹ ≫ S_{R₀}(U_{R₀}(f))`, where `ε` is the sheafification counit, `S_{R₀}` module
+sheafification, and `U_{R₀}` the underlying module-presheaf functor with its coefficient
+reindexing. -/
 lemma counitIso_inv_naturality
     (B B' : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)) (f : B ⟶ B') :
@@ -359,7 +389,12 @@ end RestrictSheafification
 
 namespace TensorHelpers
 
-/-- The sheafification counit isomorphism after restriction of coefficients. -/
+/-- Let `(C₀,J₀)` be a site with object and morphism universe `u`, and `R₀ : Sheaf J₀
+CommRingCat.{u}`. Assume additive sheafification, the locally-bijective comparison, and the
+underlying-ring sheaf comparison. For a module sheaf `A`, this counit isomorphism identifies
+`S_{R₀}(U_{R₀} A)` with `A`, where `S_{R₀}=PresheafOfModules.sheafificationCommId R₀` and
+`U_{R₀}` is the underlying module-presheaf functor reindexed by `Sheaf.commRingCatForget₂Id
+R₀`. -/
 noncomputable abbrev counitIso
     (A : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)) :
@@ -368,7 +403,11 @@ noncomputable abbrev counitIso
           (Sheaf.commRingCatForget₂Id R₀)).obj A) ≅ A :=
   RestrictSheafification.counitIso R₀ A
 
-/-- The tensor comparison for restriction to a slice site. -/
+/-- Let `C₀ : Type u` have morphism universe `u`, `J₀` be a topology, and `R₀` a commutative ring
+sheaf. Assume monoidal additive sheafification and the locally-bijective comparison, with
+additive sheafification and underlying-ring sheaf comparisons on the slice sites. For `U∈C₀`,
+put `F_U=RestrictSheafification.restrictSheaf R₀ U`. The isomorphism `resTensorIso R₀ U A B`
+has direction `F_U(A ⊗ B) ≅ F_U(A) ⊗ F_U(B)` for module sheaves `A,B`. -/
 noncomputable abbrev resTensorIso
     (A B : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)) :
@@ -385,7 +424,11 @@ omit [∀ (X : C₀) (Y : Over X),
   [∀ (X : C₀) (Y : Over X),
     ((J₀.over X).over Y).WEqualsLocallyBijective Ab.{u}]
   [HasPullbacks C₀] [HasBinaryProducts C₀] in
-/-- Right-whisker naturality of `RestrictSheafification.ofTensorIso`: oplax `δ`-naturality. -/
+/-- Let `(C₀,J₀,R₀)` be a commutative ringed site at universe `u`, with monoidal additive
+sheafification and the locally-bijective comparison on the base and additive sheafification,
+locally-bijective comparison, and underlying-ring sheaf comparisons on all slices. For `U∈C₀`,
+`F_U=restrictSheaf R₀ U`, and `f : B → B'`, the tensor comparison `δ` satisfies `F_U(𝟙 A ⊗ f)
+≫ δ_{A,B'} = δ_{A,B} ≫ (𝟙 F_U(A) ⊗ F_U(f))`. -/
 theorem resTensorIso_naturality_right
     (A B B' : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)) (f : B ⟶ B') :
@@ -402,7 +445,11 @@ omit [∀ (X : C₀) (Y : Over X),
   [∀ (X : C₀) (Y : Over X),
     ((J₀.over X).over Y).WEqualsLocallyBijective Ab.{u}]
   [HasPullbacks C₀] [HasBinaryProducts C₀] in
-/-- Left-whisker naturality of `RestrictSheafification.ofTensorIso`: oplax `δ`-naturality. -/
+/-- Let `(C₀,J₀,R₀)` be a commutative ringed site at universe `u`, with monoidal additive
+sheafification and the locally-bijective comparison on the base and additive sheafification,
+locally-bijective comparison, and underlying-ring sheaf comparisons on all slices. For `U∈C₀`,
+`F_U=restrictSheaf R₀ U`, and `f : A → A'`, the tensor comparison `δ` satisfies `F_U(f ⊗ 𝟙 B)
+≫ δ_{A',B} = δ_{A,B} ≫ (F_U(f) ⊗ 𝟙 F_U(B))`. -/
 theorem resTensorIso_naturality_left
     (A A' B : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)) (f : A ⟶ A') :
@@ -1028,7 +1075,12 @@ theorem sheafTensor_whisker_eq_of_presheaf_tensorHom
   exact (cancel_mono (tensorIso (RestrictSheafification.counitIso R₀ A).symm
     (RestrictSheafification.counitIso R₀ B).symm).hom).mp keyMuAssoc
 
-/-- If two sheaves of modules restrict to free sheaves over `U`, so does their tensor product. -/
+/-- Let `(C₀,J₀)` be a site with object and morphism universe `u`, and `R₀ : Sheaf J₀
+CommRingCat.{u}`. Assume monoidal additive sheafification, the locally-bijective comparison,
+and the underlying-ring sheaf comparison. For `U∈C₀`, module sheaves `A,B`, index types `I,K :
+Type u`, and isomorphisms `A.over U ≅ free_{R_U} I`, `B.over U ≅ free_{R_U} K`, there is an
+isomorphism `(A ⊗ B).over U ≅ free_{R_U}(I × K)`, where `R_U` is the underlying ring sheaf
+restricted to `U`. -/
 noncomputable def overTensorFreeIso
     (A B : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀))
@@ -1049,7 +1101,11 @@ noncomputable def overTensorFreeIso
   RestrictSheafification.ofTensorIso R₀ U A B ≪≫ tensorIso eA eB ≪≫
     _root_.SheafOfModules.freeTensorIso (R₀.over U) I K
 
-/-- Free-ness of a restriction is inherited along a map of base objects. -/
+/-- Let `(C₀,J₀)` be a site at universe `u` with additive sheafification and the locally-bijective
+comparison on slice sites, and let `S : Sheaf J₀ RingCat.{u}`. For `A : SheafOfModules.{u} S`,
+`f : V → W`, `I : Type u`, and an isomorphism `A.over W ≅ free_{S.over W} I`, further
+restriction gives `A.over V ≅ free_{S.over V} I`. The isomorphism uses the over-site
+comparison, restriction of the given chart, and the free-sheaf comparison. -/
 noncomputable def overFreeIsoOfMap {S : Sheaf J₀ RingCat.{u}}
     (A : SheafOfModules.{u} S) {V W : C₀} (f : V ⟶ W) (I : Type u)
     (e : A.over W ≅ _root_.SheafOfModules.free (R := S.over W) I) :
@@ -1063,7 +1119,12 @@ omit [∀ (X : C₀) (Y : Over X),
     HasWeakSheafify ((J₀.over X).over Y) Ab.{u}]
   [∀ (X : C₀) (Y : Over X),
     ((J₀.over X).over Y).WEqualsLocallyBijective Ab.{u}] in
-/-- The tensor product of locally free sheaves of fixed ranks has product rank. -/
+/-- Let `C₀ : Type u` have morphism universe `u`, pullbacks, and binary products, and let `R₀ :
+Sheaf J₀ CommRingCat.{u}`. Assume monoidal additive sheafification and the locally-bijective
+comparison on `J₀`, and additive sheafification, the locally-bijective comparison, and
+underlying-ring sheaf comparisons on the base and every slice. If module sheaves `A,B` over
+the underlying ring sheaf are locally free of ranks `m,n : ℕ`, then `A ⊗ B` is locally free of
+rank `m * n`. -/
 theorem isLocallyFreeOfRank_tensor
     {A B : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)}
@@ -1113,7 +1174,12 @@ theorem isLocallyFreeOfRank_tensor
 omit [∀ (X : C₀) (Y : Over X), HasWeakSheafify ((J₀.over X).over Y) Ab.{u}]
   [∀ (X : C₀) (Y : Over X),
     ((J₀.over X).over Y).WEqualsLocallyBijective Ab.{u}] in
-/-- The tensor product of two locally free sheaves of modules is locally free. -/
+/-- Let `C₀ : Type u` have morphism universe `u`, pullbacks, and binary products, and let `R₀ :
+Sheaf J₀ CommRingCat.{u}`. Assume monoidal additive sheafification and the locally-bijective
+comparison on `J₀`, and additive sheafification, the locally-bijective comparison, and
+underlying-ring sheaf comparisons on the base and every slice. If `A,B` are locally free
+module sheaves over the underlying ring sheaf, then `A ⊗ B` is locally free. The chart index
+sets may be arbitrary types in `Type u`. -/
 theorem isLocallyFree_tensor
     {A B : SheafOfModules.{u} ((sheafCompose J₀
       (forget₂ CommRingCat.{u} RingCat.{u})).obj R₀)}

@@ -14,12 +14,19 @@ module
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 /-!
-# Explicit degree-three group cohomology
+# Explicit third group cohomology
 
-This file extends the low-degree inhomogeneous group-cohomology API to
-degree three.  It supplies explicit degree-three cochains, cocycles,
-coboundaries, the `d₃₄` formula, and the quotient map `H3π` into the existing
-abstract `groupCohomology A 3`.
+Let k be a commutative ring, G a group, and A a k-linear representation in universe u. The
+degree-three and degree-four inhomogeneous cochains are functions G³→A and G⁴→A. Their
+differential is δ₃z(g,h,i,j)=ρ(g)z(h,i,j)-z(gh,i,j)+z(g,hi,j)-z(g,h,ij)+z(g,h,i).
+
+The degree-three short complex is C²(G,A) --δ₂→ C³(G,A) --δ₃→ C⁴(G,A), with
+δ₂b(g,h,i)=ρ(g)b(h,i)-b(gh,i)+b(g,hi)-b(g,h). It has cocycles Z³=ker(δ₃) and coboundaries
+B³=im(δ₂). Coordinate isomorphisms identify this short complex with the degree-three short
+complex of the inhomogeneous cochain complex.
+
+The class map Z³→H³(G,A) is surjective, and two cocycles define the same class exactly when
+their difference lies in B³.
 -/
 
 @[expose] public section
@@ -37,22 +44,32 @@ namespace groupCohomology
 variable {k G : Type u} [CommRing k] [Group G]
 variable (A : Rep k G)
 
-/-- Coordinate equivalence for three group variables. -/
+/-- For a type G in universe u, evaluation at the three indices gives an equivalence (Fin
+3→G)≃G×G×G. It sends a tuple function x to (x(0),x(1),x(2)), with the product associated as
+G×(G×G). -/
 def finThreeEquiv : (Fin 3 → G) ≃ G × G × G :=
   (Fin.consEquiv _).symm.trans
     ((Equiv.refl G).prodCongr (piFinTwoEquiv fun _ => G))
 
-/-- Coordinate equivalence for four group variables. -/
+/-- For a type G in universe u, evaluation gives an equivalence (Fin 4→G)≃G×G×G×G. It sends x to
+(x(0),x(1),x(2),x(3)), with products associated to the right, and its inverse restores the same
+four coordinates. -/
 def finFourEquiv : (Fin 4 → G) ≃ G × G × G × G :=
   (Fin.consEquiv _).symm.trans
     ((Equiv.refl G).prodCongr (finThreeEquiv (G := G)))
 
-/-- The fourth inhomogeneous cochain object in explicit coordinates. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The degree-four term K⁴ of the inhomogeneous complex is isomorphic as a k-module to functions
+G⁴→A. The coordinate isomorphism evaluates a Fin 4-indexed group tuple in the order (g,h,i,j),
+preserving all four arguments. -/
 def cochainsIso₄ : (inhomogeneousCochains A).X 4 ≅
     ModuleCat.of k (G × G × G × G → A) :=
   (LinearEquiv.funCongrLeft k A (finFourEquiv (G := G))).toModuleIso.symm
 
-/-- The degree-three inhomogeneous differential. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The k-linear map δ₃:C³(G,A)→C⁴(G,A) acts on triple-variable functions by
+δ₃z(g,h,i,j)=ρ(g)z(h,i,j)-z(gh,i,j)+z(g,hi,j)-z(g,h,ij)+z(g,h,i). The signs are +,-,+,-,+ in
+this order. -/
 @[simps!]
 def d₃₄ : ModuleCat.of k (G × G × G → A) ⟶
     ModuleCat.of k (G × G × G × G → A) :=
@@ -71,8 +88,10 @@ def d₃₄ : ModuleCat.of k (G × G × G → A) ⟶
       dsimp
       simp only [map_smul, smul_add, smul_sub] }
 
-/-- The explicit `d₃₄` is the degree-three differential of the abstract
-inhomogeneous cochain complex in coordinates. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Let K be the inhomogeneous cochain complex and e₃:K³≅C³(G,A), e₄:K⁴≅C⁴(G,A) the
+tuple-coordinate isomorphisms. Then e₃.hom≫δ₃=K.d_{3,4}≫e₄.hom. The differential is
+δ₃z(g,h,i,j)=ρ(g)z(h,i,j)-z(gh,i,j)+z(g,hi,j)-z(g,h,ij)+z(g,h,i). -/
 theorem comp_d₃₄_eq :
     (cochainsIso₃ A).hom ≫ d₃₄ A =
       (inhomogeneousCochains A).d 3 4 ≫ (cochainsIso₄ A).hom := by
@@ -135,16 +154,24 @@ theorem d₂₃_comp_d₃₄ : d₂₃ A ≫ d₃₄ A = 0 := by
 
 open ShortComplex
 
-/-- Explicit short complex computing degree-three cohomology. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The short complex C²(G,A) --δ₂→ C³(G,A) --δ₃→ C⁴(G,A) computes degree-three cohomology, and
+δ₂≫δ₃=0. For b:G×G→A, δ₂b(g,h,i)=ρ(g)b(h,i)-b(gh,i)+b(g,hi)-b(g,h). The differential is
+δ₃z(g,h,i,j)=ρ(g)z(h,i,j)-z(gh,i,j)+z(g,hi,j)-z(g,h,ij)+z(g,h,i). -/
 @[simps! -isSimp f g]
 def shortComplexH3 : ShortComplex (ModuleCat k) :=
   mk (d₂₃ A) (d₃₄ A) (d₂₃_comp_d₃₄ A)
 
-/-- Explicit degree-three cocycles. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The submodule Z³(G,A)⊆(G³→A) is ker(δ₃), consisting of functions z with δ₃z(g,h,i,j)=0 for
+all g,h,i,j. The differential is
+δ₃z(g,h,i,j)=ρ(g)z(h,i,j)-z(gh,i,j)+z(g,hi,j)-z(g,h,ij)+z(g,h,i). -/
 def cocycles₃ : Submodule k (G × G × G → A) :=
   LinearMap.ker (d₃₄ A).hom
 
-/-- Explicit degree-three coboundaries. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The submodule B³(G,A)⊆(G³→A) is im(δ₂), so a three-cochain z lies in it exactly when z=δ₂b
+for some b:G²→A. For b:G×G→A, δ₂b(g,h,i)=ρ(g)b(h,i)-b(gh,i)+b(g,hi)-b(g,h). -/
 def coboundaries₃ : Submodule k (G × G × G → A) :=
   LinearMap.range (d₂₃ A).hom
 
@@ -202,7 +229,9 @@ lemma coboundaries₃_le_cocycles₃ (A : Rep k G) :
   rintro _ ⟨x, rfl⟩
   exact d₂₃_apply_mem_cocycles₃ x
 
-/-- Natural inclusion from explicit three-coboundaries to three-cocycles. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Since δ₂≫δ₃=0, the submodule B³(G,A)=im(δ₂) lies in Z³(G,A)=ker(δ₃). The inclusion B³→Z³ is
+k-linear and sends each coboundary to the cocycle represented by the same function G³→A. -/
 abbrev coboundariesToCocycles₃ (A : Rep k G) :
     coboundaries₃ A →ₗ[k] cocycles₃ A :=
   Submodule.inclusion (coboundaries₃_le_cocycles₃ A)
@@ -210,8 +239,10 @@ abbrev coboundariesToCocycles₃ (A : Rep k G) :
 variable (A)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The explicit degree-three short complex is isomorphic to the abstract
-degree-three short complex of inhomogeneous cochains. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For the inhomogeneous complex K, its degree-three short complex K²→K³→K⁴ is isomorphic to
+C²(G,A) --δ₂→ C³(G,A) --δ₃→ C⁴(G,A). The three components are the degree-two, degree-three, and
+degree-four tuple-coordinate isomorphisms, and they intertwine both differentials. -/
 @[simps! hom inv]
 def isoShortComplexH3 :
     (inhomogeneousCochains A).sc 3 ≅ shortComplexH3 A :=
@@ -219,17 +250,24 @@ def isoShortComplexH3 :
     isoMk (cochainsIso₂ A) (cochainsIso₃ A) (cochainsIso₄ A)
       (comp_d₂₃_eq A) (comp_d₃₄_eq A)
 
-/-- Abstract cycles in degree three are isomorphic to explicit
-inhomogeneous three-cocycles. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The cycle k-module Z³(K) of the inhomogeneous complex is isomorphic to
+Z³(G,A)=ker(δ₃)⊆(G³→A). The isomorphism is induced by the degree-three short-complex coordinate
+comparison and leaves the cocycle function unchanged in those coordinates. -/
 def isoCocycles₃ : cocycles A 3 ≅ ModuleCat.of k (cocycles₃ A) :=
   cyclesMapIso' (isoShortComplexH3 A) _
     (shortComplexH3 A).moduleCatLeftHomologyData
 
-/-- Shorthand for third group cohomology. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The notation H³(G,A) denotes degree-three homology of the nonnegative inhomogeneous cochain
+complex. Via its explicit coordinate short complex, it is the k-module ker(δ₃)/im(δ₂) of
+three-cocycle classes modulo three-coboundaries. -/
 abbrev H3 := groupCohomology A 3
 
-/-- Quotient map from explicit degree-three cocycles to third group
-cohomology. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. The k-linear class map π₃:Z³(G,A)→H³(G,A) first identifies the explicit triple-variable
+cocycle with a cycle of the inhomogeneous complex, then takes its cohomology class. It is
+surjective, and π₃(z)=0 exactly when z∈im(δ₂). -/
 def H3π : ModuleCat.of k (cocycles₃ A) ⟶ H3 A :=
   (isoCocycles₃ A).inv ≫ π A 3
 

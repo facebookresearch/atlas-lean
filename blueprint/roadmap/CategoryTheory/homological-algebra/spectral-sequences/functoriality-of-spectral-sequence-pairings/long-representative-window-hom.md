@@ -1,3 +1,6 @@
-# Long Representative window Hom
+# Long representatives commute with a spectral-object morphism
 
-The original output map commutes with the full cycle-and-quotient representative.
+Long representatives commute with a spectral-object morphism.
+
+An interval component followed by the target representative equals the source representative
+followed by the quotient-window map.

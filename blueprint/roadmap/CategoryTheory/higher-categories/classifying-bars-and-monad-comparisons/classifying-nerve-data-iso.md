@@ -1,9 +1,6 @@
-# Classifying Nerve Data Iso
+# An isomorphism of classifying-bar and nerve data
 
-Data-level classifying nerve isomorphism.
+An isomorphism of classifying-bar and nerve data.
 
-Assembled from the degreewise `tupleIso` with `Data.isoOfIso`; no `Iso.refl`
-across ambient categories and no whiskered-functor iso is used.
-`ClassifyingNerveSimplicial.lean` promotes this with `toSimplicialFunctor` as
-`barNerveSimplicialIso` and composes with evaluated `classifyingBar` as
-`classifyingNerveSimplicialIso`.
+For any monoid G, the evaluated cartesian classifying-bar data is isomorphic to the nerve data
+of SingleObj Gᵐᵒᵖ. The degreewise tuple comparison respects all faces and degeneracies.

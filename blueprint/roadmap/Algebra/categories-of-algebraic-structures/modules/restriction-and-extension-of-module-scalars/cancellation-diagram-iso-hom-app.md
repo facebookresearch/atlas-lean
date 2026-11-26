@@ -1,3 +1,6 @@
-# Cancellation Diagram Iso hom app
+# Components of diagramwise tensor cancellation
 
-Diagram evaluation retains the original native tensor cancellation component.
+Components of diagramwise tensor cancellation.
+
+At coefficient M and diagram object j, the forward diagram comparison is cancellationNatIso R
+S M at X_j.

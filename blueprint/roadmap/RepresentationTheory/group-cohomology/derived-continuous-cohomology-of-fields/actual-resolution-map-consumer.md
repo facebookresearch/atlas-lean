@@ -1,4 +1,6 @@
-# Actual resolution map consumer
+# Comparison commutes with the canonical resolution map
 
-This uses the actual chosen comparison map between arbitrary resolutions;
-the augmentation is provided by stock descHom, not an input hypothesis.
+Comparison commutes with the canonical resolution map.
+
+For any coefficient map and injective resolutions of its source and target, the comparison
+square uses the canonical descended resolution map on invariant-complex cohomology.

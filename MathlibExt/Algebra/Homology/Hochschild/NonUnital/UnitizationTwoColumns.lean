@@ -16,13 +16,17 @@ public import Mathlib.Algebra.Category.ModuleCat.Biproducts
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
-# The original two-column unitization comparison
+# Two cyclic columns and reduced normalized unitization
 
-The raw first-two-column total is the partial total. Its original
-even and odd coordinate maps agree with the even ideal word and the word
-with the external unit inserted in front. Native partial-total degree
-splitting and the original normalized tensor coordinates earn the degree
-isomorphisms. The original b, 1-t and -b-prime equations earn the chain law.
+Let `k` be a commutative ring and `A` a nonunital ground algebra. The first-two-column cyclic
+total has degree zero `C_0(A)` and positive degree `n+1` equal to `C_(n+1)(A) × C_n(A)`
+through its partial-total splitting.
+
+Reduced normalized chains of `A⁺ = k ⊕ A` have the same coordinates. The first summand maps to
+the ideal-leading word and the second to the external-unit-leading word. In degrees at least
+two, the boundary is `(x,y) ↦ (b x + (1-t)y, -b′ y)`; the bottom odd boundary is zero. These
+coordinates give a chain isomorphism from the first-two-column total to the reduced normalized
+unitization complex, and hence a homology comparison with the unitization cokernel model.
 -/
 
 @[expose] public section
@@ -41,7 +45,9 @@ open ModuleCat.Algebra.Hochschild
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The original bottom raw total has only its original zero-column coordinate. -/
+/-- The bottom coordinate of the first-two-column cyclic total.
+
+Degree zero contains only the zero-column tensor term and is isomorphic to `C_0(A)`. -/
 def unitizationRawZeroIso : (cyclicFirstTwoColumns k A).X 0 ≅ chainLevel k A A 0 := by
   let B := cyclicBicomplex k A
   let f := (B.partialTotalMap (Nat.zero_le 1)).f 0
@@ -52,7 +58,10 @@ def unitizationRawZeroIso : (cyclicFirstTwoColumns k A).X 0 ≅ chainLevel k A A
     (HomologicalComplex.eval (ModuleCat.{max u v} k) (ComplexShape.down ℕ) 0).mapIso
       (cyclicZeroPartialIso k A)
 
-/-- The inverse bottom coordinate is the original retained cell. -/
+/-- The retained cell of the inverse bottom coordinate.
+
+The inverse degree-zero comparison is the bidegree `(0,0)` cell inclusion into the first-two-
+column total. -/
 theorem unitizationRawZeroIso_inv :
     (unitizationRawZeroIso k A).inv =
       cyclicFirstTwoColumnCell k A (0 : Fin 2) 0 0 rfl := by
@@ -61,7 +70,10 @@ theorem unitizationRawZeroIso_inv :
   exact (cyclicBicomplex k A).partialTotalComponent_partialTotalMap
     (Nat.zero_le 1) (0 : Fin 1) 0 0 rfl
 
-/-- Native successor splitting retains the original two word coordinates in positive degrees. -/
+/-- The two summands of a positive two-column total degree.
+
+In degree `n+1`, the partial-total splitting identifies the first-two-column cyclic total with
+`C_(n+1)(A) × C_n(A)`. -/
 def unitizationRawPositiveIso (n : ℕ) :
     (cyclicFirstTwoColumns k A).X (n + 1) ≅
       ModuleCat.of k (chainLevel k A A (n + 1) × chainLevel k A A n) :=
@@ -75,6 +87,10 @@ def unitizationRawPositiveIso (n : ℕ) :
     exact B.partialTotalSuccDegreeIso 0 (n + 1) ≪≫ biprod.mapIso α β ≪≫
       ModuleCat.biprodIsoProd (chainLevel k A A (n + 1)) (chainLevel k A A n)
 
+/-- The first inclusion under the product–biproduct comparison.
+
+For ground modules `X` and `Y`, the first product inclusion followed by the inverse module
+product–biproduct isomorphism is the first biproduct inclusion. -/
 @[reassoc]
 theorem product_inl_biprod_inv (X Y : ModuleCat.{max u v} k) :
     ModuleCat.ofHom (LinearMap.inl k X Y) ≫ (ModuleCat.biprodIsoProd X Y).inv = biprod.inl := by
@@ -84,6 +100,10 @@ theorem product_inl_biprod_inv (X Y : ModuleCat.{max u v} k) :
   · rw [Category.assoc, ModuleCat.biprodIsoProd_inv_comp_snd, biprod.inl_snd]
     rfl
 
+/-- The second inclusion under the product–biproduct comparison.
+
+For ground modules `X` and `Y`, the second product inclusion followed by the inverse module
+product–biproduct isomorphism is the second biproduct inclusion. -/
 @[reassoc]
 theorem product_inr_biprod_inv (X Y : ModuleCat.{max u v} k) :
     ModuleCat.ofHom (LinearMap.inr k X Y) ≫ (ModuleCat.biprodIsoProd X Y).inv = biprod.inr := by
@@ -93,7 +113,10 @@ theorem product_inr_biprod_inv (X Y : ModuleCat.{max u v} k) :
   · rw [Category.assoc, ModuleCat.biprodIsoProd_inv_comp_snd, biprod.inr_snd]
     rfl
 
-/-- The inverse even coordinate is precisely the original retained even cell. -/
+/-- The zero-column cell of the inverse positive coordinate.
+
+The first product inclusion followed by the inverse positive-degree comparison is the retained
+cell in bidegree `(0,n+1)`. -/
 @[reassoc]
 theorem unitizationRawPositiveIso_inv_even (n : ℕ) :
     ModuleCat.ofHom (LinearMap.inl k (chainLevel k A A (n + 1)) (chainLevel k A A n)) ≫
@@ -126,7 +149,10 @@ theorem unitizationRawPositiveIso_inv_even (n : ℕ) :
       exact B.partialTotalComponent_partialTotalMap (Nat.zero_le 1)
         (0 : Fin 1) (n + 1) (n + 1) (by simp)
 
-/-- The inverse odd coordinate is precisely the original retained odd cell. -/
+/-- The one-column cell of the inverse positive coordinate.
+
+The second product inclusion followed by the inverse positive-degree comparison is the
+retained cell in bidegree `(1,n)`. -/
 @[reassoc]
 theorem unitizationRawPositiveIso_inv_odd (n : ℕ) :
     ModuleCat.ofHom (LinearMap.inr k (chainLevel k A A (n + 1)) (chainLevel k A A n)) ≫
@@ -159,7 +185,10 @@ theorem unitizationRawPositiveIso_inv_odd (n : ℕ) :
         chainLevel k A A n ⟶ (cyclicFirstTwoColumns k A).X (n + 1)) := by rw [hP]
     _ = c := by rw [hS, Iso.inv_hom_id_assoc]
 
-/-- These retained cells jointly determine a map from the original raw degree. -/
+/-- Extensionality on the two retained cyclic column cells.
+
+A map from a two-column total degree is determined by its zero-column cell and, in positive
+degree, its one-column cell. -/
 theorem unitizationRawDegree_hom_ext {T : ModuleCat.{max u v} k} (n : ℕ)
     {f g : (cyclicFirstTwoColumns k A).X n ⟶ T}
     (hEven : cyclicFirstTwoColumnCell k A (0 : Fin 2) n n (by simp [Nat.add_comm, Nat.add_assoc]) ≫ f =
@@ -191,7 +220,10 @@ theorem unitizationRawDegree_hom_ext {T : ModuleCat.{max u v} k} (n : ℕ)
       rw [hx, map_add, map_add, map_add]
       exact congrArg₂ (fun a b => a + b) he' ho'
 
-/-- The original raw even retained cell has boundary b into the same column. -/
+/-- The regular boundary of a retained even-column cell.
+
+The boundary of the zero-column cell is the regular Hochschild boundary `b`, followed by the
+zero-column cell in the next lower total degree. -/
 @[reassoc]
 theorem unitizationRawEvenCell_d (n : ℕ) :
     cyclicFirstTwoColumnCell k A (0 : Fin 2) (n + 1) (n + 1) (by simp [Nat.add_comm, Nat.add_assoc]) ≫
@@ -217,7 +249,10 @@ theorem unitizationRawEvenCell_d (n : ℕ) :
     simp only [Fin.val_zero]
     rfl)
 
-/-- The original raw odd retained cell has exactly the source horizontal/vertical signs. -/
+/-- The horizontal and vertical signs of a retained odd-column cell.
+
+The boundary of the one-column cell is `(1-t)` into column zero minus `b′` into column one, at
+the indicated successor bidegrees. -/
 @[reassoc]
 theorem unitizationRawOddCell_d_succ (n : ℕ) :
     cyclicFirstTwoColumnCell k A (1 : Fin 2) (n + 1) (n + 2)
@@ -283,7 +318,10 @@ theorem unitizationRawOddCell_d_succ (n : ℕ) :
   conv_rhs => rw [Preadditive.sub_comp, Category.assoc, he₀, Category.assoc, he₁]
   exact (sub_eq_add_neg (t ≫ ι₀) (d' ≫ ι₁)).symm
 
-/-- The bottom odd boundary is zero because its original 1-t₀ is zero. -/
+/-- The zero boundary of the bottom retained odd-column cell.
+
+The bidegree `(1,0)` cell has zero boundary in total degree zero, since its horizontal map is
+`1-t_0 = 0` and there is no lower vertical degree. -/
 @[reassoc]
 theorem unitizationRawOddCell_d_zero :
     cyclicFirstTwoColumnCell k A (1 : Fin 2) 0 1 (by simp [Nat.add_comm, Nat.add_assoc]) ≫
@@ -305,7 +343,10 @@ theorem unitizationRawOddCell_d_zero :
       𝟙 (chainLevel k A A 0) := rfl
   rw [hId, sub_self, zero_comp, zero_comp]
 
-/-- Every comparison component is from the native original coordinate isomorphisms. -/
+/-- The degreewise comparison with reduced normalized unitization.
+
+The raw two-column coordinates and normalized even/odd coordinates give an isomorphism in
+every degree, with the separate reduced-kernel coordinate in degree zero. -/
 def unitizationTwoColumnCoordinateIso (n : ℕ) :
     (cyclicFirstTwoColumns k A).X n ≅ (unitizationReducedNormalizedComplex k A).X n :=
   match n with
@@ -314,7 +355,10 @@ def unitizationTwoColumnCoordinateIso (n : ℕ) :
       (unitizationNormalizedPositiveEquiv k A n).toModuleIso.symm ≪≫
       (unitizationReducedPositiveIso k A n).symm
 
-/-- The complete even comparison is the original ideal word in the original normalized quotient. -/
+/-- The even word of the two-column unitization comparison.
+
+A zero-column cell followed by the degreewise comparison and reduced-kernel inclusion is the
+ideal-leading normalized word. -/
 @[reassoc]
 theorem unitizationTwoColumnCoordinateIso_even (n : ℕ) :
     cyclicFirstTwoColumnCell k A (0 : Fin 2) n n (by simp [Nat.add_comm, Nat.add_assoc]) ≫
@@ -345,7 +389,10 @@ theorem unitizationTwoColumnCoordinateIso_even (n : ℕ) :
       exact ((unitizationNormalizedPositiveEquiv k A n).apply_symm_apply (x, 0)).trans
         (unitizationNormalizedPositiveEquiv_even k A n x).symm
 
-/-- The complete odd comparison is the external unit followed by the original ideal word. -/
+/-- The odd word of the two-column unitization comparison.
+
+A one-column cell followed by the degreewise comparison and reduced-kernel inclusion is the
+external-unit-leading normalized word. -/
 @[reassoc]
 theorem unitizationTwoColumnCoordinateIso_odd (n : ℕ) :
     cyclicFirstTwoColumnCell k A (1 : Fin 2) n (n + 1) (by simp [Nat.add_comm, Nat.add_assoc]) ≫
@@ -367,7 +414,11 @@ theorem unitizationTwoColumnCoordinateIso_odd (n : ℕ) :
   exact ((unitizationNormalizedPositiveEquiv k A n).apply_symm_apply (0, x)).trans
     (unitizationNormalizedPositiveEquiv_odd k A n x).symm
 
-/-- The original two retained raw columns are the reduced normalized unitization complex. -/
+/-- The chain isomorphism from two cyclic columns to reduced unitization.
+
+The degreewise even/odd comparisons identify the first-two-column cyclic total with the
+reduced normalized unitization complex, preserving the `b`, `1-t`, and `-b′` boundary
+formulas. -/
 def unitizationTwoColumnIso :
     cyclicFirstTwoColumns k A ≅ unitizationReducedNormalizedComplex k A :=
   HomologicalComplex.Hom.isoOfComponents (unitizationTwoColumnCoordinateIso k A)
@@ -410,12 +461,18 @@ def unitizationTwoColumnIso :
               unitizationTwoColumnCoordinateIso_odd]
             rfl)
 
-/-- The chain comparison retains each exact original coordinate, rather than a chosen equivalence field. -/
+/-- The components of the two-column unitization chain isomorphism.
+
+The forward component in every degree is its degreewise two-column coordinate comparison. -/
 @[simp]
 theorem unitizationTwoColumnIso_hom_f (n : ℕ) :
     (unitizationTwoColumnIso k A).hom.f n = (unitizationTwoColumnCoordinateIso k A n).hom := rfl
 
-/-- The source-defined nonunital HH is from its original first-two-column total. -/
+/-- The unitization cokernel homology as two-column cyclic homology.
+
+In every degree, the unitization Hochschild cokernel model is isomorphic to homology of the
+first-two-column cyclic total, through relative normalization and the inverse chain
+comparison. -/
 def unitizationHochschildTwoColumnIso (n : ℕ) :
     unitizationHochschildHomology k A n ≅ (cyclicFirstTwoColumns k A).homology n :=
   unitizationHochschildReducedNormalizedIso k A n ≪≫

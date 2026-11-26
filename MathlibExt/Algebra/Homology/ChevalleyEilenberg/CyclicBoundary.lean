@@ -13,16 +13,19 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoalgebraNaturality
 public import MathlibExt.Algebra.Lie.OfNonUnitalAssociative
 
 /-!
-# Exterior-to-Connes chain maps
+# Exterior maps to the cyclic quotient complex
 
-For a unital algebra over a commutative ring, the Connes boundary of full alternatization on n
-+ 2 exterior inputs is n + 2 times the ordered tail product sum. When the ground ring is a
-rational algebra, normalization by the number of inputs yields a chain map whose source
-differential has the positive bracket convention.
+Let `k` be a commutative ring and `A` a unital `k`-algebra with its commutator Lie bracket.
+The cyclic quotient complex `Cλ(A)` is the Hochschild tensor complex modulo the signed cyclic
+relation. On `n+2` exterior inputs, the boundary of full permutation alternation is `n+2`
+times the alternating bracket-tail product sum.
 
-Multiplying the map in degree n by `(-1)^n` gives the chain map from the positive tail of the
-canonical Chevalley–Eilenberg complex. The constructions are natural under nonunital algebra
-homomorphisms.
+Over a commutative `ℚ`-algebra, dividing full alternation in degree `n` by its `n+1` inputs
+gives the tail-alternating map `τ_n`. It satisfies `b τ_(n+1) = τ_n(-d_CE)`, giving a chain
+map from the positive CE tail with negated differentials. The degree sign `(-1)^n τ_n` gives
+the chain map from the canonical positive CE tail. In degree one the two maps are respectively
+`[x ⊗ y]` and `-[x ⊗ y]`; in degree zero both represent `[x]`. The maps are natural under
+nonunital algebra homomorphisms.
 -/
 
 @[expose] public section
@@ -42,8 +45,10 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
 local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 
-/-- The integral full-permutation cyclic boundary is the source input count times the bracket-tail
-sum. -/
+/-- The integral cyclic boundary of full exterior alternation.
+
+On a wedge of `n+2` inputs, the cyclic quotient boundary of full alternation equals `n+2`
+times the alternating tail-product sum. This equality holds over the commutative ground ring. -/
 theorem cyclicFullExterior_boundary_tail (n : ℕ) (a : Fin (n + 2) → A) :
     ((Cλ k A).d (n + 1) n).hom
         (cyclicFullExterior k A (n + 1) (exteriorPower.ιMulti k (n + 2) a)) =
@@ -54,7 +59,10 @@ section Rational
 
 variable [Algebra ℚ k]
 
-/-- The positive CE boundary followed by the exterior map is the bracket-tail sum. -/
+/-- The positive bracket boundary in cyclic exterior coordinates.
+
+Over rational scalars, the tail-alternating map applied to the negative canonical CE
+differential equals the alternating bracket-tail product sum. -/
 theorem cyclicExterior_positive_boundary (n : ℕ) (a : Fin (n + 2) → A) :
     cyclicExterior k A n
         (-differential k A (n + 1) (exteriorPower.ιMulti k (n + 2) a)) =
@@ -78,7 +86,10 @@ theorem cyclicExterior_positive_boundary (n : ℕ) (a : Fin (n + 2) → A) :
       funext t
       exact Fin.cases rfl (fun _ => rfl) t)
 
-/-- The tail-normalized exterior map has the signed cyclic boundary law. -/
+/-- The cyclic boundary law on a pure exterior wedge.
+
+The normalized exterior map sends the negative canonical boundary of a wedge to the cyclic
+quotient boundary of its image. -/
 theorem cyclicExterior_boundary_pure (n : ℕ) (a : Fin (n + 2) → A) :
     ((Cλ k A).d (n + 1) n).hom
         (cyclicExterior k A (n + 1) (exteriorPower.ιMulti k (n + 2) a)) =
@@ -91,7 +102,9 @@ theorem cyclicExterior_boundary_pure (n : ℕ) (a : Fin (n + 2) → A) :
     ← map_natCast (algebraMap ℚ k) (n + 2), ← map_mul,
     ← Nat.cast_succ, inv_mul_cancel₀ hn, map_one, one_smul]
 
-/-- The whole exterior component commutes with the signed differential. -/
+/-- The linear boundary identity of cyclic exterior maps.
+
+In every successor degree, `b ∘ τ_(n+1) = τ_n ∘ (-d_CE)` as ground-linear maps. -/
 theorem cyclicExterior_boundary (n : ℕ) :
     (((Cλ k A).d (n + 1) n).hom).comp (cyclicExterior k A (n + 1)) =
       (cyclicExterior k A n).comp (-differential k A (n + 1)) := by
@@ -103,12 +116,17 @@ theorem cyclicExterior_boundary (n : ℕ) :
     cyclicExterior k A n ((-differential k A (n + 1)) (exteriorPower.ιMulti k (n + 2) a))
   simpa only [LinearMap.neg_apply] using cyclicExterior_boundary_pure k A n a
 
-/-- The shifted exterior complex with the positive bracket differential. -/
+/-- The positive CE tail with positive bracket convention.
+
+Take the positive tail of the canonical CE complex after negating its differentials. Displayed
+degree `n` is exterior degree `n+1`. -/
 abbrev cyclicPrintedSource : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   ChainComplex.positiveTail (HomologicalComplex.negateDifferentials (canonicalChainData k A).complex)
 
-/-- Normalized tail antisymmetrization as a chain map from the positive bracket convention to the
-Connes complex. -/
+/-- The tail-alternating chain map with positive bracket differential.
+
+The maps `τ_n` give a chain map from the positive CE tail with negated differentials to the
+cyclic quotient complex. -/
 def cyclicExteriorChainMap : cyclicPrintedSource k A ⟶ Cλ k A :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (cyclicExterior k A n)) (by
     intro n
@@ -124,18 +142,24 @@ def cyclicExteriorChainMap : cyclicPrintedSource k A ⟶ Cλ k A :=
     rw [hd]
     exact cyclicExterior_boundary k A n)
 
-/-- Its exact component is the exterior tail sum. -/
+/-- The components of the positive-bracket cyclic chain map.
+
+The degree-`n` component is the normalized tail-alternating exterior map `τ_n`. -/
 theorem cyclicExteriorChainMap_f (n : ℕ) :
     ((cyclicExteriorChainMap k A).f n).hom = cyclicExterior k A n := rfl
 
-/-- The chain map from the positive Chevalley–Eilenberg tail whose component in degree n is
-`(-1)^n` times normalized tail antisymmetrization. -/
+/-- The signed cyclic chain map from the canonical positive CE tail.
+
+The degree components `(-1)^n τ_n` give a chain map from the canonical CE complex restricted
+to positive exterior degrees. -/
 def cyclicExteriorWeibelChainMap :
     ChainComplex.positiveTail (canonicalChainData k A).complex ⟶ Cλ k A :=
   ChainComplex.positiveTailMap (ChainComplex.negationIso (canonicalChainData k A).complex).hom ≫
     (-cyclicExteriorChainMap k A)
 
-/-- Its component has exactly the source's `(-1)^n` multiplying the tail map. -/
+/-- The degree sign of the canonical-tail cyclic chain map.
+
+Its degree-`n` component is the tail-alternating exterior map multiplied by `(-1)^n`. -/
 theorem cyclicExteriorWeibelChainMap_f (n : ℕ) :
     ((cyclicExteriorWeibelChainMap k A).f n).hom = cyclicExteriorWeibel k A n := by
   let K := (canonicalChainData k A).complex
@@ -166,7 +190,10 @@ theorem cyclicExteriorWeibelChainMap_f (n : ℕ) :
       (Int.cast_smul_eq_zsmul k (ChainComplex.degreeSign n) (cyclicExterior k A n)).symm
   exact hraw.trans hs
 
-/-- Degree zero is the one-factor Connes representative, with no degree sign. -/
+/-- The degree-zero one-factor cyclic representative.
+
+The canonical-tail map sends the exterior generator `x` in degree zero to the cyclic
+representative with coefficient `x` and empty tail. -/
 theorem cyclicExteriorWeibelChainMap_zero_pure (x : A) :
     ((cyclicExteriorWeibelChainMap k A).f 0).hom
       (exteriorPower.ιMulti k 1 (fun _ => x)) =
@@ -183,8 +210,9 @@ theorem cyclicExteriorWeibelChainMap_zero_pure (x : A) :
   rw [htail] at hp
   exact hf.trans hp
 
-/-- The printed-positive degree-one component sends the two-vector wedge to its ordered tensor
-class. -/
+/-- The degree-one ordered representative for the positive bracket map.
+
+The wedge `x ∧ y` maps to the cyclic class of the coefficient-first tensor `x ⊗ y`. -/
 theorem cyclicExteriorChainMap_one_pure (x y : A) :
     ((cyclicExteriorChainMap k A).f 1).hom (exteriorPower.ιMulti k 2 ![x, y]) =
       ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A 1
@@ -203,7 +231,10 @@ theorem cyclicExteriorChainMap_one_pure (x y : A) :
   rw [htail] at hp
   exact hf.trans hp
 
-/-- The positive degree-two bracket boundary is carried to the one-factor bracket class. -/
+/-- The positive bracket boundary of a degree-one cyclic representative.
+
+The cyclic boundary of the positive-bracket image of `x ∧ y` is the degree-zero representative
+of `[x,y]`. -/
 theorem cyclicExteriorChainMap_one_boundary (x y : A) :
     ((Cλ k A).d 1 0).hom
         (((cyclicExteriorChainMap k A).f 1).hom (exteriorPower.ιMulti k 2 ![x, y])) =
@@ -224,7 +255,9 @@ theorem cyclicExteriorChainMap_one_boundary (x y : A) :
     simp [cyclicTailSum]
   exact (congrArg ((Cλ k A).d 1 0).hom hf).trans hp
 
-/-- The component in degree one is the negative of the ordered tensor representative. -/
+/-- The negative degree-one representative for the canonical-tail map.
+
+The canonical-tail map sends `x ∧ y` to the negative cyclic class of `x ⊗ y`. -/
 theorem cyclicExteriorWeibelChainMap_one_pure (x y : A) :
     ((cyclicExteriorWeibelChainMap k A).f 1).hom (exteriorPower.ιMulti k 2 ![x, y]) =
       -ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A 1
@@ -247,17 +280,26 @@ section Naturality
 
 variable {B : Type v} [Ring B] [Algebra k B]
 
-/-- The CE positive-tail map induced by the noncommutative algebra map. -/
+/-- The canonical positive-tail map of an algebra homomorphism.
+
+A nonunital algebra map induces a commutator Lie map and hence a map on the canonical CE
+complex restricted to positive exterior degrees. -/
 def cyclicWeibelSourceMap (f : A →ₙₐ[k] B) :
     ChainComplex.positiveTail (canonicalChainData k A).complex ⟶
       ChainComplex.positiveTail (canonicalChainData k B).complex :=
   ChainComplex.positiveTailMap (nativeComplexMap k A f.toLieHom)
 
-/-- The printed-positive source map is the same map under differential negation. -/
+/-- The positive-bracket source map of an algebra homomorphism.
+
+Apply the Lie-induced CE map after negating differentials and restricting to positive exterior
+degrees. -/
 def cyclicPrintedSourceMap (f : A →ₙₐ[k] B) : cyclicPrintedSource k A ⟶ cyclicPrintedSource k B :=
   ChainComplex.positiveTailMap (HomologicalComplex.negateMap (nativeComplexMap k A f.toLieHom))
 
-/-- Positive-convention chain naturality uses the coefficient/exterior and Connes maps. -/
+/-- Naturality of the positive-bracket cyclic exterior map.
+
+The source map induced by a nonunital algebra homomorphism commutes with the tail-alternating
+chain map and the induced cyclic quotient map. -/
 theorem cyclicExteriorChainMap_naturality (f : A →ₙₐ[k] B) :
     cyclicPrintedSourceMap k A f ≫ cyclicExteriorChainMap k B =
       cyclicExteriorChainMap k A ≫
@@ -278,7 +320,10 @@ theorem cyclicExteriorChainMap_naturality (f : A →ₙₐ[k] B) :
       (cyclicExterior k A n)
   exact (cyclicExterior_natural k A f n).symm
 
-/-- The signed cyclic chain map is natural under nonunital coefficient algebra homomorphisms. -/
+/-- Naturality of the canonical-tail signed cyclic exterior map.
+
+The canonical positive-tail map and the cyclic quotient map induced by a nonunital algebra
+homomorphism commute with the degree-signed exterior chain map. -/
 theorem cyclicExteriorWeibelChainMap_naturality (f : A →ₙₐ[k] B) :
     cyclicWeibelSourceMap k A f ≫ cyclicExteriorWeibelChainMap k B =
       cyclicExteriorWeibelChainMap k A ≫

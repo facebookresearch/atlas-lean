@@ -1,3 +1,6 @@
-# Window Hom page Window Iso inv
+# The inverse-chart square of a spectral window map
 
-The inverse page iso commutes with the original native page map.
+The inverse-chart square of a spectral window map.
+
+The window component followed by the inverse target chart equals the inverse source chart
+followed by the page map.

@@ -1,3 +1,5 @@
-# Page Cycles Pair To
+# The cycle product with a specified sum bidegree
 
-The original cycle product at an explicitly equal output bidegree.
+The cycle product with a specified sum bidegree.
+
+For a+b=t, transport the page cycle product to t.

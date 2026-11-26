@@ -1,4 +1,7 @@
-# Is Homogeneous Of Degree
+# Degree-shift condition on a linear map
 
-A linear map is homogeneous of degree `d` when it maps degree `n` into
-degree `d + n`.
+Degree-shift condition on a linear map.
+
+For families M_n,N_n of A-submodules, a natural d and an S-linear map f : M → N,
+IsHomogeneousOfDegree means f(M_n) ⊆ N_{d+n} for every n. At this level A,S are semirings and
+M,N carry both actions; an internal decomposition is not required.

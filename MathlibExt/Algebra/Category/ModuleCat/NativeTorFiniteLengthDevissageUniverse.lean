@@ -19,14 +19,16 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.SimpleModule.Basic
 
 /-!
-# Native Tor Euler devissage for actual finite-length coefficients
+# Finite-length dévissage for Tor Euler sums
 
-The actual simple quotients of a finite-length module over a local ring are
-isomorphic to its residue field. An additive homology-preserving coefficient
-functor retains each original short exact filtration row. The native Tor exact
-sequence earns finite local lengths and the common vanishing cutoff from the
-actual residue coefficient, and the literal native Euler sum counts the actual
-composition factors. Flat scalar extension specializes this single engine.
+Let R be a commutative local ring with residue field κ, S a commutative ring, F : Mod_R →
+Mod_S an additive homology-preserving functor and M an S-module. Suppose Tor_q^S(M,Fκ) has
+finite S-length for q < d and vanishes for q ≥ d. Then the same finite-length and vanishing
+bounds hold for Tor_q^S(M,FN) whenever N has finite R-length.
+
+For the alternating sum χ_d(M,FN) = ∑_{q<d}(−1)^q ℓ_S(Tor_q^S(M,FN)), dévissage gives
+χ_d(M,FN) = ℓ_R(N)χ_d(M,Fκ). The residue coefficient is lifted to the stated carrier universe.
+Flat scalar extension R → S is a specialization of this functorial statement.
 -/
 
 @[expose] public section
@@ -41,11 +43,17 @@ namespace ModuleCat.UniverseTensor
 universe u v w
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S] [IsLocalRing R]
 
-/-- The actual residue field with its canonical original action in the common module universe. -/
+/-- The lifted residue-field coefficient module.
+
+For a commutative local ring R, this is ULift of κ = R/m as an R-module through the residue
+map, at the specified carrier height. -/
 def nativeResidueCoefficient : ModuleCat.{max u w} R :=
   ModuleCat.of R (ULift.{w} (IsLocalRing.ResidueField R))
 
-/-- The canonical residue coefficient has actual length one over the original local ring. -/
+/-- The residue coefficient has length one.
+
+The lifted residue-field module has R-length 1, since the residue map is surjective and the
+residue field is a simple R-module. -/
 theorem nativeResidueCoefficient_length :
     Module.length R (nativeResidueCoefficient.{u, w} R) = 1 := by
   change Module.length R (ULift.{w} (IsLocalRing.ResidueField R)) = 1
@@ -67,7 +75,10 @@ private theorem simple_equiv_nativeResidueCoefficient
   exact ⟨e.trans (ULift.moduleEquiv : ULift.{w} (IsLocalRing.ResidueField R) ≃ₗ[R]
     IsLocalRing.ResidueField R).symm⟩
 
-/-- The native middle term has finite length when its two actual neighboring terms do. -/
+/-- Finite lengths of outer Tor terms imply finite length of the middle term.
+
+For a short exact sequence C₁ → C₂ → C₃ of S-modules and fixed M, if Tor_q^S(M,C₁) and
+Tor_q^S(M,C₃) have finite length, so does Tor_q^S(M,C₂). -/
 theorem nativeTor_length_ne_top_of_shortExact
     (M : ModuleCat.{max v w} S) (C : ShortComplex (ModuleCat.{max v w} S))
     (hC : C.ShortExact) (q : ℕ)
@@ -81,7 +92,10 @@ theorem nativeTor_length_ne_top_of_shortExact
     (((Tor (ModuleCat.{max v w} S) q).obj M).map C.g).hom
     ((ShortComplex.ShortExact.moduleCat_exact_iff_function_exact _).mp h) h₁ h₃
 
-/-- The actual native middle term vanishes when its two neighboring native terms vanish. -/
+/-- Vanishing of outer Tor terms implies vanishing of the middle term.
+
+For a short exact coefficient sequence and fixed M, if Tor_q^S(M,C₁) and Tor_q^S(M,C₃) are
+zero, then Tor_q^S(M,C₂) is zero. -/
 theorem nativeTor_isZero_of_shortExact
     (M : ModuleCat.{max v w} S) (C : ShortComplex (ModuleCat.{max v w} S))
     (hC : C.ShortExact) (q : ℕ)
@@ -92,7 +106,11 @@ theorem nativeTor_isZero_of_shortExact
   obtain ⟨_, h⟩ := LeftDerivedDelta.LDexact_B F q C hC
   exact h.isZero_of_both_isZero h₁ h₃
 
-/-- An exact additive coefficient functor earns the native residue cutoff and Euler multiplier. -/
+/-- Tor Euler dévissage under a homology-preserving coefficient functor.
+
+For additive homology-preserving F, assume Tor^S(M,Fκ) has finite length below cutoff d and is
+zero at and above d. Every finite-length R-module N inherits these bounds, and its alternating
+Tor length sum is ℓ_R(N) times that for Fκ. The ring and coefficient universes are as stated. -/
 theorem nativeTorFiniteLength_devissage_of_preservesHomology
     (F : ModuleCat.{max u v w} R ⥤ ModuleCat.{max u v w} S)
     [F.Additive] [F.PreservesHomology] (M : ModuleCat.{max u v w} S)
@@ -216,7 +234,11 @@ theorem nativeTorFiniteLength_devissage_of_preservesHomology
 
 variable [Algebra R S] [Module.Flat R S]
 
-/-- Actual finite-length coefficients inherit the residue native cutoff and Euler multiplier. -/
+/-- Tor Euler dévissage after flat scalar extension.
+
+For a flat R-algebra S and finite-length R-module N, finite-length and vanishing bounds for
+Tor^S(M,S⊗_R κ) pass to Tor^S(M,S⊗_R N). Its alternating sum below the common cutoff is ℓ_R(N)
+times the residue-coefficient sum. -/
 theorem nativeTorFiniteLength_devissage (M : ModuleCat.{max u v w} S)
     (N : Type (max u v w)) [AddCommGroup N] [Module R N] (hN : IsFiniteLength R N)
     (cutoff : ℕ)

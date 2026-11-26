@@ -39,7 +39,10 @@ namespace Submodule
 
 variable {R : Type u} [Ring R] {M : Type v} [AddCommGroup M] [Module R M]
 
-/-- The two successive quotients of nested submodules have additive length. -/
+/-- Let `R` be a ring and `M` an `R`-module in an independent universe. For
+submodules `A ⊆ B ⊆ M`, composition length satisfies
+`length_R(M/A) = length_R(B/A) + length_R(M/B)`. The formula uses extended natural
+lengths and requires no finite-length hypothesis. -/
 theorem length_quotient_eq_add_of_le (A B : Submodule R M) (hAB : A ≤ B) :
     Module.length R (M ⧸ A) =
       Module.length R (B ⧸ A.comap B.subtype) + Module.length R (M ⧸ B) := by
@@ -64,8 +67,10 @@ theorem length_quotient_eq_add_of_le (A B : Submodule R M) (hAB : A ≤ B) :
   rw [hleft, ← hright]
   exact hlen
 
-/-- Injective transport identifies the actual ambient quotient with the quotient
-of the range by the transported submodule. -/
+/-- For a ring `R`, an `R`-module `M`, a submodule `N ⊆ M` and an injective
+linear endomorphism `f`, there is a linear equivalence
+`M/N ≃ range(f)/f(N)`, where `f(N)` is regarded as a submodule of `range(f)`.
+No invariance or finite-colength assumption on `N` is needed for this equivalence. -/
 def quotientRangeEquivOfInjective (N : Submodule R M) (f : M →ₗ[R] M)
     (hf : Function.Injective f) :
     (M ⧸ N) ≃ₗ[R] f.range ⧸ (N.map f).comap f.range.subtype := by
@@ -78,8 +83,10 @@ def quotientRangeEquivOfInjective (N : Submodule R M) (f : M →ₗ[R] M)
   · rintro ⟨x, hx, hxz⟩
     exact ⟨x, hx, Subtype.ext hxz⟩
 
-/-- A preserved submodule of finite colength has the same quotient-image length
-as the ambient module under an actual injective endomorphism. -/
+/-- Let `R` be a ring, `M` an `R`-module and `N ⊆ M` a submodule such that
+`M/N` has finite composition length. If a linear endomorphism `f` is injective and
+`f(N) ⊆ N`, then `length_R(N/f(N)) = length_R(M/range(f))`, with the transported
+image interpreted as a submodule of `N`. The two lengths themselves may be infinite. -/
 theorem length_quotient_map_eq_of_finite_colength (N : Submodule R M)
     (hfinite : IsFiniteLength R (M ⧸ N)) (f : M →ₗ[R] M) (hf : Function.Injective f)
     (hN : N.map f ≤ N) :

@@ -1,3 +1,5 @@
-# To Add Subgroup
+# A ring homogeneous component as an additive subgroup
 
-The additive subgroup underlying the homogeneous component `𝒜 n`.
+A ring homogeneous component as an additive subgroup.
+
+For n ∈ ℕ, regard the SetLike component 𝒜_n as an additive subgroup of R.

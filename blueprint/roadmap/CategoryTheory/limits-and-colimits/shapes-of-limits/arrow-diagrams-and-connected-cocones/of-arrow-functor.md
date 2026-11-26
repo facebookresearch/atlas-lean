@@ -1,3 +1,7 @@
-# Of Arrow Functor
+# Functor from arrows to one-step diagrams
 
-The full Arrow square gives its two-object diagram and natural transformation.
+Functor from arrows to one-step diagrams.
+
+For a category C, send an arrow A to the diagram A.left → A.right with edge A.hom. A commuting
+square f : A ⟶ B is sent to the natural transformation with components f.left and f.right at
+vertices 0 and 1.

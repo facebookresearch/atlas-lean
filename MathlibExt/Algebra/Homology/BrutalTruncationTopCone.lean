@@ -17,17 +17,17 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.DegreewiseSplit
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-# The original top-degree brutal truncation as a stock cone
+# Removing a top cochain degree and recovering it by a cone
 
-For an original cochain complex `K` zero above `b`, its stock brutal
-truncation `L` below `b` is the quotient by the stock single on `K.X b`.
-The original terms and differentials determine the projection and the
-degreewise splitting. The stock connecting map `L ⟶ single(K.X b,b)⟦1⟧`
-retains the literal original last differential through its original charts.
+For an integer-indexed cochain complex K in an abelian category, let L be its brutal
+truncation in degrees below b and let A be the single-degree complex on K_b at b. If K is zero
+above b, the inclusion A → K and projection K → L give a degreewise split short exact
+sequence.
 
-The stock degreewise-split cone isomorphism, shifted by `-1`, reconstructs
-the whole original complex `K`. This is the successor presentation for
-induction on its finite support.
+The connecting map δ : L → A[1] has component σ_j.s ≫ d_K(j,j+1) ≫ σ_{j+1}.r. In degree b−1 it
+is the last differential d_K(b−1,b) through the truncation, shift and single-degree charts.
+The shifted cone Cone(δ)[−1] is canonically isomorphic to K. All integer degrees and the
+category object and morphism universes remain as stated.
 -/
 
 @[expose] public section
@@ -42,15 +42,22 @@ namespace CochainComplex
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The actual stock brutal truncation that removes the top degree `b`. -/
+/-- Brutal truncation below a chosen top degree.
+
+For K and b ∈ ℤ, retain the degrees j < b using stupid truncation along the embedding up to
+b−1. -/
 abbrev topCutLower (K : CochainComplex C ℤ) (b : ℤ) : CochainComplex C ℤ :=
   K.stupidTrunc (ComplexShape.embeddingUpIntLE (b - 1))
 
-/-- The stock single complex on the literal original top term. -/
+/-- The single complex on the chosen top term.
+
+Place K_b in cochain degree b and zero in every other degree. -/
 abbrev topCutSingle (K : CochainComplex C ℤ) (b : ℤ) : CochainComplex C ℤ :=
   (HomologicalComplex.single C (.up ℤ) b).obj (K.X b)
 
-/-- The original term chart of the stock brutal truncation below `b`. -/
+/-- The truncation chart in a retained degree.
+
+For j < b, the degree-j object of topCutLower K b is canonically isomorphic to K_j. -/
 def topCutLowerXIso (K : CochainComplex C ℤ) (b j : ℤ) (hj : j < b) :
     (topCutLower K b).X j ≅ K.X j :=
   K.stupidTruncXIso (ComplexShape.embeddingUpIntLE (b - 1))
@@ -58,13 +65,17 @@ def topCutLowerXIso (K : CochainComplex C ℤ) (b j : ℤ) (hj : j < b) :
       change b - 1 - ((b - 1 - j).toNat : ℤ) = j
       omega)
 
-/-- The lower brutal truncation is zero in and above the removed degree. -/
+/-- The lower truncation vanishes at and above the cut.
+
+For b ≤ j, the degree-j object of topCutLower K b is zero. -/
 theorem topCutLower_isZero_above (K : CochainComplex C ℤ) (b j : ℤ) (hj : b ≤ j) :
     IsZero ((topCutLower K b).X j) :=
   K.isZero_stupidTrunc_X (ComplexShape.embeddingUpIntLE (b - 1)) j
     ((ComplexShape.notMem_range_embeddingUpIntLE_iff (b - 1) j).2 (by omega))
 
-/-- The original lower support is retained by the stock brutal truncation. -/
+/-- Support of a lower truncation with a lower bound.
+
+If K is zero below a, its truncation below b is zero whenever j < a or j > b−1. -/
 theorem topCutLower_isZero_outside (K : CochainComplex C ℤ) (a b : ℤ)
     (hK : ∀ j : ℤ, j < a → IsZero (K.X j)) (j : ℤ)
     (hj : j < a ∨ b - 1 < j) : IsZero ((topCutLower K b).X j) := by
@@ -74,8 +85,10 @@ theorem topCutLower_isZero_outside (K : CochainComplex C ℤ) (a b : ℤ)
     · exact topCutLower_isZero_above K b j (by omega)
   · exact topCutLower_isZero_above K b j (by omega)
 
-/-- The lower truncation retains each original differential through the
-two actual original truncation charts. -/
+/-- The differential in retained truncation degrees.
+
+For i,j < b, the truncated differential is the original K.d i j conjugated by the truncation
+charts at i and j. -/
 theorem topCutLower_d (K : CochainComplex C ℤ) (b i j : ℤ)
     (hi : i < b) (hj : j < b) :
     (topCutLower K b).d i j =
@@ -83,8 +96,10 @@ theorem topCutLower_d (K : CochainComplex C ℤ) (b i j : ℤ)
   dsimp only [topCutLower, topCutLowerXIso]
   exact K.stupidTrunc_d_eq _ _ _
 
-/-- The actual projection from the original complex to its lower
-brutal truncation, using the inverse original term charts. -/
+/-- The projection onto the lower brutal truncation.
+
+In degree j < b, use the inverse truncation chart K_j → L_j; at and above b, use zero. These
+components form a cochain map. -/
 def πTopCutLower (K : CochainComplex C ℤ) (b : ℤ) : K ⟶ topCutLower K b where
   f j := if hj : j < b then (topCutLowerXIso K b j hj).inv else 0
   comm' i j hij := by
@@ -97,19 +112,27 @@ def πTopCutLower (K : CochainComplex C ℤ) (b : ℤ) : K ⟶ topCutLower K b w
       simp only [Iso.inv_hom_id_assoc]
     · exact (topCutLower_isZero_above K b j (by omega)).eq_of_tgt _ _
 
-/-- Below the removed degree, the projection is its actual original chart. -/
+/-- The projection component below the cut.
+
+For j < b, the degree-j projection onto topCutLower K b is the inverse of its object chart
+with K_j. -/
 theorem πTopCutLower_f (K : CochainComplex C ℤ) (b j : ℤ) (hj : j < b) :
     (πTopCutLower K b).f j = (topCutLowerXIso K b j hj).inv :=
   dite_eq_left hj
 
-/-- The top-term inclusion is defined by the identity on the literal
-original top term, using the original upper-support hypothesis. -/
+/-- The inclusion of the top single term.
+
+If K is zero above b, the identity on K_b extends to a cochain map from the single complex on
+K_b in degree b to K. -/
 def topTermInclusion (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) : topCutSingle K b ⟶ K :=
   HomologicalComplex.mkHomFromSingle (𝟙 (K.X b))
     (fun j (hj : b + 1 = j) => (hupper j (by omega)).eq_of_tgt _ _)
 
-/-- At the actual top degree, the inclusion is the stock original single chart. -/
+/-- The top-degree component of the single-term inclusion.
+
+In degree b, the inclusion is the canonical chart from the single complex's degree-b object to
+K_b. -/
 theorem topTermInclusion_f (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     (topTermInclusion K b hupper).f b =
@@ -126,8 +149,10 @@ private theorem topTermInclusion_πTopCutLower (K : CochainComplex C ℤ) (b : �
   · exact (HomologicalComplex.isZero_single_obj_X (.up ℤ) b (K.X b) j (by omega)).eq_of_src _ _
   · exact (topCutLower_isZero_above K b j (by omega)).eq_of_tgt _ _
 
-/-- The original top term, original complex, and actual lower projection
-form the concrete successor short complex. -/
+/-- The short complex obtained by removing the top degree.
+
+For K zero above b, form the short complex A → K → L from the top-term inclusion and lower-
+truncation projection. -/
 @[no_expose]
 def topCutShortComplex (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
@@ -135,14 +160,19 @@ def topCutShortComplex (K : CochainComplex C ℤ) (b : ℤ)
   ShortComplex.mk (topTermInclusion K b hupper) (πTopCutLower K b)
     (topTermInclusion_πTopCutLower K b hupper)
 
-/-- The original top inclusion followed by the original lower projection is zero. -/
+/-- The top-term inclusion followed by truncation is zero.
+
+For K zero above b, the composite from the single top term through K to its lower truncation
+is zero. -/
 theorem topCutZero (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     topTermInclusion K b hupper ≫ πTopCutLower K b = 0 :=
   topTermInclusion_πTopCutLower K b hupper
 
-/-- The whole original short-complex readout retains its literal stock
-single, original complex, lower truncation, inclusion, and projection. -/
+/-- The maps defining the top-degree short complex.
+
+The short complex consists of topTermInclusion and πTopCutLower with their zero-composite
+relation. -/
 theorem topCutShortComplex_eq (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     topCutShortComplex K b hupper =
@@ -150,8 +180,10 @@ theorem topCutShortComplex_eq (K : CochainComplex C ℤ) (b : ℤ)
         (topCutZero K b hupper) := by
   dsimp only [topCutShortComplex]
 
-/-- The actual degreewise splitting is earned from the original zero
-terms and the original chart isomorphisms. -/
+/-- The degreewise splitting of the top-degree short complex.
+
+For each j, the evaluated sequence A_j → K_j → L_j has the splitting determined by its
+truncation and single-term charts, under the upper-zero hypothesis. -/
 def topCutSplitting (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) (j : ℤ) :
     ((ShortComplex.mk (topTermInclusion K b hupper) (πTopCutLower K b)
@@ -173,7 +205,10 @@ def topCutSplitting (K : CochainComplex C ℤ) (b : ℤ)
         (HomologicalComplex.isZero_single_obj_X (.up ℤ) b (K.X b) j h)
         (hupper j (by omega)) ((topTermInclusion K b hupper).f j)
 
-/-- The concrete original successor sequence is degreewise split exact. -/
+/-- Exactness of the top-degree short complex.
+
+For K zero above b, the sequence single(K_b,b) → K → topCutLower K b is short exact in the
+category of cochain complexes. -/
 theorem topCutShortComplex_shortExact (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     (topCutShortComplex K b hupper).ShortExact := by
@@ -181,8 +216,10 @@ theorem topCutShortComplex_shortExact (K : CochainComplex C ℤ) (b : ℤ)
   intro j
   exact (topCutSplitting K b hupper j).shortExact
 
-/-- The actual stock connecting morphism is constructed from the
-original successor sequence and its earned degreewise splitting. -/
+/-- The connecting map determined by the degreewise splitting.
+
+The degreewise split top-term sequence gives a cochain map from the lower truncation L to the
+shifted single-term complex A[1]. -/
 def topCutConnecting (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     topCutLower K b ⟶ (topCutSingle K b)⟦(1 : ℤ)⟧ :=
@@ -190,8 +227,10 @@ def topCutConnecting (K : CochainComplex C ℤ) (b : ℤ)
     (ShortComplex.mk (topTermInclusion K b hupper) (πTopCutLower K b) (topCutZero K b hupper))
     (topCutSplitting K b hupper)
 
-/-- Every component of the actual connecting map uses the literal
-original differential and the earned original degreewise splitting. -/
+/-- The component formula of the top-cut connecting map.
+
+The component at j is the section of the splitting at j, followed by K.d j (j+1), followed by
+the retraction at j+1. -/
 theorem topCutConnecting_f (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) (j : ℤ) :
     (topCutConnecting K b hupper).f j =
@@ -232,8 +271,10 @@ private theorem topCutConnecting_last_f_aux (K : CochainComplex C ℤ) (p b : �
   simpa only [Category.assoc, Category.comp_id] using
     congrArg (fun f => t.hom ≫ K.d p (p + 1) ≫ f) htail
 
-/-- Through the actual original truncation, shift, and single-object
-charts, the connecting map contains the literal original last differential. -/
+/-- The connecting map retains the last cochain differential.
+
+In degree b−1, composing the connecting component with the canonical shift and single-term
+charts gives the truncation chart followed by K.d (b−1) b. -/
 theorem topCutConnecting_last_f (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     (topCutConnecting K b hupper).f (b - 1) ≫
@@ -242,8 +283,10 @@ theorem topCutConnecting_last_f (K : CochainComplex C ℤ) (b : ℤ)
       (topCutLowerXIso K b (b - 1) (by omega)).hom ≫ K.d (b - 1) b :=
   topCutConnecting_last_f_aux K (b - 1) b (by omega) hupper
 
-/-- The actual stock cone of the original connecting map, shifted by
-`-1`, is canonically isomorphic to the whole original complex. -/
+/-- Recovery of the cochain complex from the shifted connecting cone.
+
+For K zero above b, the mapping cone of topCutConnecting K b, shifted by −1, is canonically
+isomorphic to K. -/
 def topCutConeIso (K : CochainComplex C ℤ) (b : ℤ)
     (hupper : ∀ j : ℤ, b < j → IsZero (K.X j)) :
     (mappingCone (topCutConnecting K b hupper))⟦(-1 : ℤ)⟧ ≅ K := by

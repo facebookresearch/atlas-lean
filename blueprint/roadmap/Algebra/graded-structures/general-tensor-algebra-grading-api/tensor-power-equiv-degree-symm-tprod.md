@@ -1,3 +1,5 @@
-# Tensor Power Equiv Degree symm tprod
+# The inverse homogeneous equivalence takes products to pure tensors
 
-Inverse equivalence sends `⟨tprod, _⟩` to the pure tensor.
+For a commutative semiring R, R-module M, and x : Fin n → M, the inverse of
+tensorPowerEquivDegree_n takes the degree-n product element tprod(x) to PiTensorProduct.tprod
+R x.

@@ -1,3 +1,6 @@
-# Algebra Normalized Eulerian Operator comp
+# Orthogonality of normalized A-linear Eulerian weights
 
-The original normalized coefficient representation gives orthogonal projectors.
+Orthogonality of normalized A-linear Eulerian weights.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, ēₙ⁽ⁱ⁾ ∘
+ēₙ⁽ʲ⁾ is ēₙ⁽ⁱ⁾ when i=j and zero otherwise.

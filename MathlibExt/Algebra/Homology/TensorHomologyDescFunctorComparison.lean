@@ -17,12 +17,16 @@ public import MathlibExt.Algebra.Homology.Functor
 public import Mathlib.CategoryTheory.Monoidal.Functor
 
 /-!
-# Functor comparison for the original tensor homology product
+# Tensor homology descent under a monoidal equivalence
 
-Canonical mapped-cycle and mapped-homology comparisons retain the original
-cycle inclusions and homology projections. A proved cycle-product square
-then descends through the original homology cokernels on both categories.
-The tensor comparison is the strong monoidal functor's original `μ` map.
+For an additive equivalence F between abelian categories and an isomorphism from a mapped
+short complex to a target short complex, the canonical cycles and homology comparisons
+preserve cycle inclusions and homology projections.
+
+Under the stated monoidal and tensor-coequalizer preservation conditions, compatible cycle
+products descend through the homology quotients. A commuting cycle-product square gives a
+commuting homology-product square, with the strong monoidal comparison μ_F and all three
+source-to-target short-complex isomorphisms retained.
 -/
 
 @[expose] public section
@@ -42,7 +46,10 @@ variable {C : Type u₁} {D : Type u₂}
 variable [Category.{v₁} C] [Category.{v₂} D] [Abelian C] [Abelian D]
 variable (F : C ⥤ D) [F.Additive] [F.IsEquivalence]
 
-/-- The inverse of the original mapped-homology projection comparison. -/
+/-- The inverse mapped-homology comparison preserves the quotient square.
+
+F applied to the cycle projection followed by the inverse homology comparison equals the
+inverse cycles comparison followed by the mapped-complex projection. -/
 @[reassoc]
 theorem map_homologyπ_comp_mapHomologyIso_inv (S : ShortComplex C) :
     F.map S.homologyπ ≫ (S.mapHomologyIso F).inv =
@@ -54,17 +61,22 @@ theorem map_homologyπ_comp_mapHomologyIso_inv (S : ShortComplex C) :
 variable {F}
 variable {S : ShortComplex C} {T : ShortComplex D}
 
-/-- The canonical comparison of original source cycles with actual target
-cycles through a genuine mapped-source short-complex isomorphism. -/
+/-- The cycles comparison of a mapped short-complex isomorphism.
+
+For e : F(S) ≅ T, combine the mapped cycles comparison and e to obtain F(Z(S)) ≅ Z(T). -/
 def functorCyclesComparisonIso (e : S.map F ≅ T) : F.obj S.cycles ≅ T.cycles :=
   (S.mapCyclesIso F).symm ≪≫ (cyclesFunctor D).mapIso e
 
-/-- The canonical comparison of original source homology with actual target
-homology through the original homology functor. -/
+/-- The homology comparison of a mapped short-complex isomorphism.
+
+For e : F(S) ≅ T, obtain F(H(S)) ≅ H(T). -/
 def functorHomologyComparisonIso (e : S.map F ≅ T) : F.obj S.homology ≅ T.homology :=
   (S.mapHomologyIso F).symm ≪≫ (homologyFunctor D).mapIso e
 
-/-- An unchanged mapped short complex retains its original cycle comparison. -/
+/-- The cycles comparison for the identity mapped presentation.
+
+For e equal to the identity of F(S), the comparison is the inverse native mapped-cycles
+isomorphism. -/
 @[simp]
 theorem functorCyclesComparisonIso_refl (S : ShortComplex C) :
     functorCyclesComparisonIso (F := F) (Iso.refl (S.map F)) = (S.mapCyclesIso F).symm := by
@@ -73,7 +85,10 @@ theorem functorCyclesComparisonIso_refl (S : ShortComplex C) :
   change (S.mapCyclesIso F).symm ≪≫ Iso.refl (S.map F).cycles = (S.mapCyclesIso F).symm
   exact Iso.trans_refl _
 
-/-- An unchanged mapped short complex retains its original homology comparison. -/
+/-- The homology comparison for the identity mapped presentation.
+
+For e equal to the identity of F(S), the comparison is the inverse native mapped-homology
+isomorphism. -/
 @[simp]
 theorem functorHomologyComparisonIso_refl (S : ShortComplex C) :
     functorHomologyComparisonIso (F := F) (Iso.refl (S.map F)) = (S.mapHomologyIso F).symm := by
@@ -82,7 +97,10 @@ theorem functorHomologyComparisonIso_refl (S : ShortComplex C) :
   change (S.mapHomologyIso F).symm ≪≫ Iso.refl (S.map F).homology = (S.mapHomologyIso F).symm
   exact Iso.trans_refl _
 
-/-- The canonical cycle comparison preserves the original mapped inclusion. -/
+/-- The functor cycles comparison preserves inclusion.
+
+The cycles comparison followed by T's cycle inclusion equals F applied to S's inclusion
+followed by e's middle component. -/
 @[reassoc]
 theorem functorCyclesComparisonIso_hom_iCycles (e : S.map F ≅ T) :
     (functorCyclesComparisonIso e).hom ≫ T.iCycles =
@@ -93,8 +111,10 @@ theorem functorCyclesComparisonIso_hom_iCycles (e : S.map F ≅ T) :
   rw [← S.mapCyclesIso_hom_iCycles F]
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
 
-/-- The canonical cycle and homology comparisons preserve the original
-source and target homology projections. -/
+/-- The functor homology comparison preserves projection.
+
+F applied to the source cycle-to-homology map followed by the homology comparison equals the
+cycles comparison followed by the target projection. -/
 @[reassoc]
 theorem functorHomologyComparisonIso_projection (e : S.map F ≅ T) :
     F.map S.homologyπ ≫ (functorHomologyComparisonIso e).hom =
@@ -107,8 +127,10 @@ theorem functorHomologyComparisonIso_projection (e : S.map F ≅ T) :
 
 variable (F)
 
-/-- The original mapped homology projection factors through the actual
-mapped-short-complex projection and its canonical comparison isomorphisms. -/
+/-- Factorization of the mapped homology projection through comparisons.
+
+The mapped cycle projection factors through the inverse cycles comparison, the mapped
+short-complex projection and the homology comparison. -/
 theorem map_homologyπ_eq_comparison (S : ShortComplex C) :
     F.map S.homologyπ =
       (S.mapCyclesIso F).inv ≫ (S.map F).homologyπ ≫ (S.mapHomologyIso F).hom := by
@@ -120,8 +142,10 @@ variable [MonoidalCategory D] [MonoidalPreadditive D]
 variable [∀ A : D, PreservesColimitsOfShape WalkingParallelPair (tensorLeft A)]
   [∀ A : D, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)]
 
-/-- Tensoring the original mapped homology projections is epi because the
-actual mapped short-complex projections are preserved cokernel projections. -/
+/-- The tensor of mapped homology projections is epic.
+
+Under the target tensor-coequalizer preservation conditions, tensoring the two mapped cycle
+projections gives an epimorphism. -/
 theorem epi_tensor_map_homologyπ (S₁ S₂ : ShortComplex C) :
     Epi (F.map S₁.homologyπ ⊗ₘ F.map S₂.homologyπ) := by
   let c₁ : CokernelCofork (S₁.map F).toCycles :=
@@ -145,22 +169,26 @@ variable {C : Type u₁} {D : Type u₂}
 variable [Category.{v₁} C] [Category.{v₂} D] [Abelian C] [Abelian D]
 variable (F : C ⥤ D) [F.Additive] [F.IsEquivalence]
 
-/-- The canonical source-to-target cycle comparison in the actual complex
-cycle objects at the chosen degree. -/
+/-- The cycles comparison in a chosen complex degree.
+
+A mapped-source to target short-complex isomorphism at j gives F(K.cycles j) ≅ L.cycles j. -/
 def functorCyclesComparisonIso {ι : Type*} {c : ComplexShape ι}
     (K : HomologicalComplex C c) (L : HomologicalComplex D c) (j : ι)
     (e : (K.sc j).map F ≅ L.sc j) : F.obj (K.cycles j) ≅ L.cycles j :=
   ShortComplex.functorCyclesComparisonIso e
 
-/-- The canonical source-to-target homology comparison in the original
-complex homology objects, using the native short-complex homology functor. -/
+/-- The homology comparison in a chosen complex degree.
+
+The same short-complex isomorphism gives F(K.homology j) ≅ L.homology j. -/
 def functorHomologyComparisonIso {ι : Type*} {c : ComplexShape ι}
     (K : HomologicalComplex C c) (L : HomologicalComplex D c) (j : ι)
     (e : (K.sc j).map F ≅ L.sc j) : F.obj (K.homology j) ≅ L.homology j :=
   ShortComplex.functorHomologyComparisonIso e
 
-/-- The actual complex cycle and homology comparisons retain both native
-homology projections. -/
+/-- The degreewise functor comparison preserves the homology quotient.
+
+The mapped source projection followed by the homology comparison equals the cycles comparison
+followed by the target projection. -/
 @[reassoc]
 theorem functorHomologyComparisonIso_projection {ι : Type*} {c : ComplexShape ι}
     (K : HomologicalComplex C c) (L : HomologicalComplex D c) (j : ι)
@@ -202,9 +230,10 @@ variable
       (functorCyclesComparisonIso F K₃ L₃ j₃ e₃).hom)
 
 include hcycles in
-/-- A proved cross-category square on actual cycles descends through the
-original homology cokernels. The target tensor descent is its independent
-original construction, and `F.μ` is the original strong monoidal comparison. -/
+/-- A cycle-product comparison descends to homology under the functor.
+
+For boundary-killing source and target products and the stated cycle square, the tensor
+homology comparisons commute with the descended products, using μ_F. -/
 theorem tensorHomologyDesc_functorComparison :
     ((functorHomologyComparisonIso F K₁ L₁ j₁ e₁).hom ⊗ₘ
       (functorHomologyComparisonIso F K₂ L₂ j₂ e₂).hom) ≫

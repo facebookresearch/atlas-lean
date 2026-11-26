@@ -1,3 +1,6 @@
-# Hom Cochain Complex Single₀Nat Iso
+# Degree-zero single Hom cochain comparison is natural in coefficients
 
-`Hom(single₀ R, -)` is naturally isomorphic to `single₀ (R ⟶ -)`.
+Degree-zero single Hom cochain comparison is natural in coefficients.
+
+The Hom cochain coefficient functor of `A[0]` is naturally isomorphic to `Hom_C(A,-)` followed
+by the degree-zero single cochain functor.

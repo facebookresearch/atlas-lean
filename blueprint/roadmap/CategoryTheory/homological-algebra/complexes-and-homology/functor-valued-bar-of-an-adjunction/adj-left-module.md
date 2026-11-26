@@ -1,6 +1,6 @@
-# Adj Left Module
+# The right adjoint as a left module over its monad
 
-Canonical left `adj.toMonad`-module carried by the right adjoint: the
-action at `Y` is `U.map` of the counit at `Y`. The unit law is the right
-triangle identity; naturality and associativity follow from naturality of the
-counit after splitting `U.map` over composition.
+Let F : C ⥤ D and U : D ⥤ C form an adjunction with monad T=UF. The functor U is a left
+T-module, with action T(UY)=U(F(UY)) → UY given by U(ε_Y). The unit law is the right triangle
+identity, and the left-module associativity equation follows from naturality of the counit. No
+monadicity assumption is needed.

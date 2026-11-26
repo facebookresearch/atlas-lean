@@ -1,4 +1,6 @@
-# RDdelta eq of Endpoints
+# Endpoint boundary agrees with the compatible-data boundary
 
-The endpoint connecting morphism is the shared connecting morphism, with
-no intervening comparison or choice.
+Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The endpoint boundary `δ_n` equals the connecting map of
+the compatible horseshoe data constructed from `I₁,I₃`.

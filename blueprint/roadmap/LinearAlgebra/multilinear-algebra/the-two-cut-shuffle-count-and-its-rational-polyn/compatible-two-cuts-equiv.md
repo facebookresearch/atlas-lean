@@ -1,3 +1,6 @@
-# Compatible Two Cuts Equiv
+# Compatible cuts as singleton Eulerian cut multisets
 
-A compatible singleton cut is exactly a compatible original cut multiset.
+Compatible cuts as singleton Eulerian cut multisets.
+
+For σ ∈ Sₙ, sending c to the singleton multiset {c} identifies CompatibleTwoCuts(σ) with the
+one-element Eulerian cut multisets that contain every descent boundary of σ.

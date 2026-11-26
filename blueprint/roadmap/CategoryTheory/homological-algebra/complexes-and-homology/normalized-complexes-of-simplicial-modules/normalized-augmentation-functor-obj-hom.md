@@ -1,3 +1,5 @@
-# Normalized Augmentation Functor obj hom
+# The map of a normalized augmentation
 
-The normalized augmentation is the native map of the original augmentation.
+The map of a normalized augmentation.
+
+The normalized augmentation morphism is N applied to the simplicial augmentation X.hom.

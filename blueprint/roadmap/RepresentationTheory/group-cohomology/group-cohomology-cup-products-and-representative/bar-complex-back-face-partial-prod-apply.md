@@ -1,5 +1,7 @@
-# Bar Complex back Face partial Prod apply single
+# Back face in bar coordinates
 
-Restricting a prefix-product homogeneous simplex to its back face and
-transporting back to the bar resolution recovers the final inhomogeneous
-tuple, with the preceding prefix product as group-ring coefficient.
+Let `G` be a group, `k` a commutative ring, `p,q : ℕ`, and `f : Fin (p + q) → G`. Apply the
+degree-`q` back face to `MonoidAlgebra.single (Fin.partialProd f) 1`, then transport to the
+bar complex. The result is the bar basis vector with final tuple `i ↦ f (Fin.natAdd p i)` and
+group-ring coefficient `single (Fin.partialProd f p) 1`, where the latter group element is the
+ordered product of the initial `p` entries.

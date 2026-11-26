@@ -1,3 +1,6 @@
-# Mem strict succ of mem degree
+# Weak degree bound gives the next strict bound
 
-An actual degree cutoff lies strictly below its successor.
+Weak degree bound gives the next strict bound.
+
+If `p` lies in `restrictTotalDegree I R n`, then `p` lies in `restrictStrictTotalDegree I R (n
++ 1)`.

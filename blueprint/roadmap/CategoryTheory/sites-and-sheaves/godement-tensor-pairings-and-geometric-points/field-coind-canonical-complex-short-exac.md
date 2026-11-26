@@ -1,4 +1,6 @@
-# Field Coind Canonical Complex short Exact
+# Canonical coinduction complexes preserve short exact sequences
 
-The actual original coefficient short exact sequence remains short exact in every
-canonical coinduction degree, via the exact same stored monad power coordinates.
+Canonical coinduction complexes preserve short exact sequences.
+
+A short exact sequence of discrete Galois modules remains short exact after the canonical
+coinduction-complex functor.

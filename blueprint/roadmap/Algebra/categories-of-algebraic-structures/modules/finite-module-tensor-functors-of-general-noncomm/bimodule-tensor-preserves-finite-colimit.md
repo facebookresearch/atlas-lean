@@ -1,3 +1,6 @@
-# Bimodule Tensor preserves Finite Colimits
+# Bimodule tensor preserves finite colimits
 
-The actual S-module tensor functor preserves finite colimits by its original group action.
+Bimodule tensor preserves finite colimits.
+
+For an `S`-left, `R`-right bimodule `E`, the functor `E ⊗_R - : ModuleCat R ⥤ ModuleCat S`
+preserves finite colimits.

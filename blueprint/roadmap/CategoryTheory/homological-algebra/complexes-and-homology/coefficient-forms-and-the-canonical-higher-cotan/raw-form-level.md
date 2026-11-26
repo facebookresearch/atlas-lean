@@ -1,4 +1,6 @@
-# Raw Form Level
+# The lifted coefficient differential-form module
 
-The zero-differential Hochschild form degree for an original
-algebra over the fixed coefficient algebra.
+The lifted coefficient differential-form module.
+
+For `P → B` and `q ∈ ℕ`, this is the `k`-module on the lifted carrier `ULift.{u}(B ⊗[P] ⋀^q[P]
+Ω[P/k])`.

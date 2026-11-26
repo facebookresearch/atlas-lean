@@ -1,3 +1,5 @@
-# Cohomology Presentation Iso refl
+# Identity of the coaugmented cohomology-family comparison
 
-Identity presentations retain the original identity cohomology comparison.
+Identity of the coaugmented cohomology-family comparison.
+
+The identity presentation isomorphism induces the identity cohomology comparison.

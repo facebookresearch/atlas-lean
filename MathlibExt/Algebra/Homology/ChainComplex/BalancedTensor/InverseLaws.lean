@@ -14,10 +14,16 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplex.BalancedTensor.Uncurry
 
 /-!
-# Index transport for total tensor–Hom inverse laws
+# Inverse laws for signed integer tensor–Hom coordinates
 
-The transports are the negative-reindexing unit and object equality
-isomorphisms, with the full integer index range retained.
+Integer chain complexes are viewed as cochain complexes by degree negation. The units of this
+reindexing equivalence identify the double-negated degrees with the given chain objects;
+evaluation of Hom cochains respects these unit maps and equality transports of tensor indices.
+
+With these coordinates, signed currying and signed uncurrying are inverse in every integer
+degree. The triangular sign is a unit with square one, and pure tensor classes determine maps
+from each direct-sum total. Additivity gives an additive equivalence between the full-product
+total-Hom and nested-Hom cochains.
 -/
 
 @[expose] public section
@@ -45,7 +51,10 @@ variable (R : Type u) [Ring R]
 
 local notation "HI" => moduleHomCochainComplex R Q I
 
-/-- The actual native unit cancels the source-index transport in every integer degree. -/
+/-- Outer Hom evaluation respects the double-negative source unit.
+
+For `a + n = b`, evaluating an outer Hom cochain at source degree `-(-a)` on the chain-to-
+cochain equivalence unit applied to `x : P.X (-a)` gives its degree-`a` evaluation on `x`. -/
 theorem unit_source_v (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n)
     (a b : ℤ) (hab : a + n = b) (x : P.X (-a)) :
@@ -70,7 +79,10 @@ theorem unit_source_v (n : ℤ) (g : CochainComplex.HomComplex.Cochain
   change k.hom (u.hom x₀) = (g.v a b hab).hom x₀
   exact hCompose.symm.trans hValue
 
-/-- The original left-module unit cancels the inner source-index transport after forgetting. -/
+/-- Inner Hom evaluation respects the double-negative domain unit.
+
+For an inner degree-`b` cochain and `c + b = d`, evaluation at `-(-c)` after the chain-to-
+cochain equivalence unit on `Q.X (-c)` equals evaluation at coordinate `(c, d)`. -/
 theorem unit_inner_v (b : ℤ) (g : CochainComplex.HomComplex.Cochain
     (ChainComplex.moduleHomDomainCochain R Q) I b)
     (c d : ℤ) (hcd : c + b = d) (y : Q.X (-c)) :
@@ -104,7 +116,11 @@ theorem unit_inner_v (b : ℤ) (g : CochainComplex.HomComplex.Cochain
   change k.hom (u.hom y) = (g.v c d hcd).hom y₀
   exact (congrArg k.hom hUnit).symm.trans (hCompose.symm.trans hValue)
 
-/-- Native equality isomorphisms transport a pure tensor and its original Hom evaluation. -/
+/-- Tensor Hom evaluation respects equal source and summand indices.
+
+Let `p + q = -a`. Replacing `p`, `q`, and `a` by equal indices and transporting `x : P.X p`
+and `y : Q.X q` through their object equality isomorphisms leaves the value of the total-Hom
+cochain on the tensor generator unchanged. -/
 theorem tensor_v_of_eq (n : ℤ)
     (f : CochainComplex.HomComplex.Cochain
         ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n)
@@ -121,7 +137,10 @@ theorem tensor_v_of_eq (n : ℤ)
   simp only [HomologicalComplex.XIsoOfEq_rfl, Iso.refl_hom,
     ModuleCat.hom_id, LinearMap.id_apply]
 
-/-- Uncurrying after currying fixes every original tensor-total Hom cochain. -/
+/-- Signed uncurrying after signed currying is the identity.
+
+For every integer degree `n`, `uncurryCochain R P Q I n (curryCochain R P Q I n f) = f` on
+full tensor-total Hom cochains. -/
 theorem uncurry_curry (n : ℤ) (f : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n) :
     uncurryCochain R P Q I n (curryCochain R P Q I n f) = f := by
@@ -189,7 +208,10 @@ theorem uncurry_curry (n : ℤ) (f : CochainComplex.HomComplex.Cochain
       (AddMonoidHom.comp_apply r.hom ι.hom z)
   exact hLeft.trans (hPoint.trans hRight.symm)
 
-/-- Currying after uncurrying fixes every original nested full-product Hom cochain. -/
+/-- Signed currying after signed uncurrying is the identity.
+
+For every integer degree `n`, `curryCochain R P Q I n (uncurryCochain R P Q I n g) = g` on
+full nested Hom cochains. -/
 theorem curry_uncurry (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n) :
     curryCochain R P Q I n (uncurryCochain R P Q I n g) = g := by
@@ -230,7 +252,10 @@ theorem curry_uncurry (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     (congrArg (fun z : I.X d => Int.triangularSign b • z) hAdjusted)
   simpa only [smul_smul, Int.units_mul_self, one_smul] using hresult
 
-/-- Currying is additive on the original native products. -/
+/-- Signed tensor–Hom currying preserves addition.
+
+For degree-`n` cochains `f` and `g`, signed currying of `f + g` equals the sum of their signed
+curries. -/
 theorem curryCochain_add (n : ℤ) (f g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n) :
     curryCochain R P Q I n (f + g) =
@@ -290,7 +315,11 @@ theorem curryCochain_add (n : ℤ) (f g : CochainComplex.HomComplex.Cochain
       (w.v c d hcd).hom y₀) hOuterPoint).trans hInnerPoint
   exact hLeft.trans hRight.symm
 
-/-- The actual degreewise signed tensor–Hom equivalence, on the native sum and products. -/
+/-- Additive equivalence of full tensor and nested Hom cochains.
+
+For every integer `n`, signed currying and uncurrying define an additive equivalence between
+degree-`n` tensor-total Hom cochains and degree-`n` Hom cochains from `P` to
+`moduleHomCochainComplex R Q I`. -/
 def cochainEquiv (n : ℤ) :
     CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj
         (complex R P Q)) I n ≃+

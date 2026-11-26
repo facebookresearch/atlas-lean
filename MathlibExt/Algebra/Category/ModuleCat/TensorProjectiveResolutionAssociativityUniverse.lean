@@ -13,12 +13,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.TensorProjectiveResolutionUn
 public import MathlibExt.Algebra.Homology.TripleTensor
 
 /-!
-# Associativity of tensor-total projective resolutions
+# Associativity of tensor-total augmentations and resolutions
 
-The signed tensor total associator compares the two ordered
-parenthesizations. Its degree-zero map is the module tensor associator,
-and it intertwines the tensor augmentations. Positive Tor vanishing
-constructs the iterated projective resolutions.
+For a commutative ring `R : Type u`, work in `ModuleCat.{max u v} R`. The tensor total of
+three natural-index chain complexes has an associator from `(P ⊗ Q) ⊗ U` to `P ⊗ (Q ⊗ U)`,
+preserving the ordered tensor factors and the total differential signs.
+
+For augmentations to modules `M`, `N`, and `V` in degree zero, the two tensor augmentations
+commute with this complex associator and the module associator. For projective resolutions,
+positive Tor vanishing for `(M, N)`, `(N, V)`, `(M ⊗ N, V)`, and `(M, N ⊗ V)` constructs both
+iterated tensor resolutions. The same associator is an isomorphism of their underlying
+resolution complexes covering the module associator.
 -/
 
 @[expose] public section
@@ -60,8 +65,10 @@ local instance (K L U : ChainComplex (ModuleCat.{max u v} R) ℕ) :
   change PreservesColimit _ (tensorLeft (K.X p))
   infer_instance
 
-/-- The stock ordered total associator for actual module complexes. Tensor
-right exactness supplies its coproduct hypotheses in both original universes. -/
+/-- Associator of three natural-index tensor total complexes.
+
+For chain complexes `P`, `Q`, and `U` in `ModuleCat.{max u v} R`, the tensor-total associator
+gives `(P ⊗ Q) ⊗ U ≅ P ⊗ (Q ⊗ U)`. -/
 def tensorTotalAssociator (P Q U : ChainComplex (ModuleCat.{max u v} R) ℕ) :
     HomologicalComplex.tensorObj (HomologicalComplex.tensorObj P Q) U ≅
       HomologicalComplex.tensorObj P (HomologicalComplex.tensorObj Q U) :=
@@ -89,7 +96,10 @@ private theorem isIso_ιTensorObj_zero
 
 variable {M N V : ModuleCat.{max u v} R}
 
-/-- The literal left-parenthesized augmentation of three original chain complexes. -/
+/-- Left-parenthesized tensor augmentation of three complexes.
+
+Given augmentations `π : P → M[0]`, `ρ : Q → N[0]`, and `τ : U → V[0]`, tensor them with left
+parentheses to obtain `(P ⊗ Q) ⊗ U → ((M ⊗ N) ⊗ V)[0]`. -/
 def tensorLeftTripleAugmentation
     (P Q U : ChainComplex (ModuleCat.{max u v} R) ℕ)
     (π : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj M)
@@ -101,7 +111,10 @@ def tensorLeftTripleAugmentation
     (M := M ⊗ N) (N := V) R
       (tensorAugmentation.{u,v} (K := P) (L := Q) (M := M) (N := N) R π ρ) τ
 
-/-- The literal right-parenthesized augmentation of three original chain complexes. -/
+/-- Right-parenthesized tensor augmentation of three complexes.
+
+The three augmentations give `P ⊗ (Q ⊗ U) → (M ⊗ (N ⊗ V))[0]` by right-parenthesized
+tensoring. -/
 def tensorRightTripleAugmentation
     (P Q U : ChainComplex (ModuleCat.{max u v} R) ℕ)
     (π : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj M)
@@ -228,8 +241,10 @@ private theorem tensorAugmentation_associator_zero
   change E.hom.f 0 ≫ δ' = δ ≫ (α_ M N V).hom
   exact tensorAssociator_comp_of_basis.{u,v} R a b d j k (E.hom.f 0) δ δ' hE hL hR
 
-/-- The stock ordered tensor-total associator carries the literal iterated
-chain augmentations by the original coefficient tensor associator. -/
+/-- Tensor-total associator intertwines the triple augmentations.
+
+The complex associator followed by the right-parenthesized augmentation equals the left-
+parenthesized augmentation followed by the degree-zero module associator. -/
 theorem tensorAugmentation_associator
     (P Q U : ChainComplex (ModuleCat.{max u v} R) ℕ)
     (π : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj M)
@@ -244,9 +259,11 @@ theorem tensorAugmentation_associator
   exact tensorAugmentation_associator_zero.{u,v} R P Q U π ρ τ
 
 
-/-- The original ordered total associator is a genuine resolution map between
-both actual iterated tensor resolutions. All four vanishing hypotheses are
-literal positive native Tor conditions for the original coefficients. -/
+/-- Associator morphism between iterated tensor projective resolutions.
+
+For resolutions of `M`, `N`, and `V`, assume vanishing of every positive Tor degree for `(M,
+N)`, `(N, V)`, `(M ⊗ N, V)`, and `(M, N ⊗ V)`. The total associator defines a morphism between
+the left- and right-parenthesized tensor resolutions covering `(M ⊗ N) ⊗ V → M ⊗ (N ⊗ V)`. -/
 def tensorProjectiveResolutionAssociatorHom
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) (U : ProjectiveResolution V)
     (hPQ : ∀ n : ℕ, IsZero (((Tor (ModuleCat.{max u v} R) (n + 1)).obj M).obj N))
@@ -263,8 +280,10 @@ def tensorProjectiveResolutionAssociatorHom
       (tensorAugmentation_associator.{u,v} R P.complex Q.complex U.complex P.π Q.π U.π)
     exact h
 
-/-- The constructed resolution comparison is the stock ordered tensor total
-isomorphism on the original complexes. -/
+/-- Iterated tensor-resolution associator is an isomorphism of complexes.
+
+Under the four positive-Tor vanishing hypotheses used to construct the iterated tensor
+resolutions, the underlying complex morphism of their associator is an isomorphism. -/
 theorem tensorProjectiveResolutionAssociatorHom_isIso
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) (U : ProjectiveResolution V)
     (hPQ : ∀ n : ℕ, IsZero (((Tor (ModuleCat.{max u v} R) (n + 1)).obj M).obj N))

@@ -1,4 +1,4 @@
 # Spectral-sequence vanishing fields for the partial-total filtration
 
-- [Partial Total Spectral Object is Zero i₀ le](partial-total-spectral-object-is-zero-i.md)
-- [Partial Total Spectral Object is Zero i₃ le](partial-total-spectral-object-is-zero-i-2.md)
+- [Outer-left interval vanishing when a page arrow has no target](partial-total-spectral-object-is-zero-i.md)
+- [Outer-right interval vanishing when a page arrow has no source](partial-total-spectral-object-is-zero-i-2.md)

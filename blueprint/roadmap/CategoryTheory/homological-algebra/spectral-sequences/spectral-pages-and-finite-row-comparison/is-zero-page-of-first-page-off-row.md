@@ -1,3 +1,5 @@
-# Is Zero page of first Page off row
+# First-page row-zero support persists on all pages
 
-A zero row on the actual first page stays zero on every later page.
+First-page row-zero support persists on all pages.
+
+If E₁ vanishes off row zero, E_r vanishes there for every r≥1.

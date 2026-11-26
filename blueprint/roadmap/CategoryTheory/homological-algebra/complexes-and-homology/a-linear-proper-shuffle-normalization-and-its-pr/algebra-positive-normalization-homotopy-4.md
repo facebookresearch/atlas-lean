@@ -1,3 +1,6 @@
-# Algebra Positive Normalization Homotopy Equiv inv hom
+# Proper normalization has a strict right inverse
 
-The projected original inverse is an exact right inverse on the original normalized proper quotient.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M an A-module with compatible
+k-action. The inverse map of algebraPositiveNormalizationHomotopyEquiv k A M, followed by
+algebraPositiveNormalization k A M, is the identity on the normalized proper-shuffle quotient
+complex.

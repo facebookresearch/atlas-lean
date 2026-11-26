@@ -1,4 +1,6 @@
-# Cyclic Exterior Chain Map
+# The tail-alternating chain map with positive bracket differential
 
-Normalized tail antisymmetrization as a chain map from the positive bracket convention to the
-Connes complex.
+The tail-alternating chain map with positive bracket differential.
+
+The maps `τ_n` give a chain map from the positive CE tail with negated differentials to the
+cyclic quotient complex.

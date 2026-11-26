@@ -10,7 +10,16 @@ public import MathlibExt.Algebra.Homology.KoszulTensorBraiding
 public import MathlibExt.Algebra.Homology.TotalComplexSymmetryDownNat
 
 /-!
-# Koszul compatibility of chain pairings
+# Koszul braiding compatibility of chain pairings
+
+Let C be a preadditive braided monoidal category whose tensor is additive
+in both variables. For nonnegative complexes K₁,K₂, assume both ordered
+tensor complexes exist.
+
+If P:K₁⊗K₂→K₃ and Q:K₂⊗K₁→L₃ agree through a target map f and the
+Koszul chain braiding, their component pairings satisfy the
+(-1)^(p q) sign rule, coefficient braiding and the target degree
+identification q+p=p+q.
 -/
 
 @[expose] public section
@@ -41,8 +50,12 @@ private lemma ιTensorObj_comp_XIsoOfEq
   subst e
   simp
 
-/-- A chain-level Koszul braiding identity gives the corresponding bidegree
-formula for a pair of chain pairings. -/
+/-- Let C be a preadditive braided monoidal category with additive
+tensoring, and K₁⊗K₂,K₂⊗K₁ existing nonnegative tensor complexes.
+Suppose P:K₁⊗K₂→K₃, Q:K₂⊗K₁→L₃ and f:K₃→L₃ satisfy
+f∘P=Q∘β_Koszul. Then in bidegree (p,q),
+f_(p+q)∘P_(p,q)=(-1)^(p q) Q_(q,p)∘β_(K₁,p,K₂,q),
+with the target degree q+p identified with p+q. -/
 lemma pair_braiding_of_koszul
     (P : ChainGradedPairing K₁ K₂ K₃)
     (Q : ChainGradedPairing K₂ K₁ L₃) (f : K₃ ⟶ L₃)

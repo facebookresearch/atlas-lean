@@ -1,3 +1,5 @@
-# The original coefficient multiplication on its canonical...
+# Coefficient multiplication acts on the lifted algebra module
 
-The original coefficient multiplication on its canonical carrier lift.
+For a commutative R-algebra V, multiplication gives
+V→ₐ[R]End_R(ULift^Γ V), v↦(up(x)↦up(v*x)),
+with Γ=max(r,v,t).

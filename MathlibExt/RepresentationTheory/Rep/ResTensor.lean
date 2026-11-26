@@ -15,17 +15,23 @@ public import MathlibExt.CategoryTheory.Monoidal.TensorPowerFunctor
 public import MathlibExt.LinearAlgebra.TensorProduct.DirectedTensorPower
 
 /-!
-# Restriction and tensor products of representations
+# Group restriction, tensor products and power coherence
 
-Restriction of the acting group preserves the tensor product of coefficient
-representations.  This file exposes the canonical identity-on-carriers
-comparison independently of any low-degree cohomology or transfer theorem.
+Let k be a commutative ring and G,H groups in universe u.
+Group restriction is a strong monoidal functor:
+Res(A)⊗Res(B)≅Res(A⊗B), with identity coefficient carrier map,
+and its unit isomorphism is the identity on k.
 
-## Main declaration
+The left-associated positive power L_n(A)=T_(n+1)(A) has n+1 copies
+of A with a leading unit, beginning k⊗A. The right-associated power
+R_n(A) begins A and recursively prepends A.
+A coefficient map Res(A)→B induces maps on all positive powers;
+an isomorphism induces power isomorphisms.
 
-* `Rep.resTensorIso`
-* `Rep.resTensorPowMapSucc`
-* `Rep.tensorPowObjPositiveCarrierEquiv`
+The restriction comparisons commute with unit identifications,
+head–tail splittings, reassociation, prepended unit maps, identity
+and composition. The underlying maps agree with the ordinary
+positive tensor-power maps of coefficient modules.
 -/
 
 @[expose] public section
@@ -42,8 +48,10 @@ universe u
 
 variable {k G H : Type u} [CommRing k] [Group G] [Group H]
 
-/-- The carrier of the representation-theoretic `(n + 1)`-fold tensor
-power is the corresponding positive left-associated module tensor power. -/
+/-- For a commutative ring k and a G-representation A, the carrier
+of L_n(A)=T_(n+1)(A) is k-linearly equivalent to the positive module
+power P₀(A)=k⊗A, P_(n+1)(A)=P_n(A)⊗A.
+The equivalence keeps the left-associated factors. -/
 noncomputable def tensorPowObjPositiveCarrierEquiv (A : Rep k G) :
     ∀ n : ℕ,
       (TensorPower.tensorPowObj A (n + 1)).V ≃ₗ[k]
@@ -68,8 +76,13 @@ theorem tensorPowObjPositiveCarrierEquiv_succ_tmul
       tensorPowObjPositiveCarrierEquiv A n x ⊗ₜ[k] a :=
   rfl
 
-/-- Restricting the acting group commutes with tensoring coefficient
-representations.  The comparison is identity-on-carriers. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For representations A,B, the tensor restriction isomorphism
+Res(A)⊗Res(B)≅Res(A⊗B) is the identity on the underlying
+tensor module and retains its factor order. -/
 noncomputable def resTensorIso (f : H →* G) (A B : Rep k G) :
     Rep.res f A ⊗ Rep.res f B ≅ Rep.res f (A ⊗ B) :=
   eqToIso (by rfl)
@@ -86,7 +99,12 @@ theorem resTensorIso_inv_tmul (f : H →* G) (A B : Rep k G)
     (resTensorIso f A B).inv (a ⊗ₜ[k] b) = a ⊗ₜ[k] b :=
   rfl
 
-/-- Restriction of representations is canonically strong monoidal. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+The tensor restriction isomorphisms and identity-on-k unit
+isomorphism give the coherent strong monoidal data of Res. -/
 noncomputable def resFunctorCoreMonoidal (f : H →* G) :
     (resFunctor (k := k) f).CoreMonoidal where
   εIso := Iso.refl _
@@ -129,15 +147,24 @@ noncomputable def resFunctorCoreMonoidal (f : H →* G) :
     | tmul x r => rfl
     | add x y hx hy => simp only [map_add, hx, hy]
 
-/-- The canonical strong monoidal structure on restriction of
-representations. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Res carries the strong monoidal structure determined by its
+tensor and unit isomorphisms on representations. -/
 noncomputable instance resFunctorMonoidal (f : H →* G) :
     (resFunctor (k := k) f).Monoidal :=
   (resFunctorCoreMonoidal f).toMonoidal
 
-/-- Map on a positive tensor power induced by restriction of the acting group
-and a coefficient morphism.  The natural parameter `n` represents the power
-`n + 1`. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For φ:Res(A)→B, the maps M_n:Res(L_n(A))→L_n(B) apply φ
+to each A factor. At n=0 the one-factor unitors identify M₀ with φ;
+the successor tensors M_n with φ after the inverse tensor restriction
+isomorphism. -/
 noncomputable def resTensorPowMapSucc
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B) :
@@ -151,8 +178,12 @@ noncomputable def resTensorPowMapSucc
       (resTensorIso f (TensorPower.tensorPowObj A (n + 1)) A).inv ≫
         (resTensorPowMapSucc f phi n ⊗ₘ phi)
 
-/-- Isomorphism version of `resTensorPowMapSucc`: restriction commutes with
-every positive tensor power, functorially in a coefficient isomorphism. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For e:Res(A)≅B, the recursive tensor-power maps give
+E_n:Res(L_n(A))≅L_n(B), beginning with e under the one-factor unitors. -/
 noncomputable def resTensorPowIsoSucc
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (e : Rep.res f A ≅ B) :
@@ -166,8 +197,15 @@ noncomputable def resTensorPowIsoSucc
       (resTensorIso f (TensorPower.tensorPowObj A (n + 1)) A).symm ≪≫
         tensorIso (resTensorPowIsoSucc f e n) e
 
-/-- Restriction of a positive tensor power, decomposed into its first
-restricted factor and the restriction of the remaining tensor power. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+The restricted head–tail isomorphism is
+Res(L_(n+1)(A))≅Res(A)⊗Res(L_n(A)),
+obtained from Res(h_A,n) and the inverse tensor restriction comparison. -/
 noncomputable def resTensorPowHeadTailIso
     (f : H →* G) (A : Rep k G) (n : ℕ) :
     Rep.res f (TensorPower.tensorPowObj A (n + 2)) ≅
@@ -178,9 +216,14 @@ noncomputable def resTensorPowHeadTailIso
     tensorIso (Iso.refl (Rep.res f A))
       (resTensorPowIsoSucc f (Iso.refl (Rep.res f A)) n).symm
 
-/-- The inverse restriction/tensor-power comparison followed by the
-head--tail comparison is head--tail decomposition on the restricted
-coefficient followed by the inverse comparison on the tail. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+For the restricted head–tail map Ω_n, the square is
+Ω_n∘σ_(n+1)⁻¹=(id⊗σ_n⁻¹)∘h_Res(A),n. -/
 theorem resTensorPowIsoSucc_inv_comp_resTensorPowHeadTailIso_hom
     (f : H →* G) (A : Rep k G) (n : ℕ) :
     (resTensorPowIsoSucc f (Iso.refl (Rep.res f A)) (n + 1)).inv ≫
@@ -212,8 +255,14 @@ theorem resTensorPowIsoSucc_hom
       rw [ih]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- For the identity coefficient comparison, the recursive restriction
-tensor-power isomorphism is the canonical strong-monoidal comparison. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+The recursive σ_n is the canonical tensor-power comparison of
+the strong monoidal restriction functor, for every n∈ℕ. -/
 theorem resTensorPowIsoSucc_refl_eq_mapTensorPowObjIso
     (f : H →* G) (A : Rep k G) :
     ∀ n : ℕ,
@@ -246,8 +295,13 @@ theorem resTensorPowIsoSucc_refl_eq_mapTensorPowObjIso
             (resFunctor f) A (n + 1)).hom ⊗ₘ 𝟙 (Rep.res f A))
       rw [resTensorPowIsoSucc_refl_eq_mapTensorPowObjIso f A n]
 
-/-- Restriction commutes with nonempty right-associated tensor powers,
-functorially in a coefficient isomorphism. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For e:Res(A)≅B, restriction of the right-associated power is
+isomorphic to R_n(B). The comparison starts with e at n=0 and
+recursively tensors e with the previous right-power comparison. -/
 noncomputable def resTensorPowRightSuccIso
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (e : Rep.res f A ≅ B) :
@@ -296,7 +350,13 @@ theorem resTensorPowMapSucc_succ
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Weight-one coherence for the positive tensor-power restriction map. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For φ:Res(A)→B and one-factor unitors η_A:L₀(A)≅A,
+η_B:L₀(B)≅B, the base map satisfies
+M₀∘Res(η_A⁻¹)=η_B⁻¹∘φ. -/
 theorem tensorPowObjOneIso_inv_comp_resTensorPowMapSucc_zero
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B) :
@@ -322,8 +382,14 @@ theorem tensorPowObjOneIso_inv_comp_resTensorPowMapSucc_zero
     ((resFunctor f).map (TensorPower.tensorPowObjOneIso A).hom), hcancel,
     Category.id_comp]
 
-/-- Inverse weight-one coherence for the isomorphism-valued positive
-tensor-power restriction comparison. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+For the one-factor unitor η, the canonical inverse power map obeys
+σ₀⁻¹∘η_Res(A)⁻¹=Res(η_A⁻¹). -/
 theorem tensorPowObjOneIso_inv_comp_resTensorPowIsoSucc_zero_inv
     (f : H →* G) (A : Rep k G) :
     (TensorPower.tensorPowObjOneIso (Rep.res f A)).inv ≫
@@ -337,9 +403,13 @@ theorem tensorPowObjOneIso_inv_comp_resTensorPowIsoSucc_zero_inv
     f (𝟙 (Rep.res f A))
   simpa only [Category.id_comp, Iso.refl_hom] using h.symm
 
-/-- The inverse weight-one tensor-power restriction comparison followed by
-normalization is normalization followed by the inverse coefficient
-isomorphism. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For e:Res(A)≅B, the inverse base power map E₀⁻¹ followed by
+Res(η_A) equals e⁻¹ followed by η_B:
+Res(η_A)∘E₀⁻¹=e⁻¹∘η_B. -/
 theorem resTensorPowIsoSucc_zero_inv_comp_tensorPowObjOneIso_hom
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (e : Rep.res f A ≅ B) :
@@ -355,8 +425,15 @@ theorem resTensorPowIsoSucc_zero_inv_comp_tensorPowObjOneIso_hom
   rw [Iso.inv_hom_id, (resFunctor f).map_id]
   simp
 
-/-- Weight-one coherence between left/right tensor reassociation and
-restriction. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+At n=0, the left-to-right reassociation on Res(A), inverse
+right-power restriction, and inverse restricted reassociation compose
+to σ₀⁻¹. The right-associated power is just A at this index. -/
 theorem resTensorPow_reassociation_coherence_zero
     (f : H →* G) (A : Rep k G) :
     (TensorPower.tensorPowObjRightSuccIso (Rep.res f A) 0).hom ≫
@@ -383,8 +460,15 @@ theorem resTensorPow_reassociation_coherence_zero
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Restriction tensor-power comparison preserves canonical head--tail
-decomposition in every positive weight. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+The inverse σ_(n+1)⁻¹ is recovered by head–tail splitting,
+id⊗σ_n⁻¹, the tensor restriction isomorphism, and inverse Res(h_A,n).
+This is the inverse head–tail coherence equation. -/
 theorem resTensorPow_headTail_coherence
     (f : H →* G) (A : Rep k G) (n : ℕ) :
     (TensorPower.tensorPowObjHeadTailIso (Rep.res f A) n).hom ≫
@@ -434,8 +518,16 @@ theorem resTensorPow_headTail_coherence
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Inverse head--tail orientation of the canonical restriction/tensor
-comparison. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+The forward comparison obeys
+σ_(n+1)∘Res(h_A,n)⁻¹ =
+h_Res(A),n⁻¹∘(id⊗σ_n)∘μ_f⁻¹,
+where μ_f is the tensor restriction isomorphism. -/
 theorem resTensorPow_headTail_inv_coherence
     (f : H →* G) (A : Rep k G) (n : ℕ) :
     (resFunctor f).map
@@ -479,8 +571,15 @@ theorem resTensorPow_headTail_inv_coherence
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The canonical restriction/tensor comparison commutes with prepending a
-tensor-unit coefficient. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+For u:k_triv→A, let u_H be u restricted to H through the unit
+isomorphism of Res. The power comparisons satisfy
+σ_(n+1)∘Res(prepend_u)=prepend_(u_H)∘σ_n. -/
 theorem resTensorPow_prepend_coherence
     (f : H →* G) (A : Rep k G)
     (u : 𝟙_ (Rep k G) ⟶ A) (n : ℕ) :
@@ -502,8 +601,15 @@ theorem resTensorPow_prepend_coherence
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Coherence between left/right tensor reassociation and restriction in
-every positive weight. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+Let r_A,n:L_n(A)≅R_n(A) be reassociation and ρ_n the canonical
+right-power restriction comparison. Then
+σ_n⁻¹=Res(r_A,n)⁻¹∘ρ_n⁻¹∘r_Res(A),n for every n∈ℕ. -/
 theorem resTensorPow_reassociation_coherence
     (f : H →* G) (A : Rep k G) :
     ∀ n : ℕ,
@@ -594,8 +700,12 @@ theorem resTensorPow_reassociation_coherence
       exact resTensorPow_headTail_coherence f A n
 
 
-/-- Pointwise weight-one coherence for the positive tensor-power restriction
-map. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For φ:Res(A)→B and x∈A, the base power map sends
+η_A⁻¹(x) to η_B⁻¹(φ(x)). -/
 theorem resTensorPowMapSucc_zero_oneIso_inv_apply
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B) (x : A) :
@@ -606,8 +716,12 @@ theorem resTensorPowMapSucc_zero_oneIso_inv_apply
     (tensorPowObjOneIso_inv_comp_resTensorPowMapSucc_zero f phi) x
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Pure-tensor formula at weight one for the positive tensor-power
-restriction map. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For r∈k and a∈A, the base power map from Res(k⊗A) to k⊗B
+has value r⊗a↦r⊗φ(a). -/
 theorem resTensorPowMapSucc_zero_tmul
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B)
@@ -625,8 +739,12 @@ theorem resTensorPowMapSucc_zero_tmul
       r (1 : k) (phi.hom a))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Successor pure-tensor formula for the positive tensor-power restriction
-map. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For φ:Res(A)→B and x∈Res(L_n(A)), the successor map has value
+M_(n+1)(x⊗a)=M_n(x)⊗φ(a). -/
 theorem resTensorPowMapSucc_succ_tmul
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B) (n : ℕ)
@@ -636,8 +754,13 @@ theorem resTensorPowMapSucc_succ_tmul
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- On underlying carriers, the restriction-induced positive tensor-power
-map is exactly the recursively induced module tensor-power map. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Under the representation/module positive-power carrier
+equivalences, M_n equals the ordinary positive tensor-power map
+of the underlying k-linear coefficient map φ. -/
 theorem tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B) :
@@ -670,7 +793,8 @@ theorem tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc
       | add x y hx hy => simp only [map_add, hx, hy]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Identity coherence of positive tensor-power restriction maps. -/
+/-- For a commutative ring k and G-representation A, the positive
+power map induced by id_G and id_A is id_(L_n(A)) in every n. -/
 theorem resTensorPowMapSucc_id (A : Rep k G) (n : ℕ) :
     resTensorPowMapSucc (MonoidHom.id G) (𝟙 A) n =
       𝟙 (TensorPower.tensorPowObj A (n + 1)) := by
@@ -704,9 +828,9 @@ theorem resTensorPowMapSucc_id (A : Rep k G) (n : ℕ) :
       | add x y hx hy => simp only [map_add, hx, hy]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Along the identity group homomorphism, the positive tensor-power
-restriction map is the ordinary tensor-power map of the coefficient
-morphism. -/
+/-- For a commutative ring k, G-representations A,B and φ:A→B,
+the power map with group map id_G equals the ordinary categorical
+tensor-power map T_(n+1)(φ). -/
 theorem resTensorPowMapSucc_id_eq_tensorPowMap
     {A B : Rep k G} (phi : A ⟶ B) :
     ∀ n : ℕ,
@@ -744,7 +868,10 @@ theorem resTensorPowMapSucc_id_eq_tensorPowMap
       | add x y hx hy => simp only [map_add, hx, hy]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Composition coherence of positive tensor-power restriction maps. -/
+/-- Let k be a commutative ring and G,H,K groups in universe u. For f:H→G, g:K→H,
+φ:Res_f(A)→B and ψ:Res_g(B)→C,
+M_(f∘g)(ψ∘Res_g(φ))=
+M_g(ψ)∘Res_g(M_f(φ)) in every positive power index n. -/
 theorem resTensorPowMapSucc_comp
     {K : Type u} [Group K]
     {A : Rep k G} {B : Rep k H} {C : Rep k K}
@@ -795,9 +922,13 @@ theorem resTensorPowMapSucc_comp
           rfl
       | add x y hx hy => simp only [map_add, hx, hy]
 
-/-- Congruence of positive tensor-power restriction maps in the group and
-coefficient morphisms, stated on underlying linear maps so that it applies
-across transported source representations. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For equal group homomorphisms f=g and coefficient maps φ,ψ
+with equal underlying k-linear maps, the induced positive power
+maps have equal underlying linear maps for every n. -/
 theorem resTensorPowMapSucc_congr
     {A : Rep k G} {B : Rep k H}
     {f g : H →* G} (hfg : f = g)
@@ -814,8 +945,10 @@ theorem resTensorPowMapSucc_congr
   subst h
   rfl
 
-/-- Composition coherence with transported group and coefficient morphisms,
-stated on underlying linear maps. -/
+/-- Let k be a commutative ring and G,H,K groups in universe u, f:H→G, g:K→H,
+φ:Res_f(A)→B and ψ:Res_g(B)→C.
+If h=f∘g and the underlying coefficient map χ equals ψ∘φ,
+the underlying map M_h(χ) equals the composite power map from φ and ψ. -/
 theorem resTensorPowMapSucc_comp_congr
     {K : Type u} [Group K]
     {A : Rep k G} {B : Rep k H} {C : Rep k K}
@@ -839,10 +972,11 @@ theorem resTensorPowMapSucc_comp_congr
       congrArg (fun t => t.hom.toLinearMap)
         (resTensorPowMapSucc_comp f g phi psi n)
 
-/-- Two composites of positive tensor-power restriction maps have the same
-underlying linear map whenever the corresponding composites on one tensor
-factor do.  The intermediate acting groups may differ; only the common
-source and target coefficient representations matter on carriers. -/
+/-- For a commutative ring k and two composable coefficient-map
+paths A→B→C and A→B′→C over possibly different intermediate
+groups, equality of their underlying k-linear composites implies
+equality of the underlying composite positive tensor-power maps,
+for every n. The endpoint coefficients are the same. -/
 theorem resTensorPowMapSucc_composites_toLinearMap_eq
     {H' K : Type u} [Group H'] [Group K]
     {A : Rep k G} {B : Rep k H} {B' : Rep k H'} {C : Rep k K}
@@ -896,9 +1030,14 @@ theorem resTensorPowMapSucc_composites_toLinearMap_eq
         g' psi' n _).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- A positive tensor-power restriction map factors through the canonical
-restriction/tensor comparison and the ordinary tensor power of the
-coefficient morphism. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+For φ:Res(A)→B, its power map factors as
+M_n(φ)=T_(n+1)(φ)∘σ_n. -/
 theorem resTensorPowMapSucc_eq_refl_comp_tensorPowMap
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B) (n : ℕ) :
@@ -919,8 +1058,13 @@ theorem resTensorPowMapSucc_eq_refl_comp_tensorPowMap
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Positive tensor-power restriction maps are natural for compatible
-tensor-unit prepend coefficients. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+For φ:Res(A)→B, u:k_triv,G→A and v:k_triv,H→B with
+φ∘u_H=v after the unit restriction comparison, the square
+M_(n+1)(φ)∘Res(prepend_u)=prepend_v∘M_n(φ) commutes. -/
 theorem resTensorPowMapSucc_prepend_naturality
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (phi : Rep.res f A ⟶ B)
@@ -970,9 +1114,14 @@ theorem resTensorPowMapSucc_prepend_naturality
           rw [← resTensorPowMapSucc_eq_refl_comp_tensorPowMap]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse positive tensor-power restriction isomorphism factors as
-the tensor power of the inverse coefficient isomorphism followed by the
-inverse canonical restriction/tensor comparison. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+For e:Res(A)≅B, the inverse power isomorphism factors as
+E_n⁻¹=σ_n⁻¹∘T_(n+1)(e⁻¹). -/
 theorem resTensorPowIsoSucc_inv
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (e : Rep.res f A ≅ B) (n : ℕ) :
@@ -1025,8 +1174,14 @@ theorem resTensorPowIsoSucc_inv
   rw [he, hrefl]
   rw [Iso.hom_inv_id, Iso.hom_inv_id]
 
-/-- After the inverse tensor power of a coefficient isomorphism, the
-canonical restriction/tensor comparison removes the normalization factor. -/
+/-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+For e:Res(A)≅B, inverse coefficient power comparison followed
+by σ_n is T_(n+1)(e⁻¹). -/
 theorem resTensorPowIsoSucc_inv_comp_refl_hom
     {A : Rep k G} {B : Rep k H}
     (f : H →* G) (e : Rep.res f A ≅ B) (n : ℕ) :
@@ -1037,8 +1192,10 @@ theorem resTensorPowIsoSucc_inv_comp_refl_hom
   rw [resTensorPowIsoSucc_inv]
   rw [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- An inverse canonical restriction/tensor normalization cancels against
-the normalization appearing in a composite positive tensor-power map. -/
+/-- For a commutative ring k and groups G,H,K in universe u, f:H→G, g:K→H,
+e:Res_f(A)≅B and ψ:Res_g(B)→C, the inverse restricted power
+of e cancels the e part of the composite coefficient power map.
+The remaining map is the positive power map induced by g and ψ. -/
 theorem resTensorPowIsoSucc_refl_inv_comp_resTensorPowMapSucc
     {K : Type u} [Group K]
     {A : Rep k G} {B : Rep k H} {C : Rep k K}

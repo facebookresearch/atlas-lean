@@ -1,4 +1,6 @@
-# Map Tensor Pow Obj Iso hom naturality monoidal
+# Power comparison is natural in monoidal transformations
 
-The tensor-power comparison is compatible with a monoidal natural
-transformation between strong monoidal functors.
+Power comparison is natural in monoidal transformations.
+
+A monoidal natural transformation commutes with the finite-power comparisons and its
+component's power map.

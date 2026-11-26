@@ -2,8 +2,8 @@
 
 ## Cochain Chain Graded Pairing
 
-- [Pair Homology associativity ordered of pair](pair-homology-associativity-ordered-of-p.md)
+- [An ordered termwise cup–cap identity descends through compatible cycle and homology maps](pair-homology-associativity-ordered-of-p.md)
 
 ## Homological Complex
 
-- [Linear Hom Cochain Chain Pair associativity ordered of diagrams](linear-hom-cochain-chain-pair-associativ.md)
+- [An ordered diagonal-and-action descriptor diagram gives linear Hom cup–cap associativity](linear-hom-cochain-chain-pair-associativ.md)

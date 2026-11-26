@@ -12,12 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialDifferentialFormComplexComparison
 
 /-!
-# Integral polynomial HKR naturality in the coefficient
+# Coefficient naturality of the polynomial differential-form comparison
 
-The signed inverse comparison commutes with algebra-linear
-coefficient maps already at the level of chains. The forward comparison
-commutes up to the homotopies of the chain homotopy equivalences.
-The resulting homology square uses the coefficient-head form map.
+For a commutative ring k, A = k[σ] and compatible symmetric coefficient modules M,N, an A-linear
+map f : M → N gives a Hochschild coefficient map and the form map f ⊗ id on coefficient exterior
+forms. The signed form-to-Hochschild chain map commutes with these maps exactly. The forward
+Hochschild-to-form comparison commutes up to the homotopies of its chain homotopy equivalences.
+
+Consequently the polynomial homology isomorphisms HHₙ(A,M) ≅ M ⊗_A ∧ⁿ_AΩ¹_{A/k}, viewed with the
+canonical form-object universe lift, satisfy the coefficient naturality square in every n : ℕ.
+The chain formulas use signed permutation sums over k and require no division by n!.
 -/
 
 @[expose] public section
@@ -43,8 +47,10 @@ local notation "A" => MvPolynomial σ k
 local notation "V" => σ →₀ k
 local notation "Ω" => KaehlerDifferential k A
 
-/-- The ground free exterior coordinates of the canonical lifted
-form object. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. For n : ℕ, the polynomial cotangent
+basis gives a k-linear equivalence M ⊗[k] ∧ⁿₖ(⊕ᵢ∈σ k·eᵢ) ≅ Formsₙ(M), where Formsₙ(M) is the
+canonical universe lift of M ⊗[A] ∧ⁿ_AΩ¹_{A/k}. -/
 def polynomialFormFreeDegreeEquiv (M : Type w) [AddCommGroup M] [Module k M]
     [Module A M] [SMulCommClass k A M] [IsScalarTower k A M] (n : ℕ) :
     M ⊗[k] (⋀[k]^n V) ≃ₗ[k] (Symmetric.coefficientDifferentialFormComplex k A M).X n :=
@@ -52,7 +58,10 @@ def polynomialFormFreeDegreeEquiv (M : Type w) [AddCommGroup M] [Module k M]
     (ULift.moduleEquiv : ULift.{u} (M ⊗[A] (⋀[A]^n Ω)) ≃ₗ[k]
       M ⊗[A] (⋀[A]^n Ω)).symm
 
-/-- Free variable coordinates give the original lifted differential word. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. In degree n : ℕ,
+polynomialFormFreeDegreeEquiv sends m ⊗(e_{a(0)}∧…∧e_{a(n−1)}) to the canonical lift of m
+⊗_A(dX_{a(0)}∧…∧dX_{a(n−1)}), for a : Fin n → σ and m ∈ M. -/
 theorem polynomialFormFreeDegreeEquiv_basis
     (n : ℕ) (m : M) (a : Fin n → σ) :
     polynomialFormFreeDegreeEquiv k σ M n
@@ -62,7 +71,10 @@ theorem polynomialFormFreeDegreeEquiv_basis
   change ULift.up (KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n _) = _
   rw [KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv_tmul_basis]
 
-/-- The form-complex map acts only on the original coefficient head. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Let N be another such module and f : M
+→ₗ[A] N. In degree n : ℕ, the coefficient-form map sends the lifted word m
+⊗_A(dX_{a(0)}∧…∧dX_{a(n−1)}) to the lifted word f(m) ⊗_A(dX_{a(0)}∧…∧dX_{a(n−1)}). -/
 theorem polynomialFormCoefficientMap_basis (f : M →ₗ[A] N)
     (n : ℕ) (m : M) (a : Fin n → σ) :
     ((Symmetric.coefficientDifferentialFormComplexMap k A f).f n).hom
@@ -84,8 +96,11 @@ theorem polynomialFormCoefficientMap_basis (f : M →ₗ[A] N)
       LinearMap.id_apply]
   exact (hUp _).trans (congrArg ULift.up hRaw)
 
-/-- The integral signed inverse comparison is strictly natural in the
-symmetric coefficient. No factorial cancellation enters this square. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Let N be another such module and f : M
+→ₗ[A] N. Write E_M and E_N for the polynomial Hochschild-to-form homotopy equivalences, F_f for
+the coefficient-form map and C_f for the Hochschild map applying f to the coefficient. Then F_f
+≫ E_N.inv = E_M.inv ≫ C_f as chain maps. -/
 @[reassoc]
 theorem polynomialDifferentialFormComparison_inv_coefficient (f : M →ₗ[A] N) :
     Symmetric.coefficientDifferentialFormComplexMap k A f ≫
@@ -175,7 +190,11 @@ theorem polynomialDifferentialFormComparison_inv_coefficient (f : M →ₗ[A] N)
   obtain ⟨x, rfl⟩ := e.surjective ω
   exact DFunLike.congr_fun hLR x
 
-/-- The forward chain comparison is coefficient-natural up to the chain homotopies supplied by the integral signed equivalences. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Let N be another such module and f : M
+→ₗ[A] N. With E_M and E_N the polynomial Hochschild-to-form equivalences, C_f the Hochschild
+coefficient map and F_f the coefficient-form map, there is a chain homotopy C_f ≫ E_N.hom ∼
+E_M.hom ≫ F_f. -/
 def polynomialDifferentialFormComparison_coefficientHomotopy (f : M →ₗ[A] N) :
     Homotopy
       (Symmetric.symmetricOriginalCoefficientChainMap k A M f ≫
@@ -199,7 +218,11 @@ def polynomialDifferentialFormComparison_coefficientHomotopy (f : M →ₗ[A] N)
   exact (((Homotopy.ofEq (Category.id_comp (h ≫ eN.hom))).symm.trans hfirst).trans
     (Homotopy.ofEq hmiddle)).trans (hlast.trans (Homotopy.ofEq (Category.comp_id _)))
 
-/-- The all-degree HKR homology comparison preserves the coefficient-head map on differential forms. -/
+/-- Let k be a commutative ring, σ an arbitrary variable set and A = k[σ]. Let M be an A-module with
+compatible k-action, regarded as a symmetric A-bimodule. Let N be another such module and f : M
+→ₗ[A] N. For n : ℕ, let Φ_M and Φ_N be the polynomial Hochschild-to-form homology isomorphisms.
+Then Hₙ(C_f) ≫ Φ_N.hom = Φ_M.hom ≫ (F_f).f n. The form component acts as f ⊗ id on M ⊗_A
+∧ⁿ_AΩ¹_{A/k}, with its canonical universe lift. -/
 @[reassoc]
 theorem polynomialDifferentialFormHomologyIso_coefficient (f : M →ₗ[A] N) (n : ℕ) :
     HomologicalComplex.homologyMap

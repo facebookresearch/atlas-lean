@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Unit to Inverse id
+# Field stalk unit is the transpose of the identity
 
-The unit is the SAME original invariant Hom adjoint of the original identity arrow.
+Field stalk unit is the transpose of the identity.
+
+The adjunction unit equals the inverse-sheaf transpose of the identity stalk morphism.

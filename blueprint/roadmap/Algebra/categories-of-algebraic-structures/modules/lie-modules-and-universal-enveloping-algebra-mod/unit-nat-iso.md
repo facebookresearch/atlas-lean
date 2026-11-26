@@ -1,3 +1,6 @@
-# Unit Nat Iso
+# Naturality of the Lie-module unit isomorphism
 
-The unit is natural for every native Lie-module morphism.
+Naturality of the Lie-module unit isomorphism.
+
+The identity functor on Lie modules is naturally isomorphic to representation followed by
+restriction, with the carrier-identity unit as its components.

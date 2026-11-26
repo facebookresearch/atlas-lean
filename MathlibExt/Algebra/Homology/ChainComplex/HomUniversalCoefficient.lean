@@ -22,14 +22,20 @@ public import Mathlib.CategoryTheory.Preadditive.Yoneda.Limits
 /-!
 # Universal coefficient sequences for full Hom cochain products
 
-The short exact cycles sequence gives connecting maps for the full-product
-Hom cochain complex. Exactness of products and the boundary, cycle and
-homology presentations identify the kernel term with a product of Hom
-groups and the cokernel term with a product of first Ext groups.
+Let C be an abelian category, P an integer chain complex, Q an integer cochain complex, and n an
+integer. Assume every term Pₚ and every differential image im(Pₚ → Pₚ₋₁) is projective. Then
+there is a short exact sequence 0 → ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)) → Hⁿ Hom(P,Q)   → ∏ₚ
+Hom_C(Hₚ(P),H^{n-p}(Q)) → 0. The products range over all integers, and Q retains its
+differential.
 
-The middle term is the cohomology of the full Hom product with its given
-differential. The `HasExt` universe and the object and morphism universes
-are kept independent.
+The sequence comes from 0 → Hom(I⁰(P),Q) → Hom(P,Q) → Hom(Z⁰(P),Q) → 0. The connecting map
+identifies with (-1)^{n+1} times boundary precomposition. Normalizing this unit gives the
+positive Yoneda Ext¹ cokernel and the Hom kernel obtained from the homology quotients. These
+determine the left cohomology inclusion and right cycles restriction in the UCT sequence.
+
+The Ext, object and morphism universes remain independent. Canonical group lifts compare the
+three terms in a common universe. Pullback along a chain map P′ → P and pushforward along Q → Q′
+give the simultaneous Ext, Hom cohomology and homology-Hom maps of short exact sequences.
 -/
 
 @[expose] public section
@@ -43,13 +49,17 @@ universe u v w
 
 namespace AddCommGrpCat
 
-/-- The canonical universe lift commutes with the actual dependent integer product. -/
+/-- Let Aₚ be a family of abelian groups indexed by all integers, in universe v. Moving groups to a
+common universe max(v,w) commutes canonically with their dependent product: lift(∏ₚ Aₚ) ≅ ∏ₚ
+lift(Aₚ). -/
 def uliftIntPiIso (A : ℤ → AddCommGrpCat.{v}) :
     uliftFunctor.{w, v}.obj (AddCommGrpCat.of (∀ p : ℤ, A p)) ≅
       AddCommGrpCat.of (∀ p : ℤ, uliftFunctor.{w, v}.obj (A p)) :=
   uliftPiIso.{0, v, w} A
 
-/-- Each lifted family retains its original component under the canonical product lift. -/
+/-- For a family Aₚ of abelian groups in universe v, the common-universe product comparison sends a
+lifted family k to the family of its lifted components: the p-th coordinate is lift(kₚ), for
+every p ∈ ℤ. -/
 lemma uliftIntPiIso_hom_up (A : ℤ → AddCommGrpCat.{v}) (k : ∀ p : ℤ, A p) (p : ℤ) :
     (uliftIntPiIso.{v, w} A).hom (ULift.up k) p = ULift.up (k p) := rfl
 
@@ -59,18 +69,24 @@ namespace CategoryTheory.Abelian
 
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{w} C]
 
-/-- The actual degree-zero Hom/Ext map in the common group universe. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. For objects X,Y, the canonical isomorphism Hom_C(X,Y) ≅
+Ext⁰_C(X,Y), f ↦ [f], remains an isomorphism after both groups are moved to universe max(v,w). -/
 def homExtZeroLiftIso (X Y : C) :
     AddCommGrpCat.uliftFunctor.{w, v}.obj (AddCommGrpCat.of (X ⟶ Y)) ≅
       AddCommGrpCat.uliftFunctor.{v, w}.obj (AddCommGrpCat.of (Ext.{w} X Y 0)) :=
   (((AddEquiv.ulift : ULift.{w, v} (X ⟶ Y) ≃+ (X ⟶ Y)).trans Ext.addEquiv₀.symm).trans
     (AddEquiv.ulift : ULift.{v, w} (Ext.{w} X Y 0) ≃+ Ext.{w} X Y 0).symm).toAddCommGrpIso
 
-/-- The lifted ordinary representative is the same native degree-zero class. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. For f : X → Y, the forward common-universe Hom–Ext⁰
+comparison sends the lift of f to the lift of its degree-zero class Ext.mk₀(f). -/
 lemma homExtZeroLiftIso_hom_up (X Y : C) (f : X ⟶ Y) :
     (homExtZeroLiftIso X Y).hom (ULift.up f) = ULift.up (Ext.mk₀ f) := rfl
 
-/-- The inverse retains the ordinary morphism of the actual native zero-degree class. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. For f : X → Y, the inverse common-universe Hom–Ext⁰
+comparison sends the lift of Ext.mk₀(f) back to the lift of f. -/
 lemma homExtZeroLiftIso_inv_up (X Y : C) (f : X ⟶ Y) :
     (homExtZeroLiftIso X Y).inv (ULift.up (Ext.mk₀ f)) = ULift.up f := by
   change ULift.up (Ext.addEquiv₀ (Ext.mk₀ f)) = ULift.up f
@@ -83,7 +99,11 @@ namespace CategoryTheory.ShortComplex.ShortExact
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{w} C]
   {S S' : ShortComplex C}
 
-/-- The actual ordinary Hom presentation and positive native Yoneda connecting map. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S be the short exact sequence 0 → S₁ → S₂ → S₃ → 0,
+with inclusion a : S₁ → S₂, and let Y be an object. The positive Yoneda presentation is
+Hom_C(S₂,Y) → Hom_C(S₁,Y) → Ext¹_C(S₃,Y). Its first map is precomposition with a and its second
+sends t to the pushout t_*[S]. Canonical lifts put all terms in universe max(v,w). -/
 def liftedHomPresentation (hS : S.ShortExact) (Y : C) :
     ShortComplex AddCommGrpCat.{max v w} := by
   let A : AddCommGrpCat.{max v w} := AddCommGrpCat.of (ULift.{w, v} (S.X₂ ⟶ Y))
@@ -111,7 +131,12 @@ def liftedHomPresentation (hS : S.ShortExact) (Y : C) :
     ((congrArg g.hom hf).trans
       (hg.trans (congrArg (fun e : Ext.{w} S.X₃ Y 1 => (ULift.up e : D)) hZero)))
 
-/-- Native degree-zero composition compares the two actual presentations. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S be the short exact sequence 0 → S₁ → S₂ → S₃ → 0,
+with inclusion a : S₁ → S₂, and let Y be an object. The ordinary Hom presentation Hom(S₂,Y) →
+Hom(S₁,Y) → Ext¹(S₃,Y) is isomorphic to the degree-zero Ext presentation Ext⁰(S₂,Y) → Ext⁰(S₁,Y)
+→ Ext¹(S₃,Y). The first two components use f ↦ Ext.mk₀(f), and the right component is the
+identity on Ext¹, after common-universe transport. -/
 def liftedHomPresentationIso (hS : S.ShortExact) (Y : C) :
     hS.liftedHomPresentation Y ≅
       (hS.extPresentationSequence Y).map AddCommGrpCat.uliftFunctor.{v, w} := by
@@ -133,13 +158,20 @@ def liftedHomPresentationIso (hS : S.ShortExact) (Y : C) :
     change g = g ≫ 𝟙 _
     exact (Category.comp_id g).symm
 
-/-- The native presentation is exact, without projectivity of either end object. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S be the short exact sequence 0 → S₁ → S₂ → S₃ → 0,
+with inclusion a : S₁ → S₂, and let Y be an object. The positive presentation Hom(S₂,Y) →
+Hom(S₁,Y) → Ext¹(S₃,Y) is exact at Hom(S₁,Y). No projectivity of S₁ or S₃ is assumed. -/
 lemma liftedHomPresentation_exact (hS : S.ShortExact) (Y : C) :
     (hS.liftedHomPresentation Y).Exact :=
   ShortComplex.exact_of_iso (hS.liftedHomPresentationIso Y).symm
     ((hS.extPresentationSequence_exact Y).map AddCommGrpCat.uliftFunctor.{v, w})
 
-/-- Projectivity of the actual middle object makes the actual connecting arrow epi. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S be the short exact sequence 0 → S₁ → S₂ → S₃ → 0,
+with inclusion a : S₁ → S₂, and let Y be an object. If S₂ is projective, every class in
+Ext¹_C(S₃,Y) is the pushout of [S] along a morphism S₁ → Y. Thus the positive connecting arrow
+Hom(S₁,Y) → Ext¹(S₃,Y) is an epimorphism. -/
 lemma liftedHomPresentation_epi (hS : S.ShortExact) (Y : C) [Projective S.X₂] :
     Epi (hS.liftedHomPresentation Y).g := by
   let T : ShortComplex AddCommGrpCat.{w} := hS.extPresentationSequence Y
@@ -152,12 +184,19 @@ lemma liftedHomPresentation_epi (hS : S.ShortExact) (Y : C) [Projective S.X₂] 
   change Epi (e.hom ≫ U.map T.g)
   exact epi_comp' (inferInstance : Epi e.hom) hU
 
-/-- The lifted connecting representative is the positive class of the original pushout. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S be the short exact sequence 0 → S₁ → S₂ → S₃ → 0,
+with inclusion a : S₁ → S₂, and let Y be an object. The positive connecting arrow sends a lifted
+morphism t : S₁ → Y to the lifted pushout class t_*[S] in Ext¹_C(S₃,Y), with no negative sign. -/
 lemma liftedHomPresentation_g_apply (hS : S.ShortExact) (Y : C) (f : S.X₁ ⟶ Y) :
     (hS.liftedHomPresentation Y).g (ULift.up f) =
       ULift.up (hS.extClass.comp (Ext.mk₀ f) (add_zero 1)) := rfl
 
-/-- The existing actual native presentation square gives the ordinary lifted presentation map. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S and S′ be short exact sequences, φ : S′ → S a
+morphism of sequences, and b : Y → Y′. There is an induced map from the positive Hom
+presentation of (S,Y) to that of (S′,Y′): the two Hom components precompose with φ₂ and φ₁ and
+postcompose with b, while the Ext¹ component pulls back along φ₃ and pushes forward along b. -/
 def liftedHomPresentationMap (hS : S.ShortExact) (hS' : S'.ShortExact)
     (φ : S' ⟶ S) {Y Y' : C} (b : Y ⟶ Y') :
     hS.liftedHomPresentation Y ⟶ hS'.liftedHomPresentation Y' :=
@@ -165,7 +204,10 @@ def liftedHomPresentationMap (hS : S.ShortExact) (hS' : S'.ShortExact)
     AddCommGrpCat.uliftFunctor.{v, w}.mapShortComplex.map (hS.extPresentationMap hS' φ b) ≫
       (hS'.liftedHomPresentationIso Y').inv
 
-/-- The left component is the original precomposition and postcomposition on Hom. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S and S′ be short exact sequences, φ : S′ → S a
+morphism of sequences, and b : Y → Y′. On the first presentation term, a morphism t : S₂ → Y is
+sent to b ∘ t ∘ φ₂ : S′₂ → Y′, with the same common-universe lift. -/
 lemma liftedHomPresentationMap_τ₁_apply (hS : S.ShortExact) (hS' : S'.ShortExact)
     (φ : S' ⟶ S) {Y Y' : C} (b : Y ⟶ Y') (f : S.X₂ ⟶ Y) :
     (hS.liftedHomPresentationMap hS' φ b).τ₁ (ULift.up f) =
@@ -186,7 +228,10 @@ lemma liftedHomPresentationMap_τ₁_apply (hS : S.ShortExact) (hS' : S'.ShortEx
     (ULift.up (Ext.addEquiv₀ e) : ULift.{w, v} (S'.X₂ ⟶ Y'))) h₁).trans
       ((congrArg ULift.up h₂).trans (congrArg ULift.up (Category.assoc a f b)))
 
-/-- The middle component is the original precomposition and postcomposition on Hom. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S and S′ be short exact sequences, φ : S′ → S a
+morphism of sequences, and b : Y → Y′. On the middle presentation term, t : S₁ → Y is sent to b
+∘ t ∘ φ₁ : S′₁ → Y′, with the same common-universe lift. -/
 lemma liftedHomPresentationMap_τ₂_apply (hS : S.ShortExact) (hS' : S'.ShortExact)
     (φ : S' ⟶ S) {Y Y' : C} (b : Y ⟶ Y') (f : S.X₁ ⟶ Y) :
     (hS.liftedHomPresentationMap hS' φ b).τ₂ (ULift.up f) =
@@ -207,7 +252,10 @@ lemma liftedHomPresentationMap_τ₂_apply (hS : S.ShortExact) (hS' : S'.ShortEx
     (ULift.up (Ext.addEquiv₀ e) : ULift.{w, v} (S'.X₁ ⟶ Y'))) h₁).trans
       ((congrArg ULift.up h₂).trans (congrArg ULift.up (Category.assoc a f b)))
 
-/-- The right component is the actual simultaneous native Ext map. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let S and S′ be short exact sequences, φ : S′ → S a
+morphism of sequences, and b : Y → Y′. The right component on Ext¹_C(S₃,Y) is pullback along φ₃
+: S′₃ → S₃ followed by pushforward along b : Y → Y′. -/
 lemma liftedHomPresentationMap_τ₃ (hS : S.ShortExact) (hS' : S'.ShortExact)
     (φ : S' ⟶ S) {Y Y' : C} (b : Y ⟶ Y') :
     (hS.liftedHomPresentationMap hS' φ b).τ₃ =
@@ -235,34 +283,52 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 private lemma prevDownInt (p : ℤ) : (ComplexShape.down ℤ).prev p = p + 1 :=
   (ComplexShape.down ℤ).prev_eq' (ComplexShape.down_mk _ _ (by omega))
 
-/-- The product presentations use the actual incoming boundary, cycles and homology sequence. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. For each integer p, the
+boundary–cycle–homology short complex is Bₚ → Zₚ → Hₚ, with maps βₚ and πₚ. -/
 def homUctBoundaryPresentation (P : ChainComplex C ℤ) (p : ℤ) : ShortComplex C :=
   boundariesCyclesHomologySequence P (p + 1) p
 
-/-- The presentation is the genuine second short exact sequence; no splitting is chosen. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. For every p ∈ ℤ, the natural sequence 0 → Bₚ →
+Zₚ → Hₚ → 0 is short exact; no splitting or projectivity is assumed. -/
 lemma homUctBoundaryPresentation_shortExact (P : ChainComplex C ℤ) (p : ℤ) :
     (homUctBoundaryPresentation P p).ShortExact :=
   boundariesCyclesHomologySequence_shortExact P (p + 1) p (prevDownInt p)
 
-/-- The first map is the original differential image inclusion into cycles. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. The first arrow of Bₚ → Zₚ → Hₚ is the
+incoming differential-image inclusion βₚ, obtained from d_P^{p+1,p}. -/
 lemma homUctBoundaryPresentation_f (P : ChainComplex C ℤ) (p : ℤ) :
     (homUctBoundaryPresentation P p).f = boundaryCyclesMap P (p + 1) p := rfl
 
-/-- The second map is the native quotient from cycles to original homology. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. The second arrow of Bₚ → Zₚ → Hₚ is the
+canonical quotient πₚ from cycles to homology. -/
 lemma homUctBoundaryPresentation_g (P : ChainComplex C ℤ) (p : ℤ) :
     (homUctBoundaryPresentation P p).g = P.homologyπ p := rfl
 
-/-- The original complex map induces the actual boundary/cycles/homology square. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. For an integer
+chain map f : P′ → P and p ∈ ℤ, the incoming-boundary sequences for P′ and P form a morphism of
+short exact sequences. Its components are the induced differential-image map, Zₚ(f), and Hₚ(f). -/
 def homUctBoundaryPresentationMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P) (p : ℤ) :
     homUctBoundaryPresentation P' p ⟶ homUctBoundaryPresentation P p :=
   (boundariesCyclesHomologySequenceFunctor (C := C) (c := ComplexShape.down ℤ)
     (p + 1) p).map f
 
-/-- Its cycle component is the native cycle map of the original morphism. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. For f : P′ → P and
+p ∈ ℤ, the cycle component of the induced boundary–cycle–homology presentation map is exactly
+Zₚ(f) : Zₚ(P′) → Zₚ(P). -/
 lemma homUctBoundaryPresentationMap_τ₂ {P P' : ChainComplex C ℤ} (f : P' ⟶ P) (p : ℤ) :
     (homUctBoundaryPresentationMap f p).τ₂ = HomologicalComplex.cyclesMap f p := rfl
 
-/-- Its homology component is the native homology map of the original morphism. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. For f : P′ → P and
+p ∈ ℤ, the homology component of the induced boundary–cycle–homology presentation map is exactly
+Hₚ(f) : Hₚ(P′) → Hₚ(P). -/
 lemma homUctBoundaryPresentationMap_τ₃ {P P' : ChainComplex C ℤ} (f : P' ⟶ P) (p : ℤ) :
     (homUctBoundaryPresentationMap f p).τ₃ = HomologicalComplex.homologyMap f p := rfl
 
@@ -270,22 +336,46 @@ section ExtPresentation
 
 variable [HasExt.{w} C]
 
-/-- The actual ordinary/Ext¹ presentation at every homology degree and given target object. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). For each p, the
+corresponding row is Hom(Zₚ,Yₚ) → Hom(Bₚ,Yₚ) → Ext¹(Hₚ,Yₚ), using βₚ-precomposition and positive
+pushout of the boundary extension. -/
 def homUctPresentationRow (P : ChainComplex C ℤ) (Y : ℤ → C) (p : ℤ) :
     ShortComplex AddCommGrpCat.{max v w} :=
   (homUctBoundaryPresentation_shortExact P p).liftedHomPresentation (Y p)
 
-/-- All integer presentation rows form the actual full product diagram. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The rows Hom(Zₚ,Yₚ) →
+Hom(Bₚ,Yₚ) → Ext¹(Hₚ,Yₚ), for every p ∈ ℤ, form the discrete diagram whose limit is the full
+product presentation. -/
 def homUctPresentationRows (P : ChainComplex C ℤ) (Y : ℤ → C) :
     Discrete ℤ ⥤ ShortComplex AddCommGrpCat.{max v w} :=
   Discrete.functor (homUctPresentationRow P Y)
 
-/-- Native exact-limit data gives the actual product presentation sequence. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). Taking the limit of the
+discrete diagram of positive presentation rows gives this full product short complex; its arrows
+are the coordinatewise precomposition and positive Yoneda boundary maps. -/
 def homUctPresentationLimit (P : ChainComplex C ℤ) (Y : ℤ → C) :
     ShortComplex AddCommGrpCat.{max v w} :=
   ShortComplex.limitShortComplex (homUctPresentationRows P Y)
 
-/-- Native exact limits preserve the genuine pointwise presentation exactness. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The full product
+presentation is exact at ∏ₚ Hom(Bₚ,Yₚ), because products of abelian groups preserve the
+exactness of every positive Hom–Ext row. -/
 lemma homUctPresentationLimit_exact (P : ChainComplex C ℤ) (Y : ℤ → C) :
     (homUctPresentationLimit P Y).Exact := by
   let R := homUctPresentationRows P Y
@@ -302,7 +392,13 @@ lemma homUctPresentationLimit_exact (P : ChainComplex C ℤ) (Y : ℤ → C) :
   change (K.map (lim (J := Discrete ℤ) (C := AddCommGrpCat.{max v w}))).Exact
   exact hK.map (lim (J := Discrete ℤ) (C := AddCommGrpCat.{max v w}))
 
-/-- Projective cycles make the actual full presentation connecting arrow epi. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). If every Zₚ is
+projective, the coordinatewise positive Yoneda maps are surjective and the product connecting
+map ∏ₚ Hom(Bₚ,Yₚ) → ∏ₚ Ext¹(Hₚ,Yₚ) is an epimorphism. -/
 lemma homUctPresentationLimit_epi (P : ChainComplex C ℤ) (Y : ℤ → C)
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) : Epi (homUctPresentationLimit P Y).g := by
   let R := homUctPresentationRows P Y
@@ -318,7 +414,13 @@ lemma homUctPresentationLimit_epi (P : ChainComplex C ℤ) (Y : ℤ → C)
   change Epi ((lim (J := Discrete ℤ) (C := AddCommGrpCat.{max v w})).map K.g)
   infer_instance
 
-/-- The physical product of the actual Hom/Ext presentation rows over all integer degrees. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The product short
+complex uses precomposition with βₚ in its first arrow and tₚ ↦ (tₚ)_*[0 → Bₚ → Zₚ → Hₚ → 0] in
+its second arrow, in each integer coordinate. -/
 def homUctProductPresentation (P : ChainComplex C ℤ) (Y : ℤ → C) :
     ShortComplex AddCommGrpCat.{max v w} where
   X₁ := AddCommGrpCat.of (∀ p : ℤ, (homUctPresentationRow P Y p).X₁)
@@ -343,7 +445,13 @@ def homUctProductPresentation (P : ChainComplex C ℤ) (Y : ℤ → C) :
     change (f ≫ g).hom k p = 0
     exact (congrArg (fun x : A₃ => x p) (AddCommGrpCat.comp_apply f g k)).trans hRow
 
-/-- Evaluation is an actual map of the product short complex to its original presentation row. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). For each p ∈ ℤ,
+evaluation at p is a morphism from the full product presentation to its degree-p Hom–Ext row, on
+all three terms and both arrows. -/
 def homUctProductPresentationProjection (P : ChainComplex C ℤ) (Y : ℤ → C) (p : ℤ) :
     homUctProductPresentation P Y ⟶ homUctPresentationRow P Y p := by
   let R : ℤ → ShortComplex AddCommGrpCat.{max v w} := homUctPresentationRow P Y
@@ -364,7 +472,12 @@ def homUctProductPresentationProjection (P : ChainComplex C ℤ) (Y : ℤ → C)
     change (π₂ ≫ (R p).g).hom k = (A.g ≫ π₃).hom k
     rfl
 
-/-- The full presentation uses precisely the actual native Hom precomposition. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The first arrow sends a
+family (tₚ : Zₚ → Yₚ) to (tₚ ∘ βₚ : Bₚ → Yₚ), with the canonical lifts of these Hom groups. -/
 lemma homUctProductPresentation_f_apply (P : ChainComplex C ℤ) (Y : ℤ → C)
     (k : (homUctProductPresentation P Y).X₁) (p : ℤ) :
     (homUctProductPresentation P Y).f k p =
@@ -374,7 +487,13 @@ lemma homUctProductPresentation_f_apply (P : ChainComplex C ℤ) (Y : ℤ → C)
     (k₀ p) = ULift.up (boundaryCyclesMap P (p + 1) p ≫ (k₀ p).down)
   rfl
 
-/-- Every product representative is sent to the original positive extension class. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The second arrow sends a
+family tₚ : Bₚ → Yₚ to the positive pushout extension classes (tₚ)_*[0 → Bₚ → Zₚ → Hₚ → 0] in
+every coordinate p. -/
 lemma homUctProductPresentation_g_apply (P : ChainComplex C ℤ) (Y : ℤ → C)
     (k : (homUctProductPresentation P Y).X₂) (p : ℤ) :
     (homUctProductPresentation P Y).g k p =
@@ -390,7 +509,14 @@ lemma homUctProductPresentation_g_apply (P : ChainComplex C ℤ) (Y : ℤ → C)
   exact (congrArg (hS.liftedHomPresentation (Y p)).g.hom hValue.symm).trans
     (hS.liftedHomPresentation_g_apply (Y p) v.down)
 
-/-- The canonical native product comparison identifies the entire presentation data. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The limit of the
+discrete presentation rows is canonically isomorphic, as a short complex, to their explicit full
+product. The component comparisons preserve coordinate evaluation and both positive presentation
+arrows. -/
 def homUctPresentationLimitIso (P : ChainComplex C ℤ) (Y : ℤ → C) :
     homUctPresentationLimit P Y ≅ homUctProductPresentation P Y := by
   let R : Discrete ℤ ⥤ ShortComplex AddCommGrpCat.{max v w} := homUctPresentationRows P Y
@@ -469,13 +595,24 @@ def homUctPresentationLimitIso (P : ChainComplex C ℤ) (Y : ℤ → C) :
     change a.hom k p = b.hom k p
     exact hLeft.symm.trans ((ConcreteCategory.congr_hom hArrow k).trans hRight)
 
-/-- The physical product presentation inherits exactness from native exact limits. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The explicit full
+product short complex is exact at ∏ₚ Hom(Bₚ,Yₚ); its kernel is the product of the kernels in the
+individual positive presentation rows. -/
 lemma homUctProductPresentation_exact (P : ChainComplex C ℤ) (Y : ℤ → C) :
     (homUctProductPresentation P Y).Exact :=
   ShortComplex.exact_of_iso (homUctPresentationLimitIso P Y)
     (homUctPresentationLimit_exact P Y)
 
-/-- Projective cycles make the physical product connecting map epi. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). If every cycle object Zₚ
+is projective, the positive product connecting arrow to ∏ₚ Ext¹(Hₚ,Yₚ) is an epimorphism. -/
 lemma homUctProductPresentation_epi (P : ChainComplex C ℤ) (Y : ℤ → C)
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) : Epi (homUctProductPresentation P Y).g := by
   let L : ShortComplex AddCommGrpCat.{max v w} := homUctPresentationLimit P Y
@@ -490,7 +627,13 @@ lemma homUctProductPresentation_epi (P : ChainComplex C ℤ) (Y : ℤ → C)
     infer_instance
   exact epi_of_epi a A.g
 
-/-- Native cokernel uniqueness gives product Ext¹ from the actual full Hom presentation. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). Assume every Zₚ is
+projective. The cokernel of β-precomposition ∏ₚ Hom(Zₚ,Yₚ) → ∏ₚ Hom(Bₚ,Yₚ) is canonically
+isomorphic to ∏ₚ Ext¹(Hₚ,Yₚ), with the positive Yoneda boundary map as quotient comparison. -/
 def homUctPresentationCokernelIso (P : ChainComplex C ℤ) (Y : ℤ → C)
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) :
     cokernel (homUctProductPresentation P Y).f ≅ (homUctProductPresentation P Y).X₃ := by
@@ -498,7 +641,13 @@ def homUctPresentationCokernelIso (P : ChainComplex C ℤ) (Y : ℤ → C)
   exact (cokernelIsCokernel (homUctProductPresentation P Y).f).coconePointUniqueUpToIso
     (homUctProductPresentation_exact P Y).gIsCokernel
 
-/-- The actual cokernel comparison retains the positive presentation connecting map. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). Assume every Zₚ is
+projective. If α is the cokernel-to-product-Ext¹ isomorphism, then the cokernel quotient
+followed by α equals the positive product Yoneda connecting map. -/
 @[reassoc]
 lemma homUctPresentationCokernelIso_π_hom (P : ChainComplex C ℤ) (Y : ℤ → C)
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) :
@@ -509,7 +658,13 @@ lemma homUctPresentationCokernelIso_π_hom (P : ChainComplex C ℤ) (Y : ℤ →
     (cokernelIsCokernel (homUctProductPresentation P Y).f)
     (homUctProductPresentation_exact P Y).gIsCokernel WalkingParallelPair.one
 
-/-- Each cokernel representative is the actual Yoneda extension product in that degree. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). Assume every Zₚ is
+projective. The cokernel class of a family tₚ : Bₚ → Yₚ is sent in degree p to the positive
+pushout class (tₚ)_*[0 → Bₚ → Zₚ → Hₚ → 0]. -/
 lemma homUctPresentationCokernelIso_apply (P : ChainComplex C ℤ) (Y : ℤ → C)
     (hZ : ∀ p : ℤ, Projective (P.cycles p))
     (k : (homUctProductPresentation P Y).X₂) (p : ℤ) :
@@ -526,7 +681,12 @@ lemma homUctPresentationCokernelIso_apply (P : ChainComplex C ℤ) (Y : ℤ → 
   exact (congrArg (fun z : A.X₃ => z p) hValue).trans
     (homUctProductPresentation_g_apply P Y k p)
 
-/-- Original source maps and the actual target family maps act on the full presentation. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. The full Hom–Ext presentation for (P,Y) maps to that for
+(P′,Y′). Each Hom component precomposes with the induced cycle or boundary map and postcomposes
+with bₚ; each Ext¹ component is pullback along Hₚ(f) followed by pushforward along bₚ. -/
 def homUctProductPresentationMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p) :
     homUctProductPresentation P Y ⟶ homUctProductPresentation P' Y' := by
@@ -558,7 +718,11 @@ def homUctProductPresentationMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     exact (congrArg (fun z : B.X₃ => z p) hLeft).trans
       (hValue.trans (congrArg (fun z : B.X₃ => z p) hRight).symm)
 
-/-- The first product map is the original cycles precomposition and given postcomposition. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. A family tₚ : Zₚ → Yₚ in the first term is sent to bₚ ∘ tₚ ∘
+Zₚ(f) : Z′ₚ → Y′ₚ. -/
 lemma homUctProductPresentationMap_τ₁_apply {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p)
     (k : (homUctProductPresentation P Y).X₁) (p : ℤ) :
@@ -580,7 +744,11 @@ lemma homUctProductPresentationMap_τ₁_apply {P P' : ChainComplex C ℤ} (f : 
     ((hS.liftedHomPresentationMap_τ₁_apply hS' φ (b p) v.down).trans
       (congrArg (fun a : S'.X₂ ⟶ S.X₂ => ULift.up (a ≫ v.down ≫ b p)) hφ))
 
-/-- The middle product map precomposes by the actual incoming image map. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. A family tₚ : Bₚ → Yₚ in the middle term is sent to bₚ ∘ tₚ
+∘ Bₚ(f) : B′ₚ → Y′ₚ, where Bₚ(f) is the actual induced differential-image map. -/
 lemma homUctProductPresentationMap_τ₂_apply {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p)
     (k : (homUctProductPresentation P Y).X₂) (p : ℤ) :
@@ -599,7 +767,11 @@ lemma homUctProductPresentationMap_τ₂_apply {P P' : ChainComplex C ℤ} (f : 
   exact (congrArg (hS.liftedHomPresentationMap hS' φ (b p)).τ₂.hom hValue.symm).trans
     (hS.liftedHomPresentationMap_τ₂_apply hS' φ (b p) v.down)
 
-/-- The right product map is the simultaneous native Ext action in the original two variables. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. A family eₚ ∈ Ext¹_C(Hₚ,Yₚ) is sent to (bₚ)_*(Hₚ(f))^* eₚ in
+Ext¹_C(H′ₚ,Y′ₚ), with no additional sign. -/
 lemma homUctProductPresentationMap_τ₃_apply {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p)
     (e : (homUctProductPresentation P Y).X₃) (p : ℤ) :
@@ -626,7 +798,11 @@ lemma homUctProductPresentationMap_τ₃_apply {P P' : ChainComplex C ℤ} (f : 
       (zero_add 1)).comp (Ext.mk₀ (b p)) (add_zero 1)) := rfl
   exact (congrArg (fun m : A ⟶ B => m.hom v) h).trans hValue
 
-/-- The product cokernel map uses the actual square of the two Hom presentation arrows. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. The commuting square of the two β-precomposition arrows
+induces a map between their cokernels, from the presentation of (P,Y) to that of (P′,Y′). -/
 def homUctPresentationCokernelMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p) :
     cokernel (homUctProductPresentation P Y).f ⟶
@@ -634,7 +810,12 @@ def homUctPresentationCokernelMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
   cokernel.map _ _ (homUctProductPresentationMap f b).τ₁
     (homUctProductPresentationMap f b).τ₂ (homUctProductPresentationMap f b).comm₁₂.symm
 
-/-- The positive product Ext comparison is simultaneously natural in both original variables. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. Assume the cycles Zₚ and Z′ₚ are projective in every degree.
+The cokernel-to-product-Ext¹ comparisons commute with the induced cokernel map and the
+coordinatewise Ext pullback/pushforward map. -/
 lemma homUctPresentationCokernelIso_naturality {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p)
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) (hZ' : ∀ p : ℤ, Projective (P'.cycles p)) :
@@ -666,7 +847,13 @@ lemma homUctPresentationCokernelIso_naturality {P P' : ChainComplex C ℤ} (f : 
     _ = (π ≫ e.hom) ≫ φ.τ₃ := congrArg (fun a => a ≫ φ.τ₃) he.symm
     _ = π ≫ (e.hom ≫ φ.τ₃) := Category.assoc _ _ _
 
-/-- The full Hom product embeds by precomposition with the original homology quotients. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The product ∏ₚ
+Hom(Hₚ,Yₚ) maps into ∏ₚ Hom(Zₚ,Yₚ) by precomposition with each homology quotient πₚ. Its p-th
+coordinate sends tₚ to tₚ ∘ πₚ. -/
 def homUctHomKernelInclusion (P : ChainComplex C ℤ) (Y : ℤ → C) :
     AddCommGrpCat.of (∀ p : ℤ, ULift.{w, v} (P.homology p ⟶ Y p)) ⟶
       (homUctProductPresentation P Y).X₁ := by
@@ -681,7 +868,13 @@ def homUctHomKernelInclusion (P : ChainComplex C ℤ) (Y : ℤ → C) :
         (P.homologyπ p) k.down k'.down)
   exact AddCommGrpCat.ofHom (AddMonoidHom.piMap f)
 
-/-- These actual homology-quotient representatives vanish after boundary precomposition. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). Precomposition by πₚ
+followed by precomposition by βₚ is zero in every degree, since πₚ ∘ βₚ=0. Thus the full
+homology-Hom inclusion is killed by the first product-presentation arrow. -/
 @[reassoc]
 lemma homUctHomKernelInclusion_f (P : ChainComplex C ℤ) (Y : ℤ → C) :
     homUctHomKernelInclusion P Y ≫ (homUctProductPresentation P Y).f = 0 := by
@@ -705,7 +898,13 @@ lemma homUctHomKernelInclusion_f (P : ChainComplex C ℤ) (Y : ℤ → C) :
     (hValue.trans ((congrArg (fun t : Abelian.image (P.d (p + 1) p) ⟶ Y p =>
       (ULift.up t : ULift.{w, v} (Abelian.image (P.d (p + 1) p) ⟶ Y p))) hZero).trans rfl))
 
-/-- The inclusion is mono because each original homology quotient is epi. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The map ∏ₚ Hom(Hₚ,Yₚ) →
+∏ₚ Hom(Zₚ,Yₚ), tₚ ↦ tₚ ∘ πₚ, is a monomorphism because every homology quotient πₚ is an
+epimorphism. -/
 lemma homUctHomKernelInclusion_mono (P : ChainComplex C ℤ) (Y : ℤ → C) :
     Mono (homUctHomKernelInclusion P Y) := by
   let B : AddCommGrpCat.{max v w} := AddCommGrpCat.of
@@ -723,7 +922,13 @@ lemma homUctHomKernelInclusion_mono (P : ChainComplex C ℤ) (Y : ℤ → C) :
         ULift.{w, v} (P.cycles p ⟶ Y p)) := congrFun h p
   exact congrArg (fun v : ULift.{w, v} (P.cycles p ⟶ Y p) => v.down) hValue
 
-/-- Native contravariant kernel preservation constructs the full product Hom kernel. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The inclusion ∏ₚ
+Hom(Hₚ,Yₚ) → ∏ₚ Hom(Zₚ,Yₚ) is a kernel of the β-precomposition map to ∏ₚ Hom(Bₚ,Yₚ). This is the
+full product of the contravariant Hom kernels of 0 → Bₚ → Zₚ → Hₚ → 0. -/
 def homUctHomKernelIsKernel (P : ChainComplex C ℤ) (Y : ℤ → C) :
     IsLimit (KernelFork.ofι (homUctHomKernelInclusion P Y)
       (homUctHomKernelInclusion_f P Y)) := by
@@ -773,14 +978,26 @@ def homUctHomKernelIsKernel (P : ChainComplex C ℤ) (Y : ℤ → C) :
   exact hLeft.trans (hRowValue.symm.trans
     ((ConcreteCategory.congr_hom hLift x).trans hProjection))
 
-/-- The actual product Hom group is the kernel of the positive product presentation arrow. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The kernel of ∏ₚ
+Hom(Zₚ,Yₚ) → ∏ₚ Hom(Bₚ,Yₚ) is canonically isomorphic to ∏ₚ Hom(Hₚ,Yₚ), with inverse represented
+by precomposition with the homology quotients πₚ. -/
 def homUctHomKernelIso (P : ChainComplex C ℤ) (Y : ℤ → C) :
     kernel (homUctProductPresentation P Y).f ≅
       AddCommGrpCat.of (∀ p : ℤ, ULift.{w, v} (P.homology p ⟶ Y p)) :=
   (kernelIsKernel (homUctProductPresentation P Y).f).conePointUniqueUpToIso
     (homUctHomKernelIsKernel P Y)
 
-/-- The comparison retains the actual homology-quotient inclusion on all representatives. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The
+kernel-to-product-Hom comparison followed by the πₚ-precomposition inclusion equals the canonical
+inclusion of the presentation kernel. -/
 @[reassoc]
 lemma homUctHomKernelIso_hom_inclusion (P : ChainComplex C ℤ) (Y : ℤ → C) :
     (homUctHomKernelIso P Y).hom ≫ homUctHomKernelInclusion P Y =
@@ -789,7 +1006,12 @@ lemma homUctHomKernelIso_hom_inclusion (P : ChainComplex C ℤ) (Y : ℤ → C) 
     (kernelIsKernel (homUctProductPresentation P Y).f)
     (homUctHomKernelIsKernel P Y) WalkingParallelPair.zero
 
-/-- The inverse sends the original Hom family to its actual kernel representative. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The inverse
+product-Hom-to-kernel comparison followed by the kernel inclusion is exactly (tₚ) ↦ (tₚ ∘ πₚ). -/
 @[reassoc]
 lemma homUctHomKernelIso_inv_ι (P : ChainComplex C ℤ) (Y : ℤ → C) :
     (homUctHomKernelIso P Y).inv ≫ kernel.ι (homUctProductPresentation P Y).f =
@@ -798,7 +1020,11 @@ lemma homUctHomKernelIso_inv_ι (P : ChainComplex C ℤ) (Y : ℤ → C) :
     (kernelIsKernel (homUctProductPresentation P Y).f)
     (homUctHomKernelIsKernel P Y) WalkingParallelPair.zero
 
-/-- The full Hom product has the original homology precomposition and given target maps. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. There is an additive map ∏ₚ Hom(Hₚ,Yₚ) → ∏ₚ Hom(H′ₚ,Y′ₚ),
+sending tₚ to bₚ ∘ tₚ ∘ Hₚ(f) in each integer coordinate. -/
 def homUctHomProductMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p) :
     AddCommGrpCat.of (∀ p : ℤ, ULift.{w, v} (P.homology p ⟶ Y p)) ⟶
@@ -822,7 +1048,11 @@ def homUctHomProductMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
           (Category.assoc a k.down c) (Category.assoc a k'.down c))
   exact AddCommGrpCat.ofHom (AddMonoidHom.piMap m)
 
-/-- The actual homology-quotient inclusion is natural in both original variables. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. The πₚ-precomposition inclusions into cycle Hom commute with
+the product map tₚ ↦ bₚ ∘ tₚ ∘ Hₚ(f) and the corresponding cycle-Hom presentation map. -/
 lemma homUctHomKernelInclusion_naturality {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p) :
     homUctHomKernelInclusion P Y ≫ (homUctProductPresentationMap f b).τ₁ =
@@ -861,7 +1091,11 @@ lemma homUctHomKernelInclusion_naturality {P P' : ChainComplex C ℤ} (f : P' �
   exact hLeft.trans ((congrArg (fun z : P'.cycles p ⟶ Y' p =>
     (ULift.up z : ULift.{w, v} (P'.cycles p ⟶ Y' p))) hValue).trans hRight.symm)
 
-/-- The actual presentation square induces the map of its kernels. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. The actual square of β-precomposition maps induces the map
+between the full-presentation kernels for (P,Y) and (P′,Y′). -/
 def homUctHomKernelMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p) :
     kernel (homUctProductPresentation P Y).f ⟶
@@ -869,7 +1103,11 @@ def homUctHomKernelMap {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
   kernel.map _ _ (homUctProductPresentationMap f b).τ₁
     (homUctProductPresentationMap f b).τ₂ (homUctProductPresentationMap f b).comm₁₂.symm
 
-/-- The kernel comparison has the original simultaneous Hom naturality square. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Assume Ext_C is
+available in an independent universe w. Let f : P′ → P be an integer chain map, Y,Y′ : ℤ → C
+coefficient families, and bₚ : Yₚ → Y′ₚ. Write Bₚ,Zₚ,Hₚ for the boundary, cycles and homology
+objects of P, and similarly for P′. The kernel-to-product-Hom comparisons commute with the
+induced kernel map and coordinatewise precomposition by Hₚ(f) and postcomposition by bₚ. -/
 lemma homUctHomKernelIso_naturality {P P' : ChainComplex C ℤ} (f : P' ⟶ P)
     {Y Y' : ℤ → C} (b : ∀ p, Y p ⟶ Y' p) :
     homUctHomKernelMap f b ≫ (homUctHomKernelIso P' Y').hom =
@@ -913,7 +1151,14 @@ section LiftedCohomology
 
 open ComposableArrows
 
-/-- The real four arrows surrounding full Hom cohomology in the native Hom cycles LES. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+The four-arrow exact window is H^{n-1} Hom(Z⁰,Q) → Hⁿ Hom(I⁰,Q) → Hⁿ Hom(P,Q) → Hⁿ Hom(Z⁰,Q) →
+H^{n+1} Hom(I⁰,Q), with outside arrows δₙ₋₁ and δₙ and inside arrows induced by the Hom
+inclusion and restriction. -/
 def homCyclesFourArrowSequence (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     ComposableArrows AddCommGrpCat.{max v w} 4 :=
@@ -925,7 +1170,13 @@ def homCyclesFourArrowSequence (P : ChainComplex C ℤ) (Q : CochainComplex C �
     (U.map (HomologicalComplex.homologyMap S.g n))
     (U.map (hS.δ n (n + 1) rfl))
 
-/-- Native LES exactness and the exact lift functor prove these actual four arrows exact. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+The four arrows surrounding Hⁿ Hom(P,Q) form an exact window, after canonical common-universe
+transport. Only projectivity of the differential images is required. -/
 lemma homCyclesFourArrowSequence_exact (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     (homCyclesFourArrowSequence.{u, v, w} P Q n hI).Exact := by
@@ -937,26 +1188,48 @@ lemma homCyclesFourArrowSequence_exact (P : ChainComplex C ℤ) (Q : CochainComp
     (exact_of_δ₀ ((hS.homology_exact₂ n).map U).exact_toComposableArrows
       ((hS.homology_exact₃ n (n + 1) rfl).map U).exact_toComposableArrows)
 
-/-- The original Hom LES supplies the canonical cokernel/cohomology/kernel sequence. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+The window gives the natural short complex coker(δₙ₋₁) → Hⁿ Hom(P,Q) → ker(δₙ). Its arrows are
+the canonical maps induced by exactness of the Hom cohomology sequence. -/
 def homCyclesCohomologyClip (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     ShortComplex AddCommGrpCat.{max v w} :=
   middleKernelCokernelSequence (homCyclesFourArrowSequence P Q n hI)
     (homCyclesFourArrowSequence_exact P Q n hI).toIsComplex
 
-/-- Projective outgoing images alone make the actual clipped Hom LES short exact. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+The induced sequence 0 → coker(δₙ₋₁) → Hⁿ Hom(P,Q) → ker(δₙ) → 0 is short exact. No projectivity
+of the terms Pₚ is used for this clipped sequence. -/
 lemma homCyclesCohomologyClip_shortExact (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     (homCyclesCohomologyClip.{u, v, w} P Q n hI).ShortExact :=
   middleKernelCokernelSequence_shortExact _ (homCyclesFourArrowSequence_exact P Q n hI)
 
-/-- The clipped sequence retains the actual full-product Hom cohomology in its middle. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+The middle object of coker(δₙ₋₁) → Hⁿ Hom(P,Q) → ker(δₙ) is exactly the cohomology of the full
+Hom cochain product, in the common group universe. Neither differential of P or Q is replaced. -/
 lemma homCyclesCohomologyClip_X₂ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     (homCyclesCohomologyClip.{u, v, w} P Q n hI).X₂ =
       AddCommGrpCat.uliftFunctor.{w, v}.obj ((homCochainComplex P Q).homology n) := rfl
 
-/-- The actual simultaneous Hom sequence map induces its genuine lifted four-arrow square. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let f : P′ → P and
+g : Q → Q′ be integer chain and cochain maps, respectively, and let n ∈ ℤ. Assume all
+differential images of P and P′ are projective. The induced map of short exact Hom sequences
+gives a map of their four-arrow cohomology windows, including both connecting arrows. The map is
+contravariant in P and covariant in Q. -/
 def homCyclesFourArrowSequenceMap {P P' : ChainComplex C ℤ} {Q Q' : CochainComplex C ℤ}
     (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
@@ -1002,8 +1275,11 @@ def homCyclesFourArrowSequenceMap {P P' : ChainComplex C ℤ} {Q Q' : CochainCom
     simpa only [U.map_comp] using congrArg U.map
       (HomologicalComplex.HomologySequence.δ_naturality φ hS hT n (n + 1) rfl)
 
-/-- Native kernel/cokernel maps give the natural square
-of the actual clipped cohomology sequence. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let f : P′ → P and
+g : Q → Q′ be integer chain and cochain maps, respectively, and let n ∈ ℤ. Assume all
+differential images of P and P′ are projective. The actual window map induces a map coker(δₙ₋₁)
+→ Hⁿ Hom(P,Q) → ker(δₙ) to the corresponding clipped sequence for (P′,Q′), using the induced
+cokernel and kernel maps. -/
 def homCyclesCohomologyClipMap {P P' : ChainComplex C ℤ} {Q Q' : CochainComplex C ℤ}
     (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
@@ -1013,7 +1289,10 @@ def homCyclesCohomologyClipMap {P P' : ChainComplex C ℤ} {Q Q' : CochainComple
     (homCyclesFourArrowSequence_exact P Q n hI).toIsComplex
     (homCyclesFourArrowSequence_exact P' Q' n hI').toIsComplex
 
-/-- The middle naturality map is exactly the native map of the original full Hom cohomology. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let f : P′ → P and
+g : Q → Q′ be integer chain and cochain maps, respectively, and let n ∈ ℤ. Assume all
+differential images of P and P′ are projective. The middle component of the clipped-sequence map
+is Hⁿ Hom(f,g), with its canonical common-universe transport. -/
 lemma homCyclesCohomologyClipMap_τ₂ {P P' : ChainComplex C ℤ} {Q Q' : CochainComplex C ℤ}
     (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
@@ -1031,7 +1310,11 @@ variable [HasExt.{w} C]
 private lemma nextDownInt (p : ℤ) : (ComplexShape.down ℤ).next p = p - 1 :=
   (ComplexShape.down ℤ).next_eq' (ComplexShape.down_mk _ _ (by omega))
 
-/-- The native full-product cycles comparison in the common Hom/Ext group universe. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume every cycle object Zₚ(P) is
+projective. The full cohomology comparison is Hⁿ Hom(Z⁰(P),Q) ≅ ∏ₚ Hom_C(Zₚ(P),H^{n-p}(Q)), in
+the common group universe max(v,w). -/
 def homUctCyclesCohomologyIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) :
     AddCommGrpCat.uliftFunctor.{w, v}.obj
@@ -1054,7 +1337,11 @@ def homUctCyclesCohomologyIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ
   change U.obj (H.homology n) ≅ T
   exact U.mapIso e ≪≫ t
 
-/-- Reindexing uses the original incoming image and only the earned adjacent-degree equality. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. For integers n,m with m=n+1,
+reindexing outgoing images in source degree p+1 identifies ∏ᵢ Hom_C(im d_P^{i,i-1},H^{m-i}(Q))
+with ∏ₚ Hom_C(Bₚ(P),H^{n-p}(Q)), using the actual adjacent-degree identifications. -/
 def homUctImageProductIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n m : ℤ)
     (hnm : n + 1 = m) :
     AddCommGrpCat.uliftFunctor.{w, v}.obj
@@ -1091,7 +1378,11 @@ def homUctImageProductIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n
   change U.obj G ≅ T₂
   exact t ≪≫ q
 
-/-- Its representative is the original image morphism with the actual two degree transports. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. For m=n+1, the p-th reindexed
+component is the original morphism in source degree p+1, precomposed with the canonical image
+identification Bₚ ≅ im d_P^{p+1,p} and followed by the equality H^{m-(p+1)}(Q)=H^{n-p}(Q). -/
 lemma homUctImageProductIso_hom_up (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n m : ℤ) (hnm : n + 1 = m)
     (k : ∀ p : ℤ, (outgoingImageZeroComplex P).X p ⟶ Q.homology (m - p)) (p : ℤ) :
@@ -1163,7 +1454,12 @@ lemma homUctImageProductIso_hom_up (P : ChainComplex C ℤ) (Q : CochainComplex 
     (hq.trans ((congrArg (U.map (e p).hom).hom hz).trans
       (hu.trans (congrArg ULift.up hNative))))
 
-/-- Image projectivity gives the genuine full-Hom image comparison at adjacent degrees. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. For m=n+1, projectivity of the images identifies Hᵐ
+Hom(I⁰(P),Q) with the full product ∏ₚ Hom_C(Bₚ(P),H^{n-p}(Q)), after reindexing the actual
+source image degree p+1. -/
 def homUctImagesCohomologyIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n m : ℤ)
     (hnm : n + 1 = m) (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     AddCommGrpCat.uliftFunctor.{w, v}.obj
@@ -1185,7 +1481,11 @@ def homUctImagesCohomologyIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ
   let t : U.obj G ≅ T := homUctImageProductIso P Q n m hnm
   exact U.mapIso e ≪≫ t
 
-/-- The cycles cohomology comparison retains actual simultaneous P/Q naturality. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let f : P′ → P and
+g : Q → Q′ be integer chain and cochain maps, respectively, and let n ∈ ℤ. If every cycle of P
+and P′ is projective, the comparisons Hⁿ Hom(Z⁰(P),Q) ≅ ∏ₚ Hom(Zₚ(P),H^{n-p}(Q)) commute with
+Hom cohomology of the cycle map and with coordinatewise cycle precomposition and target homology
+postcomposition. -/
 lemma homUctCyclesCohomologyIso_naturality {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hZ : ∀ p : ℤ, Projective (P.cycles p))
@@ -1407,7 +1707,11 @@ private lemma imageProduct_naturality {P P' : ChainComplex C ℤ}
         ((congrArg (fun v => ULift.up (a ≫ v.down ≫ h')) hz).symm.trans hτ.symm))
     exact hLeft.trans (hValue.trans hRight.symm)
 
-/-- The image cohomology comparison is natural under the original image and target maps. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let f : P′ → P and
+g : Q → Q′ be integer chain and cochain maps, respectively, and let n ∈ ℤ. Assume all
+differential images of P and P′ are projective. For m=n+1, the image-complex cohomology
+comparisons to ∏ₚ Hom(Bₚ,H^{n-p}(Q)) commute with the actual induced image map of f and the
+homology maps H^{n-p}(g). -/
 lemma homUctImagesCohomologyIso_naturality {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q')
     (n m : ℤ) (hnm : n + 1 = m)
@@ -1595,8 +1899,13 @@ private lemma connecting_degree_eq (P : ChainComplex C ℤ) (Q : CochainComplex 
   change d = d ≫ 𝟙 (F.homology (n + 1))
   exact (Category.comp_id d).symm
 
-/-- The native connecting map is the signed positive Hom presentation
-after actual degree transport. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Zₚ(P) is projective, and let m=n+1. Under
+the cycles and image full-product cohomology comparisons, the connecting map Hⁿ Hom(Z⁰(P),Q) →
+Hᵐ Hom(I⁰(P),Q) is (-1)^m times βₚ-precomposition on ∏ₚ Hom(Zₚ(P),H^{n-p}(Q)). The positive
+Hom–Ext presentation map is otherwise unchanged. -/
 lemma homUctConnecting_square (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n m : ℤ) (hnm : n + 1 = m)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
@@ -1721,7 +2030,14 @@ private lemma unitIso_naturality {A B : AddCommGrpCat.{max v w}} (f : A ⟶ B) (
   change f.hom ((u : ℤ) • x) = (u : ℤ) • f.hom x
   exact f.hom.map_zsmul (u : ℤ) x
 
-/-- Domain-unit normalization preserves the positive Ext¹ cokernel representatives. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+Assume every Zₚ(P) is projective and Ext_C is available in universe w. Normalizing the domain
+unit (-1)^n identifies coker(δₙ₋₁) with ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), with positive Yoneda
+extension representatives. -/
 def homUctCokernelIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) :
@@ -1749,7 +2065,14 @@ def homUctCokernelIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : �
   change cokernel d ≅ A.X₃
   exact m ≪≫ t
 
-/-- The cokernel map sends the actual image cohomology to the original positive extension class. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+Assume all cycles are projective and Ext_C is available. The cokernel quotient of δₙ₋₁ followed
+by the product-Ext¹ comparison equals the image-complex cohomology comparison followed by the
+positive product Yoneda connecting arrow. -/
 @[reassoc]
 lemma homUctCokernelIso_π_hom (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
@@ -1796,7 +2119,13 @@ lemma homUctCokernelIso_π_hom (P : ChainComplex C ℤ) (Q : CochainComplex C �
       ((congrArg (fun f => f ≫ t.hom) hm).trans
         ((Category.assoc b.hom πA t.hom).trans (congrArg (fun f => b.hom ≫ f) ht))))
 
-/-- Codomain-unit normalization identifies the actual connecting kernel with product Hom. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+Assume every Zₚ(P) is projective. Normalizing the codomain unit (-1)^{n+1} identifies ker(δₙ)
+with the full product ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), using the original homology quotients. -/
 def homUctKernelIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
     (hZ : ∀ p : ℤ, Projective (P.cycles p)) :
@@ -1850,7 +2179,14 @@ def homUctKernelIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ
   change kernel d ≅ T
   exact m ≪≫ t
 
-/-- The kernel comparison retains the original cycles cohomology representative. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. The Hom short exact sequence is 0 → Hom(I⁰(P),Q) → Hom(P,Q)
+→ Hom(Z⁰(P),Q) → 0. Write δₖ : Hᵏ Hom(Z⁰(P),Q) → H^{k+1} Hom(I⁰(P),Q) for its connecting map.
+Assume every Zₚ(P) is projective. The kernel-to-product-Hom comparison followed by
+πₚ-precomposition equals the inclusion into Hⁿ Hom(Z⁰(P),Q) followed by the cycles full-product
+cohomology comparison. -/
 @[reassoc]
 lemma homUctKernelIso_hom_inclusion (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1))))
@@ -1940,7 +2276,16 @@ private lemma projectiveUctCycles (P : ChainComplex C ℤ)
     exact hI p
   exact HomologicalComplex.projective_cycles P p
 
-/-- The actual full-product UCT uses native HasExt at an independent Ext universe. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. The
+full-product UCT short complex is obtained from coker(δₙ₋₁) → Hⁿ Hom(P,Q) → ker(δₙ) by the
+positive product-Ext¹ and product-Hom comparisons. Its left map is the Hom-sequence inclusion
+after the inverse Ext comparison; its right map is the Hom-sequence restriction followed by the
+Hom comparison. -/
 def homUniversalCoefficientSequenceEngine (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1965,7 +2310,14 @@ def homUniversalCoefficientSequenceEngine (P : ChainComplex C ℤ) (Q : CochainC
         (by simp only [Limits.comp_zero, Limits.zero_comp])
   exact ShortComplex.mk f g hfg
 
-/-- The left term is the full integer product of the original native Ext¹ groups. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. The
+left object is exactly the full product ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), with each Ext factor
+moved to universe max(v,w). -/
 lemma homUniversalCoefficientSequenceEngine_X₁ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1973,21 +2325,43 @@ lemma homUniversalCoefficientSequenceEngine_X₁ (P : ChainComplex C ℤ) (Q : C
       AddCommGrpCat.of (∀ p : ℤ,
         ULift.{v, w} (Ext.{w} (P.homology p) (Q.homology (n - 1 - p)) 1)) := rfl
 
-/-- The middle term is the existing full-product Hom cohomology with Q's true differential. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. The
+middle object is Hⁿ Hom(P,Q), moved to universe max(v,w). The full Hom product keeps the given
+differentials of P and Q. -/
 lemma homUniversalCoefficientSequenceEngine_X₂ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     (homUniversalCoefficientSequenceEngine P Q n hP hI).X₂ =
       AddCommGrpCat.uliftFunctor.{w, v}.obj ((homCochainComplex P Q).homology n) := rfl
 
-/-- The right term is the full integer product of the actual homology Hom groups. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. The
+right object is exactly the full product ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with the individual Hom
+factors moved to universe max(v,w). -/
 lemma homUniversalCoefficientSequenceEngine_X₃ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     (homUniversalCoefficientSequenceEngine P Q n hP hI).X₃ =
       AddCommGrpCat.of (∀ p : ℤ, ULift.{w, v} (P.homology p ⟶ Q.homology (n - p))) := rfl
 
-/-- The actual endpoint comparisons transport the genuine native LES clip to UCT. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. The
+canonical cokernel-to-Ext and kernel-to-Hom endpoint comparisons give an isomorphism of the
+clipped Hom cohomology sequence with this full-product UCT short complex; the middle cohomology
+object is unchanged. -/
 def homUniversalCoefficientSequenceEngineIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2032,23 +2406,17 @@ def homUniversalCoefficientSequenceEngineIso (P : ChainComplex C ℤ) (Q : Cocha
       congrArg₂ (fun t : M ⟶ M => fun v : M ⟶ T.X₃ => t ≫ v) heM hgM
     exact hFirst.trans (Category.id_comp (sG ≫ e₃.hom))
 
-/-- Let `C : Type u` be an abelian category with morphisms in universe `v` and
-`HasExt.{w} C`, let `P : ChainComplex C ℤ` and `Q : CochainComplex C ℤ`, and let `n : ℤ`.
-If every `P.X p` and every `Abelian.image (P.d p (p - 1))`, for all `p : ℤ`, is projective,
-the full-product universal coefficient sequence is short exact:
-`0 → (∏ p : ℤ, Ext¹_C(H_p(P), H^{n-1-p}(Q))) → Hⁿ(homCochainComplex P Q) →
-(∏ p : ℤ, Hom_C(H_p(P), H^{n-p}(Q))) → 0`.
-The Hom complex uses products over all integer degrees and retains both given differentials.
-
-Each Ext factor uses `ULift.{v, w}`; the middle cohomology uses
-`AddCommGrpCat.uliftFunctor.{w, v}`; each right-hand Hom factor uses `ULift.{w, v}`.
-All three terms lie in `AddCommGrpCat.{max v w}`.
-
-For `S = homCyclesCohomologyClip P Q n hI`, the first arrow is
-`(homUctCokernelIso P Q n hI hZ).inv ≫ S.f` and the second is
-`S.g ≫ (homUctKernelIso P Q n hI hZ).hom`, where `hZ` is the projectivity of all cycles
-derived from the two hypotheses. These are the Hom long-exact-sequence inclusion and cycles
-restriction, transported through the Yoneda Ext and homology-Hom product comparisons. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. There
+is a short exact sequence 0 → ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)) → Hⁿ Hom(P,Q) → ∏ₚ
+Hom_C(Hₚ(P),H^{n-p}(Q)) → 0 in the common group universe max(v,w). The left map is the positive
+Yoneda-extension comparison followed by the Hom long-exact-sequence inclusion; the right map is
+cycles restriction followed by the homology-Hom comparison. Both projectivity families are used
+to obtain projective cycles; Q is arbitrary. -/
 lemma homUniversalCoefficientSequenceEngine_shortExact (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2056,7 +2424,15 @@ lemma homUniversalCoefficientSequenceEngine_shortExact (P : ChainComplex C ℤ)
   ShortComplex.shortExact_of_iso (homUniversalCoefficientSequenceEngineIso P Q n hP hI)
     (homCyclesCohomologyClip_shortExact P Q n hI)
 
-/-- Positive Yoneda representatives map through the original Hom-LES injection. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. A
+class in Hⁿ Hom(I⁰(P),Q) first gives its full positive Yoneda Ext¹ family and then maps by the
+left UCT injection to Hⁿ Hom(P,Q). This composite is exactly the cohomology map induced by the
+Hom inclusion Hom(I⁰(P),Q) → Hom(P,Q). -/
 @[reassoc]
 lemma homUniversalCoefficientSequenceEngine_left_representative (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2098,7 +2474,15 @@ lemma homUniversalCoefficientSequenceEngine_left_representative (P : ChainComple
   change b.hom ≫ A.g ≫ T.f = a
   exact (Category.assoc b.hom A.g T.f).symm.trans hValue
 
-/-- The canonical projection retains the cycles restriction and the actual triangular comparison. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. The
+right UCT map followed by precomposition with πₚ equals the cohomology restriction Hⁿ Hom(P,Q) →
+Hⁿ Hom(Z⁰(P),Q), followed by the full cycles-Hom cohomology comparison. This fixes its original
+cycles representatives and degree-sign convention. -/
 @[reassoc]
 lemma homUniversalCoefficientSequenceEngine_right_representative (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2138,8 +2522,12 @@ lemma homUniversalCoefficientSequenceEngine_right_representative (P : ChainCompl
     _ = (S.g ≫ ι) ≫ b.hom := (Category.assoc _ _ _).symm
     _ = _ := congrArg (fun x => x ≫ b.hom) hClip
 
-/-- The actual UCT map is native Ext on the left, full Hom cohomology in the middle,
-and Hom on the right. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext universe w. Let f : P′ → P
+be an integer chain map, g : Q → Q′ an integer cochain map, and n ∈ ℤ. Assume every term and
+differential image of P and P′ is projective. The full-product UCT sequence for (P,Q) maps to
+that for (P′,Q′). Its three components are, respectively, coordinatewise Ext¹
+pullback/pushforward, Hⁿ Hom(f,g), and coordinatewise Hom precomposition/postcomposition, all in
+the common group universe max(v,w). -/
 def homUniversalCoefficientSequenceEngineMap {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2273,7 +2661,10 @@ def homUniversalCoefficientSequenceEngineMap {P P' : ChainComplex C ℤ}
       _ = E.g ≫ (H ≫ κ') := congrArg (fun t => E.g ≫ t) hκ
       _ = (E.g ≫ H) ≫ κ' := (Category.assoc _ _ _).symm
 
-/-- The middle naturality arrow is the genuine map of the original full-product Hom cohomology. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext universe w. Let f : P′ → P
+be an integer chain map, g : Q → Q′ an integer cochain map, and n ∈ ℤ. Assume every term and
+differential image of P and P′ is projective. The middle UCT component is precisely Hⁿ Hom(f,g),
+preserving the original full Hom differential and its common-universe cohomology object. -/
 lemma homUniversalCoefficientSequenceEngineMap_τ₂ {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2297,7 +2688,11 @@ lemma homUniversalCoefficientSequenceEngineMap_τ₂ {P P' : ChainComplex C ℤ}
     (congrArg (fun t : homCochainComplex P Q ⟶ homCochainComplex P' Q' =>
       U.map (HomologicalComplex.homologyMap t n)) hφ)
 
-/-- Every left component is the actual pullback and pushforward of the native Ext¹ class. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext universe w. Let f : P′ → P
+be an integer chain map, g : Q → Q′ an integer cochain map, and n ∈ ℤ. Assume every term and
+differential image of P and P′ is projective. On the full left product, eₚ ∈
+Ext¹_C(Hₚ(P),H^{n-1-p}(Q)) is sent to (H^{n-1-p}(g))_*(Hₚ(f))^* eₚ, using the actual Yoneda
+degree-zero compositions. -/
 lemma homUniversalCoefficientSequenceEngineMap_τ₁_apply {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2334,7 +2729,10 @@ lemma homUniversalCoefficientSequenceEngineMap_τ₁_apply {P P' : ChainComplex 
   change M.τ₁.hom e₀ p = _
   exact hApply.trans hValue
 
-/-- Every right component has the original Hom precomposition/postcomposition order. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext universe w. Let f : P′ → P
+be an integer chain map, g : Q → Q′ an integer cochain map, and n ∈ ℤ. Assume every term and
+differential image of P and P′ is projective. On the full right product, tₚ : Hₚ(P) → H^{n-p}(Q)
+is sent to H^{n-p}(g) ∘ tₚ ∘ Hₚ(f) in each integer degree. -/
 lemma homUniversalCoefficientSequenceEngineMap_τ₃_apply {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2366,7 +2764,13 @@ end Endpoints
 
 section Standard
 
-/-- The three standard universe comparisons depend only on the original objects and degree. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Using the standard Ext groups in
+universe max(u,v), the three common-universe comparisons identify the lifted full Ext¹ product
+with ∏ₚ Ext¹(Hₚ(P),H^{n-1-p}(Q)), identify the two lifts of Hⁿ Hom(P,Q), and identify the
+product of lifted Hom groups with the lift of ∏ₚ Hom(Hₚ(P),H^{n-p}(Q)). These comparisons
+require no projectivity and change no morphism representatives. -/
 def homUniversalCoefficientStandardCoordinates
     (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ) :
     letI := HasExt.standard C
@@ -2407,7 +2811,15 @@ def homUniversalCoefficientStandardCoordinates
     (AddCommGrpCat.uliftIntPiIso.{v, max u v} A).symm ≪≫ relift.toAddCommGrpIso
   exact (e₁, e₂, e₃)
 
-/-- HasExt.standard gives the actual full-product UCT at the common object/Hom universe. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. These groups
+form the full-product UCT short complex. The first arrow is positive Yoneda normalization
+followed by the Hom cohomology inclusion, and the second is cycles restriction followed by
+homology descent. All products run over every integer degree. -/
 def homUniversalCoefficientSequence (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2437,7 +2849,14 @@ def homUniversalCoefficientSequence (P : ChainComplex C ℤ) (Q : CochainComplex
     exact e.2.2
   exact S.changeObjects e₁ e₂ e₃
 
-/-- The standard left term contains the original full product of native Ext¹ classes. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. The standard
+left object is the unlifted full product ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), whose Ext groups already
+lie in universe max(u,v). -/
 lemma homUniversalCoefficientSequence_X₁ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2445,14 +2864,28 @@ lemma homUniversalCoefficientSequence_X₁ (P : ChainComplex C ℤ) (Q : Cochain
     (homUniversalCoefficientSequence P Q n hP hI).X₁ = AddCommGrpCat.of
       (∀ p : ℤ, Ext.{max u v} (P.homology p) (Q.homology (n - 1 - p)) 1) := rfl
 
-/-- The standard middle term is the canonically lifted native full-Hom cohomology. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. The standard
+middle object is the canonical common-universe lift of Hⁿ Hom(P,Q), with the full Hom
+differential retained. -/
 lemma homUniversalCoefficientSequence_X₂ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
     (homUniversalCoefficientSequence P Q n hP hI).X₂ =
       AddCommGrpCat.uliftFunctor.{u, v}.obj ((homCochainComplex P Q).homology n) := rfl
 
-/-- The standard right term is the canonically lifted full homology Hom product. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. The standard
+right object is the canonical common-universe lift of ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), over all
+integers p. -/
 lemma homUniversalCoefficientSequence_X₃ (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2460,7 +2893,15 @@ lemma homUniversalCoefficientSequence_X₃ (P : ChainComplex C ℤ) (Q : Cochain
       AddCommGrpCat.uliftFunctor.{u, v}.obj
         (AddCommGrpCat.of (∀ p : ℤ, P.homology p ⟶ Q.homology (n - p))) := rfl
 
-/-- The standard sequence changes only the actual canonical universe lifts of the native engine. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. Changing to
+the standard common-universe coordinates gives an isomorphism of short complexes from the
+full-product UCT constructed with Ext universe max(u,v) to the standard UCT sequence. Every
+component preserves the underlying Ext, cohomology and Hom representatives. -/
 def homUniversalCoefficientSequenceIso (P : ChainComplex C ℤ) (Q : CochainComplex C ℤ) (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2493,22 +2934,17 @@ def homUniversalCoefficientSequenceIso (P : ChainComplex C ℤ) (Q : CochainComp
   change S ≅ S.changeObjects e₁ e₂ e₃
   exact S.changeObjectsIso e₁ e₂ e₃
 
-/-- Let `C : Type u` be an abelian category with morphisms in universe `v`, let
-`P : ChainComplex C ℤ` and `Q : CochainComplex C ℤ`, and let `n : ℤ`.
-Assume that `P.X p` and `Abelian.image (P.d p (p - 1))` are projective for every `p : ℤ`.
-Then the standard full-product universal coefficient sequence is short exact:
-`0 → (∏ p : ℤ, Ext¹_C(H_p(P), H^{n-1-p}(Q))) → Hⁿ(homCochainComplex P Q) →
-(∏ p : ℤ, Hom_C(H_p(P), H^{n-p}(Q))) → 0`.
-The target `Q` retains its differential and every product ranges over all integers.
-
-`HasExt.standard C` supplies Ext in universe `max u v`. The left term is the unlifted product
-of these Ext groups; the middle and the full right-hand Hom product are lifted by
-`AddCommGrpCat.uliftFunctor.{u, v}` into `AddCommGrpCat.{max u v}`.
-
-The arrows are the Hom long-exact-sequence inclusion and cycles restriction, using the Ext
-and homology-Hom product comparisons of `homUniversalCoefficientSequenceEngine` and then
-transported by `homUniversalCoefficientStandardCoordinates`. Short exactness is transported
-through `homUniversalCoefficientSequenceIso`. -/
+/-- Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. The sequence 0
+→ ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)) → Hⁿ Hom(P,Q) → ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)) → 0 is short exact.
+The left product uses standard Ext classes, while the middle and full right product are
+canonically lifted to universe max(u,v). The maps are the positive Hom-sequence inclusion and
+canonical cycles restriction, after the Ext and Hom endpoint comparisons. Q has its original
+differential. -/
 lemma homUniversalCoefficientSequence_shortExact (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2517,7 +2953,11 @@ lemma homUniversalCoefficientSequence_shortExact (P : ChainComplex C ℤ)
   exact ShortComplex.shortExact_of_iso (homUniversalCoefficientSequenceIso P Q n hP hI)
     (homUniversalCoefficientSequenceEngine_shortExact P Q n hP hI)
 
-/-- Canonical lift changes transport the actual simultaneous native UCT map. -/
+/-- Let C be abelian with object universe u, morphism universe v and the standard Ext groups in
+universe max(u,v). Let f : P′ → P be an integer chain map, g : Q → Q′ an integer cochain map,
+and n ∈ ℤ. Assume every term and differential image of P and P′ is projective. The standard
+full-product UCT sequence maps from (P,Q) to (P′,Q′). Its left map is coordinatewise Yoneda Ext¹
+action, its middle map is Hⁿ Hom(f,g), and its right map is the full homology Hom action. -/
 def homUniversalCoefficientSequenceMap {P P' : ChainComplex C ℤ} {Q Q' : CochainComplex C ℤ}
     (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2539,7 +2979,11 @@ def homUniversalCoefficientSequenceMap {P P' : ChainComplex C ℤ} {Q Q' : Cocha
   change T ⟶ T'
   exact e.inv ≫ m ≫ e'.hom
 
-/-- The standard middle arrow is still the actual canonically lifted full-Hom cohomology map. -/
+/-- Let C be abelian with object universe u, morphism universe v and the standard Ext groups in
+universe max(u,v). Let f : P′ → P be an integer chain map, g : Q → Q′ an integer cochain map,
+and n ∈ ℤ. Assume every term and differential image of P and P′ is projective. The middle
+component is the canonical common-universe lift of Hⁿ Hom(f,g), with the original full Hom
+cochain map. -/
 lemma homUniversalCoefficientSequenceMap_τ₂ {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2593,7 +3037,11 @@ lemma homUniversalCoefficientSequenceMap_τ₂ {P P' : ChainComplex C ℤ}
   exact (congrArg (fun a : T.X₂ ⟶ T'.X₂ => a.hom z₀) hField).trans
     (hComposite.trans (h₃.trans ((congrArg ULift.up hDown).trans hTarget.symm)))
 
-/-- The standard left map is the actual simultaneous native Ext¹ action. -/
+/-- Let C be abelian with object universe u, morphism universe v and the standard Ext groups in
+universe max(u,v). Let f : P′ → P be an integer chain map, g : Q → Q′ an integer cochain map,
+and n ∈ ℤ. Assume every term and differential image of P and P′ is projective. For each integer
+p, the left product component sends eₚ to its pullback along Hₚ(f), followed by pushforward
+along H^{n-1-p}(g), in Ext¹_C(Hₚ(P′),H^{n-1-p}(Q′)). -/
 lemma homUniversalCoefficientSequenceMap_τ₁_apply {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -2656,7 +3104,11 @@ lemma homUniversalCoefficientSequenceMap_τ₁_apply {P P' : ChainComplex C ℤ}
   change M.τ₁.hom e₀ p = a
   exact hApply.trans (h₃.trans hDown)
 
-/-- The standard right map is the original full Hom family map under the canonical lift. -/
+/-- Let C be abelian with object universe u, morphism universe v and the standard Ext groups in
+universe max(u,v). Let f : P′ → P be an integer chain map, g : Q → Q′ an integer cochain map,
+and n ∈ ℤ. Assume every term and differential image of P and P′ is projective. For each integer
+p, the right product component sends tₚ to H^{n-p}(g) ∘ tₚ ∘ Hₚ(f), with the canonical lift of
+the entire Hom family. -/
 lemma homUniversalCoefficientSequenceMap_τ₃_apply {P P' : ChainComplex C ℤ}
     {Q Q' : CochainComplex C ℤ} (f : P' ⟶ P) (g : Q ⟶ Q') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))

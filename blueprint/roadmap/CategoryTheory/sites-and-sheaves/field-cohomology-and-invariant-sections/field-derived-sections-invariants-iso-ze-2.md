@@ -1,3 +1,6 @@
-# Field Derived Sections Invariants Iso zero germ
+# Zero derived section comparison is the terminal geometric germ
 
-The actual zero-derived class has exactly its prescribed original section germ.
+Zero derived section comparison is the terminal geometric germ.
+
+After the derived-zero invariant coordinate, a degree-zero section class has underlying value
+the germ of its terminal section at the prescribed geometric point.

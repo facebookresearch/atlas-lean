@@ -1,4 +1,6 @@
-# Local Regular Family Tor Euler
+# The local regular-family Tor Euler sum
 
-Serre's actual finite alternating sum of original local Tor lengths
-for these proved regular intersection equations.
+The local regular-family Tor Euler sum.
+
+Under the stated minimal-prime finiteness hypotheses, sum (−1)^j times the Tor lengths for
+0≤j≤n.

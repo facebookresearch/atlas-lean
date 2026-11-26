@@ -1,3 +1,6 @@
-# Unitization Relative Normalization naturality
+# Naturality of relative unitization normalization
 
-Naturality retains the complete original restricted normalization map.
+Naturality of relative unitization normalization.
+
+The maps induced by `f` on relative and reduced normalized complexes commute with the
+restricted normalization chain maps.

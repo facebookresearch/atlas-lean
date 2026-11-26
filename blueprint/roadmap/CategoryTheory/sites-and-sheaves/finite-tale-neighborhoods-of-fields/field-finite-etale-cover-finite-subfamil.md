@@ -1,3 +1,5 @@
-# Field Finite Etale Cover finite subfamily
+# Every finite-étale basis cover has a finite subcover
 
-Every original basis cover has a finite subfamily of its same original arrows.
+Let k be a field and f_i : B_i → A a covering family in the opposite finite étale algebra
+site. There is a finite subset t of the same index type such that the subfamily f_j for j∈t
+still generates a covering sieve. The subfamily uses the given arrows f_j.

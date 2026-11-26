@@ -1,4 +1,4 @@
 # Linear-Hom external pairings evaluated on homology cross products
 
-- [Linear Hom Cochain Tensor Evaluation](linear-hom-cochain-tensor-evaluation.md)
-- [Linear Hom Cochain Cross Evaluation of homotopy](linear-hom-cochain-cross-evaluation-of-h.md)
+- [External Hom cochain products evaluate on tensor homology as the two factor evaluations](linear-hom-cochain-tensor-evaluation.md)
+- [A one-sided cross-product–diagonal homotopy gives the external evaluation identity](linear-hom-cochain-cross-evaluation-of-h.md)

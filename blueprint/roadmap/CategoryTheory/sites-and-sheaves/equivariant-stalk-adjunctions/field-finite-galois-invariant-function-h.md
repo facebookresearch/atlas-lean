@@ -1,4 +1,6 @@
-# Field Finite Galois Invariant Function Hom
+# Additive map from fixed coefficients to embedding functions
 
-`fieldFiniteGaloisInvariantFunction` as an additive map: an element of `M` fixed by the
-subgroup fixing `L` gives a `Gal(Ω/k)`-equivariant function on the embeddings `L →ₐ[k] Ω`.
+Additive map from fixed coefficients to embedding functions.
+
+The assignment from a fixing-subgroup invariant coefficient to its equivariant embedding
+function is additive.

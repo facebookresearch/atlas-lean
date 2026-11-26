@@ -1,4 +1,7 @@
-# Page One Homology Data
+# Homology data for the chosen first-page differential
 
-The package-owned HomologyData for the transition from page one to page
-two at `(p,q)`.
+Homology data for the chosen first-page differential.
+
+Using the neighboring bidegrees and integer cuts in `χ.pageTransitionIndex p q`, the spectral
+object supplies homology data for the short complex of first-page objects around `(p, q)`. Its
+homology coordinate is shared with page two.

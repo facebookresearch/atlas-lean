@@ -1,3 +1,5 @@
-# Polynomial Comonad unit X
+# The variable formula for the polynomial adjunction unit
 
-The adjunction unit includes each element as its actual formal variable.
+The variable formula for the polynomial adjunction unit.
+
+For `a ∈ A`, the free/forgetful adjunction unit sends `a` to the polynomial variable `X_a`.

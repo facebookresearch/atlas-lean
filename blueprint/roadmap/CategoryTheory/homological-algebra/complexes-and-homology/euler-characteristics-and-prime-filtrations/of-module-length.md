@@ -1,4 +1,5 @@
-# Of module length
+# A finite-length module has finite multiplication lengths
 
-Finite length of the ambient module supplies finite-length kernel and
-cokernel data for multiplication by every element.
+A finite-length module has finite multiplication lengths.
+
+If M has finite R-length, both the kernel and cokernel of μ_r have finite length for every r.

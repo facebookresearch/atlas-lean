@@ -1,5 +1,6 @@
-# Lift From Complex
+# Lift from an augmented projective complex
 
-A morphism from the augmentation target of a projective complex to the
-object resolved by `Q` lifts to a chain map into `Q`. Source exactness and
-boundedness are not required.
+In an abelian category `C`, let `K` be a chain complex on `ℕ`
+with projective terms, augmented to `Y` by `ε`, and let `Q`
+resolve `Z`. Every `f : Y → Z` lifts to a chain map
+`K → Q.complex` commuting with these augmentations.

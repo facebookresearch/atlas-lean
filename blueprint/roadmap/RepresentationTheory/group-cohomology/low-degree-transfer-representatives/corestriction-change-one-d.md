@@ -1,4 +1,5 @@
-# Corestriction Change One d₁₂
+# The degree-two transfer difference is an explicit boundary
 
-The differential of the explicit degree-one change cochain is the
-difference of the two chosen-transversal degree-two transfers.
+The degree-two transfer difference is an explicit boundary.
+
+For an H-two-cocycle z, d¹(corestrictionChangeOne A T U z) = cor_T²(z) − cor_U²(z).

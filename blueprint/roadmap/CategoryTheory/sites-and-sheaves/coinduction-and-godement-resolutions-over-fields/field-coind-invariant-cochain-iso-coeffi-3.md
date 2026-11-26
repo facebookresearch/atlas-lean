@@ -1,4 +1,7 @@
-# Field Coind Invariant Cochain Iso coefficient connecting
+# Invariant coinduction and continuous connecting maps agree
 
-The actual homology connector of the fixed coinduction invariant complexes
-agrees with the SAME original native coefficient cochain connector.
+Invariant coinduction and continuous connecting maps agree.
+
+For a coefficient-exact sequence, its invariant-coinduction connecting map followed by the
+degree-`n+1` comparison equals the degree-`n` comparison followed by the continuous-cochain
+connecting map.

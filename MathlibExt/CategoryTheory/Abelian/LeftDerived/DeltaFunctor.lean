@@ -13,15 +13,15 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.LongExact
 public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.Effaceable
 
 /-!
-# The universal homological δ-functor of the left-derived family
+# Universal homological delta-functor of left derivation
 
-The degree functors are exactly `F.leftDerived n`. Connecting maps on the category of short exact
-sequences are the canonical mapped-horseshoe maps. Positive coeffaceability uses the degree-zero
-projective object and epi augmentation of the chosen resolution. No global reverse instance for
-enough projectives is introduced.
-
-This construction concerns `L₀F` itself. Identifying `L₀F` with `F` additionally requires
-finite-colimit preservation.
+Let `C,D` be abelian, with projective resolutions in `C`, and
+`F : C → D` additive. The degree functors `L_nF` and horseshoe
+boundaries `L_(n+1)F(X₃) → L_nF(X₁)` form a homological delta-functor.
+Every positive degree is coeffaceable by a projective-resolution
+augmentation, so a transformation into degree zero extends uniquely
+into this delta-functor. Identifying `L₀F` with `F` additionally
+requires preservation of finite colimits.
 -/
 
 @[expose] public section
@@ -39,7 +39,10 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
-/-- The horseshoe boundary is a natural transformation on short exact sequences. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. The horseshoe boundaries give a natural transformation
+`L_(n+1)F(X₃) → L_nF(X₁)` on the category of short exact
+sequences `X₁ → X₂ → X₃`. -/
 def leftDerivedConnecting (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (ShortComplex.isShortExact C).ι ⋙ ShortComplex.π₃ ⋙ F.leftDerived (n + 1) ⟶
       (ShortComplex.isShortExact C).ι ⋙ ShortComplex.π₁ ⋙ F.leftDerived n where
@@ -51,7 +54,9 @@ def leftDerivedConnecting (F : C ⥤ D) [F.Additive] (n : ℕ) :
     exact LeftDerivedDelta.LDdelta_natural F n S'.obj S.obj φ.hom
       S'.property S.property
 
-/-- The homological δ-functor with the left-derived degree functors and boundaries. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. The degree functors `L_nF` and canonical horseshoe connecting
+maps form a homological delta-functor from `C` to `D`. -/
 def leftDerivedDeltaFunctor (F : C ⥤ D) [F.Additive] : HomologicalDeltaFunctor C D where
   T n := F.leftDerived n
   additive _ := inferInstance
@@ -61,18 +66,26 @@ def leftDerivedDeltaFunctor (F : C ⥤ D) [F.Additive] : HomologicalDeltaFunctor
   exactRight n S := LeftDerivedDelta.LDexact_C F n S.obj S.property
   epiZero S := LeftDerivedDelta.LDepi_zero F S.obj S.property
 
-/-- Every degree of the bundle is the derived functor. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. The degree-`n` functor of its homological delta-functor is
+exactly `L_nF`. -/
 @[simp]
 theorem leftDerivedDeltaFunctor_T (F : C ⥤ D) [F.Additive] (n : ℕ) :
     F.leftDerivedDeltaFunctor.T n = F.leftDerived n := rfl
 
-/-- The bundle's boundary is the canonical horseshoe connecting map. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. On a short exact sequence `S`, the connecting map of its
+derived delta-functor is the canonical horseshoe boundary
+`L_(n+1)F(S.X₃) → L_nF(S.X₁)`. -/
 theorem leftDerivedDeltaFunctor_connecting_app (F : C ⥤ D) [F.Additive]
     (n : ℕ) (S : ShortComplex.ShortExactSequences C) :
     (F.leftDerivedDeltaFunctor.connecting n).app S =
       LeftDerivedDelta.LDdelta F n S.obj S.property := rfl
 
-/-- Every positive left-derived functor is coeffaceable using a resolution augmentation. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. For every `n`, `L_(n+1)F` is coeffaceable: the epi
+augmentation `P(X)₀ → X` from a projective resolution kills its
+induced degree-`n+1` map for each object `X`. -/
 theorem isCoeffaceable_leftDerived_succ (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (F.leftDerived (n + 1)).IsCoeffaceable := by
   intro X
@@ -88,7 +101,10 @@ theorem isCoeffaceable_leftDerived_succ (F : C ⥤ D) [F.Additive] (n : ℕ) :
     F.isZero_leftDerived_obj_projective_succ n P
   exact ⟨P, p, hp, hP.eq_of_src _ _⟩
 
-/-- The derived bundle is universal in the homological, receiving direction. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Its homological delta-functor is universal in the receiving
+direction: for any homological delta-functor `T`, every natural
+transformation `T₀ → L₀F` extends uniquely to a morphism `T → L_*F`. -/
 theorem isUniversal_leftDerivedDeltaFunctor (F : C ⥤ D) [F.Additive] :
     HomologicalDeltaFunctor.IsUniversal C D F.leftDerivedDeltaFunctor := by
   apply HomologicalDeltaFunctor.isUniversal_of_coeffaceable

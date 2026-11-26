@@ -1,4 +1,6 @@
-# Small Etale Base Change Point Fiber Iso
+# Geometric fiber comparison after base change
 
-The literal geometric fiber after actual base change identifies with the
-literal fiber at the same geometric point composed with the original `f`.
+Geometric fiber comparison after base change.
+
+For `x : Spec Ω → X` over a separably closed field in universe `u`, base change along `f`
+followed by the fiber of `x` is naturally isomorphic to the fiber of `x ≫ f`.

@@ -1,3 +1,6 @@
-# Normalized Augmentation Functor
+# Dold–Kan normalization of an augmented simplicial object
 
-The actual augmented presentation, mapped on both sides by native Dold--Kan normalization.
+Dold–Kan normalization of an augmented simplicial object.
+
+Apply normalization to both the simplicial object and its augmentation X → const(A), obtaining
+N(X) → N(const(A)).

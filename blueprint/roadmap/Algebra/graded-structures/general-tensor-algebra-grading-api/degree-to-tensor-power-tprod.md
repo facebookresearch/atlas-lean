@@ -1,3 +1,5 @@
-# Degree To Tensor Power tprod
+# Homogeneous projection recovers the pure tensor from its product
 
-Backward direction sends `⟨tprod R M n x, _⟩` back to the pure tensor.
+Let R be a commutative semiring, M an R-module, and x : Fin n → M. Applying
+degreeToTensorPower_n to the degree-n element represented by Π_i ι(x_i) returns the pure
+tensor ⊗_i x_i.

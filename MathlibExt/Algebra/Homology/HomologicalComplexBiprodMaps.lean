@@ -15,10 +15,16 @@ module
 public import Mathlib.Algebra.Homology.HomologicalComplexBiprod
 
 /-!
-# Original biproduct-complex maps in their term coordinates
+# Term maps of biproduct cochain complexes
 
-The original evaluation isomorphisms retain both summand component maps.
-They earn monomorphisms and split monomorphisms of the actual term map.
+Let C be a preadditive category with binary biproducts, and let
+f:K → K′ and g:L → L′ be maps of integer-indexed cochain complexes.
+Under the evaluation isomorphisms (K ⊞ L)ʲ ≅ Kʲ ⊞ Lʲ, the
+j-th component of f ⊞ g is the biproduct map fⱼ ⊞ gⱼ.
+
+Consequently that component is monic when fⱼ and gⱼ are monic,
+and split monic when both admit retractions. The splitting is the
+biproduct of the two component retractions in these coordinates.
 -/
 
 @[expose] public section
@@ -34,8 +40,11 @@ namespace HomologicalComplex
 variable {C : Type uC} [Category.{vC} C] [Preadditive C] [HasBinaryBiproducts C]
 variable {K L K' L' : CochainComplex C ℤ}
 
-/-- The original biproduct-complex map has the two original component maps
-under the actual original evaluation isomorphisms. -/
+/-- Let C be preadditive with binary biproducts, f:K → K′ and g:L → L′
+integer-indexed cochain maps, and j an integer. For the evaluation
+isomorphisms β:(K ⊞ L)ʲ ≅ Kʲ ⊞ Lʲ and
+β′:(K′ ⊞ L′)ʲ ≅ K′ʲ ⊞ L′ʲ, the component formula is
+β′ ∘ (f ⊞ g)ⱼ ∘ β⁻¹ = fⱼ ⊞ gⱼ. -/
 theorem biprodXIso_inv_map_hom (f : K ⟶ K') (g : L ⟶ L') (j : ℤ) :
     (biprodXIso K L j).inv ≫ (biprod.map f g).f j ≫ (biprodXIso K' L' j).hom =
       biprod.map (f.f j) (g.f j) := by
@@ -78,13 +87,20 @@ private theorem biprodMapComponent_eq (f : K ⟶ K') (g : L ⟶ L') (j : ℤ) :
   simpa only [Category.assoc, Iso.inv_hom_id_assoc, Iso.inv_hom_id, Category.comp_id]
     using biprodXIso_inv_map_hom f g j
 
-/-- Monomorphism of each original summand earns a monomorphic original term map. -/
+/-- In a preadditive category C with binary biproducts, let f:K → K′
+and g:L → L′ be integer-indexed cochain maps. If their components
+fⱼ and gⱼ are monomorphisms in a fixed degree j, then the j-th
+component of f ⊞ g is a monomorphism. -/
 theorem mono_biprod_map_f (f : K ⟶ K') (g : L ⟶ L') (j : ℤ)
     [Mono (f.f j)] [Mono (g.f j)] : Mono ((biprod.map f g).f j) := by
   rw [biprodMapComponent_eq]
   infer_instance
 
-/-- Actual component retractions give a retraction of the original biproduct term map. -/
+/-- In a preadditive category C with binary biproducts, let f:K → K′
+and g:L → L′ be integer-indexed cochain maps. If fⱼ and gⱼ are
+split monomorphisms in a fixed degree j, then (f ⊞ g)ⱼ is split
+monic, with retraction given by the biproduct of their retractions
+under the term evaluation isomorphisms. -/
 theorem isSplitMono_biprod_map_f (f : K ⟶ K') (g : L ⟶ L') (j : ℤ)
     [IsSplitMono (f.f j)] [IsSplitMono (g.f j)] : IsSplitMono ((biprod.map f g).f j) := by
   let r := (inferInstance : IsSplitMono (f.f j)).exists_splitMono.some

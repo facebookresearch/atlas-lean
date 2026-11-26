@@ -11,18 +11,19 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialObject.NormalizedChainHomotopy
 
 /-!
-# Naturality of a fixed original simplicial prism under a functor family
+# Parameter naturality of a fixed simplicial homotopy
 
-The original prism is chosen before the parameter varies. Each actual
-family functor acts on that same prism. Native negative alternating sums,
-Moore inclusion and native PInfty projection prove naturality of the
-resulting normalized chain-homotopy components.
+Let C,D,I be categories with independent object and morphism universes, F : I ⥤ (C ⥤ D) a
+family of functors, and H a fixed simplicial homotopy from f : X ⟶ Y to g in C. A parameter
+map a : p ⟶ q induces τ = F.map(a), a natural transformation F(p) → F(q). Whiskering H by F(p)
+gives an alternating homotopy h_p in a preadditive target D, and h_p(n,m) ≫ τ_Y,m = τ_X,n ≫
+h_q(n,m).
 
-The source and parameter are arbitrary categories. The alternating result
-needs only a preadditive target; Moore normalization needs an abelian target.
-No additivity of the family functors, coefficient flatness, or desired
-naturality certificate is assumed. Naturality when the original prism
-itself varies is a separate statement.
+When D is abelian, the same equation holds for normalized Moore homotopies. Their components
+are the Moore inclusion followed by h_p(n,m) and the normalization projection. The shifted
+alternating component is −Σᵢ₌₀ⁿ (−1)ⁱHᵢ after whiskering; components outside m = n+1 are zero.
+Naturality of τ on each prism map, inclusion and projection gives parameter naturality without
+requiring the functors F(p) to be additive.
 -/
 
 @[expose] public section
@@ -46,7 +47,12 @@ section Alternating
 
 variable [Preadditive D]
 
-/-- The native alternating chain homotopies commute with every actual parameter map. -/
+/-- Parameter naturality of alternating prism components.
+
+Let F : I ⥤ (C ⥤ D) be a family of functors with D preadditive, H a fixed simplicial homotopy
+in C and a : p ⟶ q. Set τ = F.map(a). For all n,m : ℕ, the whiskered alternating components
+satisfy h_p(n,m) ≫ τ_Y,m = τ_X,n ≫ h_q(n,m). This follows term by term from naturality on the
+prism maps in the negative alternating sum; no additivity of F(p) or F(q) is required. -/
 theorem alternatingFamilyHom_naturality {p q : I} (a : p ⟶ q) (n m : ℕ) :
     ((H.whiskerRight (F.obj p)).toChainHomotopy).hom n m ≫
         ((alternatingFaceMapComplex D).map (Functor.whiskerLeft Y (F.map a))).f m =
@@ -73,7 +79,12 @@ section Normalized
 
 variable [Abelian D]
 
-/-- The existing normalized homotopy has exactly its native inclusion/homotopy/projection component. -/
+/-- Formula for a normalized prism component.
+
+For a simplicial homotopy H from f : X ⟶ Y to g in an abelian category D and natural degrees
+n,m, its normalized component equals i_X,n ≫ h_H(n,m) ≫ p_Y,m. Here i is the Moore inclusion,
+p the normalization projection, and h_H(n,n+1) = −Σᵢ₌₀ⁿ (−1)ⁱHᵢ with h_H(n,m) = 0 when m ≠
+n+1. -/
 theorem toNormalizedChainHomotopy_hom
     {Xd Yd : SimplicialObject D} {fd gd : Xd ⟶ Yd}
     (Hd : SimplicialObject.Homotopy fd gd) (n m : ℕ) :
@@ -92,7 +103,12 @@ theorem toNormalizedChainHomotopy_hom
   exact hZero.trans (Category.assoc ((inclusionOfMooreComplexMap Xd).f n)
     (Hd.toChainHomotopy.hom n m) ((DoldKan.PInftyToNormalizedMooreComplex Yd).f m))
 
-/-- The actual native normalized chain-homotopy components are parameter-natural. -/
+/-- Parameter naturality of normalized prism components.
+
+Let D be abelian, F : I ⥤ (C ⥤ D) a family of functors, H a fixed simplicial homotopy in C and
+a : p ⟶ q. The normalized homotopies of H whiskered by F(p) and F(q) commute componentwise
+with the normalized maps induced by F.map(a). Explicitly, h_pᴺ(n,m) ≫ N(τ_Y)_m = N(τ_X)_n ≫
+h_qᴺ(n,m) for every n,m : ℕ; the family functors need not be additive. -/
 theorem normalizedFamilyHom_naturality {p q : I} (a : p ⟶ q) (n m : ℕ) :
     ((H.whiskerRight (F.obj p)).toNormalizedChainHomotopy).hom n m ≫
         ((normalizedMooreComplex D).map (Functor.whiskerLeft Y (F.map a))).f m =

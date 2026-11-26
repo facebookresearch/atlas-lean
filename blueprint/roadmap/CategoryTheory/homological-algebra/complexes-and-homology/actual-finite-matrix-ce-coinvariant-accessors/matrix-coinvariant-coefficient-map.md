@@ -1,3 +1,6 @@
-# Matrix Coinvariant Coefficient Map
+# The coefficient map of matrix adjoint coinvariant complexes
 
-Coefficient algebra maps descend through the matrix coinvariant cokernels.
+The coefficient map of matrix adjoint coinvariant complexes.
+
+An entry-algebra homomorphism commutes with scalar inclusion and induces a chain map on
+scalar-adjoint coinvariants.

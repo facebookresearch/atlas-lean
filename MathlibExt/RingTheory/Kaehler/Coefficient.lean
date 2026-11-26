@@ -15,16 +15,18 @@ public import Mathlib.LinearAlgebra.TensorProduct.Lift
 /-!
 # Kähler differentials with augmentation coefficients
 
-For a tower of commutative rings `k → P → A`, the module
-`Coefficient k P A = A ⊗[P] Ω[P⁄k]` represents `k`-derivations from `P`
-to an `A`-module, with the action induced by augmentation. Algebra maps
-over `A` send `a ⊗ dp` to `a ⊗ d(f p)`.
+Let k→P→A be a compatible tower of commutative rings. The A-module C=A⊗_PΩ¹_{P/k} has the
+k-derivation p ↦ 1⊗dp. For an A-module M with compatible restricted P- and k-actions, the
+correspondence Hom_A(C,M) ≃ Der_k(P,M) sends f to p ↦ f(1⊗dp), and its inverse sends a
+derivation D to a⊗dp ↦ a·D(p). It is A-linear and natural in coefficient module maps; maps from
+C are determined by the generators 1⊗dp.
 
-The base ring, intermediate algebra, target and coefficient carrier may
-have independent universes.
+A k-algebra map f:P→Q compatible with the two structural maps to A induces a coefficient
+differential map a⊗dp ↦ a⊗d(f(p)). These maps preserve identity and composition. The base ring,
+source algebra, coefficient algebra and module targets retain their separate universes.
 
-References: Stacks Project, Section 92.3, Definitions 92.3.1–92.3.2 and
-Remark 92.3.3; Loday, *Cyclic Homology*, second edition, Definition 3.5.3.
+References: Stacks Project, Section 92.3, Definitions 92.3.1–92.3.2 and Remark 92.3.3; Loday,
+Cyclic Homology, second edition, Definition 3.5.3.
 -/
 
 @[expose] public section
@@ -41,10 +43,14 @@ variable (k : Type u) (P : Type v) (A : Type w)
   [CommRing k] [CommRing P] [CommRing A]
   [Algebra k P] [Algebra P A] [Algebra k A] [IsScalarTower k P A]
 
-/-- The module of differentials of `P/k` after extension to the target `A`. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Coefficient k P A is the A-module C=A⊗_PΩ¹_{P/k}. It represents k-derivations from P to
+A-modules, with P acting through P→A. -/
 abbrev Coefficient := A ⊗[P] KaehlerDifferential k P
 
-/-- The derivation `p ↦ 1 ⊗ dp` into the actual extended module. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. The map D_C:P → C given by p ↦ 1_A⊗_Pdp is a k-derivation, using the P-action on C
+induced through P→A. -/
 def coefficientD : Derivation k P (Coefficient k P A) :=
   (TensorProduct.mk P A (KaehlerDifferential k P) (1 : A)).compDer
     (KaehlerDifferential.D k P)
@@ -57,8 +63,9 @@ section Ext
 
 variable {M : Type t} [AddCommGroup M] [Module A M]
 
-/-- Maps out of the extended module are determined by `1 ⊗ dp`.
-The target needs only its given `A`-module structure. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. For any A-module M, if A-linear maps f,g:C → M have f(1⊗dp)=g(1⊗dp) for every p∈P, then
+f=g. No separately supplied P- or k-action on M is required for this extensionality statement. -/
 @[ext]
 theorem coefficient_hom_ext {f g : Coefficient k P A →ₗ[A] M}
     (h : ∀ p : P,
@@ -102,8 +109,10 @@ variable {M : Type t} [AddCommGroup M]
   [Module A M] [Module P M] [Module k M]
   [IsScalarTower P A M] [IsScalarTower k P M] [IsScalarTower k A M]
 
-/-- The universal correspondence, obtained from the native extension of scalars
-adjunction and the native universal property of Kähler differentials. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
+towers. There is a bijection Hom_A(C,M) ≃ Der_k(P,M), sending f to p ↦ f(1⊗dp). Its inverse
+sends D to the unique A-linear map a⊗dp ↦ a·D(p). -/
 def coefficientHomEquivDerivation :
     (Coefficient k P A →ₗ[A] M) ≃ Derivation k P M :=
   (LinearMap.liftBaseChangeEquiv A).symm.toEquiv.trans
@@ -115,7 +124,10 @@ theorem coefficientHomEquivDerivation_apply
     coefficientHomEquivDerivation k P A f p =
       f ((1 : A) ⊗ₜ[P] KaehlerDifferential.D k P p) := rfl
 
-/-- The representing correspondence is linear over the target ring `A`. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
+towers. The universal correspondence Hom_A(C,M) ≃ Der_k(P,M) is an A-linear equivalence, with A
+acting on derivations through their values in M. -/
 def coefficientLinearMapEquivDerivation :
     (Coefficient k P A →ₗ[A] M) ≃ₗ[A] Derivation k P M where
   __ := coefficientHomEquivDerivation k P A
@@ -126,7 +138,10 @@ def coefficientLinearMapEquivDerivation :
     ext p
     rfl
 
-/-- The extension of a derivation to an `A`-linear map. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
+towers. For D∈Der_k(P,M), coefficientLift k P A D is the A-linear map C → M determined by a⊗dp ↦
+a·D(p). -/
 def coefficientLift (D : Derivation k P M) : Coefficient k P A →ₗ[A] M :=
   D.liftKaehlerDifferential.liftBaseChange A
 
@@ -150,7 +165,10 @@ theorem coefficientLift_coefficientD :
   ext p
   rfl
 
-/-- The unique map extending an actual derivation on the source algebra. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
+towers. If D∈Der_k(P,M) and f:C →ₗ[A] M satisfies f(1⊗dp)=D(p) for every p∈P, then
+f=coefficientLift k P A D. -/
 theorem coefficientLift_unique (D : Derivation k P M)
     (f : Coefficient k P A →ₗ[A] M)
     (h : ∀ p : P, f ((1 : A) ⊗ₜ[P] KaehlerDifferential.D k P p) = D p) :
@@ -164,7 +182,11 @@ variable {N : Type*} [AddCommGroup N]
   [Module A N] [Module P N] [Module k N]
   [IsScalarTower P A N] [IsScalarTower k P N] [IsScalarTower k A N]
 
-/-- The universal correspondence is natural in the coefficient module. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
+towers. Let N have the same compatible scalar towers and g:M →ₗ[A] N. For f:C →ₗ[A] M, the
+derivation corresponding to g∘f equals postcomposition by the P-linear restriction of g of the
+derivation corresponding to f. -/
 theorem coefficientHomEquivDerivation_naturality
     (g : M →ₗ[A] N) (f : Coefficient k P A →ₗ[A] M) :
     coefficientHomEquivDerivation k P A (g.comp f) =
@@ -172,7 +194,10 @@ theorem coefficientHomEquivDerivation_naturality
   ext p
   rfl
 
-/-- The extension of a derivation commutes with actual coefficient maps. -/
+/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
+towers. For a compatible coefficient module N, an A-linear g:M→N and D∈Der_k(P,M), one has
+g∘coefficientLift(D)=coefficientLift(g|_P∘D). -/
 theorem coefficientLift_naturality (g : M →ₗ[A] N) (D : Derivation k P M) :
     g.comp (coefficientLift k P A D) =
       coefficientLift k P A ((g.restrictScalars P).compDer D) := by
@@ -189,8 +214,9 @@ variable {P A}
 variable {Q : Type*} [CommRing Q] [Algebra k Q] [Algebra Q A]
   [IsScalarTower k Q A]
 
-/-- A derivation pulled back by an actual algebra map over the target.
-The equality compares the two actual structural maps into `A`. -/
+/-- Let k→P→A and k→Q→A be compatible towers of commutative rings. Suppose f:P →ₐ[k] Q satisfies
+ρ_P(p)=ρ_Q(f(p)) in A for every p. Then p ↦ 1_A⊗_Qd(f(p)) is a k-derivation P → A⊗_QΩ¹_{Q/k},
+with P acting through ρ_P. -/
 def coefficientPullback (f : P →ₐ[k] Q)
     (h : ∀ p : P, algebraMap P A p = algebraMap Q A (f p)) :
     Derivation k P (Coefficient k Q A) where
@@ -214,7 +240,8 @@ theorem coefficientPullback_apply (f : P →ₐ[k] Q)
     coefficientPullback k f h p =
       (1 : A) ⊗ₜ[Q] KaehlerDifferential.D k Q (f p) := rfl
 
-/-- The canonical linear map induced by an algebra map over `A`. -/
+/-- Let k→P→A and k→Q→A be compatible commutative-ring towers. If f:P →ₐ[k] Q satisfies ρ_P=ρ_Q∘f,
+it induces an A-linear map A⊗_PΩ¹_{P/k} → A⊗_QΩ¹_{Q/k} sending a⊗dp to a⊗d(f(p)). -/
 def coefficientMap (f : P →ₐ[k] Q)
     (h : ∀ p : P, algebraMap P A p = algebraMap Q A (f p)) :
     Coefficient k P A →ₗ[A] Coefficient k Q A :=
@@ -242,7 +269,9 @@ theorem coefficientMap_id :
 variable {T : Type*} [CommRing T] [Algebra k T] [Algebra T A]
   [IsScalarTower k T A]
 
-/-- The map for a composite is the composite of the actual linear maps. -/
+/-- Let P,Q,T be commutative k-algebras with compatible structural maps to A. If f:P→Q and g:Q→T are
+k-algebra maps satisfying ρ_P=ρ_Q∘f and ρ_Q=ρ_T∘g, then
+coefficientMap(g∘f)=coefficientMap(g)∘coefficientMap(f). -/
 theorem coefficientMap_comp (f : P →ₐ[k] Q) (g : Q →ₐ[k] T)
     (hf : ∀ p : P, algebraMap P A p = algebraMap Q A (f p))
     (hg : ∀ q : Q, algebraMap Q A q = algebraMap T A (g q)) :

@@ -1,4 +1,4 @@
 # The triangular comparison sign across cup degrees
 
-- [Acyclic Resolution Normalization Exponent add](acyclic-resolution-normalization-exponen.md)
-- [Acyclic Resolution Normalization Sign add](acyclic-resolution-normalization-sign-ad.md)
+- [Addition formula for triangular normalization exponents](acyclic-resolution-normalization-exponen.md)
+- [Product formula for triangular normalization signs](acyclic-resolution-normalization-sign-ad.md)

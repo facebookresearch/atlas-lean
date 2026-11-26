@@ -1,4 +1,6 @@
-# Sum smul rho inv factor Tuple contract of cocycle
+# The signed contraction sum of a subgroup cocycle
 
-The internal alternating faces of a transported subgroup cocycle are
-the negative transported leading face, at one transversal representative.
+The signed contraction sum of a subgroup cocycle.
+
+If dᵠy = 0, summing the inverse-weighted y-values on contracted factor tuples with
+coefficients (−1)ʲ⁺¹ equals the negative leading term ρ_B(g₀r(t,g₀)⁻¹)y on the tail scan.

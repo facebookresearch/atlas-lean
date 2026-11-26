@@ -19,16 +19,13 @@ import Mathlib.Tactic
 /-!
 # Localization away from an element as a sequential direct limit
 
-For an `R`-module `M` and `r : R`, consider the constant sequential system
+For a module over a commutative semiring, form the sequential system whose successor map is
+multiplication by r. The transition from stage i to j is multiplication by r^{j−i}.
 
-```text
-M --r•--> M --r•--> M --r•--> ⋯.
-```
-
-This file proves that its module direct limit is the localization of `M`
-away from `r`. The proof constructs the inverse shift to scalar
-multiplication by `r` and verifies the specialized
-`IsLocalizedModule.Away` universal property.
+In its direct limit, moving a representative from stage n to n+1 is inverse to multiplication
+by r. The stage-zero map therefore exhibits localization away from r, and the canonical linear
+equivalence sends a stage-n class of x to x/r^n. The semiring and module carrier universes are
+independent.
 -/
 
 @[expose] public section
@@ -42,10 +39,15 @@ namespace Module
 variable {R : Type u} [CommSemiring R]
   (M : Type v) [AddCommMonoid M] [Module R M]
 
-/-- Transition from stage `i` to stage `j`: multiply by `r^(j-i)`. -/
+/-- The power transition in an away-localization system.
+
+For i≤j, map x to r^{j−i}·x. -/
 def awayTransition (r : R) (i j : ℕ) (_ : i ≤ j) : M →ₗ[R] M :=
   LinearMap.lsmul R M (r ^ (j - i))
 
+/-- The directed-system laws of power transitions.
+
+The identity power and additive exponent law give the transition identities and composition. -/
 instance awayTransition_directedSystem (r : R) :
     DirectedSystem (fun _ : ℕ ↦ M) (awayTransition M r · · ·) where
   map_self i x := by
@@ -56,17 +58,22 @@ instance awayTransition_directedSystem (r : R) :
     congr 2
     omega
 
-/-- The sequential direct limit under repeated multiplication by `r`. -/
+/-- The direct limit of repeated scalar multiplication.
+
+Take the module direct limit of the constant sequence with successor map r·−. -/
 abbrev AwayDirectLimit (r : R) :=
   Module.DirectLimit (fun _ : ℕ ↦ M) (awayTransition M r)
 
-/-- The canonical stage-zero map into the sequential direct limit. -/
+/-- The stage-zero map to the away direct limit.
+
+Send x∈M to its direct-limit class at stage zero. -/
 def awayDirectLimitMap (r : R) : M →ₗ[R] AwayDirectLimit M r :=
   Module.DirectLimit.of R ℕ (fun _ : ℕ ↦ M)
     (awayTransition M r) 0
 
-/-- Increasing the stage by one defines the inverse shift on the direct
-limit. -/
+/-- The stage-increase operator on the away direct limit.
+
+Send the class of x at stage n to its class at stage n+1. -/
 def awayShift (r : R) : AwayDirectLimit M r →ₗ[R] AwayDirectLimit M r :=
   Module.DirectLimit.lift R ℕ (fun _ : ℕ ↦ M)
     (awayTransition M r)
@@ -81,6 +88,9 @@ def awayShift (r : R) : AwayDirectLimit M r →ₗ[R] AwayDirectLimit M r :=
         (hij := hsucc) (x := x)
       simpa [awayTransition, Nat.succ_sub_succ_eq_sub] using h)
 
+/-- The shift formula on a direct-limit representative.
+
+The stage-n representative is sent to the same x at stage n+1. -/
 @[simp]
 theorem awayShift_of (r : R) (n : ℕ) (x : M) :
     awayShift M r
@@ -90,7 +100,9 @@ theorem awayShift_of (r : R) (n : ℕ) (x : M) :
         (awayTransition M r) (n + 1) x :=
   by simp [awayShift]
 
-/-- Multiplication by `r` after shifting is the identity. -/
+/-- Multiplication after stage increase is the identity.
+
+For every direct-limit element z, r·awayShift(z)=z. -/
 theorem r_smul_awayShift (r : R) (z : AwayDirectLimit M r) :
     r • awayShift M r z = z := by
   induction z using Module.DirectLimit.induction_on with
@@ -101,7 +113,9 @@ theorem r_smul_awayShift (r : R) (z : AwayDirectLimit M r) :
         (f := awayTransition M r) (i := n) (j := n + 1)
         (hij := Nat.le_succ n) (x := x)
 
-/-- Shifting after multiplication by `r` is the identity. -/
+/-- Stage increase after multiplication is the identity.
+
+For every z, awayShift(r·z)=z. -/
 theorem awayShift_r_smul (r : R) (z : AwayDirectLimit M r) :
     awayShift M r (r • z) = z := by
   induction z using Module.DirectLimit.induction_on with
@@ -112,7 +126,9 @@ theorem awayShift_r_smul (r : R) (z : AwayDirectLimit M r) :
         (f := awayTransition M r) (i := n) (j := n + 1)
         (hij := Nat.le_succ n) (x := x)
 
-/-- The element `r` acts invertibly on the sequential direct limit. -/
+/-- The scalar r acts invertibly on the direct limit.
+
+Its module endomorphism is a unit, with inverse awayShift. -/
 theorem awayDirectLimit_isUnit_algebraMap (r : R) :
     IsUnit
       (algebraMap R (Module.End R (AwayDirectLimit M r)) r) := by
@@ -125,8 +141,9 @@ theorem awayDirectLimit_isUnit_algebraMap (r : R) :
   · intro z
     exact ⟨awayShift M r z, r_smul_awayShift M r z⟩
 
-/-- A stage-`n` class becomes a stage-zero class after multiplication by
-`r^n`. -/
+/-- A power clears the stage of a direct-limit representative.
+
+Multiplying the stage-n class of x by r^n gives its stage-zero class. -/
 theorem pow_smul_of_eq_awayDirectLimitMap (r : R) (n : ℕ) (x : M) :
     r ^ n •
         Module.DirectLimit.of R ℕ (fun _ : ℕ ↦ M)
@@ -138,8 +155,9 @@ theorem pow_smul_of_eq_awayDirectLimitMap (r : R) (n : ℕ) (x : M) :
     (f := awayTransition M r) (i := 0) (j := n)
     (hij := Nat.zero_le n) (x := x)
 
-/-- The stage-zero map exhibits the sequential direct limit as localization
-away from `r`. -/
+/-- The stage-zero map has the away-localization universal property.
+
+The sequential direct limit is a localized module at the powers of r. -/
 theorem awayDirectLimit_isLocalizedModule (r : R) :
     IsLocalizedModule.Away r (awayDirectLimitMap M r) := by
   apply IsLocalizedModule.Away.mk
@@ -154,8 +172,9 @@ theorem awayDirectLimit_isLocalizedModule (r : R) :
       (f := awayTransition M r) hxy
     exact ⟨n, by simpa [awayTransition] using hn⟩
 
-/-- The sequential direct limit is canonically linearly equivalent to the
-localized module away from `r`. -/
+/-- The linear equivalence between the direct limit and away localization.
+
+Identify the two localized-module models through their universal properties. -/
 noncomputable def awayDirectLimitLinearEquiv (r : R) :
     AwayDirectLimit M r ≃ₗ[R] LocalizedModule.Away r M := by
   let _ : IsLocalizedModule.Away r (awayDirectLimitMap M r) :=
@@ -163,8 +182,9 @@ noncomputable def awayDirectLimitLinearEquiv (r : R) :
   exact (IsLocalizedModule.iso (Submonoid.powers r)
     (awayDirectLimitMap M r)).symm
 
-/-- Under the canonical equivalence, a stage-`n` class is the fraction with
-denominator `r^n`. -/
+/-- The direct-limit equivalence on a stage representative.
+
+The class of x at stage n maps to the fraction x/r^n. -/
 theorem awayDirectLimitLinearEquiv_of (r : R) (n : ℕ) (x : M) :
     awayDirectLimitLinearEquiv M r
         (Module.DirectLimit.of R ℕ (fun _ : ℕ ↦ M)

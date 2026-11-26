@@ -1,3 +1,6 @@
-# Is Killed By of nat Cast
+# A vanishing natural scalar annihilates the module identity
 
-The actual scalar-ring equation kills the identity of the actual module object.
+A vanishing natural scalar annihilates the module identity.
+
+If (m : R) = 0, the module object A satisfies IsKilledBy A m: the natural-number multiple
+m·id_A is the zero morphism.

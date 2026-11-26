@@ -1,3 +1,5 @@
-# Small Etale Godement Stalk Degree Iso
+# Stalk family coordinate of a Godement cochain term
 
-Actual stalk-family degree coordinates are the same canonical monad-power coordinates.
+Stalk family coordinate of a Godement cochain term.
+
+The stalk family of cochain degree `n` is isomorphic to the stalk family of `T^(n+1)Q`.

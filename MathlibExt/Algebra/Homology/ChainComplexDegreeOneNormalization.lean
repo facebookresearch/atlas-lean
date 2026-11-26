@@ -13,7 +13,13 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplexAugmentationHomology
 
 /-!
-## # Characteristic cycle formula for the retained degree-one kernel comparison
+# Cycle formula for the degree-one augmentation kernel comparison
+
+For an additive functor between abelian categories, an augmentation
+quasi-isomorphism in degrees zero and one, and preservation of the
+cokernel of `Q₂ → Q₁`, the comparison
+`H₁(F(Q)) ≅ ker(F(ker(π₀) → Q₀))` sends a cycle class to the mapped
+lift of `Q₁ → Q₀` through the original augmentation kernel.
 -/
 
 @[expose] public section
@@ -27,8 +33,14 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D]
 variable {Q : ChainComplex C ℕ} {M : C}
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original degree-one kernel comparison takes an original cycle to the image of
-the original kernel lift, with no sign inserted in this homology comparison. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degrees zero and one. Suppose `F` preserves
+the cokernel of `d_Q : Q₂ → Q₁`. Put `K=ker(π₀)` and write
+`κ : K → Q₀` for its inclusion. Let `ν : Q₁ → K` be the kernel lift of `d_Q : Q₁ → Q₀`.
+The cycle quotient followed by `H₁(F(Q)) ≅ ker(F(κ))` and its
+kernel inclusion into `F(K)` equals the cycle inclusion into
+`F(Q₁)` followed by `F(ν)`. -/
 theorem homologyπ_homologyOneIsoOfPreservedKernelTail_hom_ι
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M)
     [QuasiIsoAt π 0] [QuasiIsoAt π 1]

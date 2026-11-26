@@ -1,3 +1,6 @@
-# Higher Ground Functor obj
+# The object formula for higher ground cotangent modules
 
-The ground-level object is native scalar restriction of the same cotangent point.
+The object formula for higher ground cotangent modules.
+
+At `P → B`, the weight-`q` object is scalar restriction of the higher cotangent module `B ⊗[P]
+⋀^q[P] Ω[P/k]`.

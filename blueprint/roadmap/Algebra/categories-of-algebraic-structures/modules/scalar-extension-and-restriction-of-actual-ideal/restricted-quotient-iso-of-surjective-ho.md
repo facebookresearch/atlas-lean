@@ -1,3 +1,5 @@
-# Restricted Quotient Iso Of Surjective hom mk
+# Representative formula for the restricted quotient comparison
 
-The restricted quotient comparison retains the original target scalar value on every representative.
+For a commuting scalar triangle j=b∘g with b:Q→P
+surjective and ker(b)=J, the S-module quotient comparison
+Res_g(Q/J)→Res_j(P) sends [q] to b(q).

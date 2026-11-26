@@ -1,3 +1,6 @@
-# Family Quotient length ne top of annihilator le
+# Post-quotient finiteness passes to a larger annihilator
 
-Finite length of a quotient passes to the quotient by a larger ideal.
+Post-quotient finiteness passes to a larger annihilator.
+
+For Ann M ⊆ Ann N, finite length of R/(ideal(a)+Ann M) gives finite length of R/(ideal(a)+Ann
+N).

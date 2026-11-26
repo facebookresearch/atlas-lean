@@ -16,16 +16,17 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRe
 public import MathlibExt.RepresentationTheory.Rep.ZModRestrictTensor
 
 /-!
-# Scalar restriction and the degree-`(1, 1)` cup product
+# Integral scalar restriction and the cup in degrees one and one
 
-Restriction of coefficients from `ZMod n` to `ℤ` preserves the explicit
-degree-one and degree-two cocycles.  The only coefficient adjustment needed
-for a cup product is the canonical comparison from the integral tensor
-product of the restricted factors to the restriction of their `ZMod n`
-tensor product.  This file records that compatibility first for cocycle
-representatives and then for the descended `H¹ × H¹ → H²` cup product.
+For n∈ℕ and a ZMod n-representation of a group G, scalar restriction
+to ℤ retains the coefficient group and action. The degree-one and
+degree-two cocycle and cohomology comparisons preserve representatives.
 
-The statements include `n = 0`.
+The tensor comparison
+Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B)
+identifies the scalar restriction of the (1,1) cup with the integral cup.
+The equality holds on cocycles and on H¹×H¹→H², and is natural in
+coefficient morphisms. The case n=0 is included.
 -/
 
 @[expose] public section
@@ -41,8 +42,14 @@ namespace groupCohomology
 variable {G : Type} [Group G]
 variable (n : ℕ) (A B : Rep (ZMod n) G)
 
-/-- Scalar restriction carries a `ZMod n`-linear cup cocycle to the cup of
-the scalar-restricted one-cocycles, after the canonical tensor comparison. -/
+/-- Let n∈ℕ, G be a group and A,B representations over ZMod n.
+Write Res for scalar restriction to ℤ and
+μ:Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B) for the canonical tensor
+comparison. All statements include n=0.
+For x∈Z¹(G,A) and y∈Z¹(G,B), their cup cocycle is
+(x∪y)(g,h)=x(g)⊗g•y(h).
+Its scalar restriction equals the integral cup of the restricted
+cocycles followed by the coefficient map μ. -/
 theorem cocycles₂ZModRestrictIntEquiv_cupCocycleOneOne
     (x : cocycles₁ A) (y : cocycles₁ B) :
     cocycles₂ZModRestrictIntEquiv n (A ⊗ B)
@@ -58,8 +65,13 @@ theorem cocycles₂ZModRestrictIntEquiv_cupCocycleOneOne
   intro g h
   rfl
 
-/-- The degree-`(1, 1)` cup product commutes with scalar restriction from
-`ZMod n` to `ℤ`, after the canonical tensor comparison. -/
+/-- Let n∈ℕ, G be a group and A,B representations over ZMod n.
+Write Res for scalar restriction to ℤ and
+μ:Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B) for the canonical tensor
+comparison. All statements include n=0.
+For x∈H¹(G,A) and y∈H¹(G,B), the additive degree-two comparison
+satisfies χ₂(x∪y)=H²(μ)(χ₁(x)∪χ₁(y)).
+The integral cup first has coefficient Res(A)⊗[ℤ]Res(B). -/
 theorem H2ZModRestrictIntAddEquiv_cupOneOne
     (x : H1 A) (y : H1 B) :
     H2ZModRestrictIntAddEquiv n (A ⊗ B)
@@ -85,8 +97,10 @@ theorem H2ZModRestrictIntAddEquiv_cupOneOne
           rw [cocycles₂ZModRestrictIntEquiv_cupCocycleOneOne]
           rfl
 
-/-- Scalar restriction commutes with an equivariant coefficient map in
-degree one. -/
+/-- For n∈ℕ, a group G and a morphism t:A→C of ZMod n-
+representations, the degree-one additive comparison is natural:
+χ_C¹∘H¹(t)=H¹(Res(t))∘χ_A¹.
+The coefficient action is restricted to ℤ, including n=0. -/
 theorem H1ZModRestrictIntAddEquiv_map
     {C : Rep (ZMod n) G} (f : A ⟶ C) (x : H1 A) :
     H1ZModRestrictIntAddEquiv n C
@@ -102,8 +116,9 @@ theorem H1ZModRestrictIntAddEquiv_map
       rw [← ConcreteCategory.comp_apply, H1π_comp_map]
       rfl
 
-/-- Scalar restriction commutes with an equivariant coefficient map in
-degree two. -/
+/-- For n∈ℕ, a group G and a morphism t:A→C of ZMod n-
+representations, the degree-two additive comparison satisfies
+χ_C²∘H²(t)=H²(Res(t))∘χ_A², including n=0. -/
 theorem H2ZModRestrictIntAddEquiv_map
     {C : Rep (ZMod n) G} (f : A ⟶ C) (x : H2 A) :
     H2ZModRestrictIntAddEquiv n C

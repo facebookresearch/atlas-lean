@@ -1,3 +1,8 @@
-# Sequential Milnor Of Degree Sections Map τ₃
+# Right component of the split-transition sequence morphism
 
-The right map is the actual map between limits of homology towers.
+Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and α:K → L a map of inverse towers.
+Choose degreewise sections s for K and t for L, each a right inverse
+of its adjacent transition, and assume c.Rel(i,j).
+
+The right component of this sequence morphism is lim(H_jα).

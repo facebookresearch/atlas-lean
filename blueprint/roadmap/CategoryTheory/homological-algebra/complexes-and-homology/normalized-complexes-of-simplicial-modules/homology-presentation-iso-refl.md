@@ -1,3 +1,5 @@
-# Homology Presentation Iso refl
+# Identity of the augmented homology-family comparison
 
-Identity augmented presentations yield the native identity comparison.
+Identity of the augmented homology-family comparison.
+
+An identity presentation isomorphism induces the identity homology-family isomorphism.

@@ -1,3 +1,6 @@
-# Module Equivalence
+# The module equivalence for lifted scalar rings
 
-The native ring-equivalence module equivalence in the actual common world.
+The module equivalence for lifted scalar rings.
+
+The ring equivalence `R ≃+* ULift.{v} R` induces an equivalence from lifted-ring modules to
+`R`-modules, both in coefficient universe `max u v`.

@@ -1,4 +1,6 @@
-# Output Normalized Map
+# The map between lifted normalized tensor complexes
 
-Native additive normalization of the actual lifted original tensor map,
-returned to the lifts of the original normalized coefficient models.
+The map between lifted normalized tensor complexes.
+
+Normalize outputTensorMap and use the normalization–lift isomorphisms to obtain a chain map
+between the lifts of the normalized Moore complexes of M ⊗_R X and N ⊗_R X.

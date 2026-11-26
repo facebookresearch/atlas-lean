@@ -1,5 +1,6 @@
-# Quasi Iso desc Short Complex down Nat
+# Cofiber of a monomorphism computes its chain quotient
 
-The canonical map from the homotopy cofiber of the first arrow in a
-short-exact sequence of down-Nat complexes to its third term is a
+In an abelian category C, for a short exact sequence
+K —f→ L —g→ M of nonnegative chain complexes, the canonical
+cofiber map Cofib(f) → M induced by g and g∘f=0 is a
 quasi-isomorphism.

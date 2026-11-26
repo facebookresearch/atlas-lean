@@ -1,3 +1,6 @@
-# Postcompose natural zero
+# A point coordinate remains compatible after a functor map
 
-The actual target zero naturality transports any proved source value square.
+A point coordinate remains compatible after a functor map.
+
+A map into a source functor object agreeing with its comparison coordinate stays compatible
+after the functor image of a morphism.

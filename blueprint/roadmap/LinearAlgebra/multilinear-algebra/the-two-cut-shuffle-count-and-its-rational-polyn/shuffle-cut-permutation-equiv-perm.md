@@ -1,3 +1,6 @@
-# Shuffle Cut Permutation Equiv perm
+# The total-degree permutation in the cut-shuffle equivalence
 
-The actual sigma bijection retains its original degree-cast shuffle permutation.
+The total-degree permutation in the cut-shuffle equivalence.
+
+For a weak cut p+q=n and a (p,q)-shuffle s, the permutation component of
+shuffleCutPermutationEquiv is s.perm transported along Fin(p+q) ≃ Fin n.

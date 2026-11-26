@@ -1,3 +1,6 @@
-# Primitive Lie Map apply
+# Underlying value of a map on primitive Lie algebras
 
-The induced primitive morphism has the original bialgebra morphism as its underlying map.
+Underlying value of a map on primitive Lie algebras.
+
+For a primitive x in H and bialgebra homomorphism f : H → K, the image f.primitiveLieMap(x),
+viewed in K, is f(x).

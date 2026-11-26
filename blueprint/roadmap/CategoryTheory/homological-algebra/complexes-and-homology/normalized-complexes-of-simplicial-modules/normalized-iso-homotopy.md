@@ -1,4 +1,7 @@
-# Normalized complexes of simplicial modules
+# The normalized lift comparison commutes with homotopy components
 
-Native tensoring before normalization retains the same fixed original
-prism under coefficient and output lifts, in every shifted degree.
+The normalized lift comparison commutes with homotopy components.
+
+For a simplicial homotopy H and degrees n,m, its normalized component with coefficient ULift M
+followed by the comparison at Y_m equals the comparison at X_n followed by the lifted
+normalized component with coefficient M.

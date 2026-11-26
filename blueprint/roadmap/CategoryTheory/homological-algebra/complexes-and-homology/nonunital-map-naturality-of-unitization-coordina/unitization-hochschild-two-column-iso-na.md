@@ -1,3 +1,6 @@
-# Unitization Hochschild Two Column Iso naturality
+# Naturality of the unitization cokernel-to-two-column comparison
 
-The source HH comparison with the raw total commutes with its original map.
+Naturality of the unitization cokernel-to-two-column comparison.
+
+The cokernel homology map induced by `f` commutes with the comparison to homology of the
+first-two-column cyclic total.

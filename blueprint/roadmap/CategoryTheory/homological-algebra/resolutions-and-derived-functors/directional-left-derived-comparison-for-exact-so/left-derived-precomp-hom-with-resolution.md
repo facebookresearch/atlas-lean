@@ -1,3 +1,6 @@
-# Left Derived Precomp Hom With Resolution
+# Directional left-derived comparison from a supplied source resolution
 
-The source projective resolution maps into the exact image of any target resolution.
+Let `C,D,E` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → E` additive. A supplied projective resolution `P` of `X` computes the map
+`L_nL(U(X)) → L_n(U ⋙ L)(X)` by comparison from a projective
+resolution of `U(X)` into the exact augmented complex `U(P)`.

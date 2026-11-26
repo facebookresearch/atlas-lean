@@ -17,17 +17,15 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.DeletionBasis
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.CoalgebraGraded
 
 /-!
-# Homogeneous exterior primitives on free modules in every characteristic
+# Homogeneous primitives in the exterior coalgebra of a free module
 
-The actual singleton coproduct component is the stock exterior deletion
-map after its native one-variable coordinate equivalence. A homogeneous
-primitive of degree at least two has zero deletion. The existing deletion
-injectivity theorem for free modules therefore rules out higher primitives
-without dividing by the degree or any factorial. This includes positive
-characteristic and characteristic dividing the exterior degree.
+Let R be a commutative ring and M an R-module. The reduced coproduct of ι(x)ι(y) is
+ι(x)⊗ι(y)−ι(y)⊗ι(x). The degree-(1,n) coproduct component, followed by Λ¹(M)≃M and a tensor
+flip, is the exterior deletion map Λ^{n+1}(M) → Λ^n(M)⊗M.
 
-The free-module hypothesis is retained. A separate characteristic-two
-nonfree-module client has a nonzero primitive in degree two.
+A primitive in degree n+1≥2 has zero deletion. For free M this deletion map is injective, so
+every homogeneous primitive of degree other than one is zero. Degree-zero primitives vanish
+even without freeness. These statements hold in every characteristic.
 -/
 
 @[expose] public section
@@ -45,7 +43,10 @@ variable (M : Type v) [AddCommGroup M] [Module R M]
 
 local notation "E" => ExteriorAlgebra R M
 
-/-- The actual degree-two reduced coproduct has the alternating middle term. -/
+/-- Let R be a commutative ring, M an R-module, and x,y ∈ M. In E=ExteriorAlgebra R M, the reduced
+primitive equation satisfies ∆̄(ι(x)ι(y))=ι(x)⊗ι(y)−ι(y)⊗ι(x). The middle coproduct term is
+alternating, with the displayed order and minus sign, and no freeness or characteristic
+hypothesis is required. -/
 theorem primitiveEquation_ι_mul_ι (x y : M) :
     primitiveEquation R M (ι R x * ι R y) =
       ι R x ⊗ₜ[R] ι R y - ι R y ⊗ₜ[R] ι R x := by
@@ -208,7 +209,11 @@ private theorem singletonDomCoprod (n : ℕ) (w : Fin (n + 1) → M) :
       rw [singletonPositionEquiv_symm]
       exact singletonSummand R M n r w
 
-/-- The stock deletion map is the actual singleton coproduct component, not an independent certificate. -/
+/-- For an R-module M over a commutative ring R and n ∈ ℕ, the deletion map Λ^{n+1}_R M → Λ^n_R
+M⊗_R M equals the following composite: include into the exterior algebra, apply ∆, project the
+two factors to degrees 1 and n, apply Λ¹_R M≃ₗ[R] M to the first factor, then flip M⊗Λ^n_R M
+to Λ^n_R M⊗M. This identifies deletion with the specified coproduct component in the stated
+factor order. -/
 theorem deletion_eq_coproductProjection (n : ℕ) :
     exteriorPower.deletion R M n =
       (TensorProduct.comm R M (⋀[R]^n M)).toLinearMap.comp
@@ -252,7 +257,10 @@ theorem deletion_eq_coproductProjection (n : ℕ) :
     (DFunLike.congr_fun hpost
       (w ∘ ((finSumFinEquiv : Fin 1 ⊕ Fin n ≃ Fin (1 + n)).trans (finCongr (Nat.one_add n))))).symm
 
-/-- Every homogeneous primitive in degree at least two has zero actual deletion. -/
+/-- Let R be a commutative ring, M an R-module, and n ∈ ℕ with n≠0. If a ∈ Λ^{n+1}_R M is
+primitive when included in ExteriorAlgebra R M, then exteriorPower.deletion R M n a = 0. Its
+degree-(1,n) coproduct component vanishes because the primitive coproduct has only factors of
+degrees (n+1,0) and (0,n+1). Freeness of M is not required for this vanishing. -/
 theorem deletion_eq_zero_of_primitive (n : ℕ) (hn : n ≠ 0)
     (a : ⋀[R]^(n + 1) M)
     (ha : Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) (a : E)) :
@@ -268,7 +276,10 @@ theorem deletion_eq_zero_of_primitive (n : ℕ) (hn : n ≠ 0)
     exteriorPower.projection_ιMulti_ne R M n 0 hn.symm,
     TensorProduct.zero_tmul, TensorProduct.tmul_zero, zero_add, map_zero, map_zero]
 
-/-- A homogeneous degree-zero primitive is zero, without any freeness assumption. -/
+/-- Let R be a commutative ring, M an R-module, and a ∈ Λ⁰_R M. If its image in ExteriorAlgebra R
+M is (1,1)-skew primitive, then a=0. The degree-zero coproduct and primitive equation force
+the scalar coordinate to vanish by additive cancellation. No freeness, torsion, or
+characteristic hypothesis is imposed. -/
 theorem primitive_degree_zero (a : ⋀[R]^0 M)
     (ha : Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) (a : E)) : a = 0 := by
   apply (exteriorPower.zeroEquiv R M).injective
@@ -277,8 +288,11 @@ theorem primitive_degree_zero (a : ⋀[R]^0 M)
   rw [augmentation_degree_zero] at h
   simpa only [map_zero] using h
 
-/-- On free modules, exterior primitives in any homogeneous degree other than one vanish,
-including positive characteristic and degrees divisible by that characteristic. -/
+/-- Let R be a commutative ring and M a free R-module. For n ∈ ℕ with n≠1, any a ∈ Λ^n_R M whose
+image in ExteriorAlgebra R M is (1,1)-skew primitive is zero. Degree zero follows from the
+primitive scalar equation, and degrees at least two follow from vanishing and injectivity of
+exterior deletion. The result includes positive characteristic and degrees divisible by that
+characteristic. -/
 theorem primitive_homogeneous_eq_zero [Module.Free R M] (n : ℕ) (hn : n ≠ 1)
     (a : ⋀[R]^n M)
     (ha : Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) (a : E)) : a = 0 := by

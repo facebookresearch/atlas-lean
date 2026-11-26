@@ -1,3 +1,6 @@
-# Unitization Normalized Scalar Projector
+# The scalar projector on normalized unitization chains
 
-The reduced normalized model uses the induced scalar projector.
+The scalar projector on normalized unitization chains.
+
+The unitization scalar algebra projector induces an endomorphism of the normalized regular
+Hochschild complex.

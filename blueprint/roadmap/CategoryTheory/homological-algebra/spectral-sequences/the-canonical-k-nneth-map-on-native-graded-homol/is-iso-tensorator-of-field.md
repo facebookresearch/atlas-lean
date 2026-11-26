@@ -1,4 +1,6 @@
-# Is Iso tensorator of field
+# The graded Künneth tensorator isomorphism over a field
 
-The existing field Künneth theorem applies to the actual canonical
-tensorator; no replacement tensor map is chosen.
+The graded Künneth tensorator isomorphism over a field.
+
+For two nonnegative module chain complexes over a field, every tensorator component is an
+isomorphism.

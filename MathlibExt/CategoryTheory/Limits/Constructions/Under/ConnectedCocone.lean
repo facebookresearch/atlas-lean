@@ -16,11 +16,16 @@ public import Mathlib.CategoryTheory.Limits.Constructions.Over.Connected
 public import Mathlib.CategoryTheory.Limits.Shapes.Connected
 
 /-!
-# Literal cocone lifts in an under category
+# Connected cocones in an under category
 
-A connected diagram under a fixed object admits a lift of any target cocone.
-The lift keeps the supplied vertex and legs. Its source arrow is the common
-composite along any cocone leg.
+Let J be a connected category, C any category and D : J ⥤ Under I a diagram of arrows out of
+an object I. For a cocone s over the underlying diagram in C, the composites I → D(j) → s.pt
+agree for every j. They therefore define a single arrow I → s.pt.
+
+This arrow makes s.pt an object of Under I, and the existing legs s.ι_j form a cocone there.
+The construction keeps the underlying vertex and all legs of s; it applies to every cocone,
+without requiring a colimit. The indexing and coefficient object and morphism universes are
+independent.
 -/
 
 @[expose] public section
@@ -35,7 +40,12 @@ namespace CategoryTheory.Limits
 
 variable {C : Type u} [Category.{v} C] {J : Type w} [Category.{w'} J] [IsConnected J]
 
-/-- Lift a connected target cocone in an under-category with the original vertex and legs. -/
+/-- Lifting a connected cocone to an under category.
+
+Let D : J ⥤ Under I with J connected, and let s be a cocone over D followed by the forgetful
+functor to C. Give s.pt the arrow I → s.pt obtained as D(j).hom ≫ s.ι_j at any j.
+Connectedness makes this composite independent of j, so the same vertex and legs define a
+cocone over D in Under I. -/
 def liftConnectedUnderCocone (I : C) {D : J ⥤ Under I}
     (s : Cocone (D ⋙ Under.forget I)) : Cocone D where
   pt := Under.mk ((D.obj (Classical.arbitrary J)).hom ≫ s.ι.app (Classical.arbitrary J))

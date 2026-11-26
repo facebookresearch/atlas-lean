@@ -13,25 +13,30 @@ public import Mathlib.Algebra.Homology.Embedding.Basic
 public import MathlibExt.Algebra.Homology.Embedding.StupidTruncNested
 
 /-!
-# Finite initial intervals of nonnegative complex shapes
+# Finite initial chain and cochain intervals
 
-The finite chain indices use the natural-number successor relation. The
-chain embedding has image closed under outgoing differentials, and the
-opposite cochain embedding has image closed under incoming differentials.
-There is no differential from the last index to the first.
+Fin(q+1) represents the finite interval {0,…,q}, with its ordinary successor
+relation rather than a cyclic wraparound. Inclusion by natural value gives
+chain and cochain shape embeddings whose ranges increase with q.
 -/
 
 @[expose] public section
 
 namespace ComplexShape.NatInitialInterval
 
-/-- The original downward natural successor relation on the finite interval. -/
+/--
+For q∈ℕ, the downward shape on Fin(q+1) allows i→j exactly when j.val+1=i.val. It represents
+the finite linear chain interval {0,…,q} without a wraparound edge.
+-/
 def downShape (q : ℕ) : ComplexShape (Fin (q + 1)) where
   Rel i j := j.val + 1 = i.val
   next_eq := by intro i j k hj hk; apply Fin.ext; omega
   prev_eq := by intro i j k hi hj; apply Fin.ext; omega
 
-/-- The finite chain interval is embedded by its original natural value. -/
+/--
+For q∈ℕ, the finite chain interval with indices Fin(q+1) and relation j.val+1=i.val embeds in
+the downward shape on ℕ by i↦i.val. Its range is {0,…,q}.
+-/
 def downEmbedding (q : ℕ) : (downShape q).Embedding (ComplexShape.down ℕ) where
   f := Fin.val
   injective_f := Fin.val_injective
@@ -40,17 +45,26 @@ def downEmbedding (q : ℕ) : (downShape q).Embedding (ComplexShape.down ℕ) wh
 instance downEmbedding_isRelIff (q : ℕ) : (downEmbedding q).IsRelIff where
   rel' _ _ h := h
 
-/-- Original chain differentials cannot leave a finite initial interval. -/
+/--
+For the downward interval embedding Fin(q+1)→ℕ, the range {0,…,q} is closed under outgoing
+chain differentials: if j+1=i and i≤q, then j≤q. Thus the embedding satisfies IsTruncGE.
+-/
 instance downEmbedding_isTruncGE (q : ℕ) : (downEmbedding q).IsTruncGE where
   toIsRelIff := inferInstance
   mem_next {i j} h := by
     change j + 1 = i.val at h
     exact ⟨⟨j, by omega⟩, rfl⟩
 
-/-- The finite cochain shape, with the original finite indices and reversed relation. -/
+/--
+For q∈ℕ, reversing the finite downward interval gives a cochain shape on Fin(q+1) with
+relation i.val+1=j.val. There is no wraparound differential.
+-/
 abbrev upShape (q : ℕ) := (downShape q).symm
 
-/-- The cochain interval has the same original indices and the reversed relation. -/
+/--
+For q∈ℕ, the finite cochain interval Fin(q+1), with relation i.val+1=j.val, embeds into the
+upward shape on ℕ by natural value. Its range is {0,…,q}.
+-/
 abbrev upEmbedding (q : ℕ) : (upShape q).Embedding (ComplexShape.up ℕ) :=
   (downEmbedding q).op
 
@@ -74,13 +88,19 @@ theorem downEmbedding_range (q i : ℕ) :
 theorem upEmbedding_range (q i : ℕ) :
     i ∈ Set.range (upEmbedding q).f ↔ i ≤ q := downEmbedding_range q i
 
-/-- Initial chain supports increase with the original cutoff. -/
+/--
+For natural cutoffs p≤q, the range of the downward embedding Fin(p+1)→ℕ is contained in the
+range of Fin(q+1)→ℕ, with each finite index retaining its natural value.
+-/
 theorem downRangeLE {p q : ℕ} (h : p ≤ q) :
     (downEmbedding p).RangeLE (downEmbedding q) := by
   intro i hi
   exact (downEmbedding_range q i).2 ((downEmbedding_range p i).1 hi |>.trans h)
 
-/-- Initial cochain supports increase with the original cutoff. -/
+/--
+For natural cutoffs p≤q, the upward interval embedding with range {0,…,p} has its range
+contained in the upward interval with range {0,…,q}.
+-/
 theorem upRangeLE {p q : ℕ} (h : p ≤ q) :
     (upEmbedding p).RangeLE (upEmbedding q) := downRangeLE h
 

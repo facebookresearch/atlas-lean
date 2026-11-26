@@ -1,3 +1,5 @@
-# Top Fin Snoc Homeomorph apply
+# Coordinates of the tuple-appending homeomorphism
 
-Evaluation of the finite-tuple snoc homeomorphism.
+Coordinates of the tuple-appending homeomorphism.
+
+The homeomorphism Gⁿ × G → Gⁿ⁺¹ sends (t,g) to Fin.snoc t g.

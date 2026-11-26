@@ -21,13 +21,11 @@ public import Mathlib.RingTheory.Ideal.Quotient.Noetherian
 public import Mathlib.RingTheory.HopkinsLevitzki
 
 /-!
-# Finite length at actual generic intersection supports
+# Quotient length at a minimal prime over an ideal
 
-At a minimal prime over an ideal in a Noetherian ring, the radical of the
-localized ideal is the actual local maximal ideal. Every prime over it is
-therefore maximal, so the local quotient is Artinian and Noetherian. This
-derives the finite length required for genuine local intersection
-multiplicities from the actual minimal-prime condition.
+For a prime p minimal over I, the radical of the localized ideal in R_p is its maximal ideal.
+Thus the local quotient has Krull dimension at most zero. If R is noetherian, that quotient is
+Artinian and noetherian, hence has finite module length over R_p.
 -/
 
 @[expose] public section
@@ -42,8 +40,9 @@ universe u
 
 variable (R : Type u) [CommRing R]
 
-/-- The quotient at an original generic intersection support has Krull
-dimension zero, derived from its actual minimal prime. -/
+/-- The localized quotient has zero-dimensional support.
+
+For p minimal over I, the quotient R_p/I R_p has Krull dimension at most zero. -/
 theorem localizedIntersectionQuotient_krullDimLE_zero
     (I p : Ideal R) [p.IsPrime] (hp : p ∈ I.minimalPrimes) :
     Ring.KrullDimLE 0
@@ -63,8 +62,9 @@ theorem localizedIntersectionQuotient_krullDimLE_zero
   rw [← heq]
   exact hmax
 
-/-- The local quotient at any actual generic intersection support is
-finite length. No finite-length input is supplied. -/
+/-- Finite localized quotient length at a minimal prime.
+
+For noetherian R and p minimal over I, the module R_p/I R_p has finite length. -/
 theorem localizedIntersectionQuotient_length_ne_top
     [IsNoetherianRing R]
     (I p : Ideal R) [p.IsPrime] (hp : p ∈ I.minimalPrimes) :

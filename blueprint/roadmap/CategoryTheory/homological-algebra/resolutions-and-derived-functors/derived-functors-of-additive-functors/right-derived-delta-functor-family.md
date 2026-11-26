@@ -1,3 +1,5 @@
-# Right Derived Delta Functor Family
+# Right derivation as a functor to cohomological delta-functors
 
-Additive functors form their right-derived cohomological δ-functor family.
+Let `C,D` be abelian, with injective resolutions in `C`. Right derivation defines a functor from additive functors
+`C → D` to cohomological delta-functors, taking `F` to its family
+`R^nF` and a transformation to its derived degree maps.

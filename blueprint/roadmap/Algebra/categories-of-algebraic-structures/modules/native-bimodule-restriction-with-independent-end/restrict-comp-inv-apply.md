@@ -1,3 +1,5 @@
-# Restrict Comp inv apply
+# The inverse restriction-composition comparison fixes each value
 
-Its inverse has the same carrier identity.
+For an E_(R″,S″)-module B″, the inverse component
+of the endpoint restriction-composition isomorphism sends
+every underlying value x to itself.

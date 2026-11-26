@@ -16,16 +16,15 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationSpectralNaturality
 
 /-!
-# Naturality of the coherent first-page mapping-cone comparison
+# Naturality of coherent filtration cones and direct columns
 
-The endpoint maps and coherent-window cokernel map form a morphism of
-cokernel short complexes.  Naturality of the mapping-cone descent map and of
-the coherent cokernel isomorphism then gives naturality of the canonical map
-from the coherent mapping cone to the direct column.  Applying homology gives
-the corresponding relative-homology square.
+Let `f : K → L` be a map of first-quadrant bicomplexes in an abelian category. The coherent
+lower-stage, upper-stage, and cokernel maps form a morphism of the cokernel short complexes
+for each first-page window.
 
-No page-object, normalized-row, second-page, or Bousfield--Kan comparison is
-constructed here.
+The induced mapping-cone map commutes with descent to the direct column and its cokernel
+comparison. Taking homology at degree `-p-q` gives naturality of the coherent relative-window
+homology isomorphism.
 -/
 
 @[expose] public section
@@ -45,8 +44,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The endpoint maps and induced cokernel map form a morphism between the
-cokernel short complexes of two coherent first-page windows. -/
+/-- The cokernel-sequence map of a coherent first-page window.
+
+The lower and upper filtration-stage maps induced by a bicomplex morphism, together with the
+induced cokernel map, define a morphism of window cokernel sequences. -/
 noncomputable def horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex
     (f : K ⟶ L) (p : ℕ) :
     ShortComplex.cokernelSequence (horizontalFirstPageCoherentMap K p) ⟶
@@ -60,6 +61,9 @@ noncomputable def horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex
   comm₂₃ :=
     (horizontalFirstPageCoherentCokernelMapOfBicomplex_π f p).symm
 
+/-- The lower endpoint of a coherent window cokernel-sequence map.
+
+The first component is the bicomplex-induced map of the coherent lower cochain stage. -/
 @[simp]
 theorem horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex_τ₁
     (f : K ⟶ L) (p : ℕ) :
@@ -68,6 +72,9 @@ theorem horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex_τ₁
         horizontalFirstPageCoherentLowerCochainMapOfBicomplex f p :=
   rfl
 
+/-- The upper endpoint of a coherent window cokernel-sequence map.
+
+The middle component is the bicomplex-induced map of the coherent upper cochain stage. -/
 @[simp]
 theorem horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex_τ₂
     (f : K ⟶ L) (p : ℕ) :
@@ -76,6 +83,9 @@ theorem horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex_τ₂
         horizontalFirstPageCoherentUpperCochainMapOfBicomplex f p :=
   rfl
 
+/-- The cokernel endpoint of a coherent window sequence map.
+
+The third component is the induced map between the coherent filtration cokernels. -/
 @[simp]
 theorem horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex_τ₃
     (f : K ⟶ L) (p : ℕ) :
@@ -84,8 +94,10 @@ theorem horizontalFirstPageCoherentCokernelShortComplexMapOfBicomplex_τ₃
         horizontalFirstPageCoherentCokernelMapOfBicomplex f p :=
   rfl
 
-/-- The coherent mapping-cone-to-direct-column comparison commutes with a
-bicomplex map. -/
+/-- Naturality of coherent cone descent to a direct column.
+
+The mapping-cone map of a bicomplex morphism followed by target cone-to-column descent equals
+source descent followed by the direct-column map. -/
 theorem horizontalFirstPageCoherentMappingConeToDirectColumn_naturality_of_bicomplex
     (f : K ⟶ L) (p : ℕ) :
     (horizontalCompleteFiltrationMappingConeNatTrans f).app
@@ -133,8 +145,10 @@ theorem horizontalFirstPageCoherentMappingConeToDirectColumn_naturality_of_bicom
           horizontalDirectColumnCochainMap f p :=
       (Category.assoc _ _ _).symm
 
-/-- Coherent relative homology identifies naturally with direct-column
-homology under a bicomplex map. -/
+/-- Naturality of coherent relative-window homology in direct-column coordinates.
+
+At degree `-p-q`, the induced relative homology map commutes with the direct-column homology
+comparison and the direct-column homology map. -/
 theorem
     horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom_naturality_of_bicomplex
     (f : K ⟶ L) (p q : ℕ) :

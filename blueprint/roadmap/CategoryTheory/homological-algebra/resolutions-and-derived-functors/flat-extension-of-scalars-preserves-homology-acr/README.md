@@ -1,4 +1,4 @@
 # Flat extension of scalars preserves homology across universes
 
-- [Preserves Homology extend Scalars of flat](preserves-homology-extend-scalars-of-fla.md)
-- [Preserves Homology extend Scalars restrict Scalars of flat](preserves-homology-extend-scalars-restri.md)
+- [Flat scalar extension preserves homology of short complexes](preserves-homology-extend-scalars-of-fla.md)
+- [Flat extension followed by arbitrary restriction preserves homology](preserves-homology-extend-scalars-restri.md)

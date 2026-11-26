@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Homotopy Nat Iso hom
+# Forward homotopy isomorphism is the restricted comparison
 
-Its entire forward transformation remains the restricted comparison class.
+Forward homotopy isomorphism is the restricted comparison.
+
+The forward transformation of the restricted homotopy natural isomorphism is the comparison
+whiskered by the full-subcategory inclusion.

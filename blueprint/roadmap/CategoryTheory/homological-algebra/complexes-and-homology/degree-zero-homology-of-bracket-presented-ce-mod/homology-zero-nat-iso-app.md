@@ -1,4 +1,5 @@
-# Homology Zero Nat Iso app
+# The components of the constant degree-zero homology comparison
 
-The natural comparison has the canonical degree-zero comparison as its component at each
-model.
+The components of the constant degree-zero homology comparison.
+
+At a model `X`, the natural comparison component is its scalar homology isomorphism.

@@ -1,3 +1,6 @@
-# Cotangent Weight Zero On Resolution Map
+# The weight-zero map of augmented simplicial resolutions
 
-Every original augmented-resolution map induces its actual weight-zero operator.
+The weight-zero map of augmented simplicial resolutions.
+
+A map between resolutions over `A` induces a simplicial module map by composing the source
+comparison with the inverse target comparison to the constant module `A`.

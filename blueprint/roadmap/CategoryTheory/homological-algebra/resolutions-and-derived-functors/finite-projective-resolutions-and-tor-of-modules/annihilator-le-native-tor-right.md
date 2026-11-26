@@ -1,4 +1,6 @@
-# Annihilator le native Tor right
+# The second coefficient annihilator annihilates Tor
 
-Canonical symmetry transports the other original coefficient
-annihilator to the actual native Tor object in its original order.
+The second coefficient annihilator annihilates Tor.
+
+For any commutative ring R and modules M,N, Ann_R(N) is contained in Ann_R(Tor_q^R(M,N)) in
+every degree q.

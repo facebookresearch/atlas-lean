@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Counit surjective
+# Field stalk counit is surjective
 
-Every actual module element has an original stage preimage under the SAME counit.
+Field stalk counit is surjective.
+
+Every discrete coefficient element is the counit value of a germ represented at a suitable
+finite Galois field.

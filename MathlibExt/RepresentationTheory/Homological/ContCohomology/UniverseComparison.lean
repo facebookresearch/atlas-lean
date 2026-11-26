@@ -14,7 +14,20 @@ public import MathlibExt.RepresentationTheory.Homological.ContCohomology.Invaria
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientLongExact
 
 /-!
-# The same original continuous cochains at two coefficient universe parameters
+# Continuous cochains in two universe-parameter presentations
+
+Let G be a profinite group in universe u and c = max(u,w).
+A coefficient representation with carrier c has homogeneous cochain
+presentations labelled by w and by c. Their tuple-form and nested complexes
+are canonically isomorphic, preserving the same coefficients and group
+coordinate values.
+
+The comparisons are natural in coefficients, commute with the cohomology
+realizations and connecting maps of exact discrete coefficient sequences,
+and preserve identity evaluation in degree zero.
+For G,H,K in universe u, the fixed-carrier group/coefficient maps satisfy
+identity, composition and cycle-class laws, and commute with the parameter
+comparisons.
 -/
 
 @[expose] public section
@@ -32,14 +45,18 @@ open CategoryTheory CategoryTheory.Limits
 namespace ContinuousCohomology
 variable (G : ProfiniteGrp.{u})
 
-/-- The identity comparison of the flat homogeneous term in degree q for parameters
-w and max u w, on the same representation. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let X be a topological ℤ-representation with carrier in c.
+The coefficient-universe parameters w and c describe this same carrier.
+The tuple-form homogeneous degree q terms at parameters w and c
+are isomorphic in topological ℤ-modules, by the same continuous
+equivariant function on G^(q+1). -/
 def sameRankFlatTermIso (X : TopRep.{max u w, 0, u} ℤ G) (q : ℕ) :
     flatHomogeneousTerm.{0, u, w} X q ≅
       flatHomogeneousTerm.{0, u, max u w} X q := Iso.refl _
 
 set_option backward.isDefEq.respectTransparency false in
--- V2 recorded the same flat-term identity/projection unification failure.
+
 theorem sameRank_flat_d (X : TopRep.{max u w, 0, u} ℤ G) (q : ℕ) :
     flatHomogeneousD.{0, u, w} X q ≫ (sameRankFlatTermIso.{u, w} G X (q + 1)).hom =
       (sameRankFlatTermIso.{u, w} G X q).hom ≫
@@ -52,8 +69,12 @@ theorem sameRank_flat_d (X : TopRep.{max u w, 0, u} ℤ G) (q : ℕ) :
     (flatHomogeneousD_apply.{0, u, w} X q c t).trans
       (flatHomogeneousD_apply.{0, u, max u w} X q c t).symm)))
 
-/-- The isomorphism between the two flat homogeneous complexes, assembled from
-the identity term comparisons and equality of their differentials. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let X be a topological ℤ-representation with carrier in c.
+The coefficient-universe parameters w and c describe this same carrier.
+The tuple-form homogeneous complexes at parameters w and c
+are isomorphic, degreewise retaining the function values and
+alternating deletion differential. -/
 def sameRankFlatComplexIso (X : TopRep.{max u w, 0, u} ℤ G) :
     flatHomogeneousComplex.{0, u, w} X ≅
       flatHomogeneousComplex.{0, u, max u w} X :=
@@ -65,8 +86,11 @@ def sameRankFlatComplexIso (X : TopRep.{max u w, 0, u} ℤ G) :
     rw [CochainComplex.of_d, CochainComplex.of_d]
     exact (sameRank_flat_d.{u, w} G X i).symm)
 
-/-- Compare the original homogeneous cochain complexes at parameters w and max u w
-through their flat homogeneous complexes. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let X be a topological ℤ-representation with carrier in c.
+The coefficient-universe parameters w and c describe this same carrier.
+The nested invariant homogeneous complexes at parameters w and c
+are isomorphic by passing through their tuple-form comparisons. -/
 def sameRankOriginalComplexIso (X : TopRep.{max u w, 0, u} ℤ G) :
     (homogeneousCochainsFunctor.{0, u, w} (k := ℤ) (G := G)).obj X ≅
       (homogeneousCochainsFunctor.{0, u, max u w} (k := ℤ) (G := G)).obj X :=
@@ -128,15 +152,25 @@ theorem sameRank_original_complex_iso_naturality
       homogeneousNestedCoefficientMap_apply.{0, u, max u w},
       sameRank_original_complex_iso_hom_apply])))
 
-/-- The natural isomorphism between the two original homogeneous cochain functors,
-using the same representation maps. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let X be a topological ℤ-representation with carrier in c.
+The coefficient-universe parameters w and c describe this same carrier.
+The nested complex comparisons are natural in continuous equivariant
+ℤ-linear coefficient maps, giving a natural isomorphism of the two
+homogeneous cochain functors. -/
 def sameRankOriginalComplexNatIso :
     homogeneousCochainsFunctor.{0, u, w} (k := ℤ) (G := G) ≅
       homogeneousCochainsFunctor.{0, u, max u w} (k := ℤ) (G := G) :=
   NatIso.ofComponents (sameRankOriginalComplexIso.{u, w} G)
     (fun f => sameRank_original_complex_iso_naturality.{u, w} G f)
 
-/-- Comparison of the SAME original algebraic cochains; there is no coefficient lift. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let A be a discrete topological ℤ-module with jointly continuous G-action.
+Its continuous cochains and cohomology have presentations at parameters
+w and c, on the same actual coefficient carrier.
+The discrete abelian-group cochain functors at parameters w and c
+are naturally isomorphic, after the same coefficient realization
+and topology-forgetting functor. -/
 def sameRankDiscreteCochainNatIso :
     discreteCoefficientCochainFunctor.{u, w} G ≅
       discreteCoefficientCochainFunctor.{u, max u w} G :=
@@ -145,7 +179,12 @@ def sameRankDiscreteCochainNatIso :
       (sameRankOriginalComplexNatIso.{u, w} G))
     (discreteCoefficientForget.{max u w}.mapHomologicalComplex (ComplexShape.up ℕ))
 
-/-- Comparison of the fixed original cohomology groups in every degree. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let A be a discrete topological ℤ-module with jointly continuous G-action.
+Its continuous cochains and cohomology have presentations at parameters
+w and c, on the same actual coefficient carrier.
+For every q ∈ ℕ, the continuous cohomology functors at parameters
+w and c are naturally isomorphic on the fixed coefficient category. -/
 def sameRankDiscreteCohomologyNatIso (q : ℕ) :
     discreteCoefficientCohomologyFunctor.{u, w} G q ≅
       discreteCoefficientCohomologyFunctor.{u, max u w} G q :=
@@ -157,7 +196,13 @@ def sameRankDiscreteCohomologyNatIso (q : ℕ) :
         (ComplexShape.up ℕ) q))
     discreteCoefficientForget.{max u w}
 
-/-- The same fixed homology comparisons identify the algebraic comparison. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let A be a discrete topological ℤ-module with jointly continuous G-action.
+Its continuous cochains and cohomology have presentations at parameters
+w and c, on the same actual coefficient carrier.
+For the cohomology comparisons γ_w,γ_c and parameter maps α_H,α_C,
+the realization square is
+γ_c ∘ α_H = Hᑫ(α_C) ∘ γ_w. -/
 theorem sameRank_discrete_homology_square
     (A : DiscreteContAction (TopModuleCat.{max u w} ℤ) G) (q : ℕ) :
     (sameRankDiscreteCohomologyNatIso.{u, w} G q).hom.app A ≫
@@ -183,14 +228,24 @@ open CategoryTheory CategoryTheory.Limits
 namespace ContinuousCohomology
 variable (G : ProfiniteGrp.{u})
 
-/-- The actual SAME original sequence maps to the old and common original complexes. -/
+/-- For a profinite G in universe u, c=max(u,w), and a short complex
+S of discrete continuous coefficients with carrier c, the parameter
+comparison gives a map from its cochain short complex at w to that at c.
+The three components are the cochain parameter isomorphisms of S's terms. -/
 def sameRankDiscreteSequenceMap
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max u w} ℤ) G)) :
     S.map (discreteCoefficientCochainFunctor.{u, w} G) ⟶
       S.map (discreteCoefficientCochainFunctor.{u, max u w} G) :=
   S.mapNatTrans (sameRankDiscreteCochainNatIso.{u, w} G).hom
 
-/-- The canonical homology comparison also supplies the inverse square. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let A be a discrete topological ℤ-module with jointly continuous G-action.
+Its continuous cochains and cohomology have presentations at parameters
+w and c, on the same actual coefficient carrier.
+The inverse realization square is
+α_H ∘ γ_w⁻¹ = γ_c⁻¹ ∘ Hᑫ(α_C),
+where γ_w,γ_c identify the two continuous cohomology presentations with
+homology of their algebraic cochain complexes. -/
 theorem sameRank_discrete_homology_inv_square
     (A : DiscreteContAction (TopModuleCat.{max u w} ℤ) G) (q : ℕ) :
     (discreteCoefficientHomologyIso.{u, w} G A q).inv ≫
@@ -203,7 +258,12 @@ theorem sameRank_discrete_homology_inv_square
       ((sameRankOriginalComplexNatIso.{u, w} G).hom.app
         ((discreteCoefficientTopRepFunctor.{u, w} G).obj A))).symm
 
-/-- Naturality of the actual SES homology connector gives the original-rank connector square. -/
+/-- For a profinite G in universe u, c=max(u,w), let S be a short
+complex of discrete continuous coefficients with carrier c.
+Assume its underlying maps are injective, image equals kernel and
+surjective in both parameter presentations, with their given witnesses.
+The connecting maps satisfy
+α_H^(q+1) ∘ δ_w = δ_c ∘ α_H^q. -/
 theorem sameRank_discrete_connecting
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max u w} ℤ) G))
     (hS : DiscreteCoefficientExact.{u, w} S)
@@ -282,7 +342,12 @@ theorem sameRank_original_complex_iso_zero_value
     homogeneousFinContinuousLinearEquiv_apply] at h
   exact h
 
-/-- The original identity-evaluation H0 normalization is preserved. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let X be a topological ℤ-representation with carrier in c.
+The coefficient-universe parameters w and c describe this same carrier.
+The nested-complex parameter comparison preserves the canonical
+degree-zero invariant identification:
+zeroIso_c ∘ H⁰(α_C)=zeroIso_w. -/
 theorem sameRank_original_zero
     (X : TopRep.{max u w, 0, u} ℤ G) :
     HomologicalComplex.homologyMap (sameRankOriginalComplexIso.{u, w} G X).hom 0 ≫
@@ -304,7 +369,12 @@ theorem sameRank_original_zero
         (hI.trans (hval.trans
           (homogeneousZeroIso_cycles_value.{0, u, w} X c).symm)))))
 
-/-- The fixed algebraic H0 comparison retains the same invariant value. -/
+/-- Let G be a profinite group in universe u and c = max(u,w).
+Let A be a discrete topological ℤ-module with jointly continuous G-action.
+Its continuous cochains and cohomology have presentations at parameters
+w and c, on the same actual coefficient carrier.
+The discrete cohomology parameter comparison in degree zero
+commutes with identity evaluation to the coefficient invariants. -/
 theorem sameRank_discrete_zero
     (A : DiscreteContAction (TopModuleCat.{max u w} ℤ) G) :
     (sameRankDiscreteCohomologyNatIso.{u, w} G 0).hom.app A ≫
@@ -328,7 +398,11 @@ open CategoryTheory CategoryTheory.Limits
 namespace ContinuousCohomology
 variable (G H : ProfiniteGrp.{u})
 
-/-- The literal old-rank original group/coefficient map. -/
+/-- For profinite groups G,H in universe u and c=max(u,w), let X,Y
+be topological ℤ-representations with carrier c. A continuous φ:H→G
+and equivariant continuous ℤ-linear f:Res_φ(X)→Y give a map of the
+w-parameter homogeneous complexes. In tuple values it precomposes
+each coordinate by φ and then applies f. -/
 def sameRankOriginalGroupCochainMap
     {X : TopRep.{max u w, 0, u} ℤ G} {Y : TopRep.{max u w, 0, u} ℤ H}
     (φ : H →ₜ* G) (f : TopRep.res φ X ⟶ Y) :
@@ -389,13 +463,18 @@ open CategoryTheory
 namespace ContinuousCohomology
 variable (G H K : ProfiniteGrp.{u})
 
-/-- The literal OLD original cochain identity, with no extra coefficient lift. -/
+/-- For profinite G in universe u, c=max(u,w), and a topological
+ℤ-representation X with carrier c, the fixed-carrier cochain map
+for id_G and id_X is id_(C_hom^•(G,X)). -/
 theorem sameRank_original_group_cochain_map_id (X : TopRep.{max u w, 0, u} ℤ G) :
     sameRankOriginalGroupCochainMap.{u, w} G G (ContinuousMonoidHom.id G) (𝟙 X) =
       𝟙 ((homogeneousCochainsFunctor.{0, u, w} (k := ℤ) (G := G)).obj X) :=
   cochainsMap_id X
 
-/-- The literal original group/coefficient composition uses the same stored module maps. -/
+/-- For profinite G,H,K in universe u, c=max(u,w), continuous
+φ:H→G, ψ:K→H and coefficient maps f:Res_φ(X)→Y, g:Res_ψ(Y)→Z,
+the fixed-carrier cochain maps obey
+map_(φ∘ψ, g∘Res_ψ(f)) = map_(ψ,g) ∘ map_(φ,f). -/
 theorem sameRank_original_group_cochain_map_comp
     {X : TopRep.{max u w, 0, u} ℤ G} {Y : TopRep.{max u w, 0, u} ℤ H}
     {Z : TopRep.{max u w, 0, u} ℤ K}
@@ -406,7 +485,10 @@ theorem sameRank_original_group_cochain_map_comp
         sameRankOriginalGroupCochainMap.{u, w} H K ψ g :=
   cochainsMap_comp φ ψ f g
 
-/-- The SAME original cycle class projection respects every literal old cochain map. -/
+/-- For profinite G,H in universe u, fixed coefficient carrier
+c=max(u,w), and a group/coefficient cochain map a from (φ,f),
+the cycle-to-cohomology projections satisfy
+Hᑫ(a) ∘ π_X = π_Y ∘ Zᑫ(a). -/
 theorem sameRank_original_group_cochain_map_cycle_class
     {X : TopRep.{max u w, 0, u} ℤ G} {Y : TopRep.{max u w, 0, u} ℤ H}
     (φ : H →ₜ* G) (f : TopRep.res φ X ⟶ Y) (q : ℕ) :
@@ -429,7 +511,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace ContinuousCohomology
 variable (G H : ProfiniteGrp.{u})
 
-/-- Every degree of the fixed original cochain comparison respects the literal group map. -/
+/-- For profinite G,H in universe u, fixed coefficient carrier
+c=max(u,w), and group/coefficient data (φ,f), the cohomology maps
+at the two parameters commute with the parameter isomorphisms:
+α_Y ∘ Hᑫ(map_w)=Hᑫ(map_c) ∘ α_X. -/
 theorem sameRank_original_group_cohomology_square
     {X : TopRep.{max u w, 0, u} ℤ G} {Y : TopRep.{max u w, 0, u} ℤ H}
     (φ : H →ₜ* G) (f : TopRep.res φ X ⟶ Y) (q : ℕ) :

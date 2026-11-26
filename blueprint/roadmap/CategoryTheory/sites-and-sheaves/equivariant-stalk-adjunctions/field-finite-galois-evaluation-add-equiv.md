@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation Add Equiv
+# Equivariant embedding functions are the fixing subgroup invariants
 
-EVERY finite Galois stage has its actual original-embedding evaluation equivalence.
+Equivariant embedding functions are the fixing subgroup invariants.
+
+Evaluation at the inclusion and the extension-action construction are mutually inverse
+additive maps.

@@ -1,3 +1,6 @@
-# Field Finite Galois Section Evaluation apply
+# Finite Galois section evaluation uses its geometric point
 
-Original-stage evaluation is the value at its SAME original geometric pointing.
+Finite Galois section evaluation uses its geometric point.
+
+The section evaluation equivalence takes an equivariant section to its value at the canonical
+finite Galois point.

@@ -1,3 +1,7 @@
-# Outer Cutoff Iota D2 Finite eq zero
+# The inner total-differential component vanishes on every cutoff summand
 
-`ιTotal` followed by `D₂` vanishes: outer-cutoff inner complexes are singles.
+For a cohomological bicomplex K in an abelian category,
+the composition of any cutoff total summand inclusion with the
+inner total-differential component D₂ is zero.
+The cutoff B^(r) has zero inner differential, so this holds in
+every pair of total degrees.

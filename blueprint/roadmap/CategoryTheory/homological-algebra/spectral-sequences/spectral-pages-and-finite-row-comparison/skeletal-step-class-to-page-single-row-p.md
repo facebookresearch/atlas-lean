@@ -1,3 +1,5 @@
-# Skeletal Step Class To Page single Row Page
+# Step-class maps commute with every later single-row comparison
 
-The single-row comparison from page two preserves the class map under first-page support in row zero.
+Step-class maps commute with every later single-row comparison.
+
+Under row-zero support, the E₂-to-E_r isomorphism preserves the class map for r≥2.

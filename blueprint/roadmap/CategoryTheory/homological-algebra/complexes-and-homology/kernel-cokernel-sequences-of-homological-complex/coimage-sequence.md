@@ -1,3 +1,6 @@
-# Coimage Sequence
+# The kernel–source–coimage short complex
 
-The canonical kernel--source--coimage short complex of a chain map.
+The kernel–source–coimage short complex.
+
+For f : K → L, form ker(f) → K → coim(f) using the kernel inclusion and canonical coimage
+projection.

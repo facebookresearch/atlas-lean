@@ -1,3 +1,6 @@
-# Tensor Pow Obj
+# Left associated finite tensor power
 
-Left-associated finite tensor power: `0 ↦ 𝟙`, `n+1 ↦ pow n ⊗ X`.
+Left associated finite tensor power.
+
+Recursively set power zero to the tensor unit and the successor power to the preceding power
+tensored with `X`.

@@ -1,3 +1,5 @@
-# BBar Degree Homeomorph d Last
+# The terminal classifying-bar face in tuple coordinates
 
-The last BBar face removes the final head-first tuple coordinate.
+The terminal classifying-bar face in tuple coordinates.
+
+For t of length n+1, the last face has tuple Fin.init t, removing the last entry.

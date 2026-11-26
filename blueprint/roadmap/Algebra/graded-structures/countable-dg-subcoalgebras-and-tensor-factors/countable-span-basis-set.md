@@ -1,4 +1,5 @@
-# Countable Span Basis Set
+# A linearly independent subset of a generating set
 
-Choose an actual linearly independent subset of the given generators spanning the same
-module.
+A linearly independent subset of a generating set.
+
+Over a field, choose a subset of g that is linearly independent and has the same linear span.

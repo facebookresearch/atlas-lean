@@ -1,4 +1,7 @@
-# Pair Homology delta right
+# Right input connecting map has the left degree Koszul sign
 
-Pairing after a connecting morphism in the right input equals the
-connecting morphism after pairing, with Koszul sign `(-1) ^ p`.
+Right input connecting map has the left degree Koszul sign.
+
+For compatible pairings `K × S_i → T_i` on short exact sequences `S` and `T`, pairing after
+the right connecting map in degree `q` equals `(-1)^p` times pairing in degrees `(p,q)`
+followed by the target connecting map, after degree transport.

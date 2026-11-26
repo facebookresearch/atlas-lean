@@ -13,21 +13,26 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientHomogene
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientNaturality
 
 /-!
-# Chevalley–Eilenberg chain complexes with left coefficients
+# Exterior-first Chevalley–Eilenberg chains with coefficients
 
-The nonnegative chain complex has exterior-first tensor terms and the
-homogeneous restrictions of the coefficient boundary. Lie-module
-homomorphisms induce chain maps whose degree components are the identity
-on the exterior factor tensored with the coefficient map.
+Let R be commutative, L an R-Lie algebra and M a compatible left Lie
+module. The chain term is Λ_R^nL⊗M, and its differential is the
+homogeneous restriction of the ambient coefficient boundary. It is
+the bracket term tensored with M plus signed coefficient deletion,
+with action sign (−1)^{i+1}. The first boundary gives −[x,m].
 
-The degree-one differential is `-[x, m]`. Conversion to right coefficients
-uses `m · x = -[x, m]` and interchanges the tensor factors. The chain
-construction applies to arbitrary Lie modules over a commutative ring.
+Linear differential naturality holds for coefficient homomorphisms
+with independent carrier universes. For literal categorical chain maps,
+the coefficient modules occupy one universe w, and the chain category
+has height max{u,v,w}. The component map is id_{Λ^nL}⊗f and
+preserves identity and composition.
 
-## References
+Changing to right coefficients uses m·x=−[x,m] and swaps the tensor
+factors. No projectivity or finiteness assumption on the Lie module
+is part of the chain construction.
 
-* Charles A. Weibel, *An Introduction to Homological Algebra*, Definition 7.7.1
-  and Corollary 7.7.3.
+References: C. A. Weibel, An Introduction to Homological Algebra,
+Definition 7.7.1 and Corollary 7.7.3.
 -/
 
 @[expose] public section
@@ -47,14 +52,19 @@ variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 variable (M : Type w) [AddCommGroup M] [Module R M]
 
-/-- Degree `n` of the exterior-first coefficient chains. -/
+/-- Let R be commutative, L an R-Lie algebra and M an R-module.
+The degree-n exterior-first coefficient object is Λ_R^nL⊗M
+in ModuleCat over R at height max{u,v,w}. A Lie action on M
+is not needed to form this tensor object. -/
 abbrev coefficientChainObject (n : ℕ) : ModuleCat.{max u v w} R :=
   ModuleCat.of R ((⋀[R]^n L) ⊗[R] M)
 
 variable [LieRingModule L M] [LieModule R L M]
 
-/-- The coefficient chain complex, using the canonical homogeneous
-restriction of the ambient Chevalley--Eilenberg boundary. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+The homogeneous coefficient boundaries define the nonnegative
+R-module chain complex with degree-n term Λ_R^nL⊗M. -/
 def coefficientComplex : ChainComplex (ModuleCat.{max u v w} R) ℕ :=
   ChainComplex.of (coefficientChainObject R L M)
     (fun n => ModuleCat.ofHom (coefficientDifferential R L M n))
@@ -73,7 +83,10 @@ theorem coefficientComplex_d_succ (n : ℕ) :
       ModuleCat.ofHom (coefficientDifferential R L M n) := by
   simp only [coefficientComplex, ChainComplex.of_d]
 
-/-- All differentials away from consecutive descending degrees are zero. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Every differential between degrees i,j with i≠j+1 is zero;
+only consecutive descending degrees carry the coefficient boundary. -/
 theorem coefficientComplex_d_eq_zero (i j : ℕ) (h : i ≠ j + 1) :
     (coefficientComplex R L M).d i j = 0 :=
   ChainComplex.of_d_ne (coefficientChainObject R L M)
@@ -84,8 +97,11 @@ section Naturality
 variable {N : Type w'} [AddCommGroup N] [Module R N]
   [LieRingModule L N] [LieModule R L N]
 
-/-- The homogeneous differential is natural in its native left
-Lie-module coefficients, with independent coefficient universes. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For an R-Lie module homomorphism f:M→N, with N in an
+independent carrier universe,
+(id_{Λ^nL}⊗f)d_n^M=d_n^N(id_{Λ^{n+1}L}⊗f). -/
 theorem coefficientDifferential_naturality (f : M →ₗ⁅R,L⁆ N) (n : ℕ) :
     (f.toLinearMap.lTensor (⋀[R]^n L)).comp (coefficientDifferential R L M n) =
       (coefficientDifferential R L N n).comp (f.toLinearMap.lTensor (⋀[R]^(n + 1) L)) := by
@@ -119,8 +135,11 @@ variable {N P : Type w} [AddCommGroup N] [Module R N]
   [LieRingModule L N] [LieModule R L N]
   [AddCommGroup P] [Module R P] [LieRingModule L P] [LieModule R L P]
 
-/-- A native Lie-module coefficient morphism induces a chain map between the
-coefficient complexes. Chain compatibility follows from ambient naturality. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For an R-Lie module map f:M→N with M,N in one coefficient
+universe w, the maps id_{Λ^nL}⊗f form a chain map
+C_*(L,M)→C_*(L,N) at height max{u,v,w}. -/
 def coefficientComplexMap (f : M →ₗ⁅R,L⁆ N) :
     coefficientComplex R L M ⟶ coefficientComplex R L N :=
   ChainComplex.ofHom
@@ -129,22 +148,30 @@ def coefficientComplexMap (f : M →ₗ⁅R,L⁆ N) :
       simp only [coefficientComplex_d_succ]
       exact congrArg ModuleCat.ofHom (coefficientDifferential_naturality R L M f n).symm)
 
-/-- The degree component is the identity on the exterior factor tensored with
-the given native coefficient morphism. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For coefficients in a common universe, the degree-n component
+of the chain map induced by f:M→N is id_{Λ_R^nL}⊗f. -/
 @[simp]
 theorem coefficientComplexMap_f (f : M →ₗ⁅R,L⁆ N) (n : ℕ) :
     (coefficientComplexMap R L M f).f n =
       ModuleCat.ofHom (f.toLinearMap.lTensor (⋀[R]^n L)) :=
   rfl
 
-/-- A pure tensor is mapped by applying the coefficient morphism to its right factor. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For a coefficient Lie-module map f:M→N in the common
+coefficient universe, the chain map sends a⊗m to a⊗f(m). -/
 theorem coefficientComplexMap_f_tmul (f : M →ₗ⁅R,L⁆ N) (n : ℕ)
     (a : ⋀[R]^n L) (m : M) :
     ((coefficientComplexMap R L M f).f n).hom (a ⊗ₜ[R] m) = a ⊗ₜ[R] f m := by
   change f.toLinearMap.lTensor (⋀[R]^n L) (a ⊗ₜ[R] m) = a ⊗ₜ[R] f m
   simp only [LinearMap.lTensor_tmul, LieModuleHom.coe_toLinearMap]
 
-/-- The induced map of coefficient complexes preserves identities. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+The coefficient chain map induced by id_M is the identity
+of C_*(L,M). -/
 @[simp]
 theorem coefficientComplexMap_id :
     coefficientComplexMap R L M (LieModuleHom.id : M →ₗ⁅R,L⁆ M) =
@@ -158,7 +185,11 @@ theorem coefficientComplexMap_id :
     (a ⊗ₜ[R] m) = a ⊗ₜ[R] m
   rw [coefficientComplexMap_f_tmul, LieModuleHom.id_apply]
 
-/-- The induced map of coefficient complexes preserves composition. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For coefficient Lie-module maps f:M→N and g:N→P,
+with all coefficients in one universe, the chain maps satisfy
+C(g)C(f)=C(g∘f). -/
 @[simp]
 theorem coefficientComplexMap_comp (f : M →ₗ⁅R,L⁆ N) (g : N →ₗ⁅R,L⁆ P) :
     coefficientComplexMap R L M f ≫ coefficientComplexMap R L N g =

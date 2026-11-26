@@ -16,17 +16,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeThree
 
 /-!
-# Restriction followed by chosen-transversal corestriction in degree three
+# Degree-three restriction and right-transversal corestriction
 
-For every finite right transversal, degree-three Schreier corestriction after
-restriction is multiplication by the subgroup index on `H³`.  The proof uses
-an explicit degree-two prism homotopy on inhomogeneous three-cocycles.
-Consequently degree-three restriction is injective whenever the subgroup
-index is a unit in the coefficient ring.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A` a representation.
+For each right transversal `T`, transfer of a restricted three-cocycle differs from `[G:H]`
+times that cocycle by the coboundary of an explicit two-cochain.
 
-This file does not prove independence of the chosen transversal and therefore
-does not define canonical degree-three corestriction.  It also makes no
-Kummer, norm-residue, or Bloch--Kato claim.
+Writing `t g=h₁r₁` and `r₁h=h₂r₂` in the Schreier decomposition, the two-cochain is
+`K₂z(g,h)=-∑ t∈T, ρ(t⁻¹)(z(t,g,h)-z(h₁,r₁,h)+z(h₁,h₂,r₂))`. Thus `cor_T ∘ res = [G:H]` on
+`H³(G,A)`. If the index is a unit in `k`, restriction is injective.
 -/
 
 @[expose] public section
@@ -49,8 +47,11 @@ noncomputable local instance restrictionCorestrictionH3TransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- One prism summand of the degree-two homotopy comparing degree-three
-restriction-corestriction with index multiplication. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `T` a right transversal,
+`z ∈ Z³(G,A)`, and `t∈T`. For `g,h∈G`, put `h₁=h_T(t,g)`, `r₁=r_T(t,g)`, `h₂=h_T(r₁,h)`, and
+`r₂=r_T(r₁,h)`, using `a b=h_T(a,b)r_T(a,b)`. The summand
+`restrictionCorestrictionHomotopyTwoTerm A T z t g h` equals
+`ρ(t⁻¹)(z(t,g,h)-z(h₁,r₁,h)+z(h₁,h₂,r₂))`. -/
 noncomputable def restrictionCorestrictionHomotopyTwoTerm
     (A : Rep k G) (T : H.RightTransversal) (z : cocycles₃ A)
     (t : (T : Set G)) (g h : G) : A :=
@@ -62,16 +63,21 @@ noncomputable def restrictionCorestrictionHomotopyTwoTerm
         (T.schreierFactor (T.schreierRep t g) h : G),
         (T.schreierRep (T.schreierRep t g) h : G)))
 
-/-- The signed degree-two prism homotopy comparing degree-three
-restriction-corestriction with index multiplication. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z³(G,A)`. The two-cochain `restrictionCorestrictionHomotopyTwo A T z`
+has value `K₂z(g,h)=-∑ t∈T, ρ(t⁻¹)(z(t,g,h)-z(h₁,r₁,h)+z(h₁,h₂,r₂))`, where `t g=h₁r₁` and
+`r₁h=h₂r₂` are the successive Schreier decompositions. -/
 noncomputable def restrictionCorestrictionHomotopyTwo
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₃ A) : G × G → A := fun p =>
   -∑ t : (T : Set G),
     restrictionCorestrictionHomotopyTwoTerm A T z t p.1 p.2
 
-/-- The single-transversal-term prism identity behind the degree-three
-restriction/corestriction index formula. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `T` a right transversal,
+`z ∈ Z³(G,A)`, `t∈T`, and `g,h,i∈G`. Write `Q_t(a,b)=restrictionCorestrictionHomotopyTwoTerm A
+T z t a b`. If `h₁=h_T(t,g)`, `r₁=r_T(t,g)`, `h₂=h_T(r₁,h)`, `r₂=r_T(r₁,h)`, and
+`h₃=h_T(r₂,i)`, then
+`ρ(t⁻¹)z(h₁,h₂,h₃)=z(g,h,i)+Q_t(gh,i)-Q_t(g,hi)+Q_t(g,h)-ρ(g)Q_{r₁}(h,i)`. -/
 theorem restrictionCorestrictionThree_term
     (A : Rep k G) (T : H.RightTransversal) (z : cocycles₃ A)
     (t : (T : Set G)) (g h i : G) :
@@ -294,8 +300,11 @@ theorem restrictionCorestrictionThree_term
     Module.End.one_apply]
   rw [htransport, htransport, htransport]
 
-/-- Chosen-transversal degree-three corestriction after restriction differs
-from index multiplication by the displayed degree-two prism boundary. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z³(G,A)`. Then `corestrictionCochainThree A T (res z) = (H.index : k) •
+z + d²(K₂z)`, where `K₂z=-∑ t∈T, restrictionCorestrictionHomotopyTwoTerm A T z t`. The
+differential is `d²c(g,h,i)=ρ(g)c(h,i)-c(gh,i)+c(g,hi)-c(g,h)`, and restriction uses the
+subgroup inclusion with unchanged coefficients. -/
 theorem corestrictionCochainThree_restriction
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₃ A) :
@@ -356,8 +365,9 @@ theorem corestrictionCochainThree_restriction
   rw [hcard, ← Nat.cast_smul_eq_nsmul k]
   module
 
-/-- Representative form of `cor ∘ res = [G : H]` on `H³` for every chosen
-right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z³(G,A)`. Then `corestrictionH3OfRightTransversal A T (map H.subtype (𝟙
+_) 3 (H3π A z)) = (H.index : k) • H3π A z` in `H³(G,A)`. -/
 theorem corestrictionH3OfRightTransversal_restriction_H3π
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₃ A) :
@@ -383,8 +393,9 @@ theorem corestrictionH3OfRightTransversal_restriction_H3π
         module
     _ = (H.index : k) • H3π A z := (H3π A).hom.map_smul _ _
 
-/-- Chosen-transversal degree-three corestriction after restriction is
-multiplication by the subgroup index. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. For every `x ∈ H³(G,A)`, `corestrictionH3OfRightTransversal A T (map
+H.subtype (𝟙 _) 3 x) = (H.index : k) • x`. -/
 theorem corestrictionH3OfRightTransversal_restriction
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : H3 A) :
@@ -396,9 +407,9 @@ theorem corestrictionH3OfRightTransversal_restriction
       exact corestrictionH3OfRightTransversal_restriction_H3π
         (H := H) A T z
 
-/-- Degree-three restriction to a finite-index subgroup is injective when
-the subgroup index is a unit in the coefficient ring.  A right transversal
-is supplied only to witness the left inverse up to the unit scalar. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` any
+right transversal. If `IsUnit (H.index : k)`, then restriction `map H.subtype (𝟙 _) 3 :
+H³(G,A) → H³(H,Rep.res H.subtype A)` is injective. -/
 theorem restrictionH3_injective_of_isUnit_index
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (hindex : IsUnit (H.index : k)) :

@@ -1,3 +1,6 @@
-# Mem primitive Lie Subalgebra
+# Membership criterion for the primitive Lie subalgebra
 
-Membership in the primitive Lie subalgebra is native bialgebra primitivity.
+Membership criterion for the primitive Lie subalgebra.
+
+For x in a bialgebra H over a commutative ring R, x belongs to primitiveLieSubalgebra R H
+exactly when IsPrimitiveElem R x holds.

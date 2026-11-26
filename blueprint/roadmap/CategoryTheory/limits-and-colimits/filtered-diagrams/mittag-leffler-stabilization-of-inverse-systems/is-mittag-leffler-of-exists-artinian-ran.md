@@ -1,4 +1,6 @@
-# Is Mittag Leffler of exists artinian range
+# Artinian incoming images imply the Mittag–Leffler condition
 
-Artinian images of incoming linear maps suffice for a cofiltered module
-diagram to satisfy Mathlib's Mittag--Leffler condition.
+Artinian incoming images imply the Mittag–Leffler condition.
+
+For each j, assume some map i → j has Artinian linear range in A_j. Then the underlying-set
+diagram of the cofiltered module diagram A is Mittag–Leffler.

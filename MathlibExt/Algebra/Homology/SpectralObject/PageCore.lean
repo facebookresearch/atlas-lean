@@ -15,14 +15,17 @@ module
 public import Mathlib.Algebra.Homology.SpectralObject.FirstPage
 
 /-!
-# The skeletal cohomological page recipe
+# Skeletal cohomological pages on the integer grid
 
-The first page has relative terms in total degree `p + q`, and its
-differential has degree `(1, 0)`. On page `r`, the differential has degree
-`(r, 1 - r)`. Both coordinates range over all integers.
+The page prescription indexed by EInt begins at E₁. At (p,q) its total
+cohomological degree is p+q, with cuts
+−p−r≤−p−1≤−p≤−p+r−1 on page r.
+The differential sends (p,q) to (p+r,q+1−r), so d₁ has bidegree (1,0).
 
-The spectral-object index is opposite to the increasing skeletal index:
-the middle interval `-p-1 ⟶ -p` represents the pair `(X^p, X^(p-1))`.
+For a spectral object in an abelian category, the full integer grid
+satisfies the required boundary conditions. Its first page is the relative
+interval H^{p+q}(−p−1,−p), and the second page is the homology of that
+first-page differential. Both page coordinates range over all integers.
 -/
 
 @[expose] public section
@@ -33,7 +36,9 @@ open CategoryTheory CategoryTheory.ComposableArrows
 
 namespace CategoryTheory.Abelian.SpectralObject
 
-/-- The E₁ page recipe for the opposite inclusion index of an increasing filtration. -/
+/-- The EInt-indexed spectral-sequence prescription starting at page 1,
+with degree p+q, cuts i₀=−p−r, i₁=−p−1, i₂=−p, i₃=−p+r−1,
+and page-r differential bidegree (r,1−r) on ℤ×ℤ. -/
 @[simps!]
 def skeletalPageCore :
     SpectralSequenceDataCore EInt
@@ -60,7 +65,10 @@ instance : skeletalPageCore.HasFirstPageComputation where
 
 variable {C : Type*} [Category* C] [Abelian C]
 
-/-- The full integer shape has both predecessor and successor at every position. -/
+/-- For a spectral object X in an abelian category, indexed by EInt, the
+integer-grid page prescription satisfies the spectral-sequence boundary
+condition: every page position has both a predecessor and a successor
+for the differential bidegree (r,1−r). -/
 instance (X : SpectralObject C EInt) : X.HasSpectralSequence skeletalPageCore where
   isZero_H_obj_mk₁_i₀_le r r' pq hpq n hn hrr' hr := by
     exfalso
@@ -69,18 +77,25 @@ instance (X : SpectralObject C EInt) : X.HasSpectralSequence skeletalPageCore wh
     exfalso
     exact hpq (pq - (r, 1 - r)) (by simp)
 
-/-- The actual spectral sequence starting with the relative E₁ page. -/
+/-- For an EInt-indexed spectral object X in an abelian category, the
+spectral sequence beginning at E₁ with cuts
+−p−r≤−p−1≤−p≤−p+r−1, total degree p+q and differential
+bidegree (r,1−r). -/
 abbrev skeletalSpectralSequence (X : SpectralObject C EInt) :=
   X.spectralSequence skeletalPageCore
 
-/-- The first page is the middle relative interval in total degree `p + q`. -/
+/-- For an EInt-indexed spectral object X in an abelian category, the
+canonical first-page isomorphism
+E₁^{p,q} ≅ H_X^{p+q}(−p−1,−p) at every integer pair (p,q). -/
 def skeletalFirstPageXIso (X : SpectralObject C EInt) (pq : ℤ × ℤ) :
     ((X.skeletalSpectralSequence).page 1).X pq ≅
       (X.H (pq.1 + pq.2)).obj
         (mk₁ (homOfLE (show ((-pq.1 - 1 : ℤ) : EInt) ≤ ((-pq.1 : ℤ) : EInt) by simp))) :=
   X.spectralSequenceFirstPageXIso skeletalPageCore pq _ _ rfl rfl _ rfl
 
-/-- E₂ is the homology of the actual first-page differential. -/
+/-- For an EInt-indexed spectral object X in an abelian category, the
+canonical isomorphism from the homology of its first-page complex at
+(p,q) to E₂^{p,q}. The first-page differential has bidegree (1,0). -/
 def skeletalSecondPageXIso (X : SpectralObject C EInt) (pq : ℤ × ℤ) :
     ((X.skeletalSpectralSequence).page 1).homology pq ≅
       ((X.skeletalSpectralSequence).page 2).X pq :=

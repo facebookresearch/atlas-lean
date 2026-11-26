@@ -1,3 +1,5 @@
-# Mk Alg Hom relation Error
+# The defining relation error in the enveloping quotient
 
-Every literal relation error is killed by the actual native quotient map.
+The defining relation error in the enveloping quotient.
+
+The tensor-algebra quotient map to `U_R(L)` sends every error `r(x,y)` to zero.

@@ -1,3 +1,5 @@
-# Page Signed Symmetry successor
+# Signed symmetry passes to the successor page
 
-The successor homology comparison preserves the signed swap law.
+Signed symmetry passes to the successor page.
+
+The page-r graded symmetry law gives the same law at r+1.

@@ -1,3 +1,6 @@
-# Skeletal Step Class To Zero Row Cycles i
+# The zero-row cycle lift recovers the cut class representative
 
-The row-zero cycle inclusion equals interval restriction followed by the inverse coordinate map.
+The zero-row cycle lift recovers the cut class representative.
+
+The interval map followed by the inverse cut chart equals the cycle lift followed by
+inclusion.

@@ -1,3 +1,6 @@
-# Ambient Comp Map Iso naturality
+# Naturality of alternating-complex comparison in functor transformations
 
-The native ambient comparisons respect every actual functor transformation.
+Naturality of alternating-complex comparison in functor transformations.
+
+For additive functors between preadditive categories, every natural transformation `F → G`
+commutes with their alternating-complex comparisons.

@@ -1,3 +1,6 @@
-# Page Homology Pair To π
+# The specified-output homology product preserves projection
 
-The original native homology projection computes the equal-position homology product.
+The specified-output homology product preserves projection.
+
+The tensor of input projections followed by this product equals the cycle product followed by
+output projection.

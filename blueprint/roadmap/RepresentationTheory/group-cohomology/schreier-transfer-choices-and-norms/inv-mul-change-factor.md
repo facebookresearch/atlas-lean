@@ -1,4 +1,5 @@
-# Inv mul change Factor
+# The inverse identity for representative change
 
-Moving the change factor across the original representative gives the
-inverse of the matched representative.
+The inverse identity for representative change.
+
+From t = c(t)u(t), obtain t⁻¹c(t) = u(t)⁻¹.

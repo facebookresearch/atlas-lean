@@ -1,3 +1,6 @@
-# Sequential Homology Tower Map id
+# Identity law for homology tower maps
 
-The homology-tower map induced by the identity is the identity.
+Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+The map of degree-i homology towers induced by 1_K is the identity of H_iK.

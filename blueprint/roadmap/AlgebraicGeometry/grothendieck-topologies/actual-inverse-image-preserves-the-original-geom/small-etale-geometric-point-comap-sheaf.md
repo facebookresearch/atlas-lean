@@ -1,4 +1,6 @@
-# Small Etale Geometric Point Comap Sheaf Fiber Iso
+# Geometric comap identification on sheaf fibers
 
-The same point comparison induces the comparison of actual common-universe
-abelian-sheaf fiber functors.
+Geometric comap identification on sheaf fibers.
+
+The comap-point identification induces an isomorphism of sheaf-fiber functors with the fiber
+at `x ≫ f`, for additive coefficients in `max u w`.

@@ -1,3 +1,6 @@
-# Hom Coefficient Transformation
+# Coefficient precomposition as a Hom natural transformation
 
-The actual Hom functors are contravariant in the original coefficient.
+Coefficient precomposition as a Hom natural transformation.
+
+The maps induced by `f : B → B'` form a natural transformation `homFunctor R S B' ⟶ homFunctor
+R S B`, reversing the coefficient direction.

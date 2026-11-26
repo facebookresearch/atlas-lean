@@ -1,4 +1,6 @@
-# Grade exact
+# Exactness of inherited and quotient degree maps
 
-In each degree, the inherited submodule piece, ambient piece, and
-quotient piece form an exact sequence.
+Exactness of inherited and quotient degree maps.
+
+For homogeneous H ⊆ M, the A-linear pair H_n → M_n → Q_n is exact at M_n. A degree-n element
+has zero quotient class exactly when it lies in H_n.

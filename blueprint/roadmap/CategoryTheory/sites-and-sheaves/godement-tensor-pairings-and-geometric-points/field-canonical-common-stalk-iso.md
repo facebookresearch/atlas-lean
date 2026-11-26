@@ -1,4 +1,6 @@
-# Field Canonical Common Stalk Iso
+# Prescribed field stalk compares with the canonical residue stalk
 
-The genuine point isomorphism gives an actual natural isomorphism from prescribed Ω stalks to
-the original canonical stalks.
+Prescribed field stalk compares with the canonical residue stalk.
+
+The point isomorphism induces a natural isomorphism from the prescribed stalk functor to the
+canonical residue-point stalk functor.

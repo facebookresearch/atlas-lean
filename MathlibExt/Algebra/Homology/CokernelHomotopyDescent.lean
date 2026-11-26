@@ -20,13 +20,15 @@ public import Mathlib.Algebra.Homology.Homotopy
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Descent of homotopies through a cokernel
+# Homotopy components descending through a cokernel
 
-Compatible absolute homotopies descend through a cokernel to a homotopy
-of the descended maps. Unlike `Homotopy.descOfComponentwiseEpi` (which
-takes the descended components as input), this API *constructs* them via
-`cokernel.desc`. It needs only `[Ring R]`, with modules in an independent
-universe (`ModuleCat.{v} R` for `R : Type u`).
+Let a : Y → X be a map of nonnegative chain complexes of modules over a ring R. Suppose
+homotopies H on X and H′ on Y satisfy a_n ≫ H(n,m) = H′(n,m) ≫ a_m for every n,m. Their
+components then descend through the degreewise cokernels to maps on coker(a).
+
+For supplied endomorphisms F,G of coker(a) satisfying πa ≫ F = f ≫ πa and πa ≫ G = g ≫ πa,
+these constructed components form a homotopy F ≃ G. The ring and module carrier universes are
+independent.
 -/
 
 @[expose] public section
@@ -43,8 +45,10 @@ section CokernelDescent
 
 variable {R : Type u} [Ring R]
 
-/-- Descended homotopy maps: the absolute homotopy maps, taken through the
-degreewise-cokernel comparison iso. -/
+/-- The homotopy component induced on a cokernel.
+
+Using the compatible homotopy components H and H′, descend H(n,m) followed by the target
+cokernel projection to a map (coker a)_n → (coker a)_m. -/
 noncomputable def cokernelDescHomotopyHom {KX KY : ChainComplex (ModuleCat.{v} R) ℕ}
     (a : KY ⟶ KX) {f g : KX ⟶ KX} {f' g' : KY ⟶ KY}
     (H : Homotopy f g) (H' : Homotopy f' g')
@@ -63,7 +67,10 @@ noncomputable def cokernelDescHomotopyHom {KX KY : ChainComplex (ModuleCat.{v} R
         rw [HomologicalComplex.eval_map, ← Category.assoc, hcompat n m,
           Category.assoc, hkill, comp_zero])
 
-/-- The descended maps lie over the absolute homotopy maps. -/
+/-- The descended component commutes with the cokernel projection.
+
+The projection in degree n followed by the descended component equals H(n,m) followed by the
+projection in degree m. -/
 theorem cokernelDescHomotopyHom_compat {KX KY : ChainComplex (ModuleCat.{v} R) ℕ}
     (a : KY ⟶ KX) {f g : KX ⟶ KX} {f' g' : KY ⟶ KY}
     (H : Homotopy f g) (H' : Homotopy f' g')
@@ -76,8 +83,10 @@ theorem cokernelDescHomotopyHom_compat {KX KY : ChainComplex (ModuleCat.{v} R) �
   unfold cokernelDescHomotopyHom
   rw [← Category.assoc, PreservesCokernel.π_iso_hom, cokernel.π_desc]
 
-/-- Compatible absolute homotopies descend through a cokernel to a homotopy
-of the descended maps. -/
+/-- The homotopy on supplied descended endomorphisms.
+
+For F,G on coker(a) obeying the endpoint projection squares and compatible H,H′, the
+components descended through the cokernel form a homotopy from F to G. -/
 noncomputable def cokernelDescHomotopy {KX KY : ChainComplex (ModuleCat.{v} R) ℕ}
     (a : KY ⟶ KX) {f g : KX ⟶ KX} {f' g' : KY ⟶ KY}
     (F G : cokernel a ⟶ cokernel a)

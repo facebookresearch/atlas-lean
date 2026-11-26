@@ -1,4 +1,4 @@
 # Mapped Connecting
 
-- [Mapped Connecting](mapped-connecting.md)
-- [Mapped Connecting iso components](mapped-connecting-iso-components.md)
+- [Connecting morphism on an exactly mapped sequence](mapped-connecting.md)
+- [Connecting square between mapped delta functors](mapped-connecting-iso-components.md)

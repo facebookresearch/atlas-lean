@@ -1,4 +1,5 @@
-# Stable Image Tail Cone Is Limit
+# A limiting cone remains limiting on every tail
 
-Restricting the actual total limiting cone to an index tail preserves
-the limiting property and every literal original evaluation.
+Let G be an inverse tower of abelian groups and c a limiting cone over G.
+
+For every N∈ℕ, restriction to the stages N+k is a limiting cone over the tail tower, retaining the original coordinates at those stages.

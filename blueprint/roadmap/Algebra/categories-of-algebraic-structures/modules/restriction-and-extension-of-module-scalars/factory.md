@@ -1,3 +1,6 @@
-# Factory
+# The tensor bifunctor with S-coefficients and R-inputs
 
-A native functor factory for arbitrary original coefficients, with no supplied right action.
+The tensor bifunctor with S-coefficients and R-inputs.
+
+Send an S-module M to the functor L ↦ M ⊗_R L, and an S-linear map to its coefficient tensor
+transformation.

@@ -1,4 +1,6 @@
-# Corestriction Cochains f two comp cochains Iso₂ hom
+# The binary coordinate square for the general cochain map
 
-Degree-two component square between the arbitrary cochain map and the
-existing low-degree pair model.
+The binary coordinate square for the general cochain map.
+
+Identifying tuple cochains in degree two with functions G × G → A intertwines the general
+Schreier cochain map and the binary transfer.

@@ -1,3 +1,6 @@
-# Eventual Rangesι
+# The natural inclusion of the eventual image endofunctor
 
-The eventual-range inclusion is natural as the diagram varies.
+The natural inclusion of the eventual image endofunctor.
+
+The inclusions of eventual ranges form a natural transformation from eventualRangesFunctor to
+the identity on module diagrams.

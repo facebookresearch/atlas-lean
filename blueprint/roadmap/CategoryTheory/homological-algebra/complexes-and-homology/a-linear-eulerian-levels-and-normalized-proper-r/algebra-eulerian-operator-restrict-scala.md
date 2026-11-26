@@ -1,3 +1,6 @@
-# Algebra Eulerian Operator restrict Scalars
+# The ground restriction of a raw algebra-linear Eulerian operator
 
-Restriction of the A-linear raw operator is the original coefficient Eulerian operator.
+The ground restriction of a raw algebra-linear Eulerian operator.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+restricting algebraEulerianOperator(n,i) to k gives coefficientEulerianOperator(n,i).

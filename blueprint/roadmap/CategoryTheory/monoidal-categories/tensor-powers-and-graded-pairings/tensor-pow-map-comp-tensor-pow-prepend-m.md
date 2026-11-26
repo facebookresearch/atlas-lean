@@ -1,3 +1,5 @@
-# Tensor Pow Map comp tensor Pow Prepend Map
+# Power maps commute with compatible prepended elements
 
-Naturality of prepending a selected tensor-unit element.
+Power maps commute with compatible prepended elements.
+
+If `u ≫ f = v`, the power map and the prepend maps for `u` and `v` form a commutative square.

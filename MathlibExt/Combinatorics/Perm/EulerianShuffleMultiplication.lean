@@ -14,14 +14,16 @@ public import MathlibExt.Combinatorics.Perm.ShuffleSortFibers
 public import MathlibExt.Algebra.MonoidAlgebra.FiniteFiber
 
 /-!
-# Actual Eulerian evaluation and signed shuffle multiplication
+# Eulerian evaluation and signed shuffle products
 
-The two literal finite signed permutation sums have equal output
-fibers. The native actual shuffle/block factorization and split stable
-labeling equivalences identify those fibers. Every term in a fiber has the
-same original composite sign, proved by the native permutation sign laws.
-Thus the evaluated Eulerian elements respect actual signed shuffle
-multiplication. There is no supplied multiplicativity or kernel certificate.
+For `p,q : ℕ`, let `Sh_(p,q)` be the sum of `(p,q)`-shuffle permutations with their signs in
+`ℚ[S_(p+q)]`. The block embeddings give the split family `Λ_p(a)^L Λ_q(a)^R`.
+
+At every natural parameter `m`, `Λ_(p+q)(m) Sh_(p,q) = Sh_(p,q) (Λ_p(m)^L Λ_q(m)^R)`. The
+split family is also the signed sum over two finite block labelings, with their sorting
+permutations combined by `blockPermutation`.
+
+Reference: Loday, *Cyclic Homology*, Sections 4.2 and 4.5.
 -/
 
 @[expose] public section
@@ -33,7 +35,9 @@ namespace Equiv.Perm
 
 open AlgebraicTopology.EilenbergZilber
 
-/-- The literal signed native shuffle group-ring element. -/
+/-- Let `p,q : ℕ`, `N=p+q`, and `Sh_(p,q) = ∑ s : Shuffle p q, sign(s.perm) [s.perm]` in `ℚ[S_N]`.
+`signedShuffleElement p q` is this finite sign-weighted sum; `Shuffle p q` consists of
+permutations increasing on each of the two input blocks. -/
 def signedShuffleElement (p q : ℕ) : MonoidAlgebra ℚ (Perm (Fin (p + q))) :=
   ∑ s : Shuffle p q, MonoidAlgebra.single s.perm ((s.perm.sign : ℤ) : ℚ)
 
@@ -45,11 +49,16 @@ def blockRightAlgebraMap (p q : ℕ) :
     MonoidAlgebra ℚ (Perm (Fin q)) →ₐ[ℚ] MonoidAlgebra ℚ (Perm (Fin (p + q))) :=
   MonoidAlgebra.mapDomainAlgHom ℚ ℚ (blockRightHom p q)
 
-/-- The actual block action of the original two evaluated Eulerian elements. -/
+/-- Let `p,q : ℕ`, `N=p+q`, and `Sh_(p,q) = ∑ s : Shuffle p q, sign(s.perm) [s.perm]` in `ℚ[S_N]`.
+For `a : ℚ`, `splitEulerianLambda p q a = B_L(Λ_p(a)) * B_R(Λ_q(a))`, where `B_L,B_R` embed
+the left and right block group rings in `ℚ[S_N]`. -/
 def splitEulerianLambda (p q : ℕ) (a : ℚ) : MonoidAlgebra ℚ (Perm (Fin (p + q))) :=
   blockLeftAlgebraMap p q (eulerianLambda p a) * blockRightAlgebraMap p q (eulerianLambda q a)
 
-/-- The actual block action has the original literal two-block coefficient sum. -/
+/-- Let `p,q : ℕ`, `N=p+q`, and `Sh_(p,q) = ∑ s : Shuffle p q, sign(s.perm) [s.perm]` in `ℚ[S_N]`.
+For `a : ℚ`, the split family is the sum over `α ∈ S_p`, `β ∈ S_q` with basis element
+`[blockPermutation p q α β]` and coefficient `P_(p,d(α))(a) sign(α) * P_(q,d(β))(a) sign(β)`,
+where `P_(r,d)(X)=(1/r!)∏_(j=0)^(r-1)(X+j-d)`. -/
 theorem splitEulerianLambda_eq_sum (p q : ℕ) (a : ℚ) :
     splitEulerianLambda p q a =
       ∑ α : Perm (Fin p), ∑ β : Perm (Fin q),
@@ -63,7 +72,10 @@ theorem splitEulerianLambda_eq_sum (p q : ℕ) (a : ℚ) :
   simp_rw [Finset.sum_mul, Finset.mul_sum, MonoidAlgebra.single_mul_single,
     blockLeftHom_mul_blockRightHom]
 
-/-- The original two evaluated block elements are exactly the actual two-block stable-label sum. -/
+/-- Let `p,q : ℕ`, `N=p+q`, and `Sh_(p,q) = ∑ s : Shuffle p q, sign(s.perm) [s.perm]` in `ℚ[S_N]`.
+For `m : ℕ`, `splitEulerianLambda p q m` equals the sum over `g : Fin p → Fin m` and `h : Fin
+q → Fin m`, with contribution `sign(blockPermutation(sort g,sort h)) [blockPermutation(sort
+g,sort h)]`. -/
 theorem splitEulerianLambda_nat (p q m : ℕ) :
     splitEulerianLambda p q (m : ℚ) =
       ∑ z : (Fin p → Fin m) × (Fin q → Fin m),
@@ -86,7 +98,9 @@ theorem splitEulerianLambda_nat (p q m : ℕ) :
   rw [sign_blockPermutation]
   simp only [Units.val_mul, Int.cast_mul]
 
-/-- The exact natural-parameter Eulerian group-ring element respects the actual signed shuffle product. -/
+/-- Let `p,q : ℕ`, `N=p+q`, and `Sh_(p,q) = ∑ s : Shuffle p q, sign(s.perm) [s.perm]` in `ℚ[S_N]`.
+For every `m : ℕ`, `Λ_N(m) * Sh_(p,q) = Sh_(p,q) * splitEulerianLambda p q m`, where `Λ_r` is
+the sign-weighted descent-polynomial family and the natural parameter is coerced to `ℚ`. -/
 theorem eulerianLambda_mul_signedShuffle (p q m : ℕ) :
     eulerianLambda (p + q) (m : ℚ) * signedShuffleElement p q =
       signedShuffleElement p q * splitEulerianLambda p q (m : ℚ) := by

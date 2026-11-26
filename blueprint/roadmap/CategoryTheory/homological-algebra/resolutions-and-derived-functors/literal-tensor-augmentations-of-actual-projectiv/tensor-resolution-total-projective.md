@@ -1,4 +1,6 @@
-# Tensor Resolution Total projective
+# Every tensor-total resolution term is projective
 
-Every original tensor-total term is projective, without finite generation
-or boundedness assumptions on either actual resolution.
+Every tensor-total resolution term is projective.
+
+For each natural degree `n`, the degree-`n` object of the tensor total of two projective
+resolutions is categorically projective in the module category.

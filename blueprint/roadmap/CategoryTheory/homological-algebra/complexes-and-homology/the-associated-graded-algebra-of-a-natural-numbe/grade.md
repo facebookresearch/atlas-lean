@@ -1,3 +1,6 @@
-# Grade
+# Quotient layer of a submodule family
 
-The original quotient layer in degree `n`.
+Quotient layer of a submodule family.
+
+For natural `n`, `Grade F n` is the `R`-module `F n ⧸ lowerInStage F n`. Degree zero has
+denominator zero; for an increasing filtration, degree `n + 1` is `F (n + 1) / F n`.

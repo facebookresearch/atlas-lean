@@ -12,7 +12,20 @@ public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionCoresolution
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.CoinducedAcyclicity
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.CoefficientFunctor
 
-/-! # Native acyclicity of the actual original coinduction terms -/
+/-!
+# Positive continuous cohomology vanishes on coinduction terms
+
+Let G be a compact, locally compact, totally disconnected topological group in universe g, with
+discrete continuous abelian coefficients in W=max(g,w). The comparison from diagonal action
+coinduction to continuous representation coinduction identifies their homogeneous cochain
+complexes.
+
+For every coefficient action A, every positive continuous cohomology object of J(TA) is zero in
+topological ℤ-modules. The same vanishing holds for all positive monad powers T^{p+1}A and for
+every term of the cosimplicial monad coresolution, whose degree-p coefficient is T^{p+1}A. Both
+p and the cohomological degree range over all nonnegative integers before taking their
+successors.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -22,7 +35,12 @@ namespace CategoryTheory.DiscreteAbelianAction
 variable (G : Type g) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [CompactSpace G] [TotallyDisconnectedSpace G] [LocallyCompactSpace G]
 
-/-- The actual original coinduced coefficient is native-acyclic in every positive degree. -/
+/-- Let G be a compact, locally compact, totally disconnected topological group in universe g, with
+discrete continuous abelian coefficients in W=max(g,w). Write J for the associated continuous
+ℤ-representation and T for diagonal coinduction. For A and n≥0, the continuous cohomology object
+H_cont^{n+1}(G,J(TA)) is a zero object of topological ℤ-modules in universe W. The coinduction
+comparison J(TA)≅C(JA) transports the positive-degree vanishing for the continuous homogeneous
+resolution. -/
 theorem coind_native_isZero_succ (A : DiscreteAbelianAction.{g, max g w} G) (n : ℕ) :
     IsZero (continuousCohomology.{0, g, w} (n + 1) (toTopRep.obj (coind.{g, w}.obj A))) := by
   let F := ContinuousCohomology.homogeneousCochainsFunctor.{0, g, w} (k := ℤ) (G := G) ⋙
@@ -31,7 +49,12 @@ theorem coind_native_isZero_succ (A : DiscreteAbelianAction.{g, max g w} G) (n :
   have hz := ContinuousCohomology.isZero_coind₁_succ.{0, g, w} (toTopRep.obj A) n
   exact IsZero.of_iso hz e
 
-/-- Every actual positive monad power is native-acyclic in every positive degree. -/
+/-- Let G be a compact, locally compact, totally disconnected topological group in universe g, with
+discrete continuous abelian coefficients in W=max(g,w). Write J for the associated continuous
+ℤ-representation and T for diagonal coinduction. For a coefficient action A and all p,n≥0,
+H_cont^{n+1}(G,J(T^{p+1}A)) is a zero topological ℤ-module. Reassociation realizes T^{p+1}A as
+one coinduction of T^p A, so the statement includes every positive power and every positive
+cohomological degree. -/
 theorem coindPower_native_isZero_succ (A : DiscreteAbelianAction.{g, max g w} G)
     (p n : ℕ) :
     IsZero (continuousCohomology.{0, g, w} (n + 1)
@@ -43,7 +66,11 @@ theorem coindPower_native_isZero_succ (A : DiscreteAbelianAction.{g, max g w} G)
     (eqToIso (Monad.monadPow_succ_obj_eq (coindMonad.{g, w} G) p A)))
   exact IsZero.of_iso (coind_native_isZero_succ.{g, w} G B n) e
 
-/-- The actual canonical coresolution coefficients are native-acyclic terms. -/
+/-- Let G be a compact, locally compact, totally disconnected topological group in universe g, with
+discrete continuous abelian coefficients in W=max(g,w). Write J for the associated continuous
+ℤ-representation and T for diagonal coinduction. Let K_A be the cosimplicial monad coresolution.
+For all p,n≥0, H_cont^{n+1}(G,J(K_A^p)) is a zero topological ℤ-module. The degree-p coefficient
+comparison K_A^p≅T^{p+1}A identifies it with a positive coinduction power. -/
 theorem coindCoresolution_native_isZero_succ (A : DiscreteAbelianAction.{g, max g w} G)
     (p n : ℕ) :
     IsZero (continuousCohomology.{0, g, w} (n + 1)

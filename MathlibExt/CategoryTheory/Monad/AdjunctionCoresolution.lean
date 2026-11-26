@@ -15,11 +15,15 @@ public import Mathlib.CategoryTheory.Preadditive.Basic
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# The actual adjunction contraction of monad coresolutions
+# Counit contractions after applying a left adjoint to a monad coresolution
 
-After applying the left adjoint, the counit of the same adjunction supplies
-the extra codegeneracies of the canonical monad coresolution. Its split and
-coface equations use the original unit insertions and the literal monad powers.
+Let F : C → D and U : D → C form an adjunction, with induced monad T=UF. The counit gives
+retractions s_n : F(T^{n+1}X) → F(T^nX), natural in X. They split the first unit insertion and
+commute with shifted unit cofaces.
+
+If D is preadditive, let D_n be the alternating sum of the F-images of the n+1 unit insertions
+T^nX → T^{n+1}X. Then D_{n+1}≫s_{n+1}+s_n≫D_n=id_{F(T^{n+1}X)}, the contraction identity in
+every n≥0.
 -/
 
 @[expose] public section
@@ -74,7 +78,9 @@ private theorem barEtaAtPos_succ_power (T : Monad C) (n : ℕ) (i : Fin (n + 1))
 
 variable {F : C ⥤ D} {R : D ⥤ C}
 
-/-- The actual counit retracts the next monad power after the same left adjoint. -/
+/-- Let F : C → D and U : D → C form an adjunction with monad T=UF. For n ∈ ℕ and X ∈ C, define
+s_n : F(T^{n+1}X) → F(T^nX) by the canonical successor-power identification followed by
+ε_{F(T^nX)}. This is the counit retraction of the next unit-insertion term. -/
 def adjunctionCoresolutionRetraction (adj : F ⊣ R) (n : ℕ) (X : C) :
     F.obj ((monadPow adj.toMonad (n + 1)).obj X) ⟶
       F.obj ((monadPow adj.toMonad n).obj X) :=
@@ -82,7 +88,8 @@ def adjunctionCoresolutionRetraction (adj : F ⊣ R) (n : ℕ) (X : C) :
     adj.counit.app (F.obj ((monadPow adj.toMonad n).obj X))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The counit contractions are natural in every original object morphism. -/
+/-- For an adjunction F ⊣ U, T=UF, n ∈ ℕ, and f : X → Y, the retractions s satisfy
+F(T^{n+1}f)≫s_n(Y)=s_n(X)≫F(T^n f). Both sides go from F(T^{n+1}X) to F(T^nY). -/
 theorem adjunctionCoresolutionRetraction_naturality (adj : F ⊣ R) (n : ℕ)
     {X Y : C} (f : X ⟶ Y) :
     F.map ((monadPow adj.toMonad (n + 1)).map f) ≫
@@ -105,7 +112,9 @@ theorem adjunctionCoresolutionRetraction_naturality (adj : F ⊣ R) (n : ℕ)
     (adj.counit.app (F.obj ((monadPow T n).obj X))) (F.map g)).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original first coface and the counit contraction compose to the identity. -/
+/-- Let F ⊣ U be an adjunction, T=UF, n ∈ ℕ, and X ∈ C. The first source-ordered insertion
+v_n^0=barEtaAtPos(T,n,0,X), after applying F, satisfies F(v_n^0)≫s_n=id_{F(T^nX)}, where s_n
+is the counit power retraction. -/
 theorem adjunctionCoresolutionRetraction_coface_zero (adj : F ⊣ R) (n : ℕ) (X : C) :
     F.map (barEtaAtPos adj.toMonad n 0 X) ≫
       adjunctionCoresolutionRetraction adj n X = 𝟙 _ := by
@@ -114,7 +123,9 @@ theorem adjunctionCoresolutionRetraction_coface_zero (adj : F ⊣ R) (n : ℕ) (
   exact adj.left_triangle_components ((monadPow adj.toMonad n).obj X)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every shifted coface commutes with the actual counit contraction. -/
+/-- For an adjunction F ⊣ U, T=UF, n ∈ ℕ, i ∈ Fin(n+1), and X ∈ C, the source-ordered unit
+insertions v satisfy F(v_{n+1}^{i+1})≫s_{n+1}=s_n≫F(v_n^i). This is the counit-retraction
+compatibility for every shifted coface. -/
 theorem adjunctionCoresolutionRetraction_coface_succ (adj : F ⊣ R) (n : ℕ)
     (i : Fin (n + 1)) (X : C) :
     F.map (barEtaAtPos adj.toMonad (n + 1) i.succ X) ≫
@@ -132,7 +143,10 @@ theorem adjunctionCoresolutionRetraction_coface_succ (adj : F ⊣ R) (n : ℕ)
     (adj.counit.app (F.obj ((monadPow T n).obj X))) (F.map g)).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same actual counit supplies the alternating differential contraction in every degree. -/
+/-- Let F ⊣ U be an adjunction with preadditive target D, and T=UF. Put
+D_n=Σ_{i∈Fin(n+1)}(-1)^i·F(barEtaAtPos(T,n,i,X)) and s_n the counit retraction. For every n ∈
+ℕ and X ∈ C, D_{n+1}≫s_{n+1}+s_n≫D_n=id_{F(T^{n+1}X)}. The signs use the displayed finite
+indices. -/
 theorem adjunctionCoresolutionRetraction_alternating [Preadditive D]
     (adj : F ⊣ R) (n : ℕ) (X : C) :
     (∑ i : Fin (n + 2), (-1 : ℤ) ^ i.val •

@@ -16,18 +16,18 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.Existence
 public import MathlibExt.Algebra.Homology.Kunneth.PID
 
 /-!
-# The objectwise Künneth sequence for a chosen resolution
+# The objectwise Künneth row for a chosen Cartan–Eilenberg resolution
 
-This file specializes the supplied-resolution PID Künneth construction to
-the repository's noncomputably chosen Cartan--Eilenberg resolution.  See
-Weibel, *An Introduction to Homological Algebra*, Theorem 3.6.3, and May,
-*A Concise Course in Algebraic Topology*, Chapter 17 §2, for the classical
-chain-complex Künneth sequence.
+Let R be a commutative principal ideal domain and K,L nonnegative chain complexes of R-modules
+in universe u, with every K_a flat. Choose a Cartan–Eilenberg resolution P_L of L and specialize
+the supplied-resolution Künneth row to this choice.
 
-The complexes are nonnegatively graded and the result is objectwise.  The
-choice does not supply functoriality or make the right edge independent of
-the resolution, and this module proves neither a natural splitting nor the
-classical noncanonical splitting.
+In degree n the terms are ⊕_{i+j=n}H_i(K)⊗_R H_j(L), H_n(K⊗_R L), and
+⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)). The first map remains the canonical homology tensor map; the
+right edge is the one constructed from P_L. The resulting objectwise row is short exact.
+
+For the classical sequence, see Weibel, An Introduction to Homological Algebra, Theorem 3.6.3,
+and May, A Concise Course in Algebraic Topology, Chapter 17 §2.
 -/
 
 set_option autoImplicit false
@@ -49,9 +49,11 @@ local instance {R : Type u} [CommRing R] :
     HasFiniteBiproducts (ChainComplex (ModuleCat.{u} R) ℕ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- The supplied-resolution PID Künneth short complex specialized to the
-repository's chosen Cartan--Eilenberg resolution. This is objectwise and does
-not assert resolution independence or naturality. -/
+/-- Let R be a commutative principal ideal domain, with R-modules in the same universe u. Let K,L be
+nonnegative chain complexes and assume every term K_a is flat over R. Put T_n=⊕_{i+j=n}H_i(K)⊗_R
+H_j(L) and U_n=⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)); U₀=0. Select the Cartan–Eilenberg resolution
+P_L of L. In every n≥0, the chosen short complex is T_n→H_n(K⊗_R L)→U_n obtained by specializing
+the supplied-resolution construction to P_L. -/
 noncomputable abbrev kunnethChosenShortComplex
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -61,8 +63,11 @@ noncomputable abbrev kunnethChosenShortComplex
   kunnethShortComplexOfResolution K
     (CartanEilenbergResolution.of L) hK n
 
-/-- The chosen short complex retains the canonical Künneth tensor map as its
-left arrow. -/
+/-- Let R be a commutative principal ideal domain, with R-modules in the same universe u. Let K,L be
+nonnegative chain complexes and assume every term K_a is flat over R. Put T_n=⊕_{i+j=n}H_i(K)⊗_R
+H_j(L) and U_n=⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)); U₀=0. For n≥0, the first arrow of the chosen
+Künneth short complex equals the canonical map T_n→H_n(K⊗_R L). On a tensor of homology classes
+it is the class of the corresponding tensor of cycles in total degree n. -/
 theorem kunnethChosenShortComplex_f_eq_kunnethHomologyTensorMap
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -73,7 +78,11 @@ theorem kunnethChosenShortComplex_f_eq_kunnethHomologyTensorMap
   kunnethShortComplexOfResolution_f_eq_kunnethHomologyTensorMap K
     (CartanEilenbergResolution.of L) hK n
 
-/-- The chosen objectwise PID Künneth short complex is exact. -/
+/-- Let R be a commutative principal ideal domain, with R-modules in the same universe u. Let K,L be
+nonnegative chain complexes and assume every term K_a is flat over R. Put T_n=⊕_{i+j=n}H_i(K)⊗_R
+H_j(L) and U_n=⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)); U₀=0. For every n≥0, the row built from the
+chosen Cartan–Eilenberg resolution of L is short exact: 0→T_n→H_n(K⊗_R L)→U_n→0. At degree zero
+its Tor-one term is zero. -/
 theorem kunnethChosenShortComplex_shortExact
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]

@@ -18,12 +18,16 @@ public import Mathlib.LinearAlgebra.Isomorphisms
 public import Mathlib.RingTheory.Length
 
 /-!
-# Length Euler identities for actual complexes with finite support
+# Weighted Euler length cancellation for finitely supported complexes
 
-The actual kernel and quotient computing homology give the middle-module
-length as homology length plus the two differential-range lengths. Finite
-support then permits cancellation of the actual incoming and outgoing ranges.
-Ring and module universes are independent.
+For a short complex of R-modules, the middle length is the sum of homology length and the
+lengths of the incoming and outgoing differential ranges. This equality holds in extended
+natural numbers. Finite middle length gives the corresponding finite natural-number identity.
+
+For a complex supported on a finite set s with finite term lengths, let ε assign integer
+weights satisfying ε(i)+ε(j)=0 along every differential edge. The range terms cancel, giving
+∑_{i∈s}ε(i)ℓ_R(K_i)=∑_{i∈s}ε(i)ℓ_R(H_i(K)). Homology is finite on s and zero outside s. The
+ring, index and module universes are independent.
 -/
 
 @[expose] public section
@@ -39,7 +43,9 @@ namespace CategoryTheory.ShortComplex
 
 variable {R : Type u} [CommRing R] (S : ShortComplex (ModuleCat.{v} R))
 
-/-- Actual homology and differential ranges decompose the middle module's extended length. -/
+/-- The middle length decomposes into homology and range lengths.
+
+For a module short complex S, ℓ(S₂)=ℓ(H(S))+ℓ(range f)+ℓ(range g) in extended natural numbers. -/
 theorem moduleCat_length_X₂_eq :
     Module.length R S.X₂ = Module.length R S.homology +
       Module.length R S.f.hom.range + Module.length R S.g.hom.range := by
@@ -64,14 +70,19 @@ theorem moduleCat_length_X₂_eq :
   rw [hm, hker, hp, ← hh,
     add_comm (Module.length R S.f.hom.range) (Module.length R S.homology)]
 
-/-- Finite middle-module length earns finite length of the actual homology. -/
+/-- Finite middle length gives finite homology length.
+
+If the middle module of S has finite length, its homology has finite length. -/
 theorem moduleCat_homology_length_ne_top (hM : Module.length R S.X₂ ≠ ⊤) :
     Module.length R S.homology ≠ ⊤ := by
   apply ne_top_of_le_ne_top hM
   rw [S.moduleCat_length_X₂_eq]
   exact le_self_add.trans le_self_add
 
-/-- The actual middle length is the sum of finite homology and the two finite ranges. -/
+/-- The natural-number length decomposition of a finite middle term.
+
+For finite-length S₂, its natural-number length equals those of homology and the two
+differential ranges added together. -/
 theorem moduleCat_length_X₂_toNat (hM : Module.length R S.X₂ ≠ ⊤) :
     (Module.length R S.X₂).toNat = (Module.length R S.homology).toNat +
       (Module.length R S.f.hom.range).toNat + (Module.length R S.g.hom.range).toNat := by
@@ -93,7 +104,11 @@ namespace HomologicalComplex
 variable {R : Type u} [CommRing R] {ι : Type w} {c : ComplexShape ι}
   (K : HomologicalComplex (ModuleCat.{v} R) c)
 
-/-- Genuine finite support and opposite arrow weights give the actual homology Euler sum. -/
+/-- The weighted term Euler sum equals the homology sum.
+
+For finite support s, finite lengths on s and opposite integer weights across each
+differential edge, homology is finite on s, zero outside it, and the two weighted length sums
+agree. -/
 theorem lengthEuler_eq_homology_of_finite_support (s : Finset ι) (ε : ι → ℤ)
     (hzero : ∀ i, i ∉ s → IsZero (K.X i))
     (hlen : ∀ i ∈ s, Module.length R (K.X i) ≠ ⊤)

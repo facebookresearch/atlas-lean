@@ -1,4 +1,6 @@
-# Coefficient Eulerian boundary
+# Each rational coefficient Eulerian projector commutes with the boundary
 
-Every original rational Eulerian coefficient operator commutes with the
-full Hochschild boundary. The conclusion is from the bar-lambda boundary square and the original rational projector laws.
+Each rational coefficient Eulerian projector commutes with the boundary.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, bₙ ∘
+eₙ₊₁⁽ⁱ⁾ = eₙ⁽ⁱ⁾ ∘ bₙ for every weight i, including weights outside the degree range.

@@ -15,12 +15,19 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalTwoColumnZeroEdge
 
 /-!
-# Two-column partial-total convergence
+# Two-column partial-total homology and its canonical edge sequence
 
-When the page-two partial-total spectral sequence has only columns zero and
-one, those columns identify with the two adjacent pieces of the finite
-homology filtration.  This file constructs the literal right edge and the
-resulting two-column short exact sequence.  It chooses no splitting.
+Let B be a first-quadrant bicomplex in an abelian category and E its increasing homological
+partial-total spectral sequence, with d_r of bidegree (-r,r−1). Assume its second page is
+supported in columns zero and one: E^2_{p,q}=0 for every p≥2. For p≤1, the surviving second-page
+object identifies with the stable interval S_{p+q,p}=E_Y(⊥,p−1,p,⊤;−(p+q)) of the partial-total
+spectral object Y. Here p−1 is an integer cut.
+
+In total degree n=q+1 with q∈ℕ, the image filtration F_0⊂F_1⊂H_n(Tot B) has F_1≅H_n(Tot B), and
+its two adjacent graded pieces identify with E^2_{0,q+1} and E^2_{1,q}. The zero-column edge is
+the map through S_{n,0} and F_0 into total homology. The right edge is the quotient by F_0 after
+identifying total homology with F_1. These arrows give the canonical short exact sequence
+0→E^2_{0,q+1}→H_{q+1}(Tot B)→E^2_{1,q}→0 in arbitrary category universes.
 -/
 
 @[expose] public section
@@ -47,8 +54,12 @@ local notation "core" =>
 local notation "E" =>
   B.partialTotalSpectralObject.spectralSequence core
 
-/-- In a two-column partial-total spectral sequence, a surviving page-two
-coordinate is canonically its stable interval. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+p,q∈ℕ with p≤1 and n=p+q, let S_{n,p}=E_Y(⊥,p−1,p,⊤;−n) be the stable interval of the
+partial-total spectral object Y. This canonical isomorphism E^2_{p,q}≅S_{n,p} follows the
+spectral-object survivor coordinate from page two to page n+2 and then the stable-page
+comparison. The cut p−1 is interpreted in ℤ, including -1 at p=0. -/
 noncomputable def partialTotalTwoColumnPageTwoStableIso
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (p q : ℕ) (hp : p ≤ 1) :
@@ -118,8 +129,11 @@ private theorem partialTotalZeroColumnPageToStable_eq_twoColumnStableIso
   unfold partialTotalTwoColumnZeroColumnPageTwoStableIso
   exact B.partialTotalZeroColumnPageToStable_eq_pageTwoToStable_of_twoColumn h₂ q
 
-/-- Under a two-column page-two hypothesis, the literal existing zero-column
-page-to-stable map is an isomorphism. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+q∈ℕ, the specified zero-column map θ_q:E^2_{0,q}→S_{q,0}, where S_{q,0}=E_Y(⊥,-1,0,⊤;−q), is an
+isomorphism. The map θ_q is the chosen page-two coordinate followed by its source-presentation
+identification and the stable-tail map; the conclusion applies to that arrow. -/
 theorem isIso_partialTotalZeroColumnPageToStable_of_twoColumn
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (q : ℕ) : IsIso (B.partialTotalZeroColumnPageToStable q) := by
@@ -192,8 +206,12 @@ private theorem isIso_partialTotalHomologyFiltration_map_one_to_of_twoColumn
         (B.isIso_partialTotalHomologyFiltrationAdjacentHom_of_twoColumn
           h₂ n (k + 2) (by omega) (by omega))
 
-/-- Under a two-column page-two hypothesis, the actual stage-one filtration
-inclusion in total degree `q+1` is an isomorphism. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+q∈ℕ and n=q+1, let F_pH_n(Tot B)=image(H_n(P_p(B))→H_n(Tot B)) be the partial-total image
+filtration. The inclusion ι_1:F_1H_n(Tot B)→H_n(Tot B) is an isomorphism. All higher adjacent
+graded pieces vanish under the two-column hypothesis, and the finite filtration is exhaustive at
+stage n. -/
 theorem isIso_partialTotalHomologyFiltration_ι_app_one_of_twoColumn
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (q : ℕ) :
@@ -218,8 +236,12 @@ theorem isIso_partialTotalHomologyFiltration_ι_app_one_of_twoColumn
   rw [← hfg]
   infer_instance
 
-/-- The right edge from total homology to the surviving page-two column one
-is the literal adjacent filtration quotient. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+q∈ℕ set n=q+1, let ι_1:F_1H_n(Tot B)≅H_n(Tot B) be the stage-one inclusion and π_1:F_1H_n(Tot
+B)→gr_1H_n(Tot B) its quotient by F_0. Write u:S_{n,1}≅gr_1H_n(Tot B) for the stable-graded
+comparison and e:E^2_{1,q}≅S_{n,1} for the two-column survivor comparison. This right edge
+H_n(Tot B)→E^2_{1,q} is ι_1^{-1}≫π_1≫u.inv≫e.inv. -/
 noncomputable def partialTotalOneColumnRightEdge
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (q : ℕ) :
@@ -276,8 +298,13 @@ private noncomputable def partialTotalTwoColumnTotalFiltrationOneIso
     B.isIso_partialTotalHomologyFiltration_ι_app_one_of_twoColumn h₂ q
   exact (asIso f).symm
 
-/-- The two surviving page-two columns form the literal partial-total edge
-short complex. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+q∈ℕ, this short complex is E^2_{0,q+1}→H_{q+1}(Tot B)→E^2_{1,q}. The first arrow is the
+zero-column edge through its stable interval and the stage-zero image filtration. The second
+identifies total homology with stage one and then takes the adjacent quotient, followed by the
+inverse stable-column comparison. The composite is zero because the stage-zero image is killed
+by the stage-one quotient. -/
 noncomputable abbrev partialTotalTwoColumnShortComplex
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (q : ℕ) : ShortComplex C :=
@@ -372,7 +399,12 @@ private noncomputable def partialTotalTwoColumnShortComplexIsoGraded
     simp only [Iso.symm_hom, asIso_inv, Iso.trans_hom, Category.assoc,
       Iso.inv_hom_id_assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- The literal two-column partial-total edge short complex is short exact. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+every q∈ℕ, the specified edge arrows give a short exact sequence 0→E^2_{0,q+1}→H_{q+1}(Tot
+B)→E^2_{1,q}→0. It is the adjacent image-filtration sequence 0→F_0→F_1→gr_1→0 transported
+through the survivor and stable-graded isomorphisms and the canonical isomorphism
+F_1≅H_{q+1}(Tot B). -/
 theorem partialTotalTwoColumnShortComplex_shortExact
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (q : ℕ) :

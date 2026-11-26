@@ -16,13 +16,24 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Shapir
 public import MathlibExt.RepresentationTheory.Rep.CyclicPermutationCoinduced
 
 /-!
-# Comparing Shapiro and Schreier corestriction
+# Shapiro comparison, restriction, and corestriction
 
-The explicit bar-resolution Shapiro comparison identifies the coefficient
-counit with the established Schreier corestriction in every degree.
-The canonical comparison uses the proven independence of the right transversal.
-The same comparison identifies cyclic augmentation and diagonal with the
-established corestriction and restriction maps.
+Let `G` be a group and `k` a commutative ring. The bar complexes for a subgroup `H ≤ G` and
+for `G` have a natural inclusion `B_H → Res_H B_G`. If `H` has finite index, a right
+transversal gives an adjoint Schreier comparison and a homotopy equivalence of these
+resolutions. Applying coefficient Hom and the restriction–coinduction adjunction gives `S_T^n
+: H^n(G,Coind_H^G B) ≅ H^n(H,B)` for `B : Rep k H`.
+
+For `A : Rep k G`, let `η_A : A → Coind(Res A)` be the restriction–coinduction unit and let
+`ε_A : Coind(Res A) → A` be the finite-index counit. They satisfy `η_* ≫ S_T.hom = res_H^G`
+and `S_T.inv ≫ ε_* = cor_H^G` in every degree. The counit has value `ε_A(f)=∑ t∈T,
+ρ_A(t⁻¹)f(t)` for any right transversal.
+
+For a surjective character `χ : G → Multiplicative (ZMod ℓ)` with `ℓ ≠ 0`, put
+`c(g)=Multiplicative.toAdd (χ g)`. The cyclic coefficient representation consists of functions
+`p : ZMod ℓ → A` with action `(g·p)(i)=ρ_A(g)p(i+c(g))`. Its comparison with coinduction is `p
+↦ (g ↦ ρ_A(g)p(c(g)))`. The diagonal `a ↦ (i ↦ a)` corresponds to restriction, and the
+augmentation `p ↦ ∑ i, p(i)` corresponds to corestriction from `ker χ`.
 -/
 
 @[expose] public section
@@ -39,18 +50,24 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable (H : Subgroup G) [H.FiniteIndex]
 
-/-- Classical right-coset equality used by the explicit Shapiro comparison. -/
+/-- For a group `G` and a subgroup `H ≤ G`, the relation of belonging to the same right `H`-coset
+is classically decidable. This local instance gives `DecidableRel (QuotientGroup.rightRel H)`
+on `G`. -/
 noncomputable local instance shapiroComparisonDecidableRightRel :
     DecidableRel (QuotientGroup.rightRel H) :=
   Classical.decRel _
 
-/-- A finite right transversal for the finite-index counit sum. -/
+/-- For a group `G`, a finite-index subgroup `H ≤ G`, and a right transversal `T`, the subtype `(T
+: Set G)` of representatives has a finite enumeration. This local `Fintype` structure gives
+the index set of the finite coinduction counit sum. -/
 noncomputable local instance shapiroComparisonRightTransversalFintype
     (T : H.RightTransversal) : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The finite-index coinduction counit is the usual sum of transported
-values over any right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. For `f ∈ Coind_H^G(Res_H A)`, `(corestrictionCounit H A)(f) = ∑ t∈T,
+A.ρ(t⁻¹)(f.1(t))`. Here `f.1 : G → A` is the coinduced function, and the sum is over the
+finite representative subtype of `T`. -/
 theorem corestrictionCounit_apply_eq_sum
     (A : Rep k G) (T : H.RightTransversal)
     (f : Rep.coind H.subtype (Rep.res H.subtype A)) :
@@ -68,8 +85,11 @@ theorem corestrictionCounit_apply_eq_sum
   intro t _ht
   simp [Rep.indResAdjunction, Rep.indResHomEquiv]
 
-/-- The two finite-index adjunctions identify inverse coinduced Shapiro
-followed by the coinduction counit with the induced adjoint composite. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `X,A : Rep k G`, and `Y :
+Rep k H`. Given `r : Res X → Y` and `z : Y → Res A`, write `α=Rep.resCoindHomEquiv H.subtype X
+(Res A)`, `β=(Rep.resIndAdjunction k H).homEquiv X Y`, and `γ=(Rep.indResHomEquiv H.subtype Y
+A).symm`. Then `α(r ≫ z) ≫ corestrictionCounit H A = β(r) ≫ γ(z)` as morphisms `X → A`; the
+right-hand composite factors through `Ind_H^G Y`. -/
 theorem resCoindHomEquiv_comp_corestrictionCounit
     {X : Rep.{u} k G} {Y : Rep.{u} k H} (A : Rep.{u} k G)
     (r : Rep.res H.subtype X ⟶ Y)
@@ -111,8 +131,10 @@ theorem resCoindHomEquiv_comp_corestrictionCounit
       rfl
 
 omit [H.FiniteIndex] in
-/-- Taking the adjoint of a morphism followed by the
-restriction--coinduction unit recovers the restricted morphism. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `X,A : Rep k G`, and `f : X → A`. For the
+restriction–coinduction unit `η_A=(Rep.resCoindAdjunction k H.subtype).unit.app A`,
+`(Rep.resCoindHomEquiv H.subtype X (Res A)).symm (f ≫ η_A) = (Rep.resFunctor H.subtype).map
+f`. -/
 theorem resCoindHomEquiv_symm_comp_unit
     {X A : Rep.{u} k G} (f : X ⟶ A) :
     (Rep.resCoindHomEquiv H.subtype X (Rep.res H.subtype A)).symm
@@ -128,8 +150,10 @@ theorem resCoindHomEquiv_symm_comp_unit
         ((Rep.resFunctor H.subtype).map f)
   exact adj.unit.naturality f
 
-/-- Degreewise inclusion of the subgroup bar complex into the restriction
-of the ambient bar complex. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `n : ℕ`. The equivariant morphism
+`barRestrictionComponent H n : (Rep.barComplex k H).X n → Res_H((Rep.barComplex k G).X n)`
+sends the unit-coefficient bar basis at `q : Fin n → H` to the ambient bar basis at `fun i =>
+(q i : G)`. It is the free equivariant extension of this basis formula. -/
 noncomputable def barRestrictionComponent (n : ℕ) :
     (Rep.barComplex k H).X n ⟶
       Rep.res H.subtype ((Rep.barComplex k G).X n) :=
@@ -147,8 +171,9 @@ theorem barRestrictionComponent_barBasis
   freeLift_barBasis _ _ _ _
 
 omit [H.FiniteIndex] in
-/-- The degreewise subgroup bar inclusions commute with bar
-differentials. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `n : ℕ`. Write
+`ι_j=barRestrictionComponent H j` and `B_H,B_G` for the two bar complexes. Then `ι_{n+1} ≫
+Res_H(B_G.d (n+1) n) = B_H.d (n+1) n ≫ ι_n`, as maps from `B_H.X (n+1)` to `Res_H(B_G.X n)`. -/
 theorem barRestrictionComponent_comm (n : ℕ) :
     barRestrictionComponent (k := k) H (n + 1) ≫
         (Rep.resFunctor H.subtype).map
@@ -183,8 +208,9 @@ theorem barRestrictionComponent_comm (n : ℕ) :
   rw [inhomogeneous_d_restrictedBarBasisCochain] at hH
   exact hG.symm.trans hH.symm
 
-/-- Literal chain map from the subgroup bar complex to the restriction of
-the ambient bar complex. -/
+/-- Let `G` be a group, `k` a commutative ring, and `H ≤ G`. The chain map `barRestrictionChain H
+: B_H → Res_H B_G` has component `barRestrictionComponent H n` in every degree `n : ℕ`. On
+unit-coefficient basis tuples it applies the inclusion `H → G` to each coordinate. -/
 noncomputable def barRestrictionChain :
     Rep.barComplex k H ⟶
       ((Rep.resFunctor H.subtype).mapHomologicalComplex
@@ -194,7 +220,10 @@ noncomputable def barRestrictionChain :
     rcases hij with ⟨rfl⟩
     exact barRestrictionComponent_comm (k := k) H j
 
-/-- Projective-resolution form of `barRestrictionChain`. -/
+/-- Let `G` be a group, `k` a commutative ring, and `H ≤ G`. Write `P_G=Rep.barResolution k G`,
+`P_H=Rep.barResolution k H`, and `R_H(P_G)=(Rep.resFunctor H.subtype).mapProjectiveResolution
+P_G`. The chain map `barRestriction H : P_H.complex → R_H(P_G).complex` has the subgroup bar
+inclusions `barRestrictionComponent H n` as its degree-`n` components. -/
 noncomputable def barRestriction :
     (Rep.barResolution k H).complex ⟶
       ((Rep.resFunctor H.subtype).mapProjectiveResolution
@@ -208,7 +237,9 @@ noncomputable def barRestriction :
 
 set_option backward.isDefEq.respectTransparency false in
 omit [H.FiniteIndex] in
-/-- The degree-zero literal bar restriction commutes with augmentation. -/
+/-- Let `G` be a group, `k` a commutative ring, and `H ≤ G`. For the degree-zero bar inclusion
+`ι₀=barRestrictionComponent H 0`, `ι₀ ≫ Res_H(barAugmentationZero G) = barAugmentationZero H`.
+The augmentations send unit-coefficient degree-zero basis elements to `1 : k`. -/
 theorem barRestrictionComponent_zero_comp_augmentation :
     barRestrictionComponent (k := k) H 0 ≫
         (Rep.resFunctor H.subtype).map
@@ -237,8 +268,10 @@ theorem barRestrictionComponent_zero_comp_augmentation :
 
 set_option backward.isDefEq.respectTransparency false in
 omit [H.FiniteIndex] in
-/-- Literal bar restriction is a morphism of the subgroup bar resolution
-to the restricted ambient bar resolution. -/
+/-- Let `G` be a group, `k` a commutative ring, and `H ≤ G`. Put `P_H=Rep.barResolution k H` and
+`R_H(P_G)=(Rep.resFunctor H.subtype).mapProjectiveResolution (Rep.barResolution k G)`. The
+chain map `barRestriction H` satisfies `barRestriction H ≫ R_H(P_G).π = P_H.π`, as maps to the
+degree-zero complex of the trivial `H`-representation. -/
 theorem barRestriction_comp_π :
     barRestriction (k := k) H ≫
         ((Rep.resFunctor H.subtype).mapProjectiveResolution
@@ -255,8 +288,11 @@ theorem barRestriction_comp_π :
       exact barRestrictionComponent_zero_comp_augmentation (k := k) H
   | succ n => simp
 
-/-- The adjoint of the universal induced-bar transfer, as a chain map from
-the restricted ambient bar complex to the subgroup bar complex. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+If `J_T=schreierTransferInducedBarChain H T : B_G → Ind_H^G B_H`, then
+`schreierRestrictionBarChain H T : Res_H B_G → B_H` has degree-`n` component
+`((Rep.resIndAdjunction k H).homEquiv _ _).symm (J_T.f n)`. Thus each component is the adjoint
+of induced-bar transfer under the finite-index restriction–induction adjunction. -/
 noncomputable def schreierRestrictionBarChain
     (T : H.RightTransversal) :
     ((Rep.resFunctor H.subtype).mapHomologicalComplex
@@ -282,7 +318,11 @@ noncomputable def schreierRestrictionBarChain
         apply congrArg (adj.homEquiv _ _).symm
         exact (schreierTransferInducedBarChain (k := k) H T).comm _ _ }
 
-/-- Projective-resolution form of `schreierRestrictionBarChain`. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The chain map `schreierRestrictionBar H T` runs from the restricted complex of
+`Rep.barResolution k G` to the complex of `Rep.barResolution k H`. Under the bar-complex
+identifications, its components are those of `schreierRestrictionBarChain H T`, the adjoint
+induced-bar transfer. -/
 noncomputable def schreierRestrictionBar
     (T : H.RightTransversal) :
     ((Rep.resFunctor H.subtype).mapHomologicalComplex
@@ -291,8 +331,10 @@ noncomputable def schreierRestrictionBar
   rw [Rep.barResolution_complex, Rep.barResolution_complex]
   exact schreierRestrictionBarChain H T
 
-/-- The degree-zero adjoint transfer commutes with the two bar
-augmentations. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The degree-zero adjoint Schreier component satisfies `(schreierRestrictionBarChain H T).f 0 ≫
+barAugmentationZero H = Res_H(barAugmentationZero G)` as morphisms from the restricted ambient
+bar term to the trivial `H`-representation. -/
 theorem schreierRestrictionBarChain_zero_comp_augmentation
     (T : H.RightTransversal) :
     (schreierRestrictionBarChain (k := k) H T).f 0 ≫
@@ -324,8 +366,10 @@ theorem schreierRestrictionBarChain_zero_comp_augmentation
         (Rep.trivial k G k)))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The adjoint Schreier map is a morphism of projective resolutions of the
-trivial subgroup representation. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+With `P_H=Rep.barResolution k H` and `R_H(P_G)` the restricted ambient bar projective
+resolution, `schreierRestrictionBar H T ≫ P_H.π = R_H(P_G).π`. Hence this chain map lifts the
+identity of the trivial `H`-representation. -/
 theorem schreierRestrictionBar_comp_π
     (T : H.RightTransversal) :
     schreierRestrictionBar (k := k) H T ≫
@@ -344,8 +388,11 @@ theorem schreierRestrictionBar_comp_π
   | succ n => simp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The explicit adjoint Schreier comparison is homotopic to the canonical
-lift between the restricted ambient and subgroup bar resolutions. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+Put `P_H=Rep.barResolution k H` and `R_H(P_G)` for the restricted ambient bar projective
+resolution. There is a chain homotopy from `schreierRestrictionBar H T` to
+`ProjectiveResolution.lift (𝟙 (Rep.trivial k H k)) R_H(P_G) P_H`, the canonical comparison
+lifting the identity on the resolved trivial representation. -/
 noncomputable def schreierRestrictionBarHomotopy
     (T : H.RightTransversal) :
     Homotopy (schreierRestrictionBar (k := k) H T)
@@ -371,8 +418,11 @@ noncomputable def schreierRestrictionBarHomotopy
       exact schreierRestrictionBar_comp_π H T)
     (by simp)
 
-/-- The restricted ambient and subgroup bar resolutions, with the explicit
-adjoint Schreier map as the forward homotopy equivalence. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+Put `P_H=Rep.barResolution k H` and `R_H(P_G)` for the restricted ambient bar projective
+resolution. The homotopy equivalence `schreierRestrictionBarHomotopyEquiv H T :
+R_H(P_G).complex ≃ P_H.complex` has forward chain map `schreierRestrictionBar H T`. Its
+composites with the reverse map are homotopic to the respective identities. -/
 noncomputable def schreierRestrictionBarHomotopyEquiv
     (T : H.RightTransversal) :
     HomotopyEquiv
@@ -386,8 +436,10 @@ noncomputable def schreierRestrictionBarHomotopyEquiv
       (schreierRestrictionBarHomotopy (k := k) H T).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The reverse map retained by the explicit Schreier homotopy equivalence
-is a lift of the identity on the trivial subgroup representation. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+For `F_T=schreierRestrictionBarHomotopyEquiv H T`, `P_H=Rep.barResolution k H`, and the
+restricted resolution `R_H(P_G)`, `F_T.inv ≫ R_H(P_G).π = P_H.π`. Thus the reverse map also
+lifts the identity on the trivial `H`-representation. -/
 theorem schreierRestrictionBarHomotopyEquiv_inv_comp_π
     (T : H.RightTransversal) :
     (schreierRestrictionBarHomotopyEquiv (k := k) H T).inv ≫
@@ -404,8 +456,11 @@ theorem schreierRestrictionBarHomotopyEquiv_inv_comp_π
   exact ProjectiveResolution.homotopyEquiv_inv_π _ _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The reverse restricted-bar lift in explicit Schreier Shapiro is
-homotopic to literal bar restriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The reverse chain map of `schreierRestrictionBarHomotopyEquiv H T` is homotopic to
+`barRestriction H : (Rep.barResolution k H).complex → R_H(Rep.barResolution k G).complex`.
+Both comparisons preserve augmentation and lift the identity on the trivial
+`H`-representation. -/
 noncomputable def schreierShapiroInverseBarRestrictionHomotopy
     (T : H.RightTransversal) :
     Homotopy
@@ -434,8 +489,11 @@ noncomputable def schreierShapiroInverseBarRestrictionHomotopy
       rw [hid, Category.comp_id]
       exact barRestriction_comp_π (k := k) H)
 
-/-- Applying linear Hom into a subgroup coefficient reverses the explicit
-restricted-bar homotopy equivalence. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `B : Rep k H`, and `T` a
+right transversal. For `P_H` and the restricted ambient resolution `R_H(P_G)`, applying the
+contravariant linear-Hom cochain functor gives a homotopy equivalence `L(P_H,B) ≃
+L(R_H(P_G),B)`. Its forward map precomposes with `schreierRestrictionBar H T`; its reverse map
+precomposes with the reverse bar-resolution comparison. -/
 noncomputable def schreierRestrictionLinearHomHomotopyEquiv
     (B : Rep k H) (T : H.RightTransversal) :
     HomotopyEquiv
@@ -459,9 +517,11 @@ theorem schreierRestrictionLinearHomHomotopyEquiv_hom
           (schreierRestrictionBar (k := k) H T).op :=
   rfl
 
-/-- The explicit inverse-Shapiro homotopy equivalence: subgroup
-inhomogeneous cochains are carried to ambient inhomogeneous cochains with
-coinduced coefficients by the adjoint Schreier comparison. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `B : Rep k H`, and `T` a
+right transversal. The homotopy equivalence `schreierCoindShapiroInvCochainHomotopyEquiv H B
+T` runs from `C^*(H,B)` to `C^*(G,Coind_H^G B)`. It combines the inhomogeneous/bar
+comparisons, precomposition with the adjoint Schreier map, and the restriction–coinduction Hom
+adjunction. Its forward map induces inverse Shapiro on cohomology. -/
 noncomputable def schreierCoindShapiroInvCochainHomotopyEquiv
     (B : Rep k H) (T : H.RightTransversal) :
     HomotopyEquiv
@@ -485,8 +545,10 @@ noncomputable def schreierCoindShapiroInvCochainHomotopyEquiv
               (inhomogeneousResolutionLinearHomCochainIso
                 (Rep.coind H.subtype B)).symm
 
-/-- Ambient cochains, restricted as equivariant maps on the restricted
-ambient bar resolution. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `A : Rep k G`. The cochain map
+`ambientRestrictedBarCochains H A : C^*(G,A) → L(R_H(P_G),Res_H A)` carries each ambient
+inhomogeneous cochain to its equivariant bar morphism restricted to `H`. Here
+`P_G=Rep.barResolution k G` and `L` is the linear-Hom cochain complex. -/
 noncomputable def ambientRestrictedBarCochains (A : Rep k G) :
     inhomogeneousCochains A ⟶
       (HomologicalComplex.linearHomCochainComplexFunctor
@@ -510,8 +572,10 @@ noncomputable def ambientRestrictedBarCochains (A : Rep k G) :
 
 set_option backward.isDefEq.respectTransparency false in
 omit [H.FiniteIndex] in
-/-- The restricted-bar model of an ambient inhomogeneous cochain is the
-restriction of its ambient free lift. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `n : ℕ`, and `z : (Fin n →
+G) → A`. Then `(ambientRestrictedBarCochains H A).f n (z) = (Rep.resFunctor H.subtype).map
+(Rep.freeLift k G A z)`. This identifies the degree-`n` restricted bar morphism with the
+restriction of the ambient equivariant linear extension. -/
 theorem ambientRestrictedBarCochains_f_apply
     (A : Rep k G) (n : ℕ) (z : (Fin n → G) → A) :
     ((ambientRestrictedBarCochains H A).f n).hom z =
@@ -551,8 +615,11 @@ theorem ambientRestrictedBarCochains_f_apply
     rw [freeLift_barBasis]
   rw [hfree, resCoindHomEquiv_symm_comp_unit]
 
-/-- Coefficient-unit transport followed by explicit Schreier Shapiro on
-cochains. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. Write `η_A` for the restriction–coinduction unit and
+`Ψ_T=schreierCoindShapiroInvCochainHomotopyEquiv H (Res_H A) T`. The cochain map
+`coindUnitSchreierShapiroCochains H A T : C^*(G,A) → C^*(H,Res_H A)` is `cochainsMap (id G)
+η_A ≫ Ψ_T.inv`. -/
 noncomputable def coindUnitSchreierShapiroCochains
     (A : Rep k G) (T : H.RightTransversal) :
     inhomogeneousCochains A ⟶
@@ -563,8 +630,11 @@ noncomputable def coindUnitSchreierShapiroCochains
       (Rep.res H.subtype A) T).inv
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The coefficient-unit/Shapiro cochain map is precomposition by the
-reverse restricted-bar lift after restricting the ambient free lift. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `n : ℕ`. For `z : (Fin n → G) → A` and `q : Fin n → H`, the value of
+`coindUnitSchreierShapiroCochains H A T` is `(F_T.inv.f n ≫ Res_H(Rep.freeLift k G A
+z))(barBasis_H n q)`, where `F_T=schreierRestrictionBarHomotopyEquiv H T` and the basis has
+unit group-ring coefficient. -/
 theorem coindUnitSchreierShapiroCochains_f_apply
     (A : Rep k G) (T : H.RightTransversal) (n : ℕ)
     (z : (Fin n → G) → A) (q : Fin n → H) :
@@ -614,8 +684,11 @@ theorem coindUnitSchreierShapiroCochains_f_apply
   rw [hfree, resCoindHomEquiv_symm_comp_unit]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- After the subgroup inhomogeneous/bar comparison, coefficient-unit
-Shapiro is precomposition by the reverse restricted-bar lift. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. Put `F_T=schreierRestrictionBarHomotopyEquiv H T`,
+`I_H=inhomogeneousResolutionLinearHomCochainIso (Res_H A)`, and `L` the contravariant
+Hom-cochain functor with coefficient `Res_H A`. Then `coindUnitSchreierShapiroCochains H A T ≫
+I_H.hom = ambientRestrictedBarCochains H A ≫ L.map F_T.inv.op`. -/
 theorem coindUnitSchreierShapiroCochains_comp_resolutionIso
     (A : Rep k G) (T : H.RightTransversal) :
     coindUnitSchreierShapiroCochains H A T ≫
@@ -643,8 +716,11 @@ theorem coindUnitSchreierShapiroCochains_comp_resolutionIso
 
 set_option backward.isDefEq.respectTransparency false in
 omit [H.FiniteIndex] in
-/-- Literal inhomogeneous restriction is precomposition by literal bar
-restriction after restricting the ambient free lift. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `A : Rep k G`. Put
+`I_H=inhomogeneousResolutionLinearHomCochainIso (Res_H A)` and let `L` be the contravariant
+Hom-cochain functor with coefficient `Res_H A`. Then `cochainsMap H.subtype (𝟙 (Res_H A)) ≫
+I_H.hom = ambientRestrictedBarCochains H A ≫ L.map (barRestriction H).op`. Thus subgroup
+restriction is precomposition by the bar inclusion after the ambient cochain comparison. -/
 theorem restrictionCochains_comp_resolutionIso
     (A : Rep k G) :
     cochainsMap H.subtype (𝟙 (Rep.res H.subtype A)) ≫
@@ -679,8 +755,9 @@ theorem restrictionCochains_comp_resolutionIso
   rw [freeLift_barBasis]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Coefficient-unit transport followed by explicit Schreier Shapiro
-induces ordinary subgroup restriction on cohomology. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `n : ℕ`. The map induced by `coindUnitSchreierShapiroCochains H A T` on
+degree-`n` cohomology equals `map H.subtype (𝟙 (Res_H A)) n : H^n(G,A) → H^n(H,Res_H A)`. -/
 theorem homologyMap_coindUnitSchreierShapiroCochains
     (A : Rep k G) (T : H.RightTransversal) (n : ℕ) :
     HomologicalComplex.homologyMap
@@ -731,8 +808,10 @@ theorem homologyMap_coindUnitSchreierShapiroCochains
           rw [HomologicalComplex.homologyMap_comp]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The explicit inverse-Shapiro cochain map followed by the finite-index
-coinduction counit is the chosen-transversal Schreier transfer. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. Put `Ψ_T=schreierCoindShapiroInvCochainHomotopyEquiv H (Res_H A) T` and
+`ε_A=corestrictionCounit H A`. Then `Ψ_T.hom ≫ cochainsMap (id G) ε_A = corestrictionCochains
+A T`, as maps `C^*(H,Res_H A) → C^*(G,A)`. -/
 theorem schreierCoindShapiroInvCochains_comp_counit
     (A : Rep k G) (T : H.RightTransversal) :
     (schreierCoindShapiroInvCochainHomotopyEquiv H
@@ -774,8 +853,11 @@ theorem schreierCoindShapiroInvCochains_comp_counit
   rw [freeLift_barBasis] at hbasis
   exact hbasis
 
-/-- Explicit Shapiro isomorphism whose inverse is induced by the adjoint
-Schreier restricted-bar comparison. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `B : Rep k H`, `T` a right
+transversal, and `n : ℕ`. The isomorphism `schreierCoindShapiroIso H B T n : H^n(G,Coind_H^G
+B) ≅ H^n(H,B)` is the inverse of the homology isomorphism induced by
+`schreierCoindShapiroInvCochainHomotopyEquiv H B T`. Its inverse morphism is induced by that
+cochain equivalence's forward map. -/
 noncomputable def schreierCoindShapiroIso
     (B : Rep k H) (T : H.RightTransversal) (n : ℕ) :
     groupCohomology (Rep.coind H.subtype B) n ≅
@@ -799,8 +881,10 @@ theorem schreierCoindShapiroIso_hom
         (schreierCoindShapiroInvCochainHomotopyEquiv H B T).inv n :=
   rfl
 
-/-- The restriction--coinduction unit followed by explicit Schreier
-Shapiro is ordinary subgroup restriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `n : ℕ`. For `η_A=(Rep.resCoindAdjunction k H.subtype).unit.app A` and
+`S_T=schreierCoindShapiroIso H (Res_H A) T n`, `map (id G) η_A n ≫ S_T.hom = map H.subtype (𝟙
+(Res_H A)) n` as maps `H^n(G,A) → H^n(H,Res_H A)`. -/
 theorem map_unit_comp_schreierCoindShapiroIso_hom
     (A : Rep k G) (T : H.RightTransversal) (n : ℕ) :
     groupCohomology.map (MonoidHom.id G)
@@ -821,8 +905,10 @@ theorem map_unit_comp_schreierCoindShapiroIso_hom
       (coindUnitSchreierShapiroCochains H A T) n = _
   exact homologyMap_coindUnitSchreierShapiroCochains H A T n
 
-/-- Explicit inverse Shapiro followed by the finite-index counit is the
-chosen-transversal Schreier corestriction in every degree. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `n : ℕ`. For `S_T=schreierCoindShapiroIso H (Res_H A) T n` and
+`ε_A=corestrictionCounit H A`, `S_T.inv ≫ map (id G) ε_A n = corestrictionOfRightTransversal A
+T n` as maps `H^n(H,Res_H A) → H^n(G,A)`. -/
 theorem schreierCoindShapiroIso_inv_comp_corestrictionCounit
     (A : Rep k G) (T : H.RightTransversal) (n : ℕ) :
     (schreierCoindShapiroIso H (Rep.res H.subtype A) T n).inv ≫
@@ -839,9 +925,11 @@ theorem schreierCoindShapiroIso_inv_comp_corestrictionCounit
   rw [← HomologicalComplex.homologyMap_comp,
     schreierCoindShapiroInvCochains_comp_counit]
 
-/-- Explicit inverse Shapiro followed by the finite-index coefficient counit
-is the established canonical Schreier corestriction, independently of the
-chosen right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `n : ℕ`. For `S_T=schreierCoindShapiroIso H (Res_H A) T n` and
+`ε_A=corestrictionCounit H A`, `S_T.inv ≫ map (id G) ε_A n = schreierCorestriction H A n`.
+Thus this composite `H^n(H,Res_H A) → H^n(G,A)` is independent of the chosen right
+transversal. -/
 theorem schreierCoindShapiroIso_inv_comp_schreierCorestriction
     (A : Rep k G) (T : H.RightTransversal) (n : ℕ) :
     (schreierCoindShapiroIso H (Rep.res H.subtype A) T n).inv ≫
@@ -851,8 +939,11 @@ theorem schreierCoindShapiroIso_inv_comp_schreierCorestriction
   rw [schreierCoindShapiroIso_inv_comp_corestrictionCounit,
     ← schreierCorestriction_eq_of_rightTransversal H A T n]
 
-/-- Cyclic permutation Shapiro using the explicit Schreier resolution
-comparison rather than the opaque resolution-independence isomorphism. -/
+/-- Let `G` be a group, `k` a commutative ring, `ℓ : ℕ` nonzero, `χ : G → Multiplicative (ZMod ℓ)`
+a surjective group homomorphism, `A : Rep k G`, `T` a right transversal for `J=ker χ`, and `n
+: ℕ`. Put `c(g)=Multiplicative.toAdd (χ g)`. The isomorphism `H^n(G,P_χ(A)) ≅ H^n(J,Res_J A)`
+composes the coefficient comparison `p ↦ (g ↦ ρ_A(g)p(c(g)))` with Schreier Shapiro. Here
+`P_χ(A)` has carrier `ZMod ℓ → A` and action `(g·p)(i)=ρ_A(g)p(i+c(g))`. -/
 noncomputable def schreierCyclicPermutationShapiroIso
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell))
@@ -908,8 +999,11 @@ theorem schreierCyclicPermutationShapiroIso_hom
     Subgroup.finiteIndex_of_finite_quotient
   rfl
 
-/-- Under the explicit cyclic-permutation/coinduction isomorphism, the
-finite-index coinduction counit is cyclic augmentation. -/
+/-- Let `G` be a group, `k` a commutative ring, `ℓ : ℕ` nonzero, `χ : G → Multiplicative (ZMod ℓ)`
+surjective, and `A : Rep k G`. For `J=ker χ`, `F_χ=Rep.cyclicPermutationCoinducedIso ℓ χ hχ
+A`, and `ε_A=corestrictionCounit J A`, `F_χ.hom ≫ ε_A = Rep.cyclicPermutationAugmentation ℓ χ
+A`. The comparison sends `p` to `g ↦ ρ_A(g)p(Multiplicative.toAdd (χ g))`, and the
+augmentation sends `p` to `∑ i : ZMod ℓ, p(i)`. -/
 theorem cyclicPermutationCoinducedIso_hom_comp_corestrictionCounit
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell))
@@ -961,8 +1055,11 @@ theorem cyclicPermutationCoinducedIso_hom_comp_corestrictionCounit
     _ = ∑ i : ZMod ell, p i := Equiv.sum_comp e p
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Under explicit Schreier Shapiro, cyclic augmentation is exactly the
-chosen-transversal Schreier corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `ℓ : ℕ` nonzero, `χ : G → Multiplicative (ZMod ℓ)`
+surjective, `A : Rep k G`, `T` a right transversal for `J=ker χ`, and `n : ℕ`. For
+`S_χ=schreierCyclicPermutationShapiroIso ℓ χ hχ A T n` and
+`a_χ=Rep.cyclicPermutationAugmentation ℓ χ A`, `S_χ.inv ≫ map (id G) a_χ n =
+corestrictionOfRightTransversal A T n`. The map `a_χ` sums the cyclic coordinates. -/
 theorem schreierCyclicPermutationShapiroIso_inv_comp_augmentation
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell))
@@ -1000,8 +1097,11 @@ theorem schreierCyclicPermutationShapiroIso_inv_comp_augmentation
   exact hShapiro
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Cyclic diagonal followed by explicit Schreier Shapiro is ordinary
-restriction to the character kernel. -/
+/-- Let `G` be a group, `k` a commutative ring, `ℓ : ℕ` nonzero, `χ : G → Multiplicative (ZMod ℓ)`
+surjective, `A : Rep k G`, `T` a right transversal for `J=ker χ`, and `n : ℕ`. With
+`d_χ=Rep.cyclicPermutationDiagonal ℓ χ A`, `map (id G) d_χ n ≫
+(schreierCyclicPermutationShapiroIso ℓ χ hχ A T n).hom = map J.subtype (𝟙 (Res_J A)) n`. The
+coefficient diagonal is `a ↦ (i ↦ a)`. -/
 theorem map_diagonal_comp_schreierCyclicPermutationShapiroIso_hom
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell))
@@ -1036,8 +1136,11 @@ theorem map_diagonal_comp_schreierCyclicPermutationShapiroIso_hom
     chi.ker A T n
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Explicit cyclic Shapiro followed by the established Schreier corestriction
-is the cohomology map induced by cyclic augmentation. -/
+/-- Let `G` be a group, `k` a commutative ring, `ℓ : ℕ` nonzero, `χ : G → Multiplicative (ZMod ℓ)`
+surjective, `A : Rep k G`, `T` a right transversal for `J=ker χ`, and `n : ℕ`. Then
+`(schreierCyclicPermutationShapiroIso ℓ χ hχ A T n).hom ≫ schreierCorestriction J A n = map
+(id G) (Rep.cyclicPermutationAugmentation ℓ χ A) n`, as maps `H^n(G,P_χ(A)) → H^n(G,A)`; the
+coefficient augmentation is `p ↦ ∑ i : ZMod ℓ, p(i)`. -/
 theorem schreierCyclicPermutationShapiroIso_hom_comp_schreierCorestriction
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell))

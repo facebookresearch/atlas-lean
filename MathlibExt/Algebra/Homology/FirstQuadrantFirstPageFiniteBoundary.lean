@@ -13,12 +13,14 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageCokernelSections
 
 /-!
-# The finite-stage horizontal boundary on cycles
+# Finite-filtration horizontal boundaries on vertical cycles
 
-Inside filtration stage `p+1`, the total differential of a vertical cycle in
-the top column has no surviving vertical component.  It is exactly the
-previous-column inclusion of the horizontal bicomplex differential.  This is
-the transparent finite-stage calculation underlying the first-page boundary.
+Let `K` be a first-quadrant bicomplex in an abelian category. In filtration stage `p+1`,
+include a vertical cycle in the top column `(p+1,q)` and take the total boundary.
+
+The vertical term is zero on that cycle. The boundary is the horizontal component `K.d(p+1,p)`
+followed by inclusion of `(p,q)` into the same filtration stage. The direct-column formula
+uses cochain degree `-(p+1)-q` and total degrees `p+1+q` and `p+q`.
 -/
 
 @[expose] public section
@@ -38,15 +40,18 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Inclusion of column `p` into filtration stage `p+1` in total degree
-`p+q`. -/
+/-- The preceding-column inclusion in a finite filtration stage.
+
+Include bidegree `(p,q)` into total degree `p+q` of filtration stage `p+1`. -/
 noncomputable def horizontalFilteredPreviousColumnInclusion (p q : ℕ) :
     (K.X p).X q ⟶ horizontalFilteredTotalObj K (p + 1) (p + q) :=
   horizontalFilteredTotalι K (p + 1) (p + q)
     ⟨⟨(p, q), by simp⟩, by change p ≤ p + 1; omega⟩
 
-/-- On vertical cycles, the filtered total differential from the top column
-is precisely the previous-column inclusion of the horizontal differential. -/
+/-- The filtered total boundary of a top-column vertical cycle.
+
+For a cycle in column `p+1` at vertical degree `q`, top inclusion followed by the filtered
+total boundary equals the horizontal differential followed by the preceding-column inclusion. -/
 theorem horizontalFilteredTopInclusion_d_eq_previous (p q : ℕ) :
     (K.X (p + 1)).iCycles q ≫
         horizontalFilteredTopInclusion K (p + 1) q ≫
@@ -97,8 +102,10 @@ theorem horizontalFilteredTopInclusion_d_eq_previous (p q : ℕ) :
           (K.X (p + 1)).iCycles_d, zero_comp, smul_zero]
   rw [hvertical, add_zero]
 
-/-- The same finite-stage boundary formula with the source cycle written in
-the direct-column presentation. -/
+/-- The finite top-column boundary in direct-column cycle coordinates.
+
+Transport direct-column cycles at cochain degree `-(p+1)-q` to the vertical column; the
+filtered boundary is the horizontal map into column `p` followed by its stage-`p+1` inclusion. -/
 theorem horizontalDirectColumnTopInclusion_d_eq_previous (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).iCycles
         (-((p + 1 : ℕ) : ℤ) - q) ≫

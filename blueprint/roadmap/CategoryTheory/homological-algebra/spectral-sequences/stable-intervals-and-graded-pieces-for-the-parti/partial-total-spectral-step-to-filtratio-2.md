@@ -1,4 +1,6 @@
-# Partial Total Spectral Step To Filtration comp ι
+# The inclusion formula for a stable-step image factor
 
-A finite spectral step followed through its selected homology filtration
-is ordinary homology of the partial-total inclusion.
+The inclusion formula for a stable-step image factor.
+
+The image factor followed by filtration inclusion is the partial-total step homology
+coordinate followed by homology of the finite-stage inclusion.

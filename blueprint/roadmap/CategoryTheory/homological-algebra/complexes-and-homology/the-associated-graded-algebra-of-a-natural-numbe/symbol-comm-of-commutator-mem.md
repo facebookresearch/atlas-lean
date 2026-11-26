@@ -1,3 +1,6 @@
-# Symbol comm of commutator mem
+# Lowering filtered commutators makes homogeneous symbols commute
 
-Actual lowering of commutators implies that every pair of symbols commutes.
+Lowering filtered commutators makes homogeneous symbols commute.
+
+Suppose `u.val * v.val - v.val * u.val ∈ lower F (n + m)` for all natural degrees and filtered
+representatives. Then every pair of homogeneous symbols commutes in `AssociatedGraded F`.

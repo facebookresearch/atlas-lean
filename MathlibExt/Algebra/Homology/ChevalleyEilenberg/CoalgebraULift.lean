@@ -16,16 +16,24 @@ public import Mathlib.Algebra.Category.ModuleCat.Ulift
 public import Mathlib.Algebra.Homology.Additive
 
 /-!
-# Universe lifts of Chevalley–Eilenberg coalgebras
+# Carrier lifts of exterior Lie coalgebras
 
-Transferring the Lie structure to a lifted carrier gives a chain-complex
-isomorphism between its Chevalley–Eilenberg complex and the module-universe
-lift of the original complex. Transport through this isomorphism preserves
-the comonoid structure and coaugmentation.
+For a Lie ring L, lifting its carrier transfers the bracket by
+[up(x),up(y)]=up([x,y]). With an R-Lie structure over commutative R,
+the down map is an R-Lie equivalence and Lie homomorphisms lift by
+up(x)↦up(f(x)).
 
-A Lie algebra map between independently sized carriers induces a coalgebra
-map at a common height containing the ring and both carriers. Its components
-are the exterior maps conjugated by the lift equivalences.
+For R:Type u, L:Type v and any height z, the degree equivalences
+Λ_R^n(U^zL)≃U^z(Λ_R^nL) form a chain isomorphism
+C(U^zL)≅U^zC(L). Transporting the exterior comonoid through this
+isomorphism gives a cocommutative coaugmented coalgebra on the
+lifted chain complex in carrier height max{u,v,z}.
+
+For a Lie map between L:Type v and L′:Type w, choose the common
+height H=max{u,v,w}. Conjugating the lifted Lie chain map by the
+exterior comparison isomorphisms gives U^H C(L)→U^H C(L′),
+with value up(a)↦up(Λ^n f(a)) in degree n. It preserves the
+coproduct, counit and coaugmentation.
 -/
 
 @[expose] public section
@@ -39,18 +47,28 @@ universe u v w z
 
 namespace ChevalleyEilenberg.LieLift
 
-/-- The Lie bracket transferred through the canonical carrier lift. -/
+/-- For a Lie ring L and any carrier lift height z, ULift.{z}L
+has Lie bracket [up(x),up(y)]=up([x,y]) and the lifted additive
+Lie ring laws. -/
 scoped instance lieRing {L : Type v} [LieRing L] : LieRing (ULift.{z} L) :=
   (AddEquiv.ulift : ULift.{z} L ≃+ L).lieRing
 
 open scoped ChevalleyEilenberg.LieLift
 
-/-- The scalar-compatible Lie structure on the canonical carrier lift. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The scalar action r•up(x)=up(r•x) is compatible with the
+lifted bracket, giving U^zL its R-Lie algebra structure. -/
 scoped instance lieAlgebra {R : Type u} [CommRing R] {L : Type v}
     [LieRing L] [LieAlgebra R L] : LieAlgebra R (ULift.{z} L) :=
   (ULift.moduleEquiv : ULift.{z} L ≃ₗ[R] L).lieAlgebra
 
-/-- The Lie equivalence that removes the canonical carrier lift. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The down map U^zL→L is an R-Lie equivalence, with inverse
+x↦up(x). -/
 def downEquiv (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L] :
     ULift.{z} L ≃ₗ⁅R⁆ L := (ULift.moduleEquiv : ULift.{z} L ≃ₗ[R] L).lieEquiv R
 
@@ -62,7 +80,9 @@ theorem downEquiv_apply (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieA
 theorem downEquiv_symm_apply (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
     (x : L) : (downEquiv R L).symm x = ULift.up x := rfl
 
-/-- The Lie homomorphism transported to the two canonical carrier lifts. -/
+/-- Let R be commutative and f:L→L′ an R-Lie homomorphism, with
+independent carrier universes v,w and common extra lift height z.
+Its lifted Lie map U^zL→U^zL′ sends up(x) to up(f(x)). -/
 def map {R : Type u} [CommRing R] {L : Type v} [LieRing L] [LieAlgebra R L]
     {L' : Type w} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L') :
     ULift.{z} L →ₗ⁅R⁆ ULift.{z} L' :=
@@ -85,7 +105,9 @@ variable (L : Type v) [LieRing L] [LieAlgebra R L]
 local instance coalgebraLiftFiniteBiproducts : HasFiniteBiproducts (ModuleCat.{max u z} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u z} R)
 
-/-- Closedness of the canonical tensor structure at the lifted carrier height. -/
+/-- For R:Type u commutative and any height z, tensoring in
+ModuleCat.{max u z}R has internal R-linear Hom as right adjoint,
+giving the closed tensor structure at that height. -/
 local instance coalgebraLiftClosed :
     letI : MonoidalCategoryStruct (ModuleCat.{max u z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, z} (R := R)
@@ -106,12 +128,22 @@ local instance coalgebraLiftClosed :
     ModuleCat.UniverseTensor.monoidalLinear.{u, z} (R := R)
   exact ModuleCat.UniverseScalarRestriction.monoidalClosed.{u, z} (R := R)
 
-/-- The original canonical CE complex carried through the native module universe lift. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The carrier-lifted CE complex U^zC(L) has degree-n term
+U^z(Λ_R^nL) and lifted differentials, in ModuleCat at
+max{u,v,z}. -/
 def canonicalComplexULift : ChainComplex (ModuleCat.{max u v z} R) ℕ :=
   ((ModuleCat.uliftFunctor.{z, max u v} R).mapHomologicalComplex (ComplexShape.down ℕ)).obj
     (canonicalChainData R L).complex
 
-/-- The exterior equivalence between lifting the Lie carrier and lifting its exterior degree. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The R-linear exterior lift equivalence is
+Λ_R^n(U^zL)≃U^z(Λ_R^nL), sending a lifted decomposable
+wedge to the lift of its down-vector wedge. -/
 def exteriorULiftEquiv (n : ℕ) :
     (⋀[R]^n (ULift.{z} L)) ≃ₗ[R] ULift.{z} (⋀[R]^n L) where
   toLinearMap := (ULift.moduleEquiv : ULift.{z} (⋀[R]^n L) ≃ₗ[R] (⋀[R]^n L)).symm.toLinearMap.comp
@@ -149,7 +181,11 @@ theorem exteriorULiftEquiv_symm_apply (n : ℕ) (a : ULift.{z} (⋀[R]^n L)) :
     (exteriorULiftEquiv R L n).symm a =
       exteriorPower.map n (LieLift.downEquiv.{u,v,z} R L).symm.toLinearMap a.down := rfl
 
-/-- The native chain comparison, using the CE differential in all degrees. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The exterior-degree equivalences give a chain isomorphism
+C(U^zL)≅U^zC(L), compatible with the CE boundary in every degree. -/
 def complexLiftComparisonIso :
     (canonicalChainData R (ULift.{z} L)).complex ≅ canonicalComplexULift.{u,v,z} R L :=
   HomologicalComplex.Hom.isoOfComponents (fun n => (exteriorULiftEquiv R L n).toModuleIso)
@@ -182,7 +218,12 @@ theorem complexLiftComparisonIso_inv_f (n : ℕ) :
     (complexLiftComparisonIso.{u,v,z} R L).inv.f n =
       (exteriorULiftEquiv R L n).toModuleIso.inv := rfl
 
-/-- The original lifted CE complex carries the transported native comonoid. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+Transporting the comonoid of C(U^zL) through the chain
+comparison equips U^zC(L) with its coproduct and counit
+in the signed tensor category at max{u,v,z}. -/
 def liftedComonObj :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, max v z} (R := R)
@@ -204,11 +245,20 @@ def liftedComonObj :
   letI : ComonObj (canonicalChainData R (ULift.{z} L)).complex := nativeComonObj R (ULift.{z} L)
   exact ComonObj.ofIso (complexLiftComparisonIso.{u,v,z} R L)
 
-/-- The coaugmentation on the original lifted CE complex. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The lifted coaugmentation has source the tensor-unit complex
+at max{u,v,z} and target U^zC(L). It is the coaugmentation
+of C(U^zL) followed by the chain comparison. -/
 def liftedComplexCoaug : nativeUnitComplex.{u,max v z} R ⟶ canonicalComplexULift.{u,v,z} R L :=
   nativeComplexCoaug R (ULift.{z} L) ≫ (complexLiftComparisonIso.{u,v,z} R L).hom
 
-/-- The coaugmentation remains a native comonoid map after the explicit complex comparison. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The transported coaugmentation into U^zC(L) is a comonoid
+morphism from the tensor-unit coalgebra. -/
 def liftedComplexCoaugIsComonHom :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, max v z} (R := R)
@@ -239,7 +289,11 @@ def liftedComplexCoaugIsComonHom :
   unfold liftedComplexCoaug
   infer_instance
 
-/-- The transported coproduct is cocommutative for the native Koszul chain braiding. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The transported coproduct on U^zC(L) is cocommutative
+for the signed chain braiding, with degree-(p,q) sign (−1)^{pq}. -/
 theorem liftedComul_cocommutative :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, max v z} (R := R)
@@ -284,7 +338,11 @@ theorem liftedComul_cocommutative :
   have h₃ := congrArg (fun t => t ≫ HomologicalComplex.tensorHom e.hom e.hom) hc
   exact h₁.trans (congrArg (fun t => e.inv ≫ t) (h₂.trans h₃))
 
-/-- The original universe-lifted CE complex bundled as its native comonoid. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The lifted complex U^zC(L), with transported coproduct and
+counit, is a bundled coalgebra in the chain category at max{u,v,z}. -/
 def liftedCoalgebra :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, max v z} (R := R)
@@ -309,8 +367,10 @@ section IndependentWorlds
 
 variable {L' : Type w} [LieRing L'] [LieAlgebra R L']
 
-/-- The native CE map on the original complexes at a common height containing both carrier
-universes. -/
+/-- Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At H=max{u,v,w},
+the exterior lift comparisons give the chain map
+U^H C(L)→U^H C(L′) induced by the lifted Lie map. -/
 def nativeLiftedComplexMap (f : L →ₗ⁅R⁆ L') :
     canonicalComplexULift.{u,v,max u v w} R L ⟶
       canonicalComplexULift.{u,w,max u v w} R L' :=
@@ -318,7 +378,9 @@ def nativeLiftedComplexMap (f : L →ₗ⁅R⁆ L') :
     nativeComplexMap R (ULift.{max u v w} L) (LieLift.map.{u,v,w,max u v w} f) ≫
       (complexLiftComparisonIso.{u,w,max u v w} R L').hom
 
-/-- The common-height map has exactly the original exterior-map formula. -/
+/-- For an R-Lie map f:L→L′ with scalar and carrier worlds u,v,w,
+the common-height chain map at H=max{u,v,w} sends up(a) to
+up(Λ_R^n f(a)) for every a∈Λ_R^nL. -/
 theorem nativeLiftedComplexMap_f_apply (f : L →ₗ⁅R⁆ L') (n : ℕ) (a : ⋀[R]^n L) :
     ((nativeLiftedComplexMap R L f).f n).hom (ULift.up a) =
       ULift.up (exteriorPower.map n f.toLinearMap a) := by
@@ -343,7 +405,9 @@ theorem nativeLiftedComplexMap_f_apply (f : L →ₗ⁅R⁆ L') (n : ℕ) (a : �
     exact h
   exact congrArg (fun t => exteriorPower.map n t a) h'
 
-/-- The independent-universe map preserves the transported native comonoids. -/
+/-- For an R-Lie homomorphism f:L→L′, lifting to H=max{u,v,w}
+gives a comonoid morphism U^H C(L)→U^H C(L′), preserving
+the transported coproduct and counit. -/
 def nativeLiftedComplexMapIsComonHom (f : L →ₗ⁅R⁆ L') :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, max u v w} (R := R)
@@ -381,7 +445,9 @@ def nativeLiftedComplexMapIsComonHom (f : L →ₗ⁅R⁆ L') :
   unfold nativeLiftedComplexMap
   infer_instance
 
-/-- The original common-height Lie-variable map also preserves the coaugmentation. -/
+/-- For an R-Lie homomorphism f:L→L′ at H=max{u,v,w}, the
+common-height chain map F preserves the transported coaugmentations:
+Fu_L^H=u_{L′}^H. -/
 theorem nativeLiftedComplexMap_coaug (f : L →ₗ⁅R⁆ L') :
     liftedComplexCoaug.{u,v,max u v w} R L ≫ nativeLiftedComplexMap R L f =
       liftedComplexCoaug.{u,w,max u v w} R L' := by
@@ -390,7 +456,9 @@ theorem nativeLiftedComplexMap_coaug (f : L →ₗ⁅R⁆ L') :
     ← Category.assoc (nativeComplexCoaug R (ULift.{max u v w} L)),
     nativeComplexMap_coaug]
 
-/-- The independent-universe map bundled as a native comonoid morphism. -/
+/-- For an R-Lie map f:L→L′, the common-height chain map at
+max{u,v,w} is bundled as a morphism of the transported exterior
+coalgebras, without identifying the carrier universes v,w. -/
 def nativeLiftedCoalgebraMap (f : L →ₗ⁅R⁆ L') :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u, max u v w} (R := R)

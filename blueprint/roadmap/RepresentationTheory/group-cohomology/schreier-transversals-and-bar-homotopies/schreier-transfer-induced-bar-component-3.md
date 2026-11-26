@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Component comm
+# The chain equation of the universal transfer components
 
-Consecutive universal induced-bar transfer components commute with the
-bar differentials.
+The chain equation of the universal transfer components.
+
+The degree-(n+1) transfer followed by the induced H-bar differential equals the G-bar
+differential followed by the degree-n transfer.

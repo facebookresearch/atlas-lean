@@ -1,4 +1,6 @@
-# Surjective Scalar Restriction Map trans
+# Composition of induced quotient-coefficient restriction maps
 
-Actual coefficient restrictions compose along a chain of surjective
-scalar presentations, retaining the original coefficient maps.
+Composition of induced quotient-coefficient restriction maps.
+
+For two compatible base-change squares, applying the two induced restriction maps successively
+equals the restriction map of the composite square on every a ∈ A.

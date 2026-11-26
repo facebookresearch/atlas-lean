@@ -1,3 +1,5 @@
-# Small Etale Derived Gamma Identity Hom
+# Identity comparison for the derived global-section delta functor
 
-The identity comparison is formed from the SAME actual LF mate and exact identity input.
+For a scheme X in universe u and c = max(u, w), combine the
+delta-functor pullback for id_X with the comparison id_X* ≅ id.
+This gives the endomorphism of (RᑫΓ_X) on coefficient sheaves over X.

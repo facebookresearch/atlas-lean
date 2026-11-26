@@ -1,4 +1,6 @@
-# Bar Complex d comp free Lift
+# Bar differential and inhomogeneous cochain differential
 
-Precomposition by the bar differential is the inhomogeneous cochain
-differential under the free-lift equivalence.
+Let `G` be a group, `k` a commutative ring, `A : Rep k G`, `n : ℕ`, and `f : (Fin n → G) → A`.
+For the bar complex `B`, `B.d (n + 1) n ≫ Rep.freeLift k G A f = Rep.freeLift k G A
+((inhomogeneousCochains.d A n).hom f)`. Thus the inhomogeneous differential corresponds to
+precomposition by the bar differential.

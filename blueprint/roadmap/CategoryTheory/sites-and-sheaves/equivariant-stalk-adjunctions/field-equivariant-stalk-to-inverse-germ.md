@@ -1,3 +1,6 @@
-# Field Equivariant Stalk To Inverse germ map
+# Equivariant transpose evaluates by a geometric germ
 
-Every actual Hom adjoint has the original point germ as its original section coordinate.
+Equivariant transpose evaluates by a geometric germ.
+
+The inverse-sheaf section map followed by evaluation at a geometric point equals the germ map
+followed by the underlying equivariant stalk map.

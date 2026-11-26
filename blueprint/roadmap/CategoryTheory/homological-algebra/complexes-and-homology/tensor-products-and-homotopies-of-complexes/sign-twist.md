@@ -1,5 +1,7 @@
-# Sign Twist
+# The signed conversion to a commuting bicomplex
 
-Multiply the vertical differential in horizontal degree `i₁` by a
-sign `ε i₁` which changes sign across every horizontal differential.
-The anticommuting squares then become commuting squares.
+The signed conversion to a commuting bicomplex.
+
+Let ε : I₁ → ℤˣ change sign across every c₁-relation. Keep the objects and first differential
+of K, and multiply the second differential in first degree i₁ by ε(i₁). The squares then
+commute.

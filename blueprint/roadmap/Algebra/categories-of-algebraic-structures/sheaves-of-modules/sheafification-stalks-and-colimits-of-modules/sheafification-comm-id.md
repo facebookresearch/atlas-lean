@@ -1,3 +1,7 @@
-# Sheafification Comm Id
+# Module sheafification over a commutative ring sheaf
 
-The sheafification functor for presheaves of modules over `R`.
+Module sheafification over a commutative ring sheaf.
+
+Using the identity comparison of underlying ring presheaves, sheafify R-module presheaves to
+module sheaves over the corresponding ring sheaf, under the stated site and weak-
+sheafification assumptions.

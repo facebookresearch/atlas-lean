@@ -1,15 +1,15 @@
 # Composition of canonical Tor ring-change maps
 
-- [Composite Coefficient Ring Change](composite-coefficient-ring-change.md)
-- [Composite Input Ring Change](composite-input-ring-change.md)
-- [Tensor Ring Change Resolution Map comp](tensor-ring-change-resolution-map-comp.md)
+- [The composite coefficient map uses endpoint-restriction coherence](composite-coefficient-ring-change.md)
+- [The composite input map uses right-ring restriction coherence](composite-input-ring-change.md)
+- [Tensor resolution ring-change maps compose through canonical comparisons](tensor-ring-change-resolution-map-comp.md)
 
 ## Derived
 
-- [Tor Ring Change Map comp](tor-ring-change-map-comp.md)
+- [Canonical Tor ring-change maps preserve composition](tor-ring-change-map-comp.md)
 
 ## Raw Composition
 
-- [Compose Coefficient Semilinear](compose-coefficient-semilinear.md)
-- [Compose Input Semilinear](compose-input-semilinear.md)
-- [Tor ring changes compose in a common working universe...](tor-ring-changes-compose-in-a-common-wor.md)
+- [Independent-carrier coefficient semilinear maps compose](compose-coefficient-semilinear.md)
+- [Independent-carrier right-module semilinear maps compose](compose-input-semilinear.md)
+- [Tor composition is coherent at the common independent-carrier height](tor-ring-changes-compose-in-a-common-wor.md)

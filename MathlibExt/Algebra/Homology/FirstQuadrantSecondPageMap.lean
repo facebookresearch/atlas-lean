@@ -16,16 +16,17 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantSecondPage
 public import MathlibExt.Algebra.Homology.SpectralObjectPageMapNaturality
 
 /-!
-# Maps on first-quadrant spectral-sequence pages
+# Bicomplex maps on first-quadrant spectral-sequence pages
 
-A bicomplex map induces the columnwise map on the horizontal complex of
-vertical homology and a map on every fixed page of the horizontal-filtration
-spectral sequence.  At page two, the latter is the canonical `pageXIso`
-conjugate of the corresponding spectral-object `EMap`.
+Let C be an abelian category and f : K → L a map of bicomplexes of shape (down ℕ,down ℕ). The
+map of their complete horizontal filtrations induces a chain map on every fixed page r≥1,
+whose differential has bidegree (−r,r−1). A bicomplex isomorphism gives an isomorphism on each
+page and each page-two term.
 
-This file only packages fixed-page maps.  It proves no compatibility with
-successor-page isomorphisms and no naturality of the second-page comparison
-with iterated homology.
+For p,q ∈ ℕ, page two is expressed using the filtration indices p−2 ≤ p−1 ≤ p ≤ p+1 and
+cochain degrees ℓ−1,ℓ,ℓ+1, where ℓ=−p−q. Its object is the homology of the connecting-map
+short complex between the three consecutive relative cone homologies. The page-two map is
+conjugate, through this presentation, to the induced map on that homology.
 -/
 
 @[expose] public section
@@ -194,7 +195,11 @@ private theorem horizontalCompleteFiltrationSpectralObjectMap_comp
       (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0) EInt).map_comp _ _
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The map on a fixed page induced by a bicomplex map. -/
+/-- Let C be an abelian category, f : K → L a map of bicomplexes of shape (down ℕ,down ℕ), and r ∈
+ℤ with 1 ≤ r. The morphism of complete horizontal filtration spectral objects induced by f
+gives a homological-complex map E^r(K) → E^r(L). These pages have index set ℕ×ℕ and
+differential bidegree (−r,r−1). Its component at a bidegree is the corresponding
+spectral-object page map, and it commutes with the fixed-page differentials. -/
 noncomputable def horizontalPageMapOfBicomplex
     (f : K ⟶ L) (r : ℤ) (hr : 1 ≤ r) :
     (horizontalFirstQuadrantSpectralSequence K).page r hr ⟶
@@ -203,8 +208,13 @@ noncomputable def horizontalPageMapOfBicomplex
     (horizontalCompleteFiltrationSpectralObjectMap f) data r hr
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- Components of the fixed-page bicomplex map are the corresponding raw
-page-map components. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), r ∈ ℤ with
+r≥1, and (p,q) ∈ ℕ×ℕ. The (p,q)-component of the map E^r(K) → E^r(L) equals the
+spectral-object pageMapComponent induced by f. In its canonical presentation, this is the map
+on homology of the connecting-map short complex at filtration indices p−r ≤ p−1 ≤ p ≤ p+r−1
+and consecutive cochain degrees −p−q−1,−p−q,−p−q+1, transported through the two page-object
+isomorphisms. The stage maps in this short complex are induced by the complete horizontal
+filtration map of f. -/
 @[simp]
 theorem horizontalPageMapOfBicomplex_f
     (f : K ⟶ L) (r : ℤ) (hr : 1 ≤ r) (pq : ℕ × ℕ) :
@@ -235,8 +245,10 @@ theorem horizontalPageMapOfBicomplex_comp
   rw [horizontalCompleteFiltrationSpectralObjectMap_comp,
     CategoryTheory.Abelian.SpectralObject.Hom.pageMap_comp]
 
-/-- A bicomplex isomorphism induces an isomorphism on every fixed page of the
-horizontal-filtration spectral sequence. -/
+/-- Let C be an abelian category, f : K → L an invertible bicomplex morphism of shape (down ℕ,down
+ℕ), and r ∈ ℤ with 1 ≤ r. The induced map E^r(K) → E^r(L) is an isomorphism of page complexes.
+Its inverse is the fixed-page map induced by f⁻¹, with the same page index r and spectral
+differential shape of bidegree (−r,r−1). -/
 noncomputable instance isIso_horizontalPageMapOfBicomplex
     (f : K ⟶ L) [IsIso f] (r : ℤ) (hr : 1 ≤ r) :
     IsIso (horizontalPageMapOfBicomplex f r hr) :=
@@ -246,7 +258,10 @@ noncomputable instance isIso_horizontalPageMapOfBicomplex
       rw [← horizontalPageMapOfBicomplex_comp, IsIso.inv_hom_id,
         horizontalPageMapOfBicomplex_id]⟩⟩
 
-/-- The map on page two in bidegree `(p,q)` induced by a bicomplex map. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Define E²_{p,q}(K) → E²_{p,q}(L) to be the (p,q)-component of the fixed-page map at r=2. It is
+induced by the map of complete horizontal filtration spectral objects and uses the page-two
+differential shape of bidegree (−2,1). -/
 noncomputable def horizontalSecondPageMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 2).X (p, q) ⟶
@@ -272,23 +287,34 @@ theorem horizontalSecondPageMapOfBicomplex_comp
     (horizontalPageMapOfBicomplex_comp f g 2 (by omega))
   exact h
 
-/-- A bicomplex isomorphism induces an isomorphism on every second-page term
-of the horizontal-filtration spectral sequence. -/
+/-- Let C be an abelian category, f : K → L an invertible bicomplex morphism of shape (down ℕ,down
+ℕ), and p,q ∈ ℕ. The induced component E²_{p,q}(K) → E²_{p,q}(L) is an isomorphism in C. Its
+inverse is the corresponding second-page component induced by f⁻¹. -/
 noncomputable instance isIso_horizontalSecondPageMapOfBicomplex
     (f : K ⟶ L) [IsIso f] (p q : ℕ) :
     IsIso (horizontalSecondPageMapOfBicomplex f p q) := by
   dsimp only [horizontalSecondPageMapOfBicomplex]
   infer_instance
 
-/-- The lower filtration index in the canonical page-two presentation. -/
+/-- For a column p ∈ ℕ, the lower filtration index in the page-two presentation is the finite
+integer (p:ℤ)−2 embedded in EInt = ℤ ∪ {⊥,⊤}. The subtraction is in ℤ, so the value is −2 at
+p=0 and −1 at p=1. It is the first index in the chain p−2 ≤ p−1 ≤ p ≤ p+1. -/
 abbrev horizontalSecondPageLowerIndex (p : ℕ) : EInt :=
   @WithBotTop.coe ℤ ((p : ℤ) - 2)
 
-/-- The upper filtration index in the canonical page-two presentation. -/
+/-- For a column p ∈ ℕ, the upper filtration index in the page-two presentation is the finite
+integer (p:ℤ)+2−1 = p+1 embedded in EInt. It is the last index in the chain p−2 ≤ p−1 ≤ p ≤
+p+1 used to present the page-two term. -/
 abbrev horizontalSecondPageUpperIndex (p : ℕ) : EInt :=
   @WithBotTop.coe ℤ ((p : ℤ) + 2 - 1)
 
-/-- Canonical `E`-object presentation of a page-two term. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and p,q ∈ ℕ. Write F_i
+for the complete horizontal chain stage placed in cochain degrees by n ↦ −n, and set ℓ=−p−q.
+The page term E²_{p,q}(K) is canonically isomorphic to the homology of H^{ℓ−1}(Cone(F_p →
+F_{p+1})) → H^ℓ(Cone(F_{p−1} → F_p)) → H^{ℓ+1}(Cone(F_{p−2} → F_{p−1})). Both arrows are the
+spectral connecting maps of the cone composition triangles. This is the spectral-object E
+presentation with integer filtration indices p−2,p−1,p,p+1 and consecutive cochain degrees
+ℓ−1,ℓ,ℓ+1. -/
 noncomputable def horizontalSecondPageXIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (p q : ℕ) :
@@ -311,7 +337,12 @@ noncomputable def horizontalSecondPageXIso
     (-(p : ℤ) - (q : ℤ))
     (-(p : ℤ) - (q : ℤ) + 1) rfl (by omega) rfl
 
-/-- The `EMap` in the canonical page-two presentation. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Set ℓ=−p−q and form, for each bicomplex, the short complex H^{ℓ−1}(Cone(F_p → F_{p+1})) →
+H^ℓ(Cone(F_{p−1} → F_p)) → H^{ℓ+1}(Cone(F_{p−2} → F_{p−1})), with spectral connecting arrows
+and F_i the complete horizontal cochain stages. The stage maps induced by f give a morphism of
+these short complexes. Define the page-two EMap to be its induced map on homology, using the
+same four filtration indices and three cochain degrees. -/
 noncomputable def horizontalSecondPageEMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :=
   CategoryTheory.Abelian.SpectralObject.Hom.EMap
@@ -324,8 +355,11 @@ noncomputable def horizontalSecondPageEMapOfBicomplex
     (-(p : ℤ) - (q : ℤ) + 1) (by omega) rfl
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The page-two map is the `pageXIso`-conjugate of the corresponding
-spectral-object `EMap`. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Let e_K and e_L identify E²_{p,q} with the homology of the spectral connecting-map short
+complex at filtration indices p−2 ≤ p−1 ≤ p ≤ p+1 and cochain degrees −p−q−1,−p−q,−p−q+1. If a
+is the homology map of that short complex induced by f, then the second-page component is
+e_K.hom ≫ a ≫ e_L.inv. This fixes both the presentation and the direction of the conjugation. -/
 theorem horizontalSecondPageMapOfBicomplex_eq
     (f : K ⟶ L) (p q : ℕ) :
     horizontalSecondPageMapOfBicomplex f p q =

@@ -14,12 +14,16 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.CriticalPairs
 public import Mathlib.Algebra.MonoidAlgebra.Module
 
 /-!
-# Linear tensor normalization and the actual contextual Lie relations
+# Linear tensor normalization and contextual Lie relations
 
-The native tensor basis identifies its words with free-monoid words.
-Normalization extends linearly through that basis. The actual adjacent-word
-invariance then annihilates every contextual Lie relation, first on basis
-words and then on arbitrary tensor factors by bilinear extension.
+Let `R` be a commutative ring and `b : I → L` a Lie-algebra basis indexed by a linearly
+ordered alphabet. The tensor-algebra basis is indexed by free-monoid words in `I`. Extending
+ordered-word normalization linearly through this basis gives `T_R(L) →ₗ[R] (OrderedWord I →₀
+R)`.
+
+Normalization of one or two inserted Lie vectors agrees with the corresponding linear or
+bilinear basis-coordinate insertion. The adjacent relation identities imply that this linear
+normalizer kills `p(τ(x)τ(y)-τ(y)τ(x)-τ([x,y]))s` for arbitrary left and right tensor factors.
 -/
 
 @[expose] public section
@@ -54,28 +58,41 @@ private theorem freeAlgebra_basisFreeMonoid_ofList (xs : List I) :
       (MonoidAlgebra.of R (FreeMonoid I) (FreeMonoid.ofList xs)) = _
   rw [MonoidAlgebra.lift_of, FreeMonoid.lift_ofList]
 
-/-- An actual basis word in the original tensor algebra. -/
+/-- The tensor-algebra value of a Lie basis word.
+
+Map a list of basis indices to the tensor generators `τ(b_i)` and multiply them in list order. -/
 def tensorWord (b : Module.Basis I R L) (xs : List I) : T :=
   (xs.map (fun i => τ (b i))).prod
 
 omit [LinearOrder I] in
+/-- The tensor-algebra value of the empty basis word.
+
+The empty word evaluates to the tensor-algebra unit. -/
 @[simp]
 theorem tensorWord_nil (b : Module.Basis I R L) : tensorWord b [] = 1 := rfl
 
 omit [LinearOrder I] in
+/-- The tensor-algebra value after adjoining a first basis letter.
+
+The word `i :: xs` evaluates to `τ(b_i)` times the tensor word of `xs`. -/
 @[simp]
 theorem tensorWord_cons (b : Module.Basis I R L) (i : I) (xs : List I) :
     tensorWord b (i :: xs) = τ (b i) * tensorWord b xs := rfl
 
 omit [LinearOrder I] in
+/-- The tensor-algebra value of concatenated basis words.
+
+The tensor word of `xs ++ ys` equals the product of their tensor words in that order. -/
 @[simp]
 theorem tensorWord_append (b : Module.Basis I R L) (xs ys : List I) :
     tensorWord b (xs ++ ys) = tensorWord b xs * tensorWord b ys := by
   simp only [tensorWord, List.map_append, List.prod_append]
 
 omit [LinearOrder I] in
-/-- The native tensor basis evaluates its free-monoid index as the actual
-product of the original basis vectors. -/
+/-- The tensor basis element indexed by a list.
+
+The tensor-algebra basis element at the free-monoid word of `xs` equals the tensor product of
+its basis generators. -/
 theorem tensorBasis_ofList (b : Module.Basis I R L) (xs : List I) :
     b.tensorAlgebra (FreeMonoid.ofList xs) = tensorWord b xs := by
   rw [Module.Basis.tensorAlgebra, Module.Basis.map_apply,
@@ -88,15 +105,25 @@ theorem tensorBasis_ofList (b : Module.Basis I R L) (xs : List I) :
     TensorAlgebra.equivFreeAlgebra_ι_apply, Function.comp_def]
 
 omit [LinearOrder I] in
+/-- The word formula for a tensor-algebra basis index.
+
+The tensor basis element indexed by `xs : FreeMonoid I` is the tensor word of `xs.toList`. -/
 theorem tensorBasis_apply (b : Module.Basis I R L) (xs : FreeMonoid I) :
     b.tensorAlgebra xs = tensorWord b xs.toList := by
   simpa only [FreeMonoid.ofList_toList] using tensorBasis_ofList b xs.toList
 
-/-- Extend the actual recursive normalizer through the native tensor basis. -/
+/-- The linear tensor-algebra extension of ordered-word normalization.
+
+Expand a tensor-algebra element in the free-monoid basis and evaluate the same finite
+coefficients on the ordered normal forms of its word indices. -/
 def tensorNormalizer (b : Module.Basis I R L) : T →ₗ[R] N :=
   (Finsupp.linearCombination R (fun xs : FreeMonoid I => normalize b xs.toList)).comp
     b.tensorAlgebra.repr.toLinearMap
 
+/-- The normalizer on a tensor basis word.
+
+The linear tensor normalizer sends the tensor word of `xs` to the ordered normal form
+`normalize(xs)`. -/
 @[simp]
 theorem tensorNormalizer_tensorWord (b : Module.Basis I R L) (xs : List I) :
     tensorNormalizer b (tensorWord b xs) = normalize b xs := by
@@ -106,17 +133,24 @@ theorem tensorNormalizer_tensorWord (b : Module.Basis I R L) (xs : List I) :
   rw [b.tensorAlgebra.repr_self, Finsupp.linearCombination_single,
     FreeMonoid.toList_ofList, one_smul]
 
-/-- Single-vector insertion in the actual tensor algebra. -/
+/-- The tensor insertion of a Lie vector in a basis-word context.
+
+For fixed prefix and suffix words, insert `τ(x)` between their tensor-algebra products. -/
 def tensorInsertion (b : Module.Basis I R L) (p s : List I) : L →ₗ[R] T :=
   (tensorContext R L (tensorWord b p) (tensorWord b s)).comp τ
 
 omit [LinearOrder I] in
+/-- The value of a contextual tensor insertion.
+
+The insertion map sends `x` to `tensorWord(p) * τ(x) * tensorWord(s)`. -/
 @[simp]
 theorem tensorInsertion_apply (b : Module.Basis I R L) (p s : List I) (x : L) :
     tensorInsertion b p s x = tensorWord b p * τ x * tensorWord b s := rfl
 
-/-- The linear tensor normalizer agrees with its actual basis-coordinate
-insertion on every vector. -/
+/-- The normalized value of a one-vector tensor insertion.
+
+Applying the linear tensor normalizer to an inserted vector equals its basis-coordinate
+normalization insertion. -/
 theorem tensorNormalizer_tensorInsertion (b : Module.Basis I R L)
     (p s : List I) (x : L) :
     tensorNormalizer b (tensorWord b p * τ x * tensorWord b s) =
@@ -154,7 +188,10 @@ private def normalizedTensorPair (b : Module.Basis I R L) (p s : List I) :
       (RingHom.id R) r • tensorNormalizer b (tensorWord b p * τ x * τ y * tensorWord b s)
     simp only [LinearMap.smul_apply, map_smul, mul_smul_comm, smul_mul_assoc, RingHom.id_apply]
 
-/-- Two-vector tensor insertion gives the same bilinear normalization context. -/
+/-- The normalized value of an adjacent tensor-vector pair.
+
+Applying the linear tensor normalizer to two inserted Lie vectors equals the bilinear
+normalization pair in the same prefix and suffix. -/
 theorem tensorNormalizer_tensorPair (b : Module.Basis I R L)
     (p s : List I) (x y : L) :
     tensorNormalizer b (tensorWord b p * τ x * τ y * tensorWord b s) =
@@ -174,7 +211,10 @@ theorem tensorNormalizer_tensorPair (b : Module.Basis I R L)
     simp only [List.append_assoc, List.cons_append, List.nil_append]
   exact LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
-/-- Every actual defining Lie relation in basis-word contexts is annihilated. -/
+/-- Annihilation of a Lie relation in basis-word tensor contexts.
+
+The tensor normalizer kills a defining Lie relation multiplied on the left and right by tensor
+basis words. -/
 theorem tensorNormalizer_word_relationError (b : Module.Basis I R L)
     (p s : List I) (x y : L) :
     tensorNormalizer b (tensorWord b p * relationError R L x y * tensorWord b s) = 0 := by
@@ -203,8 +243,10 @@ private def normalizedErrorSandwich (b : Module.Basis I R L) (x y : L) :
       (RingHom.id R) r • tensorNormalizer b (p * relationError R L x y * s)
     simp only [LinearMap.smul_apply, smul_mul_assoc, map_smul, RingHom.id_apply]
 
-/-- Every contextual native Lie relation is annihilated for arbitrary tensor
-factors, using the actual native tensor basis in both factors. -/
+/-- Annihilation of every contextual tensor Lie relation.
+
+For arbitrary `p,s ∈ T_R(L)` and `x,y ∈ L`, the linear normalizer sends `p * r(x,y) * s` to
+zero. -/
 theorem tensorNormalizer_relationError (b : Module.Basis I R L)
     (p s : T) (x y : L) :
     tensorNormalizer b (p * relationError R L x y * s) = 0 := by

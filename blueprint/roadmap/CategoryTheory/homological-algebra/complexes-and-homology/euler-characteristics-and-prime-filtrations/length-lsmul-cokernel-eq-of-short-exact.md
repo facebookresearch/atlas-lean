@@ -1,5 +1,6 @@
-# Length lsmul cokernel eq of short Exact
+# Cokernel lengths across an exact sequence with finite-length quotient
 
-In an actual short exact sequence with finite-length right module,
-regular multiplication on the first two modules gives equal actual
-principal quotient lengths. Finiteness of the second quotient is derived.
+Cokernel lengths across an exact sequence with finite-length quotient.
+
+Under injective multiplication on the left and middle terms, finite left cokernel length and
+finite right-module length give equal left and middle cokernel lengths.

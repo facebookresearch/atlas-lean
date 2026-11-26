@@ -16,23 +16,18 @@ public import MathlibExt.RingTheory.GradedAlgebra.Standard
 public import MathlibExt.RingTheory.Ideal.AssociatedGraded.Ring
 
 /-!
-# Minimal standard presentations of associated-graded rings
+# Degree-one presentations from generators of an ideal
 
-A finite family generating an ideal gives degree-one initial forms that
-generate its total associated-graded ring over the degree-zero quotient.
-Choosing a generating family of cardinality `I.spanFinrank` yields the
-minimal-cardinality standard graded presentation used by later
-Hilbert--Serre arguments.
+Let I be an ideal of a commutative ring R. A family g : Fin r → R with Ideal.span (Set.range
+g) = I gives degree-one elements of gr_I R = ⨁ n, I^n / I^(n+1), namely the included classes
+of the g_i modulo I². These elements generate the total associated-graded algebra over R/I and
+define a standard graded presentation with r generators.
 
-This file proves no polynomial-ring injectivity or equivalence, no Rees
-comparison, no graded free presentation for modules, no Hilbert--Serre
-polynomiality, and no dimension result.
+For a finitely generated ideal, a generating family of size I.spanFinrank is chosen before
+forming the presentation. This cardinality is minimal for generators of I as an R-module; the
+resulting degree-one family is the image of that chosen ideal-generating family.
 
-## Main declarations
-
-* `Ideal.associatedGradedStandardPresentationOfSpan`
-* `Ideal.coe_associatedGradedStandardPresentationOfSpan_generator`
-* `Ideal.associatedGradedStandardPresentation`
+See Atiyah–Macdonald, *Introduction to Commutative Algebra*, Chapter 11.
 -/
 
 @[expose] public section
@@ -162,13 +157,15 @@ private theorem associatedGraded_adjoin_degreeOne_eq_top
             exact mul_left_comm x a m)
         x.2
 
-/-- A named finite generating family for an ideal gives a standard graded
-presentation of its associated-graded ring by the degree-one initial forms. -/
+/-- Let R be a commutative ring, I an ideal and g : Fin r → R satisfy Ideal.span (Set.range g) =
+I. The degree-one elements obtained by including [g_i] ∈ I/I² into gr_I R generate that total
+algebra over R/I. They define a StandardGradedPresentation of I.AssociatedGraded, with its
+internal coordinate grading, and with r specified generators. -/
 @[no_expose]
 noncomputable def associatedGradedStandardPresentationOfSpan
     (I : Ideal R) {r : ℕ} (g : Fin r → R)
     (hg : Ideal.span (Set.range g) = I) :
-    HilbertSamuel.StandardGradedPresentation
+    GradedAlgebra.StandardGradedPresentation
       (R ⧸ I) I.AssociatedGraded
       (DirectSum.algebraInternalGrade
         (R ⧸ I) I.AssociatedGradedPiece)
@@ -183,8 +180,10 @@ noncomputable def associatedGradedStandardPresentationOfSpan
         (R ⧸ I) I.AssociatedGradedPiece _ 1).2 ⟨_, rfl⟩⟩
   adjoin_eq_top := associatedGraded_adjoin_degreeOne_eq_top I g hg
 
-/-- A named generator in the standard presentation is literally its total
-degree-one initial form. -/
+/-- Let R be a commutative ring, I an ideal and g : Fin r → R span I. For every i : Fin r, the
+underlying total element of the i-th generator in associatedGradedStandardPresentationOfSpan I
+g hg equals DirectSum.of I.AssociatedGradedPiece 1 [g_i], where [g_i] is its initial form in
+I/I². The membership of g_i in I follows from the spanning hypothesis. -/
 @[simp]
 theorem coe_associatedGradedStandardPresentationOfSpan_generator
     (I : Ideal R) {r : ℕ} (g : Fin r → R)
@@ -223,12 +222,15 @@ private noncomputable def associatedGradedSpanFinrankGenerators
   rw [← Ideal.submodule_span_eq]
   simpa only [hrange] using hsSpan
 
-/-- A finitely generated ideal has a standard graded presentation with the
-minimal number `I.spanFinrank` of degree-one generators. -/
+/-- For a finitely generated ideal I in a commutative ring R, choose an R-module generating family
+for I of cardinality I.spanFinrank. Its degree-one initial forms give a
+StandardGradedPresentation over R/I of the total associated-graded ring, with its internal
+coordinate grading and exactly I.spanFinrank specified generators. The minimal cardinality
+refers to the chosen generators of the ideal I. -/
 @[no_expose]
 noncomputable def associatedGradedStandardPresentation
     (I : Ideal R) (hI : I.FG) :
-    HilbertSamuel.StandardGradedPresentation
+    GradedAlgebra.StandardGradedPresentation
       (R ⧸ I) I.AssociatedGraded
       (DirectSum.algebraInternalGrade
         (R ⧸ I) I.AssociatedGradedPiece)

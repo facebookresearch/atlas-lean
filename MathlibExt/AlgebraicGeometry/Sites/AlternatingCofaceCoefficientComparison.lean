@@ -13,10 +13,28 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldCanonicalCoindResolutionNa
 public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionInvariantPowers
 public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionNativeAcyclicity
 
-/-! Actual original field native comparison proof components. -/
+/-!
+# Coinduction exactness and additive coface comparisons
 
-/-! Original qualified proof block: FieldCoindCanonicalExact -/
-/-! The original field canonical coinduction diagram has genuine coefficient exactness and acyclic terms. -/
+For a field `k` with separable closure `Ω`, the canonical coinduction complex of a discrete
+Galois module preserves short exact coefficient sequences and has terms acyclic for positive
+derived invariants.
+
+For any additive functor between preadditive categories, the alternating coface complex
+commutes with applying that functor. The degreewise identity coordinates are natural in
+cosimplicial objects, with independent category universes.
+-/
+
+/-!
+# Field coinduction complexes
+
+The coefficient category consists of discrete Galois modules in universe `max u w`, for `k`
+and its separable closure in universe `u`.
+-/
+/-!
+Canonical coinduction complexes take short exact coefficient sequences to degreewise short
+exact sequences. Each term is acyclic for positive derived invariants.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -28,6 +46,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
+/-- Canonical field coinduction complex preserves zero maps.
+
+The canonical coinduction-complex functor on discrete `Gal(Ω/k)`-modules preserves zero
+morphisms. -/
 instance fieldCoindCanonicalComplexFunctor_preservesZero :
     (fieldCoindCanonicalComplexFunctor.{u, w} k Ω).PreservesZeroMorphisms where
   map_zero := by
@@ -47,8 +69,10 @@ instance fieldCoindCanonicalComplexFunctor_preservesZero :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual original coefficient short exact sequence remains short exact in every
-canonical coinduction degree, via the exact same stored monad power coordinates. -/
+/-- Canonical coinduction complexes preserve short exact sequences.
+
+A short exact sequence of discrete Galois modules remains short exact after the canonical
+coinduction-complex functor. -/
 theorem fieldCoindCanonicalComplex_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{u, max u w} Gal(Ω/k))) (hS : S.ShortExact) :
     (S.map (fieldCoindCanonicalComplexFunctor.{u, w} k Ω)).ShortExact := by
@@ -73,7 +97,10 @@ theorem fieldCoindCanonicalComplex_shortExact
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every literal canonical coinduction term is acyclic for SAME native derived invariants. -/
+/-- Canonical coinduction terms are acyclic for derived invariants.
+
+Every cochain term of the canonical field coinduction complex has zero right-derived
+invariants in every positive degree. -/
 theorem fieldCoindCanonicalComplex_rightDerived_isZero
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (q n : ℕ) :
     IsZero (((fieldInvariantFunctor.{u, w} k Ω).rightDerived (n + 1)).obj
@@ -96,8 +123,16 @@ theorem fieldCoindCanonicalComplex_rightDerived_isZero
 end AlgebraicGeometry.Scheme.DerivedSections
 end
 
-/-! Original qualified proof block: AlternatingCofaceFunctorComm -/
-/-! Actual natural commutation of the alternating coface functor with additive coefficient functors. -/
+/-!
+# Additive functors and alternating cofaces
+
+An additive functor takes the alternating sum of cofaces to the alternating sum of their
+images.
+-/
+/-!
+Applying an additive coefficient functor to a cosimplicial object and then taking its
+alternating complex agrees with applying it degreewise to the alternating complex.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -107,7 +142,11 @@ open CategoryTheory CategoryTheory.Limits AlgebraicTopology
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The literal identity-component additive alternating comparison. -/
+/-- Additive functor commutes with an alternating coface complex.
+
+For an additive functor `F : C ⥤ D` between preadditive categories, the alternating complex of
+`A ⋙ F` is isomorphic to `F` applied degreewise to the alternating complex of `A`, with
+identity component maps. -/
 def actualAlternatingCoefficientIso
     {C : Type uC} [Category.{vC} C] [Preadditive C]
     {D : Type uD} [Category.{vD} D] [Preadditive D]
@@ -117,7 +156,10 @@ def actualAlternatingCoefficientIso
   HomologicalComplex.Hom.isoOfComponents (fun _ => Iso.refl _)
     (fun i j hij => additiveAlternatingCofaceComm F A i j hij)
 
-/-- The same actual identity components preserve every original cosimplicial arrow. -/
+/-- Alternating coface coefficient comparison is natural.
+
+The identity-component comparison commutes with maps of cosimplicial objects and their images
+under the additive functor. -/
 theorem actualAlternatingCoefficientIso_naturality
     {C : Type uC} [Category.{vC} C] [Preadditive C]
     {D : Type uD} [Category.{vD} D] [Preadditive D]
@@ -135,8 +177,15 @@ theorem actualAlternatingCoefficientIso_naturality
 end AlgebraicGeometry.Scheme.DerivedSections
 end
 
-/-! Original qualified proof block: AlternatingCofaceFunctorNatComm -/
-/-! Actual additive alternating commutation as one natural isomorphism. -/
+/-!
+# Naturality of coface coefficient comparisons
+
+A cosimplicial morphism commutes with the coefficient comparison in each cochain degree.
+-/
+/-!
+The identity component maps give one natural isomorphism of the two alternating-coface
+functors.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -146,7 +195,10 @@ open CategoryTheory CategoryTheory.Limits AlgebraicTopology
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The exact original coefficient commutation is natural in the actual cosimplicial object. -/
+/-- Natural commutation of additive functors with alternating cofaces.
+
+The objectwise comparisons assemble to a natural isomorphism between applying `F` before and
+after the alternating coface-complex construction. -/
 def actualAlternatingCoefficientNatIso
     {C : Type uC} [Category.{vC} C] [Preadditive C]
     {D : Type uD} [Category.{vD} D] [Preadditive D]

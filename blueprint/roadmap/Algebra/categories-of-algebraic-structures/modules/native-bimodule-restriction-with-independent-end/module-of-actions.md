@@ -1,4 +1,6 @@
-# Module Of Actions
+# Commuting endpoint actions define an enveloping module
 
-Combine the given original actions with the native module constructor.
-The supplied integer dictionary is passed explicitly and its towers are earned.
+For an additive commutative group M with specified
+integer, left R- and right S-module structures, suppose the
+two endpoint actions commute. Then M is a module over
+E_(R,S), with (r⊗t)•x=r•(t•x).

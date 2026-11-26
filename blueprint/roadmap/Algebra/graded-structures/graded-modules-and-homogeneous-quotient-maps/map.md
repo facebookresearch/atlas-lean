@@ -1,3 +1,6 @@
-# Map
+# The map on homogeneous fractions induced by a graded morphism
 
-Map induced by graded module hom on AtPrime carrier
+The map on homogeneous fractions induced by a graded morphism.
+
+For a degree-preserving linear map f : M → N, the induced function on fraction classes sends
+m/s to f(m)/s.

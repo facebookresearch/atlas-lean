@@ -1,3 +1,6 @@
-# Field Finite Galois Algebra
+# Finite Galois field in the opposite finite étale category
 
-The actual finite Galois field, packaged in the accepted original finite-etale basis.
+Finite Galois field in the opposite finite étale category.
+
+Regard the finite Galois intermediate field as an object of the opposite finite étale algebra
+category for the spectrum functor.

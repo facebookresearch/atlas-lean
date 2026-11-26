@@ -1,4 +1,7 @@
-# Nerve Homotopy Common Hom h app value
+# Product-chain coordinates of the larger-source homotopy
 
-EVERY original common-Hom H.h cylinder chain keeps its exact classifier, product and interval
- value.
+Product-chain coordinates of the larger-source homotopy.
+
+In degree m, the cylinder field of the common-morphism-universe homotopy sends (c,t) to the
+image of the product chain under the cylinder classifier of α, with the stated source and
+target object heights.

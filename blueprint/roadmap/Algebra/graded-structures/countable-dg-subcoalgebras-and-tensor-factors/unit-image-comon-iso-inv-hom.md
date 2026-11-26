@@ -1,3 +1,6 @@
-# Unit Image Comon Iso inv hom
+# Inverse arrow of the image-unit comonoid isomorphism
 
-The actual inverse point map is the inverse of the original oplax unit comparison.
+Inverse arrow of the image-unit comonoid isomorphism.
+
+For an oplax monoidal F with invertible unit comparison η_F, the underlying inverse of
+unitImageComonIso F is η_F⁻¹ : 𝟙_D → F(𝟙_C).

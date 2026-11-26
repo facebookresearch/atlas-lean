@@ -1,4 +1,6 @@
-# Cancellation Nat Iso
+# The natural categorical base-change cancellation
 
-Categorical cancellation in its actual displayed common input height.
-The coefficient M keeps its original independently specified carrier.
+The natural categorical base-change cancellation.
+
+For input R-module height max(w,v), scalar extension to S followed by tensoring with M is
+naturally isomorphic to L ↦ M ⊗_R L, with common output height max(w,t,v).

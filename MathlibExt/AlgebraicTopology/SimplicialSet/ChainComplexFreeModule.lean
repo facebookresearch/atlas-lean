@@ -20,18 +20,18 @@ public import Mathlib.Algebra.DirectSum.Finsupp
 public import Mathlib.Algebra.Module.ULift
 
 /-!
-# Simplicial chains as free modules
+# Simplicial chain modules in free coordinates
 
-This file identifies the actual degree objects of the native simplicial chain
-complex of a simplicial set with free modules on its simplices.
+Let R be an arbitrary ring and X a simplicial set. In degree n, chains with coefficient module Q
+are the direct sum of copies of Q over all n-simplices, including degenerate simplices. The
+simplex cofan injections identify with the direct-sum injections.
 
-The construction compares the colimit cofan defining simplicial chains with
-the concrete direct-sum coproduct in `ModuleCat`, then uses the linear
-equivalence between direct sums and finitely supported functions. It works
-over an arbitrary ring. The universe-lifted form allows simplicial sets and
-coefficient rings in independent universes, while the same-universe form uses
-the coefficient ring itself for convenient downstream computations. The Shrink
-form keeps that same coefficient object under a weak universe bound.
+For R in universe u and X in w, a copy of R in max(u,w) gives free coordinates as finitely
+supported R-valued functions on X_n. Under the stated bound that every w-type has a
+representative in u, the coefficient R itself instead gives free coordinates on a representative
+of X_n in u. When R,X already lie in u, the indices are X_n itself. In each form the simplex
+injection gives its basis vector, and a simplicial map pushes coefficients forward by summing
+over fibers.
 -/
 
 @[expose] public section
@@ -45,8 +45,9 @@ universe u w
 
 namespace SSet
 
-/-- The native degree object of simplicial chains is the direct sum of
-copies of its coefficient module, indexed by the simplices. -/
+/-- Let R be a ring in u, X a simplicial set in w and Q an R-module in max(u,w). For n∈ℕ, this is
+the canonical degree-object isomorphism C_n(X;Q)≅⨁_{x∈X_n}Q. It compares the simplex-indexed
+chain coproduct with the direct-sum coproduct, and Q is arbitrary. -/
 noncomputable def chainComplexDirectSumIso
     {R : Type u} [Ring R] (X : SSet.{w})
     (Q : ModuleCat.{max u w} R) (n : ℕ) :
@@ -60,8 +61,9 @@ noncomputable def chainComplexDirectSumIso
         ModuleCat.coprodIsoDirectSum Z
 
 open Classical in
-/-- The direct-sum comparison sends each native simplex injection to the
-corresponding direct-sum injection. -/
+/-- For a ring R in u, X in w, coefficient Q in max(u,w), n∈ℕ and x∈X_n, the simplex injection
+Q→C_n(X;Q) followed by the direct-sum comparison is the direct-sum injection into the
+x-coordinate. -/
 @[reassoc]
 theorem ιChainComplex_comp_chainComplexDirectSumIso_hom
     {R : Type u} [Ring R] (X : SSet.{w})
@@ -88,13 +90,10 @@ section IndependentUniverses
 
 variable (X : SSet.{w}) (R : Type u) [Ring R]
 
-/-- The degree-`n` object of the native simplicial chain complex with
-universe-lifted coefficients is the free `R`-module on the `n`-simplices of
-`X`.
-
-The `ULift` coefficient object really belongs to
-`ModuleCat.{max u w} R`; the resulting Finsupp coefficients are lowered back
-to `R` through `ULift.moduleEquiv`. -/
+/-- Let R be a ring in universe u and X a simplicial set in universe w, independently. Put
+W=max(u,w) and use the canonical copy R̃ of R as coefficient module in W. For n∈ℕ, this
+identifies C_n(X;R̃) with the R-module of finitely supported functions X_n→R in W. Each lifted
+coefficient is identified with its scalar in R. -/
 noncomputable def chainComplexFreeIsoULift (n : ℕ) :
     (X.chainComplex
       (ModuleCat.of R (ULift.{w} R) : ModuleCat.{max u w} R)).X n ≅
@@ -107,9 +106,10 @@ noncomputable def chainComplexFreeIsoULift (n : ℕ) :
         (Finsupp.mapRange.linearEquiv
           (ULift.moduleEquiv (R := R) : ULift.{w} R ≃ₗ[R] R))).toModuleIso)
 
-/-- Under `chainComplexFreeIsoULift`, the coproduct injection indexed by a
-simplex is the basis-vector map after lowering its coefficient from `ULift R`
-to `R`. -/
+/-- Let R be a ring in universe u and X a simplicial set in universe w, independently. Put
+W=max(u,w) and use the canonical copy R̃ of R as coefficient module in W. For x∈X_n, the
+injection R̃→C_n(X;R̃) followed by the free-coordinate comparison sends r̃ to the finitely
+supported function with value r at x and zero elsewhere, where r is the identified scalar of R. -/
 @[reassoc]
 theorem ιChainComplex_comp_chainComplexFreeIsoULift_hom
     (n : ℕ) (x : X _⦋n⦌) :
@@ -133,8 +133,11 @@ theorem ιChainComplex_comp_chainComplexFreeIsoULift_hom
   rw [finsuppLEquivDirectSum_symm_lof]
   simp
 
-/-- The universe-lifted free-chain identification is natural in the
-simplicial set. -/
+/-- Let R be a ring in universe u and X a simplicial set in universe w, independently. Put
+W=max(u,w) and use the canonical copy R̃ of R as coefficient module in W. For f:X→Y with Y in w,
+the degree-n chain map in free coordinates is the pushforward along f_n:X_n→Y_n. It sends the
+basis vector r[x] to r[f_n(x)] and sums coefficients over fibers on an arbitrary finitely
+supported function. -/
 theorem chainComplexMap_comp_chainComplexFreeIsoULift_hom
     {Y : SSet.{w}} (f : X ⟶ Y) (n : ℕ) :
     (chainComplexMap f
@@ -168,9 +171,11 @@ attribute [local instance] shrinkCoproducts
 
 variable (X : SSet.{w}) (R : Type u) [Ring R] [UnivLE.{w, u}]
 
-/-- The native simplicial-chain module with its original coefficient object R is
-free on a coefficient-sized model of the simplices. The weak universe bound
-supplies Shrink.{u} indices without lifting the coefficients or the chain object. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For n∈ℕ, C_n(X;R)≅(I_n→₀R) in R-modules with carrier in u.
+The source and coefficients retain R itself; the universe hypothesis supplies the representative
+simplex index. -/
 def chainComplexFreeIsoShrink (n : ℕ) :
     (X.chainComplex (ModuleCat.of R R : ModuleCat.{u} R)).X n ≅
       (ModuleCat.of R (Shrink.{u} (X _⦋n⦌) →₀ R) : ModuleCat.{u} R) := by
@@ -186,7 +191,10 @@ def chainComplexFreeIsoShrink (n : ℕ) :
   let hX := X.isColimitChainComplexXCofan A n
   exact hX.coconePointUniqueUpToIso hI
 
-/-- Every native simplex injection is the basis-vector map at its Shrink index. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For x∈X_n, the injection R→C_n(X;R) followed by the
+comparison sends r to r[e_n(x)] in the finitely supported function module on I_n. -/
 @[reassoc]
 theorem ιChainComplex_comp_chainComplexFreeIsoShrink_hom (n : ℕ) (x : X _⦋n⦌) :
     X.ιChainComplex (R := (ModuleCat.of R R : ModuleCat.{u} R)) x ≫
@@ -208,7 +216,11 @@ theorem ιChainComplex_comp_chainComplexFreeIsoShrink_hom (n : ℕ) (x : X _⦋n
     hX.comp_coconePointUniqueUpToIso_hom hI (Discrete.mk x)
   with_unfolding_all exact h
 
-/-- A Shrink-indexed basis vector returns to its same native simplex injection. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For x∈X_n, the inverse of C_n(X;R)≅(I_n→₀R) sends the vector
+r[e_n(x)] to the simplex injection of r at x. The equality holds as the full linear basis-vector
+map from R. -/
 @[reassoc]
 theorem chainComplexFreeIsoShrink_inv_single (n : ℕ) (x : X _⦋n⦌) :
     ModuleCat.ofHom
@@ -222,21 +234,32 @@ theorem chainComplexFreeIsoShrink_inv_single (n : ℕ) (x : X _⦋n⦌) :
     ((Category.assoc i e.hom e.inv).trans
       ((congrArg (fun f => i ≫ f) e.hom_inv_id).trans (Category.comp_id i)))
 
-/-- The scalar coefficient at an actual simplex, using its Shrink coordinate. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For x∈X_n, this coefficient map C_n(X;R)→R is the
+free-coordinate comparison followed by evaluation at e_n(x). It extracts the scalar coefficient
+of the given simplex. -/
 def chainComplexCoefficientShrink (n : ℕ) (x : X _⦋n⦌) :
     (X.chainComplex (ModuleCat.of R R : ModuleCat.{u} R)).X n ⟶
       (ModuleCat.of R R : ModuleCat.{u} R) :=
   (chainComplexFreeIsoShrink X R n).hom ≫
     ModuleCat.ofHom (Finsupp.lapply (equivShrink (X _⦋n⦌) x))
 
-/-- The native scalar coefficient is evaluation of the free-module coordinate. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For a∈C_n(X;R) and x∈X_n, its scalar coefficient is the value
+of the free-coordinate image of a at e_n(x). -/
 theorem chainComplexCoefficientShrink_apply (n : ℕ) (x : X _⦋n⦌)
     (a : (X.chainComplex (ModuleCat.of R R : ModuleCat.{u} R)).X n) :
     (chainComplexCoefficientShrink X R n x).hom a =
       ((chainComplexFreeIsoShrink X R n).hom.hom a) (equivShrink (X _⦋n⦌) x) := rfl
 
 open Classical in
-/-- Native simplex injections satisfy the Kronecker law for Shrink coefficients. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For x,y∈X_n, the injection at y followed by the coefficient
+at x is id_R if y=x and zero otherwise. This identifies the coefficient maps on every simplex
+basis injection. -/
 @[reassoc]
 theorem ιChainComplex_comp_chainComplexCoefficientShrink (n : ℕ) (x y : X _⦋n⦌) :
     X.ιChainComplex (R := (ModuleCat.of R R : ModuleCat.{u} R)) y ≫
@@ -276,8 +299,11 @@ theorem ιChainComplex_comp_chainComplexCoefficientShrink (n : ℕ) (x y : X _�
       exact hValue.trans (ite_eq_right h).symm
   exact hLeft.trans hEval
 
-/-- The Shrink free-chain identification is natural for every simplicial map;
-its coordinate map sums coefficients over fibers of the induced simplex map. -/
+/-- Let R be a ring in u and X a simplicial set in w. Assume every type in w admits a representative
+in u. For each n choose the canonical representative I_n of X_n with e_n:X_n≅I_n, and retain R
+itself as coefficient module in u. For f:X→Y with Y in w, the degree-n map in free coordinates
+is pushforward along e_n^Y∘f_n∘(e_n^X)^{-1}. Thus it sends r[e_n^X(x)] to r[e_n^Y(f_nx)] and
+sums coefficients over fibers. -/
 theorem chainComplexMap_comp_chainComplexFreeIsoShrink_hom
     {Y : SSet.{w}} (f : X ⟶ Y) (n : ℕ) :
     (chainComplexMap f (ModuleCat.of R R : ModuleCat.{u} R)).f n ≫
@@ -309,12 +335,9 @@ section SameUniverse
 
 variable (X : SSet.{u}) (R : Type u) [Ring R]
 
-/-- The degree-`n` object of the native simplicial chain complex is the free
-`R`-module on the `n`-simplices of `X`.
-
-This convenience form uses the actual coefficient object `R` when the ring
-and simplicial set live in the same universe. Use
-`chainComplexFreeIsoULift` for independent universes. -/
+/-- Let R be a ring and X a simplicial set in the same universe u, with coefficient module R. For
+n∈ℕ, C_n(X;R)≅(X_n→₀R). The indices are all n-simplices and the coefficients are the given
+scalar ring. -/
 noncomputable def chainComplexFreeIso (n : ℕ) :
     (X.chainComplex (ModuleCat.of R R : ModuleCat.{u} R)).X n ≅
       (ModuleCat.of R (X _⦋n⦌ →₀ R) : ModuleCat.{u} R) := by
@@ -323,8 +346,9 @@ noncomputable def chainComplexFreeIso (n : ℕ) :
     chainComplexDirectSumIso X (ModuleCat.of R R : ModuleCat.{u} R) n ≪≫
       (finsuppLEquivDirectSum R R (X _⦋n⦌)).symm.toModuleIso
 
-/-- Under `chainComplexFreeIso`, the coproduct injection indexed by a simplex
-is the corresponding Finsupp basis-vector map. -/
+/-- Let R be a ring and X a simplicial set in the same universe u, with coefficient module R. For
+x∈X_n, the injection R→C_n(X;R) followed by the free-coordinate isomorphism is r↦r[x], the
+basis-vector map at x. -/
 @[reassoc]
 theorem ιChainComplex_comp_chainComplexFreeIso_hom
     (n : ℕ) (x : X _⦋n⦌) :
@@ -341,7 +365,10 @@ theorem ιChainComplex_comp_chainComplexFreeIso_hom
       (DirectSum.lof R (X _⦋n⦌) (fun _ => R) x r) = Finsupp.single x r
   exact finsuppLEquivDirectSum_symm_lof R R (X _⦋n⦌) x r
 
-/-- The free-chain identification is natural in the simplicial set. -/
+/-- Let R be a ring and X a simplicial set in the same universe u, with coefficient module R. For a
+simplicial map f:X→Y and degree n, the chain map in the free presentations is the linear
+pushforward along f_n. Its basis formula is r[x]↦r[f_n(x)], with coefficients summed over
+fibers. -/
 theorem chainComplexMap_comp_chainComplexFreeIso_hom
     {Y : SSet.{u}} (f : X ⟶ Y) (n : ℕ) :
     (chainComplexMap f (ModuleCat.of R R : ModuleCat.{u} R)).f n ≫

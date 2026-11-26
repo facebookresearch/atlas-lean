@@ -1,3 +1,6 @@
-# Skeletal Step Class To Page successor π
+# The step-class map through the successor homology projection
 
-The successor homology quotient sends the intermediate-window class to the next page.
+The step-class map through the successor homology projection.
+
+The expanded representative projected to successor homology and then to page r+1 is the
+page-(r+1) class map.

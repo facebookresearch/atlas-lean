@@ -11,17 +11,20 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.RightActions
 
 /-!
-# Semilinear maps of the original balanced quotients
+# Semilinear change of scalars for balanced tensors
 
-The commutative ground ring and the possibly noncommutative balancing
-semiring may both change. Semilinear maps on the factors which intertwine
-the balancing actions induce a semilinear map between the balanced tensor
-quotients. A source balancing relation for `r` maps to the target relation
-for its image under the balancing-semiring homomorphism.
+Let `σ : k →+* k'` be a homomorphism of commutative ground rings and `φ : R →+* R'` a
+homomorphism of balancing semirings. Suppose `f : M →ₛₗ[σ] M'` and `g : N →ₛₗ[σ] N'` satisfy
+`f (op r • m) = op (φ r) • f m` and `g (r • n) = φ r • g n`.
 
-An independently changing outer action can be compatible with this map;
-the induced map is then semilinear for that action. All factor universes
-are independent.
+These factor maps induce a `σ`-semilinear map of balanced quotients with `[m ⊗ n] ↦ [f m ⊗ g
+n]`. A balanced pairing similarly descends to a semilinear map out of the quotient. Pure
+classes determine these maps, and the constructions preserve composition and identities.
+
+If an outer action also changes along a semiring homomorphism `τ`, compatibility of the
+relevant factor map with that action gives a `τ`-semilinear map on the same quotient carriers.
+Right actions act on the second factor and left actions on the first. The ground rings,
+balancing semirings, outer semirings, and coefficient modules have independent universes.
 -/
 
 @[expose] public section
@@ -44,7 +47,11 @@ variable {k : Type u} {k' : Type u'} [CommRing k] [CommRing k']
   [Module k M] [Module k N] [Module k' P]
   [Module Rᵐᵒᵖ M] [Module R N] {σ : k →+* k'}
 
-/-- Native semilinear descent of an actually balanced semilinear pairing. -/
+/-- Descent of a balanced semilinear pairing.
+
+Let `σ : k →+* k'` and let `f : M →ₛₗ[σ] N →ₛₗ[σ] P` satisfy `f (op r • m) n = f m (r • n)`
+for all balancing scalars `r : R`. The pairing descends to a `σ`-semilinear map `Balanced k R
+M N →ₛₗ[σ] P`. -/
 def liftSemilinear (f : M →ₛₗ[σ] N →ₛₗ[σ] P)
     (hf : ∀ (r : R) (m : M) (n : N), f (op r • m) n = f m (r • n)) :
     Balanced k R M N →ₛₗ[σ] P :=
@@ -55,19 +62,27 @@ def liftSemilinear (f : M →ₛₗ[σ] N →ₛₗ[σ] P)
     rw [map_sub, TensorProduct.lift.tmul, TensorProduct.lift.tmul,
       hf r m n, sub_self])
 
-/-- The descended map has the supplied pairing on every pure class. -/
+/-- Semilinear pairing descent on pure balanced classes.
+
+The descended map of a balanced semilinear pairing `f` sends `[m ⊗ n]` to `f m n`. -/
 theorem liftSemilinear_mk (f : M →ₛₗ[σ] N →ₛₗ[σ] P) (hf)
     (m : M) (n : N) :
     liftSemilinear f hf (mk k R M N m n) = f m n := rfl
 
-/-- Pure balanced classes determine a semilinear map even when its ground changes. -/
+/-- Pure classes determine a semilinear map from a balanced quotient.
+
+Two `σ`-semilinear maps from `Balanced k R M N` to a `k'`-module `P` are equal if they agree
+on `[m ⊗ n]` for every pair `m, n`. -/
 theorem semilinearHom_ext {f g : Balanced k R M N →ₛₗ[σ] P}
     (h : ∀ (m : M) (n : N), f (mk k R M N m n) = g (mk k R M N m n)) :
     f = g := by
   apply LinearMap.toAddMonoidHom_injective
   exact addHom_ext k R M N h
 
-/-- The semilinear universal property includes uniqueness of the actual quotient lift. -/
+/-- Uniqueness of balanced semilinear pairing descent.
+
+A `σ`-semilinear map from the balanced quotient whose value on every pure class is `f m n`
+equals the descended map of the balanced pairing `f`. -/
 theorem liftSemilinear_unique (f : M →ₛₗ[σ] N →ₛₗ[σ] P) (hf)
     (g : Balanced k R M N →ₛₗ[σ] P)
     (hg : ∀ (m : M) (n : N), g (mk k R M N m n) = f m n) :
@@ -88,8 +103,11 @@ variable {k : Type u} {k' : Type u'} [CommRing k] [CommRing k']
   [Module Rᵐᵒᵖ M] [Module R N] [Module R'ᵐᵒᵖ M'] [Module R' N']
   {σ : k →+* k'}
 
-/-- The native tensor map sends each source relation to the target relation
-with balancing scalar `φ r`; commutativity of `R` or `R'` is not used. -/
+/-- Semilinear factor maps preserve balancing relations.
+
+For `φ : R →+* R'`, assume the `σ`-semilinear maps `f` and `g` intertwine the right and left
+balancing actions through `φ`. The tensor map `TensorProduct.map f g` sends the source
+balancing submodule into the target balancing submodule. -/
 theorem mapSemilinear_preserves_balanceRelations (φ : R →+* R')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
@@ -104,7 +122,11 @@ theorem mapSemilinear_preserves_balanceRelations (φ : R →+* R')
   rw [map_sub, TensorProduct.map_tmul, TensorProduct.map_tmul, hf, hg]
   exact Submodule.subset_span ⟨φ r, f m, g n, rfl⟩
 
-/-- Change the balancing ring through the original native quotient map. -/
+/-- Semilinear map of balanced quotients under scalar change.
+
+For a ground-ring map `σ` and a balancing-semiring map `φ`, factor maps `f` and `g` semilinear
+for `σ` and intertwining the balancing actions through `φ` induce `Balanced k R M N →ₛₗ[σ]
+Balanced k' R' M' N'`. -/
 def mapSemilinear (φ : R →+* R') (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
     (hg : ∀ (r : R) (n : N), g (r • n) = φ r • g n) :
@@ -112,7 +134,10 @@ def mapSemilinear (φ : R →+* R') (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ
   (balanceRelations k R M N).mapQ (balanceRelations k' R' M' N')
     (TensorProduct.map f g) (mapSemilinear_preserves_balanceRelations φ f g hf hg)
 
-/-- The scalar-change map commutes with projection of every original ground tensor. -/
+/-- Scalar-change map commutes with the tensor quotient projection.
+
+For any tensor `x : M ⊗[k] N`, the scalar-change map applied to its balanced quotient class
+equals the target quotient class of `TensorProduct.map f g x`. -/
 theorem mapSemilinear_mkQ (φ : R →+* R') (f : M →ₛₗ[σ] M')
     (g : N →ₛₗ[σ] N') (hf hg) (x : M ⊗[k] N) :
     mapSemilinear φ f g hf hg ((balanceRelations k R M N).mkQ x) =
@@ -122,7 +147,10 @@ theorem mapSemilinear_mkQ (φ : R →+* R') (f : M →ₛₗ[σ] M')
       (TensorProduct.map f g)
       (h := mapSemilinear_preserves_balanceRelations φ f g hf hg)) x
 
-/-- Both original factors are retained on pure representatives. -/
+/-- Pure-class formula for semilinear scalar change.
+
+The map of balanced quotients induced by compatible semilinear factor maps `f` and `g` sends
+`[m ⊗ n]` to `[f m ⊗ g n]`. -/
 theorem mapSemilinear_mk (φ : R →+* R') (f : M →ₛₗ[σ] M')
     (g : N →ₛₗ[σ] N') (hf hg) (m : M) (n : N) :
     mapSemilinear φ f g hf hg (mk k R M N m n) =
@@ -132,7 +160,10 @@ theorem mapSemilinear_mk (φ : R →+* R') (f : M →ₛₗ[σ] M')
   rw [TensorProduct.map_tmul]
   rfl
 
-/-- The scalar-change map is characterized by its original factor values. -/
+/-- Uniqueness of the semilinear balanced factor map.
+
+A `σ`-semilinear map of balanced quotients with value `[f m ⊗ g n]` on every source pure class
+equals `mapSemilinear φ f g hf hg`. -/
 theorem mapSemilinear_unique (φ : R →+* R') (f : M →ₛₗ[σ] M')
     (g : N →ₛₗ[σ] N') (hf hg)
     (h : Balanced k R M N →ₛₗ[σ] Balanced k' R' M' N')
@@ -151,7 +182,11 @@ variable {k'' : Type u''} [CommRing k'']
 
 local instance : RingHomCompTriple σ σ' (σ'.comp σ) := ⟨rfl⟩
 
-/-- Composition changes each actual balancing scalar by the composite ring map. -/
+/-- Semilinear balanced maps preserve composition.
+
+Compose ground maps `σ : k →+* k'` and `σ' : k' →+* k''`, balancing maps `φ` and `φ'`, and
+compatible factor maps `f, g` and `f', g'`. The composite quotient map is the quotient map for
+`σ'.comp σ`, `φ'.comp φ`, `f' ∘ f`, and `g' ∘ g`. -/
 theorem mapSemilinear_comp (φ : R →+* R') (φ' : R' →+* R'')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (f' : M' →ₛₗ[σ'] M'') (g' : N' →ₛₗ[σ'] N'')
@@ -175,7 +210,11 @@ theorem mapSemilinear_comp (φ : R →+* R') (φ' : R' →+* R'')
 
 variable {P : Type p} [AddCommGroup P] [Module k'' P]
 
-/-- Descent and scalar change commute by the actual semilinear universal property. -/
+/-- Semilinear descent commutes with precomposition on the factors.
+
+Precompose a balanced pairing on `M'` and `N'` with compatible semilinear maps `f` and `g`.
+Its descended map equals the descended target pairing composed with the induced source-to-
+target balanced map, with composite ground-ring homomorphism. -/
 theorem liftSemilinear_comp_mapSemilinear (φ : R →+* R')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
@@ -203,7 +242,11 @@ variable {k : Type u} [CommRing k] {R : Type r} [Semiring R]
   [Module k M] [Module k N] [Module k M'] [Module k N']
   [Module Rᵐᵒᵖ M] [Module R N] [Module Rᵐᵒᵖ M'] [Module R N']
 
-/-- Keeping both scalar rings recovers the existing balanced map. -/
+/-- Fixed-scalar semilinear construction is the ground-linear balanced map.
+
+When the ground and balancing rings remain `k` and `R`, the construction with balancing map
+`RingHom.id R` and ground-linear factor maps equals `TensorProduct.Balanced.map` for those
+maps. -/
 theorem mapSemilinear_eq_map (f : M →ₗ[k] M') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op r • f m)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n) :
@@ -212,7 +255,10 @@ theorem mapSemilinear_eq_map (f : M →ₗ[k] M') (g : N →ₗ[k] N')
   intro m n
   rw [mapSemilinear_mk, map_mk]
 
-/-- Identity scalar and factor maps give the identity on the original quotient. -/
+/-- Identity factors induce the identity balanced map.
+
+Taking identity maps on the ground ring, balancing semiring, and both factors gives the
+identity `k`-linear map on `Balanced k R M N`. -/
 theorem mapSemilinear_id :
     mapSemilinear (RingHom.id R) (LinearMap.id : M →ₗ[k] M)
       (LinearMap.id : N →ₗ[k] N) (fun _ _ => rfl) (fun _ _ => rfl) =
@@ -235,7 +281,11 @@ variable {k : Type u} {k' : Type u'} [CommRing k] [CommRing k']
   [SMulCommClass S'ᵐᵒᵖ k' N'] [SMulCommClass R' S'ᵐᵒᵖ N']
   {σ : k →+* k'}
 
-/-- The same ground-semilinear quotient map intertwines the earned right actions. -/
+/-- Scalar change intertwines right outer actions.
+
+Let `τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ`. In addition to the balancing compatibility through `φ`, assume `g (t
+• n) = τ t • g n`. The ground-semilinear quotient map intertwines the source right operator at
+`t` and the target right operator at `τ t`, as additive maps. -/
 theorem mapSemilinear_rightAction (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ)
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
@@ -251,7 +301,11 @@ theorem mapSemilinear_rightAction (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐ
     rightAction k' R' S' M' N' (τ t) (mapSemilinear φ f g hf hg (mk k R M N m n))
   rw [rightAction_mk, mapSemilinear_mk, mapSemilinear_mk, rightAction_mk, hgS]
 
-/-- Earn right outer semilinearity for the original scalar-change quotient map. -/
+/-- Scalar-change map semilinear for the right outer action.
+
+Compatible ground-semilinear factor maps, with the second factor preserving the right outer
+action along `τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ`, give a `τ`-semilinear map between the balanced quotients
+with their induced right module structures. -/
 def mapSemilinearRight (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ)
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
@@ -268,20 +322,29 @@ def mapSemilinearRight (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ)
   change h (rightAction k R S M N t x) = rightAction k' R' S' M' N' (τ t) (h x)
   exact DFunLike.congr_fun (mapSemilinear_rightAction φ τ f g hf hg hgS t) x
 
-/-- Earning the outer action does not change the original quotient function. -/
+/-- Right-semilinear and ground-semilinear maps have the same values.
+
+For every balanced class `x`, the right-outer-semilinear map induced by `φ`, `τ`, `f`, and `g`
+has value `mapSemilinear φ f g hf hg x`. -/
 theorem mapSemilinearRight_apply (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ)
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N') (hf hg hgS)
     (x : Balanced k R M N) :
     mapSemilinearRight φ τ f g hf hg hgS x = mapSemilinear φ f g hf hg x := rfl
 
-/-- The outer-semilinear map has exactly the same original pure-factor values. -/
+/-- Pure-class formula for right-outer semilinear scalar change.
+
+The right-outer-semilinear quotient map induced by compatible factor maps sends `[m ⊗ n]` to
+`[f m ⊗ g n]`. -/
 theorem mapSemilinearRight_mk (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ)
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N') (hf hg hgS) (m : M) (n : N) :
     mapSemilinearRight φ τ f g hf hg hgS (mk k R M N m n) =
       mk k' R' M' N' (f m) (g n) :=
   mapSemilinear_mk φ f g hf hg m n
 
-/-- Outer semilinearity has the same quotient uniqueness property. -/
+/-- Uniqueness of the right-outer semilinear quotient map.
+
+A `τ`-semilinear map between the induced right quotient modules whose values on pure classes
+are `[f m ⊗ g n]` equals `mapSemilinearRight φ τ f g hf hg hgS`. -/
 theorem mapSemilinearRight_unique (φ : R →+* R') (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ)
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N') (hf hg hgS)
     (h : letI := rightModule k R S M N
@@ -306,7 +369,11 @@ variable {k'' : Type u''} [CommRing k''] {R'' : Type r''} [Semiring R'']
 
 local instance : RingHomCompTriple σ σ' (σ'.comp σ) := ⟨rfl⟩
 
-/-- Both noncommutative scalar changes compose on the same original quotient maps. -/
+/-- Right-outer semilinear quotient maps preserve composition.
+
+Two compatible scalar changes compose by composing the ground-ring maps, balancing-semiring
+maps, right-outer maps, and factor maps. The composite quotient map is semilinear for the
+composite right-outer homomorphism `τ'.comp τ`. -/
 local instance (τ : Sᵐᵒᵖ →+* S'ᵐᵒᵖ) (τ' : S'ᵐᵒᵖ →+* S''ᵐᵒᵖ) :
     RingHomCompTriple τ τ' (τ'.comp τ) := ⟨rfl⟩
 
@@ -360,7 +427,11 @@ variable {k : Type u} {k' : Type u'} [CommRing k] [CommRing k']
   [SMulCommClass L' k' M'] [SMulCommClass L' R'ᵐᵒᵖ M']
   {σ : k →+* k'}
 
-/-- Scalar change also intertwines an independent left outer action. -/
+/-- Scalar change intertwines left outer actions.
+
+Let `τ : L →+* L'`. If the first factor map satisfies `f (l • m) = τ l • f m`, in addition to
+balancing compatibility through `φ`, then the ground-semilinear quotient map intertwines the
+left source operator at `l` and target operator at `τ l`, as additive maps. -/
 theorem mapSemilinear_leftAction (φ : R →+* R') (τ : L →+* L')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
@@ -376,7 +447,11 @@ theorem mapSemilinear_leftAction (φ : R →+* R') (τ : L →+* L')
     leftAction k' R' L' M' N' (τ l) (mapSemilinear φ f g hf hg (mk k R M N m n))
   rw [leftAction_mk, mapSemilinear_mk, mapSemilinear_mk, leftAction_mk, hfL]
 
-/-- Earn left outer semilinearity without changing the ground quotient map. -/
+/-- Scalar-change map semilinear for the left outer action.
+
+Compatible ground-semilinear factor maps, with the first factor preserving the left outer
+action along `τ : L →+* L'`, induce a `τ`-semilinear map between the balanced quotients with
+their induced left module structures. -/
 def mapSemilinearLeft (φ : R →+* R') (τ : L →+* L')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op (φ r) • f m)
@@ -393,14 +468,20 @@ def mapSemilinearLeft (φ : R →+* R') (τ : L →+* L')
   change h (leftAction k R L M N l x) = leftAction k' R' L' M' N' (τ l) (h x)
   exact DFunLike.congr_fun (mapSemilinear_leftAction φ τ f g hf hg hfL l) x
 
-/-- Its pure classes still record the original two factor maps. -/
+/-- Pure-class formula for left-outer semilinear scalar change.
+
+The left-outer-semilinear quotient map induced by compatible factor maps sends `[m ⊗ n]` to
+`[f m ⊗ g n]`. -/
 theorem mapSemilinearLeft_mk (φ : R →+* R') (τ : L →+* L')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N') (hf hg hfL) (m : M) (n : N) :
     mapSemilinearLeft φ τ f g hf hg hfL (mk k R M N m n) =
       mk k' R' M' N' (f m) (g n) :=
   mapSemilinear_mk φ f g hf hg m n
 
-/-- The earned left outer map is characterized by the original two factor values. -/
+/-- Uniqueness of the left-outer semilinear quotient map.
+
+A `τ`-semilinear map between the induced left quotient modules whose values on pure classes
+are `[f m ⊗ g n]` equals `mapSemilinearLeft φ τ f g hf hg hfL`. -/
 theorem mapSemilinearLeft_unique (φ : R →+* R') (τ : L →+* L')
     (f : M →ₛₗ[σ] M') (g : N →ₛₗ[σ] N') (hf hg hfL)
     (h : letI := leftModule k R L M N
@@ -425,7 +506,10 @@ variable {k'' : Type u''} [CommRing k''] {R'' : Type r''} [Semiring R'']
 
 local instance : RingHomCompTriple σ σ' (σ'.comp σ) := ⟨rfl⟩
 
-/-- Independent left outer scalar changes compose with the native quotient maps. -/
+/-- Left-outer semilinear quotient maps preserve composition.
+
+Composing compatible scalar changes composes their ground, balancing, and left-outer
+homomorphisms and both factor maps. The induced quotient map is semilinear for `τ'.comp τ`. -/
 local instance (τ : L →+* L') (τ' : L' →+* L'') :
     RingHomCompTriple τ τ' (τ'.comp τ) := ⟨rfl⟩
 
@@ -477,7 +561,11 @@ variable {k : Type u} [CommRing k] {R : Type r} {S : Type s}
   [SMulCommClass Sᵐᵒᵖ k N] [SMulCommClass R Sᵐᵒᵖ N]
   [SMulCommClass Sᵐᵒᵖ k N'] [SMulCommClass R Sᵐᵒᵖ N']
 
-/-- Keeping all scalar rings recovers the exact existing earned right-linear map. -/
+/-- Fixed right outer scalars recover the right-linear balanced map.
+
+When the ground ring, balancing semiring, and right outer semiring remain fixed, the
+semilinear construction with identity scalar homomorphisms equals the right-linear map
+`mapRight f g hf hg hgS`. -/
 theorem mapSemilinearRight_eq_mapRight (f : M →ₗ[k] M') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op r • f m)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -494,7 +582,11 @@ theorem mapSemilinearRight_eq_mapRight (f : M →ₗ[k] M') (g : N →ₗ[k] N')
   exact (mapSemilinearRight_mk (RingHom.id R) (RingHom.id Sᵐᵒᵖ) f g hf hg hgS m n).trans
     (mapRight_mk f g hf hg hgS m n).symm
 
-/-- Identity scalar and factor maps act by the identity on the original right module. -/
+/-- Identity factors induce the identity right-linear quotient map.
+
+With the right module structure induced by `rightModule`, identity maps on the ground ring,
+balancing semiring, right outer semiring, and factors give the identity `Sᵐᵒᵖ`-linear map on
+the quotient. -/
 theorem mapSemilinearRight_id :
     letI := rightModule k R S M N
     mapSemilinearRight (RingHom.id R) (RingHom.id Sᵐᵒᵖ)
@@ -519,7 +611,11 @@ variable {k : Type u} [CommRing k] {R : Type r} {L : Type l}
   [Module Rᵐᵒᵖ M] [Module R N] [Module L M]
   [SMulCommClass L k M] [SMulCommClass L Rᵐᵒᵖ M]
 
-/-- The independent left outer identity has the same actual quotient identity. -/
+/-- Identity factors induce the identity left-linear quotient map.
+
+With the left module structure induced by `leftModule`, identity maps on the ground ring,
+balancing semiring, left outer semiring, and factors give the identity `L`-linear map on the
+quotient. -/
 theorem mapSemilinearLeft_id :
     letI := leftModule k R L M N
     mapSemilinearLeft (RingHom.id R) (RingHom.id L)

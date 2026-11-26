@@ -17,7 +17,18 @@ public import MathlibExt.Algebra.Homology.KoszulFamilyEulerLocalDimensionVanishi
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Algebra.Module.LocalizedModule.AtPrime
 
-/-! # Finite-family Koszul Euler sums over the entire minimal support -/
+/-!
+# Koszul Euler sums over the entire minimal support
+
+Let N and M be finite modules over a noetherian local ring, with Ann N ⊆ Ann M, so Supp M ⊆
+Supp N. For a family of n maximal-ideal elements, assume the post-quotients for both modules
+have finite length and dim Supp N ≤ n. With a finite enumeration of the minimal support primes
+of N, the Euler invariant for M is their full weighted sum.
+
+The weight at p is ℓ_{R_p}(M_p), and the value is the coefficient-family Euler invariant on
+R/p. These localized lengths are finite; zero weights retain primes outside the support of M.
+The ring and both module carrier universes are independent.
+-/
 
 public section
 noncomputable section
@@ -26,7 +37,9 @@ open CategoryTheory CategoryTheory.Limits
 
 universe u v w
 
-/-- An annihilator inclusion reverses supports when the larger support module is finite. -/
+/-- Annihilator inclusion reverses supports.
+
+For finite N, Ann N ⊆ Ann M implies Supp M ⊆ Supp N. -/
 theorem support_subset_of_annihilator_le
     (S : Type u) [CommRing S]
     (N : Type v) [AddCommGroup N] [Module S N] [Module.Finite S N]
@@ -37,13 +50,18 @@ theorem support_subset_of_annihilator_le
   exact Module.mem_support_iff_of_finite.mpr
     (hAnn.trans (Module.annihilator_le_of_mem_support hp))
 
-/-- The entire family of primes minimal in the actual module support. -/
+/-- The minimal primes of a module's support.
+
+Take the subtype of prime-spectrum points minimal among those in Supp(N). -/
 abbrev minimalSupportPrimes
     (S : Type u) [CommRing S]
     (N : Type v) [AddCommGroup N] [Module S N] :=
   {p : PrimeSpectrum S // Minimal (fun q => q ∈ Module.support S N) p}
 
-/-- The actual Koszul Euler value at a minimal support prime. -/
+/-- The Koszul Euler contribution at a reference minimal-support prime.
+
+For p minimal in Supp(N), use the post-quotient finiteness to define the family coefficient
+Euler value on R/p. -/
 def koszulFamilyMinimalSupportPrimeValue
     (S : Type u) [CommRing S] [IsNoetherianRing S]
     (N : Type v) [AddCommGroup N] [Module S N]
@@ -106,7 +124,11 @@ private theorem koszulFamilyFactor_minimal_support_of_value_ne_zero
       S c (S ⧸ f.prime.asIdeal) hquot hc hdrop
   exact False.elim (hvalue hzero)
 
-/-- The full minimum-support Euler sum, with actual localized lengths and all contributing primes. -/
+/-- The full reference-minimal-support Euler formula.
+
+Under the stated local, annihilator, quotient and dimension hypotheses, all M_p lengths on the
+minimal support of N are finite and their weighted prime values sum to the Euler invariant of
+M. -/
 theorem koszulFamilyEuler_eq_sum_minimalSupport
     (S : Type u) [CommRing S] [IsNoetherianRing S] [IsLocalRing S]
     (N : Type v) [AddCommGroup N] [Module S N] [Module.Finite S N]
@@ -193,7 +215,10 @@ theorem koszulFamilyEuler_eq_sum_minimalSupport
       intro p _
       rw [hcount p, ENat.toNat_natCast]
 
-/-- The original signed homology row is the genuine family Euler invariant. -/
+/-- A row with the same homology lengths has the same Koszul Euler sum.
+
+If E_j has the length of H_j(K(a;M)) for every j, its alternating sum through n equals the
+coefficient-family Euler invariant. -/
 theorem koszulFamilyEuler_row_eq_of_homology_lengths
     (S : Type u) [CommRing S] [IsNoetherianRing S]
     {n : ℕ} (c : Fin n → S) (M : ModuleCat.{v} S) [Module.Finite S M]
@@ -210,7 +235,10 @@ theorem koszulFamilyEuler_row_eq_of_homology_lengths
   intro p _
   exact congrArg (fun l : ENat => (-1 : ℤ) ^ p * (l.toNat : ℤ)) (hE p)
 
-/-- The minimum-support family Euler sum for actual bundled modules. -/
+/-- The minimal-support Euler formula for bundled coefficient modules.
+
+For bundled finite N and M under the same hypotheses, the Euler invariant of M equals the full
+sum over minimal support primes of N. -/
 theorem koszulFamilyEuler_moduleCat_eq_sum_minimalSupport
     (S : Type u) [CommRing S] [IsNoetherianRing S] [IsLocalRing S]
     (N : ModuleCat.{v} S) [Module.Finite S N] (M : ModuleCat.{w} S) [Module.Finite S M]

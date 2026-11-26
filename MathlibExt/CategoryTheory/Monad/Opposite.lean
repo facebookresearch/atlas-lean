@@ -14,11 +14,14 @@ public import Mathlib.CategoryTheory.Monad.Basic
 public import Mathlib.CategoryTheory.Opposites
 
 /-!
-# Opposite monads and comonads
+# Opposite monads, comonads, and structure morphisms
 
-The actual native opposite endofunctor takes a monad to a comonad, and a
-comonad to a monad. Native structure morphisms reverse direction. The lawful
-contravariant functors use these actual maps and require only a category.
+For a category C, reversing the arrows of a monad T gives a comonad on Cᵒᵖ: its counit is the
+opposite of the unit and its comultiplication is the opposite of multiplication. Reversing a
+comonad gives a monad by the dual formulas.
+
+Structure morphisms reverse direction as well. These assignments define functors (Monad C)ᵒᵖ →
+Comonad(Cᵒᵖ) and (Comonad C)ᵒᵖ → Monad(Cᵒᵖ), with independent object and morphism universes.
 -/
 
 @[expose] public section
@@ -33,7 +36,9 @@ variable {C : Type u} [Category.{v} C]
 
 namespace Monad
 
-/-- The opposite native endofunctor of a monad is a comonad. -/
+/-- Let T be a monad on a category C. Its opposite endofunctor on Cᵒᵖ is a comonad with counit
+η^op and comultiplication μ^op. The monad unit and associativity equations become the comonad
+counit and coassociativity equations under arrow reversal. -/
 def op (T : Monad C) : Comonad Cᵒᵖ where
   toFunctor := T.toFunctor.op
   ε := NatTrans.op T.η
@@ -49,11 +54,13 @@ def op (T : Monad C) : Comonad Cᵒᵖ where
     change (T.μ.app X.unop).op ≫ (T.map (T.η.app X.unop)).op = 𝟙 _
     exact congrArg Quiver.Hom.op (T.right_unit X.unop)
 
-/-- The opposite counit is the actual native unit with its direction reversed. -/
+/-- For a monad T on C and X ∈ Cᵒᵖ, the counit of T.op at X equals (η_{X.unop})^op. Its direction
+is T.op(X) → X. -/
 theorem op_ε_app (T : Monad C) (X : Cᵒᵖ) :
     (op T).ε.app X = (T.η.app X.unop).op := rfl
 
-/-- The opposite comultiplication is the actual native multiplication reversed. -/
+/-- Let T be a monad on C and X ∈ Cᵒᵖ. The comultiplication of T.op at X is (μ_{X.unop})^op, a map
+T.op(X) → T.op²(X). -/
 theorem op_δ_app (T : Monad C) (X : Cᵒᵖ) :
     (op T).δ.app X = (T.μ.app X.unop).op := rfl
 
@@ -61,7 +68,8 @@ end Monad
 
 namespace Comonad
 
-/-- The opposite native endofunctor of a comonad is a monad. -/
+/-- For a comonad G on C, the opposite endofunctor on Cᵒᵖ has monad unit ε^op and multiplication
+δ^op. Reversing the comonad laws gives the monad laws. -/
 def op (G : Comonad C) : Monad Cᵒᵖ where
   toFunctor := G.toFunctor.op
   η := NatTrans.op G.ε
@@ -77,11 +85,13 @@ def op (G : Comonad C) : Monad Cᵒᵖ where
     change (G.map (G.ε.app X.unop)).op ≫ (G.δ.app X.unop).op = 𝟙 _
     exact congrArg Quiver.Hom.op (G.right_counit X.unop)
 
-/-- The opposite unit is the actual native counit reversed. -/
+/-- Let G be a comonad on C and X ∈ Cᵒᵖ. The unit of G.op at X equals (ε_{X.unop})^op : X →
+G.op(X). -/
 theorem op_η_app (G : Comonad C) (X : Cᵒᵖ) :
     (op G).η.app X = (G.ε.app X.unop).op := rfl
 
-/-- The opposite multiplication is the actual native comultiplication reversed. -/
+/-- For a comonad G on C and X ∈ Cᵒᵖ, the multiplication of G.op at X is (δ_{X.unop})^op :
+G.op²(X) → G.op(X). -/
 theorem op_μ_app (G : Comonad C) (X : Cᵒᵖ) :
     (op G).μ.app X = (G.δ.app X.unop).op := rfl
 
@@ -89,7 +99,9 @@ end Comonad
 
 namespace MonadHom
 
-/-- A native monad morphism reverses to a native comonad morphism. -/
+/-- Let f : S → T be a monad morphism on C. Reversing its underlying natural transformation gives
+a comonad morphism T.op → S.op on Cᵒᵖ. Its component at X is (f_{X.unop})^op and it preserves
+the opposite counit and comultiplication. -/
 def op {S T : Monad C} (f : S ⟶ T) : Monad.op T ⟶ Monad.op S where
   toNatTrans := NatTrans.op f.toNatTrans
   app_ε X := by
@@ -105,7 +117,9 @@ end MonadHom
 
 namespace ComonadHom
 
-/-- A native comonad morphism reverses to a native monad morphism. -/
+/-- For a comonad morphism f : S → T on C, its opposite natural transformation defines a monad
+morphism T.op → S.op on Cᵒᵖ, with component (f_{X.unop})^op. The structure equations are the
+reversed comonad-morphism equations. -/
 def op {S T : Comonad C} (f : S ⟶ T) : Comonad.op T ⟶ Comonad.op S where
   toNatTrans := NatTrans.op f.toNatTrans
   app_η X := by
@@ -119,7 +133,9 @@ def op {S T : Comonad C} (f : S ⟶ T) : Comonad.op T ⟶ Comonad.op S where
 
 end ComonadHom
 
-/-- Opposite native monads and actual reversed structure morphisms form a functor. -/
+/-- Let C : Type u have morphism universe v. The assignment T ↦ T.op and f ↦ f.op gives a functor
+(Monad C)ᵒᵖ → Comonad(Cᵒᵖ), preserving identities and composition with the reversed
+directions. -/
 def Monad.opFunctor (C : Type u) [Category.{v} C] :
     (Monad C)ᵒᵖ ⥤ Comonad Cᵒᵖ where
   obj T := Monad.op T.unop
@@ -133,7 +149,8 @@ def Monad.opFunctor (C : Type u) [Category.{v} C] :
     funext X
     rfl
 
-/-- Opposite native comonads and actual reversed structure morphisms form a functor. -/
+/-- For a category C, taking opposite comonads and reversing their morphisms defines a functor
+(Comonad C)ᵒᵖ → Monad(Cᵒᵖ). The object and morphism universes of C remain arbitrary. -/
 def Comonad.opFunctor (C : Type u) [Category.{v} C] :
     (Comonad C)ᵒᵖ ⥤ Monad Cᵒᵖ where
   obj G := Comonad.op G.unop

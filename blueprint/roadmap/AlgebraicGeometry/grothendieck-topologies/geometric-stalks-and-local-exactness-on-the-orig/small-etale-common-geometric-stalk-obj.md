@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Stalk obj
+# Geometric stalk as a filtered neighborhood colimit
 
-Its object is literally the colimit of the original neighborhood sections.
+Geometric stalk as a filtered neighborhood colimit.
+
+The stalk of a sheaf is the colimit of its sections over the opposite elements category of the
+lifted geometric fiber.

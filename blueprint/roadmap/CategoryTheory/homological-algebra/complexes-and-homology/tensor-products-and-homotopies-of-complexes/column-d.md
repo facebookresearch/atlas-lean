@@ -1,3 +1,5 @@
-# Column d
+# Differentials of a column complex
 
-The column retains the original second-direction differential.
+Differentials of a column complex.
+
+The differential of column K i₁ is K.d₂ i₁ i₂ i₂′, with no additional sign.

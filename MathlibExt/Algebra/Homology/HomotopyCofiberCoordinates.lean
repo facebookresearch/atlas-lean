@@ -15,10 +15,20 @@ public import MathlibExt.Algebra.Homology.HomotopyCofiberProjection
 public import MathlibExt.CategoryTheory.Limits.Shapes.BinaryBiproducts
 
 /-!
-# The native homotopy-cofiber differential in biproduct coordinates
+# Signed differential of a homotopy cofiber
 
-This equation retains the native homotopy cofiber and its chosen degree
-isomorphisms. It applies to any complex shape at two consecutive relations.
+Let C be preadditive, c a complex shape with decidable differential relation,
+and φ:F → G have a homotopy cofiber. For c.Rel(i,j) and c.Rel(j,k),
+assume the biproducts Fⱼ ⊞ Gᵢ and Fₖ ⊞ Gⱼ exist.
+The canonical charts identify the cofiber differential from degree i to j
+with the block map
+
+(Fⱼ ⊞ Gᵢ) → (Fₖ ⊞ Gⱼ),
+(x,y) ↦ (−d_F(j,k)(x), φⱼ(x)+d_G(i,j)(y)).
+
+Thus the shifted-source differential has a negative sign, the cross term
+is φⱼ, and the target differential has a positive sign. The statement
+requires only these two degree biproducts.
 -/
 
 @[expose] public section
@@ -35,8 +45,12 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι : Type w} {c : ComplexShape ι} [DecidableRel c.Rel]
   {F G : HomologicalComplex C c} (φ : F ⟶ G) [HasHomotopyCofiber φ]
 
-/-- The actual native differential is the signed block matrix under its
-canonical biproduct comparisons. Only these two degree biproducts are needed. -/
+/-- Let C be preadditive, c a complex shape with decidable relation,
+and φ:F → G have a homotopy cofiber. Suppose c.Rel(i,j), c.Rel(j,k),
+and the biproducts Fⱼ ⊞ Gᵢ and Fₖ ⊞ Gⱼ exist.
+Under the canonical cofiber term charts, the differential from i to j
+is the block matrix
+[[−d_F(j,k),0],[φⱼ,d_G(i,j)]]. -/
 theorem XIsoBiprod_inv_d_hom (i j k : ι) (hij : c.Rel i j) (hjk : c.Rel j k)
     [HasBinaryBiproduct (F.X j) (G.X i)] [HasBinaryBiproduct (F.X k) (G.X j)] :
     (XIsoBiprod φ i j hij).inv ≫ (homotopyCofiber φ).d i j ≫

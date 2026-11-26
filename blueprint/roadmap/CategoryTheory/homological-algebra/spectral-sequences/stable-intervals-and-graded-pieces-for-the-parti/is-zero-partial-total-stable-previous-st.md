@@ -1,3 +1,5 @@
-# Is Zero partial Total Stable Previous Step zero
+# Vanishing of the preceding stable step at filtration degree zero
 
-The spectral step at the predecessor of filtration degree zero is zero.
+Vanishing of the preceding stable step at filtration degree zero.
+
+The stable step at integer filtration index `-1` is zero.

@@ -13,6 +13,17 @@ module
 
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairing
 
+/-!
+# Left-complex naturality of the Hom cochain descriptor
+
+Let R be commutative and all coefficients lie in universe u. For chain complexes K₁,K₁′,K₂,L, a
+map f₁:K₁′→K₁ and actions ρ_q:A⊗K₂,q→L_q, the descriptor for φ:K₁,p→A pulls back along
+f₁⊗id_{K₂} to the descriptor for f₁,p≫φ.
+
+Both descriptors select the (p,q) summand of total degree p+q. Thus the equation holds before
+any chain diagonal is applied and preserves the contravariant left-complex action.
+-/
+
 @[expose] public section
 
 open CategoryTheory MonoidalCategory HomologicalComplex
@@ -23,8 +34,10 @@ variable {R : Type u} [CommRing R]
 variable {A : ModuleCat.{u} R}
 variable {K₁ K₁' K₂ L : ChainComplex (ModuleCat.{u} R) ℕ}
 
-/-- Naturality in the left chain-complex variable: precomposing the cochain with
-  `f₁` agrees with pulling back the descriptor along `tensorHom f₁ 𝟙`. -/
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+For f₁:K₁′→K₁, actions ρ_q:A⊗K₂,q→L_q, p,q∈ℕ and φ:K₁,p→A, let D_φ:(K₁⊗K₂)_{p+q}→L_q select the
+(p,q) summand. Then (f₁⊗id_{K₂})_{p+q}≫D_φ=D_{f₁,p≫φ}, where the right descriptor is on K₁′⊗K₂.
+The equality retains the same coefficient action and output degree. -/
 theorem HomologicalComplex.linearHomCochainChainPairDesc_naturality_left
     (f₁ : K₁' ⟶ K₁) (ρ : ∀ q, A ⊗ K₂.X q ⟶ L.X q) (p q : ℕ)
     (φ : K₁.X p ⟶ A) :

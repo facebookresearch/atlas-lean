@@ -14,16 +14,18 @@ public import MathlibExt.CategoryTheory.Waldhausen.ExactFunctor
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Actual coproduct preservation by Waldhausen exact functors
+# Coproduct comparisons for Waldhausen exact functors
 
-The original exact functor preserves the original chosen zero-source
-pushout. Its image of the source zero is zero, so the image cocone is
-an actual binary coproduct. The stock comparison of colimit cocones
-retains both original injections and supplies a full natural isomorphism
-between the same original coproduct functors.
+Let F:A → B be a Waldhausen exact functor between categories with zero
+objects and Waldhausen cofibration, weak-equivalence and pushout axioms.
+The image of the chosen coproduct cocone for X,Y is colimiting for
+F(X),F(Y), because F preserves its zero-source pushout.
 
-All source and target object and morphism universes are independent.
-No gluing or preservation outcome is an input.
+The resulting comparison F(X⊔Y) ≅ F(X)⊔F(Y) preserves both coproduct
+injections and is natural in maps of the two summands. Its components
+form a natural isomorphism between F composed with the chosen coproduct
+functor and the target coproduct functor composed with F×F.
+Source and target object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -45,8 +47,12 @@ variable {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWi
 variable {B : Type uB} [Category.{vB} B] [HasZeroObject B] [WaldhausenCategoryWithoutGluing B]
 variable {F : A ⥤ B} (hF : F.IsWaldhausenExact)
 
-/-- The actual image of the original chosen coproduct cocone is colimiting,
-from its mapped zero-source pushout and the actual zero image `F(0)`. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+For X,Y in A, the binary cocone with apex F(X⊔Y) and legs F(ι_X),F(ι_Y) is a coproduct cocone of F(X),F(Y). -/
 def mappedCoproductCoconeIsColimit (X Y : A) :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone A (pair X Y)).cocone
     IsColimit (BinaryCofan.mk (F.map c.inl) (F.map c.inr)) := by
@@ -68,8 +74,12 @@ def mappedCoproductCoconeIsColimit (X Y : A) :
     (BinaryCofan.mk (F.map c.inl) (F.map c.inr))
     (hF.map_isZero z).isInitial (F.map i) (F.map f) hImage.flip.isColimit
 
-/-- The stock original colimit comparison from the image coproduct cocone
-to the target's original chosen coproduct cocone. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The canonical isomorphism η_{X,Y}:F(X⊔Y) ≅ F(X)⊔F(Y) between the image coproduct cocone and the chosen target coproduct. -/
 def coproductCoconeIso (X Y : A) :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone A (pair X Y)).cocone
     let d : BinaryCofan (F.obj X) (F.obj Y) :=
@@ -78,7 +88,12 @@ def coproductCoconeIso (X Y : A) :
   IsColimit.coconePointUniqueUpToIso (mappedCoproductCoconeIsColimit hF X Y)
     (binaryCoproductColimitCocone B (pair (F.obj X) (F.obj Y))).isColimit
 
-/-- The entire first injection is retained by the actual stock comparison. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The forward comparison η_{X,Y} satisfies η_{X,Y}∘F(ι_X)=ι_{F(X)}. -/
 theorem coproductCoconeIso_hom_inl (X Y : A) :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone A (pair X Y)).cocone
     let d : BinaryCofan (F.obj X) (F.obj Y) :=
@@ -88,7 +103,12 @@ theorem coproductCoconeIso_hom_inl (X Y : A) :
     (binaryCoproductColimitCocone B (pair (F.obj X) (F.obj Y))).isColimit
     ⟨WalkingPair.left⟩
 
-/-- The entire second injection is retained by the same stock comparison. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The forward comparison η_{X,Y} satisfies η_{X,Y}∘F(ι_Y)=ι_{F(Y)}. -/
 theorem coproductCoconeIso_hom_inr (X Y : A) :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone A (pair X Y)).cocone
     let d : BinaryCofan (F.obj X) (F.obj Y) :=
@@ -98,8 +118,12 @@ theorem coproductCoconeIso_hom_inr (X Y : A) :
     (binaryCoproductColimitCocone B (pair (F.obj X) (F.obj Y))).isColimit
     ⟨WalkingPair.right⟩
 
-/-- Both actual image maps give the whole naturality square of the original
-chosen coproduct cocones. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+For f:X → X′ and g:Y → Y′, the comparisons satisfy η_{X′,Y′}∘F(f⊔g)=(F(f)⊔F(g))∘η_{X,Y}. -/
 theorem coproductCoconeIso_naturality {X Y X' Y' : A} (f : X ⟶ X') (g : Y ⟶ Y') :
     F.map (binaryCoproductMap A f g) ≫ (coproductCoconeIso hF X' Y').hom =
       (coproductCoconeIso hF X Y).hom ≫ binaryCoproductMap B (F.map f) (F.map g) := by
@@ -111,8 +135,12 @@ theorem coproductCoconeIso_naturality {X Y X' Y' : A} (f : X ⟶ X') (g : Y ⟶ 
       F.map_comp, Category.assoc, coproductCoconeIso_hom_inr]
     rw [← Category.assoc, coproductCoconeIso_hom_inr, binaryCoproductMap_inr]
 
-/-- The actual comparison between the original whole functor objects,
-using only their exported original cocone-object readouts. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+At a pair (X,Y), the component isomorphism from the value of F∘⊔_A to the value of ⊔_B∘(F×F), obtained from η_{X,Y} through the chosen apex identifications. -/
 def coproductIsoComponent (p : A × A) :
     (waldhausenCoproductFunctor A ⋙ F).obj p ≅
       (F.prod F ⋙ waldhausenCoproductFunctor B).obj p :=
@@ -120,15 +148,24 @@ def coproductIsoComponent (p : A × A) :
     coproductCoconeIso hF p.1 p.2 ≪≫
       (eqToIso (waldhausenCoproductFunctor_obj B (F.obj p.1, F.obj p.2))).symm
 
-/-- The whole original comparison arrow retains both original object
-transports and the stock image-cocone comparison. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+Under the chosen source and target coproduct apex identifications, the forward component of F∘⊔_A ≅ ⊔_B∘(F×F) is the cocone comparison η_{X,Y}. -/
 theorem coproductIsoComponent_hom (p : A × A) :
     (coproductIsoComponent hF p).hom =
       F.map (eqToHom (waldhausenCoproductFunctor_obj A p)) ≫
         (coproductCoconeIso hF p.1 p.2).hom ≫
           eqToHom (waldhausenCoproductFunctor_obj B (F.obj p.1, F.obj p.2)).symm := rfl
 
-/-- Every original pair morphism gives the complete actual functor naturality square. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+For a pair morphism (f,g), the component comparisons of F∘⊔_A and ⊔_B∘(F×F) form the naturality square of these two functors. -/
 theorem coproductIsoComponent_naturality {p q : A × A} (φ : p ⟶ q) :
     (waldhausenCoproductFunctor A ⋙ F).map φ ≫ (coproductIsoComponent hF q).hom =
       (coproductIsoComponent hF p).hom ≫ (F.prod F ⋙ waldhausenCoproductFunctor B).map φ := by
@@ -142,13 +179,22 @@ theorem coproductIsoComponent_naturality {p q : A × A} (φ : p ⟶ q) :
   simpa only [Functor.map_comp, eqToHom_map, Category.assoc,
     eqToHom_trans, eqToHom_trans_assoc, eqToHom_refl, Category.id_comp, Category.comp_id] using h
 
-/-- The original exact functor preserves the actual original chosen binary
-coproduct functor, with the entire stock comparison and naturality retained. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The natural isomorphism F∘⊔_A ≅ ⊔_B∘(F×F), with components given by the canonical coproduct cocone comparisons. -/
 def waldhausenCoproductIso :
     waldhausenCoproductFunctor A ⋙ F ≅ F.prod F ⋙ waldhausenCoproductFunctor B :=
   NatIso.ofComponents (coproductIsoComponent hF) (coproductIsoComponent_naturality hF)
 
-/-- Every whole component is the actual original cocone comparison. -/
+/-- Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The forward natural transformation of F∘⊔_A ≅ ⊔_B∘(F×F) has at each pair (X,Y) the canonical component coproduct isomorphism. -/
 theorem waldhausenCoproductIso_hom_app (p : A × A) :
     (waldhausenCoproductIso hF).hom.app p = (coproductIsoComponent hF p).hom := rfl
 

@@ -1,3 +1,5 @@
-# Factory For Map map tmul
+# Coefficient-map coordinates for the specified scalar tensor bifunctor
 
-The actual coefficient map acts on the first tensor factor.
+Coefficient-map coordinates for the specified scalar tensor bifunctor.
+
+For an S-linear map g : M → N, the component at L sends m ⊗ l to g(m) ⊗ l.

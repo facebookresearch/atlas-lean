@@ -1,3 +1,6 @@
-# Unit Image Comon Iso hom hom
+# Forward arrow of the image-unit comonoid isomorphism
 
-The native comonoid comparison has the original oplax unit map as its forward map.
+Forward arrow of the image-unit comonoid isomorphism.
+
+For an oplax monoidal F with invertible unit comparison η_F, the underlying hom of
+unitImageComonIso F is η_F : F(𝟙_C) → 𝟙_D.

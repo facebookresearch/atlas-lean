@@ -12,12 +12,20 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.IteratedCupRestriction
 
 /-!
-# Head-recursive positive iterated cups
+# Right-associated positive iterated cups
 
-The head-recursive iterated cup uses nonempty right-associated tensor-power
-coefficients, so each successor is definitionally a target-normalized
-`(1,q)` cup.  It is canonically equal to the existing left-associated
-iterated cup after reassociating coefficients.
+Let k be a commutative ring, G a group, and A a k-linear representation in universe u. Put
+R₀(A)=A and R_{n+1}(A)=A⊗R_n(A). The right-associated iterated cup C_n(x) of n+1 degree-one
+classes lies in H^{n+1}(G,R_n(A)); at each successor it cups the first class with the
+recursively formed tail.
+
+The canonical reassociation P_{n+1}(A)≅R_n(A) identifies C_n with the left-associated ordered
+cup L_n. A variant keeps a distinguished final class after n prefix entries.
+
+For f:H→G, ambient prefix classes may be restricted and followed by a source-group class.
+Tensor-restriction isomorphisms compare the result with the right-associated power of Res_f A.
+Reassociation of the ambient power then recovers the restricted left-associated iterated cup.
+All constructions retain the tuple order and have positive cohomological degree.
 -/
 
 @[expose] public section
@@ -34,8 +42,11 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Head-recursive positive iterated cup with right-associated coefficient
-tensor powers.  The parameter `n` represents weight and degree `n + 1`. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Put R₀(A)=A and R_{n+1}(A)=A⊗R_n(A), and let C_n(x)∈H^{n+1}(G,R_n(A)) be the right-associated
+iterated cup. For n≥0 and x₀,…,x_n∈H¹(G,A), define C₀([x₀])=x₀ and
+C_{n+1}(x)=x₀∪C_n(x₁,…,x_{n+1}). The successor has coefficient A⊗R_n(A)=R_{n+1}(A) and degree
+n+2. -/
 noncomputable def iteratedCupClassCons (A : Rep k G) :
     ∀ (n : ℕ) (_x : Fin (n + 1) → groupCohomology.H1 A),
       groupCohomology
@@ -64,8 +75,11 @@ theorem iteratedCupClassCons_succ
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Reassociating coefficients carries the left-associated positive
-iterated cup to the head-recursive iterated cup. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Put R₀(A)=A and R_{n+1}(A)=A⊗R_n(A), and let C_n(x)∈H^{n+1}(G,R_n(A)) be the right-associated
+iterated cup. Let L_n(x) be the left-associated cup with coefficient P_{n+1}(A), and
+χ_n:P_{n+1}(A)≅R_n(A) its canonical reassociation. For n≥0 and x₀,…,x_n∈H¹(G,A),
+(χ_n.hom)_*L_n(x)=C_n(x). -/
 theorem iteratedCupClassSucc_to_cons
     (A : Rep k G) :
     ∀ (n : ℕ) (x : Fin (n + 1) → groupCohomology.H1 A),
@@ -119,8 +133,10 @@ theorem iteratedCupClassSucc_to_cons
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Inverse orientation of the comparison between head-recursive and
-left-associated positive iterated cups. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Put R₀(A)=A and R_{n+1}(A)=A⊗R_n(A), and let C_n(x)∈H^{n+1}(G,R_n(A)) be the right-associated
+iterated cup. For n≥0 and x₀,…,x_n∈H¹(G,A), let χ_n:P_{n+1}(A)≅R_n(A). The inverse comparison
+satisfies (χ_n.inv)_*C_n(x)=L_n(x) in H^{n+1}(G,P_{n+1}(A)). -/
 theorem iteratedCupClassCons_to_succ
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology.H1 A) :
@@ -137,8 +153,10 @@ theorem iteratedCupClassCons_to_succ
   rw [map_id]
   rfl
 
-/-- Head-recursive ambient iterated cup with a distinguished final
-degree-one class. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Put R₀(A)=A and R_{n+1}(A)=A⊗R_n(A), and let C_n(x)∈H^{n+1}(G,R_n(A)) be the right-associated
+iterated cup. For n≥0, a prefix x₀,…,x_{n-1} and final class y in H¹(G,A), define D₀([],y)=y and
+D_{n+1}(x,y)=x₀∪D_n(tail x,y). The class D_n has degree n+1 and coefficient R_n(A). -/
 noncomputable def iteratedCupClassConsLast (A : Rep k G) :
     ∀ (n : ℕ) (_x : Fin n → groupCohomology.H1 A)
       (_y : groupCohomology.H1 A),
@@ -150,9 +168,12 @@ noncomputable def iteratedCupClassConsLast (A : Rep k G) :
         (x 0 ⊗ₜ[k]
           iteratedCupClassConsLast A n (fun i => x i.succ) y)
 
-/-- Head-recursive mixed iterated cup along an arbitrary group homomorphism.
-Its coefficient is the restriction of the ambient right-associated positive
-tensor power. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. Put R₀(A)=A and R_{n+1}(A)=A⊗R_n(A). For n
+ambient classes x_i∈H¹(G,A) and y∈H¹(H,A_f), the mixed class D^f_n(x,y) lies in
+H^{n+1}(H,Res_f(R_n(A))). Its empty prefix is y. Each successor cups res_f(x₀) with D^f_n(tail
+x,y), then applies A_f⊗Res_f(R_n(A))≅Res_f(R_{n+1}(A)). -/
 noncomputable def restrictedIteratedCupClassConsLastOfHom
     {H : Type u} [Group H] (f : H →* G) (A : Rep k G) :
     ∀ (n : ℕ) (_x : Fin n → groupCohomology.H1 A)
@@ -216,9 +237,12 @@ theorem restrictedIteratedCupClassConsLastOfHom_succ
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Mapping a normalized restricted head-recursive cup through the canonical
-right-tensor restriction comparison recovers the native head-recursive cup
-over the source group. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. Let R₀(B)=B, R_{n+1}(B)=B⊗R_n(B), and
+λ_n:Res_f(R_n(A))≅R_n(A_f) be the tensor-restriction comparison. For n ambient inputs
+x_i∈H¹(G,A) and y∈H¹(H,A_f), (λ_n.hom)_*D^f_n(x,y)=D_n^{A_f}(res_f x₀,…,res_f x_{n-1},y), with
+degree n+1. -/
 theorem restrictedIteratedCupClassConsLastOfHom_to_native
     {H : Type u} [Group H] (f : H →* G) (A : Rep k G) :
     ∀ (n : ℕ) (x : Fin n → groupCohomology.H1 A)
@@ -303,8 +327,11 @@ theorem restrictedIteratedCupClassConsLastOfHom_to_native
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Inverse normalization formula for a native source-group head-recursive
-cup. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. For n≥0, ambient x_i∈H¹(G,A), y∈H¹(H,A_f),
+and λ_n:Res_f(R_n(A))≅R_n(A_f), the mixed cup satisfies (λ_n.inv)_*D_n^{A_f}(res_f x₀,…,res_f
+x_{n-1},y)=D^f_n(x,y). The result has coefficient Res_f(R_n(A)) and degree n+1. -/
 theorem restrictedIteratedCupClassConsLastOfHom_from_native
     {H : Type u} [Group H] (f : H →* G) (A : Rep k G)
     (n : ℕ) (x : Fin n → groupCohomology.H1 A)
@@ -326,8 +353,10 @@ theorem restrictedIteratedCupClassConsLastOfHom_from_native
   rw [map_id]
   rfl
 
-/-- The distinguished-final-entry recursion is the ordinary head-recursive
-cup on the tuple obtained by appending the final class. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. Put R₀(A)=A and R_{n+1}(A)=A⊗R_n(A), and let C_n(x)∈H^{n+1}(G,R_n(A)) be the right-associated
+iterated cup. For n≥0, x indexed by {0,…,n-1}, and y∈H¹(G,A), the distinguished-final recursion
+D_n(x,y) equals C_n(x₀,…,x_{n-1},y). Both classes have coefficient R_n(A) and degree n+1. -/
 theorem iteratedCupClassConsLast_eq_snoc
     (A : Rep k G) :
     ∀ (n : ℕ) (x : Fin n → groupCohomology.H1 A)
@@ -361,9 +390,9 @@ theorem iteratedCupClassConsLast_eq_snoc
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Reassociating a distinguished-final-entry head-recursive cup back to
-the canonical left tensor power gives the ordinary iterated cup on the
-appended tuple. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. For n≥0, prefix x₀,…,x_{n-1}, final y∈H¹(G,A), and χ_n:P_{n+1}(A)≅R_n(A), one has
+(χ_n.inv)_*D_n(x,y)=L_n(x₀,…,x_{n-1},y). The target is H^{n+1}(G,P_{n+1}(A)). -/
 theorem iteratedCupClassConsLast_to_succ
     (A : Rep k G) (n : ℕ)
     (x : Fin n → groupCohomology.H1 A)
@@ -377,8 +406,12 @@ theorem iteratedCupClassConsLast_to_succ
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Reassociating the normalized restricted head-recursive cup gives the
-ordinary normalized restricted iterated cup. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. For n≥0, ambient inputs x_i∈H¹(G,A), final
+y∈H¹(H,A_f), and χ_n:P_{n+1}(A)≅R_n(A), one has (Res_f(χ_n.inv))_*D^f_n(x,y)=M_n(x,y). Here
+D^f_n has coefficient Res_f(R_n(A)), and M_n is the mixed left-associated cup with coefficient
+Res_f(P_{n+1}(A)); both have degree n+1. -/
 theorem restrictedIteratedCupClassConsLastOfHom_reassociate
     {H : Type u} [Group H] (f : H →* G) (A : Rep k G)
     (n : ℕ) (x : Fin n → groupCohomology.H1 A)

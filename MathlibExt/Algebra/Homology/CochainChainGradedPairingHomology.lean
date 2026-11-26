@@ -13,6 +13,24 @@ public import Mathlib.CategoryTheory.Monoidal.Limits.Cokernels
 public import MathlibExt.Algebra.Homology.CochainChainGradedPairing
 public import MathlibExt.Algebra.Homology.TensorHomologyDesc
 
+/-!
+# Descending cochain–chain pairings to homology
+
+Let C be a preadditive monoidal category with additive tensor functors. A cochain–chain
+pairing P_{p,q} : K^p⊗L_{p+q} → M_q sends cocycle–cycle tensors to cycles. Pairing a cocycle
+with a chain boundary gives (−1)^p times an output boundary; pairing a cochain differential
+with a cycle gives (−1)^{p+1} times an output boundary.
+
+Put n=p+q and p⁻=(up ℕ).prev(p). Assume homology for K at p, L at n, and M at q, and the
+binary coproduct of K^{p⁻}⊗Z_n(L) and Z^p(K)⊗L_{n+1}. For the boundary-to-cycles maps κ :
+K^{p⁻} → Z^p(K) and λ : L_{n+1} → Z_n(L), assume H^p(K)⊗− preserves the cokernel of λ, and
+−⊗Z_n(L) and −⊗L_{n+1} preserve the cokernel of κ. The pairing then descends to H^p(K)⊗H_n(L)
+→ H_q(M).
+
+A local input-boundary comparison gives equality of output homology classes when its tensor
+product with Z^p(K) is epic.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -32,9 +50,10 @@ private lemma negOnePow_mul_self (p : ℕ) :
   rw [← pow_add, ← two_mul]
   simp
 
-/-- Signed chain-boundary identity for the pairing: capping the tensor of a cocycle
-inclusion with a chain boundary equals the signed composite through the pairing
-in degree `q + 1` and the chain differential. -/
+/-- Let C be preadditive and monoidal with additive tensor functors, P a cochain–chain pairing,
+and p,q ∈ ℕ. Assume K has homology at p. Then (i_ZK⊗d_L)≫P_{p,q} =
+(-1)^p·((i_ZK⊗id)≫P_{p,q+1}≫d_M). The source is Z^p(K)⊗L_{p+(q+1)}, the target is M_q, and d_L
+maps to L_{p+q}. -/
 lemma pair_chainBoundary_eq_boundary
     (P : CochainChainGradedPairing K L M) (p q : ℕ)
     [K.HasHomology p] :
@@ -60,9 +79,11 @@ lemma pair_chainBoundary_eq_boundary
           M.d (q + 1) q) := by
             rw [← h]
 
-/-- If two input cycles agree locally up to a chain boundary, then their
-images under a cochain-chain graded pairing agree locally up to the
-corresponding signed output boundary. -/
+/-- Let C be preadditive and monoidal with additive tensor functors, and assume homology for K at
+p, L at p+q, and M at q. For v : V → A, z₁,z₂ : A → Z_{p+q}(L), and b : V → L_{p+(q+1)},
+suppose v≫(z₁−z₂)≫i_ZL=b≫d_L. Set c_i=(id_ZK⊗z_i)≫P.pairCycles and
+b_out=(-1)^p·((i_ZK⊗b)≫P_{p,q+1}). Then (id_ZK⊗v)≫(c₁−c₂)≫i_ZM=b_out≫d_M. No epimorphism
+hypothesis is required for this local equality. -/
 lemma pair_inputBoundary_to_outputBoundary
     (P : CochainChainGradedPairing K L M) (p q : ℕ)
     [K.HasHomology p] [L.HasHomology (p + q)] [M.HasHomology q]
@@ -150,8 +171,11 @@ lemma pair_inputBoundary_to_outputBoundary
       dsimp only [bOut]
       simpa only [Preadditive.zsmul_comp, Category.assoc] using hBoundary
 
-/-- If two input cycles differ epi-locally by a boundary, then pairing them
-with cocycles gives the same homology class. -/
+/-- Let C be preadditive and monoidal with additive tensor functors, P a pairing, and assume
+homology for K at p, L at p+q, and M at q. Let v : V → A and cycles z₁,z₂ : A → Z_{p+q}(L)
+differ by a boundary after v: v≫(z₁−z₂)≫i_ZL=b≫d_L for b : V → L_{p+(q+1)}. If id_{Z^p(K)}⊗v
+is epic, then (id⊗z₁)≫P.pairCycles≫π_M=(id⊗z₂)≫P.pairCycles≫π_M. Thus the paired cycles have
+the same output homology class. -/
 public lemma pairCycles_comp_homologyπ_eq_of_epi_inputBoundary
     (P : CochainChainGradedPairing K L M) (p q : ℕ)
     [K.HasHomology p] [L.HasHomology (p + q)] [M.HasHomology q]
@@ -214,8 +238,10 @@ public lemma pairCycles_comp_homologyπ_eq_of_epi_inputBoundary
   apply (cancel_epi pre).1
   exact hPre
 
-/-- The chain-boundary cap dies in opcycles: capping the tensor of a cocycle
-inclusion with a chain boundary, then projecting to opcycles, is zero. -/
+/-- For a cochain–chain pairing P in a preadditive monoidal category with additive tensor
+functors, assume homology for K at p and M at q. The composite
+(i_ZK⊗d_L)≫P_{p,q}≫pOpcycles_M,q is zero, with source Z^p(K)⊗L_{p+q+1}. Pairing a cocycle with
+an incoming chain boundary gives an output boundary, which the opcycles projection kills. -/
 lemma cycles_opcycles_desc_kill
     (P : CochainChainGradedPairing K L M) (p q : ℕ)
     [K.HasHomology p] [M.HasHomology q] :
@@ -254,11 +280,10 @@ private lemma right_boundary
   simpa only [Preadditive.zsmul_comp, Category.assoc] using
     P.pair_chainBoundary_eq_boundary p q
 
-/-- Signed cochain-boundary identity for a cochain-chain graded pairing:
-capping the tensor of a cochain differential with a cycle inclusion equals
-the signed composite through the pairing in degree `q + 1` and the chain
-differential. This is the dual of `pair_chainBoundary_eq_boundary`,
-proved by mirroring the chain-side argument. -/
+/-- Let C be preadditive and monoidal with additive tensor functors, P a cochain–chain pairing,
+and assume L has homology at (p+1)+q. If e : L_{(p+1)+q} ≅ L_{p+(q+1)}, then
+(d_K⊗i_ZL)≫P_{p+1,q} = (-1)^{p+1}·((id⊗(i_ZL≫e.hom))≫P_{p,q+1}≫d_M). The source is
+K^p⊗Z_{(p+1)+q}(L), and the sign is (-1)^{p+1}. -/
 lemma pair_cochainBoundary_eq_boundary
     (P : CochainChainGradedPairing K L M) (p q : ℕ)
     [L.HasHomology ((p + 1) + q)] :
@@ -373,8 +398,12 @@ lemma boundaries_comp_homologyπ
   · rw [Limits.coprod.inr_desc_assoc, comp_zero]
     simpa only [Category.assoc] using P.right_boundary p q
 
-/-- The pairing induced on cohomology and homology by a cochain-chain graded
-pairing satisfying the signed boundary law. -/
+/-- Let C be preadditive and monoidal with additive tensor functors, P a pairing, n=p+q, and
+p⁻=(up ℕ).prev(p). Assume homology for K at p, L at n, and M at q, and the binary coproduct of
+K^{p⁻}⊗Z_n(L) and Z^p(K)⊗L_{n+1}. Let κ : K^{p⁻} → Z^p(K) and λ : L_{n+1} → Z_n(L) be the
+boundary-to-cycles maps. Assume H^p(K)⊗− preserves the cokernel of λ, while −⊗Z_n(L) and
+−⊗L_{n+1} preserve the cokernel of κ. Then the cycle pairing followed by π_M descends to
+H^p(K)⊗H_n(L) → H_q(M). -/
 noncomputable def pairHomology
     (P : CochainChainGradedPairing K L M) (p q : ℕ)
     [K.HasHomology p] [L.HasHomology (p + q)] [M.HasHomology q]

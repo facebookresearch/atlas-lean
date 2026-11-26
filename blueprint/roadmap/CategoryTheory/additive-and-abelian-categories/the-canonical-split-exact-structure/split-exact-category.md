@@ -1,5 +1,6 @@
-# Split Exact Category
+# Split short exact sequences define an exact category
 
-The split exact structure on an additive category: a short complex is admissible exact
-iff it splits. This is a `def`, not a global instance, so importing `Split` does not
-silently equip every additive category with an `ExactCategory` instance.
+Let C be a preadditive category with a zero object and binary biproducts. Define an
+ExactCategory structure in which a short complex S is admissible exact if and only if S has a
+splitting. The kernel, cokernel, composition, pushout, and pullback axioms are those of split
+exact sequences.

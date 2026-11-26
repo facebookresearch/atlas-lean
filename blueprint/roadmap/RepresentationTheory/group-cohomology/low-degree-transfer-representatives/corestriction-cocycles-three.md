@@ -1,3 +1,5 @@
-# Corestriction Cocycles Three
+# The transfer map on three-cocycles
 
-Degree-three cochain transfer restricted to three-cocycles.
+The transfer map on three-cocycles.
+
+Restrict the k-linear ternary transfer to obtain Z³(H,A|H) → Z³(G,A).

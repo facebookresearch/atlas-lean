@@ -1,4 +1,6 @@
-# Coalgebra Closure Comon Obj
+# The comonoid structure on the homogeneous closure complex
 
-Actual original comonoid structure, with every law derived from the original target and
-tensor monos.
+The comonoid structure on the homogeneous closure complex.
+
+The lifted comultiplication and restricted counit satisfy the comonoid laws inherited from C
+through the tensor monomorphisms.

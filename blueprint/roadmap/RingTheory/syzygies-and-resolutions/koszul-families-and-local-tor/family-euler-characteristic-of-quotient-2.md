@@ -1,4 +1,6 @@
-# Family Euler Characteristic Of Quotient eq
+# The finite-family alternating homology sum
 
-Explicit bounded alternating-sum formula for the finite-family Koszul
-Euler characteristic.
+The finite-family alternating homology sum.
+
+The quotient-defined Euler invariant is the sum of (−1)^j times the finite homology lengths
+for 0≤j≤|I|.

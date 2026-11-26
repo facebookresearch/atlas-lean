@@ -1,3 +1,5 @@
-# Zero Source Iso hom
+# Forward map of the zero-source cylinder isomorphism
 
-Projection formula for the zero-source cylinder comparison.
+For a cochain map f:F → G in a preadditive category C with binary
+biproducts, if F is a zero object, the forward map of the canonical
+isomorphism Cyl(f) ≅ G is the cylinder projection Cyl(f) → G.

@@ -19,11 +19,14 @@ public import Mathlib.CategoryTheory.Abelian.Subobject
 public import Mathlib.CategoryTheory.Monoidal.Closed.Basic
 
 /-!
-# Monoidal closed structure for presheaves of modules
+# Closed tensor structure on presheaves of modules
 
-Each `tensorLeft F` is a left adjoint by the special adjoint functor theorem,
-applied to the free-Yoneda separating family. This gives the monoidal closed
-structure on presheaves of modules.
+Let R be a presheaf of commutative rings on a category C at the stated universe level. For
+every R-module presheaf F, the functor M ↦ F ⊗_R M has a right adjoint. Thus there is an
+internal Hom characterized by Hom(F ⊗_R M,N) ≅ Hom(M,Hom_R(F,N)).
+
+The free-Yoneda separating family and preservation of colimits by tensoring give these
+adjoints, hence the monoidal closed structure on the module-presheaf category.
 -/
 
 @[expose] public section
@@ -40,13 +43,9 @@ namespace ClosedAux
 
 variable (R)
 
-/-- Each `tensorLeft F` is a left adjoint by the special adjoint functor
-theorem, using the existing colimit preservation and the free-Yoneda
-separating family.
-Since Mathlib 4.34 the SAFT lemma is universe-polymorphic and needs
-`WellPowered.{u} Cᵒᵖ`; this follows from the small detecting family
-`freeYoneda` via `wellPowered_of_isDetecting` and `wellPowered_opposite`
-(Mathlib's `PresheafOfModules.wellPowered` instance). -/
+/-- Tensoring with a module presheaf is a left adjoint.
+
+For a fixed R-module presheaf F, the functor M ↦ F ⊗_R M admits a right adjoint. -/
 noncomputable instance isLeftAdjoint_tensorLeft
     (F : PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat.{u})) :
     (tensorLeft F).IsLeftAdjoint := by
@@ -55,7 +54,10 @@ noncomputable instance isLeftAdjoint_tensorLeft
       (R ⋙ forget₂ CommRingCat RingCat.{u}))
     (tensorLeft F)
 
-/-- Each object is closed, with right adjoint chosen from the SAFT instance. -/
+/-- The internal Hom adjunction for a module presheaf.
+
+For F, use the right adjoint to tensoring on the left to obtain its closed-object structure,
+characterized by Hom(F ⊗ M,N) ≅ Hom(M,Hom_R(F,N)). -/
 noncomputable instance closedObj
     (F : PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat.{u})) :
     Closed F where
@@ -64,8 +66,10 @@ noncomputable instance closedObj
 
 end ClosedAux
 
-/-- Monoidal closed structure on presheaves of modules over a presheaf of
-commutative rings (small site). -/
+/-- Module presheaves form a monoidal closed category.
+
+Over a presheaf R of commutative rings, each left tensor functor has the internal Hom right
+adjoint supplied by the closed-object construction. -/
 noncomputable instance monoidalClosed :
     MonoidalClosed (PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat.{u})) where
   closed F := ClosedAux.closedObj R F

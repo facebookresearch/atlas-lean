@@ -1,4 +1,6 @@
-# Horizontal Filtered Top Projection Is Cokernel
+# The cokernel property of a finite successor top projection
 
-The top-column projection is the cokernel of the preceding-stage
-inclusion in total degree `p+1+q`.
+The cokernel property of a finite successor top projection.
+
+The top-column projection in degree `p+1+q` is a colimit cofork for the preceding-stage
+inclusion.

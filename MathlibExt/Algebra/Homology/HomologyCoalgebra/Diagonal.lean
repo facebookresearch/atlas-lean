@@ -15,14 +15,19 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.CategoryTheory.Monoidal.Comon_
 
 /-!
-# The unconditional homology diagonal of an actual chain comonoid
+# The homology diagonal into homology of a chain tensor square
 
-Applying the native graded homology functor to the actual chain
-comultiplication gives a canonical map into homology of the tensor square.
-This construction needs no Künneth theorem, field, or scalar-world equality.
-The monoidal structure and comonoid are structures on the input chain
-category and object; no homology coalgebra or tensor-coherence data is an
-input. The subsequent graded coalgebra transport is a separate construction.
+Let A be a preadditive category with chosen homology, and let the category
+of nonnegative chain complexes in A carry a monoidal structure.
+For a chain comonoid C with comultiplication Δ_C, graded homology gives
+δ_C=H(Δ_C):H(C)→H(C⊗C).
+
+This diagonal is natural for chain comonoid morphisms. Its retraction is
+the homology map of the left counit composite
+C⊗C → 𝟙⊗C → C, so the retraction followed after δ_C is id.
+The target is homology of the chain tensor square; no tensor comparison
+between H(C⊗C) and H(C)⊗H(C) is required.
+The object and morphism worlds of A are independent.
 -/
 
 @[expose] public section
@@ -40,8 +45,10 @@ variable {A : Type u} [Category.{v} A] [Preadditive A] [CategoryWithHomology A]
   [MonoidalCategory (ChainComplex A ℕ)]
 
 
-/-- Every actual chain comonoid has a canonical homology diagonal into
-homology of its actual tensor square. -/
+/-- For a preadditive category A with chosen homology and a
+monoidal structure on ChainComplex(A,ℕ), a comonoid C has
+δ_C:H(C)→H(C⊗C), defined by applying graded homology to Δ_C.
+No monoidal structure on graded homology is needed to define this map. -/
 def canonicalToTensorHomology (C : ChainComplex A ℕ) [ComonObj C] :
     (gradedHomologyFunctor A (ComplexShape.down ℕ)).obj C ⟶ (gradedHomologyFunctor A (ComplexShape.down ℕ)).obj
       (C ⊗ C) := (gradedHomologyFunctor A (ComplexShape.down ℕ)).map Δ[C]
@@ -50,8 +57,12 @@ def canonicalToTensorHomology (C : ChainComplex A ℕ) [ComonObj C] :
 theorem canonicalToTensorHomology_apply (C : ChainComplex A ℕ) [ComonObj C] (n : ℕ) :
     canonicalToTensorHomology C n = homologyMap Δ[C] n := rfl
 
-/-- Naturality follows from the actual input comonoid-morphism equation
-and functoriality of native homology. -/
+/-- For chain comonoids C,D in a monoidal category of
+nonnegative complexes over a preadditive category with homology,
+a comonoid morphism f:C→D satisfies
+δ_D ∘ H(f)=H(f⊗f) ∘ δ_C.
+Both diagonals have target homology of the corresponding chain
+tensor square. -/
 @[reassoc]
 theorem canonicalToTensorHomology_naturality (C : ChainComplex A ℕ) [ComonObj C]
     {D : ChainComplex A ℕ} [ComonObj D] (f : C ⟶ D) [IsComonHom f] :
@@ -59,8 +70,10 @@ theorem canonicalToTensorHomology_naturality (C : ChainComplex A ℕ) [ComonObj 
       canonicalToTensorHomology C ≫ (gradedHomologyFunctor A (ComplexShape.down ℕ)).map (f ⊗ₘ f) := by
   simp only [canonicalToTensorHomology, ← Functor.map_comp, IsComonHom.hom_comul]
 
-/-- The actual left counit gives a canonical retraction of the homology
-diagonal, without any Künneth hypothesis. -/
+/-- For a chain comonoid C over a preadditive category with
+homology, the map H(C⊗C)→H(C) is H of the composite
+C⊗C → 𝟙⊗C → C, given by ε_C⊗id and the left unitor.
+The left counit equation makes it a retraction of H(Δ_C). -/
 def diagonalRetraction (C : ChainComplex A ℕ) [ComonObj C] : (gradedHomologyFunctor A (ComplexShape.down ℕ)).obj
   (C ⊗ C) ⟶ (gradedHomologyFunctor A (ComplexShape.down ℕ)).obj C :=
   (gradedHomologyFunctor A (ComplexShape.down ℕ)).map (ε[C] ▷ C ≫ (λ_ C).hom)

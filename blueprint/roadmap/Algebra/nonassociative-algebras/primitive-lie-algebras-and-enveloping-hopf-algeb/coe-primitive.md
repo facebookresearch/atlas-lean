@@ -1,3 +1,5 @@
-# Coe ιPrimitive
+# The underlying element of the primitive generator map
 
-The primitive-valued generator morphism has the original generators as its underlying map.
+The underlying element of the primitive generator map.
+
+The included primitive image of x is ιx.

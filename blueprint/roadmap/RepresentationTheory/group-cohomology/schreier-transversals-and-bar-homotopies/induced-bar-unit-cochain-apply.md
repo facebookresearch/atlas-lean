@@ -1,3 +1,5 @@
-# Induced Bar Unit Cochain apply
+# Values of the universal induced-bar cochain
 
-The normalized-basis formula for the induction-unit cochain.
+Values of the universal induced-bar cochain.
+
+The value at q is the induction-unit image of barBasis n q.

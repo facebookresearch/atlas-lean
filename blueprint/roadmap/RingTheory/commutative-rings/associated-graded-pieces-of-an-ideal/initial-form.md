@@ -1,4 +1,4 @@
-# Initial Form
+# The initial-form map
 
-The class of an element of `I ^ n` in the degree-`n` associated-graded
-piece.
+For an ideal `I` in a commutative ring `R` and `n : ℕ`, `initialForm I n` is the `R`-linear
+quotient map `I^n → I^n/I^(n+1)`. It sends `x : (I^n : Ideal R)` to `Submodule.Quotient.mk x`.

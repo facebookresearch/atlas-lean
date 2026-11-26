@@ -1,5 +1,6 @@
-# Inv mul schreier Factor
+# The inverse representative formula for a subgroup factor
 
-Rewriting the Schreier factor after multiplying by the inverse of the
-starting representative.  This is the coefficient-action identity used by
-degree-one corestriction.
+The inverse representative formula for a subgroup factor.
+
+The decomposition tg = a(t,g)r(t,g) implies t⁻¹a(t,g) = g r(t,g)⁻¹. The multiplication order
+is retained in the ambient group G.

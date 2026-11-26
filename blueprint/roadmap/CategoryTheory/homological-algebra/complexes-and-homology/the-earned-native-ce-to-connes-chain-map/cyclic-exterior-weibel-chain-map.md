@@ -1,4 +1,6 @@
-# Cyclic Exterior Weibel Chain Map
+# The signed cyclic chain map from the canonical positive CE tail
 
-The chain map from the positive Chevalley–Eilenberg tail whose component in degree n is
-`(-1)^n` times normalized tail antisymmetrization.
+The signed cyclic chain map from the canonical positive CE tail.
+
+The degree components `(-1)^n τ_n` give a chain map from the canonical CE complex restricted
+to positive exterior degrees.

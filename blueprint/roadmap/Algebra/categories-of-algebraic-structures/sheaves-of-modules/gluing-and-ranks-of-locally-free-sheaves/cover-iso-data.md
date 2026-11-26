@@ -1,6 +1,6 @@
-# Cover Iso Data
+# Compatible local isomorphism data
 
-Local iso data on a cover: Hom data in both directions, inverse on
-every covered open. Section-level inverse laws (rather than `≫ = 𝟙`) keep
-the input elementary: consumers with genuine local isos supply
-`Iso.hom_inv_id`/`Iso.inv_hom_id` pointwise.
+For module sheaves `F,G` over a ringed space `(X,R)` and a family of opens `U_i`,
+`CoverIsoData F G U` consists of compatible local morphism data `F → G` and `G → F`, with both
+pointwise inverse laws on every `V ≤ U_i`. Its fields are `fwd`, `bwd`, `left_inv`, and
+`right_inv`.

@@ -1,3 +1,6 @@
-# Algebra Positive One To Kaehler surjective
+# The proper degree-one quotient surjects onto coefficient differentials
 
-Surjectivity of the quotient representative map is inherited from the tensor map.
+The proper degree-one quotient surjects onto coefficient differentials.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveOneToKaehler maps onto M ⊗[A] Ω¹(A/k).

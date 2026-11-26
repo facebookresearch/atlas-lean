@@ -15,10 +15,15 @@ public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.HomTensorCoor
 public meta import Mathlib.Tactic.Abel
 
 /-!
-# Differential squares of Hom–tensor comparison
+# Differential compatibility of the signed Hom–tensor map
 
-The tensor total and Hom differentials give the same three component terms.
-The sign equations retain degrees a,b,p and the cochain tensor sign.
+For cochains `f ∈ Hom_R(P,J)^a` and `u ∈ U^b`, put `n = a + b`. The signed comparison has
+source-degree-`p` factor `(-1)^(p*b)`. Taking its differential gives the three contributions
+from `d_J`, `d_U`, and precomposition with `d_P`.
+
+Their signs are respectively `(-1)^(p*b)`, `(-1)^(p*b+p+a)`, and `(-1)^(n+1+(p+1)*b)`. The
+last two agree with the signs obtained by taking the source tensor differential first. Thus
+the degree maps define a cochain morphism for arbitrary integer complexes `P`, `J`, and `U`.
 -/
 
 @[expose] public section
@@ -33,6 +38,10 @@ universe u v
 variable (R : Type u) [CommRing R]
   (P J U : CochainComplex (ModuleCat.{v} R) ℤ)
 
+/-- Cochain tensor-total generator is additive in its first factor.
+
+For `p + q = n`, the tensor-total class of `(x + x') ⊗ y` is the sum of the classes of `x ⊗ y`
+and `x' ⊗ y`. -/
 theorem mkAt_add_fst (p q n : ℤ) (h : p + q = n)
     (x x' : J.X p) (y : U.X q) :
     mkAt R J U p q n h (x + x') y =
@@ -43,6 +52,10 @@ theorem mkAt_add_fst (p q n : ℤ) (h : p + q = n)
   rw [TensorProduct.add_tmul]
   exact i.hom.map_add _ _
 
+/-- Integer units pass through the first tensor-total factor.
+
+For an integer unit `s : ℤˣ`, the tensor-total class of `(s • x) ⊗ y` equals `s` times the
+tensor-total class of `x ⊗ y`. -/
 theorem mkAt_units_smul_fst (p q n : ℤ) (h : p + q = n)
     (s : ℤˣ) (x : J.X p) (y : U.X q) :
     mkAt R J U p q n h (s • x) y = s • mkAt R J U p q n h x y := by
@@ -53,6 +66,10 @@ theorem mkAt_units_smul_fst (p q n : ℤ) (h : p + q = n)
   rw [← TensorProduct.smul_tmul']
   exact map_zsmul i.hom _ _
 
+/-- Integer scalar multiplication passes through the first tensor-total factor.
+
+For an integer `s`, the tensor-total class of `(s • x) ⊗ y` equals `s` times the class of `x ⊗
+y`. -/
 theorem mkAt_zsmul_fst (p q n : ℤ) (h : p + q = n)
     (s : ℤ) (x : J.X p) (y : U.X q) :
     mkAt R J U p q n h (s • x) y = s • mkAt R J U p q n h x y := by
@@ -62,7 +79,12 @@ theorem mkAt_zsmul_fst (p q n : ℤ) (h : p + q = n)
   rw [← TensorProduct.smul_tmul']
   exact map_zsmul i.hom _ _
 
-/-- Original post-Hom/tensor differential coordinates of the constructed degree map. -/
+/-- Differential after the Hom–tensor comparison on a pure cell.
+
+For `a + b = n`, evaluate the differential of the image of `f ⊗ u` at source degree `p`. Its
+three terms are the `J` differential with sign `(-1)^(p*b)`, the `U` differential with sign
+`(-1)^(p*b+p+a)`, and precomposition by `P.d p (p+1)` with sign `(-1)^(n+1+(p+1)*b)`, in
+target total degree `p + n + 1`. -/
 theorem delta_homTensorDegree_mk (n a b : ℤ) (hab : a + b = n)
     (f : Cochain P J a) (u : U.X b) (p : ℤ) (x : P.X p) :
     ((δ n (n + 1) ((homTensorDegree R P J U n).hom
@@ -94,7 +116,11 @@ theorem delta_homTensorDegree_mk (n a b : ℤ) (hab : a + b = n)
   rw [d_mkAt] at hv
   simpa only [Units.smul_def, Units.val_mul, smul_add, smul_smul, add_assoc] using hv
 
-/-- Original Hom/tensor-total differential coordinates before the constructed degree map. -/
+/-- Hom–tensor comparison after the tensor differential on a pure cell.
+
+For a cell in degrees `(a, b)`, take its source tensor differential and then the comparison in
+degree `n + 1`. At source degree `p`, the `J`, `P`, and `U` terms have signs `(-1)^(p*b)`,
+`(-1)^(p*b+a+1)`, and `(-1)^(a+p*(b+1))`, respectively. -/
 theorem homTensorDegree_d_mk (n a b : ℤ) (hab : a + b = n)
     (f : Cochain P J a) (u : U.X b) (p : ℤ) (x : P.X p) :
     (((homTensorDegree R P J U (n + 1)).hom
@@ -148,7 +174,10 @@ theorem homTensorDegree_d_mk (n a b : ℤ) (hab : a + b = n)
   simpa only [Units.smul_def, Units.val_mul, mkAt_add_fst, mkAt_zsmul_fst,
     smul_add, smul_smul, add_assoc] using hv
 
-/-- The original P differential weights agree after the actual equation a+b=n. -/
+/-- Hom-source sign identity for the tensor comparison.
+
+For integers with `a + b = n`, `(n + 1).negOnePow * ((p + 1)*b).negOnePow = (p*b).negOnePow *
+(a + 1).negOnePow`. This identifies the two precomposition signs. -/
 theorem homTensor_sign_P (n a b p : ℤ) (hab : a + b = n) :
     (n + 1).negOnePow * ((p + 1) * b).negOnePow =
       (p * b).negOnePow * (a + 1).negOnePow := by
@@ -162,7 +191,10 @@ theorem homTensor_sign_P (n a b p : ℤ) (hab : a + b = n) :
       simp only [Int.negOnePow_add]
     _ = _ := by rw [Int.units_mul_self, mul_one]
 
-/-- The original U differential weights retain the native tensor sign. -/
+/-- Tensor-factor sign identity for the Hom comparison.
+
+For arbitrary integers `a`, `b`, and `p`, `(p*b).negOnePow * (p + a).negOnePow = a.negOnePow *
+(p*(b+1)).negOnePow`. -/
 theorem homTensor_sign_U (a b p : ℤ) :
     (p * b).negOnePow * (p + a).negOnePow =
       a.negOnePow * (p * (b + 1)).negOnePow := by
@@ -174,7 +206,10 @@ theorem homTensor_sign_U (a b p : ℤ) :
     _ = (a + p * (b + 1)).negOnePow := congrArg Int.negOnePow h
     _ = _ := Int.negOnePow_add _ _
 
-/-- The original degree maps commute with the actual two native differentials. -/
+/-- Signed Hom–tensor degree maps commute with differentials.
+
+For every integer `n`, the degree-`n` comparison followed by the target differential equals
+the source differential followed by the degree-`n + 1` comparison. -/
 theorem homTensorDegree_comm (n : ℤ) :
     homTensorDegree R P J U n ≫ (linearComplex R P (complexAt R J U)).d n (n + 1) =
       (complexAt R (linearComplex R P J) U).d n (n + 1) ≫
@@ -202,7 +237,10 @@ theorem homTensorDegree_comm (n : ℤ) :
     homTensor_sign_P n a b p hab, homTensor_sign_U]
   abel
 
-/-- The actual original Hom–tensor cochain comparison, with the earned differential square. -/
+/-- Signed Hom–tensor cochain morphism.
+
+The degree maps `homTensorDegree R P J U n` and their differential compatibility define a
+morphism `Hom_R(P,J) ⊗_R U ⟶ Hom_R(P,J ⊗_R U)` of cochain complexes. -/
 def homTensorComparison :
     complexAt R (linearComplex R P J) U ⟶ linearComplex R P (complexAt R J U) where
   f n := homTensorDegree R P J U n

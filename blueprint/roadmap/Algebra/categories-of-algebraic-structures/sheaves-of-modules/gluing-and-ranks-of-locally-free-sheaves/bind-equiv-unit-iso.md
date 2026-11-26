@@ -1,5 +1,6 @@
-# Bind Equiv Unit Iso
+# Structure-module comparison for the inverse slice equivalence
 
-The unit sheaf is preserved definitionally by the inverse of
-`LocalGeneratorsData.bindEquiv`, but stated with syntactic sides so that
-transported terms stay well-typed at reducible transparency.
+For a ringed site `(C',J',S)`, `X∈C'`, and `Y∈Over X`, let `E=LocalGeneratorsData.bindEquiv Y`
+compare the direct and iterated slices. The isomorphism `unit(S.over Y.left) ≅
+E.inverse(unit((S.over X).over Y))` identifies their structure modules through the inverse
+equivalence.

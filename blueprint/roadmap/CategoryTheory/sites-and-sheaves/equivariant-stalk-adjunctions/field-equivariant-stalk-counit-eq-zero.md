@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit eq zero
+# Field stalk counit has zero kernel
 
-Zero evaluation kills an actual original finite representative, hence the SAME stalk germ.
+Field stalk counit has zero kernel.
+
+An inverse-sheaf stalk element whose counit value is zero is itself zero.

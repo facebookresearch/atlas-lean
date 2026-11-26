@@ -1,3 +1,5 @@
-# Window Cycles Hom
+# The cycle-window component of a spectral morphism
 
-The original morphism acts on the actual cycles in a finite window.
+The cycle-window component of a spectral morphism.
+
+Use the interval cycle component on the lower-width window.

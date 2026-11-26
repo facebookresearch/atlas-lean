@@ -1,3 +1,5 @@
-# Matrix Coinvariant Coalgebra
+# The descended coalgebra complex on matrix adjoint coinvariants
 
-The lawful coaugmented coinvariant coalgebra is a map of the cokernel.
+The descended coalgebra complex on matrix adjoint coinvariants.
+
+The scalar-adjoint quotient carries the coaugmented CE coalgebra structure.

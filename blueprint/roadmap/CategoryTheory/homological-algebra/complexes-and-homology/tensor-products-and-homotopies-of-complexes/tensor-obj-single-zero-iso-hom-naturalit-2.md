@@ -1,4 +1,6 @@
-# Tensor Obj Single Zero Iso hom naturality₂
+# Naturality of the single-zero comparison in the coefficient
 
-The tensor/single-zero comparison is natural in the degree-zero
-coefficient object.
+Naturality of the single-zero comparison in the coefficient.
+
+A morphism a : A → A′ commutes with the comparison and the corresponding degreewise tensor
+transformation.

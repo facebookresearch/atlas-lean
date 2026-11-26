@@ -1,3 +1,5 @@
-# Signed Regrading Functor
+# The signed integer regrading functor
 
-Signed regrading is functorial on every integer-indexed chain complex.
+The signed integer regrading functor.
+
+For fixed d, send chain complexes and their maps to the signed cochain regrading k ↦ d−k.

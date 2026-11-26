@@ -1,4 +1,6 @@
-# Tensor Pow Obj Three Right Iso
+# Right associated triple as the left associated power
 
-The canonical comparison from a right-associated tensor cube to the
-left-associated third tensor power.
+Right associated triple as the left associated power.
+
+The inverse associator and inverse two-factor coordinate identify `X ⊗ (X ⊗ X)` with power
+three.

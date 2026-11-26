@@ -15,17 +15,23 @@ public import MathlibExt.Algebra.Homology.SpectralObject.StableImageConvergence
 public import MathlibExt.Algebra.Homology.SpectralObject.PageCore
 public import MathlibExt.Algebra.Homology.SpectralObjectMapNaturality
 /-!
-# Naturality of stable-image comparisons
+# Naturality of stable-image graded comparisons
 
-For spectral objects in `AddCommGrpCat` indexed by a bounded preorder,
-stable-image page comparisons commute with morphisms. The kernel-graded
-comparisons use limits of total cones, the sequential Mittag--Leffler
-condition on kernel towers, and a common attained eventual image.
-Finite-window padding adds the stated right-endpoint vanishing hypotheses.
+For abelian-group spectral objects on a preorder with endpoints, the
+stable-to-finite window map induced by a change of the left cut is natural.
+For an antitone cut sequence a_k and fixed c≥a₀, the right-interval tower
+G_k=Hⁿ(a_k,⊤) restricts to Hⁿ(c,⊤), with kernel tower K.
 
-For `EInt` indices, these comparisons identify skeletal spectral-sequence
-pages with abutment graded objects and commute with spectral-object maps.
-Equal cut and page indices give compatible transports of these comparisons.
+When the full-endpoint cone is limiting and K is Mittag–Leffler, the
+comparison at an attained image stage R identifies Eⁿ(a_R,a₀,c,⊤)
+with F_c/F_{a₀}, where F_i is the full-abutment restriction kernel.
+These comparisons are natural in spectral-object maps. Right padding uses
+the stated H^{n−1}(d,⊤)=0 hypotheses, and changing equal cuts or growing
+the left and right window bounds preserves the comparisons.
+
+For EInt skeletal cuts a_k=−p−1−k, the page-to-graded comparisons commute
+with spectral-object maps at a common attained image stage and with
+equal page-index identifications.
 -/
 
 @[expose] public section
@@ -47,7 +53,10 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {ι : Type v} [Preorder ι] [OrderBot ι] [OrderTop ι]
 variable {S T : SpectralObject AddCommGrpCat.{u} ι}
 
-/-- Stable-image page comparisons commute with morphisms of spectral objects. -/
+/-- Let ι be a preorder with endpoints, φ:S → T a morphism of
+abelian-group spectral objects, n∈ℤ, a:ℕ → ι antitone and a₀≤c.
+
+For every R, the stable-to-finite maps E_Wⁿ(⊥,a₀,c,⊤) → E_Wⁿ(a_R,a₀,c,⊤) commute with the E-window maps induced by φ. -/
 @[reassoc]
 theorem Hom.stableImagePageComparison_naturality (φ : S ⟶ T)
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c) (R : ℕ) :
@@ -61,7 +70,13 @@ theorem Hom.stableImagePageComparison_naturality (φ : S ⟶ T)
       (by subsingleton) (by subsingleton) (by subsingleton))
     (n - 1) n (n + 1) (by omega) (by omega)
 
-/-- At a common attained eventual kernel image, the graded isomorphisms commute with a spectral morphism. -/
+/-- Let ι be a preorder with endpoints, φ:S → T a morphism of
+abelian-group spectral objects, n∈ℤ, a:ℕ → ι antitone and a₀≤c. For W=S,T set A_W=H_Wⁿ(⊥,⊤), G_k(W)=H_Wⁿ(a_k,⊤),
+K_k(W)=Ker(G_k(W) → H_Wⁿ(c,⊤)), and F_i(W)=Ker(A_W → H_Wⁿ(i,⊤)).
+Assume the full-endpoint cone A_W → G(W) is limiting and K(W) is
+Mittag–Leffler. Let R attain the eventual image in both K₀(S) and K₀(T).
+
+The comparisons E_Wⁿ(a_R,a₀,c,⊤) ≅ F_c(W)/F_{a₀}(W) commute with φ on the E-windows and the kernel-filtration graded quotients. -/
 @[reassoc]
 theorem Hom.stableImageKernelGradedIso_naturality (φ : S ⟶ T)
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
@@ -90,7 +105,13 @@ theorem Hom.stableImageKernelGradedIso_naturality (φ : S ⟶ T)
     φ.stableIntervalKernelGradedIso_naturality,
     ← Category.assoc, stableImageKernelGradedIso_comparison]
 
-/-- Right-endpoint padding preserves naturality under the stated vanishing hypotheses. -/
+/-- Let ι be a preorder with endpoints, φ:S → T a morphism of
+abelian-group spectral objects, n∈ℤ, a:ℕ → ι antitone and a₀≤c. For W=S,T set A_W=H_Wⁿ(⊥,⊤), G_k(W)=H_Wⁿ(a_k,⊤),
+K_k(W)=Ker(G_k(W) → H_Wⁿ(c,⊤)), and F_i(W)=Ker(A_W → H_Wⁿ(i,⊤)).
+Assume the full-endpoint cone A_W → G(W) is limiting and K(W) is
+Mittag–Leffler. Let R attain the eventual image in both K₀(S) and K₀(T).
+
+Let d≥c and assume H_W^{n−1}(d,⊤)=0 for W=S,T. The padded comparisons E_Wⁿ(a_R,a₀,c,d) ≅ F_c(W)/F_{a₀}(W) commute with φ on windows and graded quotients. -/
 @[reassoc]
 theorem Hom.stableImageFiniteWindowKernelGradedIso_naturality (φ : S ⟶ T)
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
@@ -132,8 +153,12 @@ theorem Hom.stableImageFiniteWindowKernelGradedIso_naturality (φ : S ⟶ T)
   rw [← Category.assoc, ← hPad, Category.assoc,
     φ.stableImageKernelGradedIso_naturality, ← Category.assoc]
 
-/-- Equal cuts give window transports that commute with spectral-object maps. -/
 -- Keep the original hypothesis parameters and their order in this compatibility declaration.
+/-- Let φ:S → T be a morphism of abelian-group spectral objects indexed
+by a preorder with endpoints. For two ordered four-cut chains with
+iₐ=jₐ for all four cuts, the canonical identifications of their
+degree-n E-windows commute with the E-window maps of φ. -/
+
 @[reassoc, nolint unusedArguments]
 theorem Hom.stableImageWindowEqIso_naturality (φ : S ⟶ T) (n : ℤ)
     {i₀ i₁ i₂ i₃ j₀ j₁ j₂ j₃ : ι}
@@ -147,7 +172,11 @@ theorem Hom.stableImageWindowEqIso_naturality (φ : S ⟶ T) (n : ℤ)
   subst j₀ j₁ j₂ j₃
   simp only [stableImageWindowEqIso, Iso.refl_hom, Category.comp_id, Category.id_comp]
 
-/-- Equal cuts give kernel-graded transports that commute with spectral-object maps. -/
+/-- Let φ:S → T be a morphism of abelian-group spectral objects on a
+preorder with endpoints. For i₁≤i₂ and j₁≤j₂ with i₁=j₁,i₂=j₂,
+the identifications F_{i₂}(W)/F_{i₁}(W) ≅ F_{j₂}(W)/F_{j₁}(W)
+commute with the kernel-graded maps of φ, where
+F_i(W)=Ker(H_Wⁿ(⊥,⊤) → H_Wⁿ(i,⊤)). -/
 @[reassoc]
 theorem Hom.stableImageKernelGradedEqIso_naturality (φ : S ⟶ T) (n : ℤ)
     {i₁ i₂ j₁ j₂ : ι} (h : i₁ ≤ i₂) (h' : j₁ ≤ j₂) (e₁ : i₁ = j₁) (e₂ : i₂ = j₂) :
@@ -156,7 +185,11 @@ theorem Hom.stableImageKernelGradedEqIso_naturality (φ : S ⟶ T) (n : ℤ)
   subst j₁ j₂
   simp only [stableImageKernelGradedEqIso, Iso.refl_hom, Category.comp_id, Category.id_comp]
 
-/-- Equal cutoff indices give compatible transports of the skeletal page-to-graded comparison. -/
+/-- Let U be an EInt-indexed abelian-group spectral object, p,q∈ℤ and n=p+q.
+Put a_k=−p−1−k, G_k=H_Uⁿ(a_k,+∞), K_k=Ker(G_k → H_Uⁿ(−p,+∞)),
+and assume the full-endpoint cone is limiting and K is Mittag–Leffler.
+
+Suppose M=R, both indices attain the eventual image in K₀, and H_U^{n−1}(−p+M,+∞)=H_U^{n−1}(−p+R,+∞)=0. The comparisons from pages M+1 and R+1 agree after the canonical identification of these equal page indices. -/
 theorem stableImageSkeletalPageGradedIso_transport
     (U : SpectralObject AddCommGrpCat.{u} EInt) (p q : ℤ)
     (hTotal : IsLimit (stableImageTotalCone U (p + q) (stableImageSkeletalLeftCuts p)
@@ -192,9 +225,15 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {ι : Type v} [Preorder ι] [OrderBot ι] [OrderTop ι]
 variable (S : SpectralObject AddCommGrpCat.{u} ι)
 
-/-- Both original window indexing maps preserve the canonical stable-image
-graded comparison. Only the right omitted intervals vanish; the left intervals
-may carry nonzero cohomology in arbitrarily many degrees. -/
+/-- Let S be an abelian-group spectral object on a preorder with endpoints.
+Fix n∈ℤ, antitone a:ℕ → ι and a₀≤c. Suppose its full-endpoint
+cone over H_Sⁿ(a_k,⊤) is limiting and the kernels of restriction to
+H_Sⁿ(c,⊤) form a Mittag–Leffler tower. Let R≤M both attain the
+eventual kernel image, c≤d≤d′, and
+H_S^{n−1}(d,⊤)=H_S^{n−1}(d′,⊤)=0.
+From E_Sⁿ(a_M,a₀,c,d), the left-index map to the R-window followed by
+its graded comparison equals the right-index map to the d′-window
+followed by the M-comparison; both target F_c/F_{a₀}. -/
 theorem stableImageFiniteWindowKernelGradedIso_indexing
     (n : ℤ) (a : ℕ → ι) (ha : Antitone a) (c : ι) (hc : a 0 ≤ c)
     (hTotal : IsLimit (stableImageTotalCone S n a ha))
@@ -256,8 +295,14 @@ namespace CategoryTheory.Abelian.SpectralObject
 
 variable {S T : SpectralObject AddCommGrpCat.{u} EInt}
 
-/-- Skeletal page-to-graded comparisons commute with spectral-object maps
-at a common attained eventual kernel image and vanishing right endpoint. -/
+/-- Let φ:S → T be a map of EInt-indexed abelian-group spectral objects.
+Fix p,q∈ℤ, n=p+q and a_k=−p−1−k. For W=S,T assume the cone
+H_Wⁿ(−∞,+∞) over H_Wⁿ(a_k,+∞) is limiting and the kernel tower
+of restriction to H_Wⁿ(−p,+∞) is Mittag–Leffler.
+Let R attain both eventual kernel images, and suppose
+H_W^{n−1}(−p+R,+∞)=0 for both objects.
+The comparisons E_{R+1}^{p,q}(W) ≅ GrᵖA_n(W) commute with the
+page map and associated-graded map induced by φ. -/
 @[reassoc]
 theorem Hom.stableImageSkeletalPageGradedIso_naturality (φ : S ⟶ T) (p q : ℤ)
     (hTotalS : IsLimit (stableImageTotalCone S (p + q) (stableImageSkeletalLeftCuts p)

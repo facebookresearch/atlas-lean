@@ -1,3 +1,6 @@
-# Corestriction Cocycle Two Class ker
+# Two-coboundaries vanish under the transferred class map
 
-Transferred two-cocycle classes annihilate source two-coboundaries.
+Two-coboundaries vanish under the transferred class map.
+
+The kernel of Z²(H,A|H) → H²(H,A|H) is contained in the kernel of the chosen-transversal
+transferred class map to H²(G,A).

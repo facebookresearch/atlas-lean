@@ -1,3 +1,6 @@
-# Full Quotient Functor
+# The proper-shuffle quotient functor in all chain degrees
 
-The original full proper quotient functor, before the native positive-index restriction.
+The proper-shuffle quotient functor in all chain degrees.
+
+For `P → B`, take the quotient by both-positive shuffle relations with coefficients `M`,
+retaining degree zero before any positive-index restriction.

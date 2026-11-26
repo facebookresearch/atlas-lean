@@ -1,4 +1,5 @@
-# Is Iso homology Universal Coefficient Map zero
+# The degree-zero coefficient map is an isomorphism in the PID setting
 
-In degree zero, the canonical homological universal-coefficient map over
-a commutative PID is an isomorphism.
+The degree-zero coefficient map is an isomorphism in the PID setting.
+
+For flat K-terms over a PID, the canonical degree-zero map is an isomorphism because T_0=0.

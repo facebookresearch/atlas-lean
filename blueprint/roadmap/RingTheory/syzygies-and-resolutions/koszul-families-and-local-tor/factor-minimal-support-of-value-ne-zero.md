@@ -1,4 +1,6 @@
-# Factor minimal support of value ne zero of support Dim le
+# Nonzero Koszul Euler factors are minimal in support
 
-Under the full-family local dimension bound, every nonzero actual prime
-Euler contribution is minimal in the original coefficient module support.
+Nonzero Koszul Euler factors are minimal in support.
+
+With all coefficients in the maximal ideal and support dimension at most n, each listed factor
+of nonzero value satisfies the minimal-support condition.

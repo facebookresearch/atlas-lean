@@ -1,4 +1,6 @@
-# Input Source Type
+# Source category of a natural transformation
 
-Recover the source type, including its captured parameters, from an existing natural
-transformation. This is a reducible type alias.
+For a natural transformation `η : F → G` between functors
+`F,G : C → E`, the source-category type of the transformation is
+`C`. This comparison retains the specified source objects and
+category structure.

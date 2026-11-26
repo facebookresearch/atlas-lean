@@ -1,3 +1,6 @@
-# Cancellation Factory Iso
+# The coefficient-natural cancellation isomorphism of bifunctors
 
-Native cancellation assembled naturally in both original module arguments.
+The coefficient-natural cancellation isomorphism of bifunctors.
+
+The extended-input tensor bifunctor is naturally isomorphic to (M,L) ↦ M ⊗_R L through base-
+change cancellation.

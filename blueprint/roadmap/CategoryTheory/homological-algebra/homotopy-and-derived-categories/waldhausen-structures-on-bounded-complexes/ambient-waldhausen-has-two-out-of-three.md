@@ -1,3 +1,6 @@
-# Ambient Waldhausen has Two Out Of Three
+# Two-out-of-three in the ambient Waldhausen structure
 
-The Waldhausen weak equivalences satisfy the two-out-of-three property.
+For an additive functor F:E → A from a preadditive exact category with
+a zero object and binary biproducts to an abelian category, the weak
+equivalences in the ambient Waldhausen structure on bounded cochain
+complexes satisfy two-out-of-three.

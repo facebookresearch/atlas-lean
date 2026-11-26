@@ -1,4 +1,7 @@
-# Partial Total Horizontal Row Homology total Row Homology Iso
+# Horizontal row homology yields the signed vertical-homology differential
 
-In the signed-row homology coordinates, the horizontal-row homology map
-is the signed differential on the horizontal complex of vertical homology.
+Horizontal row homology yields the signed vertical-homology differential.
+
+Transport the horizontal row homology map from total degrees `p + 1 + q` and `p + q` to
+vertical homology through `B.totalRowHomologyIso`. The resulting map is the differential from
+`p + 1` to `p` in `B.signedVerticalHomologyComplex q`, including its factor `ε(q)`.

@@ -1,3 +1,7 @@
-# Field Derived Sections Invariants Iso resolution formula
+# Resolution formula for the derived section comparison
 
-The comparison keeps the actual homology of the SAME termwise cut2 map on ANY resolution.
+Resolution formula for the derived section comparison.
+
+The forward comparison is the source resolution coordinate, the homology map of the section-
+invariant transformation, the mapped-resolution coordinate, and the inverse target resolution
+coordinate.

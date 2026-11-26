@@ -15,10 +15,15 @@ public import MathlibExt.Algebra.Category.ModuleCat.TorBalancedUniverse
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.BifunctorColimits
 
 /-!
-# Native Tor and exact filtered module colimits
+# Tor and filtered colimits of modules
 
-Balance lets us resolve the fixed coefficient. The resulting degreewise
-tensor functors preserve colimits, and filtered module colimits are exact.
+Let `R : Type u` be a commutative ring and `J` a filtered category whose object and morphism
+universes are bounded by `u`. For a fixed `M : ModuleCat.{u} R` and any natural degree `n`,
+the functor `Tor_n^R(M, -)` preserves colimits of shape `J`.
+
+Consequently, if `Tor_n^R(M, D j)` vanishes at every object of a filtered diagram `D`, then it
+also vanishes at its colimit. The comparison uses the balance of tensor derivations and
+exactness of filtered module colimits.
 -/
 
 public section
@@ -34,8 +39,11 @@ namespace ModuleCat
 variable {R : Type u} [CommRing R]
 variable (J : Type w) [Category.{w'} J] [IsFiltered J] [UnivLE.{w, u}] [UnivLE.{w', u}]
 
-/-- Native Tor with any fixed coefficient preserves filtered colimits. The
-object and morphism universes of the shape can be chosen independently. -/
+/-- Tor with a fixed module preserves filtered colimits.
+
+For a filtered category `J` with both index universes bounded by the module universe `u`, the
+functor `Tor_n^R(M, -)` on `ModuleCat.{u} R` preserves colimits of shape `J` for every natural
+`n`. -/
 theorem tor_preservesFilteredColimitsOfShape (M : ModuleCat.{u} R) (n : ℕ) :
     PreservesColimitsOfShape J ((Tor (ModuleCat.{u} R) n).obj M) := by
   let C := ModuleCat.{u} R
@@ -53,7 +61,10 @@ theorem tor_preservesFilteredColimitsOfShape (M : ModuleCat.{u} R) (n : ℕ) :
 
 variable {J}
 
-/-- The native Tor of a filtered colimit vanishes if it vanishes at every stage. -/
+/-- Objectwise Tor vanishing passes to a filtered colimit.
+
+Let `c` be a colimit cocone of a filtered diagram `D` in `ModuleCat.{u} R`. If `Tor_n^R(M,
+D.obj j)` is zero for every `j`, then `Tor_n^R(M, c.pt)` is zero. -/
 theorem tor_isZero_of_isColimit {D : J ⥤ ModuleCat.{u} R} {c : Cocone D}
     (hc : IsColimit c) (M : ModuleCat.{u} R) (n : ℕ)
     (h : ∀ j, IsZero (((Tor (ModuleCat.{u} R) n).obj M).obj (D.obj j))) :

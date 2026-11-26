@@ -1,3 +1,5 @@
-# First Page Row Second Page Iso
+# The first-page row homology is the second-page object
 
-The integer row homology is the actual native second page.
+The first-page row homology is the second-page object.
+
+Combine restriction homology with the successor comparison to obtain Hᵖ(E₁^{*,q}) ≅ E₂^{p,q}.

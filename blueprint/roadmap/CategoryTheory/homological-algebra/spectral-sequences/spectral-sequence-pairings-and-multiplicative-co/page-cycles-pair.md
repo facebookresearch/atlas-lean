@@ -1,4 +1,5 @@
-# Page Cycles Pair
+# The product on cycles of a spectral page
 
-The constructed product on actual native page cycles, using the genuine
-asymmetric cycle windows supplied by native homology data.
+The product on cycles of a spectral page.
+
+Pair the (r+1,r)-window descriptions of page cycles and return through the output cycle chart.

@@ -1,3 +1,6 @@
-# Page Associativity
+# Associativity of a fixed-page internal product
 
-Associativity is an equality of the original native page cups at all bidegrees.
+Associativity of a fixed-page internal product.
+
+The two triple products agree after the monoidal associator and additive output-bidegree
+transport.

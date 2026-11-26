@@ -12,11 +12,15 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferArbitrary
 
 /-!
-# Differential compatibility of arbitrary Schreier transfer
+# Differential compatibility and cohomology of Schreier transfer
 
-The chosen-transversal `Fin n` transfer commutes with the arbitrary
-inhomogeneous group-cohomology differential.  Thus the degreewise transfer
-maps assemble into a cochain map in every degree.
+For a finite-index H ≤ G, right transversal T and G-representation A, the tuple transfer
+cor_Tⁿ(f)(g) = ∑ₜ ρ(t⁻¹)f(T.schreierFactorTuple t g) commutes with the inhomogeneous group-
+cohomology differential, with its usual alternating signs: cor_Tⁿ⁺¹(dⁿf) = dⁿ(cor_Tⁿf).
+
+The degreewise maps therefore assemble into a cochain map C*(H,A|H) → C*(G,A). Applying
+homology gives a map Hⁿ(H,A|H) → Hⁿ(G,A) in every degree, whose value on a represented class
+is the class of the transferred cycle.
 -/
 
 @[expose] public section
@@ -35,13 +39,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite representatives for differential-compatible transfer.
+
+The finite-index hypothesis supplies the finite right-transversal type used in the cochain
+differential and transfer sums. -/
 noncomputable local instance corestrictionArbitraryDifferentialFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Reindexing the leading differential term by the Schreier permutation,
-with an arbitrary remaining factor tuple. -/
+/-- The leading differential sum after a Schreier update.
+
+For g = (g₀,…,gₙ), the sum weighted by ρ(g₀r(t,g₀)⁻¹) over the factor tuples of the tail
+starting at r(t,g₀) equals ρ(g₀) times the ordinary transfer sum of that tail. -/
 theorem sum_rho_mul_schreierRep_inv_factorTuple
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     {n : ℕ} (f : (Fin n → H) → A) (g : Fin (n + 1) → G) :
@@ -78,8 +87,10 @@ theorem sum_rho_mul_schreierRep_inv_factorTuple
             (f (T.schreierFactorTuple t (Fin.tail g)))) := by
       rw [map_sum]
 
-/-- Arbitrary-degree Schreier transfer commutes pointwise with the
-inhomogeneous differential. -/
+/-- Arbitrary-degree transfer commutes with the differential.
+
+For every n and H-cochain f, transferring dⁿf in degree n+1 equals applying the G-differential
+dⁿ to the degree-n transfer of f. -/
 theorem corestrictionCochain_d
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (n : ℕ) (f : (Fin n → H) → A) :
@@ -134,8 +145,10 @@ theorem corestrictionCochain_d
     exact congrArg f
       (Subgroup.RightTransversal.schreierFactorTuple_contractNth T t g j).symm
 
-/-- The arbitrary-degree chosen-transversal transfers assemble into a
-cochain map. -/
+/-- The Schreier transfer as a cochain-complex morphism.
+
+The chosen-transversal maps in all degrees define a morphism from the inhomogeneous cochain
+complex of A|H to that of A. -/
 noncomputable def corestrictionCochains
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.inhomogeneousCochains
@@ -151,6 +164,10 @@ noncomputable def corestrictionCochains
     intro f
     exact (corestrictionCochain_d A T i f).symm
 
+/-- The degree component of the transfer cochain map.
+
+The component in degree n of corestrictionCochains A T is the ModuleCat morphism of the linear
+map corestrictionCochain A T n. -/
 @[simp]
 theorem corestrictionCochains_f
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
@@ -158,16 +175,19 @@ theorem corestrictionCochains_f
       ModuleCat.ofHom (corestrictionCochain A T n) :=
   rfl
 
-/-- Arbitrary-degree group-cohomological transfer attached to one right
-transversal. -/
+/-- The cohomological transfer in an arbitrary degree.
+
+For n ≥ 0, apply homology to the chosen-transversal cochain map to obtain Hⁿ(H,A|H) → Hⁿ(G,A). -/
 noncomputable def corestrictionOfRightTransversal
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     groupCohomology (Rep.res (Subgroup.subtype H) A) n ⟶
       groupCohomology A n :=
   HomologicalComplex.homologyMap (corestrictionCochains A T) n
 
-/-- Arbitrary-degree representative formula for chosen-transversal
-corestriction. -/
+/-- The arbitrary-degree transfer on a cycle class.
+
+Applying the transfer to the class of z ∈ Zⁿ(H,A|H) gives the class of the cycle obtained by
+applying the transfer cochain map to z. -/
 theorem corestrictionOfRightTransversal_π
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
     (z : groupCohomology.cocycles
@@ -181,8 +201,10 @@ theorem corestrictionOfRightTransversal_π
     (HomologicalComplex.homologyπ_naturality
       (corestrictionCochains A T) n) z
 
-/-- The transferred generic cycle has the arbitrary Schreier cochain as its
-underlying inhomogeneous cochain. -/
+/-- The cochain underlying a transferred arbitrary-degree cycle.
+
+Including the transferred cycle into G-cochains gives the degree-n Schreier transfer of the
+included H-cycle cochain. -/
 theorem iCocycles_corestriction_cyclesMap
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
     (z : groupCohomology.cocycles
@@ -197,6 +219,9 @@ theorem iCocycles_corestriction_cyclesMap
     (HomologicalComplex.cyclesMap_i
       (corestrictionCochains A T) n) z
 
+/-- The transfer preserves the zero class in every degree.
+
+For each n, the chosen-transversal cohomology map sends 0 in Hⁿ(H,A|H) to 0 in Hⁿ(G,A). -/
 @[simp]
 theorem corestrictionOfRightTransversal_zero
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :

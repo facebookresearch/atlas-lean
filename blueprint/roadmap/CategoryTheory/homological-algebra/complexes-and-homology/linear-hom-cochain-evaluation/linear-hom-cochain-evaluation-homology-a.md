@@ -1,5 +1,6 @@
-# Linear Hom Cochain Evaluation Homology π apply
+# A cochain cycle evaluated on a chain-cycle class gives its underlying value
 
-Evaluation on homology, computed on representatives: the evaluation of
-the class of a cochain cycle on the class of a chain cycle is the value of
-the underlying cochain on the underlying chain.
+Let R be commutative in universe u, with all module carriers and nonnegative chain terms in u.
+For D=Hom_R(K,M), p∈ℕ, φ∈Z^pD and x∈Z_pK, ev_p([φ]⊗[x])=(i_D^pφ)(i_K^px). The cycles inclusions
+identify φ with a linear map K_p→M and x with its underlying chain element. The equality
+computes the canonical homology evaluation on every pair of representatives.

@@ -1,3 +1,6 @@
-# Hom Tensor Homotopy Quotient map surjective
+# Morphisms between quotient triples have cochain representatives
 
-Every native homotopy-triple map is represented by original cochain maps.
+Morphisms between quotient triples have cochain representatives.
+
+Every morphism between the homotopy triples of two given cochain triples is the image of a
+morphism between those cochain triples.

@@ -16,16 +16,14 @@ public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
 public import Mathlib.CategoryTheory.Limits.ConcreteCategory.Basic
 
 /-!
-# Kernels of maps on filtered module colimits
+# Pointwise kernel equality in filtered module colimits
 
-If two natural transformations of filtered diagrams of modules have the
-same pointwise kernels, their induced maps on colimits have the same kernel.
+Let F,A,B be diagrams of R-modules on a small filtered category J, and let η : F → A and θ : F
+→ B be natural transformations. If η_j and θ_j have the same kernel for every j, then the
+induced maps from colim F also have the same kernel.
 
-For an element represented at a stage, vanishing of its image in the target
-colimit means that image becomes literally zero at a common later stage.
-Naturality moves the source representative to that stage, where pointwise
-kernel equality transfers the vanishing to the second transformation.  The
-same later-stage witness then proves vanishing in the second colimit.
+The equality compares vanishing in the two target colimits; the targets need not be identified
+with each other.
 -/
 
 @[expose] public section
@@ -43,8 +41,10 @@ variable {R : Type u} [Ring R]
 variable {J : Type u} [SmallCategory J] [IsFiltered J]
 variable {F A B : J ⥤ ModuleCat.{u} R}
 
-/-- Pointwise equality of kernels for natural transformations of filtered
-module diagrams passes to the induced colimit maps. -/
+/-- Pointwise kernel equality passes to filtered colimit maps.
+
+If η_j(x) = 0 exactly when θ_j(x) = 0 at every diagram object j, then colimMap η(x) = 0
+exactly when colimMap θ(x) = 0 for every x ∈ colim F. -/
 theorem colimMap_apply_eq_zero_iff_of_app
     (η : F ⟶ A) (θ : F ⟶ B)
     (hker : ∀ (j : J) (x : F.obj j),

@@ -2,25 +2,25 @@
 
 ## Homological Complex
 
-- [Map Homology Functor Iso id hom](map-homology-functor-iso-id-hom.md)
+- [Identity functor gives the identity homology-preservation comparison](map-homology-functor-iso-id-hom.md)
 
 ## Functor
 
-- [Map Square Homological Complex](map-square-homological-complex.md)
-- [Map Square Homological Complex f](map-square-homological-complex-f.md)
-- [Left Derived Square Hom](left-derived-square-hom.md)
-- [Left Derived Square Hom With Resolution](left-derived-square-hom-with-resolution.md)
-- [Left Derived Square Hom With Resolution naturality](left-derived-square-hom-with-resolution-2.md)
-- [Left Derived Square Hom With Resolution independent](left-derived-square-hom-with-resolution-3.md)
-- [Left Derived Square Hom app canonical](left-derived-square-hom-app-canonical.md)
-- [Left Derived Square Hom app](left-derived-square-hom-app.md)
-- [Left Derived Square Hom eq with lift](left-derived-square-hom-eq-with-lift.md)
-- [Left Derived Square Hom eq with source lift](left-derived-square-hom-eq-with-source-l.md)
-- [Left Derived Square Hom zero augmentation](left-derived-square-hom-zero-augmentatio.md)
-- [Left Derived Square Hom of preserves Projectives](left-derived-square-hom-of-preserves-pro.md)
-- [Left Derived Square Hom naturality source functor](left-derived-square-hom-naturality-sourc.md)
-- [Left Derived Square Hom naturality target functor](left-derived-square-hom-naturality-targe.md)
+- [Underlying coefficient square on chain complexes](map-square-homological-complex.md)
+- [Degree components of a mapped coefficient square](map-square-homological-complex-f.md)
+- [Canonical left-derived map of an underlying comparison square](left-derived-square-hom.md)
+- [Resolution-based component of a left-derived comparison square](left-derived-square-hom-with-resolution.md)
+- [Resolution-based derived square is natural in the object](left-derived-square-hom-with-resolution-2.md)
+- [Derived square components are independent of resolution choices](left-derived-square-hom-with-resolution-3.md)
+- [Canonical derived square component from the chosen resolution](left-derived-square-hom-app-canonical.md)
+- [Any projective resolution computes the canonical derived square](left-derived-square-hom-app.md)
+- [A projective lift computes the canonical derived square component](left-derived-square-hom-eq-with-lift.md)
+- [A source-object lift computes the derived square after an input map](left-derived-square-hom-eq-with-source-l.md)
+- [Derived square preserves its underlying augmentation square](left-derived-square-hom-zero-augmentatio.md)
+- [Projective preservation gives the isomorphism-factorized derived square](left-derived-square-hom-of-preserves-pro.md)
+- [Derived square is natural under source coefficient transformations](left-derived-square-hom-naturality-sourc.md)
+- [Derived square is natural under target coefficient transformations](left-derived-square-hom-naturality-targe.md)
 
 ## Homological Complex
 
-- [Comparison Hom comp](comparison-hom-comp.md)
+- [Composition of presented homology comparisons across target functors](comparison-hom-comp.md)

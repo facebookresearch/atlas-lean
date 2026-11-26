@@ -14,25 +14,31 @@ module
 public import MathlibExt.RepresentationTheory.Homological.NormalizedBar.ShuffleTuples
 public import MathlibExt.RepresentationTheory.Homological.NormalizedBar.NativeBar
 
-/-!
-# The literal integral group-bar shuffle and its normalization descent
-
-For any group, the shuffle multiplies the two group-ring coefficients in
-input order and sums over the existing Eilenberg–Zilber shuffle predicate,
-with permutation sign and tuple interleaving by the inverse permutation.
-Projection deletes the identity-containing tuples. The operator descends
-to the actual normalized tuple modules, uniquely, and agrees with the
-actual native normalization projection and normalization-corrected section.
-
-The tuple and raw quotient API accepts `G : Type v`. The two comparisons
-with Mathlib's integral bar complex retain its `G : Type` scope. No
-commutativity, flatness, or projectivity assumption enters this layer.
-
+/-
 The constructions and proofs are extracted from
 `FormalizedTextbooks.WeibelHomologicalAlgebra.Chapter06.Section05.ShuffleProduct`,
 following Weibel, *An Introduction to Homological Algebra*, §6.5.11–6.5.12.
 Source credits: @toskua and Avocado authored the original implementation
 and proofs. The textbook declarations retain their original author header.
+-/
+
+/-!
+# Integral shuffle on full and normalized group-bar modules
+
+Let G be any group. The degreewise ℤ-linear shuffle on underlying
+tuple modules multiplies the group-ring coefficients in input order
+and sums over (p,q)-shuffles σ with sign sgn(σ).
+The output tuple is the input concatenation evaluated at σ⁻¹.
+
+A degenerate input makes every output tuple degenerate, so the operator
+descends through the projections to the nonidentity tuple modules.
+The descended map is unique with this projection characteristic.
+It agrees degreewise with the bar normalization projection and with
+the normalization-corrected section, for their stated Type 0 group scope.
+The raw tuple operators allow arbitrary group universe v.
+
+Weibel, An Introduction to Homological Algebra, §6.5.11–6.5.12,
+gives the shuffle construction and normalization identities.
 -/
 
 @[expose] public section
@@ -44,12 +50,14 @@ universe v
 open CategoryTheory Limits
 open scoped Classical
 
-/-- 6.5.11: the shuffle product as a `ℤ`-linear map out of the module
-tensor product: on basis tensors
-`single a (single ha ca) ⊗ single b (single hb cb)` it is
-`ca · cb · ∑_{σ shuffle} (sign σ) • single (shuffle-tuple) (single (ha·hb) 1)`,
-extended bilinearly (quadruple `Finsupp.lsum`); the shuffle tuple is
-`Fin.addCases a b ∘ σ⁻¹`. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+The ℤ-linear shuffle B_p⊗[ℤ]B_q→B_(p+q) takes a pair of
+basis symbols with ordered group-ring coefficients u,v to
+∑_(σ∈Sh(p,q)) sgn(σ) [I_σ(a,b)]_(uv).
+The map is on underlying modules. -/
 noncomputable def shuffleLinear (G : Type v) [Group G] (p q : ℕ) :
     TensorProduct ℤ ((Fin p → G) →₀ MonoidAlgebra ℤ G)
       ((Fin q → G) →₀ MonoidAlgebra ℤ G) →ₗ[ℤ]
@@ -74,7 +82,14 @@ noncomputable def shuffleLinear (G : Type v) [Group G] (p q : ℕ) :
               (MonoidAlgebra.coeffLinearEquiv ℤ).toLinearMap)))).comp
         (MonoidAlgebra.coeffLinearEquiv ℤ).toLinearMap))
 
-/-- The literal existing shuffle operator on all four basis coefficients. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+For coefficients c_a[h_a],c_b[h_b], the basis value is
+c_a c_b∑_(σ∈Sh(p,q)) sgn(σ)
+[I_σ(a,b)]_[h_a h_b].
+The group entries h_a,h_b are multiplied in their input order. -/
 theorem shuffleLinear_basis (G : Type v) [Group G] (p q : ℕ)
     (a : Fin p → G) (b : Fin q → G) (ha hb : G) (ca cb : ℤ) :
     shuffleLinear G p q
@@ -176,9 +191,13 @@ theorem shuffleLinear_basis (G : Type v) [Group G] (p q : ℕ)
       congrArg (fun z : (Fin (p + q) → G) →₀ MonoidAlgebra ℤ G => ca • z) (hQ a ha)
     _ = (ca * cb) • W a ha b hb := (mul_smul ca cb (W a ha b hb)).symm
 
-/-- The existing shuffle operator descended to the actual normalized tuple
-modules. This is an ordinary `ℤ`-linear map, without a diagonal `Rep` tensor
-morphism or a DG/homology-ring assertion. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+The normalized ℤ-linear operator Q_p⊗[ℤ]Q_q→Q_(p+q)
+is obtained by including nonidentity tuples, applying the full
+shuffle and projecting the output to nonidentity tuples. -/
 noncomputable def normalizedShuffleLinear (G : Type v) [Group G] (p q : ℕ) :
     TensorProduct ℤ ((Rep.NormalizedBar.complex ℤ G).X p).V
       ((Rep.NormalizedBar.complex ℤ G).X q).V →ₗ[ℤ]
@@ -188,7 +207,12 @@ noncomputable def normalizedShuffleLinear (G : Type v) [Group G] (p q : ℕ) :
       (TensorProduct.map (Rep.NormalizedBar.rawInclusion ℤ G p).hom.toLinearMap
         (Rep.NormalizedBar.rawInclusion ℤ G q).hom.toLinearMap))
 
-/-- Projection of an existing shuffle with a degenerate left input is zero. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+If a has an identity entry, the output of its full shuffle with b
+is killed by the degree p+q nonidentity projection. -/
 theorem shuffle_projection_zero_of_degenerate_left (G : Type v) [Group G] (p q : ℕ)
     (a : Fin p → G) (b : Fin q → G) (ha hb : G)
     (hdeg : ¬ Rep.NormalizedBar.IsNondegenerate G a) :
@@ -207,7 +231,12 @@ theorem shuffle_projection_zero_of_degenerate_left (G : Type v) [Group G] (p q :
   rw [dite_eq_right h] at hp
   rw [hp, smul_zero]
 
-/-- Projection of an existing shuffle with a degenerate right input is zero. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+If b has an identity entry, the output of its full shuffle with a
+is killed by the degree p+q nonidentity projection. -/
 theorem shuffle_projection_zero_of_degenerate_right (G : Type v) [Group G] (p q : ℕ)
     (a : Fin p → G) (b : Fin q → G) (ha hb : G)
     (hdeg : ¬ Rep.NormalizedBar.IsNondegenerate G b) :
@@ -226,8 +255,12 @@ theorem shuffle_projection_zero_of_degenerate_right (G : Type v) [Group G] (p q 
   rw [dite_eq_right h] at hp
   rw [hp, smul_zero]
 
-/-- The actual normalized shuffle descends the literal existing operator:
-projecting either input first agrees with projecting its shuffle output. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+For full and normalized shuffles S and S̄ and projections π_n,
+S̄∘(π_p⊗π_q)=π_(p+q)∘S. -/
 theorem normalizedShuffleLinear_desc (G : Type v) [Group G] (p q : ℕ) :
     (normalizedShuffleLinear G p q).comp
         (TensorProduct.map (Rep.NormalizedBar.rawProjection ℤ G p).hom.toLinearMap
@@ -322,8 +355,13 @@ theorem normalizedShuffleLinear_desc (G : Type v) [Group G] (p q : ℕ) :
     rw [hpa, TensorProduct.zero_tmul, N.map_zero]
     exact (shuffle_projection_zero_of_degenerate_left G p q a b ha hb hA).symm
 
-/-- The descended operator keeps the literal shuffle formula on normalized
-nonidentity tuple basis elements. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+For nonidentity a,b, the normalized basis value is the output
+projection of
+c_a c_b∑_(σ∈Sh(p,q))sgn(σ)[I_σ(a,b)]_[h_a h_b]. -/
 theorem normalizedShuffleLinear_basis (G : Type v) [Group G] (p q : ℕ)
     (a : Rep.NormalizedBar.Tuple G p) (b : Rep.NormalizedBar.Tuple G q)
     (ha hb : G) (ca cb : ℤ) :
@@ -363,7 +401,14 @@ theorem normalizedShuffleLinear_basis (G : Type v) [Group G] (p q : ℕ)
   exact congrArg (fun x : (Fin (p + q) → G) →₀ MonoidAlgebra ℤ G => P x)
     (shuffleLinear_basis G p q a.val b.val ha hb ca cb)
 
-/-- The normalized output is the literal signed sum of nonidentity shuffle tuples. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+Every interleaving of nonidentity a,b is nonidentity. Thus the
+normalized basis value is directly
+c_a c_b∑_(σ∈Sh(p,q))sgn(σ)[I_σ(a,b)]_[h_a h_b]
+as a sum of normalized tuple symbols. -/
 theorem normalizedShuffleLinear_nonidentity_basis (G : Type v) [Group G] (p q : ℕ)
     (a : Rep.NormalizedBar.Tuple G p) (b : Rep.NormalizedBar.Tuple G q)
     (ha hb : G) (ca cb : ℤ) :
@@ -406,7 +451,10 @@ theorem normalizedShuffleLinear_nonidentity_basis (G : Type v) [Group G] (p q : 
     exact h
   rw [hp]
 
-/-- The descent square uses the actual native bar-to-normalization chain projection. -/
+/-- Let G be a group in Type 0 and p,q∈ℕ.
+For the inhomogeneous bar projection π_B to normalized tuples,
+the integral shuffles satisfy
+S̄∘(π_B,p⊗π_B,q)=π_B,p+q∘S. -/
 theorem normalizedShuffleLinear_nativeProjection (G : Type) [Group G] (p q : ℕ) :
     (normalizedShuffleLinear G p q).comp
         (TensorProduct.map ((Rep.NormalizedBar.nativeProjection ℤ G).f p).hom.toLinearMap
@@ -469,7 +517,10 @@ theorem normalizedShuffleLinear_nativeProjection (G : Type) [Group G] (p q : ℕ
           (Rep.NormalizedBar.Tuple G (p + q) →₀ MonoidAlgebra ℤ G) => f.comp S) hO.symm
   exact hLeft.trans (hDesc.trans hRight)
 
-/-- The constructed operator also uses the actual normalization-corrected chain inclusion. -/
+/-- Let G be a group in Type 0 and p,q∈ℕ.
+For the bar normalization projection π_B and corrected chain
+section i_B, the normalized underlying-module shuffle is
+S̄=π_B,p+q∘S∘(i_B,p⊗i_B,q). -/
 theorem normalizedShuffleLinear_nativeInclusion (G : Type) [Group G] (p q : ℕ) :
     normalizedShuffleLinear G p q =
       ((Rep.NormalizedBar.nativeProjection ℤ G).f (p + q)).hom.toLinearMap.comp
@@ -545,7 +596,13 @@ theorem normalizedShuffleLinear_nativeInclusion (G : Type) [Group G] (p q : ℕ)
   change normalizedShuffleLinear G p q = P.comp ((shuffleLinear G p q).comp I)
   exact hleft.symm.trans (h.trans (LinearMap.comp_assoc I (shuffleLinear G p q) P))
 
-/-- The descended linear operator is uniquely determined by its actual quotient square. -/
+/-- Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+If an ℤ-linear F:Q_p⊗Q_q→Q_(p+q) satisfies
+F∘(π_p⊗π_q)=π_(p+q)∘S, then F=S̄.
+This is the uniqueness characteristic of the descended shuffle. -/
 theorem normalizedShuffleLinear_unique (G : Type v) [Group G] (p q : ℕ)
     (F : TensorProduct ℤ ((Rep.NormalizedBar.complex ℤ G).X p).V
       ((Rep.NormalizedBar.complex ℤ G).X q).V →ₗ[ℤ]

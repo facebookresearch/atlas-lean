@@ -1,3 +1,5 @@
-# Family Quotient Residue Alg Equiv mk
+# The residue algebra comparison on a quotient class
 
-On representatives, the family quotient equivalence is the residue map.
+The residue algebra comparison on a quotient class.
+
+The class of r is sent to residue R r.

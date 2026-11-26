@@ -1,3 +1,5 @@
-# Mono
+# Admissible kernel maps are monomorphisms
 
-An admissible monomorphism is a monomorphism
+In an additive category `C` with a chosen Quillen exact structure, every
+admissible monomorphism `i : X → Y` is a monomorphism in the
+underlying category `C`.

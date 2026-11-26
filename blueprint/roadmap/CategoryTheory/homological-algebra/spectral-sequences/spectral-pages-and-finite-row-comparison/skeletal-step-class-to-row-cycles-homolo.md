@@ -1,3 +1,6 @@
-# Skeletal Step Class To Row Cycles homology
+# The row-cycle step-class map gives its second-page class
 
-The row homology comparison sends the cycle lift to the second-page class map.
+The row-cycle step-class map gives its second-page class.
+
+The row homology projection and row-to-E₂ comparison carry the lift to the skeletal page-2
+class map.

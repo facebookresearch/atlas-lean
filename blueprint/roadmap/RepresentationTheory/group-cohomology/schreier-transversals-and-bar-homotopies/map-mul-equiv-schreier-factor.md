@@ -1,3 +1,6 @@
-# Map Mul Equiv schreier Factor
+# Transport of Schreier subgroup factors
 
-Schreier factors commute with transport of a transversal.
+Transport of Schreier subgroup factors.
+
+The subgroup factor of e(t)e(g) in e(H) is the image under the induced subgroup equivalence of
+the factor of tg in H.

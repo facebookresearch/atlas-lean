@@ -1,3 +1,5 @@
-# Cup one two eq cup One Two
+# Equality of the one-two cup constructions
 
-Compatibility name for the class comparison in degree (1,2).
+For representations `A,B` of a group `G` over a commutative ring `k` and classes `x ∈
+H¹(G,A)`, `y ∈ H²(G,B)`, the Alexander–Whitney morphism and the descended bilinear product
+satisfy `(cup G k A B 1 2)(x ⊗ₜ[k] y) = cupOneTwo A B x y`.

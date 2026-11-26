@@ -1,3 +1,5 @@
-# Native Lifted Complex Map Is Comon Hom
+# The independent-universe map preserves the comonoids
 
-The independent-universe map preserves the transported native comonoids.
+For an R-Lie homomorphism f:L→L′, lifting to H=max{u,v,w}
+gives a comonoid morphism U^H C(L)→U^H C(L′), preserving
+the transported coproduct and counit.

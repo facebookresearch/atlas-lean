@@ -11,6 +11,20 @@ module
 public import MathlibExt.Algebra.Homology.LinearHomCochainHomotopyEquiv
 public import Mathlib.Algebra.Homology.SingleHomology
 
+/-!
+# Linear Hom cochains of a single complex
+
+Let R be a ring and C a preadditive R-linear category with a zero object. The scalar, object and
+morphism universes are independent. For M,G∈C, Hom_C(M[0],G) is canonically the cochain complex
+concentrated in degree zero at Hom_C(M,G). Its degree-zero comparison is the identity under the
+single-term identification, and it is natural in G.
+
+Consequently the coefficient functor G↦H^0(Hom_C(M[0],G)) is Hom_C(M,-). A specified homotopy
+equivalence K≃M[0] transports this isomorphism to G↦H^0(Hom_C(K,G)). In every positive degree n,
+the latter cohomology functor is zero. All Hom and homology modules have carriers in the
+morphism universe.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -27,7 +41,11 @@ variable (R : Type w) [Ring R]
 variable {C : Type u} [Category.{v} C] [Preadditive C] [Linear R C]
   [HasZeroObject C]
 
-/-- `Hom(-, G)` on the `0`-single chain complex is the `0`-single cochain. -/
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. For M,G∈C, this is the canonical cochain
+isomorphism Hom_C(M[0],G)≅Hom_C(M,G)[0] in R-modules of carrier universe v. The source chain
+single and target cochain single are both concentrated in degree zero; every positive-degree Hom
+term has zero source. -/
 noncomputable def linearHomCochainComplexSingle₀Iso (M G : C) :
     (linearHomCochainComplexFunctor R C G).obj
         (Opposite.op ((ChainComplex.single₀ C).obj M)) ≅
@@ -70,6 +88,10 @@ noncomputable def linearHomCochainComplexSingle₀Iso (M G : C) :
       simp only [hY, hX, comp_zero, zero_comp])
 
 set_option backward.isDefEq.respectTransparency.types false in
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. For M,G∈C, the forward degree-zero component
+of Hom_C(M[0],G)≅Hom_C(M,G)[0] is id_{Hom_C(M,G)} under the canonical identification (M[0])_0=M.
+The equality fixes the comparison's map on the full degree-zero Hom module. -/
 @[simp]
 lemma linearHomCochainComplexSingle₀Iso_hom_f_zero (M G : C) :
     (linearHomCochainComplexSingle₀Iso R M G).hom.f 0 = 𝟙 _ := by
@@ -77,13 +99,20 @@ lemma linearHomCochainComplexSingle₀Iso_hom_f_zero (M G : C) :
   ext f
   exact Category.id_comp f
 
-/-- Functor `G ↦ Hom(single₀ M, G)` as a cochain complex. -/
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. For fixed M∈C, this functor sends G to the
+nonnegative cochain complex Hom_C(M[0],G) and a coefficient map G→G′ to postcomposition in every
+Hom term. Its cochain modules lie in v. -/
 noncomputable def linearHomCochainComplexSingle₀Functor (M : C) :
     C ⥤ CochainComplex (ModuleCat.{v} R) ℕ :=
   linearHomCochainComplexBifunctor R C ⋙
     (evaluation _ _).obj (Opposite.op ((ChainComplex.single₀ C).obj M))
 
-/-- `Hom(single₀ M, -)` is naturally isomorphic to `single₀ (M ⟶ -)`. -/
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. For fixed M∈C, the isomorphisms
+Hom_C(M[0],G)≅Hom_C(M,G)[0] form a natural isomorphism of coefficient functors on C. A map G→G′
+acts by postcomposition on the degree-zero Hom modules, and all positive-degree components are
+zero. -/
 noncomputable def linearHomCochainComplexSingle₀NatIso (M : C) :
     linearHomCochainComplexSingle₀Functor R M ≅
       (linearCoyoneda R C).obj (Opposite.op M) ⋙
@@ -103,7 +132,11 @@ noncomputable def linearHomCochainComplexSingle₀NatIso (M : C) :
           (isZero_single_obj_X (ComplexShape.up ℕ) 0
             (ModuleCat.of R (M ⟶ G')) n hn).eq_of_tgt _ _)
 
-/-- `H⁰(Hom(single₀ M, -))` as coefficient functors is `Hom(M, -)`. -/
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. For M∈C, there is a natural isomorphism
+G↦H^0(Hom_C(M[0],G))≅Hom_C(M,G) of functors C→R-Mod_v. It applies degree-zero homology to the
+single-cochain comparison and then uses the homology isomorphism of a degree-zero single
+complex. -/
 noncomputable def linearHomCochainComplexHomologyFunctorSingle₀Iso (M : C) :
     linearHomCochainComplexHomologyFunctor R C
         ((ChainComplex.single₀ C).obj M) 0 ≅
@@ -128,7 +161,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [Linear R C]
   [HasZeroObject C]
 variable {K : ChainComplex C ℕ} {M : C}
 
-/-- `H⁰(Hom(K, -))` transported along `K ≃ single₀ M`. -/
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. For a chain complex K of shape down ℕ and a
+specified homotopy equivalence e:K≃M[0], the coefficient functor G↦H^0(Hom_C(K,G)) is naturally
+isomorphic to Hom_C(M,G). Its forward map uses precomposition by the inverse leg M[0]→K,
+followed by the single-source Hom cohomology comparison. -/
 noncomputable def linearHomCochainComplexHomologyFunctorIsoOfSingle₀
     (e : HomotopyEquiv K ((ChainComplex.single₀ C).obj M)) :
     HomologicalComplex.linearHomCochainComplexHomologyFunctor R C K 0 ≅
@@ -136,7 +173,11 @@ noncomputable def linearHomCochainComplexHomologyFunctorIsoOfSingle₀
   (linearHomCochainComplexHomologyNatIso R e 0).symm ≪≫
     HomologicalComplex.linearHomCochainComplexHomologyFunctorSingle₀Iso R M
 
-/-- `Hⁿ(Hom(K, -))` is zero for `n ≠ 0` when `K ≃ single₀ M`. -/
+/-- Let R be a ring in universe w and C a preadditive R-linear category with a zero object, object
+universe u and morphism universe v, independently. Let K be a chain complex of shape down ℕ with
+a specified homotopy equivalence e:K≃M[0]. For n∈ℕ with n≠0, the entire coefficient functor
+G↦H^n(Hom_C(K,G)) is zero in C→R-Mod_v. The homotopy equivalence compares it to the Hom cochains
+of the degree-zero single, whose positive cohomology vanishes. -/
 theorem isZero_linearHomCochainComplexHomologyFunctor_of_single₀
     (e : HomotopyEquiv K ((ChainComplex.single₀ C).obj M))
     {n : ℕ} (hn : n ≠ 0) :

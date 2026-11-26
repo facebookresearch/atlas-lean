@@ -14,14 +14,16 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedZeroSquare
 
 /-!
-# Maps on the associated graded of first-quadrant total homology
+# Maps on associated graded total homology
 
-The positive- and zero-column filtration squares are combined into one
-all-column square.  Viewing that square as a morphism in the arrow category
-and applying the cokernel functor gives the induced map on each associated
-graded piece.
+Let C be an abelian category and f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ).
+In total degree n=p+q, let s_K : F_{p−1}H_n(Tot(K)) → F_pH_n(Tot(K)) be the consecutive
+complete image-stage inclusion.
 
-This file does not yet prove identity or composition laws for these maps.
+The predecessor map is transported from the finite stage p−1 when p>0 and is the zero map
+between the zero negative stages when p=0. Together with the current-stage map it gives a
+commutative square s_K → s_L. Applying the cokernel functor to this square gives the map on
+the associated graded piece at (p,q).
 -/
 
 @[expose] public section
@@ -38,9 +40,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The map on the preceding complete total-homology filtration stages,
-using the transported finite predecessor in positive columns and the zero
-map from the genuinely zero lower stage in column zero. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+In total degree n=p+q, define F_{(p:ℤ)−1}H_n(Tot(K)) → F_{(p:ℤ)−1}H_n(Tot(L)). If p>0, it is
+the finite predecessor-stage map at p−1 transported through the complete-to-finite
+comparisons. If p=0, it is the zero map between the negative finite stages F_{−1}, which are
+zero objects. The integer predecessor is retained in both cases. -/
 noncomputable def horizontalPrevTotalHomologyFiltrationMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     (horizontalTotalHomologyFiltration K (p + q)).obj
@@ -54,8 +58,11 @@ noncomputable def horizontalPrevTotalHomologyFiltrationMapOfBicomplex
     subst p
     exact horizontalZeroPrevTotalHomologyFiltrationMapOfBicomplex f q
 
-/-- Every bicomplex map commutes with the consecutive complete
-total-homology filtration step, including at column zero. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Put n=p+q, let s_K and s_L be the inclusions F_{p−1}H_n(Tot) → F_pH_n(Tot), c(f) the
+transported current-stage map, and a(f) the all-column predecessor map. Then s_K ≫ c(f) = a(f)
+≫ s_L. At p=0 the predecessor stages are the zero stages at the integer −1; no positivity
+assumption is needed for this square. -/
 theorem horizontalTotalHomologyFiltrationStepMap_naturality
     (f : K ⟶ L) (p q : ℕ) :
     horizontalTotalHomologyFiltrationStepMap K p q ≫
@@ -70,8 +77,11 @@ theorem horizontalTotalHomologyFiltrationStepMap_naturality
     simpa [horizontalPrevTotalHomologyFiltrationMapOfBicomplex, hp] using
       horizontalTotalHomologyFiltrationStepMap_naturality_zero f q
 
-/-- The consecutive-stage filtration square of a bicomplex map, packaged as
-a morphism in the arrow category. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+The predecessor and current image-stage maps in total degree p+q define a morphism in Arrow(C)
+from s_K : F_{p−1}(K) → F_p(K) to s_L : F_{p−1}(L) → F_p(L). Its left component is the
+all-column predecessor map a(f), its right component is the transported current map c(f), and
+their equation is a(f) ≫ s_L = s_K ≫ c(f). -/
 noncomputable def horizontalTotalHomologyFiltrationStepSquareOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     Arrow.mk (horizontalTotalHomologyFiltrationStepMap K p q) ⟶
@@ -95,8 +105,11 @@ theorem horizontalTotalHomologyFiltrationStepSquareOfBicomplex_right
       horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex f p q :=
   rfl
 
-/-- The map induced by a bicomplex morphism on a horizontal associated
-graded piece of total homology. -/
+/-- Let C be an abelian category, f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ),
+and p,q ∈ ℕ. Applying the cokernel functor to the commutative square of consecutive
+image-stage inclusions defines Gr_pH_{p+q}(Tot(K)) → Gr_pH_{p+q}(Tot(L)). Here Gr_p is
+coker(F_{p−1} → F_p), with predecessor computed in ℤ. If π_K and π_L are the cokernel
+projections and c(f) the current-stage map, the induced map a satisfies π_K ≫ a = c(f) ≫ π_L. -/
 noncomputable def horizontalTotalHomologyGradedPieceMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     horizontalTotalHomologyGradedPiece K p q ⟶

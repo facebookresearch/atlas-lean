@@ -12,11 +12,17 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGeometricStalkGaloisAction
 public import Mathlib.CategoryTheory.Sites.Point.Conservative
 
-/-! # Cover detection and conservativity of the prescribed field point
+/-!
+# Cover detection and conservativity of the prescribed geometric field point
 
-The field, chosen separable closure, original small etale objects and actual
-arrows are retained. Only point-fiber elements and original coefficient groups
-are lifted to the same common universe.
+Let k be a field and Ω a prescribed separable closure. A sieve on an étale U over k covers
+exactly when every Ω-valued geometric lift to U lifts through one of its arrows. Thus the
+singleton prescribed-point family is conservative.
+
+Lifting the point fibers by ULift^w preserves this criterion. The common-height additive-group
+stalk and the Galois stalk functor reflect isomorphisms. For coefficient sheaves of smaller
+size w, the single ULift^u coefficient functor also reflects isomorphisms, so an isomorphism
+is detected by either lifted stalk.
 -/
 @[expose] public section
 noncomputable section
@@ -28,18 +34,24 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 omit [IsSepClosure k Ω] in
-/-- The actual map from the chosen closure covers the spectrum of the field. -/
+/-- Let k,Ω be fields of universe u with a k-algebra structure on Ω. The map Spec(Ω) → Spec(k) is
+surjective on the underlying point sets. This conclusion does not require Ω to be a separable
+closure. -/
 theorem fieldPrescribedGeometricMorphism_surjective :
     Function.Surjective (Spec.algebraMap k Ω) := by
   intro x
   exact ⟨default, Subsingleton.elim _ _⟩
 
-/-- A singleton family containing the prescribed original point. -/
+/-- For a field k and prescribed separable closure Ω, define the family of points of the small
+étale topology to be the singleton indexed by Unit whose point is Spec(Ω) → Spec(k). Its fiber
+universe is u. -/
 def fieldPrescribedGeometricPointFamily :
     ObjectProperty (Spec (.of k)).smallEtaleTopology.Point.{u} :=
   ObjectProperty.ofObj (fun _ : Unit => fieldGeometricPoint k Ω)
 
-/-- Native conservativity follows from the actual geometric morphism's range. -/
+/-- Let Ω be a prescribed separable closure of a field k. The singleton family consisting of its
+geometric point on the small étale site of Spec(k) is conservative. Covers are detected by
+lifting geometric fiber points through their sieve arrows. -/
 theorem fieldPrescribedGeometricPointFamily_conservative :
     (fieldPrescribedGeometricPointFamily k Ω).IsConservativeFamilyOfPoints := by
   apply Scheme.isConservative_pointSmallEtale (Ω := fun _ : Unit => Ω)
@@ -48,7 +60,9 @@ theorem fieldPrescribedGeometricPointFamily_conservative :
   simp only [Set.mem_iUnion, Set.mem_range, Set.mem_univ, iff_true]
   exact ⟨(), (fieldPrescribedGeometricMorphism_surjective k Ω x)⟩
 
-/-- Every original covering sieve is detected by the same native point. -/
+/-- For a field k, prescribed separable closure Ω, étale object U, and sieve R on U, R covers if
+and only if every lift z : Spec(Ω) → U over k is of the form y≫g for an étale arrow g : V → U
+in R and a lift y : Spec(Ω) → V over k. -/
 theorem fieldPrescribedGeometricPoint_cover_iff
     {U : (Spec (.of k)).Etale} (R : Sieve U) :
     R ∈ (Spec (.of k)).smallEtaleTopology U ↔
@@ -74,19 +88,25 @@ theorem fieldPrescribedGeometricPoint_cover_iff
     refine ⟨j, (fieldGeometricPoint k Ω).fiber.map p y, ?_⟩
     simpa only [Functor.map_comp, ConcreteCategory.comp_apply] using hy
 
-/-- The common point retains exactly the original fiber elements through up/down. -/
+/-- Let Ω be a prescribed separable closure of k and U an étale object over k. The common point
+fiber at U equals ULift^w of the prescribed geometric fiber of U. This raises the fiber size
+from u to max(u,w) without changing U. -/
 theorem fieldPrescribedCommonPoint_fiber_obj (U : (Spec (.of k)).Etale) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).fiber.obj U =
       ULift.{w} ((fieldGeometricPoint k Ω).fiber.obj U) := rfl
 
-/-- Each common fiber restriction is the single lift of the original restriction. -/
+/-- For a field k, prescribed separable closure Ω, an étale arrow g : V → U, and y in the
+prescribed fiber of V, the common fiber map sends up(y) to up(p_Ω(g)(y)). The point lift is
+ULift^w and the site arrow remains g. -/
 theorem fieldPrescribedCommonPoint_fiber_map
     {U V : (Spec (.of k)).Etale} (g : V ⟶ U)
     (z : (fieldGeometricPoint k Ω).fiber.obj V) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).fiber.map g
         (ULift.up z) = ULift.up ((fieldGeometricPoint k Ω).fiber.map g z) := rfl
 
-/-- The common lifting criterion concerns the very same original sieve and arrows. -/
+/-- For a field k, prescribed separable closure Ω, étale U, and sieve R on U, R covers exactly
+when every common-height fiber element over U lifts through some g : V → U in R from a common
+fiber element over V. The fiber lift is ULift^w, and the sieve and arrows are unchanged. -/
 theorem fieldPrescribedCommonPoint_cover_iff
     {U : (Spec (.of k)).Etale} (R : Sieve U) :
     R ∈ (Spec (.of k)).smallEtaleTopology U ↔
@@ -104,13 +124,17 @@ theorem fieldPrescribedCommonPoint_cover_iff
     obtain ⟨V, g, hg, y, hy⟩ := hR (ULift.up z)
     exact ⟨V, g, hg, y.down, congrArg ULift.down hy⟩
 
-/-- The singleton family after lifting only its point-fiber elements. -/
+/-- Let Ω be a prescribed separable closure of k. Define the common-height point family as the
+singleton indexed by Unit with point smallEtaleGeometricPointCommon(Spec(Ω)→Spec(k)). Its
+fiber universe is max(u,w). -/
 def fieldPrescribedCommonPointFamily :
     ObjectProperty (Spec (.of k)).smallEtaleTopology.Point.{max u w} :=
   ObjectProperty.ofObj
     (fun _ : Unit => smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω))
 
-/-- Common conservativity is derived from the actual original-sieve criterion. -/
+/-- For a field k and prescribed separable closure Ω, the singleton common-height geometric-point
+family is conservative on the full small étale topology. The criterion is the lift of the same
+sieve-arrow covering condition. -/
 theorem fieldPrescribedCommonPointFamily_conservative :
     (fieldPrescribedCommonPointFamily.{u, w} k Ω).IsConservativeFamilyOfPoints := by
   apply ObjectProperty.IsConservativeFamilyOfPoints.mk'
@@ -121,7 +145,9 @@ theorem fieldPrescribedCommonPointFamily_conservative :
     ⟨smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω),
       ObjectProperty.ofObj.mk ()⟩ z
 
-/-- The actual prescribed common abelian stalk reflects all sheaf isomorphisms. -/
+/-- Let Ω be a prescribed separable closure of k. The common geometric stalk functor on
+small-étale additive-group sheaves of height max(u,w) reflects isomorphisms: if the induced
+stalk morphism is invertible, the sheaf morphism itself is invertible. -/
 instance fieldPrescribedCommonStalk_reflectsIsomorphisms :
     (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).ReflectsIsomorphisms where
   reflects τ _ := by
@@ -135,7 +161,9 @@ instance fieldPrescribedCommonStalk_reflectsIsomorphisms :
         (IsIso ((smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map τ))
     exact h.isIso τ
 
-/-- Forgetting the same Galois action transfers actual stalk conservativity to T. -/
+/-- For a field k and prescribed separable closure Ω, the functor taking a small-étale
+additive-group sheaf to its discrete Galois stalk reflects isomorphisms. Forgetting its Galois
+action gives the conservative common geometric stalk functor. -/
 instance fieldGeometricStalkGaloisFunctor_reflectsIsomorphisms :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).ReflectsIsomorphisms := by
   let : (fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
@@ -145,7 +173,9 @@ instance fieldGeometricStalkGaloisFunctor_reflectsIsomorphisms :
   exact reflectsIsomorphisms_of_comp (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
     (DiscreteAbelianAction.forget Gal(Ω/k))
 
-/-- The canonical one coefficient lift reflects all original sheaf isomorphisms. -/
+/-- Let k be a field of universe u. The coefficient-lift functor from small-étale additive-group
+sheaves of size w to size max(u,w), using ULift^u, reflects isomorphisms. An invertible lifted
+sheaf map implies an invertible unlifted map. -/
 instance fieldOriginalCoefficientLift_reflectsIsomorphisms :
     (liftCoefficients.{u, w} (Spec (.of k))).ReflectsIsomorphisms := by
   let J := (Spec (.of k)).smallEtaleTopology
@@ -157,7 +187,9 @@ instance fieldOriginalCoefficientLift_reflectsIsomorphisms :
     infer_instance
   exact reflectsIsomorphisms_of_comp L (sheafToPresheaf J AddCommGrpCat.{max u w})
 
-/-- Original sheaf maps are detected after the same one lift and prescribed stalk. -/
+/-- Let Ω be a prescribed separable closure of k, τ : F → F′ a small-étale additive-group sheaf
+map of coefficient universe w, and L the ULift^u coefficient functor. Then S_Ω(Lτ) is an
+isomorphism if and only if τ is an isomorphism. The stalk has coefficient height max(u,w). -/
 theorem fieldOriginalSheafMap_isIso_iff_commonStalk
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (τ : F ⟶ F') :
     IsIso ((smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map
@@ -165,7 +197,9 @@ theorem fieldOriginalSheafMap_isIso_iff_commonStalk
   rw [isIso_iff_of_reflects_iso,
     isIso_iff_of_reflects_iso]
 
-/-- The same original-map assertion holds for the actual Galois-module functor. -/
+/-- For a field k and prescribed separable closure Ω, let τ : F → F′ be a small-étale sheaf map
+with coefficient universe w. Its Galois stalk after the single coefficient lift, Φ_Ω(Lτ), is
+invertible if and only if τ is invertible. -/
 theorem fieldOriginalSheafMap_isIso_iff_galoisStalk
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (τ : F ⟶ F') :
     IsIso ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
@@ -173,21 +207,31 @@ theorem fieldOriginalSheafMap_isIso_iff_galoisStalk
   rw [isIso_iff_of_reflects_iso,
     isIso_iff_of_reflects_iso]
 
-/-- Every original coefficient value is retained through the literal single lift. -/
+/-- Let k have universe u, F be a small-étale additive-group sheaf of coefficient universe w, and
+U an étale object over k. The coefficient-lifted sheaf has value
+AddCommGrpCat.of(ULift^u(F(U))) at U. -/
 theorem fieldOriginalCoefficientLift_obj
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (U : (Spec (.of k)).Etale) :
     ((liftCoefficients.{u, w} (Spec (.of k))).obj F).obj.obj (op U) =
       AddCommGrpCat.of (ULift.{u} (F.obj.obj (op U))) := rfl
 
-/-- Every original restriction and coefficient morphism retains its actual lifted map. -/
+/-- For a field k of universe u, a small-étale sheaf morphism τ : F → F′ with coefficient universe
+w, and U an étale object, the component (Lτ)_U is AddCommGrpCat.uliftFunctor applied to τ_U.
+It sends up(c) to up(τ_U(c)) using the single ULift^u. -/
 theorem fieldOriginalCoefficientLift_map
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}}
     (τ : F ⟶ F') (U : (Spec (.of k)).Etale) :
     ((liftCoefficients.{u, w} (Spec (.of k))).map τ).hom.app (op U) =
       AddCommGrpCat.uliftFunctor.{u, w}.map (τ.hom.app (op U)) := rfl
 
-/-- All native/common covering and original-map reflection laws use the fixed point. -/
+/-- Let Ω be a prescribed separable closure of a field k, p its point, pc its ULift^w fiber
+version, S the common additive-group stalk, Φ the Galois stalk, and L the ULift^u coefficient
+functor. This proposition asserts surjectivity of Spec(Ω)→Spec(k); cover detection by both p
+and pc; pc(U)=ULift^w(p(U)) with lifted fiber maps; conservativity of both singleton families;
+reflection of sheaf isomorphisms by S and Φ at common height and after L for smaller
+coefficients; the pointwise lifted object and morphism formulas; and equality Φ⋙forget=S,
+including on the lifted maps. -/
 def OriginalFieldSingletonStalkConservativityLaws : Prop :=
   let X := Spec (.of k)
   let p := fieldGeometricPoint k Ω
@@ -222,7 +266,11 @@ def OriginalFieldSingletonStalkConservativityLaws : Prop :=
     (L.obj F).obj.obj (op U) = AddCommGrpCat.of (ULift.{u} (F.obj.obj (op U)))) ∧
   T ⋙ DiscreteAbelianAction.forget Gal(Ω/k) = S
 
-/-- The complete original singleton-cover and conservative-stalk source unit. -/
+/-- For a field k and prescribed separable closure Ω, the fixed geometric point detects all
+small-étale covering sieves, its common fiber is ULift^w of the prescribed fiber, and both
+additive-group and Galois stalks detect sheaf isomorphisms. These laws also hold after the
+single coefficient lift from universe w to max(u,w), with the same section maps and forgetful
+comparison. -/
 theorem original_field_singleton_stalk_conservativity :
     OriginalFieldSingletonStalkConservativityLaws.{u, w} k Ω := by
   refine ⟨fieldPrescribedGeometricMorphism_surjective k Ω,

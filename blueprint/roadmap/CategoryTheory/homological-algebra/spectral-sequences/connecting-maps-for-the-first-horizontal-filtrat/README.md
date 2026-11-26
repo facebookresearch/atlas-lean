@@ -1,9 +1,9 @@
 # Connecting maps for the first horizontal-filtration page
 
-- [ΙTotal d horizontal Total Top Projection succ](total-d-horizontal-total-top-projection.md)
-- [Horizontal Filtered Previous Column Projection](horizontal-filtered-previous-column-proj.md)
-- [Horizontal Filtered Top Section d previous Column Projection](horizontal-filtered-top-section-d-previo.md)
-- [Horizontal Filtered Top Section d previous Column Projection eq](horizontal-filtered-top-section-d-previo-2.md)
-- [Horizontal First Page Adjacent Connecting Map](horizontal-first-page-adjacent-connectin.md)
-- [Horizontal First Page Adjacent Vertical Connecting Map](horizontal-first-page-adjacent-vertical.md)
-- [Horizontal First Page Horizontal Homology Map](horizontal-first-page-horizontal-homolog.md)
+- [The horizontal component of a total boundary](total-d-horizontal-total-top-projection.md)
+- [The projection to a preceding column in a finite filtration stage](horizontal-filtered-previous-column-proj.md)
+- [The signed previous-column component of a filtered top boundary](horizontal-filtered-top-section-d-previo.md)
+- [The standard horizontal component of a filtered top boundary](horizontal-filtered-top-section-d-previo-2.md)
+- [The connecting map of adjacent direct columns](horizontal-first-page-adjacent-connectin.md)
+- [The adjacent connecting map in vertical-homology coordinates](horizontal-first-page-adjacent-vertical.md)
+- [The vertical-homology map of a horizontal bicomplex differential](horizontal-first-page-horizontal-homolog.md)

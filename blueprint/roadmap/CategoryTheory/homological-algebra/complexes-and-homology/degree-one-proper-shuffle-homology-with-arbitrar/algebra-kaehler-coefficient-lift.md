@@ -1,3 +1,6 @@
-# Algebra Kaehler Coefficient Lift
+# The lifted Kähler tensor map of an A-linear coefficient arrow
 
-The original coefficient tensor map transported through whole-module lifts on both ends.
+The lifted Kähler tensor map of an A-linear coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, send
+ULift.up(m ⊗ ω) to ULift.up(f(m) ⊗ ω).

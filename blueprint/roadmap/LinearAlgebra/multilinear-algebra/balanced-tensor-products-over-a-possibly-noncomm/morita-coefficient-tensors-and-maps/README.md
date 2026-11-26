@@ -1,25 +1,25 @@
 # Morita coefficient tensors and maps
 
-- [Coefficient Tensor](coefficient-tensor.md)
-- [Coefficient Hom ext](coefficient-hom-ext.md)
-- [Coefficient Left Module](coefficient-left-module.md)
-- [Coefficient Right Module](coefficient-right-module.md)
-- [Coefficient Actions Comm](coefficient-actions-comm.md)
-- [Coefficient Left Tower](coefficient-left-tower.md)
-- [Coefficient Right Tower](coefficient-right-tower.md)
-- [Coefficient Module](coefficient-module.md)
-- [Coefficient Left Module smul mk](coefficient-left-module-smul-mk.md)
-- [Coefficient Right Module smul mk](coefficient-right-module-smul-mk.md)
-- [Coefficient Module tmul mk](coefficient-module-tmul-mk.md)
+- [Balanced tensor carrier of a bimodule coefficient](coefficient-tensor.md)
+- [Additive maps determined by pure coefficient triples](coefficient-hom-ext.md)
+- [Left outer action on a balanced bimodule coefficient](coefficient-left-module.md)
+- [Right outer action on a balanced bimodule coefficient](coefficient-right-module.md)
+- [Commutation of bimodule coefficient outer actions](coefficient-actions-comm.md)
+- [Ground scalar tower for the left coefficient action](coefficient-left-tower.md)
+- [Ground scalar tower for the right coefficient action](coefficient-right-tower.md)
+- [Enveloping-ring module of a balanced coefficient](coefficient-module.md)
+- [Left scalar value on a pure coefficient triple](coefficient-left-module-smul-mk.md)
+- [Right scalar value on a pure coefficient triple](coefficient-right-module-smul-mk.md)
+- [Enveloping scalar value on a pure coefficient triple](coefficient-module-tmul-mk.md)
 
 ## Maps
 
-- [Coefficient Map](coefficient-map.md)
-- [Coefficient Map apply](coefficient-map-apply.md)
-- [Coefficient Map mk](coefficient-map-mk.md)
-- [Coefficient Map assoc](coefficient-map-assoc.md)
+- [Map of balanced bimodule coefficients](coefficient-map.md)
+- [Underlying balanced map of an enveloping-linear coefficient morphism](coefficient-map-apply.md)
+- [Coefficient morphism on an ordered pure triple](coefficient-map-mk.md)
+- [Reassociation naturality of bimodule coefficient maps](coefficient-map-assoc.md)
 
 ## Functor Laws
 
-- [Coefficient Map id](coefficient-map-id.md)
-- [Coefficient Map comp](coefficient-map-comp.md)
+- [Identity map of a balanced bimodule coefficient](coefficient-map-id.md)
+- [Composition of balanced bimodule coefficient maps](coefficient-map-comp.md)

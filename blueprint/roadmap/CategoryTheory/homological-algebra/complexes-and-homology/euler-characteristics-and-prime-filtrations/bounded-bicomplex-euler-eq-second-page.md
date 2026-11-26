@@ -1,3 +1,7 @@
-# Bounded Bicomplex euler eq second Page
+# The bounded total Euler characteristic equals the second-page Euler sum
 
-Actual bounded total homology has the same Euler sum as the genuine finite E2 page.
+The bounded total Euler characteristic equals the second-page Euler sum.
+
+Under the rectangular support and finite iterated-homology length hypotheses, the finite-
+length Euler characteristic of Tot K equals the spectral sequence's page-2 length Euler sum
+over the rectangle.

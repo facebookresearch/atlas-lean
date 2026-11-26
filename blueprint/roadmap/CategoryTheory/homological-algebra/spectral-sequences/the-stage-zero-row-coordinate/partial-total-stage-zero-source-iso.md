@@ -1,4 +1,6 @@
-# Partial Total Stage Zero Source Iso
+# Bottom-to-zero spectral homology in increasing-core coordinates
 
-The literal bottom-to-zero StageZero H-object is canonically identified
-with the increasing-core bottom interval.
+Bottom-to-zero spectral homology in increasing-core coordinates.
+
+The spectral homology object of `⊥ ⟶ 0` in degree `-q` is isomorphic to the object of `⊥ ⟶
+core.i₂ (0, q)` in degree `core.deg (0, q)`. The core has `i₂ (0, q) = 0` and degree `-q`.

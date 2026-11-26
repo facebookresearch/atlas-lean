@@ -1,3 +1,5 @@
-# Cotangent Map id
+# The cotangent map of an identity augmentation map
 
-The linearization map of the identity is the actual module identity.
+The cotangent map of an identity augmentation map.
+
+The identity of `P → A` induces the identity on `A ⊗[P] Ω[P/k]`.

@@ -21,15 +21,15 @@ public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.Colimits
 public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.OverLocalSurjective
 
 /-!
-# Quasicoherence on a general ringed site
+# Quasicoherence of the zero module sheaf
 
-The zero module sheaf is quasicoherent, using its empty local presentation
-over the maximal cover. Finite presentation implies quasicoherence and
-finite type.
+Let `(C,J)` be a site and `R : Sheaf J RingCat.{u}` a sheaf of rings. Assume weak
+sheafification for `AddCommGrpCat.{u}` and the characterization of sheafification equivalences
+as locally bijective maps, both on `J` and on every slice topology `J.over X`.
 
-Kernels and equalizers of quasicoherent sheaves need not be quasicoherent
-on a general ringed site. The scheme case has additional closure properties
-(Hartshorne II.5.5).
+The zero object of `SheafOfModules.{u} R` is quasicoherent. On the maximal covering family `X
+↦ X`, each restriction has a presentation with empty generating and relation families: both
+free sheaves are zero, and the presentation map has zero kernel.
 -/
 
 @[expose] public section
@@ -96,6 +96,12 @@ private noncomputable def Presentation.empty {M : SheafOfModules (R.over X)} (hM
 -- The zero sheaf is quasicoherent: the maximal cover (every object) carries
 -- the empty local presentation. Only slice sheafification/local-bijectivity
 -- is assumed; in particular no binary products.
+/-- Let `C : Type u₁` be a category with morphism universe `v₁`, `J` a Grothendieck topology, and
+`R : Sheaf J RingCat.{u}`. Assume `HasWeakSheafify J AddCommGrpCat.{u}` and
+`J.WEqualsLocallyBijective AddCommGrpCat.{u}`, together with the corresponding hypotheses for
+every `J.over X`. Then the zero object `⊥_ SheafOfModules.{u} R` satisfies
+`SheafOfModules.IsQuasicoherent`. Its local presentations use the maximal cover of all objects
+and empty generator and relation families. -/
 theorem isQuasicoherent_zero :
     _root_.SheafOfModules.IsQuasicoherent (R := R)
       (⊥_ SheafOfModules.{u} R : SheafOfModules.{u} R) := by

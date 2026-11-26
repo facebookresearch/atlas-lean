@@ -1,4 +1,6 @@
-# End Ring Hom Of Linear Action
+# A commuting ring action by Lie-module endomorphisms
 
-Commuting coefficient endomorphisms form an action in the native
-Lie-module category.
+A commuting ring action by Lie-module endomorphisms.
+
+For `ρ : S →+* End_R(X)` with `ρ(s)([x,m]) = [x,ρ(s)(m)]`, this is the induced ring
+homomorphism `S →+* End(X)` in the category of left `L`-modules.

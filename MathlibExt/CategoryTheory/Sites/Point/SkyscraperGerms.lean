@@ -13,7 +13,12 @@ module
 public import Mathlib.CategoryTheory.Sites.Point.Skyscraper
 
 /-!
-# Original germ coordinates of the point adjunction unit
+# Germ coordinates of the skyscraper adjunction unit
+
+For a point of a Grothendieck topology and a coefficient category with products and colimits
+of the point universe, the skyscraper-adjunction unit sends sections to their family of stalk
+germs. Its section component followed by projection at a fiber element is exactly the
+corresponding germ map.
 -/
 
 @[expose] public section
@@ -37,7 +42,10 @@ variable [HasProducts.{p} A] [HasColimitsOfSize.{p, p} A]
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
 -- V1 failed implicit instance checks for the same sheaf/presheaf stalk aliases.
-/-- Each coordinate of the actual point-adjunction unit is its original germ map. -/
+/-- Point adjunction unit projects to the geometric germ.
+
+At object `U` and point-fiber element `z`, the unit section map followed by the product
+projection at `z` equals `Φ.toPresheafFiber U z Q.obj`. -/
 theorem skyscraperSheafAdjunction_unit_app_π
     (Q : Sheaf J A) (U : C) (z : Φ.fiber.obj U) :
     (Φ.skyscraperSheafAdjunction.unit.app Q).hom.app (op U) ≫

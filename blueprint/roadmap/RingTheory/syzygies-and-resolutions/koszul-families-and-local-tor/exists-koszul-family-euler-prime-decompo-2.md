@@ -1,4 +1,6 @@
-# Exists koszul Family Euler Prime Decomposition
+# Existence of a coefficient-family prime Euler decomposition
 
-Every actual finite module with finite original coefficient/annihilator
-quotient admits a genuine full-family prime-filtration Euler decomposition.
+Existence of a coefficient-family prime Euler decomposition.
+
+For finite M and finite post-quotient over a noetherian ring, construct the prime-factor list
+and its homology-length and Euler identities.

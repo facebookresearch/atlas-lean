@@ -1,9 +1,8 @@
-# Bicomplex Homotopy Hom
+# The original-degree chain maps of a bicomplex homotopy
 
-The components of the induced bicomplex homotopy, before
-assembly: in resolution degrees `(a, b)`, the chain map in the original
-degree whose component in degree `j` is the `(a, b)` component of the
-term homotopy in that degree.  It is a chain map by the same
-three-square pasting as `termDifferential_naturality`, using the
-inclusion and projection compatibilities of the comparison homotopy;
-off the successor diagonal all components vanish.
+Let C be abelian, L,L′ chain complexes indexed by ℕ, P and Q chosen Cartan–Eilenberg
+resolutions, and g : L → L′. Let F,G be comparisons of P and Q over the same map g. Let Θ be a
+comparison homotopy, consisting of compatible boundary, homology, cycle and term resolution
+homotopies. For resolution degrees a,b, the term-homotopy components Θ.termⱼ(a,b) assemble in
+original degree j to a chain map P.bicomplex.Xₐ → Q.bicomplex.X_b. The map vanishes off the
+successor diagonal b=a+1.

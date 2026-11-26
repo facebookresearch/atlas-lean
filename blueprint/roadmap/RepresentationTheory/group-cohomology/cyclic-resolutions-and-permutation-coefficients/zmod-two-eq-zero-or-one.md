@@ -1,3 +1,3 @@
-# Zmod Two eq zero or one
+# Two possible residues modulo two
 
-Every element of `ZMod 2` is zero or one.
+Every i∈ZMod 2 is either 0 or 1.

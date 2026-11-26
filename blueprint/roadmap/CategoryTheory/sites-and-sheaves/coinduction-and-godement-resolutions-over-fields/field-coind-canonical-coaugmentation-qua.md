@@ -1,4 +1,6 @@
-# Field Coind Canonical Coaugmentation quasi Iso geometric
+# Geometric fiber coinduction coaugmentation is a quasi isomorphism
 
-The genuine mapped Godement quasi-isomorphism makes the canonical coinduction
-coaugmentation a quasi-isomorphism for every original geometric coefficient.
+Geometric fiber coinduction coaugmentation is a quasi isomorphism.
+
+For the geometric fiber of a field sheaf, the canonical coinduction coaugmentation is a quasi-
+isomorphism.

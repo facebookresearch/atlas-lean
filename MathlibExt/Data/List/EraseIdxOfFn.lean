@@ -14,9 +14,11 @@ public import Mathlib.Data.List.OfFn
 /-!
 # Erasing entries from lists defined by finite tuples
 
-This file relates `List.eraseIdx` on `List.ofFn v` to `Fin.removeNth` on the
-tuple `v`. It also records the ordered two-deletion formula used when a pair
-`i < j` is encoded by `i : Fin (n + 1)` and `j ∈ Finset.Ici i`.
+Deleting position `i.val` from the list associated to a finite tuple is
+the list associated to `i.removeNth v`. For two positions encoded by
+`i,j : Fin (n + 1)` with `i ≤ j`, deleting original position `j.val + 1`
+and then position `i.val` agrees with removing `i` and then `j` from the
+successively shortened tuples. The entries may lie in any type.
 -/
 
 @[expose] public section
@@ -29,8 +31,9 @@ namespace List
 
 variable {α : Type u}
 
-/-- Erasing the entry indexed by `i` from `List.ofFn v` gives the list of the
-tuple obtained by removing that entry from `v`. -/
+/-- For `v : Fin (n + 1) → α`, deleting list position `i.val` from `List.ofFn v`
+gives `List.ofFn (i.removeNth v)`, preserving the order of the other entries.
+No structure on the entry type `α` is required. -/
 theorem eraseIdx_ofFn {n : ℕ} (v : Fin (n + 1) → α) (i : Fin (n + 1)) :
     (List.ofFn v).eraseIdx i.val = List.ofFn (i.removeNth v) := by
   apply List.ext_getElem
@@ -47,9 +50,10 @@ theorem eraseIdx_ofFn {n : ℕ} (v : Fin (n + 1) → α) (i : Fin (n + 1)) :
         (by change i.val ≤ j; exact Nat.le_of_not_lt hj)]
       rfl
 
-/-- If `i ≤ j`, deleting the entry `j + 1` and then the entry `i` from
-`List.ofFn v` keeps the same ordered tuple as first removing `i` and then
-removing `j` from the shortened tuple. -/
+/-- For `v : Fin (n + 2) → α` and `i,j : Fin (n + 1)` with `i ≤ j`, delete
+original position `j.val + 1` and then position `i.val`. The resulting list
+is `List.ofFn (j.removeNth (i.castSucc.removeNth v))`; the latter removes `i`
+first and then the shifted higher position `j` from the shortened tuple. -/
 theorem eraseIdx_eraseIdx_ofFn {n : ℕ} (v : Fin (n + 2) → α)
     (i j : Fin (n + 1)) (hij : i ≤ j) :
     ((List.ofFn v).eraseIdx j.succ.val).eraseIdx i.val =

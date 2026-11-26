@@ -14,10 +14,17 @@ public import Mathlib.RingTheory.Etale.Field
 public import Mathlib.FieldTheory.Galois.GaloisClosure
 public import Mathlib.LinearAlgebra.Dimension.Free
 
-/-! # Finite Galois refinements of the original field geometric neighborhoods
+/-!
+# Finite Galois refinements of geometric étale neighborhoods
 
-The field, chosen separable closure, original étale objects and geometric
-maps are retained. Finite Galois fields lie inside that same closure.
+Let k and Ω be fields of universe u with Ω a prescribed separable closure of k. The geometric
+point Spec(Ω) → Spec(k) has a neighborhood category of pointed étale objects. Each finite
+Galois intermediate field L⊆Ω gives the neighborhood Spec(L) with its lift from Spec(Ω).
+
+An inclusion L⊆M gives a pointed spectrum arrow Spec(M) → Spec(L), hence a functor from the
+subfield poset to the opposite neighborhood category. Every geometric lift to an arbitrary
+étale object, without an affine hypothesis on that object, factors through some such finite
+Galois neighborhood.
 -/
 @[expose] public section
 noncomputable section
@@ -30,11 +37,15 @@ attribute [local instance] IsSepClosure.sep_closed
 
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The prescribed original geometric point of the field site. -/
+/-- Let k,Ω be fields of universe u with a k-algebra structure and IsSepClosure k Ω. The spectrum
+map Spec(Ω) → Spec(k) defines fieldGeometricPoint, a point of the small étale topology of
+Spec(k). -/
 def fieldGeometricPoint : (Spec (.of k)).smallEtaleTopology.Point :=
   Scheme.pointSmallEtale (Spec.algebraMap k Ω)
 
-/-- Its actual original geometric-neighborhood category. -/
+/-- For a field k and prescribed separable closure Ω, define FieldGeometricNeighborhoods as the
+category of elements of the geometric point's fiber functor. Its objects are étale U → Spec(k)
+with a lift z : Spec(Ω) → U over k; a morphism carries one lift to the other. -/
 abbrev FieldGeometricNeighborhoods := (fieldGeometricPoint k Ω).fiber.Elements
 
 theorem fieldFiniteGalois_algHom_factor {A : Type u} [CommRing A] [Algebra k A]
@@ -62,7 +73,9 @@ theorem fieldFiniteGalois_algHom_factor {A : Type u} [CommRing A] [Algebra k A]
   ext a
   rfl
 
-/-- A finite Galois subfield gives its actual original étale object. -/
+/-- Let Ω be a prescribed separable closure of k and L a finite Galois intermediate field. The
+morphism Spec(L) → Spec(k) is an object of the small étale category, denoted
+fieldFiniteGaloisEtale(k,Ω,L). -/
 abbrev fieldFiniteGaloisEtale (L : FiniteGaloisIntermediateField k Ω) :
     (Spec (.of k)).Etale := by
   letI : Algebra.FormallyEtale k L := Algebra.FormallyEtale.of_isSeparable k L
@@ -74,19 +87,25 @@ abbrev fieldFiniteGaloisEtale (L : FiniteGaloisIntermediateField k Ω) :
     exact (RingHom.etale_algebraMap).mpr inferInstance
   exact Scheme.Etale.mk (Spec.algebraMap k L)
 
-/-- Its original geometric lift is the spectrum of the same subfield inclusion. -/
+/-- For a finite Galois intermediate field L⊆Ω over k, the inclusion L → Ω gives a geometric lift
+Spec(Ω) → Spec(L) over Spec(k). This is the fiber point of fieldFiniteGaloisEtale at the
+prescribed geometric point. -/
 def fieldFiniteGaloisPoint (L : FiniteGaloisIntermediateField k Ω) :
     (fieldGeometricPoint k Ω).fiber.obj (fieldFiniteGaloisEtale k Ω L) :=
   Over.homMk (Spec.algebraMap L Ω)
     ((Spec.homEquivAlgHom (R := k) (A := L) (B := Ω)).symm
       (IsScalarTower.toAlgHom k L Ω)).property
 
-/-- The actual pointed original étale object. -/
+/-- Let Ω be a prescribed separable closure of k and L a finite Galois intermediate field. Pair
+the étale object Spec(L) → Spec(k) with its lift Spec(Ω) → Spec(L) to obtain an object of
+FieldGeometricNeighborhoods(k,Ω). -/
 def fieldFiniteGaloisNeighborhood (L : FiniteGaloisIntermediateField k Ω) :
     FieldGeometricNeighborhoods k Ω :=
   Functor.elementsMk _ (fieldFiniteGaloisEtale k Ω L) (fieldFiniteGaloisPoint k Ω L)
 
-/-- Every subfield inclusion gives the original spectrum arrow in the reverse direction. -/
+/-- For finite Galois intermediate fields L≤M inside Ω, the field inclusion L → M induces Spec(M)
+→ Spec(L) over Spec(k). This is the morphism fieldFiniteGaloisEtale(M) →
+fieldFiniteGaloisEtale(L), with the direction reversed from the inclusion. -/
 def fieldFiniteGaloisInclusion {L M : FiniteGaloisIntermediateField k Ω} (h : L ≤ M) :
     fieldFiniteGaloisEtale k Ω M ⟶ fieldFiniteGaloisEtale k Ω L :=
   MorphismProperty.Over.homMk
@@ -105,7 +124,10 @@ theorem fieldFiniteGaloisInclusion_point
   rw [← Spec.map_comp]
   congr 1
 
-/-- The canonical finite Galois subfield functor into opposite original neighborhoods. -/
+/-- Let k,Ω be fields with Ω a prescribed separable closure. The assignment L ↦
+op(Spec(L),Spec(Ω)→Spec(L)) defines a functor from FiniteGaloisIntermediateField k Ω to the
+opposite geometric-neighborhood category. An inclusion L≤M maps to the opposite of the pointed
+spectrum arrow Spec(M) → Spec(L). -/
 def fieldFiniteGaloisNeighborhoodFunctor :
     FiniteGaloisIntermediateField k Ω ⥤ (FieldGeometricNeighborhoods k Ω)ᵒᵖ where
   obj L := op (fieldFiniteGaloisNeighborhood k Ω L)
@@ -132,7 +154,9 @@ def fieldFiniteGaloisNeighborhoodFunctor :
     rw [← Spec.map_comp]
     congr 1
 
-/-- Every original geometric map, with no affine assumption on its original target, refines. -/
+/-- Let Ω be a prescribed separable closure of k, U → Spec(k) an étale object, and z : Spec(Ω) → U
+a map over k. There are a finite Galois intermediate field L⊆Ω and r : Spec(L) → U over k such
+that Spec(Ω) → Spec(L) →^r U equals z. The target U need not be affine. -/
 theorem fieldFiniteGalois_refines
     (U : (Spec (.of k)).Etale) (z : Spec (.of Ω) ⟶ U.left)
     (hz : z ≫ U.hom = Spec.algebraMap k Ω) :
@@ -181,7 +205,9 @@ theorem fieldFiniteGalois_refines
         ((Spec.homEquivAlgHom (R := k) (A := R) (B := L)).symm μL).property
   · rw [← Category.assoc, hry, hy]
 
-/-- The same refinement in the literal original point-fiber category. -/
+/-- For an étale object U over Spec(k) and z in the fiber of its prescribed geometric point, there
+exist a finite Galois intermediate field L⊆Ω and an étale arrow r : Spec(L) → U whose fiber
+map carries the inclusion point of L to z. -/
 theorem fieldFiniteGalois_refines_point
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U) :
     ∃ (L : FiniteGaloisIntermediateField k Ω)
@@ -193,14 +219,21 @@ theorem fieldFiniteGalois_refines_point
   apply Over.OverMorphism.ext
   exact hz
 
-/-- Every opposite original neighborhood has an actual arrow to the same finite subfield functor. -/
+/-- Let Ω be a prescribed separable closure of k and d an object of the opposite
+geometric-neighborhood category. There exists a finite Galois intermediate field L⊆Ω with a
+morphism d → fieldFiniteGaloisNeighborhoodFunctor(L). This states existence of a finite Galois
+refinement in the colimit indexing direction. -/
 theorem fieldFiniteGaloisNeighborhoodFunctor_refines
     (d : (FieldGeometricNeighborhoods k Ω)ᵒᵖ) :
     ∃ L, Nonempty (d ⟶ (fieldFiniteGaloisNeighborhoodFunctor k Ω).obj L) := by
   obtain ⟨L, r, hr⟩ := fieldFiniteGalois_refines_point k Ω d.unop.obj d.unop.val
   exact ⟨L, ⟨(Functor.Elements.homMk r hr).op⟩⟩
 
-/-- The full original finite Galois pointed-refinement unit and its literal functor laws. -/
+/-- For a field k and prescribed separable closure Ω, the finite Galois neighborhood functor takes
+L to the opposite pointed spectrum of L and inclusions to the corresponding spectrum maps. It
+preserves identities and composition. Every map Spec(Ω) → U over k with U étale factors
+through Spec(L) for a finite Galois subfield L⊆Ω, and every opposite geometric neighborhood
+has an arrow to the functor's value at such an L. -/
 theorem original_field_finite_galois_pointed_neighborhoods :
     (∀ L, (fieldFiniteGaloisNeighborhoodFunctor k Ω).obj L =
       op (fieldFiniteGaloisNeighborhood k Ω L)) ∧

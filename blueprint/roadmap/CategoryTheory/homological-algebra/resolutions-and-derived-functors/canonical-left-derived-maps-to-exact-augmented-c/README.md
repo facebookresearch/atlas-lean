@@ -2,23 +2,23 @@
 
 ## Projective Resolution
 
-- [Comparison To Augmented Exact](comparison-to-augmented-exact.md)
+- [Comparison from a projective resolution into an exact augmented complex](comparison-to-augmented-exact.md)
 
 ## Chain Complex
 
-- [Mapped Augmentation Desc](mapped-augmentation-desc.md)
-- [P Opcycles comp mapped Augmentation Desc](p-opcycles-comp-mapped-augmentation-desc.md)
-- [Mapped Augmentation Homology Zero](mapped-augmentation-homology-zero.md)
+- [Mapped augmentation descends through degree-zero opcycles](mapped-augmentation-desc.md)
+- [Quotient projection recovers the mapped degree-zero augmentation](p-opcycles-comp-mapped-augmentation-desc.md)
+- [Degree-zero homology map of a mapped augmentation](mapped-augmentation-homology-zero.md)
 
 ## Functor
 
-- [Left Derived Obj To Augmented Hom With Resolution](left-derived-obj-to-augmented-hom-with-r.md)
-- [Left Derived Obj To Augmented Hom With Resolution eq](left-derived-obj-to-augmented-hom-with-r-2.md)
-- [Left Derived Obj To Augmented Hom With Resolution independent](left-derived-obj-to-augmented-hom-with-r-3.md)
-- [Left Derived Obj To Augmented Hom](left-derived-obj-to-augmented-hom.md)
-- [Left Derived Obj To Augmented Hom eq](left-derived-obj-to-augmented-hom-eq.md)
-- [Left Derived Obj To Augmented Hom naturality target](left-derived-obj-to-augmented-hom-natura.md)
-- [Left Derived Obj To Augmented Hom naturality source](left-derived-obj-to-augmented-hom-natura-2.md)
-- [Left Derived Obj To Augmented Hom projective target](left-derived-obj-to-augmented-hom-projec.md)
-- [Left Derived Obj To Augmented Hom naturality functor](left-derived-obj-to-augmented-hom-natura-3.md)
-- [Left Derived Obj To Augmented Hom zero augmentation](left-derived-obj-to-augmented-hom-zero-a.md)
+- [Resolution-based left-derived map into an exact augmented complex](left-derived-obj-to-augmented-hom-with-r.md)
+- [Any augmented lift computes the resolution-based derived map](left-derived-obj-to-augmented-hom-with-r-2.md)
+- [Derived-to-augmented comparison is independent of the source resolution](left-derived-obj-to-augmented-hom-with-r-3.md)
+- [Canonical left-derived map into an exact augmented complex](left-derived-obj-to-augmented-hom.md)
+- [Every source resolution and lift compute the canonical augmented map](left-derived-obj-to-augmented-hom-eq.md)
+- [Derived-to-augmented comparison is natural in target complexes](left-derived-obj-to-augmented-hom-natura.md)
+- [Derived-to-augmented comparison is natural in the source object](left-derived-obj-to-augmented-hom-natura-2.md)
+- [Projective target recovers the canonical derived map](left-derived-obj-to-augmented-hom-projec.md)
+- [Derived-to-augmented comparison is natural in the coefficient functor](left-derived-obj-to-augmented-hom-natura-3.md)
+- [Derived-to-augmented comparison preserves the degree-zero augmentation](left-derived-obj-to-augmented-hom-zero-a.md)

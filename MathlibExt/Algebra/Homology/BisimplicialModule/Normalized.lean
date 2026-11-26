@@ -16,21 +16,18 @@ public import Mathlib.CategoryTheory.Functor.Currying
 public import Mathlib.CategoryTheory.Retract
 
 /-!
-# Actual normalized bisimplicial objects and their filtered totals
+# Double normalization and horizontal filtration of bisimplicial objects
 
-Normalize the actual inner simplicial object, then the actual outer one in
-the abelian category of chain complexes. This is a first-quadrant bicomplex;
-its two differentials commute by the native chain-map laws. The native total
-adds its existing homological sign and finite antidiagonal coproducts.
+For a bisimplicial object in an abelian category C, normalize the inner simplicial direction
+and then the outer direction. This gives a first-quadrant commuting bicomplex K_{p,q}. Its
+total has degree-n object ⊕_{p+q=n}K_{p,q} and differential d_h + (−1)^p d_v on the summand of
+horizontal degree p, following the tensor signs for homological complexes.
 
-The existing complete horizontal-filtration functor gives the actual filtered
-total, with all original maps retained. The separate native diagonal functor
-gives the normalized diagonal model. No diagonal/total comparison, asphericity,
-spectral-page identification or convergence is accepted as caller data or
-claimed merely from constructing these objects.
-
-The coefficient category is arbitrary abelian, with independent object/hom
-worlds. The construction is natural in bisimplicial objects and their morphisms.
+The complete horizontal filtration and the extended-integer partial-total tower retain the
+normalized component maps, with zero bottom stage and the total complex at the top.
+Normalizing the diagonal gives a separate chain-complex functor. Moore normalization is a
+retract of the alternating-face complex, so degreewise projective simplicial objects yield
+degreewise projective normalized objects.
 -/
 
 @[expose] public section
@@ -49,14 +46,20 @@ variable (C : Type u) [Category.{v} C]
 
 variable [Abelian C]
 
-/-- The actual native Moore split pair, viewed as a retract for componentwise properties. -/
+/-- The Moore normalization retract of the alternating-face complex.
+
+The normalized Moore complex includes into the alternating-face complex and retracts by the
+Dold–Kan projection, with retraction composed with inclusion equal to the identity. -/
 def normalizationRetract (X : SimplicialObject C) :
     Retract ((normalizedMooreComplex C).obj X) ((alternatingFaceMapComplex C).obj X) where
   i := inclusionOfMooreComplexMap X
   r := DoldKan.PInftyToNormalizedMooreComplex X
   retract := (DoldKan.splitMonoInclusionOfMooreComplexMap X).id
 
-/-- Actual projective simplicial degrees have projective normalized degrees. -/
+/-- Projectivity of normalized simplicial degrees.
+
+If every simplicial degree of X is projective in C, then every degree of its normalized Moore
+complex is projective, by the normalization retract. -/
 theorem normalizedDegree_projective (X : SimplicialObject C)
     (hX : ∀ n : ℕ, Projective (X.obj (Opposite.op (SimplexCategory.mk n)))) (n : ℕ) :
     Projective (((normalizedMooreComplex C).obj X).X n) := by
@@ -67,18 +70,27 @@ theorem normalizedDegree_projective (X : SimplicialObject C)
   exact ((normalizationRetract C X).map
     (HomologicalComplex.eval C (ComplexShape.down ℕ) n)).projective (p := hP)
 
-/-- Normalize both actual simplicial variables using the native Moore functors. -/
+/-- Double Moore normalization of a bisimplicial object.
+
+Normalize the inner simplicial variable, then normalize the outer variable in the category of
+chain complexes, obtaining a commuting bicomplex indexed by ℕ × ℕ. -/
 def normalizedBicomplexFunctor :
     SimplicialObject (SimplicialObject C) ⥤
       HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   (SimplicialObject.whiskering (SimplicialObject C) (ChainComplex C ℕ)).obj
       (normalizedMooreComplex C) ⋙ normalizedMooreComplex (ChainComplex C ℕ)
 
-/-- The actual original double-normalized chain object. -/
+/-- The double-normalized bicomplex of one bisimplicial object.
+
+This is the value of normalizedBicomplexFunctor at X, with the outer normalized degree first
+and inner normalized degree second. -/
 abbrev normalizedBicomplex (X : SimplicialObject (SimplicialObject C)) :=
   (normalizedBicomplexFunctor C).obj X
 
-/-- Both native Moore retracts preserve the actual original component projectivity. -/
+/-- Projectivity of double-normalized components.
+
+If every raw bidegree X_{p,q} is projective, every bidegree of the double-normalized bicomplex
+is projective, by applying the two normalization retracts. -/
 theorem normalizedBicomplexTerm_projective (X : SimplicialObject (SimplicialObject C))
     (hX : ∀ p q : ℕ, Projective ((X.obj (Opposite.op (SimplexCategory.mk p))).obj
       (Opposite.op (SimplexCategory.mk q)))) (p q : ℕ) :
@@ -96,37 +108,56 @@ theorem normalizedBicomplexTerm_projective (X : SimplicialObject (SimplicialObje
     (HomologicalComplex.eval (ChainComplex C ℕ) (ComplexShape.down ℕ) p ⋙
       HomologicalComplex.eval C (ComplexShape.down ℕ) q)).projective (p := hP)
 
-/-- Reuse native totalization, including its original total differential signs. -/
+/-- The total chain complex of double normalization.
+
+Take the finite antidiagonal coproducts of the double-normalized bicomplex, with differential
+d_h + (−1)^p d_v on horizontal degree p. -/
 def totalFunctor : SimplicialObject (SimplicialObject C) ⥤ ChainComplex C ℕ :=
   normalizedBicomplexFunctor C ⋙
     HomologicalComplex₂.totalFunctor C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ) (ComplexShape.down ℕ)
 
-/-- The existing complete horizontal filtration of the actual native total. -/
+/-- The complete horizontal filtration of the normalized total.
+
+Apply the complete horizontal total-filtration functor to double normalization, giving an
+extended-integer filtered chain complex. -/
 def filteredTotalFunctor :
     SimplicialObject (SimplicialObject C) ⥤ FilteredObject (ChainComplex C ℕ) EInt :=
   normalizedBicomplexFunctor C ⋙
     HomologicalComplex₂.horizontalCompleteTotalFilteredObjectFunctor
 
-/-- The actual partial-total tower has zero bottom and the native total at top. -/
+/-- The extended-integer partial-total tower.
+
+For X, take the partial-total filtration of its double-normalized bicomplex, as a functor from
+EInt to chain complexes. -/
 abbrev partialTotalFiltration (X : SimplicialObject (SimplicialObject C)) :
     EInt ⥤ ChainComplex C ℕ :=
   (normalizedBicomplex C X).partialTotalEIntFiltration
 
+/-- The bottom stage of the bisimplicial partial-total tower.
+
+The extended-integer bottom stage is the zero chain complex. -/
 theorem partialTotalFiltration_bot (X : SimplicialObject (SimplicialObject C)) :
     (partialTotalFiltration C X).obj ⊥ = 0 :=
   HomologicalComplex₂.partialTotalEIntFiltration_obj_bot _
 
+/-- The top stage of the bisimplicial partial-total tower.
+
+The extended-integer top stage is the total complex of the double-normalized bicomplex. -/
 theorem partialTotalFiltration_top (X : SimplicialObject (SimplicialObject C)) :
     (partialTotalFiltration C X).obj ⊤ = (totalFunctor C).obj X :=
   HomologicalComplex₂.partialTotalEIntFiltration_obj_top _
 
-/-- Normalize the actual diagonal separately from the filtered-total construction. -/
+/-- The normalized chain complex of a bisimplicial diagonal.
+
+Take the simplicial diagonal n ↦ X_{n,n} and then its normalized Moore complex. -/
 def diagonalChainFunctor : SimplicialObject (SimplicialObject C) ⥤ ChainComplex C ℕ :=
   diagonalFunctor C ⋙ normalizedMooreComplex C
 
-/-- The total map on every original antidiagonal coprojection is the same
-actual double-normalized component map. -/
+/-- The normalized total map on an antidiagonal coprojection.
+
+For p+q=n, the coprojection into the source total followed by the degree-n total map equals
+the bidegree-(p,q) normalized map followed by the target coprojection. -/
 theorem totalMap_ι {X Y : SimplicialObject (SimplicialObject C)} (f : X ⟶ Y)
     (p q n : ℕ) (h : p + q = n) :
     (normalizedBicomplex C X).ιTotal (ComplexShape.down ℕ) p q n h ≫

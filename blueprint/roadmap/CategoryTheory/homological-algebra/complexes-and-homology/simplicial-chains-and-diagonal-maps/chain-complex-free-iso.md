@@ -1,8 +1,5 @@
-# Chain Complex Free Iso
+# Same-universe simplicial chains have free coordinates on their simplices
 
-The degree-`n` object of the native simplicial chain complex is the free
-`R`-module on the `n`-simplices of `X`.
-
-This convenience form uses the actual coefficient object `R` when the ring
-and simplicial set live in the same universe. Use
-`chainComplexFreeIsoULift` for independent universes.
+Let R be a ring and X a simplicial set in the same universe u, with coefficient module R. For
+n∈ℕ, C_n(X;R)≅(X_n→₀R). The indices are all n-simplices and the coefficients are the given
+scalar ring.

@@ -1,7 +1,6 @@
-# Bar Change Nat Trans id app
+# The identity natural bar change is the restriction comparison
 
-NatTrans-level identity coherence for `barChangeNatTrans`.
-
-At `𝟙 T`, the packaged natural transformation acts as the identity-restriction
-iso. This is `barChangeHom_id` at each component; unfolding the `app` field of
-`barChangeNatTrans` is definitional, so no new naturality argument is needed.
+Let T be a monad on C and p=(R,L), with R : C → D a right T-module and L : A → C a left
+T-module. The component at p of the bar-change natural transformation for id_T equals the
+forward map of the simplicial identity-restriction isomorphism. This identifies the component
+from the bar of id_T-restricted modules to B(R,T,L).

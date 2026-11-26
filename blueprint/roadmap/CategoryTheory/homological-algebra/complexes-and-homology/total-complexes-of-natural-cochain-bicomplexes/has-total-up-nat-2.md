@@ -1,4 +1,5 @@
-# Has Total Up'Nat
+# Existence of totals for unit-step nonnegative cochain bicomplexes
 
-Every bicomplex using the `up' 1` spelling in a category with finite
-coproducts has a nonnegative cochain total complex.
+Let C be preadditive with finite coproducts and B a bicomplex whose two shapes are the unit-step
+cochain shape on ℕ. It has a nonnegative total cochain complex with degree-n term ⨁_\{p+q=n\}
+B_\{p,q\} and the canonical signed total differential.

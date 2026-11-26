@@ -17,14 +17,17 @@ public import
   MathlibExt.CategoryTheory.Abelian.DiagramLemmas.ImageQuotientNaturality
 
 /-!
-# Naturality of the canonical-abutment cokernel presentation
+# Naturality of the canonical abutment cokernel presentation
 
-A bicomplex map induces commuting vertical maps on the two incoming relative
-homology terms and their common target.  The resulting canonical map between
-the biproduct cokernels agrees, through the canonical cokernel presentation,
-with the fixed-`E` map on the canonical abutment term.
+Let f:K→L be a morphism of bicomplexes of shape (down ℕ,down ℕ) in an abelian category. For p,q
+: ℕ put m=p+q, ℓ=p−1 as an integer cut and u=m+1. The two incoming relative homology maps are
+a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and δ:H^{-m-1}(p,u)→H^{-m}(⊥,p).
 
-This file proves no image-quotient or final associated-graded naturality.
+The spectral morphism of f gives vertical maps α,χ,β on these two sources and their common
+target, satisfying a_K≫β=α≫a_L and δ_K≫β=χ≫δ_L. They induce the canonical map
+coker[a_K,δ_K]→coker[a_L,δ_L]. Through the canonical cokernel isomorphisms, this map agrees with
+the spectral E-map on the bottom-indexed abutment terms. The map's projection formula and the
+isomorphism's quotient-map formula are explicit.
 -/
 
 @[expose] public section
@@ -44,8 +47,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- Map between the biproduct cokernel presentations of the canonical
-abutment induced by a bicomplex morphism. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ),
+f:K→L and p,q : ℕ. Put m=p+q, ℓ=(p:ℤ)−1 and u=m+1; Hᵃ(s,t) denotes relative cochain homology of
+the complete horizontal filtration. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and
+δ:H^{-m-1}(p,u)→H^{-m}(⊥,p) be the two incoming abutment maps. The induced relative homology
+maps α,χ,β satisfy a_K≫β=α≫a_L and δ_K≫β=χ≫δ_L. They therefore define
+horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex:coker[a_K,δ_K]→coker[a_L,δ_L]. -/
 noncomputable def horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     cokernel (biprod.desc
@@ -78,8 +85,12 @@ noncomputable def horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex
     (horizontalCanonicalAbutmentBoundaryMap L p q)
     α χ β ha hx
 
-/-- The canonical biproduct-cokernel map computes on the cokernel
-projection. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ),
+f:K→L and p,q : ℕ. Put m=p+q, ℓ=(p:ℤ)−1 and u=m+1; Hᵃ(s,t) denotes relative cochain homology of
+the complete horizontal filtration. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and
+δ:H^{-m-1}(p,u)→H^{-m}(⊥,p) be the two incoming abutment maps. If Q_f is the induced cokernel
+map and β:H^{-m}_K(⊥,p)→H^{-m}_L(⊥,p), then π_K≫Q_f=β≫π_L for the cokernel projections π_K,π_L
+of the maps [a,δ]. -/
 @[reassoc]
 theorem horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex_π
     (f : K ⟶ L) (p q : ℕ) :
@@ -96,8 +107,10 @@ theorem horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex_π
   simp [horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex,
     CategoryTheory.cokernel_π_biprodQuotientMap]
 
-/-- The canonical cokernel Iso sends the abstract cokernel projection to the
-canonical epimorphism into the fixed `E` object. -/
+/-- Let C be abelian and K a bicomplex of shape (down ℕ,down ℕ). For p,q : ℕ, the cokernel
+projection of [a,δ] followed by horizontalCanonicalAbutmentCokernelIso.hom equals the
+epimorphism g of horizontalCanonicalAbutmentCokernelSequence, whose target is the canonical
+abutment E-object. The maps use m=p+q, ℓ=p−1, u=m+1 and degrees -m,-m-1. -/
 @[reassoc]
 theorem horizontalCanonicalAbutmentCokernelIso_hom_fac
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -123,8 +136,12 @@ theorem horizontalCanonicalAbutmentCokernelIso_hom_fac
       (horizontalCanonicalAbutmentCokernelIso K p q).hom = S.g at hleg
   exact hleg
 
-/-- The canonical cokernel presentation is natural under bicomplex
-morphisms. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ),
+f:K→L and p,q : ℕ. Put m=p+q, ℓ=(p:ℤ)−1 and u=m+1; Hᵃ(s,t) denotes relative cochain homology of
+the complete horizontal filtration. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and
+δ:H^{-m-1}(p,u)→H^{-m}(⊥,p) be the two incoming abutment maps. Let Q_f be the map between
+coker[a,δ] objects, e_K,e_L their canonical E-object isomorphisms, and E_f the induced canonical
+abutment map. Then Q_f≫e_L.hom=e_K.hom≫E_f. -/
 theorem horizontalCanonicalAbutmentCokernelIso_naturality
     (f : K ⟶ L) (p q : ℕ) :
     horizontalCanonicalAbutmentBiprodCokernelMapOfBicomplex f p q ≫

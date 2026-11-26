@@ -1,4 +1,5 @@
-# Restriction H1 sylow eq iff prime Power
+# Equality detected by degree-one Sylow restriction
 
-Two degree-one classes are equal exactly when their restrictions to a
-Sylow subgroup are equal.
+Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x,y ∈ H¹(G,A)`, `res_P¹(x) = res_P¹(y) ↔ x = y`, where restriction
+is along the subgroup inclusion with the identity coefficient morphism.

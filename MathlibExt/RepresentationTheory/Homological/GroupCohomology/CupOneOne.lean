@@ -14,20 +14,15 @@ public import Mathlib.LinearAlgebra.Isomorphisms
 public import Mathlib.LinearAlgebra.Quotient.Bilinear
 
 /-!
-# The descended degree-`(1, 1)` cup product
+# Cup product of degree-one cohomology classes
 
-For a discrete group `G` (in particular, for a finite group) and two
-`k`-linear representations `A` and `B`, this file descends the representative
-cocycle formula
+Let `G` be a group and `k` a commutative ring in the same universe, and let `A,B` be
+`k`-representations of `G`. The cocycle formula `(x ∪ y)(g,h) = x(g) ⊗ g·y(h)` descends to a
+bilinear map `H¹(G,A) × H¹(G,B) → H²(G,A ⊗ B)`.
 
-`(x ∪ y)(g, h) = x(g) ⊗ g · y(h)`
-
-through both degree-one quotient maps.  The result is a genuine bilinear map
-`H¹(G, A) →ₗ[k] H¹(G, B) →ₗ[k] H²(G, A ⊗ B)`.  The two
-coboundary formulas used for the descent are recorded explicitly.
-
-Nonclaims: no continuous or étale cohomology, no comparison map, no Kummer
-map, no norm-residue map, and no Bloch--Kato theorem.
+For the inhomogeneous differentials `d⁰a(g) = g·a - a` and `d¹t(g,h) = g·t(h) - t(gh) + t(g)`,
+the coboundary identities are `(d⁰a) ∪ y = d¹(g ↦ a ⊗ y(g))` and `x ∪ (d⁰b) = d¹(g ↦ -x(g) ⊗
+g·b)`. They make the product independent of either cocycle representative.
 -/
 
 @[expose] public section
@@ -43,8 +38,9 @@ namespace groupCohomology
 variable {k G : Type u} [CommRing k] [Group G]
 variable (A B : Rep k G)
 
-/-- Replacing the left one-cocycle by the coboundary of `a` changes the cup
-representative to the coboundary of `g ↦ a ⊗ y(g)`. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, `a : A`, and `y ∈
+Z¹(G,B)`. With `d⁰a(g) = g·a - a` and `d¹t(g,h) = g·t(h) - t(gh) + t(g)`, the cochain equality
+is `(d⁰a) ∪ y = d¹(fun g => a ⊗ₜ[k] y(g))`. -/
 theorem cupCochainOneOne_d₀₁_left
     (a : A) (y : cocycles₁ B) :
     cupCochainOneOne A B (d₀₁ A a) y =
@@ -63,8 +59,9 @@ theorem cupCochainOneOne_d₀₁_left
     (mem_cocycles₁_iff y).1 y.2 g h, TensorProduct.tmul_add]
   abel
 
-/-- Replacing the right one-cocycle by the coboundary of `b` changes the cup
-representative to the coboundary of `g ↦ -(x(g) ⊗ g · b)`. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, `x ∈ Z¹(G,A)`, and `b
+: B`. With `d⁰b(g) = g·b - b` and `d¹t(g,h) = g·t(h) - t(gh) + t(g)`, the cochain equality is
+`x ∪ (d⁰b) = d¹(fun g => -(x(g) ⊗ₜ[k] g·b))`. The negative sign comes from the degree of `x`. -/
 theorem cupCochainOneOne_d₀₁_right
     (x : cocycles₁ A) (b : B) :
     cupCochainOneOne A B x (d₀₁ B b) =
@@ -87,8 +84,9 @@ theorem cupCochainOneOne_d₀₁_right
     Module.End.mul_apply, TensorProduct.add_tmul]
   abel
 
-/-- The representative cup class annihilates the kernel of `H1π` in its
-left variable. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the kernel of `H1π A :
+Z¹(G,A) → H¹(G,A)` is contained in the kernel of the curried map `cupCocycleOneOneClass A B`.
+Equivalently, if `H1π A x = 0`, then `[x ∪ y] = 0` in `H²(G,A ⊗ B)` for every `y ∈ Z¹(G,B)`. -/
 theorem cupCocycleOneOneClass_ker_left :
     LinearMap.ker (H1π A).hom ≤
       LinearMap.ker (cupCocycleOneOneClass A B) := by
@@ -111,8 +109,9 @@ theorem cupCocycleOneOneClass_ker_left :
     cupCochainOneOne A B (d₀₁ A a) y
   exact (cupCochainOneOne_d₀₁_left A B a y).symm
 
-/-- The representative cup class annihilates the kernel of `H1π` in its
-right variable. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the kernel of `H1π B :
+Z¹(G,B) → H¹(G,B)` is contained in the kernel of `(cupCocycleOneOneClass A B).flip`.
+Equivalently, if `H1π B y = 0`, then `[x ∪ y] = 0` in `H²(G,A ⊗ B)` for every `x ∈ Z¹(G,A)`. -/
 theorem cupCocycleOneOneClass_ker_right :
     LinearMap.ker (H1π B).hom ≤
       LinearMap.ker (cupCocycleOneOneClass A B).flip := by
@@ -135,7 +134,9 @@ theorem cupCocycleOneOneClass_ker_right :
     cupCochainOneOne A B x (d₀₁ B b)
   exact (cupCochainOneOne_d₀₁_right A B x b).symm
 
-/-- The degree-`(1, 1)` cup product on genuine group-cohomology classes. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the `k`-bilinear map
+`H¹(G,A) →ₗ[k] H¹(G,B) →ₗ[k] H²(G,A ⊗ B)` is induced from the cocycle `(g,h) ↦ x(g) ⊗ₜ[k]
+g·y(h)`. It sends the classes of one-cocycles `x,y` to the class of this two-cocycle. -/
 noncomputable def cupOneOne :
     H1 A →ₗ[k] H1 B →ₗ[k] H2 (A ⊗ B) :=
   let q := LinearMap.liftQ₂
@@ -156,8 +157,9 @@ noncomputable def cupOneOne :
       ext z
       simp }
 
-/-- The descended cup product computes as the representative cup cocycle
-followed by `H2π` on classes presented by `H1π`. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, and let `x ∈
+Z¹(G,A)`, `y ∈ Z¹(G,B)`. Then `cupOneOne A B (H1π A x) (H1π B y) = H2π (A ⊗ B)
+(cupCocycleOneOne A B x y)`, the degree-two class represented by `(g,h) ↦ x(g) ⊗ₜ[k] g·y(h)`. -/
 @[simp]
 theorem cupOneOne_H1π_H1π
     (x : cocycles₁ A) (y : cocycles₁ B) :

@@ -15,12 +15,19 @@ public import MathlibExt.Algebra.Homology.Hochschild.NormalizedEulerianOperators
 public import MathlibExt.LinearAlgebra.TensorPower.EulerianCyclicNormActions
 
 /-!
-# The dyadic convolution relation for normalized Connes B
+# The scalar-two Connes convolution square
 
-Over a rational ground algebra, the signed norm and head-unit
-insertion define regular
-normalized Connes B. Cyclic descent-fiber counts intertwine
-bar-lambda at parameter two with B by the scalar two.
+Let k be a commutative ℚ-algebra and A a commutative unital k-algebra.
+The regular normalized chain module is N_n=A⊗[k](A/span_k{1})^{⊗n}.
+Let B_n:N_n→N_{n+1} be normalized Connes boundary and Λ_n(2)
+the coefficient-fixed bar-lambda convolution evaluated at two.
+
+In every degree, including n=0, these maps satisfy
+Λ_{n+1}(2) B_n = 2 B_n Λ_n(2).
+The normalized B first places the coefficient in the quotient tail,
+takes its signed cyclic norm, and inserts the unit as the new coefficient.
+
+References: J.-L. Loday, Cyclic Homology, §§2.1 and 4.5.
 -/
 
 @[expose] public section
@@ -39,7 +46,11 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
 local notation "Q" => ModuleCat.Algebra.Hochschild.quotientCarrier k A
 local notation "q" => Submodule.mkQ (ModuleCat.Algebra.Hochschild.unitSubmodule k A)
 
-/-- The regular normalized B and the convolution at two satisfy the scalar-two identity in every degree. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1} and N_n(A)=A⊗[k]Ā^{⊗n}.
+For normalized Connes B_n:N_n→N_{n+1} and the bar-lambda
+convolution Λ_n(2), the all-degree square is
+Λ_{n+1}(2)B_n=2B_nΛ_n(2). -/
 theorem normalizedConvolutionTwo_connesBoundary (n : ℕ) :
     (normalizedConvolutionOperator k A A (n + 1) 2).comp (NonUnital.normalizedBoundary k A n).hom =
       (2 : k) • (NonUnital.normalizedBoundary k A n).hom.comp

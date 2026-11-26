@@ -1,4 +1,6 @@
-# Annihilator le native Tor left
+# The first coefficient annihilator annihilates Tor
 
-The annihilator of the first original coefficient annihilates its
-actual native Tor with every other coefficient and in every degree.
+The first coefficient annihilator annihilates Tor.
+
+For any commutative ring R and modules M,N, Ann_R(M) is contained in Ann_R(Tor_q^R(M,N)) in
+every degree q.

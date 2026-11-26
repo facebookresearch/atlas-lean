@@ -1,3 +1,5 @@
-# Original Cycle Class Map postcomp
+# Postcomposition preserves canonical Hom-complex cycle classes
 
-The homology arrow sends every original cocycle to the same postcomposed cycle.
+Let C be abelian, Z an object, g : K → L a cochain map and q ∈ ℤ. For a degree-q cocycle z from
+Z[0] to K, the homology map induced by homComplexPostcompSingle(Z,g) sends [z] to the canonical
+class of z postcomposed with g.

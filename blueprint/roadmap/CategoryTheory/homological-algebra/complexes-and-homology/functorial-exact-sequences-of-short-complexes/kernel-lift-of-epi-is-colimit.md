@@ -1,3 +1,7 @@
-# Kernel Lift Of Epi Is Colimit
+# Cokernel universal property of the lifted source sequence
 
-The same original morphism is the actual source cokernel of the represented inclusion.
+Cokernel universal property of the lifted source sequence.
+
+Under the exact-category and reflection assumptions on F : E ⥤ A, the lifted sequence K → P →
+Q is a conflation whenever F(f) is epic. Consequently f : P → Q defines a colimit cokernel
+cofork of the lifted inclusion i : K → P.

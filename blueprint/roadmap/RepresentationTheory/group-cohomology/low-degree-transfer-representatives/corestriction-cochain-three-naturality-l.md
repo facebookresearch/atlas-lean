@@ -1,4 +1,6 @@
-# Corestriction Cochain Three naturality linear Map
+# The linear-map square for ternary coefficient naturality
 
-Bundled linear-map square for coefficient naturality on degree-three
-cochains.
+The linear-map square for ternary coefficient naturality.
+
+The G-cochain coefficient map composed with the ternary transfer for A equals the transfer for
+B composed with the restricted H-cochain coefficient map.

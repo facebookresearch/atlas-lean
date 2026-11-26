@@ -1,3 +1,6 @@
-# Field Coind Invariant Cochain Iso hom f
+# Invariant coinduction comparison in each degree
 
-Each degree map of the fixed original comparison is the actual invariant coinduction term map.
+Invariant coinduction comparison in each degree.
+
+The forward component is the underlying additive invariants map of the coinduction
+coresolution term isomorphism.

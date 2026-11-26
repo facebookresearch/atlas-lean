@@ -1,4 +1,6 @@
-# First Page Row Native Homology Pair π
+# The transported row homology product preserves projection
 
-The actual row homology projections retain the original native cycle
-product and its homology projection.
+The transported row homology product preserves projection.
+
+The tensor of row homology projections followed by the product equals the row cycle product
+followed by output projection.

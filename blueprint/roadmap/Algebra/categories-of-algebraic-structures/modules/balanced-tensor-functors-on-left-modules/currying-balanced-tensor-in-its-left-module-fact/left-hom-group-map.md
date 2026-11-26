@@ -1,3 +1,6 @@
-# Left Hom Group Map
+# Left-linear postcomposition on additive Hom groups
 
-The actual left-domain Hom map is native additive postcomposition.
+Left-linear postcomposition on additive Hom groups.
+
+A target-group morphism `g : I ⟶ I'` induces an `R`-linear map `Hom_ℤ(A, I) → Hom_ℤ(A, I')` by
+postcomposition, for fixed right module `A`.

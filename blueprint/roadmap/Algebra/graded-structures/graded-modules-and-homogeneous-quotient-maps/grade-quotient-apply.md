@@ -1,3 +1,5 @@
-# Grade Quotient apply
+# Value of the degreewise quotient projection
 
-The component quotient map agrees with the canonical quotient map.
+Value of the degreewise quotient projection.
+
+For x ∈ M_n, the value of gradeQuotient, viewed in M/H, is the canonical quotient class q(x).

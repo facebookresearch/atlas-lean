@@ -18,10 +18,12 @@ public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.SetTheory.Cardinal.Order
 
 /-!
-# Submodules of projective modules over a PID
+# Submodules of projective modules over a principal ideal domain
 
-Every submodule of an arbitrary-rank free module over a principal ideal domain
-is free.  Consequently, every submodule of a projective module is projective.
+Let R be a commutative domain in which every ideal is principal. Every
+submodule of a free R-module is free, with no restriction on the rank.
+Every submodule of a projective R-module is consequently projective.
+The ring and module carriers may lie in independent universes.
 -/
 
 @[expose] public section
@@ -225,8 +227,9 @@ private theorem submodule_free_aux
   have hN' : Module.Free R N' := finsuppSubmodule_free N'
   exact Module.Free.of_equiv' hN' (b.repr.submoduleMap N).symm
 
-/-- Every submodule of an arbitrary-rank free module over a principal ideal
-domain is free. -/
+/-- Let R be a commutative principal ideal domain, M a free R-module,
+and N an R-submodule of M. Then N is free over R. The module M may
+have arbitrary rank, and its carrier universe is independent of that of R. -/
 theorem submodule_of_isPrincipalIdealRing
     {M : Type v} [AddCommGroup M] [Module R M] [Module.Free R M]
     (N : Submodule R M) : Module.Free R N :=
@@ -238,8 +241,9 @@ namespace Module.Projective
 
 variable {R : Type u} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
 
-/-- Every submodule of a projective module over a principal ideal domain is
-projective. -/
+/-- Let R be a commutative principal ideal domain, M a projective
+R-module, and N an R-submodule of M. Then N is projective over R.
+No finite-generation or finite-rank condition is imposed. -/
 theorem submodule_of_isPrincipalIdealRing
     {M : Type v} [AddCommGroup M] [Module R M] [Module.Projective R M]
     (N : Submodule R M) : Module.Projective R N := by

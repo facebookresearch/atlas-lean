@@ -16,12 +16,16 @@ public import MathlibExt.Algebra.Homology.PartialTotalConvergence
 public import MathlibExt.Algebra.Homology.PartialTotalHasSpectralSequence
 
 /-!
-# A stable page for the partial-total spectral sequence
+# A finite stable page of the partial-total spectral sequence
 
-This file proves the two outer interval vanishings and identifies the explicit
-page `p+q+2` with the stable interval and adjacent homology graded piece.  The
-identification is objectwise; it defines no morphism of whole page complexes
-and makes no naturality claim.
+Let `B` be a first-quadrant bicomplex in an abelian category. In bidegree `(p, q)`, page `p +
+q + 2` is isomorphic to the stable interval object for total homology degree `p + q` and
+filtration index `p`.
+
+Write `I_p H_n` for the image of `H_n(B.partialTotal p) ⟶ H_n(B.total (.down ℕ))`, and take
+`I_-1 H_n = 0`. The stable-page object is isomorphic to the adjacent quotient `I_p H_(p+q) /
+I_(p-1) H_(p+q)`. The filtration-to-page composite agrees with this quotient map. At column
+zero the stable coordinate is expressed in total degree `q`.
 -/
 
 @[expose] public section
@@ -49,8 +53,10 @@ local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
 
-/-- A sufficiently high stage-to-top relative object vanishes in the stated
-homological degree. -/
+/-- Stage-to-top interval vanishing below its remaining support.
+
+For natural `s` and `k` with `k + 1 ≤ s`, the partial-total spectral-object homology in
+cochain degree `-(k + 1)` of the interval `s ⟶ ⊤` is zero. -/
 theorem isZero_partialTotalSpectralObjectHObj_stage_to_top
     (s k : ℕ) (hks : k + 1 ≤ s) :
     IsZero ((B.partialTotalSpectralObject.H (-((k + 1 : ℕ) : ℤ))).obj
@@ -113,7 +119,11 @@ theorem isZero_partialTotalSpectralObjectHObj_stage_to_top
   rw [IsZero.iff_id_eq_zero, ← cancel_mono (Y.δ f g d d' hdd'),
     hδZero, Category.id_comp, zero_comp]
 
-/-- Page `p+q+2` is stable at bidegree `(p,q)`. -/
+/-- Page at total degree plus two as a stable interval object.
+
+For natural `p` and `q`, the spectral-sequence object at `(p, q)` on page `p + q + 2` is
+isomorphic to `B.partialTotalStableObj (p + q) p`. First-quadrant vanishing removes the two
+outer intervals in this page coordinate. -/
 noncomputable def partialTotalStablePageIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page
         (((p + q + 2 : ℕ) : ℤ))).X (p, q) ≅
@@ -201,7 +211,11 @@ noncomputable def partialTotalStablePageIso (p q : ℕ) :
     all_goals omega
   exact e ≪≫ eqToIso hTarget
 
-/-- The explicit stable page is the adjacent graded piece of total homology. -/
+/-- Stable page as the adjacent image-filtration quotient.
+
+The object at `(p, q)` on page `p + q + 2` is isomorphic to `B.partialTotalHomologyGradedPiece
+(p + q) p`, the quotient of the stage-`p` image in total homology by the preceding image. This
+is the stable-interval isomorphism followed by its graded-quotient isomorphism. -/
 noncomputable def partialTotalStablePageGradedIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page
         (((p + q + 2 : ℕ) : ℤ))).X (p, q) ≅
@@ -209,8 +223,11 @@ noncomputable def partialTotalStablePageGradedIso (p q : ℕ) :
   B.partialTotalStablePageIso p q ≪≫
     B.partialTotalStableGradedIso (p + q) p
 
-/-- The filtration-to-page map followed by the page grading is the canonical
-adjacent graded quotient. -/
+/-- Filtration-to-stable-page map agrees with the graded quotient.
+
+Map the stage-`p` image in total degree `p + q` to the stable interval, then to page `p + q +
+2`, and then through the page grading isomorphism. The composite is
+`B.partialTotalHomologyGradedπ (p + q) p`. -/
 @[reassoc]
 theorem partialTotalHomologyFiltrationToStablePage_comp_gradingIso_hom
     (p q : ℕ) :
@@ -222,8 +239,11 @@ theorem partialTotalHomologyFiltrationToStablePage_comp_gradingIso_hom
     Category.assoc, Iso.inv_hom_id_assoc,
     B.partialTotalHomologyFiltrationToStable_comp_stableGradedIso_hom]
 
-/-- The explicit zero-column stable-page morphism in the q-normalized
-terminal coordinate. -/
+/-- Zero-column stable-page map in total degree q.
+
+For natural `q`, this morphism sends the page-`q + 2` object at `(0, q)` to
+`B.partialTotalStableObj q 0`. It uses the stable spectral interval with lower outer cut `-(q
++ 2)`, middle cuts `-1` and `0`, and upper outer cut `q + 1`. -/
 noncomputable def partialTotalStablePageZeroColumnHom (q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page
       (((0 + q + 2 : ℕ) : ℤ))).X (0, q) ⟶
@@ -1530,8 +1550,11 @@ private theorem stablePageZeroOwnerFactorHom_eq_alignedFactorHom (q : ℕ) :
     _ = D.alignedHom := D.ownerHom_eq_alignedHom
     _ = _ := B.comparisonData_alignedHom_eq_alignedFactorHom q
 
-/-- At filtration degree zero, the stable-page coordinate followed by the
-canonical target equality is the explicit zero-column stable morphism. -/
+/-- Zero-column stable isomorphism agrees with the degree-q coordinate.
+
+After transporting `B.partialTotalStableObj (0 + q) 0` to `B.partialTotalStableObj q 0` along
+`0 + q = q`, the forward map of `B.partialTotalStablePageIso 0 q` equals
+`B.partialTotalStablePageZeroColumnHom q`. -/
 theorem partialTotalStablePageIso_zero_hom_comp_eqToIso_hom (q : ℕ) :
     (B.partialTotalStablePageIso 0 q).hom ≫
         (eqToIso (congrArg (fun m => B.partialTotalStableObj m 0)

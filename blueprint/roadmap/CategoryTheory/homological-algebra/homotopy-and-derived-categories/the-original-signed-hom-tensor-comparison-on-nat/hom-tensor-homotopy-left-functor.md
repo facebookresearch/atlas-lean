@@ -1,3 +1,6 @@
-# Hom Tensor Homotopy Left Functor
+# Hom followed by tensor as a functor on homotopy triples
 
-The actual source T(H(P,J),U) on native homotopy-category inputs.
+Hom followed by tensor as a functor on homotopy triples.
+
+The left functor takes `(P, J, U)` to the homotopy class of `Hom_R(P,J) ⊗_R U`, using the
+linear Hom and tensor homotopy bifunctors.

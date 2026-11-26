@@ -1,3 +1,6 @@
-# Constant Right Extra Degeneracy
+# The right extra degeneracy of a constant augmented simplicial object
 
-The genuine constant augmented object has the identity extra degeneracy.
+The right extra degeneracy of a constant augmented simplicial object.
+
+For any category object `P`, use identity maps for the augmentation section and each extra
+degeneracy of its constant augmented simplicial object.

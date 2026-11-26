@@ -1,4 +1,6 @@
-# Cast
+# Identifying equal resolved-object maps
 
-Transport a morphism of projective resolutions along an equality of
-the resolved morphisms. The underlying chain map is unchanged.
+For projective resolutions `P`, `P′` in a category `C` with
+a zero object and zero morphisms, identifying equal resolved maps
+`f=f′ : Z → Z′` transports a resolution map over `f` to one over
+`f′`, without changing its underlying chain map.

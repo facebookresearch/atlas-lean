@@ -16,15 +16,18 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierCorestrictionH3Transitivity
 
 /-!
-# Degree-three corestriction under group equivalences
+# Degree-three transfer under group equivalences
 
-This file extends the canonical Schreier corestriction equivalence API to
-degree three.  It proves cochain and cocycle transport, canonical naturality
-under ambient multiplicative equivalences, simultaneous coefficient
-naturality, and subgroup-chain transitivity for separately bundled equal
-image subgroups.
+Let `k` be a commutative ring, `e : G ≃* G'` an equivalence of groups, `H ≤ G` finite index,
+and `H' = e(H)`. The induced equivalence `q : H ≃* H'` transports right transversals and their
+Schreier factors. For `A : Rep k G'`, pullback along `e` carries the degree-three transfer
+from `H'` to `G'` to the transfer from `H` to `G`, after the canonical subgroup coefficient
+comparison.
 
-No field-theoretic, Kummer, norm-residue, or Bloch--Kato claim is made here.
+The same identity holds for cochains, cocycles, and cohomology, and also with a morphism `e^*A
+→ B` of coefficients. Equal presentations of the image subgroup are accommodated by their
+induced subgroup equivalences. For a finite-index chain `K ≤ H ≤ G`, the canonical
+degree-three transfers compose after identifying `K` with its image in `G`.
 -/
 
 @[expose] public section
@@ -47,21 +50,27 @@ noncomputable local instance corestrictionH3EquivMapFiniteIndex
     (H.map e.toMonoidHom).FiniteIndex :=
   Subgroup.FiniteIndex.map_of_surjective H e.surjective
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- For a group `M`, a finite-index subgroup `J ≤ M`, and a right transversal `T` for `J`, the
+representative subtype `(T : Set M)` has a finite enumeration. This is the local `Fintype`
+structure used for the finite transfer sums. -/
 noncomputable local instance corestrictionH3EquivTransversalFintype
     {M : Type u} [Group M] {J : Subgroup M}
     (T : J.RightTransversal) [J.FiniteIndex] : Fintype (T : Set M) :=
   @Fintype.ofFinite (T : Set M) (T.2.finite_right)
 
-/-- The original mapped representative type is finite under the original
-subgroup finite-index hypothesis. -/
+/-- Let `e : G ≃* G'` be an equivalence of groups, `H ≤ G` finite index, and `T` a right
+transversal for `H`. Its image `T.mapMulEquiv e` is a right transversal for `H.map
+e.toMonoidHom`, and the subtype `(T.mapMulEquiv e : Set G')` has a finite enumeration. -/
 noncomputable local instance corestrictionH3EquivMappedRepresentativeFintype
     (e : G ≃* G') (T : H.RightTransversal) [H.FiniteIndex] :
     Fintype (T.mapMulEquiv e : Set G') :=
   @Fintype.ofFinite _ (T.mapMulEquiv e).2.finite_right
 
-/-- Degree-three cochain transfer commutes with transport by an ambient
-multiplicative equivalence. -/
+/-- Let `k` be a commutative ring, `e : G ≃* G'` a group equivalence, `H ≤ G` finite index, `T` a
+right transversal, and `A : Rep k G'`. Put `H' = H.map e.toMonoidHom`, `q = H.mapMulEquivEquiv
+e : H ≃* H'`, and `B = Rep.res e.toMonoidHom A`. For any cochain `f : H' × H' × H' → A`,
+`(Tr_{e(T)}^A f)(e g₁,e g₂,e g₃) = Tr_T^B(f ∘ q³)(g₁,g₂,g₃)`, where `Tr` is the Schreier
+three-cochain sum with weights `ρ(t⁻¹)`. -/
 theorem corestrictionCochainThree_mapMulEquiv (e : G ≃* G')
     (A : Rep k G') (T : H.RightTransversal) [H.FiniteIndex]
     (f : (H.map e.toMonoidHom) × (H.map e.toMonoidHom) ×
@@ -139,8 +148,11 @@ theorem corestrictionCochainThree_mapMulEquiv (e : G ≃* G')
                 (T.schreierRep (T.schreierRep t g₁) g₂) g₃))))
         (map_inv e (t : G)).symm
 
-/-- Representative-level degree-three corestriction commutes with transport
-by an ambient multiplicative equivalence. -/
+/-- Let `k` be a commutative ring, `e : G ≃* G'` a group equivalence, `H ≤ G` finite index, `T` a
+right transversal, and `A : Rep k G'`. Put `H' = e(H)`, `q : H ≃* H'` for the induced
+equivalence, and `B = e^*A`. For `z ∈ Z³(H',Res A)`, `e^*(corestrictionCocyclesThree A
+(T.mapMulEquiv e) z) = corestrictionCocyclesThree B T (mapCocycles₃ q γ z)`, where `γ =
+(mulEquivSubgroupResIso e H A).hom : q^*(Res A) → Res B`. -/
 theorem mapCocycles₃_corestrictionCocyclesThree_mulEquiv
     (e : G ≃* G') (A : Rep k G') (T : H.RightTransversal)
     [H.FiniteIndex]
@@ -164,8 +176,11 @@ theorem mapCocycles₃_corestrictionCocyclesThree_mulEquiv
   exact congrFun (corestrictionCochainThree_mapMulEquiv e A T z)
     (g₁, g₂, g₃)
 
-/-- Chosen-transversal degree-three corestriction commutes with transport by
-an ambient multiplicative equivalence. -/
+/-- Let `k` be a commutative ring, `e : G ≃* G'` a group equivalence, `H ≤ G` finite index, `T` a
+right transversal, and `A : Rep k G'`. Write `H'=e(H)`, `q : H ≃* H'`, `B=e^*A`, and
+`γ=(mulEquivSubgroupResIso e H A).hom`. For `x ∈ H³(H',Res A)`, `map e (𝟙 B) 3
+(corestrictionH3OfRightTransversal A (T.mapMulEquiv e) x) = corestrictionH3OfRightTransversal
+B T (map q γ 3 x)`. -/
 theorem corestrictionH3OfRightTransversal_mulEquiv
     (e : G ≃* G') (A : Rep k G') (T : H.RightTransversal)
     [H.FiniteIndex]
@@ -206,8 +221,10 @@ theorem corestrictionH3OfRightTransversal_mulEquiv
               (H3π (Rep.res (Subgroup.subtype (H.map e.toMonoidHom)) A) z)) := by
           rw [H3π_comp_map_apply]
 
-/-- Elementwise naturality of canonical degree-three corestriction under an
-equivalence of ambient groups. -/
+/-- Let `k` be a commutative ring, `e : G ≃* G'` a group equivalence, `H ≤ G` finite index, and `A
+: Rep k G'`. Put `H'=e(H)`, `q=H.mapMulEquivEquiv e : H ≃* H'`, `B=e^*A`, and
+`γ=(mulEquivSubgroupResIso e H A).hom`. For `x ∈ H³(H',Res A)`, `map e (𝟙 B) 3 (cor_{H'}^{G'}
+x) = cor_H^G (map q γ 3 x)` in `H³(G,B)`. -/
 theorem corestrictionH3_mulEquiv_apply (e : G ≃* G')
     (A : Rep k G') [H.FiniteIndex]
     (x : H3 (Rep.res (Subgroup.subtype (H.map e.toMonoidHom)) A)) :
@@ -221,8 +238,10 @@ theorem corestrictionH3_mulEquiv_apply (e : G ≃* G')
     corestrictionH3_eq_of_rightTransversal (Rep.res e.toMonoidHom A) T]
   exact corestrictionH3OfRightTransversal_mulEquiv e A T x
 
-/-- Degree-three corestriction naturality under simultaneous transport of
-the ambient group and a coefficient morphism. -/
+/-- Let `k` be a commutative ring, `e : G ≃* G'` a group equivalence, `H ≤ G` finite index, `A :
+Rep k G'`, `B : Rep k G`, and `φ : e^*A → B`. Put `H'=e(H)`, `q=H.mapMulEquivEquiv e`, and
+`ψ=mulEquivSubgroupResHom e H φ : q^*(Res A) → Res B`. For `x ∈ H³(H',Res A)`, `map e φ 3
+(cor_{H'}^{G'} x) = cor_H^G (map q ψ 3 x)`. -/
 theorem corestrictionH3_mulEquiv_hom_apply
     (e : G ≃* G') {A : Rep k G'} {B : Rep k G}
     (φ : Rep.res e.toMonoidHom A ⟶ B) [H.FiniteIndex]
@@ -258,8 +277,10 @@ theorem corestrictionH3_mulEquiv_hom_apply
       rw [← ConcreteCategory.comp_apply, ← map_comp]
       rfl
 
-/-- Degree-three corestriction naturality with both a coefficient morphism
-and a separately bundled equal image subgroup. -/
+/-- Let `k` be a commutative ring, `e : G ≃* G'` a group equivalence, and `H ≤ G`, `H' ≤ G'`
+finite-index subgroups with `h : H.map e.toMonoidHom = H'`. For `A : Rep k G'`, `B : Rep k G`,
+and `φ : e^*A → B`, set `q=H.mapMulEquivEquivOfEq e H' h` and `ψ=mulEquivSubgroupResHomOfEq e
+H H' h φ`. For `x ∈ H³(H',Res A)`, `map e φ 3 (cor_{H'}^{G'} x) = cor_H^G (map q ψ 3 x)`. -/
 theorem corestrictionH3_mulEquivOfEq_hom_apply
     (e : G ≃* G') (H' : Subgroup G')
     (h : H.map e.toMonoidHom = H') {A : Rep k G'} {B : Rep k G}
@@ -273,8 +294,12 @@ theorem corestrictionH3_mulEquivOfEq_hom_apply
   subst H'
   exact corestrictionH3_mulEquiv_hom_apply e φ x
 
-/-- Degree-three subgroup-chain transitivity with a separately bundled equal
-presentation of the image subgroup. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G`, `K ≤ H`, and `J ≤ G`, with `K`, `H`, and
+`J` finite index in their respective ambient groups. Suppose `h : K.map H.subtype = J`, and
+let `A : Rep k G`. Write `q : K ≃* J` for the injective-image equivalence followed by
+`MulEquiv.subgroupCongr h`, and `τ=(mapSubtypeResIsoOfEq h A).hom`. For `x ∈ H³(J,Res A)`,
+`cor_J^G(x) = cor_H^G(cor_K^H(map q τ 3 x))`, where the intermediate coefficients are `Res_H
+A`. -/
 theorem corestrictionH3_trans_of_eq
     {K : Subgroup H} {J : Subgroup G}
     (h : K.map H.subtype = J) (A : Rep k G)

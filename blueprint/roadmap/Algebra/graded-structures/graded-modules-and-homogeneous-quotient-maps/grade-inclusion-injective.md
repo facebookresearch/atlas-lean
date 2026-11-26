@@ -1,3 +1,5 @@
-# Grade Inclusion injective
+# Injectivity of the inherited grade inclusion
 
-The component inclusion is injective.
+Injectivity of the inherited grade inclusion.
+
+For every n, the A-linear map H_n → M_n induced by the inclusion H → M is injective.

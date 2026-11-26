@@ -1,4 +1,6 @@
-# Local Ring Hom lmul' bijective
+# The canonical local map at an étale diagonal prime is bijective
 
-The original canonical local map at a prime of the étale diagonal is
-bijective, even when the étale algebra has several components.
+Let R,A be commutative rings in independent universes u,v, with A an R-algebra. Write μ:A⊗_R A→A
+for tensor multiplication. Assume A is étale over R and p⊂A is prime. With q=μ⁻¹(p), the
+canonical map (A⊗_R A)_q→A_p induced by μ is bijective. Tensor multiplication is flat and
+surjective, so its target-prime local map is an isomorphism.

@@ -1,3 +1,5 @@
-# Native up-f-down maps compose on the actual original...
+# Coefficient lifts preserve composition
 
-Native up-f-down maps compose on the actual original coefficient carriers.
+For R-linear maps f:B→B′ and g:B′→B″, the lifted maps
+satisfy lift(g∘f)=lift(g)∘lift(f).
+All coefficient carriers use the same chosen height Γ_z.

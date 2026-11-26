@@ -15,10 +15,30 @@ module
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.NativeZeroCochainClasses
 public import MathlibExt.CategoryTheory.Abelian.CoaugmentationCycles
 
-/-! Actual original field native comparison proof components. -/
+/-!
+# Classes of mapped coaugmentation cycles
 
-/-! Original qualified proof block: NativeZeroShortComplexClass -/
-/-! Actual zero-cycle class comparison on the literal native short complex. -/
+For a profinite group G in v and a topological integer representation X with coefficient carrier
+W=max(v,w), invariant coefficients identify with continuous cohomology in degree zero. The
+zero-cycle inclusion sends an invariant vector to its constant homogeneous zero-cochain.
+
+Let F forget topological integer modules to abelian groups. A coefficient short complex T
+identified with F(C^*_{hom}(G,X).sc(0)), and a cycle map p from F(X^G), have the same
+degree-zero class whenever their middle-vector map is the constant invariant inclusion. The
+class comparison includes the short-complex isomorphism and the canonical homology comparison
+for F.
+
+The comparison, cycle map, and vector identity form coefficient-cycle data. Pointwise constancy
+of the represented vector constructs these data and determines the resulting class map.
+-/
+
+/-!
+## The class of a constant invariant cycle
+
+The map p:F(X^G)→Z(T), followed by the class projection, the induced map of e:T≅F(S), and the
+homology comparison H(F(S))≅F(H(S)), equals the inverse degree-zero invariants isomorphism under
+F.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -30,8 +50,12 @@ namespace ContinuousCohomology
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- A true short-complex cycle with the actual constant invariant coefficient has
-its SAME native H0 zeroIso class under the canonical forgetting homology comparison. -/
+/-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+ℤ-modules to abelian groups in W. Let T be a short complex of abelian groups in W, e:T≅F(S), and
+p:F(I)→Z(T). Assume p≫i_T≫e₂=F(c_X≫i_0), where c_X:I→Z⁰(K) is the constant invariant cycle
+inclusion. For ζ_X:H⁰_cont(G,X)≅I and h_F:H(F(S))≅F(H(S)), one has
+p≫π_T≫H(e).hom≫h_F.hom=F(ζ_X.inv). -/
 theorem nativeZeroShortComplexClass_of_constant_cycle
     (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, 0, v} ℤ G)
     (T : ShortComplex AddCommGrpCat.{max v w})
@@ -74,8 +98,13 @@ theorem nativeZeroShortComplexClass_of_constant_cycle
 end ContinuousCohomology
 end
 
-/-! Original qualified proof block: NativeZeroCycleCoefficientSystem -/
-/-! Complete native H0 class computation from the actual coefficient-cycle vector. -/
+/-!
+## Coefficient zero-cycle data
+
+The data consist of the short-complex comparison e, the invariant cycle map p, and the equation
+identifying its included vector with the constant invariant zero-cochain. Their degree-zero
+class formula follows from these three components.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -85,20 +114,43 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace ContinuousCohomology
 
-/-- Actual coefficient-cycle data on the literal original homogeneous complex. -/
+/-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+ℤ-modules to abelian groups in W. For a short complex T of abelian groups, the data are
+e:T≅F(S), p:F(I)→Z(T), and the vector identity p≫i_T≫e₂=F(c_X≫i_0). Here c_X includes invariant
+coefficients as zero cycles of K, and i_0 includes them into K⁰. -/
 structure NativeZeroCoefficientCycle (G : ProfiniteGrp.{v})
     (X : TopRep.{max v w, 0, v} ℤ G) (T : ShortComplex AddCommGrpCat.{max v w}) where
-  /-- The actual original coefficient-complex isomorphism. -/
+  /-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+  carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+  ℤ-modules to abelian groups in W. For a short complex T of abelian groups in W and
+  coefficient-cycle data on it, the comparison is an isomorphism e:T≅F(S) of short complexes of
+  abelian groups. Its middle component transports the coefficient vector into the forgotten
+  homogeneous zero-cochain term. -/
   comparison : T ≅ ((TopRep.homogeneousCochains X).sc 0).map discreteCoefficientForget.{max v w}
-  /-- The actual original invariant coaugmentation cycle. -/
+  /-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+  carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+  ℤ-modules to abelian groups in W. For a short complex T in abelian groups, the cycle component
+  p:F(I)→Z(T) is an additive morphism from invariant coefficients to its cycles. The vector
+  component identifies p≫i_T after the middle comparison with the constant invariant
+  coaugmentation. -/
   cycle : discreteCoefficientForget.{max v w}.obj ((TopRep.invariantsFunctor ℤ G).obj X) ⟶ T.cycles
-  /-- The actual cycle vector is the original constant invariant coefficient. -/
+  /-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+  carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+  ℤ-modules to abelian groups in W. Let T be a short complex of abelian groups in W, e:T≅F(S), and
+  p:F(I)→Z(T). The vector law is p≫i_T≫e₂=F(c_X≫i_0) as maps F(I)→F(K⁰). Thus each invariant
+  coefficient is represented by its constant homogeneous zero-cochain after the complex
+  comparison. -/
   vector : cycle ≫ T.iCycles ≫ comparison.hom.τ₂ =
     discreteCoefficientForget.{max v w}.map
       (zeroCycleInclusion G X ≫ (TopRep.homogeneousCochains X).iCycles 0)
 
-/-- The original native zeroIso inverse is internally computed from the actual
-coefficient-cycle data; it is not an additional normalization assumption. -/
+/-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+ℤ-modules to abelian groups in W. For a short complex T of abelian groups in W and
+coefficient-cycle data d on T, let e=d.comparison and p=d.cycle. Then
+p≫π_T≫H(e).hom≫h_F.hom=F(ζ_X.inv), with ζ_X:H⁰_cont(G,X)≅I and h_F:H(F(S))≅F(H(S)). The vector
+law determines this full class map. -/
 theorem NativeZeroCoefficientCycle.class_eq
     (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, 0, v} ℤ G)
     (T : ShortComplex AddCommGrpCat.{max v w}) (d : NativeZeroCoefficientCycle G X T) :
@@ -110,8 +162,13 @@ theorem NativeZeroCoefficientCycle.class_eq
 end ContinuousCohomology
 end
 
-/-! Original qualified proof block: NativeZeroCycleVector -/
-/-! Actual constant invariant cycle values in the original native homogeneous complex. -/
+/-!
+## Values of the invariant zero-cycle inclusion
+
+For a ring R with a topology and a topological R-representation of a profinite group, every
+invariant vector maps to the constant homogeneous zero-cochain with that same value at each
+group element.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -124,7 +181,9 @@ variable {R : Type r} [Ring R] [TopologicalSpace R]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The native constant-cycle inclusion keeps the exact original invariant coefficient. -/
+/-- Let R be a ring with a topology in universe r, G a profinite group in v, and X a topological
+R-representation with coefficient carrier max(v,w). For x∈X^G and g∈G, the cochain obtained by
+including its zero cycle into C⁰_{hom}(G,X) has value x at g. -/
 theorem zeroCycleInclusion_constant
     (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, r, v} R G)
     (x : X.ρ.invariants) (g : G) :
@@ -152,8 +211,12 @@ theorem zeroCycleInclusion_constant
 end ContinuousCohomology
 end
 
-/-! Original qualified proof block: NativeZeroCoefficientCycleConstructor -/
-/-! Genuine native H0 coefficient-cycle construction from original vectors. -/
+/-!
+## Constructing coefficient data from pointwise vectors
+
+If the included vector of p, transported by the middle component of e, has value x at every g∈G
+for each invariant x, this pointwise condition supplies the coefficient-cycle vector identity.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -163,8 +226,12 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace ContinuousCohomology
 
-/-- A genuine cycle whose actual coefficient vector is pointwise constant constructs
-its native zero-class data, with no supplied homology equality. -/
+/-- Let G be a profinite group in universe v and X a topological ℤ-representation with coefficient
+carrier W=max(v,w). Put K=C^*_{hom}(G,X), S=K.sc(0), I=X^G, and let F forget topological
+ℤ-modules to abelian groups in W. Let T be a short complex of abelian groups in W, e:T≅F(S), and
+p:F(I)→Z(T). Suppose for every x∈F(I) and g∈G, the cochain vector e₂(i_T(p(x))) has value x at
+g. This constructs coefficient-cycle data with comparison e and cycle p; its vector identity is
+equality with F(c_X≫i_0). -/
 def nativeZeroCoefficientCycleOfVector
     (G : ProfiniteGrp.{v}) (X : TopRep.{max v w, 0, v} ℤ G)
     (T : ShortComplex AddCommGrpCat.{max v w})

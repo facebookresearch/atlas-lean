@@ -1,3 +1,6 @@
-# Unitization Scalar Complex Augmentation inclusion
+# The chain factorization of unitization scalar projection
 
-The factorization of the projector is the original augmentation followed by scalar inclusion.
+The chain factorization of unitization scalar projection.
+
+The scalar chain augmentation followed by its inclusion equals the scalar chain projector on
+`b(A⁺)`.

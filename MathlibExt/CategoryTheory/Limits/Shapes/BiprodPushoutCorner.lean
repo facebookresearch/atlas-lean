@@ -16,15 +16,17 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 
 /-!
-# Corners of pushouts along a biproduct inclusion
+# Pushouts along a biproduct inclusion
 
-Push out the actual right biproduct inclusion along an arbitrary map.
-The resulting object is canonically the original left factor plus the
-new right factor. Under this comparison the actual corner induced by a
-map on the left factor is that map plus an identity.
+Let C have zero morphisms and binary biproducts, and let b : B → B'. The square with top edge
+the right injection B → X ⊞ B, left edge b, right edge id_X ⊞ b and bottom edge the right
+injection B' → X ⊞ B' is a pushout.
 
-This proves monomorphism and explicit splitness of the original corner.
-The original pushout and its two legs are retained throughout.
+For any pushout P of the same span, with legs inOld : X ⊞ B → P and inNew : B' → P, the
+comparison e : P ≅ X ⊞ B' identifies those legs with id_X ⊞ b and the right injection. A map x
+: X → X' induces a corner c_x : P → X' ⊞ B' satisfying c_x = e.hom ≫ (x ⊞ id_B'). Thus c_x is
+monic when x is monic. If r : X' → X satisfies x ≫ r = id_X, then (r ⊞ id_B') ≫ e.inv is a
+retraction of c_x.
 -/
 
 @[expose] public section
@@ -40,7 +42,11 @@ namespace CategoryTheory.IsPushout
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasBinaryBiproducts C]
 variable {X X' B B' P : C} (b : B ⟶ B')
 
-/-- Replace the right factor using the actual two biproduct injections. -/
+/-- Pushout of a right biproduct injection.
+
+In a category with zero morphisms and binary biproducts, pushing the injection B → X ⊞ B along
+b : B → B' gives X ⊞ B'. The pushout legs are id_X ⊞ b : X ⊞ B → X ⊞ B' and the right
+injection B' → X ⊞ B'. -/
 theorem biprodInr (X : C) :
     IsPushout (biprod.inr : B ⟶ X ⊞ B) b
       (biprod.map (𝟙 X) b) (biprod.inr : B' ⟶ X ⊞ B') := by
@@ -62,35 +68,59 @@ variable {b}
 variable {inOld : X ⊞ B ⟶ P} {inNew : B' ⟶ P}
 variable (hP : IsPushout (biprod.inr : B ⟶ X ⊞ B) b inOld inNew)
 
-/-- The original pushout is compared with the actual replacement biproduct. -/
+/-- Comparison of a biproduct-inclusion pushout with the replacement biproduct.
+
+Let P be a pushout of B → X ⊞ B and b : B → B', with specified legs inOld and inNew. The
+universal property gives an isomorphism e : P ≅ X ⊞ B' comparing this pushout with the
+biproduct whose right factor is B'. -/
 def biprodInrIso : P ≅ X ⊞ B' :=
   hP.isoIsPushout (X ⊞ B) B' (biprodInr b X)
 
-/-- The old leg becomes the original right-factor replacement map. -/
+/-- Old pushout leg under the replacement comparison.
+
+For the comparison e : P ≅ X ⊞ B' of a pushout of B → X ⊞ B along b : B → B', the leg from X ⊞
+B satisfies inOld ≫ e.hom = id_X ⊞ b. -/
 theorem inOld_biprodInrIso_hom :
     inOld ≫ (biprodInrIso hP).hom = biprod.map (𝟙 X) b :=
   hP.inl_isoIsPushout_hom (X ⊞ B) B' (biprodInr b X)
 
-/-- The new leg becomes the actual right biproduct inclusion. -/
+/-- New pushout leg under the replacement comparison.
+
+For the comparison e : P ≅ X ⊞ B' of a pushout of the right biproduct injection along b : B →
+B', the new leg satisfies inNew ≫ e.hom = inr : B' → X ⊞ B'. -/
 theorem inNew_biprodInrIso_hom :
     inNew ≫ (biprodInrIso hP).hom = (biprod.inr : B' ⟶ X ⊞ B') :=
   hP.inr_isoIsPushout_hom (X ⊞ B) B' (biprodInr b X)
 
-/-- The original corner is the descendant of its actual two faces. -/
+/-- Corner map induced by a map on the left biproduct factor.
+
+Let P be a pushout of the right injection B → X ⊞ B along b : B → B'. For x : X → X', define
+c_x : P → X' ⊞ B' by the maps x ⊞ b on X ⊞ B and the right injection on B'. Their agreement on
+B gives the required pushout descendant. -/
 def biprodInrCorner (x : X ⟶ X') : P ⟶ X' ⊞ B' :=
   hP.desc (biprod.map x b) biprod.inr (by simp)
 
-/-- The corner retains the entire old biproduct face. -/
+/-- Old leg of the induced biproduct corner.
+
+For x : X → X' and the corner c_x : P → X' ⊞ B' induced from a pushout of B → X ⊞ B along b,
+the composite inOld ≫ c_x is the biproduct map x ⊞ b. -/
 theorem inOld_biprodInrCorner (x : X ⟶ X') :
     inOld ≫ biprodInrCorner hP x = biprod.map x b :=
   hP.inl_desc _ _ _
 
-/-- The corner retains the actual new boundary face. -/
+/-- New leg of the induced biproduct corner.
+
+For the corner c_x : P → X' ⊞ B' induced by x : X → X', the new pushout leg satisfies inNew ≫
+c_x = inr : B' → X' ⊞ B'. -/
 theorem inNew_biprodInrCorner (x : X ⟶ X') :
     inNew ≫ biprodInrCorner hP x = (biprod.inr : B' ⟶ X' ⊞ B') :=
   hP.inr_desc _ _ _
 
-/-- The actual corner is the original left map plus the identity on the new right factor. -/
+/-- Formula for the corner after identifying the pushout.
+
+If e : P ≅ X ⊞ B' is the comparison for a pushout of the right biproduct injection along b,
+then the corner induced by x : X → X' satisfies c_x = e.hom ≫ (x ⊞ id_B'). Thus only the left
+factor changes under this map. -/
 theorem biprodInrCorner_eq (x : X ⟶ X') :
     biprodInrCorner hP x = (biprodInrIso hP).hom ≫ biprod.map x (𝟙 B') := by
   apply hP.hom_ext
@@ -99,16 +129,26 @@ theorem biprodInrCorner_eq (x : X ⟶ X') :
   · rw [inNew_biprodInrCorner, ← Category.assoc, inNew_biprodInrIso_hom]
     simp only [biprod.inr_map, Category.id_comp]
 
-/-- A monomorphism on the unchanged left factor earns a monomorphic original corner. -/
+/-- Monomorphism of a corner induced by a monic left-factor map.
+
+For a pushout of B → X ⊞ B along b : B → B', a monomorphism x : X → X' induces a monomorphism
+c_x : P → X' ⊞ B'. Under the comparison P ≅ X ⊞ B', this corner is x ⊞ id_B'. -/
 theorem mono_biprodInrCorner (x : X ⟶ X') [Mono x] : Mono (biprodInrCorner hP x) := by
   rw [biprodInrCorner_eq]
   infer_instance
 
-/-- The actual corner retraction uses the original left retraction and the same pushout chart. -/
+/-- Retraction map for a biproduct pushout corner.
+
+For a pushout comparison e : P ≅ X ⊞ B' and any r : X' → X, define the map X' ⊞ B' → P as (r ⊞
+id_B') ≫ e.inv. It is a retraction of the corner induced by x whenever x ≫ r = id_X. -/
 def biprodInrCornerRetraction (r : X' ⟶ X) : X' ⊞ B' ⟶ P :=
   biprod.map r (𝟙 B') ≫ (biprodInrIso hP).inv
 
-/-- The original corner followed by that explicit retraction is the original identity. -/
+/-- Retraction equation for a split left-factor corner.
+
+Let x : X → X' and r : X' → X satisfy x ≫ r = id_X. For the corner c_x : P → X' ⊞ B' of a
+pushout of the right biproduct injection, the map (r ⊞ id_B') ≫ e.inv satisfies c_x ≫ ((r ⊞
+id_B') ≫ e.inv) = id_P. -/
 theorem biprodInrCorner_retraction (x : X ⟶ X') (r : X' ⟶ X) (hr : x ≫ r = 𝟙 X) :
     biprodInrCorner hP x ≫ biprodInrCornerRetraction hP r = 𝟙 P := by
   have hMap : biprod.map x (𝟙 B') ≫ biprod.map r (𝟙 B') = 𝟙 (X ⊞ B') := by
@@ -128,7 +168,11 @@ theorem biprodInrCorner_retraction (x : X ⟶ X') (r : X' ⟶ X) (hr : x ≫ r =
       rw [hMap, Category.id_comp]
     _ = 𝟙 P := (biprodInrIso hP).hom_inv_id
 
-/-- Actual splitness of the left factor earns splitness of the original relative corner. -/
+/-- Split monomorphism of a corner induced by a split left factor.
+
+If x : X → X' is split monic, then the corner c_x : P → X' ⊞ B' induced from a pushout of B →
+X ⊞ B along b : B → B' is split monic. A retraction r of x gives the corner retraction (r ⊞
+id_B') ≫ e.inv. -/
 theorem isSplitMono_biprodInrCorner (x : X ⟶ X') [IsSplitMono x] :
     IsSplitMono (biprodInrCorner hP x) := by
   let s := (inferInstance : IsSplitMono x).exists_splitMono.some

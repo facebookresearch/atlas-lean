@@ -15,12 +15,14 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 
 /-!
-# Restriction along an existing module scalar tower
+# Restriction of scalars along a module scalar tower
 
-A module with its existing base-ring action and an actual scalar tower is
-canonically the restriction of its scalar-algebra module. The comparison
-preserves the carrier and every element. The two ring universes and the module
-universe are independent. No ring equivalence or surjectivity is required.
+Let R be a commutative ring, S an R-algebra that is a ring, and M an R-module carrying an
+S-module structure with IsScalarTower R S M. Then the given R-module is canonically isomorphic
+to the restriction of the S-module along R → S. Both directions preserve every element.
+
+The comparisons are natural for S-linear maps and their restrictions to R-linear maps. The R,
+S and module carrier universes are independent.
 -/
 
 @[expose] public section
@@ -35,8 +37,10 @@ universe r s m
 
 variable (R : Type r) (S : Type s) [CommRing R] [Ring S] [Algebra R S]
 
-/-- An actual scalar tower identifies the original base-ring module
-with restriction of the same carrier and its existing scalar-algebra action. -/
+/-- The restriction isomorphism of an existing scalar tower.
+
+For M with compatible R- and S-module structures, the identity on its carrier gives an
+R-linear isomorphism from M to the restriction of ModuleCat.of S M along algebraMap R S. -/
 def restrictScalarsIsoOfScalarTower (M : ModuleCat.{m} R)
     [Module S M] [IsScalarTower R S M] :
     M ≅ (restrictScalars (algebraMap R S)).obj (ModuleCat.of S M) := by
@@ -50,21 +54,28 @@ def restrictScalarsIsoOfScalarTower (M : ModuleCat.{m} R)
       map_smul' := fun r x => (IsScalarTower.algebraMap_smul S r x).symm }
   exact e.toModuleIso
 
-/-- The tower comparison leaves every original element unchanged. -/
+/-- Elements under the forward scalar-tower comparison.
+
+The forward restriction comparison sends x ∈ M to the same element x. -/
 @[simp]
 theorem restrictScalarsIsoOfScalarTower_hom_apply (M : ModuleCat.{m} R)
     [Module S M] [IsScalarTower R S M] (x : M) :
     (restrictScalarsIsoOfScalarTower R S M).hom x = x := rfl
 
-/-- The inverse tower comparison also leaves every element unchanged. -/
+/-- Elements under the inverse scalar-tower comparison.
+
+The inverse comparison from the restricted S-module sends every element to itself in the given
+R-module. -/
 @[simp]
 theorem restrictScalarsIsoOfScalarTower_inv_apply (M : ModuleCat.{m} R)
     [Module S M] [IsScalarTower R S M]
     (x : (restrictScalars (algebraMap R S)).obj (ModuleCat.of S M)) :
     (restrictScalarsIsoOfScalarTower R S M).inv x = x := rfl
 
-/-- Existing scalar-algebra linear maps commute with the literal tower
-comparison and their canonical restriction to the original base-ring actions. -/
+/-- Naturality of the forward scalar-tower comparison.
+
+For an S-linear map f : M → N between compatible scalar towers, the forward comparisons
+commute with f restricted to R and with the categorical restriction-of-scalars map. -/
 theorem restrictScalarsIsoOfScalarTower_hom_naturality
     {M N : ModuleCat.{m} R}
     [Module S M] [IsScalarTower R S M] [Module S N] [IsScalarTower R S N]
@@ -76,7 +87,10 @@ theorem restrictScalarsIsoOfScalarTower_hom_naturality
   ext x
   rfl
 
-/-- The inverse comparisons commute with the same genuine restricted maps. -/
+/-- Naturality of the inverse scalar-tower comparison.
+
+The inverse comparisons commute with the same S-linear morphism restricted to the given
+R-module structures. -/
 theorem restrictScalarsIsoOfScalarTower_inv_naturality
     {M N : ModuleCat.{m} R}
     [Module S M] [IsScalarTower R S M] [Module S N] [IsScalarTower R S N]

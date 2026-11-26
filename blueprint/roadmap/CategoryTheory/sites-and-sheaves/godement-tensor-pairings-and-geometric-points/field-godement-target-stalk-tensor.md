@@ -1,3 +1,4 @@
-# Field Godement Target Stalk Tensor
+# The tensor of the two canonical point-skyscraper stalks
 
-The actual tensor target stalk on the two original point sheaves.
+Let k be a field, p₀ its unique spectrum point, and M,N coefficient families. The target stalk
+tensor is L(x_{p₀*}M_{p₀})⊗_ℤ L(x_{p₀*}N_{p₀}), with L the canonical point stalk.

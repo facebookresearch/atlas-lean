@@ -18,13 +18,18 @@ public import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.FinCases
 
 /-!
-# Cyclic permutation representations
+# Character-twisted cyclic permutation representations
 
-A character `G → Multiplicative (ZMod ell)` makes the function module
-`ZMod ell → A` into the cyclic permutation representation attached to a
-`G`-representation `A`.  The representation and diagonal allow any `ell`;
-nonzero `ell` gives a finite index set and an augmentation map.  At `ell = 2`,
-the diagonal and augmentation form an exact sequence over `ZMod 2`.
+Let k be a commutative ring, G a group, A a k-representation and
+χ:G→Multiplicative(ZMod ℓ). The function module Pχ(A)=ZMod ℓ→A
+has action (g•p)(i)=g•p(i+χ_add(g)).
+The ring, group and coefficient universes are independent.
+
+The diagonal δ(a) is the constant function a, for every ℓ.
+For nonzero ℓ, the augmentation ε(p)=∑_i p(i) is equivariant and
+ε∘δ=ℓ•id_A. For coefficients over ZMod 2 at ℓ=2, this gives the
+short exact sequence A→Pχ(A)→A with diagonal and coordinate sum.
+No surjectivity assumption on χ is needed for that sequence.
 -/
 
 @[expose] public section
@@ -40,9 +45,13 @@ universe uK uG uA
 
 variable {k : Type uK} {G : Type uG} [CommRing k] [Group G]
 
-/-- The cyclic permutation representation on functions `ZMod ell → A`.
-The group acts simultaneously on values through `A` and on indices through
-the supplied cyclic character. -/
+/-- Let k be a commutative ring, G a group, A a k-linear
+G-representation and χ:G→Multiplicative(ZMod ℓ) a character.
+Write χ_add(g) for its additive ZMod ℓ value and
+Pχ(A)=ZMod ℓ→A, with (g•p)(i)=g•p(i+χ_add(g)).
+This is the k-linear permutation representation Pχ(A) with the
+given simultaneous value action and positive index translation.
+It is defined for every ℓ, including ℓ=0. -/
 noncomputable abbrev cyclicPermutation
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell))
@@ -89,8 +98,12 @@ theorem cyclicPermutation_rho_apply
       A.ρ g (f (i + Multiplicative.toAdd (chi g))) :=
   rfl
 
-/-- The equivariant diagonal from a representation into its cyclic
-permutation representation. -/
+/-- Let k be a commutative ring, G a group, A a k-linear
+G-representation and χ:G→Multiplicative(ZMod ℓ) a character.
+Write χ_add(g) for its additive ZMod ℓ value and
+Pχ(A)=ZMod ℓ→A, with (g•p)(i)=g•p(i+χ_add(g)).
+The equivariant diagonal map δ:A→Pχ(A) sends a to the constant
+function i↦a. -/
 noncomputable def cyclicPermutationDiagonal
     (ell : ℕ)
     (chi : G →* Multiplicative (ZMod ell)) (A : Rep.{uA} k G) :
@@ -116,7 +129,12 @@ theorem cyclicPermutationDiagonal_apply
     (cyclicPermutationDiagonal ell chi A).hom a i = a :=
   rfl
 
-/-- Equivariant augmentation of the cyclic permutation representation. -/
+/-- Let k be a commutative ring, G a group, A a k-linear
+G-representation and χ:G→Multiplicative(ZMod ℓ) a character.
+Write χ_add(g) for its additive ZMod ℓ value and
+Pχ(A)=ZMod ℓ→A, with (g•p)(i)=g•p(i+χ_add(g)).
+For ℓ≠0, the equivariant augmentation is
+ε:Pχ(A)→A, p↦∑_(i:ZMod ℓ)p(i). -/
 noncomputable def cyclicPermutationAugmentation
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell)) (A : Rep.{uA} k G) :
@@ -151,8 +169,12 @@ theorem cyclicPermutationAugmentation_apply
       ∑ i : ZMod ell, f i :=
   rfl
 
-/-- Diagonal followed by augmentation is multiplication by the cyclic
-degree. -/
+/-- Let k be a commutative ring, G a group, A a k-linear
+G-representation and χ:G→Multiplicative(ZMod ℓ) a character.
+Write χ_add(g) for its additive ZMod ℓ value and
+Pχ(A)=ZMod ℓ→A, with (g•p)(i)=g•p(i+χ_add(g)).
+For ℓ≠0, summation after constant inclusion satisfies
+ε∘δ=ℓ•id_A. -/
 theorem cyclicPermutationDiagonal_comp_augmentation
     (ell : ℕ) [NeZero ell]
     (chi : G →* Multiplicative (ZMod ell)) (A : Rep.{uA} k G) :
@@ -166,13 +188,14 @@ theorem cyclicPermutationDiagonal_comp_augmentation
   change (∑ _i : ZMod ell, a) = ell • a
   rw [Finset.sum_const, Finset.card_univ, ZMod.card]
 
-/-- Every element of `ZMod 2` is zero or one. -/
+/-- Every i∈ZMod 2 is either 0 or 1. -/
 theorem zmodTwo_eq_zero_or_one (i : ZMod 2) : i = 0 ∨ i = 1 := by
   fin_cases i
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-/-- A sum over `ZMod 2` is the sum of its values at zero and one. -/
+/-- For any additive commutative monoid M and f:ZMod 2→M,
+∑_i f(i)=f(0)+f(1). -/
 theorem sum_zmodTwo {M : Type*} [AddCommMonoid M] (f : ZMod 2 → M) :
     (∑ i : ZMod 2, f i) = f 0 + f 1 := by
   calc
@@ -183,7 +206,10 @@ theorem sum_zmodTwo {M : Type*} [AddCommMonoid M] (f : ZMod 2 → M) :
       rw [Fin.sum_univ_two]
       rfl
 
-/-- The mod-two diagonal is injective. -/
+/-- Let G be a group, χ:G→Multiplicative(ZMod 2) a character,
+and A a ZMod 2-linear G-representation. The diagonal δ:A→Pχ(A)
+is constant inclusion and ε:Pχ(A)→A is summation of the two coordinates.
+The diagonal δ is injective on underlying coefficient modules. -/
 theorem cyclicPermutationDiagonal_two_injective
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{uA} (ZMod 2) G) :
@@ -192,7 +218,11 @@ theorem cyclicPermutationDiagonal_two_injective
   change (fun _ : ZMod 2 => a) = (fun _ : ZMod 2 => b) at h
   exact congrFun h 0
 
-/-- The mod-two cyclic augmentation is surjective. -/
+/-- Let G be a group, χ:G→Multiplicative(ZMod 2) a character,
+and A a ZMod 2-linear G-representation. The diagonal δ:A→Pχ(A)
+is constant inclusion and ε:Pχ(A)→A is summation of the two coordinates.
+The augmentation ε is surjective on underlying modules,
+with a preimage obtained by placing a in one coordinate. -/
 theorem cyclicPermutationAugmentation_two_surjective
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{uA} (ZMod 2) G) :
@@ -203,8 +233,11 @@ theorem cyclicPermutationAugmentation_two_surjective
   change (∑ i : ZMod 2, f i) = a
   simp [f]
 
-/-- Over `ZMod 2`, the diagonal and augmentation of the two-term cyclic
-permutation representation are exact. -/
+/-- Let G be a group, χ:G→Multiplicative(ZMod 2) a character,
+and A a ZMod 2-linear G-representation. The diagonal δ:A→Pχ(A)
+is constant inclusion and ε:Pχ(A)→A is summation of the two coordinates.
+The sequence A→Pχ(A)→A is exact at Pχ(A):
+the kernel of coordinate sum is the constant diagonal image. -/
 theorem cyclicPermutation_two_exact
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{uA} (ZMod 2) G) :
@@ -240,8 +273,11 @@ theorem cyclicPermutation_two_exact
       _ = 0 := by
         rw [show (2 : ZMod 2) = 0 by decide, zero_smul]
 
-/-- The diagonal--augmentation short complex of the mod-two cyclic
-permutation representation. -/
+/-- Let G be a group, χ:G→Multiplicative(ZMod 2) a character,
+and A a ZMod 2-linear G-representation. The diagonal δ:A→Pχ(A)
+is constant inclusion and ε:Pχ(A)→A is summation of the two coordinates.
+Since ε∘δ=2•id_A=0, the diagonal and augmentation form
+this short complex of ZMod 2-representations. -/
 noncomputable def cyclicPermutationTwoShortComplex
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{uA} (ZMod 2) G) :
@@ -275,8 +311,11 @@ theorem cyclicPermutationTwoShortComplex_g
       cyclicPermutationAugmentation 2 chi A :=
   rfl
 
-/-- The mod-two cyclic permutation short complex is short exact in ordinary
-representations. -/
+/-- Let G be a group, χ:G→Multiplicative(ZMod 2) a character,
+and A a ZMod 2-linear G-representation. The diagonal δ:A→Pχ(A)
+is constant inclusion and ε:Pχ(A)→A is summation of the two coordinates.
+The diagonal/augmentation short complex is short exact in
+the representation category. -/
 theorem cyclicPermutationTwoShortComplex_shortExact
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{uA} (ZMod 2) G) :

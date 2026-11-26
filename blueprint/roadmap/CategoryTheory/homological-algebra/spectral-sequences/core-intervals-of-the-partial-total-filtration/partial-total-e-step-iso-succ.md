@@ -1,4 +1,6 @@
-# Partial Total E₁Step Iso Succ
+# The positive-column core interval in partial-total coordinates
 
-At filtration degree `m+1`, the core interval is isomorphic to the
-successor partial-total step.
+The positive-column core interval in partial-total coordinates.
+
+The interval for column `m+1` is isomorphic to the successor partial-total step from stage `m`
+to stage `m+1`.

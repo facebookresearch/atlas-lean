@@ -1,3 +1,5 @@
-# Skeletal Step Class To Page Cycles i
+# The step-class cycle lift recovers the page class map
 
-Including the cycle lift recovers the skeletal page class map.
+The step-class cycle lift recovers the page class map.
+
+Cycle inclusion composed after the lift equals skeletalStepClassToPage.

@@ -1,3 +1,5 @@
-# Short Pair
+# Compatible interval products have compatible short products
 
-Original compatible interval products preserve the actual short-interval product.
+Compatible interval products have compatible short products.
+
+Specialize the compatibility square to unit-width intervals.

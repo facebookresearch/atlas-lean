@@ -13,13 +13,22 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleGeometricStalkExactne
 public import MathlibExt.CategoryTheory.Sites.Point.Mates
 public import Mathlib.CategoryTheory.Sites.Point.Comap
 
-/-! # Actual inverse image preserves the original geometric stalks
+/-!
+# Geometric stalks of small étale inverse images
 
-The common stalk is the same original-neighborhood filtered colimit from the
-geometric exactness criterion. The canonical comparison is constructed from
-the actual original base-change maps and the same concrete adjunctions.
-Both identity and composition diagrams use the previously proved canonical
-sheaf-functor comparisons. No comparison or coherence premise is supplied.
+Let `f : X → Y` be a scheme morphism and `x : Spec Ω → X` a geometric point, with `Ω`
+separably closed in the scheme universe `u`. Base change identifies the fiber over `x` with
+the fiber over `x ≫ f`. The corresponding point-comap and sheaf-pullback comparisons give
+`stalk_x(f^*Q) ≅ stalk_(x≫f)(Q)` for abelian coefficients in universe `max u w`.
+
+The comparison is defined both with the point fiber in universe `u` and with its common-
+universe lift. Its right-adjoint mate identifies the skyscraper at `x ≫ f` with the skyscraper
+at `x` followed by direct image. On sections, this mate reindexes coefficient-product
+coordinates by the base-change fiber isomorphism.
+
+The geometric representative maps are the pullback projections. The point, stalk, and right-
+adjoint comparisons respect identity and composition through the canonical sheaf-image and
+image-point isomorphisms.
 -/
 
 @[expose] public section
@@ -30,10 +39,17 @@ universe u w
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
+/-- Small étale base change is continuous.
+
+For every scheme morphism `f : X → Y`, the small étale base-change functor is continuous from
+the topology of `Y` to that of `X`. -/
 instance smallEtaleBaseChangeIsContinuous {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleBaseChange f).IsContinuous Y.smallEtaleTopology X.smallEtaleTopology :=
   smallEtaleBaseChange_isContinuous f
 
+/-- Small étale base change is representably flat.
+
+The site base-change functor is representably flat, using its preservation of finite limits. -/
 instance smallEtaleBaseChangeRepresentablyFlat {X Y : Scheme.{u}} (f : X ⟶ Y) :
     RepresentablyFlat (smallEtaleBaseChange f) := by
   let : PreservesFiniteLimits (smallEtaleBaseChange f) :=
@@ -42,8 +58,10 @@ instance smallEtaleBaseChangeRepresentablyFlat {X Y : Scheme.{u}} (f : X ⟶ Y) 
 
 variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
-/-- The literal geometric fiber after actual base change identifies with the
-literal fiber at the same geometric point composed with the original `f`. -/
+/-- Geometric fiber comparison after base change.
+
+For `x : Spec Ω → X` over a separably closed field in universe `u`, base change along `f`
+followed by the fiber of `x` is naturally isomorphic to the fiber of `x ≫ f`. -/
 def smallEtaleBaseChangePointFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleBaseChange f ⋙ (Scheme.pointSmallEtale x).fiber ≅
@@ -55,8 +73,9 @@ def smallEtaleBaseChangePointFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (Functor.isoWhiskerLeft (Scheme.Etale.forget Y)
       ((CategoryTheory.Over.mapPullbackAdj f).compCoyonedaIso.app (op a))).symm
 
-/-- The category of actual geometric neighborhoods after base change is
-initially small, derived from the original image geometric point. -/
+/-- Base changed geometric neighborhoods are initially small.
+
+The elements category of the base-changed geometric fiber is initially small in universe `u`. -/
 instance smallEtaleBaseChangePointInitiallySmall {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     InitiallySmall.{u} (smallEtaleBaseChange f ⋙ (Scheme.pointSmallEtale x).fiber).Elements := by
@@ -68,13 +87,18 @@ instance smallEtaleBaseChangePointInitiallySmall {X Y : Scheme.{u}} (f : X ⟶ Y
         (Functor.Elements.structuredArrowEquivalence G).symm)
   exact initiallySmall_of_initial_of_initiallySmall.{u} e.inverse
 
-/-- The point obtained by the actual original small-site base change. -/
+/-- Comap of a geometric point along base change.
+
+The point of `X` defined by `x` has a comap point on `Y` along the covering-preserving base-
+change functor. -/
 def smallEtaleGeometricPointComap {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) : Y.smallEtaleTopology.Point.{u} :=
   (Scheme.pointSmallEtale x).comap (smallEtaleBaseChange f)
     (smallEtaleBaseChange_coverPreserving f)
 
-/-- This actual comap point is the original geometric point `x ≫ f`. -/
+/-- Geometric point comap is the image point.
+
+The comap point on `Y` is isomorphic to the geometric point defined by the composite `x ≫ f`. -/
 def smallEtaleGeometricPointComapIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleGeometricPointComap f x ≅ Scheme.pointSmallEtale (x ≫ f) where
@@ -87,8 +111,10 @@ def smallEtaleGeometricPointComapIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     apply GrothendieckTopology.Point.hom_ext
     exact (smallEtaleBaseChangePointFiberIso f x).inv_hom_id
 
-/-- The same point comparison induces the comparison of actual common-universe
-abelian-sheaf fiber functors. -/
+/-- Geometric comap identification on sheaf fibers.
+
+The comap-point identification induces an isomorphism of sheaf-fiber functors with the fiber
+at `x ≫ f`, for additive coefficients in `max u w`. -/
 def smallEtaleGeometricPointComapSheafFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleGeometricPointComap f x).sheafFiber (A := AddCommGrpCat.{max u w}) ≅
@@ -104,13 +130,19 @@ def smallEtaleGeometricPointComapSheafFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
       (smallEtaleGeometricPointComapIso f x).inv_hom_id]
     exact GrothendieckTopology.Point.Hom.sheafFiber_id _
 
+/-- Full site sheaf pushforward is a right adjoint.
+
+Continuous sheaf pushforward along small étale base change is right adjoint to the inverse-
+image construction. -/
 instance smallEtaleBaseChangePushforwardIsRightAdjoint {X Y : Scheme.{u}} (f : X ⟶ Y) :
     ((smallEtaleBaseChange f).sheafPushforwardContinuous AddCommGrpCat.{max u w}
       Y.smallEtaleTopology X.smallEtaleTopology).IsRightAdjoint :=
   (smallEtaleInverseImageAdjunction.{u, w} f).isRightAdjoint
 
-/-- The actual affine construction is the same left adjoint as the chosen
-full original-site pullback; no full-site presheaf Kan premise is needed. -/
+/-- Affine inverse image agrees with full site sheaf pullback.
+
+The affine-basis inverse-image functor is naturally isomorphic to sheaf pullback along the
+full small étale base-change functor. -/
 def smallEtaleInverseImageFullSitePullbackIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleInverseImage.{u, w} f ≅
       (smallEtaleBaseChange f).sheafPullback AddCommGrpCat.{max u w}
@@ -119,8 +151,10 @@ def smallEtaleInverseImageFullSitePullbackIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
     ((smallEtaleBaseChange f).sheafAdjunctionContinuous AddCommGrpCat.{max u w}
       Y.smallEtaleTopology X.smallEtaleTopology)
 
-/-- Actual inverse-image stalks are the original stalks at the image geometric
-point, naturally on every common-universe sheaf and sheaf morphism. -/
+/-- Inverse image preserves geometric stalks.
+
+For common-universe abelian coefficients, inverse image followed by the geometric stalk at `x`
+is naturally isomorphic to the stalk at `x ≫ f`. -/
 def smallEtaleInverseImageGeometricStalkIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleInverseImage.{u, w} f ⋙
@@ -132,16 +166,20 @@ def smallEtaleInverseImageGeometricStalkIso {X Y : Scheme.{u}} (f : X ⟶ Y)
       (smallEtaleBaseChange_coverPreserving f) AddCommGrpCat.{max u w}).symm ≪≫
     smallEtaleGeometricPointComapSheafFiberIso.{u, w} f x
 
-/-- The actual geometric stalk functor preserves finite limits in the common
-coefficient universe. -/
+/-- Geometric sheaf fibers preserve finite limits.
+
+The geometric stalk functor with additive-group coefficients in `max u w` preserves finite
+limits. -/
 theorem smallEtaleGeometricSheafFiber_preservesFiniteLimits {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) :
     PreservesFiniteLimits ((Scheme.pointSmallEtale x).sheafFiber
       (A := AddCommGrpCat.{max u w})) := by
   infer_instance
 
-/-- After every actual geometric point, inverse image preserves finite limits.
-This statement does not assume conservativity in a larger coefficient universe. -/
+/-- Inverse image followed by a geometric stalk preserves finite limits.
+
+The composite of inverse image along `f` and the geometric stalk at `x` preserves finite
+limits. -/
 theorem smallEtaleInverseImageAtGeometricPoint_preservesFiniteLimits
     {X Y : Scheme.{u}} (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X) :
     PreservesFiniteLimits (smallEtaleInverseImage.{u, w} f ⋙
@@ -152,8 +190,10 @@ theorem smallEtaleInverseImageAtGeometricPoint_preservesFiniteLimits
   exact preservesFiniteLimits_of_natIso
     (smallEtaleInverseImageGeometricStalkIso.{u, w} f x).symm
 
-/-- The original geometric point's common-universe fiber after base change
-is the same original image point's lifted fiber. -/
+/-- Lifted geometric fiber comparison after base change.
+
+Lift the geometric fiber comparison to obtain a natural isomorphism from base change followed
+by the common point's fiber to the common fiber of `x ≫ f`. -/
 def smallEtaleBaseChangeCommonPointFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleBaseChange f ⋙ (smallEtaleGeometricPointCommon.{u, w} x).fiber ≅
@@ -162,6 +202,10 @@ def smallEtaleBaseChangeCommonPointFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     uliftFunctor.{w, u}).symm ≪≫
       Functor.isoWhiskerRight (smallEtaleBaseChangePointFiberIso f x) uliftFunctor.{w, u}
 
+/-- Lifted base changed neighborhoods are initially small.
+
+The elements category of base change followed by the lifted geometric fiber is initially small
+in `max u w`. -/
 instance smallEtaleBaseChangeCommonPointInitiallySmall {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     InitiallySmall.{max u w}
@@ -174,13 +218,18 @@ instance smallEtaleBaseChangeCommonPointInitiallySmall {X Y : Scheme.{u}} (f : X
         (Functor.Elements.structuredArrowEquivalence G).symm)
   exact initiallySmall_of_initial_of_initiallySmall e.inverse
 
-/-- The actual common-universe comap point along the original base change. -/
+/-- Comap of a lifted geometric point along base change.
+
+The common-universe point of `X` has a comap point on `Y` along the small étale base-change
+functor. -/
 def smallEtaleCommonGeometricPointComap {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) : Y.smallEtaleTopology.Point.{max u w} :=
   (smallEtaleGeometricPointCommon.{u, w} x).comap (smallEtaleBaseChange f)
     (smallEtaleBaseChange_coverPreserving f)
 
-/-- The common-universe comap is the same prescribed original image geometric point. -/
+/-- Lifted geometric point comap is the image point.
+
+The common-universe comap point is isomorphic to the lifted geometric point at `x ≫ f`. -/
 def smallEtaleCommonGeometricPointComapIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleCommonGeometricPointComap.{u, w} f x ≅
@@ -194,7 +243,10 @@ def smallEtaleCommonGeometricPointComapIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     apply GrothendieckTopology.Point.hom_ext
     exact (smallEtaleBaseChangeCommonPointFiberIso.{u, w} f x).inv_hom_id
 
-/-- The same point comparison induces the comparison of actual abelian-sheaf stalks. -/
+/-- Lifted comap identification on sheaf fibers.
+
+The common comap-point isomorphism identifies its sheaf-fiber functor with the common
+geometric stalk at `x ≫ f`. -/
 def smallEtaleCommonGeometricPointComapSheafFiberIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleCommonGeometricPointComap.{u, w} f x).sheafFiber
@@ -212,7 +264,10 @@ def smallEtaleCommonGeometricPointComapSheafFiberIso {X Y : Scheme.{u}} (f : X �
       (smallEtaleCommonGeometricPointComapIso.{u, w} f x).inv_hom_id]
     exact GrothendieckTopology.Point.Hom.sheafFiber_id _
 
-/-- Actual inverse image has the original image-point stalk in the same common universe. -/
+/-- Inverse image preserves common universe geometric stalks.
+
+The canonical inverse-image functor followed by the common stalk at `x` is naturally
+isomorphic to the common stalk at `x ≫ f`. -/
 def smallEtaleInverseImageCommonGeometricStalkIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleInverseImage.{u, w} f ⋙
@@ -225,12 +280,19 @@ def smallEtaleInverseImageCommonGeometricStalkIso {X Y : Scheme.{u}} (f : X ⟶ 
       (smallEtaleBaseChange_coverPreserving f) AddCommGrpCat.{max u w}).symm ≪≫
     smallEtaleCommonGeometricPointComapSheafFiberIso.{u, w} f x
 
+/-- Common universe geometric sheaf fibers preserve finite limits.
+
+The common geometric stalk functor preserves finite limits of abelian sheaves. -/
 theorem smallEtaleCommonGeometricSheafFiber_preservesFiniteLimits {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) :
     PreservesFiniteLimits ((smallEtaleGeometricPointCommon.{u, w} x).sheafFiber
       (A := AddCommGrpCat.{max u w})) := by
   infer_instance
 
+/-- Inverse image followed by a common universe stalk preserves finite limits.
+
+Inverse image followed by the common geometric stalk at `x` preserves finite limits, through
+its comparison with the image-point stalk. -/
 theorem smallEtaleInverseImageAtCommonGeometricPoint_preservesFiniteLimits
     {X Y : Scheme.{u}} (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X) :
     PreservesFiniteLimits (smallEtaleInverseImage.{u, w} f ⋙
@@ -249,7 +311,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
-/-- The right-adjoint comparison belonging to the same actual common-point stalk isomorphism. -/
+/-- Right adjoint comparison for common universe stalk preservation.
+
+The adjunction mate identifies the skyscraper functor at `x ≫ f` with the skyscraper functor
+at `x` followed by direct image along `f`. -/
 def smallEtaleInverseImageCommonGeometricStalkRightIso {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleGeometricPointCommon.{u, w} (x ≫ f)).skyscraperSheafFunctor
@@ -264,7 +329,10 @@ def smallEtaleInverseImageCommonGeometricStalkRightIso {X Y : Scheme.{u}} (f : X
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The same stalk comparison has the mate supplied by its actual comap-point morphism. -/
+/-- Forward stalk right adjoint comparison is the comap mate.
+
+The forward right-adjoint comparison equals the adjunction conjugate of the comap-point sheaf-
+fiber identification. -/
 theorem smallEtaleInverseImageCommonGeometricStalkRightIso_hom_eq
     {X Y : Scheme.{u}} (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleInverseImageCommonGeometricStalkRightIso.{u, w} f x).hom =
@@ -309,8 +377,11 @@ theorem smallEtaleInverseImageCommonGeometricStalkRightIso_hom_eq
       (a'.comp Φ.skyscraperSheafAdjunction) (a.comp Φ.skyscraperSheafAdjunction), hc, hu]
   simp
 
-/-- The same actual stalk comparison's mate sends each product coordinate
-through the original geometric base-change fiber map. -/
+/-- Stalk right adjoint comparison reindexes skyscraper coordinates.
+
+At coefficient group `M` and étale object `U`, projection after the right-adjoint comparison
+at a base-changed fiber element `z` equals projection at its image under the forward common
+fiber comparison. -/
 theorem smallEtaleInverseImageCommonGeometricStalkRightIso_hom_app_π
     {X Y : Scheme.{u}} (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w}) (U : Y.Etale)
@@ -332,7 +403,10 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The original base-change fiber comparison is the pullback projection on neighborhoods. -/
+/-- Geometric fiber comparison uses the pullback projection.
+
+The underlying scheme map of a fiber element after the comparison is its given map followed by
+the first projection `U ×_Y X → U`. -/
 theorem smallEtaleBaseChangePointFiberIso_hom_app_left {X Y : Scheme.{u}}
     (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X) (U : Y.Etale)
     (z : (Scheme.pointSmallEtale x).fiber.obj ((smallEtaleBaseChange f).obj U)) :
@@ -342,7 +416,10 @@ theorem smallEtaleBaseChangePointFiberIso_hom_app_left {X Y : Scheme.{u}}
     ((Scheme.Etale.forget Y).obj U)).symm z).left = z.left ≫ pullback.fst U.hom f
   simp [CategoryTheory.Over.mapPullbackAdj]
 
-/-- The common-universe comparison preserves the same original neighborhood projection. -/
+/-- Lifted geometric fiber comparison uses the pullback projection.
+
+After lowering the lifted fiber element, the forward comparison's scheme map is its underlying
+map followed by the first pullback projection. -/
 theorem smallEtaleBaseChangeCommonPointFiberIso_hom_app_down_left {X Y : Scheme.{u}}
     (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X) (U : Y.Etale)
     (z : (smallEtaleGeometricPointCommon.{u, w} x).fiber.obj ((smallEtaleBaseChange f).obj U)) :
@@ -350,26 +427,36 @@ theorem smallEtaleBaseChangeCommonPointFiberIso_hom_app_down_left {X Y : Scheme.
       z.down.left ≫ pullback.fst U.hom f := by
   exact smallEtaleBaseChangePointFiberIso_hom_app_left f x U z.down
 
-/-- Actual common geometric fibers send an original neighborhood arrow to composition. -/
+/-- Lifted geometric fiber maps use the étale arrow.
+
+For an étale arrow `g`, the lowered scheme map of the image fiber element is the given lowered
+scheme map composed with `g.left`. -/
 theorem smallEtaleGeometricPointCommon_map_down_left {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) {U V : X.Etale} (g : U ⟶ V)
     (z : (smallEtaleGeometricPointCommon.{u, w} x).fiber.obj U) :
     ((smallEtaleGeometricPointCommon.{u, w} x).fiber.map g z).down.left = z.down.left ≫ g.left :=
   rfl
 
-/-- The canonical original image-point comparison for the identity morphism. -/
+/-- Geometric image of the identity has the same fiber.
+
+The geometric fiber at `x ≫ 𝟙 X` is naturally isomorphic to the fiber at `x`. -/
 def smallEtaleGeometricImageIdFiberIso {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     (Scheme.pointSmallEtale (x ≫ 𝟙 X)).fiber ≅ (Scheme.pointSmallEtale x).fiber :=
   Functor.isoWhiskerLeft (Scheme.Etale.forget X)
     (coyoneda.mapIso (((CategoryTheory.Over.mapId X).app (CategoryTheory.Over.mk x)).op))
 
-/-- The same identity image comparison in the common fiber-element universe. -/
+/-- Lifted geometric image of the identity has the same fiber.
+
+Lift the identity-image geometric fiber isomorphism to the common point universe. -/
 def smallEtaleCommonGeometricImageIdFiberIso {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleGeometricPointCommon.{u, w} (x ≫ 𝟙 X)).fiber ≅
       (smallEtaleGeometricPointCommon.{u, w} x).fiber :=
   Functor.isoWhiskerRight (smallEtaleGeometricImageIdFiberIso x) uliftFunctor.{w, u}
 
-/-- The canonical original comparison of iterated and single image geometric points. -/
+/-- Successive geometric images have the composite fiber.
+
+The geometric fibers at `(x ≫ f) ≫ g` and `x ≫ (f ≫ g)` are naturally isomorphic through
+scheme-composition associativity. -/
 def smallEtaleGeometricImageCompFiberIso {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     (Scheme.pointSmallEtale ((x ≫ f) ≫ g)).fiber ≅
@@ -378,7 +465,10 @@ def smallEtaleGeometricImageCompFiberIso {X Y Z : Scheme.{u}}
     (coyoneda.mapIso (((CategoryTheory.Over.mapComp f g).app
       (CategoryTheory.Over.mk x)).symm.op))
 
-/-- The same actual composition image comparison in the common fiber-element universe. -/
+/-- Successive lifted geometric images have the composite fiber.
+
+The common-universe fibers of the two parenthesizations of the image geometric point are
+naturally isomorphic. -/
 def smallEtaleCommonGeometricImageCompFiberIso {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleGeometricPointCommon.{u, w} ((x ≫ f) ≫ g)).fiber ≅
@@ -387,7 +477,10 @@ def smallEtaleCommonGeometricImageCompFiberIso {X Y Z : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- Identity image transport retains the original geometric neighborhood map. -/
+/-- Lifted geometric identity coordinate preserves the underlying map.
+
+The forward identity-image fiber coordinate preserves the scheme map of the lowered geometric
+element. -/
 theorem smallEtaleCommonGeometricImageIdFiberIso_hom_app_down_left {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) (U : X.Etale)
     (z : (smallEtaleGeometricPointCommon.{u, w} (x ≫ 𝟙 X)).fiber.obj U) :
@@ -398,7 +491,10 @@ theorem smallEtaleCommonGeometricImageIdFiberIso_hom_app_down_left {X : Scheme.{
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- Composition image transport retains the original geometric neighborhood map. -/
+/-- Lifted geometric composite coordinate preserves the underlying map.
+
+The forward image-composition fiber coordinate preserves the scheme map of the lowered
+geometric element. -/
 theorem smallEtaleCommonGeometricImageCompFiberIso_hom_app_down_left {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) (U : Z.Etale)
     (z : (smallEtaleGeometricPointCommon.{u, w} ((x ≫ f) ≫ g)).fiber.obj U) :
@@ -416,8 +512,10 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The single fiber-product projection is the iterated projection under the
-same canonical base-change comparison. -/
+/-- Inverse base change composition preserves the iterated first projection.
+
+The inverse base-change composition map followed by the first projection of the composite
+pullback equals the composite of the two first projections of the iterated pullback. -/
 theorem smallEtaleBaseChangeComp_inv_app_left_fst {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (U : Z.Etale) :
     ((smallEtaleBaseChangeComp f g).inv.app U).left ≫ pullback.fst U.hom (f ≫ g) =
@@ -427,8 +525,10 @@ theorem smallEtaleBaseChangeComp_inv_app_left_fst {X Y Z : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The actual identity base-change fiber comparison agrees with the canonical
-original image-point identity and the preceding BaseId comparison. -/
+/-- Lifted base change fiber comparisons respect identity.
+
+The identity base-change fiber comparison followed by the identity-image fiber coordinate
+equals the base-change identity isomorphism whiskered with the point fiber and its unitor. -/
 theorem smallEtaleBaseChangeCommonPointFiberIso_id {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleBaseChangeCommonPointFiberIso.{u, w} (𝟙 X) x ≪≫
@@ -454,8 +554,10 @@ theorem smallEtaleBaseChangeCommonPointFiberIso_id {X : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The two actual base-change fiber comparisons agree with the same original
-image-point composition and the preceding BaseComp comparison. -/
+/-- Lifted base change fiber comparisons respect composition.
+
+The two successive fiber comparisons, followed by the image-associativity coordinate, equal
+the composite fiber comparison after base-change composition and the functor associator. -/
 theorem smallEtaleBaseChangeCommonPointFiberIso_comp {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     Functor.isoWhiskerLeft (smallEtaleBaseChange g)
@@ -503,7 +605,10 @@ theorem smallEtaleBaseChangeCommonPointFiberIso_comp {X Y Z : Scheme.{u}}
           ((smallEtaleBaseChangeComp f g).inv.app U) z).symm
     _ = _ := (smallEtaleBaseChangeCommonPointFiberIso_hom_app_down_left (f ≫ g) x U _).symm
 
-/-- Canonical identity comparison of the original common geometric points. -/
+/-- Lifted identity image is isomorphic to the geometric point.
+
+The fiber identity comparison gives an isomorphism of common geometric points from the
+identity image back to `x`. -/
 def smallEtaleCommonGeometricImageIdIso {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     smallEtaleGeometricPointCommon.{u, w} (x ≫ 𝟙 X) ≅ smallEtaleGeometricPointCommon.{u, w} x where
   hom := ⟨(smallEtaleCommonGeometricImageIdFiberIso.{u, w} x).inv⟩
@@ -515,7 +620,10 @@ def smallEtaleCommonGeometricImageIdIso {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ 
     apply GrothendieckTopology.Point.hom_ext
     exact (smallEtaleCommonGeometricImageIdFiberIso.{u, w} x).inv_hom_id
 
-/-- Canonical comparison of the iterated and single original image geometric points. -/
+/-- Successive lifted images are isomorphic to the composite point.
+
+The fiber associativity comparison gives an isomorphism between the common geometric points of
+the two image-composition parentheses. -/
 def smallEtaleCommonGeometricImageCompIso {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     smallEtaleGeometricPointCommon.{u, w} ((x ≫ f) ≫ g) ≅
@@ -529,7 +637,10 @@ def smallEtaleCommonGeometricImageCompIso {X Y Z : Scheme.{u}}
     apply GrothendieckTopology.Point.hom_ext
     exact (smallEtaleCommonGeometricImageCompFiberIso.{u, w} f g x).inv_hom_id
 
-/-- The same image-point identity comparison on actual common geometric stalks. -/
+/-- Geometric identity image stalk coordinate.
+
+The identity-image point isomorphism induces a natural isomorphism from the common stalk at `x
+≫ 𝟙 X` to the common stalk at `x`. -/
 def smallEtaleCommonGeometricStalkImageIdIso {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     smallEtaleCommonGeometricStalk.{u, w} (x ≫ 𝟙 X) ≅ smallEtaleCommonGeometricStalk.{u, w} x where
   hom := (smallEtaleCommonGeometricImageIdIso.{u, w} x).inv.sheafFiber
@@ -543,7 +654,10 @@ def smallEtaleCommonGeometricStalkImageIdIso {X : Scheme.{u}} (x : Spec (.of Ω)
       (smallEtaleCommonGeometricImageIdIso.{u, w} x).inv_hom_id]
     exact GrothendieckTopology.Point.Hom.sheafFiber_id _
 
-/-- The same image-point composition comparison on actual common geometric stalks. -/
+/-- Geometric composite image stalk coordinate.
+
+The image-associativity point isomorphism induces the natural stalk isomorphism for the two
+parenthesizations of the image point. -/
 def smallEtaleCommonGeometricStalkImageCompIso {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     smallEtaleCommonGeometricStalk.{u, w} ((x ≫ f) ≫ g) ≅
@@ -567,7 +681,10 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The inverse of the same DI identity comparison is the original restriction along BaseId. -/
+/-- Inverse direct image identity comparison on sections.
+
+The inverse direct-image identity component acts on sections by restriction along the forward
+base-change identity map. -/
 theorem smallEtaleDirectImageIdIso_inv_app_hom_app (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : X.Etaleᵒᵖ) :
     ((smallEtaleDirectImageIdIso.{u, w} X).inv.app Q).hom.app U =
@@ -579,7 +696,11 @@ theorem smallEtaleDirectImageIdIso_inv_app_hom_app (X : Scheme.{u})
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The right mate of the same κ identity comparison has the original BaseId coordinates. -/
+/-- Identity right adjoint stalk comparison on skyscraper coordinates.
+
+At every coefficient group, étale object, and fiber index, the point-identity mate followed by
+the identity stalk right comparison agrees with the inverse direct-image identity path after
+projection. -/
 theorem smallEtaleCommonStalkRightId_app_π {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w}) (U : X.Etale)
     (z : (smallEtaleGeometricPointCommon.{u, w} x).fiber.obj ((smallEtaleBaseChange (𝟙 X)).obj U)) :
@@ -623,7 +744,10 @@ theorem smallEtaleCommonStalkRightId_app_π {X : Scheme.{u}} (x : Spec (.of Ω) 
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The actual right-adjoint identity diagram for the same κ. -/
+/-- Right adjoint stalk comparisons respect identity.
+
+The point-identity mate followed by the identity stalk right comparison equals the inverse
+skyscraper unitor followed by the whiskered inverse direct-image identity comparison. -/
 theorem smallEtaleCommonStalkRightId {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     conjugateEquiv
         (smallEtaleGeometricPointCommon.{u, w} x).skyscraperSheafAdjunction
@@ -655,8 +779,10 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The same κ agrees with the accepted actual inverse-image identity
-comparison and canonical original image-point identity transport. -/
+/-- Inverse image stalk comparisons respect identity.
+
+The identity inverse-image stalk comparison followed by the point-identity stalk coordinate
+equals the inverse-image identity comparison whiskered with the stalk functor and its unitor. -/
 theorem smallEtaleInverseImageCommonGeometricStalkIso_id {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) :
     smallEtaleInverseImageCommonGeometricStalkIso.{u, w} (𝟙 X) x ≪≫
@@ -711,7 +837,10 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The inverse of the accepted DI composition comparison is restriction along BaseComp.inv. -/
+/-- Inverse direct image composition comparison on sections.
+
+The inverse direct-image composition component acts by restriction along the inverse base-
+change composition isomorphism. -/
 theorem smallEtaleDirectImageCompIso_inv_app_hom_app {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z)
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : Z.Etaleᵒᵖ) :
@@ -724,7 +853,11 @@ theorem smallEtaleDirectImageCompIso_inv_app_hom_app {X Y Z : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- Both actual κ composition routes have the same original product coordinates. -/
+/-- Composite right adjoint stalk comparison on skyscraper coordinates.
+
+After the image-associativity mate, the two successive stalk right comparisons agree at every
+skyscraper coordinate with the composite stalk right comparison followed by the inverse
+direct-image composition comparison. -/
 theorem smallEtaleCommonStalkRightComp_app_π {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w}) (U : Z.Etale)
@@ -791,7 +924,11 @@ theorem smallEtaleCommonStalkRightComp_app_π {X Y Z : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The same κ right-adjoint comparison agrees with the accepted DI composition law. -/
+/-- Right adjoint stalk comparisons respect composition.
+
+The image-associativity mate and the two successive right-adjoint stalk comparisons, with
+their functor associator, equal the composite right comparison followed by the whiskered
+inverse direct-image composition coordinate. -/
 theorem smallEtaleCommonStalkRightComp {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     conjugateEquiv
@@ -829,7 +966,10 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The accepted LF composition's forward map has the same actual DI inverse as mate. -/
+/-- Forward inverse image composition comparison is the inverse direct image mate.
+
+Under adjunction conjugation, the forward inverse-image composition map corresponds to the
+inverse direct-image composition map. -/
 theorem smallEtaleInverseImageCompIso_hom_mate {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) :
     conjugateEquiv (smallEtaleInverseImageAdjunction.{u, w} (f ≫ g))
@@ -843,8 +983,11 @@ theorem smallEtaleInverseImageCompIso_hom_mate {X Y Z : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The same κ agrees with the accepted actual inverse-image composition
-and the canonical original image-point composition transport. -/
+/-- Inverse image stalk comparisons respect composition.
+
+Successive inverse images and their stalk comparisons, with the functor associator and image-
+point composition coordinate, equal the inverse-image composition comparison followed by the
+stalk comparison for `f ≫ g`. -/
 theorem smallEtaleInverseImageCommonGeometricStalkIso_comp {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (x : Spec (.of Ω) ⟶ X) :
     Functor.associator (smallEtaleInverseImage.{u, w} g) (smallEtaleInverseImage.{u, w} f)
@@ -907,9 +1050,12 @@ end AlgebraicGeometry.Scheme.DerivedSections
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The complete original geometric-stalk comparison family, with its actual
-additive values, naturality, original-neighborhood coordinate law, and both
-identity/composition compatibility diagrams for the same canonical κ. -/
+/-- Natural coherent preservation of common universe geometric stalks.
+
+For every scheme map and geometric point over a separably closed field in universe `u`, the
+common stalk comparison is an additive equivalence natural in sheaf maps. Its right-adjoint
+section coordinates are the stated fiber reindexings, and the comparisons satisfy the identity
+and composition equations. -/
 theorem original_small_etale_inverse_image_stalks :
     (∀ {X Y : Scheme.{u}} (f : X ⟶ Y) {Ω : Type u} [Field Ω] [IsSepClosed Ω]
         (x : Spec (.of Ω) ⟶ X),

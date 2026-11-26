@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Adjunction
+# Geometric Galois stalk is left adjoint to the invariant inverse sheaf
 
-The actual adjunction is constructed from that correspondence, not supplied as a premise.
+Geometric Galois stalk is left adjoint to the invariant inverse sheaf.
+
+The natural equivariant Hom correspondence defines the field stalk/inverse-sheaf adjunction.

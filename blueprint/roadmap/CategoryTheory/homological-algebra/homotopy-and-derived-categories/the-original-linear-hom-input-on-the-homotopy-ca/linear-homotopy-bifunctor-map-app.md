@@ -1,3 +1,6 @@
-# Linear Homotopy Bifunctor map app
+# Source component of the homotopy Hom bifunctor
 
-Each original first-variable map retains its actual precomposition class.
+Source component of the homotopy Hom bifunctor.
+
+For `f : P' ⟶ P`, the source-variable transformation at `L` is the quotient class of
+`linearComplexMap R f (𝟙 L.as)`.

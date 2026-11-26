@@ -14,11 +14,13 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.Basic
 
 /-!
-# Regular-module automorphisms over rings with trivial units
+# Regular-module automorphisms with a trivial unit group
 
-A regular-module automorphism is multiplication by a coefficient unit. A
-trivial unit group therefore makes every such automorphism the identity and
-every pair of regular-module isomorphism generators equal.
+For an arbitrary ring R, an R-linear endomorphism of the left regular module has the form r ↦
+r·a, where a is its value at 1. An automorphism makes a a unit of R. If Rˣ is a subsingleton,
+every such automorphism is therefore the identity.
+
+Consequently any two isomorphisms from the regular module R to the same module M are equal.
 -/
 
 @[expose] public section
@@ -33,7 +35,10 @@ private theorem regularHom_apply {R : Type u} [Ring R]
     f.hom r = r * f.hom 1 := by
   simpa only [smul_eq_mul, mul_one] using f.hom.map_smul r (1 : R)
 
-/-- A trivial coefficient unit group makes every regular-module automorphism the identity. -/
+/-- Regular-module automorphisms are trivial when the unit group is trivial.
+
+For a ring R with Subsingleton Rˣ, every isomorphism R ≅ R in ModuleCat R has identity forward
+morphism. -/
 theorem regularIso_hom_eq_id {R : Type u} [Ring R] [Subsingleton Rˣ]
     (e : ModuleCat.of R R ≅ ModuleCat.of R R) : e.hom = 𝟙 _ := by
   let a : R := e.hom.hom 1
@@ -56,7 +61,10 @@ theorem regularIso_hom_eq_id {R : Type u} [Ring R] [Subsingleton Rˣ]
   change r * a = r
   rw [ha, mul_one]
 
-/-- Actual isomorphism generators of any module agree when the coefficient unit group is trivial. -/
+/-- Uniqueness of isomorphisms from the regular module.
+
+For a ring R with a subsingleton unit group, any two morphisms f,g : R → M that are
+isomorphisms are equal. -/
 theorem isIso_regular_hom_unique {R : Type u} [Ring R] [Subsingleton Rˣ]
     {M : ModuleCat.{u} R} (f g : ModuleCat.of R R ⟶ M) [IsIso f] [IsIso g] : f = g := by
   have hfg : f ≫ inv g = 𝟙 _ := regularIso_hom_eq_id (asIso f ≪≫ (asIso g).symm)

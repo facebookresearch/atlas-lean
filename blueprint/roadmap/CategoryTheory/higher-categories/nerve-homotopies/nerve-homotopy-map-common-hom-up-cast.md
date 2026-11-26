@@ -1,4 +1,6 @@
-# Nerve Homotopy Map Common Hom Up cast
+# Cylinder maps under equality transport of endpoint functors
 
-Actual source/target functor equality transports retain the WHOLE
-original native cylinder. No transformation or map is supplied as a replacement.
+Cylinder maps under equality transport of endpoint functors.
+
+For equalities F = F′ and G = G′, transporting α by eqToHom on both endpoints leaves its
+common-morphism-universe cylinder map unchanged.

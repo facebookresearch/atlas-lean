@@ -1,4 +1,5 @@
-# Induced Bar Unit Cochain eq ind V mk
+# The universal induced-bar cochain in coinvariant coordinates
 
-The induction-unit cochain is the canonical induced class with ambient
-group coordinate one.
+The universal induced-bar cochain in coinvariant coordinates.
+
+At a tuple q, the universal cochain is IndV.mk(1,barBasis n q).

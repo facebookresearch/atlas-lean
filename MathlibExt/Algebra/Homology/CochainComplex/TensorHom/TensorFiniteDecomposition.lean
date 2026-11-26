@@ -15,11 +15,14 @@ public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.FiniteCoordin
 public import Mathlib.Data.Int.Interval
 
 /-!
-# Finite support in tensor sum degrees
+# Finite cell decompositions of tensor-total degrees
 
-Cell projections and coprojections resolve the total identity when the
-nonzero cells have finite support. A bounded right factor gives this
-identity for an arbitrary left factor.
+In a cochain tensor total, the cell of factor degree `b` in total degree `q` is `J^(q-b) ⊗
+U^b`. If all nonzero cells occur in a finite set of such degrees, the identity of the total
+object is the sum of the cell projections followed by their coprojections.
+
+When `U` vanishes below `L` and above `N`, the finite set can be `[L, N]`, with no support
+restriction on `J`. These identities use the same direct-sum total objects.
 -/
 
 @[expose] public section
@@ -39,8 +42,10 @@ local instance (K L : CochainComplex (ModuleCat.{v} R) ℤ) :
   intro n
   infer_instance
 
-/-- Finite support of the original coefficient cells gives the identity of the
-original sum-total degree, with its original projections and coprojections. -/
+/-- Tensor-total identity is a finite sum of cell projection and reinclusion.
+
+If the cell `J^(q-b) ⊗ U^b` is zero for every `b` outside a finite set `s`, then the identity
+in total degree `q` is `∑ b ∈ s, π_b ≫ ι_b` for its tensor-cell projections and coprojections. -/
 theorem tensorDegree_id_eq_sum_of_support
     (J U : CochainComplex (ModuleCat.{v} R) ℤ) (q : ℤ) (s : Finset ℤ)
     (hCell : ∀ b : ℤ, b ∉ s →
@@ -79,8 +84,10 @@ theorem tensorDegree_id_eq_sum_of_support
         rw [← Category.assoc, hi, Category.id_comp]
   · exact (hCell b hb).eq_of_src _ _
 
-/-- A bounded original right factor gives finite support for every native total
-degree, while the original left factor remains arbitrary. -/
+/-- Bounded right factor gives the finite tensor-cell identity decomposition.
+
+If `U^b` vanishes below `L` and above `N`, then in every total degree `q`, the identity is the
+sum of cell projection followed by reinclusion over `b ∈ Finset.Icc L N`. -/
 theorem tensorDegree_id_eq_sum_of_bounded_right
     (J U : CochainComplex (ModuleCat.{v} R) ℤ) (L N q : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))

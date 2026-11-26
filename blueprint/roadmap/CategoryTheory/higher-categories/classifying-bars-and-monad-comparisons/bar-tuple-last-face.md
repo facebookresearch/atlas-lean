@@ -1,8 +1,6 @@
-# Bar Tuple last face
+# The last bar face removes the last coordinate
 
-Bar-side last-face tuple formula.
+The last bar face removes the last coordinate.
 
-`barTuple` of the last face drops the tail: unfold the face to the left
-point action (`barFaceApp_of_val_last`), read both sides through the
-generalized reader, and apply `genLastFst`. No induction here; the induction
-lives once in `genMapSnd`/`genMapFst`.
+For a face index i with i = n+1 on a degree-(n+1) bar element, the tuple of its face is
+Fin.init of the original tuple.

@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Stalk Image Comp Iso
+# Geometric composite image stalk coordinate
 
-The same image-point composition comparison on actual common geometric stalks.
+Geometric composite image stalk coordinate.
+
+The image-associativity point isomorphism induces the natural stalk isomorphism for the two
+parenthesizations of the image point.

@@ -12,16 +12,16 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.FieldSiteModuleCohomologyNaturality
 
 /-!
-# Étale and Galois cohomology over a field
+# Étale cohomology and continuous Galois cohomology
 
-For every sheaf of abelian groups in the common universe, the original small
-étale cohomology is identified with the original continuous homogeneous
-cohomology of its geometric fiber. The comparison is the canonical Ext-to-Γ
-map followed by the existing Γ-to-continuous-cohomology isomorphism.
+For a field `k` with a prescribed separable closure `Ω`, the geometric fiber of a common-
+universe abelian sheaf is a discrete Galois module. Its small étale cohomology is additively
+equivalent in every natural degree to continuous homogeneous cohomology of that module.
 
-The same maps respect every coefficient arrow, the original Yoneda connecting
-maps, and the independently constructed field pullback. No coefficient lift,
-cochain family, connecting map, or comparison square is supplied as an input.
+The comparison is the normalized Ext-to-derived-section map followed by the derived-section-
+to-continuous-cohomology isomorphism. It commutes with coefficient maps and connecting
+morphisms. Compatible maps of fields and their closures give pullback maps, computed by group
+restriction and the field-change stalk comparison.
 -/
 
 @[expose] public section
@@ -124,16 +124,25 @@ private theorem comparisonSquareObjectTransport.{v}
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 attribute [local instance] IsSepClosure.sep_closed
 
+/-- Field geometric stalk functor is additive.
+
+The geometric-stalk functor to discrete Galois modules preserves sums of sheaf morphisms. -/
 local instance fieldEtaleGeometricStalkAdditive :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).Additive :=
   fieldGeometricStalkGaloisFunctor_additive.{u, w} k Ω
 
+/-- Field geometric stalk functor preserves zero maps.
+
+The geometric-stalk Galois-module functor sends a zero sheaf morphism to a zero morphism. -/
 local instance fieldEtaleGeometricStalkPreservesZero :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).PreservesZeroMorphisms := by
   infer_instance
 
-/-- The original small étale cohomology, through its canonical derived-Γ map,
-is identified with continuous cohomology of the same geometric fiber. -/
+/-- Field étale cohomology compares with continuous Galois cohomology.
+
+For every common-universe sheaf `Q` and natural `q`, compose the canonical cohomology-to-
+derived-section equivalence with the derived-section continuous-cohomology isomorphism of its
+geometric fiber. -/
 def fieldEtaleContinuousEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ) :
     Sheaf.H.{max u w, max u w, u, u + 1} Q q ≃+
@@ -143,7 +152,10 @@ def fieldEtaleContinuousEquiv
     ((fieldDerivedSectionsContinuousCohomologyIso.{u, w}
       k Ω q).app Q).addCommGroupIsoToAddEquiv
 
-/-- The comparison uses the literal canonical Γ map and the accepted native component. -/
+/-- Value of the field cohomology comparison.
+
+The equivalence sends a class first through the canonical derived-section coordinate and then
+through the field continuous-cohomology coordinate. -/
 theorem fieldEtaleContinuousEquiv_apply
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (x : Sheaf.H.{max u w, max u w, u, u + 1} Q q) :
@@ -151,8 +163,10 @@ theorem fieldEtaleContinuousEquiv_apply
       (fieldDerivedSectionsContinuousCohomologyIso.{u, w} k Ω q).hom.app Q
         (CanonicalLongExactSequence.canonicalEquiv.{u, w} (Spec (.of k)) Q q x) := rfl
 
-/-- The right-hand object is the original homogeneous-cochain homology of the
-same fiber module, with the original scalar, group, and coefficient universe indices. -/
+/-- Continuous field cohomology uses the homogeneous cochain model.
+
+The target group is the underlying additive group of degree-`q` homology of continuous
+homogeneous cochains of the geometric-fiber discrete representation. -/
 theorem fieldEtaleContinuousEquiv_native_model
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ) :
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).obj
@@ -163,7 +177,10 @@ theorem fieldEtaleContinuousEquiv_native_model
             (InfiniteGalois.profiniteGalGrp k Ω)).obj
               ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q))).homology q) := rfl
 
-/-- Every actual sheaf arrow is compared with its actual geometric-fiber coefficient arrow. -/
+/-- Field cohomology comparison is natural in coefficients.
+
+A sheaf map's cohomology map commutes with the comparison and the induced continuous-
+cohomology map of its geometric fiber. -/
 theorem fieldEtaleContinuousEquiv_naturality
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : Q ⟶ Q') (q : ℕ)
@@ -183,8 +200,10 @@ theorem fieldEtaleContinuousEquiv_naturality
     (CanonicalLongExactSequence.canonicalEquiv_naturality.{u, w}
       (Spec (.of k)) f q x)).trans hv
 
-/-- The coefficient map on the right is literally homology of the original
-homogeneous-cochain map of the actual geometric-fiber arrow. -/
+/-- Field coefficient comparison acts through the homogeneous cochain map.
+
+The coefficient naturality map is the underlying additive map of homology of the homogeneous-
+cochain functor applied to the geometric-fiber morphism. -/
 theorem fieldEtaleContinuousEquiv_naturality_original_map
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : Q ⟶ Q') (q : ℕ)
@@ -200,8 +219,10 @@ theorem fieldEtaleContinuousEquiv_naturality_original_map
         (fieldEtaleContinuousEquiv.{u, w} k Ω Q q x) :=
   fieldEtaleContinuousEquiv_naturality.{u, w} k Ω f q x
 
-/-- The actual continuous-cohomology delta functor on sheaves is the target of
-the accepted Γ/native delta isomorphism. -/
+/-- Geometric fiber continuous cohomology as a delta functor.
+
+Precompose the continuous-cohomology delta functor with the exact geometric-stalk Galois
+functor. -/
 def fieldGeometricFiberContinuousDeltaFunctor :
     CohomologicalDeltaFunctor
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
@@ -211,7 +232,10 @@ def fieldGeometricFiberContinuousDeltaFunctor :
     (Functor.RightDerived.precompShortExact (fieldGeometricStalkGaloisFunctor.{u, w} k Ω))
     (fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω)
 
-/-- Every degree uses the same geometric fiber followed by original continuous cohomology. -/
+/-- Degree functor of geometric fiber continuous cohomology.
+
+In degree `q`, the delta functor is the geometric-stalk Galois functor followed by degree-`q`
+continuous cohomology. -/
 theorem fieldGeometricFiberContinuousDeltaFunctor_T (q : ℕ) :
     (fieldGeometricFiberContinuousDeltaFunctor.{u, w} k Ω).T q =
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
@@ -341,8 +365,11 @@ private theorem fieldEtaleGammaNativeConnecting
     hf hgModel hhModel hiModel transported
   simpa only [SE, T, hT, f', g', h', i'] using square
 
-/-- The original Yoneda connector is sent to the original native coefficient
-connector of the same geometric-fiber short exact sequence in every degree. -/
+/-- Field cohomology comparison commutes with connecting morphisms.
+
+For a short exact sheaf sequence, the étale connecting class followed by comparison equals the
+continuous-coefficient connecting class of the compared geometric fiber, in degrees `q` and
+`q+1`. -/
 theorem fieldEtaleContinuousEquiv_connecting
     (S : ShortComplex
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}))
@@ -370,13 +397,18 @@ theorem fieldEtaleContinuousEquiv_connecting
   dsimp only [Functor.comp, ShortComplex.map] at h ⊢
   exact h
 
-/-- The original-map name refers to this same literal native connector equation. -/
+/-- Connecting compatibility in homogeneous field cohomology.
+
+The cohomology equivalence respects the continuous homogeneous-coefficient connecting map for
+every short exact sheaf sequence. -/
 alias fieldEtaleContinuousEquiv_connecting_original_map := fieldEtaleContinuousEquiv_connecting
 
 variable (K Ψ : Type u) [Field K] [Field Ψ] [Algebra K Ψ] [IsSepClosure K Ψ]
 
-/-- The original étale field pullback is induced by the canonical derived-Γ
-pullback, independently of the continuous-cohomology comparison square. -/
+/-- Field change pullback on étale cohomology.
+
+A compatible field-and-closure map induces cohomology pullback by conjugating the derived-
+section pullback through the canonical cohomology comparisons. -/
 def fieldEtaleCohomologyPullback (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ) :
     Sheaf.H.{max u w, max u w, u, u + 1} Q q →+
@@ -390,7 +422,10 @@ def fieldEtaleCohomologyPullback (e : GaloisUnits.FieldMap k Ω K Ψ)
         (Spec (.of k)) Q q).toAddMonoidHom)
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- The field pullback is the literal canonical transport of the actual Γ pullback. -/
+/-- Field pullback value through derived section coordinates.
+
+Compare the source class with derived sections, apply the derived field pullback, and apply
+the inverse target cohomology comparison. -/
 theorem fieldEtaleCohomologyPullback_apply
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
@@ -402,8 +437,10 @@ theorem fieldEtaleCohomologyPullback_apply
           (CanonicalLongExactSequence.canonicalEquiv.{u, w} (Spec (.of k)) Q q x)) := rfl
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- Applying the actual target canonical Γ map to étale pullback recovers
-exactly the independently constructed original derived-Γ pullback. -/
+/-- Field cohomology pullback agrees with derived pullback.
+
+Applying the target canonical comparison after cohomology pullback equals derived pullback
+after the source comparison. -/
 theorem fieldEtaleCohomologyPullback_canonicalEquiv
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
@@ -419,7 +456,9 @@ theorem fieldEtaleCohomologyPullback_canonicalEquiv
   exact d.apply_symm_apply _
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- Every coefficient arrow commutes with the original étale field pullback. -/
+/-- Field cohomology pullback is natural in sheaf maps.
+
+A coefficient sheaf map commutes with field pullback and its inverse-image cohomology map. -/
 theorem fieldEtaleCohomologyPullback_naturality
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
@@ -450,8 +489,10 @@ theorem fieldEtaleCohomologyPullback_naturality
               (fieldEtaleCohomologyPullback.{u, w} k Ω K Ψ e Q q x)).symm)))
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- The actual field pullback preserves the original Yoneda connectors,
-using the actual inverse-image short exact sequence. -/
+/-- Field cohomology pullback commutes with connecting morphisms.
+
+Pullback of a connecting class equals the connecting class of the pulled-back short exact
+sheaf sequence. -/
 theorem fieldEtaleCohomologyPullback_connecting
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     (S : ShortComplex
@@ -484,7 +525,10 @@ theorem fieldEtaleCohomologyPullback_connecting
             (fieldEtaleCohomologyPullback_canonicalEquiv.{u, w}
               k Ω K Ψ e S.X₃ q x).symm).trans ht)))
 
-/-- The direct étale/native comparison respects the original field square. -/
+/-- Étale and continuous comparisons respect field change.
+
+Under a compatible field-and-closure map, compare the pulled-back étale class at the target
+field. It equals the continuous field pullback of the source comparison. -/
 theorem fieldEtaleContinuousEquiv_field
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
@@ -509,8 +553,10 @@ theorem fieldEtaleContinuousEquiv_field
       ((smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e)).obj Q))
     (fieldEtaleCohomologyPullback_canonicalEquiv.{u, w} k Ω K Ψ e Q q x)).trans hv
 
-/-- The field map is the original cochain restriction followed by the actual
-field-change stalk coefficient map, on the same source and target native models. -/
+/-- Field change comparison uses group restriction and stalk transport.
+
+The continuous field pullback is the homogeneous-cochain restriction map for the induced
+continuous Galois-group homomorphism followed by the field-change stalk-module isomorphism. -/
 theorem fieldEtaleContinuousEquiv_field_original_map
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
@@ -531,7 +577,10 @@ theorem fieldEtaleContinuousEquiv_field_original_map
       (fieldNativePullback_original_map.{u, w} k Ω K Ψ e q Q)
       (fieldEtaleContinuousEquiv.{u, w} k Ω Q q x))
 
-/-- The original comparison exists for every actual common sheaf and every degree. -/
+/-- Every field étale cohomology degree has its continuous comparison.
+
+For every common-universe abelian sheaf and every natural degree, an additive equivalence with
+continuous Galois cohomology of its geometric fiber exists. -/
 theorem original_field_etale_continuous_cohomology_comparison :
     ∀ (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ),
       Nonempty (Sheaf.H.{max u w, max u w, u, u + 1} Q q ≃+

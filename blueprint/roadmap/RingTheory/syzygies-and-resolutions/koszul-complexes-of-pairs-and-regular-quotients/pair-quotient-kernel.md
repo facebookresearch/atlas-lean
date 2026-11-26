@@ -1,3 +1,5 @@
-# Pair Quotient Kernel
+# The kernel of the second element on the first quotient
 
-Kernel of multiplication by `g` on `R/(f)`.
+The kernel of the second element on the first quotient.
+
+Take ker(g : R/(f) → R/(f)).

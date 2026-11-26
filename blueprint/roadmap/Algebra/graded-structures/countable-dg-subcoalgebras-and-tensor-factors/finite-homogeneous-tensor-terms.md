@@ -1,3 +1,5 @@
-# Finite Homogeneous Tensor Terms
+# A chosen finite homogeneous tensor support
 
-Choose a finite actual decomposition-support for each original tensor element.
+A chosen finite homogeneous tensor support.
+
+Choose a finite set of actual factor pairs spanning the given tensor element.

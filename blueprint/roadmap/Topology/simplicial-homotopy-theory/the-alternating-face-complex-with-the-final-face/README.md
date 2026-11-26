@@ -2,21 +2,21 @@
 
 ## Truncated Alternating Face Map Complex
 
-- [Obj D](obj-d.md)
-- [D squared](d-squared.md)
-- [Obj](obj.md)
-- [Obj X](obj-x.md)
-- [Obj d](obj-d-2.md)
-- [Map](map.md)
-- [Map f](map-f.md)
-- [Front Insertion sum zero](front-insertion-sum-zero.md)
-- [Front Insertion sum succ](front-insertion-sum-succ.md)
-- [Contracting Homotopy](contracting-homotopy.md)
-- [Contracting Homotopy hom](contracting-homotopy-hom.md)
+- [The truncated boundary omits the final face](obj-d.md)
+- [Successive truncated boundaries compose to zero](d-squared.md)
+- [The last-face-omitted chain complex](obj.md)
+- [The truncated complex has the semisimplicial terms](obj-x.md)
+- [The adjacent differential is the last-face-omitted sum](obj-d-2.md)
+- [A semisimplicial map induces a truncated chain map](map.md)
+- [The truncated chain map has the given degree component](map-f.md)
+- [The first-face section contracts the bottom differential](front-insertion-sum-zero.md)
+- [Front insertion satisfies the positive-degree contraction equation](front-insertion-sum-succ.md)
+- [Front insertion contracts the truncated identity map to zero](contracting-homotopy.md)
+- [The contraction component is the front insertion itself](contracting-homotopy-hom.md)
 
 ## Algebraic Topology
 
-- [Truncated Alternating Face Map Complex](truncated-alternating-face-map-complex.md)
-- [Truncated Alternating Face Map Complex obj X](truncated-alternating-face-map-complex-o.md)
-- [Truncated Alternating Face Map Complex obj d](truncated-alternating-face-map-complex-o-2.md)
-- [Truncated Alternating Face Map Complex map f](truncated-alternating-face-map-complex-m.md)
+- [Last-face omission defines a functor to chain complexes](truncated-alternating-face-map-complex.md)
+- [The truncation functor retains the degree object](truncated-alternating-face-map-complex-o.md)
+- [The truncation functor has the retained-face differential](truncated-alternating-face-map-complex-o-2.md)
+- [The truncation functor maps morphisms componentwise](truncated-alternating-face-map-complex-m.md)

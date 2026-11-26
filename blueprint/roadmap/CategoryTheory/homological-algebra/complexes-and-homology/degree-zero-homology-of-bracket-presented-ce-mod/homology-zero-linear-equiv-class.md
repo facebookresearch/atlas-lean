@@ -1,4 +1,6 @@
-# Homology Zero Linear Equiv class
+# The scalar coordinate of an exterior degree-zero homology class
 
-The coefficient coordinate of a degree-zero class is the canonical coordinate of its exterior
+The scalar coordinate of an exterior degree-zero homology class.
+
+The linear homology coordinate of a degree-zero class is the scalar coordinate of its exterior
 representative.

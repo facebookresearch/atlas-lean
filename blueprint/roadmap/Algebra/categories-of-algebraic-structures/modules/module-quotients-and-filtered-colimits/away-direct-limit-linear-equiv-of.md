@@ -1,4 +1,5 @@
-# Away Direct Limit Linear Equiv of
+# The direct-limit equivalence on a stage representative
 
-Under the canonical equivalence, a stage-`n` class is the fraction with
-denominator `r^n`.
+The direct-limit equivalence on a stage representative.
+
+The class of x at stage n maps to the fraction x/r^n.

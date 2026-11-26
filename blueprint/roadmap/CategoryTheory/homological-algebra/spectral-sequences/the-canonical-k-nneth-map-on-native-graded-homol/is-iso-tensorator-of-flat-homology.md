@@ -1,4 +1,6 @@
-# Is Iso tensorator of flat homology
+# The Künneth tensorator isomorphism under flatness of the first complex
 
-Flat terms and flat homology in the first factor suffice for the
-canonical tensorator in a chosen degree.
+The Künneth tensorator isomorphism under flatness of the first complex.
+
+If every term and every homology module of `K` is flat over `R`, the canonical tensorator with
+any nonnegative `L` is an isomorphism in degree `n`.

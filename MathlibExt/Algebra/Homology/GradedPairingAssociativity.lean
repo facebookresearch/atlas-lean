@@ -21,10 +21,18 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.Braided
 public import Mathlib.CategoryTheory.Limits.Constructions.EpiMono
 
 /-!
-# Associativity of actual cochain graded pairings on additive groups
+# Associativity of cycle and cohomology pairings
 
-The equality-induced morphisms preserve the original cycles and homology
-objects at both total degrees.
+Consider nonnegative cochain complexes of abelian groups, with tensor product
+over ℤ. Let P_AB:A⊗B → AB, P_BC:B⊗C → BC,
+P_L:AB⊗C → D_L and P_R:A⊗BC → D_R be cochain graded pairings,
+and let f:D_L → D_R be a cochain map.
+
+At specified degrees p,q,r, assume the two iterated term pairings agree
+after applying f on the left, the tensor associator on the right, and
+the degree identification (p+q)+r=p+(q+r). Then the corresponding pairings
+of cycle objects agree by the same maps and degree identification.
+The same associativity equality descends to the cohomology pairings.
 -/
 
 @[expose] public section
@@ -50,7 +58,14 @@ private theorem homologyDegreeTransport (K : CochainComplex AddCommGrpCat.{s} �
   simp only [eqToHom_refl, Category.id_comp, Category.comp_id]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Associativity of the actual cochain components descends to the original cycle objects. -/
+/-- For nonnegative cochain complexes of abelian groups, let
+P_AB:A⊗B → AB, P_BC:B⊗C → BC, P_L:AB⊗C → D_L and
+P_R:A⊗BC → D_R be cochain graded pairings, and f:D_L → D_R a
+cochain map. Fix p,q,r. If the term pairings satisfy
+f(P_L(P_AB(x,y),z))=P_R(x,P_BC(y,z)) as tensor maps, with the tensor
+associator and the degree identification (p+q)+r=p+(q+r), then the
+same equality holds on Zᵖ(A)⊗Zᑫ(B)⊗Zʳ(C), using the induced cycle
+pairings and cycle map of f. -/
 theorem pairCycles_assoc
     {A B C AB BC DL DR : CochainComplex AddCommGrpCat.{s} ℕ}
     (PAB : CochainGradedPairing A B AB) (PBC : CochainGradedPairing B C BC)
@@ -120,8 +135,14 @@ private theorem tensorEpi {A A' B B' : AddCommGrpCat.{s}}
       exact ⟨a' + b', ((f ⊗ₘ g).hom.map_add a' b').trans (congrArg₂ (· + ·) ha hb)⟩
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Associativity of the actual cochain components descends to the original native
-homology objects with the same equality-induced total-degree map. -/
+/-- For nonnegative cochain complexes of abelian groups, let
+P_AB:A⊗B → AB, P_BC:B⊗C → BC, P_L:AB⊗C → D_L and
+P_R:A⊗BC → D_R be cochain graded pairings, and f:D_L → D_R a
+cochain map. Fix p,q,r and assume their iterated term pairings agree
+as tensor maps after f, the tensor associator and
+(p+q)+r=p+(q+r). The induced pairings on
+Hᵖ(A)⊗Hᑫ(B)⊗Hʳ(C) then satisfy the same associativity equality,
+with H(f) and the same total-degree identification. -/
 theorem pairHomology_assoc
     {A B C AB BC DL DR : CochainComplex AddCommGrpCat.{s} ℕ}
     (PAB : CochainGradedPairing A B AB) (PBC : CochainGradedPairing B C BC)

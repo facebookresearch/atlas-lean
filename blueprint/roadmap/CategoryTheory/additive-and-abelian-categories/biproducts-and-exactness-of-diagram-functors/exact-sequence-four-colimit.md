@@ -1,4 +1,6 @@
-# Exact Sequence Four Colimit
+# The pointwise colimit of a diagram of five-object sequences
 
-The five-object sequence obtained by taking the colimit at each position
-of a diagram of exact five-object sequences.
+The pointwise colimit of a diagram of five-object sequences.
+
+Take the colimit of each of the five terms and use the colimit maps of the four arrow
+transformations.

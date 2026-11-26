@@ -1,3 +1,6 @@
-# Unitization Raw Odd Cell d succ
+# The horizontal and vertical signs of a retained odd-column cell
 
-The original raw odd retained cell has exactly the source horizontal/vertical signs.
+The horizontal and vertical signs of a retained odd-column cell.
+
+The boundary of the one-column cell is `(1-t)` into column zero minus `b′` into column one, at
+the indicated successor bidegrees.

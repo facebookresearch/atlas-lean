@@ -1,4 +1,7 @@
-# Hom Coordinates
+# Coefficient Hom as the additive Hom group with right R action
 
-The coefficient Hom and the native additive Hom have the same integer-linear functions.
-The canonical double-opposite integer action is earned from the original groups.
+Coefficient Hom as the additive Hom group with right R action.
+
+Give `N` and `I` their integer actions transported to `ℤᵐᵒᵖᵐᵒᵖ`. The coefficient Hom object is
+`Rᵐᵒᵖ`-linearly equivalent to additive maps `N → I`, where the right `R`-action in both
+objects is precomposition by the left action on `N`.

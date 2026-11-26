@@ -1,3 +1,6 @@
-# Matrix Coefficient Map At Height
+# The lifted coefficient CE map between independent entry universes
 
-A coefficient map across independent universes, at their common height.
+The lifted coefficient CE map between independent entry universes.
+
+For `f : A → B`, lift its fixed-size matrix Lie map into the universe joining both entry-
+algebra carriers and the ground ring.

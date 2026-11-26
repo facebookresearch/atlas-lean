@@ -15,11 +15,15 @@ public import Mathlib.CategoryTheory.Monoidal.Preadditive
 public import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 
 /-!
-# Monoidal preadditivity for chain complexes
+# Tensor additivity for nonnegative chain complexes
 
-The total-complex tensor product on `ChainComplex C ℕ` is additive in each
-variable. This factors the repeated local instance proofs into one named
-reusable construction.
+Let C be a preadditive monoidal category with tensoring additive in both variables. Assume a
+zero object and finite coproducts, preserved by both left and right tensoring. The total-
+complex tensor product then gives a monoidal structure on ChainComplex C ℕ, and whiskering is
+additive in both variables.
+
+These assumptions retain the independent object and morphism universe levels of C and require
+only the stated finite coproducts.
 -/
 
 @[expose] public section
@@ -41,13 +45,18 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [MonoidalCategory C]
   [∀ Z : C, PreservesFiniteCoproducts (tensorLeft Z)]
   [∀ Z : C, PreservesFiniteCoproducts (tensorRight Z)]
 
+/-- The total-tensor monoidal structure on chain complexes.
+
+Under the stated additive tensor and finite-coproduct assumptions, use the homological total
+tensor product to give ChainComplex C ℕ its monoidal category structure. -/
 noncomputable local instance chainComplexMonoidalCategoryForPreadditive :
     MonoidalCategory (ChainComplex C ℕ) :=
   HomologicalComplex.monoidalCategory C (ComplexShape.down ℕ)
 
-/-- Preadditivity of the total-complex monoidal structure on chain complexes,
-proved directly from the tensor-hom formulas. Install locally via
-`local instance ... := HomologicalComplex.chainComplexMonoidalPreadditive`. -/
+/-- Monoidal preadditivity of the chain-complex tensor product.
+
+For the total-tensor monoidal structure, left and right tensor whiskering preserve sums and
+zero morphisms, under the stated preadditivity and coproduct-preservation assumptions. -/
 theorem chainComplexMonoidalPreadditive :
     MonoidalPreadditive (ChainComplex C ℕ) where
   whiskerLeft_zero := by

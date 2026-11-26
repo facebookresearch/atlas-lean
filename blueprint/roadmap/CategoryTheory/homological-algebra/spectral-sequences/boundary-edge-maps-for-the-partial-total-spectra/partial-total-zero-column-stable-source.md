@@ -1,3 +1,6 @@
-# Partial Total Zero Column Stable Source
+# The spectral coordinate of a zero-column second-page source
 
-The shared stable-side source of the page-two zero-column comparison.
+The spectral coordinate of a zero-column second-page source.
+
+Use the chosen page-transition interval data at `(0,q)` to form the spectral object's framed
+`E` object.

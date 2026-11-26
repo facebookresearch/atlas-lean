@@ -13,16 +13,17 @@ public import MathlibExt.RingTheory.MvPolynomial.EnvelopingDiagonalCotangentLift
 public import MathlibExt.Algebra.Homology.KoszulComplex.Semilinear
 
 /-!
-# polynomial algebra maps on diagonal Koszul complexes
+# Polynomial algebra maps on diagonal Koszul complexes
 
-An arbitrary polynomial algebra homomorphism maps both original enveloping
-factors. The diagonal generator lifts induce a literal Koszul chain
-map after scalar restriction. Its every-degree components are the exterior
-powers of the semilinear generator map.
+Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Its enveloping algebra map φ
+applies g to both tensor factors. The diagonal generator map J_g is semilinear along φ and
+satisfies δ_B ∘ J_g = φ ∘ δ_A, where δ denotes the diagonal-difference functional.
 
-The source and target polynomial variable types share an ambient universe;
-that ambient universe is independent of the ground-ring universe. The
-semilinear generator and exterior APIs retain independent carrier universes.
+Taking exterior powers of J_g gives chain maps between the diagonal Koszul complexes. They may
+be viewed as k-linear maps after ground scalar restriction, or as E_A-linear maps to the target
+complex restricted along φ. In degree zero the scalar map is φ; on an exterior generator word
+the component applies J_g to every factor. No finiteness assumption is imposed on either
+variable set.
 -/
 
 @[expose] public section
@@ -46,8 +47,11 @@ local notation "xT" => KoszulComplex.finsuppFunctional ET (MvPolynomial.diagonal
 local notation "φ" => MvPolynomial.polynomialEnvelopingMap k τ g
 local notation "J" => MvPolynomial.polynomialDiagonalGeneratorMap k τ g
 
-/-- The polynomial diagonal map on the original ground-restricted
-Koszul complexes, in every degree. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. Let J_g : ⊕ᵢ∈σ
+E_Aeᵢ → ⊕ⱼ∈τ E_Beⱼ be the semilinear diagonal generator map satisfying δ_B(J_gx) = φ(δ_Ax). Its
+exterior powers define a k-linear chain map between the two diagonal Koszul complexes after
+restriction of scalars to k. -/
 def polynomialDiagonalGroundMap :
     ((ModuleCat.restrictScalars (algebraMap k ES)).mapHomologicalComplex (.down ℕ)).obj
         (KoszulComplex.polynomialDiagonalComplex k σ) ⟶
@@ -72,7 +76,10 @@ def polynomialDiagonalGroundMap :
         (KoszulComplex.complex S Y y)
     exact KoszulComplex.semilinearMap (R := R) (S := S) (M := X) (N := Y) k e x y f hf
 
-/-- Every original wedge is mapped by the lifted diagonal generators. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. For n : ℕ and a
+: Fin n → σ, the ground diagonal map sends e_{a(0)}∧…∧e_{a(n−1)} to
+J_g(e_{a(0)})∧…∧J_g(e_{a(n−1)}). Here J_g(eᵢ) is polynomialDiagonalGeneratorLift k τ g i. -/
 theorem polynomialDiagonalGroundMap_basis (n : ℕ) (a : Fin n → σ) :
     ((polynomialDiagonalGroundMap k g).f n).hom
       (exteriorPower.ιMulti ES n (fun j => Finsupp.single (a j) (1 : ES))) =
@@ -87,8 +94,10 @@ theorem polynomialDiagonalGroundMap_basis (n : ℕ) (a : Fin n → σ) :
     rw [MvPolynomial.polynomialDiagonalGeneratorMap_single, map_one, one_smul]
   exact h.trans (congrArg (exteriorPower.ιMulti ET n) hWord)
 
-/-- Regard the same original enveloping homomorphism as an algebra map
-over its own source ring. This earns the restricted target action. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. Give E_B its
+E_A-algebra structure induced by φ. The same ring homomorphism φ is then an E_A-algebra
+homomorphism E_A → E_B, with E_A carrying its identity algebra structure. -/
 def polynomialEnvelopingSourceAlgebraMap :
     letI : Algebra ES ET := (φ).toRingHom.toAlgebra
     ES →ₐ[ES] ET := by
@@ -97,8 +106,10 @@ def polynomialEnvelopingSourceAlgebraMap :
     { (φ).toRingHom with
       commutes' := fun _ => rfl }
 
-/-- Native restriction along the identity is canonically the original
-complex functor, with the native identity-action dictionary retained. -/
+/-- Let k be a commutative ring and ρ an arbitrary variable set. Restricting the polynomial diagonal
+Koszul complex over E_ρ along the identity ring homomorphism E_ρ → E_ρ gives a chain complex
+canonically isomorphic to the same diagonal Koszul complex. The isomorphism acts as the identity
+on each exterior term. -/
 def polynomialDiagonalSourceRestrictionIso (ρ : Type v) :
     ((ModuleCat.restrictScalars
       (RingHom.id (MvPolynomial.PolynomialEnveloping k ρ))).mapHomologicalComplex (.down ℕ)).obj
@@ -109,8 +120,11 @@ def polynomialDiagonalSourceRestrictionIso (ρ : Type v) :
       Functor.mapHomologicalComplexIdIso
         (ModuleCat (MvPolynomial.PolynomialEnveloping k ρ)) (.down ℕ)).app _
 
-/-- The polynomial Koszul map as a morphism over the original
-source enveloping ring, into the native scalar-restricted target resolution. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. The exterior
+powers of the semilinear diagonal generator map J_g give an E_A-linear chain map from the
+diagonal Koszul complex of A to the diagonal Koszul complex of B restricted along φ. Its
+compatibility with the Koszul differentials follows from δ_B(J_gx) = φ(δ_Ax). -/
 def polynomialDiagonalRestrictedMap :
     KoszulComplex.polynomialDiagonalComplex k σ ⟶
       ((ModuleCat.restrictScalars (φ).toRingHom).mapHomologicalComplex (.down ℕ)).obj
@@ -136,7 +150,10 @@ def polynomialDiagonalRestrictedMap :
     KoszulComplex.semilinearMap (R := R) (S := S) (M := X) (N := Y) R eA x y f hf
   exact (polynomialDiagonalSourceRestrictionIso k σ).inv ≫ h
 
-/-- The source-restricted map has the same semilinear exterior value. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. For n : ℕ and z
+∈ ∧ⁿ_{E_A}(⊕ᵢ∈σ E_Aeᵢ), the nth component of polynomialDiagonalRestrictedMap sends z to
+exteriorPower.mapSemilinear φ J_g n z. Thus its underlying component is ∧ⁿJ_g. -/
 theorem polynomialDiagonalRestrictedMap_f_apply (n : ℕ) (z : ⋀[ES]^n VS) :
     ((polynomialDiagonalRestrictedMap k g).f n).hom z =
       exteriorPower.mapSemilinear (φ).toRingHom J n z := by
@@ -151,8 +168,10 @@ theorem polynomialDiagonalRestrictedMap_f_apply (n : ℕ) (z : ⋀[ES]^n VS) :
       (ModuleCat.of ES (⋀[ES]^n VS)) z
   exact hValue.trans (congrArg (fun t : ⋀[ES]^n VS => L t) hid)
 
-/-- The zero-degree exterior map preserves the scalar represented
-by the original empty wedge. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. If z lies in the
+degree-zero source exterior power, its image has scalar φ(r) under the target degree-zero
+exterior isomorphism, where r is the scalar of z under the source isomorphism ∧⁰E_A ≅ E_A. -/
 theorem polynomialDiagonalRestrictedMap_zero_scalar (z : ⋀[ES]^0 VS) :
     exteriorPower.zeroEquiv ET VT (((polynomialDiagonalRestrictedMap k g).f 0).hom z) =
       φ (exteriorPower.zeroEquiv ES VS z) := by

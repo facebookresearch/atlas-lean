@@ -1,3 +1,6 @@
-# Native Primitive Map ker
+# The homogeneous kernel of a CE primitive-equation component
 
-The component kernel has exactly the homogeneous primitive submodule.
+The homogeneous kernel of a CE primitive-equation component.
+
+The linear kernel in degree `n` is exactly the homogeneous primitive submodule of the exterior
+algebra.

@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Euler equiv
+# Coefficient equivalences preserve the Koszul Euler invariant
 
-The actual full-family Euler invariant is preserved by a coefficient
-linear equivalence in independent module universes.
+Coefficient equivalences preserve the Koszul Euler invariant.
+
+For finite coefficients with the stated post-quotient lengths, a linear equivalence preserves
+the full coefficient Euler value.

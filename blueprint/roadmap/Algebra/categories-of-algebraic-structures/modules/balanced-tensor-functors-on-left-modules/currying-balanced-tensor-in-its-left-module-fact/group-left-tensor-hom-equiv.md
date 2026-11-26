@@ -1,3 +1,6 @@
-# Group Left Tensor Hom Equiv
+# Hom-set equivalence for tensor in the left-module variable
 
-The existing pure-evaluation curry/uncurry maps are inverse on the original objects.
+Hom-set equivalence for tensor in the left-module variable.
+
+Additive maps `A ⊗_R B → I` are in bijection with morphisms `B ⟶ (leftHomGroupFunctor R A).obj
+I` of left `R`-modules.

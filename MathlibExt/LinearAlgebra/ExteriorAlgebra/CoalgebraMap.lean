@@ -15,13 +15,14 @@ public import MathlibExt.LinearAlgebra.ExteriorAlgebra.PrimitiveEquation
 public import Mathlib.RingTheory.Coalgebra.Hom
 
 /-!
-# Actual exterior coalgebra maps and primitive transport
+# Exterior coalgebra maps and primitive equations
 
-Every actual linear map induces a native coalgebra homomorphism for the
-constructed exterior coproduct. Its counit and coproduct laws are earned
-from the existing naturality proofs. The multiplicative exterior-map unit
-law supplies the primitive endpoints. No coalgebra-map or primitive-map
-certificate is a caller parameter. Ring and module universes are independent.
+Let R be a commutative ring and f : M →ₗ[R] N a map of R-modules with independent carrier
+universes. The exterior algebra map Λ(f) preserves the exterior coproduct and counit, so it is
+a coalgebra homomorphism. These coalgebra maps compose with the underlying linear maps.
+
+For ∆̄(a)=∆(a)−a⊗1−1⊗a, one has ∆̄(Λ(f)(a))=(Λ(f)⊗Λ(f))(∆̄(a)). Since Λ(f) preserves the unit,
+it takes primitive elements to primitive elements.
 -/
 
 @[expose] public section
@@ -38,7 +39,10 @@ variable (R : Type u) [CommRing R]
 variable (M : Type v) [AddCommGroup M] [Module R M]
 variable {N : Type w} [AddCommGroup N] [Module R N]
 
-/-- The actual exterior functor map, bundled as a native coalgebra homomorphism. -/
+/-- Let R be a commutative ring, M,N R-modules, and f : M →ₗ[R] N. The exterior algebra map Λ(f)
+defines a coalgebra homomorphism ExteriorAlgebra R M →ₗc[R] ExteriorAlgebra R N. Its
+underlying R-linear map is the exterior algebra map, and it satisfies ε_N∘Λ(f)=ε_M and
+∆_N∘Λ(f)=(Λ(f)⊗Λ(f))∘∆_M. The scalar and module carriers may occupy independent universes. -/
 def coalgMap (f : M →ₗ[R] N) : ExteriorAlgebra R M →ₗc[R] ExteriorAlgebra R N where
   toLinearMap := (map f).toLinearMap
   counit_comp := by
@@ -65,7 +69,10 @@ theorem coalgMap_id :
   change map (LinearMap.id : M →ₗ[R] M) a = a
   simp only [map_id, AlgHom.id_apply]
 
-/-- The actual native exterior coalgebra maps compose by the actual linear maps. -/
+/-- For R-modules M,N,P over a commutative ring R and R-linear maps f : M → N, g : N → P, the
+exterior coalgebra maps satisfy coalgMap(g) ∘ coalgMap(f) = coalgMap(g∘f). This is equality of
+coalgebra homomorphisms ExteriorAlgebra R M → ExteriorAlgebra R P, with no requirement that
+the three module carriers have the same universe. -/
 theorem coalgMap_comp {P : Type x} [AddCommGroup P] [Module R P]
     (f : M →ₗ[R] N) (g : N →ₗ[R] P) :
     (coalgMap R N g).comp (coalgMap R M f) = coalgMap R M (g.comp f) := by
@@ -74,7 +81,9 @@ theorem coalgMap_comp {P : Type x} [AddCommGroup P] [Module R P]
   change map g (map f a) = map (g.comp f) a
   exact AlgHom.congr_fun (map_comp_map f g) a
 
-/-- The actual reduced primitive equation is natural under arbitrary actual linear maps. -/
+/-- Let R be a commutative ring, f : M →ₗ[R] N an R-linear map, and a ∈ ExteriorAlgebra R M. With
+∆̄(a)=∆(a)−a⊗1−1⊗a, one has ∆̄_N(Λ(f)(a))=(Λ(f)⊗Λ(f))(∆̄_M(a)). Both tensor factors use the
+R-linear map of the exterior algebra homomorphism Λ(f). -/
 theorem primitiveEquation_map (f : M →ₗ[R] N) (a : ExteriorAlgebra R M) :
     primitiveEquation R N (map f a) =
       TensorProduct.map (map f).toLinearMap (map f).toLinearMap (primitiveEquation R M a) := by
@@ -82,7 +91,10 @@ theorem primitiveEquation_map (f : M →ₗ[R] N) (a : ExteriorAlgebra R M) :
     AlgHom.toLinearMap_apply, map_one]
   rw [coproduct_naturality R M f a]
 
-/-- Actual exterior coalgebra transport preserves native primitives, with its unit endpoints earned. -/
+/-- Let R be a commutative ring, f : M →ₗ[R] N an R-linear map, and a a primitive element of
+ExteriorAlgebra R M. Then Λ(f)(a) is primitive in ExteriorAlgebra R N. Here primitive means
+(1,1)-skew primitive: ∆(a)=a⊗1+1⊗a with the corresponding zero-counit condition. The exterior
+map preserves the coproduct, counit, and unit. -/
 theorem map_isPrimitive (f : M →ₗ[R] N) (a : ExteriorAlgebra R M)
     (ha : Coalgebra.IsSkewPrimitiveElem R (1 : ExteriorAlgebra R M) 1 a) :
     Coalgebra.IsSkewPrimitiveElem R (1 : ExteriorAlgebra R N) 1 (map f a) := by

@@ -1,3 +1,6 @@
-# Cyclic BTo First Two Homology Iso hom
+# The forward homology map of the left-unit comparison
 
-The canonical forward homology arrow is the comparison's native homology map.
+The forward homology map of the left-unit comparison.
+
+The forward comparison equals the homology map induced by the first-column inclusion `b(A) →
+CC^{(2)}(A)`.

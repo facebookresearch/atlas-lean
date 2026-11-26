@@ -1,3 +1,6 @@
-# Unit and associativity laws for cochain pairings on homology
+# Homology class of a degree-zero cycle
 
-Homology class of a degree-zero cocycle, via the canonical quotient projection.
+Homology class of a degree-zero cycle.
+
+For `e : K.cycles 0`, `homologyUnitClass R e` is the image of `e` under the degree-zero
+homology projection.

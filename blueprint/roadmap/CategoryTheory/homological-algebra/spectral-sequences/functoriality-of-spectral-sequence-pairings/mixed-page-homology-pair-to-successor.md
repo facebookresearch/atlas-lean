@@ -1,3 +1,6 @@
-# Mixed Page Homology Pair To successor
+# The mixed homology product gives the successor page product
 
-The actual native successor comparisons carry the mixed homology product to the next page product.
+The mixed homology product gives the successor page product.
+
+The spectral successor isomorphisms carry the mixed homology product to the specified product
+at r+1.

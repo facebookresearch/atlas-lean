@@ -1,4 +1,5 @@
-# Cotangent Generator spec
+# Chosen cotangent lifts map to their basis vectors
 
-The chosen generator maps to the corresponding vector of the canonical
-finite cotangent basis.
+For a Noetherian commutative local ring `R`, each chosen cotangent
+generator maps under `m → m/m²` to its corresponding vector of the finite
+basis over the residue field.

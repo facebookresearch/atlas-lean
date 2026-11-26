@@ -1,4 +1,6 @@
-# Tensor Adjoin Right Coefficient Iso
+# The right-adjoined coefficient module retains its carrier lift
 
-The right adjoining iso on the native scalar-extension object keeps
-its original ring coefficient and common carrier lift.
+For compatible commutative K-algebras A,B,W, scalar
+extension of the lifted B-module W to A⊗K B is isomorphic
+to the lift of A⊗K W with its product-algebra action.
+The common carrier height contains all ring worlds.

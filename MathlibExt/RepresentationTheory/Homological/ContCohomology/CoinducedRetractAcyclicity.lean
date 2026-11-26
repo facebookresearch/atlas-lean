@@ -13,25 +13,19 @@ public import MathlibExt.RepresentationTheory.Homological.ContCohomology.Coinduc
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.CoefficientFunctor
 
 /-!
-# Acyclicity from a retraction of a coinduced coefficient
+# Acyclicity from a coinduction retraction
 
-A coefficient retraction `Y.coind₁ ⟶ Y` makes positive-degree continuous
-cohomology of `Y` a retract of the vanishing cohomology of `Y.coind₁`.  We
-also construct such a retraction after restricting a coinduced coefficient
-along a continuous group homomorphism, provided a continuous left-equivariant
-coordinate on the ambient group is given.
+Let R be a ring with a topology and H a locally compact topological
+group. If a continuous equivariant R-linear map
+s : Coind_H(Y) → Y splits the constant-function inclusion, then
+Hⁿ_cts(H,Y) is a zero object for every positive n.
 
-This file does not construct an equivariant coordinate for an open or closed
-subgroup and makes no Shapiro, Hochschild--Serre, residue, or norm-residue
-claim.
-
-## Main declarations
-
-* `ContinuousCohomology.isZero_succ_of_coinduced_retract`
-* `ContinuousCohomology.restrictedCoinducedRetraction`
-* `ContinuousCohomology.restrictedCoinducedRetraction_apply`
-* `ContinuousCohomology.restrictedCoinducedIota_comp_retraction`
-* `ContinuousCohomology.isZero_restrict_coind₁_succ_of_retraction`
+For locally compact groups G,H, a continuous homomorphism φ : H → G
+and a continuous coordinate r : G → H satisfying
+r(φ(h)g) = h r(g), such a retraction is constructed on
+Y = Res_φ(Coind_G(X)). It sends F ∈ C(H,C(G,X)) to
+g ↦ F(r(g))(g). The constant inclusion is split by this formula.
+All scalar, group and carrier universes remain independent.
 -/
 
 @[expose] public section
@@ -65,8 +59,10 @@ private theorem isZero_of_retract
       _ = 0 ≫ r := by rw [hB.eq_of_tgt (f ≫ i) 0]
       _ = 0 := zero_comp
 
-/-- Positive continuous cohomology vanishes when the coefficient is a
-retract of its compact-open coinduction through the constant inclusion. -/
+/-- Let R be a ring with a topology, H a locally compact topological
+group and Y a topological R-representation of H.
+If a continuous equivariant R-linear s : C(H,Y) → Y satisfies
+s ∘ const = id_Y, then Hⁿ⁺¹_cts(H,Y) is a zero object for every n ∈ ℕ. -/
 theorem isZero_succ_of_coinduced_retract
     {k : Type u} {H : Type z}
     [Ring k] [TopologicalSpace k]
@@ -105,8 +101,14 @@ private abbrev restrictedCoinducedCoefficient
     TopRep.{max z (max v w), u, z} k H :=
   TopRep.res.{u, v, z, max z (max v w)} phi.toMonoidHom X.coind₁
 
-/-- A continuous left-equivariant coordinate on the `H`-orbits of `G`
-produces a retraction of the coinduced coefficient after restriction. -/
+/-- Let R be a ring with a topology, G and H locally compact
+topological groups in independent universes v and z, and φ : H → G
+a continuous homomorphism. Let X be a topological R-representation of G,
+and r : G → H a continuous function satisfying
+r(φ(h)g) = h r(g). Put Y = Res_φ(Coind_G(X)).
+This is the continuous equivariant R-linear retraction
+Coind_H(Y) → Y with function value F ↦ (g ↦ F(r(g))(g)).
+The output restricted-coinduced carrier has universe max(v,z,w). -/
 def restrictedCoinducedRetraction
     (phi : H →ₜ* G)
     (X : TopRep.{max z w, u, v} k G)
@@ -145,8 +147,13 @@ def restrictedCoinducedRetraction
         rw [← map_inv]
         rw [hr] }
 
-/-- The restricted-coinduced retraction evaluates at the coordinate and the
-ambient group variable. -/
+/-- Let R be a ring with a topology, G and H locally compact
+topological groups in independent universes v and z, and φ : H → G
+a continuous homomorphism. Let X be a topological R-representation of G,
+and r : G → H a continuous function satisfying
+r(φ(h)g) = h r(g). Put Y = Res_φ(Coind_G(X)).
+For F ∈ C(H,C(G,X)) and g ∈ G, the restricted-coinduced
+retraction has value s(F)(g) = F(r(g))(g). -/
 @[simp]
 theorem restrictedCoinducedRetraction_apply
     (phi : H →ₜ* G)
@@ -158,8 +165,13 @@ theorem restrictedCoinducedRetraction_apply
       F (r g) g :=
   rfl
 
-/-- The constant-function inclusion followed by the restricted-coinduced
-retraction is the identity. -/
+/-- Let R be a ring with a topology, G and H locally compact
+topological groups in independent universes v and z, and φ : H → G
+a continuous homomorphism. Let X be a topological R-representation of G,
+and r : G → H a continuous function satisfying
+r(φ(h)g) = h r(g). Put Y = Res_φ(Coind_G(X)).
+The constant-function inclusion Y → Coind_H(Y) followed by
+the coordinate retraction is id_Y. -/
 @[reassoc (attr := simp)]
 theorem restrictedCoinducedIota_comp_retraction
     (phi : H →ₜ* G)
@@ -173,8 +185,14 @@ theorem restrictedCoinducedIota_comp_retraction
   ext F g
   rfl
 
-/-- A continuous left-equivariant coordinate makes positive continuous
-cohomology of a restricted coinduced coefficient vanish. -/
+/-- Let R be a ring with a topology, G and H locally compact
+topological groups in independent universes v and z, and φ : H → G
+a continuous homomorphism. Let X be a topological R-representation of G,
+and r : G → H a continuous function satisfying
+r(φ(h)g) = h r(g). Put Y = Res_φ(Coind_G(X)).
+For every n ∈ ℕ, the continuous cohomology
+Hⁿ⁺¹_cts(H,Res_φ(Coind_G(X))) is a zero object.
+The equivariant coordinate r is part of the hypotheses. -/
 theorem isZero_restrict_coind₁_succ_of_retraction
     (phi : H →ₜ* G)
     (X : TopRep.{max z w, u, v} k G)

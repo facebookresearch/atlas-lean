@@ -1,3 +1,5 @@
-# Localized Diagonal Koszul Euler
+# The localized family Koszul Euler invariant
 
-The Euler invariant of the actual local diagonal complex.
+The localized family Koszul Euler invariant.
+
+Take the finite-family alternating homology-length Euler value at p.

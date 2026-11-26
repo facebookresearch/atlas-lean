@@ -16,11 +16,14 @@ public import MathlibExt.Algebra.Homology.Functor
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
-# The sum tensor of integer cochain complexes
+# Full tensor products of integer cochain complexes
 
-Every term and variable map is the tensor bifunctor and direct-sum total. Its differential uses
-the original first-factor degree sign. The ring and both carrier universes are independent; no
-boundedness or supplied total is used.
+For a commutative ring R, the tensor complex of P and Q has degree-n term
+⊕_{p+q=n} P^p ⊗_R Q^q. Its differential on a pure tensor is
+d(x⊗y) = d_P(x)⊗y + (−1)^p x⊗d_Q(y), for x in P^p.
+
+Both integer gradings are unrestricted. Simultaneous maps of the two
+factors preserve the pure tensors and their total degrees.
 -/
 
 @[expose] public section
@@ -35,21 +38,39 @@ universe u v w
 
 variable (R : Type u) [CommRing R]
 
-/-- The tensor totalization provider for independent carrier universes. -/
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. The family Pᵖ ⊗_R Qᑫ admits the coproducts and compatible
+differential maps needed for totalization over p+q=n, with the cochain tensor sign (−1)ᵖ in
+the second factor.
+-/
 local instance tensorHasMapBifunctorAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q : CochainComplex (ModuleCat.{w} R) ℤ) :
     HomologicalComplex.HasMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ) := by
   intro n
   infer_instance
 
-/-- Compatibility name for clients compiled before the tensor provider was named. -/
+/-
+This abbreviation retains the earlier compatibility name for the tensorHasMapBifunctorAt provider.
+-/
+
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. The integer-graded tensor family satisfies the coproduct and
+differential compatibility requirements for the sum totalization, with degree-n term ⊕_{p+q=n}
+Pᵖ ⊗_R Qᑫ.
+-/
 abbrev instHasMapBifunctorModuleCatIntTensorBifunctorAtUp
     (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q : CochainComplex (ModuleCat.{w} R) ℤ) :
     HomologicalComplex.HasMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ) :=
   tensorHasMapBifunctorAt R P Q
 
-/-- Totalization of the module tensor, on the full integer cochain grading. -/
+/--
+For a commutative ring R, the full tensor totalization is a bifunctor on integer cochain
+complexes of R-modules, allowing the two carrier universes to vary independently. It sends
+(P,Q) to the complex with term ⊕_{p+q=n} Pᵖ ⊗_R Qᑫ and differential d_P⊗1 + (−1)ᵖ 1⊗d_Q.
+-/
 def bifunctorAt : CochainComplex (ModuleCat.{v} R) ℤ ⥤
     CochainComplex (ModuleCat.{w} R) ℤ ⥤ CochainComplex (ModuleCat.{max v w} R) ℤ := by
   letI : ∀ (P : CochainComplex (ModuleCat.{v} R) ℤ)
@@ -58,13 +79,21 @@ def bifunctorAt : CochainComplex (ModuleCat.{v} R) ℤ ⥤
     fun P Q => by intro n; infer_instance
   exact (ModuleCat.tensorBifunctorAt R).map₂HomologicalComplex (.up ℤ) (.up ℤ) (.up ℤ)
 
-/-- The full sum tensor complex. -/
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. Their tensor complex has degree-n module ⊕_{p+q=n} Pᵖ ⊗_R Qᑫ.
+On the summand indexed by (p,q), its differential is d_P⊗1 + (−1)ᵖ 1⊗d_Q.
+-/
 def complexAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q : CochainComplex (ModuleCat.{w} R) ℤ) :
     CochainComplex (ModuleCat.{max v w} R) ℤ :=
   ((bifunctorAt R).obj P).obj Q
 
-/-- Place the original pure tensor in its total degree. -/
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. For p,q,n ∈ ℤ with p+q=n, x ∈ Pᵖ and y ∈ Qᑫ, mkAt inserts
+x⊗_R y into the (p,q)-summand of the degree-n tensor complex.
+-/
 def mkAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q : CochainComplex (ModuleCat.{w} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y : Q.X q) :
@@ -72,13 +101,23 @@ def mkAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
   (HomologicalComplex.ιMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ)
     p q n h).hom (x ⊗ₜ[R] y)
 
-/-- The simultaneous tensor map of the original two complex morphisms. -/
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. For morphisms f : P → P' and g : Q → Q' of the corresponding
+module complexes, their simultaneous tensor map sends the summand Pᵖ ⊗_R Qᑫ to P'ᵖ ⊗_R Q'ᑫ by
+fᵖ⊗gᑫ and preserves total degree p+q.
+-/
 def mapAt {P P' : CochainComplex (ModuleCat.{v} R) ℤ}
     {Q Q' : CochainComplex (ModuleCat.{w} R) ℤ} (f : P ⟶ P') (g : Q ⟶ Q') :
     complexAt R P Q ⟶ complexAt R P' Q' :=
   HomologicalComplex.mapBifunctorMap f g (ModuleCat.tensorBifunctorAt R) (.up ℤ)
 
-/-- Both original factor values are retained by the total map. -/
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. Let f : P → P' and g : Q → Q', and fix p+q=n with x ∈ Pᵖ,y ∈
+Qᑫ. The degree-n tensor map satisfies (f⊗g)(mkAt(x,y)) = mkAt(fᵖ(x),gᑫ(y)) in the same
+(p,q)-summand.
+-/
 theorem mapAt_mk {P P' : CochainComplex (ModuleCat.{v} R) ℤ}
     {Q Q' : CochainComplex (ModuleCat.{w} R) ℤ} (f : P ⟶ P') (g : Q ⟶ Q')
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y : Q.X q) :
@@ -111,7 +150,11 @@ theorem mapAt_mk {P P' : CochainComplex (ModuleCat.{v} R) ℤ}
   rw [ht] at hv
   exact hv
 
-/-- The two original single-variable tensor maps assemble their simultaneous map. -/
+/--
+Let R be a commutative ring and P,P',Q,Q' integer cochain complexes of R-modules in the same
+carrier universe. For f : P → P' and g : Q → Q', mapping the first factor and then the second
+gives the simultaneous map: (f⊗1_Q) ≫ (1_{P'}⊗g) = f⊗g.
+-/
 theorem mapAt_precomp_postcomp
     {P P' Q Q' : CochainComplex (ModuleCat.{v} R) ℤ}
     (f : P ⟶ P') (g : Q ⟶ Q') :
@@ -129,7 +172,12 @@ theorem mapAt_precomp_postcomp
   rw [mapAt_mk, mapAt_mk, mapAt_mk]
   rfl
 
-/-- The total differential retains the cochain tensor signs in every degree. -/
+/--
+Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
+belong to independent universes. For p+q=n and x ∈ Pᵖ,y ∈ Qᑫ, the total differential in degree
+n sends mkAt(x,y) to mkAt(d_P x,y) + (−1)ᵖ mkAt(x,d_Q y), in summands (p+1,q) and (p,q+1) of
+degree n+1.
+-/
 theorem d_mkAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q : CochainComplex (ModuleCat.{w} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y : Q.X q) :

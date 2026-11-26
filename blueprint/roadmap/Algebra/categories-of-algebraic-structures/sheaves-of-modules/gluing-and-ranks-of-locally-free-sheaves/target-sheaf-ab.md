@@ -1,6 +1,6 @@
-# Target Sheaf Ab
+# Underlying abelian sheaf of a module sheaf
 
-The target sheaf of modules as an `Ab`-valued sheaf, so the
-section-gluing API applies. The first projection is definitionally
-`G.val.presheaf` (anonymous-constructor iota), hence the `rfl` identifications
-`targetSheafAb_obj`/`targetSheafAb_map` below.
+Let `X : TopCat.{u}`, `R` be a ring sheaf of carrier universe `u`, and `G : SheafOfModules.{u}
+R`. The sheaf `targetSheafAb G : TopCat.Sheaf Ab X` has presheaf `G.val.presheaf` and the
+sheaf condition supplied by `G`. It forgets the module scalar action while retaining the
+additive sections and restrictions.

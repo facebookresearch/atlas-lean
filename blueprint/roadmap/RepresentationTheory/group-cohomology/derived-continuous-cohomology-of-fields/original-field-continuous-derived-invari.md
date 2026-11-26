@@ -1,3 +1,6 @@
-# Original Field Continuous Derived Invariants Iso
+# Continuous derived comparison on lifted sheaf fibers
 
-Every original coefficient-w sheaf enters the actual HG/RD family through ONE L.obj F.
+Continuous derived comparison on lifted sheaf fibers.
+
+Evaluate the field comparison at the geometric fiber of a coefficient sheaf lifted to the
+common universe.

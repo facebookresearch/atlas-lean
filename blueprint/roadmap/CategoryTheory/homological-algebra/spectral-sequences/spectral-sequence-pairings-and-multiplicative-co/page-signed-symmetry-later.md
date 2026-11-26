@@ -1,3 +1,5 @@
-# Page Signed Symmetry later
+# Signed symmetry persists on later pages
 
-The signed swap law is preserved from its initial page to every later integer page.
+Signed symmetry persists on later pages.
+
+A signed symmetry law at R≥1 propagates to every later page.

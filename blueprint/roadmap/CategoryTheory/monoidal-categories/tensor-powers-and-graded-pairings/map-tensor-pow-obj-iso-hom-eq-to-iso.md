@@ -1,4 +1,6 @@
-# Map Tensor Pow Obj Iso hom eq To Iso
+# Strong monoidal power comparison respects index equalities
 
-The strong-monoidal tensor-power comparison commutes with transport of
-the tensor-power index along an equality.
+Strong monoidal power comparison respects index equalities.
+
+Mapping a power-index equality and comparing equals comparing first and then transporting the
+image power index.

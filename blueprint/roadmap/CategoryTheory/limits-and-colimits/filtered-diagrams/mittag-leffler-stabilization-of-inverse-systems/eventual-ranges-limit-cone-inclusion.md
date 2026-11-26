@@ -1,3 +1,6 @@
-# Eventual Ranges Limit Cone π inclusion
+# The restricted limit coordinates recover the full coordinates
 
-Including a restricted cone projection gives the original limit projection.
+The restricted limit coordinates recover the full coordinates.
+
+Each projection of eventualRangesLimitCone A followed by the eventual-range inclusion equals
+the chosen projection lim A → A_j.

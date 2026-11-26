@@ -1,3 +1,5 @@
-# Small Etale Direct Image Comp Iso
+# Successive direct images equal the composite direct image naturally
 
-The actual direct images compose via the same canonical fiber-product comparison.
+Successive direct images equal the composite direct image naturally.
+
+For `f : X → Y` and `g : Y → Z`, there is a natural isomorphism `f_* ⋙ g_* ≅ (f ≫ g)_*`.

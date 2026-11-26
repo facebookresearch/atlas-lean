@@ -1,3 +1,7 @@
-# Coefficient Eulerian Lambda naturality
+# Naturality of Eulerian convolution in coefficients and tensor factors
 
-The actual finite rational family commutes with independent coefficient maps and uniform original tail maps.
+Naturality of Eulerian convolution in coefficients and tensor factors.
+
+For a commutative ℚ-algebra k and k-linear maps f : M → N and g : V → W, put T = f ⊗ g⊗n.
+Then T ∘ Aₙ,M,V(a) = Aₙ,N,W(a) ∘ T for every a ∈ ℚ. The four modules may have independent
+universes.

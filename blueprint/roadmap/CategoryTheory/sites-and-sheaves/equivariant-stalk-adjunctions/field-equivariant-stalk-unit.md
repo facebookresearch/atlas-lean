@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Unit
+# Unit of the equivariant field stalk adjunction
 
-The unit is the one belonging to the fixed constructed T and R.
+Unit of the equivariant field stalk adjunction.
+
+The unit sends a sheaf to the invariant inverse sheaf of its geometric Galois stalk.

@@ -1,7 +1,7 @@
-# Exists open Normal Subgroup quotient factor fin of discrete Topology
+# Finite quotient factorization for discrete target topology
 
-A continuous map from a finite power to a space with its already-selected
-discrete topology factors through one finite quotient.  The discrete
-uniformity used by `exists_openNormalSubgroup_quotient_factor_fin` is
-installed only inside the proof, with its induced topology replaced by the
-selected topology.
+Finite quotient factorization for discrete target topology.
+
+For continuous c : Gⁿ → D, where G is a compact totally disconnected topological group and D
+has the specified discrete topology, there exist H open normal and c̄ : (G/H)ⁿ → D satisfying
+c̄((xᵢH)ᵢ) = c(x).

@@ -1,4 +1,7 @@
-# Tor preserves Filtered Colimits Of Shape
+# Tor with a fixed module preserves filtered colimits
 
-Native Tor with any fixed coefficient preserves filtered colimits. The
-object and morphism universes of the shape can be chosen independently.
+Tor with a fixed module preserves filtered colimits.
+
+For a filtered category `J` with both index universes bounded by the module universe `u`, the
+functor `Tor_n^R(M, -)` on `ModuleCat.{u} R` preserves colimits of shape `J` for every natural
+`n`.

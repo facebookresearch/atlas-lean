@@ -1,3 +1,5 @@
-# Interleave Tuple
+# Interleaving as a map of nonidentity tuple index types
 
-The literal nonidentity tuple obtained by interleaving two normalized generators.
+For a type G with distinguished element 1, two nonidentity
+tuples a∈N_p,b∈N_q and any permutation σ give the nonidentity
+tuple interleave(a,b,σ)∈N_(p+q).

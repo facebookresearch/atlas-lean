@@ -11,13 +11,15 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.RingHomInduction.Composition
 
 /-!
-# Associative induction specializes to native commutative scalar extension
+# Balanced induction and commutative scalar extension
 
-The already constructed induction adjunction and Mathlib's commutative
-extension adjunction have the same native scalar-restriction functor at
-the earned common universe. Native uniqueness of left adjoints supplies
-their comparison. Its value on the unit tensor follows from the native
-unit equation, and linearity computes every original pure tensor.
+Let `k : Type u` and `R : Type v` be commutative rings and `φ : k →+* R`. On modules with
+carrier universe `max u v w`, balanced induction along `φ` is naturally isomorphic to tensor
+scalar extension `M ↦ R ⊗_{k,φ} M`. The comparison is the isomorphism between the two left
+adjoints of restriction of scalars.
+
+It sends the balanced class `tensor φ M r m` to `r ⊗ₜ[k,φ] m`; its inverse sends the pure
+tensor to that balanced class. In particular, the unit class at `r=1` is preserved.
 -/
 
 @[expose] public section
@@ -31,7 +33,11 @@ namespace ModuleCat.RingHomInduction
 
 variable {k : Type u} {R : Type v} [CommRing k] [CommRing R] (φ : k →+* R)
 
-/-- The two actual induction models are compared by native uniqueness of left adjoints. -/
+/-- Let `k : Type u` and `R : Type v` be commutative rings, `φ : k →+* R`, and `w` a
+carrier-universe parameter. There is a natural isomorphism `ModuleCat.induceScalars.{u,v,w} φ
+≅ ModuleCat.extendScalars.{u,v,max u v w} φ`, on modules of universe `max u v w`. It is
+induced by the two induction/extension adjunctions with the same restriction-of-scalars
+functor. -/
 noncomputable def commutativeIso :
     ModuleCat.induceScalars.{u, v, w} φ ≅
       ModuleCat.extendScalars.{u, v, max u v w} φ :=
@@ -39,7 +45,9 @@ noncomputable def commutativeIso :
     (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ)
     (ModuleCat.extendRestrictScalarsAdj.{max u v w, u, v} φ)
 
-/-- The actual comparison carries the balanced unit tensor to the native tensor unit. -/
+/-- Let `k : Type u` and `R : Type v` be commutative rings, `φ : k →+* R`, `M : ModuleCat.{max u v
+w} k`, and `m∈M`. The component of `commutativeIso φ` sends `tensor φ M 1 m` to `(1 : R)
+⊗ₜ[k,φ] m`, where the `k`-action on `R` is through `φ`. -/
 theorem commutativeIso_hom_unit (M : ModuleCat.{max u v w} k) (m : M) :
     (commutativeIso.{u, v, w} φ).hom.app M (tensor φ M 1 m) = (1 : R) ⊗ₜ[k,φ] m := by
   let N : ModuleCat.{max u v w} R := (ModuleCat.extendScalars.{u, v, max u v w} φ).obj M
@@ -61,7 +69,9 @@ theorem commutativeIso_hom_unit (M : ModuleCat.{max u v w} k) (m : M) :
     ModuleCat.extendRestrictScalarsAdj_unit_app_apply.{max u v w, u, v} φ M m
   exact hl.symm.trans (hm.trans hr)
 
-/-- Every pure balanced tensor is sent to its original native scalar-extension tensor. -/
+/-- Let `k : Type u` and `R : Type v` be commutative rings, `φ : k →+* R`, `M : ModuleCat.{max u v
+w} k`, `r∈R`, and `m∈M`. Then `(commutativeIso φ).hom.app M (tensor φ M r m) = r ⊗ₜ[k,φ] m`.
+Thus the comparison preserves both entries of each balanced pure tensor. -/
 theorem commutativeIso_hom_tensor (M : ModuleCat.{max u v w} k) (r : R) (m : M) :
     (commutativeIso.{u, v, w} φ).hom.app M (tensor φ M r m) = r ⊗ₜ[k,φ] m := by
   let N : ModuleCat.{max u v w} R := (ModuleCat.extendScalars.{u, v, max u v w} φ).obj M
@@ -80,7 +90,9 @@ theorem commutativeIso_hom_tensor (M : ModuleCat.{max u v w} k) (r : R) (m : M) 
     rw [mul_one]
   exact h₁.trans (h₂.trans h₃)
 
-/-- The inverse comparison returns the original balanced class of each native pure tensor. -/
+/-- Let `k : Type u` and `R : Type v` be commutative rings, `φ : k →+* R`, `M : ModuleCat.{max u v
+w} k`, `r∈R`, and `m∈M`. Then `(commutativeIso φ).inv.app M (r ⊗ₜ[k,φ] m) = tensor φ M r m`,
+the corresponding class in balanced induction. -/
 theorem commutativeIso_inv_tensor (M : ModuleCat.{max u v w} k) (r : R) (m : M) :
     (commutativeIso.{u, v, w} φ).inv.app M (r ⊗ₜ[k,φ] m) = tensor φ M r m := by
   let e := ((commutativeIso.{u, v, w} φ).app M).toLinearEquiv

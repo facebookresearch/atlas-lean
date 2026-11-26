@@ -1,8 +1,8 @@
 # The canonical module tensor in a larger coefficient universe
 
-- [Hom tensor Hom](hom-tensor-hom.md)
-- [Hom whisker Left](hom-whisker-left.md)
-- [Hom whisker Right](hom-whisker-right.md)
-- [Tensor Hom tmul](tensor-hom-tmul.md)
-- [Left Unitor tmul](left-unitor-tmul.md)
-- [Right Unitor tmul](right-unitor-tmul.md)
+- [Tensor morphisms are tensor maps of linear maps](hom-tensor-hom.md)
+- [Left whiskering is left tensoring](hom-whisker-left.md)
+- [Right whiskering is right tensoring](hom-whisker-right.md)
+- [Tensor morphisms act factor by factor](tensor-hom-tmul.md)
+- [The left unitor uses the down scalar](left-unitor-tmul.md)
+- [The right unitor uses the down scalar](right-unitor-tmul.md)

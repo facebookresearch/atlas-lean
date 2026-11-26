@@ -1,3 +1,6 @@
-# Small Etale Inverse Image id comp
+# Inverse image left scheme identity comparison is its unitor path
 
-The actual inverse-image comparison satisfies left-morphism identity coherence.
+Inverse image left scheme identity comparison is its unitor path.
+
+The comparison for `𝟙 ≫ f` agrees with the whiskered identity inverse-image comparison and the
+right functor unitor.

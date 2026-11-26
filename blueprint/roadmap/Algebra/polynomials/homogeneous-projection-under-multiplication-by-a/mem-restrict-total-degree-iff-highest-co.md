@@ -1,4 +1,5 @@
-# Mem restrict Total Degree iff highest Component zero
+# The top homogeneous component detects the previous degree cutoff
 
-On the native degree-`q+1` cutoff, the highest component vanishes exactly
-on the previous degree cutoff. This also covers the zero coefficient ring.
+For a commutative semiring R, arbitrary I, q : ℕ and p whose support has total degree at most
+q+1, p has support degree at most q if and only if π_{q+1}(p)=0. The upper-cutoff hypothesis is
+required, and no nontriviality condition on R is imposed.

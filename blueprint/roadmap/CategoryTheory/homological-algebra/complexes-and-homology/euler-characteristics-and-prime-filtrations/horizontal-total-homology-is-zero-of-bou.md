@@ -1,3 +1,5 @@
-# Horizontal Total Homology is Zero of bounded
+# Vanishing above the total degree of a bounded rectangle
 
-Real term bounds earn zero total homology beyond the sum of the two degree bounds.
+Vanishing above the total degree of a bounded rectangle.
+
+If K_{p,q} is zero whenever p>m or q>n, then H_j(Tot K) is zero for j>m+n.

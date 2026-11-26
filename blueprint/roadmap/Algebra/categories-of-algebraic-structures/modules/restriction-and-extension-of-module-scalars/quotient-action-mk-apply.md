@@ -1,3 +1,5 @@
-# Quotient Action mk apply
+# The quotient action on a scalar representative
 
-The descended action on a quotient representative is the original action.
+The quotient action on a scalar representative.
+
+The class of r acts on m as the original scalar r.

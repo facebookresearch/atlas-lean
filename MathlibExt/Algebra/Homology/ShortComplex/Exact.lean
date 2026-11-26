@@ -23,12 +23,14 @@ module
 public import Mathlib.Algebra.Homology.ShortComplex.Exact
 
 /-!
-# Exactness transport and cokernel comparisons
+# Exactness transport and universal cokernel comparisons
 
-Exactness transports along compatible isomorphisms of the three objects,
-including the zero-composite witness needed to form the target short complex.
-For an exact short complex in an abelian category whose second map is epi,
-the universal map from the cokernel of its first map is an isomorphism.
+Let S be an exact short complex in a category with zero morphisms. Three object isomorphisms
+compatible with two specified target arrows transport both their zero composite and exactness to
+the target complex.
+
+In an abelian category, if S₁ → S₂ → S₃ is exact and its second arrow is an epimorphism, then
+the universal map coker(S₁ → S₂) → S₃ is an isomorphism.
 -/
 
 @[expose] public section
@@ -37,7 +39,9 @@ namespace CategoryTheory.ShortComplex
 
 open Category Limits
 
-/-- Transport exactness and the zero-composite witness along three compatible isomorphisms. -/
+/-- Let E have zero morphisms and let S be an exact short complex. Suppose e₁ : S₁ ≅ A, e₂ : S₂ ≅ B
+and e₃ : S₃ ≅ D satisfy e₂ ∘ S.f = f ∘ e₁ and e₃ ∘ S.g = g ∘ e₂ for f : A → B and g : B → D.
+Then g ∘ f=0 and the resulting short complex A → B → D is exact. -/
 lemma exists_exact_of_iso {E : Type*} [Category E] [HasZeroMorphisms E]
     (S : ShortComplex E) (hS : S.Exact) {A B C : E}
     (e₁ : S.X₁ ≅ A) (e₂ : S.X₂ ≅ B) (e₃ : S.X₃ ≅ C)
@@ -55,15 +59,17 @@ lemma exists_exact_of_iso {E : Type*} [Category E] [HasZeroMorphisms E]
       _ = e₁.hom ≫ 0 := (comp_zero).symm
   exact ⟨hw, ShortComplex.exact_of_iso (ShortComplex.isoMk e₁ e₂ e₃ hf hg) hS⟩
 
-/-- The universal cokernel map of an exact complex with epi second map is an isomorphism. -/
+/-- Let E be abelian and let S₁ → S₂ → S₃ be exact. If S₂ → S₃ is an epimorphism, the universal
+cokernel map coker(S₁ → S₂) → S₃ induced by the second arrow is an isomorphism. -/
 lemma Exact.isIso_cokernel_desc {E : Type*} [Category E] [Abelian E]
     {S : ShortComplex E} (hS : S.Exact) [Epi S.g] :
     IsIso (cokernel.desc S.f S.g S.zero) := by
   exact (IsColimit.nonempty_isColimit_iff_isIso_desc (cokernelIsCokernel S.f)).mp
     ⟨hS.gIsCokernel⟩
 
-/-- The cokernel of the incoming map identifies with the target when the
-short complex is exact and the outgoing map is epi. -/
+/-- Let E be abelian and let S₁ → S₂ → S₃ be exact with the second arrow an epimorphism. The
+canonical isomorphism coker(S₁ → S₂) ≅ S₃ is the one induced by the universal cokernel
+factorization of S₂ → S₃. -/
 noncomputable def cokernelDescIsoOfExactOfEpi {E : Type*} [Category E]
     [Abelian E] {S : ShortComplex E} (hS : S.Exact) [Epi S.g] :
     cokernel S.f ≅ S.X₃ :=

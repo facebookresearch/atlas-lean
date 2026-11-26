@@ -1,3 +1,6 @@
-# Field Geometric Elements Lift Equivalence comp projection
+# The lifted-neighborhood equivalence preserves the site projection
 
-Its projection retains all original étale objects and arrows.
+Let Ω be a prescribed separable closure of k. Composing the forward point-index lift
+equivalence with the category-of-elements projection to the small étale category equals the
+projection from the unlifted neighborhood category. This is equality of functors on both
+objects and étale morphisms.

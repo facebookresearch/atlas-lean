@@ -1,3 +1,5 @@
-# Finite Cotruncation XIso
+# Term isomorphism in the retained interval
 
-Coordinate chart in a retained degree.
+Let C have zero morphisms and a zero object. For a nonnegative cochain
+complex K and n≤q, the canonical term isomorphism
+eₙ:Cot_q(K)ⁿ ≅ Kⁿ in the retained interval [0,q].

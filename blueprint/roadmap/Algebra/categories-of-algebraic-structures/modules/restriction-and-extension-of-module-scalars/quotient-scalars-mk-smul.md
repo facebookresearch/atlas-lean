@@ -1,4 +1,5 @@
-# Quotient Scalars mk smul
+# The descended scalar multiplication formula
 
-Restricting the descended scalar structure along the quotient map recovers
-the original action on every element.
+The descended scalar multiplication formula.
+
+The class of r in R/I sends m to r·m.

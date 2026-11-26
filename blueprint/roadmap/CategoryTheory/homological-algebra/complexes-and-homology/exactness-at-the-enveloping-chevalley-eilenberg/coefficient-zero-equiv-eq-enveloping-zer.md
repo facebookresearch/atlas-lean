@@ -1,4 +1,7 @@
-# Coefficient Zero Equiv eq enveloping Zero Equiv
+# Ground and enveloping degree-zero coordinate maps have the same value
 
-Ground-ring zero coordinates agree with the already constructed native
-left-enveloping zero coordinates on their original carrier.
+Let R be a commutative ring, L an R-Lie algebra, U its universal enveloping algebra, ι its
+Lie-generator map and ε : U →ₐ[R] R its augmentation. Give U the coefficient Lie action ⁅x,a⁆
+= −a*ι(x), and put C_n = ⋀[R]^n L ⊗[R] U. For every p : C₀, coefficientZeroEquiv R L
+(regularCoefficients R L) p = envelopingZeroEquiv R L p. Both maps identify the empty exterior
+factor with the coefficient in U.

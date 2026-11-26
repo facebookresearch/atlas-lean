@@ -1,4 +1,5 @@
-# Tensor Pow Obj One Iso
+# One factor tensor power is the object
 
-The canonical weight-one tensor power isomorphism, given by the left
-unitor after reduction of the recursive tensor-power carrier.
+One factor tensor power is the object.
+
+The left unitor identifies power one with `X`.

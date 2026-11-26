@@ -1,3 +1,6 @@
-# BBar Degree Homeomorph
+# The classifying-bar degree homeomorphism
 
-Degree-`n` topological classifying bar as the space of `n` head-first tuples.
+The classifying-bar degree homeomorphism.
+
+The degree-n space BBar G is homeomorphic to the finite product Gⁿ, by removing its point
+factors and reading the tensor-monad power coordinates.

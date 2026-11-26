@@ -1,3 +1,6 @@
-# Restrict Functor
+# The restriction functor from enveloping modules to Lie modules
 
-Native scalar restriction and Lie pullback are functorial on the original modules.
+The restriction functor from enveloping modules to Lie modules.
+
+This sends a left `U_R(L)`-module to its Lie action through `ι : L → U_R(L)` and retains the
+values of its module morphisms.

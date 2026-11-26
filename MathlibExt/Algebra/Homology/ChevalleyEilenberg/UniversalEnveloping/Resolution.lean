@@ -14,15 +14,19 @@ public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 public import Mathlib.CategoryTheory.Abelian.LeftDerived
 
 /-!
-# The free enveloping Chevalley–Eilenberg projective resolution
+# The enveloping Chevalley–Eilenberg projective resolution
 
-Under `Module.Free R L`, exactness at the augmentation and the filtered
-PBW/Koszul boundary construction give a projective resolution of the trivial
-enveloping module. Its comparison with any other projective resolution is a
-homotopy equivalence.
+Let `R` be a commutative ring and `L` an `R`-Lie algebra whose underlying `R`-module is free.
+The enveloping Chevalley–Eilenberg complex consists of projective `U_R(L)`-modules, and its
+canonical augmentation to the trivial enveloping module is a quasi-isomorphism. It therefore
+defines a projective resolution of that trivial module.
 
-For an additive functor to an abelian category, the homology of the mapped
-complex computes its left-derived functors on the trivial module.
+The resolution is chain homotopy equivalent to every other projective resolution of the same
+target. For an additive functor from the enveloping-module category to an abelian category,
+homology of the mapped complex computes the corresponding left-derived functors on the trivial
+module. The target category and morphism universes are independent.
+
+Reference: Weibel, *An Introduction to Homological Algebra*, Chapter 7.
 -/
 
 @[expose] public section
@@ -40,8 +44,10 @@ variable (R : Type u) [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The original native enveloping CE augmentation is a quasi-isomorphism
-under freeness of the original underlying Lie module. -/
+/-- The augmentation quasi-isomorphism for a free underlying Lie module.
+
+If `Module.Free R L`, the enveloping Chevalley–Eilenberg augmentation to the trivial module is
+a quasi-isomorphism in every connective degree. -/
 theorem envelopingAugmentation_quasiIso_of_free [Module.Free R L] :
     QuasiIso (envelopingAugmentation R L) := by
   refine ⟨fun n => ?_⟩
@@ -65,8 +71,10 @@ theorem envelopingAugmentation_quasiIso_of_free [Module.Free R L] :
       · exact envelopingComplex_exactAt_succ R L n
       · exact ChainComplex.exactAt_succ_single_obj _ _
 
-/-- The original enveloping CE complex resolves its original trivial
-enveloping module. The augmentation is the canonical enveloping augmentation. -/
+/-- The enveloping projective resolution of the trivial module.
+
+For `Module.Free R L`, this projective resolution has the enveloping Chevalley–Eilenberg
+complex and its canonical augmentation to the trivial `U_R(L)`-module. -/
 def envelopingProjectiveResolution [Module.Free R L] :
     ProjectiveResolution (envelopingTrivialObject R L) where
   complex := envelopingComplex R L
@@ -74,16 +82,25 @@ def envelopingProjectiveResolution [Module.Free R L] :
   π := envelopingAugmentation R L
   quasiIso := envelopingAugmentation_quasiIso_of_free R L
 
+/-- The chain complex of the enveloping projective resolution.
+
+The underlying complex of this resolution is the enveloping Chevalley–Eilenberg complex. -/
 @[simp]
 theorem envelopingProjectiveResolution_complex [Module.Free R L] :
     (envelopingProjectiveResolution R L).complex = envelopingComplex R L := rfl
 
+/-- The augmentation of the enveloping projective resolution.
+
+The resolution augmentation is the canonical enveloping Chevalley–Eilenberg augmentation. -/
 @[simp]
 theorem envelopingProjectiveResolution_π [Module.Free R L] :
     (envelopingProjectiveResolution R L).π = envelopingAugmentation R L := rfl
 
-/-- The constructed original CE resolution has the standard native
-homotopy comparison with any other projective resolution of the same target. -/
+/-- The homotopy comparison with another enveloping resolution.
+
+For any projective resolution `Q` of the trivial `U_R(L)`-module, the enveloping
+Chevalley–Eilenberg complex is chain homotopy equivalent to `Q.complex`, assuming `Module.Free
+R L`. -/
 def envelopingResolutionHomotopyEquiv [Module.Free R L]
     (Q : ProjectiveResolution (envelopingTrivialObject R L)) :
     HomotopyEquiv (envelopingComplex R L) Q.complex :=
@@ -93,8 +110,11 @@ section DerivedComparison
 
 variable [Module.Free R L] {D : Type a} [Category.{c} D] [Abelian D]
 
-/-- The mapped enveloping CE homology computes the ordinary native
-left derived functor on the original trivial enveloping module. -/
+/-- The left-derived comparison for mapped enveloping chains.
+
+If `Module.Free R L` and `F` is an additive functor to an abelian category, the degree-`n`
+homology of `F` applied to the enveloping chain complex is isomorphic to the degree-`n` left-
+derived value of `F` on the trivial module. -/
 def envelopingHomologyIsoLeftDerived (F : ModuleCat.{max u v} U ⥤ D) [F.Additive] (n : ℕ) :
     (((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj (envelopingComplex R L)).homology n) ≅
       (F.leftDerived n).obj (envelopingTrivialObject R L) :=

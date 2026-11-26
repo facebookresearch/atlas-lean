@@ -9,14 +9,14 @@ public import MathlibExt.Algebra.Homology.HomCochainComplex
 public import Mathlib.Algebra.Homology.DerivedCategory.KProjective
 
 /-!
-# Hom cochain quasi-isomorphism for projective chain complexes
+# Hom cochains of quasi-isomorphic projective chain complexes
 
-For a coefficient object `G` in an abelian category, the contravariant
-functor `Hom(-, G)` from `ℕ`-indexed chain complexes to cochain complexes
-sends quasi-isomorphisms between degreewise projective complexes to
-quasi-isomorphisms. This follows from the identification of such
-quasi-isomorphisms with homotopy equivalences and the preservation of
-homotopy equivalences by `Hom(-, G)`.
+In an abelian category, a quasi-isomorphism between natural-index chain complexes whose terms
+are projective is a homotopy equivalence with the same forward map. Contravariant Hom cochains
+into any coefficient object therefore send it to a quasi-isomorphism.
+
+The resulting cohomology isomorphisms are natural in the coefficient object, and their forward
+maps are the cohomology maps induced by precomposition with the given chain map.
 -/
 
 @[expose] public section
@@ -29,6 +29,11 @@ noncomputable section
 
 namespace HomologicalComplex
 
+/-- Hom cochains preserve quasi-isomorphisms between termwise projective chains.
+
+Let `f : K ⟶ L` be a quasi-isomorphism of natural-index chain complexes in an abelian
+category, with every term of both complexes projective. For any coefficient `G`, its
+contravariant Hom cochain map is a quasi-isomorphism. -/
 theorem homCochainComplexFunctor_map_quasiIso_of_projective
     {C : Type u} [Category.{v} C] [Abelian C]
     {K L : ChainComplex C ℕ} (f : K ⟶ L)
@@ -45,7 +50,10 @@ theorem homCochainComplexFunctor_map_quasiIso_of_projective
     rw [he]
   exact h_eq ▸ (inferInstance : QuasiIso eG.hom)
 
-/-- Homotopy equivalence underlying a quasi-iso of projective complexes. -/
+/-- Homotopy equivalence from a projective-chain quasi-isomorphism.
+
+For a quasi-isomorphism `f : K ⟶ L` between termwise projective natural-index chain complexes,
+construct a homotopy equivalence `K ≃ L` whose forward map is `f`. -/
 noncomputable def homotopyEquivOfQuasiIsoOfProjective
     {C : Type u} [Category.{v} C] [Abelian C]
     {K L : ChainComplex C ℕ} (f : K ⟶ L)
@@ -53,6 +61,9 @@ noncomputable def homotopyEquivOfQuasiIsoOfProjective
     [QuasiIso f] : HomotopyEquiv K L :=
   Classical.choose ((ChainComplex.quasiIso_iff_of_projective f).mp inferInstance)
 
+/-- Constructed projective-chain homotopy equivalence retains the given map.
+
+The forward map of `homotopyEquivOfQuasiIsoOfProjective f` equals the quasi-isomorphism `f`. -/
 @[simp] theorem homotopyEquivOfQuasiIsoOfProjective_hom
     {C : Type u} [Category.{v} C] [Abelian C]
     {K L : ChainComplex C ℕ} (f : K ⟶ L)
@@ -61,7 +72,10 @@ noncomputable def homotopyEquivOfQuasiIsoOfProjective
     (homotopyEquivOfQuasiIsoOfProjective f).hom = f :=
   Classical.choose_spec ((ChainComplex.quasiIso_iff_of_projective f).mp inferInstance)
 
-/-- Nat iso `Hⁿ(Hom(L,-)) ≅ Hⁿ(Hom(K,-))` from a projective quasi-iso. -/
+/-- Projective-chain quasi-isomorphism gives natural Hom cohomology isomorphisms.
+
+For a termwise projective-chain quasi-isomorphism `f : K ⟶ L`, the degree-`n` coefficient
+functors `H^n Hom(L,-)` and `H^n Hom(K,-)` are naturally isomorphic. -/
 noncomputable def homCochainComplexHomologyNatIsoOfProjectiveQuasiIso
     {C : Type u} [Category.{v} C] [Abelian C]
     {K L : ChainComplex C ℕ} (f : K ⟶ L)
@@ -72,6 +86,10 @@ noncomputable def homCochainComplexHomologyNatIsoOfProjectiveQuasiIso
   HomotopyEquiv.homCochainComplexHomologyNatIso
     (homotopyEquivOfQuasiIsoOfProjective f) n
 
+/-- Forward projective-chain Hom cohomology comparison is precomposition by f.
+
+At coefficient `G`, the forward natural isomorphism component is the degree-`n` cohomology map
+of `(homCochainComplexFunctor C G).map f.op`. -/
 @[simp] theorem homCochainComplexHomologyNatIsoOfProjectiveQuasiIso_hom_app
     {C : Type u} [Category.{v} C] [Abelian C]
     {K L : ChainComplex C ℕ} (f : K ⟶ L)

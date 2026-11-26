@@ -1,3 +1,6 @@
-# Skeletal Step Class To Page successor i
+# The step-class map through the successor cycle inclusion
 
-The intermediate-window class includes as the current skeletal page class.
+The step-class map through the successor cycle inclusion.
+
+The expanded lower-window representative followed by the successor cycle inclusion is the
+page-r class map.

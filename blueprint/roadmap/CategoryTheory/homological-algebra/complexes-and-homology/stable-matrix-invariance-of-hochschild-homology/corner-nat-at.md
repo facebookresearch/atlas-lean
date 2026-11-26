@@ -1,3 +1,6 @@
-# Corner Nat At
+# Zero-index corners form a natural transformation into the matrix diagram
 
-The zeroth corner is a natural transformation into the positive-size matrix diagram.
+For a k-algebra A and a compatible A-bimodule M, the
+corners at matrix index zero form const(C_*(A,ULift^H M))→D.
+Positive-size zero extension preserves these corners in every
+degree, at H=max(u,v,w,t).

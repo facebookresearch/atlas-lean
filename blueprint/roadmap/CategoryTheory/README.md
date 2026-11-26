@@ -11,6 +11,7 @@ Category theory organizes mathematical structures through morphisms, functors, u
 - [Categories, functors and natural transformations](categories-and-functors/README.md)
 - [Constructions of categories](constructions-of-categories/README.md)
 - [Monads and algebras](monads/README.md)
+- [Localization of categories](localization-of-categories/README.md)
 - [Adjunctions and Kan extensions](adjunctions-and-kan-extensions/README.md)
 - [Homological algebra](homological-algebra/README.md)
 - [Additive and abelian categories](additive-and-abelian-categories/README.md)

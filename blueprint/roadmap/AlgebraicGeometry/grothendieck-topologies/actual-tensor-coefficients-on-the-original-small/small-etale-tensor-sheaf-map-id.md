@@ -1,3 +1,4 @@
-# Small Etale Tensor Sheaf Map id
+# Identity coefficient maps give the identity tensor sheaf map
 
-The actual tensor sheaf map preserves the original identities.
+For additive-group sheaves F,G on the small étale topology of X, the tensor sheaf map induced
+by their identities is the identity of the sheafified tensor coefficient object.

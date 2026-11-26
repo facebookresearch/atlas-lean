@@ -1,4 +1,6 @@
-# Coalgebra Functor Of Comonad Hom
+# Covariant transport of coalgebras along a comonad morphism
 
-Given a comonad morphism `h : G ⟶ H`, push coalgebras for `G` forward to
-coalgebras for `H`. Covariant dual of Mathlib `Monad.algebraFunctorOfMonadHom`.
+Covariant transport of coalgebras along a comonad morphism.
+
+For `h : G → H`, a `G`-coalgebra `(X,a)` becomes an `H`-coalgebra with the same carrier and
+coaction `a ≫ h.app X`. Morphisms retain their underlying carrier maps.

@@ -1,3 +1,6 @@
-# Unitization Even Word naturality
+# Naturality of ideal-leading unitization words
 
-The map preserves the even ideal word, with the original f on every factor.
+Naturality of ideal-leading unitization words.
+
+The normalized level map induced by `f` sends the even word with all entries in `A` to the
+even word obtained by applying `f` to each entry.

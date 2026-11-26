@@ -1,7 +1,6 @@
-# Of Tensor Iso
+# Tensor comparison for sheaf restriction
 
-Tensor comparison for restriction, in `restrictSheaf` spelling: the symmetry of
-the structural `Functor.Monoidal.μIso` for the `ofMonoidal` instance,
-so it agrees with the monoidal structure by definition. This is the single
-canonical tensor comparison; its explicit counit/`μ`/`commIso` form is recorded
-as `ofTensorIso_hom_eq` / `ofTensorIso_inv_eq` below.
+Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `W`, and locally-bijective and underlying-ring comparisons on the base and slice over
+`X`. For `F=restrictSheaf R X` and module sheaves `M,N`, `ofTensorIso R X M N : F(M ⊗ N) ≅
+F(M) ⊗ F(N)` is the inverse of `Functor.Monoidal.μIso F M N`.

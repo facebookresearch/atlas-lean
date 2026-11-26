@@ -15,12 +15,20 @@ public import MathlibExt.Algebra.Category.ModuleCat.Bimodule.Over.Morita
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Contraction
 
 /-!
-# Contractions of Morita coefficient tensors
+# Relative tensor-return contractions and their coefficient values
 
-Associativity and unit isomorphisms combine two copies of the supplied
-contraction on ground-balanced tensor products. The return maps preserve
-the given ground and bimodule actions. Raw carrier universes are
-independent; the return isomorphisms use a common ambient universe.
+Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. For a k-compatible R-bimodule M in m, the raw return
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q has carrier max(p,q,m).
+
+A right R-linear isomorphism α:P⊗_S Q≃R that also preserves the left R-action gives a k-linear
+equivalence T(M)≃M. The coefficient formula is Γ(p₀,q₀,m,p₁,q₁)↦α(p₀⊗q₀)•m•α(p₁⊗q₁). The forward
+and inverse maps are linear for R⊗_kRᵒᵖ and preserve the chosen ground k-action.
+
+At a common carrier height W=max(p,q,v), the same maps give an isomorphism of relative
+enveloping-module objects. The coefficient-object value, raw tensor value, and ordered
+scalar-action value coincide. The scalar-function formula uses the right-linear contraction
+alone; left compatibility is used for the complete return equivalence.
 -/
 
 @[expose] public section
@@ -50,7 +58,12 @@ variable (M : Type m) [AddCommGroup M] [givenGroundModule : Module k M]
   [IsScalarTower k R M] [IsScalarTower k Rᵐᵒᵖ M]
 
 include R S P Q M in
-/-- The actual raw composite, retaining the first tensor's original ground action. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. The carrier T(M) is in max(p,q,m), with two balancing steps over R in its
+middle coefficient and two outer steps over S. -/
 abbrev rawReturnTensor : Type (max p q m) := by
   let C := TensorProduct.Balanced.Morita.coefficientTensor k R Q M P
   let dC : Module k C := inferInstance
@@ -63,7 +76,12 @@ abbrev rawReturnTensor : Type (max p q m) := by
   exact TensorProduct.Balanced.assocSource k S S P C Q
 
 include R S P Q M in
-/-- The same original composite bundled with its earned native R-bimodule action. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. The left R-action acts on p₀ and the right R-action on q₁. Together with the
+balanced ground k-action, these give an object of ModuleCat_{max(p,q,m)}(R⊗_kRᵒᵖ). -/
 def rawReturnObject : ModuleCat.{max p q m} (R ⊗[k] Rᵐᵒᵖ) := by
   let C := TensorProduct.Balanced.Morita.coefficientTensor k R Q M P
   let dC : Module k C := inferInstance
@@ -75,7 +93,11 @@ def rawReturnObject : ModuleCat.{max p q m} (R ⊗[k] Rᵐᵒᵖ) := by
   letI := TensorProduct.Balanced.Morita.coefficientRightTower k R S Q M P
   exact tensorObject k S R Q P C
 
-/-- The original outer pure class, with any actual first transferred coefficient. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. For p₀∈P,c∈(Q⊗_R M)⊗_R P,q₁∈Q, the class (p₀⊗_S c)⊗_S q₁ belongs to T(M). Its
+carrier height is max(p,q,m), and c may be any element of the intermediate tensor. -/
 def rawReturnOuterMk (p₀ : P)
     (c : TensorProduct.Balanced.Morita.coefficientTensor k R Q M P) (q₁ : Q) :
     rawReturnTensor k R S P Q M := by
@@ -91,7 +113,12 @@ def rawReturnOuterMk (p₀ : P)
   exact TensorProduct.Balanced.mk k S (TensorProduct.Balanced k S P C) Q
     (TensorProduct.Balanced.mk k S P C p₀ c) q₁
 
-/-- The original five-factor pure class in the raw composite. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. For p₀,p₁∈P,q₀,q₁∈Q,m∈M, Γ=(p₀⊗_S((q₀⊗_R m)⊗_R p₁))⊗_S q₁. The ordered
+factors and their R- and S-balancing are retained. -/
 def rawReturnMk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     rawReturnTensor k R S P Q M := by
   letI := TensorProduct.Balanced.rightModule k R R Q M
@@ -99,7 +126,13 @@ def rawReturnMk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     (TensorProduct.Balanced.mk k R (TensorProduct.Balanced k R Q M) P
         (TensorProduct.Balanced.mk k R Q M q₀ m) p₁) q₁
 
-/-- The five original factors determine an additive map from the raw composite. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. For an additive commutative monoid C' in any universe, additive maps
+f,g:T(M)→C' are equal if they agree on Γ(p₀,q₀,m,p₁,q₁) for every five inputs. No coefficient
+scalar action on C' is needed. -/
 theorem rawReturnHom_ext {C' : Type*} [AddCommMonoid C']
     {f g : rawReturnTensor k R S P Q M →+ C'}
     (h : ∀ (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q),
@@ -132,7 +165,12 @@ theorem rawReturnHom_ext {C' : Type*} [AddCommMonoid C']
     exact DFunLike.congr_fun hc c
   exact DFunLike.congr_fun ha a
 
-/-- The actual native return module acts on its first P and last Q factors. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. For r∈R,t∈Rᵒᵖ, (r⊗_k t)•Γ(p₀,q₀,m,p₁,q₁)=Γ(r•p₀,q₀,m,p₁,t•q₁). The middle
+three factors are retained. -/
 theorem rawReturnModule_tmul_mk (r : R) (t : Rᵐᵒᵖ)
     (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     (rawReturnObject k R S P Q M).isModule.smul (r ⊗ₜ[k] t)
@@ -160,7 +198,13 @@ variable
     ∀ (r : R) (b : TensorProduct.Balanced k S P Q), u (r • b) = r * u b)
 
 include u hu in
-/-- The actual raw return equivalence obtained by association and the two u contractions. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). The equivalence
+c_α:T(M)≃_k M is obtained by reassociation and two α-contractions. Its pure value is
+α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m), with source carrier max(p,q,m) and target carrier m. -/
 def rawReturnIso : rawReturnTensor k R S P Q M ≃ₗ[k] M := by
   let I := TensorProduct.Balanced k R Q M
   let dI : Module k I := inferInstance
@@ -215,7 +259,13 @@ def rawReturnIso : rawReturnTensor k R S P Q M ≃ₗ[k] M := by
       TensorProduct.Balanced.Over.leftContraction k R B M e eR
   exact a₀.trans (b₁.trans (b₂.trans (a₃.trans a₄)))
 
-/-- The return contracts the two original P–Q pairs, with M unchanged in the middle. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). For every
+five-factor class, c_α(Γ(p₀,q₀,m,p₁,q₁))=α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m). The scalar actions on the
+result are the given left and right R-actions on M. -/
 @[simp]
 theorem rawReturnIso_mk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     rawReturnIso k R S P Q M u hu (rawReturnMk k R S P Q M p₀ q₀ m p₁ q₁) =
@@ -301,7 +351,13 @@ theorem rawReturnIso_mk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
       ((congrArg a₄ ha₃).trans ha₄))
 
 include u hu in
-/-- The earned raw return is linear for the actual native enveloping scalar action. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Endow M with the
+R⊗_kRᵒᵖ-action combined from its given ground and endpoint actions. Then c_α:T(M)→M is
+R⊗_kRᵒᵖ-linear, for the computed enveloping action on T(M). -/
 def rawReturnLinear :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
     rawReturnObject k R S P Q M →ₗ[R ⊗[k] Rᵐᵒᵖ] M := by
@@ -359,7 +415,13 @@ def rawReturnLinear :
         (add_smul z w (F x)).symm))
 
 include u hu in
-/-- The inverse is the same actual raw inverse, with earned native scalar linearity. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). The inverse
+c_α⁻¹:M→T(M) is linear over R⊗_kRᵒᵖ. In paired tensor coordinates it inserts α⁻¹(1) on each side
+of m, then reverses the reassociation to T(M). -/
 def rawReturnInverseLinear :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
     M →ₗ[R ⊗[k] Rᵐᵒᵖ] rawReturnObject k R S P Q M := by
@@ -383,13 +445,20 @@ variable
     letI := TensorProduct.Balanced.rightModule k S R P Q
     TensorProduct.Balanced k S P Q ≃ₗ[Rᵐᵒᵖ] R)
 
-/-- The original contraction value with its ordinary scalar target fixed. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, S a ring in s, P a k-module in p with
+a right S-action, and Q a k-module in q with commuting left S and right R-actions whose right
+R-action is compatible with k. Let α:P⊗_S Q≃R be right R-linear. For p₀∈P,q₀∈Q, the contraction
+scalar a(p₀,q₀) is α(p₀⊗_S q₀)∈R. This scalar is used in the ordered return-value formula. -/
 def contractionScalar (p₀ : P) (q₀ : Q) : R := by
   let f : TensorProduct.Balanced k S P Q → R := u.toFun
   exact f (TensorProduct.Balanced.mk k S P Q p₀ q₀)
 omit [SMulCommClass R Sᵐᵒᵖ P] [IsScalarTower k R P] [IsScalarTower k Sᵐᵒᵖ P]
   [IsScalarTower k S Q] [Algebra k S] [Module R P] in
-/-- The fixed scalar is the original ordered contraction value. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, S a ring in s, P a k-module in p with
+a right S-action, and Q a k-module in q with commuting left S and right R-actions whose right
+R-action is compatible with k. Let α:P⊗_S Q≃R be right R-linear. For every p₀,q₀,
+a(p₀,q₀)=α(p₀⊗_S q₀). The equality uses the same right-R-linear contraction and the S-balanced
+pair class. -/
 @[simp]
 theorem contractionScalar_mk (p₀ : P) (q₀ : Q) :
     contractionScalar k R S P Q u p₀ q₀ =
@@ -410,7 +479,14 @@ variable (M : Type (max p q v)) [AddCommGroup M] [Module k M]
     ∀ (r : R) (b : TensorProduct.Balanced k S P Q), u (r • b) = r * u b)
 
 include u hu in
-/-- The actual native R-bimodule return iso, with the original raw inverse. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). The E_R^k-linear forward and inverse return maps give T(M)≅M in
+ModuleCat_W(E_R^k), E_R^k=R⊗_kRᵒᵖ. The target uses the combined given ground and endpoint
+actions of M. -/
 def rawReturnModuleIso :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
     rawReturnObject k R S P Q M ≅ ModuleCat.of (R ⊗[k] Rᵐᵒᵖ) M := by
@@ -435,19 +511,37 @@ def rawReturnModuleIso :
     intro x
     exact (rawReturnIso k R S P Q M u hu).apply_symm_apply x
 
-/-- The original pure point with its native source carrier fixed. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. The module-object point associated to p₀,q₀,m,p₁,q₁
+is the class Γ in the underlying carrier of the raw return object. Both carriers lie in W. -/
 def rawReturnModuleMk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     rawReturnObject k R S P Q M :=
   rawReturnMk k R S P Q M p₀ q₀ m p₁ q₁
 
-/-- The native point is the original raw tensor point. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. The five-factor point in the relative return module
+object is heterogeneously equal to Γ(p₀,q₀,m,p₁,q₁) in the raw tensor carrier. This is the
+carrier identification between the two presentations of T(M). -/
 @[simp]
 theorem rawReturnModuleMk_eq (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     HEq (rawReturnModuleMk k R S P Q M p₀ q₀ m p₁ q₁)
       (rawReturnMk k R S P Q M p₀ q₀ m p₁ q₁) := HEq.rfl
 
 include u hu in
-/-- The actual native return map, with its source carrier fixed once. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). Let H_α:T(M)→M be the coefficient function of the forward E_R^k-module
+isomorphism. It is the return contraction on the module-object carrier, taking Γ to
+α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m). -/
 def rawReturnModuleHom : rawReturnObject k R S P Q M → M := by
   letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
   let X : ModuleCat (R ⊗[k] Rᵐᵒᵖ) := rawReturnObject k R S P Q M
@@ -456,14 +550,27 @@ def rawReturnModuleHom : rawReturnObject k R S P Q M → M := by
     (show X ⟶ Y from (rawReturnModuleIso k R S P Q M u hu).hom)
   exact fun x => f x
 
-/-- The fixed native map retains the original raw return value. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). For ξ in the return module-object carrier, H_α(ξ)=c_α(ξ) after identifying that
+carrier with T(M). The source identification leaves the raw tensor coefficient unchanged. -/
 @[simp]
 theorem rawReturnModuleHom_apply (x : rawReturnObject k R S P Q M) :
     rawReturnModuleHom k R S P Q M u hu x =
       rawReturnIso k R S P Q M u hu
         (show rawReturnTensor k R S P Q M from x) := rfl
 
-/-- The actual native return map has the original two-contraction value. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). For every ξ∈T(M), the forward morphism of the E_R^k-module isomorphism has value
+c_α(ξ)∈M. The statement applies to all tensor coefficients, in the same ground and endpoint
+module structures. -/
 @[simp]
 theorem rawReturnModuleIso_hom_apply (x : rawReturnTensor k R S P Q M) :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
@@ -473,39 +580,75 @@ theorem rawReturnModuleIso_hom_apply (x : rawReturnTensor k R S P Q M) :
       (show X ⟶ Y from (rawReturnModuleIso k R S P Q M u hu).hom)) x =
       rawReturnIso k R S P Q M u hu x := rfl
 
-/-- Evaluation of the actual native return on all five original factors. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). Define N_α:P→Q→M→P→Q→M by N_α(p₀,q₀,m,p₁,q₁)=H_α(Γ_obj(p₀,q₀,m,p₁,q₁)), where
+Γ_obj is the five-factor point in the return module object. -/
 def nativeReturnValue : P → Q → M → P → Q → M := by
   let F : rawReturnObject k R S P Q M → M := rawReturnModuleHom k R S P Q M u hu
   let η : P → Q → M → P → Q → rawReturnObject k R S P Q M :=
     rawReturnModuleMk k R S P Q M
   exact fun p₀ q₀ m p₁ q₁ => F (η p₀ q₀ m p₁ q₁)
 
-/-- The original ordered two-sided action of the two contraction scalars. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, S a ring in s, P a k-module in p with
+a right S-action, and Q a k-module in q with commuting left S and right R-actions whose right
+R-action is compatible with k. Let α:P⊗_S Q≃R be right R-linear. Let M be an abelian group with
+left R and Rᵒᵖ-module actions at carrier height W=max(p,q,v). The five-argument function is
+O_α(p₀,q₀,m,p₁,q₁)=α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m). This expression uses the right scalar action
+first, then the left. -/
 def orderedReturnValue : P → Q → M → P → Q → M := by
   let l : R → M → M := (inferInstance : Module R M).smul
   let r : Rᵐᵒᵖ → M → M := (inferInstance : Module Rᵐᵒᵖ M).smul
   let c : P → Q → R := contractionScalar k R S P Q u
   exact fun p₀ q₀ m p₁ q₁ => l (c p₀ q₀) (r (op (c p₁ q₁)) m)
 
-/-- The original raw five-factor return, without native carrier transport. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). Define V_α:P→Q→M→P→Q→M by V_α(p₀,q₀,m,p₁,q₁)=c_α(Γ(p₀,q₀,m,p₁,q₁)). Its target is
+the same middle coefficient module M. -/
 def rawReturnValue : P → Q → M → P → Q → M := by
   let G : rawReturnTensor k R S P Q M → M := (rawReturnIso k R S P Q M u hu).toFun
   let ζ : P → Q → M → P → Q → rawReturnTensor k R S P Q M :=
     rawReturnMk k R S P Q M
   exact fun p₀ q₀ m p₁ q₁ => G (ζ p₀ q₀ m p₁ q₁)
 
-/-- The raw characteristic is the original ordered scalar action. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). The entire five-argument function V_α equals O_α, where V_α evaluates c_α on Γ and
+O_α(p₀,q₀,m,p₁,q₁)=α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m). -/
 theorem rawReturnValue_eq :
     rawReturnValue k R S P Q M u hu = orderedReturnValue k R S P Q M u := by
   funext p₀ q₀ m p₁ q₁
   exact rawReturnIso_mk k R S P Q M u hu p₀ q₀ m p₁ q₁
 
-/-- The native return and raw return are the same underlying function. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). The underlying coefficient function H_α of the return module morphism is
+heterogeneously equal to c_α.toFun. Their source presentations are the module-object carrier and
+raw T(M), identified by the same tensor coefficients. -/
 theorem rawReturnModuleHom_heq :
     HEq (rawReturnModuleHom k R S P Q M u hu)
       (rawReturnIso k R S P Q M u hu).toFun := HEq.rfl
 
-/-- The native five-factor value retains the original raw value. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). As five-argument functions P→Q→M→P→Q→M, N_α=V_α. The module-object point and raw
+point represent the same Γ, and the module-object return map has the raw equivalence function. -/
 theorem nativeReturnValue_eq_raw :
     nativeReturnValue k R S P Q M u hu = rawReturnValue k R S P Q M u hu := by
   have hApp {A B : Type (max p q v)} {f : A → M} {g : B → M}
@@ -520,13 +663,25 @@ theorem nativeReturnValue_eq_raw :
     (rawReturnModuleHom_heq k R S P Q M u hu)
     (rawReturnModuleMk_eq k R S P Q M p₀ q₀ m p₁ q₁)
 
-/-- The actual native return equals the original two-contraction coefficient function. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). As five-argument functions, N_α=O_α. Thus its value on p₀,q₀,m,p₁,q₁ is
+α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m), with all chosen ground and endpoint actions retained. -/
 theorem nativeReturnValue_eq :
     nativeReturnValue k R S P Q M u hu = orderedReturnValue k R S P Q M u :=
   (nativeReturnValue_eq_raw k R S P Q M u hu).trans
     (rawReturnValue_eq k R S P Q M u hu)
 
-/-- The native value function evaluates the original stored return morphism. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). For any p₀,q₀,m,p₁,q₁, N_α(p₀,q₀,m,p₁,q₁)=H_α(Γ_obj(p₀,q₀,m,p₁,q₁)). Both source
+and target use their module-object coefficient carriers in W. -/
 theorem nativeReturnValue_apply (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     nativeReturnValue k R S P Q M u hu p₀ q₀ m p₁ q₁ =
       rawReturnModuleHom k R S P Q M u hu
@@ -534,13 +689,23 @@ theorem nativeReturnValue_apply (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ :
 omit [SMulCommClass R Sᵐᵒᵖ P] [IsScalarTower k R P] [IsScalarTower k Sᵐᵒᵖ P]
   [IsScalarTower k S Q] [SMulCommClass R Rᵐᵒᵖ M] [IsScalarTower k R M]
   [IsScalarTower k Rᵐᵒᵖ M] [Algebra k S] [Module R P] [Module k M] in
-/-- The ordered value retains the full original tensor-contraction formula. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, S a ring in s, P a k-module in p with
+a right S-action, and Q a k-module in q with commuting left S and right R-actions whose right
+R-action is compatible with k. Let α:P⊗_S Q≃R be right R-linear. For an abelian group M with
+left R and Rᵒᵖ-actions at height W=max(p,q,v), O_α(p₀,q₀,m,p₁,q₁)=α(p₀⊗_S q₀)•(op(α(p₁⊗_S
+q₁))•m). The formula evaluates the right scalar action before the left scalar action. -/
 theorem orderedReturnValue_apply (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     orderedReturnValue k R S P Q M u p₀ q₀ m p₁ q₁ =
       u (TensorProduct.Balanced.mk k S P Q p₀ q₀) •
         (op (u (TensorProduct.Balanced.mk k S P Q p₁ q₁)) • m) := rfl
 
-/-- Pointwise form of the complete native two-contraction characteristic. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Choose W=max(p,q,v), and let M be a k-module with carrier W and commuting
+left and right R-actions compatible with k. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and
+Γ(p₀,q₀,m,p₁,q₁) for its five-factor class. Let α:P⊗_S Q≃R be right R-linear and satisfy
+α(r•b)=rα(b). On the five-factor point, the module isomorphism value N_α equals O_α: it sends
+Γ_obj(p₀,q₀,m,p₁,q₁) to α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m). The equality is in the given middle module M. -/
 @[simp]
 theorem rawReturnModuleIso_hom_mk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     nativeReturnValue k R S P Q M u hu p₀ q₀ m p₁ q₁ =

@@ -1,4 +1,6 @@
-# Local Regular Family Tor Euler eq localized Diagonal Koszul Euler
+# The local Tor Euler sum equals the localized image-family Koszul sum
 
-The genuine original local Tor multiplicity equals the Euler
-invariant of the actual local Koszul complex on the image equations.
+The local Tor Euler sum equals the localized image-family Koszul sum.
+
+The signed Tor length sum equals the signed local Koszul homology length sum of the images
+f(a_i), with the stated regularity, surjectivity and minimal-prime assumptions.

@@ -1,3 +1,5 @@
-# Page Pair To
+# Compatibility of page products at a specified sum bidegree
 
-Original interval compatibility preserves the native cup at any equal output bidegree.
+Compatibility of page products at a specified sum bidegree.
+
+The page product square holds after the output bidegree equality transport.

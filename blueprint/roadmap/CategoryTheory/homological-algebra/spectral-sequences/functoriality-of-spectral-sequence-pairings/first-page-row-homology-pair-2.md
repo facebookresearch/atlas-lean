@@ -1,3 +1,6 @@
-# First Page Row Homology Pair π
+# The descended row homology product preserves projections
 
-The row product's quotient formula uses the actual homology projections.
+The descended row homology product preserves projections.
+
+The tensor of input projections followed by the descended product equals the cycle product
+followed by output projection.

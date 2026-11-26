@@ -19,13 +19,17 @@ public import MathlibExt.Algebra.Homology.GradedTensorTower
 import Lean.Elab.Tactic.Omega
 
 /-!
-# Actual tensor-complex comparison under original-ring scalar restriction
+# Tensor-complex comparison under lifted-ring scalar restriction
 
-The component comparison is the actual finite-antidiagonal graded tensor
-isomorphism. Its chain equation follows from the native tensor differential,
-the two native module tensor naturality equations, and additive scalar
-restriction. The actual integer Koszul sign is retained. No chain-map or
-tensor-complex comparison certificate is supplied.
+Let R be a commutative ring in universe u and W=max(u,v) for an independent lift height v.
+Restrict scalars from its copy R̂ in W to R, and write S_C for the termwise functor on chain
+complexes of shape down ℕ. For complexes K,L over R̂, the finite-antidiagonal tensor comparisons
+define c:S_CK⊗_R S_CL≅S_C(K⊗_R̂ L).
+
+In bidegree (p,q), c is the module tensor comparison followed by the restricted summand
+inclusion, with total degree p+q. It commutes with the tensor differential dx⊗y+(-1)^p x⊗dy and
+is natural in both chain maps. For complexes over R, the inverse scalar representation and its
+counits give the comparison S_C(T_CK⊗_R̂ T_CL)≅K⊗_R L.
 -/
 
 @[expose] public section
@@ -148,7 +152,12 @@ private theorem tensorComponent_comm (K L : (ChainComplex (ModuleCat.{max u v} (
           (gradedTensorIsoComponent.{u,v} R K.X L.X n).hom).symm
 
 
-/-- The actual component comparisons form the native tensor-complex chain map. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v). Let R̂
+be the canonical copy of R in W and S the scalar-restriction equivalence from R̂-modules to
+R-modules, all with carriers in W. For chain complexes K,L over R̂ of shape down ℕ, this map
+c:S_CK⊗_R S_CL→S_C(K⊗_R̂ L) has degree-n component the graded tensor comparison over p+q=n. Its
+chain equation is c_{n+1}≫S(d_{n+1,n})=d_{n+1,n}≫c_n. The equation preserves the tensor
+differential dx⊗y+(-1)^p x⊗dy in each bidegree. -/
 def complexTensorMap (K L : (ChainComplex (ModuleCat.{max u v} (LiftedRing.{u,v} R)) ℕ)) :
   (complexFunctor.{u,v} R).obj K ⊗ (complexFunctor.{u,v} R).obj L ⟶ (complexFunctor.{u,v} R).obj (K ⊗ L) where
   f n := (gradedTensorIsoComponent.{u,v} R K.X L.X n).hom
@@ -157,8 +166,13 @@ def complexTensorMap (K L : (ChainComplex (ModuleCat.{max u v} (LiftedRing.{u,v}
     subst i
     exact tensorComponent_comm.{u,v} R K L j
 
-/-- The actual chain tensor comparison is an isomorphism in every degree,
-hence an actual native chain-complex isomorphism. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v). Let R̂
+be the canonical copy of R in W and S the scalar-restriction equivalence from R̂-modules to
+R-modules, all with carriers in W. For chain complexes K,L over R̂ of shape down ℕ, this
+isomorphism c:S_CK⊗_R S_CL≅S_C(K⊗_R̂ L) has the canonical finite-antidiagonal tensor comparison
+in every total degree n. On the (p,q) summand with p+q=n, c_n is the module tensor comparison
+S(K_p)⊗_R S(L_q)≅S(K_p⊗_R̂ L_q) followed by the image under S of the tensor-complex summand
+inclusion. -/
 def complexTensorIso (K L : (ChainComplex (ModuleCat.{max u v} (LiftedRing.{u,v} R)) ℕ)) :
   (complexFunctor.{u,v} R).obj K ⊗ (complexFunctor.{u,v} R).obj L ≅ (complexFunctor.{u,v} R).obj (K ⊗ L) :=
   HomologicalComplex.Hom.isoOfComponents
@@ -174,7 +188,11 @@ theorem ι_complexTensorIso_hom (K L : (ChainComplex (ModuleCat.{max u v} (Lifte
       (toOriginal.{u,v} R).map (HomologicalComplex.ιTensorObj K L p q n h) :=
   tensorComponent_ι.{u,v} R K L p q n h
 
-/-- The actual tensor-complex comparison is natural in both original chain maps. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v). Let R̂
+be the canonical copy of R in W and S the scalar-restriction equivalence from R̂-modules to
+R-modules, all with carriers in W. For chain maps f:K→K′ and g:L→L′ over R̂ of shape down ℕ, the
+tensor comparisons satisfy (S_C(f)⊗S_C(g))≫c_{K′,L′}.hom=c_{K,L}.hom≫S_C(f⊗g). Both sides map
+S_CK⊗_R S_CL to S_C(K′⊗_R̂ L′). -/
 @[reassoc]
 theorem complexTensorIso_naturality {K L K' L' : (ChainComplex (ModuleCat.{max u v} (LiftedRing.{u,v} R)) ℕ)}
   (f : K ⟶ K') (g : L ⟶ L') :
@@ -189,8 +207,12 @@ theorem complexTensorIso_naturality {K L K' L' : (ChainComplex (ModuleCat.{max u
   rw [HomologicalComplex.tensorHom_f_eq_graded]
   exact congrFun (gradedTensorIso_naturality.{u,v} R f.f g.f) n
 
-/-- The actual original tensor complex is reached from the actual lifted-ring
-representations and the earned complex tensor isomorphism. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v). Let R̂
+be the canonical copy of R in W and S the scalar-restriction equivalence from R̂-modules to
+R-modules, all with carriers in W. Let T_C be the inverse chain scalar functor and K,L chain
+complexes over R of shape down ℕ. This isomorphism S_C(T_CK⊗_R̂ T_CL)≅K⊗_R L is
+c_{T_CK,T_CL}^{-1} followed by ε_K⊗ε_L, where ε_K:S_C(T_CK)≅K and ε_L are the scalar-equivalence
+counits. It preserves the signed tensor differential. -/
 def originalTensorComplexIso (K L : ChainComplex (Modules.{u,v} R) ℕ) :
     (complexFunctor.{u,v} R).obj (((toLiftedComplex.{u,v} R).obj K) ⊗ ((toLiftedComplex.{u,v} R).obj L)) ≅ K ⊗ L :=
   (complexTensorIso.{u,v} R ((toLiftedComplex.{u,v} R).obj K)

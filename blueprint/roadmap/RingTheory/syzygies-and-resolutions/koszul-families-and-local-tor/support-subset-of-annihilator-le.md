@@ -1,3 +1,5 @@
-# Support subset of annihilator le
+# Annihilator inclusion reverses supports
 
-An annihilator inclusion reverses supports when the larger support module is finite.
+Annihilator inclusion reverses supports.
+
+For finite N, Ann N ⊆ Ann M implies Supp M ⊆ Supp N.

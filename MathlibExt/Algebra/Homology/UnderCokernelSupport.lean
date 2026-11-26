@@ -19,13 +19,15 @@ public import Mathlib.CategoryTheory.ObjectProperty.ColimitsOfShape
 public import Mathlib.CategoryTheory.Limits.Constructions.Over.Basic
 
 /-!
-# Negative-degree support of actual under-category cokernels
+# Nonnegative support of under-category cokernels
 
-The support predicate evaluates the actual fixed-source cokernel in every
-negative integer degree. Its colimit closure follows from the earned
-cokernel left adjoint, native degreewise evaluation preservation, and the
-universal property of a colimit of zero objects. The argument includes
-empty diagrams and leaves degree zero unrestricted.
+For a fixed integer-indexed complex I, an object η : I → X of the under category has
+nonnegative cokernel support when (coker η)_i is zero for every i<0. This property is closed
+under colimits of the stated shape, including the empty diagram.
+
+For a zero under-map the condition is exactly nonnegative support of X. In integer cochain
+complexes, it is the predicate that the cokernel is strictly supported in degrees at least
+zero.
 -/
 
 @[expose] public section
@@ -44,17 +46,23 @@ namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {c : ComplexShape ℤ} (I : HomologicalComplex C c)
 
-/-- The original full cokernel has zero evaluations in every negative integer degree. -/
+/-- The negative-degree vanishing property of an under-category cokernel.
+
+For η : I → X, require each negative-degree object of coker η to be zero. -/
 def underCokernelNonnegativeProperty : ObjectProperty (Under I) :=
   fun η => ∀ i : ℤ, i < 0 →
     IsZero ((eval C c i).obj ((underCokernel I).obj η))
 
-/-- The property concerns the literal existing cokernel of the original under arrow. -/
+/-- The cokernel support property as degreewise vanishing.
+
+The property is equivalent to zero objects (coker η)_i for all i<0. -/
 theorem underCokernelNonnegativeProperty_iff (η : Under I) :
     underCokernelNonnegativeProperty I η ↔ ∀ i : ℤ, i < 0 → IsZero ((cokernel η.hom).X i) :=
   Iff.rfl
 
-/-- For a zero under arrow, the support condition is the original target's negative support. -/
+/-- The cokernel support condition for a zero under-map.
+
+For the zero map I → X, the condition is exactly that X has zero negative-degree terms. -/
 theorem underCokernelNonnegativeProperty_zeroUnder_iff (X : HomologicalComplex C c) :
     underCokernelNonnegativeProperty I ((zeroUnder I).obj X) ↔
       ∀ i : ℤ, i < 0 → IsZero (X.X i) := by
@@ -69,7 +77,10 @@ section Colimits
 
 variable {J : Type w} [Category.{w'} J] [HasColimitsOfShape J C]
 
-/-- Every actual colimiting under cocone retains the negative support of its actual cokernels. -/
+/-- Colimit cocones preserve nonnegative cokernel support.
+
+If every object in an under-category diagram has this cokernel support, so does the point of
+an actual colimit cocone. -/
 theorem underCokernelNonnegativeProperty_of_isColimit
     {D : J ⥤ Under I} {s : Cocone D} (hs : IsColimit s)
     (hD : ∀ j : J, underCokernelNonnegativeProperty I (D.obj j)) :
@@ -83,14 +94,18 @@ theorem underCokernelNonnegativeProperty_of_isColimit
   intro j
   exact (hD j i hi).eq_of_src _ _
 
-/-- Native object-property colimit closure for the actual under-cokernel support predicate. -/
+/-- Closure under the stated colimit shape.
+
+The nonnegative under-cokernel property is closed under colimits of shape J. -/
 instance underCokernelNonnegativeProperty_closedUnderColimits :
     (underCokernelNonnegativeProperty I).IsClosedUnderColimitsOfShape J where
   colimitsOfShape_le X hX := by
     rcases hX with ⟨hX⟩
     exact underCokernelNonnegativeProperty_of_isColimit I hX.isColimit hX.prop_diag_obj
 
-/-- The actual chosen under colimit has an actual full cokernel with zero negative evaluations. -/
+/-- The chosen colimit has nonnegative cokernel support.
+
+A diagram whose objects satisfy the support condition has a chosen colimit satisfying it. -/
 theorem underCokernelNonnegativeProperty_colimit (D : J ⥤ Under I) [HasColimit D]
     (hD : ∀ j : J, underCokernelNonnegativeProperty I (D.obj j)) :
     underCokernelNonnegativeProperty I (colimit D) :=
@@ -98,7 +113,9 @@ theorem underCokernelNonnegativeProperty_colimit (D : J ⥤ Under I) [HasColimit
 
 end Colimits
 
-/-- The actual empty under colimit has supported cokernel, without any support hypothesis on `I`. -/
+/-- The empty under-category colimit has zero negative cokernel terms.
+
+The initial under-object's cokernel satisfies the nonnegative support property. -/
 theorem underCokernelNonnegativeProperty_empty_colimit :
     underCokernelNonnegativeProperty I (colimit (Functor.empty.{0} (Under I))) := by
   apply underCokernelNonnegativeProperty_colimit
@@ -111,7 +128,10 @@ namespace CochainComplex
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- For original integer cochain complexes this is exactly native strict support at zero. -/
+/-- The under-cokernel support condition is strict lower support at zero.
+
+For integer cochain complexes, the property is equivalent to IsStrictlyGE 0 of the cokernel
+complex. -/
 theorem underCokernelNonnegativeProperty_iff_isStrictlyGE
     (I : CochainComplex C ℤ) (η : Under I) :
     HomologicalComplex.underCokernelNonnegativeProperty I η ↔

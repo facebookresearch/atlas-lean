@@ -1,3 +1,5 @@
-# Cohomology Zero Fork
+# The kernel fork defined by degree-zero cohomology
 
-The native degree-zero cohomology inclusion as a kernel fork of the actual d₀.
+The kernel fork defined by degree-zero cohomology.
+
+The cohomology inclusion H⁰(K) → K⁰ and its zero composite with d⁰ form a kernel fork.

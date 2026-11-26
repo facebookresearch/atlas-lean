@@ -1,4 +1,6 @@
-# Field Etale Cohomology Pullback canonical Equiv
+# Field cohomology pullback agrees with derived pullback
 
-Applying the actual target canonical Γ map to étale pullback recovers
-exactly the independently constructed original derived-Γ pullback.
+Field cohomology pullback agrees with derived pullback.
+
+Applying the target canonical comparison after cohomology pullback equals derived pullback
+after the source comparison.

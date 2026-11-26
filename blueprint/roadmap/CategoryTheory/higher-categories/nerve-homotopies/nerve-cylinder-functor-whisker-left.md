@@ -1,3 +1,6 @@
-# Nerve Cylinder Functor whisker Left
+# Left whiskering of cylinder classifiers
 
-Classifying a whiskered transformation uses the original product functor.
+Left whiskering of cylinder classifiers.
+
+For K : X → A, the cylinder functor classified by Kα equals K × id on X × Fin 2 followed by
+the cylinder functor classified by α. All category universes in this equality are independent.

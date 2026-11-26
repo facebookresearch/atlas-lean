@@ -35,7 +35,10 @@ namespace Ideal
 
 variable {R : Type u} [CommRing R]
 
-/-- The actual double quotient has finite length if the original sum-ideal quotient does. -/
+/-- Let `R` be a commutative ring and `I`, `J` ideals. If `R/(I+J)` has
+finite composition length as an `R`-module, then the double quotient of
+`R/I` by the image of `J` has finite length as an `R/I`-module. The double
+quotient and the sum-ideal quotient are the given quotient rings. -/
 theorem quotientMapIdeal_length_ne_top (I J : Ideal R)
     (h : Module.length R (R ⧸ (I ⊔ J)) ≠ ⊤) :
     Module.length (R ⧸ I) ((R ⧸ I) ⧸ J.map (Ideal.Quotient.mk I)) ≠ ⊤ := by

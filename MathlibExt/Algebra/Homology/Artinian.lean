@@ -14,10 +14,13 @@ public import Mathlib.RingTheory.Artinian.Module
 /-!
 # Artinian cycles and homology of module complexes
 
-Cycles are subobjects of the middle module, and homology is their quotient.
-The native cycle inclusion and homology-class map therefore transport the
-Artinian condition from a single middle term. No condition on adjacent terms
-or on the existence of a predecessor is needed.
+For a short complex of R-modules, its cycles form a submodule of the middle term and its
+homology is a quotient of those cycles. If the middle module is Artinian, both cycles and
+homology are therefore Artinian.
+
+Applying this at any degree of a homological complex gives the same result from Artinianity of
+the module in that degree. The ring, degree-index and coefficient carrier universes are
+independent, and the complex shape is arbitrary.
 -/
 
 @[expose] public section
@@ -34,14 +37,20 @@ namespace CategoryTheory.ShortComplex
 
 variable {R : Type u} [Ring R]
 
-/-- The cycles of a module short complex are Artinian when its middle module is. -/
+/-- Cycles of a short complex with Artinian middle module.
+
+For a short complex of R-modules with Artinian middle term, its cycle module is Artinian by
+its injective inclusion into that term. -/
 theorem isArtinian_cycles_of_isArtinian_middle
     (S : ShortComplex (ModuleCat.{w} R)) [IsArtinian R S.X₂] :
     IsArtinian R S.cycles :=
   isArtinian_of_injective S.iCycles.hom
     ((ModuleCat.mono_iff_injective S.iCycles).mp inferInstance)
 
-/-- The homology of a module short complex is Artinian when its middle module is. -/
+/-- Homology of a short complex with Artinian middle module.
+
+For a short complex with Artinian middle R-module, its homology module is Artinian as a
+quotient of the Artinian cycles. -/
 theorem isArtinian_homology_of_isArtinian_middle
     (S : ShortComplex (ModuleCat.{w} R)) [IsArtinian R S.X₂] :
     IsArtinian R S.homology := by
@@ -55,7 +64,10 @@ namespace HomologicalComplex
 
 variable {R : Type u} [Ring R] {ι : Type v} {c : ComplexShape ι}
 
-/-- Degree-i cycles are Artinian whenever the degree-i module is Artinian. -/
+/-- Artinian cycles in an arbitrary complex degree.
+
+If K_i is Artinian over R, then the cycles of the module complex K in degree i are Artinian,
+for any complex shape. -/
 theorem isArtinian_cycles_of_isArtinian_degree
     (K : HomologicalComplex (ModuleCat.{w} R) c) (i : ι) [IsArtinian R (K.X i)] :
     IsArtinian R (K.cycles i) := by
@@ -65,7 +77,9 @@ theorem isArtinian_cycles_of_isArtinian_degree
   change IsArtinian R (K.sc i).cycles
   exact ShortComplex.isArtinian_cycles_of_isArtinian_middle (K.sc i)
 
-/-- Degree-i homology is Artinian whenever the degree-i module is Artinian. -/
+/-- Artinian homology in an arbitrary complex degree.
+
+If K_i is Artinian over R, then H_i(K) is Artinian, for any degree index and complex shape. -/
 theorem isArtinian_homology_of_isArtinian_degree
     (K : HomologicalComplex (ModuleCat.{w} R) c) (i : ι) [IsArtinian R (K.X i)] :
     IsArtinian R (K.homology i) := by

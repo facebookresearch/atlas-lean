@@ -1,4 +1,6 @@
-# Π eq zero iff exists boundary succ
+# Zero classes are predecessor-degree boundaries
 
-A positive-degree homogeneous continuous cocycle represents zero exactly
-when its included cochain is an explicit predecessor-degree boundary.
+Zero classes are predecessor-degree boundaries.
+
+For a homogeneous continuous cycle z in degree n+1, its class is zero if and only if there is
+a cochain b in degree n such that the included cochain of z equals dⁿb.

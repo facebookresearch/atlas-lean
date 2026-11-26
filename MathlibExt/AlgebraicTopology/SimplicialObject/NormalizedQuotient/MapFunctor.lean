@@ -12,12 +12,16 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialObject.NormalizedQuotient
 
 /-!
-# Additive functors and the actual normalization quotient
+# Additive functors and normalization quotients
 
-The native alternating-complex comparison and the original Dold–Kan
-projector formulas earn the quotient comparison. Preservation is local
-to the split projector; the functor need not preserve arbitrary kernels,
-cokernels, or homology.
+For an additive functor between preadditive categories, the alternating-complex comparison
+intertwines the degenerate projector `Q∞` and normalized projector `P∞`.
+
+Between abelian categories, the quotient of alternating chains by the degenerate projector is
+preserved by the additive functor, giving `F(N_Q X) ≅ N_Q(X ⋙ F)`. The quotient–Moore
+comparison then gives `F(NX) ≅ N(X ⋙ F)`. These isomorphisms are natural both in simplicial
+maps and in natural transformations between additive functors. The source and target category
+and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -38,7 +42,11 @@ section Projector
 
 variable [Preadditive C] [Preadditive D] (F : C ⥤ D) [F.Additive]
 
-/-- The native ambient comparison commutes with the original degenerate projector. -/
+/-- The degenerate projector under an additive functor.
+
+For an additive functor between preadditive categories, mapping `Q∞` and applying the
+alternating-complex comparison equals applying the comparison and then `Q∞` of the mapped
+simplicial object. -/
 @[reassoc]
 theorem map_QInfty (X : SimplicialObject C) :
     (F.mapHomologicalComplex (ComplexShape.down ℕ)).map (DoldKan.QInfty (X := X)) ≫
@@ -53,7 +61,10 @@ theorem map_QInfty (X : SimplicialObject C) :
   rw [Category.comp_id, Category.id_comp, DoldKan.QInfty_f, DoldKan.QInfty_f]
   exact DoldKan.map_Q F X n n
 
-/-- The same native ambient comparison retains the original normalized projector. -/
+/-- The normalized projector under an additive functor.
+
+The alternating-complex comparison intertwines the mapped normalized projector `P∞` with the
+normalized projector of the mapped simplicial object. -/
 @[reassoc]
 theorem map_PInfty (X : SimplicialObject C) :
     (F.mapHomologicalComplex (ComplexShape.down ℕ)).map (DoldKan.PInfty (X := X)) ≫
@@ -77,7 +88,11 @@ variable [Abelian C] [Abelian D] (F : C ⥤ D) [F.Additive]
 local notation "Fh" => F.mapHomologicalComplex (ComplexShape.down ℕ)
 local notation "Fs" => CategoryTheory.Functor.obj (SimplicialObject.whiskering C D) F
 
-/-- The actual normalization quotient commutes with every additive functor. -/
+/-- The normalization-quotient comparison for an additive functor.
+
+Between abelian categories, an additive functor identifies its degreewise image of the
+quotient normalization of `X` with the quotient normalization of `X ⋙ F`, using preservation
+of the split degenerate projector cokernel. -/
 def objCompMapIso (X : SimplicialObject C) :
     (Fh).obj (obj X) ≅ obj ((Fs).obj X) := by
   letI : PreservesColimit (parallelPair (DoldKan.QInfty (X := X)) 0) Fh :=
@@ -87,7 +102,10 @@ def objCompMapIso (X : SimplicialObject C) :
     cokernel.mapIso ((Fh).map (DoldKan.QInfty (X := X)))
       (DoldKan.QInfty (X := (Fs).obj X)) a a (map_QInfty F X)
 
-/-- The comparison retains the actual quotient projection and native ambient map. -/
+/-- The projection square of the additive normalization quotient comparison.
+
+The mapped quotient projection followed by the comparison equals the alternating-complex
+comparison followed by the target quotient projection. -/
 @[reassoc]
 theorem projection_objCompMapIso_hom (X : SimplicialObject C) :
     (Fh).map (projection X) ≫ (objCompMapIso F X).hom =
@@ -103,7 +121,10 @@ theorem projection_objCompMapIso_hom (X : SimplicialObject C) :
   rw [← Category.assoc, PreservesCokernel.π_iso_hom]
   exact cokernel.π_desc _ _ _
 
-/-- Actual simplicial maps give naturality of the original quotient comparison. -/
+/-- Naturality of normalization quotient comparison in simplicial maps.
+
+The quotient comparison commutes with the normalization maps induced by every simplicial
+morphism `X → Y`. -/
 @[reassoc]
 theorem objCompMapIso_naturality {X Y : SimplicialObject C} (f : X ⟶ Y) :
     (Fh).map (map f) ≫ (objCompMapIso F Y).hom =
@@ -139,14 +160,21 @@ theorem objCompMapIso_naturality {X Y : SimplicialObject C} (f : X ⟶ Y) :
         map ((Fs).map f) := by rw [← Category.assoc, projection_objCompMapIso_hom]
     _ = _ := Category.assoc _ _ _
 
-/-- The original quotient comparisons assemble into the actual functor isomorphism. -/
+/-- The natural quotient-normalization comparison of additive functors.
+
+The objectwise comparisons assemble into a natural isomorphism from quotient normalization
+followed by the chain functor of `F` to simplicial application of `F` followed by quotient
+normalization. -/
 def functorCompMapIso :
     functor C ⋙ Fh ≅ Fs ⋙ functor D :=
   NatIso.ofComponents (fun X => objCompMapIso F X) (by
     intro X Y f
     exact objCompMapIso_naturality F f)
 
-/-- The retained quotient–Moore comparisons give the native Moore functor comparison. -/
+/-- The natural Moore-normalization comparison of additive functors.
+
+The quotient-normalization comparison and quotient–Moore isomorphisms give `F(NX) ≅ N(X ⋙ F)`
+naturally in `X`. -/
 def mooreCompMapIso :
     normalizedMooreComplex C ⋙ Fh ≅ Fs ⋙ normalizedMooreComplex D :=
   isoWhiskerRight (mooreNatIso C).symm Fh ≪≫ functorCompMapIso F ≪≫
@@ -155,7 +183,10 @@ def mooreCompMapIso :
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual Moore functor comparison retains the original Moore inclusion. -/
+/-- The Moore-inclusion square of additive normalization comparison.
+
+The forward comparison followed by the target Moore inclusion equals the mapped source Moore
+inclusion followed by the alternating-complex comparison. -/
 @[reassoc]
 theorem mooreCompMapIso_hom_inclusion (X : SimplicialObject C) :
     ((mooreCompMapIso F).app X).hom ≫ inclusionOfMooreComplexMap ((Fs).obj X) =
@@ -189,7 +220,10 @@ section AmbientFunctorNaturality
 variable [Preadditive C] [Preadditive D]
   {F G : C ⥤ D} [F.Additive] [G.Additive]
 
-/-- The native ambient comparisons respect every actual functor transformation. -/
+/-- Naturality of alternating-complex comparison in functor transformations.
+
+For additive functors between preadditive categories, every natural transformation `F → G`
+commutes with their alternating-complex comparisons. -/
 @[reassoc]
 theorem ambientCompMapIso_naturality (α : F ⟶ G) (X : SimplicialObject C) :
     (NatTrans.mapHomologicalComplex α (ComplexShape.down ℕ)).app
@@ -209,7 +243,10 @@ section FunctorNaturality
 variable [Abelian C] [Abelian D]
   {F G : C ⥤ D} [F.Additive] [G.Additive]
 
-/-- The actual quotient comparison is natural even for a noninvertible functor transformation. -/
+/-- Naturality of quotient normalization comparison in functor transformations.
+
+For additive functors between abelian categories, a natural transformation `F → G` commutes
+with the objectwise quotient-normalization comparisons. -/
 @[reassoc]
 theorem objCompMapIso_functor_naturality (α : F ⟶ G) (X : SimplicialObject C) :
     (NatTrans.mapHomologicalComplex α (ComplexShape.down ℕ)).app (obj X) ≫
@@ -254,7 +291,10 @@ theorem objCompMapIso_functor_naturality (α : F ⟶ G) (X : SimplicialObject C)
       rw [← Category.assoc, projection_objCompMapIso_hom]
     _ = _ := Category.assoc _ _ _
 
-/-- The comparison square is an equality of actual natural transformations. -/
+/-- The natural-transformation square for quotient normalization comparison.
+
+The comparison isomorphisms of additive functors commute with a natural transformation between
+those functors as an equality of natural transformations. -/
 @[reassoc]
 theorem functorCompMapIso_naturality (α : F ⟶ G) :
     whiskerLeft (functor C) (NatTrans.mapHomologicalComplex α (ComplexShape.down ℕ)) ≫

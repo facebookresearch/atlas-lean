@@ -1,8 +1,6 @@
-# Nerve Opp Data
+# The face and degeneracy data of the opposite-monoid nerve
 
-Opposite nerve data.
+The face and degeneracy data of the opposite-monoid nerve.
 
-Objects are `ComposableArrows (SingleObj Gᵐᵒᵖ) n`; faces and degeneracies are
-the pinned nerve maps. Each identity is nerve functoriality (`map_comp`,
-`map_id`) plus the corresponding pinned `SimplexCategory` relation, folded
-across the opposite via `op_comp`; no bare `rfl` is used.
+In degree n the object is the set of chains of n arrows in SingleObj Gᵐᵒᵖ. Faces and
+degeneracies are the maps of its nerve, with their simplicial identities.

@@ -18,11 +18,15 @@ public import Mathlib.LinearAlgebra.ExteriorPower.Basis
 import Mathlib.Tactic.Ring
 
 /-!
-# Coordinates for two-generator Koszul complexes
+# Ordered coordinates of the two-generator Koszul complex
 
-The second exterior power of the standard rank-two free module is identified
-with the base ring by the ordered standard wedge.  This supplies the top
-coordinate needed for explicit two-generator Koszul differentials.
+For f,g in a commutative ring R, use the ordered basis e₀,e₁ of R² and top wedge e₀∧e₁. The
+top exterior coordinate is the determinant. In these coordinates the Koszul maps are R → R², c
+↦ c(−g,f), and R² → R, x ↦ fx₀+gx₁.
+
+If multiplication by f is injective, the top differential is injective and H₂ of the pair
+complex is zero. The coordinate three-term complex is canonically isomorphic to the degree-one
+homology short complex of the Koszul complex.
 -/
 
 @[expose] public section
@@ -38,17 +42,23 @@ universe u
 
 variable (R : Type u) [CommRing R]
 
-/-- The unique two-element subset of `Fin 2`. -/
+/-- The unique top exterior index for a pair.
+
+The full two-element subset of Fin 2 indexes the ordered top wedge. -/
 def pairTopIndex : Set.powersetCard (Fin 2) 2 :=
   ⟨Finset.univ, by simp⟩
 
-/-- Every two-element subset of `Fin 2` is the full set. -/
+/-- Uniqueness of the pair top exterior index.
+
+Every two-element subset of Fin 2 equals pairTopIndex. -/
 theorem pairTopIndex_unique (s : Set.powersetCard (Fin 2) 2) :
     s = pairTopIndex := by
   apply Subtype.ext
   exact Finset.eq_univ_of_card s.val (by simp)
 
-/-- The ordered embedding of the full two-element subset is the identity. -/
+/-- The ordered embedding of the pair top index.
+
+The embedding associated to the full subset of Fin 2 is the identity. -/
 theorem pairTopIndex_orderEmb (i : Fin 2) :
     Set.powersetCard.ofFinEmbEquiv.symm pairTopIndex i = i := by
   rw [Set.powersetCard.ofFinEmbEquiv_symm_apply]
@@ -58,19 +68,27 @@ theorem pairTopIndex_orderEmb (i : Fin 2) :
     (fun _ => Finset.mem_univ _)
   exact congrArg (fun e : Fin 2 ↪o Fin 2 => e i) h.symm
 
-/-- Standard basis of the rank-two free module. -/
+/-- The ordered standard basis of the rank-two free module.
+
+Use the two coordinate vectors of Fin 2 → R. -/
 noncomputable def pairBasis : Module.Basis (Fin 2) R (Fin 2 → R) :=
   Pi.basisFun R (Fin 2)
 
-/-- Coefficient of the ordered standard wedge in the second exterior power. -/
+/-- The coefficient of the ordered top wedge.
+
+The top-coordinate functional on Λ²(R²) reads the coefficient of e₀∧e₁. -/
 noncomputable def pairTopCoeff : (⋀[R]^2 (Fin 2 → R)) →ₗ[R] R :=
   exteriorPower.ιMultiDual R 2 (pairBasis R) pairTopIndex
 
-/-- The ordered standard basis wedge. -/
+/-- The ordered top wedge of the pair basis.
+
+This is e₀∧e₁ in Λ²(R²). -/
 noncomputable def pairTopWedge : ⋀[R]^2 (Fin 2 → R) :=
   exteriorPower.ιMulti_family R 2 (pairBasis R) pairTopIndex
 
-/-- The top-wedge coefficient is a linear equivalence in rank two. -/
+/-- The top exterior-power coordinate equivalence.
+
+The ordered wedge identifies Λ²(R²) with R by its coefficient. -/
 noncomputable def pairTopEquiv :
     (⋀[R]^2 (Fin 2 → R)) ≃ₗ[R] R := by
   apply LinearEquiv.ofBijective (pairTopCoeff R)
@@ -86,8 +104,9 @@ noncomputable def pairTopEquiv :
     rw [map_smul, pairTopWedge, pairTopCoeff,
       exteriorPower.ιMultiDual_apply_diag, smul_eq_mul, mul_one]
 
-/-- The top coordinate of a decomposable rank-two wedge is the usual
-two-by-two determinant. -/
+/-- The determinant formula for a pair wedge.
+
+The top coordinate of the wedge of two vectors is a₀₀a₁₁−a₀₁a₁₀. -/
 theorem pairTopEquiv_apply_ιMulti (a : Fin 2 → (Fin 2 → R)) :
     pairTopEquiv R (exteriorPower.ιMulti R 2 a) =
       a 0 0 * a 1 1 - a 0 1 * a 1 0 := by
@@ -96,22 +115,31 @@ theorem pairTopEquiv_apply_ιMulti (a : Fin 2 → (Fin 2 → R)) :
     Matrix.det_fin_two]
   simp [pairBasis, pairTopIndex_orderEmb]
 
-/-- Coordinate vector of the top two-generator Koszul differential. -/
+/-- The oriented top boundary vector.
+
+For the pair (f,g), the top differential vector is (−g,f). -/
 def pairTopBoundaryVector (f g : R) : Fin 2 → R :=
   Fin.cases (-g) (fun _ => f)
 
+/-- The first coordinate of the top boundary vector.
+
+The coordinate at 0 is −g. -/
 @[simp]
 theorem pairTopBoundaryVector_zero (f g : R) :
     pairTopBoundaryVector R f g 0 = -g :=
   rfl
 
+/-- The second coordinate of the top boundary vector.
+
+The coordinate at 1 is f. -/
 @[simp]
 theorem pairTopBoundaryVector_one (f g : R) :
     pairTopBoundaryVector R f g 1 = f :=
   rfl
 
-/-- Coordinate form of the top differential: the ordered top wedge maps to
-`(-g,f)`. -/
+/-- The top pair differential in ordered coordinates.
+
+After the exterior-power identifications, the differential Λ²(R²) → R² sends c to c(−g,f). -/
 theorem pair_differential_one_coordinates (f g : R) :
     (exteriorPower.oneEquiv R (Fin 2 → R)).toLinearMap.comp
         (differential R (Fin 2 → R)
@@ -132,7 +160,10 @@ theorem pair_differential_one_coordinates (f g : R) :
       pairFamily_zero, pairFamily_one, Fin.sum_univ_two] <;>
     ring
 
-/-- Coordinate form of the bottom differential: dot product with `(f,g)`. -/
+/-- The bottom pair differential in ordered coordinates.
+
+After the degree-zero and degree-one exterior identifications, the differential sends x to
+fx₀+gx₁. -/
 theorem pair_differential_zero_coordinates (f g : R) :
     (exteriorPower.zeroEquiv R (Fin 2 → R)).toLinearMap.comp
         (differential R (Fin 2 → R)
@@ -142,8 +173,9 @@ theorem pair_differential_zero_coordinates (f g : R) :
   differential_zero_equiv R (Fin 2 → R)
     (familyFunctional R (pairFamily R f g))
 
-/-- The top two-generator Koszul differential is injective when the first
-coefficient acts injectively on the ring. -/
+/-- Regularity of the first element makes the top differential injective.
+
+If multiplication by f on R is injective, the map c ↦ c(−g,f) is injective. -/
 theorem pair_differential_one_injective
     (f g : R) (hf : Function.Injective (LinearMap.lsmul R R f)) :
     Function.Injective
@@ -165,8 +197,9 @@ theorem pair_differential_one_injective
   have hcoordOne := congrArg (fun x : Fin 2 → R => x 1) hcoord
   simpa [LinearMap.lsmul_apply, smul_eq_mul, mul_comm] using hcoordOne
 
-/-- Degree-two homology of a two-generator Koszul complex vanishes when the
-first coefficient acts injectively. -/
+/-- The pair complex has zero top homology for a regular first element.
+
+If multiplication by f is injective, H₂(K(f,g)) is zero. -/
 theorem pair_homology_two_isZero
     (f g : R) (hf : Function.Injective (LinearMap.lsmul R R f)) :
     CategoryTheory.Limits.IsZero
@@ -189,8 +222,9 @@ theorem pair_homology_two_isZero
   refine ⟨0, ?_⟩
   simp [hx0]
 
-/-- The coordinate short complex `R → R² → R` for the two-generator
-Koszul complex. -/
+/-- The coordinate short complex of a Koszul pair.
+
+Form R → R² → R with maps c ↦ c(−g,f) and x ↦ fx₀+gx₁. -/
 noncomputable def pairCoordinateShortComplex (f g : R) :
     ShortComplex (ModuleCat R) :=
   ShortComplex.moduleCatMk
@@ -203,8 +237,10 @@ noncomputable def pairCoordinateShortComplex (f g : R) :
         Fin.sum_univ_two]
       ring)
 
-/-- The degree-one short complex of the abstract two-generator Koszul
-complex is isomorphic to its explicit coordinate short complex. -/
+/-- The coordinate comparison for degree-one pair homology.
+
+The degree-one homology short complex of K(f,g) is isomorphic to the coordinate complex
+through the ordered exterior identifications. -/
 noncomputable def pairCoordinateShortComplexIso (f g : R) :
     (familyComplex R (pairFamily R f g)).sc 1 ≅
       pairCoordinateShortComplex R f g := by

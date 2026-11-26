@@ -15,10 +15,14 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageConnecting
 /-!
 # Degreewise sections of first-page column projections
 
-The projection from a filtration stage to its new direct column has a
-canonical section in every supported degree.  These sections need not form a
-cochain map; they are the degreewise lifts used in the connecting-homomorphism
-calculation.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. In filtration stage `p`, inclusion of its top bidegree `(p,q)` splits projection
+to that summand.
+
+At cochain degree `-p-q`, transport this inclusion through the extension and complete-stage
+comparisons to obtain a degreewise section of the direct-column projection. The positive-
+column version in column `p+1` uses the corresponding natural-stage comparison. These are the
+degreewise lifts used by the adjacent-column boundary calculation.
 -/
 
 @[expose] public section
@@ -40,15 +44,20 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
     (ComplexShape.down ℕ))
 
 omit [HasZeroObject C] in
-/-- The top-column inclusion is a section of the top-column projection. -/
+/-- The section identity of a finite top-column inclusion.
+
+The inclusion of `(p,q)` into finite stage `p` followed by its top-column projection is the
+identity. -/
 theorem horizontalFilteredTopInclusion_projection (p q : ℕ) :
     horizontalFilteredTopInclusion K p q ≫
       horizontalFilteredTopProjection K p q = 𝟙 _ := by
   simpa [horizontalFilteredTopInclusion, horizontalFilteredTopIndex] using
     horizontalFilteredTopι_topProjection K p q
 
-/-- Section of the direct-column projection component expressed through the
-complete filtration stage. -/
+/-- The degreewise section from a direct column to a complete upper stage.
+
+At cochain degree `-p-q`, transport the finite top-column inclusion into the complete upper
+filtration stage. -/
 noncomputable def horizontalCompleteDirectColumnSectionComponent (p q : ℕ) :
     (horizontalDirectColumnCochain K p).X (-(p : ℤ) - q) ⟶
       ((horizontalCompleteFiltrationCochainDiagram K).obj
@@ -60,8 +69,10 @@ noncomputable def horizontalCompleteDirectColumnSectionComponent (p q : ℕ) :
       (i := p + q) (i' := -(p : ℤ) - q) (by simp; omega)).inv ≫
     (horizontalCompleteFiltrationCochainUpperIso K p).inv.f (-(p : ℤ) - q)
 
-/-- The complete-stage section is a right inverse of the corresponding
-direct-column projection component. -/
+/-- The projection identity of a complete direct-column section.
+
+The section component followed by its direct-column projection is the identity in the
+supported degree. -/
 theorem horizontalCompleteDirectColumnSectionComponent_projection
     (p q : ℕ) :
     horizontalCompleteDirectColumnSectionComponent K p q ≫
@@ -89,8 +100,10 @@ theorem horizontalCompleteDirectColumnSectionComponent_projection
     _ = eD.hom ≫ 𝟙 _ ≫ eD.inv := by rw [htop]
     _ = _ := by simp
 
-/-- Section of the actual complete-filtration projection onto the positive
-column `p+1`. -/
+/-- The degreewise section of a positive-column complete projection.
+
+At degree `-(p+1)-q`, include direct column `p+1` into its complete upper stage through the
+extension and natural-stage isomorphisms. -/
 noncomputable def horizontalCompleteSuccDirectColumnSection (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).X
         (-((p + 1 : ℕ) : ℤ) - q) ⟶
@@ -108,8 +121,10 @@ noncomputable def horizontalCompleteSuccDirectColumnSection (p q : ℕ) :
     (horizontalCompleteFiltrationCochainMonoUpperSuccIso K p).inv.f
       (-((p + 1 : ℕ) : ℤ) - q)
 
-/-- The positive-column section is a right inverse of the projection map in
-the supported degree. -/
+/-- The section identity of a positive complete-column projection.
+
+The positive-column section followed by the complete projection map component is the identity
+at degree `-(p+1)-q`. -/
 theorem horizontalCompleteSuccDirectColumnSection_projection (p q : ℕ) :
     horizontalCompleteSuccDirectColumnSection K p q ≫
         (horizontalCompleteDirectColumnProjectionMap K (p + 1)).f

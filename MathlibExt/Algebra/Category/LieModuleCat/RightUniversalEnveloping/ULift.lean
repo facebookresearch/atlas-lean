@@ -15,13 +15,18 @@ public import MathlibExt.Algebra.Category.LieModuleCat.CoefficientULift
 public import MathlibExt.Algebra.Category.LieModuleCat.RightUniversalEnveloping
 
 /-!
-# Original right UEA representations and actual coefficient carrier lifts
+# Right enveloping actions commute with coefficient universe lifts
 
-The representation of the lifted native Lie coefficient is actually
-equivalent to the original representation by native down. Equivariance
-follows from the original representation law for the actual down Lie map.
-No identification between independent carrier worlds or action dictionaries
-is assumed. This provider has no CE, PBW or derived-functor dependency.
+Let R be a commutative ring, L an R-Lie algebra and M a left Lie module
+in carrier world w. Give M its right enveloping action
+m·ι(x) = −[x,m]. The Lie coefficient lift ULift^z M has the inherited
+bracket [x,up(m)] = up([x,m]).
+
+Removing the lift gives a U_R(L)ᵒᵖ-linear equivalence from the represented
+lifted module to the represented module M. Its inverse is m ↦ up(m).
+Restricting both modules along R → U_R(L)ᵒᵖ gives the same equivalence
+over R. The scalar, Lie, coefficient and extra-height universes are
+independent.
 -/
 
 @[expose] public section
@@ -40,8 +45,10 @@ variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- Actual down/up equivalence between the right UEA representations of the
-lifted original Lie coefficient and the original raw Lie coefficient. -/
+/-- For a commutative ring R, an R-Lie algebra L and a Lie
+module M, the down map from the represented ULift^z M to the
+represented M is U_R(L)ᵒᵖ-linear. Its inverse is the up map,
+and both right generator actions are m·ι(x) = −[x,m]. -/
 def coefficientULiftEquiv :
     representObj R L (LieModuleCat.CoefficientULift.obj.{u, v, w, z} R L M) ≃ₗ[Uᵐᵒᵖ]
       representObj R L M :=
@@ -69,8 +76,11 @@ theorem coefficientULiftEquiv_up (m : M) : coefficientULiftEquiv.{u, v, w, z} R 
 theorem coefficientULiftEquiv_symm_apply (m : representObj R L M) :
     (coefficientULiftEquiv.{u, v, w, z} R L M).symm m = ULift.up m := rfl
 
-/-- The actual coefficient equivalence in the native scalar restrictions
-used by the original ground-linear balanced quotient. -/
+/-- For a commutative ring R, an R-Lie algebra L and a Lie
+module M, restrict the right representations of ULift^z M and M
+along R → U_R(L)ᵒᵖ. The coefficient down/up equivalence is then
+R-linear between these scalar restrictions, with the given
+ground action on M. -/
 def coefficientULiftGroundEquiv :
     (ModuleCat.restrictScalars (algebraMap R Uᵐᵒᵖ)).obj
       (representObj R L (LieModuleCat.CoefficientULift.obj.{u, v, w, z} R L M)) ≃ₗ[R]

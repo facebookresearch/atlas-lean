@@ -1,4 +1,5 @@
-# Pair
+# The bidegree cycle pairing on module homology
 
-The actual cycle-induced bidegree pairing, with descent data earned from
-the identity chain map on the tensor complex.
+The bidegree cycle pairing on module homology.
+
+Tensor cycle representatives to obtain `H_p(K) ⊗ H_q(L) → H_(p+q)(K ⊗ L)`.

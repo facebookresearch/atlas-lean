@@ -1,3 +1,6 @@
-# Polynomial Resolution Map
+# The polynomial resolution map of an algebra homomorphism
 
-The actual augmented resolution map induced by an algebra map.
+The polynomial resolution map of an algebra homomorphism.
+
+For `f : A → B`, this is the augmented simplicial map from the polynomial resolution of `A` to
+that of `B`, with degree-`n` map `T^(n+1)(f)`.

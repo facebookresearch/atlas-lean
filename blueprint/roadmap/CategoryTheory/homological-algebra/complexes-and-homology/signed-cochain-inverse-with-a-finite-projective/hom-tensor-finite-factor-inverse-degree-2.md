@@ -1,4 +1,7 @@
-# Hom Tensor Finite Factor Inverse Degree left Inverse
+# Bounded-factor inverse sum is a left inverse
 
-The degree inverse is a left inverse on the entire native sum total.
-Off the original finite U interval, the actual source cell is zero.
+Bounded-factor inverse sum is a left inverse.
+
+If every factor term `U^b` is zero for `b < L` and for `N < b`, the finite inverse sum
+followed after the degree-`n` comparison is the identity on the source Hom–tensor total
+degree.

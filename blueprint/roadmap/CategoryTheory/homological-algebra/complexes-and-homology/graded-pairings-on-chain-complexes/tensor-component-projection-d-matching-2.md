@@ -1,3 +1,5 @@
-# Tensor Component Projection d₂ matching
+# The matching vertical differential under projection
 
-The second differential into the selected component retains its Koszul sign.
+The matching vertical differential under projection.
+
+The differential from (p,q+1) projects to (−1)^p times id_{K_p} ⊗ d_L(q+1,q).

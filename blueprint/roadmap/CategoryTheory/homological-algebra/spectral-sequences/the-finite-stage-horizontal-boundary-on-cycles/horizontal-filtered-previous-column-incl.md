@@ -1,4 +1,5 @@
-# Horizontal Filtered Previous Column Inclusion
+# The preceding-column inclusion in a finite filtration stage
 
-Inclusion of column `p` into filtration stage `p+1` in total degree
-`p+q`.
+The preceding-column inclusion in a finite filtration stage.
+
+Include bidegree `(p,q)` into total degree `p+q` of filtration stage `p+1`.

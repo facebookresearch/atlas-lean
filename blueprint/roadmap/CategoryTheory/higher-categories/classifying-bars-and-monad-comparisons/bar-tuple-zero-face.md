@@ -1,8 +1,5 @@
-# Bar Tuple zero face
+# The zeroth bar face removes the first coordinate
 
-Bar-side zero-face tuple formula.
+The zeroth bar face removes the first coordinate.
 
-`barTuple` of the zeroth face drops the head: unfold the face to the
-iterated right action, read both sides through the generalized reader,
-and apply `genZeroFst`. No induction here; the induction lives once in
-`genZeroSnd`/`genZeroFst` for general `X`.
+For a degree-(n+1) bar element with tuple t, its zeroth face has tuple Fin.tail t.

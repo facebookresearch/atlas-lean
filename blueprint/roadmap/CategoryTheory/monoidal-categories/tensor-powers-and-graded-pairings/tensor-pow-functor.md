@@ -1,3 +1,5 @@
-# Tensor Pow Functor
+# Finite tensor power functor
 
-The `n`-fold tensor power as a functor of its base object.
+Finite tensor power functor.
+
+The recursively defined power objects and maps form an endofunctor for each natural power.

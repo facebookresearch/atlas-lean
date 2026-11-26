@@ -1,3 +1,5 @@
-# Matrix Coefficient Homology Map At Height
+# The homology map of a lifted matrix coefficient chain map
 
-Homology maps of full-height coefficient maps.
+The homology map of a lifted matrix coefficient chain map.
+
+Take the degree-`d` homology map of the fixed-size lifted coefficient chain map.

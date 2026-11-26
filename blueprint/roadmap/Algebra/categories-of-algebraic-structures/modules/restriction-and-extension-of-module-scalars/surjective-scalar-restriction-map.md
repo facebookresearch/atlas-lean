@@ -1,4 +1,6 @@
-# Surjective Scalar Restriction Map
+# The induced restriction map between quotient coefficients
 
-The extension/restriction adjunction turns the actual base-change
-comparison into the original scalar-linear coefficient restriction.
+The induced restriction map between quotient coefficients.
+
+Compose the scalar-extension unit A → res_γ(S ⊗_R A) with the restricted base-change
+comparison to obtain the R-linear map from A to B with the specified scalar actions.

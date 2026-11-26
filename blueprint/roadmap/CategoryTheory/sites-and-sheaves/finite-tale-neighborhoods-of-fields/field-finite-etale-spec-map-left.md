@@ -1,3 +1,5 @@
-# Field Finite Etale Spec map left
+# The affine-basis arrow is the opposite underlying ring map
 
-The actual spectrum arrow is the original algebra map, without a changed carrier.
+For a field k and f : A → B in (FiniteEtale k)ᵒᵖ, the underlying affine arrow of
+fieldFiniteEtaleSpec(f) equals the opposite of the ring map underlying f.unop : B → A. The
+functor therefore retains the given algebra morphism under spectral contravariance.

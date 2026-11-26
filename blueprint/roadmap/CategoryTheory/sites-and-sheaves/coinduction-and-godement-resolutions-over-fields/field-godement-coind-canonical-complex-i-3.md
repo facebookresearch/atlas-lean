@@ -1,3 +1,6 @@
-# Field Godement Coind Canonical Complex Iso coaugmentation
+# Godement coinduction comparison respects coaugmentation
 
-The SAME original mapped Godement comparison commutes with the actual coaugmentations.
+Godement coinduction comparison respects coaugmentation.
+
+After the single-complex functor coordinate, the image of the Godement coaugmentation followed
+by comparison equals the canonical coinduction coaugmentation.

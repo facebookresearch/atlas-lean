@@ -16,12 +16,15 @@ public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.FunctorIso
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.NatIso
 
 /-!
-# Canonical finite-frame comparison in a restriction square
+# Finite-frame dual comparisons in an additive square
 
-The earned composition and unit values identify the two sides of an actual
-commuting square of additive functors. The vertical dual comparisons are
-already earned natural restriction isomorphisms; no arbitrary pullback dual
-comparison is a hypothesis.
+Let additive functors P:C → D, R:C → E, S:D → K and Q:E → K
+between preadditive categories form a natural square S∘P ≅ Q∘R.
+Choose finite biproduct frames of distinguished objects in the four
+categories and compatible dual evaluations. Natural duality comparisons
+for the vertical functors, normalized at these objects, make the canonical
+finite-frame comparisons for P and Q commute around the square.
+The coefficient-category and finite-index universes are independent.
 -/
 
 @[expose] public section
@@ -40,7 +43,22 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {E : Type u₃} [Category.{v₃} E] [Preadditive E]
   {K : Type u₄} [Category.{v₄} K] [Preadditive K]
 
-/-- The same finite-frame comparison commutes with a genuine restriction square. -/
+/-- Let C,D,E,K be preadditive and P:C → D, R:C → E, S:D → K,
+Q:E → K additive, with ρ:S∘P ≅ Q∘R.
+Let additive contravariant functors G,H,J,L have natural comparisons
+η_R:R∘G ≅ J∘Rᵒᵖ and η_S:S∘H ≅ L∘Sᵒᵖ.
+For finite I, choose I-fold biproducts of U∈C,V∈D,W∈E,Z∈K,
+isomorphisms p:P(U) ≅ V, r:R(U) ≅ W, s:S(V) ≅ Z, q:Q(W) ≅ Z,
+and evaluations e_G:G(U) ≅ U, e_H:H(V) ≅ V,
+e_J:J(W) ≅ W, e_L:L(Z) ≅ Z. Assume
+r∘R(e_G)=e_J∘J((r⁻¹)ᵒᵖ)∘η_R,U,
+s∘S(e_H)=e_L∘L((s⁻¹)ᵒᵖ)∘η_S,V,
+and q∘Q(r)∘ρ_U=s∘S(p).
+For a bilimit frame b of copies of U, write A=b.pt and E_P,E_Q for
+the canonical comparisons at b and its R-image frame.
+Their forward maps satisfy
+E_Q∘Q(η_R,A)∘ρ_GA
+=L((ρ_A⁻¹)ᵒᵖ)∘η_S,PA∘S(E_P). -/
 theorem finiteFrameDualComparisonIso_square
     (P : C ⥤ D) [P.Additive] (R : C ⥤ E) [R.Additive]
     (S : D ⥤ K) [S.Additive] (Q : E ⥤ K) [Q.Additive]

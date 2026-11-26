@@ -21,17 +21,23 @@ public import Mathlib.Algebra.Homology.HomologySequenceLemmas
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
 /-!
-# Milnor short exact sequences for inverse towers of complexes
+# Milnor sequences for sequential inverse towers
 
-This file constructs the canonical Milnor short exact sequence associated to
-an inverse tower of homological complexes.  Its input is the exactness of the
-standard product difference on the tower of complexes.  Its endpoints are the
-concrete sequential `lim¹` of the next homology tower and the inverse limit
-of the current homology tower.
+Let C be an abelian category, c an arbitrary complex shape, and
+K=(⋯ → K₂ → K₁ → K₀) an inverse tower of complexes. Write
+P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁).
+When C has sequential inverse limits and Δ_K is epic, the sequence
+0 → lim K → P(K) —Δ_K→ P(K) → 0 is short exact.
 
-The construction uses the short exact product-difference sequence of
-complexes, Mathlib's long homology sequence, and the canonical comparison
-between homology of an exact countable product and the product of homologies.
+If countable products in C are exact, homology commutes with P.
+For every c.Rel(i,j), the resulting canonical Milnor sequence is
+0 → lim¹(H_iK) → H_j(lim K) → lim(H_jK) → 0,
+where lim¹ is the concrete cokernel of the homology-tower difference.
+The injection is induced by the long-sequence boundary, and the edge
+has stage projections H_j(lim K → Kₙ). The sequence is natural in tower
+maps. Degreewise epic differences suffice for Δ_K to be epic; for abelian
+groups, degreewise Mittag–Leffler towers provide this condition.
+The category object, morphism and complex-index universes are independent.
 -/
 
 @[expose] public section
@@ -53,12 +59,17 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   [HasLimitsOfShape ℕᵒᵖ C]
 
 omit [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Countable products of homological complexes are computed degreewise. -/
+/-- Let C be abelian with countable products and c any complex shape.
+
+Countable products of complexes of shape c exist and are computed in every degree by the corresponding product in C. -/
 noncomputable instance homologicalComplexHasCountableProducts :
     HasCountableProducts (HomologicalComplex C c) where
   out _ := inferInstance
 
-/-- The inverse tower of degree-`i` homology objects of a tower of complexes. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+For a degree i, the inverse homology tower H_iK has object H_i(Kₙ) at stage n and transition maps induced on homology by the transitions of K. -/
 abbrev sequentialHomologyTower
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) : ℕᵒᵖ ⥤ C where
   obj n := (K.obj n).homology i
@@ -67,15 +78,21 @@ abbrev sequentialHomologyTower
   map_comp f g := (K ⋙ homologyFunctor C c i).map_comp f g
 
 omit [HasCountableProducts C] [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C] in
-/-- The explicit object presentation retains the entire native composite.
-It lets projection formulas use actual homology objects without unfolding the native functor. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+The degree-i homology tower equals the composite of K with the homology functor H_i on complexes of shape c. -/
 theorem sequentialHomologyTower_eq_comp
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     sequentialHomologyTower K i = K ⋙ homologyFunctor C c i := rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Exact countable products canonically identify the homology of the
-sequential product complex with the sequential product of homology objects. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison.
+
+The canonical isomorphism β_i:H_i(P(K)) ≅ P(H_iK) identifies the homology of the product complex with the product of homology objects. -/
 noncomputable def sequentialProductHomologyIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     (sequentialProduct K).homology i ≅
@@ -85,8 +102,12 @@ noncomputable def sequentialProductHomologyIso
 
 set_option backward.isDefEq.respectTransparency false in
 omit [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Every product coordinate of the product-homology comparison is the
-homology map of the corresponding product projection. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison.
+
+For every stage n, the n-th projection of β_i is H_i of the product projection P(K) → Kₙ. -/
 @[reassoc (attr := simp)]
 theorem sequentialProductHomologyIso_hom_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) (n : ℕ) :
@@ -104,8 +125,12 @@ theorem sequentialProductHomologyIso_hom_π
 
 set_option backward.isDefEq.respectTransparency false in
 omit [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Under the exact-product comparison, the homology map of the complex-level
-standard difference is the standard difference of the homology tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison.
+
+For Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), the comparison intertwines differences: β_i ∘ H_i(Δ_K)=Δ_{H_iK} ∘ β_i. -/
 theorem homologyMap_sequentialDifference_comp_productHomologyIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     homologyMap (sequentialDifference K) i ≫
@@ -119,15 +144,21 @@ theorem homologyMap_sequentialDifference_comp_productHomologyIso
   simp only [PreservesProduct.iso_hom]
   exact sequentialDifference_piComparison (homologyFunctor C c i) K
 
-/-- The inverse tower obtained by evaluating a tower of complexes in one
-degree. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+Evaluation at degree i gives the inverse tower with objects Kₙᵢ and transitions the degree-i components of the tower maps. -/
 abbrev sequentialDegreeTower
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) : ℕᵒᵖ ⥤ C :=
   K ⋙ eval C c i
 
 omit [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Evaluation in one degree canonically commutes with the sequential
-product of complexes. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition.
+
+For each degree i, the canonical isomorphism ε_i:P(K)ᵢ ≅ ∏ₙKₙᵢ compares evaluation of the product complex with the product of the evaluated tower. -/
 noncomputable def sequentialProductEvalIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     (sequentialProduct K).X i ≅
@@ -136,8 +167,12 @@ noncomputable def sequentialProductEvalIso
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Every coordinate of the degree-evaluation product comparison is the
-evaluated product projection. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition.
+
+For the comparison ε_i:P(K)ᵢ ≅ ∏ₙKₙᵢ, its n-th projection is the degree-i component of the product projection P(K) → Kₙ. -/
 @[reassoc (attr := simp)]
 theorem sequentialProductEvalIso_hom_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) (n : ℕ) :
@@ -153,8 +188,12 @@ theorem sequentialProductEvalIso_hom_π
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Evaluation in one degree identifies the actual complex-level standard
-difference with the standard difference of the evaluated tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition.
+
+Under ε_i:P(K)ᵢ ≅ P((Kₙᵢ)ₙ), the component of the complex difference satisfies ε_i ∘ (Δ_K)ᵢ=Δ_{(Kₙᵢ)} ∘ ε_i. -/
 theorem sequentialDifference_f_comp_productEvalIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     (sequentialDifference K).f i ≫
@@ -169,8 +208,12 @@ theorem sequentialDifference_f_comp_productEvalIso
   exact sequentialDifference_piComparison (eval C c i) K
 
 omit [CountableAB4Star C] [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Degreewise epimorphy of the standard differences implies epimorphy of
-the actual standard difference of complexes. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition.
+
+If the standard difference on the evaluated tower (Kₙᵢ)ₙ is epic for every i, then Δ_K is an epimorphism of complexes. -/
 theorem epi_sequentialDifference_of_epi_degreewise
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (h : ∀ i : ι, Epi
@@ -180,8 +223,9 @@ theorem epi_sequentialDifference_of_epi_degreewise
   intro i
   exact (epi_map_sequentialDifference_iff (eval C c i) K).2 (h i)
 
-/-- A degreewise Mittag--Leffler tower of complexes of abelian groups has an
-epimorphic actual product difference. -/
+/-- Let K be an inverse tower of complexes of any shape c in abelian groups.
+
+If, in each degree i and each fixed stage n, the images of later stages in Kₙᵢ eventually stabilize, then the product difference Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic. -/
 theorem _root_.AddCommGrpCat.epi_sequentialDifference_of_degreewise_isMittagLeffler
     (K : ℕᵒᵖ ⥤ HomologicalComplex AddCommGrpCat.{u} c)
     (h : ∀ i : ι,
@@ -190,7 +234,9 @@ theorem _root_.AddCommGrpCat.epi_sequentialDifference_of_degreewise_isMittagLeff
   epi_sequentialDifference_of_epi_degreewise K fun i =>
     AddCommGrpCat.epi_sequentialDifference_of_isMittagLeffler _ (h i)
 
-/-- The map of homology towers induced by a map of towers of complexes. -/
+/-- Let C be abelian, c any complex shape and α:K → L a map of inverse towers of complexes.
+
+The induced map H_iK → H_iL has stage-n component H_i(αₙ). -/
 abbrev sequentialHomologyTowerMap
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c} (α : K ⟶ L) (i : ι) :
     sequentialHomologyTower K i ⟶ sequentialHomologyTower L i :=
@@ -198,7 +244,10 @@ abbrev sequentialHomologyTowerMap
 
 omit [HasCountableProducts C] [CountableAB4Star C]
   [HasLimitsOfShape ℕᵒᵖ C] in
-/-- The homology-tower map induced by the identity is the identity. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+The map of degree-i homology towers induced by 1_K is the identity of H_iK. -/
 theorem sequentialHomologyTowerMap_id
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     sequentialHomologyTowerMap (𝟙 K) i =
@@ -207,7 +256,9 @@ theorem sequentialHomologyTowerMap_id
 
 omit [HasCountableProducts C] [CountableAB4Star C]
   [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Homology-tower maps preserve composition. -/
+/-- Let C be abelian, c any complex shape and α:K → L, β:L → M maps of inverse towers.
+
+The homology tower map of β∘α equals H_i(β)∘H_i(α). -/
 @[reassoc]
 theorem sequentialHomologyTowerMap_comp
     {K L M : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -218,7 +269,11 @@ theorem sequentialHomologyTowerMap_comp
   exact Functor.whiskerRight_comp α β (homologyFunctor C c i)
 
 omit [HasLimitsOfShape ℕᵒᵖ C] in
-/-- The exact-product homology comparison is natural in maps of towers. -/
+/-- Let C be abelian with exact countable products and c any complex shape.
+For towers K,L and α:K → L, let P(α) be the product map and
+H_a(α) the map of degree-a homology towers.
+
+The product homology comparisons satisfy β_L,i ∘ H_i(P(α))=P(H_i(α)) ∘ β_K,i. -/
 @[reassoc]
 theorem sequentialProductHomologyIso_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c} (α : K ⟶ L) (i : ι) :
@@ -234,7 +289,11 @@ theorem sequentialProductHomologyIso_naturality
   exact sequentialProductMap_piComparison (homologyFunctor C c i) α
 
 omit [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Inverse form of naturality for the exact-product homology comparison. -/
+/-- Let C be abelian with exact countable products and c any complex shape.
+For towers K,L and α:K → L, let P(α) be the product map and
+H_a(α) the map of degree-a homology towers.
+
+The inverse comparisons satisfy β_L,i⁻¹ ∘ P(H_i(α))=H_i(P(α)) ∘ β_K,i⁻¹. -/
 @[reassoc]
 theorem sequentialProductHomologyIso_inv_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c} (α : K ⟶ L) (i : ι) :
@@ -265,8 +324,9 @@ theorem sequentialProductHomologyIso_inv_naturality
       Category.assoc _ _ _
 
 omit [CountableAB4Star C] in
-/-- A map of towers induces the canonical map between their
-limit-product-difference short complexes. -/
+/-- Let C be abelian with countable products and sequential inverse limits, c any complex shape, and α:K → L a tower map.
+
+The induced map between lim K → P(K) → P(K) and lim L → P(L) → P(L) has components lim(α), P(α), P(α), and commutes with the inclusions and differences. -/
 noncomputable def sequentialLimitShortComplexMap
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c} (α : K ⟶ L) :
     sequentialLimitShortComplex K ⟶ sequentialLimitShortComplex L where
@@ -277,8 +337,12 @@ noncomputable def sequentialLimitShortComplexMap
   comm₂₃ := sequentialDifference_naturality α
 
 omit [CountableAB4Star C] in
-/-- The standard limit-product-difference complex is short exact whenever
-the actual complex-level standard difference is an epimorphism. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition. Assume sequential inverse limits exist in C.
+
+If Δ_K is epic, then 0 → lim K → P(K) —Δ_K→ P(K) → 0 is short exact. -/
 theorem sequentialLimitShortComplex_shortExact_of_epi
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K)) :
@@ -288,8 +352,13 @@ theorem sequentialLimitShortComplex_shortExact_of_epi
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The actual connecting map in the long homology sequence of the
-limit-product-difference short exact complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The connecting map δ:H_i(P(K)) → H_j(lim K) in the homology sequence of the short exact limit-product-difference sequence. -/
 noncomputable def sequentialLimitHomologyBoundary
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -299,8 +368,12 @@ noncomputable def sequentialLimitHomologyBoundary
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The homology map of the canonical morphism from the inverse-limit
-complex to the sequential product complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition. Assume sequential inverse limits exist in C.
+
+The map H_j(lim K) → H_j(P(K)) induced by the canonical inclusion lim K → P(K). -/
 noncomputable def sequentialLimitHomologyToProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (j : ι) :
     (limit K).homology j ⟶ (sequentialProduct K).homology j :=
@@ -316,8 +389,12 @@ theorem sequentialLimitHomologyToProduct_eq
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The homology map from the limit complex to the product complex is killed
-by the homology map of the standard difference. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products.
+Write P(K)=∏ₙKₙ and Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁), where tₙ:Kₙ₊₁ → Kₙ
+is the adjacent transition. Assume sequential inverse limits exist in C.
+
+The homology map of lim K → P(K), followed by H_j(Δ_K), is zero. -/
 @[reassoc (attr := simp)]
 theorem sequentialLimitHomologyToProduct_comp_difference
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (j : ι) :
@@ -328,8 +405,13 @@ theorem sequentialLimitHomologyToProduct_comp_difference
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The long-sequence boundary followed by the homology map to the product is
-zero. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The boundary and inclusion maps satisfy ρ∘δ=0. -/
 @[reassoc (attr := simp)]
 theorem sequentialLimitHomologyBoundary_comp_toProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -341,8 +423,13 @@ theorem sequentialLimitHomologyBoundary_comp_toProduct
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The homology map of the product difference followed by the long-sequence
-boundary is zero. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The product-difference homology map satisfies δ∘H_i(Δ_K)=0. -/
 @[reassoc (attr := simp)]
 theorem homologyMap_sequentialDifference_comp_boundary
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -353,8 +440,9 @@ theorem homologyMap_sequentialDifference_comp_boundary
   (sequentialLimitShortComplex_shortExact_of_epi K hK).comp_δ i j hij
 
 omit [CountableAB4Star C] in
-/-- Naturality of the actual long-homology-sequence boundary for the
-limit-product-difference short exact complexes. -/
+/-- Let C be abelian with countable products and sequential inverse limits, c any complex shape, and α:K → L a tower map. Assume Δ_K and Δ_L are epic and c.Rel(i,j).
+
+The boundaries satisfy H_j(lim α) ∘ δ_K=δ_L ∘ H_i(P(α)). -/
 @[reassoc]
 theorem sequentialLimitBoundary_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -372,8 +460,13 @@ theorem sequentialLimitBoundary_naturality
     i j hij
 
 omit [CountableAB4Star C] in
-/-- The five consecutive terms of the homology long exact sequence used in
-the sequential Milnor construction. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The five-term homology window is H_i(P(K)) —H_i(Δ_K)→ H_i(P(K)) —δ→ H_j(lim K) —ρ→ H_j(P(K)) —H_j(Δ_K)→ H_j(P(K)). -/
 noncomputable def sequentialMilnorHomologyWindow
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -387,7 +480,13 @@ noncomputable def sequentialMilnorHomologyWindow
     (homologyMap S.g j)
 
 omit [CountableAB4Star C] in
-/-- The Milnor five-term homology window is exact. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The five-term sequence H_i(P(K)) → H_i(P(K)) → H_j(lim K) → H_j(P(K)) → H_j(P(K)), with maps H_i(Δ_K),δ,ρ,H_j(Δ_K), is exact. -/
 theorem sequentialMilnorHomologyWindow_exact
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -401,8 +500,13 @@ theorem sequentialMilnorHomologyWindow_exact
       (hS.homology_exact₂ j).exact_toComposableArrows)
 
 omit [CountableAB4Star C] in
-/-- The canonical cokernel-middle-kernel short complex extracted from the
-five-term homology window. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The extracted short complex has terms Coker(H_i(Δ_K)), H_j(lim K), Ker(H_j(Δ_K)); its first map is induced by δ and its second is the factorization of ρ through the kernel. -/
 noncomputable def sequentialMilnorRawShortComplex
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -412,7 +516,13 @@ noncomputable def sequentialMilnorRawShortComplex
     (sequentialMilnorHomologyWindow_exact K hK i j hij)
 
 omit [CountableAB4Star C] in
-/-- The extracted raw Milnor short complex is short exact. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The extracted sequence 0 → Coker(H_i(Δ_K)) → H_j(lim K) → Ker(H_j(Δ_K)) → 0 is short exact. -/
 theorem sequentialMilnorRawShortComplex_shortExact
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -424,8 +534,13 @@ theorem sequentialMilnorRawShortComplex_shortExact
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The quotient map into the raw short complex is the actual connecting map
-in Mathlib's long homology sequence. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+For the quotient q:H_i(P(K)) → Coker(H_i(Δ_K)) and the left map f of the extracted sequence, f∘q=δ. -/
 @[reassoc]
 theorem sequentialMilnorRawShortComplex_π_f
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -440,8 +555,13 @@ theorem sequentialMilnorRawShortComplex_π_f
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The raw right map followed by its kernel inclusion is the actual homology
-map of the canonical limit-to-product morphism. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+For the right map g:H_j(lim K) → Ker(H_j(Δ_K)) of the extracted sequence and kernel inclusion κ, κ∘g=ρ. -/
 @[reassoc]
 theorem sequentialMilnorRawShortComplex_g_ι
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -455,8 +575,13 @@ theorem sequentialMilnorRawShortComplex_g_ι
     (sequentialMilnorHomologyWindow_exact K hK i j hij)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual homology-product cokernel quotient, with codomain the left
-object of the raw Milnor short complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The quotient H_i(P(K)) → Coker(H_i(Δ_K)), regarded as a map into the left term of the extracted Milnor sequence. -/
 noncomputable def sequentialMilnorRawCokernelπ
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -466,8 +591,13 @@ noncomputable def sequentialMilnorRawCokernelπ
   cokernel.π (homologyMap (sequentialDifference K) i)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual kernel inclusion, with domain the right object of the raw
-Milnor short complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The inclusion Ker(H_j(Δ_K)) → H_j(P(K)), regarded as a map from the right term of the extracted Milnor sequence. -/
 noncomputable def sequentialMilnorRawKernelι
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -477,8 +607,13 @@ noncomputable def sequentialMilnorRawKernelι
   kernel.ι (homologyMap (sequentialDifference K) j)
 
 omit [CountableAB4Star C] in
-/-- The raw cokernel quotient followed by the raw injection is the actual
-long-sequence boundary. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The quotient into the extracted left term, followed by its injection into the middle term H_j(lim K), equals δ. -/
 @[reassoc]
 theorem sequentialMilnorRawCokernelπ_f
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -490,8 +625,13 @@ theorem sequentialMilnorRawCokernelπ_f
   sequentialMilnorRawShortComplex_π_f K hK i j hij
 
 omit [CountableAB4Star C] in
-/-- The raw edge followed by the raw kernel inclusion is the actual homology
-map from the inverse-limit complex to the product complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+The right map of the extracted Milnor sequence, followed by the inclusion of its right term into H_j(P(K)), equals ρ. -/
 @[reassoc]
 theorem sequentialMilnorRawShortComplex_g_rawKernelι
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -502,16 +642,24 @@ theorem sequentialMilnorRawShortComplex_g_rawKernelι
       sequentialLimitHomologyToProduct K j :=
   sequentialMilnorRawShortComplex_g_ι K hK i j hij
 
-/-- The cokernel of the homology map of the complex-level difference is
-concrete sequential `lim¹` of the homology tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison.
+
+The isomorphism Coker(H_i(Δ_K)) ≅ lim¹(H_iK) induced by β_i and its difference-intertwining equation, where lim¹(H_iK)=Coker(Δ_{H_iK}). -/
 noncomputable def sequentialMilnorCokernelIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
     cokernel (homologyMap (sequentialDifference K) i) ≅
       sequentialLimOne (sequentialHomologyTower K i) :=
   sequentialDifferenceCokernelIso (homologyFunctor C c i) K
 
-/-- The kernel of the homology map of the complex-level difference is the
-chosen inverse limit of the homology tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison. Assume sequential inverse limits exist in C.
+
+The isomorphism Ker(H_j(Δ_K)) ≅ lim(H_jK) identifies the kernel through β_j with the limit of the homology tower. -/
 noncomputable def sequentialMilnorKernelIsoLimit
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (j : ι) :
     kernel (homologyMap (sequentialDifference K) j) ≅
@@ -520,8 +668,12 @@ noncomputable def sequentialMilnorKernelIsoLimit
     (sequentialLimitKernelIso (sequentialHomologyTower K j)).symm
 
 omit [HasLimitsOfShape ℕᵒᵖ C] in
-/-- Inverse quotient formula for the direct cokernel-to-`lim¹`
-identification. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison.
+
+Let η_i:Coker(H_i(Δ_K)) ≅ lim¹(H_iK), q_i:P(H_iK) → lim¹(H_iK), and π_i:H_i(P(K)) → Coker(H_i(Δ_K)). Their inverse quotient formula is η_i⁻¹ ∘ q_i=π_i ∘ β_i⁻¹. -/
 @[reassoc]
 theorem sequentialMilnorCokernelIso_inv_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (i : ι) :
@@ -540,8 +692,12 @@ theorem sequentialMilnorCokernelIso_inv_π
   dsimp only [cokernel.mapIso, cokernel.map]
   rw [cokernel.π_desc]
 
-/-- The direct kernel-to-limit identification followed by the product map is
-the kernel inclusion followed by the exact-product homology comparison. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume countable products in C are exact.
+Write P(K)=∏ₙKₙ, H_iK for the tower (H_i(Kₙ))ₙ and
+β_i:H_i(P(K)) ≅ P(H_iK) for the canonical product comparison. Assume sequential inverse limits exist in C.
+
+Let ζ_j:Ker(H_j(Δ_K)) ≅ lim(H_jK), κ_j its kernel inclusion, and ℓ_j:lim(H_jK) → P(H_jK) the product inclusion. Then ℓ_j ∘ ζ_j=β_j ∘ κ_j. -/
 @[reassoc]
 theorem sequentialMilnorKernelIsoLimit_hom_toProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c) (j : ι) :
@@ -564,8 +720,13 @@ theorem sequentialMilnorKernelIsoLimit_hom_toProduct
   dsimp only [kernel.mapIso, kernel.map]
   rw [kernel.lift_ι]
 
-/-- The left endpoint of the raw homology window is concrete sequential
-`lim¹` of the degree-`i` homology tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the extracted sequence R with terms Coker(H_i(Δ_K)), H_j(lim K), Ker(H_j(Δ_K)), the left-term isomorphism λ:R₁ ≅ lim¹(H_iK) induced by β_i. -/
 noncomputable def sequentialMilnorLeftIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -575,8 +736,13 @@ noncomputable def sequentialMilnorLeftIso
   change cokernel (homologyMap (sequentialDifference K) i) ≅ _
   exact sequentialMilnorCokernelIso K i
 
-/-- The right endpoint of the raw homology window is the chosen inverse
-limit of the degree-`j` homology tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the extracted sequence R with terms Coker(H_i(Δ_K)), H_j(lim K), Ker(H_j(Δ_K)), the right-term isomorphism ζ:R₃ ≅ lim(H_jK) induced by β_j. -/
 noncomputable def sequentialMilnorRightIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -586,8 +752,13 @@ noncomputable def sequentialMilnorRightIso
   change kernel (homologyMap (sequentialDifference K) j) ≅ _
   exact sequentialMilnorKernelIsoLimit K j
 
-/-- The left endpoint transport sends the homology-product cokernel quotient
-to the product-homology comparison followed by the concrete `lim¹` quotient. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+Let λ:Coker(H_i(Δ_K)) ≅ lim¹(H_iK), π_i the cokernel projection and q_i:P(H_iK) → lim¹(H_iK). The quotient formula is λ ∘ π_i=q_i ∘ β_i. -/
 @[reassoc]
 theorem sequentialMilnorLeftIso_π_hom
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -609,7 +780,13 @@ theorem sequentialMilnorLeftIso_π_hom
   rw [cokernel.π_desc]
   rfl
 
-/-- Inverse quotient formula for the left raw endpoint transport. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the left-term isomorphism λ, the inverse quotient formula is λ⁻¹ ∘ q_i=π_i ∘ β_i⁻¹, where q_i is the concrete lim¹ projection and π_i is the homology-difference cokernel projection. -/
 @[reassoc]
 private theorem sequentialMilnorLeftIso_inv_π_early
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -631,7 +808,13 @@ private theorem sequentialMilnorLeftIso_inv_π_early
   rw [cokernel.π_desc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Type-stable inverse quotient formula using the raw left endpoint. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+Let q_R:H_i(P(K)) → R₁ be the quotient into the extracted left term and λ:R₁ ≅ lim¹(H_iK). Then λ⁻¹ ∘ q_i=q_R ∘ β_i⁻¹. -/
 @[reassoc]
 private theorem sequentialMilnorLeftIso_inv_rawCokernelπ_early
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -643,8 +826,13 @@ private theorem sequentialMilnorLeftIso_inv_rawCokernelπ_early
         sequentialMilnorRawCokernelπ K hK i j hij :=
   sequentialMilnorLeftIso_inv_π_early K hK i j hij
 
-/-- The right endpoint transport followed by the product inclusion is the
-raw kernel inclusion followed by the product-homology comparison. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the right-term isomorphism ζ:Ker(H_j(Δ_K)) ≅ lim(H_jK), its composite with the homology-limit product inclusion ℓ_j is β_j followed after the kernel inclusion κ_j: ℓ_j∘ζ=β_j∘κ_j. -/
 @[reassoc]
 theorem sequentialMilnorRightIso_hom_toProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -670,7 +858,13 @@ theorem sequentialMilnorRightIso_hom_toProduct
   rw [kernel.lift_ι]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Type-stable product formula using the raw right endpoint. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+Let κ_R:R₃ → H_j(P(K)) be the inclusion from the extracted right term and ζ:R₃ ≅ lim(H_jK). For the product inclusion ℓ_j, the right-term coordinate formula is ℓ_j∘ζ=β_j∘κ_R. -/
 @[reassoc]
 theorem sequentialMilnorRightIso_hom_rawKernelι
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -683,8 +877,13 @@ theorem sequentialMilnorRightIso_hom_rawKernelι
   sequentialMilnorRightIso_hom_toProduct K hK i j hij
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The middle object of the extracted homology window is homology of the
-chosen inverse-limit complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The canonical identification μ:R₂ ≅ H_j(lim K) of the middle term of the extracted kernel-cokernel sequence with homology of the inverse-limit complex. -/
 noncomputable def sequentialMilnorMiddleIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -717,8 +916,13 @@ theorem sequentialMilnorMiddleIso_inv
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- Composing the actual long-sequence boundary with the middle presentation
-is the same boundary in the fixed inverse-limit homology model. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+Under the canonical middle-term identification μ:R₂ ≅ H_j(lim K), the long-sequence boundary is unchanged: μ∘δ=δ. -/
 @[reassoc]
 private theorem sequentialLimitHomologyBoundary_comp_middleIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -731,8 +935,13 @@ private theorem sequentialLimitHomologyBoundary_comp_middleIso
 
 set_option backward.isDefEq.respectTransparency false in
 omit [CountableAB4Star C] in
-/-- The inverse middle presentation followed by the actual homology map to
-the product is that same map in the fixed inverse-limit homology model. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+For the canonical middle-term identification μ:R₂ ≅ H_j(lim K), its inverse leaves the limit-to-product homology map unchanged: ρ∘μ⁻¹=ρ. -/
 @[reassoc]
 private theorem sequentialMilnorMiddleIso_inv_comp_toProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -744,8 +953,13 @@ private theorem sequentialMilnorMiddleIso_inv_comp_toProduct
   Category.id_comp _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The canonical Milnor injection into homology of the inverse-limit
-complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The Milnor injection I:lim¹(H_iK) → H_j(lim K) induced by the boundary δ through the homology-difference cokernel. It is characterized by I∘q_i=δ∘β_i⁻¹, where q_i:P(H_iK) → lim¹(H_iK) is the quotient. -/
 noncomputable def sequentialMilnorInjection
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -759,9 +973,13 @@ noncomputable def sequentialMilnorInjection
 
 include _exactProducts in
 set_option backward.isDefEq.respectTransparency false in
-/-- The canonical Milnor edge from homology of the inverse-limit complex to
-the inverse limit of homology objects. The exact-product hypothesis is retained
-for compatibility with the existing Milnor interface. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The Milnor edge E:H_j(lim K) → lim(H_jK) is induced by the maps H_j(lim K → Kₙ). These are its composites with the stage projections of the inverse limit. -/
 noncomputable def sequentialMilnorEdge
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (_hK : Epi (sequentialDifference K))
@@ -770,7 +988,13 @@ noncomputable def sequentialMilnorEdge
   limit.post K (homologyFunctor C c j)
 
 omit _exactProducts in
-/-- The native definition of the named edge has the actual stage homology maps as projections. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the Milnor edge E and every stage n, the stage projection satisfies π_n∘E=H_j(lim K → Kₙ). -/
 @[reassoc (attr := simp)]
 theorem sequentialMilnorEdge_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -785,7 +1009,12 @@ theorem sequentialMilnorEdge_π
   exact limit.post_π K (homologyFunctor C c j) (op n)
 
 omit _exactProducts in
-/-- Naturality acts on the actual named edge and the actual maps of homology towers. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L inverse towers of complexes.
+Assume their product differences Δ(x)ₙ=xₙ−tₙ(xₙ₊₁) are epic and c.Rel(i,j).
+Let α:K → L be a tower map.
+
+The Milnor edges satisfy E_L∘H_j(lim α)=lim(H_jα)∘E_K. -/
 @[reassoc]
 theorem sequentialMilnorEdge_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -797,8 +1026,13 @@ theorem sequentialMilnorEdge_naturality
         limMap (sequentialHomologyTowerMap α j) := by
   exact limit.map_post α (homologyFunctor C c j)
 
-/-- The named Milnor edge followed by the product inclusion is the actual
-homology map to the product, followed by the exact-product comparison. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the edge E and the product inclusion ℓ_j:lim(H_jK) → P(H_jK), the product formula is ℓ_j∘E=β_j∘H_j(lim K → P(K)). -/
 @[reassoc]
 theorem sequentialMilnorEdge_toProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -837,8 +1071,13 @@ theorem sequentialMilnorEdge_toProduct
               (sequentialLimitToProduct_π K n)))
   exact hleft.trans hright.symm
 
-/-- The concrete `lim¹` quotient followed by the named injection is the
-actual long-sequence boundary in product-homology coordinates. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For the Milnor injection I, concrete lim¹ quotient q_i and long-sequence boundary δ, the quotient equation is I∘q_i=δ∘β_i⁻¹. -/
 @[reassoc]
 private theorem sequentialMilnorInjection_π_direct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -853,8 +1092,13 @@ private theorem sequentialMilnorInjection_π_direct
   rw [cokernel.π_desc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The direct canonical injection is the left map transported from the
-actual five-term homology window. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+Let R be the extracted sequence, λ:R₁ ≅ lim¹(H_iK) its left-term comparison and μ:R₂ ≅ H_j(lim K) its middle comparison. The canonical injection is I=μ∘R.f∘λ⁻¹. -/
 theorem sequentialMilnorInjection_eq_transported
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -873,8 +1117,13 @@ theorem sequentialMilnorInjection_eq_transported
     (sequentialLimitHomologyBoundary_comp_middleIso K hK i j hij).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The direct canonical edge is the right map transported from the actual
-five-term homology window. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+Let R be the extracted sequence, μ:R₂ ≅ H_j(lim K) and ζ:R₃ ≅ lim(H_jK) its middle and right comparisons. The canonical edge is E=ζ∘R.g∘μ⁻¹. -/
 theorem sequentialMilnorEdge_eq_transported
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -908,8 +1157,13 @@ theorem sequentialMilnorEdge_eq_transported
       rw [sequentialMilnorMiddleIso_inv_comp_toProduct_assoc]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The direct canonical injection followed by the direct canonical edge is
-zero. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The composite of the canonical injection I:lim¹(H_iK) → H_j(lim K) with the canonical edge E:H_j(lim K) → lim(H_jK) is zero: E∘I=0. -/
 @[reassoc (attr := simp)]
 theorem sequentialMilnorInjection_comp_edge
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -924,8 +1178,13 @@ theorem sequentialMilnorInjection_comp_edge
     zero_comp, comp_zero]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The canonical sequential Milnor short complex in its source-facing
-endpoint coordinates. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The canonical short complex is lim¹(H_iK) —I→ H_j(lim K) —E→ lim(H_jK), with the boundary-induced injection and the stage-projection edge. -/
 noncomputable def sequentialMilnorShortComplex
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -935,8 +1194,13 @@ noncomputable def sequentialMilnorShortComplex
     (sequentialMilnorEdge K hK i j hij)
     (sequentialMilnorInjection_comp_edge K hK i j hij)
 
-/-- The left object is concrete sequential `lim¹` of the preceding homology
-tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The left term of the canonical Milnor short complex is the concrete lim¹ object Coker(Δ_{H_iK}). -/
 @[simp]
 theorem sequentialMilnorShortComplex_X₁
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -947,7 +1211,13 @@ theorem sequentialMilnorShortComplex_X₁
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The middle object is homology of the chosen inverse-limit complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The middle term of the canonical Milnor short complex is H_j(lim K). -/
 @[simp]
 theorem sequentialMilnorShortComplex_X₂
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -957,8 +1227,13 @@ theorem sequentialMilnorShortComplex_X₂
       (limit K).homology j :=
   rfl
 
-/-- The right object is the chosen inverse limit of the current homology
-tower. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The right term of the canonical Milnor short complex is lim(H_jK). -/
 @[simp]
 theorem sequentialMilnorShortComplex_X₃
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -968,8 +1243,13 @@ theorem sequentialMilnorShortComplex_X₃
       limit (sequentialHomologyTower K j) :=
   rfl
 
-/-- The Milnor injection is the actual long-homology-sequence boundary,
-factored through the concrete `lim¹` endpoint. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The first map of the canonical Milnor short complex is the injection lim¹(H_iK) → H_j(lim K) induced by the long-sequence boundary. -/
 theorem sequentialMilnorShortComplex_f
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -978,8 +1258,13 @@ theorem sequentialMilnorShortComplex_f
       sequentialMilnorInjection K hK i j hij :=
   rfl
 
-/-- The Milnor edge is the actual homology map of the limit-to-product map,
-factored through the kernel and the chosen inverse limit of homologies. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The second map of the canonical Milnor short complex is the edge H_j(lim K) → lim(H_jK), whose stage projections are H_j(lim K → Kₙ). -/
 theorem sequentialMilnorShortComplex_g
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -989,8 +1274,13 @@ theorem sequentialMilnorShortComplex_g
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The raw homology window and the canonical Milnor short complex are
-canonically isomorphic. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The extracted sequence Coker(H_iΔ_K) → H_j(lim K) → Ker(H_jΔ_K) is canonically isomorphic to the Milnor sequence lim¹(H_iK) → H_j(lim K) → lim(H_jK), through the endpoint comparisons. -/
 noncomputable def sequentialMilnorShortComplexIso
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -1012,7 +1302,13 @@ noncomputable def sequentialMilnorShortComplexIso
         sequentialMilnorEdge_eq_transported]
       exact e₂.hom_inv_id_assoc (S.g ≫ e₃.hom))
 
-/-- The canonical sequential Milnor short complex is short exact. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The canonical sequence 0 → lim¹(H_iK) —I→ H_j(lim K) —E→ lim(H_jK) → 0 is short exact. -/
 theorem sequentialMilnorShortComplex_shortExact
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
     (hK : Epi (sequentialDifference K))
@@ -1022,7 +1318,13 @@ theorem sequentialMilnorShortComplex_shortExact
     (sequentialMilnorShortComplexIso K hK i j hij)
     (sequentialMilnorRawShortComplex_shortExact K hK i j hij)
 
-/-- Inverse form of the left endpoint characteristic equation. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+Let λ:Coker(H_iΔ_K) ≅ lim¹(H_iK), π_i:H_i(P(K)) → Coker(H_iΔ_K) and q_i:P(H_iK) → lim¹(H_iK). Then λ⁻¹∘q_i=π_i∘β_i⁻¹. -/
 @[reassoc]
 theorem sequentialMilnorLeftIso_inv_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -1035,8 +1337,13 @@ theorem sequentialMilnorLeftIso_inv_π
   sequentialMilnorLeftIso_inv_π_early K hK i j hij
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse endpoint transport identifies the concrete `lim¹` quotient
-with the raw cokernel quotient in product-homology coordinates. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For λ:R₁ ≅ lim¹(H_iK) and the quotient q_R:H_i(P(K)) → R₁ into the extracted left term, λ⁻¹∘q_i=q_R∘β_i⁻¹, where q_i is the concrete lim¹ quotient. -/
 @[reassoc]
 theorem sequentialMilnorLeftIso_inv_rawCokernelπ
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -1048,8 +1355,13 @@ theorem sequentialMilnorLeftIso_inv_rawCokernelπ
         sequentialMilnorRawCokernelπ K hK i j hij :=
   sequentialMilnorLeftIso_inv_π K hK i j hij
 
-/-- The concrete `lim¹` quotient followed by the named Milnor injection is
-the actual long-homology-sequence boundary in product-homology coordinates. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The quotient q_i:P(H_iK) → lim¹(H_iK) followed by the named injection I equals the boundary δ in product-homology coordinates: I∘q_i=δ∘β_i⁻¹. -/
 @[reassoc]
 theorem sequentialMilnorInjection_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -1062,7 +1374,12 @@ theorem sequentialMilnorInjection_π
   sequentialMilnorInjection_π_direct K hK i j hij
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of the named Milnor injection under a map of inverse towers. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L inverse towers of complexes.
+Assume their product differences Δ(x)ₙ=xₙ−tₙ(xₙ₊₁) are epic and c.Rel(i,j).
+Let α:K → L be a tower map.
+
+The canonical injections satisfy I_L∘lim¹(H_iα)=H_j(lim α)∘I_K. -/
 @[reassoc]
 theorem sequentialMilnorInjection_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -1084,9 +1401,13 @@ theorem sequentialMilnorInjection_naturality
     (sequentialLimitBoundary_naturality hK hL α i j hij).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The Milnor edge followed by the canonical inclusion into the sequential
-product is the homology map of the actual limit-to-product morphism, followed
-by the exact-product comparison. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The right map g of the canonical Milnor short complex satisfies ℓ_j∘g=β_j∘H_j(lim K → P(K)), where ℓ_j:lim(H_jK) → P(H_jK). -/
 @[reassoc]
 theorem sequentialMilnorShortComplex_g_toProduct
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -1101,8 +1422,13 @@ theorem sequentialMilnorShortComplex_g_toProduct
     sequentialLimitHomologyToProduct_eq]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Every stage projection of the Milnor edge is the homology map of the
-corresponding projection from the inverse-limit complex. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+For every stage n, the right map g of the canonical Milnor short complex satisfies π_n∘g=H_j(lim K → Kₙ). -/
 @[reassoc (attr := simp)]
 theorem sequentialMilnorShortComplex_g_π
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -1115,8 +1441,12 @@ theorem sequentialMilnorShortComplex_g_π
     sequentialMilnorEdge_π K hK i j hij n
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The middle map induced by a map of towers is the actual homology map of
-the canonical map between inverse-limit complexes. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L inverse towers of complexes.
+Assume their product differences Δ(x)ₙ=xₙ−tₙ(xₙ₊₁) are epic and c.Rel(i,j).
+Let α:K → L be a tower map.
+
+The middle map between the two canonical Milnor sequences is H_j(lim α):H_j(lim K) → H_j(lim L). -/
 noncomputable def sequentialMilnorMiddleMap
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
     (hK : Epi (sequentialDifference K))
@@ -1127,7 +1457,12 @@ noncomputable def sequentialMilnorMiddleMap
   homologyMap (limMap α) j
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of the actual left map of the canonical Milnor short complex. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L inverse towers of complexes.
+Assume their product differences Δ(x)ₙ=xₙ−tₙ(xₙ₊₁) are epic and c.Rel(i,j).
+Let α:K → L be a tower map.
+
+The left maps of the canonical Milnor sequences commute with the induced lim¹ map and middle map: f_L∘lim¹(H_iα)=H_j(lim α)∘f_K. -/
 @[reassoc]
 theorem sequentialMilnorShortComplex_f_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -1144,7 +1479,12 @@ theorem sequentialMilnorShortComplex_f_naturality
   exact sequentialMilnorInjection_naturality hK hL α i j hij
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of the Milnor edge under a map of inverse towers. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L inverse towers of complexes.
+Assume their product differences Δ(x)ₙ=xₙ−tₙ(xₙ₊₁) are epic and c.Rel(i,j).
+Let α:K → L be a tower map.
+
+The right maps of the canonical Milnor sequences satisfy g_L∘H_j(lim α)=lim(H_jα)∘g_K. -/
 @[reassoc]
 theorem sequentialMilnorShortComplex_g_naturality
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
@@ -1159,8 +1499,12 @@ theorem sequentialMilnorShortComplex_g_naturality
     sequentialMilnorShortComplex_g] using
       sequentialMilnorEdge_naturality hK hL α i j hij
 
-/-- A map of inverse towers induces a morphism of the actual canonical
-Milnor short complexes. -/
+/-- Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape, and K,L inverse towers of complexes.
+Assume their product differences Δ(x)ₙ=xₙ−tₙ(xₙ₊₁) are epic and c.Rel(i,j).
+Let α:K → L be a tower map.
+
+The morphism between canonical Milnor short complexes has three components lim¹(H_iα), H_j(lim α), and lim(H_jα). -/
 noncomputable def sequentialMilnorShortComplexMap
     {K L : ℕᵒᵖ ⥤ HomologicalComplex C c}
     (hK : Epi (sequentialDifference K))
@@ -1205,7 +1549,13 @@ theorem sequentialMilnorShortComplexMap_τ₃
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The induced morphism of Milnor short complexes preserves identities. -/
+/-- Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The morphism of canonical Milnor short complexes induced by the identity tower map is the identity of the Milnor short complex. -/
 @[simp]
 theorem sequentialMilnorShortComplexMap_id
     (K : ℕᵒᵖ ⥤ HomologicalComplex C c)
@@ -1233,7 +1583,9 @@ theorem sequentialMilnorShortComplexMap_id
     exact hlim
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The induced morphism of Milnor short complexes preserves composition. -/
+/-- Let C be abelian with exact countable products and sequential inverse limits, c any complex shape, and K,L,M towers whose product differences are epic. Take c.Rel(i,j) and tower maps α:K → L, β:L → M.
+
+The Milnor-sequence morphism induced by β∘α equals the composite of the morphisms induced by α and β. -/
 @[reassoc]
 theorem sequentialMilnorShortComplexMap_comp
     {K L M : ℕᵒᵖ ⥤ HomologicalComplex C c}

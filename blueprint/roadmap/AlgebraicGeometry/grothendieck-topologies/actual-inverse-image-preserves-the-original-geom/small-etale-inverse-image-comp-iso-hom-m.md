@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Comp Iso hom mate
+# Forward inverse image composition comparison is the inverse direct image mate
 
-The accepted LF composition's forward map has the same actual DI inverse as mate.
+Forward inverse image composition comparison is the inverse direct image mate.
+
+Under adjunction conjugation, the forward inverse-image composition map corresponds to the
+inverse direct-image composition map.

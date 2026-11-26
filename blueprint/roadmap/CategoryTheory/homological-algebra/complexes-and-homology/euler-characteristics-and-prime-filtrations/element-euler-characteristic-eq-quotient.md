@@ -1,4 +1,5 @@
-# Element Euler Characteristic eq quotient of injective
+# The Euler characteristic of injective multiplication
 
-When multiplication is injective, the one-element Euler characteristic
-is the quotient length.
+The Euler characteristic of injective multiplication.
+
+If μ_r is injective, χ_r(M) is the natural-number length of M/rM.

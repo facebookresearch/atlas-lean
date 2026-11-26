@@ -1,4 +1,5 @@
-# Adj Literal Augmented hom zero
+# The evaluated-and-forgotten augmentation is the algebra action in degree zero
 
-Degree-zero augmentation component of the literal image is the algebra
-structure map: evaluation/forgotten counit is the structure map.
+For a monad T on C and a T-algebra alg=(A,a), the zero-degree augmentation of
+adjLiteralAugmented(alg) is exactly a : T(A) → A. It is the forgotten counit of the
+free-forgetful adjunction evaluated at alg.

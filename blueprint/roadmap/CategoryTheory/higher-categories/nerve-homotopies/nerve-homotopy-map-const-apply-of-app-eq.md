@@ -1,8 +1,6 @@
-# Nerve Homotopy Map const apply of app eq To Hom
+# The cylinder on a constant chain with an identity transition
 
-If the component of `α : F ⟶ G` at `c` is the equality transport
-between `F.obj c` and `G.obj c`, then the nerve cylinder is constant in the
-interval direction on the literal constant composable-arrow simplex at `c`.
+The cylinder on a constant chain with an identity transition.
 
-The interval simplex is arbitrary; in particular, this includes simplices
-whose associated order map crosses from `0` to `1`.
+If F(c) = G(c) and α_c is the morphism transporting along that equality, the cylinder map on
+the constant chain at c is the image of that chain under N(F), for every simplex of Δ¹.

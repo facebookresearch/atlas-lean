@@ -2,10 +2,10 @@
 
 ## Homological Complex
 
-- [Cochain Chain Graded Pairing](cochain-chain-graded-pairing.md)
+- [A degree-lowering cochain–chain pairing](cochain-chain-graded-pairing.md)
 
 ## Cochain Chain Graded Pairing
 
-- [Pair Cycles](pair-cycles.md)
-- [Boundary cochain Side](boundary-cochain-side.md)
-- [Boundary chain Side](boundary-chain-side.md)
+- [Pairing cocycles with cycles gives output cycles](pair-cycles.md)
+- [The cochain-differential term is the chain term minus the signed output boundary](boundary-cochain-side.md)
+- [The chain-differential term is the signed output boundary plus the cochain term](boundary-chain-side.md)

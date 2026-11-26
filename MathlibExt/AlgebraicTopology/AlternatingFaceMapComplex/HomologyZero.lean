@@ -14,15 +14,19 @@ public import MathlibExt.Algebra.Homology.ChainComplex.HomologyZero
 public import Mathlib.CategoryTheory.Preadditive.Basic
 
 /-!
-# alternating-face homology in degree zero
+# Degree-zero homology as a coequalizer of faces
 
-The differential in degree one is `δ₀ - δ₁`. Native opcycles
-and the preadditive cofork/cokernel conversion show that the degree-zero
-class map is a coequalizer of these faces. The resulting comparison with the
-native coequalizer is characterized by its projection and is natural.
+For a simplicial object X in a preadditive category, the alternating-face differential X₁ → X₀
+is δ₀ − δ₁. When degree-zero homology exists, its class map c_X : X₀ → H₀(X) is a coequalizer
+of these two faces. If their chosen coequalizer Q_X exists, there is a canonical isomorphism
+H₀(X) ≅ Q_X carrying c_X to its projection.
 
-Only preadditivity, the individual degree-zero homology and the indicated
-coequalizer are required. No alternative simplicial/complex model is defined.
+A simplicial map α induces both a homology map and a map between these coequalizers. The
+isomorphisms commute with these maps. More generally, the same square holds for any map Q_X →
+Q_Y satisfying the projection equation with α₀.
+
+See Weibel, *An Introduction to Homological Algebra*, Chapter 8, for alternating-face
+complexes.
 -/
 
 @[expose] public section
@@ -38,8 +42,9 @@ namespace AlgebraicTopology.AlternatingFaceMapComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- The degree-one differential is the difference of the
-two degree-one faces. -/
+/-- For a simplicial object X in a preadditive category C, the degree-one differential of its
+alternating-face chain complex is d₁₀ = X.δ 0 − X.δ 1 : X₁ ⟶ X₀. This is the alternating sum
+with the δ₀ term positive and the δ₁ term negative. -/
 theorem degreeOneDifferential_eq_sub (X : SimplicialObject C) :
     (obj X).d 1 0 = X.δ (0 : Fin 2) - X.δ (1 : Fin 2) := by
   rw [obj_d_eq, Fin.sum_univ_two]
@@ -50,11 +55,15 @@ section Homology
 
 variable (X : SimplicialObject C) [(obj X).HasHomology 0]
 
-/-- The class map from degree-zero chains to homology. -/
+/-- In a preadditive category C, let X be a simplicial object whose alternating-face chain complex
+K_X has homology in degree 0. Define c_X : X₀ ⟶ K_X.homology 0 to be the degree-zero chain
+class map. It is the cokernel projection of the boundary K_X.d 1 0 = δ₀ − δ₁. -/
 def homologyZeroClass : X _⦋0⦌ ⟶ (obj X).homology 0 :=
   ChainComplex.homologyZeroClass (obj X)
 
-/-- The native class map coequalizes the first two faces. -/
+/-- In a preadditive category C, let X be a simplicial object whose alternating-face chain complex
+K_X has homology in degree 0. The class map c_X satisfies X.δ 0 ≫ c_X = X.δ 1 ≫ c_X as
+morphisms X₁ ⟶ H₀(K_X). -/
 theorem homologyZeroClass_balance :
     X.δ (0 : Fin 2) ≫ homologyZeroClass X =
       X.δ (1 : Fin 2) ≫ homologyZeroClass X := by
@@ -63,7 +72,9 @@ theorem homologyZeroClass_balance :
     exact ChainComplex.d_comp_homologyZeroClass (obj X)
   exact sub_eq_zero.mp (by simpa only [Preadditive.sub_comp] using h)
 
-/-- The homology class map as a cofork of the degree-one faces. -/
+/-- In a preadditive category C, let X be a simplicial object whose alternating-face chain complex
+K_X has homology in degree 0. The class map c_X : X₀ ⟶ H₀(K_X), together with δ₀ ≫ c_X = δ₁ ≫
+c_X, defines a cofork of the parallel faces δ₀, δ₁ : X₁ ⟶ X₀. -/
 def homologyZeroCofork : Cofork (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2)) :=
   Cofork.ofπ (homologyZeroClass X) (homologyZeroClass_balance X)
 
@@ -71,7 +82,9 @@ def homologyZeroCofork : Cofork (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2)) :=
 theorem homologyZeroCofork_π : (homologyZeroCofork X).π = homologyZeroClass X :=
   rfl
 
-/-- The native degree-zero class map earns the coequalizer universal property. -/
+/-- In a preadditive category C, let X be a simplicial object whose alternating-face chain complex
+K_X has homology in degree 0. The cofork with projection c_X is a colimit: every morphism f :
+X₀ ⟶ W satisfying δ₀ ≫ f = δ₁ ≫ f factors uniquely as c_X ≫ g for a morphism g : H₀(K_X) ⟶ W. -/
 def homologyZeroCoforkIsColimit : IsColimit (homologyZeroCofork X) := by
   let c : CokernelCofork (X.δ (0 : Fin 2) - X.δ (1 : Fin 2)) :=
     CokernelCofork.ofπ (homologyZeroClass X) (by
@@ -87,8 +100,10 @@ def homologyZeroCoforkIsColimit : IsColimit (homologyZeroCofork X) := by
 
 variable [HasCoequalizer (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2))]
 
-/-- Actual degree-zero alternating-face homology is the native coequalizer
-of the two degree-one faces. -/
+/-- In a preadditive category C, let X be a simplicial object whose alternating-face chain complex
+K_X has homology in degree 0. Assume also that Q_X = coequalizer (X.δ 0) (X.δ 1) exists. The
+colimit universal properties give an isomorphism e_X : H₀(K_X) ≅ Q_X, uniquely characterized
+by c_X ≫ e_X.hom = coequalizer.π (X.δ 0) (X.δ 1). -/
 def homologyZeroIsoCoequalizer : (obj X).homology 0 ≅
     coequalizer (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2)) :=
   IsColimit.coconePointUniqueUpToIso
@@ -116,7 +131,10 @@ section Naturality
 
 variable {X Y : SimplicialObject C} [(obj X).HasHomology 0] [(obj Y).HasHomology 0]
 
-/-- Genuine simplicial maps preserve the degree-zero class maps. -/
+/-- In a preadditive category C, let α : X ⟶ Y be a simplicial map and assume that the
+alternating-face complexes K_X and K_Y have homology in degree 0. Writing c_X and c_Y for
+their class maps, one has c_X ≫ H₀(map α) = α₀ ≫ c_Y, where map α is the induced
+alternating-face chain map and α₀ is the component at the zero simplex. -/
 @[reassoc]
 theorem homologyZeroClass_naturality (α : X ⟶ Y) :
     homologyZeroClass X ≫
@@ -134,8 +152,11 @@ theorem homologyZeroClass_naturality (α : X ⟶ Y) :
 variable [HasCoequalizer (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2))]
   [HasCoequalizer (Y.δ (0 : Fin 2)) (Y.δ (1 : Fin 2))]
 
-/-- Compatibility with any ordinary morphism obeying the native
-coequalizer projection equation. The comparison itself is canonically earned. -/
+/-- In a preadditive category C, let α : X ⟶ Y be a simplicial map and assume that the
+alternating-face complexes K_X and K_Y have homology in degree 0. Assume the face coequalizers
+Q_X and Q_Y exist, with projections π_X and π_Y, and let u : Q_X ⟶ Q_Y satisfy π_X ≫ u = α₀ ≫
+π_Y. Then H₀(map α) ≫ e_Y.hom = e_X.hom ≫ u, where e_X and e_Y are the canonical
+homology-to-coequalizer isomorphisms. -/
 theorem homologyZeroIsoCoequalizer_naturality_of_π (α : X ⟶ Y)
     (u : coequalizer (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2)) ⟶
       coequalizer (Y.δ (0 : Fin 2)) (Y.δ (1 : Fin 2)))
@@ -172,7 +193,10 @@ variable {X Y : SimplicialObject C}
   [HasCoequalizer (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2))]
   [HasCoequalizer (Y.δ (0 : Fin 2)) (Y.δ (1 : Fin 2))]
 
-/-- The colimit map of the degree-one parallel-pair diagram. -/
+/-- For simplicial objects X and Y in a category C, assume that the coequalizers Q_X and Q_Y of
+their two faces X₁ ⇉ X₀ and Y₁ ⇉ Y₀ exist. A simplicial map α : X ⟶ Y induces the colimit map
+Q_X ⟶ Q_Y from its components α₁ and α₀. It satisfies π_X ≫ degreeZeroCoequalizerMap α = α₀ ≫
+π_Y. -/
 def degreeZeroCoequalizerMap (α : X ⟶ Y) :
     coequalizer (X.δ (0 : Fin 2)) (X.δ (1 : Fin 2)) ⟶
       coequalizer (Y.δ (0 : Fin 2)) (Y.δ (1 : Fin 2)) :=
@@ -201,7 +225,11 @@ theorem degreeZeroCoequalizerMap_π (α : X ⟶ Y) :
 
 variable [(obj X).HasHomology 0] [(obj Y).HasHomology 0]
 
-/-- The homology/coequalizer comparison is natural for simplicial maps and the native parallel-pair colimit maps. -/
+/-- In a preadditive category C, let α : X ⟶ Y be a simplicial map and assume that the
+alternating-face complexes K_X and K_Y have homology in degree 0. If the coequalizers Q_X and
+Q_Y of the degree-one faces exist, the canonical comparison isomorphisms satisfy H₀(map α) ≫
+e_Y.hom = e_X.hom ≫ degreeZeroCoequalizerMap α. The map on the right is induced by α₁ and α₀
+on the parallel-pair diagrams. -/
 @[reassoc]
 theorem homologyZeroIsoCoequalizer_naturality (α : X ⟶ Y) :
     HomologicalComplex.homologyMap (AlgebraicTopology.AlternatingFaceMapComplex.map α) 0 ≫

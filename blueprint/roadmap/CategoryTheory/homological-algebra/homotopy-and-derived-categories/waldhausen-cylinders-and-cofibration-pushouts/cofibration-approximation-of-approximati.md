@@ -1,7 +1,8 @@
-# Cofibration Approximation of approximation
+# Cofibration approximation obtained from a mapping-cylinder core
 
-Literal approximation plus an exact functor and a weak mapping-cylinder
-projection yields a cofibration-valued factorization.
+Cofibration approximation obtained from a mapping-cylinder core.
 
-The new weak map is `F.map projection ≫ p`; no saturation hypothesis is
-needed.
+Let F : C ⥤ D be exact for the given WaldhausenCategoryWithoutGluing structures, satisfy the
+approximation property, and let C have a cylinder core whose projections are weak. Every g :
+F(X) → Y admits g = F(i) ≫ p with i a cofibration and p a weak equivalence. From g = F(a) ≫ q,
+take i to be the front of T(a) and p = F(p_a) ≫ q.

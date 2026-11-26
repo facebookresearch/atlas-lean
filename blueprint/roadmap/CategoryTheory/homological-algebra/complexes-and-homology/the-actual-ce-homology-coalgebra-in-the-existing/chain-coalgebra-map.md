@@ -1,4 +1,5 @@
-# Chain Coalgebra Map
+# The scalar-unit-compared CE coalgebra map of a Lie homomorphism
 
-The converted CE coalgebra is natural under the Lie chain map and the identity tensor
-comparison.
+The scalar-unit-compared CE coalgebra map of a Lie homomorphism.
+
+Transport the lifted-unit coalgebra morphism through the scalar-unit comparison functor.

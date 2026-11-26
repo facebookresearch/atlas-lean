@@ -14,7 +14,19 @@ public import MathlibExt.CategoryTheory.Sites.Point.SkyscraperGerms
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleInverseImageStalks
 
 /-!
-# Original germ coordinates of the constructed small étale inverse image
+# Germ coordinates of small étale inverse image
+
+Let f : X → Y be a morphism of schemes in universe u, Ω a separably
+closed field in universe u, and x : Spec Ω → X. Coefficients are abelian
+groups in c = max(u, w). Base change identifies geometric lifts
+fiber_x(X ×_Y U) ≅ fiber_(f∘x)(U) for each étale Y-scheme U.
+
+On skyscraper sections, the inverse right-adjoint comparison evaluates
+at the inverse base-change coordinate. The inverse stalk comparison
+Q_(f∘x) → (f*Q)_x sends the germ represented by (U, z, a) to the germ
+of the inverse-image unit applied to a over X ×_Y U, at the coordinate
+corresponding to z. This describes the same inverse-image adjunction
+and stalk isomorphism on section representatives.
 -/
 
 @[expose] public section
@@ -35,8 +47,16 @@ variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
--- V1 rewrite checking required the actual skyscraper and product aliases.
-/-- The inverse right mate has the inverse of the original base-change coordinate map. -/
+
+/-- Let f : X → Y be a morphism of schemes in universe u,
+Ω a separably closed field in universe u, x : Spec Ω → X a geometric
+point, and c = max(u, w). For U ∈ Etale(Y), let
+σ_U : fiber_x(X ×_Y U) ≅ fiber_(f∘x)(U) be the base-change point comparison.
+For M ∈ AddCommGrpCat c, the inverse comparison
+f_*(Skyscraper_x M) → Skyscraper_(f∘x) M has section value
+s ↦ (z ↦ s(σ_U⁻¹(z))) over U.
+Equivalently, evaluating its output at z is evaluation of the input
+at σ_U⁻¹(z). -/
 theorem smallEtaleInverseImageCommonGeometricStalkRightIso_inv_app_π
     {X Y : Scheme.{u}} (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w}) (U : Y.Etale)
@@ -67,9 +87,15 @@ theorem smallEtaleInverseImageCommonGeometricStalkRightIso_inv_app_π
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
--- V1 implicit rewriting could not see the same direct-image object aliases.
-/-- The inverse of the same stalk comparison sends a germ through the actual
-inverse-image adjunction unit and the actual base-change point. -/
+
+/-- Let f : X → Y be a morphism of schemes in universe u,
+Ω a separably closed field in universe u, x : Spec Ω → X a geometric
+point, and c = max(u, w). For U ∈ Etale(Y), let
+σ_U : fiber_x(X ×_Y U) ≅ fiber_(f∘x)(U) be the base-change point comparison.
+For an AddCommGrpCat c-valued étale sheaf Q on Y, the inverse
+stalk comparison Q_(f∘x) → (f*Q)_x sends the germ of a ∈ Q(U)
+at z ∈ fiber_(f∘x)(U) to the germ of η_Q,U(a) over X ×_Y U
+at σ_U⁻¹(z). Here η : Q → f_*f*Q is the inverse-image adjunction unit. -/
 theorem smallEtaleInverseImageCommonGeometricStalkIso_inv_original_germ
     {X Y : Scheme.{u}} (f : X ⟶ Y) (x : Spec (.of Ω) ⟶ X)
     (Q : Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w}) (U : Y.Etale)

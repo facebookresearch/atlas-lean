@@ -1,4 +1,6 @@
-# Tensor Pow Obj add assoc
+# Tensor power block splitting is associative
 
-Associativity coherence: the two `((m + n) + k)`-reassociation routes via
-`tensorPowObj_add` agree up to the associator.
+Tensor power block splitting is associative.
+
+The two splitting routes for three blocks agree after the associator and natural-number
+addition transport.

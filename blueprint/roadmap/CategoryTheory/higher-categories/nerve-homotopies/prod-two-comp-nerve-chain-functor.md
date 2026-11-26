@@ -1,5 +1,6 @@
-# Prod δ two comp nerve Chain Functor
+# The first-transformation face of the chain classifier
 
-The `δ₂` face of the nerve chain functor of `α` and `β` is the
-cylinder functor of `α`, by `CategoryTheory.nerve.δ₂_mk₂_eq` in the
-functor category.
+The first-transformation face of the chain classifier.
+
+Restricting the chain functor along δ₂ omits the last level and gives the cylinder functor of
+α.

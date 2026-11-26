@@ -17,15 +17,20 @@ public import MathlibExt.Algebra.Homology.Kunneth.Collapse
 public import Mathlib.Algebra.Field.ULift
 
 /-!
-# Field Künneth in the actual original larger coefficient world
+# Scalar transport and field Künneth in a larger coefficient universe
 
-Native field collapse is invoked over the actual ring `ULift.{v} k :
-Type (max u v)`, in its actual same-world module category. The original
-field remains `k : Type u` in the target. Earned scalar, graded tensor,
-complex tensor and native homology isomorphisms compare the actual maps.
-The scalar-pairing theorem identifies the carried map with the literal
-original-field cycle Künneth tensorator. No caller Künneth certificate or
-universe-cumulativity identification is used.
+Let R be a commutative ring in universe u and W=max(u,v) for an independent lift height v. Its
+lifted copy R̂ lies in W. Restriction of scalars S identifies R̂-modules and R-modules in W,
+with inverse T and their canonical chain, tensor, graded and homology comparisons. For chain
+complexes K,L over R, these comparisons give ψ:H(K)⊗H(L)≅S_G(H(TK)⊗H(TL)) and
+θ:H(K⊗L)≅S_G(H(TK⊗TL)).
+
+The cycle tensorators satisfy μ_R≫θ.hom=ψ.hom≫S_G(μ_R̂), so scalar transport identifies the
+specified Künneth maps. When R=k is a field, the field Künneth map over k̂ is invertible; hence
+μ_k is invertible in every degree and as a graded map. Together with the canonical unit
+comparison, it gives a monoidal graded-homology functor on nonnegative chain complexes over k in
+W. The scalar comparison statements preceding the field specialization hold over every
+commutative ring.
 -/
 
 @[expose] public section
@@ -41,7 +46,12 @@ namespace HomologicalComplex.UniverseKunneth
 variable {R : Type u} [CommRing R]
 
 
-/-- The actual component homology comparisons form a native graded isomorphism. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. For a chain
+complex K over R̂ of shape down ℕ, this is the graded isomorphism σ_K:H_R(S_CK)≅S_G(H_R̂(K)).
+Its component in degree n∈ℕ is the canonical scalar-restriction homology comparison. The
+restriction retains the carriers in W and changes only the scalar action. -/
 def mappedHomologyIso (K : ChainComplex (ModuleCat.{max u v} (ModuleCat.UniverseScalarRestriction.LiftedRing.{u,v} R))
     ℕ) : (homologyFunctor (R := R)).obj ((ModuleCat.UniverseScalarRestriction.complexFunctor.{u,v} R).obj K) ≅
     (ModuleCat.UniverseScalarRestriction.gradedFunctor.{u,v} R).obj ((HomologicalComplex.Kunneth.homologyFunctor).obj
@@ -55,7 +65,13 @@ private theorem mappedHomologyIso_hom_apply
     (mappedHomologyIso K).hom n =
       (ModuleCat.UniverseScalarRestriction.homologyComparison.{u,v} R K n).hom := rfl
 
-/-- The actual mapped-complex Künneth diagram commutes on every canonical cycle summand. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. Let K,L be
+chain complexes over R̂ of shape down ℕ. Write c:S_CK⊗_R S_CL≅S_C(K⊗_R̂ L) for the
+tensor-complex comparison, g for the graded tensor comparison, and σ for the homology
+comparisons. Then μ_R(S_CK,S_CL)≫H_R(c.hom)≫σ_{K⊗L}.hom=(σ_K.hom⊗σ_L.hom)≫g.hom≫S_G(μ_R̂(K,L)).
+Both sides map H_R(S_CK)⊗H_R(S_CL) to S_G(H_R̂(K⊗L)). -/
 @[reassoc]
 theorem mapped_tensorator (K L : ChainComplex (ModuleCat.{max u v}
     (ModuleCat.UniverseScalarRestriction.LiftedRing.{u,v} R)) ℕ) :
@@ -136,8 +152,12 @@ theorem mapped_tensorator (K L : ChainComplex (ModuleCat.{max u v}
               (HomologicalComplex.homologyIsoOfEq (K ⊗ L) h).hom) hPair.symm)
   exact hMiddle.trans hHighEq.symm
 
-/-- The original homology object is represented over the actual lifted ring,
-through the actual complex counit and native homology comparison. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. Let T_C be the
+inverse chain scalar functor and K a chain complex over R of shape down ℕ. The counit
+ε_K:S_C(T_CK)≅K and σ_{T_CK}:H_R(S_C(T_CK))≅S_G(H_R̂(T_CK)) give this isomorphism
+H_R(K)≅S_G(H_R̂(T_CK)), with forward map H_R(ε_K)^{-1}≫σ_{T_CK}.hom. -/
 def representationHomologyIso (K : ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} R) ℕ) :
     (homologyFunctor (R := R)).obj K ≅ (ModuleCat.UniverseScalarRestriction.gradedFunctor.{u,v} R).obj
     ((HomologicalComplex.Kunneth.homologyFunctor).obj ((ModuleCat.UniverseScalarRestriction.toLiftedComplex.{u,v}
@@ -147,8 +167,12 @@ def representationHomologyIso (K : ChainComplex (ModuleCat.UniverseScalarRestric
       ModuleCat.UniverseScalarRestriction.homologyComparison.{u,v} R
     ((ModuleCat.UniverseScalarRestriction.toLiftedComplex.{u,v} R).obj K) n
 
-/-- The actual tensor of original homologies compares with the actual
-restriction of the lifted-ring tensor of lifted-ring homologies. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. For chain
+complexes K,L over R of shape down ℕ, let T_C represent them over R̂. This source comparison is
+ψ:H_R(K)⊗_R H_R(L)≅S_G(H_R̂(T_CK)⊗_R̂ H_R̂(T_CL)). It tensors the two representation homology
+isomorphisms and then applies the graded scalar tensor comparison. -/
 def tensorSourceIso (K L : ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} R) ℕ) :
     (homologyFunctor (R := R)).obj K ⊗ (homologyFunctor (R := R)).obj L ≅
     (ModuleCat.UniverseScalarRestriction.gradedFunctor.{u,v} R).obj ((HomologicalComplex.Kunneth.homologyFunctor).obj
@@ -161,8 +185,13 @@ def tensorSourceIso (K L : ChainComplex (ModuleCat.UniverseScalarRestriction.Mod
     ((HomologicalComplex.Kunneth.homologyFunctor).obj ((ModuleCat.UniverseScalarRestriction.toLiftedComplex.{u,v}
     R).obj L))
 
-/-- Homology of the actual original tensor complex compares with the actual
-restriction of homology of the actual lifted-ring tensor complex. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. For chain
+complexes K,L over R of shape down ℕ and their lifted-ring representations T_CK,T_CL, this
+target comparison is θ:H_R(K⊗_R L)≅S_G(H_R̂(T_CK⊗_R̂ T_CL)). Its component in degree n is the
+inverse homology map of the canonical tensor-complex counit S_C(T_CK⊗T_CL)≅K⊗L, followed by the
+scalar-restriction homology comparison. -/
 def tensorTargetIso (K L : ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} R) ℕ) :
     (homologyFunctor (R := R)).obj (K ⊗ L) ≅ (ModuleCat.UniverseScalarRestriction.gradedFunctor.{u,v} R).obj
     ((HomologicalComplex.Kunneth.homologyFunctor).obj ((ModuleCat.UniverseScalarRestriction.toLiftedComplex.{u,v}
@@ -246,8 +275,13 @@ private theorem originalTensorHomologyComparison
     HomologicalComplex.homologyMapIso_inv, Iso.trans_inv, Iso.symm_inv,
     HomologicalComplex.homologyMap_comp, Category.assoc] using hMapped
 
-/-- The canonical original-field Künneth map is the actual scalar transport
-of the canonical lifted-ring map under the earned source/target isomorphisms. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. For chain
+complexes K,L over R of shape down ℕ, let ψ and θ be the source and target comparison
+isomorphisms for their lifted-ring representations T_CK,T_CL. The canonical cycle tensorators
+satisfy μ_R(K,L)≫θ.hom=ψ.hom≫S_G(μ_R̂(T_CK,T_CL)). Thus the scalar comparison carries the full
+graded Künneth map, including every homogeneous antidiagonal component. -/
 @[reassoc]
 theorem tensorator_scalar_transport (K L : ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} R) ℕ) :
     tensorator K L ≫ (tensorTargetIso K L).hom =
@@ -341,9 +375,11 @@ private theorem liftedFieldTensorator_isIso
     (HomologicalComplex.isIso_kunnethHomologyTensorMap_of_field
       (k := ModuleCat.UniverseScalarRestriction.LiftedRing.{u,v} k) K L n)
 
-/-- The actual canonical original-field tensorator is invertible in the
-actual larger carrier world. Existing field collapse is used only over the
-actual lifted ring in its actual same-world module category. -/
+/-- Let k be a field in universe u and W=max(u,v) for an independent lift height v. For arbitrary
+chain complexes K,L of shape down ℕ with k-module terms in W, the canonical cycle tensorator
+μ:H(K)⊗_k H(L)→H(K⊗_k L) is an isomorphism. In degree n it is the Künneth map from the sum of
+H_pK⊗H_qL over p+q=n. The conclusion follows through the scalar comparison with the lifted field
+k̂ in W. -/
 theorem isIso_tensorator_of_field (K L : ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) : IsIso
     (tensorator K L) := by
   let K0 : ChainComplex (ModuleCat.{max u v}
@@ -380,8 +416,11 @@ theorem isIso_tensorator_of_field (K L : ChainComplex (ModuleCat.UniverseScalarR
   rw [h]
   infer_instance
 
-/-- The earned canonical original-field tensorator gives the native
-monoidal structure on actual larger-world graded homology. -/
+/-- Let k be a field in universe u, v an independent lift height and W=max(u,v). Graded homology
+from k-linear chain complexes of shape down ℕ in W to ℕ-graded k-modules has a monoidal
+structure whose unit map is the canonical comparison 𝟙≅H(𝟙) and whose tensorator is the cycle
+Künneth isomorphism H(K)⊗H(L)≅H(K⊗L). Its associativity and unit laws are the cycle-pairing
+coherence laws. -/
 def monoidalOfField :
     (homologyFunctor (R := k) : ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ ⥤ GradedObject ℕ
     (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k)).Monoidal := by

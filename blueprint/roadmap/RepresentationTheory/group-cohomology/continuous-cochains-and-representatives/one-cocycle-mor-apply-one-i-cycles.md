@@ -1,4 +1,6 @@
-# One Cocycle Mor apply one i Cycles
+# The included value of the rank-one cycle map at one
 
-Inclusion of the distinguished value at scalar `1` of `oneCocycleMor`
-recovers its homogeneous one-cochain.
+The included value of the rank-one cycle map at one.
+
+For a cocycle c with jointly continuous homogenization, applying its cycle map to the lifted
+scalar 1 and then including into C¹ gives homOneCochain X c.

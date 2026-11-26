@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Counit after inverse
+# Counit after its inverse is the identity
 
-The SAME counit cancels its actual inverse on every possibly infinite module element.
+Counit after its inverse is the identity.
+
+Applying the inverse counit to a coefficient element and then the counit recovers that
+element.

@@ -1,3 +1,5 @@
-# Step Class To E stable
+# The step-class quotient map with extreme outer cuts
 
-With bottom and top outer cuts, the class map is the stable-interval quotient map.
+The step-class quotient map with extreme outer cuts.
+
+At outer cuts ⊥ and ⊤, the map is the stable interval step-to-stable map.

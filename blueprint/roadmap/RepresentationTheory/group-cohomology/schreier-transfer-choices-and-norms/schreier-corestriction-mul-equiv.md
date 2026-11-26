@@ -1,4 +1,7 @@
-# Schreier Corestriction mul Equiv
+# Canonical corestriction commutes with group equivalences
 
-Canonical arbitrary-degree Schreier corestriction commutes with an
-equivalence of ambient groups.
+Canonical corestriction commutes with group equivalences.
+
+For e : G ≃* G′, pullback along e after corestriction from e(H) to G′ equals corestriction
+from H to G after subgroup pullback along H ≃* e(H), with the specified coefficient
+comparison.

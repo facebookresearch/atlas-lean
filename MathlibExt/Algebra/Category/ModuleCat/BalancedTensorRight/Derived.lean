@@ -21,12 +21,17 @@ public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 public import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-# Derived bimodule tensor and Hom functors
+# Right-module-valued Tor and Ext of a bimodule
 
-The tensor–Hom adjunction produces right-module-valued Tor and Ext. Exact
-forgetting compares these with the abelian-group derived models.
-The scalar rings have independent universes and may be noncommutative;
-the carrier universe is the common universe of the underived adjunction.
+Let `B` be an `R`-left, `S`-right bimodule with commuting actions. If the right `R`-module
+category has projective resolutions, left deriving `A ↦ A ⊗_R B` gives right `S`-module-valued
+Tor. If the right `S`-module category has injective resolutions, right deriving `C ↦
+Hom_(Sᵐᵒᵖ)(B, C)` gives right `R`-module-valued Ext.
+
+Forgetting the outer action commutes with these derivations because the forgetful module
+functor is exact. Degree-zero Tor is naturally the tensor functor, and degree-zero Ext is
+naturally the Hom functor. The ring universes are independent, while the underived categorical
+adjunction and its derived functors use carrier universe `v`.
 -/
 
 @[expose] public section
@@ -60,11 +65,17 @@ section Tor
 
 variable [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
 
-/-- Tor is the native left-derived actual tensor functor, with its right S-action. -/
+/-- Tor as the left-derived right-module tensor functor.
+
+Assuming projective resolutions in `ModuleCat.{v} Rᵐᵒᵖ`, the degree-`n` left-derived functor
+of `A ↦ A ⊗_R B` is `ModuleCat Rᵐᵒᵖ ⥤ ModuleCat Sᵐᵒᵖ`, retaining the right `S`-action. -/
 def torFunctor (n : ℕ) : ModuleCat.{v} Rᵐᵒᵖ ⥤ ModuleCat.{v} Sᵐᵒᵖ :=
   (tensorFunctor R S B).leftDerived n
 
-/-- Exact forgetting preserves the original native projective-resolution computation. -/
+/-- Forgetting the right outer action commutes with Tor derivation.
+
+The degree-`n` Tor functor followed by forgetting right `S`-scalars is naturally isomorphic to
+the left-derived functor of the corresponding additive-group tensor functor. -/
 def torForgetIso (n : ℕ) :
     torFunctor R S B n ⋙ forget₂ (ModuleCat.{v} Sᵐᵒᵖ) AddCommGrpCat.{v} ≅
       (tensorFunctor R S B ⋙
@@ -74,11 +85,16 @@ def torForgetIso (n : ℕ) :
   exact (tensorFunctor R S B).leftDerivedCompIsoOfPreservesHomology
     (forget₂ (ModuleCat.{v} Sᵐᵒᵖ) AddCommGrpCat.{v}) n
 
-/-- The actual tensor adjunction gives the native S-linear degree-zero identification. -/
+/-- Degree-zero right-module Tor is the tensor functor.
+
+The degree-zero left-derived tensor functor is naturally isomorphic to `tensorFunctor R S B`. -/
 def torZeroIso : torFunctor R S B 0 ≅ tensorFunctor R S B :=
   (tensorFunctor R S B).leftDerivedZeroIsoSelf
 
-/-- Its forward map is the existing native augmentation-induced map. -/
+/-- Degree-zero Tor comparison is the tensor augmentation.
+
+The forward map of `torZeroIso R S B` is the canonical transformation `fromLeftDerivedZero` of
+the tensor functor. -/
 theorem torZeroIso_hom : (torZeroIso R S B).hom =
     (tensorFunctor R S B).fromLeftDerivedZero := rfl
 
@@ -88,11 +104,18 @@ section Ext
 
 variable [HasInjectiveResolutions (ModuleCat.{v} Sᵐᵒᵖ)]
 
-/-- ExtS(B,-) is the native right-derived Hom functor, with its right R-action. -/
+/-- Ext as the right-derived right-module Hom functor.
+
+Assuming injective resolutions in `ModuleCat.{v} Sᵐᵒᵖ`, right derive the coefficient Hom
+functor in degree `n`. The result sends a right `S`-module `C` to `Ext^n_(Sᵐᵒᵖ)(B, C)` with
+its right `R`-action. -/
 def extFunctor (n : ℕ) : ModuleCat.{v} Sᵐᵒᵖ ⥤ ModuleCat.{v} Rᵐᵒᵖ :=
   (homFunctor R S B).rightDerived n
 
-/-- Exact forgetting preserves the native injective-resolution computation. -/
+/-- Forgetting the right outer action commutes with Ext derivation.
+
+The degree-`n` Ext functor followed by forgetting right `R`-scalars is naturally isomorphic to
+the right-derived functor of the corresponding additive-group Hom functor. -/
 def extForgetIso (n : ℕ) :
     extFunctor R S B n ⋙ forget₂ (ModuleCat.{v} Rᵐᵒᵖ) AddCommGrpCat.{v} ≅
       (homFunctor R S B ⋙
@@ -102,7 +125,10 @@ def extForgetIso (n : ℕ) :
   exact (homFunctor R S B).rightDerivedCompIsoOfPreservesHomology
     (forget₂ (ModuleCat.{v} Rᵐᵒᵖ) AddCommGrpCat.{v}) n
 
-/-- The actual right adjoint earns the native R-linear degree-zero Hom identification. -/
+/-- Degree-zero right-module Ext is the Hom functor.
+
+The degree-zero right-derived coefficient Hom functor is naturally isomorphic to `homFunctor R
+S B`. -/
 def extZeroIso : extFunctor R S B 0 ≅ homFunctor R S B := by
   letI : (homFunctor R S B).IsRightAdjoint :=
     ⟨tensorFunctor R S B, ⟨tensorAdjunction R S B⟩⟩

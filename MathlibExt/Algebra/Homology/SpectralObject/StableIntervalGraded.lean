@@ -16,12 +16,18 @@ public import Mathlib.Algebra.Homology.SpectralObject.Page
 public import Mathlib.CategoryTheory.Abelian.Exact
 
 /-!
-# Stable intervals and ordered image quotients
+# Stable spectral intervals as ordered image quotients
 
-For a spectral object over a bounded preorder, this file compares the stable
-interval between two ordered cuts with the cokernel of the induced map
-between their images in the bottom-to-top abutment object.  It makes no page,
-first-quadrant, or convergence claim.
+Let Y be a spectral object in an abelian category D over a preorder ι with bottom and top. For
+n∈ℤ write A_i=H^n_Y(⊥,i), A=H^n_Y(⊥,⊤), and u_i:A_i→A for the bottom-to-top map. If i₁≤i₂, the
+step map a:A_{i₁}→A_{i₂} satisfies a≫u_{i₂}=u_{i₁}, giving an inclusion j:image u_{i₁}→image
+u_{i₂}.
+
+The stable interval E_Y(⊥,i₁,i₂,⊤;n) is the cokernel of [a,δ]:A_{i₁}⊕H^{n-1}_Y(i₂,⊤)→A_{i₂},
+where δ is the connecting map into degree n. Its quotient π descends uniquely through
+A_{i₂}→image u_{i₂}, because δ dies in the abutment image. The descended map q:image u_{i₂}→E is
+a cokernel of j. Consequently E≅coker j canonically, with q followed by the comparison equal to
+the cokernel projection. Object, morphism and index universes are independent.
 -/
 
 @[expose] public section
@@ -63,15 +69,23 @@ theorem stableIntervalLeft_comp_middle {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
       stableIntervalLeftMiddle i₂ :=
   Subsingleton.elim _ _
 
-/-- The spectral step associated to the bottom-to-`i` interval. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i∈ι, this step object is A_i=H^n_Y(⊥,i), the degree-n spectral value
+on the unique arrow ⊥→i. The bottom cut and the chosen cut determine the interval; no choice of
+a spectral page enters this object. -/
 noncomputable def stableIntervalStep (n : ℤ) (i : ι) : D :=
   (Y.H n).obj (mk₁ (stableIntervalLeftMiddle i))
 
-/-- The bottom-to-top spectral object in degree `n`. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ, the abutment object is A=H^n_Y(⊥,⊤), the degree-n spectral value of the
+full index interval. It is the common target of the bottom-to-cut step maps. -/
 noncomputable def stableIntervalAbutment (n : ℤ) : D :=
   (Y.H n).obj (mk₁ stableIntervalFull)
 
-/-- The map between spectral steps induced by an inequality of cuts. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, this is the map a:H^n_Y(⊥,i₁)→H^n_Y(⊥,i₂) induced by the
+interval square with identity on bottom and the arrow i₁→i₂ on the other endpoint. If u_i maps
+the step to H^n_Y(⊥,⊤), then a≫u_{i₂}=u_{i₁}. -/
 noncomputable def stableIntervalStepMap
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Y.stableIntervalStep n i₁ ⟶ Y.stableIntervalStep n i₂ :=
@@ -82,7 +96,10 @@ noncomputable def stableIntervalStepMap
       (stableIntervalLeftMiddle i₂)
       (stableIntervalLeft_comp_middle h))
 
-/-- The map from a spectral step to the bottom-to-top abutment object. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i∈ι, this is u_i:H^n_Y(⊥,i)→H^n_Y(⊥,⊤), induced by identity on bottom
+and i→⊤ on the upper endpoint. It supplies the ambient map whose image defines the cut's
+abutment subobject. -/
 noncomputable def stableIntervalStepToAbutment (n : ℤ) (i : ι) :
     Y.stableIntervalStep n i ⟶ Y.stableIntervalAbutment n :=
   (Y.H n).map
@@ -102,7 +119,9 @@ theorem stableIntervalStepMap_comp_toAbutment
 noncomputable abbrev stableIntervalStepImage (n : ℤ) (i : ι) : D :=
   Limits.image (Y.stableIntervalStepToAbutment n i)
 
-/-- The canonical epimorphism from a step to its selected abutment image. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i∈ι, let u_i:A_i=H^n_Y(⊥,i)→A=H^n_Y(⊥,⊤). This is the canonical
+epimorphism e_i:A_i→image u_i in its image factorization. It satisfies e_i≫image.ι(u_i)=u_i. -/
 noncomputable def stableIntervalStepToImage (n : ℤ) (i : ι) :
     Y.stableIntervalStep n i ⟶
       Limits.image (Y.stableIntervalStepToAbutment n i) :=
@@ -113,7 +132,10 @@ instance stableIntervalStepToImage_epi (n : ℤ) (i : ι) :
   dsimp only [stableIntervalStepToImage]
   infer_instance
 
-/-- The map between selected abutment images at two ordered cuts. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, write u_i:H^n_Y(⊥,i)→H^n_Y(⊥,⊤). The relation a≫u_{i₂}=u_{i₁}
+for the step map a induces this map j:image u_{i₁}→image u_{i₂}. It is the inclusion of these
+selected image subobjects and satisfies j≫image.ι(u_{i₂})=image.ι(u_{i₁}). -/
 noncomputable def stableIntervalImageMap
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Limits.image (Y.stableIntervalStepToAbutment n i₁) ⟶
@@ -148,7 +170,10 @@ theorem stableIntervalStepToImage_naturality
     Y.stableIntervalImageMap_comp_ι n h,
     Y.stableIntervalStepMap_comp_toAbutment n h]
 
-/-- The direct stable interval between ordered cuts. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, this object is E_Y(⊥,i₁,i₂,⊤;n). It uses the three successive
+index arrows ⊥→i₁→i₂→⊤ and the spectral degrees n−1,n,n+1, with connecting maps increasing
+degree by one. -/
 noncomputable def stableIntervalObj
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) : D :=
   Y.E
@@ -157,7 +182,11 @@ noncomputable def stableIntervalObj
     (stableIntervalRight i₂)
     (n - 1) n (n + 1) (by omega) (by omega)
 
-/-- The canonical cokernel sequence defining the stable interval. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, write A_i=H^n_Y(⊥,i), a:A_{i₁}→A_{i₂}, and
+δ:H^{n-1}_Y(i₂,⊤)→A_{i₂}. This is the canonical cokernel short complex A_{i₁}⊕H^{n-1}_Y(i₂,⊤)
+--[a,δ]→ A_{i₂} --π→ E_Y(⊥,i₁,i₂,⊤;n). Its incoming maps are the ordered step map and the
+degree-one connecting map. -/
 noncomputable def stableIntervalCokernelSequence
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) : ShortComplex D :=
   Y.cokernelSequenceE
@@ -168,7 +197,10 @@ noncomputable def stableIntervalCokernelSequence
     (stableIntervalLeft_comp_middle h)
     (n - 1) n (n + 1) (by omega) (by omega)
 
-/-- The quotient from the current spectral step to the stable interval. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, this is the canonical epimorphism
+π:H^n_Y(⊥,i₂)→E_Y(⊥,i₁,i₂,⊤;n). It is the quotient by the ordered step map from H^n_Y(⊥,i₁) and
+the connecting map from H^{n-1}_Y(i₂,⊤); both incoming maps have zero composite with π. -/
 noncomputable def stableIntervalStepToStable
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Y.stableIntervalStep n i₂ ⟶ Y.stableIntervalObj n h :=
@@ -224,10 +256,11 @@ theorem stableIntervalDelta_comp_toStable_zero
     _ = biprod.inr ≫ 0 := congrArg (fun k => biprod.inr ≫ k) S.zero
     _ = 0 := by simp)
 
-/-- Implementation data for the stable quotient factored through the current
-selected abutment image.  It is public because the transparent descended map
-and characteristic below cannot depend on a private declaration under Lean's
-module visibility rules. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, let u_{i₂}:A_{i₂}=H^n_Y(⊥,i₂)→H^n_Y(⊥,⊤), e_{i₂}:A_{i₂}→image
+u_{i₂}, and π:A_{i₂}→E_Y(⊥,i₁,i₂,⊤;n). This is the pair consisting of the descended map q:image
+u_{i₂}→E and its factorization equation e_{i₂}≫q=π. Exactness of the connecting sequence gives
+the descent, and the epimorphism e_{i₂} makes it unique. -/
 noncomputable def stableIntervalImageToStableLift
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     { q : Limits.image (Y.stableIntervalStepToAbutment n i₂) ⟶
@@ -248,7 +281,10 @@ noncomputable def stableIntervalImageToStableLift
   refine ⟨q, ?_⟩
   exact Cofork.IsColimit.π_desc hExact.isColimitImage
 
-/-- The stable quotient descended through the current selected image. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, this is the descended epimorphism q:image
+u_{i₂}→E_Y(⊥,i₁,i₂,⊤;n), where u_{i₂}:H^n_Y(⊥,i₂)→H^n_Y(⊥,⊤). With e_{i₂} the step-to-image
+epimorphism and π the stable quotient, it satisfies e_{i₂}≫q=π. -/
 noncomputable def stableIntervalImageToStable
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Limits.image (Y.stableIntervalStepToAbutment n i₂) ⟶
@@ -275,8 +311,11 @@ instance stableIntervalImageToStable_epi
   exact epi_of_epi (Y.stableIntervalStepToImage n i₂)
     (Y.stableIntervalImageToStable n h)
 
-/-- The connecting morphism for the current-to-top interval dies after
-passing to the current selected abutment image. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₂∈ι, let δ:H^{n-1}_Y(i₂,⊤)→H^n_Y(⊥,i₂) be the connecting map for
+⊥→i₂→⊤ and e_{i₂}:H^n_Y(⊥,i₂)→image(H^n_Y(⊥,i₂)→H^n_Y(⊥,⊤)) the image epimorphism. Then
+δ≫e_{i₂}=0. The equality follows from the spectral zero relation after the monic image
+inclusion. -/
 @[reassoc]
 theorem stableIntervalDelta_comp_toImage_zero
     (n : ℤ) (i₂ : ι) :
@@ -293,7 +332,10 @@ theorem stableIntervalDelta_comp_toImage_zero
     (stableIntervalFull (ι := ι))
     (Subsingleton.elim _ _) (n - 1) n
 
-/-- The ordered image map followed by the stable quotient is zero. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, let j:image u_{i₁}→image u_{i₂} be the ordered image inclusion
+and q:image u_{i₂}→E_Y(⊥,i₁,i₂,⊤;n) the descended stable quotient. Then j≫q=0. This is the image
+version of the vanishing composite of the preceding step with the stable quotient. -/
 @[reassoc]
 theorem stableIntervalImageMap_comp_imageToStable_zero
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
@@ -307,8 +349,10 @@ theorem stableIntervalImageMap_comp_imageToStable_zero
     Y.stableIntervalStepMap_comp_toStable_zero n h,
     comp_zero]
 
-/-- The descended stable quotient is a cokernel of the ordered map between
-selected abutment images. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, let j:image u_{i₁}→image u_{i₂} and q:image
+u_{i₂}→E_Y(⊥,i₁,i₂,⊤;n). The cofork defined by q and j≫q=0 is a cokernel. Thus every t:image
+u_{i₂}→Z with j≫t=0 factors uniquely as q≫l=t for a morphism l:E→Z. -/
 noncomputable def stableIntervalImageToStableIsCokernel
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     IsColimit (CokernelCofork.ofπ
@@ -393,8 +437,11 @@ noncomputable def stableIntervalImageToStableIsCokernel
     Y.stableIntervalStepToImage_comp_imageToStable n h]
   exact Cofork.IsColimit.π_desc hS.gIsCokernel
 
-/-- The stable interval is canonically the cokernel of the ordered selected
-image map. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, this is the canonical isomorphism E_Y(⊥,i₁,i₂,⊤;n)≅coker(j),
+where j:image u_{i₁}→image u_{i₂} is induced by the ordered bottom-to-cut steps in H^n_Y(⊥,⊤).
+It identifies the two cokernels of j, one given by the descended stable quotient and the other
+by the categorical cokernel. -/
 noncomputable def stableIntervalImageCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Y.stableIntervalObj n h ≅
@@ -403,8 +450,10 @@ noncomputable def stableIntervalImageCokernelIso
     (cokernelIsCokernel (Y.stableIntervalImageMap n h))
     (Y.stableIntervalImageToStableIsCokernel n h)).symm
 
-/-- The stable/image-cokernel isomorphism identifies the descended quotient
-with the canonical cokernel projection. -/
+/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
+indexed by ι. For n∈ℤ and i₁≤i₂, let q:image u_{i₂}→E_Y(⊥,i₁,i₂,⊤;n), j:image u_{i₁}→image
+u_{i₂}, and e:E≅coker(j) be the canonical comparison. Then q≫e.hom=cokernel.π(j). The equality
+specifies the comparison on the full current image, not merely its isomorphism class. -/
 @[reassoc]
 theorem stableIntervalImageToStable_comp_iso_hom
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :

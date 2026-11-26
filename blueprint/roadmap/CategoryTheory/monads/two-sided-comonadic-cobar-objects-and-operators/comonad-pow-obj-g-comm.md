@@ -1,3 +1,6 @@
-# Comonad Pow obj G comm
+# Commutation of a comonad power with one objectwise application
 
-Powers commute with application of `G` on objects.
+Commutation of a comonad power with one objectwise application.
+
+For `X ∈ C`, the objects `G^n(G(X))` and `G(G^n(X))` are equal for the specified power
+recursion.

@@ -1,3 +1,5 @@
-# Top Fin Cons Homeomorph apply
+# Coordinates of the tuple-prepending homeomorphism
 
-Evaluation of the finite-tuple head-cons homeomorphism.
+Coordinates of the tuple-prepending homeomorphism.
+
+The homeomorphism G × Gⁿ → Gⁿ⁺¹ sends (g,t) to Fin.cons g t.

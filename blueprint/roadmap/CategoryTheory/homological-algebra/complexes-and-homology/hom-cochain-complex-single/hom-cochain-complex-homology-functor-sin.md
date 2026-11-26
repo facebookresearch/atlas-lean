@@ -1,3 +1,6 @@
-# Hom Cochain Complex Homology Functor Single₀Iso
+# Zeroth cohomology of single-object Hom cochains is Coyoneda
 
-`H⁰(Hom(single₀ R, -))` as coefficient functors is `Hom(R, -)`.
+Zeroth cohomology of single-object Hom cochains is Coyoneda.
+
+The degree-zero Hom cochain cohomology coefficient functor of `A[0]` is naturally isomorphic
+to the additive Hom functor `Hom_C(A,-)`.

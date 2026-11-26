@@ -1,3 +1,5 @@
-# Polynomial Comonad obj carrier
+# The carrier of a polynomial comonad object
 
-The underlying comonad object is the literal polynomial ring on the algebra's carrier.
+The carrier of a polynomial comonad object.
+
+For a commutative `k`-algebra `A`, the carrier of `T(A)` is `MvPolynomial A k`.

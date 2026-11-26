@@ -15,14 +15,17 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalStepHomology
 
 /-!
-# Below-row vanishing for partial-total filtration steps
+# Homology and support of partial-total filtration-step cones
 
-The mapping cone of a partial-total filtration step is quasi-isomorphic to
-the extended signed row.  This file records that comparison in every degree
-and proves vanishing below the row's support.
+Let B be a bicomplex of shape (down ℕ,down ℕ) in an abelian category. Write P_p for its partial
+total through horizontal column p, with P_{-1}=0. The pth step is the short exact sequence
+P_{p-1}→P_p→R_p, where R_p places B_{p,q} in total degree p+q and has vertical differential
+(-1)^p d. Extend chain degree k to cochain degree -k.
 
-These are prerequisites for a later `HasSpectralSequence` instance.  No
-spectral page or convergence statement is made here.
+The cone of the extended step inclusion has homology isomorphic to that of the extended signed
+row R_p in every integer cochain degree. Since R_p is supported in chain degrees at least p, the
+cone homology vanishes in cochain degree -k for k∈ℕ with k<p. Category object and morphism
+universes are arbitrary.
 -/
 
 @[expose] public section
@@ -43,8 +46,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- In every cochain degree, mapping-cone homology of the `p`th filtration
-step is homology of the extended signed `p`th row. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). For p∈ℕ, let P_{p-1}→P_p→R_p be the
+partial-total step, with P_{-1}=0 and R_p the pth row placed in degree p+q with differential
+(-1)^p d. After extending chain degree k to cochain degree -k, let a_p be the step inclusion.
+For every n∈ℤ this is the canonical isomorphism H^n(Cone(a_p))≅H^n(E R_p), induced by the cone
+map to the short-exact quotient and its row identification. -/
 noncomputable def partialTotalStepConeExtendedRowHomologyIso (p : ℕ) (n : ℤ) :
     (CochainComplex.mappingCone
         (B.partialTotalStepCochainShortComplex p).f).homology n ≅
@@ -57,8 +63,10 @@ noncomputable def partialTotalStepConeExtendedRowHomologyIso (p : ℕ) (n : ℤ)
   exact asIso (HomologicalComplex.homologyMap desc n) ≪≫
     HomologicalComplex.homologyMapIso (B.partialTotalStepCochainX₃Iso p) n
 
-/-- Mapping-cone homology of the `p`th filtration step vanishes in the
-cochain degree corresponding to a chain degree strictly below `p`. -/
+/-- For a first-quadrant bicomplex B in an abelian category and p,k∈ℕ with k<p, let a_p be the
+inclusion P_{p-1}→P_p extended from chain degree r to cochain degree -r, using P_{-1}=0. Then
+H^{-k}(Cone(a_p)) is zero. Its comparison with the extended signed row R_p identifies it with
+H_k(R_p), and R_p has no terms in total degrees below p. -/
 theorem isZero_partialTotalStepConeHomology_of_lt
     (p k : ℕ) (h : k < p) :
     IsZero ((CochainComplex.mappingCone

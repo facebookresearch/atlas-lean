@@ -1,6 +1,6 @@
-# Is Noetherian Object iff finite
+# Finite generation characterizes noetherian objects over a noetherian ring
 
-Over a noetherian ring, finite generation is exactly the categorical noetherian-object
-property in `ModuleCat R`. The proof combines `isNoetherianObject_iff_isNoetherian` with the
-algebraic facts `IsNoetherian R M → Module.Finite R M` and
-`[IsNoetherianRing R] [Module.Finite R M] → IsNoetherian R M`.
+Finite generation characterizes noetherian objects over a noetherian ring.
+
+If R is noetherian, an R-module M is finitely generated if and only if it is a noetherian
+object of ModuleCat R.

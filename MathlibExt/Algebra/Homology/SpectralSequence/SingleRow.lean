@@ -15,13 +15,14 @@ module
 public import Mathlib.Algebra.Homology.SpectralSequence.Basic
 
 /-!
-# Single-row cohomological spectral sequences
+# Collapse of a cohomological spectral sequence supported in row zero
 
-If the first page of a cohomological spectral sequence is supported in row
-zero, every later page has the same support and all differentials from page
-two onward vanish. The resulting page isomorphisms are the composites of
-the original successor homology comparisons and are natural in morphisms
-of spectral sequences.
+If E₁^{p,q}=0 for q≠0, this support condition persists on every later page. For r≥2, a
+differential of degree (r,1−r) must leave row zero, so all such differentials vanish.
+
+The zero-differential homology identifications and successor comparisons give canonical
+isomorphisms E₂^{p,q} ≅ E_r^{p,q} for every r≥2. Their finite successor composites and
+integer-page forms are natural in spectral-sequence morphisms.
 -/
 
 @[expose] public section
@@ -39,7 +40,9 @@ namespace CategoryTheory.SpectralSequence
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (S : CohomologicalSpectralSequence C 1)
 
-/-- A zero row on the actual first page stays zero on every later page. -/
+/-- First-page row-zero support persists on all pages.
+
+If E₁ vanishes off row zero, E_r vanishes there for every r≥1. -/
 theorem isZero_page_of_firstPage_off_row
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
     (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) (hq : q ≠ 0) :
@@ -59,7 +62,9 @@ theorem isZero_page_of_firstPage_off_row
   exact (h (r - 1).toNat).of_iso
     (S.pageXIsoOfEq (p, q) r (((r - 1).toNat : ℤ) + 1) heq.symm hr)
 
-/-- The ordinary coefficient row forces every actual differential from page two onward to vanish. -/
+/-- All differentials from the second page vanish under row-zero support.
+
+For r≥2, every differential of E_r is zero. -/
 theorem page_d_eq_zero_of_firstPage_off_row
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
     (r : ℤ) (hr : 2 ≤ r) (pq pq' : ℤ × ℤ) :
@@ -77,7 +82,10 @@ theorem page_d_eq_zero_of_firstPage_off_row
   · exact (S.isZero_page_of_firstPage_off_row hrow r (by omega)
       pq.1 pq.2 hq).eq_of_src _ _
 
-/-- The canonical successor comparison for an actual ordinary row collapse. -/
+/-- The canonical successor isomorphism after row collapse.
+
+For r≥2, identify E_r with its zero-differential homology and then with E_{r+1} at each
+bidegree. -/
 def singleRowSuccessorIso
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
     (r : ℤ) (hr : 2 ≤ r) (pq : ℤ × ℤ) :
@@ -87,7 +95,9 @@ def singleRowSuccessorIso
     (S.page_d_eq_zero_of_firstPage_off_row hrow r hr _ _)).left.homologyIso.symm ≪≫
       S.iso r (r + 1) pq rfl (by omega)
 
-/-- A finite composite of the actual canonical ordinary successor comparisons. -/
+/-- The finite successor composite from the second page.
+
+Compose the canonical collapsed-page comparisons to obtain E₂ ≅ E_{k+2} for every k∈ℕ. -/
 def singleRowPageIsoNat
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
     (pq : ℤ × ℤ) : ∀ k : ℕ, (S.page 2).X pq ≅ (S.page ((k : ℤ) + 2) (by omega)).X pq
@@ -97,7 +107,9 @@ def singleRowPageIsoNat
         S.pageXIsoOfEq pq (((k : ℤ) + 2) + 1) (((k + 1 : ℕ) : ℤ) + 2)
           (by omega) (by omega)
 
-/-- The actual second page identifies canonically with every later page under the ordinary row axiom. -/
+/-- The canonical comparison from E₂ to any later page.
+
+For r≥2, the finite successor composite gives E₂^{p,q} ≅ E_r^{p,q}. -/
 def singleRowPageIso
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
     (r : ℤ) (hr : 2 ≤ r) (pq : ℤ × ℤ) :
@@ -117,7 +129,9 @@ private theorem pageXIsoOfEq_naturality (f : S ⟶ T) (pq : ℤ × ℤ)
   subst r'
   simp only [pageXIsoOfEq, eqToIso_refl, Iso.refl_hom, Category.comp_id, Category.id_comp]
 
-/-- Canonical ordinary successor collapse is natural for actual morphisms of spectral sequences. -/
+/-- Naturality of a collapsed successor comparison.
+
+A morphism between row-supported sequences commutes with E_r ≅ E_{r+1}. -/
 @[reassoc]
 theorem singleRowSuccessorIso_naturality (f : S ⟶ T)
     (hS : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
@@ -151,7 +165,9 @@ theorem singleRowSuccessorIso_naturality (f : S ⟶ T)
   rw [← Category.assoc, ← hc, Category.assoc,
     f.comm r (r + 1) pq rfl (by omega), ← Category.assoc]
 
-/-- Every finite canonical ordinary page comparison is natural in spectral sequences. -/
+/-- Naturality of the finite collapsed-page composite.
+
+The morphism commutes with the comparison from E₂ to E_{k+2}. -/
 @[reassoc]
 theorem singleRowPageIsoNat_naturality (f : S ⟶ T)
     (hS : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))
@@ -176,7 +192,9 @@ theorem singleRowPageIsoNat_naturality (f : S ⟶ T)
     rw [f.singleRowSuccessorIso_naturality_assoc hS hT,
       f.pageXIsoOfEq_naturality]
 
-/-- Ordinary row collapse from page two to any later integer page is natural. -/
+/-- Naturality of the collapsed comparison at an integer page.
+
+For r≥2, the morphism commutes with the canonical E₂-to-E_r isomorphism. -/
 @[reassoc]
 theorem singleRowPageIso_naturality (f : S ⟶ T)
     (hS : ∀ p q : ℤ, q ≠ 0 → IsZero ((S.page 1).X (p, q)))

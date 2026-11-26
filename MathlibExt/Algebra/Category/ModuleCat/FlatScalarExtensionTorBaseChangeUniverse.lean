@@ -19,13 +19,23 @@ public import Mathlib.RingTheory.Localization.BaseChange
 public import Mathlib.RingTheory.Flat.Localization
 
 /-!
-# Flat base change and localization of Tor
+# Flat scalar extension and localization of ordered Tor
 
-Flat extension of scalars commutes with derived tensor in every degree for
-arbitrary modules in a common universe larger than both ring universes.
-The comparison uses the scalar-extended projective resolution and the
-tensor base-change equivalence. Localization specializes this comparison
-using `IsLocalization.flat`.
+Let R,S be commutative rings in independent worlds u,v, and let modules
+use the common height Γ=max(u,v,w). For any ring map f:R→S,
+scalar extension distributes naturally over the tensor product:
+S⊗_R(M⊗_R X)≅(S⊗_R M)⊗_S(S⊗_R X).
+
+If S is flat over R, scalar extension transports projective resolutions
+and commutes with left derivation after an additive S-module functor.
+In particular
+S⊗_R Tor_q^R(M,X)≅Tor_q^S(S⊗_R M,S⊗_R X)
+naturally in both coefficients. The Tor convention derives tensor
+in its second variable X, retaining the ordered pair M,X.
+
+For a prime ideal p⊆R, localization is flat and gives
+(Tor_q^R(M,X))_p≅Tor_q^(R_p)(M_p,X_p).
+Neither module coefficient is required to be flat.
 -/
 
 @[expose] public section
@@ -40,7 +50,11 @@ universe u v w
 
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S]
 
-/-- Scalar extension distributes over the actual native tensor carriers. -/
+/-- For a map f:R→S of commutative rings and modules M,X
+at height Γ=max(u,v,w), there is an S-module isomorphism
+E_f(M⊗_R X)≅E_f(M)⊗_S E_f(X),
+where E_f=S⊗_R−. No flatness of f is required for this
+underived tensor comparison. -/
 def scalarExtensionTensorIso (f : R →+* S)
     (M X : ModuleCat.{max u v w} R) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
@@ -57,7 +71,10 @@ def scalarExtensionTensorIso (f : R →+* S)
   letI : Algebra R S := f.toAlgebra
   exact (TensorProduct.AlgebraTensorModule.distribBaseChange R S M X).toModuleIso
 
-/-- The actual tensor base-change comparison retains both coefficient maps. -/
+/-- For f:R→S and R-linear maps g:M→M′, h:X→X′,
+the scalar-extension tensor comparison commutes with
+E_f(g⊗h) and E_f(g)⊗E_f(h).
+The coefficient and resolved-module order M,X is retained. -/
 theorem scalarExtensionTensorIso_hom_naturality (f : R →+* S)
     {M M' X X' : ModuleCat.{max u v w} R} (g : M ⟶ M') (h : X ⟶ X') :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
@@ -89,7 +106,10 @@ theorem scalarExtensionTensorIso_hom_naturality (f : R →+* S)
   intro x
   rfl
 
-/-- Tensor base change as a natural isomorphism in the resolved variable. -/
+/-- For a commutative-ring map f:R→S and fixed R-module M,
+the comparisons E_f(M⊗_R X)≅E_f(M)⊗_S E_f(X)
+form a natural isomorphism in X.
+All module carriers use Γ=max(u,v,w). -/
 def scalarExtensionTensorNatIso (f : R →+* S) (M : ModuleCat.{max u v w} R) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} S) := tensorStructure.{v, max u w}
@@ -119,8 +139,11 @@ section FlatChange
 
 variable [Algebra R S] [Module.Flat R S]
 
-/-- The genuine scalar-extended projective resolution compares left
-derivation before and after flat scalar extension of the resolved object. -/
+/-- For S flat over the commutative ring R and an additive
+functor L:ModuleCat^Γ(S)→ModuleCat^Γ(S), there is a natural
+isomorphism L_q(E⋙L)≅E⋙L_q(L), where E=S⊗_R−.
+The left side is derived in R-modules, the right side in S-modules,
+and Γ=max(u,v,w). -/
 def flatScalarExtensionDerivedPrecompIso
     (L : ModuleCat.{max u v w} S ⥤ ModuleCat.{max u v w} S) [L.Additive] (q : ℕ) :
     (extendScalars.{u, v, max u v w} (algebraMap R S) ⋙ L).leftDerived q ≅
@@ -139,8 +162,10 @@ def flatScalarExtensionDerivedPrecompIso
     (algebraMap R S) (by rw [RingHom.flat_algebraMap_iff]; infer_instance)
   exact Functor.leftDerivedPrecompIso F L q
 
-/-- The genuine resolved-object comparison is natural in the additive
-functor being derived. -/
+/-- For S flat over R and a natural transformation
+β:L₁→L₂ of additive S-module functors, the two derived
+precomposition comparisons commute with L_q(E⋙β) and
+E⋙L_q(β). This holds at every original R-module X and q≥0. -/
 theorem flatScalarExtensionDerivedPrecompIso_hom_naturality_functor
     {L₁ L₂ : ModuleCat.{max u v w} S ⥤ ModuleCat.{max u v w} S}
     [L₁.Additive] [L₂.Additive] (β : L₁ ⟶ L₂)
@@ -166,8 +191,10 @@ theorem flatScalarExtensionDerivedPrecompIso_hom_naturality_functor
   have h := Functor.leftDerivedPrecompIso_hom_naturality_functor F β q
   exact congrArg (fun η => η.app X) h
 
-/-- Flat scalar extension commutes with the ordered native Tor functor,
-as a natural isomorphism in the second coefficient. -/
+/-- For S flat over the commutative ring R, a fixed R-module M
+and q≥0, there is a natural isomorphism in X,
+E(Tor_q^R(M,X))≅Tor_q^S(E(M),E(X)).
+The coefficient M is first and the derived variable X second. -/
 def flatScalarExtensionTorBaseChangeNatIso (M : ModuleCat.{max u v w} R) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} S) := tensorStructure.{v, max u w}
@@ -197,7 +224,11 @@ def flatScalarExtensionTorBaseChangeNatIso (M : ModuleCat.{max u v w} R) (q : �
       (scalarExtensionTensorNatIso R S (algebraMap R S) M) q ≪≫
       flatScalarExtensionDerivedPrecompIso R S L' q
 
-/-- Genuine flat base change for both original native Tor coefficients. -/
+/-- For commutative rings R,S with S flat over R and
+M,X∈ModuleCat^Γ(R), the canonical comparison is
+S⊗_R Tor_q^R(M,X)≅Tor_q^S(S⊗_R M,S⊗_R X).
+It is an S-module isomorphism for every q≥0, with
+Γ=max(u,v,w) and no flatness premise on M or X. -/
 def flatScalarExtensionTorBaseChangeIso (M X : ModuleCat.{max u v w} R) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} S) := tensorStructure.{v, max u w}
@@ -218,7 +249,10 @@ def flatScalarExtensionTorBaseChangeIso (M X : ModuleCat.{max u v w} R) (q : ℕ
   letI : MonoidalPreadditive (ModuleCat.{max u v w} S) := monoidalPreadditive.{v, max u w}
   exact (flatScalarExtensionTorBaseChangeNatIso R S M q).app X
 
-/-- Native Tor base change preserves every map in the resolved coefficient. -/
+/-- For S flat over R, fixed M and h:X→Y R-linear,
+the base-change isomorphisms commute with
+E(Tor_q^R(M,h)) and Tor_q^S(E(M),E(h)).
+This is naturality in the second coefficient. -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_naturality_resolved
     (M : ModuleCat.{max u v w} R) {X Y : ModuleCat.{max u v w} R}
     (h : X ⟶ Y) (q : ℕ) :
@@ -243,7 +277,10 @@ theorem flatScalarExtensionTorBaseChangeIso_hom_naturality_resolved
   let : MonoidalPreadditive (ModuleCat.{max u v w} S) := monoidalPreadditive.{v, max u w}
   exact (flatScalarExtensionTorBaseChangeNatIso R S M q).hom.naturality h
 
-/-- Native Tor base change preserves every map in the first coefficient. -/
+/-- For S flat over R, fixed X and g:M₁→M₂ R-linear,
+the base-change isomorphisms commute with
+E(Tor_q^R(g,X)) and Tor_q^S(E(g),E(X)).
+The resolved coefficient X remains second. -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_naturality_coefficient
     {M₁ M₂ : ModuleCat.{max u v w} R} (g : M₁ ⟶ M₂)
     (X : ModuleCat.{max u v w} R) (q : ℕ) :
@@ -313,8 +350,11 @@ theorem flatScalarExtensionTorBaseChangeIso_hom_naturality_coefficient
 
 end FlatChange
 
-/-- The actual native Tor over the local ring, with both original
-coefficients localized and the original coefficient order retained. -/
+/-- For a prime ideal p of a commutative ring R and
+M,X∈ModuleCat^max(u,w)(R), the local Tor object is
+Tor_q^(R_p)(M_p,X_p).
+Both original modules are localized, and M remains the first
+coefficient while X is the derived second variable. -/
 abbrev nativeTorAtPrime (p : Ideal R) [p.IsPrime]
     (M X : ModuleCat.{max u w} R) (q : ℕ) :
     ModuleCat.{max u w} (Localization.AtPrime p) := by
@@ -328,8 +368,11 @@ abbrev nativeTorAtPrime (p : Ideal R) [p.IsPrime]
     (ModuleCat.of (Localization.AtPrime p) (LocalizedModule.AtPrime p M))).obj
       (ModuleCat.of (Localization.AtPrime p) (LocalizedModule.AtPrime p X))
 
-/-- Localization commutes with the actual native derived tensor. Flatness
-is earned from the localization; neither coefficient is assumed flat. -/
+/-- For a prime ideal p⊆R and arbitrary modules M,X,
+the localization comparison is
+(Tor_q^R(M,X))_p≅Tor_q^(R_p)(M_p,X_p), q≥0.
+Localization flatness supplies the scalar-change hypothesis,
+and the carrier height remains max(u,w). -/
 def localizedNativeTorIso (p : Ideal R) [p.IsPrime]
     (M X : ModuleCat.{max u w} R) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u w} R) := tensorStructure.{u, w}

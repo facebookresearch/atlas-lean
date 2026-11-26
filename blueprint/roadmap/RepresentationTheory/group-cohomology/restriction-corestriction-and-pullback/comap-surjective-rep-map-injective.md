@@ -1,4 +1,6 @@
-# Comap Surjective Rep Map injective
+# Injectivity of the projection on lifted representatives
 
-Mapping representatives from the pulled-back transversal is
-injective.
+Injectivity of the projection on lifted representatives.
+
+Two representatives in the chosen pulled-back transversal with the same image under π are
+equal.

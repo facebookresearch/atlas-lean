@@ -1,4 +1,6 @@
-# Enveloping Hom Term
+# The enveloping-linear Hom term of a coefficient cochain complex
 
-Hom from the original enveloping CE term to the original left
-UEA coefficient module.
+The enveloping-linear Hom term of a coefficient cochain complex.
+
+For a left `U_R(L)`-module `M`, degree `n` is the module of `U_R(L)`-linear maps from the
+degree-`n` enveloping chain term to `M`.

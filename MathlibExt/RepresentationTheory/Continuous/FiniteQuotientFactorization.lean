@@ -15,15 +15,16 @@ public import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 public import Mathlib.Topology.UniformSpace.DiscreteUniformity
 
 /-!
-# Fin-indexed finite-quotient factorization
+# Finite quotient factorization of continuous functions
 
-A continuous map from a finite power of a compact totally disconnected
-topological group to a discrete uniform space is invariant under coordinatewise
-right multiplication by one open normal subgroup.  It therefore factors
-uniquely through the corresponding finite power of the quotient group.
+Let G be a compact totally disconnected topological group and D a discrete uniform space. For
+every finite power Gⁿ and continuous c : Gⁿ → D, one open normal subgroup H makes c invariant
+under coordinatewise right multiplication by elements of H. Consequently c factors through
+(G/H)ⁿ, and any factor satisfying the representative-coordinate formula is unique.
 
-The familiar unary through quaternary APIs are compatibility corollaries of
-the `Fin n` theorem.
+The factorization also holds for an already specified discrete topology on D. The unary
+through quaternary formulas use the same right-multiplication convention; locally compact
+parameter spaces allow continuous curried functions to be evaluated jointly.
 -/
 
 @[expose] public section
@@ -36,16 +37,20 @@ open Filter
 
 namespace ContinuousCohomology
 
-/-- Joint continuity obtained by uncurrying a continuous binary family over
-a locally compact parameter space. -/
+/-- Joint evaluation of a continuous binary family.
+
+For a locally compact space G and a topological space D, a continuous map G → C(G,D) gives a
+jointly continuous function (x,y) ↦ f(x)(y). -/
 theorem continuous_uncurry_two
     {G D : Type*} [TopologicalSpace G] [TopologicalSpace D]
     [LocallyCompactSpace G] (f : C(G, C(G, D))) :
     Continuous (fun p : G × G => f p.1 p.2) :=
   ContinuousMap.continuous_uncurry_of_continuous f
 
-/-- Joint continuity obtained by uncurrying a continuous ternary family over
-locally compact parameter spaces. -/
+/-- Joint evaluation of a continuous ternary family.
+
+For locally compact G, a continuous map G → C(G,C(G,D)) gives the continuous function
+(x,(y,z)) ↦ f(x)(y)(z). -/
 theorem continuous_uncurry_three
     {G D : Type*} [TopologicalSpace G] [TopologicalSpace D]
     [LocallyCompactSpace G] (f : C(G, C(G, C(G, D)))) :
@@ -59,8 +64,10 @@ theorem continuous_uncurry_three
     (continuous_fst.prodMk continuous_snd.fst).prodMk continuous_snd.snd
   exact hf₁.comp hassoc
 
-/-- Joint continuity obtained by uncurrying a continuous four-variable
-family over locally compact parameter spaces. -/
+/-- Joint evaluation of a continuous quaternary family.
+
+For locally compact G, a continuous fourfold curried family gives the continuous function
+(x,(y,(z,t))) ↦ f(x)(y)(z)(t). -/
 theorem continuous_uncurry_four
     {G D : Type*} [TopologicalSpace G] [TopologicalSpace D]
     [LocallyCompactSpace G] (f : C(G, C(G, C(G, C(G, D))))) :
@@ -108,8 +115,11 @@ private theorem exists_openNormalSubgroup_right_invariant_of_compact
   have hout : c x = c (x * h) := hUrel hpair
   exact hout.symm
 
-/-- A continuous map on a finite power is invariant under coordinatewise
-right multiplication by one open normal subgroup. -/
+/-- One normal subgroup giving finite-power right invariance.
+
+For continuous c : (Fin n → G) → D, with G compact and totally disconnected and D discretely
+uniform, there exists an open normal subgroup H such that c(x·h) = c(x) whenever every
+coordinate hᵢ lies in H. -/
 theorem exists_openNormalSubgroup_right_invariant_fin
     {n : ℕ} (c : (Fin n → G) → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,
@@ -136,8 +146,11 @@ theorem exists_openNormalSubgroup_right_invariant_fin
 
 omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G]
   [UniformSpace D] [DiscreteUniformity D] in
-/-- A function on a finite power of quotient groups is uniquely determined by
-its values on coordinatewise quotient representatives. -/
+/-- Uniqueness of a function on a finite power of a quotient.
+
+If two functions on (G/H)ⁿ agree with the same function c on every coordinatewise quotient
+representative, they are equal. Here H is an open normal subgroup; uniqueness requires no
+compactness or discreteness of the target. -/
 theorem quotient_factor_fin_unique
     {n : ℕ} (H : OpenNormalSubgroup G)
     {c : (Fin n → G) → D}
@@ -154,8 +167,11 @@ theorem quotient_factor_fin_unique
     cbar' (fun i => QuotientGroup.mk' H.toSubgroup (x i))
   rw [hcbar, hcbar']
 
-/-- A continuous map on a finite power factors through the corresponding
-finite power of one finite quotient. -/
+/-- Factorization through a common finite quotient in every coordinate.
+
+For continuous c : Gⁿ → D with G compact and totally disconnected and D discretely uniform,
+there exist an open normal subgroup H and a function c̄ : (G/H)ⁿ → D such that c̄((xᵢH)ᵢ) =
+c(x). -/
 theorem exists_openNormalSubgroup_quotient_factor_fin
     {n : ℕ} (c : (Fin n → G) → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,
@@ -192,11 +208,11 @@ theorem exists_openNormalSubgroup_quotient_factor_fin
   rw [he]
   rfl
 
-/-- A continuous map from a finite power to a space with its already-selected
-discrete topology factors through one finite quotient.  The discrete
-uniformity used by `exists_openNormalSubgroup_quotient_factor_fin` is
-installed only inside the proof, with its induced topology replaced by the
-selected topology. -/
+/-- Finite quotient factorization for discrete target topology.
+
+For continuous c : Gⁿ → D, where G is a compact totally disconnected topological group and D
+has the specified discrete topology, there exist H open normal and c̄ : (G/H)ⁿ → D satisfying
+c̄((xᵢH)ᵢ) = c(x). -/
 theorem exists_openNormalSubgroup_quotient_factor_fin_of_discreteTopology
     {G : Type*} {D : Type*}
     [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -218,7 +234,10 @@ theorem exists_openNormalSubgroup_quotient_factor_fin_of_discreteTopology
     ⟨UniformSpace.replaceTopology_eq uD htop⟩
   exact exists_openNormalSubgroup_quotient_factor_fin c hc
 
-/-- Unary compatibility specialization. -/
+/-- Right invariance of a continuous unary function.
+
+For continuous c : G → D under the compact, totally disconnected, discretely uniform
+hypotheses, some open normal H satisfies c(gh) = c(g) for every h ∈ H. -/
 theorem exists_openNormalSubgroup_right_invariant_one
     (c : G → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,
@@ -233,7 +252,10 @@ theorem exists_openNormalSubgroup_right_invariant_one
     fin_cases i
     exact hh)
 
-/-- Binary compatibility specialization. -/
+/-- Right invariance of a continuous binary function.
+
+For continuous c : G × G → D under the stated compactness and discreteness hypotheses, some
+open normal H satisfies c(g₁h₁,g₂h₂) = c(g₁,g₂) whenever h₁,h₂ ∈ H. -/
 theorem exists_openNormalSubgroup_right_invariant_two
     (c : G × G → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,
@@ -252,7 +274,11 @@ theorem exists_openNormalSubgroup_right_invariant_two
     · exact hh₁
     · exact hh₂)
 
-/-- Ternary compatibility specialization. -/
+/-- Right invariance of a continuous ternary function.
+
+For continuous c : G × (G × G) → D, some open normal H gives c(g₁h₁,(g₂h₂,g₃h₃)) =
+c(g₁,(g₂,g₃)) whenever all hᵢ ∈ H, under the compact totally disconnected group and discrete
+uniform target hypotheses. -/
 theorem exists_openNormalSubgroup_right_invariant_three
     (c : G × (G × G) → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,
@@ -273,7 +299,10 @@ theorem exists_openNormalSubgroup_right_invariant_three
     · exact hh₂
     · exact hh₃)
 
-/-- Quaternary compatibility specialization. -/
+/-- Right invariance of a continuous quaternary function.
+
+For continuous c : G × (G × (G × G)) → D, one open normal H leaves c unchanged when each gᵢ is
+replaced by gᵢhᵢ with hᵢ ∈ H, under the stated compactness and discrete uniformity hypotheses. -/
 theorem exists_openNormalSubgroup_right_invariant_four
     (c : G × (G × (G × G)) → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,
@@ -296,7 +325,10 @@ theorem exists_openNormalSubgroup_right_invariant_four
     · exact hh₃
     · exact hh₄)
 
-/-- Unary quotient-factorization compatibility specialization. -/
+/-- A unary function descending to a finite quotient.
+
+For continuous c : G → D under the compact totally disconnected group and discrete uniform
+target hypotheses, some open normal H and function c̄ : G/H → D satisfy c̄(gH) = c(g). -/
 theorem exists_openNormalSubgroup_quotient_factor_one
     (c : G → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G, ∃ cbar : (G ⧸ H.toSubgroup) → D,
@@ -316,7 +348,10 @@ theorem exists_openNormalSubgroup_quotient_factor_one
     rfl
   · simp [c']
 
-/-- Binary quotient-factorization compatibility specialization. -/
+/-- A binary function descending to a common finite quotient.
+
+For continuous c : G × G → D under the stated compactness and discrete uniformity hypotheses,
+some open normal H and function c̄ : (G/H) × (G/H) → D satisfy c̄(g₁H,g₂H) = c(g₁,g₂). -/
 theorem exists_openNormalSubgroup_quotient_factor_two
     (c : G × G → D) (hc : Continuous c) :
     ∃ H : OpenNormalSubgroup G,

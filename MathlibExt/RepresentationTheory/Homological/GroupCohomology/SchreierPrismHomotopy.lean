@@ -16,12 +16,21 @@ public import Mathlib.Algebra.Category.ModuleCat.Adjunctions
 public import Mathlib.Algebra.Category.Grp.Adjunctions
 
 /-!
-# The finite signed Schreier prism
+# Signed prism homotopies for Schreier transfer
 
-The prism inserts the actual change-of-representative factor between a prefix
-of the first Schreier factor tuple and a suffix of the second one. Its finite
-signed sum is the proposed explicit cochain homotopy for transversal change.
-All scalar, group and coefficient universes are independent.
+For two tuples `a,b : Fin (n+1) → X`, the homogeneous prism at `i` is `(a₀,…,a_i,b_i,…,b_n)`.
+In positive cochain degree, its signed sum satisfies the alternating face-deletion identity
+`dK + Kd = g^* - f^*` for maps `f,g : X → Y` and cochains with values in an abelian group.
+
+Let `R : Type r` be a ring, `G : Type g` a group, and `M : Type v` an `R`-module with action
+`ρ : Representation R G M`. For a finite-index subgroup `H ≤ G` and right transversals `T,U`,
+the Schreier prism inserts the change factor between a prefix of the `T` factors and a suffix
+of the `U` factors. It defines `K_n : C^{n+1}(H,M) →ₗ[R] C^n(G,M)` by summing these tuples
+with signs `(-1)^i` and weights `ρ(t⁻¹)`.
+
+The cochain identities are `d_G K_n + K_{n+1} d_H = Tr_U - Tr_T` in positive degree and `K₀
+d_H = Tr_U - Tr_T` in degree zero. The scalar, group, and coefficient universes are
+independent.
 -/
 
 @[expose] public section
@@ -35,13 +44,16 @@ universe r g v
 
 namespace SchreierPrism
 
-/-- The homogeneous prism repeats the middle vertex while switching between two vertex maps. -/
+/-- For a type `X`, `n : ℕ`, tuples `a,b : Fin (n + 1) → X`, and `i : Fin (n + 1)`, the tuple
+`vertices a b i : Fin (n + 2) → X` has entries `a_j` for `j ≤ i` and `b_{j-1}` for `j > i`.
+Thus its ordered vertices are `(a₀,…,a_i,b_i,…,b_n)`. -/
 def vertices {X : Type g} {n : ℕ} (a b : Fin (n + 1) → X)
     (i : Fin (n + 1)) (j : Fin (n + 2)) : X :=
   if h : (j : ℕ) ≤ (i : ℕ) then a ⟨j, lt_of_le_of_lt h i.isLt⟩
   else b ⟨(j : ℕ) - 1, by omega⟩
 
-/-- The inserted prism coordinate is the original first vertex. -/
+/-- For a type `X`, tuples `a,b : Fin (n + 1) → X`, and `i : Fin (n + 1)`, `vertices a b i
+i.castSucc = a i`. This is the first of the two prism vertices at the switch index. -/
 theorem vertices_inserted {X : Type g} {n : ℕ} (a b : Fin (n + 1) → X)
     (i : Fin (n + 1)) : vertices a b i i.castSucc = a i := by
   simp only [vertices, Fin.val_castSucc, le_refl, dite_true]
@@ -357,7 +369,11 @@ private theorem freeTupleD_apply (X : Type g) (n : ℕ) (x : Fin (n + 2) → X) 
   rw [abelian_zsmul_apply]
   exact congrArg (fun z => (-1 : ℤ) ^ (i : ℕ) • z) (FreeAbelianGroup.map_of_apply x)
 
-/-- The finite homogeneous prism satisfies the actual alternating boundary identity. -/
+/-- Let `X,Y` be types, `M` an abelian group, `f,g : X → Y`, `n : ℕ`, and `c : (Fin (n + 2) → Y) →
+M`. Define `K_n c(x) = ∑ i : Fin (n + 1), (-1)^i • c(vertices (f ∘ x) (g ∘ x) i)`, and let `d`
+be the alternating sum over vertex deletions. For `x : Fin (n + 2) → X`, `(d K_n c)(x) +
+(K_{n+1} d c)(x) = c(g ∘ x) - c(f ∘ x)`. The two sums have signs `(-1)^(j+i)` for deletion
+followed by insertion and insertion followed by deletion. -/
 theorem homogeneous_prism_identity_succ
     {X Y : Type g} {M : Type v} [AddCommGroup M]
     (f g : X → Y) (n : ℕ) (c : (Fin (n + 2) → Y) → M)
@@ -436,19 +452,28 @@ namespace Subgroup.RightTransversal
 
 variable {G : Type g} [Group G] {H : Subgroup G}
 
-/-- The actual change factors at the successive vertices of a Schreier scan. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, and `tuple : Fin n → G`. The
+change-factor scan is `i ↦ T.changeFactor U (T.schreierRepScan t tuple i)` in `H`, for `i :
+Fin (n + 1)`. Its value `c_i` compares the representatives at the prefix product by `r_i^T =
+c_i r_i^U`. -/
 def schreierChangeScan {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) : Fin (n + 1) → H :=
   fun i => T.changeFactor U (T.schreierRepScan t tuple i)
 
-/-- Matching actual representatives commutes with every prefix-product scan. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, `tuple : Fin n → G`, and `i :
+Fin (n + 1)`. Then `T.changeRep U (T.schreierRepScan t tuple i) = U.schreierRepScan
+(T.changeRep U t) tuple i`. Thus changing the initial representative and scanning the ordered
+prefix products agrees with changing each scanned representative. -/
 theorem schreierChangeRep_scan {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin (n + 1)) :
     T.changeRep U (T.schreierRepScan t tuple i) =
       U.schreierRepScan (T.changeRep U t) tuple i :=
   T.changeRep_schreierRep U t (Fin.partialProd tuple i)
 
-/-- The actual factor tuples and change scan satisfy the commuting-square identity. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, `tuple : Fin n → G`, and `i :
+Fin n`. Put `a_i=T.schreierFactorTuple t tuple i`, `b_i=U.schreierFactorTuple (T.changeRep U
+t) tuple i`, and `c_j=T.schreierChangeScan U t tuple j`. These elements of `H` satisfy `a_i *
+c_{i+1} = c_i * b_i`. -/
 theorem schreierChangeScan_factor {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin n) :
     T.schreierFactorTuple t tuple i * T.schreierChangeScan U t tuple i.succ =
@@ -459,20 +484,30 @@ theorem schreierChangeScan_factor {n : ℕ} (T U : H.RightTransversal)
   rw [T.schreierFactor_mul_changeFactor U]
   rw [T.schreierChangeRep_scan U]
 
-/-- The actual prism tuple: first factors, inserted change factor, then second factors. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, and `tuple : Fin n → G`. For
+`i : Fin (n + 1)`, `T.schreierPrismTuple U t tuple i` inserts the change factor
+`c_i=T.schreierChangeScan U t tuple i` after the first `i` entries of the `T` factor tuple,
+then uses the remaining entries of the `U` tuple starting at `T.changeRep U t`. Its ordered
+entries are `(a₀,…,a_{i-1},c_i,b_i,…,b_{n-1})`. -/
 def schreierPrismTuple {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin (n + 1)) : Fin (n + 1) → H :=
   Fin.insertNth i (T.schreierChangeScan U t tuple i)
     (fun j => if (j : ℕ) < (i : ℕ) then T.schreierFactorTuple t tuple j
       else U.schreierFactorTuple (T.changeRep U t) tuple j)
 
-/-- The inserted coordinate is exactly the original change-of-representative factor. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, `tuple : Fin n → G`, and `i :
+Fin (n + 1)`. The inserted coordinate satisfies `T.schreierPrismTuple U t tuple i i =
+T.schreierChangeScan U t tuple i`, the change factor at the `i`th prefix-product
+representative. -/
 theorem schreierPrismTuple_inserted {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin (n + 1)) :
     T.schreierPrismTuple U t tuple i i = T.schreierChangeScan U t tuple i :=
   Fin.insertNth_apply_same _ _ _
 
-/-- Away from the inserted coordinate the prism retains the actual first or second factor. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, `tuple : Fin n → G`, `i : Fin
+(n + 1)`, and `j : Fin n`. At the coordinate `i.succAbove j`, the prism tuple equals
+`T.schreierFactorTuple t tuple j` if `j < i`, and `U.schreierFactorTuple (T.changeRep U t)
+tuple j` otherwise. This gives all coordinates other than the inserted change factor. -/
 theorem schreierPrismTuple_other {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin (n + 1)) (j : Fin n) :
     T.schreierPrismTuple U t tuple i (i.succAbove j) =
@@ -480,7 +515,10 @@ theorem schreierPrismTuple_other {n : ℕ} (T U : H.RightTransversal)
       else U.schreierFactorTuple (T.changeRep U t) tuple j :=
   Fin.insertNth_apply_succAbove _ _ _ _
 
-/-- Consecutive subgroup vertices recover the original Schreier factor tuple. -/
+/-- Let `G` be a group, `H ≤ G`, `T` a right transversal, `t ∈ T`, `tuple : Fin n → G`, and `i :
+Fin n`. Put `p_j=Fin.partialProd tuple j`. The factor tuple satisfies `(T.schreierFactor t
+p_i)⁻¹ * T.schreierFactor t p_{i+1} = T.schreierFactorTuple t tuple i`. The inverse and
+product have the displayed order in `H`. -/
 theorem schreierFactor_partialProd_difference {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin n) :
     (T.schreierFactor t (Fin.partialProd tuple i.castSucc))⁻¹ *
@@ -492,7 +530,11 @@ theorem schreierFactor_partialProd_difference {n : ℕ} (T : H.RightTransversal)
       T.schreierFactorTuple t tuple i) = _
   exact inv_mul_cancel_left _ _
 
-/-- The homogeneous vertex prism has exactly the existing inserted Schreier factor tuple. -/
+/-- Let `G` be a group, `H ≤ G`, `T,U` right transversals, `t ∈ T`, `tuple : Fin n → G`, and `i :
+Fin (n + 1)`. For prefix products `p_j`, put `a_j=T.schreierFactor t p_j` and
+`b_j=T.changeFactor U t * U.schreierFactor (T.changeRep U t) p_j`. If
+`v=SchreierPrism.vertices a b i`, then `j ↦ (v j)⁻¹ * v(j+1)` equals `T.schreierPrismTuple U t
+tuple i` as an `(n+1)`-tuple in `H`. -/
 theorem schreierPrismTuple_eq_differences {n : ℕ} (T U : H.RightTransversal)
     (t : (T : Set G)) (tuple : Fin n → G) (i : Fin (n + 1)) :
     let a : Fin (n + 1) → H := fun j => T.schreierFactor t (Fin.partialProd tuple j)
@@ -635,7 +677,9 @@ private theorem homogeneousValue_d {J : Type g} [Group J]
   intro j _
   rw [hv, map_zsmul]
 
-/-- A finite-index subgroup has finitely many actual representatives in each right transversal. -/
+/-- For a group `G`, a finite-index subgroup `H ≤ G`, and a right transversal `T`, the
+representative subtype `(T : Set G)` has a finite enumeration. This local `Fintype` instance
+supplies the finite outer sum in the Schreier prism. -/
 local instance prismTransversalFintype (T : H.RightTransversal) [H.FiniteIndex] :
     Fintype (T : Set G) := @Fintype.ofFinite (T : Set G) T.2.finite_right
 
@@ -734,7 +778,11 @@ private theorem homogeneousPrism_mul (rho : Representation R G M)
       (T.schreierRepEquiv h).sum_comp
         (fun t : (T : Set G) => rho h (rho (t : G)⁻¹ (prismAt rho T U n f t x)))
 
-/-- The actual arbitrary-degree finite signed prism cochain, with independent universes. -/
+/-- Let `R : Type r` be a ring, `G : Type g` a group, `M : Type v` an abelian group with an
+`R`-module structure, and `ρ : Representation R G M`. For `H ≤ G` finite index, right
+transversals `T,U`, and `n : ℕ`, `schreierPrism ρ T U n` is the linear map `C^{n+1}(H,M) →ₗ[R]
+C^n(G,M)` with value `K_n f(tuple) = ∑ t∈T, ρ(t⁻¹)(∑ i : Fin (n+1), (-1)^i •
+f(T.schreierPrismTuple U t tuple i))`. The universes `r,g,v` are independent. -/
 def schreierPrism (rho : Representation R G M) (T U : H.RightTransversal)
     [H.FiniteIndex] (n : ℕ) : ((Fin (n + 1) → H) → M) →ₗ[R] ((Fin n → G) → M) where
   toFun f tuple := ∑ t : (T : Set G), rho (t : G)⁻¹
@@ -751,7 +799,11 @@ def schreierPrism (rho : Representation R G M) (T U : H.RightTransversal)
     ext t
     rw [← Finset.smul_sum, map_smul]
 
-/-- Evaluation of the prism is the literal finite signed sum over actual factor tuples. -/
+/-- Let `R` be a ring, `G` a group, `M` an abelian `R`-module, and `ρ : Representation R G M`,
+with independent scalar, group, and coefficient universes. For `H ≤ G` finite index, right
+transversals `T,U`, `n : ℕ`, `f : (Fin (n+1) → H) → M`, and `tuple : Fin n → G`,
+`schreierPrism ρ T U n f tuple = ∑ t∈T, ρ(t⁻¹)(∑ i : Fin (n+1), (-1)^i •
+f(T.schreierPrismTuple U t tuple i))`. -/
 theorem schreierPrism_apply (rho : Representation R G M) (T U : H.RightTransversal)
     [H.FiniteIndex] (n : ℕ) (f : (Fin (n + 1) → H) → M) (tuple : Fin n → G) :
     schreierPrism rho T U n f tuple = ∑ t : (T : Set G), rho (t : G)⁻¹
@@ -895,7 +947,13 @@ private theorem homogeneousPrism_d (rho : Representation R G M)
       (fun z => z - homogeneousTrace rho T (n + 1) f x)
       (homogeneousTrace_changeRep rho T U (n + 1) f x)
 
-/-- The actual finite Schreier prism satisfies delta K plus K delta in every positive degree. -/
+/-- Let `R` be a ring, `G` a group, `M` an abelian `R`-module, and `ρ : Representation R G M`, in
+independent universes. For `H ≤ G` finite index, right transversals `T,U`, and `n : ℕ`, put
+`K_j=schreierPrism ρ T U j`. For every `f ∈ C^{n+1}(H,M)`, `d_G(K_n f) + K_{n+1}(d_H f) =
+Tr_U^{n+1} f - Tr_T^{n+1} f` as cochains on `G`. Here `Tr_T^m f(tuple)=∑ t∈T,
+ρ(t⁻¹)f(T.schreierFactorTuple t tuple)`, and the degree-`m` differential is `d
+c(tuple)=ρ(tuple 0)c(Fin.tail tuple)+∑ j : Fin (m+1), (-1)^(j+1) • c(Fin.contractNth j (· * ·)
+tuple)`, using the restricted action on `H`. -/
 theorem schreierPrism_identity_succ (rho : Representation R G M)
     (T U : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
     (f : (Fin (n + 1) → H) → M) (tuple : Fin (n + 1) → G) :
@@ -917,7 +975,11 @@ theorem schreierPrism_identity_succ (rho : Representation R G M)
     homogeneousTrace_partialProd, homogeneousTrace_partialProd] at h
   exact h
 
-/-- The actual zeroth Schreier prism accounts for the change of trace on every zero cochain. -/
+/-- Let `R` be a ring, `G` a group, `M` an abelian `R`-module, and `ρ : Representation R G M`, in
+independent universes. For `H ≤ G` finite index, right transversals `T,U`, and a zero-cochain
+`f : (Fin 0 → H) → M`, put `m=f(empty)`. The identity is `schreierPrism ρ T U 0 (fun y => ρ(y
+0)m - m)(empty) = ∑ u∈U, ρ(u⁻¹)m - ∑ t∈T, ρ(t⁻¹)m`. Thus `K₀ d_H f = Tr_U^0 f - Tr_T^0 f` with
+the same signed prism and inverse-representative weights. -/
 theorem schreierPrism_identity_zero (rho : Representation R G M)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (f : (Fin 0 → H) → M) (tuple : Fin 0 → G) :

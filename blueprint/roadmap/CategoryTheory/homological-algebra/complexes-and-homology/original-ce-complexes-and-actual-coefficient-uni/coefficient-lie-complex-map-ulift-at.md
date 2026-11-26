@@ -1,4 +1,6 @@
-# Coefficient Lie Complex Map ULift At
+# The lifted joint CE map at a common carrier height
 
-The Chevalley–Eilenberg carrier-universe joint map, carried through the larger working height
-and flattening. Gamma contains both Lie and coefficient universes.
+The lifted joint CE map at a common carrier height.
+
+For a Lie homomorphism `f` and an equivariant coefficient map `h`, lift the joint CE chain map
+and flatten the source and target into the universe joining both Lie and coefficient carriers.

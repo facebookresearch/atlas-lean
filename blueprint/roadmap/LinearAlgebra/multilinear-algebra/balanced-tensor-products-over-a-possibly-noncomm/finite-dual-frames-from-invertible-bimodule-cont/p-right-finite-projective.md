@@ -1,3 +1,8 @@
-# P right finite projective
+# Finite projectivity of the first bimodule over the opposite of ring S
 
-P is finite and projective for its original right S module.
+Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+The right S-module P is finite and projective. Its split finite
+free coordinates are indexed by the inverse-unit support of U.

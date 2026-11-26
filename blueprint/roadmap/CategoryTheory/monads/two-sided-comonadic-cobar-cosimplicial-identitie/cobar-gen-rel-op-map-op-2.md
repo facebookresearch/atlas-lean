@@ -1,3 +1,6 @@
-# Cobar Gen Rel Op map σ op
+# The generated opposite cobar map of a codegeneracy generator
 
-Generator codegeneracies are `op` of the public codegeneracies.
+The generated opposite cobar map of a codegeneracy generator.
+
+The opposite codegeneracy generator maps to the opposite of the corresponding cobar
+codegeneracy.

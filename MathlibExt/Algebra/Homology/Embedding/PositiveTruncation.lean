@@ -22,16 +22,16 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import MathlibExt.Algebra.Homology.Embedding.PositiveStupidTruncInclusion
 
 /-!
-# The actual smart-to-stupid positive truncation comparison
+# Good and stupid positive truncations
 
-The native smart truncation maps to the native restriction and hence to
-its extension, the stupid truncation. Its retained components are the
-original smart-truncation inclusions. For nonnegative chains with zero
-boundary from degree one, the comparison is an isomorphism. Its inverse
-then gives an actual inclusion of the whole positive stupid truncation.
+For an incoming-closed shape embedding e, good truncation includes cycles
+at an outgoing boundary while stupid truncation keeps the entire term.
+Their canonical comparison agrees with the original inclusions in each
+retained degree.
 
-The original degree-zero object is unrestricted. Object and morphism
-universes are independent, and no tensor structure is needed.
+For nonnegative chains and e(n)=n+1, vanishing of d_1 makes the boundary
+cycles equal to K_1. The good positive truncation is then canonically
+isomorphic to the stupid positive truncation.
 -/
 
 @[expose] public section
@@ -55,7 +55,14 @@ variable [HasZeroMorphisms C]
 variable (K : HomologicalComplex C c') (e : c.Embedding c') [e.IsTruncLE]
   [∀ i', K.HasHomology i']
 
-/-- At a boundary the native smart-to-restriction map is the actual cycle inclusion. -/
+/--
+Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
+preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
+κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. For
+e(i)=i' with i an outgoing boundary of the image, the good term is the cycles Z_{i'}(K). Its
+comparison component is θ_Z.hom ≫ K.iCycles i' ≫ θ_R.inv, where θ_Z identifies the good term
+with cycles and θ_R identifies the restricted term with K_{i'}.
+-/
 @[reassoc]
 theorem truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv
     {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : e.BoundaryLE i) :
@@ -89,7 +96,13 @@ theorem truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv
   simpa [truncLE'ToRestriction, unopFunctor, truncLE'XIsoCycles,
     truncLE', restriction, restrictionXIso, Category.assoc] using! h
 
-/-- Away from a boundary the actual map is the original coordinate isomorphism. -/
+/--
+Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
+preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
+κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. If
+e(i)=i' and i is not an outgoing boundary, both terms identify with K_{i'}. The component is
+θ_G.hom ≫ θ_R.inv, using the good-term and restriction coordinate isomorphisms.
+-/
 @[reassoc]
 theorem truncLE'ToRestriction_f_eq_iso_hom_iso_inv
     {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : ¬ e.BoundaryLE i) :
@@ -131,11 +144,27 @@ private theorem truncLEIso_hom_f_comp_extendXIso_hom (i : ι) :
     ((K.op.truncGE' e.op).extendXIso e.op rfl).inv
   exact extendXIso_hom_op_comp_extendOpIso_inv (K.truncLE' e) e i
 
-/-- The original smart-to-restriction map, extended along the same native embedding. -/
+/--
+Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
+preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
+κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. Assume
+also that C has a zero object, so these complexes can be extended by zero to shape c'.
+Extending κ along e, preceded by the canonical realization of the good truncation, gives
+K.truncLE e→K.stupidTrunc e. It compares the boundary cycles with the entire boundary term and
+is the identity comparison at other retained degrees.
+-/
 def truncLEToStupid : K.truncLE e ⟶ K.stupidTrunc e :=
   (K.truncLEIso e).hom ≫ extendMap (K.truncLE'ToRestriction e) e
 
-/-- The retained component of the actual comparison is the original smart inclusion. -/
+/--
+Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
+preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
+κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. Assume
+also that C has a zero object, so these complexes can be extended by zero to shape c'. At a
+retained degree i'=e(i), the comparison component followed by the stupid coordinate
+isomorphism equals the canonical good-truncation inclusion into K: (truncLEToStupid e).f i' ≫
+θ_S.hom = (K.ιTruncLE e).f i'.
+-/
 @[reassoc]
 theorem truncLEToStupid_f_comp_stupidTruncXIso_hom
     {i : ι} {i' : ι'} (hi' : e.f i = i') :
@@ -175,7 +204,11 @@ theorem truncLEToStupid_f_comp_stupidTruncXIso_hom
 
 variable {K} {L : HomologicalComplex C c'} [∀ i', L.HasHomology i']
 
-/-- The actual comparison commutes with every original chain map. -/
+/--
+Let C have zero morphisms and a zero object, let e:c→c' be incoming-closed and
+relation-reflecting, and let φ:K→L be a morphism of c'-complexes with homology in every
+degree. The comparisons commute with φ: truncLEMap(φ,e) ≫ κ_L = κ_K ≫ stupidTruncMap(φ,e).
+-/
 @[reassoc]
 theorem truncLEToStupid_naturality (φ : K ⟶ L) :
     truncLEMap φ e ≫ L.truncLEToStupid e =
@@ -216,7 +249,12 @@ private theorem positive_not_boundary_succ (i : ℕ) : ¬ e₊.BoundaryLE (i + 1
 
 variable (K : ChainComplex C ℕ)
 
-/-- Zero original boundary from degree one makes the actual smart-to-restriction map invertible. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C, assume K.d 1 0 = 0, and let
+e(n)=n+1 select the positive degrees. The comparison K.truncLE' e→K.restriction e is an
+isomorphism. At its first degree the good term is Z₁(K)=K₁ because d₁=0, and all higher terms
+are unchanged.
+-/
 theorem isIso_truncLE'ToRestriction_positive (hK : K.d 1 0 = 0) :
     IsIso (K.truncLE'ToRestriction e₊) := by
   suffices ∀ i : ℕ, IsIso ((K.truncLE'ToRestriction e₊).f i) by
@@ -234,7 +272,11 @@ theorem isIso_truncLE'ToRestriction_positive (hK : K.d 1 0 = 0) :
   | succ i =>
       exact K.isIso_truncLE'ToRestriction e₊ (i + 1) (positive_not_boundary_succ i)
 
-/-- The actual extended comparison is invertible under the original endpoint-zero law. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C, assume K.d 1 0 = 0, and let
+e(n)=n+1 select the positive degrees. The canonical comparison K.truncLE e→K.stupidTrunc e is
+an isomorphism, including the zero term at original degree zero.
+-/
 theorem isIso_truncLEToStupid_positive (hK : K.d 1 0 = 0) :
     IsIso (K.truncLEToStupid e₊) := by
   let hRestriction : IsIso (K.truncLE'ToRestriction e₊) :=
@@ -244,17 +286,30 @@ theorem isIso_truncLEToStupid_positive (hK : K.d 1 0 = 0) :
   dsimp only [truncLEToStupid]
   exact IsIso.comp_isIso' (K.truncLEIso e₊).isIso_hom hExtend
 
-/-- The canonical isomorphism obtained from the actual comparison and the endpoint-zero law. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C, assume K.d 1 0 = 0, and let
+e(n)=n+1 select the positive degrees. The canonical good-to-stupid comparison defines an
+isomorphism K.truncLE e ≅ K.stupidTrunc e, with the original comparison as its forward map.
+-/
 def positiveTruncLEToStupidIso (hK : K.d 1 0 = 0) : K.truncLE e₊ ≅ K.stupidTrunc e₊ :=
   letI := K.isIso_truncLEToStupid_positive hK
   asIso (K.truncLEToStupid e₊)
 
-/-- Its forward map is the original comparison, without any caller-supplied isomorphism. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C, assume K.d 1 0 = 0, and let
+e(n)=n+1 select the positive degrees. The forward morphism of the canonical isomorphism
+K.truncLE e≅K.stupidTrunc e is exactly K.truncLEToStupid e.
+-/
 @[simp]
 theorem positiveTruncLEToStupidIso_hom (hK : K.d 1 0 = 0) :
     (K.positiveTruncLEToStupidIso hK).hom = K.truncLEToStupid e₊ := rfl
 
-/-- Under abelian homology assumptions, the direct inclusion agrees with the earned smart inverse. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C, assume K.d 1 0 = 0, and let
+e(n)=n+1 select the positive degrees. The direct positive-coordinate inclusion into K equals
+the inverse good-to-stupid comparison followed by the good inclusion: ι₊ =
+(positiveTruncLEToStupidIso).inv ≫ K.ιTruncLE e.
+-/
 theorem positiveStupidTruncInclusion_eq_inverse_comp (hK : K.d 1 0 = 0) :
     K.positiveStupidTruncInclusion hK =
       (K.positiveTruncLEToStupidIso hK).inv ≫ K.ιTruncLE e₊ := by
@@ -279,7 +334,11 @@ theorem positiveStupidTruncInclusion_eq_inverse_comp (hK : K.d 1 0 = 0) :
     exact K.truncLEToStupid_f_comp_stupidTruncXIso_hom e₊ hi
   · exact (K.isZero_stupidTrunc_X e₊ i' (fun i hi => hi' ⟨i, hi⟩)).eq_of_src _ _
 
-/-- The comparison followed by the direct strict inclusion is the original smart inclusion. -/
+/--
+Let K be a nonnegative chain complex in an abelian category C, assume K.d 1 0 = 0, and let
+e(n)=n+1 select the positive degrees. The good-to-stupid comparison followed by the direct
+positive inclusion equals the good inclusion into K: K.truncLEToStupid e ≫ ι₊ = K.ιTruncLE e.
+-/
 @[reassoc]
 theorem truncLEToStupid_comp_positiveStupidTruncInclusion (hK : K.d 1 0 = 0) :
     K.truncLEToStupid e₊ ≫ K.positiveStupidTruncInclusion hK = K.ιTruncLE e₊ := by

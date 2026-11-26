@@ -1,3 +1,6 @@
-# Is Artinian cycles of is Artinian degree
+# Artinian cycles in an arbitrary complex degree
 
-Degree-i cycles are Artinian whenever the degree-i module is Artinian.
+Artinian cycles in an arbitrary complex degree.
+
+If K_i is Artinian over R, then the cycles of the module complex K in degree i are Artinian,
+for any complex shape.

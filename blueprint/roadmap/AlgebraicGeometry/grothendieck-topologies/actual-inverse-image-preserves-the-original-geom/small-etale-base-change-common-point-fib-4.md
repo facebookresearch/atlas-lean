@@ -1,4 +1,6 @@
-# Small Etale Base Change Common Point Fiber Iso comp
+# Lifted base change fiber comparisons respect composition
 
-The two actual base-change fiber comparisons agree with the same original
-image-point composition and the preceding BaseComp comparison.
+Lifted base change fiber comparisons respect composition.
+
+The two successive fiber comparisons, followed by the image-associativity coordinate, equal
+the composite fiber comparison after base-change composition and the functor associator.

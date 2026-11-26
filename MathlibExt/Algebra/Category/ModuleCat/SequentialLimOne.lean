@@ -19,11 +19,13 @@ public import Mathlib.Algebra.Category.ModuleCat.EpiMono
 public import Mathlib.CategoryTheory.Limits.Shapes.ConcreteCategory
 
 /-!
-# Sequential lim-one vanishing for towers of modules
+# Sequential lim-one vanishing for surjective module towers
 
-If every transition in an inverse tower of modules is an epimorphism, the
-standard `1 - shift` difference is an epimorphism. Consequently its concrete
-sequential `lim¹`, defined as the cokernel of that difference, is zero.
+Let `R : Type u` be a ring and `A : ℕᵒᵖ ⥤ ModuleCat.{w} R` an inverse sequence, with successor
+maps `τ_n : A_{n+1} → A_n`. On the product of the terms, the sequential difference is `D(a)_n
+= a_n - τ_n(a_{n+1})`. If every `τ_n` is an epimorphism, then `D` is an epimorphism and its
+cokernel, the sequential `lim¹ A`, is a zero object. The ring and module-carrier universes are
+independent.
 -/
 
 @[expose] public section
@@ -41,8 +43,10 @@ universe w u
 
 variable {R : Type u} [Ring R]
 
-/-- The standard sequential difference is epi when every transition of the
-inverse tower is epi. -/
+/-- Let `R : Type u` be a ring and `A : ℕᵒᵖ ⥤ ModuleCat.{w} R`. Assume every successor transition
+`τ_n=A.map (homOfLE (Nat.le_succ n)).op : A_{n+1} → A_n` is epi. Then `sequentialDifference A
+: ∏ A_n → ∏ A_n`, with coordinate `a_n - τ_n(a_{n+1})`, is epi. The carrier universe `w` is
+independent of `u`. -/
 theorem epi_sequentialDifference_of_transition_epi
     (A : ℕᵒᵖ ⥤ ModuleCat.{w} R)
     [∀ n : ℕ, Epi (A.map (homOfLE (Nat.le_succ n)).op)] :
@@ -57,8 +61,10 @@ theorem epi_sequentialDifference_of_transition_epi
     AddCommGrpCat.epi_sequentialDifference_of_isMittagLeffler _ hA
   exact epi_sequentialDifference_of_epi_functor F A
 
-/-- A tower of modules with epimorphic transitions has zero concrete
-sequential `lim¹`. -/
+/-- Let `R : Type u` be a ring and `A : ℕᵒᵖ ⥤ ModuleCat.{w} R` an inverse sequence whose successor
+transitions are epimorphisms. Then `IsZero (sequentialLimOne A)`. This object is the cokernel
+of the product difference `(a_n)_n ↦ (a_n - τ_n(a_{n+1}))_n`, where `τ_n : A_{n+1} → A_n` is
+the successor map. -/
 theorem isZero_sequentialLimOne_of_transition_epi
     (A : ℕᵒᵖ ⥤ ModuleCat.{w} R)
     [∀ n : ℕ, Epi (A.map (homOfLE (Nat.le_succ n)).op)] :

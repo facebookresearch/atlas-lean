@@ -1,3 +1,5 @@
-# Unitization Map scalar Projector
+# Commutation of unitization homomorphisms with scalar projection
 
-The scalar projector commutes with the original lifted nonunital map.
+Commutation of unitization homomorphisms with scalar projection.
+
+The extension of `f : A → B` commutes with the scalar algebra projectors of `A⁺` and `B⁺`.

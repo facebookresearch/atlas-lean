@@ -1,3 +1,6 @@
-# Field Coind Invariant Complex Functor
+# Functor of invariant coinduction cochains
 
-The actual invariant alternating complex of the fixed coinduction monad.
+Functor of invariant coinduction cochains.
+
+Form the coinduction monad coresolution, apply invariants cosimplicially, and take the
+alternating coface complex.

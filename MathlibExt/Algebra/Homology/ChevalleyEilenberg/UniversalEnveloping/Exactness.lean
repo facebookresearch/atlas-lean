@@ -12,15 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping.FilteredKoszulComparison
 
 /-!
-# Positive exactness of the free enveloping Chevalley–Eilenberg complex
+# Positive exactness from the total-degree enveloping filtration
 
-Given a basis of the Lie module, the leading coefficient of a filtered cycle
-is a polynomial-variable Koszul cycle. Lifting its homogeneous boundary
-leaves a cycle in the previous total-degree stage. Induction constructs a
-boundary of the original positive-degree cycle.
+Let L have a basis indexed by a linearly ordered type over a commutative ring R. Filter C_n =
+⋀[R]^n L ⊗[R] U(L) by the sum of exterior degree n and enveloping coefficient degree. The
+leading part of a positive-degree cycle is a polynomial-variable Koszul cycle in the
+corresponding basis coordinates.
 
-The freeness formulation uses `Module.Free R L`; the basis need not be finite,
-and the ground ring is any commutative ring.
+A lifted Koszul boundary corrects the cycle inside the same total stage, leaving its remainder
+in stage p−1. Induction on the finite total stage produces a boundary of every positive-degree
+cycle. The resulting freeness formulation assumes Module.Free R L and permits infinite bases.
 -/
 
 @[expose] public section
@@ -45,8 +46,14 @@ local notation "P" => MvPolynomial I R
 local notation:max "C" n:max => ((⋀[R]^n L) ⊗[R] regularCoefficients R L)
 local notation:max "F" n:max => (Set.powersetCard I n →₀ P)
 
-/-- An original filtered positive-degree cycle has an original boundary
-correction whose remainder lies one total-degree stage lower. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, U its universal enveloping algebra, ι its
+Lie-generator map and ε : U →ₐ[R] R its augmentation. Give U the coefficient Lie action ⁅x,a⁆
+= −a*ι(x), and put C_n = ⋀[R]^n L ⊗[R] U. Let I be a linearly ordered index type and b :
+Module.Basis I R L. Let F_p C_n be the R-submodule spanned by decomposable words w ⊗ a with a
+in UEA degree q and q + n ≤ p. For p, k : ℕ and z : C_(k+1) with z ∈ F_p C_(k+1) and
+coefficientDifferential k z = 0, there exists w : C_(k+2) in F_p C_(k+2) such that z −
+coefficientDifferential (k + 1) w lies in F_(p−1) C_(k+1). The subtraction p−1 is
+natural-number subtraction. -/
 theorem enveloping_cycle_correction (b : Module.Basis I R L) (p k : ℕ)
     (z : C (k + 1)) (hz : z ∈ envelopingFiltration R L p (k + 1))
     (hcycle : coefficientDifferential R L (regularCoefficients R L) k z = 0) :
@@ -181,16 +188,23 @@ private theorem enveloping_exact_cycles_at_stage (b : Module.Basis I R L) (k p :
       refine ⟨w₀ + w, ?_⟩
       rw [map_add, hw₀, sub_add_cancel]
 
-/-- Every positive-degree regular-coefficient CE cycle has a boundary when the underlying Lie
-module has an arbitrary ground-ring basis. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, U its universal enveloping algebra, ι its
+Lie-generator map and ε : U →ₐ[R] R its augmentation. Give U the coefficient Lie action ⁅x,a⁆
+= −a*ι(x), and put C_n = ⋀[R]^n L ⊗[R] U. Let I be a linearly ordered index type and b :
+Module.Basis I R L. For k : ℕ and z : C_(k+1) with coefficientDifferential k z = 0, there
+exists w : C_(k+2) satisfying coefficientDifferential (k + 1) w = z. The basis index type I
+need not be finite. -/
 theorem enveloping_exact_cycles (b : Module.Basis I R L) (k : ℕ) (z : C (k + 1))
     (hcycle : coefficientDifferential R L (regularCoefficients R L) k z = 0) :
     ∃ w : C (k + 2), coefficientDifferential R L (regularCoefficients R L) (k + 1) w = z := by
   obtain ⟨p, hp⟩ := envelopingFiltration_exhaustive R L (k + 1) z
   exact enveloping_exact_cycles_at_stage R L b k p z hp hcycle
 
-/-- Positive exactness retains the original free-underlying-module hypothesis,
-without a finite basis or characteristic restriction. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, U its universal enveloping algebra, ι its
+Lie-generator map and ε : U →ₐ[R] R its augmentation. Give U the coefficient Lie action ⁅x,a⁆
+= −a*ι(x), and put C_n = ⋀[R]^n L ⊗[R] U. Assume Module.Free R L. For k : ℕ and z : C_(k+1)
+killed by coefficientDifferential k, there exists w : C_(k+2) with coefficientDifferential (k
++ 1) w = z. -/
 theorem enveloping_exact_cycles_of_free [Module.Free R L] (k : ℕ) (z : C (k + 1))
     (hcycle : coefficientDifferential R L (regularCoefficients R L) k z = 0) :
     ∃ w : C (k + 2), coefficientDifferential R L (regularCoefficients R L) (k + 1) w = z := by

@@ -15,8 +15,15 @@ module
 public import MathlibExt.Algebra.Homology.SpectralObject.AbutmentFiltration
 
 /-!
-# Compatibility import for AbutmentFiltration
+# Filtration of a spectral-object abutment
 
-The generic spectral-object definitions are owned by
-`MathlibExt.Algebra.Homology.SpectralObject.AbutmentFiltration`.
+Let Y be a spectral object in an abelian category D, indexed by a preorder with least and
+greatest elements. In integer degree n write A = H_Yⁿ(⊥,⊤). The restrictions r_i : A →
+H_Yⁿ(i,⊤) define an increasing kernel filtration F_i = Ker(r_i), equal to Im(H_Yⁿ(⊥,i) → A).
+
+For i₁ ≤ i₂ the endpoint window E_Yⁿ(⊥ ≤ i₁ ≤ i₂ ≤ ⊤) is canonically the associated graded
+F_{i₂}/F_{i₁}. The restriction, image, kernel and quotient comparisons commute with
+spectral-object maps. These definitions are available through
+MathlibExt.Algebra.Homology.SpectralObject.AbutmentFiltration, with independent object,
+morphism and indexing universes.
 -/

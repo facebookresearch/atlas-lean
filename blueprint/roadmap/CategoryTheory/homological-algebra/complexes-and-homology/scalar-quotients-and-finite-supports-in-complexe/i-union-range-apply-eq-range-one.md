@@ -1,4 +1,5 @@
-# Scalar quotients and finite supports in complexes
+# The union of represented vector ranges is the unit-image range
 
-The represented vector ranges of a possibly nonunital operator homomorphism
-have union equal to the actual range of the image of the source unit.
+The union of represented vector ranges is the unit-image range.
+
+For a possibly nonunital operator homomorphism, ⋃_a range(ρ(a))=range(ρ(1)).

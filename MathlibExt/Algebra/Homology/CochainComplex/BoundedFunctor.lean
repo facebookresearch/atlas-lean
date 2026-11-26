@@ -13,12 +13,17 @@ public import MathlibExt.Algebra.Homology.CochainComplex.Bounded
 public import Mathlib.CategoryTheory.ObjectProperty.Equivalence
 
 /-!
-# Functor comparisons on bounded cochains
+# Functors and natural comparisons on bounded cochain complexes
 
-Degreewise prolongations lift to bounded cochains. Natural transformations
-and isomorphisms retain their components. Equivalences restrict to these
-full subcategories with the degreewise unit and counit and the same support
-windows.
+Let C,D be categories with zero morphisms and F : C → D preserve zero morphisms. Its
+degreewise cochain prolongation restricts to bounded complexes. Natural transformations and
+isomorphisms between such functors restrict with the same component maps in each integer
+degree.
+
+The bounded lifts have the canonical identity and composition isomorphisms. A fully faithful
+zero-preserving functor reflects boundedness, and an equivalence whose forward functor
+preserves zero morphisms induces an equivalence of bounded cochain categories with degreewise
+unit and counit.
 -/
 
 @[expose] public section
@@ -41,16 +46,22 @@ namespace Functor
 
 variable (F : C ⥤ D) [F.PreservesZeroMorphisms]
 
-/-- The original bounded differential is the literal original functor image. -/
+/-- Let C,D have zero morphisms and F : C → D preserve them. For K ∈ Bounded C and i,j ∈ ℤ, the
+differential of the bounded image F(K) from i to j equals F(d_K^{i,j}). -/
 theorem mapCochainComplexBounded_obj_d (K : CochainComplex.Bounded C) (i j : ℤ) :
     ((F.mapCochainComplexBounded).obj K).obj.d i j = F.map (K.obj.d i j) := rfl
 
-/-- The whole original bounded inclusion square is the canonical full-subcategory lift square. -/
+/-- For a zero-preserving functor F : C → D, there is a natural isomorphism F_B ⋙ ι_D ≅ ι_C ⋙
+F_cochain. Here F_B is its bounded lift, ι includes bounded complexes into integer cochains,
+and F_cochain is degreewise prolongation. Both routes have the same underlying cochain objects
+and maps. -/
 def mapCochainComplexBoundedCompιIso :
     F.mapCochainComplexBounded ⋙ CochainComplex.Bounded.ι D ≅
       CochainComplex.Bounded.ι C ⋙ F.mapHomologicalComplex (.up ℤ) := Iso.refl _
 
-/-- A fully faithful original functor reflects the same original finite support windows. -/
+/-- Let C,D have zero morphisms and F : C → D be full, faithful, and zero-preserving. An integer
+cochain complex F(K), obtained by applying F degreewise, is bounded if and only if K is
+bounded. Zero terms are preserved and reflected, so the same integer support windows apply. -/
 theorem bounded_mapHomologicalComplex_obj_iff [F.Full] [F.Faithful]
     (K : CochainComplex C ℤ) :
     CochainComplex.bounded D ((F.mapHomologicalComplex (.up ℤ)).obj K) ↔
@@ -67,7 +78,9 @@ namespace NatTrans
 variable {F G H : C ⥤ D} [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms]
   [H.PreservesZeroMorphisms]
 
-/-- Restrict the canonical degreewise natural transformation to the original bounded cochains. -/
+/-- Let C,D have zero morphisms, F,G : C → D preserve them, and τ : F → G be a natural
+transformation. Its degreewise cochain transformation restricts to τ_B : F_B → G_B on bounded
+complexes. At K its component has jth map τ_{K^j}. -/
 def mapCochainComplexBounded (τ : F ⟶ G) :
     F.mapCochainComplexBounded ⟶ G.mapCochainComplexBounded where
   app K := ObjectProperty.homMk ((τ.mapHomologicalComplex (.up ℤ)).app K.obj)
@@ -75,11 +88,13 @@ def mapCochainComplexBounded (τ : F ⟶ G) :
     apply ObjectProperty.hom_ext
     exact (τ.mapHomologicalComplex (.up ℤ)).naturality f.hom
 
-/-- The actual bounded comparison retains each given original component. -/
+/-- For zero-preserving functors F,G : C → D, a natural transformation τ : F → G, K ∈ Bounded C,
+and j ∈ ℤ, the jth component of τ_B(K) equals τ_{K^j}. -/
 theorem mapCochainComplexBounded_app_f (τ : F ⟶ G) (K : CochainComplex.Bounded C) (j : ℤ) :
     ((τ.mapCochainComplexBounded).app K).hom.f j = τ.app (K.obj.X j) := rfl
 
-/-- Identity comparisons remain the whole original identity transformation. -/
+/-- Let C,D have zero morphisms and F : C → D preserve them. Restricting the identity
+transformation of F to bounded cochains gives the identity of its bounded lift F_B. -/
 @[simp]
 theorem mapCochainComplexBounded_id :
     mapCochainComplexBounded (𝟙 F) = 𝟙 F.mapCochainComplexBounded := by
@@ -88,7 +103,9 @@ theorem mapCochainComplexBounded_id :
   apply ObjectProperty.hom_ext
   exact congrArg (fun τ => τ.app K.obj) (mapHomologicalComplex_id (.up ℤ) F)
 
-/-- Composition uses the same original degreewise transformations. -/
+/-- For zero-preserving functors F,G,H : C → D and natural transformations τ : F → G and σ : G →
+H, the bounded restrictions satisfy (τ≫σ)_B = τ_B≫σ_B. The composition is evaluated in every
+integer degree of the same bounded complex. -/
 theorem mapCochainComplexBounded_comp (τ : F ⟶ G) (σ : G ⟶ H) :
     (τ ≫ σ).mapCochainComplexBounded = τ.mapCochainComplexBounded ≫ σ.mapCochainComplexBounded := by
   apply NatTrans.ext
@@ -102,7 +119,9 @@ namespace NatIso
 
 variable {F G : C ⥤ D} [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms]
 
-/-- An original natural isomorphism restricts with its original inverse components. -/
+/-- Let C,D have zero morphisms, F,G : C → D preserve them, and e : F ≅ G. The degreewise
+restrictions of e.hom and e.inv give a natural isomorphism F_B ≅ G_B on bounded integer
+cochains. -/
 def mapCochainComplexBounded (e : F ≅ G) :
     F.mapCochainComplexBounded ≅ G.mapCochainComplexBounded where
   hom := e.hom.mapCochainComplexBounded
@@ -114,11 +133,13 @@ def mapCochainComplexBounded (e : F ≅ G) :
     rw [← NatTrans.mapCochainComplexBounded_comp, e.inv_hom_id,
       NatTrans.mapCochainComplexBounded_id]
 
-/-- The whole original bounded isomorphism component is the canonical degreewise component. -/
+/-- For zero-preserving functors F,G : C → D, e : F ≅ G, K ∈ Bounded C, and j ∈ ℤ, the jth forward
+component of the bounded comparison is e.hom_{K^j}. -/
 theorem mapCochainComplexBounded_hom_app_f (e : F ≅ G) (K : CochainComplex.Bounded C) (j : ℤ) :
     ((NatIso.mapCochainComplexBounded e).hom.app K).hom.f j = e.hom.app (K.obj.X j) := rfl
 
-/-- The actual inverse retains the original inverse component in every integer degree. -/
+/-- Let F,G : C → D preserve zero morphisms, e : F ≅ G, K ∈ Bounded C, and j ∈ ℤ. The jth inverse
+component of the bounded natural isomorphism equals e.inv_{K^j}. -/
 theorem mapCochainComplexBounded_inv_app_f (e : F ≅ G) (K : CochainComplex.Bounded C) (j : ℤ) :
     ((NatIso.mapCochainComplexBounded e).inv.app K).hom.f j = e.inv.app (K.obj.X j) := rfl
 
@@ -126,7 +147,10 @@ end NatIso
 
 namespace Functor
 
-/-- Composition of the actual bounded lifts retains the original prolongation comparison. -/
+/-- Let C,D,E have zero morphisms, F : C → D and G : D → E preserve them. There is a natural
+isomorphism F_B ⋙ G_B ≅ (F⋙G)_B. It is the bounded restriction of the degreewise cochain
+composition comparison, oriented from successive prolongation to prolongation of the
+composite. -/
 def mapCochainComplexBoundedCompIso (F : C ⥤ D) (G : D ⥤ E)
     [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms] :
     F.mapCochainComplexBounded ⋙ G.mapCochainComplexBounded ≅
@@ -137,7 +161,9 @@ def mapCochainComplexBoundedCompIso (F : C ⥤ D) (G : D ⥤ E)
       apply ObjectProperty.hom_ext
       exact (mapHomologicalComplexCompIso (Iso.refl (F ⋙ G)) (.up ℤ)).hom.naturality f.hom)
 
-/-- The identity bounded lift uses the canonical original degreewise identity comparison. -/
+/-- For a category C with zero morphisms, the bounded lift of Id_C is naturally isomorphic to
+Id_{Bounded C}. The comparison is the restriction of the degreewise identity cochain
+isomorphism. -/
 def mapCochainComplexBoundedIdIso :
     (𝟭 C).mapCochainComplexBounded ≅ 𝟭 (CochainComplex.Bounded C) :=
   NatIso.ofComponents (fun K => ObjectProperty.isoMk _
@@ -152,28 +178,39 @@ namespace Equivalence
 
 variable (e : C ≌ D) [e.functor.PreservesZeroMorphisms]
 
-/-- Restrict the canonical degreewise equivalence to the original finite-support cochains. -/
+/-- Let C,D have zero morphisms and e : C ≌ D be an equivalence whose forward functor preserves
+zero morphisms. Degreewise prolongation induces Bounded C ≌ Bounded D, because the forward
+functor preserves and reflects finite term support. Its inverse is the bounded lift of
+e.inverse. -/
 def mapCochainComplexBounded : CochainComplex.Bounded C ≌ CochainComplex.Bounded D :=
   (e.mapHomologicalComplex (.up ℤ)).congrFullSubcategory (by
     ext K
     exact e.functor.bounded_mapHomologicalComplex_obj_iff K)
 
-/-- The forward equivalence is literally the original bounded functor lift. -/
+/-- For an equivalence e : C ≌ D with zero-preserving forward functor, the forward functor of its
+induced bounded-cochain equivalence equals e.functor_B. In degree j it applies e.functor to
+the term and component map. -/
 theorem mapCochainComplexBounded_functor :
     e.mapCochainComplexBounded.functor = e.functor.mapCochainComplexBounded := rfl
 
-/-- Its inverse is literally the original bounded inverse-functor lift. -/
+/-- Let e : C ≌ D have zero-preserving forward functor between categories with zero morphisms. The
+inverse of its bounded-cochain equivalence is the bounded lift of e.inverse, acting degreewise
+on D-cochains. -/
 theorem mapCochainComplexBounded_inverse :
     e.mapCochainComplexBounded.inverse = e.inverse.mapCochainComplexBounded := rfl
 
-/-- The original unit remains the actual unit component in every original degree. -/
+/-- Let C,D have zero morphisms and e : C ≌ D have zero-preserving forward functor. For K ∈
+Bounded C and j ∈ ℤ, the jth forward component of the bounded unit equals e.unitIso.hom at K^j
+: K^j → e.inverse(e.functor(K^j)). -/
 theorem mapCochainComplexBounded_unitIso_hom_app_f (K : CochainComplex.Bounded C) (j : ℤ) :
     ((e.mapCochainComplexBounded).unitIso.hom.app K).hom.f j =
       e.unitIso.hom.app (K.obj.X j) := by
   simp [mapCochainComplexBounded, mapHomologicalComplex]
   rfl
 
-/-- The original counit remains the actual counit component in every original degree. -/
+/-- Let C,D have zero morphisms and e : C ≌ D have zero-preserving forward functor. For K ∈
+Bounded D and j ∈ ℤ, the jth forward component of the bounded counit equals e.counitIso.hom at
+K^j : e.functor(e.inverse(K^j)) → K^j. -/
 theorem mapCochainComplexBounded_counitIso_hom_app_f (K : CochainComplex.Bounded D) (j : ℤ) :
     ((e.mapCochainComplexBounded).counitIso.hom.app K).hom.f j =
       e.counitIso.hom.app (K.obj.X j) := by

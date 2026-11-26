@@ -1,3 +1,7 @@
-# Sequential Difference Section naturality
+# Naturality of recursive product difference maps
 
-The actual product-difference sections are natural under the same original section squares.
+Naturality of recursive product difference maps.
+
+For a tower map α : A → B commuting with upward maps s_n and t_n, the recursive product lifts
+satisfy P(α) ≫ R_B = R_A ≫ P(α). Both are defined from r₀ = 0 and rₙ₊₁ = (rₙ−πₙ) followed by
+the respective upward map.

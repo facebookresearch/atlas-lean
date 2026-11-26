@@ -1,3 +1,5 @@
-# To Linear Map
+# The linear map underlying a graded morphism
 
-The underlying linear map of a degree-preserving morphism.
+The linear map underlying a graded morphism.
+
+Forget the degree-preservation proof of f to obtain its R-linear map M → N.

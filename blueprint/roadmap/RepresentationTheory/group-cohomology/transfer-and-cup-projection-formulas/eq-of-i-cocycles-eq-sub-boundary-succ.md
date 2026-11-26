@@ -1,4 +1,6 @@
-# Π eq of i Cocycles eq sub boundary succ
+# Equal positive-degree classes from a subtracted boundary
 
-Two generic cocycles represent the same class when their included
-cochains differ by one explicit predecessor-degree boundary.
+Equal positive-degree classes from a subtracted boundary.
+
+If two included degree-(q+1) cycle cochains satisfy z₁ = z₂ − dᵠb, then their images under the
+group-cohomology projection are equal.

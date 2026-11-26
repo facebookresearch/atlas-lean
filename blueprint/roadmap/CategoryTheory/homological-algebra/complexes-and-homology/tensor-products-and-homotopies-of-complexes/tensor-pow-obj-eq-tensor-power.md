@@ -1,6 +1,8 @@
-# Tensor Pow Obj eq tensor Power
+# Equality of recursive and monoidal cochain tensor-power objects
 
-Under the full coherence hypotheses, the DG carrier agrees with the generic
-`TensorPower` power, by induction from the two public recursion equations.
-This is the DG-to-generic orientation: the weak direct carrier/map layer above
-is retained, and only the carrier identification is transported.
+Equality of recursive and monoidal cochain tensor-power objects.
+
+Under the graded coproduct, empty-colimit preservation and iterated tensor coherence
+hypotheses giving the cochain monoidal structure, the recursive object P_n(X) equals the
+general monoidal TensorPower.tensorPowObj X n. Both start at the same tensor unit and use Pₙ₊₁
+= Pₙ ⊗ X.

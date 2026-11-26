@@ -1,4 +1,5 @@
-# Pair Quotient Cokernel Equiv
+# The iterated scalar cokernel is the pair-ideal quotient
 
-The cokernel of multiplication by `g` on `R/(f)` is the quotient
-`R/(f,g)`.
+The iterated scalar cokernel is the pair-ideal quotient.
+
+The cokernel of g on R/(f) is R-linearly equivalent to R/(f,g).

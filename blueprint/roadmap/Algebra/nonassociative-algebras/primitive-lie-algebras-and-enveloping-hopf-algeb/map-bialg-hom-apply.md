@@ -1,3 +1,5 @@
-# Map Bialg Hom apply
+# Values of the induced enveloping bialgebra morphism
 
-The induced bialgebra map has the canonical enveloping algebra map as its underlying map.
+Values of the induced enveloping bialgebra morphism.
+
+The underlying function is map R f.

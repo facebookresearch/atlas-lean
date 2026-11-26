@@ -1,4 +1,6 @@
-# Positive Total Augmentation Retract
+# The arrow retract of positive proper-shuffle total augmentation
 
-The augmented proper-shuffle total arrow is a native retract
-of the positive Hochschild total arrow.
+The arrow retract of positive proper-shuffle total augmentation.
+
+Taking augmented chain totals carries the augmented-diagram retraction to an arrow retract of
+the proper-shuffle total augmentation inside the positive Hochschild total augmentation.

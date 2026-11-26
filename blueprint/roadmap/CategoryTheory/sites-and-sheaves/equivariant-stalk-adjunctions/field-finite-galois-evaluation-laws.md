@@ -1,3 +1,7 @@
-# Field Finite Galois Evaluation Laws
+# Full finite Galois evaluation and naturality laws
 
-Complete original-embedding, invariant-group and actual original-stage compatibility.
+Full finite Galois evaluation and naturality laws.
+
+These laws include embedding extension, fixing subgroups, evaluation and inverse values,
+finite fixing fields for elements, and forward/inverse naturality under coefficient maps and
+field refinement, both for functions and inverse-sheaf sections.

@@ -1,4 +1,6 @@
-# Boundary right cycles Pair
+# The second-factor boundary product is a signed output boundary
 
-Multiplying an original right boundary by a long representative gives
-an original boundary, with the integer total-degree sign.
+The second-factor boundary product is a signed output boundary.
+
+A right boundary paired with a long representative factors through the output boundary with
+sign (−1)^n.

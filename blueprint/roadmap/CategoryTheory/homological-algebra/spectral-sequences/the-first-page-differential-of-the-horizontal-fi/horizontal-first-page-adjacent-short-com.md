@@ -1,4 +1,6 @@
-# Horizontal First Page Adjacent Short Complex Iso endpoint
+# The shared endpoint of consecutive adjacent-column comparisons
 
-The right endpoint of one adjacent-column comparison agrees, through the
-canonical cokernel identification, with the next comparison's left endpoint.
+The shared endpoint of consecutive adjacent-column comparisons.
+
+The right endpoint map of one comparison equals its cokernel identification followed by the
+next comparison's left endpoint map.

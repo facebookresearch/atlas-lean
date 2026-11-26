@@ -15,15 +15,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.NormalizedMixedBi
 public import MathlibExt.CategoryTheory.Preadditive.SplitProjector
 
 /-!
-# relative and reduced normalized unitization complexes
+# Relative unitization chains and reduced normalization
 
-The relative complex is the kernel of the scalar projector on the
-regular Hochschild complex of the native unitization. Its normalized
-counterpart is the kernel of the same induced projector on the normalized quotient. The original normalization map restricts to a
-quasi-isomorphism because its restricted arrow is an retract.
+Let `k` be a commutative ring and `A` a nonunital ground algebra. The scalar section and
+augmentation of `A⁺ = k ⊕ A` act on every entry of the regular Hochschild complex. Their
+composite is an idempotent scalar chain projector.
 
-The scalar complex uses an explicit ULift of k in the unitization carrier
-world. It does not require the original ring and algebra universes to agree.
+The relative complex is the kernel of this projector. The induced normalized scalar projector
+has a corresponding reduced kernel, and normalization restricts to a chain map between the two
+kernels. This restricted map is a quasi-isomorphism, obtained as an arrow retract of
+unitization normalization. The scalar complex uses `ULift.{v} k` in the joint ring-algebra
+carrier universe.
 -/
 
 @[expose] public section
@@ -40,32 +42,49 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The original scalar inclusion, with only the explicit carrier lift added. -/
+/-- The scalar section into a unitization with lifted scalar carrier.
+
+The algebra map from `ULift.{v} k` to `A⁺` sends a lifted scalar to its scalar-coordinate
+inclusion. -/
 def unitizationGroundScalarSection :
     ULift.{v} k →ₐ[k] Unitization k A :=
   (unitizationScalarSection k A).comp (ULift.algEquiv (R := k) (A := k)).toAlgHom
 
-/-- The original augmentation, into the explicitly lifted scalar carrier. -/
+/-- The unitization augmentation into a lifted scalar carrier.
+
+The algebra map `A⁺ → ULift.{v} k` takes the first coordinate and lifts its value. -/
 def unitizationGroundAugmentation :
     Unitization k A →ₐ[k] ULift.{v} k :=
   (ULift.algEquiv (R := k) (A := k)).symm.toAlgHom.comp (unitizationAugmentation k A)
 
+/-- The value of the lifted unitization scalar section.
+
+The scalar section sends `r : ULift.{v} k` to `Unitization.inl r.down`. -/
 @[simp]
 theorem unitizationGroundScalarSection_apply (r : ULift.{v} k) :
     unitizationGroundScalarSection k A r = Unitization.inl r.down := rfl
 
+/-- The value of the lifted unitization augmentation.
+
+The lifted augmentation sends `x ∈ A⁺` to `ULift.up x.fst`. -/
 @[simp]
 theorem unitizationGroundAugmentation_apply (x : Unitization k A) :
     unitizationGroundAugmentation k A x = ULift.up x.fst := rfl
 
-/-- The lifted augmentation retracts the original scalar inclusion. -/
+/-- The retraction equation of the lifted unitization scalar section.
+
+The lifted scalar section followed by the lifted augmentation is the identity on `ULift.{v}
+k`. -/
 theorem unitizationGroundScalarSection_augmentation :
     (unitizationGroundAugmentation k A).comp (unitizationGroundScalarSection k A) =
       AlgHom.id k (ULift.{v} k) := by
   ext x
   rfl
 
-/-- The complementary composite is still the literal original scalar projector. -/
+/-- The scalar projector from the lifted augmentation and section.
+
+The lifted augmentation followed by the scalar section is the algebra projector `(r,a) ↦
+(r,0)`. -/
 theorem unitizationGroundAugmentation_section :
     (unitizationGroundScalarSection k A).comp (unitizationGroundAugmentation k A) =
       unitizationScalarProjector k A := by
@@ -73,25 +92,36 @@ theorem unitizationGroundAugmentation_section :
   intro x
   rfl
 
-/-- The scalar inclusion acts on every original coefficient and tensor factor. -/
+/-- The lifted scalar inclusion on regular Hochschild complexes.
+
+Apply the scalar section to the regular coefficient and each tail entry to obtain `b(ULift.{v}
+k) → b(A⁺)`. -/
 def unitizationScalarComplexInclusion :
     bComplex k (ULift.{v} k) ⟶ bComplex k (Unitization k A) :=
   ModuleCat.Algebra.Hochschild.cyclicBComplexHom
     (unitizationGroundScalarSection k A).toNonUnitalAlgHom
 
-/-- The augmentation acts on the same original coefficient and tensor factors. -/
+/-- The lifted scalar augmentation on regular Hochschild complexes.
+
+Apply the lifted augmentation to each tensor entry to obtain `b(A⁺) → b(ULift.{v} k)`. -/
 def unitizationScalarComplexAugmentation :
     bComplex k (Unitization k A) ⟶ bComplex k (ULift.{v} k) :=
   ModuleCat.Algebra.Hochschild.cyclicBComplexHom
     (unitizationGroundAugmentation k A).toNonUnitalAlgHom
 
-/-- The chain-level scalar projector uses the original algebra endomorphism. -/
+/-- The scalar projector on regular unitization Hochschild chains.
+
+The algebra projector `(r,a) ↦ (r,0)` acts on every tensor entry and defines a chain
+endomorphism of `b(A⁺)`. -/
 def unitizationScalarComplexProjector :
     bComplex k (Unitization k A) ⟶ bComplex k (Unitization k A) :=
   ModuleCat.Algebra.Hochschild.cyclicBComplexHom
     (unitizationScalarProjector k A).toNonUnitalAlgHom
 
-/-- Both original split maps retain their chain-level identity. -/
+/-- The chain retraction equation for lifted scalar inclusion.
+
+The scalar chain inclusion followed by its augmentation is the identity on the lifted scalar
+Hochschild complex. -/
 @[reassoc]
 theorem unitizationScalarComplexInclusion_augmentation :
     unitizationScalarComplexInclusion k A ≫ unitizationScalarComplexAugmentation k A = 𝟙 _ := by
@@ -102,7 +132,10 @@ theorem unitizationScalarComplexInclusion_augmentation :
   exact (congrArg ModuleCat.Algebra.Hochschild.cyclicBComplexHom h).trans
     (ModuleCat.Algebra.Hochschild.cyclicBComplexHom_id (k := k) (A := ULift.{v} k))
 
-/-- The factorization of the projector is the original augmentation followed by scalar inclusion. -/
+/-- The chain factorization of unitization scalar projection.
+
+The scalar chain augmentation followed by its inclusion equals the scalar chain projector on
+`b(A⁺)`. -/
 @[reassoc]
 theorem unitizationScalarComplexAugmentation_inclusion :
     unitizationScalarComplexAugmentation k A ≫ unitizationScalarComplexInclusion k A =
@@ -113,6 +146,9 @@ theorem unitizationScalarComplexAugmentation_inclusion :
   exact congrArg ModuleCat.Algebra.Hochschild.cyclicBComplexHom
     (congrArg AlgHom.toNonUnitalAlgHom (unitizationGroundAugmentation_section k A))
 
+/-- Idempotence of the regular unitization scalar chain projector.
+
+Composing the scalar chain projector with itself gives the same endomorphism. -/
 theorem unitizationScalarComplexProjector_idempotent :
     unitizationScalarComplexProjector k A ≫ unitizationScalarComplexProjector k A =
       unitizationScalarComplexProjector k A := by
@@ -126,8 +162,10 @@ section NormalizedEndomorphism
 variable {k A} {B : Type v} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- A same-world unitization map uses the factor-quotient map.
-Its chain law is from the original epic normalization projection. -/
+/-- The normalized chain map of a unital map between unitizations.
+
+A `k`-algebra homomorphism `A⁺ → B⁺` acts on the regular coefficient and quotient-tail
+factors, inducing a map between their normalized Hochschild complexes. -/
 def normalizedRegularUnitizationMap (f : Unitization k A →ₐ[k] Unitization k B) :
     normalizedBComplex k (Unitization k A) ⟶ normalizedBComplex k (Unitization k B) := by
   have hOne : f.toLinearMap (1 : Unitization k A) = (1 : Unitization k B) := f.map_one
@@ -167,7 +205,10 @@ def normalizedRegularUnitizationMap (f : Unitization k A →ₐ[k] Unitization k
                 ((congrArg (fun z => z ≫ g n) (κA.comm (n + 1) n).symm).trans
                   (Category.assoc _ _ _))))
 
-/-- The complete original chain-map square is retained. -/
+/-- The normalization square for a map between unitizations.
+
+The regular chain map induced by a unital homomorphism followed by normalization equals
+normalization followed by the induced normalized chain map. -/
 @[reassoc]
 theorem normalizedProjection_regularUnitizationMap
     (f : Unitization k A →ₐ[k] Unitization k B) :
@@ -183,11 +224,17 @@ theorem normalizedProjection_regularUnitizationMap
   exact ModuleCat.Algebra.Hochschild.normalizationLevelMap_naturality
     f.toLinearMap f.toLinearMap f.map_one n
 
-/-- The endomorphism is the same normalized map, in its original coefficient world. -/
+/-- The normalized endomorphism of a unitization algebra map.
+
+A unital algebra endomorphism of `A⁺` induces the corresponding factorwise map on its
+normalized Hochschild complex. -/
 abbrev normalizedRegularEndomorphism (f : Unitization k A →ₐ[k] Unitization k A) :=
   normalizedRegularUnitizationMap f
 
-/-- The original endomorphism square forwards the one quotient-map construction. -/
+/-- The normalization square for a unitization endomorphism.
+
+The normalized projection commutes with the regular and normalized chain endomorphisms induced
+by a unital map `A⁺ → A⁺`. -/
 @[reassoc]
 theorem normalizedProjection_regularEndomorphism
     (f : Unitization k A →ₐ[k] Unitization k A) :
@@ -198,11 +245,18 @@ theorem normalizedProjection_regularEndomorphism
 
 end NormalizedEndomorphism
 
-/-- The reduced normalized model uses the induced scalar projector. -/
+/-- The scalar projector on normalized unitization chains.
+
+The unitization scalar algebra projector induces an endomorphism of the normalized regular
+Hochschild complex. -/
 def unitizationNormalizedScalarProjector :
     normalizedBComplex k (Unitization k A) ⟶ normalizedBComplex k (Unitization k A) :=
   normalizedRegularEndomorphism (unitizationScalarProjector k A)
 
+/-- Idempotence of the normalized unitization scalar projector.
+
+The normalized scalar chain projector is idempotent, as follows from the regular scalar
+projector and its normalization square. -/
 theorem unitizationNormalizedScalarProjector_idempotent :
     unitizationNormalizedScalarProjector k A ≫ unitizationNormalizedScalarProjector k A =
       unitizationNormalizedScalarProjector k A := by
@@ -231,22 +285,34 @@ theorem unitizationNormalizedScalarProjector_idempotent :
       rw [← Category.assoc, hp]
     _ = _ := hs.symm
 
-/-- The original relative Hochschild complex is the augmentation-projector kernel. -/
+/-- The relative kernel of unitization Hochschild chains.
+
+This chain complex is the kernel of the scalar projector on the regular Hochschild complex of
+`A⁺`. -/
 abbrev unitizationRelativeComplex : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   kernel (unitizationScalarComplexProjector k A)
 
-/-- The original reduced normalized complex is the normalized scalar-projector kernel. -/
+/-- The reduced kernel of normalized unitization chains.
+
+This chain complex is the kernel of the scalar projector on the normalized Hochschild complex
+of `A⁺`. -/
 abbrev unitizationReducedNormalizedComplex : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   kernel (unitizationNormalizedScalarProjector k A)
 
-/-- The original normalization projection restricts by the native kernel-map API. -/
+/-- Normalization restricted to relative unitization chains.
+
+The normalization projection induces a chain map from the relative scalar-projector kernel to
+the reduced normalized scalar-projector kernel. -/
 def unitizationRelativeNormalization :
     unitizationRelativeComplex k A ⟶ unitizationReducedNormalizedComplex k A :=
   kernel.map _ _ (normalizedProjection k (Unitization k A))
     (normalizedProjection k (Unitization k A))
     (normalizedProjection_regularEndomorphism (unitizationScalarProjector k A)).symm
 
-/-- The restricted map retains the complete original normalization projection. -/
+/-- The kernel-inclusion formula for relative normalization.
+
+Relative normalization followed by the reduced kernel inclusion equals the relative kernel
+inclusion followed by the full unitization normalization projection. -/
 @[reassoc]
 theorem unitizationRelativeNormalization_ι :
     unitizationRelativeNormalization k A ≫ kernel.ι (unitizationNormalizedScalarProjector k A) =
@@ -254,7 +320,10 @@ theorem unitizationRelativeNormalization_ι :
         normalizedProjection k (Unitization k A) :=
   kernel.lift_ι _ _ _
 
-/-- Native quasi-isomorphisms are closed under the computed arrow retract. -/
+/-- The quasi-isomorphism of relative unitization normalization.
+
+The restricted normalization map is a quasi-isomorphism, since the compatible idempotent
+projectors exhibit it as an arrow retract of the full unitization normalization. -/
 instance unitizationRelativeNormalization_quasiIso :
     _root_.QuasiIso (unitizationRelativeNormalization k A) :=
   quasiIso_of_retractArrow (projectorKernelMapRetractArrow

@@ -16,13 +16,15 @@ public import Mathlib.RingTheory.Length
 public import Mathlib.RingTheory.Spectrum.Prime.Noetherian
 
 /-!
-# Scalar length in the actual Artinian localization decomposition
+# Scalar length in the prime-localization decomposition
 
-The canonical prime-localization product equivalence of an Artinian
-algebra decomposes its length over any commutative base ring. The factors
-retain their actual nilpotents and scalar action. This is the common
-length calculation for finite-field fiber degrees and for local divisor
-multiplicities over a non-field base ring.
+Let A be a commutative Artinian algebra over any commutative ring R. Its prime spectrum is
+finite, and the canonical algebra equivalence A ≅ ∏_{p∈Spec A} A_p decomposes A into its prime
+localizations, with the original R-action on every factor.
+
+Module length is additive on this finite product, so ℓ_R(A) = Σ_p ℓ_R(A_p) in ℕ∞. The equality
+allows infinite scalar length and retains the nilpotent structure of each factor. The base and
+algebra universes are independent.
 -/
 
 @[expose] public section
@@ -34,7 +36,12 @@ universe u v
 
 namespace IsArtinianRing
 
-/-- The actual prime-localization product decomposes scalar length over every commutative base ring. -/
+/-- Prime-localization sum for scalar length of an Artinian algebra.
+
+For a commutative Artinian R-algebra A, with R any commutative ring, ℓ_R(A) = Σ_{p∈Spec A}
+ℓ_R(A_p). The finite sum is taken over the prime spectrum, and the equality is in ℕ∞. It
+follows from the canonical prime-localization product equivalence, restricted to the R-module
+structure. -/
 theorem length_eq_sum_primeSpectrum
     (R : Type u) (A : Type v) [CommRing R] [CommRing A] [Algebra R A]
     [IsArtinianRing A] :

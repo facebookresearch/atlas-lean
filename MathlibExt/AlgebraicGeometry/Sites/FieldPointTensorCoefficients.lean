@@ -15,7 +15,24 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldGeometricClosureComparison
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientCupProduct
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientLongExact
 
-/-! # Tensor germs and their actual point and Galois actions -/
+/-!
+# Tensor stalks, point maps and Galois coefficients
+
+For a scheme X in universe u and c = max(u, w), the point-stalk map on
+the integer tensor presheaf is natural under morphisms of points.
+A point morphism h : p → q induces a stalk map q* → p*, and sends
+a germ at q to the germ at p at the corresponding fiber coordinate.
+The sheafified tensor comparison has the same naturality.
+
+For a separable closure Ω/k of fields in universe u, these comparisons
+are equivariant for G = Gal(Ω/k). The stalk of F ⊗_sheaf H is naturally
+the diagonal tensor E(F) ⊗[ℤ] E(H) in discrete G-modules and in
+topological ℤ-representations. A pure tensor section at a geometric
+lift z maps to germ_z(a) ⊗ germ_z(b).
+The inverse Galois sheaf has the corresponding equivariant-function value,
+and the tensor comparison commutes with embeddings Ω → Ψ into any
+separably closed k-field Ψ in universe u.
+-/
 
 @[expose] public section
 noncomputable section
@@ -25,7 +42,12 @@ universe u w
 open CategoryTheory CategoryTheory.Limits Opposite
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The actual point map sends every germ to the germ at its image point element. -/
+/-- Let X be a scheme in universe u, c = max(u, w), p, q points of
+its small étale site, and h : p → q a point morphism.
+For an AddCommGrpCat c-valued presheaf P, U ∈ Etale(X) and
+x ∈ fiber_q(U), the induced stalk map h* : P_q → P_p satisfies
+h*(germ_q(U, x)) = germ_p(U, h_U(x)) as maps from P(U).
+The point coordinate map h_U goes from fiber_q(U) to fiber_p(U). -/
 theorem pointHom_presheafFiber_germ (X : Scheme.{u})
     {p q : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology} (h : p ⟶ q)
     (P : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (U : X.Etale) (x : q.fiber.obj U) :
@@ -41,7 +63,12 @@ theorem pointHom_presheafFiber_germ (X : Scheme.{u})
     U x
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The literal tensor of germs commutes with every actual map of points. -/
+/-- Let X be a scheme in universe u, c = max(u, w), h : p → q a
+morphism of points of its small étale site, and F, H presheaves of
+abelian groups in universe c. For the integer tensor presheaf, the
+stalk tensor maps satisfy
+τ_p ∘ h*_(F⊗H) = (h*_F ⊗ h*_H) ∘ τ_q,
+where each h* goes from the q-stalk to the p-stalk. -/
 theorem smallEtalePointTensorStalkMap_point_naturality (X : Scheme.{u})
     {p q : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology} (h : p ⟶ q)
     (F G : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
@@ -87,7 +114,11 @@ theorem smallEtalePointTensorStalkMap_point_naturality (X : Scheme.{u})
           (Category.assoc _ _ _)))))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor sheaf stalk isomorphism commutes with every map of points. -/
+/-- Let X be a scheme in universe u, c = max(u, w), h : p → q a
+morphism of points, and F, H abelian sheaves on its small étale site.
+The tensor-sheaf stalk isomorphisms
+τ_p : (F ⊗_sheaf H)_p ≅ F_p ⊗[ℤ] H_p satisfy
+τ_p ∘ h*_(F⊗H) = (h*_F ⊗ h*_H) ∘ τ_q. -/
 theorem smallEtalePointTensorSheafStalkIso_point_naturality (X : Scheme.{u})
     {p q : GrothendieckTopology.Point.{max u w} X.smallEtaleTopology} (h : p ⟶ q)
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
@@ -130,7 +161,14 @@ section Field
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 attribute [local instance] IsSepClosure.sep_closed
 
-/-- The original Galois action preserves the actual binary integer tensor of germs. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For coefficient sheaves F, H and g ∈ G, the point tensor-stalk
+isomorphism τ satisfies
+τ ∘ g_(F⊗H) = (g_F ⊗ g_H) ∘ τ.
+Thus the action on the tensor stalk is the diagonal Galois action. -/
 theorem fieldPointTensorSheafStalkIso_galois
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (g : Gal(Ω/k)) :
@@ -151,8 +189,14 @@ local instance fieldNativeModuleDiscrete (M : FieldCohomologyModule.{u, w} k Ω)
       (InfiniteGalois.profiniteGalGrp k Ω)).obj M) := M.property
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original field coefficient representation of the actual binary tensor sheaf
-is isomorphic to the actual continuous integer tensor of the original field fibers. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For coefficient sheaves F, H, the stalk tensor comparison is an
+isomorphism of discrete topological ℤ-representations
+P(E(F ⊗_sheaf H)) ≅ P(E(F)) ⊗[ℤ] P(E(H)),
+with the diagonal G-action and discrete tensor-coefficient topology. -/
 def fieldPointTensorTopRepIso
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (ContinuousCohomology.discreteCoefficientTopRepFunctor.{u, w}
@@ -217,7 +261,13 @@ def fieldPointTensorTopRepIso
         intro x
         exact e.apply_symm_apply x }
 
-/-- The forward original representation map is the SAME tensor-of-germs map. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+The underlying map of the topological tensor comparison on
+E(F ⊗_sheaf H) is the canonical point tensor-stalk isomorphism
+(F ⊗_sheaf H)_Ω → F_Ω ⊗[ℤ] H_Ω. -/
 theorem fieldPointTensorTopRepIso_hom_apply
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (x : fieldGeometricStalkCarrier.{u, w} k Ω
@@ -226,7 +276,14 @@ theorem fieldPointTensorTopRepIso_hom_apply
       (smallEtalePointTensorSheafStalkIso.{u, w} (Spec (.of k))
         (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)) F G).hom x := rfl
 
-/-- Every pure section germ is sent to the pure tensor of the two original field germs. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For an étale k-scheme U, a geometric lift z ∈ U(Ω), and
+a ∈ F(U), b ∈ H(U), the topological tensor-stalk comparison sends
+the germ of the sheafified tensor section a ⊗ b at z to
+germ_z(a) ⊗[ℤ] germ_z(b). -/
 theorem fieldPointTensorTopRepIso_original_germ_tmul
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -243,8 +300,15 @@ theorem fieldPointTensorTopRepIso_original_germ_tmul
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)) F G U (ULift.up z) a b
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original field tensor representation comparison respects every original coefficient
-arrow. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For sheaf maps f : F → F′ and g : H → H′, the topological tensor
+comparisons τ satisfy
+τ_(F′,H′) ∘ P(E(f ⊗_sheaf g)) =
+(P(E(f)) ⊗ P(E(g))) ∘ τ_(F,H).
+The tensor maps use the discrete coefficient representations. -/
 theorem fieldPointTensorTopRepIso_naturality
     {F F' G G' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -264,7 +328,13 @@ theorem fieldPointTensorTopRepIso_naturality
     (smallEtalePointTensorSheafStalkIso_naturality.{u, w} (Spec (.of k))
       (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)) f g) x
 
-/-- The actual diagonal integer tensor of two original discrete continuous Galois modules. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For discrete continuous G-modules M, N, their tensor coefficient is
+the abelian group M ⊗[ℤ] N with discrete topology and continuous
+diagonal action g • (m ⊗ n) = (g • m) ⊗ (g • n). -/
 def fieldTensorCoefficientModule (M N : FieldCohomologyModule.{u, w} k Ω) :
     FieldCohomologyModule.{u, w} k Ω := by
   let P := ContinuousCohomology.discreteCoefficientTopRepFunctor.{u, w}
@@ -282,14 +352,26 @@ def fieldTensorCoefficientModule (M N : FieldCohomologyModule.{u, w} k Ω) :
     ContinuousCohomology.discreteTensorCoefficient_action_isContinuous A B hA hB⟩,
       ContinuousCohomology.discreteTensorCoefficient_discrete A B⟩
 
-/-- The original module tensor has exactly the original algebraic integer tensor carrier. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+The underlying abelian group of the diagonal tensor coefficient
+of M and N is the algebraic integer tensor product M ⊗[ℤ] N,
+in coefficient universe c. -/
 theorem fieldTensorCoefficientModule_carrier (M N : FieldCohomologyModule.{u, w} k Ω) :
     (DiscreteAbelianAction.underlying (fieldTensorCoefficientModule.{u, w} k Ω M N) : Type
         (max u w)) =
       TensorProduct ℤ (DiscreteAbelianAction.underlying M)
           (DiscreteAbelianAction.underlying N) := rfl
 
-/-- Its literal Galois action on a pure tensor uses the original stored factor modules. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For M, N discrete continuous G-modules, g ∈ G and m ∈ M, n ∈ N,
+the tensor coefficient action has pure value
+g • (m ⊗[ℤ] n) = (g • m) ⊗[ℤ] (g • n). -/
 theorem fieldTensorCoefficientModule_action_tmul
     (M N : FieldCohomologyModule.{u, w} k Ω) (g : Gal(Ω/k)) :
     let P := ContinuousCohomology.discreteCoefficientTopRepFunctor.{u, w}
@@ -304,8 +386,13 @@ theorem fieldTensorCoefficientModule_action_tmul
   intro P A B a b
   exact ContinuousCohomology.discreteTensorCoefficient_action_tmul A B g a b
 
-/-- The original geometric-fiber tensor comparison also lies in the original Galois module
-category. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For coefficient sheaves F, H, the geometric tensor-stalk comparison
+is an isomorphism E(F ⊗_sheaf H) ≅ E(F) ⊗[ℤ] E(H) in the
+discrete continuous G-module category. -/
 def fieldPointTensorGaloisIso
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj
@@ -322,7 +409,13 @@ def fieldPointTensorGaloisIso
     (fieldPointTensorTopRepIso.{u, w} k Ω F G ≪≫ (TopRep.toActionFromAction T).symm)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original Galois module arrow retains the SAME actual tensor-of-germs value. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+The underlying additive map of the Galois tensor-stalk isomorphism
+equals the underlying map of its topological representation comparison.
+Both give the canonical point tensor-stalk map. -/
 theorem fieldPointTensorGaloisIso_hom_apply
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (x : fieldGeometricStalkCarrier.{u, w} k Ω
@@ -348,8 +441,14 @@ theorem fieldPointTensorGaloisIso_hom_apply
     P.map_preimage (X := M) (Y := N) (e ≪≫ (TopRep.toActionFromAction T).symm).hom
   exact congrArg (fun f : P.obj M ⟶ P.obj N => f.hom x) h
 
-/-- The actual inverse sheaf equivalence identifies the tensor sheaf with the inverse
-of the actual diagonal integer tensor of its two prescribed geometric fibers. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+If Φ is the equivariant-function inverse to E, the tensor sheaf
+has the isomorphism F ⊗_sheaf H ≅ Φ(E(F) ⊗[ℤ] E(H)).
+Its forward map is the equivalence unit followed by Φ of the
+Galois tensor-stalk isomorphism. -/
 def fieldTensorSheafInverseIso
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheaf.{u, w} (Spec (.of k)) F G ≅
@@ -363,8 +462,14 @@ def fieldTensorSheafInverseIso
       (fieldPointTensorGaloisIso.{u, w} k Ω F G)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original inverse sheaf tensor comparison has the literal tensor of the two
-original germ values on every original pure section tensor. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+For U ∈ Etale(Spec k), z ∈ U(Ω), a ∈ F(U), and b ∈ H(U),
+the image of the tensor section a ⊗ b under
+F ⊗_sheaf H ≅ Φ(E(F) ⊗[ℤ] E(H)) is the equivariant function
+whose value at z is germ_z(a) ⊗[ℤ] germ_z(b). -/
 theorem fieldTensorSheafInverseIso_original_germ_tmul
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -399,7 +504,15 @@ theorem fieldTensorSheafInverseIso_original_germ_tmul
 
 variable (Ψ : Type u) [Field Ψ] [Algebra k Ψ] [IsSepClosed Ψ]
 
-/-- An explicit closure embedding preserves the original binary integer tensor of germs. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, G = Gal(Ω/k), and c = max(u, w). Let E be the geometric-stalk
+functor from AddCommGrpCat c-valued étale sheaves on Spec k to discrete
+continuous G-modules.
+Let Ψ be any separably closed k-field in universe u and
+σ : Ω →ₐ[k] Ψ. For the closure-change stalk comparisons χ,
+the tensor square is
+τ_Ψ ∘ χ_(F⊗H) = (χ_F ⊗ χ_H) ∘ τ_Ω
+for every pair of coefficient sheaves F, H. -/
 theorem fieldClosureCommonStalkIso_tensor
     (σ : Ω →ₐ[k] Ψ)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :

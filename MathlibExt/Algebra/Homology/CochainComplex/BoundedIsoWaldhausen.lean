@@ -16,14 +16,19 @@ public import MathlibExt.Algebra.Homology.CochainComplex.BoundedAmbientWaldhause
 public import MathlibExt.CategoryTheory.Waldhausen.ExactFunctor
 
 /-!
-# Waldhausen structure with isomorphism weak equivalences
+# Bounded complexes with isomorphism weak equivalences
 
-Degreewise admissible monomorphisms form the cofibrations on bounded
-cochain complexes, with isomorphisms as weak equivalences. Isomorphic
-admissible spans induce isomorphic pushout apices.
+Let E be a preadditive exact category with a zero object and binary biproducts.
+On bounded integer-indexed cochain complexes, take degreewise admissible
+monomorphisms as cofibrations and isomorphisms as weak equivalences.
+A cofiber sequence X → Y → Z is an admissible map X → Y together with
+a pushout description of Z along X → 0. Isomorphisms between the three
+vertices of two admissible spans induce an isomorphism of their pushout apices.
 
-The identity functor from this structure to the ambient quasi-isomorphism
-structure is exact.
+For any additive functor F:E → A to an abelian category, the identity functor
+on bounded complexes is Waldhausen exact from this structure to the one
+whose weak equivalences are quasi-isomorphisms after applying F.
+The object and morphism universes of E and A are independent.
 -/
 
 @[expose] public section
@@ -40,7 +45,11 @@ namespace CochainComplex.Bounded
 variable (E : Type uE) [Category.{vE} E] [Preadditive E]
   [HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
 
-/-- Waldhausen structure with degreewise admissible cofibrations and isomorphism weak equivalences. -/
+/-- In a preadditive exact category E with a zero object and binary
+biproducts, the cofibration and weak-equivalence structure on bounded
+integer-indexed cochain complexes with degreewise admissible monomorphisms
+as cofibrations and isomorphisms as weak equivalences. Pushouts along
+cofibrations exist, and their cobase-change legs are cofibrations. -/
 @[instance_reducible, no_expose]
 def isoWaldhausenCategory : WaldhausenCategoryWithoutGluing (Bounded E) where
   cofibrations := degreewiseAdmissibleMonomorphisms E
@@ -55,23 +64,38 @@ def isoWaldhausenCategory : WaldhausenCategoryWithoutGluing (Bounded E) where
     obtain ⟨P, inB, inC, hP, _, _, hadm, _⟩ := exists_boundedAdmissiblePushout E i f hi
     exact ⟨P, inC, inB, hP.flip, hadm⟩
 
-/-- Cofibrations are exactly the degreewise admissible monomorphisms. -/
+/-- For bounded cochain complexes X and Y in a preadditive exact category E
+with a zero object and binary biproducts, a map f:X → Y is a cofibration
+in the isomorphism model if and only if every component fⱼ is an admissible
+monomorphism in E. -/
 theorem iso_isCofibration_iff {X Y : Bounded E} (f : X ⟶ Y) :
     letI := isoWaldhausenCategory E
     IsCofibration f ↔ ∀ j : ℤ, ExactCategory.IsAdmissibleMono (f.hom.f j) := Iff.rfl
 
-/-- Weak equivalences in this model are exactly isomorphisms. -/
+/-- In the Waldhausen structure on bounded cochain complexes over a
+preadditive exact category E with a zero object and binary biproducts,
+whose weak equivalences are isomorphisms, a map f:X → Y is a weak
+equivalence if and only if it is an isomorphism in the bounded category. -/
 theorem iso_isWeakEquivalence_iff {X Y : Bounded E} (f : X ⟶ Y) :
     letI := isoWaldhausenCategory E
     IsWeakEquivalence f ↔ IsIso f := Iff.rfl
 
-/-- The isomorphism and ambient models use the same cofiber legs. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts. Maps i:X → Y and p:Y → Z of bounded cochain complexes form a
+cofiber sequence in the isomorphism Waldhausen model exactly when i is
+degreewise admissible and there are maps X → 0 and 0 → Z making the
+square with i and p a pushout. Thus Z is the cofiber of i in the bounded
+category. -/
 theorem iso_isCofiberSequence_iff {X Y Z : Bounded E} (i : X ⟶ Y) (p : Y ⟶ Z) :
     (letI := isoWaldhausenCategory E; IsCofiberSequence i p) ↔
       degreewiseAdmissibleMonomorphisms E i ∧
         ∃ (h : X ⟶ (0 : Bounded E)) (q : (0 : Bounded E) ⟶ Z), IsPushout h i q p := Iff.rfl
 
-/-- Isomorphic admissible spans induce isomorphic pushout apices. -/
+/-- For bounded cochain complexes in a preadditive exact category E with a
+zero object and binary biproducts, a commuting map between two admissible
+pushout squares that is an isomorphism on each of the three span vertices
+is an isomorphism on the pushout apices. This gives the gluing axiom for
+isomorphism weak equivalences. -/
 theorem isoWaldhausen_gluing :
     letI := isoWaldhausenCategory E
     WaldhausenGluingAxiom (C := Bounded E) := by
@@ -126,7 +150,13 @@ variable {E}
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable (F : E ⥤ A) [F.Additive]
 
-/-- The identity functor is exact from the isomorphism model to the ambient quasi-isomorphism model. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts, A an abelian category, and F:E → A an additive functor.
+The identity on bounded cochain complexes is a Waldhausen exact functor
+from the structure with isomorphism weak equivalences to the structure with
+F-detected quasi-isomorphism weak equivalences: it preserves zero objects,
+degreewise admissible cofibrations, weak equivalences and pushouts along
+cofibrations. -/
 theorem isoToAmbient_isWaldhausenExact :
     @Functor.IsWaldhausenExact (Bounded E) _ _ (isoWaldhausenCategory E)
       (Bounded E) _ _ (ambientWaldhausenCategory F) (𝟭 (Bounded E)) := by

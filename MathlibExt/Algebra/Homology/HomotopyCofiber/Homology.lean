@@ -15,11 +15,18 @@ public import Mathlib.Algebra.Homology.HomotopyCofiber
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# The original cofiber inclusion on homology
+# Homology of the composite with a cofiber inclusion
 
-At a degree having an actual predecessor, the native cofiber equation makes
-the composite with its inclusion a boundary on cycles. This local statement
-does not require a predecessor at every degree.
+Let C be a preadditive category, c a complex shape with decidable differential
+relation, and φ:F → G a map whose homotopy cofiber exists. The target
+inclusion u:G → Cofib(φ) is monic, with a retraction in every degree.
+
+If c.Rel(i,j), the shifted-source inclusion v:Fⱼ → Cofib(φ)ᵢ
+makes the image of every degree-j cycle under uⱼ∘φⱼ a boundary:
+uⱼ ∘ φⱼ ∘ i_Z = d_Cofib(i,j) ∘ v ∘ i_Z.
+Consequently Hⱼ(u∘φ)=0 when F and Cofib(φ) have the chosen homology
+objects at j. Only a predecessor of this degree is needed; the category
+and complex-index universes are independent.
 -/
 
 @[expose] public section
@@ -36,7 +43,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι : Type w} {c : ComplexShape ι} [DecidableRel c.Rel]
   {F G : HomologicalComplex C c} (φ : F ⟶ G) [HasHomotopyCofiber φ]
 
-/-- Every original cofiber inclusion is monic, using its actual degree retractions. -/
+/-- In a preadditive category C, for a complex shape c with decidable
+differential relation and a map φ:F → G whose homotopy cofiber exists,
+the target inclusion G → Cofib(φ) is a monomorphism. Its component
+in every degree is split monic with the target-coordinate projection
+as retraction. -/
 theorem mono_inr : Mono (inr φ) := by
   apply HomologicalComplex.mono_of_mono_f
   intro j
@@ -44,7 +55,13 @@ theorem mono_inr : Mono (inr φ) := by
     { retraction := sndX φ j
       id := inrX_sndX φ j }).mono
 
-/-- At a degree with a predecessor, the actual composite inclusion is a boundary on cycles. -/
+/-- Let C be preadditive, c a complex shape with decidable differential
+relation, and φ:F → G have a homotopy cofiber. For c.Rel(i,j),
+assume F has its chosen homology object at j. Write
+i_Z:Zⱼ(F) → Fⱼ, uⱼ:Gⱼ → Cofib(φ)ⱼ and
+v:Fⱼ → Cofib(φ)ᵢ for the cycle and cofiber inclusions. Then
+uⱼ ∘ φⱼ ∘ i_Z = d_Cofib(i,j) ∘ v ∘ i_Z:
+the composite takes cycles to boundaries. -/
 theorem cycles_comp_inr_eq_boundary (i j : ι) (hij : c.Rel i j) [F.HasHomology j] :
     F.iCycles j ≫ φ.f j ≫ inrX φ j =
       F.iCycles j ≫ inlX φ j i hij ≫ (homotopyCofiber φ).d i j := by
@@ -63,7 +80,10 @@ theorem cycles_comp_inr_eq_boundary (i j : ι) (hij : c.Rel i j) [F.HasHomology 
       _ = _ := rfl
   · exact (congrArg (fun a => F.iCycles j ≫ a) (inlX_d' φ i j hij hj)).symm
 
-/-- An actual predecessor suffices to kill the original composite on homology. -/
+/-- Let C be preadditive, c a complex shape with decidable differential
+relation, and φ:F → G have a homotopy cofiber. If c.Rel(i,j) and
+F and Cofib(φ) have their chosen homology objects at j, then the
+composite F → G → Cofib(φ) induces the zero homology map in degree j. -/
 theorem homologyMap_comp_inr_eq_zero (i j : ι) (hij : c.Rel i j)
     [F.HasHomology j] [(homotopyCofiber φ).HasHomology j] :
     homologyMap (φ ≫ inr φ) j = 0 := by

@@ -1,4 +1,5 @@
-# Corestriction H1 Of Right Transversal independent
+# The degree-one cohomology transfer is independent of the transversal
 
-Chosen-transversal degree-one cohomological transfer is independent of
-the finite right transversal.
+The degree-one cohomology transfer is independent of the transversal.
+
+The induced linear maps H¹(H,A|H) → H¹(G,A) obtained from T and U are equal.

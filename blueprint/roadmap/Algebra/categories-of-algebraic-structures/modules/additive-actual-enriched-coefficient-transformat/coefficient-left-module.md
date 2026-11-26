@@ -1,3 +1,6 @@
-# Coefficient Left Module
+# Left R action of a tensor-product-ring coefficient object
 
-Restrict the stored scalar action along the native left tensor inclusion.
+Left R action of a tensor-product-ring coefficient object.
+
+For a coefficient object `X`, restrict its `R ⊗[ℤ] Sᵐᵒᵖ`-module structure along the left ring
+inclusion to obtain a left `R`-module structure.

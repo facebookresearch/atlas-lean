@@ -1,26 +1,33 @@
 # Right modules over a Lie algebra
 
-- [Right Lie Module Cat](right-lie-module-cat.md)
+- [The bundled category of right Lie modules](right-lie-module-cat.md)
 
 ## Right Lie Module Cat
 
-- [Of](of.md)
-- [Act](act.md)
-- [Negative Lie Ring Module](negative-lie-ring-module.md)
-- [To Left](to-left.md)
-- [To Left lie](to-left-lie.md)
-- [From Left](from-left.md)
-- [From Left action](from-left-action.md)
-- [Hom Over Submodule](hom-over-submodule.md)
-- [Hom Over](hom-over.md)
+- [The right Lie module of a bilinear action](of.md)
+- [Evaluation of a right Lie action](act.md)
+- [Act lie](act-lie.md)
+- [The left Lie-ring action obtained by negating a right action](negative-lie-ring-module.md)
+- [The left Lie module associated to right coefficients](to-left.md)
+- [To Left carrier](to-left-carrier.md)
+- [The sign formula for right-to-left Lie conversion](to-left-lie.md)
+- [The right Lie module associated to a left representation](from-left.md)
+- [The sign formula for left-to-right Lie conversion](from-left-action.md)
+- [The submodule of right coefficient maps over a Lie map](hom-over-submodule.md)
+- [Right Lie coefficient homomorphisms over a specified Lie map](hom-over.md)
 
 ## Hom Over
 
-- [To Linear Map](to-linear-map.md)
-- [Comp](comp.md)
+- [The linear map underlying a right coefficient homomorphism](to-linear-map.md)
+- [Map action](map-action.md)
+- [Composition of right coefficient maps over Lie maps](comp.md)
+- [Comp apply](comp-apply.md)
 
 ## Right Lie Module Cat
 
-- [To Left Map](to-left-map.md)
-- [To Left Functor](to-left-functor.md)
-- [Trivial](trivial.md)
+- [Hom ext](hom-ext.md)
+- [The left Lie map associated to a right coefficient morphism](to-left-map.md)
+- [To Left Map apply](to-left-map-apply.md)
+- [The right-to-left Lie-module functor](to-left-functor.md)
+- [The trivial right Lie action on a scalar module](trivial.md)
+- [Trivial action](trivial-action.md)

@@ -1,3 +1,6 @@
-# Ulift Functor Forget₂Add Comm Grp Iso
+# Module lifting commutes with forgetting to additive groups
 
-The underlying original additive groups of the module and group lifts agree.
+Module lifting commutes with forgetting to additive groups.
+
+Lifting R-modules and then forgetting gives a functor naturally isomorphic to forgetting first
+and lifting the additive groups, with identity components.

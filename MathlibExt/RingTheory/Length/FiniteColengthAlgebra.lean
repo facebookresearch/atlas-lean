@@ -40,8 +40,11 @@ namespace Algebra
 
 variable {R : Type u} [CommRing R] {S : Type v} [CommRing S] [Algebra R S]
 
-/-- A nonzero base scalar has equal actual principal-quotient lengths across
-an injective domain algebra inclusion with finite scalar cokernel. -/
+/-- Let `R`, `S` be commutative rings in independent universes, with `S` an
+`R`-algebra domain and injective algebra map. Suppose the `R`-module quotient of `S`
+by the image of `R` has finite composition length. For every nonzero `a ∈ R`,
+`length_R(R/(a)) = length_R(S/(aS))`. Both sides use length over the original base
+ring and the actual principal ideals. -/
 theorem length_quotient_span_eq_of_finite_colength [IsDomain S]
     (hi : Function.Injective (algebraMap R S))
     (hfinite : IsFiniteLength R (S ⧸ (Algebra.linearMap R S).range))

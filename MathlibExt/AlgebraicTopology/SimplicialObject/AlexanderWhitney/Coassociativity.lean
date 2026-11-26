@@ -12,10 +12,16 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.AlexanderWhitney.Cha
 public import MathlibExt.AlgebraicTopology.SimplicialObject.AlexanderWhitney.Coherence
 
 /-!
-# Coassociativity of the Alexander--Whitney chain map
+# Alexander–Whitney associativity on alternating-face complexes
 
-This file proves that the generic Alexander--Whitney map on alternating-face
-complexes is coassociative up to the standard monoidal associators.
+Let C be preadditive and monoidal with a zero object and finite coproducts. Suppose both tensor
+variables are additive and preserve finite coproducts. The alternating-face functor A sends X to
+the chain complex with term X_n and boundary ∑_i(-1)^i d_i. The Alexander–Whitney map
+AW_{X,Y}:A(X⊗Y)→A(X)⊗A(Y) splits degree n over p+q=n by the front-p and back-q face maps.
+
+For simplicial X,Y,Z, applying AW twice along the two parenthesizations gives equal maps after
+the simplicial and chain tensor associators. This is an equality of the specified chain maps,
+with arbitrary object and morphism universes.
 -/
 
 @[expose] public section
@@ -484,8 +490,12 @@ private theorem assocTerm_eq (X Y Z : SimplicialObject C) (n : ℕ)
     (n - k.val) (n - p.val - (k.val - p.val)) (n - p.val) n
     (by omega) (by omega) (by omega) hr.symm
 
-/-- The Alexander--Whitney chain map is coassociative up to the standard
-associators of simplicial objects and chain complexes. -/
+/-- Let C be a preadditive monoidal category with independent object and morphism universes, a zero
+object and finite coproducts. Assume tensoring in each variable is additive and preserves finite
+coproducts. Write A for the alternating-face functor from simplicial objects to nonnegative
+chain complexes. For simplicial objects X,Y,Z, the equality is
+AW_{X⊗Y,Z}≫(AW_{X,Y}⊗id_{A(Z)})≫α_{A(X),A(Y),A(Z)}=A(α_{X,Y,Z})≫AW_{X,Y⊗Z}≫(id_{A(X)}⊗AW_{Y,Z}).
+Both sides map A((X⊗Y)⊗Z) to A(X)⊗(A(Y)⊗A(Z)) using the canonical associators. -/
 theorem alternatingMap_assoc (X Y Z : SimplicialObject C) :
     alternatingMap (X ⊗ Y) Z ≫
         HomologicalComplex.tensorHom (alternatingMap X Y) (𝟙 _) ≫

@@ -1,3 +1,6 @@
-# Skeletal Page XIso middle Normalization
+# Skeletal page charts respect equal normalized middle cuts
 
-The original native page equality isomorphisms retain an equal choice of middle index.
+Skeletal page charts respect equal normalized middle cuts.
+
+Replacing two middle-cut presentations equal to the skeletal core index gives the same page
+chart after equality transport.

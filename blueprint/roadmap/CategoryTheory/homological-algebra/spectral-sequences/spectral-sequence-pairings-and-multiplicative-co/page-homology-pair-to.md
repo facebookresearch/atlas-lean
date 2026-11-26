@@ -1,3 +1,5 @@
-# Page Homology Pair To
+# The homology product with a specified sum bidegree
 
-The original homology product at an explicitly equal output bidegree.
+The homology product with a specified sum bidegree.
+
+For a+b=t, transport the page homology product to t.

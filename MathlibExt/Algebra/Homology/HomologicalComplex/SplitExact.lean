@@ -16,20 +16,11 @@ public import Mathlib.CategoryTheory.Idempotents.Basic
 /-!
 # Split exact complexes and contracting homotopies
 
-A splitting is a degree-one family of generalized inverses to the
-differentials. Normalization makes its complementary degree projector
-annihilate both adjacent differential maps. If the complex is exact, this
-projector vanishes and the splitting gives a homotopy from the identity to
-zero.
-
-The construction applies to preadditive categories and arbitrary complex
-shapes. The converse uses existence of homology only at the selected
-short complex.
-
-## Source credit
-
-The contractibility characterization generalizes Weibel, *An Introduction
-to Homological Algebra* (1994), Definition 1.4.1 and Exercise 1.4.3.
+In a preadditive category, a contracting homotopy of 1_K to zero gives
+splitting data and exactness wherever homology exists. Conversely, a
+split acyclic complex has a normalized contracting homotopy. Thus, for
+complexes with homology in every degree, split exactness is equivalent
+to null-homotopy of the identity.
 -/
 
 @[expose] public section
@@ -42,9 +33,11 @@ universe u v
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- A decomposition of the middle identity into the incoming and outgoing
-boundary terms forces exactness whenever native homology exists. The two maps
-need not retract or section the outer differentials. -/
+/--
+Let S=(A→B→D) be a short complex in a preadditive category C, with homology. If r:B→A and
+s:D→B satisfy r≫S.f+S.g≫s=1_B, then S is exact at B. Neither r nor s is assumed to split the
+corresponding outer differential.
+-/
 lemma exact_of_middle_contraction (S : ShortComplex C) [S.HasHomology]
     (r : S.X₂ ⟶ S.X₁) (s : S.X₃ ⟶ S.X₂)
     (h : r ≫ S.f + S.g ≫ s = 𝟙 S.X₂) : S.Exact := by
@@ -69,7 +62,11 @@ section Preadditive
 
 variable [Preadditive C] {K : HomologicalComplex C c}
 
-/-- An actual identity-to-zero homotopy supplies the literal splitting data. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. A homotopy H:1_K∼0
+supplies splitting components H.hom i j. The homotopy identity gives dᵢⱼ≫H.hom j i≫dᵢⱼ=dᵢⱼ,
+with support on reversed differential degrees.
+-/
 def Splitting.ofHomotopyIdZero (h : Homotopy (𝟙 K) 0) : Splitting K where
   hom := h.hom
   zero := h.zero
@@ -88,7 +85,11 @@ def Splitting.ofHomotopyIdZero (h : Homotopy (𝟙 K) 0) : Splitting K where
     · rw [K.shape i j hij]
       simp only [comp_zero]
 
-/-- Its components are precisely those of the supplied native homotopy. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. For a contracting
+homotopy H:1_K∼0, the associated splitting has component (Splitting.ofHomotopyIdZero H).hom i
+j=H.hom i j.
+-/
 lemma Splitting.ofHomotopyIdZero_hom (h : Homotopy (𝟙 K) 0) (i j : ι) :
     (Splitting.ofHomotopyIdZero h).hom i j = h.hom i j := rfl
 
@@ -98,7 +99,11 @@ section ZeroMorphisms
 
 variable [HasZeroMorphisms C]
 
-/-- Split exactness is the literal split predicate together with native acyclicity. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms. It is split exact precisely
+when it admits generalized-inverse splitting data and is acyclic, meaning its short complex
+around every degree is exact.
+-/
 def IsSplitExact (K : HomologicalComplex C c) : Prop :=
   IsSplit K ∧ K.Acyclic
 
@@ -108,7 +113,11 @@ section PreadditiveExactness
 
 variable [Preadditive C] {K : HomologicalComplex C c}
 
-/-- Exactness kills the complementary normalized degree projection. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. Let s be a splitting and
+assume K is acyclic. For n=s.normalize.hom,
+1_{Kᵢ}=dᵢ,next(i)≫n_next(i),i+n_i,prev(i)≫d_prev(i),i at every i.
+-/
 lemma Splitting.normalize_sum_id (s : Splitting K) (hK : K.Acyclic) (i : ι) :
     𝟙 (K.X i) = dNext i s.normalize.hom + prevD i s.normalize.hom := by
   let a : K.X i ⟶ K.X i :=
@@ -170,7 +179,11 @@ lemma Splitting.normalize_sum_id (s : Splitting K) (hK : K.Acyclic) (i : ι) :
   have hid : 𝟙 (K.X i) = a + b := sub_eq_zero.mp hq0
   exact hid
 
-/-- The normalized inverse maps form an actual identity-to-zero homotopy. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. If s is a splitting and K
+is acyclic, the normalized family n=s.normalize.hom defines a homotopy 1_K∼0, since dNext i
+n+prevD i n=1_{Kᵢ} in every degree.
+-/
 noncomputable def Splitting.contractingHomotopy (s : Splitting K) (hK : K.Acyclic) :
     Homotopy (𝟙 K) 0 where
   hom := s.normalize.hom
@@ -179,11 +192,19 @@ noncomputable def Splitting.contractingHomotopy (s : Splitting K) (hK : K.Acycli
     simpa only [HomologicalComplex.id_f, HomologicalComplex.zero_f, add_zero] using
       s.normalize_sum_id hK i
 
-/-- Its components retain the actual normalized inverse maps. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. For a splitting s and an
+acyclicity hypothesis on K, the contracting homotopy from 1_K to zero has component
+s.normalize.hom i j at every pair i,j.
+-/
 lemma Splitting.contractingHomotopy_hom (s : Splitting K) (hK : K.Acyclic) (i j : ι) :
     (s.contractingHomotopy hK).hom i j = s.normalize.hom i j := rfl
 
-/-- An actual contraction earns exactness at a selected degree where native homology exists. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. Given H:1_K∼0 and
+homology at degree i, the three-term complex K_prev(i)→Kᵢ→K_next(i) is exact at its middle
+term.
+-/
 lemma exactAt_of_homotopy_id_zero (h : Homotopy (𝟙 K) 0) (i : ι) [K.HasHomology i] :
     (K.sc i).Exact := by
   apply CategoryTheory.ShortComplex.exact_of_middle_contraction (K.sc i)
@@ -194,11 +215,18 @@ lemma exactAt_of_homotopy_id_zero (h : Homotopy (𝟙 K) 0) (i : ι) [K.HasHomol
   simpa only [HomologicalComplex.id_f, HomologicalComplex.zero_f, add_zero,
     dNext, prevD, AddMonoidHom.mk'_apply, zero_add, add_comm] using hi.symm
 
-/-- Identity null-homotopy forces native homology to vanish when it exists. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. If homology exists at
+every degree and H:1_K∼0, then K is acyclic: every homology object is zero, equivalently every
+degreewise short complex is exact.
+-/
 lemma acyclic_of_homotopy_id_zero [∀ i, K.HasHomology i] (h : Homotopy (𝟙 K) 0) : K.Acyclic :=
   fun i => exactAt_of_homotopy_id_zero h i
 
-/-- Split exactness is equivalent to the existence of an actual contracting homotopy. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C. Assume K has homology in
+every degree. Then K is split exact if and only if there exists a homotopy from 1_K to zero.
+-/
 lemma isSplitExact_iff_id_nullHomotopic (K : HomologicalComplex C c)
     [∀ i, K.HasHomology i] :
     IsSplitExact K ↔ Nonempty (Homotopy (𝟙 K) 0) := by

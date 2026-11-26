@@ -1,3 +1,6 @@
-# Tensor Pow Obj zero
+# Zeroth cochain tensor power
 
-`tensorPowObj` at `0` is the tensor unit; left-associated base computation (`rfl`).
+Zeroth cochain tensor power.
+
+For a cochain complex X over R, its zeroth recursive tensor power is the cochain tensor unit,
+concentrated in degree zero at the scalar module R.

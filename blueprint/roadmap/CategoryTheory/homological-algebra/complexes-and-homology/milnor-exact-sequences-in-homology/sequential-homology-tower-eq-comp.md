@@ -1,4 +1,6 @@
-# Sequential Homology Tower eq comp
+# Homology tower as a composite functor
 
-The explicit object presentation retains the entire native composite.
-It lets projection formulas use actual homology objects without unfolding the native functor.
+Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+The degree-i homology tower equals the composite of K with the homology functor H_i on complexes of shape c.

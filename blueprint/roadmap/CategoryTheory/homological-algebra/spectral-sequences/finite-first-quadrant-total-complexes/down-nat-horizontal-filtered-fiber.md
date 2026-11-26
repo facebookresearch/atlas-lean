@@ -1,4 +1,5 @@
-# Down Nat Horizontal Filtered Fiber
+# The horizontally bounded total-degree fiber
 
-Bidegrees in total degree `n` whose horizontal coordinate is at most
-`k`.
+For n,k∈ℕ, the horizontal filtered fiber consists of
+pairs (p,q)∈ℕ² with p+q=n and p≤k.
+It indexes the retained finite summands in stage k of total degree n.

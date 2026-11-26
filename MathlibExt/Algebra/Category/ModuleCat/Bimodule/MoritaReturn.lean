@@ -16,11 +16,19 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Contraction
 public import MathlibExt.Algebra.Module.NatInt
 
 /-!
-# Contractions of Morita coefficient tensors
+# Contracting the bimodule tensor return
 
-Associativity and unit isomorphisms combine two copies of the supplied
-contraction to form the return maps. They respect the given commuting
-bimodule actions and integer scalar action.
+Let R,S be rings in universes r,s and P:(R,S), Q:(S,R), M:(R,R) bimodules with carriers in v.
+The raw return T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q has outer R-actions on its first P and final Q.
+
+Suppose α:P⊗_S Q≃R is right R-linear and also satisfies α(r•b)=rα(b). Associativity and the two
+α-contractions identify T(M) with M. On a five-factor class the forward map is
+Γ(p₀,q₀,m,p₁,q₁)↦α(p₀⊗q₀)•m•α(p₁⊗q₁).
+
+This contraction and its inverse are linear for R⊗_ℤRᵒᵖ. The inverse is obtained by inserting
+α⁻¹(1) on both sides of M in the paired-factor tensor coordinates and then reversing the
+reassociation. The resulting module isomorphism preserves the given left and right R-actions and
+integer scalar action.
 -/
 
 @[expose] public section
@@ -45,7 +53,11 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
   [Module R M] [Module Rᵐᵒᵖ M] [SMulCommClass R Rᵐᵒᵖ M]
 
 include R S P Q M in
-/-- The actual raw composite, retaining the first tensor's original ground action. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. The carrier T(M) lies in v. Its middle three-factor coefficient is (Q⊗_R M)⊗_R P,
+and the two outer balancing steps are over S. -/
 abbrev rawReturnTensor : Type v := by
   let C := TensorProduct.Balanced.Morita.coefficientTensor ℤ R Q M P
   let dC : Module ℤ C := inferInstance
@@ -58,7 +70,11 @@ abbrev rawReturnTensor : Type v := by
   exact assocSource ℤ S S P C Q
 
 include R S P Q M in
-/-- The same original composite bundled with its earned native R-bimodule action. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. The outer left R-action acts on p₀ and the outer right R-action on q₁. These
+commuting actions make T(M) an object of ModuleCat_v(R⊗_ℤRᵒᵖ). -/
 def rawReturnObject : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ) := by
   let C := TensorProduct.Balanced.Morita.coefficientTensor ℤ R Q M P
   let dC : Module ℤ C := inferInstance
@@ -70,7 +86,10 @@ def rawReturnObject : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ) := by
   letI := TensorProduct.Balanced.Morita.coefficientRightTower ℤ R S Q M P
   exact tensorObject S R Q P C
 
-/-- The original outer pure class, with any actual first transferred coefficient. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. For
+p₀∈P,c∈(Q⊗_R M)⊗_R P,q₁∈Q, the raw outer class is (p₀⊗_S c)⊗_S q₁ in T(M). It allows any inner
+coefficient c, with the computed S-actions of that tensor. -/
 def rawReturnOuterMk (p₀ : P)
     (c : TensorProduct.Balanced.Morita.coefficientTensor ℤ R Q M P) (q₁ : Q) :
     rawReturnTensor R S P Q M := by
@@ -86,14 +105,23 @@ def rawReturnOuterMk (p₀ : P)
   exact mk ℤ S (TensorProduct.Balanced ℤ S P C) Q
     (mk ℤ S P C p₀ c) q₁
 
-/-- The original five-factor pure class in the raw composite. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. For p₀,p₁∈P,q₀,q₁∈Q,m∈M, Γ is the class (p₀⊗_S((q₀⊗_R m)⊗_R p₁))⊗_S q₁. The
+parenthesization and the two R and two S balancing relations are fixed. -/
 def rawReturnMk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     rawReturnTensor R S P Q M := by
   letI := TensorProduct.Balanced.rightModule ℤ R R Q M
   exact rawReturnOuterMk R S P Q M p₀
     (mk ℤ R (TensorProduct.Balanced ℤ R Q M) P (mk ℤ R Q M q₀ m) p₁) q₁
 
-/-- The five original factors determine an additive map from the raw composite. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. For any additive commutative monoid C' in any universe, additive maps f,g:T(M)→C'
+are equal whenever f(Γ(p₀,q₀,m,p₁,q₁))=g(Γ(p₀,q₀,m,p₁,q₁)) for every choice of the five
+coefficients. -/
 theorem rawReturnHom_ext {C' : Type*} [AddCommMonoid C']
     {f g : rawReturnTensor R S P Q M →+ C'}
     (h : ∀ (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q),
@@ -126,7 +154,11 @@ theorem rawReturnHom_ext {C' : Type*} [AddCommMonoid C']
     exact DFunLike.congr_fun hc c
   exact DFunLike.congr_fun ha a
 
-/-- The actual native return module acts on its first P and last Q factors. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. For r∈R,t∈Rᵒᵖ, the scalar action satisfies
+(r⊗t)•Γ(p₀,q₀,m,p₁,q₁)=Γ(r•p₀,q₀,m,p₁,t•q₁). The inner coefficient factors are retained. -/
 theorem rawReturnModule_tmul_mk (r : R) (t : Rᵐᵒᵖ)
     (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     (rawReturnObject R S P Q M).isModule.smul (r ⊗ₜ[ℤ] t)
@@ -153,7 +185,12 @@ variable
     ∀ (r : R) (b : TensorProduct.Balanced ℤ S P Q), u (r • b) = r * u b)
 
 include u hu in
-/-- The actual raw return equivalence obtained by association and the two u contractions. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. There is an integer-linear equivalence T(M)≃M obtained by
+reassociation and contracting both P⊗_S Q pairs. Its value on Γ is α(p₀⊗q₀)•m•α(p₁⊗q₁). -/
 def rawReturnIso : rawReturnTensor R S P Q M ≃ₗ[ℤ] M := by
   let ringInteger : Module ℤ R := (Algebra.toModule : Module ℤ R)
   letI : Module ℤ R := ringInteger
@@ -203,7 +240,13 @@ def rawReturnIso : rawReturnTensor R S P Q M ≃ₗ[ℤ] M := by
   let a₄ : TensorProduct.Balanced ℤ R B M ≃ₗ[ℤ] M := leftContraction R B M e eR
   exact a₀.trans (b₁.trans (b₂.trans (a₃.trans a₄)))
 
-/-- The return contracts the two original P–Q pairs, with M unchanged in the middle. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. For every five-factor generator,
+c_α(Γ(p₀,q₀,m,p₁,q₁))=α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m). The first scalar acts on the left and the
+second through the given Rᵒᵖ-action. -/
 @[simp]
 theorem rawReturnIso_mk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     rawReturnIso R S P Q M u hu (rawReturnMk R S P Q M p₀ q₀ m p₁ q₁) =
@@ -282,7 +325,13 @@ theorem rawReturnIso_mk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
       ((congrArg a₄ ha₃).trans ha₄))
 
 include u hu in
-/-- The earned raw return is linear for the actual native enveloping scalar action. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. Combine the given R and Rᵒᵖ-actions on M into an E_R=R⊗_ℤRᵒᵖ-module.
+The return contraction c_α:T(M)→M is E_R-linear, so it commutes with every enveloping scalar as
+well as both endpoint actions. -/
 def rawReturnLinear :
     letI : Module (R ⊗[ℤ] Rᵐᵒᵖ) M := @TensorProduct.Algebra.module ℤ R Rᵐᵒᵖ M
       inferInstance (inferInstance : AddCommMonoid M) givenIntegerModule
@@ -352,7 +401,13 @@ def rawReturnLinear :
         (add_smul z w (F x)).symm))
 
 include u hu in
-/-- The inverse is the same actual raw inverse, with earned native scalar linearity. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. For M with the enveloping action reconstructed from its given
+endpoints, c_α⁻¹:M→T(M) is E_R-linear. In paired tensor coordinates it inserts α⁻¹(1) on the
+left and on the right of m, then reassociates to the raw five-factor carrier. -/
 def rawReturnInverseLinear :
     letI : Module (R ⊗[ℤ] Rᵐᵒᵖ) M := @TensorProduct.Algebra.module ℤ R Rᵐᵒᵖ M
       inferInstance (inferInstance : AddCommMonoid M) givenIntegerModule
@@ -382,7 +437,13 @@ def rawReturnInverseLinear :
   exact (e.apply_symm_apply (z • m)).trans h.symm
 
 include u hu in
-/-- The actual native R-bimodule return iso, with the original raw inverse. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. The mutually inverse E_R-linear contraction maps give T(M)≅M in
+ModuleCat_v(E_R), where E_R=R⊗_ℤRᵒᵖ and the target uses its combined given R-actions. The
+forward map has value α(p₀⊗q₀)•m•α(p₁⊗q₁) on Γ. -/
 def rawReturnModuleIso :
     letI : Module (R ⊗[ℤ] Rᵐᵒᵖ) M := @TensorProduct.Algebra.module ℤ R Rᵐᵒᵖ M
       inferInstance (inferInstance : AddCommMonoid M) givenIntegerModule
@@ -421,13 +482,24 @@ def rawReturnModuleIso :
     intro x
     exact (rawReturnIso R S P Q M u hu).apply_symm_apply x
 
-/-- The actual native return map has the original two-contraction value. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. For every ξ∈T(M), the forward morphism of the E_R-module isomorphism
+sends ξ to c_α(ξ), where c_α is the integer-linear raw return equivalence. Both maps use the
+same contraction and coefficient carrier. -/
 @[simp]
 theorem rawReturnModuleIso_hom_apply (x : rawReturnTensor R S P Q M) :
     ((rawReturnModuleIso R S P Q M u hu).hom).hom x =
       rawReturnIso R S P Q M u hu x := rfl
 
-/-- The actual native return map has the original two-contraction value. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Let M be an R-bimodule with abelian carrier and integer scalar action in v. Put
+T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q, and Γ(p₀,q₀,m,p₁,q₁) for its class with those five factors in
+that order. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b) for all r∈R,b∈P⊗_S Q. Thus
+α preserves both R-actions. For Γ(p₀,q₀,m,p₁,q₁), the forward module isomorphism evaluates to
+α(p₀⊗q₀)•(op(α(p₁⊗q₁))•m), in the module M with its given left and right actions. -/
 @[simp]
 theorem rawReturnModuleIso_hom_mk (p₀ : P) (q₀ : Q) (m : M) (p₁ : P) (q₁ : Q) :
     ((rawReturnModuleIso R S P Q M u hu).hom).hom

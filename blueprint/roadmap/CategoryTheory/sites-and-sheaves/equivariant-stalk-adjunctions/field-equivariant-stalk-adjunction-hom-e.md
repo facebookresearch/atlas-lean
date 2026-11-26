@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Adjunction hom Equiv
+# Field stalk adjunction has the constructed transpose correspondence
 
-Its Hom equivalence is exactly the original invariant-cone factorization family.
+Field stalk adjunction has the constructed transpose correspondence.
+
+The adjunction Hom equivalence equals the invariant-cone transpose equivalence.

@@ -1,3 +1,5 @@
-# Page Cycles Pair signed Swap
+# Signed page symmetry passes to cycles
 
-Actual native cycle inclusion retains the original signed swap law.
+Signed page symmetry passes to cycles.
+
+The cycle products obey the same total-degree sign under braiding.

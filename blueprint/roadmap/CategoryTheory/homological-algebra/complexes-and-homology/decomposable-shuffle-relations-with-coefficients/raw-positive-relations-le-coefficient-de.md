@@ -1,3 +1,6 @@
-# Raw Positive Relations le coefficient Decomposable
+# Containment of proper relations in regular-evaluated decomposables
 
-Every original two-positive-factor coefficient relation is an evaluated regular decomposable.
+Containment of proper relations in regular-evaluated decomposables.
+
+Every coefficient relation formed from two positive chain degrees belongs to the sum of images
+of regular both-positive relations under coefficient evaluation.

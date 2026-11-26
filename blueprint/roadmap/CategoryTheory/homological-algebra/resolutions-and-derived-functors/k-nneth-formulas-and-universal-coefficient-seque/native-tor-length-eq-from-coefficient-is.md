@@ -1,3 +1,5 @@
-# Native Tor Length eq from Coefficient Isos
+# Tor lengths agree through ring and coefficient equivalences
 
-Genuine coefficient isomorphisms preserve every literal extended-natural native Tor length.
+Tor lengths agree through ring and coefficient equivalences.
+
+The transported ordered Tor coefficients give equal module lengths over the two rings.

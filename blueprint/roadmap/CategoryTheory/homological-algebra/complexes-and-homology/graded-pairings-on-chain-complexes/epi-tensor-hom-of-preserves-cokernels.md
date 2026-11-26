@@ -1,3 +1,8 @@
-# Epi tensor Hom of preserves Cokernels
+# Epimorphism of a tensor product of epic maps
 
-Preserving the actual cokernels preserves the tensor of any two original epimorphisms.
+Epimorphism of a tensor product of epic maps.
+
+Let C be abelian and monoidal preadditive, with every left and right tensor functor preserving
+colimits of parallel pairs. For epimorphisms f : A → B and g : D → F, the tensor map f ⊗ g : A
+⊗ D → B ⊗ F is epic. Present f and g as cokernels of their kernels and use tensor preservation
+of these cokernels.

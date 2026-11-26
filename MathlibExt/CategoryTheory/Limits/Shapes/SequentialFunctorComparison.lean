@@ -19,11 +19,19 @@ public import Mathlib.CategoryTheory.Functor.EpiMono
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Functor comparison for sequential differences
+# Additive functors and sequential difference comparisons
 
-The native product comparison intertwines the standard sequential differences
-for every additive functor. Its naturality also compares maps of towers.
-Product preservation makes this comparison an isomorphism.
+Let C,D be preadditive categories with countable products and F : C ⥤ D additive, with
+independent object and morphism universes. For an inverse tower A with transition t_n :
+A_{n+1} → A_n, put P_A = ∏ₙA_n and d_A = 1−shift, where d_A ≫ π_n = π_n−π_{n+1} ≫ t_n. The
+product comparison κ_A : F(P_A) → P_{A⋙F} satisfies F(d_A) ≫ κ_A = κ_A ≫ d_{A⋙F}, naturally in
+tower maps.
+
+Preservation of the particular product P_A makes κ_A invertible. It then identifies the
+kernels and cokernels of F(d_A) and d_{A⋙F}. To identify F(Ker(d_A)) with Ker(d_{A⋙F})
+requires preservation of the particular kernel as well. Likewise, preservation of the
+particular cokernel gives the comparison F(Coker(d_A)) → Coker(d_{A⋙F}), which is invertible
+when the product is also preserved. The sequential lim¹ object here is Coker(d_A).
 -/
 
 @[expose] public section
@@ -43,7 +51,11 @@ variable {C : Type u₁} [Category.{v₁} C]
 variable {D : Type u₂} [Category.{v₂} D]
 variable [HasCountableProducts C] [HasCountableProducts D]
 
-/-- The native product comparison is natural in maps of inverse towers. -/
+/-- Product comparison naturality for inverse tower maps.
+
+Let F : C ⥤ D be any functor between categories with countable products and α : A → B a map of
+inverse towers. Writing P(α) for its componentwise product map, the canonical comparisons
+satisfy F(P(α)) ≫ κ_B = κ_A ≫ P(α⋙F). This equation does not require additivity. -/
 @[reassoc]
 theorem sequentialProductMap_piComparison
     (F : C ⥤ D) {A B : ℕᵒᵖ ⥤ C} (α : A ⟶ B) :
@@ -61,8 +73,11 @@ theorem sequentialProductMap_piComparison
 
 variable [Preadditive C] [Preadditive D]
 
-/-- The standard difference is identity minus the native product map
-reindexed by successor. -/
+/-- Sequential difference as identity minus successor shift.
+
+For an inverse tower A in a preadditive category with countable products, let t_n : A_{n+1} →
+A_n be its transitions. The standard difference on P_A = ∏ₙA_n is id_{P_A} −
+Pi.map'(Nat.succ,t), so its n-th projection is π_n − π_{n+1} ≫ t_n. -/
 theorem sequentialDifference_eq_id_sub_map' (A : ℕᵒᵖ ⥤ C) :
     sequentialDifference A = 𝟙 (sequentialProduct A) -
       Pi.map' Nat.succ (fun n => A.map (homOfLE (Nat.le_succ n)).op) := by
@@ -71,8 +86,12 @@ theorem sequentialDifference_eq_id_sub_map' (A : ℕᵒᵖ ⥤ C) :
   simp only [sequentialDifference_π, Preadditive.sub_comp,
     Category.id_comp, Pi.map'_comp_π]
 
-/-- Mapping the standard difference commutes with the native product
-comparison for an additive functor. -/
+/-- Intertwining sequential differences by an additive product comparison.
+
+For an additive functor F between preadditive categories with countable products and an
+inverse tower A, the product comparison κ_A satisfies F(d_A) ≫ κ_A = κ_A ≫ d_{A⋙F}. Here d_A
+is identity minus successor shift; additivity preserves the subtraction and the mapped
+transition maps. -/
 @[reassoc]
 theorem sequentialDifference_piComparison
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C) :
@@ -97,8 +116,11 @@ theorem sequentialDifference_piComparison
         (g := fun n : ℕ => A.obj (op n))
         (fun n => A.map (homOfLE (Nat.le_succ n)).op))
 
-/-- Preservation of the particular sequential product transports
-epimorphisms between the mapped difference and the difference of the mapped tower. -/
+/-- Epimorphism comparison for a mapped sequential difference.
+
+Let F be additive between preadditive categories with countable products and preserve the
+particular product P_A of an inverse tower A. The resulting invertible comparison κ_A
+intertwines F(d_A) and d_{A⋙F}, hence F(d_A) is epic if and only if d_{A⋙F} is epic. -/
 theorem epi_map_sequentialDifference_iff
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [PreservesLimit (Discrete.functor (fun n : ℕ => A.obj (op n))) F] :
@@ -107,8 +129,11 @@ theorem epi_map_sequentialDifference_iff
     (piComparison F (fun n : ℕ => A.obj (op n))),
     sequentialDifference_piComparison F A, epi_comp_iff_of_epi]
 
-/-- Preservation of the particular sequential product transports
-monomorphisms between the mapped difference and the difference of the mapped tower. -/
+/-- Monomorphism comparison for a mapped sequential difference.
+
+Let F be additive between preadditive categories with countable products and preserve the
+particular product P_A of an inverse tower A. Since κ_A is invertible and F(d_A) ≫ κ_A = κ_A ≫
+d_{A⋙F}, the morphism F(d_A) is monic if and only if d_{A⋙F} is monic. -/
 theorem mono_map_sequentialDifference_iff
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [PreservesLimit (Discrete.functor (fun n : ℕ => A.obj (op n))) F] :
@@ -117,8 +142,11 @@ theorem mono_map_sequentialDifference_iff
     (piComparison F (fun n : ℕ => A.obj (op n))),
     sequentialDifference_piComparison F A, mono_comp_iff_of_isIso]
 
-/-- A functor reflecting epimorphisms detects an epimorphic standard
-difference after mapping the tower and preserving its product. -/
+/-- Detecting an epic tower difference through an additive functor.
+
+Suppose F : C ⥤ D is additive, reflects epimorphisms and preserves the product of an inverse
+tower A, with C,D preadditive and having countable products. If d_{A⋙F} is epic, the product
+comparison makes F(d_A) epic, and reflection implies that d_A is epic. -/
 theorem epi_sequentialDifference_of_epi_functor
     (F : C ⥤ D) [F.Additive] [Functor.ReflectsEpimorphisms F]
     (A : ℕᵒᵖ ⥤ C)
@@ -128,8 +156,12 @@ theorem epi_sequentialDifference_of_epi_functor
 
 section Kernels
 
-/-- Product preservation compares the kernel of the mapped difference with
-that of the mapped tower. No kernel preservation by the functor is needed. -/
+/-- Kernel isomorphism induced by preservation of a tower product.
+
+Let F be additive between preadditive categories with countable products and preserve P_A. If
+the kernels of F(d_A) and d_{A⋙F} exist, the square with invertible sides κ_A induces an
+isomorphism Ker(F(d_A)) ≅ Ker(d_{A⋙F}). Preservation of Ker(d_A) by F is not an assumption of
+this comparison. -/
 noncomputable def sequentialDifferenceKernelIso
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [HasKernel (F.map (sequentialDifference A))]
@@ -143,7 +175,11 @@ noncomputable def sequentialDifferenceKernelIso
     (PreservesProduct.iso F (fun n : ℕ => A.obj (op n)))
     (by simpa only [PreservesProduct.iso_hom] using sequentialDifference_piComparison F A)
 
-/-- The mapped-difference kernel isomorphism preserves the actual inclusions. -/
+/-- Forward mapped-difference kernel comparison on inclusions.
+
+With additive F preserving P_A and both mapped-difference kernels defined, let e : Ker(F(d_A))
+≅ Ker(d_{A⋙F}) be the induced kernel comparison. Its forward map satisfies e.hom ≫
+kernel.ι(d_{A⋙F}) = kernel.ι(F(d_A)) ≫ κ_A. -/
 @[reassoc (attr := simp)]
 theorem sequentialDifferenceKernelIso_hom_comp_ι
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -157,7 +193,11 @@ theorem sequentialDifferenceKernelIso_hom_comp_ι
   dsimp only [sequentialDifferenceKernelIso, kernel.mapIso]
   simp only [kernel.map, kernel.lift_ι, PreservesProduct.iso_hom]
 
-/-- The inverse kernel isomorphism preserves the actual inclusions. -/
+/-- Inverse mapped-difference kernel comparison on inclusions.
+
+With additive F preserving P_A and both kernels defined, the induced isomorphism e :
+Ker(F(d_A)) ≅ Ker(d_{A⋙F}) satisfies e.inv ≫ kernel.ι(F(d_A)) = kernel.ι(d_{A⋙F}) ≫ κ_A⁻¹.
+Here κ_A is the invertible product comparison. -/
 @[reassoc (attr := simp)]
 theorem sequentialDifferenceKernelIso_inv_comp_ι
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -171,8 +211,12 @@ theorem sequentialDifferenceKernelIso_inv_comp_ι
   dsimp only [sequentialDifferenceKernelIso, kernel.mapIso]
   simp only [kernel.map, kernel.lift_ι]
 
-/-- The kernel comparison for a sequential difference, followed by the
-kernel map induced by the native product comparison. -/
+/-- Comparison from the image of a tower kernel to the mapped tower kernel.
+
+For additive F between preadditive categories with countable products, suppose Ker(d_A),
+Ker(F(d_A)) and Ker(d_{A⋙F}) exist. Compose the ordinary kernel comparison F(Ker(d_A)) →
+Ker(F(d_A)) with the kernel map induced by κ_A to obtain F(Ker(d_A)) → Ker(d_{A⋙F}). This map
+is defined without a preservation hypothesis. -/
 noncomputable def sequentialKernelComparison
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [HasKernel (sequentialDifference A)]
@@ -185,7 +229,11 @@ noncomputable def sequentialKernelComparison
       (piComparison F (fun n : ℕ => A.obj (op n)))
       (sequentialDifference_piComparison F A)
 
-/-- The kernel comparison preserves the actual kernel inclusions. -/
+/-- Kernel inclusion equation for additive tower transport.
+
+For additive F and an inverse tower A with all three comparison kernels defined, the map k_A :
+F(Ker(d_A)) → Ker(d_{A⋙F}) satisfies k_A ≫ kernel.ι(d_{A⋙F}) = F(kernel.ι(d_A)) ≫ κ_A. The
+equation specifies its composite with the mapped tower's kernel inclusion. -/
 @[reassoc (attr := simp)]
 theorem sequentialKernelComparison_comp_ι
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -199,8 +247,11 @@ theorem sequentialKernelComparison_comp_ι
   simp only [Category.assoc, kernel.map, kernel.lift_ι,
     kernelComparison_comp_ι_assoc]
 
-/-- Preserving the product and the particular kernel makes the kernel
-comparison an isomorphism. -/
+/-- Invertibility of the tower kernel comparison under preservation.
+
+Let F be additive between preadditive categories with countable products. If it preserves the
+product P_A and the particular kernel of d_A, with the comparison kernels defined, then the
+map F(Ker(d_A)) → Ker(d_{A⋙F}) is invertible. -/
 noncomputable instance sequentialKernelComparison_isIso
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [HasKernel (sequentialDifference A)]
@@ -212,7 +263,11 @@ noncomputable instance sequentialKernelComparison_isIso
   dsimp only [sequentialKernelComparison]
   infer_instance
 
-/-- The kernel isomorphism has the actual kernel comparison as its hom. -/
+/-- Isomorphism between a transported tower kernel and the mapped tower kernel.
+
+For additive F preserving the product P_A and the kernel of d_A, the canonical kernel
+comparison defines F(Ker(d_A)) ≅ Ker(d_{A⋙F}). The categories are preadditive with countable
+products, and the three kernels occurring in the comparison are assumed to exist. -/
 noncomputable def sequentialKernelFunctorIso
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [HasKernel (sequentialDifference A)]
@@ -223,6 +278,11 @@ noncomputable def sequentialKernelFunctorIso
     F.obj (kernel (sequentialDifference A)) ≅ kernel (sequentialDifference (A ⋙ F)) :=
   asIso (sequentialKernelComparison F A)
 
+/-- Forward map of the transported tower kernel isomorphism.
+
+Under preservation of P_A and Ker(d_A) by an additive functor F, the hom of
+sequentialKernelFunctorIso is exactly sequentialKernelComparison F A : F(Ker(d_A)) →
+Ker(d_{A⋙F}), with the comparison kernels defined. -/
 @[simp]
 theorem sequentialKernelFunctorIso_hom
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -237,9 +297,12 @@ end Kernels
 
 section Cokernels
 
-/-- Product preservation compares cokernels of the two standard differences.
-This concerns the cokernel of the mapped difference and needs no preservation
-of cokernels by the functor. -/
+/-- Cokernel isomorphism induced by preservation of a tower product.
+
+Let F be additive between preadditive categories with countable products and preserve P_A. If
+the cokernels of F(d_A) and d_{A⋙F} exist, the invertible product comparison κ_A induces
+Coker(F(d_A)) ≅ Coker(d_{A⋙F}). This comparison uses the cokernel of the mapped difference and
+does not require F to preserve Coker(d_A). -/
 noncomputable def sequentialDifferenceCokernelIso
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [HasCokernel (F.map (sequentialDifference A))]
@@ -253,7 +316,11 @@ noncomputable def sequentialDifferenceCokernelIso
     (PreservesProduct.iso F (fun n : ℕ => A.obj (op n)))
     (by simpa only [PreservesProduct.iso_hom] using sequentialDifference_piComparison F A)
 
-/-- The mapped-difference cokernel isomorphism preserves the quotient maps. -/
+/-- Forward mapped-difference cokernel comparison on projections.
+
+For additive F preserving P_A and both cokernels defined, let e : Coker(F(d_A)) ≅
+Coker(d_{A⋙F}) be induced by κ_A. Its hom satisfies cokernel.π(F(d_A)) ≫ e.hom = κ_A ≫
+cokernel.π(d_{A⋙F}). -/
 @[reassoc (attr := simp)]
 theorem cokernel_π_comp_sequentialDifferenceCokernelIso_hom
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -267,7 +334,11 @@ theorem cokernel_π_comp_sequentialDifferenceCokernelIso_hom
   dsimp only [sequentialDifferenceCokernelIso, cokernel.mapIso]
   simp only [cokernel.map, cokernel.π_desc, PreservesProduct.iso_hom]
 
-/-- The inverse cokernel isomorphism preserves the quotient maps. -/
+/-- Inverse mapped-difference cokernel comparison on projections.
+
+For additive F preserving P_A and both cokernels defined, the induced comparison e satisfies
+cokernel.π(d_{A⋙F}) ≫ e.inv = κ_A⁻¹ ≫ cokernel.π(F(d_A)). Thus its inverse respects the
+quotient projections through the inverse product comparison. -/
 @[reassoc (attr := simp)]
 theorem cokernel_π_comp_sequentialDifferenceCokernelIso_inv
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -283,8 +354,12 @@ theorem cokernel_π_comp_sequentialDifferenceCokernelIso_inv
 
 variable [HasCokernels C] [HasCokernels D]
 
-/-- Preservation of the particular cokernel gives a map from the image of
-concrete sequential lim-one to the lim-one of the mapped tower. -/
+/-- Comparison for the cokernel of an additive tower difference.
+
+Let C,D be preadditive with countable products and cokernels, and F additive. If F preserves
+the particular cokernel of d_A, compose F(Coker(d_A)) ≅ Coker(F(d_A)) with the cokernel map
+induced by κ_A. This defines F(lim¹ A) → lim¹(A⋙F), where lim¹ is the concrete cokernel of the
+sequential difference. -/
 noncomputable def sequentialLimOneComparison
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [PreservesColimit (parallelPair (sequentialDifference A) 0) F] :
@@ -295,7 +370,11 @@ noncomputable def sequentialLimOneComparison
       (piComparison F (fun n : ℕ => A.obj (op n)))
       (sequentialDifference_piComparison F A)
 
-/-- The lim-one comparison preserves the actual quotient maps. -/
+/-- Quotient projection equation for the sequential lim-one comparison.
+
+For additive F preserving the cokernel of d_A, with countable products and cokernels in C,D,
+let c_A : F(lim¹ A) → lim¹(A⋙F) be the canonical comparison. If q_A : P_A → lim¹ A is the
+cokernel projection, then F(q_A) ≫ c_A = κ_A ≫ q_{A⋙F}. -/
 @[reassoc (attr := simp)]
 theorem map_sequentialLimOneπ_comp_comparison
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
@@ -312,7 +391,12 @@ theorem map_sequentialLimOneπ_comp_comparison
         cokernel.π (sequentialDifference (A ⋙ F))
   simp only [PreservesCokernel.π_iso_hom_assoc, cokernel.π_desc]
 
-/-- Product preservation makes the concrete lim-one comparison invertible. -/
+/-- Invertibility of the sequential lim-one comparison.
+
+In preadditive categories with countable products and cokernels, an additive functor F
+preserving both P_A and Coker(d_A) makes the canonical map F(lim¹ A) → lim¹(A⋙F) invertible.
+The comparison combines the preserved cokernel isomorphism with the isomorphism induced by the
+product comparison. -/
 noncomputable instance sequentialLimOneComparison_isIso
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [PreservesColimit (parallelPair (sequentialDifference A) 0) F]
@@ -330,8 +414,12 @@ noncomputable instance sequentialLimOneComparison_isIso
             cokernel (sequentialDifference (A ⋙ F))))
   infer_instance
 
-/-- The image of concrete lim-one agrees with the lim-one of the mapped
-tower when the particular product and cokernel are preserved. -/
+/-- Transported sequential lim-one isomorphism.
+
+For an additive functor F between preadditive categories with countable products and
+cokernels, preservation of the particular product P_A and cokernel of d_A gives F(lim¹ A) ≅
+lim¹(A⋙F). Both lim¹ objects are defined as cokernels of their standard sequential
+differences. -/
 noncomputable def sequentialLimOneFunctorIso
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)
     [PreservesColimit (parallelPair (sequentialDifference A) 0) F]
@@ -339,6 +427,11 @@ noncomputable def sequentialLimOneFunctorIso
     F.obj (sequentialLimOne A) ≅ sequentialLimOne (A ⋙ F) :=
   asIso (sequentialLimOneComparison F A)
 
+/-- Forward map of the sequential lim-one transport isomorphism.
+
+When additive F preserves P_A and Coker(d_A), the hom of sequentialLimOneFunctorIso is
+sequentialLimOneComparison F A : F(lim¹ A) → lim¹(A⋙F), the comparison characterized by its
+equation with the cokernel projections. -/
 @[simp]
 theorem sequentialLimOneFunctorIso_hom
     (F : C ⥤ D) [F.Additive] (A : ℕᵒᵖ ⥤ C)

@@ -21,12 +21,23 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.HorseshoeComparison
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.HorseshoeData
 
 /-!
-## Derived connectors for augmented coefficient diagrams in arbitrary abelian categories
+# Connecting morphisms computed by exact coaugmented diagrams
+
+In abelian categories, coaugmentation quasi-isomorphisms identifying
+three nonnegative cochain complexes with a short exact sequence admit
+strict comparison to an injective horseshoe. If an additive functor
+maps that diagram to a short exact sequence of complexes, its
+cohomology connecting map commutes with the three augmented
+cohomology-to-derived comparisons.
 -/
 
 
 /-!
-## Strict comparison into an injective horseshoe, from any exact augmented diagram
+## Comparison of all three coaugmentations
+
+The degree-zero coaugmentation squares for the two sequence maps are
+required to commute. The comparison into the injective horseshoe then
+preserves each coaugmentation as a cochain map.
 -/
 @[expose] public section
 section
@@ -38,10 +49,11 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory.Functor.RightDerived
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/--
-An augmented quasi-isomorphic resolution diagram admits a strict comparison into the injective
-horseshoe, preserving all three original coaugmentations.
--/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and `H`
+an injective horseshoe for `S`. Suppose a short complex of nonnegative
+cochain complexes `P₁ → P₂ → P₃` has quasi-isomorphisms
+`ι_k : X_k[0] → P_k` whose degree-zero squares commute with `S.f,S.g`.
+There is a map of diagrams `P → H` preserving all three coaugmentations. -/
 theorem exists_strictAugmentedHorseshoeComparison
     (S : ShortComplex C) (hS : S.ShortExact) (H : HorseshoeData S hS)
     (P : ShortComplex (CochainComplex C ℕ))
@@ -104,7 +116,11 @@ end
 
 
 /-!
-## The short-exact augmented diagram comparison preserves the derived connector
+## Connecting square for a mapped short exact diagram
+
+The connecting map is taken from the short exact sequence of complexes
+after applying the additive coefficient functor. The exact coaugmented
+source complexes need not have injective terms.
 -/
 @[expose] public section
 section
@@ -119,11 +135,12 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-A true augmented quasi-isomorphic short-exact diagram, mapped by the additive functor, has the
-SAME derived connecting morphism under the injective augmentation comparisons. The strict
-comparison is constructed internally.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For short exact `S : X₁ → X₂ → X₃`, let
+`P₁ → P₂ → P₃` have coaugmentation quasi-isomorphisms `X_k[0] → P_k`
+commuting with the two sequence maps in degree zero. If `F(P)` is
+short exact, then its boundary `Hⁿ(F(P₃)) → H^(n+1)(F(P₁))`
+commutes with the comparisons to the right-derived boundary of `S`. -/
 theorem augmentedResolutionToRightDerivedHom_connecting
     (F : C ⥤ D) [F.Additive]
     (S : ShortComplex C) (hS : S.ShortExact)
@@ -179,7 +196,11 @@ end
 
 
 /-!
-## The functorial augmented comparison preserves the connector on every short exact diagram
+## Connecting square for a functorial coaugmented family
+
+Naturality of the coaugmentations identifies the preceding diagram
+comparison with the components of the cohomology-to-derived natural
+transformation for the family.
 -/
 @[expose] public section
 section
@@ -194,11 +215,12 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-Every augmented functorial complex preserves the derived connector when its mapped coefficient
-diagram is genuinely short exact. The needed strict map is constructed from the true augmentation
-and exactness internally.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. Let `R : C → CochainComplex C ℕ` preserve
+zero morphisms and have natural coaugmentation quasi-isomorphisms
+`X[0] → R(X)`. If `S` is short exact and `F(R(S))` is short exact,
+its connecting map commutes with the degree-`n` and degree-`n+1`
+components of the augmented cohomology-to-derived natural transformation. -/
 theorem augmentedResolutionToRightDerivedNatTrans_connecting
     (F : C ⥤ D) [F.Additive] (R : C ⥤ CochainComplex C ℕ) [R.PreservesZeroMorphisms]
     (ι : ∀ X : C, (CochainComplex.single₀ C).obj X ⟶ R.obj X)

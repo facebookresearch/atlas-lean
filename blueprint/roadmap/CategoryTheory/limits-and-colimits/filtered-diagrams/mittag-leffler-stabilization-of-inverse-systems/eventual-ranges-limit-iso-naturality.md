@@ -1,3 +1,6 @@
-# Eventual Ranges Limit Iso naturality
+# Naturality of eventual-image limit comparison
 
-The actual limit-inclusion isomorphisms are natural in the original diagram.
+Naturality of eventual-image limit comparison.
+
+For α : A → B, the limit of its restricted eventual-range map followed by the comparison for B
+equals the comparison for A followed by limMap α.

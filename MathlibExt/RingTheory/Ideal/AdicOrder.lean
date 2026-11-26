@@ -13,20 +13,15 @@ module
 public import Mathlib.RingTheory.Filtration
 
 /-!
-# Finite order in an adic filtration
+# Finite adic order in a Noetherian local ring
 
-In a Noetherian local ring, every nonzero element has a final nonzero
-initial form for the powers of any proper ideal.  This is the element-first
-counterpart to the Dedekind-domain result that fixes an exponent and then
-produces an element in one power but not the next.
+Let `R` be a Noetherian local commutative ring and let `I` be a proper ideal. The intersection
+of the powers of `I` is zero. Consequently, every nonzero `x : R` has a degree `n : ℕ` such
+that `x ∈ I^n` and `x ∉ I^(n+1)`, so its class in `I^n/I^(n+1)` is nonzero.
 
-This file deliberately does not define a total adic-order function: the
-zero element has infinite order, so such a definition requires a separately
-reviewed extended-natural-valued interface.
+The zero element belongs to every ideal power.
 
-## Main declaration
-
-* `Ideal.exists_mem_pow_notMem_pow_succ_of_ne_zero`
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -59,8 +54,9 @@ private theorem exists_mem_pow_not_mem_pow_succ_of_iInf_eq_bot
     exact (Nat.find_min hex (by omega : n < Nat.find hex)) hnot
   · simpa [hn] using Nat.find_spec hex
 
-/-- In a Noetherian local ring, every nonzero element belongs to some power
-of a proper ideal but not to the next power. -/
+/-- Let `R` be a Noetherian local commutative ring, let `I : Ideal R` satisfy `I ≠ ⊤`, and let `x
+: R` satisfy `x ≠ 0`. There exists `n : ℕ` such that `x ∈ I^n` and `x ∉ I^(n+1)`. Thus `x` has
+a nonzero initial form in degree `n`. -/
 theorem exists_mem_pow_notMem_pow_succ_of_ne_zero
     {R : Type u} [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
     (I : Ideal R) (hI : I ≠ ⊤) {x : R} (hx : x ≠ 0) :

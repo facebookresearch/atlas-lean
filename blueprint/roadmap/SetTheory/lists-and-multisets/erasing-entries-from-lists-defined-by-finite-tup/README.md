@@ -1,4 +1,4 @@
 # Erasing entries from lists defined by finite tuples
 
-- [Erase Idx of Fn](erase-idx-of-fn.md)
-- [Erase Idx erase Idx of Fn](erase-idx-erase-idx-of-fn.md)
+- [Deleting an entry from the list of a finite tuple](erase-idx-of-fn.md)
+- [Ordered deletion of two tuple entries](erase-idx-erase-idx-of-fn.md)

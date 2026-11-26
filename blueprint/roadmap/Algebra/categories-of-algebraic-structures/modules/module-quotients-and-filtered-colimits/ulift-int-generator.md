@@ -1,4 +1,5 @@
-# Ulift Int Generator
+# The regular module of the lifted integers
 
-The regular module over `ULift ℤ`, used as the canonical excision
-generator.
+The regular module of the lifted integers.
+
+This is ULift ℤ as a module over the same lifted integer ring, at the stated universe height.

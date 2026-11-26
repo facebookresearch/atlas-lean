@@ -1,3 +1,6 @@
-# Tor Coefficient Transformation id
+# Identity bimodule coefficient gives the identity Tor transformation
 
-Identity coefficient maps induce the identity on the same native Tor functor.
+Identity bimodule coefficient gives the identity Tor transformation.
+
+The degree-`n` Tor coefficient transformation induced by the identity map on `B` is the
+identity of `torFunctor R S B n`.

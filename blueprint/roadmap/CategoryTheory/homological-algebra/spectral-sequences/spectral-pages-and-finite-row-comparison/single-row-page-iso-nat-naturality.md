@@ -1,3 +1,5 @@
-# Single Row Page Iso Nat naturality
+# Naturality of the finite collapsed-page composite
 
-Every finite canonical ordinary page comparison is natural in spectral sequences.
+Naturality of the finite collapsed-page composite.
+
+The morphism commutes with the comparison from E₂ to E_{k+2}.

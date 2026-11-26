@@ -14,17 +14,15 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.SplittingShiftProje
 public import MathlibExt.Algebra.Homology.CochainComplex.ShiftHomologyPointwise
 
 /-!
-# Signed cochain shift of actual pointwise decomposition
+# Shift comparisons for the coordinates of a split degree
 
-The original selected homology supplies shifted homology through the native
-short-complex isomorphism. The original selected kernel/cokernel supply their
-shifted counterparts by native diagram transport. Actual cycle retractions,
-homology inclusions, boundary projections and outgoing sections then commute
-with the native comparison maps. The resulting nested biproduct comparison
-intertwines the actual two constructed degree decompositions.
+For an integer cochain splitting, the canonical cycles and homology
+shift maps identify its retractions, inclusions and sections at i with
+those at i+a. Kernel and cokernel comparisons identify the boundary and
+outgoing coordinates when those objects exist.
 
-Only preadditivity and the original selected homology/kernel/cokernel existences
-are assumed. No global homology, abelian, zero-object or biproduct premise occurs.
+The three comparison maps combine into an isomorphism of the two degree
+decompositions and preserve their canonical forward coordinate maps.
 -/
 
 @[expose] public section
@@ -39,7 +37,13 @@ universe u v
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   {K : CochainComplex C ℤ}
 
-/-- The actual shifted cycles retraction agrees through the native selected cycles comparison. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. The cycles retractions satisfy r'_i≫e_Z.hom=r_{i+a}, after identifying the
+shifted degree term with K^{i+a}.
+-/
 @[reassoc]
 lemma cochainShift_cyclesRetraction (s : Splitting K) (a i : ℤ) [K.HasHomology (i + a)] :
     letI := CochainComplex.hasHomology_shift K a i
@@ -52,7 +56,13 @@ lemma cochainShift_cyclesRetraction (s : Splitting K) (a i : ℤ) [K.HasHomology
     s.cyclesRetraction_iCycles (i + a), cochainShift_normalize_dNext]
   rfl
 
-/-- The actual shifted homology inclusion agrees through the native selected homology map. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. The homology inclusions satisfy e_H.hom≫ℓ_{i+a}=ℓ'_i, from shifted homology
+to the common degree term.
+-/
 @[reassoc]
 lemma cochainShift_homologyInclusionComponent (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] :
@@ -80,7 +90,12 @@ lemma cochainShift_homologyInclusionComponent (s : Splitting K) (a i : ℤ)
     _ = (K⟦a⟧).homologyπ i ≫ (s.cochainShift a).homologyInclusionComponent i :=
       ((s.cochainShift a).homologyπ_homologyInclusionComponent i).symm
 
-/-- The earned shifted homology section agrees through the native cycle and homology maps. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. For the homology-to-cycles sections t, e_H.hom≫t_{i+a}=t'_i≫e_Z.hom.
+-/
 @[reassoc]
 lemma cochainShift_homologyCycleSection (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] :
@@ -98,7 +113,13 @@ lemma cochainShift_homologyCycleSection (s : Splitting K) (a i : ℤ)
         (CochainComplex.shiftCyclesIso K a i).hom := by
       simp only [homologyCycleSection, Category.assoc]
 
-/-- The shifted native pointwise homology coordinate has no residual shift sign. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. The shifted degree projector r'_i≫π'_i≫ℓ'_i equals r_{i+a}≫π_{i+a}≫ℓ_{i+a}.
+The signs of differential and inverse cancel in this degree-zero endomorphism.
+-/
 lemma cochainShift_pointwiseHomologyProjectionInclusion (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] :
     letI := CochainComplex.hasHomology_shift K a i
@@ -112,7 +133,14 @@ lemma cochainShift_pointwiseHomologyProjectionInclusion (s : Splitting K) (a i :
     cochainShift_normalize_dNext, cochainShift_normalize_prevD]
   rfl
 
-/-- The shifted boundary projection agrees through the actual selected kernel comparison. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. Assume the quotient π_{i+a}:Z_{i+a}→H_{i+a} has a kernel and let e_B
+identify its shifted boundary kernel with the original kernel. The boundary projections
+satisfy b'_i≫e_B.hom=e_Z.hom≫b_{i+a}.
+-/
 @[reassoc]
 lemma cochainShift_boundaryKernelProjection (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] [HasKernel (K.homologyπ (i + a))] :
@@ -150,7 +178,14 @@ lemma cochainShift_boundaryKernelProjection (s : Splitting K) (a i : ℤ)
         kernel.ι (K.homologyπ (i + a)) := by
       rw [Category.assoc, s.boundaryKernelProjection_ι (i + a)]
 
-/-- The shifted outgoing section agrees through the actual selected cokernel comparison. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. Assume the cycle inclusion j_{i+a}:Z_{i+a}→K^{i+a} has a cokernel and let
+e_Q identify the shifted outgoing quotient with that cokernel. The outgoing sections satisfy
+e_Q.hom≫u_{i+a}=u'_i, with their codomain the common degree term K^{i+a}.
+-/
 @[reassoc]
 lemma cochainShift_outgoingCokernelSection (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] [HasCokernel (K.iCycles (i + a))] :
@@ -166,7 +201,15 @@ lemma cochainShift_outgoingCokernelSection (s : Splitting K) (a i : ℤ)
     (s.cochainShift a).outgoingCokernelProjectionSection i,
     cochainShift_normalize_dNext]
 
-/-- Actual native boundary/homology/outgoing maps compare the two earned degree decompositions. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. Assume both ker π_{i+a} and coker j_{i+a} exist. The canonical boundary,
+homology and outgoing shift isomorphisms combine into
+((B'_i⊞H'_i)⊞Q'_i)≅((B_{i+a}⊞H_{i+a})⊞Q_{i+a}), comparing the two split-degree coordinate
+objects.
+-/
 def cochainShiftDegreeComparison (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] [HasKernel (K.homologyπ (i + a))]
     [HasCokernel (K.iCycles (i + a))] :
@@ -190,7 +233,14 @@ def cochainShiftDegreeComparison (s : Splitting K) (a i : ℤ)
     (biprod.mapIso (CochainComplex.shiftBoundaryIso K a i) (CochainComplex.shiftHomologyIso K a i))
     (CochainComplex.shiftOutgoingIso K a i)
 
-/-- The two actual constructed degree isomorphisms commute with the native signed comparison. -/
+/--
+Let K be an integer cochain complex in a preadditive category C, s a splitting, and a,i∈ℤ.
+Assume K has homology at i+a. Shift by a places K^{i+a} in degree i and gives the inverse
+components the sign (−1)^a. Let e_Z and e_H identify shifted cycles and homology at i with
+those of K at i+a. Assume both ker π_{i+a} and coker j_{i+a} exist. Let E' and E be the
+shifted and original degree decomposition isomorphisms, and let T compare their three
+coordinates by the canonical shift maps. Under the common term K^{i+a}, E'.hom≫T.hom=E.hom.
+-/
 lemma cochainShiftDegreeComparison_hom (s : Splitting K) (a i : ℤ)
     [K.HasHomology (i + a)] [HasKernel (K.homologyπ (i + a))]
     [HasCokernel (K.iCycles (i + a))] :

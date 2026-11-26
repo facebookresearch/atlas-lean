@@ -1,3 +1,5 @@
-# Pair Top Index unique
+# Uniqueness of the pair top exterior index
 
-Every two-element subset of `Fin 2` is the full set.
+Uniqueness of the pair top exterior index.
+
+Every two-element subset of Fin 2 equals pairTopIndex.

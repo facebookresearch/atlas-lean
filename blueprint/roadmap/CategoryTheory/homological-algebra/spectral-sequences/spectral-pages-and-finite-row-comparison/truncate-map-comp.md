@@ -1,3 +1,5 @@
-# Truncate Map comp
+# Truncation preserves composition of morphisms
 
-Restriction preserves native composition.
+Truncation preserves composition of morphisms.
+
+Restricting a composite gives the composite of its restrictions.

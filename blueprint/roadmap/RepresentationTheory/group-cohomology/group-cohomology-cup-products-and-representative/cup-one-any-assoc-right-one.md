@@ -1,4 +1,6 @@
-# Group cohomology cup products and representatives
+# Associativity of cup products in degrees one-q-one
 
-A target-normalized `(1,q)` cup followed by a degree-one cup reassociates
-to the target-normalized cup against the right-hand `(q,1)` cup.
+Let `A,B,C` be representations of a group `G` over a commutative ring `k`, `q : ℕ`, and `x ∈
+H¹(G,A)`, `y ∈ H^q(G,B)`, `z ∈ H¹(G,C)`. Applying the coefficient associator in degree `q + 2`
+to `cup_{q+1,1}(cupOneAny A B q (x ⊗ y) ⊗ z)` equals `cupOneAny A (B ⊗ C) (q + 1) (x ⊗
+cup_{q,1}(y ⊗ z))`. Both sides lie in `H^{q+2}(G,A ⊗ (B ⊗ C))`.

@@ -16,14 +16,16 @@ public import Mathlib.Algebra.Module.ULift
 public import Mathlib.CategoryTheory.Functor.Const
 
 /-!
-# Degree-zero homology of bracket-presented models
+# Degree-zero homology of bracket-presented CE models
 
-The bracket differential of a Chevalley–Eilenberg model vanishes from exterior degree one to
-degree zero. Consequently degree-zero homology identifies with the coefficient ring, naturally
-in model morphisms.
+Let `R` be a commutative ring and `X` a bracket-presented CE model. The bracket differential
+from exterior degree one to degree zero is zero. Since exterior degree zero is `R`, degree-
+zero homology is linearly equivalent to the coefficient ring.
 
-The categorical comparison uses a universe lift of the ring. Its linear-equivalence form has
-target the ring itself and allows independent ring and Lie carrier universes.
+The categorical isomorphism uses a lifted regular module in the model's exterior carrier
+universe. Its scalar-coordinate form maps an exterior degree-zero class to its scalar
+representative. Every model morphism preserves these coordinates, so the degree-zero homology
+functor is naturally constant.
 -/
 
 @[expose] public section
@@ -42,14 +44,20 @@ variable {R : Type u} [CommRing R]
 
 namespace Model
 
-/-- The canonical CE differential from exterior degree one to degree zero vanishes. -/
+/-- The zero differential from CE exterior degree one.
+
+For every bracket-presented model, the chain differential from degree one to degree zero
+vanishes. -/
 theorem differential_one_zero (X : Model.{u, v} R) :
     ((complexFunctor R).obj X).d 1 0 = 0 := by
   change X.data.toChainData.complex.d 1 0 = 0
   rw [ChainData.complex_d_succ, PresentedData.d_zero, ModuleCat.ofHom_zero]
   rfl
 
-/-- Exterior degree zero is canonically the coefficient ring. -/
+/-- The lifted scalar coordinate of CE exterior degree zero.
+
+The degree-zero chain module is isomorphic to the regular coefficient ring lifted into the
+model's joint carrier universe. -/
 def zeroCoefficientIso (X : Model.{u, v} R) :
     ((complexFunctor R).obj X).X 0 ≅ ModuleCat.of R (ULift.{max u v, u} R) :=
   ((exteriorPower.zeroEquiv R X.carrier).trans ULift.moduleEquiv.symm).toModuleIso
@@ -66,13 +74,18 @@ private theorem zeroCoefficientIso_naturality
       (exteriorPower.zeroEquiv R X.carrier).toLinearMap
   rw [LinearMap.comp_assoc, exteriorPower.zeroEquiv_naturality]
 
-/-- In degree zero, every chain is an opcycle. -/
+/-- The opcycle coordinate of CE degree zero.
+
+Since the incoming differential is zero, the degree-zero chain object maps isomorphically to
+the degree-zero opcycle object. -/
 def zeroOpcyclesIso (X : Model.{u, v} R) :
     ((complexFunctor R).obj X).X 0 ≅ ((complexFunctor R).obj X).opcycles 0 :=
   ((complexFunctor R).obj X).pOpcyclesIso 1 0 (by simp) (differential_one_zero X)
 
-/-- Degree-zero homology of a bracket-presented CE model, identified with the coefficient module
-in the universe of the model's exterior powers. -/
+/-- The categorical scalar isomorphism of CE homology degree zero.
+
+Degree-zero homology of a bracket-presented model is isomorphic to the lifted regular
+coefficient module. -/
 def homologyZeroIso (X : Model.{u, v} R) :
     X.H 0 ≅ ModuleCat.of R (ULift.{max u v, u} R) :=
   ((complexFunctor R).obj X).isoHomologyι₀ ≪≫
@@ -116,7 +129,10 @@ private theorem homologyZeroIso_naturalityRaw
   rw [homologyZeroIso_characteristic, homologyZeroIso_characteristic]
   exact zeroCoefficientIso_naturality f
 
-/-- Every model morphism induces the identity in coefficient coordinates on degree-zero homology. -/
+/-- Naturality of the lifted scalar coordinate in CE degree zero.
+
+A model homology map followed by the target scalar isomorphism equals the source scalar
+isomorphism. -/
 @[reassoc]
 theorem homologyZeroIso_naturality
     {X Y : Model.{u, v} R} (f : X ⟶ Y) :
@@ -124,8 +140,10 @@ theorem homologyZeroIso_naturality
       (homologyZeroIso X).hom := by
   exact homologyZeroIso_naturalityRaw f
 
-/-- The degree-zero CE homology functor is naturally isomorphic to the constant coefficient-module
-functor. -/
+/-- The constant-functor comparison for CE homology degree zero.
+
+The degree-zero homology functor is naturally isomorphic to the constant functor with value
+the lifted regular coefficient module. -/
 def homologyZeroNatIso (R : Type u) [CommRing R] :
     homologyFunctor R 0 ≅
       (Functor.const (Model.{u, v} R)).obj
@@ -133,19 +151,23 @@ def homologyZeroNatIso (R : Type u) [CommRing R] :
   NatIso.ofComponents (fun X => homologyZeroIso X) fun f => by
     exact (homologyZeroIso_naturality f).trans (Category.comp_id _).symm
 
-/-- The natural comparison has the canonical degree-zero comparison as its component at each
-model. -/
+/-- The components of the constant degree-zero homology comparison.
+
+At a model `X`, the natural comparison component is its scalar homology isomorphism. -/
 @[simp]
 theorem homologyZeroNatIso_app (X : Model.{u, v} R) :
     (homologyZeroNatIso R).app X = homologyZeroIso X :=
   rfl
 
-/-- Degree-zero CE homology as an `R`-linear equivalence with `R`, without exposing the
-categorical universe lift. -/
+/-- The scalar linear equivalence of CE homology degree zero.
+
+Removing the carrier lift from the categorical scalar comparison gives `X.H 0 ≃ₗ[R] R`. -/
 def homologyZeroLinearEquiv (X : Model.{u, v} R) : X.H 0 ≃ₗ[R] R :=
   (homologyZeroIso X).toLinearEquiv.trans ULift.moduleEquiv
 
-/-- The coefficient coordinate of a degree-zero class is the canonical coordinate of its exterior
+/-- The scalar coordinate of an exterior degree-zero homology class.
+
+The linear homology coordinate of a degree-zero class is the scalar coordinate of its exterior
 representative. -/
 theorem homologyZeroLinearEquiv_class (X : Model.{u, v} R)
     (a : ⋀[R]^0 X.carrier) :
@@ -161,8 +183,10 @@ theorem homologyZeroLinearEquiv_class (X : Model.{u, v} R)
     (homologyZeroIso_characteristic X)
   exact h
 
-/-- A scalar is represented in degree-zero homology by the canonical exterior degree-zero
-representative of that scalar. -/
+/-- The exterior representative of a degree-zero scalar homology class.
+
+The inverse scalar equivalence represents `r ∈ R` by its inverse exterior-degree-zero
+coordinate, then takes its degree-zero class. -/
 @[simp]
 theorem homologyZeroLinearEquiv_symm_apply (X : Model.{u, v} R) (r : R) :
     (homologyZeroLinearEquiv X).symm r =
@@ -173,7 +197,10 @@ theorem homologyZeroLinearEquiv_symm_apply (X : Model.{u, v} R) (r : R) :
   rw [LinearEquiv.apply_symm_apply, homologyZeroLinearEquiv_class,
     LinearEquiv.apply_symm_apply]
 
-/-- The scalar coordinates of degree-zero homology are preserved by every CE model morphism. -/
+/-- Preservation of scalar homology coordinates by CE model maps.
+
+The degree-zero homology map of every model morphism retains the scalar coordinate under the
+source and target linear equivalences. -/
 theorem homologyZeroLinearEquiv_naturality
     {X Y : Model.{u, v} R} (f : X ⟶ Y) (a : X.H 0) :
     homologyZeroLinearEquiv Y ((homologyFunctor R 0).map f a) =

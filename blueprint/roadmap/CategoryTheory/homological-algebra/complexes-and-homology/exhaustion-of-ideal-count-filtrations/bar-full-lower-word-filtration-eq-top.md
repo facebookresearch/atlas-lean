@@ -1,3 +1,6 @@
-# Bar Full Lower Word Filtration eq top
+# The full positive predecessor is top when p exceeds the degree
 
-The full positive lower stage includes the original zero augmentation correctly.
+Let k be commutative, A a nonunital k-algebra ring, I two-sided and V any k-module. Let K_+ be
+the relative positive bar kernel. Its full stages G_p,0 are zero and G_p,n+1 =
+barWordFiltration p n; a word in degree N > 0 has length N. If N < p,
+barFullLowerWordFiltration p N = ⊤.

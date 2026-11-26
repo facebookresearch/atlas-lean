@@ -1,3 +1,5 @@
-# Quotient Hom Is Colimit
+# Power torsion is the colimit of ideal-power quotient Hom
 
-Native change-of-diagram transports G5's earned universal property.
+Power torsion is the colimit of ideal-power quotient Hom.
+
+The evaluation cocone with point `Γ_I(M)` is a colimit cocone of `quotientHomDiagram I M`.

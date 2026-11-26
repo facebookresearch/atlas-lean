@@ -1,4 +1,6 @@
-# Horizontal First Page Next Filtration Map
+# The next complete filtration inclusion
 
-Inclusion from filtration stage `p` to stage `p+1`, with the middle
-index normalized to the upper-stage convention.
+For a nonnegative homological bicomplex K in an abelian
+category and p ≥ 0, the next-stage cochain map is F_p → F_(p+1),
+using upper(p) and upper(p+1) as its EInt indices.
+It is the reindexed complete-filtration inclusion.

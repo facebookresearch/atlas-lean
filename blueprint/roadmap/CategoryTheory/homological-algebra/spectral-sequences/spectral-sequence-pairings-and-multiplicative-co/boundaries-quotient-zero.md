@@ -1,3 +1,6 @@
-# Boundaries quotient zero
+# Both tensor boundary sources vanish in the output quotient
 
-The actual two boundary relations vanish after the product cycle quotient.
+Both tensor boundary sources vanish in the output quotient.
+
+The coproduct of the two boundary-product maps has zero composite with the projected cycle
+product.

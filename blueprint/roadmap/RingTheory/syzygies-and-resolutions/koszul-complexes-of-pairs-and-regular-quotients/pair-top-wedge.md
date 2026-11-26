@@ -1,3 +1,5 @@
-# Pair Top Wedge
+# The ordered top wedge of the pair basis
 
-The ordered standard basis wedge.
+The ordered top wedge of the pair basis.
+
+This is e₀∧e₁ in Λ²(R²).

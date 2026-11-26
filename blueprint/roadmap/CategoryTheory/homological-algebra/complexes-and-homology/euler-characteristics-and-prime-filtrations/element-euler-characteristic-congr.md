@@ -1,4 +1,5 @@
-# Element Euler Characteristic congr
+# The one-element Euler characteristic respects equality of scalars
 
-The Euler characteristic is insensitive to replacing the acting element
-and its finiteness witness along an equality.
+The one-element Euler characteristic respects equality of scalars.
+
+Equal elements r=s give the same Euler characteristic, with either finite-length witness.

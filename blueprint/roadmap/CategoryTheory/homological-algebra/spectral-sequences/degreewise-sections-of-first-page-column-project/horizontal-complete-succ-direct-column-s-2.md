@@ -1,4 +1,6 @@
-# Horizontal Complete Succ Direct Column Section projection
+# The section identity of a positive complete-column projection
 
-The positive-column section is a right inverse of the projection map in
-the supported degree.
+The section identity of a positive complete-column projection.
+
+The positive-column section followed by the complete projection map component is the identity
+at degree `-(p+1)-q`.

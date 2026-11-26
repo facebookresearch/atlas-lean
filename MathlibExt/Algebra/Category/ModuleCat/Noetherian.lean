@@ -20,6 +20,17 @@ public import Mathlib.Order.RelClasses
 public import Mathlib.RingTheory.Noetherian.Basic
 public import Mathlib.RingTheory.Noetherian.Defs
 
+/-!
+# Noetherian module objects and finite generation
+
+For a ring R and a module object M, the order isomorphism between subobjects of M and
+R-submodules identifies categorical noetherianity with algebraic noetherianity. Thus M is a
+noetherian object exactly when its R-submodules satisfy the ascending-chain condition.
+
+If R is noetherian, this condition is equivalent to finite generation of M. The ring and
+module carrier universe levels are independent.
+-/
+
 @[expose] public section
 
 open CategoryTheory
@@ -30,11 +41,10 @@ namespace ModuleCat
 
 variable {R : Type u} [Ring R] (M : ModuleCat.{v} R)
 
-/-- A module object in `ModuleCat R` is categorically noetherian iff it is algebraically
-noetherian as an `R`-module. The bridge uses `ModuleCat.subobjectModule`, the order
-isomorphism `Subobject M ≃o Submodule R M`, and the characterisations
-`IsNoetherian R M ↔ WellFoundedGT (Submodule R M)` and
-`IsNoetherianObject M ↔ WellFoundedGT (Subobject M)` via strict order well-foundedness. -/
+/-- Categorical and algebraic noetherianity of a module agree.
+
+For any ring R and R-module M, IsNoetherianObject M holds exactly when IsNoetherian R M holds,
+through the subobject–submodule order isomorphism. -/
 theorem isNoetherianObject_iff_isNoetherian :
     IsNoetherianObject M ↔ IsNoetherian R M := by
   rw [isNoetherian_iff]
@@ -57,10 +67,10 @@ theorem isNoetherianObject_iff_isNoetherian :
       (subobjectModule M).toOrderEmbedding.dual.wellFoundedLT
     exact (wellFoundedGT_dual_iff (α := OrderDual (Subobject M))).mpr hLT_dual_sub
 
-/-- Over a noetherian ring, finite generation is exactly the categorical noetherian-object
-property in `ModuleCat R`. The proof combines `isNoetherianObject_iff_isNoetherian` with the
-algebraic facts `IsNoetherian R M → Module.Finite R M` and
-`[IsNoetherianRing R] [Module.Finite R M] → IsNoetherian R M`. -/
+/-- Finite generation characterizes noetherian objects over a noetherian ring.
+
+If R is noetherian, an R-module M is finitely generated if and only if it is a noetherian
+object of ModuleCat R. -/
 theorem isNoetherianObject_iff_finite [IsNoetherianRing R] :
     Module.Finite R M ↔ IsNoetherianObject M := by
   constructor
@@ -73,10 +83,17 @@ theorem isNoetherianObject_iff_finite [IsNoetherianRing R] :
     have : IsNoetherian R M := hNoeth
     exact inferInstance
 
+/-- The finite-module criterion for categorical noetherianity.
+
+Over a noetherian ring R, Module.Finite R M is equivalent to IsNoetherianObject M. -/
 theorem finite_iff_isNoetherianObject [IsNoetherianRing R] :
     Module.Finite R M ↔ IsNoetherianObject M :=
   isNoetherianObject_iff_finite M
 
+/-- The finitely generated object predicate and noetherianity.
+
+Over a noetherian ring, the predicate isFG on a module object is equivalent to categorical
+noetherianity. -/
 theorem isFG_iff_isNoetherianObject [IsNoetherianRing R] :
     isFG (R := R) M ↔ IsNoetherianObject M := by
   rw [isFG_iff]

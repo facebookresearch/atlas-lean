@@ -14,11 +14,16 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplex.BalancedTensor.Curry
 
 /-!
-# Full-product to tensor-total Hom inverse
+# Balanced uncurrying from full Hom products to a tensor total
 
-Each summand uses underived uncurrying. Negative-reindexing unit maps
-identify its two module factors, and coproduct descent assembles all
-integer summands without a support assumption on Hom.
+Let R be a ring, P a ℤ-indexed chain complex of right R-modules, Q a ℤ-indexed chain complex
+of left R-modules, and I a ℤ-indexed cochain complex of abelian groups. Reindex the chain
+complexes by p ↦ −p. The internal Hom complex has full products over all integer degrees.
+
+A degree-n cochain P^c → Hom(Q^c,I) gives a cochain Tot(P⊗_R Q)^c → I by descent from each
+tensor summand. On the summand (p,q), its value is the iterated evaluation multiplied by
+σ(−p+n), where σ(k)=(−1)^{k(k+1)/2}. The negative-reindexing unit maps identify the input
+representatives. No boundedness or finite-support condition is imposed on the Hom cochain.
 -/
 
 @[expose] public section
@@ -38,7 +43,12 @@ variable (R : Type u) [Ring R]
 
 local notation "HI" => moduleHomCochainComplex R Q I
 
-/-- The actual original tensor summand map extracted from a full Hom cochain. -/
+/-- Let R be a ring, P and Q integer chain complexes of right and left R-modules, and I an integer
+cochain complex of abelian groups, with common carrier universe v and ring universe u. Let g
+be a degree-n cochain P^c → Hom(Q^c,I), where c denotes negative reindexing and Hom uses full
+products. For a+n=d and p+q=−a, define P_p⊗_R Q_q → I_d by [x,y] ↦
+σ(−p+n)·(g_{−p}(j_Px))_{−q}(j_Qy). Here j_P,j_Q are the reindexing-unit maps and
+σ(k)=(−1)^{k(k+1)/2}. -/
 def uncurryComponent (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n)
     (a d : ℤ) (had : a + n = d) (p q : ℤ) (hpq : p + q = -a) :
@@ -57,7 +67,12 @@ def uncurryComponent (n : ℤ) (g : CochainComplex.HomComplex.Cochain
   exact ModuleCat.BalancedTensor.groupUncurry R (P.X p) (Q.X q) (I.X d)
     (Int.triangularSign b • w)
 
-/-- Native total descent assembles every actual tensor summand into the original Hom cochain. -/
+/-- For a ring R, integer chain complexes P of right R-modules and Q of left R-modules, and an
+integer cochain complex I of abelian groups, a degree-n cochain g : P^c → Hom(Q^c,I)
+determines a degree-n cochain Tot(P⊗_R Q)^c → I. In source degree a, descend from all summands
+with p+q=−a using the balanced evaluation σ(−p+n)·g_{−p}(j_Px)_{−q}(j_Qy). The target degree
+is a+n. The Hom terms are full products, while tensor totalization uses coproducts; no support
+hypothesis is needed. -/
 def uncurryCochain (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n) :
     CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj
@@ -66,7 +81,11 @@ def uncurryCochain (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     HomologicalComplex.mapBifunctorDesc (fun p q hpq =>
       uncurryComponent R P Q I n g a d had p q hpq))
 
-/-- The inverse summand map evaluates the original coefficient and the two native unit maps. -/
+/-- Let g be a degree-n cochain P^c → Hom(Q^c,I) for integer right/left R-module chain complexes
+P,Q and an abelian-group cochain complex I. If a+n=d and p+q=−a, then the uncurrying component
+on [x,y] ∈ P_p⊗_R Q_q equals σ(−p+n)·(g_{−p}(j_Px))_{−q,d}(j_Qy). The maps j_P : P_p →
+P^c_{−p} and j_Q : Q_q → Q^c_{−q} are the units of the chain–cochain equivalences, and
+σ(k)=(−1)^{k(k+1)/2}. The target is I_d. -/
 theorem uncurryComponent_mk (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n)
     (a d : ℤ) (had : a + n = d) (p q : ℤ) (hpq : p + q = -a)
@@ -133,7 +152,11 @@ theorem uncurryComponent_mk (n : ℤ) (g : CochainComplex.HomComplex.Cochain
   exact hUncurry.trans (hScalar.trans
     (congrArg (fun value : I.X d => Int.triangularSign b • value) hW))
 
-/-- The native coproduct descent keeps that exact inverse value on every integer summand. -/
+/-- Let R be a ring, P,Q integer chain complexes of right and left R-modules, I an abelian-group
+cochain complex, and g a degree-n cochain P^c → Hom(Q^c,I). For a+n=d and p+q=−a, the
+(a,d)-component of uncurryCochain(g) on the canonical total summand [x,y] is
+σ(−p+n)·(g_{−p}(j_Px))_{−q,d}(j_Qy), with reindexing-unit maps j_P,j_Q and
+σ(k)=(−1)^{k(k+1)/2}. Thus coproduct descent preserves the formula at every integer summand. -/
 theorem uncurryCochain_mk (n : ℤ) (g : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n)
     (a d : ℤ) (had : a + n = d) (p q : ℤ) (hpq : p + q = -a)

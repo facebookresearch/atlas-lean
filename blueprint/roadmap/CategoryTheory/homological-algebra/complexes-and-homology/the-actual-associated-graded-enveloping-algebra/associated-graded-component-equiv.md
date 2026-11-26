@@ -1,3 +1,6 @@
-# Associated Graded Component Equiv
+# A homogeneous component is its polynomial submodule
 
-The graded component is linearly equivalent to its homogeneous polynomial coordinates.
+Let R be a commutative ring, L an R-Lie algebra, b : Basis I R L with LinearOrder I, and n ∈
+ℕ. Restricting the full PBW R-algebra coordinate equivalence gives an R-linear equivalence
+between associatedGradedComponent(b,n) and the homogeneous degree-n submodule of MvPolynomial
+I R. Its inverse restricts the inverse polynomial equivalence to that homogeneous submodule.

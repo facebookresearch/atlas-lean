@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Euler additive
+# Additivity of the coefficient Koszul Euler invariant
 
-Actual coefficient additivity under the original annihilator-quotient
-finiteness premise, without finite length of any coefficient module.
+Additivity of the coefficient Koszul Euler invariant.
+
+For a short exact sequence of finite coefficients with the three post-quotient finiteness
+hypotheses, the middle Euler value is the sum of the outer values.

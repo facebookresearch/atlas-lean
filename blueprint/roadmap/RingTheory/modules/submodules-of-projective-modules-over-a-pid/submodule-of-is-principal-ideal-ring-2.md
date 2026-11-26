@@ -1,4 +1,5 @@
-# Submodule of is Principal Ideal Ring
+# Submodules of projective modules over a principal ideal domain
 
-Every submodule of a projective module over a principal ideal domain is
-projective.
+Let R be a commutative principal ideal domain, M a projective
+R-module, and N an R-submodule of M. Then N is projective over R.
+No finite-generation or finite-rank condition is imposed.

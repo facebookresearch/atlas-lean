@@ -1,4 +1,6 @@
-# Graph Projection flat
+# Second tensor inclusion is flat after flat scalar base change
 
-The actual second tensor inclusion is flat when the original
-coefficient algebra is flat over the base.
+Second tensor inclusion is flat after flat scalar base change.
+
+If `B` is flat over `R`, the ring homomorphism `A → B ⊗_R A` given by the second tensor
+inclusion is flat.

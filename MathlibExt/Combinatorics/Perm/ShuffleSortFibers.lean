@@ -13,14 +13,19 @@ public import MathlibExt.Combinatorics.Perm.ShuffleFactorization
 public import MathlibExt.AlgebraicTopology.SimplicialObject.EilenbergZilber.Shuffle
 
 /-!
-# Genuine sorting fibers of native shuffle products
+# Sorting fibers for shuffle composition
 
-A global labeling is split along the actual two increasing value blocks of
-a native shuffle. The native lexicographic sorting criterion identifies
-when the global sort rank makes the original permutation a shuffle. The
-unique original shuffle/block factorization then gives inverse
-fiber maps for the two sides of shuffle multiplicativity. The empty-block
-and empty-alphabet cases are part of the original finite types.
+For `N=p+q`, let `s_f` be the stable sorting permutation of a labeling `f : Fin N → Fin m`. A
+shuffle `s` splits `f` into its restrictions to the two increasing value blocks, via
+`f(s.perm(L i))` and `f(s.perm(R j))`.
+
+For a fixed `γ ∈ S_N`, the fiber of `(f,s) ↦ s_f * s.perm` and the fiber of `(s,g,h) ↦ s.perm
+* blockPermutation(sort g,sort h)` are both equivalent to the pair of labeling fibers with
+sorting permutations `blockRankLeft γ` and `blockRankRight γ`. Consequently they have the same
+cardinality.
+
+References: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1; Loday, *Cyclic
+Homology*, Section 4.2.
 -/
 
 @[expose] public section
@@ -30,16 +35,21 @@ namespace Equiv.Perm
 
 open AlgebraicTopology.EilenbergZilber
 
-/-- The original sorted label graph with its exact stable tie order. -/
+/-- For `n,m : ℕ` and `f : Fin n → Fin m`, put `s_f = Tuple.sort f`. The graph labeling
+`sortedLabelGraph f : Fin n → Fin m ×ₗ Fin n` is `i ↦ toLex(f(s_f i), s_f i)`, ordering labels
+first and input indices second. -/
 def sortedLabelGraph {n m : ℕ} (f : Fin n → Fin m) : Fin n → Fin m ×ₗ Fin n :=
   fun i => toLex (f (Tuple.sort f i), Tuple.sort f i)
 
-/-- The original native sorting criterion gives the strictly ordered graph. -/
+/-- For `n,m : ℕ` and `f : Fin n → Fin m`, the function `i ↦ toLex(f(Tuple.sort f i), Tuple.sort f
+i)` is strictly increasing. Equal labels are therefore ordered by their input indices. -/
 theorem strictMono_sortedLabelGraph {n m : ℕ} (f : Fin n → Fin m) :
     StrictMono (sortedLabelGraph f) :=
   Tuple.eq_sort_iff'.mp (rfl : Tuple.sort f = Tuple.sort f)
 
-/-- A global labeling is in bijection with the original two labels on an actual shuffle's value blocks. -/
+/-- Let `p,q,m : ℕ` and `s : Shuffle p q`. The equivalence `(Fin(p+q) → Fin m) ≃ (Fin p → Fin m) ×
+(Fin q → Fin m)` sends `f` to `g(i)=f(s.perm(Fin.castAdd q i))` and `h(j)=f(s.perm(Fin.natAdd
+p j))`. Its inverse assigns `g` and `h` to the corresponding value blocks using `s.perm⁻¹`. -/
 def splitShuffleLabelsEquiv (p q m : ℕ) (s : Shuffle p q) :
     (Fin (p + q) → Fin m) ≃ (Fin p → Fin m) × (Fin q → Fin m) where
   toFun f := (fun i => f (s.perm (Fin.castAdd q i)), fun i => f (s.perm (Fin.natAdd p i)))
@@ -56,8 +66,10 @@ def splitShuffleLabelsEquiv (p q m : ℕ) (s : Shuffle p q) :
     · funext i
       simp
 
-/-- The native global sort rank makes a block factorization a shuffle exactly when its two actual split sorts are
-  the original rank permutations. -/
+/-- Let `p,q,m : ℕ`, `s : Shuffle p q`, `α ∈ S_p`, `β ∈ S_q`, and `f : Fin(p+q) → Fin m`. Split
+`f` along the value blocks of `s` into `(g,h)`. Then `(Tuple.sort f)⁻¹ * (s.perm *
+blockPermutation p q α β)` is a `(p,q)`-shuffle if and only if `Tuple.sort g = α` and
+`Tuple.sort h = β`. -/
 theorem isShuffle_sortRank_block_iff (p q m : ℕ) (s : Shuffle p q)
     (α : Perm (Fin p)) (β : Perm (Fin q)) (f : Fin (p + q) → Fin m) :
     IsShuffle ((Tuple.sort f).symm * (s.perm * blockPermutation p q α β)) ↔
@@ -116,24 +128,39 @@ theorem isShuffle_sortRank_block_iff (p q m : ℕ) (s : Shuffle p q)
         toLex (f (s.perm (Fin.natAdd p (β j))), s.perm (Fin.natAdd p (β j))) at hh
       simpa only [sortedLabelGraph, Equiv.apply_symm_apply] using hh
 
-/-- The actual global-sort/shuffle composition fiber at the original output permutation. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks.
+`ShuffleSortFiber p q m γ` consists of pairs `(f,s)` with `s : Shuffle p q` and `s_f * s.perm
+= γ`. -/
 abbrev ShuffleSortFiber (p q m : ℕ) (γ : Perm (Fin (p + q))) :=
   {z : (Fin (p + q) → Fin m) × Shuffle p q // Tuple.sort z.1 * z.2.perm = γ}
 
-/-- The actual shuffle/two-block-sort composition fiber at the original output permutation. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks.
+`SplitShuffleSortFiber p q m γ` consists of triples `(s,g,h)` with `s : Shuffle p q`, `g : Fin
+p → Fin m`, `h : Fin q → Fin m`, and `s.perm * blockPermutation p q (Tuple.sort g) (Tuple.sort
+h) = γ`. -/
 abbrev SplitShuffleSortFiber (p q m : ℕ) (γ : Perm (Fin (p + q))) :=
   {z : Shuffle p q × (Fin p → Fin m) × (Fin q → Fin m) //
     z.1.perm * blockPermutation p q (Tuple.sort z.2.1) (Tuple.sort z.2.2) = γ}
 
-/-- The actual finite global-label/shuffle fiber, including empty alphabets and blocks. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. The set
+of pairs `(f,s)` satisfying `s_f * s.perm = γ` is finite and has the indicated `Fintype`
+structure, since its labeling and shuffle factors are finite types. -/
 instance shuffleSortFiberFintype (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     Fintype (ShuffleSortFiber p q m γ) := Fintype.ofFinite _
 
-/-- The actual finite two-block-label/shuffle fiber uses its original predicate. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. The set
+of triples `(s,g,h)` satisfying `s.perm * blockPermutation(sort g,sort h) = γ` is finite, with
+the `Fintype` structure on `SplitShuffleSortFiber p q m γ`. -/
 instance splitShuffleSortFiberFintype (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     Fintype (SplitShuffleSortFiber p q m γ) := Fintype.ofFinite _
 
-/-- The original fiber equation computes exactly the shuffle permutation in global-sort rank coordinates. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. For
+`z=(f,s) : ShuffleSortFiber p q m γ`, `(Tuple.sort f)⁻¹ * γ = s.perm`. -/
 theorem shuffleSortFiber_rank_perm (p q m : ℕ) (γ : Perm (Fin (p + q)))
     (z : ShuffleSortFiber p q m γ) :
     (Tuple.sort z.val.1).symm * γ = z.val.2.perm := by
@@ -142,7 +169,11 @@ theorem shuffleSortFiber_rank_perm (p q m : ℕ) (γ : Perm (Fin (p + q)))
     (Tuple.sort z.val.1)⁻¹ * γ at h
   exact h.symm.trans (inv_mul_cancel_left _ _)
 
-/-- The exact original composition fiber is equivalent to its actual global-sort rank labelings. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. There
+is an equivalence from `ShuffleSortFiber p q m γ` to `{f : Fin N → Fin m // IsShuffle (s_f⁻¹ *
+γ)}`. It forgets the shuffle; its inverse equips `f` with the shuffle whose permutation is
+`s_f⁻¹ * γ`. -/
 def shuffleSortFiberEquivRankLabels (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     ShuffleSortFiber p q m γ ≃
       {f : Fin (p + q) → Fin m // IsShuffle ((Tuple.sort f).symm * γ)} where
@@ -161,7 +192,10 @@ def shuffleSortFiberEquivRankLabels (p q m : ℕ) (γ : Perm (Fin (p + q))) :
       exact shuffleSortFiber_rank_perm p q m γ z
   right_inv f := rfl
 
-/-- Actual split-label restriction identifies rank labelings with the two original sorting fibers. -/
+/-- Let `p,q,m : ℕ`, `s : Shuffle p q`, `α ∈ S_p`, and `β ∈ S_q`. Labelings `f : Fin(p+q) → Fin m`
+for which `(sort f)⁻¹ * (s.perm * blockPermutation(α,β))` is a shuffle are equivalent to pairs
+`(g,h)` with `sort g=α` and `sort h=β`. The equivalence restricts `f` along the two value
+blocks of `s`; its inverse joins the two restrictions. -/
 def rankLabelsEquivSplitSortFibers (p q m : ℕ) (s : Shuffle p q)
     (α : Perm (Fin p)) (β : Perm (Fin q)) :
     {f : Fin (p + q) → Fin m // IsShuffle ((Tuple.sort f).symm * (s.perm * blockPermutation p q α β))} ≃
@@ -184,7 +218,11 @@ def rankLabelsEquivSplitSortFibers (p q m : ℕ) (s : Shuffle p q)
     · apply Subtype.ext
       exact congrArg Prod.snd h
 
-/-- The actual left product fiber is in bijection with the original two block sorting fibers. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. Put `α
+= blockRankLeft p q γ`, `β = blockRankRight p q γ`, and `s_γ = sortedBlockShuffle p q γ`. The
+fiber `ShuffleSortFiber p q m γ` is equivalent to `{g : Fin p → Fin m // sort g=α} × {h : Fin
+q → Fin m // sort h=β}` by restricting its labeling along the value blocks of `s_γ`. -/
 def shuffleSortFiberEquiv (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     ShuffleSortFiber p q m γ ≃
       {g : Fin p → Fin m // Tuple.sort g = blockRankLeft p q γ} ×
@@ -196,7 +234,11 @@ def shuffleSortFiberEquiv (p q m : ℕ) (γ : Perm (Fin (p + q))) :
       (rankLabelsEquivSplitSortFibers p q m (sortedBlockShuffle p q γ)
         (blockRankLeft p q γ) (blockRankRight p q γ)))
 
-/-- The actual right product fiber has the same pair of original sorting fibers. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. Put `α
+= blockRankLeft p q γ` and `β = blockRankRight p q γ`. The fiber `SplitShuffleSortFiber p q m
+γ` is equivalent to the labeling fibers `sort g=α` and `sort h=β`. The forward map keeps
+`(g,h)`; its inverse uses the shuffle `sortedBlockShuffle p q γ`. -/
 def splitShuffleSortFiberEquiv (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     SplitShuffleSortFiber p q m γ ≃
       {g : Fin p → Fin m // Tuple.sort g = blockRankLeft p q γ} ×
@@ -217,7 +259,10 @@ def splitShuffleSortFiberEquiv (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     · rfl
   right_inv z := rfl
 
-/-- The actual composition fibers of the two shuffle products have exactly the same cardinality. -/
+/-- Let `p,q,m : ℕ`, `N = p+q`, `γ ∈ S_N`, and `s_f = Tuple.sort f` for a labeling `f : Fin N →
+Fin m`. A `(p,q)`-shuffle is a permutation increasing on each of the two input blocks. The
+cardinalities agree: `Fintype.card (ShuffleSortFiber p q m γ) = Fintype.card
+(SplitShuffleSortFiber p q m γ)`. -/
 theorem card_shuffleSortFiber_eq (p q m : ℕ) (γ : Perm (Fin (p + q))) :
     Fintype.card (ShuffleSortFiber p q m γ) = Fintype.card (SplitShuffleSortFiber p q m γ) :=
   Fintype.card_congr ((shuffleSortFiberEquiv p q m γ).trans

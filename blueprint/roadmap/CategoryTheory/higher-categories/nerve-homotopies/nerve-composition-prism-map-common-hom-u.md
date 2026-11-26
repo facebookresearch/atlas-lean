@@ -1,4 +1,6 @@
-# Nerve Composition Prism Map Common Hom Up
+# The triangular composition prism at the stated universe heights
 
-The original composable TWO-arrow functor-category chain gives the
-actual native upward two-simplex prism, without a lift or replacement map.
+The triangular composition prism at the stated universe heights.
+
+For α : F → G and β : G → H, apply the common-morphism-universe nerve prism construction to
+their three-level chain classifier. This gives N(A) × Δ² → N(B).

@@ -1,4 +1,5 @@
-# Exists factor prime eq of is Min
+# Every minimal ring prime occurs in the regular-module decomposition
 
-Every minimal prime of the coefficient ring occurs among the bundled
-factors of a prime decomposition of the regular module.
+Every minimal ring prime occurs in the regular-module decomposition.
+
+For a decomposition of R and a minimal prime q, some factor-list entry has prime q.

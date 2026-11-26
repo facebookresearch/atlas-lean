@@ -1,4 +1,6 @@
-# Left unitality inv
+# The scalar unit comparison preserves inverse left unitors
 
-The actual up/down chain unit comparison preserves the native left
-unit insertion; the source insertion is `ULift.up 1`.
+For a commutative ring R and a lifted-unit chain C, the
+inverse left unitor of T(C) equals the composite
+T(C)→T(I_L⊗C)→T(I_L)⊗T(C)→I_N⊗T(C).
+The maps are T(λ_C⁻¹), τ_(I_L,C)⁻¹ and U⁻¹⊗id, respectively.

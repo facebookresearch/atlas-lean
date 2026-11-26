@@ -1,3 +1,5 @@
-# Is Artinian homology of is Artinian degree
+# Artinian homology in an arbitrary complex degree
 
-Degree-i homology is Artinian whenever the degree-i module is Artinian.
+Artinian homology in an arbitrary complex degree.
+
+If K_i is Artinian over R, then H_i(K) is Artinian, for any degree index and complex shape.

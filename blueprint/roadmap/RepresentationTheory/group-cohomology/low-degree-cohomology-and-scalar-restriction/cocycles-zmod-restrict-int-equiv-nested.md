@@ -1,4 +1,6 @@
-# Cocycles₃ZMod Restrict Int Equiv nested Cup One One
+# Integral comparison of a nested three-cocycle cup
 
-Scalar restriction of an explicit right-associated triple cup is the
-integral triple cup followed by the canonical tensor-cube comparison.
+For n∈ℕ, a group G and a ZMod n-representation A, let x,y,z
+be degree-one cocycles. Scalar restriction of x∪(y∪z) equals the
+nested integral cup of their restrictions, followed by the
+right-associated tensor-cube comparison.

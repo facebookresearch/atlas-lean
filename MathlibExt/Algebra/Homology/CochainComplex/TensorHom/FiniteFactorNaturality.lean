@@ -17,12 +17,16 @@ public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
 public import Mathlib.CategoryTheory.Whiskering
 
 /-!
-# Finite tensor-factor cochain natural isomorphisms
+# Natural Hom–tensor isomorphisms with a finite projective factor
 
-The source and target use the Hom and tensor functors, and the natural
-transformation is the signed comparison. Only U is restricted to bounded
-cochains with finite categorical-projective terms; its inclusion retains
-all maps. The cochain object isomorphism gives componentwise invertibility.
+The triples `(P, J, U)` of integer module cochain complexes form a category contravariant in
+`P` and covariant in `J` and `U`. The functors `Hom_R(P,J) ⊗_R U` and `Hom_R(P,J ⊗_R U)` are
+joined by the signed Hom–tensor natural transformation.
+
+Restrict to the full subcategory where the third complex `U` is bounded above and below and
+has finite categorically projective terms. On this subcategory, the same comparison is a
+natural isomorphism. All cochain maps between such triples are retained, with no additional
+conditions on `P` or `J`.
 -/
 
 @[expose] public section
@@ -36,12 +40,19 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- All original cochain triples, with only the first Hom source opposite. -/
+/-- Category of three cochain inputs with Hom source contravariance.
+
+The category is the product of the opposite cochain-complex category in the first input with
+the cochain-complex categories in the second and third inputs. A morphism reverses the `P`
+direction and preserves the directions of `J` and `U`. -/
 abbrev HomTensorCoChainTriples :=
   ((CochainComplex (ModuleCat.{v} R) ℤ)ᵒᵖ ×
     CochainComplex (ModuleCat.{v} R) ℤ) × CochainComplex (ModuleCat.{v} R) ℤ
 
-/-- The actual original source functor T(H(P,J),U). -/
+/-- Triple-input functor for Hom followed by tensor.
+
+The left functor takes `(P, J, U)` to `Hom_R(P,J) ⊗_R U`, with the first input contravariant
+and the other two covariant. -/
 def homTensorCoChainLeftFunctor :
     HomTensorCoChainTriples.{u, v} R ⥤ CochainComplex (ModuleCat.{v} R) ℤ :=
   ((CategoryTheory.Functor.uncurry.obj (linearFunctor R (ModuleCat.{v} R))).prod
@@ -50,7 +61,9 @@ def homTensorCoChainLeftFunctor :
       (bifunctorAt R : CochainComplex (ModuleCat.{v} R) ℤ ⥤
         CochainComplex (ModuleCat.{v} R) ℤ ⥤ CochainComplex (ModuleCat.{v} R) ℤ)
 
-/-- The actual original target functor H(P,T(J,U)). -/
+/-- Triple-input functor for tensor followed by Hom.
+
+The right functor takes `(P, J, U)` to `Hom_R(P,J ⊗_R U)` with the same input variance. -/
 def homTensorCoChainRightFunctor :
     HomTensorCoChainTriples.{u, v} R ⥤ CochainComplex (ModuleCat.{v} R) ℤ := by
   let A : HomTensorCoChainTriples.{u, v} R ⥤
@@ -74,17 +87,24 @@ def homTensorCoChainRightFunctor :
   exact A.prod' B ⋙ CategoryTheory.Functor.uncurry.obj
     (linearFunctor R (ModuleCat.{v} R))
 
-/-- The source functor has exactly the original tensor/Hom object. -/
+/-- Object formula for the Hom-then-tensor functor.
+
+At a triple `X`, the left functor is `complexAt R (linearComplex R X.1.1.unop X.1.2) X.2`. -/
 theorem homTensorCoChainLeftFunctor_obj (X : HomTensorCoChainTriples.{u, v} R) :
     (homTensorCoChainLeftFunctor R).obj X =
       complexAt R (linearComplex R X.1.1.unop X.1.2) X.2 := rfl
 
-/-- The target functor has exactly the original Hom/tensor object. -/
+/-- Object formula for the tensor-then-Hom functor.
+
+At a triple `X`, the right functor is `linearComplex R X.1.1.unop (complexAt R X.1.2 X.2)`. -/
 theorem homTensorCoChainRightFunctor_obj (X : HomTensorCoChainTriples.{u, v} R) :
     (homTensorCoChainRightFunctor R).obj X =
       linearComplex R X.1.1.unop (complexAt R X.1.2 X.2) := rfl
 
-/-- Source functor maps are the mapAt/linearComplexMap maps. -/
+/-- Map formula for the Hom-then-tensor functor.
+
+A triple morphism acts by the linear Hom map of its first two components, tensored with its
+third component. -/
 theorem homTensorCoChainLeftFunctor_map
     {X Y : HomTensorCoChainTriples.{u, v} R} (f : X ⟶ Y) :
     (homTensorCoChainLeftFunctor R).map f =
@@ -100,7 +120,10 @@ theorem homTensorCoChainLeftFunctor_map
               (X := X.1) (Y := Y.1) f.1, f.2) = _
   rw [linearFunctor_uncurry_map, mapAt_uncurry]
 
-/-- Every target functor map is the actual original pre/postcomposition map. -/
+/-- Map formula for the tensor-then-Hom functor.
+
+A triple morphism acts by precomposition in the first input and by the tensor map of the
+second and third components in the Hom target. -/
 theorem homTensorCoChainRightFunctor_map
     {X Y : HomTensorCoChainTriples.{u, v} R} (f : X ⟶ Y) :
     (homTensorCoChainRightFunctor R).map f =
@@ -116,7 +139,10 @@ theorem homTensorCoChainRightFunctor_map
               (X := (X.1.2, X.2)) (Y := (Y.1.2, Y.2)) (f.1.2, f.2)) = _
   rw [linearFunctor_uncurry_map, mapAt_uncurry]
 
-/-- The unrestricted transformation is the actual original signed comparison. -/
+/-- Signed Hom–tensor comparison as a triple-input natural transformation.
+
+The maps `homTensorComparison R P J U` form a natural transformation from the Hom-then-tensor
+functor to the tensor-then-Hom functor. -/
 def homTensorCoChainNatTrans :
     homTensorCoChainLeftFunctor.{u, v} R ⟶ homTensorCoChainRightFunctor.{u, v} R where
   app X := homTensorComparison R X.1.1.unop X.1.2 X.2
@@ -124,7 +150,10 @@ def homTensorCoChainNatTrans :
     rw [homTensorCoChainLeftFunctor_map, homTensorCoChainRightFunctor_map]
     exact homTensorComparison_naturality R f.1.1.unop f.1.2 f.2
 
-/-- Only the original U bounds and finite categorical-projective terms qualify a triple. -/
+/-- Third-factor boundedness and finite projectivity property.
+
+A triple has this property if there are integer bounds below and above which its third complex
+vanishes, and every term of that complex is finite and categorically projective. -/
 def finiteFactorHomTensorCoChainProperty : ObjectProperty (HomTensorCoChainTriples.{u, v} R) :=
   fun X => ∃ L N : ℤ,
     (∀ b : ℤ, b < L → IsZero (X.2.X b)) ∧
@@ -132,16 +161,25 @@ def finiteFactorHomTensorCoChainProperty : ObjectProperty (HomTensorCoChainTripl
     (∀ b : ℤ, CategoryTheory.Projective (X.2.X b)) ∧
     (∀ b : ℤ, Module.Finite R (X.2.X b))
 
-/-- The native full subcategory retains all original maps between finite-C triples. -/
+/-- Full subcategory of triples with a bounded finite projective third factor.
+
+Restrict the category of cochain triples by `finiteFactorHomTensorCoChainProperty`, leaving
+the first and second complexes unrestricted. -/
 abbrev FiniteFactorHomTensorCoChainTriples :=
   (finiteFactorHomTensorCoChainProperty.{u, v} R).FullSubcategory
 
-/-- The native inclusion forgets only the original finite-C qualification. -/
+/-- Inclusion of bounded finite-factor cochain triples.
+
+The full-subcategory inclusion retains the cochain triples and all morphisms between objects
+whose third factor is bounded with finite projective terms. -/
 abbrev finiteFactorHomTensorCoChainInclusion :
     FiniteFactorHomTensorCoChainTriples.{u, v} R ⥤ HomTensorCoChainTriples.{u, v} R :=
   ObjectProperty.ι _
 
-/-- The bounded-U object isomorphism gives invertibility of each component. -/
+/-- Signed comparison is invertible on each bounded finite-factor triple.
+
+At every object of the restricted triple category, the signed Hom–tensor natural
+transformation has an isomorphism as its component. -/
 theorem homTensorCoChainNatTrans_app_isIso
     (X : FiniteFactorHomTensorCoChainTriples.{u, v} R) :
     IsIso ((homTensorCoChainNatTrans R).app X.obj) := by
@@ -153,7 +191,10 @@ theorem homTensorCoChainNatTrans_app_isIso
     L N hUlo hUhi]
   infer_instance
 
-/-- The natural Iso is the restriction of the original unrestricted signed transformation. -/
+/-- Natural Hom–tensor isomorphism on bounded finite-factor triples.
+
+The signed comparison restricts to a natural isomorphism between the two Hom–tensor functors
+on triples with bounded finite projective third factor. -/
 def finiteFactorHomTensorCoChainNatIso :
     finiteFactorHomTensorCoChainInclusion.{u, v} R ⋙ homTensorCoChainLeftFunctor R ≅
       finiteFactorHomTensorCoChainInclusion.{u, v} R ⋙ homTensorCoChainRightFunctor R := by
@@ -163,13 +204,19 @@ def finiteFactorHomTensorCoChainNatIso :
     (fun X => homTensorCoChainNatTrans_app_isIso R X)
   exact asIso α
 
-/-- Its whole hom is exactly the restricted original transformation. -/
+/-- Restricted natural isomorphism retains the signed comparison transformation.
+
+Its forward natural transformation is the signed comparison whiskered by the full-subcategory
+inclusion. -/
 theorem finiteFactorHomTensorCoChainNatIso_hom :
     (finiteFactorHomTensorCoChainNatIso.{u, v} R).hom =
       CategoryTheory.Functor.whiskerLeft
         (finiteFactorHomTensorCoChainInclusion R) (homTensorCoChainNatTrans R) := rfl
 
-/-- Each hom component retains the actual original cochain comparison. -/
+/-- Restricted natural isomorphism has the signed cochain map as each component.
+
+At a restricted triple `X`, the forward component is `homTensorComparison R X.obj.1.1.unop
+X.obj.1.2 X.obj.2`. -/
 theorem finiteFactorHomTensorCoChainNatIso_hom_app
     (X : FiniteFactorHomTensorCoChainTriples.{u, v} R) :
     (finiteFactorHomTensorCoChainNatIso R).hom.app X =

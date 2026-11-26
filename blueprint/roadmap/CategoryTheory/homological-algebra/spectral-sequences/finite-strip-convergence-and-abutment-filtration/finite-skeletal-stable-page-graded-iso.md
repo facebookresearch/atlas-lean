@@ -1,4 +1,8 @@
-# Finite Skeletal Stable Page Graded Iso
+# Stable page as the abutment associated graded
 
-The actual stable page is the associated graded of the original endpoint
-abutment restriction filtration.
+Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ and assume, for every integer m,
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+
+The selected page E_{N+1}^{p,q} is canonically isomorphic to GrᵖA_{p+q}.

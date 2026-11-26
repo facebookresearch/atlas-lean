@@ -1,4 +1,6 @@
-# Is Iso homology Universal Coefficient Map of pid of torsion Free homology
+# The coefficient map is an isomorphism for torsion-free PID homology
 
-Over a commutative PID, termwise flatness and torsion-free homology make
-the canonical homological universal-coefficient map an isomorphism.
+The coefficient map is an isomorphism for torsion-free PID homology.
+
+Over a PID, flat terms of K and torsion-free homology in every degree make the canonical map
+an isomorphism.

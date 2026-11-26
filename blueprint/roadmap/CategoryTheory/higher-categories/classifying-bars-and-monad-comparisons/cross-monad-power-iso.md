@@ -1,4 +1,5 @@
-# Cross Monad Power Iso
+# Finite monad powers compare across an intertwining functor
 
-A genuine intertwining functor isomorphism iterates to the same original
-monad powers in the two categories.
+Finite monad powers compare across an intertwining functor.
+
+Recursively use `T ⋙ J ≅ J ⋙ S` to give `J(T^n F) ≅ S^n(J F)`, with identity at power zero.

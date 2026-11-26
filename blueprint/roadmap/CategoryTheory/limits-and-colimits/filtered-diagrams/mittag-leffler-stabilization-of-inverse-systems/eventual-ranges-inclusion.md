@@ -1,3 +1,6 @@
-# Eventual Ranges Inclusion
+# The inclusion of the eventual image subdiagram
 
-The canonical inclusion from eventual ranges into the original diagram.
+The inclusion of the eventual image subdiagram.
+
+At j, the inclusion eventualRanges A → A is the subtype inclusion of the eventual range
+submodule into A_j.

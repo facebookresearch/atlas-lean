@@ -1,3 +1,6 @@
-# Map antipode To Opposite
+# Enveloping maps commute with the opposite-valued antipode
 
-The signed universal lifts are natural for Lie morphisms, with independent Lie worlds.
+Enveloping maps commute with the opposite-valued antipode.
+
+The opposite of the target algebra map and the source antipode form the same composite as the
+target antipode after the enveloping map.

@@ -1,5 +1,6 @@
-# Pair Euler Characteristic Of Quotient
+# The pair Euler value obtained from a finite noetherian quotient
 
-Canonical two-generator Euler characteristic over a Noetherian ring,
-requiring only finite length of `R/(f,g)`.  This is the `Fin 2`
-specialization of the arbitrary finite-family construction.
+The pair Euler value obtained from a finite noetherian quotient.
+
+For noetherian R and finite-length R/(f,g), use the induced family homology data to define the
+pair Euler invariant.

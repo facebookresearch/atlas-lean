@@ -1,3 +1,5 @@
-# Step Class To Cycles
+# The map from a bottom-to-cut class to interval cycles
 
-Bottom-to-cut interval classes map to cycles in a three-cut window.
+The map from a bottom-to-cut class to interval cycles.
+
+For a≤b≤c, map H_n(⊥,c) to the cycles associated to a→b→c through interval restriction.

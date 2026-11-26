@@ -1,3 +1,6 @@
-# Tensor Iso
+# The tensor isomorphism for a lifted coefficient
 
-The actual tensor of native lifted coefficients returns to the native lift of the original tensor.
+The tensor isomorphism for a lifted coefficient.
+
+The canonical R-linear isomorphism identifies (ULift M) ⊗_R X with ULift(M ⊗_R X), with
+separate coefficient, diagram and lift heights.

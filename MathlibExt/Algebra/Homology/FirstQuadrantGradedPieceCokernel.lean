@@ -13,15 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceMap
 
 /-!
-# Consecutive filtration stages and the graded-piece cokernel
+# Consecutive horizontal filtration stages and their comparisons
 
-For an ℕ-indexed downward bicomplex in a preadditive category with a zero
-object and finite coproducts, consecutive horizontal filtration stages are
-linked by their filtration morphism.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. The first-page filtration map for column `p` joins its lower and upper complete
+stages.
 
-The lower stage in column zero is zero, so the column-projection composite
-vanishes. At positive stages, the natural-stage comparison square commutes
-in `MonoOver` and remains commutative after chain-to-cochain extension.
+For `p=0`, the lower stage is the negative stage `-1`, hence zero, and the composite with the
+direct-column projection vanishes. For column `p+1`, the lower and upper stages identify with
+natural stages `p` and `p+1`. Their complete-stage map agrees with the natural filtration
+inclusion, also after chain-to-cochain extension.
 -/
 
 @[expose] public section
@@ -39,7 +40,9 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The consecutive-stage map defining the `p`th horizontal graded piece. -/
+/-- The consecutive-stage map of a horizontal first-page window.
+
+Map the complete lower filtration stage of column `p` to its complete upper stage. -/
 noncomputable def horizontalFirstPageFiltrationMap (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageLowerIndex p) ⟶
@@ -48,8 +51,10 @@ noncomputable def horizontalFirstPageFiltrationMap (p : ℕ) :
   (horizontalCompleteFiltrationCochainDiagram K).map
     (homOfLE (horizontalFirstPageIndex_le p))
 
-/-- In column zero, the consecutive-stage map starts at the zero complex, so
-its composite with the graded-piece projection is zero. -/
+/-- The zero-column filtration map followed by direct-column projection.
+
+The lower zero-column stage is zero, so its filtration map followed by the direct-column
+projection is the zero chain map. -/
 theorem horizontalFirstPageFiltrationMap_zero_projection :
     horizontalFirstPageFiltrationMap K 0 ≫
       horizontalDirectColumnProjectionMap K 0 = 0 := by
@@ -63,6 +68,9 @@ theorem horizontalFirstPageFiltrationMap_zero_projection :
     exact E.map_isZero HomologicalComplex.isZero_zero
   exact hsource.eq_of_src _ _
 
+/-- The natural lower stage of a positive first-page window.
+
+The complete lower subobject for column `p+1` is natural filtration stage `p`. -/
 theorem horizontalCompleteFilteredTotalMonoOver_lower_succ (p : ℕ) :
     horizontalCompleteFilteredTotalMonoOver K
         (horizontalFirstPageLowerIndex (p + 1)) =
@@ -73,6 +81,9 @@ theorem horizontalCompleteFilteredTotalMonoOver_lower_succ (p : ℕ) :
   congr 2
   omega
 
+/-- The natural upper stage of a positive first-page window.
+
+The complete upper subobject for column `p+1` is natural filtration stage `p+1`. -/
 theorem horizontalCompleteFilteredTotalMonoOver_upper_succ (p : ℕ) :
     horizontalCompleteFilteredTotalMonoOver K
         (horizontalFirstPageUpperIndex (p + 1)) =
@@ -82,20 +93,28 @@ theorem horizontalCompleteFilteredTotalMonoOver_upper_succ (p : ℕ) :
   rw [ite_eq_left (show 0 ≤ ((p + 1 : ℕ) : ℤ) by omega)]
   congr 2
 
+/-- The lower-subobject comparison for a positive first-page window.
+
+The positive lower complete stage is canonically isomorphic to natural stage `p`. -/
 noncomputable def horizontalCompleteFilteredTotalMonoOverLowerSuccIso (p : ℕ) :
     horizontalCompleteFilteredTotalMonoOver K
         (horizontalFirstPageLowerIndex (p + 1)) ≅
       (horizontalTotalFiltration K).toMonoOver.obj p :=
   eqToIso (horizontalCompleteFilteredTotalMonoOver_lower_succ K p)
 
+/-- The upper-subobject comparison for a positive first-page window.
+
+The positive upper complete stage is canonically isomorphic to natural stage `p+1`. -/
 noncomputable def horizontalCompleteFilteredTotalMonoOverUpperSuccIso (p : ℕ) :
     horizontalCompleteFilteredTotalMonoOver K
         (horizontalFirstPageUpperIndex (p + 1)) ≅
       (horizontalTotalFiltration K).toMonoOver.obj (p + 1) :=
   eqToIso (horizontalCompleteFilteredTotalMonoOver_upper_succ K p)
 
-/-- The complete consecutive-stage map agrees with the original natural-stage
-map after the canonical source and target identifications. -/
+/-- The positive complete filtration map in natural-stage coordinates.
+
+The complete map of column `p+1` commutes with its lower and upper subobject comparisons and
+the natural inclusion `F_p → F_(p+1)`. -/
 theorem horizontalCompleteFilteredTotalMonoOverMap_succ (p : ℕ) :
     horizontalCompleteFilteredTotalMonoOverMap K
         (horizontalFirstPageIndex_le (p + 1)) ≫
@@ -105,8 +124,10 @@ theorem horizontalCompleteFilteredTotalMonoOverMap_succ (p : ℕ) :
           (homOfLE (Nat.le_succ p)) := by
   apply Subsingleton.elim
 
-/-- Canonical cochain identification of a positive lower stage with its
-natural-stage presentation. -/
+/-- The lower cochain-stage comparison of a positive first-page window.
+
+Forget the lower subobject comparison and extend to identify the lower complete cochain stage
+with the extension of natural stage `p`. -/
 noncomputable def horizontalCompleteFiltrationCochainMonoLowerSuccIso (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageLowerIndex (p + 1)) ≅
@@ -117,8 +138,10 @@ noncomputable def horizontalCompleteFiltrationCochainMonoLowerSuccIso (p : ℕ) 
       Over.forget (K.total (ComplexShape.down ℕ))).mapIso
       (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p))
 
-/-- Canonical cochain identification of a positive upper stage with its
-natural-stage presentation. -/
+/-- The upper cochain-stage comparison of a positive first-page window.
+
+Forget the upper subobject comparison and extend to identify the upper complete cochain stage
+with the extension of natural stage `p+1`. -/
 noncomputable def horizontalCompleteFiltrationCochainMonoUpperSuccIso (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageUpperIndex (p + 1)) ≅
@@ -129,8 +152,10 @@ noncomputable def horizontalCompleteFiltrationCochainMonoUpperSuccIso (p : ℕ) 
       Over.forget (K.total (ComplexShape.down ℕ))).mapIso
       (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p))
 
-/-- The positive consecutive-stage comparison square after chain-to-cochain
-extension. -/
+/-- The positive filtration comparison square after cochain extension.
+
+The complete first-page map followed by its upper cochain comparison equals the lower
+comparison followed by the extended natural-stage inclusion. -/
 theorem horizontalFirstPageFiltrationMap_succ_monoIso (p : ℕ) :
     horizontalFirstPageFiltrationMap K (p + 1) ≫
         (horizontalCompleteFiltrationCochainMonoUpperSuccIso K p).hom =

@@ -1,3 +1,6 @@
-# Extended Diagram
+# Integer-degree extension of the injective horseshoe diagram
 
-The SAME three chosen resolutions extended by zero to integer degrees.
+In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Extending all three nonnegative cochain resolutions and their
+maps by zero in negative degrees gives a short complex of integer
+cochain complexes.

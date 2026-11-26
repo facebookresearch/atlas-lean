@@ -1,3 +1,6 @@
-# Level Map Lift apply
+# The value of the lifted tensor-level map
 
-The lifted map applies only the original linear map to the original tensor value.
+Let k be commutative and A,B nonunital rings with k-module structures
+in universes v,w. For a k-linear f : A → B, the common-height
+tensor map has value ULift(x) ↦ ULift(F_n(x)), where F_n applies
+f to every factor.

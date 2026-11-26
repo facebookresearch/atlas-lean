@@ -16,10 +16,12 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.CategoryTheory.Limits.Constructions.EventuallyConstant
 
 /-!
-# Quasi-isomorphisms of actual filtered-colimit legs
+# Quasi-isomorphisms of filtered colimit legs
 
-Every leg of an actual filtered colimit cocone is a quasi-isomorphism when
-all diagram transitions are quasi-isomorphisms and colimits preserve homology.
+Let K be a filtered diagram of homological complexes of arbitrary shape in an abelian
+category. Assume colimits of that indexing shape exist and the colimit functor preserves
+homology. If every transition of K is a quasi-isomorphism, every leg of any colimit cocone is
+a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -36,8 +38,10 @@ variable {I : Type t} {c : ComplexShape I}
 variable [HasColimitsOfShape J C]
 variable [(colim (J := J) (C := C)).PreservesHomology]
 
-/-- Every actual colimit leg is a quasi-isomorphism when all filtered
-diagram transitions are quasi-isomorphisms. -/
+/-- Every filtered colimit leg is a quasi-isomorphism.
+
+For an actual colimit cocone of K, homology-preserving colimits and quasi-isomorphic diagram
+transitions imply that its leg from every stage is a quasi-isomorphism. -/
 theorem quasiIso_ι_of_isColimit_of_quasiIso_maps
     (K : J ⥤ HomologicalComplex C c) (s : Cocone K) (hs : IsColimit s)
     (hK : ∀ {i j : J} (f : i ⟶ j), QuasiIso (K.map f)) (j : J) :

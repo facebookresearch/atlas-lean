@@ -1,3 +1,5 @@
-# Field Original Pullback id
+# Scheme map induced by the identity field embedding
 
-Actual field identity gives the original identity scheme morphism.
+For fields k, Ω in universe u with k-algebra Ω, the compatible
+identity field map induces the identity scheme map on Spec k:
+Spec(id_k) = id_(Spec k).

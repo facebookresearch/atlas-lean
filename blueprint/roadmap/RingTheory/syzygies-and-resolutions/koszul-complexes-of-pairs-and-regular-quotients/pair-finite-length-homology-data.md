@@ -1,4 +1,5 @@
-# Pair Finite Length Homology Data
+# The pair complex finite-length homology data
 
-Canonical cutoff-three finite-length homology data for a two-generator
-Koszul complex.
+The pair complex finite-length homology data.
+
+Use cutoff 3, the three finite-length hypotheses and vanishing above degree two.

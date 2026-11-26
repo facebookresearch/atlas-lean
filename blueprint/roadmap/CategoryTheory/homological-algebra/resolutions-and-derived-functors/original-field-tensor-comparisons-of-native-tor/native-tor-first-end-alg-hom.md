@@ -1,4 +1,6 @@
-# Native Tor First End Alg Hom
+# First-coefficient endomorphisms act algebraically on Tor
 
-Original coefficient multiplication is mapped into endomorphisms
-of the actual native Tor object, preserving its real algebra structure.
+For R-modules N,X over a commutative ring R, the map
+End_R(N)→End_R(Tor_q^R(N,X)), f↦Tor_q(f,id_X),
+is an R-algebra homomorphism.
+All modules use a common carrier height containing R.

@@ -1,3 +1,7 @@
-# Connes Odd Total
+# Coproduct chain complex of the translated odd bar columns
 
-The quotient complex is the native coproduct of the odd translated columns.
+Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. The odd total is the chain complex obtained by the
+coproduct of these translated odd columns in each degree.

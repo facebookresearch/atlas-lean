@@ -1,4 +1,7 @@
-# Forget To Rep
+# The algebraic representation underlying a topological representation
 
-Forget the coefficient topology of a topological representation while
-retaining its algebraic linear group action.
+The algebraic representation underlying a topological representation.
+
+For a topological group G and topological ring k, this functor sends X to its k-linear
+representation and sends each continuous intertwiner to the same linear intertwiner. The
+coefficient carrier and group action are retained.

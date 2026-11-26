@@ -1,5 +1,10 @@
-# Coinduced action is Continuous
+# Joint continuity of coinduction for compact totally disconnected groups
 
-Under the standard joint-action hypothesis, compact-open coinduction
-over a compact totally disconnected group again has jointly continuous
-action.
+Let R be a ring equipped with a topology and G a topological
+group. A coefficient X is a topological R-module with a G-representation
+by continuous R-linear maps. Scalar, group and carrier universes are independent.
+Write Coind(X) = C(G,X) with compact-open topology and diagonal action
+(g • F)(x) = g • F(g⁻¹x).
+If G is compact and totally disconnected, X is discrete, and
+its G-action is jointly continuous, then the diagonal coinduced
+G-action on C(G,X) is jointly continuous.

@@ -1,3 +1,5 @@
-# Restrict Scalars Tor Iso Of Ring Equiv
+# The Tor isomorphism of restriction along a ring equivalence
 
-Original native Tor is transported in every degree using the actual scalar equivalence.
+The Tor isomorphism of restriction along a ring equivalence.
+
+Restriction of Tor_j^S(M,N) is isomorphic to Tor_j^R(res M,res N).

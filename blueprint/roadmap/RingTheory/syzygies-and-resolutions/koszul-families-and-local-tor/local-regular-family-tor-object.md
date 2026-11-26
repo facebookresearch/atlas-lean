@@ -1,4 +1,6 @@
-# Local Regular Family Tor Object
+# The local Tor module of the regular-family quotient
 
-The original native Tor object, defined from the actual local
-coefficient map and original quotient, independently of regularity.
+The local Tor module of the regular-family quotient.
+
+Take Tor_j over R_q with first coefficient S_p and second coefficient the quotient of R_q by
+the localized family ideal.

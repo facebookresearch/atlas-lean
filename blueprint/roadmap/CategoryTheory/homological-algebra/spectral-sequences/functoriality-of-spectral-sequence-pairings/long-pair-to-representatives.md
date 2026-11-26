@@ -1,3 +1,6 @@
-# Long Pair To representatives
+# The specified long product agrees with quotient representatives
 
-The actual representatives retain the explicit-cut original long product.
+The specified long product agrees with quotient representatives.
+
+The long interval product followed by the output representative equals the tensor of input
+representatives followed by the window product.

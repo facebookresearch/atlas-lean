@@ -1,3 +1,6 @@
-# Polynomial Alg Hom X
+# A polynomial variable evaluates to its specified generator
 
-A variable maps to the corresponding standard generator.
+Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. For every i : Fin r, hstd.polynomialAlgHom (MvPolynomial.X i) = (hstd.generator i
+: S).

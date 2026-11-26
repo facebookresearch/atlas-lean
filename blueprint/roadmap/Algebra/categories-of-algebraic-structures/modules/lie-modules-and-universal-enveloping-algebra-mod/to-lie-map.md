@@ -1,3 +1,6 @@
-# To Lie Map
+# The Lie-module map recovered from an enveloping-linear map
 
-A U-linear morphism between represented modules recovers the original Lie-module map.
+The Lie-module map recovered from an enveloping-linear map.
+
+A morphism between the enveloping modules associated to `M` and `N` defines a Lie-module map
+by restriction and the unit isomorphisms.

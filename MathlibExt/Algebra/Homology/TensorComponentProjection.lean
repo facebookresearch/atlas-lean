@@ -17,11 +17,14 @@ public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Basic
 
 /-!
-# Projections from a tensor total complex
+# Bidegree projections from a tensor total complex
 
-The projection to a chosen bidegree retains that tensor summand and annihilates
-all other summands. Its naturality and differential formulas apply to chain
-complexes of modules over any commutative ring.
+For nonnegative chain complexes of modules over a commutative ring, the projection from total
+degree p+q to K_p ⊗ L_q retains that summand and kills all other antidiagonal summands. It is
+natural in both chain maps.
+
+The matching horizontal differential projects to d_K ⊗ id, while the matching vertical
+differential projects to (−1)^p id ⊗ d_L. Differentials into other bidegrees project to zero.
 -/
 
 @[expose] public section
@@ -32,7 +35,9 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory
 
 namespace HomologicalComplex
 
-/-- The canonical projection to one original tensor-total bidegree. -/
+/-- The projection to a selected tensor bidegree.
+
+Project total degree p+q onto K_p ⊗ L_q by identity on that summand and zero on the others. -/
 def tensorComponentProjection {R : Type u} [CommRing R]
     (K L : ChainComplex (ModuleCat.{u} R) ℕ) (p q : ℕ) :
     (HomologicalComplex.tensorObj K L).X (p + q) ⟶ (K.X p ⊗ L.X q : ModuleCat.{u} R) :=
@@ -45,7 +50,9 @@ def tensorComponentProjection {R : Type u} [CommRing R]
         · exact 0
       · exact 0)
 
-/-- The actual selected tensor-total summand is retained by the canonical projection. -/
+/-- The selected summand is retained by the tensor projection.
+
+Its coprojection followed by the projection is the identity. -/
 @[reassoc (attr := simp)]
 theorem tensorComponentProjection_ι {R : Type u} [CommRing R]
     (K L : ChainComplex (ModuleCat.{u} R) ℕ) (p q : ℕ) :
@@ -54,7 +61,9 @@ theorem tensorComponentProjection_ι {R : Type u} [CommRing R]
   rw [tensorComponentProjection, HomologicalComplex.ι_mapBifunctorDesc]
   simp
 
-/-- Every other original tensor-total summand is annihilated by the canonical projection. -/
+/-- Other tensor summands are killed by the selected projection.
+
+For i+j=p+q with (i,j)≠(p,q), the corresponding coprojection has zero composite. -/
 theorem tensorComponentProjection_other {R : Type u} [CommRing R]
     (K L : ChainComplex (ModuleCat.{u} R) ℕ)
     (p q i j : ℕ) (hij : i + j = p + q) (h : i ≠ p ∨ j ≠ q) :
@@ -66,7 +75,10 @@ theorem tensorComponentProjection_other {R : Type u} [CommRing R]
     · subst i; simp [hj]
     · simp [hi]
 
-/-- The canonical tensor-total projection is natural under both original chain maps. -/
+/-- Naturality of the tensor component projection.
+
+The total tensor map of f,g followed by the target projection equals the source projection
+followed by f_p ⊗ g_q. -/
 theorem tensorComponentProjection_map {R : Type u} [CommRing R]
     {K L K' L' : ChainComplex (ModuleCat.{u} R) ℕ}
     (f : K ⟶ K') (g : L ⟶ L') (p q : ℕ) :
@@ -91,7 +103,9 @@ theorem tensorComponentProjection_map {R : Type u} [CommRing R]
   · rw [tensorComponentProjection_other K' L' p q i j hij (Or.inl hi), comp_zero,
       tensorComponentProjection_other K L p q i j hij (Or.inl hi), zero_comp]
 
-/-- The first differential into the selected component retains the left differential. -/
+/-- The matching horizontal differential under projection.
+
+The differential from (p+1,q) projects to d_K(p+1,p) ⊗ id_{L_q}. -/
 theorem tensorComponentProjection_d₁_matching
     {R : Type u} [CommRing R] (K L : ChainComplex (ModuleCat.{u} R) ℕ) (p q : ℕ) :
     HomologicalComplex.mapBifunctor.d₁ K L (curriedTensor (ModuleCat.{u} R))
@@ -103,7 +117,9 @@ theorem tensorComponentProjection_d₁_matching
     HomologicalComplex.ιTensorObj K L p q (p + q) rfl)) ≫ _ = _
   rw [one_smul, Category.assoc, tensorComponentProjection_ι, Category.comp_id]
 
-/-- The second differential into the selected component retains its Koszul sign. -/
+/-- The matching vertical differential under projection.
+
+The differential from (p,q+1) projects to (−1)^p times id_{K_p} ⊗ d_L(q+1,q). -/
 theorem tensorComponentProjection_d₂_matching
     {R : Type u} [CommRing R] (K L : ChainComplex (ModuleCat.{u} R) ℕ) (p q : ℕ) :
     HomologicalComplex.mapBifunctor.d₂ K L (curriedTensor (ModuleCat.{u} R))
@@ -117,7 +133,9 @@ theorem tensorComponentProjection_d₂_matching
   rw [Linear.units_smul_comp, Category.assoc,
     tensorComponentProjection_ι, Category.comp_id]
 
-/-- The first differential into any other tensor component has zero selected projection. -/
+/-- Other horizontal differential terms have zero selected projection.
+
+A horizontal term whose target bidegree differs from (p,q) projects to zero. -/
 theorem tensorComponentProjection_d₁_other
     {R : Type u} [CommRing R] (K L : ChainComplex (ModuleCat.{u} R) ℕ)
     (p q i j : ℕ) (hij : i + j = p + q) (h : i ≠ p ∨ j ≠ q) :
@@ -131,7 +149,9 @@ theorem tensorComponentProjection_d₁_other
   rw [one_smul, Category.assoc,
     tensorComponentProjection_other K L p q i j hij h, comp_zero]
 
-/-- The second differential into any other tensor component has zero selected projection. -/
+/-- Other vertical differential terms have zero selected projection.
+
+A vertical term whose target bidegree differs from (p,q) projects to zero. -/
 theorem tensorComponentProjection_d₂_other
     {R : Type u} [CommRing R] (K L : ChainComplex (ModuleCat.{u} R) ℕ)
     (p q i j : ℕ) (hij : i + j = p + q) (h : i ≠ p ∨ j ≠ q) :

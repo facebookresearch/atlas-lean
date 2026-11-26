@@ -14,7 +14,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.AcyclicResolutionSi
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AcyclicResolutionNaturality
 
 /-!
-# The augmented-map square for the canonically normalized acyclic comparison
+# Normalized acyclic comparisons and injective targets
+
+For an additive left-exact functor between abelian categories, correcting
+an acyclic-resolution comparison by `σ_n=(-1)^(n(n+1)/2)` gives an
+unsigned comparison square with any coaugmentation-preserving map to
+an injective resolution. On an injective resolution, the corrected
+isomorphism is its canonical right-derived comparison.
 -/
 
 @[expose] public section
@@ -26,7 +32,12 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- Correct the SAME retained acyclic comparison by the natural triangular scalar. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. Multiplying the source by `σ_n=(-1)^(n(n+1)/2)` corrects the
+acyclic comparison to an isomorphism `R^nF(X) ≅ Hⁿ(F(I))`
+normalized to agree with injective-resolution comparisons. -/
 def rightDerivedNormalizedAcyclicComparison (F : C ⥤ D) [F.Additive] [PreservesFiniteLimits F]
     {X : C} (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I)
     [QuasiIso ι] (hI : ∀ q j : ℕ, IsZero ((F.rightDerived (j + 1)).obj (I.X q))) (n : ℕ) :
@@ -36,10 +47,13 @@ def rightDerivedNormalizedAcyclicComparison (F : C ⥤ D) [F.Additive] [Preserve
     F.rightDerivedObjIsoHomologyOfAcyclicResolution I ι hI n
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-A augmentation-compatible map into an injective resolution identifies the SAME retained acyclic
-comparison with the signed SAME injective comparison.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. For an injective resolution `J` of `Y` and a map `a : I → J`
+over `f : X → Y`, the forward acyclic comparison followed by
+`Hⁿ(F(a))` equals `σ_n` times `R^nF(f)` followed by the canonical
+comparison for `J`, where `σ_n=(-1)^(n(n+1)/2)`. -/
 theorem rightDerivedAcyclicComparison_toInjective_signed (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X Y : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -59,10 +73,12 @@ theorem rightDerivedAcyclicComparison_toInjective_signed (F : C ⥤ D)
       (comp_zsmul _ _ _))
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The canonical corrected acyclic comparison has the unsigned square for every
-augmentation-compatible map into an injective resolution.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. For an injective resolution `J` of `Y` and a map `a : I → J`
+over `f : X → Y`, the normalized comparison followed by `Hⁿ(F(a))`
+equals `R^nF(f)` followed by the canonical comparison for `J`. -/
 theorem rightDerivedNormalizedAcyclicComparison_toInjective (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X Y : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -81,7 +97,11 @@ theorem rightDerivedNormalizedAcyclicComparison_toInjective (F : C ⥤ D)
     ProjectiveResolution.acyclicResolutionNormalizationSign_mul_self, one_zsmul]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- On the same injective resolution, the corrected comparison is the resolution comparison. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and preserving finite limits, and `J` an injective
+resolution of `X` with all positive right-derived term values zero.
+The forward normalized acyclic comparison on `J` is the forward
+canonical injective-resolution comparison. -/
 theorem rightDerivedNormalizedAcyclicComparison_injective_hom (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X : C} (J : InjectiveResolution X)
     (hJ : ∀ q j : ℕ, IsZero ((F.rightDerived (j + 1)).obj (J.cocomplex.X q))) (n : ℕ) :
@@ -95,7 +115,11 @@ theorem rightDerivedNormalizedAcyclicComparison_injective_hom (F : C ⥤ D)
     ProjectiveResolution.acyclicResolutionNormalizationSign_mul_self, one_zsmul]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The complete corrected iso on the same injective resolution is the iso. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and preserving finite limits, and `J` an injective
+resolution of `X` with all positive right-derived term values zero.
+Its normalized acyclic isomorphism equals its canonical
+injective-resolution isomorphism in every degree. -/
 theorem rightDerivedNormalizedAcyclicComparison_injective (F : C ⥤ D)
     [F.Additive] [PreservesFiniteLimits F] {X : C} (J : InjectiveResolution X)
     (hJ : ∀ q j : ℕ, IsZero ((F.rightDerived (j + 1)).obj (J.cocomplex.X q))) (n : ℕ) :

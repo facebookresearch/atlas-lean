@@ -1,3 +1,7 @@
-# Satisfies Cylinder Axiom
+# Cylinder Axiom for full mapping-cylinder data
 
-The Cylinder Axiom asks that every original cylinder projection be weak.
+Cylinder Axiom for full mapping-cylinder data.
+
+For a full cylinder T, SatisfiesCylinderAxiom means that every projection p_f : T(f) → f.right
+is a weak equivalence. This condition is imposed separately from the fields defining
+FullCylinder.

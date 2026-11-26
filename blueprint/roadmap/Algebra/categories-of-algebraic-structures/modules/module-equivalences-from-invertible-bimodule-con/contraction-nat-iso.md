@@ -1,3 +1,6 @@
-# Contraction Nat Iso
+# Regular-equivalent coefficient tensor is naturally the right-module identity
 
-Bimodule contraction is natural in the original right-module variable.
+Regular-equivalent coefficient tensor is naturally the right-module identity.
+
+A bimodule equivalence `B ≅ R` gives a natural isomorphism `tensorFunctor R R B ≅ 𝟭 (ModuleCat
+Rᵐᵒᵖ)` through its contraction maps.

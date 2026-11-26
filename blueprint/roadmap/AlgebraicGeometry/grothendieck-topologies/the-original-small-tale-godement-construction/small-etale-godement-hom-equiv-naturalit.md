@@ -1,3 +1,6 @@
-# Small Etale Godement Hom Equiv naturality left symm
+# Stalk skyscraper correspondence is natural in the sheaf
 
-Naturality in every original sheaf morphism uses the same point adjunctions.
+Stalk skyscraper correspondence is natural in the sheaf.
+
+The inverse Hom correspondence commutes with precomposition by a sheaf morphism and its
+induced stalk-family map.

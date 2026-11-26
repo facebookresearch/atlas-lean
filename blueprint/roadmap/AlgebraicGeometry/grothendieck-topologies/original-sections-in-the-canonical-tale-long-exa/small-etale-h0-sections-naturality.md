@@ -1,3 +1,6 @@
-# Small Etale H0 Sections naturality
+# Degree zero section coordinate is natural in sheaf maps
 
-Both original sequence arrows are carried to their literal section components.
+Degree zero section coordinate is natural in sheaf maps.
+
+The cohomology map followed by the target terminal-section coordinate equals the source
+coordinate followed by the sheaf map's terminal component.

@@ -1,3 +1,4 @@
-# Sum zmod Two
+# Sum over the two residues modulo two
 
-A sum over `ZMod 2` is the sum of its values at zero and one.
+For any additive commutative monoid M and f:ZMod 2→M,
+∑_i f(i)=f(0)+f(1).

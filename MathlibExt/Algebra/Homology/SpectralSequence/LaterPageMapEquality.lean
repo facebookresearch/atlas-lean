@@ -16,10 +16,9 @@ public import Mathlib.Algebra.Homology.SpectralSequence.Basic
 /-!
 # Equality of spectral-sequence maps on later pages
 
-For two morphisms between spectral sequences in an abelian category,
-equality of their maps on a page implies equality on its successor, using
-compatibility with homology and the successor isomorphisms. Iteration gives
-equality on every later integer page and at each component of that page.
+For morphisms α,β of spectral sequences with arbitrary page shapes, equality of their maps at
+a page N propagates through successor homology to every r≥N. The same equality holds on every
+component object, with the starting-page bound retained.
 -/
 
 @[expose] public section
@@ -36,7 +35,9 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {ι : Type t} {c : ℤ → ComplexShape ι} {r₀ : ℤ}
   {S T : SpectralSequence C c r₀}
 
-/-- Equality of page maps propagates to the successor through homology compatibility. -/
+/-- Equality of page maps passes to the successor page.
+
+Equal maps at r give equal maps at r+1 through spectral successor compatibility. -/
 theorem Hom.hom_eq_successor_of_hom_eq (α β : S ⟶ T) (r : ℤ) (hr : r₀ ≤ r)
     (h : α.hom r hr = β.hom r hr) :
     α.hom (r + 1) (by omega) = β.hom (r + 1) (by omega) := by
@@ -50,7 +51,9 @@ theorem Hom.hom_eq_successor_of_hom_eq (α β : S ⟶ T) (r : ℤ) (hr : r₀ �
         (T.iso r (r + 1) i rfl hr).hom := by rw [h]
     _ = _ := β.comm r (r + 1) i rfl hr
 
-/-- Equality of page maps propagates through any natural number of successors. -/
+/-- Equality of page maps persists through finitely many successors.
+
+If α_N=β_N, then α_{N+n}=β_{N+n} for every n∈ℕ. -/
 theorem Hom.hom_eq_add_nat_of_hom_eq (α β : S ⟶ T) (N : ℤ) (hN : r₀ ≤ N)
     (h : α.hom N hN = β.hom N hN) (n : ℕ) :
     α.hom (N + (n : ℤ)) (by omega) = β.hom (N + (n : ℤ)) (by omega) := by
@@ -68,7 +71,9 @@ theorem Hom.hom_eq_add_nat_of_hom_eq (α β : S ⟶ T) (N : ℤ) (hN : r₀ ≤ 
       exact (congrArg P (by omega : N + (n : ℤ) + 1 = N + ((n + 1 : ℕ) : ℤ))).mp hnext
   exact hall n (by omega)
 
-/-- Equality at an initial page gives equality at every later integer page. -/
+/-- Equality at one page determines every later page map.
+
+For N≤r above the starting page, α_N=β_N implies α_r=β_r. -/
 theorem Hom.hom_eq_at_later_page (α β : S ⟶ T) (N : ℤ) (hN : r₀ ≤ N)
     (h : α.hom N hN = β.hom N hN) (r : ℤ) (hNr : N ≤ r) :
     α.hom r (by omega) = β.hom r (by omega) := by
@@ -79,7 +84,9 @@ theorem Hom.hom_eq_at_later_page (α β : S ⟶ T) (N : ℤ) (hN : r₀ ≤ N)
     exact Hom.hom_eq_add_nat_of_hom_eq α β N hN h (r - N).toNat
   exact ((congrArg P hr).mp hn) (by omega)
 
-/-- Each component of later-page maps agrees after initial-page equality. -/
+/-- Equality at one page determines every later component map.
+
+Under page equality at N, the component of α_r equals that of β_r at every index for r≥N. -/
 theorem Hom.hom_f_eq_at_later_page (α β : S ⟶ T) (N : ℤ) (hN : r₀ ≤ N)
     (h : α.hom N hN = β.hom N hN) (r : ℤ) (hNr : N ≤ r) (i : ι) :
     (α.hom r (by omega)).f i = (β.hom r (by omega)).f i :=

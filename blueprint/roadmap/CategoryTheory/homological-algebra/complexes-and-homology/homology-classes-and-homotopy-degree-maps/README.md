@@ -1,5 +1,5 @@
 # Homology classes and homotopy-degree maps
 
-- [Module Cat component cycle](module-cat-component-cycle.md)
-- [Cycles Degree Map module Cat cycles Mk](cycles-degree-map-module-cat-cycles-mk.md)
-- [Homology Degree Map module Cat Cycle Class](homology-degree-map-module-cat-cycle-cla.md)
+- [A zero self-homotopy maps cycles along reversed edges](module-cat-component-cycle.md)
+- [Concrete value of the homotopy cycle-degree map](cycles-degree-map-module-cat-cycles-mk.md)
+- [Concrete value of the homotopy homology-degree map](homology-degree-map-module-cat-cycle-cla.md)

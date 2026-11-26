@@ -16,7 +16,16 @@ public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.PrecompositionCoher
 public import MathlibExt.AlgebraicGeometry.Sites.FieldContinuousCohomologyDerivedInvariants
 
 /-!
-# The same original field cochains, connecting maps and group restriction at the original coefficient rank
+# Rank coordinates for continuous field cohomology
+
+The field coefficient category already uses carrier universe `max u w`. Reparameterizing the
+auxiliary rank `w` as `max u w` gives a natural comparison of the continuous-cohomology
+constructions, compatible with connecting maps and the degree-zero invariant coordinate.
+
+A continuous homomorphism between the two Galois groups gives restriction on coefficients and
+cohomology. Conjugating by these rank comparisons produces the restriction delta morphism at
+the stated rank, whose components are the homology maps of the corresponding continuous
+homogeneous-cochain restriction.
 -/
 
 @[expose] public section
@@ -35,14 +44,20 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- Actual original-cochain isomorphism on the same common field module in every degree. -/
+/-- Rank reparameterization gives a continuous cohomology isomorphism.
+
+The degree-`q` continuous-cohomology functors with parameters `w` and `max u w` are naturally
+isomorphic on the common-rank coefficient category. -/
 def fieldSameRankContinuousIso (q : ℕ) :
     fieldContinuousCohomologyFunctor.{u, w} k Ω q ≅
       fieldContinuousCohomologyFunctor.{u, max u w} k Ω q :=
   ContinuousCohomology.sameRankDiscreteCohomologyNatIso.{u, w}
     (InfiniteGalois.profiniteGalGrp k Ω) q
 
-/-- Actual source and target field connectors commute with the fixed original cochain comparison. -/
+/-- Rank comparison commutes with coefficient connecting maps.
+
+The two rank coordinates identify the connecting morphisms of every short exact coefficient
+sequence. -/
 theorem fieldSameRankContinuousIso_connecting (q : ℕ)
     (S : ShortComplex.ShortExactSequences (FieldCohomologyModule.{u, w} k Ω)) :
     ((fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω).connecting q).app S ≫
@@ -54,7 +69,10 @@ theorem fieldSameRankContinuousIso_connecting (q : ℕ)
     (fieldShortExact_discreteCoefficientExact.{u, w} k Ω S.obj S.property)
     (fieldShortExact_discreteCoefficientExact.{u, max u w} k Ω S.obj S.property) q
 
-/-- One genuine delta isomorphism, with the SAME original model and no second coefficient lift. -/
+/-- Rank comparison is an isomorphism of delta functors.
+
+The degreewise rank comparisons and connecting-map compatibility assemble to an isomorphism of
+the continuous-cohomology delta functors. -/
 def fieldSameRankContinuousDeltaIso :
     fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω ≅
       fieldContinuousCohomologyDeltaFunctor.{u, max u w} k Ω :=
@@ -64,12 +82,18 @@ def fieldSameRankContinuousDeltaIso :
     (fieldSameRankContinuousIso.{u, w} k Ω)
     (fieldSameRankContinuousIso_connecting.{u, w} k Ω)
 
+/-- Degree component of the rank delta comparison.
+
+Its degree-`q` morphism is the forward map of `fieldSameRankContinuousIso`. -/
 @[simp] theorem fieldSameRankContinuousDeltaIso_hom_app (q : ℕ) :
     CohomologicalDeltaFunctor.Hom.app
       (fieldSameRankContinuousDeltaIso.{u, w} k Ω).hom q =
         (fieldSameRankContinuousIso.{u, w} k Ω q).hom := rfl
 
-/-- The SAME old identity evaluation normalizes the original-rank comparison. -/
+/-- Rank comparison preserves the invariant coordinate in degree zero.
+
+The rank comparison followed by the enlarged-parameter zero-degree coordinate equals the
+stated-rank zero-degree coordinate. -/
 theorem fieldSameRankContinuousIso_zero :
     (fieldSameRankContinuousIso.{u, w} k Ω 0).hom ≫
         (fieldContinuousCohomologyZeroIso.{u, max u w} k Ω).hom =
@@ -82,7 +106,10 @@ theorem fieldSameRankContinuousIso_zero :
 variable (K Ψ : Type u) [Field K] [Field Ψ] [Algebra K Ψ] [IsSepClosure K Ψ]
 
 -- Earlier V5 recorded the real original/wide cochain mismatch; the proved adapter now supplies it.
-/-- The actual group restriction, transported between the SAME old original cochain models. -/
+/-- Group restriction delta morphism in the stated field rank.
+
+For a continuous Galois-group homomorphism, conjugate the restriction map by the source and
+target rank comparisons to obtain a morphism of delta functors. -/
 def fieldOriginalRankRestrictionDeltaHom
     (φ : InfiniteGalois.profiniteGalGrp K Ψ →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω ⟶
@@ -112,6 +139,10 @@ def fieldOriginalRankRestrictionDeltaHom
   exact eS.hom ≫ d ≫ P.map eT.inv
 
 -- Typed components of the proved old/wide delta comparison.
+/-- Degree map of the stated rank restriction.
+
+The degree component is source rank comparison, continuous cohomology restriction, and inverse
+target rank comparison whiskered by coefficient restriction. -/
 theorem fieldOriginalRankRestrictionDeltaHom_app
     (φ : InfiniteGalois.profiniteGalGrp K Ψ →ₜ* InfiniteGalois.profiniteGalGrp k Ω) (q : ℕ) :
     CohomologicalDeltaFunctor.Hom.app
@@ -169,7 +200,10 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
-/-- The SAME old original nested cochain map for the actual neutral field restriction. -/
+/-- Continuous cochain restriction in the stated rank.
+
+The group homomorphism and canonical coefficient intertwiner give the homogeneous-cochain
+restriction map in the given rank coordinates. -/
 def fieldOriginalRankRestrictionCochainMap
     (φ : InfiniteGalois.profiniteGalGrp K Ψ →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (M : FieldCohomologyModule.{u, w} k Ω) :=
@@ -178,7 +212,10 @@ def fieldOriginalRankRestrictionCochainMap
     (fieldModuleRestrictionTopRepHom.{u, u, w} k Ω K Ψ φ M)
 
 -- V5 retained the actual old/wide model mismatch; the full proved cochain square resolves it.
-/-- The transported delta map in EVERY degree is the literal old original cochain homology map. -/
+/-- Rank restriction degree map is the cochain homology map.
+
+At a coefficient module, the delta restriction component equals the underlying additive map
+induced on homology by the stated-rank homogeneous-cochain map. -/
 theorem fieldOriginalRankRestrictionDeltaHom_original_map
     (φ : InfiniteGalois.profiniteGalGrp K Ψ →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (q : ℕ) (M : FieldCohomologyModule.{u, w} k Ω) :

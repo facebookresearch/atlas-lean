@@ -16,11 +16,15 @@ public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Monoidal
 public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Pushforward
 
 /-!
-# Tensor comparison for scalar-restricted presheaf pushforward
+# Presheaf tensor comparison under precomposition and scalar restriction
 
-For arbitrary functors between sites and maps of commutative ring presheaves,
-the comparison sends a tensor over the source scalars to the same pure tensor
-over the target scalars. It is natural in both module-presheaf factors.
+Let F : C → D, let S and R be commutative ring presheaves on C and D, and let φ : S → F*R. A
+module presheaf M over R is sent to the presheaf U ↦ M(F(U)), with its S(U)-action restricted
+along φ_U.
+
+The canonical comparison from P(M) ⊗_S P(N) to P(M ⊗_R N) sends m ⊗_{S(U)} n to m ⊗_{R(F(U))}
+n. It is natural in both module-presheaf factors. The object and morphism universe levels of C
+and D are separate.
 -/
 
 @[expose] public section
@@ -33,8 +37,10 @@ universe u u₁ u₂ v₁ v₂
 
 namespace PresheafOfModulesOfCommRing
 
-/-- The existing scalar-restricted pushforward with its commutative
-presheaf source and target stated explicitly. -/
+/-- Precomposition of module presheaves with scalar restriction.
+
+For F : C → D and φ : S → F*R, send an R-module presheaf M to the S-module presheaf U ↦
+M(F(U)), with action through φ_U. -/
 abbrev scalarPresheafPushforward
     {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
     (F : C ⥤ D) (S : Cᵒᵖ ⥤ CommRingCat.{u}) (R : Dᵒᵖ ⥤ CommRingCat.{u})
@@ -45,8 +51,10 @@ abbrev scalarPresheafPushforward
     (Functor.whiskerRight φ (forget₂ CommRingCat RingCat) ≫
       (Functor.associator F.op R (forget₂ CommRingCat RingCat)).hom)
 
-/-- The actual tensor comparison on scalar-restricted pushforward
-presheaves. Its local value is the canonical change of scalar tensor map. -/
+/-- The tensor comparison for scalar-restricted presheaf precomposition.
+
+For R-module presheaves M,N, the map P(M) ⊗_S P(N) → P(M ⊗_R N) sends pure tensors at U from
+the S(U)-tensor product to the same tensors over R(F(U)). -/
 def presheafPushforwardTensorHom
     {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
     (F : C ⥤ D) (S : Cᵒᵖ ⥤ CommRingCat.{u}) (R : Dᵒᵖ ⥤ CommRingCat.{u})
@@ -102,7 +110,10 @@ def presheafPushforwardTensorHom
     intro m n
     rfl
 
-/-- The genuine scalar tensor morphism is natural in both presheaf factors. -/
+/-- Naturality of the presheaf tensor comparison in both factors.
+
+For maps a : M → M′ and b : N → N′, applying P(a) ⊗ P(b) before the comparison equals applying
+the comparison first and then P(a ⊗ b). -/
 theorem presheafPushforwardTensorHom_naturality
     {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
     (F : C ⥤ D) (S : Cᵒᵖ ⥤ CommRingCat.{u}) (R : Dᵒᵖ ⥤ CommRingCat.{u})

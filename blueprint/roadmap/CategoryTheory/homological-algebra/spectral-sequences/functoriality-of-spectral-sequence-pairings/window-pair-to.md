@@ -1,3 +1,5 @@
-# Window Pair To
+# Compatibility of specified-output window products
 
-The same descended compatibility with an explicitly equal output cut.
+Compatibility of specified-output window products.
+
+The same quotient-product square holds with a specified sum output cut.

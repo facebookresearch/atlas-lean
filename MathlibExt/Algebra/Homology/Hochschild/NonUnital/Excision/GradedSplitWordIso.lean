@@ -18,16 +18,22 @@ public import Mathlib.Algebra.Module.Submodule.Equiv
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Relative graded split-word coordinates
+# Exact relative split-word grade coordinates
 
-The relative kernel removes the all-quotient
-coordinate from each fixed-count family. Below
-the word-length bound all remaining colors are
-retained; at and beyond it the layer is zero.
-The equivalences use a ground-linear splitting
-and arbitrary independent coefficient modules.
-They describe graded terms, not a differential
-or an excision homology identification.
+Let A → A/I be a ground-linear split quotient. In word length N = n + 1, form the finite
+family Γ_p,n of colours with exactly p quotient positions. The relative coordinate submodule
+R_p,n has its all-quotient coordinate zero, because the relative word lies in the kernel of
+the tensor quotient.
+
+Summing the colour inclusions reconstructs a tensor in that kernel and in filtration stage
+F_p. Extracting exactly the p-count coordinates has predecessor F_(p−1) as kernel, with zero
+predecessor at p = 0. These maps induce mutually inverse equivalences F_p/F_lower ≃ₗ[k] R_p,n,
+for both the naive and arbitrary-coefficient positive bar layers.
+
+When p < n + 1, the all-quotient colour is absent and R_p,n is the complete fixed-count
+family. When n + 1 ≤ p, the relative family and layer are zero. The final isomorphisms
+identify individual associated-complex terms; they do not specify a differential on the
+coordinate family or an excision homology isomorphism.
 -/
 
 @[expose] public section
@@ -102,7 +108,9 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
   (splitting : I.KSplit)
 
-/-- The original quotient tensor map in every original word position. -/
+/-- Let k be commutative, A a nonunital k-module ring and I a k-subalgebra, with quotient-linear
+map q : A → A/I. For N : ℕ, originalQuotientWordMap N : A^⊗N →ₗ[k] (A/I)^⊗N is
+PiTensorProduct.map (fun _ => q). -/
 def originalQuotientWordMap (N : ℕ) :
     TensorPower k N A →ₗ[k] TensorPower k N I.Quotient :=
   PiTensorProduct.map (fun _ : Fin N => NonUnitalSubalgebra.Quotient.mkL I)
@@ -115,7 +123,11 @@ private theorem naiveQuotient_word_natural (n : ℕ) :
   rw [cyclicBComplexHom_f]
   exact TensorPower.consEquiv_naturality (NonUnitalSubalgebra.Quotient.mkL I) n
 
-/-- The evaluated original naive kernel, in its word coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Let q_N : A^⊗N → Q^⊗N be the tensor quotient, K_b,n the
+relative naive kernel term and W_n its ambient word inclusion. relativeNaiveWordKernelEquiv n
+: K_b,n ≃ₗ[k] ker q_N is obtained by kernel preservation under degree evaluation and the
+first-factor tensor equivalences. -/
 def relativeNaiveWordKernelEquiv (n : ℕ) :
     (relativeNaiveComplex k A I).X n ≃ₗ[k]
       LinearMap.ker (originalQuotientWordMap k A I (n + 1)) :=
@@ -130,7 +142,10 @@ def relativeNaiveWordKernelEquiv (n : ℕ) :
         ((TensorPower.consEquiv k A n).ofSubmodule'
           (LinearMap.ker (originalQuotientWordMap k A I (n + 1)))))
 
-/-- This native kernel equivalence has exactly the original relative naive word getter. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Let q_N : A^⊗N → Q^⊗N be the tensor quotient, K_b,n the
+relative naive kernel term and W_n its ambient word inclusion. For x : K_b,n, the underlying
+ambient tensor of relativeNaiveWordKernelEquiv n x equals W_n(x). -/
 theorem relativeNaiveWordKernelEquiv_val (n : ℕ)
     (x : (relativeNaiveComplex k A I).X n) :
     (relativeNaiveWordKernelEquiv k A I n x : TensorPower k (n + 1) A) =
@@ -143,7 +158,10 @@ theorem relativeNaiveWordKernelEquiv_val (n : ℕ)
   rw [componentKernelEquiv_val]
   rfl
 
-/-- The all-quotient coordinate vanishes on the original relative naive kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and s a k-linear quotient section. Let K_b be the relative naive kernel and W_n its inclusion
+in word coordinates of length n + 1. For x : K_b.X n and the all-true colour c,
+splitAmbientToWord s c (W_n x) = 0, since this colour projection is the tensor quotient. -/
 theorem relativeNaiveWord_allQuotient_zero (n : ℕ)
     (colour : Fin (n + 1) → Bool) (hc : colour = fun _ => true)
     (x : (relativeNaiveComplex k A I).X n) :
@@ -153,7 +171,10 @@ theorem relativeNaiveWord_allQuotient_zero (n : ℕ)
   rw [← relativeNaiveWordKernelEquiv_val k A I n x]
   exact (relativeNaiveWordKernelEquiv k A I n x).property
 
-/-- The full source-count family with precisely its original all-quotient coordinate zero. -/
+/-- Let k be commutative, A a nonunital k-module ring, I a k-subalgebra and N = n + 1. For a
+colour c : Fin N → Bool, let W_c tensor I at false positions and A/I at true positions. In
+Γ_p,n = Π c with exactly p true positions, W_c, naiveRelativeSplitWordGradeSpace is the
+submodule of families whose all-true coordinate is zero. -/
 def naiveRelativeSplitWordGradeSpace (p n : ℕ) :
     Submodule k (naiveSplitWordGradeCoordinates k A I p n) where
   carrier := {y | ∀ colour : splitWordGradeColours p (n + 1),
@@ -166,11 +187,17 @@ def naiveRelativeSplitWordGradeSpace (p n : ℕ) :
     change r • x colour = (0 : splitWordTensor k A I colour.val)
     rw [hx colour hc, smul_zero]
 
-/-- The native module of all original fixed-p relative naive coordinates. -/
+/-- Let k be commutative, A a nonunital k-module ring, I a k-subalgebra and N = n + 1. Let W_c
+tensor I at false positions and A/I at true positions. naiveRelativeSplitWordGradeCoordinates
+p n is the submodule of Π c with exactly p true positions, W_c imposing a zero all-true
+coordinate. -/
 abbrev naiveRelativeSplitWordGradeCoordinates (p n : ℕ) :=
   naiveRelativeSplitWordGradeSpace k A I p n
 
-/-- Sum every original source-count colour using its original section/inclusion word map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and s a k-linear quotient
+section. Put N = n + 1, let W_c tensor I at false and A/I at true positions, and let J_c
+tensor the inclusion or section. naiveFixedGradeToAmbient maps Γ_p,n = Π c with p true
+positions, W_c to A^⊗N by y ↦ ∑ c, J_c(y_c). -/
 def naiveFixedGradeToAmbient (p n : ℕ) :
     naiveSplitWordGradeCoordinates k A I p n →ₗ[k] TensorPower k (n + 1) A :=
   ∑ colour : splitWordGradeColours p (n + 1),
@@ -241,7 +268,16 @@ private theorem naiveFixedGradeToAmbient_mem_span (p n : ℕ)
   exact splitWordToAmbient_range_le_idealWordSpan k A I splitting colour.val (n + 1 - p)
     hrequired ⟨y colour, rfl⟩
 
-/-- Every reconstructed source-count family lies in the original quotient kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. Restricting naiveFixedGradeToAmbient to R_p,n gives naiveFixedGradeToKernel : R_p,n
+→ₗ[k] ker q_N. Every non-all-true colour has an ideal factor, and the all-true coordinate is
+zero. -/
 def naiveFixedGradeToKernel (p n : ℕ) :
     naiveRelativeSplitWordGradeCoordinates k A I p n →ₗ[k]
       LinearMap.ker (originalQuotientWordMap k A I (n + 1)) :=
@@ -252,7 +288,15 @@ def naiveFixedGradeToKernel (p n : ℕ) :
         intro y
         exact naiveFixedGradeToAmbient_quotient_zero k A I splitting p n y)
 
-/-- Native evaluated-kernel transport returns the original relative naive term. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. naiveFixedGradeToRelative : R_p,n →ₗ[k] K_b,n is reconstruction into ker q_N
+followed by relativeNaiveWordKernelEquiv n.symm. -/
 def naiveFixedGradeToRelative (p n : ℕ) :
     naiveRelativeSplitWordGradeCoordinates k A I p n →ₗ[k]
       (relativeNaiveComplex k A I).X n :=
@@ -269,7 +313,15 @@ private theorem naiveFixedGradeToRelative_word (p n : ℕ)
   rw [relativeNaiveWordKernelEquiv_val] at h
   exact h
 
-/-- Actual reconstruction into the original naive count stage, through its original relative kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. naiveFixedGradeToStage : R_p,n →ₗ[k] F_p,n is the reconstructed relative term
+restricted to the stage requiring n + 1 − p ideal entries. -/
 def naiveFixedGradeToStage (p n : ℕ) :
     naiveRelativeSplitWordGradeCoordinates k A I p n →ₗ[k] naiveWordFiltration k A I p n :=
   (naiveFixedGradeToRelative k A I splitting p n).codRestrict (naiveWordFiltration k A I p n)
@@ -279,7 +331,14 @@ def naiveFixedGradeToStage (p n : ℕ) :
       rw [naiveFixedGradeToRelative_word]
       exact naiveFixedGradeToAmbient_mem_span k A I splitting p n y.val)
 
-/-- The reconstructed original stage has exactly the finite sum of every original source-count word. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. For y : R_p,n, W_n(naiveFixedGradeToStage y) = ∑ c with p true positions, J_c(y_c). -/
 theorem naiveFixedGradeToStage_word (p n : ℕ)
     (y : naiveRelativeSplitWordGradeCoordinates k A I p n) :
     relativeNaiveWordMap k A I n ((naiveFixedGradeToStage k A I splitting p n y).val) =
@@ -288,7 +347,15 @@ theorem naiveFixedGradeToStage_word (p n : ℕ)
   exact (naiveFixedGradeToRelative_word k A I splitting p n y).trans
     (naiveFixedGradeToAmbient_apply k A I splitting p n y.val)
 
-/-- Original naive stage extraction, retaining the exact original relative-kernel coordinate condition. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. naiveStageToRelativeFixedGrade maps F_p,n to R_p,n by x ↦ (P_c(W_n(x.val))) for all
+colours with p true positions. The relative kernel forces the all-true coordinate to vanish. -/
 def naiveStageToRelativeFixedGrade (p n : ℕ) :
     naiveWordFiltration k A I p n →ₗ[k] naiveRelativeSplitWordGradeCoordinates k A I p n :=
   (LinearMap.pi (fun colour : splitWordGradeColours p (n + 1) =>
@@ -307,7 +374,15 @@ private theorem naiveStageToRelativeFixedGrade_reconstruct (p n : ℕ)
   rw [naiveFixedGradeToRelative_word]
   exact naiveFixedGradeToAmbient_coordinate k A I splitting p n y.val colour
 
-/-- The exact kernel of complete original naive source-count extraction is the original predecessor. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. The kernel of naiveStageToRelativeFixedGrade equals naiveLowerFiltration p n viewed
+inside F_p,n. This predecessor is zero at p = 0 and F_(p−1),n otherwise. -/
 theorem naiveStageToRelativeFixedGrade_ker (p n : ℕ) :
     LinearMap.ker (naiveStageToRelativeFixedGrade k A I splitting p n) =
       (naiveLowerFiltration k A I p n).comap (naiveWordFiltration k A I p n).subtype := by
@@ -356,7 +431,15 @@ theorem naiveStageToRelativeFixedGrade_ker (p n : ℕ) :
     funext colour
     exact naiveLowerFiltration_le_ker_stageToSplitWord k A I splitting p n colour.val colour.property hx
 
-/-- Complete extraction from the original naive layer, with its all-quotient coordinate zero. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. naiveLayerToRelativeFixedGrade maps naiveWordLayer p n = F_p,n/F_lower to R_p,n by
+the descended exact-count coordinate maps. -/
 def naiveLayerToRelativeFixedGrade (p n : ℕ) :
     naiveWordLayer k A I p n →ₗ[k] naiveRelativeSplitWordGradeCoordinates k A I p n :=
   (naiveLayerToSplitWordCoordinates k A I splitting p n).codRestrict
@@ -371,12 +454,28 @@ private theorem naiveLayerToRelativeFixedGrade_projection (p n : ℕ)
     naiveLayerToRelativeFixedGrade k A I splitting p n (naiveWordLayerProjection k A I p n x) =
       naiveStageToRelativeFixedGrade k A I splitting p n x := rfl
 
-/-- The original naive quotient projection follows original-kernel reconstruction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. naiveRelativeFixedGradeToLayer sends y to the class of naiveFixedGradeToStage y
+under naiveWordLayerProjection p n. -/
 def naiveRelativeFixedGradeToLayer (p n : ℕ) :
     naiveRelativeSplitWordGradeCoordinates k A I p n →ₗ[k] naiveWordLayer k A I p n :=
   (naiveWordLayerProjection k A I p n).comp (naiveFixedGradeToStage k A I splitting p n)
 
-/-- Every original source-count naive coordinate is recovered by original stage/layer reconstruction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. The composite naiveLayerToRelativeFixedGrade ∘ naiveRelativeFixedGradeToLayer
+equals id_(R_p,n). -/
 theorem naiveLayerToRelativeFixedGrade_comp_inverse (p n : ℕ) :
     (naiveLayerToRelativeFixedGrade k A I splitting p n).comp
         (naiveRelativeFixedGradeToLayer k A I splitting p n) = LinearMap.id := by
@@ -387,7 +486,15 @@ theorem naiveLayerToRelativeFixedGrade_comp_inverse (p n : ℕ) :
   rw [naiveLayerToRelativeFixedGrade_projection]
   exact naiveStageToRelativeFixedGrade_reconstruct k A I splitting p n y
 
-/-- Native quotient equality identifies reconstructed complete naive coordinates with the original layer. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. The composite naiveRelativeFixedGradeToLayer ∘ naiveLayerToRelativeFixedGrade
+equals the identity on naiveWordLayer p n. -/
 theorem naiveRelativeFixedGradeToLayer_comp_extraction (p n : ℕ) :
     (naiveRelativeFixedGradeToLayer k A I splitting p n).comp
         (naiveLayerToRelativeFixedGrade k A I splitting p n) = LinearMap.id := by
@@ -411,8 +518,15 @@ theorem naiveRelativeFixedGradeToLayer_comp_extraction (p n : ℕ) :
     exact hzero
   exact (Submodule.Quotient.eq _).mpr hl
 
-/-- The source splitting earns the exact equivalence of the original naive graded term
-and all relative source-count coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. naiveGradedSplitWordIso : naiveWordLayer p n ≃ₗ[k] R_p,n has forward map
+naiveLayerToRelativeFixedGrade and inverse naiveRelativeFixedGradeToLayer, for every p,n : ℕ. -/
 def naiveGradedSplitWordIso (p n : ℕ) :
     naiveWordLayer k A I p n ≃ₗ[k] naiveRelativeSplitWordGradeCoordinates k A I p n :=
   { naiveLayerToRelativeFixedGrade k A I splitting p n with
@@ -422,12 +536,28 @@ def naiveGradedSplitWordIso (p n : ℕ) :
     right_inv := fun y => congrArg (fun f => f y)
       (naiveLayerToRelativeFixedGrade_comp_inverse k A I splitting p n) }
 
-/-- The forward graded equivalence retains precisely the accepted complete original naive extraction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. For z : naiveWordLayer p n, the underlying family of naiveGradedSplitWordIso z is
+naiveLayerToSplitWordCoordinates p n z. -/
 theorem naiveGradedSplitWordIso_apply (p n : ℕ) (z : naiveWordLayer k A I p n) :
     (naiveGradedSplitWordIso k A I splitting p n z).val =
       naiveLayerToSplitWordCoordinates k A I splitting p n z := rfl
 
-/-- The inverse uses the original naive kernel and original quotient projection. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I
+two-sided. Put Q = A/I and N = n + 1. Choose a k-linear quotient section s. For c : Fin N →
+Bool, let W_c be the tensor with I at false and Q at true positions, J_c its ambient
+inclusion/section map and P_c its projection/quotient map. Let Γ_p,n = Π c with exactly p true
+positions, W_c, and let R_p,n ≤ Γ_p,n impose a zero all-true coordinate. Write K_b for the
+naive quotient-map kernel, W_n for its word inclusion in degree n, F_p,n for the pullback of
+the span with at least N−p ideal entries, and F_lower for zero at p = 0 or F_(p−1),n
+otherwise. For y : R_p,n, naiveGradedSplitWordIso.symm y = naiveWordLayerProjection p n
+(naiveFixedGradeToStage p n y). -/
 theorem naiveGradedSplitWordIso_symm_apply (p n : ℕ)
     (y : naiveRelativeSplitWordGradeCoordinates k A I p n) :
     (naiveGradedSplitWordIso k A I splitting p n).symm y =
@@ -435,7 +565,10 @@ theorem naiveGradedSplitWordIso_symm_apply (p n : ℕ)
 
 variable (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The original arbitrary-coefficient quotient tensor map keeps V under its identity. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+a general word length N, originalCoefficientQuotientWordMap is q_N^V : V ⊗[k] A^⊗N →ₗ[k] V
+⊗[k] Q^⊗N. -/
 def originalCoefficientQuotientWordMap (N : ℕ) :
     V ⊗[k] TensorPower k N A →ₗ[k] V ⊗[k] TensorPower k N I.Quotient :=
   TensorProduct.map (LinearMap.id : V →ₗ[k] V) (originalQuotientWordMap k A I N)
@@ -492,7 +625,11 @@ private theorem barQuotient_word_natural (n : ℕ) :
   simpa only [ModuleCat.hom_comp, ModuleCat.hom_ofHom] using
     congrArg (fun f => f.hom) hcat
 
-/-- The original evaluated positive kernel in its exact arbitrary-coefficient word coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N.
+relativeBarWordKernelEquiv n identifies K_+.X (n + 1) with ker q_N^V, where K_+ is the
+positive bar quotient-map kernel. The equivalence uses kernel preservation under evaluation
+and positive word coordinates. -/
 def relativeBarWordKernelEquiv (n : ℕ) :
     (relativePositiveBarComplex k A I V).X (n + 1) ≃ₗ[k]
       LinearMap.ker (originalCoefficientQuotientWordMap k A I V (n + 1)) :=
@@ -508,7 +645,10 @@ def relativeBarWordKernelEquiv (n : ℕ) :
         ((positiveBarWordIso k A V n).toLinearEquiv.ofSubmodule'
           (LinearMap.ker (originalCoefficientQuotientWordMap k A I V (n + 1)))))
 
-/-- The native positive kernel equivalence is precisely the original arbitrary-coefficient word getter. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V a k-module. Let K_+ =
+ker(positiveBar(A,V) → positiveBar(A/I,V)). For x : K_+.X (n + 1), the ambient coefficient
+tensor of relativeBarWordKernelEquiv n x equals relativePositiveBarWordMap n x in V ⊗[k]
+A^⊗(n+1). -/
 theorem relativeBarWordKernelEquiv_val (n : ℕ)
     (x : (relativePositiveBarComplex k A I V).X (n + 1)) :
     (relativeBarWordKernelEquiv k A I V n x : V ⊗[k] TensorPower k (n + 1) A) =
@@ -522,7 +662,15 @@ theorem relativeBarWordKernelEquiv_val (n : ℕ)
   rw [componentKernelEquiv_val, CategoryTheory.Iso.toLinearEquiv_apply]
   rfl
 
-/-- The original positive relative kernel has zero all-quotient coordinate, retaining V. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. For x : K_+.X N and c the all-true colour,
+(id_V ⊗ P_c)(W_n^V(x)) = 0, since that coordinate is q_N^V. -/
 theorem relativeBarWord_allQuotient_zero (n : ℕ)
     (colour : Fin (n + 1) → Bool) (hc : colour = fun _ => true)
     (x : (relativePositiveBarComplex k A I V).X (n + 1)) :
@@ -532,7 +680,12 @@ theorem relativeBarWord_allQuotient_zero (n : ℕ)
   rw [← relativeBarWordKernelEquiv_val k A I V n x]
   exact (relativeBarWordKernelEquiv k A I V n x).property
 
-/-- Every original source-count coefficient colour, with only its original all-quotient coordinate zero. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. barRelativeSplitWordGradeSpace is R_p,n^V, the submodule imposing
+that single relative-kernel condition on the exact-count coefficient family. -/
 def barRelativeSplitWordGradeSpace (p n : ℕ) :
     Submodule k (barSplitWordGradeCoordinates k A I V p n) where
   carrier := {y | ∀ colour : splitWordGradeColours p (n + 1),
@@ -545,10 +698,24 @@ def barRelativeSplitWordGradeSpace (p n : ℕ) :
     change r • x colour = (0 : V ⊗[k] splitWordTensor k A I colour.val)
     rw [hx colour hc, smul_zero]
 
-/-- The full fixed-p positive relative coordinate module, with independent coefficient V. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. barRelativeSplitWordGradeCoordinates p n is the module R_p,n^V,
+retaining the coefficient V and every exact-p-count colour except for its forced zero all-true
+coordinate. -/
 abbrev barRelativeSplitWordGradeCoordinates (p n : ℕ) := barRelativeSplitWordGradeSpace k A I V p n
 
-/-- Every original fixed-p coefficient word participates in the ambient reconstruction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barFixedGradeToAmbient sends y : Γ_p,n^V to
+∑ c with p true positions, (id_V ⊗ J_c)(y_c), in V ⊗[k] A^⊗N. -/
 def barFixedGradeToAmbient (p n : ℕ) :
     barSplitWordGradeCoordinates k A I V p n →ₗ[k] V ⊗[k] TensorPower k (n + 1) A :=
   ∑ colour : splitWordGradeColours p (n + 1),
@@ -618,7 +785,16 @@ private theorem barFixedGradeToAmbient_mem_span (p n : ℕ)
   exact coefficientSplitWordToAmbient_range_le_coefficientIdealWordSpan
     k A I splitting V colour.val (n + 1 - p) hrequired ⟨y colour, rfl⟩
 
-/-- Every original coefficient reconstruction lies in the original positive quotient kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. Restricting the fixed-count reconstruction
+to R_p,n^V gives barFixedGradeToKernel : R_p,n^V →ₗ[k] ker q_N^V. The all-quotient coordinate
+is zero and every other colour has an ideal factor. -/
 def barFixedGradeToKernel (p n : ℕ) :
     barRelativeSplitWordGradeCoordinates k A I V p n →ₗ[k]
       LinearMap.ker (originalCoefficientQuotientWordMap k A I V (n + 1)) :=
@@ -629,7 +805,16 @@ def barFixedGradeToKernel (p n : ℕ) :
         intro y
         exact barFixedGradeToAmbient_quotient_zero k A I splitting V p n y)
 
-/-- Native evaluated-kernel transport retains the original positive term and coefficient. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barFixedGradeToRelative maps R_p,n^V to
+K_+.X N by coefficient reconstruction into ker q_N^V followed by relativeBarWordKernelEquiv
+n.symm. -/
 def barFixedGradeToRelative (p n : ℕ) :
     barRelativeSplitWordGradeCoordinates k A I V p n →ₗ[k]
       (relativePositiveBarComplex k A I V).X (n + 1) :=
@@ -647,7 +832,15 @@ private theorem barFixedGradeToRelative_word (p n : ℕ)
   rw [relativeBarWordKernelEquiv_val] at h
   exact h
 
-/-- Actual arbitrary-coefficient reconstruction into the original positive count stage and relative kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barFixedGradeToStage maps R_p,n^V to B_p,n
+by codomain restriction of the reconstructed positive relative term. -/
 def barFixedGradeToStage (p n : ℕ) :
     barRelativeSplitWordGradeCoordinates k A I V p n →ₗ[k] barWordFiltration k A I V p n :=
   (barFixedGradeToRelative k A I splitting V p n).codRestrict (barWordFiltration k A I V p n)
@@ -657,7 +850,15 @@ def barFixedGradeToStage (p n : ℕ) :
       rw [barFixedGradeToRelative_word]
       exact barFixedGradeToAmbient_mem_span k A I splitting V p n y.val)
 
-/-- Every reconstructed coefficient stage word is its original complete source-count colour sum. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. For y : R_p,n^V, W_n^V(barFixedGradeToStage
+y) = ∑ c with p true positions, (id_V ⊗ J_c)(y_c). -/
 theorem barFixedGradeToStage_word (p n : ℕ)
     (y : barRelativeSplitWordGradeCoordinates k A I V p n) :
     relativePositiveBarWordMap k A I V n ((barFixedGradeToStage k A I splitting V p n y).val) =
@@ -666,7 +867,16 @@ theorem barFixedGradeToStage_word (p n : ℕ)
   exact (barFixedGradeToRelative_word k A I splitting V p n y).trans
     (barFixedGradeToAmbient_apply k A I splitting V p n y.val)
 
-/-- Original positive stage extraction retains the all-quotient kernel condition and coefficient identity. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barStageToRelativeFixedGrade sends x :
+B_p,n to the family ((id_V ⊗ P_c)(W_n^V(x.val)))_c in R_p,n^V, for colours with p true
+positions. -/
 def barStageToRelativeFixedGrade (p n : ℕ) :
     barWordFiltration k A I V p n →ₗ[k] barRelativeSplitWordGradeCoordinates k A I V p n :=
   (LinearMap.pi (fun colour : splitWordGradeColours p (n + 1) =>
@@ -685,7 +895,16 @@ private theorem barStageToRelativeFixedGrade_reconstruct (p n : ℕ)
   rw [barFixedGradeToRelative_word]
   exact barFixedGradeToAmbient_coordinate k A I splitting V p n y.val colour
 
-/-- The complete original positive source-count extraction has exactly its original predecessor as kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. The kernel of barStageToRelativeFixedGrade
+equals barLowerFiltration p n viewed inside B_p,n. This is zero at p = 0 and B_(p−1),n
+otherwise. -/
 theorem barStageToRelativeFixedGrade_ker (p n : ℕ) :
     LinearMap.ker (barStageToRelativeFixedGrade k A I splitting V p n) =
       (barLowerFiltration k A I V p n).comap (barWordFiltration k A I V p n).subtype := by
@@ -737,7 +956,15 @@ theorem barStageToRelativeFixedGrade_ker (p n : ℕ) :
     funext colour
     exact barLowerFiltration_le_ker_stageToSplitWord k A I splitting V p n colour.val colour.property hx
 
-/-- Complete original positive layer extraction with its all-quotient coordinate zero. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barLayerToRelativeFixedGrade maps
+barWordLayer p n = B_p,n/B_lower to R_p,n^V by the descended exact-count coordinates. -/
 def barLayerToRelativeFixedGrade (p n : ℕ) :
     barWordLayer k A I V p n →ₗ[k] barRelativeSplitWordGradeCoordinates k A I V p n :=
   (barLayerToSplitWordCoordinates k A I splitting V p n).codRestrict
@@ -753,12 +980,28 @@ private theorem barLayerToRelativeFixedGrade_projection (p n : ℕ)
     barLayerToRelativeFixedGrade k A I splitting V p n (barWordLayerProjection k A I V p n x) =
       barStageToRelativeFixedGrade k A I splitting V p n x := rfl
 
-/-- The original positive native layer projection follows arbitrary-coefficient kernel reconstruction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barRelativeFixedGradeToLayer sends y :
+R_p,n^V to barWordLayerProjection p n (barFixedGradeToStage y). -/
 def barRelativeFixedGradeToLayer (p n : ℕ) :
     barRelativeSplitWordGradeCoordinates k A I V p n →ₗ[k] barWordLayer k A I V p n :=
   (barWordLayerProjection k A I V p n).comp (barFixedGradeToStage k A I splitting V p n)
 
-/-- Actual original coefficient reconstruction recovers every complete fixed-p relative coordinate. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barLayerToRelativeFixedGrade ∘
+barRelativeFixedGradeToLayer = id_(R_p,n^V). -/
 theorem barLayerToRelativeFixedGrade_comp_inverse (p n : ℕ) :
     (barLayerToRelativeFixedGrade k A I splitting V p n).comp
         (barRelativeFixedGradeToLayer k A I splitting V p n) = LinearMap.id := by
@@ -769,7 +1012,15 @@ theorem barLayerToRelativeFixedGrade_comp_inverse (p n : ℕ) :
   rw [barLayerToRelativeFixedGrade_projection]
   exact barStageToRelativeFixedGrade_reconstruct k A I splitting V p n y
 
-/-- The original positive layer is recovered from its complete coefficient coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barRelativeFixedGradeToLayer ∘
+barLayerToRelativeFixedGrade is the identity on barWordLayer p n. -/
 theorem barRelativeFixedGradeToLayer_comp_extraction (p n : ℕ) :
     (barRelativeFixedGradeToLayer k A I splitting V p n).comp
         (barLayerToRelativeFixedGrade k A I splitting V p n) = LinearMap.id := by
@@ -793,8 +1044,16 @@ theorem barRelativeFixedGradeToLayer_comp_extraction (p n : ℕ) :
     exact hzero
   exact (Submodule.Quotient.eq _).mpr hl
 
-/-- The source splitting earns the original positive graded-term equivalence
-with every relative source-count coefficient colour. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. barGradedSplitWordIso : barWordLayer p n
+≃ₗ[k] R_p,n^V has forward map barLayerToRelativeFixedGrade and inverse
+barRelativeFixedGradeToLayer, for every p,n : ℕ. -/
 def barGradedSplitWordIso (p n : ℕ) :
     barWordLayer k A I V p n ≃ₗ[k] barRelativeSplitWordGradeCoordinates k A I V p n :=
   { barLayerToRelativeFixedGrade k A I splitting V p n with
@@ -804,12 +1063,28 @@ def barGradedSplitWordIso (p n : ℕ) :
     right_inv := fun y => congrArg (fun f => f y)
       (barLayerToRelativeFixedGrade_comp_inverse k A I splitting V p n) }
 
-/-- The positive graded equivalence retains exactly the accepted complete arbitrary-coefficient extraction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. For z : barWordLayer p n, the underlying
+family of barGradedSplitWordIso z is barLayerToSplitWordCoordinates p n z. -/
 theorem barGradedSplitWordIso_apply (p n : ℕ) (z : barWordLayer k A I V p n) :
     (barGradedSplitWordIso k A I splitting V p n z).val =
       barLayerToSplitWordCoordinates k A I splitting V p n z := rfl
 
-/-- Its inverse is precisely original-kernel reconstruction followed by the original bar quotient. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, Q = A/I and V an arbitrary k-module. Put N = n + 1 and let q_N^V = id_V ⊗ q^⊗N. For
+each colour c : Fin N → Bool, let W_c tensor I at false positions and Q at true positions. Let
+Γ_p,n^V = Π c with exactly p true positions, V ⊗ W_c, and let R_p,n^V be its submodule with
+zero all-true coordinate. Choose a k-linear quotient section s and let J_c,P_c be its word
+inclusion/projection maps. Let K_+ = ker(positiveBar(A,V) → positiveBar(Q,V)), W_n^V its
+positive word inclusion and B_p,n its ideal-count stage requiring N−p ideal entries. Write
+B_lower for zero at p = 0 and B_(p−1),n otherwise. For y : R_p,n^V, barGradedSplitWordIso.symm
+y = barWordLayerProjection p n (barFixedGradeToStage y). -/
 theorem barGradedSplitWordIso_symm_apply (p n : ℕ)
     (y : barRelativeSplitWordGradeCoordinates k A I V p n) :
     (barGradedSplitWordIso k A I splitting V p n).symm y =
@@ -838,7 +1113,11 @@ private theorem sourceCountColour_allTrue {p N : ℕ} (hp : N ≤ p)
   · rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Below the original word length, every original source-count naive colour is unrestricted. -/
+/-- Let k be commutative, A a nonunital k-module ring, I a k-subalgebra, Q = A/I and N = n + 1.
+For a Boolean colour c, let W_c tensor I at false and Q at true positions. Put Γ_p,n = Π c
+with exactly p true positions, W_c and let R_p,n impose a zero all-true coordinate. If p < N,
+naiveRelativeSplitWordGradeSpace p n = ⊤. No colour with p true positions is the all-true
+colour. -/
 theorem naiveRelativeSplitWordGradeSpace_eq_top (p n : ℕ) (hp : p < n + 1) :
     naiveRelativeSplitWordGradeSpace k A I p n = ⊤ := by
   apply top_unique
@@ -847,21 +1126,33 @@ theorem naiveRelativeSplitWordGradeSpace_eq_top (p n : ℕ) (hp : p < n + 1) :
   rw [hc, quotientEntryCount_allTrue] at hq
   omega
 
-/-- Below the original word length, the original naive layer is equivalent to the full fixed-p family. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and s a k-linear quotient section. Put N = n + 1, let F_p,n be the relative naive ideal-count
+stage, and let R_p,n be the exact-p-count colour family with zero all-quotient coordinate. If
+p < N, naiveGradedSplitWordFullIso : naiveWordLayer p n ≃ₗ[k] naiveSplitWordGradeCoordinates p
+n is naiveGradedSplitWordIso followed by the equivalence of R_p,n = ⊤ with its full family. -/
 def naiveGradedSplitWordFullIso (p n : ℕ) (hp : p < n + 1) :
     naiveWordLayer k A I p n ≃ₗ[k] naiveSplitWordGradeCoordinates k A I p n :=
   (naiveGradedSplitWordIso k A I splitting p n).trans
     (LinearEquiv.ofTop (naiveRelativeSplitWordGradeSpace k A I p n)
       (naiveRelativeSplitWordGradeSpace_eq_top k A I p n hp))
 
-/-- The full-family equivalence keeps exactly the original accepted naive extraction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and s a k-linear quotient section. Put N = n + 1, let F_p,n be the relative naive ideal-count
+stage, and let R_p,n be the exact-p-count colour family with zero all-quotient coordinate. If
+p < N, naiveGradedSplitWordFullIso z = naiveLayerToSplitWordCoordinates p n z for every z :
+naiveWordLayer p n. -/
 theorem naiveGradedSplitWordFullIso_apply (p n : ℕ) (hp : p < n + 1)
     (z : naiveWordLayer k A I p n) :
     naiveGradedSplitWordFullIso k A I splitting p n hp z =
       naiveLayerToSplitWordCoordinates k A I splitting p n z := rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- At and beyond word length, the relative source-count naive coordinate module is zero. -/
+/-- Let k be commutative, A a nonunital k-module ring, I a k-subalgebra, Q = A/I and N = n + 1.
+For a Boolean colour c, let W_c tensor I at false and Q at true positions. Put Γ_p,n = Π c
+with exactly p true positions, W_c and let R_p,n impose a zero all-true coordinate. If N ≤ p,
+every y : R_p,n equals zero. At p = N the only colour is all-true and is forced zero; at p > N
+there are no exact-count colours. -/
 theorem naiveRelativeSplitWordGrade_eq_zero (p n : ℕ) (hp : n + 1 ≤ p)
     (y : naiveRelativeSplitWordGradeCoordinates k A I p n) : y = 0 := by
   apply Subtype.ext
@@ -869,7 +1160,11 @@ theorem naiveRelativeSplitWordGrade_eq_zero (p n : ℕ) (hp : n + 1 ≤ p)
   exact y.property colour (sourceCountColour_allTrue hp colour)
 
 include splitting in
-/-- At and beyond word length, the original naive graded layer is zero. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and s a k-linear quotient section. Put N = n + 1, let F_p,n be the relative naive ideal-count
+stage, and let R_p,n be the exact-p-count colour family with zero all-quotient coordinate. If
+N ≤ p, every class z : naiveWordLayer p n equals zero, by the relative graded coordinate
+equivalence. -/
 theorem naiveWordLayer_eq_zero_of_wordLength_le (p n : ℕ) (hp : n + 1 ≤ p)
     (z : naiveWordLayer k A I p n) : z = 0 := by
   apply (naiveGradedSplitWordIso k A I splitting p n).injective
@@ -877,7 +1172,12 @@ theorem naiveWordLayer_eq_zero_of_wordLength_le (p n : ℕ) (hp : n + 1 ≤ p)
     (naiveGradedSplitWordIso k A I splitting p n z)).trans (map_zero _).symm
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Below word length every original fixed-p coefficient colour remains unrestricted. -/
+/-- Let k be commutative, A a nonunital k-module ring, I a k-subalgebra, Q = A/I and N = n + 1.
+For a Boolean colour c, let W_c tensor I at false and Q at true positions. Put Γ_p,n = Π c
+with exactly p true positions, W_c and let R_p,n impose a zero all-true coordinate. Let V be
+any k-module and let R_p,n^V ≤ Γ_p,n^V = Π c with p true positions, V ⊗ W_c impose the same
+all-true zero coordinate. If p < N, barRelativeSplitWordGradeSpace p n = ⊤ in the full
+coefficient exact-count family. -/
 theorem barRelativeSplitWordGradeSpace_eq_top (p n : ℕ) (hp : p < n + 1) :
     barRelativeSplitWordGradeSpace k A I V p n = ⊤ := by
   apply top_unique
@@ -886,21 +1186,33 @@ theorem barRelativeSplitWordGradeSpace_eq_top (p n : ℕ) (hp : p < n + 1) :
   rw [hc, quotientEntryCount_allTrue] at hq
   omega
 
-/-- Below word length the original positive layer is equivalent to the full coefficient family. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, s a k-linear quotient section and V any k-module. Put N = n + 1 and let B_p,n be
+the relative positive bar word stage in degree N. If p < N, barGradedSplitWordFullIso :
+barWordLayer p n ≃ₗ[k] barSplitWordGradeCoordinates p n follows barGradedSplitWordIso by the
+top-submodule equivalence. -/
 def barGradedSplitWordFullIso (p n : ℕ) (hp : p < n + 1) :
     barWordLayer k A I V p n ≃ₗ[k] barSplitWordGradeCoordinates k A I V p n :=
   (barGradedSplitWordIso k A I splitting V p n).trans
     (LinearEquiv.ofTop (barRelativeSplitWordGradeSpace k A I V p n)
       (barRelativeSplitWordGradeSpace_eq_top k A I V p n hp))
 
-/-- The full coefficient-family equivalence is the exact original accepted bar extraction. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, s a k-linear quotient section and V any k-module. Put N = n + 1 and let B_p,n be
+the relative positive bar word stage in degree N. If p < N, barGradedSplitWordFullIso z =
+barLayerToSplitWordCoordinates p n z for every z : barWordLayer p n. -/
 theorem barGradedSplitWordFullIso_apply (p n : ℕ) (hp : p < n + 1)
     (z : barWordLayer k A I V p n) :
     barGradedSplitWordFullIso k A I splitting V p n hp z =
       barLayerToSplitWordCoordinates k A I splitting V p n z := rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- At and beyond word length the positive relative coordinate family is zero. -/
+/-- Let k be commutative, A a nonunital k-module ring, I a k-subalgebra, Q = A/I and N = n + 1.
+For a Boolean colour c, let W_c tensor I at false and Q at true positions. Put Γ_p,n = Π c
+with exactly p true positions, W_c and let R_p,n impose a zero all-true coordinate. Let V be
+any k-module and let R_p,n^V ≤ Γ_p,n^V = Π c with p true positions, V ⊗ W_c impose the same
+all-true zero coordinate. If N ≤ p, every y : R_p,n^V equals zero, because the all-true
+coordinate is killed at p = N and the colour family is empty for p > N. -/
 theorem barRelativeSplitWordGrade_eq_zero (p n : ℕ) (hp : n + 1 ≤ p)
     (y : barRelativeSplitWordGradeCoordinates k A I V p n) : y = 0 := by
   apply Subtype.ext
@@ -908,20 +1220,33 @@ theorem barRelativeSplitWordGrade_eq_zero (p n : ℕ) (hp : n + 1 ≤ p)
   exact y.property colour (sourceCountColour_allTrue hp colour)
 
 include splitting in
-/-- At and beyond word length the original positive graded layer is zero. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, s a k-linear quotient section and V any k-module. Put N = n + 1 and let B_p,n be
+the relative positive bar word stage in degree N. If N ≤ p, every class z : barWordLayer p n
+equals zero. -/
 theorem barWordLayer_eq_zero_of_wordLength_le (p n : ℕ) (hp : n + 1 ≤ p)
     (z : barWordLayer k A I V p n) : z = 0 := by
   apply (barGradedSplitWordIso k A I splitting V p n).injective
   exact (barRelativeSplitWordGrade_eq_zero k A I V p n hp
     (barGradedSplitWordIso k A I splitting V p n z)).trans (map_zero _).symm
 
-/-- The exact original naive associated-complex term inherits this native graded coordinate equivalence. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and s a k-linear quotient section. Put N = n + 1, let F_p,n be the relative naive ideal-count
+stage, and let R_p,n be the exact-p-count colour family with zero all-quotient coordinate. For
+all p,n : ℕ, naiveAssociatedGradedSplitWordIso identifies (naiveAssociatedWordComplex p).X n
+with ModuleCat.of k (naiveRelativeSplitWordGradeCoordinates p n). This is the module-category
+form of the linear grade equivalence in that degree. -/
 def naiveAssociatedGradedSplitWordIso (p n : ℕ) :
     (naiveAssociatedWordComplex k A I p).X n ≅
       ModuleCat.of k (naiveRelativeSplitWordGradeCoordinates k A I p n) :=
   (naiveGradedSplitWordIso k A I splitting p n).toModuleIso
 
-/-- The exact original positive associated-complex term retains source degree n+1 and arbitrary V. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I
+two-sided, s a k-linear quotient section and V any k-module. Put N = n + 1 and let B_p,n be
+the relative positive bar word stage in degree N. For all p,n : ℕ,
+barAssociatedGradedSplitWordIso identifies (barAssociatedWordComplex p).X (n + 1) with
+ModuleCat.of k (barRelativeSplitWordGradeCoordinates p n). It is a degreewise isomorphism of
+positive associated terms. -/
 def barAssociatedGradedSplitWordIso (p n : ℕ) :
     (barAssociatedWordComplex k A I V p).X (n + 1) ≅
       ModuleCat.of k (barRelativeSplitWordGradeCoordinates k A I V p n) :=

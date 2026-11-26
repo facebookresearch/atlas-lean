@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation laws
+# Finite Galois evaluation satisfies its full laws
 
-The full finite-stage source laws use the constructed SAME families.
+Finite Galois evaluation satisfies its full laws.
+
+The finite-field evaluation constructions satisfy all extension, fixed-element, value,
+coefficient-map, and refinement identities.

@@ -1,3 +1,6 @@
-# Matrix Coinvariant Zero Corner Map
+# The zero-extension map of matrix adjoint coinvariant complexes
 
-Every zero corner induces the coinvariant chain map.
+The zero-extension map of matrix adjoint coinvariant complexes.
+
+The compatible zero extensions of matrix and scalar special-linear Lie algebras induce a map
+of coinvariant chain complexes.

@@ -1,3 +1,6 @@
-# Field Same Rank Continuous Iso
+# Rank reparameterization gives a continuous cohomology isomorphism
 
-Actual original-cochain isomorphism on the same common field module in every degree.
+Rank reparameterization gives a continuous cohomology isomorphism.
+
+The degree-`q` continuous-cohomology functors with parameters `w` and `max u w` are naturally
+isomorphic on the common-rank coefficient category.

@@ -1,5 +1,6 @@
-# Is Locally Free Of Rank unit
+# The structure module has local rank one
 
-The unit sheaf is locally free of rank one, via the free sheaf on
-`ULift (Fin 1)`. This is the single rank-one unit lemma (replacing the
-split-epi argument formerly in `Sheaf/LocallyFree.lean`).
+Let `(C,J,R)` be a ringed site with binary products in `C`, ring/module universe `u`, weak
+additive sheafification and the locally-bijective comparison on `J`, and strong and weak
+additive sheafification with that comparison on all slices. The structure module
+`SheafOfModules.unit R` is locally free of rank one.

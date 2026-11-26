@@ -1,3 +1,6 @@
-# EBar Extra Degeneracy s
+# The higher extra degeneracies of the universal bar
 
-Each extra degeneracy is evaluation of the regular operator.
+The higher extra degeneracies of the universal bar.
+
+In degree n, the extra-degeneracy map is the evaluation at the bar index of the regular-bar
+contraction map sₙ.

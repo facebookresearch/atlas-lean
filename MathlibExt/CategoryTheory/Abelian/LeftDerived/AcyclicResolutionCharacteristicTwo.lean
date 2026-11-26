@@ -12,8 +12,18 @@ module
 public import MathlibExt.CategoryTheory.Abelian.AcyclicResolutionCharacteristicTwo
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolutionSignedCorrection
 
-/-!
+/- Proof implementation note.
 # The SAME original projective acyclic comparison on two-torsion coefficients
+-/
+
+/-!
+# Left-derived normalization on objects killed by two
+
+Let `C`, `D` be abelian, with projective resolutions in `C`.
+An additive functor carries two-torsion objects to two-torsion
+left-derived objects, so triangular normalization acts as the identity.
+For a right-exact functor, the normalized acyclic comparison of a
+projective resolution agrees with its canonical derived comparison.
 -/
 
 @[expose] public section
@@ -25,7 +35,13 @@ namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
   {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- The original left-derived scalar component is the identity on two-torsion coefficients. -/
+/- Proof implementation note.
+The original left-derived scalar component is the identity on two-torsion coefficients.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. If `2 • 𝟙 X=0`, the degree-`n`
+normalization automorphism on `L_n F(X)` is the identity. -/
 theorem leftDerived_normalizationIso_app_eq_refl (F : C ⥤ D) [F.Additive]
     {X : C} (hX : IsKilledBy X 2) (n : ℕ) :
     ((F.leftDerived n).acyclicResolutionNormalizationIso n).app X =
@@ -33,7 +49,15 @@ theorem leftDerived_normalizationIso_app_eq_refl (F : C ⥤ D) [F.Additive]
   (F.leftDerived_obj_isKilledBy hX n).normalization_iso_eq_refl n
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The SAME retained projective comparison is in every degree on two-torsion coefficients. -/
+/- Proof implementation note.
+The SAME retained projective comparison is in every degree on two-torsion coefficients.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive and preserving finite colimits.
+If `2 • 𝟙 X=0` and `P` resolves `X`, the acyclic-resolution
+comparison on `P` in every degree equals the canonical
+comparison `P.isoLeftDerivedObj F n`. -/
 theorem leftDerivedAcyclicComparison_of_twoTorsion (F : C ⥤ D) [F.Additive]
     [PreservesFiniteColimits F] {X : C} (hX : IsKilledBy X 2)
     (P : ProjectiveResolution X) (n : ℕ) :

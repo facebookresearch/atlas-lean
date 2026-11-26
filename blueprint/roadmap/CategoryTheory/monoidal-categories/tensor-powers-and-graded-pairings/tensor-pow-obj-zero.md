@@ -1,3 +1,5 @@
-# Tensor Pow Obj zero
+# Tensor power zero is the tensor unit
 
-Computation rule: `tensorPowObj X 0` is the tensor unit.
+Tensor power zero is the tensor unit.
+
+The power-zero object is `𝟙_ C`.

@@ -1,3 +1,5 @@
-# Skeletal Step Class To Page g
+# Step classes are cycles on the skeletal page
 
-The interval class map is annihilated by every skeletal page differential.
+Step classes are cycles on the skeletal page.
+
+The step-class map to E_r^{p,q} is killed by the outgoing page differential.

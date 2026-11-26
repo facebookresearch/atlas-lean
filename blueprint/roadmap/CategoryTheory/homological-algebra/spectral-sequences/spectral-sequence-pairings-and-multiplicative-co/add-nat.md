@@ -1,3 +1,5 @@
-# Add Nat
+# Iteration of page-unit succession
 
-Iterating the actual native successor constructs its coefficient unit after any number of pages.
+Iteration of page-unit succession.
+
+For n∈ℕ, iterate succession to obtain unit data at R+n.

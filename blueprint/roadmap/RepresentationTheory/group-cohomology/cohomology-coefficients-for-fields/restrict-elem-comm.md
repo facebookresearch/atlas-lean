@@ -1,3 +1,5 @@
-# Restrict Elem comm
+# The field-value equation for restricted automorphisms
 
-The exact equation at every original field value.
+The field-value equation for restricted automorphisms.
+
+For g ∈ Gal(L′/K′) and x ∈ L, e.extension(restrictElem(e,g)(x)) = g(e.extension(x)).

@@ -1,6 +1,7 @@
-# Is Locally Free Of Rank coproduct fin
+# Rank of a finite-ordinal coproduct of locally free sheaves
 
-A `Fin n`-indexed coproduct of finite-rank sheaves is locally free
-of rank the sum of the ranks, by induction via `finSumFinEquiv`. The
-empty case transports rank zero from `free (ULift Empty)` along the
-unique iso between initial objects.
+Let `(C,J,R)` be a ringed site with binary products and pullbacks, weak additive
+sheafification and the locally-bijective comparison on `J`, and strong and weak additive
+sheafification with the comparison on first slices. For `n : ℕ`, a family `M : Fin n →
+SheafOfModules.{u} R`, and ranks `r : Fin n → ℕ` with each `M i` locally free of rank `r i`,
+the coproduct `∐ M` is locally free of rank `∑ i, r i`.

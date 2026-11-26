@@ -14,11 +14,15 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoria
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
 /-!
-# Coefficient naturality of arbitrary Schreier transfer
+# Coefficient naturality of Schreier transfer
 
-The chosen-transversal Schreier transfer commutes with morphisms of
-coefficients on arbitrary inhomogeneous cochains, as a map of cochain
-complexes, and on group cohomology in every degree.
+Let H ≤ G have finite index and let T be a right transversal. For a G-equivariant k-linear map
+φ : A → B, postcomposition of H-cochains with φ commutes with every degree-n Schreier
+transfer: φ(cor_Tⁿ(f)) = cor_Tⁿ(φ∘f).
+
+This square commutes as a map of cochain complexes and after passing to Hⁿ. Thus the fixed-
+transversal transfers form natural transformations in the G-representation, both on
+inhomogeneous cochains and on group cohomology.
 -/
 
 @[expose] public section
@@ -37,13 +41,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite representatives for coefficient-naturality sums.
+
+A finite-index right transversal is finitely enumerated for the coefficient-map and transfer
+sums. -/
 noncomputable local instance corestrictionArbitraryNaturalityFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Mapping coefficients commutes with arbitrary-degree chosen-transversal
-Schreier transfer on inhomogeneous cochains. -/
+/-- Coefficient maps commute with each tuple transfer.
+
+For a G-equivariant linear φ : A → B, every H-cochain f and every degree n satisfy φ∘cor_Tⁿ(f)
+= cor_Tⁿ(φ∘f). -/
 theorem corestrictionCochain_naturality
     {A B : Rep k G} (phi : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
@@ -56,8 +65,10 @@ theorem corestrictionCochain_naturality
   intro t _
   exact Rep.hom_comm_apply phi (t : G)⁻¹ (f (T.schreierFactorTuple t g))
 
-/-- The arbitrary-degree chosen-transversal transfer is natural as a map of
-inhomogeneous cochain complexes. -/
+/-- The coefficient square for transfer cochain maps.
+
+The transfer cochain map for A followed by the G-coefficient map of φ equals the restricted
+H-coefficient map of φ followed by the transfer cochain map for B. -/
 theorem corestrictionCochains_naturality
     {A B : Rep k G} (phi : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] :
@@ -70,8 +81,10 @@ theorem corestrictionCochains_naturality
   exact congrFun (corestrictionCochain_naturality phi T n f) g
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Arbitrary-degree chosen-transversal corestriction is natural under a
-morphism of coefficient representations. -/
+/-- The coefficient square for arbitrary-degree cohomology transfer.
+
+In every degree n, the transfer for A followed by Hⁿ(G,φ) equals Hⁿ(H,φ|H) followed by the
+transfer for B. -/
 theorem corestrictionOfRightTransversal_naturality
     {A B : Rep k G} (phi : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
@@ -85,8 +98,10 @@ theorem corestrictionOfRightTransversal_naturality
   exact HomologicalComplex.homologyMap_square
     (corestrictionCochains_naturality phi T) n
 
-/-- Elementwise coefficient naturality of arbitrary-degree
-chosen-transversal corestriction. -/
+/-- Elementwise coefficient naturality of cohomology transfer.
+
+For x ∈ Hⁿ(H,A|H), mapping its transferred class by φ gives the transfer for B of the class
+obtained by the restricted coefficient map φ|H. -/
 theorem corestrictionOfRightTransversal_naturality_apply
     {A B : Rep k G} (phi : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
@@ -99,9 +114,10 @@ theorem corestrictionOfRightTransversal_naturality_apply
   exact ConcreteCategory.congr_hom
     (corestrictionOfRightTransversal_naturality phi T n) x
 
-/-- A chosen right transversal packages arbitrary Schreier transfer as a
-natural transformation from restricted-coefficient cochains to ambient
-cochains. -/
+/-- The transfer natural transformation on cochain complexes.
+
+For a fixed finite right transversal T, the cochain maps are natural from restriction to H
+followed by H-cochains to the G-cochain functor. -/
 noncomputable def corestrictionCochainsNatTransOfRightTransversal
     (T : H.RightTransversal) [H.FiniteIndex] :
     Rep.resFunctor (Subgroup.subtype H) ⋙
@@ -111,9 +127,10 @@ noncomputable def corestrictionCochainsNatTransOfRightTransversal
   naturality {_A _B} phi :=
     (corestrictionCochains_naturality phi T).symm
 
-/-- In each degree, a chosen right transversal packages arbitrary
-corestriction as a natural transformation in the coefficient
-representation. -/
+/-- The transfer natural transformation in a cohomology degree.
+
+For fixed T and n, the transfers define a natural transformation from Hⁿ(H,A|H) to Hⁿ(G,A) as
+A varies through G-representations. -/
 noncomputable def corestrictionNatTransOfRightTransversal
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     Rep.resFunctor (Subgroup.subtype H) ⋙

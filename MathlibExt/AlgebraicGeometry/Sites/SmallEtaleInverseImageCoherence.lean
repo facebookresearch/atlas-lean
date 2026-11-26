@@ -10,11 +10,16 @@ LICENSE file in the root directory of this source tree.
 module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleInverseImageComposition
 
-/-! # Coherence of the actual small étale sheaf functors
+/-!
+# Coherence of small étale base change and sheaf images
 
-All comparisons below are the concrete base-change comparisons and their
-adjunction mates. A common composite is named explicitly when a category
-identity or associativity equality changes its expression.
+Base-change functors have identity and composition comparisons given by pullback isomorphisms.
+These satisfy the left and right unit equations and associativity. Precomposition gives the
+corresponding direct-image coherence, and adjunction mates give inverse-image coherence.
+
+The unit and counit of inverse image commute with the identity and composition comparisons.
+Equality of a chosen scheme composite with `f ≫ g` is handled by the associated functor
+equality isomorphism. All sheaves use coefficient universe `max u w`.
 -/
 
 @[expose] public section
@@ -26,7 +31,10 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same canonical base-change comparison with an explicitly named composite. -/
+/-- Base change comparison for an identified composite.
+
+For `fg = f ≫ g`, the pullback composition isomorphism gives `baseChange fg ≅ baseChange g ⋙
+baseChange f`. -/
 def smallEtaleBaseChangeCompTo {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (fg : X ⟶ Z) (hfg : fg = f ≫ g) :
     smallEtaleBaseChange fg ≅ smallEtaleBaseChange g ⋙ smallEtaleBaseChange f :=
@@ -35,7 +43,10 @@ def smallEtaleBaseChangeCompTo {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The actual identity comparison is the original pullback projection. -/
+/-- Identity base change comparison has the pullback projection.
+
+The underlying scheme map of the forward base-change identity component is the first pullback
+projection. -/
 theorem smallEtaleBaseChangeId_hom_app_left (X : Scheme.{u}) (U : X.Etale) :
     ((smallEtaleBaseChangeId X).hom.app U).left = pullback.fst U.hom (𝟙 X) := by
   let G := Scheme.Etale.forget X
@@ -52,8 +63,10 @@ theorem smallEtaleBaseChangeId_hom_app_left (X : Scheme.{u}) (U : X.Etale) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The inverse of the right identity base-change comparison is the
-same actual identity comparison followed by base change. -/
+/-- Base change composition with a right identity has its unitor.
+
+The inverse identified-composite comparison for `f ≫ 𝟙` is the base-change identity comparison
+whiskered with base change along `f`, followed by the appropriate functor unitor. -/
 theorem smallEtaleBaseChange_comp_id {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleBaseChangeCompTo f (𝟙 Y) f (Category.comp_id f).symm).symm =
       Functor.isoWhiskerRight (smallEtaleBaseChangeId Y) (smallEtaleBaseChange f) ≪≫
@@ -70,8 +83,10 @@ theorem smallEtaleBaseChange_comp_id {X Y : Scheme.{u}} (f : X ⟶ Y) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The inverse of the left identity base-change comparison is the
-same actual identity comparison on the resulting original étale object. -/
+/-- Base change composition with a left identity has its unitor.
+
+The inverse identified-composite comparison for `𝟙 ≫ f` is the whiskered base-change identity
+comparison followed by the appropriate functor unitor. -/
 theorem smallEtaleBaseChange_id_comp {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleBaseChangeCompTo (𝟙 X) f f (Category.id_comp f).symm).symm =
       Functor.isoWhiskerLeft (smallEtaleBaseChange f) (smallEtaleBaseChangeId X) ≪≫
@@ -87,7 +102,10 @@ theorem smallEtaleBaseChange_id_comp {X Y : Scheme.{u}} (f : X ⟶ Y) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The two canonical comparisons of the original triple fiber product agree. -/
+/-- Base change composition comparisons are associative.
+
+The two pullback-comparison paths for three composable scheme maps agree after the functor
+associator and the equality of the scheme composites. -/
 theorem smallEtaleBaseChange_assoc {X Y Z T : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (h : Z ⟶ T) :
     smallEtaleBaseChangeCompTo f (g ≫ h) (f ≫ g ≫ h) rfl ≪≫
@@ -112,17 +130,25 @@ theorem smallEtaleBaseChange_assoc {X Y Z T : Scheme.{u}}
       MorphismProperty.Over.pullback_map_left, Category.assoc]
 
 
-/-- Equality of original morphisms transports the same literal direct-image functor. -/
+/-- Equal scheme maps have equal direct image coordinates.
+
+An equality of scheme morphisms gives the natural equality isomorphism between their direct-
+image functors. -/
 def smallEtaleDirectImageCongr {X Y : Scheme.{u}} {f g : X ⟶ Y} (h : f = g) :
     smallEtaleDirectImage.{u, max u w} f ≅ smallEtaleDirectImage.{u, max u w} g :=
   eqToIso (congrArg (fun a => smallEtaleDirectImage.{u, max u w} a) h)
 
-/-- Equality of original morphisms transports the same constructed inverse image. -/
+/-- Equal scheme maps have equal inverse image coordinates.
+
+An equality of scheme morphisms gives the natural equality isomorphism between their inverse-
+image functors. -/
 def smallEtaleInverseImageCongr {X Y : Scheme.{u}} {f g : X ⟶ Y} (h : f = g) :
     smallEtaleInverseImage.{u, w} f ≅ smallEtaleInverseImage.{u, w} g :=
   eqToIso (congrArg (fun a => smallEtaleInverseImage.{u, w} a) h)
 
-/-- The same actual direct-image comparison with an explicitly named composite. -/
+/-- Direct image composition for an identified scheme composite.
+
+For `fg = f ≫ g`, the composition comparison gives `f_* ⋙ g_* ≅ fg_*`. -/
 def smallEtaleDirectImageCompTo {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (fg : X ⟶ Z) (hfg : fg = f ≫ g) :
     smallEtaleDirectImage.{u, max u w} f ⋙ smallEtaleDirectImage.{u, max u w} g ≅
@@ -136,7 +162,9 @@ def smallEtaleDirectImageCompTo {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
   exact Functor.sheafPushforwardContinuousComp' (smallEtaleBaseChangeCompTo f g fg hfg).symm
     AddCommGrpCat.{max u w} Z.smallEtaleTopology Y.smallEtaleTopology X.smallEtaleTopology
 
-/-- The same actual inverse-image comparison with an explicitly named composite. -/
+/-- Inverse image composition for an identified scheme composite.
+
+For `fg = f ≫ g`, the adjunction comparison gives `g^* ⋙ f^* ≅ fg^*`. -/
 def smallEtaleInverseImageCompTo {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (fg : X ⟶ Z) (hfg : fg = f ≫ g) :
     smallEtaleInverseImage.{u, w} g ⋙ smallEtaleInverseImage.{u, w} f ≅
@@ -146,7 +174,10 @@ def smallEtaleInverseImageCompTo {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z
     (smallEtaleInverseImageAdjunction.{u, w} fg)
     (smallEtaleDirectImageCompTo.{u, w} f g fg hfg)
 
-/-- Naming a composite changes the preceding actual comparison only by equality transport. -/
+/-- Identified direct image composition factors through the canonical comparison.
+
+The comparison for `fg` is the usual composition isomorphism followed by equality transport
+from `f ≫ g` to `fg`. -/
 theorem smallEtaleDirectImageCompTo_eq {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (fg : X ⟶ Z) (hfg : fg = f ≫ g) :
     smallEtaleDirectImageCompTo.{u, w} f g fg hfg =
@@ -155,7 +186,10 @@ theorem smallEtaleDirectImageCompTo_eq {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y
   simp only [smallEtaleDirectImageCongr, eqToIso_refl, Iso.trans_refl]
   rfl
 
-/-- Naming a composite changes the preceding actual mate only by equality transport. -/
+/-- Identified inverse image composition factors through the canonical comparison.
+
+The inverse-image comparison for `fg` is the usual composition isomorphism followed by
+equality transport to `fg`. -/
 theorem smallEtaleInverseImageCompTo_eq {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (fg : X ⟶ Z) (hfg : fg = f ≫ g) :
     smallEtaleInverseImageCompTo.{u, w} f g fg hfg =
@@ -166,7 +200,10 @@ theorem smallEtaleInverseImageCompTo_eq {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : 
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The composition comparison has the literal restriction-map component. -/
+/-- Identified direct image comparison acts by base change restriction.
+
+Its section component is restriction along the forward identified-composite base-change
+isomorphism. -/
 theorem smallEtaleDirectImageCompTo_hom_app_hom_app {X Y Z : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (fg : X ⟶ Z) (hfg : fg = f ≫ g)
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : Z.Etaleᵒᵖ) :
@@ -180,7 +217,9 @@ theorem smallEtaleDirectImageCompTo_hom_app_hom_app {X Y Z : Scheme.{u}}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The identity comparison has the literal restriction-map component. -/
+/-- Direct image identity comparison acts by inverse base change restriction.
+
+Its section component is restriction along the inverse base-change identity isomorphism. -/
 theorem smallEtaleDirectImageIdIso_hom_app_hom_app (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : X.Etaleᵒᵖ) :
     ((smallEtaleDirectImageIdIso.{u, w} X).hom.app Q).hom.app U =
@@ -192,7 +231,10 @@ theorem smallEtaleDirectImageIdIso_hom_app_hom_app (X : Scheme.{u})
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The actual direct-image comparison satisfies right identity coherence. -/
+/-- Direct image right identity comparison is its unitor path.
+
+Composition of direct image with identity direct image agrees with the whiskered identity
+comparison and the right functor unitor. -/
 theorem smallEtaleDirectImage_comp_id {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleDirectImageCompTo.{u, w} f (𝟙 Y) f (Category.comp_id f).symm =
       Functor.isoWhiskerLeft (smallEtaleDirectImage.{u, max u w} f)
@@ -212,7 +254,10 @@ theorem smallEtaleDirectImage_comp_id {X Y : Scheme.{u}} (f : X ⟶ Y) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The actual direct-image comparison satisfies left identity coherence. -/
+/-- Direct image left identity comparison is its unitor path.
+
+Identity direct image composed before direct image agrees with the whiskered identity
+comparison and the left functor unitor. -/
 theorem smallEtaleDirectImage_id_comp {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleDirectImageCompTo.{u, w} (𝟙 X) f f (Category.id_comp f).symm =
       Functor.isoWhiskerRight (smallEtaleDirectImageIdIso.{u, w} X)
@@ -232,7 +277,10 @@ theorem smallEtaleDirectImage_id_comp {X Y : Scheme.{u}} (f : X ⟶ Y) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The two actual direct-image comparisons of a triple composite agree. -/
+/-- Direct image composition comparisons satisfy associativity.
+
+The two comparison paths for three successive direct images agree with the functor associator
+and scheme-composition equality. -/
 theorem smallEtaleDirectImage_assoc {X Y Z T : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (h : Z ⟶ T) :
     Functor.isoWhiskerLeft (smallEtaleDirectImage.{u, max u w} f)
@@ -257,7 +305,10 @@ theorem smallEtaleDirectImage_assoc {X Y Z T : Scheme.{u}}
     smallEtaleDirectImage, Functor.sheafPushforwardContinuous, Functor.map_comp,
     smallEtaleBaseChangeCompTo, smallEtaleBaseChangeComp] using hh
 
-/-- The actual inverse-image comparison satisfies right-morphism identity coherence. -/
+/-- Inverse image right scheme identity comparison is its unitor path.
+
+The comparison for `f ≫ 𝟙` agrees with the whiskered identity inverse-image comparison and the
+left functor unitor. -/
 theorem smallEtaleInverseImage_comp_id {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleInverseImageCompTo.{u, w} f (𝟙 Y) f (Category.comp_id f).symm =
       Functor.isoWhiskerRight (smallEtaleInverseImageIdIso.{u, w} Y)
@@ -269,7 +320,10 @@ theorem smallEtaleInverseImage_comp_id {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleDirectImageCompTo.{u, w} f (𝟙 Y) f (Category.comp_id f).symm)
     (smallEtaleDirectImageIdIso.{u, w} Y) (smallEtaleDirectImage_comp_id.{u, w} f)
 
-/-- The actual inverse-image comparison satisfies left-morphism identity coherence. -/
+/-- Inverse image left scheme identity comparison is its unitor path.
+
+The comparison for `𝟙 ≫ f` agrees with the whiskered identity inverse-image comparison and the
+right functor unitor. -/
 theorem smallEtaleInverseImage_id_comp {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleInverseImageCompTo.{u, w} (𝟙 X) f f (Category.id_comp f).symm =
       Functor.isoWhiskerLeft (smallEtaleInverseImage.{u, w} f)
@@ -281,8 +335,10 @@ theorem smallEtaleInverseImage_id_comp {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleDirectImageCompTo.{u, w} (𝟙 X) f f (Category.id_comp f).symm)
     (smallEtaleDirectImageIdIso.{u, w} X) (smallEtaleDirectImage_id_comp.{u, w} f)
 
-/-- Inverse-image associativity follows from the proved actual direct-image
-associativity and the same six concrete adjunctions. -/
+/-- Inverse image composition comparisons satisfy associativity.
+
+The two comparison paths for three inverse-image functors, in reversed scheme order, agree
+after the functor associator. -/
 theorem smallEtaleInverseImage_assoc {X Y Z T : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (h : Z ⟶ T) :
     Functor.isoWhiskerLeft (smallEtaleInverseImage.{u, w} h)
@@ -307,7 +363,10 @@ theorem smallEtaleInverseImage_assoc {X Y Z T : Scheme.{u}}
     (smallEtaleDirectImageCompTo.{u, w} f (g ≫ h) (f ≫ g ≫ h) rfl)
     (smallEtaleDirectImage_assoc.{u, w} f g h)
 
-/-- The identity comparison commutes with the actual adjunction unit. -/
+/-- Identity comparison is compatible with the adjunction unit.
+
+The inverse direct-image identity component is the identity adjunction unit followed by direct
+image of the forward inverse-image identity component. -/
 theorem smallEtaleInverseImageIdIso_unit (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleDirectImageIdIso.{u, w} X).inv.app Q =
@@ -321,7 +380,10 @@ theorem smallEtaleInverseImageIdIso_unit (X : Scheme.{u})
       (smallEtaleInverseImageAdjunction.{u, w} (𝟙 X))
       (smallEtaleInverseImageIdIso.{u, w} X).hom Q)
 
-/-- The identity comparison commutes with the actual adjunction counit. -/
+/-- Identity comparison is compatible with the adjunction counit.
+
+Inverse image of the inverse direct-image identity component followed by the counit equals the
+forward inverse-image identity component. -/
 theorem smallEtaleInverseImageIdIso_counit (X : Scheme.{u})
     (R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleInverseImage.{u, w} (𝟙 X)).map
@@ -336,7 +398,10 @@ theorem smallEtaleInverseImageIdIso_counit (X : Scheme.{u})
       (smallEtaleInverseImageAdjunction.{u, w} (𝟙 X))
       (smallEtaleInverseImageIdIso.{u, w} X).hom R)
 
-/-- The composition comparison commutes with the same actual adjunction units. -/
+/-- Composition comparison is compatible with the adjunction unit.
+
+The successive adjunction unit followed by the direct-image composition comparison equals the
+composite unit followed by direct image of the inverse inverse-image comparison. -/
 theorem smallEtaleInverseImageCompIso_unit {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (Q : Sheaf Z.smallEtaleTopology AddCommGrpCat.{max u w}) :
     ((smallEtaleInverseImageAdjunction.{u, w} g).comp
@@ -353,7 +418,10 @@ theorem smallEtaleInverseImageCompIso_unit {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g
       (smallEtaleInverseImageAdjunction.{u, w} (f ≫ g))
       (smallEtaleInverseImageCompIso.{u, w} f g).inv Q)
 
-/-- The composition comparison commutes with the same actual adjunction counits. -/
+/-- Composition comparison is compatible with the adjunction counit.
+
+Inverse image along the composite of the direct-image comparison followed by its counit equals
+the inverse inverse-image comparison followed by the successive counit. -/
 theorem smallEtaleInverseImageCompIso_counit {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleInverseImage.{u, w} (f ≫ g)).map
@@ -370,8 +438,10 @@ theorem smallEtaleInverseImageCompIso_counit {X Y Z : Scheme.{u}} (f : X ⟶ Y) 
       (smallEtaleInverseImageAdjunction.{u, w} (f ≫ g))
       (smallEtaleInverseImageCompIso.{u, w} f g).inv R)
 
-/-- The literal identity data, naturality, and unit/counit equations of the
-same actual sheaf functors. This is an output property, with no supplied data. -/
+/-- Identity comparison naturality and adjunction conditions.
+
+These conditions state the identity isomorphisms for both sheaf images, their naturality, the
+mate equality, and compatibility with the identity adjunction unit and counit. -/
 def SmallEtaleIdentityCoherence (X : Scheme.{u}) : Prop :=
   let D := smallEtaleDirectImage.{u, max u w} (𝟙 X)
   let L := smallEtaleInverseImage.{u, w} (𝟙 X)
@@ -390,8 +460,11 @@ def SmallEtaleIdentityCoherence (X : Scheme.{u}) : Prop :=
   ∀ R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w},
     L.map (eD.inv.app R) ≫ (smallEtaleInverseImageCounit.{u, w} (𝟙 X)).app R = eL.hom.app R
 
-/-- The literal pair data, naturality, equality transport, and unit/counit
-equations of the same actual sheaf functors and concrete adjunctions. -/
+/-- Composition comparison naturality and adjunction conditions.
+
+These conditions state both composition isomorphisms and their naturality, their adjunction-
+mate relationship, unit and counit compatibility, and equality transport for every identified
+composite. -/
 def SmallEtalePairCoherence {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) : Prop :=
   let Df := smallEtaleDirectImage.{u, max u w} f
   let Dg := smallEtaleDirectImage.{u, max u w} g
@@ -424,7 +497,10 @@ def SmallEtalePairCoherence {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) : P
     smallEtaleInverseImageCompTo.{u, w} f g fg hfg =
       eL ≪≫ smallEtaleInverseImageCongr.{u, w} hfg.symm
 
-/-- Both identity coherence laws hold for both actual sheaf functors. -/
+/-- Left and right identity coherence of both sheaf images.
+
+The four conditions identify direct- and inverse-image composition with either scheme identity
+with the corresponding whiskered identity comparisons and functor unitors. -/
 def SmallEtaleUnitCoherence {X Y : Scheme.{u}} (f : X ⟶ Y) : Prop :=
   (smallEtaleDirectImageCompTo.{u, w} f (𝟙 Y) f (Category.comp_id f).symm =
     Functor.isoWhiskerLeft (smallEtaleDirectImage.{u, max u w} f)
@@ -443,7 +519,10 @@ def SmallEtaleUnitCoherence {X Y : Scheme.{u}} (f : X ⟶ Y) : Prop :=
       (smallEtaleInverseImageIdIso.{u, w} X) ≪≫
       Functor.rightUnitor (smallEtaleInverseImage.{u, w} f))
 
-/-- Both literal associativity diagrams commute for every original triple. -/
+/-- Associativity conditions of direct and inverse image comparisons.
+
+The two conditions equate the comparison paths for three direct images and for the reversed
+three inverse images, including functor associators and scheme-composition equality. -/
 def SmallEtaleAssociativityCoherence {X Y Z T : Scheme.{u}}
     (f : X ⟶ Y) (g : Y ⟶ Z) (h : Z ⟶ T) : Prop :=
   (Functor.isoWhiskerLeft (smallEtaleDirectImage.{u, max u w} f)
@@ -466,9 +545,11 @@ def SmallEtaleAssociativityCoherence {X Y Z T : Scheme.{u}}
         (smallEtaleInverseImage.{u, w} f) ≪≫
       smallEtaleInverseImageCompTo.{u, w} f (g ≫ h) (f ≫ g ≫ h) rfl)
 
-/-- One globally fixed actual functor family has the full original identity,
-composition, naturality, unit/counit, and identity/associativity coherence data,
-for every original scheme and morphism and the independent coefficient universe. -/
+/-- Small étale sheaf image comparisons satisfy all coherence conditions.
+
+Identity, pairwise composition, left and right units, and triple associativity satisfy the
+stated naturality and adjunction coherence conditions for every scheme and every composable
+set of scheme maps. -/
 theorem original_small_etale_sheaf_functor_coherence :
     (∀ X : Scheme.{u}, SmallEtaleIdentityCoherence.{u, w} X) ∧
     (∀ {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z), SmallEtalePairCoherence.{u, w} f g) ∧

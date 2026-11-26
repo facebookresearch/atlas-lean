@@ -1,4 +1,6 @@
-# Graded Module Cat
+# Graded modules over a naturally graded commutative ring
 
-A `ℤ`-graded module over the graded ring `𝒜`: the grading is a direct-sum decomposition of
-the carrier compatible with the action of `𝒜`.
+Graded modules over a naturally graded commutative ring.
+
+For a commutative ring R with ℕ-grading 𝒜, an object is an R-module M with an integer-indexed
+direct-sum decomposition and scalar compatibility 𝒜_n·M_i ⊆ M_{i+n}.

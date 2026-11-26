@@ -14,11 +14,17 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplex.BalancedTensor.Differential
 
 /-!
-# The actual full integer tensor–Hom total-cochain isomorphism
+# Full integer tensor–Hom isomorphism
 
-The degree maps are the proved signed currying and its actual inverse.
-Native `isoOfComponents` assembles their differential square, preserving
-the original tensor-total and full Hom products.
+For a right-module chain complex `P`, a left-module chain complex `Q`, and an additive-group
+cochain complex `I`, signed currying gives an isomorphism `Hom_ℤ(P ⊗_R Q, I) ≅ Hom_(Rᵐᵒᵖ)(P,
+Hom_ℤ(Q, I))` of additive-group cochain complexes. The inner additive Hom has its right
+`R`-action by domain precomposition.
+
+The tensor complex uses direct sums over all integer diagonals, while both Hom constructions
+use full products. Each degree map is the additive cochain equivalence defined by currying
+with `θ(b) = (-1)^(b*(b+1)/2)` in inner degree `b`; the inverse is signed uncurrying.
+Differential compatibility assembles these maps into the complex isomorphism.
 -/
 
 @[expose] public section
@@ -36,7 +42,11 @@ variable (R : Type u) [Ring R]
   (Q : ChainComplex (ModuleCat.{v} R) ℤ)
   (I : CochainComplex AddCommGrpCat.{v} ℤ)
 
-/-- The original sum/product tensor–Hom adjunction in the full integer cochain grading. -/
+/-- Full tensor-total Hom complex is isomorphic to nested Hom.
+
+Signed currying and uncurrying in every integer degree give an isomorphism from
+`homCochainComplex (complex R P Q) I` to `homCochainComplex P (moduleHomCochainComplex R Q
+I)`. -/
 def homIso :
     homCochainComplex (complex R P Q) I ≅
       homCochainComplex P (moduleHomCochainComplex R Q I) :=
@@ -59,12 +69,18 @@ def homIso :
         (((homCochainComplex (complex R P Q) I).d n (n + 1)).hom f)
     exact (curryCochain_d R P Q I n f).symm)
 
-/-- The forward component is exactly the earned signed currying. -/
+/-- Forward component of the full tensor–Hom isomorphism.
+
+In integer degree `n`, the forward map of the tensor–Hom isomorphism is the additive map
+underlying `cochainEquiv R P Q I n`. -/
 theorem homIso_hom_f (n : ℤ) :
     ((homIso R P Q I).hom.f n).hom =
       (cochainEquiv R P Q I n).toAddMonoidHom := rfl
 
-/-- The inverse component is exactly the earned uncurrying, without a support restriction. -/
+/-- Inverse component of the full tensor–Hom isomorphism.
+
+In integer degree `n`, the inverse map of the tensor–Hom isomorphism is the additive map
+underlying the inverse of `cochainEquiv R P Q I n`. -/
 theorem homIso_inv_f (n : ℤ) :
     ((homIso R P Q I).inv.f n).hom =
       (cochainEquiv R P Q I n).symm.toAddMonoidHom := rfl

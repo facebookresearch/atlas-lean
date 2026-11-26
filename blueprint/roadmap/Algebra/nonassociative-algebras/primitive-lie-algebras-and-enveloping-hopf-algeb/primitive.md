@@ -1,3 +1,5 @@
-# ΙPrimitive
+# The Lie generator map into primitive elements
 
-The Lie generators as a Lie morphism into the primitive Lie algebra.
+The Lie generator map into primitive elements.
+
+Send x to the primitive element ιx in the enveloping bialgebra's primitive Lie subalgebra.

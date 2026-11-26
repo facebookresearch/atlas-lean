@@ -1,3 +1,6 @@
-# Cobar Coface App codegeneracy succ
+# The componentwise successor coface–codegeneracy identity
 
-Adjacent cancellation at `succ` (dual of `barDegeneracyApp_succ`).
+The componentwise successor coface–codegeneracy identity.
+
+For `i : Fin (n+1)`, coface `i+1` followed by codegeneracy `i` is the identity at every
+carrier object.

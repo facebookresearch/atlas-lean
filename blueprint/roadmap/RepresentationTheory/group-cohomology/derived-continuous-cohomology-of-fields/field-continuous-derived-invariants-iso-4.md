@@ -1,3 +1,7 @@
-# Field Continuous Derived Invariants Iso connecting
+# Continuous derived comparison respects coefficient connecting maps
 
-The original continuous connector and actual right-derived horseshoe connector commute.
+Continuous derived comparison respects coefficient connecting maps.
+
+For a short exact coefficient sequence, the continuous connecting map followed by comparison
+in degree `n+1` equals comparison in degree `n` followed by the derived-invariant connecting
+map.

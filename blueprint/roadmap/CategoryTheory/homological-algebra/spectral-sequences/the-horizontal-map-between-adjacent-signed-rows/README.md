@@ -1,6 +1,6 @@
 # The horizontal map between adjacent signed rows
 
-- [Partial Total Horizontal Row F](partial-total-horizontal-row-f.md)
-- [Partial Total Horizontal Row F eq](partial-total-horizontal-row-f-eq.md)
-- [Partial Total Horizontal Row F eq At](partial-total-horizontal-row-f-eq-at.md)
-- [Partial Total Horizontal Row F eq zero of lt](partial-total-horizontal-row-f-eq-zero-o.md)
+- [Horizontal row component from the partial-total splitting](partial-total-horizontal-row-f.md)
+- [Horizontal row component in bicomplex coordinates](partial-total-horizontal-row-f-eq.md)
+- [Horizontal row component after specifying the target degree](partial-total-horizontal-row-f-eq-at.md)
+- [Horizontal row component vanishes below target-row support](partial-total-horizontal-row-f-eq-zero-o.md)

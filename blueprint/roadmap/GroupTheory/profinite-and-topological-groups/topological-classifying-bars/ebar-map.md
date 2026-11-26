@@ -1,6 +1,5 @@
-# EBar Map
+# The universal-bar map of a continuous monoid homomorphism
 
-Universal-bar map induced by a continuous monoid homomorphism.
+The universal-bar map of a continuous monoid homomorphism.
 
-It first maps the regular and point modules into their restrictions along the
-tensor-monad hom, then applies the generic monad-change map.
+For continuous φ : G → H, functoriality of B(−,−,*) gives a simplicial map EBar G → EBar H.

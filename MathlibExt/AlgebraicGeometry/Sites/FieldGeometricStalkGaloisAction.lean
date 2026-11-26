@@ -13,12 +13,18 @@ public import MathlibExt.CategoryTheory.Action.DiscreteAbelian
 public import Mathlib.CategoryTheory.Sites.Point.Category
 public import Mathlib.FieldTheory.KrullTopology
 
-/-! # The canonical continuous left Galois action on the original field stalk
+/-!
+# The continuous left Galois action on a geometric field stalk
 
-The same field, prescribed separable closure, original neighborhoods and
-common stalk are retained. The topology on the stalk is discrete, while
-its actual Galois group carries the Krull topology. Each germ has its own
-finite Galois fixing subgroup; no finite quotient of the whole stalk is required.
+Let k have prescribed separable closure Ω, G=Gal(Ω/k) with its Krull topology, and Q a
+small-étale additive-group sheaf of height max(u,w). Precomposition of geometric lifts by
+Spec(g) induces an additive stalk action. Its germ formula is g·[U,z,c]=[U,Spec(g)≫z,c]; on
+affine coordinates it postcomposes the algebra embedding by g.
+
+Every stalk vector has a representative at a finite Galois subfield L⊆Ω. The subgroup fixing L
+lies in that vector's stabilizer and is open, so the action on the discrete stalk is jointly
+continuous. These actions and equivariant sheaf-induced maps define the Galois stalk functor,
+whose forgetful composite is the geometric stalk. Smaller coefficient sheaves use one ULift^u.
 -/
 @[expose] public section
 noncomputable section
@@ -29,11 +35,14 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω]
 
-/-- The original spectrum arrow of the prescribed Galois automorphism. -/
+/-- Let k,Ω be fields with a k-algebra structure and g∈Gal(Ω/k). Define fieldGaloisSpec(g) as the
+spectrum map of g's underlying ring automorphism, an endomorphism of Spec(Ω). -/
 abbrev fieldGaloisSpec (g : Gal(Ω/k)) : Spec (.of Ω) ⟶ Spec (.of Ω) :=
   Spec.map (CommRingCat.ofHom g.toRingHom)
 
-/-- It is the actual original endomorphism over Spec k. -/
+/-- For a k-field Ω and g∈Gal(Ω/k), the map Spec(g) : Spec(Ω) → Spec(Ω) commutes with the
+structure map to Spec(k). It therefore defines an endomorphism of Spec(Ω) → Spec(k) in the
+overcategory of schemes. -/
 def fieldGaloisOver (g : Gal(Ω/k)) :
     Over.mk (Spec.algebraMap k Ω) ⟶ Over.mk (Spec.algebraMap k Ω) :=
   Over.homMk (fieldGaloisSpec k Ω g) (Spec.homEquivAlgHom.symm g.toAlgHom).property
@@ -61,7 +70,9 @@ theorem fieldGaloisOver_mul (g h : Gal(Ω/k)) :
 
 variable [IsSepClosure k Ω]
 
-/-- Precomposition on the original fibers is the actual stock coyoneda map. -/
+/-- Let Ω be a prescribed separable closure of k and g∈Gal(Ω/k). The natural endomorphism of the
+geometric fiber functor at Spec(Ω) sends a lift z : Spec(Ω) → U over k to Spec(g)≫z. It is
+defined by precomposition in the scheme overcategory. -/
 def fieldGaloisFiberMap (g : Gal(Ω/k)) :
     (fieldGeometricPoint k Ω).fiber ⟶ (fieldGeometricPoint k Ω).fiber :=
   Functor.whiskerLeft (Scheme.Etale.forget (Spec (.of k)))
@@ -85,7 +96,8 @@ theorem fieldGaloisFiberMap_mul (g h : Gal(Ω/k)) :
   rw [fieldGaloisOver_mul]
   exact Category.assoc _ _ z'
 
-/-- Lift only the original geometric point indices to the common universe. -/
+/-- For k,Ω with IsSepClosure k Ω, the map fieldGaloisCommonFiberMap(g) is the fiber endomorphism
+z↦Spec(g)≫z whiskered by ULift^w. It acts on the common point fibers of height max(u,w). -/
 def fieldGaloisCommonFiberMap (g : Gal(Ω/k)) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).fiber ⟶
       (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).fiber :=
@@ -104,13 +116,17 @@ theorem fieldGaloisCommonFiberMap_mul (g h : Gal(Ω/k)) :
   rw [fieldGaloisFiberMap_mul]
   rfl
 
-/-- Its original scheme coordinate is literal precomposition by Spec(g). -/
+/-- Let Ω be a prescribed separable closure of k, U an étale object, and z a geometric lift to U.
+Applying the common Galois fiber map to up(z), then taking down and its scheme coordinate,
+gives Spec(g)≫z.left. -/
 theorem fieldGaloisCommonFiberMap_left (g : Gal(Ω/k)) (U : (Spec (.of k)).Etale)
     (z : (fieldGeometricPoint k Ω).fiber.obj U) :
     ((fieldGaloisCommonFiberMap.{u, w} k Ω g).app U (ULift.up z)).down.left =
       fieldGaloisSpec k Ω g ≫ z.left := rfl
 
-/-- The same common geometric point endomorphism. -/
+/-- For a field k, prescribed separable closure Ω, and g∈Gal(Ω/k), the lifted fiber transformation
+z↦Spec(g)≫z defines an endomorphism of the common geometric point on the small étale site. Its
+underlying fiber map is fieldGaloisCommonFiberMap(g). -/
 def fieldGaloisPointEndomorphism (g : Gal(Ω/k)) :
     smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω) ⟶
       smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω) :=
@@ -128,7 +144,9 @@ theorem fieldGaloisPointEndomorphism_mul (g h : Gal(Ω/k)) :
   apply GrothendieckTopology.Point.hom_ext
   exact fieldGaloisCommonFiberMap_mul.{u, w} k Ω g h
 
-/-- The actual natural endomorphism of the SAME original common stalk functor. -/
+/-- For a field k, prescribed separable closure Ω, and g∈Gal(Ω/k), the common geometric point
+endomorphism induces a natural endomorphism of the common additive-group stalk functor. This
+is fieldGaloisStalkMap(g), acting on every coefficient sheaf. -/
 def fieldGaloisStalkMap (g : Gal(Ω/k)) :
     smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω) ⟶
       smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω) :=
@@ -146,7 +164,9 @@ theorem fieldGaloisStalkMap_mul (g h : Gal(Ω/k)) :
   rw [fieldGaloisPointEndomorphism_mul, GrothendieckTopology.Point.Hom.sheafFiber_comp]
   rfl
 
-/-- The same original stalk carrier, with no additional coefficient lift. -/
+/-- Let Ω be a prescribed separable closure of k and Q a small-étale additive-group sheaf of
+height max(u,w). Define fieldGeometricStalkCarrier(Q) to be the underlying group of its common
+geometric stalk, a type of that same height. No additional coefficient lift is applied to Q. -/
 abbrev fieldGeometricStalkCarrier
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) : Type (max u w) :=
   (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).obj Q
@@ -159,7 +179,9 @@ instance fieldGeometricStalkDiscreteTopology
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     DiscreteTopology (fieldGeometricStalkCarrier.{u, w} k Ω Q) := discreteTopology_bot _
 
-/-- The two point/fiber reversals give the actual LEFT additive action. -/
+/-- For a field k, prescribed separable closure Ω, and coefficient sheaf Q, define
+g·m=fieldGaloisStalkMap(g)_Q(m). This is a DistribMulAction on the stalk: 1 acts identically,
+(gh)·m=g·(h·m), and every g preserves zero and addition. -/
 instance fieldGeometricStalkDistribMulAction
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     DistribMulAction Gal(Ω/k) (fieldGeometricStalkCarrier.{u, w} k Ω Q) where
@@ -176,14 +198,18 @@ instance fieldGeometricStalkDistribMulAction
   smul_zero g := ((fieldGaloisStalkMap.{u, w} k Ω g).app Q).hom.map_zero
   smul_add g := ((fieldGaloisStalkMap.{u, w} k Ω g).app Q).hom.map_add
 
-/-- The SAME constructed stalk action on its raw point-fiber presentation. -/
+/-- Let Ω be a prescribed separable closure of k and Q a common-height additive-group sheaf. The
+scalar action on its presheaf-fiber stalk presentation is the SMul component of
+fieldGeometricStalkDistribMulAction(Q). It uses the same point-induced stalk endomorphisms. -/
 abbrev fieldGeometricStalkSMul
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     SMul Gal(Ω/k) ((smallEtaleGeometricPointCommon.{u, w}
       (Spec.algebraMap k Ω)).presheafFiber.obj Q.obj : AddCommGrpCat.{max u w}) :=
   (fieldGeometricStalkDistribMulAction.{u, w} k Ω Q).toMulAction.toSemigroupAction.toSMul
 
-/-- The original germ equation of the stock point-induced stalk map. -/
+/-- For a field k, prescribed separable closure Ω, sheaf Q, g∈Gal(Ω/k), and a lift z to an étale
+U, the germ map γ_{U,z} followed by the stalk endomorphism α_g equals γ_{U,Spec(g)≫z}. The
+section group Q(U) is unchanged. -/
 theorem fieldGaloisStalkMap_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (g : Gal(Ω/k)) (U : (Spec (.of k)).Etale)
@@ -210,7 +236,9 @@ theorem fieldGaloisStalkMap_germ
     exact hgeneric (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω))
       (fieldGaloisPointEndomorphism.{u, w} k Ω g) Q.obj U (ULift.up z)
 
-/-- Every original representative has its literal LEFT action, with the same section. -/
+/-- Let Ω be a prescribed separable closure of k, Q a small-étale additive-group sheaf, z :
+Spec(Ω) → U a geometric lift, and c∈Q(U). Then g·[U,z,c]=[U,Spec(g)≫z,c] in the common stalk.
+The point-fiber representatives use the single ULift^w. -/
 theorem fieldGeometricStalk_smul_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (g : Gal(Ω/k)) (U : (Spec (.of k)).Etale)
@@ -224,7 +252,9 @@ theorem fieldGeometricStalk_smul_germ
   ConcreteCategory.congr_hom (fieldGaloisStalkMap_germ.{u, w} k Ω Q g U z) c
 
 omit [IsSepClosure k Ω] in
-/-- On an actual affine spectrum, the same geometric embedding is postcomposed by g. -/
+/-- Let k,Ω be fields with a k-algebra structure, g∈Gal(Ω/k), and A a commutative k-algebra. For z
+: Spec(Ω) → Spec(A) over k, the algebra coordinate of Spec(g)≫z is g∘h_z : A → Ω. This
+identity does not require Ω to be a separable closure or A to be étale. -/
 theorem fieldGaloisSpec_homEquivAlgHom (g : Gal(Ω/k))
     {A : Type u} [CommRing A] [Algebra k A] (z : Spec (.of Ω) ⟶ Spec (.of A))
     (hz : z ≫ Spec.algebraMap k A = Spec.algebraMap k Ω) :
@@ -240,7 +270,9 @@ theorem fieldGaloisSpec_homEquivAlgHom (g : Gal(Ω/k))
   rw [Spec.preimage_comp, Spec.preimage_map]
   rfl
 
-/-- The SAME g restricted to the SAME original finite Galois subfield. -/
+/-- For a field k, prescribed separable closure Ω, g∈Gal(Ω/k), and finite Galois intermediate
+field L, restrict g to L. Its spectrum map gives an étale endomorphism r_{g,L} : Spec(L) →
+Spec(L) over k. -/
 def fieldFiniteGaloisRestriction (g : Gal(Ω/k)) (L : FiniteGaloisIntermediateField k Ω) :
     fieldFiniteGaloisEtale k Ω L ⟶ fieldFiniteGaloisEtale k Ω L := by
   letI : Normal k L := L.isGalois.to_normal
@@ -249,7 +281,9 @@ def fieldFiniteGaloisRestriction (g : Gal(Ω/k)) (L : FiniteGaloisIntermediateFi
     ((Spec.homEquivAlgHom (R := k) (A := L) (B := L)).symm
       (g.restrictNormal L).toAlgHom).property
 
-/-- The original geometric pointing commutes with that same restriction. -/
+/-- Let Ω be a prescribed separable closure of k and L a finite Galois subfield. The fiber map of
+r_{g,L}=Spec(g|L) sends the inclusion point z_L : Spec(Ω) → Spec(L) to Spec(g)≫z_L. This is
+the compatibility of the field restriction with the geometric pointing. -/
 theorem fieldFiniteGaloisRestriction_point (g : Gal(Ω/k))
     (L : FiniteGaloisIntermediateField k Ω) :
     (fieldGeometricPoint k Ω).fiber.map (fieldFiniteGaloisRestriction k Ω g L)
@@ -265,7 +299,9 @@ theorem fieldFiniteGaloisRestriction_point (g : Gal(Ω/k))
   ext x
   exact AlgEquiv.restrictNormal_commutes g L x
 
-/-- Finite-stage action is precisely the original restriction along Spec(g|L). -/
+/-- For a prescribed separable closure Ω, a sheaf Q, finite Galois L⊆Ω, and c∈Q(Spec L), the stalk
+action satisfies g·[L,c]=[L,Q(r_{g,L}.op)(c)]. The germ is at the inclusion Spec(Ω) → Spec(L),
+and r_{g,L}=Spec(g|L). -/
 theorem fieldGeometricStalk_smul_finite_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (g : Gal(Ω/k)) (L : FiniteGaloisIntermediateField k Ω)
@@ -281,7 +317,10 @@ theorem fieldGeometricStalk_smul_finite_germ
   exact ((smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).toPresheafFiber_w_apply
     (fieldFiniteGaloisRestriction k Ω g L) (ULift.up (fieldFiniteGaloisPoint k Ω L)) Q.obj c).symm
 
-/-- The same canonical colimit comparison has that original finite-stage action. -/
+/-- Let k have prescribed separable closure Ω, Q be a common-height sheaf, and e the additive
+finite-Galois colimit-to-stalk equivalence. For c∈Q(Spec L),
+g·e(ι_L(c))=e(ι_L(Q(Spec(g|L).op)(c))). This states the action on the specified colimit
+representative through e. -/
 theorem fieldGeometricStalk_smul_finite_colimit
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (g : Gal(Ω/k)) (L : FiniteGaloisIntermediateField k Ω)
@@ -295,7 +334,9 @@ theorem fieldGeometricStalk_smul_finite_colimit
   rw [fieldFiniteGaloisStalkAddEquiv_ι, fieldFiniteGaloisStalkAddEquiv_ι]
   exact fieldGeometricStalk_smul_finite_germ.{u, w} k Ω Q g L c
 
-/-- Every actual germ has an actual original finite Galois stage in the same closure. -/
+/-- For a field k, prescribed separable closure Ω, and common-height additive-group sheaf Q, every
+m∈Q_{arη} is the germ of some c∈Q(Spec L) for a finite Galois intermediate field L⊆Ω. The
+germ uses the inclusion point of that same L. -/
 theorem fieldGeometricStalk_finite_rep
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (m : fieldGeometricStalkCarrier.{u, w} k Ω Q) :
@@ -317,7 +358,9 @@ theorem fieldGeometricStalk_finite_rep
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).toPresheafFiber
       U y Q.obj c) hz).trans hc)
 
-/-- Elements fixing the same finite subfield give its actual identity restriction. -/
+/-- Let Ω be a prescribed separable closure of k, L a finite Galois subfield, and g∈Gal(Ω/k)
+belong to L.fixingSubgroup. Then the étale endomorphism r_{g,L}=Spec(g|L) is the identity of
+Spec(L) over k. -/
 theorem fieldFiniteGaloisRestriction_eq_id (g : Gal(Ω/k))
     (L : FiniteGaloisIntermediateField k Ω) (hg : g ∈ L.fixingSubgroup) :
     fieldFiniteGaloisRestriction k Ω g L = 𝟙 _ := by
@@ -331,7 +374,9 @@ theorem fieldFiniteGaloisRestriction_eq_id (g : Gal(Ω/k))
     ext x; rfl
   exact (congrArg Spec.map e).trans (Spec.map_id _)
 
-/-- Each germ's own actual finite Galois fixing subgroup is contained in its stabilizer. -/
+/-- For a field k, prescribed separable closure Ω, sheaf Q, and stalk vector m, there exists a
+finite Galois subfield L⊆Ω with L.fixingSubgroup ≤ Stab_G(m). A representative of m at L is
+fixed by every automorphism fixing L. -/
 theorem fieldGeometricStalk_finite_fixingSubgroup
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (m : fieldGeometricStalkCarrier.{u, w} k Ω Q) :
@@ -352,7 +397,9 @@ theorem fieldGeometricStalk_finite_fixingSubgroup
   exact (congrArg (fun x : fieldGeometricStalkCarrier.{u, w} k Ω Q => g • x) hc.symm).trans
     (hs.trans (hx.trans hc))
 
-/-- The actual stabilizer of EVERY germ is open in the actual Krull topology. -/
+/-- Let k have prescribed separable closure Ω and G=Gal(Ω/k) carry its Krull topology. For any
+common-height additive-group sheaf Q and m∈Q_{arη}, the subgroup Stab_G(m) is open. It
+contains the open fixing subgroup of a finite Galois representative. -/
 theorem fieldGeometricStalk_stabilizer_isOpen
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (m : fieldGeometricStalkCarrier.{u, w} k Ω Q) :
@@ -360,19 +407,25 @@ theorem fieldGeometricStalk_stabilizer_isOpen
   obtain ⟨L, hL⟩ := fieldGeometricStalk_finite_fixingSubgroup.{u, w} k Ω Q m
   exact Subgroup.isOpen_mono hL (IntermediateField.fixingSubgroup_isOpen L.toIntermediateField)
 
-/-- Joint continuity is proved from those actual elementwise open stabilizers. -/
+/-- For a field k, prescribed separable closure Ω, and additive-group sheaf Q, equip the geometric
+stalk with the discrete topology and G=Gal(Ω/k) with the Krull topology. The left stalk action
+has ContinuousSMul, since every vector's stabilizer is open. -/
 instance fieldGeometricStalkContinuousSMul
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     ContinuousSMul Gal(Ω/k) (fieldGeometricStalkCarrier.{u, w} k Ω Q) :=
   continuousSMul_iff_stabilizer_isOpen.mpr (fieldGeometricStalk_stabilizer_isOpen.{u, w} k Ω Q)
 
-/-- The complete discrete continuous abelian action on the SAME original stalk. -/
+/-- Let Ω be a prescribed separable closure of k and Q a small-étale additive-group sheaf of
+height max(u,w). Its common stalk, with the additive left Galois action and discrete topology,
+defines an object of DiscreteAbelianAction.{u,max(u,w)} Gal(Ω/k). -/
 def fieldGeometricStalkGaloisObject
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     DiscreteAbelianAction.{u, max u w} Gal(Ω/k) :=
   DiscreteAbelianAction.of Gal(Ω/k) (fieldGeometricStalkCarrier.{u, w} k Ω Q)
 
-/-- EVERY original sheaf map is equivariant for the same original stalk action. -/
+/-- For a field k, prescribed separable closure Ω, and sheaf morphism τ : Q → Q′, the geometric
+stalk map satisfies S(τ)(g·m)=g·S(τ)(m) for every g∈Gal(Ω/k) and m∈Q_{arη}. Thus it preserves
+the point-induced left actions. -/
 theorem fieldGeometricStalk_map_equivariant
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q')
     (g : Gal(Ω/k)) (x : fieldGeometricStalkCarrier.{u, w} k Ω Q) :
@@ -380,7 +433,9 @@ theorem fieldGeometricStalk_map_equivariant
       g • (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map τ x :=
   (ConcreteCategory.congr_hom ((fieldGaloisStalkMap.{u, w} k Ω g).naturality τ) x).symm
 
-/-- Package exactly the original induced stalk map, including its original integer-linearity. -/
+/-- For a field k, prescribed separable closure Ω, and sheaf morphism τ : Q → Q′, the additive
+geometric stalk map is Galois-equivariant and defines fieldGeometricStalkGaloisMap(τ). Its
+underlying additive map is exactly S(τ). -/
 def fieldGeometricStalkGaloisMap
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q') :
     fieldGeometricStalkGaloisObject.{u, w} k Ω Q ⟶
@@ -389,7 +444,10 @@ def fieldGeometricStalkGaloisMap
     ⟨((smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map τ).hom,
       fieldGeometricStalk_map_equivariant.{u, w} k Ω τ⟩
 
-/-- The ONE functor retains all original common sheaves and all original stalk maps. -/
+/-- Let Ω be a prescribed separable closure of k. Assign to each common-height additive-group
+sheaf Q its geometric stalk with the point-induced left Galois action, and to τ the same
+equivariant additive stalk map. This defines a functor to DiscreteAbelianAction Gal(Ω/k),
+preserving identities and composition. -/
 def fieldGeometricStalkGaloisFunctor :
     Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ⥤
       DiscreteAbelianAction.{u, max u w} Gal(Ω/k) where
@@ -406,12 +464,16 @@ def fieldGeometricStalkGaloisFunctor :
         (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map σ
     exact (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map_comp τ σ
 
-/-- Forgetting returns exactly the SAME original stalk functor and maps. -/
+/-- For a field k and prescribed separable closure Ω, the Galois stalk functor followed by
+DiscreteAbelianAction.forget equals the common additive-group geometric stalk functor. The
+equality retains both the underlying stalk objects and all sheaf-induced maps. -/
 theorem fieldGeometricStalkGaloisFunctor_forget :
     fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙ DiscreteAbelianAction.forget Gal(Ω/k) =
       smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω) := rfl
 
-/-- Every original coefficient representative is included through exactly ONE lift. -/
+/-- Let F be a small-étale sheaf of coefficient size w, L the ULift^u coefficient functor, and Ω a
+prescribed separable closure of k. For c∈F(U) and a geometric lift z, g·[U,up(z),up(c)] in the
+stalk of LF equals [U,up(Spec(g)≫z),up(c)]. The coefficient is not lifted again. -/
 theorem fieldGeometricStalk_original_smul_germ
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (g : Gal(Ω/k)) (U : (Spec (.of k)).Etale)
@@ -426,7 +488,9 @@ theorem fieldGeometricStalk_original_smul_germ
   fieldGeometricStalk_smul_germ.{u, w} k Ω
     ((liftCoefficients.{u, w} (Spec (.of k))).obj F) g U z (ULift.up c)
 
-/-- Every original coefficient map is its SAME induced stalk map after ONE lift. -/
+/-- For a field k, prescribed separable closure Ω, and τ : F → F′ with coefficient universe w, the
+forgetful image of Φ(Lτ) equals S(Lτ). Here L is the single ULift^u coefficient functor, Φ the
+Galois stalk, and S its underlying geometric stalk. -/
 theorem fieldGeometricStalk_original_map
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F') :
     (DiscreteAbelianAction.forget Gal(Ω/k)).map
@@ -435,26 +499,33 @@ theorem fieldGeometricStalk_original_map
       (smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)).map
         ((liftCoefficients.{u, w} (Spec (.of k))).map f) := rfl
 
-/-- Joint continuity on the SAME underlying stalk with the genuine Krull topology. -/
+/-- Let Ω be a prescribed separable closure of k, G=Gal(Ω/k) with the Krull topology, and Q a
+common-height additive-group sheaf. The map G×Q_{arη} → Q_{arη}, (g,m)↦g·m, is continuous
+when the stalk has its discrete topology. -/
 theorem fieldGeometricStalk_continuous_action
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     Continuous (fun x : Gal(Ω/k) × fieldGeometricStalkCarrier.{u, w} k Ω Q => x.1 • x.2) :=
   continuous_smul
 
-/-- The constructed module object has the SAME actual original stalk carrier. -/
+/-- For a field k, prescribed separable closure Ω, and common-height additive-group sheaf Q, the
+underlying type of fieldGeometricStalkGaloisObject(Q) equals fieldGeometricStalkCarrier(Q).
+The representation adds the Galois action and continuity without changing the stalk carrier. -/
 theorem fieldGeometricStalkGaloisObject_carrier
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (DiscreteAbelianAction.underlying (fieldGeometricStalkGaloisObject.{u, w} k Ω Q) :
       Type (max u w)) = fieldGeometricStalkCarrier.{u, w} k Ω Q := rfl
 
-/-- Its original action endomorphism is the SAME point-induced stalk map. -/
+/-- Let Ω be a prescribed separable closure of k, Q a common-height sheaf, g∈Gal(Ω/k), and m a
+stalk vector. The action morphism ρ(g) of fieldGeometricStalkGaloisObject(Q) sends m to
+fieldGaloisStalkMap(g)_Q(m). -/
 theorem fieldGeometricStalkGaloisObject_action
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (g : Gal(Ω/k)) (x : fieldGeometricStalkCarrier.{u, w} k Ω Q) :
     ((fieldGeometricStalkGaloisObject.{u, w} k Ω Q).obj.obj.ρ g).asHom.hom x =
       (fieldGaloisStalkMap.{u, w} k Ω g).app Q x := rfl
 
-/-- Every actual sheaf component has its original induced action on original germs. -/
+/-- For a field k, prescribed separable closure Ω, and sheaf map τ : Q → Q′, the induced stalk map
+sends [U,z,c] to [U,z,τ_U(c)]. The geometric neighborhood and pointing are unchanged. -/
 theorem fieldGeometricStalk_map_germ
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q')
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -467,14 +538,18 @@ theorem fieldGeometricStalk_map_germ
   (smallEtaleGeometricPointCommon.{u, w}
     (Spec.algebraMap k Ω)).toPresheafFiber_naturality_apply τ.hom U (ULift.up z) c
 
-/-- The finite-stage restriction has the literal original Spec(g|L) map. -/
+/-- Let Ω be a prescribed separable closure of k, L a finite Galois subfield, and g∈Gal(Ω/k). The
+underlying scheme map of fieldFiniteGaloisRestriction(g,L) is Spec(g.restrictNormal L), using
+the normality supplied by L's finite Galois property. -/
 theorem fieldFiniteGaloisRestriction_left (g : Gal(Ω/k))
     (L : FiniteGaloisIntermediateField k Ω) :
     letI : Normal k L := L.isGalois.to_normal
     (fieldFiniteGaloisRestriction k Ω g L).left =
       Spec.map (CommRingCat.ofHom (g.restrictNormal L).toRingHom) := rfl
 
-/-- Every original coefficient component is retained through its ONE canonical lift. -/
+/-- For a field k, prescribed separable closure Ω, τ : F → F′ with coefficient universe w, and
+c∈F(U), the underlying Galois-stalk map of Lτ sends [U,up(z),up(c)] to [U,up(z),up(τ_U(c))].
+The functor L uses one ULift^u coefficient lift. -/
 theorem fieldGeometricStalk_original_map_germ
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F')
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -490,7 +565,11 @@ theorem fieldGeometricStalk_original_map_germ
   fieldGeometricStalk_map_germ.{u, w} k Ω
     ((liftCoefficients.{u, w} (Spec (.of k))).map f) U z (ULift.up c)
 
-/-- All original spectrum, affine-embedding and point-map multiplication conventions. -/
+/-- Let Ω be a prescribed separable closure of k. This proposition asserts that the spectrum maps
+σ_g and common point endomorphisms p_g have identity at 1 and satisfy σ_{gh}=σ_g≫σ_h and
+p_{gh}=p_g≫p_h, while the induced stalk maps satisfy α_{gh}=α_h≫α_g. It also asserts that the
+common fiber map of up(z) has scheme coordinate σ_g≫z and that on any affine k-algebra A its
+algebra coordinate is g∘h_z. -/
 def FieldGaloisPointActionLaws : Prop :=
   fieldGaloisSpec k Ω (1 : Gal(Ω/k)) = 𝟙 _ ∧
   (∀ g h : Gal(Ω/k), fieldGaloisSpec k Ω (g * h) =
@@ -514,7 +593,14 @@ def FieldGaloisPointActionLaws : Prop :=
           exact (Spec.homEquivAlgHom.symm g.toAlgHom).property⟩ =
       g.toAlgHom.comp (Spec.homEquivAlgHom ⟨z, hz⟩)
 
-/-- The SAME actual functor, LEFT action, finite stages, stabilizers and all sheaf maps. -/
+/-- For a field k and prescribed separable closure Ω, this proposition asserts that the Galois
+stalk functor has the geometric stalk as its exact carrier and forgetful composite; its action
+is the point-induced stalk map with the left group and additive laws; general germs transform
+by Spec(g), and finite-stage germs and their colimit representatives transform by the
+restriction Spec(g|L); every vector has a finite Galois representative and an open stabilizer
+containing a finite fixing subgroup; the topology is discrete and the action jointly
+continuous; all sheaf maps are equivariant and send [U,z,c] to [U,z,τ_U(c)]; and the functor
+preserves identities and composition. -/
 def FieldGeometricStalkGaloisLaws : Prop :=
   let T := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
   let S := smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)
@@ -597,7 +683,11 @@ def FieldGeometricStalkGaloisLaws : Prop :=
   ∀ (Q Q' Q'' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
       (τ : Q ⟶ Q') (σ : Q' ⟶ Q''), T.map (τ ≫ σ) = T.map τ ≫ T.map σ
 
-/-- Every original coefficient sheaf and map uses exactly ONE lift into the SAME functor. -/
+/-- Let Ω be a prescribed separable closure of k, Φ the Galois stalk, S its underlying geometric
+stalk, and Lc the ULift^u coefficient functor from sheaves of size w. This proposition asserts
+the action formula g·[U,up(z),up(c)]=[U,up(Spec(g)≫z),up(c)], equality
+forget(Φ(Lc(f)))=S(Lc(f)), the germ map [c]↦[f_U(c)] with one lift, and equivariance
+S(Lc(f))(g·m)=g·S(Lc(f))(m). -/
 def FieldGeometricStalkOriginalCoefficientLaws : Prop :=
   let T := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
   let S := smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω)
@@ -624,7 +714,12 @@ def FieldGeometricStalkOriginalCoefficientLaws : Prop :=
       (g : Gal(Ω/k)) (m : fieldGeometricStalkCarrier.{u, w} k Ω (Lc.obj F)),
     S.map (Lc.map f) (g • m) = g • S.map (Lc.map f) m
 
-/-- The full original LEFT Galois action, actual joint continuity and the ONE module functor. -/
+/-- Let k be a field and Ω its prescribed separable closure. Common-height additive-group
+geometric stalks carry a natural left Gal(Ω/k)-action with the Krull/discrete continuity,
+finite Galois representative and stabilizer formulas, and equivariant sheaf maps. The
+spectrum/point/stalk composition conventions and the single-lift formulas for smaller
+coefficients satisfy FieldGaloisPointActionLaws, FieldGeometricStalkGaloisLaws, and
+FieldGeometricStalkOriginalCoefficientLaws together. -/
 theorem original_field_geometric_stalk_galois_action :
     FieldGaloisPointActionLaws.{u, w} k Ω ∧
       FieldGeometricStalkGaloisLaws.{u, w} k Ω ∧

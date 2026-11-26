@@ -1,3 +1,6 @@
-# Polynomial Resolution Generator
+# The polynomial generator in a resolution degree
 
-The actual degree-n generator indexed by an element of the preceding native power.
+The polynomial generator in a resolution degree.
+
+For `x ∈ T^n(A)`, this is the element of `T^(n+1)(A)` corresponding to the variable `X_x`
+under the degreewise polynomial comparison.

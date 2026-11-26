@@ -13,12 +13,14 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplex
 public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexShift
 
 /-!
-# Generic cocycle pre/post laws
+# Precomposition and postcomposition of Hom cocycles
 
-Arbitrary preadditive-category, arbitrary-degree cocycle identity, composition, zero, and
-interchange laws, plus shift-equivalence pre/post naturality, actually consumed by the
-cohomology-class base actions and the forward twisting-representability map. Reuses
-`Cocycle.precomp`/`postcomp` and `Cochain` laws; no larger functor abstraction.
+Let C be preadditive and n an integer. A degree-n Hom cocycle between integer cochain complexes
+can be precomposed with a source complex map or postcomposed with a target complex map. These
+actions obey identity, composition, zero and interchange laws.
+
+For shifts a,m with m+a=0, the equivalence between maps K[a] → L and degree-m Hom cocycles is
+natural for shifted source maps and target maps.
 -/
 
 @[expose] public section
@@ -32,69 +34,70 @@ namespace CochainComplex.HomComplex.Cocycle
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {F G H K L : CochainComplex C ℤ} {n : ℤ}
 
-/-- Precomposing a fixed-degree cocycle on the contravariant source side with the
-identity leaves it unchanged; no shift or cohomology-level claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For any
+degree-n cocycle z from G to K, precomposition by id_G leaves z unchanged. -/
 @[simp] theorem precomp_id (z : Cocycle G K n) : z.precomp (𝟙 G) = z := by
   apply Cocycle.ext
   simp
 
-/-- Postcomposing a fixed-degree cocycle on the covariant target side with the
-identity leaves it unchanged; no shift or cohomology-level claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For any
+degree-n cocycle z from F to G, postcomposition by id_G leaves z unchanged. -/
 @[simp] theorem postcomp_id (z : Cocycle F G n) : z.postcomp (𝟙 G) = z := by
   apply Cocycle.ext
   simp
 
-/-- Source-side precomposition is contravariantly functorial at fixed degree,
-turning precomposition with a composite into successive precompositions in reverse
-order; no target-side or shift claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For z
+from H to K of degree n and maps f : F → G, g : G → H, precomposing z by g ∘ f equals first
+precomposing by g and then by f. -/
 @[simp] theorem precomp_comp (z : Cocycle H K n) (f : F ⟶ G) (g : G ⟶ H) :
     z.precomp (f ≫ g) = (z.precomp g).precomp f := by
   apply Cocycle.ext
   simp
 
-/-- Target-side postcomposition is covariantly functorial at fixed degree,
-collapsing successive postcompositions to postcomposition with the composite;
-no source-side or shift claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For z
+from F to G of degree n and maps f : G → K, g : K → L, postcomposing first by f and then by g
+equals postcomposition by g ∘ f. -/
 @[simp] theorem postcomp_comp (z : Cocycle F G n) (f : G ⟶ K) (g : K ⟶ L) :
     (z.postcomp f).postcomp g = z.postcomp (f ≫ g) := by
   apply Cocycle.ext
   simp
 
-/-- Independent contravariant source precomposition and covariant target
-postcomposition commute at fixed degree; no identity, zero, shift, or
-cohomology-level claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For a
+degree-n cocycle z from G to K, a source map f : F → G and target map g : K → L, precomposition
+by f and postcomposition by g commute. -/
 theorem precomp_postcomp (z : Cocycle G K n) (f : K ⟶ L) (g : F ⟶ G) :
     (z.postcomp f).precomp g = (z.precomp g).postcomp f := by
   apply Cocycle.ext
   simp
 
-/-- Precomposing a fixed-degree cocycle on the contravariant source side with the
-zero map absorbs to the zero cocycle; source-zero absorption only, with no
-target-side or shift claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C.
+Precomposing a degree-n cocycle from G to K by the zero map F → G gives the zero degree-n
+cocycle from F to K. -/
 @[simp] theorem precomp_zero (z : Cocycle G K n) :
     z.precomp (0 : F ⟶ G) = 0 := by
   apply Cocycle.ext
   simp
 
-/-- Postcomposing a fixed-degree cocycle on the covariant target side with the
-zero map absorbs to zero; target-zero absorption only, with no shift claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C.
+Postcomposing a degree-n cocycle from F to G by the zero map G → K gives the zero degree-n
+cocycle from F to K. -/
 @[simp] theorem postcomp_zero (z : Cocycle F G n) :
     z.postcomp (0 : G ⟶ K) = 0 := by
   apply Cocycle.ext
   simp
 
-/-- Postcomposing the zero cocycle itself on the covariant target side stays zero
-at fixed degree; no claim about nonzero cocycles, shifts, or cohomology. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For a
+target map f : G → K, postcomposition sends the zero degree-n cocycle from F to G to the zero
+cocycle from F to K. -/
 @[simp] theorem zero_postcomp (f : G ⟶ K) :
     (0 : Cocycle F G n).postcomp f = 0 := by
   apply Cocycle.ext
   simp
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Contravariant source-side naturality of the shift equivalence at fixed shift
-parameters: shifting `g` before the equivalence is cocycle precomposition after it,
-under the degree condition `m + a = 0`. Fixed `a`/`m` only; no general
-cohomology-level or unrestricted shift-functor claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. Let a,m
+∈ ℤ with m+a=0. Under the equivalence Hom(K[a],L) ≅ Zᵐ Hom(K,L), a map f : K[a] → L precomposed
+with g[a] for g : K′ → K corresponds to the cocycle of f precomposed with g. -/
 theorem equivHomShift'_shift_comp {K' : CochainComplex C ℤ} {a m : ℤ} (h : m + a = 0)
     (g : K' ⟶ K) (f : K⟦a⟧ ⟶ L) :
     equivHomShift' a m h (g⟦a⟧' ≫ f) = Cocycle.precomp (equivHomShift' a m h f) g := by
@@ -113,10 +116,9 @@ theorem equivHomShift'_shift_comp {K' : CochainComplex C ℤ} {a m : ℤ} (h : m
   rw [HomologicalComplex.comp_f, CochainComplex.shiftFunctor_map_f']
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Covariant target-side naturality of the shift equivalence at fixed shift
-parameters: postcomposition before the equivalence is cocycle postcomposition after
-it, under the degree condition `m + a = 0`. Fixed `a`/`m` only; no general
-cohomology-level or unrestricted shift-functor claim. -/
+/-- Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. Let a,m
+∈ ℤ with m+a=0. Under Hom(K[a],L) ≅ Zᵐ Hom(K,L), postcomposing f : K[a] → L with g : L → L′
+corresponds to postcomposing its degree-m cocycle with g. -/
 theorem equivHomShift'_comp {L' : CochainComplex C ℤ} {a m : ℤ} (h : m + a = 0)
     (f : K⟦a⟧ ⟶ L) (g : L ⟶ L') :
     equivHomShift' a m h (f ≫ g) = Cocycle.postcomp (equivHomShift' a m h f) g := by

@@ -1,3 +1,5 @@
-# Hom f eq at later page
+# Equality at one page determines every later component map
 
-Each component of later-page maps agrees after initial-page equality.
+Equality at one page determines every later component map.
+
+Under page equality at N, the component of α_r equals that of β_r at every index for r≥N.

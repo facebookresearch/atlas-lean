@@ -1,3 +1,6 @@
-# Nerve Composition Prism Map Common Hom Up app value
+# Product-chain coordinates of the composition prism
 
-Every original upward composition-prism value retains its entire native chain classifier.
+Product-chain coordinates of the composition prism.
+
+In degree m, the triangular composition prism sends a chain c and a monotone map t to the
+image of their product chain under the three-level classifier of α and β.

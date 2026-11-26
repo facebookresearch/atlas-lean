@@ -12,6 +12,18 @@ Author: @toskua, Avocado
 import MathlibExt.Algebra.Homology.LinearHomCochainChainPairing
 import MathlibExt.Algebra.Homology.LinearHomCochainComplex
 
+/-!
+# Coefficient naturality of degree-lowering Hom cochain pairings
+
+Let R be commutative and all module carriers lie in universe u. Fix a chain diagonal Δ:K₃→K₁⊗K₂.
+Coefficient and output maps f_A:A→A′ and f_L:L→L′ compare actions ρ_q:A⊗K₂,q→L_q and
+ρ′_q:A′⊗K₂,q→L′_q when ρ_q≫f_L,q=(f_A⊗id)≫ρ′_q.
+
+For a cochain φ:K₁,p→A and chain x∈K₃,p+q, pairing φ≫f_A with x using ρ′ equals applying f_L,q
+to the pairing of φ with x using ρ. This is equality of the full R-linear tensor maps, with
+output degree q and fixed diagonal input.
+-/
+
 open CategoryTheory CategoryTheory.MonoidalCategory HomologicalComplex Opposite
 
 universe u
@@ -20,8 +32,11 @@ namespace HomologicalComplex
 
 variable (R : Type u) [CommRing R]
 
-/-- Coefficient naturality: mapping coefficients by `fA` then pairing
-    with `ρ'` equals pairing with `ρ` then mapping outputs by `fL`, given `hρ`. -/
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+Let Δ:K₃→K₁⊗K₂, f_A:A→A′ and f_L:L→L′, and suppose ρ_q≫f_L,q=(f_A⊗id_{K₂,q})≫ρ′_q for every q.
+For p,q∈ℕ, the pairings satisfy
+(postcompose(f_A)⊗id_{K₃,p+q})≫κ_{Δ,ρ′}^{p,q}=κ_{Δ,ρ}^{p,q}≫f_L,q. Here postcomposition sends
+φ:K₁,p→A to φ≫f_A, and both sides map Hom_R(K₁,p,A)⊗K₃,p+q to L′_q. -/
 @[reassoc]
 public theorem linearHomCochainChainPair_coefficient_naturality
     {K₁ K₂ K₃ : ChainComplex (ModuleCat.{u} R) ℕ}

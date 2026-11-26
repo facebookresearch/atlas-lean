@@ -1,3 +1,6 @@
-# Field Coind Canonical Coaugmentation closed
+# Coinduction coaugmentation is a degree zero cocycle
 
-The original augmented monad unit is closed in the canonical complex.
+Coinduction coaugmentation is a degree zero cocycle.
+
+The augmented monad unit at the zero simplex followed by the first coinduction differential is
+zero.

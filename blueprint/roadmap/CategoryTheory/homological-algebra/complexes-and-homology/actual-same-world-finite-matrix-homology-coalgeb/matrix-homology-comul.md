@@ -1,3 +1,6 @@
-# Matrix Homology Comul
+# The graded coproduct of finite matrix CE homology
 
-Matrix homology coproduct, from the general field provider.
+The graded coproduct of finite matrix CE homology.
+
+The field homology comonoid comultiplication maps graded matrix homology to its graded tensor
+square.

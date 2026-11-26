@@ -15,14 +15,19 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
 /-!
-# Arbitrary restriction followed by Schreier corestriction
+# Restriction-corestriction index formula in every degree
 
-Restriction followed by arbitrary-degree Schreier transfer is represented
-by precomposition with an explicit endomorphism of the bar resolution.  Its
-augmentation is multiplication by the subgroup index, so uniqueness of
-lifts between projective resolutions identifies the two maps up to chain
-homotopy.  This yields the restriction--corestriction index formula in every
-cohomological degree.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+Transfer of the subgroup restriction of the basis-valued bar cochain extends to an
+endomorphism `E_T` of the bar resolution. Its degree-zero augmentation multiplies by `[G:H]`.
+
+Both `E_T` and `[G:H]` times the identity lift this multiplication on the trivial
+representation. The comparison homotopy of the projective bar resolution therefore induces
+equal maps on the coefficient Hom complexes. Under the inhomogeneous/bar comparison,
+precomposition with `E_T` is restriction followed by transfer.
+
+For every representation `A` and `n : ℕ`, `res_H^G ≫ cor_T = [G:H] • 𝟙` on `H^n(G,A)`.
+Restriction is injective whenever the image of the index is a unit in `k`.
 -/
 
 @[expose] public section
@@ -41,12 +46,16 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- For a group `G`, a finite-index subgroup `H ≤ G`, and a right transversal `T`, the subtype `(T
+: Set G)` of representatives has a finite enumeration. This local `Fintype` structure supplies
+the finite transfer sums. -/
 noncomputable local instance restrictionCorestrictionArbitraryFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The normalized basis element of the inhomogeneous bar resolution. -/
+/-- Let `G` be a group, `k` a commutative ring, `n : ℕ`, and `g : Fin n → G`. The element
+`barBasis n g` of `(Rep.barComplex k G).X n` is `Finsupp.single g (MonoidAlgebra.single 1 1)`,
+the bar basis vector at `g` with unit group-ring coefficient. -/
 def barBasis (n : ℕ) (g : Fin n → G) :
     (Rep.barComplex k G).X n :=
   Finsupp.single g (MonoidAlgebra.single 1 1)
@@ -56,13 +65,16 @@ theorem freeLift_barBasis (A : Rep k G) (n : ℕ)
     (Rep.freeLift k G A f).hom (barBasis (k := k) n g) = f g := by
   simp [barBasis]
 
-/-- The universal normalized bar-basis cochain. -/
+/-- For a group `G`, a commutative ring `k`, and `n : ℕ`, `barBasisCochain n : (Fin n → G) →
+(Rep.barComplex k G).X n` sends a tuple `g` to `Finsupp.single g (MonoidAlgebra.single 1 1)`.
+It is an inhomogeneous degree-`n` cochain with values in the degree-`n` bar representation. -/
 def barBasisCochain (n : ℕ) :
     (Fin n → G) → (Rep.barComplex k G).X n :=
   barBasis (k := k) n
 
-/-- Free extension of the universal normalized bar-basis cochain is the
-identity of the corresponding free representation. -/
+/-- Let `G` be a group, `k` a commutative ring, `n : ℕ`, and `B_n=(Rep.barComplex k G).X n`. The
+equivariant linear extension of the basis-valued cochain is the identity: `Rep.freeLift k G
+B_n (barBasisCochain n) = 𝟙 B_n`. -/
 theorem freeLift_barBasisCochain (n : ℕ) :
     Rep.freeLift k G ((Rep.barComplex k G).X n)
         (barBasisCochain (k := k) (G := G) n) =
@@ -71,13 +83,17 @@ theorem freeLift_barBasisCochain (n : ℕ) :
   intro g
   simp [barBasisCochain, barBasis]
 
-/-- The normalized bar basis restricted from `G`-tuples to `H`-tuples. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `n : ℕ`. The function
+`restrictedBarBasisCochain n : (Fin n → H) → (Rep.barComplex k G).X n` sends `q` to `barBasis
+n (fun i => (q i : G))`, using the subgroup inclusion in every tuple coordinate. -/
 def restrictedBarBasisCochain (n : ℕ) :
     (Fin n → H) → (Rep.barComplex k G).X n :=
   fun q ↦ barBasis (k := k) n (fun i ↦ (q i : G))
 
-/-- Restricting the universal ambient bar-basis cochain gives the universal
-subgroup-indexed bar-basis cochain. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `n : ℕ`. Restricting `barBasisCochain
+n` along `H.subtype`, with the identity coefficient morphism on `Res_H((Rep.barComplex k G).X
+n)`, gives `restrictedBarBasisCochain n`. This is the equality obtained by applying
+`(cochainsMap H.subtype (𝟙 _)).f n` to the ambient cochain. -/
 theorem cochainsMap_barBasisCochain (n : ℕ) :
     ((groupCohomology.cochainsMap (Subgroup.subtype H)
       (𝟙 (Rep.res (Subgroup.subtype H)
@@ -86,8 +102,11 @@ theorem cochainsMap_barBasisCochain (n : ℕ) :
       restrictedBarBasisCochain (k := k) (G := G) (H := H) n :=
   rfl
 
-/-- Degree-`n` component of the bar-chain endomorphism representing
-restriction followed by chosen-transversal corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, and
+`n : ℕ`. Put `B_n=(Rep.barComplex k G).X n`. The endomorphism
+`restrictionCorestrictionChainComponent T n : B_n → B_n` is the equivariant linear extension
+of `corestrictionCochain B_n T n (restrictedBarBasisCochain n)`. Thus it is obtained by
+transferring the subgroup restriction of the basis-valued bar cochain. -/
 noncomputable def restrictionCorestrictionChainComponent
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     (Rep.barComplex k G).X n ⟶ (Rep.barComplex k G).X n :=
@@ -105,8 +124,12 @@ theorem restrictionCorestrictionChainComponent_barBasis
         (restrictedBarBasisCochain (k := k) (G := G) (H := H) n) g := by
   simp [restrictionCorestrictionChainComponent, barBasis]
 
-/-- Precomposition by the universal transfer-chain component is restriction
-followed by arbitrary Schreier transfer on every coefficient cochain. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, `A
+: Rep k G`, `n : ℕ`, and `f : (Fin n → G) → A`. For
+`E_{T,n}=restrictionCorestrictionChainComponent T n`, `E_{T,n} ≫ Rep.freeLift k G A f =
+Rep.freeLift k G A (corestrictionCochain A T n (fun q => f (fun i => (q i : G))))`. Hence
+precomposition represents restriction followed by Schreier transfer on every degree-`n`
+cochain. -/
 theorem restrictionCorestrictionChainComponent_comp_freeLift
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (n : ℕ) (f : (Fin n → G) → A) :
@@ -140,8 +163,10 @@ theorem restrictionCorestrictionChainComponent_comp_freeLift
   rw [hbasis] at h
   exact h
 
-/-- Precomposition by the bar differential is the inhomogeneous cochain
-differential under the free-lift equivalence. -/
+/-- Let `G` be a group, `k` a commutative ring, `A : Rep k G`, `n : ℕ`, and `f : (Fin n → G) → A`.
+For the bar complex `B`, `B.d (n + 1) n ≫ Rep.freeLift k G A f = Rep.freeLift k G A
+((inhomogeneousCochains.d A n).hom f)`. Thus the inhomogeneous differential corresponds to
+precomposition by the bar differential. -/
 theorem barComplex_d_comp_freeLift
     (A : Rep k G) (n : ℕ) (f : (Fin n → G) → A) :
     (Rep.barComplex k G).d (n + 1) n ≫
@@ -171,14 +196,18 @@ theorem barComplex_d_comp_freeLift
   simp only [Representation.freeLift_single_single, one_smul,
     map_one, Module.End.one_apply]
 
-/-- The universal cochain represented by the degree-`n` bar differential. -/
+/-- Let `G` be a group, `k` a commutative ring, and `n : ℕ`. Put `B_n=(Rep.barComplex k G).X n`.
+The cochain `barDifferentialCochain n : (Fin (n + 1) → G) → B_n` is `(inhomogeneousCochains.d
+B_n n).hom (barBasisCochain n)`, the inhomogeneous differential of the cochain sending each
+degree-`n` tuple to its unit-coefficient bar basis vector. -/
 def barDifferentialCochain (n : ℕ) :
     (Fin (n + 1) → G) → (Rep.barComplex k G).X n :=
   (inhomogeneousCochains.d ((Rep.barComplex k G).X n) n).hom
     (barBasisCochain (k := k) (G := G) n)
 
-/-- Free extension of the universal differential cochain is the bar
-differential itself. -/
+/-- Let `G` be a group, `k` a commutative ring, and `n : ℕ`. For `B=Rep.barComplex k G`,
+`Rep.freeLift k G (B.X n) (barDifferentialCochain n) = B.d (n + 1) n`. Here the cochain being
+extended is the inhomogeneous differential of the degree-`n` basis-valued cochain. -/
 theorem freeLift_barDifferentialCochain (n : ℕ) :
     Rep.freeLift k G ((Rep.barComplex k G).X n)
         (barDifferentialCochain (k := k) (G := G) n) =
@@ -189,8 +218,10 @@ theorem freeLift_barDifferentialCochain (n : ℕ) :
   rw [freeLift_barBasisCochain, Category.comp_id] at h
   exact h.symm
 
-/-- The subgroup differential of the restricted universal basis cochain is
-the restriction of the ambient universal differential cochain. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `n : ℕ`. With coefficient
+`Res_H((Rep.barComplex k G).X n)`, `d_H(restrictedBarBasisCochain n)(q) =
+barDifferentialCochain n (fun i => (q i : G))` for `q : Fin (n + 1) → H`. Thus the subgroup
+differential is the restriction of the ambient differential cochain. -/
 theorem inhomogeneous_d_restrictedBarBasisCochain (n : ℕ) :
     (inhomogeneousCochains.d
       (Rep.res (Subgroup.subtype H) ((Rep.barComplex k G).X n)) n).hom
@@ -210,8 +241,9 @@ theorem inhomogeneous_d_restrictedBarBasisCochain (n : ℕ) :
   funext i
   exact congrFun h i
 
-/-- Consecutive universal transfer-chain components commute with the bar
-differential. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, and
+`n : ℕ`. For `E_{T,j}=restrictionCorestrictionChainComponent T j` and `B=Rep.barComplex k G`,
+`E_{T,n+1} ≫ B.d (n + 1) n = B.d (n + 1) n ≫ E_{T,n}` as maps `B.X (n + 1) → B.X n`. -/
 theorem restrictionCorestrictionChainComponent_comm
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     restrictionCorestrictionChainComponent (k := k) T (n + 1) ≫
@@ -254,8 +286,10 @@ theorem restrictionCorestrictionChainComponent_comm
     _ = (Rep.barComplex k G).d (n + 1) n ≫
         restrictionCorestrictionChainComponent (k := k) T n := rfl
 
-/-- The literal bar-chain endomorphism representing restriction followed by
-chosen-transversal Schreier corestriction in every degree. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The chain endomorphism `restrictionCorestrictionBarChain T` of `Rep.barComplex k G` has
+component `restrictionCorestrictionChainComponent T n` in every degree `n : ℕ`. Each component
+is the equivariant extension of transfer of the subgroup-restricted bar-basis cochain. -/
 noncomputable def restrictionCorestrictionBarChain
     (T : H.RightTransversal) [H.FiniteIndex] :
     Rep.barComplex k G ⟶ Rep.barComplex k G where
@@ -271,8 +305,10 @@ theorem restrictionCorestrictionBarChain_f
       restrictionCorestrictionChainComponent (k := k) T n :=
   rfl
 
-/-- The same bar-chain endomorphism, typed on the exact complex carried by
-Mathlib's bundled bar projective resolution. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The endomorphism `restrictionCorestrictionChain T` of `(Rep.barResolution k G).complex` has
+degree-`n` component `restrictionCorestrictionChainComponent T n`. It uses the canonical
+identification of this projective-resolution complex with `Rep.barComplex k G`. -/
 noncomputable def restrictionCorestrictionChain
     (T : H.RightTransversal) [H.FiniteIndex] :
     (Rep.barResolution k G).complex ⟶
@@ -289,8 +325,9 @@ theorem restrictionCorestrictionChain_f
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The bar-resolution augmentation takes the normalized degree-zero basis
-to one. -/
+/-- For a group `G` and a commutative ring `k`, the degree-zero augmentation
+`ε₀=(Rep.barResolution k G).π.f 0` to the trivial representation sends `barBasis 0 Fin.elim0 =
+Finsupp.single Fin.elim0 (MonoidAlgebra.single 1 1)` to `1 : k`. -/
 theorem barResolution_augmentation_barBasis_zero :
     ((Rep.barResolution k G).π.f 0).hom
         (barBasis (k := k) 0 Fin.elim0) = (1 : k) := by
@@ -301,8 +338,9 @@ theorem barResolution_augmentation_barBasis_zero :
   simp [Rep.standardComplex.ε]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- At degree zero, augmenting the universal restriction--corestriction
-chain component gives the subgroup index. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+For `E_{T,0}=restrictionCorestrictionChainComponent T 0` and `ε₀=(Rep.barResolution k G).π.f
+0`, `ε₀(E_{T,0}(barBasis 0 Fin.elim0)) = (H.index : k)`. -/
 theorem restrictionCorestrictionChainComponent_zero_augmentation
     (T : H.RightTransversal) [H.FiniteIndex] :
     ((Rep.barResolution k G).π.f 0).hom
@@ -347,8 +385,10 @@ theorem restrictionCorestrictionChainComponent_zero_augmentation
   rw [hcard]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Degree-zero augmentation square for the universal
-restriction--corestriction chain component. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The morphisms from the degree-zero bar term to the trivial representation satisfy
+`restrictionCorestrictionChainComponent T 0 ≫ (Rep.barResolution k G).π.f 0 = H.index •
+(Rep.barResolution k G).π.f 0`. -/
 theorem restrictionCorestrictionChainComponent_zero_comp_augmentation
     (T : H.RightTransversal) [H.FiniteIndex] :
     restrictionCorestrictionChainComponent (k := k) T 0 ≫
@@ -370,9 +410,10 @@ theorem restrictionCorestrictionChainComponent_zero_comp_augmentation
   simp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The universal restriction--corestriction bar-chain map lifts
-multiplication by the subgroup index on the resolved trivial
-representation. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+Write `P=Rep.barResolution k G`, `ε=P.π`, and `E_T=restrictionCorestrictionChain T`. Then `E_T
+≫ ε = ε ≫ (ChainComplex.single₀ (Rep k G)).map (H.index • 𝟙 (Rep.trivial k G k))`. Thus `E_T`
+lifts index multiplication on the trivial representation resolved by `P`. -/
 theorem restrictionCorestrictionChain_comp_augmentation
     (T : H.RightTransversal) [H.FiniteIndex] :
     restrictionCorestrictionChain (k := k) T ≫
@@ -392,8 +433,9 @@ theorem restrictionCorestrictionChain_comp_augmentation
       simp
   | succ n => simp
 
-/-- The scalar identity bar-chain endomorphism lifts the same index
-multiplication map. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `P=Rep.barResolution k G`. Its
+augmentation satisfies `(H.index • 𝟙 P.complex) ≫ P.π = P.π ≫ (ChainComplex.single₀ (Rep k
+G)).map (H.index • 𝟙 (Rep.trivial k G k))`. This identity holds for any subgroup `H`. -/
 theorem indexSMulIdentityChain_comp_augmentation :
     (H.index • 𝟙 (Rep.barResolution k G).complex) ≫
         (Rep.barResolution k G).π =
@@ -406,8 +448,10 @@ theorem indexSMulIdentityChain_comp_augmentation :
   rw [(ChainComplex.single₀ (Rep k G)).map_id, Category.comp_id]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The universal restriction--corestriction bar-chain endomorphism is
-homotopic to subgroup-index multiplication. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `T` a right transversal.
+The projective bar resolution `P=Rep.barResolution k G` supplies a chain homotopy from
+`restrictionCorestrictionChain T` to `H.index • 𝟙 P.complex`. Both maps lift `H.index • 𝟙` on
+the trivial representation through the augmentation of `P`. -/
 noncomputable def restrictionCorestrictionChainHomotopy
     (T : H.RightTransversal) [H.FiniteIndex] :
     Homotopy
@@ -420,8 +464,10 @@ noncomputable def restrictionCorestrictionChainHomotopy
     (restrictionCorestrictionChain_comp_augmentation T)
     (indexSMulIdentityChain_comp_augmentation (H := H))
 
-/-- Restriction followed by arbitrary chosen-transversal corestriction as
-an endomorphism of the inhomogeneous cochain complex. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, and
+`A : Rep k G`. The cochain endomorphism `restrictionCorestrictionCochains A T` of `C^*(G,A)`
+is `cochainsMap H.subtype (𝟙 (Res_H A)) ≫ corestrictionCochains A T`. In each degree it sends
+`f` to the Schreier transfer of the subgroup restriction of `f`. -/
 noncomputable def restrictionCorestrictionCochains
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     inhomogeneousCochains A ⟶ inhomogeneousCochains A :=
@@ -438,8 +484,11 @@ theorem restrictionCorestrictionCochains_f_apply
         (fun q ↦ f (fun i ↦ (q i : G))) :=
   rfl
 
-/-- The bar linear-Hom cochain endomorphism obtained by precomposition with
-the universal restriction--corestriction chain map. -/
+/-- Let `G` be a group, `k` a commutative ring, `A : Rep k G`, and `P` any `ℕ`-indexed chain
+complex of representations. The canonical isomorphism identifies
+`(linearHomCochainComplexFunctor k (Rep k G) A).obj (Opposite.op P)` with `P.linearYonedaObj k
+A`. Their degree-`n` coefficient module is `Hom_{Rep k G}(P.X n,A)`, and the cochain
+differential is precomposition by `P.d (n+1) n`. -/
 noncomputable def linearHomCochainComplexObjIso
     (A : Rep k G) (P : ChainComplex (Rep k G) ℕ) :
     (HomologicalComplex.linearHomCochainComplexFunctor
@@ -447,17 +496,21 @@ noncomputable def linearHomCochainComplexObjIso
       P.linearYonedaObj k A :=
   eqToIso (by rfl)
 
-/-- The literal bar linear-Yoneda complex and the one carried by the bundled
-bar resolution differ only by the recorded equality of their chain
-complexes. -/
+/-- For a group `G`, a commutative ring `k`, and `A : Rep k G`, the canonical equality
+`(Rep.barResolution k G).complex = Rep.barComplex k G` induces `barResolutionLinearYonedaIso A
+: (Rep.barComplex k G).linearYonedaObj k A ≅ (Rep.barResolution k G).complex.linearYonedaObj k
+A`. -/
 noncomputable def barResolutionLinearYonedaIso (A : Rep k G) :
     (Rep.barComplex k G).linearYonedaObj k A ≅
       (Rep.barResolution k G).complex.linearYonedaObj k A :=
   eqToIso (congrArg (fun P : ChainComplex (Rep k G) ℕ ↦
     P.linearYonedaObj k A) (Rep.barResolution_complex k G).symm)
 
-/-- The inhomogeneous comparison with codomain the exact linear-Hom object
-of the bundled bar resolution. -/
+/-- For a group `G`, a commutative ring `k`, and `A : Rep k G`, put `P=(Rep.barResolution k
+G).complex`. The comparison `inhomogeneousResolutionLinearHomCochainIso A` identifies
+`C^*(G,A)` with the linear-Hom cochain complex `L(P,A)`, whose degree-`n` module is `Hom_{Rep
+k G}(P.X n,A)`. It composes the inhomogeneous/bar comparison, the bar-resolution linear-Yoneda
+comparison, and the inverse linear-Hom/linear-Yoneda identification. -/
 noncomputable def inhomogeneousResolutionLinearHomCochainIso
     (A : Rep k G) :
     inhomogeneousCochains A ≅
@@ -469,8 +522,11 @@ noncomputable def inhomogeneousResolutionLinearHomCochainIso
     (linearHomCochainComplexObjIso A
       (Rep.barResolution k G).complex).symm
 
-/-- The exact-resolution linear-Hom cochain endomorphism obtained by
-precomposition with the universal restriction--corestriction chain map. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, and
+`A : Rep k G`. For `P=(Rep.barResolution k G).complex`, the endomorphism
+`restrictionCorestrictionResolutionCochains A T` of `L(P,A)` is the map of the contravariant
+linear-Hom functor induced by `(restrictionCorestrictionChain T).op`. Thus each coefficient
+cochain precomposes with the corresponding transfer-chain component. -/
 noncomputable def restrictionCorestrictionResolutionCochains
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (HomologicalComplex.linearHomCochainComplexFunctor
@@ -491,8 +547,10 @@ theorem restrictionCorestrictionResolutionCochains_f_apply
       (restrictionCorestrictionChain (k := k) T).f n ≫ phi :=
   rfl
 
-/-- The exact-resolution linear-Hom model of restriction--corestriction is homotopic to
-index multiplication in every cochain degree. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, and
+`A : Rep k G`. Put `P=(Rep.barResolution k G).complex` and let `L(P,A)` be its linear-Hom
+cochain complex. There is a cochain homotopy from `restrictionCorestrictionResolutionCochains
+A T` to `H.index • 𝟙 L(P,A)`, induced by the transfer-chain homotopy on `P`. -/
 noncomputable def restrictionCorestrictionResolutionCochainsHomotopy
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     Homotopy
@@ -515,8 +573,11 @@ noncomputable def restrictionCorestrictionResolutionCochainsHomotopy
   exact h
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Under the bundled-resolution linear-Hom comparison, restriction followed by
-Schreier transfer is precomposition by the universal bar-chain map. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, and
+`A : Rep k G`. For `I_A=inhomogeneousResolutionLinearHomCochainIso A`,
+`restrictionCorestrictionCochains A T ≫ I_A.hom = I_A.hom ≫
+restrictionCorestrictionResolutionCochains A T`. Thus the inhomogeneous restriction-transfer
+operator corresponds to precomposition on Hom cochains of the bar resolution. -/
 theorem restrictionCorestrictionCochains_comp_resolutionLinearHomIso_hom
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     restrictionCorestrictionCochains A T ≫
@@ -533,8 +594,10 @@ theorem restrictionCorestrictionCochains_comp_resolutionLinearHomIso_hom
     A T n f).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Conjugating the projective-resolution homotopy by the inhomogeneous
-comparison gives equality of the induced homology maps. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, `A
+: Rep k G`, and `n : ℕ`. The induced maps on `H^n(G,A)` satisfy
+`HomologicalComplex.homologyMap (restrictionCorestrictionCochains A T) n =
+HomologicalComplex.homologyMap (H.index • 𝟙 (inhomogeneousCochains A)) n`. -/
 theorem homologyMap_restrictionCorestrictionCochains
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     HomologicalComplex.homologyMap
@@ -586,8 +649,10 @@ theorem homologyMap_restrictionCorestrictionCochains
       rw [HomologicalComplex.homologyMap_comp]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- In every degree, chosen-transversal corestriction after restriction is
-multiplication by the subgroup index. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, `A
+: Rep k G`, and `n : ℕ`. Then `map H.subtype (𝟙 (Res_H A)) n ≫ corestrictionOfRightTransversal
+A T n = H.index • 𝟙 (H^n(G,A))`. The composite is restriction to `H` followed by the
+cohomology map induced by Schreier transfer for `T`. -/
 theorem corestrictionOfRightTransversal_restriction
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
     groupCohomology.map (Subgroup.subtype H)
@@ -610,7 +675,9 @@ theorem corestrictionOfRightTransversal_restriction
   rw [CategoryTheory.Functor.map_nsmul, CategoryTheory.Functor.map_id]
   rfl
 
-/-- Elementwise arbitrary-degree restriction--corestriction formula. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `T` a right transversal, `A
+: Rep k G`, and `n : ℕ`. For `x ∈ H^n(G,A)`, `corestrictionOfRightTransversal A T n (map
+H.subtype (𝟙 (Res_H A)) n x) = (H.index : k) • x`. -/
 theorem corestrictionOfRightTransversal_restriction_apply
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
     (x : groupCohomology A n) :
@@ -626,8 +693,9 @@ theorem corestrictionOfRightTransversal_restriction_apply
     H.index • x at h
   simpa only [Nat.cast_smul_eq_nsmul] using h
 
-/-- Restriction to a finite-index subgroup is injective in every degree when
-the subgroup index is a unit in the coefficient ring. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `n : ℕ`.
+If `IsUnit (H.index : k)`, then restriction `map H.subtype (𝟙 (Res_H A)) n : H^n(G,A) →
+H^n(H,Res_H A)` is injective. -/
 theorem restriction_injective_of_isUnit_index
     (A : Rep k G) [H.FiniteIndex] (n : ℕ)
     (hindex : IsUnit (H.index : k)) :

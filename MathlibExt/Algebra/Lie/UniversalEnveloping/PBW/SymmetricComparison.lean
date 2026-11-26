@@ -15,14 +15,15 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.AssociatedGraded
 public import Mathlib.LinearAlgebra.SymmetricAlgebra.Basis
 
 /-!
-# The symmetric algebra and PBW graded coordinates
+# The symmetric algebra in PBW graded coordinates
 
-For a chosen ordered basis of a Lie algebra over a commutative ring, sending each
-symmetric-algebra generator to its degree-one symbol defines an algebra equivalence with the
-PBW graded model.
+Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L an ordered basis. The
+basis identifies Sym_R(L) with MvPolynomial I R, and the complete graded PBW coordinates
+identify the associated graded quotient model with the same polynomial algebra.
 
-Polynomial coordinates identify its underlying map with the universal symmetric-algebra lift
-of the generator-symbol map.
+Composing these equivalences gives Sym_R(L) ≃ₐ[R] PBW.AssociatedGraded(b). It sends each
+symmetric generator x to the degree-one symbol of the enveloping generator ι(x), so its
+forward map is the universal symmetric lift of that symbol map.
 -/
 
 @[expose] public section
@@ -41,7 +42,10 @@ variable {R : Type u} [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The Lie generators, mapped to their degree-one symbols. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I.
+Define an R-linear map L → PBW.AssociatedGraded(b) by x ↦ symbol_1(ι(x)). The enveloping
+generator ι(x) lies in D_1, and its class modulo the degree-zero stage is inserted in the
+degree-one quotient component. -/
 def generatorSymbol (b : Module.Basis I R L) : L →ₗ[R] AssociatedGraded b :=
   (symbol b 1).comp
     ((UniversalEnvelopingAlgebra.ι R : L →ₗ⁅R⁆ U).toLinearMap.codRestrict
@@ -71,13 +75,18 @@ theorem associatedGradedAlgEquiv_generatorSymbol_basis (b : Module.Basis I R L) 
       (show (Finsupp.single i 1).degree = 1 by rw [Finsupp.degree_single])), if_pos rfl]
   rfl
 
-/-- The symmetric/associated-graded algebra equivalence. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R, compose
+Sym_R(L) ≃ₐ[R] MvPolynomial I R with the inverse PBW graded polynomial equivalence. This gives
+Sym_R(L) ≃ₐ[R] PBW.AssociatedGraded(b). The maps use the same basis variables and preserve the
+R-algebra operations. -/
 def symmetricPBWEquiv (b : Module.Basis I R L) :
     SymmetricAlgebra R L ≃ₐ[R] AssociatedGraded b :=
   (SymmetricAlgebra.equivMvPolynomial b).trans (associatedGradedAlgEquiv b).symm
 
-/-- The constructed algebra equivalence sends every symmetric generator to the symbol of the same
-enveloping algebra generator. -/
+/-- Let b : Basis I R L be an ordered basis over a commutative ring R and x ∈ L. The symmetric PBW
+equivalence satisfies e_b(ι_Sym(x)) = generatorSymbol_b(x) = symbol_1(ι_U(x)). Thus the
+symmetric and enveloping generators correspond through the degree-one quotient symbol of the
+same Lie element. -/
 theorem symmetricPBWEquiv_ι_apply (b : Module.Basis I R L) (x : L) :
     symmetricPBWEquiv b (SymmetricAlgebra.ι R L x) = generatorSymbol b x := by
   have h : (symmetricPBWEquiv b).toLinearMap.comp (SymmetricAlgebra.ι R L) =
@@ -92,7 +101,10 @@ theorem symmetricPBWEquiv_ι_apply (b : Module.Basis I R L) (x : L) :
       associatedGradedAlgEquiv_generatorSymbol_basis]
   exact LinearMap.congr_fun h x
 
-/-- The canonical symmetric lift is exactly the constructed PBW map. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R,
+SymmetricAlgebra.lift(generatorSymbol_b) equals the R-algebra homomorphism underlying the
+symmetric PBW equivalence. Both have domain Sym_R(L), codomain PBW.AssociatedGraded(b), and
+send the generator x to symbol_1(ι_U(x)). -/
 theorem symmetricLift_generatorSymbol_eq (b : Module.Basis I R L) :
     SymmetricAlgebra.lift (generatorSymbol b) = (symmetricPBWEquiv b).toAlgHom := by
   apply SymmetricAlgebra.algHom_ext
@@ -102,8 +114,10 @@ theorem symmetricLift_generatorSymbol_eq (b : Module.Basis I R L) :
     symmetricPBWEquiv b (SymmetricAlgebra.ι R L x)
   rw [SymmetricAlgebra.lift_ι_apply, symmetricPBWEquiv_ι_apply]
 
-/-- PBW in its canonical symmetric-algebra form on the associated graded carrier. The input is
-only a basis of the underlying module. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. The
+universal R-algebra map Sym_R(L) → PBW.AssociatedGraded(b) extending x ↦ symbol_1(ι_U(x)) is
+bijective. This follows from its equality with the symmetric PBW equivalence; the chosen basis
+is the only module-structure hypothesis. -/
 theorem symmetricLift_generatorSymbol_bijective (b : Module.Basis I R L) :
     Function.Bijective (SymmetricAlgebra.lift (generatorSymbol b)) := by
   rw [symmetricLift_generatorSymbol_eq]

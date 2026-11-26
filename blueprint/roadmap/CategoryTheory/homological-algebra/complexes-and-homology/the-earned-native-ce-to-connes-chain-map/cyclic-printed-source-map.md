@@ -1,3 +1,6 @@
-# Cyclic Printed Source Map
+# The positive-bracket source map of an algebra homomorphism
 
-The printed-positive source map is the same map under differential negation.
+The positive-bracket source map of an algebra homomorphism.
+
+Apply the Lie-induced CE map after negating differentials and restricting to positive exterior
+degrees.

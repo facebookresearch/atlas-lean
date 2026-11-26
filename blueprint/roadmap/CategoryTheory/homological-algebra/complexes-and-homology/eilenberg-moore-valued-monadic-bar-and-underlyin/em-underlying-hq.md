@@ -1,4 +1,6 @@
-# Em Underlying hq
+# The forgotten action pairing is natural in algebra morphisms
 
-Degree-zero naturality square for the underlying map. Mirrors the degree-zero
-compatibility used by `BarResolution.resolutionHom`: after normalization both sides are `φ.h`.
+For a monad T on C and algebra morphism φ : alg → alg′, the degree-zero bar map with identity
+forgotten right-module map and left-module map φ commutes with the action pairings. Its
+equation is b_0(φ) ≫ pairing_alg′ = pairing_alg ≫ target(φ), whose carrier form is T(φ.f) ≫
+alg′.a = alg.a ≫ φ.f.

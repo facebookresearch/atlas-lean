@@ -14,13 +14,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRe
 public import MathlibExt.RepresentationTheory.Rep.ZModRestrictRes
 
 /-!
-# Corestriction and restriction of `ZMod` scalars
+# Integral scalar restriction and degree-one corestriction
 
-Restriction of the acting group commutes with restriction of coefficient
-scalars from `ZMod n` to `ℤ`.  In degree one, this comparison also
-commutes with canonical finite-index corestriction.
+Let `G : Type` be a group, `H ≤ G` a finite-index subgroup, `n : ℕ`, and `A : Rep (ZMod n) G`.
+Restricting coefficient scalars along `ℤ → ZMod n` commutes with the right-transversal
+transfer of one-cocycles and with the induced canonical map `H¹(H,Res A) → H¹(G,A)`.
 
-The statements include `n = 0`.
+The subgroup coefficient comparison is `J(Res A) ≅ Res(J(A))`, where `J(A) =
+Rep.zmodRestrictInt n A`. The scalar-restriction additive equivalences preserve this transfer
+square for every `n`, including `n = 0`.
 -/
 
 @[expose] public section
@@ -35,13 +37,18 @@ namespace groupCohomology
 variable {G : Type} [Group G] {H : Subgroup G}
 
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- For a group `G : Type`, a finite-index subgroup `H ≤ G`, and a right transversal `T`, the
+subtype `(T : Set G)` of representatives has a finite enumeration. This local `Fintype`
+instance enumerates the finite set used in the degree-one transfer sum. -/
 noncomputable local instance corestrictionH1ZModRestrictTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Scalar restriction commutes with chosen-transversal transfer on
-degree-one cocycles. -/
+/-- Let `G : Type` be a group, `H ≤ G` finite index, `n : ℕ`, `A : Rep (ZMod n) G`, and `T` a
+right transversal. Put `J(A) = Rep.zmodRestrictInt n A`, `E_A = cocycles₁ZModRestrictIntEquiv
+n A`, and `θ = (zmodRestrictIntResIso n (Subgroup.subtype H) A).hom`. For `z ∈ Z¹(H,Res A)`,
+`E_A(corestrictionCocyclesOne A T z) = corestrictionCocyclesOne (J(A)) T (mapCocycles₁ (id H)
+θ (E_{Res A} z))`. The scalar restriction is along `ℤ → ZMod n` for every `n`, including zero. -/
 theorem cocycles₁ZModRestrictIntEquiv_corestrictionCocyclesOne
     (n : ℕ) (A : Rep (ZMod n) G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -68,8 +75,11 @@ theorem cocycles₁ZModRestrictIntEquiv_corestrictionCocyclesOne
   intro t _
   rfl
 
-/-- Forward scalar restriction commutes with canonical degree-one
-corestriction. -/
+/-- Let `G : Type` be a group, `H ≤ G` finite index, `n : ℕ`, and `A : Rep (ZMod n) G`. Put `J(A)
+= Rep.zmodRestrictInt n A`, `E_A = H1ZModRestrictIntAddEquiv n A`, and `θ =
+(zmodRestrictIntResIso n (Subgroup.subtype H) A).hom : J(Res A) → Res(J(A))`. For `x ∈
+H¹(H,Res A)`, `E_A(corestrictionH1 A x) = corestrictionH1 (J(A)) (map (id H) θ 1 (E_{Res A}
+x))`. This identity includes `n = 0`. -/
 theorem H1ZModRestrictIntAddEquiv_corestrictionH1
     (n : ℕ) (A : Rep (ZMod n) G) [H.FiniteIndex]
     (x : H1 (Rep.res (Subgroup.subtype H) A)) :

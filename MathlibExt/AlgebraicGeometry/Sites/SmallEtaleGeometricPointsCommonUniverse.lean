@@ -14,13 +14,18 @@ public import Mathlib.CategoryTheory.Comma.StructuredArrow.Small
 public import Mathlib.CategoryTheory.Limits.EssentiallySmall
 public import Mathlib.CategoryTheory.Limits.Preserves.Ulift
 
-/-! # Original geometric points and covers in the common universe
+/-!
+# Geometric points in a common coefficient universe
 
-The original common-point declarations and their cover-detection proof are
-extracted unchanged from the inverse-image scouts. The affine common-universe size construction
-is derived inline from the stock small model and universe enlargement. This provider needs
-only coefficients and stock site/point APIs; it has no inverse-image,
-inverse-exactness, or presheaf Kan-extension dependency.
+Let `X : Scheme.{u}` and let `Spec Ω → X` be a geometric point with `Ω : Type u` separably
+closed. Lift its étale fiber sets to universe `λ = max u w`. The categories of elements before
+and after lifting are equivalent, and the neighborhood category is initially small in `λ`,
+giving a point of the small étale topology in that universe.
+
+At each scheme point, the separable closure of its residue field gives a canonical geometric
+morphism. These geometric points, both before and after lifting, form conservative families
+and detect covering sieves. The common universe also supports sheafification of type-valued
+presheaves.
 -/
 
 @[expose] public section
@@ -33,8 +38,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
-/-- The same geometric neighborhoods after lifting their fiber elements.
-This uses stock equivalences of structured arrows and fully faithful postcomposition. -/
+/-- Lifting geometric fibers preserves their category of elements.
+
+The elements category of a geometric-point fiber is equivalent to that of the fiber followed
+by the universe lift from `u` to `max u w`. -/
 def smallEtaleGeometricElementsLiftEquivalence {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) :
     (Scheme.pointSmallEtale x).fiber.Elements ≌
@@ -47,7 +54,10 @@ def smallEtaleGeometricElementsLiftEquivalence {X : Scheme.{u}}
         (Functor.Elements.structuredArrowEquivalence
           ((Scheme.pointSmallEtale x).fiber ⋙ uliftFunctor.{w, u})).symm))
 
-/-- The original geometric-neighborhood initial model enlarges to the common universe. -/
+/-- Geometric neighborhoods are initially small in the common universe.
+
+For a geometric point over a separably closed field in universe `u`, its étale fiber-elements
+category is initially small in universe `max u w`. -/
 theorem smallEtaleGeometricNeighborhoodsInitiallySmallCommon {X : Scheme.{u}}
     (x : Spec (.of Ω) ⟶ X) :
     InitiallySmall.{max u w} (Scheme.pointSmallEtale x).fiber.Elements := by
@@ -57,8 +67,10 @@ theorem smallEtaleGeometricNeighborhoodsInitiallySmallCommon {X : Scheme.{u}}
   let : F.Initial := Functor.initial_comp _ _
   exact InitiallySmall.mk' F
 
-/-- The prescribed original geometric point, with its fiber elements lifted
-to the common universe and all point conditions derived internally. -/
+/-- Geometric point with lifted fiber values.
+
+Lift the fiber sets of the small étale geometric point to universe `max u w`; their cofiltered
+and initially small elements category defines the common-universe point. -/
 def smallEtaleGeometricPointCommon {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     X.smallEtaleTopology.Point.{max u w} where
   fiber := (Scheme.pointSmallEtale x).fiber ⋙ uliftFunctor.{w, u}
@@ -73,8 +85,9 @@ def smallEtaleGeometricPointCommon {X : Scheme.{u}} (x : Spec (.of Ω) ⟶ X) :
     refine ⟨V, g, hg, ULift.up y, ?_⟩
     exact congrArg ULift.up hy
 
-/-- Actual common-universe sheafification for type-valued sheaves, using the
-same original affine basis and its genuine sheaf restriction equivalence. -/
+/-- Common universe type valued presheaves admit sheafification.
+
+The small étale topology of `X` has sheafification for presheaves valued in `Type (max u w)`. -/
 instance smallEtaleHasSheafifyTypesCommon (X : Scheme.{u}) :
     HasSheafify X.smallEtaleTopology (Type (max u w)) := by
   let : EssentiallySmall.{max u w} X.AffineEtale := by
@@ -93,32 +106,44 @@ instance smallEtaleHasSheafifyTypesCommon (X : Scheme.{u}) :
   exact Functor.IsDenseSubsite.hasSheafify_of_isEquivalence
     (Scheme.AffineEtale.topology X) X.smallEtaleTopology (Scheme.AffineEtale.Spec X)
 
-/-- The actual canonical residue-field geometric morphism at each original point. -/
+/-- Geometric morphism from the separable closure of a residue field.
+
+For a scheme point `x`, use the residue-field inclusion into its separable closure to define
+`Spec (SeparableClosure (κ(x))) → X`. -/
 abbrev smallEtaleCanonicalGeometricMorphism (X : Scheme.{u}) (x : X) :
     Spec (.of (SeparableClosure (X.residueField x))) ⟶ X :=
   (SpecToEquivOfField (SeparableClosure (X.residueField x)) X).symm
     ⟨x, CommRingCat.ofHom (algebraMap (X.residueField x) _)⟩
 
-/-- The original small-universe canonical geometric point family. -/
+/-- Family of residue field geometric points.
+
+Take the small étale points associated to the canonical separable-closure morphism at each
+point of `X`. -/
 abbrev smallEtaleCanonicalGeometricPoints (X : Scheme.{u}) :
     ObjectProperty X.smallEtaleTopology.Point.{u} :=
   ObjectProperty.ofObj
     (fun x : X => Scheme.pointSmallEtale (smallEtaleCanonicalGeometricMorphism X x))
 
-/-- The same actual geometric morphisms define the common-universe point family. -/
+/-- Lifted family of residue field geometric points.
+
+Take the common-universe lifts of the canonical residue-field geometric points, indexed by the
+points of `X`. -/
 abbrev smallEtaleCanonicalGeometricPointsCommon (X : Scheme.{u}) :
     ObjectProperty X.smallEtaleTopology.Point.{max u w} :=
   ObjectProperty.ofObj
     (fun x : X => smallEtaleGeometricPointCommon.{u, w} (smallEtaleCanonicalGeometricMorphism X x))
 
-/-- Stock conservativity of the original actual small-site geometric points. -/
+/-- Residue field geometric points form a conservative family.
+
+The canonical geometric points obtained from separable closures of residue fields form a
+conservative family of small étale points. -/
 theorem smallEtaleCanonicalGeometricPoints_conservative (X : Scheme.{u}) :
     (smallEtaleCanonicalGeometricPoints X).IsConservativeFamilyOfPoints := by
   exact Scheme.isConservativeFamilyOfPoints_pointSmallEtale' X
 
-/-- The same original geometric family is conservative after its fiber elements
-are lifted to the common universe; cover detection is inherited from the
-original family rather than supplied as a certificate. -/
+/-- Lifted residue field geometric points remain conservative.
+
+The common-universe family of canonical geometric points is conservative. -/
 theorem smallEtaleCanonicalGeometricPointsCommon_conservative (X : Scheme.{u}) :
     (smallEtaleCanonicalGeometricPointsCommon.{u, w} X).IsConservativeFamilyOfPoints := by
   apply ObjectProperty.IsConservativeFamilyOfPoints.mk'
@@ -141,10 +166,10 @@ theorem smallEtaleCanonicalGeometricPointsCommon_conservative (X : Scheme.{u}) :
     ?_⟩
   simpa only [Functor.map_comp, ConcreteCategory.comp_apply] using hy'
 
-/-- An actual sieve is covering if its arrows lift every element of each
-original common-universe geometric fiber. This is the cover criterion used
-to construct the preceding conservative family, with no common-universe
-local-bijectivity certificate. -/
+/-- Canonical geometric fibers detect covering sieves.
+
+If every fiber element at every canonical common-universe point lifts through an arrow of a
+sieve on an étale object, that sieve is covering in the small étale topology. -/
 theorem smallEtaleCanonicalGeometricPointsCommon_cover {X : Scheme.{u}} {U : X.Etale}
     (R : Sieve U)
     (hR : ∀ (Φ : (smallEtaleCanonicalGeometricPointsCommon.{u, w} X).FullSubcategory)

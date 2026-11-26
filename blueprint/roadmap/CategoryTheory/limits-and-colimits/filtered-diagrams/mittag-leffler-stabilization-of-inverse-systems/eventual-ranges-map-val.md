@@ -1,3 +1,6 @@
-# Eventual Ranges map val
+# Values of the restricted eventual-image transition
 
-The restricted map has the same underlying value as the original transition.
+Values of the restricted eventual-image transition.
+
+The transition between eventual range modules sends x to the same underlying element A(f)(x)
+as the transition of A.

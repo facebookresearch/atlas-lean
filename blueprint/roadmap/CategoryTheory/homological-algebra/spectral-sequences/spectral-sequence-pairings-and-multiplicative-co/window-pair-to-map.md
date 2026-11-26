@@ -1,3 +1,5 @@
-# Window Pair To map
+# Specified-output window products commute with width maps
 
-Native quotient maps commute with a product at any explicitly chosen sum cut.
+Specified-output window products commute with width maps.
+
+The same nested-width square holds after the additive output-cut identification.

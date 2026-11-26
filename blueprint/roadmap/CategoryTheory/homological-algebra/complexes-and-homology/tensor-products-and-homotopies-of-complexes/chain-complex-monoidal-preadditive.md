@@ -1,5 +1,6 @@
-# Tensor products and homotopies of complexes
+# Monoidal preadditivity of the chain-complex tensor product
 
-Preadditivity of the total-complex monoidal structure on chain complexes,
-proved directly from the tensor-hom formulas. Install locally via
-`local instance ... := HomologicalComplex.chainComplexMonoidalPreadditive`.
+Monoidal preadditivity of the chain-complex tensor product.
+
+For the total-tensor monoidal structure, left and right tensor whiskering preserve sums and
+zero morphisms, under the stated preadditivity and coproduct-preservation assumptions.

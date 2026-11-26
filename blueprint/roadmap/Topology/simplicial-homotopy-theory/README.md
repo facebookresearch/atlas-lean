@@ -54,7 +54,7 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Upper-face corrections preserving the SAME lower and later group faces](upper-face-corrections-preserving-the-same-lower/README.md)
 - [Whiskering of simplicial homotopies](whiskering-of-simplicial-homotopies/README.md)
 - [Data-level left extra degeneracy](extra-degeneracy.md)
-- [The shuffle map as a chain pairing](alternating-pairing.md)
+- [Signed shuffles pair the two alternating-face complexes](alternating-pairing.md)
 - [Augmented Whiskering](augmented-whiskering/README.md)
 - [Coface comparisons, alternating complexes and conditional AW pairing transport](coface-comparisons-alternating-complexes-and-con/README.md)
 

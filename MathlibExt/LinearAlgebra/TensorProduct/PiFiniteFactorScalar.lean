@@ -15,10 +15,16 @@ public import MathlibExt.LinearAlgebra.TensorProduct.PiFiniteFactor
 public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 
 /-!
-# Scalar transport for product tensor comparisons
+# Arbitrary product tensor comparisons under a scalar surjection
 
-Compatible-scalar tensor coordinates transport the finite-projective
-factor comparison, preserving pure tensors and product projections.
+Let R→S be a surjective algebra map of commutative rings. Let U and every member N_i of an
+arbitrary product family be compatible R,S-modules. If U is finitely generated projective over
+S, scalar balancing transports the product comparison over S to the R-linear equivalence
+U⊗_R(∏_iN_i)≅∏_i(U⊗_RN_i).
+
+Its forward map is the canonical componentwise tensor map, sending u⊗x to i↦u⊗x_i. The family
+and index may be infinite. The S-actions on U and the family are part of the hypotheses, and all
+ring, index and carrier universes are independent.
 -/
 
 @[expose] public section
@@ -38,8 +44,11 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] [Algebra R S]
   [∀ i, AddCommGroup (N i)] [∀ i, Module R (N i)] [∀ i, Module S (N i)]
   [∀ i, IsScalarTower R S (N i)]
 
-/-- All scalar tensor coordinates and the original finite-factor product map
-are constructed internally from the actual surjective scalar action. -/
+/-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
+below be compatible scalar towers. The ring, module and index universes are independent. Let U
+and the family N_i be compatible R,S-modules and U finitely generated projective over S. This is
+the R-linear equivalence U⊗_R(∏_iN_i)≅∏_i(U⊗_RN_i). It compares R- and S-balancing on the input
+and outputs and applies the finite-factor product equivalence over S. -/
 def piRightFiniteFactorOfSurjectiveScalars
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
@@ -52,7 +61,11 @@ def piRightFiniteFactorOfSurjectiveScalars
     (piRightFiniteFactor S N U).restrictScalars R ≪≫ₗ
       LinearEquiv.piCongrRight (fun i => TensorProduct.equivOfCompatibleSMul R S R U (N i))
 
-/-- Every original pure tensor retains every original product coordinate. -/
+/-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
+below be compatible scalar towers. The ring, module and index universes are independent. For
+compatible R,S-modules U,N_i with U finitely generated projective over S, the product
+equivalence satisfies e(u⊗_R x)_i=u⊗_R x_i for every u∈U, family x and index i. The formula
+includes arbitrary product indices. -/
 theorem piRightFiniteFactorOfSurjectiveScalars_tmul
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) (u : U) (x : ∀ i, N i) (i : ι) :
@@ -60,7 +73,10 @@ theorem piRightFiniteFactorOfSurjectiveScalars_tmul
   simp [piRightFiniteFactorOfSurjectiveScalars, piRightFiniteFactor,
     TensorProduct.equivOfCompatibleSMul, TensorProduct.piRightHom_tmul]
 
-/-- The original R product comparison is the exact forward map. -/
+/-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
+below be compatible scalar towers. The ring, module and index universes are independent. For U
+finitely generated projective over S and an arbitrary compatible R,S-module family N_i, the
+underlying R-linear map of U⊗_R(∏_iN_i)≅∏_i(U⊗_RN_i) is π_R, with π_R(u⊗x)_i=u⊗x_i. -/
 theorem piRightFiniteFactorOfSurjectiveScalars_toLinearMap
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :

@@ -1,3 +1,6 @@
-# KSplit
+# A linear splitting of a nonunital ideal quotient
 
-The source k-splitting is an actual linear section of the actual quotient.
+A linear splitting of a nonunital ideal quotient.
+
+For `q : A → A/I`, this consists of a `k`-linear section `s : A/I → A` satisfying `q ∘ s =
+id`. The datum imposes no multiplicative equation on `s`.

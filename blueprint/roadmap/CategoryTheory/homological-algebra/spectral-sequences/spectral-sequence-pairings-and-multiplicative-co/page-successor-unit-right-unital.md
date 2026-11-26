@@ -1,3 +1,5 @@
-# Page Successor Unit right unital
+# The successor unit satisfies the right unit law
 
-The original successor comparison preserves the actual right unit law on every bidegree.
+The successor unit satisfies the right unit law.
+
+The induced next-page unit has the right unitor product.

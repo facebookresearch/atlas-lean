@@ -1,4 +1,5 @@
-# Vertical Homology Complex d
+# Differentials of the first-quadrant vertical-homology chain complex
 
-Differentials of the vertical-homology complex are the induced homology
-maps of the horizontal bicomplex maps.
+Let `C` be abelian and `B` a first-quadrant chain bicomplex,
+with both index shapes `down ℕ`. The horizontal differential from `p` to `p′` in fixed
+vertical degree `q` is the homology map `H_q(B.d(p,p′))`.

@@ -1,4 +1,6 @@
-# Field Group Coefficient Cohomology factorization
+# Group coefficient cohomology map factors through restriction
 
-The original group/coefficient cochain map factors through actual restriction
-and the original coefficient arrow, on the existing homology groups.
+Group coefficient cohomology map factors through restriction.
+
+The map induced by a group homomorphism and coefficient intertwiner equals group restriction
+followed by the cohomology map of the factored coefficient morphism.

@@ -1,3 +1,8 @@
-# Tensor Left Int Eval Iso
+# Degree evaluation of left cochain tensor is the coproduct of its pieces
 
-Actual degree evaluation of the full cochain tensor is the original degree-piece coproduct.
+Let R be a commutative ring in universe u and use R-module carriers in u. Use the ℤ-indexed
+cochain convolution tensor: all antidiagonal coproducts exist, coefficient tensoring preserves
+zero objects in both variables and commutes with the coproducts in both triple
+parenthesizations, and fourfold tensor inclusions determine maps. For K and n∈ℤ, there is a
+natural isomorphism ev_n(K⊗(-))≅colim∘P^L_{K,n}. At L it identifies (K⊗L)^n with
+⊕_{p+q=n}K^p⊗L^q, preserving each fibre coefficient.

@@ -1,4 +1,6 @@
-# Top Cut Lower d
+# The differential in retained truncation degrees
 
-The lower truncation retains each original differential through the
-two actual original truncation charts.
+The differential in retained truncation degrees.
+
+For i,j < b, the truncated differential is the original K.d i j conjugated by the truncation
+charts at i and j.

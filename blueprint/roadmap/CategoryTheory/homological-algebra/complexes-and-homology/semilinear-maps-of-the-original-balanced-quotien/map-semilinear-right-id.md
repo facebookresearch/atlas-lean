@@ -1,3 +1,7 @@
-# Map Semilinear Right id
+# Identity factors induce the identity right-linear quotient map
 
-Identity scalar and factor maps act by the identity on the original right module.
+Identity factors induce the identity right-linear quotient map.
+
+With the right module structure induced by `rightModule`, identity maps on the ground ring,
+balancing semiring, right outer semiring, and factors give the identity `Sᵐᵒᵖ`-linear map on
+the quotient.

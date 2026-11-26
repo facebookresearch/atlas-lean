@@ -1,3 +1,6 @@
-# Field Continuous Coker Connecting epi
+# Connecting map of an injective cokernel sequence is epi
 
-The actual cokernel effacement includes the initial q=1 case and every higher degree.
+Connecting map of an injective cokernel sequence is epi.
+
+For a monomorphism into an injective coefficient, the continuous connecting map from cokernel
+cohomology to the next degree of the source is an epimorphism.

@@ -24,10 +24,19 @@ public import Mathlib.RingTheory.Finiteness.Basic
 /-!
 # Finite data in filtered colimits of module cochain complexes
 
-Finite families of homogeneous images lie in a common stage. Equalities
-on finitely many homogeneous generators hold after one transition.
-Finite bases allow cochain maps to factor through a stage; over a field,
-these bases are supplied by finite-dimensional terms.
+Let R be a commutative ring, and consider integer-indexed cochain complexes
+of R-modules. In a filtered colimit, finitely generated homogeneous images
+in finitely many degrees lie in one common stage. Elements from the same
+stage that agree in the colimit agree after a transition; the same holds
+for cochain maps from a complex supported in finitely many degrees with
+finitely generated terms.
+
+If each nonzero term of the source has a specified finite R-basis, every
+cochain map to a filtered colimit factors through one stage. Over a field,
+finite-dimensional terms supply these bases. The common-stage image theorem
+allows an independently sized filtered indexing category and assumes its
+colimits exist in the module category; the element, equality and factorization
+theorems use a small filtered category in the universe of the modules.
 -/
 
 @[expose] public section
@@ -50,7 +59,13 @@ variable {J : Type w} [Category.{v} J] [IsFiltered J]
 variable {E : J ⥤ CochainComplex (ModuleCat.{u} R) ℤ} {c : Cocone E}
   {A : CochainComplex (ModuleCat.{u} R) ℤ}
 
-/-- A finite family of homogeneous images lies in one filtered-colimit stage. -/
+/-- Let R be a commutative ring, J a filtered category, and c a colimit cocone
+of a diagram E of integer-indexed R-module cochain complexes. Assume
+J-shaped colimits exist in the module category. For a map f:A → c.pt and
+a finite set S of degrees, if each image im(fₙ) for n∈S is finitely
+generated, then some j in J satisfies
+im(fₙ) ⊆ im(cⱼⁿ:Eⱼⁿ → c.ptⁿ) for every n∈S.
+The indexing category may have independent object and morphism universes. -/
 theorem exists_stage_range_le_of_finite_degree_images [HasColimitsOfShape J (ModuleCat.{u} R)]
     (hc : IsColimit c) (f : A ⟶ c.pt) (S : Finset ℤ)
     (hfinite : ∀ n ∈ S, (LinearMap.range (f.f n).hom).FG) :
@@ -86,7 +101,10 @@ variable {R : Type u} [CommRing R]
 variable {J : Type u} [SmallCategory J] [IsFiltered J]
 variable {E : J ⥤ CochainComplex (ModuleCat.{u} R) ℤ} {t : Cocone E}
 
-/-- Elements with the same image in a filtered colimit agree after one transition. -/
+/-- Let R be a commutative ring and t a colimit cocone for a diagram E of
+integer-indexed R-module cochain complexes over a small filtered category J
+in the universe of the modules. If x,y∈Eᵢⁿ have the same image in t.ptⁿ,
+there is an arrow a:i → j such that E(a)ₙ(x)=E(a)ₙ(y). -/
 theorem exists_stage_eq_of_filtered_colimit_element (ht : IsColimit t) {i : J} {n : ℤ}
     (x y : (E.obj i).X n)
     (h : ((t.ι.app i).f n).hom x = ((t.ι.app i).f n).hom y) :
@@ -97,7 +115,12 @@ theorem exists_stage_eq_of_filtered_colimit_element (ht : IsColimit t) {i : J} {
   exact (Types.FilteredColimit.isColimit_eq_iff' hc x y).mp h
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Equalities on finitely many homogeneous generators hold in a common stage. -/
+/-- Let R be a commutative ring and t a colimit cocone of module cochain
+complexes over a small filtered category J in the universe of the modules.
+Let A vanish outside a finite set S of integer degrees and have finitely
+generated R-module terms in S. If two cochain maps p,q:A → Eᵢ have equal
+composites into t.pt, then some arrow a:i → j makes
+E(a) ∘ p = E(a) ∘ q as cochain maps. -/
 theorem exists_stage_eq_of_filtered_colimit_finite_support (ht : IsColimit t) {i : J}
     {A : CochainComplex (ModuleCat.{u} R) ℤ} (p q : A ⟶ E.obj i) (S : Finset ℤ)
     (hfinite : ∀ n ∈ S, Module.Finite R (A.X n)) (hzero : ∀ n ∉ S, IsZero (A.X n))
@@ -146,7 +169,10 @@ variable {J : Type u} [SmallCategory J] [IsFiltered J]
 variable {E : J ⥤ CochainComplex (ModuleCat.{u} R) ℤ} {t : Cocone E}
 variable {A : CochainComplex (ModuleCat.{u} R) ℤ}
 
-/-- A filtered-colimit element has a representative of the same degree. -/
+/-- For a colimit cocone t of integer-indexed R-module cochain complexes
+over a small filtered category J in the universe of the modules, with R
+commutative, every element x∈t.ptⁿ is the image of an element y∈Eⱼⁿ
+for some stage j. The representative lies in the same cochain degree n. -/
 theorem exists_stage_preimage_of_filtered_colimit_element (ht : IsColimit t) {n : ℤ}
     (x : t.pt.X n) :
     ∃ (j : J) (y : (E.obj j).X n), ((t.ι.app j).f n).hom y = x := by
@@ -156,7 +182,12 @@ theorem exists_stage_preimage_of_filtered_colimit_element (ht : IsColimit t) {n 
   exact Types.jointly_surjective_of_isColimit hc x
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Finite bases define a family of degree maps to a common stage. -/
+/-- Let R be a commutative ring and t a colimit cocone of module cochain
+complexes over a small filtered category J in the universe of the modules.
+Suppose A vanishes outside a finite set S of degrees and each Aⁿ for n∈S
+has a specified R-basis with a finite index set. For every cochain map
+f:A → t.pt, there is one stage j and maps aₙ:Aⁿ → Eⱼⁿ in every degree
+such that tⱼⁿ ∘ aₙ=fₙ. -/
 theorem exists_stage_degree_factor_of_filtered_colimit_finite_bases (ht : IsColimit t)
     (f : A ⟶ t.pt) (S : Finset ℤ) (I : S → Type u) [∀ n, Finite (I n)]
     (b : ∀ n : S, Module.Basis (I n) R (A.X n)) (hzero : ∀ n ∉ S, IsZero (A.X n)) :
@@ -194,7 +225,11 @@ theorem exists_stage_degree_factor_of_filtered_colimit_finite_bases (ht : IsColi
   · exact (hzero n hn).eq_of_src _ _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Differential equations for the lifted finite bases hold after one transition. -/
+/-- Let R be a commutative ring and t a colimit cocone of module cochain
+complexes over a small filtered category J in the universe of the modules.
+If A has finite support S and specified finite R-bases for its terms in S,
+then every cochain map f:A → t.pt factors as
+A → Eⱼ → t.pt for some j, with the first map a cochain map. -/
 theorem exists_stage_cochain_factor_of_filtered_colimit_finite_bases (ht : IsColimit t)
     (f : A ⟶ t.pt) (S : Finset ℤ) (I : S → Type u) [∀ n, Finite (I n)]
     (b : ∀ n : S, Module.Basis (I n) R (A.X n)) (hzero : ∀ n ∉ S, IsZero (A.X n)) :
@@ -263,8 +298,11 @@ variable {E : J ⥤ CochainComplex (ModuleCat.{u} R) ℤ} {t : Cocone E}
 variable {A : CochainComplex (ModuleCat.{u} R) ℤ}
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Every cochain map from a finitely supported complex of finite-dimensional vector spaces
-to a filtered colimit factors through a stage. -/
+/-- Let R be a field and t a colimit cocone of integer-indexed R-vector-space
+cochain complexes over a small filtered category J in the universe of the
+modules. If A is zero outside a finite set S and Aⁿ is finite-dimensional
+for each n∈S, then every cochain map f:A → t.pt factors through a single
+stage Eⱼ as a cochain map. -/
 theorem exists_stage_cochain_factor_of_filtered_colimit_finite_support (ht : IsColimit t)
     (f : A ⟶ t.pt) (S : Finset ℤ) (hfinite : ∀ n ∈ S, Module.Finite R (A.X n))
     (hzero : ∀ n ∉ S, IsZero (A.X n)) :

@@ -1,4 +1,5 @@
-# Local Regular Family mapped eq
+# The family images under the local coefficient map
 
-The actual local map sends the original localized equation to the
-localization of its original image. No compatibility equation is supplied.
+The family images under the local coefficient map.
+
+Mapping the source-localized family to S_p gives the localized images of f(a_i).

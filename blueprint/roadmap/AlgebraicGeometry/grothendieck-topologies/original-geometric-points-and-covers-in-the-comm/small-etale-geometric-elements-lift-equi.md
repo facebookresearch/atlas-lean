@@ -1,4 +1,6 @@
-# Small Etale Geometric Elements Lift Equivalence
+# Lifting geometric fibers preserves their category of elements
 
-The same geometric neighborhoods after lifting their fiber elements.
-This uses stock equivalences of structured arrows and fully faithful postcomposition.
+Lifting geometric fibers preserves their category of elements.
+
+The elements category of a geometric-point fiber is equivalent to that of the fiber followed
+by the universe lift from `u` to `max u w`.

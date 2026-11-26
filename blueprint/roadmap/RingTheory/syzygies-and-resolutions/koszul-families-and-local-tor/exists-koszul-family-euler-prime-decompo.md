@@ -1,5 +1,6 @@
-# Exists koszul Family Euler Prime Decomposition localized Length mul
+# Existence of the local generic-multiplicity Koszul Euler formula
 
-The original finite coefficient module earns a genuine prime factor
-list and its full-family localized-length multiplier formula. No prime
-filtration, Euler comparison, or multiplicity certificate is an input.
+Existence of the local generic-multiplicity Koszul Euler formula.
+
+For the stated finite coefficient and local dimension hypotheses, a prime decomposition
+supplies the localized-length weighted sum.

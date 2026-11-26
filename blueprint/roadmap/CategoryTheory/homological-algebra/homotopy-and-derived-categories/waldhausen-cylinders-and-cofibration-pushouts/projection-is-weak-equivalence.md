@@ -1,3 +1,6 @@
-# Projection is Weak Equivalence
+# Weak equivalence of a full-cylinder projection
 
-The Cylinder Axiom makes every original full-cylinder projection a weak equivalence.
+Weak equivalence of a full-cylinder projection.
+
+If a full cylinder T satisfies the Cylinder Axiom, its projection p_f : T(f) → f.right is a
+weak equivalence for every arrow f.

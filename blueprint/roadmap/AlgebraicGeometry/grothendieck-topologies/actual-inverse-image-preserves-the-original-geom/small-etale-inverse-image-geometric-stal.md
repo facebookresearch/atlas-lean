@@ -1,4 +1,6 @@
-# Small Etale Inverse Image Geometric Stalk Iso
+# Inverse image preserves geometric stalks
 
-Actual inverse-image stalks are the original stalks at the image geometric
-point, naturally on every common-universe sheaf and sheaf morphism.
+Inverse image preserves geometric stalks.
+
+For common-universe abelian coefficients, inverse image followed by the geometric stalk at `x`
+is naturally isomorphic to the stalk at `x ≫ f`.

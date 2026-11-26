@@ -1,3 +1,6 @@
-# Restrict Continuous comp
+# Composition of continuous Galois restriction maps
 
-The fixed continuous restrictions compose contravariantly.
+Composition of continuous Galois restriction maps.
+
+For composable e and f between Galois extensions, restriction along f ∘ e equals restriction
+along f followed by restriction along e.

@@ -1,4 +1,5 @@
-# Associated Graded Module Map Total initial Form Module
+# Initial forms commute with the total map
 
-The total associated-graded map sends an included initial form to the
-included initial form of its image.
+Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, `f : M →ₗ[R] N`, `n : ℕ`,
+and `x ∈ I^n M`. For the homogeneous inclusions `j_n`, `gr_I(f)(j_n([x]_n)) = j_n([f x]_n)`.
+The brackets are the module initial forms in degrees `n` of `M` and `N`.

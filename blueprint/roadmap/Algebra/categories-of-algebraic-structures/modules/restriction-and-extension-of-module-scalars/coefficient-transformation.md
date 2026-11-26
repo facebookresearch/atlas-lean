@@ -1,3 +1,6 @@
-# Coefficient Transformation
+# The natural tensor transformation of a coefficient map
 
-The original coefficient map is natural in every actual R-linear input map.
+The natural tensor transformation of a coefficient map.
+
+An S-linear g : M → N gives a natural transformation from M ⊗_R − to N ⊗_R −, whose components
+are g ⊗ id.

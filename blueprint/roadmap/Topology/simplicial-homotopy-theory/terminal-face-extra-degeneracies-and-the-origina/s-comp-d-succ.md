@@ -1,3 +1,6 @@
-# S comp d succ
+# The successor terminal extra-degeneracy recurrence
 
-Splitting the actual alternating differential at its terminal face gives the recurrence.
+The successor terminal extra-degeneracy recurrence.
+
+In degree `n+1`, the boundary after extra degeneracy equals extra degeneracy after the
+previous boundary plus `(-1)^(n+2)` times the identity.

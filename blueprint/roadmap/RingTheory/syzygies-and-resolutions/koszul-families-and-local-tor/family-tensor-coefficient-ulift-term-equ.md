@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Ulift Term Equiv
+# The term equivalence for a lifted Koszul coefficient
 
-The canonical mixed-universe tensor equivalence when the original
-coefficient module is lifted.
+The term equivalence for a lifted Koszul coefficient.
+
+Identify (ULift M) ⊗ K(a)_j with ULift(M ⊗ K(a)_j) by the canonical coefficient-down and
+output-up maps.

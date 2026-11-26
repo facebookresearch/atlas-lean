@@ -18,11 +18,14 @@ public import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 public import MathlibExt.Algebra.Homology.TensorUnitor
 
 /-!
-# Tensor products with a degree-zero single complex
+# Tensoring with a degree-zero single complex
 
-The tensor convolution of a nonnegative chain complex `K` with the complex
-having `A` only in degree zero is canonically the complex obtained by
-tensoring every term of `K` on the right by `A`.
+For a preadditive monoidal category with a zero object, finite coproducts and additive tensor
+variables, K ⊗ A[0] is canonically the complex with degree-n object K_n ⊗ A and differential
+d_K ⊗ id_A.
+
+The comparison is natural in both K and A and preserves the degree-(n,0) antidiagonal summand
+through the canonical single-object chart.
 -/
 
 @[expose] public section
@@ -46,8 +49,9 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Tensoring a nonnegative chain complex with a degree-zero single complex
-is canonically the degreewise right-tensor functor. -/
+/-- The tensor comparison with a degree-zero single complex.
+
+Identify K ⊗ A[0] with the degreewise right-tensor functor applied to K. -/
 noncomputable def tensorObjSingleZeroIso
     (K : ChainComplex C ℕ) (A : C) :
     tensorObj K ((ChainComplex.single₀ C).obj A) ≅
@@ -188,8 +192,10 @@ noncomputable def tensorObjSingleZeroIso
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The degree-`(n,0)` tensor summand followed by the single-zero comparison
-is the tensor of the identity with the canonical degree-zero coordinate. -/
+/-- The degree-zero tensor comparison on its surviving summand.
+
+The (n,0) coprojection followed by the comparison is id_{K_n} tensored with the single-complex
+chart to A. -/
 @[reassoc]
 theorem ιTensorObj_comp_tensorObjSingleZeroIso_hom
     (K : ChainComplex C ℕ) (A : C) (n : ℕ) :
@@ -205,7 +211,9 @@ theorem ιTensorObj_comp_tensorObjSingleZeroIso_hom
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The tensor/single-zero comparison is natural in the chain complex. -/
+/-- Naturality of the single-zero comparison in the chain complex.
+
+A chain map f commutes with the tensor-single comparison and degreewise right tensoring by A. -/
 @[reassoc]
 theorem tensorObjSingleZeroIso_hom_naturality₁
     {K K' : ChainComplex C ℕ} (f : K ⟶ K') (A : C) :
@@ -241,8 +249,10 @@ theorem tensorObjSingleZeroIso_hom_naturality₁
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The tensor/single-zero comparison is natural in the degree-zero
-coefficient object. -/
+/-- Naturality of the single-zero comparison in the coefficient.
+
+A morphism a : A → A′ commutes with the comparison and the corresponding degreewise tensor
+transformation. -/
 @[reassoc]
 theorem tensorObjSingleZeroIso_hom_naturality₂
     (K : ChainComplex C ℕ) {A A' : C} (a : A ⟶ A') :
@@ -278,7 +288,10 @@ theorem tensorObjSingleZeroIso_hom_naturality₂
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Joint naturality of the tensor/single-zero comparison. -/
+/-- Joint naturality of the single-zero tensor comparison.
+
+The tensor map of f and a[0] commutes with the comparison and the degreewise maps in both
+variables. -/
 @[reassoc]
 theorem tensorObjSingleZeroIso_hom_naturality
     {K K' : ChainComplex C ℕ} (f : K ⟶ K')

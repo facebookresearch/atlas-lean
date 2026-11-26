@@ -1,3 +1,5 @@
-# Partial Total E₁Adjacent Core Diagram
+# The composable diagram of adjacent first-page core intervals
 
-The composable pair of adjacent core-interval maps.
+The composable diagram of adjacent first-page core intervals.
+
+Use the lower-to-upper map for column `m` followed by the upper-stage successor map.

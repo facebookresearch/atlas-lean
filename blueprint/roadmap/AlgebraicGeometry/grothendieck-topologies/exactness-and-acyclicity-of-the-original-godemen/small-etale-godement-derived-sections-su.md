@@ -1,4 +1,6 @@
-# Small Etale Godement Derived Sections succ is Zero
+# Skyscraper products have zero positive derived sections
 
-Every actual Godement skyscraper family is acyclic for positive right-derived global
-sections.
+Skyscraper products have zero positive derived sections.
+
+For any coefficient family `M` and natural `n`, `R^(n+1)Γ` of its product of canonical
+geometric skyscrapers is zero.

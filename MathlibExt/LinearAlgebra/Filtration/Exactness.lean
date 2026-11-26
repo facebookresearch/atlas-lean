@@ -14,16 +14,17 @@ module
 public import Mathlib.LinearAlgebra.Quotient.Basic
 
 /-!
-# Exactness by finite descent in an increasing module filtration
+# Exactness by finite descent through submodule families
 
-The maps on adjacent filtration quotients are constructed from the original
-linear maps. A boundary in a quotient lifts to an original element whose
-error lies one stage lower. Induction on the finite stage gives exactness of
-the original sequence.
+Let R be a ring and e : A →ₗ[R] B, d : B →ₗ[R] C maps preserving submodule families
+P_p,F_p,H_p. The adjacent quotient of F is F_{p+1}/(F_p∩F_{p+1}), with the intersection
+considered inside F_{p+1}; for an increasing family this is F_{p+1}/F_p.
 
-This general transfer theorem has an associated-graded exactness premise.
-Applying it to a concrete complex requires proving that premise for its
-constructed quotient maps; it does not itself prove CE or PBW exactness.
+Exactness of the induced quotient sequence lets a cycle in F_{p+1} be modified by a boundary
+from P_{p+1} so that its remainder lies in F_p. If de=0, F_0=0, every element of B lies in
+some F_p, and every adjacent quotient sequence is exact, finite descent proves
+range(e)=ker(d). Monotonicity of the families and exhaustiveness of P or H are not hypotheses
+of this statement.
 -/
 
 @[expose] public section
@@ -36,12 +37,17 @@ namespace Submodule
 
 variable {M : Type v} [AddCommGroup M] [Module R M]
 
-/-- The original lower filtration stage as a submodule of the upper stage. -/
+/-- Let R be a ring, M an R-module, F : ℕ → Submodule R M, and p ∈ ℕ. Define a submodule of
+F_{p+1} by {x ∈ F_{p+1} | x ∈ F_p}, equivalently the inverse image of F_p under the subtype
+inclusion F_{p+1} → M. If F is increasing, this is F_p viewed inside F_{p+1}; the definition
+itself requires no monotonicity. -/
 def filtrationLower (F : ℕ → Submodule R M) (p : ℕ) : Submodule R (F (p + 1)) :=
   (F p).comap (F (p + 1)).subtype
 
-/-- An adjacent quotient in an increasing filtration, retaining the original
-upper-stage carrier and quotient map. -/
+/-- For a module M over a ring R, a family F : ℕ → Submodule R M, and p ∈ ℕ, define
+FiltrationLayer(F,p) = F_{p+1}/(F_p∩F_{p+1}), with the denominator viewed as a submodule of
+F_{p+1}. For an increasing family this is the usual adjacent quotient F_{p+1}/F_p. No
+monotonicity is needed to form the quotient. -/
 abbrev FiltrationLayer (F : ℕ → Submodule R M) (p : ℕ) :=
   F (p + 1) ⧸ filtrationLower F p
 
@@ -53,7 +59,10 @@ variable {A : Type v} [AddCommGroup A] [Module R A]
   {B : Type w} [AddCommGroup B] [Module R B]
   {C : Type t} [AddCommGroup C] [Module R C]
 
-/-- The actual restriction of a filtration-preserving map to a stage. -/
+/-- Let R be a ring, f : A →ₗ[R] B an R-linear map, and F,G families of submodules of A,B. Assume
+f(F_p) ⊆ G_p for every p ∈ ℕ. Then for a fixed p, f restricts to an R-linear map F_p → G_p,
+taking a stage element x to f(x) with its given membership in G_p. The module carriers may
+have independent universes. -/
 def filtrationStage (f : A →ₗ[R] B)
     (F : ℕ → Submodule R A) (G : ℕ → Submodule R B)
     (hf : ∀ p, ∀ x ∈ F p, f x ∈ G p) (p : ℕ) : F p →ₗ[R] G p where
@@ -71,7 +80,10 @@ theorem filtrationStage_apply (f : A →ₗ[R] B)
     (hf : ∀ p, ∀ x ∈ F p, f x ∈ G p) (p : ℕ) (x : F p) :
     (f.filtrationStage F G hf p x).val = f x.val := rfl
 
-/-- The induced map on the original adjacent filtration quotients. -/
+/-- Let R be a ring, f : A →ₗ[R] B, and F,G submodule families with f(F_p) ⊆ G_p for every p. The
+restriction on stage p+1 induces an R-linear map F_{p+1}/(F_p∩F_{p+1}) →
+G_{p+1}/(G_p∩G_{p+1}). It sends the quotient class of x to the class of f(x). Preservation of
+both p and p+1 makes this quotient map well defined; no monotonicity assumption is needed. -/
 def filtrationLayerMap (f : A →ₗ[R] B)
     (F : ℕ → Submodule R A) (G : ℕ → Submodule R B)
     (hf : ∀ p, ∀ x ∈ F p, f x ∈ G p) (p : ℕ) :
@@ -88,8 +100,11 @@ theorem filtrationLayerMap_mkQ (f : A →ₗ[R] B)
     f.filtrationLayerMap F G hf p (Submodule.Quotient.mk x) =
       Submodule.Quotient.mk (f.filtrationStage F G hf (p + 1) x) := rfl
 
-/-- Exactness of the constructed quotient sequence supplies a genuine lift
-whose error in the original module is one filtration stage lower. -/
+/-- Let R be a ring, e : A →ₗ[R] B and d : B →ₗ[R] C preserve submodule families P,F,H,
+respectively. Fix p ∈ ℕ and assume range(e_p^gr)=ker(d_p^gr) for the induced maps on the
+adjacent quotients P_{p+1}/(P_p∩P_{p+1}), F_{p+1}/(F_p∩F_{p+1}), and H_{p+1}/(H_p∩H_{p+1}). If
+z ∈ F_{p+1} and d(z)=0, then there is y ∈ P_{p+1} with z−e(y) ∈ F_p. Thus a quotient boundary
+has a representative whose error is one stage lower. -/
 theorem exists_boundary_mod_filtration
     (e : A →ₗ[R] B) (d : B →ₗ[R] C)
     (P : ℕ → Submodule R A) (F : ℕ → Submodule R B) (H : ℕ → Submodule R C)
@@ -126,9 +141,12 @@ theorem exists_boundary_mod_filtration
     (Submodule.filtrationLower F p)).mp hzero
   exact hlower
 
-/-- An exhaustive increasing filtration with zero initial middle stage
-transfers exactness of its actual quotient sequence to the original maps.
-The proof terminates at the finite stage containing each given cycle. -/
+/-- Let R be a ring and e : A →ₗ[R] B, d : B →ₗ[R] C preserve submodule families P_p,F_p,H_p.
+Assume d∘e=0, F_0=0, every z ∈ B belongs to some F_p, and for every p the induced adjacent
+quotient maps satisfy range(e_p^gr)=ker(d_p^gr). Then range(e)=ker(d). The quotient
+denominators are the intersections of adjacent stages inside the upper stages. No monotonicity
+of the families or exhaustiveness of P and H is assumed, and A,B,C may have independent
+carrier universes. -/
 theorem range_eq_ker_of_exact_filtrationLayers
     (e : A →ₗ[R] B) (d : B →ₗ[R] C)
     (P : ℕ → Submodule R A) (F : ℕ → Submodule R B) (H : ℕ → Submodule R C)

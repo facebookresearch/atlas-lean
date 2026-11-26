@@ -1,4 +1,6 @@
-# Functor Homology Comparison Iso projection
+# The functor homology comparison preserves projection
 
-The canonical cycle and homology comparisons preserve the original
-source and target homology projections.
+The functor homology comparison preserves projection.
+
+F applied to the source cycle-to-homology map followed by the homology comparison equals the
+cycles comparison followed by the target projection.

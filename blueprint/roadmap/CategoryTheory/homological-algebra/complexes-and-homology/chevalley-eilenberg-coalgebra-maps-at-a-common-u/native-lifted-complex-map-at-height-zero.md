@@ -1,3 +1,7 @@
-# Native Lifted Complex Map At Height zero
+# The zero-extra-height comparison
 
-The general working-height adapter extends the existing independent-universe map exactly.
+Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At an independent extra
+height z, set H=max{u,v,w,z}.
+When the additional height z is zero, F^H equals the
+common-height Lie map for H=max{u,v,w}.

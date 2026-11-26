@@ -21,16 +21,16 @@ public import Mathlib.CategoryTheory.Functor.Currying
 /-!
 # Semilinear Hom functors and finite projective tensor factors
 
-For `σ : R →+* S`, semilinear Hom is contravariant in an arbitrary
-`R`-module and covariant in an `S`-module. Its coefficient `S`-action needs
-no `S`-action on the source. The source and coefficient carrier universes
-are independent.
+For a scalar homomorphism `σ : R →+* S`, semilinear Hom is contravariant in the `R`-source and
+covariant in the `S`-coefficient. Its `S`-action is pointwise: `(s·f)(m)=s·f(m)`. The
+semimodule functors use a semiring `R` and a commutative semiring `S`; the module functors use
+a ring `R` and a commutative ring `S`.
 
-A finite projective `S`-module tensor factor gives natural isomorphisms
-between tensoring Hom and taking Hom into the coefficient tensor product.
-The comparisons use the native semilinear tensor map. The semimodule
-version retains commutative semiring generality; the module version uses
-the existing tensor bifunctor with independent carrier universes.
+When both scalar rings are commutative and `U` is finite projective over `S`, the map `(f ⊗
+u)(m)=f(m) ⊗ u` gives an equivalence `Hom_σ(M,N) ⊗_S U ≅ Hom_σ(M,N ⊗_S U)`, natural in the
+arbitrary source `M` and coefficient `N`. Scalar and carrier universes are independent. A
+separate coefficient-linear equivalence identifies semilinear maps with morphisms into scalar
+restriction when the two carriers have the same universe.
 -/
 
 @[expose] public section
@@ -45,8 +45,11 @@ universe r s vM vN vU h
 
 namespace TensorProduct
 
-/-- The equivalence with the native semilinear Hom–tensor map as its forward map,
-earned from finite projectivity of the `S`-module tensor factor. -/
+/-- Let `R : Type r` and `S : Type s` be commutative semirings, `σ : R →+* S`, `M` an
+`R`-semimodule, and `N,U` independently sized `S`-semimodules. Assume `U` is finite and
+projective over `S`. The linear equivalence `(M →ₛₗ[σ] N) ⊗[S] U ≃ₗ[S] (M →ₛₗ[σ] N ⊗[S] U)`
+has forward map `rTensorHomToHomRTensor σ M N U`, sending `f ⊗ u` to `m ↦ f(m) ⊗ u`. The
+source `M` is arbitrary. -/
 def semilinearHomFiniteFactorEquiv
     {R : Type r} {S : Type s} [CommSemiring R] [CommSemiring S] (σ : R →+* S)
     (M : Type vM) [AddCommMonoid M] [Module R M]
@@ -65,7 +68,9 @@ section Tensor
 
 variable {S : Type s} [CommSemiring S]
 
-/-- Tensoring on the right with an independently sized semimodule. -/
+/-- For a commutative semiring `S : Type s` and `U : SemimoduleCat.{vU} S`, the functor
+`SemimoduleCat.{vN} S → SemimoduleCat.{max vN vU} S` sends `N` to `N ⊗[S] U` and a linear map
+`f` to `f.rTensor U`. The coefficient and tensor-factor carrier universes are independent. -/
 def tensorRightFunctor (U : SemimoduleCat.{vU} S) :
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vN vU} S where
   obj N := of S (N ⊗[S] U)
@@ -103,7 +108,9 @@ section Lift
 
 variable (R : Type r) [Semiring R]
 
-/-- The canonical universe lift of a semimodule, retaining its linear maps. -/
+/-- For a semiring `R : Type ringU`, the functor `SemimoduleCat.{carrierU} R → SemimoduleCat.{max
+liftU carrierU} R` sends `M` to `ULift.{liftU} M`, with the transported `R`-module structure.
+It sends a linear map `f` to the map `ULift.up m ↦ ULift.up (f m)`. -/
 def uliftFunctor.{liftU, ringU, carrierU} (R : Type ringU) [Semiring R] :
     SemimoduleCat.{carrierU} R ⥤ SemimoduleCat.{max liftU carrierU} R where
   obj M := of R (ULift.{liftU} M)
@@ -134,11 +141,14 @@ section Hom
 
 variable {R : Type r} {S : Type s} [Semiring R] [CommSemiring S] (σ : R →+* S)
 
-/-- The semilinear Hom functor in its coefficient, with unrestricted source. -/
+/-- Let `R : Type r` be a semiring, `S : Type s` a commutative semiring, `σ : R →+* S`, and `M :
+SemimoduleCat.{vM} R`. The functor `SemimoduleCat.{vN} S → SemimoduleCat.{max vM vN} S` sends
+`N` to `M →ₛₗ[σ] N`, with pointwise `S`-action. Its map on `f : N → N'` is postcomposition `a
+↦ f ∘ a`. -/
 def semilinearHomCoeffFunctor (σ : R →+* S) (M : SemimoduleCat.{vM} R) :
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
-  map {N N'} f := ofHom (LinearMap.llcomp S M N N' f.hom)
+  map {N N'} f := ofHom (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' f.hom)
   map_id N := by
     apply SemimoduleCat.hom_ext
     apply LinearMap.ext
@@ -154,6 +164,8 @@ def semilinearHomCoeffFunctor (σ : R →+* S) (M : SemimoduleCat.{vM} R) :
     intro x
     rfl
 
+attribute [local implicit_reducible] semilinearHomCoeffFunctor
+
 instance semilinearHomCoeffFunctor_preservesZero (M : SemimoduleCat.{vM} R) :
     (semilinearHomCoeffFunctor σ M : SemimoduleCat.{vN} S ⥤
       SemimoduleCat.{max vM vN} S).PreservesZeroMorphisms := by
@@ -166,7 +178,10 @@ instance semilinearHomCoeffFunctor_preservesZero (M : SemimoduleCat.{vM} R) :
   intro x
   rfl
 
-/-- Semilinear Hom as the original contravariant/covariant bifunctor. -/
+/-- Let `R : Type r` be a semiring, `S : Type s` a commutative semiring, and `σ : R →+* S`. The
+bifunctor `(SemimoduleCat.{vM} R)ᵒᵖ ⥤ SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S` has
+value `M →ₛₗ[σ] N`. A source map `a : M' → M` acts by precomposition, and a coefficient map `b
+: N → N'` acts by postcomposition. -/
 def semilinearHomFunctor (σ : R →+* S) : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S where
   obj M := semilinearHomCoeffFunctor σ M.unop
@@ -198,11 +213,17 @@ def semilinearHomFunctor (σ : R →+* S) : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
     intro x
     rfl
 
-/-- Semilinear Hom in the source, at a fixed independently sized coefficient. -/
+attribute [local implicit_reducible] semilinearHomFunctor
+
+/-- Let `R : Type r` be a semiring, `S : Type s` a commutative semiring, `σ : R →+* S`, and `N :
+SemimoduleCat.{vN} S`. The functor `(SemimoduleCat.{vM} R)ᵒᵖ → SemimoduleCat.{max vM vN} S`
+sends `M` to `M →ₛₗ[σ] N`; a linear map `a : M' → M` induces `f ↦ f ∘ a`. -/
 def semilinearHomSourceFunctor (σ : R →+* S) (N : SemimoduleCat.{vN} S) :
     (SemimoduleCat.{vM} R)ᵒᵖ ⥤ SemimoduleCat.{max vM vN} S :=
   semilinearHomFunctor σ ⋙
     (evaluation (SemimoduleCat.{vN} S) (SemimoduleCat.{max vM vN} S)).obj N
+
+attribute [local implicit_reducible] semilinearHomSourceFunctor
 
 instance semilinearHomSourceFunctor_preservesZero (N : SemimoduleCat.{vN} S) :
     (semilinearHomSourceFunctor σ N : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
@@ -232,7 +253,11 @@ section FiniteFactor
 
 variable {R : Type r} {S : Type s} [CommSemiring R] [CommSemiring S] (σ : R →+* S)
 
-/-- The native finite-factor comparison is natural in the coefficient semimodule. -/
+/-- Let `R,S` be commutative semirings, `σ : R →+* S`, `M : SemimoduleCat.{vM} R`, and `U :
+SemimoduleCat.{vU} S` finite projective over `S`. The natural isomorphism in `N :
+SemimoduleCat.{vN} S` identifies `Hom_σ(M,N) ⊗_S U` with `Hom_σ(M,N ⊗_S U)`. Its component
+sends `f ⊗ u` to `m ↦ f(m) ⊗ u`, and its naturality maps are coefficient postcomposition and
+tensoring on the right. -/
 def semilinearHomCoeffTensorIso (M : SemimoduleCat.{vM} R) (U : SemimoduleCat.{vU} S)
     [Module.Finite S U] [Module.Projective S U] :
     (semilinearHomCoeffFunctor σ M : SemimoduleCat.{vN} S ⥤
@@ -245,12 +270,16 @@ def semilinearHomCoeffTensorIso (M : SemimoduleCat.{vM} R) (U : SemimoduleCat.{v
       apply SemimoduleCat.hom_ext
       change
         (TensorProduct.rTensorHomToHomRTensor σ M N' U).comp
-            ((LinearMap.llcomp S M N N' g.hom).rTensor U) =
-          (LinearMap.llcomp S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
+            ((LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' g.hom).rTensor U) =
+          (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ)
+             S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
             (TensorProduct.rTensorHomToHomRTensor σ M N U)
       exact TensorProduct.rTensorHomToHomRTensor_postcomp σ M N (U := U) g.hom)
 
-/-- The same finite-factor comparison is natural in the arbitrary source semimodule. -/
+/-- Let `R,S` be commutative semirings, `σ : R →+* S`, `N : SemimoduleCat.{vN} S`, and `U :
+SemimoduleCat.{vU} S` finite projective over `S`. The natural isomorphism on
+`(SemimoduleCat.{vM} R)ᵒᵖ` identifies `Hom_σ(M,N) ⊗_S U` with `Hom_σ(M,N ⊗_S U)` for arbitrary
+`M`. Its component is `f ⊗ u ↦ (m ↦ f(m) ⊗ u)` and it commutes with source precomposition. -/
 def semilinearHomSourceTensorIso (N : SemimoduleCat.{vN} S) (U : SemimoduleCat.{vU} S)
     [Module.Finite S U] [Module.Projective S U] :
     (semilinearHomSourceFunctor σ N : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
@@ -267,6 +296,8 @@ def semilinearHomSourceTensorIso (N : SemimoduleCat.{vN} S) (U : SemimoduleCat.{
           (LinearMap.lcompₛₗ S (N ⊗[S] U) σ k.unop.hom).comp
             (TensorProduct.rTensorHomToHomRTensor σ M.unop N U)
       exact TensorProduct.rTensorHomToHomRTensor_precomp σ M.unop N (U := U) k.unop.hom)
+
+attribute [local implicit_reducible] semilinearHomCoeffTensorIso semilinearHomSourceTensorIso
 
 @[simp]
 theorem semilinearHomCoeffTensorIso_hom_apply (M : SemimoduleCat.{vM} R)
@@ -292,7 +323,11 @@ section Hom
 
 variable {R : Type r} {S : Type s} [Ring R] [CommRing S] (σ : R →+* S)
 
-/-- The native restricted-Hom additive equivalence with its coefficient `S`-linearity. -/
+/-- Let `R : Type r` be a ring, `S : Type s` a commutative ring, `σ : R →+* S`, `M :
+ModuleCat.{vM} R`, and `N : ModuleCat.{vM} S`. The `S`-linear equivalence `(M →ₛₗ[σ] N) ≃ₗ[S]
+(M ⟶ (restrictScalars σ).obj N)` preserves the underlying function in both directions. The
+coefficient `S`-action on the restricted Hom space uses the commuting `R`- and `S`-actions on
+`N` induced by `σ`. -/
 def semilinearMapLinearEquiv (M : ModuleCat.{vM} R) (N : ModuleCat.{vM} S) :
     letI : SMulCommClass R S ((restrictScalars σ).obj N) := sMulCommClass_mk σ N
     (M →ₛₗ[σ] N) ≃ₗ[S] (M ⟶ (restrictScalars σ).obj N) := by
@@ -313,11 +348,14 @@ theorem semilinearMapLinearEquiv_symm_apply (M : ModuleCat.{vM} R) (N : ModuleCa
     (f : M ⟶ (restrictScalars σ).obj N) (x : M) :
     (semilinearMapLinearEquiv σ M N).symm f x = f.hom x := rfl
 
-/-- The coefficient `S`-linear Hom functor for an arbitrary `R`-module source. -/
+/-- Let `R : Type r` be a ring, `S : Type s` a commutative ring, `σ : R →+* S`, and `M :
+ModuleCat.{vM} R`. The functor `ModuleCat.{vN} S → ModuleCat.{max vM vN} S` sends `N` to `M
+→ₛₗ[σ] N`, with pointwise scalar action. An `S`-linear map `b : N → N'` induces
+postcomposition `f ↦ b ∘ f`. -/
 def semilinearHomCoeffFunctor (σ : R →+* S) (M : ModuleCat.{vM} R) :
     ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
-  map {N N'} f := ofHom (LinearMap.llcomp S M N N' f.hom)
+  map {N N'} f := ofHom (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' f.hom)
   map_id N := by
     apply ModuleCat.hom_ext
     apply LinearMap.ext
@@ -332,6 +370,8 @@ def semilinearHomCoeffFunctor (σ : R →+* S) (M : ModuleCat.{vM} R) :
     apply LinearMap.ext
     intro x
     rfl
+
+attribute [local implicit_reducible] semilinearHomCoeffFunctor
 
 instance semilinearHomCoeffFunctor_additive (M : ModuleCat.{vM} R) :
     (semilinearHomCoeffFunctor σ M : ModuleCat.{vN} S ⥤
@@ -355,7 +395,10 @@ instance semilinearHomCoeffFunctor_linear (M : ModuleCat.{vM} R) :
     intro x
     rfl
 
-/-- The independently sized semilinear Hom bifunctor on the native module categories. -/
+/-- Let `R : Type r` be a ring, `S : Type s` a commutative ring, and `σ : R →+* S`. The bifunctor
+`(ModuleCat.{vM} R)ᵒᵖ ⥤ ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S` has value `M →ₛₗ[σ] N`.
+For `a : M' → M` and `b : N → N'`, the induced map is `f ↦ b ∘ f ∘ a`; the source and
+coefficient carrier universes are independent. -/
 def semilinearHomFunctor (σ : R →+* S) : (ModuleCat.{vM} R)ᵒᵖ ⥤
     ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S where
   obj M := semilinearHomCoeffFunctor σ M.unop
@@ -387,11 +430,18 @@ def semilinearHomFunctor (σ : R →+* S) : (ModuleCat.{vM} R)ᵒᵖ ⥤
     intro x
     rfl
 
-/-- The source-variable Hom functor at an independently sized coefficient module. -/
+attribute [local implicit_reducible] semilinearHomFunctor
+
+/-- Let `R : Type r` be a ring, `S : Type s` a commutative ring, `σ : R →+* S`, and `N :
+ModuleCat.{vN} S`. The functor `(ModuleCat.{vM} R)ᵒᵖ → ModuleCat.{max vM vN} S` sends an
+arbitrary `R`-module `M` to `M →ₛₗ[σ] N`. Its map on `a : M' → M` is precomposition `f ↦ f ∘
+a`. -/
 def semilinearHomSourceFunctor (σ : R →+* S) (N : ModuleCat.{vN} S) :
     (ModuleCat.{vM} R)ᵒᵖ ⥤ ModuleCat.{max vM vN} S :=
   semilinearHomFunctor σ ⋙
     (evaluation (ModuleCat.{vN} S) (ModuleCat.{max vM vN} S)).obj N
+
+attribute [local implicit_reducible] semilinearHomSourceFunctor
 
 instance semilinearHomSourceFunctor_additive (N : ModuleCat.{vN} S) :
     (semilinearHomSourceFunctor σ N : (ModuleCat.{vM} R)ᵒᵖ ⥤
@@ -420,7 +470,10 @@ section FiniteFactor
 
 variable {R : Type r} {S : Type s} [CommRing R] [CommRing S] (σ : R →+* S)
 
-/-- Coefficient-variable naturality of the native finite projective tensor comparison. -/
+/-- Let `R,S` be commutative rings, `σ : R →+* S`, `M : ModuleCat.{vM} R`, and `U : ModuleCat.{vU}
+S` finite projective over `S`. The natural isomorphism in `N : ModuleCat.{vN} S` identifies
+`Hom_σ(M,N) ⊗_S U` with `Hom_σ(M,N ⊗_S U)`. Each component sends `f ⊗ u` to `m ↦ f(m) ⊗ u`,
+and the naturality square uses coefficient postcomposition and right tensoring. -/
 def semilinearHomCoeffTensorIso (M : ModuleCat.{vM} R) (U : ModuleCat.{vU} S)
     [Module.Finite S U] [Module.Projective S U] :
     (semilinearHomCoeffFunctor σ M : ModuleCat.{vN} S ⥤
@@ -433,12 +486,17 @@ def semilinearHomCoeffTensorIso (M : ModuleCat.{vM} R) (U : ModuleCat.{vU} S)
       apply ModuleCat.hom_ext
       change
         (TensorProduct.rTensorHomToHomRTensor σ M N' U).comp
-            ((LinearMap.llcomp S M N N' g.hom).rTensor U) =
-          (LinearMap.llcomp S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
+            ((LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' g.hom).rTensor U) =
+          (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ)
+             S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
             (TensorProduct.rTensorHomToHomRTensor σ M N U)
       exact TensorProduct.rTensorHomToHomRTensor_postcomp σ M N (U := U) g.hom)
 
-/-- Source-variable naturality of the same native finite projective tensor comparison. -/
+/-- Let `R,S` be commutative rings, `σ : R →+* S`, `N : ModuleCat.{vN} S`, and `U : ModuleCat.{vU}
+S` finite projective over `S`. On `(ModuleCat.{vM} R)ᵒᵖ`, there is a natural isomorphism
+`Hom_σ(-,N) ⊗_S U ≅ Hom_σ(-,N ⊗_S U)`. Its component sends `f ⊗ u` to `m ↦ f(m) ⊗ u` and
+commutes with precomposition by arbitrary source morphisms. All three carrier universes are
+independent. -/
 def semilinearHomSourceTensorIso (N : ModuleCat.{vN} S) (U : ModuleCat.{vU} S)
     [Module.Finite S U] [Module.Projective S U] :
     (semilinearHomSourceFunctor σ N : (ModuleCat.{vM} R)ᵒᵖ ⥤
@@ -456,6 +514,8 @@ def semilinearHomSourceTensorIso (N : ModuleCat.{vN} S) (U : ModuleCat.{vU} S)
           (LinearMap.lcompₛₗ S (N ⊗[S] U) σ k.unop.hom).comp
             (TensorProduct.rTensorHomToHomRTensor σ M.unop N U)
       exact TensorProduct.rTensorHomToHomRTensor_precomp σ M.unop N (U := U) k.unop.hom)
+
+attribute [local implicit_reducible] semilinearHomCoeffTensorIso semilinearHomSourceTensorIso
 
 @[simp]
 theorem semilinearHomCoeffTensorIso_hom_apply (M : ModuleCat.{vM} R)

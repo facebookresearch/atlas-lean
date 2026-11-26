@@ -1,4 +1,7 @@
-# Hom Tensor Finite Factor Projected forward
+# Projection recovers the matching signed coefficient coordinates
 
-Projection of the same arbitrary original tensor summand recovers exactly
-the earned signed full-product comparison, before applying its inverse.
+Projection recovers the matching signed coefficient coordinates.
+
+Apply the degree-`n` comparison to the source cell `(n - b, b)` and project to factor degree
+`b`. The result is `cochainTensorFiniteFactorEquiv` of the cell tensor, as a full integer
+family of linear maps.

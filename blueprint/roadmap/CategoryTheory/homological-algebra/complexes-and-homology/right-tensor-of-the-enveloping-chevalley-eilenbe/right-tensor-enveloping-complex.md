@@ -1,4 +1,6 @@
-# Right Tensor Enveloping Complex
+# The balanced tensor complex of enveloping chains
 
-Apply the original balanced right tensor functor to the original native
-enveloping CE complex.
+The balanced tensor complex of enveloping chains.
+
+Apply `N ⊗[U_R(L)] -` degreewise to the enveloping Chevalley–Eilenberg chain complex, with `N`
+a fixed right module.

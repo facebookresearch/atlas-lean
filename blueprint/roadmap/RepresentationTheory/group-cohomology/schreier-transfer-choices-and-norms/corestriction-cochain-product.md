@@ -1,4 +1,6 @@
-# Corestriction Cochain product
+# The product-transversal cochain formula
 
-Cochain-level transitivity of arbitrary-degree Schreier transfer for
-the compatible product right transversal.
+The product-transversal cochain formula.
+
+In degree n, transfer with S.product T equals transfer with S and then with T, after
+identifying K with its ambient subgroup image in each source tuple coordinate.

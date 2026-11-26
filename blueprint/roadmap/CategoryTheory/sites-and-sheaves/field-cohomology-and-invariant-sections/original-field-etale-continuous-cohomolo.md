@@ -1,3 +1,6 @@
-# Original field etale continuous cohomology comparison
+# Every field étale cohomology degree has its continuous comparison
 
-The original comparison exists for every actual common sheaf and every degree.
+Every field étale cohomology degree has its continuous comparison.
+
+For every common-universe abelian sheaf and every natural degree, an additive equivalence with
+continuous Galois cohomology of its geometric fiber exists.

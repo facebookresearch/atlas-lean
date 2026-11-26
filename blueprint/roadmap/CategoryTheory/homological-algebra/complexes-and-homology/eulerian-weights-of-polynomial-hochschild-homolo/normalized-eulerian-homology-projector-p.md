@@ -1,3 +1,6 @@
-# Normalized Eulerian Homology Projector polynomial Class
+# The Eulerian weight of a normalized polynomial exterior class
 
-The normalized signed polynomial class has its original top Eulerian homology weight.
+The Eulerian weight of a normalized polynomial exterior class.
+
+The normalized degree-`n` homology projector fixes each polynomial exterior class at weight
+`n` and kills it at every other weight.

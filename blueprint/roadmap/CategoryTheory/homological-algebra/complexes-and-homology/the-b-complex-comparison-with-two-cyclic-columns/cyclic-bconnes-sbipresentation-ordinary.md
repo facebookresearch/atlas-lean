@@ -1,3 +1,6 @@
-# Cyclic BConnes SBIPresentation ordinary Comparison
+# The ordinary chain comparison of the left-unit SBI presentation
 
-The chain-level ordinary comparison stays the original unit-independent first-column map.
+The ordinary chain comparison of the left-unit SBI presentation.
+
+The comparison from the ordinary `b`-complex to the retained two-column total is the first-
+column inclusion.

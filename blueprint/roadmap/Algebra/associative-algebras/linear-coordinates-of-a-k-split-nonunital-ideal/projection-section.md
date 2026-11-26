@@ -1,3 +1,5 @@
-# Projection section
+# The split projection vanishes on the section image
 
-The original section has zero ideal coordinate.
+The split projection vanishes on the section image.
+
+For a class `x ∈ A/I`, one has `π(s(x)) = 0`.

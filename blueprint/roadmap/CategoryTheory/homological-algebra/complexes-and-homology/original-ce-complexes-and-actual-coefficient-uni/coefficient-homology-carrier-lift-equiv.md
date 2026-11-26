@@ -1,4 +1,6 @@
-# Coefficient Homology Carrier Lift Equiv
+# The linear lift equivalence of a CE homology carrier
 
-Up/down linear equivalence between the lower-universe homology carrier and its lifted object.
-The carrier universes are independent.
+The linear lift equivalence of a CE homology carrier.
+
+The homology carrier is ground-linearly equivalent to its module lift by `x ↦ up(x)` and
+`up(x) ↦ x`.

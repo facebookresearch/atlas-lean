@@ -1,3 +1,6 @@
-# Graded Ring Object Decompose Add Hom
+# The ring decomposition indexed by integer degrees
 
-AddMonoidHom version of the graded ring decomposition
+The ring decomposition indexed by integer degrees.
+
+Decompose R by its natural grading and insert each component 𝒜_n into the direct-sum component
+at the integer n.

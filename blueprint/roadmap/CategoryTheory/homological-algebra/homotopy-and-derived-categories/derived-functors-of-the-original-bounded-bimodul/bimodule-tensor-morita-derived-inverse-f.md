@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Inverse Functor
+# Inverse Morita tensor functor on bounded localizations
 
-The actual inverse tensor functor on that same original bounded-derived model.
+Inverse Morita tensor functor on bounded localizations.
+
+Localize the inverse bounded finite-module tensor functor to obtain `FGModuleDerived S ⥤
+FGModuleDerived R`.

@@ -16,19 +16,16 @@ public import Mathlib.CategoryTheory.Comma.Arrow
 public import Mathlib.CategoryTheory.Limits.Shapes.ZeroObjects
 
 /-!
-# Zero-arrow normalization for Waldhausen cylinders
+# Normalization of a cylinder functor on zero-source arrows
 
-The minimal Waldhausen interface assumes a zero object but not a separate
-`HasZeroMorphisms` structure.  The low-level `zeroArrowFunctor` therefore
-uses the unique map from zero directly.
+Let C be a category with a zero object. The zero-arrow functor sends
+A to the unique map 0 → A. For T:Arrow(C) → C, a target inclusion
+back:Right → T and projection:T → Right, normalization consists of a
+natural isomorphism T(0 → A) ≅ A whose forward map is the projection
+and whose inverse is the target inclusion.
 
-`CylinderNormalization` packages the source-faithful natural isomorphism
-`T(0 ⟶ -) ≅ 𝟭 C`.  Its hom is the cylinder projection and its inverse is the
-back inclusion.  The first consequence records the missing inverse identity
-at zero arrows.
-
-This file defines no full cylinder, cylinder axiom, Cyl-I exactness, Stage
-cylinder, Approximation theorem, or K-theory consequence.
+Consequently the projection T(0 → A) → A followed by the target inclusion
+A → T(0 → A) is the identity of T(0 → A).
 -/
 
 @[expose] public section
@@ -43,8 +40,9 @@ namespace CategoryTheory.Waldhausen
 
 variable {C : Type u} [Category.{v} C] [HasZeroObject C]
 
-/-- The functor sending `A` to the unique arrow `0 ⟶ A`, requiring only a
-zero object. -/
+/-- For a category C with a zero object, the functor C → Arrow(C) sends
+A to the unique map 0 → A and a morphism f:A → B to the square
+with source side 1_0 and target side f. -/
 noncomputable def zeroArrowFunctor : C ⥤ Arrow C where
   obj A := Arrow.mk ((isZero_zero C).to_ A)
   map {A B} f := Arrow.homMk (𝟙 (0 : C)) f
@@ -58,9 +56,11 @@ noncomputable def zeroArrowFunctor : C ⥤ Arrow C where
     · simp
     · rfl
 
-/-- Natural normalization of a cylinder functor on arrows over maps from
-zero.  Projection and back inclusion are the two directions of the
-normalization isomorphism. -/
+/-- Let C have a zero object, T:Arrow(C) → C be a functor, and
+back:Right → T, projection:T → Right natural transformations.
+Cylinder normalization is a natural isomorphism T(0 → A) ≅ A
+whose forward component is projection at 0 → A and whose inverse
+is back at that arrow. -/
 structure CylinderNormalization
     (T : Arrow C ⥤ C)
     (back : Arrow.rightFunc ⟶ T)
@@ -74,7 +74,10 @@ structure CylinderNormalization
     zeroNormalization.inv =
       Functor.whiskerLeft zeroArrowFunctor back
 
-/-- At a zero arrow, projection followed by back inclusion is the identity. -/
+/-- For a category C with a zero object and normalized data
+T:Arrow(C) → C, back:Right → T and projection:T → Right,
+the composite T(0 → A) —projection→ A —back→ T(0 → A)
+is the identity for every A. -/
 theorem CylinderNormalization.projection_back
     {T : Arrow C ⥤ C}
     {back : Arrow.rightFunc ⟶ T}
@@ -99,7 +102,8 @@ private theorem zeroArrowFunctor_source_isZero_computed (X : C) :
   change IsZero (0 : C)
   exact isZero_zero C
 
-/-- The source of every original zero arrow is the actual selected zero object. -/
+/-- In a category C with a zero object, the source object of the arrow
+assigned to X by the zero-arrow functor is a zero object. -/
 theorem zeroArrowFunctor_source_isZero (X : C) :
     IsZero ((zeroArrowFunctor (C := C)).obj X).left :=
   zeroArrowFunctor_source_isZero_computed X

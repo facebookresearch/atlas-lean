@@ -1,7 +1,7 @@
 # The rational Eulerian Hochschild chain maps
 
-- [Eulerian Chain Map](eulerian-chain-map.md)
-- [Eulerian Chain Map f](eulerian-chain-map-f.md)
-- [Eulerian Chain Map comp](eulerian-chain-map-comp.md)
-- [Eulerian Chain Map support](eulerian-chain-map-support.md)
-- [Eulerian Chain Map sum](eulerian-chain-map-sum.md)
+- [Eulerian weight projections of Hochschild chains](eulerian-chain-map.md)
+- [The rational permutation operator in each degree](eulerian-chain-map-f.md)
+- [Orthogonality of Eulerian chain projections](eulerian-chain-map-comp.md)
+- [Eulerian weights vanish beyond the tensor degree](eulerian-chain-map-support.md)
+- [Completeness of the Eulerian projections in each degree](eulerian-chain-map-sum.md)

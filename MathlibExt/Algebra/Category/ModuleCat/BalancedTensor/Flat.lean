@@ -16,16 +16,17 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Exactness
 public import MathlibExt.Algebra.Homology.HomologicalComplex.CyclesComplex
 
 /-!
-# Tor vanishing and flatness of balanced tensor
+# Flatness criteria from balanced Tor
 
-The opposite-variable Tor comparison turns first-variable Tor₁ vanishing
-into exactness of the coefficient tensor functor and vanishing of higher Tor.
-The derived exact sequence shows that flat middle and quotient modules have
-flat kernels. This applies to the cycles, term and outgoing-image sequence
-in every complex shape.
+Let `R` be an arbitrary ring, and assume the right and left module categories in the chosen
+carrier universe have projective resolutions. A right module `A` has an exact tensor functor
+`A ⊗_R -` precisely when `Tor¹_R(A, B)` vanishes for every left module `B`. This condition
+also gives vanishing in all positive Tor degrees.
 
-The ring and modules are arbitrary; projectivity of the modules or
-differential images is not required.
+For a short exact sequence of right modules, vanishing of `Tor¹` for the quotient at a fixed
+left module makes tensoring preserve the sequence. If the middle and quotient modules satisfy
+the all-left-module vanishing condition, so does the kernel. Consequently, flat complex terms
+and flat outgoing differential images give flat cycles, for arbitrary complex shapes.
 -/
 
 @[expose] public section
@@ -41,7 +42,11 @@ variable (R : Type u) [Ring R]
   [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
   [HasProjectiveResolutions (ModuleCat.{v} R)]
 
-/-- Exactness in the coefficient variable is detected by the actual first-variable Tor₁. -/
+/-- Exactness of a balanced tensor functor is detected by Tor one.
+
+For a right `R`-module `A`, preservation of finite limits by the group-valued tensor functor
+`A ⊗_R -` is equivalent to `Tor¹_R(A, B) = 0` for every left module `B`, assuming both module
+categories have projective resolutions. -/
 theorem groupBifunctor_obj_preservesFiniteLimits_iff_torFirst_one
     (A : ModuleCat.{v} Rᵐᵒᵖ) :
     PreservesFiniteLimits ((groupBifunctor R).obj A) ↔
@@ -61,7 +66,10 @@ theorem groupBifunctor_obj_preservesFiniteLimits_iff_torFirst_one
     change IsZero ((F.leftDerived 1).obj B) at hSecond
     exact hSecond
 
-/-- First-variable Tor₁ vanishing implies vanishing in every positive degree. -/
+/-- All-left-module Tor-one vanishing gives every positive Tor degree.
+
+If `Tor¹_R(A, B)` vanishes for every left module `B`, then `Tor^(n+1)_R(A, B)` vanishes for
+every natural `n` and every left module `B`. -/
 theorem isZero_torFirst_obj_succ_of_torFirst_one (A : ModuleCat.{v} Rᵐᵒᵖ)
     (hA : ∀ B : ModuleCat.{v} R, IsZero (((torFirst R 1).obj A).obj B))
     (B : ModuleCat.{v} R) (n : ℕ) :
@@ -75,8 +83,11 @@ theorem isZero_torFirst_obj_succ_of_torFirst_one (A : ModuleCat.{v} Rᵐᵒᵖ)
   exact hSecond.of_iso (torBalanceObjIso R A B (n + 1)).symm
 
 omit [HasProjectiveResolutions (ModuleCat.{v} R)] in
-/-- Tensoring an original right-module short exact sequence with a fixed
-left coefficient stays short exact when that single quotient Tor₁ value vanishes. -/
+/-- Tensor preserves a short exact sequence when quotient Tor one vanishes.
+
+Let `0 ⟶ S.X₁ ⟶ S.X₂ ⟶ S.X₃ ⟶ 0` be a short exact sequence of right modules. If `Tor¹_R(S.X₃,
+B)` is zero for a fixed left module `B`, tensoring the sequence with `B` gives a short exact
+sequence of additive groups. -/
 theorem shortExact_map_tensor_of_isZero_torFirst_one
     {S : ShortComplex (ModuleCat.{v} Rᵐᵒᵖ)} (hS : S.ShortExact)
     (B : ModuleCat.{v} R) (h₃ : IsZero (((torFirst R 1).obj S.X₃).obj B)) :
@@ -89,8 +100,10 @@ theorem shortExact_map_tensor_of_isZero_torFirst_one
   exact ShortComplex.ShortExact.map_of_isZero_leftDerived_one F hS h₁
 
 omit [HasProjectiveResolutions (ModuleCat.{v} R)] in
-/-- Tensoring an original right-module short exact sequence stays short exact
-when its quotient is Tor₁-flat; the other two modules need no flatness premise. -/
+/-- Flat quotient makes each tensor image sequence short exact.
+
+A short exact sequence of right modules remains short exact after tensoring with any left
+module `B` if the quotient has zero `Tor¹` against every left module. -/
 theorem shortExact_map_tensor_of_torFirst_one
     {S : ShortComplex (ModuleCat.{v} Rᵐᵒᵖ)} (hS : S.ShortExact)
     (h₃ : ∀ B : ModuleCat.{v} R, IsZero (((torFirst R 1).obj S.X₃).obj B))
@@ -98,8 +111,11 @@ theorem shortExact_map_tensor_of_torFirst_one
     (S.map ((groupBifunctor R).flip.obj B)).ShortExact :=
   shortExact_map_tensor_of_isZero_torFirst_one R hS B (h₃ B)
 
-/-- A kernel of a surjection between Tor₁-flat right modules is Tor₁-flat,
-using the genuine Tor₂ → Tor₁ → Tor₁ segment of the native derived sequence. -/
+/-- Flat middle and quotient modules give a flat kernel.
+
+In a short exact sequence of right modules, suppose the middle and quotient modules have zero
+`Tor¹` against every left module. Then the kernel has zero `Tor¹` against each left module
+`B`. -/
 theorem isZero_torFirst_one_of_shortExact
     {S : ShortComplex (ModuleCat.{v} Rᵐᵒᵖ)} (hS : S.ShortExact)
     (h₂ : ∀ B : ModuleCat.{v} R, IsZero (((torFirst R 1).obj S.X₂).obj B))
@@ -116,7 +132,11 @@ theorem isZero_torFirst_one_of_shortExact
   change IsZero ((F.leftDerived 1).obj S.X₁)
   exact Functor.isZero_leftDerived_obj_of_shortExact F 1 hS hSource hTarget
 
-/-- Flat original terms and outgoing images give flat actual cycles in any shape. -/
+/-- Flat terms and outgoing images give flat cycles.
+
+For a complex of right modules in any complex shape, suppose every term and every outgoing
+differential image has zero `Tor¹` against every left module. Then each cycle object also has
+zero `Tor¹` against every left module. -/
 theorem isZero_torFirst_one_cycles {ι : Type w} {c : ComplexShape ι}
     (P : HomologicalComplex (ModuleCat.{v} Rᵐᵒᵖ) c)
     (hP : ∀ i B, IsZero (((torFirst R 1).obj (P.X i)).obj B))
@@ -130,8 +150,11 @@ theorem isZero_torFirst_one_cycles {ι : Type w} {c : ComplexShape ι}
   exact isZero_torFirst_one_of_shortExact R hS (hP i) (hI i) B
 
 omit [HasProjectiveResolutions (ModuleCat.{v} R)] in
-/-- The original cycles/term/outgoing-image point sequence remains exact after
-balanced tensoring with an arbitrary coefficient when that image is flat. -/
+/-- Cycles-to-term-to-image sequence remains exact under tensor.
+
+For a right-module complex `P` and index `i`, assume its outgoing differential image at `i`
+has zero `Tor¹` against every left module. The short exact sequence from `P.cycles i` to `P.X
+i` to that image remains short exact after tensoring with any left module `B`. -/
 theorem cyclesImageSequence_map_tensor_shortExact {ι : Type w} {c : ComplexShape ι}
     (P : HomologicalComplex (ModuleCat.{v} Rᵐᵒᵖ) c) (i : ι)
     (hI : ∀ B : ModuleCat.{v} R,

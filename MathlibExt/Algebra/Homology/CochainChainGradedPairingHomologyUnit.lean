@@ -14,6 +14,17 @@ module
 public import MathlibExt.Algebra.Homology.CochainChainGradedPairingHomology
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairingAssociativity
 
+/-!
+# Units descend in mixed cochain–chain pairings
+
+For a commutative ring R, a nonnegative cochain complex U and chain
+complex K, a degree-zero cycle u in U acts as a left unit on H_q(K)
+when its cochain pairing acts as a unit after the specified input
+comparison. The maps on terms, cycles and homology must commute with
+cycle inclusion and homology projection. The input comparisons are maps,
+and their invertibility is not required.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -31,7 +42,15 @@ namespace HomologicalComplex.CochainChainGradedPairing
 
 variable (R : Type u) [CommRing R]
 
-/-- A pair-level left-unit identity for a cochain-chain pairing descends to homology. -/
+/-- Let R be a commutative ring, U a nonnegative module cochain
+complex, K a nonnegative module chain complex, and P:U⊗K→K a mixed
+graded pairing. Choose a cycle map u:R→Z⁰(U) and compatible maps
+a_X:K_q→K_(0+q), a_Z:Z_q(K)→Z_(0+q)(K), and
+a_H:H_q(K)→H_(0+q)(K), commuting with cycle inclusion and homology
+projection. If pairing the underlying unit cycle after a_X equals
+the left tensor unitor on K_q, the induced cohomology–homology
+pairing after a_H equals the left unitor on H_q(K).
+No invertibility of these input comparison maps is assumed. -/
 theorem pairHomology_left_unit_of_pair
     {U : CochainComplex (ModuleCat.{u} R) ℕ}
     {K : ChainComplex (ModuleCat.{u} R) ℕ}

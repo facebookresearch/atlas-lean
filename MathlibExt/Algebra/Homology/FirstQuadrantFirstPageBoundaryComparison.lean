@@ -13,13 +13,24 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageZeroBoundary
 
 /-!
-# Comparing the first-page boundary with the horizontal differential
+# The adjacent boundary is the signed horizontal homology map
 
-The exactness-defined boundary cycle in the adjacent-column short exact
-sequence is identified with the raw horizontal bicomplex representative.
-After the previously computed untwisting sign is inserted, the adjacent
-connecting homomorphism becomes `(-1)^(q+1)` times the horizontal homology
-map in vertical degree `q`.
+Let K be a nonnegative homological bicomplex in an abelian category C.
+Write D_p for its signed direct cochain column, with K_(p,q) in degree
+−p−q, and 0 → D_p → M_p → D_(p+1) → 0 for the adjacent quotient
+short exact sequence.
+
+The supported section of column p+1 into F_(p+1) sends a source cycle
+to a lift whose total differential is its raw horizontal differential
+in column p. This identifies the exactness-defined adjacent boundary
+representative with the map obtained from (K.d_(p+1,p))_q.
+
+After transporting through the column sign-removing comparisons, the
+boundary-cycle lift is (−1)^(q+1) times the horizontal cycles map.
+Consequently the adjacent connecting homomorphism, identified with a
+map H_q(K_(p+1)) → H_q(K_p), is
+δ_adj = (−1)^(q+1) H_q(d_h).
+The formulas include p=0, the edge from column one to column zero.
 -/
 
 @[expose] public section
@@ -39,9 +50,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Supported-degree section of column `p` into complete filtration stage
-`p`, using the direct zero-stage presentation and the natural positive-stage
-presentation. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q ≥ 0, the supported section is
+s_(p,q) : D_p^(−p−q) → F_p^(−p−q).
+At p=0 it is the direct complete zero-stage section, and at
+positive p it is the finite top-column section transported to the
+complete-stage presentation. -/
 noncomputable def horizontalCompleteDirectColumnSupportedSection :
     (p q : ℕ) →
       (horizontalDirectColumnCochain K p).X (-(p : ℤ) - q) ⟶
@@ -50,8 +64,11 @@ noncomputable def horizontalCompleteDirectColumnSupportedSection :
   | 0, q => horizontalCompleteDirectColumnSectionComponent K 0 q
   | p + 1, q => horizontalCompleteSuccDirectColumnSection K p q
 
-/-- In every column, the inverse cokernel comparison is the supported-degree
-section followed by the cokernel projection. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the inverse of coker(F_(p−1) → F_p) ≅ D_p has component
+in degree i=−p−q equal to π_i ∘ s_(p,q).
+Here s is the supported top-column section into F_p and π is
+the consecutive-stage cokernel projection. -/
 theorem horizontalFirstPageCokernelIso_inv_f_supported (p q : ℕ) :
     (horizontalFirstPageCokernelIso K p).inv.f (-(p : ℤ) - q) =
       horizontalCompleteDirectColumnSupportedSection K p q ≫
@@ -63,8 +80,13 @@ theorem horizontalFirstPageCokernelIso_inv_f_supported (p q : ℕ) :
   | succ p =>
       exact horizontalFirstPageCokernelIso_inv_f_succ K p q
 
-/-- Uniform complete-stage boundary formula, including the edge from column
-one to column zero. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, put i=−(p+1)−q and j=i+1=−p−q.
+On Z^i(D_(p+1)), taking the differential after the section into
+F_(p+1) equals applying the raw horizontal component
+(K.d_(p+1,p))_q, taking the supported target section into F_p,
+and including F_p into F_(p+1).
+This holds for all p,q≥0, including the one-to-zero edge. -/
 theorem horizontalCompleteDirectColumnSupportedSection_d (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).iCycles
         (-((p + 1 : ℕ) : ℤ) - q) ≫
@@ -85,9 +107,11 @@ theorem horizontalCompleteDirectColumnSupportedSection_d (p q : ℕ) :
   | succ p =>
       exact horizontalCompleteSuccDirectColumnSection_d K p q
 
-/-- The supported target section followed by the next filtration map and the
-middle cokernel projection is the left map of the adjacent short exact
-sequence. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and j=−p−q, the left map a : D_p → M_p of the
+adjacent quotient sequence has component
+a^j = π_M^j ∘ (F_p → F_(p+1))^j ∘ s_(p,q).
+The middle quotient is M_p=coker(F_(p−1) → F_(p+1)). -/
 theorem horizontalCompleteDirectColumnSupportedSection_adjacent_f
     (p q : ℕ) :
     horizontalCompleteDirectColumnSupportedSection K p q ≫
@@ -105,8 +129,12 @@ theorem horizontalCompleteDirectColumnSupportedSection_adjacent_f
   rw [← HomologicalComplex.comp_f]
   rw [← HomologicalComplex.comp_f, cokernel.π_desc]
 
-/-- The underlying raw horizontal representative between direct-column
-presentations. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let α_(p,q) : D_p^(−p−q) ≅ K_(p,q).
+The raw representative from Z^(−(p+1)−q)(D_(p+1)) to
+D_p^(−p−q) is
+α_(p,q)⁻¹ ∘ (K.d_(p+1,p))_q ∘ α_(p+1,q) ∘ i_Z.
+It uses the horizontal bicomplex component before sign transport. -/
 noncomputable def horizontalDirectColumnRawHorizontalRepresentative
     (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).cycles
@@ -118,8 +146,11 @@ noncomputable def horizontalDirectColumnRawHorizontalRepresentative
     (K.d (p + 1) p).f q ≫
     (horizontalDirectColumnCochainXIso K p q).inv
 
-/-- The differential of the canonical middle lift factors as the raw
-horizontal representative followed by the left adjacent-sequence map. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let s_M lift D_(p+1) into the middle quotient M_p and
+R_(p,q) be the raw horizontal representative on source cycles.
+Then d_M ∘ s_M ∘ i_Z = a ∘ R_(p,q), in degrees
+−(p+1)−q and −p−q, where a : D_p → M_p is the left adjacent arrow. -/
 theorem horizontalFirstPageAdjacentMiddleSection_d_eq_raw (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).iCycles
         (-((p + 1 : ℕ) : ℤ) - q) ≫
@@ -149,8 +180,11 @@ theorem horizontalFirstPageAdjacentMiddleSection_d_eq_raw (p q : ℕ) :
   rw [horizontalCompleteDirectColumnSupportedSection_adjacent_f K p q]
   simp only [Category.assoc]
 
-/-- The exactness-defined adjacent boundary is the raw horizontal
-representative. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q≥0, the boundary representative obtained from
+exactness of D_p → M_p → D_(p+1) equals R_(p,q), the raw
+horizontal component conjugated by the direct-column object
+identifications on source cycles. -/
 theorem horizontalFirstPageAdjacentBoundaryCycles_eq_raw (p q : ℕ) :
     horizontalFirstPageAdjacentBoundaryCycles K p q =
       horizontalDirectColumnRawHorizontalRepresentative K p q := by
@@ -169,8 +203,13 @@ theorem horizontalFirstPageAdjacentBoundaryCycles_eq_raw (p q : ℕ) :
   rw [horizontalFirstPageAdjacentBoundaryCycles_f]
   exact horizontalFirstPageAdjacentMiddleSection_d_eq_raw K p q
 
-/-- The boundary representative is the signed transported horizontal cycle
-representative. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let C_(p,q) be the horizontal cycles map transported
+through the sign-removing column identifications.
+The adjacent boundary representative satisfies
+b_(p,q) = (−1)^(q+1) i_Z ∘ C_(p,q),
+as a map from the column-p+1 source cycles to the column-p term
+in cochain degree −p−q. -/
 theorem horizontalFirstPageAdjacentBoundaryCycles_eq_horizontal (p q : ℕ) :
     horizontalFirstPageAdjacentBoundaryCycles K p q =
       ((q + 1 : ℕ) : ℤ).negOnePow •
@@ -181,8 +220,11 @@ theorem horizontalFirstPageAdjacentBoundaryCycles_eq_horizontal (p q : ℕ) :
   simp only [smul_smul, Int.units_mul_self, one_smul]
   rfl
 
-/-- The canonical lift of the adjacent boundary to target cycles is the
-signed transported horizontal cycles map. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the canonical target-cycle lift of the adjacent
+boundary representative equals (−1)^(q+1) C_(p,q).
+Here C_(p,q) is the horizontal cycles map conjugated by the
+direct-column sign and extension comparisons. -/
 theorem horizontalFirstPageAdjacentBoundaryLiftCycles_eq_horizontal
     (p q : ℕ) :
     (horizontalDirectColumnCochain K p).liftCycles
@@ -197,8 +239,11 @@ theorem horizontalFirstPageAdjacentBoundaryLiftCycles_eq_horizontal
   simp only [Linear.units_smul_comp]
   exact horizontalFirstPageAdjacentBoundaryCycles_eq_horizontal K p q
 
-/-- The connecting map on direct-column homology is the signed horizontal
-homology map, conjugated by the direct-column homology identifications. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let χ_(p,q) : H_(−p−q)(D_p) ≅ H_q(K_p).
+The adjacent connecting map satisfies
+δ = (−1)^(q+1) χ_(p,q)⁻¹ ∘ H_q(d_h) ∘ χ_(p+1,q).
+Its source degree is −(p+1)−q and its target degree is −p−q. -/
 theorem horizontalFirstPageAdjacentConnectingMap_eq_horizontal
     (p q : ℕ) :
     horizontalFirstPageAdjacentConnectingMap K p q =
@@ -213,8 +258,13 @@ theorem horizontalFirstPageAdjacentConnectingMap_eq_horizontal
   simp only [Linear.units_smul_comp, Linear.comp_units_smul]
   rw [horizontalDirectColumnHorizontalCyclesMap_homologyπ K p q]
 
-/-- After transport to ordinary vertical homology, the adjacent first-page
-connecting map is `(-1)^(q+1)` times the horizontal homology map. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q≥0, identifying the adjacent quotient homologies
+with ordinary vertical homology gives
+δ_adj : H_q(K_(p+1)) → H_q(K_p),
+δ_adj = (−1)^(q+1) H_q(K.d_(p+1,p)).
+This is the connecting morphism of the adjacent-column short
+exact sequence after the column sign-removing comparisons. -/
 theorem horizontalFirstPageAdjacentVerticalConnectingMap_eq_horizontal
     (p q : ℕ) :
     horizontalFirstPageAdjacentVerticalConnectingMap K p q =

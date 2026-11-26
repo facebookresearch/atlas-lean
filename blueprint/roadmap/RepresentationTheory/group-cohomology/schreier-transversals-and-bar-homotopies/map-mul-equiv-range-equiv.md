@@ -1,4 +1,5 @@
-# Map Mul Equiv Range Equiv
+# An equivalence onto the representative image set
 
-The representatives of a transversal are equivalent to the
-representatives in its transported image.
+An equivalence onto the representative image set.
+
+The map t ↦ e(t) identifies T with its image subset in G′.

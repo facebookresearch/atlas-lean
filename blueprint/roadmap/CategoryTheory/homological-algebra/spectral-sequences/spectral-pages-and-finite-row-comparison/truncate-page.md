@@ -1,3 +1,5 @@
-# Truncate page
+# The retained page complex is unchanged
 
-Every retained page is literally the original page complex.
+The retained page complex is unchanged.
+
+The page of the truncated sequence is the corresponding original page.

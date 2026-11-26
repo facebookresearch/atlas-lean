@@ -14,16 +14,19 @@ public import Mathlib.Algebra.Module.Projective
 public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
 /-!
-# A free underlying Lie algebra retract of a projective Lie algebra
+# A free-module Lie cover of a projective Lie algebra
 
-The projective module definition supplies a section of the canonical linear
-combination map from `L →₀ R` to `L`. On a separate copy of this free module
-the bracket is `i ⁅p x, p y⁆`. The section identity proves alternation,
-Jacobi, and the Lie compatibility of both maps. The complement is central.
+Let R be a commutative ring and L an R-Lie algebra whose underlying
+R-module is projective. The free R-module F = L →₀ R has the canonical
+projection p(∑_x r_x δ_x) = ∑_x r_x x. Projectivity supplies an R-linear
+section s : L → F with p s = id_L.
 
-This construction uses projectivity over the original commutative ring.
-It makes no assumption that the original module is free, and the free
-carrier lives in the maximum of the original scalar and Lie universes.
+Give F the Lie bracket [u,v]_F = s([p(u),p(v)]_L). Then F is an
+R-Lie algebra, s and p are Lie homomorphisms, and p s = id as Lie maps.
+The kernel of p is central, since [u,v]_F = 0 when p(u) = 0.
+Thus L is a Lie retract of an algebra whose underlying module is free.
+Its module basis is δ_x, x ∈ L, and its carrier lies in max(u,v)
+for the independent worlds of R and L.
 -/
 
 @[expose] public section
@@ -37,8 +40,11 @@ namespace LieAlgebra
 variable (R : Type u) [CommRing R]
   (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- A separate carrier for the free module on the original Lie algebra.
-Its Lie bracket is installed from the actual projective section below. -/
+/-- For a commutative ring R and an R-Lie algebra L, the free
+cover carrier is F = L →₀ R, the finitely supported R-valued
+functions on L. Its world is max(u,v), where R and L have
+independent carrier worlds u and v. Its module basis is indexed
+by the elements of L. -/
 def ProjectiveFreeCover : Type (max u v) := L →₀ R
 
 instance projectiveFreeCoverAddCommGroup : AddCommGroup (ProjectiveFreeCover R L) :=
@@ -47,20 +53,27 @@ instance projectiveFreeCoverAddCommGroup : AddCommGroup (ProjectiveFreeCover R L
 instance projectiveFreeCoverModule : Module R (ProjectiveFreeCover R L) :=
   inferInstanceAs (Module R (L →₀ R))
 
-/-- The underlying free module is the actual finitely supported function module. -/
+/-- For a commutative ring R and an R-Lie algebra L, the
+underlying cover module F is R-linearly equivalent to L →₀ R
+by the identity on finitely supported coefficient functions. -/
 def projectiveFreeCoverEquiv : ProjectiveFreeCover R L ≃ₗ[R] (L →₀ R) :=
   LinearEquiv.refl R (L →₀ R)
 
 instance projectiveFreeCoverFree : Module.Free R (ProjectiveFreeCover R L) :=
   Module.Free.of_equiv (projectiveFreeCoverEquiv R L).symm
 
-/-- The canonical original linear-combination projection. -/
+/-- For a commutative ring R and an R-Lie algebra L, the
+R-linear projection p : (L →₀ R) → L sends a finitely supported
+family c to ∑_x c(x) • x. In particular p(δ_x) = x. -/
 def projectiveCoverLinearProjection : ProjectiveFreeCover R L →ₗ[R] L :=
   Finsupp.linearCombination R (id : L → L)
 
 variable [hL : Module.Projective R L]
 
-/-- The actual section supplied by projectivity of the original module. -/
+/-- For a commutative ring R and an R-Lie algebra L whose
+underlying R-module is projective, the canonical projection
+p : (L →₀ R) → L has an R-linear section s : L → (L →₀ R)
+satisfying p(s(x)) = x for every x ∈ L. -/
 def projectiveCoverLinearInclusion : L →ₗ[R] ProjectiveFreeCover R L :=
   Classical.choose hL.out
 
@@ -76,9 +89,11 @@ theorem projectiveCoverLinearProjection_comp_inclusion :
   apply LinearMap.ext
   exact projectiveCoverLinearProjection_inclusion_apply R L
 
-/-- The bracket on the free underlying module is obtained from the original
-bracket and the actual section/retraction, rather than stipulated by a
-free-bracket extension hypothesis. -/
+/-- For a projective R-Lie algebra L over a commutative ring R,
+let p : F → L and s : L → F be the canonical free-cover projection
+and its projective section, with p s = id. The bracket
+[u,v]_F = s([p(u),p(v)]_L) makes the additive group F = L →₀ R
+a Lie ring. -/
 instance projectiveFreeCoverLieRing : LieRing (ProjectiveFreeCover R L) where
   __ := projectiveFreeCoverAddCommGroup R L
   bracket x y := projectiveCoverLinearInclusion R L
@@ -126,8 +141,10 @@ theorem projectiveFreeCover_lie (x y : ProjectiveFreeCover R L) :
     ⁅x, y⁆ = projectiveCoverLinearInclusion R L
       ⁅projectiveCoverLinearProjection R L x, projectiveCoverLinearProjection R L y⁆ := rfl
 
-/-- The projective section is an actual Lie algebra homomorphism for the
-constructed bracket. -/
+/-- For an R-Lie algebra L projective as an R-module, give
+F = L →₀ R the bracket [u,v]_F = s([p(u),p(v)]_L).
+The R-linear section s : L → F preserves brackets and therefore
+defines an R-Lie homomorphism L → F. -/
 def projectiveCoverInclusion : L →ₗ⁅R⁆ ProjectiveFreeCover R L where
   toLinearMap := projectiveCoverLinearInclusion R L
   map_lie' := by
@@ -139,7 +156,10 @@ def projectiveCoverInclusion : L →ₗ⁅R⁆ ProjectiveFreeCover R L where
     rw [projectiveCoverLinearProjection_inclusion_apply,
       projectiveCoverLinearProjection_inclusion_apply]
 
-/-- The canonical projection is an actual Lie algebra homomorphism. -/
+/-- For an R-Lie algebra L projective as an R-module, with
+free cover F and bracket [u,v]_F = s([p(u),p(v)]_L), the
+canonical R-linear projection p : F → L preserves brackets.
+It is a left inverse to the projective Lie inclusion s. -/
 def projectiveCoverProjection : ProjectiveFreeCover R L →ₗ⁅R⁆ L where
   toLinearMap := projectiveCoverLinearProjection R L
   map_lie' := by
@@ -161,7 +181,10 @@ theorem projectiveCoverProjection_comp_inclusion :
   apply LieHom.ext
   exact projectiveCoverProjection_inclusion_apply R L
 
-/-- The complement introduced by the free cover is central. -/
+/-- For a commutative ring R and an R-Lie algebra L projective
+as an R-module, let p : F → L be its free-cover Lie projection.
+If p(u) = 0, then [u,v]_F = 0 for every v ∈ F. Thus ker(p)
+is a central Lie ideal of the free-module cover. -/
 theorem projectiveFreeCover_lie_eq_zero_of_projection_eq_zero
     (x y : ProjectiveFreeCover R L) (hx : projectiveCoverProjection R L x = 0) :
     ⁅x, y⁆ = 0 := by
@@ -169,7 +192,10 @@ theorem projectiveFreeCover_lie_eq_zero_of_projection_eq_zero
   have hx' : projectiveCoverLinearProjection R L x = 0 := hx
   rw [hx', zero_lie, map_zero]
 
-/-- The free cover has the usual single-one basis, without a finite-rank assumption. -/
+/-- For a commutative ring R and an R-Lie algebra L, the
+underlying free-cover module F = L →₀ R has basis indexed by L,
+with vector δ_x the function equal to 1 at x and zero elsewhere.
+The index type L may have arbitrary cardinality. -/
 def projectiveFreeCoverBasis : Module.Basis L R (ProjectiveFreeCover R L) :=
   Finsupp.basisSingleOne
 

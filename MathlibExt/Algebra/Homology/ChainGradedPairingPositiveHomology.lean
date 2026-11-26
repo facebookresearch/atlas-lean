@@ -15,12 +15,16 @@ public import MathlibExt.Algebra.Homology.HomologicalComplexCokernelHomology
 public import MathlibExt.Algebra.Homology.ChainGradedPairingPositiveCokernel
 
 /-!
-# Low homology of the actual both-positive pairing quotient
+# Homology in degrees zero and one of the both-positive quotient
 
-The actual strict-positive map is zero in degrees zero and one. Its native
-cokernel projection therefore preserves homology in these degrees. The
-module pointwise quotient obtains the same comparison through its earned
-native cokernel isomorphism. No full Harrison or AQ comparison is asserted.
+For a pairing of nonnegative chain complexes with both first differentials
+zero, the strict-positive source has zero degree-zero and degree-one terms.
+Its map into K₃ therefore vanishes in degrees n<2.
+
+In an abelian monoidal category with additive tensoring, the cokernel
+projection preserves H_n for n<2. In a module category with chosen tensor,
+the pointwise positive image quotient has the same comparison through
+its canonical cokernel isomorphism. No higher-degree assertion is needed.
 -/
 
 @[expose] public section
@@ -40,7 +44,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {K₁ K₂ K₃ : ChainComplex C ℕ} (P : ChainGradedPairing K₁ K₂ K₃)
   (h₁ : K₁.d 1 0 = 0) (h₂ : K₂.d 1 0 = 0)
 
-/-- The actual strict-positive map has zero components below degree two. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+For n<2, the degree n component of P₊₊ is zero because
+no two positive bidegrees sum to n. -/
 theorem strictPositivePairing_f_eq_zero (n : ℕ) (hn : n < 2) :
     (strictPositivePairing P h₁ h₂).f n = 0 := by
   apply HomologicalComplex.mapBifunctor.hom_ext
@@ -67,7 +76,12 @@ theorem strictPositivePairing_f_eq_zero (n : ℕ) (hn : n < 2) :
     simpa only [MonoidalPreadditive.tensor_zero, zero_comp, id_f,
       Category.comp_id] using h.symm
 
-/-- The native projection is a quasi-isomorphism at every degree below two. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+For n<2, the cokernel projection K₃→Coker(P₊₊) is
+a quasi-isomorphism in degree n. -/
 theorem strictPositiveProjection_quasiIsoAt (n : ℕ) (hn : n < 2) :
     QuasiIsoAt (strictPositiveProjection P h₁ h₂) n := by
   change QuasiIsoAt (cokernel.π (strictPositivePairing P h₁ h₂)) n
@@ -78,13 +92,23 @@ theorem strictPositiveProjection_quasiIsoAt (n : ℕ) (hn : n < 2) :
       cases n <;> simp
     omega
 
-/-- The canonical low-degree isomorphism is the homology of the actual native projection. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+For n<2, the projection gives
+H_n(K₃)≅H_n(Coker(P₊₊)). -/
 def strictPositiveCokernelHomologyIso (n : ℕ) (hn : n < 2) :
     K₃.homology n ≅ (strictPositiveCokernel P h₁ h₂).homology n := by
   letI := strictPositiveProjection_quasiIsoAt P h₁ h₂ n hn
   exact _root_.isoOfQuasiIsoAt (strictPositiveProjection P h₁ h₂) n
 
-/-- The comparison's forward map is the original projection on homology. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+The forward low homology comparison is H_n(π_coker)
+for n<2. -/
 theorem strictPositiveCokernelHomologyIso_hom (n : ℕ) (hn : n < 2) :
     (strictPositiveCokernelHomologyIso P h₁ h₂ n hn).hom =
       HomologicalComplex.homologyMap (strictPositiveProjection P h₁ h₂) n := rfl
@@ -99,7 +123,12 @@ variable {R : Type u} [Ring R]
   (P : ChainGradedPairing K₁ K₂ K₃)
   (h₁ : K₁.d 1 0 = 0) (h₂ : K₂.d 1 0 = 0)
 
-/-- The actual pointwise quotient has the same low-degree quasi-isomorphism. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+For n<2, the pointwise positive image projection is a
+quasi-isomorphism in degree n. -/
 theorem positiveImageProjection_quasiIsoAt (n : ℕ) (hn : n < 2) :
     QuasiIsoAt (positiveImageProjection P h₁ h₂) n := by
   let := strictPositiveProjection_quasiIsoAt P h₁ h₂ n hn
@@ -108,13 +137,23 @@ theorem positiveImageProjection_quasiIsoAt (n : ℕ) (hn : n < 2) :
     infer_instance
   simpa only [e, strictPositiveProjection_comp_iso_hom] using h
 
-/-- The pointwise quotient comparison is induced by the original quotient projection. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+For n<2, the image quotient projection gives
+H_n(K₃)≅H_n(Q_J). -/
 def positiveImageQuotientHomologyIso (n : ℕ) (hn : n < 2) :
     K₃.homology n ≅ (positiveImageQuotient P h₁ h₂).homology n := by
   letI := positiveImageProjection_quasiIsoAt P h₁ h₂ n hn
   exact _root_.isoOfQuasiIsoAt (positiveImageProjection P h₁ h₂) n
 
-/-- The low-degree comparison retains the actual pointwise projection map. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+For n<2, the forward image quotient homology isomorphism
+is H_n(π_J). -/
 theorem positiveImageQuotientHomologyIso_hom (n : ℕ) (hn : n < 2) :
     (positiveImageQuotientHomologyIso P h₁ h₂ n hn).hom =
       HomologicalComplex.homologyMap (positiveImageProjection P h₁ h₂) n := rfl

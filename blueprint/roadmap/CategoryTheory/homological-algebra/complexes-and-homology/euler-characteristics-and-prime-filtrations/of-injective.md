@@ -1,4 +1,6 @@
-# Of injective
+# Finite multiplication lengths from injectivity and a finite quotient
 
-An injective multiplication map and a finite-length quotient supply the
-one-element Euler finiteness data.
+Finite multiplication lengths from injectivity and a finite quotient.
+
+If μ_r is injective and M/rM has finite length, its kernel and cokernel satisfy
+ElementEulerFiniteLength.

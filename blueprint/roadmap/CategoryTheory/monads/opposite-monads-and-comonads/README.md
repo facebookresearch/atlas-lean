@@ -2,25 +2,25 @@
 
 ## Monad
 
-- [Op](op.md)
-- [Op ε app](op-app.md)
-- [Op δ app](op-app-2.md)
+- [The opposite of a monad is a comonad](op.md)
+- [The opposite comonad counit is the reversed monad unit](op-app.md)
+- [The opposite comultiplication is the reversed monad multiplication](op-app-2.md)
 
 ## Comonad
 
-- [Op](op-2.md)
-- [Op η app](op-app-3.md)
-- [Op μ app](op-app-4.md)
+- [The opposite of a comonad is a monad](op-2.md)
+- [The opposite monad unit is the reversed counit](op-app-3.md)
+- [The opposite multiplication is the reversed comultiplication](op-app-4.md)
 
 ## Monad Hom
 
-- [Op](op-3.md)
+- [A monad morphism reverses to a comonad morphism](op-3.md)
 
 ## Comonad Hom
 
-- [Op](op-4.md)
+- [A comonad morphism reverses to a monad morphism](op-4.md)
 
 ## Category Theory
 
-- [Op Functor](op-functor.md)
-- [Op Functor](op-functor-2.md)
+- [Taking opposite monads defines a contravariant functor](op-functor.md)
+- [Taking opposite comonads defines a contravariant functor](op-functor-2.md)

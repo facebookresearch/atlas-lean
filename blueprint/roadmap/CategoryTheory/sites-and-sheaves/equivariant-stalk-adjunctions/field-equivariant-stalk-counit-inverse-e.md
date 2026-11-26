@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit inverse equivariant
+# Inverse field counit is Galois equivariant
 
-Its equivariance uses the SAME original Galois automorphism and actions.
+Inverse field counit is Galois equivariant.
+
+The inverse counit commutes with the Galois action on each coefficient element.

@@ -1,3 +1,5 @@
-# Map antipode
+# Enveloping maps commute with the Hopf antipode
 
-Canonical enveloping maps commute with the native antipodes.
+Enveloping maps commute with the Hopf antipode.
+
+For a Lie morphism f, map(f)(S(a))=S(map(f)(a)).

@@ -1,4 +1,6 @@
-# Local Regular Family Tor length eq
+# Local Tor and image-family homology have equal lengths under surjectivity
 
-Along the actual local map of a surjective support map, native Tor
-and local Koszul homology have the same module lengths.
+Local Tor and image-family homology have equal lengths under surjectivity.
+
+For surjective f, the Tor length over R_q equals the image-family Koszul homology length over
+S_p.

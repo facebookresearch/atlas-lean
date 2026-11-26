@@ -1,4 +1,6 @@
-# Small Etale Long Sequence initial injective
+# Initial degree zero cohomology map is injective
 
-The degree-zero map is injective, by the actual integral-sheaf Hom functor
-and the original sequence's first monomorphism.
+Initial degree zero cohomology map is injective.
+
+For a short exact sheaf sequence, the degree-zero cohomology map of its first arrow is
+injective.

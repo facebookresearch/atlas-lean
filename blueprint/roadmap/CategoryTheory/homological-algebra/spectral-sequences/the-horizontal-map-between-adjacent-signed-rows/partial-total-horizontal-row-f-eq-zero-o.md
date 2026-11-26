@@ -1,4 +1,6 @@
-# Partial Total Horizontal Row F eq zero of lt
+# Horizontal row component vanishes below target-row support
 
-Below the support of the target signed row, the horizontal row map is
-zero.
+Horizontal row component vanishes below target-row support.
+
+If `n < m`, then `B.partialTotalHorizontalRowF m n = 0`. The target term `(B.totalRow m).X n`
+is zero because row `m` starts in total degree `m`.

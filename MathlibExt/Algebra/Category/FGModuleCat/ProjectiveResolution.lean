@@ -19,17 +19,19 @@ public import Mathlib.CategoryTheory.Preadditive.Projective.Preserves
 public import Mathlib.RingTheory.Finiteness.Finsupp
 
 /-!
-# Projective resolutions with finite terms
+# Projective resolutions with finitely generated terms
 
-Finite generators give an actual finite free cover of every finite module.
-The category of finite modules therefore has enough projectives. A projective
-object in this category is a retract of its finite free cover, so it remains
-projective after forgetting to the category of all modules.
+Let R be a ring in universe u whose carrier admits a representative in the module universe v.
+Every finitely generated left R-module in v has a surjection from a finite free module in v.
+These covers give enough projectives in the category of finitely generated modules. A projective
+object of that category is a retract of its finite free cover, so it remains projective in the
+category of all R-modules.
 
-Over a Noetherian ring the original finite-module category is abelian. Its
-projective resolutions give resolutions in `ModuleCat` whose terms are all
-finite. No finite projective dimension or termination is asserted. The ring
-and the module carrier have independent universes.
+If R is Noetherian, the finitely generated module category is abelian and its inclusion into all
+modules is exact. Applying this inclusion to a projective resolution preserves the underlying
+modules, differentials, and augmentation. Every resolving term remains finitely generated. Thus
+each finitely generated R-module has a projective resolution with finitely generated terms in
+all nonnegative degrees.
 -/
 
 @[expose] public section
@@ -42,8 +44,10 @@ namespace FGModuleCat
 
 variable (R : Type u) [Ring R] [Small.{v} R]
 
-/-- Every actual finite module has a surjection from a finite free module
-in the original module universe. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. For M, there exist a finitely generated module P
+and an R-linear morphism f:P→M such that P is free and f is surjective. P has a finite basis,
+obtained from a finite generating family of M. -/
 theorem exists_finiteFree_cover (M : FGModuleCat.{v} R) :
     ∃ (P : FGModuleCat.{v} R) (f : P ⟶ M),
       Module.Free R P ∧ Function.Surjective f.hom.hom := by
@@ -61,8 +65,10 @@ theorem exists_finiteFree_cover (M : FGModuleCat.{v} R) :
     exact hs
   exact ⟨FGModuleCat.of R P, FGModuleCat.ofHom f, inferInstance, hcomb.comp e.surjective⟩
 
-/-- The actual finite free cover is a projective presentation in the
-category of finite modules. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Every object M has a projective presentation P --f→
+M with P projective in the finitely generated module category and f epi. A finite free cover
+supplies P and the surjective morphism f. -/
 theorem exists_projectivePresentation (M : FGModuleCat.{v} R) :
     Nonempty (ProjectivePresentation M) := by
   obtain ⟨P, f, hfree, hf⟩ := exists_finiteFree_cover R M
@@ -78,13 +84,18 @@ theorem exists_projectivePresentation (M : FGModuleCat.{v} R) :
   have hf' : Epi f := Functor.epi_of_epi_map U (by infer_instance)
   exact ⟨{ p := P, projective := hP, f := f, epi := hf' }⟩
 
-/-- Finite free covers earn enough projectives without a Noetherian
-or finite projective dimension assumption. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. The category FGModuleCat_v(R) has enough
+projectives: every object M receives an epimorphism from a projective object P. The
+presentations can be chosen from finite free covers, and this conclusion does not require
+Noetherianity. -/
 theorem enoughProjectives : EnoughProjectives (FGModuleCat.{v} R) where
   presentation M := exists_projectivePresentation R M
 
-/-- A projective finite-module object is an actual retract of its finite
-free cover after forgetting, and hence is projective in `ModuleCat`. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. For P∈FGModuleCat_v(R) that is projective in that
+category, its underlying module is a projective object of ModuleCat_v(R). Its finite free cover
+splits by projectivity of P, giving a retract of a finite free module after forgetting. -/
 theorem projective_toModuleCat (P : FGModuleCat.{v} R) [Projective P] :
     Projective P.obj := by
   obtain ⟨Q, f, hfree, hf⟩ := exists_finiteFree_cover R P
@@ -103,8 +114,10 @@ theorem projective_toModuleCat (P : FGModuleCat.{v} R) [Projective P] :
   let : Projective Q.obj := inferInstance
   exact r.projective
 
-/-- The actual finite-module forgetful functor preserves projective
-objects through their finite free retracts. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. The inclusion U:FGModuleCat_v(R)→ModuleCat_v(R)
+preserves projective objects. For each projective P, U(P) is the same underlying R-module and is
+a retract of its finite free cover. -/
 theorem forget_preservesProjectiveObjects :
     (forget₂ (FGModuleCat.{v} R) (ModuleCat.{v} R)).PreservesProjectiveObjects where
   projective_obj hP := by
@@ -113,8 +126,11 @@ theorem forget_preservesProjectiveObjects :
 
 variable [IsNoetherianRing R]
 
-/-- Forget an original finite-module projective resolution along the
-actual exact inclusion. Every resolving term remains the same module. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Assume R is Noetherian. For M∈FGModuleCat_v(R) and
+a projective resolution P→M in that category, the exact inclusion U produces a projective
+resolution U(P)→U(M) in ModuleCat_v(R). Every term, differential, and augmentation is the
+corresponding underlying R-module or linear map. -/
 def toModuleCatProjectiveResolution {M : FGModuleCat.{v} R}
     (P : ProjectiveResolution M) : ProjectiveResolution M.obj := by
   let U := forget₂ (FGModuleCat.{v} R) (ModuleCat.{v} R)
@@ -123,20 +139,28 @@ def toModuleCatProjectiveResolution {M : FGModuleCat.{v} R}
   let : U.PreservesHomology := inferInstance
   exact U.mapProjectiveResolution P
 
-/-- The forgotten resolution retains the literal original underlying
-module in every degree. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Assume R is Noetherian. For a projective resolution
+P of M∈FGModuleCat_v(R) and n≥0, the n-th term of the induced ModuleCat resolution equals the
+underlying module U(P_n). Its carrier and R-action are unchanged. -/
 theorem toModuleCatProjectiveResolution_X {M : FGModuleCat.{v} R}
     (P : ProjectiveResolution M) (n : ℕ) :
     (toModuleCatProjectiveResolution R P).complex.X n = (P.complex.X n).obj := rfl
 
-/-- The forgotten resolution retains the literal original differential
-linear map in every pair of degrees. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Assume R is Noetherian. For a projective resolution
+P of M∈FGModuleCat_v(R) and all n,m∈ℕ, the R-linear differential U(P)_n→U(P)_m equals the
+underlying linear map of P.d_{n,m}. This includes the zero maps outside the chain shape. -/
 theorem toModuleCatProjectiveResolution_d {M : FGModuleCat.{v} R}
     (P : ProjectiveResolution M) (n m : ℕ) :
     ((toModuleCatProjectiveResolution R P).complex.d n m).hom =
       (P.complex.d n m).hom.hom := rfl
 
-/-- Every degree of the forgotten original resolution is finite. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Assume R is Noetherian. For M∈FGModuleCat_v(R), a
+projective resolution P→M there, and every n≥0, the n-th term of the induced ModuleCat
+resolution is finitely generated over R. It is the underlying module of the finite-module object
+P_n. -/
 theorem toModuleCatProjectiveResolution_finite {M : FGModuleCat.{v} R}
     (P : ProjectiveResolution M) (n : ℕ) :
     Module.Finite R ((toModuleCatProjectiveResolution R P).complex.X n) := by
@@ -149,17 +173,22 @@ namespace ModuleCat
 
 variable (R : Type u) [Ring R] [IsNoetherianRing R] [Small.{v} R]
 
-/-- The actual projective resolution of a finite module obtained from
-the existing projective resolution in the category of finite modules.
-Its terms are finite without a caller supplying a resolution. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Assume R is Noetherian. For M∈ModuleCat_v(R)
+finitely generated over R, form a projective resolution of its finitely generated module object
+and apply the exact inclusion. This gives a projective resolution of M with finitely generated
+terms in every degree n≥0. -/
 def degreewiseFiniteProjectiveResolution (M : ModuleCat.{v} R) [Module.Finite R M] :
     ProjectiveResolution M := by
   let : EnoughProjectives (FGModuleCat.{v} R) := FGModuleCat.enoughProjectives R
   let N : FGModuleCat.{v} R := ⟨M, inferInstanceAs (Module.Finite R M)⟩
   exact FGModuleCat.toModuleCatProjectiveResolution R (projectiveResolution N)
 
-/-- Every term of the constructed original resolution is a finite
-module over the original ring. -/
+/-- Let R be a ring in universe u whose carrier has a representative in universe v, and use finitely
+generated left R-modules with carriers in v. Assume R is Noetherian. For a finitely generated
+M∈ModuleCat_v(R) and any n≥0, the n-th term of its degreewise finitely generated projective
+resolution is finitely generated over R. The assertion holds for the entire nonnegative chain
+complex. -/
 theorem degreewiseFiniteProjectiveResolution_finite
     (M : ModuleCat.{v} R) [Module.Finite R M] (n : ℕ) :
     Module.Finite R ((degreewiseFiniteProjectiveResolution R M).complex.X n) := by

@@ -1,3 +1,9 @@
-# Raw Return Hom ext
+# Five-factor relative return generators determine an additive map
 
-The five original factors determine an additive map from the raw composite.
+Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) bimodules in
+independent carrier universes p,q. Both endpoint actions on each module commute and restrict to
+its given k-action. Let M be a k-module in m with commuting left and right R-actions compatible
+with its k-action. Write T(M)=(P⊗_S((Q⊗_R M)⊗_R P))⊗_S Q and Γ(p₀,q₀,m,p₁,q₁) for its
+five-factor class. For an additive commutative monoid C' in any universe, additive maps
+f,g:T(M)→C' are equal if they agree on Γ(p₀,q₀,m,p₁,q₁) for every five inputs. No coefficient
+scalar action on C' is needed.

@@ -1,5 +1,5 @@
 # Faithfulness of the algebraic tensor action on linear maps
 
-- [L Tensor Hom To Hom LTensor injective](l-tensor-hom-to-hom-ltensor-injective.md)
-- [R Tensor Hom To Hom RTensor injective](r-tensor-hom-to-hom-rtensor-injective.md)
-- [Hom Tensor Hom Map injective](hom-tensor-hom-map-injective.md)
+- [Vector-first tensor evaluation into Hom is injective over any field](l-tensor-hom-to-hom-ltensor-injective.md)
+- [Hom-first tensor evaluation is injective without finite-dimensionality](r-tensor-hom-to-hom-rtensor-injective.md)
+- [The tensor action of two linear-map spaces is faithful over a field](hom-tensor-hom-map-injective.md)

@@ -1,3 +1,6 @@
-# Hom Cochain Complex Single Nat Iso
+# Single-degree Hom cochain isomorphism is coefficient-natural
 
-`Hom(single_j R, -)` as `single_j (R ⟶ -)`, natural in the coefficient.
+Single-degree Hom cochain isomorphism is coefficient-natural.
+
+The coefficient Hom functor of the single chain object `A[j]` is naturally isomorphic to
+`Hom_C(A,-)` followed by the single cochain functor in degree `j`.

@@ -1,3 +1,5 @@
-# Under Cokernel Nonnegative Property colimit
+# The chosen colimit has nonnegative cokernel support
 
-The actual chosen under colimit has an actual full cokernel with zero negative evaluations.
+The chosen colimit has nonnegative cokernel support.
+
+A diagram whose objects satisfy the support condition has a chosen colimit satisfying it.

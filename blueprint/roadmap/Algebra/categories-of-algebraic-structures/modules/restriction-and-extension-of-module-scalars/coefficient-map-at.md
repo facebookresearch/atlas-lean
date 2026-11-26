@@ -1,3 +1,5 @@
-# Coefficient Map At
+# The tensor map of an S-linear coefficient morphism
 
-An original S-linear coefficient map acts on the actual first tensor factor.
+The tensor map of an S-linear coefficient morphism.
+
+For g : M → N, the S-linear map M ⊗_R L → N ⊗_R L acts by g ⊗ id_L.

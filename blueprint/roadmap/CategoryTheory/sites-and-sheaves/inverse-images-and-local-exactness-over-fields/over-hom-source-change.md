@@ -1,3 +1,6 @@
-# Over Hom Source Change
+# Transport of an over-scheme morphism along equal source maps
 
-Change only a bare original Over source through its proved scheme equality.
+Let X, Z be schemes in universe u, x, y : Z → X equal
+morphisms, and U an object over X. An over-X morphism
+(Z, x) → U transports to (Z, y) → U along x = y, with the
+same underlying scheme map Z → U.

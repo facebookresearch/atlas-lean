@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Component zero comp augmentation
+# The degree-zero universal transfer lifts the norm map
 
-Degree-zero augmentation square for the universal induced-bar transfer
-component.
+The degree-zero universal transfer lifts the norm map.
+
+The transfer component followed by induced H-bar augmentation equals the G-bar augmentation
+followed by the induced trivial norm.

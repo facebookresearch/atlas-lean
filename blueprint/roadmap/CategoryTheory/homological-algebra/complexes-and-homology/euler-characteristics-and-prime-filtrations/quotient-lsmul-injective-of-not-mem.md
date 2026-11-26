@@ -1,4 +1,5 @@
-# Quotient lsmul injective of not mem
+# An element outside a prime acts injectively on the prime quotient
 
-On a prime quotient, multiplication by an element outside the prime is
-injective.
+An element outside a prime acts injectively on the prime quotient.
+
+For prime p and r ∉ p, multiplication by r on R/p is injective.

@@ -1,3 +1,5 @@
-# Single Row Successor Iso naturality
+# Naturality of a collapsed successor comparison
 
-Canonical ordinary successor collapse is natural for actual morphisms of spectral sequences.
+Naturality of a collapsed successor comparison.
+
+A morphism between row-supported sequences commutes with E_r ≅ E_{r+1}.

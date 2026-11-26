@@ -1,3 +1,5 @@
-# Page Right Unit
+# The right unit law at a fixed page
 
-The original native right unit law at all page bidegrees.
+The right unit law at a fixed page.
+
+The analogous product with u on the right equals the right unitor.

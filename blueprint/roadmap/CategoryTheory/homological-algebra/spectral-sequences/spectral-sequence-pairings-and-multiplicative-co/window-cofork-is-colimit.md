@@ -1,3 +1,5 @@
-# Window Cofork Is Colimit
+# The window projection has the boundary cokernel universal property
 
-The original projection is a cokernel of the original last boundary.
+The window projection has the boundary cokernel universal property.
+
+The window E object is the cokernel of the incoming boundary into cycles.

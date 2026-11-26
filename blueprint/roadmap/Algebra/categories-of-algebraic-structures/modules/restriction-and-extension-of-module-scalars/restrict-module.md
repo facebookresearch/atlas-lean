@@ -1,3 +1,5 @@
-# Restrict Module
+# The restricted R-action on an S-coefficient module
 
-The original coefficient's R-action is its S-action through the structural map.
+The restricted R-action on an S-coefficient module.
+
+For an S-module M, define its R-module structure through algebraMap R S.

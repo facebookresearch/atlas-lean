@@ -1,4 +1,6 @@
-# Corestriction H3 Of Right Transversal
+# The degree-three cohomology transfer of a right transversal
 
-Degree-three cohomological transfer associated to a chosen finite right
-transversal.  Independence of the transversal is not asserted here.
+The degree-three cohomology transfer of a right transversal.
+
+The ternary transfer descends through the source coboundary quotient to a k-linear map
+H³(H,A|H) → H³(G,A).

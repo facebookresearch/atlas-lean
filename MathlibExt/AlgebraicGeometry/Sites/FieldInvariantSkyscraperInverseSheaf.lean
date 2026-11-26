@@ -15,12 +15,25 @@ public import Mathlib.GroupTheory.GroupAction.Hom
 public import Mathlib.CategoryTheory.Sites.Limits
 public import Mathlib.CategoryTheory.Limits.FunctorCategory.Basic
 
-/-! # Literal equivariant-function sheaves from the same point skyscraper
+/-!
+# Equivariant-function sheaves as invariant skyscrapers
 
-The field and prescribed separable closure are fixed. The original point
-indices and all possibly infinite discrete abelian modules are retained.
-The skyscraper diagonal uses the inverse on the index and the same action on
-its coefficient group. Invariant limits are taken in the common sheaf category.
+Let Ω/k be a separable closure of fields in universe u, G = Gal(Ω/k),
+and c = max(u, w). For a discrete continuous G-module M with abelian
+coefficients in universe c, the presheaf Φ̃_M assigns to an étale k-scheme U
+the group Map_G(U(Ω), M), with pointwise operations.
+
+The point skyscraper S_M has all functions on the common lifted geometric
+fiber. Its diagonal G-action is
+(D_g s)(z) = g • s(g⁻¹ • z).
+Its invariant sections are exactly Φ̃_M(U). Their presheaf is a sheaf,
+and the invariant-skyscraper sheaf Φ(M) is the limit of this action diagram.
+
+Restriction is precomposition by V(Ω) → U(Ω), and a coefficient morphism
+M → N acts by postcomposition. These maps agree with the invariant limit
+functor. For a finite étale k-algebra A, Φ(M)(Spec A) identifies with
+Map_G(Hom_(k-alg)(A, Ω), M), compatibly with algebra and coefficient maps.
+Neither the Galois group nor the coefficient modules need be finite.
 -/
 @[expose] public section
 noncomputable section
@@ -31,7 +44,13 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The native set action is the SAME original geometric fiber map. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The geometric lifts U(Ω) carry the left G-action induced by the
+Galois fiber maps. Under an affine algebra description this is
+postcomposition of an Ω-valued algebra map by g ∈ G. -/
 instance fieldOriginalFiberMulAction (U : (Spec (.of k)).Etale) :
     MulAction Gal(Ω/k) ((fieldGeometricPoint k Ω).fiber.obj U) where
   smul g z := (fieldGaloisFiberMap k Ω g).app U z
@@ -45,7 +64,12 @@ instance fieldOriginalFiberMulAction (U : (Spec (.of k)).Etale) :
     rw [fieldGaloisFiberMap_mul]
     rfl
 
-/-- The original restrictions are genuine equivariant maps of the native fibers. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For an étale map r : V → U, the map V(Ω) → U(Ω), z ↦ r ∘ z,
+is G-equivariant. It is the geometric-fiber map used for section restriction. -/
 def fieldOriginalFiberMap {U V : (Spec (.of k)).Etale} (r : V ⟶ U) :
     (fieldGeometricPoint k Ω).fiber.obj V →[Gal(Ω/k)]
       (fieldGeometricPoint k Ω).fiber.obj U where
@@ -55,7 +79,13 @@ def fieldOriginalFiberMap {U V : (Spec (.of k)).Etale} (r : V ⟶ U) :
       (fieldGaloisFiberMap k Ω g).app U ((fieldGeometricPoint k Ω).fiber.map r z)
     exact ((fieldGaloisFiberMap k Ω g).naturality_apply r z).symm
 
-/-- The literal ORIGINAL-index equivariant function space, with its pointwise group. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, this is the abelian group Map_G(U(Ω), M) of
+G-equivariant functions, with pointwise addition, negation and zero.
+Its carrier is in universe c. -/
 abbrev FieldEquivariantFunctions (U : (Spec (.of k)).Etale)
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) : Type (max u w) :=
   (fieldGeometricPoint k Ω).fiber.obj U →[Gal(Ω/k)] DiscreteAbelianAction.underlying M
@@ -66,7 +96,12 @@ instance fieldEquivariantFunctions_addCommGroup (U : (Spec (.of k)).Etale)
     AddCommGroup (FieldEquivariantFunctions.{u, w} k Ω U M) := by
   infer_instance
 
-/-- The original section restriction is precomposition by the original fiber map. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D and r : V → U étale, restriction is the additive map
+Map_G(U(Ω), M) → Map_G(V(Ω), M), h ↦ h ∘ r_Ω. -/
 def fieldEquivariantFunctionsRestrict {U V : (Spec (.of k)).Etale} (r : V ⟶ U)
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     FieldEquivariantFunctions.{u, w} k Ω U M →+
@@ -75,11 +110,21 @@ def fieldEquivariantFunctionsRestrict {U V : (Spec (.of k)).Etale} (r : V ⟶ U)
   map_zero' := by ext z; rfl
   map_add' h h' := by ext z; rfl
 
-/-- Deprecated alias for `fieldEquivariantFunctionsRestrict`. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D and an étale map r : V → U, the restriction operator
+on equivariant sections sends h to z ↦ h(r_Ω(z)). -/
 @[deprecated fieldEquivariantFunctionsRestrict (since := "2026-10-28"), nolint defsWithUnderscore]
 alias fieldEquivariantFunctions_restrict := fieldEquivariantFunctionsRestrict
 
-/-- Every original module map acts by postcomposition with its same additive function. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For an equivariant additive map t : M → N in D, postcomposition
+gives Map_G(U(Ω), M) → Map_G(U(Ω), N), h ↦ t ∘ h. -/
 def fieldEquivariantFunctionsPost
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N)
     (U : (Spec (.of k)).Etale) :
@@ -93,11 +138,22 @@ def fieldEquivariantFunctionsPost
   map_zero' := by ext z; exact (DiscreteAbelianAction.homToAdd t).map_zero
   map_add' h h' := by ext z; exact (DiscreteAbelianAction.homToAdd t).map_add _ _
 
-/-- Deprecated alias for `fieldEquivariantFunctionsPost`. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For a coefficient map t : M → N in D, the equivariant function
+postcomposition operator has value h ↦ (z ↦ t(h(z))). -/
 @[deprecated fieldEquivariantFunctionsPost (since := "2026-10-28"), nolint defsWithUnderscore]
 alias fieldEquivariantFunctions_post := fieldEquivariantFunctionsPost
 
-/-- The literal original-index equivariant-function presheaf on every original object. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, this abelian presheaf has value Map_G(U(Ω), M)
+on U and restriction h ↦ h ∘ r_Ω along an étale map r.
+The identity and composition laws are those of the geometric fiber functor. -/
 def fieldEquivariantFunctionPresheaf
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (Spec (.of k)).Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w} where
@@ -116,7 +172,13 @@ def fieldEquivariantFunctionPresheaf
     rw [CategoryTheory.Functor.map_comp]
     rfl
 
-/-- All module maps give the actual original-component natural transformation. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+A map t : M → N in D gives a natural transformation between
+the two equivariant-function presheaves, with component h ↦ t ∘ h
+on every étale object U. -/
 def fieldEquivariantFunctionPresheafMap
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) :
     fieldEquivariantFunctionPresheaf.{u, w} k Ω M ⟶
@@ -124,21 +186,41 @@ def fieldEquivariantFunctionPresheafMap
   app U := AddCommGrpCat.ofHom (fieldEquivariantFunctionsPost.{u, w} k Ω t U.unop)
   naturality U V r := by ext h; rfl
 
-/-- The same underlying coefficient action through the genuine stock forgetful functors. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, this is its G-action on the underlying abelian group
+in AddCommGrpCat c, obtained by forgetting the discrete topology while
+retaining the coefficient action. -/
 abbrev fieldModuleAbAction
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Action AddCommGrpCat.{max u w} Gal(Ω/k) :=
   ((forget₂ (TopModuleCat.{max u w} ℤ) (ModuleCat.{max u w} ℤ) ⋙
     forget₂ (ModuleCat.{max u w} ℤ) AddCommGrpCat.{max u w}).mapAction Gal(Ω/k)).obj M.obj.obj
 
-/-- The actual skyscraper of the SAME common point and SAME coefficient group. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+S_M is the skyscraper sheaf at Spec Ω → Spec k with coefficient
+group M. On U it consists of all functions from the common lifted
+geometric fiber to M, before imposing equivariance. -/
 abbrev fieldSkyscraper
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} :=
   (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafFunctor.obj
     ((fieldModuleAbAction.{u, w} k Ω M).V)
 
-/-- The mate of the SAME point map acts on the original skyscraper index. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For g ∈ G, the natural endomorphism I_g of the point skyscraper
+functor acts by reindexing sections: I_g(s)(z) = s(g • z).
+It is the right-adjoint mate of the corresponding stalk point map. -/
 def fieldSkyscraperIndexMap (g : Gal(Ω/k)) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafFunctor
       (A := AddCommGrpCat.{max u w}) ⟶
@@ -148,7 +230,15 @@ def fieldSkyscraperIndexMap (g : Gal(Ω/k)) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafAdjunction
     (fieldGaloisPointEndomorphism.{u, w} k Ω g).sheafFiber
 
-/-- The diagonal is the ACTUAL inverse-index mate followed by the same module action. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The diagonal sheaf endomorphism is
+D_g(s)(z) = g • s(g⁻¹ • z).
+It reindexes by g⁻¹ and then applies the coefficient action of g. -/
 def fieldSkyscraperDiagonalMap
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (g : Gal(Ω/k)) :
     fieldSkyscraper.{u, w} k Ω M ⟶ fieldSkyscraper.{u, w} k Ω M :=
@@ -158,7 +248,15 @@ def fieldSkyscraperDiagonalMap
       (Spec.algebraMap k Ω)).skyscraperSheafFunctor.map
         ((fieldModuleAbAction.{u, w} k Ω M).ρ g).asHom
 
-/-- Every product coordinate is the SAME inverse-index diagonal formula. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+For g ∈ G and a common geometric coordinate z over U,
+evaluation after D_g is the coordinate formula
+(D_g s)(z) = g • s(g⁻¹ • z). -/
 theorem fieldSkyscraperDiagonalMap_π
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (g : Gal(Ω/k))
     (U : (Spec (.of k)).Etale)
@@ -194,14 +292,25 @@ theorem fieldSkyscraperDiagonalMap_π
     ((Category.assoc _ _ a).symm.trans (congrArg (fun t => t ≫ a) hb))
 
 
-/-- The actual index mates preserve the identity. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The skyscraper index endomorphism for 1 ∈ G is the identity:
+I₁ = id on the point skyscraper functor. -/
 theorem fieldSkyscraperIndexMap_one :
     fieldSkyscraperIndexMap.{u, w} k Ω (1 : Gal(Ω/k)) = 𝟙 _ := by
   change conjugateEquiv _ _ (fieldGaloisStalkMap.{u, w} k Ω 1) = _
   rw [fieldGaloisStalkMap_one]
   exact conjugateEquiv_id _
 
-/-- The same point mates compose in the original group order. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The reindexing endomorphisms satisfy I_(gh) = I_h ∘ I_g.
+This is the composition order for precomposition by the G-action
+on geometric coordinates. -/
 theorem fieldSkyscraperIndexMap_mul (g h : Gal(Ω/k)) :
     fieldSkyscraperIndexMap.{u, w} k Ω (g * h) =
       fieldSkyscraperIndexMap.{u, w} k Ω g ≫ fieldSkyscraperIndexMap.{u, w} k Ω h := by
@@ -209,7 +318,13 @@ theorem fieldSkyscraperIndexMap_mul (g h : Gal(Ω/k)) :
   rw [fieldGaloisStalkMap_mul]
   exact (conjugateEquiv_comp _ _ _ _ _).symm
 
-/-- The genuine diagonal preserves the identity. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The diagonal endomorphism D₁ is the identity on S_M. -/
 theorem fieldSkyscraperDiagonalMap_one
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     fieldSkyscraperDiagonalMap.{u, w} k Ω M 1 = 𝟙 _ := by
@@ -218,7 +333,14 @@ theorem fieldSkyscraperDiagonalMap_one
   simp only [NatTrans.id_app, Category.id_comp, map_one, End.one_asHom,
     CategoryTheory.Functor.map_id]
 
-/-- The same inverse-index diagonal is a left group action on the actual skyscraper. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The diagonal endomorphisms satisfy D_(gh) = D_g ∘ D_h.
+This is the left G-action law on the skyscraper sheaf. -/
 theorem fieldSkyscraperDiagonalMap_mul
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (g h : Gal(Ω/k)) :
     fieldSkyscraperDiagonalMap.{u, w} k Ω M (g * h) =
@@ -254,7 +376,14 @@ theorem fieldSkyscraperDiagonalMap_mul
         (Category.assoc _ _ _))
   exact congrArg (fun t => (fieldSkyscraperIndexMap.{u, w} k Ω h⁻¹).app C ≫ t) hna
 
-/-- The actual diagonal action, using the SAME point skyscraper and coefficient module. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The sheaf S_M with endomorphisms D_g forms a G-action object
+in the category of abelian étale sheaves on Spec k. -/
 def fieldSkyscraperDiagonalAction
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Action (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) Gal(Ω/k) where
@@ -268,13 +397,26 @@ def fieldSkyscraperDiagonalAction
       apply End.ext
       exact fieldSkyscraperDiagonalMap_mul.{u, w} k Ω M g h }
 
-/-- The diagram whose genuine limit is the invariant skyscraper. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The single-object G-diagram of S_M and the maps D_g is the
+invariant-skyscraper diagram. Its limit consists of sections fixed
+by every diagonal endomorphism. -/
 abbrev fieldSkyscraperInvariantDiagram
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     SingleObj Gal(Ω/k) ⥤ Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} :=
   SingleObj.functor (fieldSkyscraperDiagonalAction.{u, w} k Ω M).ρ
 
-/-- Evaluation at one ORIGINAL geometric point is additive. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D and z ∈ U(Ω), evaluation h ↦ h(z) is an additive
+map Map_G(U(Ω), M) → M. -/
 def fieldEquivariantFunctionEvaluation
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U) :
@@ -284,7 +426,14 @@ def fieldEquivariantFunctionEvaluation
   map_zero' := rfl
   map_add' _ _ := rfl
 
-/-- The actual original-index functions enter the common point product by taking `down`. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The inclusion Φ̃_M → S_M sends h on U to the function on lifted
+coordinates z ↦ h(z.down). It is natural under étale restrictions. -/
 def fieldEquivariantFunctionInclusion
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     fieldEquivariantFunctionPresheaf.{u, w} k Ω M ⟶
@@ -319,7 +468,14 @@ def fieldEquivariantFunctionInclusion
       ((congrArg (fun t => iU ≫ t) hr).trans hU)
     exact hleft.trans hright.symm
 
-/-- Each common product coordinate recovers the SAME original function value. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+At a common lifted coordinate z over U, the inclusion followed by
+the product projection is evaluation h ↦ h(z.down). -/
 @[reassoc]
 theorem fieldEquivariantFunctionInclusion_π
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
@@ -332,7 +488,14 @@ theorem fieldEquivariantFunctionInclusion_π
   Pi.lift_comp_π _ _
 
 
-/-- The original equivariant functions are fixed by the actual diagonal, not by supplied data. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The inclusion i_M : Φ̃_M → S_M is invariant under each diagonal
+action: D_g ∘ i_M = i_M for g ∈ G. -/
 theorem fieldEquivariantFunctionInclusion_invariant
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (g : Gal(Ω/k)) :
     fieldEquivariantFunctionInclusion.{u, w} k Ω M ≫
@@ -361,7 +524,15 @@ theorem fieldEquivariantFunctionInclusion_invariant
     exact hh.trans (smul_inv_smul g (h z.down))
   exact hdiag.trans (hvalue.trans hival.symm)
 
-/-- A fixed section of the SAME common skyscraper yields its literal ORIGINAL-index function. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+For a section s ∈ S_M(U) satisfying D_g(s) = s for every g,
+the function z ↦ s(ULift.up(z)) lies in Map_G(U(Ω), M).
+Its equivariance follows from the diagonal fixed-section condition. -/
 def fieldEquivariantFunctionOfInvariantSection
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (U : (Spec (.of k)).Etale)
@@ -391,7 +562,15 @@ def fieldEquivariantFunctionOfInvariantSection
       (congrArg (fun a => g • Pi.π (fun _ : Φ.fiber.obj U => C) a q) hy))
 
 
-/-- The literal function presheaf is a cone of the actual invariant-skyscraper diagram. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The presheaf Φ̃_M with inclusion i_M is a cone over the
+invariant-skyscraper diagram after forgetting to presheaves.
+Each cone leg is the same inclusion and is fixed by D_g. -/
 def fieldInvariantFunctionCone
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Cone (fieldSkyscraperInvariantDiagram.{u, w} k Ω M ⋙
@@ -405,7 +584,16 @@ def fieldInvariantFunctionCone
           (fieldSkyscraperDiagonalMap.{u, w} k Ω M g).hom
       exact (fieldEquivariantFunctionInclusion_invariant.{u, w} k Ω M g).symm }
 
-/-- The universal map at an original object is recovered from the actual product projections. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+For a cone A over the invariant-skyscraper diagram evaluated at U,
+the additive map A → Map_G(U(Ω), M) sends a to
+z ↦ π_A(a)(ULift.up(z)), where π_A is its section component.
+The cone equations make this function equivariant. -/
 def fieldInvariantFunctionConeLift
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (U : (Spec (.of k)).Etale)
     (c : Cone ((fieldSkyscraperInvariantDiagram.{u, w} k Ω M ⋙
@@ -431,7 +619,15 @@ def fieldInvariantFunctionConeLift
         (Spec.algebraMap k Ω)).fiber.obj U => (fieldModuleAbAction.{u, w} k Ω M).V)
           (ULift.up z)).hom.comp (c.π.app (SingleObj.star Gal(Ω/k))).hom).map_add x y }
 
-/-- The actual cone is limiting at EVERY original site object. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+At every étale object U, the equivariant-function cone is a
+limit of the evaluated diagonal G-action diagram.
+Thus Map_G(U(Ω), M) is the fixed subgroup of S_M(U). -/
 def fieldInvariantFunctionPointwiseLimit
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (U : (Spec (.of k)).Etale) :
     IsLimit (((CategoryTheory.evaluation (Spec (.of k)).Etaleᵒᵖ AddCommGrpCat.{max u w}).obj
@@ -467,8 +663,15 @@ def fieldInvariantFunctionPointwiseLimit
       (fieldEquivariantFunctionInclusion_π.{u, w} k Ω M U (ULift.up z))
     exact hi.symm.trans hh
 
-/-- Sheafness of the literal original-index functions is derived from the genuine
-invariant limit. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The presheaf U ↦ Map_G(U(Ω), M) satisfies the sheaf condition
+for the small étale topology on Spec k.
+It is the presheaf of invariant sections of the point skyscraper. -/
 theorem fieldEquivariantFunctionPresheaf_isSheaf
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Presheaf.IsSheaf (Spec (.of k)).smallEtaleTopology
@@ -479,14 +682,28 @@ theorem fieldEquivariantFunctionPresheaf_isSheaf
         fieldInvariantFunctionPointwiseLimit.{u, w} k Ω M U.unop))
 
 
-/-- The genuine inverse sheaf has the literal original-index equivariant functions as values. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The invariant-skyscraper sheaf Φ(M) is the sheaf with underlying
+presheaf Φ̃_M. Its sections and restrictions are equivariant functions
+and geometric-fiber precomposition. -/
 def fieldInvariantSkyscraperInverseSheafObj
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} :=
   ⟨fieldEquivariantFunctionPresheaf.{u, w} k Ω M,
     fieldEquivariantFunctionPresheaf_isSheaf.{u, w} k Ω M⟩
 
-/-- One functor on ALL original modules, with their same additive equivariant arrows. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The functor Φ : D → Sheaf((Spec k)_ét, AddCommGrpCat c) sends
+M to its invariant-skyscraper sheaf and a coefficient map t to
+postcomposition h ↦ t ∘ h. -/
 def fieldInvariantSkyscraperInverseSheaf :
     DiscreteAbelianAction.{u, max u w} Gal(Ω/k) ⥤
       Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} where
@@ -505,7 +722,14 @@ def fieldInvariantSkyscraperInverseSheaf :
     ext h
     rfl
 
-/-- The SAME actual inverse sheaf is an invariant cone in sheaves. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The sheaf Φ(M), with its inclusion into S_M, is a cone over
+the single-object diagonal G-action diagram. -/
 def fieldInvariantSkyscraperSheafCone
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     Cone (fieldSkyscraperInvariantDiagram.{u, w} k Ω M) where
@@ -516,7 +740,15 @@ def fieldInvariantSkyscraperSheafCone
       apply Sheaf.hom_ext
       exact (fieldEquivariantFunctionInclusion_invariant.{u, w} k Ω M g).symm }
 
-/-- The canonical invariant cone is genuinely limiting in the actual common sheaf category. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The sheaf cone with vertex Φ(M) and leg i_M : Φ(M) → S_M
+is limiting. It realizes the G-invariant part of the point skyscraper
+inside the sheaf category. -/
 def fieldInvariantSkyscraperSheafIsLimit
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     IsLimit (fieldInvariantSkyscraperSheafCone.{u, w} k Ω M) :=
@@ -526,7 +758,14 @@ def fieldInvariantSkyscraperSheafIsLimit
       evaluationJointlyReflectsLimits _ (fun U =>
         fieldInvariantFunctionPointwiseLimit.{u, w} k Ω M U.unop))
 
-/-- The fixed literal sheaf is identified with the genuine stock invariant limit. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+There is a canonical isomorphism α_M : lim_G S_M ≅ Φ(M)
+between the action-diagram limit and the equivariant-function sheaf. -/
 def fieldInvariantSkyscraperLimitIso
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     limit (fieldSkyscraperInvariantDiagram.{u, w} k Ω M) ≅
@@ -535,7 +774,14 @@ def fieldInvariantSkyscraperLimitIso
     fieldInvariantSkyscraperSheafIsLimit.{u, w} k Ω M⟩
 
 
-/-- The canonical stock-limit comparison has the SAME original invariant inclusion. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+For α_M : lim_G S_M ≅ Φ(M), the inclusion i_M and limit
+projection π_lim satisfy i_M ∘ α_M = π_lim. -/
 @[reassoc]
 theorem fieldInvariantSkyscraperLimitIso_hom_inclusion
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -544,7 +790,14 @@ theorem fieldInvariantSkyscraperLimitIso_hom_inclusion
         limit.π (fieldSkyscraperInvariantDiagram.{u, w} k Ω M) (SingleObj.star Gal(Ω/k)) :=
   limit.isoLimitCone_hom_π _ _
 
-/-- The comparison inverse also recovers the SAME original invariant inclusion. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+For α_M : lim_G S_M ≅ Φ(M), one has
+π_lim ∘ α_M⁻¹ = i_M as maps Φ(M) → S_M. -/
 @[reassoc]
 theorem fieldInvariantSkyscraperLimitIso_inv_π
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -554,14 +807,26 @@ theorem fieldInvariantSkyscraperLimitIso_inv_π
   limit.isoLimitCone_inv_π _ _
 
 
-/-- On original algebra embeddings the SAME Galois automorphism acts by postcomposition. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For any commutative k-algebra A in universe u, its algebra maps
+A →ₐ[k] Ω carry the G-action g • ξ = g ∘ ξ.
+No finite étale condition on A is needed for this action. -/
 instance fieldAlgebraEmbeddingMulAction (A : Type u) [CommRing A] [Algebra k A] :
     MulAction Gal(Ω/k) (A →ₐ[k] Ω) where
   smul g ξ := g.toAlgHom.comp ξ
   one_smul ξ := by ext a; rfl
   mul_smul g h ξ := by ext a; rfl
 
-/-- The accepted ORIGINAL finite-algebra fiber comparison is genuinely equivariant. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For a finite étale k-algebra A, the geometric-fiber comparison
+(Spec A)(Ω) → Hom_(k-alg)(A, Ω) is G-equivariant, with postcomposition
+by G on algebra embeddings. -/
 def fieldFiniteEtaleFiberEquivariant (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ) :
     (fieldGeometricPoint k Ω).fiber.obj ((fieldFiniteEtaleToEtale k).obj A) →[Gal(Ω/k)]
       (A.unop →ₐ[k] Ω) where
@@ -569,7 +834,12 @@ def fieldFiniteEtaleFiberEquivariant (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ) 
   map_smul' g z := by
     exact fieldGaloisSpec_homEquivAlgHom k Ω g z.left z.w
 
-/-- The inverse of that SAME actual spectrum/algebra comparison is equivariant as well. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For a finite étale k-algebra A, the inverse algebra-embedding
+comparison Hom_(k-alg)(A, Ω) → (Spec A)(Ω) is also G-equivariant. -/
 def fieldFiniteEtaleFiberEquivariantInv (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ) :
     (A.unop →ₐ[k] Ω) →[Gal(Ω/k)]
       (fieldGeometricPoint k Ω).fiber.obj ((fieldFiniteEtaleToEtale k).obj A) :=
@@ -578,7 +848,13 @@ def fieldFiniteEtaleFiberEquivariantInv (A : (CommAlgCat.FiniteEtale.{u} k)ᵒ�
     (fieldFiniteEtaleFiberEquiv k Ω A).symm_apply_apply
     (fieldFiniteEtaleFiberEquiv k Ω A).apply_symm_apply
 
-/-- For EVERY original finite étale algebra, the inverse value is the literal Hom_G group. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D and finite étale k-algebra A, this additive equivalence
+identifies Φ(M)(Spec A) with
+Map_G(Hom_(k-alg)(A, Ω), M). -/
 def fieldInvariantFiniteEtaleSectionsEquiv
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ) :
@@ -598,7 +874,12 @@ def fieldInvariantFiniteEtaleSectionsEquiv
     exact congrArg h ((fieldFiniteEtaleFiberEquiv k Ω A).apply_symm_apply ξ)
   map_add' h h' := by ext ξ; rfl
 
-/-- The comparison evaluates on the SAME original lift of an actual algebra embedding. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For finite étale A, let e_A : (Spec A)(Ω) ≅ Hom_(k-alg)(A, Ω).
+The section equivalence sends h to ξ ↦ h(e_A⁻¹(ξ)). -/
 theorem fieldInvariantFiniteEtaleSectionsEquiv_apply
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ)
@@ -608,7 +889,13 @@ theorem fieldInvariantFiniteEtaleSectionsEquiv_apply
       (show FieldEquivariantFunctions.{u, w} k Ω ((fieldFiniteEtaleToEtale k).obj A) M from h)
         ((fieldFiniteEtaleGeometricFiberIso k Ω).inv.app A ξ) := rfl
 
-/-- Every ORIGINAL finite-algebra arrow has its literal embedding-precomposition restriction. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For a finite étale algebra map b : B → A and a section h over
+Spec B, the finite-value equivalences identify restriction to Spec A
+with ξ ↦ h(ξ ∘ b), for ξ : A →ₐ[k] Ω. -/
 theorem fieldInvariantFiniteEtaleSectionsEquiv_restrict
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     {A B : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ} (r : A ⟶ B)
@@ -630,7 +917,13 @@ theorem fieldInvariantFiniteEtaleSectionsEquiv_restrict
     ((fieldFiniteEtaleFiberEquiv k Ω A).apply_symm_apply ξ)).trans
       ((fieldFiniteEtaleFiberEquiv k Ω B).apply_symm_apply (ξ.comp r.unop.hom.hom)).symm)
 
-/-- All module arrows are their SAME original additive postcomposition on finite-algebra values. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For t : M → N in D and finite étale A, the finite-value
+equivalences identify Φ(t)_A with pointwise postcomposition:
+h(ξ) ↦ t(h(ξ)). -/
 theorem fieldInvariantFiniteEtaleSectionsEquiv_map
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N)
     (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ)
@@ -644,7 +937,12 @@ theorem fieldInvariantFiniteEtaleSectionsEquiv_map
   rfl
 
 
-/-- The actual coefficient action arrow is induced by the original stored module morphism. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+A map t : M → N in D gives the same equivariant additive morphism
+between the underlying abelian-group G-action objects. -/
 def fieldModuleAbActionMap
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) :
     fieldModuleAbAction.{u, w} k Ω M ⟶ fieldModuleAbAction.{u, w} k Ω N :=
@@ -652,13 +950,25 @@ def fieldModuleAbActionMap
     forget₂ (ModuleCat.{max u w} ℤ) AddCommGrpCat.{max u w}).mapAction Gal(Ω/k)).map t.hom.hom
 
 omit [IsSepClosure k Ω] in
-/-- Its group map is the SAME accepted original additive module map. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For t : M → N in D, the underlying map of its abelian-group
+action morphism equals the map U(t) given by forgetting the topology
+and G-action. -/
 theorem fieldModuleAbActionMap_hom
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) :
     (fieldModuleAbActionMap.{u, w} k Ω t).hom =
       (DiscreteAbelianAction.forget Gal(Ω/k)).map t := rfl
 
-/-- Every original module arrow commutes with the SAME actual skyscraper diagonal. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For t : M → N in D and g ∈ G, the skyscraper map S(t) obeys
+S(t) ∘ D_g^M = D_g^N ∘ S(t).
+Thus the diagonal action is natural in equivariant coefficients. -/
 theorem fieldSkyscraperDiagonalMap_naturality
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) (g : Gal(Ω/k)) :
     fieldSkyscraperDiagonalMap.{u, w} k Ω M g ≫
@@ -693,7 +1003,12 @@ theorem fieldSkyscraperDiagonalMap_naturality
       congrArg (fun q => q ≫ Φ.skyscraperSheafFunctor.map b) hn.symm
     _ = _ := Category.assoc _ _ _
 
-/-- The invariant diagrams retain every original module map on the SAME skyscraper. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For t : M → N in D, the map of invariant-skyscraper G-diagrams
+has sole component S(t), commuting with every diagonal endomorphism. -/
 def fieldSkyscraperInvariantDiagramMap
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) :
     fieldSkyscraperInvariantDiagram.{u, w} k Ω M ⟶
@@ -703,7 +1018,13 @@ def fieldSkyscraperInvariantDiagramMap
       (fieldModuleAbActionMap.{u, w} k Ω t).hom)
     (fieldSkyscraperDiagonalMap_naturality.{u, w} k Ω t)
 
-/-- One functor fixes all actual invariant diagrams and their original coefficient maps. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The invariant-skyscraper diagrams form a functor from D to the
+category of G-shaped diagrams of abelian étale sheaves, with coefficient
+maps acting by the skyscraper maps S(t). -/
 def fieldSkyscraperInvariantDiagrams :
     DiscreteAbelianAction.{u, max u w} Gal(Ω/k) ⥤
       SingleObj Gal(Ω/k) ⥤
@@ -727,7 +1048,13 @@ def fieldSkyscraperInvariantDiagrams :
       ((smallEtaleGeometricPointCommon.{u, w}
         (Spec.algebraMap k Ω)).skyscraperSheafFunctor.map_comp _ _)
 
-/-- The invariant inclusion is natural for EVERY original module arrow. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For t : M → N in D, the invariant inclusions satisfy
+i_N ∘ Φ(t) = S(t) ∘ i_M.
+Postcomposition of equivariant functions commutes with inclusion. -/
 theorem fieldInvariantSkyscraperInclusion_naturality
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) :
     (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).map t ≫
@@ -759,7 +1086,13 @@ theorem fieldInvariantSkyscraperInclusion_naturality
   ext h
   rfl
 
-/-- The comparison to the genuine invariant limit is ONE natural additive sheaf isomorphism. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The comparison α_M : lim_G S_M ≅ Φ(M) is natural in M.
+For t : M → N, α_N ∘ lim(S(t)) = Φ(t) ∘ α_M,
+giving the natural isomorphism between the limit-diagram functor and Φ. -/
 def fieldInvariantSkyscraperLimitNatIso :
     fieldSkyscraperInvariantDiagrams.{u, w} k Ω ⋙ lim ≅
       fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω :=
@@ -782,13 +1115,23 @@ def fieldInvariantSkyscraperLimitNatIso :
     exact hl.trans hr.symm)
 
 
-/-- The object formula retains the SAME original-index pointwise abelian group. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D and U ∈ Etale(Spec k), the group Φ(M)(U) is
+Map_G(U(Ω), M), with pointwise abelian-group operations. -/
 theorem fieldInvariantSkyscraperInverseSheaf_value
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (U : (Spec (.of k)).Etale) :
     ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M).obj.obj (op U) =
       AddCommGrpCat.of (FieldEquivariantFunctions.{u, w} k Ω U M) := rfl
 
-/-- Every original restriction is the literal original geometric-fiber precomposition. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, r : V → U étale, and h ∈ Φ(M)(U), restriction
+has value (h|_V)(z) = h(r_Ω(z)) for z ∈ V(Ω). -/
 theorem fieldInvariantSkyscraperInverseSheaf_restrict_apply
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     {U V : (Spec (.of k)).Etale} (r : V ⟶ U)
@@ -798,7 +1141,12 @@ theorem fieldInvariantSkyscraperInverseSheaf_restrict_apply
       ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M).obj.map r.op h) z =
         h ((fieldGeometricPoint k Ω).fiber.map r z) := rfl
 
-/-- Every original module arrow acts by its SAME additive function, point by point. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For t : M → N in D, h ∈ Φ(M)(U) and z ∈ U(Ω), the
+coefficient sheaf map has value Φ(t)_U(h)(z) = t(h(z)). -/
 theorem fieldInvariantSkyscraperInverseSheaf_map_apply
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N)
     (U : (Spec (.of k)).Etale) (h : FieldEquivariantFunctions.{u, w} k Ω U M)
@@ -807,7 +1155,13 @@ theorem fieldInvariantSkyscraperInverseSheaf_map_apply
       ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).map t).hom.app (op U) h) z =
         DiscreteAbelianAction.homToAdd t (h z) := rfl
 
-/-- The inverse finite-algebra comparison uses the SAME original embedding at every point. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For finite étale A and e_A : (Spec A)(Ω) ≅ Hom_(k-alg)(A, Ω),
+the inverse finite-value equivalence sends an equivariant function h
+on algebra embeddings to z ↦ h(e_A(z)) on geometric lifts. -/
 theorem fieldInvariantFiniteEtaleSectionsEquiv_symm_apply
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ)
@@ -817,7 +1171,16 @@ theorem fieldInvariantFiniteEtaleSectionsEquiv_symm_apply
       (fieldInvariantFiniteEtaleSectionsEquiv.{u, w} k Ω M A).symm h) z =
         h ((fieldFiniteEtaleGeometricFiberIso k Ω).hom.app A z) := rfl
 
-/-- The source construction fixes the actual diagonal, inclusion, invariant limit and all maps. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+This proposition records the limiting invariant sheaf cone,
+D₁ = id and D_(gh) = D_g ∘ D_h, the coordinate formula
+D_g(s)(z) = g • s(g⁻¹ • z), and the inclusion evaluation formula.
+It also records the natural comparisons lim_G S_M ≅ Φ(M),
+their forward/inverse projection identities, and naturality of
+diagonal actions, inclusions and limits under every coefficient map. -/
 def FieldInvariantSkyscraperLimitLaws : Prop :=
   (∀ M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k),
     Nonempty (IsLimit (fieldInvariantSkyscraperSheafCone.{u, w} k Ω M))) ∧
@@ -872,7 +1235,14 @@ def FieldInvariantSkyscraperLimitLaws : Prop :=
     (fieldInvariantSkyscraperLimitIso.{u, w} k Ω M).hom ≫
       (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).map t
 
-/-- ALL original objects, restrictions, module maps and pointwise operations are retained. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+This proposition records Φ(M)(U) = Map_G(U(Ω), M), restriction
+h ↦ h ∘ r_Ω, coefficient maps h ↦ t ∘ h, and the identity and
+composition laws of Φ. It includes the pointwise formulas for addition,
+negation and zero on equivariant sections. -/
 def FieldInvariantSkyscraperOriginalValuesLaws : Prop :=
   (∀ (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) (U : (Spec (.of k)).Etale),
     ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M).obj.obj (op U) =
@@ -906,7 +1276,15 @@ def FieldInvariantSkyscraperOriginalValuesLaws : Prop :=
       (z : (fieldGeometricPoint k Ω).fiber.obj U),
     (0 : FieldEquivariantFunctions.{u, w} k Ω U M) z = 0
 
-/-- EVERY finite algebra and algebra/module arrow uses the SAME original fiber family. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For every finite étale k-algebra A, this proposition records both
+directions of Φ(M)(Spec A) ≅ Map_G(Hom_(k-alg)(A, Ω), M),
+with values h(e_A⁻¹(ξ)) and h(e_A(z)).
+It includes restriction by ξ ↦ ξ ∘ b, postcomposition by coefficient
+maps, and G-equivariance of the fiber/algebra-embedding comparison. -/
 def FieldInvariantSkyscraperFiniteValuesLaws : Prop :=
   (∀ (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
       (A : (CommAlgCat.FiniteEtale.{u} k)ᵒᵖ)
@@ -944,7 +1322,14 @@ def FieldInvariantSkyscraperFiniteValuesLaws : Prop :=
     (fieldFiniteEtaleGeometricFiberIso k Ω).hom.app A (g • z) =
       g.toAlgHom.comp ((fieldFiniteEtaleGeometricFiberIso k Ω).hom.app A z)
 
-/-- The full original-site inverse-sheaf construction, including its genuine invariant limit. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+The invariant-skyscraper sheaf functor has all the stated limit,
+action, section, functor and finite étale value properties.
+The construction uses the chosen closure Ω, the common coefficient
+universe c, and all étale objects without finiteness assumptions on M or G. -/
 theorem original_field_invariant_skyscraper_inverse_sheaf :
     FieldInvariantSkyscraperLimitLaws.{u, w} k Ω ∧
       FieldInvariantSkyscraperOriginalValuesLaws.{u, w} k Ω ∧

@@ -1,4 +1,6 @@
-# Localized length eq count P of minimal
+# Localized coefficient length under the minimal-support condition
 
-At a prime minimal in the module support, the localized length is the
-number of occurrences of that prime in the decomposition's factor list.
+Localized coefficient length under the minimal-support condition.
+
+If every support prime contained in q equals q, the localized length of M at q is the
+factor-list occurrence count of q.

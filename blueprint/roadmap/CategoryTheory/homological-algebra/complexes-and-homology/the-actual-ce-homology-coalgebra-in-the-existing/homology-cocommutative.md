@@ -1,3 +1,6 @@
-# Homology cocommutative
+# Koszul cocommutativity of field CE homology
 
-The CE homology coproduct has the canonical Koszul symmetry.
+Koszul cocommutativity of field CE homology.
+
+The graded homology coproduct is unchanged by swapping tensor degrees `p,q` with the sign
+`(-1)^(pq)`.

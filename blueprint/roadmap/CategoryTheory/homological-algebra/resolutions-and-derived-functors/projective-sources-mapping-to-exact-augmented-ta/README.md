@@ -2,15 +2,15 @@
 
 ## Chain Complex
 
-- [Op Coaugmentation](op-coaugmentation.md)
-- [Op Coaugmentation f zero](op-coaugmentation-f-zero.md)
-- [Op Coaugmentation f succ](op-coaugmentation-f-succ.md)
-- [Exact succ of augmented Quasi Iso](exact-succ-of-augmented-quasi-iso.md)
-- [Op Coaugmentation exact zero](op-coaugmentation-exact-zero.md)
-- [Op Coaugmentation exact succ](op-coaugmentation-exact-succ.md)
+- [Opposite of a chain augmentation](op-coaugmentation.md)
+- [Degree-zero map of the opposite augmentation](op-coaugmentation-f-zero.md)
+- [Vanishing positive components of the opposite augmentation](op-coaugmentation-f-succ.md)
+- [Positive exactness of a quasi-isomorphic augmentation](exact-succ-of-augmented-quasi-iso.md)
+- [Exactness of the opposite augmentation row](op-coaugmentation-exact-zero.md)
+- [Exactness of positive opposite cochain rows](op-coaugmentation-exact-succ.md)
 
 ## Category Theory
 
-- [Exists projective Augmented Exact Comparison](exists-projective-augmented-exact-compar.md)
-- [Projective Augmented Exact Comparison Homotopy](projective-augmented-exact-comparison-ho.md)
-- [Projective Augmented Exact Comparison homology Map eq](projective-augmented-exact-comparison-ho-2.md)
+- [Existence of projective-source augmented comparisons](exists-projective-augmented-exact-compar.md)
+- [Homotopy uniqueness with projective source terms](projective-augmented-exact-comparison-ho.md)
+- [Homology independence of projective-source comparisons](projective-augmented-exact-comparison-ho-2.md)

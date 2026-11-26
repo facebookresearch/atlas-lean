@@ -1,3 +1,5 @@
-# Mixed Page Associativity of long
+# The mixed page law follows from its long-interval law
 
-The earned long-interval law supplies mixed associativity on every original native page.
+The mixed page law follows from its long-interval law.
+
+Long associativity at width r implies mixedPageAssociativity on page r.

@@ -13,12 +13,15 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.Bicomplex
 public import MathlibExt.Algebra.Homology.VerticalHomologyComplex
 
 /-!
-# The column-zero augmentation of a Cartan--Eilenberg resolution
+# Column-zero and vertical-homology augmentations
 
-The augmentations of the stored term resolutions assemble in resolution
-degree zero into a map to the original chain complex.  Taking homology in a
-fixed original degree then gives the degree-zero component of a strict map
-from the vertical-homology complex to the corresponding single complex.
+Let P be a Cartan–Eilenberg resolution of a nonnegative complex L in an abelian category. The
+augmentations of its term resolutions assemble in resolution degree zero to a chain map ε :
+P.bicomplex.X₀ → L. The first resolution differential is killed by ε.
+
+For every original degree q, the map H_q(ε) augments the vertical-homology chain complex to the
+complex concentrated on H_q(L) in resolution degree zero. All positive-degree components of this
+augmentation are zero.
 -/
 
 @[expose] public section
@@ -40,8 +43,10 @@ variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 namespace CartanEilenbergResolution
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The term-resolution augmentations in resolution degree zero, assembled
-as a map of chain complexes in the original degree. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The
+degree-zero term augmentations Rⱼ,₀ → Lⱼ assemble to a chain map ε : P.bicomplex.X₀ → L in the
+original degree j. -/
 noncomputable def termColumnZeroAugmentation :
     P.bicomplex.X 0 ⟶ L :=
   ChainComplex.ofHom
@@ -55,8 +60,10 @@ noncomputable def termColumnZeroAugmentation :
       simpa only [HomologicalComplex.comp_f,
         ChainComplex.single₀_map_f_zero] using h.symm)
 
-/-- The column-zero augmentation is the stored term-resolution augmentation
-in every original degree. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. In each
+original degree j, the component εⱼ : Rⱼ,₀ → Lⱼ of the column-zero augmentation is precisely the
+degree-zero augmentation of Rⱼ. -/
 @[simp]
 theorem termColumnZeroAugmentation_f (j : ℕ) :
     P.termColumnZeroAugmentation.f j =
@@ -64,8 +71,10 @@ theorem termColumnZeroAugmentation_f (j : ℕ) :
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The first resolution differential is killed by the column-zero
-augmentation. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The first
+resolution differential P.bicomplex.d(1,0) is killed by the column-zero augmentation ε:
+P.bicomplex.d(1,0) ≫ ε=0. -/
 @[reassoc]
 theorem bicomplex_d_one_zero_comp_termColumnZeroAugmentation :
     P.bicomplex.d 1 0 ≫ P.termColumnZeroAugmentation = 0 := by
@@ -76,22 +85,28 @@ theorem bicomplex_d_one_zero_comp_termColumnZeroAugmentation :
   rw [P.bicomplex_d₁ 0 j, P.termColumnZeroAugmentation_f]
   exact (P.termResolution j).complex_d_comp_π_f_zero
 
-/-- The map on homology induced by the column-zero augmentation in original
-degree `q`. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For q ∈
+ℕ, the column augmentation ε induces H_q(ε) from the degree-zero object of the vertical-homology
+complex to H_q(L). -/
 noncomputable def termColumnZeroHomologyAugmentation (q : ℕ) :
     (P.bicomplex.verticalHomologyComplex q).X 0 ⟶ L.homology q :=
   HomologicalComplex.homologyMap P.termColumnZeroAugmentation q
 
-/-- The homology augmentation is the homology map of the assembled column
-augmentation. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The
+homology augmentation in original degree q is exactly H_q(ε), where ε is the assembled
+column-zero chain augmentation. -/
 theorem termColumnZeroHomologyAugmentation_eq_homologyMap (q : ℕ) :
     P.termColumnZeroHomologyAugmentation q =
       HomologicalComplex.homologyMap P.termColumnZeroAugmentation q :=
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The first differential of the vertical-homology complex is killed by its
-degree-zero augmentation. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For every
+q ∈ ℕ, the first resolution differential of the vertical-homology complex is killed by H_q(ε):
+d^{1,0} ≫ H_q(ε)=0. -/
 @[reassoc]
 theorem verticalHomologyComplex_d_one_zero_comp_termColumnZeroHomologyAugmentation
     (q : ℕ) :
@@ -104,8 +119,11 @@ theorem verticalHomologyComplex_d_one_zero_comp_termColumnZeroHomologyAugmentati
     P.bicomplex_d_one_zero_comp_termColumnZeroAugmentation,
     HomologicalComplex.homologyMap_zero]
 
-/-- The strict augmentation of the vertical-homology complex in original
-degree `q`. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For each
+original degree q, H_q(ε) in resolution degree zero extends to an augmentation of the
+vertical-homology chain complex to H_q(L)[0]. Its positive resolution-degree components are
+zero. -/
 noncomputable def rowHomologyAugmentation (q : ℕ) :
     P.bicomplex.verticalHomologyComplex q ⟶
       (ChainComplex.single₀ C).obj (L.homology q) :=
@@ -114,16 +132,20 @@ noncomputable def rowHomologyAugmentation (q : ℕ) :
       ⟨P.termColumnZeroHomologyAugmentation q,
         P.verticalHomologyComplex_d_one_zero_comp_termColumnZeroHomologyAugmentation q⟩
 
-/-- The degree-zero component of the row-homology augmentation is the
-homology map induced by the full term-column augmentation. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. The
+resolution-degree-zero component of the augmentation of vertical homology in degree q is H_q(ε),
+the homology map of the column-zero augmentation. -/
 @[simp]
 theorem rowHomologyAugmentation_f_zero (q : ℕ) :
     (P.rowHomologyAugmentation q).f 0 =
       P.termColumnZeroHomologyAugmentation q :=
   ChainComplex.toSingle₀Equiv_symm_apply_f_zero _ _
 
-/-- Every positive-degree component of the row-homology augmentation is
-zero. -/
+/-- Let C be abelian, L a nonnegative chain complex, and P a Cartan–Eilenberg resolution of L. Write
+Rⱼ for its chosen projective resolution of Lⱼ and Cⱼ for its chosen cycles resolution. For every
+original degree q and n ∈ ℕ, the resolution-degree-(n+1) component of the vertical-homology
+augmentation to H_q(L)[0] is zero. -/
 @[simp]
 theorem rowHomologyAugmentation_f_succ (q n : ℕ) :
     (P.rowHomologyAugmentation q).f (n + 1) = 0 := by

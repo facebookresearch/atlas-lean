@@ -16,12 +16,16 @@ public import MathlibExt.CategoryTheory.Waldhausen.BinaryCoproduct
 public import Mathlib.CategoryTheory.Products.Basic
 
 /-!
-# The functor of the derived Waldhausen coproduct
+# The chosen coproduct functor in a Waldhausen category
 
-Objects are the actual coproduct cocones already derived from zero
-pushouts. Morphisms are their colimit descendants. The two injection
-equations prove the functor laws. Whole map equations retain the proved
-object transports, so callers need no unfolding of the functor value.
+Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Its chosen zero-source pushouts are binary
+coproducts. Maps f:X → X′ and g:Y → Y′ induce the unique coproduct map
+f⊔g characterized by its two injection equations.
+
+These maps respect identities and composition, giving a functor C×C → C
+whose value on (X,Y) is the chosen coproduct apex. Its map on a pair of
+morphisms is the coproduct map under the canonical apex identifications.
 -/
 
 public section
@@ -34,8 +38,11 @@ namespace CategoryTheory.Waldhausen
 
 variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
-/-- The actual map between the derived coproduct cocones, determined by
-the two original component maps. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For f:X → X′ and g:Y → Y′, the induced map f⊔g between the chosen coproduct apices is the unique map with (f⊔g)∘ι_X=ι_X′∘f and (f⊔g)∘ι_Y=ι_Y′∘g. -/
 noncomputable def binaryCoproductMap {X Y X' Y' : C}
     (f : X ⟶ X') (g : Y ⟶ Y') :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone C (pair X Y)).cocone;
@@ -54,7 +61,11 @@ private theorem binaryCoproductMap_inl_aux {X Y X' Y' : C}
   exact BinaryCofan.IsColimit.inl_desc
     (binaryCoproductColimitCocone C (pair X Y)).isColimit _ _
 
-/-- The map sends the first injection through the original first map. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For f:X → X′ and g:Y → Y′, the first injection equation is (f⊔g)∘ι_X=ι_X′∘f. -/
 theorem binaryCoproductMap_inl {X Y X' Y' : C}
     (f : X ⟶ X') (g : Y ⟶ Y') :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone C (pair X Y)).cocone;
@@ -71,7 +82,11 @@ private theorem binaryCoproductMap_inr_aux {X Y X' Y' : C}
   exact BinaryCofan.IsColimit.inr_desc
     (binaryCoproductColimitCocone C (pair X Y)).isColimit _ _
 
-/-- The map sends the second injection through the original second map. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For f:X → X′ and g:Y → Y′, the second injection equation is (f⊔g)∘ι_Y=ι_Y′∘g. -/
 theorem binaryCoproductMap_inr {X Y X' Y' : C}
     (f : X ⟶ X') (g : Y ⟶ Y') :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone C (pair X Y)).cocone;
@@ -79,7 +94,11 @@ theorem binaryCoproductMap_inr {X Y X' Y' : C}
     c.inr ≫ binaryCoproductMap C f g = g ≫ c'.inr :=
   binaryCoproductMap_inr_aux C f g
 
-/-- Identity component maps give the identity of the actual coproduct. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+The map induced by 1_X and 1_Y is the identity of X⊔Y. -/
 theorem binaryCoproductMap_id (X Y : C) :
     binaryCoproductMap C (𝟙 X) (𝟙 Y) =
       𝟙 (binaryCoproductColimitCocone C (pair X Y)).cocone.pt := by
@@ -90,7 +109,11 @@ theorem binaryCoproductMap_id (X Y : C) :
   · simpa only [Category.id_comp, Category.comp_id] using
       binaryCoproductMap_inr C (𝟙 X) (𝟙 Y)
 
-/-- The actual coproduct maps compose in both original components. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For composable f₀,f₁ and g₀,g₁, the chosen maps satisfy (f₁∘f₀)⊔(g₁∘g₀)=(f₁⊔g₁)∘(f₀⊔g₀). -/
 theorem binaryCoproductMap_comp {X₀ Y₀ X₁ Y₁ X₂ Y₂ : C}
     (f₀ : X₀ ⟶ X₁) (g₀ : Y₀ ⟶ Y₁) (f₁ : X₁ ⟶ X₂) (g₁ : Y₁ ⟶ Y₂) :
     binaryCoproductMap C (f₀ ≫ f₁) (g₀ ≫ g₁) =
@@ -120,7 +143,11 @@ theorem binaryCoproductMap_comp {X₀ Y₀ X₁ Y₁ X₂ Y₂ : C}
       _ = c₀.inr ≫ (binaryCoproductMap C f₀ g₀ ≫ binaryCoproductMap C f₁ g₁) :=
         Category.assoc _ _ _
 
-/-- The original zero-pushout coproduct cocones form a functor on pairs. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+The functor C×C → C sending (X,Y) to the chosen coproduct apex and (f,g) to its induced coproduct map. -/
 noncomputable def waldhausenCoproductFunctor : C × C ⥤ C where
   obj p := (binaryCoproductColimitCocone C (pair p.1 p.2)).cocone.pt
   map f := binaryCoproductMap C f.1 f.2
@@ -132,7 +159,11 @@ private theorem waldhausenCoproductFunctor_obj_aux (p : C × C) :
       (binaryCoproductColimitCocone C (pair p.1 p.2)).cocone.pt := by
   rfl
 
-/-- The functor object is the apex of the existing derived coproduct. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+At a pair (X,Y), the coproduct functor has value the apex of the selected zero-source coproduct cocone. -/
 theorem waldhausenCoproductFunctor_obj (p : C × C) :
     (waldhausenCoproductFunctor C).obj p =
       (binaryCoproductColimitCocone C (pair p.1 p.2)).cocone.pt :=
@@ -142,8 +173,11 @@ private theorem waldhausenCoproductFunctor_map_heq_aux {p q : C × C} (f : p ⟶
     HEq ((waldhausenCoproductFunctor C).map f) (binaryCoproductMap C f.1 f.2) := by
   rfl
 
-/-- The whole functor map is the actual coproduct descendant through the
-proved source and target object transports. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+Under the canonical identifications of the functor values with the selected coproduct apices, its map on (f,g) is the unique coproduct map f⊔g. -/
 theorem waldhausenCoproductFunctor_map {p q : C × C} (f : p ⟶ q) :
     (waldhausenCoproductFunctor C).map f =
       eqToHom (waldhausenCoproductFunctor_obj C p) ≫ binaryCoproductMap C f.1 f.2 ≫

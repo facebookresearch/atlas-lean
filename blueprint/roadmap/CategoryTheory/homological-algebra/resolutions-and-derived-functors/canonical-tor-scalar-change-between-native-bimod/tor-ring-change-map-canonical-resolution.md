@@ -1,4 +1,7 @@
-# Tor Ring Change Map canonical resolution
+# The constructed resolution comparison gives the canonical Tor map
 
-The actual internally constructed comparison computes the canonical map without any
-comparison data being supplied by aGlobal caller.
+For projective resolutions P,Q over the source and target
+rings and g:A→Res_(φᵒᵖ)(A′), the canonical Tor map is computed
+by the augmentation-compatible projective-source comparison
+constructed from P,Q,g. Its tensor chain map changes the
+coefficient by f and the resolution by that comparison.

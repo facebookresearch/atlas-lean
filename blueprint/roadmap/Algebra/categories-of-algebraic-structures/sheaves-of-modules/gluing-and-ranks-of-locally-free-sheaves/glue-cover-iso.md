@@ -1,5 +1,6 @@
-# Glue Cover Iso
+# Gluing compatible local module isomorphisms
 
-Amalgamation of overlap-compatible local data into a global iso: glue
-hom and inv separately, then prove the inverse laws by uniqueness
-(`coverHom_ext`), since they hold on the cover by `left_inv`/`right_inv`.
+Let `F,G` be module sheaves over `(X,R)`, `U` an open cover, and `D : CoverIsoData F G U`
+compatible local maps in both directions with the two pointwise inverse laws. Then
+`glueCoverIso D hU : F ≅ G` has forward morphism determined by `glueCoverHom D.fwd hU` and
+inverse morphism determined by `glueCoverHom D.bwd hU`.

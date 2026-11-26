@@ -17,17 +17,17 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.KProjective
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 /-!
-# Actual cone augmentations and finite support
+# Support and augmentations of mapped cochain cones
 
-The stock cone of `φ : F ⟶ G` has the original summands `F.X (j + 1)`
-and `G.X j`. Their original support windows give the cone window
-`[min (a - 1) c, max (b - 1) e]`. Projectivity of their images gives
-projectivity of the image cone terms through the stock biproduct charts.
+For φ : F → G in integer cochain complexes, the cone term at j is F_{j+1} ⊕ G_j. If F is
+supported in [a,b] and G in [c,e], the cone is supported in [min(a−1,c),max(b−1,e)]. An
+additive functor to an abelian category carries projective image terms of F and G to
+projective image cone terms.
 
-An actual map from the image of `G` and an actual null homotopy of its
-composite with the image of `φ` give an augmentation from the image cone.
-Its component formula retains the original cone projections, map, and
-null homotopy. This is glue data for induction on finite support.
+A map β from the image of G to T and a null homotopy of image(φ) followed by β define an
+augmentation from the image cone to T. Its component is the sum of the first cone projection
+followed by the homotopy component and the second projection followed by β. Finite support and
+projective image terms give K-projectivity of the image cone.
 -/
 
 @[expose] public section
@@ -44,8 +44,10 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P] [HasBinaryBiproducts P]
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable {F G : CochainComplex P ℤ} (φ : F ⟶ G)
 
-/-- The original summand support windows give the exact computed cone
-support window, including the shift of the source summand by one. -/
+/-- The support window of a cochain mapping cone.
+
+For source support [a,b] and target support [c,e], the cone vanishes outside
+[min(a−1,c),max(b−1,e)]. -/
 theorem isZero_outside_of_finiteSupport (a b c e : ℤ)
     (hF : ∀ j : ℤ, j < a ∨ b < j → IsZero (F.X j))
     (hG : ∀ j : ℤ, j < c ∨ e < j → IsZero (G.X j))
@@ -60,8 +62,10 @@ theorem isZero_outside_of_finiteSupport (a b c e : ℤ)
     have h₂ := le_max_right (b - 1) e
     exact ⟨hF (j + 1) (Or.inr (by omega)), hG j (Or.inr (by omega))⟩
 
-/-- The original cone charts and the additive functor's biproduct chart
-give projectivity of the actual image cone term. -/
+/-- Projectivity of the image cone terms.
+
+For additive i : P → A, if every i(F_j) and i(G_j) is projective, then every i(Cone(φ)_j) is
+projective through the cone biproduct charts. -/
 theorem projective_image_term (i : P ⥤ A) [i.Additive]
     (hF : ∀ j : ℤ, Projective (i.obj (F.X j)))
     (hG : ∀ j : ℤ, Projective (i.obj (G.X j))) (j : ℤ) :
@@ -75,8 +79,10 @@ theorem projective_image_term (i : P ⥤ A) [i.Additive]
   let _ : Projective (i.obj (G.X j)) := hG j
   exact Projective.of_iso t.symm inferInstance
 
-/-- The actual augmentation from the mapped stock cone, constructed from
-the original target map and its actual null homotopy. -/
+/-- The image-cone augmentation determined by a null homotopy.
+
+For β : i(G) → T and H : i(φ)β ≃ 0, the cone comparison and cofiber universal property give
+i(Cone φ) → T. -/
 def mappedAugmentation (i : P ⥤ A) [i.Additive] {T : CochainComplex A ℤ}
     (β : (i.mapHomologicalComplex (.up ℤ)).obj G ⟶ T)
     (h : Homotopy ((i.mapHomologicalComplex (.up ℤ)).map φ ≫ β) 0) :
@@ -85,8 +91,10 @@ def mappedAugmentation (i : P ⥤ A) [i.Additive] {T : CochainComplex A ℤ}
     HomologicalComplex.homotopyCofiber.desc
       ((i.mapHomologicalComplex (.up ℤ)).map φ) β h
 
-/-- The augmentation component is expressed through the actual original
-cone projections and the original null homotopy and target map. -/
+/-- The component formula for the image-cone augmentation.
+
+At j, the augmentation is the image first projection followed by H(j+1,j), plus the image
+second projection followed by β_j. -/
 theorem mappedAugmentation_f (i : P ⥤ A) [i.Additive] {T : CochainComplex A ℤ}
     (β : (i.mapHomologicalComplex (.up ℤ)).obj G ⟶ T)
     (h : Homotopy ((i.mapHomologicalComplex (.up ℤ)).map φ ≫ β) 0) (j : ℤ) :
@@ -114,8 +122,9 @@ theorem mappedAugmentation_f (i : P ⥤ A) [i.Additive] {T : CochainComplex A �
       rw [hE]
       simp only [Preadditive.add_comp, Category.assoc, hD₁, hD₂]
 
-/-- The mapped original right inclusion followed by the actual
-augmentation is the original target map. -/
+/-- The image-cone augmentation restricts to the supplied target map.
+
+The mapped inclusion i(G) → i(Cone φ) followed by the augmentation equals β. -/
 theorem mapped_inr_comp_mappedAugmentation (i : P ⥤ A) [i.Additive]
     {T : CochainComplex A ℤ} (β : (i.mapHomologicalComplex (.up ℤ)).obj G ⟶ T)
     (h : Homotopy ((i.mapHomologicalComplex (.up ℤ)).map φ ≫ β) 0) :
@@ -132,8 +141,10 @@ theorem mapped_inr_comp_mappedAugmentation (i : P ⥤ A) [i.Additive]
     _ = inr ψ ≫ D := congrArg (fun f => f ≫ D) (map_inr φ i)
     _ = β := HomologicalComplex.homotopyCofiber.inr_desc ψ β h
 
-/-- Finite support and the original projective image terms earn
-K-projectivity of the actual mapped stock cone. -/
+/-- K-projectivity of a finitely supported image cone.
+
+Under the finite support windows and projectivity of all image terms of F and G, the mapped
+cone is K-projective. -/
 theorem mappedCone_isKProjective (i : P ⥤ A) [i.Additive] (a b c e : ℤ)
     (hF : ∀ j : ℤ, j < a ∨ b < j → IsZero (F.X j))
     (hG : ∀ j : ℤ, j < c ∨ e < j → IsZero (G.X j))

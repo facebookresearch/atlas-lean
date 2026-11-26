@@ -1,4 +1,5 @@
-# Nerve Homotopy h value
+# The underlying map of the nerve homotopy
 
-The SAME original simplicial homotopy has EXACTLY its original whole cylinder map as its h
- field.
+The underlying map of the nerve homotopy.
+
+The cylinder field h of the simplicial homotopy associated to α is nerveHomotopyMap α.

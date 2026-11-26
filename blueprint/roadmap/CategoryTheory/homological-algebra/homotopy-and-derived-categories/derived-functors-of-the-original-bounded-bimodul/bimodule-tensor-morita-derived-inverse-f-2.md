@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Inverse Factors
+# Inverse Morita tensor commutes with bounded localization
 
-The original inverse-Q factorization uses the actual bounded inverse tensor.
+Inverse Morita tensor commutes with bounded localization.
+
+The inverse localized functor composed after `Q_S` is naturally isomorphic to the inverse
+bounded tensor equivalence composed before `Q_R`.

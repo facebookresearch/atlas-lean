@@ -1,3 +1,6 @@
-# In New biprod Inr Corner
+# New leg of the induced biproduct corner
 
-The corner retains the actual new boundary face.
+New leg of the induced biproduct corner.
+
+For the corner c_x : P → X' ⊞ B' induced by x : X → X', the new pushout leg satisfies inNew ≫
+c_x = inr : B' → X' ⊞ B'.

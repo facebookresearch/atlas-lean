@@ -1,3 +1,5 @@
-# Page Map page Window Iso At
+# The spectral comparison map in specified window coordinates
 
-The original output page map retains independently chosen, equal degree and cut notation.
+The spectral comparison map in specified window coordinates.
+
+The component of γ commutes with page-window charts at total degree n and cut a.

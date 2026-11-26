@@ -1,3 +1,6 @@
-# Native Tensor Functor Iso hom smul pairing
+# The forward tensor comparison retains the outer scalar action
 
-The actual native provider comparison carries the original stored outer action.
+For an (R,S)-bimodule B, t∈Sᵒᵖ and a pure tensor class,
+the forward tensor-presentation comparison sends
+t•[x⊗y] to t•[x⊗y] in the coefficient-family presentation.
+It is right S-linear.

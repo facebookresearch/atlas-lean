@@ -13,11 +13,14 @@ public import MathlibExt.Algebra.Homology.OfFunctorHomology
 public import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Basic
 
 /-!
-# Homology commutes with exact filtered colimits, canonically.
+# Homology commutes with homology-preserving colimits
 
-We construct the canonical comparison `homologyColimitIso` for a diagram
-`K : J ⥤ HomologicalComplex C c` and prove the generator formulas for its
-`hom` and `inv`, and that the inverse equals `colimit.post`.
+Let `C` be abelian with colimits of an arbitrary shape `J`, and
+suppose the colimit functor preserves homology. For a diagram of
+complexes of any shape `c`, there is a canonical comparison
+`H_i(colim K) ≅ colim_j H_i(K_j)`. It preserves the original diagram
+injections, and its inverse is the colimit comparison induced by
+the homology functor. The category and complex-index worlds are independent.
 -/
 
 open CategoryTheory Limits
@@ -40,7 +43,10 @@ private lemma colimitIsoColimOfFunctor_ι (K : J ⥤ HomologicalComplex C c) (j 
 
 variable [(colim (J := J) (C := C)).PreservesHomology]
 
-/-- Canonical iso comparing homology of a colimit with the colimit of homologies. -/
+/-- Let `C` be abelian with colimits of shape `J`, where `J` is
+any category, and suppose `colim : (J → C) → C` preserves homology.
+Let `c` be any complex shape and `K : J → HomologicalComplex C c`. For each complex index `i`, there is a canonical isomorphism
+`H_i(colim K) ≅ colim_j H_i(K_j)`. -/
 public noncomputable def homologyColimitIso (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (colimit K).homology i ≅ colimit (K ⋙ homologyFunctor C c i) :=
   (homologyFunctor C c i).mapIso (colimitIsoColimOfFunctor K) ≪≫
@@ -48,7 +54,11 @@ public noncomputable def homologyColimitIso (K : J ⥤ HomologicalComplex C c) (
     (colim (J := J) (C := C)).mapIso (ofFunctorHomologyIso K i)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- `map` of a colimit injection followed by the forward comparison is the target injection. -/
+/-- Let `C` be abelian with colimits of shape `J`, where `J` is
+any category, and suppose `colim : (J → C) → C` preserves homology.
+Let `c` be any complex shape and `K : J → HomologicalComplex C c`. For `j : J`, taking homology of `K_j → colim K` and then
+the forward comparison gives the injection
+`H_i(K_j) → colim_l H_i(K_l)`. -/
 public theorem map_ι_comp_homologyColimitIso_hom (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     (homologyFunctor C c i).map (colimit.ι K j) ≫ (homologyColimitIso K i).hom =
       colimit.ι (K ⋙ homologyFunctor C c i) j := by
@@ -91,7 +101,11 @@ public theorem map_ι_comp_homologyColimitIso_hom (K : J ⥤ HomologicalComplex 
     _ = _ := hCancel
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Target injection followed by the inverse comparison is the `map` of the source injection. -/
+/-- Let `C` be abelian with colimits of shape `J`, where `J` is
+any category, and suppose `colim : (J → C) → C` preserves homology.
+Let `c` be any complex shape and `K : J → HomologicalComplex C c`. For `j : J`, the injection `H_i(K_j) → colim_l H_i(K_l)`
+followed by the inverse comparison is the homology map of
+`K_j → colim K`. -/
 public theorem ι_comp_homologyColimitIso_inv (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     colimit.ι (K ⋙ homologyFunctor C c i) j ≫ (homologyColimitIso K i).inv =
       (homologyFunctor C c i).map (colimit.ι K j) := by
@@ -105,7 +119,11 @@ public theorem ι_comp_homologyColimitIso_inv (K : J ⥤ HomologicalComplex C c)
     _ = _ := by rw [Iso.hom_inv_id, Category.comp_id]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse of the canonical iso equals the colimit comparison map. -/
+/-- Let `C` be abelian with colimits of shape `J`, where `J` is
+any category, and suppose `colim : (J → C) → C` preserves homology.
+Let `c` be any complex shape and `K : J → HomologicalComplex C c`. The inverse comparison from `colim_j H_i(K_j)` to
+`H_i(colim K)` is the canonical colimit comparison induced by the
+homology functor. -/
 public theorem homologyColimitIso_inv_eq_colimit_post (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (homologyColimitIso K i).inv = colimit.post K (homologyFunctor C c i) := by
   apply colimit.hom_ext

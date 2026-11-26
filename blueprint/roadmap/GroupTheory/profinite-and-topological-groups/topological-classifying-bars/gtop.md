@@ -1,3 +1,5 @@
-# GTop
+# The topological space underlying a monoid
 
-A topological monoid as an object of `TopCat`.
+The topological space underlying a monoid.
+
+Bundle G with its specified topology as an object of TopCat.

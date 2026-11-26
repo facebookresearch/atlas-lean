@@ -15,15 +15,21 @@ public import MathlibExt.Algebra.Homology.Hochschild.PolynomialEulerianRepresent
 public import Mathlib.Algebra.Homology.Embedding.RestrictionHomology
 
 /-!
-# Polynomial proper-shuffle acyclicity
+# Polynomial proper-shuffle acyclicity and the cotangent comparison
 
-For a polynomial algebra over a rational ground ring and
-an arbitrary symmetric coefficient module, degree-n
-Hochschild homology has Eulerian weight n. The proper
-quotient retains weights zero and one, so its homology
-vanishes above degree one. After positive-index restriction,
-all positive degrees of the shifted cotangent complex vanish.
-Variables and coefficient universes are independent.
+Let k be a commutative ℚ-algebra, A = k[σ] and M a compatible symmetric coefficient module.
+Signed polynomial exterior representatives generate HHₙ(A,M) and have Eulerian weight n. The
+proper quotient by both-positive coefficient shuffle relations is the split image of the
+weight-zero-plus-one projector. Consequently its homology vanishes in every degree n ≥ 2.
+
+Restricting the proper quotient along n ↦ n+1 gives the proper cotangent complex. In positive
+degree n its homology is the proper quotient homology in degree n+1, hence is zero. In degree
+zero the cotangent augmentation identifies the Leibniz-relation cokernel with M ⊗_A Ω¹_{A/k}.
+These calculations show that the augmentation to this module concentrated in degree zero is a
+quasi-isomorphism. No finiteness condition on σ or flatness condition on M is needed.
+
+For Harrison proper-shuffle relations and the Eulerian decomposition, see J.-L. Loday, Cyclic
+Homology, second edition, §§4.2 and 4.5.
 -/
 
 @[expose] public section
@@ -42,7 +48,10 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k] (σ : Type v)
 
 local notation "A" => MvPolynomial σ k
 
-/-- The first projector kills each original signed polynomial class above degree one. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. For n ≥ 2 and x ∈ M ⊗_k ∧ⁿₖ(⊕ᵢk·eᵢ), the homology map
+of Symmetric.firstEulerianChainMap, the sum of the weight-zero and weight-one projectors, sends
+polynomialAntisymmetricExteriorClass k σ M n x to zero. -/
 theorem polynomialFirstEulerianHomology_polynomialClass_zero (n : ℕ) (hn : 2 ≤ n)
     (x : M ⊗[k] (⋀[k]^n (σ →₀ k))) :
     HomologicalComplex.homologyMap (Symmetric.firstEulerianChainMap k A M) n
@@ -76,8 +85,10 @@ theorem polynomialFirstEulerianHomology_polynomialClass_zero (n : ℕ) (hn : 2 �
   exact (congrArg (HomologicalComplex.homologyMap F n).hom hClass).trans
     (hMap.trans (hZero ((F.f n).hom y) hFcycle hz))
 
-/-- The polynomial first chain projector is zero on every homology degree above one.
-The polynomial comparison supplies every original homology class. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. For every n : ℕ with 2 ≤ n, the endomorphism of
+HHₙ(A,M) induced by Symmetric.firstEulerianChainMap is zero. Every Hochschild class is
+represented by a signed polynomial exterior class of Eulerian weight n. -/
 theorem polynomialFirstEulerianHomology_zero (n : ℕ) (hn : 2 ≤ n) :
     HomologicalComplex.homologyMap (Symmetric.firstEulerianChainMap k A M) n = 0 := by
   apply ModuleCat.hom_ext
@@ -97,7 +108,11 @@ theorem polynomialFirstEulerianHomology_zero (n : ℕ) (hn : 2 ≤ n) :
     ((KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n).symm ω)
   exact (congrArg H hω.symm).trans ((congrArg H (he.trans hclass)).trans hz)
 
-/-- The split quotient and polynomial Hodge purity force every higher proper homology identity to zero. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. Let P be the raw proper quotient of Hochschild chains
+by both-positive coefficient shuffle relations. For n ≥ 2, the identity of Hₙ(P) equals zero, by
+its Eulerian split section and the vanishing of the retained weight-zero-plus-one projector on
+HHₙ(A,M). -/
 theorem polynomialProperShuffleHomology_id_zero (n : ℕ) (hn : 2 ≤ n) :
     𝟙 ((Symmetric.positiveQuotient k A M).homology n) = 0 := by
   let s := HomologicalComplex.homologyMap (Symmetric.properEulerianSection k A M) n
@@ -115,12 +130,18 @@ theorem polynomialProperShuffleHomology_id_zero (n : ℕ) (hn : 2 ≤ n) :
       _ = 0 := by rw [hp, Limits.comp_zero]
   exact hs.symm.trans ((congrArg (fun f => f ≫ p) hz).trans Limits.zero_comp)
 
-/-- The original polynomial proper quotient has no homology in degrees n greater than one. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. For n : ℕ with 2 ≤ n, the homology object
+Hₙ(Symmetric.positiveQuotient k A M) is zero. The quotient relations are the both-positive
+shuffle images. -/
 theorem polynomialProperShuffleHomology_isZero (n : ℕ) (hn : 2 ≤ n) :
     IsZero ((Symmetric.positiveQuotient k A M).homology n) :=
   (IsZero.iff_id_eq_zero _).mpr (polynomialProperShuffleHomology_id_zero k σ M n hn)
 
-/-- Native restriction compares every positive shifted degree with the original proper quotient degree n+1. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. Let P be the proper-shuffle quotient and Ccot its
+restriction along n ↦ n+1. For n : ℕ with 0 < n, restriction induces an isomorphism Hₙ(Ccot) ≅
+Hₙ₊₁(P). The positive-degree hypothesis ensures both neighboring degrees are retained. -/
 def polynomialProperCotangentRestrictionHomologyIso (n : ℕ) (hn : 0 < n) :
     (Symmetric.properCotangentComplex k A M).homology n ≅
       (Symmetric.positiveQuotient k A M).homology (n + 1) :=
@@ -139,14 +160,20 @@ def polynomialProperCotangentRestrictionHomologyIso (n : ℕ) (hn : 0 < n) :
       (show (ComplexShape.down ℕ).Rel (n + 2) (n + 1) from rfl))
     ((ComplexShape.down ℕ).next_eq' (show (ComplexShape.down ℕ).Rel (n + 1) n from rfl))
 
-/-- The original shifted polynomial proper cotangent complex is acyclic in every positive degree. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. For every n : ℕ with 0 < n,
+Hₙ(Symmetric.properCotangentComplex k A M) is zero. Its positive homology is identified with
+proper-shuffle homology in degree n+1 ≥ 2. -/
 theorem polynomialProperCotangentHomology_isZero (n : ℕ) (hn : 0 < n) :
     IsZero ((Symmetric.properCotangentComplex k A M).homology n) :=
   (polynomialProperShuffleHomology_isZero k σ M (n + 1) (by omega)).of_iso
     (polynomialProperCotangentRestrictionHomologyIso k σ M n hn)
 
-/-- Every degree of the original polynomial proper-shuffle cotangent map is a quasi-isomorphism.
-Degree zero uses the Leibniz cokernel, and positive degrees use the polynomial Hodge purity. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] for an arbitrary variable set σ, and M a compatible
+A-module with its symmetric right action. The map from the positive-index restricted
+proper-shuffle quotient to M ⊗_A Ω¹_{A/k} concentrated in degree zero is a quasi-isomorphism.
+Its degree-zero comparison is the Leibniz-relation cokernel isomorphism, while its source and
+target have zero homology in every positive degree. -/
 instance polynomialProperShuffleCotangentMap_quasiIso :
     _root_.QuasiIso (Symmetric.properShuffleCotangentMap k A M) where
   quasiIsoAt n := by

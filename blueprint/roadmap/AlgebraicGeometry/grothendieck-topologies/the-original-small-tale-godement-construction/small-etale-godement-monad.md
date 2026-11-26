@@ -1,3 +1,5 @@
-# Small Etale Godement Monad
+# Godement monad from the stalk skyscraper adjunction
 
-The Godement monad is constructed from the same actual point-family adjunction.
+Godement monad from the stalk skyscraper adjunction.
+
+The stalk-family adjunction induces a monad on common-universe small étale abelian sheaves.

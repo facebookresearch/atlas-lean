@@ -1,3 +1,5 @@
-# Field Finite Galois Restriction left
+# The finite étale restriction has the spectrum map of g restricted to L
 
-The finite-stage restriction has the literal original Spec(g|L) map.
+Let Ω be a prescribed separable closure of k, L a finite Galois subfield, and g∈Gal(Ω/k). The
+underlying scheme map of fieldFiniteGaloisRestriction(g,L) is Spec(g.restrictNormal L), using
+the normality supplied by L's finite Galois property.

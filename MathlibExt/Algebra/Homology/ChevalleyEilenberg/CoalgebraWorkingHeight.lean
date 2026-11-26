@@ -12,12 +12,19 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoalgebraULift
 
 /-!
-# Chevalley–Eilenberg coalgebra maps at a common universe height
+# Lie coalgebra maps at an arbitrary common carrier height
 
-Carrier lifts and the exterior chain comparison bundle a Lie algebra map
-as a coalgebra map at any height containing the ring and both Lie carriers.
-An additional independent height supports simultaneous matrix-size and
-coefficient diagrams. The scalar tensor unit is lifted to the same height.
+Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. For any additional height z,
+set H=max{u,v,w,z}. The exterior lift comparisons define a chain map
+F^H:U^H C(L)→U^H C(L′), with
+F_n^H(up(a))=up(Λ_R^n f(a)).
+
+The map preserves the transported coproduct, counit and coaugmentation.
+At extra height zero it equals the common-height map at max{u,v,w}.
+Identity maps remain identities; for three independently sized Lie
+carriers, composition is calculated at a single common height
+max{u,v,w,x,z}. The tensor unit is placed at the same height.
 -/
 
 @[expose] public section
@@ -37,7 +44,9 @@ variable {L' : Type w} [LieRing L'] [LieAlgebra R L']
 
 local instance : HasFiniteBiproducts (ModuleCat.{max u z} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u z} R)
-/-- The canonical closed tensor structure at the chosen common carrier height. -/
+/-- For a commutative ring R:Type u and any height z, the coefficient
+category ModuleCat.{max u z}R is monoidal closed: tensoring has
+internal R-linear Hom as right adjoint. -/
 local instance workingHeightClosed :
     letI : MonoidalCategoryStruct (ModuleCat.{max u z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u,z} (R := R)
@@ -58,7 +67,12 @@ local instance workingHeightClosed :
     ModuleCat.UniverseTensor.monoidalLinear.{u,z} (R := R)
   exact ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,z} (R := R)
 
-/-- The existing CE comparisons and native Lie map, placed at the full common height. -/
+/-- Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At an independent extra
+height z, set H=max{u,v,w,z}.
+The exterior lift comparisons define
+F^H:U^H C(L)→U^H C(L′) by conjugating the lifted Lie chain
+map with the comparison isomorphisms. -/
 def nativeLiftedComplexMapAtHeight (f : L →ₗ⁅R⁆ L') :
     canonicalComplexULift.{u,v,max u v w z} R L ⟶
       canonicalComplexULift.{u,w,max u v w z} R L' :=
@@ -66,7 +80,11 @@ def nativeLiftedComplexMapAtHeight (f : L →ₗ⁅R⁆ L') :
     nativeComplexMap R (ULift.{max u v w z} L) (LieLift.map.{u,v,w,max u v w z} f) ≫
       (complexLiftComparisonIso.{u,w,max u v w z} R L').hom
 
-/-- The map keeps exactly the original exterior-map value under the native lift. -/
+/-- Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At an independent extra
+height z, set H=max{u,v,w,z}.
+For a∈Λ_R^nL, the degree-n map has value
+F_n^H(up(a))=up(Λ_R^n f(a)). -/
 theorem nativeLiftedComplexMapAtHeight_f_up (f : L →ₗ⁅R⁆ L') (n : ℕ) (a : ⋀[R]^n L) :
     ((nativeLiftedComplexMapAtHeight.{u,v,w,z} R L f).f n).hom (ULift.up a) =
       ULift.up (exteriorPower.map n f.toLinearMap a) := by
@@ -83,11 +101,19 @@ theorem nativeLiftedComplexMapAtHeight_f_up (f : L →ₗ⁅R⁆ L') (n : ℕ) (
     rfl
   rw [h]
 
-/-- The general working-height adapter extends the existing independent-universe map exactly. -/
+/-- Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At an independent extra
+height z, set H=max{u,v,w,z}.
+When the additional height z is zero, F^H equals the
+common-height Lie map for H=max{u,v,w}. -/
 theorem nativeLiftedComplexMapAtHeight_zero (f : L →ₗ⁅R⁆ L') :
     nativeLiftedComplexMapAtHeight.{u,v,w,0} R L f = nativeLiftedComplexMap R L f := rfl
 
-/-- The full-height map preserves the transported coaugmentation. -/
+/-- Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At an independent extra
+height z, set H=max{u,v,w,z}.
+The transported coaugmentations satisfy
+F^H u_L^H=u_{L′}^H at the common tensor-unit height H. -/
 theorem nativeLiftedComplexMapAtHeight_coaug (f : L →ₗ⁅R⁆ L') :
     liftedComplexCoaug.{u,v,max u v w z} R L ≫
         nativeLiftedComplexMapAtHeight.{u,v,w,z} R L f =
@@ -97,7 +123,11 @@ theorem nativeLiftedComplexMapAtHeight_coaug (f : L →ₗ⁅R⁆ L') :
     ← Category.assoc (nativeComplexCoaug R (ULift.{max u v w z} L)),
     nativeComplexMap_coaug]
 
-/-- The full-height map is a native comonoid homomorphism. -/
+/-- Let R:Type u be commutative, L:Type v and L′:Type w R-Lie
+algebras, and f:L→L′ a Lie homomorphism. At an independent extra
+height z, set H=max{u,v,w,z}.
+The arbitrary-height chain map is a comonoid morphism,
+preserving the transported coproduct and counit at H. -/
 def nativeLiftedComplexMapAtHeightIsComonHom (f : L →ₗ⁅R⁆ L') :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w z} R) :=
       ModuleCat.UniverseTensor.tensorStructure.{u,max u v w z} (R := R)
@@ -137,7 +167,9 @@ def nativeLiftedComplexMapAtHeightIsComonHom (f : L →ₗ⁅R⁆ L') :
   unfold nativeLiftedComplexMapAtHeight
   infer_instance
 
-/-- The full-height identity map is the native chain identity. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+At any additional height z, the common-height map induced by id_L
+is the identity of U^{max{u,v,z}}C(L). -/
 theorem nativeLiftedComplexMapAtHeight_id :
     nativeLiftedComplexMapAtHeight.{u,v,v,z} R L (LieHom.id : L →ₗ⁅R⁆ L) =
       𝟙 (canonicalComplexULift.{u,v,max u v z} R L) := by
@@ -153,7 +185,10 @@ theorem nativeLiftedComplexMapAtHeight_id :
       exact (nativeLiftedComplexMapAtHeight_f_up.{u,v,v,z} R L LieHom.id n a).trans
         (congrArg ULift.up (LinearMap.congr_fun (exteriorPower.map_id (R := R) (M := L) (n := n)) a))
 
-/-- Three original worlds use one common-height composite, with the original exterior maps. -/
+/-- Let R:Type u be commutative and L,L′,L″ R-Lie algebras in
+independent carrier universes v,w,x. For composable Lie maps f,g
+and any height z, set H=max{u,v,w,x,z}. Then
+F^H(g) F^H(f)=F^H(g∘f) on the lifted exterior chain complexes. -/
 theorem nativeLiftedComplexMapAtHeight_comp
     {L'' : Type x} [LieRing L''] [LieAlgebra R L'']
     (f : L →ₗ⁅R⁆ L') (g : L' →ₗ⁅R⁆ L'') :

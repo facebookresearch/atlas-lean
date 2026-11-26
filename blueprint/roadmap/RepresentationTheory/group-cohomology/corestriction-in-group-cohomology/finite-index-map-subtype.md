@@ -1,4 +1,4 @@
-# Finite Index map subtype
+# Finite index for the image of a nested subgroup
 
-The image of a finite-index subgroup of a finite-index subgroup has
-finite index in the ambient group.
+Let `G` be a group, `H ≤ G` a finite-index subgroup, and `K ≤ H` finite index in `H`. Then
+`K.map H.subtype ≤ G` has finite index in `G`. Its index is the product `[H:K] [G:H]`.

@@ -1,3 +1,6 @@
-# Bimodule Tensor Transformation id
+# Identity coefficient gives the identity finite tensor transformation
 
-Identity coefficient maps give the whole identity natural transformation.
+Identity coefficient gives the identity finite tensor transformation.
+
+The natural transformation induced by the identity map on `E` is the identity of
+`FGModuleCat.bimoduleTensor E`.

@@ -1,3 +1,6 @@
-# Field Continuous Derived Invariants Iso
+# Continuous cohomology as derived invariants in each degree
 
-Every degree of the SAME canonical delta-functor isomorphism.
+Continuous cohomology as derived invariants in each degree.
+
+Evaluate the delta-functor isomorphism in natural degree `q` to obtain a natural isomorphism
+with `R^q` of invariants.

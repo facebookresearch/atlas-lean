@@ -1,10 +1,6 @@
-# Em Augmented naturality
+# The regular-right comparison is natural as an augmented map
 
-Full augmented-morphism naturality for the model comparison:
-postcomposed-module underlying maps commute with the comparison against
-`BarResolution.resolutionHom`, oriented
-`emUnderlyingHom φ ≫ (emAugmentedIso alg').hom =
-  (emAugmentedIso alg).hom ≫ resolutionHom φ`.
-The simplicial square reuses `emNaturality_left`; the target square uses
-`emNaturality_right` with the identity comparison components.
-Postcomposed-module model, not the literal forgetful image.
+Let T be a monad on C and φ : alg → alg′ an algebra morphism. The augmented isomorphism
+e=emAugmentedIso satisfies emUnderlyingHom(φ) ≫ e_alg′.hom = e_alg.hom ≫ resolutionHom(φ). The
+equality includes both the simplicial naturality square and the identity comparisons on
+algebra-carrier targets.

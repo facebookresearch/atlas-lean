@@ -1,3 +1,6 @@
-# Field Mapped Injective Resolution zero
+# Mapped resolution coaugmentation retains its degree zero map
 
-Its literal zero component is the original T-map of the original augmentation.
+Mapped resolution coaugmentation retains its degree zero map.
+
+Its degree-zero component is the geometric-stalk Galois image of the sheaf resolution's
+degree-zero coaugmentation.

@@ -14,11 +14,14 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDegreeThree
 
 /-!
-# The concrete quotient model for third group cohomology
+# The concrete quotient description of third group cohomology
 
-The explicit degree-three inhomogeneous short complex identifies ordinary
-third group cohomology with its concrete kernel/image quotient.  This is
-the degree-three analogue of Mathlib's `groupCohomology.H2Iso`.
+Let k be a commutative ring, G a group, and A a k-linear representation in universe u. The
+coordinate short complex C²(G,A)→C³(G,A)→C⁴(G,A) identifies H³(G,A) with ker(δ₃)/im(δ₂).
+
+The isomorphism sends the class of a cycle in the inhomogeneous complex to the quotient class of
+its triple-variable coordinate cocycle. It commutes with the cycle projections, so it preserves
+representatives as well as the cohomology objects.
 -/
 
 @[expose] public section
@@ -35,8 +38,11 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Ordinary H3 identified with the concrete homology quotient of the
-explicit degree-three inhomogeneous short complex. -/
+/-- Let k be a commutative ring, G a group, and A a k-linear G-representation, in the given universe
+u. There is a k-module isomorphism H³(G,A)≅ker(δ₃)/im(δ₂) obtained from the degree-three
+short-complex coordinate isomorphism. It sends a class represented by z:G³→A to the quotient
+class of the same three-cocycle. For b:G×G→A, δ₂b(g,h,i)=ρ(g)b(h,i)-b(gh,i)+b(g,hi)-b(g,h). The
+differential is δ₃z(g,h,i,j)=ρ(g)z(h,i,j)-z(gh,i,j)+z(g,hi,j)-z(g,h,ij)+z(g,h,i). -/
 noncomputable def H3Iso (A : Rep k G) :
     H3 A ≅ (shortComplexH3 A).moduleCatLeftHomologyData.H :=
   (leftHomologyIso _).symm ≪≫

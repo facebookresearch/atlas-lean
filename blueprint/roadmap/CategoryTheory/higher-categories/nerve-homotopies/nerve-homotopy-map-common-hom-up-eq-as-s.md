@@ -1,5 +1,6 @@
-# Nerve Homotopy Map Common Hom Up eq as Small
+# Factorization of the cylinder through canonical category transport
 
-The ORIGINAL up/down chart gives the ENTIRE native upward cylinder
-with ALL independent object/Hom roles, every simplex/parameter and every
-crossing arrow. AsSmall's enlarged Hom chart is retained explicitly.
+Factorization of the cylinder through canonical category transport.
+
+The larger-target cylinder map of α equals the nerve map of AsSmall.up on the first factor
+followed by the cylinder classified by AsSmall.down α.

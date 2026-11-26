@@ -1,4 +1,7 @@
-# Original Middle Tor Tensor End Map
+# The support representation is an algebra map into Tor endomorphisms
 
-The actual balanced support representation as an algebra map into
-endomorphisms of the original native middle-ring Tor.
+For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The balanced support action gives the R-algebra map
+T=V⊗_R W→End_R(M_q).

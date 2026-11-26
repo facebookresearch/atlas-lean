@@ -1,3 +1,6 @@
-# Field Coind Canonical Complex Functor map f
+# Canonical coinduction map in a fixed degree
 
-Its coefficient-map component is the actual stored canonical coresolution map.
+Canonical coinduction map in a fixed degree.
+
+The degree-`n` map of a coefficient morphism is the monad-coresolution natural transformation
+evaluated at the simplex of degree `n`.

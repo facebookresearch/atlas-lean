@@ -1,4 +1,5 @@
-# Horizontal First Page Row Map Of Bicomplex f
+# The components of a restricted first-page row map
 
-Components of the restricted row map are the corresponding page-one map
-components.
+The components of a restricted first-page row map.
+
+The displayed degree-`p` component is the first-page map component at `(p,q)`.

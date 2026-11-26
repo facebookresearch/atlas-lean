@@ -16,14 +16,13 @@ public import MathlibExt.CategoryTheory.Waldhausen.BinaryCoproduct
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Cofibrations of the genuine Waldhausen coproduct injections
+# Cofibrations of Waldhausen coproduct injections
 
-The existing binary-coproduct cocone is derived from the original zero
-pushout axiom. Its colimit universal property identifies the square from
-zero as a pushout. Cobase-change stability of the original cofibrations
-then proves both injections are cofibrations.
-
-No exact structure, biproduct or caller-selected coproduct is needed.
+In a category C with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms, the chosen coproduct
+X⊔Y is a pushout of 0 → X and 0 → Y.
+Both maps from zero are cofibrations, so the two coproduct injections
+X → X⊔Y and Y → X⊔Y are cofibrations.
 -/
 
 public section
@@ -36,8 +35,10 @@ namespace CategoryTheory.Waldhausen
 
 variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
-/-- Both injections of the existing binary-coproduct cocone derived from
-Waldhausen zero pushouts are original base cofibrations. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms.
+
+For the binary coproduct cocone supplied by the zero-source pushout of X and Y, both injections are cofibrations. -/
 theorem binaryCoproductColimitCocone_injections_isCofibration (X Y : C) :
     let c : BinaryCofan X Y := (binaryCoproductColimitCocone C (pair X Y)).cocone;
     IsCofibration c.inl ∧ IsCofibration c.inr := by

@@ -1,3 +1,6 @@
-# Single Obj XSelf eq
+# Agreement of bounded and full evaluation isomorphisms
 
-The evaluation chart is the canonical single-object chart.
+In a category E with zero morphisms and a zero object, the evaluation
+isomorphism Sⱼ(X)ʲ ≅ X in the bounded category equals the canonical
+evaluation isomorphism for the same single complex in the full cochain
+category.

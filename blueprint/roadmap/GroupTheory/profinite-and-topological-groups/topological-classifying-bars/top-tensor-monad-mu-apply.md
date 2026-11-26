@@ -1,3 +1,5 @@
-# Top Tensor Monad mu apply
+# Coordinates of the topological tensor-monad multiplication
 
-Pointwise multiplication of the topological tensor monad.
+Coordinates of the topological tensor-monad multiplication.
+
+The multiplication at X sends (g,(h,x)) to (gh,x).

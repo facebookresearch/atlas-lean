@@ -18,17 +18,16 @@ public import MathlibExt.Algebra.Category.ModuleCat.NativeTorLinearity
 public import MathlibExt.Algebra.Category.ModuleCat.TorBalancedUniverse
 
 /-!
-# Finiteness and annihilators of the original native Tor
+# Finite generation and annihilators of Tor modules
 
-The actual finite-term projective resolution of the right coefficient gives
-finite Tor modules in every degree over a Noetherian ring. The native Tor
-objects are the existing derived tensor objects.
+For a commutative noetherian ring R and finitely generated modules M and N, every Tor_q^R(M,N)
+is finitely generated. A resolution of N with finitely generated projective terms gives this
+finiteness through the homology of M tensored with that resolution.
 
-The existing first-variable linear map of native Tor transports an
-annihilating scalar to zero. Canonical native Tor symmetry proves the same
-statement for the other coefficient. Thus the sum of both actual coefficient
-annihilators annihilates each original Tor module. Ring and module universes
-are independent, and no finiteness of Tor or resolution is a caller input.
+For any commutative R, the annihilator of either coefficient module is contained in the
+annihilator of Tor_q^R(M,N). Consequently the sum of the two coefficient annihilator ideals
+annihilates Tor in every degree. The ring and common coefficient carrier heights are
+independent.
 -/
 
 @[expose] public section
@@ -42,8 +41,10 @@ namespace ModuleCat
 
 variable (R : Type u) [CommRing R]
 
-/-- The original derived tensor module is finite in every degree when
-both coefficients are finite over a Noetherian ring. -/
+/-- Finite generation of every Tor degree.
+
+Over a commutative noetherian ring R, finitely generated M and N have finitely generated
+Tor_q^R(M,N) for every q ≥ 0. -/
 theorem nativeTor_finite [IsNoetherianRing R]
     (M N : ModuleCat.{max u v} R) [Module.Finite R M] [Module.Finite R N] (q : ℕ) :
     Module.Finite R (((Tor (ModuleCat.{max u v} R) q).obj M).obj N) := by
@@ -60,8 +61,10 @@ theorem nativeTor_finite [IsNoetherianRing R]
     exact HomologicalComplex.homology_finite_of_finite R K q
   exact Module.Finite.equiv (P.isoLeftDerivedObj F q).toLinearEquiv.symm
 
-/-- The annihilator of the first original coefficient annihilates its
-actual native Tor with every other coefficient and in every degree. -/
+/-- The first coefficient annihilator annihilates Tor.
+
+For any commutative ring R and modules M,N, Ann_R(M) is contained in Ann_R(Tor_q^R(M,N)) in
+every degree q. -/
 theorem annihilator_le_nativeTor_left
     (M N : ModuleCat.{max u v} R) (q : ℕ) :
     Module.annihilator R M ≤
@@ -87,8 +90,10 @@ theorem annihilator_le_nativeTor_left
   change 0 = r • x at hx
   exact hx.symm
 
-/-- Canonical symmetry transports the other original coefficient
-annihilator to the actual native Tor object in its original order. -/
+/-- The second coefficient annihilator annihilates Tor.
+
+For any commutative ring R and modules M,N, Ann_R(N) is contained in Ann_R(Tor_q^R(M,N)) in
+every degree q. -/
 theorem annihilator_le_nativeTor_right
     (M N : ModuleCat.{max u v} R) (q : ℕ) :
     Module.annihilator R N ≤
@@ -101,8 +106,9 @@ theorem annihilator_le_nativeTor_right
   apply e.toLinearEquiv.injective
   rw [map_smul, Module.mem_annihilator.mp hswap, map_zero]
 
-/-- Both original scalar annihilators annihilate the same actual native
-Tor carrier, including every higher degree. -/
+/-- The sum of coefficient annihilators annihilates Tor.
+
+The ideal Ann_R(M) + Ann_R(N) is contained in Ann_R(Tor_q^R(M,N)) for every q. -/
 theorem annihilator_sup_le_nativeTor
     (M N : ModuleCat.{max u v} R) (q : ℕ) :
     Module.annihilator R M ⊔ Module.annihilator R N ≤

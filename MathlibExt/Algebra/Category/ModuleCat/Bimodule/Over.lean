@@ -16,12 +16,19 @@ public import Mathlib.Algebra.Module.Bimodule
 public import Mathlib.Algebra.Algebra.Tower
 
 /-!
-# Original actions of native k-enveloping modules
+# Ground and endpoint actions of relative enveloping modules
 
-The three restrictions of a native k-enveloping module recover its actual
-ground, left and right actions. Recombination recovers the stored module.
-All comparisons below are earned from those actions, including the ground
-module equality for arbitrary k. The categories remain native ModuleCat.
+Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and X a module over
+E_R^k=R⊗_kRᵒᵖ with carrier universe v. Restriction along the ground algebra map and the two
+tensor inclusions gives its k-, left R-, and right R-actions.
+
+Both endpoint actions restrict to the same ground k-action and commute with each other. Their
+combined pure-tensor action equals the E_R^k-action, and recombination recovers the same module
+structure. The reconstruction isomorphism is the identity on the coefficient carrier and
+transports every morphism with its values unchanged.
+
+Conversely, a k-module with commuting left and right R-actions compatible with that k-action
+defines an E_R^k-module. Ground and endpoint restriction recover all three chosen actions.
 -/
 
 @[expose] public section
@@ -37,21 +44,32 @@ namespace ModuleCat.Bimodule.Over
 
 variable (k : Type u) [CommRing k] (R : Type r) [Ring R] [Algebra k R]
 
-/-- Restrict the original stored action along the ground algebra map. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. The k-module structure is
+restriction along the algebra map k→E_R^k. Thus c∈k acts on x through the enveloping scalar
+algebraMap(c), preserving the same additive carrier. -/
 def groundModule (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) : Module k X :=
   Module.compHom X (algebraMap k (R ⊗[k] Rᵐᵒᵖ))
 
-/-- Restrict the original action along the first tensor inclusion. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. Restriction along a↦a⊗1:R→E_R^k
+gives the left R-module structure on X. Its scalar function is a•x=(a⊗1)•_X x. -/
 def leftModule (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) : Module R X :=
   Module.compHom X
     (Algebra.TensorProduct.includeLeftRingHom : R →+* R ⊗[k] Rᵐᵒᵖ)
 
-/-- Restrict the original action along the second tensor inclusion. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. Restriction along
+b↦1⊗b:Rᵒᵖ→E_R^k gives the Rᵒᵖ-module structure. For b=op(a), this is the right R-action
+x•a=(1⊗op(a))•_X x. -/
 def rightModule (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) : Module Rᵐᵒᵖ X :=
   Module.compHom X
     (Algebra.TensorProduct.includeRight : Rᵐᵒᵖ →ₐ[k] R ⊗[k] Rᵐᵒᵖ).toRingHom
 
-/-- The first restriction has the original ground action. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. The ground and left
+restrictions form a compatible scalar tower k→R→X. For c∈k and x∈X, algebraMap_k^R(c)•_left
+x=c•_ground x, so (c•a)•x=c•(a•x) for a∈R. -/
 theorem leftTower (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     letI := groundModule k R X
     letI := leftModule k R X
@@ -66,7 +84,10 @@ theorem leftTower (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     (Algebra.TensorProduct.algebraMap_apply (R := k) (S := k)
       (A := R) (B := Rᵐᵒᵖ) a).symm
 
-/-- The second restriction has that same ground action. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. The ground and Rᵒᵖ restrictions
+form a compatible scalar tower k→Rᵒᵖ→X. The action of algebraMap_k^{Rᵒᵖ}(c) equals c•_ground x
+for each c∈k,x∈X. -/
 theorem rightTower (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     letI := groundModule k R X
     letI := rightModule k R X
@@ -81,7 +102,10 @@ theorem rightTower (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     (Algebra.TensorProduct.algebraMap_apply' (R := k) (A := R)
       (B := Rᵐᵒᵖ) a).symm
 
-/-- The two restrictions of the original enveloping action commute. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. For a∈R,b∈Rᵒᵖ,x∈X, the
+restricted scalar functions satisfy a•_left(b•_right x)=b•_right(a•_left x). Their two
+tensor-inclusion scalars commute in E_R^k. -/
 theorem commute (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     letI := leftModule k R X
     letI := rightModule k R X
@@ -95,7 +119,10 @@ theorem commute (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
   apply congrArg (fun z : R ⊗[k] Rᵐᵒᵖ => z • x)
   simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
-/-- The pure enveloping action is the original ordered two-sided action. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. For a∈R,b∈Rᵒᵖ,x∈X,
+a•_left(b•_right x)=(a⊗_k b)•_X x. The tensor scalar uses the relative enveloping ring and the
+endpoint restrictions of the same module. -/
 theorem smul_tmul (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ))
     (a : R) (b : Rᵐᵒᵖ) (x : X) :
     (leftModule k R X).smul a ((rightModule k R X).smul b x) =
@@ -105,7 +132,10 @@ theorem smul_tmul (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ))
   apply congrArg (fun z : R ⊗[k] Rᵐᵒᵖ => z • x)
   simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
-/-- Recombine the original restrictions with the native module constructor. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. Combine the ground k-action and
+the commuting endpoint R-actions to obtain an E_R^k-module on the same carrier. Its pure action
+is (a⊗b)•x=a•_left(b•_right x), with both scalar towers compatible with k. -/
 def reconstructedModule (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     Module (R ⊗[k] Rᵐᵒᵖ) X := by
   letI := groundModule k R X
@@ -116,7 +146,10 @@ def reconstructedModule (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
   letI := commute k R X
   exact TensorProduct.Algebra.module
 
-/-- Native recombination acts by the original stored scalar function. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. For z∈E_R^k and x∈X, the scalar
+function reconstructed from the ground and endpoint restrictions satisfies z•_{rec}x=z•_X x.
+This holds for every tensor scalar, extending the pure-tensor formula by additivity. -/
 theorem reconstructedModule_smul (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ))
     (z : R ⊗[k] Rᵐᵒᵖ) (x : X) :
     (reconstructedModule k R X).smul z x = X.isModule.smul z x := by
@@ -131,18 +164,27 @@ theorem reconstructedModule_smul (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ))
     exact ((reconstructedModule k R X).add_smul z w x).trans
       ((congrArg₂ (· + ·) hz hw).trans (X.isModule.add_smul z w x).symm)
 
-/-- Equality of the actual native module data follows from its scalar function. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. The E_R^k-module structure
+reconstructed from its ground and endpoint restrictions equals the module structure of X. The
+additive group and scalar function are the same. -/
 theorem reconstructedModule_eq (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     reconstructedModule k R X = X.isModule :=
   Module.ext' _ _ (reconstructedModule_smul k R X)
 
-/-- Bundle the same carrier with the reconstructed native action. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. The reconstructed object
+X_rec∈ModuleCat_v(E_R^k) uses the carrier of X with the recombined enveloping action. Its ground
+and two endpoint scalar actions are the restrictions of X. -/
 def reconstructedObject (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ) :=
   letI := reconstructedModule k R X
   ModuleCat.of (R ⊗[k] Rᵐᵒᵖ) X
 
-/-- The comparison is the actual identity function in both directions. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. There is an E_R^k-module
+isomorphism e_X:X_rec≅X whose forward and inverse maps are x↦x. Equality of the reconstructed
+and given scalar actions makes these identity coefficient maps linear. -/
 def reconstructedIso (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) :
     reconstructedObject k R X ≅ X where
   hom := @ModuleCat.ofHom (R ⊗[k] Rᵐᵒᵖ) _
@@ -178,7 +220,10 @@ theorem reconstructedIso_hom_apply (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) (x 
 theorem reconstructedIso_inv_apply (X : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)) (x : X) :
     (reconstructedIso k R X).inv.hom x = x := rfl
 
-/-- Transport the original morphism using those identity-coordinate isos. -/
+/-- Let k be a commutative ring in universe u, R a k-algebra ring in universe r, and E_R^k=R⊗_kRᵒᵖ.
+Let X be an E_R^k-module with carrier in independent universe v. For an E_R^k-linear morphism
+f:X→Y, its reconstruction map X_rec→Y_rec is e_X.hom≫f≫e_Y.inv. It has value f(x) on each
+coefficient x and preserves the ground and endpoint actions. -/
 def reconstructedMap {X Y : ModuleCat.{v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     reconstructedObject k R X ⟶ reconstructedObject k R Y :=
   (reconstructedIso k R X).hom ≫ f ≫ (reconstructedIso k R Y).inv
@@ -193,7 +238,10 @@ variable (M : Type v) [AddCommGroup M] [dM : Module k M]
   [Module R M] [Module Rᵐᵒᵖ M] [SMulCommClass R Rᵐᵒᵖ M]
   [IsScalarTower k R M] [IsScalarTower k Rᵐᵒᵖ M]
 
-/-- The k-action recovered from a compatible tensor module is the supplied one. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, and M an abelian group in v with a
+chosen k-action and commuting R- and Rᵒᵖ-actions. Assume both endpoint actions restrict along
+their algebra maps to the chosen k-action. After combining the actions into a module over
+R⊗_kRᵒᵖ, restriction along k→R⊗_kRᵒᵖ is equal to the chosen k-module structure on M. -/
 theorem groundModule_ofTensor :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
     groundModule k R (ModuleCat.of (R ⊗[k] Rᵐᵒᵖ) M) = dM := by
@@ -206,7 +254,11 @@ theorem groundModule_ofTensor :
   rw [one_smul]
   exact IsScalarTower.algebraMap_smul (R := k) (A := R) (M := M) a m
 
-/-- The first restriction recovers the original left action. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, and M an abelian group in v with a
+chosen k-action and commuting R- and Rᵒᵖ-actions. Assume both endpoint actions restrict along
+their algebra maps to the chosen k-action. The combined relative enveloping module restricts
+along a↦a⊗1 to exactly the given R-module structure on M. The unit in the second factor leaves
+each coefficient unchanged. -/
 theorem leftModule_ofTensor :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
     leftModule k R (ModuleCat.of (R ⊗[k] Rᵐᵒᵖ) M) = (inferInstance : Module R M) := by
@@ -216,7 +268,11 @@ theorem leftModule_ofTensor :
   change r • ((1 : Rᵐᵒᵖ) • m) = r • m
   exact congrArg (fun x : M => r • x) (one_smul Rᵐᵒᵖ m)
 
-/-- The second restriction recovers the original right action. -/
+/-- Let k be a commutative ring in u, R a k-algebra ring in r, and M an abelian group in v with a
+chosen k-action and commuting R- and Rᵒᵖ-actions. Assume both endpoint actions restrict along
+their algebra maps to the chosen k-action. Restriction of the combined R⊗_kRᵒᵖ-module along
+b↦1⊗b gives the chosen Rᵒᵖ-module structure on M. The unit in the first factor leaves every
+right action value unchanged. -/
 theorem rightModule_ofTensor :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
     rightModule k R (ModuleCat.of (R ⊗[k] Rᵐᵒᵖ) M) =

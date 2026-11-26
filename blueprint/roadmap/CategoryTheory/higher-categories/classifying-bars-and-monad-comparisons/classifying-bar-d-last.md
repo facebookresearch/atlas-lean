@@ -1,3 +1,6 @@
-# Classifying Bar d Last
+# Last boundary face of the classifying bar
 
-Last face of the classifying bar uses the point left action.
+Last boundary face of the classifying bar.
+
+Its last face component is the two-sided bar boundary map at the last index for the specified
+endpoint modules.

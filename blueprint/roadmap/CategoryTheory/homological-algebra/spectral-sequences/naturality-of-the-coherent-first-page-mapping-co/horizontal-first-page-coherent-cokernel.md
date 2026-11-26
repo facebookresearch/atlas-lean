@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Cokernel Short Complex Map Of Bicomplex
+# The cokernel-sequence map of a coherent first-page window
 
-The endpoint maps and induced cokernel map form a morphism between the
-cokernel short complexes of two coherent first-page windows.
+The cokernel-sequence map of a coherent first-page window.
+
+The lower and upper filtration-stage maps induced by a bicomplex morphism, together with the
+induced cokernel map, define a morphism of window cokernel sequences.

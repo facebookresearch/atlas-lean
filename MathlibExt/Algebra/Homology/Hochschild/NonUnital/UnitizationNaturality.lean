@@ -12,14 +12,18 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.UnitizationTwoColumns
 
 /-!
-# nonunital-map naturality of unitization coordinates
+# Naturality of relative unitization and two-column coordinates
 
-Original nonunital algebra maps lift through the native unitization
-property. Their normalized level maps preserve the even word and
-unit-leading odd word for independent algebra carrier universes. In one
-module carrier world these original maps restrict to the relative
-and reduced complexes and commute with the two-column comparison.
-No preservation of a unit in the original nonunital algebra is assumed.
+Let `f : A → B` be a nonunital algebra homomorphism over a commutative ring `k`. Its
+unitization extends by `(r,a) ↦ (r,f(a))`, so it preserves the external scalar unit and
+commutes with scalar projection.
+
+On normalized tensor levels it sends ideal-leading and unit-leading words to the corresponding
+words with `f` applied to every ideal entry, for independent algebra-carrier universes. In a
+common chain category, the induced maps restrict to the relative and reduced normalized
+complexes. They commute with normalization, the first-two-column comparison, and the
+unitization cokernel homology comparison. If `A` has a left unit, the latter model also
+compares with homology of its `b`-complex.
 -/
 
 @[expose] public section
@@ -43,7 +47,10 @@ section IndependentCarriers
 variable {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The original map acts on the regular coefficient and quotient tail, in independent worlds. -/
+/-- The normalized unitization map on independently sized tensor levels.
+
+For `f : A → B`, its unitization map acts on the regular coefficient and on each quotient-tail
+factor, giving a ground-linear map between normalized levels of `A⁺` and `B⁺`. -/
 def unitizationNormalizedLevelMap (f : A →ₙₐ[k] B) (n : ℕ) :
     (normalizedBComplex k (Unitization k A)).X n →ₗ[k]
       (normalizedBComplex k (Unitization k B)).X n :=
@@ -51,7 +58,10 @@ def unitizationNormalizedLevelMap (f : A →ₙₐ[k] B) (n : ℕ) :
     (unitizationMap k A f).toLinearMap (unitizationMap k A f).toLinearMap
     (unitizationMap k A f).map_one n
 
-/-- The map preserves the even ideal word, with the original f on every factor. -/
+/-- Naturality of ideal-leading unitization words.
+
+The normalized level map induced by `f` sends the even word with all entries in `A` to the
+even word obtained by applying `f` to each entry. -/
 theorem unitizationEvenWord_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     (unitizationNormalizedLevelMap f n).comp (unitizationEvenWord k A n).hom =
       (unitizationEvenWord k B n).hom.comp (TensorPower.consLevelMap (f : A →ₗ[k] B) n) := by
@@ -73,7 +83,10 @@ theorem unitizationEvenWord_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
   simp only [unitizationMap_inr]
   rfl
 
-/-- The map preserves the external unit and original odd ideal word. -/
+/-- Naturality of unit-leading unitization words.
+
+The normalized map retains the external unit coefficient and sends every ideal tail entry
+through `f`, giving the corresponding odd word for `B`. -/
 theorem unitizationOddWord_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     (unitizationNormalizedLevelMap f (n + 1)).comp (unitizationOddWord k A n).hom =
       (unitizationOddWord k B n).hom.comp (TensorPower.consLevelMap (f : A →ₗ[k] B) n) := by
@@ -97,7 +110,9 @@ theorem unitizationOddWord_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
   funext i
   cases i using Fin.cases <;> rfl
 
-/-- The scalar projector commutes with the original lifted nonunital map. -/
+/-- Commutation of unitization homomorphisms with scalar projection.
+
+The extension of `f : A → B` commutes with the scalar algebra projectors of `A⁺` and `B⁺`. -/
 theorem unitizationMap_scalarProjector (f : A →ₙₐ[k] B) :
     (unitizationMap k A f).comp (unitizationScalarProjector k A) =
       (unitizationScalarProjector k B).comp (unitizationMap k A f) := by
@@ -114,20 +129,34 @@ section OneCarrierWorld
 variable {B : Type v} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The original unitization map gives the regular Hochschild chain map. -/
+/-- The regular Hochschild chain map of a unitization homomorphism.
+
+In a common module category, the extension of `f : A → B` induces the regular `b`-complex map
+of their unitizations. -/
 def unitizationRegularMap (f : A →ₙₐ[k] B) :
     bComplex k (Unitization k A) ⟶ bComplex k (Unitization k B) :=
   cyclicBComplexHom (unitizationMap k A f).toNonUnitalAlgHom
 
-/-- The normalized chain map is the same native factor-quotient construction. -/
+/-- The normalized Hochschild chain map of a unitization homomorphism.
+
+The unital extension of `f : A → B` induces the chain map on the normalized regular complexes
+of `A⁺` and `B⁺`. -/
 def unitizationNormalizedMap (f : A →ₙₐ[k] B) :
     normalizedBComplex k (Unitization k A) ⟶ normalizedBComplex k (Unitization k B) :=
   normalizedRegularUnitizationMap (unitizationMap k A f)
 
+/-- The normalized tensor-level component of a unitization chain map.
+
+In degree `n`, the normalized chain map is the categorical ground-module map associated to the
+unitization normalized level map. -/
 @[simp]
 theorem unitizationNormalizedMap_f (f : A →ₙₐ[k] B) (n : ℕ) :
     (unitizationNormalizedMap f).f n = ModuleCat.ofHom (unitizationNormalizedLevelMap f n) := rfl
 
+/-- Scalar-projector naturality on regular unitization chains.
+
+The scalar chain projectors commute with the regular Hochschild map induced by a unitization
+homomorphism. -/
 @[reassoc]
 theorem unitizationRegularMap_projector (f : A →ₙₐ[k] B) :
     unitizationScalarComplexProjector k A ≫ unitizationRegularMap f =
@@ -137,12 +166,20 @@ theorem unitizationRegularMap_projector (f : A →ₙₐ[k] B) :
   exact congrArg cyclicBComplexHom
     (congrArg AlgHom.toNonUnitalAlgHom (unitizationMap_scalarProjector f))
 
+/-- Naturality of normalized projection for unitization maps.
+
+Applying the regular unitization chain map and then normalizing equals normalizing first and
+applying the normalized chain map. -/
 @[reassoc]
 theorem unitizationNormalizedMap_projection (f : A →ₙₐ[k] B) :
     normalizedProjection k (Unitization k A) ≫ unitizationNormalizedMap f =
       unitizationRegularMap f ≫ normalizedProjection k (Unitization k B) :=
   normalizedProjection_regularUnitizationMap (unitizationMap k A f)
 
+/-- Scalar-projector naturality on normalized unitization chains.
+
+The normalized scalar projectors commute with the normalized chain map induced by the
+unitization of `f`. -/
 @[reassoc]
 theorem unitizationNormalizedMap_projector (f : A →ₙₐ[k] B) :
     unitizationNormalizedScalarProjector k A ≫ unitizationNormalizedMap f =
@@ -174,19 +211,27 @@ theorem unitizationNormalizedMap_projector (f : A →ₙₐ[k] B) :
           g ≫ κB.f n) hp
     _ = _ := by rw [← hB, ← Category.assoc, ← hf, Category.assoc]
 
-/-- The original map restricts to the relative augmentation kernels. -/
+/-- The relative unitization chain map of a nonunital homomorphism.
+
+The regular unitization map restricts to the kernels of the scalar chain projectors, giving a
+map between the relative complexes. -/
 def unitizationRelativeMap (f : A →ₙₐ[k] B) :
     unitizationRelativeComplex k A ⟶ unitizationRelativeComplex k B :=
   kernel.map _ _ (unitizationRegularMap f) (unitizationRegularMap f)
     (unitizationRegularMap_projector f)
 
-/-- The same original map restricts to the reduced normalized kernels. -/
+/-- The reduced normalized unitization map of a nonunital homomorphism.
+
+The normalized unitization map restricts to the kernels of the normalized scalar projectors. -/
 def unitizationReducedNormalizedMap (f : A →ₙₐ[k] B) :
     unitizationReducedNormalizedComplex k A ⟶ unitizationReducedNormalizedComplex k B :=
   kernel.map _ _ (unitizationNormalizedMap f) (unitizationNormalizedMap f)
     (unitizationNormalizedMap_projector f)
 
-/-- Naturality retains the complete original restricted normalization map. -/
+/-- Naturality of relative unitization normalization.
+
+The maps induced by `f` on relative and reduced normalized complexes commute with the
+restricted normalization chain maps. -/
 @[reassoc]
 theorem unitizationRelativeNormalization_naturality (f : A →ₙₐ[k] B) :
     unitizationRelativeMap f ≫ unitizationRelativeNormalization k B =
@@ -204,7 +249,10 @@ theorem unitizationRelativeNormalization_naturality (f : A →ₙₐ[k] B) :
     ← Category.assoc, ← unitizationRelativeNormalization_ι, Category.assoc, ← hn]
   rw [Category.assoc]
 
-/-- Original nonunital maps commute with the first-two-column unitization chain comparison. -/
+/-- Naturality of the unitization two-column chain comparison.
+
+The retained two-column map induced by `f` commutes with the chain isomorphisms to the reduced
+normalized unitization complexes. -/
 @[reassoc]
 theorem unitizationTwoColumnIso_naturality (f : A →ₙₐ[k] B) :
     (cyclicTwoColumnSequenceMap f).τ₁ ≫ (unitizationTwoColumnIso k B).hom =
@@ -241,7 +289,10 @@ theorem unitizationTwoColumnIso_naturality (f : A →ₙₐ[k] B) :
       (unitizationNormalizedLevelMap f (m + 1)).comp (unitizationOddWord k A m).hom
     exact (unitizationOddWord_naturality f m).symm
 
-/-- The original scalar inclusion commutes with the original lifted nonunital map. -/
+/-- Naturality of the scalar inclusion into unitization chains.
+
+The scalar chain inclusion into `A⁺` followed by the regular map induced by `f` is the scalar
+inclusion into `B⁺`. -/
 @[reassoc]
 theorem unitizationScalarComplexInclusion_naturality (f : A →ₙₐ[k] B) :
     unitizationScalarComplexInclusion k A ≫ unitizationRegularMap f =
@@ -254,13 +305,19 @@ theorem unitizationScalarComplexInclusion_naturality (f : A →ₙₐ[k] B) :
   change unitizationMap k A f (Unitization.inl x.down) = Unitization.inl x.down
   exact unitizationMap_inl k A f x.down
 
-/-- The public source HH map is the cokernel map induced by the original unitization lift. -/
+/-- The unitization cokernel homology map of a nonunital homomorphism.
+
+In degree `n`, the regular unitization homology map and the scalar-inclusion naturality
+equation induce a map between the scalar-inclusion cokernels. -/
 def unitizationHochschildMap (f : A →ₙₐ[k] B) (n : ℕ) :
     unitizationHochschildHomology k A n ⟶ unitizationHochschildHomology k B n :=
   cokernel.map _ _ (𝟙 _) (HomologicalComplex.homologyMap (unitizationRegularMap f) n) (by
     rw [Category.id_comp, ← HomologicalComplex.homologyMap_comp, unitizationScalarComplexInclusion_naturality])
 
-/-- The source cokernel comparison is natural for the original nonunital algebra map. -/
+/-- Naturality of the unitization cokernel-to-relative comparison.
+
+The cokernel homology map induced by `f` commutes with the comparison to relative homology and
+the homology map of the relative chain map. -/
 @[reassoc]
 theorem unitizationHochschildRelativeIso_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     unitizationHochschildMap f n ≫ (unitizationHochschildRelativeIso k B n).hom =
@@ -276,7 +333,10 @@ theorem unitizationHochschildRelativeIso_naturality (f : A →ₙₐ[k] B) (n : 
     ← HomologicalComplex.homologyMap_comp, ← HomologicalComplex.homologyMap_comp]
   exact congrArg (fun g => HomologicalComplex.homologyMap g n) hr
 
-/-- The source HH comparison with the raw total commutes with its original map. -/
+/-- Naturality of the unitization cokernel-to-two-column comparison.
+
+The cokernel homology map induced by `f` commutes with the comparison to homology of the
+first-two-column cyclic total. -/
 @[reassoc]
 theorem unitizationHochschildTwoColumnIso_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     unitizationHochschildMap f n ≫ (unitizationHochschildTwoColumnIso k B n).hom =
@@ -306,14 +366,20 @@ theorem unitizationHochschildTwoColumnIso_naturality (f : A →ₙₐ[k] B) (n :
     Category.assoc, hInv]
   simp only [Category.assoc]
 
-/-- An left unit earns the specialization to the original b-complex through its canonical inclusion. -/
+/-- The unitization Hochschild comparison for an algebra with a left unit.
+
+If `A` has a left unit, the unitization cokernel homology model is isomorphic to `H_n(b(A))`,
+through its two-column comparison and the inverse first-column homology isomorphism. -/
 def unitizationHochschildUnitalIso (hUnit : ∃ e : A, ∀ a : A, e * a = a) (n : ℕ) :
     unitizationHochschildHomology k A n ≅ (bComplex k A).homology n := by
   letI : _root_.QuasiIso (cyclicBToFirstTwo k A) := cyclicBToFirstTwo_quasiIso k A hUnit
   exact unitizationHochschildTwoColumnIso k A n ≪≫
     (asIso (HomologicalComplex.homologyMap (cyclicBToFirstTwo k A) n)).symm
 
-/-- The unital specialization retains the canonical first-column inclusion. -/
+/-- The first-column formula for the left-unit unitization comparison.
+
+The unitization-to-`b` homology comparison followed by the first-column homology inclusion is
+the unitization-to-two-column comparison. -/
 @[reassoc]
 theorem unitizationHochschildUnitalIso_inclusion
     (hUnit : ∃ e : A, ∀ a : A, e * a = a) (n : ℕ) :

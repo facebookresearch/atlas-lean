@@ -17,11 +17,13 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 import Mathlib.CategoryTheory.Abelian.Refinements
 
 /-!
-# A short exact complex extracted from five exact terms
+# A short exact sequence extracted from five exact objects
 
-An exact composable sequence with five objects canonically yields the short
-exact complex from the cokernel of its first arrow, through its middle object,
-to the kernel of its last arrow.
+For an exact sequence A₀ → A₁ → A₂ → A₃ → A₄ in an abelian category, the middle arrows induce
+a short exact sequence coker(A₀ → A₁) → A₂ → ker(A₃ → A₄).
+
+The first map is the cokernel descent of A₁ → A₂, and the second is the kernel lift of A₂ →
+A₃. Their composites with the canonical quotient and inclusion recover the middle arrows.
 -/
 
 @[expose] public section
@@ -39,8 +41,10 @@ universe v u
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The canonical short complex extracted from an exact five-object
-sequence. -/
+/-- The short complex from an exact four-arrow sequence.
+
+For five exact objects, take the cokernel of the first arrow, the middle object and the kernel
+of the last arrow, with maps induced by the two middle arrows. -/
 noncomputable def exactSequenceFourShortComplex
     (S : ComposableArrows C 4) (hS : S.Exact) : ShortComplex C :=
   ShortComplex.mk
@@ -54,6 +58,9 @@ noncomputable def exactSequenceFourShortComplex
       simpa only [Category.assoc, cokernel.π_desc_assoc, kernel.lift_ι,
         comp_zero, zero_comp] using hS.toIsComplex.zero 1)
 
+/-- The first term of the extracted short complex.
+
+The first term is the cokernel of A₀ → A₁. -/
 @[simp]
 theorem exactSequenceFourShortComplex_X₁
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -61,6 +68,9 @@ theorem exactSequenceFourShortComplex_X₁
       cokernel (S.map' 0 1) :=
   rfl
 
+/-- The middle term of the extracted short complex.
+
+The middle term is A₂. -/
 @[simp]
 theorem exactSequenceFourShortComplex_X₂
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -68,6 +78,9 @@ theorem exactSequenceFourShortComplex_X₂
       S.obj ⟨2, by omega⟩ :=
   rfl
 
+/-- The last term of the extracted short complex.
+
+The last term is the kernel of A₃ → A₄. -/
 @[simp]
 theorem exactSequenceFourShortComplex_X₃
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -75,6 +88,9 @@ theorem exactSequenceFourShortComplex_X₃
       kernel (S.map' 3 4) :=
   rfl
 
+/-- The first extracted map is a cokernel descent.
+
+Descend A₁ → A₂ through the cokernel of A₀ → A₁. -/
 @[simp]
 theorem exactSequenceFourShortComplex_f
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -83,6 +99,9 @@ theorem exactSequenceFourShortComplex_f
         (hS.toIsComplex.zero 0) :=
   rfl
 
+/-- The second extracted map is a kernel lift.
+
+Lift A₂ → A₃ into the kernel of A₃ → A₄. -/
 @[simp]
 theorem exactSequenceFourShortComplex_g
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -91,8 +110,9 @@ theorem exactSequenceFourShortComplex_g
         (hS.toIsComplex.zero 2) :=
   rfl
 
-/-- The first extracted map is induced by the second arrow of the original
-sequence. -/
+/-- The extracted cokernel map recovers the second arrow.
+
+The quotient A₁ → coker(A₀ → A₁) followed by the extracted map equals A₁ → A₂. -/
 @[reassoc (attr := simp)]
 theorem exactSequenceFourShortComplex_π_f
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -102,8 +122,9 @@ theorem exactSequenceFourShortComplex_π_f
   unfold exactSequenceFourShortComplex
   apply cokernel.π_desc
 
-/-- The last extracted map factors the third arrow of the original sequence
-through the kernel of the fourth. -/
+/-- The extracted kernel map recovers the third arrow.
+
+The extracted map A₂ → ker(A₃ → A₄) followed by the kernel inclusion equals A₂ → A₃. -/
 @[reassoc (attr := simp)]
 theorem exactSequenceFourShortComplex_g_ι
     (S : ComposableArrows C 4) (hS : S.Exact) :
@@ -113,7 +134,9 @@ theorem exactSequenceFourShortComplex_g_ι
   unfold exactSequenceFourShortComplex
   apply kernel.lift_ι
 
-/-- The short complex extracted from five exact terms is short exact. -/
+/-- The extracted middle sequence is short exact.
+
+For the exact five-object sequence, coker(A₀ → A₁) → A₂ → ker(A₃ → A₄) is short exact. -/
 theorem exactSequenceFourShortComplex_shortExact
     (S : ComposableArrows C 4) (hS : S.Exact) :
     (exactSequenceFourShortComplex S hS).ShortExact := by

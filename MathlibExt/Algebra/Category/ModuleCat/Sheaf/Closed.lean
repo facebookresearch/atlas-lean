@@ -18,9 +18,16 @@ public import Mathlib.CategoryTheory.Monoidal.Braided.Reflection
 public import Mathlib.CategoryTheory.Localization.Monoidal.Basic
 
 /-!
-# Monoidal closed structure for sheaves of modules
+# Presheaf internal Hom and sheaf tensor products
 
-Sheafification over a sheaf of commutative rings is monoidal. Day reflection
-from presheaves gives the monoidal closed structure on sheaves of modules,
-with the tensor-unit isomorphism.
+Let `C : Type u` carry a category structure with morphisms in `Type u`, let `J` be a
+Grothendieck topology, and let `R : Sheaf J CommRingCat.{u}`. The category of module
+presheaves over `R.obj` is monoidal closed: each functor `M ↦ P ⊗_R M` has a right adjoint,
+characterized by `Hom(P ⊗_R M,N) ≅ Hom(M,Hom_R(P,N))`.
+
+Assume weak additive sheafification, the identification of sheafification equivalences with
+locally bijective maps, monoidality of those equivalences, and preservation of the sheaf
+condition by `CommRingCat → RingCat`. The tensor product of module sheaves is the
+sheafification of the tensor product of their underlying module presheaves. These presheaf Hom
+and sheaf tensor constructions give the setting for monoidal reflection.
 -/

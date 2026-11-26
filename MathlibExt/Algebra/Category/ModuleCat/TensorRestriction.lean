@@ -13,21 +13,16 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 
 /-!
-# Native tensor with an original restricted coefficient
+# Tensoring an R-module with an S-module coefficient
 
-For an actual commutative algebra map R → S and an arbitrary original
-S-module M, the functor sends an R-module L to the literal S-module
-M ⊗[R] L.  Its R-action is earned from the original S-action and the map.
-All rings and both module carriers have independent universes.  No flatness,
-projectivity, finite generation, Small, or extended-origin assumption is used.
+Let R → S be a commutative algebra map and M an S-module. Restrict the R-action on M along
+that map, then form M ⊗_R L for each R-module L. The S-action is on the first factor. These
+modules and maps form an additive functor in L, natural in S-linear coefficient maps M → N.
 
-Native cancellation identifies M ⊗[S] (S ⊗[R] L) with M ⊗[R] L as a raw
-S-linear equivalence across worlds.  The categorical natural isomorphism
-uses a displayed input height containing S, because the explicit S factor
-otherwise raises the source carrier universe.  Original M is never replaced.
-
-This is functor packaging of native heterobasic tensor maps and cancellation;
-it adds no balanced quotient or tensor engine.  Native checks are unexecuted.
+Base-change cancellation gives the S-linear equivalence M ⊗_S (S ⊗_R L) ≃ M ⊗_R L, sending m ⊗
+(s ⊗ l) to (s·m) ⊗ l. Its inverse sends m ⊗ l to m ⊗ (1 ⊗ l). The raw equivalence permits
+independent carrier heights; the categorical natural isomorphism uses input height max(w,v)
+and output height max(w,t,v), retaining the S-ring and coefficient heights.
 -/
 
 @[expose] public section
@@ -44,17 +39,23 @@ namespace ModuleCat.TensorRestriction
 variable (R : Type u) (S : Type w) [CommRing R] [CommRing S] [Algebra R S]
   (M : ModuleCat.{t} S)
 
-/-- The original coefficient's R-action is its S-action through the structural map. -/
+/-- The restricted R-action on an S-coefficient module.
+
+For an S-module M, define its R-module structure through algebraMap R S. -/
 abbrev restrictModule : Module R M := Module.compHom M (algebraMap R S)
 
-/-- The restricted action and original S-action form the native scalar tower. -/
+/-- The scalar tower of the restricted coefficient action.
+
+The R-action obtained from R → S and the S-action on M satisfy IsScalarTower R S M. -/
 abbrev restrictTower :
     letI : Module R M := restrictModule R S M
     IsScalarTower R S M := by
   letI : Module R M := restrictModule R S M
   exact IsScalarTower.of_algebraMap_smul (fun _ _ => rfl)
 
-/-- Restricted R-scalars commute with the original S-scalars on the same coefficient. -/
+/-- The commuting scalar actions on the coefficient module.
+
+The restricted R-action and the S-action on M commute because S is commutative. -/
 abbrev restrictCommute :
     letI : Module R M := restrictModule R S M
     SMulCommClass R S M := by
@@ -63,14 +64,19 @@ abbrev restrictCommute :
   change (algebraMap R S r) • (s • m) = s • ((algebraMap R S r) • m)
   exact smul_comm (algebraMap R S r) s m
 
-/-- The literal original coefficient tensor, with its earned outer S-action. -/
+/-- The S-module obtained by tensoring a restricted coefficient.
+
+For an R-module L, form M ⊗_R L with the S-action on M. Its carrier height is max(t,v), with t
+the coefficient height and v the input height. -/
 abbrev objAt (L : ModuleCat.{v} R) : ModuleCat.{max t v} S := by
   letI : Module R M := restrictModule R S M
   letI : IsScalarTower R S M := restrictTower R S M
   letI : SMulCommClass R S M := restrictCommute R S M
   exact ModuleCat.of S (M ⊗[R] L)
 
-/-- The actual native heterobasic map, retaining the original coefficient first. -/
+/-- The tensor map of an R-linear input morphism.
+
+For f : L → L′, the S-linear map M ⊗_R L → M ⊗_R L′ acts by id_M ⊗ f. -/
 def mapAt {L L' : ModuleCat.{v} R} (f : L ⟶ L') :
     objAt R S M L ⟶ objAt R S M L' := by
   letI : Module R M := restrictModule R S M
@@ -78,7 +84,10 @@ def mapAt {L L' : ModuleCat.{v} R} (f : L ⟶ L') :
   letI : SMulCommClass R S M := restrictCommute R S M
   exact ModuleCat.ofHom (TensorProduct.AlgebraTensorModule.lTensor S M f.hom)
 
-/-- Native coefficient-first tensoring with independent module carrier worlds. -/
+/-- The additive tensor functor with an S-module coefficient.
+
+For fixed M, send L to M ⊗_R L and f to id_M ⊗ f, retaining the independent ring and module
+heights. -/
 abbrev functorAt : ModuleCat.{v} R ⥤ ModuleCat.{max t v} S where
   obj := objAt R S M
   map := mapAt R S M
@@ -95,6 +104,9 @@ abbrev functorAt : ModuleCat.{v} R ⥤ ModuleCat.{max t v} S where
     apply ModuleCat.hom_ext
     exact TensorProduct.AlgebraTensorModule.lTensor_comp g.hom f.hom
 
+/-- The tensor functor on a pure tensor.
+
+The map induced by f sends m ⊗ l to m ⊗ f(l). -/
 @[simp]
 theorem functorAt_map_tmul {L L' : ModuleCat.{v} R} (f : L ⟶ L') (m : M) (l : L) :
     letI : Module R M := Module.compHom M (algebraMap R S)
@@ -104,7 +116,9 @@ theorem functorAt_map_tmul {L L' : ModuleCat.{v} R} (f : L ⟶ L') (m : M) (l : 
   letI : SMulCommClass R S M := restrictCommute R S M
   rfl
 
-/-- The original tensor functor is additive, not merely an object assignment. -/
+/-- Additivity of the restricted-coefficient tensor functor.
+
+The functor L ↦ M ⊗_R L preserves addition of R-linear morphisms. -/
 instance functorAt_additive : (functorAt R S M : ModuleCat.{v} R ⥤ _).Additive where
   map_add {L L' f g} := by
     letI : Module R M := restrictModule R S M
@@ -117,7 +131,10 @@ instance functorAt_additive : (functorAt R S M : ModuleCat.{v} R ⥤ _).Additive
       (m ⊗ₜ[R] f.hom l) + (m ⊗ₜ[R] g.hom l)
     exact TensorProduct.tmul_add m (f.hom l) (g.hom l)
 
-/-- Raw native S-linear cancellation, valid with every ring and carrier world independent. -/
+/-- The S-linear base-change cancellation equivalence.
+
+For any input carrier height, M ⊗_S (S ⊗_R L) is S-linearly equivalent to M ⊗_R L through the
+canonical cancellation map. -/
 def cancellationLinearEquiv (L : ModuleCat.{v} R) :
     letI : Module R M := Module.compHom M (algebraMap R S)
     letI : IsScalarTower R S M := IsScalarTower.of_algebraMap_smul (fun _ _ => rfl)
@@ -128,6 +145,9 @@ def cancellationLinearEquiv (L : ModuleCat.{v} R) :
   letI : SMulCommClass R S M := restrictCommute R S M
   exact TensorProduct.AlgebraTensorModule.cancelBaseChange R S S M L
 
+/-- The forward cancellation formula on pure tensors.
+
+The cancellation equivalence sends m ⊗_S (s ⊗_R l) to (s·m) ⊗_R l. -/
 @[simp]
 theorem cancellationLinearEquiv_tmul (L : ModuleCat.{v} R)
     (m : M) (s : S) (l : L) :
@@ -139,6 +159,9 @@ theorem cancellationLinearEquiv_tmul (L : ModuleCat.{v} R)
   letI : SMulCommClass R S M := restrictCommute R S M
   exact TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul R S S m l s
 
+/-- The inverse cancellation formula on pure tensors.
+
+The inverse cancellation equivalence sends m ⊗_R l to m ⊗_S (1 ⊗_R l). -/
 @[simp]
 theorem cancellationLinearEquiv_symm_tmul (L : ModuleCat.{v} R) (m : M) (l : L) :
     letI : Module R M := Module.compHom M (algebraMap R S)
@@ -149,8 +172,10 @@ theorem cancellationLinearEquiv_symm_tmul (L : ModuleCat.{v} R) (m : M) (l : L) 
   letI : SMulCommClass R S M := restrictCommute R S M
   exact TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul R S S m l
 
-/-- Categorical cancellation in its actual displayed common input height.
-The coefficient M keeps its original independently specified carrier. -/
+/-- The natural categorical base-change cancellation.
+
+For input R-module height max(w,v), scalar extension to S followed by tensoring with M is
+naturally isomorphic to L ↦ M ⊗_R L, with common output height max(w,t,v). -/
 def cancellationNatIso :
     (ModuleCat.extendScalars (algebraMap R S) :
         ModuleCat.{max w v} R ⥤ ModuleCat.{max w v} S) ⋙
@@ -180,7 +205,9 @@ def cancellationNatIso :
       exact (TensorProduct.AlgebraTensorModule.lTensor_comp_cancelBaseChange
         (R := R) (A := S) (B := S) (M := M) f.hom).symm)
 
-/-- The categorical inverse has the actual native original-carrier formula. -/
+/-- The inverse categorical cancellation on generators.
+
+At L, the inverse natural comparison sends m ⊗_R l to m ⊗_S (1 ⊗_R l). -/
 @[simp]
 theorem cancellationNatIso_inv_tmul (L : ModuleCat.{max w v} R) (m : M) (l : L) :
     letI : Module R M := Module.compHom M (algebraMap R S)
@@ -199,7 +226,9 @@ section Coefficients
 
 variable {M} {N P : ModuleCat.{t} S}
 
-/-- An original S-linear coefficient map acts on the actual first tensor factor. -/
+/-- The tensor map of an S-linear coefficient morphism.
+
+For g : M → N, the S-linear map M ⊗_R L → N ⊗_R L acts by g ⊗ id_L. -/
 def coefficientMapAt (g : M ⟶ N) (L : ModuleCat.{v} R) :
     objAt R S M L ⟶ objAt R S N L := by
   letI : Module R M := restrictModule R S M
@@ -211,6 +240,9 @@ def coefficientMapAt (g : M ⟶ N) (L : ModuleCat.{v} R) :
   exact ModuleCat.ofHom
     (TensorProduct.AlgebraTensorModule.map g.hom (LinearMap.id : L →ₗ[R] L))
 
+/-- The coefficient tensor map on a pure tensor.
+
+The map induced by g sends m ⊗ l to g(m) ⊗ l. -/
 @[simp]
 theorem coefficientMapAt_tmul (g : M ⟶ N) (L : ModuleCat.{v} R) (m : M) (l : L) :
     letI : Module R M := Module.compHom M (algebraMap R S)
@@ -224,7 +256,10 @@ theorem coefficientMapAt_tmul (g : M ⟶ N) (L : ModuleCat.{v} R) (m : M) (l : L
   letI : SMulCommClass R S N := restrictCommute R S N
   rfl
 
-/-- The original coefficient map is natural in every actual R-linear input map. -/
+/-- The natural tensor transformation of a coefficient map.
+
+An S-linear g : M → N gives a natural transformation from M ⊗_R − to N ⊗_R −, whose components
+are g ⊗ id. -/
 abbrev coefficientTransformation (g : M ⟶ N) : functorAt R S M ⟶ functorAt R S N where
   app := coefficientMapAt R S g
   naturality {L L'} f := by
@@ -239,6 +274,9 @@ abbrev coefficientTransformation (g : M ⟶ N) : functorAt R S M ⟶ functorAt R
     intro m l
     rfl
 
+/-- The coefficient transformation of an identity map.
+
+The identity of M induces the identity natural transformation of M ⊗_R −. -/
 @[simp]
 theorem coefficientTransformation_id :
     coefficientTransformation R S (𝟙 M) = 𝟙 (functorAt R S M) := by
@@ -252,6 +290,10 @@ theorem coefficientTransformation_id :
   intro m l
   rfl
 
+/-- Composition of coefficient tensor transformations.
+
+The transformation induced by g followed by h equals the transformation induced by the
+composite g ≫ h. -/
 theorem coefficientTransformation_comp (g : M ⟶ N) (h : N ⟶ P) :
     coefficientTransformation R S (g ≫ h) =
       coefficientTransformation R S g ≫ coefficientTransformation R S h := by
@@ -273,7 +315,10 @@ theorem coefficientTransformation_comp (g : M ⟶ N) (h : N ⟶ P) :
 
 end Coefficients
 
-/-- A native functor factory for arbitrary original coefficients, with no supplied right action. -/
+/-- The tensor bifunctor with S-coefficients and R-inputs.
+
+Send an S-module M to the functor L ↦ M ⊗_R L, and an S-linear map to its coefficient tensor
+transformation. -/
 def factory : ModuleCat.{t} S ⥤ (ModuleCat.{v} R ⥤ ModuleCat.{max t v} S) where
   obj := functorAt R S
   map := coefficientTransformation R S

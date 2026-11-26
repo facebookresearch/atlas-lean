@@ -1,3 +1,5 @@
-# Coefficient Transformation add
+# Coefficient tensor transformations preserve addition
 
-Additivity in the coefficient uses the original second-factor linear map.
+For bimodule morphisms f,g:B→B′, the natural
+transformation for f+g is the sum of those for f and g.
+This is additivity in the coefficient Hom group.

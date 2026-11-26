@@ -1,4 +1,6 @@
-# Projective image term
+# Projectivity of the image cone terms
 
-The original cone charts and the additive functor's biproduct chart
-give projectivity of the actual image cone term.
+Projectivity of the image cone terms.
+
+For additive i : P → A, if every i(F_j) and i(G_j) is projective, then every i(Cone(φ)_j) is
+projective through the cone biproduct charts.

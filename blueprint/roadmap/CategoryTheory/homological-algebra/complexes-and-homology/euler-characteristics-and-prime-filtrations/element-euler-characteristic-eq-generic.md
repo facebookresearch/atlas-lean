@@ -1,5 +1,6 @@
-# Element Euler Characteristic eq generic Length mul of local Domain
+# The local-domain Euler formula with generic multiplicity
 
-The original full one-element Euler characteristic is the genuine
-generic multiplicity times the original parameter quotient length.
-The coefficient module may live in a different universe from the ring.
+The local-domain Euler formula with generic multiplicity.
+
+Under the stated local-domain, dimension, parameter and finiteness hypotheses,
+χ_r(M)=ℓ_{R_(0)}(M_(0))·ℓ_R(R/rR).

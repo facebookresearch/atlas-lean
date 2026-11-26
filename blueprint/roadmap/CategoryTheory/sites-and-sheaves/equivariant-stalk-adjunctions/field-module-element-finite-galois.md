@@ -1,3 +1,6 @@
-# Field Module element finite Galois
+# Each discrete coefficient element has a finite Galois fixing field
 
-Each actual module element has its own finite Galois fixing field in the SAME closure.
+Each discrete coefficient element has a finite Galois fixing field.
+
+For every element of any discrete Galois coefficient, some finite Galois intermediate field
+has a fixing subgroup that fixes that element.

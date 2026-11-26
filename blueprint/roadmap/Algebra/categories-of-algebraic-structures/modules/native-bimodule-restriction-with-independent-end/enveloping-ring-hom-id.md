@@ -1,3 +1,4 @@
-# Enveloping Ring Hom id
+# Identity endpoint maps give the identity enveloping map
 
-Identity endpoint maps recover the native enveloping identity ring map.
+For rings R,S, the enveloping map induced by id_R
+and id_S is id on R⊗[ℤ]Sᵒᵖ.

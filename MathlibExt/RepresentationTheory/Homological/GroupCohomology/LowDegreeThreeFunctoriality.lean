@@ -13,11 +13,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 
 /-!
-# Functoriality for explicit degree-three group cohomology
+# Group and coefficient functoriality in degree-three cohomology
 
-This file extends the explicit low-degree-three API with cochain, cocycle,
-and `H3π` naturality under a group homomorphism and equivariant coefficient
-map.
+Let k be a commutative ring, f:G→H a group homomorphism in universe u, A an H-representation,
+and φ:Res_f A→B an equivariant k-linear map to a G-representation. In degree n, the cochain map
+sends z to (g₁,…,g_n)↦φ(z(f(g₁),…,f(g_n))).
+
+The degree-two, degree-three, and degree-four maps form a morphism of the short complexes
+computing third cohomology. Their cycle map restricts this formula to Z³(H,A)→Z³(G,B). The
+resulting cohomology map satisfies map_{f,φ}([z])=[mapCocycles_{f,φ}(z)] in H³(G,B).
 -/
 
 @[expose] public section
@@ -53,7 +57,11 @@ theorem isoCocycles₃_inv_comp_iCocycles (A : Rep k G) :
       (shortComplexH3 A).moduleCatLeftHomologyData.i ≫ (cochainsIso₃ A).inv :=
   (CommSq.horiz_inv ⟨isoCocycles₃_hom_comp_i A⟩).w
 
-/-- Degree-four inhomogeneous cochain map in explicit coordinates. -/
+/-- Let k be a commutative ring, G,H groups in the given universe u, A a k-linear H-representation,
+and B a k-linear G-representation. Let f:G→H be a homomorphism and φ:Res_f A→B an equivariant
+k-linear coefficient map. The k-linear cochain map C⁴(H,A)→C⁴(G,B) sends z to
+z'(g,h,i,j)=φ(z(f(g),f(h),f(i),f(j))). The four group arguments are transformed in order and the
+coefficient map is applied afterwards. -/
 noncomputable abbrev cochainsMap₄ :
     ModuleCat.of k (H × H × H × H → A) ⟶
       ModuleCat.of k (G × G × G × G → B) :=
@@ -71,7 +79,11 @@ theorem cochainsMap_f_4_comp_cochainsIso₄ :
   fin_cases x <;> rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Explicit map of short complexes computing degree-three cohomology. -/
+/-- Let k be a commutative ring, G,H groups in the given universe u, A a k-linear H-representation,
+and B a k-linear G-representation. Let f:G→H be a homomorphism and φ:Res_f A→B an equivariant
+k-linear coefficient map. The maps in degrees 2,3,4 form a morphism
+(C²(H,A)→C³(H,A)→C⁴(H,A))→(C²(G,B)→C³(G,B)→C⁴(G,B)). The degree-n component sends z to φ∘z∘f^n,
+and these components commute with δ₂ and δ₃ by equivariance of φ. -/
 @[simps]
 noncomputable def mapShortComplexH3 :
     shortComplexH3 A ⟶ shortComplexH3 B where
@@ -87,7 +99,11 @@ noncomputable def mapShortComplexH3 :
     funext g
     simp [shortComplexH3, d₃₄, ← Rep.hom_comm_apply φ]
 
-/-- Map on explicit degree-three cocycles. -/
+/-- Let k be a commutative ring, G,H groups in the given universe u, A a k-linear H-representation,
+and B a k-linear G-representation. Let f:G→H be a homomorphism and φ:Res_f A→B an equivariant
+k-linear coefficient map. The k-linear map Z³(H,A)→Z³(G,B) sends a cocycle z to
+z'(g,h,i)=φ(z(f(g),f(h),f(i))). It is the cycle map induced by the morphism of explicit
+degree-three short complexes. -/
 noncomputable abbrev mapCocycles₃ :
     ModuleCat.of k (cocycles₃ A) ⟶ ModuleCat.of k (cocycles₃ B) :=
   ShortComplex.cyclesMap' (mapShortComplexH3 f φ)

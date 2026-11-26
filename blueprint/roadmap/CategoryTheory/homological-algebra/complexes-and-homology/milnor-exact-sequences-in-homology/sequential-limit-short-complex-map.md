@@ -1,4 +1,5 @@
-# Sequential Limit Short Complex Map
+# Map of limit-product-difference sequences
 
-A map of towers induces the canonical map between their
-limit-product-difference short complexes.
+Let C be abelian with countable products and sequential inverse limits, c any complex shape, and α:K → L a tower map.
+
+The induced map between lim K → P(K) → P(K) and lim L → P(L) → P(L) has components lim(α), P(α), P(α), and commutes with the inclusions and differences.

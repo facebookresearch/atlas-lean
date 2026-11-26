@@ -1,4 +1,6 @@
-# Unit Iso Is Comon Hom
+# The scalar up unit isomorphism is a comonoid morphism
 
-The actual up unit comparison is a native comonoid isomorphism from
-the native scalar unit to the transported lifted scalar unit.
+For a commutative ring R, equip T with its unit and tensor
+comparisons. The forward scalar up map U:I_N→T(I_L) is a
+comonoid morphism from the trivial unlifted-unit comonoid to
+the transported lifted-unit comonoid.

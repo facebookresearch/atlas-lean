@@ -24,9 +24,9 @@ fixed-degree range/ambient/quotient exact sequence gives the natural-valued
 length recurrence.  Degree-one endomorphisms yield the successor form used by
 Hilbert--Serre induction.
 
-This file proves only component-length identities.  It contains no polynomial,
-eventual-polynomiality, degree-bound, quotient-ring-action, or associated-
-graded specialization.
+The range-grade identification preserves natural-number lengths over any
+commutative coefficient ring. Additivity of the finite component lengths
+uses the Artinian coefficient-ring and finite-degree-piece hypotheses.
 
 ## Main declarations
 
@@ -65,8 +65,12 @@ variable (hf : GradedModule.IsHomogeneousOfDegree Mgrade Ngrade d f)
 
 omit [∀ n, Module.Finite A (Ngrade n)] [∀ n, Module.Finite A (Mgrade n)]
     [IsArtinianRing A] in
-/-- The inherited range grade has the same natural-valued length as the
-source grade identified with it by an injective homogeneous map. -/
+/-- Let `A` be a commutative ring, `S` a graded commutative `A`-algebra,
+and `M`, `N` graded `S`-modules with compatible `A`-actions. If a linear map
+`f : M → N` is injective and homogeneous of degree `d`, the natural-number
+length of degree `d+n` in its inherited homogeneous range equals the
+natural-number length of `M_n`. This equality does not require Artinian
+coefficients or finite graded pieces. -/
 theorem moduleLengthNat_rangeGrade_eq
     (hinj : Function.Injective f) (n : ℕ) :
     HilbertSamuel.moduleLengthNat A
@@ -77,8 +81,11 @@ theorem moduleLengthNat_rangeGrade_eq
   exact congrArg ENat.toNat
     (rangeGradeEquiv Sgrade Mgrade Ngrade hf hinj n).length_eq.symm
 
-/-- In target degree `d+n`, length is the sum of the source degree-`n`
-length and the corresponding quotient-range-grade length. -/
+/-- Let `A` be an Artinian commutative ring, `S` a graded commutative
+`A`-algebra, and `M`, `N` graded `S`-modules with compatible `A`-actions and
+finite `A`-module degree pieces. For an injective homogeneous map `f : M → N`
+of degree `d`, `lengthNat_A(N_{d+n})` equals `lengthNat_A(M_n)` plus the
+length of degree `d+n` in the quotient by the homogeneous range of `f`. -/
 theorem gradedPieceLength_eq_add_rangeQuotient
     (hinj : Function.Injective f) (n : ℕ) :
     HilbertSamuel.gradedPieceLength A Ngrade (d + n) =
@@ -99,8 +106,11 @@ theorem gradedPieceLength_eq_add_rangeQuotient
       (R.gradeQuotient_surjective Sgrade Ngrade (d + n))
       (rangeGrade_exact Sgrade Mgrade Ngrade hf hinj n)
 
-/-- For an injective degree-one endomorphism, the shifted length recurrence
-takes its successor-indexed form. -/
+/-- Let `A` be an Artinian commutative ring, `S` a graded commutative
+`A`-algebra, and `M` a graded `S`-module with compatible `A`-action and finite
+`A`-module degree pieces. For an injective homogeneous endomorphism `f` of
+degree one, `lengthNat_A(M_{n+1})` equals `lengthNat_A(M_n)` plus the
+length of degree `n+1` in the quotient by the homogeneous range of `f`. -/
 theorem gradedPieceLength_succ_eq_add_rangeQuotient
     [SetLike.GradedSMul Sgrade Mgrade]
     {f : Module.End S M}

@@ -1,3 +1,6 @@
-# Localization Scalar Square Iso hom naturality
+# Naturality of the localization-square comparison in the coefficient module
 
-The actual comparison commutes with every coefficient-module map.
+Naturality of the localization-square comparison in the coefficient module.
+
+For an A-linear map f : M → N, the comparison commutes with extending the restricted map along
+γ and with restricting the extended map along δ.

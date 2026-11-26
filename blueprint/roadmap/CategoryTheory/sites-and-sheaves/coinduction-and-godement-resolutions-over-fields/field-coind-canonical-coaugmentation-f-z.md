@@ -1,3 +1,6 @@
-# Field Coind Canonical Coaugmentation f zero
+# Degree zero coinduction coaugmentation is the augmented unit
 
-Its degree-zero component retains the actual augmented monad unit.
+Degree zero coinduction coaugmentation is the augmented unit.
+
+The coaugmentation's degree-zero component is the augmented monad-coresolution map at the zero
+simplex.

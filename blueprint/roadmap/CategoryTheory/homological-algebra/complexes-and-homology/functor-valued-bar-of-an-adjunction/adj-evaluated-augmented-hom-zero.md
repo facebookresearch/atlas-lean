@@ -1,6 +1,7 @@
-# Adj Evaluated Augmented hom zero
+# Transporting the evaluated bar augmentation recovers the algebra action
 
-Degree-zero augmentation component of the evaluated augmentation is the
-algebra structure map, up to the public object/point identifications.
-Transport-normalized: a plain `= alg.a` is ill-typed without unfolding the
-opaque surrogate model at statement elaboration.
+Let T be a monad on C and alg=(A,a) a T-algebra. Identify the zero-degree term of
+adjEvaluatedAugmented(alg) with T(A) and its augmentation target with A using the stated
+object equalities e_0 and e_A. Then eqToHom(e_0.symm) ≫ ε_0 ≫ eqToHom(e_A) = a, where ε_0 is
+its zero-degree augmentation. This specifies the source and target transports of the action
+equation.

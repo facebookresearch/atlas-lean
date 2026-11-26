@@ -1,3 +1,6 @@
-# To Local Cohomology Zero comp zero Iso
+# Power-torsion comparison with degree-zero local cohomology is inverse
 
-The native zero-degree maps cancel on the actual primary-component functor.
+Power-torsion comparison with degree-zero local cohomology is inverse.
+
+The canonical map `Γ_I ⟶ H_I^0` followed by the forward map of `localCohomologyZeroIso I` is
+the identity transformation of `Γ_I`.

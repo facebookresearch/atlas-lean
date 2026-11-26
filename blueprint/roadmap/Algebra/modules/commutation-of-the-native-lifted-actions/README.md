@@ -1,5 +1,5 @@
 # Commutation of the native lifted actions
 
-- [Smul Comm Class Of Base](smul-comm-class-of-base.md)
-- [Map Linear](map-linear.md)
-- [Map Linear apply](map-linear-apply.md)
+- [Commutation of scalar actions on a lifted carrier](smul-comm-class-of-base.md)
+- [Linear map between independently lifted modules](map-linear.md)
+- [Value of the lifted linear map](map-linear-apply.md)

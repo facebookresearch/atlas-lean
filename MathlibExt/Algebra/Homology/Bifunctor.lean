@@ -14,11 +14,15 @@ module
 public import MathlibExt.CategoryTheory.DGSource.CochainBifunctor
 
 /-!
-# Zero morphisms under bicomplex prolongation
+# Zero maps under extension of a bifunctor to complexes
 
-A bifunctor preserving zero morphisms in both variables induces a bicomplex
-bifunctor preserving zero morphisms in the first variable. The construction
-uses arbitrary complex shapes.
+Let `F : C₁ ⥤ C₂ ⥤ D` be a bifunctor between categories with zero morphisms. Assume `F`
+preserves zero maps in its first variable and every `F.obj X` preserves zero maps in the
+second variable.
+
+For arbitrary complex shapes `c₁` and `c₂`, the degreewise extension of `F` to homological
+complexes preserves zero morphisms in its first complex variable. The object, morphism, and
+index universes of the three categories are independent.
 -/
 
 @[expose] public section
@@ -36,7 +40,11 @@ variable {C₁ : Type u₁} [Category.{v₁} C₁] [HasZeroMorphisms C₁]
   [∀ X : C₁, (F.obj X).PreservesZeroMorphisms]
   {I₁ : Type w₁} {I₂ : Type w₂} (c₁ : ComplexShape I₁) (c₂ : ComplexShape I₂)
 
-/-- Bicomplex prolongation sends a zero first-variable morphism to zero. -/
+/-- Bicomplex extension of a zero-preserving bifunctor preserves zero maps.
+
+If a bifunctor preserves zero morphisms in both variables, its extension
+`F.mapBifunctorHomologicalComplex c₁ c₂` preserves zero morphisms in the first variable, for
+arbitrary complex shapes. -/
 instance mapBifunctorHomologicalComplex_preservesZeroMorphisms :
     (F.mapBifunctorHomologicalComplex c₁ c₂).PreservesZeroMorphisms where
   map_zero K L := by

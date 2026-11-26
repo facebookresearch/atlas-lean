@@ -1,3 +1,6 @@
-# Is Admissible Exact iff is Cofibration Sequence
+# Admissible exactness and cofibration sequences are equivalent
 
-Admissible exact iff cofibration sequence in `waldhausenCategory C`.
+Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+For a short complex A —i→ B —q→ Q, admissible exactness is equivalent to being a cofibration sequence in the standard Waldhausen structure.

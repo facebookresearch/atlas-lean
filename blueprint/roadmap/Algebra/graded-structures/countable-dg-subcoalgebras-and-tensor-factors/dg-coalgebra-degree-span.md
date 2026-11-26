@@ -1,4 +1,5 @@
-# Dg Coalgebra Degree Span
+# The coefficient span of homogeneous closure generators
 
-The span is taken over the entire coefficient field or ring. Its carrier need not be
-countable.
+The coefficient span of homogeneous closure generators.
+
+In degree n, take the full R-submodule span of the closure generator set.

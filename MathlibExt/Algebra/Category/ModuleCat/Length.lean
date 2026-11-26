@@ -13,10 +13,16 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.RingTheory.Length
 
 /-!
-# Module length under surjective scalar restriction
+# Module length under surjective restriction of scalars
 
-Restriction along a surjective ring homomorphism preserves the lattice of
-submodules and therefore the extended-natural module length.
+For a surjective ring homomorphism f:R→S and any S-module M, restriction of scalars gives the
+same lattice of submodules. Its extended-natural composition length therefore satisfies
+ℓ_R(U_fM)=ℓ_S(M), including the value ∞. The rings need not be commutative, and their universes
+and the module universe are independent.
+
+If e:R≅S is a ring isomorphism and an R-module M is linearly isomorphic to the restriction of an
+S-module N, then ℓ_R(M)=ℓ_S(N). This comparison combines invariance under the module isomorphism
+with surjective scalar restriction.
 -/
 
 @[expose] public section
@@ -29,8 +35,10 @@ namespace ModuleCat
 
 universe u v w
 
-/-- Actual restriction along a surjective ring map retains module length,
-with independent ring and module universes. -/
+/-- Let R,S be rings in independent universes u,v, f:R→S a surjective ring homomorphism and M an
+S-module in universe w. Then ℓ_R(U_fM)=ℓ_S(M) as extended natural numbers. Surjectivity
+identifies the R-submodule and S-submodule lattices of M, so the equality includes modules of
+infinite length. -/
 theorem restrictScalars_length_eq
     {R : Type u} {S : Type v} [Ring R] [Ring S]
     (f : R →+* S) (hf : Function.Surjective f) (M : ModuleCat.{w} S) :
@@ -46,8 +54,10 @@ theorem restrictScalars_length_eq
     (Submodule.orderIsoMapComapOfBijective g
       ⟨fun _ _ h => h, fun x => ⟨x, rfl⟩⟩)
 
-/-- An actual restricted-module isomorphism preserves literal module length
-under a ring equivalence. -/
+/-- Let R,S be rings in the same universe u, e:R≅S a ring isomorphism, M an R-module and N an
+S-module in universe v. For a specified module isomorphism M≅U_eN, the extended-natural lengths
+satisfy ℓ_R(M)=ℓ_S(N). The equality follows from linear-isomorphism invariance and surjectivity
+of the ring equivalence. -/
 theorem length_eq_of_restrictScalarsIso
     {R S : Type u} [Ring R] [Ring S]
     (eR : R ≃+* S) (M : ModuleCat.{v} R) (N : ModuleCat.{v} S)

@@ -13,10 +13,15 @@ public import Mathlib.RingTheory.TensorProduct.IsBaseChangeRightExact
 public import Mathlib.Algebra.FiveLemma
 
 /-!
-# Right-exact base-change diagrams in tensor coordinates
+# Bijectivity in a right-exact base-change diagram
 
-The right-exact four lemma applies to tensor-base-change maps, with the
-first two comparison equivalences and both commuting squares specified.
+Let S be a commutative R-algebra and U→V→W→0, U′→V′→W′→0 right-exact module sequences over R,S.
+Suppose the first two vertical comparisons are S-linear equivalences S⊗_R U≅U′ and S⊗_R V≅V′,
+and the third is an S-linear map v:S⊗_R W→W′.
+
+If both squares commute, v is bijective. The tensor source row is right exact without requiring
+S to be flat. The result retains both specified comparison equivalences, both exactness
+hypotheses and both surjective row endpoints.
 -/
 
 @[expose] public section
@@ -33,8 +38,11 @@ variable {R : Type*} [CommRing R] (S : Type*) [CommRing S] [Algebra R S]
   [Module R U] [Module R V] [Module R W]
   [Module S U'] [Module S V'] [Module S W']
 
-/-- Two actual tensor comparison equivalences identify the third map in
-a commuting right-exact diagram. -/
+/-- Let R,S be commutative rings with S an R-algebra. Let a:U→V,q:V→W be R-linear and
+a′:U′→V′,q′:V′→W′ S-linear, with im(a)=ker(q), im(a′)=ker(q′) and q,q′ surjective. Given
+S-linear equivalences e_U:S⊗_R U≅U′, e_V:S⊗_R V≅V′ and v:S⊗_R W→W′, assume e_V∘(S⊗a)=a′∘e_U and
+v∘(S⊗q)=q′∘e_V. Then v is bijective. The modules have their declared carrier universes, and no
+flatness hypothesis is imposed on S. -/
 theorem baseChange_rightExact_bijective
     (a : U →ₗ[R] V) (q : V →ₗ[R] W) (a' : U' →ₗ[S] V') (q' : V' →ₗ[S] W')
     (v : S ⊗[R] W →ₗ[S] W') (eU : S ⊗[R] U ≃ₗ[S] U') (eV : S ⊗[R] V ≃ₗ[S] V')

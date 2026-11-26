@@ -1,3 +1,6 @@
-# Algebra Eulerian Operator outside
+# Raw algebra-linear Eulerian weights above degree n vanish
 
-The original A-linear raw family has its original finite support.
+Raw algebra-linear Eulerian weights above degree n vanish.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾=0
+whenever n<i.

@@ -1,4 +1,6 @@
-# Homology Map corestriction Cochains eq
+# The induced cohomology map is independent of the transversal
 
-The arbitrary Schreier cochain maps attached to two right transversals
-induce the same map on cohomology.
+The induced cohomology map is independent of the transversal.
+
+For any right transversals T and U and every degree n, the homology maps of their explicit
+Schreier cochain maps are equal.

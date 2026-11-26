@@ -1,3 +1,6 @@
-# Map Tensor Pow Obj Iso hom naturality
+# Strong monoidal power comparison is object natural
 
-The tensor-power comparison is natural in the powered object.
+Strong monoidal power comparison is object natural.
+
+The functor image of a power map commutes with the comparison and the power of its image
+morphism.

@@ -1,3 +1,6 @@
-# Contraction Linear
+# Right-module contraction in the tensor-object coordinates
 
-Contract the actual tensor-functor object, with its canonical integer action.
+Right-module contraction in the tensor-object coordinates.
+
+For an `R`-bimodule equivalent to the regular bimodule, contraction gives a right `R`-linear
+equivalence from `tensorObj R R B A` to `A`.

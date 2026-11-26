@@ -1,3 +1,6 @@
-# Cycles Tensor Sequence
+# Total tensor sequence of cycles and outgoing images
 
-The native full direct-sum total of the actual cycles/image tensor bicomplex sequence.
+Total tensor sequence of cycles and outgoing images.
+
+For `P` and `Q`, the short complex `cyclesTensorSequence R P Q` is the direct-sum totalization
+of the corresponding tensor bicomplex sequence.

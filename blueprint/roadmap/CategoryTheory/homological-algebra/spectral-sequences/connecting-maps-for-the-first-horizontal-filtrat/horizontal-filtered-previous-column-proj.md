@@ -1,3 +1,5 @@
-# Horizontal Filtered Previous Column Projection
+# The projection to a preceding column in a finite filtration stage
 
-Projection from filtration stage `p+1` onto its preceding column `p`.
+The projection to a preceding column in a finite filtration stage.
+
+Project total degree `p+q` of stage `p+1` onto its column-`p`, vertical-degree-`q` summand.

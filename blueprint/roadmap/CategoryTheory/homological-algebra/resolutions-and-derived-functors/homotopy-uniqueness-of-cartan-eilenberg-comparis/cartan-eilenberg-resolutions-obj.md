@@ -1,4 +1,5 @@
-# Cartan Eilenberg Resolutions obj
+# Objects of the Cartan–Eilenberg resolution functor
 
-The value of the Cartan--Eilenberg resolution functor on an object
-is the homotopy class of the bicomplex of the chosen resolution.
+Let C be abelian and assume every object has a projective resolution. For every nonnegative
+complex L, the resolution functor sends L to the homotopy class of the bicomplex of its chosen
+Cartan–Eilenberg resolution.

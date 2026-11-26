@@ -1,3 +1,6 @@
-# Unitization Two Column Coordinate Iso odd
+# The odd word of the two-column unitization comparison
 
-The complete odd comparison is the external unit followed by the original ideal word.
+The odd word of the two-column unitization comparison.
+
+A one-column cell followed by the degreewise comparison and reduced-kernel inclusion is the
+external-unit-leading normalized word.

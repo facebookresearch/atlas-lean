@@ -1,3 +1,3 @@
-# Head Fixing Permutation sign
+# Fixing the zero head preserves the sign
 
-The actual head-fixing permutation retains the original tail sign.
+For `n : ℕ` and `π ∈ S_n`, `(headFixingPermutation n π).sign = π.sign` in `ℤˣ`.

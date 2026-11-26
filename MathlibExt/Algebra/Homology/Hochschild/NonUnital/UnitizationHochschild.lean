@@ -12,15 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.UnitizationRelative
 
 /-!
-# Unitization cokernel Hochschild homology
+# Hochschild homology defined by the unitization cokernel
 
-Regular Hochschild homology of the
-unitization receives the scalar inclusion.
-Its cokernel defines this nonunital
-Hochschild model. The scalar projector
-splits that inclusion and compares the
-model with the relative complex and
-its reduced normalization.
+Let `k` be a commutative ring and `A` a nonunital ground algebra. The scalar section `k → A⁺ =
+k ⊕ A` induces a map on regular Hochschild homology. Define the unitization Hochschild model
+in degree `n` as its cokernel `coker(HH_n(k) → HH_n(A⁺))`.
+
+The scalar section and augmentation split the scalar projector on the chain complex of `A⁺`.
+Its complementary kernel is the relative complex. The cokernel model is naturally isomorphic
+to homology of this kernel and to homology of its reduced normalized complex. The comparisons
+use the complementary retraction and the restricted normalization map.
 -/
 
 @[expose] public section
@@ -36,12 +37,17 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The source extension HH(A) is the cokernel of the original scalar inclusion HH(k)→HH(A⁺). -/
+/-- The unitization cokernel model of nonunital Hochschild homology.
+
+In degree `n`, this is the cokernel of the homology map induced by the scalar inclusion into
+the regular Hochschild complex of `A⁺`. -/
 abbrev unitizationHochschildHomology (n : ℕ) : ModuleCat.{max u v} k :=
   cokernel (HomologicalComplex.homologyMap (unitizationScalarComplexInclusion k A) n)
 
-/-- The source cokernel agrees with homology of the original relative kernel.
-Both comparisons are from the original augmentation and scalar section. -/
+/-- The comparison of unitization cokernel homology with relative homology.
+
+The scalar augmentation and section identify `coker(HH_n(k) → HH_n(A⁺))` with the homology of
+the complementary kernel of the scalar chain projector. -/
 def unitizationHochschildRelativeIso (n : ℕ) :
     unitizationHochschildHomology k A n ≅ (unitizationRelativeComplex k A).homology n := by
   let F := homologyFunctor (ModuleCat.{max u v} k) (ComplexShape.down ℕ) n
@@ -70,14 +76,21 @@ def unitizationHochschildRelativeIso (n : ℕ) :
     cokernelIsoOfEq hpF ≪≫
     cokernelSplitComplementIso (F.map p) (F.map j) (F.map ρ) hjρF hqF
 
-/-- The original restricted normalization supplies the homology isomorphism. -/
+/-- The comparison of unitization cokernel homology with reduced normalization.
+
+The relative homology comparison followed by the restricted normalization isomorphism
+identifies the unitization cokernel model with homology of the reduced normalized complex. -/
 def unitizationHochschildReducedNormalizedIso (n : ℕ) :
     unitizationHochschildHomology k A n ≅
       (unitizationReducedNormalizedComplex k A).homology n :=
   unitizationHochschildRelativeIso k A n ≪≫
     asIso (HomologicalComplex.homologyMap (unitizationRelativeNormalization k A) n)
 
-/-- The source cokernel projection computes the original complementary retraction on homology. -/
+/-- The cokernel projection in relative homology coordinates.
+
+The cokernel projection followed by the relative comparison is the homology map of the
+complementary chain retraction from the unitization complex to the kernel of its scalar
+projector. -/
 @[reassoc]
 theorem unitizationHochschildRelativeIso_π_hom (n : ℕ) :
     cokernel.π (HomologicalComplex.homologyMap (unitizationScalarComplexInclusion k A) n) ≫
@@ -91,7 +104,10 @@ theorem unitizationHochschildRelativeIso_π_hom (n : ℕ) :
     π_comp_cokernelIsoOfEq_hom_assoc, cokernelSplitComplementIso_π_hom]
   rfl
 
-/-- The source comparison really uses the original normalization map on relative homology. -/
+/-- The map of the unitization reduced-normalization comparison.
+
+The forward isomorphism is the relative homology comparison followed by the homology map of
+the relative normalization chain map. -/
 theorem unitizationHochschildReducedNormalizedIso_hom (n : ℕ) :
     (unitizationHochschildReducedNormalizedIso k A n).hom =
       (unitizationHochschildRelativeIso k A n).hom ≫

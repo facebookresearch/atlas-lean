@@ -1,4 +1,6 @@
-# Field Geometric Fiber Continuous Delta Functor
+# Geometric fiber continuous cohomology as a delta functor
 
-The actual continuous-cohomology delta functor on sheaves is the target of
-the accepted Γ/native delta isomorphism.
+Geometric fiber continuous cohomology as a delta functor.
+
+Precompose the continuous-cohomology delta functor with the exact geometric-stalk Galois
+functor.

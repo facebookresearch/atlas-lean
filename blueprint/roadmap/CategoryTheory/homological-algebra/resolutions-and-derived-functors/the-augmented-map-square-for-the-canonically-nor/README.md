@@ -1,7 +1,7 @@
 # The augmented-map square for the canonically normalized acyclic comparison
 
-- [Right Derived Normalized Acyclic Comparison](right-derived-normalized-acyclic-compari.md)
-- [Right Derived Acyclic Comparison to Injective signed](right-derived-acyclic-comparison-to-inje.md)
-- [Right Derived Normalized Acyclic Comparison to Injective](right-derived-normalized-acyclic-compari-2.md)
-- [Right Derived Normalized Acyclic Comparison injective hom](right-derived-normalized-acyclic-compari-3.md)
-- [Right Derived Normalized Acyclic Comparison injective](right-derived-normalized-acyclic-compari-4.md)
+- [Triangularly normalized acyclic right-derived comparison](right-derived-normalized-acyclic-compari.md)
+- [Signed acyclic comparison square with an injective target](right-derived-acyclic-comparison-to-inje.md)
+- [Normalized acyclic comparison gives an unsigned injective-target square](right-derived-normalized-acyclic-compari-2.md)
+- [Forward normalized comparison agrees with the injective-resolution map](right-derived-normalized-acyclic-compari-3.md)
+- [Normalized comparison on an injective resolution is canonical](right-derived-normalized-acyclic-compari-4.md)

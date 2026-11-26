@@ -1,3 +1,6 @@
-# Tensor Iso naturality
+# Naturality of the ring-equivalence tensor comparison
 
-The canonical comparison is natural in both original module maps.
+Naturality of the ring-equivalence tensor comparison.
+
+For `S`-linear maps `f : M → M'` and `g : N → N'`, restricting their maps and tensoring over
+`R` commutes with the comparison to the restriction of `f ⊗[S] g`.

@@ -1,3 +1,6 @@
-# Is Admissible Exact of is Cofibration Sequence
+# Cofibration sequences give admissible exact pairs
 
-Cofibration sequence in `waldhausenCategory C` implies admissible exact.
+Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+If a short complex A —i→ B —q→ Q is a cofibration sequence in the standard Waldhausen structure, then it is admissible exact in C.

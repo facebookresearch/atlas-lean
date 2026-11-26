@@ -1,3 +1,6 @@
-# Primitive Lie Map id
+# Identity law for induced primitive Lie maps
 
-The identity bialgebra morphism induces the identity on primitives.
+Identity law for induced primitive Lie maps.
+
+The identity bialgebra homomorphism of H induces the identity Lie homomorphism of
+primitiveLieSubalgebra R H.

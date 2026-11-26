@@ -1,3 +1,5 @@
-# Skeletal Step Class To Page cast
+# The step-class page map respects equality of page indices
 
-Equal page indices give compatible transports of the interval class map.
+The step-class page map respects equality of page indices.
+
+Transport along r=r′ carries the page-r map to the page-r′ map.

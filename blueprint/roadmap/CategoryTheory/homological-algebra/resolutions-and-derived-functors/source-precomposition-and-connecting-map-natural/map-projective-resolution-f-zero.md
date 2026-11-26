@@ -1,3 +1,6 @@
-# Map Projective Resolution π f zero
+# Degree-zero augmentation of a mapped projective resolution
 
-The image-resolution augmentation has the original degree-zero map.
+Let `C,D` be abelian, `U : C → D` additive and preserving
+projectives and homology, and `P` a projective resolution of `X`.
+The degree-zero augmentation of the mapped resolution `U(P)` is
+`U(π_P,₀)`.

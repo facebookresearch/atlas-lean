@@ -1,4 +1,6 @@
-# Raw Form Level Iso naturality
+# Naturality of the lifted-form cotangent comparison
 
-The raw original form map has the same operator as the canonical
-higher cotangent functor after restriction of ground scalars.
+Naturality of the lifted-form cotangent comparison.
+
+The weight-`q` comparison from lifted coefficient forms to ground higher cotangent modules
+commutes with the form map and the higher cotangent map induced by `f : P → Q` over `B`.

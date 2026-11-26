@@ -1,4 +1,8 @@
-# Coproduct Cocone Iso
+# Canonical coproduct comparison for an exact functor
 
-The stock original colimit comparison from the image coproduct cocone
-to the target's original chosen coproduct cocone.
+Let A,B have zero objects and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. Let F:A → B be Waldhausen exact,
+preserving zero objects, cofibrations, weak equivalences and pushouts
+along cofibrations. Use the chosen zero-source coproducts in A and B.
+
+The canonical isomorphism η_{X,Y}:F(X⊔Y) ≅ F(X)⊔F(Y) between the image coproduct cocone and the chosen target coproduct.

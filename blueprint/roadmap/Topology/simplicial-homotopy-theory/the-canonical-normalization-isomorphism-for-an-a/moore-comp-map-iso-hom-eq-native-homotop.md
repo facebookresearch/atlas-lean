@@ -1,5 +1,7 @@
-# Moore Comp Map Iso hom eq native Homotopy Equiv
+# The forward Moore comparison through normalization homotopy equivalences
 
-The forward map is exactly the existing composition of the three native
-homotopy-equivalence maps. Its isomorphism property comes from the existing
-quotient--Moore comparison.
+The forward Moore comparison through normalization homotopy equivalences.
+
+The forward isomorphism map equals the composite of the mapped source Dold–Kan homotopy
+equivalence, the alternating-complex isomorphism, and the inverse target Dold–Kan homotopy
+equivalence.

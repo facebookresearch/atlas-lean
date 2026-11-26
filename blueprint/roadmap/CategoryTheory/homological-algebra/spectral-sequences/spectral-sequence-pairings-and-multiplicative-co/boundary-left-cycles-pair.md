@@ -1,4 +1,6 @@
-# Boundary left cycles Pair
+# The first-factor boundary product is an output boundary
 
-Multiplying an original left boundary by a long representative gives
-an original boundary in the product window.
+The first-factor boundary product is an output boundary.
+
+A left boundary paired with a long representative factors through the output incoming
+boundary.

@@ -1,3 +1,5 @@
-# Away Shift r smul
+# Stage increase after multiplication is the identity
 
-Shifting after multiplication by `r` is the identity.
+Stage increase after multiplication is the identity.
+
+For every z, awayShift(r·z)=z.

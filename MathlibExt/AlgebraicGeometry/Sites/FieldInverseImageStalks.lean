@@ -17,7 +17,21 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldGeometricStalkGaloisAction
 public import Mathlib.CategoryTheory.ConcreteCategory.EpiMono
 
 /-!
-# The actual equivariant inverse-image stalk comparison and every original germ
+# Equivariant stalk change under compatible field embeddings
+
+Let k, Ω, K, Ψ be fields in universe u with separable closures Ω/k and Ψ/K.
+A compatible field map consists of β : k → K and σ : Ω → Ψ satisfying
+σ ∘ algebraMap(k, Ω) = algebraMap(K, Ψ) ∘ β.
+It gives f = Spec β : Spec K → Spec k and a continuous restriction
+res_e : Gal(Ψ/K) → Gal(Ω/k).
+
+For abelian sheaves Q with coefficients in c = max(u, w), the stalk
+comparison is the natural equivariant isomorphism
+Res_(res_e)(Q_Ω) ≅ (f*Q)_Ψ.
+On the germ of a ∈ Q(U) at z : Spec Ω → U, it applies the inverse-image
+unit to a and takes the germ at the pullback lift of z ∘ Spec σ
+over Spec Ψ. The module also describes the point, fiber and underlying
+stalk comparisons, and their compatibility with spectrum automorphisms.
 -/
 
 @[expose] public section
@@ -37,13 +51,24 @@ namespace GaloisUnits.FieldMap
 variable {k Ω K Ψ : Type u} [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ]
 
-/-- The source-base algebra structure is the actual original commutative field square. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+The induced k-algebra structure on Ψ has algebra map
+k → Ψ equal to algebraMap(K, Ψ) ∘ β.
+This construction only uses the compatible field square. -/
 @[instance_reducible]
 def sourceBaseAlgebra (e : FieldMap k Ω K Ψ) : Algebra k Ψ :=
   ((algebraMap K Ψ).comp e.base).toAlgebra
 
-/-- The extension component of e as a k-algebra homomorphism, using its induced
-k-algebra structure on Ψ. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+For that induced k-algebra structure on Ψ, the extension map σ
+is the k-algebra homomorphism Ω →ₐ[k] Ψ.
+Its scalar compatibility is precisely the commuting field square. -/
 def extensionAlgHom (e : FieldMap k Ω K Ψ) :
     letI : Algebra k Ψ := sourceBaseAlgebra e
     Ω →ₐ[k] Ψ := by
@@ -61,7 +86,12 @@ variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 attribute [local instance] IsSepClosure.sep_closed
 
-/-- The scheme morphism Spec K to Spec k induced by the base component of the field map. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+The base embedding β gives f = Spec β : Spec K → Spec k,
+the scheme morphism used by the inverse-image functor. -/
 def fieldOriginalPullback (e : GaloisUnits.FieldMap k Ω K Ψ) :
     Spec (.of K) ⟶ Spec (.of k) := Spec.map (CommRingCat.ofHom e.base)
 
@@ -74,13 +104,19 @@ theorem fieldOriginalImagePoint (e : GaloisUnits.FieldMap k Ω K Ψ) :
   rfl
 
 
-/-- Change only a bare original Over source through its proved scheme equality. -/
+/-- Let X, Z be schemes in universe u, x, y : Z → X equal
+morphisms, and U an object over X. An over-X morphism
+(Z, x) → U transports to (Z, y) → U along x = y, with the
+same underlying scheme map Z → U. -/
 def overHomSourceChange {X Z : Scheme.{u}} (x y : Z ⟶ X) (h : x = y)
     (U : Over X) (z : Over.mk x ⟶ U) : Over.mk y ⟶ U :=
   Over.homMk z.left (z.w.trans h)
 
-/-- Transport an actual Over precomposition surjectivity proof using only its
-constructed source-point equality and literal underlying scheme map. -/
+/-- Let X, Z, Z′ be schemes, x : Z → X and y = y′ : Z′ → X,
+and U an object over X. Suppose a : (Z′, y) → (Z, x) and
+b : (Z′, y′) → (Z, x) have the same underlying map Z′ → Z.
+If precomposition by a maps Hom_X((Z, x), U) surjectively onto
+Hom_X((Z′, y), U), then precomposition by b is also surjective. -/
 theorem overPrecomp_surjective_source_transport {X Z Z' : Scheme.{u}}
     (x : Z ⟶ X) (y y' : Z' ⟶ X) (h : y = y') (U : Over X)
     (a : Over.mk y ⟶ Over.mk x) (b : Over.mk y' ⟶ Over.mk x)
@@ -91,7 +127,13 @@ theorem overPrecomp_surjective_source_transport {X Z Z' : Scheme.{u}}
   have hh : a = b := Over.OverMorphism.ext hab
   exact hh ▸ ha
 
-/-- Literal spectrum map of the original supplied field embedding. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+The extension embedding σ gives Spec σ : Spec Ψ → Spec Ω.
+Its composite with Spec Ω → Spec k equals
+Spec Ψ → Spec K followed by Spec β. -/
 def fieldChangeSpec (e : GaloisUnits.FieldMap k Ω K Ψ) : Spec (.of Ψ) ⟶ Spec (.of Ω) :=
   Spec.map (CommRingCat.ofHom e.extension)
 
@@ -113,13 +155,27 @@ theorem fieldChangeSpec_eq (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldChangeSpec k Ω K Ψ e =
       fieldClosureSpec k Ω Ψ (GaloisUnits.FieldMap.extensionAlgHom e) := rfl
 
-/-- Spec(σ) is an original morphism from the ACTUAL image point to the source point. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Spec σ is a morphism over Spec k from the image of the Ψ-valued
+point along f to the Ω-valued point, because the two maps from
+Spec Ψ to Spec k agree. -/
 def fieldChangeOverHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
     Over.mk (Spec.algebraMap K Ψ ≫ fieldOriginalPullback k Ω K Ψ e) ⟶
       Over.mk (Spec.algebraMap k Ω) :=
   Over.homMk (fieldChangeSpec k Ω K Ψ e) (fieldChangeSpec_source_square k Ω K Ψ e)
 
-/-- The point morphism acts on every original neighborhood by literal Spec(σ). -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+The induced point morphism goes from the Ψ-valued image point over
+Spec k to the Ω-valued point. Its fiber map sends a geometric lift
+z : Spec Ω → U to z ∘ Spec σ. -/
 def fieldChangeImagePointHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
     Scheme.pointSmallEtale (Spec.algebraMap K Ψ ≫ fieldOriginalPullback k Ω K Ψ e) ⟶
       fieldGeometricPoint k Ω :=
@@ -166,7 +222,15 @@ theorem fieldChangeImagePointHom_app_surjective (e : GaloisUnits.FieldMap k Ω K
     (Spec.algebraMap K Ψ ≫ fieldOriginalPullback k Ω K Ψ e)
     (fieldOriginalImagePoint k Ω K Ψ e).symm V a b hab ha
 
-/-- Every original image/source fiber comparison is actually bijective. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+Precomposition with Spec σ is a natural isomorphism from the
+Ω-valued fiber functor on Etale(Spec k) to the Ψ-valued image-point
+fiber functor, with value z ↦ z ∘ Spec σ. -/
 def fieldChangeImageFiberIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (fieldGeometricPoint k Ω).fiber ≅
       (Scheme.pointSmallEtale (Spec.algebraMap K Ψ ≫ fieldOriginalPullback k Ω K Ψ e)).fiber :=
@@ -176,8 +240,15 @@ def fieldChangeImageFiberIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
       fieldChangeImagePointHom_app_surjective k Ω K Ψ e U⟩).toIso)
     (fun f => (fieldChangeImagePointHom k Ω K Ψ e).hom.naturality f)
 
-/-- The isomorphism from the image of the Ψ-valued geometric point on Spec k to
-the Ω-valued geometric point, induced by the compatible field map. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+This is the isomorphism from the Ψ-valued image point over Spec k
+to the Ω-valued point. Its fiber map is precomposition by Spec σ;
+its inverse uses the bijective fiber maps. -/
 def fieldChangeImagePointIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     Scheme.pointSmallEtale (Spec.algebraMap K Ψ ≫ fieldOriginalPullback k Ω K Ψ e) ≅
       fieldGeometricPoint k Ω where
@@ -190,7 +261,15 @@ def fieldChangeImagePointIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     apply GrothendieckTopology.Point.hom_ext
     exact (fieldChangeImageFiberIso k Ω K Ψ e).hom_inv_id
 
-/-- Lift only the original point indices to their proved common size. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+The image-point isomorphism holds for common-universe points
+whose fiber coordinates are lifted to c. It uses the same embedding
+and the same underlying geometric lifts. -/
 def fieldChangeCommonImagePointIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     smallEtaleGeometricPointCommon.{u, w}
         (Spec.algebraMap K Ψ ≫ fieldOriginalPullback k Ω K Ψ e) ≅
@@ -204,7 +283,15 @@ def fieldChangeCommonImagePointIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     apply GrothendieckTopology.Point.hom_ext
     exact (Functor.isoWhiskerRight (fieldChangeImageFiberIso k Ω K Ψ e) uliftFunctor.{w, u}).hom_inv_id
 
-/-- The actual common-stalk closure comparison to the ACTUAL image point. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+The point isomorphism gives the natural additive stalk isomorphism
+Q_Ω ≅ Q_(Ψ over k) on coefficient sheaves over Spec k.
+Its direction is from the source closure stalk to the image-point stalk. -/
 def fieldChangeImageStalkIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).sheafFiber
         (A := AddCommGrpCat.{max u w}) ≅
@@ -222,7 +309,14 @@ def fieldChangeImageStalkIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
       (fieldChangeCommonImagePointIso.{u, w} k Ω K Ψ e).hom_inv_id]
     exact GrothendieckTopology.Point.Hom.sheafFiber_id _
 
-/-- Closure change followed by the inverse of the SAME raw accepted κ. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+Closure change and the inverse-image stalk comparison give
+Q_Ω ≅ (f*Q)_Ψ, naturally in the coefficient sheaf Q. -/
 def fieldChangeUnderlyingStalkIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).sheafFiber
         (A := AddCommGrpCat.{max u w}) ≅
@@ -233,7 +327,11 @@ def fieldChangeUnderlyingStalkIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (smallEtaleInverseImageCommonGeometricStalkIso.{u, w}
       (fieldOriginalPullback k Ω K Ψ e) (Spec.algebraMap K Ψ)).symm
 
-/-- Native/common β transport changes only the original point-index universe. -/
+/-- Let h : X → Y be a scheme morphism in universe u, Λ a separably
+closed field in universe u, x : Spec Λ → X, and U ∈ Etale(Y).
+The inverse common-universe fiber comparison sends ULift.up(z) to
+ULift.up of the inverse ordinary fiber comparison applied to z.
+Both compare lifts of h ∘ x to U with lifts of x to U ×_Y X. -/
 theorem smallEtaleBaseChangeCommonPointFiberIso_inv_up
     {Λ : Type u} [Field Λ] [IsSepClosed Λ] {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Λ) ⟶ X) (U : Y.Etale)
@@ -241,7 +339,10 @@ theorem smallEtaleBaseChangeCommonPointFiberIso_inv_up
     (smallEtaleBaseChangeCommonPointFiberIso.{u, w} f x).inv.app U (ULift.up z) =
       ULift.up ((smallEtaleBaseChangePointFiberIso f x).inv.app U z) := rfl
 
-/-- Literal original pullback projection of the native inverse fiber map. -/
+/-- Let h : X → Y be a scheme morphism, Λ a separably closed field,
+x : Spec Λ → X, and z a geometric lift of h ∘ x to U ∈ Etale(Y).
+The inverse fiber comparison produces a lift to U ×_Y X whose
+projection to U is z. -/
 theorem smallEtaleBaseChangePointFiberIso_inv_app_fst
     {Λ : Type u} [Field Λ] [IsSepClosed Λ] {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Λ) ⟶ X) (U : Y.Etale)
@@ -253,7 +354,15 @@ theorem smallEtaleBaseChangePointFiberIso_inv_app_fst
   have hp := smallEtaleBaseChangePointFiberIso_hom_app_left f x U (β.inv.app U z)
   exact hp.symm.trans (congrArg Over.Hom.left hβ)
 
-/-- The original target point is the NATIVE β inverse, independent of coefficients. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+For U ∈ Etale(Spec k) and z : Spec Ω → U over k, this is the
+Ψ-valued lift to U ×_(Spec k) Spec K obtained by inverse base change
+from z ∘ Spec σ. It is independent of coefficient sheaves. -/
 def fieldChangeOriginalPoint (e : GaloisUnits.FieldMap k Ω K Ψ)
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U) :
     (fieldGeometricPoint K Ψ).fiber.obj
@@ -280,7 +389,15 @@ theorem fieldChangeOriginalPoint_fst (e : GaloisUnits.FieldMap k Ω K Ψ)
     (((fieldChangeImagePointHom k Ω K Ψ e).hom.app U) z)).trans
       (fieldChangeImagePointHom_app_left k Ω K Ψ e U z)
 
-/-- Literal closure-change germs at every original object. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+For a coefficient sheaf Q, U ∈ Etale(Spec k), z ∈ U(Ω), and
+a ∈ Q(U), the image-stalk isomorphism sends germ_(U,z)(a)
+to germ_(U,z∘Spec σ)(a) at the Ψ-valued image point over k. -/
 theorem fieldChangeImageStalkIso_original_germ (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U) :
@@ -294,7 +411,15 @@ theorem fieldChangeImageStalkIso_original_germ (e : GaloisUnits.FieldMap k Ω K 
   exact (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).toPresheafFiber_presheafFiberDesc
     (A := AddCommGrpCat.{max u w}) (P := Q.obj) _ _ U (ULift.up z)
 
-/-- Same raw κ inverse, SAME actual unit, on every original field germ. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+The underlying inverse-image stalk comparison sends a germ (U, z, a)
+to the Ψ-germ of η_Q,U(a) over U ×_(Spec k) Spec K at the changed
+lift z_e. Here η : Q → f_*f*Q is the inverse-image adjunction unit. -/
 theorem fieldChangeUnderlyingStalkIso_original_germ (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U) :
@@ -335,7 +460,10 @@ open CategoryTheory CategoryTheory.Limits Opposite
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The native inverse fiber comparison is the actual original Over adjunction. -/
+/-- Let h : X → Y be a scheme morphism, Λ a separably closed field,
+x : Spec Λ → X, and U ∈ Etale(Y). On a lift z of h ∘ x to U,
+the inverse fiber comparison is the pullback adjunction's Hom map
+Hom_Y((Spec Λ, h∘x), U) → Hom_X((Spec Λ, x), h*U). -/
 theorem smallEtaleBaseChangePointFiberIso_inv_app_overHomEquiv
     {Λ : Type u} [Field Λ] [IsSepClosed Λ] {X Y : Scheme.{u}} (f : X ⟶ Y)
     (x : Spec (.of Λ) ⟶ X) (U : Y.Etale)
@@ -348,7 +476,15 @@ variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 attribute [local instance] IsSepClosure.sep_closed
 
 omit [IsSepClosure K Ψ] in
-/-- Literal restriction compatibility of the original field embedding on spectra. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+For h ∈ Gal(Ψ/K), the Galois spectrum automorphisms satisfy
+Spec σ ∘ γ_h = γ_(res_e h) ∘ Spec σ.
+This is the Galois square used by the equivariant stalk comparison. -/
 theorem fieldChangeSpec_galois_square (e : GaloisUnits.FieldMap k Ω K Ψ) (h : Gal(Ψ/K)) :
     fieldGaloisSpec K Ψ h ≫ fieldChangeSpec k Ω K Ψ e =
       fieldChangeSpec k Ω K Ψ e ≫ fieldGaloisSpec k Ω (GaloisUnits.FieldMap.restrictHom e h) := by
@@ -453,7 +589,16 @@ theorem fieldChangeUnderlyingStalkIso_equivariant
         U (ULift.up z) Q.obj c)) :=
       congrArg (fun t : fieldGeometricStalkCarrier.{u, w} K Ψ F => h • t) h0.symm
 
-/-- Exactly the original stalk map, with its proved original equivariance. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+For a coefficient sheaf Q, the additive map Q_Ω → (f*Q)_Ψ
+is a morphism from the source Galois module restricted along res_e
+to the target stalk module in the discrete continuous Gal(Ψ/K)-module
+category. -/
 def fieldChangeStalkModuleHom (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (GaloisUnits.restrictModules (GaloisUnits.FieldMap.restrictContinuous e)).obj
@@ -464,7 +609,16 @@ def fieldChangeStalkModuleHom (e : GaloisUnits.FieldMap k Ω K Ψ)
     ⟨((fieldChangeUnderlyingStalkIso.{u, w} k Ω K Ψ e).hom.app Q).hom,
       fieldChangeUnderlyingStalkIso_equivariant.{u, w} k Ω K Ψ e Q⟩
 
-/-- The genuine original pullback/restriction comparison of continuous Galois modules. -/
+/-- Let k, Ω, K, Ψ be fields in universe u, with k-algebra Ω
+and K-algebra Ψ. Let e consist of embeddings β : k → K and
+σ : Ω → Ψ satisfying σ ∘ algebraMap(k, Ω) =
+algebraMap(K, Ψ) ∘ β.
+Assume Ω/k and Ψ/K are separable closures. Put c = max(u, w)
+and f = Spec(β) : Spec K → Spec k.
+These maps form the natural isomorphism
+Res_(res_e) ∘ E_(k,Ω) ≅ E_(K,Ψ) ∘ f*,
+where E denotes the geometric-stalk Galois functor.
+The coefficient universe w is independent of the field universe u. -/
 def fieldChangeStalkModuleIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
         GaloisUnits.restrictModules (GaloisUnits.FieldMap.restrictContinuous e) ≅

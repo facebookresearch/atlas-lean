@@ -1,3 +1,7 @@
-# H2 ZMod Restrict Int To Fun
+# Integral second-cohomology class of a representative
 
-Underlying degree-two scalar-restriction comparison.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward H² scalar function takes the integral class of a
+chosen two-cocycle representative.

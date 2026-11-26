@@ -1,3 +1,6 @@
-# Field Continuous Derived Invariants Iso naturality
+# Continuous derived comparison is coefficient natural
 
-All original coefficient maps commute with the same comparison.
+Continuous derived comparison is coefficient natural.
+
+Each coefficient map commutes with the degreewise comparison and its right-derived invariant
+map.

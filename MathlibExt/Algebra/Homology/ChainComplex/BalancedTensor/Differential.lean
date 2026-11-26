@@ -14,11 +14,16 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplex.BalancedTensor.DifferentialCoordinates
 
 /-!
-# Differential compatibility of the actual signed tensor–Hom currying
+# Differential compatibility of signed tensor–Hom currying
 
-The proof compares the three original differential terms. The triangular
-unit supplies exactly the change in the two inner-Hom terms, in all integer
-degrees. No differential square or comparison map is supplied as input.
+For integer chain complexes `P` and `Q` and a cochain complex `I`, signed currying uses the
+inner-degree unit `θ(b) = (-1)^(b*(b+1)/2)`. The full Hom differential has an unweighted
+source-precomposition term and a target-postcomposition term weighted by `(-1)^(n+1)` in
+degree `n`.
+
+The tensor differential contributes the separate `P` and `Q` terms. The recurrence `θ(b + 1) =
+θ(b) * (-1)^(b+1)` makes these three terms agree with the differential of the nested Hom
+complex. Thus signed currying commutes with the cochain differential in every integer degree.
 -/
 
 @[expose] public section
@@ -57,7 +62,10 @@ variable (R : Type u) [Ring R]
 
 local notation "HI" => moduleHomCochainComplex R Q I
 
-/-- The earned signed currying commutes with the two original total-Hom differentials. -/
+/-- Signed tensor–Hom currying commutes with the differential.
+
+For every integer `n` and degree-`n` Hom cochain `f`, currying its differential in degree `n +
+1` equals the nested Hom differential applied to its signed curry in degree `n`. -/
 theorem curryCochain_d (n : ℤ) (f : CochainComplex.HomComplex.Cochain
     ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n) :
     curryCochain R P Q I (n + 1)

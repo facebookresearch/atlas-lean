@@ -12,11 +12,16 @@ public import Mathlib.CategoryTheory.Sites.Point.Category
 public import Mathlib.CategoryTheory.Sites.Point.Skyscraper
 public import Mathlib.CategoryTheory.Adjunction.Mates
 
-/-! # Concrete product coordinates of the mate of a point morphism
+/-!
+# Product coordinates of point adjunctions and their mates
 
-These stock-adjunction consequences identify the same point-induced stalk
-map and its skyscraper mate. They will be used for the original geometric
-point comparisons, without supplying a coherence certificate.
+Let J be a topology on C and A a coefficient category with w-sized products and colimits of
+size (w,w). For a point Φ of fiber universe w, its skyscraper at M has value ∏_{x∈Φ(U)}M. The
+local germ map followed by the stalk–skyscraper counit is projection at x.
+
+For a point morphism j : Φ → Ψ, the mate on skyscrapers reindexes these products by j_U : Ψ(U)
+→ Φ(U). Skyscraper restriction along a site morphism similarly reindexes by its fiber map;
+this last formula needs only the product hypothesis.
 -/
 
 @[expose] public section
@@ -32,7 +37,10 @@ variable {C : Type u} [Category.{v} C] {J : GrothendieckTopology C}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The actual skyscraper counit on a neighborhood is its original product projection. -/
+/-- Let J be a topology on C, A have w-sized products and colimits of size (w,w), Φ : Point.{w} J,
+M ∈ A, U ∈ C, and x ∈ Φ(U). The germ map ∏_{Φ(U)}M → Φ^*(Φ_*M), followed by the
+stalk–skyscraper counit Φ^*(Φ_*M) → M, equals the product projection π_x. Category and fiber
+universes may be independent. -/
 @[reassoc (attr := simp)]
 lemma toPresheafFiber_skyscraperSheafAdjunction_counit (Φ : Point.{w} J)
     (M : A) (U : C) (x : Φ.fiber.obj U) :
@@ -52,8 +60,10 @@ lemma toPresheafFiber_skyscraperSheafAdjunction_counit (Φ : Point.{w} J)
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The mate of the same point-induced stalk map reindexes the actual
-skyscraper products by the original fiber map. -/
+/-- Let J be a topology on C and A have w-sized products and colimits of size (w,w). For points
+Φ,Ψ and j : Φ → Ψ, write j_U : Ψ(U) → Φ(U) for its fiber map. The adjoint mate on skyscrapers
+is a map Φ_*M → Ψ_*M whose U-component t satisfies t_U≫π_y=π_{j_U(y)} for every y ∈ Ψ(U). This
+specifies its product reindexing coordinates. -/
 lemma conjugateEquiv_sheafFiber_app_π {Φ Ψ : Point.{w} J} (j : Φ ⟶ Ψ)
     (M : A) (U : C) (y : Ψ.fiber.obj U) :
     ((conjugateEquiv Φ.skyscraperSheafAdjunction Ψ.skyscraperSheafAdjunction
@@ -99,7 +109,10 @@ variable {C : Type*} [Category* C] {J : GrothendieckTopology C}
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The original skyscraper restriction is the actual fiber reindexing of product coordinates. -/
+/-- Let J be a topology on C, A have w-sized products, Φ : Point.{w} J, and M ∈ A. For g : U → V
+and z ∈ Φ(U), restriction Φ_*M(V) → Φ_*M(U) followed by π_z equals π_{Φ(g)(z)}. The
+restriction map thus reindexes the product by Φ(g) : Φ(U) → Φ(V), without a colimit hypothesis
+on A. -/
 lemma skyscraperSheaf_restrict_π (Φ : Point.{w} J) (M : A)
     {U V : C} (g : U ⟶ V) (z : Φ.fiber.obj U) :
     (Φ.skyscraperSheafFunctor.obj M).obj.map g.op ≫ Pi.π (fun (_ : Φ.fiber.obj U) => M) z =

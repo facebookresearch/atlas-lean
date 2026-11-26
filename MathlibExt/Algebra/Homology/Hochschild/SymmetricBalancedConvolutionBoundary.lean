@@ -7,10 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/-
-UNEXECUTED source proposal. The original algebraBoundary, A-balanced cuts,
-signed shuffle multiplication and coefficient carriers are retained.
--/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricBalancedCutsBoundary
@@ -18,13 +15,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricBalancedShuffleBou
 public import MathlibExt.LinearAlgebra.TensorPower.ProperShuffleDegreeCutSuccessor
 
 /-!
-# Boundary compatibility of proper shuffle convolution
+# Proper shuffle convolution commutes with the Hochschild boundary
 
-Each deconcatenation cut followed by balanced signed
-shuffle satisfies the convolution boundary identity.
-The finite successor-cut sum cancels the interior
-terms; the endpoint terms vanish by the symmetric
-degree-one boundary formula.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. For a cut
+p+q=n, deconcatenation followed by the A-balanced signed shuffle gives an A-linear
+endomorphism of M ⊗[k] A⊗n. Summing only cuts with p,q>0 gives the proper convolution
+operator. It commutes with the Hochschild boundary; the middle coefficient terms cancel by
+A-balancing and the degree-one endpoint boundary is zero.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for both-positive shuffle relations and
+Eulerian convolution.
 -/
 
 @[expose] public section
@@ -43,14 +43,21 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The original cut and signed shuffle, with their original target degree. -/
+/-- The A-linear shuffle endomorphism of a fixed degree cut.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, for a weak cut z=(p,q) of n, algebraShuffleCutEnd is balanced signed shuffle after
+deconcatenation at z. Its coefficient factor is M and its tensor tails are over k. -/
 def algebraShuffleCutEnd {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
     Module.End A (M ⊗[k] TensorPower k n A) :=
   (algebraShufflePairCutAt k A M z.val.1 z.val.2 n z.property).comp
     (algebraDeconcatCutAt k A M z.val.1 z.val.2 n z.property)
 
-/-- Changing the balancing and returning to the original level gives the
-original coefficient-fixed signed cut, without changing any tail. -/
+/-- The ground-linear action of an A-balanced shuffle cut.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, restricting algebraShuffleCutEnd(z) from A to k gives coefficientShuffleCutEnd(z) on
+M ⊗[k] A⊗n. -/
 theorem algebraShuffleCutEnd_restrictScalars {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
     (algebraShuffleCutEnd k A M z).restrictScalars k = coefficientShuffleCutEnd k A M z := by
   rcases z with ⟨⟨p, q⟩, h⟩
@@ -70,12 +77,20 @@ theorem algebraShuffleCutEnd_restrictScalars {n : ℕ} (z : TensorPower.ShuffleD
     LinearMap.id_apply, TensorProduct.map_tmul]
   rfl
 
-/-- The A-linear sum of the original both-positive shuffle cuts. -/
+/-- The A-linear sum over both-positive shuffle cuts.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, this endomorphism of M ⊗[k] A⊗n sums deconcatenation followed by signed shuffle over
+p+q=n with p,q>0. -/
 def algebraProperShuffleConvolutionTwo (n : ℕ) :
     Module.End A (M ⊗[k] TensorPower k n A) :=
   ∑ z : TensorPower.ProperShuffleDegreeCut n, algebraShuffleCutEnd k A M z.val
 
-/-- The balanced sum retains the original coefficient proper-cut sum. -/
+/-- Restriction of the proper A-linear convolution to ground scalars.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, the k-linear restriction of algebraProperShuffleConvolutionTwo(n) equals
+totalProperCoefficientShuffleCutEnd(n), with the same both-positive cut index. -/
 theorem algebraProperShuffleConvolutionTwo_restrictScalars (n : ℕ) :
     (algebraProperShuffleConvolutionTwo k A M n).restrictScalars k =
       totalProperCoefficientShuffleCutEnd k A M n := by
@@ -88,8 +103,11 @@ theorem algebraProperShuffleConvolutionTwo_restrictScalars (n : ℕ) :
   intro z _
   exact DFunLike.congr_fun (algebraShuffleCutEnd_restrictScalars k A M z.val) x
 
-/-- The original symmetric degree-one boundary is zero also in the original
-coefficient-head A-module structure. -/
+/-- The symmetric Hochschild boundary from degree one to zero vanishes.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, algebraBoundary(0) is zero: the two coefficient actions in b₁ agree because A is
+commutative and M is symmetric. -/
 @[simp]
 theorem algebraBoundary_zero : algebraBoundary k A M 0 = 0 := by
   apply LinearMap.restrictScalars_injective k
@@ -189,10 +207,11 @@ private theorem algebraShuffleCutEnd_incoming_boundary (n : ℕ)
           (algebraDeconcatCutAt k A M z.val.val.1 (z.val.val.2 + 1) (n + 2) (by omega)))
   simpa only [LinearMap.comp_assoc, LinearMap.comp_add, LinearMap.comp_smul] using h
 
-/-- The proper shuffle convolution commutes with the original
-Hochschild boundary in every incoming degree at least two. Both successor
-sums come from the original balanced cut boundary; their extra endpoint
-terms vanish by the original symmetric degree-one boundary. -/
+/-- The proper balanced convolution is a Hochschild chain operator.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, writing Cₙ for algebraProperShuffleConvolutionTwo(n) and bₙ : C(n+1) → C(n) for
+algebraBoundary(n), bₙ₊₁ ∘ Cₙ₊₂ = Cₙ₊₁ ∘ bₙ₊₁ for every n≥0. -/
 theorem algebraProperShuffleConvolutionTwo_boundary (n : ℕ) :
     (algebraBoundary k A M (n + 1)).comp (algebraProperShuffleConvolutionTwo k A M (n + 2)) =
       (algebraProperShuffleConvolutionTwo k A M (n + 1)).comp (algebraBoundary k A M (n + 1)) := by

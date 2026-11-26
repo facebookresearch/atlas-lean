@@ -1,5 +1,7 @@
-# Schreier Coind Shapiro Inv Cochain Homotopy Equiv
+# Inverse Shapiro homotopy equivalence on cochains
 
-The explicit inverse-Shapiro homotopy equivalence: subgroup
-inhomogeneous cochains are carried to ambient inhomogeneous cochains with
-coinduced coefficients by the adjoint Schreier comparison.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `B : Rep k H`, and `T` a
+right transversal. The homotopy equivalence `schreierCoindShapiroInvCochainHomotopyEquiv H B
+T` runs from `C^*(H,B)` to `C^*(G,Coind_H^G B)`. It combines the inhomogeneous/bar
+comparisons, precomposition with the adjoint Schreier map, and the restriction–coinduction Hom
+adjunction. Its forward map induces inverse Shapiro on cohomology.

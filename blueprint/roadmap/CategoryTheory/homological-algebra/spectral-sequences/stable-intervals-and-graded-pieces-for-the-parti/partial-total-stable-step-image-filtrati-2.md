@@ -1,4 +1,6 @@
-# Partial Total Stable Step Image Filtration Iso hom comp ι
+# The inclusion equation of a stable-step image comparison
 
-The finite selected-image coordinate commutes with inclusion into total
-homology.
+The inclusion equation of a stable-step image comparison.
+
+The image comparison followed by filtration inclusion equals stable-step image inclusion
+followed by the total-homology abutment comparison.

@@ -1,5 +1,7 @@
-# Is Finite Type of epi'
+# Epimorphic images of finite-type module sheaves
 
-A quotient of a finite-type sheaf is finite type, with no binary-product
-hypothesis (using `epi_over_of_epi`). The statement quantifies an
-independent site universe so it applies after passing to a slice category.
+Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, and `S : Sheaf K
+RingCat.{u}`. Assume additive sheafification and the locally-bijective comparison on `K`, and
+weak additive sheafification with the same comparison on every `K.over X`. If `f : M → N` is
+an epimorphism of module sheaves of carrier universe `u` and `M` is finite type, then `N` is
+finite type.

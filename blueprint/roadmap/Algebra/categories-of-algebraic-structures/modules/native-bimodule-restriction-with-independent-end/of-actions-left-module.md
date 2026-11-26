@@ -1,3 +1,5 @@
-# Of Actions left Module
+# The constructed bimodule retains its specified left action
 
-The first native restriction recovers the actual given left module dictionary.
+For the enveloping module built from specified commuting
+actions on M, restricting to the left R endpoint recovers
+the given Module R M structure.

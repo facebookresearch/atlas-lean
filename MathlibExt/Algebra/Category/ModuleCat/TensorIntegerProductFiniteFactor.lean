@@ -15,12 +15,16 @@ public import MathlibExt.Algebra.Category.ModuleCat.AnnihilatorQuotient
 public import MathlibExt.LinearAlgebra.TensorProduct.PiFiniteFactorScalar
 
 /-!
-# Original-world integer Hom products with a finite-projective tensor factor
+# Tensoring integer-indexed products with a finite projective module
 
-The index is the actual cochain index ℤ. Original categorical projectivity and
-finiteness of the tensor factor earn the product comparison on the original
-module carriers. Quotient scalar smallness is earned from the original product
-and factor actions; no Small R or carrier/world equality premise is introduced.
+Let `R` be a commutative ring, `N : ℤ → ModuleCat.{v} R` an integer-indexed family, and `U :
+ModuleCat.{v} R` a finite, categorically projective module. The canonical map `U ⊗_R (∏ i, N
+i) → ∏ i, U ⊗_R N i` is an isomorphism, with `u ⊗ x ↦ (i ↦ u ⊗ x i)`.
+
+There is also a comparison with `U` on the right, `(∏ i, N i) ⊗_R U → ∏ i, N i ⊗_R U`, given
+by the coordinate projections. It is an isomorphism under the same finite-projective
+hypothesis. The scalar universe is independent of `v`, and the products range over all integer
+indices.
 -/
 
 @[expose] public section
@@ -37,8 +41,10 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- The original integer-indexed product comparison is bijective for the
-original finite categorical-projective tensor factor. -/
+/-- Left finite-projective tensor factor commutes with integer products.
+
+For an integer-indexed family of `R`-modules and a finite categorically projective module `U`,
+the canonical map `U ⊗_R (∏ i : ℤ, N i) → ∏ i : ℤ, U ⊗_R N i` is bijective. -/
 theorem tensorIntegerProductFiniteFactor_bijective (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R)
     [CategoryTheory.Projective U] [Module.Finite R U] :
     Function.Bijective (TensorProduct.piRightHom R R U (fun i => (N i).carrier)) := by
@@ -78,8 +84,10 @@ theorem tensorIntegerProductFiniteFactor_bijective (N : ℤ → ModuleCat.{v} R)
   rw [← he]
   exact e.bijective
 
-/-- The original integer-product Iso has exactly the native original product
-comparison as its hom, including all original coordinate projections. -/
+/-- Left finite-projective tensor factor gives an integer-product isomorphism.
+
+Bundle the bijective canonical product comparison as an isomorphism in `ModuleCat.{v} R` from
+`U ⊗_R (∏ i : ℤ, N i)` to `∏ i : ℤ, U ⊗_R N i`. -/
 def tensorIntegerProductFiniteFactorIso (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R)
     [CategoryTheory.Projective U] [Module.Finite R U] :
     ModuleCat.of R (U ⊗[R] (∀ i : ℤ, N i)) ≅
@@ -87,19 +95,27 @@ def tensorIntegerProductFiniteFactorIso (N : ℤ → ModuleCat.{v} R) (U : Modul
   (LinearEquiv.ofBijective (TensorProduct.piRightHom R R U (fun i => (N i).carrier))
     (tensorIntegerProductFiniteFactor_bijective R N U)).toModuleIso
 
+/-- Forward left-factor product isomorphism is the canonical tensor comparison.
+
+The underlying linear map of the finite-projective left-factor product isomorphism is
+`TensorProduct.piRightHom R R U (fun i => (N i).carrier)`. -/
 theorem tensorIntegerProductFiniteFactorIso_hom (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R)
     [CategoryTheory.Projective U] [Module.Finite R U] :
     (tensorIntegerProductFiniteFactorIso R N U).hom.hom =
       TensorProduct.piRightHom R R U (fun i => (N i).carrier) := rfl
 
-/-- The actual comparison for an original Hom product followed by the tensor
-factor: each original product projection is tensored with the identity of U. -/
+/-- Integer-product comparison with the tensor factor on the right.
+
+For any `U`, tensor each product projection with `U` to define `(∏ i : ℤ, N i) ⊗_R U →ₗ[R] ∏ i
+: ℤ, N i ⊗_R U`. On a pure tensor it gives the family `i ↦ x i ⊗ u`. -/
 def integerProductRightTensorComparison (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R) :
     (∀ i : ℤ, N i) ⊗[R] U →ₗ[R] ∀ i : ℤ, N i ⊗[R] U :=
   LinearMap.pi (fun i => (LinearMap.proj i).rTensor U)
 
-/-- Native tensor symmetry transports the earned original product comparison
-to the original right-tensor position, preserving each original projection. -/
+/-- Right finite-projective tensor factor commutes with integer products.
+
+If `U` is finite and categorically projective, the canonical right-factor integer-product
+comparison is bijective. -/
 theorem integerProductRightTensorComparison_bijective
     (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R)
     [CategoryTheory.Projective U] [Module.Finite R U] :
@@ -116,14 +132,20 @@ theorem integerProductRightTensorComparison_bijective
   rw [h]
   exact c.bijective.comp ((tensorIntegerProductFiniteFactor_bijective R N U).comp d.bijective)
 
-/-- The actual original right-tensor product Iso has the original tensorized
-projections as its hom, even for the full unbounded integer Hom product. -/
+/-- Right finite-projective tensor factor gives an integer-product isomorphism.
+
+For finite categorically projective `U`, the right-factor product comparison gives an
+isomorphism `(∏ i : ℤ, N i) ⊗_R U ≅ ∏ i : ℤ, N i ⊗_R U` in the chosen module universe. -/
 def integerProductRightTensorIso (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R)
     [CategoryTheory.Projective U] [Module.Finite R U] :
     ModuleCat.of R ((∀ i : ℤ, N i) ⊗[R] U) ≅ ModuleCat.of R (∀ i : ℤ, N i ⊗[R] U) :=
   (LinearEquiv.ofBijective (integerProductRightTensorComparison R N U)
     (integerProductRightTensorComparison_bijective R N U)).toModuleIso
 
+/-- Forward right-factor product isomorphism is its projection comparison.
+
+The underlying linear map of the right-factor product isomorphism is
+`integerProductRightTensorComparison R N U`. -/
 theorem integerProductRightTensorIso_hom (N : ℤ → ModuleCat.{v} R) (U : ModuleCat.{v} R)
     [CategoryTheory.Projective U] [Module.Finite R U] :
     (integerProductRightTensorIso R N U).hom.hom = integerProductRightTensorComparison R N U := rfl

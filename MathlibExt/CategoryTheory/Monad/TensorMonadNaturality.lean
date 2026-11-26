@@ -12,12 +12,14 @@ module
 public import MathlibExt.CategoryTheory.Monad.MonoidalBar
 
 /-!
-# Tensor-monad functoriality in an internal monoid
+# Tensor monads vary with internal monoids
 
-An internal monoid morphism `f : M ⟶ N` induces a morphism from the tensor monad of `M`
-to the tensor monad of `N`. Its component at `X` is `f.hom ▷ X`; compatibility with the
-monad unit and multiplication is exactly compatibility of `f` with the internal unit and
-multiplication. Identity and composition agree with those in the category of monads.
+An internal monoid morphism `f : M → N` gives a monad morphism between `M ⊗ -` and `N ⊗ -`,
+with component `f.hom ▷ X`. The unit and multiplication conditions are the monoid morphism
+laws.
+
+This construction preserves identities and composition and gives the corresponding morphism
+between regular right modules, after restriction along the monad morphism.
 -/
 
 @[expose] public section
@@ -36,7 +38,10 @@ variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The tensor-monad morphism induced by a morphism of internal monoids. -/
+/-- Internal monoid morphism induces a tensor monad morphism.
+
+The components `f.hom ▷ X` define a natural transformation respecting tensor-monad unit and
+multiplication. -/
 noncomputable def tensorMonadHom {M N : Mon C} (f : M ⟶ N) :
     tensorMonad M.X ⟶ tensorMonad N.X where
   toNatTrans :=
@@ -87,21 +92,27 @@ noncomputable def tensorMonadHom {M N : Mon C} (f : M ⟶ N) :
         rw [tensorHom_def']
         simp only [Category.assoc]
 
-/-- The component of the induced tensor-monad morphism is the monoid morphism tensored with the
-identity. -/
+/-- Tensor monad morphism component is tensoring the monoid map.
+
+At object `X`, the component is `f.hom ▷ X`. -/
 @[simp]
 theorem tensorMonadHom_app {M N : Mon C} (f : M ⟶ N) (X : C) :
     (tensorMonadHom f).app X = f.hom ▷ X :=
   rfl
 
-/-- Explicit unit compatibility of the induced tensor-monad morphism. -/
+/-- Tensor monad morphism respects the unit.
+
+The source unit followed by the component equals the target unit. -/
 @[reassoc]
 theorem tensorMonadHom_η {M N : Mon C} (f : M ⟶ N) (X : C) :
     (tensorMonad M.X).η.app X ≫ (tensorMonadHom f).app X =
       (tensorMonad N.X).η.app X :=
   (tensorMonadHom f).app_η X
 
-/-- Explicit multiplication compatibility of the induced tensor-monad morphism. -/
+/-- Tensor monad morphism respects multiplication.
+
+The source multiplication followed by the component equals the two component maps followed by
+target multiplication. -/
 @[reassoc]
 theorem tensorMonadHom_μ {M N : Mon C} (f : M ⟶ N) (X : C) :
     (tensorMonad M.X).μ.app X ≫ (tensorMonadHom f).app X =
@@ -110,7 +121,9 @@ theorem tensorMonadHom_μ {M N : Mon C} (f : M ⟶ N) (X : C) :
           (tensorMonad N.X).μ.app X :=
   (tensorMonadHom f).app_μ X
 
-/-- The identity internal-monoid morphism induces the identity monad morphism. -/
+/-- Identity monoid map gives the identity tensor monad map.
+
+The tensor-monad morphism of the identity internal monoid map is the identity. -/
 @[simp]
 theorem tensorMonadHom_id (M : Mon C) :
     tensorMonadHom (𝟙 M) = 𝟙 (tensorMonad M.X) := by
@@ -119,7 +132,10 @@ theorem tensorMonadHom_id (M : Mon C) :
   change (𝟙 M : M ⟶ M).hom ▷ X = 𝟙 (M.X ⊗ X)
   rw [show (𝟙 M : M ⟶ M).hom = 𝟙 M.X by rfl, id_whiskerRight]
 
-/-- Tensor-monad morphisms compose with internal-monoid morphisms. -/
+/-- Tensor monad maps preserve monoid map composition.
+
+The map of a composite internal monoid morphism equals the composite of its tensor-monad
+morphisms. -/
 @[simp]
 theorem tensorMonadHom_comp {M N P : Mon C} (f : M ⟶ N) (g : N ⟶ P) :
     tensorMonadHom (f ≫ g) = tensorMonadHom f ≫ tensorMonadHom g := by
@@ -128,8 +144,10 @@ theorem tensorMonadHom_comp {M N P : Mon C} (f : M ⟶ N) (g : N ⟶ P) :
   change (f ≫ g).hom ▷ X = (f.hom ▷ X) ≫ (g.hom ▷ X)
   rw [show (f ≫ g).hom = f.hom ≫ g.hom by rfl, comp_whiskerRight]
 
-/-- The induced monad morphism as a morphism from the regular source module to the regular target
-module restricted along it. -/
+/-- Monoid map induces a restricted regular right module map.
+
+The monad morphism gives a map from the source regular right module to the target regular
+module restricted along that morphism. -/
 noncomputable def tensorMonadRegularRightModuleHom {M N : Mon C} (f : M ⟶ N) :
     RightModule.regular (tensorMonad M.X) ⟶
       (rightModuleRestrictAlongHom (tensorMonadHom f)).obj

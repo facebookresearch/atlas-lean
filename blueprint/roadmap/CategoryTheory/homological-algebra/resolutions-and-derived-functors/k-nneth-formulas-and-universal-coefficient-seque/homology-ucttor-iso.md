@@ -1,4 +1,6 @@
-# Homology UCTTor Iso
+# Compression of the Künneth Tor source for a degree-zero coefficient
 
-The Künneth Tor-one source for coefficients concentrated in degree zero
-canonically reduces to `Tor₁(H_(n-1)(K), A)`, and is zero in degree zero.
+Compression of the Künneth Tor source for a degree-zero coefficient.
+
+The Künneth Tor-source sum for K and A[0] is isomorphic to T_n, including its zero degree-zero
+case.

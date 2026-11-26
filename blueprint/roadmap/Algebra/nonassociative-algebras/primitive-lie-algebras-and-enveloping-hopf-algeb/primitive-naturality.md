@@ -1,3 +1,6 @@
-# ΙPrimitive naturality
+# Naturality of the primitive generator Lie map
 
-Primitive-valued generators are natural in Lie morphisms through the canonical bialgebra map.
+Naturality of the primitive generator Lie map.
+
+The primitive Lie map induced by an enveloping bialgebra map commutes with the Lie generator
+maps.

@@ -13,11 +13,18 @@ public import Mathlib.Algebra.Homology.Additive
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoalgebraNative
 
 /-!
-# Naturality of the Chevalley–Eilenberg chain coalgebra
+# Lie maps preserve the exterior chain coalgebra
 
-The exterior map of a Lie algebra homomorphism induces a chain map preserving
-the coproduct, counit, and coaugmentation. The ring universe is independent
-of the common Lie-carrier universe used for the bundled chain maps.
+Let R:Type u be commutative and L,L′ R-Lie algebras in a common
+carrier universe v. A Lie homomorphism f:L→L′ gives the chain map
+F_n=Λ_R^n f on canonical Chevalley–Eilenberg chains.
+
+For the primitive chain coproducts and counits,
+Γ_{L′}F=(F⊗F)Γ_L and ε_{L′}F=ε_L.
+The coaugmentations satisfy Fu_L=u_{L′}. Thus F is a comonoid
+morphism in the signed tensor category of nonnegative R-module
+complexes at height max{u,v}. The ground universe u is independent
+of the common Lie-carrier universe v.
 -/
 
 @[expose] public section
@@ -39,13 +46,19 @@ open scoped ModuleCat.UniverseTensor
 local instance coalgebraNaturalityFiniteBiproducts : HasFiniteBiproducts (ModuleCat.{max u v} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} R)
 
-/-- Closedness of the canonical original-universe module tensor structure. -/
+/-- For R:Type u commutative and any universe v, the tensor product
+on ModuleCat.{max u v}R is closed, with internal R-linear Hom
+right adjoint to tensoring by a module. -/
 local instance coalgebraNaturalityMonoidalClosed : MonoidalClosed (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := R)
 variable {L' L'' : Type v} [LieRing L'] [LieAlgebra R L'] [LieRing L''] [LieAlgebra R L'']
 
 
-/-- The canonical CE chain map of a Lie algebra homomorphism. -/
+/-- Let R be commutative and L,L′ R-Lie algebras in the same
+carrier universe v. Let f:L→L′ be a Lie homomorphism and
+F_n=Λ_R^n f its exterior chain maps.
+The exterior maps Λ_R^n f define a chain map between the
+canonical Chevalley–Eilenberg complexes C_*(L) and C_*(L′). -/
 def nativeComplexMap (f : L →ₗ⁅R⁆ L') : ((canonicalChainData R L).complex) ⟶ ((canonicalChainData R L').complex) :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (exteriorPower.map n f.toLinearMap))
     (fun n => by
@@ -108,7 +121,11 @@ private theorem tensorMap_realize (f : L →ₗ⁅R⁆ L') (n : ℕ) :
         AlgHom.toLinearMap_apply]
     exact hReal'.trans (hRaw.trans hSource.symm)))
 
-/-- Lie algebra maps preserve the native CE coproduct. -/
+/-- Let R be commutative and L,L′ R-Lie algebras in the same
+carrier universe v. Let f:L→L′ be a Lie homomorphism and
+F_n=Λ_R^n f its exterior chain maps.
+The primitive chain coproducts satisfy the square
+Γ_{L′}F=(F⊗F)Γ_L. -/
 theorem nativeComplexMap_comul (f : L →ₗ⁅R⁆ L') :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -153,7 +170,10 @@ theorem nativeComplexMap_comul (f : L →ₗ⁅R⁆ L') :
       ((congrArg (TensorProduct.map (ExteriorAlgebra.map f.toLinearMap).toLinearMap
         (ExteriorAlgebra.map f.toLinearMap).toLinearMap) hsource).symm.trans htensor.symm)))
 
-/-- Lie algebra maps preserve the native chain counit. -/
+/-- Let R be commutative and L,L′ R-Lie algebras in the same
+carrier universe v. Let f:L→L′ be a Lie homomorphism and
+F_n=Λ_R^n f its exterior chain maps.
+The chain counits satisfy ε_{L′}F=ε_L. -/
 theorem nativeComplexMap_counit (f : L →ₗ⁅R⁆ L') :
     nativeComplexMap R L f ≫ nativeComplexCounit R L' = nativeComplexCounit R L := by
   apply HomologicalComplex.hom_ext
@@ -177,7 +197,10 @@ theorem nativeComplexMap_counit (f : L →ₗ⁅R⁆ L') :
   · exact (HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0
       (ModuleCat.of R (ULift.{v} R)) n hn).eq_of_tgt _ _
 
-/-- Lie algebra maps preserve the native coaugmentation. -/
+/-- Let R be commutative and L,L′ R-Lie algebras in the same
+carrier universe v. Let f:L→L′ be a Lie homomorphism and
+F_n=Λ_R^n f its exterior chain maps.
+The chain coaugmentations satisfy Fu_L=u_{L′}. -/
 theorem nativeComplexMap_coaug (f : L →ₗ⁅R⁆ L') :
     nativeComplexCoaug R L ≫ nativeComplexMap R L f = nativeComplexCoaug R L' := by
   apply HomologicalComplex.hom_ext
@@ -206,7 +229,11 @@ theorem nativeComplexMap_coaug (f : L →ₗ⁅R⁆ L') :
   · exact (HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0
       (ModuleCat.of R (ULift.{v} R)) n hn).eq_of_src _ _
 
-/-- The Lie-variable CE map is a native comonoid homomorphism. -/
+/-- Let R be commutative and L,L′ R-Lie algebras in the same
+carrier universe v. Let f:L→L′ be a Lie homomorphism and
+F_n=Λ_R^n f its exterior chain maps.
+The coproduct and counit squares make F:C_*(L)→C_*(L′)
+a comonoid morphism in the signed tensor category of R-module chains. -/
 def nativeComplexMapIsComonHom (f : L →ₗ⁅R⁆ L') :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)

@@ -1,4 +1,5 @@
-# Horizontal Filtered Top Inclusion
+# The inclusion of a finite filtration stage's top column
 
-Inclusion of the top-column summand into its horizontal filtration
-stage.
+The inclusion of a finite filtration stage's top column.
+
+Include bidegree `(p,q)` into stage `p` at total degree `p+q`.

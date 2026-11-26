@@ -2,32 +2,32 @@
 
 ## Functor
 
-- [Map Cochain Complex Bounded obj d](map-cochain-complex-bounded-obj-d.md)
-- [Map Cochain Complex Bounded CompιIso](map-cochain-complex-bounded-comp-iso.md)
-- [Bounded map Homological Complex obj iff](bounded-map-homological-complex-obj-iff.md)
+- [Mapped bounded differentials are the functor images](map-cochain-complex-bounded-obj-d.md)
+- [The bounded lift commutes with inclusion into all cochains](map-cochain-complex-bounded-comp-iso.md)
+- [Fully faithful zero-preserving functors reflect bounded support](bounded-map-homological-complex-obj-iff.md)
 
 ## Nat Trans
 
-- [Map Cochain Complex Bounded](map-cochain-complex-bounded.md)
-- [Map Cochain Complex Bounded app f](map-cochain-complex-bounded-app-f.md)
-- [Map Cochain Complex Bounded id](map-cochain-complex-bounded-id.md)
-- [Map Cochain Complex Bounded comp](map-cochain-complex-bounded-comp.md)
+- [A natural transformation restricts to bounded cochain functors](map-cochain-complex-bounded.md)
+- [Bounded natural-transformation components are the given degreewise maps](map-cochain-complex-bounded-app-f.md)
+- [Identity natural transformations remain identities on bounded cochains](map-cochain-complex-bounded-id.md)
+- [Restriction to bounded cochains preserves transformation composition](map-cochain-complex-bounded-comp.md)
 
 ## Nat Iso
 
-- [Map Cochain Complex Bounded](map-cochain-complex-bounded-2.md)
-- [Map Cochain Complex Bounded hom app f](map-cochain-complex-bounded-hom-app-f.md)
-- [Map Cochain Complex Bounded inv app f](map-cochain-complex-bounded-inv-app-f.md)
+- [A natural isomorphism restricts to bounded cochain functors](map-cochain-complex-bounded-2.md)
+- [Forward bounded isomorphism components retain the natural isomorphism](map-cochain-complex-bounded-hom-app-f.md)
+- [Inverse bounded isomorphism components retain the inverse transformation](map-cochain-complex-bounded-inv-app-f.md)
 
 ## Functor
 
-- [Map Cochain Complex Bounded Comp Iso](map-cochain-complex-bounded-comp-iso-2.md)
-- [Map Cochain Complex Bounded Id Iso](map-cochain-complex-bounded-id-iso.md)
+- [Iterated bounded prolongation agrees with the composite functor](map-cochain-complex-bounded-comp-iso-2.md)
+- [The identity prolongation is the identity on bounded cochains](map-cochain-complex-bounded-id-iso.md)
 
 ## Equivalence
 
-- [Map Cochain Complex Bounded](map-cochain-complex-bounded-3.md)
-- [Map Cochain Complex Bounded functor](map-cochain-complex-bounded-functor.md)
-- [Map Cochain Complex Bounded inverse](map-cochain-complex-bounded-inverse.md)
-- [Map Cochain Complex Bounded unit Iso hom app f](map-cochain-complex-bounded-unit-iso-hom.md)
-- [Map Cochain Complex Bounded counit Iso hom app f](map-cochain-complex-bounded-counit-iso-h.md)
+- [An equivalence restricts to bounded cochain categories](map-cochain-complex-bounded-3.md)
+- [The bounded equivalence uses the bounded forward lift](map-cochain-complex-bounded-functor.md)
+- [The bounded equivalence uses the bounded inverse lift](map-cochain-complex-bounded-inverse.md)
+- [The bounded equivalence unit is the category unit in each degree](map-cochain-complex-bounded-unit-iso-hom.md)
+- [The bounded equivalence counit is the category counit in each degree](map-cochain-complex-bounded-counit-iso-h.md)

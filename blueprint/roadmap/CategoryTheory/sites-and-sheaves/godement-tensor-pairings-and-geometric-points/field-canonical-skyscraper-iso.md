@@ -1,3 +1,6 @@
-# Field Canonical Skyscraper Iso
+# Canonical and prescribed field skyscraper functors are isomorphic
 
-Canonical and prescribed point skyscrapers are identified by the actual stalk adjunctions.
+Canonical and prescribed field skyscraper functors are isomorphic.
+
+Uniqueness of right adjoints gives a natural isomorphism from the canonical skyscraper functor
+to the prescribed one.

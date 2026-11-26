@@ -24,10 +24,20 @@ public import Mathlib.Algebra.Homology.SpectralObject.SpectralSequence
 import all Mathlib.Algebra.Homology.SpectralObject.SpectralSequence
 
 /-!
-# The original complete stage-zero representative
+# The stage-zero map to second-page zero-column homology
 
-The original complete-filtration representative is compared with the actual
-column-zero projection followed by the full incoming-boundary quotient.
+Let K be a nonnegative homological bicomplex in an abelian category D,
+F_0 its complete horizontal stage zero and V_q its vertical-homology
+chain complex, with (V_q)_p = H_q(K_p).
+Assume every bottom-to-negative-stage relative group is zero:
+H^n(Cone(F_(−∞) → F_a)) = 0 for all n∈ℤ and finite a<0.
+
+After identifying bottom-relative stage-zero homology with H_q(F_0)
+and E²_(0,q) with H_0(V_q), the canonical stage-zero representative
+is the column-zero map ρ_0 : H_q(F_0) → H_q(K_0) followed by the
+full incoming-boundary quotient H_q(K_0) → H_0(V_q).
+The quotient includes the entire map (V_q)_1 → (V_q)_0.
+The object and morphism worlds of D are independent.
 -/
 
 @[expose] public section
@@ -901,8 +911,15 @@ private theorem first_page_map_projection
       simpa only [Category.assoc, A, M, n, F, zero_bottom_arrow] using
         (A ≫= hH) =≫ cN
 
-/-- The original stage-zero representative is the actual column-zero projection
-followed by the full degree-zero quotient of the vertical-homology complex. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, assume H^n(Cone(F_(−∞) → F_a)) is zero for every
+n∈ℤ and finite a<0. Let V_q be its vertical-homology chain complex.
+Under the bottom-relative stage comparison and
+E²_(0,q) ≅ H_0(V_q), the stage-zero representative equals
+H_q(F_0) → H_q(K_0) → H_0(V_q).
+The first map is the extended direct-column projection transported
+back to chain homology; the second is the quotient by all incoming
+boundaries from (V_q)_1. -/
 theorem horizontalSecondPageZeroColumnStageRepresentative
     {D : Type uD} [Category.{vD} D] [Abelian D]
     (K : HomologicalComplex₂ D (ComplexShape.down ℕ) (ComplexShape.down ℕ))

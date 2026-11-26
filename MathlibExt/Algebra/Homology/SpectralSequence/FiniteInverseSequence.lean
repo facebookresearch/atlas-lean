@@ -14,13 +14,12 @@ module
 public import MathlibExt.CategoryTheory.Limits.Shapes.SequentialMittagLefflerLimits
 public import Mathlib.Algebra.Homology.ShortComplex.Ab
 /-!
-# Eventual invertibility in finite inverse sequences
+# Eventual isomorphisms in finite inverse sequences
 
-For an inverse sequence `F : ℕᵒᵖ ⥤ AddCommGrpCat`, monomorphism successor
-maps make every transition map a monomorphism. If each stage group is
-finite, the Mittag--Leffler condition stabilizes the images in stage zero.
-Injectivity of the maps to stage zero then makes all sufficiently late
-successor maps isomorphisms.
+For an inverse sequence of abelian groups with monic successor maps, every transition is
+monic. If every stage group is finite, the images in stage zero stabilize by the
+Mittag–Leffler condition. Their injective projections then force every sufficiently late
+successor map to be an isomorphism.
 -/
 
 @[expose] public section
@@ -38,7 +37,9 @@ universe u w
 
 namespace AddCommGrpCat
 
-/-- Every transition map in an inverse sequence is mono if its successor maps are mono. -/
+/-- Monic successor maps make every inverse-sequence transition monic.
+
+For n≤m, the transition F_m → F_n is monic when each F_{k+1} → F_k is monic. -/
 theorem finiteCoefficient_mono_map
     (F : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (hMono : ∀ k : ℕ, Mono (F.map (homOfLE (Nat.le_succ k)).op))
@@ -56,7 +57,10 @@ theorem finiteCoefficient_mono_map
       letI := hMono m
       infer_instance
 
-/-- An inverse sequence of finite groups with mono successor maps has eventually invertible successor maps. -/
+/-- Finite inverse sequences with monic transitions become stationary.
+
+If every stage is finite and every successor map is monic, there exists N after which every
+successor map is an isomorphism. -/
 theorem finiteCoefficient_eventually_isIso_transition
     (F : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (hFinite : ∀ k : ℕ, _root_.Finite (F.obj (op k)))

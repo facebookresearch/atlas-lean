@@ -1,3 +1,6 @@
-# Field Finite Galois Neighborhood Functor refines
+# Every opposite neighborhood maps to a finite Galois neighborhood
 
-Every opposite original neighborhood has an actual arrow to the same finite subfield functor.
+Let Ω be a prescribed separable closure of k and d an object of the opposite
+geometric-neighborhood category. There exists a finite Galois intermediate field L⊆Ω with a
+morphism d → fieldFiniteGaloisNeighborhoodFunctor(L). This states existence of a finite Galois
+refinement in the colimit indexing direction.

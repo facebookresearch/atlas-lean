@@ -1,4 +1,5 @@
-# Finite Factor Hom Tensor Iso hom
+# Forward bounded-factor isomorphism is the signed Hom–tensor map
 
-Its hom is the actual original unrestricted cochain comparison, including
-the original source-index signs and all original noninvertible variable maps.
+Forward bounded-factor isomorphism is the signed Hom–tensor map.
+
+The forward morphism of `finiteFactorHomTensorIso` equals `homTensorComparison R P J U`.

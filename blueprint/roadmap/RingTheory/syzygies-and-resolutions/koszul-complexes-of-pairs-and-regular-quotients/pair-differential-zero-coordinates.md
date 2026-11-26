@@ -1,3 +1,6 @@
-# Pair differential zero coordinates
+# The bottom pair differential in ordered coordinates
 
-Coordinate form of the bottom differential: dot product with `(f,g)`.
+The bottom pair differential in ordered coordinates.
+
+After the degree-zero and degree-one exterior identifications, the differential sends x to
+fx₀+gx₁.

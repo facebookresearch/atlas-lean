@@ -53,8 +53,10 @@ variable (Mgrade : ℕ → Submodule A M)
 
 variable (N : HomogeneousSubmodule Sgrade Mgrade)
 
-/-- Each inherited degree piece is finite when the coefficient ring is
-Noetherian and every ambient degree piece is finite. -/
+/-- Let `A` be a Noetherian commutative ring, `S` a graded commutative
+`A`-algebra, and `M` a graded `S`-module with compatible `A`-action. If every
+ambient degree piece is finite over `A`, then each inherited degree piece of
+a homogeneous submodule `N ⊆ M` is also finite over `A`. -/
 instance gradeFinite [IsNoetherianRing A]
     [∀ n, Module.Finite A (Mgrade n)] (n : ℕ) :
     Module.Finite A (N.grade Sgrade Mgrade n) := by
@@ -64,16 +66,21 @@ instance gradeFinite [IsNoetherianRing A]
     (N.gradeInclusion Sgrade Mgrade n)
     (N.gradeInclusion_injective Sgrade Mgrade n)
 
-/-- Each quotient degree piece is finite when the corresponding ambient
-degree piece is finite. -/
+/-- Let `A` be a commutative ring, `S` a graded commutative `A`-algebra,
+and `M` a graded `S`-module with compatible `A`-action and finite `A`-module
+degree pieces. For a homogeneous submodule `N ⊆ M`, every degree piece of
+`M/N` is finite over `A`. -/
 instance quotientGradeFinite [∀ n, Module.Finite A (Mgrade n)] (n : ℕ) :
     Module.Finite A (N.quotientGrade Sgrade Mgrade n) :=
   Module.Finite.of_surjective
     (N.gradeQuotient Sgrade Mgrade n)
     (N.gradeQuotient_surjective Sgrade Mgrade n)
 
-/-- Natural-valued length is additive on each homogeneous component of the
-submodule/ambient/quotient short exact sequence. -/
+/-- Let `A` be an Artinian commutative ring, `S` a graded commutative
+`A`-algebra, and `M` a graded `S`-module with compatible `A`-action and finite
+`A`-module degree pieces. For a homogeneous submodule `N ⊆ M` and `n : ℕ`,
+`lengthNat_A(M_n) = lengthNat_A(N_n) + lengthNat_A((M/N)_n)`. The scalar,
+algebra and module universes retain their independent values. -/
 theorem gradedPieceLength_eq_add [IsArtinianRing A]
     [∀ n, Module.Finite A (Mgrade n)] (n : ℕ) :
     HilbertSamuel.gradedPieceLength A Mgrade n =

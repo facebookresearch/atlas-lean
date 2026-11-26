@@ -15,22 +15,17 @@ module
 public import MathlibExt.RingTheory.GradedAlgebra.Homogeneous.ShiftedLinearMap
 
 /-!
-# Injective shifted maps identify source grades with range grades
+# Source grades and ranges of injective shifted maps
 
-An injective degree-`d` linear map identifies the source component in degree
-`n` with the inherited component of its homogeneous range in degree `d+n`.
-Transporting the existing fixed-degree range/ambient/quotient exact sequence
-through this equivalence gives the component exact sequence with source
-`M_n`.
+Let S be a graded algebra over a commutative ring A. Let M,N be S-modules with compatible
+A-actions and internal decompositions M = ⨁ₙM_n, N = ⨁ₙN_n, with the graded S-action on N. An
+S-linear map f of degree d satisfies f(M_n) ⊆ N_{d+n}, and its range is a homogeneous
+S-submodule of N.
 
-This file contains no length, finiteness, Noetherian, Hilbert--Serre,
-power-kernel, or associated-graded specialization.
-
-## Main declarations
-
-* `GradedModule.IsHomogeneousOfDegree.rangeGradeEquiv`
-* `GradedModule.IsHomogeneousOfDegree.coe_rangeGradeEquiv_apply`
-* `GradedModule.IsHomogeneousOfDegree.rangeGrade_exact`
+If f is injective, restriction gives an A-linear equivalence M_n ≃ (Im f)_{d+n}, where the
+range grade is inherited from N. It sends x to f(x). Transporting the range inclusion through
+this equivalence gives the exact pair M_n → N_{d+n} → (N/Im f)_{d+n}. The coefficient, algebra
+and two module universes are independent.
 -/
 
 @[expose] public section
@@ -91,8 +86,12 @@ private theorem rangeGradeMap_surjective (n : ℕ) :
   rw [← hf.coe_decompose_apply_add x n, hx]
   exact DirectSum.decompose_of_mem_same Ngrade y.2
 
-/-- An injective degree-`d` map identifies source degree `n` with degree
-`d+n` in its inherited homogeneous range. -/
+/-- Equivalence from a source grade to an injective shifted range grade.
+
+Let f : M →ₗ[S] N be injective and homogeneous of degree d, with internally decomposed
+A-submodule families and a compatible graded S-action on N. Restriction of f gives M_n ≃ₗ[A]
+(Im f)_{d+n}, where the latter is the inherited degree piece of the homogeneous range
+submodule. -/
 @[no_expose]
 noncomputable def rangeGradeEquiv
     (hinj : Function.Injective f) (n : ℕ) :
@@ -103,7 +102,10 @@ noncomputable def rangeGradeEquiv
     ⟨rangeGradeMap_injective Sgrade Mgrade Ngrade hf hinj n,
       rangeGradeMap_surjective Sgrade Mgrade Ngrade hf n⟩
 
-/-- The range-grade equivalence is induced by the original linear map. -/
+/-- Underlying value of the shifted range-grade equivalence.
+
+For an injective degree-d map f and x ∈ M_n, its rangeGradeEquiv image, viewed in N, is f(x).
+The equivalence lands in the inherited range grade of degree d+n. -/
 @[simp]
 theorem coe_rangeGradeEquiv_apply
     (hinj : Function.Injective f) (n : ℕ) (x : Mgrade n) :
@@ -112,9 +114,11 @@ theorem coe_rangeGradeEquiv_apply
       f (x : M) := by
   rfl
 
-/-- The source grade, target grade, and quotient range grade form an exact
-sequence after transporting the inherited range grade through the
-equivalence. -/
+/-- Exact component pair for an injective shifted map.
+
+For an injective homogeneous S-linear map f of degree d, the map M_n → N_{d+n} obtained from
+rangeGradeEquiv and range inclusion is exact with the quotient map N_{d+n} → (N/Im f)_{d+n}.
+The statement is exactness at the target grade N_{d+n}, using its homogeneous range. -/
 theorem rangeGrade_exact
     (hinj : Function.Injective f) (n : ℕ) :
     Function.Exact

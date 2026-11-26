@@ -1,4 +1,6 @@
-# Schreier Rep Scan
+# The representative scan of a finite tuple
 
-Successive right-transversal representatives obtained by scanning a
-finite tuple of group elements, including the initial representative.
+The representative scan of a finite tuple.
+
+For g : Fin n → G, the scan at i ∈ Fin (n+1) is r(t,Pᵢ), where Pᵢ = g₀⋯gᵢ₋₁ is the ordered
+partial product and P₀ = 1.

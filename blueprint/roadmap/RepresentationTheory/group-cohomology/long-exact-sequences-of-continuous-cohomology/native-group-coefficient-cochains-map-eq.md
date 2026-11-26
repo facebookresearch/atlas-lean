@@ -1,3 +1,6 @@
-# Native Group Coefficient Cochains Map eq stock
+# Agreement of homogeneous group maps at a fixed carrier
 
-Agreement with the actual stock cochain map whenever its group universes are typed.
+For a ring k with a topology, profinite G,H in the same group
+universe v, and coefficients X,Y in max(v,w), the tuple-defined
+group/coefficient cochain map for (φ,f) equals the standard homogeneous
+cochain map with the same φ and f.

@@ -1,8 +1,8 @@
 # Cochain Chain Graded Pairing Homology
 
-- [Pair chain Boundary eq boundary](pair-chain-boundary-eq-boundary.md)
-- [Pair input Boundary to output Boundary](pair-input-boundary-to-output-boundary.md)
-- [Pair Cycles comp homologyπ eq of epi input Boundary](pair-cycles-comp-homology-eq-of-epi-inpu.md)
-- [Cycles opcycles desc kill](cycles-opcycles-desc-kill.md)
-- [Pair cochain Boundary eq boundary](pair-cochain-boundary-eq-boundary.md)
-- [Pair Homology](pair-homology.md)
+- [Pairing a cocycle with a chain boundary gives a signed boundary](pair-chain-boundary-eq-boundary.md)
+- [A local chain-boundary difference gives a signed output-boundary difference](pair-input-boundary-to-output-boundary.md)
+- [Tensor-epic local boundary differences give equal output homology classes](pair-cycles-comp-homology-eq-of-epi-inpu.md)
+- [Cocycle–chain-boundary pairings vanish in output opcycles](cycles-opcycles-desc-kill.md)
+- [Pairing a cochain differential with a cycle gives the opposite signed boundary](pair-cochain-boundary-eq-boundary.md)
+- [The induced pairing between cohomology and chain homology](pair-homology.md)

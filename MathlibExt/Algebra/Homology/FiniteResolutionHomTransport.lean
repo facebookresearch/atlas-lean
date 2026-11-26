@@ -14,15 +14,16 @@ public import MathlibExt.Algebra.Homology.FiniteResolutionComparison
 public import MathlibExt.Algebra.Homology.FiniteResolutionSourceCoherence
 
 /-!
-# Transport of comparison maps between finite resolutions
+# Transport of augmented finite-resolution maps
 
-The original `FiniteResolution.Hom` records a chain map and its augmentation square. Source change
-applies the source functor to this chain map; target change retains it. Naturality of the
-canonical complex comparisons proves the new augmentation squares. These transports preserve
-identities and composition and agree under source/target interchange.
+Let P be preadditive, A abelian and i : P → A additive. Finite-resolution data is determined by
+the resolving complex, augmentation and support bound, and an augmented comparison is determined
+by its chain map.
 
-Every construction uses the existing finite resolutions, their complexes and augmentations, and
-their unchanged inclusive support bounds.
+An additive source functor F with jF ≅ i transports the resolving complex and each comparison
+map. An additive homology-preserving target functor H with Hi ≅ j transports augmentations while
+retaining the resolving maps. These transports preserve identities and composition and commute
+with one another under the combined compatibility isomorphism.
 -/
 
 @[expose] public section
@@ -39,10 +40,10 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P]
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable {i : P ⥤ A} [i.Additive]
 
-/--
-A finite resolution is determined by its complex, augmentation, and inclusive support bound. The
-remaining fields are proofs.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Two finite resolutions of the same X are equal if their
+resolving complexes, augmentations and recorded support bounds agree. -/
 @[ext]
 theorem ext {X : A} (R S : FiniteResolution i X)
     (hcomplex : R.complex = S.complex)
@@ -63,8 +64,11 @@ variable {j : Q ⥤ A} [j.Additive] {k : Q ⥤ B} [k.Additive]
 variable (F : P ⥤ Q) [F.Additive] (H : A ⥤ B) [H.Additive] [H.PreservesHomology]
 variable (eF : F ⋙ j ≅ i) (eH : j ⋙ H ≅ k)
 
-/-- The two original source/target transport programs give the same finite
-resolution, including its augmentation and its exact original bound. -/
+/-- Let P,Q be preadditive, A,B abelian, and i : P → A, j : Q → A, k : Q → B additive. Let F : P → Q
+and H : A → B be additive, H homology-preserving, with jF ≅ i and Hj ≅ k. Changing a finite
+resolution first by F and then by H yields the same resolution as changing its target through
+the composed compatibility and then its source by F. The complex, augmentation and support bound
+agree. -/
 theorem mapSourceTarget_eq {X : A} (R : FiniteResolution i X) :
     (R.mapSource F eF).mapTarget H eH =
       (R.mapTarget H (sourceTargetCompatibility F H eF eH)).mapSource F
@@ -83,7 +87,10 @@ variable {R₁ : FiniteResolution i X₁} {R₂ : FiniteResolution i X₂}
 variable {R₃ : FiniteResolution i X₃}
 variable {f : X₁ ⟶ X₂} {g : X₂ ⟶ X₃}
 
-/-- An augmented comparison map is determined by its original chain map. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. For finite resolutions R₁,R₂ and a fixed base map f : X₁ → X₂,
+two augmented comparisons are equal when their resolving chain maps are equal. -/
 @[ext]
 theorem ext (φ ψ : Hom R₁ R₂ f) (hmap : φ.map = ψ.map) : φ = ψ := by
   cases φ
@@ -91,8 +98,11 @@ theorem ext (φ ψ : Hom R₁ R₂ f) (hmap : φ.map = ψ.map) : φ = ψ := by
   cases hmap
   rfl
 
-/-- Equality of the original resolutions, base map, and chain map identifies
-comparison maps even when their dependent types use different programs. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. After identifying the source resolutions, target resolutions and
+base maps, equal resolving chain maps identify the corresponding augmented comparisons,
+including their augmentation squares. -/
 theorem hext {S₁ : FiniteResolution i X₁} {S₂ : FiniteResolution i X₂}
     {f' : X₁ ⟶ X₂} (φ : Hom R₁ R₂ f) (ψ : Hom S₁ S₂ f')
     (hsource : R₁ = S₁) (htarget : R₂ = S₂) (hbase : f = f')
@@ -108,10 +118,11 @@ variable {Q : Type uQ} [Category.{vQ} Q] [Preadditive Q]
 variable {j : Q ⥤ A} [j.Additive]
 variable (F : P ⥤ Q) [F.Additive] (e : F ⋙ j ≅ i)
 
-/--
-Transport an augmented comparison map by the source functor. The new chain map is the canonical
-image of the original chain map.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let Q be preadditive, j : Q → A additive and F : P → Q additive
+with j ∘ F ≅ i. Applying F to an augmented comparison R₁ → R₂ over f produces an augmented
+comparison of the source-changed resolutions over the same f, using the compatibility jF ≅ i. -/
 def mapSource (φ : Hom R₁ R₂ f) : Hom (R₁.mapSource F e) (R₂.mapSource F e) f where
   map := (F.mapHomologicalComplex (ComplexShape.down ℕ)).map φ.map
   augmentation_comm := by
@@ -132,25 +143,39 @@ def mapSource (φ : Hom R₁ R₂ f) : Hom (R₁.mapSource F e) (R₂.mapSource 
         simpa only [Category.assoc] using
           congrArg (fun t => E.hom.app R₁.complex ≫ t) φ.augmentation_comm
 
-/-- The entire transported comparison chain map is the original image map. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let Q be preadditive, j : Q → A additive and F : P → Q additive
+with j ∘ F ≅ i. The entire resolving chain map of the source-changed comparison is F applied
+degreewise to the original chain map. -/
 theorem mapSource_map (φ : Hom R₁ R₂ f) :
     (φ.mapSource F e).map =
       (F.mapHomologicalComplex (ComplexShape.down ℕ)).map φ.map :=
   rfl
 
-/-- Its degree component is the original source functor applied to the
-original comparison component. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let Q be preadditive, j : Q → A additive and F : P → Q additive
+with j ∘ F ≅ i. In resolution degree n ∈ ℕ, the source-changed comparison component is F(φₙ). -/
 theorem mapSource_map_f (φ : Hom R₁ R₂ f) (n : ℕ) :
     (φ.mapSource F e).map.f n = F.map (φ.map.f n) :=
   rfl
 
-/-- Source transport preserves the identity as an augmented comparison map. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let Q be preadditive, j : Q → A additive and F : P → Q additive
+with j ∘ F ≅ i. Source change sends the identity augmented comparison of R to the identity of
+its F-image resolution. -/
 theorem mapSource_id (R : FiniteResolution i X₁) :
     (Hom.id R).mapSource F e = Hom.id (R.mapSource F e) := by
   apply ext
   exact (F.mapHomologicalComplex (ComplexShape.down ℕ)).map_id R.complex
 
-/-- Source transport preserves composition of the original augmented maps. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let Q be preadditive, j : Q → A additive and F : P → Q additive
+with j ∘ F ≅ i. Source change sends a composite of augmented comparisons to the composite of
+their F-image comparisons. -/
 theorem mapSource_comp (φ : Hom R₁ R₂ f) (ψ : Hom R₂ R₃ g) :
     (φ.comp ψ).mapSource F e = (φ.mapSource F e).comp (ψ.mapSource F e) := by
   apply ext
@@ -164,9 +189,12 @@ variable {B : Type uB} [Category.{vB} B] [Abelian B]
 variable {j : P ⥤ B} [j.Additive]
 variable (H : A ⥤ B) [H.Additive] [H.PreservesHomology] (e : i ⋙ H ≅ j)
 
-/-- Target transport retains the original comparison chain map. Its
-augmentation square follows from the original square and the two canonical
-comparison naturality equations. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let B be abelian, j : P → B additive and H : A → B additive and
+homology-preserving with H ∘ i ≅ j. An augmented comparison over f becomes a comparison over
+H(f) between the target-changed resolutions. Its resolving chain map in P remains the original
+one. -/
 def mapTarget (φ : Hom R₁ R₂ f) :
     Hom (R₁.mapTarget H e) (R₂.mapTarget H e) (H.map f) where
   map := φ.map
@@ -202,23 +230,37 @@ def mapTarget (φ : Hom R₁ R₂ f) :
           (ChainComplex.single₀ B).map (H.map f) := by
         simp only [Category.assoc]
 
-/-- The whole resolving chain map is unchanged by target transport. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let B be abelian, j : P → B additive and H : A → B additive and
+homology-preserving with H ∘ i ≅ j. The resolving chain map of the target-changed comparison is
+exactly the original comparison chain map in P. -/
 theorem mapTarget_map (φ : Hom R₁ R₂ f) : (φ.mapTarget H e).map = φ.map :=
   rfl
 
-/-- Each original comparison component is retained by target transport. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let B be abelian, j : P → B additive and H : A → B additive and
+homology-preserving with H ∘ i ≅ j. Every resolution-degree component of an augmented comparison
+is unchanged in P under target change. -/
 theorem mapTarget_map_f (φ : Hom R₁ R₂ f) (n : ℕ) :
     (φ.mapTarget H e).map.f n = φ.map.f n :=
   rfl
 
-/-- Target transport preserves the full identity comparison, with its base
-map identified by the original functor identity law. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let B be abelian, j : P → B additive and H : A → B additive and
+homology-preserving with H ∘ i ≅ j. Target change sends the identity comparison to the identity
+comparison, after identifying H(id_X)=id_{H(X)}. -/
 theorem mapTarget_id (R : FiniteResolution i X₁) :
     HEq ((Hom.id R).mapTarget H e) (Hom.id (R.mapTarget H e)) :=
   hext _ _ rfl rfl (H.map_id X₁) HEq.rfl
 
-/-- Target transport preserves the full composition comparison, with its
-base map identified by the original functor composition law. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. A finite resolution R of X∈A consists of
+a nonnegative resolving complex in P, an augmentation i(R) → X[0] that is a quasi-isomorphism,
+and an inclusive support bound. Let B be abelian, j : P → B additive and H : A → B additive and
+homology-preserving with H ∘ i ≅ j. Target change sends a composite comparison to the composite
+of the target-changed comparisons, after identifying H(g ∘ f)=H(g) ∘ H(f). -/
 theorem mapTarget_comp (φ : Hom R₁ R₂ f) (ψ : Hom R₂ R₃ g) :
     HEq ((φ.comp ψ).mapTarget H e)
       ((φ.mapTarget H e).comp (ψ.mapTarget H e)) :=
@@ -234,11 +276,10 @@ variable {j : Q ⥤ A} [j.Additive] {k : Q ⥤ B} [k.Additive]
 variable (F : P ⥤ Q) [F.Additive] (H : A ⥤ B) [H.Additive] [H.PreservesHomology]
 variable (eF : F ⋙ j ≅ i) (eH : j ⋙ H ≅ k)
 
-/--
-The full source-first and target-first comparison programs coincide. Their resolutions are
-identified by the already proved augmentation interchange, and both chain maps are the original
-source-functor image.
--/
+/-- Let P,Q be preadditive, A,B abelian, and i : P → A, j : Q → A, k : Q → B additive. Let F : P → Q
+and H : A → B be additive, H homology-preserving, with jF ≅ i and Hj ≅ k. The source-first and
+target-first transports of an augmented comparison agree after the canonical identification of
+their finite resolutions and base maps. -/
 theorem mapSourceTarget (φ : Hom R₁ R₂ f) :
     HEq ((φ.mapSource F eF).mapTarget H eH)
       ((φ.mapTarget H (sourceTargetCompatibility F H eF eH)).mapSource F
@@ -246,7 +287,10 @@ theorem mapSourceTarget (φ : Hom R₁ R₂ f) :
   hext _ _ (mapSourceTarget_eq F H eF eH R₁)
     (mapSourceTarget_eq F H eF eH R₂) rfl HEq.rfl
 
-/-- Source/target interchange retains the same entire original image chain map. -/
+/-- Let P,Q be preadditive, A,B abelian, and i : P → A, j : Q → A, k : Q → B additive. Let F : P → Q
+and H : A → B be additive, H homology-preserving, with jF ≅ i and Hj ≅ k. The two transport
+orders have the same resolving chain map, namely the degreewise F-image of the original
+comparison map. -/
 theorem mapSourceTarget_map (φ : Hom R₁ R₂ f) :
     ((φ.mapSource F eF).mapTarget H eH).map =
       ((φ.mapTarget H (sourceTargetCompatibility F H eF eH)).mapSource F

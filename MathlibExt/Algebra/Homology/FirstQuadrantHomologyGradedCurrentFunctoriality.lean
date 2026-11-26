@@ -11,16 +11,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedMap
+public import Mathlib.CategoryTheory.HomCongr
 
 /-!
-# Functoriality of the current total-homology filtration-stage map
+# Functorial maps on current homology-filtration stages
 
-The current-stage map transported through the complete/finite filtration
-comparison preserves identities and composition.  Both laws follow by
-projecting the corresponding laws of the finite filtered-object functor to
-the selected stage and cancelling the comparison isomorphisms.
+Let C be an abelian category, p,q ∈ ℕ, and F_p(K) the complete image-filtration stage in
+H_{p+q}(Tot(K)). A bicomplex map f induces F_p(K) → F_p(L) by transporting its finite
+image-stage map through the complete-to-finite comparisons at p.
 
-This file proves no predecessor-map, arrow-functor, or cokernel-functor law.
+These maps preserve identity morphisms and composition. The current-stage construction is
+defined for every p, including p=0.
 -/
 
 @[expose] public section
@@ -37,8 +38,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The transported current-stage map of an identity bicomplex morphism is
-the identity. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and p,q ∈ ℕ. In total
+degree n=p+q, let c(f) : F_p(K) → F_p(L) be the current complete image-stage map obtained by
+conjugating the finite stage-p map with the complete-to-finite comparisons. Then c(𝟙_K) =
+𝟙_{F_p(K)}. The formula holds for every p, including column zero. -/
 @[simp 1100]
 theorem
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_id
@@ -47,21 +50,30 @@ theorem
     (p q : ℕ) :
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex
         (𝟙 K) p q = 𝟙 _ := by
-  rw [horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq,
-    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app]
-  have hId :
-      horizontalFiniteHomologyImageMapOfBicomplex (𝟙 K) (p + q) p =
-        𝟙 ((horizontalFiniteTotalHomologyFiltration K (p + q)).obj p) := by
-    simpa only [horizontalFiniteTotalHomologyFiltrationDiagramFunctor_map_app,
-      NatTrans.id_app, horizontalFiniteTotalHomologyFiltrationDiagramFunctor_obj_obj] using
-      NatTrans.congr_app
-        ((horizontalFiniteTotalHomologyFiltrationDiagramFunctor
-          (C := C) (p + q)).map_id K) p
-  simpa only [hId, Category.id_comp] using
-    Iso.hom_inv_id_app (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q)) p
+  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor (C := C) (p + q)
+  let eK : (horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj K).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q))
+  let θ : (F.obj K ⟶ F.obj K) →
+      ((horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ⟶
+        (horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt))) :=
+    fun h => eK.hom ≫ h.natTrans.app p ≫ eK.inv
+  change θ (F.map (𝟙 K)) = 𝟙 _
+  calc
+    θ (F.map (𝟙 K)) = θ (𝟙 (F.obj K)) := congrArg θ (F.map_id K)
+    _ = 𝟙 _ := by
+      change eK.hom ≫ 𝟙 _ ≫ eK.inv = 𝟙 _
+      calc
+        eK.hom ≫ 𝟙 _ ≫ eK.inv = eK.hom ≫ eK.inv :=
+          congrArg (fun h => eK.hom ≫ h) (Category.id_comp eK.inv)
+        _ = 𝟙 _ := eK.hom_inv_id
 
-/-- Transported current-stage maps preserve composition of bicomplex
-morphisms. -/
+/-- Let C be an abelian category and f : K → L, g : L → M composable maps of bicomplexes of shape
+(down ℕ,down ℕ). For p,q ∈ ℕ and n=p+q, let c(f) : F_pH_n(Tot(K)) → F_pH_n(Tot(L)) be the
+current-stage map transported from the finite image filtration. Then c(f ≫ g) = c(f) ≫ c(g).
+Each intermediate complete-to-finite stage comparison is an isomorphism, and the equality uses
+the same column p and total degree n throughout. -/
 @[simp 1100]
 theorem
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_comp
@@ -70,31 +82,33 @@ theorem
         (f ≫ g) p q =
       horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex f p q ≫
         horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex g p q := by
-  rw [horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq (f ≫ g) p q,
-    horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq f p q,
-    horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq g p q,
-    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app (p + q) (f ≫ g),
-    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app (p + q) f,
-    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app (p + q) g]
-  have hComp :
-      horizontalFiniteHomologyImageMapOfBicomplex (f ≫ g) (p + q) p =
-        horizontalFiniteHomologyImageMapOfBicomplex f (p + q) p ≫
-          horizontalFiniteHomologyImageMapOfBicomplex g (p + q) p := by
-    simpa only [NatTrans.comp_app,
-      horizontalFiniteTotalHomologyFiltrationDiagramFunctor_map_app] using
-      NatTrans.congr_app
-        ((horizontalFiniteTotalHomologyFiltrationDiagramFunctor
-          (C := C) (p + q)).map_comp f g) p
-  have hCancel :
-      (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q)).inv.app p ≫
-        (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q)).hom.app p ≫
-          (horizontalFiniteHomologyImageMapOfBicomplex g (p + q) p ≫
-            (horizontalCompleteFiniteHomologyFiltrationDiagramIso M (p + q)).inv.app p) =
-      horizontalFiniteHomologyImageMapOfBicomplex g (p + q) p ≫
-        (horizontalCompleteFiniteHomologyFiltrationDiagramIso M (p + q)).inv.app p := by
-    rw [← Category.assoc, Iso.inv_hom_id_app, Category.id_comp]
-  rw [hComp]
-  simp only [Category.assoc, hCancel]
+  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor (C := C) (p + q)
+  let eK : (horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj K).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q))
+  let eL : (horizontalTotalHomologyFiltration L (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj L).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q))
+  let eM : (horizontalTotalHomologyFiltration M (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj M).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso M (p + q))
+  let θ : (F.obj K ⟶ F.obj M) →
+      ((horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ⟶
+        (horizontalTotalHomologyFiltration M (p + q)).obj (((p : ℤ) : EInt))) :=
+    fun h => eK.hom ≫ h.natTrans.app p ≫ eM.inv
+  change θ (F.map (f ≫ g)) =
+    (eK.hom ≫ (F.map f).natTrans.app p ≫ eL.inv) ≫
+      (eL.hom ≫ (F.map g).natTrans.app p ≫ eM.inv)
+  calc
+    θ (F.map (f ≫ g)) = θ (F.map f ≫ F.map g) := congrArg θ (F.map_comp f g)
+    _ = (eK.hom ≫ (F.map f).natTrans.app p ≫ eL.inv) ≫
+        (eL.hom ≫ (F.map g).natTrans.app p ≫ eM.inv) := by
+      change eK.hom ≫ ((F.map f).natTrans.app p ≫ (F.map g).natTrans.app p) ≫ eM.inv = _
+      exact Iso.homCongr_comp eK.symm eL.symm eM.symm
+        ((F.map f).natTrans.app p) ((F.map g).natTrans.app p)
 
 end HomologicalComplex₂
 

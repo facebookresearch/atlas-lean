@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Functor eq
+# Forward localized Morita functor is exact tensor by Q
 
-Original contraction properties identify the whole forward lift with Q's right-flat tensor.
+Forward localized Morita functor is exact tensor by Q.
+
+The forward localized Morita functor equals the localized tensor functor of `Q`, with its left
+finiteness and right Tor-one vanishing obtained from the bimodule contractions.

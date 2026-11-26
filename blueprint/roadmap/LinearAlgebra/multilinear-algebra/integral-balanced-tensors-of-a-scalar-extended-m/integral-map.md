@@ -1,4 +1,9 @@
-# Integral Map
+# Maps in both factors of integer-balanced scalar extensions
 
-The actual map in both free-term variables; the acting-ring condition
-is a condition on the coefficient map, not a supplied comparison square.
+Let k be a commutative ring, R a possibly noncommutative k-algebra,
+M a right R-module with a compatible k-action commuting with R,
+and V an additive commutative group with a k-module structure.
+For k-linear f : M → M′ preserving the right R-action and
+g : V → V′, with the same structures on the targets, the induced
+integer-linear map sends [m ⊗ (r ⊗ v)] to
+[f(m) ⊗ (r ⊗ g(v))]. The carrier universes of both targets may be independent.

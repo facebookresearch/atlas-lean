@@ -16,11 +16,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import Mathlib.Tactic.FinCases
 
 /-!
-# Low-degree formulas for arbitrary Schreier transfer
+# The first three degrees of tuple Schreier transfer
 
-The `Fin n` chosen-transversal cochain transfer specializes definitionally
-to the existing degree-two and degree-three formulas after the standard
-tuple/function identifications.
+For a finite-index subgroup H, right transversal T and G-representation A over a commutative
+ring, the tuple transfer formula specializes to the one-, two- and three-variable Schreier
+maps. The coordinate identifications C¹ ≃ (G → A), C² ≃ (G × G → A) and C³ ≃ (G × G × G → A)
+intertwine their linear maps.
+
+After passage to cohomology, the degree-1, degree-2 and degree-3 components of the general
+transfer are the respective maps constructed from those low-degree cocycle quotients.
 -/
 
 @[expose] public section
@@ -39,7 +43,10 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- Degree-two specialization of arbitrary Schreier cochain transfer. -/
+/-- The degree-two tuple formula equals the binary transfer.
+
+For f : H × H → A, the degree-two transfer of x ↦ f(x₀,x₁) at the tuple (g₁,g₂) equals
+corestrictionCochainTwo A T f (g₁,g₂). -/
 theorem corestrictionCochain_two_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H × H → A) (g₁ g₂ : G) :
@@ -53,7 +60,10 @@ theorem corestrictionCochain_two_apply (A : Rep k G)
     Subgroup.RightTransversal.schreierFactorTuple_one]
   simp
 
-/-- Degree-three specialization of arbitrary Schreier cochain transfer. -/
+/-- The degree-three tuple formula equals the ternary transfer.
+
+For f : H × H × H → A, the degree-three transfer of x ↦ f(x₀,x₁,x₂) at (g₁,g₂,g₃) equals
+corestrictionCochainThree A T f (g₁,g₂,g₃). -/
 theorem corestrictionCochain_three_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H × H × H → A) (g₁ g₂ g₃ : G) :
@@ -68,8 +78,10 @@ theorem corestrictionCochain_three_apply (A : Rep k G)
     Subgroup.RightTransversal.schreierFactorTuple_two]
   simp
 
-/-- Degree-one component square between the arbitrary cochain map and the
-existing low-degree function model. -/
+/-- The unary coordinate square for the general cochain map.
+
+Identifying tuple cochains in degree one with functions G → A intertwines the general Schreier
+cochain map and the unary transfer. -/
 theorem corestrictionCochains_f_one_comp_cochainsIso₁_hom
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (corestrictionCochains A T).f 1 ≫ (cochainsIso₁ A).hom =
@@ -89,8 +101,10 @@ theorem corestrictionCochains_f_one_comp_cochainsIso₁_hom
   fin_cases i
   simp
 
-/-- Degree-two component square between the arbitrary cochain map and the
-existing low-degree pair model. -/
+/-- The binary coordinate square for the general cochain map.
+
+Identifying tuple cochains in degree two with functions G × G → A intertwines the general
+Schreier cochain map and the binary transfer. -/
 theorem corestrictionCochains_f_two_comp_cochainsIso₂_hom
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (corestrictionCochains A T).f 2 ≫ (cochainsIso₂ A).hom =
@@ -110,8 +124,10 @@ theorem corestrictionCochains_f_two_comp_cochainsIso₂_hom
   funext i
   fin_cases i <;> simp
 
-/-- Degree-three component square between the arbitrary cochain map and the
-existing low-degree triple model. -/
+/-- The ternary coordinate square for the general cochain map.
+
+Identifying tuple cochains in degree three with functions G × G × G → A intertwines the
+general Schreier cochain map and the ternary transfer. -/
 theorem corestrictionCochains_f_three_comp_cochainsIso₃_hom
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (corestrictionCochains A T).f 3 ≫ (cochainsIso₃ A).hom =
@@ -142,8 +158,10 @@ theorem corestrictionCochains_f_three_comp_cochainsIso₃_hom
     T.schreierFactor (T.schreierRep (T.schreierRep t g₁) g₂) g₃
   rfl
 
-/-- The former chosen-transversal `H¹` transfer is the degree-one
-specialization of the arbitrary-degree cohomology transfer. -/
+/-- Agreement of general and degree-one cohomology transfers.
+
+The underlying linear map of the general chosen-transversal transfer in degree one is
+corestrictionH1OfRightTransversal A T. -/
 theorem corestrictionOfRightTransversal_one_eq
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (corestrictionOfRightTransversal A T 1).hom =
@@ -186,8 +204,10 @@ theorem corestrictionOfRightTransversal_one_eq
         ModuleCat.hom_comp, LinearMap.comp_apply,
         Iso.inv_hom_id_apply, coe_corestrictionCocyclesOne] using hsquare
 
-/-- The former chosen-transversal `H²` transfer is the degree-two
-specialization of the arbitrary-degree cohomology transfer. -/
+/-- Agreement of general and degree-two cohomology transfers.
+
+The underlying linear map of the general chosen-transversal transfer in degree two is
+corestrictionH2OfRightTransversal A T. -/
 theorem corestrictionOfRightTransversal_two_eq
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (corestrictionOfRightTransversal A T 2).hom =
@@ -228,8 +248,10 @@ theorem corestrictionOfRightTransversal_two_eq
         ModuleCat.hom_comp, LinearMap.comp_apply,
         Iso.inv_hom_id_apply, coe_corestrictionCocyclesTwo] using hsquare
 
-/-- The former chosen-transversal `H³` transfer is the degree-three
-specialization of the arbitrary-degree cohomology transfer. -/
+/-- Agreement of general and degree-three cohomology transfers.
+
+The underlying linear map of the general chosen-transversal transfer in degree three is
+corestrictionH3OfRightTransversal A T. -/
 theorem corestrictionOfRightTransversal_three_eq
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex] :
     (corestrictionOfRightTransversal A T 3).hom =

@@ -1,3 +1,6 @@
-# To Cycles cycles Component
+# The spectral cycle component preserves long representatives
 
-The original long-interval representatives commute with the induced cycle map.
+The spectral cycle component preserves long representatives.
+
+The long-interval map followed by the cycle component equals the H component followed by the
+target map to cycles.

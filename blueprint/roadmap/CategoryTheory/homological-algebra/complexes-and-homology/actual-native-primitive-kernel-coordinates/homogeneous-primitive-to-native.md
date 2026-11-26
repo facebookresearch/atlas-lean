@@ -1,3 +1,6 @@
-# Homogeneous Primitive To Native
+# The chain map from homogeneous primitive coordinates to the primitive kernel
 
-The homogeneous primitive complex maps to the kernel by its universal property.
+The chain map from homogeneous primitive coordinates to the primitive kernel.
+
+The homogeneous primitive inclusion lifts through the chain kernel of the CE primitive-
+equation map.

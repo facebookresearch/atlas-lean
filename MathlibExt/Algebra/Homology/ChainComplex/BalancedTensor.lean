@@ -18,12 +18,16 @@ public import MathlibExt.Algebra.Homology.TensorSignsDownInt
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
-# Balanced tensor direct-sum totals of integer chain complexes
+# Balanced tensor totals of integer chain complexes
 
-The bicomplex, total objects, differential and variable maps are
-`mapBifunctor` constructions on balanced tensor. This module gives their
-tensor generators and differential formulas.
-Boundedness and flatness are not required.
+Let `R` be an associative ring, `P` an integer chain complex of right `R`-modules, and `Q` an
+integer chain complex of left `R`-modules. The tensor total has degree-`n` object the direct
+sum of the balanced tensor groups `P_p ⊗_R Q_q` over all integer pairs `p + q = n`.
+
+The inclusion of a pure class is bilinear and balanced. Its differential is `d_P x ⊗ y +
+(-1)^p x ⊗ d_Q y`, in the summands `(p - 1, q)` and `(p, q - 1)`. Chain maps in the factors
+act on these classes factorwise. The complexes may be unbounded, and their common carrier
+universe is independent of the ring universe.
 -/
 
 @[expose] public section
@@ -38,7 +42,11 @@ universe u v
 
 variable (R : Type u) [Ring R]
 
-/-- Native totalization of the actual balanced tensor bifunctor on all integer degrees. -/
+/-- Integer chain balanced tensor as a total-complex bifunctor.
+
+Extend the group-valued balanced tensor bifunctor to integer chain bicomplexes and take the
+direct-sum total. This gives a bifunctor from right and left `R`-module chain complexes to
+additive-group chain complexes. -/
 def bifunctor :
     ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ ⥤
       ChainComplex (ModuleCat.{v} R) ℤ ⥤ ChainComplex AddCommGrpCat.{v} ℤ := by
@@ -51,12 +59,18 @@ def bifunctor :
   exact (ModuleCat.BalancedTensor.groupBifunctor R).map₂HomologicalComplex
     (ComplexShape.down ℤ) (ComplexShape.down ℤ) (ComplexShape.down ℤ)
 
-/-- The original tensor-complex total is a native direct-sum total, with no finite-stage cutoff. -/
+/-- Direct-sum balanced tensor total of two integer chain complexes.
+
+For a right-module complex `P` and left-module complex `Q`, `complex R P Q` is the homological
+tensor total, with degree-`n` sum over all `p + q = n`. -/
 def complex (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (Q : ChainComplex (ModuleCat.{v} R) ℤ) : ChainComplex AddCommGrpCat.{v} ℤ :=
   ((bifunctor R).obj P).obj Q
 
-/-- The original pure tensor placed in its actual total degree. -/
+/-- Pure balanced tensor in an integer total degree.
+
+For integers `p`, `q`, and `n` with `p + q = n`, include `[x ⊗ y]`, where `x : P.X p` and `y :
+Q.X q`, in the corresponding summand of `(complex R P Q).X n`. -/
 def mk (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (Q : ChainComplex (ModuleCat.{v} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y : Q.X q) : (complex R P Q).X n := by
@@ -65,7 +79,10 @@ def mk (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (ComplexShape.down ℤ) p q n h).hom
       (TensorProduct.Balanced.mk ℤ R (P.X p) (Q.X q) x y)
 
-/-- Additivity in the original right-module factor. -/
+/-- Tensor-total pure class is additive in the right-module element.
+
+For fixed total-degree indices and `y`, the total class of `(x + x') ⊗ y` equals the sum of
+the classes of `x ⊗ y` and `x' ⊗ y`. -/
 theorem mk_add_left (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (Q : ChainComplex (ModuleCat.{v} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (x x' : P.X p) (y : Q.X q) :
@@ -84,7 +101,10 @@ theorem mk_add_left (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
       (LinearMap.add_apply (μ x) (μ x') y)
   exact (congrArg ι.hom hPoint).trans (ι.hom.map_add a a')
 
-/-- Additivity in the original left-module factor. -/
+/-- Tensor-total pure class is additive in the left-module element.
+
+For fixed total-degree indices and `x`, the total class of `x ⊗ (y + y')` equals the sum of
+the classes of `x ⊗ y` and `x ⊗ y'`. -/
 theorem mk_add_right (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (Q : ChainComplex (ModuleCat.{v} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y y' : Q.X q) :
@@ -102,7 +122,10 @@ theorem mk_add_right (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     exact (μ x).map_add y y'
   exact (congrArg ι.hom hPoint).trans (ι.hom.map_add a a')
 
-/-- The original noncommutative R-balance is retained in the actual total summand. -/
+/-- Tensor-total pure classes satisfy the R-balancing relation.
+
+For `r : R`, the total classes represented by `(op r • x) ⊗ y` and `x ⊗ (r • y)` are equal in
+the same degree `p + q`. -/
 theorem mk_balance (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (Q : ChainComplex (ModuleCat.{v} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (r : R) (x : P.X p) (y : Q.X q) :
@@ -112,7 +135,11 @@ theorem mk_balance (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
       (ModuleCat.BalancedTensor.groupBifunctor R) (ComplexShape.down ℤ) p q n h).hom
     (TensorProduct.Balanced.balance ℤ R (P.X p) (Q.X q) r x y)
 
-/-- The actual tensor-total differential has the full source sign, in every integer degree. -/
+/-- Integer tensor-total differential on a pure balanced class.
+
+For `p + q = n`, the differential from total degree `n` to `n - 1` sends `[x ⊗ y]` to the
+class of `d_P x ⊗ y` in `(p - 1, q)` plus `p.negOnePow` times the class of `x ⊗ d_Q y` in `(p,
+q - 1)`. -/
 theorem d_mk (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
     (Q : ChainComplex (ModuleCat.{v} R) ℤ)
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y : Q.X q) :
@@ -201,14 +228,20 @@ theorem d_mk (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ)
   exact hSource.symm.trans (hValue.trans (hSum.trans
     (congrArg₂ (fun x y : T => x + p.negOnePow • y) hLeft hRight)))
 
-/-- The two original complex maps induce the native map of their actual tensor totals. -/
+/-- Chain map induced on a balanced tensor total.
+
+Chain maps `f : P ⟶ P'` and `g : Q ⟶ Q'` induce a chain map `complex R P Q ⟶ complex R P' Q'`
+by the two-variable tensor map. -/
 def map {P P' : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ}
     {Q Q' : ChainComplex (ModuleCat.{v} R) ℤ} (f : P ⟶ P') (g : Q ⟶ Q') :
     complex R P Q ⟶ complex R P' Q' :=
   HomologicalComplex.mapBifunctorMap f g (ModuleCat.BalancedTensor.groupBifunctor R)
     (ComplexShape.down ℤ)
 
-/-- The native total map keeps the two actual tensor-factor values. -/
+/-- Balanced tensor-total map on pure classes.
+
+For `p + q = n`, the degree-`n` map induced by `f` and `g` sends the total class of `x ⊗ y` to
+the total class of `(f.f p) x ⊗ (g.f q) y`. -/
 theorem map_mk {P P' : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ}
     {Q Q' : ChainComplex (ModuleCat.{v} R) ℤ} (f : P ⟶ P') (g : Q ⟶ Q')
     (p q n : ℤ) (h : p + q = n) (x : P.X p) (y : Q.X q) :

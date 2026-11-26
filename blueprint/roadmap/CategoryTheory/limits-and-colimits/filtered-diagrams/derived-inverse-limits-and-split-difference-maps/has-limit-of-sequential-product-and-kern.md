@@ -1,4 +1,6 @@
-# Has Limit of sequential product and kernel
+# Existence of tower limits from products and kernels
 
-Explicit evidence that every tower has a limit when countable products
-and kernels exist. This is deliberately not a global instance.
+Existence of tower limits from products and kernels.
+
+Every inverse tower A in a preadditive category with countable products and kernels has a
+limit, represented by Ker(d_A) with its projection legs.

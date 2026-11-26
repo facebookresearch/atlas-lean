@@ -17,12 +17,20 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Additive
 public import Mathlib.Algebra.Module.Bimodule
 
 /-!
-# Additive coefficient transformations for bimodule tensor functors
+# Additive coefficient maps for bimodule tensor and Tor
 
-Linear maps preserving the commuting coefficient actions form an additive
-group. Their induced tensor transformations and derived Tor transformations
-are additive. Modules over the tensor product of the two scalar rings
-package the coefficient actions and their compatible maps.
+For `R`-left, `S`-right bimodules `B` and `B'`, the `R`-linear maps that preserve the right
+`S`-action form an additive subgroup. Sending such a map to its tensor natural transformation
+is additive, and, when right `R`-modules have projective resolutions, the same holds for the
+derived Tor transformations in each degree.
+
+A module over `R ⊗[ℤ] Sᵐᵒᵖ` supplies commuting left `R`- and right `S`-actions by restricting
+the two tensor-factor inclusions. This coefficient category maps additively to the category of
+additive right-module tensor functors. Bimodules with given commuting actions, and maps
+preserving them, define coefficient objects and morphisms with the same underlying values.
+
+The rings may be noncommutative and have independent universes; coefficient and tensor-input
+carriers share universe `v`.
 -/
 
 @[expose] public section
@@ -35,7 +43,10 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
   [Module R B] [Module R B'] [Module Sᵐᵒᵖ B] [Module Sᵐᵒᵖ B']
   [SMulCommClass R Sᵐᵒᵖ B] [SMulCommClass R Sᵐᵒᵖ B']
 
-/-- The zero coefficient map gives the actual zero tensor transformation. -/
+/-- Zero coefficient induces the zero tensor transformation.
+
+The natural transformation of right-module-valued tensor functors induced by the zero bimodule
+coefficient map is zero. -/
 theorem tensorCoefficientTransformation_zero :
     tensorCoefficientTransformation R S B B' (0 : B →ₗ[R] B')
       (by intro t x; simp) = 0 := by
@@ -50,7 +61,10 @@ theorem tensorCoefficientTransformation_zero :
   rw [tensorCoefficientMap_mk, LinearMap.zero_apply]
   exact map_zero (TensorProduct.Balanced.mk ℤ R X B' x)
 
-/-- Addition is addition on the original coefficient representatives. -/
+/-- Tensor coefficient transformations preserve addition.
+
+For `R`-linear coefficient maps `f` and `g` preserving the right `S`-action, the tensor
+transformation for `f + g` is the sum of their tensor transformations. -/
 theorem tensorCoefficientTransformation_add (f g : B →ₗ[R] B')
     (hf : ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x)
     (hg : ∀ (t : Sᵐᵒᵖ) (x : B), g (t • x) = t • g x) :
@@ -73,7 +87,10 @@ theorem tensorCoefficientTransformation_add (f g : B →ₗ[R] B')
     LinearMap.add_apply]
   exact map_add (TensorProduct.Balanced.mk ℤ R X B' x) _ _
 
-/-- Original R-linear maps commuting with the actual outer action form an additive group. -/
+/-- Additive subgroup of maps preserving both coefficient actions.
+
+The subgroup of `B →ₗ[R] B'` consists of maps satisfying `f (t • x) = t • f x` for all `t :
+Sᵐᵒᵖ` and `x : B`. It is closed under zero, addition, and negation. -/
 def coefficientMapGroup : AddSubgroup (B →ₗ[R] B') where
   carrier := {f : B →ₗ[R] B' | ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x}
   zero_mem' := by
@@ -86,7 +103,10 @@ def coefficientMapGroup : AddSubgroup (B →ₗ[R] B') where
     intro f hf t x
     simp only [LinearMap.neg_apply, hf t x, smul_neg]
 
-/-- The actual coefficient construction is additive on the original bimodule morphisms. -/
+/-- Additive map from bimodule morphisms to tensor transformations.
+
+The assignment sending a map in `coefficientMapGroup R S B B'` to its tensor coefficient
+natural transformation is an additive group homomorphism. -/
 def tensorCoefficientTransformationAddHom :
     coefficientMapGroup R S B B' →+
       (tensorFunctor R S B ⟶ tensorFunctor R S B') where
@@ -95,7 +115,10 @@ def tensorCoefficientTransformationAddHom :
   map_add' f g := tensorCoefficientTransformation_add R S B B'
     f.val g.val f.property g.property
 
-/-- The additive package retains the existing coefficient natural transformation. -/
+/-- Value of the additive tensor-transformation assignment.
+
+For a compatible coefficient map `f`, the additive assignment returns
+`tensorCoefficientTransformation R S B B' f.val f.property`. -/
 theorem tensorCoefficientTransformationAddHom_apply
     (f : coefficientMapGroup R S B B') :
     tensorCoefficientTransformationAddHom R S B B' f =
@@ -105,7 +128,10 @@ section Tor
 
 variable [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
 
-/-- Native derivation sends the actual zero tensor transformation to zero. -/
+/-- Zero coefficient induces the zero Tor transformation.
+
+Assuming projective resolutions for right `R`-modules, the degree-`n` derived coefficient
+transformation induced by the zero map is zero. -/
 theorem torCoefficientTransformation_zero (n : ℕ) :
     torCoefficientTransformation R S B B' (0 : B →ₗ[R] B')
       (by intro t x; simp) n = 0 := by
@@ -113,7 +139,10 @@ theorem torCoefficientTransformation_zero (n : ℕ) :
     NatTrans.leftDerived_zero]
   rfl
 
-/-- Native derived addition applies to the same actual coefficient transformations. -/
+/-- Tor coefficient transformations preserve addition.
+
+For compatible coefficient maps `f` and `g`, the degree-`n` Tor coefficient transformation of
+`f + g` equals the sum of their degree-`n` transformations. -/
 theorem torCoefficientTransformation_add (f g : B →ₗ[R] B')
     (hf : ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x)
     (hg : ∀ (t : Sᵐᵒᵖ) (x : B), g (t • x) = t • g x) (n : ℕ) :
@@ -125,7 +154,10 @@ theorem torCoefficientTransformation_add (f g : B →ₗ[R] B')
     NatTrans.leftDerived_add]
   rfl
 
-/-- Native derivation is additive on the same original coefficient-map group. -/
+/-- Additive map from bimodule morphisms to Tor transformations.
+
+In each natural degree `n`, compatible coefficient maps form an additive group mapping to the
+additive group of natural transformations between their Tor functors. -/
 def torCoefficientTransformationAddHom (n : ℕ) :
     coefficientMapGroup R S B B' →+
       (torFunctor R S B n ⟶ torFunctor R S B' n) where
@@ -134,7 +166,10 @@ def torCoefficientTransformationAddHom (n : ℕ) :
   map_add' f g := torCoefficientTransformation_add R S B B'
     f.val g.val f.property g.property n
 
-/-- The native additive package keeps the actual derived coefficient morphism. -/
+/-- Value of the additive Tor-transformation assignment.
+
+For `f` in the compatible coefficient-map subgroup, the degree-`n` additive assignment returns
+the Tor transformation induced by `f.val` and `f.property`. -/
 theorem torCoefficientTransformationAddHom_apply
     (n : ℕ) (f : coefficientMapGroup R S B B') :
     torCoefficientTransformationAddHom R S B B' n f =
@@ -146,20 +181,32 @@ section NativeCoefficientCategory
 
 open scoped TensorProduct
 
-/-- Native coefficients are modules over the actual two-factor scalar ring. -/
+/-- Module category realizing commuting coefficient actions.
+
+The coefficient category is `ModuleCat.{v} (R ⊗[ℤ] Sᵐᵒᵖ)`. Restriction along the tensor-factor
+inclusions gives left `R`- and right `S`-actions on its objects. -/
 abbrev coefficientCategory := ModuleCat.{v} (R ⊗[ℤ] Sᵐᵒᵖ)
 
-/-- Restrict the stored scalar action along the native left tensor inclusion. -/
+/-- Left R action of a tensor-product-ring coefficient object.
+
+For a coefficient object `X`, restrict its `R ⊗[ℤ] Sᵐᵒᵖ`-module structure along the left ring
+inclusion to obtain a left `R`-module structure. -/
 def coefficientLeftModule (X : coefficientCategory R S) : Module R X :=
   Module.compHom X
     (Algebra.TensorProduct.includeLeftRingHom : R →+* R ⊗[ℤ] Sᵐᵒᵖ)
 
-/-- Restrict the same stored action along the native right tensor inclusion. -/
+/-- Right S action of a tensor-product-ring coefficient object.
+
+For a coefficient object `X`, restrict scalars along the right inclusion of `Sᵐᵒᵖ` in `R ⊗[ℤ]
+Sᵐᵒᵖ` to obtain its right `S`-module structure. -/
 def coefficientRightModule (X : coefficientCategory R S) : Module Sᵐᵒᵖ X :=
   Module.compHom X
     (Algebra.TensorProduct.includeRight : Sᵐᵒᵖ →ₐ[ℤ] R ⊗[ℤ] Sᵐᵒᵖ).toRingHom
 
-/-- The actual two restricted endpoint actions commute in their original order. -/
+/-- Tensor-product coefficient actions commute.
+
+The restricted left `R`-action and right `S`-action on a coefficient object commute, since the
+images of the two tensor-factor inclusions commute. -/
 theorem coefficientActionsCommute (X : coefficientCategory R S) :
     letI := coefficientLeftModule R S X
     letI := coefficientRightModule R S X
@@ -174,7 +221,10 @@ theorem coefficientActionsCommute (X : coefficientCategory R S) :
   apply congrArg (fun z : R ⊗[ℤ] Sᵐᵒᵖ => z • x)
   simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
-/-- The native coefficient object gives an actual additive tensor functor. -/
+/-- Additive tensor functor of a tensor-product-ring coefficient.
+
+A coefficient object `X`, with its two restricted actions, defines the additive functor `A ↦ A
+⊗_R X` from right `R`-modules to right `S`-modules. -/
 def coefficientTensorObj (X : coefficientCategory R S) :
     ModuleCat.{v} Rᵐᵒᵖ ⥤+ ModuleCat.{v} Sᵐᵒᵖ := by
   letI := coefficientLeftModule R S X
@@ -182,7 +232,10 @@ def coefficientTensorObj (X : coefficientCategory R S) :
   letI := coefficientActionsCommute R S X
   exact AdditiveFunctor.of (tensorFunctor R S X)
 
-/-- A native coefficient morphism is linear for the restricted left action. -/
+/-- Left-linear restriction of a coefficient-category morphism.
+
+A morphism `f : X ⟶ Y` over `R ⊗[ℤ] Sᵐᵒᵖ` gives an `R`-linear map between the restricted left-
+module structures on `X` and `Y`. -/
 def coefficientLeftMap {X Y : coefficientCategory R S} (f : X ⟶ Y) :
     letI := coefficientLeftModule R S X
     letI := coefficientLeftModule R S Y
@@ -195,7 +248,10 @@ def coefficientLeftMap {X Y : coefficientCategory R S} (f : X ⟶ Y) :
     (r ⊗ₜ[ℤ] (1 : Sᵐᵒᵖ)) • f.hom x
   exact f.hom.map_smul _ x
 
-/-- The same native morphism also retains the actual right endpoint action. -/
+/-- Restricted coefficient morphism preserves the right S action.
+
+For a coefficient-category morphism `f`, its restricted left-linear map satisfies `f (s • x) =
+s • f x` for every `s : Sᵐᵒᵖ`. -/
 theorem coefficientLeftMap_outer {X Y : coefficientCategory R S}
     (f : X ⟶ Y) (s : Sᵐᵒᵖ) (x : X) :
     letI := coefficientLeftModule R S X
@@ -211,7 +267,10 @@ theorem coefficientLeftMap_outer {X Y : coefficientCategory R S}
     ((1 : R) ⊗ₜ[ℤ] s) • f.hom x
   exact f.hom.map_smul _ x
 
-/-- Actual native bimodule morphisms give the original tensor coefficient maps. -/
+/-- Coefficient-category morphism gives a tensor natural transformation.
+
+A morphism of tensor-product-ring coefficient modules induces a natural transformation between
+their additive right-module tensor functors. -/
 def coefficientTensorTransformation {X Y : coefficientCategory R S} (f : X ⟶ Y) :
     (coefficientTensorObj R S X).obj ⟶ (coefficientTensorObj R S Y).obj := by
   letI := coefficientLeftModule R S X
@@ -223,7 +282,10 @@ def coefficientTensorTransformation {X Y : coefficientCategory R S} (f : X ⟶ Y
   exact tensorCoefficientTransformation R S X Y
     (coefficientLeftMap R S f) (coefficientLeftMap_outer R S f)
 
-/-- The native coefficient functor retains both actions rather than storing a desired square. -/
+/-- Coefficient modules as a functor to additive tensor functors.
+
+The assignment from coefficient objects to their additive tensor functors, and from
+coefficient morphisms to their tensor natural transformations, defines a functor. -/
 def coefficientTensorFunctor :
     coefficientCategory R S ⥤
       (ModuleCat.{v} Rᵐᵒᵖ ⥤+ ModuleCat.{v} Sᵐᵒᵖ) where
@@ -277,7 +339,10 @@ def coefficientTensorFunctor :
     rw [tensorCoefficientMap_mk, tensorCoefficientMap_mk, tensorCoefficientMap_mk]
     rfl
 
-/-- The actual coefficient functor is additive without any commutativity of S. -/
+/-- The coefficient-to-tensor-functor assignment is additive.
+
+The functor from `ModuleCat (R ⊗[ℤ] Sᵐᵒᵖ)` to additive right-module tensor functors preserves
+sums of coefficient morphisms. -/
 theorem coefficientTensorFunctor_additive : (coefficientTensorFunctor R S).Additive := by
   refine ⟨?_⟩
   intro X Y f g
@@ -309,14 +374,21 @@ theorem coefficientTensorFunctor_additive : (coefficientTensorFunctor R S).Addit
   change TensorProduct.Balanced.mk ℤ R A Y a (f.hom x + g.hom x) = _
   exact (TensorProduct.Balanced.mk ℤ R A Y a).map_add _ _
 
-/-- Bundle the earned coefficient additivity using the native additive-functor category. -/
+/-- Bundled additive assignment of coefficient tensor functors.
+
+Bundle the coefficient-to-tensor-functor assignment with its additivity as an additive functor
+into the category of additive functors from right `R`-modules to right `S`-modules. -/
 def coefficientTensorAdditiveFunctor :
     coefficientCategory R S ⥤+
       (ModuleCat.{v} Rᵐᵒᵖ ⥤+ ModuleCat.{v} Sᵐᵒᵖ) := by
   letI := coefficientTensorFunctor_additive R S
   exact AdditiveFunctor.of (coefficientTensorFunctor R S)
 
-/-- Native degree derivation assembles the honest coefficient Tor functor. -/
+/-- Coefficient category maps to Tor functors in each degree.
+
+Assuming right `R`-modules have projective resolutions, compose the coefficient tensor-functor
+assignment with degree-`n` left derivation to obtain a functor from coefficient modules to
+right-module-valued Tor functors. -/
 def coefficientTorFunctor [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)] (n : ℕ) :
     coefficientCategory R S ⥤ (ModuleCat.{v} Rᵐᵒᵖ ⥤ ModuleCat.{v} Sᵐᵒᵖ) :=
   coefficientTensorFunctor R S ⋙
@@ -329,26 +401,38 @@ section OriginalActions
 
 open scoped TensorProduct
 
-/-- Commuting actions define a module over the tensor product of the scalar rings. -/
+/-- Commuting bimodule actions define a coefficient-category object.
+
+A coefficient `B` with commuting left `R`- and right `S`-actions has an induced module
+structure over `R ⊗[ℤ] Sᵐᵒᵖ`, giving an object of the coefficient category on the carrier `B`. -/
 def coefficientObjectOfActions : coefficientCategory R S := by
   letI : Module (R ⊗[ℤ] Sᵐᵒᵖ) B := TensorProduct.Algebra.module
   exact ModuleCat.of (R ⊗[ℤ] Sᵐᵒᵖ) B
 
-/-- Restricting the native package recovers the given original left action. -/
+/-- Constructed coefficient object retains its given left action.
+
+Restricting the tensor-product-ring coefficient object of `B` along the left inclusion gives
+the same scalar values `r • x` as the given left `R`-action. -/
 theorem coefficientObjectOfActions_left (r : R) (x : B) :
     (coefficientLeftModule R S (coefficientObjectOfActions R S B)).smul r x =
       r • x := by
   change r • ((1 : Sᵐᵒᵖ) • x) = r • x
   rw [one_smul]
 
-/-- The right restriction likewise recovers the original right S action. -/
+/-- Constructed coefficient object retains its given right action.
+
+Restricting the coefficient object of `B` along the right inclusion gives the same scalar
+values `s • x` as the given right `S`-action. -/
 theorem coefficientObjectOfActions_right (s : Sᵐᵒᵖ) (x : B) :
     (coefficientRightModule R S (coefficientObjectOfActions R S B)).smul s x =
       s • x := by
   change (1 : R) • (s • x) = s • x
   rw [one_smul]
 
-/-- An actual original bimodule morphism is native-linear for the earned tensor-ring action. -/
+/-- Map preserving bimodule actions gives a coefficient-category morphism.
+
+An `R`-linear map `f : B → B'` preserving the right `S`-action is linear over the induced
+tensor-product-ring module structures, and hence defines a coefficient-category morphism. -/
 def coefficientMapOfActions (f : B →ₗ[R] B')
     (hf : ∀ (s : Sᵐᵒᵖ) (x : B), f (s • x) = s • f x) :
     coefficientObjectOfActions R S B ⟶ coefficientObjectOfActions R S B' := by
@@ -368,7 +452,10 @@ def coefficientMapOfActions (f : B →ₗ[R] B')
     rw [add_smul, add_smul, f.map_add, hz, hw]
     rfl
 
-/-- The native coefficient morphism evaluates to the original raw map. -/
+/-- Constructed coefficient-category morphism retains its function values.
+
+The coefficient-category morphism induced by a compatible bimodule map `f` evaluates at `x :
+B` as `f x`. -/
 theorem coefficientMapOfActions_apply (f : B →ₗ[R] B')
     (hf : ∀ (s : Sᵐᵒᵖ) (x : B), f (s • x) = s • f x) (x : B) :
     (coefficientMapOfActions R S B B' f hf).hom x = f x := rfl

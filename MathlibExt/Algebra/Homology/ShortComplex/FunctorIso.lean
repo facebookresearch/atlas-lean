@@ -8,6 +8,18 @@ LICENSE file in the root directory of this source tree.
 
 import Mathlib.Algebra.Homology.ShortComplex.Basic
 
+/-!
+# Functor isomorphisms on short complexes
+
+For categories with zero morphisms, a zero-preserving functor acts on the
+three objects and two maps of a short complex. A natural isomorphism
+between two such functors gives the corresponding natural isomorphism on
+short complexes. Successive application of two zero-preserving functors
+agrees, up to the identity component isomorphisms, with application of their
+zero-preserving composite. All category object and morphism universes are
+independent.
+-/
+
 open CategoryTheory
 
 universe v₁ v₂ v₃ u₁ u₂ u₃
@@ -18,7 +30,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Limits.HasZeroMorphisms C]
 variable {D : Type u₂} [Category.{v₂} D] [Limits.HasZeroMorphisms D]
 variable {E : Type u₃} [Category.{v₃} E] [Limits.HasZeroMorphisms E]
 
-/-- Transport a natural isomorphism through `mapShortComplex`. -/
+/-- Let C and D have zero morphisms, F,G:C → D preserve zero morphisms,
+and e:F ≅ G be a natural isomorphism. The induced natural isomorphism
+between the functors on short complexes that apply F and G to all three
+terms and maps, with components e at the three terms. -/
 def mapShortComplexNatIso {F G : C ⥤ D} [PreservesZeroMorphisms F]
     [PreservesZeroMorphisms G] (e : F ≅ G) :
     F.mapShortComplex ≅ G.mapShortComplex :=
@@ -28,7 +43,10 @@ def mapShortComplexNatIso {F G : C ⥤ D} [PreservesZeroMorphisms F]
     · exact e.hom.naturality f.τ₂
     · exact e.hom.naturality f.τ₃
 
-/-- `mapShortComplex` preserves composition up to isomorphism. -/
+/-- Let C,D,E have zero morphisms and F:C → D, G:D → E and G∘F preserve
+zero morphisms. Successive application of F and G to short complexes
+is naturally isomorphic to application of G∘F; its components are the
+identity identifications of the three objects G(F(Sₐ)). -/
 def mapShortComplexCompIso (F : C ⥤ D) (G : D ⥤ E) [PreservesZeroMorphisms F]
     [PreservesZeroMorphisms G] [PreservesZeroMorphisms (F ⋙ G)] :
     F.mapShortComplex ⋙ G.mapShortComplex ≅ (F ⋙ G).mapShortComplex :=

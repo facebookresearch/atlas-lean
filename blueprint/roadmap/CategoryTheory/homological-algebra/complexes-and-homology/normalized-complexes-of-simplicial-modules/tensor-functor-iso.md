@@ -1,3 +1,6 @@
-# Tensor Functor Iso
+# Naturality of the lifted coefficient tensor isomorphism
 
-The same native tensor comparison is natural in every original diagram map.
+Naturality of the lifted coefficient tensor isomorphism.
+
+For fixed M, the tensor comparisons give a natural isomorphism between (ULift M) ⊗_R − and M
+⊗_R − followed by module lifting.

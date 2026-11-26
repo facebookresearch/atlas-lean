@@ -1,4 +1,6 @@
-# Res Tensor Pow Iso Succ refl inv comp res Tensor Pow Map Succ
+# Cancellation of an inverse coefficient power isomorphism
 
-An inverse canonical restriction/tensor normalization cancels against
-the normalization appearing in a composite positive tensor-power map.
+For a commutative ring k and groups G,H,K in universe u, f:H→G, g:K→H,
+e:Res_f(A)≅B and ψ:Res_g(B)→C, the inverse restricted power
+of e cancels the e part of the composite coefficient power map.
+The remaining map is the positive power map induced by g and ψ.

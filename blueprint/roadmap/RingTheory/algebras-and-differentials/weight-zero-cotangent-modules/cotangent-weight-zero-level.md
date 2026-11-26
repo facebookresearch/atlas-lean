@@ -1,3 +1,5 @@
-# Cotangent Weight Zero Level
+# The regular module in cotangent weight zero
 
-The actual extended regular module prescribed by Ω⁰(P/k)=P.
+The regular module in cotangent weight zero.
+
+For `P → A`, this is the scalar extension `A ⊗[P] P`, corresponding to `Ω⁰[P/k] = P`.

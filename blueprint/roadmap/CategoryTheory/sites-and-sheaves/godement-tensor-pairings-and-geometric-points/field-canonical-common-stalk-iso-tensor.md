@@ -1,4 +1,6 @@
-# Field Canonical Common Stalk Iso tensor
+# Forward field stalk comparison preserves tensor coordinates
 
-The genuine prescribed-to-canonical stalk comparison preserves the same original binary
-tensor.
+Forward field stalk comparison preserves tensor coordinates.
+
+The comparison on the tensor sheaf followed by its canonical stalk-tensor coordinate equals
+the prescribed coordinate followed by tensoring the two forward stalk comparisons.

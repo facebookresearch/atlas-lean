@@ -1,3 +1,6 @@
-# Trace regular Face
+# Regular Hochschild faces commute with generalized trace
 
-The original regular matrix and scalar faces retain the trace square.
+For a k-algebra A, r,n ≥ 0 and i ∈ {0,…,n+1}, the regular
+Hochschild faces satisfy T_n ∘ δᵢ^Mat = δᵢ^A ∘ T_(n+1).
+The first face multiplies X a₁, the interior faces multiply adjacent
+matrices in their given order, and the last face multiplies a_(n+1) X.

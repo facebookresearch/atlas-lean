@@ -13,10 +13,13 @@ module
 public import Mathlib.CategoryTheory.Abelian.Injective.Resolution
 
 /-!
-# Comparing exact augmented complexes into injective terms
+# Homotopy uniqueness for exact augmented cochain sources
 
-Source exactness and target-term injectivity give homotopy uniqueness of
-comparison maps. Source terms need not be injective.
+In an abelian category `C`, let `X → P⁰ → P¹` and all positive
+rows of a natural-index cochain complex `P` be exact. Maps from `P`
+to a cochain complex with injective terms are homotopic if they agree
+on the augmentation. Applying any additive functor preserves equality
+of the resulting homology maps.
 -/
 
 @[expose] public section
@@ -29,7 +32,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- A map vanishing on an exact augmentation is null-homotopic into injective terms. -/
+/-- In an abelian category `C`, let `ι : X[0] → P` augment a
+cochain complex with exact row `X → P⁰ → P¹` and exact positive
+rows. If every term of `Q` is injective and `a : P → Q` satisfies
+`ι ≫ a = 0`, then `a` is null-homotopic. -/
 def augmentedExactNullHomotopy
     {C : Type u} [Category.{v} C] [Abelian C]
     {X : C} {P Q : CochainComplex C ℕ}
@@ -68,7 +74,10 @@ def augmentedExactNullHomotopy
     exact ⟨s, (eq_add_of_sub_eq hs.symm).trans (add_comm _ _)⟩
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Maps agreeing on an exact augmentation are homotopic into injective terms. -/
+/-- In an abelian category `C`, let `ι : X[0] → P` have exact
+augmentation and positive cochain rows. If all terms of `Q` are
+injective and `a,b : P → Q` agree after `ι`, there is a
+cochain homotopy `a ~ b`. -/
 def augmentedExactComparisonHomotopy
     {C : Type u} [Category.{v} C] [Abelian C]
     {X : C} {P Q : CochainComplex C ℕ}
@@ -83,7 +92,11 @@ def augmentedExactComparisonHomotopy
     (by rw [Preadditive.comp_sub, hab, sub_self]))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Such comparison choices give the same homology map after any additive functor. -/
+/-- Let `C`, `D` be abelian and `F : C → D` additive. If a
+cochain complex `P` has exact augmentation and positive rows,
+`Q` has injective terms, and `a,b : P → Q` agree on the
+augmentation, the maps on degree-`n` homology of `F(P) → F(Q)`
+induced by `F(a)` and `F(b)` are equal. -/
 theorem augmentedExactComparison_homologyMap_eq
     {C : Type u} [Category.{v} C] [Abelian C]
     {D : Type u'} [Category.{v'} D] [Abelian D]

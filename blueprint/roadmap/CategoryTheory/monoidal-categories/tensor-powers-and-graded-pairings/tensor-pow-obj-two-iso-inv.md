@@ -1,4 +1,5 @@
-# Tensor Pow Obj Two Iso inv
+# Inverse two factor coordinate uses the inverse one factor map
 
-The inverse weight-two normalization inserts the tensor unit only in the
-accumulated left factor.
+Inverse two factor coordinate uses the inverse one factor map.
+
+The inverse two-factor coordinate is the inverse one-factor map tensored with `𝟙 X`.

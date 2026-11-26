@@ -5,8 +5,8 @@ points and sheaves, representability of sheaves by schemes, and ℓ-adic cohomol
 topologies and sheaves on general sites are under category theory.
 
 - [The fppf topology on schemes](fppf-topology-on-schemes.md)
-- [The terminal object of the original small étale category](identity-etale-is-terminal.md)
-- [Derived sections of every original small étale sheaf](original-small-etale-derived-sections.md)
+- [The identity étale object is terminal](identity-etale-is-terminal.md)
+- [Natural comparison for derived sections of lifted coefficients](original-small-etale-derived-sections.md)
 - [Actual inverse image preserves the original geometric stalks](actual-inverse-image-preserves-the-original-geom/README.md)
 - [Actual sheaf inverse image on the original small étale sites](actual-sheaf-inverse-image-on-the-original-small/README.md)
 - [Actual tensor coefficients on the original small étale site](actual-tensor-coefficients-on-the-original-small/README.md)
@@ -35,4 +35,4 @@ topologies and sheaves on general sites are under category theory.
 - [The canonical long exact sequence on the original small étale site](the-canonical-long-exact-sequence-on-the-origina/README.md)
 - [The canonical small étale Godement coresolution](the-canonical-small-tale-godement-coresolution/README.md)
 - [The original small étale Godement construction](the-original-small-tale-godement-construction/README.md)
-- [Actual maps of small étale sections-resolution classes](sections-resolution-class-map-naturality.md)
+- [Resolution section cycle classes commute with sheaf maps](sections-resolution-class-map-naturality.md)

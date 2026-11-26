@@ -15,12 +15,16 @@ import Mathlib.Tactic.Ring
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageConnectingCycles
 
 /-!
-# Horizontal maps on direct-column cycles
+# Horizontal maps in direct-column cycle coordinates
 
-The horizontal bicomplex map on vertical cycles is transported through the
-extension and untwisting isomorphisms to the direct-column presentations.
-Its composite with the target homology projection is computed as the
-corresponding transported horizontal homology map.
+Let `K` be a first-quadrant bicomplex in an abelian category. Direct-column cycles at `(p,q)`
+use cochain degree `-p-q`. Untwisting and extension compare them with ordinary vertical cycles
+in `K_p`.
+
+Transporting the horizontal map from column `p+1` to column `p` gives a direct-column cycle
+map. On included representatives, it is the horizontal bicomplex map multiplied by
+`(-1)^(q+1)`. Normalizing the cycle isomorphism by `(-1)^(p(-p-q))` cancels its untwisting
+scalar, so its cycle inclusion is the direct-column degree identification.
 -/
 
 @[expose] public section
@@ -40,9 +44,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Horizontal map on direct-column cycle objects, obtained by untwisting,
-passing to the original vertical columns, applying the horizontal bicomplex
-map, and transporting back. -/
+/-- The horizontal map between direct-column cycle objects.
+
+Untwist source cycles, identify them with ordinary vertical cycles, apply the horizontal chain
+map, and transport back to target direct-column cycles. -/
 noncomputable def horizontalDirectColumnHorizontalCyclesMap (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).cycles
         (-((p + 1 : ℕ) : ℤ) - q) ⟶
@@ -58,8 +63,10 @@ noncomputable def horizontalDirectColumnHorizontalCyclesMap (p q : ℕ) :
     HomologicalComplex.cyclesMap (horizontalDirectColumnUntwistIso K p).inv
       (-(p : ℤ) - q)
 
-/-- On homology, the direct-column horizontal cycle map is the ordinary
-horizontal homology map conjugated by the direct-column homology
+/-- The homology projection of a direct-column horizontal cycle map.
+
+The cycle map followed by target homology projection equals source homology projection
+followed by the ordinary horizontal homology map conjugated by the direct-column homology
 isomorphisms. -/
 theorem horizontalDirectColumnHorizontalCyclesMap_homologyπ (p q : ℕ) :
     horizontalDirectColumnHorizontalCyclesMap K p q ≫
@@ -79,8 +86,10 @@ theorem horizontalDirectColumnHorizontalCyclesMap_homologyπ (p q : ℕ) :
   rw [← HomologicalComplex.homologyπ_naturality_assoc]
   rfl
 
-/-- On underlying cycle representatives, the transported horizontal map is
-the raw horizontal component multiplied by `(-1)^(q+1)`. -/
+/-- The representative sign of a direct-column horizontal cycle map.
+
+After target cycle inclusion, the transported map is `(-1)^(q+1)` times the horizontal
+bicomplex map through the direct-column degree identifications. -/
 theorem horizontalDirectColumnHorizontalCyclesMap_iCycles (p q : ℕ) :
     horizontalDirectColumnHorizontalCyclesMap K p q ≫
         (horizontalDirectColumnCochain K p).iCycles (-(p : ℤ) - q) =
@@ -112,9 +121,10 @@ theorem horizontalDirectColumnHorizontalCyclesMap_iCycles (p q : ℕ) :
   dsimp [horizontalDirectColumnCochain, horizontalDirectColumnCochainXIso]
   simp
 
-/-- Normalized isomorphism from direct-column cycles to cycles in the
-original vertical column.  The leading scalar cancels the scalar used by the
-untwisting map on the underlying object. -/
+/-- The sign-normalized comparison of direct and vertical column cycles.
+
+Multiply the untwisting cycle comparison by `(-1)^(p(-p-q))` and use extension to identify
+direct-column cycles with vertical cycles in degree `q`. -/
 noncomputable def horizontalDirectColumnVerticalCyclesIso (p q : ℕ) :
     (horizontalDirectColumnCochain K p).cycles (-(p : ℤ) - q) ≅
       (K.X p).cycles q :=
@@ -124,8 +134,10 @@ noncomputable def horizontalDirectColumnVerticalCyclesIso (p q : ℕ) :
     (K.X p).extendCyclesIso
       (ComplexShape.embeddingUpIntLE (-(p : ℤ))) (by simp)
 
-/-- The normalized cycle isomorphism carries cycle inclusion to the canonical
-degree identification of the direct column. -/
+/-- The inclusion formula for normalized direct-column cycle comparison.
+
+The normalized cycle isomorphism followed by vertical cycle inclusion equals direct-column
+cycle inclusion followed by its degree-object isomorphism. -/
 theorem horizontalDirectColumnVerticalCyclesIso_hom_iCycles (p q : ℕ) :
     (horizontalDirectColumnVerticalCyclesIso K p q).hom ≫
         (K.X p).iCycles q =

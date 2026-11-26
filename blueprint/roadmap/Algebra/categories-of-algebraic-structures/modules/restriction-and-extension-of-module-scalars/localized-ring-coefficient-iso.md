@@ -1,4 +1,7 @@
-# Restriction and extension of module scalars
+# The localized restricted ring-coefficient isomorphism
 
-Localizing the actual restricted ring coefficient gives its original
-localized ring coefficient with the literal local scalar map.
+The localized restricted ring-coefficient isomorphism.
+
+For surjective f : R → S and prime p ⊆ S, the localization at q = p.comap f of the restricted
+lifted S-module is isomorphic to the lifted S_p-module restricted along
+Localization.localRingHom q p f.

@@ -1,3 +1,5 @@
-# Homogeneous Zero Iso inverse projection
+# Inverse degree-zero invariant comparison through constant cycles
 
-The inverse normalization is the class of the original constant cocycle.
+For a ring k with a topology, profinite G and coefficient X,
+the inverse isomorphism X^G→H⁰_cts(G,X) takes an invariant x
+to the class of its constant degree-zero homogeneous cycle.

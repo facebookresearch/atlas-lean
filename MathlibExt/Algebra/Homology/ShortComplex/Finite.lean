@@ -13,11 +13,11 @@ module
 
 public import Mathlib.Algebra.Homology.ShortComplex.Ab
 /-!
-# Finiteness of homology of short complexes of abelian groups
+# Finite homology of a short complex of abelian groups
 
-For a short complex in `AddCommGrpCat`, finiteness of the middle group
-implies finiteness of homology. Its cycles embed into the middle group,
-and its homology is a quotient of the cycles.
+For a short complex A → B → D of abelian groups, its homology is
+Ker(B → D)/Im(A → B). If the underlying set of B is finite, its
+cycle subgroup and therefore its homology group are finite.
 -/
 
 @[expose] public section
@@ -35,7 +35,9 @@ universe u w
 
 namespace CategoryTheory.ShortComplex
 
-/-- Homology of a short complex of abelian groups is finite if its middle group is finite. -/
+/-- For a short complex A → B → D of abelian groups, if the underlying
+set of the middle group B is finite, then the underlying set of the
+homology group Ker(B → D)/Im(A → B) is finite. -/
 theorem ab_finiteHomology_of_finite_middle
     (S : ShortComplex AddCommGrpCat.{u}) [_root_.Finite S.X₂] : _root_.Finite S.homology := by
   letI : _root_.Finite S.cycles := _root_.Finite.of_injective S.iCycles

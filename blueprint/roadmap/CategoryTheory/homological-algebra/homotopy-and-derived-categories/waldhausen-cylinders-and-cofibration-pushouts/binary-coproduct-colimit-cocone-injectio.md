@@ -1,4 +1,6 @@
-# Waldhausen cylinders and cofibration pushouts
+# Both chosen coproduct injections are cofibrations
 
-Both injections of the existing binary-coproduct cocone derived from
-Waldhausen zero pushouts are original base cofibrations.
+Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms.
+
+For the binary coproduct cocone supplied by the zero-source pushout of X and Y, both injections are cofibrations.

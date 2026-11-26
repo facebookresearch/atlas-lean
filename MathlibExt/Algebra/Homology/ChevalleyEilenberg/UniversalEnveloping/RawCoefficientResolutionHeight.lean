@@ -14,15 +14,17 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping.RawCoefficientHeightComparison
 
 /-!
-# Enveloping resolutions under universe lifting
+# Universe lifting of enveloping resolutions and coefficient homology
 
-Successive universe lifts of the enveloping Chevalley–Eilenberg complex have an
-augmentation-preserving comparison. For a free underlying Lie module, this compares lifts of
-its projective resolution.
+Let R be a commutative ring, L an R-Lie algebra, and U = U_R(L). The twice-lifted enveloping
+Chevalley–Eilenberg complex is isomorphic to its single lift at the combined carrier universe.
+If L is free over R, this isomorphism commutes with the augmentations of the lifted projective
+resolutions of the trivial U-module.
 
-Balanced tensor cancellation identifies the resulting coefficient complex with the
-Lie-coefficient Chevalley–Eilenberg complex. The homology-to-Tor comparison commutes with the
-tensor and coefficient height isomorphisms.
+For an L-module M, let N_H be the right enveloping representation of its coefficient lift.
+Balanced tensor cancellation identifies N_H ⊗_U Q_H with C_*(L;M_H), where Q_H is the lifted
+enveloping resolution. This cancellation and the resulting homology-to-Tor comparison commute
+with coefficient and whole-output height transport.
 -/
 
 @[expose] public section
@@ -46,7 +48,11 @@ local notation "U" => UniversalEnvelopingAlgebra R L
 local instance rawResolutionHeight_input_preservesHomology {A : Type a} [Ring A] :
     (ModuleCat.uliftFunctor.{c, b} A).PreservesHomology := Functor.preservesHomologyOfExact _
 
-/-- Flattening of the two lifts of the enveloping algebra CE complex. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and U = U_R(L). Put H = max(u,v,v′,w,w′,z)
+and H′ = max(H,t), and let Q be the enveloping Chevalley–Eilenberg complex in shape down ℕ. If
+I_H lifts U-modules to H and I lifts them from H to H′, repeated-lift flattening gives
+I(I_H(Q)) ≅ I_H′(Q). Its degreewise map sends up(up(q)) to up(q), and its inverse adds the
+intermediate lift. This chain isomorphism does not require L to be free. -/
 def rawEnvelopingComplexHeightIso :
     ((rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L).mapHomologicalComplex (ComplexShape.down ℕ)).obj
       (((envelopingLiftFunctor.{u, v, max u v v' w w' z} R L).mapHomologicalComplex
@@ -70,7 +76,12 @@ section Resolution
 variable [Module.Free R L]
 
 
-/-- Augmentation square for resolution height unflattening, proved on the degree-zero carrier. -/
+/-- Let R be a commutative ring and L an R-Lie algebra that is free as an R-module. Put U =
+U_R(L), H = max(u,v,v′,w,w′,z), and H′ = max(H,t). Let Q_H → T_H and Q_H′ → T_H′ be the lifted
+enveloping projective resolutions of the augmentation module, χ : I(Q_H) ≅ Q_H′ the
+repeated-lift flattening, and τ : I(T_H) ≅ T_H′ its augmentation-module counterpart. Then
+χ.inv ≫ I(π_H) = π_H′ ≫ single₀(τ.inv), where the augmentation maps have target the complexes
+concentrated in degree zero. Thus the inverse flattening is a morphism of augmented complexes. -/
 theorem rawEnvelopingComplexHeightIso_inv_augmentation :
     (rawEnvelopingComplexHeightIso.{u, v, v', w, w', z, t} R L).inv ≫
       Functor.mapChainAugmentation (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L)
@@ -101,8 +112,12 @@ local instance rawResolutionHeight_low_additive {A : Type a} [Ring A] [Algebra R
     (N : ModuleCat.{b} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, a, b, c} R A N).Additive :=
   ModuleCat.BalancedTensor.additive R A N
 
-/-- Cancellation from the tensor of the lifted CE resolution to the coefficient CE complex at its
-sufficient working height. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), U = U_R(L), Q_H the lifted enveloping projective resolution of the
+augmentation module, and N_H the right representation of M_H with m·ι(x) = −[x,m]. There is a
+chain isomorphism N_H ⊗_U Q_H ≅ C_*(L;M_H). In degree n the balanced class [m,up(a ⊗ b)] maps
+to a ⊗ (m·b), for a ∈ Λⁿ_R L and b ∈ U. The coefficient complex is in exterior-first order and
+the action is the right U-action. -/
 def rawTensorCoefficientComplexIsoAt :
     ((ModuleCat.BalancedTensor.functor R U
       (LieModuleCat.RightUniversalEnveloping.representObj R L (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M))
@@ -141,7 +156,12 @@ theorem rawTensorCoefficientComplexIsoAt_mk_tmul (n : ℕ)
   rw [rightTensorCoordinatesAt_mk_tmul]
   rfl
 
-/-- The chain map inserted into the independent tensor height square. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), H′ = max(H,t), U = U_R(L), F_H(X) = N_H ⊗_U X, and V = ULift_{H→H′} on
+R-modules. For the lifted enveloping resolutions Q_H and Q_H′, define F_H′(Q_H′) → V(F_H(Q_H))
+by applying F_H′ to the inverse χ.inv of the resolution-lift flattening χ : I_U(Q_H) ≅ Q_H′,
+then applying the tensor height natural transformation F_H′∘I_U → V∘F_H. This specifies a
+chain map in every degree. -/
 def rawTensorResolutionHeightMap :
     ((ModuleCat.BalancedTensor.functor R U
       (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -172,8 +192,12 @@ def rawTensorResolutionHeightMap :
         (rawTensorHeightNatIso.{u, v, v', w, w', z, t} R L M).hom).app
           (liftedEnvelopingProjectiveResolution.{u, v, max u v v' w w' z} R L).complex
 
-/-- Balanced cancellation commutes with coefficient height and the resolution unflattening. The
-right action is used. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), H′ = max(H,t), and V = ULift_{H→H′}. Let e_H : N_H ⊗_U Q_H ≅ C_*(L;M_H)
+and e_H′ be the tensor cancellation isomorphisms, d : N_H′ ⊗_U Q_H′ → V(N_H ⊗_U Q_H) the
+resolution height map, and k : C_*(L;M_H′) ≅ V(C_*(L;M_H)) the coefficient height isomorphism.
+Then d ≫ V(e_H.hom) = e_H′.hom ≫ k.hom. Both composites use the right enveloping action in the
+formula [m,a ⊗ b] ↦ a ⊗ (m·b). -/
 theorem rawTensorCoefficientComplexIsoAt_height :
     rawTensorResolutionHeightMap.{u, v, v', w, w', z, t} R L M ≫
       ((rawTensorHeightOutputLift.{u, v, v', w, w', z, t} R).mapHomologicalComplex (ComplexShape.down ℕ)).map
@@ -250,8 +274,12 @@ theorem rawTensorCoefficientComplexIsoAt_height :
               letI : Module R M₀ := M₀.moduleStructure
               exact hLeft.trans ((congrArg (fun q : M₀ => ULift.up (x ⊗ₜ[R] q)) hAct.symm).trans hRight.symm)
 
-/-- The coefficient comparison uses exactly the inverse of the tensor cancellation and the
-resolution iso. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), U = U_R(L), F_H(X) = N_H ⊗_U X, and Q_H the lifted enveloping projective
+resolution of the augmentation module T_H. Let e_H : F_H(Q_H) ≅ C_*(L;M_H) be tensor
+cancellation. For every n ∈ ℕ, the comparison H_n(C_*(L;M_H)) → (L_nF_H)(T_H) is H_n(e_H.inv)
+followed by the inverse of Q_H.isoLeftDerivedObj(F_H,n). This fixes its direction from
+coefficient homology to the left-derived balanced tensor. -/
 theorem nativeCoefficientHomologyIsoTor_eq_rawTensorCoordinates (n : ℕ) :
     (nativeCoefficientHomologyIsoTor.{u, v, v', max w w' z} R L (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)
       n).hom =
@@ -280,8 +308,12 @@ theorem nativeCoefficientHomologyIsoTor_eq_rawTensorCoordinates (n : ℕ) :
   exact hNative.trans (congrArg (fun h => h ≫ (P.isoLeftDerivedObj F n).inv)
     ((congrArg (fun h => HomologicalComplex.homologyMap h n) hInverse).trans hMap).symm)
 
-/-- The resolution computation commutes with the independently defined canonical Tor height map at
-the two coefficient lifts. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), H′ = max(H,t), and V = ULift_{H→H′}. For n ∈ ℕ, let Φ_H : H_n(C_*(L;M_H))
+≅ Tor_H,n(M) and Φ_H′ be the comparisons obtained from the lifted enveloping resolutions. Let
+e : H_n(C_*(L;M_H′)) ≅ V(H_n(C_*(L;M_H))) be coefficient height transport, and J :
+V(Tor_H,n(M)) ≅ Tor_H′,n(M) the derived tensor height isomorphism. Then Φ_H′.hom ≫ J.inv =
+e.hom ≫ V(Φ_H.hom). -/
 theorem nativeCoefficientHomologyIsoTor_raw_height (n : ℕ) :
     (nativeCoefficientHomologyIsoTor.{u, v, v', max w w' z t} R L
       (rawLieCoefficientLiftAt.{u, v, v', w, w', max z t} R L M) n).hom ≫
@@ -391,8 +423,12 @@ theorem nativeCoefficientHomologyIsoTor_raw_height (n : ℕ) :
       n), hNat]
   simp only [Category.assoc]
 
-/-- Full raw-carrier CE/Tor comparison at different sufficient heights, with explicit output
-down/up and canonical Tor transport. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), H′ = max(H,t), and V = ULift_{H→H′}. For n ∈ ℕ, let Ψ_H :
+ULift_H(H_n(C_*(L;M))) ≅ Tor_H,n(M) and Ψ_H′ be the transported homology-to-Tor comparisons.
+Let b : V(ULift_H(H_n(C_*(L;M)))) ≅ ULift_H′(H_n(C_*(L;M))) flatten the repeated homology
+lift, and J : V(Tor_H,n(M)) ≅ Tor_H′,n(M) be the Tor height isomorphism. Then Ψ_H′.hom ≫ J.inv
+= b.inv ≫ V(Ψ_H.hom). -/
 theorem rawCoefficientHomologyIsoTorAt_height (n : ℕ) :
     (rawCoefficientHomologyIsoTorAt.{u, v, v', w, w', max z t} R L M n).hom ≫
       (rawLieCoefficientTorHeightIsoAt.{u, v, v', w, w', z, t} R L M n).inv =
@@ -427,8 +463,12 @@ theorem rawCoefficientHomologyIsoTorAt_height (n : ℕ) :
   exact (congrArg (fun q => q ≫ h.inv) hHigh).trans
     (hMid.trans (congrArg (fun q => b.inv ≫ V.map q) hLow.symm))
 
-/-- Working-height coherence on the exact raw homology carrier. The only output change is the up
-of the lower-height Tor value. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), H′ = max(H,t), and let E_H : H_n(C_*(L;M)) ≃ₗ[R] Tor_H,n(M) and E_H′ be
+the comparisons with the unlifted homology carrier. For n ∈ ℕ and a ∈ H_n(C_*(L;M)), the
+inverse Tor height isomorphism J : ULift_{H′}(Tor_H,n(M)) ≅ Tor_H′,n(M) satisfies
+J.inv(E_H′(a)) = up(E_H(a)). The input class a is unchanged; the output is the lift of its
+lower-height Tor value. -/
 theorem rawCoefficientHomologyEquivTorAt_height (n : ℕ)
     (a : (coefficientComplex R L M).homology n) :
     (rawLieCoefficientTorHeightIsoAt.{u, v, v', w, w', z, t} R L M n).inv

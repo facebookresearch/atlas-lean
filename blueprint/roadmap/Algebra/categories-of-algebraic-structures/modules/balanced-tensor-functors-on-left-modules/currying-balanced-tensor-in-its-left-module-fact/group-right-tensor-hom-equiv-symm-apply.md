@@ -1,3 +1,6 @@
-# Group Right Tensor Hom Equiv symm apply
+# Inverse right-variable tensor–Hom equivalence on pure classes
 
-The inverse native first-variable hom-set map keeps the original function evaluation.
+Inverse right-variable tensor–Hom equivalence on pure classes.
+
+The additive tensor map corresponding to a right-module morphism `g : A ⟶ Hom_ℤ(B, I)` sends
+`[a ⊗ b]` to `(g a)(b)`.

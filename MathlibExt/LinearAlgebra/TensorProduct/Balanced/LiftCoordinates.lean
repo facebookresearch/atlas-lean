@@ -15,13 +15,22 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.RightActions
 public import MathlibExt.Algebra.Module.ULiftActions
 
 /-!
-# Actual lifted coordinates on the balanced quotient
+# Lifted coordinates on balanced tensor products
 
-The coordinate maps are the existing balanced congruence maps. Their right
-outer linearity is earned from the existing action naturality equation.
-Native coefficient/input lifts and native up/down are retained, as are the
-original ground scalars and ordered balancing and outer actions. No action
-is installed globally and no flatness, freeness or carrier smallness is used.
+Let k be a commutative ring and R, S semirings. Let M be a right R-module
+and N a left R-module and right S-module, both additive commutative groups
+with k-module structures. The right S-action on N commutes with k and
+the left R-action. The balanced quotient M ⊗_R N therefore has the induced
+right S-action [m ⊗ n] s = [m ⊗ n s].
+
+Equivariant k-linear equivalences on M and N induce a right S-linear
+equivalence of the balanced quotients, retaining ground k-linearity.
+For any common lift height z, lowering the two lifted carriers gives
+ULift M ⊗_R ULift N ≅ M ⊗_R N. Composing with the lift of the whole
+quotient gives ULift M ⊗_R ULift N ≅ ULift(M ⊗_R N).
+Both comparisons have the corresponding up/down values on pure classes
+and commute with equivariant coefficient maps. All ring, carrier and lift
+universes are independent.
 -/
 
 @[expose] public section
@@ -49,7 +58,14 @@ variable {M' : Type a'} {N' : Type b'} [AddCommGroup M'] [AddCommGroup N']
   (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
   (hgS : ∀ (s : Sᵐᵒᵖ) (n : N), g (s • n) = s • g n)
 
-/-- The existing quotient congruence is outer-linear for its actual computed right actions. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+Let f : M ≃ₗ[k] M′ preserve the right R-action and
+g : N ≃ₗ[k] N′ preserve both the left R- and right S-actions, with
+the same structures on M′, N′. The induced balanced quotient
+equivalence is right S-linear and sends [m ⊗ n] to [f(m) ⊗ g(n)]. -/
 def rightCongr :
     letI := rightModule k R S M N
     letI := rightModule k R S M' N'
@@ -65,7 +81,14 @@ def rightCongr :
     map_rightAction f.toLinearMap g.toLinearMap hf hg hgS s
   exact LinearMap.congr_fun h x
 
-/-- The actual right-coordinate map preserves the two original pure factors. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+For equivariant k-linear equivalences f : M ≅ M′ and g : N ≅ N′,
+where f preserves right R and g preserves left R and right S,
+the quotient coordinate equivalence satisfies
+rightCongr([m ⊗ n]) = [f(m) ⊗ g(n)]. -/
 theorem rightCongr_mk (m : M) (n : N) :
     letI := rightModule k R S M N
     letI := rightModule k R S M' N'
@@ -73,7 +96,13 @@ theorem rightCongr_mk (m : M) (n : N) :
       mk k R M' N' (f m) (g n) :=
   congr_mk f g hf hg m n
 
-/-- Inverse coordinates preserve the same original ordered factors. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+For equivariant k-linear equivalences f : M ≅ M′ and g : N ≅ N′,
+preserving right R and left R/right S respectively, the inverse quotient
+coordinate map sends [m′ ⊗ n′] to [f⁻¹(m′) ⊗ g⁻¹(n′)]. -/
 theorem rightCongr_symm_mk (m : M') (n : N') :
     letI := rightModule k R S M N
     letI := rightModule k R S M' N'
@@ -85,7 +114,13 @@ theorem rightCongr_symm_mk (m : M') (n : N') :
   rw [LinearEquiv.apply_symm_apply, rightCongr_mk,
     f.apply_symm_apply, g.apply_symm_apply]
 
-/-- Outer-linear coordinates also retain the original ground scalar action. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+The right S-linear coordinate equivalence determined by equivariant
+k-linear f : M ≅ M′ and g : N ≅ N′ also preserves the ground action:
+rightCongr(c • x) = c • rightCongr(x) for c ∈ k. -/
 theorem rightCongr_ground_smul (c : k) (x : Balanced k R M N) :
     letI := rightModule k R S M N
     letI := rightModule k R S M' N'
@@ -95,7 +130,14 @@ theorem rightCongr_ground_smul (c : k) (x : Balanced k R M N) :
 
 end Coordinates
 
-/-- Lower both native lifted factors through the original balanced quotient. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+At any common lift height z, this right S-linear equivalence
+ULift M ⊗_R ULift N ≅ M ⊗_R N lowers both factors.
+Its pure value is [m ⊗ n] ↦ [m.down ⊗ n.down], with inverse
+[m ⊗ n] ↦ [ULift.up(m) ⊗ ULift.up(n)]. -/
 def uliftRightCarrierEquiv :
     letI : SMulCommClass Sᵐᵒᵖ k (ULift.{z} N) := ULift.smulCommClassOfBase Sᵐᵒᵖ k N
     letI : SMulCommClass R Sᵐᵒᵖ (ULift.{z} N) := ULift.smulCommClassOfBase R Sᵐᵒᵖ N
@@ -111,7 +153,13 @@ def uliftRightCarrierEquiv :
     (ULift.moduleEquiv : ULift.{z} N ≃ₗ[k] N)
     (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
 
-/-- The lifted quotient coordinate is exactly down on both original factors. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+For m ∈ ULift M and n ∈ ULift N at a common height z, the
+carrier-lowering equivalence has value
+[m ⊗ n] ↦ [m.down ⊗ n.down]. -/
 theorem uliftRightCarrierEquiv_mk (m : ULift.{z} M) (n : ULift.{z} N) :
     letI : SMulCommClass Sᵐᵒᵖ k (ULift.{z} N) := ULift.smulCommClassOfBase Sᵐᵒᵖ k N
     letI : SMulCommClass R Sᵐᵒᵖ (ULift.{z} N) := ULift.smulCommClassOfBase R Sᵐᵒᵖ N
@@ -124,7 +172,12 @@ theorem uliftRightCarrierEquiv_mk (m : ULift.{z} M) (n : ULift.{z} N) :
     (ULift.moduleEquiv : ULift.{z} N ≃ₗ[k] N)
     (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl) m n
 
-/-- Inverse lifted coordinates are exactly native up on the two original factors. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+At a common lift height z, the inverse carrier-lowering equivalence
+sends a pure class [m ⊗ n] to [ULift.up(m) ⊗ ULift.up(n)]. -/
 theorem uliftRightCarrierEquiv_symm_mk (m : M) (n : N) :
     letI : SMulCommClass Sᵐᵒᵖ k (ULift.{z} N) := ULift.smulCommClassOfBase Sᵐᵒᵖ k N
     letI : SMulCommClass R Sᵐᵒᵖ (ULift.{z} N) := ULift.smulCommClassOfBase R Sᵐᵒᵖ N
@@ -137,7 +190,13 @@ theorem uliftRightCarrierEquiv_symm_mk (m : M) (n : N) :
     (ULift.moduleEquiv : ULift.{z} N ≃ₗ[k] N)
     (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl) m n
 
-/-- Compare lifted factors with a native lift of the whole original quotient. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+For any common lift height z, this right S-linear equivalence
+ULift M ⊗_R ULift N ≅ ULift(M ⊗_R N) lowers the two factors
+and then lifts their balanced class in the whole output carrier. -/
 def uliftRightEquiv :
     letI : SMulCommClass Sᵐᵒᵖ k (ULift.{z} N) := ULift.smulCommClassOfBase Sᵐᵒᵖ k N
     letI : SMulCommClass R Sᵐᵒᵖ (ULift.{z} N) := ULift.smulCommClassOfBase R Sᵐᵒᵖ N
@@ -151,7 +210,13 @@ def uliftRightEquiv :
   exact (uliftRightCarrierEquiv k R S M N).trans
     (ULift.moduleEquiv : ULift.{z} (Balanced k R M N) ≃ₗ[Sᵐᵒᵖ] Balanced k R M N).symm
 
-/-- The whole-output comparison has the literal original representative value. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+For m ∈ ULift M and n ∈ ULift N at a common height z, the
+comparison to the lifted output has value
+[m ⊗ n] ↦ ULift.up([m.down ⊗ n.down]). -/
 theorem uliftRightEquiv_mk (m : ULift.{z} M) (n : ULift.{z} N) :
     letI : SMulCommClass Sᵐᵒᵖ k (ULift.{z} N) := ULift.smulCommClassOfBase Sᵐᵒᵖ k N
     letI : SMulCommClass R Sᵐᵒᵖ (ULift.{z} N) := ULift.smulCommClassOfBase R Sᵐᵒᵖ N
@@ -166,7 +231,13 @@ theorem uliftRightEquiv_mk (m : ULift.{z} M) (n : ULift.{z} N) :
   change ULift.up (uliftRightCarrierEquiv k R S M N _ ) = _
   rw [uliftRightCarrierEquiv_mk]
 
-/-- The inverse whole-output comparison inserts the actual two native input lifts. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+At a common lift height z, the inverse comparison from the lifted
+output sends ULift.up([m ⊗ n]) to
+[ULift.up(m) ⊗ ULift.up(n)]. -/
 theorem uliftRightEquiv_symm_mk (m : M) (n : N) :
     letI := rightModule k R S (ULift.{z} M) (ULift.{z} N)
     letI := rightModule k R S M N
@@ -187,7 +258,15 @@ variable {M' : Type a'} {N' : Type b'} [AddCommGroup M'] [AddCommGroup N']
   (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
   (hgS : ∀ (s : Sᵐᵒᵖ) (n : N), g (s • n) = s • g n)
 
-/-- Actual input and coefficient maps commute with lowering native lifted coordinates. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+Let k-linear maps f : M → M′ and g : N → N′ preserve right R and
+left R/right S respectively, with the same action structures on the targets.
+At a common lift height z, lowering lifted factors commutes with the
+induced quotient maps: lower′ ∘ tensor(ULift f, ULift g) =
+tensor(f, g) ∘ lower. -/
 theorem uliftRightCarrierEquiv_naturality :
     letI := rightModule k R S (ULift.{z} M) (ULift.{z} N)
     letI := rightModule k R S (ULift.{z} M') (ULift.{z} N')
@@ -225,7 +304,14 @@ theorem uliftRightCarrierEquiv_naturality :
   rw [hLift, uliftRightCarrierEquiv_mk, uliftRightCarrierEquiv_mk, hBase]
   rfl
 
-/-- Whole-output lift comparison is natural in the same actual ordered coefficient maps. -/
+/-- Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+Let k-linear maps f : M → M′ and g : N → N′ preserve right R and
+left R/right S respectively, with the same action structures on the targets.
+At a common lift height z, the whole-output comparison χ satisfies
+χ′ ∘ tensor(ULift f, ULift g) = ULift(tensor(f, g)) ∘ χ. -/
 theorem uliftRightEquiv_naturality :
     letI := rightModule k R S (ULift.{z} M) (ULift.{z} N)
     letI := rightModule k R S (ULift.{z} M') (ULift.{z} N')

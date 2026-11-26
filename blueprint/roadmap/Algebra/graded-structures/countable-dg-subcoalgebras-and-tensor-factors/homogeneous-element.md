@@ -1,3 +1,5 @@
-# Homogeneous Element
+# An element with its integer homogeneous degree
 
-An actual homogeneous element, retaining its original integer degree.
+An element with its integer homogeneous degree.
+
+A homogeneous element is a pair (n,x) with n ∈ ℤ and x ∈ C_n.

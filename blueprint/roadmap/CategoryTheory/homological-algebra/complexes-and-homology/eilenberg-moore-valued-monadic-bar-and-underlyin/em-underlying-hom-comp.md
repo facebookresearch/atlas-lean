@@ -1,4 +1,5 @@
-# Em Underlying Hom comp
+# Forgotten-module augmented maps preserve composition
 
-Composition of algebra morphisms induces composition of underlying maps.
-Mirrors `BarResolution.resolutionHom_comp`.
+Let T be a monad on C and φ : alg₁ → alg₂, ψ : alg₂ → alg₃ algebra morphisms. Then
+emUnderlyingHom(φ) ≫ emUnderlyingHom(ψ) = emUnderlyingHom(φ ≫ ψ), as augmented simplicial maps
+of C.

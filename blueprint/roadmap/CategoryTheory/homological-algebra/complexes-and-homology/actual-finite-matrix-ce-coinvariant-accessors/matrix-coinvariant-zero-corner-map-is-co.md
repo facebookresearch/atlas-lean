@@ -1,3 +1,5 @@
-# Matrix Coinvariant Zero Corner Map Is Comon Hom
+# Comonoid compatibility of matrix coinvariant size maps
 
-The zero-corner map has coinvariant coalgebra compatibility.
+Comonoid compatibility of matrix coinvariant size maps.
+
+Zero-extension maps preserve the descended coinvariant coproduct and counit.

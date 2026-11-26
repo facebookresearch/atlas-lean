@@ -15,11 +15,15 @@ public import Mathlib.CategoryTheory.Preadditive.Biproducts
 public import MathlibExt.CategoryTheory.Limits.Shapes.BinaryBiproducts
 
 /-!
-# Literal coordinates for native binary biproduct matrices
+# Coordinates of binary and nested biproduct matrix maps
 
-The matrix object and multiplication remain native `Biprod.ofComponents`
-and `Biprod.ofComponents_comp`. These equations recover the literal
-desc/lift and nested three-entry coordinates of actual consumers.
+Let C be preadditive with binary biproducts. For maps fᵢⱼ : X_i → Y_j, the binary matrix map
+X₁ ⊞ X₂ → Y₁ ⊞ Y₂ is desc(lift(f₁₁,f₁₂),lift(f₂₁,f₂₂)). Postcomposing with desc(g₁,g₂) gives
+desc(f₁₁ ≫ g₁ + f₁₂ ≫ g₂, f₂₁ ≫ g₁ + f₂₂ ≫ g₂).
+
+For three factors, the nested matrix retains the order (X₁ ⊞ X₂) ⊞ X₃ and (Y₁ ⊞ Y₂) ⊞ Y₃. Its
+row maps are lift(lift(fᵢ₁,fᵢ₂),fᵢ₃), assembled by desc(desc(row₁,row₂),row₃). The object and
+morphism universes remain independent.
 -/
 
 @[expose] public section
@@ -34,7 +38,11 @@ open Limits
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasBinaryBiproducts C]
 
-/-- The native matrix has the actual universal desc/lift coordinates. -/
+/-- Binary matrix map as a descendant of row lifts.
+
+In a preadditive category with binary biproducts, the map with entries fᵢⱼ : X_i → Y_j is
+Biprod.ofComponents(f₁₁,f₁₂,f₂₁,f₂₂) = desc(lift(f₁₁,f₁₂),lift(f₂₁,f₂₂)). Its source is X₁ ⊞
+X₂ and target Y₁ ⊞ Y₂. -/
 lemma Biprod.ofComponents_eq_desc_lift {X₁ X₂ Y₁ Y₂ : C}
     (f₁₁ : X₁ ⟶ Y₁) (f₁₂ : X₁ ⟶ Y₂) (f₂₁ : X₂ ⟶ Y₁) (f₂₂ : X₂ ⟶ Y₂) :
     Biprod.ofComponents f₁₁ f₁₂ f₂₁ f₂₂ =
@@ -42,7 +50,11 @@ lemma Biprod.ofComponents_eq_desc_lift {X₁ X₂ Y₁ Y₂ : C}
   simp only [Biprod.ofComponents, biprod.desc_eq, biprod.lift_eq,
     Preadditive.comp_add, add_assoc]
 
-/-- Binary matrix-vector composition on the actual chosen biproduct. -/
+/-- Composition of a binary matrix with an output descendant.
+
+For entries fᵢⱼ : X_i → Y_j and maps g_j : Y_j → Z in a preadditive category with binary
+biproducts, the matrix followed by desc(g₁,g₂) equals desc(f₁₁ ≫ g₁ + f₁₂ ≫ g₂, f₂₁ ≫ g₁ + f₂₂
+≫ g₂). -/
 @[reassoc]
 lemma Biprod.ofComponents_desc {X₁ X₂ Y₁ Y₂ Z : C}
     (f₁₁ : X₁ ⟶ Y₁) (f₁₂ : X₁ ⟶ Y₂) (f₂₁ : X₂ ⟶ Y₁) (f₂₂ : X₂ ⟶ Y₂)
@@ -52,7 +64,11 @@ lemma Biprod.ofComponents_desc {X₁ X₂ Y₁ Y₂ Z : C}
   rw [Biprod.ofComponents_eq_desc_lift, biprod.desc_comp,
     biprod.lift_desc, biprod.lift_desc]
 
-/-- The existing native block matrix retains the literal `(X₁ ⊞ X₂) ⊞ X₃` order. -/
+/-- Three-factor matrix in nested biproduct coordinates.
+
+For entries fᵢⱼ : X_i → Y_j in a preadditive category with binary biproducts, the nested block
+matrix from (X₁ ⊞ X₂) ⊞ X₃ to (Y₁ ⊞ Y₂) ⊞ Y₃ equals desc(desc(row₁,row₂),row₃), where row_i =
+lift(lift(fᵢ₁,fᵢ₂),fᵢ₃). The formula retains the displayed nesting and factor order. -/
 lemma Biprod.ofComponents_nested_eq_desc_lift {X₁ X₂ X₃ Y₁ Y₂ Y₃ : C}
     (f₁₁ : X₁ ⟶ Y₁) (f₁₂ : X₁ ⟶ Y₂) (f₁₃ : X₁ ⟶ Y₃)
     (f₂₁ : X₂ ⟶ Y₁) (f₂₂ : X₂ ⟶ Y₂) (f₂₃ : X₂ ⟶ Y₃)

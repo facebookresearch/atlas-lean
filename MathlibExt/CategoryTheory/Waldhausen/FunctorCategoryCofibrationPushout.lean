@@ -17,13 +17,16 @@ public import Mathlib.CategoryTheory.Limits.FunctorCategory.Basic
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Actual functor-category pushouts along original component cofibrations
+# Pointwise cofibration pushouts in functor categories
 
-Original base cofibration pushouts supply each component colimit.
-The standard span-composition isomorphism places these at the exact
-pointwise functor-category diagram types. The existing pointwise colimit
-construction then supplies the whole pushout and preservation by every
-evaluation, without assuming all pushouts of the base category.
+Let J be any category and C have a zero object and WaldhausenCategoryWithoutGluing structure.
+For natural transformations i : X → Y and g : X → Z in J ⥤ C, suppose every i_j is a
+cofibration. The cofibration-pushout axiom supplies each component pushout of g_j and i_j, and
+these component colimits give the pushout of the whole span.
+
+Every evaluation functor preserves this particular pushout. Hence the components of its chosen
+legs form the corresponding pushout square in C. The indexing and coefficient-category object
+and morphism universes are independent.
 -/
 
 public section
@@ -51,16 +54,22 @@ private theorem componentSpanHasColimit (i : X ⟶ Y) (g : X ⟶ Z)
     exact hp.hasPushout
   exact hasColimit_of_iso (spanCompIso ((evaluation J C).obj j) g i)
 
-/-- Original component cofibrations supply the actual whole
-functor-category pushout, through the standard pointwise construction. -/
+/-- Pushout of a pointwise cofibration in a functor category.
+
+Let C carry a zero object and WaldhausenCategoryWithoutGluing structure. For i : X → Y and g :
+X → Z in J ⥤ C, if every i_j is a cofibration, the pushout of g and i exists. Its pointwise
+colimits are supplied by the cofibration-pushout axiom in C. -/
 theorem functorCategoryHasPushoutOfCofibrations (i : X ⟶ Y) (g : X ⟶ Z)
     (hi : ∀ j : J, IsCofibration (i.app j)) : HasPushout g i := by
   let : ∀ j : J, HasColimit ((span g i).flip.obj j) :=
     fun j => componentSpanHasColimit i g hi j
   infer_instance
 
-/-- Every original evaluation preserves the same componentwise
-cofibration pushout of the whole functor-category diagram. -/
+/-- Evaluation preservation of a pointwise cofibration pushout.
+
+For i : X → Y pointwise a cofibration and g : X → Z in J ⥤ C, every evaluation at j preserves
+the colimit of the span g,i. The category C has a zero object and
+WaldhausenCategoryWithoutGluing structure, which supplies these component pushouts. -/
 theorem functorCategoryEvaluationPreservesPushoutOfCofibrations
     (i : X ⟶ Y) (g : X ⟶ Z) (hi : ∀ j : J, IsCofibration (i.app j)) (j : J) :
     PreservesColimit (span g i) ((evaluation J C).obj j) := by
@@ -68,8 +77,11 @@ theorem functorCategoryEvaluationPreservesPushoutOfCofibrations
     fun j => componentSpanHasColimit i g hi j
   infer_instance
 
-/-- The actual selected whole pushout has the original component
-pushout square at every evaluation, with the same selected leg maps. -/
+/-- Component square of the chosen functor-category pushout.
+
+For a pointwise cofibration i : X → Y and g : X → Z, choose their pushout in J ⥤ C using the
+component construction. At each j, its legs (pushout.inl)_j and (pushout.inr)_j form a pushout
+square of g_j and i_j in C. -/
 theorem functorCategoryPushout_app_isPushout (i : X ⟶ Y) (g : X ⟶ Z)
     (hi : ∀ j : J, IsCofibration (i.app j)) (j : J) :
     letI : HasPushout g i := functorCategoryHasPushoutOfCofibrations i g hi;

@@ -1,3 +1,6 @@
-# Linear Homotopy Functor map
+# Target map of descended Hom is the postcomposition class
 
-Every original target map keeps precisely its original quotient class.
+Target map of descended Hom is the postcomposition class.
+
+For a target cochain map `g`, the descended functor on its quotient class is the quotient
+image of `linearComplexMap R (𝟙 P) g`.

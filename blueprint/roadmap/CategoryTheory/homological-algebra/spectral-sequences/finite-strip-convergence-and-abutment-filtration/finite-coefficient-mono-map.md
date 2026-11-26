@@ -1,3 +1,5 @@
-# Finite Coefficient mono map
+# Monic successor maps make every inverse-sequence transition monic
 
-Every transition map in an inverse sequence is mono if its successor maps are mono.
+Monic successor maps make every inverse-sequence transition monic.
+
+For n≤m, the transition F_m → F_n is monic when each F_{k+1} → F_k is monic.

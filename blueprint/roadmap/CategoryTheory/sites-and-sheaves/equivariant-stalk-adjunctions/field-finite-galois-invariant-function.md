@@ -1,3 +1,6 @@
-# Field Finite Galois Invariant Function
+# Fixed coefficient as an equivariant embedding function
 
-An invariant element gives its literal equivariant function on original embeddings.
+Fixed coefficient as an equivariant embedding function.
+
+For a fixed coefficient `m`, send an embedding `ξ` to `g • m`, where `g` extends `ξ`. The
+fixing condition makes the value independent of the extension.

@@ -1,3 +1,6 @@
-# Forget
+# The functor forgetting the module grading
 
-The forgetful functor to `R`-modules.
+The functor forgetting the module grading.
+
+Send a graded module to its underlying R-module and a graded morphism to its underlying
+R-linear map.

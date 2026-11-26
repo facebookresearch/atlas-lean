@@ -1,3 +1,7 @@
-# Projector Cokernel Iso Kernel π hom
+# Quotient formula for the idempotent comparison
 
-The original cokernel projection computes the original complementary retraction.
+In a preadditive category `C`, let `p : X → X` be idempotent
+and suppose its kernel exists. If its cokernel
+also exists, the cokernel projection followed by
+`cokernel p ≅ kernel p` equals the complementary retraction
+`X → kernel p`.

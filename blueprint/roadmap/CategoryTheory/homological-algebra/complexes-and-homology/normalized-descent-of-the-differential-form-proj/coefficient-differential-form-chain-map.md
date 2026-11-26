@@ -1,3 +1,6 @@
-# Coefficient Differential Form Chain Map degeneracy
+# The coefficient-form chain projection kills unit degeneracies
 
-Every original unit degeneracy vanishes after the constructed raw chain projection.
+The coefficient-form chain projection kills unit degeneracies.
+
+Inserting a unit into any Hochschild tail position and then applying the coefficient
+differential-form chain map gives the zero map.

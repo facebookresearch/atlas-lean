@@ -1,3 +1,6 @@
-# Unit Image Counit hom
+# Underlying map of the image-unit comonoid counit
 
-The underlying map is exactly the original oplax unit comparison.
+Underlying map of the image-unit comonoid counit.
+
+For an oplax monoidal functor F, the underlying arrow F(𝟙_C) → 𝟙_D of unitImageCounit F is
+precisely the oplax unit comparison η_F.

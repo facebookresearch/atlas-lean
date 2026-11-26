@@ -11,7 +11,15 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Sites.CanonicalPrescribedMonadPairing
 
-/-! # The genuine original Godement-to-prescribed point binary pairing -/
+/-!
+# The Godement binary pairing at a prescribed closure point
+
+Let Ω be a prescribed separable closure of a field k. The composite Godement-to-canonical and
+canonical-to-prescribed point comparisons gives a natural isomorphism of the two endofunctors.
+
+It preserves the binary tensor pairing: the Godement pairing followed by the comparison at F⊗G
+equals tensoring the comparisons at F and G and then applying the prescribed point pairing.
+-/
 
 @[expose] public section
 noncomputable section
@@ -22,7 +30,9 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The same actual full Godement/prescribed point monad iso as a natural endofunctor comparison. -/
+/-- For a field k and prescribed separable closure Ω, compose the singleton Godement collapse with
+the canonical-to-prescribed point endofunctor comparison. This gives T_G ≅ T_Ω on small-étale
+additive-group sheaves of height max(u,w), using the same monad-isomorphism components. -/
 def fieldGodementPrescribedPointEndofunctorIso :
     (smallEtaleGodementMonad.{u, w} (Spec (.of k))).toFunctor ≅
       (fieldPrescribedPointMonad.{u, w} k Ω).toFunctor :=
@@ -30,8 +40,10 @@ def fieldGodementPrescribedPointEndofunctorIso :
     fieldCanonicalPrescribedPointEndofunctorIso.{u, w} k Ω
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual original Godement monad comparison to the prescribed Ω point preserves its binary
-tensor pairing. -/
+/-- Let k have prescribed separable closure Ω, θ : T_G ≅ T_Ω be the Godement-to-point comparison,
+and λ_Ω the prescribed point tensor pairing. For sheaves F,G,
+λ_G(F,G)≫θ_{F⊗G}=(θ_F⊗θ_G)≫λ_Ω(F,G). The tensor products are the integer tensor coefficient
+sheaves. -/
 theorem fieldGodementPrescribedPointMonadIso_tensorPairing
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let e := fieldGodementPrescribedPointEndofunctorIso.{u, w} k Ω

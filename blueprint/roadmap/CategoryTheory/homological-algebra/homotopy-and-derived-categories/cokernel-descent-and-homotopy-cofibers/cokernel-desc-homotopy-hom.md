@@ -1,4 +1,6 @@
-# Cokernel Desc Homotopy Hom
+# The homotopy component induced on a cokernel
 
-Descended homotopy maps: the absolute homotopy maps, taken through the
-degreewise-cokernel comparison iso.
+The homotopy component induced on a cokernel.
+
+Using the compatible homotopy components H and H′, descend H(n,m) followed by the target
+cokernel projection to a map (coker a)_n → (coker a)_m.

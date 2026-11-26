@@ -1,3 +1,6 @@
-# Tensor Pow Functor
+# Finite tensor-power functor on cochain complexes
 
-The `n`-fold DG tensor power as a functor of its base complex.
+Finite tensor-power functor on cochain complexes.
+
+For a fixed n : ℕ, the assignment X ↦ Pₙ(X), f ↦ Pₙ(f) defines a functor on
+CochainComplex(ModuleCat R,ℤ), using the specified graded binary tensor coproducts.

@@ -16,17 +16,21 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolutionZer
 public import Mathlib.LinearAlgebra.TensorProduct.Projective
 
 /-!
-# Literal tensor augmentations of actual projective resolutions
+# Tensor-total augmentations and projective resolutions
 
-The tensor product is Mathlib's direct-sum total of the original two
-nonnegative resolution complexes. Its augmentation is the tensor of their
-actual augmentations. The total differential has sign one in the first
-direction and sign `(-1)^p` in the second direction.
+Let `R : Type u` be a commutative ring and use the module category with carrier universe `max
+u v`. For nonnegative chain complexes, tensor totalization has degree-`n` term the direct sum
+of `K_p ⊗_R L_q` over `p + q = n`, and differential `d_K ⊗ 1 + (-1)^p 1 ⊗ d_L` on the `(p, q)`
+summand.
 
-The existing bifunctor augmentation comparison and native derived-zero
-normalization identify its homology with the original native Tor and identify
-degree zero with the literal tensor of the resolved modules. No length or
-boundedness hypothesis is imposed on the resolutions or their coefficients.
+Two degree-zero augmentations induce a tensor augmentation to `(M ⊗_R N)[0]`. For projective
+resolutions of `M` and `N`, the total homology is `Tor_n^R(M, N)`, and its degree-zero
+comparison is the tensor of the two augmentations.
+
+The total terms are projective, and its tensor augmentation is a quasi-isomorphism exactly
+when all positive Tor groups of `(M, N)` vanish. Under that condition it defines a projective
+resolution of `M ⊗_R N`. Resolution morphisms induce the corresponding tensor resolution
+morphisms and commute with the augmentations and degree-zero homology coordinates.
 -/
 
 @[expose] public section
@@ -70,8 +74,10 @@ variable {M N : (ModuleCat.{max u v} R)}
 
 variable {K L : ChainComplex (ModuleCat.{max u v} R) ℕ}
 
-/-- The literal tensor of two actual chain augmentations, with the canonical
-comparison of the tensor of their degree-zero singles. -/
+/-- Tensor augmentation of two nonnegative chain complexes.
+
+For augmentations `π : K ⟶ M[0]` and `ρ : L ⟶ N[0]`, tensor the chain maps and identify the
+tensor of the single complexes with `(M ⊗ N)[0]`. -/
 def tensorAugmentation
     (π : K ⟶ (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj M)
     (ρ : L ⟶ (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj N) :
@@ -82,7 +88,10 @@ def tensorAugmentation
       ((ChainComplex.single₀ (ModuleCat.{max u v} R)).obj M) N ≪≫
         (HomologicalComplex.singleMapHomologicalComplex (tensorRight N) c 0).app M).hom
 
-/-- The degree-zero tensor representative uses both actual chain augmentations. -/
+/-- Tensor augmentation on the degree-zero summand.
+
+The inclusion of the `(0, 0)` tensor summand followed by the degree-zero tensor augmentation
+is `π.f 0 ⊗ₘ ρ.f 0`. -/
 @[reassoc]
 theorem ι_tensorAugmentation_zero
     (π : K ⟶ (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj M)
@@ -100,15 +109,19 @@ theorem ι_tensorAugmentation_zero
   intro y
   rfl
 
-/-- The actual tensor of the two original resolution augmentations, with the
-canonical identification of the tensor of degree-zero singles. -/
+/-- Tensor augmentation of two projective resolutions.
+
+For projective resolutions `P` of `M` and `Q` of `N`, the tensor-total augmentation is
+`tensorAugmentation R P.π Q.π`, with target `(M ⊗ N)[0]`. -/
 def tensorResolutionAugmentation (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
     HomologicalComplex.tensorObj P.complex Q.complex ⟶
       (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj (M ⊗ N) :=
   tensorAugmentation R P.π Q.π
 
-/-- The original degree-zero tensor representative maps by both original
-augmentation maps, in their original order. -/
+/-- Resolution tensor augmentation on the degree-zero summand.
+
+The `(0, 0)` inclusion into the tensor total followed by its augmentation is the tensor
+product of `P.π.f 0` and `Q.π.f 0`. -/
 @[reassoc]
 theorem ι_tensorResolutionAugmentation_zero
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
@@ -124,8 +137,10 @@ private theorem projectiveTensorRightPreservesHomology (Y : (ModuleCat.{max u v}
   rw [ShortComplex.ShortExact.moduleCat_exact_iff_function_exact] at hS ⊢
   exact Module.Flat.rTensor_exact Y hS
 
-/-- Total homology of the actual tensor of two projective resolutions is
-the original native Tor of the original resolved modules. -/
+/-- Tensor of projective resolutions computes Tor.
+
+For natural `n`, the degree-`n` homology of the direct-sum tensor total of `P.complex` and
+`Q.complex` is isomorphic to `Tor_n^R(M, N)` in `ModuleCat.{max u v} R`. -/
 def tensorResolutionHomologyIso (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
     (n : ℕ) :
     (HomologicalComplex.tensorObj P.complex Q.complex).homology n ≅
@@ -139,15 +154,19 @@ def tensorResolutionHomologyIso (P : ProjectiveResolution M) (Q : ProjectiveReso
   exact isoOfQuasiIsoAt (Functor.LeftDerivedBalance.leftAugmentation F P Q.complex) n ≪≫
     (Q.isoLeftDerivedObj (tensorLeft M) n).symm
 
-/-- The canonical degree-zero comparison for the original tensor total has
-the literal tensor product of the original coefficients as its target. -/
+/-- Zeroth tensor-resolution homology is the tensor of the resolved modules.
+
+Compose the tensor-total homology coordinate in degree zero with the zero-Tor isomorphism to
+obtain `H₀(P ⊗ Q) ≅ M ⊗ N`. -/
 def tensorResolutionHomologyZeroIso (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
     (HomologicalComplex.tensorObj P.complex Q.complex).homology 0 ≅ M ⊗ N :=
   tensorResolutionHomologyIso R P Q 0 ≪≫ nativeTorZeroIso R M N
 
 
-/-- The canonical native degree-zero comparison carries the original total
-quotient class to the tensor of the two original augmentation maps. -/
+/-- Zeroth tensor homology coordinate evaluates the two augmentations.
+
+The `(0, 0)` summand inclusion, followed by the zeroth homology class map and the homology-
+zero comparison, equals `P.π.f 0 ⊗ₘ Q.π.f 0`. -/
 @[reassoc]
 theorem ι_tensorResolutionHomologyZeroIso_hom
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
@@ -196,8 +215,10 @@ theorem ι_tensorResolutionHomologyZeroIso_hom
   change (a ▷ Q.complex.X 0) ≫ (M ◁ b) = a ⊗ₘ b
   exact (tensorHom_def a b).symm
 
-/-- The canonical H0 quotient followed by the native tensor comparison is
-exactly the degree-zero component of the literal tensor augmentation. -/
+/-- Tensor-resolution augmentation factors through zeroth homology.
+
+The degree-zero tensor-resolution augmentation is the zeroth homology class map followed by
+`tensorResolutionHomologyZeroIso R P Q` on forward maps. -/
 theorem tensorResolutionAugmentation_f_zero
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
     (tensorResolutionAugmentation R P Q).f 0 =
@@ -228,8 +249,10 @@ private theorem homologyZeroClass_single_hom (X : ModuleCat.{max u v} R) :
   rw [← hE, Iso.inv_hom_id_assoc]
   exact hp
 
-/-- The actual homology map of the tensor augmentation is the canonical
-native H0 tensor comparison, with the target's standard single homology iso. -/
+/-- Tensor-resolution augmentation induces its canonical homology-zero coordinate.
+
+The degree-zero homology map of the tensor augmentation, followed by the homology coordinate
+of the target single complex, equals the forward homology-zero tensor comparison. -/
 @[reassoc]
 theorem tensorResolutionAugmentation_homology_zero
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
@@ -259,8 +282,10 @@ theorem tensorResolutionAugmentation_homology_zero
     _ = δ := Category.comp_id _
     _ = _ := hδ
 
-/-- The literal tensor augmentation is a quasi-isomorphism precisely when
-all positive original native Tor modules vanish. -/
+/-- Tensor-resolution augmentation is a quasi-isomorphism exactly for positive Tor vanishing.
+
+The augmentation `P ⊗ Q → (M ⊗ N)[0]` is a quasi-isomorphism if and only if `Tor_(n+1)^R(M,
+N)` is zero for every natural `n`. -/
 theorem tensorResolutionAugmentation_quasiIso_iff
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
     QuasiIso (tensorResolutionAugmentation R P Q) ↔
@@ -300,8 +325,10 @@ theorem tensorResolutionAugmentation_quasiIso_iff
         ((ChainComplex.exactAt_succ_single_obj (M ⊗ N) n).isZero_homology)
         (HomologicalComplex.homologyMap π (n + 1))
 
-/-- Every original tensor-total term is projective, without finite generation
-or boundedness assumptions on either actual resolution. -/
+/-- Every tensor-total resolution term is projective.
+
+For each natural degree `n`, the degree-`n` object of the tensor total of two projective
+resolutions is categorically projective in the module category. -/
 theorem tensorResolutionTotal_projective
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) (n : ℕ) :
     Projective ((HomologicalComplex.tensorObj P.complex Q.complex).X n) := by
@@ -329,8 +356,10 @@ theorem tensorResolutionTotal_projective
   change Projective (∐ A)
   exact Projective.of_iso (Sigma.reindex ε A) hA
 
-/-- Under actual positive Tor vanishing, the original tensor total with the
-literal tensor augmentation is a genuine projective resolution. -/
+/-- Projective resolution of a tensor product under positive Tor vanishing.
+
+If all positive Tor groups of `(M, N)` vanish, the tensor total of `P` and `Q`, with its
+tensor augmentation, defines a projective resolution of `M ⊗ N`. -/
 def tensorProjectiveResolution (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
     (hTor : ∀ n : ℕ, IsZero (((Tor (ModuleCat.{max u v} R) (n + 1)).obj M).obj N)) :
     ProjectiveResolution (M ⊗ N) where
@@ -339,7 +368,10 @@ def tensorProjectiveResolution (P : ProjectiveResolution M) (Q : ProjectiveResol
   projective := tensorResolutionTotal_projective R P Q
   quasiIso := (tensorResolutionAugmentation_quasiIso_iff R P Q).mpr hTor
 
-/-- The constructed resolution retains the literal original tensor total. -/
+/-- Underlying complex of the tensor-product projective resolution.
+
+The complex of `tensorProjectiveResolution R P Q hTor` is the direct-sum tensor total of
+`P.complex` and `Q.complex`. -/
 @[simp]
 theorem tensorProjectiveResolution_complex
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
@@ -347,7 +379,10 @@ theorem tensorProjectiveResolution_complex
     (tensorProjectiveResolution R P Q hTor).complex =
       HomologicalComplex.tensorObj P.complex Q.complex := rfl
 
-/-- The constructed resolution retains the tensor of both actual augmentations. -/
+/-- Augmentation of the tensor-product projective resolution.
+
+The projection of `tensorProjectiveResolution R P Q hTor` is `tensorResolutionAugmentation R P
+Q`. -/
 @[simp]
 theorem tensorProjectiveResolution_π
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
@@ -355,8 +390,11 @@ theorem tensorProjectiveResolution_π
     (tensorProjectiveResolution R P Q hTor).π = tensorResolutionAugmentation R P Q := rfl
 
 
-/-- The canonical H0 projection followed by the native tensor comparison is
-exactly the literal augmentation as a chain map. -/
+/-- Tensor augmentation as projection to zeroth homology.
+
+The tensor-resolution augmentation is the chain map to the single complex on zeroth homology
+induced by the class map, followed by the single-complex image of
+`tensorResolutionHomologyZeroIso R P Q`. -/
 theorem tensorResolutionAugmentation_eq_projection
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N) :
     tensorResolutionAugmentation R P Q =
@@ -388,8 +426,11 @@ theorem tensorResolutionAugmentation_eq_projection
 
 variable {M' N' : ModuleCat.{max u v} R}
 
-/-- Simultaneous actual resolution maps commute with the literal tensor
-augmentation and the tensor of their actual coefficient maps. -/
+/-- Tensor-resolution augmentations commute with resolution morphisms.
+
+For resolution morphisms `f` over `a : M ⟶ M'` and `g` over `b : N ⟶ N'`, their tensor complex
+map followed by the target augmentation equals the source augmentation followed by the single-
+complex map of `a ⊗ₘ b`. -/
 @[reassoc]
 theorem tensorResolutionAugmentation_naturality
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
@@ -451,8 +492,10 @@ theorem tensorResolutionAugmentation_naturality
   | succ n =>
     exact (HomologicalComplex.isZero_single_obj_X c 0 (M' ⊗ N') (n + 1) (by omega)).eq_of_tgt _ _
 
-/-- The canonical degree-zero tensor comparison is natural under the same
-actual simultaneous resolution and coefficient maps. -/
+/-- Zeroth tensor-resolution homology coordinates are natural.
+
+The homology map of the tensor of resolution morphisms, followed by the target homology-zero
+coordinate, equals the source coordinate followed by the tensor of the resolved module maps. -/
 @[reassoc]
 theorem tensorResolutionHomologyZeroIso_naturality
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
@@ -490,8 +533,11 @@ theorem tensorResolutionHomologyZeroIso_naturality
     _ = δ ≫ (a ⊗ₘ b) := hα
     _ = _ := by rw [hδ, Category.assoc]
 
-/-- The actual simultaneous tensor map is a map of the constructed genuine
-projective resolutions, with the original tensor coefficient map. -/
+/-- Tensoring morphisms of projective resolutions.
+
+When both resolved module pairs have vanishing positive Tor, two resolution morphisms over `a`
+and `b` induce a morphism of tensor-product resolutions over `a ⊗ₘ b`. Its complex map is the
+tensor of the given resolution maps. -/
 def tensorProjectiveResolutionHom
     (P : ProjectiveResolution M) (Q : ProjectiveResolution N)
     (P' : ProjectiveResolution M') (Q' : ProjectiveResolution N')

@@ -2,14 +2,14 @@
 
 ## Monoidal
 
-- [Tensor Obj eq](tensor-obj-eq.md)
-- [Tensor Hom apply heq](tensor-hom-apply-heq.md)
-- [Associator hom apply heq](associator-hom-apply-heq.md)
+- [Congruence of graded tensor objects](tensor-obj-eq.md)
+- [Heterogeneous congruence of a graded tensor-map component](tensor-hom-apply-heq.md)
+- [Heterogeneous congruence of a graded associator component](associator-hom-apply-heq.md)
 
 ## Homological Complex
 
-- [Tensor Obj X eq graded](tensor-obj-x-eq-graded.md)
-- [Tensor Hom f eq graded](tensor-hom-f-eq-graded.md)
-- [Associator hom f eq graded](associator-hom-f-eq-graded.md)
-- [Tensor Hom f heq](tensor-hom-f-heq.md)
-- [Associator hom f heq](associator-hom-f-heq.md)
+- [The graded carrier of a tensor product of complexes](tensor-obj-x-eq-graded.md)
+- [The graded component formula for a tensor map of complexes](tensor-hom-f-eq-graded.md)
+- [The graded component formula for a complex associator](associator-hom-f-eq-graded.md)
+- [Heterogeneous congruence of complex tensor-map components](tensor-hom-f-heq.md)
+- [Heterogeneous congruence of complex associator components](associator-hom-f-heq.md)

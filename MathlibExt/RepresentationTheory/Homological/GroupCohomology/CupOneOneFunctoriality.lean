@@ -14,15 +14,13 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOneOneNaturality
 
 /-!
-# Functoriality of the degree-one cup product
+# Group and coefficient naturality of one-cocycle cups
 
-The inhomogeneous degree-`(1, 1)` cup representative is natural jointly in a
-group homomorphism and two compatible coefficient morphisms.  This is the
-representative-level statement needed to compare cup classes after restricting
-the acting group and changing coefficients.
-
-No injectivity, surjectivity, inflation, restriction, or comparison theorem is
-asserted here.
+Let `f : G →* H` be a homomorphism of groups, `k` a commutative ring, `A,B` representations of
+`H`, and `A',B'` representations of `G`. For equivariant maps `φ : Rep.res f A → A'` and `ψ :
+Rep.res f B → B'`, pulling back one-cocycles along `f` and applying `φ,ψ` commutes with their
+degree-`(1,1)` cup. The pulled-back cochain is `g ↦ φ(x(f g))`, and the cup formula is `(x ∪
+y)(g,h) = x(g) ⊗ g·y(h)`.
 -/
 
 @[expose] public section
@@ -40,8 +38,11 @@ namespace groupCohomology
 variable {k G H : Type u} [CommRing k] [Group G] [Group H]
 variable {A B : Rep k H} {A' B' : Rep k G}
 
-/-- Joint group-and-coefficient naturality of the degree-`(1, 1)` cup
-representative. -/
+/-- Let `k` be a commutative ring, `f : G →* H` a group homomorphism, `A,B : Rep k H`, and `A',B'
+: Rep k G`. For morphisms `φ : Rep.res f A → A'`, `ψ : Rep.res f B → B'` and one-cocycles
+`x,y` with values in `A,B`, respectively, `mapCocycles₂ f (φ ⊗ ψ) (x ∪ y) = (mapCocycles₁ f φ
+x) ∪ (mapCocycles₁ f ψ y)` in `Z²(G,A' ⊗ B')`. The maps on one-cocycles have pointwise values
+`φ(x(f g))` and `ψ(y(f g))`. -/
 theorem mapCocycles₂_cupCocycleOneOne_of_hom
     (f : G →* H) (phi : Rep.res f A ⟶ A') (psi : Rep.res f B ⟶ B')
     (x : cocycles₁ A) (y : cocycles₁ B) :

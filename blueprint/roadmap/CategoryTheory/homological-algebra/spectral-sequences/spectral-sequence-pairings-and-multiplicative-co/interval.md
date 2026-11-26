@@ -1,3 +1,5 @@
-# Intervalδ
+# The triple-interval boundary map
 
-The original triple boundary, with explicit integer degree transport.
+The triple-interval boundary map.
+
+For a≤b≤c, the boundary sends H_n(b,c) to H_{n+1}(a,b).

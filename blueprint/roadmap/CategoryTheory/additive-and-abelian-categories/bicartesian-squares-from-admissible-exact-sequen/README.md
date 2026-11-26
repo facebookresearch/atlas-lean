@@ -1,7 +1,7 @@
 # Bicartesian squares from admissible exact sequences
 
-- [Is Pushout of is Admissible Exact short Complex](is-pushout-of-is-admissible-exact-short.md)
-- [Is Pullback of is Admissible Exact short Complex'](is-pullback-of-is-admissible-exact-short.md)
-- [Is Pullback g of is Admissible Exact of is Iso left](is-pullback-g-of-is-admissible-exact-of.md)
-- [Is Admissible Mono middle of is Iso left](is-admissible-mono-middle-of-is-iso-left.md)
-- [Is Pushout f of is Admissible Exact of is Iso right](is-pushout-f-of-is-admissible-exact-of-i.md)
+- [Pushouts characterized by admissible exact pairs](is-pushout-of-is-admissible-exact-short.md)
+- [Pullbacks characterized by admissible exact pairs](is-pullback-of-is-admissible-exact-short.md)
+- [Pullback of the final exact-sequence maps](is-pullback-g-of-is-admissible-exact-of.md)
+- [Admissible middle map from an invertible left component](is-admissible-mono-middle-of-is-iso-left.md)
+- [Pushout of the initial exact-sequence maps](is-pushout-f-of-is-admissible-exact-of-i.md)

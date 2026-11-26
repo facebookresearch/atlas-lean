@@ -1,3 +1,6 @@
-# Cycles Tensor Bicomplex Sequence
+# Tensor bicomplex sequence from cycles to terms to outgoing images
 
-The original canonical complex sequence after the actual fixed-Q raw bifunctor.
+Tensor bicomplex sequence from cycles to terms to outgoing images.
+
+Apply the balanced tensor bicomplex construction with fixed `Q` to the short complex
+`cyclesZeroComplex P ⟶ P ⟶ outgoingImageZeroComplex P`.

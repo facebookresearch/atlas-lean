@@ -12,10 +12,21 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleTensorCoefficients
 
 /-!
-# The actual binary Godement pairing
+# Tensor pairings of the Godement monad and its coresolution
 
-The canonical stalk tensor isomorphism and the actual family counit give the
-binary map on the original Godement construction by adjunction.
+Let X be a scheme in universe u and c = max(u, w).
+For AddCommGrpCat c-valued étale sheaves, the stalk-family functor L has
+product-skyscraper right adjoint R and Godement monad T = R L.
+The tensor stalk isomorphism is pointwise over X.
+
+The adjoint transpose of the tensor of the family counits gives
+R(M) ⊗_sheaf R(N) → R(M ⊗[ℤ] N).
+It induces the lax tensor map m : T(F) ⊗_sheaf T(H) → T(F ⊗_sheaf H),
+natural in coefficients and compatible with the monad unit and multiplication.
+Its iterates m_n pair T^n(F) and T^n(H).
+The cosimplicial Godement coresolution has degree n term T^(n+1)(F);
+its pairing commutes with every coface and with coefficient maps.
+The scheme and coefficient universes are independent.
 -/
 
 @[expose] public section
@@ -27,13 +38,21 @@ open scoped TensorProduct
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The literal pointwise integer tensor of the original coefficient families. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient families M_x, N_x over x ∈ X, their tensor family
+is x ↦ M_x ⊗[ℤ] N_x, with pointwise abelian-group structure. -/
 def smallEtaleGodementFamilyTensor (X : Scheme.{u})
     (M N : X → AddCommGrpCat.{max u w}) : X → AddCommGrpCat.{max u w} :=
   fun x => AddCommGrpCat.of (M x ⊗[ℤ] N x)
 
-/-- The actual stalk-family tensor isomorphism is componentwise the original geometric tensor
-germ. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For sheaves F, H, the stalk-family isomorphism
+L(F ⊗_sheaf H) ≅ L(F) ⊗ L(H) has at x the canonical tensor-stalk
+isomorphism at the geometric point over x. -/
 def smallEtaleGodementStalkTensorIso (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleGodementStalks.{u, w} X).obj (smallEtaleTensorSheaf.{u, w} X F G) ≅
@@ -55,7 +74,11 @@ def smallEtaleGodementStalkTensorIso (X : Scheme.{u})
       (smallEtaleGeometricPointCommon.{u, w} (smallEtaleCanonicalGeometricMorphism X x)) F
           G).inv_hom_id
 
-/-- Two original family maps induce their literal pointwise tensor map. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For pointwise coefficient-family maps f : M → M′ and g : N → N′,
+their tensor-family map has component f_x ⊗[ℤ] g_x at each x ∈ X. -/
 def smallEtaleGodementFamilyTensorMap (X : Scheme.{u})
     {M M' N N' : X → AddCommGrpCat.{max u w}} (f : M ⟶ M') (g : N ⟶ N') :
     smallEtaleGodementFamilyTensor.{u, w} X M N ⟶
@@ -63,7 +86,14 @@ def smallEtaleGodementFamilyTensorMap (X : Scheme.{u})
   fun x => AddCommGrpCat.ofHom
     (TensorProduct.map (f x).hom.toIntLinearMap (g x).hom.toIntLinearMap).toAddMonoidHom
 
-/-- The actual right-adjoint binary pairing is the transpose of the original tensor counit map. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+With L the stalk family, R its product-skyscraper right adjoint,
+and ε the adjunction counit, this map
+R(M) ⊗_sheaf R(N) → R(M ⊗ N) is adjoint to
+(ε_M ⊗ ε_N) ∘ τ_(R(M),R(N)), where τ is the stalk-family tensor
+isomorphism. -/
 def smallEtaleGodementSkyscraperPairing (X : Scheme.{u})
     (M N : X → AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheaf.{u, w} X
@@ -79,8 +109,12 @@ def smallEtaleGodementSkyscraperPairing (X : Scheme.{u})
         ((smallEtaleGodementAdjunction.{u, w} X).counit.app M)
         ((smallEtaleGodementAdjunction.{u, w} X).counit.app N))
 
-/-- The original Godement endofunctor has the actual binary tensor map given by its own
-adjunction. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+The Godement tensor map m : T(F) ⊗_sheaf T(H) → T(F ⊗_sheaf H)
+pairs the product skyscrapers of the two stalk families and uses
+the inverse stalk-family tensor isomorphism in the target. -/
 def smallEtaleGodementTensorPairing (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheaf.{u, w} X
@@ -94,7 +128,12 @@ def smallEtaleGodementTensorPairing (X : Scheme.{u})
       (smallEtaleGodementStalkTensorIso.{u, w} X F G).inv
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The canonical tensor-stalk map commutes with every original pair of sheaf morphisms. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For sheaf maps f : F → F′ and g : H → H′, the stalk-family
+isomorphisms satisfy
+τ_(F′,H′) ∘ L(f ⊗_sheaf g) = (L(f) ⊗ L(g)) ∘ τ_(F,H). -/
 theorem smallEtaleGodementStalkTensorIso_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -109,7 +148,12 @@ theorem smallEtaleGodementStalkTensorIso_naturality (X : Scheme.{u})
     (smallEtaleGeometricPointCommon.{u, w} (smallEtaleCanonicalGeometricMorphism X x)) f g
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Composition of the actual Godement family tensor maps in both coefficients. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For family maps f : A → B, g : B → C, h : D → E and i : E → H,
+their pointwise tensor maps satisfy
+(g ⊗ i) ∘ (f ⊗ h) = (g ∘ f) ⊗ (i ∘ h). -/
 theorem smallEtaleGodementFamilyTensorMap_comp (X : Scheme.{u})
     {A B C D E H : X → AddCommGrpCat.{max u w}}
     (f : A ⟶ B) (g : B ⟶ C) (h : D ⟶ E) (i : E ⟶ H) :
@@ -122,7 +166,11 @@ theorem smallEtaleGodementFamilyTensorMap_comp (X : Scheme.{u})
       (f x).hom.toIntLinearMap (h x).hom.toIntLinearMap).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual binary Godement pairing preserves the literal original unit. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+The tensor pairing m and monad unit η satisfy
+m_(F,H) ∘ (η_F ⊗_sheaf η_H) = η_(F⊗H). -/
 theorem smallEtaleGodementTensorPairing_unit (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheafMap.{u, w} X
@@ -170,7 +218,12 @@ theorem smallEtaleGodementTensorPairing_unit (X : Scheme.{u})
   exact adj.homEquiv_id Q
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual right-adjoint tensor pairing is natural in every original family morphism. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient-family maps f : M → M′ and g : N → N′, the
+product-skyscraper pairing m_R satisfies
+m_R′ ∘ (R(f) ⊗_sheaf R(g)) = R(f ⊗ g) ∘ m_R. -/
 theorem smallEtaleGodementSkyscraperPairing_naturality (X : Scheme.{u})
     {M M' N N' : X → AddCommGrpCat.{max u w}} (f : M ⟶ M') (g : N ⟶ N') :
     smallEtaleTensorSheafMap.{u, w} X
@@ -212,7 +265,11 @@ theorem smallEtaleGodementSkyscraperPairing_naturality (X : Scheme.{u})
   rw [← adj.homEquiv_naturality_left, ← adj.homEquiv_naturality_right, hb]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original Godement tensor pairing commutes with every original pair of sheaf morphisms. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For sheaf maps f : F → F′ and g : H → H′, the Godement pairing
+satisfies m′ ∘ (T(f) ⊗_sheaf T(g)) = T(f ⊗_sheaf g) ∘ m. -/
 theorem smallEtaleGodementTensorPairing_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -253,7 +310,12 @@ theorem smallEtaleGodementTensorPairing_naturality (X : Scheme.{u})
           (Category.assoc _ _ _).symm)))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual right-adjoint pairing has exactly the original tensor counit as its transpose. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For L ⊣ R with counit ε, the product-skyscraper pairing m_R satisfies
+ε_(M⊗N) ∘ L(m_R) = (ε_M ⊗ ε_N) ∘ τ_(R(M),R(N)).
+This identifies its adjoint transpose on the stalk family. -/
 theorem smallEtaleGodementSkyscraperPairing_counit (X : Scheme.{u})
     (M N : X → AddCommGrpCat.{max u w}) :
     (smallEtaleGodementStalks.{u, w} X).map (smallEtaleGodementSkyscraperPairing.{u, w} X M N) ≫
@@ -312,7 +374,13 @@ private theorem godementTensorPairing_counit (X : Scheme.{u})
     _ = t ≫ e.inv := by rw [← Category.assoc, ← Category.assoc, eT.inv_hom_id, Category.id_comp]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual Godement binary tensor map commutes with its literal monad multiplication. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+The tensor pairing m and monad multiplication μ satisfy
+m_(F,H) ∘ (μ_F ⊗ μ_H) =
+μ_(F⊗H) ∘ T(m_(F,H)) ∘ m_(T(F),T(H)).
+Both sides map T²(F) ⊗_sheaf T²(H) to T(F ⊗_sheaf H). -/
 theorem smallEtaleGodementTensorPairing_mul (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheafMap.{u, w} X
@@ -363,7 +431,13 @@ theorem smallEtaleGodementTensorPairing_mul (X : Scheme.{u})
           (congrArg (fun a => a ≫ R.map (adj.counit.app (L.obj Q)))
             (Category.assoc _ _ _).symm))))
 
-/-- The original source-ordered Godement power carries the iterated actual binary tensor map. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For n ∈ ℕ, the iterated pairing is
+m_n : T^n(F) ⊗_sheaf T^n(H) → T^n(F ⊗_sheaf H).
+It starts with m₀ = id and obeys
+m_(n+1)(F,H) = T^n(m₁(F,H)) ∘ m_n(T(F),T(H)). -/
 def smallEtaleGodementPowerTensorPairing (X : Scheme.{u}) : (n : ℕ) →
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) →
     smallEtaleTensorSheaf.{u, w} X
@@ -379,7 +453,11 @@ def smallEtaleGodementPowerTensorPairing (X : Scheme.{u}) : (n : ℕ) →
           (smallEtaleGodementTensorPairing.{u, w} X F G)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Each actual iterated binary map is natural in every original pair of coefficient morphisms. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For sheaf maps f : F → F′, g : H → H′ and n ∈ ℕ,
+m_n′ ∘ (T^n(f) ⊗ T^n(g)) = T^n(f ⊗ g) ∘ m_n. -/
 theorem smallEtaleGodementPowerTensorPairing_naturality (X : Scheme.{u}) (n : ℕ)
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -418,7 +496,12 @@ theorem smallEtaleGodementPowerTensorPairing_naturality (X : Scheme.{u}) (n : �
                   (Category.assoc _ _ _).symm)))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every literal unit insertion commutes with the actual iterated Godement tensor map. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For n ∈ ℕ and a unit insertion η_i : T^n → T^(n+1) at
+position i ∈ Fin(n + 1), the power pairings satisfy
+m_(n+1) ∘ (η_i(F) ⊗ η_i(H)) = η_i(F ⊗ H) ∘ m_n. -/
 theorem smallEtaleGodementPowerTensorPairing_etaAtPos (X : Scheme.{u}) (n : ℕ)
     (i : Fin (n + 1)) (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheafMap.{u, w} X
@@ -479,7 +562,12 @@ theorem smallEtaleGodementPowerTensorPairing_etaAtPos (X : Scheme.{u}) (n : ℕ)
                     ((congrArg (fun l => e ≫ l) hn.symm).trans
                       (Category.assoc _ _ _).symm)))
 
-/-- Every genuine Godement cosimplicial degree uses the actual iterated binary tensor map. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+The degree n coresolution pairing
+T^(n+1)(F) ⊗_sheaf T^(n+1)(H) → T^(n+1)(F ⊗_sheaf H)
+is m_(n+1) under the canonical coresolution degree identifications. -/
 def smallEtaleGodementCoresolutionTensorPairing (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     smallEtaleTensorSheaf.{u, w} X
@@ -494,7 +582,13 @@ def smallEtaleGodementCoresolutionTensorPairing (X : Scheme.{u})
       (Monad.coresolutionObjIso (smallEtaleGodementMonad.{u, w} X)
         (smallEtaleTensorSheaf.{u, w} X F G) n).inv
 
-/-- The actual Godement power pairing commutes with every original reversed unit insertion. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For the bar-oriented unit insertion b_i : T^n → T^(n+1),
+with i ∈ Fin(n + 1), the power pairings satisfy
+m_(n+1) ∘ (b_i(F) ⊗ b_i(H)) = b_i(F ⊗ H) ∘ m_n.
+These are the insertions used by the monad coresolution. -/
 theorem smallEtaleGodementPowerTensorPairing_barEtaAtPos (X : Scheme.{u}) (n : ℕ)
     (i : Fin (n + 1)) (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheafMap.{u, w} X
@@ -530,7 +624,12 @@ private theorem pairingCoordinatesSquare.{vC, uC} {C : Type uC} [Category.{vC} C
         _ = t ≫ m ≫ d := by rw [e.inv_hom_id, Category.id_comp]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual cosimplicial Godement binary map commutes with every original coface. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For the cosimplicial coresolution pairing m^C_n and coface δ^i,
+i ∈ Fin(n + 2), one has
+m^C_(n+1) ∘ (δ_F^i ⊗ δ_H^i) = δ_(F⊗H)^i ∘ m^C_n. -/
 theorem smallEtaleGodementCoresolutionTensorPairing_coface (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) (i : Fin (n + 2)) :
     smallEtaleTensorSheafMap.{u, w} X
@@ -571,7 +670,13 @@ theorem smallEtaleGodementCoresolutionTensorPairing_coface (X : Scheme.{u})
     (eQ n) (eQ (n + 1)) cQ bQ ht hm hQ
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Original coefficient maps commute with the actual cosimplicial Godement tensor pairing. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaf maps f : F → F′ and g : H → H′, the
+degree n coresolution pairings satisfy
+m_n′ ∘ (Cores(f)_n ⊗ Cores(g)_n) =
+Cores(f ⊗_sheaf g)_n ∘ m_n. -/
 theorem smallEtaleGodementCoresolutionTensorPairing_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') (n : ℕ) :

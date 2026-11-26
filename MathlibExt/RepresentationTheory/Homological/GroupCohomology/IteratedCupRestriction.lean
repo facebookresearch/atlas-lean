@@ -13,12 +13,18 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Iterat
 public import MathlibExt.RepresentationTheory.Rep.ResTensor
 
 /-!
-# Positive iterated cups under restriction
+# Positive iterated cups under group restriction
 
-An iterated cup formed after restricting the acting group is normalized into
-the restriction of the original tensor-power coefficient.  Its head--tail
-decomposition is compatible with the corresponding restricted coefficient
-decomposition in every positive weight.
+Let k be a commutative ring, f:H→G a group homomorphism, and A a k-linear G-representation in
+universe u. For a tuple of n+1 classes in H¹(H,Res_f A), form the iterated cup over H and
+transport its tensor coefficient along Res_f(P_{n+1}(A))≅P_{n+1}(Res_f A). The result has
+coefficient Res_f(P_{n+1}(A)) and degree n+1.
+
+The first-factor comparison separates this class into the first restricted coefficient class and
+the iterated tail. A mixed construction uses n ambient classes in H¹(G,A), restricts them, and
+appends an arbitrary final class in H¹(H,Res_f A). Its empty-prefix case is the final class
+transported through the restricted one-factor isomorphism; each successor exposes the first
+ambient restriction and the remaining mixed tail.
 -/
 
 @[expose] public section
@@ -35,8 +41,12 @@ universe u
 
 variable {k G H : Type u} [CommRing k] [Group G] [Group H]
 
-/-- An iterated cup over a restricted group action, normalized into the
-restriction of the original positive tensor-power coefficient. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. For n≥0 and x_i∈H¹(H,A_f), let
+Φ_n:Res_f(P_{n+1}(A))≅P_{n+1}(A_f) be the tensor-restriction isomorphism. The restricted
+iterated class is (Φ_n.inv)_*L_n^{A_f}(x) in H^{n+1}(H,Res_f(P_{n+1}(A))). The x_i may be
+arbitrary source-group classes. -/
 noncomputable def restrictedIteratedCupClassSucc
     (f : H →* G) (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology (Rep.res f A) 1) :
@@ -49,8 +59,12 @@ noncomputable def restrictedIteratedCupClassSucc
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The normalized restricted iterated cup decomposes into its first class
-and normalized restricted iterated tail. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. For n≥0 and x₀,…,x_{n+1}∈H¹(H,A_f), let L^f_n
+denote the restricted tensor-coefficient iterated cup and
+ψ^f_n:Res_f(P_{n+2}(A))≅A_f⊗Res_f(P_{n+1}(A)). Then
+(ψ^f_n.hom)_*L^f_{n+1}(x)=x₀∪L^f_n(x₁,…,x_{n+1}) in degree n+2. -/
 theorem restrictedIteratedCupClassSucc_headTail
     (f : H →* G) (A : Rep k G) (n : ℕ)
     (x : Fin (n + 2) → groupCohomology (Rep.res f A) 1) :
@@ -80,8 +94,12 @@ theorem restrictedIteratedCupClassSucc_headTail
     ModuleCat.MonoidalCategory.tensorHom_tmul,
     ConcreteCategory.id_apply]
 
-/-- The normalized iterated cup of restricted ambient classes followed by
-one degree-one class for the source group. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. For n≥0, ambient classes
+x₀,…,x_{n-1}∈H¹(G,A), and y∈H¹(H,A_f), form the ordered tuple (res_f x₀,…,res_f x_{n-1},y). Its
+restricted iterated cup lies in H^{n+1}(H,Res_f(P_{n+1}(A))), with y as the distinguished final
+entry. -/
 noncomputable def restrictedIteratedCupClassSuccLastOfHom
     (f : H →* G) (A : Rep k G) (n : ℕ)
     (x : Fin n → groupCohomology.H1 A)
@@ -95,8 +113,11 @@ noncomputable def restrictedIteratedCupClassSuccLastOfHom
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- In weight one, the normalized last-entry construction is restriction
-of the ambient weight-one coefficient applied to the source-group class. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. For y∈H¹(H,A_f), the mixed construction with
+no ambient inputs equals (Res_f(s.inv))_*y, where s:P₁(A)≅A is the one-factor comparison. The
+result has degree one and coefficient Res_f(P₁(A)). -/
 theorem restrictedIteratedCupClassSuccLastOfHom_zero
     (f : H →* G) (A : Rep k G)
     (x : Fin 0 → groupCohomology.H1 A)
@@ -119,8 +140,12 @@ theorem restrictedIteratedCupClassSuccLastOfHom_zero
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- At successor weight, the normalized last-entry construction exposes
-the first restricted ambient class and the normalized mixed tail. -/
+/-- Let k be a commutative ring, f:H→G a homomorphism of groups in the given universe u, and A a
+k-linear G-representation. Write A_f=Res_f A, P_m(A) for its left-associated m-fold tensor
+coefficient, and res_f for cohomology restriction. Let M_n(x,y) be the mixed restricted cup of n
+ambient inputs and final source-group class y. For n≥0, x₀,…,x_n∈H¹(G,A), and y∈H¹(H,A_f), the
+comparison ψ^f_n:Res_f(P_{n+2}(A))≅A_f⊗Res_f(P_{n+1}(A)) satisfies
+(ψ^f_n.hom)_*M_{n+1}(x,y)=res_f(x₀)∪M_n(x₁,…,x_n,y), in degree n+2. -/
 theorem restrictedIteratedCupClassSuccLastOfHom_succ_headTail
     (f : H →* G) (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology.H1 A)

@@ -1,3 +1,5 @@
-# Normalized Eulerian Operator outside
+# Vanishing of normalized Eulerian weights above the tensor degree
 
-The normalized support is the original homogeneous tensor degree.
+Vanishing of normalized Eulerian weights above the tensor degree.
+
+If `n<i`, the normalized weight-`i` operator in degree `n` is zero.

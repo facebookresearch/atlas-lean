@@ -1,4 +1,5 @@
-# Map mem of mem comap Surjective
+# Lifted representatives map into the target transversal
 
-Every representative in the pulled-back transversal maps into the
-original transversal.
+Lifted representatives map into the target transversal.
+
+If s belongs to the pulled-back transversal in G′, then π(s) belongs to T in G.

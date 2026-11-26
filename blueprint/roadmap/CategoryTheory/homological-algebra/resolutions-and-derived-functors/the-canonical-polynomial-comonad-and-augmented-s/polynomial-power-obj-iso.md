@@ -1,3 +1,5 @@
-# Polynomial Power Obj Iso
+# The polynomial comparison for a successor power
 
-Canonical identification of a successor power with its literal polynomial object.
+The polynomial comparison for a successor power.
+
+This isomorphism identifies `T^(n+1)(A)` with `MvPolynomial (T^n(A)) k`.

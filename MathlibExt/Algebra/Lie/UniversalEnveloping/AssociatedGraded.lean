@@ -18,14 +18,17 @@ public import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 public import Mathlib.Tactic.NoncommRing
 
 /-!
-# The intrinsic associated graded enveloping algebra
+# The associated graded of a universal enveloping algebra
 
-For a Lie algebra over a commutative ring, the degree filtration defines the associated graded
-enveloping algebra, with multiplication induced by enveloping products. Commutators lower the
-filtration degree, so this algebra is commutative.
+Let R be a commutative ring, L an R-Lie algebra, and U=U_R(L). Its degree filtration D_n is
+spanned by products of at most n Lie generators. The direct sum of the quotient layers
+D_n/D_{<n}, with multiplication induced from U, is the intrinsic associated graded algebra.
+Commutators lower degree, so this algebra is commutative without a freeness or projectivity
+hypothesis on L.
 
-Lie homomorphisms induce graded algebra maps. The canonical map from the symmetric algebra
-sends generators to their degree-one symbols and is natural in Lie homomorphisms.
+A Lie map induces a graded R-algebra map. The linear map x ↦ the degree-one symbol of ι(x)
+extends to an R-algebra map Sym_R(L) → gr(U), natural for Lie maps between independently sized
+Lie algebras.
 -/
 
 @[expose] public section
@@ -50,10 +53,17 @@ instance degreeFiltration_isRingFiltration :
   __ := FilteredAlgebra.isFiltration_lower (degreeFiltration R L) (degreeFiltration_mono R L)
   __ := degreeFiltration_gradedMonoid R L
 
-/-- The quotient layers with their intrinsic direct-sum product. -/
+/-- For a commutative ring R and an R-Lie algebra L, let D_n be the degree filtration of U_R(L).
+Define gr(U_R(L)) as the finite-support direct sum of the quotient layers D_n/D_{<n}. Here
+D_{<0}=0 and, for n>0, D_{<n} is the preceding degree stage inside D_n. Multiplication sends
+degree-n and degree-m classes to the degree-(n+m) class of their enveloping product, and the
+scalar map lies in degree zero. -/
 abbrev AssociatedGraded := FilteredAlgebra.AssociatedGraded (degreeFiltration R L)
 
-/-- Commuting one Lie generator past a word lowers one degree. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, x ∈ L, and ys a finite list of elements of L.
+Write w(ys) for the product of their images under ι : L → U_R(L), with the empty product equal
+to 1. Then ι(x)w(ys) − w(ys)ι(x) belongs to D_{length(ys)}. Thus commuting one generator past
+a word lowers the product's filtration degree by one. -/
 theorem ι_word_commutator_mem_degreeFiltration (x : L) (ys : List L) :
     ι R x * word R L ys - word R L ys * ι R x ∈ degreeFiltration R L ys.length := by
   induction ys with
@@ -76,7 +86,10 @@ theorem ι_word_commutator_mem_degreeFiltration (x : L) (ys : List L) :
       exact degreeFiltration_mono R L (by simp only [List.length_cons]; omega)
         ((degreeFiltration R L (1 + ys.length)).add_mem hleft hright)
 
-/-- The commutator of two words lies one stage below their total length. -/
+/-- For a commutative ring R, an R-Lie algebra L, and lists xs,ys of Lie elements, let w(xs),w(ys)
+be their ordered enveloping products. The commutator w(xs)w(ys) − w(ys)w(xs) lies in
+D_{length(xs)+length(ys)−1}. The subtraction in the stage index is natural-number subtraction.
+This statement includes empty words, whose commutators vanish. -/
 theorem word_commutator_mem_degreeFiltration (xs ys : List L) :
     word R L xs * word R L ys - word R L ys * word R L xs ∈
       degreeFiltration R L (xs.length + ys.length - 1) := by
@@ -113,8 +126,10 @@ theorem word_commutator_mem_degreeFiltration (xs ys : List L) :
           exact (degreeFiltration R L ((x :: xs).length + (y :: ys).length - 1)).add_mem
             hleft' hright'
 
-/-- Every filtered commutator lies in the preceding stage, including the zero denominator at total
-degree zero. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, a ∈ D_n and b ∈ D_m in U_R(L), with n,m ∈ ℕ.
+Then ab−ba belongs to D_{<n+m}, the lower submodule used to define the degree-(n+m) quotient.
+For n+m>0 this is the preceding degree stage, while at n+m=0 it is zero. Consequently the
+symbols of a and b commute in the associated graded algebra. -/
 theorem commutator_mem_degreeFiltration_lower {n m : ℕ}
     {a b : UniversalEnvelopingAlgebra R L}
     (ha : a ∈ degreeFiltration R L n) (hb : b ∈ degreeFiltration R L m) :
@@ -165,13 +180,19 @@ theorem commutator_mem_degreeFiltration_lower {n m : ℕ}
       rw [smul_mul_assoc, mul_smul_comm, ← smul_sub]
       exact (FilteredAlgebra.lower (degreeFiltration R L) (n + m)).smul_mem r ih
 
-/-- Commutativity of the intrinsic associated graded enveloping algebra needs no PBW premise. -/
+/-- For any R-Lie algebra L over a commutative ring R, the intrinsic associated graded ring
+gr(U_R(L)) is a commutative ring. Its multiplication is induced by enveloping products on
+quotient layers, and commutativity follows because [D_n,D_m] ⊆ D_{<n+m}. This requires neither
+an ordered basis nor freeness or projectivity of L. -/
 instance associatedGradedCommRing : CommRing (AssociatedGraded R L) where
   __ := (inferInstance : Ring (AssociatedGraded R L))
   mul_comm := FilteredAlgebra.mul_comm_of_commutator_mem (degreeFiltration R L)
     (fun n m u v => commutator_mem_degreeFiltration_lower R L u.property v.property)
 
-/-- The symbol of a filtered element of the enveloping algebra. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and n ∈ ℕ. The R-linear symbol map D_n →
+gr(U_R(L)) first takes the class modulo D_{<n}, then inserts that class into degree n of the
+quotient direct sum. Thus changing a representative by an element of D_{<n} leaves its
+degree-n symbol unchanged. -/
 def associatedGradedSymbol (n : ℕ) : degreeFiltration R L n →ₗ[R] AssociatedGraded R L :=
   FilteredAlgebra.symbol (degreeFiltration R L) n
 
@@ -195,7 +216,10 @@ theorem associatedGradedSymbol_algebraMap (r : R) :
 variable {L} {L' : Type v'} [LieRing L'] [LieAlgebra R L']
   {L'' : Type v''} [LieRing L''] [LieAlgebra R L'']
 
-/-- Enveloping algebra maps send words to the image words. -/
+/-- Let R be a commutative ring and f : L →ₗ⁅R⁆ L′ a Lie map between R-Lie algebras with
+independent carrier universes. For a list xs of elements of L, the canonical algebra map
+U_R(f) sends w_L(xs) to w_L′(xs.map(f)). The words are ordered products of the Lie-generator
+images, with the empty word equal to the unit. -/
 theorem map_word (f : L →ₗ⁅R⁆ L') (xs : List L) :
     map R f (word R L xs) = word R L' (xs.map f) := by
   induction xs with
@@ -203,7 +227,10 @@ theorem map_word (f : L →ₗ⁅R⁆ L') (xs : List L) :
   | cons x xs ih =>
       rw [word_cons, map_mul, map_ι, ih, List.map_cons, word_cons]
 
-/-- Lie maps preserve every degree stage. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, n ∈ ℕ, and a ∈ D_n(U_R(L)). Then
+U_R(f)(a) belongs to D_n(U_R(L′)). The degree filtration is the R-span of words of length at
+most n, and the map sends each such word to the word in its image generators. No condition on
+f beyond being an R-Lie map is required. -/
 theorem map_mem_degreeFiltration (f : L →ₗ⁅R⁆ L') (n : ℕ)
     {a : UniversalEnvelopingAlgebra R L} (ha : a ∈ degreeFiltration R L n) :
     map R f a ∈ degreeFiltration R L' n := by
@@ -221,7 +248,10 @@ theorem map_mem_degreeFiltration (f : L →ₗ⁅R⁆ L') (n : ℕ)
       rw [map_smul]
       exact (degreeFiltration R L' n).smul_mem r ih
 
-/-- The algebra map induced by a Lie map on enveloping algebra quotient layers. -/
+/-- Let R be a commutative ring and f : L →ₗ⁅R⁆ L′ a Lie map. The filtration-preserving enveloping
+map U_R(f) induces an R-algebra map gr(U_R(L)) → gr(U_R(L′)). On the degree-n class of a ∈ D_n
+it takes the symbol of a to the degree-n symbol of U_R(f)(a). The Lie carriers may lie in
+independent universes, and no basis hypothesis is imposed. -/
 def associatedGradedMap (f : L →ₗ⁅R⁆ L') : AssociatedGraded R L →ₐ[R] AssociatedGraded R L' :=
   FilteredAlgebra.map (degreeFiltration R L) (degreeFiltration R L') (map R f)
     (fun n _ ha => map_mem_degreeFiltration R f n ha)
@@ -279,7 +309,10 @@ theorem associatedGradedMap_comp (f : L →ₗ⁅R⁆ L') (g : L' →ₗ⁅R⁆ 
 
 variable (L)
 
-/-- The Lie generator mapped to its degree-one quotient symbol. -/
+/-- For an R-Lie algebra L over a commutative ring R, define the R-linear map L → gr(U_R(L)) by x
+↦ the degree-one symbol of ι(x). The generator ι(x) belongs to D_1, so its class modulo the
+degree-zero stage is inserted in homogeneous degree one of the intrinsic associated graded
+algebra. -/
 def associatedGradedGeneratorSymbol : L →ₗ[R] AssociatedGraded R L :=
   (associatedGradedSymbol R L 1).comp
     ((show L →ₗ⁅R⁆ UniversalEnvelopingAlgebra R L from ι R).toLinearMap.codRestrict (degreeFiltration R L 1)
@@ -290,8 +323,10 @@ theorem associatedGradedGeneratorSymbol_apply (x : L) :
     associatedGradedGeneratorSymbol R L x =
       associatedGradedSymbol R L 1 ⟨ι R x, ι_mem_degreeFiltration R L x⟩ := rfl
 
-/-- The canonical symmetric lift into the intrinsic associated graded enveloping algebra, defined
-for every Lie algebra over the scalar ring. -/
+/-- For an R-Lie algebra L over a commutative ring R, the R-linear generator-symbol map x ↦
+symbol_1(ι(x)) extends uniquely to an R-algebra map Sym_R(L) → gr(U_R(L)). This uses
+commutativity of the intrinsic associated graded enveloping algebra. The construction applies
+to arbitrary L; it does not assume that this comparison is invertible. -/
 def symmetricComparison : SymmetricAlgebra R L →ₐ[R] AssociatedGraded R L :=
   SymmetricAlgebra.lift (associatedGradedGeneratorSymbol R L)
 
@@ -312,8 +347,11 @@ theorem associatedGradedMap_generatorSymbol (f : L →ₗ⁅R⁆ L') (x : L) :
   apply Subtype.ext
   exact map_ι R f x
 
-/-- The canonical symmetric comparison is natural for all Lie maps, before imposing any
-projectivity or freeness hypothesis. -/
+/-- Let R be a commutative ring and f : L →ₗ⁅R⁆ L′ a Lie map. If c_L : Sym_R(L) → gr(U_R(L)) and
+c_L′ are the generator-symbol comparisons, then gr(U_R(f)) ∘ c_L = c_L′ ∘ Sym_R(f). Here
+Sym_R(f) sends the symmetric generator x to the generator f(x). This is an equality of
+R-algebra maps, valid without free or projective hypotheses and with independent Lie carrier
+universes. -/
 theorem symmetricComparison_naturality (f : L →ₗ⁅R⁆ L') :
     (associatedGradedMap R f).comp (symmetricComparison R L) =
       (symmetricComparison R L').comp

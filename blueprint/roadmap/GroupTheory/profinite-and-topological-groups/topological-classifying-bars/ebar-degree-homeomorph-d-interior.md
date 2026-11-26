@@ -1,3 +1,6 @@
-# EBar Degree Homeomorph d Interior
+# An interior universal-bar face in tuple coordinates
 
-Interior EBar faces multiply adjacent entries after the outer regular coordinate.
+An interior universal-bar face in tuple coordinates.
+
+The face at k+1 contracts universal-bar tuple entries k+1 and k+2, retaining the regular
+leading coordinate.

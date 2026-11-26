@@ -45,7 +45,10 @@ namespace Subalgebra
 variable {R : Type u} [CommRing R]
 variable {K : Type v} [Field K] [Algebra R K] [IsFractionRing R K]
 
-/-- The actual quotient of a fraction-field subalgebra by the original ring is torsion. -/
+/-- Let `R` be a commutative ring, `K` an `R`-algebra field that is a fraction
+ring of `R`, and `A ⊆ K` an `R`-subalgebra. The `R`-module quotient of `A` by the
+image of the algebra map from `R` is torsion: each class is annihilated by a
+non-zero-divisor of `R`. The ring and field universes are independent. -/
 theorem isTorsion_quotient_range (A : Subalgebra R K) :
     Module.IsTorsion R (A ⧸ (Algebra.linearMap R A).range) := by
   let N : Submodule R A := (Algebra.linearMap R A).range
@@ -63,7 +66,9 @@ theorem isTorsion_quotient_range (A : Subalgebra R K) :
 
 variable [IsDomain R]
 
-/-- A genuine finite fraction-field subalgebra has one nonzero scalar annihilating its scalar cokernel. -/
+/-- Let `R` be a domain, `K` a chosen fraction field, and `A ⊆ K` a finite
+`R`-subalgebra. There exists one nonzero `c ∈ R` that annihilates every class of
+the `R`-module quotient of `A` by the image of `R`. -/
 theorem exists_nonzero_annihilator_quotient_range (A : Subalgebra R K)
     [Module.Finite R A] :
     ∃ c : R, c ≠ 0 ∧ ∀ z : A ⧸ (Algebra.linearMap R A).range, c • z = 0 := by
@@ -72,7 +77,9 @@ theorem exists_nonzero_annihilator_quotient_range (A : Subalgebra R K)
   exact ⟨c, mem_nonZeroDivisors_iff_ne_zero.mp hc0,
     fun z ↦ Submodule.mem_annihilator.mp hc z Submodule.mem_top⟩
 
-/-- A finite subalgebra of the actual fraction field of a one-dimensional Noetherian domain has finite colength. -/
+/-- Let `R` be a Noetherian domain of Krull dimension at most one, `K` its
+chosen fraction field, and `A ⊆ K` a finite `R`-subalgebra. The quotient of `A`
+by the scalar image of `R` has finite composition length over `R`. -/
 theorem isFiniteLength_quotient_range (A : Subalgebra R K)
     [Module.Finite R A] [IsNoetherianRing R] [Ring.KrullDimLE 1 R] :
     IsFiniteLength R (A ⧸ (Algebra.linearMap R A).range) := by
@@ -86,7 +93,10 @@ theorem isFiniteLength_quotient_range (A : Subalgebra R K)
     (Module.length_ne_top_of_finite_of_ideal_le_annihilator R
       (A ⧸ (Algebra.linearMap R A).range) (Ideal.span {c}) hI hquot)
 
-/-- Principal quotients have the same genuine base-ring length in a finite subalgebra of the common fraction field. -/
+/-- Let `R` be a Noetherian domain of Krull dimension at most one, `K` its
+chosen fraction field, and `A ⊆ K` a finite `R`-subalgebra. For every nonzero
+`a ∈ R`, the principal quotients have equal base-ring lengths:
+`length_R(R/(a)) = length_R(A/(aA))`. -/
 theorem length_quotient_span_eq_of_finite (A : Subalgebra R K)
     [Module.Finite R A] [IsNoetherianRing R] [Ring.KrullDimLE 1 R]
     {a : R} (ha : a ≠ 0) :

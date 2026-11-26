@@ -14,16 +14,24 @@ public import Mathlib.LinearAlgebra.TensorPower.Basic
 public import Mathlib.Data.Fintype.OfMap
 
 /-!
-# Actual signed shuffle multiplication and the two-cut convolution operation
+# Signed shuffle products and degree-cut convolution
 
-Every cut has the original exact equality p+q=n. Tensor splitting, signed
-shuffle multiplication and the original target cast define its endomorphism.
-The full two-cut operation includes both empty blocks. Their actual unit
-shuffles contribute two identities in positive degree and one identity in
-degree zero. The proper-cut identity is proved from that finite index split.
+For a commutative ring `k` and `k`-module `V`, concatenate tensor
+words of lengths `p,q` and then sum their reindexings over `(p,q)`-
+shuffles with the permutation sign. A weak cut of `n` is a pair
+`p+q=n`; a proper cut requires `p,q>0`. Splitting a length-`n` word
+at a cut and multiplying by the signed shuffle gives an endomorphism
+of `V^⊗n`.
 
-This is the concrete convolution operation. Its equality with a rational
-Eulerian-polynomial expansion is a separate theorem and is not assumed here.
+The two empty-block cuts act by identity. Thus in positive degree the
+sum over all weak cuts is `2·id` plus the sum over proper cuts.
+In degree zero the two unit cuts coincide and the full sum has one
+identity term. No rationality assumption is required.
+
+## References
+
+* J.-L. Loday, *Cyclic Homology*, §4.2, for signed shuffle products.
+* S. Eilenberg and J. A. Zilber, *On products of complexes*, Amer. J. Math. 75 (1953).
 -/
 
 @[expose] public section
@@ -35,18 +43,22 @@ universe u v w
 
 namespace TensorPower
 
-/-- An actual weak cut with its original total degree. -/
+/-- For `n ∈ ℕ`, a weak shuffle degree cut is a pair of natural
+block lengths `(p,q)` with the specified equality `p+q=n`. -/
 abbrev ShuffleDegreeCut (n : ℕ) := {pq : ℕ × ℕ // pq.1 + pq.2 = n}
 
-/-- A proper cut is a weak cut whose two original factors are positive. -/
+/-- For `n ∈ ℕ`, a proper shuffle degree cut is a weak cut
+`p+q=n` with both block lengths strictly positive. -/
 abbrev ProperShuffleDegreeCut (n : ℕ) :=
   {z : ShuffleDegreeCut n // 0 < z.1.1 ∧ 0 < z.1.2}
 
-/-- The actual bounded pair of block lengths, used to enumerate the original finite cut type. -/
+/-- For a weak cut `(p,q)` of `n`, both lengths lie in
+`Fin(n+1)`; the bounded-pair map records those two lengths. -/
 def cutBound (n : ℕ) (z : ShuffleDegreeCut n) : Fin (n + 1) × Fin (n + 1) :=
   (⟨z.1.1, by have h := z.2; omega⟩, ⟨z.1.2, by have h := z.2; omega⟩)
 
-/-- The bounded pair retains both original block lengths. -/
+/-- For each `n ∈ ℕ`, the map from weak cuts `p+q=n` to their
+bounded pairs in `Fin(n+1) × Fin(n+1)` is injective. -/
 theorem cutBound_injective (n : ℕ) : Function.Injective (cutBound n) := by
   intro z z' h
   apply Subtype.ext
@@ -60,13 +72,16 @@ instance shuffleDegreeCutFintype (n : ℕ) : Fintype (ShuffleDegreeCut n) :=
 instance properShuffleDegreeCutFintype (n : ℕ) : Fintype (ProperShuffleDegreeCut n) :=
   Fintype.ofFinite _
 
-/-- The actual empty first block at the original total degree. -/
+/-- For `n ∈ ℕ`, the left unit degree cut is `(0,n)`, with empty
+first block and the whole degree in the second block. -/
 def leftUnitDegreeCut (n : ℕ) : ShuffleDegreeCut n := ⟨(0, n), Nat.zero_add n⟩
 
-/-- The actual empty second block at the original total degree. -/
+/-- For `n ∈ ℕ`, the right unit degree cut is `(n,0)`, with the
+whole degree in the first block and an empty second block. -/
 def rightUnitDegreeCut (n : ℕ) : ShuffleDegreeCut n := ⟨(n, 0), Nat.add_zero n⟩
 
-/-- The weak cut set is two unit cuts plus the proper cuts in positive degree. -/
+/-- For `n>0`, the weak cuts `p+q=n` are in bijection with the
+two unit cuts and the proper cuts: `Cut(n) ≃ Fin 2 ⊕ ProperCut(n)`. -/
 def shuffleDegreeCutEquivUnitsProper (n : ℕ) (hn : 0 < n) :
     ShuffleDegreeCut n ≃ Fin 2 ⊕ ProperShuffleDegreeCut n where
   toFun z :=
@@ -107,20 +122,32 @@ def shuffleDegreeCutEquivUnitsProper (n : ℕ) (hn : 0 < n) :
 
 variable {k : Type u} [CommRing k] {V : Type v} [AddCommGroup V] [Module k V]
 
-/-- The original finite signed inverse-place permutation sum on one homogeneous tail. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The signed shuffle endomorphism of `V^⊗(p+q)` is
+`sh_(p,q)=∑_(s∈Sh(p,q)) ε(s)·reindex(s)`. Reindexing sends a
+word `x` to the word `i ↦ x(s⁻¹(i))`. -/
 def signedShuffleEnd (p q : ℕ) : Module.End k (TensorPower k (p + q) V) := by
   classical
   exact ∑ s : AlgebraicTopology.EilenbergZilber.Shuffle p q,
     AlgebraicTopology.EilenbergZilber.shuffleSignZ s •
       (PiTensorProduct.reindex k (fun _ : Fin (p + q) => V) s.perm).toLinearMap
 
-/-- Actual tensor concatenation followed by the actual signed shuffle. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The signed shuffle product
+`V^⊗p ⊗[k] V^⊗q → V^⊗(p+q)` first concatenates the two tensor
+words, then applies `sh_(p,q)`. -/
 def signedShuffleProduct (p q : ℕ) :
     TensorPower k p V ⊗[k] TensorPower k q V →ₗ[k] TensorPower k (p + q) V :=
   (signedShuffleEnd (k := k) (V := V) p q).comp
     (TensorPower.mulEquiv (R := k) (M := V) (n := p) (m := q)).toLinearMap
 
-/-- The exact signed shuffle tensor-word formula. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. For words `a : Fin p → V`, `b : Fin q → V`, the product is
+`∑_(s∈Sh(p,q)) ε(s) • tprod_k(i ↦ append(a,b)(s⁻¹(i)))` on
+`tprod_k(a) ⊗ tprod_k(b)`. -/
 theorem signedShuffleProduct_tprod (p q : ℕ) (a : Fin p → V) (b : Fin q → V) :
     signedShuffleProduct (k := k) (V := V) p q (PiTensorProduct.tprod k a ⊗ₜ[k] PiTensorProduct.tprod k b) =
       ∑ s : AlgebraicTopology.EilenbergZilber.Shuffle p q,
@@ -136,7 +163,10 @@ theorem signedShuffleProduct_tprod (p q : ℕ) (a : Fin p → V) (b : Fin q → 
   simp only [signedShuffleEnd, LinearMap.sum_apply, ← Int.cast_smul_eq_zsmul k,
     LinearMap.smul_apply, LinearEquiv.coe_toLinearMap, PiTensorProduct.reindex_tprod]
 
-/-- The original left unit shuffle gives the actual identity tail endomorphism. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The signed shuffle endomorphism `sh_(0,n)` is the identity
+of `V^⊗n`, since there is only one shuffle with an empty first block. -/
 theorem signedShuffleEnd_left_zero (n : ℕ) : signedShuffleEnd (k := k) (V := V) 0 n = LinearMap.id := by
   classical
   letI : Unique (AlgebraicTopology.EilenbergZilber.Shuffle 0 n) :=
@@ -157,7 +187,10 @@ theorem signedShuffleEnd_left_zero (n : ℕ) : signedShuffleEnd (k := k) (V := V
   rw [Fintype.sum_unique, hsign, one_smul, hperm, PiTensorProduct.reindex_refl]
   rfl
 
-/-- The original right unit shuffle gives the actual identity tail endomorphism. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The signed shuffle endomorphism `sh_(n,0)` is the identity
+of `V^⊗n`, since there is only one shuffle with an empty second block. -/
 theorem signedShuffleEnd_right_zero (n : ℕ) : signedShuffleEnd (k := k) (V := V) n 0 = LinearMap.id := by
   classical
   letI : Unique (AlgebraicTopology.EilenbergZilber.Shuffle n 0) :=
@@ -178,14 +211,24 @@ theorem signedShuffleEnd_right_zero (n : ℕ) : signedShuffleEnd (k := k) (V := 
   rw [Fintype.sum_unique, hsign, one_smul, hperm, PiTensorProduct.reindex_refl]
   rfl
 
-/-- One actual split/multiply/shuffle cut, in its original total degree. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. For a weak cut `z=(p,q)` with `p+q=n`, splitting into the
+two block tensor powers and applying signed shuffle multiplication,
+then identifying the total degree with `n`, gives the cut
+endomorphism of `V^⊗n`. -/
 def shuffleCutEnd {n : ℕ} (z : ShuffleDegreeCut n) : Module.End k (TensorPower k n V) :=
   (TensorPower.cast k V z.2).toLinearMap.comp
     ((signedShuffleProduct (k := k) (V := V) z.1.1 z.1.2).comp
       ((TensorPower.mulEquiv (R := k) (M := V) (n := z.1.1) (m := z.1.2)).symm.toLinearMap.comp
         (TensorPower.cast k V z.2).symm.toLinearMap))
 
-/-- The actual tensor split and concatenation cancel, leaving the original target cast and signed sum. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. For `z=(p,q)` with `p+q=n`, the cut endomorphism is
+`cast_(p+q=n) ∘ sh_(p,q) ∘ cast_(p+q=n)⁻¹`:
+it is the signed shuffle operator transported from degree `p+q`
+to degree `n`. -/
 theorem shuffleCutEnd_eq_cast {n : ℕ} (z : ShuffleDegreeCut n) :
     shuffleCutEnd (k := k) (V := V) z = (TensorPower.cast k V z.2).toLinearMap.comp
       ((signedShuffleEnd (k := k) (V := V) z.1.1 z.1.2).comp (TensorPower.cast k V z.2).symm.toLinearMap) := by
@@ -199,7 +242,9 @@ theorem shuffleCutEnd_eq_cast {n : ℕ} (z : ShuffleDegreeCut n) :
   rw [LinearEquiv.apply_symm_apply]
   rfl
 
-/-- The actual left-empty cut is identity after its original degree cast. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The cut endomorphism for `(0,n)` is identity on `V^⊗n`. -/
 theorem shuffleCutEnd_left_unit (n : ℕ) :
     shuffleCutEnd (k := k) (V := V) (leftUnitDegreeCut n) = LinearMap.id := by
   rw [shuffleCutEnd_eq_cast]
@@ -211,7 +256,9 @@ theorem shuffleCutEnd_left_unit (n : ℕ) :
   intro x
   exact (TensorPower.cast k V (leftUnitDegreeCut n).2).apply_symm_apply x
 
-/-- The actual right-empty cut is identity after its original degree cast. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The cut endomorphism for `(n,0)` is identity on `V^⊗n`. -/
 theorem shuffleCutEnd_right_unit (n : ℕ) :
     shuffleCutEnd (k := k) (V := V) (rightUnitDegreeCut n) = LinearMap.id := by
   rw [shuffleCutEnd_eq_cast]
@@ -223,15 +270,26 @@ theorem shuffleCutEnd_right_unit (n : ℕ) :
   intro x
   exact (TensorPower.cast k V (rightUnitDegreeCut n).2).apply_symm_apply x
 
-/-- The actual second shuffle-convolution operation is the full weak-cut sum. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The two-cut shuffle convolution in degree `n` is the finite
+sum of cut endomorphisms over all weak cuts `p+q=n`, including
+the empty-block cuts. -/
 def shuffleConvolutionTwo (n : ℕ) : Module.End k (TensorPower k n V) :=
   ∑ z : ShuffleDegreeCut n, shuffleCutEnd (k := k) (V := V) z
 
-/-- The actual proper cut sum omits both unit cuts. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The proper two-cut shuffle convolution in degree `n` is
+the finite sum of cut endomorphisms over `p,q>0` with `p+q=n`. -/
 def properShuffleConvolutionTwo (n : ℕ) : Module.End k (TensorPower k n V) :=
   ∑ z : ProperShuffleDegreeCut n, shuffleCutEnd (k := k) (V := V) z.val
 
-/-- The exact full two-cut operation is two identities plus the actual proper cuts in positive degree. -/
+/-- Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. For `n>0`, the full two-cut convolution equals
+`2 • id_(V^⊗n) + properShuffleConvolutionTwo(n)`, the two
+identity terms coming from `(0,n)` and `(n,0)`. -/
 theorem shuffleConvolutionTwo_eq_two_add_proper (n : ℕ) (hn : 0 < n) :
     shuffleConvolutionTwo (k := k) (V := V) n =
       (2 : k) • LinearMap.id + properShuffleConvolutionTwo (k := k) (V := V) n := by

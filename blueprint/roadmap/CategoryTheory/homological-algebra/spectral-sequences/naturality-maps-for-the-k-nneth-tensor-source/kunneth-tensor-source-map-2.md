@@ -1,4 +1,6 @@
-# Kunneth Tensor Source Map ι
+# The inclusion formula for a Künneth antidiagonal source map
 
-The selected component of the Künneth tensor-source map is the tensor of
-the corresponding homology maps.
+The inclusion formula for a Künneth antidiagonal source map.
+
+On summand `(i,j)`, the source map is the tensor of the two homology maps followed by the
+target inclusion.

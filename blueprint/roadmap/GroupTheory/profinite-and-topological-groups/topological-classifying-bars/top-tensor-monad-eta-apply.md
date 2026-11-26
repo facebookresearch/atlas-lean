@@ -1,3 +1,5 @@
-# Top Tensor Monad eta apply
+# Coordinates of the topological tensor-monad unit
 
-Pointwise unit of the topological tensor monad.
+Coordinates of the topological tensor-monad unit.
+
+The unit at X sends x to (1,x) in G × X.

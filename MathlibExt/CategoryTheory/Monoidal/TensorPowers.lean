@@ -15,68 +15,14 @@ public import Mathlib.CategoryTheory.Monoidal.CoherenceLemmas
 public import Mathlib.CategoryTheory.Monoidal.FunctorCategory
 
 /-!
-# Generic monoidal finite tensor powers
+# Finite tensor powers and coherent ordered pairings
 
-For `X : C` in an arbitrary monoidal category define the left-associated
-finite power `tensorPowObj X n` (`0 ↦ 𝟙`, `n+1 ↦ pow n ⊗ X`), functorial
-`tensorPowMap`, and the finite add/coherence isomorphism
-`pow (m + n) ≅ pow m ⊗ pow n`.  For a lax monoidal functor `G`, it also
-constructs the ordered multiplication and unit on the objects
-`G.obj (tensorPowObj X n)`, with naturality, unit, and associativity laws.
+In any monoidal category, define the left-associated finite power by `X^0 = 𝟙` and `X^(n+1) =
+X^n ⊗ X`. Applying a morphism to each factor gives its power map and a power functor.
 
-This supplies reusable category-level finite tensor powers. It uses only ambient `tensorObj` /
-`tensorHom` (notation `⊗` / `⊗ₘ`), `associator`, unitors, and generic
-coherence lemmas. No `ModuleCat`, `GradedObject`, `HomologicalComplex`,
-preadditive, zero-morphism, dg/sign, coproduct, free/cofree, completion, or
-operad content is provided here.
-
-## Declaration inventory
-
-* `tensorPowObj`: left-associated `n`-fold power.
-* `tensorPowObj_zero` / `tensorPowObj_succ`: computation rules.
-* `tensorPowMap`: functorial map by recursion via `⊗ₘ`.
-* `tensorPowMap_zero` / `tensorPowMap_succ`: computation rules.
-* `tensorPowMap_id` / `tensorPowMap_comp`: functoriality laws.
-* `tensorPowFunctor`: the bundled power functor for each `n`.
-* `tensorPowObj_add`: finite add/coherence iso by induction on `n`
-  (base via `rightUnitor`, step via `tensorIso` + `associator`).
-* `tensorPowAddNatIso`: the add/coherence isomorphism bundled naturally in `X`.
-* `tensorPowObj_add_zero_right` / `tensorPowObj_add_zero_left`: unit coherence.
-* `tensorPowObj_eqToHom_whiskerRight`: generic right-whisker transport for
-  `tensorPowObj` equalities, derived from `MonoidalCategory.eqToHom_whiskerRight`.
-* `tensorPowObj_add_naturality`: the add iso commutes with `tensorPowMap`.
-* `tensorPowObj_add_assoc`: the two `(m+n)+k` reassociation routes agree
-  (by induction on `k` via `pentagon` + associator naturality).
-* `laxTensorPowerPairing` / `laxTensorPowerUnit`: the ordered multiplication
-  and unit on tensor powers after applying a lax monoidal functor.
-* `laxTensorPowerPairing_naturality`: naturality in the base object.
-* `laxTensorPowerPairing_zero_left` / `laxTensorPowerPairing_zero_right`:
-  the lax unit laws.
-* `laxTensorPowerPairing_assoc`: ordered associativity.
-
-## Finite-support note
-
-For fixed `n`, `tensorPowObj X n` is an `n`-fold binary iteration. No
-infinite sum, tensor coalgebra carrier, or colimit beyond binary `⊗`
-is constructed here. This is explicitly *not* a graded direct sum.
-
-## Nonclaims
-
-* No infinite sums, (co)free objects, filtrations, completeness, or
-  adjunction data.
-* No derived, Koszul, operadic, or model-category claim.
-* No new global instances are declared.
-
-## Import justification
-
-`CoherenceLemmas` (which transitively imports `Monoidal.Category`) supplies
-`Category` / `MonoidalCategory`, `tensorObj` / `tensorHom` (`⊗` / `⊗ₘ`),
-`tensorIso`, `associator`, `leftUnitor` / `rightUnitor`, and the
-`tensorHom_comp`, `associator_naturality`, `leftUnitor_naturality`,
-`rightUnitor_naturality`, `pentagon`, and `triangle` coherence fields.
-`Monoidal.Category` supplies `leftUnitor_tensor_hom` for the `0+n` step and
-`rightUnitor_tensor_inv` for the associativity base case; `CoherenceLemmas`
-contributes `unitors_equal` for the `0+n` base case.
+The coherent splitting `X^(m+n) ≅ X^m ⊗ X^n` is natural and satisfies the unit and
+associativity equations. A lax monoidal functor gives ordered pairing maps on the family of
+images of these powers, with its unit and associative multiplication coherence.
 -/
 
 @[expose] public section
@@ -91,41 +37,57 @@ namespace CategoryTheory.MonoidalCategory.TensorPower
 
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
 
-/-- Left-associated finite tensor power: `0 ↦ 𝟙`, `n+1 ↦ pow n ⊗ X`. -/
+/-- Left associated finite tensor power.
+
+Recursively set power zero to the tensor unit and the successor power to the preceding power
+tensored with `X`. -/
 noncomputable def tensorPowObj (X : C) : ℕ → C
   | 0 => 𝟙_ C
   | n + 1 => tensorPowObj X n ⊗ X
 
-/-- Computation rule: `tensorPowObj X 0` is the tensor unit. -/
+/-- Tensor power zero is the tensor unit.
+
+The power-zero object is `𝟙_ C`. -/
 @[simp]
 theorem tensorPowObj_zero (X : C) : tensorPowObj X 0 = 𝟙_ C :=
   rfl
 
-/-- Computation rule: `tensorPowObj X (n + 1)` is `tensorPowObj X n ⊗ X`. -/
+/-- Successor tensor power appends one factor.
+
+The successor power is `tensorPowObj X n ⊗ X`. -/
 @[simp]
 theorem tensorPowObj_succ (X : C) (n : ℕ) :
     tensorPowObj X (n + 1) = tensorPowObj X n ⊗ X :=
   rfl
 
-/-- Functorial map on finite powers by recursion via `⊗ₘ`. -/
+/-- Morphisms act on every finite tensor factor.
+
+Define the power map recursively by the identity at zero and tensoring the preceding power map
+with `f` at a successor. -/
 noncomputable def tensorPowMap {X Y : C} (f : X ⟶ Y) : ∀ (n : ℕ),
     tensorPowObj X n ⟶ tensorPowObj Y n
   | 0 => 𝟙 _
   | n + 1 => tensorPowMap f n ⊗ₘ f
 
-/-- Computation rule: `tensorPowMap f 0` is the identity on the unit. -/
+/-- Power zero map is the unit identity.
+
+Every morphism's power-zero map is the identity of the tensor unit. -/
 @[simp]
 theorem tensorPowMap_zero {X Y : C} (f : X ⟶ Y) :
     tensorPowMap f 0 = 𝟙 _ :=
   rfl
 
-/-- Computation rule: `tensorPowMap f (n + 1)` is `tensorPowMap f n ⊗ₘ f`. -/
+/-- Successor power map appends the given morphism.
+
+The successor map is `tensorPowMap f n ⊗ₘ f`. -/
 @[simp]
 theorem tensorPowMap_succ {X Y : C} (f : X ⟶ Y) (n : ℕ) :
     tensorPowMap f (n + 1) = tensorPowMap f n ⊗ₘ f :=
   rfl
 
-/-- Identity law: mapping the identity yields the identity on each tensor power. -/
+/-- Finite tensor powers preserve identity morphisms.
+
+The power of an identity morphism is the identity of that power object. -/
 @[simp]
 theorem tensorPowMap_id (X : C) (n : ℕ) :
     tensorPowMap (𝟙 X) n = 𝟙 _ := by
@@ -136,7 +98,9 @@ theorem tensorPowMap_id (X : C) (n : ℕ) :
     rw [ih]
     exact id_tensorHom_id _ _
 
-/-- Composition law: `tensorPowMap` preserves composition degreewise. -/
+/-- Finite tensor powers preserve composition.
+
+The power of `f ≫ g` is the power of `f` followed by the power of `g`. -/
 theorem tensorPowMap_comp {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z) (n : ℕ) :
     tensorPowMap (f ≫ g) n = tensorPowMap f n ≫ tensorPowMap g n := by
   induction n with
@@ -147,25 +111,34 @@ theorem tensorPowMap_comp {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z) (n : ℕ) :
     rw [ih]
     exact (tensorHom_comp_tensorHom _ _ _ _).symm
 
-/-- The `n`-fold tensor power as a functor of its base object. -/
+/-- Finite tensor power functor.
+
+The recursively defined power objects and maps form an endofunctor for each natural power. -/
 noncomputable def tensorPowFunctor (n : ℕ) : C ⥤ C where
   obj X := tensorPowObj X n
   map f := tensorPowMap f n
   map_id X := tensorPowMap_id X n
   map_comp f g := tensorPowMap_comp f g n
 
+/-- Object formula of the tensor power functor.
+
+The power functor takes `X` to its recursively left-associated finite power. -/
 @[simp]
 theorem tensorPowFunctor_obj (n : ℕ) (X : C) :
     (tensorPowFunctor n).obj X = tensorPowObj X n :=
   rfl
 
+/-- Map formula of the tensor power functor.
+
+The power functor sends `f` to `tensorPowMap f n`. -/
 @[simp]
 theorem tensorPowFunctor_map (n : ℕ) {X Y : C} (f : X ⟶ Y) :
     (tensorPowFunctor n).map f = tensorPowMap f n :=
   rfl
 
-/-- Finite add/coherence iso: `pow (m + n) ≅ pow m ⊗ pow n` by induction on
-`n` (base via `rightUnitor`, step via `tensorIso` + `associator`). -/
+/-- Splitting a finite tensor power into two blocks.
+
+The coherent isomorphism takes power `m+n` to the tensor product of powers `m` and `n`. -/
 noncomputable def tensorPowObj_add (X : C) (m : ℕ) : ∀ (n : ℕ),
     tensorPowObj X (m + n) ≅ tensorPowObj X m ⊗ tensorPowObj X n
   | 0 => (rightUnitor _).symm
@@ -173,13 +146,17 @@ noncomputable def tensorPowObj_add (X : C) (m : ℕ) : ∀ (n : ℕ),
       (tensorIso (tensorPowObj_add X m n) (Iso.refl X)) ≪≫
         associator _ _ _
 
-/-- Right-unit coherence: `tensorPowObj_add X m 0` is the inverse right unitor. -/
+/-- Right zero block splitting is the inverse right unitor.
+
+The forward split map for a zero right block is the inverse right unitor. -/
 theorem tensorPowObj_add_zero_right (X : C) (m : ℕ) :
     (tensorPowObj_add X m 0).hom = (rightUnitor _).symm.hom :=
   rfl
 
-/-- Generic right-whisker transport for `tensorPowObj` equalities, derived
-from `MonoidalCategory.eqToHom_whiskerRight`. -/
+/-- Equality transport commutes with appending a tensor factor.
+
+Tensoring a power-index equality map with the identity of `X` equals the equality map of the
+corresponding appended-factor objects. -/
 theorem tensorPowObj_eqToHom_whiskerRight (X : C) {a b : ℕ} (h : a = b) :
     ((eqToIso (congrArg (tensorPowObj X) h)).hom ⊗ₘ 𝟙 X) =
       (eqToIso (congrArg (fun k => tensorPowObj X k ⊗ X) h)).hom := by
@@ -187,8 +164,9 @@ theorem tensorPowObj_eqToHom_whiskerRight (X : C) {a b : ℕ} (h : a = b) :
   cases h
   rfl
 
-/-- Left-unit coherence: unfolding `tensorPowObj_add X 0 n` then the left unitor
-is transport along `0 + n = n`. -/
+/-- Left zero block splitting agrees with the left unitor.
+
+Splitting `0+n` and applying the left unitor gives the power-index equality transport to `n`. -/
 theorem tensorPowObj_add_zero_left (X : C) (n : ℕ) :
     (tensorPowObj_add X 0 n).hom ≫
         (leftUnitor (tensorPowObj X n)).hom =
@@ -234,7 +212,10 @@ theorem tensorPowObj_add_zero_left (X : C) (n : ℕ) :
     rw [hD]
     rfl
 
-/-- Naturality of `tensorPowObj_add` in the base morphism: mapping commutes with splitting. -/
+/-- Power block splitting is natural in the powered object.
+
+A morphism's full power map commutes with the splitting and the tensor of its two block power
+maps. -/
 theorem tensorPowObj_add_naturality {X Y : C} (f : X ⟶ Y) (m n : ℕ) :
     tensorPowMap f (m + n) ≫ (tensorPowObj_add Y m n).hom =
       (tensorPowObj_add X m n).hom ≫
@@ -285,7 +266,9 @@ theorem tensorPowObj_add_naturality {X Y : C} (f : X ⟶ Y) (m n : ℕ) :
     rw [← tensorHom_comp_tensorHom, Category.assoc, hNat,
       ← Category.assoc] at ⊢
 
-/-- Tensor powers turn addition of exponents into tensor product, naturally in the base object. -/
+/-- Natural isomorphism for tensor power block splitting.
+
+The block-splitting isomorphisms assemble naturally over all objects. -/
 noncomputable def tensorPowAddNatIso (m n : ℕ) :
     tensorPowFunctor (C := C) (m + n) ≅
       (tensorPowFunctor (C := C) m).prod' (tensorPowFunctor (C := C) n) ⋙
@@ -293,8 +276,10 @@ noncomputable def tensorPowAddNatIso (m n : ℕ) :
   NatIso.ofComponents (fun X ↦ tensorPowObj_add X m n)
     (fun f ↦ tensorPowObj_add_naturality f m n)
 
-/-- Associativity coherence: the two `((m + n) + k)`-reassociation routes via
-`tensorPowObj_add` agree up to the associator. -/
+/-- Tensor power block splitting is associative.
+
+The two splitting routes for three blocks agree after the associator and natural-number
+addition transport. -/
 theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
     (eqToIso (congrArg (tensorPowObj X) (Nat.add_assoc m n k))).hom ≫
         (tensorPowObj_add X m (n + k)).hom ≫
@@ -543,8 +528,10 @@ section LaxMonoidalImage
 
 variable {D : Type uD} [Category.{vD} D] [MonoidalCategory D]
 
-/-- The ordered multiplication on the lax-monoidal image of finite tensor
-powers. -/
+/-- Ordered pairing on tensor powers under a lax monoidal functor.
+
+Apply the lax tensor map and then the image of the inverse block split to pair image degrees
+`p` and `q` into degree `p+q`. -/
 noncomputable def laxTensorPowerPairing (G : C ⥤ D) [G.LaxMonoidal]
     (X : C) (p q : ℕ) :
     G.obj (TensorPower.tensorPowObj X p) ⊗
@@ -553,12 +540,17 @@ noncomputable def laxTensorPowerPairing (G : C ⥤ D) [G.LaxMonoidal]
   Functor.LaxMonoidal.μ G _ _ ≫
     G.map (TensorPower.tensorPowObj_add X p q).inv
 
-/-- The lax unit into the image of the weight-zero tensor power. -/
+/-- Unit for the image tensor power family.
+
+The lax monoidal unit maps the target tensor unit to the image of power zero. -/
 noncomputable def laxTensorPowerUnit (G : C ⥤ D) [G.LaxMonoidal] (X : C) :
     𝟙_ D ⟶ G.obj (TensorPower.tensorPowObj X 0) :=
   Functor.LaxMonoidal.ε G
 
-/-- Ordered tensor-power multiplication is natural in the base object. -/
+/-- Lax power pairings are natural in the base object.
+
+The tensor of the two image power maps commutes with the ordered pairing and the full image
+power map. -/
 theorem laxTensorPowerPairing_naturality (G : C ⥤ D) [G.LaxMonoidal]
     {X Y : C} (f : X ⟶ Y) (p q : ℕ) :
     (G.map (TensorPower.tensorPowMap f p) ⊗ₘ
@@ -575,8 +567,10 @@ theorem laxTensorPowerPairing_naturality (G : C ⥤ D) [G.LaxMonoidal]
   simp [TensorPower.tensorPowObj_add_naturality]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The left unit law uses the lax unit map; no strong-monoidal unit
-identification is assumed. -/
+/-- Lax power pairing satisfies the left unit equation.
+
+The unit in degree zero paired on the left gives the left unitor followed by the required
+`0+p` index transport. -/
 theorem laxTensorPowerPairing_zero_left (G : C ⥤ D) [G.LaxMonoidal]
     (X : C) (p : ℕ) :
     (laxTensorPowerUnit G X ▷ G.obj (TensorPower.tensorPowObj X p)) ≫
@@ -604,8 +598,9 @@ theorem laxTensorPowerPairing_zero_left (G : C ⥤ D) [G.LaxMonoidal]
   rw [← Functor.LaxMonoidal.left_unitality_assoc, eqToHom_map]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The right unit law uses the lax unit map; weight `p + 0` reduces
-definitionally to `p`. -/
+/-- Lax power pairing satisfies the right unit equation.
+
+Pairing the unit on the right gives the right unitor. -/
 theorem laxTensorPowerPairing_zero_right (G : C ⥤ D) [G.LaxMonoidal]
     (X : C) (p : ℕ) :
     (G.obj (TensorPower.tensorPowObj X p) ◁ laxTensorPowerUnit G X) ≫
@@ -626,7 +621,10 @@ theorem laxTensorPowerPairing_zero_right (G : C ⥤ D) [G.LaxMonoidal]
         (TensorPower.tensorPowObj X p)).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Ordered associativity of lax-monoidal tensor-power multiplication. -/
+/-- Lax power pairings satisfy ordered associativity.
+
+The two triple pairing routes agree after the associator and the degree equality `(p+q)+r =
+p+(q+r)`. -/
 theorem laxTensorPowerPairing_assoc (G : C ⥤ D) [G.LaxMonoidal]
     (X : C) (p q r : ℕ) :
     (laxTensorPowerPairing G X p q ⊗ₘ

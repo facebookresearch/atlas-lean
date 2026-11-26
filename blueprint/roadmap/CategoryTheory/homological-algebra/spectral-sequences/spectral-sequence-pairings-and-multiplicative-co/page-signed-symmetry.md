@@ -1,3 +1,5 @@
-# Page Signed Symmetry
+# The signed symmetry law of a page product
 
-The signed swap concerns the actual native cup and its original total cohomological degrees.
+The signed symmetry law of a page product.
+
+Under braiding, swapping input bidegrees a,b has sign (−1)^{|a||b|}, where |a|=a₁+a₂.

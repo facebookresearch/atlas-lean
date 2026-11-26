@@ -1,4 +1,7 @@
-# Augmented Resolution To Right Derived Hom eq of injective Target
+# Any injective target computes the augmented derived comparison
 
-Any augmentation-preserving map into an injective resolution computes the SAME
-cohomology-to-derived map, even when the target resolution is an arbitrary choice.
+Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For a quasi-isomorphism `ι : X[0] → I`, any map
+`a : I → J` to any injective resolution `J` of `X` with `ι ≫ a = ι_J`
+computes `Hⁿ(F(I)) → R^nF(X)` by `Hⁿ(F(a))` followed by the inverse
+comparison for `J`.

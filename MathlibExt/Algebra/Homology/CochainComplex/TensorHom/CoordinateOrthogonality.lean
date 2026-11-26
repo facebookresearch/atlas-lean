@@ -14,12 +14,14 @@ module
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.Coordinates
 
 /-!
-# Orthogonality of native tensor degree components
+# Tensor-cell orthogonality after a total-degree transport
 
-The existing native sum-tensor descriptor projects onto a selected degree
-pair. Its composite with an inclusion from a different pair is zero.
-The same statement holds after the original equality transport between
-the two displayed sum degrees. Both module worlds are independent.
+Let R be a commutative ring and P,Q integer cochain complexes in independent module universes.
+Transport along an equality of displayed total degrees sends a cell inclusion to the inclusion
+of the same factor degrees.
+
+An inclusion from a different factor pair, transported to the same sum degree, is still killed
+by the projection onto the selected pair.
 -/
 
 @[expose] public section
@@ -36,7 +38,10 @@ namespace CochainComplex.ModuleTensor
 variable (R : Type u) [CommRing R]
   (P : CochainComplex (ModuleCat.{v} R) ℤ) (Q : CochainComplex (ModuleCat.{w} R) ℤ)
 
-/-- Equality transport on the actual native sum degree carries its original inclusion to the same pair. -/
+/-- Let R be a commutative ring, P,Q integer R-module cochain complexes in independent carrier
+universes, and i+j=m with m=n. The inclusion P^i⊗Q^j → (P⊗Q)^m followed by the term
+isomorphism for m=n equals the canonical inclusion into (P⊗Q)^n. The factor indices remain
+i,j. -/
 theorem nativeComponentInclusion_cast (i j m n : ℤ) (hm : i + j = m) (h : m = n) :
     HomologicalComplex.ιMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ)
         i j m hm ≫ ((complexAt R P Q).XIsoOfEq h).hom =
@@ -49,7 +54,9 @@ theorem nativeComponentInclusion_cast (i j m n : ℤ) (hm : i + j = m) (h : m = 
   change J ≫ 𝟙 ((complexAt R P Q).X m) = J
   exact Category.comp_id J
 
-/-- The original projection also kills a different pair transported from its original sum degree. -/
+/-- For integer R-module cochain complexes P,Q over a commutative ring R, suppose i+j=p+q and i≠p
+or j≠q. Include the cell (i,j) into total degree i+j, transport to degree p+q, and project
+onto (p,q). This composite is zero. The two module carrier universes may be independent. -/
 theorem componentInclusionAt_other_projectionAt (p q i j : ℤ)
     (h : i + j = p + q) (hne : i ≠ p ∨ j ≠ q) :
     (componentInclusionAt R P Q i j ≫ ((complexAt R P Q).XIsoOfEq h).hom) ≫

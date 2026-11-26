@@ -13,13 +13,19 @@ public import MathlibExt.Algebra.Category.ModuleCat.ExteriorPower
 public import MathlibExt.LinearAlgebra.ExteriorPower.DirectLimit
 
 /-!
-# Exterior powers preserve native colimits of directed module diagrams
+# Exterior powers preserve directed module colimits
 
-The source and target cocones use the existing native module direct-limit
-universal property. The earned homogeneous direct-limit equivalence and the
-native comparison of module limit carriers give their point isomorphism.
-The original injection formulas prove that this is an isomorphism of cocones.
-The ground, index and carrier universes remain independent.
+Let R be a commutative ring, I a nonempty directed preorder, and
+F : I → ModuleCat^max(i,m)(R) a module diagram. For every finite
+exterior degree n ≥ 0, the canonical direct-limit cocone remains
+a colimit cocone after applying ⋀_R^n.
+
+Equivalently, colim_a ⋀_R^n(F_a) ≅ ⋀_R^n(colim_a F_a).
+On a wedge represented at stage a, the comparison applies the
+stage injection to every exterior factor. The diagram maps are
+arbitrary R-linear maps. The ring world u, index world i and
+carrier height m are independent, and the exterior-power target
+category has height max(u,i,m).
 -/
 
 @[expose] public section
@@ -36,7 +42,11 @@ variable (R : Type u) [CommRing R]
   {I : Type i} [Preorder I] [IsDirectedOrder I] [Nonempty I]
   (F : I ⥤ ModuleCat.{max i m} R)
 
-/-- The exterior functor sends the actual native module-limit cocone to a colimit cocone. -/
+/-- For a commutative ring R, a nonempty directed preorder I
+and F : I → ModuleCat^max(i,m)(R), the image under ⋀_R^n of the
+direct-limit cocone of F is a colimit cocone, for every n ≥ 0.
+Its maps are exterior powers of the stage injections, with
+target category ModuleCat^max(u,i,m)(R). -/
 def exteriorPowerDirectLimitIsColimit (n : ℕ) :
     IsColimit ((exteriorPowerFunctorAt R n).mapCocone (directLimitCoconeOfFunctor F)) := by
   classical
@@ -97,7 +107,10 @@ def exteriorPowerDirectLimitIsColimit (n : ℕ) :
       exact hr.symm)
   exact IsColimit.ofIsoColimit hs he
 
-/-- The actual exterior-power functor preserves the existing directed-diagram colimit. -/
+/-- For a commutative ring R, a nonempty directed preorder I,
+a diagram F : I → ModuleCat^max(i,m)(R) and n ≥ 0, the
+exterior-power functor ⋀_R^n preserves the colimit of F.
+The ring, index and module-carrier worlds are independent. -/
 instance exteriorPowerFunctorAt_preservesDirectedColimit (n : ℕ) :
     PreservesColimit F (exteriorPowerFunctorAt R n) :=
   preservesColimit_of_preserves_colimit_cocone (directLimitCoconeOfFunctorIsColimit.{u, i, m} F)

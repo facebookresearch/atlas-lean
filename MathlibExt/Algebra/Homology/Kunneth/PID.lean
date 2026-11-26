@@ -17,22 +17,22 @@ public import MathlibExt.Algebra.Homology.Kunneth.Edge
 public import MathlibExt.Algebra.Homology.PartialTotalTwoColumn
 
 /-!
-# The supplied-resolution Künneth short exact sequence over a PID
+# The Künneth short exact sequence from a supplied resolution over a PID
 
-For a termwise-flat first complex, this file constructs the objectwise
-Künneth short exact sequence over a commutative PID relative to an explicitly
-supplied Cartan--Eilenberg resolution.  It makes no resolution-independence,
-naturality, or splitting claim.
+Let R be a commutative principal ideal domain, and K,L nonnegative chain complexes of R-modules
+in universe u. Assume every K_a is flat and fix a Cartan–Eilenberg resolution P of L. For every
+n≥0 there is a short exact row
 
-## Mathematical reference and scope
+0→⊕_{i+j=n}H_i(K)⊗_R H_j(L)→H_n(K⊗_R L)→⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L))→0.
 
-See Weibel, *An Introduction to Homological Algebra*, Theorem 5.6.4,
-Künneth Formula 5.6.5, and Theorem 3.6.3; compare also May,
-*A Concise Course in Algebraic Topology*, Chapter 17 §2.  The complexes are
-nonnegatively graded, and the short exact sequence is constructed objectwise
-from a supplied Cartan--Eilenberg resolution.  In particular, this API does
-not prove functoriality, resolution independence of the right edge, a natural
-splitting, or the classical noncanonical splitting.
+The left arrow is the canonical homology tensor map. In positive degree the right arrow is the
+spectral edge defined by P and the Cartan–Eilenberg abutment comparison. The Tor-one index set
+is empty at n=0, where the tensor map is an isomorphism. Vanishing of Tor in degrees at least
+two gives the two-column spectral computation.
+
+For the classical chain-complex sequence, see Weibel, An Introduction to Homological Algebra,
+Theorem 5.6.4, Formula 5.6.5, and Theorem 3.6.3; also May, A Concise Course in Algebraic
+Topology, Chapter 17 §2. The construction here is objectwise relative to P.
 -/
 
 @[expose] public section
@@ -56,7 +56,8 @@ local instance {R : Type u} [CommRing R] :
     HasFiniteBiproducts (ChainComplex (ModuleCat.{u} R) ℕ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- Pairs contributing to the Tor-one term in total degree `n`. -/
+/-- For n∈ℕ, the Tor-one index set consists of pairs (i,j) of nonnegative integers with i+j+1=n. It
+is empty at n=0 and is the finite antidiagonal i+j=q when n=q+1. -/
 def KunnethTorOneIndex : ℕ → Finset (ℕ × ℕ)
   | 0 => ∅
   | q + 1 => Finset.antidiagonal q
@@ -92,8 +93,12 @@ private theorem kunnethIsTwoColumnAtTwoOfPID
   exact IsZero.of_iso hSum
     (tensorCartanEilenbergSecondPageIsoAt K P p q)
 
-/-- The supplied-resolution spectral right edge in positive total degree for
-a termwise-flat first complex. -/
+/-- Let R be a commutative principal ideal domain, with R-modules in the same universe u. Let K,L be
+nonnegative chain complexes and assume every term K_a is flat over R. Put T_n=⊕_{i+j=n}H_i(K)⊗_R
+H_j(L) and U_n=⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)); U₀=0. For a Cartan–Eilenberg resolution P of L
+and q≥0, the right edge is H_{q+1}(K⊗_R L)→U_{q+1}. It first applies the inverse abutment
+isomorphism, then the one-column right edge of the two-column spectral sequence, then the
+second-page identification with the Tor-one sum indexed by i+j=q. -/
 noncomputable def kunnethHomologyTorOneMapOfResolution
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -127,8 +132,12 @@ noncomputable def kunnethHomologyTorOneMapOfResolution
     B.partialTotalOneColumnRightEdge h₂ q ≫
     (tensorCartanEilenbergSecondPageIsoAt K P 1 q).hom
 
-/-- The supplied-resolution objectwise PID Künneth short complex for a
-termwise-flat first complex. -/
+/-- Let R be a commutative principal ideal domain, with R-modules in the same universe u. Let K,L be
+nonnegative chain complexes and assume every term K_a is flat over R. Put T_n=⊕_{i+j=n}H_i(K)⊗_R
+H_j(L) and U_n=⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)); U₀=0. For a Cartan–Eilenberg resolution P of L
+and n≥0, the short complex is T_n→H_n(K⊗_R L)→U_n. Its first arrow is the canonical homology
+tensor map, and its second is zero at n=0 or the resolution-defined spectral right edge at
+n=q+1. -/
 noncomputable abbrev kunnethShortComplexOfResolution
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -242,6 +251,12 @@ private theorem isIso_kunnethHomologyTensorMap_zero
   rw [kunnethHomologyTensorMap_eq_p_zero_edge K P hK 0]
   infer_instance
 
+/-- Let R be a commutative principal ideal domain, with R-modules in the same universe u. Let K,L be
+nonnegative chain complexes and assume every term K_a is flat over R. Put T_n=⊕_{i+j=n}H_i(K)⊗_R
+H_j(L) and U_n=⊕_{i+j+1=n}Tor₁^R(H_i(K),H_j(L)); U₀=0. For every Cartan–Eilenberg resolution P
+of L and n≥0, the row 0→T_n→H_n(K⊗_R L)→U_n→0 is short exact. Its left arrow is the canonical
+homology tensor map, and its positive-degree right arrow is the spectral edge constructed from
+P. -/
 theorem kunnethShortComplexOfResolution_shortExact
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]

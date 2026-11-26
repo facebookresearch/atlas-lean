@@ -1,3 +1,6 @@
-# Ract Pt assoc
+# The associativity law of the point right action
 
-Right associativity for the point action; both sides land in `PUnit`.
+The associativity law of the point right action.
+
+The two maps from (PUnit × G) × G to PUnit, obtained by multiplying in G or acting twice,
+agree after the cartesian associator.

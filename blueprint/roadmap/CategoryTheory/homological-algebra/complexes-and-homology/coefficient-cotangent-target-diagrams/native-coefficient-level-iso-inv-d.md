@@ -1,3 +1,5 @@
-# Native Coefficient Level Iso inv D
+# The inverse differential-tensor value of the cotangent comparison
 
-The inverse returns the original nested tensor with coefficient one.
+The inverse differential-tensor value of the cotangent comparison.
+
+The inverse comparison sends `up(m ⊗ dp)` to `m ⊗ (1 ⊗ dp)`.

@@ -1,4 +1,6 @@
-# Partial Total Stable Image Cokernel Iso Graded
+# The stable-image cokernel as a partial-total graded quotient
 
-The generic selected-image cokernel identifies with the adjacent
-partial-total homology graded piece.
+The stable-image cokernel as a partial-total graded quotient.
+
+The current and preceding image comparisons identify the stable-image map's cokernel with the
+adjacent partial-total homology graded piece.

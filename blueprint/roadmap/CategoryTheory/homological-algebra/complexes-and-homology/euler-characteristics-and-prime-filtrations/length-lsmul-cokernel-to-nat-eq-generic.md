@@ -1,5 +1,6 @@
-# Length lsmul cokernel to Nat eq generic Length mul of local Domain
+# The local-domain quotient length formula for injective multiplication
 
-Genuine regular multiplication reduces the full Euler projection to
-the actual principal quotient length. No regularity of other parameters
-or of the original local domain is assumed.
+The local-domain quotient length formula for injective multiplication.
+
+If μ_r is injective and M/rM has finite length, its length equals the generic localized length
+of M times ℓ_R(R/rR), under the stated local-domain parameter hypotheses.

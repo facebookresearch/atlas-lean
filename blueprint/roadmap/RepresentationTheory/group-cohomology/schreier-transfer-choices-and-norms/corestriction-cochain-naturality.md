@@ -1,4 +1,6 @@
-# Corestriction Cochain naturality
+# Coefficient maps commute with each tuple transfer
 
-Mapping coefficients commutes with arbitrary-degree chosen-transversal
-Schreier transfer on inhomogeneous cochains.
+Coefficient maps commute with each tuple transfer.
+
+For a G-equivariant linear φ : A → B, every H-cochain f and every degree n satisfy φ∘cor_Tⁿ(f)
+= cor_Tⁿ(φ∘f).

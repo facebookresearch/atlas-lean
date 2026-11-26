@@ -17,12 +17,15 @@ public import MathlibExt.Algebra.Homology.GenericSpectralSequenceMapCompatibilit
 public import MathlibExt.CategoryTheory.Monoidal.PairingDescentCoherence
 
 /-!
-# Mixed associativity of native spectral-sequence pairings
+# Mixed associativity of interval and spectral-page products
 
-Four original interval pairings and an original spectral-object map determine
-the two ways to multiply three inputs. Their long-interval equality descends
-through the actual cycle and quotient representatives to the native windows
-and pages. All products and comparison maps are the existing native maps.
+Four interval pairings P:X⊗Y→U, Q:U⊗Z→L, R:Y⊗Z→V and T:X⊗V→W, together with γ:L→W, give two
+triple products. Their long-interval equality, with the monoidal associator, descends to cycle
+quotients and page products.
+
+A mixed associativity law at one page passes to its cycle and homology products and then to
+every later page through successor compatibility. The comparison map γ, all additive degree
+and cut transports, and the stated tensor-coequalizer preservation conditions are retained.
 -/
 
 @[expose] public section
@@ -44,7 +47,9 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [MonoidalCategory C] [Monoida
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)]
   {X Y Z U V L W : SpectralObject C EInt}
 
-/-- The original long-interval product with an explicitly equal output cut. -/
+/-- The long interval product at a specified sum cut.
+
+For a+b=s, pair the two lower-width intervals into H_{n+m}(s−ℓ,s). -/
 def longPairTo (P : IntervalPairing X Y U) (n m k : ℤ) (hnm : n + m = k)
     (a b s : ℤ) (hs : a + b = s) (ℓ : ℤ) (hℓ : 1 ≤ ℓ) :
     X.intervalH n (a - ℓ) a (by omega) ⊗ Y.intervalH m (b - ℓ) b (by omega) ⟶
@@ -52,7 +57,10 @@ def longPairTo (P : IntervalPairing X Y U) (n m k : ℤ) (hnm : n + m = k)
   P.pair n m k (a - ℓ) a (b - ℓ) b (s - ℓ) s hnm
     (by omega) (by omega) (by omega) (by omega) (by omega) (by omega)
 
-/-- The actual representatives retain the explicit-cut original long product. -/
+/-- The specified long product agrees with quotient representatives.
+
+The long interval product followed by the output representative equals the tensor of input
+representatives followed by the window product. -/
 @[reassoc]
 lemma longPairTo_representatives (P : IntervalPairing X Y U)
     (n m k : ℤ) (hnm : n + m = k) (a b s : ℤ) (hs : a + b = s)
@@ -67,7 +75,10 @@ lemma longPairTo_representatives (P : IntervalPairing X Y U)
 omit [MonoidalCategory C] [MonoidalPreadditive C]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft A)]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)] in
-/-- The original output map commutes with the full cycle-and-quotient representative. -/
+/-- Long representatives commute with a spectral-object morphism.
+
+An interval component followed by the target representative equals the source representative
+followed by the quotient-window map. -/
 @[reassoc]
 lemma longRepresentative_windowHom (γ : L ⟶ W)
     (n a ℓ u : ℤ) (hℓ : 1 ≤ ℓ) (hu : 1 ≤ u) :
@@ -78,7 +89,10 @@ lemma longRepresentative_windowHom (γ : L ⟶ W)
   rw [Category.assoc, Hom.windowπ_windowHom,
     Hom.windowToCycles_windowCyclesHom_assoc]
 
-/-- An equality of the original three long-interval products descends to the genuine quotient windows. -/
+/-- Mixed long-interval associativity descends to window quotients.
+
+For the four pairings and comparison γ, equality of the two long triple products gives the
+corresponding window triple-product equality at 1≤u≤ℓ. -/
 theorem windowPairTo_associativity
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -133,7 +147,10 @@ theorem windowPairTo_associativity
     (T.longPairTo_representatives n (m + k) (n + (m + k)) rfl a (b + c) (a + (b + c)) rfl ℓ u hℓ hu huℓ)
     (longRepresentative_windowHom γ (n + (m + k)) (a + (b + c)) ℓ u hℓ hu) hassoc
 
-/-- Mixed associativity concerns only the original products on three equal-length long intervals. -/
+/-- The mixed associativity law on equal-width long intervals.
+
+For P:X⊗Y→U, Q:U⊗Z→L, R:Y⊗Z→V, T:X⊗V→W and γ:L→W, the two triple products agree after the
+monoidal associator and γ. -/
 def longAssociativity
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -149,7 +166,10 @@ def longAssociativity
       (𝟙 _ ⊗ₘ R.longPairTo m k (m + k) rfl b c (b + c) rfl ℓ hℓ) ≫
       T.longPairTo n (m + k) (n + (m + k)) rfl a (b + c) (a + (b + c)) rfl ℓ hℓ
 
-/-- The original page product followed by the original page-window comparison is the window product. -/
+/-- The forward page chart preserves a specified window product.
+
+The page product followed by the output window chart equals the tensor of input charts
+followed by the window product. -/
 @[reassoc]
 lemma pagePairTo_window_hom (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t)
@@ -173,7 +193,9 @@ lemma pagePairTo_window_hom (P : IntervalPairing X Y U)
 omit [MonoidalCategory C] [MonoidalPreadditive C]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft A)]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)] in
-/-- The original output page map retains independently chosen, equal degree and cut notation. -/
+/-- The spectral comparison map in specified window coordinates.
+
+The component of γ commutes with page-window charts at total degree n and cut a. -/
 @[reassoc]
 lemma pageMap_pageWindowIsoAt (γ : L ⟶ W) (r : ℤ) (hr : 1 ≤ r) (pq : ℤ × ℤ)
     (n a : ℤ) (hn : n = pq.1 + pq.2) (ha : a = -pq.1) :
@@ -183,7 +205,10 @@ lemma pageMap_pageWindowIsoAt (γ : L ⟶ W) (r : ℤ) (hr : 1 ≤ r) (pq : ℤ 
   subst n a
   exact Hom.pageMap_pageWindowIso γ r hr pq
 
-/-- The long-interval associativity equation gives the actual native mixed page equation. -/
+/-- Mixed long-interval associativity gives page associativity.
+
+At width r, the long associativity law gives equality of the two triple page products, with γ
+on the first output branch. -/
 theorem pagePairTo_associativity
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -237,7 +262,10 @@ theorem pagePairTo_associativity
       (by dsimp; omega) (by dsimp; omega))
     (windowPairTo_associativity P Q R T γ n m k a b c r r hr hr le_rfl (hassoc n m k a b c))
 
-/-- Mixed associativity is the equality of the original four native page products and original output map. -/
+/-- The mixed associativity law at a fixed page.
+
+Record the triple-product equality for the four pairings and γ, including the monoidal
+associator and additive bidegree transport. -/
 def mixedPageAssociativity
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -250,7 +278,9 @@ def mixedPageAssociativity
       (((Z.skeletalSpectralSequence).page r).X pq'')).hom ≫
       (𝟙 _ ⊗ₘ R.pagePair r hr pq' pq'') ≫ T.pagePair r hr pq (pq' + pq'')
 
-/-- The earned long-interval law supplies mixed associativity on every original native page. -/
+/-- The mixed page law follows from its long-interval law.
+
+Long associativity at width r implies mixedPageAssociativity on page r. -/
 theorem mixedPageAssociativity_of_long
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -258,7 +288,9 @@ theorem mixedPageAssociativity_of_long
     mixedPageAssociativity P Q R T γ r hr :=
   pagePairTo_associativity P Q R T γ r hr hassoc
 
-/-- The original mixed cycle product with an explicitly equal output bidegree. -/
+/-- The mixed cycle product at a specified sum bidegree.
+
+Lift the page product to the output cycles using the two input cycle inclusions. -/
 def mixedPageCyclesPairTo (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
     ((X.skeletalSpectralSequence).page r).cycles pq ⊗ ((Y.skeletalSpectralSequence).page r).cycles pq' ⟶
@@ -266,7 +298,9 @@ def mixedPageCyclesPairTo (P : IntervalPairing X Y U)
   subst t
   exact P.pageCyclesPair r hr pq pq'
 
-/-- The original mixed homology product with an explicitly equal output bidegree. -/
+/-- The mixed homology product at a specified sum bidegree.
+
+Descend the mixed cycle product through the page homology projections. -/
 def mixedPageHomologyPairTo (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
     ((X.skeletalSpectralSequence).page r).homology pq ⊗ ((Y.skeletalSpectralSequence).page r).homology pq' ⟶
@@ -274,7 +308,10 @@ def mixedPageHomologyPairTo (P : IntervalPairing X Y U)
   subst t
   exact P.pageHomologyPair r hr pq pq'
 
-/-- The mixed cycle product is computed by the original native kernel inclusions. -/
+/-- The mixed cycle product preserves inclusion.
+
+Its output cycle inclusion equals the tensor of input inclusions followed by the specified
+page product. -/
 @[reassoc]
 lemma mixedPageCyclesPairTo_i (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
@@ -284,7 +321,10 @@ lemma mixedPageCyclesPairTo_i (P : IntervalPairing X Y U)
   subst t
   exact P.pageCyclesPair_i r hr pq pq'
 
-/-- The mixed homology product is computed by the original native quotient projections. -/
+/-- The mixed homology product preserves projections.
+
+The tensor of input homology projections followed by the product equals the cycle product
+followed by output projection. -/
 @[reassoc]
 lemma mixedPageHomologyPairTo_π (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
@@ -294,7 +334,10 @@ lemma mixedPageHomologyPairTo_π (P : IntervalPairing X Y U)
   subst t
   exact P.pageHomologyPair_π r hr pq pq'
 
-/-- The actual native successor comparisons carry the mixed homology product to the next page product. -/
+/-- The mixed homology product gives the successor page product.
+
+The spectral successor isomorphisms carry the mixed homology product to the specified product
+at r+1. -/
 @[reassoc]
 lemma mixedPageHomologyPairTo_successor (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
@@ -306,7 +349,10 @@ lemma mixedPageHomologyPairTo_successor (P : IntervalPairing X Y U)
   subst t
   exact P.pagePair_successor r hr pq pq'
 
-/-- The inverse successor comparisons retain the original mixed homology product. -/
+/-- The inverse successor square for the mixed product.
+
+Returning the output product from r+1 equals returning the inputs and applying the page-r
+homology product. -/
 @[reassoc]
 lemma mixedPagePairTo_successor_inv (P : IntervalPairing X Y U)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
@@ -320,7 +366,9 @@ lemma mixedPagePairTo_successor_inv (P : IntervalPairing X Y U)
   rw [P.mixedPageHomologyPairTo_successor, tensorHom_comp_tensorHom_assoc]
   simp only [Iso.inv_hom_id, tensorHom_id, id_whiskerRight, Category.id_comp]
 
-/-- Native cycle inclusions preserve mixed associativity and the original induced output cycle map. -/
+/-- Mixed page associativity passes to cycles.
+
+The triple cycle products agree with the induced cycles map of γ. -/
 theorem mixedPageCyclesPair_associativity
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -356,7 +404,9 @@ theorem mixedPageCyclesPair_associativity
     (R.pageCyclesPair_i r hr pq' pq'') (T.pageCyclesPair_i r hr pq (pq' + pq''))
     (HomologicalComplex.cyclesMap_i _ _) (hassoc pq pq' pq'')
 
-/-- Native homology quotients descend mixed associativity with the actual output homology map. -/
+/-- Mixed page associativity passes to homology.
+
+The triple homology products agree with the induced homology map of γ. -/
 theorem mixedPageHomologyPair_associativity
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -399,7 +449,10 @@ theorem mixedPageHomologyPair_associativity
 omit [MonoidalCategory C] [MonoidalPreadditive C]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft A)]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)] in
-/-- The inverse native successor maps commute with the original output spectral-sequence map. -/
+/-- The spectral comparison map commutes with inverse succession.
+
+The next-page component of γ followed by inverse succession equals inverse succession followed
+by its homology map at r. -/
 @[reassoc]
 lemma spectralMap_successor_inv (γ : L ⟶ W) (r : ℤ) (hr : 1 ≤ r) (pq : ℤ × ℤ) :
     (γ.spectralSequencePageMap skeletalPageCore (r + 1) (by omega)).f pq ≫
@@ -411,7 +464,9 @@ lemma spectralMap_successor_inv (γ : L ⟶ W) (r : ℤ) (hr : 1 ≤ r) (pq : �
   rw [Hom.spectralSequencePageMap_comm γ skeletalPageCore r (r + 1) pq rfl hr]
   simp only [Iso.inv_hom_id_assoc]
 
-/-- Mixed page homology and the successor maps preserve mixed associativity. -/
+/-- Mixed associativity passes to the successor page.
+
+The page-r law for the four pairings and γ implies the page-(r+1) law. -/
 theorem mixedPageAssociativity_successor
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)
@@ -441,7 +496,9 @@ theorem mixedPageAssociativity_successor
     (spectralMap_successor_inv γ r hr (pq + (pq' + pq'')))
     (mixedPageHomologyPair_associativity P Q R T γ r hr hassoc pq pq' pq'')
 
-/-- Mixed associativity proved on an initial native page holds on every later integer page. -/
+/-- Mixed associativity persists on all later pages.
+
+A mixed associativity law at r₀≥1 propagates to every r≥r₀. -/
 theorem mixedPageAssociativity_later
     (P : IntervalPairing X Y U) (Q : IntervalPairing U Z L)
     (R : IntervalPairing Y Z V) (T : IntervalPairing X V W) (γ : L ⟶ W)

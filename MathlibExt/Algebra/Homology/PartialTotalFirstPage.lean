@@ -15,15 +15,16 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalCoreInterval
 
 /-!
-# First-page objects of the partial-total spectral object
+# Signed-row coordinates on the first page
 
-This file identifies the homology object attached to a core interval with
-the corresponding signed-row homology.  Under the exact
-`HasSpectralSequence` hypothesis required by Mathlib, it packages this as an
-isomorphism from the actual first-page object.
+Let `B` be a first-quadrant bicomplex in an abelian category. Its partial-total filtration has
+successive quotients given by the rows `B.totalRow p`, whose degree `p + q` term is `B.X p q`
+and whose vertical differential has sign `(-1)^p`. The homology of the core interval for `(p,
+q)` is therefore the degree `p + q` homology of this signed row.
 
-No `HasSpectralSequence` instance, differential formula, E₂ computation, or
-convergence theorem is proved here.
+When the partial-total spectral object has a spectral sequence for the increasing homological
+core, these isomorphisms identify `E¹_(p,q)` with the same signed-row homology. An additional
+equality `p + q = n` expresses the coordinate in a specified total degree.
 -/
 
 @[expose] public section
@@ -47,9 +48,12 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- The `H`-object of the mapped spectral object on the interval selected by
-the increasing core is the green mapping-cone homology object of the uniform
-filtration step. -/
+/-- Core-interval homology as partial-total step homology.
+
+For natural indices `p` and `q`, the spectral homology of the first core interval in
+cochain degree `-p - q` is isomorphic to `B.partialTotalStepE₁Homology p q`. The
+isomorphism uses the mapping cone of the inclusion between the two adjacent
+partial-total stages. -/
 noncomputable def partialTotalSpectralObjectHStepIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.H ((core).deg (p, q))).obj
         (CategoryTheory.ComposableArrows.mk₁
@@ -67,11 +71,11 @@ section Page
 variable [B.partialTotalSpectralObject.HasSpectralSequence core]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual first-page object at `(p,q)` is canonically the homology of
-the signed `p`th row in total degree `p+q`.
+/-- First-page homology in signed-row coordinates.
 
-The only hypothesis beyond abelianness is Mathlib's exact
-`HasSpectralSequence` condition for the custom increasing core. -/
+Assume the partial-total spectral object has a spectral sequence for the increasing
+homological core. Its first-page object at `(p, q)` is isomorphic to `H_(p+q)(B.totalRow p)`,
+with the vertical sign and the total-degree placement carried by `B.totalRow p`. -/
 noncomputable def partialTotalSpectralSequenceFirstPageRowIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page 1).X (p, q) ≅
       (B.totalRow p).homology (p + q) :=
@@ -81,7 +85,11 @@ noncomputable def partialTotalSpectralSequenceFirstPageRowIso (p q : ℕ) :
     B.partialTotalSpectralObjectHStepIso p q ≪≫
     B.partialTotalStepE₁HomologyIso p q
 
-/-- The first-page object at `(p,q)` in a chosen total degree `n=p+q`. -/
+/-- First-page row coordinate in a specified total degree.
+
+Under the same spectral-sequence hypothesis, an equality `p + q = n` gives an isomorphism from
+the first-page object at `(p, q)` to `H_n(B.totalRow p)`. The change of degree is the homology
+transport along this equality. -/
 noncomputable def partialTotalSpectralSequenceFirstPageRowIsoAt
     (p q n : ℕ) (h : p + q = n) :
     ((B.partialTotalSpectralObject.spectralSequence core).page 1).X (p, q) ≅

@@ -1,4 +1,6 @@
-# Native Tor Symmetry Nat Iso
+# Tor bifunctor is naturally isomorphic to its variable flip
 
-Canonical balance followed by the derived original braiding gives the
-full two-variable native Tor symmetry in the actual module universe.
+Tor bifunctor is naturally isomorphic to its variable flip.
+
+For every natural `q`, balance of the two tensor derivations and the derived braiding give a
+natural isomorphism from the Tor bifunctor to its flip in `ModuleCat.{max u v} R`.

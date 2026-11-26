@@ -1,3 +1,6 @@
-# Field Tensor Coefficient Module Map hom apply
+# Underlying map of a Galois tensor coefficient morphism
 
-The original tensor coefficient arrow retains the SAME computed native tensor map value.
+Let Ω/k be a separable closure in universe u and c = max(u, r).
+For equivariant additive f : M → M′ and g : N → N′, the underlying
+tensor coefficient map is TensorProduct.map(f, g), with pure value
+m ⊗ n ↦ f(m) ⊗ g(n).

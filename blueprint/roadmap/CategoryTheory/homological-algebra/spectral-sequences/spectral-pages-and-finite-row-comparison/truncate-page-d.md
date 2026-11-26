@@ -1,3 +1,5 @@
-# Truncate page d
+# The retained page differential is unchanged
 
-Every retained differential is exactly the original differential.
+The retained page differential is unchanged.
+
+Truncation keeps the original differential between every pair of indices.

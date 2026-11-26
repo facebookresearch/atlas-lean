@@ -1,3 +1,6 @@
-# Algebra Eulerian Chain Map comp
+# Orthogonality of raw Eulerian chain endomorphisms
 
-The raw Eulerian chain maps are orthogonal idempotents.
+Orthogonality of raw Eulerian chain endomorphisms.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+chain maps of weights i and j compose to the weight-i map when i=j and to zero otherwise.

@@ -1,3 +1,5 @@
-# Away Direct Limit
+# The direct limit of repeated scalar multiplication
 
-The sequential direct limit under repeated multiplication by `r`.
+The direct limit of repeated scalar multiplication.
+
+Take the module direct limit of the constant sequence with successor map r·−.

@@ -1,3 +1,6 @@
-# Countable Coalgebra Basis
+# A countable homogeneous basis for a countably seeded subcomonoid
 
-A countable seed set gives a homogeneous basis with countable indices in all degrees.
+A countable homogeneous basis for a countably seeded subcomonoid.
+
+If s is countable, the closure complex has a homogeneous basis whose total index set over all
+integer degrees is countable.

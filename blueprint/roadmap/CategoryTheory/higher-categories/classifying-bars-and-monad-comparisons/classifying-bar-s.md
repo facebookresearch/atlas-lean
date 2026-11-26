@@ -1,3 +1,6 @@
-# Classifying Bar s
+# Classifying bar degeneracies insert the monad unit
 
-Degeneracies of the classifying bar insert the monad unit.
+Classifying bar degeneracies insert the monad unit.
+
+The degeneracy indexed by `i` is outer tensoring by `Pt` of the monad unit insertion at
+position `i`.

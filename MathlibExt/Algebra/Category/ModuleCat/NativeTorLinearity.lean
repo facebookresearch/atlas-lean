@@ -15,12 +15,15 @@ public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.CategoryTheory.Monoidal.Tor
 
 /-!
-# Scalar linearity of native Tor in its first coefficient
+# Linearity of Tor in maps of its first coefficient
 
-The original projective resolution in the second coefficient computes the
-first-variable native Tor maps. The actual tensor and homology maps retain
-addition and the original base scalar action in every degree. The ring and
-module carrier universes are independent.
+Let R be a commutative ring in universe nr and coefficient carriers lie in W=max(nr,nm). Fix an
+R-module Y and q∈ℕ. For modules X₁,X₂, the map f↦Tor_q^R(f,id_Y) from Hom_R(X₁,X₂) to
+Hom_R(Tor_q(X₁,Y),Tor_q(X₂,Y)) is R-linear.
+
+A projective resolution of Y computes these maps using f⊗id on the tensor complexes. Tensoring
+and homology preserve addition and multiplication by scalars, and the canonical derived-functor
+comparisons retain those equations. The coefficient height nm is independent of nr.
 -/
 
 @[expose] public section
@@ -34,8 +37,10 @@ namespace ModuleCat.UniverseTensor
 universe nr nm
 variable (R₇ : Type nr) [CommRing R₇]
 
-/-- The genuine first-variable map of native Tor is linear, computed
-using the actual original projective resolution and homology maps. -/
+/-- Let R be commutative in universe nr and X₁,X₂,Y R-modules in W=max(nr,nm), with nm independent.
+For q∈ℕ, this is the R-linear map Hom_R(X₁,X₂)→Hom_R(Tor_q^R(X₁,Y),Tor_q^R(X₂,Y)) sending f to
+Tor_q^R(f,id_Y). It satisfies Tor_q(f+g,id_Y)=Tor_q(f,id_Y)+Tor_q(g,id_Y) and
+Tor_q(r•f,id_Y)=r•Tor_q(f,id_Y). -/
 def nativeTorFirstMapLinear {X₁ X₂ : ModuleCat.{max nr nm} R₇}
     (Y : ModuleCat.{max nr nm} R₇) (q : ℕ) :
     (X₁ ⟶ X₂) →ₗ[R₇]

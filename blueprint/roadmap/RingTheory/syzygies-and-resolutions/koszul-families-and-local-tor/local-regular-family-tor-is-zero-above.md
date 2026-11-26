@@ -1,5 +1,5 @@
-# Local Regular Family Tor is Zero above
+# The local regular-family Tor vanishes above the family size
 
-The original local Tor groups vanish above the actual length of the
-regular coefficient sequence. This cutoff is proved from the original
-projective Koszul resolution.
+The local regular-family Tor vanishes above the family size.
+
+For a family of size n, its local Tor module is zero for j>n.

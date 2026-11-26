@@ -1,3 +1,6 @@
-# Tensor Coefficient Transformation add
+# Tensor coefficient transformations preserve addition
 
-Addition is addition on the original coefficient representatives.
+Tensor coefficient transformations preserve addition.
+
+For `R`-linear coefficient maps `f` and `g` preserving the right `S`-action, the tensor
+transformation for `f + g` is the sum of their tensor transformations.

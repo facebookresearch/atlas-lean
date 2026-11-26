@@ -1,4 +1,6 @@
-# Scalar Presheaf Pushforward
+# Precomposition of module presheaves with scalar restriction
 
-The existing scalar-restricted pushforward with its commutative
-presheaf source and target stated explicitly.
+Precomposition of module presheaves with scalar restriction.
+
+For F : C → D and φ : S → F*R, send an R-module presheaf M to the S-module presheaf U ↦
+M(F(U)), with action through φ_U.

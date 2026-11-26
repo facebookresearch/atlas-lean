@@ -1,4 +1,6 @@
-# Horizontal First Page Filtration Map succ mono Iso
+# The positive filtration comparison square after cochain extension
 
-The positive consecutive-stage comparison square after chain-to-cochain
-extension.
+The positive filtration comparison square after cochain extension.
+
+The complete first-page map followed by its upper cochain comparison equals the lower
+comparison followed by the extended natural-stage inclusion.

@@ -15,16 +15,25 @@ public import Mathlib.CategoryTheory.Comma.StructuredArrow.Small
 public import Mathlib.CategoryTheory.Limits.EssentiallySmall
 public import Mathlib.CategoryTheory.Functor.KanExtension.Adjunction
 
-/-! # Common-universe affine-comma presheaf left extension
+/-!
+# Left extension of affine étale presheaves
 
-For every scheme morphism, the original affine étale basis followed by actual
-base change gives a functor to the original small étale category. The target
-objects are not required to be affine. Its comma diagrams are essentially
-small in the common coefficient universe, so every affine presheaf has an
-actual pointwise left Kan extension, with its natural presheaf adjunction.
+Let f : X → Y be a morphism of schemes in universe u and put c = max(u, w).
+The functor G_f : AffineEtale(Y) → Etale(X) sends an affine étale Y-scheme U
+to X ×_Y U. Its values need not be affine. For an abelian-group presheaf
+P on AffineEtale(Y) with coefficients in universe c, left Kan extension
+along G_fᵒᵖ gives an abelian-group presheaf on Etale(X).
 
-Milne, *Lectures on Étale Cohomology*, §8, p. 60, constructs presheaf inverse
-image by these diagrams; the affine-domain size refinement uses §7, p. 51.
+At V ∈ Etale(X), the extension is the colimit of P(U) over arrows
+V → G_f(U), indexed by the opposite affine-comparison category.
+These indexing categories are essentially small in universe c, so their
+colimits exist in AddCommGrpCat c for every f, P and V.
+The colimit formula specifies restriction maps and maps of presheaves;
+the extension is left adjoint to precomposition by G_fᵒᵖ.
+
+Milne, Lectures on Étale Cohomology, §8, p. 60, describes presheaf inverse
+image using these comma diagrams; the affine-basis size argument uses
+§7, p. 51.
 -/
 
 @[expose] public section
@@ -35,12 +44,18 @@ universe u w
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The actual original affine basis followed by arbitrary scheme base change. -/
+/-- For a scheme morphism f : X → Y, the functor
+G_f : AffineEtale(Y) → Etale(X) first regards an affine étale Y-scheme
+U as an étale object and then takes X ×_Y U. The resulting étale X-scheme
+is not required to be affine. -/
 abbrev smallEtaleAffineBaseChange {X Y : Scheme.{u}} (f : X ⟶ Y) :
     Y.AffineEtale ⥤ X.Etale :=
   Scheme.AffineEtale.Spec Y ⋙ smallEtaleBaseChange f
 
-/-- The actual affine étale category is small in the common universe. -/
+/-- For a scheme Y in universe u and an independent universe w, the
+category AffineEtale(Y) is essentially small in c = max(u, w):
+it is equivalent to a category whose objects and morphisms lie in
+that common universe. -/
 theorem smallEtaleAffineCommonEssentiallySmall (Y : Scheme.{u}) :
     EssentiallySmall.{max u w} Y.AffineEtale := by
   let e := equivSmallModel.{u} Y.AffineEtale
@@ -53,35 +68,52 @@ private instance commonAffineSmall (Y : Scheme.{u}) :
     EssentiallySmall.{max u w} Y.AffineEtale :=
   smallEtaleAffineCommonEssentiallySmall.{u, w} Y
 
-/-- These are the actual diagrams from an original étale object to the
-base change of an original affine étale object. -/
+/-- For a scheme morphism f : X → Y and V ∈ Etale(X), this is the
+category of pairs (U, a), where U ∈ AffineEtale(Y) and a : V → X ×_Y U
+is a morphism of étale X-schemes. A morphism is an affine étale map
+U → U′ whose base change takes a to a′. -/
 abbrev smallEtaleAffineStructuredComma {X Y : Scheme.{u}} (f : X ⟶ Y) (V : X.Etale) :=
   StructuredArrow V (smallEtaleAffineBaseChange f)
 
-/-- The opposite indexing category appropriate for the presheaf colimit.
-An object's arrow unop is precisely `V ⟶ G(U)` on the original site. -/
+/-- For a scheme morphism f : X → Y and V ∈ Etale(X), this comma
+category indexes presheaf extension at V. Its objects correspond to
+U ∈ AffineEtale(Y) and arrows a : V → X ×_Y U. Its arrow direction
+is opposite to that of the structured-arrow category of these pairs,
+so an affine presheaf can be evaluated on it covariantly. -/
 abbrev smallEtaleAffineComma {X Y : Scheme.{u}} (f : X ⟶ Y) (V : X.Etale) :=
   CostructuredArrow (smallEtaleAffineBaseChange f).op (op V)
 
-/-- Stock structured-arrow smallness applies to every actual diagram. -/
+/-- For schemes X, Y in universe u, a morphism f : X → Y, V ∈ Etale(X),
+and an independent universe w, the category of affine comparison arrows
+V → X ×_Y U is essentially small in max(u, w). No restriction on
+the morphism f is imposed. -/
 theorem smallEtaleAffineStructuredCommaEssentiallySmall
     {X Y : Scheme.{u}} (f : X ⟶ Y) (V : X.Etale) :
     EssentiallySmall.{max u w} (smallEtaleAffineStructuredComma f V) := by
   infer_instance
 
-/-- Stock costructured-arrow smallness applies in the same common universe. -/
+/-- For schemes X, Y in universe u, a morphism f : X → Y, V ∈ Etale(X),
+and an independent universe w, the comma category indexing arrows
+V → X ×_Y U with the presheaf arrow direction is essentially small
+in max(u, w). -/
 theorem smallEtaleAffineCommaEssentiallySmall
     {X Y : Scheme.{u}} (f : X ⟶ Y) (V : X.Etale) :
     EssentiallySmall.{max u w} (smallEtaleAffineComma f V) := by
   infer_instance
 
-/-- The literal diagram of the original affine-presheaf groups. -/
+/-- Let f : X → Y be a scheme morphism, V ∈ Etale(X), and
+P : AffineEtale(Y)ᵒᵖ → AddCommGrpCat max(u, w) an abelian-group presheaf.
+This diagram on the affine presheaf comma category sends a comparison
+arrow V → X ×_Y U to P(U), and sends a comma morphism to the corresponding
+restriction map of P. -/
 abbrev smallEtaleAffineCommaDiagram {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (V : X.Etale) :=
   CostructuredArrow.proj (smallEtaleAffineBaseChange f).op (op V) ⋙ P
 
-/-- Every corresponding colimit exists in the same common-universe group
-category; no actual-comma object smallness is assumed. -/
+/-- For a scheme morphism f : X → Y with X and Y in universe u,
+V ∈ Etale(X), and any universe w, AddCommGrpCat max(u, w) admits
+all colimits indexed by the affine presheaf comma category at V.
+The indexing category's essential smallness in max(u, w) suffices. -/
 theorem smallEtaleAffineCommaHasColimits
     {X Y : Scheme.{u}} (f : X ⟶ Y) (V : X.Etale) :
     HasColimitsOfShape (smallEtaleAffineComma f V) AddCommGrpCat.{max u w} := by
@@ -89,8 +121,11 @@ theorem smallEtaleAffineCommaHasColimits
     smallEtaleAffineCommaEssentiallySmall.{u, w} f V
   exact hasColimitsOfShape_of_essentiallySmall.{max u w} _ _
 
-/-- All actual comma colimits provide pointwise left extensions for every
-affine presheaf, with no certificate among the hypotheses. -/
+/-- For a scheme morphism f : X → Y and an abelian-group presheaf
+P on AffineEtale(Y) with coefficients in c = max(u, w), a pointwise
+left Kan extension along G_fᵒᵖ exists, where G_f(U) = X ×_Y U.
+At V ∈ Etale(X), it is the colimit of P(U) over the affine comparison
+arrows V → G_f(U). -/
 theorem smallEtaleAffineHasPointwiseLeftKanExtension
     {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
@@ -122,13 +157,20 @@ instance smallEtaleAffineLeftKanExtension
     ((smallEtaleAffineBaseChange f).op.pointwiseLeftKanExtension P)
     ((smallEtaleAffineBaseChange f).op.pointwiseLeftKanExtensionUnit P)
 
-/-- The stock left-Kan-extension functor for every actual affine presheaf. -/
+/-- For a scheme morphism f : X → Y, this functor sends abelian-group
+presheaves on AffineEtale(Y) to abelian-group presheaves on Etale(X),
+with all coefficients in c = max(u, w). It is left Kan extension
+along G_fᵒᵖ for G_f(U) = X ×_Y U; its value at V is the comma colimit
+of P(U) over arrows V → G_f(U). -/
 def smallEtaleAffinePresheafLan {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) ⥤
       (X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :=
   (smallEtaleAffineBaseChange f).op.lan (H := AddCommGrpCat.{max u w})
 
-/-- The natural unit belonging to that one actual presheaf functor. -/
+/-- For a scheme morphism f : X → Y and coefficients in c = max(u, w),
+this is the unit η of affine presheaf left extension. For every affine
+presheaf P, it is the natural map
+P → (Lan_(G_fᵒᵖ) P) ∘ G_fᵒᵖ, where G_f(U) = X ×_Y U. -/
 def smallEtaleAffinePresheafLanUnit {X Y : Scheme.{u}} (f : X ⟶ Y) :
     𝟭 (Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) ⟶
       smallEtaleAffinePresheafLan.{u, w} f ⋙
@@ -136,35 +178,50 @@ def smallEtaleAffinePresheafLanUnit {X Y : Scheme.{u}} (f : X ⟶ Y) :
           (smallEtaleAffineBaseChange f).op :=
   (smallEtaleAffineBaseChange f).op.lanUnit (H := AddCommGrpCat.{max u w})
 
-/-- The natural presheaf adjunction, obtained from the stock Kan provider. -/
+/-- For a scheme morphism f : X → Y and abelian-group coefficients
+in c = max(u, w), left Kan extension along
+G_fᵒᵖ : AffineEtale(Y)ᵒᵖ → Etale(X)ᵒᵖ is left adjoint to precomposition
+by G_fᵒᵖ, where G_f(U) = X ×_Y U. -/
 def smallEtaleAffinePresheafLanAdjunction {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleAffinePresheafLan.{u, w} f ⊣
       (Functor.whiskeringLeft Y.AffineEtaleᵒᵖ X.Etaleᵒᵖ AddCommGrpCat.{max u w}).obj
         (smallEtaleAffineBaseChange f).op :=
   (smallEtaleAffineBaseChange f).op.lanAdjunction AddCommGrpCat.{max u w}
 
-/-- The actual comma cocone, whose point is the value of the chosen Kan functor. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf
+P with coefficients in c = max(u, w), and V ∈ Etale(X), this cocone
+has vertex (Lan_(G_fᵒᵖ) P)(V). Its leg at a : V → G_f(U) is the unit
+P(U) → (Lan P)(G_f(U)) followed by restriction along a. -/
 def smallEtaleAffinePresheafLanCocone {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (V : X.Etale) :
     Cocone (smallEtaleAffineCommaDiagram.{u, w} f P V) :=
   (Functor.LeftExtension.mk ((smallEtaleAffinePresheafLan.{u, w} f).obj P)
     ((smallEtaleAffinePresheafLanUnit.{u, w} f).app P)).coconeAt (op V)
 
-/-- This very cocone is a colimit, by the derived pointwise Kan property. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf
+P with coefficients in c = max(u, w), and V ∈ Etale(X), the cocone
+with vertex (Lan_(G_fᵒᵖ) P)(V) and legs given by the Kan unit followed
+by restriction along V → G_f(U) is a colimit cocone. -/
 def smallEtaleAffinePresheafLanIsColimit {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (V : X.Etale) :
     IsColimit (smallEtaleAffinePresheafLanCocone.{u, w} f P V) :=
   (smallEtaleAffineBaseChange f).op.isPointwiseLeftKanExtensionLeftKanExtensionUnit P (op V)
 
-/-- The canonical value comparison with the colimit of the same actual groups. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf
+P with coefficients in c = max(u, w), and V ∈ Etale(X), this is the
+canonical isomorphism (Lan_(G_fᵒᵖ) P)(V) ≅ colim_(V→G_f(U)) P(U).
+Here G_f(U) = X ×_Y U and the colimit uses the presheaf comma direction. -/
 def smallEtaleAffinePresheafLanObjIsoColimit {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (V : X.Etale) :
     ((smallEtaleAffinePresheafLan.{u, w} f).obj P).obj (op V) ≅
       colimit (smallEtaleAffineCommaDiagram.{u, w} f P V) :=
   (smallEtaleAffineBaseChange f).op.leftKanExtensionObjIsoColimit P (op V)
 
-/-- Each actual colimit inclusion is identified with the prescribed unit
-component followed by the actual Kan restriction. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf P,
+V ∈ Etale(X), and a comma object j given by a : V → G_f(U), let
+χ_V : (Lan P)(V) ≅ colim P(U) be the colimit comparison, with coefficients
+in c = max(u, w). The composite χ_V⁻¹ ∘ ι_j is restriction along a
+after the Kan unit η_U : P(U) → (Lan P)(G_f(U)). -/
 theorem smallEtaleAffinePresheafLan_ι_inv
     {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (V : X.Etale)
@@ -175,7 +232,10 @@ theorem smallEtaleAffinePresheafLan_ι_inv
         ((smallEtaleAffinePresheafLan.{u, w} f).obj P).map j.hom := by
   exact (smallEtaleAffineBaseChange f).op.ι_leftKanExtensionObjIsoColimit_inv P (op V) j
 
-/-- The canonical forward comparison has the original colimit inclusion value. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf P,
+V ∈ Etale(X), and a : V → G_f(U), let χ_V be the comparison from
+(Lan P)(V) to its comma colimit, with coefficients in c = max(u, w).
+Then χ_V ∘ restriction(a) ∘ η_U is the colimit inclusion ι_(U,a). -/
 theorem smallEtaleAffinePresheafLan_ι_hom
     {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) (V : X.Etale)
@@ -186,8 +246,11 @@ theorem smallEtaleAffinePresheafLan_ι_hom
       colimit.ι (smallEtaleAffineCommaDiagram.{u, w} f P V) j := by
   exact (smallEtaleAffineBaseChange f).op.ι_leftKanExtensionObjIsoColimit_hom P (op V) j
 
-/-- Restriction is the actual colimit map induced by postcomposition of the
-same comma arrows with the original étale map. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf P
+with coefficients in c = max(u, w), and g : V → W in Etale(X),
+restriction from (Lan P)(W) to (Lan P)(V) sends the comma inclusion
+indexed by a : W → G_f(U) to the inclusion indexed by a ∘ g.
+The equality uses the colimit comparisons at W and V. -/
 theorem smallEtaleAffinePresheafLan_restriction_ι
     {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w})
@@ -208,7 +271,11 @@ theorem smallEtaleAffinePresheafLan_restriction_ι
   rw [← Category.assoc, smallEtaleAffinePresheafLan_ι_inv.{u, w} f P W j]
   simpa only [Functor.map_comp, Category.assoc] using h
 
-/-- Every affine-presheaf morphism induces the actual corresponding colimit map. -/
+/-- For a scheme morphism f : X → Y, a morphism α : P → P′ of affine
+abelian-group presheaves with coefficients in c = max(u, w), and V ∈ Etale(X),
+the extension map at V sends the inclusion of P(U) indexed by
+a : V → G_f(U) to the inclusion of P′(U) composed with α_U.
+The equality identifies both extension values with their comma colimits. -/
 theorem smallEtaleAffinePresheafLan_map_ι
     {X Y : Scheme.{u}} (f : X ⟶ Y)
     {P P' : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w}} (α : P ⟶ P')
@@ -231,7 +298,11 @@ theorem smallEtaleAffinePresheafLan_map_ι
   simpa only [Category.assoc] using congrArg (fun k => α.app j.left ≫ k)
     (smallEtaleAffinePresheafLan_ι_hom.{u, w} f P' V j)
 
-/-- The natural Hom equivalence for every actual target presheaf. -/
+/-- For a scheme morphism f : X → Y, an affine abelian-group presheaf
+P on Y and an abelian-group presheaf Q on Etale(X), both with coefficients
+in c = max(u, w), this is the natural equivalence
+Hom(Lan_(G_fᵒᵖ) P, Q) ≃ Hom(P, Q ∘ G_fᵒᵖ),
+where G_f(U) = X ×_Y U. -/
 def smallEtaleAffinePresheafLanHomEquiv {X Y : Scheme.{u}} (f : X ⟶ Y)
     (P : Y.AffineEtaleᵒᵖ ⥤ AddCommGrpCat.{max u w})
     (Q : X.Etaleᵒᵖ ⥤ AddCommGrpCat.{max u w}) :
@@ -239,9 +310,15 @@ def smallEtaleAffinePresheafLanHomEquiv {X Y : Scheme.{u}} (f : X ⟶ Y)
       (P ⟶ (smallEtaleAffineBaseChange f).op ⋙ Q) :=
   (smallEtaleAffinePresheafLanAdjunction.{u, w} f).homEquiv P Q
 
-/-- The whole construction uses one actual left-extension functor: the same
-comma diagrams give its pointwise colimits, restriction and morphism maps,
-and its natural presheaf adjunction, for every original affine presheaf. -/
+/-- For every scheme morphism f : X → Y in universe u and
+c = max(u, w), the affine comma categories at all V ∈ Etale(X) are
+essentially c-small and their colimits exist in AddCommGrpCat c.
+The left extension of every affine abelian-group presheaf is presented
+by its comma colimit cocone and is left adjoint to precomposition by G_fᵒᵖ.
+The comparison sends the Kan-unit restriction at V → G_f(U) to the
+corresponding colimit inclusion, restriction along g : V → W replaces
+a : W → G_f(U) by a ∘ g, and a presheaf morphism acts on each inclusion
+by its component at U. -/
 theorem original_small_etale_affine_presheaf_left_extension
     {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (∀ V : X.Etale,

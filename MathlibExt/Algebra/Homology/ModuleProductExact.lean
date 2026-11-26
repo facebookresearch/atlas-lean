@@ -16,12 +16,15 @@ public import Mathlib.LinearAlgebra.Pi
 public import Mathlib.Algebra.Category.ModuleCat.Biproducts
 
 /-!
-# Exact products of original module short complexes
+# Exact products and finite biproducts of module short complexes
 
-The product maps act componentwise through the original differentials.
-Exactness is proved by choosing the original component preimages. The
-construction also applies to the finite shifted coefficient systems used
-in generalized-cohomology descent, including an empty index.
+Let R be a ring in u and I an index type in v, with coefficient carriers W=max(u,v). The product
+short complex has terms ∏_i A_i, ∏_i B_i, ∏_i C_i and maps acting coordinatewise. If every
+component is exact at B_i, the product is exact at ∏_i B_i.
+
+For finite I, the canonical finite biproduct-to-product isomorphisms commute with the component
+maps. They give an isomorphism of the biproduct short complex with the product short complex, so
+exactness also passes to the finite biproduct. The empty family is included.
 -/
 
 @[expose] public section
@@ -40,7 +43,9 @@ namespace CategoryTheory.ShortComplex
 
 variable {R : Type u} [Ring R] {I : Type v} (S : I → ShortComplex (ModuleCat.{max u v} R))
 
-/-- The product of the original module short complexes with their literal component maps. -/
+/-- Let R be a ring in u, I a type in v, W=max(u,v), and S_i=(A_i --f_i→ B_i --g_i→ C_i) short
+complexes of R-modules in W. The product has terms ∏_i A_i→∏_i B_i→∏_i C_i, with f(x)_i=f_i(x_i)
+and g(y)_i=g_i(y_i). Since f_i≫g_i=0 in every component, the product composite is zero. -/
 def moduleProduct : ShortComplex (ModuleCat.{max u v} R) :=
   ShortComplex.mk
     (ModuleCat.ofHom (LinearMap.pi (fun i => (S i).f.hom.comp (LinearMap.proj i))))
@@ -50,7 +55,9 @@ def moduleProduct : ShortComplex (ModuleCat.{max u v} R) :=
       ext x i
       exact ConcreteCategory.congr_hom (S i).zero (x i))
 
-/-- Every product cycle has a componentwise preimage when each component complex is exact. -/
+/-- Let R be a ring in u, I a type in v, W=max(u,v), and S_i=(A_i --f_i→ B_i --g_i→ C_i) short
+complexes of R-modules in W. If im(f_i)=ker(g_i) for every i, then the product short complex is
+exact at ∏_i B_i. Every tuple y with g_i(y_i)=0 has a tuple preimage x with f_i(x_i)=y_i. -/
 theorem moduleProduct_exact (hS : ∀ i, (S i).Exact) : (moduleProduct S).Exact := by
   rw [moduleCat_exact_iff]
   intro x hx
@@ -66,7 +73,9 @@ section Finite
 
 variable [Finite I]
 
-/-- The standard biproduct/product comparison at an arbitrary finite index universe. -/
+/-- Let R be a ring in u, I finite in v, W=max(u,v), and X_i∈ModuleCat_W(R). There is an isomorphism
+e:⊕_i X_i≅∏_i X_i of R-module objects. The coordinate of e(x) at i is the i-th biproduct
+projection of x, and the inverse sums the finitely many injections. -/
 def moduleBiproductIsoPi (X : I → ModuleCat.{max u v} R) :
     (⨁ X) ≅ ModuleCat.of R (∀ i, X i) :=
   IsLimit.conePointUniqueUpToIso (biproduct.isLimit X)
@@ -77,7 +86,9 @@ theorem moduleBiproductIsoPi_inv_comp_π (X : I → ModuleCat.{max u v} R) (i : 
       ModuleCat.ofHom (LinearMap.proj i : (∀ j, X j) →ₗ[R] X i) :=
   IsLimit.conePointUniqueUpToIso_inv_comp _ _ (Discrete.mk i)
 
-/-- The literal finite biproduct complex uses the original component maps. -/
+/-- Let R be a ring in u, I a type in v, W=max(u,v), and S_i=(A_i --f_i→ B_i --g_i→ C_i) short
+complexes of R-modules in W. Assume I is finite. The short complex has terms ⊕_i A_i→⊕_i B_i→⊕_i
+C_i and maps ⊕_i f_i, ⊕_i g_i. The component zero-composite equations give its zero composite. -/
 def moduleBiproduct : ShortComplex (ModuleCat.{max u v} R) :=
   ShortComplex.mk (biproduct.map (fun i : I => (S i).f)) (biproduct.map (fun i : I => (S i).g)) (by
     apply biproduct.hom_ext
@@ -104,7 +115,10 @@ theorem moduleBiproductIsoPi_map {X Y : I → ModuleCat.{max u v} R}
     moduleBiproductIsoPi_inv_comp_π] at hf
   exact (ConcreteCategory.congr_hom hf x).symm
 
-/-- The standard finite biproduct/product equivalences preserve the original differentials. -/
+/-- Let R be a ring in u, I a type in v, W=max(u,v), and S_i=(A_i --f_i→ B_i --g_i→ C_i) short
+complexes of R-modules in W. For finite I, the three canonical isomorphisms ⊕_i A_i≅∏_i A_i, and
+similarly for B_i,C_i, give an isomorphism from the biproduct short complex to the product short
+complex. They intertwine both f and g. -/
 def moduleBiproductIsoProduct : moduleBiproduct S ≅ moduleProduct S :=
   ShortComplex.isoMk (moduleBiproductIsoPi (fun i : I => (S i).X₁))
     (moduleBiproductIsoPi (fun i : I => (S i).X₂))
@@ -112,7 +126,10 @@ def moduleBiproductIsoProduct : moduleBiproduct S ≅ moduleProduct S :=
     (moduleBiproductIsoPi_map (fun i : I => (S i).f))
     (moduleBiproductIsoPi_map (fun i : I => (S i).g))
 
-/-- Exactness of each component proves exactness of the literal finite shifted-source biproduct. -/
+/-- Let R be a ring in u, I a type in v, W=max(u,v), and S_i=(A_i --f_i→ B_i --g_i→ C_i) short
+complexes of R-modules in W. For finite I, if every S_i is exact, then the biproduct short
+complex is exact at ⊕_i B_i. The biproduct/product comparison transports exactness from the
+coordinatewise product. -/
 theorem moduleBiproduct_exact (hS : ∀ i, (S i).Exact) : (moduleBiproduct S).Exact :=
   ShortComplex.exact_of_iso (moduleBiproductIsoProduct S).symm (moduleProduct_exact S hS)
 

@@ -1,5 +1,6 @@
-# Triangular normalization for the additive pairing of an linear cup
+# Triangular normalization of module-valued products
 
-The additive pairing of an arbitrary-ring linear cup has the same
-forced cross-degree sign. Its integer linearization is built from the
-literal additive functions, without replacing the original coefficient modules.
+Let `R` be a commutative ring, `A,B,C` be `R`-modules, and
+`cup : A →ₗ[R] B →ₗ[R] C`. For `p,q ∈ ℕ`, if
+`σ_(p+q) • z = cup(σ_p • x, σ_q • y)`, with integer
+`σ_n = (-1)^(n(n+1)/2)`, then `z = (-1)^(pq) • cup(x,y)`.

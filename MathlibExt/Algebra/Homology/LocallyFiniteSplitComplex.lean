@@ -15,16 +15,22 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import MathlibExt.CategoryTheory.Linear.LocallyFiniteSplitCoproduct
 
 /-!
-# Actual locally finite split-complex coproduct inverses
+# Degreewise finite splittings of complex coproducts
 
-The original chain-map inclusions define the native complex coproduct
-descent. In every original degree, the actual finite sum of image
-projections and coproduct inclusions gives its inverse. Native evaluation
-preserves the coproduct, so its original legs are jointly detecting.
-The actual split/cross/projector/support laws prove component invertibility;
-native homological-complex isomorphism detection gives the complex
-isomorphism. No global AB5, homology preservation or supplied isomorphism
-certificate is assumed.
+Let C be an abelian category with countable coproducts, and let K and
+F_j, j ∈ ℕ, be complexes of any common shape on ι. Suppose chain maps
+i_j : F_j → K and p_j : K → F_j satisfy
+p_j ∘ i_j = id_(F_j) and p_k ∘ i_j = 0 for j ≠ k.
+Let N : ι → ℕ bound the projections, so (p_j)_n = 0 for j > N(n),
+and assume ∑_(j=0)^(N(n)) (i_j)_n ∘ (p_j)_n = id_(K_n).
+
+The coproduct map D : ⨁_j F_j → K has restriction i_j.
+Its inverse in degree n is
+V_n = ∑_(j=0)^(N(n)) ι_(j,n) ∘ (p_j)_n.
+The completeness identity gives D_n V_n = id_(K_n), and the split,
+cross and support identities give V_n D_n = id.
+Thus D is a complex isomorphism. The support bound may vary with n,
+and the object, morphism and complex-index worlds are independent.
 -/
 
 @[expose] public section
@@ -48,21 +54,37 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (hsupport : ∀ n : ι, ∀ j : ℕ, N n < j → (p j).f n = 0)
   (hsum : ∀ n : ι, (∑ j : Fin (N n + 1), (p j).f n ≫ (i j).f n) = 𝟙 (K.X n))
 
-/-- The original native sum of the actual image-complex inclusions. -/
+/-- For complexes F_j and K of a common shape in an abelian
+category C with countable coproducts, chain maps i_j : F_j → K
+define D : ⨁_(j∈ℕ) F_j → K by D ∘ ι_j = i_j.
+No projection or splitting data is needed to define this map. -/
 def splitComplexCoproductMap : (∐ F) ⟶ K := Sigma.desc i
 
-/-- The actual finite projection formula in each original complex degree. -/
+/-- For complexes F_j and K in an abelian category with
+countable coproducts, projections p_j : K → F_j and a bound
+N : ι → ℕ define V_n : K_n → (⨁_j F_j)_n by
+V_n = ∑_(j=0)^(N(n)) ι_(j,n) ∘ (p_j)_n.
+This is the degreewise inverse formula when the splitting identities
+hold. -/
 def splitComplexCoproductInverseAt (n : ι) : K.X n ⟶ (∐ F).X n :=
   ∑ j : Fin (N n + 1), (p j.val).f n ≫ (Sigma.ι F j.val).f n
 
-/-- The actual original coproduct chain legs retain the actual original component inclusions. -/
+/-- For chain maps i_j : F_j → K in an abelian category with
+countable coproducts, the component D_n of the induced coproduct
+map satisfies D_n ∘ ι_(j,n) = (i_j)_n for every j and n.
+The complexes may have any common shape. -/
 @[reassoc]
 theorem splitComplexCoproduct_leg (j : ℕ) (n : ι) :
     (Sigma.ι F j).f n ≫ (splitComplexCoproductMap K F i).f n = (i j).f n := by
   exact congrArg (fun f => f.f n) (Sigma.ι_comp_desc i j)
 
 include hsum in
-/-- The actual finite projector sum is the right component inverse. -/
+/-- For complexes F_j,K in an abelian category with countable
+coproducts, let D be induced by i_j and
+V_n = ∑_(j=0)^(N(n)) ι_(j,n) ∘ (p_j)_n.
+If ∑_(j=0)^(N(n)) (i_j)_n ∘ (p_j)_n = id_(K_n), then
+D_n ∘ V_n = id_(K_n). The finite completeness condition supplies
+this right-inverse identity. -/
 @[reassoc]
 theorem splitComplexCoproductInverseAt_map (n : ι) :
     splitComplexCoproductInverseAt K F p N n ≫ (splitComplexCoproductMap K F i).f n = 𝟙 (K.X n) := by
@@ -71,7 +93,12 @@ theorem splitComplexCoproductInverseAt_map (n : ι) :
   exact hsum n
 
 include hsplit hcross hsupport in
-/-- Native evaluation of the actual coproduct proves the left component inverse from original split and cross maps. -/
+/-- For complexes F_j,K in an abelian category with countable
+coproducts, suppose p_j ∘ i_j = id_(F_j),
+p_k ∘ i_j = 0 for j ≠ k and (p_j)_n = 0 for j > N(n).
+Then V_n ∘ D_n = id_((⨁_j F_j)_n), where
+D restricts to i_j and V_n = ∑_(j=0)^(N(n)) ι_(j,n) ∘ (p_j)_n.
+This identity uses the split, cross and degree-support conditions. -/
 @[reassoc]
 theorem splitComplexCoproductMap_inverseAt (n : ι) :
     (splitComplexCoproductMap K F i).f n ≫ splitComplexCoproductInverseAt K F p N n =
@@ -112,7 +139,13 @@ theorem splitComplexCoproductMap_inverseAt (n : ι) :
     rw [← Category.assoc, ← HomologicalComplex.comp_f, h, HomologicalComplex.zero_f, zero_comp]
 
 include hsplit hcross hsupport hsum in
-/-- Each original coproduct-map component is actually invertible with its original finite projection inverse. -/
+/-- For complexes F_j,K of any common shape in an abelian
+category with countable coproducts, assume split orthogonality
+p_j i_j = id and p_k i_j = 0 for j ≠ k, the bound
+(p_j)_n = 0 for j > N(n), and finite completeness
+∑_(j=0)^(N(n)) (i_j)_n(p_j)_n = id_(K_n).
+Then every D_n : (⨁_j F_j)_n → K_n is an isomorphism, with inverse
+∑_(j=0)^(N(n)) ι_(j,n)(p_j)_n. -/
 theorem isIso_splitComplexCoproductMap_f (n : ι) :
     IsIso ((splitComplexCoproductMap K F i).f n) := by
   let e : (∐ F).X n ≅ K.X n :=
@@ -123,7 +156,12 @@ theorem isIso_splitComplexCoproductMap_f (n : ι) :
   exact e.isIso_hom
 
 include hsplit hcross hsupport hsum in
-/-- Native componentwise detection gives the original locally finite complex coproduct isomorphism. -/
+/-- Let C be abelian with countable coproducts and let F_j,K
+be complexes of any common shape. If the chain maps i_j,p_j split
+orthogonally, (p_j)_n vanishes for j > N(n), and
+∑_(j=0)^(N(n)) (i_j)_n ∘ (p_j)_n = id_(K_n), then the coproduct
+map with restrictions i_j is an isomorphism ⨁_j F_j ≅ K.
+The inverse has the stated finite projection formula in each degree. -/
 def locallyFiniteSplitComplexCoproductIso : (∐ F) ≅ K := by
   letI : ∀ n : ι, IsIso ((splitComplexCoproductMap K F i).f n) :=
     fun n => isIso_splitComplexCoproductMap_f K F i p hsplit hcross N hsupport hsum n

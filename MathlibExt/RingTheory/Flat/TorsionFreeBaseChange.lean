@@ -19,7 +19,19 @@ public import Mathlib.RingTheory.Localization.Module
 public import Mathlib.RingTheory.Ideal.MinimalPrime.Localization
 public import MathlibExt.RingTheory.KrullDimension.Integral
 
-/-! Torsion-freeness retained by the actual flat scalar extension. -/
+/-!
+# Torsion-free modules under flat scalar extension
+
+Let R be a commutative domain, S a flat commutative R-algebra and M a torsion-free R-module.
+Then S ⊗[R] M is torsion-free over S: regular scalars of S act injectively. The localization
+of M over the fraction field of R supplies an embedding into a flat module, and tensoring
+preserves that embedding.
+
+For a torsion-free commutative algebra B over a domain S, the map S → B/p is injective for
+every minimal prime p of B. If B is also finite over S, this quotient is integral with
+faithful scalar action, so ringKrullDim(B/p) = ringKrullDim(S). The scalar, algebra and module
+universes are independent.
+-/
 
 @[expose] public section
 noncomputable section
@@ -27,7 +39,11 @@ open scoped TensorProduct nonZeroDivisors
 universe u v w
 namespace Module.IsTorsionFree
 
-/-- Actual flat scalar extension preserves torsion-free modules over a domain. -/
+/-- Torsion-freeness preserved by flat base change from a domain.
+
+Let R be a commutative domain, S a flat commutative R-algebra and M a torsion-free R-module.
+Then S ⊗[R] M is torsion-free over S, in the sense that every regular scalar of S acts
+injectively. -/
 theorem baseChange_of_flat_of_domain
     (R : Type u) (S : Type v) (M : Type w)
     [CommRing R] [IsDomain R] [CommRing S] [Algebra R S] [Module.Flat R S]
@@ -50,7 +66,11 @@ theorem baseChange_of_flat_of_domain
 end Module.IsTorsionFree
 
 namespace Algebra
-/-- Every actual minimal component of a torsion-free algebra retains the original domain scalars. -/
+/-- Injective scalar map to a minimal-prime quotient of a torsion-free algebra.
+
+Let S be a commutative domain and B a torsion-free commutative S-algebra. For p ∈
+minimalPrimes B, the scalar map S → B/p is injective. The image in B of a nonzero scalar is a
+non-zero-divisor and hence cannot lie in a minimal prime. -/
 theorem torsionFree_minimalPrime_algebraMap_injective
     (S : Type u) (B : Type v) [CommRing S] [IsDomain S] [CommRing B]
     [Algebra S B] [Module.IsTorsionFree S B] (p : Ideal B) (hp : p ∈ minimalPrimes B) :
@@ -67,7 +87,11 @@ theorem torsionFree_minimalPrime_algebraMap_injective
       (by simpa only [Algebra.smul_def, mul_comm] using hb)
   exact notMem_nonZeroDivisors_of_mem_mem_minimalPrimes hmem hp hreg
 
-/-- Every original minimal-prime quotient of a finite torsion-free algebra has the original base dimension. -/
+/-- Krull dimension of a finite torsion-free minimal-prime quotient.
+
+Let B be a commutative algebra finite and torsion-free over a commutative domain S. For every
+minimal prime p of B, ringKrullDim(B/p) = ringKrullDim(S). The scalar map to the quotient is
+injective, and finite generation makes the extension integral. -/
 theorem finite_torsionFree_minimalPrime_quotient_dimension
     (S : Type u) (B : Type v) [CommRing S] [IsDomain S] [CommRing B]
     [Algebra S B] [Module.IsTorsionFree S B] [Module.Finite S B]

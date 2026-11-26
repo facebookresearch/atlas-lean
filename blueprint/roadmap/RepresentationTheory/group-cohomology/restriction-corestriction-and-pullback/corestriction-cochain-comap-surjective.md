@@ -1,4 +1,6 @@
-# Corestriction Cochain comap Surjective
+# The tuple transfer formula under surjective pullback
 
-Chosen-transversal cochain corestriction commutes with inflation along a
-surjective homomorphism when the subgroup is pulled back by preimage.
+The tuple transfer formula under surjective pullback.
+
+Pullback along π of the T-transfer equals transfer with the lifted transversal of the cochain
+pulled back along π : π⁻¹H → H, with coefficients π* A.

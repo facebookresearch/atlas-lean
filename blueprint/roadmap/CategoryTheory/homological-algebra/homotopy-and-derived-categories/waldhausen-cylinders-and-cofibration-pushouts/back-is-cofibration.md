@@ -1,4 +1,7 @@
-# Back is Cofibration
+# Back cofibration derived from the joint cylinder boundary
 
-The back inclusion is a cofibration, derived from its coproduct injection
-and the full cylinder's actual joint boundary cofibration.
+Back cofibration derived from the joint cylinder boundary.
+
+For a full cylinder T, the back inclusion k_f : f.right → T(f) is a cofibration. It is the
+composite of the right coproduct injection with the joint boundary b_f, and both are
+cofibrations in the WaldhausenCategoryWithoutGluing structure.

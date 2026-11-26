@@ -1,3 +1,5 @@
-# Homology Presentation Iso symm
+# Inverses of augmented homology-family comparisons
 
-Inverses of the original presentation isomorphisms are preserved.
+Inverses of augmented homology-family comparisons.
+
+The inverse comparison induced by e is the comparison induced by e⁻¹.

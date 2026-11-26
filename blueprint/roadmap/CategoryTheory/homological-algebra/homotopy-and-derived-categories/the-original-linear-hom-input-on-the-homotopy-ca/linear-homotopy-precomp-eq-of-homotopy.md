@@ -1,3 +1,6 @@
-# Linear Homotopy Precomp eq of homotopy
+# Homotopic source maps give equal descended Hom transformations
 
-Homotopic original source maps also have precisely the same quotient class.
+Homotopic source maps give equal descended Hom transformations.
+
+If cochain maps `f₀, f₁ : P' ⟶ P` are homotopic, then `linearHomotopyPrecomp R f₀ =
+linearHomotopyPrecomp R f₁`.

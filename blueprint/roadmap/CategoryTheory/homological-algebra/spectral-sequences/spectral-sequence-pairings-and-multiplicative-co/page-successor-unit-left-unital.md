@@ -1,3 +1,5 @@
-# Page Successor Unit left unital
+# The successor unit satisfies the left unit law
 
-The original successor comparison preserves the actual left unit law on every bidegree.
+The successor unit satisfies the left unit law.
+
+The induced next-page unit has the left unitor product.

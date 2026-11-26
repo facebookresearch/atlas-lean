@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Inverse Localizer
+# Inverse bounded Morita tensor functor preserves quasi-isomorphisms
 
-The original inverse bounded tensor earns its actual inverse localizer morphism.
+Inverse bounded Morita tensor functor preserves quasi-isomorphisms.
+
+The inverse bounded tensor functor, with coefficient `P`, defines the localizer morphism in
+the opposite direction, using the same invertible bimodule contractions.

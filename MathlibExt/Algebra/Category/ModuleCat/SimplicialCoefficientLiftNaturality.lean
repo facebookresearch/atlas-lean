@@ -6,20 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
--- SOURCE-ONLY needed original-output transport; Native has not been run.
+-- Coefficient maps between lifted normalized tensor complexes.
 module
 
 public import MathlibExt.Algebra.Category.ModuleCat.SimplicialCoefficientLift
 
 /-!
-# Actual coefficient maps on lifted original normalized tensor models
+# Coefficient maps between lifted normalized tensor models
 
-Independently sized coefficients are compared through the native coefficient
-lifts and the already earned tensor isomorphisms. The map on lifted original
-tensor diagrams has exactly the native lift of TensorProduct.map a id in each
-degree. Native additive normalization then gives a map between the lifts of
-the original normalized models. Its comparison square uses the existing
-normalizedIso, without an assumed naturality or output-transport certificate.
+For a linear map a : M → N between independently sized R-modules and a simplicial module
+diagram X, lift both coefficients to a common carrier height. Tensoring a with X gives a map
+of the lifted-coefficient diagrams. The tensor comparison identifies it with the lift of a ⊗
+id_X on M ⊗_R X.
+
+After passing to normalized Moore complexes and using the normalization–lift comparisons, this
+gives a map between the lifts of the normalized complexes with coefficients M and N. The
+normalized coefficient-lift isomorphisms commute with this map.
 -/
 
 @[expose] public section
@@ -37,8 +39,10 @@ open ModuleCat.SimplicialCoefficientLift
 variable (R : Type u) [CommRing R]
   {M : ModuleCat.{s} R} {N : ModuleCat.{t} R}
 
-/-- The actual coefficient map on the fixed simplicial diagram in one native
-coefficient world, retaining the original heterogeneous linear map. -/
+/-- The simplicial tensor map between common-height coefficient lifts.
+
+For a : M →ₗ[R] N, tensor its common-height lift on the left with each object of X to obtain
+(ULift M) ⊗_R X → (ULift N) ⊗_R X. -/
 def liftedTensorMap (a : M →ₗ[R] N) (X : SimplicialObject (ModuleCat.{v} R)) :
     X ⋙ (tensorBifunctorAt.{u, max v s t h, v} R).obj
         ((uliftFunctor.{max v s t h, s} R).obj M) ⟶
@@ -47,8 +51,10 @@ def liftedTensorMap (a : M →ₗ[R] N) (X : SimplicialObject (ModuleCat.{v} R))
   Functor.whiskerLeft X ((tensorBifunctorAt.{u, max v s t h, v} R).map
     (coefficientMap.{u, s, t, max v s t h} R a))
 
-/-- Return that same coefficient map to the native lifts of the original
-unmodified tensor diagrams through the actual tensor comparison. -/
+/-- The coefficient map on lifts of the tensor diagrams.
+
+Conjugate the lifted-coefficient simplicial map by the tensor comparison isomorphisms to
+obtain ULift(M ⊗_R X) → ULift(N ⊗_R X). -/
 def outputTensorMap (a : M →ₗ[R] N) (X : SimplicialObject (ModuleCat.{v} R)) :
     (X ⋙ (tensorBifunctorAt.{u, s, v} R).obj M) ⋙ uliftFunctor.{max v s t h, max v s} R ⟶
       (X ⋙ (tensorBifunctorAt.{u, t, v} R).obj N) ⋙ uliftFunctor.{max v s t h, max v t} R :=
@@ -56,8 +62,10 @@ def outputTensorMap (a : M →ₗ[R] N) (X : SimplicialObject (ModuleCat.{v} R))
     liftedTensorMap.{u, v, s, t, h} R a X ≫
       (Functor.isoWhiskerLeft X (tensorFunctorIso.{u, v, t, max v s t h} R N)).hom
 
-/-- The map is exactly the native lift of the original tensor coefficient map,
-with the same original diagram and original coefficient-map values. -/
+/-- The component formula for the lifted tensor-diagram map.
+
+At i, outputTensorMap is the common-height lift of TensorProduct.map a id_{X_i}, acting on the
+first tensor coefficient. -/
 theorem outputTensorMap_app (a : M →ₗ[R] N)
     (X : SimplicialObject (ModuleCat.{v} R)) (i : SimplexCategoryᵒᵖ) :
     (outputTensorMap.{u, v, s, t, h} R a X).app i =
@@ -74,8 +82,10 @@ theorem outputTensorMap_app (a : M →ₗ[R] N)
       (tensorHomAt R (coefficientMap.{u, s, t, max v s t h} R a) (𝟙 (X.obj i)) ≫ eN.hom) = c
   exact (congrArg (fun z => eM.inv ≫ z) hc).trans (Iso.inv_hom_id_assoc eM c)
 
-/-- Native additive normalization of the actual lifted original tensor map,
-returned to the lifts of the original normalized coefficient models. -/
+/-- The map between lifted normalized tensor complexes.
+
+Normalize outputTensorMap and use the normalization–lift isomorphisms to obtain a chain map
+between the lifts of the normalized Moore complexes of M ⊗_R X and N ⊗_R X. -/
 def outputNormalizedMap (a : M →ₗ[R] N)
     (X : SimplicialObject (ModuleCat.{v} R)) :
     ((uliftFunctor.{max v s t h, max v s} R).mapHomologicalComplex (ComplexShape.down ℕ)).obj
@@ -89,8 +99,10 @@ def outputNormalizedMap (a : M →ₗ[R] N)
       (((NormalizedQuotient.mooreCompMapIso (uliftFunctor.{max v s t h, max v t} R)).app
         (X ⋙ (tensorBifunctorAt.{u, t, v} R).obj N))).inv
 
-/-- The same existing normalized tensor-lift isomorphisms respect the actual
-original-output coefficient map for independently sized original modules. -/
+/-- The normalized lift comparison square for coefficient maps.
+
+The normalized map of the common-height coefficient lift followed by the target normalized
+comparison equals the source comparison followed by outputNormalizedMap. -/
 @[reassoc]
 theorem normalizedIso_coefficientMap_naturality (a : M →ₗ[R] N)
     (X : SimplicialObject (ModuleCat.{v} R)) :

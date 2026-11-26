@@ -1,3 +1,5 @@
-# Terminal Algebra
+# The terminal algebra for an augmented module-coefficient diagram
 
-The terminal algebra is the original coefficient algebra with its identity augmentation.
+The terminal algebra for an augmented module-coefficient diagram.
+
+The terminal object of `Over B` is `B` with its identity augmentation.

@@ -1,4 +1,6 @@
-# Countable Homogeneous Basis
+# A homogeneous basis with a countable total index set
 
-A countable total collection of homogeneous basis vectors, over every original integer
-degree.
+A homogeneous basis with a countable total index set.
+
+For an integer cochain complex, record a basis in each degree such that the disjoint union of
+all basis index types over ℤ is countable.

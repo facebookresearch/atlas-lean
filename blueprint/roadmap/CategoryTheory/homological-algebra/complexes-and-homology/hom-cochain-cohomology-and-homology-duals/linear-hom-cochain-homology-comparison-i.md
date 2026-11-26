@@ -1,9 +1,7 @@
-# Linear Hom Cochain Homology Comparison is Iso of projective terms and homology
+# Projective terms and homology objects make the canonical Hom comparison invertible
 
-If a chain complex and all its homology objects are projective, the
-canonical comparison from linear Hom-cochain cohomology to the linear dual of
-homology is an isomorphism.
-
-The proof internally chooses projective sections in order to compare with the
-zero-differential homology complex.  No chosen section or splitting is part of
-the theorem statement or the resulting public isomorphism.
+Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K of shape down ℕ, assume K_i and H_iK are projective
+objects of C for every i∈ℕ. For arbitrary M∈C and n∈ℕ, the canonical map
+Φ_n:H^nHom_C(K,M)→Hom_C(H_nK,M) is an isomorphism. Both complete projectivity families are
+hypotheses, and the coefficient M is unrestricted.

@@ -1,3 +1,6 @@
-# Eventual Ranges Limit Iso
+# The limit comparison for eventual image modules
 
-The chosen eventual-range limit is canonically the original chosen limit.
+The limit comparison for eventual image modules.
+
+The chosen limit of eventualRanges A is canonically isomorphic to lim A through the limiting
+restricted cone.

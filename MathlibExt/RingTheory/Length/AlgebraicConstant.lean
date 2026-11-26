@@ -18,15 +18,16 @@ public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 public import Mathlib.RingTheory.Ideal.Span
 
 /-!
-# Principal-quotient lengths of algebraic constants on singular curves
+# Principal quotient lengths of algebraic fractions
 
-A nonzero fraction algebraic over the coefficient field and its inverse
-are integral over every original affine curve ring. Adjoin both actual
-elements inside the prescribed fraction field. This is a genuine finite
-birational subalgebra in which the fraction is a unit, so its numerator and
-denominator generate the same ideal. Actual finite-colength invariance
-then proves equality of their principal-quotient lengths in the original
-ring. No normality or algebraic-closedness hypothesis is used.
+Let k be a field, R a commutative Noetherian k-algebra that is a domain of Krull dimension at
+most one, and K its fraction field with the compatible k-action. Suppose f ∈ K is nonzero and
+integral over k, and write f = a/b for nonzero a,b ∈ R.
+
+Then ℓ_R(R/(a)) = ℓ_R(R/(b)). Adjoining f and f⁻¹ to R inside K gives a finite birational
+subalgebra in which a and b differ by a unit. Their principal ideals there are equal, and the
+principal-quotient length comparison for a finite fraction subalgebra transfers the equality
+back to R. The coefficient field, ring and fraction-field universes are independent.
 -/
 
 @[expose] public section
@@ -37,7 +38,12 @@ universe u v w
 
 namespace Algebra
 
-/-- A nonzero original fraction integral over the coefficient field has equal numerator and denominator quotient lengths in any original Noetherian curve ring. -/
+/-- Equality of numerator and denominator quotient lengths for an algebraic constant.
+
+Let R be a Noetherian domain of Krull dimension at most one over a field k, with fraction
+field K and compatible scalar tower. If f ∈ K is nonzero and integral over k and f = a/b for
+nonzero a,b ∈ R, then ℓ_R(R/Ideal.span{a}) = ℓ_R(R/Ideal.span{b}). Both lengths use the
+original R-module structures. -/
 theorem length_quotient_span_num_eq_den_of_integral_constant
     {k : Type u} [Field k]
     {R : Type v} [CommRing R] [IsDomain R] [IsNoetherianRing R] [Ring.KrullDimLE 1 R]

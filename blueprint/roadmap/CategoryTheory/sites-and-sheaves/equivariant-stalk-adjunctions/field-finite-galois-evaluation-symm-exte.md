@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation symm extension
+# Inverse embedding evaluation has the extension action value
 
-Every extension gives the exact inverse value of the SAME additive stage equivalence.
+Inverse embedding evaluation has the extension action value.
+
+For any automorphism `g` inducing an embedding `ξ`, inverse evaluation of a fixed coefficient
+at `ξ` is `g • m`.

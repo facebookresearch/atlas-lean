@@ -1,3 +1,6 @@
-# Group Right Tensor Hom Equiv apply
+# Forward right-variable tensor–Hom equivalence on elements
 
-The actual native first-variable hom-set equivalence keeps the original tensor value.
+Forward right-variable tensor–Hom equivalence on elements.
+
+The right-module morphism corresponding to an additive tensor map `f`, evaluated first at `a`
+and then at `b`, gives `f([a ⊗ b])`.

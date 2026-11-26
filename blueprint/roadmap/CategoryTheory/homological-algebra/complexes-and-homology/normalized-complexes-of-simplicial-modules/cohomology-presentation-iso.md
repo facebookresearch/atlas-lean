@@ -1,3 +1,6 @@
-# Cohomology Presentation Iso
+# The cohomology comparison of coaugmented presentation families
 
-The native cohomology family comparison comes from the original coaugmented presentation.
+The cohomology comparison of coaugmented presentation families.
+
+For e : P ≅ Q and n ≥ 0, apply the cohomology-coaugmentation functor to obtain the comparison
+of both coaugmentation sides.

@@ -1,4 +1,6 @@
-# Lsmul Cokernel Restrict Scalars Equiv
+# The cokernel comparison for restricted scalar multiplication
 
-The multiplication cokernels before and after changing from a source
-ring to an algebra are linearly equivalent over the source ring.
+The cokernel comparison for restricted scalar multiplication.
+
+The S-module quotient by multiplication by s agrees with the quotient by multiplication by its
+image in A, with scalars restricted.

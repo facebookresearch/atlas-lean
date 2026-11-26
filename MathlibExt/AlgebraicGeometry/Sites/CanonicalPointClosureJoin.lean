@@ -17,11 +17,15 @@ public import Mathlib.CategoryTheory.Sites.Point.Skyscraper
 public import Mathlib.CategoryTheory.Adjunction.Unique
 
 /-!
-# The actual canonical residue closure over a field
+# Residue separable closures and prescribed field points
 
-The literal residue-field separable closure is given its base-field algebra
-through the actual residue-field isomorphism. Closure uniqueness compares it
-with the prescribed separable closure; its carrier is preserved.
+For a point of `Spec k`, its residue field identifies with `k`. Transporting the algebra
+structure makes the separable closure of that residue field a separable closure of `k`,
+comparable with any prescribed separable closure.
+
+When both fields lie in the scheme universe, this gives an isomorphism from the canonical
+residue-field geometric point to the prescribed point. Its stalk comparison preserves germs,
+and the associated skyscraper comparison respects adjunction units and counits.
 -/
 
 @[expose] public section
@@ -33,12 +37,16 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The exact residue-field separable closure used by the original canonical geometric point. -/
+/-- Separable closure of a field spectrum residue field.
+
+At a point of `Spec k`, take the separable closure of its residue field. -/
 abbrev fieldCanonicalResidueClosure (k : Type u) [Field k] (x : Spec (.of k)) :=
   SeparableClosure ((Spec (.of k)).residueField x)
 
-/-- Its actual base-field algebra comes through the inverse of the original residue-field
-isomorphism. -/
+/-- Base field action on the residue separable closure.
+
+Use the inverse residue-field isomorphism and the closure inclusion to give the canonical
+residue closure a `k`-algebra structure. -/
 @[instance_reducible]
 def fieldCanonicalResidueClosureAlgebra (k : Type u) [Field k] (x : Spec (.of k)) :
     Algebra k (fieldCanonicalResidueClosure k x) :=
@@ -48,7 +56,10 @@ def fieldCanonicalResidueClosureAlgebra (k : Type u) [Field k] (x : Spec (.of k)
 attribute [local instance] fieldCanonicalResidueClosureAlgebra
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- This actual canonical residue closure is a separable closure of the original field. -/
+/-- Canonical residue closure is a separable closure of the base field.
+
+With the transported `k`-algebra structure, the residue-field separable closure satisfies
+`IsSepClosure k`. -/
 theorem fieldCanonicalResidueClosure_isSepClosure (k : Type u) [Field k] (x : Spec (.of k)) :
     IsSepClosure k (fieldCanonicalResidueClosure k x) := by
   let r := (Spec (.of k)).residueField x
@@ -68,14 +79,19 @@ theorem fieldCanonicalResidueClosure_isSepClosure (k : Type u) [Field k] (x : Sp
 
 attribute [local instance] fieldCanonicalResidueClosure_isSepClosure
 
-/-- The actual original residue closure is algebra-isomorphic to the prescribed separable
-closure. -/
+/-- Canonical residue closure compares with any prescribed separable closure.
+
+The canonical residue closure is `k`-algebra equivalent to a prescribed separable closure `Ω`,
+allowing an independent universe for `Ω`. -/
 def fieldCanonicalResidueClosureEquiv (k : Type u) [Field k]
     (Ω : Type v) [Field Ω] [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k)) :
     fieldCanonicalResidueClosure k x ≃ₐ[k] Ω :=
   IsSepClosure.equiv k (fieldCanonicalResidueClosure k x) Ω
 
-/-- The actual comparison sends the original base-field values to their prescribed Ω values. -/
+/-- Residue closure equivalence preserves base field elements.
+
+The equivalence sends the image of any `a : k` under the canonical closure algebra map to its
+image in `Ω`. -/
 theorem fieldCanonicalResidueClosureEquiv_algebraMap (k : Type u) [Field k]
     (Ω : Type v) [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
     (x : Spec (.of k)) (a : k) :
@@ -84,8 +100,10 @@ theorem fieldCanonicalResidueClosureEquiv_algebraMap (k : Type u) [Field k]
   (fieldCanonicalResidueClosureEquiv k Ω x).commutes a
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual inverse residue-field isomorphism induces the original residue-field point over Spec
-k. -/
+/-- Inverse residue isomorphism gives the residue point morphism.
+
+Taking spectra of the inverse field-spectrum residue isomorphism gives the canonical map from
+the residue-field spectrum to `Spec k`. -/
 theorem fieldSpecResidueIso_inv_map (k : Type u) [Field k] (x : Spec (.of k)) :
     Spec.map (Spec.residueFieldIsoOfField x).inv = (Spec (.of k)).fromSpecResidueField x := by
   rw [Spec.residueFieldIsoOfField_eq]
@@ -95,7 +113,10 @@ theorem fieldSpecResidueIso_inv_map (k : Type u) [Field k] (x : Spec (.of k)) :
   exact Spec.map_residueFieldIso_inv_eq_fromSpecResidueField (.of k) x
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The transported base-field algebra gives exactly the original canonical geometric morphism. -/
+/-- Canonical closure algebra map gives the canonical geometric morphism.
+
+The spectrum map of the base-field inclusion in the residue closure is the canonical geometric
+morphism at the point. -/
 theorem fieldCanonicalResidueClosure_algebraMap_spec (k : Type u) [Field k] (x : Spec (.of k)) :
     Spec.algebraMap k (fieldCanonicalResidueClosure k x) =
       smallEtaleCanonicalGeometricMorphism (Spec (.of k)) x := by
@@ -109,8 +130,10 @@ theorem fieldCanonicalResidueClosure_algebraMap_spec (k : Type u) [Field k] (x :
 attribute [local instance] IsSepClosure.sep_closed
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical common point is isomorphic to the prescribed Ω point through the genuine
-closure isomorphism. -/
+/-- Canonical and prescribed field geometric points are isomorphic.
+
+For a prescribed separable closure in the scheme universe, the canonical common geometric
+point is isomorphic to the prescribed common point. -/
 def fieldCanonicalCommonPointIso (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k)) :
     smallEtaleGeometricPointCommon.{u, w} (smallEtaleCanonicalGeometricMorphism (Spec (.of k)) x) ≅
@@ -121,8 +144,10 @@ def fieldCanonicalCommonPointIso (k Ω : Type u) [Field k] [Field Ω]
         (fieldCanonicalResidueClosureEquiv k Ω x).toAlgHom).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine point isomorphism gives an actual natural isomorphism from prescribed Ω stalks to
-the original canonical stalks. -/
+/-- Prescribed field stalk compares with the canonical residue stalk.
+
+The point isomorphism induces a natural isomorphism from the prescribed stalk functor to the
+canonical residue-point stalk functor. -/
 def fieldCanonicalCommonStalkIso (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k)) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).sheafFiber
@@ -142,8 +167,10 @@ def fieldCanonicalCommonStalkIso (k Ω : Type u) [Field k] [Field Ω]
     exact GrothendieckTopology.Point.Hom.sheafFiber_id _
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original prescribed-point germ becomes the same original germ at its actual
-canonical-point image. -/
+/-- Field stalk comparison preserves geometric germ coordinates.
+
+The prescribed-point germ followed by the stalk comparison equals the canonical-point germ at
+the image fiber element. -/
 theorem fieldCanonicalCommonStalkIso_germ (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k))
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
@@ -163,8 +190,10 @@ theorem fieldCanonicalCommonStalkIso_germ (k Ω : Type u) [Field k] [Field Ω]
   exact q.toPresheafFiber_presheafFiberDesc (A := AddCommGrpCat.{max u w}) (P := Q.obj) _ _ U z
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual common stalk isomorphism transports the canonical skyscraper adjunction to prescribed
-Ω stalks. -/
+/-- Prescribed field stalk is left adjoint to the canonical skyscraper.
+
+Transport the canonical point adjunction through the stalk comparison to obtain this
+adjunction. -/
 def fieldCanonicalSkyscraperAdjunction (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k)) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).sheafFiber
@@ -178,7 +207,10 @@ def fieldCanonicalSkyscraperAdjunction (k Ω : Type u) [Field k] [Field Ω]
         (fieldCanonicalCommonStalkIso.{u, w} k Ω x).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Canonical and prescribed point skyscrapers are identified by the actual stalk adjunctions. -/
+/-- Canonical and prescribed field skyscraper functors are isomorphic.
+
+Uniqueness of right adjoints gives a natural isomorphism from the canonical skyscraper functor
+to the prescribed one. -/
 def fieldCanonicalSkyscraperIso (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k)) :
     (smallEtaleGeometricPointCommon.{u, w}
@@ -191,8 +223,10 @@ def fieldCanonicalSkyscraperIso (k Ω : Type u) [Field k] [Field Ω]
       (A := AddCommGrpCat.{max u w}))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original canonical point unit becomes the prescribed point unit through the actual
-skyscraper and stalk comparisons. -/
+/-- Field skyscraper comparison respects the adjunction unit.
+
+The transported canonical unit followed by the skyscraper comparison equals the prescribed-
+point unit. -/
 theorem fieldCanonicalSkyscraperIso_unit (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k))
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
@@ -205,8 +239,10 @@ theorem fieldCanonicalSkyscraperIso_unit (k Ω : Type u) [Field k] [Field Ω]
   exact Adjunction.unit_rightAdjointUniq_hom_app adj adj' Q
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same skyscraper comparison intertwines the original canonical and prescribed evaluation
-counits. -/
+/-- Field skyscraper comparison respects the adjunction counit.
+
+Apply the prescribed stalk to the skyscraper comparison and then its counit; the result is the
+transported canonical counit. -/
 theorem fieldCanonicalSkyscraperIso_counit (k Ω : Type u) [Field k] [Field Ω]
     [Algebra k Ω] [IsSepClosure k Ω] (x : Spec (.of k))
     (M : AddCommGrpCat.{max u w}) :

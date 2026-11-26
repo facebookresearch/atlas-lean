@@ -1,3 +1,5 @@
-# Cotangent Higher Tensor
+# A decomposable higher cotangent differential
 
-An original positive-weight differential word in the literal coefficient tensor.
+A decomposable higher cotangent differential.
+
+For `p : Fin (n+1) → P` and `a ∈ A`, this is `a ⊗ (dp₀ ∧ ⋯ ∧ dpₙ)` in weight `n+1`.

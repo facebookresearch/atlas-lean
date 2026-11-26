@@ -17,10 +17,14 @@ public import MathlibExt.CategoryTheory.ExactCategory.Abelian
 public import MathlibExt.CategoryTheory.ExactCategory.Functor
 
 /-!
-# Exact functors between abelian categories
+# Exact functors for canonical abelian exact structures
 
-For abelian categories with their canonical exact structures, Quillen exact functors are exactly
-Mathlib's functors preserving finite limits and finite colimits.
+Let C,D be abelian categories equipped with their canonical exact structures and F : C → D an
+additive functor. Preserving admissible exact sequences is equivalent to preserving finite
+limits and finite colimits.
+
+Thus the Quillen exact-functor property agrees with exactFunctor C D F in this abelian
+setting.
 -/
 
 @[expose] public section
@@ -34,8 +38,9 @@ namespace CategoryTheory
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
-/-- For canonical exact structures on abelian categories, preserving admissible exact sequences is
- equivalent to preserving finite limits and finite colimits. -/
+/-- Let C,D be abelian categories with their canonical exact structures and F : C → D an additive
+functor. Then F.IsExact holds if and only if F preserves finite limits and finite colimits.
+The exact structure declares the ordinary short exact sequences admissible. -/
 lemma Functor.isExact_iff_preservesFiniteLimits_and_colimits (F : C ⥤ D) [F.Additive] :
     F.IsExact ↔ PreservesFiniteLimits F ∧ PreservesFiniteColimits F := by
   constructor
@@ -44,8 +49,9 @@ lemma Functor.isExact_iff_preservesFiniteLimits_and_colimits (F : C ⥤ D) [F.Ad
   · intro hF
     exact ⟨((Functor.exact_tfae F).out 4 1).1 hF⟩
 
-/-- For canonical exact structures on abelian categories, Quillen exactness agrees with Mathlib's
-`exactFunctor` property. -/
+/-- For an additive functor F : C → D between abelian categories with canonical exact structures,
+F.IsExact is equivalent to exactFunctor C D F. The equivalence identifies preservation of
+admissible short exact sequences with the abelian exact-functor property. -/
 lemma Functor.isExact_iff_exactFunctor (F : C ⥤ D) [F.Additive] :
     F.IsExact ↔ exactFunctor C D F := by
   rw [exactFunctor_iff]

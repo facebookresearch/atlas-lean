@@ -1,4 +1,7 @@
-# Mem coboundaries₂ zmod Restrict Int iff
+# Second-coboundary condition under integral scalar restriction
 
-A degree-two cochain is a coboundary before scalar restriction iff it is
-a coboundary afterwards.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+A function z:G²→A is a two-coboundary exactly when its integral
+image is. The coboundary formula g•x(h)-x(gh)+x(g) is unchanged.

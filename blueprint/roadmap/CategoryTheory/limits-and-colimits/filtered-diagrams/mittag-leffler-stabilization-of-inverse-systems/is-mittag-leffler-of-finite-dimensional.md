@@ -1,4 +1,6 @@
-# Is Mittag Leffler of finite Dimensional
+# Finite-dimensional vector-space diagrams are Mittag–Leffler
 
-A cofiltered diagram of finite-dimensional vector spaces is
-Mittag--Leffler. Dimensions may vary without a uniform bound.
+Finite-dimensional vector-space diagrams are Mittag–Leffler.
+
+For a division ring K and a cofiltered-or-empty diagram of finite-dimensional K-modules, the
+underlying-set diagram is Mittag–Leffler.

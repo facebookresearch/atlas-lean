@@ -1,4 +1,6 @@
-# Eq sum localized Length mul
+# The coefficient Euler formula grouped by generic multiplicity
 
-Repetitions of every nonzero-contributing prime factor are the original
-localized module lengths once that prime is minimal in the module support.
+The coefficient Euler formula grouped by generic multiplicity.
+
+When every nonzero factor satisfies the stated minimal-support condition, the distinct-factor
+sum weights each value by ℓ_{R_p}(M_p).

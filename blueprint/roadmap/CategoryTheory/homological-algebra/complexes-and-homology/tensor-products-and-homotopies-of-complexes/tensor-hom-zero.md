@@ -1,4 +1,6 @@
-# Tensor Hom zero
+# Vanishing of a cochain tensor map with zero right factor
 
-`tensorHom` with zero on the right vanishes, specialized from the generic
-homological-complex tensor-zero law.
+Vanishing of a cochain tensor map with zero right factor.
+
+For a cochain map f : K₁ → L₁, the binary tensor map f ⊗ 0 : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero, with
+the graded tensor coproducts defined.

@@ -1,4 +1,6 @@
-# Window Pair leibniz
+# The equal-width window product satisfies Leibniz
 
-Signed Leibniz for the actual spectral-object differential, derived from
-aligned original triple boundaries and quotient descent.
+The equal-width window product satisfies Leibniz.
+
+The output window differential equals the first differential product plus (−1)^n times the
+second differential product.

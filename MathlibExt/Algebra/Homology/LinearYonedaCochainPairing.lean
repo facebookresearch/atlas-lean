@@ -16,26 +16,21 @@ public import MathlibExt.Algebra.Homology.LinearHomCochainComplex
 public import MathlibExt.Algebra.Homology.TensorDifferentialDownNat
 
 /-!
-# Graded pairings on linear-Yoneda cochains
+# Tensor pairings of linear Yoneda cochains
 
-In a linear monoidal category, a chain map into a tensor product and a
-pairing of coefficient objects induce a graded pairing on linear-Yoneda
-cochains.  This generalizes the construction from chain complexes of modules
-to categories such as `Rep k G`.
+Let R be a commutative ring in universe v and C a preadditive R-linear
+monoidal category, with objects in universe u and morphisms in universe v.
+Tensoring in C is additive and R-linear in each variable. For a nonnegative
+chain complex K in C and a coefficient object M, Hom_C(K; M) is the
+R-module cochain complex with terms Hom_C(K_n, M) and differential
+φ ↦ φ ∘ d_K.
 
-The degreewise pairing projects the tensor complex onto its `(p,q)` summand,
-applies the tensor of the two cochains and the coefficient pairing, and
-precomposes with the chain diagonal.  Its Leibniz rule follows from the
-tensor differential with the Koszul sign `(-1)^p`.
-
-## Main declarations
-
-* `HomologicalComplex.linearYonedaPairingDesc`
-* `HomologicalComplex.linearYonedaCochainPairLinearMap`
-* `HomologicalComplex.linearYonedaCochainPair`
-* `HomologicalComplex.linearYonedaCochainPair_tmul`
-* `HomologicalComplex.linearYonedaCochainGradedPairing`
-* `HomologicalComplex.linearYonedaCochainGradedPairing_pair`
+A chain map Δ : K₃ → K₁ ⊗ K₂ and a coefficient map μ : M ⊗ N → P yield
+a graded cochain pairing. On φ ⊗ ψ, its value is Δ_(p+q) followed by the
+descriptor supported on the (p, q) tensor summand with value μ ∘ (φ ⊗ ψ).
+The pairing satisfies the Leibniz rule with sign (-1)^p, is natural in
+coefficient maps preserving μ, and respects identifications of total degrees.
+The indicated total tensor products of chain complexes are assumed to exist.
 -/
 
 @[expose] public section
@@ -103,9 +98,12 @@ noncomputable def linearYonedaPairingDesc
     (tensorObj K₁ K₂).X (p + q) ⟶ P :=
   linearYonedaPairingDescOfEq C mu p q (p + q) rfl phi psi
 
-/-- The restriction of a linear-Yoneda pairing descriptor to an arbitrary
-tensor summand.  It is the chosen tensor of cochains when the left degree
-matches, and zero otherwise. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let K₁, K₂
+be nonnegative chain complexes with a total tensor product. For p + q = n,
+cochains φ : K₁,p → M, ψ : K₂,q → N, and μ : M ⊗ N → P, the degree n
+descriptor restricts on K₁,i ⊗ K₂,j, i + j = n, to μ ∘ (φ ⊗ ψ) when
+i = p (and hence j = q), and to zero otherwise. -/
 @[reassoc (attr := simp)]
 theorem ιTensorObj_comp_linearYonedaPairingDescOfEq
     (mu : M ⊗ N ⟶ P) (p q n i j : ℕ) (hpq : p + q = n)
@@ -122,8 +120,12 @@ theorem ιTensorObj_comp_linearYonedaPairingDescOfEq
       else 0 := by
   apply ι_mapBifunctorDesc
 
-/-- Restriction of a linear-Yoneda pairing descriptor to a tensor summand
-whose two degrees are identified with the selected bidegree. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let K₁, K₂
+be nonnegative chain complexes with a total tensor product. Given p + q = n,
+i + j = n, i = p, j = q, φ : K₁,p → M, ψ : K₂,q → N, and μ : M ⊗ N → P,
+the descriptor on K₁,i ⊗ K₂,j is μ ∘ (φ ⊗ ψ) after transporting the two
+source terms along i = p and j = q. -/
 @[reassoc]
 theorem ιTensorObj_comp_linearYonedaPairingDescOfEq_of_eq
     (mu : M ⊗ N ⟶ P) (p q n i j : ℕ)
@@ -139,9 +141,11 @@ theorem ιTensorObj_comp_linearYonedaPairingDescOfEq_of_eq
   rw [ιTensorObj_comp_linearYonedaPairingDescOfEq]
   simp
 
-/-- The linear-Yoneda pairing descriptor restricts on its selected tensor
-summand to the tensor product of the two cochains followed by the coefficient
-pairing. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let K₁, K₂
+be nonnegative chain complexes with a total tensor product. For
+φ : K₁,p → M, ψ : K₂,q → N, and μ : M ⊗ N → P, restriction of the
+degree p + q descriptor to K₁,p ⊗ K₂,q is exactly μ ∘ (φ ⊗ ψ). -/
 @[reassoc (attr := simp)]
 theorem ιTensorObj_comp_linearYonedaPairingDesc
     (mu : M ⊗ N ⟶ P) (p q : ℕ)
@@ -153,8 +157,11 @@ theorem ιTensorObj_comp_linearYonedaPairingDesc
   rw [ιTensorObj_comp_linearYonedaPairingDescOfEq]
   simp
 
-/-- The linear-Yoneda pairing descriptor vanishes on every tensor summand
-whose left degree differs from the selected degree. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let K₁, K₂
+be nonnegative chain complexes with a total tensor product. For cochains
+φ : K₁,p → M, ψ : K₂,q → N and μ : M ⊗ N → P, the descriptor vanishes
+on K₁,i ⊗ K₂,j whenever i + j = p + q and i ≠ p. -/
 @[reassoc (attr := simp)]
 theorem ιTensorObj_comp_linearYonedaPairingDesc_of_ne_left
     (mu : M ⊗ N ⟶ P) (p q i j : ℕ) (hij : i + j = p + q)
@@ -165,8 +172,13 @@ theorem ιTensorObj_comp_linearYonedaPairingDesc_of_ne_left
   rw [ιTensorObj_comp_linearYonedaPairingDescOfEq]
   simp [hi]
 
-/-- Naturality of the linear-Yoneda pairing descriptor under independent
-precomposition in its two chain-complex variables. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+f₁ : L₁ → K₁ and f₂ : L₂ → K₂ be maps of nonnegative chain complexes
+whose indicated total tensor products exist. For φ : K₁,p → M,
+ψ : K₂,q → N, μ : M ⊗ N → P, and p + q = n, precomposing the degree n
+descriptor by (f₁ ⊗ f₂)_n gives the descriptor formed from φ ∘ f₁,p
+and ψ ∘ f₂,q on (L₁ ⊗ L₂)_n. -/
 @[reassoc]
 theorem linearYonedaPairingDescOfEq_naturality
     {L₁ L₂ : ChainComplex C ℕ} [HasTensor L₁ L₂]
@@ -196,8 +208,13 @@ theorem linearYonedaPairingDescOfEq_naturality
     rw [MonoidalCategory.tensorHom_comp_tensorHom_assoc]
   · simp [hi]
 
-/-- Naturality of the linear-Yoneda pairing descriptor under independent
-precomposition in its two chain-complex variables. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+f₁ : L₁ → K₁ and f₂ : L₂ → K₂ be maps of nonnegative chain complexes
+whose indicated total tensor products exist. For φ : K₁,p → M,
+ψ : K₂,q → N and μ : M ⊗ N → P, the degree p + q descriptor satisfies
+desc(φ, ψ) ∘ (f₁ ⊗ f₂)_(p+q) =
+desc(φ ∘ f₁,p, ψ ∘ f₂,q). -/
 @[reassoc]
 theorem linearYonedaPairingDesc_naturality
     {L₁ L₂ : ChainComplex C ℕ} [HasTensor L₁ L₂]
@@ -371,8 +388,13 @@ private lemma tensor_d_comp_linearYonedaPairingDescOfEq
             ιTensorObj_comp_linearYonedaPairingDescOfEq (C := C), hi_zero,
             hj_zero, hi_pred, hi_left, hi_right]
 
-/-- Transporting the source degree before a diagonal and a linear-Yoneda
-pairing descriptor is the corresponding arbitrary-total-degree descriptor. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+Δ : K₃ → K₁ ⊗ K₂ be a map of nonnegative chain complexes with the indicated
+tensor product defined. For φ : K₁,p → M, ψ : K₂,q → N, μ : M ⊗ N → P,
+and n = p + q, the composite from K₃,n obtained by transporting to degree
+p + q, applying Δ_(p+q), and applying the descriptor equals Δ_n followed
+by the degree n descriptor supported on (p, q). -/
 @[reassoc]
 theorem XIsoOfEq_comp_linearYonedaPairingDescOfEq
     (Delta : K₃ ⟶ tensorObj K₁ K₂) (mu : M ⊗ N ⟶ P)
@@ -385,8 +407,12 @@ theorem XIsoOfEq_comp_linearYonedaPairingDescOfEq
   subst n
   simp
 
-/-- Wrapper form of
-`XIsoOfEq_comp_linearYonedaPairingDescOfEq` at total degree `p + q`. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+Δ : K₃ → K₁ ⊗ K₂ be a map of nonnegative chain complexes with the indicated
+tensor product defined. Given φ : K₁,p → M, ψ : K₂,q → N, μ : M ⊗ N → P,
+and n = p + q, transporting K₃,n to K₃,p+q before Δ and the degreewise
+descriptor gives the same map as Δ_n followed by the descriptor at n. -/
 @[reassoc]
 theorem XIsoOfEq_comp_linearYonedaPairingDesc
     (Delta : K₃ ⟶ tensorObj K₁ K₂) (mu : M ⊗ N ⟶ P)
@@ -423,8 +449,14 @@ noncomputable def linearYonedaCochainPairLinearMap
         (K₁ := K₁) (K₂ := K₂) (M := M) (N := N) (P := P),
         Linear.comp_smul])
 
-/-- Degreewise pairing of linear-Yoneda cochains induced by a chain diagonal
-and a coefficient pairing. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+Δ : K₃ → K₁ ⊗ K₂ be a map of nonnegative chain complexes with the indicated
+tensor product defined, and μ : M ⊗ N → P a coefficient map. For p, q ∈ ℕ,
+this is the R-linear pairing
+Hom_C(K₁,p, M) ⊗[R] Hom_C(K₂,q, N) → Hom_C(K₃,p+q, P).
+Its value on φ ⊗ ψ is Δ_(p+q) followed by the descriptor supported on
+(p, q) with value μ ∘ (φ ⊗ ψ). -/
 noncomputable def linearYonedaCochainPair
     (Delta : K₃ ⟶ tensorObj K₁ K₂) (mu : M ⊗ N ⟶ P)
     (p q : ℕ) :
@@ -434,7 +466,13 @@ noncomputable def linearYonedaCochainPair
   ModuleCat.ofHom
     (linearYonedaCochainPairLinearMap R (C := C) Delta mu p q)
 
-/-- The linear-Yoneda cochain pairing on a pure tensor. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+Δ : K₃ → K₁ ⊗ K₂ be a map of nonnegative chain complexes with the indicated
+tensor product defined. For μ : M ⊗ N → P and cochains φ : K₁,p → M,
+ψ : K₂,q → N, the pairing on the pure tensor φ ⊗ ψ is
+desc_(p,q)(φ, ψ) ∘ Δ_(p+q), where the descriptor is μ ∘ (φ ⊗ ψ)
+on the (p, q) summand and zero on the other summands. -/
 @[simp]
 theorem linearYonedaCochainPair_tmul
     (Delta : K₃ ⟶ tensorObj K₁ K₂) (mu : M ⊗ N ⟶ P)
@@ -497,8 +535,14 @@ private lemma linearYonedaPairingDesc_coefficient_naturality
     rw [MonoidalCategory.tensorHom_comp_tensorHom_assoc]
   · simp [hi]
 
-/-- Naturality of the degreewise linear-Yoneda cochain pairing in all three
-coefficient objects. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, fix a chain
+map Δ : K₃ → K₁ ⊗ K₂ between nonnegative chain complexes with the indicated
+tensor product defined. Let μ : M ⊗ N → P, μ′ : M′ ⊗ N′ → P′, and
+f_M : M → M′, f_N : N → N′, f_P : P → P′ satisfy
+μ′ ∘ (f_M ⊗ f_N) = f_P ∘ μ. In every pair of degrees p, q,
+postcompose(f_P) ∘ pair(Δ, μ) =
+pair(Δ, μ′) ∘ (postcompose(f_M) ⊗ postcompose(f_N)). -/
 theorem linearYonedaCochainPair_coefficient_naturality
     {M' N' P' : C}
     (Delta : K₃ ⟶ tensorObj K₁ K₂)
@@ -585,8 +629,11 @@ private lemma linearHomCochainComplex_d_apply
   rfl
 
 omit [MonoidalCategory C] [MonoidalPreadditive C] [MonoidalLinear R C] in
-/-- Degree transport on a linear-Yoneda cochain acts by precomposition with
-the inverse source-degree transport. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let K be a
+nonnegative chain complex, G a coefficient object, and a = b equal degrees.
+The induced map Hom_C(K_a, G) → Hom_C(K_b, G) sends φ to φ precomposed
+with the degree identification K_b → K_a, the inverse of K_a ≅ K_b. -/
 @[simp]
 theorem linearYonedaCochainComplex_XIsoOfEq_hom_apply
     (K : ChainComplex C ℕ) (G : C) {a b : ℕ} (h : a = b)
@@ -598,8 +645,14 @@ theorem linearYonedaCochainComplex_XIsoOfEq_hom_apply
   change phi = 𝟙 (K.X a) ≫ phi
   simp
 
-/-- A chain diagonal and coefficient pairing induce a cochain graded pairing
-on linear-Yoneda cochains in any linear monoidal category. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, a chain map
+Δ : K₃ → K₁ ⊗ K₂ between nonnegative complexes and a coefficient map
+μ : M ⊗ N → P define a graded pairing
+Hom_C(K₁; M) × Hom_C(K₂; N) → Hom_C(K₃; P).
+The indicated total tensor product must exist. For a degree p cochain φ,
+the Leibniz equation is d(φ ∪ ψ) = dφ ∪ ψ + (-1)^p φ ∪ dψ,
+with dφ = φ ∘ d_K. -/
 noncomputable def linearYonedaCochainGradedPairing
     (Delta : K₃ ⟶ tensorObj K₁ K₂) (mu : M ⊗ N ⟶ P) :
     CochainGradedPairing
@@ -648,7 +701,12 @@ noncomputable def linearYonedaCochainGradedPairing
     rw [XIsoOfEq_comp_linearYonedaPairingDescOfEq,
       XIsoOfEq_comp_linearYonedaPairingDescOfEq]
 
-/-- The graded pairing's degreewise map is the linear-Yoneda cochain pair. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, take a chain
+map Δ : K₃ → K₁ ⊗ K₂ of nonnegative complexes with the tensor product defined
+and a coefficient map μ : M ⊗ N → P. The (p, q) component of the induced
+graded pairing is the degreewise R-linear pairing sending φ ⊗ ψ to
+desc_(p,q)(φ, ψ) ∘ Δ_(p+q). -/
 @[simp]
 theorem linearYonedaCochainGradedPairing_pair
     (Delta : K₃ ⟶ tensorObj K₁ K₂) (mu : M ⊗ N ⟶ P)
@@ -657,8 +715,14 @@ theorem linearYonedaCochainGradedPairing_pair
       linearYonedaCochainPair R C Delta mu p q :=
   rfl
 
-/-- Naturality of the linear-Yoneda cochain graded pairing in all three
-coefficient objects. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+Δ : K₃ → K₁ ⊗ K₂ be a chain map of nonnegative complexes with the tensor
+product defined. Given μ : M ⊗ N → P, μ′ : M′ ⊗ N′ → P′ and maps
+f_M : M → M′, f_N : N → N′, f_P : P → P′ with
+μ′ ∘ (f_M ⊗ f_N) = f_P ∘ μ, the components of the graded pairing satisfy
+postcompose(f_P) ∘ pair_(p,q)(Δ, μ) =
+pair_(p,q)(Δ, μ′) ∘ (postcompose(f_M) ⊗ postcompose(f_N)) for every p, q. -/
 theorem linearYonedaCochainGradedPairing_coefficient_naturality
     {M' N' P' : C}
     (Delta : K₃ ⟶ tensorObj K₁ K₂)

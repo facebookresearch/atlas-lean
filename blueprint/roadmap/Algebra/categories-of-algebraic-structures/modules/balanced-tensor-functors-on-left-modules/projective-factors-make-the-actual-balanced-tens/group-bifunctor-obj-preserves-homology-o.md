@@ -1,5 +1,6 @@
-# Group Bifunctor obj preserves Homology of projective
+# Tensor functor with a projective right factor preserves homology
 
-The actual tensor functor in its second variable preserves homology when
-its first factor is projective. Its finite-colimit property comes from the
-constructed adjunction, and its monomorphism property from projective lifting.
+Tensor functor with a projective right factor preserves homology.
+
+For a categorically projective right `R`-module `P`, the group-valued balanced tensor functor
+`P ⊗_R -` preserves homology.

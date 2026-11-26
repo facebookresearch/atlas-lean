@@ -1,3 +1,5 @@
-# Single Row Page Iso
+# The canonical comparison from E₂ to any later page
 
-The actual second page identifies canonically with every later page under the ordinary row axiom.
+The canonical comparison from E₂ to any later page.
+
+For r≥2, the finite successor composite gives E₂^{p,q} ≅ E_r^{p,q}.

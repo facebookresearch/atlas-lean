@@ -1,4 +1,7 @@
-# Localized First Quadrant Total Homology Iso
+# Localized total homology equals homology of the localized total
 
-Localization of total homology is the homology of the totalized
-objectwise-localized bicomplex.
+For a commutative ring R, a submonoid S, a nonnegative
+homological R-module bicomplex K and n≥0, there is an isomorphism
+S⁻¹H_n(Tot(K)) ≅ H_n(Tot(S⁻¹K)).
+It combines exactness of module localization with the natural
+finite-total comparison.

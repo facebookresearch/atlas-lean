@@ -12,12 +12,17 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.FlatScalarExtensionTorCancellationNaturality
 
 /-!
-# Coefficient naturality of Tor cancellation
+# Coefficient naturality of flat scalar-extension Tor cancellation
 
-Flat scalar cancellation commutes with maps of the extended-ring
-coefficient module. The comparison uses extension of the projective
-resolution, its homology maps and the scalar tensor coefficient square.
-Degrees, ring universes and coefficient universes are independent.
+Let S be a flat algebra over a commutative ring R, with independent ring universes u,v and all
+coefficient carriers in W=max(u,v,w). For an S-module N and R-module X, write
+c_{N,X,q}:U(Tor_q^S(N,S⊗_R X))≅Tor_q^R(U(N),X) for the flat cancellation isomorphism in degree
+q.
+
+A coefficient morphism g:N₁→N₂ commutes with this comparison in every degree:
+U(Tor_q^S(g,id))≫c_{N₂,X,q}.hom=c_{N₁,X,q}.hom≫Tor_q^R(U(g),id). The inverse comparisons satisfy
+the corresponding reverse square. The coefficient modules are arbitrary over S; the flatness
+condition is S over R.
 -/
 
 @[expose] public section
@@ -35,8 +40,12 @@ universe u v w
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S]
   [Algebra R S] [Module.Flat R S]
 
-/-- The original flat native Tor comparison preserves every actual
-extended-ring coefficient map in every original homological degree. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). Assume S is an R-algebra and flat as an R-module. Write F(X)=S⊗_R X for scalar
+extension and U for restriction to R. For an S-linear map g:N₁→N₂, an R-module X in W and q∈ℕ,
+the forward cancellation maps satisfy
+U(Tor_q^S(g,id_{F(X)}))≫c_{N₂,X,q}.hom=c_{N₁,X,q}.hom≫Tor_q^R(U(g),id_X). The source is
+U(Tor_q^S(N₁,F(X))) and the target is Tor_q^R(U(N₂),X). -/
 theorem flatScalarExtensionTorCancellationIso_hom_naturality_coefficient
     {N₁ N₂ : ModuleCat.{max u v w} S} (g : N₁ ⟶ N₂)
     (X : ModuleCat.{max u v w} R) (q : ℕ) :
@@ -162,8 +171,12 @@ theorem flatScalarExtensionTorCancellationIso_hom_naturality_coefficient
     _ = _ := by
       simpa only [Category.assoc] using congrArg (fun k => H.map a₁ ≫ b₁ ≫ c₁ ≫ k) hP
 
-/-- The actual inverse of the original flat Tor cancellation retains
-the same coefficient map in every original degree. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). Assume S is an R-algebra and flat as an R-module. Write F(X)=S⊗_R X for scalar
+extension and U for restriction to R. For an S-linear map g:N₁→N₂, an R-module X in W and q∈ℕ,
+the inverse cancellation maps satisfy
+Tor_q^R(U(g),id_X)≫c_{N₂,X,q}.inv=c_{N₁,X,q}.inv≫U(Tor_q^S(g,id_{F(X)})). Both sides map
+Tor_q^R(U(N₁),X) to U(Tor_q^S(N₂,F(X))). -/
 theorem flatScalarExtensionTorCancellationIso_inv_naturality_coefficient
     {N₁ N₂ : ModuleCat.{max u v w} S} (g : N₁ ⟶ N₂)
     (X : ModuleCat.{max u v w} R) (q : ℕ) :

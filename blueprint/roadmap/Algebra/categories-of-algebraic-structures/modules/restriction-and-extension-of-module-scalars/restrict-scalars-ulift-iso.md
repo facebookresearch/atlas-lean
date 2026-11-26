@@ -1,4 +1,6 @@
-# Restrict Scalars Ulift Iso
+# The natural isomorphism between restriction and module lifting
 
-The native module lift commutes with the same actual scalar restriction,
-for independently sized rings and original coefficient carriers.
+The natural isomorphism between restriction and module lifting.
+
+For f : S → R, restriction along f followed by lifting is naturally isomorphic to lifting
+followed by restriction along f, through identity maps on the carriers.

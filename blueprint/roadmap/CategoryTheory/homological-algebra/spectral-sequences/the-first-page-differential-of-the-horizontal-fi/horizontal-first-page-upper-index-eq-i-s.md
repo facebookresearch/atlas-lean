@@ -1,4 +1,6 @@
-# Horizontal First Page Upper Index eq i₁ succ
+# The common endpoint of consecutive first-page filtration windows
 
-The upper filtration index for column `p` is the first-page lower index
-for column `p+1`.
+The common endpoint of consecutive first-page filtration windows.
+
+The upper endpoint for column `p` is the lower endpoint selected for column `p+1` by the
+first-page indexing data.

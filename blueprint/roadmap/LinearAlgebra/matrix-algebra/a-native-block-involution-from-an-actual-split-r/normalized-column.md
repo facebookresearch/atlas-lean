@@ -1,3 +1,3 @@
-# Normalized Column
+# One-column matrix of a coefficient family
 
-The actual one-column matrix, with no transposed product convention.
+For a family v:J → A, normalizedColumn v is the J-by-singleton matrix with entry (j,⋆)=v(j).

@@ -1,4 +1,6 @@
-# Left Coaction epsilon zero
+# The left-coaction counit identity at the innermost contraction
 
-Left coaction is cancelled by counit at raw position zero. Follows from
-`LeftComodule.counit_app` lifted through the power and `R`.
+The left-coaction counit identity at the innermost contraction.
+
+The mapped left coaction followed by innermost counit contraction is the identity on the cobar
+degree.

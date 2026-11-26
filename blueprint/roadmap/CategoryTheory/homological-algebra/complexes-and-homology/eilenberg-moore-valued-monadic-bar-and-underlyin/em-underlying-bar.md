@@ -1,5 +1,6 @@
-# Em Underlying Bar
+# The simplicial bar of the forgotten free right module
 
-The forgotten bar in `C`: the algebra-valued bar at the postcomposed
-right module. Faces are `T.forget.map` of the EM faces by
-`barFaceApp_postcomp`.
+Let T be a monad on C and alg=(A,a) a T-algebra. Define emUnderlyingBar(alg) by the two-sided
+bar of the free right module postcomposed with T.forget and the constant left module of alg,
+evaluated at the unique point. Its degree-n object is T(T^n(A)), with faces and degeneracies
+inherited from these actions.

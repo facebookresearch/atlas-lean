@@ -1,4 +1,6 @@
-# Horizontal Filtered Top Section d previous Column Projection eq
+# The standard horizontal component of a filtered top boundary
 
-For the standard first-quadrant totalization, the first-coordinate sign
-is one, so the previous-column component is literally the horizontal map.
+The standard horizontal component of a filtered top boundary.
+
+For the standard first-quadrant total signs, the preceding-column boundary component is
+exactly `(K.d(p+1,p)).f q`.

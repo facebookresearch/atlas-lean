@@ -1,4 +1,6 @@
-# Enveloping Filtration exhaustive
+# Exhaustiveness of the enveloping chain filtration
 
-Every enveloping CE chain has a finite total filtration stage,
-without requiring a finite basis or a finite-dimensional Lie algebra.
+Exhaustiveness of the enveloping chain filtration.
+
+Every element of `⋀ⁿ[R] L ⊗[R] U_R(L)` belongs to some finite total filtration stage. This
+holds for every `R`-Lie algebra `L`.

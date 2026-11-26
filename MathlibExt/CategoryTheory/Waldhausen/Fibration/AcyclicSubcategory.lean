@@ -17,22 +17,22 @@ public import MathlibExt.CategoryTheory.Waldhausen.ExactFunctor
 public import MathlibExt.CategoryTheory.Waldhausen.Fibration.TrivialCofibration
 
 /-!
-# The original acyclic subcategory with the smaller weak structure
+# Acyclic objects with inherited Waldhausen morphism classes
 
-Two Waldhausen structures `V` and `W` share the original cofibrations on
-the same category. The objects acyclic for `W` form the original full
-subcategory. Gluing for `W` proves closure of the actual `V`-cofibration
-pushouts. Those same pushouts construct the inherited `V` structure and
-prove that its inclusion preserves the original cofiber sequences.
+Let C have a zero object and two Waldhausen cofibration/weak-equivalence
+structures V,W with the same cofibrations. The full subcategory C^W
+consists of objects whose map 0 → X is W-weak. Gluing for W makes it
+closed under pushouts along V-cofibrations, so the V classes restrict
+to Waldhausen cofibration, weak-equivalence and pushout data on C^W.
 
-The chosen subcategory zero and the original ambient zero are connected
-by their actual inclusion isomorphism. Both cofiber admission directions
-retain this chart and the given quotient maps. Inclusion of the original
-weak classes also gives exactness into `W` and of the identity `V → W`.
+The inclusion into C with V is exact and preserves and reflects cofiber
+sequences. If V-weak maps are W-weak, it is also exact into C with W,
+and the identity from V to W is exact. If V additionally satisfies
+gluing, the inherited V structure on C^W does as well.
+The selected zero in C^W is canonically isomorphic, under inclusion,
+to the ambient zero.
 
-## References
-
-* C. Weibel, *The K-book*, V.2.1, printed pages 376–377.
+Reference: C. Weibel, The K-book, V.2.1, pp. 376–377.
 -/
 
 @[expose] public section
@@ -52,8 +52,10 @@ section PushoutClosure
 
 variable [WaldhausenCategoryWithoutGluing C]
 
-/-- Original gluing from the all-zero square proves acyclicity of the
-given pushout apex from the three original acyclic span objects. -/
+/-- Let C have a zero object and Waldhausen cofibration/weak-equivalence
+data satisfying gluing. For a pushout of i:X → Y and f:X → Z,
+with i a cofibration, if 0 → X, 0 → Y and 0 → Z are weak equivalences,
+then 0 → P is a weak equivalence for its pushout apex P. -/
 theorem WaldhausenGluingAxiom.acyclicObjects_of_pushout
     (hG : WaldhausenGluingAxiom (C := C))
     {X Y Z P : C} (i : X ⟶ Y) (f : X ⟶ Z) (inY : Y ⟶ P) (inZ : Z ⟶ P)
@@ -74,77 +76,144 @@ end PushoutClosure
 
 namespace Waldhausen
 
-/-- The original full subcategory of objects acyclic for the specified
-larger weak structure, with its inherited original morphisms. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The full category C^W has the W-acyclic objects and all ambient morphisms between them. -/
 abbrev AcyclicSubcategory (W : WaldhausenCategoryWithoutGluing C) : Type u :=
   (@WaldhausenCategoryWithoutGluing.acyclicObjects C _ _ W).FullSubcategory
 
-/-- The original fully faithful inclusion of the acyclic full subcategory. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The fully faithful inclusion ι:C^W → C retains the ambient objects and morphisms. -/
 abbrev acyclicι (W : WaldhausenCategoryWithoutGluing C) : AcyclicSubcategory W ⥤ C :=
   (@WaldhausenCategoryWithoutGluing.acyclicObjects C _ _ W).ι
 
-/-- The whole inclusion retains the original object. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The value of ι on an object of C^W is its underlying ambient object. -/
 theorem acyclicι_obj (W : WaldhausenCategoryWithoutGluing C) (X : AcyclicSubcategory W) :
     (acyclicι W).obj X = X.obj := rfl
 
-/-- The whole inclusion retains the original morphism. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The value of ι on a morphism of C^W is its ambient morphism in C. -/
 theorem acyclicι_map (W : WaldhausenCategoryWithoutGluing C)
     {X Y : AcyclicSubcategory W} (f : X ⟶ Y) : (acyclicι W).map f = f.hom := rfl
 
-/-- The original ambient zero, admitted by its weak identity. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The ambient zero object, admitted as an object of C^W because its identity is W-weak. -/
 def acyclicZero (W : WaldhausenCategoryWithoutGluing C) : AcyclicSubcategory W :=
   ⟨(0 : C), @WaldhausenCategoryWithoutGluing.zero_mem_acyclicObjects C _ _ W⟩
 
-/-- The admitted original zero is zero through the original full inclusion. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The ambient zero admitted in C^W is a zero object of the full subcategory. -/
 theorem acyclicZero_isZero (W : WaldhausenCategoryWithoutGluing C) : IsZero (acyclicZero W) :=
   IsZero.of_full_of_faithful_of_isZero (acyclicι W) (acyclicZero W) (isZero_zero C)
 
-/-- The actual zero-object witness for the original acyclic category. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The full subcategory C^W has a zero object, represented by the admitted ambient zero. -/
 theorem acyclicHasZeroObject (W : WaldhausenCategoryWithoutGluing C) :
     HasZeroObject (AcyclicSubcategory W) :=
   (acyclicZero_isZero W).hasZeroObject
 
-/-- The actual selected subcategory zero is compared with the admitted
-original ambient zero, without replacing either selected object. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The canonical isomorphism from the selected zero object of C^W to the ambient zero regarded as an object of C^W. -/
 def acyclicZeroIso (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (0 : AcyclicSubcategory W) ≅ acyclicZero W := by
   let := acyclicHasZeroObject W
   exact (isZero_zero (AcyclicSubcategory W)).iso (acyclicZero_isZero W)
 
-/-- The original inclusion's complete selected-zero chart. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+Applying ι to the zero-object comparison gives the canonical isomorphism e_W:ι(0_{C^W}) ≅ 0_C. -/
 def acyclicιZeroIso (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicι W).obj (0 : AcyclicSubcategory W) ≅ (0 : C) := by
   let := acyclicHasZeroObject W
   exact (acyclicι W).mapIso (acyclicZeroIso W)
 
-/-- The zero chart's whole forward map is the original inclusion map. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The forward map of e_W:ι(0_{C^W}) ≅ 0_C is the inclusion's image of the forward zero-object isomorphism in C^W. -/
 theorem acyclicιZeroIso_hom (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).hom = (acyclicι W).map (acyclicZeroIso W).hom := rfl
 
-/-- The zero chart's whole inverse map is the original inclusion map. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The inverse map of e_W:ι(0_{C^W}) ≅ 0_C is the inclusion's image of the inverse zero-object isomorphism in C^W. -/
 theorem acyclicιZeroIso_inv (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).inv = (acyclicι W).map (acyclicZeroIso W).inv := rfl
 
-/-- The complete forward zero chart is the original unique map to zero. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The forward map of e_W:ι(0_{C^W}) ≅ 0_C is the unique morphism from ι(0_{C^W}) to the ambient zero. -/
 theorem acyclicιZeroIso_hom_eq_from (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).hom =
       (isZero_zero C).from_ ((acyclicι W).obj (0 : AcyclicSubcategory W)) :=
   (isZero_zero C).eq_of_tgt _ _
 
-/-- The complete inverse zero chart is the original unique map from zero. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+The inverse map of e_W:ι(0_{C^W}) ≅ 0_C is the unique morphism from the ambient zero to ι(0_{C^W}). -/
 theorem acyclicιZeroIso_inv_eq_to (W : WaldhausenCategoryWithoutGluing C) :
     letI := acyclicHasZeroObject W
     (acyclicιZeroIso W).inv =
       (isZero_zero C).to_ ((acyclicι W).obj (0 : AcyclicSubcategory W)) :=
   (isZero_zero C).eq_of_src _ _
 
-/-- The original full inclusion preserves and reflects zero objects,
-using the actual admitted ambient zero for the forward direction. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+For X in C^W, X is a zero object of the full subcategory if and only if its underlying object ι(X) is zero in C. -/
 theorem acyclic_isZero_iff (W : WaldhausenCategoryWithoutGluing C) (X : AcyclicSubcategory W) :
     IsZero X ↔ IsZero X.obj := by
   constructor
@@ -154,8 +223,13 @@ theorem acyclic_isZero_iff (W : WaldhausenCategoryWithoutGluing C) (X : AcyclicS
   · intro hX
     exact IsZero.of_full_of_faithful_of_isZero (acyclicι W) X hX
 
-/-- Construct the same original smaller-structure cofibration pushout in
-the acyclic full subcategory. Larger-structure gluing earns its apex. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+For a V-cofibration i:X → Y and f:X → Z in C^W, a pushout exists both in C^W and in C under inclusion, with the induced map Z → P a V-cofibration. -/
 theorem acyclic_cofibration_pushout (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
@@ -179,8 +253,13 @@ theorem acyclic_cofibration_pushout (V W : WaldhausenCategoryWithoutGluing C)
   refine ⟨P', inl', inr', ?_, hP, hInl⟩
   exact IsPushout.of_map_of_faithful (acyclicι W) hP
 
-/-- The constructed source and mapped pushout pair earns preservation of
-every original source cofibration pushout by the full inclusion. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+Any pushout in C^W along a V-cofibration remains a pushout after applying the inclusion ι. -/
 theorem acyclicι_map_isPushout (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
@@ -194,8 +273,13 @@ theorem acyclicι_map_isPushout (V W : WaldhausenCategoryWithoutGluing C)
     (hQ.preservesColimit_span_iff (F := acyclicι W)).mpr hQMapped
   exact hP.map (acyclicι W)
 
-/-- The inherited smaller weak structure uses exactly the original
-smaller cofibrations and weak maps under the original full inclusion. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+The restricted Waldhausen data on C^W use V-cofibrations and V-weak maps detected by ι, with the pushouts admitted through W-acyclicity. -/
 @[instance_reducible]
 def acyclicWaldhausenCategory (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
@@ -224,7 +308,13 @@ def acyclicWaldhausenCategory (V W : WaldhausenCategoryWithoutGluing C)
       acyclic_cofibration_pushout V W hCof hGW i hi Z f
     exact ⟨P, inl, inr, hP, hInl⟩
 
-/-- The source cofibration class is the literal original smaller class. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+A map f in the inherited structure on C^W is a cofibration exactly when ι(f) is a V-cofibration in C. -/
 theorem isCofibration_acyclicWaldhausenCategory_iff (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
@@ -233,7 +323,13 @@ theorem isCofibration_acyclicWaldhausenCategory_iff (V W : WaldhausenCategoryWit
       letI := acyclicWaldhausenCategory V W hCof hGW;
       IsCofibration f) ↔ V.cofibrations f.hom := Iff.rfl
 
-/-- The source weak class is the literal original smaller weak class. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+A map f in the inherited structure on C^W is a weak equivalence exactly when ι(f) is V-weak in C. -/
 theorem isWeakEquivalence_acyclicWaldhausenCategory_iff (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
@@ -242,8 +338,13 @@ theorem isWeakEquivalence_acyclicWaldhausenCategory_iff (V W : WaldhausenCategor
       letI := acyclicWaldhausenCategory V W hCof hGW;
       IsWeakEquivalence f) ↔ V.weakEquivalences f.hom := Iff.rfl
 
-/-- The original acyclic inclusion into the original smaller weak
-structure is exact on the constructed source structure and original maps. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+The inclusion ι from the inherited V structure on C^W to C with structure V is Waldhausen exact. -/
 theorem acyclicι_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W) :
@@ -262,8 +363,13 @@ theorem acyclicι_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
   intro X Y Z P i f inl inr hi hP
   exact acyclicι_map_isPushout V W hCof hGW i f inl inr hi hP
 
-/-- Inclusion of the actual weak classes makes the same acyclic
-inclusion exact into the larger original weak structure. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+If every V-weak map is W-weak, the same inclusion ι is Waldhausen exact into C with structure W. -/
 theorem acyclicι_toLarger_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hWeak : V.weakEquivalences ≤ W.weakEquivalences)
@@ -287,8 +393,10 @@ theorem acyclicι_toLarger_isWaldhausenExact (V W : WaldhausenCategoryWithoutGlu
   · intro X Y Z P i f inl inr hi hP
     exact acyclicι_map_isPushout V W hCof hGW i f inl inr hi hP
 
-/-- The original identity functor from the smaller to the larger weak
-structure is exact, with the two actual structures separately supplied. -/
+/-- Let C have a zero object and V,W be Waldhausen cofibration,
+weak-equivalence and pushout data with identical cofibrations.
+If V-weak maps are W-weak, the identity functor C → C is
+Waldhausen exact from V to W. -/
 theorem changeWeakEquivalences_isWaldhausenExact (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hWeak : V.weakEquivalences ≤ W.weakEquivalences) :
@@ -307,8 +415,12 @@ theorem changeWeakEquivalences_isWaldhausenExact (V W : WaldhausenCategoryWithou
   · intro X Y Z P i f inl inr hi hP
     exact hP
 
-/-- The given original map to ambient zero, transported by the actual
-inverse selected-zero chart, as a map to the selected subcategory zero. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+For X in C^W and s:ι(X) → 0_C, the map X → 0_{C^W} whose ambient morphism is e_W⁻¹∘s, where e_W:ι(0_{C^W}) ≅ 0_C is the canonical zero comparison. -/
 def acyclicCofiberZeroMap (W : WaldhausenCategoryWithoutGluing C)
     {X : AcyclicSubcategory W} (s : X.obj ⟶ (0 : C)) :
     letI := acyclicHasZeroObject W
@@ -316,8 +428,12 @@ def acyclicCofiberZeroMap (W : WaldhausenCategoryWithoutGluing C)
   let := acyclicHasZeroObject W
   exact ObjectProperty.homMk (s ≫ (acyclicιZeroIso W).inv)
 
-/-- The given original map from ambient zero, transported by the actual
-forward selected-zero chart, as a map from the selected subcategory zero. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+For Q in C^W and z:0_C → ι(Q), the map 0_{C^W} → Q whose ambient morphism is z∘e_W, using e_W:ι(0_{C^W}) ≅ 0_C. -/
 def acyclicCofiberFromZeroMap (W : WaldhausenCategoryWithoutGluing C)
     {Q : AcyclicSubcategory W} (z : (0 : C) ⟶ Q.obj) :
     letI := acyclicHasZeroObject W
@@ -325,21 +441,35 @@ def acyclicCofiberFromZeroMap (W : WaldhausenCategoryWithoutGluing C)
   let := acyclicHasZeroObject W
   exact ObjectProperty.homMk ((acyclicιZeroIso W).hom ≫ z)
 
-/-- The whole transported map retains the original map and inverse zero chart. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+For s:ι(X) → 0_C, the ambient image of its map X → 0_{C^W} equals e_W⁻¹∘s. -/
 theorem acyclicCofiberZeroMap_hom (W : WaldhausenCategoryWithoutGluing C)
     {X : AcyclicSubcategory W} (s : X.obj ⟶ (0 : C)) :
     letI := acyclicHasZeroObject W
     (acyclicCofiberZeroMap W s).hom = s ≫ (acyclicιZeroIso W).inv := rfl
 
-/-- The whole transported map retains the forward zero chart and original map. -/
+/-- Let C have a zero object and let W be Waldhausen cofibration,
+weak-equivalence and cofibration-pushout data on C.
+Write C^W for the full subcategory of objects whose map 0 → X is
+a W-weak equivalence, and ι:C^W → C for its inclusion.
+
+For z:0_C → ι(Q), the ambient image of its map 0_{C^W} → Q equals z∘e_W. -/
 theorem acyclicCofiberFromZeroMap_hom (W : WaldhausenCategoryWithoutGluing C)
     {Q : AcyclicSubcategory W} (z : (0 : C) ⟶ Q.obj) :
     letI := acyclicHasZeroObject W
     (acyclicCofiberFromZeroMap W z).hom = (acyclicιZeroIso W).hom ≫ z := rfl
 
-/-- The same original cofiber row is admitted in both directions. The
-reverse direction transports its given zero corner through the actual
-selected-zero chart before reflecting the whole original pushout. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+For maps X —i→ Y —q→ Q in C^W, they form a cofiber sequence in the inherited V structure if and only if ι(X) —ι(i)→ ι(Y) —ι(q)→ ι(Q) is a cofiber sequence in C with V. -/
 theorem acyclic_isCofiberSequence_iff (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)
@@ -363,8 +493,13 @@ theorem acyclic_isCofiberSequence_iff (V W : WaldhausenCategoryWithoutGluing C)
     refine ⟨hi, acyclicCofiberZeroMap W s, acyclicCofiberFromZeroMap W z, ?_⟩
     exact IsPushout.of_map_of_faithful (acyclicι W) hP'
 
-/-- The constructed acyclic category inherits the genuine smaller-class
-gluing axiom from the original smaller weak structure, on the same maps. -/
+/-- Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+If V also satisfies the gluing axiom, then the inherited V structure on C^W satisfies gluing. -/
 theorem acyclicGluingAxiom (V W : WaldhausenCategoryWithoutGluing C)
     (hCof : V.cofibrations = W.cofibrations)
     (hGW : @WaldhausenGluingAxiom C _ _ W)

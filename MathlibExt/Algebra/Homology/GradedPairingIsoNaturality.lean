@@ -17,6 +17,16 @@ public import MathlibExt.Algebra.Category.Grp.MonoidalPreadditive
 public import Mathlib.Algebra.Category.Grp.Abelian
 public import Mathlib.CategoryTheory.Monoidal.Limits.Colimits
 
+/-!
+# Transport of a graded pairing by cochain isomorphisms
+
+For nonnegative cochain complexes of abelian groups, a graded pairing
+P:K₁⊗K₂ → K₃ and isomorphisms a:K₁ ≅ L₁, b:K₂ ≅ L₂, c:K₃ ≅ L₃
+determine the transported pairing Q=c ∘ P ∘ (a⁻¹⊗b⁻¹).
+The cohomology pairings commute with the induced maps H(a), H(b), H(c)
+in every bidegree (p,q), with total degree p+q and tensor product over ℤ.
+-/
+
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -26,8 +36,12 @@ open CategoryTheory MonoidalCategory
 namespace CategoryTheory
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual homology map of three genuine complex isomorphisms carries
-the original graded pairing to its actual whiskered pairing. -/
+/-- Let K₁,K₂,K₃ and L₁,L₂,L₃ be nonnegative cochain complexes of abelian
+groups, P a graded pairing K₁⊗K₂ → K₃, and a:K₁ ≅ L₁,
+b:K₂ ≅ L₂, c:K₃ ≅ L₃ cochain isomorphisms. Define the transported
+pairing Q=c ∘ P ∘ (a⁻¹⊗b⁻¹). For p,q∈ℕ its cohomology
+naturality square is
+H^{p+q}(c) ∘ P_H = Q_H ∘ (Hᵖ(a)⊗Hᑫ(b)). -/
 theorem originalGradedPairing_homology_iso_square
     {K₁ K₂ K₃ L₁ L₂ L₃ : CochainComplex AddCommGrpCat.{s} ℕ}
     (P : HomologicalComplex.CochainGradedPairing K₁ K₂ K₃)

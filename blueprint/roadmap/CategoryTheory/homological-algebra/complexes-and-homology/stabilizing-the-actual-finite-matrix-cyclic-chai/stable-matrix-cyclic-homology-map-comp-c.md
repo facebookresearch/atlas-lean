@@ -1,3 +1,6 @@
-# Stable Matrix Cyclic Homology Map comp connes
+# The quotient factorization of the matrix-colimit cyclic homology map
 
-The colimit HC lift factors through the rational Connes comparison.
+The quotient factorization of the matrix-colimit cyclic homology map.
+
+Composing the cyclic homology map with the cyclic-to-quotient comparison gives the colimit
+trace map to quotient homology.

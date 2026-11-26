@@ -1,3 +1,5 @@
-# Antipode ι
+# The enveloping antipode on a Lie generator
 
-The native antipode negates each Lie generator.
+The enveloping antipode on a Lie generator.
+
+The antipode sends ιx to −ιx.

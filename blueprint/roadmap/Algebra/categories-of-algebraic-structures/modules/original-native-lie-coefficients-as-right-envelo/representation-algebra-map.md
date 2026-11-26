@@ -1,3 +1,6 @@
-# Representation algebra Map
+# The right representation recovers the ground scalar action
 
-The original scalar action is recovered by the actual algebra-map law.
+For a commutative ring R, an R-Lie algebra L, a Lie
+module M, r ∈ R and m ∈ M, the represented action of
+algebraMap(r) ∈ U_R(L)ᵒᵖ on m is r • m for the given
+R-module structure of M.

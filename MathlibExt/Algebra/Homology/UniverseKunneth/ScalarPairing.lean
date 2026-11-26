@@ -16,13 +16,18 @@ public import MathlibExt.Algebra.Homology.UniverseKunneth.Graded
 public import MathlibExt.Algebra.Homology.Kunneth.Graded
 
 /-!
-# Canonical cycle Künneth pairings commute with actual scalar transport
+# Scalar compatibility of cycle and homology Künneth pairings
 
-Both sides are the actual identity-chain-map cycle pairings. The proof
-first checks their cycle inclusions through the actual balanced tensor
-and tensor-complex comparisons, then descends through original homology
-quotient epis. Thus an isomorphism carried from the lifted coefficient ring
-will be the canonical original-ring cycle Künneth map.
+Let R be a commutative ring in universe u, W=max(u,v), and R̂ its lifted copy in W. Restricting
+scalars S from R̂ to R has canonical tensor, cycle and homology comparisons. For chain complexes
+K,L over R̂ of shape down ℕ, these comparisons carry the tensor of cycles in degrees p,q to the
+same degree p+q cycle pairing in the restricted tensor complex.
+
+Writing c:S_CK⊗_R S_CL≅S_C(K⊗_R̂ L), z_K:Z_p(S_CK)≅S(Z_pK), and t for the module tensor
+comparison, the cycle equation is (z_K⊗z_L)≫t≫S(κ^Z_KL)=κ^Z_{S_CK,S_CL}≫Z_{p+q}(c)≫z_{K⊗L}.
+Replacing cycles and z by homology and its canonical comparison gives the same equation for κ^H.
+The coefficient carriers stay in W while the two scalar rings are compared; no field hypothesis
+is needed.
 -/
 
 @[expose] public section
@@ -38,8 +43,14 @@ namespace ModuleCat.UniverseScalarRestriction
 variable (R : Type u) [CommRing R]
 
 
-/-- The actual cycle pairings commute with the actual module and complex
-tensor comparisons, before taking homology. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. For chain
+complexes K,L over R̂ of shape down ℕ and p,q∈ℕ, let z_K:Z_p(S_CK)≅S(Z_pK), z_L and z_{K⊗L} be
+the cycle comparisons, t the scalar module tensor comparison and c:S_CK⊗_R S_CL≅S_C(K⊗_R̂ L) the
+tensor-complex comparison. Then
+(z_K.hom⊗z_L.hom)≫t.hom≫S(κ^Z_{K,L})=κ^Z_{S_CK,S_CL}≫Z_{p+q}(c.hom)≫z_{K⊗L}.hom. Both cycle
+pairings tensor representatives in degrees p,q into degree p+q. -/
 theorem cyclePair_scalar_transport (K L : (ChainComplex (ModuleCat.{max u v} (LiftedRing.{u,v} R)) ℕ)) (p q : ℕ) :
     ((cyclesComparison.{u,v} R K p).hom ⊗ₘ (cyclesComparison.{u,v} R L q).hom) ≫
       (tensorIso.{u,v} R (K.cycles p) (L.cycles q)).hom ≫ (toOriginal.{u,v} R).map
@@ -127,8 +138,13 @@ theorem cyclePair_scalar_transport (K L : (ChainComplex (ModuleCat.{max u v} (Li
     (toOriginal.{u,v} R).map (HomologicalComplex.ιTensorObj K L p q (p + q) rfl)) hTensor
   exact hn'.trans ((Category.assoc _ _ _).symm.trans hTensor')
 
-/-- The actual bidegree homology pairings commute with the actual scalar
-restriction comparisons. This is the canonical-cycle identification. -/
+/-- Let R be a commutative ring in universe u, v an independent lift height and W=max(u,v) the
+coefficient universe. Write R̂ for the canonical lifted copy of R in W, S for restriction from
+R̂-modules to R-modules, and S_C,S_G for its termwise chain and graded functors. For chain
+complexes K,L over R̂ of shape down ℕ and p,q∈ℕ, let σ_K:H_p(S_CK)≅S(H_pK), σ_L, σ_{K⊗L}, t the
+scalar tensor comparison and c the tensor-complex comparison. The homology pairings satisfy
+(σ_K.hom⊗σ_L.hom)≫t.hom≫S(κ^H_{K,L})=κ^H_{S_CK,S_CL}≫H_{p+q}(c.hom)≫σ_{K⊗L}.hom. The equality is
+obtained from the same cycle tensor maps by their homology quotient projections. -/
 @[reassoc]
 theorem pair_scalar_transport (K L : (ChainComplex (ModuleCat.{max u v} (LiftedRing.{u,v} R)) ℕ)) (p q : ℕ) :
     ((homologyComparison.{u,v} R K p).hom ⊗ₘ (homologyComparison.{u,v} R L q).hom) ≫

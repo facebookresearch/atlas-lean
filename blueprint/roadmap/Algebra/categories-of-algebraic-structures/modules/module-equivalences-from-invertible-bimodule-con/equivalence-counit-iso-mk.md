@@ -1,3 +1,6 @@
-# Equivalence counit Iso mk
+# Right-module Morita counit evaluates the S-contraction
 
-The unchanged counit has the book's ordered contraction formula.
+Right-module Morita counit evaluates the S-contraction.
+
+For a right `S`-module `A`, the counit sends `[[a ⊗ q] ⊗ p]` to `op (w([q ⊗ p])) • a`, where
+`w : Q ⊗_R P ≅ S` is the second bimodule equivalence.

@@ -76,22 +76,33 @@ private theorem length_quotient_span_eq_lsmul_of_finite_colength
 
 variable {K : Type v} [Field K] [Algebra R K] [IsFractionRing R K]
 
-/-- The original scalar inclusion into a fraction submodule containing one. -/
+/-- Let `R` be a commutative ring, `K` an `R`-algebra field that is a fraction
+ring of `R`, and `N ⊆ K` an `R`-submodule containing `1`. The algebra map factors
+as an `R`-linear scalar inclusion `R → N`, whose value in `K` is the original
+algebra-map value. -/
 def fractionScalarMap (N : Submodule R K) (h1 : (1 : K) ∈ N) : R →ₗ[R] N :=
   (Algebra.linearMap R K).codRestrict N (fun r => by
     simpa only [Algebra.linearMap_apply, Algebra.smul_def, mul_one] using N.smul_mem r h1)
 
 omit [IsFractionRing R K] in
-/-- The original scalar inclusion has its literal algebra-map value in the fraction field. -/
+/-- For a commutative ring `R`, an `R`-algebra field `K`, and an `R`-submodule
+`N ⊆ K` containing `1`, the scalar inclusion sends `r` to an element whose value
+in `K` is exactly `algebraMap R K r`. This coordinate formula does not require
+the fraction-ring hypothesis. -/
 @[simp] theorem fractionScalarMap_apply (N : Submodule R K) (h1 : (1 : K) ∈ N) (r : R) :
     ((fractionScalarMap N h1 r : N) : K) = algebraMap R K r := rfl
 
+/-- For a commutative ring `R`, a chosen fraction-ring field `K`, and an
+`R`-submodule `N ⊆ K` containing `1`, the scalar inclusion `R → N` is
+injective. -/
 theorem fractionScalarMap_injective (N : Submodule R K) (h1 : (1 : K) ∈ N) :
     Function.Injective (fractionScalarMap N h1) := by
   intro a b h
   exact IsFractionRing.injective R K (congrArg Subtype.val h)
 
-/-- Actual denominator clearing makes the quotient by the original scalar image torsion. -/
+/-- Let `R` be a commutative ring, `K` an `R`-algebra field that is a fraction
+ring of `R`, and `N ⊆ K` an `R`-submodule containing `1`. The quotient of `N`
+by its scalar image of `R` is torsion as an `R`-module. -/
 theorem isTorsion_quotient_fractionScalarMap (N : Submodule R K) (h1 : (1 : K) ∈ N) :
     Module.IsTorsion R (N ⧸ (fractionScalarMap N h1).range) := by
   let i := fractionScalarMap N h1
@@ -107,8 +118,10 @@ theorem isTorsion_quotient_fractionScalarMap (N : Submodule R K) (h1 : (1 : K) �
   change algebraMap R K r = (c : R) • (x : K)
   exact hr
 
-/-- Finite generation earns finite colength over the original Noetherian ring of Krull dimension
-at most one, in its actual fraction field. -/
+/-- Let `R` be a Noetherian commutative ring of Krull dimension at most one,
+`K` an `R`-algebra field that is a fraction ring of `R`, and `N ⊆ K` a finitely
+generated `R`-submodule containing `1`. The quotient of `N` by the scalar image
+of `R` has finite composition length over `R`. -/
 theorem isFiniteLength_quotient_fractionScalarMap
     (N : Submodule R K) (h1 : (1 : K) ∈ N)
     [Module.Finite R N] [IsNoetherianRing R] [Ring.KrullDimLE 1 R] :
@@ -125,8 +138,11 @@ theorem isFiniteLength_quotient_fractionScalarMap
     (Module.length_ne_top_of_finite_of_ideal_le_annihilator R
       (N ⧸ (fractionScalarMap N h1).range) (Ideal.span {c}) hI hquot)
 
-/-- The original principal quotient and the scalar quotient of a finite fraction submodule
-have the same genuine base-ring length. -/
+/-- Let `R` be a Noetherian commutative ring of Krull dimension at most one,
+`K` an `R`-algebra field that is a fraction ring of `R`, and `M ⊆ K` a finitely
+generated `R`-submodule containing `1`. For nonzero `a ∈ R`,
+`length_R(R/(a)) = length_R(M/aM)`, where `aM` is the range of multiplication
+by `a` on `M`. -/
 theorem length_quotient_span_eq_quotient_lsmul_finite_fraction
     (M : Submodule R K) (h1 : (1 : K) ∈ M)
     [Module.Finite R M] [IsNoetherianRing R] [Ring.KrullDimLE 1 R]
@@ -177,8 +193,12 @@ private theorem exists_finite_fraction_lift
     exact hg j
   exact ⟨P, hPN, hfg, hone, LinearMap.range_eq_top.mp (top_le_iff.mp htop)⟩
 
-/-- An actual finite annihilated quotient of a fraction submodule has length at most the
-original principal quotient. Its finite lifting submodule and quotient surjectivity are earned. -/
+/-- Let `R` be a Noetherian commutative ring of Krull dimension at most one,
+`K` an `R`-algebra field that is a fraction ring of `R`, and `N ⊆ K` an
+`R`-submodule containing `1`. If a linear map `N → Q` is surjective, `Q` is a
+finitely generated `R`-module in any given universe, and a nonzero scalar `a`
+annihilates `Q`, then `length_R(Q) ≤ length_R(R/(a))`. The submodule `N` need
+not itself be finitely generated. -/
 theorem length_le_quotient_span_of_surjective_finite_fraction
     {Q : Type w} [AddCommGroup Q] [Module R Q] [Module.Finite R Q]
     [IsNoetherianRing R] [Ring.KrullDimLE 1 R]

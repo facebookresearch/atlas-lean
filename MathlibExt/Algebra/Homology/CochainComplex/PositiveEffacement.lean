@@ -17,10 +17,15 @@ public import MathlibExt.CategoryTheory.Functor.Effaceable
 /-!
 # Effacement of positive cochain cohomology
 
-The inclusion into the identity cofiber is split monic in each degree
-and kills cohomology in degrees with a predecessor. For nonnegative
-cochains this gives positive-degree effacement. The degree-zero term is
-retained.
+Let C be a preadditive category. For a nonnegative cochain complex K whose
+identity map has a homotopy cofiber, define Eff(K)=Cofib(1_K) and take
+the canonical cofiber inclusion e:K → Eff(K). This map is monic.
+If the source and target have homology in degree n+1, then Hⁿ⁺¹(e)=0.
+
+When C has binary biproducts and homology, this construction gives, for every
+K, a monomorphism that kills its cohomology in a specified positive degree.
+Consequently the degree-(n+1) cochain cohomology functor is effaceable for
+every n∈ℕ.
 -/
 
 @[expose] public section
@@ -35,23 +40,33 @@ namespace CochainComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- Cofiber of the identity cochain map. -/
+/-- For a nonnegative cochain complex K in a preadditive category C, assuming
+the homotopy cofiber of its identity exists, the effacement complex
+Eff(K)=Cofib(1_K). -/
 def positiveEffacement (K : CochainComplex C ℕ) [HasHomotopyCofiber (𝟙 K)] :
     CochainComplex C ℕ :=
   homotopyCofiber (𝟙 K)
 
-/-- Canonical inclusion into the identity cofiber. -/
+/-- For a nonnegative cochain complex K in a preadditive category C whose
+identity has a homotopy cofiber, the canonical cofiber inclusion
+e:K → Eff(K)=Cofib(1_K). -/
 def positiveEffacementMap (K : CochainComplex C ℕ) [HasHomotopyCofiber (𝟙 K)] :
     K ⟶ positiveEffacement K :=
   homotopyCofiber.inr (𝟙 K)
 
-/-- Degreewise retractions of the cofiber inclusion. -/
+/-- In a preadditive category C, for a nonnegative cochain complex K whose
+identity has a homotopy cofiber, the canonical inclusion
+K → Eff(K)=Cofib(1_K) is a monomorphism of cochain complexes. -/
 theorem positiveEffacementMap_mono (K : CochainComplex C ℕ)
     [HasHomotopyCofiber (𝟙 K)] :
     Mono (positiveEffacementMap K) :=
   homotopyCofiber.mono_inr (𝟙 K)
 
-/-- The cofiber inclusion kills positive cohomology under local homology assumptions. -/
+/-- Let C be preadditive, K a nonnegative cochain complex, and n∈ℕ.
+Assume the homotopy cofiber Eff(K)=Cofib(1_K) exists and both K and
+Eff(K) have the chosen homology objects in degree n+1. The map induced
+by the canonical inclusion e:K → Eff(K) on that cohomology is zero:
+Hⁿ⁺¹(e)=0. -/
 theorem positiveEffacementMap_homology_succ_eq_zero (K : CochainComplex C ℕ) (n : ℕ)
     [HasHomotopyCofiber (𝟙 K)]
     [K.HasHomology (n + 1)] [(positiveEffacement K).HasHomology (n + 1)] :
@@ -64,7 +79,10 @@ theorem positiveEffacementMap_homology_succ_eq_zero (K : CochainComplex C ℕ) (
   exact @homotopyCofiber.homologyMap_comp_inr_eq_zero C _ _ ℕ (ComplexShape.up ℕ) _
     K K (𝟙 K) hCF n (n + 1) (by rfl) hK hE
 
-/-- Positive cochain cohomology is effaceable. -/
+/-- For a preadditive category C with binary biproducts and homology, the
+degree-(n+1) cohomology functor on nonnegative cochain complexes is
+effaceable for every n∈ℕ. Each K admits the monomorphism
+K → Cofib(1_K) whose induced map on Hⁿ⁺¹ is zero. -/
 theorem homologyFunctor_isEffaceable_succ
     [HasBinaryBiproducts C] [CategoryWithHomology C] (n : ℕ) :
     (homologyFunctor C (ComplexShape.up ℕ) (n + 1)).IsEffaceable := by

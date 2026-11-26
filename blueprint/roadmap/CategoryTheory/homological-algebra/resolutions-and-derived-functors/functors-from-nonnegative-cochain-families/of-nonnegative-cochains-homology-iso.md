@@ -1,3 +1,6 @@
-# Of Nonnegative Cochains Homology Iso
+# Degree comparison with nonnegative cochain homology
 
-Its degree functor is naturally identified with the original Nat homology.
+For additive short-exact-sequence-preserving
+`F : A → CochainComplex B ℕ`, with `A` preadditive and `B` abelian,
+the degree-`n` functor of the resulting δ-functor is naturally
+isomorphic to `F ⋙ homologyFunctor B (up ℕ) n`.

@@ -1,4 +1,6 @@
-# Finite Factor Hom Tensor Iso inv f
+# Inverse bounded-factor isomorphism is the finite inverse sum
 
-The inverse component is exactly the signed finite sum of the original
-projected integer-product/coefficient inverses and native coprojections.
+Inverse bounded-factor isomorphism is the finite inverse sum.
+
+In integer degree `n`, the inverse component of the Hom–tensor isomorphism is
+`homTensorFiniteFactorInverseDegree R P J U L N n`.

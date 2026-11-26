@@ -16,11 +16,15 @@ public import Mathlib.RingTheory.Finiteness.Projective
 public import MathlibExt.LinearAlgebra.LinearMap.RetractComparison
 
 /-!
-# Tensoring arbitrary products with a finite-projective factor
+# A finite projective factor commutes with arbitrary products
 
-The product index is arbitrary. Native finite-free tensor coordinates and the
-actual finite-free retraction of the tensor factor earn bijectivity of the
-original product comparison. No finite product-index hypothesis is used.
+Let R be commutative, N_i an arbitrary family of R-modules and U a finitely generated projective
+R-module. The canonical map π:U⊗_R(∏_iN_i)→∏_i(U⊗_RN_i), π(u⊗x)_i=u⊗x_i, is bijective and gives
+a linear equivalence. The product index may be infinite.
+
+For U=R^n this is finite-free coordinate interchange. Taking a finite projective U as a retract
+of a finite free module and using factor naturality gives the general result. The forward map
+remains π, with independent scalar, index and carrier universes.
 -/
 
 @[expose] public section
@@ -39,7 +43,9 @@ variable (R : Type uR) [CommRing R] {ι : Type uI}
 
 attribute [local ext high] TensorProduct.ext
 
-/-- Interchange of the actual finite-free coordinate and original product index. -/
+/-- Let R be a commutative ring, ι an arbitrary index type and N_i R-modules, with independent ring,
+index and carrier universes. For n∈ℕ, the R-linear equivalence (Fin n→∏_iN_i)≅∏_i(Fin n→N_i)
+sends x to y_i(j)=x_j(i). Its inverse exchanges the same coordinates. -/
 def finitePiFlip (n : ℕ) : (Fin n → ∀ i, N i) ≃ₗ[R] ∀ i, Fin n → N i where
   toFun x i j := x j i
   invFun x j i := x i j
@@ -48,8 +54,10 @@ def finitePiFlip (n : ℕ) : (Fin n → ∀ i, N i) ≃ₗ[R] ∀ i, Fin n → N
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-/-- The original arbitrary-product tensor comparison respects every actual
-linear map in the tensor factor. -/
+/-- Let R be a commutative ring, ι an arbitrary index type and N_i R-modules, with independent ring,
+index and carrier universes. For linear f:U→V in independent carrier universes,
+π_V∘(f⊗id_{∏N_i})=(∏_i(f⊗id_{N_i}))∘π_U, where π_U,π_V are the componentwise tensor maps.
+Neither factor needs to be finite for this square. -/
 theorem piRightHom_factor_naturality
     {U : Type uU} {V : Type uV}
     [AddCommGroup U] [Module R U] [AddCommGroup V] [Module R V]
@@ -61,8 +69,9 @@ theorem piRightHom_factor_naturality
   funext i
   rfl
 
-/-- Native finite-free coordinates compute the original product comparison;
-the family and product index remain arbitrary. -/
+/-- Let R be a commutative ring, ι an arbitrary index type and N_i R-modules, with independent ring,
+index and carrier universes. For n∈ℕ, R^n⊗_R(∏_iN_i)→∏_i(R^n⊗_RN_i) is bijective. Finite-free
+coordinates identify both sides with ∏_i(N_i)^n, including n=0. -/
 theorem piRightHom_finiteFree_bijective (n : ℕ) :
     Function.Bijective (piRightHom R R (Fin n → R) N) := by
   let eD : (Fin n → R) ⊗[R] (∀ i, N i) ≃ₗ[R] (∀ i, Fin n → N i) :=
@@ -90,8 +99,10 @@ theorem piRightHom_finiteFree_bijective (n : ℕ) :
     obtain ⟨x, hx⟩ := hb.surjective (eC y)
     exact ⟨x, eC.injective hx⟩
 
-/-- The actual finite-free projection/inclusion and original comparison squares
-earn the finite-projective case through the shared elementary retract provider. -/
+/-- Let R be a commutative ring, ι an arbitrary index type and N_i R-modules, with independent ring,
+index and carrier universes. For finitely generated projective U, π_U:U⊗_R(∏_iN_i)→∏_i(U⊗_RN_i)
+is bijective. U is a retract of a finite free module and factor naturality carries the
+comparison through that retract. -/
 theorem piRightHom_finiteFactor_bijective
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :
@@ -113,14 +124,19 @@ theorem piRightHom_finiteFactor_bijective
     dG dF cG cF hd hc (piRightHom_factor_naturality R N g)
       (piRightHom_factor_naturality R N f) (piRightHom_finiteFree_bijective R N n)
 
-/-- The actual product Iso has the native original product comparison as its
-forward map, even for infinite products. -/
+/-- Let R be a commutative ring, ι an arbitrary index type and N_i R-modules, with independent ring,
+index and carrier universes. For finitely generated projective U, this is the R-linear
+equivalence U⊗_R(∏_iN_i)≅∏_i(U⊗_RN_i), with forward map u⊗x↦(i↦u⊗x_i). U is the left factor and
+the arbitrary product is on the right. -/
 def piRightFiniteFactor
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :
     U ⊗[R] (∀ i, N i) ≃ₗ[R] ∀ i, U ⊗[R] N i :=
   LinearEquiv.ofBijective (piRightHom R R U N) (piRightHom_finiteFactor_bijective R N U)
 
+/-- Let R be a commutative ring, ι an arbitrary index type and N_i R-modules, with independent ring,
+index and carrier universes. For finitely generated projective U, the underlying linear map of
+the product equivalence is π_U, characterized by π_U(u⊗x)_i=u⊗x_i. -/
 theorem piRightFiniteFactor_toLinearMap
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :

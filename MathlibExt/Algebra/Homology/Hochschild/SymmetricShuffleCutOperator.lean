@@ -13,13 +13,21 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricPositiveAlgebra
 public import MathlibExt.Combinatorics.Perm.EulerianElements
 
 /-!
-# coefficient-head shuffle cuts
+# Coefficient-head shuffle cuts and Eulerian evaluation
 
-The original coefficient stays in the second block; a head one is
-inserted into the regular first coefficient. Applying the original native
-symmetric Hochschild pairing gives exactly the coefficient-fixed signed
-shuffle cut. Thus the explicit rational Eulerian value at two is two unit
-cuts plus the original proper shuffle pairings, without a supplied cut law.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible symmetric coefficient
+module. A weak cut p+q=n splits a raw tensor tail into two blocks, inserts coefficient 1 into
+the regular first block and retains M as the coefficient of the second block. Recombining with
+the symmetric shuffle pairing fixes the coefficient and applies the signed tail shuffle-cut
+operator.
+
+Each coefficient cut therefore equals id_M ⊗ shuffleCutEnd. Summing over cuts with p,q > 0 gives
+id_M tensored with the proper shuffle convolution at two. If k is a ℚ-algebra and n>0, the
+coefficient action of the Eulerian element Λₙ(2) is 2·id plus this sum of proper cuts, the two
+identity terms coming from the empty-block cuts.
+
+For Eulerian elements and shuffle convolution, see J.-L. Loday, Cyclic Homology, second edition,
+§4.5.
 -/
 
 @[expose] public section
@@ -39,7 +47,9 @@ variable (k : Type u) [CommRing k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The coefficient-fixed tensor cut, with a head one in the original regular factor. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a k-module. For a weak cut z=(p,q)
+with p+q=n, coefficientShuffleCutInput splits the degree-n tail into its two blocks and sends m
+⊗ concat(a,b) to (1 ⊗ a) ⊗ (m ⊗ b). The first coefficient 1 is in the chosen lift of A. -/
 def coefficientShuffleCutInput {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
     M ⊗[k] TensorPower k n A →ₗ[k]
       (ULift.{w} A ⊗[k] TensorPower k z.1.1 A) ⊗[k]
@@ -52,7 +62,10 @@ def coefficientShuffleCutInput {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
         (TensorPower.mulEquiv (R := k) (M := A) (n := z.1.1) (m := z.1.2)).symm.toLinearMap).comp
           (TensorProduct.map LinearMap.id (TensorPower.cast k A z.2).symm.toLinearMap)))
 
-/-- The original shuffle pairing applied to the coefficient-head cut. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. For a weak cut z=(p,q) with p+q=n, compose coefficientShuffleCutInput
+with the (p,q)-pairing component, transported to degree n. This gives coefficientShuffleCutEnd,
+a k-linear endomorphism of M ⊗_k A^{⊗n}. -/
 def coefficientShuffleCutEnd {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
     Module.End k (M ⊗[k] TensorPower k n A) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
@@ -68,7 +81,9 @@ def coefficientShuffleCutEnd {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
       (coefficientShuffleCutInput k A M z)
 
 omit [Module A M] [SMulCommClass k A M] [IsScalarTower k A M] in
-/-- The original coefficient-head input has the literal value on any two original tail tensors. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a k-module. For p,q : ℕ, m ∈ M, a ∈
+A^{⊗p} and b ∈ A^{⊗q}, coefficientShuffleCutInput for the cut (p,q) sends m ⊗ concat(a,b) to (1
+⊗ a) ⊗ (m ⊗ b). No A-action on M is needed for this tensor-splitting formula. -/
 theorem coefficientShuffleCutInput_concat_tmul (p q : ℕ) (m : M)
     (a : TensorPower k p A) (b : TensorPower k q A) :
     coefficientShuffleCutInput k A M ⟨(p, q), rfl⟩
@@ -77,7 +92,10 @@ theorem coefficientShuffleCutInput_concat_tmul (p q : ℕ) (m : M)
   simp [coefficientShuffleCutInput, TensorPower.cast_refl,
     LinearMap.comp_apply, TensorProduct.map_tmul, TensorProduct.leftComm_tmul]
 
-/-- The original head-one pairing has exactly the coefficient-fixed signed shuffle value. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. For p,q : ℕ, m ∈ M and tail words a,b, coefficientShuffleCutEnd for
+(p,q) sends m ⊗ concat(⊗a,⊗b) to m ⊗ signedShuffleProduct(⊗a,⊗b). The tail is ∑s
+sign(s)·⊗ᵢappend(a,b)(s.perm⁻¹i), and the coefficient is fixed. -/
 theorem coefficientShuffleCutEnd_concat_tprod (p q : ℕ) (m : M)
     (a : Fin p → A) (b : Fin q → A) :
     coefficientShuffleCutEnd k A M ⟨(p, q), rfl⟩
@@ -118,7 +136,10 @@ theorem coefficientShuffleCutEnd_concat_tprod (p q : ℕ) (m : M)
       (hPair.trans (congrArg (fun z => m ⊗ₜ[k] z)
         (TensorPower.signedShuffleProduct_tprod p q a b)).symm))
 
-/-- The original pairing cut is exactly the coefficient-fixed signed tail cut. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. For any weak degree cut z=(p,q) with p+q=n, coefficientShuffleCutEnd k A
+M z equals id_M ⊗ shuffleCutEnd(A,z). Thus the coefficient-head construction agrees with the
+signed tail cut in all degree coordinates. -/
 theorem coefficientShuffleCutEnd_eq_map {n : ℕ} (z : TensorPower.ShuffleDegreeCut n) :
     coefficientShuffleCutEnd k A M z =
       TensorProduct.map LinearMap.id (TensorPower.shuffleCutEnd (V := A) z) := by
@@ -162,11 +183,17 @@ theorem coefficientShuffleCutEnd_eq_map {n : ℕ} (z : TensorPower.ShuffleDegree
   have he : e (e.symm x) = x := e.apply_symm_apply x
   exact (congrArg L he).symm.trans (hx.trans (congrArg R he))
 
-/-- The finite sum of the original proper coefficient-head pairings. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. In degree n : ℕ, totalProperCoefficientShuffleCutEnd is the finite sum
+of coefficientShuffleCutEnd over all cuts p,q > 0 with p+q=n. It is an endomorphism of M ⊗_k
+A^{⊗n}. -/
 def totalProperCoefficientShuffleCutEnd (n : ℕ) : Module.End k (M ⊗[k] TensorPower k n A) :=
   ∑ z : TensorPower.ProperShuffleDegreeCut n, coefficientShuffleCutEnd k A M z.val
 
-/-- The original proper native pairing sum is exactly the coefficient-fixed proper signed cut sum. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. For every n : ℕ, totalProperCoefficientShuffleCutEnd equals id_M ⊗
+properShuffleConvolutionTwo(A,n), where the tail convolution is the sum of all signed
+shuffle-cut endomorphisms with both block degrees positive. -/
 theorem totalProperCoefficientShuffleCutEnd_eq_map (n : ℕ) :
     totalProperCoefficientShuffleCutEnd k A M n =
       TensorProduct.map LinearMap.id (TensorPower.properShuffleConvolutionTwo (V := A) n) := by
@@ -182,7 +209,11 @@ theorem totalProperCoefficientShuffleCutEnd_eq_map (n : ℕ) :
     F (∑ z : TensorPower.ProperShuffleDegreeCut n, TensorPower.shuffleCutEnd (V := A) z.val)
   exact (map_sum F _ _).symm
 
-/-- The rational Eulerian evaluation at two has exactly the original proper shuffle cuts. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Assume k is a ℚ-algebra and n : ℕ satisfies 0<n. The coefficient
+rational permutation action of the Eulerian element Λₙ(2) equals 2·id +
+totalProperCoefficientShuffleCutEnd k A M n. The two empty-block cuts give the identity terms,
+while the remaining cuts have both degrees positive. -/
 theorem coefficientEulerianLambda_two_eq_proper_pairings [Algebra ℚ k] (n : ℕ) (hn : 0 < n) :
     TensorPower.coefficientRationalPermutationAction (M := M) (V := A) n
         (Equiv.Perm.eulerianLambda n 2) =

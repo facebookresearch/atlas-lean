@@ -1,3 +1,7 @@
-# Under Cokernel Counit
+# Counit from the cokernel of a zero arrow
 
-The original zero-arrow cokernel isomorphism is the counit.
+Counit from the cokernel of a zero arrow.
+
+In a category with zero morphisms and cokernels, the natural transformation zeroUnder I ⋙
+underCokernel I → id_C has component ε_Y : Coker(0 : I → Y) → Y, the hom of the canonical
+zero-arrow cokernel isomorphism.

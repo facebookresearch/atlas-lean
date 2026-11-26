@@ -1,3 +1,6 @@
-# Right Derived Precomp Homology Iso Of Iso
+# Resolution cohomology comparison after a coefficient-functor isomorphism
 
-The fixed underived map is applied term by term on the same resolution.
+Let `C,D,A` be abelian, `F : C → D` additive and preserving
+injective objects and homology, and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. For an injective resolution `I` of `X`, the termwise isomorphism
+`α_I` and complex-composition identification give
+`H^q(P(I)) ≅ H^q(B(F(I)))`.

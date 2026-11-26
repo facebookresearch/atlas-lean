@@ -1,3 +1,5 @@
-# Functorial exact sequences of short complexes
+# Finite middle group gives finite homology
 
-Homology of a short complex of abelian groups is finite if its middle group is finite.
+For a short complex A → B → D of abelian groups, if the underlying
+set of the middle group B is finite, then the underlying set of the
+homology group Ker(B → D)/Im(A → B) is finite.

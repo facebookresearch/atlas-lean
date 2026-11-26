@@ -1,3 +1,6 @@
-# Partial Total Filtration
+# The extended-integer partial-total tower
 
-The actual partial-total tower has zero bottom and the native total at top.
+The extended-integer partial-total tower.
+
+For X, take the partial-total filtration of its double-normalized bicomplex, as a functor from
+EInt to chain complexes.

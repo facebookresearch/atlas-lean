@@ -1,3 +1,5 @@
-# Cobar Data Op obj n
+# The object in one degree of opposite cobar data
 
-Objects of the opposite data at a degree.
+The object in one degree of opposite cobar data.
+
+In degree `n`, the object is `op(cobarObj G R L n)`.

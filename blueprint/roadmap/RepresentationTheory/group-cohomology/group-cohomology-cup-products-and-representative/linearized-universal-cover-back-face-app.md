@@ -1,4 +1,5 @@
-# Linearized Universal Cover back Face apply single
+# Back face of a linearized basis simplex
 
-A back-face map on the linearized universal cover restricts a basis
-simplex along the back subinterval inclusion.
+Let `G` be a group and `k` a commutative ring. For `p + q = n`, `u : Fin (n + 1) → G`, and `r
+: k`, the Alexander–Whitney back-face map sends `single u r` to `single (u ∘ backInclusion p q
+n h) r`. Thus it retains the last `q + 1` vertices, starting at vertex `p`, and preserves `r`.

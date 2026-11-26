@@ -1,4 +1,6 @@
-# Native Tor finite
+# Finite generation of every Tor degree
 
-The original derived tensor module is finite in every degree when
-both coefficients are finite over a Noetherian ring.
+Finite generation of every Tor degree.
+
+Over a commutative noetherian ring R, finitely generated M and N have finitely generated
+Tor_q^R(M,N) for every q ≥ 0.

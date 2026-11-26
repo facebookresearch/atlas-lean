@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Mapping Cone To Direct Column
+# The mapping-cone comparison of a coherent window with its direct column
 
-The mapping cone of a coherent filtration map maps to the corresponding
-direct column through its cokernel sequence.
+The mapping-cone comparison of a coherent window with its direct column.
+
+The mapping cone maps through the cokernel sequence and the coherent cokernel isomorphism to
+the direct column.

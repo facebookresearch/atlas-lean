@@ -1,5 +1,5 @@
 # Tensor homology of relative resolutions
 
-- [Relative Tensor Functor](relative-tensor-functor.md)
-- [Tensor Relative Comparison Homology Map](tensor-relative-comparison-homology-map.md)
-- [Tensor Relative Resolution Homology Iso](tensor-relative-resolution-homology-iso.md)
+- [Fixed-coefficient tensor functor for relative-resolution comparisons](relative-tensor-functor.md)
+- [Tensor homology map from a relative-projective source comparison](tensor-relative-comparison-homology-map.md)
+- [Tensor homology isomorphism between split relative resolutions](tensor-relative-resolution-homology-iso.md)

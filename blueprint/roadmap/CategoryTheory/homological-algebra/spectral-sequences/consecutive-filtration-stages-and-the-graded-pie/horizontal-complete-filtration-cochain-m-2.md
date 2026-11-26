@@ -1,4 +1,6 @@
-# Horizontal Complete Filtration Cochain Mono Upper Succ Iso
+# The upper cochain-stage comparison of a positive first-page window
 
-Canonical cochain identification of a positive upper stage with its
-natural-stage presentation.
+The upper cochain-stage comparison of a positive first-page window.
+
+Forget the upper subobject comparison and extend to identify the upper complete cochain stage
+with the extension of natural stage `p+1`.

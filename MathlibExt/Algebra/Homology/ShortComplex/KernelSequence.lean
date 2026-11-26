@@ -13,16 +13,14 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import MathlibExt.Algebra.Homology.ShortComplex.ShortExactSequences
 
 /-!
-# Functorial kernel sequences
+# Acyclic kernels and quasi-isomorphisms
 
-This module is the epi-map dual of the horizontal half of
-`MathlibExt.Algebra.Homology.ShortComplex.CokernelSequence`: for a short
-exact sequence `S` of homological complexes over an abelian category, the
-horizontal criterion `quasiIso_g_iff` says `S.g` is a quasi-isomorphism iff
-`S.X₁` is acyclic, and `HomologicalComplex.quasiIso_iff_acyclic_kernel` says
-an epimorphism `g` of complexes is a quasi-isomorphism iff its kernel is
-acyclic. The latter is derived from the former applied to
-`ShortComplex.kernelSequence`.
+For a short exact sequence 0 → A → B → D → 0 of complexes of any shape
+in an abelian category, the map B → D is a quasi-isomorphism exactly
+when A is acyclic. In particular, an epimorphism g:K → L of complexes
+is a quasi-isomorphism if and only if its kernel complex is acyclic.
+These criteria apply to arbitrary complex shapes, including those with
+boundary degrees.
 -/
 
 @[expose] public section
@@ -36,10 +34,9 @@ open CategoryTheory
 variable {C ι : Type*} [Category* C] [Abelian C] {c : ComplexShape ι}
 variable {S : ShortComplex (HomologicalComplex C c)}
 
-/-- Horizontal criterion for a short exact sequence of homological complexes:
-`S.g` is a quasi-isomorphism iff `S.X₁` is acyclic. Uses `homology_exact₂`
-directly for monomorphy and `homology_exact₃` directly for epimorphy, with a
-split on existence of a successor. -/
+/-- Let C be abelian and 0 → A → B —g→ D → 0 a short exact sequence
+of complexes of any shape c. The map g is a quasi-isomorphism if
+and only if A is acyclic in every degree. -/
 theorem quasiIso_g_iff (hS : S.ShortExact) :
     _root_.QuasiIso S.g ↔ S.X₁.Acyclic := by
   constructor
@@ -83,9 +80,9 @@ section KernelCriterion
 variable {C ι : Type*} [Category* C] [Abelian C] {c : ComplexShape ι}
 variable {K L : HomologicalComplex C c} (g : K ⟶ L) [Epi g]
 
-/-- Horizontal criterion for an epimorphism of homological complexes: `g` is a
-quasi-isomorphism iff its kernel is acyclic. Derived from
-`ShortExact.quasiIso_g_iff` applied to `ShortComplex.kernelSequence`. -/
+/-- For an epimorphism g:K → L of complexes of any shape c in an abelian
+category, g is a quasi-isomorphism if and only if the kernel complex
+Ker(g) is acyclic in every degree. -/
 theorem quasiIso_iff_acyclic_kernel :
     QuasiIso g ↔ (Limits.kernel g).Acyclic := by
   have hShortExact : (ShortComplex.kernelSequence g).ShortExact :=

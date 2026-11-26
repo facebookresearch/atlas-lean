@@ -20,12 +20,19 @@ public import MathlibExt.CategoryTheory.ExactCategory.Functor
 /-!
 # Admissible pushouts of bounded cochain complexes
 
-A span whose distinguished map is degreewise admissible has a pushout
-computed in each degree of the exact category. The underlying cochain
-pushout is supported in the union of the target support windows.
+Let E be a preadditive exact category with a zero object and binary biproducts.
+A bounded complex is an integer-indexed cochain complex whose terms vanish
+outside some finite interval. A map is degreewise admissible when every
+component is an admissible monomorphism in E.
 
-The induced leg is degreewise admissible, and exact functors preserve
-these bounded pushouts.
+For a span B ← A → C whose map A → B is degreewise admissible, its pushout
+exists both among bounded complexes and among all integer-indexed cochain
+complexes, and evaluation in any degree gives the corresponding pushout in E.
+If B and C are supported in [aB,bB] and [aC,bC], the pushout is supported in
+[min(aB,aC),max(bB,bC)]. The induced map C → B ⨿ₐ C is degreewise admissible.
+An additive exact functor between such exact categories preserves these maps
+and pushout squares. The object and morphism universes of the two categories
+are independent.
 -/
 
 @[expose] public section
@@ -42,11 +49,17 @@ namespace CochainComplex.Bounded
 variable (E : Type uE) [Category.{vE} E] [Preadditive E]
   [HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
 
-/-- Admissibility of a bounded cochain map is tested degreewise. -/
+/-- In a preadditive exact category E with a zero object and binary biproducts,
+the morphism property on bounded integer-indexed cochain complexes that holds
+for i:A → B exactly when every component iⱼ:Aʲ → Bʲ is an admissible
+monomorphism in E. -/
 def degreewiseAdmissibleMonomorphisms : MorphismProperty (Bounded E) :=
   fun _ _ i => ∀ j : ℤ, IsAdmissibleMono (i.hom.f j)
 
-/-- Criterion for degreewise admissibility of the underlying cochain map. -/
+/-- For bounded integer-indexed cochain complexes A and B in a preadditive
+exact category E with a zero object and binary biproducts, a map i:A → B belongs
+to the degreewise admissible morphism property if and only if iⱼ:Aʲ → Bʲ is
+an admissible monomorphism for every integer j. -/
 theorem degreewiseAdmissibleMonomorphisms_iff {A B : Bounded E} (i : A ⟶ B) :
     degreewiseAdmissibleMonomorphisms E i ↔ ∀ j : ℤ, IsAdmissibleMono (i.hom.f j) := Iff.rfl
 
@@ -81,7 +94,11 @@ private theorem hasColimit_span_eval {A B C : Bounded E} (i : A ⟶ B) (f : A �
     diagramIsoSpan (span i.hom f.hom ⋙ HomologicalComplex.eval E (.up ℤ) j)
   exact hasColimit_of_iso e
 
-/-- An admissible bounded span has a pushout in the underlying cochain category. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts. For bounded cochain complexes A, B, C and a span B ← A → C with
+maps i and f, if every iⱼ is an admissible monomorphism, then the pushout of
+the underlying maps exists in the category of all integer-indexed cochain
+complexes in E. -/
 theorem hasPushout_hom_of_degreewiseAdmissibleMonomorphisms
     {A B C : Bounded E} (i : A ⟶ B) (f : A ⟶ C)
     (hi : degreewiseAdmissibleMonomorphisms E i) : HasPushout i.hom f.hom := by
@@ -90,7 +107,11 @@ theorem hasPushout_hom_of_degreewiseAdmissibleMonomorphisms
   change HasColimit (span i.hom f.hom)
   infer_instance
 
-/-- The pushout is supported in the union of the target support windows. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts, and let i:A → B and f:A → C be maps of bounded cochain complexes
+with i degreewise admissible. Suppose Bʲ is zero for j<aB or bB<j, and Cʲ
+is zero for j<aC or bC<j. Then the underlying cochain pushout B ⨿ₐ C has
+zero j-th term whenever j<min(aB,aC) or max(bB,bC)<j. -/
 theorem pushout_unionSupport {A B C : Bounded E} (i : A ⟶ B) (f : A ⟶ C)
     (hi : degreewiseAdmissibleMonomorphisms E i)
     (aB bB aC bC : ℤ)
@@ -119,7 +140,13 @@ theorem pushout_unionSupport {A B C : Bounded E} (i : A ⟶ B) (f : A ⟶ C)
   · exact hBj.eq_of_src _ _
   · exact hCj.eq_of_src _ _
 
-/-- Pushout of an admissible span in the category of bounded cochain complexes. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts. A span i:A → B, f:A → C of bounded integer-indexed cochain
+complexes with i degreewise admissible has a bounded pushout P with maps
+inB:B → P and inC:C → P. The square is a pushout in the bounded category,
+in the category of all cochain complexes, and in E in every degree.
+The map inC is degreewise admissible, and P has the underlying complex
+B ⨿ₐ C. -/
 theorem exists_boundedAdmissiblePushout {A B C : Bounded E} (i : A ⟶ B) (f : A ⟶ C)
     (hi : degreewiseAdmissibleMonomorphisms E i) :
     letI := hasPushout_hom_of_degreewiseAdmissibleMonomorphisms E i f hi
@@ -147,7 +174,11 @@ theorem exists_boundedAdmissiblePushout {A B C : Bounded E} (i : A ⟶ B) (f : A
       (P := admissibleMonosOf E IsAdmissibleExact) (hTerms j).flip (hi j)
   exact ⟨P, inB, inC, hBounded, hRaw, hTerms, hAdmissible, rfl⟩
 
-/-- The bounded pushout realizes the underlying cochain pushout. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts. For a pushout square of bounded cochain complexes with maps
+i:A → B, f:A → C, inB:B → P and inC:C → P, if i is degreewise admissible,
+then the square of underlying integer-indexed cochain complexes is also a
+pushout. -/
 theorem admissiblePushout_raw {A B C P : Bounded E}
     {i : A ⟶ B} {f : A ⟶ C} {inB : B ⟶ P} {inC : C ⟶ P}
     (hi : degreewiseAdmissibleMonomorphisms E i) (hP : IsPushout i f inB inC) :
@@ -158,7 +189,10 @@ theorem admissiblePushout_raw {A B C P : Bounded E}
     (hP₀.preservesColimit_span_iff (F := ι E)).2 hRaw₀
   exact hP.map (ι E)
 
-/-- Evaluation in each degree realizes a pushout of components. -/
+/-- Let E be a preadditive exact category with a zero object and binary
+biproducts. Given a pushout square of bounded cochain complexes along a
+degreewise admissible map i:A → B, evaluation at each integer j yields
+the pushout square with maps iⱼ, fⱼ, inBⱼ and inCⱼ in E. -/
 theorem admissiblePushout_term {A B C P : Bounded E}
     {i : A ⟶ B} {f : A ⟶ C} {inB : B ⟶ P} {inC : C ⟶ P}
     (hi : degreewiseAdmissibleMonomorphisms E i) (hP : IsPushout i f inB inC) (j : ℤ) :
@@ -177,7 +211,11 @@ variable {D : Type uD} [Category.{vD} D] [Preadditive D]
   [HasZeroObject D] [HasBinaryBiproducts D] [ExactCategory D]
 variable (F : E ⥤ D) [F.Additive] [F.IsExact]
 
-/-- Exact functors preserve degreewise admissibility. -/
+/-- Let E and D be preadditive exact categories with zero objects and binary
+biproducts, and let F:E → D be an additive exact functor. If i:A → B is a
+map of bounded integer-indexed cochain complexes whose components are
+admissible monomorphisms, then the components F(iⱼ) of the induced bounded
+cochain map are also admissible monomorphisms. -/
 theorem mapCochainComplexBounded_degreewiseAdmissibleMonomorphisms
     {A B : CochainComplex.Bounded E} (i : A ⟶ B)
     (hi : CochainComplex.Bounded.degreewiseAdmissibleMonomorphisms E i) :
@@ -190,7 +228,11 @@ theorem mapCochainComplexBounded_degreewiseAdmissibleMonomorphisms
   refine ⟨F.obj Q, F.map p, wF, ?_⟩
   exact F.map_admissibleExact (ShortComplex.mk (i.hom.f j) p w) hS
 
-/-- Exact functors preserve admissible pushouts of bounded cochain complexes. -/
+/-- Let F:E → D be an additive exact functor between preadditive exact
+categories with zero objects and binary biproducts. If a square of bounded
+cochain complexes is a pushout along a degreewise admissible map, then
+applying F to every term and map gives a pushout square in the category of
+bounded cochain complexes in D. -/
 theorem mapCochainComplexBounded_isPushout_of_degreewiseAdmissibleMono
     {A B C P : CochainComplex.Bounded E}
     {i : A ⟶ B} {f : A ⟶ C} {inB : B ⟶ P} {inC : C ⟶ P}

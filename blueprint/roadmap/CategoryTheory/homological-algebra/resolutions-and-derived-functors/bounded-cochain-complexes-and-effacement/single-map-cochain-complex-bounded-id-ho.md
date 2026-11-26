@@ -1,3 +1,6 @@
-# Single Map Cochain Complex Bounded id hom app
+# Identity functor law for the forward comparison
 
-Identity law for the bounded single-complex comparison.
+In a category C with zero morphisms and a zero object, the forward
+single-complex comparison for the identity functor, evaluated at X and j,
+equals the canonical cochain identification of termwise identity applied
+to Sⱼ(X) with Sⱼ(X).

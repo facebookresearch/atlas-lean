@@ -1,3 +1,6 @@
-# Enveloping Ground Cover Inclusion projection
+# The chain retraction equation for a projective Lie free cover
 
-The original CE chain maps retain the original strict Lie retraction.
+The chain retraction equation for a projective Lie free cover.
+
+The chain inclusion of `L` into `F` followed by the chain projection back to `L` is the
+identity on the ground enveloping complex.

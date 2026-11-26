@@ -1,4 +1,7 @@
-# Corestriction Cup One One term
+# The transferred one-by-one cup summand
 
-A single transferred restricted-cup summand, split into the projection
-term and the two homotopy terms.
+The transferred one-by-one cup summand.
+
+For one-cocycles x and y, the inverse-weighted restricted cup summand equals the corresponding
+x(g₁) term plus the comparison term from x(t) minus the translated comparison term from
+x(r(t,g₁)). The second tensor factor is common to these three terms.

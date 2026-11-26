@@ -1,3 +1,5 @@
-# Outer Cutoff Total Iota Off Row Finite
+# Off-slice cutoff total inclusions are zero
 
-Off-row total summands vanish (their source is a zero single-branch object).
+For a cohomological bicomplex K in an abelian category and
+p+q=n, if q≠r then the inclusion B^(r)_(p,q) → Tot(B^(r))_n
+is zero. Its source is the zero object of the off-slice branch.
