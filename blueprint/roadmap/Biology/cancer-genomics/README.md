@@ -15,3 +15,8 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Branching populations under power-law mutation rates](branching-populations-under-power-law-mutation-rates/README.md)
+- [Neutral site frequency spectrum of growing branching populations](neutral-site-frequency-spectrum-of-growing-branching-populations/README.md)
+- [Recurrence of resistant tumors from de novo mutation](recurrence-of-resistant-tumors-from-de-novo-mutation/README.md)
+- [Spatial waiting time for k mutations](spatial-waiting-time-for-k-mutations/README.md)
+- [Tug-of-war driver-passenger branching process](tug-of-war-driver-passenger-branching-process/README.md)
