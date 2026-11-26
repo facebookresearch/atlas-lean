@@ -1199,5 +1199,6 @@ Topics added since this subject's fields were last revised.
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
+- [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
 - [Exterior Power](exterior-power/README.md)
 - [Kaehler Differential](kaehler-differential/README.md)
