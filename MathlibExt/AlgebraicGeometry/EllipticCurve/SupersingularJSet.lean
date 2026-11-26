@@ -35,6 +35,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import MathlibExt.NumberTheory.ModularForms.SupersingularJSet
 
 import all MathlibExt.AlgebraicGeometry.EllipticCurve.TorsionCardinality
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
@@ -45,10 +46,11 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Supersingular `j`-invariants form a finite set
 
-`ModularCurve.ssJSet q K` is the set of `j ∈ K` such that every elliptic curve over `K`
-with `j`-invariant `j` has no nonzero `q`-torsion point. Over an algebraically closed
-field of characteristic `q`, every such `j` satisfies `j ^ q ^ 2 = j`, so the set is
-finite.
+Over an algebraically closed field of characteristic `q`, an elliptic curve with no nonzero
+point killed by `q` has `j ^ q ^ 2 = j`. So the supersingular `j`-invariants `ModularCurve.ssJSet p`
+in an algebraic closure of `ZMod p` (defined in
+`MathlibExt.NumberTheory.ModularForms.SupersingularJSet`) lie in the subfield with `p ^ 2` elements,
+and they form a finite set (`ModularCurve.ssJSet_finite`).
 
 The key step is `WeierstrassCurve.j_pow_q_sq_eq_j_of_forall_q_zsmul_eq_zero`. For
 `q = 2`, the absence of nonzero `2`-torsion forces `a₁ = 0`, hence `j = 0`. For odd `q`,
@@ -607,6 +609,11 @@ private theorem j_eq_zero_of_forall_two_nsmul_eq_zero [IsAlgClosed F] [Decidable
 
 end WeierstrassCurve
 
+/-- **Supersingular `j`-invariants lie in the field with `q ^ 2` elements.** Let `q` be a prime and
+`E` an elliptic curve over an algebraically closed field `F` of characteristic `q` such that the
+only point of `E` killed by `q` is zero, that is, `E` is supersingular. Then `E.j ^ q ^ 2 = E.j`,
+so `E.j` lies in the subfield of `F` with `q ^ 2` elements (J. H. Silverman, *The Arithmetic of
+Elliptic Curves*, 2nd ed., Theorem V.3.1(a)). -/
 theorem WeierstrassCurve.j_pow_q_sq_eq_j_of_forall_q_zsmul_eq_zero
     {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] (q : ℕ) [Fact q.Prime]
     [CharP F q] (E : WeierstrassCurve F) [E.IsElliptic]
@@ -626,45 +633,35 @@ theorem WeierstrassCurve.j_pow_q_sq_eq_j_of_forall_q_zsmul_eq_zero
 
 namespace ModularCurve
 
-/-- The set of supersingular `j`-invariants in characteristic `q`. -/
-def ssJSet (p : ℕ) (K : Type*) [Field K] [DecidableEq K] : Set K :=
-  {j | ∀ (W : WeierstrassCurve K) [W.IsElliptic], W.j = j →
-    ∀ P : W.toAffine.Point, p • P = 0 → P = 0}
-
-theorem mem_ssJSet_iff {p : ℕ} {K : Type*} [Field K] [DecidableEq K] {j : K} :
-    j ∈ ssJSet p K ↔ ∀ (W : WeierstrassCurve K) [W.IsElliptic], W.j = j →
-      ∀ P : W.toAffine.Point, p • P = 0 → P = 0 :=
-  Iff.rfl
-
-private theorem pow_q_sq_of_mem_ssJSet {K : Type*} [Field K] [IsAlgClosed K] [DecidableEq K]
-    (q : ℕ) [Fact q.Prime] [CharP K q] {a : K} (ha : a ∈ ssJSet q K) :
-    a ^ (q ^ 2) = a := by
-  have h := WeierstrassCurve.j_pow_q_sq_eq_j_of_forall_q_zsmul_eq_zero q
+private theorem pow_sq_of_mem_ssJSet {p : ℕ} [Fact p.Prime] {a : AlgebraicClosure (ZMod p)}
+    (ha : a ∈ ssJSet p) : a ^ (p ^ 2) = a := by
+  classical
+  have h := WeierstrassCurve.j_pow_q_sq_eq_j_of_forall_q_zsmul_eq_zero p
     (WeierstrassCurve.ofJ a)
     (fun P hP => (mem_ssJSet_iff.mp ha) (WeierstrassCurve.ofJ a)
       (WeierstrassCurve.ofJ_j a) P (by rwa [natCast_zsmul] at hP))
   rwa [WeierstrassCurve.ofJ_j] at h
 
-/-- The set of supersingular `j`-invariants over an algebraically closed field
-of prime characteristic is finite. -/
-theorem ssJSet_finite (q : ℕ) [Fact q.Prime]
-    (K : Type*) [Field K] [IsAlgClosed K] [CharP K q] [DecidableEq K] :
-    (ssJSet q K).Finite := by
+/-- **Finitely many supersingular `j`-invariants.** For a prime `p`, the supersingular
+`j`-invariants `ssJSet p` in an algebraic closure of `ZMod p` form a finite set: each of them
+satisfies `j ^ p ^ 2 = j` (`WeierstrassCurve.j_pow_q_sq_eq_j_of_forall_q_zsmul_eq_zero`), so it is
+a root of `X ^ p ^ 2 - X`. -/
+theorem ssJSet_finite (p : ℕ) [Fact p.Prime] : (ssJSet p).Finite := by
   classical
-  have hq : 1 < q ^ 2 :=
-    calc 1 < q := (Fact.out : q.Prime).one_lt
-      _ ≤ q * q := Nat.le_mul_self q
-      _ = q ^ 2 := (sq q).symm
-  have hne : (Polynomial.X ^ (q ^ 2) - Polynomial.X : Polynomial K) ≠ 0 := by
+  have hp : 1 < p ^ 2 :=
+    calc 1 < p := (Fact.out : p.Prime).one_lt
+      _ ≤ p * p := Nat.le_mul_self p
+      _ = p ^ 2 := (sq p).symm
+  have hne : (X ^ (p ^ 2) - X : (AlgebraicClosure (ZMod p))[X]) ≠ 0 := by
     intro h
-    have h1 := congrArg (fun p : Polynomial K => p.coeff 1) h
-    simp [Polynomial.coeff_X, hq.ne] at h1
-  refine ((Polynomial.X ^ (q ^ 2) - Polynomial.X : Polynomial K).roots.toFinset.finite_toSet).subset
+    have h1 := congrArg (fun f : (AlgebraicClosure (ZMod p))[X] => f.coeff 1) h
+    simp [Polynomial.coeff_X, hp.ne] at h1
+  refine ((X ^ (p ^ 2) - X : (AlgebraicClosure (ZMod p))[X]).roots.toFinset.finite_toSet).subset
     ?_
   intro a ha
   rw [Finset.mem_coe, Multiset.mem_toFinset, Polynomial.mem_roots hne, Polynomial.IsRoot,
     Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, sub_eq_zero]
-  exact pow_q_sq_of_mem_ssJSet q ha
+  exact pow_sq_of_mem_ssJSet ha
 
 end ModularCurve
 
