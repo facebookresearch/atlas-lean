@@ -9,13 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Convex.Extreme
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Algebra.Group.Pointwise.Set.Basic
 import Mathlib.Analysis.Convex.Cone.Extension
+import Mathlib.Analysis.Convex.Integral
 import Mathlib.Analysis.LocallyConvex.SeparatingDual
 import Mathlib.Analysis.Normed.Module.Dual
 import Mathlib.Analysis.Normed.Module.HahnBanach
 import Mathlib.LinearAlgebra.LinearPMap
+import Mathlib.MeasureTheory.Function.LocallyIntegrable
 import Mathlib.MeasureTheory.Integral.BoundedContinuousFunction
 import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 import Mathlib.Topology.Bases
@@ -794,3 +797,63 @@ public theorem choquet_representation
     choquet_representation_of_isCompact hKCompact hx
 
 end MathlibExt.Analysis.Convex.ChoquetWanted
+
+namespace MathlibExt.Analysis.ChoquetWanted.Analysis
+
+variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
+
+/-
+The Bauer statement below comes from `LeanEval.Analysis.Choquet` at commit
+38361be884302c7edce1908c4aef8296eb2cb27e of leanprover/lean-eval, problem
+`bauer_extreme_point_uniqueness` (submitted by Kim Morrison).
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+ATLAS adapted the namespace and documentation and supplied the proof.
+-/
+
+/- **Bauer's uniqueness at extreme points.** If `x` is an extreme point of a
+compact convex set `K` and `μ` is a probability measure supported on `K`
+(`μ Kᶜ = 0`) with barycenter `x = ∫ y, y ∂μ`, then `μ` is the Dirac mass at
+`x`. (The support hypothesis is the weaker `μ Kᶜ = 0`, making this a
+strengthening of the textbook statement: uniqueness among all ambient Borel
+probability measures on `K`, not only those already supported on `ext K`.) -/
+-- Preserve the existing public name, including its repeated `Analysis` component.
+set_option linter.dupNamespace false in
+/-- **Bauer's uniqueness theorem at extreme points.** Let $X$ be a real Banach space with its Borel
+σ-algebra, let $K \subseteq X$ be compact and convex, and let $x$ be an extreme point of $K$. If
+$\mu$ is a probability measure on $X$ with $\mu(X \setminus K) = 0$ whose barycenter
+$\int y \, d\mu(y)$ (a Bochner integral) equals $x$, then $\mu$ is the Dirac measure at $x$.
+The `CompleteSpace X` hypothesis matters: Mathlib defines the Bochner integral into an
+incomplete space to be zero.
+
+Source: H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Arch. Math. 9 (1958),
+389–393; see also Phelps, *Lectures on Choquet's Theorem*. Knill, *Some fundamental theorems in
+mathematics*, §88. Via leanprover/lean-eval@38361be, problem `bauer_extreme_point_uniqueness`. -/
+public theorem bauer_unique [CompleteSpace X] [MeasurableSpace X] [BorelSpace X]
+    (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
+    {x : X} (hx : x ∈ K.extremePoints ℝ)
+    (μ : Measure X) [IsProbabilityMeasure μ]
+    (hμ : μ Kᶜ = 0) (hbar : x = ∫ y, y ∂μ) :
+    μ = Measure.dirac x := by
+  have hK : ∀ᵐ y ∂μ, y ∈ K := ae_iff.mpr hμ
+  have hint : Integrable (fun y : X => y) μ := by
+    rw [← Measure.restrict_eq_self_of_ae_mem hK]
+    exact continuous_id.continuousOn.integrableOn_compact hK_cpt
+  have hmean : (⨍ y : X, y ∂μ) = x := by rw [average_eq_integral, ← hbar]
+  -- Unless the identity is a.e. constant, a measurable split has distinct conditional means.
+  rcases ae_eq_const_or_exists_average_ne_compl hint with hconst | ⟨s, hs, h₀, h₀', hne⟩
+  · calc
+      μ = μ.map id := Measure.map_id.symm
+      _ = μ.map (fun _ => x) := Measure.map_congr (by
+        filter_upwards [hconst] with y hy
+        exact hy.trans hmean)
+      _ = Measure.dirac x := by rw [Measure.map_const, measure_univ, one_smul]
+  · have hmem (t : Set X) (ht : μ t ≠ 0) : (⨍ y in t, y ∂μ) ∈ K :=
+      hK_cvx.set_average_mem hK_cpt.isClosed ht (measure_ne_top μ t)
+        (ae_restrict_of_ae hK) hint.integrableOn
+    have hseg := average_mem_openSegment_compl_self hs.nullMeasurableSet h₀ h₀' hint
+    rw [hmean] at hseg
+    obtain ⟨hleft, hright⟩ :=
+      (mem_extremePoints.mp hx).2 _ (hmem s h₀) _ (hmem sᶜ h₀') hseg
+    exact (hne (hleft.trans hright.symm)).elim
+
+end MathlibExt.Analysis.ChoquetWanted.Analysis

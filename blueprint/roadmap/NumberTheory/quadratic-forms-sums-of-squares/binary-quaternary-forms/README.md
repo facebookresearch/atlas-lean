@@ -8,3 +8,4 @@ Reduction theory, discriminants and class numbers of binary forms, quaternary fo
 - [Kronecker's class number sums](kronecker-s-class-number-sums/README.md)
 - [Representation numbers of quaternary quadratic forms](representation-numbers-of-quaternary-quadratic-f/README.md)
 - [Representations by x² + y² − z²](representations-by-x-y-z/README.md)
+- [Fowler's bound on imaginary quadratic order discriminants](sqrt-abs-discriminant-le-of-gauss-class.md)
