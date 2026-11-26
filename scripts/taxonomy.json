@@ -12555,6 +12555,7 @@
   "MathlibExt/NumberTheory/Bernoulli/PolyBernoulliSymmetricExponentialGeneratingFunction": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Poly-Bernoulli numbers"},
   "MathlibExt/NumberTheory/Bernoulli/PolynomialDenominatorRadical": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Denominators of Bernoulli polynomials"},
   "MathlibExt/NumberTheory/Bernoulli/StirlingHarmonic": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},
+  "MathlibExt/NumberTheory/Bernoulli/StirlingInversion": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Bernoulli numbers of the second kind"},
   "MathlibExt/NumberTheory/Bernoulli/SumModPrime": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},
   "MathlibExt/NumberTheory/Bernoulli/TruncatedSumModPrime": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},
   "MathlibExt/NumberTheory/Bernoulli/TuenterBernoulliPowerSum": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Identities for Bernoulli numbers"},
