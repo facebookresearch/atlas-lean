@@ -22,7 +22,7 @@ Insisting on a sink rather than "a sink or another source" gives the class PPADS
 
 - [Nash's theorem](../../../GameTheory/noncooperative-games/nash-s-theorem/README.md): the total search problem whose complexity PPAD was designed to capture.
 - [Bimatrix games and the Lemke–Howson algorithm](../../../GameTheory/noncooperative-games/bimatrix-games-and-the-lemke-howson-algorithm/README.md): the path-following argument behind the definition of PPAD.
-- [Brouwer fixed-point theorem](../../../Topology/algebraic-topology/brouwer-fixed-point-theorem/README.md): approximate Brouwer fixed points are PPAD-complete (BROUWER; Daskalakis, Goldberg and Papadimitriou).
+- [Brouwer fixed-point theorem](../../../Topology/algebraic-topology/fixed-points-antipodal-maps/brouwer-fixed-point-theorem/README.md): approximate Brouwer fixed points are PPAD-complete (BROUWER; Daskalakis, Goldberg and Papadimitriou).
 - [Sperner's lemma](../../../Combinatorics/polytopes-simplicial-complexes/sperner-s-lemma/README.md): a door-counting parity argument of exactly the END-OF-THE-LINE kind.
 - [Correlated equilibria](../../../GameTheory/noncooperative-games/correlated-equilibria/README.md): by contrast, a correlated equilibrium can be found in polynomial time in many succinctly represented games (Papadimitriou, *Algorithmic Game Theory*, Theorem 2.6).
 - [NP-completeness](../../np-completeness/README.md): the notion that does not fit total search problems unless NP = coNP.

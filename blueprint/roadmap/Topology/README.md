@@ -14,8 +14,8 @@ on the four-dimensional side.
 spaces, and [descriptive set theory](descriptive-set-theory/README.md) characterizes Baire space, Cantor space and the
 rationals and studies the [Banach–Mazur game](descriptive-set-theory/banach-mazur-game/README.md).
 [Algebraic topology](algebraic-topology/README.md) includes the
-[Hurewicz theorem](algebraic-topology/hurewicz-theorem/README.md) in degree one and the
-[homotopy groups of spheres](algebraic-topology/homotopy-groups-of-spheres/README.md), and
+[Hurewicz theorem](algebraic-topology/homology-cohomology/hurewicz-theorem/README.md) in degree one and the
+[homotopy groups of spheres](algebraic-topology/homotopy-theory/homotopy-groups-of-spheres/README.md), and
 [manifolds and geometric topology](manifolds-geometric-topology/README.md) runs from the
 [classification of surfaces](manifolds-geometric-topology/classification-of-surfaces/README.md) to the
 [Poincaré conjecture](manifolds-geometric-topology/poincar-conjecture/README.md) in dimensions three, four and at least
@@ -25,9 +25,9 @@ five and the [annulus theorem](manifolds-geometric-topology/annulus-theorem/READ
 infinite-dimensional topology.
 
 Topology also reaches data. Topological data analysis builds
-[simplicial complexes from point clouds](algebraic-topology/simplicial-complexes-from-point-clouds/README.md) at every
-scale, summarizes their homology by [persistence modules and barcodes](algebraic-topology/persistence-modules-and-barcodes/README.md),
-and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero-dimensional part is
+[simplicial complexes from point clouds](algebraic-topology/topological-data-analysis/simplicial-complexes-from-point-clouds/README.md) at every
+scale, summarizes their homology by [persistence modules and barcodes](algebraic-topology/topological-data-analysis/persistence-modules-and-barcodes/README.md),
+and draws data sets with [Mapper](algebraic-topology/topological-data-analysis/mapper/README.md); its zero-dimensional part is
 [single-linkage hierarchical clustering](../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/README.md).
 
 - [Topological spaces and continuous maps](topological-spaces/README.md)
