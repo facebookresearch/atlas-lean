@@ -1,15 +1,21 @@
 # Sparse full-factorial decomposition of higher-order epistasis
 
 Let $L$ binary mutations be indexed by $[L]=\{1,\dots,L\}$, and let a genotype be identified with the set $S\subseteq[L]$ of mutations it carries, $\varnothing$ being the ancestor. Code genotype $S$ by indicators $x_k=\mathbf 1[k\in S]$ and consider the saturated model
+
 $$m_S=\sum_{T\subseteq S}\beta_T,\qquad\text{equivalently}\qquad y=\sum_{T\subseteq[L]}\beta_T\prod_{k\in T}x_k+\varepsilon,$$
+
 where $m_S$ is the mean phenotype of genotype $S$. Then:
 
 1. **Möbius inversion.** The coefficients are determined by the $2^L$ means,
+
 $$\beta_T=\sum_{S\subseteq T}(-1)^{|T|-|S|}\,m_S,$$
+
 and least squares on replicated data recovers them with each $m_S$ replaced by the cell sample mean. The order of $\beta_T$ is $|T|$; for $|T|=2$ it is the interaction contrast $m_{\{k,l\}}-m_{\{k\}}-m_{\{l\}}+m_\varnothing$.
 2. **Contexts as factors.** Adding categorical background factors with $a_1,\dots,a_r$ levels and all their interactions with the mutations gives a saturated model with $2^L\prod_t a_t$ coefficients, one per genotype-by-context cell. For three mutations, three species backgrounds of the enzyme and three protein-quality-control backgrounds this is $2^3\cdot3\cdot3=72$.
 3. **Sparse estimation.** Because the saturated model interpolates the cell means, interactions are selected by penalized regression on standardized phenotypes,
+
 $$\hat\beta=\arg\min_\beta\ \frac{1}{2N}\|y-X\beta\|_2^2+\lambda\Bigl[\alpha\|\beta\|_1+\tfrac{1-\alpha}{2}\|\beta\|_2^2\Bigr],$$
+
 with $\alpha=1$ (the lasso) and $\lambda$ the largest value within one cross-validated standard error of the minimum. A coefficient set to zero is read as an absent interaction of that order.
 
 ## Depends on

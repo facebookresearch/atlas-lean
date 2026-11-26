@@ -1,9 +1,13 @@
 # Unseen-variant estimation as a linear program
 
 Fix a finite grid $X \subset (0,1]$ of candidate population frequencies, a cohort of $k$ sampled alleles, and an observed site frequency spectrum $F_1, \dots, F_k$ ($F_i$ sites seen in exactly $i$ alleles). For nonnegative weights $w_1, \dots, w_k$, the **unseen estimator** chooses a frequency histogram $h : X \to [0,\infty)$ minimising the weighted discrepancy between the expected and observed spectra,
+
 $$\min_{h \ge 0}\ \sum_{i=1}^{k} w_i \,\Big| F_i - \sum_{x \in X} h(x)\,\mathrm{bin}(x,k,i) \Big|, \qquad \mathrm{bin}(x,k,i) = \binom{k}{i}x^i(1-x)^{k-i},$$
+
 possibly with linear side constraints (for example a fixed total number of sites, or $h(x) = 0$ above a frequency threshold where the empirical spectrum is used directly). This is a linear program: introducing slack variables $e_i$ with
+
 $$e_i \ge F_i - \sum_x h(x)\,\mathrm{bin}(x,k,i), \qquad e_i \ge \sum_x h(x)\,\mathrm{bin}(x,k,i) - F_i,$$
+
 the problem becomes minimising $\sum_i w_i e_i$ over the polyhedron in $(h, e)$, which has an optimal vertex and can be solved in polynomial time. The fitted $h$ includes mass at frequencies below $1/k$, the variants not yet observed, and plugging it into the discovery curve $\sum_x h(x)(1 - (1-x)^N)$ extrapolates the number of distinct variants a cohort of $N > k$ alleles will see.
 
 ## Depends on

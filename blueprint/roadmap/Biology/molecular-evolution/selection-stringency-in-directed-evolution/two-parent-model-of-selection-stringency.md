@@ -3,7 +3,9 @@
 **Model.** Two parent variants differ in fitness by $\Delta x > 0$: the fitter has fitness $0$ and the other $-\Delta x$. A budget of $n$ mutants is split into $n_{\mathrm{low}}$ mutants of the less-fit parent and $n - n_{\mathrm{low}}$ of the fitter one. Only beneficial mutations are modelled, with exponential distributions of fitness effects (DFEs): mutants of the fitter parent have fitness $\mathrm{Exp}(\lambda_{\mathrm{high}})$ and mutants of the less-fit parent have fitness $\mathrm{Exp}(\lambda_{\mathrm{low}}) - \Delta x$, all independent. Heterogeneity between the parents' DFEs is modelled by drawing $\lambda_{\mathrm{low}}, \lambda_{\mathrm{high}}$ independently from a common exponential law whose parameter $\alpha$ sets the spread of DFE scales. The outcome is the maximum fitness $M$ of the $n$ mutants; $n_{\mathrm{low}} = 0$ is maximal stringency and $n_{\mathrm{low}} = n/2$ maximal diversification.
 
 **Diminishing returns (Rényi).** If $Y_1, \dots, Y_m$ are i.i.d. $\mathrm{Exp}(\lambda)$, then
+
 $$\mathbb E\big[\max(Y_1, \dots, Y_m)\big] = \frac1\lambda \sum_{i=1}^m \frac1i,$$
+
 so the $i$-th draw from the same DFE raises the expected maximum by only $1/(\lambda i)$.
 
 **Consequences.** If $\lambda_{\mathrm{low}} = \lambda_{\mathrm{high}}$ deterministically, $n_{\mathrm{low}} = 0$ maximizes $M$. With random, independently drawn rates, the less-fit parent's DFE is sometimes more favorable, and because extra draws from the fitter parent's DFE yield only harmonic gains, spending some of the budget on a second DFE can raise the typical maximum despite the $\Delta x$ handicap. The optimal $n_{\mathrm{low}}$ increases with the DFE heterogeneity relative to $\Delta x$ and with the budget $n$, and never exceeds $n/2$ because each parent is equally likely to have the better DFE. Diversification is further favored with more parents, more rounds, and inherited changes in DFEs.

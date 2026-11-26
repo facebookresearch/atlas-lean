@@ -3,11 +3,17 @@
 Consider an asexual population of constant size $N$ at a wild-type genotype $w$ that can reach two fitter states: an immediately beneficial "uphill" genotype $u$ of selective advantage $s_u > 0$, reached by one mutation at rate $\mu_u$ per individual per generation, and a doubly mutant "valley-crossing" genotype $v$ of advantage $s_v > s_u$, reached only through an intermediate $i$ of fitness effect $-\delta_i \le 0$, with mutation rates $\mu_i$ from $w$ to $i$ and $\mu_v$ from $i$ to $v$. Assume weak selection, $s_j \ll 1$ for all genotypes, and let the uphill genotype be an evolutionary dead end.
 
 When $N$ is small enough that the population is nearly clonal, it moves in Markovian jumps between neighbouring genotypes, with transition rate
+
 $$r_{jk} = N \mu_{jk} \pi_{jk}, \qquad \pi_{jk} = \frac{1 - e^{-2(s_k - s_j)}}{1 - e^{-2N(s_k - s_j)}},$$
+
 $\pi_{jk}$ being the fixation probability of a single $k$ mutant in a population of $j$. Treating $w$ and $i$ as transient states and $u$ and $v$ as absorbing, and allowing back-mutation from a fixed intermediate to the wild type, the probability that the population ends at the doubly mutant genotype rather than at the uphill genotype is
+
 $$P_{\mathrm{cross}} = \frac{r_{wi} r_{iv}}{r_{wi} r_{iv} + r_{wu}(r_{iw} + r_{iv})} = \left[ 1 + \frac{\pi_{wu}}{\pi_{wi}} \frac{\mu_u}{\mu_i} \left( 1 + \frac{\mu_i \pi_{iw}}{\mu_v \pi_{iv}} \right) \right]^{-1}.$$
+
 Within this regime $P_{\mathrm{cross}}$ **decreases** with $N$: as $N$ grows, $\pi_{wu} \to 2 s_u$ while $\pi_{wi} \to 0$ for a deleterious intermediate, so the ratio $\pi_{wu}/\pi_{wi} \to \infty$ and $P_{\mathrm{cross}} \to 0$. Larger populations are the greedier ones, until stochastic tunneling takes over: the sequential-fixation description fails once
+
 $$N > \frac{1}{2\delta_i} \log\!\left( 1 + \frac{e^{2\delta_i} - 1}{p_v} \right),$$
+
 where $p_v = -\delta_i + \sqrt{\delta_i^2 + 4 \mu_v s_v}$ is the probability that an intermediate lineage survives drift long enough to produce a successful double mutant.
 
 ## Depends on

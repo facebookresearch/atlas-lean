@@ -1,9 +1,13 @@
 # Likelihood factorization and sufficiency under the SMC$'$
 
 Let the observed data from a chromosomal segment of length $L$ be the sequence of local genealogies and the breakpoints at which they change,
+
 $$Y = \{(g_0, 0), (g_1, b_1), \dots, (g_{m-1}, b_{m-1}),\, s_m = L - b_{m-1}\},$$
+
 including both visible and invisible events. Under the SMC$'$ with recombination rate $\rho$ per site and effective size trajectory $N(t)$ the observed-data likelihood factors as
+
 $$\mathcal L_{\mathrm{obs}}(Y; N(t), \rho) = \underbrace{\Pr[g_0 \mid N(t)] \prod_{i=0}^{m-2} \Pr[g_{i+1} \mid g_i, N(t)]}_{\text{depends on } N(t)} \times \underbrace{h(L - b_{m-1} \mid g_{m-1}, \rho) \prod_{i=0}^{m-2} f(s_{i+1} \mid g_i, \rho)}_{\text{depends on } \rho},$$
+
 where $f(s \mid g, \rho) = \rho \ell\, e^{-\rho \ell s}$ and $h$ is the corresponding survival function. Two consequences follow by the factorization theorem. First, the total tree lengths $\ell_0, \dots, \ell_{m-1}$ together with the locus lengths $s_1, \dots, s_{m-1}, L - b_{m-1}$ are sufficient for $\rho$. Second, the breakpoint positions $b_0, \dots, b_{m-1}$ carry no information about $N(t)$; the sequence of local genealogies alone does.
 
 ## Depends on

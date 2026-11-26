@@ -3,7 +3,9 @@
 **Setting.** A cohort of parent–offspring trios is ascertained because the offspring has a disease $D$ of population prevalence $P(D)$. For a site or set of sites, let $V$ be the event that a child carries a de novo mutation there, with population probability $P(V)$ given by a mutation-rate model calibrated on neutral (for example synonymous) de novo mutations. The expected number of de novo mutations in the cohort under the model is proportional to $P(V)$ and the observed number to $P(V\mid D)$.
 
 **Proposition.** If the mutation rate at the sites is the same in the general population as assumed by the model, then
+
 $$\frac{\text{observed}}{\text{expected}} \approx \frac{P(V\mid D)}{P(V)} = \frac{P(D\mid V)}{P(D)} \le \frac{1}{P(D)} .$$
+
 Consequently, an enrichment ratio significantly above $1/P^{*}(D)$, where $P^{*}(D)$ is a lower bound on the prevalence of the ascertained phenotype, cannot be explained by disease causation alone and indicates that the effective mutation rate at those sites is inflated, as happens for drivers of clonal expansion in spermatogonia (CES).
 
 **Test.** For a gene $g$ with model loss-of-function mutation rate $\lambda_g$ (expected count in the cohort), a one-sided Poisson test of the observed count against mean $\lambda_g/P^{*}(D)$ rejects the hypothesis that the gene is merely a fully penetrant disease gene with normal mutation rate.

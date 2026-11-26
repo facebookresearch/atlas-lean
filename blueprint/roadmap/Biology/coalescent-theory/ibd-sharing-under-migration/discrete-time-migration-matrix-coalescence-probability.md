@@ -1,11 +1,17 @@
 # Coalescence probability under a discrete-time migration matrix
 
 Let two subpopulations have sizes $N_1(g)$ and $N_2(g)$ at generation $g$ in the past and exchange migrants with the backwards-in-time one-generation matrix
+
 $$M(g) = \begin{pmatrix} 1 - m_{12}(g) & m_{12}(g) \\ m_{21}(g) & 1 - m_{21}(g) \end{pmatrix},$$
+
 where $m_{12}(g)$ is the probability that a lineage currently in population $1$ had its parent in population $2$. For a lineage sampled in population $k$, let $a_i(g)$ be the row vector of probabilities that its ancestor at generation $g$ lies in each population; then $a_i(g) = a_i(0)\prod_{h=1}^{g} M(h)$. Writing $\Lambda(g)$ for the diagonal matrix with entries $1/N_1(g)$ and $1/N_2(g)$, the probability that two lineages coalesce between generations $g-1$ and $g$, given that they have not coalesced earlier, is
+
 $$c(g) \;=\; a_i(g)\, \Lambda(g)\, a_j(g)^{\mathsf T},$$
+
 that is, the chance that both ancestors are in the same subpopulation weighted by the reciprocal of that subpopulation's size, and the unconditional coalescence density at generation $g$ is
+
 $$\pi(g) \;=\; c(g) \prod_{h=1}^{g-1} \bigl( 1 - c(h) \bigr).$$
+
 Substituting $\pi$ into the discrete form of the expected-sharing integral gives the expected fraction of genome shared through segments in a length range under an arbitrary history of sizes and migration rates.
 
 ## Depends on

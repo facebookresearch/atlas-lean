@@ -1,7 +1,9 @@
 # Geometric steady state of short repeat lengths under two-way substitution
 
 Let $P(L)$ be the genome-wide frequency of uninterrupted tandem repeat tracts of exactly $L$ copies of a motif $A$, and model the sequence as evolving under motif-unit substitutions alone, at rate $\mu$ for a non-motif unit $B$ turning into $A$ (lengthening) and rate $\nu$ for the reverse (shortening), with length-changing indels negligible. At stationarity each unit is independently $A$ with probability $p_A = \mu/(\mu+\nu)$ and $B$ with probability $p_B = \nu/(\mu+\nu)$, so a tract of $L$ consecutive $A$ units has frequency proportional to $p_A^{L}$:
+
 $$P(L) \;\propto\; \left( \frac{\mu}{\mu+\nu} \right)^{L} \qquad (L \ll 10).$$
+
 The short-repeat part of the distribution is therefore geometric, with the normalizing constant fixed by the mass of the shortest length class and the remaining mass carried by the long-repeat tail. The approximation holds up to the length at which the length-changing processes — expansion, contraction and non-motif insertion — stop being negligible relative to substitution, which for mononucleotide repeats is of order $L = 10$.
 
 Above that length the dynamics decouple from substitution: the per-unit expansion, contraction and insertion rates grow with length, modelled as power laws $\epsilon_L = \epsilon_0 L^{\tau_\epsilon}$, $\kappa_L = \kappa_0 L^{\tau_\kappa}$ and $\iota_L = \iota_0 L^{\tau_\iota}$ for $L \ge 9$, and the steady state in that regime is governed by a continuum equation in which local expansion–contraction transitions compete with the non-local effects of repeat fission and fusion. A finite-length tail then requires contraction bias at large lengths, while expansion bias at intermediate lengths maintains it.

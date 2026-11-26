@@ -3,6 +3,7 @@
 **Setting.** A nuclear family has two genotyped parents and $c$ genotyped children, typed at ordered loci $l = 0,1,\dots,L$. An **inheritance vector** $\vec v \in \{0,1\}^{2c}$ records, for each of the $2c$ parent-to-child meioses, which of the parent's two homologous chromosomes was transmitted at a locus. At locus $l$, let $\mathcal V_l$ be the set of inheritance vectors that are consistent with the observed genotypes for some assignment of each parent's alleles to its two homologs. For two inheritance vectors, the Hamming distance $H(\vec w,\vec v)$ counts the meioses whose transmitted homolog switches, that is, the recombinations implied between consecutive loci.
 
 **Recursion.** Define $R(0,\vec v) = 0$ for $\vec v \in \mathcal V_0$ and, for $l \ge 1$ and $\vec v \in \mathcal V_l$,
+
 $$R(l,\vec v) = \min_{\vec w\in\mathcal V_{l-1}}\Big\{R(l-1,\vec w) + H(\vec w,\vec v)\Big\}.$$
 
 **Proposition.** $R(l,\vec v)$ is the minimum, over all sequences $\vec v_0\in\mathcal V_0,\dots,\vec v_l\in\mathcal V_l$ with $\vec v_l = \vec v$, of the total number of implied recombinations $\sum_{t=1}^{l}H(\vec v_{t-1},\vec v_t)$. Hence $\min_{\vec v\in\mathcal V_L}R(L,\vec v)$ is the globally minimum number of recombinations for the whole chromosome, and backtracking the minimizing predecessors from an optimal final vector yields a minimum-recombinant haplotype assignment for all family members.

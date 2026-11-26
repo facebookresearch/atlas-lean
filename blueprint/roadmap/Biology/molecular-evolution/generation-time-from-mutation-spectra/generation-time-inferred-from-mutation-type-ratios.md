@@ -1,11 +1,17 @@
 # Generation time inferred from mutation-type ratios
 
 Model the expected number of de novo mutations of type $k$ that a child inherits from a parent as linear in that parent's age at conception: $\beta_p^k G_p + \alpha_p^k$ from a father of age $G_p$ and $\beta_m^k G_m + \alpha_m^k$ from a mother of age $G_m$, with observed counts Poisson with these means (slopes $\beta$ and intercepts $\alpha$ estimated by maximum likelihood from parent–offspring trios). For two mutation types $1, 2$ the expected ratio of their counts per generation is
+
 $$\rho_{1,2}(G_p, G_m) = \frac{(\beta_p^1 G_p + \alpha_p^1) + (\beta_m^1 G_m + \alpha_m^1)}{(\beta_p^2 G_p + \alpha_p^2) + (\beta_m^2 G_m + \alpha_m^2)} .$$
+
 Given an observed ratio $R$ of the two types among polymorphisms that arose in some past time window, the parental ages compatible with it satisfy $\rho_{1,2}(G_p, G_m) = R$, which, for positive denominator, is the **linear** constraint
+
 $$(\beta_p^1 - R\beta_p^2)\,G_p + (\beta_m^1 - R\beta_m^2)\,G_m = R(\alpha_p^2 + \alpha_m^2) - (\alpha_p^1 + \alpha_m^1).$$
+
 If paternal and maternal ages co-vary with a fixed ratio $G_p / G_m = \gamma$, the constraint has the unique solution
+
 $$G_m = \frac{R(\alpha_p^2 + \alpha_m^2) - (\alpha_p^1 + \alpha_m^1)}{\gamma(\beta_p^1 - R\beta_p^2) + (\beta_m^1 - R\beta_m^2)}, \qquad G_p = \gamma G_m,$$
+
 whenever the denominator is nonzero. A change in generation time alone moves all ratios along one curve in $(G_p, G_m)$; observed ratios of different mutation types that imply incompatible ages, or ages outside a plausible human range, cannot be explained by generation-time change alone.
 
 ## Expansion

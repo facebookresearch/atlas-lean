@@ -1,9 +1,13 @@
 # Ligation advantage of compositionally diverse templates
 
 Consider a template offering $N\ge1$ candidate ligation sites. Let $p_1\in(0,1)$ be the probability that a pair of substrate fragments anneals adjacently at a site and $p_2\in(0,1)$ the probability that a bond then forms. Compare a compositionally diverse (high $C_k$) template, whose $N$ sites are distinct and anneal independently, with a repetitive (low $C_k$) template, whose sites are copies of one motif so that annealing happens to all sites or none. The probabilities that at least one ligation occurs are
+
 $$p_{\mathrm{high}}=1-(1-p_1p_2)^N,\qquad p_{\mathrm{low}}=p_1\bigl[1-(1-p_2)^N\bigr],$$
+
 and their ratio
+
 $$R=\frac{p_{\mathrm{high}}}{p_{\mathrm{low}}}=\frac{1-(1-p_1p_2)^N}{p_1\bigl[1-(1-p_2)^N\bigr]}$$
+
 satisfies $R\ge1$, with equality if and only if $N=1$.
 
 ## Depends on

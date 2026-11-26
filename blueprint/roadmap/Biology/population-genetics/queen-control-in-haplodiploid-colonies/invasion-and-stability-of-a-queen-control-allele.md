@@ -5,8 +5,11 @@
 **Statement** (Olejarz, Veller and Nowak 2017, Conditions (1) and (2)). Whether $a$ is dominant or recessive, and for every mating number $n$:
 
 1. the queen-control allele invades a population of non-controlling queens if
+
 $$\frac{r'}{r} > 1 - \frac{p' - p}{2 + p + p'};$$
+
 2. once fixed, it resists invasion by the non-controlling allele if
+
 $$\frac{r'}{r} > 1 - \frac{p' - p}{2(1 + p')}.$$
 
 If $p' > p$, condition 1 is strictly weaker than condition 2, so three regimes occur: neither holds (control cannot invade), only condition 1 holds (control invades but cannot fix, and a mixed equilibrium exists), or both hold (control invades and is stable when fixed). For complete control, $p' = 1$, the stability condition reads $r'/r > (3 + p)/4$.

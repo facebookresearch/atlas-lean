@@ -3,11 +3,15 @@
 In the [colony dynamics model](colony-dynamics-model-for-worker-sterility-alleles.md) with queens mating $n$ times, consider a resident population fixed for $A$ (all colonies $AA,0$) and introduce the sterility allele $a$ at low frequency. Write $r_z$ for the colony reproductive rate and $p_z$ for the queen's share of males when a fraction $z$ of workers is sterile.
 
 **Theorem (recessive allele).** The recessive sterility allele increases in frequency when rare if
+
 $$\frac{r_{1/(2n)}}{r_0} > \frac{2(2n-1)(2 + n + n p_0)}{2n^2\big(2 + p_0 + p_{1/(2n)}\big) + n\big(3 + 3p_0 - 2p_{1/(2n)}\big) - 2(1 + p_0)} .$$
+
 For single and double mating this reads
+
 $$n = 1:\quad \frac{r_{1/2}}{r_0} > \frac{6 + 2p_0}{5 + 3p_0}, \qquad n = 2:\quad \frac{r_{1/4}}{r_0} > \frac{6 + 3p_0}{5 + 3p_0 + p_{1/4}} .$$
 
 **Theorem (dominant allele).** The dominant sterility allele increases in frequency when rare if
+
 $$\frac{r_{1/2}}{r_0}\Big(1 + p_{1/2}\, \frac{r_{1/n}}{r_0}\Big) > 2 .$$
 
 In particular, sterility cannot invade unless sterile workers raise colony efficiency by a finite amount (for $p_0 = 0$ the single-mating threshold is $6/5$), and there are open parameter regions where it invades under double but not single mating, e.g. $p_0 = 0.8$, $p_{1/4} = 0.9$, $r_0 = 1$ give thresholds $r_{1/2} > 1.027$ for $n = 1$ but only $r_{1/4} > 1.012$ for $n = 2$.

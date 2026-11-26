@@ -1,7 +1,9 @@
 # Quantile-integrated variance effect of a variant
 
 Let $Y$ be a quantitative phenotype and $G$ a genotype dosage. For $\tau \in (0,1)$ let $Q_Y(\tau \mid G = g) = g\,\beta_\tau$ be the linear quantile-regression model for the conditional $\tau$-quantile of $Y$ given $G$ (phenotype and covariates centred). Define the **quantile-integrated effect**
+
 $$\beta_{QI} = \int_0^{1/2} \big(\beta_{1-\tau} - \beta_\tau\big)\, d\tau .$$
+
 Then:
 
 1. If the genotype shifts the distribution of $Y$ by a location change only, $\beta_\tau \equiv \beta$ is constant in $\tau$ and $\beta_{QI} = 0$: a pure mean effect contributes nothing.

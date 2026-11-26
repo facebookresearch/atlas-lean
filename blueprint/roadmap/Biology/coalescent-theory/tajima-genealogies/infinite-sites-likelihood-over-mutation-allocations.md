@@ -3,13 +3,19 @@
 Let $Y$ be binary sequence data at $s$ segregating sites from $n$ fully linked haploid sequences under the infinite-sites model with known ancestral states and mutation rate $\mu$. Compress $Y$ into $Y_{h \times m}$ by recording the $h$ distinct haplotypes with their frequencies and grouping identical columns into $m$ mutation groups with their cardinalities; by Gusfield's perfect-phylogeny algorithm this compressed representation is in one-to-one correspondence with the gene tree $T$ of the data, so $\Pr(Y \mid g^T, \mu) = \Pr(T \mid g^T, \mu)$ for a Tajima's genealogy $g^T$.
 
 Mutations fall on the branches of $g^T$ as a Poisson process of rate $\mu$, so the conditional likelihood is obtained by summing over all allocations of the observed mutation groups to branches that are compatible with the gene tree. Organizing the allocations on a directed acyclic graph whose nodes carry the counts assigned to each branch, every node contributes a factor $e^{-\mu \mathcal L}$ (global, with $\mathcal L$ the total length of $g^T$) times $(\mu l_j)^{x}$ for a single branch of length $l_j$ receiving $x$ mutations, and for a node whose parent allocates to $k > 1$ branches,
+
 $$\Pr\bigl(X_i = (x_{i1},\dots,x_{ik}) \mid \mathbf b = (b_{j_1},\dots,b_{j_k}), g^T, \mu\bigr) \;\propto\; \sum_{\mathbf s \in \Pi(x_i,k)} \prod_{r=1}^{k} (\mu l_{j_r})^{s_r},$$
+
 where $\Pi(x_i,k)$ is the set of distinct permutations of the multiset $x_i$ over the $k$ branches, of cardinality
+
 $$|\Pi(x_i,k)| = \frac{k!}{\prod_{j=1}^{m_i} k_j!}$$
+
 when the multiset has $m_i$ distinct values with multiplicities $k_1, \dots, k_{m_i}$. Marginalizing the directed acyclic graph from tips to root by backtracking computes $\Pr(Y \mid g^T, \mu)$ exactly.
 
 When ancestral states are unknown, the data form an unlabelled *unrooted* gene tree $Y^0$ compatible with at most $s+1$ unlabelled rooted gene trees $Y^{(i)}$, and
+
 $$\Pr(Y^0 \mid g^T, \mu) = \sum_{i=1}^{\mathcal R(Y^0)} \Pr(Y^{(i)} \mid g^T, \mu),$$
+
 with $\mathcal R(Y^0)$ the number of those rootings.
 
 ## Depends on

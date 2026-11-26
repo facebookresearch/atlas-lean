@@ -1,7 +1,9 @@
 # Symmetric overdominance with linked deleterious sites
 
 Consider a Wright–Fisher population of effective size $N_e$ with a diallelic multiplicative fitness scheme over $n$ sites: a genotype has fitness
+
 $$f = \prod_{k=1}^{n} \big(1 + s_k h_k\big),$$
+
 where $s_k$ is the selection coefficient of site $k$ and $h_k$ its dominance factor for the genotype carried ($h_k = 0$ for the ancestral homozygote, $h_k = h$ for the heterozygote, $h_k = 1$ for the derived homozygote; $s_k < 0$ is purifying selection). Split the genome into a **target region** of $m$ sites held under **symmetric overdominance**, meaning heterozygotes at those sites have $s_{\mathrm{bal}} > 0$ and both homozygotes $0$, and a **flanking region** whose sites evolve with $s_{\mathrm{nb}} \le 0$ and additive dominance $h = 1/2$, linked to the target at recombination rate $r$ per base pair and mutating at rate $\mu$ per site per generation. Symmetric overdominance holds the target sites at intermediate frequency indefinitely, so coalescence of a sample at the target is older than neutral and genealogies of flanking sites are stretched in proportion to their linkage.
 
 Under this model, as the recombination distance to the target grows, the effect on flanking variation decays, and two opposing consequences appear at short distances: the density of polymorphic flanking sites falls, while the frequencies of the flanking variants that remain polymorphic, including deleterious ones, rise relative to a neutral or purely purifying-selection baseline. Increasing $r$ by an order of magnitude essentially removes both effects; decreasing it by the same factor strengthens them at every level of purifying selection.

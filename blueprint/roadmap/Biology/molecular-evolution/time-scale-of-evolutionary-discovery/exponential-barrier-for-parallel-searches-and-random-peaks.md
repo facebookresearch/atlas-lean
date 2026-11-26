@@ -7,6 +7,7 @@ Work in the origination–fixation model of evolution on sequences of length $L$
 Informally, if the expected discovery time of a single search is $d$, then $M$ independent searches started far from the target all fail for $\beta$ steps with probability at least $\exp(-M\beta/d)$. For instance, $10^{24}$ independent populations of size $N = 10^6$, run for $10^{14}$ generations on a sequence of length $L = 1000$ with peak width $c = 1/2$, succeed with probability below $10^{-26}$. Many mutant lineages evolving in parallel within one population behave like such independent searches, so they do not help either.
 
 **Theorem (randomly placed peaks).** Consider a single search on a landscape with $m \ll 4^L$ target centers chosen uniformly at random, each with a broad peak of width at most $c$, where $c < 3/4$. Then with high probability the expected discovery time of the target set is at least
+
 $$\frac{1}{m}\,\exp\!\left[2L\left(\tfrac{3}{4} - c\right)^2\right].$$
 
 Whether this bound is exponential depends on how $m$ grows with $L$, and even exponentially many randomly placed peaks need not give polynomial discovery time. Recombination shortens discovery times by at most a factor linear in $L$, which cannot turn an exponential time into a polynomial one. Polynomial time is recovered only when starting sequences a bounded number $k$ of mutations from the target are regenerated over and over (for example by gene duplication); then $L^{k+1}$ searches suffice with high probability, even under neutral drift.

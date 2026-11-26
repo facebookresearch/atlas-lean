@@ -1,9 +1,13 @@
 # Density of a Tajima's genealogy under a variable population size
 
 A *Tajima's genealogy* of $n$ samples is the pair $g^{T} = (F, \mathbf t)$ of a ranked tree shape $F$ with $c$ cherries and the vector of coalescence times $\mathbf t = (t_n, \dots, t_2)$ measured from the present into the past, where the sample has exactly $k$ ancestors during $[t_{k+1}, t_k)$ and $t_{n+1} = 0$. Coarsening Kingman's genealogy to its ranked tree shape does not change the law of the intercoalescent times, so with $C_k = \binom{k}{2}$ and effective size trajectory $(N(t))_{t \ge 0}$,
+
 $$\Pr\bigl(t_k - t_{k+1} \mid t_{k+1}, N(\cdot)\bigr) = \frac{C_k}{N(t_k)} \exp\left[ - \int_{t_{k+1}}^{t_k} \frac{C_k}{N(t)}\, dt \right],$$
+
 and the whole genealogy has density
+
 $$\Pr\bigl(g^{T} \mid N(\cdot)\bigr) = \frac{2^{\,n-c-1}}{(n-1)!} \prod_{k=2}^{n} \frac{C_k}{N(t_k)} \exp\left[ - \int_{t_{k+1}}^{t_k} \frac{C_k}{N(t)}\, dt \right].$$
+
 The density factors into a combinatorial term free of $N(\cdot)$ and a product of interval terms depending only on the coalescence times.
 
 ## Depends on

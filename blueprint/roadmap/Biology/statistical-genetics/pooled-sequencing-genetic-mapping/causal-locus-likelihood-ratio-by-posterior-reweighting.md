@@ -1,9 +1,13 @@
 # Causal-locus likelihood ratio by posterior reweighting
 
 In the pooled-sequencing model of a two-parent cross (pool of $N$ segregants, latent pool allele frequencies $x_1, \dots, x_L$ forming a reversible Markov chain along a chromosome with stationary law $\pi(x) = \Pr(N x \sim \mathrm{Bin}(N,\tfrac12))$, and read data $y_i$ depending only on $x_i$), suppose a single block $c$ contains the causal locus and that selection on the phenotype shifts its population allele frequency to $p$, so that $N x_c \sim \mathrm{Bin}(N, p)$ while the conditional law of all other blocks given $x_c$ is unchanged. Write $\Pr(\cdot \mid y)$ for posteriors computed in the null model with no causal locus. Then the data likelihood with causal block $c$ is
+
 $$\Pr(y \mid c, p) = \Pr(y) \sum_{j=0}^{N} \frac{\Pr(x_c = j/N \mid y)}{\pi(j/N)}\, \Pr(x_c = j/N \mid p),$$
+
 and the likelihood-ratio statistic for association at $c$ is
+
 $$\mathrm{LR}(c) = \max_{p'} \frac{\Pr(y \mid c, p')}{\Pr(y \mid c, \tfrac12)} = \max_{p'} \sum_{j=0}^{N} \frac{\Pr(x_c = j/N \mid y)}{\pi(j/N)}\, \Pr(x_c = j/N \mid p').$$
+
 One forward–backward pass of the null model therefore yields the statistic for every candidate block $c$; $\log_{10}\mathrm{LR}(c)$ is a LOD score, its maximiser estimates the causal position, and normalising $\Pr(y \mid c)$ over $c$ under a uniform prior gives approximate credible intervals.
 
 ## Depends on

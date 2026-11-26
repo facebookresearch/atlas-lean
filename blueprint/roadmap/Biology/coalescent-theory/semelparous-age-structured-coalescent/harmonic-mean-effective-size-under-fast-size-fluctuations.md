@@ -1,7 +1,9 @@
 # Harmonic-mean effective size under fast fluctuations in a semelparous population
 
 Keep the semelparous age-structured model but let the total population size vary from year to year: at year $t$ in the past the size is $N^{(t)} = x_t N$, where the relative sizes $x_t$ are independent and identically distributed, take finitely many positive values with $\Pr[x_t = x_j] = q_j$, and the demographic parameters $p_i$ and $c_i$, and hence the relative sizes of the age classes, are held fixed. Fluctuations then occur on the fast timescale, one year, while coalescence occurs on the slow timescale of $N$ generations. Taking the limit of the no-coalescence probability over $\lfloor Nt \rfloor$ years shows that the long-term coalescent effective size is the constant-size value scaled by the **harmonic mean** of the yearly relative sizes,
+
 $$N_e^{\text{long}} = \left( \sum_j \frac{q_j}{x_j} \right)^{-1} N_e,$$
+
 with $N_e$ the coalescent effective size of the constant-size model. The limiting ancestral process is still Kingman's coalescent, now on this longer timescale.
 
 ## Depends on

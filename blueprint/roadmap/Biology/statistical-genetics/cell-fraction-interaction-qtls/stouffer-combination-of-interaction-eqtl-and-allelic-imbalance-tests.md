@@ -1,7 +1,9 @@
 # Stouffer combination of interaction eQTL and allelic-imbalance tests
 
 For a variant, gene and cell type, let $Z_{\mathrm{eQTL}}$ be the signed Wald statistic for the genotype-by-cell-fraction interaction $\beta_f$ in the total-expression regression $y=\mu+\beta x+f+\beta_f\,xf$, and $Z_{\mathrm{AI}}$ the signed statistic for the cell-fraction slope of the allelic fraction in heterozygous carriers, both oriented toward the alternative allele. If $Z_{\mathrm{eQTL}}$ and $Z_{\mathrm{AI}}$ are independent and each standard normal under the null, the combined statistic
+
 $$Z_{\mathrm{DeCAF}}=\frac{Z_{\mathrm{eQTL}}+Z_{\mathrm{AI}}}{\sqrt2}$$
+
 is standard normal under the null. It rewards agreement in sign: effects in opposite directions cancel.
 
 ## Depends on

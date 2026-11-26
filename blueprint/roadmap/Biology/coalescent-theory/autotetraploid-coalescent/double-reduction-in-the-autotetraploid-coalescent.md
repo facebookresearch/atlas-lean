@@ -1,9 +1,13 @@
 # Double reduction in the autotetraploid coalescent
 
 Let the autotetraploid model carry double reduction: at a locus distal to the centromere, a quadrivalent with a crossover between locus and centromere can send two sister chromatids to the same pole, so that a gamete carries two lineages that are automatically identical by descent. Let $\alpha$ be the probability of double reduction at the locus, which satisfies $0 \le \alpha \le 1/6$ and does not depend on $N$. For two lineages the one-generation matrix becomes
+
 $$P = \begin{pmatrix} \tfrac{1-\alpha}{3} + \tfrac{1}{2N} & \tfrac{2}{3} - \tfrac{2}{3N} & \tfrac{\alpha}{3} + \tfrac{1}{6N} \\[2pt] \tfrac{3}{4N} & 1 - \tfrac{1}{N} & \tfrac{1}{4N} \\[2pt] 0 & 0 & 1\end{pmatrix},$$
+
 so double reduction raises the coalescence probability out of the within-individual state by $\alpha/3$, an $O(1)$ amount, and leaves the between-individual row unchanged. In the limit $N \to \infty$ with time in units of $N$ generations,
+
 $$E = \begin{pmatrix} 0 & \tfrac{2}{2+\alpha} & \tfrac{\alpha}{2+\alpha} \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}:$$
+
 a pair sampled within one individual coalesces *instantaneously* with probability $\alpha/(\alpha+2)$, and otherwise scatters into different individuals and coalesces at a rate strictly greater than $1/4$. Hence the limit is not Kingman's coalescent, and the long-term coalescent effective size is smaller than $4N$.
 
 For a sample of $n$ lineages distributed as $k$ individuals holding two lineages, $l$ individuals holding three and $m$ individuals holding four, the number of instantaneous coalescences contributed by the doubly occupied individuals is $X \sim \mathrm{Binomial}(k, \alpha/(\alpha+2))$ and by the triply occupied individuals $Y \sim \mathrm{Binomial}(l, 3\alpha/(\alpha+2))$; after this instantaneous adjustment the surviving lineages lie in distinct individuals and coalesce at rate $O(1/N)$.

@@ -1,17 +1,25 @@
 # Between- and within-individual decomposition of multi-context expression
 
 Fix a gene. Let $E_{ic}$ be the expression of individual $i\in\{1,\dots,I\}$ in context $c\in\{1,\dots,C\}$, with every individual measured in every context, and assume each context has been centered and scaled over individuals, $\frac1I\sum_i E_{ic}=0$ and $\frac1I\sum_i E_{ic}^2=1$. Put
+
 $$\bar E_{i\cdot}=\frac1C\sum_{c=1}^C E_{ic},\qquad E^{\mathrm{Shared}}_i=\bar E_{i\cdot},\qquad E^{\mathrm{Specific}}_{ic}=E_{ic}-\bar E_{i\cdot}.$$
+
 Then:
 
 1. **Decomposition.** $E_{ic}=E^{\mathrm{Shared}}_i+E^{\mathrm{Specific}}_{ic}$, the grand mean $\frac{1}{IC}\sum_{i,c}E_{ic}$ being $0$.
 2. **Orthogonality.** For each individual $\sum_c E^{\mathrm{Specific}}_{ic}=0$, so in $\mathbb R^{I\times C}$ the shared array $(E^{\mathrm{Shared}}_i)_{i,c}$ and the specific array are orthogonal, and
+
 $$\sum_{i,c}E_{ic}^2=C\sum_i\bigl(E^{\mathrm{Shared}}_i\bigr)^2+\sum_{i,c}\bigl(E^{\mathrm{Specific}}_{ic}\bigr)^2 .$$
+
 3. **Genetic content.** Under the generative model $E_{ic}=g_i^\top\beta+g_i^\top\gamma_c+\varepsilon_{ic}$, with cis-genotypes $g_i$, context-shared effects $\beta$, context-specific effects $\gamma_c$ and noise $\varepsilon_{i\cdot}$ independent of $g_i$,
+
 $$E^{\mathrm{Shared}}_i=g_i^\top(\beta+\bar\gamma)+\bar\varepsilon_{i\cdot},\qquad E^{\mathrm{Specific}}_{ic}=g_i^\top(\gamma_c-\bar\gamma)+(\varepsilon_{ic}-\bar\varepsilon_{i\cdot}),$$
+
 with $\bar\gamma=\frac1C\sum_c\gamma_c$. Only the deviation $\gamma_c-\bar\gamma$ is identified as context specific.
 4. **Removal of correlated noise.** If the intra-individual noise is exchangeable, $\operatorname{Var}\varepsilon_{ic}=\sigma^2$ and $\operatorname{Corr}(\varepsilon_{ic},\varepsilon_{ic'})=\rho$ for $c\ne c'$, then
+
 $$\operatorname{Var}\bigl(\varepsilon_{ic}-\bar\varepsilon_{i\cdot}\bigr)=\sigma^2(1-\rho)\Bigl(1-\frac1C\Bigr),$$
+
 so the noise in the specific component falls as the cross-context noise correlation $\rho$ rises.
 
 ## Expansion

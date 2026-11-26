@@ -1,7 +1,9 @@
 # Probability of a ranked tree shape under the coalescent
 
 A *ranked tree shape* on $n$ leaves, also called a Tajima's genealogy without its times, is a rooted binary tree whose leaves are unlabelled and whose $n-1$ internal nodes are labelled $2, \dots, n$ by their order in time, the root being node $2$. A *cherry* is an internal node both of whose children are leaves. Under Kingman's $n$-coalescent the ranked tree shape $F$ with $c$ cherries has probability
+
 $$\Pr(F) = \frac{2^{\,n - c - 1}}{(n-1)!},$$
+
 independently of the effective population size trajectory $N(t)$, because at each coalescence event the pair that merges is chosen uniformly among the available pairs irrespective of $N$. The number of ranked tree shapes on $n$ leaves is the $n$-th Euler zigzag number — $1, 1, 1, 2, 5, 16, 61, 272, 1385, 7936$ for $n = 1, \dots, 10$ — against $n!(n-1)!/2^{\,n-1}$ labelled topologies.
 
 ## Expansion

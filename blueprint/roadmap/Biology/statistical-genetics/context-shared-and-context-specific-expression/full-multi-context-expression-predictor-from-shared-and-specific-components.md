@@ -3,10 +3,13 @@
 Fix a gene $j$ with cis-genotype matrix $G_j\in\mathbb R^{I\times m}$ and covariate-residualized, standardized expression in $C$ contexts, decomposed into a shared component $E^{\mathrm{Shared}}_j$ and specific components $E^{\mathrm{Specific}}_{jc}$ as in the between- and within-individual decomposition. The predictor is built in three steps.
 
 1. Fit cross-validated elastic-net regressions
+
 $$E^{\mathrm{Shared}}_j=\alpha^{\mathrm{Shared}}+G_j\beta+\varepsilon^{\mathrm{Shared}},\qquad E^{\mathrm{Specific}}_{jc}=\alpha^{\mathrm{Specific}}_c+G_j\gamma_c+\varepsilon^{\mathrm{Specific}}_c,$$
+
 one for the shared component and one for each of the $C$ specific components.
 2. Form the genetic predictors $\hat E^{\mathrm{Sh}}_{j}=\hat\alpha^{\mathrm{Shared}}+G_j\hat\beta$ and $\hat E^{\mathrm{Sp}}_{jc}=\hat\alpha^{\mathrm{Specific}}_c+G_j\hat\gamma_c$.
 3. For each context fit the ordinary least-squares recombination
+
 $$E_{jc}=\alpha^{\mathrm{Full}}_c+\hat E^{\mathrm{Sh}}_{j}\,w^{\mathrm{Sh}}_{jc}+\hat E^{\mathrm{Sp}}_{jc}\,w^{\mathrm{Sp}}_{jc}+\varepsilon_{jc}.$$
 
 The full predictor of context $c$ is linear in genotype with SNP weights $\hat w^{\mathrm{Sh}}_{jc}\hat\beta+\hat w^{\mathrm{Sp}}_{jc}\hat\gamma_c$, so it can be passed to a summary-statistic transcriptome-wide association test like any single-context weight vector. A component (shared or specific) is declared heritable by a one-degree-of-freedom likelihood-ratio test of its predictor against the intercept-only model, and the full model by a two-degree-of-freedom test.

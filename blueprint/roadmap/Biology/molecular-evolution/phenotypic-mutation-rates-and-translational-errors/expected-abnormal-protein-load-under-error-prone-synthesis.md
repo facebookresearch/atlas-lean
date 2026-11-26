@@ -1,7 +1,9 @@
 # Expected abnormal-protein load under error-prone protein synthesis
 
 A cell has $K$ genes; gene $i$ encodes $n_i$ amino acids and $y_i$ functional copies of its protein are needed per cell cycle. Each codon is synthesized wrongly, producing a nonfunctional protein, independently with probability $u\in(0,1)$, the phenotypic mutation rate. The gene is expressed until $y_i$ functional proteins exist. Then the number $x_i$ of nonfunctional proteins of gene $i$ made along the way is negative binomial: the number of failures before the $y_i$-th success in trials with success probability $(1-u)^{n_i}$. Hence
+
 $$\mathbb E\,x_i=y_i\,\frac{1-(1-u)^{n_i}}{(1-u)^{n_i}},\qquad \bar x=\sum_i n_i\,\mathbb E\,x_i=\sum_i n_i y_i\bigl[(1-u)^{-n_i}-1\bigr],$$
+
 where $\bar x$ is the expected number of amino acids spent on abnormal proteins. Moreover:
 
 1. $\bar x\ge u\sum_i n_i^2y_i$ for all $u\in(0,1)$, with $\bar x=u\sum_i n_i^2y_i+O(u^2)$ as $u\to0$; the linear approximation is accurate while $u\,n_i\ll1$ for the genes carrying most of the weight $n_i^2y_i$.

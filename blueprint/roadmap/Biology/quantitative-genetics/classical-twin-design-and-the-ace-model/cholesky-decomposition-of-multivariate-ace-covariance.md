@@ -8,9 +8,13 @@ $$\Sigma_A = L_A L_A^{\mathsf T}, \qquad \Sigma_C = L_C L_C^{\mathsf T}, \qquad 
 1. *Guaranteed admissibility and exact saturation.* Every lower-triangular $L$ gives a positive semidefinite $\Sigma = LL^{\mathsf T}$, and every positive semidefinite $\Sigma$ arises this way, so the triangular parameterization is an unconstrained and exactly saturated reparameterization of each component: it imposes no structure on the component covariances and no ordering assumption is being tested.
 2. *Sequential interpretation.* With traits ordered $1, \dots, p$, the $k$-th latent factor of a component loads only on traits $k, \dots, p$. Hence the genetic variance of the last trait splits into the part explained by the latent genetic factors of the earlier traits, $\sum_{l<p} (L_A)_{pl}^2$, and the residual $(L_A)_{pp}^2$ specific to it. Placing a trait last therefore quantifies how much of its heritable variance is independent of the genes acting on the others.
 3. *Genetic and environmental correlations.* The component correlations
+
 $$r_A(k,l) = \frac{(\Sigma_A)_{kl}}{\sqrt{(\Sigma_A)_{kk}(\Sigma_A)_{ll}}}, \qquad r_E(k,l) = \frac{(\Sigma_E)_{kl}}{\sqrt{(\Sigma_E)_{kk}(\Sigma_E)_{ll}}}$$
+
 decompose the phenotypic correlation as
+
 $$r_P(k,l) = h_k h_l\, r_A(k,l) + c_k c_l\, r_C(k,l) + e_k e_l\, r_E(k,l),$$
+
 with $h^2$, $c^2$, $e^2$ the component proportions of each trait's variance. Because the three terms can carry opposite signs, a phenotypic correlation near zero is consistent with substantial genetic correlation offset by environmental correlation of the other sign; the multivariate fit, not the phenotypic correlation, decides.
 
 **Model choice.** Dropping a whole component (setting $L_C = 0$, the multivariate AE model) is a nested hypothesis with $p(p+1)/2$ constraints, tested by a likelihood-ratio chi-square against the full model.

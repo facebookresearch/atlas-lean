@@ -1,9 +1,13 @@
 # Single-component moment estimator of heritability and its null law
 
 Let $y \in \mathbb R^n$ be a phenotype standardised to unit variance and let $R$ be a symmetric positive semidefinite $n \times n$ genetic relationship matrix normalised so that $\operatorname{tr} R = n$ (for example a local relationship matrix built from mutations of an ancestral recombination graph in a gene region). Under the single-component model $\mathbb E[y] = 0$, $\operatorname{Cov}(y) = \sigma_g^2 R + (1 - \sigma_g^2) I_n$, the method-of-moments (randomized Haseman–Elston) estimator
+
 $$\tilde\sigma_g^2 = \frac{y^\top (R - I_n)\,y}{\operatorname{tr}(R^2) - n}$$
+
 is unbiased for $\sigma_g^2$ whenever $\operatorname{tr}(R^2) > n$, that is, whenever $R \ne I_n$. Under the null hypothesis $H_0 : \sigma_g^2 = 0$ with Gaussian $y \sim \mathcal N(0, I_n)$, the random part $T = y^\top R\,y$ of its numerator has the weighted chi-square law
+
 $$T \overset{d}{=} \sum_{i=1}^n \lambda_i\, \chi^2_{1,i},$$
+
 where $\lambda_1 \ge \dots \ge \lambda_n \ge 0$ are the eigenvalues of $R$ and the $\chi^2_{1,i}$ are independent chi-square variables with one degree of freedom. $T$ is the same quadratic form as the variance-component score statistic of SKAT, with variant weights given by the construction of $R$.
 
 ## Depends on

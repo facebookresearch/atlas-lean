@@ -1,17 +1,25 @@
 # Site fixation probabilities and the neutral substitution rate
 
 **Setting.** A haploid asexual population occupies $N$ sites, each always holding one individual. At each time step a replacement event occurs: a random set of sites is refilled by offspring of other sites, drawn from a fixed distribution (the replacement rule) that does not depend on the alleles present, since all variants are neutral. Let $e_{ij} \ge 0$ be the marginal probability that, in one step, the occupant of site $j$ is replaced by an offspring of site $i$. Define the birth and death (turnover) rates
+
 $$b_i = \sum_{j=1}^{N} e_{ij}, \qquad d_i = \sum_{j=1}^{N} e_{ji}, \qquad B = \sum_i b_i = \sum_i d_i ,$$
+
 and measure time in generations of $N/B$ steps. Assume the replacement graph allows fixation (some site can reach every other site through chains of positive $e_{ij}$).
 
 **Site fixation probabilities.** Let $\rho_i$ be the probability that a new neutral mutation arising at site $i$ eventually fixes. Then $(\rho_1,\dots,\rho_N)$ is the unique solution of
+
 $$d_i \rho_i = \sum_{j=1}^{N} e_{ij}\rho_j \quad (i = 1,\dots,N), \qquad \sum_{i=1}^{N}\rho_i = 1 .$$
+
 The quantity $\rho_i$ is the reproductive value of site $i$.
 
 **Substitution rate.** If each birth carries a new mutation with probability $u \ll 1$, mutations arise at site $i$ in proportion to its turnover $d_i$, so the overall fixation probability of a new mutation and the substitution rate per generation are
+
 $$\rho = \frac{1}{B}\sum_{i=1}^{N} d_i\rho_i, \qquad K = N u \rho = \frac{N u}{B}\sum_{i=1}^{N} d_i \rho_i .$$
+
 Equivalently, since $\bar\rho = 1/N$ and $\bar d = B/N$ (bars denote averages over sites),
+
 $$K > u \iff \overline{d\rho} > \bar d\,\bar\rho ,$$
+
 so the clock is accelerated exactly when turnover and reproductive value are positively correlated across sites, and slowed exactly when they are negatively correlated.
 
 ## Depends on

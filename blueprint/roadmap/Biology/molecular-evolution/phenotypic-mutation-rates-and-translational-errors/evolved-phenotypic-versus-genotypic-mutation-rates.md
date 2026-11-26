@@ -1,10 +1,15 @@
 # Evolved phenotypic versus genotypic mutation rates under Haldane's principle
 
 Consider a large asexual population in which a cell with genotypic mutation rate $\mu$ and phenotypic mutation rate $u$ (both per codon) has mean fitness
+
 $$\bar f(\mu,u)=(1-\mu)^n\bigl[1-\bar\eta(u)\bigr],\qquad n=\sum_i n_i,$$
+
 where $n$ is the effective genome size in codons, $\bar\eta(u)$ is the expected fitness cost of synthesizing abnormal proteins, with $\bar\eta(0)=0$, and $(1-\mu)^n$ is the mutation load at mutation-selection balance. Suppose mutations that change $\mu$ and $u$, mostly upward, arise at rates $\pi_\mu$ and $\pi_u$. Treating each rate as a trait at mutation-selection balance and applying Haldane's principle (mean fitness is reduced by the rate of mutation away from the optimum, independently of the mutants' fitnesses) gives
+
 $$\hat\mu\approx\frac{\pi_\mu}{n},\qquad \bar\eta(\hat u)=\pi_u,\qquad \hat\mu\,n\approx\bar\eta(\hat u)\,\frac{\pi_\mu}{\pi_u}.$$
+
 If the cost is linear in the amount of abnormal protein, $\eta(x)=c\,x$, and the linear load approximation $\bar x\approx u\sum_i n_i^2y_i$ holds, then
+
 $$\hat u\approx\frac{\pi_u}{c\sum_i n_i^2y_i},\qquad\frac{\hat u}{\hat\mu}\approx\frac{\sum_i n_i}{c\sum_i n_i^2y_i}\,\frac{\pi_u}{\pi_\mu}.$$
 
 ## Depends on

@@ -4,7 +4,9 @@ Let a class of variant sites have population frequencies described by a **freque
 
 1. **Expected spectrum.** $\mathbb E[F_i] = \sum_{x \in X} h(x)\,\mathrm{bin}(x,k,i)$.
 2. **Discovery curve.** The expected number of distinct variants observed in a sample of $N$ alleles is
+
 $$D(N) = \sum_{x \in X} h(x)\left(1 - (1-x)^N\right).$$
+
 $D$ is nondecreasing and concave in $N$, with increments $D(N+1) - D(N) = \sum_x h(x)\,x(1-x)^N = \mathbb E[F_1^{(N+1)}]/(N+1)$, where $F_1^{(N+1)}$ is the number of singletons in a sample of $N+1$ alleles, and $D(N) \to \sum_x h(x)$ as $N \to \infty$.
 3. **Limit of identifiability.** Each $\mathbb E[F_i]$, $i \le k$, depends on $h$ only through the moments $m_j = \sum_x h(x) x^j$ for $1 \le j \le k$, whereas $D(N) = \sum_{j=1}^N (-1)^{j+1}\binom{N}{j} m_j$ involves moments up to order $N$. Two histograms with the same first $k$ moments produce the same expected spectrum in a cohort of $k$ alleles but can have different discovery curves for $N > k$; extrapolation beyond the sampled size is therefore a regularised inverse problem rather than a direct computation.
 

@@ -5,7 +5,9 @@ Let $G$ be an ancestral recombination graph on $K$ extant samples with $M$ non-m
 1. **Bounded descriptor.** $G$ always has a minimal descriptor with finitely many vertices and a GMRCA.
 2. **GMRCA degree.** That GMRCA has degree at most $MK$.
 3. **Size bounds.** In any nontrivial minimal descriptor ARG, the numbers $n_c$ of coalescent events, $n_e$ of genetic-exchange events and $n_v$ of non-leaf vertices satisfy
+
 $$1 \le n_c \le M(K-1) + 1, \qquad 0 \le n_e \le K(M-1) + M(K-1), \qquad n_v = O(MK).$$
+
 4. **Bounded degree.** Every minimal descriptor has a bounded number of edges at each vertex, with a bound depending only on $K$ and $M$.
 5. **Local overlap.** If a non-GMRCA coalescent vertex of a minimal descriptor has children $u_1, \dots, u_l$ with $l > 1$, then every $u_i$ shares at least one segment with some other $u_j$, $j \ne i$.
 

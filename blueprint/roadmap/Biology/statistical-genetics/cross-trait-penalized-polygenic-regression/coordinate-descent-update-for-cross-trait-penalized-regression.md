@@ -1,16 +1,25 @@
 # Coordinate-descent update for cross-trait penalized regression
 
 Consider the [cross-trait Laplacian-penalized least squares](cross-trait-laplacian-penalized-least-squares.md) objective with the data standardized so that, for every trait $k$ and SNP $j$, $\sum_i x_{kij}^2 = n_k$, $\sum_i x_{kij} = 0$ and $\sum_i y_{ki} = 0$ (so the intercepts drop out). Fix all coefficients except $\beta_{k'j'}$ at current values $\tilde\beta$, and define the partial residuals and the summaries
+
 $$\tilde r_{k'ij'} = y_{k'i}-\sum_{j\ne j'}x_{k'ij}\tilde\beta_{k'j},\qquad \tilde\zeta_{k'j'} = \frac{1}{n_{k'}}\sum_{i=1}^{n_{k'}}x_{k'ij'}\tilde r_{k'ij'},$$
+
 $$\tilde\xi_{k'j'} = \lambda_2\Big(\sum_{k\ne k'}a_{kk'j'}\tilde\beta_{kj'}+\sum_{m=1}^{M}a_{k'(K+m)j'}\hat s_{mj'}\Big),\qquad d_{k'j'} = \sum_{k\ne k'}a_{kk'j'}+\sum_{m=1}^{M}a_{k'(K+m)j'},$$
+
 and $\tilde b_{k'j'} = \tilde\zeta_{k'j'}+\tilde\xi_{k'j'}$.
 
 **Proposition.** The objective restricted to $\beta_{k'j'}$ equals, up to a constant,
+
 $$\tfrac12\big(\beta_{k'j'}-\tilde b_{k'j'}\big)^2 + p^{\mathrm{sp}}(\beta_{k'j'}) + \tfrac{\lambda_2}{2}\,d_{k'j'}\,\beta_{k'j'}^2,$$
+
 and its minimizer is, for the Lasso,
+
 $$\hat\beta_{k'j'} = \frac{\operatorname{sgn}(\tilde b_{k'j'})\,\big(|\tilde b_{k'j'}|-\lambda_1\big)_+}{1+\lambda_2 d_{k'j'}},$$
+
 and for the MCP with $\gamma(1+\lambda_2 d_{k'j'}) > 1$,
+
 $$\hat\beta_{k'j'} = \begin{cases}\dfrac{\operatorname{sgn}(\tilde b_{k'j'})\,\gamma\,\big(|\tilde b_{k'j'}|-\lambda_1\big)_+}{\gamma(1+\lambda_2 d_{k'j'})-1}, & |\tilde b_{k'j'}|\le \gamma\lambda_1(1+\lambda_2 d_{k'j'}),\\[2ex] \dfrac{\tilde b_{k'j'}}{1+\lambda_2 d_{k'j'}}, & |\tilde b_{k'j'}| > \gamma\lambda_1(1+\lambda_2 d_{k'j'}).\end{cases}$$
+
 As $\gamma\to\infty$ the MCP update tends to the Lasso update.
 
 ## Depends on

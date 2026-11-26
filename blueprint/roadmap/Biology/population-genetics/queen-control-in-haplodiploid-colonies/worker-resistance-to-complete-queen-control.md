@@ -9,8 +9,11 @@ $$p_z = p + (1 - p) z, \qquad r_z = r + (r' - r) z$$
 **Statement** (Conditions (6) and (7)). For a dominant resistance allele $b$ and queen mating number $n$:
 
 1. $b$ cannot invade the queen-controlled population if
+
 $$\frac{r'}{r} > \frac{4(1 - p) + n(3 + p) + \sqrt{\bigl[4(1 - p) + n(3 + p)\bigr]^2 + 4(1 + p)\bigl[5 + n + 3(n - 1)p\bigr]}}{2\bigl[5 + n + 3(n - 1)p\bigr]};$$
+
 2. $b$ cannot fix if
+
 $$\frac{r'}{r} > \frac{3 + 4n + p}{3 + p + 2n(1 + p)}.$$
 
 Unlike the conditions for queen control itself, these depend on $n$.

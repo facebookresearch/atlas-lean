@@ -3,10 +3,13 @@
 **Setting.** Consider a class of strongly deleterious sites (for example loss-of-function sites in a gene) in a population of effective size $N_e$, each with per-generation mutation rate $\mu$ drawn from a distribution with mean $\mathbb E(\mu)$ and variance $\operatorname{Var}(\mu)$, and heterozygous selection coefficient $s$. Under the gamma approximation to mutation–selection–drift balance, the allele frequency $x$ at a site has a gamma distribution with shape $4N_e\mu$ and scale $1/(4N_e s)$. In a sample of $n$ chromosomes, the allele count $k$ satisfies $k \mid x \sim \mathrm{Poisson}(nx)$.
 
 **Proposition.**
+
 $$\mathbb E(k) = \frac{n\,\mathbb E(\mu)}{s},\qquad \operatorname{Var}(k) = \underbrace{\frac{n\,\mathbb E(\mu)}{s}}_{\text{sampling}} + \underbrace{\frac{n\,\mathbb E(\mu)}{s}\cdot\frac{n}{4N_e s}}_{\text{segregation}} + \underbrace{\frac{n^2}{s^2}\operatorname{Var}(\mu)}_{\text{rate heterogeneity}} .$$
 
 **Corollary (clonal expansion).** If clonal expansion in the germline multiplies the effective mutation rate by a factor $\kappa \ge 1$, then
+
 $$\mathbb E(k) = \kappa\,\frac{n\,\mathbb E(\mu)}{s},\qquad \operatorname{Var}(k) = \kappa\,\frac{n\,\mathbb E(\mu)}{s}\Big(1+\frac{n}{4N_e s}\Big) + \kappa^2\,\frac{n^2}{s^2}\operatorname{Var}(\mu).$$
+
 Thus population allele counts at constrained sites scale linearly in $\kappa$ in the mean, and comparing observed counts with the rate-model expectation estimates the expansion factor.
 
 ## Expansion

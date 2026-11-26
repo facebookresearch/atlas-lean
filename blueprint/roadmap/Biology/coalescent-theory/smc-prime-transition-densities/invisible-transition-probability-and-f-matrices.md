@@ -1,9 +1,13 @@
 # Invisible transitions of the SMC$'$ and the $F$ matrix
 
 A recombination event in the SMC$'$ is **invisible** when the detached branch coalesces back onto the same lineage it was pruned from, so that the new local genealogy equals the old one. Fix a local genealogy $g$ of $n$ sequences with coalescence times $t_n < \dots < t_2$ and $t_{n+1} = 0$, and let $A(t)$ be its number of ancestral lineages at time $t$. For $n \ge j \ge k \ge 2$ define $F_{j,k}$ as the number of lineages of $g$ that are free — that is, that do not coalesce — throughout the time interval $(t_{j+1}, t_k)$. Define also
+
 $$Q_j = \int_{t_{j+1}}^{t_j} \exp\left\{-\int_{u}^{t_j} \frac{A(r)}{N(r)}dr\right\} du, \qquad q_l = \exp\left\{-\int_{t_{l+1}}^{t_l} \frac{A(r)}{N(r)} dr \right\},$$
+
 and $P_{j,k} = Q_j\, q_{j-1} q_{j-2} \cdots q_{k+1} (1 - q_k)$, the probability that the pruning time falls in $(t_{j+1}, t_j)$ and the regrafting time falls in $(t_{k+1}, t_k)$ on the same lineage. Then the marginal probability of an invisible transition is
+
 $$\Pr[G_i = g \mid g, N(t)] = \frac{1}{\ell} \sum_{j=2}^{n} \sum_{k=2}^{j} F_{j,k}\, P_{j,k},$$
+
 with $\ell$ the total length of $g$. The numbers $F_{j,k}$ form a lower-triangular matrix, the $F$ matrix of the genealogy, and $F$ matrices are in bijection with ranked tree shapes.
 
 ## Depends on

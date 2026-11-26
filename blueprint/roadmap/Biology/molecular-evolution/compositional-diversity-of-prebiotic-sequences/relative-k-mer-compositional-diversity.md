@@ -1,9 +1,13 @@
 # Relative k-mer compositional diversity of a sequence
 
 Let $s$ be a sequence of length $L$ over an alphabet of size $a$ (two in binary models, four for nucleic acids) and $1\le k<L$. Let $p_w$ be the frequency of the $k$-mer $w$ among the $L-k+1$ overlapping windows of $s$, and define the $k$-mer entropy
+
 $$H_k(s)=-\sum_{w}p_w\log_2p_w .$$
+
 Let $H_k^{\max}(L)$ be the largest value of $H_k$ over sequences of length $L$, and define the relative compositional diversity
+
 $$C_k(s)=\frac{H_k(s)}{H_k^{\max}(L)}\in[0,1].$$
+
 For a pool of molecules in which unique sequence $i$ makes up the fraction $n_i$ of molecules, the pool entropy is $D=-\sum_{i=1}^N n_i\log_2n_i$. Then:
 
 1. $C_k(s)=0$ if and only if all $k$-mer windows of $s$ are identical, and $C_1$ is the normalized Shannon entropy of the base composition.

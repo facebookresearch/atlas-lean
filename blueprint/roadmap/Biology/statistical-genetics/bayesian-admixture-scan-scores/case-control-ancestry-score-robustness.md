@@ -17,7 +17,9 @@ with $\widehat{\mathrm{sd}}$ the standard deviation of the numerator, estimated 
 ## Expansion
 
 Writing each inferred group average as truth plus bias, the difference of differences is
+
 $$\bigl[(A^{\text{cases}}_\ell + b_\ell) - (A^{\text{cases}} + c)\bigr] - \bigl[(A^{\text{controls}}_\ell + b_\ell) - (A^{\text{controls}} + c)\bigr],$$
+
 in which $b_\ell$ and $c$ appear once with each sign. The price of the cancellation is power: the score uses only the contrast between the groups, so it discards the information in the cases' own deviation from their genome average, which is exactly what the case-only score exploits, and it needs control samples that the case-only design does not. The two scores are therefore complementary, and a locus is most convincing when both support it. Neither score protects against a bias that acts differently on cases and controls, for instance one arising from differential genotyping quality or from phenotype-correlated genome-wide ancestry.
 
 ## Sources
