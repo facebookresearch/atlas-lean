@@ -1,5 +1,6 @@
 # Permutation tests
 
+- [The Fisher randomization test](fisher-randomization/README.md)
 - [Permutation p-value](permutation-pvalue.md)
 - [Counting lemma for rank counts](card-filter-rank-count-le.md)
 - [Validity of permutation p-values](is-valid-pvalue-permutation-pvalue.md)

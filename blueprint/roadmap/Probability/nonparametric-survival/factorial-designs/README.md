@@ -14,3 +14,6 @@
 - [Unbiasedness of the inverse-probability-weighted main effect of the first factor](integral-ipw-main-effect-a.md)
 - [Unbiasedness of the inverse-probability-weighted main effect of the second factor](integral-ipw-main-effect-b.md)
 - [Unbiasedness of the inverse-probability-weighted interaction](integral-ipw-interaction-ab.md)
+- [Complete randomization over four cells](cell-assignment.md)
+- [Interaction of `A` and `B`](interaction-ab.md)
+- [Complete randomization over four cells is a probability measure](is-probability-measure-cell-assignment.md)

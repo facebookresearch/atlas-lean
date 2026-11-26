@@ -1,5 +1,6 @@
 # Sample mean, sample variance and sampling distributions
 
+- [Unbiased sample variance](sample-moments/README.md)
 - [Sample mean of the first N terms of a sequence](sample-mean.md)
 - [Squared sample correlation](sample-corr-sq.md)
 - [Asymptotic chi-square law of the oracle covariance statistic](tendsto-in-distribution-oracle-stat.md)
@@ -21,3 +22,4 @@
 - [The sample mean is unbiased under a common mean](is-unbiased-sample-mean-of-common-mean.md)
 - [The sample mean of identically distributed observations is unbiased](is-unbiased-sample-mean-family.md)
 - [Mean squared error of the sample mean](family-mean-squared-error-sample-mean-of.md)
+- [The mean is the unique least-squares location](forall-sum-sq-sub-le-iff-eq-sample-mean.md)

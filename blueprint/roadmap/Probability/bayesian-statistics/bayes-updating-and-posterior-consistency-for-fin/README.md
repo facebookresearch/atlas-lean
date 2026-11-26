@@ -1,5 +1,6 @@
 # Bayes updating and posterior consistency for finite models
 
+- [Bayes update in a finite model](finite-posterior/README.md)
 - [Posterior weight after n observations](post-weight.md)
 - [Bernoulli mass function on two points](bern-pmf.md)
 - [Posterior consistency for two Bernoulli hypotheses](two-point-post-weight-tendsto-one.md)
@@ -16,3 +17,4 @@
 - [Updating twice is updating on the product likelihood](finite-posterior-finite-posterior.md)
 - [Normalization of the sequential posterior](sum-sequential-posterior.md)
 - [The sequential posterior does not depend on the order of observations](sequential-posterior-perm.md)
+- [Posterior consistency in a finite model](ae-tendsto-post-weight-one.md)

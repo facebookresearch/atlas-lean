@@ -10,3 +10,4 @@
 - [Chi-square law of the between-group sum of squares](has-law-sum-sq-between-div.md)
 - [Chi-square law of the within-group sum of squares](has-law-sum-sq-within-div.md)
 - [One-way analysis of variance F test](has-law-one-way-anova-f-variance-free.md)
+- [One-way ANOVA $F$ test](has-law-one-way-anova-f.md)

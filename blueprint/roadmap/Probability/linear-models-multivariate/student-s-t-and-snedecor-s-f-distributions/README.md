@@ -1,5 +1,6 @@
 # Student's t and Snedecor's F distributions
 
+- [Exact one-sample t intervals](normal-theory/README.md)
 - [Student's $t$ law as a ratio](map-div-sqrt-chi-square-eq-student-t.md)
 - [Beta integral in Snedecor form](lintegral-rpow-mul-one-add-mul-rpow-neg.md)
 - [Snedecor's F distribution](snedecor-fmeasure.md)

@@ -8,3 +8,4 @@
 - [Full rank of the two-by-two design](is-unit-gram-two-by-two-design-iff.md)
 - [Least squares on the saturated two-by-two design](ols-estimator-two-by-two-design.md)
 - [Unique solution of the two-by-two normal equations](two-by-two-design-normal-eq-iff.md)
+- [The saturated two-by-two regression interaction is the four-cell mean contrast](ols-estimator-two-by-two-design-interact.md)

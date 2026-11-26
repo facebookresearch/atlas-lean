@@ -12,3 +12,4 @@
 - [Bonferroni simultaneous coverage](simultaneous-coverage-bonferroni.md)
 - [Confidence set from a pivot](pivot-confidence-set.md)
 - [Coverage of a pivot confidence set](pivot-confidence-set-coverage.md)
+- [Test inversion](level-iff-coverage.md)

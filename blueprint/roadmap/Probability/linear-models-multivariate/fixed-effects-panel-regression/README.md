@@ -27,3 +27,5 @@
 - [Dummy-variable regression implies the within normal equations](lsdv-slope-within-normal-eq.md)
 - [Within normal equations imply the dummy-variable regression](lsdv-normal-eq-of-within-normal-eq.md)
 - [The dummy-variable slope is the within estimator](lsdv-slope-eq-within-estimator-2.md)
+- [LSDV slope equals the within estimator](lsdv-slope-eq-within-estimator.md)
+- [Consistency of the panel within estimator](tendsto-within-estimator.md)
