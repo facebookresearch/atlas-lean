@@ -322,6 +322,16 @@ theorem fifoPager_misses {k : ℕ} :
       rw [fifoPager_misses _ σ]
       rfl
 
+/-- **Belady's anomaly for FIFO.** From an empty cache, FIFO incurs nine faults with three
+frames but ten faults with four frames on the request sequence
+`1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5`. Thus adding a frame can increase the number of faults.
+This is the example of Belady, Nelson, and Shedler (1969), as presented in Arpaci-Dusseau
+and Arpaci-Dusseau, *Operating Systems: Three Easy Pieces*, “Beyond Physical Memory: Policies.” -/
+theorem fifo_belady_anomaly :
+    let requests : List ℕ := [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]
+    policyMisses (fifoStep 3) [] requests = 9 ∧ policyMisses (fifoStep 4) [] requests = 10 := by
+  decide
+
 /-- **FIFO is `k`-competitive** (Sleator and Tarjan). Let $k \ge 1$, and let $\tau$ be a legal
 trace of the caching system with capacity $k$ that starts from a cache $c_0$ of at most $k$
 distinct pages; let $m$ be its number of misses. Then the FIFO online pager with capacity $k$,
