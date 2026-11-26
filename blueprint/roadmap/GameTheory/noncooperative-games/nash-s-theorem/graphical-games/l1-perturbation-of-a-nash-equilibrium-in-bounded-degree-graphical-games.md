@@ -1,10 +1,10 @@
 # L1 perturbation of a Nash equilibrium in bounded-degree graphical games
 
-Let $M$ be a graphical game with local payoffs in $[0, 1]$ and maximum degree at most $d$. If $p$ is a mixed Nash equilibrium and $q$ is a mixed profile with $\|q_j - p_j\|_1 \le \tau$ for every player $j$, then $q$ is an additive $(d\tau)$-approximate Nash equilibrium (for binary actions; for general finite actions the slack is proportional to $d \tau$ with the same structure).
+Let $M$ be a graphical game with finite action sets and local payoffs in $[0, 1]$ in which each player's payoff depends on the actions of at most $d$ players, itself included. If $p$ is a mixed Nash equilibrium and $q$ is a mixed profile with $\|q_j - p_j\|_1 \le \tau$ for every player $j$, then $q$ is an additive $(d\tau)$-approximate Nash equilibrium.
 
 ## Proof sketch
 
-Player $i$'s expected payoff depends on the $d$ neighbours' mixed strategies multilinearly with coefficients in $[0,1]$; changing one neighbour's strategy by $\tau$ in $L^1$ changes it by at most $\tau/2$, and summing over neighbours and comparing the equilibrium and deviation payoffs gives the bound.
+Player $i$'s expected payoff is multilinear in the mixed strategies of the at most $d$ players it depends on, with coefficients in $[0,1]$; changing one of them by $\tau$ in $L^1$ changes it by at most $\tau/2$. So at $q$ every pure deviation of $i$ gains at most $(d-1)\tau/2$ over its value at $p$, which is at most $i$'s equilibrium payoff, and $i$'s payoff at $q$ is at most $d\tau/2$ below its equilibrium payoff; the total is at most $(2d-1)\tau/2 \le d\tau$.
 
 ## Depends on
 

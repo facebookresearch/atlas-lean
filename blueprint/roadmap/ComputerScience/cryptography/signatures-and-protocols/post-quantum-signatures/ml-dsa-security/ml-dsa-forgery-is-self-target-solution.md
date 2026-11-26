@@ -1,10 +1,10 @@
 # A verifying ML-DSA forgery is a SelfTargetMSIS solution
 
-Let $(\mathbf{z}, c)$ verify for message $\mu$ under the full public key $(\mathbf{A}, \mathbf{t})$ with a fixed hash. Then $(-\mathrm{LowBits}(\mathbf{A}\mathbf{z} - c\mathbf{t}), \mathbf{z}, c)$ is a short vector $\mathbf{y}$ with $\|\mathbf{y}\|_\infty \le \max(\gamma_1 - \beta, \gamma_2 + 1, 1)$ solving SelfTargetMSIS for the matrix $[\,I_k \mid \mathbf{A} \mid -\mathbf{t}\,]$: the hash of $\mu$ and of $[\,I \mid \mathbf{A} \mid -\mathbf{t}\,]\mathbf{y}$, rounded by HighBits, equals $c$. For compressed verification with public key $\mathbf{t}_1$ and hints, the forgery likewise yields a SelfTargetMSIS solution in which the low part is corrected by the hint residual and the rounding error $c\,\mathbf{t}_0$, with bound $2\gamma_2 + 1 + \beta$-type terms in place of $\gamma_2$.
+Let $(\mathbf{z}, c)$ verify for message $\mu$ under the full public key $(\mathbf{A}, \mathbf{t})$ with a fixed hash. Then $(-\mathrm{LowBits}(\mathbf{A}\mathbf{z} - c\mathbf{t}), \mathbf{z}, c)$ is a short vector $\mathbf{y}$ with $\|\mathbf{y}\|_\infty \le \max(\gamma_1 - \beta, \gamma_2 + 1, 1)$ solving SelfTargetMSIS for the matrix $[\,I_k \mid \mathbf{A} \mid -\mathbf{t}\,]$: the hash of $\mu$ and of $[\,I \mid \mathbf{A} \mid -\mathbf{t}\,]\mathbf{y}$, rounded by HighBits, equals $c$. For compressed verification with public key $\mathbf{t}_1$, where $\mathbf{t} = 2^d\mathbf{t}_1 + \mathbf{t}_0$ and $c$ has $\tau$ nonzero coefficients, each $\pm 1$, and with hints, the forgery yields a SelfTargetMSIS solution $\mathbf{y}$ for $[\,I_k \mid \mathbf{A} \mid -2^d\mathbf{t}_1\,]$ in which the low part is corrected by the hint residual and the rounding error $c\,\mathbf{t}_0$, with $\|\mathbf{y}\|_\infty \le \max(\gamma_1 - \beta, 2\gamma_2 + 1 + 2^{d-1}\tau)$.
 
 ## Proof sketch
 
-Write $\mathbf{A}\mathbf{z} - c\mathbf{t} = \mathrm{HighBits}\cdot 2\gamma_2 + \mathrm{LowBits}$; adding the negated low part to the product gives a multiple of $2\gamma_2$ whose bucket is what the verifier hashes. In the compressed case, use the hint residual bound.
+Write $\mathbf{A}\mathbf{z} - c\mathbf{t} = \mathrm{HighBits}\cdot 2\gamma_2 + \mathrm{LowBits}$; adding the negated low part to the product gives a multiple of $2\gamma_2$ whose bucket is what the verifier hashes. In the compressed case, the hint residual has norm at most $2\gamma_2 + 1$ and $\|c\,\mathbf{t}_0\|_\infty \le 2^{d-1}\tau$.
 
 ## Depends on
 

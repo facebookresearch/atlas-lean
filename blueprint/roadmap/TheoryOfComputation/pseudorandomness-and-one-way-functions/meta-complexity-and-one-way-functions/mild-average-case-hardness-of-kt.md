@@ -4,8 +4,6 @@ $K^t$ is *mildly hard on average* if there is a polynomial $p$ such that every p
 
 $$\Pr_{x \leftarrow \{0,1\}^n,\ \text{coins}}\bigl[H(x) \ne K^t(x)\bigr] \ge \frac{1}{p(n)}.$$
 
-A variant allows the heuristic an additive approximation window of $O(\log n)$.
-
 ## Depends on
 
 - [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)

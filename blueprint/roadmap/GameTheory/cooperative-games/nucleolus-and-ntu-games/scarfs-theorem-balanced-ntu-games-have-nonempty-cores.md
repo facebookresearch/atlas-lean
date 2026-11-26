@@ -1,6 +1,6 @@
 # Scarf's theorem: balanced NTU games have nonempty cores
 
-Every balanced NTU game in which each $V(S)$ is closed, comprehensive (closed under decreasing coordinates in $S$), nonempty, and bounded above on the individually rational region has a nonempty core. The analogous statement holds for NTU cost-sharing games.
+Every balanced NTU game in which each $V(S)$ is closed, comprehensive (closed under decreasing coordinates in $S$), nonempty, and bounded above on the individually rational region has a nonempty core.
 
 ## Proof sketch
 

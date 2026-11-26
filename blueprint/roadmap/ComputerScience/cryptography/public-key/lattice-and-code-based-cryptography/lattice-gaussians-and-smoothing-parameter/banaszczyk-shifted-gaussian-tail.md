@@ -4,7 +4,7 @@ Let $L$ be a full-rank lattice in dimension $n$ (including $n = 0$), $s > 0$, $v
 
 $$\rho_{s}\bigl(\{x \in L - v : \|x\| > c\,s\sqrt{n}\}\bigr) < \bigl(c\sqrt{2\pi e}\,e^{-\pi c^2}\bigr)^{n}\,\rho_s(L).$$
 
-At $c = 1$ the factor is below $(1/4)^n$ for $n \ge 1$. This sharpens the classical statement (which has an extra factor $2$ for shifted lattices).
+At $c = 1$ the factor is below $(1/4)^n$ for $n \ge 1$. Banaszczyk (1993, Lemma 1.5) proves this bound for $v \in L$ and, for arbitrary $v$, with an extra factor $2$ on the right; the factor-free form for every shift follows from the two steps of the proof sketch, both of which hold for every $v$.
 
 ## Proof sketch
 

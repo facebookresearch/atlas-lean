@@ -1,6 +1,6 @@
 # Liu–Pass: one-way functions exist iff time-bounded Kolmogorov complexity is mildly hard on average
 
-The following are equivalent: (a) one-way functions exist; (b) for some polynomial $t(n) > n$, $K^t$ is mildly hard on average with respect to the uniform distribution; (c) for every sufficiently large polynomial $t$, $K^t$ is mildly hard on average, even for heuristics allowed an additive error of $O(\log n)$.
+The following are equivalent: (a) one-way functions exist; (b) for some polynomial $t$ with $t(n) > (1+\varepsilon)n$ for a constant $\varepsilon > 0$, $K^t$ is mildly hard on average with respect to the uniform distribution; (c) for every polynomial $t$ with $t(n) > (1+\varepsilon)n$ for a constant $\varepsilon > 0$, $K^t$ is mildly hard on average.
 
 ## Proof sketch
 

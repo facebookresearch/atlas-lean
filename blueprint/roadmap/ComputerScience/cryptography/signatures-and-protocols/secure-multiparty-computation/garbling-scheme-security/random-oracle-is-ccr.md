@@ -6,7 +6,7 @@ $$
 \frac{q_O\, q_H}{|D|}.
 $$
 
-Hence garbling schemes proved secure under circular correlation robustness (Free-XOR, half gates, BMR16 with the mixed-modulus variant) are secure in the random oracle model.
+Hence garbling schemes proved secure under circular correlation robustness (Free-XOR and half gates) are secure in the random oracle model.
 
 ## Proof sketch
 

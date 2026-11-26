@@ -1,6 +1,6 @@
 # Forgeries against RSA signatures without a full-domain hash
 
-For unhashed RSA signatures ($\sigma = m^{d} \bmod N$): choosing any $\sigma$ and outputting the message $\sigma^{e} \bmod N$ with signature $\sigma$ is an existential forgery with no signing queries and success probability $1$; and by multiplicativity, signatures on $m_1$ and $m_2$ give the signature $\sigma_1\sigma_2$ on $m_1m_2 \bmod N$. Hashing into a small range (not full domain) is likewise insecure. Full-domain hashing in the random oracle model removes these attacks.
+For unhashed RSA signatures ($\sigma = m^{d} \bmod N$): choosing any $\sigma$ and outputting the message $\sigma^{e} \bmod N$ with signature $\sigma$ is an existential forgery with no signing queries and success probability $1$; and by multiplicativity, signatures on $m_1$ and $m_2$ give the signature $\sigma_1\sigma_2$ on $m_1m_2 \bmod N$. Full-domain hashing in the random oracle model removes these attacks.
 
 ## Proof sketch
 

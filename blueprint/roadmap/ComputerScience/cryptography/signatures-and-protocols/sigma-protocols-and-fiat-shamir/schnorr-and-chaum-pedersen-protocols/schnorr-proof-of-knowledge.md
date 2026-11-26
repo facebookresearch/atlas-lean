@@ -1,6 +1,6 @@
 # Schnorr's protocol is a proof of knowledge of discrete logarithms
 
-For Schnorr's protocol over a prime-order group family, there is a rewinding knowledge extractor that, given oracle access to any prover that convinces the verifier on statement $u$ with probability $\varepsilon$ over challenges from a set of size $N$, outputs $\log_g u$ with probability at least $\varepsilon^2 - \varepsilon/N$ in expected polynomial time (or with a strict polynomial budget and a correspondingly smaller probability).
+For Schnorr's protocol over a prime-order group family, there is a rewinding knowledge extractor that, given oracle access to any prover that convinces the verifier on statement $u$ with probability $\varepsilon$ over challenges from a set of size $N$, outputs $\log_g u$ with probability at least $\varepsilon^2 - \varepsilon/N$ in expected polynomial time.
 
 ## Proof sketch
 

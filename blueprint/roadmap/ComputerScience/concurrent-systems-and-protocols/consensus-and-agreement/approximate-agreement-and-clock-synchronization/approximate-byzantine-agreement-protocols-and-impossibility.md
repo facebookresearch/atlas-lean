@@ -1,6 +1,6 @@
 # Approximate Byzantine agreement: protocols and impossibility
 
-In *approximate agreement*, correct processes start with reals in $[0, 1]$ and must output values within $\varepsilon$ of each other, inside the range of correct inputs. In the synchronous model, iterating the trimmed midpoint for $R$ rounds solves it with $\varepsilon = 2^{-R}$ whenever $n > 3t$; in a single-hop asynchronous round model the analogous protocol works whenever $n > 5t$. For $2 \le n \le 3t$ no deterministic synchronous protocol achieves $\varepsilon$-agreement with $\varepsilon < 1$ on inputs in $[0, 1]$ in any fixed number of rounds.
+In *approximate agreement*, correct processes start with reals in $[0, 1]$ and must output values within $\varepsilon$ of each other, inside the range of correct inputs. In the synchronous model, iterating the trimmed midpoint for $R$ rounds solves it with $\varepsilon = 2^{-R}$ whenever $n > 3t$. For $2 \le n \le 3t$ no deterministic synchronous protocol achieves $\varepsilon$-agreement with $\varepsilon < 1$ on inputs in $[0, 1]$ in any fixed number of rounds.
 
 ## Proof sketch
 

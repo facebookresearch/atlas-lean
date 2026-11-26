@@ -1,6 +1,6 @@
 # Cardinality conditions for threshold Byzantine quorum systems and masking-register safety
 
-For the family of all subsets of size $q$ of $n$ servers, the system is a dissemination quorum system against $b$ faults iff $2q - n \ge b + 1$ and $q \le n - b$ (feasible iff $n > 3b$), a masking quorum system iff $2q - n \ge 2b + 1$ and $q \le n - b$ (feasible iff $n > 4b$), and strongly opaque under the analogous stronger inequalities. In a masking quorum system, a reader that queries a quorum and accepts the highest-timestamped value reported by at least $b + 1$ servers returns the latest completed write.
+For the family of all subsets of size $q$ of $n$ servers, the system is a dissemination quorum system against $b$ faults iff $2q - n \ge b + 1$ and $q \le n - b$ (feasible iff $n > 3b$), and a masking quorum system iff $2q - n \ge 2b + 1$ and $q \le n - b$ (feasible iff $n > 4b$). In a masking quorum system, a reader that queries a quorum and accepts the highest-timestamped value reported by at least $b + 1$ servers returns the latest completed write.
 
 ## Proof sketch
 

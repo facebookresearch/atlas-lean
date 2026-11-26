@@ -6,8 +6,6 @@ $$
 \mathrm{Adv}^{\mathrm{ow\text{-}cpa}}(\mathcal{A}) \le \mathrm{Adv}^{\mathrm{ind\text{-}cpa}}(\mathcal{B}) + \frac{1}{|M|}.
 $$
 
-The same argument bounds, in the Fujisaki–Okamoto proofs, the probability that an adversary interacting with a keyless decapsulation simulator ever queries the random oracle at the challenge plaintext.
-
 ## Proof sketch
 
 When the challenge encrypts the second message, $\mathcal{A}$'s view is independent of the first, which it outputs with probability $1/|M|$.
