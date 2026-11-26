@@ -13,5 +13,7 @@ Construction and uniqueness of measures, atomless and vector measures, measures 
 - [Lyapunov convexity theorem](lyapunov-convexity-theorem/README.md)
 - [Von Neumann's conditions do not guarantee a measure](measures-on-complete-boolean-algebras/README.md)
 - [Uniqueness of measures on R^d from their values on boxes](uniqueness-of-measures-on-euclidean-space/README.md)
+- [Unit interval moments](unit-interval-moments/README.md)
 - [Szpilrajn's Problem 170](universally-measurable-sets/README.md)
 - [Vitali's theorem](vitali-set/README.md)
+- [Moment determinacy on a compact subset of `ℝ^d`](eq-of-forall-integral-monomial-eq.md)

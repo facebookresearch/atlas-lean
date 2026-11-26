@@ -7,6 +7,7 @@ Complex characters and representations used to study finite groups: class functi
 - [Burnside's p^a q^b theorem](burnside-s-p-a-q-b-theorem/README.md)
 - [Character degrees of Sylow subgroups](character-degrees-of-sylow-subgroups/README.md)
 - [Character degrees of symmetric groups](character-degrees-of-symmetric-groups/README.md)
+- [Character Degrees; Irreducible Character](character-degrees-irreducible-character/README.md)
 - [Character values of simple groups](character-values-of-simple-groups/README.md)
 - [Convolution on finite groups](convolution-on-finite-groups/README.md)
 - [Frobenius group determinant](frobenius-group-determinant/README.md)
@@ -19,3 +20,4 @@ Complex characters and representations used to study finite groups: class functi
 - [Four isotypic components in a tensor square for a simple group of order 10200960](m23-irrep-tensor-square-decomp.md)
 - [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](green-cuspidal-characters-of-gl-n.md)
 - [Induction from cyclic subgroups in Grothendieck groups of modular representations](induction-from-cyclic-subgroups.md)
+- [Double coset fibre](nat-card-fibre-quotient-eq-nat-card-quot.md)

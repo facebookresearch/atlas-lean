@@ -1,6 +1,7 @@
 # Transformations of factorial series
 
 - [Two derivative series with the same sum (Chapter 3, Entry 2, Corollary 1)](ramanujan-part1-ch3-entry2-corollary1-de.md)
+- [Harmonic](harmonic.md)
 - [Agreement of two definitions of the harmonic numbers](harmonic-eq-mathlib-harmonic.md)
 - [Ramanujan's series for the harmonic numbers, restated](ramanujan-part1-ch3-entry2-corollary2-ha.md)
 - [Ramanujan's series for the harmonic numbers (Chapter 3, Entry 2, Corollary 2)](ramanujan-part1-ch3-entry2-corollary2-ha-2.md)
