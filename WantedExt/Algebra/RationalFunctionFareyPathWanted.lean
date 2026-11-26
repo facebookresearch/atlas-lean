@@ -13,6 +13,7 @@ public import MathlibExt.Algebra.ContinuedFractions.RationalFunctionFareyPath
 public import Mathlib.FieldTheory.RatFunc.Valuation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Algebra.Field.ZMod
+public import MathlibExt.Algebra.RationalFunctionFareyPathPolyContFractExtendFareyPath
 
 namespace MetaMathlibExt
 
@@ -43,38 +44,6 @@ public theorem_wanted polyContFract_convergents_farey_path (a : ℕ → F[X]) (n
       (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (B i) ∧
       B i ≠ 0 ∧ IsCoprime (A i) (B i) ∧
       (1 ≤ i → IsUnit (A i * B (i - 1) - A (i - 1) * B i))
-
-/-- **Extending a Farey path extends the continued fraction.** Let $F$ be a field, let $n \ge 1$,
-and let $a_0, a_1, \dots, a_n \in F[X]$ with $a_i$ nonconstant for $1 \le i \le n$. Let
-$A_0, \dots, A_n, B_0, \dots, B_n \in F[X]$ be such that, for every $i \le n$, $A_i$ and $B_i$ are
-the numerator and the denominator of the $i$th convergent of the continued fraction
-$[a_0, a_1, \dots, a_n]$ over $F(X)$. Let $u, v \in F[X]$ be such that $u B_n - v A_n$ is a unit
-of $F[X]$ (a nonzero constant) and $\deg B_n < \deg v$. Then there is a nonconstant polynomial
-$b \in F[X]$ such that, in $F(X)$,
-$$b = \frac{v A_{n-1} - u B_{n-1}}{u B_n - v A_n},$$
-and the $(n+1)$st convergent of the continued fraction $[a_0, a_1, \dots, a_n, b]$ equals $u/v$.
-
-Compared with the paper: the case $n = 0$, which needs $A_{-1} = 1$ and $B_{-1} = 0$, is excluded;
-the paper's degree condition on the reduced denominator of $A_n / B_n$ is stated with $B_n$ itself
-(the two agree, since $A_n / B_n$ is already in lowest terms); and the hypothesis that $u$ and $v$
-are coprime is omitted, since adjacency implies it.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Theorem 5. -/
-public theorem_wanted polyContFract_extend_farey_path (a : ℕ → F[X]) {n : ℕ}
-    (hn : 1 ≤ n) (ha : ∀ i, 1 ≤ i → i ≤ n → 0 < (a i).natDegree)
-    (A B : ℕ → F[X])
-    (hA : ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F) (A i))
-    (hB : ∀ i ≤ n, (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (B i))
-    (u v : F[X]) (hadj : IsUnit (u * B n - v * A n))
-    (hdeg : (B n).degree < v.degree) :
-    ∃ b : F[X], 0 < b.natDegree ∧
-      algebraMap F[X] (RatFunc F) b =
-        algebraMap F[X] (RatFunc F) (v * A (n - 1) - u * B (n - 1)) /
-          algebraMap F[X] (RatFunc F) (u * B n - v * A n) ∧
-      (polyContFract (Function.update a (n + 1) b) (n + 1)).convs (n + 1) =
-        algebraMap F[X] (RatFunc F) u / algebraMap F[X] (RatFunc F) v
 
 /-- **Continued fraction along a Farey path of polynomials.** Let $F$ be a field, let
 $n \in \mathbb N$, let $u_i, v_i \in F[X]$ for $i \ge 0$, and let $c_i \in F$ for $i \ge 1$.
