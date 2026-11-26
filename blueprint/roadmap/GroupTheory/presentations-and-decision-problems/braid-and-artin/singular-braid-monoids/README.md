@@ -1,6 +1,5 @@
 # Singular braid monoids
 
-- [Artin braid groups](braid-group.md)
 - [Generators of the singular braid monoid](sbgen.md)
 - [Birman's relations for the singular braid monoid](singular-braid-rels.md)
 - [Singular braid monoids](singular-braid-monoid.md)

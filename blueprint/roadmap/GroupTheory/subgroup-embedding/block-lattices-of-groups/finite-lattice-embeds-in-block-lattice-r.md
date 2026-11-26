@@ -4,4 +4,5 @@ Some finite lattice admits no embedding (injective, sending meets to intersectio
 
 ## Sources
 
-- E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 9.62 (D. M. Smirnov), which cites D. M. Smirnov, Siberian Math. J. 33 (1992), no. 4, 663-668, for that result.
+- E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 9.62 (D. M. Smirnov), which cites that result.
+- D. M. Smirnov, On embedding lattices into block lattices of regular algebras and groups, Siberian Math. J. 33 (1992), no. 4, 663-668, https://doi.org/10.1007/BF00971131.
