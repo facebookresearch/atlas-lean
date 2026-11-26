@@ -48,18 +48,18 @@ public import MathlibExt.RingTheory.Valuation.FrobeniusExists
 /-!
 # From a deformation ring onto a local Hecke algebra
 
-A universal deformation ring `R` of a residual Galois representation `ρbar`
-(`GaloisRep.DeformationRingData`) and a finite free local `𝒪`-algebra `T`
-carrying the Hecke operators together with a Galois representation whose
-Frobenius characteristic polynomials are `X² - T_ℓ X + ℓ`
+A universal deformation ring `R` of an absolutely irreducible residual Galois
+representation `ρbar` (`GaloisRep.DeformationRingData`) and a finite free local
+`𝒪`-algebra `T` carrying the Hecke operators together with a Galois representation
+whose Frobenius characteristic polynomials are `X² - T_ℓ X + ℓ`
 (`CuspForm.HeckeGaloisRepDatum`) are related as follows: when the Hecke
 representation is a deformation of `ρbar` of the given type and `T` sees no
-operator `U_q`, the universal map `R → T` is surjective.
+operator `U_q`, the universal map `R → T`, a local `𝒪`-algebra map, is surjective.
 
 ## Main declarations
 
 * `ResidualGaloisRep.baseChangeAlong`: scalar extension of a residual
-  representation along a field homomorphism.
+  representation along a ring homomorphism of fields.
 * `GaloisRepAdic.charpoly_baseChangeAlong`, `GaloisRepAdic.charpoly_eq_of_isEquiv`.
 * `GaloisRep.DeformationRingData`, `CuspForm.HeckeGaloisRepDatum`.
 * `GaloisRep.DeformationRingData.exists_surjective_algHom_of_heckeGaloisRepDatum`.
@@ -75,19 +75,21 @@ open Polynomial
 
 namespace ResidualGaloisRep
 
-/-- Scalar extension of a residual representation along a field homomorphism.
-Both fields and the representation space live in one universe `u`. -/
-def baseChangeAlong {k : Type u} [Field k] {k' : Type u} [Field k'] (φ : k →+* k')
-    (ρ : ResidualGaloisRep.{u, u} k) : ResidualGaloisRep.{u, u} k' :=
-  letI : Algebra k k' := φ.toAlgebra
-  ρ.baseChange k'
+variable {k : Type u} [Field k]
+
+/-- Scalar extension of a residual representation along a ring homomorphism of fields. -/
+public def baseChangeAlong {K : Type v} [Field K] (φ : k →+* K)
+    (ρ : ResidualGaloisRep k) : ResidualGaloisRep K :=
+  letI : Algebra k K := φ.toAlgebra
+  ρ.baseChange K
 
 end ResidualGaloisRep
 
 namespace GaloisRepAdic
 
-/-- The characteristic polynomial of a Galois element on a base change is the image of the
-original characteristic polynomial. -/
+/-- For a local homomorphism `φ : A → B` of local rings, the characteristic polynomial of a
+Galois element on the base change along `φ` is the image under `φ` of its characteristic
+polynomial on the original representation. -/
 theorem charpoly_baseChangeAlong {A : Type u} [CommRing A] [IsLocalRing A] {B : Type v}
     [CommRing B] [IsLocalRing B] (φ : A →+* B) (hφ : IsLocalHom φ)
     (ρ : GaloisRepAdic.{u, v} A) (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
@@ -95,7 +97,8 @@ theorem charpoly_baseChangeAlong {A : Type u} [CommRing A] [IsLocalRing A] {B : 
   let : Algebra A B := φ.toAlgebra
   exact LinearMap.charpoly_baseChange (ρ.ρ σ) B
 
-/-- Equivalent representations have the same characteristic polynomials. -/
+/-- Equivalent adic Galois representations over a local ring have the same characteristic
+polynomial at every Galois element. -/
 theorem charpoly_eq_of_isEquiv {A : Type u} [CommRing A] [IsLocalRing A]
     {ρ₁ ρ₂ : GaloisRepAdic.{u, v} A} (h : ρ₁.IsEquiv ρ₂)
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
@@ -115,11 +118,14 @@ end GaloisRepAdic
 
 namespace GaloisRep
 
-/-- A universal deformation ring for deformations of type `𝒟` of a residual representation
-`ρbar` over a complete discrete valuation ring `𝒪`: a complete local noetherian `𝒪`-algebra
-`R` with residue field that of `𝒪`, and a deformation `ρ` of `ρbar` of type `𝒟` over `R`
-through which every such deformation over a complete local noetherian `𝒪`-algebra factors
-uniquely. -/
+/-- A universal deformation ring for deformations of type `𝒟` of an absolutely irreducible
+residual representation `ρbar` over a complete discrete valuation ring `𝒪`: a complete local
+noetherian `𝒪`-algebra `R`, whose structure map is local and induces a surjection on residue
+fields, with a deformation `ρ` of `ρbar` of type `𝒟` over `R`, such that for every complete
+local noetherian `𝒪`-algebra `A` whose structure map is local and induces a surjection on
+residue fields, every representation of type `𝒟` over `A` whose residual representation is
+equivalent to the base change of `ρbar` is equivalent to the base change of `ρ` along a unique
+local `𝒪`-algebra map `R → A`. -/
 structure DeformationRingData (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪]
     [IsDiscreteValuationRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
     (ρbar : ResidualGaloisRep.{u, u} (IsLocalRing.ResidueField 𝒪))
@@ -145,7 +151,10 @@ structure DeformationRingData (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪]
   /-- The universal deformation lifts `ρbar`. -/
   residual_isEquiv : ρ.residual.IsEquiv
     (ρbar.baseChangeAlong (IsLocalRing.ResidueField.map (algebraMap 𝒪 R)))
-  /-- Universality. -/
+  /-- Universality: over every complete local noetherian `𝒪`-algebra `A` whose structure map
+  is local and induces a surjection on residue fields, every representation of type `𝒟` whose
+  residual representation is equivalent to the base change of `ρbar` is equivalent to the base
+  change of `ρ` along a unique local `𝒪`-algebra map `R → A`. -/
   universal : ∀ (A : Type u) [CommRing A] [IsLocalRing A] [IsNoetherianRing A]
       [IsAdicComplete (IsLocalRing.maximalIdeal A) A] [Algebra 𝒪 A]
       [IsLocalHom (algebraMap 𝒪 A)],
@@ -164,11 +173,15 @@ end GaloisRep
 
 namespace CuspForm
 
-/-- Integral Hecke–Galois data at a residual Hecke character `θ`: a complete local
-noetherian `𝒪`-algebra `T`, finite and free over `𝒪`, generated over `𝒪` by the image of
-the Hecke algebra, with residue field that of `𝒪`, lifting `θ`, and with a Galois
-representation over `T` whose Frobenius at every prime `ℓ ∤ N`, `ℓ ∉ S`, has characteristic
-polynomial `X² - T_ℓ X + ℓ`. -/
+/-- Integral Hecke–Galois data at a residual Hecke character `θ`, a ring homomorphism from
+the weight-two Hecke algebra `heckeAlgebra N 2 S` to the residue field of `𝒪`. It consists of
+a complete local noetherian `𝒪`-algebra `T`, finite and free over `𝒪`, whose structure map is
+local and induces a surjection on residue fields; of a ring homomorphism `π` from the Hecke
+algebra to `T` that reduces to `θ` and whose image generates `T` as an `𝒪`-algebra, such that
+every `𝒪`-valued character of the Hecke algebra reducing to `θ` factors through `π` by an
+`𝒪`-algebra map `T → 𝒪`; and of a Galois representation over `T` whose residual
+representation is absolutely irreducible and whose Frobenius at every prime `ℓ ∤ N`, `ℓ ∉ S`,
+has characteristic polynomial `X² - T_ℓ X + ℓ`. -/
 structure HeckeGaloisRepDatum (N : ℕ) [NeZero N] (S : Set ℕ)
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
     [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
@@ -205,9 +218,10 @@ variable {N : ℕ} [NeZero N] {S : Set ℕ} {𝒪 : Type u} [CommRing 𝒪] [IsD
   [IsLocalRing T] [IsNoetherianRing T] [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
   [Algebra 𝒪 T] [IsLocalHom (algebraMap 𝒪 T)] [Module.Finite 𝒪 T] [Module.Free 𝒪 T]
 
-/-- If `S` contains every prime dividing `N`, any `𝒪`-algebra map `R → T` along which some
-representation over `R` base changes to the Hecke representation is surjective: the
-Frobenius traces `T_ℓ` generate `T` and lie in the image. -/
+/-- If `S` contains every prime dividing `N`, then every local `𝒪`-algebra map `R → T` from
+a local `𝒪`-algebra `R`, along which some representation over `R` base changes to a
+representation equivalent to the Hecke representation, is surjective: the Frobenius traces
+`T_ℓ` generate `T` and lie in the image. -/
 theorem HeckeGaloisRepDatum.surjective_of_isEquiv_baseChangeAlong
     (H : HeckeGaloisRepDatum N S 𝒪 θ T) (hS : ∀ q : ℕ, q.Prime → q ∣ N → q ∈ S)
     {R : Type u} [CommRing R] [IsLocalRing R] [Algebra 𝒪 R] (ρR : GaloisRepAdic.{u, u} R)
@@ -259,9 +273,11 @@ end CuspForm
 
 namespace GaloisRep.DeformationRingData
 
-/-- If the Hecke representation is a deformation of `ρbar` of type `𝒟` and `S` contains every
-prime dividing `N`, the universal map from the deformation ring to `T` is surjective and
-carries the universal deformation to the Hecke representation. -/
+/-- If the Hecke representation has type `𝒟` and its residual representation is equivalent to
+the base change of `ρbar`, and `S` contains every prime dividing `N`, then there is a surjective
+local `𝒪`-algebra map from the deformation ring to `T`, the one universality gives, along which
+the universal deformation base changes to a representation equivalent to the Hecke
+representation. -/
 theorem exists_surjective_algHom_of_heckeGaloisRepDatum {𝒪 : Type u} [CommRing 𝒪] [IsDomain 𝒪]
     [IsDiscreteValuationRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
     {ρbar : ResidualGaloisRep.{u, u} (IsLocalRing.ResidueField 𝒪)}
