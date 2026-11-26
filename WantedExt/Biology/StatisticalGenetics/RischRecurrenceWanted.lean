@@ -18,12 +18,15 @@ of the penetrance, so `λ_R - 1 = (2φ_R V_A + Δ_R V_D) / K²`; with no dominan
 proved on main as `MathlibExt.Biology.StatisticalGenetics.CovarianceRelatives.LocusModel.relCov_eq`
 in `Domains.Biology.StatisticalGenetics.CovarianceRelatives`.
 
-Recorded here: the missing multilocus part. Under a multiplicative model (penetrance the product
-of locus penetrances, genotypes of a relative pair independent across loci) `λ_R` is the product
-of the locus ratios `λ_{R,i}` (derived from the definitions), and when every locus halves
-`λ - 1` from first- to second-degree relatives, the product decreases faster: `λ_1 - 1` is at
-least twice `λ_2 - 1`, strictly so when two loci contribute (the abstract's "for a
-multiplicative (epistasis) model, `λ_R - 1` decreases more rapidly"). Risch's linkage-power
+The multilocus part: under a multiplicative model (penetrance the product of locus
+penetrances, genotypes of a relative pair independent across loci) `λ_R` is the product of the
+locus ratios `λ_{R,i}` (derived from the definitions; recorded here, still to be proved), and
+when every locus halves `λ - 1` from first- to second-degree relatives, the product decreases
+faster: `λ_1 - 1` is at least twice `λ_2 - 1`, strictly so when two loci contribute (the
+abstract's "for a multiplicative (epistasis) model, `λ_R - 1` decreases more rapidly"). That
+decrease is proved as
+`WantedExt.Biology.StatisticalGenetics.RischRecurrenceWanted.prod_sub_one_ge_two_mul` in
+`Domains.Biology.StatisticalGenetics.RischRecurrenceProdSubOneGeTwoMul`. Risch's linkage-power
 analysis is not formalized.
 
 Sources: N. Risch, "Linkage strategies for genetically complex traits. I. Multilocus models",
@@ -37,6 +40,7 @@ public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Pi
+public import Domains.Biology.StatisticalGenetics.RischRecurrenceProdSubOneGeTwoMul
 
 @[expose] public section
 
@@ -80,17 +84,5 @@ public theorem_wanted recurrenceRatio_pi {ι : Type*} [Fintype ι] [DecidableEq 
     recurrenceRatio (fun g : ∀ i, G i => ∏ i, π i (g i))
         (fun g h : ∀ i, G i => ∏ i, J i (g i) (h i)) (fun g => ∏ i, f i (g i)) =
       ∏ i, recurrenceRatio (π i) (J i) (f i)
-
-/-- **Under a multiplicative model `λ - 1` more than halves per degree** (Risch 1990, abstract):
-if each locus has `λ_{1,i} ≥ 1` for first-degree relatives and halves `λ - 1` for second-degree
-relatives, `λ_{2,i} - 1 = (λ_{1,i} - 1) / 2` (one locus, no dominance variance), then the
-multilocus ratios `∏ λ_{1,i}` and `∏ λ_{2,i}` satisfy `∏ λ_{1,i} - 1 ≥ 2 (∏ λ_{2,i} - 1)`, with
-strict inequality as soon as two distinct loci have `λ_{1,i} > 1`.
-
-Source: Risch (1990), abstract. -/
-public theorem_wanted prod_sub_one_ge_two_mul {ι : Type*} [Fintype ι] (lam₁ lam₂ : ι → ℝ)
-    (h₁ : ∀ i, 1 ≤ lam₁ i) (hhalf : ∀ i, lam₂ i - 1 = (lam₁ i - 1) / 2) :
-    2 * (∏ i, lam₂ i - 1) ≤ ∏ i, lam₁ i - 1 ∧
-      ((∃ i j, i ≠ j ∧ 1 < lam₁ i ∧ 1 < lam₁ j) → 2 * (∏ i, lam₂ i - 1) < ∏ i, lam₁ i - 1)
 
 end WantedExt.Biology.StatisticalGenetics.RischRecurrenceWanted
