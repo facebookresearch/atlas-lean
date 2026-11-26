@@ -16,7 +16,7 @@ open scoped UpperHalfPlane
 
 /-- The `exactSource` consumer: the pairing identity with the original
 binders (nonzero level `N`, arbitrary integer weight `k`). -/
-theorem petersson_add_left_exactSource {N : ℕ} {k : ℤ} [NeZero N]
+private theorem petersson_add_left_exactSource {N : ℕ} {k : ℤ} [NeZero N]
     (f₁ f₂ g : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
     CuspForm.petersson (f₁ + f₂) g = CuspForm.petersson f₁ g + CuspForm.petersson f₂ g :=
   CuspForm.petersson_add_left f₁ f₂ g
