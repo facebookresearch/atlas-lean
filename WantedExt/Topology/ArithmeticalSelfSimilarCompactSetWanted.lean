@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSetDerived
 public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSetLayerEnumTendsto
+public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSetIsArithmeticalCompactSetDerivedSetIterate
 
 namespace MetaMathlibExt
 
@@ -126,17 +127,6 @@ public theorem_wanted isQuasiArithmeticalCompactSet_gauge_ratio_mul {K : Set ℝ
     (h : (n : ℝ) / (ρ : ℝ) ^ ℓ ∈ selfSimilarLayer K u)
     (h' : ((ρ * n : ℕ) : ℝ) / (ρ : ℝ) ^ ℓ' ∈ selfSimilarLayer K u') :
     (ℓ' * μ - u' : ℤ) = ℓ * μ - u + μ
-
-/-- **Derived sets of an arithmetical compact set are arithmetical (Proposition 7).** Let $K$ be
-an arithmetical compact set of module $\mu$ and ratio $\rho$. For every natural number $n$, the
-$n$-th derived set $K^{(n)}$ of $K$ (the set of accumulation points, iterated $n$ times, so that
-$K^{(0)} = K$) is an arithmetical compact set of module $\mu$ and ratio $\rho$.
-
-Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
-(2024), Article A21, Proposition 7. -/
-public theorem_wanted isArithmeticalCompactSet_derivedSet_iterate {K : Set ℝ} {μ ρ : ℕ}
-    (hK : IsArithmeticalCompactSet K μ ρ) (n : ℕ) :
-    IsArithmeticalCompactSet (derivedSet^[n] K) μ ρ
 
 /-- **The closure of $T_0$ is an arithmetical compact set (Theorem 2).** Let $T_0$ be the set of
 reals $n / 3^k$, where $n$ and $k$ are natural numbers, $n$ is stable and
