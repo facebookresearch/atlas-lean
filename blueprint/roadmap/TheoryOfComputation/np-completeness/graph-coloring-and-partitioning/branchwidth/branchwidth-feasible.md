@@ -1,0 +1,3 @@
+# Feasible instances of BRANCHWIDTH
+
+An instance $(n, E, K)$ of BRANCHWIDTH is feasible when the list $E$ has at most one entry, or some branch decomposition of $E$ has width at most $K$. The branch decomposition is taken over the positions of the list $E$, not over the edges of a graph: a repeated or reversed entry occupies its own leaf, and endpoints outside $\{0, \dots, n - 1\}$ are not counted in the width. For a well-formed instance (no repeated edges in either orientation, no loops, every endpoint below $n$), the entries are the edges of a simple graph and the condition says that this graph has branchwidth at most $K$, where a graph with at most one edge has branchwidth $0$ by convention.
