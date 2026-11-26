@@ -40,9 +40,10 @@ TOPLAS states Theorems 2.4.1-2.4.3 for a nondeterministic relation closed under 
 congruence; its footnote 2 points to a call-by-value variant in Pierce (2002). Every theorem here
 is about the repository's call-by-value `Step`, whose evaluation contexts are those of Cornell
 CS 4110 Lecture #30. The two soundness statements are not comparable: the call-by-value relation
-reaches fewer expressions but has more normal forms. The last clause of Theorem 2.4.3 reads
-`C ≮: D` for the stuck cast `(D) new C(ē)`, as in the prose of TOPLAS p. 406 and rule
-E-CastNew; there `C` is the class of the object, not the type of the original expression.
+reaches fewer expressions but has more normal forms. Theorem 2.4.3 prints `C <: D` in the
+stuck branch; this should read `C ≮: D`, by Fig. 3 (R-Cast). The stuck cast there is
+`(D) new C(ē)`, which R-Cast reduces whenever `C <: D`; `C` is the class of the object, not the
+type of the original expression.
 
 ## References
 
@@ -50,9 +51,9 @@ E-CastNew; there `C` is the class of the object, not the type of the original ex
   and GJ*, ACM TOPLAS 23(3):396-450, 2001: Section 2.4 (Theorems 2.4.1-2.4.3, footnote 2) and
   Appendix A.1 (Lemmas A.1.1-A.1.4, proof of Theorem 2.4.1).
 * *A Theory of Featherweight Java in Isabelle/HOL*, Archive of Formal Proofs, Sections 3.6-3.9;
-  Section 3.8 strengthens the TOPLAS progress lemmas by a decomposition: a well-typed expression
-  is a value or contains a potential redex. `Typing.progress` refines it to a three-way
-  classification for the evaluation contexts of Lecture #30.
+  Section 3.8 strengthens the TOPLAS progress lemmas by a decomposition: a closed well-typed
+  expression is a value or contains a potential redex. `Typing.progress` refines it to a
+  three-way classification for the evaluation contexts of Lecture #30.
 * Cornell CS 4110, Lecture #30 (Featherweight Java): evaluation contexts
   `E ::= [·] | E.f | E.m(ē) | v.m(v̄, E, ē) | new C(v̄, E, ē) | (C) E`.
 -/
@@ -423,8 +424,8 @@ mutual
   /-- **Progress for the call-by-value `Step`, modulo failed casts.** A closed well-typed
   expression is a value, is stuck at a failed cast in evaluation position, or steps. No
   class-table property is assumed. The Isabelle/HOL theory (Section 3.8) strengthens the TOPLAS
-  progress lemmas (Theorem 2.4.2) by a decomposition: a well-typed expression is a value or
-  contains a potential redex. This three-way classification refines it for the evaluation
+  progress lemmas (Theorem 2.4.2) by a decomposition: a closed well-typed expression is a value
+  or contains a potential redex. This three-way classification refines it for the evaluation
   contexts of Lecture #30: the redex is in evaluation position, and a cast redex
   `(T) (new K(v̄))` steps when `K <: T` and is a failed cast otherwise. -/
   theorem Typing.progress {ct : ClassTable} {e : Expr} {C : CName}
