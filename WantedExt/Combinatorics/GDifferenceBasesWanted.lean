@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 public import MathlibExt.Combinatorics.GDifferenceBases
+public import MathlibExt.Combinatorics.GDifferenceBasesGroupDiffBasisNumberLeHundredSqrt
 public import MathlibExt.Combinatorics.GDifferenceBasesExistsBoundedDiffSetCardDivSqrtTendsto
 
 namespace MetaMathlibExt
@@ -45,16 +46,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
     ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
-
-/-- **Square-root bound for difference bases of finite fields.** For every finite field $K$ with
-$q$ elements, the least size $\eta_1(K)$ of a set $A \subseteq K$ such that every element of $K$
-is a difference $a - a'$ of two elements of $A$ satisfies $\eta_1(K) \le 100 \sqrt{q}$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 7 (`integers-2025-A77-lem-7`). -/
-public theorem_wanted groupDiffBasisNumber_le_hundred_sqrt {K : Type*} [Field K] [Finite K]
-    [DecidableEq K] :
-    (groupDiffBasisNumber 1 K : ℝ) ≤ 100 * Real.sqrt (Nat.card K)
 
 open Classical in
 /-- **Difference bases of $\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}$.** Let $p$ be an odd prime.
