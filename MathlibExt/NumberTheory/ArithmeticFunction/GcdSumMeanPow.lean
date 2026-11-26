@@ -38,7 +38,7 @@ because `3 ^ k + (2 ^ k).choose 2 ≤ 4 ^ k`.
 
 namespace MetaMathlibExt.LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul
 
-open ArithmeticFunction Complex GcdSumMeanSquare
+open ArithmeticFunction Complex
 open scoped ArithmeticFunction.Moebius ArithmeticFunction.zeta
 
 /-! ### The mean gcd-sum function at prime powers -/

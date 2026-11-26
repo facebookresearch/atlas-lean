@@ -36,7 +36,12 @@ example : ∃ g h : ℕ → ℂ,
   exact ⟨g, h, h₁, h₂⟩
 
 -- The second correction series converges inside the strip `1/3 < Re s ≤ 1/2`, where the first
--- one is not claimed to converge.
-example (k : ℕ) : ∃ h : ℕ → ℂ, LSeriesSummable h (2 / 5 + I) := by
-  obtain ⟨-, h, -, hh, -⟩ := LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul k
-  exact ⟨h, hh _ (by norm_num)⟩
+-- one is not claimed to converge, and it is the same series that the factorization gives at
+-- `2 + I`.
+example (k : ℕ) : ∃ g h : ℕ → ℂ, LSeriesSummable h (2 / 5 + I) ∧
+    LSeries (fun n => ((gcdSumMean n ^ k : ℝ) : ℂ)) (2 + I) =
+        riemannZeta (2 + I) ^ (2 ^ k) * LSeries g (2 + I) ∧
+      LSeries g (2 + I) * riemannZeta (2 * (2 + I)) ^ (4 ^ k - 3 ^ k - (2 ^ k).choose 2) =
+        LSeries h (2 + I) := by
+  obtain ⟨g, h, -, hh, H⟩ := LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul k
+  exact ⟨g, h, hh _ (by norm_num), H (2 + I) (by norm_num)⟩
