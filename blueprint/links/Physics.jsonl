@@ -2325,6 +2325,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/elasticity-and-structures/isotropic-elastic-energy/griffith-energy-balance-for-brittle-fracture.md"}], "id": "af_786b0d86f731bfa3ce1fe413", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/nuclear-reactor-physics/one-group-criticality-of-a-bare-slab-reactor.md"}], "id": "af_a2d9bc1251784f6421e38fea", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/nuclear-reactor-physics/README.md"}], "id": "af_1be7e4b592a3447eff07f615"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Physics/tomographic-imaging/README.md"}], "id": "af_98c180c405ddf84ff88306d7"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/waves-and-acoustics/rectangular-waveguides/maxwell-equations-in-a-homogeneous-linear-medium.md"}], "id": "af_0ff47151d29736e60336ac2f", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/waves-and-acoustics/rectangular-waveguides/README.md"}], "id": "af_ac2cd2f94e8d6098d699b320"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Physics/waves-and-acoustics/rectangular-waveguides/te10-mode-of-a-rectangular-waveguide-in-a-homogeneous-medium.md"}], "id": "af_6c0e3b30d6ed678945f3d4b4", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
