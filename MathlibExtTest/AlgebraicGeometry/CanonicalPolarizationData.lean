@@ -102,7 +102,7 @@ example {S : Type u} [CommRing S] {A : Scheme.{u}}
     {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
     {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S)) :
     G.mul t (G.one t) (G.one t) = G.one t ∧ negMor G ≫ f = f :=
-  ⟨mul_one_one G t, negMor_over G⟩
+  ⟨G.one_mul t (G.one t), negMor_over G⟩
 
 /-- The kernel condition is an equality with the `2`-torsion, not only a
 containment: the identity point lies in the Mumford kernel. -/
@@ -113,7 +113,7 @@ example {S : Type u} [CommRing S] {A : Scheme.{u}}
     LocIsoOnBase (pullback.snd f t)
       ((Scheme.Modules.pullback (sliceAt (G.one t))).obj (mumfordBundle G L))
       (structureModule _) :=
-  (h R t (G.one t)).2 (mul_one_one G t)
+  (h R t (G.one t)).2 (G.one_mul t (G.one t))
 
 /-- The Mumford bundle is built from the dual `𝓗om(L, 𝒪_A)` of `L` itself,
 not from a separately chosen sheaf. -/

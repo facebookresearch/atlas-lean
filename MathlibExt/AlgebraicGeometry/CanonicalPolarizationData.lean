@@ -163,10 +163,10 @@ def KernelTrivial (L : A.Modules) : Prop :=
 /-- The kernel of the Mumford bundle is exactly the `2`-torsion: a point
 over an affine test scheme `Spec R` lies in the kernel, that is, its slice
 of the Mumford bundle is locally trivial over `Spec R`, if and only if it is
-killed by `2`.  This is the kernel of a sheaf of the canonical form
-`L₀ ⊗ (-1)^* L₀` with `L₀` principal: there
+killed by `2`.  For an abelian scheme, this is the kernel of a sheaf of the
+canonical form `L₀ ⊗ (-1)^* L₀` with `L₀` principal: there
 `φ_L = φ_{L₀} + φ_{(-1)^* L₀} = 2 φ_{L₀}` with `φ_{L₀}` an isomorphism, so
-`ker φ_L = A[2]`. -/
+`ker φ_L = A[2]`.  The definition itself takes any relative group law. -/
 def KernelIsTwoTorsion (L : A.Modules) : Prop :=
   ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶
       Spec (CommRingCat.of S)) (x : Over.mk t ⟶ Over.mk f),
@@ -361,11 +361,6 @@ theorem CanonicalPolarizationData.exists_baseChange_canonicalForm
                 (Spec.map (CommRingCat.ofHom (algebraMap S S')))))).obj L₀)) := by
   obtain ⟨S', _, _, hS', hform⟩ := h.locallyCanonicalForm
   exact ⟨S', _, _, hS', hform _ fun t' P Q ↦ baseChange_mul_left_fst G _ t' P Q⟩
-
-/-- The identity point always satisfies the `2`-torsion equation, so the
-right-hand side of the kernel condition is not vacuous. -/
-theorem mul_one_one {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S)) :
-    G.mul t (G.one t) (G.one t) = G.one t := G.one_mul t _
 
 end MathlibExt.AlgebraicGeometry.QMCanonicalPol
 
