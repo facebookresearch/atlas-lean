@@ -66,6 +66,16 @@ private theorem rawRingSheaf (X : Scheme.{0}) :
     ((Over.forget X).op_comp_isSheaf_of_isSheaf
       (Scheme.etaleTopology.over X) Scheme.etaleTopology _ regularFunctionsSheaf)
 
+end MathlibExt.AlgebraicGeometry.NativeKummerFlatModelsRegularSections
+
+namespace WantedExt.AlgebraicGeometry.NativeKummerFlatModels
+
+open _root_.CategoryTheory _root_.Opposite
+open _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.EtaleLogSchemes
+open MathlibExt.AlgebraicGeometry.KatoChartCoefficientModels
+open MathlibExt.AlgebraicGeometry.NativeKummerFlatModelsRegularSections
+
 /-- Ordinary regular-function descent for the specified native etale unit. -/
 public theorem regularSections : RegularSectionComparisons
     := by
@@ -74,15 +84,5 @@ public theorem regularSections : RegularSectionComparisons
   have := isIso_toSheafify X.smallEtaleTopology (rawRingSheaf X)
   change IsIso ((toSheafify X.smallEtaleTopology (rawRing X)).app (op U))
   infer_instance
-
-end MathlibExt.AlgebraicGeometry.NativeKummerFlatModelsRegularSections
-
-namespace WantedExt.AlgebraicGeometry.NativeKummerFlatModels
-
-open MathlibExt.AlgebraicGeometry.KatoChartCoefficientModels
-
-/-- Ordinary regular-function descent for the specified native etale unit. -/
-public theorem regularSections : RegularSectionComparisons
-    := MathlibExt.AlgebraicGeometry.NativeKummerFlatModelsRegularSections.regularSections
 
 end WantedExt.AlgebraicGeometry.NativeKummerFlatModels

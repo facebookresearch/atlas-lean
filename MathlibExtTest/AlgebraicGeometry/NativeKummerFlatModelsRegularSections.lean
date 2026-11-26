@@ -30,7 +30,7 @@ namespace MathlibExtTest.AlgebraicGeometry.NativeKummerFlatModelsRegularSections
 open _root_.CategoryTheory _root_.AlgebraicGeometry _root_.Opposite
 open MathlibExt.AlgebraicGeometry.EtaleLogSchemes
 open MathlibExt.AlgebraicGeometry.KatoChartCoefficientModels
-open MathlibExt.AlgebraicGeometry.NativeKummerFlatModelsRegularSections
+open WantedExt.AlgebraicGeometry.NativeKummerFlatModels
 
 example (X : Scheme.{0}) (U : X.Etale) :
     (regularIso regularSections X U).hom =
