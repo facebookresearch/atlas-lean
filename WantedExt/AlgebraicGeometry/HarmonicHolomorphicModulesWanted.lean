@@ -9,16 +9,21 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
 
 All ordinary support requests concern the fixed public section formulas.
+The holomorphic coefficient sheaf condition
+`holomorphic_coefficient_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`.
+The pluriharmonic Higgs integrability theorem
+`pluriharmonic_higgs_integrable` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
-The integrability theorem `pluriharmonic_higgs_integrable` is proved in
-`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable`.
 Polystability, Chern vanishing and the full correspondence are separate
 theorems. Simpson, alg-geom/9604005v1, section 2, printed pages 9--11.
 -/
@@ -41,10 +46,6 @@ theorem_wanted holomorphic_bar_multiplication
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     (B : SmoothComplexBundle n M r)
     (h : HermitianMetric B) (A : SmoothConnection B) : BarMultiplicationCalculus B h A
-
-/-- The actual holomorphic scalar ring has the ordinary local sheaf condition. -/
-theorem_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
-  MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M
 
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
 theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :

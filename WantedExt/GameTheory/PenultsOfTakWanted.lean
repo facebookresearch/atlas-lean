@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.GameTheory.PenultsOfTak.CrossNonempty
 public import MathlibExt.GameTheory.PenultsOfTak.DualPenultBound
 public import MathlibExt.GameTheory.PenultsOfTak.FifthBound
 public import MathlibExt.GameTheory.PenultsOfTak.LargestPenult
@@ -98,21 +99,6 @@ public theorem_wanted impartialTak_exists_snake_penult {n : ℕ} (hn : 6 ≤ n) 
       (n % 6 = 2 ∨ n % 6 = 3 → 3 * S.card + 12 = n ^ 2 + 4 * n) ∧
       (n % 6 = 5 → 3 * S.card + 16 = n ^ 2 + 6 * n) ∧
       (n % 6 = 0 → 3 * S.card + 18 = n ^ 2 + 6 * n)
-
-/-- **Every Cross meets an Impartial Tak penult.** Impartial Tak is the placement game on the
-$n \times n$ board whose play ends once the tokens contain a road. Let $S$ be an Impartial Tak
-penult on the $n \times n$ board and let $c$ be an interior cell, that is, a cell in neither the
-first nor the last row and in neither the first nor the last column. Then $S$ contains $c$ or a
-cell orthogonally adjacent to $c$: every Cross (an interior cell together with its four
-orthogonal neighbours) contains a token.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 8 (`integers-2025-G1-prop-8`). -/
-public theorem_wanted impartialTak_penult_cross_nonempty {n : ℕ} {S : Finset (Fin n × Fin n)}
-    (hS : placementPenult takHasRoad S) (c : Fin n × Fin n) (hr : 1 ≤ (c.1 : ℕ))
-    (hr' : (c.1 : ℕ) + 1 < n) (hc : 1 ≤ (c.2 : ℕ)) (hc' : (c.2 : ℕ) + 1 < n) :
-    ∃ p ∈ S, p = c ∨ takAdjacent p c
 
 /-- **Every Thick Cross holds three tokens of an Impartial Tak penult.** Impartial Tak is the
 placement game on the $n \times n$ board whose play ends once the tokens contain a road. Index the
