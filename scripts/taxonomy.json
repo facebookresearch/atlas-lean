@@ -11455,6 +11455,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/ErdosStoneEdges": {"to": "GraphTheory/extremal-graph-theory", "title": "Erdős–Stone theorem"},
   "MathlibExt/Combinatorics/SimpleGraph/EulerCircuit": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Eulerian circuits"},
   "MathlibExt/Combinatorics/SimpleGraph/Expander": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
+  "MathlibExt/Combinatorics/SimpleGraph/ExpanderChernoff": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/ExpanderWalk": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/Fleischner": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Fleischner's theorem"},
   "MathlibExt/Combinatorics/SimpleGraph/FleischnerStrong": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Fleischner's theorem"},
