@@ -9,6 +9,7 @@
 - [Boolean function of a CNF expression](to-fun.md)
 - [k-CNF expression](is-kcnf.md)
 - [Clauses of at most $k$ literals](all-clauses.md)
+- [Initial clauses of the k-CNF elimination algorithm](mem-all-clauses.md)
 - [Counting the initial clauses](card-all-clauses-le.md)
 - [Valiant's elimination algorithm for k-CNF](eliminate.md)
 - [The elimination output is a k-CNF expression](is-kcnf-eliminate.md)

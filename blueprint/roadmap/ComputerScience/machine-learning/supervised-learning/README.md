@@ -2,6 +2,7 @@
 
 Prediction from labelled data: least squares, ridge, lasso, logistic regression, support vector machines and kernel or Gaussian-process regression (including GBLUP), the bias-variance decomposition, Bayes classifiers and optimal predictors, log loss, decision-tree information gain, backpropagation, two-layer neural networks and the Barron space, residual networks as discretised flows, and sufficient input subsets. Ridge regression is the finite-dimensional case of [Tikhonov regularization](../../../Analysis/convex-analysis-and-variations/tikhonov-regularization/README.md); point estimation theory (risk, sufficiency, James–Stein shrinkage) is under [statistical estimation](../../../Probability/statistical-estimation/README.md), and Gauss–Markov and generalized least squares under [linear models and multivariate analysis](../../../Probability/linear-models-multivariate/README.md). The optimization behind these estimators — first-order optimality conditions, Lagrange duality and gradient descent — is under [convex analysis](../../../Analysis/convex-analysis-and-variations/README.md).
 
+- [Anytime online gradient descent](anytime-online-gradient-descent/README.md)
 - [Backpropagation](backpropagation/README.md)
 - [Two-layer neural networks and Barron space](two-layer-neural-networks-and-barron-space/README.md)
 - [Residual networks as discretised flows](residual-networks-as-discretised-flows/README.md)
@@ -13,11 +14,15 @@ Prediction from labelled data: least squares, ridge, lasso, logistic regression,
 - [Information gain in decision trees](information-gain-in-decision-trees/README.md)
 - [Least squares, ridge and lasso regression](least-squares-ridge-and-lasso-regression/README.md)
 - [Logistic regression and support vector machines](logistic-regression-and-support-vector-machines/README.md)
+- [Lower bound for online convex optimization](lower-bound-for-online-convex-optimization/README.md)
+- [OLS residuals sum to zero with an intercept](ols-residuals-sum-to-zero-with-an-intercept/README.md)
 - [Kernel ridge regression and GBLUP](kernel-ridge-regression-and-gblup/README.md)
 - [Random Fourier features](random-fourier-features/README.md)
+- [Randomized smoothing: the certified ℓ² radius](randomized-smoothing-the-certified-radius/README.md)
 - [Sufficient input subsets](sufficient-input-subsets/README.md)
 - [Matrix-aware optimizers](matrix-aware-optimizers/README.md)
 - [Effective ranks and benign overfitting](effective-ranks-and-benign-overfitting/README.md)
+- [Empirical neural tangent kernel](empirical-neural-tangent-kernel/README.md)
 - [Implicit regularization of SGD in linear models](implicit-regularization-of-sgd-in-linear-models/README.md)
 - [Finite-sample expressivity of ReLU networks](finite-sample-expressivity-of-relu-networks/README.md)
 - [Classification-calibrated losses](classification-calibrated-losses/README.md)

@@ -1,0 +1,15 @@
+# Visibility-graph shortest paths around two squares
+
+- [Open interior of the left square](open1.md)
+- [Open interior of the right square](open2.md)
+- [Lower right corner of the left square](b.md)
+- [Upper right corner of the left square](c.md)
+- [Lower left corner of the right square](e.md)
+- [Upper left corner of the right square](q.md)
+- [Visibility between two points around two squares](vis-adj.md)
+- [Visibility around two squares is symmetric](symm.md)
+- [Vertices of the two-squares visibility graph](vtx.md)
+- [Coordinates of the two-squares graph vertices](coord.md)
+- [Two-squares visibility graph](vis-graph.md)
+- [Weight of a walk in the two-squares visibility graph](walk-weight.md)
+- [Shortest walk around two squares has length 3 + √5](min-eq-walk.md)

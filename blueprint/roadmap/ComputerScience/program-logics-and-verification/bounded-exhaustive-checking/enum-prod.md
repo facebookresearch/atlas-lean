@@ -1,0 +1,3 @@
+# Budget-split product enumeration
+
+Given $\mathit{size}_A : \alpha \to \mathbb{N}$, enumerators $\mathit{enum}_A : \mathbb{N} \to \mathrm{List}\,\alpha$ and $\mathit{enum}_B : \mathbb{N} \to \mathrm{List}\,\beta$, and a bound $n$, the product enumeration lists, for each $a$ in $\mathit{enum}_A(n)$ in order, the pairs $(a, b)$ for $b$ in $\mathit{enum}_B(n \mathbin{\dot-} \mathit{size}_A(a))$, in order, and concatenates these lists. The operation $\dot-$ is truncated subtraction on $\mathbb{N}$, so each $b$ is drawn within the budget remaining after $a$. This differs from the naive product $\mathit{enum}_A(n) \times \mathit{enum}_B(n)$.

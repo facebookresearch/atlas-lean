@@ -1,0 +1,5 @@
+# Expected likelihood-weighting estimate of one is the evidence probability
+
+Let $B$ be a Bayesian network on the nodes $0, \dots, n-1$ with values in a finite nonempty type $\alpha$ with measurable singletons, conditional probability tables $p_k(\cdot \mid x_{\mathrm{pa}(k)})$ and joint distribution $P(x) = \prod_k p_k(x_k \mid x_{\mathrm{pa}(k)})$. For a set $E$ of evidence nodes, the likelihood weight of an assignment $x$ is $w_E(x) = \prod_{k \in E} p_k(x_k \mid x_{\mathrm{pa}(k)})$, and the proposal $q$ is the joint of the evidence-clamped network, in which every evidence node $k \in E$ has no parents and the point mass at $e_k$ as its table. Let $\mu_q = \sum_x q(x)\,\delta_x$ be the proposal measure. Let $\mu$ be a measure on a measurable space $\Omega$ and $X_0, X_1, \ldots : \Omega \to \alpha^n$ measurable samples whose law under $\mu$ is $\mu_q$. Then for every $m \ne 0$, the likelihood-weighting estimate of the constant function $1$ from the first $m$ samples has expectation
+
+$$\int \frac{1}{m} \sum_{i < m} w_E(X_i(\omega)) \, d\mu(\omega) = P(X_E = e_E) .$$
