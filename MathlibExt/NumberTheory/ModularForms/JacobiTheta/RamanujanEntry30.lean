@@ -139,8 +139,10 @@ moreover $a \ne 0$, then $f(a, b) - f(-a, -b) = 2a f(b/a, a^5 b^3)$.
 
 Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
 Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
-Article A16, Lemma 1 record, quoting Berndt, Part III, Entry 30 (i)-(iii)
-(`integers-2025-A16-lem-1`). -/
+Article A16, Lemma 2 of Section 2, Equations (8)-(10) (`integers-2025-A16-sec-2-lem-2`),
+quoting C. Adiga, B. C. Berndt, S. Bhargava, and G. N. Watson, Mem. Amer. Math. Soc. 53
+(1985), no. 315, Entry 30 (i)-(iii); see also B. C. Berndt, *Ramanujan's Notebooks, Part III*,
+Springer, 1991, Chapter 16, Entry 30 (i)-(iii). -/
 public theorem ramanujanTheta_entry30 (a b : ℂ) (hab : ‖a * b‖ < 1) :
     ramanujanThetaRaw a (a * b ^ 2) * ramanujanThetaRaw b (a ^ 2 * b) =
         ramanujanThetaRaw a b * ramanujanThetaRaw (a * b) ((a * b) ^ 3) ∧
