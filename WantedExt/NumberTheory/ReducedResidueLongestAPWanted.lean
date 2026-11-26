@@ -14,6 +14,7 @@ public import MathlibExt.NumberTheory.ReducedResidueLongestAP
 public import MathlibExt.NumberTheory.ReducedResiduePrimeBound
 public import MathlibExt.NumberTheory.ReducedResidueAverage
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne
 
 /-!
 # Longest arithmetic progressions in the reduced residue systems `R_m(n)`
@@ -111,19 +112,6 @@ Theorem 2 (`integers-2026-A6-thm-2`). -/
 public theorem_wanted isGreatest_longestAPLength {n : ℕ} (hn : 1 < n) :
     IsGreatest (Set.range fun m : ℤ => longestAPLength m n)
       (max (n / radical n) (n.primeFactors.sup id - 1))
-
-/-- **Minimum longest progression length modulo a prime $p \equiv 1 \pmod 4$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 4$. For an integer $m$ let $f_m(p)$ be the length of the longest arithmetic
-progression with positive common difference contained in the set $R_m(p)$ of integers $a$ with
-$m + 1 \le a \le m + p$ and $\gcd(a, p) = 1$. Then the least value of $f_m(p)$ over all integers
-$m$ is $(p - 1) / 2$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted isLeast_longestAPLength_prime_of_mod_four_eq_one {p : ℕ} (hp : p.Prime)
-    (h4 : p % 4 = 1) :
-    IsLeast (Set.range fun m : ℤ => longestAPLength m p) ((p - 1) / 2)
 
 /-- **Minimum longest progression length modulo a prime power.** Let $p$ be a prime and $r > 1$ a
 natural number. For an integer $m$ let $f_m(p^r)$ be the length of the longest arithmetic
