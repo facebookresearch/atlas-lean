@@ -9608,6 +9608,7 @@
   "MathlibExt/Analysis/Fourier/AddCircle/FejerTheorem": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Fejér kernel and Fejér's theorem"},
   "MathlibExt/Analysis/Fourier/AddCircle/FourierUniqueness": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Uniqueness of Fourier coefficients"},
   "MathlibExt/Analysis/Fourier/AddCircle/RiemannLebesgue": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Riemann–Lebesgue lemma"},
+  "MathlibExt/Analysis/Fourier/AiryKatoSmoothingIdentity": {"to": "Analysis/partial-differential-equations", "title": "Airy equation and Kato smoothing"},
   "MathlibExt/Analysis/Fourier/BernsteinFourierSupportLpLq": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Bernstein inequalities for band-limited functions"},
   "MathlibExt/Analysis/Fourier/BandLimitedDerivSobolevBound": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Bernstein inequalities for band-limited functions"},
   "MathlibExt/Analysis/Fourier/BernsteinInequalityBandLimited": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Bernstein inequalities for band-limited functions"},
