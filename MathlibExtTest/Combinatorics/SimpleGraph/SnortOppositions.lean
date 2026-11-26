@@ -95,13 +95,25 @@ example : IsAlmostOpposable (strongProd (⊥ : SimpleGraph (Fin 3)) (pathGraph 3
     rcases hcases x with hx | hx <;> simp [flip, hx] at hval
   · exact ⟨1, by decide⟩
 
--- The half-turn of the four-cycle gives an opposition of its homomorphic product with a path.
-example : IsOpposable
-    (formulaProduct (fun eG eH qG _ => qG || (eG && !eH)) (cycleGraph 4) (pathGraph 3)) := by
+private theorem cycleFourOpposable : IsOpposable (cycleGraph 4) := by
   have hmap : ∀ x y : Fin 4,
       (cycleGraph 4).Adj (x + 2) (y + 2) ↔ (cycleGraph 4).Adj x y := by decide
-  have hcycle : IsOpposable (cycleGraph 4) := by
-    refine ⟨⟨Equiv.addRight 2, hmap _ _⟩, ?_⟩
-    change ∀ x : Fin 4, x + 2 + 2 = x ∧ x + 2 ≠ x ∧ ¬ (cycleGraph 4).Adj x (x + 2)
-    decide
-  exact (isOpposable_products (cycleGraph 4) (pathGraph 3) hcycle).2.2.2.2.2
+  refine ⟨⟨Equiv.addRight 2, hmap _ _⟩, ?_⟩
+  change ∀ x : Fin 4, x + 2 + 2 = x ∧ x + 2 ≠ x ∧ ¬ (cycleGraph 4).Adj x (x + 2)
+  decide
+
+-- The half-turn of the four-cycle gives an opposition of its homomorphic product with a path.
+example : IsOpposable
+    (formulaProduct (fun eG eH qG _ => qG || (eG && !eH)) (cycleGraph 4) (pathGraph 3)) :=
+  (isOpposable_products (cycleGraph 4) (pathGraph 3) cycleFourOpposable).2.2.2.2.2
+
+-- Allow either edges in both factors or distinct second coordinates in a single fiber.
+example : IsOpposable
+    (formulaProduct (fun eG eH qG qH => (eG && eH) || (qG && !qH))
+      (cycleGraph 4) (pathGraph 3)) :=
+  isOpposable_formulaProduct _ _ _ (by decide) cycleFourOpposable
+
+-- An empty second factor makes the formula hypothesis vacuous, even for the constant true.
+example : IsOpposable
+    (formulaProduct (fun _ _ _ _ => true) (cycleGraph 4) (⊥ : SimpleGraph (Fin 0))) :=
+  isOpposable_formulaProduct _ _ _ (fun _ _ h => Fin.elim0 h) cycleFourOpposable

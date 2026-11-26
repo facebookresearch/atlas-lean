@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AffinoidTorsorAlgebraizationModels
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
+public import MathlibExt.AlgebraicGeometry.AffinoidTorsorAlgebraization
 
 /-!
 # Original all-test torsor algebraization and native fpqc pullback requests
@@ -19,6 +20,8 @@ The source algebraization retains the whole original analytic torsor
 presheaf and every action/map on actual Gamma spectrum tests. Its source
 is an actual strongly noetherian whole affinoid chart. Native completion
 and fpqc restriction are computed separately from this source output.
+The fpqc restriction theorem `fpqcRestrictionPreservesTorsors` is proved in
+`MathlibExt.AlgebraicGeometry.AffinoidTorsorAlgebraization`.
 
 Source: Fargues--Scholze arXiv:2102.13459v4, Section III.3 and VI.1;
 Stacks Project, Tags03AG and04UV; affinoid algebraization.
@@ -50,10 +53,5 @@ public def_wanted affinoidTorsorAlgebraization (p : ℕ) [Fact p.Prime]
     (H : ∀ V : ESpace p E, GroupDescent p E G V)
     (X : ESpace p E) (Q : Chart p X.left) [IsIso Q.map]
     (hQ : IsStronglyNoetherian p Q.pair) : Algebraization p E G H X
-
-/-- Restriction along each actual scheme map preserves the native fpqc torsor condition. -/
-public theorem_wanted fpqcRestrictionPreservesTorsors
-    (E : Type) [Field E] (G : Over (Spec (.of E))) [GrpObj G]
-    {B C : Over (Spec (.of E))} (f : B ⟶ C) : FpqcPreservesTorsors E G f
 
 end WantedExt.AlgebraicGeometry.AffinoidTorsorAlgebraization
