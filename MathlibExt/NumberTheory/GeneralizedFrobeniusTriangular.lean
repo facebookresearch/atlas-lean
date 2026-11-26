@@ -233,6 +233,98 @@ theorem frobeniusRepCount_pair_sub_ge (a b : ℕ) (ha : 0 < a) (hab' : a < b)
     have := Nat.le_of_dvd (by omega : 0 < y + 1) hy
     omega
 
+
+namespace frobeniusRepCount_pair_sub_ge
+
+/-- Swapping the generators swaps the two coordinates of a representation. -/
+private theorem pairCount_swap (a b : ℕ) (m : ℤ) :
+    frobeniusRepCount ![a, b] m = frobeniusRepCount ![b, a] m := by
+  simp only [frobeniusRepCount, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  apply Set.encard_congr
+  let e : (Fin 2 → ℕ) ≃ (Fin 2 → ℕ) :=
+    ⟨fun x => ![x 1, x 0], fun x => ![x 1, x 0],
+      fun x => funext (Fin.forall_fin_two.mpr ⟨rfl, rfl⟩),
+      fun x => funext (Fin.forall_fin_two.mpr ⟨rfl, rfl⟩)⟩
+  apply e.subtypeEquiv
+  intro x
+  change ((x 0 : ℤ) * a + (x 1 : ℤ) * b = m) ↔
+    ((x 1 : ℤ) * b + (x 0 : ℤ) * a = m)
+  rw [add_comm]
+
+/-- On the residue class of `G s` modulo `a`, `G r` is a cutoff for the representation count. -/
+private theorem pairCutoff_le_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
+    (G : ℕ → ℤ) (hG : ∀ r, IsGenFrobeniusNumber ![a, b] r (G r))
+    (c : ℕ) (hc : a ∣ c) (j : ℤ) (s r : ℕ) :
+    frobeniusRepCount ![a, b] (G s + j * c) ≤ r ↔ G s + j * c ≤ G r := by
+  refine ⟨fun le => not_lt.mp fun lt => (hG r).2 _ lt |>.not_ge le, fun le => ?_⟩
+  -- Every cutoff has residue `-b` modulo `a`, so the gap is a multiple of `a`.
+  have hds := dvd_add_generator hb (hG s)
+  have hdr := dvd_add_generator hb (hG r)
+  have hc' : (a : ℤ) ∣ (c : ℤ) := by exact_mod_cast hc
+  have hd : (a : ℤ) ∣ G r - (G s + j * c) := by
+    have h := dvd_sub (dvd_sub hdr hds) (dvd_mul_of_dvd_right hc' j)
+    convert h using 1; omega
+  obtain ⟨z, hz⟩ := hd
+  have hz0 : 0 ≤ z :=
+    Int.nonneg_of_mul_nonneg_right (hz ▸ sub_nonneg.mpr le) (by exact_mod_cast ha)
+  have hshift : G s + j * c + (z.toNat : ℤ) * a = G r := by
+    rw [Int.toNat_of_nonneg hz0]
+    linear_combination -hz
+  have hmono : frobeniusRepCount ![a, b] (G s + j * c) ≤ frobeniusRepCount ![a, b] (G r) := by
+    apply count_le_of_translate (u := z.toNat) (v := 0)
+    · simpa using hshift
+    · intro _ _ _
+      exact Nat.zero_le _
+  exact hmono.trans (hG r).1
+
+end frobeniusRepCount_pair_sub_ge
+
+-- Keep the source hypotheses in the signature even though the residue argument is stronger.
+set_option linter.unusedVariables false in
+open frobeniusRepCount_pair_sub_ge in
+/-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
+be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized
+Frobenius number of $(a, b)$ at $r$, and for an integer $m$ let $d(m; a, b)$ be the number of
+representations of $m$ by $(a, b)$. Let $i$ and $s$ be natural numbers, let $c$ be a positive
+integer divisible by $a$ or by $b$, and let $j$ be an integer. Then $d(g(a, b; s) + jc; a, b) = i$
+if and only if $g(a, b; s) + jc \le g(a, b; i)$ and, in case $i \ge 1$, also
+$g(a, b; i - 1) < g(a, b; s) + jc$.
+
+Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
+Numbers*, INTEGERS 26 (2026), Article A63, Lemma 3 (`integers-2026-A63-lem-3`), quoted from
+Subwattanachai, *Generalized Frobenius number of three variables*. -/
+theorem frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
+    (hab : Nat.Coprime a b) (G : ℕ → ℤ) (hG : ∀ r, IsGenFrobeniusNumber ![a, b] r (G r))
+    (i s c : ℕ) (hc : 0 < c) (hdvd : a ∣ c ∨ b ∣ c) (j : ℤ) :
+    frobeniusRepCount ![a, b] (G s + j * c) = i ↔
+      (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i := by
+  -- The residue-class argument only needs positivity of the two generators.
+  clear hab hc
+  have cutoff (r : ℕ) :
+      frobeniusRepCount ![a, b] (G s + j * c) ≤ r ↔ G s + j * c ≤ G r := by
+    rcases hdvd with hd | hd
+    · exact pairCutoff_le_iff a b ha hb G hG c hd j s r
+    · have hSwap (q : ℕ) : IsGenFrobeniusNumber ![b, a] q (G q) := by
+        constructor
+        · rw [pairCount_swap b a]; exact (hG q).1
+        · intro m hm
+          rw [pairCount_swap b a]
+          exact (hG q).2 m hm
+      rw [pairCount_swap a b]
+      exact pairCutoff_le_iff b a hb ha G hSwap c hd j s r
+  cases i with
+  | zero => simp [← cutoff]
+  | succ i =>
+    simp only [Nat.succ_ne_zero, false_or, Nat.succ_sub_one, ← cutoff, ← not_le]
+    constructor
+    · intro heq
+      rw [heq]
+      exact ⟨fun h => (Nat.not_succ_le_self i) (by exact_mod_cast h), le_rfl⟩
+    · intro ⟨hi, hs⟩
+      exact le_antisymm hs (by
+        rw [Nat.cast_succ]
+        exact (ENat.add_one_le_iff (by simp)).2 (lt_of_not_ge hi))
+
 end
 
 end MetaMathlibExt
