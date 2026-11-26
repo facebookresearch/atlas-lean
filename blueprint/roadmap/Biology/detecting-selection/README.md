@@ -14,3 +14,4 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Likelihood inference for selection in Wright–Fisher diffusions](likelihood-inference-for-selection-in-wright-fisher-diffusions/README.md)

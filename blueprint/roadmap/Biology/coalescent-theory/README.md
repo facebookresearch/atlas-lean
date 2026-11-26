@@ -27,3 +27,11 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
+- [Diploid sweepstakes coalescents](diploid-sweepstakes-coalescents/README.md)
+- [Forward-backward coalescent with competitive interactions](forward-backward-coalescent-with-competitive-interactions/README.md)
+- [Fréchet summaries of ranked tree shapes](frechet-summaries-of-ranked-tree-shapes/README.md)
+- [F_ST and site frequency spectrum of seed-bank coalescents](fst-and-site-frequency-spectrum-of-seed-bank-coalescents/README.md)
+- [Seed bank coalescent with simultaneous switching](seed-bank-coalescent-with-simultaneous-switching/README.md)
+- [Subsample and clade statistics of Ξ-coalescents](subsample-and-clade-statistics-of-xi-coalescents/README.md)
+- [Ξ-ancestral recombination graph](xi-ancestral-recombination-graph/README.md)
+- [Zig-zag sampling of coalescent trees](zig-zag-sampling-of-coalescent-trees/README.md)
