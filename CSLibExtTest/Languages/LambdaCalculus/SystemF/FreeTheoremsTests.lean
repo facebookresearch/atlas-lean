@@ -67,7 +67,7 @@ example (f a : Model) : (Rel.graph f).holds a (Model.app f a) := BetaEq.refl _
 
 example (x : Model) :
     BetaEq (Model.app (Tm.eraseModel (.tapp (polyId : Tm 0 0) (.arr natTy natTy))) x) x :=
-  identity_free_theorem (polyId_typed Fin.elim0) (.arr natTy natTy) x
+  polymorphic_identity (polyId_typed Fin.elim0) (.arr natTy natTy) x
 
 /-! ### Naturality at a list-doubling rearrangement -/
 
@@ -97,7 +97,7 @@ example (f x y n c : Model) :
         n) c) :=
   rearrangement_natural doubleTm_typed natTy accTy f [x, y] n c
 
--- The element-replacing function fails naturality and has no typed preimage.
+-- The element-replacing function fails naturality.
 example : ¬ BetaEq
     (Model.app (Model.app
       (mapE natTy natTy (Model.atom 1) (Model.app constRearrange (encList [Model.atom 2])))
@@ -106,9 +106,6 @@ example : ¬ BetaEq
       (Model.app constRearrange (mapE natTy natTy (Model.atom 1) (encList [Model.atom 2])))
       (Model.atom 3)) (Model.atom 4)) :=
   constRearrange_not_natural natTy natTy
-
-example : ¬ ∃ r : Tm 0 0, Typing Fin.elim0 r rearrangeTy ∧ Tm.eraseModel r = constRearrange :=
-  constRearrange_untypable
 
 /-! ### Representation independence -/
 

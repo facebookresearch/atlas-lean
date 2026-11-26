@@ -20,7 +20,6 @@ conclusion is beta-conversion of erasures applied to arbitrary arguments; no
 equality of unapplied terms, eta rule, contextual equivalence, call-by-value
 termination or set-valued reading is claimed.
 
-* Identity: every closed inhabitant of `∀X. X → X` acts as the identity.
 * Naturality: every closed rearrangement `r : ∀X. List X → List X` commutes with
   the encoded map, as in Wadler's `a* ∘ r_A = r_A' ∘ a*`.
 * Representation independence: counter packages related by a beta-invariant
@@ -41,16 +40,6 @@ termination or set-valued reading is claimed.
 @[expose] public section
 
 namespace Cslib.Languages.LambdaCalculus.SystemF
-
-/-! ### Identity -/
-
-/-- **Identity free theorem.** Every closed inhabitant of `∀X. X → X` acts as the
-identity after every type instantiation: applied to an arbitrary model term, its
-erasure is beta-convertible to that term. This is `polymorphic_identity`, stated
-as the first free theorem. -/
-theorem identity_free_theorem {t : Tm 0 0} (ht : Typing Fin.elim0 t polyIdType)
-    (A : Ty 0) (x : Model) : BetaEq (Model.app (Tm.eraseModel (.tapp t A)) x) x :=
-  polymorphic_identity ht A x
 
 /-! ### Naturality of rearrangements -/
 
@@ -222,17 +211,6 @@ theorem constRearrange_not_natural (A B : Ty 0) :
           (crK_red _ _ _ _ (Model.atom 3)))))
   exact not_betaEq_of_atomSpine (by simp [AtomSpine, Model.app, Model.atom])
     (by simp [AtomSpine, Model.app, Model.atom]) (by decide) (hl.symm.trans (h.trans hr))
-
-/-- **The element-replacing function is not a typed rearrangement.** No closed term
-of type `∀X. List X → List X` erases to the element-replacing function. -/
-theorem constRearrange_untypable :
-    ¬ ∃ r : Tm 0 0, Typing Fin.elim0 r rearrangeTy ∧ Tm.eraseModel r = constRearrange := by
-  rintro ⟨r, hr, he⟩
-  have h := rearrangement_natural hr natTy natTy (Model.atom 1) [Model.atom 2] (Model.atom 3)
-    (Model.atom 4)
-  have he' : Tm.eraseModel (.tapp r natTy) = constRearrange := he
-  rw [he'] at h
-  exact constRearrange_not_natural natTy natTy h
 
 /-! ### Representation independence -/
 
