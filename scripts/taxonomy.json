@@ -12902,6 +12902,7 @@
   "MathlibExt/NumberTheory/HelouTerjanianTwo": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
   "MathlibExt/NumberTheory/HeightOneMultipleZetaSeries": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Height one multiple zeta values"},
   "MathlibExt/NumberTheory/Height/SchurSiegelSmyth/ClassicalUpperBound": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
+  "MathlibExt/NumberTheory/Height/SchurSiegelSmyth/SchurLowerBound": {"to": "NumberTheory/heights-mahler-measure", "title": "Schur–Siegel–Smyth trace problem"},
   "MathlibExt/NumberTheory/HenselFactorization": {"to": "RingTheory/valuation-rings", "title": "Henselian rings and Hensel's lemma"},
   "MathlibExt/NumberTheory/HenselFactorizationUniqueness": {"to": "RingTheory/valuation-rings", "title": "Henselian rings and Hensel's lemma"},
   "MathlibExt/NumberTheory/HigherANumbersPeriodicSum": {"to": "NumberTheory/function-fields", "title": "Higher a-numbers in ℤ_p-towers"},
