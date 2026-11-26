@@ -67,16 +67,6 @@ theorem_wanted not_isDeficientFPerfect_of_prime (p : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect p
 
-/-- **Primes are not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers with
-$\ell \ge 1$ and let $p$ be a prime. Then $p$ is not $[k,\ell]$-near-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Proposition 2. -/
-theorem_wanted not_isKLNearPerfect_of_prime (k l p : ℕ)
-    (hl : 1 ≤ l) (hp : p.Prime) :
-    ¬ IsKLNearPerfect k l p
-
 /-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
 every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
 $F$-perfect: there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) + d^2 = n^2 + 3n$, and
