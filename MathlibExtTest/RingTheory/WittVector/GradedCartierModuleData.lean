@@ -371,7 +371,7 @@ example {B B' : Type} [CommRing B] [CommRing B'] {j : Zp2 p →+* B}
       j' = φ.comp j ∧ UnconstrainedBaseChange φ D D' f :=
   Iff.rfl
 
-/-- The coefficient-map clause, read off a base change. -/
+/-- The coefficient-map clause, read off `IsBaseChangeAlong'`. -/
 example {B B' : Type} [CommRing B] [CommRing B'] {j : Zp2 p →+* B}
     {j' : Zp2 p →+* B'} (φ : B →+* B') (D : GradedCartierModuleData p j)
     (D' : GradedCartierModuleData p j') (f : D.M →+ D'.M)
@@ -390,15 +390,15 @@ private theorem unconstrainedBaseChange_seqData
   rw [WittVector.map_id]
   rfl
 
-/-- The constraint holds: the identity of `seqData j` is a base change along
-the identity. -/
+/-- The constraint holds: the identity of `seqData j` satisfies
+`IsBaseChangeAlong'` along the identity. -/
 example (j : Zp2 p →+* GaloisField p 2) :
     IsBaseChangeAlong' (RingHom.id _) (seqData j) (seqData j)
       (AddMonoidHom.id _) :=
   ⟨(RingHom.id_comp j).symm, unconstrainedBaseChange_seqData j j⟩
 
-/-- The same base change through `IsBaseChangeAlong`, whose target is
-indexed by `(RingHom.id _).comp j`. -/
+/-- The same map through `IsBaseChangeAlong`, whose target is indexed by
+`(RingHom.id _).comp j`. -/
 example (j : Zp2 p →+* GaloisField p 2) :
     IsBaseChangeAlong (RingHom.id _) (seqData j)
       (seqData ((RingHom.id _).comp j)) (AddMonoidHom.id _) :=
@@ -428,7 +428,7 @@ private theorem frobenius_comp_constantCoeff_ne :
 
 /-- Boundary: twist the target's coefficient map by the Frobenius of the
 field with `p ^ 2` elements. The unconstrained clauses still hold for the
-identity, but the coefficient-map clause fails, so it is not a base change
+identity, but the coefficient-map clause fails, so `IsBaseChangeAlong'` fails
 along the identity. -/
 example :
     UnconstrainedBaseChange (RingHom.id _)
@@ -485,9 +485,9 @@ private noncomputable def frobSeq :
   map_zero' := by ext n <;> simp [zero_pow (Fact.out : p.Prime).ne_zero]
   map_add' x y := by ext n <;> simp [add_pow_char]
 
-/-- Base change along the Frobenius `σ` of the field with `p ^ 2` elements:
-the target's coefficient map is `σ.comp j`, and the module map raises entries
-to the `p`-th power. -/
+/-- `IsBaseChangeAlong'` along the Frobenius `σ` of the field with `p ^ 2`
+elements: the target's coefficient map is `σ.comp j`, and the module map raises
+entries to the `p`-th power. -/
 private theorem isBaseChangeAlong'_frobSeq :
     IsBaseChangeAlong' (frobenius (GaloisField p 2) p)
       (seqData (p := p) WittVector.constantCoeff)
@@ -513,7 +513,7 @@ private theorem isBaseChangeAlong'_frobSeq :
     rw [h]
     exact seqData_isHomogeneousVBasis _
 
-/-- With the constraint, the base change intertwines the Teichmüller actions
+/-- With the constraint, `frobSeq` intertwines the Teichmüller actions
 although the coefficient maps differ: on piece `0`, `[c]` acts by `c` on the
 source and by `c ^ p` on the target, and `frobSeq` turns one into the other. -/
 example (c : GaloisField p 2)
@@ -541,6 +541,197 @@ example : ¬ ∀ (c : GaloisField p 2)
   simp only [Pi.smul_apply, smul_eq_mul, seqOne, mul_one, RingHom.comp_apply,
     WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero, frobenius_def] at h0
   exact hc h0.symm
+
+/-- Raising to the `p`-th power, as an additive map. -/
+private noncomputable def pthPowHom : GaloisField p 2 →+ GaloisField p 2 where
+  toFun a := a ^ p
+  map_zero' := zero_pow (Fact.out : p.Prime).ne_zero
+  map_add' _ _ := add_pow_char _ _ _
+
+private theorem smul_pow_p (w : Zp2 p) (a : GaloisField p 2) :
+    w • a ^ p = (WittVector.frobenius w • a) ^ p := by
+  change WittVector.constantCoeff w * a ^ p =
+    (WittVector.constantCoeff (WittVector.frobenius w) * a) ^ p
+  rw [mul_pow, WittVector.constantCoeff_apply, WittVector.constantCoeff_apply,
+    WittVector.coeff_frobenius_charP, pow_p_pow_p]
+
+/-- Verschiebung on one graded piece of `bigSeqData`, a sequence paired with an
+element of the field: `shiftFrob` on the sequence, the `p`-th power on the
+element. -/
+private noncomputable def halfV :
+    ((ℕ → GaloisField p 2) × GaloisField p 2) →+
+      ((ℕ → GaloisField p 2) × GaloisField p 2) :=
+  shiftFrobHom.prodMap pthPowHom
+
+/-- Verschiebung of `bigSeqData`: exchange the two pieces and apply `halfV`. -/
+private noncomputable def bigV :
+    (((ℕ → GaloisField p 2) × GaloisField p 2) ×
+        ((ℕ → GaloisField p 2) × GaloisField p 2)) →+
+      (((ℕ → GaloisField p 2) × GaloisField p 2) ×
+        ((ℕ → GaloisField p 2) × GaloisField p 2)) where
+  toFun x := (halfV x.2, halfV x.1)
+  map_zero' := by simp
+  map_add' x y := by simp
+
+/-- The product of `seqData` with a summand `T`, two copies of the field with
+`p ^ 2` elements graded by the coordinates, Witt vectors acting through the
+constant coefficient, `F = ϖ = 0`, and `V (a, b) = (b ^ p, a ^ p)`, which is
+bijective. Piece `i` pairs piece `i` of `seqData` with coordinate `i` of `T`. -/
+private noncomputable abbrev bigSeqData (j : Zp2 p →+* GaloisField p 2) :
+    GradedCartierModuleData p j where
+  M := ((ℕ → GaloisField p 2) × GaloisField p 2) ×
+    ((ℕ → GaloisField p 2) × GaloisField p 2)
+  frobenius := 0
+  verschiebung := bigV
+  varpi := 0
+  piece := fun i =>
+    if i = 0 then LinearMap.range (LinearMap.inl _ _ _)
+    else LinearMap.range (LinearMap.inr _ _ _)
+  frobenius_smul := by simp
+  smul_verschiebung w x :=
+    Prod.ext (Prod.ext (smul_shiftFrob w x.2.1) (smul_pow_p w x.2.2))
+      (Prod.ext (smul_shiftFrob w x.1.1) (smul_pow_p w x.1.2))
+  verschiebung_smul_frobenius := by
+    intro w x
+    simp only [AddMonoidHom.zero_apply, smul_zero, map_zero]
+    refine Prod.ext (Prod.ext (funext fun n => ?_) ?_)
+      (Prod.ext (funext fun n => ?_) ?_) <;>
+    · change (0 : GaloisField p 2) =
+        WittVector.constantCoeff (WittVector.verschiebung w) * _
+      rw [WittVector.constantCoeff_apply, WittVector.verschiebung_coeff_zero,
+        zero_mul]
+  frobenius_verschiebung := by
+    intro x
+    refine Prod.ext (Prod.ext (funext fun n => ?_) ?_)
+      (Prod.ext (funext fun n => ?_) ?_) <;>
+      simp [nsmul_eq_mul]
+  varpi_verschiebung := by simp
+  varpi_frobenius := by simp
+  varpi_varpi := by
+    intro x
+    refine Prod.ext (Prod.ext (funext fun n => ?_) ?_)
+      (Prod.ext (funext fun n => ?_) ?_) <;>
+      simp [nsmul_eq_mul]
+  isCompl_piece := LinearMap.isCompl_range_inl_inr
+  verschiebung_mem := by
+    intro i x hx
+    fin_cases i
+    · obtain ⟨a, rfl⟩ := hx
+      exact ⟨halfV a, Prod.ext (map_zero halfV).symm rfl⟩
+    · obtain ⟨b, rfl⟩ := hx
+      exact ⟨halfV b, Prod.ext rfl (map_zero halfV).symm⟩
+  frobenius_mem := by simp
+  varpi_mem := by simp
+
+/-- The inclusion of `seqData` into `bigSeqData`, `x ↦ ((x.1, 0), (x.2, 0))`. -/
+private noncomputable def seqIncl :
+    ((ℕ → GaloisField p 2) × (ℕ → GaloisField p 2)) →+
+      (((ℕ → GaloisField p 2) × GaloisField p 2) ×
+        ((ℕ → GaloisField p 2) × GaloisField p 2)) where
+  toFun x := ((x.1, 0), (x.2, 0))
+  map_zero' := rfl
+  map_add' x y := by simp
+
+private theorem bigSeqData_expand (j j' : Zp2 p →+* GaloisField p 2)
+    (cy : (Fin 2 → GaloisField p 2) × (bigSeqData j').M) (n : ℕ) :
+    ((∑ i : Fin 2, WittVector.teichmuller p (cy.1 i) • seqIncl (seqBasis j i)) +
+        (bigSeqData j').verschiebung cy.2).1.1 n =
+      cy.1 0 * seqOne n + shiftFrob cy.2.2.1 n ∧
+    ((∑ i : Fin 2, WittVector.teichmuller p (cy.1 i) • seqIncl (seqBasis j i)) +
+        (bigSeqData j').verschiebung cy.2).1.2 = cy.2.2.2 ^ p ∧
+    ((∑ i : Fin 2, WittVector.teichmuller p (cy.1 i) • seqIncl (seqBasis j i)) +
+        (bigSeqData j').verschiebung cy.2).2.1 n =
+      cy.1 1 * seqOne n + shiftFrob cy.2.1.1 n ∧
+    ((∑ i : Fin 2, WittVector.teichmuller p (cy.1 i) • seqIncl (seqBasis j i)) +
+        (bigSeqData j').verschiebung cy.2).2.2 = cy.2.1.2 ^ p := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+  · rw [Fin.sum_univ_two]
+    simp [seqBasis, seqIncl, bigV, halfV, pthPowHom, shiftFrobHom, smul_eq_constantCoeff_mul,
+      WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
+
+/-- The images of the basis of `seqData` form a homogeneous `V`-basis of
+`bigSeqData`: the coordinates of `T` are `V` of unique elements, because `V`
+is bijective on `T`. -/
+private theorem bigSeqData_isHomogeneousVBasis (j j' : Zp2 p →+* GaloisField p 2) :
+    (bigSeqData j').IsHomogeneousVBasis (fun i => seqIncl (seqBasis j i)) := by
+  refine ⟨fun i => ?_, fun x => ?_⟩
+  · fin_cases i
+    · exact ⟨(seqOne, 0), rfl⟩
+    · exact ⟨(seqOne, 0), rfl⟩
+  refine ⟨(![x.1.1 0, x.2.1 0],
+    ((fun n => x.2.1 (n + 1) ^ p, x.2.2 ^ p), (fun n => x.1.1 (n + 1) ^ p, x.1.2 ^ p))),
+    ?_, ?_⟩
+  · refine Prod.ext (Prod.ext (funext fun n => ?_) ?_) (Prod.ext (funext fun n => ?_) ?_)
+    · rw [(bigSeqData_expand j j' _ n).1]
+      cases n with
+      | zero => simp [seqOne, shiftFrob]
+      | succ n => simp [seqOne, shiftFrob, pow_p_pow_p]
+    · rw [(bigSeqData_expand j j' _ 0).2.1]
+      simp [pow_p_pow_p]
+    · rw [(bigSeqData_expand j j' _ n).2.2.1]
+      cases n with
+      | zero => simp [seqOne, shiftFrob]
+      | succ n => simp [seqOne, shiftFrob, pow_p_pow_p]
+    · rw [(bigSeqData_expand j j' _ 0).2.2.2]
+      simp [pow_p_pow_p]
+  · rintro ⟨c, y⟩ h
+    have h1 n := (bigSeqData_expand j j' (c, y) n).1
+    have h2 := (bigSeqData_expand j j' (c, y) 0).2.1
+    have h3 n := (bigSeqData_expand j j' (c, y) n).2.2.1
+    have h4 := (bigSeqData_expand j j' (c, y) 0).2.2.2
+    rw [← h] at h1 h2 h3 h4
+    have h10 := h1 0
+    have h30 := h3 0
+    simp only [seqOne, shiftFrob, mul_one, add_zero] at h10 h30
+    refine Prod.ext (funext fun i => ?_)
+      (Prod.ext (Prod.ext (funext fun n => ?_) ?_) (Prod.ext (funext fun n => ?_) ?_))
+    · fin_cases i
+      · exact h10.symm
+      · exact h30.symm
+    · have h31 := h3 (n + 1)
+      simp only [seqOne, shiftFrob, mul_zero, zero_add] at h31
+      simp [h31, pow_p_pow_p]
+    · simp [h4, pow_p_pow_p]
+    · have h11 := h1 (n + 1)
+      simp only [seqOne, shiftFrob, mul_zero, zero_add] at h11
+      simp [h11, pow_p_pow_p]
+    · simp [h2, pow_p_pow_p]
+
+/-- The unconstrained clauses hold for the inclusion of `seqData j₁` into
+`bigSeqData j₂`. -/
+private theorem unconstrainedBaseChange_seqIncl (j₁ j₂ : Zp2 p →+* GaloisField p 2) :
+    UnconstrainedBaseChange (RingHom.id _) (seqData j₁) (bigSeqData j₂) seqIncl := by
+  refine ⟨fun w x => ?_, fun _ => rfl, fun x => ?_, fun _ => rfl,
+    fun i x hx => ?_, seqBasis j₁, seqData_isHomogeneousVBasis j₁,
+    bigSeqData_isHomogeneousVBasis j₁ j₂⟩
+  · rw [WittVector.map_id]
+    exact Prod.ext (Prod.ext rfl (smul_zero _).symm) (Prod.ext rfl (smul_zero _).symm)
+  · exact Prod.ext (Prod.ext rfl (map_zero pthPowHom).symm)
+      (Prod.ext rfl (map_zero pthPowHom).symm)
+  · fin_cases i
+    · obtain ⟨s, rfl⟩ := hx
+      exact ⟨(s, 0), rfl⟩
+    · obtain ⟨s, rfl⟩ := hx
+      exact ⟨(s, 0), rfl⟩
+
+private theorem seqIncl_not_surjective : ¬ Function.Surjective (seqIncl (p := p)) := by
+  intro h
+  obtain ⟨x, hx⟩ := h ((0, 1), 0)
+  have h12 := congrArg (fun y => y.1.2) hx
+  simp [seqIncl] at h12
+
+/-- Boundary: along the identity, the inclusion of `seqData j` into
+`bigSeqData` satisfies `IsBaseChangeAlong` and, with the same coefficient map,
+`IsBaseChangeAlong'`, but it is not surjective, while base change along the
+identity is an isomorphism. -/
+example (j : Zp2 p →+* GaloisField p 2) :
+    IsBaseChangeAlong (RingHom.id _) (seqData j)
+        (bigSeqData ((RingHom.id _).comp j)) seqIncl ∧
+      IsBaseChangeAlong' (RingHom.id _) (seqData j) (bigSeqData j) seqIncl ∧
+      ¬ Function.Surjective (seqIncl (p := p)) :=
+  ⟨(isBaseChangeAlong'_iff _ _ _ _).mp ⟨rfl, unconstrainedBaseChange_seqIncl j _⟩,
+    ⟨(RingHom.id_comp j).symm, unconstrainedBaseChange_seqIncl j j⟩,
+    seqIncl_not_surjective⟩
 
 end SeqExample
 

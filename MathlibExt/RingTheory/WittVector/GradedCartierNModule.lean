@@ -35,6 +35,19 @@ From graded Cartier module data `D` we build the Frobenius-twisted module
 `Sigma`, the relation submodule identifying Verschiebung with the
 uniformizer, the quotient `NMod`, the map `lambda` to `M`, the Lie quotient
 `M / V M`, and the notions of Cartier and canonical `L`-maps.
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura :
+  les théorèmes de Čerednik et de Drinfeld*, Astérisque 196–197 (1991), 45–158.
+  Chapter II: §3.2 defines the quotient `N(M)` of `M ⊕ M^σ` by the pairs
+  `(V m, -Π m)`, §3.3 the map `λ`, and Proposition 3.8 the maps `L_M`, the one
+  family of maps `M → N(M)` with `λ ∘ L_M = F` that commutes with base change.
+  `IsCanonicalLMap` asks instead for a commuting square with a Cartier `L`-map
+  over a `p`-torsion-free ring, as in part (c) of that proof, through the maps
+  of `IsBaseChangeAlong'` rather than base change, and `cartierL` chooses a map
+  that satisfies it; neither uniqueness nor compatibility with base change is
+  proved here.
 -/
 
 @[expose] public section
@@ -245,12 +258,13 @@ theorem nMap_nMk {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     D.nMap D' f hV hPi (D.nMk (m, m')) = D'.nMk (f m, f m') :=
   rfl
 
-/-- **Base change along a ring map, any target coefficient map.** For
+/-- **Basis-preserving semilinear map along a ring map, any target coefficient map.** For
 `φ : B →+* B'`, data `D` over `B` with coefficient map `j`, data `D'` over `B'`
 with a coefficient map `j'`, and an additive map `f : D.M →+ D'.M`:
-`j' = φ.comp j`, and `f` satisfies the clauses of `IsBaseChangeAlong`. The
-equation is about the coefficient maps alone; with the clause on pieces it
-makes `f` intertwine the Teichmüller actions
+`j' = φ.comp j`, and `f` satisfies the clauses of `IsBaseChangeAlong`. Like
+`IsBaseChangeAlong`, this is weaker than base change along `φ`, the completed
+extension of scalars. The equation is about the coefficient maps alone; with
+the clause on pieces it makes `f` intertwine the Teichmüller actions
 (`IsBaseChangeAlong'.map_teichmullerAct`). -/
 def IsBaseChangeAlong' {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     (φ : B →+* B') (D : GradedCartierModuleData p j)
@@ -270,10 +284,10 @@ theorem isBaseChangeAlong'_iff {B' : Type u} [CommRing B'] (φ : B →+* B')
     IsBaseChangeAlong' φ D D' f ↔ IsBaseChangeAlong φ D D' f :=
   ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
 
-/-- **Base change intertwines the Teichmüller actions.** A base change `f`
-along `φ` satisfies `f (D.teichmullerAct c x) = D'.teichmullerAct c (f x)`, for
-the actions that the pieces and the coefficient maps `j` and `j' = φ.comp j`
-determine. -/
+/-- **Intertwining the Teichmüller actions.** A map `f` with
+`IsBaseChangeAlong' φ D D' f` satisfies
+`f (D.teichmullerAct c x) = D'.teichmullerAct c (f x)`, for the actions that the
+pieces and the coefficient maps `j` and `j' = φ.comp j` determine. -/
 theorem IsBaseChangeAlong'.map_teichmullerAct {B' : Type u} [CommRing B']
     {j' : Zp2 p →+* B'} {φ : B →+* B'} {D : GradedCartierModuleData p j}
     {D' : GradedCartierModuleData p j'} {f : D.M →+ D'.M}
@@ -311,23 +325,25 @@ structure IsCartierLMap (L : D.M →+ D.NMod) : Prop where
   lambda_comp : ∀ x : D.M, D.lambda (L x) = D.frobenius x
 
 /-- **Canonical `L`-map.** A Cartier `L`-map `L` on `D`, over `B` with
-coefficient map `j`, that is the base change of a Cartier `L`-map over a
+coefficient map `j`, that forms a commuting square with a Cartier `L`-map over a
 `p`-torsion-free ring mapping onto `B`. That is, there are a commutative ring
 `S` on which multiplication by `p` is injective, a ring map `jS : Zp2 p →+* S`,
 a surjective ring map `φ : S →+* B`, a special Cartier module `Dl` over `S`
-with coefficient map `jS`, an additive map `f : Dl.M →+ D.M` that is a base
-change along `φ` (`IsBaseChangeAlong' φ Dl D f`, so `j = φ.comp jS`), and a
-Cartier `L`-map `Ll` on `Dl`, such that `L (f x) = nMap f (Ll x)` for every `x`
-in `Dl.M`, where `nMap f` is the map of `N`-modules that `f` induces. A special
-Cartier module over such an `S` is not enough: `L` itself must satisfy this
-equation. -/
+with coefficient map `jS`, an additive map `f : Dl.M →+ D.M` with
+`IsBaseChangeAlong' φ Dl D f` (so `j = φ.comp jS`), and a Cartier `L`-map `Ll`
+on `Dl`, such that `L (f x) = nMap f (Ll x)` for every `x` in `Dl.M`, where
+`nMap f` is the map of `N`-modules that `f` induces. The map `f` is a
+basis-preserving semilinear map along `φ`, not necessarily the base change of
+`Dl` along `φ`. A special Cartier module over such an `S` is not enough: `L`
+itself must satisfy this equation. -/
 structure IsCanonicalLMap (L : D.M →+ D.NMod) : Prop where
   /-- The map is a Cartier `L`-map. -/
   isCartierLMap : D.IsCartierLMap L
-  /-- `L` is the base change of a Cartier `L`-map `Ll` on a special Cartier
-  module `Dl` over a `p`-torsion-free ring `S` with a surjection
-  `φ : S →+* B`, along a base change `f : Dl.M →+ D.M` (so `j = φ.comp jS`):
-  `L (f x) = nMap f (Ll x)` for every `x`. -/
+  /-- `L` forms a commuting square with a Cartier `L`-map `Ll` on a special
+  Cartier module `Dl` over a `p`-torsion-free ring `S` with a surjection
+  `φ : S →+* B`, through a map `f : Dl.M →+ D.M` with
+  `IsBaseChangeAlong' φ Dl D f` (so `j = φ.comp jS`): `L (f x) = nMap f (Ll x)`
+  for every `x`. -/
   exists_lift : ∃ (S : Type u) (_ : CommRing S) (jS : Zp2 p →+* S) (φ : S →+* B)
     (_ : Function.Surjective φ) (_ : ∀ s : S, (p : S) * s = 0 → s = 0)
     (Dl : GradedCartierModuleData.{u, v} p jS) (_ : Dl.IsSpecialCartierModule)
@@ -335,8 +351,10 @@ structure IsCanonicalLMap (L : D.M →+ D.NMod) : Prop where
     (Ll : Dl.M →+ Dl.NMod) (_ : Dl.IsCartierLMap Ll),
     ∀ x : Dl.M, L (f x) = Dl.nMap D f hf.2.2.2.1 hf.2.2.2.2.1 (Ll x)
 
-/-- **The canonical `L`-map.** A canonical `L`-map, chosen from a proof that
-one exists. -/
+/-- **Chosen canonical `L`-map.** A canonical `L`-map, chosen from a proof that
+one exists. In Boutot–Carayol (Proposition 3.8 of Chapter II) the maps `L_M`
+form the one family with `λ ∘ L_M = F` that commutes with base change; neither
+property is proved here, and `cartierL` is an unspecified canonical `L`-map. -/
 noncomputable def cartierL (h : ∃ L : D.M →+ D.NMod, D.IsCanonicalLMap L) : D.M →+ D.NMod :=
   h.choose
 

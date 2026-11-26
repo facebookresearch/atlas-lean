@@ -38,9 +38,18 @@ A graded Cartier module datum over a ring `B` consists of a module `M` over
 the Witt vectors of `B`, equipped with Frobenius, Verschiebung, and a
 uniformizer operator `varpi`, together with a decomposition of `M` into two
 complementary graded pieces. We also record homogeneous `V`-bases, `V`-adic
-completeness, structure constants for `varpi`, base change, and the action of
-the Teichmüller representatives of `Zp2 p` that the pieces and the
-coefficient map `j` determine.
+completeness, structure constants for `varpi`, maps along a ring map that
+preserve this structure and a homogeneous `V`-basis (`IsBaseChangeAlong`, which
+is weaker than base change), and the action of the Teichmüller representatives
+of `Zp2 p` that the pieces and the coefficient map `j` determine.
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura :
+  les théorèmes de Čerednik et de Drinfeld*, Astérisque 196–197 (1991), 45–158.
+  Chapter II: §2.2 defines graded Cartier modules and special ones, §2.3
+  homogeneous `V`-bases and the structure constants of `Π` (here `varpi`), and
+  §2.4 base change, the completed extension of scalars `E(B') ⊗ M`.
 -/
 
 @[expose] public section
@@ -59,7 +68,8 @@ for the Frobenius of `WittVector p B`, `F (w • x) = σ w • F x`,
 `ϖ (ϖ x) = p • x`; the two pieces are complementary, and `F`, `V` and `ϖ` each
 map `piece i` into `piece (i + 1)`. No field involves `j`: with the pieces it
 determines how the Teichmüller representatives of `Zp2 p` act
-(`teichmullerAct`), and base change carries it along (`IsBaseChangeAlong`). -/
+(`teichmullerAct`), and a map along a ring map `φ` (`IsBaseChangeAlong`) goes
+to data with coefficient map `φ.comp j`. -/
 structure GradedCartierModuleData (p : ℕ) [Fact p.Prime] {B : Type u} [CommRing B]
     (j : Zp2 p →+* B) : Type (max u (v + 1)) where
   /-- The underlying module. -/
@@ -187,13 +197,17 @@ def HasStructureConstants (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M)
         (WittVector.teichmuller p (a m i) • γ (piIndex m i))) +
         (⇑D.verschiebung)^[N] h
 
-/-- **Base change along a ring map.** For `φ : B →+* B'`, data `D` over `B`
-with coefficient map `j` and `D'` over `B'` with coefficient map `φ.comp j`:
-an additive map `f : D.M →+ D'.M` with `f (w • x) = WittVector.map φ w • f x`
-that commutes with `F`, `V` and `ϖ`, maps `piece i` of `D` into `piece i` of
-`D'`, and sends some homogeneous `V`-basis of `D` to a homogeneous `V`-basis of
-`D'`. As the target is indexed by `φ.comp j`, `f` intertwines the Teichmüller
-actions (`IsBaseChangeAlong.map_teichmullerAct`). -/
+/-- **Basis-preserving semilinear map along a ring map.** For `φ : B →+* B'`,
+data `D` over `B` with coefficient map `j` and `D'` over `B'` with coefficient
+map `φ.comp j`: an additive map `f : D.M →+ D'.M` with
+`f (w • x) = WittVector.map φ w • f x` that commutes with `F`, `V` and `ϖ`, maps
+`piece i` of `D` into `piece i` of `D'`, and sends some homogeneous `V`-basis of
+`D` to a homogeneous `V`-basis of `D'`. This is weaker than base change along
+`φ`, the completed extension of scalars, which along the identity is an
+isomorphism: if `D` has a homogeneous `V`-basis and `T` is a nonzero datum on
+which `V` is bijective, the inclusion of `D` into `D × T` satisfies it along the
+identity but is not surjective. As the target is indexed by `φ.comp j`, `f`
+intertwines the Teichmüller actions (`IsBaseChangeAlong.map_teichmullerAct`). -/
 def IsBaseChangeAlong {B' : Type u} [CommRing B'] (φ : B →+* B')
     (D : GradedCartierModuleData p j) (D' : GradedCartierModuleData p (φ.comp j))
     (f : D.M →+ D'.M) : Prop :=

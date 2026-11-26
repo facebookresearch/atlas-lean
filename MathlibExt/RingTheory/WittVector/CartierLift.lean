@@ -41,6 +41,15 @@ the lift ring (`liftHom`). The relation constrains only the product of the two
 images; `liftHom` chooses the images `u` and `v` as part of the assignment
 `X b ↦ b`. A homomorphism out of the lift ring is determined by its values on
 the coefficients and on every variable (`ringHom_ext`, `eq_liftHom`).
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura :
+  les théorèmes de Čerednik et de Drinfeld*, Astérisque 196–197 (1991), 45–158.
+  Chapter II, part (c) of the proof of Proposition 3.8, p. 82: the polynomial
+  ring with a variable `X_b` for every `b ∈ B`, modulo `X_u X_v - π` for the
+  structure constants `u` and `v` of order zero (here `π = p`), and the
+  evaluation `X_b ↦ b`.
 -/
 
 @[expose] public section
@@ -50,15 +59,6 @@ universe u v
 namespace MvPolynomial
 
 variable {σ : Type*} {R : Type*} [CommRing R]
-
-private theorem eq_zero_of_C_mul_eq_zero {π : R}
-    (hπ : ∀ r : R, π * r = 0 → r = 0) {g : MvPolynomial σ R}
-    (h : C π * g = 0) : g = 0 := by
-  ext e
-  have he := congrArg (fun g : MvPolynomial σ R => g.coeff e) h
-  rw [coeff_C_mul, AddMonoidAlgebra.coeff_zero] at he
-  rw [AddMonoidAlgebra.coeff_zero]
-  exact hπ _ he
 
 private theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R}
     (hπ : ∀ r : R, π * r = 0 → r = 0) (u v : σ) {g : MvPolynomial σ R}
@@ -80,7 +80,10 @@ private theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R}
     have h0 : C π * (g + C π * q₁ - q₁ * X u * X v) = 0 := by
       have h2 := hXq
       linear_combination (-1 : MvPolynomial σ R) * h2
-    have h3 := eq_zero_of_C_mul_eq_zero hπ h0
+    have hC : IsLeftRegular (C π : MvPolynomial σ R) :=
+      ((isLeftRegular_iff_isRegular.mp (isLeftRegular_of_non_zero_divisor π hπ)).monomial
+        (m := 0)).left
+    have h3 := hC.mul_left_eq_zero_iff.mp h0
     linear_combination h3
   refine Ideal.mem_span_singleton'.mpr ⟨q₁, ?_⟩
   linear_combination (-1 : MvPolynomial σ R) * hcancel
