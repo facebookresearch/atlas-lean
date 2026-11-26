@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.GeneralizedSylvester
 import Mathlib.Data.Int.ModEq
+import Mathlib.Data.Nat.Factorization.Induction
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Tactic.Ring
 
@@ -22,11 +24,14 @@ residue `7` modulo `36`.
 
 Starting from `S₃ = 43`, the recurrence preserves the residue `43` modulo `1764`
 because `43² - 43 + 1 = 1807 = 1764 + 43` (congruence (7) in the reference below).
+Starting from `S₁ = 3`, the residue modulo `4` gives a prime divisor congruent to
+`3` modulo `4` in every subsequent term, including `S₁` itself.
 
 ## References
 
 * Abderrahim Makki Naciri, *A Note on Sylvester's Sequence*, INTEGERS 24
-  (2024), Article A117, Proposition 1, divisibility (4) and congruence (6).
+  (2024), Article A117, Proposition 1, divisibility (4) and congruences (5)–(7),
+  and Corollary 1(d).
   <https://math.colgate.edu/~integers/y117/y117.pdf>
 -/
 
@@ -99,5 +104,33 @@ theorem sylvester_modEq_forty_three_mod_1764
     Int.modEq_iff_dvd.mpr (sylvester_sub_dvd 3 3 n (by decide) (by decide) hn)
   have hnat : 43 ≡ sylvesterNumber n [MOD 1764] := Int.natCast_modEq_iff.mp hmod
   exact hnat.symm
+
+private theorem exists_prime_dvd_mod_four_eq_three (m : ℕ) (hm : m % 4 = 3) :
+    ∃ p : ℕ, p.Prime ∧ p ∣ m ∧ p % 4 = 3 := by
+  induction m using induction_on_primes with
+  | zero => simp at hm
+  | one => simp at hm
+  | prime_mul p a hp ih =>
+    have hresidue : ∀ i j : Fin 4, (i.val * j.val) % 4 = 3 → i.val = 3 ∨ j.val = 3 := by
+      decide
+    rw [Nat.mul_mod] at hm
+    rcases hresidue ⟨p % 4, Nat.mod_lt _ (by decide)⟩ ⟨a % 4, Nat.mod_lt _ (by decide)⟩ hm with
+      h | h
+    · exact ⟨p, hp, dvd_mul_right p a, h⟩
+    · obtain ⟨q, hq, hqa, hqmod⟩ := ih h
+      exact ⟨q, hq, hqa.trans (dvd_mul_left a p), hqmod⟩
+
+/-- **Prime divisors congruent to 3 modulo 4 of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the
+Sylvester sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n$ has a
+prime divisor $p$ with $p \equiv 3 \pmod 4$.
+
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(d). -/
+theorem sylvester_exists_prime_divisor_mod_four_eq_three
+    (n : ℕ) (hn : 1 ≤ n) :
+    ∃ p : ℕ, p.Prime ∧ p ∣ sylvesterNumber n ∧ p % 4 = 3 := by
+  have hmod : (3 : ℤ) ≡ (sylvesterNumber n : ℤ) [ZMOD 4] :=
+    Int.modEq_iff_dvd.mpr (sylvester_sub_dvd 1 1 n (by decide) (by decide) hn)
+  have hnat : 3 ≡ sylvesterNumber n [MOD 4] := Int.natCast_modEq_iff.mp hmod
+  exact exists_prime_dvd_mod_four_eq_three _ hnat.symm
 
 end MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
