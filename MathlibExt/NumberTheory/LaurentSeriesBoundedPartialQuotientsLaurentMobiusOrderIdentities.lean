@@ -42,16 +42,6 @@ private theorem order_div_aux (x y : LaurentSeries K) (hx : x ≠ 0) (hy : y ≠
   rw [div_eq_mul_inv, order_mul hx (inv_ne_zero hy), order_inv_aux y hy]
   ring
 
-private theorem order_pow_aux (x : LaurentSeries K) (hx : x ≠ 0) (n : ℕ) :
-    (x ^ n).order = (n : ℤ) * x.order := by
-  induction n with
-  | zero => simp [order_one]
-  | succ n ih =>
-    have hxn : x ^ n ≠ 0 := pow_ne_zero n hx
-    rw [pow_succ, order_mul hxn hx, ih]
-    push_cast
-    ring
-
 private theorem order_add_eq_left_of_lt (x y : LaurentSeries K) (hx : x ≠ 0)
     (hlt : x.order < y.order) : (x + y).order = x.order := by
   have hxTop : (x.order : WithTop ℤ) = x.orderTop := order_eq_orderTop_of_ne_zero hx
@@ -401,55 +391,6 @@ private theorem order_alpha_sub_frac (α : LaurentSeries K) (hα : LaurentIsIrra
   rw [hfrac]
   exact order_approx_all α hα n
 
-private theorem mobius_den_ne_zero [Fintype K] (A B C D : Polynomial K)
-    (α : LaurentSeries K) (hα : LaurentIsIrrational α)
-    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
-      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D)) :
-    polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D ≠ 0 := by
-  intro h
-  have hzero : α = 0 := by simpa [h] using hfix
-  exact hα 0 1 one_ne_zero (by simp [hzero, polyToLaurentInv])
-
-private theorem mobius_invDen_ne_zero [Fintype K] (A B C D : Polynomial K)
-    (hΔ : A * D - B * C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
-    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
-      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D)) :
-    polyToLaurentInv A - polyToLaurentInv C * α ≠ 0 := by
-  have hden := mobius_den_ne_zero A B C D α hα hfix
-  have hcross := (eq_div_iff hden).mp hfix
-  have hdet : (polyToLaurentInv A - polyToLaurentInv C * α) *
-      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) =
-      polyToLaurentInv (A * D - B * C) := by
-    simp only [polyToLaurentInv, map_sub, map_mul] at hcross ⊢
-    linear_combination -((Polynomial.aeval (laurentInvVar K)) C) * hcross
-  have hΔe : polyToLaurentInv (A * D - B * C) ≠ 0 :=
-    polyToLaurentInv_ne_zero _ hΔ
-  exact (mul_ne_zero_iff.mp (hdet.trans_ne hΔe)).1
-
-private theorem S1_div_identity [Fintype K] (A B C D : Polynomial K)
-    (hΔ : A * D - B * C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
-    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
-      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
-    (P Q : Polynomial K) (hS₁ : -C * P + A * Q ≠ 0) :
-    α ^ Fintype.card K - polyToLaurentInv (D * P - B * Q) / polyToLaurentInv (-C * P + A * Q) =
-        polyToLaurentInv (A * D - B * C) * (polyToLaurentInv Q * α - polyToLaurentInv P) /
-          ((polyToLaurentInv A - polyToLaurentInv C * α) * polyToLaurentInv (-C * P + A * Q)) := by
-  have hden := mobius_den_ne_zero A B C D α hα hfix
-  have hcross := (eq_div_iff hden).mp hfix
-  have hinvDen := mobius_invDen_ne_zero A B C D hΔ α hα hfix
-  have hinv : α ^ Fintype.card K =
-      (polyToLaurentInv D * α - polyToLaurentInv B) /
-        (polyToLaurentInv A - polyToLaurentInv C * α) := by
-    apply (eq_div_iff hinvDen).mpr
-    simp only [polyToLaurentInv] at hcross ⊢
-    linear_combination -hcross
-  have hS₁e : polyToLaurentInv (-C * P + A * Q) ≠ 0 :=
-    polyToLaurentInv_ne_zero _ hS₁
-  rw [hinv, div_sub_div _ _ hinvDen hS₁e]
-  congr 1
-  simp only [polyToLaurentInv, map_add, map_sub, map_neg, map_mul]
-  ring
-
 private theorem S1_identity [Fintype K] (A B C D : Polynomial K)
     (hΔ : A * D - B * C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
     (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
@@ -461,8 +402,8 @@ private theorem S1_identity [Fintype K] (A B C D : Polynomial K)
         (polyToLaurentInv A - polyToLaurentInv C * α) := by
   have hS₁e : polyToLaurentInv (-C * P + A * Q) ≠ 0 :=
     polyToLaurentInv_ne_zero _ hS₁
-  have hinvDen := mobius_invDen_ne_zero A B C D hΔ α hα hfix
-  have hdiv := S1_div_identity A B C D hΔ α hα hfix P Q hS₁
+  have hinvDen := laurentMobius_invDen_ne_zero A B C D hΔ α hα hfix
+  have hdiv := laurentMobius_pow_sub_identity A B C D hΔ α hα hfix P Q hS₁
   have hfac : polyToLaurentInv (-C * P + A * Q) * α ^ Fintype.card K -
       polyToLaurentInv (D * P - B * Q) =
       polyToLaurentInv (-C * P + A * Q) *
@@ -471,30 +412,6 @@ private theorem S1_identity [Fintype K] (A B C D : Polynomial K)
     rw [mul_sub, mul_div_cancel₀ _ hS₁e]
   rw [hfac, hdiv]
   field_simp
-
-private theorem S2_div_identity [Fintype K] (A B C D : Polynomial K)
-    (α : LaurentSeries K) (hα : LaurentIsIrrational α)
-    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
-      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
-    (P Q : Polynomial K)
-    (hS₂ : C * P ^ Fintype.card K + D * Q ^ Fintype.card K ≠ 0) :
-    α - polyToLaurentInv (A * P ^ Fintype.card K + B * Q ^ Fintype.card K) /
-          polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) =
-        polyToLaurentInv (A * D - B * C) *
-            (polyToLaurentInv Q * α - polyToLaurentInv P) ^ Fintype.card K /
-          ((polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) *
-            polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K)) := by
-  have hden := mobius_den_ne_zero A B C D α hα hfix
-  have hpow (u v : LaurentSeries K) : (u - v) ^ Fintype.card K =
-      u ^ Fintype.card K - v ^ Fintype.card K :=
-    map_sub (FiniteField.frobeniusAlgHom K (LaurentSeries K)) u v
-  have hS₂e : polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) ≠ 0 :=
-    polyToLaurentInv_ne_zero _ hS₂
-  nth_rw 1 [hfix]
-  rw [div_sub_div _ _ hden hS₂e, hpow, mul_pow]
-  congr 1
-  simp only [polyToLaurentInv, map_add, map_sub, map_mul, map_pow]
-  ring
 
 private theorem S2_identity [Fintype K] (A B C D : Polynomial K)
     (α : LaurentSeries K) (hα : LaurentIsIrrational α)
@@ -509,8 +426,8 @@ private theorem S2_identity [Fintype K] (A B C D : Polynomial K)
         (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) := by
   have hS₂e : polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) ≠ 0 :=
     polyToLaurentInv_ne_zero _ hS₂
-  have hden := mobius_den_ne_zero A B C D α hα hfix
-  have hdiv := S2_div_identity A B C D α hα hfix P Q hS₂
+  have hden := laurentMobius_den_ne_zero A B C D α hα hfix
+  have hdiv := laurentMobius_sub_identity A B C D α hα hfix P Q hS₂
   have hfac : polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) * α -
       polyToLaurentInv (A * P ^ Fintype.card K + B * Q ^ Fintype.card K) =
       polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) *
@@ -573,7 +490,7 @@ private theorem S2_ne_zero_of_close [Fintype K] (α : LaurentSeries K)
     alpha_sub_frac_ne_zero α hα P Q hQ
   have hord : (α ^ Fintype.card K + polyToLaurentInv D / polyToLaurentInv C).order =
       Fintype.card K * (α - polyToLaurentInv P / polyToLaurentInv Q).order := by
-    rw [heq, order_pow_aux _ hαPQ]
+    rw [heq, HahnSeries.order_pow, nsmul_eq_mul]
   exact (ne_of_lt hclose) hord
 
 private theorem alpha_pow_frac_ne_zero [Fintype K] (A B C D : Polynomial K)
@@ -582,7 +499,7 @@ private theorem alpha_pow_frac_ne_zero [Fintype K] (A B C D : Polynomial K)
       (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
     (hC : C ≠ 0) : α ^ Fintype.card K + polyToLaurentInv D / polyToLaurentInv C ≠ 0 := by
   have hCe : polyToLaurentInv C ≠ 0 := polyToLaurentInv_ne_zero C hC
-  have hden := mobius_den_ne_zero A B C D α hα hfix
+  have hden := laurentMobius_den_ne_zero A B C D α hα hfix
   have heq : α ^ Fintype.card K + polyToLaurentInv D / polyToLaurentInv C =
       (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) / polyToLaurentInv C := by
     field_simp
@@ -664,7 +581,7 @@ private theorem order_PQqDC_eq [Fintype K] (A B C D : Polynomial K)
   have hαPQ := alpha_sub_frac_ne_zero α hα P Q hQ
   have hord_y : (-(α - polyToLaurentInv P / polyToLaurentInv Q) ^ Fintype.card K).order =
       Fintype.card K * (α - polyToLaurentInv P / polyToLaurentInv Q).order := by
-    rw [order_neg, order_pow_aux _ hαPQ]
+    rw [order_neg, HahnSeries.order_pow, nsmul_eq_mul]
   have hlt : (α ^ Fintype.card K + polyToLaurentInv D / polyToLaurentInv C).order <
       (-(α - polyToLaurentInv P / polyToLaurentInv Q) ^ Fintype.card K).order := by
     rw [hord_y]
@@ -717,7 +634,8 @@ private theorem order_alphaq_DC_eq [Fintype K] (A B C D : Polynomial K)
       ((polyToLaurentInv Q) ^ Fintype.card K).order + (polyToLaurentInv C).order :=
     order_mul hQq hCe
   have hQq_ord : ((polyToLaurentInv Q) ^ Fintype.card K).order =
-      (Fintype.card K : ℤ) * (polyToLaurentInv Q).order := order_pow_aux _ hQe _
+      (Fintype.card K : ℤ) * (polyToLaurentInv Q).order := by
+    rw [HahnSeries.order_pow, nsmul_eq_mul]
   have hfrac_ord := order_PQqDC_eq A B C D α hα hfix P Q hC hQ hclose
   have hS2_ord := order_polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K)
   have hC_ord := order_polyToLaurentInv C
@@ -753,7 +671,7 @@ private theorem mobius_order_first_aux [Fintype K] (A B C D : Polynomial K)
   have hQαP : polyToLaurentInv Q * α - polyToLaurentInv P ≠ 0 := by
     have h := hα P Q hQ
     exact sub_ne_zero.mpr h
-  have hinvDen := mobius_invDen_ne_zero A B C D hΔ α hα hfix
+  have hinvDen := laurentMobius_invDen_ne_zero A B C D hΔ α hα hfix
   have hS1_id := S1_identity A B C D hΔ α hα hfix P Q hS1
   have hαPQ_ne := alpha_sub_frac_ne_zero α hα P Q hQ
   have hαAC_ne := alpha_sub_frac_ne_zero α hα A C hC
@@ -808,7 +726,7 @@ private theorem mobius_order_second_aux [Fintype K] (A B C D : Polynomial K)
     exact sub_ne_zero.mpr h
   have hQαPq : (polyToLaurentInv Q * α - polyToLaurentInv P) ^ Fintype.card K ≠ 0 :=
     pow_ne_zero _ hQαP
-  have hden := mobius_den_ne_zero A B C D α hα hfix
+  have hden := laurentMobius_den_ne_zero A B C D α hα hfix
   have hS2_id := S2_identity A B C D α hα hfix P Q hS2
   have hαPQ_ne := alpha_sub_frac_ne_zero α hα P Q hQ
   have hαqDC_ne := alpha_pow_frac_ne_zero A B C D α hα hfix hC
@@ -831,7 +749,7 @@ private theorem mobius_order_second_aux [Fintype K] (A B C D : Polynomial K)
       (polyToLaurentInv Q * α - polyToLaurentInv P) ^ Fintype.card K ≠ 0 :=
     mul_ne_zero hΔe hQαPq
   rw [order_div_aux _ _ hnum_ne hden, order_mul hΔe hQαPq,
-    order_pow_aux _ hQαP, hfac1, order_mul hQe hαPQ_ne, hfac3, order_mul hCe hαqDC_ne]
+    HahnSeries.order_pow, nsmul_eq_mul, hfac1, order_mul hQe hαPQ_ne, hfac3, order_mul hCe hαqDC_ne]
   rw [order_polyToLaurentInv, order_polyToLaurentInv, order_polyToLaurentInv,
     hαPQ_ord, hαqDC_ord, hQn_ord]
   ring
