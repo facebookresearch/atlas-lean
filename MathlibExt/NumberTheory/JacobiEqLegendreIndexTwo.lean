@@ -20,7 +20,8 @@ the units of `ℤ/nℤ` to `{±1}`, and its kernel is `L(n;p) = {u : (u/n) = (u/
 `n = ∏ q ^ e_q`, the homomorphism is `(u/p) ^ (e_p + 1) ∏_{q ≠ p} (u/q) ^ e_q`, so it is onto
 exactly when `e_p` is even or some other prime has odd exponent; then `L(n;p)` has index two.
 This is Proposition 26 of Mondal, Paul and Paul, *Zero-Sum Constants Related to the Jacobi
-Symbol* (arXiv:2111.14477).
+Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7; the preprint arXiv:2111.14477
+numbers its results differently.
 -/
 
 namespace MetaMathlibExt
