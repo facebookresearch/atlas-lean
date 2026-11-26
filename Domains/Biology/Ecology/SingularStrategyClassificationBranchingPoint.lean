@@ -202,12 +202,12 @@ private lemma diagonal_hessian_sum_eq_zero {s : ℝ → ℝ → ℝ} {xs : ℝ} 
   simp only [e11, map_add, add_apply] at hdiag
   linarith only [hdiag]
 
-/-- **Diagonal identity and the derivative of the fitness gradient** (Geritz et al. 1998,
-eq. (7)). For an invasion fitness `s` with singular strategy `x*` (`s` is `C²`, `s x x = 0`,
-`D(x*) = 0`): `s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`, and `D` has derivative `s_xy + s_yy` at
-`x*`.
+/-- **Diagonal identity and the derivative of the fitness gradient** (Geritz et al. 1998).
+For an invasion fitness `s` with singular strategy `x*` (`s` is `C²`, `s x x = 0`, `D(x*) = 0`):
+`s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`, and `D` has derivative `s_xy + s_yy` at `x*`.
 
-Source: Geritz et al. (1998), eq. (7). -/
+Source: Geritz et al. (1998), eq. (7) for the identity and the equality in eq. (6) for the
+fitness-gradient derivative. -/
 public theorem diagonal_identity_and_hasDerivAt {s : ℝ → ℝ → ℝ} {xs : ℝ}
     (h : IsSingular s xs) :
     sxx s xs xs + 2 * sxy s xs xs + syy s xs xs = 0 ∧
