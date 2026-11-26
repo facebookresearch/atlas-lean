@@ -14,5 +14,6 @@ For connected $G$ with a cycle, every face is bounded by a closed walk of length
 
 ## Sources
 
+- R. Diestel, *Graph Theory*, 6th ed., Graduate Texts in Mathematics 173, Springer, 2025, Chapter 4 (Planar graphs), <https://diestel-graph-theory.com/>: Corollary 4.2.10 (a plane graph with $n \ge 3$ vertices has at most $3n - 6$ edges, and every plane triangulation has exactly $3n - 6$), with Euler's formula, Theorem 4.2.9, for the face counts
 - S. Har-Peled, *Geometric Approximation Algorithms*, revised online chapter "Planar graphs and testing for planarity" (Chapter 14), <https://sarielhp.org/book/chapters/planar.pdf>: Lemma 14.1.5 (at most $3n - 6$ edges and $2n - 4$ faces; a triangulation has exactly $3n - 6$ edges and $2n - 4$ faces) and Lemma 14.1.4
 - *Computational Geometry*, lecture notes, ETH Zürich, autumn 2013, Chapter 4 (Plane graphs and the DCEL), <https://ti.inf.ethz.ch/ew/courses/CG13/lecture/Chapter%204.pdf>: Lemma 4.1 (a planar graph on $n \ge 3$ vertices has at most $3n - 6$ edges and at most $2n - 4$ faces)

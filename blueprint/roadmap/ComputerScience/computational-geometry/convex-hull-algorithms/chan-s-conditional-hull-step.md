@@ -12,4 +12,5 @@ Let $P$ be a set of $n$ points in $\mathbb{R}^2$ with no three on a line, $h$ th
 
 ## Sources
 
+- T. M. Chan, "Optimal output-sensitive convex hull algorithms in two and three dimensions", *Discrete & Computational Geometry* 16 (1996), 361–368, <https://doi.org/10.1007/BF02712873>: Section 2, Algorithm Hull2D$(P, m, H)$: groups of size at most $m$, Graham's scan on each group, at most $H$ wrapping steps by binary search on each group hull, time $O(n(1 + H/m) \log m)$, returning the hull when $H \ge h$ and "incomplete" otherwise
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 3, "The Conditional Algorithm" (ConditionalHull$(P, h^*)$), the supporting-line lemma, and the analysis of repeated squaring of the guess
