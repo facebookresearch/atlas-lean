@@ -265,3 +265,85 @@ lemma continuousSMul_iff_open_stabilizers (M : Type v) [AddCommGroup M]
 
 end DiscreteAbelianAction
 end CategoryTheory
+
+universe w a
+
+namespace GaloisUnits
+
+section ModuleRestriction
+variable {G : Type u} {H : Type v} [Monoid G] [Monoid H]
+  [TopologicalSpace G] [TopologicalSpace H]
+
+/-- For a continuous monoid homomorphism `φ : H →ₜ* G`, pull back a discrete
+continuous abelian action of `G` to an action of `H` by `h • x = φ h • x`.
+The underlying coefficient group and additive maps are unchanged, and its
+universe is independent of the two monoid universes. -/
+def restrictModules (φ : H →ₜ* G) :
+    DiscreteAbelianAction.{u, w} G ⥤ DiscreteAbelianAction.{v, w} H :=
+  ObjectProperty.lift _
+    (ObjectProperty.ι _ ⋙ ContAction.res (TopModuleCat.{w} ℤ) φ)
+    (fun X => X.property)
+
+@[simp] theorem restrictModules_underlying (φ : H →ₜ* G)
+    (M : DiscreteAbelianAction.{u, w} G) :
+    DiscreteAbelianAction.underlying ((restrictModules φ).obj M) =
+      DiscreteAbelianAction.underlying M := rfl
+
+@[simp, nolint simpNF] -- simpNF only sees `restrictModules_underlying` in the coercion's type
+theorem restrictModules_action (φ : H →ₜ* G)
+    (M : DiscreteAbelianAction.{u, w} G) (h : H)
+    (x : DiscreteAbelianAction.underlying M) :
+    (((restrictModules φ).obj M).obj.obj.ρ h).asHom.hom x =
+      (M.obj.obj.ρ (φ h)).asHom.hom x := rfl
+
+@[simp] theorem restrictModules_map (φ : H →ₜ* G)
+    {M N : DiscreteAbelianAction.{u, w} G} (f : M ⟶ N) :
+    DiscreteAbelianAction.homToAdd ((restrictModules φ).map f) =
+      DiscreteAbelianAction.homToAdd f := rfl
+end ModuleRestriction
+
+section RestrictionComparisons
+variable {G : Type u} {H : Type v} {J : Type a}
+  [Monoid G] [Monoid H] [Monoid J]
+  [TopologicalSpace G] [TopologicalSpace H] [TopologicalSpace J]
+
+/-- Pullback along the identity continuous monoid homomorphism is naturally
+isomorphic to the identity functor on discrete continuous abelian actions.
+Its components induce the identity additive maps on the coefficient groups. -/
+def restrictModulesId : restrictModules (ContinuousMonoidHom.id G) ≅
+    𝟭 (DiscreteAbelianAction.{u, w} G) :=
+  NatIso.ofComponents fun M => ObjectProperty.isoMk _
+    (ObjectProperty.isoMk _ ((Action.resId (TopModuleCat.{w} ℤ)).app M.obj.obj))
+
+/-- For continuous monoid homomorphisms `φ : H →ₜ* G` and `ψ : J →ₜ* H`,
+pullback along `φ.comp ψ` is naturally isomorphic to pullback along `φ` followed
+by pullback along `ψ`. The coefficient groups may have an independent universe. -/
+def restrictModulesComp (φ : H →ₜ* G) (ψ : J →ₜ* H) :
+    restrictModules (φ.comp ψ) ≅ restrictModules φ ⋙ restrictModules ψ :=
+  NatIso.ofComponents fun M => ObjectProperty.isoMk _
+    ((ContAction.resComp (TopModuleCat.{w} ℤ) ψ φ).app M.obj)
+
+/-- Equal continuous monoid homomorphisms `φ, φ' : H →ₜ* G` induce naturally
+isomorphic pullback functors on discrete continuous abelian actions.
+The comparison acts as the identity on each underlying coefficient group. -/
+def restrictModulesCongr (φ φ' : H →ₜ* G) (h : φ = φ') :
+    restrictModules.{u, v, w} φ ≅ restrictModules φ' :=
+  NatIso.ofComponents fun M => ObjectProperty.isoMk _
+    ((ContAction.resCongr (TopModuleCat.{w} ℤ) φ φ' h).app M.obj)
+
+@[simp] theorem restrictModulesId_hom (M : DiscreteAbelianAction.{u, w} G) :
+    DiscreteAbelianAction.homToAdd (restrictModulesId.hom.app M) =
+      AddMonoidHom.id (DiscreteAbelianAction.underlying M) := rfl
+
+@[simp] theorem restrictModulesComp_hom (φ : H →ₜ* G) (ψ : J →ₜ* H)
+    (M : DiscreteAbelianAction.{u, w} G) :
+    DiscreteAbelianAction.homToAdd ((restrictModulesComp φ ψ).hom.app M) =
+      AddMonoidHom.id (DiscreteAbelianAction.underlying M) := rfl
+
+@[simp] theorem restrictModulesCongr_hom (φ φ' : H →ₜ* G) (h : φ = φ')
+    (M : DiscreteAbelianAction.{u, w} G) :
+    DiscreteAbelianAction.homToAdd ((restrictModulesCongr φ φ' h).hom.app M) =
+      AddMonoidHom.id (DiscreteAbelianAction.underlying M) := rfl
+end RestrictionComparisons
+
+end GaloisUnits

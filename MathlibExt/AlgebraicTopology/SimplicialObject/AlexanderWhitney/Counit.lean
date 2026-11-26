@@ -168,7 +168,8 @@ theorem alternatingMap_left_counit (X : SimplicialObject C) :
   · have hback : backFace X (p := 0) (q := n) (n := n) (Nat.zero_add n) =
         𝟙 (X.obj (Opposite.op (SimplexCategory.mk n))) := by
       simpa only [backFace] using X.δ₀Iter_zero n
-    simp [frontFace, hback, Category.assoc]
+    simp [frontFace, hback]
+    rfl
   · intro x hx
     rcases x with ⟨x, hxlt⟩
     have hxval : x ≠ 0 := by

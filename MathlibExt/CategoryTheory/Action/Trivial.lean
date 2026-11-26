@@ -10,7 +10,6 @@ module
 
 public import MathlibExt.CategoryTheory.Action.DiscreteAbelian
 public import MathlibExt.CategoryTheory.Action.Invariants
-public import MathlibExt.FieldTheory.Galois.UnitsContinuousModule
 
 -- Authors: @toskua, Avocado
 

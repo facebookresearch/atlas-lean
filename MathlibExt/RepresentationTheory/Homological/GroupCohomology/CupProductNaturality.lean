@@ -59,6 +59,18 @@ private lemma cochainsMap_id_apply
     ((cochainsMap (MonoidHom.id G) f).f n).hom phi x = f.hom (phi x) :=
   rfl
 
+private lemma cochainsMap_restricted_apply
+    {G H : Type u} [Group G] [Group H] {A : Rep k H} {B : Rep k G}
+    (f : G →* H) (phi : Rep.res f A ⟶ B) (n : ℕ)
+    (a : (Fin n → H) → A) (g : Fin n → G) :
+    ((cochainsMap f phi).f n).hom a g = phi.hom (a (fun i => f (g i))) :=
+  rfl
+
+private lemma coefficientTensorMap_tmul {A B C D : ModuleCat k}
+    (f : A ⟶ B) (g : C ⟶ D) (a : A) (b : C) :
+    (f ⊗ₘ g).hom (a ⊗ₜ[k] b) = f.hom a ⊗ₜ[k] g.hom b :=
+  rfl
+
 private lemma coefficientMap_apply_basis
     {A B : Rep k G} (f : A ⟶ B) (n : ℕ)
     (phi : Rep.free k G (Fin n → G) ⟶ A) (x : Fin n → G) :
@@ -230,6 +242,10 @@ theorem inhomogeneousCupPairing_naturality_of_hom
           ((Rep.resTensorIso f A B).inv ≫ (phi ⊗ₘ psi))).f (p + q) =
       ((cochainsMap f phi).f p ⊗ₘ (cochainsMap f psi).f q) ≫
         (inhomogeneousCupPairing G k A' B').pair p q := by
+  have hcoef (a : A) (b : B) :
+      ((Rep.resTensorIso f A B).inv ≫ (phi ⊗ₘ psi)).hom (a ⊗ₜ[k] b) =
+        phi.hom a ⊗ₜ[k] psi.hom b := by
+    rfl
   apply ModuleCat.hom_ext
   apply LinearMap.ext
   intro z
@@ -237,27 +253,11 @@ theorem inhomogeneousCupPairing_naturality_of_hom
   | tmul x y =>
       apply inhomogeneousCochains.ext
       intro g
-      change (((Rep.resTensorIso f A B).inv ≫ (phi ⊗ₘ psi)).hom
-          ((((inhomogeneousCupPairing H k A B).pair p q).hom
-            (x ⊗ₜ[k] y)) (fun i => f (g i)))) =
-        (((inhomogeneousCupPairing G k A' B').pair p q).hom
-          (((cochainsMap f phi).f p).hom x ⊗ₜ[k]
-            ((cochainsMap f psi).f q).hom y)) g
+      rw [moduleHom_comp_apply, moduleHom_comp_apply,
+        coefficientTensorMap_tmul, cochainsMap_restricted_apply]
       rw [inhomogeneousCupPairing_apply, inhomogeneousCupPairing_apply]
-      change (phi ⊗ₘ psi).hom
-          (x (fun i => f (g (Fin.castAdd q i))) ⊗ₜ[k]
-            B.ρ (Fin.partialProd (fun i => f (g i))
-              (Fin.natAdd p (0 : Fin (q + 1))))
-              (y (fun i => f (g (Fin.natAdd p i))))) = _
-      rw [Rep.hom_tensorHom]
-      erw [Representation.IntertwiningMap.tensor_apply]
-      change phi.hom (x (fun i => f (g (Fin.castAdd q i)))) ⊗ₜ[k]
-          psi.hom (B.ρ (Fin.partialProd (fun i => f (g i))
-            (Fin.natAdd p (0 : Fin (q + 1))))
-            (y (fun i => f (g (Fin.natAdd p i))))) =
-        phi.hom (x (fun i => f (g (Fin.castAdd q i)))) ⊗ₜ[k]
-          B'.ρ (Fin.partialProd g (Fin.natAdd p (0 : Fin (q + 1))))
-            (psi.hom (y (fun i => f (g (Fin.natAdd p i)))))
+      rw [hcoef]
+      simp only [cochainsMap_restricted_apply]
       congr 1
       rw [← map_partialProd]
       simpa using Rep.hom_comm_apply psi

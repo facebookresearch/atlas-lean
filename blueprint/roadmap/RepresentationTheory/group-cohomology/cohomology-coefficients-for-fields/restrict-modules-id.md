@@ -1,3 +1,5 @@
-# Restrict Modules Id
+# Pullback along the identity monoid homomorphism
 
-The stock identity comparison, on the same discrete module objects.
+Pullback along the identity continuous monoid homomorphism is naturally
+isomorphic to the identity functor on discrete continuous abelian actions.
+Its components induce the identity additive maps on the coefficient groups.
