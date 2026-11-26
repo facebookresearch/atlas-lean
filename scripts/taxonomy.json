@@ -12815,6 +12815,7 @@
   "MathlibExt/NumberTheory/CommaSequence": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
   "MathlibExt/NumberTheory/ComplementarySequenceDeterminedBySubsequenceSumEquation": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
   "MathlibExt/NumberTheory/ComplementarySequences": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
+  "MathlibExt/NumberTheory/ComplementarySequencesNthNonCenteredPolygonal": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
   "MathlibExt/NumberTheory/CompleteGesselWord": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Gessel words"},
   "MathlibExt/NumberTheory/CompletelyAdditiveHeight": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Completely additive height functions"},
   "MathlibExt/NumberTheory/Composite": {"to": "NumberTheory/primes-primality", "title": "Composite numbers"},
