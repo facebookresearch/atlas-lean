@@ -1201,4 +1201,3 @@ Topics added since this subject's fields were last revised.
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
 - [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
 - [Modular Model Conductor](modular-model-conductor/README.md)
-- [Invertible Base Scalar](invertible-base-scalar/README.md)
