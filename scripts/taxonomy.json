@@ -12738,7 +12738,6 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryFortyOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectExistsPrimeGeFiveDvdSigmaBiunitaryPrimePow": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
-  "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectFactorizationTwoNeSixOfBiunitaryTriperfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectNotFiveDvdOfFactorizationTwoEqFour": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/CompletelyMultiplicative": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Completely multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/CoprimalityDensityIndependentSet": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Tuples coprime along the edges of a graph"},
