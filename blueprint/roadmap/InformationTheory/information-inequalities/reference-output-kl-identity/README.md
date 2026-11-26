@@ -9,7 +9,6 @@
 
 ## Validation
 
-- [Kl Div prod marginal eq mul measure Mutual Information](kl-div-prod-marginal-eq-mul-measure-mutu.md)
 - [Measure Mutual Information prod eq zero](measure-mutual-information-prod-eq-zero.md)
 - [Kl Div prod prod eq kl Div](kl-div-prod-prod-eq-kl-div.md)
 - [Diagonal Gaussian](diagonal-gaussian.md)
