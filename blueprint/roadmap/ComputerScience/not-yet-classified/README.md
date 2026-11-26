@@ -51,6 +51,7 @@ Topics added since this subject's fields were last revised.
 - [Moralization](moralization/README.md)
 - [Natarajan](natarajan/README.md)
 - [Neural Tangent Kernel](neural-tangent-kernel/README.md)
+- [Noise Averaging](noise-averaging/README.md)
 - [Online Convex Lower Bound](online-convex-lower-bound/README.md)
 - [Online Gradient Descent Anytime](online-gradient-descent-anytime/README.md)
 - [Path Shortening](path-shortening/README.md)
