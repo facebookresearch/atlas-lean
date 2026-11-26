@@ -34,7 +34,9 @@ proves invariance of the box
 `[0, 1]ⁿ` (`IsSolution.mem_Icc`), extinction for `R₀ < 1` (`tendsto_zero_of_lt_one`) and
 non-extinction for `R₀ > 1` with `C` irreducible (`not_tendsto_zero_of_one_lt`). The statements
 below add the critical case `R₀ = 1`, the existence and uniqueness of the endemic equilibrium,
-its global attraction, and well-posedness.
+its global attraction, and the global existence and uniqueness of solutions. Continuous
+dependence on the initial data, the remaining part of the well-posedness that Lajmanovich and
+Yorke prove (Hethcote and Yorke 1984, p. 27), is not stated.
 
 Sources: A. Lajmanovich and J. A. Yorke, "A deterministic model for gonorrhea in a
 nonhomogeneous population", Math. Biosci. 28 (1976) 221–236; statement as restated in
@@ -56,12 +58,14 @@ open Filter Topology MathlibExt.Biology.Ecology
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Well-posedness** (Lajmanovich and Yorke 1976, as restated by Hethcote and Yorke 1984, p. 27):
-on a finite index set `ι` of groups, let `C` be a contact matrix with every `C_ij ≥ 0` and `e`
-recovery rates with every `e_i > 0` (for the multigroup SIS model, `C_ij = λ_ij N_j / N_i` and
-`e_i = 1 / d_i`). For every initial state `I₀ ∈ [0, 1]ⁿ` there is a solution `I` of
-`I' = LevinsNetwork.field C e I` on `[0, ∞)` (`LevinsNetwork.IsSolution C e I`) with `I 0 = I₀`; it
-stays in `[0, 1]ⁿ`, and every solution `J` with `J 0 = I₀` agrees with `I` for all `t ≥ 0`. -/
+/-- **Global existence and uniqueness.** Lajmanovich and Yorke (1976), as restated by Hethcote
+and Yorke (1984, p. 27): on a finite index set `ι` of groups, let `C` be a contact matrix with
+every `C_ij ≥ 0` and `e` recovery rates with every `e_i > 0` (for the multigroup SIS model,
+`C_ij = λ_ij N_j / N_i` and `e_i = 1 / d_i`). For every initial state `I₀ ∈ [0, 1]ⁿ` there is a
+solution `I` of `I' = LevinsNetwork.field C e I` on `[0, ∞)` (`LevinsNetwork.IsSolution C e I`)
+with `I 0 = I₀`; it stays in `[0, 1]ⁿ`, and every solution `J` with `J 0 = I₀` agrees with `I`
+for all `t ≥ 0`. This is the source's well-posedness without its continuous dependence on the
+initial data, which is not stated here. -/
 theorem_wanted exists_unique_solution (C : Matrix ι ι ℝ) (e : ι → ℝ)
     (hC : ∀ i j, 0 ≤ C i j) (he : ∀ i, 0 < e i)
     (I₀ : ι → ℝ) (hI₀ : ∀ i, I₀ i ∈ Set.Icc (0 : ℝ) 1) :

@@ -9,7 +9,7 @@
 - [Admissible](admissible.md)
 - [Field](field.md)
 - [Susceptible DFE](susceptible-dfe.md)
-- [R0](r0.md)
+- [Basic reproduction number](r0.md)
 - [Interior Feasible](interior-feasible.md)
 - [Is Solution](is-solution.md)
 

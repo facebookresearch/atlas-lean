@@ -1,4 +1,18 @@
-# Incidence
+# Adapted incidence hypotheses
 
-The incidence hypotheses (2.1)–(2.3): `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0`,
-are strictly increasing on `[0, ∞)`, and `g` is concave on `[0, ∞)`.
+An adaptation of conditions (2.1)–(2.3), not those
+conditions: `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0` and are strictly increasing on
+`[0, ∞)`, and `g` is concave on `[0, ∞)`. For the incidence `h(S) g(I)` the source asks for
+positive partial derivatives when `S, I > 0` and for `∂²(h(S) g(I))/∂I² ≤ 0`; with `h` and `g`
+increasing, as its proof takes them, these imply the hypotheses here but not conversely, since a
+strictly increasing `C¹` function may have a zero derivative at an interior point and concavity
+needs no second derivative. The hypotheses still give what the proof of Theorem 4.1 uses: `h` and
+`g` are positive on `(0, ∞)`, so the Lyapunov functions are defined; `h(S) - h(S*)` has the sign
+of `S - S*`; `g(I) / I` is nonincreasing on `(0, ∞)`, which gives (4.5) and `g(I) ≤ g'(0) I`;
+the partial derivatives `∂V/∂S = 1 - h(S*) / h(S)` and `∂V/∂I = B (1 - g(I*) / g(I))` of the
+Lyapunov function (4.4) increase strictly, so `Q*` is its only extremum; and the equilibrium
+equations (4.3) have exactly one solution with `I* > 0` when `R₀ > 1` and none when `R₀ ≤ 1`.
+
+## Sources
+
+- Korobeinikov and Maini (2005), conditions (2.1)–(2.3), Eqs. (4.3)–(4.5) and Theorem 4.1.

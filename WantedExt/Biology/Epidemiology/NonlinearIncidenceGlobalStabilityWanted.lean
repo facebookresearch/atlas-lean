@@ -17,8 +17,14 @@ latency rate `θ > 0`:
   SEIR (4.2): `S' = μ - h(S) g(I) - μ S`,  `E' = h(S) g(I) - (θ + μ) E`,
               `I' = θ E - (δ + μ) I`.
 
-Here `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0` and are strictly increasing, and `g` is
-concave (conditions (2.1)–(2.3)). With `B = 1` for SIR and `B = (θ + μ) / θ` for SEIR, the basic
+The source asks that the incidence `f(S, I) = h(S) g(I)` vanish when `S = 0` or `I = 0` (2.1),
+have positive partial derivatives for `S, I > 0` (2.2) and satisfy `∂²f/∂I² ≤ 0` (2.3), and its
+proof takes `h` and `g` increasing. The statements below assume an adaptation of these
+conditions, `Incidence`: `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0` and are strictly
+increasing, and `g` is concave. Read with `h` and `g` increasing, the source's conditions imply
+these but not conversely, since a strictly increasing `C¹` function may have a zero derivative at
+an interior point and concavity needs no second derivative; `Incidence` lists why the proof still
+goes through. With `B = 1` for SIR and `B = (θ + μ) / θ` for SEIR, the basic
 reproduction number is `R₀ = h(1) g'(0) / (B (δ + μ))`. Their Theorem 4.1: if `R₀ > 1` the
 endemic equilibrium is globally asymptotically stable, and if `R₀ ≤ 1` the disease-free
 equilibrium `(1, 0, 0)` is globally asymptotically stable; the proofs use Volterra-type
@@ -48,8 +54,20 @@ namespace WantedExt.Biology.Epidemiology.NonlinearIncidenceGlobalStabilityWanted
 
 open Filter Topology
 
-/-- The incidence hypotheses (2.1)–(2.3): `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0`,
-are strictly increasing on `[0, ∞)`, and `g` is concave on `[0, ∞)`. -/
+/-- **Adapted incidence hypotheses.** An adaptation of conditions (2.1)–(2.3), not those
+conditions: `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0` and are strictly increasing on
+`[0, ∞)`, and `g` is concave on `[0, ∞)`. For the incidence `h(S) g(I)` the source asks for
+positive partial derivatives when `S, I > 0` and for `∂²(h(S) g(I))/∂I² ≤ 0`; with `h` and `g`
+increasing, as its proof takes them, these imply the hypotheses here but not conversely, since a
+strictly increasing `C¹` function may have a zero derivative at an interior point and concavity
+needs no second derivative. The hypotheses still give what the proof of Theorem 4.1 uses: `h` and
+`g` are positive on `(0, ∞)`, so the Lyapunov functions are defined; `h(S) - h(S*)` has the sign
+of `S - S*`; `g(I) / I` is nonincreasing on `(0, ∞)`, which gives (4.5) and `g(I) ≤ g'(0) I`;
+the partial derivatives `∂V/∂S = 1 - h(S*) / h(S)` and `∂V/∂I = B (1 - g(I*) / g(I))` of the
+Lyapunov function (4.4) increase strictly, so `Q*` is its only extremum; and the equilibrium
+equations (4.3) have exactly one solution with `I* > 0` when `R₀ > 1` and none when `R₀ ≤ 1`.
+
+Source: Korobeinikov and Maini (2005), conditions (2.1)–(2.3), Eqs. (4.3)–(4.5) and Theorem 4.1. -/
 structure Incidence (h g : ℝ → ℝ) : Prop where
   contDiffOn_h : ContDiffOn ℝ 1 h (Set.Ici 0)
   contDiffOn_g : ContDiffOn ℝ 1 g (Set.Ici 0)
@@ -97,11 +115,11 @@ def GloballyStable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] (F : V
     ∀ x : ℝ → V, IsForwardSolution F x → (∀ t, 0 ≤ t → x t ∈ D) → x 0 ∈ A →
       Tendsto x atTop (𝓝 e)
 
-/-- **Korobeinikov–Maini theorem, endemic case, SEIR** (Korobeinikov and Maini 2005,
-Theorem 4.1(i)). Under (2.1)–(2.3), with `μ > 0`, `δ ≥ 0`, `θ > 0` and `R₀ > 1`, there is a
-unique equilibrium of (4.2) in the nonnegative orthant with `I > 0`; all its coordinates are
-positive, and it is Lyapunov stable for solutions in the closed nonnegative orthant and
-attracts every such solution with `E(0) + I(0) > 0`.
+/-- **Korobeinikov–Maini theorem, endemic case, SEIR.** Theorem 4.1(i) of Korobeinikov and Maini
+(2005), under the adapted incidence hypotheses `Incidence` in place of (2.1)–(2.3). With `μ > 0`,
+`δ ≥ 0`, `θ > 0` and `R₀ > 1`, there is a unique equilibrium of (4.2) in the nonnegative orthant
+with `I > 0`; all its coordinates are positive, and it is Lyapunov stable for solutions in the
+closed nonnegative orthant and attracts every such solution with `E(0) + I(0) > 0`.
 
 Source: Korobeinikov and Maini (2005), Theorem 4.1. -/
 theorem_wanted seir_endemic_globallyStable (h g : ℝ → ℝ) (μ δ θ : ℝ) (hinc : Incidence h g)
@@ -112,11 +130,11 @@ theorem_wanted seir_endemic_globallyStable (h g : ℝ → ℝ) (μ δ θ : ℝ) 
       GloballyStable (seirField h g μ δ θ) {x | 0 ≤ x.1 ∧ 0 ≤ x.2.1 ∧ 0 ≤ x.2.2}
         {x | 0 ≤ x.1 ∧ 0 ≤ x.2.1 ∧ 0 ≤ x.2.2 ∧ 0 < x.2.1 + x.2.2} e
 
-/-- **Korobeinikov–Maini theorem, disease-free case, SEIR** (Korobeinikov and Maini 2005,
-Theorem 4.1(ii)). Under (2.1)–(2.3), with `μ > 0`, `δ ≥ 0`, `θ > 0` and `R₀ ≤ 1` (the case
-`R₀ = 1` included), the disease-free equilibrium `(1, 0, 0)` is the only equilibrium in the
-closed nonnegative orthant, and it is Lyapunov stable for and attracts every solution in the
-closed nonnegative orthant.
+/-- **Korobeinikov–Maini theorem, disease-free case, SEIR.** Theorem 4.1(ii) of Korobeinikov and
+Maini (2005), under the adapted incidence hypotheses `Incidence` in place of (2.1)–(2.3). With
+`μ > 0`, `δ ≥ 0`, `θ > 0` and `R₀ ≤ 1` (the case `R₀ = 1` included), the disease-free
+equilibrium `(1, 0, 0)` is the only equilibrium in the closed nonnegative orthant, and it is
+Lyapunov stable for and attracts every solution in the closed nonnegative orthant.
 
 Source: Korobeinikov and Maini (2005), Theorem 4.1. -/
 theorem_wanted seir_diseaseFree_globallyStable (h g : ℝ → ℝ) (μ δ θ : ℝ) (hinc : Incidence h g)
@@ -126,11 +144,12 @@ theorem_wanted seir_diseaseFree_globallyStable (h g : ℝ → ℝ) (μ δ θ : �
       GloballyStable (seirField h g μ δ θ) {x | 0 ≤ x.1 ∧ 0 ≤ x.2.1 ∧ 0 ≤ x.2.2}
         {x | 0 ≤ x.1 ∧ 0 ≤ x.2.1 ∧ 0 ≤ x.2.2} (1, 0, 0)
 
-/-- **Korobeinikov–Maini theorem, endemic case, SIR** (Korobeinikov and Maini 2005,
-Theorem 4.1(i), with `B = 1`). Under (2.1)–(2.3), with `μ > 0`, `δ ≥ 0` and `R₀ > 1`, there is
-a unique equilibrium of (4.1) in the nonnegative quadrant with `I > 0`; both its coordinates
-are positive, and it is Lyapunov stable for solutions in the closed nonnegative quadrant and
-attracts every such solution with `I(0) > 0`.
+/-- **Korobeinikov–Maini theorem, endemic case, SIR.** Theorem 4.1(i) of Korobeinikov and Maini
+(2005), with `B = 1`, under the adapted incidence hypotheses `Incidence` in place of
+(2.1)–(2.3). With `μ > 0`, `δ ≥ 0` and `R₀ > 1`, there is a unique equilibrium of (4.1) in the
+nonnegative quadrant with `I > 0`; both its coordinates are positive, and it is Lyapunov stable
+for solutions in the closed nonnegative quadrant and attracts every such solution with
+`I(0) > 0`.
 
 Source: Korobeinikov and Maini (2005), Theorem 4.1. -/
 theorem_wanted sir_endemic_globallyStable (h g : ℝ → ℝ) (μ δ : ℝ) (hinc : Incidence h g)
@@ -140,10 +159,11 @@ theorem_wanted sir_endemic_globallyStable (h g : ℝ → ℝ) (μ δ : ℝ) (hin
       GloballyStable (sirField h g μ δ) {x | 0 ≤ x.1 ∧ 0 ≤ x.2}
         {x | 0 ≤ x.1 ∧ 0 < x.2} e
 
-/-- **Korobeinikov–Maini theorem, disease-free case, SIR** (Korobeinikov and Maini 2005,
-Theorem 4.1(ii), with `B = 1`). Under (2.1)–(2.3), with `μ > 0`, `δ ≥ 0` and `R₀ ≤ 1`, the
-disease-free equilibrium `(1, 0)` is the only equilibrium in the closed nonnegative quadrant,
-and it is Lyapunov stable for and attracts every solution in the closed nonnegative quadrant.
+/-- **Korobeinikov–Maini theorem, disease-free case, SIR.** Theorem 4.1(ii) of Korobeinikov and
+Maini (2005), with `B = 1`, under the adapted incidence hypotheses `Incidence` in place of
+(2.1)–(2.3). With `μ > 0`, `δ ≥ 0` and `R₀ ≤ 1`, the disease-free equilibrium `(1, 0)` is the
+only equilibrium in the closed nonnegative quadrant, and it is Lyapunov stable for and attracts
+every solution in the closed nonnegative quadrant.
 
 Source: Korobeinikov and Maini (2005), Theorem 4.1. -/
 theorem_wanted sir_diseaseFree_globallyStable (h g : ℝ → ℝ) (μ δ : ℝ) (hinc : Incidence h g)

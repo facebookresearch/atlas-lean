@@ -1,6 +1,6 @@
 # Global stability with nonlinear incidence
 
-- [Incidence](incidence.md)
+- [Adapted incidence hypotheses](incidence.md)
 - [Slope At Zero](slope-at-zero.md)
 - [Seir Field](seir-field.md)
 - [Sir Field](sir-field.md)
