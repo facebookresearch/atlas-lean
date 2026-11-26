@@ -1,6 +1,6 @@
 # B-trees on the Word RAM in O(t log_t n) instructions
 
-There is a word-RAM implementation of classic B-trees of minimum degree $t \ge 2$ in a flat array arena with 20 registers in which lookup walks one root-to-leaf path in at most $(16 t + 21) h + 16$ instructions, where $h$ is the height, and proactive top-down insertion (splitting a full root, then splitting every full child before descending into it) runs in $O(t h)$ instructions and allocates at most two nodes. Both are correct with respect to the sorted association-list model, so lookup and insertion take $O(t \log_t n)$ time on $n$ keys.
+There is a word-RAM implementation of classic B-trees of minimum degree $t \ge 2$ in a flat array arena in which lookup walks one root-to-leaf path in $O(t(h + 1))$ instructions, where $h$ is the height, and proactive top-down insertion (splitting a full root, then splitting every full child before descending into it) runs in $O(t h)$ instructions and allocates at most two nodes. Both are correct with respect to the sorted association-list model, so lookup and insertion take $O(t \log_t n)$ time on $n$ keys.
 
 ## Proof sketch
 

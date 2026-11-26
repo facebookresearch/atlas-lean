@@ -1,9 +1,9 @@
 # Static-array Fibonacci heap on the Word RAM
 
-There is a word-RAM implementation of the indexed min-priority queue on $n$ handles in $9n + 1$ words, and of the min-priority queue with handles in $11 n + 1$ words, by a Fibonacci heap stored in static arrays, with potential $80 \cdot (\text{number of roots} + 2 \cdot \text{number of marked nodes})$ and initial potential $0$. Initialization takes at most $421$ instructions on zeroed memory (or $421(n+1)$ on arbitrary memory), and any sequence of $m_q$ queries, $m_{\mathrm{ins}}$ insertions, $m_{\mathrm{dec}}$ key decreases and $m_{\mathrm{ext}}$ minimum extractions executes in at most
+There is a word-RAM implementation of the indexed min-priority queue on $n$ handles and of the min-priority queue with handles, each in $O(n)$ words, by a Fibonacci heap stored in static arrays, with a potential proportional to the number of roots plus twice the number of marked nodes and initial potential $0$. Initialization takes $O(1)$ instructions on zeroed memory ($O(n)$ on arbitrary memory), and any sequence of $m_q$ queries, $m_{\mathrm{ins}}$ insertions, $m_{\mathrm{dec}}$ key decreases and $m_{\mathrm{ext}}$ minimum extractions executes in
 
 $$
-421 \left(m_q + m_{\mathrm{ins}} + m_{\mathrm{dec}} + m_{\mathrm{ext}} (\lfloor \log_2 n \rfloor + 1)\right)
+O\left(m_q + m_{\mathrm{ins}} + m_{\mathrm{dec}} + m_{\mathrm{ext}} (1 + \log n)\right)
 $$
 
 instructions.

@@ -1,6 +1,6 @@
 # Doubling arrays on the Word RAM
 
-A fixed word-RAM routine for appending to an array that doubles its capacity when full (allocating a zeroed block of twice the capacity and copying, in at most $15c + 14$ instructions for capacity $c$), together with a two-instruction indexed read, implements a growable array such that appending $m$ words to an initialized empty array takes at most $15 + 52 m$ instructions in total and allocates fewer than $4m$ words (old blocks are retained, not reclaimed). Each append has amortized cost at most $49$ instructions with respect to a potential proportional to $2 \cdot \mathrm{length} - \mathrm{capacity}$.
+A fixed word-RAM routine for appending to an array that doubles its capacity when full (allocating a zeroed block of twice the capacity and copying, in $O(c)$ instructions for capacity $c$), together with a constant-time indexed read, implements a growable array such that appending $m$ words to an initialized empty array takes $O(m)$ instructions in total and allocates fewer than $4m$ words (old blocks are retained, not reclaimed). Each append has amortized cost $O(1)$ instructions with respect to a potential proportional to $2 \cdot \mathrm{length} - \mathrm{capacity}$.
 
 ## Proof sketch
 

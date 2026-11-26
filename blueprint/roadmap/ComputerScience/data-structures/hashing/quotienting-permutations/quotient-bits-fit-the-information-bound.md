@@ -1,6 +1,6 @@
 # Quotients of a uniform permutation fit the information bound
 
-For all $U \ge 1$ and $n \le U$, let a key-quotienting permutation of $[U]$ split each key into a bucket among about $n$ buckets and a quotient of $q(U, n)$ bits. Then
+For $U \ge 1$ and $1 \le n \le U$, let $a = \lceil \log_2 U \rceil$ and $m = \lfloor \log_2 n \rfloor$, and let a key-quotienting permutation $[2^a] \to [2^m] \times [2^{a-m}]$ split each key of $[U]$ into one of $2^m$ buckets and a quotient of $q(U, n) = a - m$ bits. Then
 
 $$
 n \cdot q(U, n) \le \left\lceil \log_2 \binom{U}{n} \right\rceil + 2n,
@@ -10,7 +10,7 @@ and adding $n \lceil \log_2 V\rceil$ value bits stays within $\mathrm{opt}(U, V,
 
 ## Proof sketch
 
-The quotient length is $\lceil \log_2 U \rceil - \lfloor \log_2 n \rfloor$ up to rounding, and $n(\log_2 U - \log_2 n) \le \log_2 \binom{U}{n}$ by the power–binomial inequality; the rounding of the two logarithms costs at most two bits per key.
+The quotient length is $q(U, n) = \lceil \log_2 U \rceil - \lfloor \log_2 n \rfloor < \log_2(U/n) + 2$, and $n(\log_2 U - \log_2 n) \le \log_2 \binom{U}{n}$ by the power–binomial inequality; the rounding of the two logarithms costs at most two bits per key.
 
 ## Depends on
 

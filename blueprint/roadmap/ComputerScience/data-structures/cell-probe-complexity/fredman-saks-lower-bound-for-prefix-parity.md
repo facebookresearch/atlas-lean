@@ -1,9 +1,9 @@
 # Fredman–Saks lower bound for dynamic prefix parity
 
-Let a deterministic step-indexed cell-probe scheme in $S \le 2^w$ cells of $w$ bits implement dynamic prefix parity on arrays of length $n$, with every update probing at most $t_u$ cells and every query at most $t_q$ cells (worst case). Let $\beta = \max(4, 8 t_u (2w + 1))$. Then
+Let a deterministic step-indexed cell-probe scheme in $S \le 2^w$ cells of $w$ bits implement dynamic prefix parity on arrays of length $n$, with every update probing at most $t_u$ cells and every query at most $t_q$ cells (worst case). Let $\beta = \max(4, 8 t_u (2w + 1))$. Then, for an absolute constant $c$,
 
 $$
-\log_\beta n \le 128\, t_q + 1 .
+\log_\beta n \le c\, t_q + 1 .
 $$
 
 In particular $t_q = \Omega\left(\log n / \log(t_u (w+1))\right)$.

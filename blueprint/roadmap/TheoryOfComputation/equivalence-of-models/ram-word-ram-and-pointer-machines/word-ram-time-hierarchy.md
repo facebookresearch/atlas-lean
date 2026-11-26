@@ -1,6 +1,6 @@
 # A time hierarchy for the word RAM
 
-For every time-constructible, polynomially bounded $T$ with $T(n)\ge n$, there is a problem decided by one fixed word-RAM program over the additive basis within $O(T(n)^{5})$ instructions at every word size $w\ge k\log n$ (for a constant $k>0$), but by no word-RAM program within $O(T(n))$ instructions at any such family of word sizes. That is, $\mathsf{RAMTIME}(T)\subsetneq\mathsf{RAMTIME}(T^{5})$.
+For every time-constructible, polynomially bounded $T$ with $T(n)\ge n$, there is a constant $d$, independent of $T$, and a problem decided by one fixed word-RAM program over the additive basis within $O(T(n)^{d})$ instructions at every word size $w\ge k\log n$ (for a constant $k>0$), but by no word-RAM program within $O(T(n))$ instructions at any such family of word sizes. That is, $\mathsf{RAMTIME}(T)\subsetneq\mathsf{RAMTIME}(T^{d})$.
 
 ## Proof sketch
 

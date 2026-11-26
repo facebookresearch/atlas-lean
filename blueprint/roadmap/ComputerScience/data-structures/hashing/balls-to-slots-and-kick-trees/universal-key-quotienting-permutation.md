@@ -1,6 +1,6 @@
 # Universal key-quotienting permutation
 
-For $m \le a$, a *key-quotienting permutation* is a bijection $[2^a] \to [2^m] \times [2^{a-m}]$ splitting a key into a bucket index and a quotient, built so that for sets of at most $\kappa$ keys lying in one shard the bucket indices are, with probability $1 - \delta$, distributed like those of a uniformly random permutation up to small statistical distance. It is constructed from a two-round unbalanced Feistel network with double tabulation round functions on a polynomial universe, and from unbalanced three-round Naor–Reingold Feistel blocks combined with one-round Feistel sharding for small universes. Storing only the quotient saves $m$ bits per key, and over $n$ keys the total quotient length is at most $\lceil \log_2 \binom{U}{n} \rceil$ plus lower-order terms for every $U \ge n$.
+For $m \le a$, a *key-quotienting permutation* is a bijection $[2^a] \to [2^m] \times [2^{a-m}]$ splitting a key into a bucket index and a quotient, built so that for sets of at most $\kappa$ keys lying in one shard the bucket indices are, with probability $1 - \delta$, distributed like those of a uniformly random permutation up to small statistical distance. It is constructed from a two-round unbalanced Feistel network with double tabulation round functions on a polynomial universe, and from unbalanced three-round Naor–Reingold Feistel blocks combined with one-round Feistel sharding for small universes. Storing only the quotient saves $m$ bits per key, so $n$ keys take $n(a - m)$ quotient bits in total.
 
 ## Depends on
 

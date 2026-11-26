@@ -4,7 +4,7 @@ For keys in a universe of size polynomial in $n$, there is a Word-RAM implementa
 
 ## Proof sketch
 
-The work of an operation is linear in its number of probes, which has expectation at most $3$ by the double hashing bound under limited independence; evaluating the hash pair takes $O(L)$ or $O(1)$ instructions depending on the regime, and the threshold is chosen so that this cost is constant for small tables.
+The work of an operation is linear in its number of probes, which has expectation $O(1)$ by the double hashing bound under limited independence; evaluating the hash pair takes $O(L)$ or $O(1)$ instructions depending on the regime, and the threshold is chosen so that this cost is constant for small tables.
 
 ## Depends on
 

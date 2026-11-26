@@ -1,6 +1,6 @@
 # A doubling stack is a framed amortized refinement
 
-A bounded word stack with capacity bound $C$ implemented in a doubling array with a three-cell header (size, capacity, base address) is a framed refinement of the stack specification: its footprint is the header and the current array, which moves into fresh cells on growth, and its room is $4C - 2 \cdot \mathrm{capacity}$, which decreases by exactly $2c$ when capacity $c$ doubles. Every push and pop costs at most $13$ memory operations amortized, so the structure can share one memory with other framed structures.
+A bounded word stack with capacity bound $C$ implemented in a doubling array with a three-cell header (size, capacity, base address) is a framed refinement of the stack specification: its footprint is the header and the current array, which moves into fresh cells on growth, and its room is $4C - 2 \cdot \mathrm{capacity}$, which decreases by exactly $2c$ when capacity $c$ doubles. Every push and pop costs $O(1)$ memory operations amortized, so the structure can share one memory with other framed structures.
 
 ## Proof sketch
 

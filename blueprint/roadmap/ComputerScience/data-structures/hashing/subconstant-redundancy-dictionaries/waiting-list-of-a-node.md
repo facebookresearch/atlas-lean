@@ -1,6 +1,6 @@
 # Waiting list of a dictionary-tree node
 
-In the multi-level dictionary tree, each node $u$ at level $\ell$ keeps a *waiting list* of bounded capacity $2\delta_\ell$ holding pairs (identifier at level $\ell$, identifier at level $\ell - 1$) of keys that have been routed to $u$ but are not yet stored in its children, for instance while a child subtree is being rebuilt. Queries check the waiting list before descending, so the represented dictionary includes its keys; its size is charged to the redundancy budget.
+In the multi-level dictionary tree, each non-root node $u$ at level $\ell \ge 2$ keeps a *waiting list* of capacity $\overline{n}_\ell - \underline{n}_\ell \le 2\Delta_\ell$ holding pairs (identifier at level $\ell$, identifier at level $\ell - 1$) of keys that have been routed to $u$ but are stored at an ancestor of $u$, so that after a deletion from the subtree of $u$ a key stored at an ancestor can be found and pulled down to refill it. The list is auxiliary: its keys are stored at ancestors, and its at most $2\Delta_\ell (1 + I_\ell + I_{\ell-1})$ bits are charged to the redundancy budget.
 
 ## Depends on
 

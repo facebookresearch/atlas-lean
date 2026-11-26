@@ -9,7 +9,7 @@ under the same parameter conditions as the cell-probe bounds, with $c > 0$ depen
 
 ## Proof sketch
 
-Simulate the Word-RAM implementation by a cell-probe scheme using one extra cell per persistent register; the simulation adds at most $2 r_{\max}$ probes per operation. Since an implementation must execute at least one non-halting instruction per operation, this overhead is absorbed into the constant, and the cell-probe lower bounds apply.
+Simulate the Word-RAM implementation by a cell-probe scheme using one extra cell per persistent register; the simulation adds $O(r_{\max})$ probes per operation. Since an implementation must execute at least one non-halting instruction per operation, this overhead is absorbed into the constant, and the cell-probe lower bounds apply.
 
 ## Depends on
 

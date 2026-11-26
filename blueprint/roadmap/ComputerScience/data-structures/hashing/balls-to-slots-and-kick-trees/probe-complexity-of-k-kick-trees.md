@@ -3,8 +3,8 @@
 For the standard $k$-kick tree with $2^{m_0}$ slots and a 3-wise independent hash function:
 
 1. every insertion moves at most $k + 1$ balls (switching cost at most $k+1$), deterministically;
-2. inserting a new ball into a valid configuration holding fewer than $2^{m_0}$ balls gives it expected probe complexity at most $96 \max(\log^{(k+1)} 2^{m_0}, 1)$;
-3. over any valid operation history fixed in advance, the expected total probe complexity is at most $96\, |A| \max(\log^{(k+1)} 2^{m_0}, 1)$, where $A$ is the set of balls present at the end.
+2. inserting a new ball into a valid configuration holding fewer than $2^{m_0}$ balls gives it expected probe complexity $O(\max(\log^{(k+1)} 2^{m_0}, 1))$;
+3. over any valid operation history fixed in advance, the expected total probe complexity is $O(|A| \max(\log^{(k+1)} 2^{m_0}, 1))$, where $A$ is the set of balls present at the end.
 
 With $O(m)$-wise independence and a partition of the history into sub-histories with disjoint footprints, the total probe complexity also concentrates around this bound with polynomially small tail probability (via a $2m$-th moment bound).
 

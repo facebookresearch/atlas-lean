@@ -1,6 +1,6 @@
 # Cuckoo hashing on the Word RAM in expected amortized constant time
 
-For keys in a universe of size at most $\max(n,4)^{c}$ for a constant $c$, there is a Word-RAM implementation of the insert-only bounded dictionary with capacity $n$ by two-table cuckoo hashing, using $O_c(n + 1)$ words: two sub-tables of size at least $32 \max(n,4)$, a hash pair that is $(2L+2)$-wise independent polynomial hashing for small $n$ and double tabulation for large $n$, and arrays recording the insertion order. Lookups make two probes in the worst case. Against every operation sequence fixed independently of the seeds, the expected total number of instructions is $O(1)$ per operation, amortized over the sequence.
+For keys in a universe of size at most $\max(n,4)^{c}$ for a constant $c$, there is a Word-RAM implementation of the insert-only bounded dictionary with capacity $n$ by two-table cuckoo hashing, using $O_c(n + 1)$ words: two sub-tables of size at least $32 \max(n,4)$, a hash pair that is $(2L+2)$-wise independent polynomial hashing, for an eviction cap $L = O(\log n)$, for small $n$ and double tabulation for large $n$, and arrays recording the insertion order. Lookups make two probes in the worst case. Against every operation sequence fixed independently of the seeds, the expected total number of instructions is $O(1)$ per operation, amortized over the sequence.
 
 ## Proof sketch
 

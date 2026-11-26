@@ -1,6 +1,6 @@
 # Fibonacci heap as an amortized refinement over memory
 
-A Fibonacci heap on $n$ handles stored as a record of $9n + 5$ named memory cells implements the indexed min-priority queue as an amortized refinement over word memory, with potential proportional to (number of roots $+ 2 \cdot$ number of marked nodes): insertion, decrease-key, minimum and membership have amortized cost $O(1)$ memory operations, and extract-min on a queue holding $m$ handles has amortized cost $O(\log m)$. The heap reads and writes only its own cells, so it can share one memory with other framed structures; zeroed memory is an empty heap.
+A Fibonacci heap on $n$ handles stored as a record of $O(n)$ named memory cells implements the indexed min-priority queue as an amortized refinement over word memory, with potential proportional to (number of roots $+ 2 \cdot$ number of marked nodes): insertion, decrease-key, minimum and membership have amortized cost $O(1)$ memory operations, and extract-min on a queue holding $m$ handles has amortized cost $O(\log m)$. The heap reads and writes only its own cells, so it can share one memory with other framed structures; zeroed memory is an empty heap.
 
 ## Proof sketch
 

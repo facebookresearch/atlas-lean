@@ -1,6 +1,6 @@
 # Memory-operation costs of an indexed binary heap
 
-An indexed binary min-heap over a word-addressed memory, with position and key arrays, implements the indexed min-priority queue on $n$ handles. Sift-up from position $k$ repairs one order defect within $8 \lfloor \log_2 k \rfloor + 4$ memory operations and sift-down within $10(\lfloor \log_2 S \rfloor - \lfloor \log_2 k \rfloor) + 6$ on a heap of size $S$, so every operation costs at most $14(\lfloor \log_2 n \rfloor + 1)$ memory operations. The heap reads and writes only its own region, so it composes with other framed structures in one memory.
+An indexed binary min-heap over a word-addressed memory, with position and key arrays, implements the indexed min-priority queue on $n$ handles. Sift-up from position $k$ repairs one order defect within $O(1 + \log k)$ memory operations and sift-down within $O(1 + \log S - \log k)$ on a heap of size $S$, so every operation costs $O(1 + \log n)$ memory operations. The heap reads and writes only its own region, so it composes with other framed structures in one memory.
 
 ## Proof sketch
 

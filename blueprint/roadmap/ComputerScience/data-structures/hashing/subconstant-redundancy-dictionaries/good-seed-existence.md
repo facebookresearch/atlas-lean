@@ -1,6 +1,6 @@
 # Existence of good seed assignments for the dictionary tree
 
-In the polynomial-universe regime, for every key set of size at most $n$ the probability, over independently drawn node seeds, that some node of the multi-level dictionary tree receives more keys than its capacity or produces an identifier collision is less than $1$; in particular a seed assignment under which every node's load is within capacity exists, and the tree can be built bottom-up from any such assignment.
+In the polynomial-universe regime, for every key set of size at most $n$ the probability, over independently drawn node seeds, that some node of the multi-level dictionary tree overflows or underflows (receives more than $\overline{n}_\ell$ or fewer than $\underline{n}_\ell$ keys) or produces an identifier collision is less than $1$; in particular a good seed assignment exists, and the tree can be built bottom-up from any such assignment.
 
 ## Proof sketch
 

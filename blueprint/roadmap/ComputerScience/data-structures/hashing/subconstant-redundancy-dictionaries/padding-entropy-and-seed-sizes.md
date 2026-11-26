@@ -1,10 +1,10 @@
 # Padding entropy and seed sizes in the dictionary tree
 
-In the multi-level dictionary tree with effective redundancy parameter $R'$, padding the universe with sentinels to the size required by the schedule increases $\log_2 \binom{U}{n} + n \log_2 V$ by at most $2R' + 1$ bits; at every non-leaf level $\ell$ the squared bit length of the child-router seed is at most the level's minimum node capacity, so seeds use a vanishing fraction of a node's space; and the identifier-compressor seeds, waiting lists, leaf deficits, inner tables and root directory each contribute $O(R')$ bits in total.
+In the multi-level dictionary tree, rounding the universe $[U]$ up to $[U']$ increases $\log_2 \binom{U}{n} + n \log_2 V$ by $o(R)$ bits; the child-router seed of a level-$\ell$ node takes $O(n_\ell^{1/25})$ bits, a vanishing fraction of the $\Theta(n_\ell^{7/9})$ bits of the node's waiting list; and, summed over the tree, the minimaps contribute $O(n / r^9)$ redundant bits, the waiting lists $O(n / r^2)$, the non-root storage tables $O(n \log r / r^3)$ and the root storage tables $O(n / \log^2 n)$, each $O(R)$ for $r = n / R$.
 
 ## Proof sketch
 
-Sentinels are a lower-order fraction of the keys, chosen so that their entropy contribution is at most $2R'+1$ bits. The seed and waiting-list bounds follow from the parameter schedule, in which node capacities shrink slowly enough that per-node overheads sum to $O(R')$ over all levels.
+Since $U' - U < B_0 2^{I_1} = n \cdot \mathrm{polylog}(n)$ and $U \ge n^{1+\alpha_{\min}}$, rounding changes $\log_2 \binom{U}{n}$ by at most $n \log_2(U'/U) = O(n^{1-\alpha_{\min}} \mathrm{polylog}(n))$ bits. The router family of Li, Liang, Yu and Zhou (Lemma 5.1) with $\varepsilon = 1/100$ and $L = I_\ell$ stores a seed in $O(2^{I_\ell/100})$ bits. A level-$\ell$ waiting list holds at most $2\Delta_\ell$ entries of $O(\log n_{\ell-1})$ bits, and there are $n / n_\ell$ such nodes; the other terms are the per-node redundancies of the minimaps and storage tables times the number of nodes (Section 5.2).
 
 ## Depends on
 

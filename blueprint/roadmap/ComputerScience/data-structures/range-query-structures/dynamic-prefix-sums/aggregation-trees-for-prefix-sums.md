@@ -1,6 +1,6 @@
 # Balanced aggregation trees for dynamic prefix sums on the Word RAM
 
-For $n = 2^h$, a complete binary tree whose leaves are $A_0, \dots, A_{n-1}$ and whose internal nodes store the sums of their subtrees, laid out in preorder in $2n - 1$ contiguous words, supports $\mathrm{sum}(\ell)$ (adding the left siblings along the path to leaf $\ell$) and $\mathrm{add}(i, \delta)$ (updating the path from the root to leaf $i$). One fixed fourteen-register word-RAM program dispatches both operations in at most $13(h + 1) + 12 = O(\log n)$ instructions each, provided all sums fit in a word, and modifies no memory outside the tree.
+For $n = 2^h$, a complete binary tree whose leaves are $A_0, \dots, A_{n-1}$ and whose internal nodes store the sums of their subtrees, laid out in preorder in $2n - 1$ contiguous words, supports $\mathrm{sum}(\ell)$ (adding the left siblings along the path to leaf $\ell$) and $\mathrm{add}(i, \delta)$ (updating the path from the root to leaf $i$). A word-RAM program performs both operations in $O(\log n)$ instructions each, provided all sums fit in a word, and modifies no memory outside the tree.
 
 ## Proof sketch
 

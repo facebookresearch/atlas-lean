@@ -1,6 +1,6 @@
 # Linear-time LRAT checking on the word RAM
 
-There is a deterministic word-RAM program that, given an encoded CNF formula $\varphi$ and an encoded LRAT certificate $\pi$ (RUP steps with hints, and deletions; RAT steps are rejected), halts with output $1$ exactly when the LRAT checker accepts $\pi$ for $\varphi$ and with $0$ otherwise, within $60L + 20W + 21$ instructions, where $L$ is the input length in words and $W$ is the total length of the clauses named by the hints. Since $W$ is at most the number of hints times the maximum clause width $w$, the running time is $O(F + C \cdot \max(1, w))$ for $F$ and $C$ the encoded lengths of formula and certificate.
+There is a deterministic word-RAM program that, given an encoded CNF formula $\varphi$ and an encoded LRAT certificate $\pi$ (RUP steps with hints, and deletions; RAT steps are rejected), halts with output $1$ exactly when the LRAT checker accepts $\pi$ for $\varphi$ and with $0$ otherwise, within $O(L + W)$ instructions, where $L$ is the input length in words and $W$ is the total length of the clauses named by the hints. Since $W$ is at most the number of hints times the maximum clause width $w$, the running time is $O(F + C \cdot \max(1, w))$ for $F$ and $C$ the encoded lengths of formula and certificate.
 
 ## Proof sketch
 

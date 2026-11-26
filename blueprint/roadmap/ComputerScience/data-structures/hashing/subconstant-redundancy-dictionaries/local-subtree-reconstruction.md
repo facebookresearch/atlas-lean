@@ -1,6 +1,6 @@
 # Local subtree reconstruction in the dictionary tree
 
-In the multi-level dictionary tree, given replacement seeds that agree with the current seeds outside the subtree of a node $u$ at level $\ell_0$ and are good on the padded dictionary, rebuilding the subtree of $u$ canonically and splicing it in changes only that subtree and the metadata of the $\ell_0 - 1$ strict ancestors of $u$; all other subtrees and root trees are unchanged, the represented dictionary is unchanged, and the sentinel counts are preserved.
+In the multi-level dictionary tree, given replacement seeds that agree with the current seeds outside the subtree of a node $u$ at level $\ell_0$ and are good on the current key set, rebuilding the subtree of $u$ canonically and splicing it in changes only that subtree and the metadata of the $\ell_0 - 1$ strict ancestors of $u$; all other subtrees and root trees are unchanged, and the represented dictionary is unchanged.
 
 ## Proof sketch
 

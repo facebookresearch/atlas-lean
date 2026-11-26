@@ -1,10 +1,10 @@
 # Linear probing with 5-wise independence takes expected constant probes
 
-Consider linear probing in a table of $2^M$ slots with $2^M \ge 8 n$ (load factor at most $1/8$), storing a set of at most $n$ keys inserted in any order fixed independently of the hash function, where $h$ is drawn from a 5-wise independent family into $[2^M]$. Then for every key $x$ (present or absent) the expected number of slots inspected by a search for $x$, and by an insertion of $x$, is at most $288$. On the Word RAM, with $h$ a 5-wise independent polynomial hash, this gives a dictionary with expected $O(1)$ time per operation in $O(n)$ words.
+Consider linear probing in a table of $2^M$ slots with $2^M \ge 8 n$ (load factor at most $1/8$), storing a set of at most $n$ keys inserted in any order fixed independently of the hash function, where $h$ is drawn from a 5-wise independent family into $[2^M]$. Then for every key $x$ (present or absent) the expected number of slots inspected by a search for $x$, and by an insertion of $x$, is at most an absolute constant, independent of $n$ and $M$. On the Word RAM, with $h$ a 5-wise independent polynomial hash, this gives a dictionary with expected $O(1)$ time per operation in $O(n)$ words.
 
 ## Proof sketch
 
-A probe sequence of length $\ell$ from $h(x)$ implies an occupied cyclic interval around $h(x)$ of length at least $\ell$, which contains an aligned dyadic interval of scale $j \approx \log_2 \ell$ holding at least $2^{j-1}$ keys, i.e. an overloaded interval at scale $j$. By the fourth-moment bound, scale $j$ is overloaded with probability at most $288 / 4^j$; summing $2^j$ times this over the scales gives the constant.
+A probe sequence of length $\ell$ from $h(x)$ implies an occupied cyclic interval around $h(x)$ of length at least $\ell$, which contains an aligned dyadic interval of scale $j \approx \log_2 \ell$ holding at least $2^{j-1}$ keys, i.e. an overloaded interval at scale $j$. By the fourth-moment bound, scale $j$ is overloaded with probability at most $c / 4^j$ for an absolute constant $c$; summing $2^j$ times this over the scales gives the constant.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Fenwick trees on the Word RAM
 
-For every length $n$, a Fenwick tree stored in exactly $n$ words is realized by one fixed twelve-register word-RAM program that answers $\mathrm{sum}(\ell)$ and performs $\mathrm{add}(i, \delta)$ in at most $13 \lceil \log_2 (n + 1) \rceil + 12$ instructions each, using the bitwise lowest-set-bit identities, and that requires only that $b + n$ fits in a word for base address $b$ (the upward step compares $n - m < \mathrm{lowbit}(m)$ before forming $m + \mathrm{lowbit}(m)$). The tree for an initial list of length $n$ is built in place in at most $17n + 5$ instructions.
+For every length $n$, a Fenwick tree stored in exactly $n$ words is realized by a word-RAM program that answers $\mathrm{sum}(\ell)$ and performs $\mathrm{add}(i, \delta)$ in $O(\log n)$ instructions each, using the bitwise lowest-set-bit identities, and that requires only that $b + n$ fits in a word for base address $b$ (the upward step compares $n - m < \mathrm{lowbit}(m)$ before forming $m + \mathrm{lowbit}(m)$). The tree for an initial list of length $n$ is built in place in $O(n)$ instructions.
 
 ## Proof sketch
 

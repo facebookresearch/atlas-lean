@@ -1,6 +1,6 @@
 # Resizable succinct dynamic dictionary
 
-On the resizable Word RAM there is a randomized implementation of the dynamic dictionary over keys $[U]$ (with no fixed capacity) whose resting space after each operation, when $n$ keys are stored, and whose peak space during capacity migrations are both $\mathrm{OPT}(U, V, n)$ bits plus lower-order terms, and in which every operation takes expected amortized $O(1)$ instructions against operation sequences fixed in advance. Capacity changes are handled by epochs: when the number of keys leaves the current epoch's range, the table is migrated in place to new parameters by streaming its items, so that the old and new representations never coexist beyond the information-theoretic bound.
+On the resizable Word RAM there is a randomized implementation of the dynamic dictionary over keys $[U]$ (with no fixed capacity) whose resting space after each operation, when $n$ keys are stored, and whose peak space during capacity migrations are both at most $\mathrm{OPT}(U, V, n) + O(n \log \log n)$ bits, and in which every operation takes expected amortized $O(1)$ instructions against operation sequences fixed in advance. Capacity changes are handled by epochs: when the number of keys leaves the current epoch's range, the table is migrated in place to new parameters by streaming its items, so that the old and new representations never coexist beyond the information-theoretic bound.
 
 ## Proof sketch
 

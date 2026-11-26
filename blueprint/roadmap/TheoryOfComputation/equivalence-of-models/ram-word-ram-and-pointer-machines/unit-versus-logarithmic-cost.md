@@ -1,6 +1,6 @@
 # Repeated squaring separates unit-cost and logarithmic-cost RAM time
 
-A RAM with multiplication computes $k\mapsto 2^{2^{k}}$ by repeated squaring in exactly $4k+5$ instructions under the **unit-cost** measure (one unit per instruction), whereas under the **logarithmic-cost** measure (each instruction charged the bit lengths of its operands) any computation producing $2^{2^k}$ costs at least $2^{k}$. Hence unit cost with multiplication is not polynomially related to logarithmic cost or to Turing-machine time; for additive RAMs (no multiplication) the two measures are polynomially related.
+A RAM with multiplication computes $k\mapsto 2^{2^{k}}$ by repeated squaring in $O(k)$ instructions under the **unit-cost** measure (one unit per instruction), whereas under the **logarithmic-cost** measure (each instruction charged the bit lengths of its operands) any computation producing $2^{2^k}$ costs at least $2^{k}$. Hence unit cost with multiplication is not polynomially related to logarithmic cost or to Turing-machine time; for additive RAMs (no multiplication) the two measures are polynomially related.
 
 ## Proof sketch
 

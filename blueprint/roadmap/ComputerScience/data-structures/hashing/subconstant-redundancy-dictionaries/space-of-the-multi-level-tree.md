@@ -1,16 +1,16 @@
 # Space of the multi-level dictionary tree is OPT + O(R)
 
-There is a universal constant $C$ such that, for every admissible parameter regime (polynomial universe $n^{1+\alpha_{\min}} \le U \le n^{1+\alpha_{\max}}$, any value bound $V \ge 1$, and redundancy parameter $R$ in the allowed range below $n$), the total number of bits of the canonical multi-level dictionary tree — leaf minimaps, inner storage tables, metadata, waiting lists and all hash seeds — is at most
+There are constants $C$ and $n_0$, depending only on $\alpha_{\min}$ and $\alpha_{\max}$, such that for every $n \ge n_0$, every universe size $U$ with $n^{1+\alpha_{\min}} \le U \le n^{1+\alpha_{\max}}$, every value bound $V \ge 1$ and every redundancy parameter $R$ with $n / (\log_2 n)^{0.1} \le R \le n / 2^{\log^* n}$ (the regime $R > n / \log^{0.1} n$ of Theorem 1.1 of Li, Liang, Yu and Zhou, constructed in their Section 5), the total number of bits of the canonical multi-level dictionary tree — leaf minimaps, inner storage tables, metadata, waiting lists and all hash seeds — is at most
 
 $$
 \log_2 \binom{U}{n} + n \log_2 V + C \cdot R .
 $$
 
-In particular, with $R = o(n)$ the dictionary wastes $o(1)$ bits per key.
+In particular, with $R = o(n)$ in this range the dictionary wastes $o(1)$ bits per key.
 
 ## Proof sketch
 
-Information is conserved down the tree: the bits of a node's children, together with the routing information implicit in which child stores a key, add up to the node's share of $\log_2\binom{U}{n} + n\log_2 V$, up to slack terms. Each leaf wastes at most three bits, and the slack of inner nodes, waiting lists and seeds is bounded by the parameter schedule so that the sum over the whole tree is $O(R)$.
+Information is conserved down the tree: the bits of a node's children, together with the routing information implicit in which child stores a key, add up to the node's share of $\log_2\binom{U}{n} + n\log_2 V$, up to slack terms. Each leaf wastes at most three bits, and the slack of storage tables, waiting lists, rounding and seeds sums to $O(R)$ over the whole tree.
 
 ## Depends on
 
@@ -19,8 +19,9 @@ Information is conserved down the tree: the bits of a node's children, together 
 
 ## Proof depends on
 
-- [A full minimap wastes at most three bits](full-minimap-wastes-two-bits.md)
+- [A full minimap wastes at most three bits](full-minimap-wastes-three-bits.md)
 - [Existence of good seed assignments for the dictionary tree](good-seed-existence.md)
+- [Padding entropy and seed sizes in the dictionary tree](padding-entropy-and-seed-sizes.md)
 
 ## Sources
 
