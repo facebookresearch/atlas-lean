@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.AlgebraicGeometry.MeromorphicGroupFactorizationPuncturedParameterUnit
+import MathlibExt.AlgebraicGeometry.MeromorphicCoefficientCompletion
 
 /-!
 Tests for the punctured parameter unit: a right inverse and the finite-pole map.
@@ -20,7 +21,6 @@ open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry
 open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
 open AnalyticMeromorphicCoordinates MeromorphicCoefficientCompletion
-open FramedMeromorphicGroupModels
 
 noncomputable section
 

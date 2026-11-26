@@ -7,9 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import MathlibExt.AlgebraicGeometry.FramedMeromorphicGroupModels
-public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
+public import MathlibExt.AlgebraicGeometry.AnalyticMeromorphicCoordinates
 
 /-!
 # Punctured parameter unit
@@ -30,8 +28,7 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits Opposite
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry
 open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
-open AnalyticMeromorphicCoordinates MeromorphicCoefficientCompletion
-open FramedMeromorphicGroupModels
+open AnalyticMeromorphicCoordinates
 
 /-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
 $U$ a puncture of $d$ (an open embedding with isomorphic stalks onto the complement of the image
