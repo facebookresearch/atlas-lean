@@ -7,7 +7,9 @@ Let $\varphi(x)$ be a quantifier-free formula in negation normal form over the i
 - $\varphi_{-\infty}(j)$ be $\varphi$ with each atom $i \le x + \langle \vec k, \vec y \rangle$ replaced by $\bot$, each atom $i \le -x + \langle \vec k, \vec y \rangle$ by $\top$, and $x$ replaced by $j$ in the remaining atoms.
 
 Then
+
 $$\exists x \in \mathbb Z\ \varphi(x) \iff \bigvee_{j=0}^{\delta - 1} \varphi_{-\infty}(j) \ \vee\ \bigvee_{l \in L} \bigvee_{j=0}^{\delta - 1} \varphi(l + j).$$
+
 An arbitrary linear formula is brought into this form by multiplying each atom so that every coefficient of $x$ becomes $\pm m$ for the least common multiple $m$ of these coefficients, replacing $m x$ by $x$ and adding the conjunct $m \mid x$. Applied to innermost quantifiers, this gives Cooper's quantifier elimination procedure for Presburger arithmetic. The theorem is due to D. C. Cooper (1972).
 
 ## Sources
