@@ -1,7 +1,7 @@
 # Unwinding theorem for intransitive policies
 
-Let $M$ be a view-partitioned system, with an equivalence relation $\sim_u$ on states for each domain $u$, and $\rightsquigarrow$ a policy. $M$ is *weakly step consistent* if
-$s \sim_u t$ and $s \sim_{\mathrm{dom}(a)} t$ imply $\mathrm{step}(s, a) \sim_u \mathrm{step}(t, a)$; output consistency ($s \sim_{\mathrm{dom}(a)} t$ implies
+Let $M$ be a view-partitioned system, with an equivalence relation $\sim_u$ on states for each domain $u$, and $\rightsquigarrow$ a policy, and recall
+[weak step consistency](weak-step-consistency.md); output consistency ($s \sim_{\mathrm{dom}(a)} t$ implies
 $\mathrm{output}(s, a) = \mathrm{output}(t, a)$) and local respect ($\mathrm{dom}(a) \not\rightsquigarrow u$ implies $s \sim_u \mathrm{step}(s, a)$) are as in the
 [unwinding theorem for noninterference](../information-flow/unwinding-theorem-for-noninterference.md).
 
@@ -14,7 +14,13 @@ specializes it to $s = t = s_0$.
 ## Depends on
 
 - [Security for intransitive policies](security-for-intransitive-policies.md)
+- [Weak step consistency](weak-step-consistency.md)
 - [Unwinding theorem for noninterference](../information-flow/unwinding-theorem-for-noninterference.md)
+
+## Proof depends on
+
+- [Runs agree with their intransitive purges](runs-agree-with-their-intransitive-purges.md)
+- [Agreement with the intransitive purge implies security](ipurge-agreement-implies-security.md)
 
 ## Sources
 

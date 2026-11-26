@@ -1,7 +1,7 @@
 # Secrecy is undecidable for unboundedly many roles and nonces
 
 **Theorem (Durgin, Lincoln, Mitchell and Scedrov).** For every fact size $k$ greater than some small constant, the secrecy problem $S_{\mathrm{size}=k}$ for
-[protocol theories](protocol-theories-in-multiset-rewriting.md) is undecidable: given a protocol theory $T$ with the standard intruder and a secret $S$, it is undecidable
+[restricted protocol theories](restricted-protocol-theories-and-secrecy-problems.md) is undecidable: given a protocol theory $T$ with the standard intruder and a secret $S$, it is undecidable
 whether some run with any number of role instances and nonces, and facts of size at most $k$, reveals $S$. Undecidability holds even when data constructors,
 message depth, message width, the number of distinct roles and role length are bounded.
 
@@ -10,7 +10,7 @@ reduction from the halting problem for two-counter machines.
 
 ## Depends on
 
-- [Protocol theories in multiset rewriting](protocol-theories-in-multiset-rewriting.md)
+- [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)
 
 ## Sources
 

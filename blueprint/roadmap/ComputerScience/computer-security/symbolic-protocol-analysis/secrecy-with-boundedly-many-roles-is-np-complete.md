@@ -1,11 +1,11 @@
 # Secrecy with boundedly many role instances is NP-complete
 
-**Theorem (Durgin, Lincoln, Mitchell and Scedrov).** For [protocol theories](protocol-theories-in-multiset-rewriting.md), the secrecy problem $S_{\mathrm{role}b}$, in which the
+**Theorem (Durgin, Lincoln, Mitchell and Scedrov).** For [restricted protocol theories](restricted-protocol-theories-and-secrecy-problems.md), the secrecy problem $S_{\mathrm{role}b}$, in which the
 number $r$ of role instances and the fact size $k$ are given while the number of nonces is unbounded, is [NP-complete](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md).
 
 ## Depends on
 
-- [Protocol theories in multiset rewriting](protocol-theories-in-multiset-rewriting.md)
+- [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
 ## Sources

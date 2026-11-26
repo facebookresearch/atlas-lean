@@ -1,13 +1,13 @@
 # Secrecy with boundedly many nonces is DEXPTIME-complete
 
-**Theorem (Durgin, Lincoln, Mitchell and Scedrov).** For [protocol theories](protocol-theories-in-multiset-rewriting.md) with no disequality tests, the secrecy problem
+**Theorem (Durgin, Lincoln, Mitchell and Scedrov).** For [restricted protocol theories](restricted-protocol-theories-and-secrecy-problems.md) with no disequality tests, the secrecy problem
 $S_{\mathrm{nonce}b}$, in which the number $n$ of protocol nonces and the fact size $k$ are given while the number of role instances is unbounded, is complete for
 deterministic exponential time: it belongs to [EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md) (DEXPTIME), and every decision problem in EXP reduces to it by a
 polynomial-time many-one reduction.
 
 ## Depends on
 
-- [Protocol theories in multiset rewriting](protocol-theories-in-multiset-rewriting.md)
+- [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)
 - [The class EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md)
 
 ## Sources
