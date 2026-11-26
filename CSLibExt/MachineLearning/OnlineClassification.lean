@@ -29,7 +29,7 @@ the instance `S[t].1`. The same map serves every round and every sequence.
   whose mistakes are CSLib's `PACLearning.empiricalMiscount` (`mistakes_const`), and the halving
   algorithm is the learner `Halving.halvingPredict C` (`halvingMistakes_eq_mistakes`).
 * `expectedMistakes A S`: a randomized learner `A` outputs `p_t ∈ [0, 1]` and then predicts `1`
-  with probability `p_t`; `expectedMistakes A S = ∑_t |p_t - y_t|`.
+  with probability `p_t`; its expected number of mistakes is `∑_t |p_t - y_t|`.
   `integral_mistakes_eq_expectedMistakes`: if the predictions are independent, `ŷ_t` following
   the Bernoulli distribution of parameter `p_t`, the expected number of mistakes is
   `expectedMistakes A S`. `expectedMistakes_le` and `expectedMistakes_lt`: it is at most the
@@ -49,7 +49,11 @@ A deterministic learner's predictions are functions of the earlier examples, so 
 environment, which chooses `x_t` and `y_t` after seeing the earlier predictions, produces a single
 sequence `S` against it: a statement about every sequence covers such environments. The
 expectation over a randomized learner's predictions is taken on a fixed sequence, as an oblivious
-environment chooses it in advance.
+environment chooses it in advance. This loses nothing against an environment that also sees the
+learner's earlier random predictions, but not that of the current round (Shalev-Shwartz and
+Ben-David, Section 21.2): `p_t` depends only on the earlier examples, so each round still costs
+`|p_t - y_t|` in expectation given the past, and the expected regret is at most the largest regret
+on a fixed sequence of the same length.
 
 ## References
 
@@ -79,10 +83,19 @@ Labels are Booleans, false standing for $0$ and true for $1$. -/
 def mistakes (A : List (X × Bool) → X → Bool) (S : List (X × Bool)) : ℕ :=
   ∑ t : Fin S.length, if A (S.take t) S[t].1 = S[t].2 then 0 else 1
 
-/- The expected number of mistakes `∑_t |p_t - y_t|` of a randomized online learner `A` on `S`,
-where `p_t = A (S.take t) S[t].1` is the probability with which it predicts `1` in the round `t`
-(see `integral_mistakes_eq_expectedMistakes`). -/
-@[nolint docBlame]
+/-- **Expected number of mistakes of a randomized online learner.** In online binary
+classification over rounds $t = 1, \dots, T$, the environment reveals an instance $x_t \in X$, the
+learner outputs a prediction, and then the label $y_t \in \{0, 1\}$ is revealed. A randomized
+online learner $A$ outputs $p_t = A((x_1, y_1), \dots, (x_{t-1}, y_{t-1}); x_t) \in [0, 1]$,
+computed from the earlier examples and the current instance, and then predicts $1$ with
+probability $p_t$. Its expected number of mistakes on the sequence
+$S = ((x_1, y_1), \dots, (x_T, y_T))$ is
+$\sum_{t=1}^T \lvert p_t - y_t \rvert$, the absolute loss of the predictions $p_t$. Reading this
+sum as an expectation is justified by `integral_mistakes_eq_expectedMistakes`: when the
+predictions $\hat y_t$ are independent and each equals $1$ with probability $p_t$, the expected
+number of rounds with $\hat y_t \ne y_t$ is this sum.
+
+Labels are Booleans, false standing for $0$ and true for $1$. -/
 noncomputable def expectedMistakes (A : List (X × Bool) → X → I) (S : List (X × Bool)) : ℝ :=
   ∑ t : Fin S.length, |(A (S.take t) S[t].1 : ℝ) - S[t].2.toNat|
 
@@ -165,10 +178,11 @@ theorem integral_bernoulliMeasure_ne (p : I) (y : Bool) :
   · simp [abs_of_nonneg p.2.1]
   · simp [abs_of_nonpos (sub_nonpos.2 p.2.2)]
 
-/-- **Expected mistakes of a randomized online learner.** Let $A$ be a randomized online learner,
-which in round $t$ outputs $p_t = A((x_1, y_1), \dots, (x_{t-1}, y_{t-1}); x_t) \in [0, 1]$ from
-the earlier examples and the current instance, and let $S = ((x_1, y_1), \dots, (x_T, y_T))$ be a
-sequence with labels $y_t \in \{0, 1\}$, fixed in advance. If the predictions
+/-- **Expected mistakes of independent Bernoulli predictions.** Let $A$ be a randomized online
+learner, which in round $t$ outputs
+$p_t = A((x_1, y_1), \dots, (x_{t-1}, y_{t-1}); x_t) \in [0, 1]$ from the earlier examples and the
+current instance, and let $S = ((x_1, y_1), \dots, (x_T, y_T))$ be a sequence with labels
+$y_t \in \{0, 1\}$, fixed in advance. If the predictions
 $\hat y_1, \dots, \hat y_T$ are independent and each $\hat y_t$ equals $1$ with probability $p_t$
 and $0$ otherwise, then the expected number of mistakes is
 
