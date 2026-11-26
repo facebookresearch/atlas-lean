@@ -13203,6 +13203,7 @@
   "MathlibExt/NumberTheory/LurothBorelBernstein": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConsecutiveDigitsIntegral": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConvergent": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
+  "MathlibExt/NumberTheory/LurothDiophantineApproximation": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LucasnomialSum": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity/BinaryUpperBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
