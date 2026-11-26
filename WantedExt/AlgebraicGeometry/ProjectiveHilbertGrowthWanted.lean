@@ -18,10 +18,9 @@ actual standard-graded quotient pieces. The generator bound is explicit;
 the persistence assertion does not apply to an arbitrary homogeneous ideal
 without that bound. Macaulay expansions exist for every positive degree
 (`MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.nonempty`), so
-the hypotheses on `E` can always be met. Macaulay's growth bound
-`hilbertFunction I (d + 1) ≤ E.successor` is proved as
-`MathlibExt.RingTheory.ProjectiveHilbertGrowth.macaulay_growth` in
-`MathlibExt/RingTheory/MvPolynomial/MacaulayGrowth.lean`.
+the hypotheses on `E` can always be met. For Macaulay's growth bound
+`hilbertFunction I (d + 1) ≤ E.successor`, see
+`MathlibExt.RingTheory.ProjectiveHilbertGrowth.macaulay_growth`.
 
 References:
 * F. S. Macaulay, *Some properties of enumeration in the theory of modular

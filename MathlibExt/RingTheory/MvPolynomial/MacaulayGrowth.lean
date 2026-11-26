@@ -54,8 +54,8 @@ The proof passes to lexicographic leading monomials: the standard monomials of d
 have all their degree-`d` divisors standard, so the bound follows from
 `Finsupp.card_le_macaulayPow_card_of_forall_sub_single_mem`.
 
-The same bound is also stated through the projective Hilbert-growth API of
-`MathlibExt/RingTheory/ProjectiveHilbertGrowth.lean`: for a homogeneous ideal `I` of
+The same bound is also stated through the projective Hilbert-growth API
+`MathlibExt.RingTheory.ProjectiveHilbertGrowth`: for a homogeneous ideal `I` of
 `k[x₀, …, xₙ₋₁]`, in any number `n ≥ 0` of variables, `hilbertFunction I (d + 1)` is at most the
 Macaulay transform `E.successor` read from any `d`-th Macaulay expansion `E` of
 `hilbertFunction I d`. Two bridges connect the formulations: `E.successor = Nat.macaulayPow d h`
@@ -256,12 +256,12 @@ end MvPolynomial
 
 namespace MvPolynomial
 
+-- The proof does not use the homogeneity hypothesis `_hJ`; it is kept to match the source
+-- statement.
 open AlgebraicGeometry.HilbertFunctor MacaulayGrowthAux in
-/-- **Macaulay's bound** on the growth of the Hilbert function: for an ideal `J` of
-`K[X₀, …, Xₙ]` closed under homogeneous components and `d ≥ 1`, the dimension of the
-degree-`(d + 1)` piece of the quotient is at most `h^⟨d⟩`, where `h` is the dimension of the
-degree-`d` piece. The proof does not use the homogeneity hypothesis, which is kept to match the
-source statement. -/
+/-- **Macaulay's bound for graded pieces.** For an ideal `J` of `K[X₀, …, Xₙ]` over a field `K`,
+closed under homogeneous components, and `d ≥ 1`, the dimension of the degree-`(d + 1)` piece of
+`K[X₀, …, Xₙ] ⧸ J` is at most `h^⟨d⟩`, where `h` is the dimension of the degree-`d` piece. -/
 public theorem finrank_piece_succ_le_macaulayPow
     (n d : ℕ) (hd : 1 ≤ d) (K : Type*) [Field K] (J : Ideal (MvPolynomial (Fin (n + 1)) K))
     (_hJ : ∀ p ∈ J, ∀ i : ℕ, homogeneousComponent i p ∈ J) :
@@ -301,17 +301,18 @@ attribute [local instance] MvPolynomial.gradedAlgebra
 
 variable {k : Type*} [Field k] {n : ℕ}
 
-/-- Macaulay's transform read from any `d`-th Macaulay expansion of `h` is `Nat.macaulayPow d h`;
-in particular it does not depend on the expansion. -/
+/-- **Macaulay's transform does not depend on the expansion.** For every `d`-th Macaulay
+expansion `E` of `h`, `E.successor = Nat.macaulayPow d h`. -/
 theorem MacaulayExpansion.successor_eq_macaulayPow {d h : ℕ} (E : MacaulayExpansion d h) :
     E.successor = Nat.macaulayPow d h := by
   have := Nat.macaulayPow_sum_choose d E.upper E.strictMono
   rw [E.value_eq] at this
   exact this.symm
 
-/-- The Hilbert function of `k[x₀, …, xₙ] ⧸ I` in degree `d` is the dimension of the graded piece
-`AlgebraicGeometry.HilbertFunctor.piece I d`: both are the degree-`d` homogeneous polynomials
-modulo those in `I`. -/
+/-- **Hilbert function as the dimension of a graded piece.** For a homogeneous ideal `I` of
+`k[x₀, …, xₙ]` over a field `k`, `hilbertFunction I d` is the dimension of
+`AlgebraicGeometry.HilbertFunctor.piece I.toIdeal d`: both are the degree-`d` homogeneous
+polynomials modulo those in `I`. -/
 theorem hilbertFunction_eq_finrank_piece
     (I : HomogeneousIdeal (homogeneousSubmodule (Fin (n + 1)) k)) (d : ℕ) :
     hilbertFunction I d =
@@ -346,10 +347,10 @@ private theorem hilbertFunction_fin_zero_succ
     (Ideal.Quotient.mkₐ k I.toIdeal).toLinearMap) = 0
   rw [hbot, Submodule.map_bot, finrank_bot]
 
-/-- **Macaulay's bound** on the growth of the Hilbert function: for a homogeneous ideal `I` of
-`k[x₀, …, xₙ₋₁]` (any `n`, including `n = 0`), `d > 0`, and a `d`-th Macaulay expansion `E` of
-`hilbertFunction I d`, the next value `hilbertFunction I (d + 1)` is at most Macaulay's transform
-`E.successor`, that is `h^⟨d⟩` for `h = hilbertFunction I d`. -/
+/-- **Macaulay growth.** For a homogeneous ideal `I` of `k[x₀, …, xₙ₋₁]` over a field `k` (any
+`n`, including `n = 0`), `d > 0` and a `d`-th Macaulay expansion `E` of `hilbertFunction I d`, the
+next value `hilbertFunction I (d + 1)` is at most Macaulay's transform `E.successor`, that is
+`h^⟨d⟩` for `h = hilbertFunction I d`. -/
 theorem macaulay_growth (I : HomogeneousIdeal (homogeneousSubmodule (Fin n) k))
     (d : ℕ) (hd : 0 < d) (E : MacaulayExpansion d (hilbertFunction I d)) :
     hilbertFunction I (d + 1) ≤ E.successor := by

@@ -43,7 +43,8 @@ import Mathlib.Tactic.Push
 Let `B` be a set of monomials of degree `d ≥ 1` in `n + 1` variables and let `C` be a set of
 monomials of degree `d + 1` all of whose divisors of degree `d` lie in `B`. Then
 `#C ≤ Nat.macaulayPow d #B`. This is the combinatorial core of Macaulay's bound on the growth of
-Hilbert functions.
+Hilbert functions. The lower-shadow form for families of multisets, with Macaulay's lower function,
+is `MetaMathlibExt.macaulay_multiset_shadow_minimal`.
 
 The proof proceeds by induction on the number of variables in use, compressing the set towards
 the last variable used and splitting the result by the exponent of that variable.
@@ -51,6 +52,11 @@ the last variable used and splitting the result by the exponent of that variable
 ## Main declarations
 
 * `Finsupp.card_le_macaulayPow_card_of_forall_sub_single_mem`: Macaulay's bound.
+
+## References
+
+* F. S. Macaulay, *Some properties of enumeration in the theory of modular systems*,
+  Proc. London Math. Soc. 26 (1927), 531–555.
 -/
 
 namespace Finsupp
@@ -760,9 +766,9 @@ end Finsupp
 namespace Finsupp
 
 open MacaulayBoundAux in
-/-- **Macaulay's bound** for monomials: if every degree-`d` divisor of every monomial in a set
-`C` of degree-`(d + 1)` monomials in `n + 1` variables lies in a set `B` of degree-`d` monomials,
-then `#C ≤ #B^⟨d⟩`. -/
+/-- **Macaulay's bound for monomial shadows.** Let `d ≥ 1`. If every degree-`d` divisor of every
+monomial in a set `C` of degree-`(d + 1)` monomials in `n + 1` variables lies in a set `B` of
+degree-`d` monomials, then `#C ≤ #B^⟨d⟩`. -/
 public theorem card_le_macaulayPow_card_of_forall_sub_single_mem
     (n d : ℕ) (hd : 1 ≤ d) (B : Finset (Fin (n + 1) →₀ ℕ)) (hB : ∀ m ∈ B, m.degree = d)
     (C : Finset (Fin (n + 1) →₀ ℕ)) (hC : ∀ u ∈ C, u.degree = d + 1)

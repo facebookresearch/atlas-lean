@@ -54,14 +54,21 @@ expansion `a = C(k_d, d) + C(k_{d-1}, d - 1) + ⋯`, where `k_d` is the largest 
 * `Nat.macaulayPow_sum_choose`: the value on a strict binomial cascade
   `C(a₀, 1) + C(a₁, 2) + ⋯ + C(a_{d-1}, d)` with `a₀ < a₁ < ⋯ < a_{d-1}`, the form of
   `MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.successor`.
+
+## References
+
+* F. S. Macaulay, *Some properties of enumeration in the theory of modular systems*,
+  Proc. London Math. Soc. 26 (1927), 531–555.
 -/
 
 @[expose] public section
 
 namespace Nat
 
-/-- Macaulay's upper function `a^⟨d⟩`: the top greedy binomial term `C(k, d + 1) ≤ a` is
-replaced by `C(k + 1, d + 2)`, and the remainder is treated at level `d`. -/
+/-- **Macaulay's upper function.** `Nat.macaulayPow d a` is `a^⟨d⟩`, and `a^⟨0⟩ = 0`. At level
+`d + 1`, let `k` be the largest natural number with `C(k, d + 1) ≤ a`: the top term `C(k, d + 1)`
+of the greedy binomial expansion of `a` is replaced by `C(k + 1, d + 2)`, and the remainder
+`a - C(k, d + 1)` is treated at level `d`. -/
 def macaulayPow : ℕ → ℕ → ℕ
   | 0, _ => 0
   | d + 1, a =>
@@ -408,23 +415,24 @@ theorem macaulayPow_zero_right (d : ℕ) : macaulayPow d 0 = 0 := macaulayPow_ze
 
 theorem macaulayPow_one (a : ℕ) : macaulayPow 1 a = (a + 1).choose 2 := macaulayPow_one' a
 
-/-- The recursion of `Nat.macaulayPow` through the top greedy index: for any `k` with
-`C(k, d + 1) ≤ a < C(k + 1, d + 1)`, the term `C(k, d + 1)` is replaced by
-`C(k + 1, d + 2)` and the remainder is treated at level `d`. -/
+/-- **Recursion of Macaulay's upper function.** For any `k` with
+`C(k, d + 1) ≤ a < C(k + 1, d + 1)`, the term `C(k, d + 1)` is replaced by `C(k + 1, d + 2)` and
+the remainder is treated at level `d`: `a^⟨d+1⟩ = C(k + 1, d + 2) + (a - C(k, d + 1))^⟨d⟩`. -/
 theorem macaulayPow_succ_eq (d a k : ℕ) (h₁ : k.choose (d + 1) ≤ a)
     (h₂ : a < (k + 1).choose (d + 1)) :
     macaulayPow (d + 1) a = (k + 1).choose (d + 2) + macaulayPow d (a - k.choose (d + 1)) := by
   rw [macaulayPow_succ', rem, top_eq_of d a k h₁ h₂]
 
-/-- Below the first full binomial block, `Nat.macaulayPow (d + 1)` is the identity. -/
+/-- **Macaulay's upper function below the first binomial block.** If `a ≤ d + 1`, then
+`a^⟨d+1⟩ = a`. -/
 theorem macaulayPow_succ_of_le (d a : ℕ) (h : a ≤ d + 1) : macaulayPow (d + 1) a = a :=
   macaulayPow_eq_self d a h
 
 theorem macaulayPow_mono (d : ℕ) : Monotone (macaulayPow d) := fun _ _ h =>
   macaulayPow_mono' d h
 
-/-- The superadditivity step behind Macaulay's bound: if `b + s ≤ s^⟨d⟩`, then
-`b^⟨d+1⟩ + (b + s) ≤ (b + s)^⟨d+1⟩`. -/
+/-- **Superadditivity step for Macaulay's upper function.** If `b + s ≤ s^⟨d⟩`, then
+`b^⟨d+1⟩ + (b + s) ≤ (b + s)^⟨d+1⟩`; this is the step behind Macaulay's bound. -/
 theorem macaulayPow_succ_add_le (d b s : ℕ) (h : b + s ≤ macaulayPow d s) :
     macaulayPow (d + 1) b + (b + s) ≤ macaulayPow (d + 1) (b + s) := by
   have h1 : b ≤ low (d + 1) (b + s) := by have := le_add_low d (b + s) s h; omega
@@ -432,8 +440,8 @@ theorem macaulayPow_succ_add_le (d b s : ℕ) (h : b + s ≤ macaulayPow d s) :
   have h3 := macaulayPow_low_add d (b + s)
   omega
 
-/-- `Nat.macaulayPow` on a strict binomial cascade: if `a₀ < a₁ < ⋯ < a_{d-1}`, then
-`(∑ᵢ C(aᵢ, i + 1))^⟨d⟩ = ∑ᵢ C(aᵢ + 1, i + 2)`. -/
+/-- **Macaulay's upper function on a binomial cascade.** For natural numbers
+`a₀ < a₁ < ⋯ < a_{d-1}`, `(∑_{i<d} C(aᵢ, i + 1))^⟨d⟩ = ∑_{i<d} C(aᵢ + 1, i + 2)`. -/
 theorem macaulayPow_sum_choose : ∀ (d : ℕ) (a : Fin d → ℕ), StrictMono a →
     macaulayPow d (∑ i, (a i).choose (i.val + 1)) = ∑ i, (a i + 1).choose (i.val + 2)
   | 0, a, _ => by simp
