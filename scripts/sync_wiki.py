@@ -95,7 +95,8 @@ extensions and read as a browser builds it. An edit that would lose a link, move
 a heading or its id, or show its new link elsewhere or not at all is left out
 and reported too, and a page keeps its line ends and bytes.
 
-declarations --base REV is the run a pull request makes, scoped to its own declarations: those its Lean changes since
+declarations --base REV is the run a graph pull request or a graph-sync batch makes (docs/BLUEPRINT.md, Maintaining
+articles), scoped to its own declarations: those its Lean changes since
 commit REV add, document, make public or undeprecate (see scoped_plan). Both sides are read with the working tree's
 tools and taxonomy, so that only the Lean's changes count. It writes only what they need: a page for each of them that
 has none, laid out as above but with none of the parts generate_wiki splits a folder into in a folder it makes (see
@@ -3903,7 +3904,8 @@ def run_scoped(argv: list[str]) -> int:
 
     parser = argparse.ArgumentParser(
         prog="sync_wiki.py declarations",
-        description="Write only what the Lean changed since a commit needs: the run a pull request makes.")
+        description="Write only what the Lean changed since a commit needs: the run a graph pull request or a "
+                    "graph-sync batch makes.")
     parser.add_argument("--base", required=True, metavar="REV",
                         help="the commit the changes start from, such as `git merge-base origin/main HEAD`")
     parser.add_argument("--check", action="store_true",
