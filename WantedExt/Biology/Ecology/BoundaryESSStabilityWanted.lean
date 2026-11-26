@@ -22,8 +22,9 @@ hypercycle is asymptotically stable but not an ESS.
 The related interior-ESS development lives in `Domains.Biology.Dynamics.ReplicatorStability`.
 The global-attraction result `IsESS.tendsto_of_pos` is proved in
 `Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos`, where `simplex`, `replicatorField`,
-`IsReplicatorSolution` and `IsESS` are defined; this module states the general boundary-ESS
-results.
+`IsReplicatorSolution` and `IsESS` are defined. The characterization `isESS_iff_isLocallySuperior`
+is proved in `Domains.Biology.Ecology.BoundaryESSStabilityIsESSIffIsLocallySuperior`, where
+`IsLocallySuperior` is defined; this module states the remaining general boundary-ESS results.
 
 Sources: J. Hofbauer, P. Schuster and K. Sigmund, "A note on evolutionary stable strategies and
 game dynamics", J. Theor. Biol. 81 (1979) 609–612; P. D. Taylor and L. B. Jonker,
@@ -41,6 +42,7 @@ public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.Analysis.Complex.Basic
 public import Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos
+public import Domains.Biology.Ecology.BoundaryESSStabilityIsESSIffIsLocallySuperior
 
 @[expose] public section
 
@@ -49,11 +51,6 @@ namespace WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
 open Matrix Filter Topology
 
 variable {ι : Type*} [Fintype ι]
-
-/-- `p` is **locally superior**: `p ∈ Δ` and `x · A x < p · A x` for every `x ≠ p` in `Δ`
-near `p`. -/
-def IsLocallySuperior (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  p ∈ simplex ι ∧ ∀ᶠ x in 𝓝 p, x ∈ simplex ι → x ≠ p → x ⬝ᵥ A *ᵥ x < p ⬝ᵥ A *ᵥ x
 
 /-- `p` is **asymptotically stable** for the replicator dynamics of `A` on `Δ`: `p ∈ Δ`; every
 state of `Δ` has a forward solution; `p` is Lyapunov stable (for every `ε > 0` there is `δ > 0` such
@@ -79,14 +76,6 @@ def IsRegularESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
 noncomputable def replicatorJacobian [DecidableEq ι] (A : Matrix ι ι ℝ) (p : ι → ℝ) :
     Matrix ι ι ℝ :=
   LinearMap.toMatrix' (fderiv ℝ (replicatorField A) p : (ι → ℝ) →ₗ[ℝ] (ι → ℝ))
-
-/-- **ESS ⇔ local superiority** (Hofbauer, Schuster and Sigmund 1979). For every payoff matrix
-`A` and every `p`, `p` is an ESS of `A` iff `p ∈ Δ` and `x · A x < p · A x` for all `x ≠ p` in
-`Δ` near `p`.
-
-Source: Hofbauer, Schuster and Sigmund (1979), pp. 609–611. -/
-public theorem_wanted isESS_iff_isLocallySuperior (A : Matrix ι ι ℝ) (p : ι → ℝ) :
-    IsESS A p ↔ IsLocallySuperior A p
 
 /-- **Every ESS is asymptotically stable** (Hofbauer, Schuster and Sigmund 1979). For every
 payoff matrix `A` and every ESS `p` of `A`, interior or on the boundary of `Δ`, `p` is
