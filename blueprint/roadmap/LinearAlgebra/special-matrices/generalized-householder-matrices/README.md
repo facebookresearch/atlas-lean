@@ -4,16 +4,16 @@ Let $v$ be a real vector indexed by a finite set with $n \ge 2$ elements, let $\
 
 ## Idea
 
-$H$ changes a vector only in the direction of $v$: it multiplies $v$ by $1 - \beta\, v^{\mathsf T} v$ and leaves every vector orthogonal to $v$ fixed. Everything else follows: the determinant, the characteristic polynomial $(X - 1)^{n - 1}(X - (1 - \beta\, v^{\mathsf T} v))$, the two eigenspaces, and, by expanding $\|x - \beta (v^{\mathsf T} x) v\|_2^2$, the condition for $H$ to be a contraction. For a unit vector $v$, $\beta = 1$ gives the orthogonal projection onto the hyperplane $v^\perp$ and $\beta = 2$ the Householder reflection across it, which numerical linear algebra uses to compute QR factorizations; for $\beta \in (1, 2]$ the matrix has a negative eigenvalue, and its operator $2$-norm is at most $1$ exactly when $\beta \in [0, 2]$. Products of these matrices are the state transitions of delta-rule linear attention in sequence models.
+$H$ changes a vector only in the direction of $v$: it multiplies $v$ by $1 - \beta\, v^{\mathsf T} v$ and leaves every vector orthogonal to $v$ fixed. Everything else follows: the determinant, the characteristic polynomial $(X - 1)^{n - 1}(X - (1 - \beta\, v^{\mathsf T} v))$, the eigenspaces at the scalars $1$ and $1 - \beta\, v^{\mathsf T} v$ (these scalars differ when $\beta \ne 0$ and $v \ne 0$; the first eigenspace, $v^\perp$, is then zero for $n = 1$), and, by expanding $\|x - \beta (v^{\mathsf T} x) v\|_2^2$, the condition for $H$ to be a contraction. For a unit vector $v$, $\beta = 1$ gives the orthogonal projection onto the hyperplane $v^\perp$ and $\beta = 2$ the Householder reflection across it, which numerical linear algebra uses to compute QR factorizations; for $\beta \in (1, 2]$ the matrix has a negative eigenvalue, and its operator $2$-norm is at most $1$ exactly when $\beta \in [0, 2]$. Products of these matrices are the state transitions of delta-rule linear attention in sequence models.
 
 ## Statements
 
 - [Spectrum of a generalized Householder matrix](spectrum-one-sub-smul-vec-mul-vec.md)
 - [A generalized Householder matrix scales its vector](one-sub-smul-vec-mul-vec-mul-vec-self.md): how $H$ acts on $v$.
-- [A generalized Householder matrix fixes the vectors orthogonal to its vector](one-sub-smul-vec-mul-vec-mul-vec-of-dot.md): the eigenvalue $1$ on $v^\perp$.
+- [A generalized Householder matrix fixes the vectors orthogonal to its vector](one-sub-smul-vec-mul-vec-mul-vec-of-dot.md): $H$ fixes $v^\perp$.
 - [Determinant of a generalized Householder matrix](det-one-sub-smul-vec-mul-vec.md)
 - [Characteristic polynomial of a generalized Householder matrix](charpoly-one-sub-smul-vec-mul-vec.md): the eigenvalues with their algebraic multiplicities, used to prove the main statement.
-- [Eigenspace of a generalized Householder matrix for the eigenvalue 1](eigenspace-to-euclidean-lin-one-sub-smul.md)
+- [Fixed subspace of a generalized Householder matrix](eigenspace-to-euclidean-lin-one-sub-smul.md)
 - [Eigenspace of a generalized Householder matrix for its other eigenvalue](eigenspace-to-euclidean-lin-one-sub-smul-2.md)
 - [Norm identity for a generalized Householder matrix](norm-to-lp-one-sub-smul-vec-mul-vec-mul.md)
 - [When a generalized Householder matrix is a contraction](l2-op-norm-one-sub-smul-vec-mul-vec-le-o.md): a consequence of the norm identity.

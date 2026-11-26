@@ -20,9 +20,12 @@ Gram–Schmidt orthonormalization of the columns $a_1, \dots, a_k$ produces orth
 - [The Gram–Schmidt factors reproduce the matrix](eq-qr-q-mul-qr-r.md): the factors reproduce $A$
 - [Diagonal of a product of upper triangular matrices](diag-mul-of-is-upper-triangular.md): a lemma used for uniqueness
 
+## Background
+
+- [Generalized Householder matrices](../../special-matrices/generalized-householder-matrices/README.md): Householder reflections $I - 2vv^{\mathsf T}$ with $v$ a unit vector, the usual way to compute a QR factorization in floating point, are the case $\beta = 2$; the card proves that such a matrix is the reflection across $v^\perp$.
+
 ## Related topics
 
 - [Existence and uniqueness of the least-squares solution](../linear-least-squares/exists-unique-rss-le.md): an application: least-squares problems are solved through a QR factorization.
 - [Singular value decomposition of a complex matrix](../singular-value-decomposition/singular-value-decomposition-theorem/complex-singular-value-decomposition.md): another orthogonal factorization, with orthogonal factors on both sides and a diagonal middle factor.
 - [LU decomposition without pivoting](../lu-decomposition/exists-lu-decomposition-of-minors-ne-zer.md): the triangular factorization by elimination, with two triangular factors and no orthogonality.
-- [Spectrum of a generalized Householder matrix](../../special-matrices/generalized-householder-matrices/spectrum-one-sub-smul-vec-mul-vec.md): Householder reflections $I - 2vv^{\mathsf T}$ with $v$ a unit vector, the usual way to compute a QR factorization in floating point, are the case $\beta = 2$.

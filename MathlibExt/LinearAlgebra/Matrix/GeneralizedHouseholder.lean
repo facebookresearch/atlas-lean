@@ -36,8 +36,9 @@ needed: for a unit vector, `vᵀ v = 1`.
   `{1, 1 - β vᵀ v}`.
 * `Matrix.eigenspace_toEuclideanLin_one_sub_smul_vecMulVec_one` and
   `Matrix.eigenspace_toEuclideanLin_one_sub_smul_vecMulVec_one_sub`: for `β ≠ 0`, the eigenspace
-  of `H`, acting on `EuclideanSpace ℝ n`, for the eigenvalue `1` is the orthogonal complement of
-  `v`, and for `v ≠ 0` the eigenspace for `1 - β vᵀ v` is the line spanned by `v`.
+  of `H`, acting on `EuclideanSpace ℝ n`, at the scalar `1` (the subspace `H` fixes) is the
+  orthogonal complement of `v`, which is zero in dimension one when `v ≠ 0`; for `v ≠ 0` the
+  eigenspace for the eigenvalue `1 - β vᵀ v` is the line spanned by `v`.
 * `Matrix.norm_toLp_one_sub_smul_vecMulVec_mulVec_sq`: in the Euclidean norm,
   `‖H x‖² = ‖x‖² - β (2 - β vᵀ v) (vᵀ x)²`.
 * `Matrix.l2_opNorm_one_sub_smul_vecMulVec_le_one_iff`: the operator norm of `H` for the
@@ -136,10 +137,11 @@ omit [DecidableEq n] in
 private theorem inner_toLp (v y : n → ℝ) : inner ℝ (toLp 2 v) (toLp 2 y) = v ⬝ᵥ y := by
   rw [EuclideanSpace.inner_toLp_toLp, star_trivial, dotProduct_comm]
 
-/-- **Eigenspace of a generalized Householder matrix for the eigenvalue 1.** Let $v$ be a real
-vector indexed by a finite set, let $\beta \ne 0$ and let $H = I - \beta v v^{\mathsf{T}}$, acting
-on the Euclidean space of the same index set. The eigenspace of $H$ for the eigenvalue $1$ is the
-orthogonal complement $v^{\perp}$ of $v$. -/
+/-- **Fixed subspace of a generalized Householder matrix.** Let $v$ be a real vector indexed by a
+finite set, let $\beta \ne 0$ and let $H = I - \beta v v^{\mathsf{T}}$, acting on the Euclidean
+space of the same index set. The eigenspace of $H$ at the scalar $1$, that is the subspace of
+vectors fixed by $H$, is the orthogonal complement $v^{\perp}$ of $v$. With one index and
+$v \ne 0$ it is zero, and $1$ is then not an eigenvalue of $H$. -/
 theorem eigenspace_toEuclideanLin_one_sub_smul_vecMulVec_one {β : ℝ} (hβ : β ≠ 0)
     (v : n → ℝ) :
     Module.End.eigenspace (toEuclideanLin (1 - β • vecMulVec v v)) 1 = (ℝ ∙ toLp 2 v)ᗮ := by
