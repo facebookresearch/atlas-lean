@@ -898,6 +898,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
 {"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
 {"folder": "QuantumInformation/not-yet-classified/part-01/shor-factoring", "to": "ComputerScience/quantum-algorithms/shor-s-factoring-algorithm", "article_id": "af_b6684e3859d5d929c552cccb"}
 {"page": "QuantumInformation/not-yet-classified/part-01/shor-factoring/is-shor-output", "to": "ComputerScience/quantum-algorithms/shor-s-factoring-algorithm/is-shor-output", "article_id": "af_1f0da2d56969e9c883c6e8cf"}
 {"page": "QuantumInformation/not-yet-classified/part-01/shor-factoring/shor-factoring", "to": "ComputerScience/quantum-algorithms/shor-s-factoring-algorithm/shor-factoring", "article_id": "af_ddfb8358f64997b955d79955"}
