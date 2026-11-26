@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt

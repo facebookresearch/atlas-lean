@@ -40,8 +40,9 @@ except for one correction recorded as a Lean variant: `intersectionMultiplicity`
 `K`. Later changes (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
 `WantedExt/AlgebraicGeometry/BezoutWanted.lean` to this `MathlibExt` module with unchanged names,
 statements and docstrings, and the imports were replaced by the Mathlib and `MathlibExt` imports
-the proof needs. The proof of `chartIndex_rep_ne_zero` now cites `Projectivization.rep_ne_zero`
-instead of its deprecated alias `Projectivization.rep_nonzero`.
+the proof needs. The proof inside the definition of `chartIndex` (that some coordinate of the
+representative is nonzero) and the proof of `chartIndex_rep_ne_zero` now cite
+`Projectivization.rep_ne_zero` instead of its deprecated alias `Projectivization.rep_nonzero`.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
 `bezout_multiplicity`, the private lemmas it uses and the module documentation.
@@ -152,7 +153,7 @@ set_option linter.dupNamespace false in
 with chosen representative $v = (v_0, \dots, v_n) \in K^{n+1} \setminus \{0\}$, the chart index of
 $p$ is a fixed choice of an index $i \in \{0, \dots, n\}$ with $v_i \neq 0$. -/
 noncomputable def chartIndex {n : ℕ} (p : ProjSpace K n) : Fin (n + 1) :=
-  Classical.choose (Function.ne_iff.mp p.rep_nonzero)
+  Classical.choose (Function.ne_iff.mp p.rep_ne_zero)
 
 set_option linter.dupNamespace false in
 lemma chartIndex_rep_ne_zero {n : ℕ} (p : ProjSpace K n) :

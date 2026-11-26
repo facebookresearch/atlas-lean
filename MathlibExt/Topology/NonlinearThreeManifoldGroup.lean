@@ -37,11 +37,11 @@ unchanged. Source: J. O. Button, *A 3-manifold group which is not four dimension
 arXiv:1210.3068 (2012). See the discussion of [Kir97, Problem 3.33] in the K3 problem list.
 Later changes (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
 `WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean` to this `MathlibExt` module with
-unchanged names, statements and docstrings, and the imports of `Batteries.Util.ProofWanted` and of
-all of Mathlib were replaced by narrower Mathlib imports. The citation of Button's paper, here and
-in the module documentation, was corrected: it gave another title and arXiv:1404.4639, the number
-of an unrelated paper. The `Source:` line of `nonlinear_three_manifold_group`, part of its
-unchanged docstring, still gives the old citation.
+unchanged names and statements, and the imports of `Batteries.Util.ProofWanted` and of all of
+Mathlib were replaced by narrower Mathlib imports. The citation of Button's paper, here, in the
+module documentation and in the `Source:` line of the docstring of
+`nonlinear_three_manifold_group`, was corrected: it gave another title and arXiv:1404.4639, the
+number of an unrelated paper. The docstrings are otherwise unchanged.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
 `nonlinear_three_manifold_group`, the private definitions and lemmas it uses, and the parts of
@@ -106,11 +106,6 @@ obstruction it uses is special to the field `ℝ`.
   `S³ → S³/Q₈`, shows `a₁² ≠ 1`, `a₂² ≠ 1` and `a₁² ≠ a₂²`.
 * A faithful representation in `GL(4, ℝ)` would send both `a₁²` and `a₂²` to
   `-1`, contradicting `a₁² ≠ a₂²`.
-
-The `Source:` line of `nonlinear_three_manifold_group` keeps the citation of
-the former wanted statement; its title and its arXiv number, arXiv:1404.4639
-(an unrelated paper), are not those of Button's preprint arXiv:1210.3068
-cited above.
 -/
 
 @[expose] public section
@@ -1833,8 +1828,8 @@ set_option linter.dupNamespace false in
 is a closed connected topological 3-manifold $M$ with a point $x$ such that no group
 homomorphism from the fundamental group $\pi_1(M, x)$ to $GL_4(\mathbb{R})$ is injective.
 
-Source: J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*,
-arXiv:1404.4639 (2014). See the discussion of [Kir97, Problem 3.33] in the K3 problem list. Via
+Source: J. O. Button, *A 3-manifold group which is not four dimensional linear*,
+arXiv:1210.3068 (2012). See the discussion of [Kir97, Problem 3.33] in the K3 problem list. Via
 leanprover/lean-eval@38361be, problem `nonlinear_three_manifold_group`. -/
 theorem nonlinear_three_manifold_group :
     ∃ (M : Closed3Manifold) (x : M.carrier),
