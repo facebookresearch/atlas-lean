@@ -15,6 +15,7 @@ import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 import Mathlib.Data.Rat.BigOperators
 import Mathlib.Analysis.Calculus.Deriv.Add
@@ -242,19 +243,8 @@ private theorem one_add_sum_le_prod (s : Finset ℕ) (x : ℕ → ℝ) :
     rw [Finset.sum_insert has, Finset.prod_insert has]
     nlinarith [mul_nonneg h1 h2, h3]
 
-/-- The sum of squares is at most the square of the sum, for nonnegative terms. -/
-private theorem sum_sq_le_sq_sum {s : Finset ℕ} {x : ℕ → ℝ} (hx : ∀ i ∈ s, 0 ≤ x i) :
-    ∑ i ∈ s, x i ^ 2 ≤ (∑ i ∈ s, x i) ^ 2 := by
-  have h : (∑ i ∈ s, x i) ^ 2 = ∑ i ∈ s, ∑ j ∈ s, x i * x j := by
-    rw [sq, Finset.sum_mul_sum]
-  rw [h]
-  apply Finset.sum_le_sum
-  intro i hi
-  have hii : x i ^ 2 = x i * x i := by ring
-  rw [hii]
-  exact Finset.single_le_sum (fun j hj => mul_nonneg (hx i hi) (hx j hj)) hi
-
-/-- The abundancy surplus, coerced to `ℝ`, as a real product. -/
+/-- The product formula for `H(n)`: `abundancySup n`, coerced to `ℝ`, is the real product
+of `p / (p - 1)` over the prime factors `p` of `n`. -/
 private theorem abundancySup_cast (n : ℕ) :
     ((abundancySup n : ℚ) : ℝ) = ∏ p ∈ n.primeFactors, (p : ℝ) / ((p : ℝ) - 1) := by
   unfold abundancySup
@@ -270,7 +260,7 @@ private theorem one_le_div_sub_one {p : ℝ} (hp : 2 ≤ p) : 1 ≤ p / (p - 1) 
   rw [le_div_iff₀ hp1]
   linarith
 
-/-- The abundancy surplus is at least one. -/
+/-- The product `H(n)` is at least one. -/
 private theorem one_le_abundancySup (n : ℕ) :
     1 ≤ ((abundancySup n : ℚ) : ℝ) := by
   rw [abundancySup_cast]
@@ -279,17 +269,6 @@ private theorem one_le_abundancySup (n : ℕ) :
   have hprime := Nat.prime_of_mem_primeFactors hp
   have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hprime.two_le
   exact one_le_div_sub_one hp2
-
-/-- If `2` is a prime factor, the least prime factor is `2`. -/
-private theorem minFac_eq_two_of_mem_two {n : ℕ} (hmem : 2 ∈ n.primeFactors) :
-    n.minFac = 2 := by
-  have hmem' := Nat.mem_primeFactors.mp hmem
-  have h2dvd : 2 ∣ n := hmem'.2.1
-  have hn0 : n ≠ 0 := hmem'.2.2
-  have hn2 : 2 ≤ n := Nat.le_of_dvd (Nat.pos_of_ne_zero hn0) h2dvd
-  have hle : n.minFac ≤ 2 := Nat.minFac_le_of_dvd (le_refl 2) h2dvd
-  have hge : 2 ≤ n.minFac := (Nat.minFac_prime (by omega)).two_le
-  omega
 
 /-- Per-prime excess bounded by half the square of `1 / (p - 1)`. -/
 private theorem log_div_sub_one_sub_inv_le_sq {p : ℕ} (hp : 2 ≤ p) :
@@ -373,7 +352,7 @@ private theorem excess_le_of_mem_two {n : ℕ} (hmem : 2 ∈ n.primeFactors) :
     Finset.sum_nonneg hx_nonneg
   have hle : ∑ p ∈ O, 1 / ((p : ℝ) - 1)
       ≤ ∏ p ∈ O, (p : ℝ) / ((p : ℝ) - 1) - 1 := by linarith [hW]
-  have hsq := sum_sq_le_sq_sum (s := O) (x := fun p => 1 / ((p : ℝ) - 1)) hx_nonneg
+  have hsq := Finset.sum_sq_le_sq_sum_of_nonneg hx_nonneg
   have hsq2 : (∑ p ∈ O, 1 / ((p : ℝ) - 1)) ^ 2
       ≤ (∏ p ∈ O, (p : ℝ) / ((p : ℝ) - 1) - 1) ^ 2 :=
     pow_le_pow_left₀ hsum_nonneg hle 2
@@ -846,7 +825,7 @@ public theorem primitiveNondeficient_primeReciprocalSum_ge
       linarith [h2]
     · have hn2 : 2 ≤ n := by omega
       by_cases h2mem : 2 ∈ n.primeFactors
-      · have hmf2 : n.minFac = 2 := minFac_eq_two_of_mem_two h2mem
+      · have hmf2 : n.minFac = 2 := (Nat.minFac_eq_two_iff n).2 (Nat.dvd_of_mem_primeFactors h2mem)
         have hE2 := excess_le_of_mem_two h2mem
         have hbud : (25 : ℝ) / (64 * (((2 : ℕ)) : ℝ)) = 25 / 128 := by norm_num
         rw [hmf2, hbud]

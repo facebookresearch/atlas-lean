@@ -12781,7 +12781,6 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/NonagonalAdditiveUniqueness": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/OddPerfectPrimeReciprocalSum": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/OddPerfectPrimeReciprocalSumNotIsEulerPrimeOfMod165Eq": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
-  "MathlibExt/NumberTheory/ArithmeticFunction/OddPerfectPrimeReciprocalSumPrimitiveNondeficientPrimeReciprocalSumGe": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/ParallelogramSquareUniqueness": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/PrimeDistribution": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Discrepancy of sequences in residue classes"},
   "MathlibExt/NumberTheory/ArithmeticFunction/PrimitiveNondeficient": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Primitive non-deficient numbers"},
