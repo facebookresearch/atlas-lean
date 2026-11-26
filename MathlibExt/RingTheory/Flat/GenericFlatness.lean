@@ -43,6 +43,22 @@ import Mathlib.RingTheory.Localization.BaseChange
 import Mathlib.RingTheory.Noetherian.Basic
 import Mathlib.RingTheory.Polynomial.Basic
 
+/-!
+# Generic flatness
+
+Let `A` be a Noetherian domain, `B` a finite type `A`-algebra and `M` a finite `B`-module. Then
+there is a nonzero `a : A` such that the localization of `M` at the powers of `a` is flat over `A`.
+
+## Main results
+
+* `Module.Flat.exists_ne_zero_flat_localization_tensorProduct`
+
+## References
+
+* [Stacks Project, Lemma 10.118.1 (Tag 051R)](https://stacks.math.columbia.edu/tag/051R), which
+  proves that the localization is free over the localization of `A`
+-/
+
 @[expose] public section
 
 open TensorProduct
@@ -574,8 +590,12 @@ end Convert
 end Module.Flat.GenericFlatness
 
 open Module.Flat.GenericFlatness in
-/-- Generic flatness: a finite module over a finite type algebra `B` over a Noetherian domain
-`A` becomes flat over `A` after inverting the image of some nonzero `a : A`. -/
+/-- **Generic flatness.** A finite module over a finite type algebra `B` over a Noetherian domain
+`A` becomes flat over `A` after inverting the image of some nonzero `a : A`.
+
+Source: [Stacks Project, Lemma 10.118.1 (Tag 051R)](https://stacks.math.columbia.edu/tag/051R),
+which proves the stronger statement that the localized module is free over the localization of
+`A`. -/
 public theorem Module.Flat.exists_ne_zero_flat_localization_tensorProduct
     {A B M : Type*} [CommRing A] [IsDomain A] [IsNoetherianRing A] [CommRing B] [Algebra A B]
     [Algebra.FiniteType A B] [AddCommGroup M] [Module A M] [Module B M] [IsScalarTower A B M]

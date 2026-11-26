@@ -46,6 +46,23 @@ import Mathlib.RingTheory.LocalRing.ResidueField.Defs
 import Mathlib.RingTheory.SimpleModule.Basic
 import Mathlib.RingTheory.TensorProduct.Finite
 
+/-!
+# Noetherian approximation of flatness at a prime
+
+Let `R₀` be a Noetherian ring, `B₀` a finite type `R₀`-algebra and `R` an `R₀`-algebra. If the
+localization of `R ⊗[R₀] B₀` at a prime `P` is flat over `R`, then the same holds over some
+finitely generated `R₀`-subalgebra `R₁` of `R`, at the prime of `R₁ ⊗[R₀] B₀` below `P`. The proof
+uses the local criterion for flatness (`Module.flat_of_comap_maximalIdeal_rTensor_injective`).
+
+## Main results
+
+* `Module.Flat.exists_fg_subalgebra_flat_localization_tensorProduct`
+
+## References
+
+* [Stacks Project, Lemma 10.128.3 (Tag 00R6)](https://stacks.math.columbia.edu/tag/00R6)
+-/
+
 @[expose] public section
 
 open TensorProduct LinearMap
@@ -1121,8 +1138,11 @@ end FlatDescentFG
 end
 
 open FlatDescentFG in
-/-- Noetherian approximation of flatness at a prime: if `R ⊗[R₀] B₀` is flat over `R` at the
-prime `P`, then the same holds over some finitely generated `R₀`-subalgebra of `R`. -/
+/-- **Noetherian approximation of flatness at a prime.** If `R ⊗[R₀] B₀` is flat over `R` at the
+prime `P`, then the same holds over some finitely generated `R₀`-subalgebra of `R`.
+
+Source: [Stacks Project, Lemma 10.128.3 (Tag 00R6)](https://stacks.math.columbia.edu/tag/00R6),
+stated there for the directed systems of local rings of Lemma 10.127.13 (Tag 00QX). -/
 public theorem Module.Flat.exists_fg_subalgebra_flat_localization_tensorProduct
     {R₀ R B₀ : Type*} [CommRing R₀] [CommRing R] [CommRing B₀]
     [Algebra R₀ R] [Algebra R₀ B₀] [IsNoetherianRing R₀] [Algebra.FiniteType R₀ B₀]

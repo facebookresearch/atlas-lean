@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.RingTheory.Flat.OfComapMaximalIdeal
 
+import Mathlib.RingTheory.PrincipalIdealDomain
+
 @[expose] public section
 
 open TensorProduct
@@ -29,3 +31,11 @@ example {R S : Type} [CommRing R] [CommRing S] [Algebra R S]
       (((IsLocalRing.maximalIdeal S).comap (algebraMap R S)).subtype.rTensor S)) :
     Module.Flat R S :=
   Module.flat_of_comap_maximalIdeal_rTensor_injective (S := S) _ rfl h
+
+/-- A concrete instance: `ℚ` is flat over `ℤ`. The maximal ideal `⊥` of `ℚ` contracts to `⊥`, and
+`⊥ ⊗[ℤ] ℚ` is zero. -/
+example : Module.Flat ℤ ℚ :=
+  Module.flat_of_comap_maximalIdeal_rTensor_injective (S := ℚ) ⊥
+    (by rw [IsLocalRing.maximalIdeal_eq_bot,
+      Ideal.comap_bot_of_injective _ (algebraMap ℤ ℚ).injective_int])
+    (Function.injective_of_subsingleton _)

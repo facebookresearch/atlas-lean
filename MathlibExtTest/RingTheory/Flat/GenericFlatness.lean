@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.RingTheory.Flat.GenericFlatness
 
+import Mathlib.RingTheory.PrincipalIdealDomain
+
 @[expose] public section
 
 open TensorProduct
@@ -29,3 +31,7 @@ example {A : Type u} {B : Type v} {M : Type w} [CommRing A] [IsDomain A] [IsNoet
       Module.Flat A (Localization (Submonoid.powers (algebraMap A B a)) ⊗[B] M) :=
   Module.Flat.exists_ne_zero_flat_localization_tensorProduct (A := A) (B := B) (M := M)
 
+/-- A concrete instance: `ℤ[X]` as a module over itself, over the Noetherian domain `ℤ`. -/
+example :=
+  Module.Flat.exists_ne_zero_flat_localization_tensorProduct (A := ℤ) (B := Polynomial ℤ)
+    (M := Polynomial ℤ)

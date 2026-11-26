@@ -44,6 +44,24 @@ import Mathlib.RingTheory.TensorProduct.Maps
 import MathlibExt.RingTheory.Flat.GenericFlatness
 import MathlibExt.RingTheory.Flat.OfComapMaximalIdeal
 
+/-!
+# Openness of the flat locus
+
+For a finite type algebra `B` over a Noetherian ring `A`, the set of primes `Q` of `B` such that
+the localization of `B` at `Q` is flat over `A` is open in `PrimeSpectrum B`. The proof uses
+Nagata's criterion for openness, generic flatness
+(`Module.Flat.exists_ne_zero_flat_localization_tensorProduct`) and the local criterion for flatness
+(`Module.flat_of_comap_maximalIdeal_rTensor_injective`).
+
+## Main results
+
+* `Module.Flat.isOpen_setOf_flat_localization_atPrime`
+
+## References
+
+* [Stacks Project, Theorem 10.129.4 (Tag 00RC)](https://stacks.math.columbia.edu/tag/00RC)
+-/
+
 @[expose] public section
 
 open TensorProduct
@@ -470,8 +488,11 @@ end Module.Flat.OpenFlatLocus
 end
 
 open Module.Flat.OpenFlatLocus in
-/-- For a finite type algebra `B` over a Noetherian ring `A`, the set of primes of `B` at
-which `B` is flat over `A` is open. -/
+/-- **Openness of the flat locus.** For a finite type algebra `B` over a Noetherian ring `A`, the
+set of primes of `B` at which `B` is flat over `A` is open.
+
+Source: [Stacks Project, Theorem 10.129.4 (Tag 00RC)](https://stacks.math.columbia.edu/tag/00RC),
+stated there for a finitely presented module over a finitely presented algebra. -/
 public theorem Module.Flat.isOpen_setOf_flat_localization_atPrime
     {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [IsNoetherianRing A]
     [Algebra.FiniteType A B] :

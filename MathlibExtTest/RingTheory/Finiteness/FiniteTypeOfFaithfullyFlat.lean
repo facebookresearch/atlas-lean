@@ -22,3 +22,9 @@ example (R : Type u) (A : Type v) (B : Type w) [CommRing R] [CommRing A] [CommRi
 
 example : Algebra.FiniteType ℤ ℤ :=
   Algebra.FiniteType.of_faithfullyFlat_of_finitePresentation ℤ ℤ ℤ
+
+-- A concrete instance: `ℤ → ℤ[X] → ℤ[X][Y]`, where `ℤ[X][Y]` is free, hence faithfully flat,
+-- and finitely presented over `ℤ[X]`.
+example : Algebra.FiniteType ℤ (Polynomial ℤ) :=
+  Algebra.FiniteType.of_faithfullyFlat_of_finitePresentation ℤ (Polynomial ℤ)
+    (Polynomial (Polynomial ℤ))

@@ -32,10 +32,29 @@ module
 public import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 
-import Mathlib.AlgebraicGeometry.Morphisms.QuasiCompact
+import Mathlib.AlgebraicGeometry.Morphisms.UniversallyOpen
 import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 import MathlibExt.RingTheory.Finiteness.FinitePresentationOfFaithfullyFlat
 import Mathlib.Tactic.Algebraize
+
+/-!
+# Descent of local finite presentation along flat surjective covers
+
+If `f : X ⟶ Y` is flat, surjective and locally of finite presentation, and `f ≫ g` is locally of
+finite presentation, then `g : Y ⟶ Z` is locally of finite presentation. Since `f` is open, every
+affine open `V` of `Y` is the image of a quasi-compact open of `X`. A finite affine cover of that
+open is a faithfully flat, finitely presented `Γ(Y, V)`-algebra, and the affine statement
+`Algebra.FinitePresentation.of_faithfullyFlat_of_finitePresentation` applies.
+
+## Main results
+
+* `AlgebraicGeometry.LocallyOfFinitePresentation.of_comp_of_flat_of_surjective`: local finite
+  presentation descends along a flat, surjective, locally finitely presented morphism.
+
+## References
+
+* [Stacks Project, Lemma 35.14.3 (Tag 02KL)](https://stacks.math.columbia.edu/tag/02KL)
+-/
 
 @[expose] public section
 
@@ -61,24 +80,27 @@ private theorem exists_affine_cover (W : Scheme.{u}) [CompactSpace W] :
   use Sigma.ι W.affineCover.finiteSubcover.X i x
   rw [← Scheme.Hom.comp_apply, Sigma.ι_comp_desc]
 
-/-- If `f : X ⟶ Y` is flat, surjective, quasi-compact and locally of finite
-presentation, and the composite `f ≫ g` is locally of finite presentation,
-then `g : Y ⟶ Z` is locally of finite presentation.
+/-- **Local finite presentation descends along flat surjective covers.** If `f : X ⟶ Y` is flat,
+surjective and locally of finite presentation, and the composite `f ≫ g` is locally of finite
+presentation, then `g : Y ⟶ Z` is locally of finite presentation.
 
-In other words, local finite presentation descends along a flat,
-surjective, quasi-compact, locally finitely presented cover: it can be
-checked after precomposing with such a cover. -/
+In other words, local finite presentation descends along a flat, surjective, locally finitely
+presented cover: it can be checked after precomposing with such a cover.
+
+Source: [Stacks Project, Lemma 35.14.3 (Tag 02KL)](https://stacks.math.columbia.edu/tag/02KL). -/
 public theorem LocallyOfFinitePresentation.of_comp_of_flat_of_surjective
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) [Flat f]
-    [LocallyOfFinitePresentation f] [Surjective f] [QuasiCompact f]
+    [LocallyOfFinitePresentation f] [Surjective f]
     [LocallyOfFinitePresentation (f ≫ g)] : LocallyOfFinitePresentation g := by
   rw [HasRingHomProperty.iff_appLE (P := @LocallyOfFinitePresentation)]
   intro U V e
   have hU : IsAffineOpen (U : Z.Opens) := U.2
   have hV : IsAffineOpen (V : Y.Opens) := V.2
-  set W : X.Opens := f ⁻¹ᵁ (V : Y.Opens) with hWdef
-  have hWc : IsCompact (W : Set X) :=
-    QuasiCompact.isCompact_preimage (f := f) _ (V : Y.Opens).isOpen hV.isCompact
+  -- `f` is flat and locally of finite presentation, hence open, so the quasi-compact open `V`
+  -- is the image of a quasi-compact open `W` of `X`.
+  obtain ⟨W : X.Opens, hWc, hWV⟩ :=
+    f.isOpenMap.exists_opens_image_eq_of_prespectralSpace f.continuous
+      (fun y _ ↦ Set.mem_range.mpr (f.surjective y)) (V : Y.Opens).isOpen hV.isCompact
   have : CompactSpace (W : X.Opens) := isCompact_iff_compactSpace.mp hWc
   obtain ⟨T, p, hp, hpflat, hplfp, hT⟩ := exists_affine_cover (W : X.Opens)
   let q : T ⟶ Y := p ≫ W.ι ≫ f
@@ -88,7 +110,9 @@ public theorem LocallyOfFinitePresentation.of_comp_of_flat_of_surjective
   have eq : (⊤ : T.Opens) ≤ q ⁻¹ᵁ (V : Y.Opens) := by
     rintro t -
     rw [Scheme.Hom.mem_preimage, hqapp]
-    exact (p t).2
+    have hpt : f (p t).val ∈ f '' (W : Set X) := Set.mem_image_of_mem f (p t).2
+    rw [hWV] at hpt
+    exact hpt
   have eqU : (⊤ : T.Opens) ≤ (q ≫ g) ⁻¹ᵁ (U : Z.Opens) := by
     rw [Scheme.Hom.comp_preimage]; exact eq.trans (Scheme.Hom.preimage_mono q e)
   let Tt : T.affineOpens := ⟨⊤, hT'⟩
@@ -116,8 +140,7 @@ public theorem LocallyOfFinitePresentation.of_comp_of_flat_of_surjective
     have hy : hV.fromSpec 𝔭 ∈ (V : Y.Opens) := by
       have : hV.fromSpec 𝔭 ∈ Set.range hV.fromSpec := ⟨𝔭, rfl⟩
       rwa [hV.range_fromSpec] at this
-    obtain ⟨x, hx⟩ := f.surjective (hV.fromSpec 𝔭)
-    have hxW : x ∈ W := by rw [hWdef, Scheme.Hom.mem_preimage, hx]; exact hy
+    obtain ⟨x, hxW, hx⟩ : hV.fromSpec 𝔭 ∈ f '' (W : Set X) := by rw [hWV]; exact hy
     obtain ⟨t, ht⟩ := hp.surj ⟨x, hxW⟩
     have hqt : q t = hV.fromSpec 𝔭 := by rw [hqapp, ht, ← hx]
     have htr : t ∈ Set.range hT'.fromSpec := by rw [hT'.range_fromSpec]; trivial

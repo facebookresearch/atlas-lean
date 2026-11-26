@@ -43,6 +43,24 @@ import Mathlib.RingTheory.Spectrum.Prime.Topology
 import MathlibExt.RingTheory.Flat.OpenFlatLocus
 import MathlibExt.RingTheory.Flat.FGSubalgebraLocalization
 
+/-!
+# Noetherian approximation of flatness
+
+Let `B₀` be a finitely presented `R₀`-algebra and `R` an `R₀`-algebra. If `R ⊗[R₀] B₀` is flat over
+`R`, then every finite subset of `R` lies in a finitely generated `R₀`-subalgebra `R₁` of `R` such
+that `R₁ ⊗[R₀] B₀` is flat over `R₁`. The proof uses the pointwise version
+(`Module.Flat.exists_fg_subalgebra_flat_localization_tensorProduct`) and openness of the flat locus
+(`Module.Flat.isOpen_setOf_flat_localization_atPrime`).
+
+## Main results
+
+* `Module.Flat.exists_fg_subalgebra_flat_tensorProduct`
+
+## References
+
+* [Stacks Project, Lemma 10.168.1 (Tag 02JO)](https://stacks.math.columbia.edu/tag/02JO)
+-/
+
 @[expose] public section
 
 open TensorProduct
@@ -484,9 +502,12 @@ end
 
 end Module.Flat.FGSubalgebraTensorProduct
 
-/-- Noetherian approximation of flatness: if `R ⊗[R₀] B₀` is flat over `R` for a finitely
+/-- **Noetherian approximation of flatness.** If `R ⊗[R₀] B₀` is flat over `R` for a finitely
 presented `R₀`-algebra `B₀`, then any finite subset of `R` lies in a finitely generated
-`R₀`-subalgebra `R₁` with `R₁ ⊗[R₀] B₀` flat over `R₁`. -/
+`R₀`-subalgebra `R₁` with `R₁ ⊗[R₀] B₀` flat over `R₁`.
+
+Source: [Stacks Project, Lemma 10.168.1 (Tag 02JO)](https://stacks.math.columbia.edu/tag/02JO),
+its last assertion, for `R` as the directed union of its finitely generated `R₀`-subalgebras. -/
 public theorem Module.Flat.exists_fg_subalgebra_flat_tensorProduct
     {R₀ R B₀ : Type*} [CommRing R₀] [CommRing R] [CommRing B₀]
     [Algebra R₀ R] [Algebra R₀ B₀] [Algebra.FinitePresentation R₀ B₀]

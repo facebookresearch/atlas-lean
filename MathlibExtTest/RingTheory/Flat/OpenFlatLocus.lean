@@ -28,3 +28,6 @@ example {A B : Type 1} [CommRing A] [CommRing B] [Algebra A B] [IsNoetherianRing
 example {K : Type*} [Field K] :
     IsOpen {Q : PrimeSpectrum K | Module.Flat K (Localization.AtPrime Q.asIdeal)} :=
   Module.Flat.isOpen_setOf_flat_localization_atPrime
+
+/-- A concrete instance: the polynomial ring `ℤ[X]` over `ℤ`. -/
+example := Module.Flat.isOpen_setOf_flat_localization_atPrime (A := ℤ) (B := Polynomial ℤ)

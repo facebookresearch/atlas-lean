@@ -42,6 +42,24 @@ import Mathlib.RingTheory.TensorProduct.Quotient
 import MathlibExt.RingTheory.Finiteness.FiniteTypeOfFaithfullyFlat
 import MathlibExt.RingTheory.Flat.FGSubalgebraTensorProduct
 
+/-!
+# Descent of finite presentation along faithfully flat, finitely presented algebras
+
+In a tower `R → A → B` where `B` is faithfully flat and finitely presented over `A`, if `B` is
+finitely presented over `R`, then so is `A`. The proof first shows that `A` is of finite type over
+`R` (`Algebra.FiniteType.of_faithfullyFlat_of_finitePresentation`), then that the kernel of a
+presentation of `A` is finitely generated, using Noetherian approximation of flatness
+(`Module.Flat.exists_fg_subalgebra_flat_tensorProduct`).
+
+## Main results
+
+* `Algebra.FinitePresentation.of_faithfullyFlat_of_finitePresentation`
+
+## References
+
+* [Stacks Project, Lemma 35.14.1 (Tag 02KK)](https://stacks.math.columbia.edu/tag/02KK)
+-/
+
 @[expose] public section
 
 universe u v w
@@ -564,8 +582,11 @@ end Assembly
 
 end Algebra.FinitePresentation.OfFaithfullyFlat
 
-/-- In a tower `R → A → B` with `B` faithfully flat and finitely presented over `A`, if `B`
-is finitely presented over `R`, then so is `A`. -/
+/-- **Finite presentation descends along faithfully flat, finitely presented algebras.** In a
+tower `R → A → B` with `B` faithfully flat and finitely presented over `A`, if `B` is finitely
+presented over `R`, then so is `A`.
+
+Source: [Stacks Project, Lemma 35.14.1 (Tag 02KK)](https://stacks.math.columbia.edu/tag/02KK). -/
 public theorem Algebra.FinitePresentation.of_faithfullyFlat_of_finitePresentation
     (R : Type u) (A : Type v) (B : Type w) [CommRing R] [CommRing A] [CommRing B]
     [Algebra R A] [Algebra R B] [Algebra A B] [IsScalarTower R A B]
