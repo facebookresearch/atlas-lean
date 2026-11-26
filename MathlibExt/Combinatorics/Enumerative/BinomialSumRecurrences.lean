@@ -21,12 +21,17 @@ import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.RingTheory.PowerSeries.Order
 
 /-!
-# Step sums and finite recurrence windows
+# Recurrences for step-`k` sums of binomial coefficients and Riordan arrays
+
+Statements from Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial
+Coefficients and Some Generalizations*, Journal of Integer Sequences 27 (2024),
+Article 24.3.4.
 
 The Riordan-array step sums are coefficients of a geometric series. For a rational Riordan
 array, the step sums of all residues modulo the step therefore satisfy one common linear
 recurrence with integer coefficients. A linear recurrence propagates any other linear recurrence
-that holds on a sufficiently long initial window.
+that holds on a sufficiently long initial window. For binomial step sums, multiplication in the
+cyclic group algebra gives such a recurrence starting from any row of Pascal's triangle.
 -/
 
 namespace MetaMathlibExt
@@ -114,22 +119,40 @@ private noncomputable def binomialStepElement (α γ : ℕ) : A :=
 private noncomputable def binomialResidue (p : ZMod k) : A →ₗ[ℤ] ℤ :=
   (Finsupp.lapply p).comp (AddMonoidAlgebra.coeffLinearEquiv ℤ).toLinearMap
 
-private theorem binomialStepElement_pow_coeff (α γ p n : ℕ) :
-    binomialResidue k (p : ZMod k) (binomialStepElement k α γ ^ n) =
-      ∑ m ∈ (Finset.range (α * n + 1)).filter (fun m => m % k = (γ * n + p) % k),
-        ((α * n).choose m : ℤ) := by
+private theorem binomialStepElement_pow_coeff (α β γ p n : ℕ) :
+    binomialResidue k (p : ZMod k)
+        (binomialStepElement k α γ ^ n * (AddMonoidAlgebra.single 1 1 + 1) ^ β) =
+      ∑ m ∈ (Finset.range (α * n + β + 1)).filter (fun m => m % k = (γ * n + p) % k),
+        ((α * n + β).choose m : ℤ) := by
   have hshift : n • -(γ : ZMod k) = -((γ * n : ℕ) : ZMod k) := by
     simp [nsmul_eq_mul, mul_comm]
   rw [binomialStepElement, mul_pow, AddMonoidAlgebra.single_pow, hshift, one_pow, ← pow_mul,
-    add_pow, Finset.mul_sum, map_sum, Finset.sum_filter]
+    mul_assoc, ← pow_add, add_pow, Finset.mul_sum, map_sum, Finset.sum_filter]
   refine Finset.sum_congr rfl fun m _ ↦ ?_
   rw [one_pow, mul_one, AddMonoidAlgebra.single_pow, nsmul_one, one_pow, ← mul_assoc,
     AddMonoidAlgebra.single_mul_single, mul_one, ← nsmul_eq_mul', map_nsmul]
-  change (α * n).choose m • (AddMonoidAlgebra.single (-(↑(γ * n) : ZMod k) + ↑m) (1 : ℤ)).coeff
+  change (α * n + β).choose m • (AddMonoidAlgebra.single (-(↑(γ * n) : ZMod k) + ↑m) (1 : ℤ)).coeff
     (p : ZMod k) = _
   simp only [AddMonoidAlgebra.coeff_single, Finsupp.single_apply, neg_add_eq_iff_eq_add,
     ← Nat.cast_add, ZMod.natCast_eq_natCast_iff']
   split <;> simp
+
+-- Multiplying by the initial row changes the coefficient functional on powers of the step.
+private theorem shiftedBinomialStepSum_recurrence_of_window.exists_recurrence [NeZero k]
+    (α β γ p : ℕ) :
+    let c : ℕ → ℤ := fun n =>
+      ∑ m ∈ (Finset.range (α * n + β + 1)).filter (fun m => m % k = (γ * n + p) % k),
+        ((α * n + β).choose m : ℤ)
+    ∃ a : ℕ → ℤ, ∀ n, k ≤ n → c n = ∑ i ∈ Finset.Icc 1 k, a i * c (n - i) := by
+  let b := AddMonoidAlgebra.basis (ZMod k) ℤ
+  let := Module.Free.of_basis b
+  let := Module.Finite.of_basis b
+  have hdim : Module.finrank ℤ A = k := (Module.finrank_eq_card_basis b).trans (ZMod.card k)
+  let row : A := (AddMonoidAlgebra.single 1 1 + 1) ^ β
+  obtain ⟨a, ha⟩ := linearRecurrence_of_powers (binomialStepElement k α γ)
+    ((binomialResidue k p).comp (LinearMap.mulRight ℤ row))
+  exact ⟨a, by simpa only [hdim, LinearMap.comp_apply, LinearMap.mulRight_apply, row,
+    binomialStepElement_pow_coeff] using ha⟩
 
 end BinomialStepSums
 
@@ -157,13 +180,36 @@ public theorem binomialStepSum_recurrence_of_window (α k γ p s : ℕ) (hα : 1
       ∀ n, s ≤ n → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i) := by
   intro c hc
   let : NeZero k := ⟨by omega⟩
-  let b := AddMonoidAlgebra.basis (ZMod k) ℤ
-  let := Module.Free.of_basis b
-  let := Module.Finite.of_basis b
-  have hdim : Module.finrank ℤ (AddMonoidAlgebra ℤ (ZMod k)) = k :=
-    (Module.finrank_eq_card_basis b).trans (ZMod.card k)
-  obtain ⟨a, ha⟩ := linearRecurrence_of_powers (binomialStepElement k α γ) (binomialResidue k p)
-  simp only [hdim, binomialStepElement_pow_coeff] at ha
+  obtain ⟨a, ha⟩ := shiftedBinomialStepSum_recurrence_of_window.exists_recurrence k α 0 γ p
+  exact linearRecurrence_of_finite_window c a δ k s (k ^ 2 + s - 1) ha
+    (by have : k ≤ k ^ 2 := Nat.le_pow (by decide); omega) hc
+
+-- As for the unshifted sums, the recurrence only needs the modulus to be nonzero.
+set_option linter.unusedVariables false in
+/-- **Window criterion for shifted step sums of binomial coefficients.** Let
+$\alpha, \beta, k, \gamma, p, s$ be natural numbers with $\alpha > 1$, $k > 1$, $\gamma > 1$ and
+$p < k$, and let $\delta_1, \delta_2, \ldots$ be integers. For $n \in \mathbb{N}$ let $c(n)$ be
+the sum of $\binom{\alpha n + \beta}{m}$ over all $m$ with $0 \le m \le \alpha n + \beta$ and
+$m \equiv \gamma n + p \pmod{k}$, that is,
+$c(n) = \sum_{j \in \mathbb{Z}} \binom{\alpha n + \beta}{\gamma n + p + kj}$. If
+$c(n) = \sum_{i=1}^{s} \delta_i c(n - i)$ for all $n$ with $s \le n \le k^2 + s - 1$, then
+$c(n) = \sum_{i=1}^{s} \delta_i c(n - i)$ for all $n \ge s$.
+
+The coefficients $\delta_i$ need only work for this one residue $p$; the source's hypothesis,
+with one family $\delta_i$ for every $p$, is a special case.
+
+Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
+Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Theorem 9. -/
+public theorem shiftedBinomialStepSum_recurrence_of_window (α β k γ p s : ℕ)
+    (hα : 1 < α) (hk : 1 < k) (hγ : 1 < γ) (hp : p < k) (δ : ℕ → ℤ) :
+    let c : ℕ → ℤ := fun n =>
+      ∑ m ∈ (Finset.range (α * n + β + 1)).filter (fun m => m % k = (γ * n + p) % k),
+        ((α * n + β).choose m : ℤ)
+    (∀ n, s ≤ n → n ≤ k ^ 2 + s - 1 → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i)) →
+      ∀ n, s ≤ n → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i) := by
+  intro c hc
+  let : NeZero k := ⟨by omega⟩
+  obtain ⟨a, ha⟩ := shiftedBinomialStepSum_recurrence_of_window.exists_recurrence k α β γ p
   exact linearRecurrence_of_finite_window c a δ k s (k ^ 2 + s - 1) ha
     (by have : k ≤ k ^ 2 := Nat.le_pow (by decide); omega) hc
 
