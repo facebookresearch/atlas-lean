@@ -18,11 +18,12 @@ codes over $\mathrm{GF}(4)$.
 
 ## Depends on
 
-- [Pauli operators form an orthogonal basis of the matrices](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
 
 ## Proof depends on
 
-- [Pauli operators form an orthogonal basis of the matrices](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
+- [Pauli operators are orthogonal for the trace inner product](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
+- [Every matrix is a combination of Pauli operators](../stabilizer-formalism/pauli-expansion-of-a-matrix.md)
 
 ## Sources
 

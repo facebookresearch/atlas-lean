@@ -6,7 +6,7 @@ the remaining qubit as a work qubit whose state is arbitrary and is restored; co
 [doubly controlled construction](doubly-controlled-unitary-from-a-square-root.md) of at most $20$ gates per Toffoli, it is
 a product of at most $160(n - 5)$ single-qubit gates and CNOTs, so $O(n)$ of them. The construction splits the controls into
 two groups of sizes $m_1 = \lceil (n - 1)/2 \rceil$ and $m_2 = \lfloor (n - 1)/2 \rfloor$, both in $\{3, \dots, \lceil n/2 \rceil\}$
-for $n \ge 7$, simulates $\wedge_{m_1}(X)$ and $\wedge_{m_2}(X)$ by $4(m - 2)$ Toffoli
+for $n \ge 7$, simulates $\wedge_{m_1}(X)$ and $\wedge_{m_2}(X)$ by $4(m_i - 2)$ Toffoli
 gates each using the idle qubits as work qubits, and composes two of each with the borrowed qubit as an intermediate
 target.
 

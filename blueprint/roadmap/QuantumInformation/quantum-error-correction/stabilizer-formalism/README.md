@@ -22,7 +22,7 @@ definitions of the Pauli and Clifford groups are on the pages linked under relat
 - [Encoding circuit for a stabilizer code](encoding-circuit-for-a-stabilizer-code.md)
 - [Stabilizer codes from additive codes over GF(4)](stabilizer-codes-from-additive-codes-over-gf4.md)
 - [The number of stabilizer states](number-of-stabilizer-states.md)
-- [Pauli operators form an orthogonal basis of the matrices](pauli-operators-form-an-orthogonal-basis.md)
+- [Pauli operators are orthogonal for the trace inner product](pauli-operators-form-an-orthogonal-basis.md)
 - [Symplectic Gram–Schmidt over $\mathbb{F}_2$](symplectic-gram-schmidt-over-f2.md)
 - [Graph state](graph-state.md)
 - [Every stabilizer state is local-Clifford equivalent to a graph state](every-stabilizer-state-is-local-clifford-equivalent-to-a-graph-state.md)
@@ -33,7 +33,7 @@ definitions of the Pauli and Clifford groups are on the pages linked under relat
 
 - [Dimension of a stabilizer code](../finrank-stabilizer-code.md): the dimension $2^{n-r}$ of a stabilizer code with $r$ independent generators.
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md): correctability and distance in terms of the normalizer.
-- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md): the Pauli group, the Clifford group and stabilizer states.
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md): the Pauli group and its binary representation.
 
 ## Sources
 

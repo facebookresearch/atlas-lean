@@ -3,7 +3,7 @@
 For every $n$-qubit [stabilizer state](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 $|\psi\rangle$ there are a [graph state](graph-state.md) $|G\rangle$ on $n$ vertices and one-qubit Clifford unitaries
 $U_1, \dots, U_n$ with $|\psi\rangle = (U_1 \otimes \cdots \otimes U_n) |G\rangle$ up to a global phase. Proof: write the
-stabilizer generators as the rows of a matrix $\binom{Z}{X}$ (columns indexed by generators); a local Clifford operation,
+stabilizer generators as the columns of a $2n \times n$ matrix $\binom{Z}{X}$; a local Clifford operation,
 here Hadamards on a suitable set of qubits, makes the $X$ block $X'$ invertible, and changing generators by $X'^{-1}$ gives
 $\binom{Z' X'^{-1}}{I}$, where $Z' X'^{-1}$ is symmetric because the generators commute. Phase gates clear its diagonal,
 and Pauli $Z$ gates fix the signs, so the result is the tableau of the graph state whose adjacency matrix is

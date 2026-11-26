@@ -1,15 +1,14 @@
 # Decomposition of a unitary into two-level unitaries
 
-Let $d \ge 2$ and fix an orthonormal basis $e_1, \dots, e_d$ of $\mathbb{C}^d$. A *two-level unitary* is a unitary that acts
-as the identity on all basis vectors except two, $e_j$ and $e_k$, and maps $\operatorname{span}(e_j, e_k)$ to itself. Every
-unitary $U$ on $\mathbb{C}^d$ is a product of at most $d(d-1)/2$ two-level unitaries, one for each pair of basis vectors,
-followed by a diagonal unitary $D$:
+For every $d \ge 0$ and every unitary $d \times d$ complex matrix $U$ there are a list $M_1, \dots, M_m$ of unitary matrices,
+each [two-level](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md) on some pair of indices, with $m \le d(d-1)/2$, and complex numbers $\varphi_1, \dots, \varphi_d$
+with $|\varphi_k| = 1$, such that
 
-$$U = \Big( \prod_{j > k} T(j, k) \Big) \cdot D ,$$
+$$U = M_1 M_2 \cdots M_m \cdot \operatorname{diag}(\varphi_1, \dots, \varphi_d).$$
 
-where $T(j, k)$ acts on $\operatorname{span}(e_j, e_k)$. The factors are found column by column, as in Gaussian elimination
-with Givens rotations: two-level unitaries zero the entries below the diagonal of the first column, which leaves a unit
-complex number on the diagonal, and the procedure repeats on the remaining $(d - 1) \times (d - 1)$ block.
+The factors are found column by column, as in Gaussian elimination with Givens rotations: two-level unitaries zero the
+entries below the diagonal of the first column, which leaves a unit complex number on the diagonal, and the procedure
+repeats on the remaining $(d - 1) \times (d - 1)$ block.
 
 ## Sources
 

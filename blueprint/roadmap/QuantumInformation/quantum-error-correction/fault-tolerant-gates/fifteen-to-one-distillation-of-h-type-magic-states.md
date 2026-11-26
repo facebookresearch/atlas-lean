@@ -34,4 +34,4 @@ subroutine drives the error to zero.
 
 ## Sources
 
-- S. Bravyi and A. Kitaev, *Universal quantum computation with ideal Clifford gates and noisy ancillas*, Phys. Rev. A 71 (2005), 022316, arXiv:quant-ph/0403025, Section VI, Lemma 2, the distillation subroutine (steps 1–6) and equations (28)–(37).
+- S. Bravyi and A. Kitaev, *Universal quantum computation with ideal Clifford gates and noisy ancillas*, Phys. Rev. A 71 (2005), 022316, arXiv:quant-ph/0403025, Section VI, Lemma 2, the distillation subroutine (steps 1–6), equations (28)–(37), and equation (38) (the expansion $35\varepsilon^3$).

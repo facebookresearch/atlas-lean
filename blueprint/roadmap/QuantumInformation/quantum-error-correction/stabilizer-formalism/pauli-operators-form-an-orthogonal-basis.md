@@ -1,22 +1,17 @@
-# Pauli operators form an orthogonal basis of the matrices
+# Pauli operators are orthogonal for the trace inner product
 
-The $4^n$ Pauli products $P_1 \otimes \cdots \otimes P_n$ with $P_j \in \{I, X, Y, Z\}$ are orthogonal for the
-Hilbert–Schmidt inner product: $\operatorname{Tr}(P^{*} Q) = 2^n$ if $P = Q$ and $0$ otherwise. Hence they form a basis of
-the space of complex $2^n \times 2^n$ matrices, and every matrix $A$ expands as
+For $k \ge 0$ and $a, b \in \mathbb{F}_2^k$ let $\sigma_{a, b} = i^{|a \wedge b|} X^a Z^b$ be the Hermitian Pauli operator on $k$
+qubits, the tensor product of the factors $I, X, Z, Y$ for $(a_j, b_j) = (0,0), (1,0), (0,1), (1,1)$. Then
 
-$$A = \sum_{P} \alpha_P\, P, \qquad \alpha_P = 2^{-n} \operatorname{Tr}(P A).$$
+$$\operatorname{Tr}(\sigma_{a, b}\, \sigma_{a', b'}) = \begin{cases} 2^k & \text{if } (a, b) = (a', b'), \\ 0 & \text{otherwise.} \end{cases}$$
 
-The one-qubit case, $\operatorname{Tr}(I) = 2$ and $\operatorname{Tr}(X) = \operatorname{Tr}(Y) = \operatorname{Tr}(Z) = 0$
-together with the products $XY = iZ$, $YZ = iX$, $ZX = iY$, gives the general case by
-$\operatorname{Tr}(A \otimes B) = \operatorname{Tr}(A) \operatorname{Tr}(B)$. This expansion is why correcting the Pauli
-errors of weight at most $t$ corrects every error supported on at most $t$ qubits.
-
-## Depends on
-
-- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+So the $4^k$ Pauli products $\{I, X, Y, Z\}^{\otimes k}$ are orthogonal for the Hilbert–Schmidt inner product
+$\langle A, B \rangle = \operatorname{Tr}(A^{*} B)$; together with the
+[Pauli expansion](pauli-expansion-of-a-matrix.md) they form an orthogonal basis of the $2^k \times 2^k$ complex matrices.
+This is why correcting the Pauli errors of weight at most $t$ corrects every error supported on at most $t$ qubits.
 
 ## Sources
 
-- J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.2 (the Pauli operators "are a basis for the vector space of $2 \times 2$ matrices").
-- A. Ketkar, A. Klappenecker, S. Kumar and P. K. Sarvepalli, *Nonbinary stabilizer codes over finite fields*, IEEE Trans. Inform. Theory 52 (2006), 4892–4914, arXiv:quant-ph/0508070, Section II (the nice error basis: $\operatorname{Tr}(A^\dagger B) = 0$ for distinct elements, so the error operators form a basis), Lemma 1 and Corollary 4.
+- A. Ketkar, A. Klappenecker, S. Kumar and P. K. Sarvepalli, *Nonbinary stabilizer codes over finite fields*, IEEE Trans. Inform. Theory 52 (2006), 4892–4914, arXiv:quant-ph/0508070, Section II (the nice error basis: $\operatorname{Tr}(A^\dagger B) = 0$ for distinct elements), Lemma 1 and Corollary 4.
 - C. Dankert, R. Cleve, J. Emerson and E. Livine, *Exact and approximate unitary 2-designs and their application to fidelity estimation*, Phys. Rev. A 80 (2009), 012304, arXiv:quant-ph/0606161, the expansion $A = \sum_a \alpha_a P_a$ before equation (10).
+- J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.2 (the Pauli operators "are a basis for the vector space of $2 \times 2$ matrices").

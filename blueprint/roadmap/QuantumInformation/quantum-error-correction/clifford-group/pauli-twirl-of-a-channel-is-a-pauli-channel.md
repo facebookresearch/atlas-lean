@@ -2,7 +2,7 @@
 
 Let $\Lambda$ be a [quantum channel](../../quantum-operations/quantum-channel.md) on $n$ qubits with Kraus operators
 $A_l$, $\Lambda(\rho) = \sum_l A_l \rho A_l^{*}$, and expand $A_l = \sum_P \alpha_{l, P}\, P$ in the
-[Pauli basis](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md) $\{I, X, Y, Z\}^{\otimes n}$. The
+[Pauli basis](../stabilizer-formalism/pauli-expansion-of-a-matrix.md) $\{I, X, Y, Z\}^{\otimes n}$. The
 *Pauli twirl* of $\Lambda$ averages its conjugates by all $4^n$ Pauli products:
 
 $$\Lambda_{\mathrm{tw}}(\rho) = \frac{1}{4^n} \sum_{Q} Q\, \Lambda(Q \rho Q)\, Q = \sum_{P} p_P\, P \rho P,
@@ -16,12 +16,13 @@ instead yields a depolarizing channel.
 
 ## Depends on
 
+- [Every matrix is a combination of Pauli operators](../stabilizer-formalism/pauli-expansion-of-a-matrix.md)
 - [Quantum channel](../../quantum-operations/quantum-channel.md)
 - [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
 
 ## Proof depends on
 
-- [Pauli operators form an orthogonal basis of the matrices](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
+- [Pauli operators are orthogonal for the trace inner product](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
 - [Pauli operators commute exactly when their symplectic product vanishes](../stabilizer-formalism/pauli-operators-commute-iff-symplectic-product-vanishes.md)
 
 ## Sources

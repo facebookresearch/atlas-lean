@@ -1,6 +1,6 @@
 # A two-level unitary from multiply controlled gates along a Gray code
 
-Let $n \ge 1$ and let $T$ be a [two-level unitary](decomposition-into-two-level-unitaries.md) on $(\mathbb{C}^2)^{\otimes n}$
+Let $n \ge 1$ and let $T$ be a two-level unitary (a unitary that is [two-level](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md)) on $(\mathbb{C}^2)^{\otimes n}$
 acting on the computational basis states $|x\rangle$ and $|y\rangle$, $x \ne y \in \{0, 1\}^n$. Let
 $x = g_1, g_2, \dots, g_m = y$ be a Gray code from $x$ to $y$: consecutive strings differ in exactly one bit, and
 $m \le n + 1$. Then $T$ is a product of $2m - 3 \le 2n - 1$ gates, each a multiply controlled gate $\wedge_{n-1}(V)$
@@ -13,7 +13,7 @@ of $\Theta(n^2)$ gates each, $T$ costs $O(n^3)$ single-qubit gates and CNOTs.
 
 ## Depends on
 
-- [Decomposition of a unitary into two-level unitaries](decomposition-into-two-level-unitaries.md)
+- [Two-level matrix](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md)
 
 ## Proof depends on
 

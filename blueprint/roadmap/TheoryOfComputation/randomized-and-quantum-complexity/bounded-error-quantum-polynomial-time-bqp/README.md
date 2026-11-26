@@ -10,7 +10,6 @@
 - [The Pauli group on $n$ qubits](pauli-group-on-n-qubits.md)
 - [The Clifford group on $n$ qubits](clifford-group-on-n-qubits.md)
 - [Stabilizer groups and stabilizer states](stabilizer-groups-and-stabilizer-states.md)
-- [The Pauli group on $n$ qubits](pauli-group-on-n-qubits.md)
 - [Exactly unitary Gaussian-rational approximations of 1- and 2-qubit gates](exactly-unitary-gaussian-rational-approximations-of-1-and-2.md)
 - [Exact Gaussian-rational Toffoli and multi-controlled NOT decompositions](exact-2-local-gaussian-rational-toffoli-and-multi-controlled.md)
 - [Snapping approximate values to exact Gaussian-rational unitaries](snapping-approximate-values-to-exact-gaussian-rational-unita.md)

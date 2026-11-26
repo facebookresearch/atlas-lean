@@ -9,9 +9,6 @@ $e^{o(L)} \cdot (4\mu^2 p(1 - p))^{L/2}$, and so tends to $0$ exponentially in $
 $p < 1/2$ matters: at $p = 1$ the condition $4\mu^2 p(1 - p) < 1$ holds, yet for odd $L$ flipping every edge leaves an
 empty syndrome and an odd winding in both directions, so decoding fails with certainty.
 
-The same holds, with smaller constants, when the syndrome measurements are themselves faulty and a spacetime decoder is
-used: see [the faulty-syndrome threshold](threshold-for-toric-code-decoding-with-faulty-syndrome-measurements.md).
-
 Dennis, Kitaev, Landahl and Preskill relate the threshold of the optimal decoder to a phase transition of the
 random-bond Ising model and quote the numerical value $p_c \approx 0.1094$; that value is not a theorem.
 
