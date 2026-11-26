@@ -10,9 +10,19 @@ module
 
 import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
 
-open MathlibExt.NumberTheory.PrimitiveNondeficientWanted MetaMathlibExt
+/-! # Tests for `MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum` -/
 
 namespace MathlibExtTest.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
+
+open MathlibExt.NumberTheory.PrimitiveNondeficientWanted MetaMathlibExt
+
+-- With exponent 5 the disjunct `e = 1` is impossible, so the fifth-power bound holds.
+example (n q m : ℕ) (h : EulerianForm n q 5 m) : q ^ 5 < 2 * m ^ 2 := by
+  simpa using eulerianForm_exponent_eq_one_or_pow_five_lt n q 5 m h
+
+-- Corollary: an exponent different from 1 forces the fifth-power bound.
+example (n q e m : ℕ) (h : EulerianForm n q e m) (he : e ≠ 1) : q ^ 5 < 2 * m ^ 2 := by
+  simpa [he] using eulerianForm_exponent_eq_one_or_pow_five_lt n q e m h
 
 -- Below the crossing threshold, the lifted product stays at most two.
 example (q : ℕ) (hq : q.Prime) (hodd : Odd q)
