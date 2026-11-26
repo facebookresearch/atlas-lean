@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundYKLBMWKCZGS2026TTTDiscoverHolds
 
 @[expose] public section
 
@@ -90,12 +91,6 @@ the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.
 
 Source: Georgiev--Gómez-Serrano--Tao--Wagner 2025; Optimization Problems, Constant 1b. -/
 def upperBound_GGSWT2025_AlphaEvolve : Prop := C₁ᵦ ≤ (380924 : ℝ) / 1000000
-
-/-- **TTT-Discover 2026 upper bound statement for the minimum overlap constant.** This is the
-proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ is at most $0.380876$.
-
-Source: Yuksekgonul et al. 2026 (TTT-Discover); Optimization Problems, Constant 1b. -/
-def upperBound_YKLBMWKCZGS2026_TTTDiscover : Prop := C₁ᵦ ≤ (380876 : ℝ) / 1000000
 
 /-- **Together AI 2026 upper bound statement for the minimum overlap constant.** This is the
 proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ is at most $0.380871$.
@@ -194,13 +189,6 @@ minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380924$.
 Source: Georgiev--Gómez-Serrano--Tao--Wagner 2025 and Optimization Problems 1b. -/
 public theorem_wanted upperBound_GGSWT2025_AlphaEvolve_holds :
   upperBound_GGSWT2025_AlphaEvolve
-
-/-- **TTT-Discover 2026 upper bound for the minimum overlap constant holds.** The continuous
-Erdős minimum-overlap constant $C_{1b}$ is at most $0.380876$.
-
-Source: Yuksekgonul et al. 2026 and Optimization Problems 1b. -/
-public theorem_wanted upperBound_YKLBMWKCZGS2026_TTTDiscover_holds :
-  upperBound_YKLBMWKCZGS2026_TTTDiscover
 
 /-- **Together AI's 2026 upper bound for the minimum-overlap constant.** The continuous Erdős
 minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380871$.
