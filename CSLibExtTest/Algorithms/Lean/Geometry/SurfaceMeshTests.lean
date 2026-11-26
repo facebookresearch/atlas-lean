@@ -19,6 +19,15 @@ open Cslib.Algorithms.Lean.Geometry.SurfaceMesh
 
 def bowtie : Mesh (Fin 5) := ⟨[[0, 1, 2], [0, 3, 4]]⟩
 
+/-- Three triangles on the edge `{0, 1}`: every link is connected, but the link of `0` is a star
+whose center `1` has degree three. -/
+def book : Mesh (Fin 5) := ⟨[[0, 1, 2], [0, 1, 3], [0, 1, 4]]⟩
+
+/-- Two tetrahedral boundaries sharing only the vertex `0`: edges are paired and every link
+vertex has degree two, but the link of `0` is two disjoint triangles. -/
+def twoTetra : Mesh (Fin 7) :=
+  ⟨[[0, 1, 2], [0, 3, 1], [0, 2, 3], [1, 3, 2], [0, 4, 5], [0, 6, 4], [0, 5, 6], [4, 6, 5]]⟩
+
 def degenerate : Mesh (Fin 3) := ⟨[[0, 1, 1]]⟩
 
 def subdivTetra : Mesh (Fin 5) :=
@@ -35,6 +44,9 @@ def rp2 : Mesh (Fin 6) :=
 
 /-- A single triangle: its edges are not paired. -/
 def disk : Mesh (Fin 3) := ⟨[[0, 1, 2]]⟩
+
+/-- A single two-vertex face: not a valid polygon, but it uses both directions of its edge. -/
+def digon : Mesh (Fin 2) := ⟨[[0, 1]]⟩
 
 theorem tetra_vertices : (vertices tetra).card = 4 := by decide
 
@@ -84,9 +96,31 @@ theorem csaszar_orientable : Orientable csaszar := by decide +kernel
 
 theorem bowtie_fails_link : ¬ VertexLinkCycle bowtie := by decide
 
-theorem bowtie_fails_link_at_zero :
-    ¬ ((∀ u ∈ linkVertsList bowtie 0, linkDegree bowtie 0 u = 2) ∧
-      LinkConnected bowtie 0) := by decide
+/-- The bowtie fails the link condition through degrees: each link vertex at `0` has degree one. -/
+theorem bowtie_link_degree_fails_at_zero :
+    ¬ ∀ u ∈ linkVertsList bowtie 0, linkDegree bowtie 0 u = 2 := by decide
+
+theorem book_links_connected : ∀ v ∈ verticesList book, LinkConnected book v := by decide
+
+/-- With every link connected, only the degree condition fails. -/
+theorem book_not_vertexLinkCycle : ¬ VertexLinkCycle book := by decide
+
+theorem twoTetra_valid : Valid twoTetra := by decide
+
+theorem twoTetra_edges_paired : EdgeManifold twoTetra := by decide
+
+theorem twoTetra_link_degree_two :
+    ∀ v ∈ verticesList twoTetra, ∀ u ∈ linkVertsList twoTetra v, linkDegree twoTetra v u = 2 := by
+  decide
+
+/-- With edges paired and every link degree two, only connectivity fails: the link of `0` is two
+disjoint triangles. -/
+theorem twoTetra_link_disconnected : ¬ LinkConnected twoTetra 0 := by decide
+
+theorem twoTetra_not_closed : ¬ ClosedSurface twoTetra := by decide
+
+/-- `Orientable` is the edge-parity condition, which this pinched mesh also meets. -/
+theorem twoTetra_orientable : Orientable twoTetra := by decide
 
 theorem degenerate_invalid : ¬ Valid degenerate := by decide
 
@@ -121,7 +155,14 @@ theorem rp2_not_flipCompatible : ¬ ∃ flip, FlipCompatible rp2 flip := fun h =
   rp2_not_orientable ((orientable_iff_edgesPaired_and_flipCompatible rp2).mpr
     ⟨by decide +kernel, h⟩)
 
-theorem disk_not_orientable : ¬ Orientable disk := by decide
+theorem disk_edges_unpaired : ¬ EdgesPaired disk := by decide
+
+/-- A disk is not `Orientable` in the closed-edge sense, because its boundary edges are unpaired. -/
+theorem disk_not_orientable_of_unpaired_edges : ¬ Orientable disk := fun h =>
+  disk_edges_unpaired ((orientable_iff_edgesPaired_and_flipCompatible disk).mp h).1
+
+/-- The edge-parity reading on a raw mesh: the invalid face `[0, 1]` passes. -/
+theorem digon_orientable_not_valid : Orientable digon ∧ ¬ Valid digon := by decide
 
 /-- An `n × n` grid triangulation of the torus (`twist = false`) or, with the last row glued back
 reversed, of the Klein bottle (`twist = true`). -/
@@ -135,6 +176,7 @@ private meta def gridMesh (n : ℕ) (twist : Bool) : Mesh ℕ :=
 
 -- 128 faces each: far beyond a search over all `2 ^ 128` flip assignments.
 #guard chi (gridMesh 8 false) == 0 && chi (gridMesh 8 true) == 0
+#guard decide (EdgesPaired (gridMesh 8 false)) && decide (EdgesPaired (gridMesh 8 true))
 #guard decide (Orientable (gridMesh 8 false))
 #guard !decide (Orientable (gridMesh 8 true))
 

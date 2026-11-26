@@ -26,6 +26,11 @@ vertices, edges and Euler characteristic `chi` of a mesh, and decidable predicat
 surfaces (`ClosedSurface`: valid faces, every edge in exactly two faces, every vertex link a
 single cycle), for consistent orientation, and for orientability.
 
+`ConsistentlyOriented` and `Orientable` are edge-parity conditions on raw meshes: every directed
+edge is used by at most one face and its reverse by some face. For a mesh with `ClosedSurface`
+they are the usual coherent orientation and orientability of the closed surface. A mesh with a
+boundary edge is never `Orientable`, and the conditions do not require `Valid` faces.
+
 ## Main definitions
 
 * `Mesh`, `vertices`, `edges`, `chi`: a mesh, its vertex and edge sets, and `V - E + F`.
@@ -145,16 +150,26 @@ def VertexLinkCycle {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
 def ClosedSurface {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   Valid M ∧ EdgeManifold M ∧ VertexLinkCycle M
 
+/-- Every directed edge is used by at most one face, and its reverse by some face. For a mesh
+with `ClosedSurface` this says the faces are coherently oriented: the two faces at each edge
+traverse it in opposite directions. On a raw mesh it is only this edge condition: a boundary edge,
+used in one direction only, makes it fail, and the faces need not be valid polygons. -/
 def ConsistentlyOriented {V : Type _} [DecidableEq V] (M : Mesh V) :
     Prop :=
   (∀ d ∈ allDirectedEdges M,
     (M.faces.filter (fun f => decide (d ∈ directedEdgesOfFace f))).length ≤ 1) ∧
   (∀ d ∈ allDirectedEdges M, (d.2, d.1) ∈ allDirectedEdges M)
 
+/-- Reverse the faces whose `flip` is `true`. -/
 def reorient {V : Type _} (M : Mesh V)
     (flip : Fin M.faces.length → Bool) : Mesh V :=
   ⟨List.ofFn (fun i => if flip i then M.faces[i].reverse else M.faces[i])⟩
 
+/-- Some choice of face reversals makes the mesh `ConsistentlyOriented`. For a mesh with
+`ClosedSurface` this is orientability of the closed surface it describes. On a raw mesh it is only
+the edge-parity condition: a mesh with a boundary edge is never orientable in this sense (a single
+triangle is not), and `Valid` faces are not required (the one face `[0, 1]` uses both directions
+of its edge and passes). -/
 def Orientable {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   ∃ flip : Fin M.faces.length → Bool, ConsistentlyOriented (reorient M flip)
 
