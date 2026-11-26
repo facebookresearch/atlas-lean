@@ -1,8 +1,11 @@
 # PC-Relate kinship estimator under population structure
 
 Let $g_{is} \in \{0,1,2\}$ be the genotype of individual $i$ at SNP $s$, $s = 1,\dots,S$. In a structured or admixed sample, allele frequencies vary between individuals; let $\mu_{is} \in (0,1)$ be the individual-specific allele frequency, so $E[g_{is}] = 2\mu_{is}$. PC-Relate estimates $\mu_{is}$ by regressing the genotypes at SNP $s$ on the top principal components $V_{i1},\dots,V_{iK}$ of ancestry,
+
 $$2\hat\mu_{is} = \hat\beta_{0s} + \sum_{k=1}^K\hat\beta_{ks}V_{ik},$$
+
 with fitted values kept inside $(0,1)$, and estimates the kinship coefficient of individuals $i \ne j$ by
+
 $$\hat\phi_{ij} = \frac{\sum_{s=1}^S (g_{is} - 2\hat\mu_{is})(g_{js} - 2\hat\mu_{js})}{4\sum_{s=1}^S\sqrt{\hat\mu_{is}(1-\hat\mu_{is})\,\hat\mu_{js}(1-\hat\mu_{js})}}.$$
 
 The estimator is the ratio of the summed ancestry-adjusted genotype covariances to their summed scale, under the moment model $E[(g_{is} - 2\mu_{is})(g_{js} - 2\mu_{js})] = 4\phi_{ij}\sqrt{\mu_{is}(1-\mu_{is})\mu_{js}(1-\mu_{js})}$, which reduces to the usual $\operatorname{Cov}(g_{is}, g_{js}) = 4\phi_{ij}\,p_s(1-p_s)$ when all individuals share the frequency $p_s$. The principal components are computed in a way that is robust to the relatives in the sample, so that ancestry and recent relatedness are not confounded.

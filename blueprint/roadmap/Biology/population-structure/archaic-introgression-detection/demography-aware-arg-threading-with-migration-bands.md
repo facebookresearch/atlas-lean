@@ -5,7 +5,9 @@
 **Population paths.** For a lineage that starts in a known present-day population, its **population path** is the sequence of populations it occupies over its time span; it is determined by the population tree and by which migration bands it follows. Let $P$ be the maximum number of population paths available to any lineage.
 
 **Threading HMM.** ARGweaver samples ancestral recombination graphs by MCMC: one sample's branch is removed from every local tree ("unthreading") and re-inserted by sampling from a hidden Markov model along the $L$ sites ("threading"). In the demography-aware version, a hidden state at a site is a triple (branch of the local tree, discrete coalescence time, population path), restricted to triples in which the new lineage and the branch it joins are in the same population at the coalescence time. Coalescence states reached through a migration band receive prior weight $p_M$ for each band followed and $1 - p_M$ for each band passed without migrating, in addition to the coalescent and recombination terms of the discretized sequentially Markov coalescent. Each threading step costs
+
 $$O\big(L\,n\,k^2\,P^2\big)$$
+
 for $n$ samples, compared with $O(Lnk^2)$ without population structure; restricting the model to at most one migration event per site keeps $P$ small and makes the size of an unsampled (ghost) source population irrelevant, since at most one lineage occupies it.
 
 **Posterior introgression probability.** For sampled ARGs $G^{(1)}, \dots, G^{(M)}$ from the chain, the posterior probability that a haploid genome is introgressed through band $b$ at site $s$ is estimated by the fraction of samples whose local tree at $s$ routes that genome's ancestral lineage through $b$; a site is called introgressed when this fraction is at least $1/2$.

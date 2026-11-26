@@ -5,7 +5,9 @@ Let $h_1,\dots,h_n$ be phased haplotypes sampled from one population (or from tw
 **Pairwise model.** For a pair of haplotypes $(a,b)$, the hidden state at each genomic position is the pairwise coalescence time $\tau_{ab}(x)$ of the local genealogy, which under the sequentially Markovian coalescent evolves along the sequence as a Markov chain with transitions caused by recombination, and the observations are the heterozygous and homozygous sites of the pair, emitted with a mutation rate that depends on $\tau_{ab}(x)$. This two-haplotype HMM (as in PSMC) has likelihood $L_{ab}(\lambda)$ computed by the forward algorithm.
 
 **Composite likelihood.** MSMC2 maximizes
+
 $$\mathcal L_{\mathrm{MSMC2}}(\lambda) = \prod_{1 \le a < b \le n} L_{ab}(\lambda)$$
+
 over the rate profiles. Each factor is exact under the sequentially Markovian coalescent for its pair, and the set of pairs describes the whole distribution of pairwise coalescence times rather than only the time to the first coalescence among all $n$ haplotypes. The cross-population and within-population rates combine into the relative cross-coalescence rate, $2\lambda_{12}(t)/(\lambda_{11}(t) + \lambda_{22}(t))$, which lies near one before the populations split and falls to zero after they become isolated.
 
 ## Depends on

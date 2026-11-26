@@ -5,7 +5,9 @@ Let a molecular phenotype $P$ be measured in $N$ samples and let $G$ hold genoty
 - **Direct permutation p-value.** If $r$ of the permutation minima are at least as extreme as the observed one, $p_d = (r + 1)/(R + 1)$, which can never fall below $1/(R+1)$.
 - **Adaptive permutation p-value.** Permute until $B$ more extreme minima are seen or $M$ permutations are done; then $p_a = (\min(r, B) + 1)/(\min(R, M) + 1)$.
 - **Beta approximation.** If the $L$ tests were independent, the minimum of $L$ independent $\mathrm{Uniform}(0,1)$ p-values would follow $\mathrm{Beta}(1, L)$, with $\Pr(U \le p) = 1 - (1 - p)^L$. LD makes the effective number of tests smaller than $L$, so FastQTL fits $U \sim \mathrm{Beta}(k, n)$ to the permutation minima by maximum likelihood,
+
 $$\ell(k, n) = (k - 1)\sum_{r=1}^R \ln p_r + (n - 1)\sum_{r=1}^R \ln(1 - p_r) - R \ln B(k, n), \qquad B(k,n) = \frac{\Gamma(k)\Gamma(n)}{\Gamma(k+n)},$$
+
 and reports the adjusted p-value $p_b = \Pr(U \le p_n)$ under the fitted law.
 
 The fitted $n$ estimates the effective number of independent cis tests and $k$ stays near $1$, as expected for a minimum. Because $p_b$ uses the fitted tail rather than counting exceedances, it gives calibrated adjusted p-values far below $1/(R + 1)$ from a few hundred to a thousand permutations, and the per-phenotype values can then enter a genome-wide false discovery rate procedure such as Storey–Tibshirani across phenotypes.

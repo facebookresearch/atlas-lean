@@ -1,9 +1,13 @@
 # Absolute risk under proportional hazards with competing mortality
 
 Let $Z = (Z_1, \dots, Z_K)$ be an individual's risk factors (genetic scores, environmental exposures and interaction terms). Assume the age-specific disease incidence (hazard) follows the proportional hazards model
+
 $$I(a \mid Z) = I_0(a)\exp\Big(\sum_{k=1}^{K}\beta_k Z_k\Big),$$
+
 with baseline hazard $I_0$ and hazard ratios $e^{\beta_k}$; $\exp(\sum_k\beta_k Z_k)$ is the **multivariate relative risk**. Let $m(v \mid Z)$ be the hazard of death from other causes. For a person disease-free and alive at age $a$, the **absolute risk** of developing the disease in the age interval $[a, a+s]$ is
+
 $$R_{a, a+s}(Z) = \int_a^{a+s} I(u \mid Z)\exp\Big(-\int_a^u \big\{I(v \mid Z) + m(v \mid Z)\big\}\,dv\Big)\,du .$$
+
 It is the cumulative incidence of disease in the presence of the competing risk of death: the probability of developing the disease at age $u$ having remained free of both disease and death until $u$, integrated over the interval.
 
 When relative risks are estimated from cohort or case–control studies and the overall population incidence $\bar I(a)$ is known from registries, the baseline hazard is recovered from the fact that $\bar I(a)$ is the average of the covariate-specific incidence over the population distribution $F_a$ of risk factors at age $a$: $\bar I(a) = I_0(a)\int\exp\big(\sum_k\beta_k z_k\big)\,dF_a(z)$.

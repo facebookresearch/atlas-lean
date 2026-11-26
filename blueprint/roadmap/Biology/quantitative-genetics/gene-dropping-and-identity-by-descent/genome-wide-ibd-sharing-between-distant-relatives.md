@@ -6,11 +6,15 @@ Let two relatives descend from a single common ancestor through a total of $2m$ 
 2. **Segment lengths.** Along the genome, IBD segments from this ancestor have lengths approximately exponential with rate $2m$ (mean $1/(2m)$ Morgans); the segment covering a fixed IBD point is size-biased, the sum of two independent such exponentials (mean $1/m$ Morgans), ignoring chromosome ends.
 3. **Probability of any sharing.** The number of shared segments is approximately Poisson, and the probability that the relatives share any IBD segment from the ancestor is approximately $1 - \exp\!\big(-(2m - 1) L \beta\big)$, which stays appreciable long after $\beta$ is negligible. For $12$ meioses $\beta \approx 0.0005$, yet the probability of sharing some autosomal segment is about $0.148$.
 4. **Variance of the shared proportion.** The proportion $\frac1L \int_0^L I(x)\,dx$ has mean $\beta$ (or, in general, the kinship-based pointwise IBD probability $\psi$) and variance
+
 $$\frac{1}{L^2}\int_0^L\!\!\int_0^L \Pr\big(I(x) = I(y) = 1\big)\,dx\,dy - \psi^2,$$
+
 which depends only on two-locus IBD probabilities, i.e. on the recombination fraction between $x$ and $y$ and the pedigree.
 
 At the population level, for a randomly mating population with effective sizes $N_e(s)$ at time depth $s$, the pointwise probability that two gametes are IBD relative to a reference time $t$ generations ago is
+
 $$\beta(t) = 1 - \prod_{s=1}^{t}\left(1 - \frac{1}{2 N_e(s)}\right),$$
+
 which increases with $t$ while the segments get shorter, so deeper reference times mean many more, shorter segments.
 
 ## Depends on

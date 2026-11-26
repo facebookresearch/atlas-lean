@@ -1,7 +1,9 @@
 # Maynard Smith's connectivity condition in protein space
 
 Represent proteins of length $L$ as points of the sequence space $\mathcal A^L$ over the $20$-letter amino-acid alphabet, with two sequences adjacent when they differ by a single substitution, so that each sequence has $N = 19L$ one-step neighbours. Call a sequence *meaningful* (functional) if it is viable under selection, and let $f$ be the fraction of one-step neighbours of a meaningful sequence that are themselves meaningful. Maynard Smith's condition for evolution by natural selection to proceed through protein space by single substitutions, each intermediate retaining function, is
+
 $$f N > 1,$$
+
 that is, a meaningful protein must on average have more than one meaningful neighbour, so that meaningful sequences form extended networks rather than isolated islands.
 
 **Branching-process form.** Suppose that, starting from a meaningful sequence, the numbers of new meaningful one-step neighbours found at successive steps are independent with mean $f N$ (neighbours are treated as new, which is accurate while explored sets are tiny compared with $20^L$). Then the explored set of meaningful sequences is a Galton–Watson process with mean offspring $fN$: if $fN \le 1$ it is finite with probability one (excluding the degenerate case of exactly one offspring always), and if $fN > 1$ it is infinite with positive probability. Thus $fN > 1$ is exactly the threshold at which a mutational walk can reach meaningful sequences many substitutions away.

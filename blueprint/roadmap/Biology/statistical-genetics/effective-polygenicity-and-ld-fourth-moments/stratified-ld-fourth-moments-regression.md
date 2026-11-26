@@ -1,13 +1,21 @@
 # Stratified LD fourth moments regression
 
 Let GWAS marginal effect estimates $\hat\alpha_j$ (in per-normalized-genotype units) be available for $M$ reference SNPs, with LD $r_{jk}$ from a reference panel. Define, for SNP $j$ and an annotation category $C$,
+
 $$\ell^{(2)}_{j,C} = \sum_{k \in C} r_{jk}^2 \quad \text{(LD score)}, \qquad \ell^{(4)}_{j,C} = \sum_{k \in C} r_{jk}^4 \quad \text{(LD fourth moment)}.$$
+
 Stratified LD fourth moments regression (S-LD4M) fits, across SNPs,
+
 $$\mathbb E\big(\alpha_j^4 \mid \ell^{(2)}_j, \ell^{(4)}_j\big) \approx 3\big(\ell^{(2)}_j \cdot \tau\big)^2 + \ell^{(4)}_j \cdot K,$$
+
 where $\tau$ is the vector of stratified LD score regression coefficients (per-SNP heritabilities by category) and $K$ is the vector of fourth-moment coefficients. The first term is the fourth moment that a Gaussian (infinitesimal) architecture with the same second moments would give; $K$ measures excess kurtosis of the causal effect-size distribution. For a single category,
+
 $$K = 3\,\mathbb E(\beta^2)\big[\mathbb E_{h^2}(\alpha^2) - \mathbb E(\alpha^2)\big] = \frac{3 h^2}{M}\left[\frac{h^2}{M_e} - \frac{h^2}{M_{\mathrm{indep}}}\right],$$
+
 where $h^2$ is the heritability tagged by the reference SNPs, $M_{\mathrm{indep}}$ is the effective number of independent SNPs and $M_e$ is the [effective number of independently associated SNPs](effective-number-of-independently-associated-snps.md). Hence, with $h^2$ estimated by stratified LD score regression,
+
 $$M_e = \left(\frac{K M}{3 h^4} + \frac{1}{M_{\mathrm{indep}}}\right)^{-1},$$
+
 and $K = 0$ exactly when $M_e = M_{\mathrm{indep}}$, as under an infinitesimal architecture.
 
 ## Depends on

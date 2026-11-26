@@ -1,10 +1,13 @@
 # Effective positive selection on neutral alleles near fixation under background selection
 
 In the strong-load regime ($\lambda = U_d/s \gg 1$, $N s e^{-\lambda} \gg 1$) of the model of [lineage trajectories under linked deleterious mutations](lineage-trajectories-under-linked-deleterious-mutations.md), consider a neutral derived allele that has fixed among the most-fit individuals and is close to fixation in the whole population, so that the ancestral (wild-type) allele survives only at frequency $1 - f$ in less fit backgrounds. Let $k_c$ be the smallest number of deleterious mutations still carried by wild-type individuals; when $k_c \gg 1$,
+
 $$k_c + 1 \approx \log_\lambda\!\left(\frac{1}{N s e^{-\lambda} (1-f)}\right).$$
 
 **Result.** For $1 - f \ll 1/(N s e^{-\lambda})$, the wild type declines as if under selection $-s(k_c + 1)$, and the neutral derived allele behaves as if it had the frequency-dependent selection coefficient
+
 $$s_{\mathrm{eff}}(f) = s \,\log_\lambda\!\left(\frac{1}{N s e^{-\lambda}(1-f)}\right) > 0,$$
+
 which grows as $1 - f$ shrinks, because the fittest wild-type classes are successively lost (a ratchet) while the derived allele keeps the mutation-free class. This sweep-like behaviour of strictly neutral alleles creates the excess of high-frequency derived variants in the [site frequency spectrum under strong background selection](site-frequency-spectrum-under-strong-background-selection.md).
 
 ## Depends on

@@ -7,6 +7,7 @@ $$\partial_t \varphi = \frac{1}{4N}\, \partial_x^2[x(1-x)\varphi] - s\, \partial
 **Unclosed hierarchy.** Projecting on the binomial weights $w_{n,i}$ as in the neutral case gives, for $1 \le i \le n-1$ and $n|s| \ll 1$,
 
 $$\dot\Phi_n(i) = \frac{1}{4N}\big(\tilde\Delta_n \Phi_n\big)(i) + \frac{sh}{n+1}\Big[i(n+1-i)\Phi_{n+1}(i) - (n-i)(i+1)\Phi_{n+1}(i+1)\Big]$$
+
 $$\qquad + \frac{s(1-2h)(i+1)}{(n+1)(n+2)}\Big[i(n+1-i)\Phi_{n+2}(i+1) - (n-i)(i+2)\Phi_{n+2}(i+2)\Big] + nu\,\delta_{i,1},$$
 
 where $\tilde\Delta_n$ is the neutral drift operator. The selection term needs the spectrum at sample sizes $n+1$ and $n+2$, whose equations need $n+3$ and $n+4$, and so on, so the system is not closed. Under genic selection ($h = 1/2$) only $\Phi_{n+1}$ appears.

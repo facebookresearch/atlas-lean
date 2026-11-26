@@ -1,11 +1,15 @@
 # FINDOR: p-value weights from stratified LD-score predictions
 
 Let SNP $j$ have GWAS association statistic $\chi^2_j$ from $N_j$ samples, and let annotations $C$ have LD scores $\ell(j,C) = \sum_k C(k)\,r_{kj}^2$. Stratified LD-score regression posits
+
 $$E[\chi^2_j] = N_j\sum_C \tau_C\,\ell(j,C) + N_j\alpha + 1,$$
+
 with $\tau_C$ the per-SNP heritability effect of annotation $C$ and $\alpha$ a confounding term.
 
 **Weights.** (1) Fit $\hat\tau_C, \hat\alpha$ and predict the tagged variance of every SNP, $\widehat{\chi^2_j} = N_j\sum_C\hat\tau_C\ell(j,C) + N_j\hat\alpha + 1$. (2) Sort SNPs by $\widehat{\chi^2_j}$ into $B$ equal-size bins (the paper uses $B = 100$) and, in each bin $b$, estimate the null and non-null proportions $\hat\pi_{0,b}$, $\hat\pi_{1,b}$ from the p-value histogram. (3) Set
+
 $$\hat w_b = \frac{\hat\pi_{1,b}/\hat\pi_{0,b}}{\frac1B\sum_{b'=1}^B \hat\pi_{1,b'}/\hat\pi_{0,b'}},$$
+
 so the weights have mean one across bins, and reweight each SNP in bin $b$ as $p_j/\hat w_b$. (4) Declare SNPs significant when $p_j/\hat w_b$ falls below the usual genome-wide threshold.
 
 ## Depends on

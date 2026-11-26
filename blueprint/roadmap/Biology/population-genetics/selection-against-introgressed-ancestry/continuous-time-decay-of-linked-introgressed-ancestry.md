@@ -3,10 +3,13 @@
 A neutral introgressed allele $a$ sits $L$ base pairs from a deleterious allele with selection coefficient $s > 0$; the recombination rate is $r$ per base pair per generation, so linkage breaks at rate $rL$. At admixture the deleterious allele is fixed in the donor and absent from the recipient. While linked, the haplotype's frequency decays at rate $s$; once recombination moves $a$ onto a recipient background its frequency stays constant.
 
 **Formula.** The expected frequency after $T$ generations is
+
 $$f_a(T) = f_a(0)\left(e^{-rLT}e^{-sT} + \int_0^T rL\,e^{-rLt}e^{-st}\,dt\right) = f_a(0)\,\frac{rL + s\,e^{-T(rL+s)}}{rL + s}.$$
+
 As $T\to\infty$, $f_a(T) \to f_a(0)\,\frac{rL}{rL + s}$.
 
 **Segregating deleterious allele.** If the deleterious allele has frequency $f_N$ in the donor and $f_H$ in the recipient before admixture, then
+
 $$f_a(T) = f_a(0)\left(1 - f_N + f_H + (f_N - f_H)\,\frac{rL + s\,e^{-T(rL+s)}}{rL + s}\right).$$
 
 ## Depends on

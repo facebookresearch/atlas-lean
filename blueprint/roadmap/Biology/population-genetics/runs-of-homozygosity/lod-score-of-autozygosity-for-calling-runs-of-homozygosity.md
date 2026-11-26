@@ -1,9 +1,13 @@
 # LOD score of autozygosity for calling runs of homozygosity
 
 Let an individual have genotypes $g_1, \dots, g_n$ at a window of $n$ consecutive biallelic SNPs, with population allele frequencies $p_k, q_k = 1 - p_k$ at SNP $k$, and let $\varepsilon$ be a small rate of genotyping error and mutation. The **LOD score of autozygosity** of the window is
+
 $$\mathrm{LOD} = \sum_{k=1}^{n}\log_{10}\frac{\Pr(g_k \mid \text{autozygous})}{\Pr(g_k \mid \text{not autozygous})},$$
+
 where, under non-autozygosity, genotypes follow Hardy–Weinberg proportions $(p_k^2, 2p_kq_k, q_k^2)$, and under autozygosity both alleles are a single ancestral allele drawn with frequency $p_k$ or $q_k$, except that with probability $\varepsilon$ the genotype is drawn as under non-autozygosity. In this standard form
+
 $$\Pr(AA \mid \text{auto}) = (1-\varepsilon)p_k + \varepsilon p_k^2, \qquad \Pr(Aa \mid \text{auto}) = 2\varepsilon p_kq_k, \qquad \Pr(aa \mid \text{auto}) = (1-\varepsilon)q_k + \varepsilon q_k^2,$$
+
 so a homozygote contributes $\log_{10}\big((1-\varepsilon)/p_k + \varepsilon\big) > 0$ (rare homozygotes count more) and a heterozygote contributes $\log_{10}\varepsilon < 0$.
 
 **Calling procedure.** Slide the window along each chromosome in steps of $m$ SNPs; across all windows and individuals of a population the LOD scores are bimodal, and the population-specific threshold is placed at the local minimum between the two modes of a kernel density estimate. Windows above the threshold are called autozygous, and contiguous called windows are merged into one run of homozygosity (ROH). Allele frequencies are estimated from a fixed number of resampled alleles per population (for example $40$), so that thresholds are comparable across populations of different sample sizes; a SNP at which the individual carries an allele of estimated frequency $0$ is treated as missing (contribution $0$ to the LOD).

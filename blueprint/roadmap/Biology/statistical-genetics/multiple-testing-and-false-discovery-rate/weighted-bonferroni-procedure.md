@@ -5,7 +5,9 @@ Let $p_1,\dots,p_m$ be p-values for hypotheses $H_1,\dots,H_m$, each valid in th
 **Procedure.** At level $\alpha \in (0,1)$, reject $H_j$ when $p_j \le \alpha w_j/m$, equivalently when the weighted p-value $p_j/w_j$ is at most $\alpha/m$.
 
 **Theorem.** The family-wise error rate is at most $\alpha$: if $\mathcal H_0$ is the set of true nulls,
+
 $$P\Big(\bigcup_{j\in\mathcal H_0}\{p_j \le \alpha w_j/m\}\Big) \le \frac{\alpha}{m}\sum_{j\in\mathcal H_0} w_j \le \alpha.$$
+
 No independence between p-values is required. With all $w_j = 1$ it is the ordinary Bonferroni procedure.
 
 ## Expansion

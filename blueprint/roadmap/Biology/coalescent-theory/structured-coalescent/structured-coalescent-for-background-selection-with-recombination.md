@@ -3,7 +3,9 @@
 Consider a haploid Wright–Fisher population of size $N$ at mutation–selection equilibrium and a genomic region of $L$ selected sites split into $K$ types, $L_k$ sites of type $k$. Deleterious mutations arise without back mutation at total rate $U_k$ per chromosome per generation on type-$k$ sites, have effect $s_k \in (0,1)$, and combine multiplicatively; crossing over in the region occurs with probability $R$ per generation, uniformly along it. Write $d = (d_1, \dots, d_K)$ for the numbers of deleterious mutations of each type carried by a chromosome, $\lambda_k = U_k/s_k$, $\gamma_k = N s_k$, $\rho = NR$, and measure time in units of $N$ generations.
 
 **Model.** At equilibrium the counts are independent Poisson,
+
 $$f(d) = \prod_{k=1}^{K} e^{-\lambda_k}\frac{\lambda_k^{d_k}}{d_k!},$$
+
 and the sampled chromosomes start with independent $\mathrm{Poisson}(\lambda_k)$ counts. Backwards in time three competing exponential events act on the lineages:
 
 - *mutation:* a lineage with counts $d$ loses one type-$k$ mutation (its parent had one fewer) at rate $d_k\gamma_k$, total rate $\sigma_m = \sum_{\text{lineages}}\sum_k d_k\gamma_k$;

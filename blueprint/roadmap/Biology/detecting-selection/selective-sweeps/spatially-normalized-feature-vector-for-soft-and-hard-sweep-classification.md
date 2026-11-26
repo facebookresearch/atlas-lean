@@ -1,7 +1,9 @@
 # Spatially normalized feature vector for soft and hard sweep classification
 
 Divide a genomic window into $n$ adjacent subwindows, with the candidate sweep site in the central subwindow. For a nonnegative population-genetic summary statistic $x$ with value $x_i$ in subwindow $i$ (and $\sum_i x_i > 0$), define its **normalized spatial profile**
+
 $$v(x) = \Big(\frac{x_1}{\sum_{i} x_i}, \frac{x_2}{\sum_i x_i}, \dots, \frac{x_n}{\sum_i x_i}\Big) \in \Delta^{n-1},$$
+
 a point of the probability simplex recording only the shape of the statistic across the window. The S/HIC **feature vector** of a window concatenates $v(x)$ over the statistics: nucleotide diversity $\pi$, Watterson's $\hat\theta_W$, Fay and Wu's $\hat\theta_H$, the number of distinct haplotypes, average haplotype homozygosity $H_1 = \sum_j p_j^2$ (with $p_1 \ge p_2 \ge \dots$ the haplotype frequencies), $H_{12} = (p_1 + p_2)^2 + \sum_{j \ge 3}p_j^2$, $H_2/H_1$ with $H_2 = H_1 - p_1^2$, Kelly's $Z_{nS}$, and the maximum of the $\omega$ statistic. A supervised classifier (an ensemble of extremely randomized decision trees) trained on coalescent simulations assigns each window to one of five classes: hard sweep in the central subwindow, soft sweep in the central subwindow, linked to a hard sweep, linked to a soft sweep, or neutral.
 
 **Scale invariance.** If a demographic change multiplies a statistic by a common factor $c > 0$ in every subwindow, $x_i \mapsto c\,x_i$, then $v(x)$ is unchanged. The features thus discard the absolute level of each statistic, which nonequilibrium demography strongly affects, and keep its spatial shape, which a sweep distorts in a characteristic way (a valley of diversity at the target, excess high-frequency derived alleles on the flanks, reduced haplotype diversity and elevated linkage disequilibrium on each flank but not across the target).

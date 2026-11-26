@@ -1,20 +1,31 @@
 # Single-marker IBD LOD score under independent allele errors
 
 At a biallelic marker with major allele $A$ and minor allele $B$, let $p_A, p_B$ be the true allele frequencies and suppose each observed allele is miscalled independently with probability $\varepsilon \ge 0$. The error-added frequencies are then
+
 $$f_B = (1 - \varepsilon)\, p_B + \varepsilon\, (1 - p_B) = p_B (1 - 2\varepsilon) + \varepsilon, \qquad\text{so}\qquad p_B = \frac{f_B - \varepsilon}{1 - 2\varepsilon},$$
+
 which lets $p_B$ be estimated from the observed frequency $f_B$.
 
 For two ordered, non-inbred individuals under Hardy–Weinberg equilibrium, the **IBD model** has exactly one allele shared identical by descent, so the pair carries three independent alleles; without error,
+
 $$P(AA, AA \mid I) = p_A^3,\quad P(AA, AB \mid I) = p_A^2 p_B,\quad P(AB, AB \mid I) = p_A p_B,\quad P(AA, BB \mid I) = 0,$$
+
 and symmetrically $P(AB, BB \mid I) = p_A p_B^2$, $P(BB, BB \mid I) = p_B^3$. With errors, writing $e_j = \varepsilon^j (1 - \varepsilon)^{4 - j}$ for the probability of a given pattern of $j$ errors among the four observed alleles, and dropping negligible higher-order terms, the observed-pair probabilities include
+
 $$P_O(AA, AA \mid I) \approx e_0 p_A^3 + 2 e_1 p_A^2 p_B + e_2 p_A p_B,$$
+
 $$P_O(AA, AB \mid I) \approx e_0 p_A^2 p_B + (e_1 + 3 e_2)\, p_A p_B + 2 e_1 p_A^3,$$
+
 $$P_O(AA, BB \mid I) = (e_1 + e_2 + e_3)\, p_A p_B + e_2 (p_A^3 + p_B^3),$$
+
 $$P_O(AB, AB \mid I) \approx (e_0 + 4 e_1 + 2 e_2)\, p_A p_B + 4 e_2 (p_A^3 + p_B^3),$$
+
 with the remaining cases obtained by exchanging the roles of $A$ and $B$. The **non-IBD model** treats the four alleles as independent with the observed frequencies: $P_O(AA) \approx f_A^2$, $P_O(AB) \approx 2 f_A f_B$, $P_O(BB) \approx f_B^2$, and the pair probability is the product.
 
 The **single-marker IBD LOD score** is
+
 $$\mathrm{LOD} = \log_{10} \frac{P_O(g_1, g_2 \mid I)}{P_O(g_1)\, P_O(g_2)},$$
+
 set to $0$ if any allele is missing. An IBD segment is reported for a pair on every maximal interval whose summed LOD exceeds a threshold (for example $3$), which can be found by a single linear scan; summing LODs multiplies likelihood ratios, so markers are first thinned to approximate linkage equilibrium.
 
 ## Expansion

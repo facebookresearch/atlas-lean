@@ -1,8 +1,11 @@
 # Relative versus absolute divergence: Hudson's $F_{ST}$ and $d_{XY}$
 
 For two populations $X$ and $Y$ and a genomic region, let $\pi_X$ and $\pi_Y$ be the mean numbers of pairwise differences per site between two sequences drawn within $X$ and within $Y$, let $\pi_W = (\pi_X + \pi_Y)/2$, and let the absolute divergence
+
 $$d_{XY} = \pi_B$$
+
 be the mean number of differences per site between one sequence from $X$ and one from $Y$. Hudson's fixation index is
+
 $$F_{ST} = 1 - \frac{\pi_W}{\pi_B} = \frac{d_{XY} - \pi_W}{d_{XY}}.$$
 
 **Consequence.** $F_{ST}$ is a *relative* measure: for fixed $d_{XY} > 0$ it is strictly decreasing in $\pi_W$. Any process that lowers within-population diversity in a region (background selection or a selective sweep acting in both populations, or low recombination) raises $F_{ST}$ there without any change in between-population divergence. Reduced gene flow at a locus, by contrast, lengthens the time to the most recent common ancestor of sequences from the two populations and therefore raises the absolute measure $d_{XY}$. A region of elevated $F_{ST}$ is evidence of a barrier to gene flow only if $d_{XY}$ is also elevated.

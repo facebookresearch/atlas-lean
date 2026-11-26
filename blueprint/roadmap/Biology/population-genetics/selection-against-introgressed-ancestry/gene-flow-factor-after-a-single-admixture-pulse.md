@@ -3,13 +3,17 @@
 A recipient population is fixed for alleles $S_2$ (selected locus) and $N_2$ (linked neutral locus); a donor population is fixed for $S_1$ and $N_1$. A single admixture pulse at time $0$ introduces the haplotype $N_1S_1$ at frequency $p_0$. In the recipient, carriers of $S_1$ have viability $1-s$ ($0 \le s < 1$; carriers are heterozygous, since $S_1S_1$ homozygotes are rare and ignored), and the recombination fraction between the loci is $r \in [0, \tfrac12]$. To first order in $p_0$ the expected frequency of $N_1$ after $t$ generations is $p_t = p_0\,f(r,s,t)$, where, writing $c = (1-s)(1-r)$,
 
 **Autosome.**
+
 $$f_a(r,s,t) = \frac{c^{\,t}\,[\,1 - r - c\,] + r}{1 - c} = c^{\,t} + \frac{r\,(1 - c^{\,t})}{1 - c}.$$
 
 **X chromosome (non-pseudoautosomal), equal fitness $1-s$ in carrier females and males, female recombination fraction $r$.** An X-linked allele spends on average a fraction $2/3$ of generations in females, so the effective recombination fraction is $\tfrac23 r$:
+
 $$f_X(r,s,t) = \frac{s\,(1 - \tfrac23 r)^{t+1}(1-s)^t + \tfrac23 r}{1 - (1-\tfrac23 r)(1-s)}.$$
 
 **Limit.** For $r + s > 0$, as $t\to\infty$,
+
 $$f_a(r,s,t) \to \frac{r}{1 - (1-s)(1-r)} = \frac{r}{r + s - rs},$$
+
 the gene flow factor: the fraction of the introgressed neutral allele that escapes the barrier created by the linked deleterious allele.
 
 ## Depends on

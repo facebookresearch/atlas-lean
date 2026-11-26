@@ -1,13 +1,19 @@
 # Local genetic correlation between gene expression and a trait from a TWAS statistic
 
 In a cis-region of about 1 Mb around a gene, let $X$ be standardized genotypes with LD matrix $V$ (assumed invertible), and model expression and trait as $y_{GE} = X\beta_{GE} + \epsilon_{GE}$ and $y_T = X\beta_T + \epsilon_T$ with standardized effects, measured in non-overlapping samples of sizes $N_{GE}$ and $N_T$ (so $\operatorname{cov}(\epsilon_{GE},\epsilon_T) = 0$). The local genetic covariance is $\beta_{GE}^\top V\beta_T$ and the local genetic correlation is
+
 $$\rho_{g,\mathrm{local}} = \frac{\beta_{GE}^\top V\beta_T}{\sqrt{h^2_{g,\mathrm{local}}(GE)\,h^2_{g,\mathrm{local}}(T)}},$$
+
 with $h^2_{g,\mathrm{local}}$ the local SNP heritabilities.
 
 **Estimator.** With GWAS z-scores $z_T$, the LD-adjusted trait effects are $\hat\beta_T = N_T^{-1/2}V^{-1}z_T$, and with expression weights $w_{GE} = \hat\beta_{GE}$ the TWAS statistic is
+
 $$z_{\mathrm{TWAS}} = \frac{w_{GE}^\top z_T}{\sqrt{w_{GE}^\top V w_{GE}}}.$$
+
 Taking $w_{GE}^\top V w_{GE}$ as the local expression heritability, $z_{\mathrm{TWAS}}/\sqrt{N_T} = \hat\beta_{GE}^\top V\hat\beta_T / \sqrt{h^2_{g,\mathrm{local}}(GE)}$, which estimates $\rho_{g,\mathrm{local}}\sqrt{h^2_{g,\mathrm{local}}(T)}$. Hence
+
 $$\hat\rho_{g,\mathrm{local}} = \frac{z_{\mathrm{TWAS}}}{\sqrt{N_T\,h^2_{g,\mathrm{local}}(T)}},$$
+
 where in practice the variance explained by the locus's lead SNP is used for $h^2_{g,\mathrm{local}}(T)$.
 
 ## Depends on

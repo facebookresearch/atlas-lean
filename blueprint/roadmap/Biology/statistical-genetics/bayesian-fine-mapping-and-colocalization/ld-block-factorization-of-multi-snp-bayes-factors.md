@@ -1,12 +1,17 @@
 # LD-block factorization of multi-SNP Bayes factors
 
 Let $y$ and the columns of $G$ be centred, $\boldsymbol\beta \mid \boldsymbol\gamma \sim N(0, W)$ with $W$ diagonal (zero entries for SNPs outside the model), and let the residual precision $\tau$ be known. The Bayes factor of the multiple-regression model against the null is
+
 $$\mathrm{BF}(\boldsymbol\beta; W) = \left|I + \tau G^\top G W\right|^{-1/2}\exp\!\left(\tfrac12\, y^\top G\left[W(I + \tau G^\top G W)^{-1}\right]G^\top y\right).$$
 
 **Factorization.** Partition the SNPs into non-overlapping LD blocks, $G = (G_{[1]},\dots,G_{[L]})$, $W = W_{[1]}\oplus\cdots\oplus W_{[L]}$, and replace $G^\top G$ by its block-diagonal part $G_{[1]}^\top G_{[1]}\oplus\cdots\oplus G_{[L]}^\top G_{[L]}$. Then
+
 $$\mathrm{BF}(\boldsymbol\beta; W) = \prod_{k=1}^{L}\mathrm{BF}_{[k]}, \qquad \mathrm{BF}_{[k]} = \left|I + \tau G_{[k]}^\top G_{[k]} W_{[k]}\right|^{-1/2}\exp\!\left(\tfrac12\, y^\top G_{[k]}\left[W_{[k]}(I + \tau G_{[k]}^\top G_{[k]} W_{[k]})^{-1}\right]G_{[k]}^\top y\right).$$
+
 If, in addition, the prior on association indicators is independent across SNPs, the posterior over configurations factorizes approximately over blocks,
+
 $$\Pr(\boldsymbol\gamma \mid y, G, \boldsymbol\alpha) \approx \prod_{k=1}^{L}\Pr(\boldsymbol\gamma_{[k]} \mid y, G, \boldsymbol\alpha),$$
+
 so fine-mapping can be run on each block separately (with $\tau$ replaced by a block-wise point estimate via a Laplace approximation).
 
 ## Depends on

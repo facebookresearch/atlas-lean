@@ -1,16 +1,25 @@
 # Posterior number of causal variants at a locus
 
 Let $S = (S_1, \dots, S_m)^\top$ be the marginal association $z$-scores of $m$ variants in a locus with LD (correlation) matrix $\Sigma$. Under a linear model with standardized genotypes, $S_c \sim N(\lambda_c, 1)$ approximately, with $\lambda_c$ the normalized effect (non-centrality) of variant $c$, and jointly
+
 $$S \mid \Lambda \sim N(\Sigma \Lambda, \Sigma),$$
+
 where $\Lambda$ is the vector of normalized causal effects. Let $C \in \{0,1\}^m$ be the causal configuration ($c_i = 1$ if variant $i$ is causal) and place the prior $\Lambda \mid C \sim N(0, \Sigma_C)$ with $\Sigma_C = \sigma^2 \operatorname{diag}(c_1, \dots, c_m)$, so non-causal variants have zero effect. Integrating out $\Lambda$,
+
 $$S \mid C \sim N\!\left(0,\ \Sigma + \Sigma \Sigma_C \Sigma\right).$$
+
 With independent prior probability $\gamma$ of being causal, $P(C) = \prod_i \gamma^{c_i}(1 - \gamma)^{1 - c_i}$ (or variant-specific $\gamma_i$ from functional annotation), the posterior probability that the locus contains exactly $k$ causal variants is
+
 $$\Pr(N_c = k \mid S) = \frac{\sum_{|C| = k} P(S \mid C)\, P(C)}{\sum_{C} P(S \mid C)\, P(C)},$$
+
 the denominator running over all configurations, including the empty one. A locus shows **allelic heterogeneity** when $\Pr(N_c \ge 2 \mid S)$ is large.
 
 **Fast likelihood.** Evaluating $P(S \mid C)$ directly costs $O(m^3)$. Writing $\Sigma\Sigma_C\Sigma$ through its rank-$k$ factor (with $k = |C|$ causal indices $\alpha_1, \dots, \alpha_k$), set $U \in \mathbb R^{m \times k}$ with $U_{\alpha_i, i} = \sigma$ and zeros elsewhere, and $V \in \mathbb R^{k \times m}$ with $V_{i, j} = \sigma\, r_{\alpha_i, j}$, so that $\Sigma_C \Sigma = U V$ and
+
 $$S^\top(\Sigma + \Sigma\Sigma_C\Sigma)^{-1} S = S^\top \Sigma^{-1} (I_m + U V)^{-1} S,$$
+
 $$(I_m + UV)^{-1} = I_m - U (I_k + V U)^{-1} V$$
+
 by the Woodbury identity, and $\det(\Sigma + \Sigma\Sigma_C\Sigma) = \det\Sigma \cdot \det(I_k + VU)$ by the matrix determinant lemma. Since $S^\top\Sigma^{-1}$ and $\det\Sigma$ do not depend on $C$, each configuration costs $O(m^2 k)$ rather than $O(m^3)$.
 
 ## Depends on

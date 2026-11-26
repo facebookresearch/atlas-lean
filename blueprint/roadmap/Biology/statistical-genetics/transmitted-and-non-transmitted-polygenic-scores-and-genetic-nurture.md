@@ -1,8 +1,11 @@
 # Transmitted and non-transmitted polygenic scores separate direct effects from genetic nurture
 
 Let a child's outcome $Y$ depend linearly on the child's own polygenic score $C$ and on the polygenic scores $P_m, P_p$ of the mother and father:
+
 $$Y = \delta\, C + \eta_m P_m + \eta_p P_p + \varepsilon,$$
+
 where $\delta$ is the **direct genetic effect** and $\eta_m, \eta_p$ are **genetic nurture effects**, i.e. effects of parental genotype on the child's outcome through the environment the parent provides. Split each parent's score into the part on the haplotype transmitted to the child and the part on the non-transmitted haplotype, $P_m = T_m + N_m$ and $P_p = T_p + N_p$, so that $C = T_m + T_p$. Substituting,
+
 $$Y = (\delta + \eta_m)\, T_m + \eta_m N_m + (\delta + \eta_p)\, T_p + \eta_p N_p + \varepsilon .$$
 
 Two family designs identify the parameters from parent–offspring trios:

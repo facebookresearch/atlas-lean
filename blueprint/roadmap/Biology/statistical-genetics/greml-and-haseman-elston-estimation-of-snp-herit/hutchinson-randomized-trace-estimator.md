@@ -5,7 +5,9 @@ Let $A$ be a real $N\times N$ matrix and let $z$ be a random vector in $\mathbb 
 **Identity.** $E[z^\top A z] = \operatorname{tr}(A)$.
 
 **Estimator.** For independent copies $z_1,\dots,z_B$ of $z$,
+
 $$\widehat{\operatorname{tr}}_B(A) = \frac1B\sum_{b=1}^B z_b^\top A z_b$$
+
 is unbiased for $\operatorname{tr}(A)$. If $A = MM^\top$ for an $N\times M'$ matrix $M$ (with $M'$ the number of columns), then $z_b^\top A z_b = \|M^\top z_b\|_2^2$, and for $A = K^2$ with $K$ symmetric, $z_b^\top K^2 z_b = \|K z_b\|_2^2$; each term costs matrix–vector products only. For standard normal $z$ and symmetric $A$, $\operatorname{Var}(z^\top A z) = 2\operatorname{tr}(A^2)$, so $\operatorname{Var}(\widehat{\operatorname{tr}}_B(A)) = 2\operatorname{tr}(A^2)/B$.
 
 ## Expansion

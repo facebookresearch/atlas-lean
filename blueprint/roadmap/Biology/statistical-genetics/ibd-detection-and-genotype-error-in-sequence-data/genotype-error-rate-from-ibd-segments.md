@@ -1,14 +1,21 @@
 # Estimating the genotype error rate from IBD segments
 
 At a low-frequency biallelic variant with major allele $A$ and minor allele $B$, let $\gamma$ be the rate at which true $AA$ genotypes are reported as $AB$; assume $\gamma$ is small, $p_A$ is close to $1$, and errors at true $AB$ or $BB$ genotypes and double errors are negligible. Write $f_{AA}, f_{AB}$ for the observed (error-added) genotype frequencies and $f_A = f_{AA} + f_{AB}/2$ for the observed major allele frequency. Then the true frequencies satisfy, to first order in $\gamma$,
+
 $$p_{AA} \approx f_{AA}(1 + \gamma), \qquad p_{AB} \approx f_{AB} - f_{AA}\gamma, \qquad p_A \approx f_A + \tfrac12 f_{AA}\gamma .$$
+
 For two individuals sharing one allele identical by descent, the probability that one is observed $AA$ and the other $AB$ (unordered) is, to first order in $\gamma$,
+
 $$P_{\mathrm{Obs}}(AA, AB) \approx \frac{f_{AA} f_{AB}}{f_A} + \frac{f_{AA}^2}{f_A^2}\left(f_A - \frac{f_{AB}}{2}\right)\gamma,$$
+
 so
+
 $$\gamma \approx \frac{f_A^2\, P_{\mathrm{Obs}}(AA, AB) - f_A f_{AA} f_{AB}}{f_{AA}^2 \left(f_A - \tfrac12 f_{AB}\right)} .$$
 
 **Estimator (SEQERR).** Over variants $i$ in a frequency class and IBD pairs $j$, let $I^{(i,j)}(AA, AB)$ indicate that pair $j$ shows the $AA/AB$ configuration at variant $i$ inside a detected IBD segment, and let $\hat f$ denote observed frequencies at variant $i$. Then
+
 $$\hat\gamma = \frac{\sum_j \sum_i \left(\hat f_A(i)^2\, I^{(i,j)}(AA, AB) - \hat f_A(i)\, \hat f_{AA}(i)\, \hat f_{AB}(i)\right)}{\sum_j \sum_i \hat f_{AA}(i)^2 \left(\hat f_A(i) - \tfrac12 \hat f_{AB}(i)\right)} .$$
+
 Under near Hardy–Weinberg proportions this says that without error the $AA/AB$ configuration appears in IBD pairs at rate about $2 f_B$, while with error it appears at about $2 f_B + \gamma$.
 
 ## Depends on

@@ -3,15 +3,23 @@
 Let $J$ genetic variants from one gene region have summarized associations $\hat\beta_{Xj}$ with a risk factor and $\hat\beta_{Yj}$ with an outcome, outcome standard errors $\sigma_{Yj} = \operatorname{se}(\hat\beta_{Yj})$, and pairwise correlations $\rho_{j_1 j_2}$ ($\rho_{jj} = 1$). Write $\hat\beta_X, \hat\beta_Y \in \mathbb{R}^J$ and $\Omega_{j_1 j_2} = \sigma_{Yj_1}\sigma_{Yj_2}\rho_{j_1 j_2}$.
 
 **Correlated-variant IVW.** When $\Omega$ is invertible, generalized weighted least squares of $\hat\beta_Y$ on $\hat\beta_X$ through the origin gives
+
 $$\hat\theta_{\mathrm{IVW}} = \big(\hat\beta_X^{\top}\Omega^{-1}\hat\beta_X\big)^{-1}\hat\beta_X^{\top}\Omega^{-1}\hat\beta_Y .$$
+
 With individual-level data on instruments $Z \in \mathbb{R}^{N\times J}$, exposure $X$ and outcome $Y$, and univariable associations taken from the same sample, this equals the two-stage least squares estimate $\hat\theta_{\mathrm{2SLS}} = [X^{\top}Z(Z^{\top}Z)^{-1}Z^{\top}X]^{-1}X^{\top}Z(Z^{\top}Z)^{-1}Z^{\top}Y$. If $\Omega$ is near-singular (variants in near-perfect linkage disequilibrium), entries of $\Omega^{-1}$ are huge and small discrepancies in the inputs (rounding, correlations estimated in another sample) produce overprecise and misleading estimates.
 
 **Weighted PCA.** Form the weighted correlation matrix
+
 $$\Psi_{j_1 j_2} = \frac{\hat\beta_{Xj_1}\hat\beta_{Xj_2}}{\sigma_{Yj_1}\sigma_{Yj_2}}\,\rho_{j_1 j_2},$$
+
 whose diagonal entries $\hat\beta_{Xj}^2/\sigma_{Yj}^2$ are the inverse-variance weights (the precision of the single-variant ratio estimate). Take its eigendecomposition $\Psi = W\Lambda W^{\top}$ with eigenvalues $\lambda_1 > \dots > \lambda_J$, let $W_k$ be the first $k$ columns of $W$ ($k$ chosen so that the retained eigenvalues explain a set fraction, e.g. 99%, of the total), and set
+
 $$\tilde\beta_X = W_k^{\top}\hat\beta_X, \qquad \tilde\beta_Y = W_k^{\top}\hat\beta_Y, \qquad \tilde\Omega = W_k^{\top}\Omega W_k .$$
+
 The **PCA-IVW estimator** is
+
 $$\hat\theta_{\mathrm{PCA}} = \big(\tilde\beta_X^{\top}\tilde\Omega^{-1}\tilde\beta_X\big)^{-1}\tilde\beta_X^{\top}\tilde\Omega^{-1}\tilde\beta_Y .$$
+
 It uses information from every variant, while $\tilde\Omega$ is a $k\times k$ matrix whose conditioning is controlled by discarding the directions of smallest weighted variance.
 
 ## Depends on

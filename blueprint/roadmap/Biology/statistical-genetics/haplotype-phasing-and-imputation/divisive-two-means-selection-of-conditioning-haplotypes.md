@@ -8,7 +8,9 @@ In HMM-based phasing, each individual's haplotypes are resampled conditional on 
 3. For individual $i$, choose the $K$ conditioning haplotypes by minimum Hamming distance within the union of the secondary clusters of its two haplotypes (excluding individuals estimated to be IBD2 in the region).
 
 **Complexity.** If each split halves a cluster, depth $d$ has $2^d$ clusters of size $2N/2^d$ (written $N/2^d$ below, absorbing constants), and each $k$-means iteration at depth $d$ costs $4\,(N/2^d)\,L$ per cluster. Summing over the $\log_2(N/M)$ levels,
+
 $$\sum_{d=0}^{\log_2(N/M)} 2^d\cdot\frac{4NL}{2^d} = 4NL\log_2\frac{N}{M} = O(N\log N)$$
+
 for fixed $L$ and $M$, while the within-cluster Hamming comparisons cost $O(M^2)$ per cluster, independent of $N$.
 
 ## Depends on

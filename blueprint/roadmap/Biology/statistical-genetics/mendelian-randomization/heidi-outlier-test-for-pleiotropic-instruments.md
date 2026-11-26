@@ -3,7 +3,9 @@
 In the setting of [GSMR](gsmr-generalized-summary-data-mendelian-randomization.md), let $\hat b_{xy(i)}$ be the ratio estimates at $m$ instruments with delta-method covariances $\operatorname{cov}(\hat b_{xy(i)}, \hat b_{xy(j)})$ (which account for the LD correlation $r_{ij}$ and for sampling error in both $\hat b_{zx}$ and $\hat b_{zy}$). Choose a target instrument "top" that is strongly associated with the exposure but is not an extreme value of $\hat b_{xy}$ (the paper takes the most exposure-associated SNP within the third quintile of the distribution of $\hat b_{xy}$).
 
 **Statistic.** For each instrument $i \ne \text{top}$ define
+
 $$\hat d_i = \hat b_{xy(i)} - \hat b_{xy(\text{top})}, \qquad \operatorname{var}(\hat d_i) = \operatorname{var}(\hat b_{xy(i)}) + \operatorname{var}(\hat b_{xy(\text{top})}) - 2\operatorname{cov}(\hat b_{xy(i)}, \hat b_{xy(\text{top})}),$$
+
 and $T_i = \hat d_i^2/\operatorname{var}(\hat d_i)$. Under a causal model with no pleiotropy, $E[\hat b_{xy(i)}] = b_{xy}$ for every valid instrument, so $E[\hat d_i] = 0$ and $T_i$ is approximately $\chi^2_1$. Instruments with $P(\chi^2_1 > T_i) < 0.01$ are removed as pleiotropic outliers before the GSMR estimate is computed.
 
 ## Depends on
