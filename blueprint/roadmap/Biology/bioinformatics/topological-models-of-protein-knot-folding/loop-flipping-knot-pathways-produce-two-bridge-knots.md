@@ -5,10 +5,13 @@
 **Theorem 2 (bridge number).** For all integers $a, b$, every knot obtained by the steps of the model can be deformed to a conformation whose projection has only two local maxima. Equivalently, every such knot is a two-bridge knot.
 
 **Knot census.** With $a, b \in \{0, \pm 1, \pm 2\}$, the $200$ configurations produce the unknot and exactly $14$ nontrivial knot types up to mirror image:
+
 $$3_1,\ 4_1,\ 5_1,\ 5_2,\ 6_1,\ 6_2,\ 6_3,\ 7_2,\ 7_5,\ 7_6,\ 7_7,\ 8_8,\ 8_{14},\ 9_{23}.$$
+
 These include all knot types found so far in proteins ($\pm 3_1$, $4_1$, $-5_2$, $+6_1$); of the $84$ prime knots with at most nine crossings, $50$ are two-bridge and these $14$ are the ones reached. Every type except $9_{23}$ arises from more than one configuration.
 
 **Theorem 3 (twisted hairpin configurations).** For any value of the green twist parameter $b$, the configurations consistent with a twisted hairpin pathway are exactly
+
 $$RR(+, 0, b),\ RR(-, 1, b),\ RL(+, 0, b),\ RL(-, 1, b),\ LR(-, 0, b),\ LR(+, -1, b),\ LL(-, 0, b),\ LL(+, -1, b).$$
 
 ## Depends on

@@ -1,6 +1,7 @@
 # Conflict-free triangle characterization and strong NP-completeness of binary tree partitions
 
 **Model.** A tumour sample is a population of cells descended from one founder by successive clonal expansions. Assume (i) infinite sites: each locus mutates at most once in the history of the tumour, and (ii) at most one cell starts a clonal expansion at any time. Each expansion splits the current population into the cells carrying the new mutation and the rest, so the history is a rooted binary tree whose node $v$ carries the frequency $a_v \in (0,1]$ of cells with the mutations on the edge above $v$, and every internal node satisfies the **children-sum-to-parent (CSP) condition**
+
 $$a_v = \sum_{u \text{ child of } v} a_u .$$
 
 **Definitions.** Let $L = \{a_1, \dots, a_n\}$ be a multiset with $0 < a_i \le 1$.
@@ -13,7 +14,9 @@ $$a_v = \sum_{u \text{ child of } v} a_u .$$
 **Theorem (complexity).** The BTP problem is NP-complete in the strong sense, that is, it remains NP-complete when the entries of $L$ are integers bounded by a polynomial in $n$ (after rescaling). The analogous problem for non-binary trees is NP-complete by a reduction from subset sum.
 
 The hardness proof reduces from **numerical matching with target sums**: given positive integers $X = \{x_1,\dots,x_m\}$, $Y = \{y_1,\dots,y_m\}$, $B = \{b_1,\dots,b_m\}$, decide whether there are permutations $\pi_X, \pi_Y$ with $x_{\pi_X(i)} + y_{\pi_Y(i)} = b_i$ for all $i$. Set
+
 $$\hat x_i = 4(m+1)x_i + 1,\quad \hat y_i = 4(m+1)y_i + 3,\quad \hat b_i = 4(m+1)b_i + 4,\quad \beta_j = \sum_{k=1}^{j} \hat b_k \ (2 \le j \le m),$$
+
 and $L_I = \{\hat x_i\} \cup \{\hat y_i\} \cup \{\hat b_i\} \cup \{\beta_2, \dots, \beta_m\}$, a multiset of $4m - 1$ elements. The instance is solvable if and only if $L_I$ has a BTP, and solutions correspond in polynomial time.
 
 ## Expansion

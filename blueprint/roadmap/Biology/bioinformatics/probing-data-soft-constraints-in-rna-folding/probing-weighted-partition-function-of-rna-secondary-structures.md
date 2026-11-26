@@ -3,14 +3,19 @@
 **Data.** Let $a = a_1\cdots a_n$ be an RNA sequence and $q = (q_1,\dots,q_n) \in [0,1]^n$ normalized footprinting data, $q_i$ being interpreted as the probability that nucleotide $i$ is unpaired (SHAPE or in-line probing reactivities are mapped to $[0,1]$ by a piecewise linear normalization; missing positions receive an uninformative value).
 
 **Soft-constraint weights.** For a secondary structure $S$ write $s_i \in \{\text{paired},\text{unpaired}\}$ for the status of nucleotide $i$, let $\delta_i(s_i) \ge 0$ measure the discrepancy between $q_i$ and that status, and fix a scaling parameter $\beta \ge 0$. The per-position Boltzmann weight is $w_i(s_i) = e^{-\beta\,\delta_i(s_i)}$, and the probing weight of $S$ is
+
 $$W_\beta(S) = \prod_{i=1}^{n} w_i(s_i) = e^{-\beta\, d(S,q)}, \qquad d(S,q) = \sum_{i=1}^{n}\delta_i(s_i).$$
 
 **Weighted partition function.** With $E(S)$ the free energy of $S$ in the nearest-neighbour (Turner) loop model, gas constant $R$ and temperature $T$,
+
 $$Z_\beta = \sum_{S} e^{-E(S)/RT}\,W_\beta(S),$$
+
 the sum over all secondary structures of $a$. For $\beta = 0$ this is the [McCaskill partition function](../../bioinformatics/mccaskill-partition-function-for-rna-folding/partition-function.md).
 
 **Recursions.** $Z_\beta$ is computed by the McCaskill dynamic programme in which every unpaired run $[i,j]$ contributes the product of the unpaired weights $w_k(\text{unpaired})$, $i \le k \le j$, and every base pair $(i,j)$ contributes $w_i(\text{paired})\,w_j(\text{paired})$, alongside the usual hairpin, interior-loop and affine multiloop Boltzmann factors. Inside and outside passes then give the weighted base-pair probabilities
+
 $$P_\beta(i,j) = \frac{1}{Z_\beta}\sum_{S \ni (i,j)} e^{-E(S)/RT}\,W_\beta(S)$$
+
 at the same asymptotic cost as the unweighted algorithm. Replacing sums by minima, products by sums and weights by the corresponding pseudo-energies yields a minimum free energy algorithm with probing soft constraints.
 
 ## Expansion

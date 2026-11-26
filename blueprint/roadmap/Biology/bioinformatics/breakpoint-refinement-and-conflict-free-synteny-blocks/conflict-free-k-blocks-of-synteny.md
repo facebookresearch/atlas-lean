@@ -1,7 +1,9 @@
 # Conflict-free k-blocks of synteny
 
 **Anchors.** Given two genomes $G_r$ and $G_o$, an *anchor* is a pair of orthologous, non-overlapping markers, one in each genome, each marker in exactly one anchor. An anchor $a$ is described by its chromosomes, its ranks $a_r$, $a_o$ among markers on those chromosomes, and a relative orientation $\sigma_a \in \{+1,-1\}$. For anchors $a, b$ on the same chromosome pair,
+
 $$d(a,b) = \max\bigl(|b_r - a_r|,\, |b_o - a_o|\bigr),$$
+
 and $d(a,b) = \infty$ otherwise.
 
 **Chaining graph.** For an integer $k \ge 1$ let $G_k$ be the directed graph on anchors with an arc $ab$ whenever $a_r < b_r$, $d(a,b) \le k$, and either $a_o < b_o$ with both orientations positive, or $a_o > b_o$ with both orientations negative.

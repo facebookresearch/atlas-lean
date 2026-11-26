@@ -1,7 +1,9 @@
 # Half density of the budget-optimal ribosome flow model
 
 **Ribosome flow model (RFM).** For $n$ sites with occupancies $x_i(t)\in[0,1]$, initiation rate $\lambda_0>0$, elongation rates $\lambda_1,\dots,\lambda_{n-1}>0$ and exit rate $\lambda_n>0$,
+
 $$\dot x_i=\lambda_{i-1}x_{i-1}(1-x_i)-\lambda_ix_i(1-x_{i+1}),\qquad i=1,\dots,n,$$
+
 with the conventions $x_0\equiv1$ and $x_{n+1}\equiv0$. The RFM has a unique globally attracting steady state $e=e(\lambda_0,\dots,\lambda_n)\in(0,1)^n$, and the steady-state translation rate is $R=\lambda_ne_n$.
 
 **Problem 1 with homogeneous budget (Eqs. 11–12).** Maximize $R(\lambda_0,\dots,\lambda_n)$ over $\lambda_0,\dots,\lambda_n\ge0$ subject to $\sum_{i=0}^n\lambda_i\le1$.

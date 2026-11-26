@@ -1,13 +1,19 @@
 # Yield optimization as a linear program via the Charnes–Cooper transformation
 
 Let $P = \{ x \in \mathbb{R}^n : A x \le b \}$ be a flux polyhedron (steady state $Sx = 0$, irreversibilities and any further linear constraints such as uptake bounds, written as inequalities) and let $c, d \in \mathbb{R}^n$. The **yield**
+
 $$Y(x) = \frac{c^{\mathsf T} x}{d^{\mathsf T} x}$$
+
 is defined on $D = \{ x : d^{\mathsf T} x > 0 \}$; typically $c$ weights product fluxes and $d$ substrate uptake fluxes. **Yield optimization** is the linear-fractional program (LFP)
+
 $$\max_{x \in P_{>}} Y(x), \qquad P_{>} = \{ x \in P : d^{\mathsf T} x > 0 \},$$
+
 in contrast to rate optimization $\max_{x \in P} c^{\mathsf T} x$ (flux balance analysis).
 
 **Theorem (LFP-to-LP equivalence).** Define the auxiliary polyhedron
+
 $$P' = \{ (x', t) \in \mathbb{R}^n \times \mathbb{R} : A x' \le t\, b,\ d^{\mathsf T} x' = 1,\ t \ge 0 \}$$
+
 and the LP $\max_{(x', t) \in P'} c^{\mathsf T} x'$. Then:
 1. the LFP is feasible iff the LP is feasible, the LFP is unbounded iff the LP is unbounded, and both have the same optimal value (supremum);
 2. $x \in P_{>}$ maps to $(x/d^{\mathsf T}x,\ 1/d^{\mathsf T}x) \in P'$ with equal objective, and $(x', t) \in P'$ with $t > 0$ maps back to $x'/t \in P_{>}$ with equal objective;

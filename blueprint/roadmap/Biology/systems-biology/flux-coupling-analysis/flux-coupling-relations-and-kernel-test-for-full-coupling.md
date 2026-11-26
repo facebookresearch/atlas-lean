@@ -1,7 +1,9 @@
 # Flux coupling relations and the kernel test for full coupling
 
 A metabolic network is a pair $(S, \mathrm{Irr})$ with stoichiometric matrix $S \in \mathbb{R}^{m \times n}$ ($m$ internal metabolites, $n$ reactions) and a set $\mathrm{Irr} \subseteq \{1, \dots, n\}$ of irreversible reactions. Its **steady-state flux cone** is
+
 $$C = \{ v \in \mathbb{R}^n : S v = 0,\ v_i \ge 0 \text{ for all } i \in \mathrm{Irr} \}.$$
+
 A reaction $i$ is **blocked** if $v_i = 0$ for all $v \in C$. For unblocked reactions $i, j$:
 - $i \xrightarrow{=0} j$ (**directional coupling**) if $v_i = 0 \Rightarrow v_j = 0$ for all $v \in C$;
 - $i \xleftrightarrow{=0} j$ (**partial coupling**) if $v_i = 0 \Leftrightarrow v_j = 0$ for all $v \in C$;

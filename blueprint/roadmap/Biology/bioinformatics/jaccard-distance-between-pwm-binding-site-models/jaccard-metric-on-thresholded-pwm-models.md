@@ -7,9 +7,13 @@
 2. If the background satisfies $p(A) = p(T)$ and $p(C) = p(G)$, the reverse-complement PWM $\tilde M$ ($\tilde M(A,i) = M(T,m-i+1)$, $\tilde M(C,i) = M(G,m-i+1)$, etc.) has the same score distribution and P-values.
 
 **Distance.** Two PWMs of possibly different widths are aligned at a relative shift by padding each with zero columns at positions covered only by the other. For aligned models $\Omega_1,\Omega_2$ define
+
 $$J_1(\Omega_1,\Omega_2) = \frac{P(\Omega_1\cap\Omega_2)}{P(\Omega_1\cup\Omega_2)},$$
+
 the probability that a random word passes both thresholds given that it passes at least one (the ordinary Jaccard index of word sets for a uniform background); padding both aligned PWMs with further zero columns does not change $D_1 = 1 - J_1$. For unaligned models set
+
 $$J_2(\Omega_1,\Omega_2) = \max_{\text{shifts } i}\max\big\{J_1^{(i)}(\Omega_1,\Omega_2),\ J_1^{(i)}(\Omega_1,\tilde\Omega_2)\big\},$$
+
 over all relative shifts and both orientations of the second model.
 
 **Theorem.** $D_2(\Omega_1,\Omega_2) = 1 - J_2(\Omega_1,\Omega_2)$ is a metric on the space of binding-site models given by PWMs with thresholds at fixed P-value levels.

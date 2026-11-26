@@ -1,10 +1,13 @@
 # Probing-weighted ensemble reduces expected distance to footprinting data
 
 **Setting.** Fix an RNA sequence, normalized footprinting data $q$, and an additive distance $d(S,q) = \sum_i \delta_i(s_i) \ge 0$ between the pairing pattern of a secondary structure $S$ and $q$, as in the [probing-weighted partition function](probing-weighted-partition-function-of-rna-secondary-structures.md). For $\beta \ge 0$ let
+
 $$P_\beta(S) = \frac{e^{-E(S)/RT}\,e^{-\beta d(S,q)}}{Z_\beta}, \qquad D_\beta = \sum_S P_\beta(S)\, d(S,q),$$
+
 so $P_0$ is the Boltzmann distribution and $D_0$ the expected distance of the unweighted low-energy ensemble from the data.
 
 **Critical distance.** For $\beta>0$ put $d_0 = \beta^{-1}\ln(Z_0/Z_\beta)$. Then for every structure $S$,
+
 $$P_\beta(S) > P_0(S) \iff d(S,q) < d_0, \qquad P_\beta(S) < P_0(S) \iff d(S,q) > d_0 .$$
 
 **Theorem.**
@@ -12,7 +15,9 @@ $$P_\beta(S) > P_0(S) \iff d(S,q) < d_0, \qquad P_\beta(S) < P_0(S) \iff d(S,q) 
 2. More generally, $\beta \mapsto D_\beta$ is nonincreasing on $[0,\infty)$, strictly decreasing unless $d(\cdot,q)$ is constant on all secondary structures; in fact $\frac{d}{d\beta}D_\beta = -\operatorname{Var}_{P_\beta}\bigl(d(S,q)\bigr)$.
 
 **Quadratic-time evaluation.** Since $d$ is a sum over positions,
+
 $$D_\beta = \sum_{i=1}^{n}\Bigl[\pi_i\,\delta_i(\text{paired}) + (1-\pi_i)\,\delta_i(\text{unpaired})\Bigr], \qquad \pi_i = \sum_{j} P_\beta(i,j),$$
+
 so $D_\beta$ is obtained in $O(n^2)$ time from the base-pair probability matrix, without enumerating or sampling structures.
 
 ## Expansion

@@ -7,7 +7,9 @@
 - $\mathcal R'$ is **$F$-generated** if $\mathrm{cl}_{\mathcal R'}(F) = F \cup \pi(\mathcal R')$.
 
 Define $f, p : 2^{\mathcal R} \to 2^{\mathcal R}$ by
+
 $$f(\mathcal R') = \{ r \in \mathcal R' : \exists (x,r) \in C,\ \rho(r) \cup \{x\} \subseteq \mathrm{cl}_{\mathcal R'}(F)\},\qquad p(\mathcal R') = \{ r \in \mathcal R' : \exists (x,r) \in C,\ \rho(r) \cup \{x\} \subseteq F \cup \pi(\mathcal R')\},$$
+
 and let $\mathrm{fix}_p(\mathcal R')$ be the result of iterating $p$ from $\mathcal R'$ until a fixed point (possibly $\emptyset$).
 
 **Lemma.** (i) The RAFs of $Q$ are exactly its $F$-generated pRAFs. (ii) A union of pRAFs is a pRAF; hence, if $Q$ has a pRAF, it has a unique maximum pRAF. (iii) $f$ and $p$ are monotone: $\mathcal R_1 \subseteq \mathcal R_2$ implies $f(\mathcal R_1) \subseteq f(\mathcal R_2)$ and $p(\mathcal R_1) \subseteq p(\mathcal R_2)$.

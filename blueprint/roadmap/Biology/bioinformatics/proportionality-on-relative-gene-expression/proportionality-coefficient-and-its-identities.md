@@ -3,7 +3,9 @@
 **Setting.** Let $X_1, \dots, X_d$ be the parts of a random composition (relative expression of $d$ genes in one library), let $s$ be the unobserved total amount of mRNA, and let $A_i = \log(s X_i)$ be the logged absolute amounts. Genes $i$ and $j$ are proportional when $s X_i \approx m\, s X_j$ across conditions for a constant $m$, that is when the log-ratio variance $\operatorname{var}(A_i - A_j)$ is close to $0$. Write $r = \operatorname{corr}(A_i, A_j)$ and $\beta = \sqrt{\operatorname{var}(A_j)/\operatorname{var}(A_i)}$ (the standardized major axis slope of $A_j$ against $A_i$).
 
 **Definition.** For random variables with $\operatorname{var}(A_i) + \operatorname{var}(A_j) > 0$, the proportionality coefficient (a special case of Lin's concordance correlation coefficient) is
+
 $$\rho(A_i, A_j) = \frac{2\operatorname{cov}(A_i, A_j)}{\operatorname{var}(A_i) + \operatorname{var}(A_j)} \in [-1, 1],$$
+
 with $\rho = 1$ exactly for $\operatorname{var}(A_i - A_j) = 0$ (proportional pair) and $\rho = -1$ exactly for $\operatorname{var}(A_i + A_j) = 0$ (reciprocal pair). The asymmetric statistic $\phi(A_i, A_j) = \operatorname{var}(A_i - A_j)/\operatorname{var}(A_i) = 1 + \beta^2 - 2\beta r$ is related to it by $\phi = (1 - \rho)(1 + \beta^2)$.
 
 **Proposition 1.** With $\tilde\beta^2 = \operatorname{var}(A_i - A_j)/\operatorname{var}(A_i + A_j)$ (when $\operatorname{var}(A_i + A_j) > 0$),

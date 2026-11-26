@@ -1,6 +1,7 @@
 # Plateau criterion for exact p-values from rounded matrices
 
 **Rounding.** For a real position weight matrix $M$ of length $m$ and a granularity $\varepsilon>0$, the round matrix is $M_\varepsilon(i,x)=\varepsilon\lfloor M(i,x)/\varepsilon\rfloor$, with maximal error $E=\sum_{i=1}^m\max_{x\in\Sigma}\bigl(M(i,x)-M_\varepsilon(i,x)\bigr)$. For every word $u$ (Lemma 8),
+
 $$0\le \mathrm{Score}(u,M)-\mathrm{Score}(u,M_\varepsilon)\le E.$$
 
 **Lemma 9 (exact mass on a score range).** Let $M,N,N'$ be matrices of length $m$, $E,E'\ge 0$ and $\alpha\le\beta$, such that for every word $u$:
@@ -9,7 +10,9 @@ $$0\le \mathrm{Score}(u,M)-\mathrm{Score}(u,M_\varepsilon)\le E.$$
 and (iii) $\mathrm{P\text{-}value}(N,\alpha-E)=\mathrm{P\text{-}value}(N,\alpha)$, (iv) $\mathrm{P\text{-}value}(N',\beta-E')=\mathrm{P\text{-}value}(N',\beta)$. If the background gives every letter positive probability, then for every word $u$, $\alpha\le\mathrm{Score}(u,N)<\beta$ if and only if $\alpha\le\mathrm{Score}(u,M)<\beta$. Hence the score distributions of $N$ and $M$ assign the same total probability to $[\alpha,\beta)$.
 
 **Stopping rule (Lemma 11).** In particular, if the rounded distribution has a plateau just below $\alpha$, i.e. $\mathrm{P\text{-}value}(M_\varepsilon,\alpha-E)=\mathrm{P\text{-}value}(M_\varepsilon,\alpha)$, then
+
 $$\mathrm{P\text{-}value}(M,\alpha)=\mathrm{P\text{-}value}(M_\varepsilon,\alpha),$$
+
 so the exact p-value of the real matrix is obtained from a finite integer computation, and refinement $\varepsilon\downarrow$ can stop.
 
 ## Depends on

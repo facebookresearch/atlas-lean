@@ -1,7 +1,9 @@
 # Parity dichotomy of cyclic repressor rings
 
 **Setting.** Consider the ring model of $n \ge 2$ genes in which each protein $P_{i-1}$ represses the next gene $G_i$ (indices modulo $n$), with mRNA $r_i$ and protein $p_i$ obeying
+
 $$\dot r_i = -(a_i + \mu)\, r_i + \beta_i\, g\, h_i(p_{i-1}), \qquad \dot p_i = -(b_i + \mu)\, p_i + c_i\, r_i,$$
+
 where all rate constants are positive and each repression function $h_i(p) = K_{i-1}^{\nu_i} / (K_{i-1}^{\nu_i} + p^{\nu_i})$ is strictly decreasing on $p > 0$.
 
 **Species graph.** Ignoring self-loops, the signed species graph has the $2n$ edges $r_i \to p_i$ (sign $+$) and $p_{i-1} \to r_i$ (sign $-$). It is a single cycle, directed or undirected, with exactly $n$ negative edges, so its sign is $(-1)^n$.

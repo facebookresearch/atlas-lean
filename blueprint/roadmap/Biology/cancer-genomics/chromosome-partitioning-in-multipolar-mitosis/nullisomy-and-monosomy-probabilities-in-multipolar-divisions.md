@@ -3,9 +3,13 @@
 Consider a $k$-ploid mother cell ($k \ge 1$ copies of each of $M$ nonhomologous chromosomes) dividing with $p \ge 2$ spindle poles, each pole giving one daughter cell. Model chromatid partitioning as follows: (i) the two sister chromatids of every replicated chromosome go to two **distinct** poles, the unordered pair of poles being uniform among the $\binom{p}{2}$ choices; (ii) different chromatid pairs, both homologous copies and different chromosomes, are partitioned independently. A daughter cell is **nullisomic** for a chromosome if it receives no copy of it and **monosomic** if it receives exactly one.
 
 **Proposition.** For a fixed daughter cell and a fixed chromosome,
+
 $$P(\text{nullisomy}) = \left(\frac{p-2}{p}\right)^{k}, \qquad P(\text{monosomy}) = \frac{2k\,(p-2)^{k-1}}{p^{k}},$$
+
 and the probability of nullisomy or monosomy is $\big((p-2)^k + 2k (p-2)^{k-1}\big)/p^k$. For the whole daughter genome, the number of nullisomic (resp. monosomic) chromosomes is $\mathrm{Bin}(M, q)$ with $q$ the corresponding per-chromosome probability, so
+
 $$P(\text{at least one nullisomy}) = 1 - \left(1 - \left(\frac{p-2}{p}\right)^{k}\right)^{M},$$
+
 and analogously for monosomy and for nullisomy-or-monosomy.
 
 For a bipolar division ($p = 2$) both probabilities vanish for every $k$ (each daughter receives exactly one chromatid of every pair). For a tetraploid cell ($k = 4$, $M = 23$) the per-chromosome nullisomy probability is $1/81$ for $p = 3$ and $1/16$ for $p = 4$, so a tripolar division produces a daughter lacking some chromosome with probability $1 - (80/81)^{23} \approx 0.25$ and a tetrapolar one with probability $1 - (15/16)^{23} \approx 0.77$, which explains the rapid loss of highly aneuploid progeny of multipolar divisions.

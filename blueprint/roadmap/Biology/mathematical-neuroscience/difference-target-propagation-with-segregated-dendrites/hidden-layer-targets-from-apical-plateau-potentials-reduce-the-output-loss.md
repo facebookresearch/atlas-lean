@@ -1,16 +1,23 @@
 # Hidden-layer targets from apical plateau potentials reduce the output loss
 
 **Setting.** A network has a hidden layer of two-compartment neurons (basal dendrites receive feedforward input, apical dendrites receive feedback through fixed random weights $Y$) and an output layer receiving the hidden spikes through weights $W^1$. Learning alternates a **forward phase** (input only) and a **target phase** (output neurons additionally driven by a teaching current). Write $\bar\phi^{0f}$ for the time-averaged hidden firing rates in the forward phase, $\bar\phi^{1f}, \bar\phi^{1t}$ for the output rates in the two phases, and set the output target $\phi^{1*} = \bar\phi^{1t}$. Let $\sigma$ be a differentiable sigmoid, $\phi_{\max}$ the maximal rate, $k_d$ a dendrite-to-soma gain, and
+
 $$\beta(u) = \phi_{\max}\,\sigma(k_dW^1u), \qquad \gamma(u) = \sigma(Yu),$$
+
 the forward map from hidden rates to output rates and the feedback map from output rates to apical plateau potentials.
 
 The **plateau potentials** $\alpha^f, \alpha^t$ are $\sigma$ of the apical voltage averaged at the end of each phase; the model uses the hidden targets $\phi^{0*} = \bar\phi^{0f} + \alpha^t - \alpha^f$ and local losses
+
 $$L^1 \approx \|\bar\phi^{1t} - \bar\phi^{1f}\|_2^2, \qquad L^0 \approx \|\phi^{0*} - \bar\phi^{0f}\|_2^2 = \|\alpha^t - \alpha^f\|_2^2,$$
+
 which approximate the difference-target-propagation target
+
 $$\tilde\phi^{0*} = \bar\phi^{0f} + \gamma(\bar\phi^{1t}) - \gamma\big(\beta(\bar\phi^{0f})\big).$$
 
 **Theorem.** Let $e = \phi^{1*} - \beta(\bar\phi^{0f})$ and let $J_\beta, J_\gamma$ be the Jacobians of $\beta$ at $\bar\phi^{0f}$ and of $\gamma$ at $\beta(\bar\phi^{0f})$. If the largest eigenvalue $\mu$ of $(I - J_\beta J_\gamma)^{\top}(I - J_\beta J_\gamma)$ is less than $1$ and $\|e\|$ is sufficiently small, then
+
 $$\big\|\phi^{1*} - \beta(\tilde\phi^{0*})\big\|_2^2 \ \le\ \|e\|_2^2 ,$$
+
 with strict inequality when $e \neq 0$: moving the hidden layer to its target moves the output closer to its target.
 
 **Lemma (rates from filtered spikes).** For a spike train filtered by the synaptic kernel $\kappa(t) = \big(e^{-t/\tau_L} - e^{-t/\tau_s}\big)/(\tau_L - \tau_s)$, the time average of the filtered train over a window of length $\Delta t$ approaches the firing rate as $\Delta t$ grows relative to $\tau_L, \tau_s$; this justifies replacing the expected output drive $\phi_{\max}\sigma(\mathbb E[\bar V^{1f}])$ by $\beta(\bar\phi^{0f})$.

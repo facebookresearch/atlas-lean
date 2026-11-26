@@ -1,9 +1,13 @@
 # Equilibria and thresholds of the zebra–carcass–scavenger anthrax model
 
 **Model.** Let $z$ be living zebras, $u$ carcasses from natural death, $c$ anthrax carcasses and $j$ scavengers, with positive parameters $r, K, \mu, a, \rho, \alpha, b, d$:
+
 $$z' = rz\Big(1 - \frac{z}{K}\Big) - \mu z - acz,\qquad u' = \mu z - \rho u - \alpha ju,\qquad c' = acz - \rho c - \alpha jc,\qquad j' = bj(u+c) - dj.$$
+
 Put $m = \mu/r$ and
+
 $$R_Z = \frac{aK(1-m)}{\rho},\qquad R_J = \frac{ad}{b\mu},\qquad D(E_1) = \frac{b\mu K(1-m)}{\rho d},\qquad D(E_3) = \frac{br}{ad}\Big(1 - \frac{\rho}{aK}\Big).$$
+
 $R_Z$ is the anthrax reproduction number without scavengers, $R_J$ the one with scavengers at their anthrax-free equilibrium, and $D(E_1)$, $D(E_3)$ are the scavenger demographic reproduction numbers without and with anthrax.
 
 **Equilibria and local stability** (assuming $m < 1$; if $m > 1$ only the extinction state $E_0 = 0$ exists and it is stable):

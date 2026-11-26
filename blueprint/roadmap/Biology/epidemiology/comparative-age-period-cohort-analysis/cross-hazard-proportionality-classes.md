@@ -1,7 +1,9 @@
 # Cross-hazard proportionality classes in age-period-cohort models
 
 **Setting.** A Lexis diagram has age groups $a \in \{1,\dots,A\}$ and calendar periods $p \in \{1,\dots,P\}$ with $A, P \ge 2$; the birth cohort of cell $(a,p)$ is $c = p - a$. For strata $g = 1,\dots,G$ with hazard rates $\lambda^{(g)}(a,p) > 0$ following age-period-cohort models
+
 $$\log \lambda^{(g)}(a,p) = \mu_g + \alpha_g(a) + \pi_g(p) + \gamma_g(p-a),$$
+
 the cross-hazard rate ratio of strata $j$ and $k$ is $RR^{j:k}(a,p) = \lambda^{(j)}(a,p)/\lambda^{(k)}(a,p)$. The pair is called
 
 - **PH-L** (longitudinal) if $RR^{j:k}$ depends on $(a,p)$ only through the cohort $p-a$ (constant along diagonals);

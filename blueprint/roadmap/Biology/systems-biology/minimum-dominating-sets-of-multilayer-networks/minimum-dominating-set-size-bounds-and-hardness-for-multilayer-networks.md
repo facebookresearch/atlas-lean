@@ -1,11 +1,15 @@
 # Size bounds and hardness of minimum dominating sets for multilayer networks
 
 **Definitions.** For a graph $G = (V,E)$, $U \subseteq V$ is a dominating set if every $v \in V$ is in $U$ or adjacent to a vertex of $U$; a minimum dominating set (MDS) has least cardinality $S_{\mathrm{MDS}}(G)$. For a multiset $\mathcal G = \{G_i = (V_i, E_i) : i = 1,\dots,N\}$ of undirected graphs (layers) with $V = \bigcup_i V_i$, a set $U \subseteq V$ is a *dominating set for multilayer networks* (DSM) if
+
 $$\forall i\ \forall v \in V_i:\quad v \in U \ \text{ or }\ \exists u \in U,\ \{u,v\} \in E_i .$$
+
 A DSM of least cardinality is an MDSM, of size $S_{\mathrm{MDSM}}(\mathcal G)$. Choosing an MDSM as driver nodes, each able to control its links independently, makes every layer structurally controllable in the dominating-set framework.
 
 **Proposition (bounds).**
+
 $$\max_{i} S_{\mathrm{MDS}}(G_i) \ \le\ S_{\mathrm{MDSM}}(\mathcal G)\ \le\ \sum_{i=1}^N S_{\mathrm{MDS}}(G_i).$$
+
 Both are attained: the lower bound when all layers are identical, the upper bound when the $V_i$ are pairwise disjoint.
 
 **Proposition (many layers).** If every layer has minimum degree $d_{\min}$, then for a sufficiently large number of distinct layers on $n$ common nodes and $n$ sufficiently large, $S_{\mathrm{MDSM}}(\mathcal G) \ge n - d_{\min}$.

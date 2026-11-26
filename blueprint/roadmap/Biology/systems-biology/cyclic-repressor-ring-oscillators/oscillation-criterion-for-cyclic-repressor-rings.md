@@ -1,7 +1,9 @@
 # Oscillation criterion for cyclic repressor rings
 
 **Model.** A ring of $n$ genes in which the protein $P_{i-1}$ represses transcription of gene $G_i$ (indices modulo $n$, so $P_0 = P_n$) is described, after the quasi-steady-state approximation of promoter binding, by the $2n$ ordinary differential equations
+
 $$\dot r_i = -(a_i + \mu)\, r_i + \beta_i\, g\, \frac{K_{i-1}^{\nu_i}}{K_{i-1}^{\nu_i} + p_{i-1}^{\nu_i}}, \qquad \dot p_i = -(b_i + \mu)\, p_i + c_i\, r_i, \qquad i = 1, \dots, n,$$
+
 where $r_i, p_i \ge 0$ are the mRNA and protein concentrations, $a_i, b_i > 0$ their degradation rates, $c_i > 0$ the translation rate, $\beta_i > 0$ the transcription rate per unit template, $g > 0$ the template (plasmid) concentration, $K_{i-1} > 0$ and $\nu_i > 0$ the repression threshold and Hill coefficient of $P_{i-1}$ on the promoter of $G_i$, and $\mu > 0$ a common dilution rate (dilution time $T_d = \ln 2 / \mu$).
 
 **Negative ring.** Take $n$ odd, so that the single feedback loop, which contains $n$ repressions, is negative.
@@ -9,9 +11,13 @@ where $r_i, p_i \ge 0$ are the mRNA and protein concentrations, $a_i, b_i > 0$ t
 **Instability implies oscillation.** The system has a unique equilibrium, and the protein concentrations $p_1, \dots, p_n$ show stable oscillations whenever the Jacobian matrix at that equilibrium has an eigenvalue in the open right half-plane.
 
 **Explicit criterion (homogeneous ring).** Suppose all parameters are independent of $i$: $a_i = a$, $b_i = b$, $c_i = c$, $\beta_i = \beta$, $K_i = K$, $\nu_i = \nu$, and write $d$ for the dilution rate $\mu$. Define
+
 $$Q = \frac{\sqrt{(a+d)(b+d)}}{(a+b+2d)/2} \in (0, 1], \qquad W(n, Q) = \frac{2\left(-\cos\frac{\pi}{n} + \sqrt{\cos^2\frac{\pi}{n} + Q^2 \sin^2\frac{\pi}{n}}\right)}{Q^2 \sin^2\frac{\pi}{n}}.$$
+
 Then the proteins oscillate if both
+
 $$\nu > W(n, Q) \qquad \text{and} \qquad c\beta > \left(\frac{W(n,Q)}{\nu - W(n,Q)}\right)^{1/\nu} \frac{\nu}{\nu - W(n,Q)}\, K\, (a+d)(b+d)$$
+
 hold.
 
 ## Expansion

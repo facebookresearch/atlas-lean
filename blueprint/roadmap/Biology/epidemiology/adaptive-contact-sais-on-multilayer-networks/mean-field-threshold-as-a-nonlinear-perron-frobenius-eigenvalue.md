@@ -13,12 +13,18 @@ Write $\tau = \beta/\delta$ (effective infection rate) and $\bar\kappa = \kappa/
 **Theorem.** Assume the two-layer network is M-connected.
 
 1. Every equilibrium of the mean-field system has either $p^*_i = 0$ for all $i$ or $p^*_i > 0$ for all $i$, and a positive equilibrium satisfies
+
 $$\frac{p^*_i}{1 - p^*_i} = \tau\,\frac{(\bar\kappa + 1)\sum_j w^A_{ij}p^*_j \sum_j w^S_{ij}p^*_j}{\bar\kappa \sum_j w^S_{ij}p^*_j + \sum_j w^A_{ij}p^*_j}.$$
+
 2. Define the map $F$ on the nonnegative cone by
+
 $$F(z)_i = \frac{\sum_j w^A_{ij} z_j \,\sum_j w^S_{ij} z_j}{\bar\kappa \sum_j w^S_{ij} z_j + \sum_j w^A_{ij} z_j}$$
+
 (and $F(z)_i = 0$ when both sums vanish). $F$ is positively homogeneous of degree one and concave, and the nonlinear eigenproblem $F(z) = \mu z$ has a unique solution $z_* \succ 0$ with $\|z_*\|_2 = 1$, with eigenvalue $\mu_* > 0$.
 3. The mean-field epidemic threshold, the value $\tau_c$ at which a positive endemic equilibrium bifurcates from the disease-free one, is characterized by $z = \tau_c(\bar\kappa + 1) F(z)$ having a solution $z \succ 0$, so
+
 $$\tau_c = \frac{1}{(\bar\kappa + 1)\,\mu_*}.$$
+
 4. For any $c > 0$ and $z_0 \succ 0$ with $\|z_0\|_2 = 1$, the iteration $z_{k+1} = (F(z_k) + c z_k)/\|F(z_k) + c z_k\|_2$ converges to $z_*$.
 
 At $\bar\kappa = 0$, $F(z) = W_S z$ and $\tau_c = 1/\lambda_1(W_S)$, the mean-field SIS threshold on the default layer; as $\bar\kappa \to \infty$, $\tau_c \to 1/\lambda_1(W_A)$.

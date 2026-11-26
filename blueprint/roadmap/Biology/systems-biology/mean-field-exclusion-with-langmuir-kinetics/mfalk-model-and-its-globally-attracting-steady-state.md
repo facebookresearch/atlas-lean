@@ -1,14 +1,21 @@
 # MFALK model and its globally attracting steady state
 
 **Model.** For $n$ sites with occupancies $x_i(t) \in [0,1]$ and nonnegative rates $\lambda_i, \gamma_i$ ($i = 0,\dots,n$; forward transition from site $i$ to $i+1$ and backward transition from $i+1$ to $i$), $\beta_i$ (attachment) and $\alpha_i$ ($i = 1,\dots,n$; detachment), the MFALK is
+
 $$\dot x_i = \lambda_{i-1}x_{i-1}(1-x_i) + \gamma_i x_{i+1}(1-x_i) + \beta_i(1-x_i) - \lambda_i x_i(1-x_{i+1}) - \gamma_{i-1}x_i(1-x_{i-1}) - \alpha_i x_i$$
+
 for $1 < i < n$, with
+
 $$\dot x_1 = \lambda_0(1-x_1) + \gamma_1x_2(1-x_1) + \beta_1(1-x_1) - \lambda_1x_1(1-x_2) - \gamma_0x_1 - \alpha_1x_1,$$
+
 $$\dot x_n = \lambda_{n-1}x_{n-1}(1-x_n) + \gamma_n(1-x_n) + \beta_n(1-x_n) - \lambda_nx_n - \gamma_{n-1}x_n(1-x_{n-1}) - \alpha_nx_n .$$
+
 The output rate is $R = (\lambda_n + \alpha_n)x_n - (\gamma_n + \beta_n)(1-x_n)$. With $\alpha_i = \beta_i = \gamma_i = 0$ it reduces to the ribosome flow model, the mean-field approximation of the totally asymmetric exclusion process. The unit cube $C^n = [0,1]^n$ is invariant.
 
 **Results.** Assume
+
 $$\text{(P)}\quad \lambda_i + \beta_{i+1} > 0\ \ \forall i \in\{0,\dots,n\}\quad\text{or}\quad \gamma_i + \alpha_{i+1} > 0\ \ \forall i\in\{0,\dots,n\},$$
+
 with $\alpha_{n+1} = \beta_{n+1} = 0$.
 
 1. (Persistence.) Under (P), for every $\tau > 0$ there is $d \in (0, 1/2]$ with $d \le x_i(t+\tau, a) \le 1-d$ for all $a \in C^n$, all $i$ and all $t \ge 0$.

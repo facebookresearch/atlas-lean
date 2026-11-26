@@ -29,7 +29,9 @@ then $x^\ast$ is globally exponentially stable.
 ## Expansion
 
 With $e = x - x^\ast$ the error obeys $\dot e = A_ce - B_c\big[g(C_ce + C_cx^\ast) - g(C_cx^\ast)\big]$. For $V(e) = \tfrac12 e^{\mathsf T}Pe$ the two matrix identities give
+
 $$\dot V = -\tfrac12 e^{\mathsf T}Qe - (C_ce)^{\mathsf T}\big[g(C_ce + C_cx^\ast) - g(C_cx^\ast)\big]\le -\tfrac12 e^{\mathsf T}Qe,$$
+
 the last term being non-negative by the sector condition. This is the Kalman–Yakubovich–Popov route to absolute stability: the linear degradation–translation part is passive and the monotone Hill feedback is in the sector $[0,\infty)$, so stability holds for every Hill nonlinearity in the sector, not just one. A small-gain alternative uses only the upper sector bound: $\sup_\omega\lVert G(j\omega)\rVert < 1/\gamma$. The same Lyapunov function, augmented with parameter-error terms, underlies adaptive control laws that steer the network to a desired steady state by adjusting transcription rates and keep errors bounded under bounded additive noise.
 
 ## Sources

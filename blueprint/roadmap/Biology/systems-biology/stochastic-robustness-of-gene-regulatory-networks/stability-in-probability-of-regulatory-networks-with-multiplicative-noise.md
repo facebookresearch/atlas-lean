@@ -1,15 +1,21 @@
 # Stability in probability of regulatory networks with multiplicative noise
 
 **Model.** Let $x(t) \in \mathbb{R}^n$ be gene-product concentrations measured from an equilibrium (shifted to $0$) and $\omega(t)$ a standard scalar Wiener process. Intrinsic fluctuation of the interaction matrix $N$ is modeled by the Itô equation
+
 $$dx = Nx\,dt + Mx\,d\omega,$$
+
 where $M$ holds the fluctuation amplitudes of the entries of $N$, and in the nonlinear case by $dx = N(x)\,dt + M(x)\,d\omega$ with $N(0) = 0$, $M(0) = 0$.
 
 **Theorem 1 (linear network).** If there is a symmetric positive definite $P$ with
+
 $$PN + N^{\mathsf T}P + M^{\mathsf T}PM \le 0,$$
+
 then the equilibrium $x = 0$ is stable in probability.
 
 **Theorem 2 (nonlinear network).** If there is $V(x) > 0$ for $x \ne 0$, $V(0) = 0$, satisfying the Hamilton–Jacobi inequality
+
 $$\Big(\frac{\partial V}{\partial x}\Big)^{\mathsf T}N(x) + \frac12 M(x)^{\mathsf T}\frac{\partial^2 V}{\partial x^2}M(x) \le 0,$$
+
 then $x = 0$ is stable in probability.
 
 **Polytopic relaxation.** If the Jacobians satisfy $\partial[N(x); M(x)]/\partial x \in \operatorname{Co}\{[N_1; M_1], \dots, [N_L; M_L]\}$ for all $x$ (global linearization), a common $P = P^{\mathsf T} > 0$ with $PN_i + N_i^{\mathsf T}P + M_i^{\mathsf T}PM_i \le 0$ for $i = 1, \dots, L$ certifies stability of the nonlinear network; this is a linear matrix inequality (LMI) feasibility problem, more conservative than Theorem 2 but tractable.

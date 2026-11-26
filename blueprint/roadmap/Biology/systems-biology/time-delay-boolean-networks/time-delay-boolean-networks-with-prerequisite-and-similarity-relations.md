@@ -12,13 +12,21 @@ For each target the admissible relations are $g\prec z$, $g\prec\bar z$ and $g\s
 **Noise-free identification (indegree $2$).** For target $v_i$ and each input pair $(v_j, v_h)$, tabulate the counts $m_{abc}$ of samples with $(v_j, v_h, v_i') = (a, b, c)$ and mark cells positive or zero. Each of the eight basic relations $(v_j \text{ or } v_h)\prec v_i'$, $(\bar v_j \text{ or } v_h)\prec v_i'$, $\dots$, $(\bar v_j\text{ or }\bar v_h)\prec \bar v_i'$ forbids exactly one cell, namely the input $(a,b)$ that makes the clause false paired with output $c = 1$ (or $c = 0$ for $\bar v_i'$). A relation is consistent if its forbidden cell has count $0$; several consistent relations toward the same output are combined with "and" into one prerequisite function.
 
 **Noisy data and the $p$-score.** Assume every input bit $I_{ij}$ and output bit $O_{ij}$ is flipped independently with misclassification probability $p$:
+
 $$I_{ij}^* = \begin{cases} I_{ij} & \text{w.p. } 1-p,\\ 1 - I_{ij} & \text{w.p. } p,\end{cases}\qquad O_{ij}^* = \begin{cases} O_{ij} & \text{w.p. } 1-p,\\ 1 - O_{ij} & \text{w.p. } p.\end{cases}$$
+
 The true triple counts $(m_{000},\dots,m_{111})$ are multinomial with cell probabilities $q_{i_1i_2i_3}$, and a true cell $i_1i_2i_3$ is observed as cell $j_1j_2j_3$ with probability
+
 $$q_{i_1i_2i_3,\,j_1j_2j_3} = p^{I(i,j)}(1-p)^{3 - I(i,j)}\,q_{i_1i_2i_3}, \qquad I(i,j) = \sum_{k=1}^{3}|i_k - j_k| .$$
+
 The observed counts are $n_{j_1j_2j_3} = \sum_{i}m_{i_1i_2i_3,\,j_1j_2j_3}$, the complete-data log-likelihood is
+
 $$L = \sum_{i_1,i_2,i_3,j_1,j_2,j_3 = 0,1} m_{i_1i_2i_3,\,j_1j_2j_3}\log q_{i_1i_2i_3,\,j_1j_2j_3},$$
+
 and the E-step imputes the split counts
+
 $$\mathbb E\big(m_{i_1i_2i_3,\,j_1j_2j_3}\mid n_{j_1j_2j_3}\big) = \frac{n_{j_1j_2j_3}\,q_{i_1i_2i_3,\,j_1j_2j_3}}{\sum_{i'_1i'_2i'_3 = 0,1} q_{i'_1i'_2i'_3,\,j_1j_2j_3}} .$$
+
 Under each of the eight hypotheses $q_{abc} = 0$ (one per basic relation), EM gives the maximum likelihood estimate of $p$. That estimate is the relation's *$p$-score*: the smaller it is, the better the relation explains the data. Relations with scores under a threshold are kept, and the threshold is chosen by maximum compatibility (the largest threshold whose kept relations contain no conflict).
 
 ## Expansion

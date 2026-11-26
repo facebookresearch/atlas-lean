@@ -10,11 +10,15 @@ $$\begin{aligned}
 with $R_i^h$ fed by $\gamma_i^h I_i^h$. The vector parameters $b_i, \beta_i^h, \beta_i^v, d_i^v, \nu_i^v$ are functions of the patch temperature.
 
 **Theorem (unique disease-free equilibrium).** Let $X = \operatorname{diag}\big(d_i^h + \sum_{j \ne i} m_{ji}^S\big) - M^S$, where $M^S$ has off-diagonal entries $m_{ij}^S$ and zero diagonal. Then $X$ is a nonsingular M-matrix and the system has the unique disease-free equilibrium
+
 $$S^{h*} = X^{-1} A^h > 0, \qquad S_i^{v*} = A_i^v / d_i^v.$$
 
 **Theorem (threshold).** Order the infected variables as $(E^h, E^v, I^h, I^v)$. The new-infection matrix $F$ has only the blocks $\operatorname{diag}(b_i\beta_i^h S_i^{h*}/N_i^h)$ (from $I^v$ into $E^h$) and $\operatorname{diag}(b_i \beta_i^v S_i^{v*}/N_i^h)$ (from $I^h$ into $E^v$), and the transition matrix is block lower triangular,
+
 $$V = \begin{pmatrix} V_{11} & 0 & 0 & 0\\ 0 & V_{22} & 0 & 0\\ V_{31} & 0 & V_{33} & 0\\ 0 & V_{42} & 0 & V_{44} \end{pmatrix},$$
+
 with $V_{11}$, $V_{33}$ the movement-plus-exit M-matrices of the $E^h$ and $I^h$ classes, $V_{22} = \operatorname{diag}(\nu_i^v + d_i^v)$, $V_{31} = -\operatorname{diag}(\nu_i^h)$, $V_{42} = -\operatorname{diag}(\nu_i^v)$, $V_{44} = \operatorname{diag}(d_i^v)$. With $R_0 = \rho(F V^{-1})$, the disease-free equilibrium is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$. For isolated patches ($m \equiv 0$) it reduces to $R_0 = \max_i R_{0i}$ with
+
 $$R_{0i}^2 = \frac{b_i^2\, \beta_i^h \beta_i^v\, \nu_i^h \nu_i^v\, S_i^{h*} S_i^{v*}}{d_i^v (N_i^{h*})^2\,(\gamma_i^h + d_i^h)(\nu_i^h + d_i^h)(\nu_i^v + d_i^v)}.$$
 
 ## Depends on

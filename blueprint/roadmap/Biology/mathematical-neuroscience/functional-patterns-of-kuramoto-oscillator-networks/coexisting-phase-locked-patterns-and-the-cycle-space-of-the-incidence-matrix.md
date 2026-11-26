@@ -3,9 +3,13 @@
 **Setting.** As in [positive coupling weights realizing a phase-locked pattern](positive-coupling-weights-realizing-a-prescribed-phase-locked-pattern.md): a Kuramoto network on an undirected graph with $n$ nodes, $|\mathcal E|$ edges and $c$ connected components, incidence matrix $B$, edge weights $\delta$, zero-mean natural frequencies $\tilde\omega$, and phase-locked equilibria described by edge phase differences $x$ through $B\,D(x)\,\delta = \tilde\omega$ with $D(x) = \mathrm{diag}(\sin x_e)$.
 
 **Proposition (coexistence).** For fixed weights $\delta$ with no zero entry, the equilibria compatible with the network are exactly the $x$ with
+
 $$D(x)\,\delta \in B^{\dagger}\tilde\omega + \ker(B), \quad\text{equivalently}\quad \sin(x) \in \mathrm{diag}(\delta)^{-1}\big(B^{\dagger}\tilde\omega + \ker(B)\big),$$
+
 where $\ker(B)$ is the cycle space, spanned by the signed edge vectors of the undirected cycles, of dimension $|\mathcal E| - n + c$. Conversely, a collection of patterns $x^{(1)}, \dots, x^{(\ell)}$ with no phase difference in $\pi\mathbb Z$ is simultaneously realizable by one weight vector if and only if
+
 $$\bigcap_{i=1}^{\ell}\Gamma_i \neq \emptyset, \qquad \Gamma_i = D(x^{(i)})^{-1}\big(B^{\dagger}\tilde\omega + \ker(B)\big),$$
+
 and by a nonnegative weight vector if and only if this intersection meets $\mathbb R^{|\mathcal E|}_{\ge 0}$.
 
 **Examples** ($\delta = \mathbf 1$, $\tilde\omega = 0$, so the condition is $\sin(x) \in \ker B$).

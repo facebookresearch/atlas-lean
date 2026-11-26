@@ -27,7 +27,9 @@ $$\Lambda_U = D_{EE} - D_{EI}D_{II}^{-1}D_{IE} + O(\epsilon^2) = O(\epsilon),\qq
 ## Expansion
 
 Because all four blocks are diagonal, the problem decouples into $n$ independent $2\times 2$ matrices. $A$ solves the diagonal quadratic $-(D_{EE} + AD_{IE})A + D_{EI} + AD_{II} = 0$; choosing the root
+
 $$A = \tfrac12 D_{IE}^{-1}\Big[D_{II} - D_{EE} + \sqrt{(D_{II}-D_{EE})^2 + 4D_{IE}D_{EI}}\Big]$$
+
 and expanding in $\epsilon$ gives the stated orders. $\Lambda_U$ is a Schur complement: the slow mode is excitation with inhibition slaved to it.
 
 ## Depends on

@@ -1,12 +1,17 @@
 # Similarity-transformation criterion for global structural identifiability
 
 **Setting.** Consider the analytic input-affine model
+
 $$\dot x = f(x,\theta) + \sum_{i=1}^m g_i(x,\theta)u_i,\qquad y = h(x,\theta),\qquad x(0) = x_0(\theta),$$
+
 on an open set of $\mathbb{R}^n$, with parameter $\theta \in \Theta$. The model is *locally reduced* at $x_0(\theta)$ if it satisfies the controllability (accessibility) rank condition and the observability rank condition there.
 
 **Criterion (local state isomorphism).** Let $\theta, \theta' \in \Theta$ be such that the model is locally reduced at $x_0(\theta)$ and $x_0(\theta')$, and let $V$ be an open neighbourhood of $x_0(\theta)$. Suppose that for every such $\theta'$, the existence of an analytic map $\lambda: V \to \mathbb{R}^n$ with $\operatorname{rank}\,\partial\lambda/\partial x = n$ on $V$ and
+
 $$\lambda(x_0(\theta)) = x_0(\theta'),\qquad f(\lambda(x),\theta') = \frac{\partial\lambda}{\partial x}(x)\,f(x,\theta),$$
+
 $$g_i(\lambda(x),\theta') = \frac{\partial\lambda}{\partial x}(x)\,g_i(x,\theta)\ (i = 1,\dots,m),\qquad h(\lambda(x),\theta') = h(x,\theta)\quad (x \in V)$$
+
 forces $\theta' = \theta$. Then the model is globally structurally identifiable at $\theta$; conversely, global identifiability at $\theta$ holds only if every such $\lambda$ comes with $\theta' = \theta$.
 
 ## Expansion

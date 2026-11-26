@@ -7,7 +7,9 @@ Let $G \in \mathbb{R}^{n \times N}$ ($n \ge 2$ genes, $N \ge 3$ samples) have ro
 **Proposition 2 (centred and standardized profiles).** Let $\hat G$ be obtained by centring each row, $g_i^c = g_i - \bar g_i \mathbf{1}^{\mathsf T}$, and scaling it to unit Euclidean norm, $\hat g_i = g_i^c / \|g_i^c\|$. Then $\hat g_i \hat g_j^{\mathsf T} = \rho(g_i, g_j)$ for all $i, j$, $\|\hat G\|_F^2 = n$, and if $|\rho(g_i, g_j)| = 1$ for all pairs then $\operatorname{rank} \hat G = 1$, i.e. $\hat G = (\pm 1, \dots, \pm 1)^{\mathsf T} \hat g_1$.
 
 **Definition.** With $\hat S_{11}$ the largest singular value of $\hat G$, the **centralized concordance index** is
+
 $$\mathrm{CCI} = \frac{\hat S_{11}^2}{n}.$$
+
 It satisfies $0 < \mathrm{CCI} \le 1$, with $\mathrm{CCI} = 1$ iff every pair of rows has $|\rho| = 1$. Equivalently, $n \cdot \mathrm{CCI}$ is the largest eigenvalue of the $n \times n$ correlation matrix $\hat G \hat G^{\mathsf T}$, so CCI is the fraction of total standardized variance captured by the leading principal component of the module. Its significance is assessed against row-permuted data or random gene sets of the same size.
 
 ## Expansion

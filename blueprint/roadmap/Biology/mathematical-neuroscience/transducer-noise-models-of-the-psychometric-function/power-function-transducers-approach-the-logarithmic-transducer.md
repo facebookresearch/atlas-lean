@@ -1,13 +1,17 @@
 # Power-function transducers approach the logarithmic transducer
 
 **Setting.** As in [Threshold-normalized psychometric function of a transducer-noise observer](threshold-normalized-psychometric-function-of-a-transducer-noise-observer.md), a 2AFC observer with transducer $f$, even-symmetric internal noise with CDF $G$, pedestal $x > 0$ and threshold $\Delta x_\theta$ at performance level $p_\theta$ has
+
 $$P(\Delta x) = G\!\left(G^{-1}(p_\theta)\,\frac{f(x+\Delta x) - f(x)}{f(x+\Delta x_\theta) - f(x)}\right).$$
+
 Let $P_q$ be this function for the power transducer $f(x) = x^q$, $q > 0$, and $P_{\log}$ the one for $f(x) = \log x$.
 
 **Lemma 1.** For $a > 0$, $\lim_{q \to 0}(a^q - 1)/q = \ln a$.
 
 **Theorem 4.** For a nonzero pedestal $x > 0$ and every $\Delta x \ge 0$,
+
 $$\lim_{q\to 0}P_q(\Delta x) = P_{\log}(\Delta x) = G\!\left(G^{-1}(p_\theta)\,\frac{\ln(1 + \Delta x/x)}{\ln(1 + \Delta x_\theta/x)}\right),$$
+
 and the corresponding estimate of the best-fitting Weibull slope converges to its value for the logarithmic transducer.
 
 ## Depends on

@@ -1,14 +1,21 @@
 # Nuclear-norm form of the ZINB-WaVE factor penalty
 
 **Lemma.** For any real matrix $R$ and positive scalars $s, t$,
+
 $$\min_{S,T:\ R = ST}\ \frac12\big(s\|S\|^2 + t\|T\|^2\big) = \sqrt{st}\,\|R\|_*,$$
+
 where $\|\cdot\|$ is the Frobenius norm and $\|R\|_* = \operatorname{tr}\big((R^\top R)^{1/2}\big)$ is the nuclear norm. If $R = R_L R_\Sigma R_R$ is a singular value decomposition, a minimizer is
+
 $$S = (t/s)^{1/4} R_L R_\Sigma^{1/2}, \qquad T = (s/t)^{1/4} R_\Sigma^{1/2} R_R .$$
 
 **Corollary (balanced penalty).** For an $n \times J$ matrix $R$ and $\epsilon > 0$,
+
 $$\min_{W,\alpha:\ R = W\alpha}\ \frac{\epsilon}{2}\Big(\frac1n\|W\|^2 + \frac1J\|\alpha\|^2\Big) = \frac{\epsilon}{\sqrt{nJ}}\|R\|_*,$$
+
 attained at $W = (n/J)^{1/4}R_L R_\Sigma^{1/2}$, $\alpha = (J/n)^{1/4}R_\Sigma^{1/2}R_R$. At this optimum, for each factor $k \le \min(n,J)$,
+
 $$\frac1n\sum_{i=1}^n W_{ik}^2 = \frac1J\sum_{j=1}^J \alpha_{kj}^2 = \frac{(R_\Sigma)_{kk}}{\sqrt{nJ}},$$
+
 so the entries of $W$ and $\alpha$ have comparable scale.
 
 Consequently, at any local maximum of the ZINB-WaVE penalized log-likelihood the factor matrix $W$ and the transposed loadings $\alpha^\top$ have orthogonal columns.

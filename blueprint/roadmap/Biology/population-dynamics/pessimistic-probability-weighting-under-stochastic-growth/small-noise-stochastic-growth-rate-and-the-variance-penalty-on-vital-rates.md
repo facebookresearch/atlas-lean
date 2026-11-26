@@ -1,12 +1,17 @@
 # Small-noise stochastic growth rate and the variance penalty on vital rates
 
 **Setting.** An age-structured population with $M$ age classes is projected by a random sequence of nonnegative Leslie matrices $\mathbf A_1, \mathbf A_2, \dots$, one per time step, each with age-specific fertilities $F_j$ on the first row and survival probabilities $P_j$ on the subdiagonal. Let $\tilde{\mathbf A} = \mathbb E[\mathbf A]$ be the mean matrix, assumed irreducible and primitive, with dominant eigenvalue $\tilde\lambda$, right eigenvector $\tilde\omega$ (stable age distribution) and left eigenvector $\tilde\nu$ (reproductive values). The fitness of a genotype is the rate of exponential growth
+
 $$a = \lim_{n \to \infty} \frac{1}{n} \log \big\lvert \mathbf A_n \cdots \mathbf A_1\, \zeta \big\rvert$$
+
 for any nonnegative nonzero initial age vector $\zeta$; under weak ergodicity the limit does not depend on $\zeta$, and a resident homozygote resists invasion by a mutant allele when its $a$ exceeds that of the heterozygote.
 
 **Small-noise approximation.** For fluctuations of the matrix entries that are small relative to their means and serially uncorrelated,
+
 $$a \approx \log \tilde\lambda - \frac{1}{2 \tilde\lambda^2 (\tilde\nu^{\mathsf T} \tilde\omega)^2}\, (\tilde\nu \otimes \tilde\nu)^{\mathsf T}\, \mathbf C\, (\tilde\omega \otimes \tilde\omega),$$
+
 where $\mathbf C$ is the covariance matrix of the vectorized entries of $\mathbf A$. If only one entry $A_{ij}$ fluctuates, with variance $\sigma_{ij}^2$,
+
 $$a \approx \log \tilde\lambda - \frac{1}{2 \tilde\lambda^2} \Big( \frac{\partial \tilde\lambda}{\partial A_{ij}} \Big)^2 \sigma_{ij}^2, \qquad \frac{\partial \tilde\lambda}{\partial A_{ij}} = \tilde\nu_i \tilde\omega_j \quad (\tilde\nu^{\mathsf T}\tilde\omega = 1).$$
 
 **Variance penalty.** Hold the mean matrix fixed. Since the correction term is nonpositive and vanishes only when $\sigma_{ij} = 0$ (given $\partial\tilde\lambda/\partial A_{ij} \ne 0$), among strategies with the same mean value of a vital rate, fitness strictly decreases with its variance. For example, three fertility lotteries with common mean $1.5$ and standard deviations $0$, $0.5$ and $1$ have strictly decreasing fitness in that order.

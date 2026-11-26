@@ -1,15 +1,21 @@
 # Majorized block descent for the Huber group lasso
 
 **Problem.** For one target gene, minimize the convex function
+
 $$J(\mathbf b) = f(\mathbf b) + \lambda\sum_{\ell=1}^{p}\|\mathbf b_\ell\|_2, \qquad f(\mathbf b) = \sum_{j=1}^{n}\omega_j H_\delta\big(y_j - \mathbf x_j^{\mathsf T}\mathbf b\big),$$
+
 over $\mathbf b = (\mathbf b_1^{\mathsf T},\dots,\mathbf b_p^{\mathsf T})^{\mathsf T}$ with blocks $\mathbf b_\ell \in \mathbb R^{m}$, where $\omega_j > 0$, $\lambda > 0$ and $H_\delta$ is the Huber loss ($\theta^2$ for $|\theta| \le \delta$, $2\delta|\theta| - \delta^2$ otherwise). Let $\gamma$ be the largest eigenvalue of $\sum_j\omega_j\mathbf x_j\mathbf x_j^{\mathsf T}$.
 
 **Auxiliary function.** A function $Q(\mathbf b\mid\mathbf b^{(k)})$ is an auxiliary function for $J$ if $J(\mathbf b^{(k)}) = Q(\mathbf b^{(k)}\mid\mathbf b^{(k)})$ and $J(\mathbf b) \le Q(\mathbf b\mid\mathbf b^{(k)})$ for all $\mathbf b$. Since $H_\delta'$ is $2$-Lipschitz, $\big(H_\delta'(\theta_1) - H_\delta'(\theta_2)\big)(\theta_1 - \theta_2) \le 2(\theta_1 - \theta_2)^2$, the choice
+
 $$Q(\mathbf b\mid\mathbf b^{(k)}) = f(\mathbf b^{(k)}) - \sum_{j=1}^{n}\omega_j H_\delta'\big(y_j - \mathbf x_j^{\mathsf T}\mathbf b^{(k)}\big)\mathbf x_j^{\mathsf T}(\mathbf b - \mathbf b^{(k)}) + 2\gamma\|\mathbf b - \mathbf b^{(k)}\|_2^2 + \lambda\sum_{\ell=1}^{p}\|\mathbf b_\ell\|_2$$
+
 is an auxiliary function.
 
 **Block update.** Cycling over blocks $\ell = 1,\dots,p$, with $\mathbf b^{(k)}(\ell-1)$ the vector whose first $\ell-1$ blocks are already updated, the exact minimizer of $Q$ in block $\ell$ is the group soft-threshold
+
 $$\mathbf b_\ell^{(k+1)} = \frac{1}{4\gamma}\Big(1 - \frac{\lambda}{\|\mathbf v_\ell\|_2}\Big)_{+}\mathbf v_\ell, \qquad \mathbf v_\ell = \sum_{j=1}^{n}\omega_j H_\delta'\big(y_j - \mathbf x_j^{\mathsf T}\mathbf b^{(k)}(\ell-1)\big)\mathbf x_{j,\ell} + 4\gamma\,\mathbf b_\ell^{(k)},$$
+
 where $\mathbf x_{j,\ell}$ is the part of $\mathbf x_j$ matching block $\ell$ and $(\cdot)_+ = \max(\cdot,0)$.
 
 **Lemma 1 (descent).** The iterates satisfy $J(\mathbf b^{(k)}) \ge J(\mathbf b^{(k+1)})$.
@@ -17,7 +23,9 @@ where $\mathbf x_{j,\ell}$ is the part of $\mathbf x_j$ matching block $\ell$ an
 **Lemma 2 (limit points are minima).** If the iterates are bounded and, along every convergent subsequence, successive differences tend to $\mathbf 0$, then every limit point $\mathbf b^\infty$ satisfies $\liminf_{\alpha\downarrow0}\big(J(\mathbf b^\infty + \alpha\boldsymbol\delta) - J(\mathbf b^\infty)\big)/\alpha \ge 0$ for every direction $\boldsymbol\delta$, i.e. it is a minimum of $J$.
 
 **Theorem 3 (convergence).** If the data lie in a compact set and no column of the design is identically $\mathbf 0$, the iterates satisfy the sufficient-decrease inequality
+
 $$J(\mathbf b^{(k)}) - J(\mathbf b^{(k+1)}) \ge 2\gamma\,\|\mathbf b^{(k)} - \mathbf b^{(k+1)}\|_2^2,$$
+
 and the sequence converges to the minimum point of $J$.
 
 ## Expansion

@@ -1,17 +1,23 @@
 # Asymptotic stability of the herd-immunity equilibrium set
 
 **Setting.** In time $\tau = \gamma t$ the controlled SIR model for the susceptible and infectious fractions is
+
 $$\dot S = -\mathcal R(\tau)\,S I, \qquad \dot I = \mathcal R(\tau)\,S I - I,$$
+
 on $X = \{(S,I) : S, I \ge 0,\ S + I \le 1\}$, where $\mathcal R(\tau) = \beta(\tau)/\gamma$ is the reproduction number, equal to $\bar{\mathcal R} > 0$ outside a finite intervention window. Let $S^* = \min\{1, 1/\bar{\mathcal R}\}$ (herd immunity) and, for constant $\mathcal R \equiv \bar{\mathcal R}$ and initial state $(S_0, I_0)$, let $S_\infty = \lim_{\tau\to\infty}S(\tau)$.
 
 **Final susceptible fraction.** For $\mathcal R \equiv \bar{\mathcal R}$ and $I_0 > 0$,
+
 $$S_\infty = -\frac{1}{\bar{\mathcal R}}\,W_0\!\big(-\bar{\mathcal R}\,S_0\,e^{-\bar{\mathcal R}(S_0 + I_0)}\big),$$
+
 with $W_0$ the principal branch of the Lambert $W$ function, and $S_\infty < S^*$. If $S(\tau_0) > S^* $ the infectious peak is $I_{\max} = I(\tau_0) + S(\tau_0) - \bar{\mathcal R}^{-1}\big(1 + \ln(\bar{\mathcal R}S(\tau_0))\big)$.
 
 **Lemma 2.1.** For $\delta \in (0,1]$, the maximum of $S_\infty$ over initial states in $X$ with $I_0 \ge \delta$ is attained at $(S^*, \delta)$ and equals $-W_0(-\bar{\mathcal R}S^*e^{-\bar{\mathcal R}(S^*+\delta)})/\bar{\mathcal R}$; as $(S_0, I_0) \to (S^*, 0)$, $S_\infty \to S^*$.
 
 **Theorem 1.** For $\mathcal R \equiv \bar{\mathcal R}$ the set
+
 $$X_{\mathrm{st}} = \{(\bar S, 0) : 0 \le \bar S \le S^*\}$$
+
 is the unique asymptotically stable set of the system, and every trajectory starting in $X$ with $I > 0$ converges to a point of $X_{\mathrm{st}}$.
 
 **Corollary 2.1.** $X_{\mathrm{st}}$ does not depend on the initial state; its subsets are stable but not attractive (only the segment as a whole is asymptotically stable), including the state $(S^*, 0)$; if $\bar{\mathcal R} < 1$, then $S^* = 1$ and $X_{\mathrm{st}}$ is the whole disease-free segment.

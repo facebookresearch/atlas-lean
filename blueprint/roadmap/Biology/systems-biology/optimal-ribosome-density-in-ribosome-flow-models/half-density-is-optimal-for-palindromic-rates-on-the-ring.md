@@ -1,7 +1,9 @@
 # Half density is optimal for palindromic rates on the ring
 
 **Ribosome flow model on a ring (RFMR).** For $n\ge2$ sites with occupancies $x_i(t)\in[0,1]$ and rates $\lambda_1,\dots,\lambda_n>0$, indices taken modulo $n$ (so $x_0=x_n$, $x_{n+1}=x_1$, $\lambda_0=\lambda_n$),
+
 $$\dot x_i=\lambda_{i-1}x_{i-1}(1-x_i)-\lambda_i x_i(1-x_{i+1}),\qquad i=1,\dots,n.$$
+
 The total density $s=\sum_i x_i$ is conserved; for each $s\in[0,n]$ the RFMR has a unique steady state $e(s)$ with $\sum_i e_i=s$, attracting all solutions on that level set, and the steady-state translation rate is $R(s)=\lambda_ie_i(1-e_{i+1})$ (the same for every $i$).
 
 **Propositions 3 and 6.** Suppose the rates satisfy $\lambda_i=\lambda_{n-i}$ for all $i$ (indices modulo $n$), or this holds after a cyclic relabeling of the sites. Then

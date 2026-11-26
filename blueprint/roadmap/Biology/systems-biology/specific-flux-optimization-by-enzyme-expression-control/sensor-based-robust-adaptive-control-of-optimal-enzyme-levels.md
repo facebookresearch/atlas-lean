@@ -5,8 +5,11 @@
 Fix an elementary flux mode with flux vector $(V_1,\dots,V_m)$, the cost $O(x_I)=\sum_jV_j/f_j(x_I;x_E)$ and growth rate $\mu$.
 
 **qORAC (Definition 1).** Choose a set $S$ of internal sensor metabolites. For sensor values $x_S$, let $\xi(x_S)=(\xi_I(x_S),\xi_E(x_S))$ solve
+
 $$\xi_S=x_S,\qquad \frac{\partial O}{\partial\xi_i}(\xi)=0\quad(i\in I),$$
+
 i.e. the internal and external concentrations for which the current sensor values would be optimal. The controlled system is
+
 $$\dot x_i=\sum_jN_{ij}e_jf_j(x_I;x_E),\qquad \dot e_j=E_j(x_S)-\mu e_j,\qquad E_j(x_S)=\mu\,\frac{V_j/f_j(\xi(x_S))}{\sum_lV_l/f_l(\xi(x_S))}.$$
 
 **Properties.**

@@ -1,7 +1,9 @@
 # Disease-free equilibria and breakthrough threshold of the SIRVI model
 
 **Model.** With population fractions $S, I, V, R \ge 0$, $S + I + V + R = 1$, transmission rate $\beta > 0$, vaccination rate $\nu > 0$, breakthrough (reinfection of vaccinated) rate $\alpha \ge 0$ and recovery rate $\gamma > 0$,
+
 $$\dot S = -\beta SI - \nu S,\qquad \dot I = \beta SI + \alpha VI - \gamma I,\qquad \dot V = \nu S - \alpha VI,\qquad \dot R = \gamma I,$$
+
 with $S(0) = 1-\eta$, $I(0) = \eta$, $V(0) = R(0) = 0$. The reproduction number is $\mathcal{R}_0 = (\beta S_0 + \alpha V_0)/\gamma$, equal to $\beta(1-\eta)/\gamma$ for these initial data.
 
 **Results.**

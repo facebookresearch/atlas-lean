@@ -3,7 +3,9 @@
 **Setting.** A splicing graph is a directed acyclic graph $G = (V, E)$ whose nodes are exon segments and whose arcs are observed splice junctions, with nonnegative coverages $\mathrm{cov}(v)$ and $\mathrm{cov}(u,v)$, a set $S$ of sources and a set $T$ of sinks. For every node and arc let $f_v, f_{uv} : [0, \infty) \to [0,\infty)$ be convex nondecreasing penalties of the absolute deviation (for instance $f(x) = x$, $f(x) = x^2$, or $f(x) = x/\mathrm{cov}$).
 
 **Unannotated transcript expression cover (UTEC).** Find a finite tuple $\mathcal P$ of paths from $S$ to $T$ and expression levels $e(P) \ge 0$ minimizing
+
 $$\sum_{v \in V} f_v\Big(\Big|\mathrm{cov}(v) - \sum_{P \ni v} e(P)\Big|\Big) + \sum_{(u,v) \in E} f_{uv}\Big(\Big|\mathrm{cov}(u,v) - \sum_{P \ni (u,v)} e(P)\Big|\Big).$$
+
 The arc-only variant (UTEJC) drops the node terms. Replacing each node $v$ by an arc $(v_{\mathrm{in}}, v_{\mathrm{out}})$ with coverage $\mathrm{cov}(v)$ and penalty $f_v$, and each arc $(u,v)$ by $(u_{\mathrm{out}}, v_{\mathrm{in}})$, puts the optimal solutions of UTEC on $G$ in bijection with those of UTEJC on the new graph.
 
 **Offset network.** For UTEJC on $G$ build a flow network $N^*$ (flows satisfy, at each node $w$, out-flow minus in-flow $= q_w$, and $0 \le x \le$ capacity):
@@ -14,7 +16,9 @@ The arc-only variant (UTEJC) drops the node terms. Replacing each node $v$ by an
 **Lemma.** The supplies of $N^*$ sum to zero, so $N^*$ is a flow network (because $\sum_v d_v = \sum_{(u,v)\in E}\mathrm{cov}(u,v) - \sum_{(u,v)\in E}\mathrm{cov}(u,v) = 0$).
 
 **Theorem.** Let $x^*$ be a minimum-cost flow on $N^*$ and define, for $(u,v) \in E$,
+
 $$x_{uv} = \mathrm{cov}(u,v) + x^*_{uv} - x^*_{vu} \ \ (\ge 0).$$
+
 Then (1) $x$ is conserved at every node of $V \setminus (S \cup T)$; (2) the total flow leaving $S$ equals the total flow entering $T$; and (3) every decomposition of $x$ into weighted source-to-sink paths is an optimal solution of UTEJC on $G$. Consequently UTEC is solvable in polynomial time by convex-cost minimum-cost flow, and a decomposition into at most $|E|$ paths can be found in $O(|V|\,|E|)$ time.
 
 Minimizing the number of paths in a flow decomposition is NP-hard in the strong sense even on DAGs, while every flow on $G$ decomposes into at most $|E| - |V| + 2$ paths; any decomposition heuristic (for example repeatedly removing a path of maximum bottleneck) keeps optimality of the coverage fit.

@@ -1,7 +1,9 @@
 # Flux coupling relations and their feasibility tests
 
 **Setting.** A metabolic network has stoichiometric matrix $S \in \mathbb{R}^{m\times n}$ (internal metabolites by reactions) and a set $\mathrm{Irr}$ of irreversible reactions. The **steady-state flux cone** is
+
 $$C = \{v \in \mathbb{R}^n : Sv = 0,\ v_k \ge 0\ \text{for } k \in \mathrm{Irr}\},$$
+
 with lineality space $\{v : Sv = 0,\ v_k = 0 \text{ for } k\in\mathrm{Irr}\}$. Reaction $r$ is **blocked** if $v_r = 0$ for all $v \in C$. Unblocked reactions are partitioned into $\mathrm{Irev}$ (sign-constant on $C$; after flipping columns, $v_r \ge 0$ on $C$), $\mathrm{Prev}$ (both signs occur on $C$ but $v_r = 0$ on the lineality space) and $\mathrm{Frev}$ (nonzero somewhere on the lineality space). For unblocked $i,j$:
 - $i \to j$ (**directionally coupled**) if $v_i \ne 0 \Rightarrow v_j \ne 0$ for all $v \in C$;
 - $i \leftrightarrow j$ (**partially coupled**) if $i\to j$ and $j \to i$;

@@ -9,14 +9,21 @@
 This gives $4 \cdot 2 \cdot 25 = 200$ configurations. Write $-K$ for the mirror image of a knot type $K$ and $-XY(\varepsilon, a, b)$ for the mirror image of a configuration.
 
 **Lemma 1 (mirror images).** For all integers $a, b$,
+
 $$RR(+, a, b) = -LL(-, -a, -b), \quad RR(-, a, b) = -LL(+, -a, -b),$$
+
 $$RL(+, a, b) = -LR(-, -a, -b), \quad RL(-, a, b) = -LR(+, -a, -b).$$
 
 **Theorem 1 (sixteen-fold equivalence).** Let $a, b$ be integers and $\varepsilon \in \{+, -\}$. If one of the configurations
+
 $$RR(\varepsilon, a, b),\ RR(\varepsilon, b, a),\ RL(\varepsilon, a, b-1),\ LR(\varepsilon, b-1, a),\ RL(\varepsilon, b, a-1),\ LR(\varepsilon, a-1, b),\ LL(\varepsilon, a-1, b-1),\ LL(\varepsilon, b-1, a-1)$$
+
 has knot type $K$, then all eight have knot type $K$, and the eight configurations
+
 $$LL(-\varepsilon, -a, -b),\ LL(-\varepsilon, -b, -a),\ LR(-\varepsilon, -a, -b+1),\ RL(-\varepsilon, -b+1, -a),$$
+
 $$LR(-\varepsilon, -b, -a+1),\ RL(-\varepsilon, -a+1, -b),\ RR(-\varepsilon, -b+1, -a+1),\ RR(-\varepsilon, -a+1, -b+1)$$
+
 all have knot type $-K$. For an achiral knot $K$ all sixteen have type $K$.
 
 ## Expansion

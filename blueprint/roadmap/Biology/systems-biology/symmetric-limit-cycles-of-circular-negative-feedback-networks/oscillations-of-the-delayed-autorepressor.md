@@ -1,15 +1,21 @@
 # Oscillations of the delayed autorepressor
 
 **Model (Eq. 1).** A gene represses its own synthesis after a delay $\tau\ge0$:
+
 $$\frac{dx}{dt}=\frac{\alpha}{1+x(t-\tau)^h}-x(t),\qquad \alpha>0,\ h>0.$$
+
 It has a unique positive equilibrium $x_0$, defined by $x_0(1+x_0^h)=\alpha$.
 
 **Loss of stability.** Let $w=hx_0^h/(1+x_0^h)$. For $\tau=0$ the equilibrium is globally attracting. If $w>1$, put $u=\sqrt{w^2-1}$; then the equilibrium loses stability at
+
 $$\tau^*=\frac{\pi-\arctan u}{u},$$
+
 where a limit cycle appears with period $2\pi/u$.
 
 **Step-function limit (Eqs. 4–7).** As $h\to\infty$ the feedback becomes a switch: $\dot x=\alpha-x$ when $x(t-\tau)<1$ and $\dot x=-x$ when $x(t-\tau)>1$. For $\alpha>1$ and $\tau>0$ this equation has a limit cycle with period
+
 $$T(\tau)=\ln\frac{(\alpha e^{\tau}-\alpha+1)(\alpha e^{\tau}-1)}{\alpha-1},$$
+
 the unique limit cycle with $T(\tau)>2\tau$. If $T(\tau)<2\tau$, the equation also has a countable family of further cycles $C_k$, obtained from the period equation with the delay reduced by $kT$ (Lemma 1).
 
 ## Expansion

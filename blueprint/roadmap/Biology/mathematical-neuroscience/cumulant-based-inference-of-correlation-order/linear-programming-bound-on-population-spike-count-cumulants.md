@@ -1,13 +1,19 @@
 # Linear-programming bound on population spike-count cumulants
 
 **Setting.** Model the summed activity of $N$ neurons by a compound Poisson process (CPP) with amplitude-$l$ event rates $\nu_l \ge 0$ ($l=1,\dots,N$), so that the population count $Z$ in a bin of width $h>0$ has cumulants
+
 $$\kappa_i[Z] = h \sum_{l} l^{\,i}\,\nu_l, \qquad i \ge 1 .$$
+
 A CPP has no cumulant correlations of order larger than $\xi$ iff $\nu_l = 0$ for all $l>\xi$ (see [the correlation-order theorem](correlation-order-of-a-compound-poisson-population-equals-its-maximal-amplitude.md)).
 
 **Bound.** Let $Z'$ be an observed population count with cumulants $\kappa_1[Z'],\dots,\kappa_{m-1}[Z']$, $m \ge 2$, and fix $\xi \ge 1$. Define the linear program
+
 $$\kappa_m^{*}(\xi) = \max\Bigl\{\, h\sum_{l=1}^{\xi} l^{m}\nu_l \;:\; \nu \in \mathbb{R}_{\ge 0}^{\xi},\; h\sum_{l=1}^{\xi} l^{\,i}\nu_l = \kappa_i[Z'] \text{ for } i=1,\dots,m-1 \Bigr\}.$$
+
 If $Z'$ is the population count of a CPP without correlations of order $>\xi$, then the program is feasible and
+
 $$\kappa_m[Z'] \le \kappa_m^{*}(\xi).$$
+
 Consequently, evidence that $\kappa_m[Z'] > \kappa_m^{*}(\xi)$ implies correlations of order at least $\xi+1$.
 
 **Case $m=2$.** The program has the closed form $\kappa_2^{*}(\xi) = \xi\,\kappa_1[Z']$ (put all mass on $l=\xi$, since $l^2 \le \xi l$ for $l \le \xi$). As $\kappa_2[Z]/\kappa_1[Z] = \mu_2[A]/\mu_1[A]$ is the population Fano factor, a population Fano factor larger than $\xi$ already forces correlations of order $>\xi$.

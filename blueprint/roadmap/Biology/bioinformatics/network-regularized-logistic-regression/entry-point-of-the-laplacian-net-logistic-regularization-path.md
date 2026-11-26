@@ -1,15 +1,23 @@
 # Entry point of the Laplacian-net logistic regularization path
 
 **Setting.** Let $y \in \{0,1\}^n$ be a binary clinical response and $X \in \mathbb R^{n \times p}$ standardized expression values of $p$ genes, with rows $X_i$. Let $G = (V, E)$ be a gene network on the $p$ genes with adjacency $e_{uv} \in \{0,1\}$, degrees $d_u = \sum_v e_{uv} \ge 1$, $D = \mathrm{diag}(d_u)$, and normalized Laplacian
+
 $$\mathcal L = I - D^{-1/2} E D^{-1/2}, \qquad \beta^{\top}\mathcal L\beta = \sum_{\{u,v\} : e_{uv} = 1}\Big(\frac{\beta_u}{\sqrt{d_u}} - \frac{\beta_v}{\sqrt{d_v}}\Big)^2 .$$
+
 For $\lambda \ge 0$ and $\alpha \in [0,1]$ the **Laplacian-net logistic** (Logit-Lapnet) estimator minimizes the convex criterion
+
 $$\mathcal J(\beta) = \sum_{i=1}^{n}\Big[-y_iX_i\beta + \ln\big(1 + e^{X_i\beta}\big)\Big] + \lambda\alpha\|\beta\|_1 + \lambda(1-\alpha)\,\beta^{\top}\mathcal L\beta .$$
+
 It reduces to lasso logistic regression at $\alpha = 1$ and to the elastic net when $\mathcal L$ is replaced by $I$.
 
 **Proposition.** For $\alpha \in (0, 1]$, $\beta = 0$ minimizes $\mathcal J$ if and only if
+
 $$\lambda \ \ge\ \lambda_0 := \frac{\|X^{\top}(y - \tfrac12\mathbf 1)\|_\infty}{\alpha}.$$
+
 In particular the largest penalty at which the path has a nonzero coefficient satisfies
+
 $$\lambda_{\max} = \lambda_0 \ \le\ \frac{1}{2\alpha}\Big(2\|X^{\top}y\|_\infty + \Big\|\sum_{i=1}^{n}X_i^{\top}\Big\|_\infty\Big),$$
+
 so the path must start at larger penalties as $\alpha$ decreases toward the pure Laplacian penalty.
 
 The same source also states a grouping effect: for adjacent genes whose estimated coefficients have the same sign, the coefficient difference is bounded by a quantity that vanishes as their sample correlation tends to one and grows as $\lambda(1-\alpha) \to 0$, whereas lasso logistic regression selects only one of two identical predictors.

@@ -1,15 +1,21 @@
 # Taylor-series and generating-series tests for structural identifiability
 
 **Setting.** Consider the model
+
 $$\dot x(t) = f(x(t),\theta) + \sum_{i=1}^{m} g_i(x(t),\theta)\,u_i(t),\qquad y(t) = h(x(t),\theta),\qquad x(0) = x_0(\theta),$$
+
 with state $x \in \mathbb{R}^n$, input $u \in \mathbb{R}^m$, output $y \in \mathbb{R}^p$, and parameter $\theta$ in an open connected set $\Theta \subseteq \mathbb{R}^q$; $f$, $g_i$, $h$ and $x_0$ are analytic. The model is *structurally globally identifiable* at $\theta$ if $y(\cdot\,;\theta') \equiv y(\cdot\,;\theta)$ for all admissible inputs implies $\theta' = \theta$, and *locally identifiable* if this holds for $\theta'$ in some neighbourhood of $\theta$. A vector $\phi(\theta)$ of quantities determined by the output is an *exhaustive summary* if it carries all the information about $\theta$ contained in $y$; then global (local) identifiability is equivalent to global (local) injectivity of $\theta \mapsto \phi(\theta)$.
 
 **Taylor-series test.** Since $y$ is analytic in $t$, it is determined by its derivatives at $t = 0$. Put
+
 $$a_k(\theta) = \left.\frac{d^k y}{dt^k}\right|_{t=0},\qquad k = 0,1,2,\dots$$
+
 If for some finite $k_{\max}$ the algebraic system $a_k(\theta') = a_k(\theta)$, $0 \le k \le k_{\max}$, has the unique solution $\theta' = \theta$ in $\Theta$, the model is structurally globally identifiable at $\theta$; uniqueness only in a neighbourhood gives local identifiability.
 
 **Generating-series test.** Let $L_F \lambda = \sum_j F_j\,\partial \lambda/\partial x_j$ denote the Lie derivative of a function $\lambda$ along a vector field $F$. The coefficients of the Fliess generating series of $y$ with respect to time and inputs are the iterated Lie derivatives
+
 $$h(x_0),\quad L_{f}h(x_0),\quad L_{g_i}h(x_0),\quad L_f L_{g_i} h(x_0),\quad L_{g_j}L_f h(x_0),\ \dots$$
+
 evaluated at $x_0(\theta)$. These coefficients form an exhaustive summary; if a finite subset of them determines $\theta$ uniquely, the model is globally identifiable. A rank test on the Jacobian of a finite set of coefficients with respect to $\theta$ (the *identifiability tableau*) gives local identifiability when the rank equals $q$.
 
 Both tests are sufficient but not necessary: no general a priori bound on the number of coefficients is available for nonlinear models, so failure at a given order does not prove non-identifiability.

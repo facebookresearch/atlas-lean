@@ -8,7 +8,9 @@ I_2' &= \beta_2 S I_2 - (\gamma_2 + \rho_2 + d_{I_2}) I_2,\\
 R' &= (\gamma_1+\rho_1) I_1 + (\gamma_2+\rho_2) I_2 - (d_R + \delta) R .
 \end{aligned}$$
 Co-infection is ignored and both variants feed a single immune class. The disease-free equilibrium is $P_0 = (\Lambda/d_S, 0, 0, 0)$. Define the variant-specific reproduction numbers and $R_0$:
+
 $$R_{0i} = \frac{\beta_i}{\gamma_i + \rho_i + d_{I_i}}\cdot\frac{\Lambda}{d_S}\quad (i=1,2), \qquad R_0 = \max\{R_{01}, R_{02}\}.$$
+
 The single-variant equilibrium $P_1 = (\bar S, \bar I_1, 0, \bar R)$, with $\bar S = (\gamma_1 + \rho_1 + d_{I_1})/\beta_1$, lies in the nonnegative orthant iff $R_{01} \ge 1$ (and equals $P_0$ when $R_{01}=1$); symmetrically for $P_2 = (\bar{\bar S}, 0, \bar{\bar I}_2, \bar{\bar R})$.
 
 **Theorem.** On the positively invariant feasible region:

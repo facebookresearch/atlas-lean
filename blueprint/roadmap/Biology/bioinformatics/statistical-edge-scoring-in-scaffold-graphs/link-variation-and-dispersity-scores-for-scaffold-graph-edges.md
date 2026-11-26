@@ -6,7 +6,9 @@
 
 - *Link variation score* $\pi_\sigma$: compares the observed standard deviation of the link-implied distances with its theoretical value $\sigma_{o\mid d}$, the standard deviation of observations given gap $d$, which depends on $\mu,\sigma,d$, the read length and the lengths of the shorter and longer contig. Agreement gives $\pi_\sigma$ near $1$.
 - *Link dispersity score* $\pi_\zeta = 1 - D_n$: after translating and reflecting the $n$ link positions on each contig into a common coordinate, let $F_{1,n}$ and $F_{2,n}$ be the empirical distribution functions of the two samples, and
+
 $$D_n = \sup_x \big|F_{1,n}(x) - F_{2,n}(x)\big| \in [0,1],$$
+
 the two-sample Kolmogorov–Smirnov statistic.
 
 The total edge score is

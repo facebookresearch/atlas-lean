@@ -1,15 +1,21 @@
 # Time-rescaling theorem for marked point processes
 
 **Univariate case.** Let $N(t)$ be a point process on $[0,T]$ with spike times $0 \le s_1 < \dots < s_{N(T)} \le T$, history $H_t$, and conditional intensity
+
 $$\lambda(t\mid H_t) = \lim_{\Delta\to 0}\frac{\Pr(N(t+\Delta)-N(t) = 1 \mid H_t)}{\Delta}.$$
+
 Then $u_j = \int_0^{s_j}\lambda(t\mid H_t)\,dt$ are the event times of a homogeneous Poisson process of unit rate (time-rescaling theorem); equivalently the rescaled intervals $u_j - u_{j-1}$ are i.i.d. exponential with mean $1$.
 
 **Marked case.** Let spikes $(s_j, m_j)$ carry marks in a space $\mathcal{M}$ (discrete or continuous, scalar, vector or functional), with joint mark intensity $\lambda(t,m\mid H_t)$ defined by
+
 $$\int_{M}\lambda(t,m\mid H_t)\,dm = \lim_{\Delta\to0}\frac{\Pr(\text{a spike with mark in } M \text{ in } (t,t+\Delta] \mid H_t)}{\Delta}, \qquad M \subseteq \mathcal{M},$$
+
 and ground intensity $\Lambda(t\mid H_t) = \int_{\mathcal M}\lambda(t,m\mid H_t)\,dm$.
 
 **Theorem.** Define the mark-dependent rescaled times and boundary
+
 $$\tau_j(m) = \int_0^{s_j}\lambda(t,m\mid H_t)\,dt, \qquad b(m) = \int_0^T \lambda(t,m\mid H_t)\,dt,$$
+
 and the random region $R = \{(\tau,m) : 0 \le \tau \le b(m)\}$. Then the points $\{(\tau_j(m_j), m_j)\}_{j=1}^{N(T)}$ together with their number have the law of a homogeneous marked Poisson process with unit intensity on $R$. In particular, conditional on the boundary, the number of points is Poisson with mean $|R| = \int_{\mathcal M} b(m)\,dm$ and the unordered points are i.i.d. uniform on $R$.
 
 **Corollary.** Ignoring marks, the rescaled times form an inhomogeneous Poisson process with intensity $\tilde\lambda(\tau) = \int_{\mathcal M}\mathbf 1\{(\tau,m)\in R\}\,dm$.

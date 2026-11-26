@@ -1,14 +1,19 @@
 # Optimal total density of the ribosome flow model on a ring
 
 **Ribosome flow model on a ring (RFMR).** For $n\ge2$ sites with occupancies $x_i(t)\in[0,1]$ and rates $\lambda_1,\dots,\lambda_n>0$, indices taken modulo $n$ (so $x_0=x_n$, $x_{n+1}=x_1$, $\lambda_0=\lambda_n$),
+
 $$\dot x_i=\lambda_{i-1}x_{i-1}(1-x_i)-\lambda_i x_i(1-x_{i+1}),\qquad i=1,\dots,n.$$
+
 The total density $s=\sum_i x_i$ is conserved; for each $s\in[0,n]$ the RFMR has a unique steady state $e(s)$ with $\sum_i e_i=s$, attracting all solutions on that level set, and the steady-state translation rate is $R(s)=\lambda_ie_i(1-e_{i+1})$ (the same for every $i$).
 
 **Proposition 5 (sign of the slope).** For almost every $s\in[0,n]$,
+
 $$\operatorname{sgn}R'(s)=\operatorname{sgn}\Bigl(\prod_{i=1}^n(1-e_i(s))-\prod_{i=1}^n e_i(s)\Bigr).$$
 
 **Proposition 1 (unique optimal density).** For any rates $\lambda_i>0$ there is a unique $s^*\in(0,n)$ maximizing $R(s)$. With $e^*=e(s^*)$ and $R^*=R(s^*)$,
+
 $$e_1^*\cdots e_n^*=(1-e_1^*)\cdots(1-e_n^*),\qquad (R^*)^n=(\lambda_1\cdots\lambda_n)\,(e_1^*\cdots e_n^*)^2.$$
+
 At the optimum, the product of site occupancies equals the product of site vacancies.
 
 ## Expansion

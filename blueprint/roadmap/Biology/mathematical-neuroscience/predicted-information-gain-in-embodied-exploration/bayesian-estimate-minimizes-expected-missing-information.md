@@ -19,7 +19,9 @@ In particular $\hat\Theta_{ass'} = p(s'\mid a, s, \vec d)$ is the posterior pred
 ## Expansion
 
 $I_M$ is a sum over independent rows, so each row is minimised separately. Dropping the $\Phi$-independent entropy term,
+
 $$\mathbb{E}\big[D_{\mathrm{KL}}(\boldsymbol\Theta_{as\cdot}\|\Phi_{as\cdot})\big] = \text{const} - \sum_{s'}\mathbb{E}[\boldsymbol\Theta_{ass'}]\log_2\Phi_{ass'},$$
+
 which is the cross-entropy $H\big(\mathbb{E}[\boldsymbol\Theta_{as\cdot}];\Phi_{as\cdot}\big)$, minimised exactly at $\Phi_{as\cdot} = \mathbb{E}[\boldsymbol\Theta_{as\cdot}]$ by Gibbs' inequality. With independent Dirichlet priors on the rows this is the usual add-pseudocount estimator.
 
 ## Sources

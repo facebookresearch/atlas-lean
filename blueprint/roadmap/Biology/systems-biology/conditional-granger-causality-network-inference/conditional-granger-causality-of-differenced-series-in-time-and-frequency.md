@@ -6,6 +6,7 @@
 - the joint model of $(\Delta^k X_t, \Delta^k Y_t, \Delta^k Z_t)$ on their own pasts, with prediction error $\varepsilon_{3t}$ for the $X$ component.
 
 **Definition.** The conditional Granger causality from $Y$ to $X$ given $Z$ is
+
 $$F_{Y \to X \mid Z} = \ln \frac{\operatorname{var}(\varepsilon_{1t})}{\operatorname{var}(\varepsilon_{3t})} .$$
 
 **Properties.**

@@ -9,7 +9,9 @@
 - **Axiom 2 (subset equality).** Adding to $\alpha$ (or $\beta$) a superset of one of its elements does not change $I_\cap^{\alpha\to\beta}$.
 
 **Atoms.** The atoms $I_\partial^{\alpha\to\beta}$ are defined by Möbius inversion on the product lattice:
+
 $$I_\cap^{\alpha\to\beta} = \sum_{\alpha'\to\beta' \preceq \alpha\to\beta} I_\partial^{\alpha'\to\beta'}, \qquad I_\partial^{\alpha\to\beta} = I_\cap^{\alpha\to\beta} - \sum_{\alpha'\to\beta' \prec \alpha\to\beta} I_\partial^{\alpha'\to\beta'} .$$
+
 **Definition 1 (ΦID).** For Markovian dynamics, the integrated information decomposition is the collection of the $16$ atoms, which sum to the time-delayed mutual information: $I(X; Y) = \sum_{\alpha,\beta\in\mathcal A} I_\partial^{\alpha\to\beta}$.
 
 **Proposition 1 (fifteen for free).** Axioms 1 and 2 determine all $16$ atoms uniquely once one specifies (i) a single-target redundancy function $\mathrm{Red}$ and (ii) the double-redundancy atom $I_\partial^{\{1\}\{2\}\to\{1\}\{2\}}$.

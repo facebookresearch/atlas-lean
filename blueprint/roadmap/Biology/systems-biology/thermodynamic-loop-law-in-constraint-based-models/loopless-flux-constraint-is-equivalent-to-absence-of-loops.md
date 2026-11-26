@@ -1,7 +1,9 @@
 # Loopless flux constraint is equivalent to the absence of internal loops
 
 **Setting.** Let $A = S_{\mathrm{int}} \in \mathbb{R}^{m\times n}$ be the stoichiometric matrix of the $n$ internal reactions of a metabolic network with $m$ metabolites, and $v \in \mathbb{R}^n$ the internal part of a flux distribution. A *loop* is a vector $x \ne 0$ with $Ax = 0$. The flux distribution $v$ *contains a loop* if
+
 $$\exists\, x \in \mathbb{R}^n\setminus\{0\}:\quad Ax = 0\ \text{ and }\ \operatorname{sign}(x_i) \in \{\operatorname{sign}(v_i), 0\}\ \text{ for all } i,$$
+
 that is, some loop runs only through active reactions, in their active directions.
 
 **Sign-pattern alternative.** For every $A \in \mathbb{R}^{m\times n}$ and $d \in \{-1,0,1\}^n$, exactly one of the following holds:

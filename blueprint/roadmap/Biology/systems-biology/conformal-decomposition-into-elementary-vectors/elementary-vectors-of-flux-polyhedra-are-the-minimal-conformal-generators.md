@@ -4,7 +4,9 @@
 
 **Theorem.**
 1. *(Conformal decomposition.)* Every $x \in P$ can be written as
+
 $$x = \sum_{e \in E_0} e + \sum_{e \in E_1} \lambda_e\, e, \qquad \operatorname{sign}(e) \le \operatorname{sign}(x),\quad \lambda_e \ge 0,\quad \sum_{e \in E_1} \lambda_e = 1,$$
+
 with $E_0$ a finite set of elementary vectors of $C_r$ and $E_1$ a nonempty finite set of ccND points of $P$; one can take $|E_0 \cup E_1| \le \dim P + 1$ and $|E_0 \cup E_1| \le |\operatorname{supp}(x)| + |\operatorname{supp}(Ax)| + 1$. There are finitely many ccND points.
 2. *(Orthant characterization.)* For $x$ in a closed orthant $O$, $x$ is ccND in $P$ if and only if $x$ is a vertex of $P \cap O$.
 3. *(Minimality.)* For a polyhedral cone $C$ with set of elementary vectors $E$, every conformal generating set $G$ satisfies $E \subseteq G$. Hence the elementary vectors form the unique minimal conformal generating set, and likewise for a polyhedron.

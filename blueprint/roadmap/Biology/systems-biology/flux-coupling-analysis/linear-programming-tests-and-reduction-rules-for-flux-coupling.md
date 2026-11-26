@@ -6,7 +6,9 @@ Use the flux cone $C$, the coupling relations $\xrightarrow{=0}, \xleftrightarro
 1. *Both reversible of the same type* ($i, j \in \mathrm{Prev}$ or $i, j \in \mathrm{Frev}$): then $i \xrightarrow{=0} j$, $i \xleftrightarrow{=0} j$ and $i \backsim j$ are equivalent and depend only on $S$. With $v^*$ optimal for $\max\{ v_j : S v = 0,\ v_i = 0,\ 0 \le v_j \le 1 \}$, one has $i \xrightarrow{=0} j$ iff $v^*_j = 0$.
 2. *$i \in \mathrm{Irev}$, $j \in \mathrm{Prev}$*: only $i \xrightarrow{=0} j$ can hold, and it holds iff both $\max$ and $\min$ of $v_j$ over $\{ v \in C : v_i = 0,\ |v_j| \le 1 \}$ are $0$.
 3. *Both irreversible* ($i, j \in \mathrm{Irev}$): let
+
 $$L_{ij} = \min\{ v_i : v \in C,\ v_j = 1 \}, \qquad L_{ji} = \min\{ v_j : v \in C,\ v_i = 1 \}.$$
+
 Then $i \xrightarrow{=0} j$ iff $L_{ij} \ne 0$, $j \xrightarrow{=0} i$ iff $L_{ji} \ne 0$, and $i \backsim j$ iff both are nonzero and $L_{ij} L_{ji} = 1$.
 
 **Reduction and inference rules.**

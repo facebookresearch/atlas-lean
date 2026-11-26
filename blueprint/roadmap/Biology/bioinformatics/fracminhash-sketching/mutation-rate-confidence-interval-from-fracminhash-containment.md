@@ -5,11 +5,15 @@
 **Theorem 5 (mean).** $\ \mathbb{E}[C_{\mathrm{frac}}(A,B)] = (1-p)^k$, so $\hat p = 1 - C_{\mathrm{frac}}(A,B)^{1/k}$ is a point estimate of $p$.
 
 **Theorem 6 (variance).** With $N = N_{\mathrm{mut}}$,
+
 $$\operatorname{Var}[C_{\mathrm{frac}}(A,B)] = \frac{1-s}{s\,L^3\big(1-(1-s)^L\big)^2}\big(L\,\mathbb{E}[N] - \mathbb{E}[N^2]\big) + \frac{\operatorname{Var}(N)}{L^2},$$
+
 where the moments of $N$ are those under the simple mutation model.
 
 **Theorems 7–8 (test and confidence interval).** Let $\sigma_p^2$ denote the right side of Theorem 6 evaluated at mutation rate $p$, and $z_\alpha = \Phi^{-1}(1-\alpha/2)$. As $L \to \infty$ with $p$, $k$, $s$ fixed, $\Pr\big[(1-p)^k - z_\alpha\sigma_p \le C_{\mathrm{frac}} \le (1-p)^k + z_\alpha\sigma_p\big] \to 1-\alpha$. Inverting, for an observed $C_{\mathrm{frac}}$ and $L$ large enough the equations
+
 $$C_{\mathrm{frac}} = (1-p_{\mathrm{low}})^k + z_\alpha\sigma_{p_{\mathrm{low}}},\qquad C_{\mathrm{frac}} = (1-p_{\mathrm{high}})^k - z_\alpha\sigma_{p_{\mathrm{high}}}$$
+
 have unique solutions, and $\lim_{L\to\infty}\Pr[p_{\mathrm{low}} \le p \le p_{\mathrm{high}}] = 1-\alpha$.
 
 ## Expansion

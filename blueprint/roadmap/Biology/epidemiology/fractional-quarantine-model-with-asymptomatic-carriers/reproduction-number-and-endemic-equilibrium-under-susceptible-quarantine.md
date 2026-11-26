@@ -13,10 +13,13 @@ D^\alpha R &= \gamma_I^\alpha I + \gamma_A^\alpha A + \gamma_H^\alpha H - \alpha
 with $\eta = \delta_I^\alpha + \gamma_I^\alpha + \alpha_I^\alpha$ and $\xi = \gamma_A^\alpha + \alpha_A^\alpha$ the exit rates of $I$ and $A$, and all parameters positive. The nonnegative orthant is positively invariant and solutions exist uniquely on $[0, \infty)$.
 
 **Theorem (threshold).** The disease-free equilibrium is $E_0 = (\Lambda/\mu^\alpha, 0, 0, 0, 0, 0, 0)$, and the next-generation matrix gives
+
 $$R_0 = \psi\left(\frac{\rho^\alpha}{\eta} + \frac{\theta^\alpha (1-\rho^\alpha)}{\xi}\right), \qquad \psi = \frac{\beta^\alpha c^\alpha (1-q)\,\Lambda}{\mu^\alpha}.$$
+
 If $R_0 < 1$, $E_0$ is locally asymptotically stable. Quarantine enters only through the factor $1 - q$, so $R_0$ decreases linearly in the traced fraction and $R_0 < 1$ iff $q > 1 - 1/R_0|_{q=0}$.
 
 **Theorem (endemic equilibrium without quarantine).** For the sub-model with $q = 0$ (so $S_q = E_q = 0$), a positive endemic equilibrium exists iff $R_0 > 1$, it is unique, and
+
 $$S^* = \frac{\Lambda}{\mu^\alpha R_0}, \qquad I^* = \frac{\Lambda \rho^\alpha}{\eta}\left(1 - \frac{1}{R_0}\right), \qquad A^* = \frac{\Lambda (1-\rho^\alpha)}{\xi}\left(1 - \frac{1}{R_0}\right).$$
 
 ## Depends on

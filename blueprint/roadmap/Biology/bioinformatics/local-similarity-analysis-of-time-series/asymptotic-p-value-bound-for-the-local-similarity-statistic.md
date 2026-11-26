@@ -1,9 +1,13 @@
 # Asymptotic p-value bound for the local similarity statistic
 
 **Statistic.** Let $X = (X_1,\dots,X_n)$ and $Y = (Y_1,\dots,Y_n)$ be standardized time series and $D \ge 0$ a maximal lag. With $P_{i,0} = P_{0,j} = N_{i,0} = N_{0,j} = 0$, define for $1 \le i,j \le n$ with $|i-j| \le D$
+
 $$P_{i,j} = \max\{0,\ P_{i-1,j-1} + X_i Y_j\}, \qquad N_{i,j} = \max\{0,\ N_{i-1,j-1} - X_i Y_j\},$$
+
 $\hat P = \max_{|i-j|\le D} P_{i,j}$, $\hat N = \max_{|i-j|\le D} N_{i,j}$, and the local similarity score
+
 $$\mathrm{LSA}(X,Y) = \operatorname{sign}(\hat P - \hat N)\,\frac{\max\{\hat P, \hat N\}}{n}.$$
+
 The computation for $m$ series takes $O(m^2 n D)$ time.
 
 **Lemma (tail event).** For every $x$, $\{|\mathrm{LSA}| > x\} = \bigcup_{i,j}\{P_{i,j} > xn\} \cup \bigcup_{i,j}\{N_{i,j} > xn\}$, the unions over $|i-j| \le D$.
@@ -11,7 +15,9 @@ The computation for $m$ series takes $O(m^2 n D)$ time.
 **Lemma (reflected walk).** If $Z_1, Z_2,\dots$ are i.i.d., $S_0 = 0$, $S_k = Z_1+\cdots+Z_k$, and $q_0 = 0$, $q_{k} = \max\{0, q_{k-1} + Z_k\}$, then $q_k$ has the same distribution as $\max\{S_0,\dots,S_k\}$.
 
 **Theorem.** Assume, under the null hypothesis of no association, that the products $X_iY_j$ entering each recursion are independent with mean $0$ and variance $\sigma^2 = \operatorname{Var}(X_1Y_1)$. Let $G(y) = \sqrt{2/\pi}\int_0^{y} e^{-t^2/2}\,dt$ for $y \ge 0$ be the distribution function of $|Z|$, $Z$ standard normal. Then, asymptotically as $n\to\infty$,
+
 $$P\bigl(|\mathrm{LSA}| > x\bigr) \;\lesssim\; 2\,\bigl[n^2 - (n-D-1)(n-D)\bigr]\Bigl(1 - G\bigl(x\sqrt{n}/\sigma\bigr)\Bigr),$$
+
 where $n^2 - (n-D-1)(n-D)$ is the number of index pairs with $|i-j|\le D$; for standardized products ($\sigma = 1$) the bound is $2\,\bigl[n^2-(n-D-1)(n-D)\bigr]\bigl(1-G(x\sqrt n)\bigr)$.
 
 ## Expansion

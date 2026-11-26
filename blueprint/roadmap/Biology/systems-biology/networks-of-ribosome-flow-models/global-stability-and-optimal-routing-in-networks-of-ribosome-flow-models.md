@@ -1,12 +1,17 @@
 # Global stability and optimal routing in networks of ribosome flow models
 
 **Building block.** The ribosome flow model with input and output (RFMIO) of length $n$ with rates $\lambda_0, \dots, \lambda_n > 0$ and input $u(t) > 0$ is
+
 $$\dot x_1 = u\lambda_0(1 - x_1) - \lambda_1 x_1 (1 - x_2), \qquad \dot x_i = \lambda_{i-1} x_{i-1}(1 - x_i) - \lambda_i x_i (1 - x_{i+1}) \ (2 \le i \le n-1),$$
+
 $$\dot x_n = \lambda_{n-1} x_{n-1}(1 - x_n) - \lambda_n x_n, \qquad y = \lambda_n x_n,$$
+
 with occupancies $x_i \in [0,1]$; $y$ is the ribosome exit (protein production) rate. For constant $u \equiv c$ it is an RFM with initiation rate $c\lambda_0$, whose steady state is given spectrally: if $\sigma > 0$ and $\zeta > 0$ are the Perron eigenvalue and eigenvector of the symmetric tridiagonal $(n+2)\times(n+2)$ matrix with zero diagonal and off-diagonal entries $\lambda_0^{-1/2}, \dots, \lambda_n^{-1/2}$, then $y_{ss} = \sigma^{-2}$ and $e_i = \lambda_i^{-1/2}\sigma^{-1}\zeta_{i+2}/\zeta_{i+1}$.
 
 **Network.** Take $m$ RFMIOs, RFMIO $j$ with dimension $n_j$, input $u_j$ and output $y_j$, and a source of rate $y_0 > 0$. With weights $v_{k,j} \in [0,1]$ ($k \in \{0, \dots, m\}$, $j \in \{1, \dots, m+1\}$) set
+
 $$u_j = \sum_{k=0}^m v_{k,j}\, y_k, \qquad y := y_{m+1} = \sum_{j=1}^m v_{j,m+1}\, y_j .$$
+
 The network is **feasible** if every $v_{k,j} \in [0,1]$ and $\sum_{j=1}^{m+1} v_{k,j} = 1$ for each $k$ (each output is distributed, not created). Feedback loops (for example ribosome recycling from an output back to an input) are allowed. Let $z \in [0,1]^\ell$, $\ell = \sum_j n_j$, collect all occupancies.
 
 **Theorem.**

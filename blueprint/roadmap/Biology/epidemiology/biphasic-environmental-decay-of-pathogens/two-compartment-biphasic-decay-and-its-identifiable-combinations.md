@@ -1,13 +1,19 @@
 # Two-compartment biphasic decay and its identifiable combinations
 
 **Model.** Let $E_1(t)$ and $E_2(t)$ be the labile and resistant pathogen populations in an environmental compartment, $E = E_1 + E_2$, and $u(t) \ge 0$ a known input (shedding). With decay rates $\theta_1, \theta_2$, dormancy rate $\delta_1$ (labile to resistant), resuscitation rate $\delta_2$ (resistant to labile), labile fraction $\eta$ of the input, and initial conditions $E_1(0) = \rho\omega$, $E_2(0) = (1-\rho)\omega$,
+
 $$\dot E_1 = -(\theta_1 + \delta_1)E_1 + \delta_2E_2 + \eta u, \qquad \dot E_2 = \delta_1E_1 - (\theta_2 + \delta_2)E_2 + (1-\eta)u .$$
+
 Three submodels correspond to biological hypotheses: population heterogeneity ($\delta_1 = \delta_2 = 0$, $E$ observed), hardening-off ($\delta_2 = 0$, $\eta = 1$, $E$ observed) and viable-but-not-culturable ($\eta = 1$, $\theta_1 = \theta_2$, only the culturable $E_1$ observed).
 
 **Proposition 1 (biphasic form).** Outside degenerate parameter values ($\theta_1 = \theta_2$ when $E$ is observed; $\delta_2 = 0$ when $E_1$ is observed), each observed curve $Y \in \{E, E_1\}$ has the form
+
 $$Y(t) = d\big(c\,e^{-at} + (1-c)\,e^{-bt}\big) + \int_0^t\big(h\,e^{-a(t-s)} + (1-h)\,e^{-b(t-s)}\big)\upsilon(s)\,ds,$$
+
 with $\upsilon = u$ for $Y = E$ and $\upsilon = \eta u$ for $Y = E_1$, where $a > b > 0$ are the negatives of the eigenvalues of the system matrix:
+
 $$a + b = \theta_1 + \theta_2 + \delta_1 + \delta_2, \qquad ab = (\theta_1 + \delta_1)(\theta_2 + \delta_2) - \delta_1\delta_2 .$$
+
 For $Y = E$: $d = \omega$ and $ca + (1-c)b = \rho\theta_1 + (1-\rho)\theta_2$. For $Y = E_1$: $d = \rho\omega$ and $ca + (1-c)b = \theta_1 + \delta_1 + \delta_2(1 - 1/\rho)$.
 
 **Proposition 2.** The apparent parameters $a, b, c, d$ (and $h$ when $\upsilon \not\equiv 0$ is measured) are identifiable from the curve $Y$.

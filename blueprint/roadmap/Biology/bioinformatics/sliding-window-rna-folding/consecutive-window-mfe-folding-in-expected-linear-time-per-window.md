@@ -1,10 +1,13 @@
 # Consecutive-window MFE folding in expected O(NL) time
 
 Let $s = s_1 \cdots s_N$ be an RNA sequence. In the nearest-neighbour minimum free energy (MFE) recursions, $V(i,j)$ is the MFE of $s_i \cdots s_j$ over structures in which $s_i$ pairs with $s_j$ (a **closed structure**; $V = +\infty$ if they cannot pair), and
+
 $$W(i, j) = \min\Big\{ V(i, j),\ \min_{i \le k < j} \big( W(i, k) + W(k+1, j) \big) \Big\}$$
+
 is the MFE of $s_i \cdots s_j$; internal-loop sizes are bounded by a constant, so the $W$ recursion is the cubic bottleneck. The **consecutive windows folding problem** asks, for a window length $L < N$, for $W(i, i + L - 1)$ for every window start $i$.
 
 **Triangle inequality and candidates.** $W(i, j') \le W(i, j) + W(j+1, j')$ for $i \le j < j'$. Hence every optimal split can be taken with a closed left part, $W(i,j) = \min\{ V(i,j), \min_{i \le k < j} V(i,k) + W(k+1, j)\}$, and if $V(i,j) \ge V(i,k) + W(k+1, j)$ for some $k < j$, then $V(i, j) + W(j+1, j') \ge V(i,k) + W(k+1, j')$ for every $j' > j$. Call $j$ a **candidate** in row $i$ if $V(i,j) < V(i,k) + W(k+1,j)$ for all $i \le k < j$; only candidates need be considered as split points:
+
 $$W(i, j) = \min\Big\{ V(i,j),\ \min_{k \text{ candidate},\ k < j} V(i,k) + W(k+1, j) \Big\}.$$
 
 **Theorem.** Computing the $L$-wide band of $W$ in decreasing row order and increasing column order, with the candidate list of row $i$ restarted at each row and extended by $j$ whenever $V(i,j) < W(i,j)$, solves the consecutive windows folding problem in $O(N L)$ expected time and $O(N + L^2)$ space, under the polymer-folding assumption that the optimal folding of a segment of length $q$ is closed with probability $b\,q^{-c}$ for some $c > 1$. A traceback of any window costs $O(L)$ additional time.

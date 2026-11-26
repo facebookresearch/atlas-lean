@@ -1,10 +1,13 @@
 # Representer theorem for positive semidefinite metric learning
 
 **Problem (Eqs. 8–9).** Genes are vectors $x_1,\dots,x_N\in\mathbb{R}^p$. A training set $\mathcal{T}=\mathcal{I}\cup\mathcal{N}$ of gene pairs is split into interacting pairs $\mathcal{I}$ (edges of a known network) and non-interacting pairs $\mathcal{N}$. For a symmetric positive semidefinite matrix $M\succeq0$ let $d_M(x,x')=(x-x')^\top M(x-x')$. Solve
+
 $$\min_{\gamma,M,\zeta}\ \|M\|_{\mathrm{Fro}}^2+C\sum_{(i,j)\in\mathcal{T}}\zeta_{ij}$$
+
 subject to $\zeta_{ij}\ge0$, $d_M(x_i,x_j)\le\gamma-1+\zeta_{ij}$ for $(i,j)\in\mathcal{I}$, $d_M(x_i,x_j)\ge\gamma+1-\zeta_{ij}$ for $(i,j)\in\mathcal{N}$, and $M\succeq0$.
 
 **Theorem 1.** Every solution matrix can be written as
+
 $$M=\sum_{(i,j)\in\mathcal{T}}\alpha_{ij}\,(x_i-x_j)(x_i-x_j)^\top,\qquad \alpha_{ij}\in\mathbb{R}.$$
 
 ## Expansion

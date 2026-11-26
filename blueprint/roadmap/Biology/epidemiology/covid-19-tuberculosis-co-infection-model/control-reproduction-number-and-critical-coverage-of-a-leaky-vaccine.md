@@ -9,11 +9,17 @@ I_s' &= \sigma_c \psi E - (\mu + \delta_c + \gamma_2) I_s, & R' &= \gamma_1 I_a 
 Vaccination at rate $\nu$ with waning rate $\omega$ gives a **leaky** vaccine of efficacy $\varepsilon \in [0,1]$; $\psi$ is the symptomatic fraction and $\eta$ the relative infectiousness of asymptomatics. Write $k_3 = \mu + \sigma_c$, $k_4 = 1 - \psi$, $k_5 = \mu + \delta_c + \gamma_1$, $k_6 = \mu + \delta_c + \gamma_2$.
 
 **Theorem.** The COVID-free equilibrium is
+
 $$S^* = \frac{\pi(\mu + \omega)}{\mu(\mu + \omega + \nu)}, \qquad V^* = \frac{\pi \nu}{\mu(\mu + \omega + \nu)}, \qquad E = I_a = I_s = R = 0,$$
+
 and the control reproduction number is
+
 $$R_C = \frac{\beta_c \sigma_c\,(\psi k_5 + \eta k_4 k_6)}{k_3 k_5 k_6}\cdot\frac{\mu + \omega + (1-\varepsilon)\nu}{\mu + \omega + \nu} = R_\triangle\,(1 - \varepsilon\vartheta),$$
+
 where $R_\triangle = \beta_c\sigma_c(\psi k_5 + \eta k_4 k_6)/(k_3 k_5 k_6)$ is the basic reproduction number without vaccination and $\vartheta = V^*/N^* = \nu/(\mu + \omega + \nu)$ is the vaccinated proportion at the disease-free state. The disease-free equilibrium is locally asymptotically stable if $R_C < 1$ and unstable if $R_C > 1$. Hence, when $R_\triangle > 1$, elimination requires vaccine coverage above the critical proportion
+
 $$\vartheta_c = \frac{1}{\varepsilon}\left(1 - \frac{1}{R_\triangle}\right),$$
+
 which is achievable only if $\varepsilon \ge 1 - 1/R_\triangle$.
 
 **Endemic equilibria.** The endemic force of infection $\lambda_c^{**}$ solves $m_2 \lambda^2 + m_1 \lambda + m_0 = 0$ with $m_2 > 0$ and $m_0 = k_3 k_5 k_6 (\mu + \omega + \nu)(1 - R_C)$. So there is a unique endemic equilibrium when $R_C > 1$, while for $R_C < 1$ two endemic equilibria exist when $m_1 < 0$ and the discriminant is positive: the leaky vaccine together with loss of immunity can produce a backward bifurcation, in which case $R_C < 1$ alone does not guarantee elimination. For the TB-only sub-model the analogous threshold is $R_T = \beta_t \sigma_t / \big((\mu + \delta_t + \gamma_3)(\mu + \delta_t + \gamma_4)\big)$.

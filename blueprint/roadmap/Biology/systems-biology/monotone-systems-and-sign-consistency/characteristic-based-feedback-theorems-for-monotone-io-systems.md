@@ -7,7 +7,9 @@ Below, inputs and outputs are scalar, and two such systems with characteristics 
 **Theorem (positive feedback).** Let both systems be monotone with increasing characteristics $k$ (first system, $y = k(u)$) and $g$ (second system, $u = g(y)$). Steady states of the closed loop correspond bijectively to intersection points of the graphs of $k$ and $g^{-1}$. Label a non-tangential intersection $S$ if the slope of $k$ there is smaller than that of $g^{-1}$, and $U$ if it is larger. Under mild transversality, controllability and observability conditions, almost every bounded solution of the closed loop converges to a steady state labeled $S$.
 
 **Theorem (negative feedback; small-gain theorem).** Let the first system be monotone with characteristic $k$ and the second be anti-monotone (inhibition included in its output) with characteristic $g$. If all closed-loop solutions are bounded and the scalar iteration
+
 $$u_{j+1} = g\bigl(k(u_j)\bigr)$$
+
 has a globally attractive fixed point (equivalently, it has no nontrivial period-two orbit), then the closed loop has a globally attracting steady state. The conclusion persists with arbitrary, even time-varying, delays in the feedback, and for the reaction-diffusion version with Neumann boundary conditions, whose solutions all converge to a unique spatially uniform state.
 
 ## Expansion

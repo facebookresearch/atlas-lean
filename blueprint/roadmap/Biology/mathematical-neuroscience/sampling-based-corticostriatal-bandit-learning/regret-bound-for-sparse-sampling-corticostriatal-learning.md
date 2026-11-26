@@ -8,7 +8,9 @@
 3. each weight of the chosen ensemble is updated by its own (distributional) reward prediction error, $v_{t+1,a_t,m} = v_{t,a_t,m} + \eta(N_{t,a_t})\,(r_t - v_{t,a_t,m})$, where $N_{t,a}$ counts previous choices of $a$; other ensembles are unchanged.
 
 **Theorem.** If the sparsity $K$, the learning rates $\eta$ and the initial weights $\bar V_{a,m}$ are chosen appropriately, the regret after $T$ trials is at most
+
 $$C\sqrt{A\,T\,\log(AT)}$$
+
 for a constant $C$. In the formal version, $K = 1$, $\eta(n) = 1/(1+n)$ and the initial weights are $\bar V_{a,m} = c\,m/M$, with $c$ an explicit logarithmic factor in $A$, $T$ and the reward gaps, divided by the gap between the best and second-best action; the constant then depends on the ratio of reward gaps. Since every algorithm suffers regret of order $\sqrt{AT}$ in the worst case, the circuit is minimax-optimal up to a logarithmic factor.
 
 ## Expansion

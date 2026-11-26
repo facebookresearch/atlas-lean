@@ -1,6 +1,7 @@
 # Metric learning pairwise kernel
 
 **Definition (Eq. 5).** Let $K$ be a positive definite kernel on genes with feature map $\Phi$, $K(x,x')=\langle\Phi(x),\Phi(x')\rangle$. The metric learning pairwise kernel (MLPK) on pairs of genes is
+
 $$K_{\mathrm{MLPK}}\bigl((x_1,x_2),(x_3,x_4)\bigr)=\bigl(K(x_1,x_3)-K(x_1,x_4)-K(x_2,x_3)+K(x_2,x_4)\bigr)^2=\bigl\langle\Phi(x_1)-\Phi(x_2),\Phi(x_3)-\Phi(x_4)\bigr\rangle^2.$$
 
 **Properties.**

@@ -5,7 +5,9 @@
 **Proposition.**
 1. *Spin form.* $\mathrm{CD}(G) = \min_\sigma I(\sigma)$, where $I(\sigma)$ is the number of edges inconsistent with the spin assignment $\sigma$.
 2. *Partition form.* Writing $A_{+1}$ and $A_{-1}$ for the nodes of spin $+1$ and $-1$,
+
 $$\mathrm{CD}(G) = \min_{(A_{+1}, A_{-1})} \bigl(n_{+1} + n_{-1} + p\bigr),$$
+
 where $n_{\pm 1}$ is the number of negative edges inside $A_{\pm 1}$ and $p$ the number of positive edges between $A_{+1}$ and $A_{-1}$.
 3. *Ising form.* With $J_{ij} \in \{\pm 1\}$ the edge labels, the spin-glass energy $H(\sigma) = -\sum_{(j \to i) \in E} J_{ij}\sigma_i\sigma_j$ equals $I(\sigma) - C(\sigma)$, where $C(\sigma) = |E| - I(\sigma)$ counts consistent edges, so ground states of $H$ are exactly the minimizers of $I$, and $G$ is consistent if and only if the model is unfrustrated.
 4. *MAX-CUT.* If every edge is negative, $\mathrm{CD}(G) = |E| - \mathrm{maxcut}(G)$. Conversely, replacing each positive edge $v_i \to v_j$ by a new node $w_{ij}$ and two negative edges $v_i \to w_{ij} \to v_j$ preserves the consistency deficit, so computing $\mathrm{CD}$ is equivalent to MAX-CUT and is NP-hard. A semidefinite-programming relaxation in the style of Goemans and Williamson approximates it in polynomial time to within $87.9\%$ of the optimum.

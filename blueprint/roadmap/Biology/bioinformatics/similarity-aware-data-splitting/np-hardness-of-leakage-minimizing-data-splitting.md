@@ -3,11 +3,15 @@
 **Setting.** Let $\mathcal D$ be a finite set of data elements (biomolecules such as proteins, compounds or sequences, or clusters of them), each with an entity type $t(x) \in [R] = \{1, \dots, R\}$ (for drug-target interaction data $R = 2$: drugs and targets), a cardinality $\kappa(x) \in \mathbb N_{\ge 1}$ ($\kappa(x) = 1$ for an elementary data point), and a set of classes $\sigma(x) \subseteq [C]$. Let $\mathrm{sim} : \mathcal D \times \mathcal D \to \mathbb R$ be a similarity. Write $n_r = \sum_{t(x) = r} \kappa(x)$ and $n_r^c = \sum_{t(x) = r,\, c \in \sigma(x)} \kappa(x)$. A split into $k$ folds is a map $\pi : \mathcal D \to [k]$ with folds $\mathcal D_i^\pi = \pi^{-1}(i)$.
 
 **Leakage.** The information leakage of $\pi$ is the total similarity between elements placed in different folds,
+
 $$L(\pi) = \sum_{\{x, x'\} \in \binom{\mathcal D}{2}} [\pi(x) \ne \pi(x')]\, \mathrm{sim}(x, x')\, \kappa(x)\, \kappa(x').$$
 
 **The $(k, R, C)$-DataSAIL problem.** Given split fractions $s_1, \dots, s_k \in (0, 1)$ with $\sum_i s_i = 1$ and tolerances $\epsilon \in [0, 1)$, $\delta \in [0, 1]$, minimize $L(\pi)$ subject to the size constraints
+
 $$\sum_{x \in \mathcal D_i^\pi,\ t(x) = r} \kappa(x) \ge (1 - \epsilon)\, s_i\, n_r \quad \text{for all } (i, r) \in [k] \times [R],$$
+
 and the stratification constraints
+
 $$\sum_{x \in \mathcal D_i^\pi,\ t(x) = r,\ c \in \sigma(x)} \kappa(x) \ge (1 - \delta)\, s_i\, n_r^c \quad \text{for all } (i, r, c) \in [k] \times [R] \times [C].$$
 
 **Theorem 1.** For all fixed $k \ge 2$, $R \ge 1$ and $C \ge 1$, the $(k, R, C)$-DataSAIL problem is NP-hard.

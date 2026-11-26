@@ -3,9 +3,13 @@
 **Setting.** Let $X$ be a GTaS counting process on $\mathbb{D}=\{1,\dots,N\}$ with mother rate $\lambda$, marking distribution $(p_D)_{D\subseteq\mathbb{D}}$ and shift distributions $(Q_D)_{D\subseteq\mathbb{D}}$. For a set $\bar D = \{i_1,\dots,i_k\} \subseteq \mathbb{D}$ of $k$ distinct indices and Borel sets $A_1,\dots,A_k \subseteq \mathbb{R}$, write $\kappa(\cdot,\dots,\cdot)$ for the joint cumulant and $Y_{\bar D}$ for the projection of $Y$ onto the coordinates in $\bar D$.
 
 **Theorem.**
+
 $$\kappa\bigl(X_{i_1}(A_1),\dots,X_{i_k}(A_k)\bigr) = \lambda \sum_{D' \supseteq \bar D} p_{D'} \int_{\mathbb{R}} P\bigl(t\mathbf{1} + Y_{\bar D} \in A_1\times\cdots\times A_k \,\big|\, Y\sim Q_{D'}\bigr)\,dt.$$
+
 If every $Q_D$ has a density $q_D$, and $q_{D'}^{\bar D}$ denotes the joint marginal density of the coordinates in $\bar D$, the $k$-th order cross-cumulant density is
+
 $$\kappa^X_{i_1\cdots i_k}(\tau_1,\dots,\tau_{k-1}) = \lambda \sum_{D'\supseteq \bar D} p_{D'} \int_{\mathbb{R}} q_{D'}^{\bar D}(t, t+\tau_1,\dots,t+\tau_{k-1})\,dt,$$
+
 that is, a sum over markings containing $\bar D$ of the marking rate $\lambda p_{D'}$ times the density of the relative shifts $(Y_{i_2}-Y_{i_1},\dots,Y_{i_k}-Y_{i_1})$ under $Q_{D'}$.
 
 **Second order.** For $i\ne j$, the covariance density is $\kappa^X_{ij}(\tau) = \lambda\sum_{D'\ni i,j} p_{D'}\, f^{D'}_{ij}(\tau)$ with $f^{D'}_{ij}$ the density of $Y_j - Y_i$ under $Q_{D'}$. When the two shifts are independent with common density $f$, this reduces to $\lambda\bar p_{\{i,j\}}\int f(t)f(t+\tau)\,dt$.

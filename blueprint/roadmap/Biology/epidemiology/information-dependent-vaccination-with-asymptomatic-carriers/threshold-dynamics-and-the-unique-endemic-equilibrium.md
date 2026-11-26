@@ -1,7 +1,9 @@
 # Threshold dynamics and the unique endemic equilibrium
 
 **Model (Eqs. 3a–3f).** Susceptible $S$, exposed $E$, asymptomatic infectious $I_a$, symptomatic infectious $I_s$, vaccinated $V$ and an information index $M$ evolve as
+
 $$\begin{aligned}\dot S&=\Lambda-(\varphi_0+\varphi_1(M))S-\beta S(\varepsilon_aI_a+\varepsilon_sI_s)-\mu S,\\ \dot E&=\beta(S+\sigma V)(\varepsilon_aI_a+\varepsilon_sI_s)-(\rho+\mu)E,\\ \dot I_a&=\rho E-(\eta+\nu_a+\mu)I_a,\\ \dot I_s&=\eta I_a-(\nu_s+\delta+\mu)I_s,\\ \dot V&=(\varphi_0+\varphi_1(M))S-\sigma\beta V(\varepsilon_aI_a+\varepsilon_sI_s)-\mu V,\\ \dot M&=a(kI_s-M),\end{aligned}$$
+
 with positive parameters, vaccine failure factor $\sigma\in[0,1)$, constant vaccination rate $\varphi_0>0$, and a continuous increasing information-driven rate $\varphi_1$ with $\varphi_1(0)=0$ and $\sup\varphi_1<1-\varphi_0$. The disease-free equilibrium is $\bigl(\bar S,0,0,0,\bar V,0\bigr)$ with $\bar S=\Lambda/(\mu+\varphi_0)$, $\bar V=\Lambda\varphi_0/(\mu(\mu+\varphi_0))$.
 
 **Propositions 1, 3, 4 and 6.**

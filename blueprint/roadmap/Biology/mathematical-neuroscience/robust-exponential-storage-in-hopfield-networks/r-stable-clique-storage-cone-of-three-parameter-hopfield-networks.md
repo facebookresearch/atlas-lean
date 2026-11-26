@@ -3,7 +3,9 @@
 **Setting.** Consider the Hopfield network on $n = \binom{2k}{2}$ neurons indexed by the edges of the complete graph on $2k$ vertices, with weights $W_{ef} = x$ when edges $e \ne f$ share one vertex, $W_{ef} = y$ when they are disjoint, and constant threshold $\theta_e = z$ (see [robust exponential storage of cliques](robust-exponential-storage-of-cliques-in-hopfield-networks.md)). For an integer $r \ge 0$, a state $x^*$ is *$r$-stable* if the dynamics converges to $x^*$ from every state within Hamming distance $r$ of $x^*$.
 
 **Lemma.** Fix $k>3$ and $0 \le r < k$. The network stores all $k$-cliques as $r$-stable states if and only if
+
 $$\begin{pmatrix} 4(2-k)+2r & (2-k)(k-3) \\ 4(2-k) & (2-k)(k-3)-2r \\ 2(k-1)+2r & (k-1)(k-2) \\ 2(k-1) & (k-1)(k-2)-2r \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} < \begin{pmatrix} -2 \\ -2 \\ 2 \\ 2 \end{pmatrix} z$$
+
 componentwise. Moreover, every pattern within Hamming distance $r$ of a $k$-clique reaches that clique after a single iteration of the dynamics.
 
 ## Expansion

@@ -3,9 +3,13 @@
 **Setting.** An instance of the $(k, R, C)$-DataSAIL problem: data elements $\mathcal D$ with entity types $t$, cardinalities $\kappa$, classes $\sigma$, similarity $\mathrm{sim}$, split fractions $s_i$ and tolerances $\epsilon, \delta$; the goal is a split $\pi : \mathcal D \to [k]$ minimizing the leakage $L(\pi) = \sum_{\{x, x'\}} [\pi(x) \ne \pi(x')]\,\mathrm{sim}(x, x')\,\kappa(x)\kappa(x')$ under the size and stratification constraints.
 
 **ILP (Eqs. (12)–(18)).** Use binary variables $\xi_{x,i}$ ($x$ is in fold $i$) and $\zeta_{xx'}$ for unordered pairs ($x$ and $x'$ are in different folds), and write $w_{xx'} = \mathrm{sim}(x, x')\,\kappa(x)\,\kappa(x')$:
+
 $$\min_{\xi, \zeta} \sum_{\{x, x'\} \in \binom{\mathcal D}{2}} w_{xx'}\, \zeta_{xx'}$$
+
 subject to
+
 $$\sum_{i=1}^{k} \xi_{x,i} = 1 \ (x \in \mathcal D), \qquad \sum_{t(x) = r} \kappa(x)\, \xi_{x,i} \ge (1 - \epsilon)\, s_i\, n_r, \qquad \sum_{t(x) = r,\ c \in \sigma(x)} \kappa(x)\, \xi_{x,i} \ge (1 - \delta)\, s_i\, n_r^c,$$
+
 $$\zeta_{xx'} \ge \xi_{x,i} - \xi_{x',i} \quad \text{for all } \{x, x'\} \text{ and } i \in [k], \qquad \xi_{x,i}, \zeta_{xx'} \in \{0, 1\}.$$
 
 **Claim.** If all similarities are nonnegative, the ILP is equivalent to $(k, R, C)$-DataSAIL: at an optimum $\zeta_{xx'} = [\pi_\xi(x) \ne \pi_\xi(x')]$ (Eq. (19)), so the objective equals $L(\pi_\xi)$. It has $O(|\mathcal D| k + |\mathcal D|^2)$ variables and $O(kRC + |\mathcal D|^2 k)$ constraints, hence constant size when $\mathcal D$ is a constant number of clusters.

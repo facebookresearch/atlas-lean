@@ -3,8 +3,11 @@
 **Setting (Jain–Krishna or elementary model).** There are $N$ molecule types $S = \{v_1,\dots,v_N\}$, each produced by one reaction directly from food molecules, and each molecule type independently catalyzes the production of each molecule type (itself included) with probability $p$; food molecules catalyze nothing. Let $\mu = Np$, the expected number of molecule types whose formation a given molecule catalyzes, and let $P$ be the probability that some nonempty $S' \subseteq S$ has every element produced by a reaction catalyzed by an element of $S'$ (equivalently, that the network contains a RAF set).
 
 **Theorem.** For every $\mu \in (0,1)$,
+
 $$1 - e^{-\mu} \le P \le -\ln(1-\mu).$$
+
 Consequently, for $P \ge 1/2$ the minimal required diversity satisfies
+
 $$\frac{1 - e^{-1/2}}{p} \le N \le \frac{\ln 2}{p}.$$
 
 **Comparison with the binary polymer model.** In the binary polymer model with polymers up to length $n$ (about $2^{n+1}$ molecule types and many more reactions than molecules), RAFs appear with high probability once $p(n-2)2^{n+1} = Cn$ for a constant $C$, so the required length is $n = \log_2 C - \log_2 p - 1 + o(1)$; the Erdős–Rényi giant-component heuristic underestimates this only by $\log_2(n-2) + O(1)$.

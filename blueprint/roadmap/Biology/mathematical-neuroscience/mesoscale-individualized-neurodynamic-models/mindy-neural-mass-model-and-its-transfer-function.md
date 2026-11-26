@@ -1,9 +1,13 @@
 # MINDy neural mass model and its transfer function
 
 **Model.** For $N$ brain regions with activity vector $x_t \in \mathbb{R}^N$, the Mesoscale Individualized Neurodynamic (MINDy) model is
+
 $$\dot x = W\,\psi_\alpha(x_t) - D\,x_t + \varepsilon_t,$$
+
 fitted in the discrete-time form $x_{t+\Delta t} - x_t = \big(W\psi_\alpha(x_t) - Dx_t + \varepsilon_t\big)\Delta t$ with $\Delta t$ the sampling interval. Here $W \in \mathbb{R}^{N\times N}$ is the effective connectivity, $D = \operatorname{diag}(D_1,\dots,D_N)$ with $D_i > 0$ the regional decay rates, $\varepsilon_t$ process noise independent across regions, and $\psi_\alpha$ acts componentwise with a region-specific curvature $\alpha_i > 0$:
+
 $$\psi_{\alpha}(x) = \sqrt{\alpha^2 + \left(bx + \tfrac12\right)^2} - \sqrt{\alpha^2 + \left(bx - \tfrac12\right)^2},$$
+
 where $b > 0$ is a global hyperparameter.
 
 **Properties of the transfer function.** For every $\alpha > 0$ and $b > 0$:

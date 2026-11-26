@@ -3,14 +3,21 @@
 **Setting.** Use the notation and assumptions of [the selective-testing bound](infection-rate-bounds-under-selective-testing.md): indicators $C_d, T_d, R_d$, perfect specificity, and bounds $[L_{d10}, U_{d10}]$ on $P(C_d = 1 \mid T_d=1, R_d=0)$. Write $\pi_d = P(R_d=1\mid T_d=1)$ for the positivity rate among the tested.
 
 **Testing monotonicity.** Suppose testing targets people more likely to be infected:
+
 $$P(C_d=1\mid T_d=0) \le P(C_d=1\mid T_d=1).$$
+
 Then one may take $L_{d0} = 0$ and
+
 $$U_{d0} = \pi_d + U_{d10}(1-\pi_d) = U_{d10} + (1-U_{d10})\,\pi_d,$$
+
 and the infection rate satisfies
+
 $$B^{-}_d := P(R_d=1) + L_{d10}(1-\pi_d)P(T_d=1) \le P(C_d=1) \le B^{+}_d := P(R_d=1) + U_{d10}(1-\pi_d)P(T_d=1) + \bigl[\pi_d + U_{d10}(1-\pi_d)\bigr]P(T_d=0).$$
 
 **Temporal monotonicity.** Infection by an earlier date implies infection by every later date, so $d' < d \Rightarrow P(C_{d'}=1) \le P(C_d = 1)$. Given date-specific bounds $B^-_{d'} \le P(C_{d'}=1) \le B^+_{d'}$ for all dates $d'$,
+
 $$\max_{d' \le d} B^-_{d'} \;\le\; P(C_d = 1) \;\le\; \min_{d'\ge d} B^+_{d'} .$$
+
 This interval is contained in $[B^-_d, B^+_d]$ and is strictly narrower exactly when some earlier lower bound exceeds $B^-_d$ or some later upper bound falls below $B^+_d$.
 
 ## Expansion

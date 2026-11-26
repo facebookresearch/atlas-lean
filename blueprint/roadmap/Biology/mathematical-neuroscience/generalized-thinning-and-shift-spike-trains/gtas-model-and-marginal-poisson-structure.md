@@ -9,7 +9,9 @@
 Let $\bar p_D = \sum_{D' \supseteq D} p_{D'}$ be the probability that an event is copied to every neuron in $D$ (and possibly others).
 
 **Proposition (marginals).** Each $X_i$ is a homogeneous Poisson process of rate $\lambda \bar p_{\{i\}}$. Its events are the mother events with $i$ in the marking, shifted i.i.d. according to the mixture
+
 $$Q_i = \frac{\sum_{D\ni i} p_D\, Q_D^{\{i\}}}{\sum_{D\ni i} p_D},$$
+
 where $Q_D^{\{i\}}$ is the $i$-th marginal of $Q_D$.
 
 **Special cases.** With all $Q_D$ equal to the point mass at $0$:

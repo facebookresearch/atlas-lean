@@ -3,7 +3,9 @@
 **Model.** A signaling pathway is a discrete logical model: variables take states in $\{-1, 0, 1\}$ (deactivated, neutral, activated), zero-indegree variables are *stimulators*, and every other variable's state is a fixed regulation function of its regulators' states. An *experiment* fixes the stimulator states and, optionally, the state of one non-stimulator (knockout $-1$ or over-activation $1$); with $s$ stimulators, $p$ perturbable variables and $k$ perturbation states per variable there are $k^s(pk + 1)$ experiments. A *predicted model state* of an experiment is an assignment consistent with all regulation functions (a logical steady state): there is exactly one for an acyclic model, and possibly zero, one or several for a cyclic one. A *regulatory program* is a regulator together with a regulation function giving the response of a target gene; let $R$ be a set of $r$ programs.
 
 **Distinguishability.** Each predicted model state partitions $R$ by equal predicted response. An experiment $e$ induces the partition $T(e)$, the supremum of the partitions of its predicted model states (the single-block partition if it has none). A list $E = \{e_1, \dots, e_n\}$ induces the meet $S(E) = T(e_1) \wedge \dots \wedge T(e_n)$, and two programs are distinguished by $E$ exactly when they lie in different blocks of $S(E)$. If $S(E)$ has blocks of sizes $n_1, \dots, n_C$, define
+
 $$H(E) = -\sum_{c=1}^{C} \frac{n_c}{r}\log\frac{n_c}{r}, \qquad \mathrm{FUP}(E) = \frac{\sum_{c=1}^C n_c(n_c - 1)}{r(r-1)} .$$
+
 $H$ ranges from $0$ (one block) to $\log r$ (all programs distinguished). FUP is the fraction of the $\binom{r}{2}$ program pairs left undistinguished, from $0$ to $1$.
 
 **Results.**

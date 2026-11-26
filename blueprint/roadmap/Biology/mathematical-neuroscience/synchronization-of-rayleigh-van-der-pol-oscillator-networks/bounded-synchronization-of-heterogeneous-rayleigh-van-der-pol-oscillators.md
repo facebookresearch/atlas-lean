@@ -1,19 +1,29 @@
 # Bounded synchronization of heterogeneous Rayleigh–van der Pol oscillators
 
 **Model.** Node $i \in \{1,\dots,N\}$ of a simple undirected connected graph with adjacency $(a_{ij})$ and degree $N_i$ has state $x_i = (x_{i1}, x_{i2}) \in \mathbb{R}^2$ (position, velocity) and parameters $\vartheta_i = (\alpha_i,\beta_i,\gamma_i,\omega_i)$:
+
 $$\dot x_{i1} = x_{i2}, \qquad \dot x_{i2} = -\bigl(\alpha_i x_{i1}^2 + \beta_i x_{i2}^2 - \gamma_i\bigr)x_{i2} - \omega_i^2 x_{i1} + u_{i},$$
+
 the hybrid Rayleigh–van der Pol (HKB) oscillator. Under **full-state diffusive coupling** the whole state is driven,
+
 $$\dot x_i = f_i(x_i) - \frac{c}{N_i}\sum_{j=1}^N a_{ij}\,(x_i - x_j), \qquad c > 0,$$
+
 with $f_i$ the uncoupled vector field. Let $\bar x = \frac1N\sum_j x_j$, $e_i = x_i - \bar x$ and $\eta(t) = \|(e_1,\dots,e_N)\|_2$. The network achieves **bounded synchronization** if there are $\epsilon > 0$ and $\hat t$ with $\eta(t) \le \epsilon$ for all $t > \hat t$, for all initial conditions.
 
 **Theorem (Lyapunov, QUAD-affine form).** Assume $\gamma_i = \tilde\gamma$ for all $i$, and let $L_N$ be the degree-normalized Laplacian ($l_{ii} = 1$, $l_{ij} = -a_{ij}/N_i$ for neighbours) with algebraic connectivity $\lambda_2(L_N) > 0$. For $P = \mathrm{diag}(P_{11},P_{22}) \succ 0$ and $W_{11} > 0$ set
+
 $$d_\epsilon = c\,\lambda_2(L_N)\min\{P_{11},P_{22}\} - \max\{W_{11},\,\tilde\gamma P_{22}\}.$$
+
 If
+
 $$c > \bar c = \min_{W_{11},P_{11},P_{22}>0}\ \frac{\max\{W_{11},\,\tilde\gamma P_{22}\}}{\lambda_2(L_N)\,\min\{P_{11},P_{22}\}},$$
+
 then the network achieves bounded synchronization, with an asymptotic error bound $\limsup_{t\to\infty}\eta(t) \le \epsilon(c)$ proportional to $\bar M \max\{P_{11},P_{22}\}/d_\epsilon$ (a factor depending only on $N$ aside), where $\bar M = (1+\alpha_M p_M^2+\beta_M v_M^2)v_M + \omega_M^2 p_M$ bounds the heterogeneous part of the dynamics in terms of the maximal parameter magnitudes $\alpha_M,\beta_M,\omega_M$ and the maximal oscillator amplitudes $p_M$ (position) and $v_M$ (velocity). The bound decreases as $c$ grows.
 
 **Theorem (contraction, all-to-all).** On the complete graph, if the virtual system's trajectories satisfy $|z_1| \le z_1^{\max}$, $|z_2| \le z_2^{\max}$ and, with $\tilde\alpha,\tilde\omega,\tilde\gamma$ the parameter averages,
+
 $$\frac{N-1}{N}\bigl(2\tilde\alpha z_1^{\max}z_2^{\max} + \tilde\omega^2 + \tilde\gamma\bigr) < c < \frac{N-1}{N},$$
+
 then bounded synchronization is achieved.
 
 ## Expansion

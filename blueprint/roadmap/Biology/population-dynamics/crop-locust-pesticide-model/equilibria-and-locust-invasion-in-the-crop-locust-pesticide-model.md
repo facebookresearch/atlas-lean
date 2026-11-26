@@ -1,17 +1,23 @@
 # Equilibria and locust invasion in the crop–locust–pesticide model
 
 **Model.** Let $C$ and $M$ be premature and mature crop biomass, $L$ locust density and $P$ pesticide concentration, with positive parameters: crop growth rate $r$, carrying capacity $K$, maturation rate $\sigma < r$, harvest rate $hE$, consumption rate $\beta$, conversion efficiency $\xi$, locust self-limitation $\mu$, pesticide kill coefficient $\varphi\gamma$, spray rate $\theta$ and pesticide depletion rate $\theta_0$:
+
 $$\dot C = rC\Big(1 - \frac{C+M}{K}\Big) - \sigma C - \beta CL,\qquad \dot M = \sigma C\Big(1 - \frac{C+M}{K}\Big) - hEM - \beta ML,$$
+
 $$\dot L = \xi\beta(M+C)L - \varphi\gamma PL - \mu L^2,\qquad \dot P = \theta L - \theta_0 P .$$
 
 **Equilibria.**
 
 1. $E_0 = (0,0,0,0)$, unstable since its Jacobian has the eigenvalue $r - \sigma > 0$.
 2. The locust-free equilibrium
+
 $$E_1 = \Big(\frac{hEK(r-\sigma)}{hEr + \sigma^2},\ \frac{K\sigma^2(r-\sigma)}{r(hEr+\sigma^2)},\ 0,\ 0\Big),$$
+
 with total crop $C+M = K(r-\sigma)/r$. It is always unstable: the locust direction has eigenvalue $\xi\beta K(r-\sigma)/r > 0$, so locusts invade any locust-free crop.
 3. The coexistence equilibrium $E_2 = (C^*, M^*, L^*, P^*)$ with
+
 $$L^* = \frac{\beta\theta_0K\xi(r-\sigma)}{\beta^2\theta_0K\xi + \gamma\theta r\varphi + \theta_0\mu r},\qquad P^* = \frac{\theta}{\theta_0}L^*,\qquad C^* + M^* = \frac{K}{r}(r - \sigma - \beta L^*),$$
+
 which is positive whenever $r > \sigma$; its local stability is decided by the Routh–Hurwitz conditions on the quartic characteristic polynomial of the Jacobian.
 
 ## Expansion

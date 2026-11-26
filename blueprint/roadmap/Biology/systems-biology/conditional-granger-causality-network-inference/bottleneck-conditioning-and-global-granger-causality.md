@@ -5,7 +5,9 @@
 **Definition (section, bottleneck).** A set of nodes $\{Z_1,\dots,Z_m\}$, not containing $S$ or $T$, is a *section* from $S$ to $T$ if deleting it leaves no directed path from $S$ to $T$. A section of minimum cardinality is a *bottleneck*; its size is the vertex connectivity from $S$ to $T$.
 
 **Lemma.** If $\{B_1,\dots,B_m\}$ is a bottleneck from $S$ to $T$, then
+
 $$F_{S \to T \mid B_1,\dots,B_m} = 0 .$$
+
 The paper proves this for a serial chain $S \to B_1 \to \cdots \to B_n \to T$ (where each single $B_i$ is a bottleneck) and for paths that first diverge and then converge on a common bottleneck node.
 
 **Global Granger causality (GGC).** To find the direct parents of a target $T$ when the number of nodes may exceed the length of the time series:

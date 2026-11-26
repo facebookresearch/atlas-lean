@@ -1,7 +1,9 @@
 # Minimal complete atom-transfer pathway is NP-hard
 
 Let $\mathcal{R}$ be a finite set of reactions over a set of metabolites, where each metabolite consists of distinct atom positions and $\mathcal{A}$ is the set of all atom positions. Each reaction $r$ carries an **atom mapping** $\Gamma(r) \subseteq \mathcal{A} \times \mathcal{A}$ sending substrate atoms to product atoms (a reversible reaction is modelled as two reactions). For $P \subseteq \mathcal{R}$, the **atom graph** $G(P)$ has vertex set $\mathcal{A}$ and an edge $a \to a'$ for every $(a, a') \in \Gamma(r)$, $r \in P$. The pathway $P$ **transfers** $s$ to $t$ if $G(P)$ has a directed path $s \to t$; write $f_P(S)$ for the atoms reachable from a set $S$. For source and target atom sets $S, T \subseteq \mathcal{A}$ define the score
+
 $$Z_O(P, S, T) = \frac{|f_P(S) \cap T|}{|T|},$$
+
 the fraction of target atoms derivable from source atoms; $P$ is **complete** if $Z_O = 1$. Pathways may branch: different target atoms may be reached along different reaction chains.
 
 **Problems.** *Find-Branching-Pathways*: given $\mathcal{R}$, $S$, $T$, an integer $l$ and a threshold $w$, list all $P \subseteq \mathcal{R}$ with $Z_O(P, S, T) \ge w$ and $|P| < l$. *Find-Minimal-Pathway*: find such a $P$ of minimum cardinality.
