@@ -22,7 +22,7 @@ so any sampler for the standard posterior targets $\pi_\xi$ after scaling the lo
 
 - [Reconstruction matrix in nonnegative matrix factorization](recon.md)
 
-## Expansion
+## Remarks
 
 Raising the likelihood to a power $\xi < 1$ is equivalent to treating the data as carrying only a fraction $\xi$ of their nominal information; for latent-variable models with unknown latent dimension this prevents the posterior from adding spurious components to absorb small systematic departures from the Poisson NMF model (over-dispersion, sample-specific perturbations of a signature, low-level noise). The power posterior of a misspecified model is closer in Kullback–Leibler divergence to the standard posterior of a more flexible well-specified model than the standard posterior of the misspecified model is. When the model is correct, $\xi = 1$ is ideal, and smaller $\xi$ reflects more severe misspecification.
 

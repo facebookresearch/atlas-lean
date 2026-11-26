@@ -14,7 +14,7 @@ provided $\sum_j \kappa_j \ne 0$. In particular, the group's mean payoff is the 
 
 - [Zero-determinant strategies in multiplayer social dilemmas](zero-determinant-strategies-in-multiplayer-social-dilemmas.md)
 
-## Expansion
+## Proof sketch
 
 Let $\Sigma = \sum_j \pi_j$. Player $i$'s enforced relation $\frac{\Sigma - \pi_i}{n-1} = s_i\pi_i + (1 - s_i)l_i$ gives $\pi_i\,(1 + (n-1)s_i) = \Sigma - (n-1)(1 - s_i)\,l_i$. Since $1 + \kappa_i = n/(1 + (n-1)s_i)$, this is $\pi_i = (1 + \kappa_i)\,\Sigma/n - \kappa_i l_i$. Summing over $i$ gives $\Sigma = \Sigma + \Sigma\sum_j\kappa_j/n - \sum_j \kappa_j l_j$, i.e. $\Sigma/n = \sum_j\kappa_j l_j/\sum_j\kappa_j$, and substituting back yields the formula (Eqs. (3)–(4) and Appendix A.2 of the source). If all $s_i = 1$ every relation reads $\pi_{-i} = \pi_i$, so all payoffs are equal but not determined by the strategies' parameters alone.
 

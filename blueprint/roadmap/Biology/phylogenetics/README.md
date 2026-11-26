@@ -30,5 +30,3 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
-- [Excess synonymous constraint](excess-synonymous-constraint/README.md)
-- [Site-specific conservation scores from rate scaling](site-specific-conservation-scores-from-rate-scaling/README.md)

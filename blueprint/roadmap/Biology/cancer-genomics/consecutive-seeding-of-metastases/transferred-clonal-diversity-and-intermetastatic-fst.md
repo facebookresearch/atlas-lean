@@ -25,7 +25,7 @@ with $\alpha$ between $1$ (large divergence) and $2$ (small divergence), and $\l
 - [Dirichlet clone frequencies and polyclonality of metastases](dirichlet-clone-frequencies-and-polyclonality-of-metastases.md)
 - [Wright's hierarchical F-statistics identity](../../population-structure/wright-s-f-statistics/hierarchical-f-statistics.md)
 
-## Expansion
+## Proof sketch
 
 With $\operatorname{Var}(\gamma_i) = \bar\gamma_i(1-\bar\gamma_i)/(1+k)$ and $\mathbb{E}\gamma_i = \bar\gamma_i$,
 

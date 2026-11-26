@@ -31,8 +31,15 @@ which falls as the total seeding influx $k$ grows.
 ## Depends on
 
 - [Negative binomial clone sizes under consecutive seeding](negative-binomial-clone-sizes-under-consecutive-seeding.md)
+- [Dirichlet distribution](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
 
-## Expansion
+## Proof depends on
+
+- [Negative binomial splitting for random variables](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial-splitting/measure-cond-eq-beta-binomial-pmf.md)
+- [Convolution of negative binomial laws with a common $p$](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial-splitting/sum-neg-binomial-pmf-mul.md)
+- [Mean of the Dirichlet distribution](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/lintegral-dirichlet-measure-apply.md)
+
+## Proof sketch
 
 Independent negative binomial variables with a common success probability and shapes $k_i$, conditioned on their sum $Y$, are Dirichlet-multinomial with parameters $(k_1,\dots,k_N)$: the factors $q^{k_i}(1-q)^{Y_i}$ multiply to $q^{k}(1-q)^{Y}$, which cancels against the law of the sum, a negative binomial with shape $k$. The marginal of one coordinate is beta-binomial with parameters $(k_i, k-k_i)$; its probabilities at $0$ and at $Y$ give the formulas for $\bar n$ and $\Pr(n>1)$. As $Y \to \infty$ the Pólya urn proportions converge to a Dirichlet limit, and Dirichlet marginals are beta with the stated variance. The single-clone Beta law is the Balding–Nichols form familiar from population genetics, with $1/(1+k)$ in the role of $F_{ST}$.
 

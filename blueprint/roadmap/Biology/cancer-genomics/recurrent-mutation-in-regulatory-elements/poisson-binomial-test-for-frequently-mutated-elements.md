@@ -18,7 +18,16 @@ each entry being the probability that sample $k$ carries at least one of $n_i$ i
 sites mutated. An element is called frequently mutated when the observed $X_i$ is in the upper tail
 of this distribution, after correction for multiple testing.
 
-## Expansion
+## Depends on
+
+- [Poisson-binomial mass function](../../../Probability/distributions/discrete/poisson-binomial-distribution/poisson-binomial-law/poisson-binomial-pmf.md)
+- [Upper tail of the Poisson-binomial law](../../../Probability/distributions/discrete/poisson-binomial-distribution/poisson-binomial-law/poisson-binomial-tail.md)
+
+## Proof depends on
+
+- [Distribution of a sum of independent Bernoulli variables](../../../Probability/distributions/discrete/poisson-binomial-distribution/poisson-binomial-law/bernoulli-sum-pmf.md)
+
+## Remarks
 
 Counting samples rather than mutations makes the statistic robust to a single hypermutated sample
 dominating one element, and the Poisson-binomial, rather than a binomial, is needed because the

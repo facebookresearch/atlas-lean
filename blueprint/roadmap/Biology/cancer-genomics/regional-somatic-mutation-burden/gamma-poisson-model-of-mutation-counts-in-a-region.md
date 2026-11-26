@@ -23,9 +23,15 @@ a union of regions is obtained by convolving their negative binomial distributio
 
 ## Depends on
 
-- [Binomial probability mass function](../detection-power-for-somatic-mutations/binom-pmf.md)
+- [Negative binomial mass function with real shape](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-pmf.md)
 
-## Expansion
+## Proof depends on
+
+- [Greenwood–Yule](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/gamma-poisson-mixture/poisson-mixture-real-gamma-measure.md)
+- [Mean parametrization of the negative binomial law](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-real-eq-neg-binomial-pmf.md)
+- [Scaling a gamma random variable](../../../Probability/distributions/continuous/gamma-distribution/gamma-scaling/gamma-measure-map-const-mul.md)
+
+## Remarks
 
 The two factors separate two scales. The kilobase-scale mean and variance say how many neutral
 mutations a 10-50 kb window should carry, given epigenetic covariates such as chromatin state;

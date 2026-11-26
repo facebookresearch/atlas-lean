@@ -15,8 +15,9 @@ The conditional mean is a convex combination of the prior value $\varepsilon$ an
 ## Depends on
 
 - [Power posterior for Poisson NMF](power-posterior-for-poisson-nmf.md)
+- [Dirichlet distribution](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
 
-## Expansion
+## Proof sketch
 
 As a function of $\mu_k$, the gamma density of $L_{jk}$ is proportional to $\mu_k^{-a} e^{-a L_{jk}/\mu_k}$, so the $J$ loadings multiply the inverse-gamma prior $\mu_k^{-a_0 - 1} e^{-b_0/\mu_k}$ into an inverse-gamma with shape $a_0 + Ja$ and scale $b_0 + a\sum_j L_{jk}$. Its mean is
 

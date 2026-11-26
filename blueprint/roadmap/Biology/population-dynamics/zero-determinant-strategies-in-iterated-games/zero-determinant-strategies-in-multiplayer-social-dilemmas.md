@@ -19,11 +19,7 @@ between her long-run payoff $\pi_i$ and the average payoff $\pi_{-i} = \frac{1}{
 - *generous* strategies have $l = rc - c$ and $0 < s < 1$, guaranteeing $\pi_i \le \pi_{-i}$;
 - ALLD and ALLC are ZD strategies with $s = \frac{(n-1)r - n}{(n-1)r}$, $\phi = \frac{(n-1)r}{cn(r-1)}$ and baselines $l = 0$ and $l = rc - c$ respectively.
 
-## Depends on
-
-- [Zero-determinant strategies](zero-determinant-linear-relation.md)
-
-## Expansion
+## Proof sketch
 
 For $n = 2$ this is the Press–Dyson construction: the vector $\tilde{\mathbf p}$ obtained by subtracting the player's own "repeat" indicator from $\mathbf p$ is a linear combination of the payoff vectors and the all-ones vector, and any stationary distribution $v$ of the joint Markov chain satisfies $v\cdot\tilde{\mathbf p} = 0$, which reads as a linear payoff relation. With $n$ players the joint chain has $2^n$ states, but the same argument goes through with the co-players' average payoff in place of the single opponent's (Eqs. (1)–(2) of the source, which builds on the multiplayer construction of Hilbe, Wu, Traulsen and Nowak, 2014). Feasibility requires all $p_{S,j} \in [0,1]$, which restricts $(l, s, \phi)$.
 

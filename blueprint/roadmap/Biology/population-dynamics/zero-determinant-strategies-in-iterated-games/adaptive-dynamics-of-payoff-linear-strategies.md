@@ -26,7 +26,11 @@ Hence the slope is conserved; for $N \to \infty$ populations with $s > 0$ climb 
 
 - [Zero-determinant strategies](zero-determinant-linear-relation.md)
 
-## Expansion
+## Proof depends on
+
+- [The one-third rule for weak selection in the Moran process](../../population-genetics/moran-model/one-third-rule-under-weak-selection.md)
+
+## Proof sketch
 
 The payoff formula solves the linear system $\pi_2 - l_1 = s_1(\pi_1 - l_1)$, $\pi_1 - l_2 = s_2(\pi_2 - l_2)$. A rare mutant $(l', s')$ in an $(l, s)$ population earns $\pi(l', s'; l, s)$; its derivative in $s'$ vanishes at $l' = l$, and its derivative in $l'$ there is $s(1-s)/(1-s^2) = s/(1+s)$, giving the infinite-population dynamics. For finite $N$ the fixation-probability gradient is the gradient of $(N-2)\,a + (2N-1)\,b - (N+1)\,c - (2N-4)\,d$ with $a, b, c, d$ the mutant–mutant, mutant–resident, resident–mutant and resident–resident payoffs (the effective payoff matrix that removes self-interaction); differentiating in $l'$ gives $(N-2) + (2N-1)\tfrac{s}{1+s} - (N+1)\tfrac{1}{1+s} = \frac{3((N-1)s - 1)}{1+s}$. Extortioners act as catalysts: a defecting population can be left only by neutral drift along $l = P$ to a positive slope, after which cooperation is selected; removing extortioners from the mutant space lowers the long-run average payoff at every population size.
 

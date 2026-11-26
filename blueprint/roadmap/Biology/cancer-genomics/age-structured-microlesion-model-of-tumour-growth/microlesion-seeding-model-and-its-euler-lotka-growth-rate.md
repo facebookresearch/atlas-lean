@@ -18,9 +18,14 @@ then $f(a,t) \sim A\,e^{G(t-a)}$ for large $t$ and some $A > 0$, the number of l
 
 ## Depends on
 
-- [Renewal equation for exponential growth](../../epidemiology/euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff.md)
+- [The one-sided Laplace transform](../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/laplace.md)
 
-## Expansion
+## Proof depends on
+
+- [Renewal equation for exponential growth](../../epidemiology/euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff.md)
+- [Laplace transform of a causal convolution](../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/laplace-transform-of-a-causal-convolution.md)
+
+## Proof sketch
 
 The transport equation only ages lesions, so the density along characteristics is the birth rate at time $t - a$, plus the initial lesion travelling along $a = t$. Inserting this form in the boundary condition gives the renewal equation $F(t) = \phi(t) + \int_0^t \phi(a)F(t-a)\,da$, whose Laplace transform is $\tilde F = \tilde\phi + \tilde\phi\tilde F$. Singularities of $\tilde F$ are at the roots of $\tilde\phi(s) = 1$; the rightmost one, $G$, dominates the inverse transform and fixes the exponential growth rate. The hierarchical structure (type $n$ is fed only by types $n$ and $n-1$) lets the multi-driver system be solved type by type in the same way (Methods of the source).
 

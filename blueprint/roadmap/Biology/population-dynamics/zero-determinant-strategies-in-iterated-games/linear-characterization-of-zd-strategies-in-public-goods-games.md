@@ -10,7 +10,7 @@ Conversely, a strategy satisfying these equalities is a ZD strategy except on a 
 
 - [Zero-determinant strategies in multiplayer social dilemmas](zero-determinant-strategies-in-multiplayer-social-dilemmas.md)
 
-## Expansion
+## Proof sketch
 
 In the linear public goods game $a_j = rc(j+1)/n - c$ and $b_j = rcj/n$ are affine in $j$ with slope $rc/n$, while $b_{j+1} - a_j = c$ and $b_j - a_{j-1} = c$ are constant. Substituting in the ZD formulas, $p_{C,j}$ and $p_{D,j}$ are affine in $j$ with the common slope $\phi c\,[\tfrac{1}{n-1} - (1-s)\tfrac rn]$, which gives both families of equalities. Conversely, a vector satisfying them is fixed by three numbers: the common slope, $p_{D,0} = \phi(1-s)l$ and $p_{C,0} - p_{D,0} = 1 + \phi c[(1-s)(1 - r/n) - 1]$. The slope and $p_{C,0} - p_{D,0}$ are linear in $(\phi, \phi(1-s))$ with determinant $c^2(r-1)/(n-1) \ne 0$, so they determine $\phi$ and $\phi(1-s)$; then $p_{D,0}$ determines $l$ whenever $s \ne 1$. The exceptions are $\phi = 0$ (the strategy that always repeats its own last move) and $\phi(1-s) = 0$ with $p_{D,0} \ne 0$ (Eq. (5) and Appendix A.3 of the source).
 

@@ -2,6 +2,9 @@
 
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
+- [Parasite relatedness and genomic epidemiology](parasite-relatedness-and-genomic-epidemiology/README.md)
+- [Treatment, drug resistance and immune escape](treatment-resistance-and-immune-escape/README.md)
+- [Chronic disease and social contagion](chronic-disease-and-social-contagion/README.md)
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
 - [Euler–Lotka equation and the reproduction number](euler-lotka-equation-and-the-reproduction-number/README.md)
@@ -20,12 +23,3 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
-- [Age-indexed multistate risk models](age-indexed-multistate-risk-models/README.md)
-- [Coexistence of drug-sensitive and resistant strains](coexistence-of-drug-sensitive-and-resistant-strains/README.md)
-- [Genealogical relatedness of malaria parasites](genealogical-relatedness-of-malaria-parasites/README.md)
-- [Intrahost relatedness of polygenomic infections](intrahost-relatedness-of-polygenomic-infections/README.md)
-- [Latent signature models of multimorbidity](latent-signature-models-of-multimorbidity/README.md)
-- [Relatedness of cotransmitted parasites](relatedness-of-cotransmitted-parasites/README.md)
-- [SIS model with spontaneous infection](sis-model-with-spontaneous-infection/README.md)
-- [Vaccine escape under regional vaccination](vaccine-escape-under-regional-vaccination/README.md)
-- [Within-host viral dynamics](within-host-viral-dynamics/README.md)

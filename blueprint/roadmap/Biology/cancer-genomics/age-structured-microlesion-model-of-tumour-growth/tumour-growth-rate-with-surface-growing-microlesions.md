@@ -22,7 +22,7 @@ with $N(0) = 1$ and $N(t) \sim e^{Gt}/3$. Although every lesion grows only polyn
 
 - [Microlesion seeding model and its Euler–Lotka growth rate](microlesion-seeding-model-and-its-euler-lotka-growth-rate.md)
 
-## Expansion
+## Proof sketch
 
 The Euler–Lotka equation $\tilde\phi(G) = 8\pi M v^3/G^3 = 1$ has the single real root $G = (8\pi M)^{1/3}v$. With $\tilde F = \tilde\phi/(1 - \tilde\phi) = G^3/(s^3 - G^3)$, the Laplace transform of $N(t) = 1 + \int_0^t F$ is $\tilde N(s) = \frac1s(1 + \tilde F) = s^2/(s^3 - G^3) = \frac13\sum_{\omega^3 = 1}\frac{1}{s - \omega G}$, and inverting over the three cube roots of unity gives the formula for $N(t)$. The slowing case replaces $s$ by $s + \lambda$ in $\tilde\phi$, shifting the root by $-\lambda$. For volumetric growth, where every cell divides at rate $b$, the source finds that the tumour grows at the cell birth rate, $G = b$; the spatial constraint of surface growth is what makes migration, not division, set the tumour's growth rate (Results, "Only one driver" and "Multiple driver mutations", of the source).
 

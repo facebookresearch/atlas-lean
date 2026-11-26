@@ -16,7 +16,11 @@ Because $n$ is discrete, the null distribution of $p$ is not uniform; it is obta
 
 $$\mathrm{FDR}(p^*) = \frac{F_{\mathrm{exp}}(p^*)}{F_{\mathrm{obs}}(p^*)}. \tag{4}$$
 
-## Expansion
+## Depends on
+
+- [Pooled Poisson rate](../../../Probability/statistical-estimation/existence-and-uniqueness-of-the-gamma-poisson-ml/pooled-mean.md)
+
+## Remarks
 
 The estimator (2) pools all elements of a cluster, including any that are under selection, so $\hat\mu$ exceeds the true neutral rate whenever the cluster contains drivers; a larger $\hat\lambda$ makes an observed count less extreme, so (3) overestimates the $p$ value of a driver and the test is conservative. The clustering is what makes a single $\mu$ per cluster defensible: somatic mutation density varies several-fold with replication timing and chromatin state, and comparing an element against the genome average rather than against elements of matched covariates would produce excesses wherever the background is high. Equation (4) is the empirical-null form of the false discovery rate: since the Poisson null puts an atom at $p = 1$ and no mass between the attainable tail values, the theoretical uniform null does not apply and the simulated $F_{\mathrm{exp}}$ replaces it.
 

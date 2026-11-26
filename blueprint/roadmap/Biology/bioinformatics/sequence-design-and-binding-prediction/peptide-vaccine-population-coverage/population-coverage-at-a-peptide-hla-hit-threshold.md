@@ -1,0 +1,15 @@
+# Population coverage of a peptide set at a hit threshold
+
+Let $V$ be a set of candidate vaccine peptides and let an individual be described by a diploid HLA genotype $g$, formed from a pair of haplotypes drawn from a population with known haplotype frequencies, so that homozygous and heterozygous loci are both accounted for. Say that a pair (peptide, HLA allele) is a **hit** for $g$ when the allele is carried by $g$ and the peptide is predicted to be immunogenically displayed by it, and let $H(V,g)$ be the number of distinct hits. For a nonnegative integer $n$, the **population coverage** of $V$ at threshold $n$ is the probability that an individual drawn from the population has at least $n$ hits,
+
+$$P_V(n) \;=\; \sum_{g} \Pr(g)\, \mathbf 1\{ H(V,g) \ge n \},$$
+
+and the insufficient-coverage curve is its complement one step up, $1 - P_V(n+1)$, the fraction of individuals with at most $n$ hits. Two properties follow at once. First, $P_V$ is non-increasing in $n$ with $P_V(0) = 1$, so coverage curves may be compared across vaccines at any threshold. Second, $P_V$ is monotone in the peptide set: $V \subseteq V'$ implies $H(V,g) \le H(V',g)$ for every $g$ and hence $P_V(n) \le P_{V'}(n)$ for every $n$, so augmenting a vaccine with extra peptides can never lower its predicted coverage. Averaging $P_V(n)$ over several populations with different haplotype frequency distributions gives the figure used for designs meant to serve all of them.
+
+## Remarks
+
+The threshold $n$ encodes a robustness requirement that a simple "at least one epitope" criterion misses: an individual with a single predicted hit depends entirely on one peptide–HLA pair, and the design goal is that *every* individual display several distinct peptides. This is why coverage is reported as a curve in $n$ rather than as one number, and why small subunits show the largest predicted gaps — coverage at a given $n$ correlates negatively with the number of peptides a subunit contributes. Monotonicity in $V$ makes greedy and beam-search augmentation well posed: starting from a non-redundant peptide set extracted from the subunit, peptides are added one at a time to raise coverage, sweeping the threshold from $n=1$ up to the target. It does not make the problem easy — selecting a set of fixed size that maximizes $P_V(n)$ is a combinatorial optimization, and larger optimized sets need not contain smaller ones — so the search returns a design per peptide budget rather than a nested family. Coverage computed this way is a prediction conditional on the immunogenicity model and the haplotype frequency estimates, not an observed immune response.
+
+## Sources
+
+- G. Liu, B. Carter, D. K. Gifford, "Predicted cellular immunity population coverage gaps for SARS-CoV-2 subunit vaccines and their augmentation by compact peptide sets", *Cell Systems* 12 (2021), 102–107, <https://doi.org/10.1016/j.cels.2020.11.010> (PMC7691134). STAR Methods, "EvalVax subunit vaccine evaluation" (definition of $P(n)$ and of insufficient coverage) and "Design of a single set of peptides to maximize MHC class I and II population coverage"; Results.

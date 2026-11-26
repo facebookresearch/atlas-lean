@@ -18,7 +18,11 @@ for $m = 0, 1, 2, \dots$; the success probability $q(t)$ is the same for every c
 
 **Readings.** $y_i(t)$ is the number of successes before $k_i$ failures, a failure being a cell that arrived by seeding rather than by division in the metastasis; equivalently it is the total size of the surviving lineages founded by clone $i$. The influx $k_i$ (seeding relative to division) is the only clone-specific parameter.
 
-## Expansion
+## Depends on
+
+- [Negative binomial mass function with real shape](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-pmf.md)
+
+## Proof sketch
 
 This is the classical birth–death–immigration process. Its probability generating function $G(z,t) = \mathbb{E}\, z^{y_i(t)}$ satisfies a linear first-order partial differential equation whose solution is $G = \bigl(q/(1-(1-q)z)\bigr)^{k_i}$ with $q$ as above, the generating function of a negative binomial law with shape $k_i = \lambda_i/b$. The mean $k_i(1-q)/q$ equals $\bar y_i(t)$. Independence across clones holds because the immigration streams are independent Poisson processes and every lineage evolves independently.
 

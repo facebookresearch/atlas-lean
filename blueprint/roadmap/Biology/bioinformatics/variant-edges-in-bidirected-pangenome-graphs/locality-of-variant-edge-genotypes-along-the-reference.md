@@ -9,9 +9,12 @@ Thus each variant has a well-defined interval on the linear reference, and its g
 ## Depends on
 
 - [Bidirected pangenome graphs and variant edges](bidirected-pangenome-graphs-and-variant-edges.md)
+
+## Proof depends on
+
 - [Variant-edge genotypes determine walks](variant-edge-genotypes-determine-walks.md)
 
-## Expansion
+## Proof sketch
 
 Positions are monotone along $T$: if $T$ has a path from $u$ to $v$ then $\mathrm{pos}(u) \le \mathrm{pos}(v)$, and a tree path between nodes of different positions passes through the ancestor on $L$ that carries the later position. The proof combines this monotonicity with the visit-count lemma: for a binode $b$ positioned outside $[\mathrm{pos}(u), \mathrm{pos}(v)]$ the quantity $|D(b)\cap\mathrm{sinks}(W)| - |D(b)\cap\mathrm{sources}(W)|$ is invariant, and from this the traversal count of $e$ is expressed through the variant edges whose intervals overlap $[a, b]$ (Theorem 6 of the source). The reference tree itself is built by a depth-first search that prefers, at each branch, either the outgoing edge used by most haplotypes or the continuation of a prioritized haplotype; the theorem holds for any such choice.
 

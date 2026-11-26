@@ -12,7 +12,7 @@ $$\big|D(v) \cap \mathrm{sinks}(W)\big| - \big|D(v) \cap \mathrm{sources}(W)\big
 
 times, counting sources and sinks with multiplicity.
 
-## Expansion
+## Proof sketch
 
 Between consecutive variant edges a walk moves only along tree edges, and in $T^+$ (or its complement) the move is the unique directed path from a source to a sink. Decompose $W$ into such tree paths $S_0, \dots, S_n$, each running inside $V^+$ from the $i$-th source to the $i$-th sink (using $W^c$ where $W$ runs through $V^-$). A directed tree path cannot leave the subtree $D(v)$ once inside it and can enter it only through $v$; so a path that avoids $v$ starts and ends on the same side of $D(v)$, and a path from outside $D(v)$ to inside it passes through $v$. Counting each path's contribution by where it starts and ends, and summing over the paths, gives sinks in $D(v)$ minus sources in $D(v)$ (Lemma 2 of the source). Bidirected graphs encode the two strands of DNA: reading a binode in one direction gives the forward sequence and in the other its reverse complement.
 

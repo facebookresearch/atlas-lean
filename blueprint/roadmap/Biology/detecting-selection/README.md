@@ -14,3 +14,5 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Excess synonymous constraint](excess-synonymous-constraint/README.md)
+- [Site-specific conservation scores from rate scaling](site-specific-conservation-scores-from-rate-scaling/README.md)
