@@ -96,7 +96,7 @@ private theorem duplicateSucc_rate :
     Finset.sum_insert (by decide), Finset.sum_singleton]
   norm_num [dupRate, h0, h1]
 
-/-- Self event of rate 5 plus an exit of rate 2. -/
+/-- Self event of rate 5 plus an exit of rate 2: events occur at rate 7, departures at rate 2. -/
 private def selfRate : Fin 2 → Nat → ℝ := fun e _ => if e.val = 0 then 5 else 2
 private def selfSucc : Fin 2 → Nat → Nat := fun e _ => if e.val = 0 then 0 else 1
 private theorem selfNN : ∀ e x, 0 ≤ selfRate e x := by
