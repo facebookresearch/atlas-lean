@@ -107,9 +107,9 @@ private theorem beta_add_ne_zero {F K : Type*} [Field F] [Field K] [Algebra F K]
   rw [map_neg]
   linear_combination -hzero
 
-private theorem exists_pow_of_order {K : Type*} [Field K]
-    [Fintype K] {θ c : K} (hc : c ≠ 0) (hθ₀ : θ ≠ 0)
-    (hθ : orderOf θ = Fintype.card K - 1) : ∃ k : ℕ, θ ^ k = c := by
+private theorem exists_pow {K : Type*} [Field K] [Fintype K] {θ c : K}
+    (hθ₀ : θ ≠ 0) (hθ : orderOf θ = Fintype.card K - 1) (hc : c ≠ 0) :
+    ∃ k : ℕ, θ ^ k = c := by
   classical
   let g := Units.mk0 θ hθ₀
   have hg : Subgroup.zpowers g = ⊤ := by
@@ -136,22 +136,15 @@ private theorem theta_pow_inj {F K : Type*} [Field F] [Fintype F] [Field K] [Fin
   have hval : a.val = c.val := hmod.eq_of_lt_of_lt hva hvc
   exact (ZMod.val_injective _) hval
 
-private theorem foldl_add {M : ℕ} (t : List (ZMod M)) (a : ZMod M) :
-    t.foldl (· + ·) a = a + t.sum := by
-  induction t generalizing a with
-  | nil => simp
-  | cons b t ih =>
-      simp only [List.foldl_cons, List.sum_cons]
-      rw [ih]
-      ac_rfl
-
-private theorem sumNE_eq_sum_zmod {M : ℕ} (l : List (ZMod M)) (e : l ≠ []) :
+private theorem sumNE_eq_sum {G : Type*} [AddCommMonoid G] (l : List G) (e : l ≠ []) :
     AdditiveCombinatorics.sumNE l e = l.sum := by
   cases l with
-  | nil => exact False.elim (e rfl)
-  | cons a t =>
-      rw [List.sum_cons]
-      exact foldl_add t a
+  | nil => exact (e rfl).elim
+  | cons a l =>
+    change l.foldl (· + ·) a = a + l.sum
+    induction l generalizing a with
+    | nil => simp
+    | cons b l ih => simp [ih, add_assoc]
 
 private theorem pow_list_sum {K : Type*} [Field K] (θ : K) (l : List ℕ) :
     θ ^ l.sum = (l.map (θ ^ ·)).prod := by
@@ -188,16 +181,6 @@ private theorem theta_pow_sum_eq {F K : Type*} [Field F] [Fintype F] [Field K] [
   rw [hord]
   exact hmod
 
-private theorem pow_mod_eq {F K : Type*} [Field F] [Fintype F] [Field K] [Fintype K]
-    [Algebra F K] {h : ℕ} (hK : Module.finrank F K = h) {θ : K}
-    (hθ : orderOf θ = Fintype.card K - 1) (k : ℕ) :
-    θ ^ (k % (Fintype.card F ^ h - 1)) = θ ^ k := by
-  have hfin : IsOfFinOrder θ := finOrder hθ
-  have hmod : k % (Fintype.card F ^ h - 1) ≡ k [MOD orderOf θ] := by
-    rw [orderM hK hθ]
-    exact Nat.mod_modEq k _
-  exact (hfin.pow_eq_pow_iff_modEq).mpr hmod
-
 private theorem exists_bose {F K : Type*} [Field F] [Fintype F] [Field K] [Fintype K]
     [Algebra F K] {h : ℕ} (hh : 2 ≤ h) (hK : Module.finrank F K = h) {θ : K}
     (hθ : orderOf θ = Fintype.card K - 1) {b : ℕ}
@@ -206,10 +189,9 @@ private theorem exists_bose {F K : Type*} [Field F] [Fintype F] [Field K] [Finty
   have _ne : NeZero (Fintype.card F ^ h - 1) := neZeroM hh
   have hθ₀ : θ ≠ 0 := theta_ne_zero hθ
   have hne : θ ^ b + algebraMap F K v ≠ 0 := beta_add_ne_zero hh hb v
-  obtain ⟨k, hk⟩ := exists_pow_of_order hne hθ₀ hθ
+  obtain ⟨k, hk⟩ := exists_pow hθ₀ hθ hne
   refine ⟨(k : ZMod _), ?_⟩
-  rw [ZMod.val_natCast]
-  rw [pow_mod_eq hK hθ k, hk]
+  rw [ZMod.val_natCast, ← orderM hK hθ, pow_mod_orderOf, hk]
 
 private noncomputable def boseFun {F K : Type*} [Field F] [Fintype F] [Field K] [Fintype K]
     [Algebra F K] {h : ℕ} (hh : 2 ≤ h) (hK : Module.finrank F K = h) {θ : K}
@@ -289,40 +271,14 @@ private theorem bose_nonempty {F K : Type*} [Field F] [Fintype F] [Field K] [Fin
   rw [bose_range hh hK hθ hb]
   exact ⟨_, ⟨0, rfl⟩⟩
 
-private theorem monic_prod {F : Type*} [Field F] (l : List F) :
-    ((l.map fun v => Polynomial.X + Polynomial.C v).prod).Monic := by
-  induction l with
-  | nil =>
-      simp only [List.map_nil, List.prod_nil]
-      exact Polynomial.monic_one
-  | cons v t ih =>
-      simp only [List.map_cons, List.prod_cons]
-      exact Polynomial.Monic.mul (Polynomial.monic_X_add_C v) ih
-
-private theorem natDegree_prod {F : Type*} [Field F] (l : List F) :
-    ((l.map fun v => Polynomial.X + Polynomial.C v).prod).natDegree = l.length := by
-  induction l with
-  | nil => simp
-  | cons v t ih =>
-      simp only [List.map_cons, List.prod_cons, List.length_cons]
-      rw [Polynomial.Monic.natDegree_mul (Polynomial.monic_X_add_C v) (monic_prod t)]
-      rw [Polynomial.natDegree_X_add_C, ih]
-      ac_rfl
-
-private theorem roots_prod {F : Type*} [Field F] (l : List F) :
-    ((l.map fun v => Polynomial.X + Polynomial.C v).prod).roots =
-      ↑(l.map Neg.neg) := by
-  induction l with
-  | nil => simp
-  | cons v t ih =>
-      simp only [List.map_cons, List.prod_cons, List.map_cons]
-      have hne : (Polynomial.X + Polynomial.C v) *
-          (t.map fun v => Polynomial.X + Polynomial.C v).prod ≠ 0 := by
-        apply mul_ne_zero
-        · exact (Polynomial.monic_X_add_C v).ne_zero
-        · exact (monic_prod t).ne_zero
-      rw [Polynomial.roots_mul hne, Polynomial.roots_X_add_C, ih]
-      simp
+private theorem prod_X_add_C {F : Type*} [Field F] (l : List F) :
+    (l.map fun v => Polynomial.X + Polynomial.C v).prod =
+      ((l.map Neg.neg : Multiset F).map fun a => Polynomial.X - Polynomial.C a).prod := by
+  rw [Multiset.map_coe, Multiset.prod_coe, List.map_map]
+  congr 1
+  apply List.map_congr_left
+  intro v _
+  simp
 
 private theorem aeval_prod {F K : Type*} [Field F] [Field K] [Algebra F K] (β : K)
     (l : List F) :
@@ -366,7 +322,8 @@ private theorem vl_perm_of_poly_eq {F : Type*} [Field F] {vl₁ vl₂ : List F}
   have hroots : ((vl₁.map fun v => Polynomial.X + Polynomial.C v).prod).roots =
       ((vl₂.map fun v => Polynomial.X + Polynomial.C v).prod).roots := by
     rw [heq]
-  rw [roots_prod, roots_prod] at hroots
+  rw [prod_X_add_C, prod_X_add_C, Polynomial.roots_multiset_prod_X_sub_C,
+    Polynomial.roots_multiset_prod_X_sub_C] at hroots
   have hperm : (vl₁.map Neg.neg).Perm (vl₂.map Neg.neg) :=
     Multiset.coe_eq_coe.mp hroots
   exact (List.map_perm_map_iff neg_injective).mp hperm
@@ -436,7 +393,7 @@ public theorem isBhSet_boseSet {F K : Type*} [Field F] [Fintype F] [Field K]
   refine ⟨⟨bose_nonempty hh hK hθ hb, by omega, ?_⟩, bose_ncard hh hK hθ hb⟩
   intro l₁ l₂ hmem₁ hmem₂ len₁ len₂ e₁ e₂ hsumNE
   have hsum : l₁.sum = l₂.sum := by
-    rw [← sumNE_eq_sum_zmod l₁ e₁, ← sumNE_eq_sum_zmod l₂ e₂]
+    rw [← sumNE_eq_sum l₁ e₁, ← sumNE_eq_sum l₂ e₂]
     exact hsumNE
   have hpow : θ ^ (l₁.map ZMod.val).sum = θ ^ (l₂.map ZMod.val).sum :=
     theta_pow_sum_eq hh hK hθ hsum
@@ -449,11 +406,16 @@ public theorem isBhSet_boseSet {F K : Type*} [Field F] [Fintype F] [Field K]
     haeval₁.symm.trans (hpow.trans haeval₂)
   have hdeg₁ : (((l₁.map (boseChoice h θ b)).map fun v =>
       Polynomial.X + Polynomial.C v).prod).natDegree = h := by
-    rw [natDegree_prod, List.length_map, len₁]
+    rw [prod_X_add_C, Polynomial.natDegree_multiset_prod_X_sub_C_eq_card, Multiset.coe_card,
+      List.length_map, List.length_map, len₁]
   have hdeg₂ : (((l₂.map (boseChoice h θ b)).map fun v =>
       Polynomial.X + Polynomial.C v).prod).natDegree = h := by
-    rw [natDegree_prod, List.length_map, len₂]
-  have hPeq := poly_eq hh hb (monic_prod _) hdeg₁ (monic_prod _) hdeg₂ haeval
+    rw [prod_X_add_C, Polynomial.natDegree_multiset_prod_X_sub_C_eq_card, Multiset.coe_card,
+      List.length_map, List.length_map, len₂]
+  have hmono (l : List F) : ((l.map fun v => Polynomial.X + Polynomial.C v).prod).Monic := by
+    rw [prod_X_add_C]
+    exact Polynomial.monic_multisetProd_X_sub_C _
+  have hPeq := poly_eq hh hb (hmono _) hdeg₁ (hmono _) hdeg₂ haeval
   have hvlPerm : (l₁.map (boseChoice h θ b)).Perm (l₂.map (boseChoice h θ b)) :=
     vl_perm_of_poly_eq hPeq
   exact a_perm_of_vl_perm hh hK hθ hmem₁ hmem₂ hvlPerm
@@ -536,31 +498,6 @@ private theorem polynomial_eq_of_aeval {F K : Type*} [Field F] [Field K] [Algebr
   have hsub := natDegree_sub_le p q
   rw [hx] at hd
   omega
-
-private theorem sumNE_eq_sum {G : Type*} [AddCommMonoid G] (l : List G) (e : l ≠ []) :
-    AdditiveCombinatorics.sumNE l e = l.sum := by
-  cases l with
-  | nil => exact (e rfl).elim
-  | cons a l =>
-    change l.foldl (· + ·) a = a + l.sum
-    induction l generalizing a with
-    | nil => simp
-    | cons b l ih => simp [ih, add_assoc]
-
-private theorem exists_pow {K : Type*} [Field K] [Fintype K] {θ c : K}
-    (hθ₀ : θ ≠ 0) (hθ : orderOf θ = Fintype.card K - 1) (hc : c ≠ 0) :
-    ∃ k : ℕ, θ ^ k = c := by
-  classical
-  let g := Units.mk0 θ hθ₀
-  have hg : Subgroup.zpowers g = ⊤ := by
-    apply (Subgroup.card_eq_iff_eq_top _).mp
-    rw [Nat.card_zpowers, ← orderOf_units, Nat.card_eq_fintype_card, Fintype.card_units]
-    exact hθ
-  have hmem : Units.mk0 c hc ∈ Submonoid.powers g := by
-    rw [mem_powers_iff_mem_zpowers, hg]
-    exact Subgroup.mem_top _
-  obtain ⟨k, hk⟩ := hmem
-  exact ⟨k, congrArg Units.val hk⟩
 
 private theorem pow_decompose {F K : Type*} [Field F] [Field K] [Algebra F K]
     {θ : K} {ν : F} {M : ℕ} (hnorm : algebraMap F K ν = θ ^ M) (a : ℕ) :
