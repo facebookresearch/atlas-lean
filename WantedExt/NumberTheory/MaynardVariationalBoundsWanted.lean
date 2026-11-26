@@ -12,7 +12,6 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GPYMaynardSieveReduction
 public import MathlibExt.NumberTheory.MaynardVariationalBounds
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import MathlibExt.NumberTheory.MaynardVariationalBoundsEventuallyLogSubLtMaynardM
 
 /-!
 # Lower bounds for Maynard's variational quantity `M_k`
@@ -26,9 +25,8 @@ because `I_k` and every `J_k^{(m)}` are continuous for the `L²` norm on the sim
 Riemann-integrable profiles are dense there.
 
 Proposition 4.3(1–2), `M₅ > 2` (`two_lt_maynardM_five`) and `M₁₀₅ > 4` (`four_lt_maynardM_105`),
-are provided by `MathlibExt.NumberTheory.MaynardVariationalBounds`. Proposition 4.3(3), the
-eventual lower bound `eventually_log_sub_lt_maynardM`, is proved in
-`MathlibExt.NumberTheory.MaynardVariationalBoundsEventuallyLogSubLtMaynardM`.
+are provided by `MathlibExt.NumberTheory.MaynardVariationalBounds`, as is Proposition 4.3(3), the
+eventual lower bound `eventually_log_sub_lt_maynardM`.
 -/
 
 @[expose] public section
