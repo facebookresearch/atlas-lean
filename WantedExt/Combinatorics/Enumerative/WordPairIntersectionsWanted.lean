@@ -56,22 +56,6 @@ public theorem_wanted nonIntersectingWordPairs_sameLength_generatingFunction (k 
       PowerSeries.mk fun n => ∑ j ∈ Finset.Icc 1 (k - 1),
         (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((k - j : ℕ) : ℚ) ^ n
 
-/-- **Non-intersecting pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$ and
-$r \ge 1$, and order an alphabet of $k$ letters. Write $[x^m] F$ for the coefficient of $x^m$ in a
-formal power series $F$ over $\mathbb{Q}$. The number of pairs $(u, v)$ of weakly decreasing words
-over this alphabet, $u$ of length $n$ and $v$ of length $r$, such that no letter occurs in both is
-$\sum_{j=1}^{k-1} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
-[x^r]\bigl((1-x)^{-(k-j)} - 1\bigr)$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Theorem 3 (`integers-2024-A107-thm-3`). -/
-public theorem_wanted weaklyDecreasingNonIntersectingPairs_card_eq_coeff (k n r : ℕ) (hn : 1 ≤ n)
-    (hr : 1 ≤ r) :
-    (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p => Antitone p.1 ∧
-        Antitone p.2 ∧ Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) =
-      ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
-        coeff r ((((1 - X) ^ (k - j))⁻¹ - 1 : ℚ⟦X⟧))
-
 /-- **Generating function of non-intersecting pairs of weakly decreasing words.** Let $k$ be a
 natural number and order an alphabet of $k$ letters. In the ring of formal power series in $x$
 and $y$ over $\mathbb{Q}$ let
