@@ -32,3 +32,36 @@ example : oozQMZV [2] - oozQMZV [1] = oozQMZV [1, 0] := by
   have h := sum_oozQMZV_eq_of_oozToSZ_eq_szDual [1, 0] (by simp) x hx hV
   change Finsupp.linearCombination ℚ oozQMZV x = _ at h
   simpa [x] using h
+
+open Finset PowerSeries
+
+private def partitionFour (i : Fin 5) : Nat.Partition 4 :=
+  let parts : Fin 5 → Multiset ℕ := ![{4}, {3, 1}, {2, 2}, {2, 1, 1}, {1, 1, 1, 1}]
+  have h : ∀ j, (parts j).sum = 4 := by decide
+  Nat.Partition.ofSums 4 (parts i) (h i)
+
+private lemma card_partition_four : Fintype.card (Nat.Partition 4) = 5 := by
+  let sizes := Icc 1 4
+  let weights := (sizes.finsuppAntidiag 4).filter fun w => ∀ i ∈ sizes, i ∣ w i
+  have hw : weights.card = 5 := by decide
+  have mem_weights (p : Nat.Partition 4) : p.toFinsuppAntidiag ∈ weights := by
+    refine mem_filter.mpr ⟨p.toFinsuppAntidiag_mem_finsuppAntidiag, fun i _ => ?_⟩
+    exact ⟨p.parts.count i, Nat.mul_comm _ _⟩
+  apply Nat.le_antisymm
+  · have h := Fintype.card_le_of_injective
+      (fun p => (⟨p.toFinsuppAntidiag, mem_weights p⟩ : weights))
+      (fun _ _ h => Nat.Partition.toFinsuppAntidiag_injective 4 (congrArg Subtype.val h))
+    simpa only [Fintype.card_coe, hw] using h
+  · have hinj : ∀ i j, partitionFour i = partitionFour j → i = j := by decide
+    simpa only [Fintype.card_fin] using Fintype.card_le_of_injective partitionFour hinj
+
+example : (∑ r ∈ Icc 1 4, coeff 4 (szQMZV (List.replicate r 1))) = 5 := by
+  rw [sum_coeff_szQMZV_replicate_one_eq_card_partition (hN := by decide) (hR := by decide),
+    card_partition_four]
+  norm_num
+
+-- Raising the cutoff does not change the coefficient.
+example : (∑ r ∈ Icc 1 6, coeff 4 (szQMZV (List.replicate r 1))) = 5 := by
+  rw [sum_coeff_szQMZV_replicate_one_eq_card_partition (hN := by decide) (hR := by decide),
+    card_partition_four]
+  norm_num
