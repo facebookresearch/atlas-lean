@@ -13040,6 +13040,7 @@
   "MathlibExt/NumberTheory/LSeries/RiemannXi": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Riemann xi function"},
   "MathlibExt/NumberTheory/LSeries/RiemannZeta": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Meromorphic continuation of the Riemann zeta function"},
   "MathlibExt/NumberTheory/LabosPrime": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Ramanujan primes"},
+  "MathlibExt/NumberTheory/LambertSequencePartialExpSum": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Factorials bounded by powers of the golden ratio"},
   "MathlibExt/NumberTheory/LambertSeriesVariants": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Lambert series"},
   "MathlibExt/NumberTheory/LandsbergSchaar": {"to": "NumberTheory/exponential-sums", "title": "Landsberg–Schaar relation"},
   "MathlibExt/NumberTheory/LaplaceQPolynomial": {"to": "NumberTheory/continued-fractions-expansions", "title": "Laplace continued fraction"},
