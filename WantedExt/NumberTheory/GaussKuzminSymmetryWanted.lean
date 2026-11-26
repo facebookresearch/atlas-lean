@@ -98,18 +98,6 @@ public theorem_wanted reverse_symmetric_of_eq_gaussKuzmin_at_length (μ : Measur
       μ (cfCylinder a) = ENNReal.ofReal (gaussKuzminMass a)) :
     ∀ a : List ℕ, (∀ x ∈ a, 0 < x) → a.length ≤ N → μ (cfCylinder a) = μ (cfCylinder a.reverse)
 
-/-- **Gauss–Kuzmin masses agree exactly when characteristic numbers do.** Write $P_{GK}$ for the
-Gauss–Kuzmin mass and $\chi$ for the characteristic number of a string. If $a$ and $b$ are strings
-of positive integers whose lengths have the same parity, then $P_{GK}(a) = P_{GK}(b)$ if and only
-if $\chi(a) = \chi(b)$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 5.2 (`integers-2025-A89-lem-5-2`). -/
-public theorem_wanted gaussKuzminMass_eq_iff_characteristicNumber_eq (a b : List ℕ)
-    (ha : (∀ x ∈ a, 0 < x)) (hb : ∀ x ∈ b, 0 < x) (hpar : a.length % 2 = b.length % 2) :
-    gaussKuzminMass a = gaussKuzminMass b ↔ characteristicNumber a = characteristicNumber b
-
 /-- **Families of stable strings.** (i) For every positive integer $t$, the strings $(t, 2t)$ and
 $(t, 1, 2t + 1)$ are stable. (ii) If $a = (a_1, \dots, a_m)$ is a stable string of positive
 integers, then for every positive integer $t$ the string $(t, a_m, \dots, a_1, 2t)$, obtained from

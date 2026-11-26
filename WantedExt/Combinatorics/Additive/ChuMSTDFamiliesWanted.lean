@@ -28,6 +28,7 @@ public import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyDifferenceDominated
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyMstdIncreasing
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyKLTCardAdd
+public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyKLTCardSubSixAddFourMul
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyMstdDecreasing
 
 namespace MetaMathlibExt
@@ -46,19 +47,6 @@ Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 1 (`integers-2024
 public theorem_wanted chu_family_balanced {k : ℕ} (hk : 0 < k) :
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ [1, 1])
     (A + A).card = (A - A).card
-
-/-- **Positive differences of the form 6 + 4m in the Chu family set.** Let $k$, $l$, $t$ be
-positive integers and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$,
-$t$. Then exactly $lt + t$ elements $d$ of $A - A$ satisfy $d \ge 6$ and $d \equiv 2 \pmod 4$;
-that is, exactly $lt + t$ positive differences of $A$ have the form $6 + 4m$ with $m \ge 0$ an
-integer.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 3 (`integers-2024-A32-lem-3`). -/
-public theorem_wanted chuFamilyKLT_card_sub_six_add_four_mul {k l t : ℕ} (hk : 0 < k)
-    (hl : 0 < l) (ht : 0 < t) :
-    ((chuFamilyKLT k l t - chuFamilyKLT k l t).filter
-        fun d => 6 ≤ d ∧ d % 4 = 2).card = l * t + t
 
 /-- **Size of the difference set of the Chu family set.** Let $k$, $l$, $t$ be positive integers
 and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
