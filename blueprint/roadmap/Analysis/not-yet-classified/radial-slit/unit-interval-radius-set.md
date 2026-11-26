@@ -1,8 +1,4 @@
-# Unit Interval radius Set
+# Radius union of the single unit interval
 
-The distinguished one-interval radius set is exactly `[0,1]`.
-
-```lean
-theorem unitInterval_radiusSet :
-    unitInterval.radiusSet = Set.Icc 0 1
-```
+For `unitInterval : RadialSlitData 1`, with
+endpoints zero and one, `unitInterval.radiusSet=[0,1]`.

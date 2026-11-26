@@ -1,10 +1,6 @@
-# Is Open slit Domain
+# Openness of the disk minus a finite slit
 
-Removing the closed slit from the open unit disk gives an open domain.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem isOpen_slitDomain : IsOpen E.slitDomain
-```
+Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. Because the
+disk is open and `S` is closed, `E.slitDomain=D` is open in `ℂ`.

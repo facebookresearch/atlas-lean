@@ -1,10 +1,6 @@
 # Trace Norm nonneg
 
-The finite complex matrix trace norm is nonnegative.
-
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
-complex matrices, and the empty-index case is included.
-
-```lean
-theorem singularValueTraceNorm_nonneg (M : Matrix n n ℂ) : 0 ≤ M.singularValueTraceNorm
-```
+The pinned QuantumInfo provider supplies the canonical matrix trace norm and
+its standard laws. The [Euclidean singular-value bridge](trace-norm-eq-sum.md) connects this
+norm to linear-map singular values. The [trace-distance formulation](../trace-distance/trace-norm-dist.md)
+uses the same norm for differences of arbitrary complex matrices.

@@ -2,7 +2,7 @@
 
 Half-normalized trace distance between finite complex matrices is nonnegative.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean

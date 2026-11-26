@@ -25,9 +25,9 @@ open scoped InnerProductSpace
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-/-- Let E be a real inner-product space, K ⊆ E an arbitrary set and y : E.
-Then -y ∈ PointedCone.dual (innerₗ E) K if and only if
-⟪x,y⟫_ℝ ≤ 0 for every x ∈ K. -/
+/-- **Nonpositive polar membership through the inner dual cone.** Let E be a real
+inner-product space, K ⊆ E an arbitrary set and y : E. Then -y ∈ PointedCone.dual (innerₗ
+E) K if and only if ⟪x,y⟫_ℝ ≤ 0 for every x ∈ K. -/
 theorem PointedCone.neg_mem_dual_inner_iff {K : Set E} {y : E} :
     -y ∈ PointedCone.dual (innerₗ E) K ↔ ∀ x ∈ K, ⟪x, y⟫_ℝ ≤ 0 := by
   rw [PointedCone.mem_dual]

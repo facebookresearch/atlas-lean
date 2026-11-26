@@ -1,11 +1,6 @@
-# Of Real mem slit Set
+# Real points on a finite radial slit
 
-A real-axis point lies on the slit exactly when its real coordinate belongs to the radius set.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem ofReal_mem_slitSet {r : ℝ} :
-    (r : ℂ) ∈ E.slitSet ↔ r ∈ E.radiusSet
-```
+Let `n : ℕ` and `E : RadialSlitData n` have real
+endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. For `r∈ℝ`,
+`(r : ℂ)∈E.slitSet ↔ r∈R`.

@@ -69,18 +69,6 @@ theorem mem_submodule_iff (G : Set ℂ) (μ : Measure ℂ) (f : Lp ℂ 2 μ) :
 theorem mem_submodule_iff (G : Set ℂ) (μ : Measure ℂ) (f : Lp ℂ 2 μ) :
     f ∈ submodule G μ ↔ ∃ g : ℂ → ℂ, AnalyticOn ℂ g G ∧ ∀ᵐ z ∂μ, f z = g z := Iff.rfl
 
-/-- There exists a complex L2 submodule with exactly the analytic-representative membership
-characterization.
-
-```lean
-theorem exists_submodule (G : Set ℂ) (μ : Measure ℂ) :
-    ∃ B : Submodule ℂ (Lp ℂ 2 μ),
-      ∀ f, f ∈ B ↔ ∃ g : ℂ → ℂ, AnalyticOn ℂ g G ∧ ∀ᵐ z ∂μ, f z = g z
-``` -/
-theorem exists_submodule (G : Set ℂ) (μ : Measure ℂ) :
-    ∃ B : Submodule ℂ (Lp ℂ 2 μ),
-      ∀ f, f ∈ B ↔ ∃ g : ℂ → ℂ, AnalyticOn ℂ g G ∧ ∀ᵐ z ∂μ, f z = g z :=
-  ⟨submodule G μ, fun _ => Iff.rfl⟩
 
 end AnalyticL2
 

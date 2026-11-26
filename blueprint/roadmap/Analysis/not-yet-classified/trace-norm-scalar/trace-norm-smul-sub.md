@@ -1,12 +1,6 @@
 # Trace Norm smul sub
 
-Scaling both matrices in a difference scales its trace norm by the complex scalar absolute
-value.
-
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
-complex matrices, and the empty-index case is included.
-
-```lean
-theorem singularValueTraceNorm_smul_sub (c : ℂ) (M N : Matrix n n ℂ) :
-    (c • M - c • N).singularValueTraceNorm = ‖c‖ * (M - N).singularValueTraceNorm
-```
+The pinned QuantumInfo provider supplies the canonical matrix trace norm and
+its standard laws. The [Euclidean singular-value bridge](../trace-norm/trace-norm-eq-sum.md) connects this
+norm to linear-map singular values. The [trace-distance formulation](../trace-distance/trace-norm-dist.md)
+uses the same norm for differences of arbitrary complex matrices.

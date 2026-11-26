@@ -1,9 +1,6 @@
-# Submodule is Closed
+# Closed analytic-representative submodule on an open domain
 
-The analytic-representative submodule is closed in scalar L2 of planar volume restricted to an
-open domain.
-
-```lean
-theorem submodule_isClosed (G : Set ℂ) (hG : IsOpen G) :
-    IsClosed (submodule G (volume.restrict G) : Set (Lp ℂ 2 (volume.restrict G)))
-```
+For an open set `G⊆ℂ`, let
+`L=Lp ℂ 2 (volume.restrict G)` and `B={f∈L | ∃g : ℂ→ℂ, AnalyticOn ℂ g G ∧ f=g almost
+everywhere for volume.restrict G}`. Then `B=submodule G (volume.restrict G)` is closed in
+the inherited L² norm topology. The domain may be empty or unbounded.

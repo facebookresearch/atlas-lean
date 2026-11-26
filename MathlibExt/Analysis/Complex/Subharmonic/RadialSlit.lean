@@ -34,8 +34,10 @@ on the real axis.
 
 namespace Complex
 
-/-- A finite family of closed intervals with endpoints satisfying `0 ≤ inner(i) ≤ outer(i) ≤ 1`;
-overlaps, zero-length intervals and an empty family are permitted. -/
+/-- **Finite radial-slit data in the unit disk.** For `n : ℕ`, a `RadialSlitData n` consists
+of real endpoint functions `inner,outer : Fin n→ℝ` and bounds `0≤inner(i)≤outer(i)≤1` for
+each index. Intervals may overlap or have length zero. For `n=0`, the family and its union
+are empty. -/
 structure RadialSlitData (n : ℕ) where
   inner : Fin n → ℝ
   outer : Fin n → ℝ
@@ -47,115 +49,83 @@ namespace RadialSlitData
 
 variable {n : ℕ} (E : RadialSlitData n)
 
-/-- The union of the closed radius intervals in `[0,1]`.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed. -/
+/-- **Union of the finite radial intervals.** Let `n : ℕ` and `E : RadialSlitData n` have real
+endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. Then
+`E.radiusSet=R`. Overlapping and zero-length intervals are allowed; for `n=0`, `R=∅`. -/
 def radiusSet : Set ℝ :=
   ⋃ i, Set.Icc (E.inner i) (E.outer i)
 
-/-- The radius union embedded on the real axis in the complex plane.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed. -/
+/-- **Real-axis slit associated with finite radius data.** Let `n : ℕ` and `E : RadialSlitData
+n` have real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`.
+Put `R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. Then
+`E.slitSet=S=R×ℂ{0}`. For `n=0`, this slit is empty. -/
 def slitSet : Set ℂ :=
   E.radiusSet ×ℂ ({0} : Set ℝ)
 
-/-- The open unit disk after removing the closed real-axis slit.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed. -/
+/-- **Open unit disk with a finite real-axis slit removed.** Let `n : ℕ` and `E :
+RadialSlitData n` have real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with
+`0≤a_i≤b_i≤1`. Put `R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ |
+‖z‖<1}∖S`. Then `E.slitDomain=D`. For `n=0`, the domain is the full open unit disk. -/
 noncomputable def slitDomain : Set ℂ :=
   Metric.ball 0 1 \ E.slitSet
 
-/-- Radius-set membership means membership in at least one of the finite closed intervals.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem mem_radiusSet {r : ℝ} :
-    r ∈ E.radiusSet ↔ ∃ i, r ∈ Set.Icc (E.inner i) (E.outer i)
-``` -/
+/-- **Membership in the finite radius union.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. For `r∈ℝ`,
+`r∈E.radiusSet ↔ ∃i∈Fin n, a_i≤r≤b_i`. No disjointness or positive interval length is
+assumed. -/
 theorem mem_radiusSet {r : ℝ} :
     r ∈ E.radiusSet ↔ ∃ i, r ∈ Set.Icc (E.inner i) (E.outer i) := by
   unfold radiusSet
   exact Set.mem_iUnion
 
-/-- A complex point lies on the slit exactly when its imaginary part is zero and its real part
-belongs to the radius union.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem mem_slitSet {z : ℂ} :
-    z ∈ E.slitSet ↔ z.re ∈ E.radiusSet ∧ z.im = 0
-``` -/
+/-- **Complex coordinates of slit membership.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. For `z∈ℂ`,
+`z∈E.slitSet ↔ Re z∈R ∧ Im z=0`. -/
 theorem mem_slitSet {z : ℂ} :
     z ∈ E.slitSet ↔ z.re ∈ E.radiusSet ∧ z.im = 0 := by
   unfold slitSet
   rw [Complex.mem_reProdIm]
   simp only [Set.mem_singleton_iff]
 
-/-- A real-axis point lies on the slit exactly when its real coordinate belongs to the radius set.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem ofReal_mem_slitSet {r : ℝ} :
-    (r : ℂ) ∈ E.slitSet ↔ r ∈ E.radiusSet
-``` -/
+/-- **Real points on a finite radial slit.** Let `n : ℕ` and `E : RadialSlitData n` have real
+endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. For `r∈ℝ`,
+`(r : ℂ)∈E.slitSet ↔ r∈R`. -/
 theorem ofReal_mem_slitSet {r : ℝ} :
     (r : ℂ) ∈ E.slitSet ↔ r ∈ E.radiusSet := by
   rw [mem_slitSet]
   simp
 
-/-- The slit-domain points have norm below one and do not lie on the slit.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem mem_slitDomain {z : ℂ} :
-    z ∈ E.slitDomain ↔ ‖z‖ < 1 ∧ z ∉ E.slitSet
-``` -/
+/-- **Norm and exclusion criterion for the slit domain.** Let `n : ℕ` and `E : RadialSlitData
+n` have real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`.
+Put `R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. For
+`z∈ℂ`, `z∈E.slitDomain ↔ ‖z‖<1 ∧ z∉S`. -/
 theorem mem_slitDomain {z : ℂ} :
     z ∈ E.slitDomain ↔ ‖z‖ < 1 ∧ z ∉ E.slitSet := by
   simp only [slitDomain, Set.mem_sdiff, Metric.mem_ball, dist_zero_right]
 
-/-- The finite union of closed bounded radius intervals is compact.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem isCompact_radiusSet : IsCompact E.radiusSet
-``` -/
+/-- **Compactness of the finite radius union.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The finite
+union `E.radiusSet=R` is compact in the real topology, including the empty family. -/
 theorem isCompact_radiusSet : IsCompact E.radiusSet := by
   unfold radiusSet
   exact isCompact_iUnion fun _ => isCompact_Icc
 
-/-- The finite radius union is closed.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem isClosed_radiusSet : IsClosed E.radiusSet
-``` -/
+/-- **Closedness of the finite radius union.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The radius
+union `E.radiusSet=R` is closed in `ℝ`. -/
 theorem isClosed_radiusSet : IsClosed E.radiusSet :=
   E.isCompact_radiusSet.isClosed
 
-/-- Every selected radius lies in the closed interval `[0,1]`.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem radiusSet_subset_Icc : E.radiusSet ⊆ Set.Icc 0 1
-``` -/
+/-- **Bounds on all selected radii.** Let `n : ℕ` and `E : RadialSlitData n` have real
+endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. Every
+selected radius lies between zero and one: `E.radiusSet⊆[0,1]`. -/
 theorem radiusSet_subset_Icc : E.radiusSet ⊆ Set.Icc 0 1 := by
   intro r hr
   rw [E.mem_radiusSet] at hr
@@ -163,36 +133,24 @@ theorem radiusSet_subset_Icc : E.radiusSet ⊆ Set.Icc 0 1 := by
   rw [Set.mem_Icc] at hi
   exact ⟨le_trans (E.inner_nonneg i) hi.1, le_trans hi.2 (E.outer_le_one i)⟩
 
-/-- The finite real-axis slit is compact in the complex plane.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem isCompact_slitSet : IsCompact E.slitSet
-``` -/
+/-- **Compactness of a finite real-axis slit.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The slit
+`E.slitSet=S` is compact in the complex-plane topology. -/
 theorem isCompact_slitSet : IsCompact E.slitSet :=
   E.isCompact_radiusSet.reProdIm isCompact_singleton
 
-/-- The finite real-axis slit is closed in the complex plane.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem isClosed_slitSet : IsClosed E.slitSet
-``` -/
+/-- **Closedness of a finite real-axis slit.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The slit
+`E.slitSet=S` is closed in `ℂ`. -/
 theorem isClosed_slitSet : IsClosed E.slitSet :=
   E.isCompact_slitSet.isClosed
 
-/-- The slit lies in the closed unit disk.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem slitSet_subset_closedBall : E.slitSet ⊆ Metric.closedBall 0 1
-``` -/
+/-- **Finite slit lies in the closed unit disk.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The bound
+on the endpoints gives `E.slitSet⊆{z∈ℂ | ‖z‖≤1}`. -/
 theorem slitSet_subset_closedBall : E.slitSet ⊆ Metric.closedBall 0 1 := by
   intro z hz
   rw [E.mem_slitSet] at hz
@@ -203,37 +161,25 @@ theorem slitSet_subset_closedBall : E.slitSet ⊆ Metric.closedBall 0 1 := by
     Real.norm_eq_abs, abs_of_nonneg hmem.1]
   exact hmem.2
 
-/-- Removing the closed slit from the open unit disk gives an open domain.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem isOpen_slitDomain : IsOpen E.slitDomain
-``` -/
+/-- **Openness of the disk minus a finite slit.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. Because the
+disk is open and `S` is closed, `E.slitDomain=D` is open in `ℂ`. -/
 theorem isOpen_slitDomain : IsOpen E.slitDomain :=
   Metric.isOpen_ball.sdiff E.isClosed_slitSet
 
-/-- The slit domain lies in the open unit disk.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem slitDomain_subset_ball : E.slitDomain ⊆ Metric.ball 0 1
-``` -/
+/-- **Slit domain lies in the open unit disk.** Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The domain
+satisfies `E.slitDomain⊆{z∈ℂ | ‖z‖<1}`. -/
 theorem slitDomain_subset_ball : E.slitDomain ⊆ Metric.ball 0 1 :=
   Set.sdiff_subset
 
-/-- The negative real point `-1/2` belongs to the slit domain, so it is nonempty for every finite
-slit family.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem slitDomain_nonempty : E.slitDomain.Nonempty
-``` -/
+/-- **A negative real point remains outside every radial slit.** Let `n : ℕ` and `E :
+RadialSlitData n` have real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with
+`0≤a_i≤b_i≤1`. Put `R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ |
+‖z‖<1}∖S`. The point `-1/2 : ℂ` has norm less than one and negative real part, so it
+belongs to `E.slitDomain`. Thus the domain is nonempty for every finite family. -/
 theorem slitDomain_nonempty : E.slitDomain.Nonempty := by
   have heq : (-1/2 : ℂ) = ((-1/2 : ℝ) : ℂ) := by push_cast; ring
   refine ⟨-1/2, ?_⟩
@@ -247,7 +193,8 @@ theorem slitDomain_nonempty : E.slitDomain.Nonempty := by
     rw [Set.mem_Icc, heq, Complex.ofReal_re] at hsub
     norm_num at hsub
 
-/-- The one-interval slit family with inner endpoint zero and outer endpoint one. -/
+/-- **Single slit interval from zero to one.** The family `unitInterval : RadialSlitData 1`
+has `inner(i)=0` and `outer(i)=1` for its unique index. Its radius union is `[0,1]`. -/
 def unitInterval : RadialSlitData 1 where
   inner := fun _ => 0
   outer := fun _ => 1
@@ -255,12 +202,8 @@ def unitInterval : RadialSlitData 1 where
   inner_le_outer := fun _ => zero_le_one
   outer_le_one := fun _ => le_refl 1
 
-/-- The distinguished one-interval radius set is exactly `[0,1]`.
-
-```lean
-theorem unitInterval_radiusSet :
-    unitInterval.radiusSet = Set.Icc 0 1
-``` -/
+/-- **Radius union of the single unit interval.** For `unitInterval : RadialSlitData 1`, with
+endpoints zero and one, `unitInterval.radiusSet=[0,1]`. -/
 theorem unitInterval_radiusSet :
     unitInterval.radiusSet = Set.Icc 0 1 := by
   ext r
@@ -275,12 +218,8 @@ theorem unitInterval_radiusSet :
   · rintro ⟨hlo, hhi⟩
     exact ⟨0, hlo, hhi⟩
 
-/-- The distinguished slit is exactly the complex real-axis segment `[0,1]`.
-
-```lean
-theorem unitInterval_slitSet :
-    unitInterval.slitSet = Set.Icc 0 1 ×ℂ ({0} : Set ℝ)
-``` -/
+/-- **Real-axis segment of the single unit interval.** For `unitInterval : RadialSlitData 1`,
+with endpoints zero and one, `unitInterval.slitSet={z∈ℂ | 0≤Re z≤1 ∧ Im z=0}=[0,1]×ℂ{0}`. -/
 theorem unitInterval_slitSet :
     unitInterval.slitSet = Set.Icc 0 1 ×ℂ ({0} : Set ℝ) := by
   unfold slitSet

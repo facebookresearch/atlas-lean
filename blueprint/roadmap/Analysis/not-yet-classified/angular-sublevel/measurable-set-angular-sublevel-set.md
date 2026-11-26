@@ -1,12 +1,14 @@
 # Measurable Set angular Sublevel Set
 
-For a nonpositive subharmonic function on the unit disk and `0<r<1`,
-the full-period strict angular sublevel set is measurable.
+**Measurability of strict angular sublevel sets.** Let `u : ℂ → EReal` be upper
+semicontinuous on the open unit disk. For real `r,K` with `|r| < 1`, the angles
+`θ ∈ (0,2π]` satisfying `u(circleMap 0 r θ) < -K` form a measurable set.
+Zero and negative radii are included, and the threshold `K` is arbitrary.
 
 ```lean
 theorem measurableSet_angularSublevelSet
     {u : ℂ → EReal} {r K : ℝ}
-    (hu : IsNonpositiveSubharmonicOn u (Metric.ball 0 1))
-    (hr0 : 0 < r) (hr1 : r < 1) :
+    (hu : UpperSemicontinuousOn u (Metric.ball 0 1))
+    (hr : |r| < 1) :
     MeasurableSet (angularSublevelSet u r K)
 ```

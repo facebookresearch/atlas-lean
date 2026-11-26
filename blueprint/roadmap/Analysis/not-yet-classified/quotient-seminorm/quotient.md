@@ -1,5 +1,6 @@
-# Quotient
+# Seminorm induced by the infimum over a quotient coset
 
-Let 𝕜 be a normed field, X a 𝕜-module with additive commutative group,
-p a seminorm on X and Y a submodule. The quotient seminorm on X/Y
-takes the infimum of p over representatives of each coset.
+Let `𝕜` be a normed field, `X`
+an additive commutative group and `𝕜`-module, `p : Seminorm 𝕜 X`, and `Y : Submodule 𝕜 X`.
+The seminorm `p.quotient Y` on `X/Y` satisfies `p.quotient Y ([x])=inf_{y∈Y} p(x+y)`. No
+topology or closedness condition on `X` or `Y` is required.

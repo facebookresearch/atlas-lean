@@ -1,9 +1,5 @@
-# Lt top
+# Nonpositive subharmonic values are below positive infinity
 
-Every domain value of a nonpositive subharmonic function is strictly below positive infinity.
-
-```lean
-theorem IsNonpositiveSubharmonicOn.lt_top {u : ℂ → EReal} {D : Set ℂ}
-    (h : IsNonpositiveSubharmonicOn u D)
-    {z : ℂ} (hz : z ∈ D) : u z < ⊤
-```
+Let `u : ℂ→EReal`, `D⊆ℂ`,
+and `h : IsNonpositiveSubharmonicOn u D`. For every `z∈D`, the nonpositivity condition
+`u(z)≤0` implies `u(z)<+∞`. The value `-∞` is allowed.

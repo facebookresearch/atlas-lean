@@ -1,11 +1,7 @@
-# Slit Domain nonempty
+# A negative real point remains outside every radial slit
 
-The negative real point `-1/2` belongs to the slit domain, so it is nonempty for every finite
-slit family.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem slitDomain_nonempty : E.slitDomain.Nonempty
-```
+Let `n : ℕ` and `E :
+RadialSlitData n` have real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with
+`0≤a_i≤b_i≤1`. Put `R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ |
+‖z‖<1}∖S`. The point `-1/2 : ℂ` has norm less than one and negative real part, so it
+belongs to `E.slitDomain`. Thus the domain is nonempty for every finite family.

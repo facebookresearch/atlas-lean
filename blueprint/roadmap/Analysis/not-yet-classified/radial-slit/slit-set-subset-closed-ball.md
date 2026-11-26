@@ -1,10 +1,6 @@
-# Slit Set subset closed Ball
+# Finite slit lies in the closed unit disk
 
-The slit lies in the closed unit disk.
-
-Here `E` is the displayed finite slit family with `0 ≤ inner(i) ≤ outer(i) ≤ 1`; no disjointness or
-positive interval length is assumed.
-
-```lean
-theorem slitSet_subset_closedBall : E.slitSet ⊆ Metric.closedBall 0 1
-```
+Let `n : ℕ` and `E : RadialSlitData n` have
+real endpoints `a_i=E.inner i`, `b_i=E.outer i` for `i∈Fin n`, with `0≤a_i≤b_i≤1`. Put
+`R=⋃_{i∈Fin n}[a_i,b_i]`, `S={z∈ℂ | Re z∈R ∧ Im z=0}` and `D={z∈ℂ | ‖z‖<1}∖S`. The bound
+on the endpoints gives `E.slitSet⊆{z∈ℂ | ‖z‖≤1}`.

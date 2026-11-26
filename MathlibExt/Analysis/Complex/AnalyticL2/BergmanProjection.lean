@@ -38,18 +38,11 @@ open MeasureTheory Metric Set
 
 namespace AnalyticL2
 
-/-- Every compact subset of an open planar domain has a positive uniform bound on analytic
-representative differences in terms of L2 class differences.
-
-```lean
-theorem compact_local_bound (G : Set ℂ) (hG : IsOpen G) (K : Set ℂ)
-    (hKG : K ⊆ G) (hK : IsCompact K) :
-    ∃ C : ℝ, 0 < C ∧ ∀ (f h : Lp ℂ 2 (volume.restrict G)) (g k : ℂ → ℂ),
-      AnalyticOn ℂ g G → AnalyticOn ℂ k G →
-      (∀ᵐ z ∂volume.restrict G, f z = g z) →
-      (∀ᵐ z ∂volume.restrict G, h z = k z) →
-      ∀ z ∈ K, ‖g z - k z‖ ≤ C * ‖f - h‖
-``` -/
+/-- **Uniform compact bound for analytic L² representatives.** Let `G⊆ℂ` be open, `K⊆G`
+compact, and `L=Lp ℂ 2 (volume.restrict G)`. There exists `C>0` such that for all `f,h∈L`
+with analytic representatives `g,k : ℂ→ℂ` on `G`, equal to their classes almost everywhere
+for restricted volume, `‖g(z)-k(z)‖≤C‖f-h‖` for every `z∈K`. Empty compact sets and empty
+or unbounded open domains are included. -/
 theorem compact_local_bound (G : Set ℂ) (hG : IsOpen G) (K : Set ℂ)
     (hKG : K ⊆ G) (hK : IsCompact K) :
     ∃ C : ℝ, 0 < C ∧ ∀ (f h : Lp ℂ 2 (volume.restrict G)) (g k : ℂ → ℂ),
@@ -70,30 +63,28 @@ theorem compact_local_bound (G : Set ℂ) (hG : IsOpen G) (K : Set ℂ)
   simpa only [C, Pi.sub_apply] using
     norm_point_le G (g - k) (hg.sub hk) (f - h) hDifference z r hr hDisk
 
-/-- The analytic-representative submodule is closed in scalar L2 of planar volume restricted to an
-open domain.
-
-```lean
-theorem submodule_isClosed (G : Set ℂ) (hG : IsOpen G) :
-    IsClosed (submodule G (volume.restrict G) : Set (Lp ℂ 2 (volume.restrict G)))
-``` -/
+/-- **Closed analytic-representative submodule on an open domain.** For an open set `G⊆ℂ`, let
+`L=Lp ℂ 2 (volume.restrict G)` and `B={f∈L | ∃g : ℂ→ℂ, AnalyticOn ℂ g G ∧ f=g almost
+everywhere for volume.restrict G}`. Then `B=submodule G (volume.restrict G)` is closed in
+the inherited L² norm topology. The domain may be empty or unbounded. -/
 theorem submodule_isClosed (G : Set ℂ) (hG : IsOpen G) :
     IsClosed (submodule G (volume.restrict G) : Set (Lp ℂ 2 (volume.restrict G))) :=
   isClosed_of_local_bound G hG (fun K hKG hK => compact_local_bound G hG K hKG hK)
 
-/-- The analytic-representative submodule on an open domain is complete with the same inherited
-restricted-volume L2 norm.
-
-```lean
-theorem completeSpace (G : Set ℂ) (hG : IsOpen G) :
-    CompleteSpace (submodule G (volume.restrict G))
-``` -/
+/-- **Completeness of the analytic L² submodule.** For an open set `G⊆ℂ`, the submodule
+`B=submodule G (volume.restrict G)` of classes represented almost everywhere by functions
+analytic on `G` is complete in the inherited restricted-volume L² norm. No boundedness or
+finite-area hypothesis on `G` is required. -/
 theorem completeSpace (G : Set ℂ) (hG : IsOpen G) :
     CompleteSpace (submodule G (volume.restrict G)) :=
   (submodule_isClosed G hG).completeSpace_coe
 
-/-- The continuous complex-linear orthogonal projection of restricted-volume L2 onto its closed
-analytic-representative submodule. -/
+/-- **Bergman orthogonal projection on an open planar domain.** Let `G⊆ℂ` be open, with `hG :
+IsOpen G`, and let `L=Lp ℂ 2 (volume.restrict G)`. Let `B=submodule G (volume.restrict G)`
+consist of L² classes with a representative analytic on `G` and equal almost everywhere
+for restricted volume. Openness makes `B` closed and complete. The map `projection G hG :
+L→L[ℂ] B` is the orthogonal projection onto `B`: for every `f∈L`, `f-projection G hG f` is
+orthogonal to `B`. The domain may be empty or unbounded. -/
 def projection (G : Set ℂ) (hG : IsOpen G) :
     Lp ℂ 2 (volume.restrict G) →L[ℂ] submodule G (volume.restrict G) := by
   let : CompleteSpace (submodule G (volume.restrict G)) := completeSpace G hG

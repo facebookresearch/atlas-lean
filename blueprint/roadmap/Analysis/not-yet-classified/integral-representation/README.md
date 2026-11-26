@@ -7,4 +7,3 @@
 - [Commutation of two bounded spectral integrals](spectral-integral-commute.md)
 - [Normality of bounded spectral integrals](spectral-integral-is-star-normal.md)
 - [Uniform limits give operator-norm spectral limits](tendsto-spectral-integral.md)
-- [Integral Representation](mellin-gaussian-laplace-eq-parabolic-cyl.md)

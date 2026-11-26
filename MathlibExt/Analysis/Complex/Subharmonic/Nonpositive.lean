@@ -40,14 +40,24 @@ open scoped ENNReal
 
 namespace Complex
 
-/-- The normalized nonnegative extended integral of `(-u).toENNReal` on the circle centered at `z`,
-using the full-period angle measure. Negative-infinite values of a nonpositive function remain
-positive infinity in the integrand. -/
+/-- **Negative circular average of an extended-real function.** For `u : ℂ→EReal`, `z∈ℂ` and
+any real radius `r`, define `negativeCircleAverage u z r = (1/(2π)) ∫⁻_{θ∈(0,2π]} (-u(z+r
+exp(iθ))).toENNReal dθ`. This is a nonnegative extended Lebesgue average using the
+full-period angle measure. When `u≤0`, the encoding retains `-u`; values `u=-∞` contribute
+`+∞`. The definition is total, including zero and negative radii. -/
 noncomputable def negativeCircleAverage (u : ℂ → EReal) (z : ℂ) (r : ℝ) : ℝ≥0∞ :=
   ⨍⁻ θ in Set.Ioc 0 (2 * Real.pi), (-u (circleMap z r θ)).toENNReal ∂volume
 
-/-- A connected-domain, upper-semicontinuous, nonpositive extended-real function with at least one
-value above negative infinity and the displayed local sign-reversed circle submean condition. -/
+/-- **Local circular submean condition for a nonpositive function.** For `u : ℂ→EReal` and
+`D⊆ℂ`, `IsNonpositiveSubharmonicOn u D` requires `D` connected, `u` upper semicontinuous
+on `D`, `u(z)≤0` for every `z∈D`, and some `z∈D` with `u(z)≠-∞`. For each `z∈D` there must
+exist `ε>0` with `closedBall z ε⊆D` such that for every `0<r<ε`,
+
+`negativeCircleAverage u z r ≤ (-u(z)).toENNReal`,
+
+where `negativeCircleAverage u z r=(1/(2π))∫⁻_{θ∈(0,2π]} (-u(z+r exp(iθ))).toENNReal dθ`.
+Negative-infinite values are allowed, while the existence clause excludes the identically
+negative-infinite function. -/
 structure IsNonpositiveSubharmonicOn (u : ℂ → EReal) (D : Set ℂ) : Prop where
   isConnected : IsConnected D
   upperSemicontinuousOn : UpperSemicontinuousOn u D
@@ -58,13 +68,9 @@ structure IsNonpositiveSubharmonicOn (u : ℂ → EReal) (D : Set ℂ) : Prop wh
       ∀ r : ℝ, 0 < r → r < ε →
         negativeCircleAverage u z r ≤ (-u z).toENNReal
 
-/-- Every domain value of a nonpositive subharmonic function is strictly below positive infinity.
-
-```lean
-theorem IsNonpositiveSubharmonicOn.lt_top {u : ℂ → EReal} {D : Set ℂ}
-    (h : IsNonpositiveSubharmonicOn u D)
-    {z : ℂ} (hz : z ∈ D) : u z < ⊤
-``` -/
+/-- **Nonpositive subharmonic values are below positive infinity.** Let `u : ℂ→EReal`, `D⊆ℂ`,
+and `h : IsNonpositiveSubharmonicOn u D`. For every `z∈D`, the nonpositivity condition
+`u(z)≤0` implies `u(z)<+∞`. The value `-∞` is allowed. -/
 theorem IsNonpositiveSubharmonicOn.lt_top {u : ℂ → EReal} {D : Set ℂ}
     (h : IsNonpositiveSubharmonicOn u D)
     {z : ℂ} (hz : z ∈ D) : u z < ⊤ :=

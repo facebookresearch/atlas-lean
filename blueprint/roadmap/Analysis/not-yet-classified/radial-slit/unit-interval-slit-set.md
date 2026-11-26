@@ -1,8 +1,4 @@
-# Unit Interval slit Set
+# Real-axis segment of the single unit interval
 
-The distinguished slit is exactly the complex real-axis segment `[0,1]`.
-
-```lean
-theorem unitInterval_slitSet :
-    unitInterval.slitSet = Set.Icc 0 1 ×ℂ ({0} : Set ℝ)
-```
+For `unitInterval : RadialSlitData 1`,
+with endpoints zero and one, `unitInterval.slitSet={z∈ℂ | 0≤Re z≤1 ∧ Im z=0}=[0,1]×ℂ{0}`.

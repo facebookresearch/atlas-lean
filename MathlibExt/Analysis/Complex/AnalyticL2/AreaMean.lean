@@ -11,7 +11,8 @@ Author: @toskua
 -/
 module
 
-public import MathlibExt.Analysis.Complex.AnalyticL2.CircleMean
+public import Mathlib.Analysis.Complex.MeanValue
+public import Mathlib.Analysis.Calculus.FDeriv.Analytic
 public import Mathlib.Analysis.SpecialFunctions.PolarCoord
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Integral.Prod

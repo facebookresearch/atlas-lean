@@ -1,9 +1,6 @@
 # Trace Norm
 
-Trace norm of a finite square complex matrix, defined as the sum of
-singular values of its associated linear map `Matrix.toEuclideanLin`.
-We sum over `Finset.range (Fintype.card n)`, which contains all possibly
-nonzero singular values for an `n × n` matrix.
-
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
-complex matrices, and the empty-index case is included.
+The pinned QuantumInfo provider supplies the canonical matrix trace norm and
+its standard laws. The [Euclidean singular-value bridge](trace-norm-eq-sum.md) connects this
+norm to linear-map singular values. The [trace-distance formulation](../trace-distance/trace-norm-dist.md)
+uses the same norm for differences of arbitrary complex matrices.

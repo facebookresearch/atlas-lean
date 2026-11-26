@@ -24,9 +24,9 @@ of that angle set. The circle has physical radius `|r|`; definitions also
 include zero and negative `r` and arbitrary `K`.
 
 Every such set lies in one full period, so its angular length is at most
-`2π` and is finite. If `u` has the stated nonpositive subharmonic structure
-on the open unit disk and `0<r<1`, the strict angular sublevel set is
-measurable. The threshold has no additional positivity assumption.
+`2π` and is finite. If `u` is upper semicontinuous on the open unit disk
+and `|r| < 1`, the strict angular sublevel set is measurable. The radius
+may be zero or negative, and the threshold has no positivity assumption.
 -/
 
 @[expose] public section
@@ -83,27 +83,29 @@ theorem angularSublevelLength_ne_top (u : ℂ → EReal) (r K : ℝ) :
     angularSublevelLength u r K ≠ ⊤ :=
   ne_top_of_le_ne_top ENNReal.ofReal_ne_top (angularSublevelLength_le u r K)
 
-/-- For a nonpositive subharmonic function on the unit disk and `0<r<1`,
-the full-period strict angular sublevel set is measurable.
+/-- **Measurability of strict angular sublevel sets.** Let `u : ℂ → EReal` be upper
+semicontinuous on the open unit disk. For real `r,K` with `|r| < 1`, the angles
+`θ ∈ (0,2π]` satisfying `u(circleMap 0 r θ) < -K` form a measurable set.
+Zero and negative radii are included, and the threshold `K` is arbitrary.
 
 ```lean
 theorem measurableSet_angularSublevelSet
     {u : ℂ → EReal} {r K : ℝ}
-    (hu : IsNonpositiveSubharmonicOn u (Metric.ball 0 1))
-    (hr0 : 0 < r) (hr1 : r < 1) :
+    (hu : UpperSemicontinuousOn u (Metric.ball 0 1))
+    (hr : |r| < 1) :
     MeasurableSet (angularSublevelSet u r K)
 ``` -/
 theorem measurableSet_angularSublevelSet
     {u : ℂ → EReal} {r K : ℝ}
-    (hu : IsNonpositiveSubharmonicOn u (Metric.ball 0 1))
-    (hr0 : 0 < r) (hr1 : r < 1) :
+    (hu : UpperSemicontinuousOn u (Metric.ball 0 1))
+    (hr : |r| < 1) :
     MeasurableSet (angularSublevelSet u r K) := by
   obtain ⟨U, hUopen, hU⟩ :=
-    (upperSemicontinuousOn_iff_preimage_Iio.mp hu.upperSemicontinuousOn)
+    (upperSemicontinuousOn_iff_preimage_Iio.mp hu)
       (-(K : EReal))
   have hcircle (θ : ℝ) : circleMap 0 r θ ∈ Metric.ball (0 : ℂ) 1 := by
-    rw [Metric.mem_ball, dist_zero_right, norm_circleMap_zero, abs_of_pos hr0]
-    exact hr1
+    rw [Metric.mem_ball, dist_zero_right, norm_circleMap_zero]
+    exact hr
   have hpre :
       {θ : ℝ | u (circleMap 0 r θ) < -(K : EReal)} =
         (circleMap 0 r) ⁻¹' U := by

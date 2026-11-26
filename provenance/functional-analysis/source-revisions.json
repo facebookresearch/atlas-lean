@@ -3,15 +3,15 @@
     {
       "directory": "provenance/functional-analysis/residual-analysis",
       "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
-      "file_count": 51,
-      "source_content_binding": "51 active residual-analysis exports remain. The whole original 56-row snapshot manifest and four chunks remain byte-exact historical source custody; five contour/grid/Riesz/holomorphic-calculus exports transferred to their source-coherent slice with exact original and current bindings."
+      "file_count": 40,
+      "source_content_binding": "40 whole active original source rows in active-source-snapshot-v2; current source/import/proof/documentation adaptations are recorded, and full original/history custody is retained separately."
     },
     {
       "directory": "provenance/functional-analysis/kernel-spectral-tensor-apis",
       "source_revision": "632b19d0721122e67fcdd66ab75bd37a9f89de86",
       "documentation_revision": "bd599a2704f61645eea9650a5caa8da7f27b9c44",
       "file_count": 5,
-      "source_content_binding": "Five active exports; eight whole original snapshots remain aggregate custody. GNS and Hilbert tensor Basis exports have transferred to published source slices with explicit transfer records."
+      "source_content_binding": "Five whole original active kernel/spectral snapshots and exact currentexport records."
     }
   ]
 }

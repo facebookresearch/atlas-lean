@@ -12,20 +12,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Matrix.TraceNorm
-public import MathlibExt.Analysis.Matrix.TraceNormScalar
 
 /-!
-# Full and half-normalized trace distances
+# Full and half-normalized canonical trace distances
 
-For arbitrary finite square complex matrices `M,N`, `traceNormDist(M,N)`
-is the full Schatten-one quantity `singularValueTraceNorm(M-N)`, while `traceDist(M,N)`
-is half that quantity. Their exact conversion factors are two and one-half.
-Both functions are nonnegative, symmetric, zero on identical matrices, and
-zero only on identical matrices.
-
-These definitions apply to all matrices, rather than only positive trace-one
-states. The finite index type may be empty. The matrix difference and
-Euclidean singular-value trace norm retain their original conventions.
+For arbitrary finite square complex matrices `M,N`, define
+`traceNormDist(M,N) = Matrix.traceNorm(M-N)` and
+`traceDist(M,N) = (1/2) * Matrix.traceNorm(M-N)`, where the canonical trace norm is
+`Re (Tr (sqrt ((M-N)ᴴ * (M-N))))`. These distances are nonnegative and symmetric,
+and vanish exactly when `M = N`. The full distance is twice the half-normalized distance.
+Zero matrices and empty index types are included; positivity and trace-one assumptions
+on the inputs are not required.
 -/
 
 @[expose] public section
@@ -34,51 +31,49 @@ open Matrix
 
 namespace Matrix
 
-variable {n : Type*} [Fintype n] [DecidableEq n]
+variable {n : Type*} [Fintype n]
 
 /-- Full trace-norm distance between square complex matrices: `‖M - N‖₁`.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included. -/
 noncomputable def traceNormDist (M N : Matrix n n ℂ) : ℝ :=
-  (M - N).singularValueTraceNorm
+  (M - N).traceNorm
 
 /-- The full trace distance is the trace norm of the matrix difference.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
 theorem traceNormDist_def (M N : Matrix n n ℂ) :
-    traceNormDist M N = (M - N).singularValueTraceNorm
+    traceNormDist M N = (M - N).traceNorm
 ``` -/
-@[simp]
 theorem traceNormDist_def (M N : Matrix n n ℂ) :
-    traceNormDist M N = (M - N).singularValueTraceNorm := rfl
+    traceNormDist M N = (M - N).traceNorm := rfl
 
 /-- Standard quantum trace distance `(1/2)‖M - N‖₁`.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included. -/
 noncomputable def traceDist (M N : Matrix n n ℂ) : ℝ :=
   (1 / 2 : ℝ) * traceNormDist M N
 
 /-- The half-normalized trace distance is one-half the trace norm of the matrix difference.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
 theorem traceDist_def (M N : Matrix n n ℂ) :
-    traceDist M N = (1 / 2 : ℝ) * (M - N).singularValueTraceNorm
+    traceDist M N = (1 / 2 : ℝ) * (M - N).traceNorm
 ``` -/
-@[simp]
 theorem traceDist_def (M N : Matrix n n ℂ) :
-    traceDist M N = (1 / 2 : ℝ) * (M - N).singularValueTraceNorm := rfl
+    traceDist M N = (1 / 2 : ℝ) * (M - N).traceNorm := rfl
 
 /-- The half-normalized trace distance is exactly one-half the full trace distance.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -90,7 +85,7 @@ theorem traceDist_eq_half_traceNormDist (M N : Matrix n n ℂ) :
 
 /-- The full trace distance is exactly twice the half-normalized trace distance.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -104,7 +99,7 @@ theorem traceNormDist_eq_two_mul_traceDist (M N : Matrix n n ℂ) :
 
 /-- Full trace distance between finite complex matrices is nonnegative.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -113,11 +108,11 @@ theorem traceNormDist_nonneg (M N : Matrix n n ℂ) :
 ``` -/
 theorem traceNormDist_nonneg (M N : Matrix n n ℂ) :
     0 ≤ traceNormDist M N :=
-  singularValueTraceNorm_nonneg _
+  Matrix.traceNorm_nonneg _
 
 /-- Half-normalized trace distance between finite complex matrices is nonnegative.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -133,7 +128,7 @@ theorem traceDist_nonneg (M N : Matrix n n ℂ) :
 
 /-- The full trace distance from a matrix to itself is zero.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -147,7 +142,7 @@ theorem traceNormDist_self (M : Matrix n n ℂ) :
 
 /-- The half-normalized trace distance from a matrix to itself is zero.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -161,7 +156,7 @@ theorem traceDist_self (M : Matrix n n ℂ) :
 
 /-- Full trace distance is symmetric in the two matrices.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -172,11 +167,11 @@ theorem traceNormDist_comm (M N : Matrix n n ℂ) :
     traceNormDist M N = traceNormDist N M := by
   unfold traceNormDist
   have h : M - N = -(N - M) := by ext i j; simp
-  rw [h, singularValueTraceNorm_neg]
+  rw [h, Matrix.traceNorm_neg]
 
 /-- Half-normalized trace distance is symmetric in the two matrices.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -190,7 +185,7 @@ theorem traceDist_comm (M N : Matrix n n ℂ) :
 
 /-- Full trace distance is zero exactly when the matrices are equal.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
@@ -199,11 +194,11 @@ theorem traceNormDist_eq_zero_iff (M N : Matrix n n ℂ) :
 ``` -/
 theorem traceNormDist_eq_zero_iff (M N : Matrix n n ℂ) :
     traceNormDist M N = 0 ↔ M = N := by
-  rw [traceNormDist_def, singularValueTraceNorm_eq_zero_iff, sub_eq_zero]
+  rw [traceNormDist_def, Matrix.traceNorm_zero_iff, sub_eq_zero]
 
 /-- Half-normalized trace distance is zero exactly when the matrices are equal.
 
-Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
+Here `n` is any finite index type. The matrices are arbitrary square
 complex matrices, and the empty-index case is included.
 
 ```lean
