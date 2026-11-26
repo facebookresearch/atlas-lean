@@ -27,11 +27,3 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Autotetraploid coalescent](autotetraploid-coalescent/README.md)
-- [IBD sharing under migration](ibd-sharing-under-migration/README.md)
-- [Latent recurrent mutations of rare variants](latent-recurrent-mutations-of-rare-variants/README.md)
-- [Minimal descriptors of ancestral recombination graphs](minimal-descriptors-of-ancestral-recombination-graphs/README.md)
-- [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
-- [SMC$'$ transition densities](smc-prime-transition-densities/README.md)
-- [Tajima's genealogies](tajima-genealogies/README.md)
-- [Watterson's estimator from low-coverage sequencing](watterson-estimator-from-low-coverage-sequencing/README.md)

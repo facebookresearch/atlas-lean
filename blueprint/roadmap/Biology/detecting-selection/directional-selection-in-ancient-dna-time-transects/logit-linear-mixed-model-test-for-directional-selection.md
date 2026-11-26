@@ -22,6 +22,7 @@ $$\frac{s_j^2\operatorname{Var}(t)}{s_j^2\operatorname{Var}(t) + \sigma_j^2}.$$
 
 - [Log-odds grow linearly under repeated haploid selection on two types](../../population-genetics/haploid-selection-and-multiplicative-fitnesses/log-odds-iterate-select.md)
 - [Genetic relationship matrix entry](../../quantitative-genetics/genomic-relationship-matrices/grm.md)
+- [Binomial law as a probability measure](../../../Probability/central-limit-theorems/poisson-limit-theorem/binomial-prob-measure.md)
 
 ## Expansion
 

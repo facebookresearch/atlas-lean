@@ -46,3 +46,7 @@
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)
 
 - [Many-locus variance components and the covariance of relatives](many-locus-variance-components-and-covariance-of.md)
+
+## Chiasma interference
+
+- [Gamma renewal model of chiasma interference](gamma-renewal-model-of-chiasma-interference/README.md)

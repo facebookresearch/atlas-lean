@@ -101,3 +101,8 @@
 - [The shrinkage error is orthogonal to the shrunk estimates](integral-sub-blup-score-mul-blup-score.md)
 - [The shrunk PRS is calibrated when its score term is nonzero](calib-slope-blup.md)
 - [Squared accuracy of the shrunk PRS](accuracy-sq-blup.md)
+
+## Penalized and interaction polygenic scores
+
+- [Cross-trait penalized polygenic regression](cross-trait-penalized-polygenic-regression/README.md)
+- [Polygenic scores for gene-by-exposure interaction](polygenic-scores-for-gene-by-exposure-interaction/README.md)

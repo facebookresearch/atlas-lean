@@ -42,3 +42,9 @@
 - [Coalescing random walks dual to the voter model on a finite graph](coalescing-random-walks-dual-to-the-voter-moran.md)
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
+
+## Ploidy, age structure and migration
+
+- [Autotetraploid coalescent](autotetraploid-coalescent/README.md)
+- [IBD sharing under migration](ibd-sharing-under-migration/README.md)
+- [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)

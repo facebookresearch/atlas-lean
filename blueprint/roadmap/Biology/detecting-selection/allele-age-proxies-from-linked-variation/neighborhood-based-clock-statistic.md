@@ -8,6 +8,13 @@ Larger $\mathrm{NC}$ indicates a younger allele: a rarer variant lying strictly 
 
 Applied this way, $\mathrm{NC}$ is a test for the Maruyama effect: under a constant-size diffusion model with genic selection and no dominance, the mean age and the sojourn-time density of an allele at a given frequency are symmetric in the sign of the selection coefficient, so deleterious alleles at a given frequency are on average younger than neutral alleles at that frequency, and the $\mathrm{NC}$ distributions of the two classes should differ even though their frequencies do not.
 
+## Depends on
+
+- [Four-gamete condition for two sites](../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/four-gametes.md)
+- [Haplotypes carrying an allele at a site](../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/carriers.md)
+- [Symmetry of the mean age in the selection coefficient](../../population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age-neg.md)
+- [The Maruyama effect](../../population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age-lt.md)
+
 ## Expansion
 
 Matching on allele count is essential, since age and frequency are strongly dependent: all comparisons are within a count class, for instance counts $2$ to $6$ in a sample of fully sequenced trios, where family-based phasing makes rare-variant haplotypes reliable. The statistic deliberately avoids absolute age estimation, which demands a demographic model and a recombination map; it is an ordinal clock, usable to compare classes of variants in the same dataset — synonymous against missense, or missense partitioned by a damage prediction — rather than to date a single mutation. Its power is concentrated on low-frequency derived alleles, because strongly deleterious variants rarely reach high frequency, so the theoretically larger age difference at high frequency cannot be exploited. The symmetry in the sign of the selection coefficient is a property of the constant-size diffusion only: in a growing population the mean ages of deleterious and advantageous alleles of the same frequency differ, and simulations show the deleterious-versus-neutral age gap persists, though attenuated, under recent expansion and under a bottleneck followed by expansion.

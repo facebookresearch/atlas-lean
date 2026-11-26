@@ -6,6 +6,14 @@
 
 **Estimator.** Because the TMRCAs on the two sides of a recombination are dependent (both exceed the recombination time, and the ancestral recombination graph allows the split lineages to re-coalesce), $H_S(d)$ has no closed form. Instead, simulate genomes under the coalescent with recombination with the population-size history inferred by PSMC (keeping the diversity $\theta = 4N\mu$ and setting the scaled recombination rate to $\theta r/\mu$), using a genetic map perturbed to match the real map's error, at several trial rates $\mu$; interpolate the observed $H_S(d)$ between the simulated curves and fit $\mu$ by variance-weighted least squares. The raw estimate is then corrected for false heterozygous calls (estimated from the CpG fraction of heterozygous sites), for non-crossover gene conversion, and for base composition.
 
+## Depends on
+
+- [Expected differences of a pair are θ times its mean coalescence time](../../coalescent-theory/pairwise-differences-under-poisson-mutation/integral-pair-diff-of-mutation.md)
+- [Pairwise sequentially Markov coalescents SMC and SMC′](../../coalescent-theory/two-locus-coalescent/sequentially-markov-coalescent-smc-smc-pairwise.md)
+- [Haldane's map function](../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
+- [Coalescent with recombination: ancestral-material state space and generator](../../coalescent-theory/two-locus-coalescent/coalescent-with-recombination-ancestral-material.md)
+- [Stationary-kernel discretization for pairwise SMC hidden Markov models](../../../ComputerScience/machine-learning/probabilistic-graphical-models/baum-welch-algorithm/pairwise-smc-hmm-psmc-discretized-tmrca-hidden-s.md)
+
 ## Expansion
 
 Applied to eight non-African genomes with starting points of $5$–$10$ heterozygous sites per $100$ kb ($H_S(0) \approx 7.4 \times 10^{-5}$, TMRCAs of roughly $1{,}500$–$3{,}100$ generations), the procedure gives $\mu = 1.61 \pm 0.13 \times 10^{-8}$ per base per generation, between pedigree-based and phylogenetic estimates. Low starting heterozygosity is chosen because the relaxation is then slower and of larger amplitude, hence less sensitive to map error. Map error is modelled by drawing the true genetic length $Z$ of each map interval of observed genetic length $g$ and physical length $p$ as $Z \sim \mathrm{Gamma}(\alpha \gamma (g + \pi p), \alpha)$, a gamma error model with a pseudo-count $\pi$ that keeps zero-length intervals from staying exactly zero and a constant $\gamma < 1$ that preserves total map length; $1/\alpha$ is the genetic length at which the map's coefficient of variation is $1$.

@@ -14,6 +14,10 @@ $$G_m = \frac{R(\alpha_p^2 + \alpha_m^2) - (\alpha_p^1 + \alpha_m^1)}{\gamma(\be
 
 whenever the denominator is nonzero. A change in generation time alone moves all ratios along one curve in $(G_p, G_m)$; observed ratios of different mutation types that imply incompatible ages, or ages outside a plausible human range, cannot be explained by generation-time change alone.
 
+## Depends on
+
+- [Mean of the Poisson distribution](../../population-genetics/haldane-s-survival-probability-of-a-beneficial-m/mean-poisson-measure.md)
+
 ## Expansion
 
 Cross-multiplying the ratio equation by its positive denominator gives the linear constraint, a line in the $(G_p, G_m)$ plane, and intersecting with the ray $G_p = \gamma G_m$ gives the closed form. Each pairwise ratio is a monotone function of the ages along any such ray, so its observed value pins down one age. Gao et al. estimated the parental-age effects from de novo mutations in Icelandic trios (for example, if both parents reproduce at $40$ rather than $20$ years, the non-CpG C>T/C>A and non-TpG T>C/T>G ratios fall by $9.4\%$ and $7.5\%$ while C>G/T>A rises by $11.9\%$), took ratios of polymorphisms in age bins of the 1000 Genomes CEU sample, and solved these equations for $\gamma \in \{0.8, 1, 1.1, 1.2\}$, propagating uncertainty by bootstrap resampling of trios. The implied ages were mutually inconsistent across mutation types: the T>C/T>G ratio required generation times above $40$ years, while the peak of the C>T/C>A ratio around $238$–$887$ generations ago required average reproductive ages below $20$ years. They conclude that plausible changes in generation time cannot jointly explain the evolution of the human mutation spectrum, leaving a role for genetic modifiers or environmental exposures.

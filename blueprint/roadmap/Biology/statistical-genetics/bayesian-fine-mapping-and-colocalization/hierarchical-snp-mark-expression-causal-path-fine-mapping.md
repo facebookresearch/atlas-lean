@@ -25,6 +25,11 @@ from which credible sets of SNPs, of marks, and of whole SNP→mark→gene paths
 ## Depends on
 
 - [Credible set of variants](is-credible-set.md)
+- [Bayes posterior](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/bayes-posterior.md): the path posterior
+
+## Proof depends on
+
+- [The marginal of a linear-Gaussian model](../../../Probability/distributions/continuous/gaussian-conditioning/map-linear-add-of-indep-fun.md): integrating out the mark effect
 
 ## Expansion
 

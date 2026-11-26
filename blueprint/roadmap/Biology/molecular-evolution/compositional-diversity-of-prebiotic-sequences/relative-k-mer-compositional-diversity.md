@@ -14,6 +14,15 @@ For a pool of molecules in which unique sequence $i$ makes up the fraction $n_i$
 2. $H_k^{\max}(L)\le\log_2\min\bigl(a^k,\,L-k+1\bigr)$, with equality when $L-k+1\le a^k$, attained by a sequence whose windows are all distinct (a prefix of a de Bruijn sequence of order $k$).
 3. $D=0$ exactly when all molecules are identical, and $D$ is maximal, $\log_2N$, when the $N$ unique sequences are equally abundant.
 
+## Depends on
+
+- [Shannon entropy](../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md)
+
+## Proof depends on
+
+- [A point mass has zero entropy](../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy-pure.md)
+- [Gibbs' inequality](../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy-le-cross-entropy.md)
+
 ## Expansion
 
 Items 1 and 3 are the zero and maximum cases of Shannon entropy. For item 2, entropy is at most the logarithm of the support size, and the support of the window distribution has at most $a^k$ elements and at most $L-k+1$ windows. A de Bruijn sequence of order $k$ contains each $k$-mer exactly once as a cyclic window, so its linear prefixes of length up to $a^k+k-1$ have all windows distinct. The source defines $H_k^{\max}$ only as the maximum possible value and compares $C_k$ only between sequences of equal length; item 2 is supplied here. For $k>1$, $H_k$ distinguishes regular sequences that $H_1$ misses: an alternating binary sequence has maximal $H_1$ but $H_2$ near one bit rather than two.

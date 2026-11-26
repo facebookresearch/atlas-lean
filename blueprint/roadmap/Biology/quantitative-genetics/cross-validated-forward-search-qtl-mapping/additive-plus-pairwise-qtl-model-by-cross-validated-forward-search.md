@@ -10,6 +10,10 @@ fitted by least squares. The model is selected by an L0-penalized forward search
 2. **Pairwise stage.** Restricting candidates to pairs of loci already in the additive model, run the same forward search over interaction terms, re-optimizing $\beta$ and $\gamma$ at each step, with a second L0 penalty on $|P|$ chosen by cross-validation.
 3. **Localization.** For each lead SNP, report a Bayesian $95\%$ credible interval for the causal position rather than a LOD-drop interval.
 
+## Depends on
+
+- [Ordinary least-squares estimator](../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md)
+
 ## Expansion
 
 Classical forward stepwise regression adds SNPs while a $p$-value or LOD score exceeds a genome-wide threshold, but the selected statistics do not follow their nominal $F$ or $\chi^2$ laws after selection, so the procedure produces false positives, especially at large sample size and under strong linkage. Terminating by held-out prediction instead adds a QTL only when its expected contribution to phenotypic variance exceeds the bias and variance introduced by the greedy search, which shrink as $N$ grows; the procedure therefore tends to miss loci of very small effect rather than invent loci. Restricting interactions to additive loci loses little, because a pair with an interaction but no main effects still produces background-averaged marginal associations at each locus, which bring both loci into the additive model; the spurious additive effects then shrink once the interaction term is added. Applied to about $100{,}000$ barcoded yeast segregants phenotyped in $18$ environments by bulk barcode sequencing, the method resolves highly polygenic architectures with hundreds of pairwise interactions per trait.

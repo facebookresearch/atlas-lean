@@ -24,6 +24,7 @@ A significant $\gamma$ shows that alleles which predict the trait today trended 
 
 - [Logit-linear mixed-model test for directional selection](logit-linear-mixed-model-test-for-directional-selection.md)
 - [Genetic relationship matrix entry](../../quantitative-genetics/genomic-relationship-matrices/grm.md)
+- [Variance components of the linear mixed model](../../statistical-genetics/bolt-lmm-mixed-model-association/model.md)
 
 ## Expansion
 

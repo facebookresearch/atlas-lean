@@ -16,6 +16,11 @@ Whether this bound is exponential depends on how $m$ grows with $L$, and even ex
 
 - [Polynomial–exponential dichotomy for discovering a broad peak](polynomial-exponential-dichotomy-for-discovering-a-broad-peak.md)
 
+## Proof depends on
+
+- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Countable subadditivity of a measure](../../../MeasureTheory/measures/measures-and-countable-additivity/measures/measure-i-union-le.md)
+
 ## Expansion
 
 Parallel searches: if the expected discovery time of one search is exponential, the probability that it succeeds within polynomially many steps is negligible, and independence makes the probability that all searches fail the product of the individual failure probabilities. Random peaks: without selection the walk on all $4^L$ sequences moves to each of the $3L$ neighbors with probability $1/(3L)$ per mutation and mixes in $O(L\log L)$ steps to the uniform distribution. By the single-peak lower bound and a union bound over the $m$ centers, the target is reached within the first $O(L\log L)$ steps with negligible probability. After mixing, each step is essentially a uniform draw from sequence space, and Hoeffding's inequality bounds the fraction of sequences within distance $cL$ of any center, so on the order of $\exp(2(3/4 - c)^2 L)/m$ steps are needed before a target sequence is found.

@@ -6,13 +6,13 @@ $$\alpha(w) = \frac{\sum_{e \in S_1} \Psi_{e,w}}{\sum_{w' \in W} \sum_{e \in S_1
 
 for every mutation $e$ of the region, including those outside $S_1$. Mutations are ranked by iSAFE. When the favored allele is near fixation (derived frequency $D_T > 0.9$ in the target population) and its maximum difference in derived allele frequency $\mathrm{MDDAF} = D_T - \min D_{NT}$ over non-target populations exceeds a calibrated cutoff ($0.78$ for human demography), outgroup haplotypes are added to make up $10\%$ of the sample so that the frequency is no longer at the boundary.
 
-## Expansion
-
-Recombination gives different windows different genealogies. Inserted into a window whose genealogy matches its own, the favored mutation separates the window's carrier haplotypes (with elevated HAF scores) from non-carriers and gets a high SAFE score; a non-favored mutation inserted into an unrelated window does not. Windows in the sweep's shoulders, which share the favored mutation's genealogy, therefore receive high weights $\alpha(w)$, and summing $\Psi_{e,w}$ with these weights lets the shoulders vote for the favored mutation instead of diluting it. Since $\alpha$ sums to one, iSAFE scores are normalized and comparable across samples, but they are not derived from a likelihood, so significance is assessed against neutral simulations. On simulated $5$ Mb regions under a human demographic model the favored mutation was ranked within the top $20$ in $94\%$ of cases, versus $35\%$ for the composite of multiple signals (CMS).
-
 ## Depends on
 
 - [SAFE score from haplotype allele frequency scores](safe-score-from-haplotype-allele-frequency-scores.md)
+
+## Expansion
+
+Recombination gives different windows different genealogies. Inserted into a window whose genealogy matches its own, the favored mutation separates the window's carrier haplotypes (with elevated HAF scores) from non-carriers and gets a high SAFE score; a non-favored mutation inserted into an unrelated window does not. Windows in the sweep's shoulders, which share the favored mutation's genealogy, therefore receive high weights $\alpha(w)$, and summing $\Psi_{e,w}$ with these weights lets the shoulders vote for the favored mutation instead of diluting it. Since $\alpha$ sums to one, iSAFE scores are normalized and comparable across samples, but they are not derived from a likelihood, so significance is assessed against neutral simulations. On simulated $5$ Mb regions under a human demographic model the favored mutation was ranked within the top $20$ in $94\%$ of cases, versus $35\%$ for the composite of multiple signals (CMS).
 
 ## Sources
 

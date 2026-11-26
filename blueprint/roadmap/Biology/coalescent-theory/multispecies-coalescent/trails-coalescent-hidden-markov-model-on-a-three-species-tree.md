@@ -22,6 +22,9 @@ equivalently $\tfrac23 e^{-t_2/(2N)}$ for $N$ diploid individuals; each discorda
 
 - [Probability of the discordant three-species gene tree with cherry $\{0, 2\}$](gene-tree-prob-triple-cherry-02.md)
 - [Three-species concordance](gene-tree-prob-triple-matching.md)
+- [The multispecies coalescent](gene-tree-prob.md)
+- [Coalescent with recombination: ancestral-material state space and generator](../two-locus-coalescent/coalescent-with-recombination-ancestral-material.md)
+- [Jukes–Cantor transition probability](../../phylogenetics/jukes-cantor-model/jc-prob.md)
 
 ## Expansion
 

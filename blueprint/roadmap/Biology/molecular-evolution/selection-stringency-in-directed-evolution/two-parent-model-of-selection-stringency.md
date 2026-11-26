@@ -10,6 +10,16 @@ so the $i$-th draw from the same DFE raises the expected maximum by only $1/(\la
 
 **Consequences.** If $\lambda_{\mathrm{low}} = \lambda_{\mathrm{high}}$ deterministically, $n_{\mathrm{low}} = 0$ maximizes $M$. With random, independently drawn rates, the less-fit parent's DFE is sometimes more favorable, and because extra draws from the fitter parent's DFE yield only harmonic gains, spending some of the budget on a second DFE can raise the typical maximum despite the $\Delta x$ handicap. The optimal $n_{\mathrm{low}}$ increases with the DFE heterogeneity relative to $\Delta x$ and with the budget $n$, and never exceeds $n/2$ because each parent is equally likely to have the better DFE. Diversification is further favored with more parents, more rounds, and inherited changes in DFEs.
 
+## Depends on
+
+- [Mean of the exponential law](../../../Probability/distributions/continuous/exponential-distribution/integral-id-exp-measure.md)
+- [Harmonic numbers](../../coalescent-theory/fu-s-branch-length-covariances-for-every-sample/harm.md)
+
+## Proof depends on
+
+- [Competing exponential clocks](../../../Probability/distributions/continuous/exponential-distribution/competing-exponential-clocks.md)
+- [The memoryless property characterizes the exponential law](../../../Probability/distributions/continuous/exponential-distribution/memoryless-property-characterizes-the-exponential-law.md)
+
 ## Expansion
 
 The Rényi representation writes the order statistics of $m$ exponentials as partial sums of independent exponentials with rates $m\lambda, (m-1)\lambda, \dots, \lambda$, so $\max = \sum_{i=1}^m E_i/(i\lambda)$ with $E_i \sim \mathrm{Exp}(1)$, giving the harmonic expectation. Averaged over random rates $\lambda$ the expectation of $M$ can diverge (small $\lambda$ gives heavy tails), so comparisons across $n_{\mathrm{low}}$ are made on $\mathbb E[\log M]$ by simulation. The multi-parent version selects the fittest variant plus $k - 1$ others and splits the $n$ mutants equally; the inheritance version lets each mutant keep its parent's DFE scale except, with some probability, a fixed decrement, and iterates selection of the top $k$ over rounds.

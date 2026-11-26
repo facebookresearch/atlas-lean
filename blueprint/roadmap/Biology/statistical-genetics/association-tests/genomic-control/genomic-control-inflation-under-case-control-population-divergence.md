@@ -28,6 +28,10 @@ and dividing every statistic by $\lambda$ restores a $\chi^2_1$ null distributio
 - [Common-inflation model of Gaussian null scores](common-inflation-model.md)
 - [Wright's hierarchical F-statistics identity](../../../population-structure/wright-s-f-statistics/hierarchical-f-statistics.md)
 
+## Proof depends on
+
+- [The square of a standard normal variable is chi-square with one degree of freedom](../../../../Probability/distributions/continuous/chi-square-distribution/gaussian-real-map-sq.md): the squared Gaussian frequency difference
+
 ## Expansion
 
 Code case status as $y \in \{0,1\}$ with half the sample cases and the genotype as $g \in \{0,1,2\}$. Then $\operatorname{Cov}(g,y) = \tfrac14\bigl(2p_1 - 2p_2\bigr) = (p_1-p_2)/2$, $\operatorname{Var}(y) = 1/4$ and, under Hardy–Weinberg proportions and ignoring the small between-group term, $\operatorname{Var}(g) \approx 2p(1-p)$, which gives the formula for $r^2$. Substituting the Gaussian law of $p_1 - p_2$ gives $\chi^2_{CA} = N(p_1-p_2)^2/(2p(1-p))$ distributed as $\tfrac{N}{2}\bigl(2F_{ST} + \tfrac{2}{N}\bigr)\chi^2_1 = (1+NF_{ST})\chi^2_1$. The factor is the same for every marker, so the null scores follow the common-inflation model with $\lambda = 1 + NF_{ST}$.

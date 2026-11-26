@@ -6,6 +6,11 @@ $$N_e \mu = \frac{N_e}{m}\,(\mu m),$$
 
 so a simulation of $N_e/m$ individuals with mutation rate $\mu m$ has the same expected number of new mutations per generation as the original. The same rescaling is applied to the selection coefficients, so the scaled parameters $N_e \mu$ and $N_e s$ are both preserved.
 
+## Depends on
+
+- [Wright–Fisher diffusion limit, generator form](../../population-genetics/diffusion-theory/diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md)
+- [Generator of the Wright–Fisher diffusion with selection and mutation](../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/selection-mutation-generator.md)
+
 ## Expansion
 
 The diffusion limit of the Wright–Fisher model depends on the parameters only through the products $N_e \mu$ and $N_e s$, with time measured in units of $N_e$ generations, so two parameter sets with the same products describe the same process up to a time rescaling by $m$: the smaller population reaches the same states in $1/m$ as many generations, which is what makes the rescaled simulation cheaper. The approximation fails when the rescaled rates leave the regime where the diffusion applies, that is when $\mu m$ ceases to be small so that multiple mutations per site per generation become common, or when $N_e/m$ is small enough that events of order $1/N_e$ matter; in the reported use, $m = 10^3$ with $N_e = 10^4$ and per-site rates from a normalized mutation matrix for the parasite kept the qualitative dynamics of the unscaled runs.

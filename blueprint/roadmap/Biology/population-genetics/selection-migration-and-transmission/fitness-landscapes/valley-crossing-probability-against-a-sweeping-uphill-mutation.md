@@ -17,6 +17,8 @@ $$P_{v,1} = \begin{cases} \dfrac{\lambda_v}{\lambda_v + \lambda_u} e^{-\lambda_u
 ## Depends on
 
 - [Greedy adaptation versus valley crossing in the sequential-fixation regime](greedy-adaptation-versus-valley-crossing-in-the-sequential-fixation-regime.md)
+- [Logistic trajectory of a selective sweep](../../../detecting-selection/selective-sweeps/sweep-traj.md)
+- [Inhomogeneous Poisson processes by a deterministic time change](../../../../Probability/point-processes/poisson-processes/inhomogeneous-poisson-processes-by-deterministic.md)
 
 ## Expansion
 

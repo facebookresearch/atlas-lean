@@ -29,7 +29,7 @@ which is maximized by stochastic gradient ascent. The fitted posterior mean give
 ## Depends on
 
 - [Mean-field evidence lower bound](elbo.md)
-- [Two-Gaussian mixture prior on a SNP effect](mixture-prior.md)
+- [Two-Gaussian mixture prior on a SNP effect](mixture-prior.md): with $v_2 = 0$
 
 ## Expansion
 

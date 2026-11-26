@@ -18,7 +18,9 @@ where $p_v = -\delta_i + \sqrt{\delta_i^2 + 4 \mu_v s_v}$ is the probability tha
 
 ## Depends on
 
-- [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
+- [Kimura's fixation probability](../../diffusion-theory/wright-fisher-diffusion/kimura-fixation.md)
+- [Haldane's 2s approximation holds in the joint regime](../../diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/tendsto-kimura-fixation-div-two-mul.md)
+- [Absorption probabilities and mean times of a finite Markov chain](../../../../Probability/markov-chains/finite-markov-chains/absorption-probabilities-and-mean-absorption-tim.md)
 
 ## Expansion
 

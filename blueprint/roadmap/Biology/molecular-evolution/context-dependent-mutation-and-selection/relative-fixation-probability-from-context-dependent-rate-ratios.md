@@ -12,13 +12,14 @@ $$I_{\mathrm{div}} = I_\mu \cdot \frac{u_{\mathrm{CpG}}}{u_{\neg\mathrm{CpG}}}, 
 
 If selection on a replacement does not depend on its mutational context then $u_{\mathrm{CpG}} = u_{\neg\mathrm{CpG}}$ and $I_{\mathrm{div}} = I_\mu$; a ratio $I_{\mathrm{div}} / I_\mu < 1$ means that mutations in the hypermutable context are fixed less often, i.e. face stronger purifying selection. The analogous ratio $I_{\mathrm{poly}}/I_\mu$ measures the relative chance that a new mutation is observed as a polymorphism.
 
-## Expansion
-
-The factor $2N$ cancels in the ratio, so the comparison needs no estimate of population size, only target counts and substitution counts for the same replacement in the two contexts. For human–chimpanzee non-synonymous transitions, $I_{\mathrm{div}} \approx 7.1$ against $I_\mu \approx 14.5$, giving $u_{\mathrm{CpG}}/u_{\neg\mathrm{CpG}} \approx 0.49$; for human non-synonymous SNPs, $I_{\mathrm{poly}} \approx 11.2$, a ratio of about $0.77$. Neutral non-coding sites give $I_{\mathrm{div}}$ close to $I_\mu$, as expected. The stronger effect on divergence than on polymorphism indicates that the extra selection acts mostly as weak selection, which prevents fixation more than it prevents segregation. A proposed explanation is that sites not under strong selection lose their hypermutable contexts over time, so surviving CpG contexts are enriched at constrained sites.
-
 ## Depends on
 
 - [Selected origination flux and its weak-selection scaling function](../substitution-rate-with-selection.md)
+- [Weak-mutation limit justifies the origination–fixation chain](../origination-fixation-dynamics/weak-mutation-limit-justifies-the-origination-fi.md)
+
+## Expansion
+
+The factor $2N$ cancels in the ratio, so the comparison needs no estimate of population size, only target counts and substitution counts for the same replacement in the two contexts. For human–chimpanzee non-synonymous transitions, $I_{\mathrm{div}} \approx 7.1$ against $I_\mu \approx 14.5$, giving $u_{\mathrm{CpG}}/u_{\neg\mathrm{CpG}} \approx 0.49$; for human non-synonymous SNPs, $I_{\mathrm{poly}} \approx 11.2$, a ratio of about $0.77$. Neutral non-coding sites give $I_{\mathrm{div}}$ close to $I_\mu$, as expected. The stronger effect on divergence than on polymorphism indicates that the extra selection acts mostly as weak selection, which prevents fixation more than it prevents segregation. A proposed explanation is that sites not under strong selection lose their hypermutable contexts over time, so surviving CpG contexts are enriched at constrained sites.
 
 ## Sources
 

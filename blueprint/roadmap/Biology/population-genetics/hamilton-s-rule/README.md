@@ -17,3 +17,8 @@
 - [Zero variance gives zero covariance with every function](pop-cov-eq-zero-of-pop-cov-self-eq-zero.md)
 - [With zero trait variance the response is the transmission term alone](price-of-pop-cov-self-eq-zero.md)
 - [A constant transmission bias contributes its size times mean fitness](transmission-add-const.md)
+
+## Social evolution in haplodiploid colonies
+
+- [Non-reproductive workers in haplodiploid colonies](non-reproductive-workers-in-haplodiploid-colonies/README.md)
+- [Queen control in haplodiploid colonies](queen-control-in-haplodiploid-colonies/README.md)

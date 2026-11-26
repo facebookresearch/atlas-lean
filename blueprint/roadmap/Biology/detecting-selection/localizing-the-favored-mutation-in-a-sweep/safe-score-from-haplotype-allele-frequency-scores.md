@@ -12,6 +12,10 @@ and the **SAFE score** (Selection of Allele Favored by Evolution)
 
 $$\mathrm{SAFE}(e) = \frac{\phi(e) - \kappa(e)}{\sqrt{f(e)\,(1 - f(e))}} \qquad (0 < f(e) < 1).$$
 
+## Depends on
+
+- [Haplotypes carrying an allele at a site](../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/carriers.md)
+
 ## Expansion
 
 Under neutral Wright–Fisher evolution both $\kappa(e)$ and $\phi(e)$ behave as estimators of $f(e)$, and in simulations $\phi - \kappa$ has mean zero and variance proportional to $f(1 - f)$, so SAFE is a standardized, approximately Gaussian score under neutrality; these are empirical properties, not theorems. During a sweep, carriers of the favored allele accumulate high HAF scores (their mutations rise in frequency together), which raises $\phi$ for the favored mutation, while the sweep collapses carrier diversity, which lowers $\kappa$. The favored mutation therefore gets a large positive $\phi - \kappa$; mutations private to non-carriers move the other way (higher $\kappa$, lower $\phi$), and mutations older or younger than the favored one on carrier backgrounds fall in between. In simulated sweeps the favored mutation has median SAFE rank at most $3$ among about $250$ variants in a $50$ kb window, but performance degrades for larger windows, where most haplotypes become unique and $\kappa$ loses information.

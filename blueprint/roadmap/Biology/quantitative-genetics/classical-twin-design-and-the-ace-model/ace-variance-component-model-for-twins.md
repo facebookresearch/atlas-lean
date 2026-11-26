@@ -6,8 +6,7 @@ $$y_{ij} = a\,A_{ij} + c\,C_i + e\,E_{ij},$$
 
 with $A_{ij}$ the additive genetic value, $C_i$ the environment shared by family members, $E_{ij}$ the nonshared environment (measurement error included), all three standard normal, mutually independent, and $C$ constant within a family. Under random mating, no gene–environment correlation or interaction, and the equal-environments assumption (shared environment acts alike on monozygotic and dizygotic pairs),
 
-$$\operatorname{Var} y = a^2 + c^2 + e^2, \qquad
-\operatorname{Cor}(y_{i1}, y_{i2}) = \begin{cases} a^2 + c^2, & \text{monozygotic pair},\\[2pt] \tfrac12 a^2 + c^2, & \text{dizygotic pair or full siblings}.\end{cases}$$
+$$\operatorname{Var} y = a^2 + c^2 + e^2, \qquad \operatorname{Cor}(y_{i1}, y_{i2}) = \begin{cases} a^2 + c^2, & \text{monozygotic pair},\\[2pt] \tfrac12 a^2 + c^2, & \text{dizygotic pair or full siblings}.\end{cases}$$
 
 **Identification.** With the phenotypic variance scaled to one, so $a^2 + c^2 + e^2 = 1$, the two correlations $r_{MZ}$ and $r_{DZ}$ determine the three parameters:
 
@@ -20,7 +19,8 @@ the narrow-sense heritability being $h^2 = a^2$. The parameters are admissible o
 ## Depends on
 
 - [Falconer's estimator](../covariance-between-relatives/falconer.md)
-- [Half-sib covariance is a quarter of the additive variance](../fisher-s-decomposition-of-genetic-variance/cov-half-sibs-eq.md)
+- [Full-sib covariance in terms of variance components](../fisher-s-decomposition-of-genetic-variance/cov-full-sibs-eq.md)
+- [Log-density of the multivariate Gaussian](../../../Probability/linear-models-multivariate/gaussian-maximum-likelihood/log-multivariate-gaussian-pdfreal.md)
 
 ## Expansion
 
