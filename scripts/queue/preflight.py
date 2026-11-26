@@ -29,12 +29,15 @@ merged. Each removal restarts every build behind it. The checks, in order:
    - Codex posts that review as github-actions on the commit, a login that every workflow shares. So
      the Codex run that posted it must also print the review's id in its codex-verdict job, as
      codex.yml has it do.
-   - For an automatic review, that job is a check on the head. For a review that a `@codex` comment
-     asked for, or a fork's automatic review (a pull_request_target run), the run's checks attach to
-     another commit, so it is looked up among the runs of that event.
+   - For an automatic review, that job is a check on the head, in a run that GitHub lists with this
+     pull request against main alone. For a review that a `@codex` comment in the conversation asked
+     for, or a fork's automatic review (a pull_request_target run), the run's checks attach to another
+     commit, so it is looked up among the runs of that event. A `@codex` comment on a line of the diff
+     never counts: its run uses the workflow of whichever pull request the comment is on, and GitHub
+     lists no pull request for it.
    - When the pull request changes codex.yml, only a run that used main's workflow counts: a fork's
-     automatic run, or the run of a `@codex` comment in the conversation. A comment on a line of the
-     diff, like a same-repository automatic run, uses the changed workflow.
+     automatic run, or the run of a `@codex` comment in the conversation. A same-repository automatic
+     run uses the changed workflow.
    - No other reviewer's latest review may request changes.
 3. Required checks: every check that main's rules require passed on the head, in its latest run,
    reported by the app the rules name. Advisory checks are never waited for; a failed one is a
@@ -59,7 +62,9 @@ merged. Each removal restarts every build behind it. The checks, in order:
      declarations count.
    - It reads the merge onto the whole queue. If the pull request conflicts with an entry, it reads
      the merge onto the entries ahead of that one. It also reads the merges onto the queue without
-     the blockers of left-out entries (see 5).
+     the blockers of left-out entries (see 5). If it conflicts with main, there is no merged tree to
+     read: the check fails as not done, never as a pass. If it conflicts with an entry, that entry
+     and those behind it are not compared: the check fails as incomplete.
    - Reading merged trees covers what the merge does to the other side's files, such as a rename or
      a changed namespace.
    - Names that Lean generates count too: the fields, constructor and `toParent` projections of a
@@ -69,9 +74,28 @@ merged. Each removal restarts every build behind it. The checks, in order:
      anonymous instances of one class in one namespace count as a possible collision. The names that
      `@[to_additive]` without a name, `@[simps]` and similar attributes generate cannot be predicted:
      they leave the check incomplete.
+   - Known limitation: the instances that `deriving` generates are not compared (see declarations).
+     Lean names them from the elaborated terms; a clash there is rare, and the merge group's build
+     reports it.
    - CI imports those libraries together, so a name declared twice fails the merge group that
      brings in the second. The CI run's own build already compared the head with main up to its
      base.
+7. The code behind the required checks: every file that is not data (see is_check_code). A pull
+   request that changes one, or this script, needs a maintainer's hand check: the checks may run or
+   read it, and its runs used its own copy. A run that used other code than main has, or than a
+   queued pull request ahead brings, is stale (part of 4). The content listed in DATA (the taxonomy,
+   the wiki and mathgraph maps, the card-move ledger, provenance records, the blueprint's pages and
+   links), documentation and Lean modules are data: the merge group checks them with the rest, so a
+   change to them, by the pull request, on main or in the queue, counts for neither. Nothing is
+   traced, and anything unlisted counts as code: it fails closed.
+
+--only CHECKS runs the state check and the named ones alone (codex, checks, freshness, conflicts,
+duplicates, workflows, and heavy-rebuild for that warning), reading only what they need. `--only
+conflicts` reads the pull request and the queue in one GraphQL request, plus the sizes of any files
+a cold clone must download. The duplicate check also reads the head's check runs and its CI run, and
+once per job its checkout log, which is kept: which names a merge gives that CI did not build
+depends on the main its passing build merged it into, so without that it fails. A partial verdict
+covers its checks, never says to queue, and --enqueue refuses it.
 
 Evidence that cannot be read never passes. That covers the CI run's log, main's rules, a queue of
 more than 500 entries, more than ten pages of reviews or checks, and a main that changed more than
@@ -107,7 +131,11 @@ either changed. Runs on different machines can still race in the seconds between
 enqueue.
 
 It needs git 2.45 or later and network access to github.com; set https_proxy if your network needs a
-proxy. A check reads about a dozen API endpoints.
+proxy. A full check makes about 15 requests to GitHub's API, --only conflicts one, and --only
+duplicates,conflicts three once its CI log is kept (five before), plus the sizes of files a cold
+clone downloads; it prints how many. Beside the clone, a cache keeps what cannot change between runs (blob sizes, the
+merge of two commits, so the merges of main and the queue ahead serve every run until either moves)
+and main's rules for 10 minutes, which --enqueue reads again.
 """
 from __future__ import annotations
 
@@ -152,6 +180,10 @@ DEFAULT_MAX_AGE_HOURS = 6.0
 HEAVY_BUILD_MINUTES = 45
 HEAVY_BUILD_FACTOR = 3
 BUILD_SAMPLE = 20
+# The checks that --only can select. `state` always runs: the others mean nothing for a closed or queued
+# pull request. `heavy-rebuild` is the advisory warning about a long CI run.
+CHECKS = ("codex", "checks", "freshness", "conflicts", "duplicates", "workflows", "heavy-rebuild")
+RULES_TTL = 600  # seconds that main's rules are kept between runs, except before an enqueue
 DEFAULT_MAX_FILES = 50
 MAX_QUEUE_PAGES = 5  # of 100 entries
 MAX_MAIN_CHANGES = 3000
@@ -272,7 +304,9 @@ class GitHub:
     def __init__(self, token: str, repo: str = REPO):
         self.token = token
         self.repo = repo
-        self.calls = 0
+        self.calls = 0  # requests sent, GraphQL ones included
+        self.graphql_calls = 0
+        self.read_once: dict[str, object] = {}  # a workflow run or job, read once per run (see get)
         self.opener = urllib.request.build_opener()
 
     def _open(self, method: str, url: str, body: dict | None = None, attempts: int = 3):
@@ -286,6 +320,7 @@ class GitHub:
             if data is not None:
                 request.add_header("Content-Type", "application/json")
             self.calls += 1
+            self.graphql_calls += url == API + "/graphql"
             try:
                 return self.opener.open(request, timeout=60)
             except urllib.error.HTTPError as error:
@@ -306,10 +341,16 @@ class GitHub:
         raise AssertionError("unreachable")
 
     def get(self, path: str):
+        if path in self.read_once:  # the provenance check, the CI run and the timing read the same runs
+            return self.read_once[path]
         with self._open("GET", API + path) as response:
-            return json.load(response)
+            value = json.load(response)
+        if _READ_ONCE.match(path):
+            self.read_once[path] = value
+        return value
 
-    def paged(self, path: str, key: str | None = None, max_pages: int = 10) -> list:
+    def paged(self, path: str, key: str | None = None, max_pages: int = 10, stop=None) -> list:
+        """Every page of a list, or the pages up to the first for which `stop(items)` is true."""
         items: list = []
         url = API + path + ("&" if "?" in path else "?") + "per_page=100"
         for _ in range(max_pages):
@@ -318,7 +359,7 @@ class GitHub:
                 link = response.headers.get("Link") or ""
             items.extend(page[key] if key else page)
             found = re.search(r'<([^>]+)>;\s*rel="next"', link)
-            if not found:
+            if not found or (stop and stop(page[key] if key else page)):
                 return items
             url = found.group(1)
         raise Failure(f"GET {path}: more than {max_pages} pages")
@@ -345,11 +386,17 @@ class GitHub:
         return None
 
 
+_READ_ONCE = re.compile(r"^/repos/[^/]+/[^/]+/actions/(?:runs|jobs)/\d+$")
+
 QUEUE_QUERY = """
 query($owner: String!, $name: String!, $branch: String!, $qualified: String!, $number: Int!, $after: String) {
   repository(owner: $owner, name: $name) {
     ref(qualifiedName: $qualified) { target { oid } }
-    pullRequest(number: $number) { mergeQueueEntry { position state enqueuedAt } }
+    pullRequest(number: $number) {
+      headRefOid baseRefName state isDraft mergeable mergeStateStatus title id changedFiles
+      isCrossRepository headRepository { nameWithOwner }
+      mergeQueueEntry { position state enqueuedAt }
+    }
     mergeQueue(branch: $branch) {
       entries(first: 100, after: $after) {
         totalCount
@@ -376,42 +423,69 @@ def graphql_data(answer: dict, what: str) -> dict:
     return answer.get("data") or {}
 
 
-def get_pull(gh: GitHub, number: int, waits: tuple[float, ...] = (2, 4, 8)) -> dict:
-    pr = gh.get(f"/repos/{gh.repo}/pulls/{number}")
-    for wait in waits:
-        if pr.get("state") != "open" or pr.get("mergeable") is not None:
-            break
-        time.sleep(wait)  # GitHub computes mergeability after the first read
-        pr = gh.get(f"/repos/{gh.repo}/pulls/{number}")
-    return pr
+def pull_facts(number: int, repo: str, pull: dict | None) -> dict:
+    """The facts about the pull request itself, from QUEUE_QUERY's `pullRequest`."""
+    if not pull or not pull.get("headRefOid"):
+        raise Failure(f"pull request #{number} was not found")
+    head_repo = (pull.get("headRepository") or {}).get("nameWithOwner")  # none when the fork is gone
+    return {"pr": number, "repo": repo, "head": pull["headRefOid"], "node_id": pull.get("id"),
+            "title": pull.get("title"), "state": str(pull.get("state") or "").lower(),  # open, closed or merged
+            "draft": pull.get("isDraft"), "base": pull.get("baseRefName"),
+            "fork": bool(pull.get("isCrossRepository")) or head_repo != repo,
+            "mergeable": {"MERGEABLE": True, "CONFLICTING": False}.get(pull.get("mergeable")),
+            "mergeable_state": str(pull.get("mergeStateStatus") or "unknown").lower(),
+            "changed_files": pull.get("changedFiles")}
+
+
+# What one snapshot of the pull request keeps on every page of a read, and from one read to the next: the
+# facts that pull_facts makes its head, base, state, draft status, mergeability and fork of.
+_PULL_SNAPSHOT = ("headRefOid", "baseRefName", "state", "isDraft", "mergeable", "mergeStateStatus", "isCrossRepository")
+
+
+def _pull_key(pull: dict | None) -> str:
+    """The pull request as one snapshot must keep it: see _PULL_SNAPSHOT, and its own queue entry."""
+    pull = pull or {}
+    return json.dumps([[pull.get(field) for field in _PULL_SNAPSHOT],
+                       (pull.get("headRepository") or {}).get("nameWithOwner"), pull.get("mergeQueueEntry")],
+                      sort_keys=True)
 
 
 def get_queue(gh: GitHub, branch: str, number: int) -> dict:
-    """The queue in order, this pull request's own entry if any, and the branch's tip, as one snapshot:
-    the same in two complete reads."""
+    """The queue in order, this pull request's own entry if any, the branch's tip, and the pull request
+    itself (`pull`, see pull_facts), as one snapshot. One page is one answer. A longer queue must read
+    the same twice in a row, entry for entry and the pull request's facts (see _PULL_SNAPSHOT) too,
+    since pages read apart may mix two states; and each read keeps those facts on every page."""
     previous = None
-    for _ in range(5):  # two complete reads that agree, entry for entry: pages read apart may mix two states
+    for _ in range(5):
         snapshot = _read_queue(gh, branch, number)
-        key = snapshot and json.dumps([snapshot["main"], snapshot.get("own"),
+        if snapshot and snapshot.pop("pages") == 1:
+            return snapshot
+        key = snapshot and json.dumps([snapshot["main"], snapshot.get("own"), _pull_key(snapshot.get("pull")),
                                        [(e["number"], e["head"], e.get("position")) for e in snapshot["entries"]]],
                                       sort_keys=True)
         if key and key == previous:
             return snapshot
         previous = key
-    raise Failure("the merge queue changed while it was read; run preflight again")
+    raise Failure("the merge queue or the pull request changed while it was read; run preflight again")
 
 
 def _read_queue(gh: GitHub, branch: str, number: int) -> dict | None:
-    """One read of the queue, page by page; None if the pages disagree (the branch's tip, the count) or
-    the entries are not one queue (positions 1 to n, each pull request once)."""
+    """One read of the queue, page by page; None if the pages disagree (the branch's tip, the count, the
+    pull request's facts, see _PULL_SNAPSHOT) or the entries are not one queue (positions 1 to n, each
+    pull request once)."""
     owner, name = gh.repo.split("/", 1)
-    entries, own, after, tip, total = [], None, None, None, None
+    entries, own, after, tip, total, subject, pages = [], None, None, None, None, None, 0
     for _ in range(MAX_QUEUE_PAGES):
+        pages += 1
         data = graphql_data(gh.graphql(QUEUE_QUERY, {"owner": owner, "name": name, "branch": branch,
                                                      "qualified": f"refs/heads/{branch}", "number": number,
                                                      "after": after}), "merge queue")
         repository = data.get("repository") or {}
-        own = ((repository.get("pullRequest") or {}).get("mergeQueueEntry")) or own
+        page_pull = repository.get("pullRequest")  # the pull request itself, as this page has it
+        if pages > 1 and _pull_key(page_pull) != _pull_key(subject):
+            return None  # the pull request changed between pages
+        subject = page_pull if pages == 1 else subject
+        own = (page_pull or {}).get("mergeQueueEntry")
         page_tip = ((repository.get("ref") or {}).get("target") or {}).get("oid")
         if tip is not None and page_tip != tip:
             return None  # main moved between pages
@@ -435,14 +509,23 @@ def _read_queue(gh: GitHub, branch: str, number: int) -> dict | None:
         raise Failure(f"the merge queue has more than {MAX_QUEUE_PAGES * 100} entries")
     entries.sort(key=lambda e: e["position"] or 0)
     numbers = [e["number"] for e in entries]
+    listed = next((e for e in entries if e["number"] == number), None)
+    if (subject or {}).get("baseRefName", branch) == branch and (
+            (listed is None) != (own is None) or (own and listed and own.get("position") != listed["position"])):
+        return None  # its own entry and the list of its base's queue disagree
     if (total is not None and len(entries) != total) or len(set(numbers)) != len(numbers) \
             or [e["position"] for e in entries] != list(range(1, len(entries) + 1)):
         return None
-    return {"entries": entries, "own": own, "main": tip}
+    return {"entries": entries, "own": own, "main": tip, "pull": subject, "pages": pages}
 
 
-def get_required(gh: GitHub, branch: str) -> list[dict]:
-    """The checks that the branch's rules require, each with the app that must report it."""
+def get_required(gh: GitHub, branch: str, cache: "Cache | None" = None) -> list[dict]:
+    """The checks that the branch's rules require, each with the app that must report it; kept in
+    `cache` for RULES_TTL seconds."""
+    key = f"rules:{gh.repo}:{branch}"
+    cached = cache.get(key) if cache is not None else None
+    if cached is not None:
+        return cached
     required: list[dict] = []
     for rule in gh.paged(f"/repos/{gh.repo}/rules/branches/{urllib.parse.quote(branch)}"):
         if rule.get("type") == "required_status_checks":
@@ -450,6 +533,8 @@ def get_required(gh: GitHub, branch: str) -> list[dict]:
                 requirement = {"context": check["context"], "integration_id": check.get("integration_id")}
                 if requirement not in required:
                     required.append(requirement)
+    if cache is not None:
+        cache.put(key, required, ttl=RULES_TTL)
     return required
 
 
@@ -534,11 +619,12 @@ def codex_comment_attested(gh: GitHub, review: dict, budget: int = 8, events: tu
     of the run whose codex-verdict job printed the review's id, if found, and whether the search ran out
     of budget first. Such runs attach their checks to the commit of the ref they ran on, not the head,
     so they are looked up among the successful codex.yml runs that comments started in the 50 minutes
-    before the review (the job's limit is 40). A conversation comment (issue_comment) runs main's
-    workflow; a comment on a line of the diff runs the workflow of the pull request it is on, so such
-    a run counts only if it ran on `head`, this pull request's head: another pull request's workflow
-    could print anything. With events=("pull_request_target",) it finds the automatic review of a
-    fork's pull request, whose run uses main's workflow and also attaches its checks to main."""
+    before the review (the job's limit is 40). Only a conversation comment's run (issue_comment) counts
+    by default (COMMENT_EVENTS): it runs main's workflow. A comment on a line of the diff runs the
+    workflow of whichever pull request it is on, and GitHub lists no pull request for that run; such
+    runs are looked up only when `events` names them, and then only those that ran on `head`. With
+    events=("pull_request_target",) it finds the automatic review of a fork's pull request, whose run
+    uses main's workflow and also attaches its checks to main."""
     submitted = parse_time(review.get("submitted_at"))
     if not submitted:
         return None, False
@@ -669,153 +755,88 @@ def workflow_jobs(git: "Git", commit: str) -> tuple[dict[str, set[str]], set[str
     return jobs, unreadable
 
 
-def workflow_roots(git: "Git", commit: str, paths: list[str]) -> list[str]:
-    """The top-level directories of `commit` whose code the workflows at `paths` run: see
-    workflow_code."""
-    return code_roots(workflow_code(git, commit, paths), lambda entry: code_signature(git, commit, entry) is not None)
+_SYNC_ROOTS = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "WantedExt")  # ROOTS of check_formal_math_sync.py
+DATA = ("scripts/taxonomy.json", "scripts/wiki-sync.json", "scripts/mathgraph-map.jsonl", "scripts/card-moves.jsonl",
+        "scripts/card-moves.d/*.jsonl", "provenance/formal-math-sync.json",
+        *(f"provenance/formal-math-sync.d/{root}{shard}" for root in _SYNC_ROOTS for shard in (".json", "/*.json")),
+        "provenance/**/files-*.jsonl", "provenance/**/environment.json", "provenance/**/source/**/*.txt",
+        "blueprint/links/*.jsonl", "NOTICE", "LICENSE")
+"""The content that the checks read, by path (`*` within a directory, `**` across any): the topic
+taxonomy, the wiki map, the mathgraph map, the card-move ledger and its fragments, the sync records and
+their shards (`<library>.json` for a library's root modules, `<library>/<directory>.json` below), a
+migration's file records, environment and kept source texts, the blueprint's links, and the attribution
+notice and licence. Proofs, graph changes and migrations edit them, and main changes some of them with
+almost every merge. The blueprint's area map (atlas.json) and task priorities are settings that scripts
+read, not records: code. Documentation (`.md`) and Lean modules
+outside scripts/ are content too (see is_data).
+
+Each entry names a layout that holds records, not a directory: a schema, a policy or a checker that
+lands beside them, in any format or language, is not data. Every other file counts as code (see
+is_check_code), so a new kind of data file needs a maintainer until it is listed here: a list grows by
+review, never by guessing.
+
+Preflight never reads data, so data must not decide which other files the checks use: a test, which
+every pull request's CI runs (repository integrity runs scripts/check.sh, and with it these tests),
+fails if any string in the JSON listed here names a tracked file that is not data."""
 
 
-def code_roots(code: list[str], present: "Callable[[str], bool] | None" = None) -> list[str]:
-    """The top-level directories that hold code the checks run (scripts, local actions, what a glob or a
-    test discovery selects): a pull request changing a file there needs a maintainer. Files that the checks
-    only read count for freshness alone."""
-    return sorted({entry[len("glob:"):].split("/", 1)[0] if entry.startswith("glob:") else entry.split("/", 1)[0]
-                   for entry in code if entry != "?incomplete" and (present is None or present(entry)) and (
-                       entry.endswith("/") or re.search(_SCRIPT, entry)
-                       or (entry.startswith(".github/") and not entry.startswith(".github/workflows/")))})
+def is_data(path: str) -> bool:
+    """Whether `path` is content that the checks check: see DATA."""
+    if path.endswith(".lean"):
+        return not path.startswith(("scripts/", ".github/"))  # a module CI builds, not a checker
+    return path.endswith(".md") or any(_layout(path.split("/"), entry.split("/")) for entry in DATA)
 
 
-def workflow_code(git: "Git", commit: str, paths: list[str]) -> list[str]:
-    """The files of `commit` that the workflows at `paths` refer to as code (scripts they run, local
-    actions, and what they read under .github/, such as the revision of a checker they fetch): a pull
-    request's runs use its own copy of those too. The pins (lean-toolchain, lake-manifest.json,
-    lakefile.toml) are what CI tests, not what tests it, and are left to their own check."""
-    top = {line.split("\t", 1)[1] for line in git.out("ls-tree", commit).splitlines()
-           if line.split()[1:2] == ["tree"]}
-    oids = {path: git.out("rev-parse", f"{commit}:{path}") for path in paths}
-    git.prefetch(set(oids.values()))
-    texts = git.blobs(set(oids.values()))
-    code = set()
-    for oid in oids.values():
-        for found in re.finditer(r"(?<![\w/-])(?:\./)?((\.?[A-Za-z0-9_][\w.-]*)/[\w./-]+)", texts.get(oid, "")):
-            path, root = found.group(1).rstrip("."), found.group(2)
-            if (root in top or _file_name(path)) and not path.startswith(".github/workflows/"):
-                code.add(path)  # code it runs, and files it reads, even those main lacks (see _code_closure)
-    return sorted(_code_closure(git, commit, code))
+def _layout(parts: list[str], pattern: list[str]) -> bool:
+    """Whether a path's components match a DATA entry's: `*` within one, `**` any number of them."""
+    if not pattern:
+        return not parts
+    if pattern[0] == "**":
+        return any(_layout(parts[index:], pattern[1:]) for index in range(len(parts) + 1))
+    return bool(parts) and fnmatch.fnmatchcase(parts[0], pattern[0]) and _layout(parts[1:], pattern[1:])
+
+
+def is_check_code(path: str, mode: str | None = None) -> bool:
+    """Whether a file is code for the required checks rather than data that they check: everything
+    that is not data (see DATA and is_data), and any file of code's kind wherever it is (see
+    is_code_kind). Nothing is traced from the workflows: they run scripts and read files in ways that
+    text cannot always tell (a fixture opened next to a test, a nested action, a Makefile), so any
+    file that is not listed as data counts, whether or not a check uses it. What is unlisted fails
+    closed: at worst a hand check or a refresh, never a change to the checks that nobody vouched for.
+
+    The difference is who can vouch for a change. A pull request's runs use its own copy of the code
+    that checks it, so a change to that code needs a maintainer, and a run that used older code than
+    main has is stale. Data is content that the checks check: the pull request's own run checked its
+    copy, and the merge group checks the combination with main and the queue ahead, so a change to it,
+    by the pull request, on main or in the queue, is no reason for a hand check or a new CI run. Most
+    pull requests change only data (a proof renames its taxonomy key), and main changes it with almost
+    every merge. The pins (lean-toolchain, lake-manifest.json, lakefile.toml) also have their own
+    check (see compute)."""
+    return is_code_kind(path, mode) or not is_data(path)
+
+
+def is_code_kind(path: str, mode: str | None = None) -> bool:
+    """Whether `path` is code by its kind alone, which no list of data overrules: anything under
+    .github/, anything but a regular file (`mode`, when known, other than 100644: an executable, a
+    symbolic link, whose target is not data by being listed, a submodule), a script, a dependency
+    manifest, a Lean checker under scripts/, a Lake configuration written in Lean (lakefile.lean, read
+    in place of lakefile.toml), and git's own configuration (a .gitattributes changes the bytes a
+    checkout gives and how files merge)."""
+    return (path.startswith(".github/") or mode not in (None, "100644") or bool(re.search(_SCRIPT, path))
+            or bool(_MANIFEST.search(path)) or (path.startswith("scripts/") and path.endswith(".lean"))
+            or path.rsplit("/", 1)[-1] in (".gitattributes", ".gitmodules", ".gitignore", ".lfsconfig", "lakefile.lean"))
+
+
+def is_code_change(path: str, modes) -> bool:
+    """Whether a change to `path`, with `modes` on its sides (000000 for a side without it), touches
+    code: a file that is code on either side, so that a lost or gained executable bit counts."""
+    return any(is_check_code(path, mode) for mode in [m for m in modes if m != "000000"] or [None])
 
 
 _SCRIPT = r"\.(?:py|sh|bash|js|mjs|cjs|ts|rb|pl|lua)$"
-_CONFIG = r"\.(?:json|toml|ya?ml|txt|cfg|ini)$"  # files that name the paths a check reads: followed, not run
-# Scripts the checks run whose path names are rules or examples, not files they read: only their imports
-# lead to more code. scripts/ci_scope.py compares a pull request's changed paths with the graph's data
-# files, and its test names such paths; as inputs, those files would make every check stale whenever main
-# changes one of them.
-NAMES_ONLY = frozenset({"scripts/ci_scope.py", "scripts/test_ci_scope.py"})
-
-
-def code_signature(git: "Git", commit: str, entry: str) -> str | None:
-    """What `entry` of a check's code is at `commit`: a file's blob, a directory's tree (`dir/`), or for
-    a glob (`glob:scripts/*.sh`, `*` within one directory, as the shell has it) the paths it matches and
-    their blobs."""
-    if entry in git.watched:  # the entries of this run: signed together, once per revision, and kept
-        if commit not in git.signatures:
-            listing = git.listing(commit)
-            git.signatures[commit] = {e: _signature(listing, e) for e in git.watched}
-        return git.signatures[commit][entry]
-    return _signature(git.listing(commit), entry)
-
-
-def _signature(listing: dict[str, str], entry: str) -> str | None:
-    if entry.startswith("glob:"):
-        pattern = entry[len("glob:"):]
-        literal = re.split(r"[*?\[]", pattern, 1)[0]  # what every match starts with: most paths are skipped at once
-        matches = sorted(f"{record}\t{path}" for path, record in listing.items()
-                         if path.startswith(literal) and not record.split()[1] == "tree" and _glob_match(path, pattern))
-        return hashlib.sha1("\n".join(matches).encode()).hexdigest()
-    return listing.get(entry.rstrip("/"))  # a file's mode, type and blob (an executable bit counts), a directory's tree
-
-
-def _glob_match(path: str, pattern: str) -> bool:
-    """Whether the shell's glob `pattern` selects `path`: `*` within one directory."""
-    return path.count("/") == pattern.count("/") and fnmatch.fnmatchcase(path, pattern)
-
-
-def _file_name(ref: str) -> bool:
-    """Whether `ref`, which the commit lacks, still reads as a repository file the checks may read once it
-    exists: a name with an extension, under a directory that is no host (`github.com/...`), with no `..`,
-    and no library module (scripts' tests name many of those that never exist)."""
-    parts = ref.split("/")
-    return (re.search(r"\.\w+$", ref) is not None and "." not in parts[0].lstrip(".") and ".." not in parts
-            and parts[0] not in LIBRARIES and not ref.endswith(".lean"))
-
-
-def _code_closure(git: "Git", commit: str, start: set[str], limit: int = 500) -> set[str]:
-    """`start` and the scripts it runs, as far as their text says: paths from the repository's root,
-    file names next to the script, and Python modules it imports from its own directory. A directory
-    that it names below the top level (`unittest discover -s scripts/queue`), or that a glob selects
-    from (`scripts/checks/*.sh`), counts whole, as `dir/`: what runs there is whatever it holds. Past
-    `limit` files, `?incomplete` says the rest was not followed. A file it reads that is larger than
-    MAX_BLOB_BYTES (a map that has grown, such as scripts/wiki-sync.json) is an input that is not
-    opened: it still counts, but the paths inside it are not followed. A script, or anything under
-    .github/ (a local action's manifest runs code), that large fails."""
-    listing = set(git.out("ls-tree", "-r", "-z", "--name-only", commit).split("\0"))
-    folders = {path.rsplit("/", 1)[0] for path in listing if "/" in path}
-    folders |= {f.rsplit("/", i)[0] for f in list(folders) for i in range(1, f.count("/") + 1)}
-    top = {path.split("/", 1)[0] for path in listing}
-    code, frontier = set(start) & listing, set(start) & listing
-    for action in [s.rstrip("/") for s in start if s.rstrip("/") in folders and s.startswith(".github/actions/")]:
-        code.add(f"{action}/")  # `uses: ./.github/actions/x`: whatever it holds runs
-        frontier |= {f"{action}/{name}" for name in ("action.yml", "action.yaml")} & listing
-    code |= frontier
-    scanned = set(frontier)
-    reads = {path for path in set(start) - listing if path not in folders}  # named, though main lacks it now
-
-    def input_file(ref: str) -> bool:  # a file the checks may read: one main has, or a file name it lacks
-        if ref.endswith(".lean") and not ref.startswith(("scripts/", ".github/")):
-            return False  # a module CI builds, not an input to its checks (an inventory may list thousands)
-        return not ref.startswith(".github/workflows/") and (ref in listing or _file_name(ref) and ref not in folders)
-    while frontier:
-        oids = {path: git.out("rev-parse", f"{commit}:{path}") for path in frontier
-                if re.search(_SCRIPT, path) or re.search(_CONFIG, path)}
-        inputs = {path for path in oids if not re.search(_SCRIPT, path) and not path.startswith(".github/")}
-        large = git.oversized({oids[path] for path in inputs})
-        oids = {path: oid for path, oid in oids.items() if path not in inputs or oid not in large}  # not opened
-        git.prefetch(set(oids.values()))
-        texts = git.blobs(set(oids.values()))
-        found = set()
-        for path, oid in oids.items():
-            text, here = texts.get(oid, ""), path.rsplit("/", 1)[0] if "/" in path else ""
-            if path in NAMES_ONLY:  # only its imports lead to more code
-                text = "\n".join(re.findall(r"^\s*(?:from|import)\s+[A-Za-z_]\w*", text, re.M))
-            text = re.sub(r"\$\{?\w+\}?/", "", text).replace('"', " ").replace("'", " ")  # "$REPO_ROOT/scripts/x" is scripts/x
-            for ref in (re.sub(r"^(?:\./)+", "", r) for r in re.findall(r"(?<![\w/-])((?:\./)*[\w.-]+(?:/[\w.*-]+)+)", text)):
-                if "*" in ref and ref.split("/", 1)[0] not in LIBRARIES and ".." not in ref.split("/") \
-                        and "." not in ref.split("/", 1)[0].lstrip(".") \
-                        and not ref.endswith(".lean"):  # `scripts/*.sh`, `policies/*.json`: what it selects, and their content
-                    reads.add(f"glob:{ref}")  # (a glob over the libraries would make every pull request stale)
-                if "*" not in ref and input_file(ref):
-                    reads.add(ref)  # a file it reads (a list, a pin set): its content is the check's too
-                found |= {p for p in listing if _glob_match(p, ref)} if "*" in ref else {ref} & listing
-            for name in re.findall(r"(?<![\w/.-])([\w-]+\.\w+)(?![\w/])", text):  # `README.md` in a manifest: at the root
-                if name in listing:
-                    reads.add(name)
-                    found.add(name)
-            if re.search(_CONFIG, path):
-                continue  # a configuration file names paths; it runs nothing and imports nothing
-            for folder in re.findall(r"(?:\bdiscover\s+(?:-s\s+)?|\bpytest\s+)(?:\./)?([\w.-]+(?:/[\w.-]+)+)", text):
-                if folder.rstrip("/") in folders:  # test discovery: whatever tests it holds run
-                    code.add(f"{folder.rstrip('/')}/")
-            for name in re.findall(r"(?<![\w/.-])([\w-]+\.(?:sh|py|bash))\b", text):
-                found |= {f"{here}/{name}" if here else name} & listing
-            for module in re.findall(r"^\s*(?:from|import)\s+([A-Za-z_]\w*)", text, re.M):
-                found |= {f"{here}/{module}.py" if here else f"{module}.py"} & listing
-        frontier = {p for p in (found | reads) - code - scanned if not p.startswith(".github/workflows/")  # workflows: data
-                    and p in listing and (re.search(_SCRIPT, p) or re.search(_CONFIG, p) or p.startswith(".github/"))}
-        scanned |= frontier
-        if len(code | reads | frontier) > limit:
-            return code | reads | {"?incomplete"}  # not followed to the end
-        code |= frontier
-    return code | reads
+_MANIFEST = re.compile(r"(?:^|/)(?:(?:requirements|constraints)[\w.-]*\.(?:txt|in)|pyproject\.toml|setup\.(?:cfg|py)"
+                       r"|Pipfile(?:\.lock)?|poetry\.lock|uv\.lock|package(?:-lock)?\.json|yarn\.lock|pnpm-lock\.yaml"
+                       r"|Gemfile(?:\.lock)?|go\.(?:mod|sum)|Cargo\.(?:toml|lock))$")
 
 
 class Provenance:
@@ -889,12 +910,20 @@ class Provenance:
         return None, "none"
 
 
-def scoped_skip(check: dict, provenance: Provenance | None) -> bool:
+def scoped_skip(check: dict, provenance: Provenance | None, runs: list[dict] = ()) -> bool:
     """Whether a check run is CI_CHECK skipped by a pull_request run of CI_WORKFLOW (see SCOPE_JOB), the one
-    skip of a required check that counts as passed. Without a provenance to read the run, it is not."""
+    skip of a required check that counts as passed: among `runs`, that run's SCOPE_JOB succeeded (a run
+    cancelled before it decided may leave the build skipped too). Without a provenance to read the run,
+    it is not."""
     found = DETAILS_URL.search(check.get("details_url") or "")
     if (check.get("name") != CI_CHECK or check.get("status") != "completed" or check.get("conclusion") != "skipped"
             or (check.get("app") or {}).get("id") != ACTIONS_APP_ID or not found or provenance is None):
+        return False
+    decided = any(r.get("name") == SCOPE_JOB and (r.get("app") or {}).get("id") == ACTIONS_APP_ID
+                  and r.get("status") == "completed" and r.get("conclusion") == "success"
+                  and (m := DETAILS_URL.search(r.get("details_url") or "")) and m.group(1) == found.group(1)
+                  for r in runs)
+    if not decided:
         return False
     run = provenance.run(int(found.group(1))) or {}
     return run.get("event") == "pull_request" and (run.get("path") or "").split("@", 1)[0] == CI_WORKFLOW
@@ -921,7 +950,8 @@ def summarize_checks(runs: list[dict], required: list[dict], statuses: list[dict
             run, whose = provenance.latest(candidates)
         if run and whose == "unknown":  # its outcome still counts against it; only a pass needs tying
             result.append({"name": context, "status": run.get("status"), "conclusion": run.get("conclusion"),
-                           "provenance": "unknown", "url": run.get("html_url") or run.get("details_url")})
+                           "provenance": "unknown", "url": run.get("html_url") or run.get("details_url"),
+                           "scoped": scoped_skip(run, provenance, runs)})  # a skip that passes, as untied as a pass
             continue
         if run:
             found = DETAILS_URL.search(run.get("details_url") or "")
@@ -929,7 +959,7 @@ def summarize_checks(runs: list[dict], required: list[dict], statuses: list[dict
                            "run": int(found.group(1)) if found else None,
                            "url": run.get("html_url") or run.get("details_url"),
                            "started_at": run.get("started_at"), "completed_at": run.get("completed_at"),
-                           "scoped": scoped_skip(run, provenance)})
+                           "scoped": scoped_skip(run, provenance, runs)})
             continue
         # A commit status names no app, so it can only stand in for a check that requires none.
         status = None if app_id else next((s for s in statuses or [] if s.get("context") == context), None)
@@ -949,9 +979,11 @@ CHECKOUT_MERGE = re.compile(r"HEAD is now at [0-9a-f]+ Merge ([0-9a-f]{40}) into
 
 
 def ci_run(gh: GitHub, runs: list[dict], head: str, number: int | None = None, base_ref: str = "main",
-           provenance: Provenance | None = None) -> dict | None:
+           provenance: Provenance | None = None, cache: "Cache | None" = None) -> dict | None:
     """The CI run behind the head's latest `build` check that is not another pull request's: when it
-    ran, and on which main it merged the head."""
+    ran, how its build ended, and on which main it merged the head. The run is read every time (which
+    pull requests it lists can change); what a finished job is and what its checkout log says cannot,
+    so `cache` keeps those."""
     builds = [r for r in runs if r.get("name") == CI_CHECK and (r.get("app") or {}).get("id") == ACTIONS_APP_ID]
     if provenance is None:
         build, whose = max(builds, key=lambda r: r.get("id") or 0, default=None), "ours"
@@ -969,23 +1001,37 @@ def ci_run(gh: GitHub, runs: list[dict], head: str, number: int | None = None, b
     run = (provenance.run(run_id) if provenance else None) or gh.get(f"/repos/{gh.repo}/actions/runs/{run_id}")
     info = {"run_id": run_id, "job_id": job_id, "created_at": run.get("created_at"),
             "attempt": run.get("run_attempt"), "event": run.get("event"), "url": run.get("html_url"),
+            "conclusion": build.get("conclusion") if build.get("status") == "completed" else None,
             "base": None, "base_error": None}
     if run.get("path") != CI_WORKFLOW or run.get("event") != "pull_request" or run.get("head_sha") != head:
         info["base_error"] = (f"its run was {run.get('path')} for {run.get('event')} on "
                               f"{short(run.get('head_sha'))}, not {CI_WORKFLOW} for this head")
         return info
-    if not job_of(gh, job_id, run_id, CI_CHECK):
+    def member(job: int, name: str, done: bool) -> tuple[bool, dict | None]:
+        """Whether `job` is the `name` job of the run, and what is kept of it: a finished job's run and name
+        cannot change, nor what its log says."""
+        kept = cache.get(f"job:{gh.repo}:{job}") if cache is not None and done else None
+        if isinstance(kept, dict) and kept.get("run") == run_id and kept.get("name") == name:
+            return True, kept
+        return job_of(gh, job, run_id, name), None
+    finished = build.get("status") == "completed"
+    is_build, kept = member(job_id, CI_CHECK, finished)
+    if not is_build:
         info["base_error"] = f"its job {job_id} is not the {CI_CHECK} job of run {run_id}"
         return info
+    log_job, log_name, log_done = job_id, CI_CHECK, finished  # the job whose checkout says which main it merged
     if build.get("conclusion") == "skipped":  # no log: the job that skipped it checked out the same merge
-        scopes = sorted((int(m.group(2)) for r in runs if r.get("name") == SCOPE_JOB
+        if cache is not None and finished and kept is None:
+            cache.put(f"job:{gh.repo}:{job_id}", {"run": run_id, "name": CI_CHECK})  # no log, no merge to keep
+        scopes = sorted(((int(m.group(2)), r.get("status") == "completed") for r in runs if r.get("name") == SCOPE_JOB
                          and (r.get("app") or {}).get("id") == ACTIONS_APP_ID
                          and (m := DETAILS_URL.search(r.get("details_url") or "")) and int(m.group(1)) == run_id),
                         reverse=True)
-        if not scopes or not job_of(gh, scopes[0], run_id, SCOPE_JOB):
+        is_scope, kept = member(scopes[0][0], SCOPE_JOB, scopes[0][1]) if scopes else (False, None)
+        if not is_scope:
             info["base_error"] = f"its {CI_CHECK} job was skipped, and run {run_id} has no {SCOPE_JOB} job to read"
             return info
-        job_id = scopes[0]
+        log_job, log_name, log_done = scopes[0][0], SCOPE_JOB, scopes[0][1]
     associated = run.get("pull_requests") or []  # empty for a fork: GitHub does not say whose run it is
     if associated and number is not None:
         tested = {(pr.get("base") or {}).get("ref") for pr in associated if pr.get("number") == number}
@@ -1000,22 +1046,74 @@ def ci_run(gh: GitHub, runs: list[dict], head: str, number: int | None = None, b
         if tested != {base_ref}:  # it ran before the pull request was retargeted
             info["base_error"] = f"its run tested it against {', '.join(sorted(map(str, tested)))}, not {base_ref}"
             return info
-    try:
-        merge = gh.read_log(job_id, CHECKOUT_MERGE)
-    except Failure as error:
-        info["base_error"] = f"its log could not be read ({error})"
-        return info
-    if not merge:
-        info["base_error"] = "its log names no merge commit"
-    elif merge.group(1) != head:
-        info["base_error"] = f"its checkout merged {short(merge.group(1))}, not the head"
+    if isinstance(kept, dict) and "merge" in kept:
+        merged = kept["merge"]
     else:
-        info["base"] = merge.group(2)
+        try:
+            match = gh.read_log(log_job, CHECKOUT_MERGE)
+        except Failure as error:
+            info["base_error"] = f"its log could not be read ({error})"
+            return info
+        merged = list(match.groups()[:2]) if match else None
+        if cache is not None and log_done and merged:  # what a log did not say may yet be read
+            cache.put(f"job:{gh.repo}:{log_job}", {"run": run_id, "name": log_name, "merge": merged})
+    if not merged:
+        info["base_error"] = "its log names no merge commit"
+    elif merged[0] != head:
+        info["base_error"] = f"its checkout merged {short(merged[0])}, not the head"
+    else:
+        info["base"] = merged[1]
     return info
 
 
 # --------------------------------------------------------------------------------------------------
 # Git
+
+
+class Cache:
+    """Answers kept between runs, in a file beside the clone. What cannot change stays: a blob's size
+    and the merge of two commits, which is how the merges of main and the queue ahead are reused by every
+    run until main or the queue moves. Main's rules stay a few minutes (see get_required), and not at
+    all when `fresh` is set, as before an enqueue. Runs take turns on the clone, and so on the file."""
+
+    LIMIT = 50000  # entries; the oldest go first
+
+    def __init__(self, path: Path | None = None):
+        self.path, self.entries, self.dirty, self.fresh = path, {}, False, False
+        if path is not None:
+            try:
+                data = json.loads(path.read_text())
+                if isinstance(data, dict) and data.get("version") == CACHE_VERSION and isinstance(data.get("entries"), dict):
+                    self.entries = data["entries"]
+            except (OSError, ValueError):
+                pass  # none yet, or unreadable: start empty
+
+    def get(self, key: str):
+        item = self.entries.get(key)
+        if not isinstance(item, list) or len(item) != 2:
+            return None
+        expires, value = item
+        if expires and (self.fresh or time.time() > expires):
+            return None
+        return value
+
+    def put(self, key: str, value, ttl: float | None = None) -> None:
+        self.entries.pop(key, None)
+        self.entries[key] = [time.time() + ttl if ttl else 0, value]
+        self.dirty = True
+
+    def save(self) -> None:
+        if self.path is None or not self.dirty:
+            return
+        for key in list(self.entries)[:max(0, len(self.entries) - self.LIMIT)]:
+            del self.entries[key]
+        temporary = self.path.with_name(self.path.name + ".tmp")
+        temporary.write_text(json.dumps({"version": CACHE_VERSION, "entries": self.entries}))
+        os.replace(temporary, self.path)
+        self.dirty = False
+
+
+CACHE_VERSION = 1
 
 
 class Git:
@@ -1030,9 +1128,9 @@ class Git:
         self.attribute_base: tuple[str, dict[str, str]] | None = None  # see attributes
         self.size_oracle = None  # oids -> their sizes, from the remote, before downloading (see prefetch)
         self.admitted: dict[str, int] = {}  # the blobs this run has downloaded, or is about to, and their sizes
-        self.listings: "collections.OrderedDict[str, dict[str, str]]" = collections.OrderedDict()  # see listing
-        self.watched: frozenset = frozenset()  # the check code this run compares (see code_signature)
-        self.signatures: dict[str, dict[str, str | None]] = {}  # revision -> watched entry -> signature
+        self.cache = Cache()  # in memory unless main() gives it a file
+        self.version: str | None = None  # git's own, which a merge's result depends on
+        self.config_id: str | None = None  # the clone's configuration, likewise
         # The trees it merges come from pull requests: their .gitattributes may name a merge driver.
         # Git reads no global or system configuration, where such a driver could be defined, and gets
         # no credentials; the repository is public.
@@ -1120,6 +1218,15 @@ class Git:
                           "use git 2.41 or later")
         else:
             prefix = []
+        if self.version is None:
+            self.version = self.out("version")
+        if self.config_id is None:  # the configuration git applies here, included files too, may change a merge
+            listed = self.run("config", "--list", "-z", check=False).stdout
+            self.config_id = hashlib.sha1(listed.encode()).hexdigest()[:12]
+        key = f"merge:{self.version}:{self.config_id}:{bool(prefix)}:{ours}:{theirs}"
+        known = self.cache.get(key)  # the same two commits merge the same way, run after run
+        if isinstance(known, dict) and self.present(known.get("tree") or ZERO_OID):
+            return {"clean": known["clean"], "tree": known["tree"], "files": list(known["files"])}
         guard = ["--no-lazy-fetch"] if self.guarded() else []
         # What a merge reads, admitted by size first (see prefetch): the attributes of `ours`, which git would
         # skip unread with only a warning, and the three sides of each file that both sides change.
@@ -1148,7 +1255,9 @@ class Git:
         if process.returncode not in (0, 1):
             raise Failure(f"git merge-tree {short(ours)} {short(theirs)}: {process.stderr.strip()[:500]}")
         fields = [f for f in process.stdout.split("\0") if f]
-        return {"clean": process.returncode == 0, "tree": fields[0], "files": fields[1:]}
+        result = {"clean": process.returncode == 0, "tree": fields[0], "files": fields[1:]}
+        self.cache.put(key, result)
+        return dict(result, files=list(result["files"]))
 
     def commit_tree(self, tree: str, parents: list[str], message: str) -> str:
         args = ["commit-tree", tree, "-m", message]
@@ -1195,17 +1304,12 @@ class Git:
             raise Failure("this git would download files whose size preflight has not checked; use git 2.45 or later")
         return self.lazy_guard
 
-    def listing(self, commit: str) -> dict[str, str]:
-        """Every path of `commit` (a commit or a tree), directories too, with its mode, type and object. A
-        tree of the whole repository is large: only the last two are kept (see code_signature)."""
-        if commit in self.listings:
-            self.listings.move_to_end(commit)
-        else:
-            records = self.run("ls-tree", "-r", "-t", "-z", commit, check=False).stdout.split("\0")
-            self.listings[commit] = {r.split("\t", 1)[1]: r.split("\t", 1)[0] for r in records if "\t" in r}
-            while len(self.listings) > 2:
-                self.listings.popitem(last=False)
-        return self.listings[commit]
+    def changed(self, a: str, b: str) -> dict[str, tuple[str, str]]:
+        """Each file that differs between `a` and `b`, with its modes in `a` and `b` (000000 for a side
+        that lacks it)."""
+        fields = self.out("diff", "--raw", "--no-renames", "-z", "--no-abbrev", a, b).split("\0")
+        return {path: (meta.split()[0].lstrip(":"), meta.split()[1]) for meta, path in zip(fields[0::2], fields[1::2])
+                if len(meta.split()) >= 4}
 
     def attributes(self, tree: str) -> set[str]:
         """The .gitattributes blobs of `tree`: the first tree is listed once, later ones by their
@@ -1246,7 +1350,12 @@ class Git:
             have = set(self.out("cat-file", "--batch-check=%(objectname)", "--batch-all-objects").split())
         missing = [oid for oid in wanted if oid not in have]
         if missing and self.size_oracle is not None:
-            sizes = self.size_oracle(missing)
+            sizes = {oid: self.cache.get(f"size:{oid}") for oid in missing}  # a blob's size never changes
+            asked = [oid for oid, size in sizes.items() if size is None]
+            for oid, size in (self.size_oracle(asked) if asked else {}).items():
+                if size is not None:
+                    sizes[oid] = size
+                    self.cache.put(f"size:{oid}", size)
             # A size GitHub does not report is not downloaded either: what needs it then fails, closed.
             missing = [oid for oid in missing if sizes.get(oid) is not None and sizes[oid] <= limit]
             planned = dict(self.admitted, **{oid: sizes[oid] for oid in missing})
@@ -1258,26 +1367,6 @@ class Git:
             self.run("-c", "fetch.negotiationAlgorithm=noop", "fetch", "--quiet", "--no-tags",
                      "--no-write-fetch-head", "--recurse-submodules=no", "--filter=blob:none", "--stdin",
                      "origin", input="\n".join(missing[start:start + 5000]) + "\n")
-
-    def oversized(self, oids: set[str]) -> set[str]:
-        """Those of `oids` known to be larger than MAX_BLOB_BYTES, by the size the clone has or GitHub
-        reports (see prefetch), downloading none of them. A size neither knows is not known to be
-        larger: such a file is read as before, and fails if it is."""
-        wanted = sorted(set(oids) - {ZERO_OID})
-        if not wanted:
-            return set()
-        if self.guarded():  # the wanted objects alone, none fetched to answer
-            checked = subprocess.run(["git", "--git-dir", str(self.dir), "cat-file", "--batch-check=%(objectname) %(objectsize)"],
-                                     input="\n".join(wanted) + "\n", text=True, capture_output=True,
-                                     env=dict(self.env, GIT_NO_LAZY_FETCH="1")).stdout
-        else:  # an older git would fetch each missing object to answer: read what the clone has
-            checked = self.out("cat-file", "--batch-check=%(objectname) %(objectsize)", "--batch-all-objects")
-        sizes = {line.split()[0]: int(line.split()[1]) for line in checked.splitlines()
-                 if len(line.split()) == 2 and line.split()[1].isdigit() and line.split()[0] in wanted}
-        missing = [oid for oid in wanted if oid not in sizes]
-        if missing and self.size_oracle is not None:
-            sizes.update({oid: size for oid, size in self.size_oracle(missing).items() if size is not None})
-        return {oid for oid, size in sizes.items() if size > MAX_BLOB_BYTES}
 
     def blobs(self, oids: set[str]) -> dict[str, str]:
         """The texts of `oids`. A pull request chooses these files, so their sizes are checked before
@@ -1324,7 +1413,7 @@ class Git:
 # --------------------------------------------------------------------------------------------------
 # Lean declarations
 
-_TOP_LEVEL = re.compile(r'/-|--[^\n]*|(?<![\w.\'])r#*"|"(?:[^"\\]|\\[\s\S])*"|\'"\'|\'\\"\'')
+_TOP_LEVEL = re.compile(r'«[^»\n]*»|/-|--[^\n]*|(?<![\w.\'])r#*"|"(?:[^"\\]|\\[\s\S])*"|\'"\'|\'\\"\'')  # «-- a name»
 _NESTED = re.compile(r"/-|-/")
 _IN_PREFIX = re.compile(r"^(?:(?:(?:open|set_option|omit|include|variable|#guard_msgs|#count_heartbeats)\b.*?\bin|#time)\s+)+")
 _WORD = re.compile(r"([A-Za-z_]+)\b\s*")
@@ -1422,7 +1511,8 @@ _KEYWORDS = None  # filled in below, once the keyword sets exist
 
 def _canonical(name: str) -> str:
     """`name` as Lean prints it: `N.«dup»` is `N.dup`, while `«weird name»` and `«def»` keep their
-    guillemets. Dots inside guillemets belong to the component."""
+    guillemets, and a keyword written bare (`| exists`, `Formula.exists`) gets them. Dots inside
+    guillemets belong to the component."""
     parts, current, depth = [], "", 0
     for char in name:
         depth += (char == "«") - (char == "»")
@@ -1433,7 +1523,7 @@ def _canonical(name: str) -> str:
             current += char
     parts.append(current)
     return ".".join(part[1:-1] if part[:1] == "«" and part[-1:] == "»" and _PLAIN.match(part[1:-1])
-                    and part[1:-1] not in _KEYWORDS else part for part in parts)
+                    and part[1:-1] not in _KEYWORDS else f"«{part}»" if part in _KEYWORDS else part for part in parts)
 
 
 def _component(text: str) -> str:
@@ -1625,7 +1715,9 @@ def _generated(keyword: str, names: list[str], rest: str, attributes: str, quali
     if keyword in ("structure", "class") and re.search(r"\bext\b", attributes):
         out += [suffix for n in names for suffix in (f"{n}.ext", f"{n}.ext_iff")]
     if keyword == "instance" and not names:
-        kind = re.split(r":=|\bwhere\b|\|", _instance_type(rest) or "")[0]
+        kind = _instance_type(rest) or ""
+        cut = [found.start() for found in (re.search(r":=|\|", _masked(kind)), _WHERE.search(kind)) if found]
+        kind = kind[:min(cut)] if cut else kind
         tokens = re.findall(r"[A-Za-z_ℕℤℚℝℂ][\w.'ℕℤℚℝℂ]*", kind)
         heads = [_NOTATION.get(t, t).rstrip(".").split(".")[-1] for t in tokens if t[0].isupper() or t in _NOTATION]
         if heads:
@@ -1661,7 +1753,26 @@ _AGAIN = re.compile(r"(?<![\w.'@\[])(?:(" + "|".join(sorted(_DECLARATIONS | {"na
 _COMMANDS = _DECLARATIONS | _INITIALIZERS | _SYNTAX_COMMANDS | {
     "namespace", "section", "end", "mutual", "deriving", "example", "open", "variable", "universe", "attribute",
     "set_option", "omit", "include", "export", "import", "module", "noncomputable", "elab_rules", "macro_rules"}
-_WHERE = re.compile(r"\bwhere\b")
+_KW_START, _KW_END = r"(?<![\w'.!?₀-₉])", r"(?![\w'!?₀-₉])"  # around a keyword: not inside a longer name
+
+
+class _Keyword:
+    """A keyword as Lean reads it: not part of a longer name (`where'`, `deriving₁`), nor inside `«...»`.
+    A match's positions are those of the text searched."""
+
+    def __init__(self, word: str):
+        self.pattern = re.compile(_KW_START + word + _KW_END)
+
+    def search(self, text: str, pos: int = 0):
+        return self.pattern.search(_masked(text), pos)
+
+    def match(self, text: str):
+        return self.pattern.match(_masked(text))
+
+
+_WHERE = _Keyword("where")
+_DERIVING = _Keyword("deriving")
+_EXTENDS = _Keyword("extends")
 
 
 def _skip_binders(text: str) -> str | None:
@@ -1743,12 +1854,14 @@ _BINDER = re.compile(r"[∀∃λΠΣ∑∏⨆⨅⋃⋂∫]|\b(?:fun|forall|exist
 def _parents(rest: str) -> list[str]:
     """The projections to the structures that `extends` names: `toParent`, or the name a clause gives it
     (`extends part : Parent`)."""
-    clause = re.search(r"\bextends\b(.*?)(?:\bwhere\b|:=|$)", rest)
-    if not clause:
+    extends = _EXTENDS.search(rest)
+    if not extends:
         return []
+    ends = [found.start() for found in (_WHERE.search(rest, extends.end()), re.compile(":=").search(_masked(rest), extends.end()))
+            if found]
     projections: list[str | None] = []  # None: a parent whose projection's name it cannot tell
     parts, depth, start = [], 0, 0
-    text = clause.group(1)
+    text = rest[extends.end():min(ends) if ends else len(rest)]
     for index, char in enumerate(text):  # the clauses, split at top-level commas
         depth += char in "([{⟨" and 1 or (-1 if char in ")]}⟩" else 0)
         if char == "," and depth == 0:
@@ -1778,20 +1891,25 @@ _AUXILIARY = ("rec", "recOn", "casesOn", "noConfusionType", "noConfusion", "belo
 _CONSTRUCTOR_AUXILIARY = ("inj", "injEq", "sizeOf_spec")
 
 
-def _derived(classes: str, type_name: str) -> list[str]:
-    """The instances that `deriving <classes>` generates for the type `type_name` (qualified): Lean
-    names them `inst<Class><Type>`, in the type's namespace."""
-    namespace, last = _split_last(type_name)
-    found = []
-    for part in classes.split(","):
-        part = re.sub(r"^\s*(?:@\[[^\]]*\]\s*)*", "", part)  # `deriving @[expose] C`
-        words = part.split()
-        if words and _identifier(words[0]):
-            name = f"inst{words[0].split('.')[-1]}{last}"
-            found.append(f"{namespace}.{name}" if namespace else name)
-        elif words:  # an item that it cannot read
-            found.append(f"?gen:deriving:{type_name}")
-    return found
+def _top_items(text: str) -> list[str]:
+    """The items of a comma-separated list, cut only at top-level commas: not inside `«...»`, `@[...]` or
+    brackets."""
+    cuts, depth = [-1], 0
+    for index, char in enumerate(_masked(text)):
+        depth += (char in "([{⟨") - (char in ")]}⟩")
+        if char == "," and depth == 0:
+            cuts.append(index)
+    cuts.append(len(text))
+    return [text[a + 1:b] for a, b in zip(cuts, cuts[1:])]
+
+
+_ANNOTATIONS = re.compile(r"^\s*(?:@\[[^\]]*\]\s*)*")  # `deriving @[expose] C`
+
+
+def _awaiting_class(classes: str) -> bool:
+    """Whether a `deriving` list still waits for a class on a later line: it is empty, ends with a comma,
+    or its last item is only an annotation (`deriving BEq, @[expose]`)."""
+    return not _ANNOTATIONS.sub("", _top_items(classes)[-1]).strip()
 
 
 def _parts(name: str) -> list[str]:
@@ -1799,14 +1917,42 @@ def _parts(name: str) -> list[str]:
     return re.findall(r"«[^»]*»|[^.«»]+", name) or [name]
 
 
+def _masked(text: str) -> str:
+    """`text` with what lies inside each `«...»` blanked, keeping every position: so that a search for a
+    keyword or a separator skips quoted names (`«deriving»`, `«blue|green»`)."""
+    return re.sub(r"«[^»]*»", lambda quoted: "«" + " " * (len(quoted.group(0)) - 2) + "»", text)
+
+
+_ALTERNATIVE = re.compile(r"\|\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected)\s+)?")  # `| @[simp] protected `
+
+
+def _deriving(text: str) -> tuple[int, str] | None:
+    """Where a `deriving` clause starts in `text`, and what follows the keyword; quoted names aside, and a
+    constructor named `deriving` (`| deriving : T`: Lean takes any identifier there, keywords too)."""
+    masked = _masked(text)
+    for found in _DERIVING.pattern.finditer(masked):
+        if not re.search(_ALTERNATIVE.pattern + r"$", masked[:found.start()]):
+            return found.start(), text[found.end():]
+    return None
+
+
+def _open_alternative(text: str) -> str | None:
+    """The last alternative of `text` when it names no constructor yet (`| a |`, or `|` alone): the
+    constructor is on the next line."""
+    masked = _masked(text)
+    bar = masked.rfind("|")
+    return text[bar:] if bar >= 0 and _ALTERNATIVE.fullmatch(masked[bar:].rstrip()) else None
+
+
 def _constructors(text: str) -> list[str]:
     """The constructors that `| name ...` alternatives in `text` declare (`| @[simp] a`, `| protected a`)."""
     found = []
-    for part in text.split("|")[1:]:
+    cuts = [index for index, char in enumerate(_masked(text)) if char == "|"]  # not a bar inside «...»
+    for part in (text[a + 1:b] for a, b in zip(cuts, cuts[1:] + [len(text)])):
         part = re.sub(r"^\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected)\s+)?", "", part)
-        word = part.split()[0] if part.split() else ""
-        if _identifier(word):
-            found.append(word)
+        word = _identifier(part)  # up to its binders or its type: `blue: Shade`, `«blue moon» : Shade`
+        if word:
+            found.append(word)  # `| deriving`: _canonical writes it `«deriving»`; `| a.b` stays a.b
     return found
 
 
@@ -1822,12 +1968,18 @@ def declarations(text: str) -> list[tuple[str, int]]:
     each structure it extends, and its constructors, with the declarations that Lean adds for every
     inductive type and constructor (`_AUXILIARY`). A structure's header runs to `where`; a line
     indented more than its first field continues the field above. A field line that it cannot read
-    yields `?gen:structure:<name>`. `deriving C` after a type, and `deriving instance C for T`, add
-    the instances that they generate. Each `?gen:` marker ends with `#` and a fingerprint of its
+    yields `?gen:structure:<name>`. Each `?gen:` marker ends with `#` and a fingerprint of its
     attributes and its declaration's text. `initialize x : T` declares x, and a syntax command declares
     its `(name := x)`, or else yields `?gen:syntax:...`. A declaration may follow scoped commands on its line
     (`open X in`, `attribute [local instance] y in`); otherwise it misses declarations whose keyword
-    does not start a line."""
+    does not start a line.
+
+    Known limitation: the instances that `deriving` generates (`deriving Repr` after a type or a
+    definition, `deriving instance Repr for T`) are not read, so the duplicate check does not compare
+    them. Lean names them from the elaborated terms, with indices when a name is taken and a project
+    suffix for foreign types, which a line reader cannot follow; a clash there is rare, and the merge
+    group's build reports it. The clause itself is skipped: what follows `deriving` in a type's lines
+    are its classes, not fields or constructors."""
     found, stack = [], []
     lines = strip_comments(text).split("\n")
     literal = strip_comments(text, keep_strings=True).split("\n")  # Lean names parsers after their literals
@@ -1835,8 +1987,6 @@ def declarations(text: str) -> list[tuple[str, int]]:
     depth, carried, pending, attributes = 0, set(), None, ""
     marker_attributes: dict[tuple[str, int], str] = {}  # the attributes above each `?gen:` marker
     body: dict | None = None  # the structure, class or inductive whose indented lines come next
-    last_type: str | None = None  # the last such type, which a `deriving` line after it extends
-    last_local = False  # whether that type is module-local: what its clause makes is then possible only
     previous_code, expects_command, last = [""] * (len(lines) + 2), [False] * (len(lines) + 2), ""
     for index, text_line in enumerate(lines, 1):  # once per file, not once per line
         previous_code[index] = last
@@ -1849,12 +1999,8 @@ def declarations(text: str) -> list[tuple[str, int]]:
         return bool(_OPEN_END.search(previous_code[number])) and not expects_command[number]
 
     def open_clause(classes: str, number: int) -> None:
-        """Classes of a `deriving` clause attached to the type in `body`; it goes on over the next
-        lines while it has no class yet or ends with a comma."""
-        derived = _derived(classes, body["name"])  # a local type's instances may still be public: possible names
-        found.extend((f"?maybe:{name}" if body.get("local") and not name.startswith("?") else name, number)
-                     for name in derived)
-        body["deriving"] = not classes.strip() or classes.strip().endswith(",")
+        """A `deriving` clause attached to the type in `body`: the instances it generates are not read
+        (see declarations), and the rest of the type's lines are its classes."""
         body["deriving_line"] = number
 
     def constructor(type_name: str, name: str, number: int) -> None:
@@ -1863,8 +2009,6 @@ def declarations(text: str) -> list[tuple[str, int]]:
 
     def close() -> None:
         nonlocal body
-        if body and body.get("deriving"):  # a clause whose classes never came: they cannot be read
-            found.append((f"?gen:deriving:{body['name']}", body["deriving_line"]))
         if body and body["kind"] == "structure":
             if body["header"] is not None:  # no `where`: no fields, but the parents count
                 end_header(body["header"], body["line"])
@@ -1921,16 +2065,19 @@ def declarations(text: str) -> list[tuple[str, int]]:
         stripped = line.strip()
         if not stripped:
             return
-        if body.get("deriving"):  # the classes of a `deriving` clause go on
-            open_clause(stripped, number)
+        if body.get("deriving_line") is not None:  # `deriving` comes last: what follows are its classes
             return
-        deriving = re.search(r"\bderiving\b(.*)", stripped)
+        if body.get("bar"):  # `|` alone at the end of the line above: this line names its constructor
+            stripped, body["bar"] = f"{body['bar']} {stripped}", None
+        deriving = _deriving(stripped)
         if deriving and (body["header"] is None or body["kind"] == "inductive" or stripped.startswith("deriving")):
-            open_clause(deriving.group(1), number)
-            stripped = stripped[:deriving.start()].strip()
+            open_clause(deriving[1], number)
+            stripped = stripped[:deriving[0]].strip()
             if not stripped:
                 return
         if body["kind"] == "inductive":
+            where = _WHERE.match(stripped)  # `where | a | b` on a line of its own
+            stripped = stripped[where.end():].lstrip() if where else stripped
             if stripped.startswith("|"):
                 body["ctors"] = body.get("ctors", 0) + 1
                 for c in _constructors(stripped):
@@ -1938,6 +2085,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
                         found.append((f"?local:{body['name']}.{c}", number))
                     else:
                         constructor(body["name"], c, number)
+                body["bar"] = _open_alternative(stripped)
             return
         if body["header"] is not None:  # binders and `extends` until `where`
             where = _WHERE.search(stripped)
@@ -1999,7 +2147,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
                 found.append((f"?gen:syntax:{prefix + '.' if prefix else ''}{keyword}", number))
 
     def record(keyword: str, modifiers: set, rest: str, number: int, attributes: str) -> None:
-        nonlocal body, last_type, last_local
+        nonlocal body
         if re.search(r"\b(?:command_elab|macro)\b", attributes or ""):  # `@[command_elab k] def`: as an elaborator
             prefix = ".".join(n for kind, n, _ in stack if kind == "namespace" and n)
             marker = f"?gen:command:{prefix + '.' if prefix else ''}command_elab"
@@ -2023,10 +2171,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
             return
         prefix = ".".join(n for kind, n, _ in stack if kind == "namespace" and n)
         local = "private" in modifiers or not ("public" in modifiers or default())
-        if keyword == "deriving" and local:  # `private deriving instance C for T`: what it makes may be public
-            before = len(found)
-            derive(rest, number)
-            found[before:] = [(n if n.startswith("?") else f"?maybe:{n}", line) for n, line in found[before:]]
+        if keyword == "deriving":  # `deriving instance C for T`: the instances it generates are not read (see declarations)
             return
         if local or keyword.endswith("_wanted"):
             # Module-local (Batteries makes every `*_wanted` placeholder private): two such names clash only
@@ -2038,11 +2183,10 @@ def declarations(text: str) -> list[tuple[str, int]]:
                 local_names.append(n)
             inductive = keyword == "inductive" or (keyword == "class" and re.match(r"\s*inductive\b", rest))
             if keyword in ("structure", "class", "inductive") and local_names:
-                last_type, last_local = local_names[0], True
                 declared = lines[number - 1]  # its members are module-local too: read them as such
                 indent = len(declared) - len(declared.lstrip())
-                deriving = re.search(r"\bderiving\b(.*)", rest)
-                head = rest[:deriving.start()] if deriving else rest
+                deriving = _deriving(rest)
+                head = rest[:deriving[0]] if deriving else rest
                 where = _WHERE.search(head)
                 body = {"kind": "inductive" if inductive else "structure", "name": local_names[0], "line": number,
                         "constructor": False, "indent": indent, "header": None if where or inductive else head,
@@ -2050,17 +2194,16 @@ def declarations(text: str) -> list[tuple[str, int]]:
                 if inductive:
                     for c in _constructors(head):
                         found.append((f"?local:{local_names[0]}.{c}", number))
+                    if not deriving:
+                        body["bar"] = _open_alternative(head)  # `private inductive T | a |`: the next line names one
                 elif where:
                     end_header(head[:where.start()], number)  # its parents' projections, as module-local names
                     if head[where.end():].strip():
                         read_field(head[where.end():], number, indent + 1)
                 if deriving:  # `private inductive T | a | b deriving DecidableEq`: on its own line
-                    open_clause(deriving.group(1), number)
+                    open_clause(deriving[1], number)
             return
-        if keyword == "deriving":
-            derive(rest, number)
-            return
-        inductive_class = keyword == "class" and bool(re.match(r"inductive\b", rest))
+        inductive_class = keyword == "class" and bool(re.match(r"inductive" + _KW_END, rest))
         if inductive_class:
             rest = rest[len("inductive"):]
 
@@ -2093,7 +2236,6 @@ def declarations(text: str) -> list[tuple[str, int]]:
             if name.startswith("?gen:"):
                 marker_attributes[(name, number)] = " ".join(attributes.split())
         if names and keyword in ("structure", "class", "inductive"):
-            last_type, last_local = names[0], False
             found.extend((f"{names[0]}.{aux}", number) for aux in _AUXILIARY)
             if re.search(r"\bto_additive\b", attributes):  # its copy's members cannot be predicted
                 found.append((f"?gen:to_additive:{names[0]}", number))
@@ -2104,11 +2246,13 @@ def declarations(text: str) -> list[tuple[str, int]]:
             body = {"kind": "inductive" if inductive else "structure", "name": names[0], "line": number,
                     "constructor": False, "indent": indent, "header": rest, "field_indent": None}
             if inductive:
-                deriving = re.search(r"\bderiving\b(.*)", rest)
-                for c in _constructors(rest[:deriving.start()] if deriving else rest):
+                deriving = _deriving(rest)
+                for c in _constructors(rest[:deriving[0]] if deriving else rest):
                     constructor(names[0], c, number)
                 if deriving:
-                    open_clause(deriving.group(1), number)
+                    open_clause(deriving[1], number)
+                else:
+                    body["bar"] = _open_alternative(rest)  # `inductive T | a |`: the next line names one
             else:
                 where = _WHERE.search(rest)
                 if where:
@@ -2131,31 +2275,11 @@ def declarations(text: str) -> list[tuple[str, int]]:
         if keyword in _SYNTAX_COMMANDS:
             return False
         if keyword == "deriving":
-            if not text or text.endswith(","):
+            if _awaiting_class(text):  # `deriving BEq, @[expose]`: its last class follows
                 return True
-            command = re.match(r"(?:noncomputable\s+)?instance\b", text)
-            return bool(command) and not re.search(r"\bfor\b\s*\S", text)
+            command = re.match(r"(?:noncomputable\s+)?instance" + _KW_END, text)
+            return bool(command) and not re.search(_KW_START + "for" + _KW_END + r"\s*\S", _masked(text))
         return not text or (keyword == "alias" and text.startswith("⟨") and "⟩" not in text)
-
-    def derive(text: str, number: int) -> None:
-        """The instances that a `deriving` command generates."""
-        prefix = ".".join(n for kind, n, _ in stack if kind == "namespace" and n)
-        command = re.match(r"\s*(?:noncomputable\s+)?instance\b(.*?)\bfor\b(.*)", text, re.S)
-        if command:
-            targets = [t.split()[0] if t.split() else "" for t in command.group(2).split(",")]
-            classes, readable = command.group(1), all(_identifier(t) for t in targets) and targets
-            for target in targets if readable else []:
-                last = target.split(".")[-1]
-                found.extend((name, number) for name in _derived(classes, f"{prefix}.{last}" if prefix else last))
-        elif re.match(r"\s*(?:noncomputable\s+)?instance\b", text) or not last_type:
-            readable = False
-        else:
-            classes = text
-            readable = any(c.split() for c in classes.split(","))
-            found.extend((f"?maybe:{name}" if last_local and not name.startswith("?") else name, number)
-                         for name in _derived(text, last_type))
-        if not readable:
-            found.append((f"?gen:deriving:{prefix + '.' if prefix else ''}instance", number))
 
     restore = None  # the scopes as they were before a `scoped[NS]` command
     command_level = True  # whether an indented line here can only be a command, not the last one's continuation
@@ -2251,7 +2375,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
         """A helper declared by `text`, a line of a `where` block, with its own `let rec` functions; a
         `where` after its body opens a block of its own helpers."""
         nonlocal helper
-        if text.startswith("|") or re.match(r"(?:termination_by|decreasing_by|deriving|where)\b", text):
+        if text.startswith("|") or re.match(r"(?:termination_by|decreasing_by|deriving|where)" + _KW_END, text):
             return  # an alternative, or no helper
         name = _identifier(text)  # quote-aware: `«two words»`
         if not name:
@@ -2276,13 +2400,14 @@ def declarations(text: str) -> list[tuple[str, int]]:
         if rest_of_line:
             add_helper(rest_of_line, number)
     for number, line in enumerate(lines, 1):
+        number_now[0] = number
         if restore is not None and not pending and not carried:  # `scoped[NS]` alone on a line holds for the next command
             stack[:], restore = restore, None
         if body is not None and not pending:
             indent = len(line) - len(line.lstrip())
             if not line.strip() or indent > body["indent"] or \
                     (body["kind"] == "inductive" and line.lstrip().startswith("|") and indent >= body["indent"]) or \
-                    (re.match(r"where\b", line.strip()) and indent == body["indent"]  # `structure S (α : Type)` then `where`
+                    (_WHERE.match(line.strip()) and indent == body["indent"]  # `structure S (α : Type)` then `where`
                      and (body["header"] is not None or (body["kind"] == "inductive" and not body.get("ctors")))):
                 read_body(line, number)
                 continue
@@ -2314,7 +2439,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
                 helper = helper["outer"]  # that block has ended: back to the one around it, if any
         if helper is not None and helper["where"] is not None:  # inside a `where` block
             helper["indent"] = helper["indent"] or indent
-            if re.match(r"where\b", text):  # the last helper's own helpers
+            if _WHERE.match(text):  # the last helper's own helpers
                 if helper["last"]:
                     nest(indent, text[len("where"):].strip(), number)
             elif indent == helper["indent"]:
@@ -2326,7 +2451,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
                                  else [(f"?gen:helper:{owner}", number)])
             continue
         if helper is not None:
-            if re.match(r"where\b", text):
+            if _WHERE.match(text):
                 if helper["assigned"]:  # after its body: helper declarations follow
                     helper["where"] = indent
                     if text[len("where"):].strip():
@@ -2463,7 +2588,7 @@ def declarations(text: str) -> list[tuple[str, int]]:
                 pending = (keyword, modifiers, number, after, held)
             else:
                 record(keyword, modifiers, after, number, held)
-        own = re.sub(r"^\s*(?:noncomputable\s+)?(?:instance|inductive)\b", "", after) if keyword in ("deriving", "class") \
+        own = re.sub(r"^\s*(?:noncomputable\s+)?(?:instance|inductive)" + _KW_END, "", after) if keyword in ("deriving", "class") \
             else after
         own = re.sub(r"\[[^\[\]]*\]", " ", own)  # attribute lists: `attribute [local instance 5] f`
         again = _AGAIN.search(own) if keyword in _COMMANDS else None  # `deriving instance`, `class inductive` aside
@@ -2530,10 +2655,11 @@ def is_library_lean(path: str) -> bool:
     return path.endswith(".lean") and path.split("/", 1)[0] in LIBRARIES
 
 
-def head_changes(git: Git, main: str, heads: list[str]) -> dict[str, list[tuple[str, str, str]]]:
+def head_changes(git: Git, main: str, heads: list[str], lean: bool = True) -> dict[str, list[tuple[str, str, str]]]:
     """Each head's changes since its merge base with main. First it downloads, in one request, the
-    blobs that the merges and the duplicate check read. Those are the libraries' Lean files, and
-    every file that two heads change, or that one head and main change since the oldest merge base."""
+    blobs that the merges and (with `lean`) the duplicate check read. Those are the libraries' Lean
+    files, and every file that two heads change, or that one head and main change since the oldest
+    merge base."""
     changes = {sha: git.diff_raw(git.merge_base(main, sha) or main, sha, ()) for sha in dict.fromkeys(heads)}
     touched: dict[str, int] = {}
     for diff in changes.values():
@@ -2543,7 +2669,7 @@ def head_changes(git: Git, main: str, heads: list[str]) -> dict[str, list[tuple[
     on_main = set(git.changed_files(oldest, main)) if oldest else set()
     shared = {path for path, count in touched.items() if count > 1 or path in on_main}
     oids = {oid for diff in changes.values() for old, new, path in diff
-            if path in shared or is_library_lean(path) for oid in (old, new)}
+            if path in shared or (lean and is_library_lean(path)) for oid in (old, new)}
     if shared:
         oids.update(git.root_oids(main, tuple(sorted(shared))).values())
     git.prefetch(oids)
@@ -2644,9 +2770,13 @@ def simulate(git: Git, main: str, entries: list[dict], head: str, changes: dict[
     # merges nowhere, if its diff from any of its best merge bases with main does.
     pin_files: dict[int, set] = {e["number"]: {path for _, _, path in changes[e["head"]]} & set(PIN_FILES)
                                  for e in entries}
-    result = {"main": git.merge_tree(main, head), "entries": [], "candidate": None, "pin_changes_ahead": []}
+    result = {"main": git.merge_tree(main, head), "entries": [], "candidate": None, "pin_changes_ahead": [],
+              "alternative_steps": []}
     queue = _chain(git, main, entries)
     result["entries"], result["tip"] = queue["entries"], queue["tip"]
+    befores = [main] + [tip for _, tip in queue["tips"]]
+    result["steps"] = [dict(record, before=before, after=after)  # each admitted merge: what it changes, as made
+                       for (record, after), before in zip(queue["tips"], befores)]
 
     def note_pins(chain: dict) -> None:
         for number, paths in chain["pins"].items():
@@ -2698,12 +2828,18 @@ def simulate(git: Git, main: str, entries: list[dict], head: str, changes: dict[
             if union not in leaves:
                 leaves.append(union)
     positions = {e["number"]: e["position"] for e in entries}
+    seen: set[tuple] = set()  # the alternative merges recorded
     for leave in leaves:
         alternative = _chain(git, main, entries, leave)
         note_pins(alternative)
         kept = [n for n, needed in blockers.items() if needed <= leave and f"#{n}" in alternative["merged"]]
         if not kept:
             continue  # without them, no left-out entry stays
+        befores = [main] + [tip for _, tip in alternative["tips"]]
+        for (record, after), before in zip(alternative["tips"], befores):  # each merge of that queue, too
+            if (record["number"], before, after) not in seen:
+                seen.add((record["number"], before, after))
+                result["alternative_steps"].append(dict(record, before=before, after=after))
         attempt = git.merge_tree(alternative["tip"], head)
         without = sorted(leave)
         if attempt["clean"]:
@@ -2736,8 +2872,12 @@ def find_duplicates(git: Git, main: str, since: str, merges: list[dict], entries
 
     Each of `merges` is a merge of this pull request (`after`) onto main and some queued entries
     (`before`). Reading the merged tree takes care of what the merge itself does to the other side's
-    files, such as a rename or a changed namespace."""
+    files, such as a rename or a changed namespace. With no merge to read, as when it conflicts with
+    main, the result is `unavailable` (why): not a merge that adds no declaration."""
     parsed: dict[str, list[tuple[str, int]]] = {}  # one parse per blob for the whole scan
+    if not merges:  # no merged tree to read (it conflicts with main): nothing was checked, so nothing passes
+        return {"names": None, "places": False, "found": [], "incomplete": None, "unpredictable": [],
+                "unavailable": "there is no merged tree to read"}
     if not any(is_library_lean(path) for merge in merges for _, _, path in git.diff_raw(merge["before"], merge["after"])):
         return {"names": 0, "found": [], "incomplete": None, "unpredictable": []}  # it places no declaration
 
@@ -2746,13 +2886,13 @@ def find_duplicates(git: Git, main: str, since: str, merges: list[dict], entries
             parsed[oid] = declarations(texts[oid])
         return parsed[oid]
     on_main = git.diff_raw(since, main)
-    incomplete = None
-    if len(on_main) > MAX_MAIN_CHANGES:
-        incomplete = f"main changed {len(on_main)} library Lean files since {short(since)}"
     main_paths = {path for _, _, path in on_main}
+    incomplete = None
+    if len(main_paths) > MAX_MAIN_CHANGES:
+        incomplete = f"main changed {len(main_paths)} library Lean files since {short(since)}"
     entry_paths = {f"#{e['number']}": {path for _, _, path in changes[e["head"]]} for e in entries}
     positions = {f"#{e['number']}": e["position"] for e in entries}
-    found, names, unpredictable, untested = [], None, set(), set()
+    found, names, unpredictable, untested, places = [], None, set(), set(), False
     # What each queued entry's own diff adds, by name: who to blame for a copy.
     own = {f"#{e['number']}": [c for c in changes[e["head"]] if is_library_lean(c[2])] for e in entries}
     own_oids = {oid for diff in own.values() for old, new, _ in diff for oid in (old, new)}
@@ -2787,8 +2927,8 @@ def find_duplicates(git: Git, main: str, since: str, merges: list[dict], entries
         git.prefetch(oids)
         texts = git.blobs(oids)
         placed = placed_declarations(mine, texts, parsed)
-        if names is None:
-            names = len([name for name in placed if not name.startswith("?")])
+        names = (names or set()) | {name for name in placed if not name.startswith("?")}  # by any merge
+        places = places or bool(placed)  # generated names too: what only its CI could have vouched for
         for name in placed:
             if name.startswith("?gen:"):
                 _, attribute, declaration = name.split("#", 1)[0].split(":", 2)
@@ -3001,60 +3141,80 @@ def find_duplicates(git: Git, main: str, since: str, merges: list[dict], entries
         listed = ", ".join(sorted(untested)[:3]) + (" and more" if len(untested) > 3 else "")
         what = f"merging it gives names that its CI did not build ({listed}); they were not looked up in all of main"
         incomplete = f"{incomplete}; {what}" if incomplete else what
-    return {"names": names or 0, "found": found, "incomplete": incomplete, "unpredictable": sorted(unpredictable)}
+    return {"names": len(names or ()), "places": places, "found": found, "incomplete": incomplete,
+            "unpredictable": sorted(unpredictable)}
 
 
-def gather(gh: GitHub, git: Git, number: int, now: dt.datetime | None = None) -> dict:
-    """Everything the verdict depends on, read from GitHub and computed in the clone."""
-    pr = get_pull(gh, number)
-    head_repo = ((pr.get("head") or {}).get("repo") or {}).get("full_name")
-    facts = {"pr": number, "repo": gh.repo, "head": pr["head"]["sha"], "node_id": pr.get("node_id"),
-             "title": pr.get("title"), "state": "merged" if pr.get("merged") else pr.get("state"),
-             "draft": pr.get("draft"), "base": pr["base"]["ref"], "fork": head_repo != gh.repo,
-             "mergeable": pr.get("mergeable"), "mergeable_state": pr.get("mergeable_state"),
-             "changed_files": pr.get("changed_files")}
+def gather(gh: GitHub, git: Git, number: int, now: dt.datetime | None = None,
+           only: frozenset | None = None) -> dict:
+    """Everything the verdict depends on, read from GitHub and computed in the clone. With `only` (some of
+    CHECKS), what those checks need and no more: the reviews for codex; the check runs for codex, checks,
+    freshness, workflows and heavy-rebuild; main's rules and workflows for those but codex; the queue's
+    merges for codex, freshness, conflicts, duplicates and workflows."""
+    def wanted(*names: str) -> bool:
+        return only is None or any(name in only for name in names)
+    queue = get_queue(gh, "main", number)  # the pull request comes in the same request (see QUEUE_QUERY)
+    for wait in (2, 4, 8):
+        pull = queue.get("pull") or {}
+        if pull.get("state") != "OPEN" or pull.get("mergeable") != "UNKNOWN":
+            break
+        time.sleep(wait)  # GitHub computes mergeability after the first read
+        queue = get_queue(gh, "main", number)
+    facts = pull_facts(number, gh.repo, queue.pop("pull", None))
+    facts["only"] = sorted(only) if only is not None else None
     if facts["state"] != "open" or facts["base"] != "main":
         return facts
     head = facts["head"]
-    facts["queue"] = get_queue(gh, facts["base"], number)
-    if facts["queue"]["own"]:
+    facts["queue"] = queue
+    if facts["queue"]["own"] or only == frozenset():  # `--only state`: nothing more to read
         return facts
-    reviews = summarize_reviews(gh.paged(f"/repos/{gh.repo}/pulls/{number}/reviews"), head)
-    runs = gh.paged(f"/repos/{gh.repo}/commits/{head}/check-runs", "check_runs")
-    codex = reviews["codex"]
-    if codex and codex["state"] == "APPROVED":
-        if codex["kind"] == "automatic":
-            codex["attested_by"], codex["search_incomplete"] = codex_attested(gh, runs, codex["id"], number, facts["base"]), False
-            if not codex["attested_by"] and head_repo != gh.repo:
-                # A fork's automatic review runs on pull_request_target, whose checks attach to main.
-                codex["attested_by"], codex["search_incomplete"] = codex_comment_attested(
-                    gh, codex, events=("pull_request_target",))
-        else:
-            codex["attested_by"], codex["search_incomplete"] = codex_comment_attested(gh, codex, head=head)
-    facts["reviews"] = reviews
-    required = get_required(gh, facts["base"])
+    if not queue.get("main"):  # every check below reads that queue against that main: one snapshot
+        raise Failure("GitHub's answer about the merge queue does not say which commit main is")
+    reads_runs = wanted("codex", "checks", "freshness", "workflows", "heavy-rebuild", "duplicates")
+    runs = gh.paged(f"/repos/{gh.repo}/commits/{head}/check-runs", "check_runs") if reads_runs else []
+    if wanted("codex"):
+        reviews = summarize_reviews(gh.paged(f"/repos/{gh.repo}/pulls/{number}/reviews"), head)
+        codex = reviews["codex"]
+        if codex and codex["state"] == "APPROVED":
+            if codex["kind"] == "automatic":
+                codex["attested_by"], codex["search_incomplete"] = codex_attested(gh, runs, codex["id"], number, facts["base"]), False
+                if not codex["attested_by"] and facts["fork"]:
+                    # A fork's automatic review runs on pull_request_target, whose checks attach to main.
+                    codex["attested_by"], codex["search_incomplete"] = codex_comment_attested(
+                        gh, codex, events=("pull_request_target",))
+            else:
+                codex["attested_by"], codex["search_incomplete"] = codex_comment_attested(gh, codex, head=head)
+        facts["reviews"] = reviews
+    supplied = wanted("checks", "freshness", "workflows", "heavy-rebuild")  # what main's rules and workflows feed
+    required = get_required(gh, facts["base"], git.cache) if supplied else []
     statuses = None
-    if any(not c["integration_id"] and c["context"] not in {r.get("name") for r in runs} for c in required):
+    if wanted("checks") and any(not c["integration_id"] and c["context"] not in {r.get("name") for r in runs}
+                                for c in required):
         statuses = gh.get(f"/repos/{gh.repo}/commits/{head}/status").get("statuses")
     git.ensure()
     git.size_oracle = lambda oids: blob_sizes(gh, oids)
     git.fetch([f"+refs/heads/{facts['base']}:refs/preflight/main"])
-    main = git.rev_parse("refs/preflight/main")  # the one main that the checks, the simulation and enqueue use
-    workflows, unreadable = workflow_jobs(git, main)
-    provenance = Provenance(gh, number, facts["base"], workflows=workflows, unreadable=unreadable)
-    facts["check_workflows"] = sorted({path for context in [c["context"] for c in required] + [CI_CHECK]
-                                       for path in workflows.get(context, ())} | unreadable)
-    facts["code_by_workflow"] = {path: workflow_code(git, main, [path]) for path in facts["check_workflows"]}
-    facts["check_code"] = sorted({c for code in facts["code_by_workflow"].values() for c in code})
-    git.watched = frozenset(facts["check_code"]) | frozenset(facts["check_workflows"])
-    facts["check_roots"] = code_roots(facts["check_code"], lambda entry: code_signature(git, main, entry) is not None)
-    facts["checks"] = summarize_checks(runs, required, statuses, provenance)
-    facts["ci"] = ci_run(gh, runs, head, number, facts["base"], provenance)
-    compute(git, facts, number, head, main)
-    facts["stale_checks"] = stale_checks(gh, git, main, facts["checks"]["required"], provenance, facts["base"], now,
-                                         facts.get("code_by_workflow"))
-    # Last, after every read that decides: an advisory warning's two requests.
-    facts["build_time"] = build_time(gh, next((c for c in facts["checks"]["required"] if c["name"] == CI_CHECK), None))
+    main = queue["main"]  # main as the queue was read against it: one snapshot
+    if not git.rev_parse(main):
+        git.fetch([main])  # main has moved on since: the queue's main, not a later one
+    main = git.rev_parse(main)  # the one main that the checks, the simulation and enqueue use
+    if not main:
+        raise Failure("main, as the merge queue was read against it, cannot be fetched")
+    provenance = None
+    if reads_runs:
+        workflows, unreadable = workflow_jobs(git, main)
+        provenance = Provenance(gh, number, facts["base"], workflows=workflows, unreadable=unreadable)
+        facts["check_workflows"] = sorted({path for context in [c["context"] for c in required] + [CI_CHECK]
+                                           for path in workflows.get(context, ())} | unreadable)
+        facts["checks"] = summarize_checks(runs, required, statuses, provenance)
+        if wanted("codex", "freshness", "workflows", "duplicates"):  # duplicates: the names its CI built
+            facts["ci"] = ci_run(gh, runs, head, number, facts["base"], provenance, git.cache)
+    if wanted("codex", "freshness", "conflicts", "duplicates", "workflows"):
+        compute(git, facts, number, head, main, only)
+    if wanted("freshness"):
+        facts["stale_checks"] = stale_checks(gh, git, main, facts["checks"]["required"], provenance, facts["base"], now)
+    if wanted("heavy-rebuild"):  # last, after every read that decides: an advisory warning's two requests
+        facts["build_time"] = build_time(gh, next((c for c in facts["checks"]["required"] if c["name"] == CI_CHECK), None))
     return facts
 
 
@@ -3141,33 +3301,44 @@ def build_time(gh: GitHub, build: dict | None) -> dict | None:
 
 
 def stale_checks(gh: GitHub, git: Git, main: str, required: list[dict], provenance: Provenance,
-                 base_ref: str = "main", now: dt.datetime | None = None,
-                 code_by_workflow: dict[str, list[str]] | None = None) -> list[dict]:
-    """The required checks whose run used another copy of its workflow than main has now. Main as it was
+                 base_ref: str = "main", now: dt.datetime | None = None) -> list[dict]:
+    """The required checks whose run used other code than main has now: any file that is not data (see
+    is_check_code), its workflow among them, that differs between main then and main now. Main as it was
     when the run started comes from the repository's activity on the branch, which times every update
     of it to the second (`time_period=day`: the last 24 hours): the state before the first update after
     the run started, or the newest state if none came after. Updates in the very second the run started
-    leave its order open, so if the workflow differs across them the check's freshness is unknown, as it
-    is when the run's start, its workflow or main's history cannot be read."""
+    leave its order open, so if code differs across them the check's freshness is unknown, as it is when
+    the run's start, its workflow or main's history cannot be read."""
     now = now or dt.datetime.now(dt.timezone.utc)
-    out, updates = [], None
-    for check in required:
+    out: list[tuple[int, dict]] = []  # in the order of `required`
+    runs = []
+    for index, check in enumerate(required):
         if check.get("status") != "completed" or not check.get("run"):
             continue
         run = provenance.run(check["run"]) or {}
         path = (run.get("path") or "").split("@", 1)[0]
         if not path or not run.get("created_at"):
-            out.append({"name": check["name"], "unknown": "its run does not say when it started or what it ran"})
+            out.append((index, {"name": check["name"], "unknown": "its run does not say when it started or what it ran"}))
             continue
-        if updates is None:
-            try:
-                updates = sorted((parse_time(a["timestamp"]), a["before"], a["after"]) for a in gh.paged(
-                    f"/repos/{gh.repo}/activity?ref=refs/heads/{base_ref}&time_period=day"))
-            except (Failure, KeyError, TypeError, ValueError):
-                updates = False  # unread: nothing can be told
         started = parse_time(run["created_at"])
+        if started is None:
+            out.append((index, {"name": check["name"], "unknown": "its run does not say when it started or what it ran"}))
+            continue
+        runs.append((index, check, path, started))
+    updates = None
+    if runs:
+        oldest = min(started for _, _, _, started in runs)
+
+        def reaches_back(page: list) -> bool:  # newest first: past the oldest run's start, no more is needed
+            return any((t := parse_time(a.get("timestamp"))) is not None and t < oldest for a in page)
+        try:
+            updates = sorted((parse_time(a["timestamp"]), a["before"], a["after"]) for a in gh.paged(
+                f"/repos/{gh.repo}/activity?ref=refs/heads/{base_ref}&time_period=day", stop=reaches_back))
+        except (Failure, KeyError, TypeError, ValueError):
+            updates = False  # unread: nothing can be told
+    for index, check, path, started in runs:
         if updates is False or started < now - dt.timedelta(hours=23):
-            out.append({"name": check["name"], "unknown": "main's history does not cover when its run started"})
+            out.append((index, {"name": check["name"], "unknown": "main's history does not cover when its run started"}))
             continue
         tied = [u for u in updates if u[0] == started]
         later = [u for u in updates if u[0] > started]
@@ -3182,24 +3353,17 @@ def stale_checks(gh: GitHub, git: Git, main: str, required: list[dict], provenan
             order = _update_chain(last)
             states = [order[-1][2]] if order else [u[2] for u in last] or [main]
 
-        def blob(commit: str, file: str) -> str | None:  # a directory gives its tree, a glob what it matches
-            return code_signature(git, commit, file)
         if not all(git.rev_parse(state) for state in states):
-            out.append({"name": check["name"], "unknown": "main's history names a commit this clone does not have"})
+            out.append((index, {"name": check["name"], "unknown": "main's history names a commit this clone does not have"}))
             continue
-        code = list((code_by_workflow or {}).get(path, []))
-        if "?incomplete" in code:
-            out.append({"name": check["name"], "unknown": "the code its workflow runs is too large to follow"})
-            continue
-        for file in [path] + code:  # the workflow and the code it runs (a directory compares as a whole)
-            copies = {blob(state, file) for state in states}
-            if len(copies) > 1:
-                out.append({"name": check["name"], "unknown": f"main changed {file} in the second its run started"})
-                break
-            if copies != {blob(main, file)}:
-                out.append({"name": check["name"], "path": file, "main": states[0]})
-                break
-    return out
+        since = [sorted(p for p, modes in git.changed(state, main).items() if is_code_change(p, modes))
+                 for state in states]  # the code main has changed since each state it may have run on
+        if any(since) and not all(since):
+            first = next(changed for changed in since if changed)[0]
+            out.append((index, {"name": check["name"], "unknown": f"main changed {first} in the second its run started"}))
+        elif since and since[0]:
+            out.append((index, {"name": check["name"], "path": since[0][0], "main": states[0]}))
+    return [entry for _, entry in sorted(out, key=lambda item: item[0])]
 
 
 SELF = "scripts/queue/preflight.py"
@@ -3220,9 +3384,11 @@ def copy_differs(git: Git, main: str) -> bool | None:
     return git.out("hash-object", "--", str(Path(__file__).resolve())) != on_main
 
 
-def compute(git: Git, facts: dict, number: int, head: str, main: str) -> None:
-    """Add the facts computed in the clone against `main`, as fetched once: freshness, the queue
-    simulation, duplicates."""
+def compute(git: Git, facts: dict, number: int, head: str, main: str, only: frozenset | None = None) -> None:
+    """Add the facts computed in the clone against `main`, as fetched once: the queue simulation, then,
+    as `only` (see gather) asks, the code behind the checks and freshness, and duplicates."""
+    def wanted(*names: str) -> bool:
+        return only is None or any(name in only for name in names)
     entries = [e for e in facts["queue"]["entries"] if e["number"] != number and e["head"]]
     git.fetch([f"+refs/pull/{number}/head:refs/preflight/pr/{number}"]
               + [f"+refs/pull/{e['number']}/head:refs/preflight/pr/{e['number']}" for e in entries])
@@ -3232,7 +3398,7 @@ def compute(git: Git, facts: dict, number: int, head: str, main: str) -> None:
     facts["main"] = main
     facts["copy_differs"] = copy_differs(git, main)
     facts["contains_queued"] = [e["number"] for e in entries if git.is_ancestor(e["head"], head)]
-    changes = head_changes(git, main, [head] + [e["head"] for e in entries])
+    changes = head_changes(git, main, [head] + [e["head"] for e in entries], lean=wanted("duplicates"))
     facts["files"] = [path for _, _, path in changes[head]]
     ci = facts.get("ci") or {}
     base = ci.get("base")
@@ -3249,62 +3415,70 @@ def compute(git: Git, facts: dict, number: int, head: str, main: str) -> None:
         ci["main_moved"] = int(git.out("rev-list", "--count", "--first-parent", f"{base}..{main}"))
     simulation = simulate(git, main, entries, head, changes)
     facts["simulation"] = simulation
+    if wanted("codex", "freshness", "workflows"):
+        code_and_freshness(git, facts, entries, head, main, base, simulation)
+    if wanted("duplicates"):
+        built = base if ci.get("conclusion") == "success" else None  # CI built that merge, and its names held
+        since = built or git.merge_base(main, head) or main
+        merges = merges_to_read(simulation, main)
+        facts["duplicates"] = find_duplicates(git, main, since, merges, entries, changes,
+                                              tested_names(git, since, head) if merges else None)
+        if not built:  # the names its CI built, and main since, are unknown
+            facts["duplicates"]["ci_unknown"] = ("its CI build has not passed" if base else
+                                                 "which main its CI merged it into is unknown")
 
-    def blob(tree: str, path: str) -> str | None:  # a directory gives its tree, a glob what it matches
-        return code_signature(git, tree, path)
+
+def code_and_freshness(git: Git, facts: dict, entries: list[dict], head: str, main: str, base: str | None,
+                       simulation: dict) -> None:
+    """Whether the candidate changes codex.yml or any file that is not data (see is_check_code), and
+    whether CI ran other code than the merge group would run: a file that is not data and differs
+    between the merge that CI ran and the candidate merged into main, or that a queued pull request
+    ahead changes."""
     merged = simulation["main"]["tree"]  # the candidate merged into main: what its merge would change
     tested = git.merge_tree(base, head)["tree"] if base else None  # the merge that CI ran
-    facts["codex_workflow_changed"] = CODEX_WORKFLOW in facts["files"] \
-        or blob(merged, CODEX_WORKFLOW) != blob(main, CODEX_WORKFLOW) \
-        or bool(tested and blob(tested, CODEX_WORKFLOW) != blob(base, CODEX_WORKFLOW))
-    facts["changed_workflows"], facts["stale_workflows"] = [], []
-    for path in facts.get("check_workflows") or []:
-        now = blob(merged, path)
-        if now != blob(main, path) or (tested and blob(tested, path) != blob(base, path)):
-            facts["changed_workflows"].append(path)  # the candidate changes it: its runs used its own copy
-        elif tested and blob(tested, path) != now:
-            facts["stale_workflows"].append(path)  # main has changed it since CI ran: CI ran an older copy
-    facts["workflows_ahead"] = []  # each entry that may be in the merge group and changes one
-    watched = list(facts.get("check_workflows") or []) + [c for c in facts.get("check_code") or [] if c != "?incomplete"]
-    for e in entries:
-        differing = [path for path in watched if blob(e["head"], path) != blob(main, path)]
-        tree = git.merge_tree(main, e["head"])["tree"] if differing else None
-        facts["workflows_ahead"] += [{"number": e["number"], "position": e["position"], "path": path}
-                                     for path in differing if blob(tree, path) != blob(main, path)]
-    # Code that the required checks run (scripts, local actions), and this script: changed by the candidate,
-    # its runs used its own copy.
-    roots = tuple(f"{root}/" for root in facts.get("check_roots") or [])
-    touched = {path for _, _, path in git.diff_raw(main, merged, ())}  # every file, not only Lean ones
-    if tested:
-        touched |= {path for _, _, path in git.diff_raw(base, tested, ())}
-    named = {c for c in facts.get("check_code") or [] if re.search(_SCRIPT, c)}  # scripts the checks run, by name
-    facts["changed_dependencies"] = sorted(path for path in touched if ((roots and path.startswith(roots)) or path in named)
-                                           and path not in (facts.get("check_workflows") or []))
+    own = git.changed(git.merge_base(main, head) or main, head)  # its own diff, even what main has since made too
+    touched: dict[str, set[str]] = {}  # every file, with every mode it has in any view
+    for view in [git.changed(main, merged), own] + ([git.changed(base, tested)] if tested else []):
+        for path, modes in view.items():
+            touched.setdefault(path, set()).update(modes)
+    facts["codex_workflow_changed"] = CODEX_WORKFLOW in touched
+    changed = sorted(path for path, modes in touched.items() if is_code_change(path, modes))
+    required = set(facts.get("check_workflows") or [])
+    facts["changed_workflows"] = [path for path in changed if path in required]  # its runs used its own copy
+    facts["changed_dependencies"] = [path for path in changed if path not in required]
     facts["changes_self"] = SELF in touched
-    if "?incomplete" in (facts.get("check_code") or []):
-        facts["stale_workflows"].append("?incomplete")  # code that the checks run but preflight could not follow
-    for path in [c for c in facts.get("check_code") or [] if c != "?incomplete"]:
-        now = blob(merged, path)
-        if path in facts["changed_dependencies"]:
-            continue  # the candidate's own change: the hand check above
-        if tested and blob(tested, path) != now:
-            facts["stale_workflows"].append(path)  # main changed it after CI ran: CI ran an older copy
+    facts["stale_workflows"] = sorted(  # main changed it after CI ran: CI ran older code than the merge would
+        path for path, modes in git.changed(tested, merged).items() if is_code_change(path, modes)) if tested else []
+    facts["workflows_ahead"], listed = [], set()  # each merge the queue makes, or one it may make instead
+    for step in (simulation.get("steps") or []) + (simulation.get("alternative_steps") or []):
+        for path, modes in sorted(git.changed(step["before"], step["after"]).items()):
+            if is_code_change(path, modes) and (step["number"], path) not in listed:
+                listed.add((step["number"], path))
+                facts["workflows_ahead"].append({"number": step["number"], "position": step["position"], "path": path})
     candidate = simulation.get("candidate") or {}
     tips = [simulation.get("tip")] + [a["base"] for a in (candidate.get("alternatives") or {}).values()] \
         + [(candidate.get("partial") or {}).get("base")]  # every queue ahead the merge group may have
     named = {a["path"] for a in facts["workflows_ahead"]}
-    facts["workflows_ahead"] += [{"number": None, "position": None, "path": path}
-                                 for path in watched
-                                 if path not in named and any(tip and blob(tip, path) != blob(main, path) for tip in tips)]
-    since = base or git.merge_base(main, head) or main
-    facts["duplicates"] = find_duplicates(git, main, since, merges_to_read(simulation, main), entries, changes,
-                                          tested_names(git, since, head))
+    for tip in [t for t in tips if t]:
+        for path, modes in git.changed(main, tip).items():
+            if path not in named and is_code_change(path, modes):
+                facts["workflows_ahead"].append({"number": None, "position": None, "path": path})
+                named.add(path)
+    # Every tree the merge group may test, against the merge that CI ran: code that differs and that neither main
+    # since then nor the queue explains is what the merge itself makes of it (git may take another merge base,
+    # even for a file the candidate changes), and CI has not run that either.
+    groups = ([candidate.get("tree")] if candidate.get("clean") else []) \
+        + [(candidate.get("partial") or {}).get("tree")] + [a["tree"] for a in (candidate.get("alternatives") or {}).values()]
+    explained = set(facts["stale_workflows"]) | named
+    facts["merge_code"] = sorted({path for tree in groups if tree
+                                  for path, modes in git.changed(tested or merged, tree).items()
+                                  if is_code_change(path, modes) and path not in explained})
 
 
 def merges_to_read(simulation: dict, main: str) -> list[dict]:
     """The merges of the candidate that the duplicate check reads: onto the whole queue (or, when it
     conflicts with an entry, onto the entries ahead of that one), and onto main and each entry that the
-    queue may keep despite a conflict."""
+    queue may keep despite a conflict. An empty list when it conflicts with main: there is no merge to read."""
     candidate = simulation["candidate"] or {}
     clean = [f"#{e['number']}" for e in simulation["entries"] if e["clean"]]
     if candidate.get("clean"):
@@ -3325,9 +3499,15 @@ def merges_to_read(simulation: dict, main: str) -> list[dict]:
 
 def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_AGE_HOURS,
              max_files: int = DEFAULT_MAX_FILES) -> dict:
-    """READY or NOT READY, with one entry per check, the warnings, and the next thing to do."""
+    """READY or NOT READY, with one entry per check, the warnings, and the next thing to do. With
+    `facts["only"]` (see gather), for the state and those checks alone: a partial verdict, which --enqueue
+    refuses."""
     checks: list[dict] = []
     warnings: list[str] = []
+    only = facts.get("only")
+
+    def wanted(name: str) -> bool:
+        return only is None or name in only
 
     def check(name: str, ok: bool, detail: str, next_step: str | None = None, items: list | None = None,
               provenance_only: bool = False, hand_check: bool | str = False):
@@ -3342,7 +3522,11 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
                   "tested, so preflight cannot vouch for its checks and does not queue it", hand_check=True)
         ready = all(c["ok"] for c in checks)
         failing = [c for c in checks if not c["ok"]]
-        if failing and all(c.get("hand_check") or (fork and c.get("provenance_only")) for c in failing):
+        if failing and only is not None:  # a partial verdict never says to queue, not even by hand
+            first = next((c["next"] for c in failing if c["next"] and not c.get("provenance_only")), None) \
+                or next((c["next"] for c in failing if c["next"]), None)
+            next_step = (f"{first}; then " if first else "") + "run preflight without --only before queueing it"
+        elif failing and all(c.get("hand_check") or (fork and c.get("provenance_only")) for c in failing):
             what = (["its required checks and CI run, on its page"] if fork else []) + \
                    [c["hand_check"] for c in failing if isinstance(c.get("hand_check"), str)]
             next_step = (f"only hand checks remain: a maintainer checks {'; '.join(what)}, then queues it from the "
@@ -3350,7 +3534,9 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
         else:
             next_step = next((c["next"] for c in failing if c["next"] and not c.get("provenance_only")), None) \
                 or next((c["next"] for c in failing if c["next"]), None)
-        if ready:
+        if ready and only is not None:
+            next_step = "the checks asked for pass; run preflight without --only before queueing it"
+        elif ready:
             if facts.get("copy_differs") is False:  # this copy is main's: name it, wherever the caller is
                 next_step = f"queue it: python3 -I {shlex.quote(str(Path(__file__).resolve()))} {facts['pr']} --enqueue"
             else:
@@ -3359,7 +3545,8 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
             if warnings:
                 next_step += ", at a quiet hour (see the warnings)"
         return {"pr": facts["pr"], "head": facts["head"], "verdict": "READY" if ready else "NOT READY",
-                "ready": ready, "checks": checks, "warnings": warnings, "next": next_step, "facts": facts}
+                "ready": ready, "only": only, "checks": checks, "warnings": warnings, "next": next_step,
+                "facts": facts}
 
     # 1. State
     if facts["state"] != "open":
@@ -3375,24 +3562,27 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
         check("state", False, f"it is already in the merge queue, at position {own.get('position')} "
               f"({own.get('state')})", "nothing to do; do not push to it, which removes it from the queue")
         return verdict()
-    simulation, head = facts["simulation"], facts["head"]
+    simulation, head = facts.get("simulation") or {}, facts["head"]
     if facts["draft"]:
         check("state", False, "it is a draft", "mark it ready for review when it is done")
     elif facts["mergeable"] is False:
         check("state", False, f"GitHub finds a conflict with main ({facts['mergeable_state']})",
               "merge main into the branch, resolve the conflicts, push, and wait for CI and Codex")
     elif facts["mergeable"] is None:
-        local = "clean" if simulation["main"]["clean"] else "in conflict"
-        check("state", False, f"GitHub has not computed whether it is mergeable yet (a local merge with main "
-              f"is {local})", "run preflight again in a few minutes")
+        local = "" if not simulation else \
+            f" (a local merge with main is {'clean' if simulation['main']['clean'] else 'in conflict'})"
+        check("state", False, f"GitHub has not computed whether it is mergeable yet{local}",
+              "run preflight again in a few minutes")
     else:
         check("state", True, "open, ready for review, mergeable")
 
-    # 2. Codex and reviewers
-    reviews = facts["reviews"]
-    codex, latest = reviews["codex"], reviews.get("codex_latest")
     files = facts.get("files") or []
-    if reviews["change_requests"]:
+    # 2. Codex and reviewers
+    reviews = facts.get("reviews") or {"codex": None, "change_requests": []}
+    codex, latest = reviews["codex"], reviews.get("codex_latest")
+    if not wanted("codex"):
+        pass
+    elif reviews["change_requests"]:
         check("codex", False, "changes requested by " + ", ".join(
             f"{r['login']} (on {short(r['commit'])})" for r in reviews["change_requests"]),
             "address the requested changes, then ask the reviewer to review again")
@@ -3428,7 +3618,7 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
         check("codex", False, f"no formal Codex verdict on {short(head)} yet{older}", step)
 
     # 3. Required checks
-    required = facts["checks"]["required"]
+    required = (facts.get("checks") or {}).get("required") or []
     failed = [c for c in required if c["status"] == "completed" and c["conclusion"] != "success"
               and not c.get("scoped")]
     unknown = [c for c in required if c.get("provenance") == "unknown" or c["status"] == "unknown"]
@@ -3436,7 +3626,9 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
     untied = (None if facts.get("fork") else  # the fork check says what to do
               "re-run those checks on this pull request (or merge main, push, and wait for CI and Codex), then "
               "run preflight again")
-    if failed or unknown:
+    if not wanted("checks"):
+        pass
+    elif failed or unknown:
         details, fix = [], None
         if pending:
             details.append(f"not finished on {short(head)}: " + ", ".join(
@@ -3460,7 +3652,7 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
     else:
         check("required checks", True, ", ".join(c["name"] + (" (skipped: the pull request does not need it)"
                                                          if c.get("scoped") else "") for c in required) + " passed")
-    for name in facts["checks"]["advisory_failed"]:
+    for name in (facts.get("checks") or {}).get("advisory_failed") or [] if wanted("checks") else []:
         warnings.append(f"the advisory check `{name}` failed on this head")
 
     # 4. Freshness
@@ -3483,8 +3675,7 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
             name = f"#{pins['pr']}" if pins.get("pr") else short(pins["commit"])
             problems.append(f"CI merged it into main {short(base)}, which predates {name}'s change to the pins")
         for path in facts.get("stale_workflows") or []:
-            problems.append(f"the code that the required checks run is too large for preflight to follow" if path == "?incomplete"
-                            else f"CI ran its required checks with {path} as it was on main {short(base)}; main has "
+            problems.append(f"CI ran its required checks with {path} as it was on main {short(base)}; main has "
                             "changed it since")
         if age > max_age_hours:
             problems.append(f"CI ran on this head {age:.1f} hours ago, more than {max_age_hours:g}")
@@ -3493,6 +3684,16 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
         if ci.get("main_moved") is not None:
             notes.append(f"main has taken {ci['main_moved']} merges since")
     provenance_only = untied and len(problems) == 1
+    if not wanted("checks"):  # what the required checks section would say, freshness must not pass over
+        for c in required:
+            if c.get("provenance") == "unknown" or c["status"] == "unknown":
+                problems.append(f"which copy of its workflow {c['name']} ran is unknown: its latest run on "
+                                f"{short(head)} cannot be tied to this pull request")
+            elif c["status"] != "completed" or (c.get("conclusion") != "success" and not c.get("scoped")) \
+                    or not c.get("run"):
+                problems.append(f"{c['name']} has no finished, passing run on {short(head)} to compare")
+                step = "wait for the required checks; advisory checks such as Blueprint Pages need no waiting"
+                provenance_only = False
     for stale in facts.get("stale_checks") or []:
         if stale.get("unknown"):
             problems.append(f"which copy of its workflow {stale['name']} ran is unknown: {stale['unknown']}")
@@ -3511,25 +3712,40 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
                             "checks with it")
             step = f"wait for the pull requests queued ahead of it to land, then {REFRESH}"
         provenance_only = False
-    for change in simulation["pin_changes_ahead"]:  # whatever CI shows
+    candidate_sim = simulation.get("candidate") or {}
+    if candidate_sim.get("unexplored") or (candidate_sim.get("uncertain") and candidate_sim["uncertain"][0].get("unadmitted")):
+        problems.append("not compared with every queue the merge group may have: some queued pull requests left out "
+                        "for a conflict stay if the entries they conflict with leave first (see conflicts)")
+        step = "wait until the queue has removed them, then run preflight again"
+        provenance_only = False
+    for path in facts.get("merge_code") or []:  # whatever CI shows
+        problems.append(f"merged onto the queue, it comes out with a version of {path} that neither it, main nor "
+                        "the queue has, and CI has not run that")
+        step = step or REFRESH
+        provenance_only = False
+    for change in simulation.get("pin_changes_ahead") or []:  # whatever CI shows
         problems.append(f"#{change['number']}, queued at position {change['position']}, changes "
                         f"{', '.join(change['files'])}, and CI has not tested this head on that")
         step = f"wait for #{change['number']} to land, then {REFRESH}"
         provenance_only = False
-    if problems:
+    if not wanted("freshness"):
+        pass
+    elif problems:
         check("freshness", False, "; ".join(notes) if notes else "no CI run", step, problems,
               provenance_only=provenance_only)
     else:
         check("freshness", True, "; ".join(notes))
 
     # 5. Conflicts
-    merged = [e for e in simulation["entries"] if e["clean"]]
-    for entry in simulation["entries"]:
+    merged = [e for e in simulation.get("entries") or [] if e["clean"]]
+    for entry in simulation.get("entries") or [] if wanted("conflicts") else []:
         if not entry["clean"]:
             warnings.append(f"queued #{entry['number']} conflicts with the entries ahead of it "
                             f"({', '.join(entry['files'][:3])}); the queue will remove it")
-    candidate = simulation["candidate"]
-    if facts.get("contains_queued"):
+    candidate = simulation.get("candidate") or {}
+    if not wanted("conflicts"):
+        pass
+    elif facts.get("contains_queued"):
         numbers = " and ".join(f"#{n}" for n in facts["contains_queued"])
         check("conflicts", False, f"it contains the commits of {numbers}, which the queue holds, so the queue would "
               "remove it (invalid merge commit)", f"wait for {numbers} to land, then merge main into the branch, "
@@ -3569,7 +3785,9 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
               + (f" that merge with each other ({skipped} conflict and will be removed)" if skipped else ""))
 
     # 6. Duplicate declarations
-    duplicates = facts["duplicates"]
+    # What it did not read is no pass: a check that wanted duplicates and has no result is unavailable too.
+    duplicates = facts.get("duplicates") or {"found": [], "names": None, "unavailable": "preflight has no result"}
+    unavailable = duplicates.get("unavailable")
     items, step = [], None
     for d in duplicates["found"]:
         if d["source"] == "main":
@@ -3590,22 +3808,53 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
                             if d["source"] == "main" else
                             f"wait for {d['source']} to land, then merge main, import its declaration instead of "
                             "declaring the name again, push, and wait for CI and Codex")
+    if unavailable:
+        conflicting = not (simulation.get("main") or {}).get("clean", True)
+        items.append(f"not checked: {unavailable}" + (", since it conflicts with main" if conflicting else ""))
+        step = step or ("merge main, resolve the conflicts, push, and wait for CI and Codex" if conflicting
+                        else "run preflight again")
+    # Conflicting with a queued entry, it read only the merge onto the entries ahead of that one: what that entry
+    # and the entries behind it add was not compared, and they meet it if that entry leaves first.
+    partial = bool(candidate) and not candidate.get("clean") and not unavailable
+    if partial:
+        other = candidate.get("conflicts_with")
+        items.append(f"not compared with #{other['number']} and the entries queued behind it, since it conflicts "
+                     f"with #{other['number']} (see conflicts)" if other else
+                     "not compared with the whole queue, which it conflicts with (see conflicts)")
+        step = step or (f"wait for #{other['number']} to land, then merge main, resolve the conflicts, push, and "
+                        "wait for CI and Codex" if other else
+                        "wait for the queue to drain, then merge main, resolve the conflicts, and push")
     if duplicates.get("incomplete"):
         items.append(f"not compared with main: {duplicates['incomplete']}")
         step = step or REFRESH
+    if candidate.get("unexplored") or (candidate.get("uncertain") and candidate["uncertain"][0].get("unadmitted")):
+        items.append("not compared with every queue the merge group may have: some queued pull requests left "
+                     "out for a conflict stay if the entries they conflict with leave first (see conflicts)")
+        step = step or "wait until the queue has removed them, then run preflight again"
+    unbuilt = bool(duplicates.get("ci_unknown") and (duplicates.get("names") or duplicates.get("places")))
+    if unbuilt:
+        reason = duplicates["ci_unknown"] if isinstance(duplicates["ci_unknown"], str) else \
+            "which main its CI merged it into is unknown"
+        items.append(f"not compared with the names its CI built: {reason}")
+        step = step or "wait for its CI run to finish, then run preflight again"
     if duplicates.get("unpredictable"):
         listed = ", ".join(duplicates["unpredictable"][:3]) + (" and more" if len(duplicates["unpredictable"]) > 3 else "")
         items.append(f"not checked: names that Lean generates for {listed}")
         step = step or ("check by hand that neither the queued pull requests nor main since the CI run declare "
                         "those generated names")
-    if items:
+    if not wanted("duplicates"):
+        pass
+    elif items:
         hand = (f"that neither the queued pull requests nor main since the CI run declare the names Lean generates "
                 f"for {listed}" if duplicates.get("unpredictable") and not duplicates["found"]
-                and not duplicates.get("incomplete") else False)  # the one problem left is a hand check
-        check("duplicates", False, f"{len(duplicates['found'])} of the declarations it adds or moves are also "
-              "added elsewhere" + ("; the check is incomplete" if duplicates.get("incomplete")
-                                   or duplicates.get("unpredictable") else ""),
-              step, items, hand_check=hand)
+                and not duplicates.get("incomplete") and not unbuilt and not unavailable and not partial
+                else False)  # the one problem left is a hand check
+        detail = (f"could not check: {unavailable}" if unavailable else
+                  f"{len(duplicates['found'])} of the declarations it adds or moves are also added elsewhere"
+                  + ("; the check is incomplete" if duplicates.get("incomplete") or duplicates.get("unpredictable")
+                     or unbuilt or partial else ""))
+        check("duplicates", False, detail, step, items, hand_check=hand,
+              provenance_only=unbuilt and len(items) == 1 and not unavailable)
     else:
         check("duplicates", True, f"none of the {duplicates['names']} names it adds or moves is added elsewhere"
               if duplicates["names"] else "it adds or moves no declarations")
@@ -3614,17 +3863,19 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
     supplying = facts["changed_workflows"] if "changed_workflows" in facts else \
         [f for f in files if f in (facts.get("check_workflows") or [])]
     supplying = supplying + (facts.get("changed_dependencies") or [])
+    if not wanted("workflows"):
+        supplying = []
     if supplying:
         listed = ", ".join(supplying[:3]) + (f" and {len(supplying) - 3} more" if len(supplying) > 3 else "")
-        check("workflows", False, f"it changes {listed}, which the required checks run: its runs on this pull "
-              "request use its own copy, so they cannot vouch for it",
-              "have a maintainer review the change", hand_check=f"the change to {listed}")
-    if facts.get("changes_self"):
+        check("workflows", False, f"it changes {listed}, which is not data (see DATA in {SELF}): the required "
+              "checks may run or read it, and its runs on this pull request use its own copy, so they cannot "
+              "vouch for it", "have a maintainer review the change", hand_check=f"the change to {listed}")
+    if facts.get("changes_self") and wanted("workflows"):
         check("preflight", False, f"it changes {SELF}: once merged, preflight runs that code with a maintainer's "
               "token", "have a maintainer review the change", hand_check=f"the change to {SELF}")
 
     # Warnings
-    queue_length = len(facts["queue"]["entries"])
+    queue_length = len(facts["queue"]["entries"])  # the cheap warnings come with any subset
     risky = []
     hubs = [f for f in files if f in HUB_MODULES]
     if hubs:
@@ -3641,7 +3892,7 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
     for item in risky:
         warnings.append(f"{item}; queue it at a quiet hour or when the queue is short (it has {queue_length} "
                         "entries now), so that few builds restart behind it if it fails")
-    built = facts.get("build_time") or {}
+    built = (facts.get("build_time") or {}) if wanted("heavy-rebuild") else {}
     if built.get("minutes") is not None and (built["minutes"] > HEAVY_BUILD_MINUTES or (
             built.get("median") and built["minutes"] > HEAVY_BUILD_FACTOR * built["median"])):
         against = (f", against a median of {built['median']:.0f} min over the last {built['sample']} pull request "
@@ -3650,7 +3901,7 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
                         f"behind it includes its changes, so each waits for that rebuild and does it again: queue it "
                         f"when the queue is short (it has {queue_length} entries now)")
     workflows = [f for f in files if f.startswith(".github/workflows/") and f not in supplying]
-    if workflows:
+    if workflows and wanted("workflows"):
         warnings.append(f"it changes {', '.join(workflows[:3])}, and a pull request's checks run its own "
                         "workflows: have a maintainer review them")
     if facts.get("copy_differs"):
@@ -3663,6 +3914,8 @@ def enqueue(gh: GitHub, result: dict) -> dict:
     """Queue a READY pull request, pinned to its head, unless main or the queue changed since they were read."""
     if not result["ready"]:
         return {"ok": False, "error": "not queued: the verdict is NOT READY"}
+    if result.get("only") is not None:
+        return {"ok": False, "error": "not queued: the verdict covers only some checks (--only)"}
     facts = result["facts"]
     if facts.get("fork"):
         return {"ok": False, "error": "not queued: a fork's pull request is queued from its merge box, after a "
@@ -3711,7 +3964,8 @@ def enqueue(gh: GitHub, result: dict) -> dict:
 def render(result: dict) -> str:
     """The verdict as text. Every value is passed through `shown`: file names and messages come from the
     pull requests and GitHub, and must not be able to forge a line or steer the terminal."""
-    lines = [f"#{result['pr']} {shown(short(result['head']))}: {result['verdict']}"]
+    only = f" (only {', '.join(['state'] + list(result['only']))})" if result.get("only") is not None else ""
+    lines = [f"#{result['pr']} {shown(short(result['head']))}: {result['verdict']}{only}"]
     for c in result["checks"]:
         lines.append(f"  {'ok  ' if c['ok'] else 'FAIL'}  {c['name']}: {shown(c['detail'])}")
         lines.extend(f"          - {shown(item)}" for item in c["items"])
@@ -3726,6 +3980,8 @@ def render(result: dict) -> str:
                      + (f"; {shown(queued['note'])}" if queued.get("note") else ""))
     elif queued:
         lines.append(f"Enqueue: {shown(queued['error'])}")
+    if result.get("api_calls") is not None:
+        lines.append(f"GitHub requests: {result['api_calls']} ({result.get('graphql_calls', 0)} GraphQL)")
     return "\n".join(lines)
 
 
@@ -3745,7 +4001,19 @@ def main(argv: list[str] | None = None, now: dt.datetime | None = None) -> int:
                         help="changed files above which to warn (default %(default)s)")
     parser.add_argument("--git-dir", type=Path, default=None,
                         help="the clone to work in (default $XDG_CACHE_HOME/atlas-lean-preflight/repo.git)")
+    parser.add_argument("--only", default=None, metavar="CHECKS",
+                        help="check only these, comma-separated (" + ", ".join(CHECKS) + "), and the state; the "
+                        "verdict covers them alone, and --enqueue is refused")
     args = parser.parse_args(argv)
+    only = None
+    if args.only is not None:
+        only = frozenset(name.strip() for name in args.only.split(",") if name.strip())
+        unknown = sorted(only - set(CHECKS) - {"state"})
+        if unknown or not only:
+            parser.error(f"--only takes some of {', '.join(CHECKS)}" + (f", not {', '.join(unknown)}" if unknown else ""))
+        only = only - {"state"}
+        if args.enqueue:
+            parser.error("--enqueue needs every check: run it without --only")
     if not math.isfinite(args.max_age_hours) or args.max_age_hours <= 0 or args.max_files <= 0:
         parser.error("--max-age-hours and --max-files must be positive and finite")
     if args.enqueue and args.max_age_hours > DEFAULT_MAX_AGE_HOURS:
@@ -3758,14 +4026,22 @@ def main(argv: list[str] | None = None, now: dt.datetime | None = None) -> int:
     git = Git(args.git_dir or default_git_dir(), f"https://github.com/{REPO}.git")
     try:
         with git.locked():
-            facts = gather(gh, git, args.pr, now)
-            result = evaluate(facts, now or dt.datetime.now(dt.timezone.utc), args.max_age_hours, args.max_files)
-            if args.enqueue:
-                result["enqueue"] = enqueue(gh, result)
+            git.cache = Cache(Path(f"{git.dir}.cache.json"))
+            git.cache.fresh = args.enqueue  # what changes is read again before queueing
+            try:
+                facts = gather(gh, git, args.pr, now, only)
+                result = evaluate(facts, now or dt.datetime.now(dt.timezone.utc), args.max_age_hours, args.max_files)
+                if args.enqueue:
+                    result["enqueue"] = enqueue(gh, result)
+            finally:
+                try:
+                    git.cache.save()
+                except OSError:
+                    pass  # a cache it cannot write only costs the next run time
     except (Failure, OSError, ValueError, subprocess.SubprocessError, http.client.HTTPException) as error:
         print(f"preflight: {shown(error or type(error).__name__)}", file=sys.stderr)
         return 2
-    result["api_calls"] = gh.calls
+    result["api_calls"], result["graphql_calls"] = gh.calls, gh.graphql_calls
     print(json.dumps(result, indent=1) if args.json else render(result))
     if not result["ready"]:
         return 1
