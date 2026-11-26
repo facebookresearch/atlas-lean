@@ -36,6 +36,11 @@ Main results:
 * `genLeonardo_sq_sum_diff` gives the difference and sum of squares at the sum and difference
   indices by specializing the shift identity at two consecutive shifts.
 
+* `genLeonardo_sq_sub_sq`: for `1 ≤ n`,
+  `M_{k,n}^2 - L_{k,n}^2 = 4 L_{k,n-1} L_{k,n+1} + 2k L_{k,n} + k^2`
+  (Kuhapatanakul, Theorem 2.4). Since `M_{k,n} = L_{k,n-1} + L_{k,n+1}` and
+  `L_{k,n} = L_{k,n+1} - L_{k,n-1} - k`, it is a polynomial identity.
+
 Further identities from the paper are stated in `WantedExt.NumberTheory.GenLeonardoWanted`.
 
 ## Proof
@@ -56,7 +61,7 @@ Fibonacci numbers as all three sequences.
 ## References
 
 * Kantaphon Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, The Fibonacci Quarterly 62
-  (2024), no. 3, 201–207, Theorem 2.5, the source of the statement.
+  (2024), no. 3, 201–207, Theorems 2.4 and 2.5, the source of the statements.
 -/
 
 namespace MetaMathlibExt
@@ -211,5 +216,24 @@ public theorem genLeonardo_sq_sum_diff (k : ℤ) (m n : ℕ)
     rw [Nat.add_sub_cancel_left, show m + n + (m - n) = 2 * m by omega,
       show m + n - (m - n) = 2 * n by omega, pow_succ, (even_two_mul n).neg_one_pow] at h
     linear_combination h
+
+/-- **Square-difference identity for generalized Leonardo numbers.** For every integer $k$ and
+every natural number $n \ge 1$, the generalized Leonardo numbers $L_{k,n}$ and the dual
+generalized Leonardo numbers $M_{k,n}$ satisfy
+$$M_{k,n}^2 - L_{k,n}^2 = 4 L_{k,n-1} L_{k,n+1} + 2k L_{k,n} + k^2.$$
+
+Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
+Quarterly (2024), Theorem 2.4 (`fq-2024-kuhapatanakul05292024-thm-2.4`). -/
+public theorem genLeonardo_sq_sub_sq (k : ℤ) (n : ℕ) (hn : 1 ≤ n) :
+    genLeonardoCompanion k n ^ 2 - genLeonardo k n ^ 2
+      = 4 * genLeonardo k (n - 1) * genLeonardo k (n + 1)
+        + 2 * k * genLeonardo k n + k ^ 2 := by
+  -- Write `n = m + 1`; then `M_{k,n} = L_{k,m} + L_{k,m+2}` and
+  -- `L_{k,m+2} = L_{k,m+1} + L_{k,m} + k`.
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+  have hM : genLeonardoCompanion k (m + 1) = genLeonardo k m + genLeonardo k (m + 2) := rfl
+  have hL : genLeonardo k (m + 2) = genLeonardo k (m + 1) + genLeonardo k m + k := rfl
+  rw [hM, Nat.add_sub_cancel, show m + 1 + 1 = m + 2 by omega, hL]
+  ring
 
 end MetaMathlibExt
