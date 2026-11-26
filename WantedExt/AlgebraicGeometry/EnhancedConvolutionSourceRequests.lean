@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionModels
 public import MathlibExt.AlgebraicGeometry.CoefficientSheafDimensionModels
 public import Mathlib.Topology.Compactness.SigmaCompact
 public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionSourceRequestsActualBoundedProperImageOfFiniteAmplitude
+public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionSourceRequestsActualBoundedInverseImageSource
 
 /-!
 # Source proofs for the actual enhanced real convolution
@@ -55,13 +56,6 @@ attribute [local instance] HasDerivedCategory.standard
 
 /-- Graph properness of the computed finite real sum over the actual Hausdorff base. -/
 theorem_wanted actual_time_sum_graph_source (M : TopCat.{0}) [T2Space M] : TimeSumGraphSource M
-
-/-- The original exact Ind inverse image preserves actual bounded cohomology. -/
-theorem_wanted actual_bounded_inverse_image_source (k : Type) [Field k] (X Y : TopCat.{0})
-    [CompactSheafSource k X] [CompactSheafSource k Y]
-    (f : X ⟶ Y) (S : OrdinaryIndSource k X) (D : IndInverseImageSource k f S)
-    [(indInverseImage k f S D).Additive] (E : ExactIndInverseImageSource k f S D) :
-    BoundedInverseImageSource k f S D E
 
 variable (k : Type) [Field k] (M : TopCat.{0}) [T2Space M]
   [CompactSheafSource k M]
