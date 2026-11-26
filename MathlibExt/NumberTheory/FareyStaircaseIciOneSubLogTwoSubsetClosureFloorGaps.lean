@@ -81,17 +81,6 @@ private theorem sum_log_div {t : ℝ} (ht : t ≠ 0) (m : ℕ) :
   rw [h1, h2]
   simp [Finset.sum_const, Nat.card_Icc, nsmul_eq_mul]
 
-/-- Factorial logarithm splits off the top factor. -/
-private theorem log_factorial_succ {m : ℕ} (hm : 1 ≤ m) :
-    Real.log (Nat.factorial m : ℝ) = Real.log m + Real.log (Nat.factorial (m - 1) : ℝ) := by
-  have hfact : Nat.factorial m = m * Nat.factorial (m - 1) := by
-    conv_lhs => rw [← Nat.sub_add_cancel hm]
-    rw [Nat.factorial_succ, Nat.sub_add_cancel hm]
-  rw [hfact]
-  push_cast
-  exact Real.log_mul (by exact_mod_cast (by omega : m ≠ 0))
-    (by exact_mod_cast Nat.factorial_ne_zero (m - 1))
-
 /-- Factorial logarithm at a successor. -/
 private theorem log_factorial_succ' (m : ℕ) :
     Real.log (Nat.factorial (m + 1) : ℝ)
@@ -99,39 +88,6 @@ private theorem log_factorial_succ' (m : ℕ) :
   rw [Nat.factorial_succ]
   push_cast
   exact Real.log_mul (by positivity) (by exact_mod_cast Nat.factorial_ne_zero m)
-
-/-- Telescoping sum of `j * log ((j + 1) / j)`. -/
-private theorem sum_mul_log_succ {m : ℕ} (hm : 1 ≤ m) :
-    ∑ j ∈ Finset.Icc 1 (m - 1), (j : ℝ) * Real.log ((j + 1) / j)
-      = ((m - 1 : ℕ) : ℝ) * Real.log m - Real.log (Nat.factorial (m - 1) : ℝ) := by
-  induction m, hm using Nat.le_induction with
-  | base =>
-    rw [show (1 : ℕ) - 1 = 0 by rfl]
-    simp
-  | succ m hm ih =>
-    have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
-    have hlog := log_factorial_succ hm
-    have hdiv : Real.log (((m : ℝ) + 1) / m) = Real.log ((m : ℝ) + 1) - Real.log m :=
-      Real.log_div (by positivity) hm0
-    rw [Nat.add_sub_cancel]
-    conv_lhs => rw [← Nat.sub_add_cancel hm]
-    rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ m - 1 + 1) _, Nat.sub_add_cancel hm, ih,
-      hdiv, hlog, Nat.cast_sub hm]
-    push_cast
-    ring
-
-/-- The block limits sum to the logarithmic sum. -/
-private theorem telescope {m : ℕ} (hm : 1 ≤ m) {t : ℝ} (ht : t ≠ 0) :
-    ∑ j ∈ Finset.Icc 1 (m - 1), (j : ℝ) * Real.log ((j + 1) / j)
-        + (m : ℝ) * Real.log (t / m)
-      = ∑ k ∈ Finset.Icc 1 m, Real.log (t / k) := by
-  have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
-  have hT1 := sum_log_div ht m
-  have hT2 := sum_mul_log_succ hm
-  have hdiv : Real.log (t / m) = Real.log t - Real.log m := Real.log_div ht hm0
-  rw [hdiv, hT1, hT2, Nat.cast_sub hm]
-  push_cast
-  linear_combination log_factorial_succ hm
 
 /-- The gap limit at `t = m` equals the upper envelope. -/
 private theorem gapLimit_self {m : ℕ} (hm : 1 ≤ m) : gapLimit m m = gapUB m := by
@@ -347,430 +303,39 @@ private theorem gapUB_unbounded (Y : ℝ) : ∃ m : ℕ, 1 ≤ m ∧ Y < gapUB m
     ring
   linarith
 
-/-- Full harmonic blocks converge to the logarithmic ratio. -/
-private theorem tendsto_block_full {q j : ℕ} (hq : 0 < q) (hj : 1 ≤ j) :
-    Filter.Tendsto (fun M : ℕ => ∑ k ∈ Finset.Icc (j * (q * q * (M + 1)))
-        ((j + 1) * (q * q * (M + 1)) - 1), (1 : ℝ) / k)
-      Filter.atTop (nhds (Real.log (((j : ℝ) + 1) / j))) := by
-  have hjpos : 0 < j := by omega
-  have hj0 : (j : ℝ) ≠ 0 := by exact_mod_cast (by omega : j ≠ 0)
-  have hq0 : (q : ℝ) ≠ 0 := by exact_mod_cast (by omega : q ≠ 0)
-  have hqqW : ∀ M : ℕ, 1 ≤ q * q * (M + 1) := fun M => by
-    have hpos : 0 < q * q * (M + 1) := by positivity
-    omega
-  have hab : ∀ M : ℕ, j * (q * q * (M + 1)) ≤ (j + 1) * (q * q * (M + 1)) - 1 := by
-    intro M
-    have e : (j + 1) * (q * q * (M + 1))
-        = j * (q * q * (M + 1)) + q * q * (M + 1) := by ring
-    have h1 := hqqW M
-    omega
-  have ha : Filter.Tendsto (fun M : ℕ => j * (q * q * (M + 1))) Filter.atTop Filter.atTop := by
-    apply Filter.tendsto_atTop_mono (fun M => ?_) Filter.tendsto_id
-    change M ≤ j * (q * q * (M + 1))
-    have hJ : 1 ≤ j * (q * q) := by
-      have hpos : 0 < j * (q * q) := by positivity
-      omega
-    have e : j * (q * q * (M + 1)) = (j * (q * q)) * (M + 1) := by ring
-    rw [e]
-    calc M ≤ M + 1 := Nat.le_succ M
-      _ = 1 * (M + 1) := (one_mul _).symm
-      _ ≤ (j * (q * q)) * (M + 1) := mul_le_mul_of_nonneg_right hJ (Nat.zero_le _)
-  have hsub := tendsto_harmonic_block_sub_integral hab ha
-  have hC1 : ∀ M : ℕ, 1 ≤ (j + 1) * (q * q * (M + 1)) := fun M => by
-    have hpos : 0 < (j + 1) * (q * q * (M + 1)) := by positivity
-    omega
-  have heq : ∀ M : ℕ, ((((j + 1) * (q * q * (M + 1)) - 1 : ℕ)) : ℝ)
-      / (((j * (q * q * (M + 1)) : ℕ)) : ℝ)
-      = ((j : ℝ) + 1) / j - 1 / ((j : ℝ) * (q * q * (M + 1))) := by
-    intro M
-    have hM1 : (M : ℝ) + 1 ≠ 0 := by positivity
-    rw [Nat.cast_sub (hC1 M)]
-    push_cast
-    field_simp
-  have hsmall : Filter.Tendsto (fun M : ℕ => (1 : ℝ) / ((j : ℝ) * (q * q * (M + 1))))
-      Filter.atTop (nhds 0) := by
-    have h1 : Filter.Tendsto (fun M : ℕ => (1 : ℝ) / (((M : ℝ)) + 1)) Filter.atTop (nhds 0) :=
-      tendsto_one_div_add_atTop_nhds_zero_nat
-    have heq2 : ∀ M : ℕ, (1 : ℝ) / ((j : ℝ) * (q * q * (M + 1)))
-        = (1 / ((j : ℝ) * (q : ℝ) * q)) * (1 / (((M : ℝ)) + 1)) := by
-      intro M
-      have hM1 : (M : ℝ) + 1 ≠ 0 := by positivity
-      field_simp
-    have h2 := h1.const_mul (1 / ((j : ℝ) * (q : ℝ) * q))
-    rw [mul_zero] at h2
-    exact Filter.Tendsto.congr' (Filter.Eventually.of_forall (fun M => (heq2 M).symm)) h2
-  have hratio : Filter.Tendsto (fun M : ℕ => ((((j + 1) * (q * q * (M + 1)) - 1 : ℕ)) : ℝ)
-      / (((j * (q * q * (M + 1)) : ℕ)) : ℝ))
-      Filter.atTop (nhds (((j : ℝ) + 1) / j)) := by
-    have hlim : Filter.Tendsto
-        (fun M : ℕ => ((j : ℝ) + 1) / j - 1 / ((j : ℝ) * (q * q * (M + 1))))
-        Filter.atTop (nhds (((j : ℝ) + 1) / j - 0)) :=
-      tendsto_const_nhds.sub hsmall
-    rw [sub_zero] at hlim
-    exact Filter.Tendsto.congr' (Filter.Eventually.of_forall (fun M => (heq M).symm)) hlim
-  have hI : Filter.Tendsto
-      (fun M : ℕ => ∫ t in (((j * (q * q * (M + 1)) : ℕ)) : ℝ)..
-        ((((j + 1) * (q * q * (M + 1)) - 1 : ℕ)) : ℝ), t⁻¹)
-      Filter.atTop (nhds (Real.log (((j : ℝ) + 1) / j))) := by
-    have hne : ((j : ℝ) + 1) / j ≠ 0 := div_ne_zero (by positivity) hj0
-    have hlog := (Real.continuousAt_log hne).tendsto.comp hratio
-    apply Filter.Tendsto.congr' _ hlog
-    filter_upwards with M
-    rw [Function.comp_apply]
-    symm
-    apply integral_inv_of_pos
-    · have hpos : 0 < j * (q * q * (M + 1)) := by positivity
-      exact_mod_cast hpos
-    · have hpos : 0 < (j + 1) * (q * q * (M + 1)) - 1 := by
-        have e : (j + 1) * (q * q * (M + 1))
-            = j * (q * q * (M + 1)) + q * q * (M + 1) := by ring
-        have h1 := hqqW M
-        have hA : 1 ≤ j * (q * q * (M + 1)) := by
-          have hp : 0 < j * (q * q * (M + 1)) := by positivity
-          omega
-        omega
-      exact_mod_cast hpos
-  have hadd := hsub.add hI
-  rw [zero_add] at hadd
-  exact Filter.Tendsto.congr' (Filter.Eventually.of_forall (fun M => sub_add_cancel _ _)) hadd
-
-/-- The last harmonic block converges to the logarithmic ratio. -/
-private theorem tendsto_block_last {p q m : ℕ} (hq : 0 < q) (hm : 1 ≤ m) (hle : m * q ≤ p) :
-    Filter.Tendsto (fun M : ℕ => ∑ k ∈ Finset.Icc (m * (q * q * (M + 1))) (p * q * (M + 1)),
-        (1 : ℝ) / k)
-      Filter.atTop (nhds (Real.log ((p : ℝ) / ((m : ℝ) * q)))) := by
-  have hmpos : 0 < m := by omega
-  have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
-  have hq0 : (q : ℝ) ≠ 0 := by exact_mod_cast (by omega : q ≠ 0)
-  have hab : ∀ M : ℕ, m * (q * q * (M + 1)) ≤ p * q * (M + 1) := by
-    intro M
-    have e1 : m * (q * q * (M + 1)) = (m * q) * (q * (M + 1)) := by ring
-    have e2 : p * q * (M + 1) = p * (q * (M + 1)) := by ring
-    rw [e1, e2]
-    exact mul_le_mul_of_nonneg_right hle (Nat.zero_le _)
-  have ha : Filter.Tendsto (fun M : ℕ => m * (q * q * (M + 1))) Filter.atTop Filter.atTop := by
-    apply Filter.tendsto_atTop_mono (fun M => ?_) Filter.tendsto_id
-    change M ≤ m * (q * q * (M + 1))
-    have hJ : 1 ≤ m * (q * q) := by
-      have hpos : 0 < m * (q * q) := by positivity
-      omega
-    have e : m * (q * q * (M + 1)) = (m * (q * q)) * (M + 1) := by ring
-    rw [e]
-    calc M ≤ M + 1 := Nat.le_succ M
-      _ = 1 * (M + 1) := (one_mul _).symm
-      _ ≤ (m * (q * q)) * (M + 1) := mul_le_mul_of_nonneg_right hJ (Nat.zero_le _)
-  have hsub := tendsto_harmonic_block_sub_integral hab ha
-  have hratio : ∀ M : ℕ, ((((p * q * (M + 1) : ℕ))) : ℝ) / ((((m * (q * q * (M + 1)) : ℕ))) : ℝ)
-      = (p : ℝ) / ((m : ℝ) * q) := by
-    intro M
-    have hM1 : (M : ℝ) + 1 ≠ 0 := by positivity
-    push_cast
-    field_simp
-  have hI : Filter.Tendsto
-      (fun M : ℕ => ∫ t in ((((m * (q * q * (M + 1)) : ℕ))) : ℝ)..
-        ((((p * q * (M + 1) : ℕ))) : ℝ), t⁻¹)
-      Filter.atTop (nhds (Real.log ((p : ℝ) / ((m : ℝ) * q)))) := by
-    have hconst : Filter.Tendsto (fun _ : ℕ => Real.log ((p : ℝ) / ((m : ℝ) * q))) Filter.atTop
-        (nhds (Real.log ((p : ℝ) / ((m : ℝ) * q)))) :=
-      tendsto_const_nhds
-    apply Filter.Tendsto.congr' _ hconst
-    filter_upwards with M
-    rw [← hratio M]
-    symm
-    apply integral_inv_of_pos
-    · have hpos : 0 < m * (q * q * (M + 1)) := by positivity
-      exact_mod_cast hpos
-    · have hpos : 0 < p * q * (M + 1) := by
-        have hmq : 0 < m * q := by positivity
-        have hp : 0 < p := by omega
-        positivity
-      exact_mod_cast hpos
-  have hadd := hsub.add hI
-  rw [zero_add] at hadd
-  exact Filter.Tendsto.congr' (Filter.Eventually.of_forall (fun M => sub_add_cancel _ _)) hadd
-
 /-- Floor gap value. -/
 private noncomputable def gapVal (n : ℕ) (x : ℝ) : ℝ :=
   ⌊(n : ℝ) * x⌋ - n * fareyStaircase n x
 
-/-- Block decomposition of the floor gap at a rational point. -/
-private theorem gapVal_rat_eq {p q W : ℕ} (hq : 0 < q) (hle : q ≤ p) (hW : 1 ≤ W) :
-    gapVal (p * q * W) (((p : ℝ) / q) / (((p * q * W : ℕ)) : ℝ))
-      = (⌊(p : ℝ) / q⌋₊ : ℝ) - (∑ j ∈ Finset.Icc 1 (⌊(p : ℝ) / q⌋₊ - 1),
-          (j : ℝ) * ∑ k ∈ Finset.Icc (j * (q * q * W)) ((j + 1) * (q * q * W) - 1), (1 : ℝ) / k
-        + (⌊(p : ℝ) / q⌋₊ : ℝ)
-          * ∑ k ∈ Finset.Icc (⌊(p : ℝ) / q⌋₊ * (q * q * W)) (p * q * W), (1 : ℝ) / k) := by
-  set t : ℝ := (p : ℝ) / q with ht
-  set m : ℕ := ⌊t⌋₊ with hm_def
-  set n : ℕ := p * q * W with hn
-  set c : ℕ := q * q * W with hc
-  have hq0 : (q : ℝ) ≠ 0 := by exact_mod_cast (by omega : q ≠ 0)
-  have hqpos : (0 : ℝ) < q := by exact_mod_cast hq
-  have hW0 : 0 < W := by omega
-  have hp : 0 < p := by omega
-  have hp0 : (p : ℝ) ≠ 0 := by exact_mod_cast (by omega : p ≠ 0)
-  have ht0 : (0 : ℝ) ≤ t := by
-    rw [ht]
-    positivity
-  have ht1 : 1 ≤ t := by
-    rw [ht, le_div_iff₀ hqpos, one_mul]
-    exact_mod_cast hle
-  have hm1 : 1 ≤ m := by
-    rw [hm_def]
-    exact Nat.le_floor (by exact_mod_cast ht1)
-  have hmt : (m : ℝ) ≤ t := by
-    rw [hm_def]
-    exact Nat.floor_le ht0
-  have htm1 : t < (m : ℝ) + 1 := by
-    rw [hm_def]
-    exact Nat.lt_floor_add_one t
-  have hfloor : ⌊t⌋ = (m : ℤ) := by
-    apply Int.floor_eq_iff.mpr
-    constructor
-    · exact_mod_cast hmt
-    · exact_mod_cast htm1
-  have hmq : m * q ≤ p := by
-    rw [ht] at hmt
-    have h := (le_div_iff₀ hqpos).mp hmt
-    exact_mod_cast h
-  have hpmq : p < (m + 1) * q := by
-    rw [ht] at htm1
-    have h := (div_lt_iff₀ hqpos).mp htm1
-    exact_mod_cast h
-  have htm1' : t < (m : ℝ) + 1 := by rwa [ht]
-  have hnpos : 0 < p * q * W := by positivity
-  have hn1 : 1 ≤ n := by omega
-  have hcpos : 0 < q * q * W := by positivity
-  have hc1 : 1 ≤ c := by omega
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
-  have hc0 : (c : ℝ) ≠ 0 := by exact_mod_cast (by omega : c ≠ 0)
-  have hcposR : (0 : ℝ) < c := by exact_mod_cast (by omega : 0 < c)
-  have hcnonneg : (0 : ℝ) ≤ c := le_of_lt hcposR
-  have hmc : m * c ≤ n := by
-    have e1 : m * (q * q * W) = (m * q) * (q * W) := by ring
-    have e2 : p * q * W = p * (q * W) := by ring
-    rw [hn, hc, e1, e2]
-    exact mul_le_mul_of_nonneg_right hmq (Nat.zero_le _)
-  have hnm1c : n + 1 ≤ (m + 1) * c := by
-    have hpmq1 : p + 1 ≤ (m + 1) * q := by omega
-    have hqw1 : 1 ≤ q * W := by
-      have hpos : 0 < q * W := by positivity
-      omega
-    have e1 : (m + 1) * (q * q * W) = ((m + 1) * q) * (q * W) := by ring
-    have e2 : p * q * W + 1 ≤ ((m + 1) * q) * (q * W) := by
-      have h4 : (p + 1) * (q * W) ≤ ((m + 1) * q) * (q * W) :=
-        mul_le_mul_of_nonneg_right hpmq1 (Nat.zero_le _)
-      have e3 : (p + 1) * (q * W) = p * q * W + q * W := by ring
-      omega
-    rw [hn, hc, e1]
-    exact e2
-  have hnc : (n : ℝ) / (c : ℝ) = t := by
-    have hW0R : (W : ℝ) ≠ 0 := by exact_mod_cast (by omega : W ≠ 0)
-    have hqqW0 : (q : ℝ) * q * W ≠ 0 := mul_ne_zero (mul_ne_zero hq0 hq0) hW0R
-    rw [ht, hn, hc]
-    push_cast
-    rw [div_eq_div_iff hqqW0 hq0]
-    ring
-  have hterm : ∀ k : ℕ, (k : ℝ) / (n : ℝ) * t = (k : ℝ) / (c : ℝ) := by
-    intro k
-    have hW0R : (W : ℝ) ≠ 0 := by exact_mod_cast (by omega : W ≠ 0)
-    have hpqw0 : (p : ℝ) * q * W ≠ 0 := mul_ne_zero (mul_ne_zero hp0 hq0) hW0R
-    have hqqW0 : (q : ℝ) * q * W ≠ 0 := mul_ne_zero (mul_ne_zero hq0 hq0) hW0R
-    rw [ht, hn, hc]
-    push_cast
-    field_simp
-  have hgap : gapVal n (t / n)
-      = (m : ℝ) - ∑ k ∈ Finset.Icc 1 n, (⌊(k : ℝ) / (c : ℝ)⌋ : ℝ) / k := by
-    have hnt : (n : ℝ) * (t / n) = t := by field_simp
-    have hB : (n : ℝ) * fareyStaircase n (t / n) = fareyZoom n t := rfl
-    unfold gapVal
-    rw [hnt, hfloor, Int.cast_natCast, hB, fareyZoom_eq_sum hn1 t]
-    congr 1
-    refine Finset.sum_congr rfl fun k hk => ?_
-    rw [hterm k]
-  have hnat : ∀ k : ℕ, (⌊(k : ℝ) / (c : ℝ)⌋ : ℝ) = ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) := by
-    intro k
-    have hnonneg : (0 : ℝ) ≤ (k : ℝ) / (c : ℝ) := by positivity
-    have e := Int.natCast_floor_eq_floor hnonneg
-    have e2 := congrArg (Int.cast : ℤ → ℝ) e
-    rw [Int.cast_natCast] at e2
-    exact e2.symm
-  have hgap2 : gapVal n (t / n)
-      = (m : ℝ) - ∑ k ∈ Finset.Icc 1 n, ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) / k := by
-    rw [hgap]
-    congr 1
-    refine Finset.sum_congr rfl fun k hk => ?_
-    rw [hnat k]
-  have hmaps : ∀ k ∈ Finset.Icc 1 n, ⌊(k : ℝ) / (c : ℝ)⌋₊ ∈ Finset.Icc 0 m := by
-    intro k hk
-    have hk1n := Finset.mem_Icc.mp hk
-    have hkc0 : (0 : ℝ) ≤ (k : ℝ) / (c : ℝ) := by positivity
-    have hle : (k : ℝ) / (c : ℝ) ≤ (n : ℝ) / (c : ℝ) :=
-      div_le_div_of_nonneg_right (by exact_mod_cast hk1n.2) hcnonneg
-    rw [Finset.mem_Icc]
-    refine ⟨Nat.zero_le _, ?_⟩
-    have h1 : ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) ≤ (k : ℝ) / (c : ℝ) := Nat.floor_le hkc0
-    have h2 : (k : ℝ) / (c : ℝ) ≤ t := by
-      rw [← hnc]
-      exact hle
-    have h3 : ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) < (m : ℝ) + 1 :=
-      lt_of_le_of_lt (le_trans h1 h2) htm1'
-    have h4 : ⌊(k : ℝ) / (c : ℝ)⌋₊ < m + 1 := by exact_mod_cast h3
-    omega
-  have hfiber : ∀ (k j : ℕ), ⌊(k : ℝ) / (c : ℝ)⌋₊ = j ↔ j * c ≤ k ∧ k < (j + 1) * c := by
-    intro k j
-    have hkc0 : (0 : ℝ) ≤ (k : ℝ) / (c : ℝ) := by positivity
-    rw [Nat.floor_eq_iff hkc0]
-    constructor
-    · intro h
-      constructor
-      · have h' := (le_div_iff₀ hcposR).mp h.1
-        exact_mod_cast h'
-      · have h' := (div_lt_iff₀ hcposR).mp h.2
-        exact_mod_cast h'
-    · intro h
-      constructor
-      · have h' : ((j * c : ℕ) : ℝ) ≤ (k : ℝ) := by exact_mod_cast h.1
-        push_cast at h'
-        exact (le_div_iff₀ hcposR).mpr h'
-      · have h' : (k : ℝ) < (((j + 1) * c : ℕ) : ℝ) := by exact_mod_cast h.2
-        push_cast at h'
-        exact (div_lt_iff₀ hcposR).mpr h'
-  have hfilter : ∀ j ∈ Finset.Icc 1 m,
-      Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = j) (Finset.Icc 1 n)
-        = Finset.Icc (j * c) (min n ((j + 1) * c - 1)) := by
-    intro j hj
-    have hj1 : 1 ≤ j := (Finset.mem_Icc.mp hj).1
-    have hjc1 : 1 ≤ j * c := by
-      have hj0' : 0 < j := by omega
-      have hc0' : 0 < c := by omega
-      have hpos : 0 < j * c := by positivity
-      omega
-    ext k
-    simp only [Finset.mem_filter, Finset.mem_Icc, hfiber, le_min_iff]
-    omega
-  have hinner : ∀ j ∈ Finset.Icc 1 m,
-      ∑ k ∈ Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = j) (Finset.Icc 1 n),
-        ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) / k
-      = (j : ℝ) * ∑ k ∈ Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = j) (Finset.Icc 1 n),
-        (1 : ℝ) / k := by
-    intro j hj
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun k hk => ?_
-    have hkj : ⌊(k : ℝ) / (c : ℝ)⌋₊ = j := (Finset.mem_filter.mp hk).2
-    rw [hkj]
-    ring
-  have hfull : ∀ j ∈ Finset.Icc 1 (m - 1),
-      Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = j) (Finset.Icc 1 n)
-        = Finset.Icc (j * c) ((j + 1) * c - 1) := by
-    intro j hj
-    have hj1m : j ∈ Finset.Icc 1 m := by
-      rw [Finset.mem_Icc] at hj ⊢
-      omega
-    have hle : (j + 1) * c - 1 ≤ n := by
-      have hjm : j + 1 ≤ m := by
-        have h2 := (Finset.mem_Icc.mp hj).2
-        omega
-      have e : (j + 1) * c ≤ m * c := mul_le_mul_of_nonneg_right hjm (Nat.zero_le _)
-      omega
-    rw [hfilter j hj1m, min_eq_right hle]
-  have hlast :
-      Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = m) (Finset.Icc 1 n)
-        = Finset.Icc (m * c) n := by
-    have hm1m : m ∈ Finset.Icc 1 m := Finset.mem_Icc.mpr ⟨hm1, le_rfl⟩
-    have hle : n ≤ (m + 1) * c - 1 := by omega
-    rw [hfilter m hm1m, min_eq_left hle]
-  have hzero : ∑ k ∈ Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = 0) (Finset.Icc 1 n),
-      ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) / k = 0 := by
-    apply Finset.sum_eq_zero
-    intro k hk
-    have hk0 : ⌊(k : ℝ) / (c : ℝ)⌋₊ = 0 := (Finset.mem_filter.mp hk).2
-    rw [hk0]
-    norm_num
-  have hsplit0 : Finset.Icc 0 m = insert 0 (Finset.Icc 1 m) := by
-    ext j
-    simp only [Finset.mem_Icc, Finset.mem_insert]
-    omega
-  have hfib := Finset.sum_fiberwise_of_maps_to hmaps
-    (fun (k : ℕ) => ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) / k)
-  beta_reduce at hfib
-  rw [hsplit0, Finset.sum_insert (by simp : (0 : ℕ) ∉ Finset.Icc 1 m), hzero, zero_add] at hfib
-  have hmain : (∑ j ∈ Finset.Icc 1 m,
-        ∑ k ∈ Finset.filter (fun (k : ℕ) => ⌊(k : ℝ) / (c : ℝ)⌋₊ = j) (Finset.Icc 1 n),
-          ((⌊(k : ℝ) / (c : ℝ)⌋₊ : ℕ) : ℝ) / k)
-      = (∑ j ∈ Finset.Icc 1 (m - 1),
-          (j : ℝ) * ∑ k ∈ Finset.Icc (j * c) ((j + 1) * c - 1), (1 : ℝ) / k)
-        + (m : ℝ) * ∑ k ∈ Finset.Icc (m * c) n, (1 : ℝ) / k := by
-    conv_lhs => rw [← Nat.sub_add_cancel hm1]
-    rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ m - 1 + 1), Nat.sub_add_cancel hm1]
-    congr 1
-    · refine Finset.sum_congr rfl fun j hj => ?_
-      have hj1m : j ∈ Finset.Icc 1 m := by
-        rw [Finset.mem_Icc] at hj ⊢
-        omega
-      rw [hinner j hj1m, hfull j hj]
-    · have hm1m : m ∈ Finset.Icc 1 m := Finset.mem_Icc.mpr ⟨hm1, le_rfl⟩
-      rw [hinner m hm1m, hlast]
-  rw [hgap2, ← hfib, hmain]
+/-- The floor gap at `x = t / n` is `(1 - 1/n)` times the rescaled Farey staircase increment
+`n² (A_n(t / n) - A_{n-1}(t / n))`, so it converges to the gap limit along all orders. -/
+private theorem tendsto_gapVal {t : ℝ} (ht : 0 ≤ t) :
+    Filter.Tendsto (fun n : ℕ => gapVal n (t / n)) Filter.atTop (nhds (gapLimit ⌊t⌋₊ t)) := by
+  have hone : Filter.Tendsto (fun n : ℕ => (1 : ℝ) - (n : ℝ)⁻¹) Filter.atTop (nhds 1) := by
+    simpa using tendsto_const_nhds.sub (tendsto_inv_atTop_nhds_zero_nat (𝕜 := ℝ))
+  have hval : gapLimit ⌊t⌋₊ t = 1 * ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (1 - Real.log (t / k)) := by
+    simp [gapLimit, Finset.sum_sub_distrib]
+  rw [hval]
+  refine (hone.mul (tendsto_sq_mul_fareyStaircase_sub ht)).congr' ?_
+  filter_upwards [Filter.eventually_ge_atTop 2] with n hn
+  have hn2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
+  have hn0 : (n : ℝ) ≠ 0 := by positivity
+  have hn1 : (n : ℝ) - 1 ≠ 0 := by linarith
+  rw [(fareyStaircase_sub_eq hn (t / n)).2, gapVal]
+  generalize ((⌊(n : ℝ) * (t / n)⌋ : ℤ) : ℝ) = F
+  generalize fareyStaircase n (t / n) = A
+  field_simp
 
 /-- Floor gaps at rational points converge to the gap limit. -/
 private theorem tendsto_gapVal_rat {p q : ℕ} (hq : 0 < q) (hle : q ≤ p) :
     Filter.Tendsto
       (fun M : ℕ => gapVal (p * q * (M + 1)) (((p : ℝ) / q) / (((p * q * (M + 1) : ℕ)) : ℝ)))
       Filter.atTop (nhds (gapLimit ⌊(p : ℝ) / q⌋₊ ((p : ℝ) / q))) := by
-  set t : ℝ := (p : ℝ) / q with ht
-  set m : ℕ := ⌊t⌋₊ with hm_def
-  have hqpos : (0 : ℝ) < q := by exact_mod_cast hq
-  have ht0 : (0 : ℝ) ≤ t := by
-    rw [ht]
-    positivity
-  have ht1 : 1 ≤ t := by
-    rw [ht, le_div_iff₀ hqpos, one_mul]
-    exact_mod_cast hle
-  have htne : t ≠ 0 := by linarith
-  have hm1 : 1 ≤ m := Nat.le_floor (by exact_mod_cast ht1)
-  have hmt : (m : ℝ) ≤ t := Nat.floor_le ht0
-  have hmq : m * q ≤ p := by
-    rw [ht] at hmt
-    have h := (le_div_iff₀ hqpos).mp hmt
-    exact_mod_cast h
-  have heq : ∀ M : ℕ, gapVal (p * q * (M + 1)) (t / (((p * q * (M + 1) : ℕ)) : ℝ))
-      = (m : ℝ) - (∑ j ∈ Finset.Icc 1 (m - 1),
-          (j : ℝ) * ∑ k ∈ Finset.Icc (j * (q * q * (M + 1))) ((j + 1) * (q * q * (M + 1)) - 1),
-            (1 : ℝ) / k
-        + (m : ℝ) * ∑ k ∈ Finset.Icc (m * (q * q * (M + 1))) (p * q * (M + 1)), (1 : ℝ) / k) :=
-    fun M => gapVal_rat_eq hq hle (by omega)
-  have hsum : Filter.Tendsto
-      (fun M : ℕ => ∑ j ∈ Finset.Icc 1 (m - 1),
-        (j : ℝ) * ∑ k ∈ Finset.Icc (j * (q * q * (M + 1))) ((j + 1) * (q * q * (M + 1)) - 1),
-          (1 : ℝ) / k)
-      Filter.atTop (nhds (∑ j ∈ Finset.Icc 1 (m - 1), (j : ℝ) * Real.log (((j : ℝ) + 1) / j))) := by
-    refine tendsto_finsetSum _ (fun j hj => ?_)
-    have hj1 : 1 ≤ j := (Finset.mem_Icc.mp hj).1
-    exact (tendsto_block_full hq hj1).const_mul _
-  have hlastM : Filter.Tendsto
-      (fun M : ℕ => (m : ℝ)
-        * ∑ k ∈ Finset.Icc (m * (q * q * (M + 1))) (p * q * (M + 1)), (1 : ℝ) / k)
-      Filter.atTop (nhds ((m : ℝ) * Real.log (t / m))) := by
-    have h := (tendsto_block_last hq hm1 hmq).const_mul (m : ℝ)
-    have e : (p : ℝ) / ((m : ℝ) * q) = t / m := by
-      rw [ht, div_div, mul_comm (m : ℝ) q]
-    rw [e] at h
-    exact h
-  have hadd := hsum.add hlastM
-  have hfinal : Filter.Tendsto
-      (fun M : ℕ => gapVal (p * q * (M + 1)) (t / (((p * q * (M + 1) : ℕ)) : ℝ)))
-      Filter.atTop (nhds ((m : ℝ) - (∑ j ∈ Finset.Icc 1 (m - 1),
-        (j : ℝ) * Real.log (((j : ℝ) + 1) / j) + (m : ℝ) * Real.log (t / m)))) := by
-    have hsub := hadd.const_sub (m : ℝ)
-    exact Filter.Tendsto.congr' (Filter.Eventually.of_forall (fun M => (heq M).symm)) hsub
-  have htel := telescope hm1 htne
-  have hlim : gapLimit m t
-      = (m : ℝ) - (∑ j ∈ Finset.Icc 1 (m - 1), (j : ℝ) * Real.log (((j : ℝ) + 1) / j)
-        + (m : ℝ) * Real.log (t / m)) := by
-    rw [gapLimit, htel]
-  rw [hlim]
-  exact hfinal
+  have hpq : 0 < p * q := Nat.mul_pos (by omega) hq
+  have hN : Filter.Tendsto (fun M : ℕ => p * q * (M + 1)) Filter.atTop Filter.atTop :=
+    Filter.tendsto_atTop_mono (fun M => (Nat.le_succ M).trans (Nat.le_mul_of_pos_left _ hpq))
+      Filter.tendsto_id
+  exact (tendsto_gapVal (by positivity)).comp hN
 
 /-- The gap limit is continuous in `t`. -/
 private theorem gapLimit_continuousOn {m : ℕ} (hm : 1 ≤ m) :
