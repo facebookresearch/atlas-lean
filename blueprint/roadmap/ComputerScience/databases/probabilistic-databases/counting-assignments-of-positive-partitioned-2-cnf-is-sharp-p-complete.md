@@ -11,5 +11,5 @@ satisfying assignments of $\Phi_E$ is $\#P$-complete.
 
 ## Sources
 
-- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM*, 2012; authors' manuscript <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>, Theorem 5.1, credited there to J. S. Provan and M. O. Ball, "The complexity of counting cuts and of computing
+- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM* 59(6), Article 30, 2012, with theorem numbers as in the authors' copy <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>: Theorem 5.1, credited there to J. S. Provan and M. O. Ball, "The complexity of counting cuts and of computing
   the probability that a graph is connected", *SIAM Journal on Computing* 12(4), 1983.

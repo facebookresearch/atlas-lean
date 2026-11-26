@@ -27,4 +27,4 @@ immediately unsafe queries that define unsafe queries (the source's Definitions 
 
 ## Sources
 
-- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM*, 2012; authors' manuscript <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>, the abstract, Definition 4.4, Definition 4.14, Theorem 4.21 and Theorem 4.5.
+- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM* 59(6), Article 30, 2012, with theorem numbers as in the authors' copy <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>: the abstract, Definition 4.4, Definition 4.14, Theorem 4.21 and Theorem 4.5.

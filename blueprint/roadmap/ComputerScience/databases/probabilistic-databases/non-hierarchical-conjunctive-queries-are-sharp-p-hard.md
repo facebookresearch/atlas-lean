@@ -20,4 +20,4 @@ $1 - \prod_a \big(1 - p(R(a, a))\big)$ is computable in polynomial time.
 ## Sources
 
 - N. Dalvi and D. Suciu, "The dichotomy of conjunctive queries on probabilistic structures", *Proceedings of the 26th ACM Symposium on Principles of Database Systems (PODS)*, 2007, pp. 293–302, Definition 1.2 and Theorem 1.4 (p. 294), which is stated for conjunctive properties.
-- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM*, 2012; authors' manuscript <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>, Proposition 8.8 (every non-hierarchical forbidden query is $h_0$).
+- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM* 59(6), Article 30, 2012, with theorem numbers as in the authors' copy <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>: Proposition 8.8 (every non-hierarchical forbidden query is $h_0$).
