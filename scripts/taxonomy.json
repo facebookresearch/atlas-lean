@@ -13218,7 +13218,6 @@
   "MathlibExt/NumberTheory/GeneralizedMarkovCongruence": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovDiscriminant": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovEquation": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
-  "MathlibExt/NumberTheory/GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovUniquenessMulEMul": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovUniquenessPairwiseCoprime": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovVietaEq": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
