@@ -30733,6 +30733,7 @@
 "Domains.Biology.StatisticalGenetics.FisherMultilocus.totalValue": "36af1fcfd8d4aa0e",
 "Domains.Biology.StatisticalGenetics.FisherMultilocus.totalValue_eq": "de3b9b32eb88a7ff",
 "Domains.Chemistry.MineralProcessing.TwoProductFormula.two_product_formula": "c003b7f41d1d6115",
+"Domains.Chemistry.ProcessBalances.LinearRecycle.linear_recycle_balances": "1fcd0376353b8060",
 "Domains.Chemistry.ThermalBalances.FreezingTime.freezing_time_lower_bound": "64dcbcd3f8f6c1b5",
 "DoubleCentralizer.StrictCauchy": "d1b09a65fd54e313",
 "DoubleCentralizer.StrictCauchySeq": "83c74997dd05bd43",

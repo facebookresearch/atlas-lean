@@ -10353,6 +10353,7 @@
   "Domains/Chemistry/Aqueous/Balances": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Charge balance, mass balance and the proton condition"},
   "Domains/Chemistry/MineralProcessing/TwoProductFormula": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Mineral-processing balances"},
   "Domains/Chemistry/ParticleBalances/AggregationBreakage": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
+  "Domains/Chemistry/ProcessBalances/LinearRecycle": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Process material balances"},
   "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
   "Domains/Chemistry/ThermalBalances/FreezingTime": {"to": "Chemistry/chemical-kinetics", "title": "Thermal inactivation kinetics"},
   "Domains/Chemistry/Transport/StirredTankStepResponse": {"to": "Chemistry/chemical-kinetics", "title": "Residence-time distributions"},
