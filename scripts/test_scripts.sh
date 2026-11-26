@@ -804,6 +804,7 @@ python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_audit_parallel.py -
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_codex_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_scope.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_build_trims.py -v
