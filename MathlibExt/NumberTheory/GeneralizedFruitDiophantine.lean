@@ -21,8 +21,8 @@ import Mathlib.Tactic.LinearCombination
 
 For each unramified degree-one prime above two, we identify the quotients by its positive powers
 with the corresponding rings of integers modulo powers of two. The generalized fruit equation
-has no solution with even first coordinate when such a prime exists. Over the rationals, the
-associated Weierstrass curve has no affine point whose reduced first coordinate has even numerator.
+has no solution with even first coordinate when such a prime exists. For every integer α, the
+curve E_α over ℚ has no rational affine point whose x-coordinate has even reduced numerator.
 -/
 
 namespace MetaMathlibExt
