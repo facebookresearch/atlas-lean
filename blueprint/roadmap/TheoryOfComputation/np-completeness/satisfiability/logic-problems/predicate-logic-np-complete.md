@@ -1,6 +1,8 @@
-# PREDICATE LOGIC WITHOUT NEGATION is NP-complete
+# VALIDITY OF NEGATION-FREE EXISTENTIAL SENTENCES WITH TWO CONSTANTS is NP-complete
 
-The decision problem PREDICATE LOGIC WITHOUT NEGATION belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem [VALIDITY OF NEGATION-FREE EXISTENTIAL SENTENCES WITH TWO CONSTANTS](predicate-logic-dec.md) belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+This is the fragment of PREDICATE LOGIC WITHOUT NEGATION that Garey and Johnson record as remaining NP-complete: no universal quantifiers, no relation symbols and only two function symbols, both of dimension $0$. Sentences outside this grammar, such as $\forall x\, x = x$, are not instances.
 
 ## Sources
 

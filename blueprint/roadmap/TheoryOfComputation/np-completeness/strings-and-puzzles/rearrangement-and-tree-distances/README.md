@@ -1,10 +1,8 @@
 # Rearrangement and tree distances
 
-- [Instances of BLOCK SORTING](block-sorting-instance.md)
 - [Identity permutation](identity.md)
 - [Blocks of a permutation](is-block.md)
 - [Block moves](block-move.md)
-- [Well-formed instances of BLOCK SORTING](well-formed.md)
 - [Feasible instances of BLOCK SORTING](block-sorting-feasible.md)
 - [BLOCK SORTING as a decision problem](block-sorting-dec.md)
 - [BLOCK SORTING is NP-complete](block-sorting-np-complete.md)
@@ -51,7 +49,7 @@
 - [REVERSAL MEDIAN as a decision problem](reversal-median-dec.md)
 - [REVERSAL MEDIAN is NP-complete](reversal-median-np-complete.md)
 - [Reversal of an interval](reversal-2.md)
-- [Well-formed instances of SORTING BY REVERSALS](well-formed-7.md)
+- [Well-formed instances of SORTING BY REVERSALS and BLOCK SORTING](well-formed-7.md)
 - [Feasible instances of SORTING BY REVERSALS](sorting-by-reversals-feasible.md)
 - [SORTING BY REVERSALS is NP-complete](sorting-by-reversals-np-complete.md)
 - [Instances of SORTING BY TRANSPOSITIONS](sorting-by-transpositions-instance.md)
@@ -88,5 +86,5 @@
 - [Feasible instances of UNSIGNED TRANSLOCATION DISTANCE](unsigned-translocation-distance-feasible.md)
 - [UNSIGNED TRANSLOCATION DISTANCE as a decision problem](unsigned-translocation-distance-dec.md)
 - [UNSIGNED TRANSLOCATION DISTANCE is NP-complete](unsigned-translocation-distance-np-compl.md)
-- [Sorting-by-reversals instance](sorting-by-reversals-instance.md)
+- [Instances of SORTING BY REVERSALS and BLOCK SORTING](sorting-by-reversals-instance.md)
 - [Sorting by reversals as a decision problem](sorting-by-reversals-dec.md)

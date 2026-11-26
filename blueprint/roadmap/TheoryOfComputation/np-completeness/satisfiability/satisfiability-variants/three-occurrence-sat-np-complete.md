@@ -1,6 +1,8 @@
-# SATISFIABILITY WITH AT MOST THREE OCCURRENCES PER VARIABLE is NP-complete
+# SAT WITH AT MOST THREE LITERALS PER CLAUSE AND AT MOST THREE CLAUSES PER VARIABLE is NP-complete
 
-The decision problem SATISFIABILITY WITH AT MOST THREE OCCURRENCES PER VARIABLE belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem [SAT WITH AT MOST THREE LITERALS PER CLAUSE AND AT MOST THREE CLAUSES PER VARIABLE](three-occurrence-sat-dec.md) belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Tovey's theorem is stated for formulas in which no clause repeats a variable and each variable occurs at most three times; those formulas are instances of this problem, which counts clauses containing a variable rather than occurrences, and they supply the hardness.
 
 ## Sources
 

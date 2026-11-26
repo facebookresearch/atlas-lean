@@ -1,3 +1,3 @@
 # Feasible instances of SUMPLETE
 
-An instance is feasible when some cells can be crossed out so that every row and every column of the remaining numbers sums to its target (numbers and targets missing from the lists read as $0$).
+An instance is a grid given as a list of rows of integers, a list of row targets and a list of column targets. It is feasible when some cells can be crossed out so that, for every row index $r$ below the number of rows and every column index $c$ below the number of column targets, the uncrossed numbers of row $r$ in columns below the number of column targets sum to the target of row $r$, and the uncrossed numbers of column $c$ in rows below the number of rows sum to the target of column $c$. Numbers and targets missing from the lists read as $0$; entries of a row beyond the number of column targets are ignored, not added to the row sum.

@@ -1,3 +1,3 @@
 # Sliding moves
 
-One move exchanges the hole with a square in a cell that shares a side with the hole's cell.
+One move takes a labelling $a$ of the cells of the $n \times n$ grid to $b$ when some cell $x$ with $a(x) = 0$ and a cell $y$ sharing a side with $x$ have $b$ equal to $a$ with the labels of $x$ and $y$ exchanged. The move does not require a unique zero cell or a nonzero label at $y$: an all-zero labelling moves to itself. On configurations with one hole, a move slides a tile into the hole.

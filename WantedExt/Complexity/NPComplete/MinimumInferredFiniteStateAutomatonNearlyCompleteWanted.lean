@@ -67,8 +67,10 @@ reduction from every language in `NP`
 /-- `|Σ^(n)|` for an alphabet of `m` letters: the number of strings of length at most `n`. -/
 def stringsUpTo (m n : ℕ) : ℕ := ∑ k ∈ Finset.range (n + 1), m ^ k
 
-/-- The sample is nearly complete for `(p, q)` (for `ε = p / q` when `q > 0`): for some `n`,
-every string of `S` and `T` has length at most `n`, and `|Σ^(n) - (S ∪ T)|^q ≤ |Σ^(n)|^p`. -/
+/-- The sample is nearly complete for `(p, q)`: for some `n`, every string of `S` and `T` has
+length at most `n`, and `(|Σ^(n)| - |S ∪ T|)^q ≤ |Σ^(n)|^p`, where `|S ∪ T|` counts distinct
+strings and the difference of the two cardinalities is truncated at `0`. When `S ∪ T ⊆ Σ^(n)`
+and `q > 0`, this says `|Σ^(n) \ (S ∪ T)| ≤ |Σ^(n)|^ε` with `ε = p / q`. -/
 def NearlyComplete (p q : ℕ) (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
   ∃ n, (∀ w ∈ i.2.1 ++ i.2.2.1, w.length ≤ n) ∧
     (stringsUpTo i.1 n - (i.2.1 ++ i.2.2.1).toFinset.card) ^ q ≤ stringsUpTo i.1 n ^ p
