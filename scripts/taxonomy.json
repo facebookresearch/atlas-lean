@@ -13480,6 +13480,7 @@
   "MathlibExt/NumberTheory/QAnalogCollatz": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
   "MathlibExt/NumberTheory/QCollatzConjugacy": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
   "MathlibExt/NumberTheory/QCollatzParityFlip": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
+  "MathlibExt/NumberTheory/QCollatzPerturbation": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
   "MathlibExt/NumberTheory/QRDowlingPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "(q, r)-Whitney and Dowling numbers"},
   "MathlibExt/NumberTheory/QuadraticForms/BinaryQuadraticArithmeticProgressions": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Arithmetic progressions represented by binary forms"},
   "MathlibExt/NumberTheory/QuadraticForms/BinaryQuadraticNineTermProgression": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Arithmetic progressions represented by binary forms"},
