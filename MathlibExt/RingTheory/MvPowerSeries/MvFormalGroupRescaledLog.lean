@@ -38,6 +38,8 @@ public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.Ideal.Span
 
 import Mathlib.Algebra.DualNumber
+import Mathlib.Algebra.Polynomial.Coeff
+import Mathlib.Algebra.Polynomial.Eval.Defs
 import Mathlib.Algebra.MvPolynomial.PDeriv
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
@@ -54,9 +56,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Rescaled logarithms of multivariate formal group laws
 
-For a non-zero-divisor `a` of `R`, `MvFormalGroup.rescale` turns a formal group law `F` over `R`
-into the formal group law `a⁻¹ F(a X, a Y)`: the coefficients of total degree `n ≥ 1` of `F` are
-multiplied by `a ^ (n - 1)`. It is commutative when `F` is.
+For every `a : R`, `MvFormalGroup.rescale` turns a formal group law `F` over `R` into the formal
+group law whose coefficients of total degree `n ≥ 1` are those of `F` multiplied by
+`a ^ (n - 1)`; when `a` is a unit this is `a⁻¹ F(a X, a Y)`. It is commutative when `F` is.
 
 The main result, `MvFormalGroup.exists_rescaledLog_of_isAdicComplete`, says: if `p` is a
 prime that is a non-zero-divisor in a `p`-adically complete ring `𝓞`, then every commutative
@@ -64,7 +66,7 @@ prime that is a non-zero-divisor in a `p`-adically complete ring `𝓞`, then ev
 degree `n` multiplied by `p ^ (n - 1)`) that admits a logarithm `φ` over `𝓞`: `φ` has zero
 constant terms, identity linear part, coefficients tending to zero `p`-adically, and turns
 `Fp` into the additive formal group law. `MvFormalGroup.exists_log_rescale_of_isAdicComplete`
-states the same logarithm for the formal group law `F.rescale hp`.
+states the same logarithm for the formal group law `F.rescale p`.
 
 The formal group law API it builds on (`MvFormalGroup`, `MvFormalGroup.IsComm`, base change,
 substitution lemmas) is in `MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor`.
@@ -154,10 +156,12 @@ theorem pderiv_Z_φ (k : σ) :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> rintro (s | s) <;>
     simp [φYZ, φXYZ, φXYZ', φXY, pderiv_X, Pi.single_apply, eq_comm]
 
-theorem pderiv_inr_eq (Γ : P2)
+omit [Fintype σ] in
+theorem pderiv_inr_eq [Finite σ] (Γ : P2)
     (hcoc : aeval (φYZ R σ) Γ - aeval (φXYZ R σ) Γ + aeval (φXYZ' R σ) Γ - aeval (φXY R σ) Γ =
         0) (k : σ) :
     pderiv (Sum.inr k) Γ = plus (gk Γ k) - rename Sum.inr (gk Γ k) := by
+  cases nonempty_fintype σ
   classical
   obtain ⟨h1, h2, h3, h4⟩ := pderiv_Z_φ (R := R) (σ := σ) k
   have key := congrArg (fun P => ev0 (pderiv (Sum.inr (Sum.inr k)) P)) hcoc
@@ -184,7 +188,8 @@ theorem pderiv_inr_eq (Γ : P2)
   rw [e1, e2, e3, sub_zero] at key
   linear_combination key
 
-theorem pderiv_inl_eq (Γ : P2) (hsymm : rename Sum.swap Γ = Γ)
+omit [Fintype σ] in
+theorem pderiv_inl_eq [Finite σ] (Γ : P2) (hsymm : rename Sum.swap Γ = Γ)
     (hcoc : aeval (φYZ R σ) Γ - aeval (φXYZ R σ) Γ + aeval (φXYZ' R σ) Γ - aeval (φXY R σ) Γ =
         0) (k : σ) :
     pderiv (Sum.inl k) Γ = plus (gk Γ k) - rename Sum.inl (gk Γ k) := by
@@ -222,11 +227,13 @@ theorem isHomogeneous_H (n : ℕ) (hn : n ≠ 0) (Γ : P2) (hhom : Γ.IsHomogene
   have := (isHomogeneous_X R s).mul hg
   rwa [show 1 + (n - 1) = n by omega] at this
 
-theorem main (n : ℕ) (hn : IsUnit (n : R)) (Γ : P2) (hhom : Γ.IsHomogeneous n)
+omit [Fintype σ] in
+theorem main [Finite σ] (n : ℕ) (hn : IsUnit (n : R)) (Γ : P2) (hhom : Γ.IsHomogeneous n)
     (hsymm : rename Sum.swap Γ = Γ)
     (hcoc : aeval (φYZ R σ) Γ - aeval (φXYZ R σ) Γ + aeval (φXYZ' R σ) Γ - aeval (φXY R σ) Γ = 0) :
     ∃ h : P1, h.IsHomogeneous n ∧ Γ = delta h := by
   classical
+  cases nonempty_fintype σ
   rcases subsingleton_or_nontrivial R with hR | hR
   · exact ⟨0, isHomogeneous_zero _ _ _, Subsingleton.elim _ _⟩
   have hn0 : n ≠ 0 := by
@@ -310,7 +317,8 @@ theorem constantCoeff_Gfam (A : σ → MvPowerSeries τ R) (hA : ∀ i, constant
   rw [Gfam, map_add, constantCoeff_iota _ (hA i), map_sum, zero_add]
   exact Finset.sum_eq_zero fun k' _ => by rw [map_mul, constantCoeff_X, zero_mul]
 
-theorem hasSubst_Gfam (A : σ → MvPowerSeries τ R) (hA : ∀ i, constantCoeff (A i) = 0)
+omit [Fintype σ] in
+theorem hasSubst_Gfam [Finite σ] (A : σ → MvPowerSeries τ R) (hA : ∀ i, constantCoeff (A i) = 0)
     (B : σ → κ → MvPowerSeries τ R) : HasSubst (Gfam A B) :=
   hasSubst_of_constantCoeff_zero (constantCoeff_Gfam A hA B)
 
@@ -318,7 +326,8 @@ open Classical in
 noncomputable def ak (k : κ) : τ ⊕ κ → MvPowerSeries τ D :=
   Sum.elim (fun t => X t) (fun k' => if k' = k then C DualNumber.eps else 0)
 
-theorem hasSubst_ak (k : κ) : HasSubst (ak (R := R) (τ := τ) k) := by
+omit [Fintype κ] in
+theorem hasSubst_ak [Finite κ] (k : κ) : HasSubst (ak (R := R) (τ := τ) k) := by
   classical
   refine ⟨?_, fun d => ?_⟩
   · rintro (t | k')
@@ -776,7 +785,8 @@ theorem coeff_theta0 (g : MvPowerSeries (τ ⊕ κ) R) (m : τ →₀ ℕ) :
   · intro n hn
     rw [coeff_prod_a0, ite_eq_right hn, smul_zero]
 
-theorem main0 (f : MvPowerSeries σ R)
+omit [Fintype σ] in
+theorem main0 [Finite σ] (f : MvPowerSeries σ R)
     (A : σ → MvPowerSeries τ R) (hA : ∀ i, constantCoeff (A i) = 0) (B : σ → κ → MvPowerSeries τ R)
     (m : τ →₀ ℕ) :
     coeff (m.sumElim 0) (subst (Gfam A B) f) = coeff m (subst A f) := by
@@ -1787,12 +1797,11 @@ variable (f : Fin d → MvPowerSeries (Fin d) K) (hf0 : ∀ i, constantCoeff (f 
 noncomputable def Dlog (i j : Fin d) : MvPowerSeries (Fin d) K :=
   fun m => ((m j + 1 : ℕ) : K) * coeff (m + Finsupp.single j 1) (f i)
 
-include hf0 hf1 hfadd in
+include hf1 hfadd in
 theorem sum_Dlog_mul_Psi (i k : Fin d) : ∑ j,
     Psi (F𝓞.map φ) j k * Dlog f i j = if i = k then 1 else 0 := by
   classical
   set F := F𝓞.map φ with hF
-
   set A : Fin d → MvPowerSeries (Fin d) K := fun j m =>
       coeff (m.sumElim (0 : Fin d →₀ ℕ)) (F.toPowerSeries j) with hA
   have hAX : A = fun j => X j := by funext j; ext m; exact coeff_sumElim_zero_law F j m
@@ -1810,17 +1819,14 @@ theorem sum_Dlog_mul_Psi (i k : Fin d) : ∑ j,
       constantCoeff_emb _ (hA0 j), zero_add]
     exact Finset.sum_eq_zero fun k' _ => by rw [map_mul, constantCoeff_X, zero_mul]
   have hGs : HasSubst G := hasSubst_of_constantCoeff_zero hG0
-
   have taylor := fun m => MvPowerSeries.coeff_sumElim_single_subst_add_sum_X_mul_eq (f i) (Dlog f i)
     (fun j m => rfl) A hA0 (fun j k' => Psi F j k') m k
-
   have hFG : ∀ m : Fin d →₀ ℕ,
       coeff (m.sumElim (Finsupp.single k 1)) (subst F.toPowerSeries (f i)) =
       coeff (m.sumElim (Finsupp.single k 1)) (subst G (f i)) := fun m =>
     (CongW.substRight F.hasSubst_toPowerSeries hGs (fun j =>
         by rw [hGlin]; exact congW_linY _) (f i)) _
       (by rw [weight_wY_sumElim, Finsupp.degree_single])
-
   have hLHS : ∀ m : Fin d →₀ ℕ,
       coeff (m.sumElim (Finsupp.single k 1)) (subst F.toPowerSeries (f i)) =
       if m = 0 then (if i = k then 1 else 0) else 0 := by
@@ -1843,7 +1849,6 @@ theorem sum_Dlog_mul_Psi (i k : Fin d) : ∑ j,
       apply hm
       have := congrArg (fun n => Finsupp.comapDomain Sum.inl n Sum.inl_injective.injOn) h
       simpa [mapDomain_inr_eq_sumElim] using this
-
   ext m
   have := (hLHS m).symm.trans ((hFG m).trans (taylor m))
   rw [hAX] at this
@@ -1853,7 +1858,7 @@ theorem sum_Dlog_mul_Psi (i k : Fin d) : ∑ j,
   rw [← this]
   split_ifs <;> simp [coeff_one, *]
 
-include hf0 hf1 hfadd in
+include hf1 hfadd in
 theorem exists_coeff_Dlog (i j : Fin d) (m : Fin d →₀ ℕ) : ∃ c : 𝓞, φ c = coeff m (Dlog f i j) := by
   classical
   set ΨO : Matrix (Fin d) (Fin d) (MvPowerSeries (Fin d) 𝓞) := Matrix.of fun j k =>
@@ -1868,7 +1873,7 @@ theorem exists_coeff_Dlog (i j : Fin d) (m : Fin d →₀ ℕ) : ∃ c : 𝓞, �
     refine Matrix.ext fun i k => ?_
     rw [Matrix.mul_apply, Matrix.one_apply]
     simp only [hD, hΨK, Matrix.of_apply]
-    rw [← sum_Dlog_mul_Psi φ F𝓞 f hf0 hf1 hfadd i k]
+    rw [← sum_Dlog_mul_Psi φ F𝓞 f hf1 hfadd i k]
     exact Finset.sum_congr rfl fun j _ => mul_comm (Dlog f i j) (Psi (F𝓞.map φ) j k)
   have hunit := isUnit_det_Psi F𝓞
   have hD' : D = (RingHom.mapMatrix (MvPowerSeries.map φ)) ΨO⁻¹ := by
@@ -1896,11 +1901,11 @@ theorem isUnit_natCast_of_not_dvd [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞
   have h1 : (a : 𝓞) * n + (b : 𝓞) * p = 1 := by
     have := congrArg (Int.castRingHom 𝓞) hab
     simpa using this
-  have hjac : (b : 𝓞) * p ∈ (⊥ : Ideal 𝓞).jacobson :=
-    IsAdicComplete.le_jacobson_bot (Ideal.span {(p : 𝓞)}) (Ideal.mul_mem_left _ _
+  have hjac : (b : 𝓞) * p ∈ Ring.jacobson 𝓞 :=
+    IsAdicComplete.le_jacobson (Ideal.span {(p : 𝓞)}) (Ideal.mul_mem_left _ _
         (Ideal.mem_span_singleton_self _))
   have hu : IsUnit ((a : 𝓞) * n) := by
-    rw [Ideal.mem_jacobson_bot] at hjac
+    rw [Ring.mem_jacobson_iff] at hjac
     have := hjac (-1)
     rwa [show (b : 𝓞) * p * (-1) + 1 = (a : 𝓞) * n by linear_combination (-1 : 𝓞) * h1] at this
   exact isUnit_of_mul_isUnit_right hu
@@ -1967,11 +1972,13 @@ variable {𝓞 : Type*} [CommRing 𝓞] (p : ℕ) [hp : Fact p.Prime] (hpR : (p 
 local notation "K" => Localization.Away (p : 𝓞)
 local notation "φ" => algebraMap 𝓞 (Localization.Away (p : 𝓞))
 
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] in
 include hpR in
 theorem φ_injective : Function.Injective φ :=
   IsLocalization.injective (M :=
       Submonoid.powers (p : 𝓞)) (Localization.Away (p : 𝓞)) (Submonoid.powers_le.2 hpR)
 
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] in
 theorem isUnit_φp : IsUnit (φ (p : 𝓞)) := IsLocalization.Away.algebraMap_isUnit (p : 𝓞)
 
 theorem isUnit_succ (n : ℕ) : IsUnit ((n + 1 : ℕ) : K) := by
@@ -2006,7 +2013,6 @@ theorem fK_add (i : Fin d) : subst (F.map φ).toPowerSeries (fK p F i) = subst i
   unfold fK
   linear_combination this
 
-include hpR in
 theorem exists_pre (i : Fin d) (m : Fin d →₀ ℕ) (hm : m ≠ 0) :
     ∃ c : 𝓞, φ c = φ (p : 𝓞) ^ (m.degree - 1) * coeff m (fK p F i) ∧
       ∃ k : ℕ, 2 * k ≤ m.degree ∧ c ∈ Ideal.span {(p : 𝓞) ^ (m.degree - 1 - k)} := by
@@ -2016,17 +2022,15 @@ theorem exists_pre (i : Fin d) (m : Fin d →₀ ℕ) (hm : m ≠ 0) :
     exact hm (Finsupp.ext fun j => not_not.1 (not_exists.1 h j))
   obtain ⟨k, u, hu, hk⟩ := Nat.exists_eq_pow_mul_and_not_dvd hj p hp.out.ne_one
   have hu0 : u ≠ 0 := fun h => hj (by rw [hk, h, mul_zero])
-
   set m' := m - Finsupp.single j 1 with hm'
   have hmm' : m' + Finsupp.single j 1 = m :=
       tsub_add_cancel_of_le (Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 hj))
   have hmj : m' j + 1 = m j := by
     have := congrArg (fun n => n j) hmm'; simpa using this
-  obtain ⟨c₀, hc₀⟩ := exists_coeff_Dlog φ F (fK p F) (fK_const p F) (fK_lin p F) (fK_add p F) i j m'
+  obtain ⟨c₀, hc₀⟩ := exists_coeff_Dlog φ F (fK p F) (fK_lin p F) (fK_add p F) i j m'
   rw [show coeff m' (Dlog (fK p F) i j) = ((m' j + 1 : ℕ) : K) * coeff (m' +
       Finsupp.single j 1) (fK p F i) from rfl,
     hmj, hmm', hk, Nat.cast_mul, Nat.cast_pow] at hc₀
-
   obtain ⟨uu, huu⟩ := isUnit_natCast_of_not_dvd (𝓞 := 𝓞) p hu
   have hkdeg : k ≤ m.degree - 1 := by
     have h2 := two_mul_le_of_pow_mul p hu0 hk
@@ -2047,34 +2051,35 @@ theorem exists_pre (i : Fin d) (m : Fin d →₀ ℕ) (hm : m ≠ 0) :
     exact Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _)
 
 noncomputable def bcoef (i : Fin d) (m : Fin d →₀ ℕ) : 𝓞 :=
-  if hm : m = 0 then 0 else Classical.choose (exists_pre p hpR F i m hm)
+  if hm : m = 0 then 0 else Classical.choose (exists_pre p F i m hm)
 
 theorem φ_bcoef (i : Fin d) (m : Fin d →₀ ℕ) :
-    φ (bcoef p hpR F i m) = φ (p : 𝓞) ^ (m.degree - 1) * coeff m (fK p F i) := by
+    φ (bcoef p F i m) = φ (p : 𝓞) ^ (m.degree - 1) * coeff m (fK p F i) := by
   rw [bcoef]
   split_ifs with hm
   · rw [hm, map_zero, coeff_zero_eq_constantCoeff_apply, fK_const, mul_zero]
-  · exact (Classical.choose_spec (exists_pre p hpR F i m hm)).1
+  · exact (Classical.choose_spec (exists_pre p F i m hm)).1
 
 include hpR in
 theorem bcoef_mem (i : Fin d) (m : Fin d →₀ ℕ) (N : ℕ) (hN : 2 * N + 2 ≤ m.degree) :
-    bcoef p hpR F i m ∈ Ideal.span {(p : 𝓞) ^ N} := by
+    bcoef p F i m ∈ Ideal.span {(p : 𝓞) ^ N} := by
   have hm : m ≠ 0 := by rintro rfl; simp at hN
-  obtain ⟨c, hc, k, hk, hmem⟩ := exists_pre p hpR F i m hm
-  have hcb : c = bcoef p hpR F i m := φ_injective p hpR (by rw [hc, φ_bcoef])
+  obtain ⟨c, hc, k, hk, hmem⟩ := exists_pre p F i m hm
+  have hcb : c = bcoef p F i m := φ_injective p hpR (by rw [hc, φ_bcoef])
   rw [← hcb]
   refine Ideal.span_singleton_le_span_singleton.2 ?_ hmem
   exact pow_dvd_pow _ (by omega)
 
-noncomputable def phiSer (i : Fin d) : MvPowerSeries (Fin d) 𝓞 := fun m => bcoef p hpR F i m
+noncomputable def phiSer (i : Fin d) : MvPowerSeries (Fin d) 𝓞 := fun m => bcoef p F i m
 
 open Classical in
 noncomputable def FpSer (i : Fin d) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞 :=
   fun m => if m = 0 then 0 else (p : 𝓞) ^ (m.degree - 1) * coeff m (F.toPowerSeries i)
 
-theorem coeff_phiSer (i : Fin d) (m : Fin d →₀ ℕ) : coeff m (phiSer p hpR F i) =
-    bcoef p hpR F i m := rfl
+theorem coeff_phiSer (i : Fin d) (m : Fin d →₀ ℕ) : coeff m (phiSer p F i) =
+    bcoef p F i m := rfl
 
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] [F.IsComm] in
 open Classical in
 theorem coeff_FpSer (i : Fin d) (m : Fin d ⊕ Fin d →₀ ℕ) :
     coeff m (FpSer p F i) = if m = 0 then 0 else (p : 𝓞) ^ (m.degree -
@@ -2082,9 +2087,10 @@ theorem coeff_FpSer (i : Fin d) (m : Fin d ⊕ Fin d →₀ ℕ) :
 
 noncomputable def π : Kˣ := (isUnit_φp (𝓞 := 𝓞) p).unit
 
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] in
 theorem π_val : ((π p : Kˣ) : K) = (p : K) := by rw [π, IsUnit.unit_spec, map_natCast]
 
-theorem map_phiSer (i : Fin d) : MvPowerSeries.map φ (phiSer p hpR F i) = ((π p)⁻¹ : Kˣ).val •
+theorem map_phiSer (i : Fin d) : MvPowerSeries.map φ (phiSer p F i) = ((π p)⁻¹ : Kˣ).val •
     rho p (fK p F i) := by
   ext m
   rw [coeff_map, coeff_phiSer, φ_bcoef, map_smul, coeff_rho, smul_eq_mul, map_natCast, ← π_val]
@@ -2100,6 +2106,7 @@ theorem map_phiSer (i : Fin d) : MvPowerSeries.map φ (phiSer p hpR F i) = ((π 
             (((π p) : Kˣ) : K)) by ring,
       Units.inv_mul, mul_one]
 
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] [F.IsComm] in
 theorem map_FpSer (i : Fin d) :
     MvPowerSeries.map φ (FpSer p F i) = ((π p)⁻¹ : Kˣ).val • rho p ((F.map φ).toPowerSeries i) := by
   classical
@@ -2122,6 +2129,7 @@ theorem map_FpSer (i : Fin d) :
             (((π p) : Kˣ) : K)) by ring,
       Units.inv_mul, mul_one]
 
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] in
 include hpR in
 theorem map_injective : Function.Injective (MvPowerSeries.map (σ := Fin d ⊕ Fin d) φ) := by
   intro f g h
@@ -2129,16 +2137,17 @@ theorem map_injective : Function.Injective (MvPowerSeries.map (σ := Fin d ⊕ F
   apply φ_injective p hpR
   rw [← coeff_map, ← coeff_map, h]
 
-omit [F.IsComm] in
+omit hp [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞] [F.IsComm] in
 theorem hasSubst_FpK : HasSubst fun j => ((π p)⁻¹ : Kˣ).val • rho p ((F.map φ).toPowerSeries j) :=
   hasSubst_of_constantCoeff_zero fun j => by
     rw [← coeff_zero_eq_constantCoeff_apply, map_smul, coeff_rho, coeff_zero_eq_constantCoeff_apply,
       (F.map φ).constantCoeff_eq_zero, mul_zero, smul_zero]
 
+include hpR in
 theorem phiSer_add (i : Fin d) :
-    subst (FpSer p F) (phiSer p hpR F i) =
-      subst (fun j => (X (Sum.inl j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (phiSer p hpR F i) +
-        subst (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (phiSer p hpR F i) := by
+    subst (FpSer p F) (phiSer p F i) =
+      subst (fun j => (X (Sum.inl j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (phiSer p F i) +
+        subst (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (phiSer p F i) := by
   classical
   apply map_injective p hpR
   have hFp0 : ∀ j, constantCoeff (FpSer p F j) = 0 := fun j => by
@@ -2193,7 +2202,7 @@ theorem main :
         subst (fun j => (X (Sum.inl j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (φ i) +
           subst (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (φ i)) := by
   classical
-  refine ⟨FpSer p F, phiSer p hpR F, ?_, ?_, ?_, ?_, ?_, fun i => phiSer_add p hpR F i⟩
+  refine ⟨FpSer p F, phiSer p F, ?_, ?_, ?_, ?_, ?_, fun i => phiSer_add p hpR F i⟩
   · intro i m hm
     show coeff m (FpSer p F i) * _ = _ * coeff m (F.toPowerSeries i)
     rw [coeff_FpSer, ite_eq_right hm]
@@ -2208,7 +2217,7 @@ theorem main :
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_phiSer, bcoef, dite_eq_left rfl]
   · ext i j
     rw [MvFormalGroup.linearPart, Matrix.of_apply, Matrix.one_apply]
-    show coeff (Finsupp.single j 1) (phiSer p hpR F i) = _
+    show coeff (Finsupp.single j 1) (phiSer p F i) = _
     rw [coeff_phiSer]
     apply φ_injective p hpR
     rw [φ_bcoef, Finsupp.degree_single, Nat.sub_self, pow_zero, one_mul,
@@ -2355,7 +2364,7 @@ private theorem subst_swap_of_smul_eq (F : MvFormalGroup g R) [F.IsComm] {a : R}
   rw [e1, e2]
   exact subst_elim_comm F (fun j => hsX _) (fun j => hsX _) i
 
-/-- The coefficients of `a⁻¹ F(a X, a Y)`. -/
+/-- The coefficients of the rescaling of `F` by `a`. -/
 private def rescaleSeries (F : MvFormalGroup g R) (a : R) (i : Fin g) :
     MvPowerSeries (Fin g ⊕ Fin g) R :=
   fun m => if m = 0 then 0 else a ^ (m.degree - 1) * coeff m (F.toPowerSeries i)
@@ -2370,39 +2379,93 @@ private theorem constantCoeff_rescaleSeries (F : MvFormalGroup g R) (a : R) (i :
     (rescaleSeries F a i).constantCoeff = 0 := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_rescaleSeries, ite_eq_left rfl]
 
-/-- The rescaling `a⁻¹ F(a X, a Y)` of a formal group law `F` by a non-zero-divisor `a`: the
-coefficients of `F` of total degree `n ≥ 1` are multiplied by `a ^ (n - 1)`. -/
-@[no_expose]
-def rescale (F : MvFormalGroup g R) {a : R} (ha : a ∈ nonZeroDivisors R) : MvFormalGroup g R where
+private theorem coeff_single_inl_rescaleSeries (F : MvFormalGroup g R) (a : R) (i j : Fin g) :
+    coeff (Finsupp.single (Sum.inl j) 1) (rescaleSeries F a i) = if i = j then 1 else 0 := by
+  rw [coeff_rescaleSeries, ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero),
+    Finsupp.degree_single, Nat.sub_self, pow_zero, one_mul, F.coeff_single_inl]
+
+private theorem coeff_single_inr_rescaleSeries (F : MvFormalGroup g R) (a : R) (i j : Fin g) :
+    coeff (Finsupp.single (Sum.inr j) 1) (rescaleSeries F a i) = if i = j then 1 else 0 := by
+  rw [coeff_rescaleSeries, ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero),
+    Finsupp.degree_single, Nat.sub_self, pow_zero, one_mul, F.coeff_single_inr]
+
+/-- The rescaling by a non-zero-divisor `a`, whose laws follow by cancelling `a`. -/
+private def rescaleOfMem (F : MvFormalGroup g R) {a : R} (ha : a ∈ nonZeroDivisors R) :
+    MvFormalGroup g R where
   toPowerSeries := rescaleSeries F a
   constantCoeff_eq_zero := constantCoeff_rescaleSeries F a
-  coeff_single_inl i j := by
-    rw [coeff_rescaleSeries, ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero),
-      Finsupp.degree_single, Nat.sub_self, pow_zero, one_mul, F.coeff_single_inl]
-  coeff_single_inr i j := by
-    rw [coeff_rescaleSeries, ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero),
-      Finsupp.degree_single, Nat.sub_self, pow_zero, one_mul, F.coeff_single_inr]
+  coeff_single_inl := coeff_single_inl_rescaleSeries F a
+  coeff_single_inr := coeff_single_inr_rescaleSeries F a
   assoc := subst_elim_assoc_of_smul_eq F ha (constantCoeff_rescaleSeries F a)
     (smul_eq_rescale_of_coeff F (coeff_rescaleSeries F a))
     (u := fun l => (X (Sum.inl l) : MvPowerSeries (Fin g ⊕ (Fin g ⊕ Fin g)) R))
     (v := fun l => X (Sum.inr (Sum.inl l))) (w := fun l => X (Sum.inr (Sum.inr l)))
     (fun _ => constantCoeff_X _) (fun _ => constantCoeff_X _) (fun _ => constantCoeff_X _)
 
+private theorem isComm_rescaleOfMem (F : MvFormalGroup g R) [F.IsComm] {a : R}
+    (ha : a ∈ nonZeroDivisors R) : (rescaleOfMem F ha).IsComm :=
+  ⟨subst_swap_of_smul_eq F ha (smul_eq_rescale_of_coeff F (coeff_rescaleSeries F a))⟩
+
+/-- The rescaling of `F` by `a` is the image under evaluation at `a` of the rescaling of `F` by
+the non-zero-divisor `X` of `R[X]`. -/
+private theorem rescaleSeries_eq_map (F : MvFormalGroup g R) (a : R) :
+    rescaleSeries F a = ((rescaleOfMem (F.map Polynomial.C) Polynomial.X_mem_nonZeroDivisors).map
+      (Polynomial.evalRingHom a)).toPowerSeries := by
+  funext i
+  ext m
+  change coeff m (rescaleSeries F a i) =
+    coeff m (MvPowerSeries.map (Polynomial.evalRingHom a)
+      (rescaleSeries (F.map Polynomial.C) Polynomial.X i))
+  rw [coeff_map, coeff_rescaleSeries, coeff_rescaleSeries]
+  split_ifs
+  · rw [map_zero]
+  · change _ = Polynomial.evalRingHom a (Polynomial.X ^ (m.degree - 1) *
+      coeff m (MvPowerSeries.map Polynomial.C (F.toPowerSeries i)))
+    rw [coeff_map, map_mul, map_pow, Polynomial.coe_evalRingHom, Polynomial.eval_X,
+      Polynomial.eval_C]
+
+/-- **Rescaled formal group law.** For `a : R`, the formal group law whose constant terms are
+zero and whose coefficient at a multi-index `m ≠ 0` of total degree `|m|` is `a ^ (|m| - 1)`
+times that of `F`. When `a` is a unit it is `a⁻¹ F(a X, a Y)`; in general `a` need not be a unit
+or a non-zero-divisor (rescaling by `0` gives the additive formal group law). -/
+@[no_expose]
+def rescale (F : MvFormalGroup g R) (a : R) : MvFormalGroup g R where
+  toPowerSeries := rescaleSeries F a
+  constantCoeff_eq_zero := constantCoeff_rescaleSeries F a
+  coeff_single_inl := coeff_single_inl_rescaleSeries F a
+  coeff_single_inr := coeff_single_inr_rescaleSeries F a
+  assoc := by
+    rw [rescaleSeries_eq_map]
+    exact MvFormalGroup.assoc _
+
 @[simp]
-theorem coeff_rescale (F : MvFormalGroup g R) {a : R} (ha : a ∈ nonZeroDivisors R) (i : Fin g)
-    (m : Fin g ⊕ Fin g →₀ ℕ) :
-    coeff m ((F.rescale ha).toPowerSeries i) =
+theorem coeff_rescale (F : MvFormalGroup g R) (a : R) (i : Fin g) (m : Fin g ⊕ Fin g →₀ ℕ) :
+    coeff m ((F.rescale a).toPowerSeries i) =
       if m = 0 then 0 else a ^ (m.degree - 1) * coeff m (F.toPowerSeries i) :=
   coeff_rescaleSeries F a i m
 
-instance (F : MvFormalGroup g R) [F.IsComm] {a : R} (ha : a ∈ nonZeroDivisors R) :
-    (F.rescale ha).IsComm where
-  comm := subst_swap_of_smul_eq F ha (smul_eq_rescale_of_coeff F (coeff_rescale F ha))
+instance (F : MvFormalGroup g R) [F.IsComm] (a : R) : (F.rescale a).IsComm where
+  comm := by
+    have := RescaledLogAux.isComm_map F (Polynomial.C : R →+* Polynomial R)
+    have := isComm_rescaleOfMem (F.map Polynomial.C) Polynomial.X_mem_nonZeroDivisors
+    change ∀ i, subst _ (rescaleSeries F a i) = rescaleSeries F a i
+    rw [rescaleSeries_eq_map]
+    exact (RescaledLogAux.isComm_map _ (Polynomial.evalRingHom a)).comm
 
 end MvFormalGroup
 
-/-- A p-adically decaying integral logarithm for the p-rescaled
-multivariate commutative formal group law. -/
+/-- **Integral logarithm of a rescaled formal group law.** Let `p` be a prime whose image in `𝓞`
+is a non-zero-divisor, with `𝓞` complete for the `(p)`-adic topology, and let `F` be a
+commutative `d`-dimensional formal group law over `𝓞`. Then there are power series `Fp` and `φ`
+over `𝓞` such that:
+
+- for every multi-index `m ≠ 0` of total degree `|m|`,
+  `p · coeff m (Fp i) = p ^ |m| · coeff m (F i)`, so `Fp` is `F` with its coefficients of total
+  degree `n` multiplied by `p ^ (n - 1)`;
+- every `Fp i` and every `φ i` has zero constant term;
+- the linear part of `φ` is the identity matrix;
+- for every `N`, all but finitely many coefficients of each `φ i` lie in the ideal `(p ^ N)`;
+- `φ (Fp (X, Y)) = φ (X) + φ (Y)`, so `φ` is a logarithm of `Fp`. -/
 public theorem MvFormalGroup.exists_rescaledLog_of_isAdicComplete
     {𝓞 : Type u} [CommRing 𝓞] (p : ℕ) [Fact p.Prime] (hp : (p : 𝓞) ∈ nonZeroDivisors 𝓞)
     [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞]
@@ -2419,10 +2482,16 @@ public theorem MvFormalGroup.exists_rescaledLog_of_isAdicComplete
           subst (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (φ i)) :=
   RescaledLogAux.main p hp F
 
-/-- The `p`-adically decaying integral logarithm of
-`MvFormalGroup.exists_rescaledLog_of_isAdicComplete`, stated for the rescaled formal group law
-`F.rescale hp`: `φ` has zero constant terms and identity linear part, its coefficients tend to
-zero `p`-adically, and `φ (F.rescale hp) = φ (X) + φ (Y)`. -/
+/-- **Integral logarithm of the rescaled law `F.rescale p`.** Let `p` be a prime whose image in
+`𝓞` is a non-zero-divisor, with `𝓞` complete for the `(p)`-adic topology, and let `F` be a
+commutative `d`-dimensional formal group law over `𝓞`. Then there are power series `φ` over `𝓞`
+such that:
+
+- every `φ i` has zero constant term, and the linear part of `φ` is the identity matrix;
+- for every `N`, all but finitely many coefficients of each `φ i` lie in the ideal `(p ^ N)`;
+- `φ (G (X, Y)) = φ (X) + φ (Y)` for the formal group law `G = F.rescale p`, whose coefficients
+  of total degree `n ≥ 1` are those of `F` multiplied by `p ^ (n - 1)`; so `φ` is a logarithm
+  of `G`. -/
 public theorem MvFormalGroup.exists_log_rescale_of_isAdicComplete
     {𝓞 : Type u} [CommRing 𝓞] (p : ℕ) [Fact p.Prime] (hp : (p : 𝓞) ∈ nonZeroDivisors 𝓞)
     [IsAdicComplete (Ideal.span {(p : 𝓞)}) 𝓞]
@@ -2431,12 +2500,12 @@ public theorem MvFormalGroup.exists_log_rescale_of_isAdicComplete
       (∀ i, (φ i).constantCoeff = 0) ∧
       MvFormalGroup.linearPart φ = 1 ∧
       (∀ (N : ℕ) (i : Fin d), ∀ᶠ m in Filter.cofinite, (φ i).coeff m ∈ Ideal.span {(p : 𝓞) ^ N}) ∧
-      (∀ i, subst (F.rescale hp).toPowerSeries (φ i) =
+      (∀ i, subst (F.rescale (p : 𝓞)).toPowerSeries (φ i) =
         subst (fun j => (X (Sum.inl j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (φ i) +
           subst (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) 𝓞)) (φ i)) := by
   obtain ⟨Fp, φ, hcoeff, hFp0, hφ0, hlin, hdec, hlog⟩ :=
     MvFormalGroup.exists_rescaledLog_of_isAdicComplete p hp F
-  have hFp : Fp = (F.rescale hp).toPowerSeries := by
+  have hFp : Fp = (F.rescale (p : 𝓞)).toPowerSeries := by
     funext i
     ext m
     rw [MvFormalGroup.coeff_rescale]
