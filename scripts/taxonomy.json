@@ -13312,6 +13312,7 @@
   "MathlibExt/NumberTheory/LucasnomialSum": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity/BinaryUpperBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
+  "MathlibExt/NumberTheory/MahlerPopkenComplexityMahlerPopkenComplexityTwoEqRecursionValue": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MaynardVariationalBounds": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "GPY–Maynard sieve"},
   "MathlibExt/NumberTheory/MelhamGibonacci": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/MersenneEtaCondition": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
