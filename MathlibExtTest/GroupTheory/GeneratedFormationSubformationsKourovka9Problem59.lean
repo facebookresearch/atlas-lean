@@ -16,7 +16,9 @@ import MathlibExt.GroupTheory.GeneratedFormationSubformationsKourovka9Problem59
 
 The refutation gives a finite group whose generated formation contains infinitely many formations.
 The generated formation contains its generator and lies in every formation containing it, and it
-agrees with the generated formation of the Kourovka 16.31 entry, as do the two propositions.
+agrees with the generated formation of the Kourovka 16.31 entry. The 9.59 proposition agrees with
+the Lean statement of Problem 16.31, which specializes that problem (about groups with a
+composition series) to finite groups.
 -/
 
 open MathlibExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51Wanted
