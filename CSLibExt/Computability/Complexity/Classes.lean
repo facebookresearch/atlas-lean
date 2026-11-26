@@ -827,7 +827,9 @@ def AC0Mod (m : ℕ) : DecisionComplexityClass :=
 $\mathsf{AC}^0 \subseteq \mathsf{AC}^0[m]$. The same circuit family witnesses both memberships
 because a mod-free circuit satisfies the restriction on modular gates for every modulus.
 
-Source: The definitions of `AC0` and `AC0Mod` in `CSLibExt.Computability.Complexity.Classes`. -/
+Source: A. Ojha and R. Tewari, "Circuit complexity of bounded planar cutwidth graph matching",
+arXiv:1801.00906v1 (2018), Section 2.1 (the definitions of $\mathsf{AC}^0$ and
+$\mathsf{AC}^0[m]$, and the inclusion $\mathsf{AC}^0 \subseteq \mathsf{AC}^0[m]$). -/
 theorem ac0_subset_ac0Mod (m : ℕ) : AC0 ⊆ AC0Mod m := by
   rintro L ⟨d, p, C, hC⟩
   refine ⟨d, p, C, fun n => ?_⟩
