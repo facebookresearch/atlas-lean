@@ -22,7 +22,7 @@ since, expanding the definitions with $Y_{x, Z_x} = Y_x$, the left side minus th
 
 1. The model: a structural causal model with counterfactuals $Y_{xz}$, $Z_x$, the composition $Y_{x, Z_x} = Y_x$, and the definitions of total, controlled direct, natural direct and natural indirect effects.
 2. The decomposition identities of Theorem 3, the characterization of $\mathrm{TE} = \mathrm{NDE} + \mathrm{NIE}$ by equal expected direct contrasts, and the additive model without interaction, where in the linear case the indirect effect is the product of the treatment–mediator and mediator–outcome coefficients.
-3. Separate target: identification by adjusting for a covariate set $W$ of nondescendants of $X$ and $Z$ (Pearl 2001, Theorems 1, 2 and 4), with the counterfactual conditional-independence condition (7) of the source, positivity of the conditional laws involved, and the resulting adjustment formulas for the natural direct and indirect effects, including the graphical criterion of Corollary 1.
+3. Separate targets: experimental identification of the natural effects from the interventional distributions (Pearl 2001, Theorems 1 and 4), with the counterfactual conditional-independence condition (7) and positivity; and observational identification by adjusting for a covariate set $W$ of nondescendants of $X$ and $Z$ (Theorem 2(ii)–(iii)), which in addition requires the two component interventional distributions to be identified, with the resulting adjustment formulas and the graphical criterion of Corollary 1.
 
 ## Related topics
 

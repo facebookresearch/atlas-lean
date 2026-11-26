@@ -6,10 +6,6 @@ $$P(\underline T_\Gamma \ge t) \le P(T \ge t) \le P(\overline T_\Gamma \ge t) \q
 
 the bounds are attained for particular assignment probabilities in the model, and for $\Gamma = 1$ both equal the randomization distribution (Rosenbaum 2002, Section 4.4, as stated by Zhao 2017). The sign-test case, $q_i = 1$ for every pair with a nonzero difference and $q_i = 0$ for tied pairs, is [the binomial bounds on the sign-test tail](../../not-yet-classified/part-17/rosenbaum-sensitivity/upper-tail-bounds.md); this page states the bounds for general scores and their attainment.
 
-## Depends on
-
-- [Binomial bounds on the sign-test tail](../../not-yet-classified/part-17/rosenbaum-sensitivity/upper-tail-bounds.md)
-
 ## Expansion
 
 1. The model: matched pairs, treatment assignment probabilities with bounded odds within pairs, and the sharp null hypothesis.
