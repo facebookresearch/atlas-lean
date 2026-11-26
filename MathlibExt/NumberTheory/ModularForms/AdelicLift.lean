@@ -54,11 +54,6 @@ namespace NumberField.AdelicLevel
 variable (R : Type*) [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K]
   [Algebra R K] [IsFractionRing R K]
 
-/-- The component of an archimedean `GL(2)` element at one infinite place. -/
-def archComponent (w : InfinitePlace K) :
-    GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
-  Matrix.GeneralLinearGroup.map (archEval K w)
-
 variable {R} in
 theorem idealBound_of_ne_bot {N : Ideal R} (hN : N ≠ ⊥) (v : HeightOneSpectrum R) :
     idealBound R N v =
