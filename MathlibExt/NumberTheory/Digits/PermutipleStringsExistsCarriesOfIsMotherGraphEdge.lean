@@ -19,6 +19,10 @@ Every mother-graph edge admits bounded natural carries satisfying the carry equa
 
 Further statements from Benjamin V. Holt, *A Multigraph Characterization of Permutiple
 Strings*, INTEGERS 25 (2025), Article A111 (arXiv:2505.11414).
+
+The proof adapts the proof of `isHoeySloaneStep_hoeySloaneTransition` in
+`MathlibExt.NumberTheory.Digits.PermutipleStrings`, obtaining positivity of the base from the
+first digit bound instead of from `1 < n < b`.
 -/
 
 namespace MetaMathlibExt
