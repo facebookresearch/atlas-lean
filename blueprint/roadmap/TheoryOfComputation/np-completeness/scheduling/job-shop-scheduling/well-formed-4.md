@@ -1,0 +1,3 @@
+# Well-formed instances of THREE-PROCESSOR UNIT-LENGTH NO-WAIT JOB-SHOP SCHEDULING
+
+An instance of THREE-PROCESSOR UNIT-LENGTH NO-WAIT JOB-SHOP SCHEDULING is an instance $(m, J, D)$ of JOB-SHOP SCHEDULING: a number $m$ of processors, a list $J$ of jobs, each the list of its tasks given as pairs $(l(t), p(t))$ of a length and a processor, and a deadline $D$. It is well formed when it is a well-formed JOB-SHOP SCHEDULING instance, that is, $m > 0$, every job has at least one task, every task processor lies in $\{1, \dots, m\}$, consecutive tasks of a job use different processors, and $D > 0$; when $m = 3$; and when every task has length $1$.

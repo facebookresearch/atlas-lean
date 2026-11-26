@@ -6,6 +6,7 @@
 - [Feasible instances of NO-WAIT FLOW-SHOP MEAN FLOW TIME](no-wait-flow-shop-mean-flow-time-feasibl.md)
 - [NO-WAIT FLOW-SHOP MEAN FLOW TIME as a decision problem](no-wait-flow-shop-mean-flow-time-dec.md)
 - [NO-WAIT FLOW-SHOP MEAN FLOW TIME is NP-complete](no-wait-flow-shop-mean-flow-time-np-comp.md)
+- [Task lengths in NO-WAIT FLOW-SHOP SCHEDULING](task-length.md)
 - [Open-shop schedules meeting a deadline](is-open-shop-schedule.md)
 - [Flow-shop schedules meeting a deadline](is-flow-shop-schedule.md)
 - [Feasible instances of NO-WAIT FLOW-SHOP SCHEDULING](no-wait-flow-shop-scheduling-feasible.md)

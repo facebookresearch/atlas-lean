@@ -1,0 +1,3 @@
+# Instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH CHAINS, TOTAL COMPLETION TIME
+
+An instance of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH CHAINS, TOTAL COMPLETION TIME is a pair of a multi-purpose machine job-shop instance $(m, J, K)$, with $m$ the number of machines, $J$ the list of jobs, each a list of operations given as pairs of a processing time and a list of eligible machines, and $K$ the bound on the total completion time, and a list $A$ of pairs of natural numbers, the arcs of the chains: an arc $(j, j^\prime)$ says that job $j$ is the immediate predecessor of job $j^\prime$.

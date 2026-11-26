@@ -1,0 +1,3 @@
+# Stages of an instance of MULTI-PURPOSE MACHINE FLOW SHOP WITH PRECEDENCE, TOTAL COMPLETION TIME
+
+An instance of MULTI-PURPOSE MACHINE FLOW SHOP WITH PRECEDENCE, TOTAL COMPLETION TIME is a tuple $(m, M, J, R, K)$ of a number $m$ of machines, a list $M = [\mu_1, \dots, \mu_r]$ of stage machine sets given as lists of machine indices, a list $J$ of jobs, each a list $[p_{i1}, \dots, p_{ir}]$ of processing times, a list $R$ of pairs $(i, k)$ meaning that job $i$ precedes job $k$, and a bound $K$ on the total completion time, all natural numbers. Its stages are the positions $0, \dots, r-1$ of the list $M$, where $r$ is the length of $M$.

@@ -1,0 +1,3 @@
+# Resource requirement of a task in RESOURCE CONSTRAINED SCHEDULING
+
+An instance of RESOURCE CONSTRAINED SCHEDULING is a tuple $(m, r, B, T, D)$ of a number $m$ of processors, a number $r$ of resources, a list $B = (B_0, \dots, B_{r-1})$ of resource bounds, a list $T$ of rows, the row of task $t$ being $(R_0(t), \dots, R_{r-1}(t))$, and a deadline $D$. For a task $t$ and a natural number $k$, the requirement $R_k(t)$ of task $t$ for resource $k$ is the entry at position $k$ of the row of $t$, and $0$ when the row has no entry at position $k$. That every row has exactly $r$ entries, each at most the corresponding bound, is a condition of a well-formed instance, not of this definition.

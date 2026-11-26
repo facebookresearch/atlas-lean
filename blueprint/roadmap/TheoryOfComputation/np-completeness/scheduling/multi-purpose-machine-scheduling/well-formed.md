@@ -1,0 +1,3 @@
+# Well-formed instances of MULTIPROCESSOR TASK FLOW SHOP WITH THREE JOBS, MAKESPAN
+
+An instance of MULTIPROCESSOR TASK FLOW SHOP WITH THREE JOBS, MAKESPAN is an instance of MULTI-PURPOSE MACHINE FLOW SHOP WITH THREE JOBS: a number $m$ of machines, a list $[\mu_1, \dots, \mu_r]$ of stage machine sets given as lists of machine indices, one list of processing times per job, and a bound $K$. It is well formed when it is a well-formed instance of that problem, that is, there is at least one stage, every machine index is below $m$, the machine sets are pairwise different as sets, there are exactly three jobs, and each job has one processing time per stage; and, in addition, every machine set $\mu_s$ is nonempty.

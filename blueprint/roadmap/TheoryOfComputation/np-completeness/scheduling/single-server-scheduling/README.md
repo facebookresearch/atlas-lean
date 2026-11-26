@@ -1,5 +1,6 @@
 # Single-server scheduling
 
+- [Instances of TWO MACHINES WITH A SINGLE SERVER AND EQUAL PROCESSING TIMES, TOTAL COMPLETION TIME](single-server-two-machines-equal-process.md)
 - [Well-formed single-server instances](well-formed.md)
 - [Feasible instances of TWO MACHINES WITH A SINGLE SERVER AND EQUAL PROCESSING TIMES, TOTAL COMPLETION TIME](single-server-two-machines-equal-process-2.md)
 - [TWO MACHINES WITH A SINGLE SERVER AND EQUAL PROCESSING TIMES, TOTAL COMPLETION TIME as a decision problem](single-server-two-machines-equal-process-3.md)
