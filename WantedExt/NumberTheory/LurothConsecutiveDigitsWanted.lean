@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LurothConsecutiveDigitsIntegral
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsLeVolumeLurothDigitsGe
 public import MathlibExt.NumberTheory.LurothConsecutiveDigits
 
 /-!
@@ -169,30 +170,6 @@ public theorem_wanted volume_limsup_lurothPreimage_zero_one {m : ℕ}
     let E := {x ∈ Set.Ioc (0 : ℝ) 1 |
       ∃ᶠ n in atTop, (fun i : Fin m => lurothDigitSeq x (n + i)) ∈ S n}
     (∑' n, volume (A n) < ∞ → volume E = 0) ∧ (∑' n, volume (A n) = ∞ → volume E = 1)
-
-/-- **Lower bound for the measure of large Lüroth digit values.** Let $m$ be a natural number,
-let $D = [2, \infty)^m$, let $F : \mathbb{R}^m \to \mathbb{R}$ satisfy $F(x) > 0$ for every
-$x \in D$, and let $M$ be a real number with
-$F(x) \le M\,F(\lfloor x_1 \rfloor, \ldots, \lfloor x_m \rfloor)$ for every $x \in D$ (the
-paper's condition (6)). Put
-$G(y) = \int_{\{x \in D \,:\, F(x) \ge y\}} \prod_{i=1}^m x_i^{-2}\,dx$ for real $y$, let
-$\lambda$ be Lebesgue measure on $\mathbb{R}$ and let $d_1(x), d_2(x), \ldots$ be the Lüroth
-digits of $x$. Then for every real $y$,
-$$G(My) \le \lambda\{x \in (0, 1] : F(d_1(x), \ldots, d_m(x)) \ge y\}.$$
-
-The paper states it only at the values of the sequence in its Theorem 4, under that theorem's
-hypotheses, which also require $F$ to be measurable and non-decreasing; only positivity and
-condition (6) are assumed here.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 7
-(`integers-2024-A67-thm-7`). -/
-public theorem_wanted le_volume_lurothDigits_ge {m : ℕ} (F : (Fin m → ℝ) → ℝ)
-    (hpos : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → 0 < F x) (M : ℝ)
-    (hM : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → F x ≤ M * F (fun i => (⌊x i⌋₊ : ℝ))) (y : ℝ) :
-    (∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ M * y ≤ F x},
-        ENNReal.ofReal (∏ i, 1 / x i ^ 2)) ≤
-      volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))}
 
 end
 
