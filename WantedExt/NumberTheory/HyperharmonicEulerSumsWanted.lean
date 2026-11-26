@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
+public import MathlibExt.NumberTheory.CatalanOddMultipleHarmonicDivTsum
 public import MathlibExt.NumberTheory.HyperharmonicEulerSums
 
 namespace MetaMathlibExt
@@ -183,21 +184,6 @@ public theorem_wanted centralBinom_oddMultipleHarmonic_div_choose_sum_mem_eulerS
       ((∑' n : ℕ, ((2 * n).choose n : ℝ) * oddMultipleHarmonic k n /
           (4 ^ n * ((n + m).choose m : ℝ) * ((n : ℝ) + a) ^ p) : ℝ) : ℂ) ∈
         eulerSumPeriodAlgebra
-
-/-- **Catalan–odd harmonic sum with denominator $4^n n$.** Let $k \ge 1$ be an integer, let $C_n$
-denote the $n$-th Catalan number and $O_n(k)$ the depth-$k$ odd harmonic number. Then
-$$\sum_{n \ge 1} \frac{C_n O_n(k)}{4^n n} = (2^{k+1} - 1) \zeta(k + 1) - 2^{k+1}.$$
-
-Since $O_n(k) = 0$ for $n < k$, the sum can equally be taken over $n \ge k$.
-
-Source: the denominator $4^n n$ is read from the record's two-row layout ($C_n O_n(k)$ over
-$4^n n$).
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 5 (`integers-2026-A81-cor-5`). -/
-public theorem_wanted catalan_oddMultipleHarmonic_div_tsum (k : ℕ) (hk : 0 < k) :
-    ((∑' n : ℕ, (catalan n : ℝ) * oddMultipleHarmonic k n / (4 ^ n * n) : ℝ) : ℂ) =
-      (2 ^ (k + 1) - 1) * riemannZeta (k + 1) - 2 ^ (k + 1)
 
 /-- **Quarter-shift hyperharmonic Euler sums.** Let $k \ge 0$ and $0 \le r < p$ be integers, and
 let $a$ be a complex number with $a \in \tfrac14 + \mathbb{Z}$ or $a \in \tfrac34 + \mathbb{Z}$.
