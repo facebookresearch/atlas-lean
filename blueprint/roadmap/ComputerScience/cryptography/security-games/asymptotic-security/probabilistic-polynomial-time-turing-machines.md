@@ -1,11 +1,9 @@
 # Probabilistic polynomial-time Turing machines
 
-A *probabilistic* (randomized) Turing machine is a Turing machine with an additional read-only random tape whose cells hold independent, uniformly distributed bits. On an input $x$ its output is therefore a random variable over the choice of the random tape. It runs in time $T(n)$ if for every input $x \in \{0, 1\}^*$ and every content of the random tape it halts within $T(|x|)$ steps, and it is a *probabilistic polynomial-time* (PPT) machine if it runs in time $q(n)$ for some polynomial $q$, so that the bound also covers short inputs, including the empty one. A PPT machine is *uniform*: one machine serves every input length, as opposed to a non-uniform family of machines, one for each input length.
+A **uniform probabilistic polynomial-time** (PPT) Turing machine is a single finite-control machine $M$ for which there exists a polynomial $q$ with natural-number coefficients such that, for every finite binary input $x$ and **every** random tape $r$, the run of $M$ halts within $q(|x|)$ transitions. The same machine and the same polynomial serve all input lengths. The bound is not an expectation or an almost-sure guarantee. It includes the empty word: the constant term $q(0)$ may pay for transitions even there.
 
-## Depends on
-
-- [Runs of a machine given by a transition function](../../../../TheoryOfComputation/turing-machines/multi-tape-and-multi-stack/multi-tape-turing-machines/run-from-of-tr.md)
+Besides its read-only binary input, finitely many initially blank work tapes and a write-only binary output, $M$ has a read-only tape $r:\mathbb Z\to\{0,1\}$ with its head initially at zero. The transition table reads only the current state and scanned symbols. The bits in distinct cells are independent and fair; revisiting a cell returns its original bit. Once $r$ is fixed, [the run is deterministic](run-eq-iterate.md). For each input $x$, the [probability of the output word](output-law-apply.md) $y$ is the product-measure probability of the tapes for which the output at time $q(|x|)$ is $y$. Halting fixes the configuration, so a larger valid time bound gives the same distribution.
 
 ## Sources
 
-- R. Pass and A. shelat, *A Course in Cryptography*, lecture notes, Cornell University, 2010, <https://www.cs.cornell.edu/courses/cs4830/2010fa/lecnotes.pdf>, Definitions 23.4 and 23.5, and Definition 26.8 for the non-uniform contrast
+- R. Pass and A. shelat, [*A Course in Cryptography*](https://www.cs.cornell.edu/courses/cs4830/2010fa/lecnotes.pdf), Cornell University, 2010, Definitions 23.4 (random tape) and 23.5 (running time). The notes write the polynomial bound as $n^c$; the general polynomial here makes the convention at short inputs explicit. Definition 26.8 contrasts a non-uniform family, whose machine may vary with input length.
