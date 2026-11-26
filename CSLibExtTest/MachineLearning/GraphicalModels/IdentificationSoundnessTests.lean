@@ -23,7 +23,8 @@ import Mathlib.Tactic.FinCases
   the positivity hypothesis of `BayesNet.ID_sound` is satisfiable; `ADMG.ID` reaches line 6 and
   returns `P(y | x)`; conditioning on `X` equals intervening on `X`; and
   `P_{X = 1}(Y = 1) = 3 / 4`, computed from the surgery definition alone, so the soundness
-  instance could have failed.
+  instance could have failed; and the effect of `do(X)` on `Y` is the Q-factor of `{Y}`
+  (`chain_doMarginal_eq_qFactor`).
 * The bow graph `X → Y`, `X ↔ Y` with a latent common cause (the bow arc graph of Shpitser and
   Pearl, AAAI 2006, Theorem 1): `ADMG.ID` fails at line 5 with the pair `(O, O ∖ {X})`, so
   `BayesNet.ID_sound` has no instance there. Nothing is claimed about failure outputs; the
@@ -359,6 +360,23 @@ theorem chain_doMarginal_true : chainNet.doMarginal ∅ {cX} {cY} (fun _ => true
     have hz : chainNet.paVal 1 (fun _ => true) ⟨⟨0, by decide⟩, Finset.mem_univ _⟩ = true := rfl
     rw [ite_eq_left hz]
     exact ids_aux_bern_true _ (by norm_num) (by norm_num)
+
+/-- `BayesNet.doMarginal_eq_marginal_qFactor` with a nonempty intervention: on the chain, the
+effect of `do(X)` on `Y` is the Q-factor of `{Y}`, since `(O ∖ {X}) ∖ {Y}` is empty. -/
+theorem chain_doMarginal_eq_qFactor (v : CObs → Bool) :
+    chainNet.doMarginal ∅ {cX} {cY} v = chainNet.qFactor ∅ {cY} v := by
+  have hDX : ((univ : Finset CObs) \ {cX}) = {cY} := by
+    ext w
+    simp only [Finset.mem_sdiff, Finset.mem_univ, Finset.mem_singleton, true_and]
+    constructor
+    · intro hw
+      rcases cObs_cases w with rfl | rfl
+      · exact absurd rfl hw
+      · rfl
+    · rintro rfl
+      exact fun h => cX_ne_cY h.symm
+  rw [BayesNet.doMarginal_eq_marginal_qFactor, hDX, Finset.sdiff_self, Finset.coe_empty,
+    Set.compl_empty, marginal_univ]
 
 section Bow
 
