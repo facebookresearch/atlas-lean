@@ -66,7 +66,7 @@ theorem deriv_le_of_isSelfConcordantBarrier {E : Type*} [NormedAddCommGroup E]
   have hseg : ∀ t ∈ Ico (0:ℝ) 1, line t ∈ Q := by
     intro t ht
     by_cases h0 : t = 0
-    · subst h0; simp [line, AffineMap.lineMap_apply_zero]; exact hx
+    · subst h0; simpa [line, AffineMap.lineMap_apply_zero] using hx
     · have hIoo : t ∈ Ioo (0:ℝ) 1 := ⟨lt_of_le_of_ne ht.1 (Ne.symm h0), ht.2⟩
       have hmem : line t ∈ openSegment ℝ x y := lineMap_mem_openSegment ℝ x y hIoo
       have hsub : openSegment ℝ x y ⊆ interior Q :=
@@ -169,7 +169,8 @@ theorem deriv_le_of_isSelfConcordantBarrier {E : Type*} [NormedAddCommGroup E]
         exact hpsi_le u huIco
       have h0mem : (0:ℝ) ∈ Icc 0 s := ⟨le_rfl, hs.1⟩
       have hsmem : s ∈ Icc 0 s := ⟨hs.1, le_rfl⟩
-      have h := (convex_Icc 0 s).image_sub_le_mul_sub_of_deriv_le hcont hdiff hbound 0 h0mem s hsmem hs.1
+      have h := (convex_Icc 0 s).image_sub_le_mul_sub_of_deriv_le hcont hdiff hbound 0 h0mem s
+        hsmem hs.1
       have hpos_s : 0 < ((deriv φ)⁻¹) s := inv_pos.mpr (hpos s hs)
       have hrhs : (-1 / ϑ) * (s - 0) = -(s / ϑ) := by ring
       rw [hrhs] at h
