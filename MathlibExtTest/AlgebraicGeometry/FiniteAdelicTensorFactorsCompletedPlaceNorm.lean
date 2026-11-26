@@ -12,7 +12,8 @@ public import MathlibExt.AlgebraicGeometry.FiniteAdelicTensorFactorsCompletedPla
 /-!
 # Completed place norm corollaries
 
-The completed norm is multiplicative and vanishes at zero.
+The local factor norm and the completed norm are multiplicative, and the completed norm
+vanishes at zero.
 
 Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.1.
 -/
@@ -36,5 +37,12 @@ example (K E F : Type) [Field K] [Field E] [NormedField F] [CompleteSpace F]
     [Algebra K E] [Algebra K F] [FiniteDimensional K E]
     (D : Factorization K E F) (C : CompletionData D) : completedNorm D C 0 = 0 := by
   simpa using (completedPlaceNorm K E F D C 0).symm
+
+example (K E F : Type) [Field K] [Field E] [Field F]
+    [Algebra K E] [Algebra K F] [FiniteDimensional K E]
+    (D : Factorization K E F) (a b : E) :
+    factorNorm D (a * b) = factorNorm D a * factorNorm D b := by
+  rw [← tensorNorm K E F D (a * b), ← tensorNorm K E F D a, ← tensorNorm K E F D b,
+    map_mul, map_mul]
 
 end MathlibExtTest.AlgebraicGeometry.FiniteAdelicTensorFactorsCompletedPlaceNorm

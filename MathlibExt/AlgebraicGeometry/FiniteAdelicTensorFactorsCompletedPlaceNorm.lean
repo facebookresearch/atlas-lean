@@ -21,8 +21,11 @@ import Mathlib.Tactic.SplitIfs
 /-!
 # Completed place norm from isometric residue realizations
 
-The norm of the base-changed field norm equals the length-and-rank product
-of completion norms (`completedPlaceNorm`).
+For a finite extension `E/K` and a factorization `D` of the tensor algebra over a field `F`,
+the base-changed determinant norm equals the length-weighted product of local norms
+(`tensorNorm`). When `F` is a complete normed field with isometric residue realizations, the norm
+of the base-changed field norm equals the length-and-rank product of completion norms
+(`completedPlaceNorm`).
 
 Source: Yuan--Zhang, arXiv:2105.13587v9, Sections 3.4 and 5.3.1.
 -/
@@ -279,8 +282,8 @@ private theorem norm_pi (F : Type) [Field F] {ι : Type} [Fintype ι]
   rw [Algebra.norm_apply, hmul, det_pi_dependent]
   simp only [Algebra.norm_apply]
 
-/-- Base-changed determinant norm equals the local length-weighted residue norm. -/
-private theorem tensorNorm_aux (K E F : Type) [Field K] [Field E] [Field F]
+/-- Determinant norm base change includes every nonreduced local factor. -/
+public theorem tensorNorm (K E F : Type) [Field K] [Field E] [Field F]
     [Algebra K E] [Algebra K F] [FiniteDimensional K E]
     (D : Factorization K E F) (a : E) :
     algebraMap K F (Algebra.norm K a) = factorNorm D a := by
@@ -317,7 +320,7 @@ public theorem completedPlaceNorm (K E F : Type) [Field K] [Field E]
     [FiniteDimensional K E] (D : Factorization K E F) (C : CompletionData D) (a : E) :
     ‖algebraMap K F (Algebra.norm K a)‖ = completedNorm D C a := by
   have hTensor : algebraMap K F (Algebra.norm K a) = factorNorm D a :=
-    tensorNorm_aux K E F D a
+    tensorNorm K E F D a
   rw [hTensor]
   unfold factorNorm completedNorm completionWeight
   rw [norm_prod]
