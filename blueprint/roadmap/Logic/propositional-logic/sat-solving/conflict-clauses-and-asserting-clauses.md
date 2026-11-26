@@ -1,12 +1,13 @@
 # Conflict clauses and asserting clauses
 
-Let $S = (\Delta, \Gamma, D)$ be a 1-inconsistent [SAT state](unit-resolution-and-sat-solver-states.md). A clause $\alpha = \ell_1 \vee \dots \vee \ell_m$ is a *conflict clause* of $S$ if $\Delta \wedge \Gamma \wedge \neg\alpha \vdash \mathrm{false}$ by unit resolution, and $S \vdash \neg\ell_i$ for each $i$. A conflict clause is *asserting* if exactly one of its literals, the *asserted literal*, has implication level $|D|$; its *assertion level* is the largest implication level below $|D|$ of its other literals, or $0$ if it has one literal. A *learning scheme* maps each 1-inconsistent state to a conflict clause, and it is *asserting* if it always returns an asserting clause; the first-UIP scheme is asserting.
+Let $S = (\Delta, \Gamma, D)$ be a 1-inconsistent [SAT state](unit-resolution-and-sat-solver-states.md). A clause $\alpha = \ell_1 \vee \dots \vee \ell_m$ is a *conflict clause* of $S$ if $\Delta \wedge \Gamma \wedge \neg\alpha \vdash \mathrm{false}$ by unit resolution, and $S \vdash \neg\ell_i$ for each $i$. A conflict clause is *asserting* if exactly one of its literals, the *asserted literal*, has implication level $|D|$; its *assertion level* is the largest implication level below $|D|$ of its other literals, or $0$ if it has one literal. A *learning scheme* maps each normal 1-inconsistent state with a nonempty decision sequence, the states at which clause learning learns, to a conflict clause, and it is *asserting* if it always returns an asserting clause; the first-UIP scheme is asserting. At a 1-inconsistent state with no decision there is no literal to assert, and clause learning reports unsatisfiability there without learning.
 
-A *trivial resolution derivation* is a resolution derivation in which every step after the first resolves the last resolvent with a clause of the knowledge base, and the resolved variables are pairwise distinct.
+A *trivial resolution derivation* is a [resolution derivation](../resolution-size-and-width/is-resolution-derivation.md) without weakening in which every step after the first resolves the last resolvent with a clause of the knowledge base, and the resolved variables are pairwise distinct.
 
 ## Depends on
 
 - [Unit resolution and SAT-solver states](unit-resolution-and-sat-solver-states.md)
+- [Resolution derivation](../resolution-size-and-width/is-resolution-derivation.md)
 
 ## Sources
 

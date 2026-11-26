@@ -1,6 +1,6 @@
 # Kripke soundness and completeness of intuitionistic first-order logic
 
-For every set $\Gamma$ of formulas and formula $\varphi$ of first-order logic, possibly with free variables, $\Gamma \vdash \varphi$ in [natural deduction for IQC](natural-deduction-for-intuitionistic-first-order-logic.md) if and only if $\Gamma \Vdash \varphi$ in [Kripke models with expanding domains](kripke-models-for-iqc.md): every state $c$ and vector $\vec{a}$ of elements of $\mathcal{A}_c$ that force all members of $\Gamma$ force $\varphi$.
+For every finite set $\Gamma$ of formulas and formula $\varphi$ of first-order logic, possibly with free variables, $\Gamma \vdash \varphi$ in [natural deduction for IQC](natural-deduction-for-intuitionistic-first-order-logic.md) if and only if $\Gamma \Vdash \varphi$ in [Kripke models with expanding domains](kripke-models-for-iqc.md): every state $c$ and vector $\vec{a}$ of elements of $\mathcal{A}_c$, for the free variables of $\Gamma$ and $\varphi$, that force all members of $\Gamma$ force $\varphi$.
 
 **Proof idea.** Soundness is an induction on derivations that uses [persistence of forcing](persistence-of-forcing-in-first-order-kripke-models.md) for the introduction rules of $\to$ and $\forall$. The source obtains completeness from completeness of IQC for complete Heyting algebra valued structures and the equivalence of that semantics with Kripke semantics, both stated there without proof.
 

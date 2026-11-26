@@ -1,6 +1,6 @@
 # Blocked clause elimination
 
-Let $F$ be a CNF formula and call a clause of $F$ blocked if some literal [blocks it](rup-and-rat-clauses.md) with respect to $F$.
+Let $F$ be a CNF formula and call a clause of $F$ blocked if some literal [blocks it](blocked-clauses.md) with respect to $F$.
 
 1. Removing a blocked clause from $F$ preserves satisfiability.
 2. If $C \in F$ is blocked with respect to $F$, then every other clause of $F$ blocked with respect to $F$ is blocked with respect to $F \setminus \{C\}$.
@@ -8,7 +8,7 @@ Let $F$ be a CNF formula and call a clause of $F$ blocked if some literal [block
 
 ## Depends on
 
-- [RUP and RAT clauses](rup-and-rat-clauses.md)
+- [Blocked clauses](blocked-clauses.md)
 
 ## Proof depends on
 

@@ -5,11 +5,12 @@ Let $\emptyset \parallel F \Longrightarrow^*_{\mathcal{FT}} S$ be a derivation i
 1. $S$ is FailState if and only if $F$ is $T$-unsatisfiable;
 2. if $S = M \parallel F'$, then $M$ is a $T$-model of $F$.
 
-So, with a decision procedure for $T$-consistency of conjunctions of ground literals, any strategy that terminates and applies T-Learn when the assignment is $T$-inconsistent decides $T$-satisfiability.
+So, with a decision procedure for $T$-consistency of conjunctions of ground literals, such as a complete [theory solver](theory-solvers-for-dpll-t.md), any strategy that terminates and applies T-Learn when the assignment is $T$-inconsistent decides $T$-satisfiability.
 
 ## Depends on
 
 - [DPLL modulo theories transition system](dpll-modulo-theories-transition-system.md)
+- [Theory solvers for DPLL(T)](theory-solvers-for-dpll-t.md)
 
 ## Proof depends on
 

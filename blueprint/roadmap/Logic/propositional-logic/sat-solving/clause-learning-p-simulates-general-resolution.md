@@ -2,7 +2,7 @@
 
 For every asserting learning scheme LS, the [proof system](clause-learning-as-a-proof-system.md) $\mathrm{CLR}_{\mathrm{LS}}$ of clause learning with restarts p-simulates general resolution. In particular, clause learning with the first-UIP scheme does. Moreover, the extended branching sequence that realizes the simulation can be constructed in time polynomial in the sizes of the given refutation and formula.
 
-**Proof sketch.** As long as the knowledge base is 1-consistent, a [refutation contains a clause that is 1-empowering and 1-provable](refutations-contain-an-empowering-1-provable-clause.md) with respect to it, which [clause learning can absorb](clause-learning-absorbs-empowering-1-provable-clauses.md) with polynomially many steps. Absorbed clauses stay absorbed, so after at most as many rounds as there are clauses in the refutation the knowledge base is 1-inconsistent. Each learned clause has a [short trivial resolution derivation](empowering-conflict-clauses-have-trivial-resolution-derivations.md).
+**Proof sketch.** As long as the knowledge base is 1-consistent, a [refutation contains a clause that is 1-empowering and 1-provable](refutations-contain-an-empowering-1-provable-clause.md) with respect to it, which [clause learning can absorb](clause-learning-absorbs-empowering-1-provable-clauses.md) with polynomially many steps. Absorbed clauses stay absorbed, so after at most as many rounds as there are clauses in the refutation the knowledge base is 1-inconsistent. Each learned clause has a subclause with a [short trivial resolution derivation](empowering-conflict-clauses-have-trivial-resolution-derivations.md) from the knowledge base, which is what the refutation of $\mathrm{CLR}_{\mathrm{LS}}$ uses.
 
 ## Depends on
 

@@ -14,3 +14,4 @@ Natural deduction for intuitionistic propositional logic and its two semantics: 
 - [Kripke completeness of intuitionistic propositional logic](kripke-completeness-of-ipc.md)
 - [Kripke models on preorders reduce to partial orders](kripke-models-on-preorders-reduce-to-partial-orders.md)
 - [Disjunction property of intuitionistic propositional logic](disjunction-property-of-ipc.md)
+- [Finite rooted trees suffice for intuitionistic propositional logic](finite-rooted-trees-suffice-for-ipc.md)

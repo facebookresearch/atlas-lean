@@ -15,7 +15,7 @@
 - [Clause learning absorbs empowering 1-provable clauses](clause-learning-absorbs-empowering-1-provable-clauses.md)
 - [Empowering conflict clauses have trivial resolution derivations](empowering-conflict-clauses-have-trivial-resolution-derivations.md)
 - [Clause learning p-simulates general resolution](clause-learning-p-simulates-general-resolution.md)
-- [RUP and RAT clauses](rup-and-rat-clauses.md)
+- [Blocked clauses](blocked-clauses.md)
 - [Adding a RAT clause preserves satisfiability](adding-a-rat-clause-preserves-satisfiability.md)
 - [DRAT proofs](drat-proofs.md)
 - [Extended resolution](extended-resolution.md)

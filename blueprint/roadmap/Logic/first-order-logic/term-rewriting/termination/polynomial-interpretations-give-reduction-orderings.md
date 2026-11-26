@@ -2,7 +2,7 @@
 
 For a [polynomial interpretation](polynomial-interpretation.md), the ordering $s \succ t$ iff $P_s > P_t$ is a [reduction ordering](../reduction-ordering.md). Hence a term rewriting system terminates if $P_l > P_r$ for each of its rules $l \to r$.
 
-**Proof.** The interpretations are monotone maps on the well-founded set $(U, >)$, so [monotone interpretations give reduction orderings](../monotone-interpretations-give-reduction-orderings.md); and $s \succ_{\mathcal A} t$ holds exactly when $P_s > P_t$.
+**Proof.** The interpretations are monotone maps on the well-founded set $(U, >)$, so [monotone interpretations give reduction orderings](../monotone-interpretations-give-reduction-orderings.md); and $s \succ_{\mathcal A} t$ holds exactly when $P_s > P_t$. A system whose rules all satisfy $l \succ r$ for a reduction ordering terminates, by [the characterization of termination](../reduction-orderings-characterize-termination.md).
 
 ## Depends on
 
@@ -12,6 +12,7 @@ For a [polynomial interpretation](polynomial-interpretation.md), the ordering $s
 ## Proof depends on
 
 - [Monotone interpretations give reduction orderings](../monotone-interpretations-give-reduction-orderings.md)
+- [Reduction orderings characterize termination](../reduction-orderings-characterize-termination.md)
 
 ## Sources
 

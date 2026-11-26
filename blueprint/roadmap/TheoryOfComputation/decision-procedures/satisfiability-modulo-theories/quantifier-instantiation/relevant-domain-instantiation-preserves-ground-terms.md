@@ -4,7 +4,7 @@ Let $F$ be an [essentially uninterpreted](essentially-uninterpreted-formulas.md)
 
 1. Every ground argument $t_j$ of an uninterpreted $f$ in $F^*$ lies in $A_{f,j}$.
 2. $M^\pi[\![t]\!] = M[\![t]\!]$ for every ground term $t$ of $F^*$.
-3. For every non-variable term $t[\vec x]$ of a clause $C_k$ and every tuple $\vec v$, $M^\pi\{\vec x \mapsto \vec v\}[\![t]\!] = M\{\vec x \mapsto \pi_k(\vec v)\}[\![t]\!]$, where $\pi_k(\vec v) = (\pi_{k,1}(v_1), \dots, \pi_{k,m}(v_m))$.
+3. For every non-variable term $t[\vec x]$ of a clause $C_k$ and every tuple $\vec v$, $M^\pi\{\vec x \mapsto \vec v\}[\![t]\!] = M\{\vec x \mapsto \pi_k(\vec v)\}[\![t]\!]$, where $\pi_k(\vec v) = (\pi_{k,1}(v_1), \dots, \pi_{k,n_k}(v_{n_k}))$ for the $n_k$ variables of $C_k$.
 
 ## Depends on
 

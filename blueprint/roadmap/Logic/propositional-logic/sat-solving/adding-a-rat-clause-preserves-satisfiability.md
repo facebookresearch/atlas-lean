@@ -1,12 +1,12 @@
 # Adding a RAT clause preserves satisfiability
 
-If a clause $C \vee p$ is a [RAT](rup-and-rat-clauses.md) on $p$ in a CNF formula $F$, then $F$ and $F \wedge (C \vee p)$ are both satisfiable or both unsatisfiable.
+If a clause $C \vee p$ is a [RAT](../proof-certificates/rup-and-rat-clauses.md) on $p$ in a CNF formula $F$, then $F$ and $F \wedge (C \vee p)$ are both satisfiable or both unsatisfiable.
 
 **Proof idea.** A model of $F$ that falsifies $C \vee p$ becomes a model of $F \wedge (C \vee p)$ when $p$ is made true: a clause $D \vee \bar p$ of $F$ that this falsifies would give a resolvent $C \vee D$ false in the original model, although $C \vee D$ is a RUP in $F$ and hence implied by $F$.
 
 ## Depends on
 
-- [RUP and RAT clauses](rup-and-rat-clauses.md)
+- [RUP and RAT clauses](../proof-certificates/rup-and-rat-clauses.md)
 
 ## Sources
 

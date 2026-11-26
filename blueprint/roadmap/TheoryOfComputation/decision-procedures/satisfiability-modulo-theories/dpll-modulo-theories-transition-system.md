@@ -1,6 +1,6 @@
 # DPLL modulo theories transition system
 
-Let $T$ be a first-order theory and $F$ a set of clauses of ground literals, with states $M \parallel F$ and FailState as in [abstract DPLL with learning](../../../Logic/propositional-logic/sat-solving/abstract-dpll-with-learning.md), where $M \models \neg C$ and undefinedness are read propositionally. Besides Decide, Fail, UnitPropagate and Restart, unchanged, the system has:
+Let $T$ be a first-order theory and $F$ a finite set of clauses of ground literals, with states $M \parallel F$ and FailState as in [abstract DPLL with learning](../../../Logic/propositional-logic/sat-solving/abstract-dpll-with-learning.md), where $M \models \neg C$ and undefinedness are read propositionally. Besides Decide, Fail, UnitPropagate and Restart, unchanged, the system has:
 
 - **T-Learn:** $M \parallel F \Longrightarrow M \parallel F, C$ if each atom of $C$ occurs in $F$ or in $M$ and $F \models_T C$;
 - **T-Forget:** $M \parallel F, C \Longrightarrow M \parallel F$ if $F \models_T C$;

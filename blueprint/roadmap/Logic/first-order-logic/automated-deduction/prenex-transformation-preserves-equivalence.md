@@ -7,7 +7,7 @@ A formula is in *prenex form* $Q_1 x_1 \dots Q_n x_n\, G$ if $G$ is quantifier-f
 
 Hence every formula is equivalent to a formula in prenex form, computable by $\Rightarrow_P$.
 
-**Proof sketch.** Each rule is a valid equivalence, the renaming keeping the variable fresh, and equivalence is preserved under replacement in a context. Order formulas lexicographically by the number of biconditionals and then by the sum, over quantifier occurrences, of the number of connectives above each. Removing a biconditional duplicates subformulas but lowers the first component; every other step keeps it and moves one quantifier above one connective, lowering the second. A formula with a biconditional or with a quantifier below a connective admits a step.
+**Proof sketch.** Each rule is a valid equivalence, the renaming keeping the variable fresh, and equivalence is preserved under replacement in a context. Give each formula the weight $w$ with $w = 0$ for atoms, $w(\neg A) = w(Q x\, A) = w(A)$, $w(A \circ B) = w(A) + w(B)$ for $\circ \in \{\wedge, \vee, \to\}$ and $w(A \leftrightarrow B) = 1 + 2 w(A) + 2 w(B)$, and order formulas lexicographically by $w$ and then by the sum, over quantifier occurrences, of the number of connectives above each. Removing a biconditional lowers $w$ in any context, although it can raise the number of biconditionals: expanding the outer one of $(p \leftrightarrow q) \leftrightarrow (r \leftrightarrow s)$ turns three into four. Every other step keeps $w$ and moves one quantifier above one connective, lowering the second component. A formula with a biconditional or with a quantifier below a connective admits a step.
 
 ## Sources
 

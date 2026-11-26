@@ -1,10 +1,10 @@
 # RUP clauses have short resolution derivations
 
-If a CNF formula $F$ implies a non-tautological clause $C$ via unit propagation using $n$ propagation steps (so $C$ is a [RUP](rup-and-rat-clauses.md) in $F$), then $C$ can be derived from $F$ by at most $n$ resolution steps followed by one subsumed-clause addition: the derived clause $C_1$ subsumes $C$.
+If a CNF formula $F$ implies a non-tautological clause $C$ via unit propagation using $n$ propagation steps (so $C$ is a [RUP](../proof-certificates/rup-and-rat-clauses.md) in $F$), then $C$ can be derived from $F$ by at most $n$ resolution steps followed by one subsumed-clause addition: the derived clause $C_1$ subsumes $C$.
 
 ## Depends on
 
-- [RUP and RAT clauses](rup-and-rat-clauses.md)
+- [RUP and RAT clauses](../proof-certificates/rup-and-rat-clauses.md)
 - [Resolution derivability](../resolution/resolution-derivable.md)
 
 ## Sources
