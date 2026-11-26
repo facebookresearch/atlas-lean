@@ -23,8 +23,16 @@ public import Mathlib.Topology.Order.LiminfLimsup
 The constant is the limit of the expected LCS length of two independent uniform binary strings,
 divided by their length. Finite-level bounds and superadditivity prove existence of the limit.
 
-Source: Václav Chvátal and David Sankoff, *Longest common subsequences of two random sequences*,
-J. Appl. Probab. 12(2) (1975), 306–315.
+## References
+
+- Václav Chvátal and David Sankoff, *Longest common subsequences of two random sequences*,
+  J. Appl. Probab. 12(2) (1975), 306–315. Section 2 gives the length-one mean, and Section 3,
+  equation (1), identifies the limiting normalized expectation with its supremum.
+- Klarner and Rivest observed superadditivity of the expected LCS length, as credited by
+  Chvátal and Sankoff in Section 3, p. 309 (personal communication).
+- M. Fekete, *Über die Verteilung der Wurzeln bei gewissen algebraischen Gleichungen mit
+  ganzzahligen Koeffizienten*, Math. Z. 17 (1923), 228–249. Fekete's lemma gives convergence
+  from superadditivity.
 -/
 
 @[expose] public section
@@ -488,8 +496,8 @@ common subsequence of two independent uniformly random binary strings of length 
 Chvátal–Sankoff constant $C_{31a} = \liminf_{n \to \infty} \mathbb{E}[L_n]/n$ satisfies
 $C_{31a} > 0$.
 
-Source: Chvátal and Sankoff, *Longest common subsequences of two random sequences*,
-J. Appl. Probab. 12(2) (1975), §2 (the length-one mean) and §3, equation (1). -/
+Source: Chvátal--Sankoff (1975), catalogue strict lower bound `> 0`.
+Known literature result; its proof is not supplied here. -/
 theorem chvatalSankoffStrictPositive_wanted : chvatalSankoffStrictPositive := by
   have hhalf : (1 : ℝ) / 2 ≤ C31a := by
     apply Filter.le_liminf_of_le
