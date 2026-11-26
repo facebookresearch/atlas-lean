@@ -7,6 +7,7 @@
 - [Kummer Flat Data](kummer-flat-data.md)
 - [Site](site.md)
 - [Precoverage](precoverage.md)
+- [Regular Sections](regular-sections-2.md)
 - [Regular Sections](regular-sections.md)
 - [Fine Saturated Log Pullbacks](fine-saturated-log-pullbacks.md)
 - [Kummer Flat Base Change](kummer-flat-base-change.md)
