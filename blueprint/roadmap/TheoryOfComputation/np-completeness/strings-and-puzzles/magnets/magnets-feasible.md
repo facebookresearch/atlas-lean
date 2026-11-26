@@ -1,9 +1,3 @@
 # Feasible MAGNETS instances
 
-A MAGNETS instance $(w, h, D, R, C)$ is feasible when some assignment $v$ of $-1$, $0$ or $+1$
-to the squares of the $h \times w$ grid satisfies: (1) the two squares of every domino in $D$
-get opposite values or both $0$ (their values sum to $0$); (2) any two horizontally or
-vertically adjacent squares are both $0$ or get different values; (3) for each row $r$ the
-numbers of $+1$ and of $-1$ squares are the two components of the row count $(r^+, r^-)$, and
-likewise for each column with $(c^+, c^-)$. A row or column count missing from its list reads as
-$(0, 0)$.
+A MAGNETS instance $(w, h, D, R, C)$ is feasible when some assignment $v$ of $-1$, $0$ or $+1$ to the squares of the $h \times w$ grid satisfies: (1) for every domino in $D$ whose two endpoints are both squares of the grid, those squares get opposite values or both $0$ (their values sum to $0$); a domino with an endpoint off the board imposes no condition; (2) any two horizontally or vertically adjacent squares are both $0$ or get different values; (3) for each row $r$ the numbers of $+1$ and of $-1$ squares are the two components of the row count $(r^+, r^-)$, and likewise for each column with $(c^+, c^-)$. A row or column count missing from its list reads as $(0, 0)$. [Well-formedness](well-formed.md) requires every domino to be a pair of adjacent squares of the grid and the dominoes to tile the board; with it this is the usual puzzle.

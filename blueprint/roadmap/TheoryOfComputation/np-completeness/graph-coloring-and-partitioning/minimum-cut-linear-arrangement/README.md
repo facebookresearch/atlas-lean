@@ -28,7 +28,6 @@
 - [The decision problem MINIMUM CUT LINEAR ARRANGEMENT](minimum-cut-linear-arrangement-dec.md)
 - [MINIMUM CUT LINEAR ARRANGEMENT is NP-complete](minimum-cut-linear-arrangement-np-comple.md)
 - [Instances of MINIMUM CUT LINEAR ARRANGEMENT on edge-weighted trees](minimum-cut-linear-arrangement-weighted.md)
-- [Graph](graph.md)
 - [Well-formed MINIMUM CUT LINEAR ARRANGEMENT on edge-weighted trees instances](well-formed-7.md)
 - [Feasible MINIMUM CUT LINEAR ARRANGEMENT on edge-weighted trees instances](minimum-cut-linear-arrangement-weighted-2.md)
 - [The decision problem MINIMUM CUT LINEAR ARRANGEMENT on edge-weighted trees](minimum-cut-linear-arrangement-weighted-3.md)

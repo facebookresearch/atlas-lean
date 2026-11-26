@@ -1,7 +1,6 @@
 # Maximum minimum metric k-spanning tree
 
 - [Instances of MAXIMUM MINIMUM METRIC K-SPANNING TREE](maximum-minimum-metric-kspanning-tree-in.md)
-- [Dist](dist.md)
 - [Well-formed MAXIMUM MINIMUM METRIC K-SPANNING TREE instances](well-formed.md)
 - [Edge Length](edge-length.md)
 - [Feasible MAXIMUM MINIMUM METRIC K-SPANNING TREE instances](maximum-minimum-metric-kspanning-tree-fe.md)

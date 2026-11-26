@@ -1,7 +1,6 @@
 # Minimum latency
 
 - [Instances of MINIMUM LATENCY ON WEIGHTED TREES](minimum-latency-weighted-trees-instance.md)
-- [Edge Length](edge-length.md)
 - [Walk Length](walk-length.md)
 - [Well-formed MINIMUM LATENCY ON WEIGHTED TREES instances](well-formed.md)
 - [Feasible MINIMUM LATENCY ON WEIGHTED TREES instances](minimum-latency-weighted-trees-feasible.md)

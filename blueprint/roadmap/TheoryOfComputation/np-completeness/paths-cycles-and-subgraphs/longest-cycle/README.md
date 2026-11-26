@@ -7,7 +7,6 @@
 - [The decision problem LONGEST CYCLE](longest-cycle-dec.md)
 - [LONGEST CYCLE is NP-complete](longest-cycle-np-complete.md)
 - [Instances of LONGEST CIRCUIT](longest-circuit-instance.md)
-- [Edge Length](edge-length.md)
 - [Well-formed LONGEST CIRCUIT instances](well-formed-2.md)
 - [Feasible LONGEST CIRCUIT instances](longest-circuit-feasible.md)
 - [The decision problem LONGEST CIRCUIT](longest-circuit-dec.md)

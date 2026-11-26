@@ -7,8 +7,6 @@
 - [The LONGEST PATH decision problem](longest-path-dec.md)
 - [LONGEST PATH is NP-complete](longest-path-np-complete.md)
 - [Instances of LONGEST DIRECTED PATH](longest-directed-path-instance.md)
-- [Graph](graph-2.md)
-- [Arc Length](arc-length.md)
 - [Well-formed LONGEST DIRECTED PATH instances](well-formed-2.md)
 - [Feasible LONGEST DIRECTED PATH instances](longest-directed-path-feasible.md)
 - [The decision problem LONGEST DIRECTED PATH](longest-directed-path-dec.md)
