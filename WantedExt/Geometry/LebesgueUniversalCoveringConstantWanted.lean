@@ -16,6 +16,7 @@ public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.Topology.MetricSpace.Isometry
 public import MathlibExt.Geometry.LebesgueUniversalCoveringJung
 public import MathlibExt.Geometry.LebesgueUniversalCoveringHansen
+public import MathlibExt.Geometry.LebesgueUniversalCoveringConstantPal1920HexagonUpperBoundHolds
 
 /-!
 # Lebesgue universal covering constant
@@ -31,6 +32,10 @@ The definitions of universal convex covers, of planar area and of the constant
 (`lebesgueUniversalCoveringConstant`), and the proved disk lower bound, are in
 `MathlibExt/Geometry/LebesgueUniversalCoveringConstant.lean`. This module imports them through
 `MathlibExt/Geometry/LebesgueUniversalCoveringJung.lean`, which proves Jung's upper bound.
+The statement of Pál's hexagon bound (`pal1920HexagonUpperBound`) is defined, and its proof
+(`pal1920HexagonUpperBound_holds`) is given, in
+`MathlibExt/Geometry/LebesgueUniversalCoveringConstantPal1920HexagonUpperBoundHolds.lean`,
+which this module imports.
 -/
 
 namespace MathlibExt.Geometry.LebesgueUniversalCoveringConstantWanted
@@ -78,11 +83,6 @@ def vrecica1981ConstantWidthOneSuffices : Prop :=
       Convex ℝ Ω →
         (∀ K : Set Plane, IsConstantWidthOne K → CoversCongruentCopy Ω K) →
           IsUniversalConvexCover Ω
-
-/-- **Statement of Pál's hexagon bound.** The proposition that the Lebesgue universal covering
-constant is at most $\sqrt{3}/2$, the bound given by Pál's regular hexagon. -/
-def pal1920HexagonUpperBound : Prop :=
-  lebesgueUniversalCoveringConstant ≤ ENNReal.ofReal (Real.sqrt 3 / 2)
 
 /-- **Statement of Pál's truncated hexagon bound.** The proposition that the Lebesgue universal
 covering constant is at most $2 - 2/\sqrt{3}$, the bound given by Pál's truncated hexagon. -/
@@ -155,11 +155,6 @@ $\Omega$ is a universal convex cover.
 
 Source: Vrećica, A note on sets of constant width (1981). -/
 theorem_wanted vrecica1981ConstantWidthOneSuffices_holds : vrecica1981ConstantWidthOneSuffices
-
-/-- **Pál's hexagon bound.** The Lebesgue universal covering constant is at most $\sqrt{3}/2$.
-
-Source: Pál, Über ein elementares Variationsproblem (1920), hexagon bound. -/
-theorem_wanted pal1920HexagonUpperBound_holds : pal1920HexagonUpperBound
 
 /-- **Pál's truncated hexagon bound.** The Lebesgue universal covering constant is at most
 $2 - 2/\sqrt{3}$.

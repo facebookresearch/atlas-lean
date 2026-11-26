@@ -12120,6 +12120,7 @@
   "MathlibExt/Geometry/LatticePointCubeSandwich": {"to": "Geometry/discrete-geometry", "title": "Lattice points in dilated regions"},
   "MathlibExt/Geometry/LatticePointEnumerator": {"to": "Geometry/discrete-geometry", "title": "Lattice points in dilated regions"},
   "MathlibExt/Geometry/LebesgueUniversalCoveringConstant": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
+  "MathlibExt/Geometry/LebesgueUniversalCoveringConstantPal1920HexagonUpperBoundHolds": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LebesgueUniversalCoveringHansen": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LebesgueUniversalCoveringJung": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LensCurvatureRecurrence": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Lens sequences of tangent circles"},
