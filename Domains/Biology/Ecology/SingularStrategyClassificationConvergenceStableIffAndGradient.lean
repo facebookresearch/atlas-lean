@@ -33,10 +33,11 @@ convergence-stable when `D'(x*) = s_xy + s_yy < 0` (Eshel 1983), equivalently `s
 because `s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`; near a convergence-stable `x*` the fitness
 gradient points towards `x*`.
 
-This module holds the copied declarations `fitnessGradient`, `sxx`, `sxy`, `syy` and
-`IsSingular`, and proves `convergenceStable_iff_and_gradient`: for an invasion fitness of class
-`C²`, `s_xy + s_yy < 0` iff `s_yy < s_xx` at `(x*, x*)`, and if `s_xy + s_yy < 0` then
-`(x* - x) D(x) > 0` for residents `x` near but distinct from `x*`.
+This module defines `sxx` (`fitnessGradient`, `sxy`, `syy` and `IsSingular` are defined in
+`Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoint`) and proves
+`convergenceStable_iff_and_gradient`: for an invasion fitness of class `C²`, `s_xy + s_yy < 0`
+iff `s_yy < s_xx` at `(x*, x*)`, and if `s_xy + s_yy < 0` then `(x* - x) D(x) > 0` for
+residents `x` near but distinct from `x*`.
 
 Sources: S. A. H. Geritz, É. Kisdi, G. Meszéna and J. A. J. Metz, "Evolutionarily singular
 strategies and the adaptive growth and branching of the evolutionary tree", Evol. Ecol. 12
