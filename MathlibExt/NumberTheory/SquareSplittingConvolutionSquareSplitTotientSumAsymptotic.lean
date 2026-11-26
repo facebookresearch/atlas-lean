@@ -24,6 +24,7 @@ import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import Mathlib.NumberTheory.EulerProduct.Basic
 import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Analysis.Normed.Group.InfiniteSum
 
 /-!
@@ -482,12 +483,6 @@ private lemma sum_id_floor_error (y : ℝ) (hy : 1 ≤ y) :
   apply abs_le.mpr
   constructor <;> nlinarith
 
-private lemma floor_div (x : ℝ) (d : ℕ) (hd : d ≠ 0) :
-    ⌊x⌋₊ / d = ⌊x / (d : ℝ)⌋₊ := by
-  have hd' : (d : ℝ) ≠ 0 := by exact_mod_cast hd
-  simpa only [div_mul_cancel₀ x hd'] using
-    Nat.mul_cast_floor_div_cancel hd (x / (d : ℝ))
-
 
 private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
     (fun x : ℝ => (∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, (candidate n : ℝ)) -
@@ -523,7 +518,7 @@ private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
     have hxy : 1 ≤ x / (d : ℝ) := (le_div_iff₀ hd').mpr (by simpa using hdx)
     have hq : q d = (⌊x / (d : ℝ)⌋₊ : ℝ) := by
       dsimp only [q]
-      rw [floor_div x d hd₀.ne']
+      rw [← Nat.floor_div_natCast x d]
     have hpow : (d : ℝ) ^ ε ≤ x ^ ε := Real.rpow_le_rpow hd'.le hdx hε.le
     have he : |(correction d : ℝ)| * (2 * (x / (d : ℝ))) =
         2 * x * (d : ℝ) ^ ε * a d := by
@@ -635,10 +630,8 @@ public theorem squareSplitTotient_sum_asymptotic (φ : ArithmeticFunction ℤ)
   intro ε hε hε₁
   have hfun : φ = candidate := determined_by_sum φ candidate hφ candidate_sum
   have h := candidate_sum_bound ε hε (by linarith)
-  have hsets (N : ℕ) : Finset.Ioc 0 N = Finset.Icc 1 N := by
-    ext n
-    simp only [Finset.mem_Ioc, Finset.mem_Icc]
-    omega
+  have hsets (N : ℕ) : Finset.Ioc 0 N = Finset.Icc 1 N :=
+    (Finset.Icc_succ_left_eq_Ioc (0 : ℕ) N).symm
   simpa only [hfun, hsets, correction_euler_product] using h
 
 
