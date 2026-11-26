@@ -10,4 +10,4 @@ Modules over rings and semirings: linear maps and equivalences, submodules and t
 - [Baer's criterion for injective modules](baer-criterion.md)
 - [Opposite scalar actions for modules with commuting left actions](opposite-scalar-actions-for-modules-with-commuti/README.md)
 - [The enveloping action on the two outer tensor-power factors](the-enveloping-action-on-the-two-outer-tensor-po/README.md)
-- [Scalar compatibility for a algebra representation](module-end-comp-hom-is-scalar-tower.md)
+- [A representation action has the ground scalar tower](module-end-comp-hom-is-scalar-tower.md)

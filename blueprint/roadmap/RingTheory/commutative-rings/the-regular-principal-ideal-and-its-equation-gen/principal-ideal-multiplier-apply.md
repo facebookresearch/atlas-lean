@@ -1,3 +1,4 @@
-# Principal Ideal Multiplier apply
+# The principal-ideal multiplier has the expected underlying product
 
-The actual ideal multiplier retains the original equation product.
+For a commutative ring B, g : B and b : B, the underlying value of principalIdealMultiplier B
+g b in B is b * g.

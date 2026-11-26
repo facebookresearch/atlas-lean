@@ -1,3 +1,5 @@
-# Algebra Positive One To Kaehler Lift exact
+# Exactness of the lifted proper degree-one differential presentation
 
-The full-universe representative remains an exact cokernel of the degree-two map.
+Exactness of the lifted proper degree-one differential presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the image of the incoming proper boundary equals the kernel of algebraPositiveOneToKaehlerLift.

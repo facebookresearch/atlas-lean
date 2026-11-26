@@ -15,13 +15,26 @@ public import MathlibExt.Algebra.Homology.KoszulComplex
 public import MathlibExt.LinearAlgebra.ExteriorPower.BaseChange
 
 /-!
-# Koszul-to-bar antisymmetrization
+# Exterior Koszul terms and bar antisymmetrization
 
-A ground-linear generator family in a commutative algebra defines
-an enveloping generator-difference functional. Signed tensor
-antisymmetrization maps its exterior Koszul complex to the adjacent
-bar complex and commutes with their differentials. Ground, algebra
-and generator carrier universes are independent.
+Let k be a commutative ring, A a commutative unital k-algebra,
+V a k-module in an independent carrier universe, and f : V → A k-linear.
+Set E = A ⊗[k] Aᵐᵒᵖ and
+α(e ⊗ v) = e(f(v) ⊗ 1ᵐᵒᵖ − 1 ⊗ f(v)ᵐᵒᵖ).
+This E-linear functional defines a Koszul differential on
+∧_E^n(E ⊗[k] V).
+
+Exterior scalar extension, full signed tensor antisymmetrization along f,
+and the outer bar coordinates give E-linear maps
+Φ_n : ∧_E^n(E ⊗[k] V) → P_n(A).
+For an elementary generator wedge their value is
+Φ_n(e • ((1 ⊗ v_0) ∧ ⋯ ∧ (1 ⊗ v_{n-1}))) =
+e • ∑_{π ∈ S_n} sign(π)
+(1 ⊗ f(v_{π(0)}) ⊗ ⋯ ⊗ f(v_{π(n-1)}) ⊗ 1).
+The maps satisfy d_bar Φ_{n+1} = Φ_n d_α. The coefficients are integral,
+and V is an arbitrary k-module.
+
+Reference: J.-L. Loday, Cyclic Homology, §§1.1 and 3.2.
 -/
 
 @[expose] public section
@@ -39,11 +52,19 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
 
 local notation "E" => EnvelopingAlgebra k A
 
-/-- The original left outer inclusion, as a ground-linear map. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The left outer inclusion is the k-linear map
+A → E, a ↦ a ⊗ 1ᵐᵒᵖ. -/
 def leftOuterLinear : A →ₗ[k] E :=
   (TensorProduct.mk k A Aᵐᵒᵖ).flip (op (1 : A))
 
-/-- The original right outer inclusion retains its opposite coordinate. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The right outer inclusion is the k-linear map
+A → E, a ↦ 1 ⊗ aᵐᵒᵖ. -/
 def rightOuterLinear : A →ₗ[k] E where
   toFun a := (1 : A) ⊗ₜ[k] op a
   map_add' a b := by rw [MulOpposite.op_add, TensorProduct.tmul_add]
@@ -51,31 +72,62 @@ def rightOuterLinear : A →ₗ[k] E where
     change (1 : A) ⊗ₜ[k] (c • op a) = c • ((1 : A) ⊗ₜ[k] op a)
     exact TensorProduct.tmul_smul _ _ _
 
-/-- The original outer difference is an ground-linear map. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Subtracting the right inclusion from the left gives the k-linear map
+Δ : A → E, with Δ(a) = a ⊗ 1ᵐᵒᵖ − 1 ⊗ aᵐᵒᵖ. -/
 def outerDifferenceLinear : A →ₗ[k] E := leftOuterLinear k A - rightOuterLinear k A
 
-/-- Its value is the original first-minus-final enveloping coefficient. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The k-linear outer-difference map evaluates at a ∈ A as
+Δ(a) = a ⊗ 1ᵐᵒᵖ − 1 ⊗ aᵐᵒᵖ. -/
 theorem outerDifferenceLinear_apply (a : A) :
     outerDifferenceLinear k A a = outerDifference k A a := rfl
 
 variable (V : Type w) [AddCommGroup V] [Module k V] (f : V →ₗ[k] A)
 
-/-- The generator outer-difference functional on the scalar-extended module. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+The generator-difference functional is the E-linear map
+α : E ⊗[k] V → E with α(e ⊗ v) = e Δ(f(v)), where
+Δ(a) = a ⊗ 1ᵐᵒᵖ − 1 ⊗ aᵐᵒᵖ. -/
 def generatorDifferenceFunctional : E ⊗[k] V →ₗ[E] E :=
   TensorProduct.AlgebraTensorModule.lift
     ((LinearMap.lsmul E (V →ₗ[k] E)).flip ((outerDifferenceLinear k A).comp f))
 
-/-- A scalar-extended generator has its scalar multiple of the original outer difference. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+On a scalar-extended generator, the difference functional has value
+α(e ⊗ v) = e(f(v) ⊗ 1ᵐᵒᵖ − 1 ⊗ f(v)ᵐᵒᵖ). -/
 theorem generatorDifferenceFunctional_tmul (e : E) (v : V) :
     generatorDifferenceFunctional k A V f (e ⊗ₜ[k] v) = e * outerDifference k A (f v) := by
   rw [generatorDifferenceFunctional, TensorProduct.AlgebraTensorModule.lift_tmul]
   rfl
 
-/-- The signed exterior tensor map applies the original generator map to every factor. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+In degree n, exterior antisymmetrization followed by f on each factor
+defines the k-linear map ∧_k^n V → A^{⊗n}. It uses the full
+signed-permutation tensor sum. -/
 def exteriorAntisymmetrizationAlong (n : ℕ) : (⋀[k]^n V) →ₗ[k] TensorPower k n A :=
   (PiTensorProduct.map (fun _ : Fin n => f)).comp (TensorPower.exteriorAntisymmetrization k V n)
 
-/-- Its original decomposable generator input has the complete signed tensor formula. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+For a : Fin n → V, alternation along f sends
+ a_0 ∧ ⋯ ∧ a_{n-1} to
+∑_{π ∈ S_n} sign(π) tprod((f ∘ a) ∘ π). -/
 theorem exteriorAntisymmetrizationAlong_ιMulti (n : ℕ) (a : Fin n → V) :
     exteriorAntisymmetrizationAlong k A V f n (exteriorPower.ιMulti k n a) =
       ∑ π : Equiv.Perm (Fin n), (π.sign : ℤ) • PiTensorProduct.tprod k ((f ∘ a) ∘ π) := by
@@ -88,7 +140,12 @@ theorem exteriorAntisymmetrizationAlong_ιMulti (n : ℕ) (a : Fin n → V) :
   rw [map_zsmul, PiTensorProduct.map_tprod]
   rfl
 
-/-- The inverse original outer coordinate inserts the two outer units. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The inverse outer-coordinate isomorphism E ⊗[k] A^{⊗n} ≃ P_n
+sends e ⊗ tprod(a) to e • u_n(a), where
+u_n(a) = 1 ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} ⊗ 1. -/
 theorem envelopingBarDegreeEquivBaseChange_symm_tprod
     (n : ℕ) (e : E) (a : Fin n → A) :
     (envelopingBarDegreeEquivBaseChange k A n).symm (e ⊗ₜ[k] PiTensorProduct.tprod k a) =
@@ -103,16 +160,27 @@ theorem envelopingBarDegreeEquivBaseChange_symm_tprod
   congr 1
   simp only [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
 
-/-- The exterior Koszul term maps into the original bar term by canonical
-exterior scalar coordinates, full signed antisymmetrization and original outer coordinates. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+The E-linear comparison ∧_E^n(E ⊗[k] V) → P_n first uses
+∧_E^n(E ⊗[k] V) ≃ E ⊗[k] ∧_k^n V, then alternates along f,
+and finally uses the inverse outer bar coordinates. -/
 def koszulAntisymmetrizationLevel (n : ℕ) :
     (⋀[E]^n (E ⊗[k] V)) →ₗ[E] envelopingBarDegree k A n :=
   (envelopingBarDegreeEquivBaseChange k A n).symm.toLinearMap.comp
     (((exteriorAntisymmetrizationAlong k A V f n).baseChange E).comp
       (exteriorPower.baseChangeEquiv k E V n).symm.toLinearMap)
 
-/-- Every scalar-extended decomposable input gives its original antisymmetric
-middle word between original outer units. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+For e ∈ E and a : Fin n → V, the degree-n comparison satisfies
+Φ_n(e • ((1 ⊗ a_0) ∧ ⋯ ∧ (1 ⊗ a_{n-1}))) =
+e • Alt_n(f ∘ a), where Alt_n is the signed sum of the middle
+word between two outer units. -/
 theorem koszulAntisymmetrizationLevel_smul_ιMulti
     (n : ℕ) (e : E) (a : Fin n → V) :
     koszulAntisymmetrizationLevel k A V f n
@@ -147,7 +215,14 @@ theorem koszulAntisymmetrizationLevel_smul_ιMulti
   exact (congrArg (fun z : envelopingBarDegree k A n => (π.sign : ℤ) • z) hb).trans
     (smul_comm (π.sign : ℤ) e (unitOuterWord k A n ((f ∘ a) ∘ π)))
 
-/-- The unscaled Koszul word gives the complete unscaled bar antisymmetrization. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+The degree-n comparison sends
+(1 ⊗ a_0) ∧ ⋯ ∧ (1 ⊗ a_{n-1}) to
+Alt_n(f ∘ a) = ∑_{π ∈ S_n} sign(π)
+(1 ⊗ f(a_{π(0)}) ⊗ ⋯ ⊗ f(a_{π(n-1)}) ⊗ 1). -/
 theorem koszulAntisymmetrizationLevel_ιMulti (n : ℕ) (a : Fin n → V) :
     koszulAntisymmetrizationLevel k A V f n
       (exteriorPower.ιMulti E n (fun j => (1 : E) ⊗ₜ[k] a j)) =
@@ -155,8 +230,15 @@ theorem koszulAntisymmetrizationLevel_ιMulti (n : ℕ) (a : Fin n → V) :
   simpa only [one_smul] using
     koszulAntisymmetrizationLevel_smul_ιMulti k A V f n (1 : E) a
 
-/-- Signed exterior deletion and the complete original bar differential commute
-on scalar-extended generator wedges. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+Let α(e ⊗ v) = e Δ(f(v)) and let d_α be its exterior Koszul
+differential. On every e • ((1 ⊗ a_0) ∧ ⋯ ∧ (1 ⊗ a_n)),
+the exterior-to-bar comparison satisfies
+ d_bar Φ_{n+1} = Φ_n d_α. The bar and Koszul boundaries use
+the ordered deletion coefficients (−1)^i. -/
 theorem koszulAntisymmetrizationLevel_boundary_word
     (n : ℕ) (e : E) (a : Fin (n + 1) → V) :
     letI := TensorPower.outerModule k A n
@@ -263,8 +345,14 @@ theorem koszulAntisymmetrizationLevel_boundary_word
   exact hleft.trans
     ((congrArg (fun z : A ⊗[k] TensorPower k (n + 1) A => e • z) hsign).trans hright.symm)
 
-/-- The Koszul and bar maps commute in every degree. The proof uses
-the canonical scalar-extension equivalence and the full word boundary law. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Let V be a k-module and f : V → A a k-linear map.
+For α(e ⊗ v) = e Δ(f(v)), the E-linear degree maps from the
+exterior Koszul terms to the bar satisfy
+ d_bar Φ_{n+1} = Φ_n d_α
+on the whole module ∧_E^{n+1}(E ⊗[k] V). -/
 theorem koszulAntisymmetrizationLevel_boundary (n : ℕ) :
     (((envelopingBar k A).d (n + 1) n).hom :
       (envelopingBarDegree k A (n + 1)).carrier →ₗ[E] (envelopingBarDegree k A n).carrier).comp

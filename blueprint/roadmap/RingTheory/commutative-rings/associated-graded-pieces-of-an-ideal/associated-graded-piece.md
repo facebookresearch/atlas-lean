@@ -1,4 +1,5 @@
-# Associated Graded Piece
+# Homogeneous quotient of ideal powers
 
-The degree-`n` piece `I ^ n / I ^ (n + 1)` of the associated graded
-ring, presented as a quotient of the ideal `I ^ n` by `I • ⊤`.
+For an ideal `I` in a commutative ring `R` and `n : ℕ`, the degree-`n` associated graded piece
+is `I^n/I^(n+1)`. Its quotient presentation is `(I^n : Ideal R) ⧸ (I • ⊤ : Submodule R (I^n :
+Ideal R))`; multiplication by `I` on `I^n` has image `I^(n+1)`.

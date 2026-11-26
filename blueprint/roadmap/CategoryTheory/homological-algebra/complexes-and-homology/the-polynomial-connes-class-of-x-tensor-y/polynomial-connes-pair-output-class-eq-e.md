@@ -1,3 +1,5 @@
-# Polynomial Connes Pair Output Class eq exterior
+# The Connes output class is the normalized exterior two-form class
 
-The original output class is the class of the independently specified exterior word.
+Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairOutputClass equals normalizedPolynomialExteriorClass
+applied in degree two to 1 ⊗ (eₛ∧eₜ).

@@ -1,3 +1,6 @@
-# Quotient Equiv mk tprod
+# The pure-tensor coordinates of the quotient equivalence
 
-The quotient equivalence retains the classes of the actual factors.
+The pure-tensor coordinates of the quotient equivalence.
+
+For a commutative ring k, a k-module A, S ≤ A and a : Fin n → A, the class of tprod(a)
+modulo Rₙ(S) maps to tprod(i ↦ [a i]) in (A/S)⊗n.

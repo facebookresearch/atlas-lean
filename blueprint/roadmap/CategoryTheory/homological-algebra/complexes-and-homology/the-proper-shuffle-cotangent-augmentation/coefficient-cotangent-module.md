@@ -1,3 +1,6 @@
-# Coefficient Cotangent Module
+# Coefficient cotangents as a lifted ground module
 
-The original coefficient tensor the universal cotangent module, in the same carrier height.
+Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action, regarded as a symmetric A-bimodule. coefficientCotangentModule is the k-module given
+by the canonical universe lift of M ⊗[A] Ω¹_{A/k}. The lift places it in the common
+coefficient-complex universe.

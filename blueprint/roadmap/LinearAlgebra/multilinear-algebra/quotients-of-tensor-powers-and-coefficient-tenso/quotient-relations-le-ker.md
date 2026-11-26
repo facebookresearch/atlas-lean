@@ -1,3 +1,6 @@
-# Quotient Relations le ker
+# Factor relations vanish under the quotient projection
 
-The stated tensor relations are killed by the actual quotient map.
+Factor relations vanish under the quotient projection.
+
+For a commutative ring k, a k-module A and S ≤ A, Rₙ(S) ≤ ker(qₙ), since a pure tensor with
+an entry in S has a zero quotient entry.

@@ -13,12 +13,14 @@ public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.Logic.Equiv.Sum
 
 /-!
-# Actual finite-fiber sums in native monoid algebras
+# Finite sums grouped by their output fibers
 
-The native fiber equivalence reindexes an original finite sum into
-its original output fibers. A coefficient depending only on that original
-output therefore receives the actual fiber cardinality. No multiplicative
-or counting certificate is supplied.
+For finite types `I,G`, a semiring `R`, a function `f : I → G`, and coefficients `c : G → R`,
+the sum of single-coordinate functions at `f(i)` can be grouped by the fibers of `f`.
+
+The resulting term at `g` is the fiber cardinality times `single g (c g)`, where this
+multiplication is repeated addition. The identity uses the finitely supported additive carrier
+of `MonoidAlgebra R G`.
 -/
 
 @[expose] public section
@@ -32,7 +34,9 @@ namespace MonoidAlgebra
 
 variable {I G R : Type*} [Fintype I] [Fintype G] [Semiring R]
 
-/-- The original finite generator sum is the actual output-fiber cardinality sum. -/
+/-- Let `I,G` be finite types, `R` a semiring, `f : I → G`, and `c : G → R`. Then `∑ i : I, single
+(f i) (c(f i)) = ∑ g : G, |{i : I | f i=g}| • single g (c g)`. The natural-number scalar is
+repeated addition in the finitely supported `R`-valued functions on `G`. -/
 theorem sum_single_eq_sum_fiber (f : I → G) (c : G → R) :
     (∑ i : I, single (f i) (c (f i))) =
       ∑ g : G, (Fintype.card {i : I // f i = g}) • single g (c g) := by

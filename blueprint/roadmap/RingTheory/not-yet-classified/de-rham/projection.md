@@ -1,3 +1,5 @@
-# Projection
+# The canonical exterior-degree projection
 
-The canonical projection from the exterior algebra to exterior degree `n`.
+For a module `M` over a commutative ring `R`, the linear map
+`ExteriorAlgebra R M →ₗ[R] ⋀[R]^n M` obtained by taking the degree-`n`
+component of the canonical direct-sum decomposition of the exterior algebra.

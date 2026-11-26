@@ -1,4 +1,6 @@
-# Mem algebra Internal Grade iff
+# Algebra component membership has a homogeneous representative
 
-Membership in an algebra-coherent coordinate range is witnessed by an
-element of the corresponding external summand.
+Let R be a commutative semiring, I an additive monoid with decidable equality, and A i a
+family of R-semimodules forming a graded semiring and graded R-algebra. For x : ⨁ j, A j and i
+: I, membership x ∈ algebraInternalGrade R A i is equivalent to the existence of y : A i with
+DirectSum.of A i y = x.

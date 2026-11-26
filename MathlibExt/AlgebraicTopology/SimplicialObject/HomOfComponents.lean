@@ -15,13 +15,18 @@ public import Mathlib.CategoryTheory.CommSq
 public import Mathlib.CategoryTheory.Functor.FullyFaithful
 
 /-!
-# simplicial maps from compatible degree maps
+# Simplicial morphisms specified by degree maps
 
-Faces and degeneracies generate the simplex category. Actual degree maps
-that commute with those two families therefore determine a simplicial
-morphism. The construction uses the simplex generators-and-relations
-equivalence and fully faithful precomposition. No degree map is required to
-be invertible, and no additive or homological structure is required.
+In an arbitrary category C, maps f_n : X_n → Y_n between the terms of two simplicial objects
+determine a simplicial morphism when they commute with every face and degeneracy. The face
+equations are f_(n+1) ≫ δ_i^Y = δ_i^X ≫ f_n; the degeneracy equations are f_n ≫ σ_i^Y = σ_i^X
+≫ f_(n+1).
+
+The resulting morphism has exactly the specified components, is uniquely determined by them,
+and respects identities and composition. The construction uses the presentation of the simplex
+category by faces, degeneracies and their relations.
+
+See Mac Lane, *Categories for the Working Mathematician*, Chapter VII, for simplicial objects.
 -/
 
 @[expose] public section
@@ -103,8 +108,11 @@ private def generatorMap
   app := generatorComponent f
   naturality {_ _} g := generatorNaturality f hδ hσ g.unop
 
-/-- Compatible face and degeneracy squares construct a native
-simplicial map, with no invertibility or additive hypothesis. -/
+/-- Let X and Y be simplicial objects in a category C. Suppose f_n : X_n ⟶ Y_n satisfies f_(n+1) ≫
+δ_i^Y = δ_i^X ≫ f_n for i : Fin (n + 2), and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1) for i : Fin (n +
+1). The family f defines a morphism homOfComponents f hδ hσ : X ⟶ Y whose component at op ⦋n⦌
+is f_n. The face and degeneracy equations give its naturality for every simplex-category
+morphism. -/
 @[no_expose]
 def homOfComponents
     (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
@@ -114,7 +122,10 @@ def homOfComponents
     X ⟶ Y :=
   Functor.preimage W (generatorMap f hδ hσ)
 
-/-- The constructed simplicial map has the prescribed original components. -/
+/-- Let X and Y be simplicial objects in a category C. Suppose f_n : X_n ⟶ Y_n satisfies f_(n+1) ≫
+δ_i^Y = δ_i^X ≫ f_n for i : Fin (n + 2), and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1) for i : Fin (n +
+1). For every n : ℕ, the component of homOfComponents f hδ hσ at op (SimplexCategory.mk n) is
+f_n. -/
 theorem homOfComponents_app_mk
     (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
       Y.obj (op (SimplexCategory.mk n)))
@@ -125,7 +136,10 @@ theorem homOfComponents_app_mk
     (op (SimplexCategoryGenRel.mk n))
   exact h
 
-/-- Equality of prescribed degree components determines the native map. -/
+/-- Let X and Y be simplicial objects in a category C. Suppose f_n : X_n ⟶ Y_n satisfies f_(n+1) ≫
+δ_i^Y = δ_i^X ≫ f_n for i : Fin (n + 2), and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1) for i : Fin (n +
+1). If a simplicial map g : X ⟶ Y has component f_n at every op ⦋n⦌, then g = homOfComponents
+f hδ hσ. -/
 theorem homOfComponents_ext
     (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
       Y.obj (op (SimplexCategory.mk n)))
@@ -139,7 +153,9 @@ theorem homOfComponents_ext
   cases q
   exact (hg _).trans (homOfComponents_app_mk f hδ hσ _).symm
 
-/-- Identity degree maps give the identity simplicial map. -/
+/-- For a simplicial object X in any category C, the family f_n = 𝟙 X_n commutes with every face
+and degeneracy. The simplicial morphism constructed from this family and these equations
+equals 𝟙 X. -/
 @[simp]
 theorem homOfComponents_id (X : SimplicialObject C) :
     homOfComponents (fun n => 𝟙 (X.obj (op (SimplexCategory.mk n))))
@@ -153,8 +169,11 @@ theorem homOfComponents_id (X : SimplicialObject C) :
       (by intro q i; simp) (by intro q i; simp)).app (op (SimplexCategory.mk n)) = 𝟙 _
     exact homOfComponents_app_mk _ _ _ n
 
-/-- Composition of the prescribed degree maps gives composition of
-the constructed native simplicial maps. -/
+/-- Let X, Y and Z be simplicial objects in a category C. Let f_n : X_n ⟶ Y_n and g_n : Y_n ⟶ Z_n
+each commute with all faces and degeneracies, in the equations f_(n+1) ≫ δ_i^Y = δ_i^X ≫ f_n
+and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1), and the corresponding equations for g. Then the simplicial
+map for f followed by that for g equals the map constructed from the components f_n ≫ g_n and
+their induced face and degeneracy equations. -/
 @[reassoc]
 theorem homOfComponents_comp {Z : SimplicialObject C}
     (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶

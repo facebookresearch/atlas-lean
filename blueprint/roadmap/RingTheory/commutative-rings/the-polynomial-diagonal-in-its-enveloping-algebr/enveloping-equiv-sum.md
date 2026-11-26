@@ -1,3 +1,5 @@
-# Enveloping Equiv Sum
+# The two-copy polynomial equivalence
 
-The two actual polynomial factors are the two copies of the original variable type.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. This is the `k`-algebra equivalence `E ≃ₐ[k] MvPolynomial (σ ⊕ σ) k`. A left tensor
+variable maps to `X_(Sum.inl i)` and a right tensor variable maps to `X_(Sum.inr i)`.

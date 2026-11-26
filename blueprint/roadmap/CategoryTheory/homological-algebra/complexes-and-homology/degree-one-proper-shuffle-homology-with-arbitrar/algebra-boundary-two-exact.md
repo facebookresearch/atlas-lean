@@ -1,4 +1,6 @@
-# Algebra Boundary two exact
+# The degree-two boundary presents the kernel of coefficient differentials
 
-Actual right exactness of native tensor transports the Kähler
-presentation to the original arbitrary coefficient boundary.
+The degree-two boundary presents the kernel of coefficient differentials.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+image(b₂)=ker(algebraOneToKaehler). This uses tensor right exactness for arbitrary M.

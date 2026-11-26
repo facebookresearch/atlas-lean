@@ -7,10 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/-
-UNEXECUTED source proposal. Boundary compatibility is derived from the
-original signed A-balanced cuts, not supplied as a law certificate.
--/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricBalancedConvolutionBoundary
@@ -18,14 +15,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianOperators
 public import MathlibExt.LinearAlgebra.FiniteDyadicProjectorIntertwining
 
 /-!
-# Eulerian boundary compatibility
+# Eulerian weight operators commute with the symmetric Hochschild boundary
 
-In positive degrees, bar-lambda at parameter two is
-twice the identity plus the proper shuffle convolution.
-Its boundary compatibility and the rational orthogonal
-projectors give the boundary square for each Eulerian
-weight. Loday’s second lambda operation is the negative
-of this bar-lambda operation, with the same compatibility.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module. The
+convolution operator Λₙ(2) is twice the identity plus proper-shuffle convolution in positive
+degree. Its boundary compatibility and the distinct rational eigenvalues 2ⁱ give b eₙ₊₁⁽ⁱ⁾ =
+eₙ⁽ⁱ⁾ b. The integer second lambda operation carries the additional sign -1 and has the same
+boundary compatibility.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for Eulerian operations on commutative
+Hochschild chains.
 -/
 
 @[expose] public section
@@ -45,7 +44,10 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The original bar-lambda operation at two commutes with the Hochschild boundary, including the original degree-one zero boundary. -/
+/-- The convolution-at-two operator is a symmetric Hochschild chain operator.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, bₙ ∘
+Λₙ₊₁(2) = Λₙ(2) ∘ bₙ for the coefficient-fixed convolution lambdaTwoOperator. -/
 theorem lambdaTwoOperator_boundary (n : ℕ) :
     ((chainComplex k A M).d (n + 1) n).hom.comp (lambdaTwoOperator k A M (n + 1)) =
       (lambdaTwoOperator k A M n).comp ((chainComplex k A M).d (n + 1) n).hom := by
@@ -71,8 +73,10 @@ theorem lambdaTwoOperator_boundary (n : ℕ) :
     simpa only [LinearMap.restrictScalars_comp,
       algebraProperShuffleConvolutionTwo_restrictScalars] using h
 
-/-- Every original rational Eulerian coefficient operator commutes with the
-full Hochschild boundary. The conclusion is from the bar-lambda boundary square and the original rational projector laws. -/
+/-- Each rational coefficient Eulerian projector commutes with the boundary.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, bₙ ∘
+eₙ₊₁⁽ⁱ⁾ = eₙ⁽ⁱ⁾ ∘ bₙ for every weight i, including weights outside the degree range. -/
 theorem coefficientEulerian_boundary (n i : ℕ) :
     ((chainComplex k A M).d (n + 1) n).hom.comp
         (coefficientEulerianOperator k A M (n + 1) i) =

@@ -16,16 +16,17 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRingsExact
 
 /-!
-# Right exactness of commutative balanced tensor functors
+# Right exactness of the ground-valued balanced tensor functor
 
-For a commutative acting ring, compatible left and right coefficient actions
-identify the balanced tensor with the ordinary acting-ring tensor. The
-comparison is natural on balanced representatives. Tensor right exactness
-and exact restriction of scalars give finite-colimit preservation for the
-ground-valued balanced functor.
+Let `k,R` be commutative rings with `R` a `k`-algebra. Suppose the coefficient `M` has
+compatible ground and left `R`-actions and a right `R`-action agreeing with the left action,
+`op(r) • m=r • m`.
 
-The coefficient module need not be flat, projective or small. Its two actions
-are retained, with their displayed compatibility.
+The balanced tensor `M ⊗_R N`, formed from the ground `k`-tensor quotient, is naturally
+`R`-linearly equivalent to the ordinary tensor product over `R`, with `[m,n] ↦ m⊗n`.
+Restricting this tensor functor to ground `k`-modules preserves finite colimits.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -44,7 +45,9 @@ variable (k : Type u) (R : Type v) [CommRing k] [CommRing R] [Algebra k R]
   (hOp : ∀ (r : R) (m : M), op r • m = r • m)
 
 local instance actingGroundComm : SMulCommClass R k M := SMulCommClass.symm k R M
-/-- Original compatible left and right actions commute over the commutative acting ring. -/
+/-- Let `R` be a commutative ring and `M` have left and right `R`-module actions with `op(r) • m=r
+• m` for every `r,m`. Then `SMulCommClass R Rᵐᵒᵖ M` holds, so the left action commutes with
+the right action. -/
 theorem actingOppositeComm {R : Type v} [CommRing R]
     {M : Type w} [AddCommGroup M] [Module R M] [Module Rᵐᵒᵖ M]
     (hOp : ∀ (r : R) (m : M), op r • m = r • m) : SMulCommClass R Rᵐᵒᵖ M where
@@ -52,7 +55,11 @@ theorem actingOppositeComm {R : Type v} [CommRing R]
     rw [← op_unop s, hOp, hOp]
     exact smul_comm r s.unop m
 
-/-- The ordinary acting-ring tensor is the actual balanced quotient with its native outer action. -/
+/-- Let `k : Type u`, `R : Type v` be commutative rings with `R` a `k`-algebra, and `M : Type w`
+have compatible commuting `k`- and `R`-module actions and a right `R`-action satisfying `op(r)
+• m=r • m`. Put `h=max(u,v,z)` and `h'=max(u,v,w,z)`. For `N : ModuleCat.{h} R`, the
+outer-left balanced module `Left.obj k R R M N` is `R`-linearly equivalent to `M ⊗[R] N`, with
+`[m,n] ↦ m⊗n`; both carriers lie in the category of size `h'`. -/
 def commutativeCoefficientTensorEquiv (N : ModuleCat.{max u v z} R) :
     letI := actingOppositeComm (R := R) (M := M) hOp
     Left.obj k R R M N ≃ₗ[R] M ⊗[R] N := by
@@ -121,7 +128,11 @@ def commutativeCoefficientTensorEquiv (N : ModuleCat.{max u v z} R) :
     rw [hf, TensorProduct.lift.tmul]
     rfl
 
-/-- Every actual balanced representative retains its original two factors. -/
+/-- Let `k : Type u`, `R : Type v` be commutative rings with `R` a `k`-algebra, and `M : Type w`
+have compatible commuting `k`- and `R`-module actions and a right `R`-action satisfying `op(r)
+• m=r • m`. Put `h=max(u,v,z)` and `h'=max(u,v,w,z)`. For `N : ModuleCat.{h} R`, `m : M`, and
+`n : N`, `commutativeCoefficientTensorEquiv k R M hOp N ([m,n]) = m ⊗[R] n`, where `N` has its
+ground action restricted along `k→R`. -/
 theorem commutativeCoefficientTensorEquiv_mk (N : ModuleCat.{max u v z} R) (m : M) (n : N) :
     letI := actingOppositeComm (R := R) (M := M) hOp
     letI : Module k N := Module.compHom N (algebraMap k R)
@@ -134,7 +145,11 @@ theorem commutativeCoefficientTensorEquiv_mk (N : ModuleCat.{max u v z} R) (m : 
     change (op r • m) ⊗ₜ[R] n = m ⊗ₜ[R] (r • n)
     rw [hOp, TensorProduct.smul_tmul]) m n
 
-/-- The comparison is an actual natural isomorphism of the original coefficient functors. -/
+/-- Let `k : Type u`, `R : Type v` be commutative rings with `R` a `k`-algebra, and `M : Type w`
+have compatible commuting `k`- and `R`-module actions and a right `R`-action satisfying `op(r)
+• m=r • m`. Put `h=max(u,v,z)` and `h'=max(u,v,w,z)`. The comparisons `[m,n] ↦ m⊗n` form a
+natural isomorphism from `Left.functor k R R M` to the functor `N ↦ M ⊗[R] N`, from
+`ModuleCat.{h} R` to `ModuleCat.{h'} R`. -/
 def commutativeCoefficientTensorNatIso :
     letI := actingOppositeComm (R := R) (M := M) hOp
     Left.functor k R R M ≅
@@ -164,7 +179,10 @@ def commutativeCoefficientTensorNatIso :
       commutativeCoefficientTensorEquiv_mk, TensorProduct.map_tmul, LinearMap.id_apply])
 
 include hOp in
-/-- Finite-colimit preservation is earned from the ordinary tensor and actual scalar-restriction comparison. -/
+/-- Let `k : Type u`, `R : Type v` be commutative rings with `R` a `k`-algebra, and `M : Type w`
+have compatible commuting `k`- and `R`-module actions and a right `R`-action satisfying `op(r)
+• m=r • m`. Put `h=max(u,v,z)` and `h'=max(u,v,w,z)`. The functor `N ↦ TensorProduct.Balanced
+k R M N`, valued in `ModuleCat.{h'} k` on `ModuleCat.{h} R`, preserves finite colimits. -/
 theorem functor_preservesFiniteColimits_of_commutative :
     PreservesFiniteColimits
       (functor k R M : ModuleCat.{max u v z} R ⥤ ModuleCat.{max u v w z} k) := by

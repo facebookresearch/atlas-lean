@@ -13,13 +13,16 @@ public import MathlibExt.Algebra.Homology.TotalComplexSingle
 public import Mathlib.AlgebraicTopology.AlternatingFaceMapComplex
 
 /-!
-# Totals of alternating single-zero diagrams
+# Total complexes of simplicial objects concentrated in a second degree
 
-Applying the single-zero chain functor to a simplicial
-object and totalizing its alternating-face bicomplex
-gives its alternating-face chain complex. The object
-comparison and its functorial form use the same
-single-zero total isomorphism.
+Let C be preadditive with a zero object and finite coproducts. Replace every term X_n of a
+simplicial object by the chain complex concentrated in degree zero, form its alternating-face
+bicomplex, and take the direct-sum total. This total is canonically isomorphic to the
+alternating-face chain complex of X.
+
+The bicomplex has terms X_p in bidegrees (p, 0) and zero terms in positive second degree. Thus
+the total comparison retains X_n in total degree n and its alternating sum of face maps. The
+comparisons form a natural isomorphism of functors on simplicial objects.
 -/
 
 @[expose] public section
@@ -35,25 +38,38 @@ namespace AlgebraicTopology
 variable (C : Type u) [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasFiniteCoproducts C]
 
-/-- The original alternating-face bicomplex of the native single-zero simplicial objects. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts. The functor from
+simplicial objects to bicomplexes of shape (down ℕ, down ℕ) first replaces X_n by
+ChainComplex.single₀ C (X_n), then forms the alternating-face complex in the simplicial
+direction. Its term in bidegree (p, q) is X_p for q = 0 and a zero object otherwise. -/
 def alternatingSingleBicomplexFunctor : SimplicialObject C ⥤
     HomologicalComplex₂ C (.down ℕ) (.down ℕ) :=
   (SimplicialObject.whiskering C (ChainComplex C ℕ)).obj (ChainComplex.single₀ C) ⋙
     alternatingFaceMapComplex (ChainComplex C ℕ)
 
-/-- The native direct-sum total of that original bicomplex diagram. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts. This functor sends a
+simplicial object X to the direct-sum total of alternatingSingleBicomplexFunctor C applied to
+X, using down ℕ in both bicomplex directions and in the total direction. Total degree n sums
+the terms with p + q = n. -/
 def alternatingSingleTotalFunctor : SimplicialObject C ⥤ ChainComplex C ℕ :=
   alternatingSingleBicomplexFunctor C ⋙
     HomologicalComplex₂.totalFunctor C (.down ℕ) (.down ℕ) (.down ℕ)
 
-/-- Native additive-functor comparison followed by the original single-zero total isomorphism. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts. For every simplicial
+object X, there is a chain-complex isomorphism from its concentrated alternating-face
+bicomplex total to alternatingFaceMapComplex C applied to X. It is the composite of the
+alternating-face comparison for the single-degree-zero functor with the total comparison for a
+bicomplex supported in second degree zero. -/
 def alternatingSingleTotalIso (X : SimplicialObject C) :
     (alternatingSingleTotalFunctor C).obj X ≅ (alternatingFaceMapComplex C).obj X :=
   (HomologicalComplex₂.totalFunctor C (.down ℕ) (.down ℕ) (.down ℕ)).mapIso
       (((alternatingFaceMapComplexCompMapHomologicalComplexIso (ChainComplex.single₀ C)).app X).symm) ≪≫
     HomologicalComplex₂.single₀MapTotalIso ((alternatingFaceMapComplex C).obj X)
 
-/-- Every original simplicial morphism preserves this exact native total comparison. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts. For a simplicial map
+f : X ⟶ Y, let e_X and e_Y denote alternatingSingleTotalIso C at X and Y. Then
+alternatingSingleTotalFunctor.map f ≫ e_Y.hom = e_X.hom ≫ alternatingFaceMapComplex.map f.
+Both sides are maps from the total for X to the alternating-face complex of Y. -/
 @[reassoc]
 theorem alternatingSingleTotalIso_naturality {X Y : SimplicialObject C} (f : X ⟶ Y) :
     (alternatingSingleTotalFunctor C).map f ≫ (alternatingSingleTotalIso C Y).hom =
@@ -78,8 +94,10 @@ theorem alternatingSingleTotalIso_naturality {X Y : SimplicialObject C} (f : X �
       ((Category.assoc _ _ _).trans
         ((congrArg (fun t => T.map (a.app X).inv ≫ t) hs).trans (Category.assoc _ _ _).symm)))
 
-/-- The total of single-zero simplicial columns is the original alternating-face complex
-as a native functor isomorphism. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts. The isomorphisms
+alternatingSingleTotalIso C X, from the direct-sum total of the concentrated alternating-face
+bicomplex to the alternating-face complex of X, form a natural isomorphism
+alternatingSingleTotalFunctor C ≅ alternatingFaceMapComplex C. -/
 def alternatingSingleTotalNatIso : alternatingSingleTotalFunctor C ≅ alternatingFaceMapComplex C :=
   NatIso.ofComponents (alternatingSingleTotalIso C) (alternatingSingleTotalIso_naturality C)
 

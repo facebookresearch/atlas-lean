@@ -14,29 +14,16 @@ public import Mathlib.RingTheory.GradedAlgebra.FiniteType
 public import Mathlib.RingTheory.HopkinsLevitzki
 
 /-!
-# Standard graded algebra presentations
+# Finite degree-one presentations of graded algebras
 
-A standard graded presentation is a finite family of degree-one elements
-that generates the total algebra over its coefficient ring.  Such a
-presentation gives finite type; over an Artinian coefficient ring it also
-gives a Noetherian total ring.  It also induces the ordinary polynomial
-algebra map sending each variable to the corresponding generator, and that
-map is surjective.
+Let S be a commutative A-algebra with an internal grading by ℕ. A standard graded presentation
+is a family of r elements in its degree-one submodule whose A-algebra adjoin is all of S. The
+generators define a surjective A-algebra map from MvPolynomial (Fin r) A to S, sending each
+variable to its chosen degree-one element.
 
-This file contains only presentation data and these two structural
-consequences together with the ordinary polynomial-algebra map.  It proves
-no injectivity, polynomial equivalence, graded algebra-map packaging, free
-module presentation, Hilbert--Serre theorem, graded quotient theorem,
-Hilbert--Samuel polynomiality, or dimension result.
-
-## Main declarations
-
-* `HilbertSamuel.StandardGradedPresentation`
-* `HilbertSamuel.StandardGradedPresentation.finiteType`
-* `HilbertSamuel.StandardGradedPresentation.isNoetherianRing_of_isArtinianRing`
-* `HilbertSamuel.StandardGradedPresentation.polynomialAlgHom`
-* `HilbertSamuel.StandardGradedPresentation.polynomialAlgHom_X`
-* `HilbertSamuel.StandardGradedPresentation.polynomialAlgHom_surjective`
+Such a presentation makes S a finite-type A-algebra. If the coefficient ring A is Artinian, S
+is Noetherian. The number r records the supplied generating family; the structure does not
+impose minimality.
 -/
 
 @[expose] public section
@@ -45,18 +32,22 @@ set_option autoImplicit false
 
 noncomputable section
 
-namespace HilbertSamuel
+namespace GradedAlgebra
 
 universe u v
 
-/-- A finite degree-one generating family for a Nat-graded algebra.  The
-family need not be minimal. -/
+/-- For commutative rings A and S with S an A-algebra, an internal grading Sgrade : ℕ → Submodule
+A S and r : ℕ, a standard graded presentation consists of generators g_i : Sgrade 1 for i :
+Fin r satisfying Algebra.adjoin A {g_i | i : Fin r} = ⊤. The generators are viewed in the
+total algebra S in the adjoin equation. -/
 structure StandardGradedPresentation
     (A : Type u) [CommRing A]
     (S : Type v) [CommRing S] [Algebra A S]
     (Sgrade : ℕ → Submodule A S) [GradedAlgebra Sgrade]
     (r : ℕ) where
-  /-- The actual degree-one generating family. -/
+  /-- For a standard presentation of a commutative A-algebra S with internal grading Sgrade and r
+generators, generator is the family Fin r → Sgrade 1. Its underlying elements in S generate S
+as an A-algebra, by the presentation's adjoin_eq_top field. -/
   generator : Fin r → Sgrade 1
   adjoin_eq_top :
     Algebra.adjoin A (Set.range fun i => (generator i : S)) = ⊤
@@ -68,8 +59,10 @@ variable {S : Type v} [CommRing S] [Algebra A S]
 variable {Sgrade : ℕ → Submodule A S} [GradedAlgebra Sgrade]
 variable {r : ℕ}
 
-/-- A standard graded presentation makes the total algebra finite type over
-its coefficient ring. -/
+/-- Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. Then Algebra.FiniteType A S holds: the underlying finite family of elements of S
+has A-algebra adjoin equal to S. -/
 theorem finiteType
     (hstd : StandardGradedPresentation A S Sgrade r) :
     Algebra.FiniteType A S := by
@@ -79,8 +72,10 @@ theorem finiteType
   refine ⟨s, ?_⟩
   simpa [s] using hstd.adjoin_eq_top
 
-/-- A standard graded algebra over an Artinian coefficient ring is
-Noetherian. -/
+/-- Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. If A is Artinian, then S is a Noetherian ring. The presentation gives finite type
+over A, and an Artinian commutative coefficient ring is Noetherian. -/
 theorem isNoetherianRing_of_isArtinianRing
     [IsArtinianRing A]
     (hstd : StandardGradedPresentation A S Sgrade r) :
@@ -88,22 +83,30 @@ theorem isNoetherianRing_of_isArtinianRing
   let _ : Algebra.FiniteType A S := hstd.finiteType
   exact Algebra.FiniteType.isNoetherianRing A S
 
-/-- The ordinary polynomial algebra map associated to a standard graded
-presentation sends each variable to the corresponding degree-one generator. -/
+/-- Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. Define the A-algebra homomorphism MvPolynomial (Fin r) A →ₐ[A] S by evaluating X_i
+at the underlying element of hstd.generator i. Coefficients map through algebraMap A S. -/
 noncomputable def polynomialAlgHom
     (hstd : StandardGradedPresentation A S Sgrade r) :
     MvPolynomial (Fin r) A →ₐ[A] S :=
   MvPolynomial.aeval (R := A) fun i => (hstd.generator i : S)
 
-/-- A variable maps to the corresponding standard generator. -/
+/-- Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. For every i : Fin r, hstd.polynomialAlgHom (MvPolynomial.X i) = (hstd.generator i
+: S). -/
 @[simp]
 theorem polynomialAlgHom_X
     (hstd : StandardGradedPresentation A S Sgrade r) (i : Fin r) :
     hstd.polynomialAlgHom (MvPolynomial.X i) = hstd.generator i := by
   simp [polynomialAlgHom]
 
-/-- The polynomial algebra map of a standard graded presentation is
-surjective. -/
+/-- Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. The evaluation map hstd.polynomialAlgHom : MvPolynomial (Fin r) A →ₐ[A] S is
+surjective because its range is the A-algebra generated by the underlying degree-one
+generators. -/
 theorem polynomialAlgHom_surjective
     (hstd : StandardGradedPresentation A S Sgrade r) :
     Function.Surjective hstd.polynomialAlgHom := by
@@ -113,4 +116,4 @@ theorem polynomialAlgHom_surjective
 
 end StandardGradedPresentation
 
-end HilbertSamuel
+end GradedAlgebra

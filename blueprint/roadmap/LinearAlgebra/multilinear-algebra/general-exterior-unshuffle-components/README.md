@@ -1,7 +1,7 @@
 # General exterior unshuffle components
 
-- [Unshuffle Alternating](unshuffle-alternating.md)
-- [Unshuffle](unshuffle.md)
-- [Unshuffle apply ιMulti](unshuffle-apply-multi.md)
-- [Unshuffle summand representative](unshuffle-summand-representative.md)
-- [Unshuffle naturality](unshuffle-naturality.md)
+- [The alternating unshuffle word map](unshuffle-alternating.md)
+- [The exterior unshuffle component](unshuffle.md)
+- [Unshuffle is the block-coset alternating sum](unshuffle-apply-multi.md)
+- [A coset representative gives the signed two-block tensor](unshuffle-summand-representative.md)
+- [Linear maps commute with exterior unshuffle](unshuffle-naturality.md)

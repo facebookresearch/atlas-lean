@@ -1,3 +1,4 @@
-# Cut Bound
+# Bounded coordinates of a weak degree cut
 
-The actual bounded pair of block lengths, used to enumerate the original finite cut type.
+For a weak cut `(p,q)` of `n`, both lengths lie in
+`Fin(n+1)`; the bounded-pair map records those two lengths.

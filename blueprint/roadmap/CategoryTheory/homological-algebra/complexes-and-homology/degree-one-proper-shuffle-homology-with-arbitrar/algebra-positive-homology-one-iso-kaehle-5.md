@@ -1,4 +1,7 @@
-# Algebra Positive Homology One Iso Kaehler coefficient
+# The proper H₁ Kähler isomorphism is natural in A-linear coefficients
 
-The all-k degree-one proper-shuffle homology isomorphism is natural in
-arbitrary original A-linear coefficient maps; the target keeps M first.
+The proper H₁ Kähler isomorphism is natural in A-linear coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+homologyMap(f,1) followed by the target Kähler comparison equals the source Kähler comparison
+followed by the lifted map f ⊗ id.

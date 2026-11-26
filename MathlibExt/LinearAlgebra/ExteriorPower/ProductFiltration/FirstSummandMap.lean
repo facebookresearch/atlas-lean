@@ -12,12 +12,15 @@ module
 public import Mathlib.LinearAlgebra.Prod
 
 /-!
-# Linear maps preserving the first summand
+# Coordinates of a first-summand-preserving linear map
 
-A linear map between products and a compatible map on the first summand
-determine the relative map and off-diagonal part. The compatibility is the
-first-inclusion square. These coordinates apply over an arbitrary
-commutative ring with independent module universes.
+For modules over a commutative ring, a linear map `F : M×N → M'×N'` and `a : M → M'` with `F ∘
+inl = inl' ∘ a` determine the relative map `b : N → N'` and off-diagonal map `c : N → M'`.
+
+The formula is `F(x,y)=(a(x)+c(y),b(y))`. Composition preserves the first-inclusion square,
+and the relative maps compose as maps on the second-summand quotients.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -34,7 +37,9 @@ variable {R : Type u} [CommRing R]
   {M' : Type v'} [AddCommGroup M'] [Module R M']
   {N' : Type w'} [AddCommGroup N'] [Module R N']
 
-/-- The actual first-inclusion square; filtered preservation is a later conclusion. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. This is the data structure encoding that first-inclusion square. -/
 structure FirstSummandMap where
   map : M × N →ₗ[R] M' × N'
   first : M →ₗ[R] M'
@@ -45,11 +50,15 @@ namespace FirstSummandMap
 
 variable (f : FirstSummandMap (R := R) (M := M) (N := N) (M' := M') (N' := N'))
 
-/-- The actual relative map on the original second summand. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. The relative map `f.relative : N →ₗ[R] N'` is `snd' ∘ f.map ∘ inr`. -/
 def relative : N →ₗ[R] N' :=
   (LinearMap.snd R M' N').comp (f.map.comp (LinearMap.inr R M N))
 
-/-- The actual off-diagonal component, which is allowed to be nonzero. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. The map `f.offDiagonal : N →ₗ[R] M'` is `fst' ∘ f.map ∘ inr`. -/
 def offDiagonal : N →ₗ[R] M' :=
   (LinearMap.fst R M' N').comp (f.map.comp (LinearMap.inr R M N))
 
@@ -58,7 +67,9 @@ theorem map_inl (x : M) : f.map (x, 0) = (f.first x, 0) :=
 
 theorem map_inr (y : N) : f.map (0, y) = (f.offDiagonal y, f.relative y) := rfl
 
-/-- The original map is genuinely block triangular, not assumed block diagonal. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. For `x : M` and `y : N`, `f.map(x,y)=(f.first x + f.offDiagonal y, f.relative y)`. -/
 theorem map_pair (x : M) (y : N) :
     f.map (x, y) = (f.first x + f.offDiagonal y, f.relative y) := by
   have hpair : (x, y) = (x, 0) + (0, y) := by ext <;> simp
@@ -81,7 +92,10 @@ def id : FirstSummandMap (R := R) (M := M) (N := N) (M' := M) (N' := N) where
 variable {M'' : Type v''} [AddCommGroup M''] [Module R M'']
   {N'' : Type w''} [AddCommGroup N''] [Module R N'']
 
-/-- Compose the original square data; no new preservation certificate is chosen. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. For another such map `g : M'×N' → M''×N''`, the composite has total map `g.map ∘
+f.map` and first map `g.first ∘ f.first`, with the composed first-inclusion square. -/
 def comp (g : FirstSummandMap (R := R) (M := M') (N := N') (M' := M'') (N' := N'')) :
     FirstSummandMap (R := R) (M := M) (N := N) (M' := M'') (N' := N'') where
   map := g.map.comp f.map
@@ -90,7 +104,10 @@ def comp (g : FirstSummandMap (R := R) (M := M') (N := N') (M' := M'') (N' := N'
     rw [LinearMap.comp_assoc, f.first_commutes, ← LinearMap.comp_assoc,
       g.first_commutes, LinearMap.comp_assoc]
 
-/-- The relative maps compose as the actual induced maps modulo the first summands. -/
+/-- Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. For another first-summand-preserving map `g`, `(f.comp g).relative = g.relative ∘
+f.relative`. -/
 theorem relative_comp
     (g : FirstSummandMap (R := R) (M := M') (N := N') (M' := M'') (N' := N'')) :
     (f.comp g).relative = g.relative.comp f.relative := by

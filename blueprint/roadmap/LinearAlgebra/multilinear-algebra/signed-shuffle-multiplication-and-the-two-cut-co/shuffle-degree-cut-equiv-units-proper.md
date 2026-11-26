@@ -1,3 +1,4 @@
-# Shuffle Degree Cut Equiv Units Proper
+# Positive-degree cuts split into two unit cuts and proper cuts
 
-The weak cut set is two unit cuts plus the proper cuts in positive degree.
+For `n>0`, the weak cuts `p+q=n` are in bijection with the
+two unit cuts and the proper cuts: `Cut(n) ≃ Fin 2 ⊕ ProperCut(n)`.

@@ -1,3 +1,7 @@
-# Symmetric Enveloping Tensor Complex
+# The enveloping bar tensor complex for a symmetric A-module
 
-The coefficient tensor of the original bar with the original symmetric right action.
+The enveloping bar tensor complex for a symmetric A-module.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, tensor the
+enveloping-algebra bar resolution with M over Aᵉ, using its canonical symmetric right action
+and retaining the ground tensor tails.

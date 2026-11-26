@@ -1,3 +1,6 @@
-# Algebra Raw Differential comp
+# Two successive algebra-linear Hochschild differentials compose to zero
 
-The original algebra-linear raw boundary squares to zero by the original k-complex law.
+Two successive algebra-linear Hochschild differentials compose to zero.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, bₙ₊₁ ≫ bₙ = 0
+on the A-linear coefficient tensor complex.

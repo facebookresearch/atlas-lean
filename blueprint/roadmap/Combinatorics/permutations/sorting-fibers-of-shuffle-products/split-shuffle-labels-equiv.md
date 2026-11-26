@@ -1,3 +1,5 @@
-# Split Shuffle Labels Equiv
+# A shuffle splits a labeling into two blocks
 
-A global labeling is in bijection with the original two labels on an actual shuffle's value blocks.
+Let `p,q,m : ℕ` and `s : Shuffle p q`. The equivalence `(Fin(p+q) → Fin m) ≃ (Fin p → Fin m) ×
+(Fin q → Fin m)` sends `f` to `g(i)=f(s.perm(Fin.castAdd q i))` and `h(j)=f(s.perm(Fin.natAdd
+p j))`. Its inverse assigns `g` and `h` to the corresponding value blocks using `s.perm⁻¹`.

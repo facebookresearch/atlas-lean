@@ -14,10 +14,14 @@ public import Mathlib.CategoryTheory.Comma.Over.Basic
 /-!
 # Diagrams in a slice category
 
-A diagram with a natural transformation to the constant diagram at `A`
-induces a diagram in `Over A`. Morphisms of augmented diagrams lift to
-morphisms of the slice diagrams. These constructions are functorial for
-arbitrary diagram categories and independent object and morphism universes.
+For categories `J,C` and `A : C`, an augmented diagram is a functor `P : J → C` with a natural
+transformation `η_P : P → const(A)`. Its lift is the diagram in `Over A` with component
+`η_P(j) : P(j) → A`.
+
+A natural transformation `θ : P → Q` with `η_Q ∘ θ=η_P` gives component maps in the slice.
+This defines a functor from the slice of the functor category over `const(A)` to `J → Over A`.
+
+Reference: Mac Lane, *Categories for the Working Mathematician*, Chapter II.
 -/
 
 @[expose] public section
@@ -30,7 +34,10 @@ namespace CategoryTheory.Over
 
 variable {J : Type uJ} [Category.{vJ} J] {C : Type uC} [Category.{vC} C] (A : C)
 
-/-- The original augmented-diagram components as actual maps in the slice. -/
+/-- Let `J,C` be categories, `A : C`, and `P,Q` be functors `J → C` with augmentations `η_P,η_Q`
+to the constant diagram at `A`. A natural transformation `θ : P → Q` satisfying `η_Q ∘ θ=η_P`
+induces a natural map between their `Over A` diagrams, with component the slice morphism
+underlying `θ_j : P_j → Q_j`. -/
 def liftDiagramMap {P Q : Over ((Functor.const J).obj A)} (f : P ⟶ Q) :
     Over.lift P.left P.hom ⟶ Over.lift Q.left Q.hom where
   app j := Over.homMk (f.left.app j) (NatTrans.congr_app f.w j)
@@ -50,7 +57,9 @@ theorem liftDiagramMap_comp {P Q T : Over ((Functor.const J).obj A)}
   ext j
   rfl
 
-/-- Native slice lifting is a functor on actual augmented diagrams. -/
+/-- For categories `J,C` and `A : C`, `liftDiagramFunctor A : Over(const_J A) → (J → Over A)`
+sends an augmented diagram `P → const_J A` to its componentwise slice diagram. A morphism is
+sent componentwise to the commuting triangle over `A`. -/
 def liftDiagramFunctor : Over ((Functor.const J).obj A) ⥤ (J ⥤ Over A) where
   obj P := Over.lift P.left P.hom
   map := liftDiagramMap A

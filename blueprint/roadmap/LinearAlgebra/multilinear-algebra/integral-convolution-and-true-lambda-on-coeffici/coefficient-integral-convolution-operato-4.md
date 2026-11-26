@@ -1,3 +1,6 @@
-# Coefficient Integral Convolution Operator degree zero
+# Integral convolution on the empty tensor word
 
-The empty original word retains the actual unit convolution.
+Integral convolution on the empty tensor word.
+
+For a commutative ring k, k-modules M,V and every m ≥ 0, B₀(m) is the identity on M ⊗ V⊗0,
+including when the labeling alphabet is empty.

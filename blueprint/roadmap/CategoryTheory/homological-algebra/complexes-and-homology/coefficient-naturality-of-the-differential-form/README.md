@@ -1,9 +1,9 @@
 # Coefficient naturality of the differential-form projection
 
-- [Coefficient Form Projection coefficient](coefficient-form-projection-coefficient.md)
-- [Coefficient Differential Form Complex Map](coefficient-differential-form-complex-ma.md)
-- [Coefficient Differential Form Complex Map f](coefficient-differential-form-complex-ma-2.md)
-- [Symmetric Original Coefficient Chain Map tensor](symmetric-original-coefficient-chain-map.md)
-- [Coefficient Differential Form Chain Map coefficient](coefficient-differential-form-chain-map.md)
-- [Coefficient Differential Form Object Map](coefficient-differential-form-object-map.md)
-- [Coefficient Differential Form Homology Map coefficient](coefficient-differential-form-homology-m.md)
+- [Coefficient naturality of the form projection](coefficient-form-projection-coefficient.md)
+- [Maps between coefficient form complexes](coefficient-differential-form-complex-ma.md)
+- [The coefficient map in each form degree](coefficient-differential-form-complex-ma-2.md)
+- [The coefficient map on Hochschild tensor factors](symmetric-original-coefficient-chain-map.md)
+- [The coefficient naturality square of chain projections](coefficient-differential-form-chain-map.md)
+- [The map between coefficient form objects](coefficient-differential-form-object-map.md)
+- [The homology square for coefficient maps](coefficient-differential-form-homology-m.md)

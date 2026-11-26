@@ -1,4 +1,6 @@
-# To Two Sided Quotient Equiv
+# The two-sided ideal quotient equivalence
 
-The ring-congruence quotient by the two-sided ideal associated to `I` is
-canonically equivalent to the ordinary ideal quotient by `I`.
+Let `R` be an associative ring and `I : Ideal R` satisfy `I.IsTwoSided`. This is the ring
+equivalence `I.toTwoSided.ringCon.Quotient ≃+* R/I`, identifying the ring-congruence and
+ideal-quotient presentations. It sends the congruence class of `r : R` to its ideal quotient
+class `r mod I`.

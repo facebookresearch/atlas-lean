@@ -1,3 +1,4 @@
-# Principal Cotangent Map
+# The principal conormal multiplication map
 
-Multiplication by the original conormal generator over the actual quotient.
+For a commutative ring `B`, `g : B`, and `I = (g)`, this is the `B/I`-linear map `B/I → I/I²`
+given by `c ↦ c • [g]`, where `[g] = principalCotangentGenerator B g`.

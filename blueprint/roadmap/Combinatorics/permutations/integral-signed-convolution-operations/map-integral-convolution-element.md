@@ -1,3 +1,5 @@
-# Map integral Convolution Element
+# Coefficient maps preserve integral convolution
 
-A coefficient ring map preserves the original integral operation.
+For commutative rings `R,S`, a ring homomorphism `f : R →+* S`, and `n,m : ℕ`, the
+coefficient-wise group-ring map sends `integralConvolutionElement R n m` to
+`integralConvolutionElement S n m`.

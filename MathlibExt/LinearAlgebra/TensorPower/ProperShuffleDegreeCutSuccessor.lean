@@ -12,12 +12,14 @@ module
 public import MathlibExt.LinearAlgebra.TensorPower.ShuffleDegreeCutSuccessor
 
 /-!
-# Actual positive-cut successor sums
+# Successor formulas for both-positive shuffle cuts
 
-The original both-positive cut set in degree n+1 is genuinely Fin n.
-Native finite-sum first/last splitting therefore separates the actual
-endpoint cut (1,n+1) or (n+1,1) from the two corresponding successor-cut
-sums. No differential or convolution identity is supplied.
+A proper degree cut of n is a pair (p,q) with p+q=n and p,q>0. The cuts of n+1 are parametrized
+by Fin n using p-1. Increasing the first or second block defines successor maps. For an additive
+commutative monoid T, sums over cuts of n+2 split into the endpoint (1,n+1) and first-block
+successors, or into second-block successors and the endpoint (n+1,1).
+
+These index the both-positive shuffle relations of J.-L. Loday, Cyclic Homology, 2nd ed., §4.5.
 -/
 
 @[expose] public section
@@ -27,7 +29,10 @@ open scoped BigOperators
 
 namespace TensorPower
 
-/-- The original both-positive degree cuts are determined by first length minus one. -/
+/-- The finite coordinate of a both-positive degree cut.
+
+For n ≥ 0, the proper cuts (p,q) of n+1 with p,q>0 are equivalent to Fin n by (p,q) ↦ p-1.
+The inverse sends i to (i+1,n-i). -/
 def properShuffleDegreeCutPosition (n : ℕ) : ProperShuffleDegreeCut (n + 1) ≃ Fin n where
   toFun z := ⟨z.val.val.1 - 1, by
     have hp := z.property.1
@@ -59,7 +64,10 @@ def properShuffleDegreeCutPosition (n : ℕ) : ProperShuffleDegreeCut (n + 1) �
     change (i.val + 1) - 1 = i.val
     omega
 
-/-- The actual left endpoint both-positive cut in original degree n+2. -/
+/-- The first both-positive cut in degree n+2.
+
+For n ≥ 0, this proper degree cut is (1,n+1). Both block lengths are strictly positive and
+their sum is n+2. -/
 def firstProperDegreeCut (n : ℕ) : ProperShuffleDegreeCut (n + 2) :=
   by
     refine ⟨⟨(1, n + 1), ?_⟩, ?_, ?_⟩
@@ -70,7 +78,10 @@ def firstProperDegreeCut (n : ℕ) : ProperShuffleDegreeCut (n + 2) :=
     · change 0 < n + 1
       omega
 
-/-- The actual right endpoint both-positive cut in original degree n+2. -/
+/-- The last both-positive cut in degree n+2.
+
+For n ≥ 0, this proper degree cut is (n+1,1). Both block lengths are strictly positive and
+their sum is n+2. -/
 def lastProperDegreeCut (n : ℕ) : ProperShuffleDegreeCut (n + 2) :=
   by
     refine ⟨⟨(n + 1, 1), ?_⟩, ?_, ?_⟩
@@ -81,13 +92,19 @@ def lastProperDegreeCut (n : ℕ) : ProperShuffleDegreeCut (n + 2) :=
     · change 0 < (1 : ℕ)
       omega
 
-/-- The original left successor retains both actual positive blocks. -/
+/-- Increasing the first block of a proper cut.
+
+For a proper cut (p,q) of n, with p,q>0 and p+q=n, the left successor is (p+1,q), a proper
+cut of n+1. -/
 def leftSuccessorProperDegreeCut {n : ℕ} (z : ProperShuffleDegreeCut n) : ProperShuffleDegreeCut (n + 1) :=
   ⟨leftSuccessorDegreeCut z.val, by
     change 0 < z.val.val.1 + 1
     omega, z.property.2⟩
 
-/-- The original right successor retains both actual positive blocks. -/
+/-- Increasing the second block of a proper cut.
+
+For a proper cut (p,q) of n, with p,q>0 and p+q=n, the right successor is (p,q+1), a proper
+cut of n+1. -/
 def rightSuccessorProperDegreeCut {n : ℕ} (z : ProperShuffleDegreeCut n) : ProperShuffleDegreeCut (n + 1) :=
   ⟨rightSuccessorDegreeCut z.val, z.property.1, by
     change 0 < z.val.val.2 + 1
@@ -114,7 +131,10 @@ private theorem properPosition_symm_castSucc (n : ℕ) (i : Fin n) :
     have hi := i.isLt
     omega
 
-/-- The actual both-positive successor cut sum splits off the original first cut. -/
+/-- Splitting a proper-cut sum at the first endpoint.
+
+For an additive commutative monoid T and f on proper cuts of n+2, ∑cuts f = f(1,n+1) +
+∑(p,q) proper of n+1 f(p+1,q). This also covers n=0, when the successor-cut sum is empty. -/
 theorem sum_properDegreeCuts_left_successor {T : Type*} [AddCommMonoid T]
     (n : ℕ) (f : ProperShuffleDegreeCut (n + 2) → T) :
     (∑ z : ProperShuffleDegreeCut (n + 2), f z) =
@@ -130,7 +150,10 @@ theorem sum_properDegreeCuts_left_successor {T : Type*} [AddCommMonoid T]
   simp_rw [properPosition_symm_succ]
   rw [(properShuffleDegreeCutPosition n).symm.sum_comp (fun z => f (leftSuccessorProperDegreeCut z))]
 
-/-- The actual both-positive successor cut sum splits off the original last cut. -/
+/-- Splitting a proper-cut sum at the last endpoint.
+
+For an additive commutative monoid T and f on proper cuts of n+2, ∑cuts f = ∑(p,q) proper of
+n+1 f(p,q+1) + f(n+1,1). The sum uses only strictly positive block lengths. -/
 theorem sum_properDegreeCuts_right_successor {T : Type*} [AddCommMonoid T]
     (n : ℕ) (f : ProperShuffleDegreeCut (n + 2) → T) :
     (∑ z : ProperShuffleDegreeCut (n + 2), f z) =

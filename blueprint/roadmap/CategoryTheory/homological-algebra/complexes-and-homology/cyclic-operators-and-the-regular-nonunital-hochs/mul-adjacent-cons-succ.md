@@ -1,3 +1,5 @@
-# Mul Adjacent cons succ
+# Interior merging commutes with prepending a factor
 
-Merging a pair after the coefficient commutes with including the coefficient.
+For a type B with multiplication, m ∈ B and a : Fin(n+1) → B,
+merging the pair at position i+1 after prepending m equals
+cons(m, merge_i(a)), for i ∈ Fin n.

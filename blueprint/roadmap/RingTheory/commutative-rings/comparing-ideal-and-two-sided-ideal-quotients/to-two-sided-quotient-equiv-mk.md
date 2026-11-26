@@ -1,4 +1,4 @@
-# To Two Sided Quotient Equiv mk
+# The quotient equivalence preserves representatives
 
-`toTwoSidedQuotientEquiv` sends a ring-congruence quotient class to the
-ordinary ideal quotient class of the same representative.
+For an associative ring `R`, a two-sided ideal `I`, and `r : R`, `toTwoSidedQuotientEquiv I`
+sends the class of `r` in `I.toTwoSided.ringCon.Quotient` to `Ideal.Quotient.mk I r` in `R/I`.

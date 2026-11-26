@@ -1,3 +1,6 @@
-# Algebra Normalized Eulerian Chain Map
+# The normalized Hochschild chain endomorphism of one Eulerian weight
 
-The coefficient-fixed A-linear Eulerian chain map on the original normalized complex.
+The normalized Hochschild chain endomorphism of one Eulerian weight.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, weight i
+acts in degree n by ēₙ⁽ⁱ⁾ on the normalized coefficient tensor complex.

@@ -1,3 +1,7 @@
-# Enveloping Algebra
+# The enveloping algebra of a unital algebra
 
-The original enveloping algebra, retaining its opposite right coordinate.
+For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The enveloping algebra is the tensor product with the opposite right
+factor. Its multiplication on elementary tensors is
+(a ⊗ bᵐᵒᵖ)(c ⊗ dᵐᵒᵖ) = ac ⊗ (db)ᵐᵒᵖ.

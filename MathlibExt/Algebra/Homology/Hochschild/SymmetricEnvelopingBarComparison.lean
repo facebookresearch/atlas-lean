@@ -13,17 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.AdjacentBarCoefficientCompa
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricCoefficientMaps
 
 /-!
-# symmetric coefficients and the enveloping bar tensor
+# Symmetric coefficients in the enveloping-algebra bar comparison
 
-Only the canonical right action from the original A-module is added.
-The neutral comparison retains the original coefficient head, original
-ground tensor tails and the original Hochschild differential.
-Coefficient naturality uses the all-ground-ring A-linear maps;
-the comparison commutes with the original A-scalar maps as well.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. Give M the
+canonical right A-action and tensor the enveloping-algebra bar resolution with M over Aᵉ. The
+resulting complex is chain-isomorphic to the symmetric Hochschild complex. A degree-n
+representative m ⊗[Aᵉ] (a₀ ⊗ (a₁,…,aₙ₊₁)) maps to ((a₀aₙ₊₁) • m) ⊗ (a₁,…,aₙ). This comparison
+is natural in A-linear coefficient maps and respects A-scalars.
 
-No rationality, flatness, free coefficient, Small or desired comparison law
-is an input. The literal first-positive/full coefficient-ideal relations
-and higher Harrison/HKR statements remain separate from this raw comparison.
+For the enveloping-algebra description of Hochschild homology, see J.-L. Loday, Cyclic
+Homology, 2nd ed., Chapter 1.
 -/
 
 @[expose] public section
@@ -40,7 +39,11 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The coefficient tensor of the original bar with the original symmetric right action. -/
+/-- The enveloping bar tensor complex for a symmetric A-module.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, tensor the
+enveloping-algebra bar resolution with M over Aᵉ, using its canonical symmetric right action
+and retaining the ground tensor tails. -/
 def symmetricEnvelopingTensorComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ := by
   letI := opModule A M
   letI := actionsComm A M
@@ -48,7 +51,10 @@ def symmetricEnvelopingTensorComplex : ChainComplex (ModuleCat.{max u v w} k) �
   letI := kOpTower k A M
   exact AdjacentBar.coefficientTensorComplex k A M
 
-/-- The neutral bar comparison specializes to the original symmetric Hochschild complex. -/
+/-- The symmetric enveloping-bar tensor complex equals Hochschild chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, this chain
+isomorphism identifies symmetricEnvelopingTensorComplex with chainComplex(k,A,M). -/
 def symmetricEnvelopingTensorChainIso : symmetricEnvelopingTensorComplex k A M ≅ chainComplex k A M := by
   letI := opModule A M
   letI := actionsComm A M
@@ -56,7 +62,10 @@ def symmetricEnvelopingTensorChainIso : symmetricEnvelopingTensorComplex k A M �
   letI := kOpTower k A M
   exact AdjacentBar.coefficientTensorChainIso k A M
 
-/-- Both original outer scalars act on the original coefficient, in the original middle-word coordinates. -/
+/-- The endpoint coefficient formula for the symmetric enveloping comparison.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, m ⊗[Aᵉ] (a₀ ⊗
+tprod(a)) in degree n maps to ((a₀aₙ) • m) ⊗ tprod(init(a)), for a : Fin(n+1) → A. -/
 theorem symmetricEnvelopingTensorChainIso_mk_tprod (n : ℕ) (m : M) (a0 : A) (a : Fin (n + 1) → A) :
     letI := opModule A M
     letI := actionsComm A M
@@ -87,7 +96,10 @@ section CoefficientNaturality
 variable {N : Type w} [AddCommGroup N] [Module k N] [Module A N]
   [SMulCommClass k A N] [IsScalarTower k A N]
 
-/-- The balanced tensor coefficient map is the original A-linear coefficient map with its right action. -/
+/-- The A-linear coefficient arrow on the symmetric enveloping tensor complex.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+tensor the enveloping bar complex with f on its coefficient factor. -/
 def symmetricEnvelopingTensorComplexMap (f : M →ₗ[A] N) :
     symmetricEnvelopingTensorComplex k A M ⟶ symmetricEnvelopingTensorComplex k A N := by
   letI := opModule A M
@@ -104,7 +116,10 @@ def symmetricEnvelopingTensorComplexMap (f : M →ₗ[A] N) :
       change f (b.unop • m) = b.unop • f m
       exact f.map_smul b.unop m)
 
-/-- The original symmetric coefficient chain map, delegating the neutral native tensor map. -/
+/-- The ground-linear Hochschild chain map of an A-linear coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, its
+nth component is f ⊗ id on M ⊗[k] A⊗n. -/
 def symmetricOriginalCoefficientChainMap (f : M →ₗ[A] N) : chainComplex k A M ⟶ chainComplex k A N := by
   letI := opModule A M
   letI := actionsComm A M
@@ -120,14 +135,21 @@ def symmetricOriginalCoefficientChainMap (f : M →ₗ[A] N) : chainComplex k A 
       change f (b.unop • m) = b.unop • f m
       exact f.map_smul b.unop m)
 
-/-- The original A-linear coefficient component is retained exactly after ground restriction. -/
+/-- The restricted A-linear component of the symmetric coefficient chain map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+nth component is algebraCoefficientLevelMap(f,n) restricted to k. -/
 theorem symmetricOriginalCoefficientChainMap_f (f : M →ₗ[A] N) (n : ℕ) :
     ((symmetricOriginalCoefficientChainMap k A M f).f n).hom =
       (algebraCoefficientLevelMap k A f n).restrictScalars k := by
   rw [algebraCoefficientLevelMap_restrictScalars]
   rfl
 
-/-- The forward symmetric comparison is natural in original A-linear coefficient maps. -/
+/-- Forward enveloping-bar comparison is natural in symmetric coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+enveloping tensor f followed by the comparison equals the comparison followed by the
+Hochschild coefficient map. -/
 @[reassoc]
 theorem symmetricEnvelopingTensorChainIso_hom_naturality (f : M →ₗ[A] N) :
     symmetricEnvelopingTensorComplexMap k A M f ≫ (symmetricEnvelopingTensorChainIso k A N).hom =
@@ -146,7 +168,11 @@ theorem symmetricEnvelopingTensorChainIso_hom_naturality (f : M →ₗ[A] N) :
       change f (b.unop • m) = b.unop • f m
       exact f.map_smul b.unop m)
 
-/-- The inverse symmetric comparison is natural too. -/
+/-- Inverse enveloping-bar comparison is natural in symmetric coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+inverse comparison followed by enveloping tensor f equals the Hochschild coefficient map
+followed by the inverse comparison. -/
 @[reassoc]
 theorem symmetricEnvelopingTensorChainIso_inv_naturality (f : M →ₗ[A] N) :
     (symmetricEnvelopingTensorChainIso k A M).inv ≫ symmetricEnvelopingTensorComplexMap k A M f =
@@ -158,13 +184,18 @@ theorem symmetricEnvelopingTensorChainIso_inv_naturality (f : M →ₗ[A] N) :
 
 end CoefficientNaturality
 
-/-- The original A-scalar coefficient map on the tensor-of-bar complex. -/
+/-- Multiplication by an A-scalar on the symmetric enveloping tensor complex.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, a ∈ A acts on
+M and gives a chain endomorphism of symmetricEnvelopingTensorComplex. -/
 def symmetricEnvelopingTensorScalarMap (a : A) :
     symmetricEnvelopingTensorComplex k A M ⟶ symmetricEnvelopingTensorComplex k A M :=
   symmetricEnvelopingTensorComplexMap k A M (Algebra.lsmul A A M a)
 
-/-- The comparison preserves the original A-action, expressed by its
-original scalar coefficient maps; no transported coefficient action is chosen. -/
+/-- The enveloping comparison retains the coefficient A-scalar action.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, if x maps to
+y ∈ M ⊗[k] A⊗n, then symmetricEnvelopingTensorScalarMap(a)(x) maps to a • y. -/
 theorem symmetricEnvelopingTensorChainIso_scalar (a : A) (n : ℕ)
     (x : (symmetricEnvelopingTensorComplex k A M).X n) :
     let y : M ⊗[k] TensorPower k n A :=

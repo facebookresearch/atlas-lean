@@ -1,3 +1,5 @@
-# Cons Level Map coordinates
+# Level maps agree with full tensor-power maps under word coordinates
 
-The original tensor map is the native full tensor-power map in cons coordinates.
+For a commutative ring `k` and linear `f : M → M′`, the
+word identifications intertwine the level map with the map of
+`f` on all `n+1` tensor factors.

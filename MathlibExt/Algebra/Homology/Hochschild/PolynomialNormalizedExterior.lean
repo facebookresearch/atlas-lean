@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- Source proposal; Native elaboration is unexecuted. -/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialAntisymmetrization
@@ -15,13 +15,22 @@ public import MathlibExt.Algebra.Homology.Hochschild.Normalized
 public import MathlibExt.Algebra.Homology.HomologicalComplex.ConcreteCycleClass
 
 /-!
-# Polynomial exterior classes under normalization
+# Polynomial exterior classes under Hochschild normalization
 
-The signed polynomial resolution comparison and simplicial
-normalization identify coefficient exterior classes with normalized
-Hochschild homology. The representative formulas retain the signed
-antisymmetrization over arbitrary commutative ground rings and
-arbitrary symmetric coefficient modules.
+Let k be a commutative ring, A = k[σ] and M a compatible A-module with its symmetric right
+action. A free exterior element x ∈ M ⊗_k ∧ⁿₖ(⊕ᵢk·eᵢ) gives a signed Hochschild tensor
+representative through the diagonal-to-bar chain map. The diagonal coefficient differential is
+zero, so this representative is a cycle.
+
+Normalization applies A → A/(k·1) to each tail factor. It sends signed representatives to
+normalized cycles and induces homology isomorphisms in every natural-number degree. The
+normalized exterior class is the homology class of that normalized signed tensor, and the
+normalized polynomial form coordinates recover the coefficient exterior differential form of x.
+These formulas hold for arbitrary variable sets and symmetric coefficient modules over any
+commutative k.
+
+For normalized Hochschild chains and their homology, see J.-L. Loday, Cyclic Homology, second
+edition, §1.1.
 -/
 
 @[expose] public section
@@ -47,13 +56,20 @@ local instance : SMulCommClass A Aᵐᵒᵖ M := Symmetric.actionsComm A M
 local instance : SMulCommClass k Aᵐᵒᵖ M := Symmetric.kOpComm k A M
 local instance : IsScalarTower k Aᵐᵒᵖ M := Symmetric.kOpTower k A M
 
-/-- The original signed comparison representative of an original free exterior coefficient. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. For n : ℕ and x ∈ M ⊗[k]
+∧ⁿₖV, take the inverse free coordinates of x in the diagonal coefficient term and apply the
+degree-n antisymmetric coefficient map. This defines polynomialSignedRepresentative in M ⊗[k]
+A^{⊗n}; on a variable wedge it is the full signed permutation sum. -/
 def polynomialSignedRepresentative (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     M ⊗[k] TensorPower k n A :=
   ((polynomialAntisymmetricCoefficientMap k σ M).f n).hom
     ((coefficientFreeExteriorEquiv k σ M n).symm x)
 
-/-- The representative is an cycle of the original raw Hochschild complex in every degree. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. For every n : ℕ and x ∈ M
+⊗[k] ∧ⁿₖV, the Hochschild differential vanishes on polynomialSignedRepresentative k σ M n x. The
+diagonal coefficient differential is zero and the antisymmetrization map is a chain map. -/
 theorem polynomialSignedRepresentative_cycle (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     ((Symmetric.chainComplex k A M).sc n).g (polynomialSignedRepresentative k σ M n x) = 0 := by
   let C := coefficientComplex k σ M
@@ -69,7 +85,10 @@ theorem polynomialSignedRepresentative_cycle (n : ℕ) (x : M ⊗[k] (⋀[k]^n V
   change (H.d n j).hom ((ε.f n).hom y) = 0
   exact h.trans ((congrArg (ε.f j).hom hz).trans (ε.f j).hom.map_zero)
 
-/-- The signed exterior class is the native class of its literal original representative. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. For n : ℕ and x ∈ M ⊗[k]
+∧ⁿₖV, polynomialAntisymmetricExteriorClass k σ M n x equals the Hochschild homology class of
+polynomialSignedRepresentative k σ M n x, using its cycle equation. -/
 theorem polynomialAntisymmetricExteriorClass_eq_cycle
     (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     polynomialAntisymmetricExteriorClass k σ M n x =
@@ -94,12 +113,19 @@ theorem polynomialAntisymmetricExteriorClass_eq_cycle
     HomologicalComplex.moduleCatCycleClass H n ((ε.f n).hom y) _
   exact (congrArg (HomologicalComplex.homologyMap ε n).hom hClass).trans hMap
 
-/-- Native normalization of the original signed polynomial representative. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. The normalized
+representative of x ∈ M ⊗[k] ∧ⁿₖV is the image of polynomialSignedRepresentative under the
+degree-n Hochschild normalization projection. The projection applies q : A → A/(k·1) to every
+tail factor and leaves the coefficient unchanged. -/
 def normalizedPolynomialSignedRepresentative (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     (Symmetric.normalizedChainComplex k A M).X n :=
   ((Symmetric.normalizationProjection k A M).f n).hom (polynomialSignedRepresentative k σ M n x)
 
-/-- The normalized representative retains the complete original cycle equation. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. For each n : ℕ and x ∈ M
+⊗[k] ∧ⁿₖV, the normalized Hochschild differential vanishes on
+normalizedPolynomialSignedRepresentative k σ M n x. -/
 theorem normalizedPolynomialSignedRepresentative_cycle (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     ((Symmetric.normalizedChainComplex k A M).sc n).g
       (normalizedPolynomialSignedRepresentative k σ M n x) = 0 := by
@@ -114,13 +140,19 @@ theorem normalizedPolynomialSignedRepresentative_cycle (n : ℕ) (x : M ⊗[k] (
   change (L.d n j).hom ((ε.f n).hom y) = 0
   exact h.trans ((congrArg (ε.f j).hom hz).trans (ε.f j).hom.map_zero)
 
-/-- The signed exterior class in original normalized Hochschild homology. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. Compose the signed
+exterior class map M ⊗[k] ∧ⁿₖV → HHₙ(A,M) with the homology map of normalization. This defines
+normalizedPolynomialExteriorClass in the nth normalized Hochschild homology. -/
 def normalizedPolynomialExteriorClass (n : ℕ) :
     M ⊗[k] (⋀[k]^n V) →ₗ[k] (Symmetric.normalizedChainComplex k A M).homology n :=
   (HomologicalComplex.homologyMap (Symmetric.normalizationProjection k A M) n).hom.comp
     (polynomialAntisymmetricExteriorClass k σ M n)
 
-/-- The normalized class is the native class of the literal normalized signed tensor. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. For n : ℕ and x ∈ M ⊗[k]
+∧ⁿₖV, normalizedPolynomialExteriorClass k σ M n x equals the normalized Hochschild class of
+normalizedPolynomialSignedRepresentative k σ M n x. -/
 theorem normalizedPolynomialExteriorClass_eq_cycle
     (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     normalizedPolynomialExteriorClass k σ M n x =
@@ -135,7 +167,10 @@ theorem normalizedPolynomialExteriorClass_eq_cycle
       (polynomialAntisymmetricExteriorClass k σ M n x) = _
   exact (congrArg (HomologicalComplex.homologyMap ε n).hom hClass).trans hMap
 
-/-- The canonical native normalization homology comparison on the original endpoints. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. The normalization
+projection gives an isomorphism between raw and normalized Hochschild homology in every degree n
+: ℕ, because the projection is a quasi-isomorphism. -/
 def polynomialNormalizationHomologyIso (n : ℕ) :
     (Symmetric.chainComplex k A M).homology n ≅
       (Symmetric.normalizedChainComplex k A M).homology n := by
@@ -144,18 +179,29 @@ def polynomialNormalizationHomologyIso (n : ℕ) :
     infer_instance
   exact _root_.isoOfQuasiIsoAt (Symmetric.normalizationProjection k A M) n
 
-/-- Its forward map is precisely homology of the original factorwise quotient projection. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. In degree n : ℕ, the
+forward map of polynomialNormalizationHomologyIso equals the homology map induced by
+Symmetric.normalizationProjection k A M. -/
 theorem polynomialNormalizationHomologyIso_hom (n : ℕ) :
     (polynomialNormalizationHomologyIso k σ M n).hom =
       HomologicalComplex.homologyMap (Symmetric.normalizationProjection k A M) n := rfl
 
-/-- Actual normalized polynomial Hochschild homology has the original cotangent exterior coordinates. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. In degree n : ℕ, first
+apply the inverse normalization homology comparison, then the polynomial diagonal
+differential-form comparison. This gives a k-linear equivalence Hₙ(C̄(A,M)) ≅ M ⊗_A
+∧ⁿ_AΩ¹_{A/k}. -/
 def normalizedPolynomialDifferentialFormEquiv (n : ℕ) :
     (Symmetric.normalizedChainComplex k A M).homology n ≃ₗ[k] M ⊗[A] (⋀[A]^n Ω) :=
   (polynomialNormalizationHomologyIso k σ M n).toLinearEquiv.symm.trans
     (symmetricHochschildDifferentialFormEquiv k σ M n)
 
-/-- The normalized signed class has its original exterior differential form coordinates. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Let M be an A-module with
+compatible k-action and symmetric right action, and put V = ⊕ᵢ∈σ k·eᵢ. For x ∈ M ⊗[k] ∧ⁿₖV,
+normalizedPolynomialDifferentialFormEquiv sends normalizedPolynomialExteriorClass k σ M n x to
+the polynomial cotangent exterior coordinate of x. In particular eᵢ is replaced by dXᵢ and the
+coefficient is retained. -/
 theorem normalizedPolynomialExteriorClass_coordinates
     (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     normalizedPolynomialDifferentialFormEquiv k σ M n

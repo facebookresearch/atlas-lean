@@ -14,16 +14,15 @@ public import MathlibExt.LinearAlgebra.TensorPower.Cons
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 
 /-!
-# Actual antisymmetrization between exterior and tensor powers
+# Antisymmetrization and the factorial identity
 
-The forward map sends an exterior word to the sum of all tensor-place
-permutations with their integer signs. The tensor-to-exterior map uses the
-native alternating universal property. Their composite is multiplication
-by `n!`, over every commutative ring and for every module.
+Let k be a commutative ring and V a k-module. Write Aₙ : ⋀ⁿV → V⊗n for the signed lift of an
+exterior word, and Qₙ : V⊗n → ⋀ⁿV for the exterior projection. Then Aₙ(v₁ ∧ ⋯ ∧ vₙ) = ∑σ sign(σ)
+· ⊗ᵢvσ(i), and Qₙ ∘ Aₙ = n! · id. These formulas use integer signs and hold in every
+characteristic. Both maps commute with k-linear maps of V.
 
-No factorial is inverted in this owner. In particular the factorial law
-does not assert an isomorphism in positive characteristic. All maps and
-their naturality laws use the original tensor and exterior objects.
+For the alternating universal property and these signed sums, see N. Bourbaki, Algebra I,
+Chapter III (multilinear algebra).
 -/
 
 @[expose] public section
@@ -43,16 +42,25 @@ private theorem linearMap_sign_smul {M N : Type*} [AddCommGroup M] [AddCommGroup
   change f ((Equiv.Perm.sign π : ℤ) • m) = (Equiv.Perm.sign π : ℤ) • f m
   exact map_zsmul f _ _
 
-/-- Native signed alternatization, descended through the actual exterior power. -/
+/-- The signed lift from exterior powers to tensor powers.
+
+For a commutative ring k, a k-module V and n ≥ 0, this k-linear map Aₙ : ⋀ⁿV → V⊗n sends v₁
+∧ ⋯ ∧ vₙ to ∑σ∈Sₙ sign(σ) · ⊗ᵢvσ(i). The signs act through ℤ → k. -/
 def exteriorAntisymmetrization (n : ℕ) : (⋀[k]^n V) →ₗ[k] TensorPower k n V :=
   exteriorPower.alternatingMapLinearEquiv
     (MultilinearMap.alternatization (PiTensorProduct.tprod k))
 
-/-- The actual exterior word map on the native tensor power. -/
+/-- The exterior projection of a tensor power.
+
+For a commutative ring k and a k-module V, Qₙ : V⊗n → ⋀ⁿV is the k-linear map taking ⊗ᵢvᵢ to
+v₁ ∧ ⋯ ∧ vₙ. -/
 def exteriorProjection (n : ℕ) : TensorPower k n V →ₗ[k] (⋀[k]^n V) :=
   PiTensorProduct.lift (exteriorPower.ιMulti k n).toMultilinearMap
 
-/-- Every original exterior word maps to its complete signed permutation sum. -/
+/-- The signed tensor formula for an exterior word.
+
+For a commutative ring k, a k-module V and a : Fin n → V, Aₙ(ιₙ(a)) = ∑σ∈Sₙ sign(σ) ·
+tprod(a ∘ σ), where ιₙ is the exterior word map. This sum is integral. -/
 theorem exteriorAntisymmetrization_ιMulti (n : ℕ) (a : Fin n → V) :
     exteriorAntisymmetrization k V n (exteriorPower.ιMulti k n a) =
       ∑ π : Equiv.Perm (Fin n), Equiv.Perm.sign π • PiTensorProduct.tprod k (a ∘ π) := by
@@ -60,19 +68,27 @@ theorem exteriorAntisymmetrization_ιMulti (n : ℕ) (a : Fin n → V) :
     MultilinearMap.alternatization_apply]
   rfl
 
-/-- The projection takes an original pure tensor to its original exterior word. -/
+/-- Projection of a pure tensor to its exterior word.
+
+For a commutative ring k, a k-module V and a : Fin n → V, Qₙ(tprod(a)) = ιₙ(a) in ⋀ⁿV. -/
 @[simp]
 theorem exteriorProjection_tprod (n : ℕ) (a : Fin n → V) :
     exteriorProjection k V n (PiTensorProduct.tprod k a) = exteriorPower.ιMulti k n a :=
   PiTensorProduct.lift.tprod _
 
-/-- Antisymmetrization annihilates repeated input vectors, including in characteristic two. -/
+/-- Vanishing when two exterior entries agree.
+
+For a commutative ring k, a k-module V and a : Fin n → V, if a i = a j with i ≠ j, then
+Aₙ(ιₙ(a)) = 0. This follows from alternation and also holds in characteristic two. -/
 theorem exteriorAntisymmetrization_ιMulti_eq_zero
     (n : ℕ) (a : Fin n → V) (i j : Fin n) (h : a i = a j) (hij : i ≠ j) :
     exteriorAntisymmetrization k V n (exteriorPower.ιMulti k n a) = 0 := by
   rw [(exteriorPower.ιMulti k n).map_eq_zero_of_eq a h hij, map_zero]
 
-/-- Permuting an original exterior input retains its actual integer permutation sign. -/
+/-- The permutation sign of an antisymmetrized exterior word.
+
+For a commutative ring k, a k-module V, a : Fin n → V and σ ∈ Sₙ, Aₙ(ιₙ(a ∘ σ)) = sign(σ) ·
+Aₙ(ιₙ(a)). The sign is an integer scalar. -/
 theorem exteriorAntisymmetrization_ιMulti_perm
     (n : ℕ) (a : Fin n → V) (π : Equiv.Perm (Fin n)) :
     exteriorAntisymmetrization k V n (exteriorPower.ιMulti k n (a ∘ π)) =
@@ -85,8 +101,10 @@ section UniversalAlternatingMap
 
 variable {N : Type w} [AddCommGroup N] [Module k N]
 
-/-- Evaluating an actual alternating tensor functional after antisymmetrization yields
-exactly the factorial multiple of its exterior universal map. -/
+/-- The factorial identity for an alternating functional.
+
+Let k be a commutative ring, V and N k-modules, and f : Vⁿ → N an alternating k-multilinear
+map. The tensor lift of f composed with Aₙ equals n! times the induced map ⋀ⁿV → N. -/
 theorem lift_alternating_comp_exteriorAntisymmetrization
     (n : ℕ) (a : V [⋀^Fin n]→ₗ[k] N) :
     (PiTensorProduct.lift a.toMultilinearMap).comp (exteriorAntisymmetrization k V n) =
@@ -108,15 +126,19 @@ theorem lift_alternating_comp_exteriorAntisymmetrization
 
 end UniversalAlternatingMap
 
-/-- The actual tensor projection composed with antisymmetrization is `n!`, with no
-characteristic, freeness, flatness or finiteness hypothesis on the coefficient module. -/
+/-- The exterior projection of antisymmetrization is multiplication by n!.
+
+For a commutative ring k and any k-module V, Qₙ ∘ Aₙ = n! · id on ⋀ⁿV. The formula requires
+no invertibility of n! in k. -/
 theorem exteriorProjection_comp_exteriorAntisymmetrization (n : ℕ) :
     (exteriorProjection k V n).comp (exteriorAntisymmetrization k V n) =
       n.factorial • (LinearMap.id : (⋀[k]^n V) →ₗ[k] (⋀[k]^n V)) := by
   simpa only [exteriorProjection, exteriorPower.alternatingMapLinearEquiv_ιMulti] using
     lift_alternating_comp_exteriorAntisymmetrization k V n (exteriorPower.ιMulti k n)
 
-/-- The factorial law holds on every original exterior element. -/
+/-- The factorial identity on an exterior element.
+
+For a commutative ring k, a k-module V and x ∈ ⋀ⁿV, Qₙ(Aₙ(x)) = n! · x. -/
 theorem exteriorProjection_exteriorAntisymmetrization (n : ℕ) (x : ⋀[k]^n V) :
     exteriorProjection k V n (exteriorAntisymmetrization k V n x) = n.factorial • x :=
   DFunLike.congr_fun (exteriorProjection_comp_exteriorAntisymmetrization k V n) x
@@ -125,8 +147,10 @@ section Naturality
 
 variable {W : Type w} [AddCommGroup W] [Module k W]
 
-/-- Applying the original linear map to every tensor coordinate commutes with
-the complete signed antisymmetrization. -/
+/-- Naturality of the signed exterior lift.
+
+For a commutative ring k and a k-linear map f : V → W, the factorwise map f⊗n satisfies f⊗n
+∘ Aₙ,V = Aₙ,W ∘ ⋀ⁿf. The modules V and W may lie in different universes. -/
 theorem exteriorAntisymmetrization_naturality (f : V →ₗ[k] W) (n : ℕ) :
     (PiTensorProduct.map (fun _ : Fin n => f)).comp (exteriorAntisymmetrization k V n) =
       (exteriorAntisymmetrization k W n).comp (exteriorPower.map n f) := by
@@ -138,8 +162,10 @@ theorem exteriorAntisymmetrization_naturality (f : V →ₗ[k] W) (n : ℕ) :
     PiTensorProduct.map_tprod]
   rfl
 
-/-- The original tensor-to-exterior projection is natural for arbitrary original
-linear maps across independent carrier universes. -/
+/-- Naturality of the exterior projection.
+
+For a commutative ring k and a k-linear map f : V → W, Qₙ,W ∘ f⊗n = ⋀ⁿf ∘ Qₙ,V. Here f⊗n
+applies f to each tensor factor. -/
 theorem exteriorProjection_naturality (f : V →ₗ[k] W) (n : ℕ) :
     (exteriorProjection k W n).comp (PiTensorProduct.map (fun _ : Fin n => f)) =
       (exteriorPower.map n f).comp (exteriorProjection k V n) := by
@@ -152,7 +178,10 @@ theorem exteriorProjection_naturality (f : V →ₗ[k] W) (n : ℕ) :
 
 end Naturality
 
-/-- In degree zero the original antisymmetric word is the original empty tensor unit. -/
+/-- Antisymmetrization of an empty exterior word.
+
+For a commutative ring k and a k-module V, the degree-zero map sends ι₀(a) to tprod(a), for
+the unique empty family a : Fin 0 → V. -/
 theorem exteriorAntisymmetrization_zero_ιMulti (a : Fin 0 → V) :
     exteriorAntisymmetrization k V 0 (exteriorPower.ιMulti k 0 a) =
       PiTensorProduct.tprod k a := by
@@ -165,7 +194,10 @@ theorem exteriorAntisymmetrization_zero_ιMulti (a : Fin 0 → V) :
   rw [hid, Equiv.Perm.sign_one, one_smul]
   exact congrArg (PiTensorProduct.tprod k) (by funext i; exact Fin.elim0 i)
 
-/-- The actual degree-zero tensor and exterior units are identified. -/
+/-- The degree-zero scalar coordinate of antisymmetrization.
+
+For a commutative ring k and a k-module V, identifying both ⋀⁰V and V⊗0 with k identifies A₀
+with the identity map of k. -/
 theorem exteriorAntisymmetrization_zero_coordinate :
     (zeroEquiv k V).toLinearMap.comp (exteriorAntisymmetrization k V 0) =
       (exteriorPower.zeroEquiv k V).toLinearMap := by

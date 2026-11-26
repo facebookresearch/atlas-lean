@@ -1,3 +1,6 @@
-# Connes Boundary With zero tprod
+# The two positive degree-zero endpoint terms
 
-Degree zero of the 2.1.7.1 operator has the verified plus sign.
+Let k be a commutative ring and A a nonunital associative ring
+with a k-module structure. Put C_n = A ⊗[k] A^{⊗n}.
+For e,a ∈ A, the degree-zero operator has value
+B_{e,0}(a) = e ⊗ a + a ⊗ e under the empty-tensor coordinates.

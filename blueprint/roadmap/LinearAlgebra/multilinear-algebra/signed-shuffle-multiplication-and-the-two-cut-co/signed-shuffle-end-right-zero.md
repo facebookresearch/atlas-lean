@@ -1,3 +1,6 @@
-# Signed Shuffle End right zero
+# Signed shuffle with an empty second block is identity
 
-The original right unit shuffle gives the actual identity tail endomorphism.
+Let `k` be a commutative ring and `V` a `k`-module.
+Write `Sh(p,q)` for permutations that place two ordered blocks
+of lengths `p,q`, and `ε(s)` for the integer sign of the shuffle. The signed shuffle endomorphism `sh_(n,0)` is the identity
+of `V^⊗n`, since there is only one shuffle with an empty second block.

@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- UNEXECUTED source proposal. Original A-linear carriers and boundaries. -/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianBoundary
@@ -16,12 +16,14 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianAlgebraLev
 /-!
 # A-linear raw and normalized Eulerian chain maps
 
-The original coefficient boundary square makes the raw
-Eulerian operators chain maps. Surjectivity of the original normalization
-and its permutation and boundary squares give the original normalized
-boundary square. These maps retain the coefficient-head A-action and only
-the original ground-module quotient tails. No section or homotopy
-commutation is assumed.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module. The
+degree-n coefficient Eulerian projectors eₙ⁽ⁱ⁾ commute with the Hochschild boundary, so each
+weight defines an A-linear chain endomorphism. They are orthogonal and sum to the identity in
+each degree. Normalization with ground tails A/(k·1) intertwines the raw and normalized
+operators. Their zero-plus-first sum pₙ=eₙ⁽⁰⁾+eₙ⁽¹⁾ is also a chain projector.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for the rational Hodge decomposition of
+commutative Hochschild chains.
 -/
 
 @[expose] public section
@@ -39,7 +41,10 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- Finite completeness of the A-linear raw Eulerian operators. -/
+/-- The raw A-linear Eulerian operators sum to the identity.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, ∑ᵢ₌₀ⁿ
+eₙ⁽ⁱ⁾ = id on M ⊗[k] A⊗n. -/
 theorem algebraEulerianOperator_sum (n : ℕ) :
     (∑ i : Fin (n + 1), algebraEulerianOperator k A M n i.val) = LinearMap.id := by
   classical
@@ -51,7 +56,10 @@ theorem algebraEulerianOperator_sum (n : ℕ) :
   have h := DFunLike.congr_fun (coefficientEulerian_projector_laws k A M n).1 x
   simpa only [LinearMap.sum_apply, LinearMap.id_apply, hi] using h
 
-/-- Actual A-linear orthogonality is inherited from the original rational representation. -/
+/-- Orthogonality of raw A-linear Eulerian weights.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾ ∘
+eₙ⁽ʲ⁾ is eₙ⁽ⁱ⁾ when i=j and zero otherwise. -/
 theorem algebraEulerianOperator_comp (n i j : ℕ) :
     (algebraEulerianOperator k A M n i).comp (algebraEulerianOperator k A M n j) =
       if i = j then algebraEulerianOperator k A M n i else 0 := by
@@ -64,14 +72,20 @@ theorem algebraEulerianOperator_comp (n i j : ℕ) :
       LinearMap.restrictScalars_zero, algebraEulerianOperator_restrictScalars]
     simpa only [if_neg hij] using (coefficientEulerian_projector_laws k A M n).2 i j
 
-/-- The original A-linear raw family has its original finite support. -/
+/-- Raw algebra-linear Eulerian weights above degree n vanish.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾=0
+whenever n<i. -/
 theorem algebraEulerianOperator_outside (n i : ℕ) (hi : n < i) :
     algebraEulerianOperator k A M n i = 0 := by
   apply LinearMap.restrictScalars_injective k
   simpa only [algebraEulerianOperator_restrictScalars, LinearMap.restrictScalars_zero] using
     coefficientEulerian_outside k A M n i hi
 
-/-- The normalized quotient-tail operators have the same original finite completeness. -/
+/-- The normalized A-linear Eulerian weights sum to the identity.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, ∑ᵢ₌₀ⁿ
+ēₙ⁽ⁱ⁾ = id on M ⊗[k] (A/(k·1))⊗n. -/
 theorem algebraNormalizedEulerianOperator_sum (n : ℕ) :
     (∑ i : Fin (n + 1), algebraNormalizedEulerianOperator k A M n i.val) = LinearMap.id := by
   classical
@@ -87,7 +101,10 @@ theorem algebraNormalizedEulerianOperator_sum (n : ℕ) :
     DFunLike.congr_fun (algebraNormalizedEulerianOperator_restrictScalars k A M n i) x
   simpa only [LinearMap.sum_apply, LinearMap.id_apply, hi] using DFunLike.congr_fun h x
 
-/-- The original normalized coefficient representation gives orthogonal projectors. -/
+/-- Orthogonality of normalized A-linear Eulerian weights.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, ēₙ⁽ⁱ⁾ ∘
+ēₙ⁽ʲ⁾ is ēₙ⁽ⁱ⁾ when i=j and zero otherwise. -/
 theorem algebraNormalizedEulerianOperator_comp (n i j : ℕ) :
     (algebraNormalizedEulerianOperator k A M n i).comp
         (algebraNormalizedEulerianOperator k A M n j) =
@@ -106,14 +123,20 @@ theorem algebraNormalizedEulerianOperator_comp (n i j : ℕ) :
     change ρ (Equiv.Perm.eulerianElement n i) * ρ (Equiv.Perm.eulerianElement n j) = 0
     rw [← map_mul, (Equiv.Perm.eulerianElement_projector_laws n).2 i j, if_neg hij, map_zero]
 
-/-- The normalized family vanishes above its original tensor degree. -/
+/-- Normalized algebra-linear Eulerian weights above degree n vanish.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, ēₙ⁽ⁱ⁾=0
+whenever n<i. -/
 theorem algebraNormalizedEulerianOperator_outside (n i : ℕ) (hi : n < i) :
     algebraNormalizedEulerianOperator k A M n i = 0 := by
   apply LinearMap.restrictScalars_injective k
   simp only [algebraNormalizedEulerianOperator_restrictScalars, LinearMap.restrictScalars_zero,
     Equiv.Perm.eulerianElement_outside n i hi, map_zero]
 
-/-- The coefficient boundary square is also the original A-linear boundary square. -/
+/-- The raw A-linear Eulerian boundary square.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, bₙ ∘
+eₙ₊₁⁽ⁱ⁾ = eₙ⁽ⁱ⁾ ∘ bₙ, with bₙ mapping degree n+1 to n. -/
 theorem algebraEulerianOperator_boundary (n i : ℕ) :
     (algebraBoundary k A M n).comp (algebraEulerianOperator k A M (n + 1) i) =
       (algebraEulerianOperator k A M n i).comp (algebraBoundary k A M n) := by
@@ -124,8 +147,10 @@ theorem algebraEulerianOperator_boundary (n i : ℕ) :
   apply LinearMap.restrictScalars_injective k
   simpa only [LinearMap.restrictScalars_comp, algebraEulerianOperator_restrictScalars] using h
 
-/-- The normalized operators commute with the original normalized
-boundary by surjective original normalization and the raw square. -/
+/-- The normalized A-linear Eulerian boundary square.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+normalized boundary satisfies b̄ₙ ∘ ēₙ₊₁⁽ⁱ⁾ = ēₙ⁽ⁱ⁾ ∘ b̄ₙ. -/
 theorem algebraNormalizedEulerianOperator_boundary (n i : ℕ) :
     (algebraNormalizedBoundary k A M n).comp (algebraNormalizedEulerianOperator k A M (n + 1) i) =
       (algebraNormalizedEulerianOperator k A M n i).comp (algebraNormalizedBoundary k A M n) := by
@@ -148,7 +173,11 @@ theorem algebraNormalizedEulerianOperator_boundary (n i : ℕ) :
   simp only [LinearMap.comp_apply] at hs hb ht
   rw [← hs, hq, hb, ht, ← hq]
 
-/-- The coefficient-fixed A-linear Eulerian chain map on the original raw complex. -/
+/-- The raw Hochschild chain endomorphism of one Eulerian weight.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, weight i
+acts in chain degree n by algebraEulerianOperator(n,i), giving an endomorphism of
+algebraRawComplex. -/
 def algebraEulerianChainMap (i : ℕ) : algebraRawComplex k A M ⟶ algebraRawComplex k A M :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (algebraEulerianOperator k A M n i)) (by
     intro n
@@ -163,11 +192,17 @@ def algebraEulerianChainMap (i : ℕ) : algebraRawComplex k A M ⟶ algebraRawCo
     exact congrArg (fun f : M ⊗[k] TensorPower k (n + 1) A →ₗ[A]
       M ⊗[k] TensorPower k n A => f x) (algebraEulerianOperator_boundary k A M n i))
 
-/-- The original raw coefficient permutation value is retained in every chain degree. -/
+/-- The degree-n component of the raw Eulerian chain map.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the nth
+component of algebraEulerianChainMap(i) is eₙ⁽ⁱ⁾. -/
 theorem algebraEulerianChainMap_f (n i : ℕ) :
     ((algebraEulerianChainMap k A M i).f n).hom = algebraEulerianOperator k A M n i := rfl
 
-/-- The coefficient-fixed A-linear Eulerian chain map on the original normalized complex. -/
+/-- The normalized Hochschild chain endomorphism of one Eulerian weight.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, weight i
+acts in degree n by ēₙ⁽ⁱ⁾ on the normalized coefficient tensor complex. -/
 def algebraNormalizedEulerianChainMap (i : ℕ) :
     algebraNormalizedChainComplex k A M ⟶ algebraNormalizedChainComplex k A M :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (algebraNormalizedEulerianOperator k A M n i)) (by
@@ -185,12 +220,19 @@ def algebraNormalizedEulerianChainMap (i : ℕ) :
       M ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A) => f x)
         (algebraNormalizedEulerianOperator_boundary k A M n i))
 
-/-- The original normalized coefficient permutation value is retained in every chain degree. -/
+/-- The component of the normalized Eulerian chain endomorphism.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the nth
+component of algebraNormalizedEulerianChainMap(i) is algebraNormalizedEulerianOperator(n,i). -/
 theorem algebraNormalizedEulerianChainMap_f (n i : ℕ) :
     ((algebraNormalizedEulerianChainMap k A M i).f n).hom =
       algebraNormalizedEulerianOperator k A M n i := rfl
 
-/-- The A-linear original normalization commutes with each Eulerian chain map. -/
+/-- The normalization chain map intertwines raw and normalized Eulerian weights.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+normalization followed by the normalized weight-i map equals the raw weight-i map followed by
+normalization. -/
 @[reassoc]
 theorem algebraNormalizationProjection_eulerian (i : ℕ) :
     algebraNormalizationProjection k A M ≫ algebraNormalizedEulerianChainMap k A M i =
@@ -202,7 +244,10 @@ theorem algebraNormalizationProjection_eulerian (i : ℕ) :
     (algebraNormalizationLevelMap k A M n).comp (algebraEulerianOperator k A M n i)
   exact (algebraNormalizationLevelMap_eulerian k A M n i).symm
 
-/-- The raw Eulerian chain maps are orthogonal idempotents. -/
+/-- Orthogonality of raw Eulerian chain endomorphisms.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+chain maps of weights i and j compose to the weight-i map when i=j and to zero otherwise. -/
 theorem algebraEulerianChainMap_comp (i j : ℕ) :
     algebraEulerianChainMap k A M i ≫ algebraEulerianChainMap k A M j =
       if i = j then algebraEulerianChainMap k A M i else 0 := by
@@ -222,7 +267,11 @@ theorem algebraEulerianChainMap_comp (i j : ℕ) :
     change (algebraEulerianOperator k A M n j).comp (algebraEulerianOperator k A M n i) = 0
     exact (algebraEulerianOperator_comp k A M n j i).trans (if_neg (Ne.symm hij))
 
-/-- The normalized Eulerian chain maps are orthogonal idempotents. -/
+/-- Orthogonality of normalized Eulerian chain endomorphisms.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+normalized chain maps of weights i and j compose to the weight-i map when i=j and to zero
+otherwise. -/
 theorem algebraNormalizedEulerianChainMap_comp (i j : ℕ) :
     algebraNormalizedEulerianChainMap k A M i ≫ algebraNormalizedEulerianChainMap k A M j =
       if i = j then algebraNormalizedEulerianChainMap k A M i else 0 := by
@@ -242,25 +291,41 @@ theorem algebraNormalizedEulerianChainMap_comp (i j : ℕ) :
     change (algebraNormalizedEulerianOperator k A M n j).comp (algebraNormalizedEulerianOperator k A M n i) = 0
     exact (algebraNormalizedEulerianOperator_comp k A M n j i).trans (if_neg (Ne.symm hij))
 
-/-- The original full first projector retains degree zero by adding weights zero and one. -/
+/-- The raw zero-plus-first Eulerian chain projector.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, sum the
+chain maps of weights zero and one; its degree-n component is pₙ=eₙ⁽⁰⁾+eₙ⁽¹⁾. -/
 def algebraFirstEulerianChainMap : algebraRawComplex k A M ⟶ algebraRawComplex k A M :=
   algebraEulerianChainMap k A M 0 + algebraEulerianChainMap k A M 1
 
-/-- The normalized zero-plus-first projector has the original quotient tails. -/
+/-- The normalized zero-plus-first Eulerian chain projector.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+degree-n component is p̄ₙ=ēₙ⁽⁰⁾+ēₙ⁽¹⁾. -/
 def algebraNormalizedFirstEulerianChainMap :
     algebraNormalizedChainComplex k A M ⟶ algebraNormalizedChainComplex k A M :=
   algebraNormalizedEulerianChainMap k A M 0 + algebraNormalizedEulerianChainMap k A M 1
 
-/-- The raw first chain map keeps the original first operator at every level. -/
+/-- The raw lowest-weight chain projector has component pₙ.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the nth
+component of algebraFirstEulerianChainMap is algebraFirstEulerianOperator(n). -/
 theorem algebraFirstEulerianChainMap_f (n : ℕ) :
     ((algebraFirstEulerianChainMap k A M).f n).hom = algebraFirstEulerianOperator k A M n := rfl
 
-/-- The normalized first chain map keeps the original normalized first operator. -/
+/-- The normalized lowest-weight chain projector has component p̄ₙ.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the nth
+component of algebraNormalizedFirstEulerianChainMap is
+algebraNormalizedFirstEulerianOperator(n). -/
 theorem algebraNormalizedFirstEulerianChainMap_f (n : ℕ) :
     ((algebraNormalizedFirstEulerianChainMap k A M).f n).hom =
       algebraNormalizedFirstEulerianOperator k A M n := rfl
 
-/-- The normalization respects the original full first projector. -/
+/-- Normalization intertwines the two lowest-weight chain projectors.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the raw
+and normalized zero-plus-first chain maps commute with algebraNormalizationProjection. -/
 @[reassoc]
 theorem algebraNormalizationProjection_firstEulerian :
     algebraNormalizationProjection k A M ≫ algebraNormalizedFirstEulerianChainMap k A M =
@@ -268,7 +333,10 @@ theorem algebraNormalizationProjection_firstEulerian :
   simp only [algebraNormalizedFirstEulerianChainMap, algebraFirstEulerianChainMap,
     Preadditive.comp_add, Preadditive.add_comp, algebraNormalizationProjection_eulerian]
 
-/-- The original normalized first level operator is idempotent by the rational projectors. -/
+/-- The normalized lowest-weight A-linear operator is idempotent.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, p̄ₙ ∘
+p̄ₙ=p̄ₙ on normalized coefficient tensors. -/
 theorem algebraNormalizedFirstEulerianOperator_idempotent (n : ℕ) :
     (algebraNormalizedFirstEulerianOperator k A M n).comp
         (algebraNormalizedFirstEulerianOperator k A M n) =

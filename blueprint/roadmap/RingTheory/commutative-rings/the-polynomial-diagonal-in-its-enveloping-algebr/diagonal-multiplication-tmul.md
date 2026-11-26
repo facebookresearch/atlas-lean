@@ -1,3 +1,4 @@
-# Diagonal Multiplication tmul
+# Diagonal multiplication on a pure tensor
 
-Multiplication retains both original polynomial factors in their original order.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `a,b : A`, `diagonalMultiplication k σ (a ⊗ op(b)) = a*b`.

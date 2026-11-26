@@ -14,13 +14,16 @@ public import Mathlib.GroupTheory.Perm.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
-# Actual cyclic descent counts
+# Cyclic descents and rotations
 
-The count includes the closing edge of the original permutation word.
-For a one-letter word it is zero. Rotating positions reindexes the same
-edges, and rotating values removes one maximal-value descent and adds one
-minimal-value descent. The latter proof is an actual integer indicator
-identity, so no cyclic-invariance or coefficient-count certificate is used.
+For `σ ∈ S_(n+1)`, a cyclic descent is a position `i` with `σ(finRotate(n+1) i)<σ i`,
+including the edge from the last position to the first. A one-letter permutation has cyclic
+descent count zero.
+
+Rotating positions on the right and values on the left preserves this count: `c(ρ^r * σ *
+ρ^s)=c(σ)` for all natural `r,s`, where `ρ=finRotate(n+1)`.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
 -/
 
 @[expose] public section
@@ -30,7 +33,10 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- The actual number of descents in the original cyclic permutation word. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. The count is `c(σ)=∑ i : Fin N, if σ(ρ i)<σ i then 1 else 0`;
+the closing comparison is included. -/
 def cyclicDescentNumber {n : ℕ} (σ : Perm (Fin (n + 1))) : ℕ :=
   ∑ i : Fin (n + 1), if σ (finRotate (n + 1) i) < σ i then 1 else 0
 
@@ -67,7 +73,10 @@ private theorem rotation_indicator {n : ℕ} (a b : Fin (n + 1)) :
       simp only [Fin.lt_def, Fin.val_mk, Nat.add_lt_add_iff_right, ha, hb,
         ite_false, sub_zero, add_zero]
 
-/-- Rotating the original values preserves the actual cyclic descent count. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. Left multiplication rotates the values and preserves the count:
+`c(ρ*σ)=c(σ)`. -/
 theorem cyclicDescentNumber_rotate_values {n : ℕ} (σ : Perm (Fin (n + 1))) :
     cyclicDescentNumber (finRotate (n + 1) * σ) = cyclicDescentNumber σ := by
   classical
@@ -90,7 +99,9 @@ theorem cyclicDescentNumber_rotate_values {n : ℕ} (σ : Perm (Fin (n + 1))) :
   rw [h]
   omega
 
-/-- Every actual value-rotation power preserves the original cyclic descent count. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. For every `r : ℕ`, `c(ρ^r * σ)=c(σ)`. -/
 theorem cyclicDescentNumber_rotate_values_pow {n : ℕ} (σ : Perm (Fin (n + 1))) (r : ℕ) :
     cyclicDescentNumber (finRotate (n + 1) ^ r * σ) = cyclicDescentNumber σ := by
   induction r with
@@ -98,7 +109,10 @@ theorem cyclicDescentNumber_rotate_values_pow {n : ℕ} (σ : Perm (Fin (n + 1))
   | succ r hr =>
     rw [pow_succ', mul_assoc, cyclicDescentNumber_rotate_values, hr]
 
-/-- Rotating the original positions reindexes the same cyclic edges. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. For every `r : ℕ`, right multiplication rotates positions and
+satisfies `c(σ*ρ^r)=c(σ)`. -/
 theorem cyclicDescentNumber_rotate_positions_pow {n : ℕ} (σ : Perm (Fin (n + 1))) (r : ℕ) :
     cyclicDescentNumber (σ * finRotate (n + 1) ^ r) = cyclicDescentNumber σ := by
   have hcomm (i : Fin (n + 1)) :
@@ -112,7 +126,9 @@ theorem cyclicDescentNumber_rotate_positions_pow {n : ℕ} (σ : Perm (Fin (n + 
   exact Equiv.sum_comp (finRotate (n + 1) ^ r)
     (fun i : Fin (n + 1) => if σ (finRotate (n + 1) i) < σ i then 1 else 0)
 
-/-- Both original value and position rotations preserve the actual cyclic count. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. For all `r,s : ℕ`, `c(ρ^r * σ * ρ^s)=c(σ)`. -/
 theorem cyclicDescentNumber_two_sided {n : ℕ}
     (σ : Perm (Fin (n + 1))) (r s : ℕ) :
     cyclicDescentNumber (finRotate (n + 1) ^ r * σ * finRotate (n + 1) ^ s) =

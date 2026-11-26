@@ -2,10 +2,10 @@
 
 ## Homotopy
 
-- [To Semi Simplicial](to-semi-simplicial.md)
-- [To Semi Simplicial to Chain Homotopy hom](to-semi-simplicial-to-chain-homotopy-hom.md)
+- [A simplicial homotopy restricts to a semisimplicial homotopy](to-semi-simplicial.md)
+- [Restriction preserves the adjacent chain-homotopy components](to-semi-simplicial-to-chain-homotopy-hom.md)
 
 ## Semi Simplicial Alternating Face Map Complex
 
-- [Of Simplicial Iso](of-simplicial-iso.md)
-- [Of Simplicial Iso naturality](of-simplicial-iso-naturality.md)
+- [Restricted and simplicial alternating-face complexes agree by identities](of-simplicial-iso.md)
+- [The restricted-complex comparison is natural in simplicial maps](of-simplicial-iso-naturality.md)

@@ -421,7 +421,7 @@ def algebraNormalizationKernelContraction :
 
 /-- The full normalization kernel is contractible as an A-module chain complex. -/
 theorem algebraNormalizationKernel_contractible :
-    (kernel (algebraNormalizationProjection k A M)).Contractible :=
+    Nonempty (Homotopy (𝟙 (kernel (algebraNormalizationProjection k A M))) 0) :=
   HomologicalComplex.splitHomotopyKernel_contractible
     (algebraNormalizationProjection k A M) (algebraNormalizationInverse k A M)
     (algebraNormalizationInverse_projection k A M)

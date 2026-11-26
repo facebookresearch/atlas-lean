@@ -14,17 +14,22 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.AlgebraicTopology.SimplexCategory.SemiSimplexCategory
 
 /-!
-# The alternating face map complex of a semisimplicial object
+# Alternating-face complexes of semisimplicial objects
 
-We define semisimplicial objects as contravariant functors from the native
-`SemiSimplexCategory`, construct their face maps, and prove the face identities.
-For a semisimplicial object in a preadditive category, we then construct the
-chain complex whose differential is the alternating sum of its faces.
+A semisimplicial object in a category C is a contravariant functor from the category of finite
+nonempty ordinals and order-preserving injections. The injection omitting vertex i gives a
+face δ_i : X_(n+1) → X_n. These faces obey δ_(j+1) ≫ δ_i = δ_i ≫ δ_j for i ≤ j, with the
+indicated finite-index casts.
 
-The proof that the differential squares to zero is adapted from the native
-Mathlib construction for simplicial objects in
-`Mathlib.AlgebraicTopology.AlternatingFaceMapComplex`.
+When C is preadditive, the alternating sum d_(n+1,n) = ∑ i : Fin (n + 2), (−1)^i δ_i defines a
+chain complex indexed by ℕ. The face identities imply d_(n+2,n+1) ≫ d_(n+1,n) = 0.
+Semisimplicial maps act by their degree components, giving an additive functor to chain
+complexes.
+
+See Weibel, *An Introduction to Homological Algebra*, Chapter 8.
 -/
+
+-- The differential-square proof follows Mathlib's simplicial alternating-face construction.
 
 @[expose] public section
 
@@ -40,7 +45,9 @@ universe v u
 
 namespace SemiSimplexCategory
 
-/-- The `i`-th face map from `⦋n⦌ₛ` to `⦋n+1⦌ₛ`. -/
+/-- For n : ℕ and i : Fin (n + 2), the face δ i : ⦋n⦌ₛ ⟶ ⦋n + 1⦌ₛ is the order-preserving
+injection whose image omits vertex i. Under the ordinal hom equivalence it is
+Fin.succAboveOrderEmb i. -/
 def δ {n : ℕ} (i : Fin (n + 2)) : ⦋n⦌ₛ ⟶ ⦋n + 1⦌ₛ :=
   homEquiv.symm (Fin.succAboveOrderEmb i)
 
@@ -49,14 +56,18 @@ theorem toSimplexCategory_map_δ {n : ℕ} (i : Fin (n + 2)) :
     toSimplexCategory.map (δ i) = SimplexCategory.δ i :=
   rfl
 
-/-- The generic semisimplicial face identity. -/
+/-- For n : ℕ and i, j : Fin (n + 2) with i ≤ j, the semisimplex face injections satisfy δ i ≫ δ
+j.succ = δ j ≫ δ i.castSucc. Both composites are injections ⦋n⦌ₛ ⟶ ⦋n + 2⦌ₛ omitting the same
+two vertices. -/
 theorem δ_comp_δ {n : ℕ} {i j : Fin (n + 2)} (h : i ≤ j) :
     δ i ≫ δ j.succ = δ j ≫ δ i.castSucc := by
   apply toSimplexCategory.map_injective
   simpa only [Functor.map_comp, toSimplexCategory_map_δ, toSimplexCategory_obj] using
     SimplexCategory.δ_comp_δ h
 
-/-- A form of the semisimplicial face identity adapted to alternating sums. -/
+/-- Let n : ℕ, i : Fin (n + 3) and j : Fin (n + 2), with i ≤ Fin.castSucc j. Casting i to Fin (n +
+2) using this bound gives δ (i.castLT _) ≫ δ j.succ = δ j ≫ δ i as semisimplex injections ⦋n⦌ₛ
+⟶ ⦋n + 2⦌ₛ. -/
 theorem δ_comp_δ'' {n : ℕ} {i : Fin (n + 3)} {j : Fin (n + 2)}
     (h : i ≤ Fin.castSucc j) :
     δ (i.castLT (Nat.lt_of_le_of_lt (Fin.le_iff_val_le_val.mp h) j.is_lt)) ≫
@@ -72,14 +83,16 @@ namespace CategoryTheory
 
 variable (C : Type u) [Category.{v} C]
 
-/-- The category of semisimplicial objects valued in `C`. -/
+/-- For a category C, a semisimplicial object is a functor SemiSimplexCategoryᵒᵖ ⥤ C. Its degree-n
+term is its value on the opposite ordinal with n + 1 vertices, and its morphisms are natural
+transformations. -/
 abbrev SemiSimplicialObject :=
   SemiSimplexCategoryᵒᵖ ⥤ C
 
 namespace SemiSimplicialObject
 
 set_option quotPrecheck false in
-/-- `X _⦋n⦌ₛ` denotes the degree-`n` term of a semisimplicial object. -/
+/- X _⦋n⦌ₛ denotes X evaluated at the opposite ordinal with n + 1 vertices. -/
 scoped[Simplicial]
   notation3:1000 X " _⦋" n "⦌ₛ" =>
     (X : CategoryTheory.SemiSimplicialObject _).obj
@@ -87,6 +100,9 @@ scoped[Simplicial]
 
 variable {C}
 
+/-- For semisimplicial objects X and Y in a category C, two morphisms f, g : X ⟶ Y are equal if
+f.app q = g.app q for every q : SemiSimplexCategoryᵒᵖ. Thus equality of all degree components
+determines the natural transformation. -/
 @[ext]
 theorem hom_ext {X Y : SemiSimplicialObject C} (f g : X ⟶ Y)
     (h : ∀ n : SemiSimplexCategoryᵒᵖ, f.app n = g.app n) : f = g :=
@@ -94,7 +110,9 @@ theorem hom_ext {X Y : SemiSimplicialObject C} (f g : X ⟶ Y)
 
 variable (X : SemiSimplicialObject C)
 
-/-- The `i`-th face map of a semisimplicial object. -/
+/-- For a semisimplicial object X in a category C, n : ℕ and i : Fin (n + 2), the face X.δ i :
+X_(n+1) ⟶ X_n is X.map (SemiSimplexCategory.δ i).op, the image of the injection omitting
+vertex i. -/
 def δ {n : ℕ} (i : Fin (n + 2)) : X _⦋n + 1⦌ₛ ⟶ X _⦋n⦌ₛ :=
   X.map (SemiSimplexCategory.δ i).op
 
@@ -102,14 +120,18 @@ theorem δ_def {n : ℕ} (i : Fin (n + 2)) :
     X.δ i = X.map (SemiSimplexCategory.δ i).op :=
   rfl
 
-/-- The generic face identity for a semisimplicial object. -/
+/-- For a semisimplicial object X in a category C, n : ℕ and i, j : Fin (n + 2) with i ≤ j, one
+has X.δ j.succ ≫ X.δ i = X.δ i.castSucc ≫ X.δ j. These are morphisms X_(n+2) ⟶ X_n; the order
+reverses that of the injection-category face relation. -/
 @[reassoc]
 theorem δ_comp_δ {n : ℕ} {i j : Fin (n + 2)} (h : i ≤ j) :
     X.δ j.succ ≫ X.δ i = X.δ i.castSucc ≫ X.δ j := by
   dsimp [δ]
   simp only [← X.map_comp, ← op_comp, SemiSimplexCategory.δ_comp_δ h]
 
-/-- A form of the face identity adapted to alternating sums. -/
+/-- For a semisimplicial object X in a category C, let i : Fin (n + 3) and j : Fin (n + 2) satisfy
+i ≤ Fin.castSucc j. Then X.δ j.succ ≫ X.δ (i.castLT _) = X.δ i ≫ X.δ j as morphisms X_(n+2) ⟶
+X_n, where the cast to Fin (n + 2) uses the stated bound. -/
 @[reassoc]
 theorem δ_comp_δ'' {n : ℕ} {i : Fin (n + 3)} {j : Fin (n + 2)}
     (h : i ≤ Fin.castSucc j) :
@@ -130,16 +152,16 @@ namespace SemiSimplicialAlternatingFaceMapComplex
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable (X Y : SemiSimplicialObject C)
 
-/-- The alternating sum of the face maps in adjacent degrees. -/
+/-- For a semisimplicial object X in a preadditive category C and n : ℕ, define objD X n : X_(n+1)
+⟶ X_n by ∑ i : Fin (n + 2), (−1 : ℤ)^i • X.δ i. The integer scalar multiplication is that of
+the additive group of morphisms. -/
 @[simp]
 def objD (n : ℕ) : X _⦋n + 1⦌ₛ ⟶ X _⦋n⦌ₛ :=
   ∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • X.δ i
 
-/-- The alternating face differential squares to zero.
-
-This proof follows Mathlib's native simplicial alternating-face proof: expand
-the composite as a double sum and pair the two regions by `(i, j) ↦ (j, i+1)`.
-Only the semisimplicial face identity is used. -/
+/-- For a semisimplicial object X in a preadditive category C and every n : ℕ, the alternating
+boundaries satisfy objD X (n + 1) ≫ objD X n = 0 as a morphism X_(n+2) ⟶ X_n. Here objD X n =
+∑ i : Fin (n + 2), (−1)^i • X.δ i. -/
 theorem d_squared (n : ℕ) : objD X (n + 1) ≫ objD X n = 0 := by
   dsimp
   simp only [comp_sum, sum_comp, ← Finset.sum_product']
@@ -176,7 +198,10 @@ theorem d_squared (n : ℕ) : objD X (n + 1) ≫ objD X n = 0 := by
     · dsimp [φ]
       rw [SemiSimplicialObject.δ_comp_δ'' X (by simpa [S] using! hij)]
 
-/-- The alternating face map complex of a semisimplicial object. -/
+/-- For a semisimplicial object X in a preadditive category C, define the chain complex of shape
+down ℕ with term X_n in degree n and differential d_(n+1,n) = ∑ i : Fin (n + 2), (−1)^i • X.δ
+i. Its other differentials vanish, and the semisimplicial face identities make successive
+boundaries compose to zero. -/
 @[implicit_reducible]
 def obj : ChainComplex C ℕ :=
   ChainComplex.of (fun n => X _⦋n⦌ₛ) (objD X) (d_squared X)
@@ -193,7 +218,9 @@ theorem obj_d (X : SemiSimplicialObject C) (n : ℕ) :
 
 variable {X Y}
 
-/-- A morphism of semisimplicial objects induces a chain map. -/
+/-- For semisimplicial objects X and Y in a preadditive category C, a morphism f : X ⟶ Y induces a
+chain map obj X ⟶ obj Y. Its degree-n component is f.app (op ⦋n⦌ₛ); naturality of f with each
+face makes it commute with the alternating boundaries. -/
 def map (f : X ⟶ Y) : obj X ⟶ obj Y :=
   ChainComplex.ofHom (fun n => f.app (op ⦋n⦌ₛ)) fun n => by
     simp only [obj, ChainComplex.of_d, objD, Int.reduceNeg]
@@ -213,7 +240,10 @@ end SemiSimplicialAlternatingFaceMapComplex
 
 variable (C : Type u) [Category.{v} C] [Preadditive C]
 
-/-- The alternating face map complex functor for semisimplicial objects. -/
+/-- For a preadditive category C, the alternating-face construction is a functor
+SemiSimplicialObject C ⥤ ChainComplex C ℕ. It sends X to the complex with terms X_n and
+boundaries ∑ i : Fin (n + 2), (−1)^i • X.δ i, and sends each natural transformation to the
+chain map with its degree components. -/
 @[implicit_reducible]
 def semiSimplicialAlternatingFaceMapComplex :
     SemiSimplicialObject C ⥤ ChainComplex C ℕ where

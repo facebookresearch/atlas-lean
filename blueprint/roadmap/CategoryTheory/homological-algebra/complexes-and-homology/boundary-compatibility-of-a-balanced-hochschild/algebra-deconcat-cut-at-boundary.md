@@ -1,5 +1,7 @@
-# Algebra Deconcat Cut At boundary
+# The A-balanced deconcatenation chain identity
 
-For p+q=n, A-balanced cuts commute with the original Hochschild boundary.
-The first regular coefficient is ULift A, the second is the original M, and the
-original k-tensor tails and both native coefficient endpoints are retained.
+The A-balanced deconcatenation chain identity.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, for p+q=n, Dₚ,ᵩ ∘ bₙ = (bₚ,ULift A ⊗ id) ∘ Dₚ₊₁,ᵩ + (-1)ᵖ(id ⊗ bᵩ,M) ∘ Dₚ,ᵩ₊₁, with
+both successor cuts in degree n+1.

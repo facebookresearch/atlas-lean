@@ -1,6 +1,6 @@
 # Exterior kernel relations in basis words
 
-- [Basis Words](basis-words.md)
-- [Basis Words span](basis-words-span.md)
-- [Kernel Basis Words](kernel-basis-words.md)
-- [Kernel Slot Words succ eq kernel Basis Words](kernel-slot-words-succ-eq-kernel-basis-w.md)
+- [Exterior words in a module basis](basis-words.md)
+- [Basis words span every exterior degree](basis-words-span.md)
+- [Kernel vectors followed by basis tails](kernel-basis-words.md)
+- [Kernel slots can be moved to a basis-tail generator](kernel-slot-words-succ-eq-kernel-basis-w.md)

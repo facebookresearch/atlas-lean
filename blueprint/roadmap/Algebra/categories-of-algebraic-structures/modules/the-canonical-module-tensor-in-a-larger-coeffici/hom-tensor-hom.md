@@ -1,3 +1,5 @@
-# Hom tensor Hom
+# Tensor morphisms are tensor maps of linear maps
 
-The actual tensor morphism is the original native tensor linear map.
+Let `R : Type u` be a commutative ring, `v` a universe, and `h=max(u,v)`. Equip `ModuleCat.{h}
+R` with the scoped tensor structure having tensor product over `R` and unit `ULift.{v} R`. For
+`f : K → L` and `g : M → N` in this category, `(f ⊗ₘ g).hom = TensorProduct.map f.hom g.hom`.

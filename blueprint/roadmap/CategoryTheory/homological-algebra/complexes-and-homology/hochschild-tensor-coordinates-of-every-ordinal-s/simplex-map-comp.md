@@ -1,3 +1,6 @@
-# Simplex Map comp
+# Composition reverses in the Hochschild simplex action
 
-The tensor-coordinate maps compose in contravariant order.
+Composition reverses in the Hochschild simplex action.
+
+For a commutative ring k, an associative k-algebra A, a compatible A-bimodule M and composable
+simplex maps f,g, simplexMap(f ≫ g) = simplexMap(g) ≫ simplexMap(f).

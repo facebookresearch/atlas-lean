@@ -13,12 +13,15 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricShuffleCutOperator
 public import MathlibExt.LinearAlgebra.TensorPower.PermutationShuffleActions
 
 /-!
-# Eulerian operators and coefficient shuffle pairings
+# Coefficient shuffle pairings and Eulerian convolution
 
-The regular coefficient acts on the coefficient head,
-and the signed permutation shuffle acts on the tensor
-tails. Their pairing intertwines the rational Eulerian
-operations by the permutation-algebra shuffle law.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. The
+coefficient shuffle acts by the regular head on M and by the signed (p,q)-shuffle on the two
+A-tail blocks. It agrees with the component of the Hochschild chain pairing. When k is a
+ℚ-algebra, the convolution family Λ respects this pairing at every natural parameter.
+
+For coefficient products and Eulerian operations, see J.-L. Loday, Cyclic Homology, 2nd ed.,
+§4.5.
 -/
 
 @[expose] public section
@@ -38,18 +41,28 @@ variable (k : Type u) [CommRing k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The regular coefficient head acts on the original coefficient module. -/
+/-- The lifted regular head action on a coefficient module.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, ULift A ⊗[k]
+M maps to M by a₀ ⊗ m ↦ a₀.down • m. -/
 def coefficientHeadAction : ULift.{w} A ⊗[k] M →ₗ[k] M :=
   TensorProduct.lift ((Algebra.lsmul k k M).toLinearMap.comp
     (ULift.moduleEquiv : ULift.{w} A ≃ₗ[k] A).toLinearMap)
 
-/-- The head action has the original algebra scalar value. -/
+/-- The value of the lifted coefficient-head action.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+coefficientHeadAction(a₀ ⊗ m)=a₀.down • m. -/
 theorem coefficientHeadAction_tmul (a : ULift.{w} A) (m : M) :
     coefficientHeadAction k A M (a ⊗ₜ[k] m) = a.down • m := by
   rw [coefficientHeadAction, TensorProduct.lift.tmul]
   rfl
 
-/-- Native tensor regrouping followed by the original coefficient action and original signed tail shuffle. -/
+/-- The coefficient-and-tail signed shuffle map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, pair a
+regular p-word with an M-coefficient q-word by the head action and the signed (p,q)-shuffle of
+their tails. -/
 def coefficientShufflePairingMap (p q : ℕ) :
     (ULift.{w} A ⊗[k] TensorPower k p A) ⊗[k] (M ⊗[k] TensorPower k q A) →ₗ[k]
       M ⊗[k] TensorPower k (p + q) A :=
@@ -58,7 +71,10 @@ def coefficientShufflePairingMap (p q : ℕ) :
       (TensorProduct.tensorTensorTensorComm k (ULift.{w} A) (TensorPower k p A)
         M (TensorPower k q A)).toLinearMap)
 
-/-- The regrouping map has its value on the original four tensor factors. -/
+/-- The pure-word coefficient shuffle pairing formula.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, (a₀ ⊗ x) ⊗ (m
+⊗ y) maps to (a₀.down • m) ⊗ signedShuffleProduct(p,q)(x ⊗ y). -/
 theorem coefficientShufflePairingMap_tmul (p q : ℕ) (a0 : ULift.{w} A) (m : M)
     (x : TensorPower k p A) (y : TensorPower k q A) :
     coefficientShufflePairingMap k A M p q ((a0 ⊗ₜ[k] x) ⊗ₜ[k] (m ⊗ₜ[k] y)) =
@@ -70,8 +86,10 @@ theorem coefficientShufflePairingMap_tmul (p q : ℕ) (a0 : ULift.{w} A) (m : M)
   rw [TensorProduct.tensorTensorTensorComm_tmul, TensorProduct.map_tmul,
     coefficientHeadAction_tmul, LinearMap.id_apply, TensorProduct.map_tmul, LinearMap.id_apply]
 
-/-- The original Hochschild shuffle is exactly the head action followed by the signed tail
-  product. -/
+/-- The chain-pairing component equals the coefficient shuffle map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the (p,q)
+component of pairing has underlying linear map coefficientShufflePairingMap(p,q). -/
 theorem pairing_pair_eq_coefficientShuffleMap (p q : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -105,8 +123,10 @@ theorem pairing_pair_eq_coefficientShuffleMap (p q : ℕ) :
   have htail := TensorPower.signedShuffleProduct_tprod (k := k) (V := A) p q a b
   exact (congrArg (fun t : TensorPower k (p + q) A => (a0.down • m) ⊗ₜ[k] t) htail.symm).trans hvalue.symm
 
-/-- The original pairing value for arbitrary original tensor tails follows from the regrouping
-  identity. -/
+/-- The Hochschild chain pairing on arbitrary pure tail tensors.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, pairing(a₀ ⊗
+x,m ⊗ y)=(a₀.down • m) ⊗ signedShuffleProduct(p,q)(x ⊗ y). -/
 theorem pairing_pair_as_tmul (p q : ℕ) (a0 : ULift.{w} A) (m : M)
     (x : TensorPower k p A) (y : TensorPower k q A) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
@@ -130,7 +150,11 @@ theorem pairing_pair_as_tmul (p q : ℕ) (a0 : ULift.{w} A) (m : M)
   rw [pairing_pair_eq_coefficientShuffleMap]
   exact coefficientShufflePairingMap_tmul k A M p q a0 m x y
 
-/-- The rational Eulerian evaluation respects the original coefficient shuffle pairing. -/
+/-- Natural-parameter Eulerian convolution preserves the coefficient pairing.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, for a
+natural parameter m, applying Λₚ₊ᵩ(m) after the coefficient pairing equals pairing the inputs
+after Λₚ(m) and Λᵩ(m). -/
 theorem coefficientEulerianLambda_pairing [Algebra ℚ k] (p q m : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)

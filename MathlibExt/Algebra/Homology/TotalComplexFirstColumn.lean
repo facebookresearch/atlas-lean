@@ -12,12 +12,16 @@ module
 public import Mathlib.Algebra.Homology.TotalComplex
 
 /-!
-# The first column of a natural bicomplex maps to its total complex
+# The first column maps to the total of a nonnegative bicomplex
 
-The horizontal differential leaving column zero vanishes by the complex
-shape. The vertical totalization sign on that column is one. Thus its actual
-coprojections assemble into a chain map, natural in the original bicomplex.
-The object construction needs only its total complex to exist.
+For a bicomplex B of shape (down ℕ, down ℕ) in a preadditive category, assume that its total
+complex exists. The coprojections B_(0,n) → Tot(B)_n assemble into a chain map from the first
+column B.X 0 to Tot(B).
+
+The horizontal differential out of column zero is zero, and the sign on the vertical
+differential in that column is (−1)^0 = 1. The first-column map is natural in bicomplex
+morphisms. If all such bicomplexes have totals, these maps form a natural transformation from
+first-column evaluation to totalization.
 -/
 
 @[expose] public section
@@ -37,7 +41,10 @@ section Object
 
 variable (B : HomologicalComplex₂ C c c) [B.HasTotal c]
 
-/-- On the first column, the actual total differential is its vertical differential. -/
+/-- In a preadditive category C, let B be a bicomplex of shape (down ℕ, down ℕ) whose total
+complex for down ℕ exists. For n : ℕ, the total coprojections satisfy ι_(0,n+1) ≫ d_Tot(n+1,n)
+= d_(B.X 0)(n+1,n) ≫ ι_(0,n). The horizontal contribution vanishes and the vertical
+totalization sign in column zero is 1. -/
 @[reassoc]
 lemma ιTotal_firstColumn_d (n : ℕ) :
     B.ιTotal c 0 (n + 1) (n + 1) (Nat.zero_add (n + 1)) ≫
@@ -51,18 +58,25 @@ lemma ιTotal_firstColumn_d (n : ℕ) :
     B.d₂_eq c 0 (show (c).Rel (n + 1) n from rfl) n (Nat.zero_add n),
     hε, one_smul]
 
-/-- The native first-column coprojections form a chain map to the total complex. -/
+/-- In a preadditive category C, let B be a bicomplex of shape (down ℕ, down ℕ) whose total
+complex for down ℕ exists. Define firstColumnTotalInclusion B : B.X 0 ⟶ B.total (down ℕ) to
+have degree-n component B.ιTotal (down ℕ) 0 n n (Nat.zero_add n), the total coprojection from
+bidegree (0, n). -/
 def firstColumnTotalInclusion : B.X 0 ⟶ B.total c :=
   ChainComplex.ofHom (fun n => B.ιTotal c 0 n n (Nat.zero_add n))
     (fun n => ιTotal_firstColumn_d B n)
 
-/-- Every component is the original total coprojection of the first column. -/
+/-- In a preadditive category C, let B be a bicomplex of shape (down ℕ, down ℕ) whose total
+complex for down ℕ exists. For every n : ℕ, (firstColumnTotalInclusion B).f n equals B.ιTotal
+(down ℕ) 0 n n (Nat.zero_add n). -/
 lemma firstColumnTotalInclusion_f (n : ℕ) :
     (firstColumnTotalInclusion B).f n = B.ιTotal c 0 n n (Nat.zero_add n) := rfl
 
 end Object
 
-/-- An original bicomplex map commutes with the canonical first-column inclusion. -/
+/-- In a preadditive category C, let φ : B ⟶ B' be a map of bicomplexes of shape (down ℕ, down ℕ),
+and assume both total complexes exist. Then firstColumnTotalInclusion B ≫ total.map φ (down ℕ)
+= φ.f 0 ≫ firstColumnTotalInclusion B' as chain maps B.X 0 ⟶ Tot(B'). -/
 @[reassoc]
 lemma firstColumnTotalInclusion_naturality
     {B B' : HomologicalComplex₂ C c c} [B.HasTotal c] [B'.HasTotal c] (φ : B ⟶ B') :
@@ -78,13 +92,18 @@ section Functor
 
 variable [∀ B : HomologicalComplex₂ C c c, B.HasTotal c]
 
-/-- The first-column inclusions form a natural transformation whenever the total functor exists. -/
+/-- Let C be preadditive and assume every bicomplex of shape (down ℕ, down ℕ) has a total complex
+of shape down ℕ. The first-column total inclusions define a natural transformation from
+HomologicalComplex.eval (ChainComplex C ℕ) (down ℕ) 0 to the total functor, with component B.X
+0 ⟶ Tot(B) at B. -/
 def firstColumnTotalNatTrans :
     HomologicalComplex.eval (ChainComplex C ℕ) c 0 ⟶ totalFunctor C c c c where
   app B := firstColumnTotalInclusion B
   naturality _ _ φ := (firstColumnTotalInclusion_naturality φ).symm
 
-/-- The functorial comparison uses the same objectwise canonical chain map. -/
+/-- Let C be preadditive and assume every bicomplex of shape (down ℕ, down ℕ) has its down-ℕ
+total. For every such B, the component of firstColumnTotalNatTrans at B is
+firstColumnTotalInclusion B, whose degree-n map is the coprojection from B_(0,n) to Tot(B)_n. -/
 lemma firstColumnTotalNatTrans_app (B : HomologicalComplex₂ C c c) :
     (firstColumnTotalNatTrans (C := C)).app B = firstColumnTotalInclusion B := rfl
 

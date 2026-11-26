@@ -1,3 +1,5 @@
-# Coe internal Grade Equiv apply
+# The coordinate-range equivalence has the original inclusion
 
-The internal-grade equivalence includes a summand by `DirectSum.of`.
+For a semiring A, an index type ι with decidable equality and A-semimodules M i, coercing
+internalGradeEquiv A ι M i y back to ⨁ j, M j gives DirectSum.of M i y, for every i : ι and y
+: M i.

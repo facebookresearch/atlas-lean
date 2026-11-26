@@ -14,16 +14,18 @@ public import Mathlib.Logic.Equiv.Fin.Rotate
 public import Mathlib.Algebra.Group.End
 
 /-!
-# Period of finite rotation
+# A full cycle of finite rotations
 
-After `n+1` steps, rotation of `Fin (n+1)` is the identity. This index-only
-fact is shared by tensor-power rotations and geometric cyclic simplices.
+For `n : ℕ`, the rotation `finRotate(n+1)` of `Fin(n+1)` satisfies `finRotate(n+1)^(n+1) = 1`.
+This includes the identity rotation of `Fin 1`.
 -/
 
 @[expose] public section
 
 open Fin.NatCast in
-/-- Rotating through all `n+1` positions returns to the identity, including `Fin 1`. -/
+/-- For every `n : ℕ`, the cyclic permutation `finRotate(n+1)` of `Fin(n+1)` satisfies
+`finRotate(n+1)^(n+1) = 1` in its permutation group. For `n=0`, this is the identity
+permutation of `Fin 1`. -/
 theorem finRotate_pow_succ (n : ℕ) : finRotate (n + 1) ^ (n + 1) = 1 := by
   have h (j : ℕ) (i : Fin (n + 1)) :
       (finRotate (n + 1) ^ j) i = i + (j : Fin (n + 1)) := by

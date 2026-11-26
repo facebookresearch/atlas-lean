@@ -1,3 +1,5 @@
-# Principal Cotangent Map mk
+# A coefficient multiplies the defining equation
 
-A quotient scalar acts on the equation class by the original product.
+For a commutative ring `B` and `g,b : B`, let `I = (g)`. Then `principalCotangentMap B g (b
+mod I)` is the class of `b*g` in `I/I²`, namely `I.toCotangent (b • g)` with `g` viewed as an
+element of `I`.

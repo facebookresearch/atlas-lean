@@ -14,17 +14,17 @@ public import MathlibExt.LinearAlgebra.ExteriorAlgebra.CoalgebraDiagonal
 import Lean.Elab.Tactic.Omega
 
 /-!
-# General unshuffle is the actual exterior coproduct component
+# Unshuffle components of the exterior coproduct
 
-The native exterior diagonal expands multilinearly over every subset of
-the source indices. The existing ordered shuffle sorts a subset and its
-complement into two blocks. Native alternation gives its permutation sign,
-and the native exterior-product equivalence gives the two tensor factors.
-Degree projection kills subsets of the wrong cardinality. The result is
-the full domCoprod unshuffle in every bidegree, over any commutative ring.
+For `E=ExteriorAlgebra R M`, the coproduct of a word `w : Fin N → M` expands over all subsets
+`s ⊆ Fin N`. The term for `s` sends its selected vectors to the first exterior factor and its
+complement to the second, retaining word order and the graded tensor signs.
 
-No factorial is divided or canceled and no basis is chosen. Both empty
-blocks are part of the same construction and proof.
+When `N=p+q`, a subset of cardinality `p` gives the matching signed two-block tensor under
+bidegree projection; the other subsets project to zero. Thus `(π_p ⊗ π_q) ∘ Δ` restricted to
+`Λ^(p+q)_R M` is the full unshuffle map. Both empty blocks are included.
+
+References: Bourbaki, *Algebra*, Chapter III; Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -47,13 +47,19 @@ local notation "ℰ" => fun n : ℕ => ⋀[R]^n M
 local notation "G" => ℰ ᵍ⊗[R] ℰ
 local notation "π" => projection R M
 
-/-- One actual multilinear term of the native exterior diagonal. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E=ExteriorAlgebra R M`. Let `G` be the
+graded tensor algebra of the two exterior degree families, `τ : E⊗E ≃ₗ[R] G`, and `P :
+ExteriorAlgebra R (M×M) ≃ₐ[R] G` the product equivalence. For `N : ℕ`, `s : Finset(Fin N)`,
+and `w : Fin N → M`, put `v_s(i)=(w i,0)` on `s` and `(0,w i)` elsewhere. The mixed term is
+`τ⁻¹(P(ιMulti_R v_s))`. -/
 def coproductMixedTerm (N : ℕ) (s : Finset (Fin N)) (w : Fin N → M) : E ⊗[R] E :=
   (GradedTensorProduct.of R ℰ ℰ).symm (ExteriorAlgebra.prodEquivTensor R M M
     (ExteriorAlgebra.ιMulti R N
       (s.piecewise (fun i => (w i, 0)) (fun i => (0, w i)))))
 
-/-- Multilinearity expands the actual diagonal over all subsets, before degree projection. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E=ExteriorAlgebra R M`. Write `Δ` for
+the exterior coproduct and `π_r : E → Λ^r_R M` for degree projection. For `N : ℕ` and `w : Fin
+N → M`, `Δ(ExteriorAlgebra.ιMulti R N w) = ∑ s : Finset(Fin N), coproductMixedTerm R M N s w`. -/
 theorem coproduct_ιMulti_mixedTerms (N : ℕ) (w : Fin N → M) :
     ExteriorAlgebra.coproduct R M (ExteriorAlgebra.ιMulti R N w) =
       ∑ s : Finset (Fin N), coproductMixedTerm R M N s w := by
@@ -100,7 +106,11 @@ private theorem mixedWord_sorted (p q : ℕ) (s : Shuffle p q) (w : Fin (p + q) 
       simp only [finSumFinEquiv_apply_right, Function.comp_apply, Fin.append_right,
         Finset.piecewise_eq_of_notMem _ _ _ hj]
 
-/-- The actual subset term is the signed tensor of the two ordered surviving blocks. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E=ExteriorAlgebra R M`. Write `Δ` for
+the exterior coproduct and `π_r : E → Λ^r_R M` for degree projection. Let `p,q : ℕ`, `s :
+Shuffle p q`, and `w : Fin(p+q) → M`. The mixed term at `s.leftPositions` equals `sign(s.perm)
+• (ExteriorAlgebra.ιMulti_R(fun i ↦ w(s.perm(Fin.castAdd q i))) ⊗ ExteriorAlgebra.ιMulti_R(fun
+j ↦ w(s.perm(Fin.natAdd p j)))))`. -/
 theorem coproductMixedTerm_shuffle (p q : ℕ) (s : Shuffle p q) (w : Fin (p + q) → M) :
     coproductMixedTerm R M (p + q) s.leftPositions.val w = Equiv.Perm.sign s.perm •
       (ExteriorAlgebra.ιMulti R p (fun i => w (s.perm (Fin.castAdd q i))) ⊗ₜ[R]
@@ -131,7 +141,10 @@ theorem coproductMixedTerm_shuffle (p q : ℕ) (s : Shuffle p q) (w : Fin (p + q
   rw [hf]
   rfl
 
-/-- Degree projections retain the actual term of the matching cardinality. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, `p,q : ℕ`, `s : Shuffle p q`, and `w :
+Fin(p+q) → M`. For degree projections `π_r : ExteriorAlgebra R M → Λ^r_R M`, `(π_p ⊗
+π_q)(coproductMixedTerm R M (p+q) s.leftPositions w)` is `sign(s.perm) • (ιMulti_R(fun i ↦
+w(s.perm(Fin.castAdd q i))) ⊗ ιMulti_R(fun j ↦ w(s.perm(Fin.natAdd p j)))))`. -/
 theorem projectedMixedTerm_shuffle (p q : ℕ) (s : Shuffle p q) (w : Fin (p + q) → M) :
     TensorProduct.map (π p) (π q) (coproductMixedTerm R M (p + q) s.leftPositions.val w) =
       Equiv.Perm.sign s.perm •
@@ -140,7 +153,10 @@ theorem projectedMixedTerm_shuffle (p q : ℕ) (s : Shuffle p q) (w : Fin (p + q
   rw [coproductMixedTerm_shuffle]
   simp only [Units.smul_def, map_zsmul, TensorProduct.map_tmul, projection_ιMulti_self]
 
-/-- A subset of any other left-block cardinality has zero matching component. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E=ExteriorAlgebra R M`. Write `Δ` for
+the exterior coproduct and `π_r : E → Λ^r_R M` for degree projection. For `N,p,q : ℕ`, `s :
+Finset(Fin N)` with `s.card≠p`, and `w : Fin N → M`, `(π_p ⊗ π_q)(coproductMixedTerm R M N s
+w)=0`. -/
 theorem projectedMixedTerm_ne (N p q : ℕ) (s : Finset (Fin N)) (hs : s.card ≠ p)
     (w : Fin N → M) : TensorProduct.map (π p) (π q) (coproductMixedTerm R M N s w) = 0 := by
   have hcard : s.card + sᶜ.card = N := by
@@ -157,7 +173,11 @@ theorem projectedMixedTerm_ne (N p q : ℕ) (s : Finset (Fin N)) (hs : s.card �
   simp only [Units.smul_def, map_zsmul, TensorProduct.map_tmul,
     projection_ιMulti_ne R M p k hs, TensorProduct.zero_tmul, smul_zero]
 
-/-- The actual projected diagonal is the full ordered-shuffle sum, with no factorial multiplier. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E=ExteriorAlgebra R M`. Write `Δ` for
+the exterior coproduct and `π_r : E → Λ^r_R M` for degree projection. Let `p,q : ℕ`,
+`L(i)=Fin.castAdd q i`, and `R_b(j)=Fin.natAdd p j`. For `w : Fin(p+q) → M`, `(π_p ⊗
+π_q)(Δ(ExteriorAlgebra.ιMulti R (p+q) w)) = ∑ s : Shuffle p q, sign(s.perm) • (ιMulti_R(w ∘
+s.perm ∘ L) ⊗ ιMulti_R(w ∘ s.perm ∘ R_b))`. -/
 theorem projectedCoproduct_ιMulti_shuffles (p q : ℕ) (w : Fin (p + q) → M) :
     TensorProduct.map (π p) (π q)
         (ExteriorAlgebra.coproduct R M (ExteriorAlgebra.ιMulti R (p + q) w)) =
@@ -197,7 +217,10 @@ theorem projectedCoproduct_ιMulti_shuffles (p q : ℕ) (w : Fin (p + q) → M) 
       intro s _
       exact projectedMixedTerm_shuffle R M p q s w
 
-/-- The general native domCoprod unshuffle is exactly the actual exterior coproduct component. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E=ExteriorAlgebra R M`. Write `Δ` for
+the exterior coproduct and `π_r : E → Λ^r_R M` for degree projection. For `p,q : ℕ`, `(π_p ⊗
+π_q) ∘ Δ ∘ j_(p+q) = unshuffle R M p q`, where `j_(p+q) : Λ^(p+q)_R M → E` is the homogeneous
+inclusion. -/
 theorem projectedCoproduct_eq_unshuffle (p q : ℕ) :
     (TensorProduct.map (π p) (π q)).comp
         ((ExteriorAlgebra.coproduct R M).comp (⋀[R]^(p + q) M).subtype) = unshuffle R M p q := by

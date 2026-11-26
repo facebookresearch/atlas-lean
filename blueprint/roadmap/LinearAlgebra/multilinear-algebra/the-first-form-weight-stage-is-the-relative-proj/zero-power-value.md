@@ -1,3 +1,4 @@
-# Zero Power value
+# A degree-zero exterior element is its scalar
 
-The original degree-zero element is its actual ground-ring scalar.
+For a commutative ring `R`, an `R`-module `M`, and `x ∈ Λ^0_R M`, the underlying exterior
+element is `algebraMap R (ExteriorAlgebra R M) (exteriorPower.zeroEquiv R M x)`.

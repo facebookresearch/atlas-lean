@@ -1,3 +1,6 @@
-# Algebra Eulerian Operator comp
+# Orthogonality of raw A-linear Eulerian weights
 
-Actual A-linear orthogonality is inherited from the original rational representation.
+Orthogonality of raw A-linear Eulerian weights.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾ ∘
+eₙ⁽ʲ⁾ is eₙ⁽ⁱ⁾ when i=j and zero otherwise.

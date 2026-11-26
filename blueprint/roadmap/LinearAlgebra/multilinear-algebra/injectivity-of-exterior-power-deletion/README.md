@@ -1,4 +1,4 @@
 # Injectivity of exterior-power deletion
 
-- [Deletion injective of basis](deletion-injective-of-basis.md)
-- [Deletion injective](deletion-injective.md)
+- [An ordered basis makes deletion injective](deletion-injective-of-basis.md)
+- [Deletion is injective on free modules](deletion-injective.md)

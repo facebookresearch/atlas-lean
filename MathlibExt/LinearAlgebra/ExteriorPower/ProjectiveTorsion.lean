@@ -16,12 +16,13 @@ public import Mathlib.Algebra.Module.Torsion.Free
 public import Mathlib.LinearAlgebra.FreeModule.Basic
 
 /-!
-# Actual projective exterior powers have torsion-free scalar action
+# Regular scalar action on projective exterior powers
 
-Projectivity earns an actual split embedding in a free module internally.
-The original exterior map preserves that embedding, and the free exterior
-basis has regular scalar action. Pullback therefore proves torsion-freeness
-in every exterior degree, without finite rank or a supplied basis/splitting.
+For a commutative ring `R` and a projective `R`-module `M`, each exterior power is
+torsion-free in the regular-scalar sense: every `r : R` whose multiplication on `R` is
+injective also acts injectively on `Λ^n_R M`.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 public section
@@ -31,7 +32,9 @@ namespace exteriorPower
 universe u v
 variable {R : Type u} [CommRing R] {M : Type v} [AddCommGroup M] [Module R M]
 
-/-- Every exterior power of an actual projective module has regular scalar action. -/
+/-- Let `R` be a commutative ring and `M` an `R`-module. If `M` is projective, every `Λ^n_R M`
+satisfies `Module.IsTorsionFree R`. Thus for each regular `r : R`, `r • x = r • y` in `Λ^n_R
+M` implies `x=y`. -/
 theorem isTorsionFree_of_projective [Module.Projective R M] (n : ℕ) :
     Module.IsTorsionFree R (⋀[R]^n M) := by
   obtain ⟨N, hNadd, hNmodule, hNfree, i, s, hsi⟩ := Module.Projective.iff_split.mp
@@ -45,7 +48,9 @@ theorem isTorsionFree_of_projective [Module.Projective R M] (n : ℕ) :
   have hi : Function.Injective (exteriorPower.map n i) := exteriorPower.map_injective s hsi
   exact hi.moduleIsTorsionFree (exteriorPower.map n i) (fun r x => map_smul _ r x)
 
-/-- Every regular scalar of the original ring acts injectively on an actual projective exterior power. -/
+/-- Let `R` be a commutative ring and `M` an `R`-module. Assume `M` is projective. For `n : ℕ` and
+`r : R` with `IsRegular r`, the map `x ↦ r • x` on `Λ^n_R M` is injective, that is,
+`IsSMulRegular (Λ^n_R M) r`. -/
 theorem isSMulRegular_of_projective [Module.Projective R M] (n : ℕ) (r : R) (hr : IsRegular r) :
     IsSMulRegular (⋀[R]^n M) r := by
   let _ : Module.IsTorsionFree R (⋀[R]^n M) := isTorsionFree_of_projective n

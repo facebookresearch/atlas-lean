@@ -1,3 +1,6 @@
-# Algebra Deconcat Cut At refl
+# Explicit-degree deconcatenation at the sum p+q
 
-Literal-sum degree transport is the original cut, with no new level model.
+Explicit-degree deconcatenation at the sum p+q.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, using n=p+q and its reflexive equality recovers algebraDeconcatCut(p,q).
