@@ -1,9 +1,13 @@
 # Phenome-wide allelic association scan
 
 Fix a biallelic variant with alleles $A$ and $a$ and a cohort of genotyped individuals. For each phenotype $c = 1,\dots,C$ (a grouping of diagnosis codes), the **cases** are individuals carrying a code of the group, and the **controls** are individuals carrying no code of a phenotype-specific **exclusion set** $E_c$ of related conditions; individuals in neither group are dropped for that phenotype. Counting the $2n$ alleles of each group gives the table
+
 $$\begin{array}{c|cc} & A & a \\ \hline \text{cases} & n_{11} & n_{12} \\ \text{controls} & n_{21} & n_{22} \end{array}, \qquad T = n_{11}+n_{12}+n_{21}+n_{22},$$
+
 with allelic odds ratio $\widehat{\mathrm{OR}}_c = n_{11}n_{22}/(n_{12}n_{21})$ and Pearson statistic
+
 $$X_c^2 = \frac{T\,(n_{11}n_{22} - n_{12}n_{21})^2}{(n_{11}+n_{12})(n_{21}+n_{22})(n_{11}+n_{21})(n_{12}+n_{22})},$$
+
 referred to $\chi^2_1$ (a Fisher exact test replaces it when cell counts are small). Phenotypes with fewer than a minimum number of cases are not tested, and significance is judged at the Bonferroni level $\alpha / C'$, where $C'$ is the number of tested phenotypes.
 
 **Proposition.**
