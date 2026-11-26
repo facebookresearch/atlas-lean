@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.PNat.Basic
 public import MathlibExt.Combinatorics.EssentialSetSequence
 public import MathlibExt.Combinatorics.RamseyFamily
+public import MathlibExt.Combinatorics.RamseyFamilyIdempotent
 
 /-!
 # Arithmetic progressions in CR-sets
@@ -163,18 +164,6 @@ end Largeness
 section Families
 
 variable {S : Type*}
-
-/-- **β(F) contains an idempotent when it is a subsemigroup.** Let $S$ be a semigroup and
-$\mathcal F$ a family of subsets of $S$ with the Ramsey property, and multiply ultrafilters on
-$S$ by $E \in pq$ iff $\{x \in S : \{y \in S : xy \in E\} \in q\} \in p$. If
-$pq \in \beta(\mathcal F)$ for all $p, q \in \beta(\mathcal F)$, then there is
-$p \in \beta(\mathcal F)$ with $pp = p$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 3 (`integers-2025-A4-thm-3`). -/
-public theorem_wanted exists_idempotent_mem_betaFamily [Semigroup S] {F : Set (Set S)}
-    (hF : IsRamseyFamily F) (hsub : ∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) :
-    ∃ p ∈ betaFamily F, p * p = p
 
 /-- **Subsemigroup criterion for β(F).** Let $S$ be a semigroup and $\mathcal F$ a family of
 subsets of $S$ with the Ramsey property. For $x \in S$ and $E \subseteq S$ write
