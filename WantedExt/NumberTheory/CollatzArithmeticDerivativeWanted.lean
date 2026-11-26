@@ -26,10 +26,12 @@ the roots of `2x² - (p + q)x + 3pq + 1 = 0`, that is, `2(r + s) = p + q` and
 
 The statements already proved, such as the oddness of every positive `n` with
 `D(C(n)) = C(D(n))` and the prime gap bound for semiprime solutions, live in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which this module imports publicly.
-The bounds for compatible semiprime pairs (`IsCompatibleSemiprimePair.bounds`) are proved in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`, which this module also
-imports publicly.
+`MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, except
+`IsCompatibleSemiprimePair.mod_five`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`, and
+`IsCompatibleSemiprimePair.bounds`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`; this module imports all
+three publicly.
 -/
 module
 
@@ -41,6 +43,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeModFive
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
 
 namespace MetaMathlibExt
@@ -126,19 +129,6 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 public theorem_wanted IsCompatibleSemiprimePair.odd {p q r s : ℕ}
     (h : IsCompatibleSemiprimePair p q r s) :
     Odd p ∧ Odd q ∧ Odd r ∧ Odd s
-
-/-- **Compatible semiprimes modulo 5.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
-$2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then one of $p, q$ is
-congruent to $1$ and the other to $4$ modulo $5$, and likewise one of $r, s$ is congruent to $1$
-and the other to $4$ modulo $5$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 12 (`jis-2025-25.1.8-prop-12`). -/
-public theorem_wanted IsCompatibleSemiprimePair.mod_five {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) :
-    ((p % 5 = 1 ∧ q % 5 = 4) ∨ (q % 5 = 1 ∧ p % 5 = 4)) ∧
-      ((r % 5 = 1 ∧ s % 5 = 4) ∨ (s % 5 = 1 ∧ r % 5 = 4))
 
 /-- **Compatible semiprimes modulo 10.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
 $2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then one of $p, q$ is
