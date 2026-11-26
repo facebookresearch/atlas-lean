@@ -18,10 +18,6 @@ $$\Psi = \beta_1 \tau + \frac{q}{\lambda_d}\Big[\zeta\ln\zeta - \underline\theta
 
 The regimen shrinks the proliferating pool over each cycle iff $\Psi < 0$. For $\zeta > \overline\theta$ the same computation, with the saturated phase, gives $\Psi = \beta_1 \tau + \frac{q}{\lambda_d}\big[\overline\theta\ln\overline\theta - \underline\theta \ln\underline\theta - (1 + \ln\zeta)(\overline\theta - \underline\theta)\big]$.
 
-## Depends on
-
-- [Explicit Hill form of the response](../pharmacodynamic-response-models/response-eq.md)
-
 ## Expansion
 
 On each cycle the equation for $x_1$ is scalar and linear, so $\ln\big(x_1((k+1)\tau)/x_1(k\tau)\big) = \beta_1\tau - \int_{k\tau}^{(k+1)\tau} \gamma(u(t))\,dt$. The drug acts only while $u \ge \underline\theta$, which lasts $T = \ln(\zeta/\underline\theta)/\lambda_d$, and

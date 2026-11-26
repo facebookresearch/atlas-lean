@@ -4,8 +4,9 @@
 
 After rescaling so that all yields equal one except
 
-$$\omega = \frac{1}{2(1 - Y_0)(1 - Y_1)},$$ where $Y_0, Y_1$ are the biomass yields of $x_0, x_1$ ($\omega$ measures the hydrogen demand of $x_0$ relative to the hydrogen supply from $x_1$),
-the model is
+$$\omega = \frac{1}{2(1 - Y_0)(1 - Y_1)},$$
+
+where $Y_0, Y_1$ are the biomass yields of $x_0, x_1$ ($\omega$ measures the hydrogen demand of $x_0$ relative to the hydrogen supply from $x_1$), the model is
 
 $$\dot x_0 = (\mu_0(s_0,s_2) - D - a_0)x_0,\quad \dot x_1 = (\mu_1(s_1,s_2) - D - a_1)x_1,\quad \dot x_2 = (\mu_2(s_2) - D - a_2)x_2,$$
 

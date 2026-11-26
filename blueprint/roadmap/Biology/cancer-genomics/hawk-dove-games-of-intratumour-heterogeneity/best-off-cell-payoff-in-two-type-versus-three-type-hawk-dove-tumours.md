@@ -6,7 +6,9 @@ $$u(\alpha, \beta) = \frac v2(1 - \beta) + \frac c2\Big(\frac vc - \beta\Big)\al
 
 so the homogeneous population has the unique evolutionarily stable strategy (ESS) $\alpha = v/c$. In a heterogeneous tumour, cells recognize the type $I$ of their opponent but not their own, so a strategy is a vector $(\alpha_I)_I$ of aggression levels toward each type, and a cell maximizes the type-averaged payoff $U = \sum_I x_I U_I$, where $x_I$ are type proportions and $U_I$ averages $u$ over opponents met with probabilities $(nx_J - \mathbf 1[J = I])/(n-1)$. Whenever all cells use the same strategy, $U_I > U_J \iff \alpha_I < \alpha_J$: the best-off type is the one receiving the least aggression. Let
 
-$$\bar x_A = 1 - \frac vc\Big(1 - \frac1n\Big), \qquad \bar x_E = \frac vc\Big(1 - \frac1n\Big).$$
+$$\bar x_A = \Big(1 - \frac vc\Big)\Big(1 - \frac1n\Big), \qquad \bar x_E = \frac vc\Big(1 - \frac1n\Big).$$
+
+For example, with $n = 10$ and $v/c = 1/2$, $\bar x_A = \bar x_E = 0.45$; these are exactly the values at which the formulas below for $\alpha_B$ reach $1$ and $0$.
 
 **Proposition.**
 1. (Two types, low heterogeneity) For types $A, B$ with $x_A < \bar x_A$, the ESS in which $A$ is best off is $\big(\alpha_A, \alpha_B\big) = \big(0,\ \tfrac{n-1}{n - nx_A - 1}\tfrac vc\big)$; the best-off payoff $U_A^{**}(x_A)$ increases and is convex in $x_A$ on this range, and the aggression on $B$ saturates at $1$ when $x_A$ reaches $\bar x_A$.

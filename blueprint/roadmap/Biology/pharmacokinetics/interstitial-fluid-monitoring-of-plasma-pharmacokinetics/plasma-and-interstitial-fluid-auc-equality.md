@@ -10,10 +10,6 @@ $$AUC_{plasma} = \int_0^\infty C_P(t)\,dt, \qquad AUC_{ISF} = \int_0^\infty C_{I
 
 If $AUC_{plasma}$ is finite, then $AUC_{ISF} = AUC_{plasma}$. The value of $k_D$ only changes how fast the ISF exposure accumulates, not its total: the ISF profile is a delayed, smoothed copy of the plasma profile with the same integral.
 
-## Depends on
-
-- [Finite-horizon AUC of the one-compartment bolus](../one-compartment-linear-pharmacokinetics/integral-concentration-bolus.md)
-
 ## Expansion
 
 The solution with a drug-free start is the convolution $C_{ISF} = g * C_P$ with $g(t) = k_D e^{-k_D t}$ for $t \ge 0$. Since $g \ge 0$ and $\int_0^\infty g = 1$, Tonelli's theorem gives $\int_0^\infty C_{ISF} = \int_0^\infty g \cdot \int_0^\infty C_P = AUC_{plasma}$. Equivalently, integrating the ODE over $[0, t]$ gives $C_{ISF}(t) = k_D\big(\int_0^t C_P - \int_0^t C_{ISF}\big)$, and $C_{ISF}(t) \to 0$ along a sequence as $t \to \infty$ because it is integrable. This is Theorem 1 of the source, whose proof is in its Supporting Information. The practical consequence is that total plasma exposure can be read off a single ISF sensor if it records long enough, even when the ISF peak concentration underestimates the plasma peak.

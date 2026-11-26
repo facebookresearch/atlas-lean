@@ -1,0 +1,28 @@
+# Transmission models and reproduction numbers
+
+Deterministic compartmental and structured transmission models and their thresholds: age-, class-age- and viral-load-structured models, within-host and vector-borne systems, behaviour and incidence variants, invasion reproduction numbers, final and peak sizes, and next-generation matrices.
+
+- [Activation-status structured HIV model](activation-status-structured-hiv-model/README.md)
+- [Age-dependent immuno-epidemiological models](age-dependent-immuno-epidemiological-models/README.md)
+- [Age-structured host–vector transmission](age-structured-host-vector-transmission/README.md)
+- [Antiviral effectiveness in target-cell-limited infection](antiviral-effectiveness-in-target-cell-limited-infection/README.md)
+- [Class-age-structured epidemic models](class-age-structured-epidemic-models/README.md)
+- [Commuting-phase-structured epidemic models](commuting-phase-structured-epidemic-models/README.md)
+- [Coupled disease–behavior models](coupled-disease-behavior-models/README.md)
+- [Final symptomatic size of epidemics](final-symptomatic-size-of-epidemics/README.md)
+- [Fractional order epidemic models](fractional-order-epidemic-models/README.md)
+- [Hydra effects in discrete-time epidemic models](hydra-effects-in-discrete-time-epidemic-models/README.md)
+- [Hypnozoite reservoir models of Plasmodium vivax](hypnozoite-reservoir-models-of-plasmodium-vivax/README.md)
+- [Hysteretic behavioral response in epidemic models](hysteretic-behavioral-response-in-epidemic-models/README.md)
+- [Instant-release control of vector-borne outbreaks](instant-release-control-of-vector-borne-outbreaks/README.md)
+- [Invasion reproduction numbers in periodic models](invasion-reproduction-numbers-in-periodic-models/README.md)
+- [Invasion reproduction numbers of co-circulating arboviruses](invasion-reproduction-numbers-of-co-circulating-arboviruses/README.md)
+- [Malaria transmission with quarantine](malaria-transmission-with-quarantine/README.md)
+- [Multi-patch SIS models with infection during travel](multi-patch-sis-with-infection-during-travel/README.md)
+- [Next-generation matrix of epidemic Petri nets](next-generation-matrix-of-epidemic-petri-nets/README.md)
+- [Peak prevalence of the SIR epidemic](peak-prevalence-of-the-sir-epidemic/README.md)
+- [Relapsing malaria transmission models](relapsing-malaria-transmission-models/README.md)
+- [Schistosomiasis transmission models](schistosomiasis-transmission-models/README.md)
+- [SIRS model with double-exposure incidence](sirs-model-with-double-exposure-incidence/README.md)
+- [Vector maturation delay in plant disease models](vector-maturation-delay-in-plant-disease-models/README.md)
+- [Viral load-structured epidemic models](viral-load-structured-epidemic-models/README.md)

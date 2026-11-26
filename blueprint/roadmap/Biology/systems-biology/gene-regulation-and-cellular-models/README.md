@@ -1,0 +1,28 @@
+# Gene regulation, signalling and cellular models
+
+Models of gene regulation, signalling and cell-level processes: Boolean networks and their control, piecewise-affine and Ising-type gene networks, feedback control and entrainment, signal transduction and identifiability, transcription and the cell cycle, cytoskeletal mechanics, prion aggregation, network motifs and centralities, and force inference from snapshots.
+
+- [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
+- [Actin–myosin bistability of lamellipodia](actin-myosin-bistability-of-lamellipodia/README.md)
+- [Antithetic integral control](antithetic-integral-control/README.md)
+- [Boolean Delta–Notch lateral inhibition](boolean-delta-notch-lateral-inhibition/README.md)
+- [Canalizing Boolean networks](canalizing-boolean-networks/README.md)
+- [Cell-cycle-coupled two-state transcription](cell-cycle-coupled-two-state-transcription/README.md)
+- [Cytokine interaction network inference](cytokine-interaction-network-inference/README.md)
+- [Decomposable multilayer network centralities](decomposable-multilayer-network-centralities/README.md)
+- [Delay-induced oscillations in regulatory networks](delay-induced-oscillations-in-regulatory-networks/README.md)
+- [Determinative power of Boolean network nodes](determinative-power-of-boolean-network-nodes/README.md)
+- [Down-regulation in the ribosome flow model](down-regulation-in-the-ribosome-flow-model/README.md)
+- [First passage under signal inactivation](first-passage-under-signal-inactivation/README.md)
+- [Gain of entrainment in periodically forced biosynthesis](gain-of-entrainment-in-periodically-forced-biosynthesis/README.md)
+- [Gene-type spin Ising model on scale-free networks](gene-type-spin-ising-model-on-scale-free-networks/README.md)
+- [Identifiability of ERK phosphorylation kinetics](identifiability-of-erk-phosphorylation-kinetics/README.md)
+- [Minimal perturbation of asynchronous Boolean networks](minimal-perturbation-of-asynchronous-boolean-networks/README.md)
+- [Minimax evolutionary game for gene-network robustness](minimax-evolutionary-game-for-gene-network-robustness/README.md)
+- [Nucleated polymerization models of prion strains](nucleated-polymerization-models-of-prion-strains/README.md)
+- [Piecewise-affine gene network models](piecewise-affine-gene-network-models/README.md)
+- [Probability flow inference from cross-sectional snapshots](probability-flow-inference-from-cross-sectional-snapshots/README.md)
+- [Single-step control of Boolean networks](single-step-control-of-boolean-networks/README.md)
+- [Structured cell-cycle models](structured-cell-cycle-models/README.md)
+- [Subnetwork motifs under gene duplication](subnetwork-motifs-under-gene-duplication/README.md)
+- [Trap spaces and motif-avoidant attractors](trap-spaces-and-motif-avoidant-attractors/README.md)
