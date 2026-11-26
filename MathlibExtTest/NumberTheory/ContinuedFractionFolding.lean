@@ -12,11 +12,28 @@ import MathlibExt.NumberTheory.ContinuedFractionFolding
 import Mathlib.Data.Rat.Lemmas
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for `MathlibExt.NumberTheory.ContinuedFractionFolding` -/
+/-!
+# Tests for `MathlibExt.NumberTheory.ContinuedFractionFolding`
+
+The difference between the proportions of digits `1` and `2` in Cloitre's approximants tends
+to `1/3`, and the folding lemma evaluates two concrete folded continued fractions.
+
+Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
+Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 and Theorem 17.
+-/
 
 namespace MathlibExtTest.NumberTheory.ContinuedFractionFolding
 
 open MetaMathlibExt
+
+example :
+    Filter.Tendsto (fun k =>
+      ((cloitreApprox k).count 1 : ℝ) / (cloitreApprox k).length -
+        ((cloitreApprox k).count 2 : ℝ) / (cloitreApprox k).length)
+      Filter.atTop (nhds (1 / 3)) := by
+  obtain ⟨h₁, h₂⟩ := tendsto_cloitreApprox_count_div_length
+  convert h₁.sub h₂ using 1
+  norm_num
 
 -- Folding `[1; 2, 2]` by `x = 3` appends `[3, -2, -2]` and adds `1 / 75`.
 example : finiteContFrac [1, 2, 2, 3, -2, -2] = 106 / 75 := by
