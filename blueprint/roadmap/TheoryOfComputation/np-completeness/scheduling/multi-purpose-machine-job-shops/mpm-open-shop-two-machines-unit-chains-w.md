@@ -1,0 +1,3 @@
+# TWO-MACHINE UNIT-TIME MULTI-PURPOSE MACHINE OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem
+
+The decision problem TWO-MACHINE UNIT-TIME MULTI-PURPOSE MACHINE OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(\mu, w, A, K)$ (a list of lists, a list of natural numbers, a list of pairs and a natural number), to an instance that is well-formed and feasible for TWO-MACHINE UNIT-TIME MULTI-PURPOSE MACHINE OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME. It rejects every bitstring that does not decode to such an instance.
