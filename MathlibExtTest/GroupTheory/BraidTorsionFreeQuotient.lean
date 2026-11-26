@@ -24,3 +24,13 @@ example :
   intro x k hk hx
   by_contra h
   exact htorsion x h (isOfFinOrder_iff_pow_eq_one.mpr ⟨k, hk, hx⟩)
+
+-- Three is the least strand count of the general statement. The normal subgroup is neither
+-- trivial nor everything, since its quotient has two elements that do not commute.
+example : ∃ N : Subgroup (BraidGroup 3), N.Normal ∧ N ≠ ⊥ ∧ N ≠ ⊤ := by
+  obtain ⟨N, hN, hne, ⟨x, y, hxy⟩, -⟩ := exists_torsionFree_nonabelian_proper_quotient 3 le_rfl
+  refine ⟨N, hN, hne, fun htop => hxy ?_⟩
+  have hone (z : BraidGroup 3 ⧸ N) : z = 1 := by
+    obtain ⟨g, rfl⟩ := QuotientGroup.mk_surjective z
+    exact (QuotientGroup.eq_one_iff g).mpr (htop ▸ Subgroup.mem_top g)
+  rw [hone x, hone y]

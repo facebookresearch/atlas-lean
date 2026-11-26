@@ -22,14 +22,16 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Torsion-free proper quotients of braid groups
 
-We prove that braid groups on five or more strands have a nonabelian torsion-free quotient by a
-nontrivial normal subgroup, answering Kourovka Notebook Problem 14.102(c).
+We prove that for every $n \ge 3$ the braid group $B_n$ has a nonabelian torsion-free quotient by
+a nontrivial normal subgroup. For $n \ge 5$ this answers Kourovka Notebook Problem 14.102(c).
 
-The Magnus expansion sends the Artin action on the free group to automorphisms of the word
-algebra truncated at degree $n$. An iterated commutator of the squares of the first
-two braid generators acts trivially after truncation. It is nontrivial in the braid group,
-as seen by making the product of the first three free generators the identity and comparing
-the resulting inner automorphisms of a free group on two generators.
+The proof builds on Artin's representation of $B_n$ by automorphisms of the free group $F_n$ and
+on the Magnus expansion, which sends each free generator $x_i$ to $1 + x_i$ in the integral word
+algebra on $x_1, \dots, x_n$. Through it, the Artin action becomes an action by ring automorphisms
+of the word algebra truncated by keeping the words of length at most $n$. An iterated commutator
+of the squares of the first two braid generators acts trivially after truncation. It is
+nontrivial in the braid group, as seen by making the product of the first three free generators
+the identity and comparing the resulting inner automorphisms of a free group on two generators.
 
 The linear part of the action permutes the strands and exhibits noncommuting images. A
 finite-order element with identity linear part is trivial by the degree filtration. For an
@@ -1530,10 +1532,25 @@ private theorem braidRep_noncommute {n : ℕ} (hn : 3 ≤ n) :
     rwa [show (B * A) (var l) - var r - ((B * A) (var l) - var m) = var m - var r by abel] at h
   exact hmr ((var_sub_level_two_iff (by omega) m r).mp hd)
 
-private theorem quotient_exists (n : ℕ) (hn : 3 ≤ n) :
+end
+
+@[expose] public section
+
+/--
+**Braid groups on three or more strands have proper non-abelian torsion-free quotients.** For
+every $n \ge 3$, the braid group $B_n$ on $n$ strands has a nontrivial normal subgroup $N$ such that
+the quotient $B_n / N$ is non-abelian and torsion-free (no element other than the identity has
+finite order). For $n > 4$ this answers Kourovka Notebook Problem 14.102(c).
+
+Source: Direct construction: $N$ is the kernel of Artin's action of $B_n$ on the free group of rank
+$n$, read through the Magnus expansion modulo the words of length greater than $n$. The case
+$n > 4$ is Problem 14.102(c) of E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026).
+-/
+theorem exists_torsionFree_nonabelian_proper_quotient (n : ℕ) (hn : 3 ≤ n) :
     ∃ (N : Subgroup (BraidGroup n)) (_ : N.Normal), N ≠ ⊥ ∧
-      (∃ a b : BraidGroup n ⧸ N, a * b ≠ b * a) ∧
-      ∀ a : BraidGroup n ⧸ N, a ≠ 1 → ¬ IsOfFinOrder a := by
+      (∃ x y : BraidGroup n ⧸ N, x * y ≠ y * x) ∧
+      ∀ x : BraidGroup n ⧸ N, x ≠ 1 → ¬ IsOfFinOrder x := by
   let φ := braidRep n
   refine ⟨φ.ker, inferInstance, ?_, ?_, ?_⟩
   · intro he
@@ -1555,10 +1572,6 @@ private theorem quotient_exists (n : ℕ) (hn : 3 ≤ n) :
     rw [QuotientGroup.kerLift_mk, map_one]
     exact braidRep_torsion (by omega) b hb
 
-end
-
-@[expose] public section
-
 /--
 **Braid groups on five or more strands have proper non-abelian torsion-free quotients.** For
 every $n > 4$, the braid group $B_n$ on $n$ strands has a nontrivial normal subgroup $N$ such that
@@ -1569,21 +1582,21 @@ The Kourovka Archive answers 14.102(c) "Yes, it does", citing Linnell and Schick
 is residually torsion-free nilpotent-by-finite); Humphries had constructed such quotients for
 $n < 7$.
 
-Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
-Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V.
-Shpilrain); part (c) in the Archive of Solved Problems; resolution: (a) F. Castel, Geometric
-representations of the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen, K. Kordek and D.
-Margalit, Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b) S. Orevkov, Ann. Fac.
-Sci. Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and D. Margalit, Bull. London
-Math. Soc. 54 (2022), 95-111 (n ≥ 7); (c) P. Linnell and T. Schick, J. Amer. Math. Soc. 20 (2007),
-no. 4, 1003-1051, the Kourovka Notebook (21st issue) marks 14.102(a), (b) solved (for n ≥ 5 every
-non-injective endomorphism of B_n has cyclic image; every non-trivial endomorphism of [B_n, B_n] is
-an automorphism); Kourovka Archive, Problem 14.102(c) (Yes), https://arxiv.org/abs/1910.00712.
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V. Shpilrain). Part (c)
+is in the Archive of Solved Problems, answered "Yes" citing P. Linnell and T. Schick, J. Amer.
+Math. Soc. 20 (2007), no. 4, 1003-1051 (every braid group is residually torsion-free
+nilpotent-by-finite), with a comment of 2001 citing S. P. Humphries, Int. J. Algebra Comput. 11
+(2001), no. 3, 363-373 (n < 7). Parts (a) and (b) are solved in the main list: (a) F. Castel,
+Geometric representations of the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen,
+K. Kordek and D. Margalit, Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b)
+S. Orevkov, Ann. Fac. Sci. Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and
+D. Margalit, Bull. London Math. Soc. 54 (2022), 95-111 (n ≥ 7).
 -/
 theorem braidTorsionFreeNonabelianProperQuotient_holds :
     braidTorsionFreeNonabelianProperQuotient := by
   intro n hn
-  exact quotient_exists n (by omega)
+  exact exists_torsionFree_nonabelian_proper_quotient n (by omega)
 
 end
 
