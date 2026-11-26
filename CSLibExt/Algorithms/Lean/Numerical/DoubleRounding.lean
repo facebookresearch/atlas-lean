@@ -35,7 +35,9 @@ each operation either is exact at `p'` bits or stays far enough from the midpoin
 * `flIn`, `flIn_flIn_add`, `flIn_flIn_mul`, `flIn_flIn_div`, `flIn_flIn_sqrt`: rounding in a format
   with gradual underflow, and innocuous double rounding when the least exponents `q` and `q'` of
   the two formats also satisfy `q' ≤ q` for `+`, `q' ≤ 2q` for `×` and `q' ≤ q - p - 2` for `/`
-  and `√`; `binary32_via_binary64` for IEEE binary32 operations evaluated in binary64.
+  and `√`; `binary32_via_binary64` for IEEE binary32 operations evaluated in binary64. For `√`,
+  Roux's Table II also allows the alternative condition `2q' ≤ q - 4p - 2`, which is not covered
+  here.
 * `innocuous_double_rounding`: these results, with the x87 example, counterexamples showing that
   each bound on `p'` is optimal (after Roux's Remarks 11, 21, 26 and 30, which give them for
   `p = 4`), and one showing that the conditions on `q'` cannot simply be dropped.
@@ -55,7 +57,7 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [FloorRin
 
 /-! ## Rounding to an integer -/
 
-theorem rne_eq_of_abs_sub_lt {m : K} {k : ℤ} (h : |m - k| < 1 / 2) : rne m = k := by
+private theorem rne_eq_of_abs_sub_lt {m : K} {k : ℤ} (h : |m - k| < 1 / 2) : rne m = k := by
   have h₁ := abs_rne_sub_le m k
   rw [abs_sub_comm (k : K)] at h₁
   have h₂ : |((rne m - k : ℤ) : K)| < 1 := by
@@ -69,7 +71,7 @@ theorem rne_eq_of_abs_sub_lt {m : K} {k : ℤ} (h : |m - k| < 1 / 2) : rne m = k
   rw [abs_lt] at h₃
   omega
 
-theorem rne_intCast_add_half_of_even {k : ℤ} (hk : Even k) : rne ((k : K) + 1 / 2) = k := by
+private theorem rne_intCast_add_half_of_even {k : ℤ} (hk : Even k) : rne ((k : K) + 1 / 2) = k := by
   have hf : ⌊(k : K) + 1 / 2⌋ = k := by
     rw [Int.floor_eq_iff]
     constructor <;> linarith
@@ -77,7 +79,8 @@ theorem rne_intCast_add_half_of_even {k : ℤ} (hk : Even k) : rne ((k : K) + 1 
   rw [hf]
   simp [hk]
 
-theorem rne_intCast_add_half_of_odd {k : ℤ} (hk : Odd k) : rne ((k : K) + 1 / 2) = k + 1 := by
+private theorem rne_intCast_add_half_of_odd {k : ℤ} (hk : Odd k) :
+    rne ((k : K) + 1 / 2) = k + 1 := by
   have hf : ⌊(k : K) + 1 / 2⌋ = k := by
     rw [Int.floor_eq_iff]
     constructor <;> linarith
@@ -85,11 +88,12 @@ theorem rne_intCast_add_half_of_odd {k : ℤ} (hk : Odd k) : rne ((k : K) + 1 / 
   rw [hf]
   simp [Int.not_even_iff_odd.2 hk]
 
-theorem abs_rne_le_of_abs_le {m : K} {n : ℤ} (h : |m| ≤ n) : |rne m| ≤ n := by
+private theorem abs_rne_le_of_abs_le {m : K} {n : ℤ} (h : |m| ≤ n) : |rne m| ≤ n := by
   rw [abs_le] at h ⊢
   exact ⟨le_rne_of_le (by push_cast; linarith), rne_le_of_le h.2⟩
 
-theorem le_abs_rne_of_le_abs {m : K} {n : ℤ} (hn : 0 ≤ n) (h : (n : K) ≤ |m|) : n ≤ |rne m| := by
+private theorem le_abs_rne_of_le_abs {m : K} {n : ℤ} (hn : 0 ≤ n) (h : (n : K) ≤ |m|) :
+    n ≤ |rne m| := by
   rcases le_or_gt 0 m with hm | hm
   · rw [abs_of_nonneg hm] at h
     have := le_rne_of_le h
@@ -104,7 +108,7 @@ theorem le_abs_rne_of_le_abs {m : K} {n : ℤ} (hn : 0 ≤ n) (h : (n : K) ≤ |
 
 variable {p : ℕ}
 
-theorem le_ulpExp_of_le_abs (hp : 1 ≤ p) {x : K} {e : ℤ}
+private theorem le_ulpExp_of_le_abs (hp : 1 ≤ p) {x : K} {e : ℤ}
     (h : (2 : K) ^ (p - 1) * 2 ^ e ≤ |x|) : e ≤ ulpExp p x := by
   have hax : 0 < |x| := lt_of_lt_of_le (by positivity) h
   have h' : (2 : K) ^ (e + ((p : ℤ) - 1)) ≤ |x| := by
@@ -116,7 +120,7 @@ theorem le_ulpExp_of_le_abs (hp : 1 ≤ p) {x : K} {e : ℤ}
   unfold ulpExp
   omega
 
-theorem ulpExp_le_of_abs_lt {x : K} (hx : x ≠ 0) {e : ℤ} (h : |x| < 2 ^ p * 2 ^ e) :
+private theorem ulpExp_le_of_abs_lt {x : K} (hx : x ≠ 0) {e : ℤ} (h : |x| < 2 ^ p * 2 ^ e) :
     ulpExp p x ≤ e := by
   have hax : 0 < |x| := abs_pos.2 hx
   have h' : |x| < (2 : K) ^ (e + p) := by
@@ -127,12 +131,13 @@ theorem ulpExp_le_of_abs_lt {x : K} (hx : x ≠ 0) {e : ℤ} (h : |x| < 2 ^ p * 
   unfold ulpExp
   omega
 
-theorem ulpExp_eq_of_le_of_lt (hp : 1 ≤ p) {x : K} {e : ℤ} (h₁ : (2 : K) ^ (p - 1) * 2 ^ e ≤ |x|)
+private theorem ulpExp_eq_of_le_of_lt (hp : 1 ≤ p) {x : K} {e : ℤ}
+    (h₁ : (2 : K) ^ (p - 1) * 2 ^ e ≤ |x|)
     (h₂ : |x| < 2 ^ p * 2 ^ e) : ulpExp p x = e :=
   le_antisymm (ulpExp_le_of_abs_lt (abs_pos.1 (lt_of_lt_of_le (by positivity) h₁)) h₂)
     (le_ulpExp_of_le_abs hp h₁)
 
-theorem isFloat_of_abs_eq (hp : 1 ≤ p) {x : K} {e : ℤ} (h : |x| = 2 ^ p * 2 ^ e) :
+private theorem isFloat_of_abs_eq (hp : 1 ≤ p) {x : K} {e : ℤ} (h : |x| = 2 ^ p * 2 ^ e) :
     IsFloat p x := by
   have h2 : (2 : ℤ) ^ p = 2 * 2 ^ (p - 1) := by rw [← pow_succ', Nat.sub_add_cancel hp]
   have hlt : |(2 : ℤ) ^ (p - 1)| < 2 ^ p := by
@@ -151,7 +156,8 @@ theorem isFloat_of_abs_eq (hp : 1 ≤ p) {x : K} {e : ℤ} (h : |x| = 2 ^ p * 2 
     push_cast
     ring
 
-theorem fl_eq_of_le_of_le (hp : 1 ≤ p) {x : K} {e : ℤ} (h₁ : (2 : K) ^ (p - 1) * 2 ^ e ≤ |x|)
+private theorem fl_eq_of_le_of_le (hp : 1 ≤ p) {x : K} {e : ℤ}
+    (h₁ : (2 : K) ^ (p - 1) * 2 ^ e ≤ |x|)
     (h₂ : |x| ≤ 2 ^ p * 2 ^ e) : fl p x = rne (x / 2 ^ e) * 2 ^ e := by
   rcases h₂.lt_or_eq with h₂ | h₂
   · rw [fl, ulpExp_eq_of_le_of_lt hp h₁ h₂]
@@ -168,7 +174,7 @@ theorem fl_eq_of_le_of_le (hp : 1 ≤ p) {x : K} {e : ℤ} (h₁ : (2 : K) ^ (p 
 
 /- Rounding `M · 2^d` to an integer, dividing by `2^d` and rounding again gives `rne M` when `M` is
 a half-integer or lies within `1/2 - 2^(-d-1)` of an integer. -/
-theorem rne_rne_mul_two_pow_div {d : ℕ} (hd : 1 ≤ d) {M : K}
+private theorem rne_rne_mul_two_pow_div {d : ℕ} (hd : 1 ≤ d) {M : K}
     (h : (∃ k : ℤ, M = k + 1 / 2) ∨ ∃ k : ℤ, |M - k| < 1 / 2 - 1 / 2 ^ (d + 1)) :
     rne ((rne (M * 2 ^ d) : K) / 2 ^ d) = rne M := by
   have hD : (0 : K) < 2 ^ d := by positivity
@@ -197,7 +203,7 @@ theorem rne_rne_mul_two_pow_div {d : ℕ} (hd : 1 ≤ d) {M : K}
     rw [h₄, abs_div, abs_of_pos hD, div_lt_iff₀ hD]
     linarith
 
-theorem mid_or_near_of_floor {d : ℕ} {M : K}
+private theorem mid_or_near_of_floor {d : ℕ} {M : K}
     (h : M ≠ ⌊M⌋ + 1 / 2 → 1 / 2 ^ (d + 1) < |M - (⌊M⌋ + 1 / 2)|) :
     (∃ k : ℤ, M = k + 1 / 2) ∨ ∃ k : ℤ, |M - k| < 1 / 2 - 1 / 2 ^ (d + 1) := by
   by_cases hM : M = ⌊M⌋ + 1 / 2
@@ -283,11 +289,11 @@ theorem fl_fl_eq_of_near (hp : 1 ≤ p) {d : ℕ} (hd : 1 ≤ d) {z : K}
 /-! ## Midpoint distances of the four operations -/
 
 omit [LinearOrder K] [IsStrictOrderedRing K] [FloorRing K] in
-theorem IsFloat.neg {x : K} (hx : IsFloat p x) : IsFloat p (-x) := by
+private theorem IsFloat.neg {x : K} (hx : IsFloat p x) : IsFloat p (-x) := by
   obtain ⟨m, e, hm, rfl⟩ := hx
   exact ⟨-m, e, by rwa [abs_neg], by push_cast; ring⟩
 
-theorem IsFloat.exists_normalized (hp : 1 ≤ p) {x : K} (hx : IsFloat p x) (hx0 : x ≠ 0) :
+private theorem IsFloat.exists_normalized (hp : 1 ≤ p) {x : K} (hx : IsFloat p x) (hx0 : x ≠ 0) :
     ∃ m e : ℤ, 2 ^ (p - 1) ≤ |m| ∧ |m| < 2 ^ p ∧ x = m * 2 ^ e := by
   have hfl : (rne (x / 2 ^ ulpExp p x) : K) * 2 ^ ulpExp p x = x := fl_eq_self hp hx
   have hM : (rne (x / 2 ^ ulpExp p x) : K) = x / 2 ^ ulpExp p x := by
@@ -298,7 +304,7 @@ theorem IsFloat.exists_normalized (hp : 1 ≤ p) {x : K} (hx : IsFloat p x) (hx0
   exact ⟨_, _, by exact_mod_cast h₁, by exact_mod_cast h₂, hfl.symm⟩
 
 omit [IsStrictOrderedRing K] in
-theorem exists_int_mul_of_add {mx my ex ey g : ℤ} (hx : g ≤ ex) (hy : g ≤ ey) :
+private theorem exists_int_mul_of_add {mx my ex ey g : ℤ} (hx : g ≤ ex) (hy : g ≤ ey) :
     ∃ k : ℤ, (mx : K) * 2 ^ ex + my * 2 ^ ey = k * 2 ^ g := by
   refine ⟨mx * 2 ^ (ex - g).toNat + my * 2 ^ (ey - g).toNat, ?_⟩
   push_cast
@@ -307,7 +313,7 @@ theorem exists_int_mul_of_add {mx my ex ey g : ℤ} (hx : g ≤ ex) (hy : g ≤ 
     Int.toNat_of_nonneg (by omega)]
   ring_nf
 
-theorem abs_lt_of_eq_int_mul {k g : ℤ} {n : ℕ} {z : K} (hk : z = k * 2 ^ g)
+private theorem abs_lt_of_eq_int_mul {k g : ℤ} {n : ℕ} {z : K} (hk : z = k * 2 ^ g)
     (h : |z| < 2 ^ n * 2 ^ g) : |k| < 2 ^ n := by
   rw [hk, abs_mul, abs_of_pos (two_zpow_pos (K := K) g)] at h
   have h' := lt_of_mul_lt_mul_right h (two_zpow_pos (K := K) g).le
@@ -316,7 +322,7 @@ theorem abs_lt_of_eq_int_mul {k g : ℤ} {n : ℕ} {z : K} (hk : z = k * 2 ^ g)
 
 /- When the smaller operand of a sum lies below the last place of `p + d` bits, the sum is
 within `1/2 - 2^(-d-1)` of a `p`-bit number, at the scale of its last place. -/
-theorem exists_abs_sub_lt_of_add (hp : 1 ≤ p) {d : ℕ} (hd : p + 1 ≤ d) {mx my ex ey : ℤ}
+private theorem exists_abs_sub_lt_of_add (hp : 1 ≤ p) {d : ℕ} (hd : p + 1 ≤ d) {mx my ex ey : ℤ}
     (hmx : |mx| < 2 ^ p) (hmy : |my| < 2 ^ p) {z : K}
     (hz_def : z = mx * 2 ^ ex + my * 2 ^ ey) (hz : z ≠ 0) (hey : ey < ulpExp p z - d) :
     ∃ k : ℤ, |z / 2 ^ ulpExp p z - k| < 1 / 2 - 1 / 2 ^ (d + 1) := by
@@ -385,7 +391,7 @@ theorem exists_abs_sub_lt_of_add (hp : 1 ≤ p) {d : ℕ} (hd : p + 1 ≤ d) {mx
 
 /- A quotient of `p`-bit numbers that is not a midpoint at the scale `2^e` lies farther than
 `2^(-p-t)` from it, as soon as it is at least `2^(-t)` at that scale. -/
-theorem forall_far_of_div (hp : 1 ≤ p) {t : ℕ} (ht : 1 ≤ t) {x y : K} (hx : IsFloat p x)
+private theorem forall_far_of_div (hp : 1 ≤ p) {t : ℕ} (ht : 1 ≤ t) {x y : K} (hx : IsFloat p x)
     (hy : IsFloat p y) {e : ℤ} (hM : 1 / 2 ^ t ≤ |x / y / 2 ^ e|) (n : ℤ)
     (hn : x / y / 2 ^ e ≠ n + 1 / 2) : 1 / 2 ^ (p + t) < |x / y / 2 ^ e - (n + 1 / 2)| := by
   have hy0 : y ≠ 0 := by
@@ -454,7 +460,8 @@ theorem forall_far_of_div (hp : 1 ≤ p) {t : ℕ} (ht : 1 ≤ t) {x y : K} (hx 
 
 /- The square root of a `p`-bit number, at a scale `2^e` where it lies in `[7/16, 2^p)`, is a
 midpoint or lies farther than `2^(-p-3)` from the nearest one. -/
-theorem far_of_sqrt (hp : 1 ≤ p) {x : ℝ} (hx : IsFloat p x) {e : ℤ} (h₁ : 7 / 16 ≤ √x / 2 ^ e)
+private theorem far_of_sqrt (hp : 1 ≤ p) {x : ℝ} (hx : IsFloat p x) {e : ℤ}
+    (h₁ : 7 / 16 ≤ √x / 2 ^ e)
     (h₂ : √x / 2 ^ e < 2 ^ p) (hn : √x / 2 ^ e ≠ ⌊√x / 2 ^ e⌋ + 1 / 2) :
     1 / 2 ^ (p + 3) < |√x / 2 ^ e - (⌊√x / 2 ^ e⌋ + 1 / 2)| := by
   have hE : (0 : ℝ) < 2 ^ e := two_zpow_pos e
@@ -615,7 +622,7 @@ theorem fl_fl_add (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {x y : K} (
   · rw [add_comm ((mx : K) * 2 ^ ex)]
     exact fl_fl_add_aux hp (by omega) hmy hmx h
 
-theorem fl_fl_sub (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {x y : K} (hx : IsFloat p x)
+private theorem fl_fl_sub (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {x y : K} (hx : IsFloat p x)
     (hy : IsFloat p y) : fl p (fl p' (x - y)) = fl p (x - y) := by
   rw [sub_eq_add_neg]
   exact fl_fl_add hp hp' hx hy.neg
@@ -694,16 +701,16 @@ The format has gradual underflow: below $2^{q + p - 1}$ its numbers are the subn
 of $2^q$. Its exponent is unbounded above, so nothing overflows. -/
 def flIn (q : ℤ) (x : K) : K := rne (x / 2 ^ max (ulpExp p x) q) * 2 ^ max (ulpExp p x) q
 
-theorem flIn_zero (q : ℤ) : flIn p q (0 : K) = 0 := by
+private theorem flIn_zero (q : ℤ) : flIn p q (0 : K) = 0 := by
   have : rne (0 : K) = 0 := by exact_mod_cast rne_intCast (K := K) 0
   simp [flIn, this]
 
 omit [IsStrictOrderedRing K] in
-theorem flIn_eq_fl {q : ℤ} {x : K} (h : q ≤ ulpExp p x) : flIn p q x = fl p x := by
+private theorem flIn_eq_fl {q : ℤ} {x : K} (h : q ≤ ulpExp p x) : flIn p q x = fl p x := by
   unfold flIn fl
   rw [max_eq_left h]
 
-theorem flIn_int_mul_zpow {q m e : ℤ} (hm : |m| < 2 ^ p) (he : q ≤ e) :
+private theorem flIn_int_mul_zpow {q m e : ℤ} (hm : |m| < 2 ^ p) (he : q ≤ e) :
     flIn p q ((m : K) * 2 ^ e) = m * 2 ^ e := by
   rcases eq_or_ne m 0 with rfl | hm0
   · simp [flIn_zero]
@@ -721,7 +728,7 @@ theorem flIn_int_mul_zpow {q m e : ℤ} (hm : |m| < 2 ^ p) (he : q ≤ e) :
   unfold flIn
   rw [← hE_def, hint, rne_intCast, ← hint, div_mul_cancel₀ _ (two_zpow_pos _).ne']
 
-theorem flIn_eq_of_abs_le (hp : 1 ≤ p) {q e : ℤ} {w : K} (hqe : q ≤ e)
+private theorem flIn_eq_of_abs_le (hp : 1 ≤ p) {q e : ℤ} {w : K} (hqe : q ≤ e)
     (h₂ : |w| ≤ 2 ^ p * 2 ^ e) (h₁ : 2 ^ (p - 1) * 2 ^ e ≤ |w| ∨ e = q) :
     flIn p q w = rne (w / 2 ^ e) * 2 ^ e := by
   rcases eq_or_ne w 0 with rfl | hw
@@ -744,7 +751,7 @@ theorem flIn_eq_of_abs_le (hp : 1 ≤ p) {q e : ℤ} {w : K} (hqe : q ≤ e)
 `z` in the extended format is `d ≥ 1` below that in the target format, and `z` is a midpoint or
 within `1/2 - 2^(-d-1)` of a number of the target format at that scale, double rounding of `z` is
 innocuous. -/
-theorem flIn_flIn_eq_of_near (hp : 1 ≤ p) {p' : ℕ} {q q' : ℤ} {d : ℕ} (hd : 1 ≤ d) {z : K}
+private theorem flIn_flIn_eq_of_near (hp : 1 ≤ p) {p' : ℕ} {q q' : ℤ} {d : ℕ} (hd : 1 ≤ d) {z : K}
     (he : max (ulpExp p' z) q' = max (ulpExp p z) q - d)
     (h : (∃ k : ℤ, z / 2 ^ max (ulpExp p z) q = k + 1 / 2) ∨
       ∃ k : ℤ, |z / 2 ^ max (ulpExp p z) q - k| < 1 / 2 - 1 / 2 ^ (d + 1)) :
@@ -806,7 +813,7 @@ theorem flIn_flIn_eq_of_near (hp : 1 ≤ p) {p' : ℕ} {q q' : ℤ} {d : ℕ} (h
   rw [← he_def]
 
 omit [LinearOrder K] [IsStrictOrderedRing K] [FloorRing K] in
-theorem IsFloatIn.neg {qmin qmax : ℤ} {x : K} (hx : IsFloatIn p qmin qmax x) :
+private theorem IsFloatIn.neg {qmin qmax : ℤ} {x : K} (hx : IsFloatIn p qmin qmax x) :
     IsFloatIn p qmin qmax (-x) := by
   obtain ⟨m, e, hm, h₁, h₂, rfl⟩ := hx
   exact ⟨-m, e, by rwa [abs_neg], h₁, h₂, by push_cast; ring⟩
@@ -867,7 +874,7 @@ theorem flIn_flIn_add (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {q q' q
   · rw [add_comm ((mx : K) * 2 ^ ex)]
     exact flIn_flIn_add_aux hp (by omega) hq hmy hmx h hqx
 
-theorem flIn_flIn_sub (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {q q' qmax : ℤ}
+private theorem flIn_flIn_sub (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {q q' qmax : ℤ}
     (hq : q' ≤ q) {x y : K} (hx : IsFloatIn p q qmax x) (hy : IsFloatIn p q qmax y) :
     flIn p q (flIn p' q' (x - y)) = flIn p q (x - y) := by
   rw [sub_eq_add_neg]
@@ -1035,31 +1042,27 @@ theorem binary32_via_binary64 {x y : ℝ} (hx : IsFloatIn 24 (-149) 104 x)
     flIn_flIn_div (by norm_num) (by norm_num) (by norm_num) hx hy,
     flIn_flIn_sqrt (by norm_num) (by norm_num) (by norm_num) hx⟩
 
-theorem exists_flIn_flIn_div_ne :
-    ∃ x y : ℝ, IsFloatIn 2 0 3 x ∧ IsFloatIn 2 0 3 y ∧
-      flIn 2 0 (flIn 4 0 (x / y)) ≠ flIn 2 0 (x / y) := by
-  refine ⟨16, 3, ⟨2, 3, by norm_num, by norm_num, le_rfl, by norm_num⟩,
-    ⟨3, 0, by norm_num, le_rfl, by norm_num, by norm_num⟩, ?_⟩
-  have hdirect : flIn 2 0 ((16 : ℝ) / 3) = 6 := by
-    rw [flIn_eq_of_abs_le (e := 1) (by norm_num) (by norm_num) (by norm_num [abs_of_pos])
-      (Or.inl (by norm_num [abs_of_pos])), rne_eq_of_abs_sub_lt (k := 3)]
-    · norm_num
-    · rw [abs_lt]
-      constructor <;> norm_num
-  have hext : flIn 4 0 ((16 : ℝ) / 3) = 5 := by
-    rw [flIn_eq_of_abs_le (e := 0) (by norm_num) le_rfl (by norm_num [abs_of_pos]) (Or.inr rfl),
-      rne_eq_of_abs_sub_lt (k := 5)]
-    · norm_num
-    · rw [abs_lt]
-      constructor <;> norm_num
-  have hdouble : flIn 2 0 (5 : ℝ) = 4 := by
-    rw [flIn_eq_of_abs_le (e := 1) (by norm_num) (by norm_num) (by norm_num [abs_of_pos])
+private theorem flIn_flIn_sixteen_div_three :
+    IsFloatIn 2 0 3 (16 : ℝ) ∧ IsFloatIn 2 0 3 (3 : ℝ) ∧
+      flIn 2 0 (flIn 4 0 ((16 : ℝ) / 3)) = 4 ∧ flIn 2 0 ((16 : ℝ) / 3) = 6 := by
+  refine ⟨⟨2, 3, by norm_num, by norm_num, le_rfl, by norm_num⟩,
+    ⟨3, 0, by norm_num, le_rfl, by norm_num, by norm_num⟩, ?_, ?_⟩
+  · have hext : flIn 4 0 ((16 : ℝ) / 3) = 5 := by
+      rw [flIn_eq_of_abs_le (e := 0) (by norm_num) le_rfl (by norm_num [abs_of_pos])
+        (Or.inr rfl), rne_eq_of_abs_sub_lt (k := 5)]
+      · norm_num
+      · rw [abs_lt]
+        constructor <;> norm_num
+    rw [hext, flIn_eq_of_abs_le (e := 1) (by norm_num) (by norm_num) (by norm_num [abs_of_pos])
       (Or.inl (by norm_num [abs_of_pos])),
       show (5 : ℝ) / 2 ^ (1 : ℤ) = ((2 : ℤ) : ℝ) + 1 / 2 by norm_num,
       rne_intCast_add_half_of_even (by decide)]
     norm_num
-  rw [hext, hdouble, hdirect]
-  norm_num
+  · rw [flIn_eq_of_abs_le (e := 1) (by norm_num) (by norm_num) (by norm_num [abs_of_pos])
+      (Or.inl (by norm_num [abs_of_pos])), rne_eq_of_abs_sub_lt (k := 3)]
+    · norm_num
+    · rw [abs_lt]
+      constructor <;> norm_num
 
 /-! ## The x87 example -/
 
@@ -1081,7 +1084,7 @@ private theorem fl_eq_of_le_of_le_div (hp : 1 ≤ p) {x : K} (k : ℕ)
     (by rwa [zpow_natCast])
   rwa [zpow_natCast] at this
 
-theorem x87_double_rounding :
+private theorem x87_double_rounding :
     IsFloat 53 (1 : ℝ) ∧ IsFloat 53 ((2 : ℝ) ^ (-53 : ℤ) + 2 ^ (-78 : ℤ)) ∧
       fl 53 (1 + ((2 : ℝ) ^ (-53 : ℤ) + 2 ^ (-78 : ℤ))) = 1 + 2 ^ (-52 : ℤ) ∧
       fl 64 (1 + ((2 : ℝ) ^ (-53 : ℤ) + 2 ^ (-78 : ℤ))) = 1 + 2 ^ (-53 : ℤ) ∧
@@ -1109,7 +1112,7 @@ theorem x87_double_rounding :
 
 /-! ## Optimality of the bounds -/
 
-theorem exists_fl_fl_add_ne (hp : 2 ≤ p) :
+private theorem exists_fl_fl_add_ne (hp : 2 ≤ p) :
     ∃ x y : K, IsFloat p x ∧ IsFloat p y ∧ fl p (fl (2 * p) (x + y)) ≠ fl p (x + y) := by
   obtain ⟨q, rfl⟩ : ∃ q, p = q + 2 := ⟨p - 2, by omega⟩
   set B : K := 2 ^ q with hB_def
@@ -1205,7 +1208,7 @@ theorem exists_fl_fl_add_ne (hp : 2 ≤ p) :
     field_simp at h
     linarith
 
-theorem exists_fl_fl_div_ne (hp : 2 ≤ p) :
+private theorem exists_fl_fl_div_ne (hp : 2 ≤ p) :
     ∃ x y : K, IsFloat p x ∧ IsFloat p y ∧ y ≠ 0 ∧
       fl p (fl (2 * p - 1) (x / y)) ≠ fl p (x / y) := by
   obtain ⟨q, rfl⟩ : ∃ q, p = q + 2 := ⟨p - 2, by omega⟩
@@ -1285,7 +1288,7 @@ theorem exists_fl_fl_div_ne (hp : 2 ≤ p) :
   field_simp at h
   linarith
 
-theorem exists_fl_fl_mul_ne (hp : 4 ≤ p) :
+private theorem exists_fl_fl_mul_ne (hp : 4 ≤ p) :
     ∃ x y : K, IsFloat p x ∧ IsFloat p y ∧ fl p (fl (2 * p - 1) (x * y)) ≠ fl p (x * y) := by
   rcases hp.eq_or_lt with rfl | hp
   · -- `p = 4`: `13 × 13 = 169`, as in Figueroa's example
@@ -1377,7 +1380,7 @@ theorem exists_fl_fl_mul_ne (hp : 4 ≤ p) :
   have := mul_right_cancel₀ this.ne' h
   linarith
 
-theorem exists_fl_fl_sqrt_ne (hp : 1 ≤ p) :
+private theorem exists_fl_fl_sqrt_ne (hp : 1 ≤ p) :
     ∃ x : ℝ, IsFloat p x ∧ 0 ≤ x ∧ fl p (fl (2 * p + 1) √x) ≠ fl p √x := by
   set P : ℝ := 2 ^ p with hP_def
   have hP : (2 : ℝ) ≤ P := by
@@ -1523,10 +1526,10 @@ $p$-bit floating-point number when it is $m \cdot 2^e$ for integers $m$ and $e$ 
    $p' \ge 2p + 1$ and $q' \le q$; the same holds for $xy$ if $p' \ge 2p$ and $q' \le 2q$, for
    $x / y$ if $p' \ge 2p$, $q' \le q - p - 2$ and $y \ne 0$, and for $\sqrt{x}$ if $p' \ge 2p + 2$,
    $q' \le q - p - 2$ and $x \ge 0$.
-5. *Some condition on $q'$ is needed.* There are numbers $x$, $y$ of the format with $2$-bit
-   significands and last-place exponents in $[0, 3]$ (for instance $16$ and $3$) with
-   $\mathrm{fl}_{2,0}(\mathrm{fl}_{4,0}(x / y)) \ne \mathrm{fl}_{2,0}(x / y)$, although
-   $p' = 4 = 2p$ and $q' = q = 0$.
+5. *Some condition on $q'$ is needed.* $16$ and $3$ are numbers of the format with $2$-bit
+   significands and last-place exponents in $[0, 3]$, yet
+   $\mathrm{fl}_{2,0}(\mathrm{fl}_{4,0}(16 / 3)) = 4$ while $\mathrm{fl}_{2,0}(16 / 3) = 6$,
+   although $p' = 4 = 2p$ and $q' = q = 0$.
 6. *Binary32 through binary64.* For all real binary32 numbers $x$ and $y$ (the numbers
    $m \cdot 2^e$ with $|m| < 2^{24}$ and $-149 \le e \le 104$),
    $\mathrm{fl}_{24,-149}(\mathrm{fl}_{53,-1074}(x \circ y)) = \mathrm{fl}_{24,-149}(x \circ y)$
@@ -1564,8 +1567,8 @@ theorem innocuous_double_rounding :
         flIn p q (flIn p' q' (x / y)) = flIn p q (x / y)) ∧
       (2 * p + 2 ≤ p' → q' ≤ q - p - 2 → 0 ≤ x →
         flIn p q (flIn p' q' √x) = flIn p q √x)) ∧
-    (∃ x y : ℝ, IsFloatIn 2 0 3 x ∧ IsFloatIn 2 0 3 y ∧
-      flIn 2 0 (flIn 4 0 (x / y)) ≠ flIn 2 0 (x / y)) ∧
+    (IsFloatIn 2 0 3 (16 : ℝ) ∧ IsFloatIn 2 0 3 (3 : ℝ) ∧
+      flIn 2 0 (flIn 4 0 ((16 : ℝ) / 3)) = 4 ∧ flIn 2 0 ((16 : ℝ) / 3) = 6) ∧
     (∀ x y : ℝ, IsFloatIn 24 (-149) 104 x → IsFloatIn 24 (-149) 104 y →
       flIn 24 (-149) (flIn 53 (-1074) (x + y)) = flIn 24 (-149) (x + y) ∧
       flIn 24 (-149) (flIn 53 (-1074) (x - y)) = flIn 24 (-149) (x - y) ∧
@@ -1580,7 +1583,7 @@ theorem innocuous_double_rounding :
     fun p p' hp q q' qmax x y hx hy => ⟨fun h hq => ⟨flIn_flIn_add hp h hq hx hy,
       flIn_flIn_sub hp h hq hx hy⟩, fun h hq => flIn_flIn_mul h hq hx hy,
       fun h hq _ => flIn_flIn_div hp h hq hx hy, fun h hq _ => flIn_flIn_sqrt hp h hq hx⟩,
-    exists_flIn_flIn_div_ne, fun x y hx hy => ?_⟩
+    flIn_flIn_sixteen_div_three, fun x y hx hy => ?_⟩
   · obtain ⟨x, y, hx, hy, h⟩ := exists_fl_fl_add_ne (K := ℝ) hp
     exact ⟨x, -y, hx, hy.neg, by rwa [sub_neg_eq_add]⟩
   · obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := binary32_via_binary64 hx hy

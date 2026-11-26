@@ -140,13 +140,13 @@ example (x y : ℝ) (hx : IsFloatIn 53 (-1074) 971 x) (hy : IsFloatIn 53 (-1074)
 /-- The x87 counterexample with 64-bit intermediate precision for binary64. -/
 example : fl 53 (fl 64 (1 + ((2 : ℝ) ^ (-53 : ℤ) + 2 ^ (-78 : ℤ)))) ≠
     fl 53 (1 + ((2 : ℝ) ^ (-53 : ℤ) + 2 ^ (-78 : ℤ))) := by
-  obtain ⟨-, -, h₁, -, h₂⟩ := x87_double_rounding
+  obtain ⟨-, -, h₁, -, h₂⟩ := innocuous_double_rounding.1
   rw [h₁, h₂]
   norm_num
 
 /-- The optimality counterexample for square roots with `p = 24`. -/
 example : ∃ x : ℝ, IsFloat 24 x ∧ 0 ≤ x ∧ fl 24 (fl 49 √x) ≠ fl 24 √x :=
-  exists_fl_fl_sqrt_ne (p := 24) (by norm_num)
+  innocuous_double_rounding.2.2.2.2.2.1 24 (by norm_num)
 
 #print axioms innocuous_double_rounding
 #print axioms fl_fl_eq_of_near

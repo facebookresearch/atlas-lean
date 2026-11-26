@@ -16,7 +16,7 @@ $p$-bit floating-point numbers $x$ and $y$:
   $\mathrm{fl}_p(\mathrm{fl}_{p'}(x / y)) = \mathrm{fl}_p(x / y)$ for $y \ne 0$ if $p' \ge 2p$;
 - $\mathrm{fl}_p(\mathrm{fl}_{p'}(\sqrt{x})) = \mathrm{fl}_p(\sqrt{x})$ for $x \ge 0$ if $p' \ge 2p + 2$.
 
-Each bound is optimal once $p$ is not too small: for every $p \ge 2$ there are $p$-bit floating-point numbers $x$ and
+The bounds are optimal in these ranges of $p$: for every $p \ge 2$ there are $p$-bit floating-point numbers $x$ and
 $y$ with $\mathrm{fl}_p(\mathrm{fl}_{2p}(x + y)) \ne \mathrm{fl}_p(x + y)$, others with
 $\mathrm{fl}_p(\mathrm{fl}_{2p}(x - y)) \ne \mathrm{fl}_p(x - y)$, and others with $y \ne 0$ and
 $\mathrm{fl}_p(\mathrm{fl}_{2p-1}(x / y)) \ne \mathrm{fl}_p(x / y)$; for every $p \ge 4$ there are such $x$ and $y$
@@ -31,10 +31,11 @@ last-place exponents in $[q, q_{\max}]$, double rounding through $\mathrm{fl}_{p
 $\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(r)) = \mathrm{fl}_{p,q}(r)$ for the exact result $r$: for $r = x \pm y$ if
 $p' \ge 2p + 1$ and $q' \le q$, for $r = x \times y$ if $p' \ge 2p$ and $q' \le 2q$, for $r = x / y$ with $y \ne 0$ if
 $p' \ge 2p$ and $q' \le q - p - 2$, and for $r = \sqrt{x}$ with $x \ge 0$ if $p' \ge 2p + 2$ and $q' \le q - p - 2$.
-Some such condition is needed, even when the extended format contains the narrow one: $16$ and $3$ are numbers of
-the format with $2$-bit significands and last-place exponents in $[0, 3]$, yet
-$\mathrm{fl}_{2,0}(\mathrm{fl}_{4,0}(16 / 3)) = 4$ while $\mathrm{fl}_{2,0}(16 / 3) = 6$, although $p' = 4 = 2p$ and
-$q' = q = 0$. Binary32 operations evaluated in binary64 and then rounded to binary32 meet these conditions, with
+For the square root, Roux's Table II also gives the alternative condition $2q' \le q - 4p - 2$, which this statement
+does not cover. Some condition on the minimum exponents is needed, even when the extended format contains the
+narrow one: $16$ and $3$ are numbers of the format with $2$-bit significands and last-place exponents in $[0, 3]$,
+yet $\mathrm{fl}_{2,0}(\mathrm{fl}_{4,0}(16 / 3)) = 4$ while $\mathrm{fl}_{2,0}(16 / 3) = 6$, although $p' = 4 = 2p$
+and $q' = q = 0$. Binary32 operations evaluated in binary64 and then rounded to binary32 meet the conditions above, with
 $p = 24$, $q = -149$ and $q_{\max} = 104$ for binary32 and $p' = 53$ and $q' = -1074$ for binary64: for all binary32
 numbers $x$ and $y$, $\mathrm{fl}_{24,-149}(\mathrm{fl}_{53,-1074}(x \circ y)) = \mathrm{fl}_{24,-149}(x \circ y)$ for
 $\circ \in \{+, -, \times\}$, and likewise for $x / y$ when $y \ne 0$ and for $\sqrt{x}$ when $x \ge 0$.
