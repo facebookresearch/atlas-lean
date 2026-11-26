@@ -33,6 +33,9 @@ import Mathlib.Tactic.IntervalCases
 This module proves NP membership with a polynomial-time verifier for part masks and a
 common binary target sum. It proves NP-hardness via a reduction from PARTITION that
 uses two zero entries to enforce the nonempty-parts condition.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), PARTITION
+[SP12], from which NP-hardness follows by reduction.
 -/
 
 @[expose] public section
@@ -1926,9 +1929,12 @@ counted with repetition, can be split into $K$ nonempty parts with equal sums. T
 NUMBER PARTITION is in NP, and every decision problem in NP reduces to it by a polynomial-time
 many-one reduction.
 
+For $K = 2$ this is PARTITION restricted to splits into two nonempty parts: the one-entry list
+$(0)$, for instance, is a yes-instance of PARTITION but has no split into two nonempty parts.
+
 Source: M. R. Garey and D. S. Johnson,
-*Computers and Intractability* (1979), MULTIWAY NUMBER PARTITION (the `K = 2` slice is
-PARTITION). -/
+*Computers and Intractability* (1979), PARTITION [SP12], from which NP-hardness follows by
+reduction. -/
 theorem multiwayPartition_npComplete :
     multiwayPartitionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
