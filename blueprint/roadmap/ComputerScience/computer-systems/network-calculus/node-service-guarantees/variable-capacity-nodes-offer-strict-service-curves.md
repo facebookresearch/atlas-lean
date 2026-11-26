@@ -1,6 +1,6 @@
 # Variable capacity nodes offer strict service curves
 
-Consider a node offering a flow a variable service capacity, described by a cumulative function $M$, where $M(t)$ is the total service available to the flow in $[0, t]$, with a buffer large enough that no data is lost. If $M(t) - M(s) \ge \beta(t - s)$ for all $0 \le s \le t$, for a fixed wide-sense increasing $\beta$ with $\beta(0) = 0$, then $\beta$ is a [strict service curve](strict-service-curves.md) for the flow, and hence a [service curve](../service-curves.md).
+Consider a node offering a flow a variable service capacity, described by a cumulative function $M$, where $M(t)$ is the total service available to the flow in $[0, t]$, with a buffer large enough that no data is lost. If $M(t) - M(s) \ge \beta(t - s)$ for all $0 \le s \le t$, for a fixed wide-sense increasing $\beta$ with $\beta(0) = 0$, then $\beta$ is a [strict service curve](strict-service-curves.md) for the flow, and hence, when the input and output cumulative functions are left-continuous, a [service curve](../service-curves.md).
 
 ## Depends on
 

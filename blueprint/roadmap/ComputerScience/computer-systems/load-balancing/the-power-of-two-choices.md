@@ -6,7 +6,7 @@ $$
 \frac{\ln \ln n}{\ln d} + O(1)
 $$
 
-with high probability. Compared with the order $\ln n/\ln \ln n$ for one random choice, a second choice reduces the maximum load exponentially, and further choices only by a constant factor. The proof bounds, by induction on $i$, the number $\beta_i$ of bins with load at least $i$, using $\beta_{i+1} \approx n(\beta_i/n)^d$, so that $\beta_i/n$ decreases doubly exponentially once it is small.
+with high probability, that is, with probability $1 - o(1)$ as $n \to \infty$. Compared with the order $\ln n/\ln \ln n$ for one random choice, a second choice reduces the maximum load exponentially, and further choices only by a constant factor. The proof bounds, by induction on $i$, the number $\beta_i$ of bins with load at least $i$, using $\beta_{i+1} \approx n(\beta_i/n)^d$, so that $\beta_i/n$ decreases doubly exponentially once it is small.
 
 ## Depends on
 

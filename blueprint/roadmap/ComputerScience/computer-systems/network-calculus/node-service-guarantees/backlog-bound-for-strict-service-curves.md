@@ -1,12 +1,12 @@
 # Backlog bound for strict service curves
 
-Assume that a lossless node offers a [strict service curve](strict-service-curves.md) $\beta$ to a flow with [arrival curve](../arrival-curves.md) $\alpha$, and that $\alpha(u_0) \le \beta(u_0)$ for some $u_0 > 0$. Then every backlogged period lasts at most $u_0$, and for every $t$
+Assume that a lossless node offers a [strict service curve](strict-service-curves.md) $\beta$ to a flow with [arrival curve](../arrival-curves.md) $\alpha$, that the input and output [cumulative functions](../cumulative-flows-backlog-and-virtual-delay.md) $R$ and $R^*$ are left-continuous, the source's convention, so that the backlog vanishes at the start of every backlogged period, and that $\alpha(u_0) \le \beta(u_0)$ for some $u_0 > 0$. Then every backlogged period lasts at most $u_0$, and for every $t$
 
 $$
 R(t) - R^*(t) \le \sup_{0 \le u < u_0} [R(t) - R(t - u) - \beta(u)] \le \sup_{0 \le u < u_0} [\alpha(u) - \beta(u)] .
 $$
 
-So the [backlog bound](../the-backlog-bound.md) need only consider intervals shorter than $u_0$.
+So the [backlog bound](../the-backlog-bound.md) need only consider intervals shorter than $u_0$. The proof compares the backlog at $t$ with the last time before $t$ at which the buffer was empty, which is where left-continuity is used: for $\beta = \delta_1$, $\alpha = 5 \cdot \mathbf 1_{(0, \infty)}$, $u_0 = 2$, $R = 5 \cdot \mathbf 1_{[1, \infty)}$ and $R^* = 5 \cdot \mathbf 1_{(2, \infty)}$ the backlog at $t = 2$ is $5$, while the middle bound is $0$.
 
 ## Depends on
 

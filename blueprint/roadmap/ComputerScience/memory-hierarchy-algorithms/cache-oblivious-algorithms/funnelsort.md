@@ -15,6 +15,7 @@ cache misses. Funnelsort splits the input into $n^{1/3}$ contiguous arrays of si
 ## Proof depends on
 
 - [k-mergers](k-mergers.md)
+- [A k-merger fits in quadratic space](a-k-merger-fits-in-quadratic-space.md)
 - [Cache complexity of a k-merger](cache-complexity-of-a-k-merger.md)
 
 ## Sources
