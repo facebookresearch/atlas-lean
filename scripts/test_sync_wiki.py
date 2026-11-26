@@ -3730,8 +3730,8 @@ class ScopedLayout(Vault):
 
 
 class ScopedRun(unittest.TestCase):
-    """declarations --base, the run a pull request makes, on a repository of a few files with a git history: a base
-    commit, then the pull request's changes in the working tree."""
+    """declarations --base, the run a graph pull request or a graph-sync batch makes, on a repository of a few files
+    with a git history: a base commit, then the pull request's changes in the working tree."""
 
     TAXONOMY = {"schema": wiki.TAXONOMY_SCHEMA, "regions": {"Algebra & Number Theory": ["Algebra"]},
                 "subjects": {"Algebra": {"title": "Algebra", "description": "Operations.", "fields": [
