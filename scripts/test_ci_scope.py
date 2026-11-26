@@ -199,7 +199,9 @@ class WorkflowTests(unittest.TestCase):
             joined = block.replace("\\\n", " ")
             return [f"{m[1]} {m[2]}" if m[1] else m[4] for m in re.finditer(r"(?m)^" + suite.pattern, joined)]
         self.assertEqual(suites(gated), TOOL_TESTS)
-        self.assertEqual(suites(rest), ALWAYS)
+        # These must run outside the block; a suite in neither list runs too, until it is shown to read only
+        # scripts, workflows and the pins and is moved into the block.
+        self.assertEqual([name for name in ALWAYS if name not in suites(rest)], [])
         # The skipped block holds those suites and nothing else: another command there would be skipped unseen.
         lines = [line for line in gated.replace("\\\n", " ").splitlines() if line.strip()]
         self.assertEqual([line for line in lines if not suite.fullmatch(line)], [])
