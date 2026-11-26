@@ -25,4 +25,4 @@ two orthogonal axes in the order $n_1$, $n_2$, $n_1$.
 
 ## Sources
 
-- P. O. Boykin, T. Mor, M. Pulver, V. Roychowdhury and F. Vatan, *A new universal and fault-tolerant quantum basis*, Inform. Process. Lett. 75 (2000), 101–107, arXiv:quant-ph/9906054, Section 3, equations (5)–(14), and Appendix B, Theorem B.1.
+- P. O. Boykin, T. Mor, M. Pulver, V. Roychowdhury and F. Vatan, *A new universal and fault-tolerant quantum basis*, Inform. Process. Lett. 75 (2000), 101–107, arXiv:quant-ph/9906054v1 (section, equation and appendix numbers of that version), Section 3, equations (5)–(14), and Appendix B, Theorem B.1.
