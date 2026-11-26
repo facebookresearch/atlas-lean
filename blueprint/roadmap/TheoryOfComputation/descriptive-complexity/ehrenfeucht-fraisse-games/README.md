@@ -7,4 +7,4 @@
 - [Rank-$n$ types coincide with $n$-round game equivalence](rank-types-and-game-equivalence.md)
 - [EF games on finite linear orders: the $2^n - 1$ threshold](ef-games-on-finite-linear-orders.md)
 - [EF games on monadic structures and the monadic small model property](monadic-ef-games-small-model-property.md)
-- [EVEN is not first-order definable on finite linear orders](even-not-definable-on-linear-orders.md)
+- [First-order definable classes of finite linear orders are finite or cofinite](even-not-definable-on-linear-orders.md)

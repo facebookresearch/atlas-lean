@@ -10,7 +10,7 @@ with probability greater than $1-|K|^{-\lfloor(n-r)^2/2\rfloor}$. In particular,
 
 ## Proof sketch
 
-Count matrices within distance $t$ of a rank-$r$ matrix: there are at most $|K|^{2nr}$ matrices of rank at most $r$ (each determined by $r$ rows and columns), and at most $\binom{n^2}{t}|K|^t$ ways to change $t$ entries; for $t$ as stated the product is a tiny fraction of $|K|^{n^2}$.
+Count matrices within distance $t$ of a rank-$r$ matrix: there are $O(|K|^{r(2n-r)})$ matrices of rank at most $r$ (a rank-$r$ matrix is determined by its column space, one of $O(|K|^{r(n-r)})$ subspaces, and an $r\times n$ coefficient matrix), and at most $\binom{n^2}{t}|K|^t$ ways to change $t$ entries; for $t$ as stated the product is a tiny fraction of $|K|^{n^2}$.
 
 ## Depends on
 

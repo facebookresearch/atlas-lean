@@ -1,10 +1,10 @@
-# Bipartite perfect matching and maximum matching in polynomial time
+# The parity of the number of perfect matchings of a bipartite graph is polynomial-time computable
 
-Deciding whether a bipartite graph has a perfect matching, and computing a maximum matching in a general graph (Edmonds' blossom algorithm), are possible in polynomial time on multi-tape Turing machines; the parity of the number of perfect matchings of a bipartite graph equals the determinant of its biadjacency matrix modulo $2$ and is also polynomial-time computable.
+The parity of the number of perfect matchings of a bipartite graph equals the determinant of its biadjacency matrix modulo $2$ and is polynomial-time computable on multi-tape Turing machines.
 
 ## Proof sketch
 
-Augmenting paths: a matching is maximum iff no augmenting path exists (Berge); search for one by alternating BFS, contracting odd cycles (blossoms) in non-bipartite graphs. The parity statement follows from $\operatorname{perm}\equiv\det\pmod 2$.
+The number of perfect matchings is the permanent of the biadjacency matrix, and $\operatorname{perm}\equiv\det\pmod 2$; the integer determinant is computable in polynomial time by fraction-free Gaussian elimination.
 
 ## Depends on
 
@@ -14,8 +14,8 @@ Augmenting paths: a matching is maximum iff no augmenting path exists (Berge); s
 ## Proof depends on
 
 - [Permanent equals determinant in characteristic two](../../counting-complexity/complexity-of-the-permanent/permanent-eq-det-of-char-p-two.md)
+- [Polynomial-time rational Gaussian elimination (Bareiss)](bareiss-rational-gaussian-elimination.md)
 
 ## Sources
 
-- Jack Edmonds, "Maximum Matching and a Polyhedron with 0,1-Vertices", Journal of Research of the National Bureau of Standards, Section B 69B(1–2), 1965.
-- John E. Hopcroft and Richard M. Karp, "An n^5/2 Algorithm for Maximum Matchings in Bipartite Graphs", SIAM Journal on Computing 2(4), 1973.
+- Leslie G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 189–201, 1979.

@@ -1,6 +1,6 @@
 # Strassen: arithmetic circuits for matrix multiplication yield bilinear algorithms
 
-Over an infinite integral domain $K$, if an arithmetic circuit computes $n\times n$ matrix multiplication with $\mu$ multiplication gates (in particular with at most $\mu$ gates), then the tensor rank of $\langle n,n,n\rangle$ is at most $2\mu$. Combined with Strassen's block recursion, the matrix multiplication exponent defined via arithmetic circuit size coincides with the exponent defined via tensor rank.
+Over an infinite integral domain $K$, if an arithmetic circuit computes $n\times n$ matrix multiplication with $\mu$ multiplication gates (in particular with at most $\mu$ gates), then the tensor rank of $\langle n,n,n\rangle$ is at most $2\mu$.
 
 ## Proof sketch
 

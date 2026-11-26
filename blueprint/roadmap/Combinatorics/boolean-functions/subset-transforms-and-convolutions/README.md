@@ -1,3 +1,3 @@
 # Subset Transforms and Convolutions
 
-- [Covering product and fast subset convolution](covering-product-and-fast-subset-convolution.md)
+- [Covering product and the zeta transform](covering-product-and-fast-subset-convolution.md)

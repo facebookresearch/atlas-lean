@@ -4,7 +4,7 @@ For every first-order sentence $\varphi$ in the language of graphs, $\Pr[G(n,1/2
 
 ## Proof sketch
 
-Extension axioms hold almost surely, and their theory is complete; apply the transfer lemma. Rado's graph is the countable model, so truth in it decides the limit.
+This is the case $p = 1/2$ of the 0-1 law for $G(n,p)$: extension axioms hold almost surely, and their theory is complete; apply the transfer lemma. Rado's graph is the countable model, so truth in it decides the limit.
 
 ## Depends on
 
@@ -13,6 +13,7 @@ Extension axioms hold almost surely, and their theory is complete; apply the tra
 
 ## Proof depends on
 
+- [The 0-1 law for $G(n,p)$ with constant edge probability](zero-one-law-for-binomial-random-graphs.md)
 - [Extension axioms hold almost surely](extension-axioms-hold-almost-surely.md)
 - [The theory of the random graph is $\aleph_0$-categorical and complete](random-graph-theory-categorical-and-complete.md)
 - [Transfer from almost-sure theories to zero-one laws](transfer-to-zero-one-laws.md)

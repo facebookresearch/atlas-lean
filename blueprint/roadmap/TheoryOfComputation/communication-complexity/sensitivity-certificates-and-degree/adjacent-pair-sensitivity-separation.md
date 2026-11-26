@@ -8,7 +8,7 @@ For an arbitrary layout into $k$ consecutive blocks of at most $M$ bits, $s(f) \
 
 ## Proof sketch
 
-At the all-zero input each pair of adjacent positions in a block is a sensitive block, giving about $n/2$ disjoint sensitive blocks. Sensitivity is small: if some block accepts, only its at most three relevant positions are sensitive; if none accepts, each block contributes at most a constant number of sensitive positions plus possibly its own size.
+At the all-zero input each pair of adjacent positions in a block is a sensitive block, giving about $n/2$ disjoint sensitive blocks. Sensitivity: if exactly one block accepts, every position of that block is sensitive (flipping a $0$ there gives three true bits, flipping a $1$ leaves one), and no position outside it is; this gives $s(f) \le M$ on such inputs and, at a block of about $n/k \ge \sqrt n$ positions, the lower bound $s(f) \ge \sqrt n$. If two or more blocks accept, no single flip changes $f$. If no block accepts, each block has at most three sensitive positions, at most $3k$ in total.
 
 ## Depends on
 

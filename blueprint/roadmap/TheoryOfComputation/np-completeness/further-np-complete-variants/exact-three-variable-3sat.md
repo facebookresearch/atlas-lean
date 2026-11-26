@@ -1,16 +1,15 @@
-# 3SAT with exactly three distinct variables per clause: NP-complete in general, trivial with three occurrences
+# 3SAT with exactly three distinct variables per clause: NP-complete in general
 
-Let EU3SAT be satisfiability of CNF formulas in which every clause contains exactly three distinct variables. EU3SAT and its not-all-equal variant are $\mathsf{NP}$-complete. In contrast (Tovey), every EU3SAT formula in which each variable occurs at most three times is satisfiable, so that restriction is in $\mathsf{P}$.
+Let EU3SAT be satisfiability of CNF formulas in which every clause contains exactly three distinct variables. EU3SAT and its not-all-equal variant are $\mathsf{NP}$-complete.
 
 ## Proof sketch
 
-Hardness: replace each positive exact-one triple $(a,b,c)$ by the five clauses forbidding the five non-exact-one patterns over the same three variables. Tovey: in the bipartite clause–variable incidence graph each clause has degree $3$ and each variable degree $\le3$, so Hall's condition holds and there is a matching saturating the clauses; set each matched variable to satisfy its clause.
+Hardness: replace each positive exact-one triple $(a,b,c)$ by the five clauses forbidding the five non-exact-one patterns over the same three variables.
 
 ## Depends on
 
 - [The 3SAT decision problem](../satisfiability/3-satisfiability/sat3-dec.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
-- [The complexity class P](../../complexity-classes/the-classes-p-np-and-conp/p.md)
 
 ## Proof depends on
 

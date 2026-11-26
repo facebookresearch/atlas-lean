@@ -16,8 +16,9 @@ A logspace machine's configurations are tuples of elements; its deterministic st
 
 - [Immerman: FO + transitive closure is NL on ordered structures](../transitive-closure-logic-and-nl/fo-tc-eq-nl.md)
 - [Full-tuple interpretations pull back FO(LFP), FO(TC) and SO∃-Horn sentences](../ordered-structures-and-arithmetic/full-tuple-interpretations-preserve-logics.md)
+- [First-order model checking for a fixed sentence is in L](../logical-characterizations-of-l-nl-p-np/first-order-queries-in-logspace.md)
 
 ## Sources
 
-- N. Immerman, "Languages That Capture Complexity Classes", SIAM Journal on Computing 16(4), 760–778, 1987.
+- N. Immerman, "Languages That Capture Complexity Classes", SIAM Journal on Computing 16(4), 760–778, 1987, Theorem 4.2.
 - N. Immerman, Descriptive Complexity, Springer, 1999.

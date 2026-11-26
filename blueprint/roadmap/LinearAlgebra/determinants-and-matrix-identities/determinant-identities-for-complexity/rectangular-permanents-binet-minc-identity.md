@@ -6,7 +6,7 @@ $$
 \mathrm{per}(b)=\sum_{\pi}\prod_{B\in\pi}(-1)^{|B|-1}(|B|-1)!\sum_{c}\prod_{r\in B}b_{r,c},
 $$
 
-the sum over all set partitions $\pi$ of the rows. Restricting to injections whose image contains a given column set $Z$ gives an inclusion–exclusion variant.
+the sum over all set partitions $\pi$ of the rows.
 
 ## Proof sketch
 

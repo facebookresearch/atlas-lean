@@ -7,6 +7,10 @@ Contracting a blossom found by the forest search into a single new constraint (w
 - [Edge CSPs, occurrence labelings and defects](edge-csps-and-defects.md)
 - [Augmenting walks remove two defects](edge-csp-augmenting-walks.md)
 
+## Proof depends on
+
+- [Local contraction preserves even delta-matroids](../../../../TheoryOfComputation/np-completeness/satisfiability/planar-boolean-csp/local-contraction-preserves-even-delta-matroids.md)
+
 ## Sources
 
 - A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), 2019.

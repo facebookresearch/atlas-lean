@@ -1,10 +1,10 @@
-# EVEN is not first-order definable on finite linear orders
+# First-order definable classes of finite linear orders are finite or cofinite
 
-There is no first-order sentence $\varphi$ in the vocabulary $\{\le\}$ such that for every finite linear order $L$, $L \models \varphi$ iff $|L|$ is even. More generally every first-order definable class of finite linear orders is either finite or cofinite (in terms of cardinalities).
+For every first-order sentence $\varphi$ in the vocabulary $\{\le\}$, the set of $n \ge 1$ such that the $n$-element linear order satisfies $\varphi$ is finite or cofinite.
 
 ## Proof sketch
 
-If $\varphi$ has quantifier rank $n$, the linear orders of sizes $2^n$ and $2^n + 1$ are $n$-equivalent by the $2^n - 1$ threshold, but exactly one has even size.
+If $\varphi$ has quantifier rank $k$, any two linear orders of size at least $2^k - 1$ are $k$-equivalent by the $2^k - 1$ threshold, so $\varphi$ holds in all of them or in none.
 
 ## Depends on
 

@@ -4,8 +4,6 @@ For every $f : \{-1,1\}^n \to \{-1,1\}$, coordinate $i$ and $0 \le \rho \le 1$,
 
 $$\mathbf{Inf}^{(\rho)}_i[f] \le \mathbf{Inf}_i[f]^{2/(1 + \rho)}.$$
 
-At $\rho = 1/3$ this is $\mathbf{Inf}^{(1/3)}_i[f] \le \mathbf{Inf}_i[f]^{3/2}$.
-
 ## Proof sketch
 
 $D_i f$ takes values in $\{0, \pm 1\}$ with $\Pr[D_i f \ne 0] = \mathbf{Inf}_i[f]$; by hypercontractivity $\mathrm{Stab}_\rho[g] = \|T_{\sqrt\rho}g\|_2^2 \le \|g\|_{1+\rho}^2 = \mathbb{E}|g|^{1+\rho}$ to the power $2/(1+\rho)$, which for $g = D_i f$ equals $\mathbf{Inf}_i[f]^{2/(1+\rho)}$.

@@ -4,7 +4,7 @@ If $\delta(x,y)$ is a formula over $\{\le\}$ such that on every finite linear or
 
 ## Proof sketch
 
-A defining sentence for $P$ would pull back along $\delta$ to a sentence over $\le$ defining a parity class of large finite linear orders, contradicting the non-definability of EVEN.
+A defining sentence for $P$ would pull back along $\delta$ to a sentence over $\le$ defining a parity class of large finite linear orders, contradicting the fact that a first-order definable class of finite linear orders is finite or cofinite.
 
 ## Depends on
 
@@ -12,7 +12,7 @@ A defining sentence for $P$ would pull back along $\delta$ to a sentence over $\
 
 ## Proof depends on
 
-- [EVEN is not first-order definable on finite linear orders](../ehrenfeucht-fraisse-games/even-not-definable-on-linear-orders.md)
+- [First-order definable classes of finite linear orders are finite or cofinite](../ehrenfeucht-fraisse-games/even-not-definable-on-linear-orders.md)
 
 ## Sources
 

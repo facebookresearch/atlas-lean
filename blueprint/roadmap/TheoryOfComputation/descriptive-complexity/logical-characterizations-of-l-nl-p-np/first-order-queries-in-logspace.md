@@ -8,7 +8,7 @@ Evaluate $\varphi$ recursively: each quantifier ranges over the universe with an
 
 ## Depends on
 
-- [Ordered finite structures with built-in numerical predicates](ordered-structures-with-bit.md)
+- [Canonically ordered structures with BIT](../ordered-structures-and-arithmetic/canonically-ordered-structures-with-bit.md)
 - [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)
 
 ## Sources

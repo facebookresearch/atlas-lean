@@ -1,10 +1,10 @@
-# Covering product and fast subset convolution
+# Covering product and the zeta transform
 
-For $f, g$ on the subsets of an $n$-element set, the *covering product* $(f *_c g)(X) = \sum_{A \cup B = X} f(A) g(B)$ satisfies $\zeta(f *_c g) = \zeta f \cdot \zeta g$ pointwise, and the *subset convolution* $(f * g)(X) = \sum_{A \subseteq X} f(A) g(X \setminus A)$ equals the rank-$|X|$ part of the covering product of the rank-graded functions: $(f * g)(X) = \sum_{i} (f_i *_c g_{|X| - i})(X)$ with $f_i = f \cdot [|\cdot| = i]$. Hence both can be computed with $O(2^n n^2)$ ring operations (Björklund–Husfeldt–Kaski–Koivisto).
+For $f, g$ on the subsets of an $n$-element set with values in a commutative ring, the *covering product* $(f *_c g)(X) = \sum_{A \cup B = X} f(A) g(B)$ satisfies $\zeta(f *_c g) = \zeta f \cdot \zeta g$ pointwise. Hence $f *_c g = \mu(\zeta f \cdot \zeta g)$ can be computed with $O(2^n n)$ ring operations (Björklund–Husfeldt–Kaski–Koivisto).
 
 ## Proof sketch
 
-$\zeta(f *_c g)(S) = \sum_{A \cup B \subseteq S} f(A)g(B) = \zeta f(S)\zeta g(S)$. For disjoint unions, grading by size restricts covering pairs with $|A| + |B| = |X|$ to disjoint pairs. Use Yates's algorithm for each of the $n + 1$ ranks and Möbius inversion.
+$\zeta(f *_c g)(S) = \sum_{A \cup B \subseteq S} f(A)g(B) = \sum_{A \subseteq S} f(A) \sum_{B \subseteq S} g(B) = \zeta f(S)\zeta g(S)$. Compute $\zeta f$, $\zeta g$ and the Möbius transform of their pointwise product with Yates's algorithm.
 
 ## Depends on
 

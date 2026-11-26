@@ -1,19 +1,20 @@
 # Kazda–Kolmogorov–Rolínek: edge CSPs with even delta-matroid constraints are polynomial-time solvable
 
-If every relation of a finite Boolean constraint language $\Gamma$ is an even delta-matroid, then satisfiability of edge instances of $\mathrm{CSP}(\Gamma)$ is decidable in polynomial time. The algorithm maintains a local labeling and repeatedly reduces its number of defects by an augmenting walk between two defects; an improving labeling always yields such a walk, and blossoms (odd cycles of constraints) are contracted into a single even delta-matroid constraint as in Edmonds' matching algorithm.
+If every relation of a finite Boolean constraint language $\Gamma$ is an even delta-matroid, then satisfiability of edge instances of $\mathrm{CSP}(\Gamma)$ is decidable in polynomial time.
 
 ## Proof sketch
 
-Even delta-matroid exchange shows that if a labeling with fewer defects exists, then the symmetric difference decomposes into trails, one of which is an augmenting walk that can be found by a timestamped search; contraction of blossoms preserves even delta-matroids, so the search recurses on a smaller instance.
+An instance with an empty constraint is unsatisfiable. Otherwise every constraint is a nonempty even delta-matroid, so the blossom algorithm returns a valid labeling with the minimum number of defects after at most one more improvement step than there are variables; each step is a forest search with polynomially many nested blossom contractions, so the whole run takes polynomial time. The instance is satisfiable if and only if the returned labeling has no defects.
 
 ## Depends on
 
-- [Edge CSPs and their labeling walks](edge-csps.md)
+- [Edge CSPs, occurrence labelings and defects](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/edge-csps-over-even-delta-matroids/edge-csps-and-defects.md)
+- [Delta-matroids and even delta-matroids](delta-matroids-and-even-delta-matroids.md)
 - [The complexity class P](../../../complexity-classes/the-classes-p-np-and-conp/p.md)
 
 ## Proof depends on
 
-- [Local contraction preserves even delta-matroids](local-contraction-preserves-even-delta-matroids.md)
+- [Edge CSPs over even delta-matroids are solvable by a blossom algorithm](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/edge-csps-over-even-delta-matroids/edge-csp-blossom-algorithm.md)
 
 ## Sources
 

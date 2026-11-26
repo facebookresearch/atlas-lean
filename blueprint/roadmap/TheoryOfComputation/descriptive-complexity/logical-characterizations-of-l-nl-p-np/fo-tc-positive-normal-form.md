@@ -9,7 +9,7 @@ FO(posTC) $\subseteq$ NL by guessing paths; NL $\subseteq$ FO(posTC) via the NL-
 ## Depends on
 
 - [Formulas of first-order logic with transitive closure](../transitive-closure-logic-and-nl/tcfo.md)
-- [Ordered finite structures with built-in numerical predicates](ordered-structures-with-bit.md)
+- [Canonically ordered structures with BIT](../ordered-structures-and-arithmetic/canonically-ordered-structures-with-bit.md)
 - [The complexity class NL](../../complexity-classes/time-and-space-complexity-classes/nl.md)
 
 ## Proof depends on

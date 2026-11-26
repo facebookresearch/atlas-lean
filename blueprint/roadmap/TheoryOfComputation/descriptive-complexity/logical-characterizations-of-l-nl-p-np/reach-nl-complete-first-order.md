@@ -8,12 +8,13 @@ For an NL machine, the configurations of logarithmic size are $k$-tuples of univ
 
 ## Depends on
 
-- [First-order interpretations, first-order reductions and quantifier-free projections](first-order-reductions.md)
+- [First-order and quantifier-free reductions](../first-order-interpretations-and-reductions/first-order-reductions.md)
 - [The complexity class NL](../../complexity-classes/time-and-space-complexity-classes/nl.md)
 
 ## Proof depends on
 
 - [ST-connectivity is NL-complete](../../completeness-other-classes/directed-s-t-connectivity/stcon-nl-complete.md)
+- [First-order reductions are computable in logarithmic space](../first-order-interpretations-and-reductions/first-order-reductions-logspace-computable.md)
 
 ## Sources
 

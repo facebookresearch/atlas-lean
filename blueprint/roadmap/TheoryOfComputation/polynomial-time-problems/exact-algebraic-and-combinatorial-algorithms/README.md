@@ -1,7 +1,7 @@
 # Polynomial-Time Exact Algebraic and Combinatorial Algorithms
 
 - [Polynomial-time rational Gaussian elimination (Bareiss)](bareiss-rational-gaussian-elimination.md)
-- [Bipartite perfect matching and maximum matching in polynomial time](matching-in-polynomial-time.md)
+- [The parity of the number of perfect matchings of a bipartite graph is polynomial-time computable](matching-in-polynomial-time.md)
 - [Goldschlager: the monotone circuit value problem is P-complete](monotone-circuit-value-p-complete.md)
 - [Sergeev's explicit B_k-sequences are polynomial-time constructible](sergeev-explicit-bk-sequences.md)
 - [Deterministic Berlekamp factorization over GF(2)](berlekamp-factorization-gf2.md)

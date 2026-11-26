@@ -3,7 +3,6 @@
 - [Delta-matroids and even delta-matroids](delta-matroids-and-even-delta-matroids.md)
 - [Planar Boolean CSP](planar-boolean-csp.md)
 - [Local contraction preserves even delta-matroids](local-contraction-preserves-even-delta-matroids.md)
-- [Edge CSPs and their labeling walks](edge-csps.md)
 - [Dvořák–Kupec crossover gadgets](dvorak-kupec-crossover-gadgets.md)
 - [Kazda–Kolmogorov–Rolínek: edge CSPs with even delta-matroid constraints are polynomial-time solvable](kazda-kolmogorov-rolinek-edge-csp.md)
 - [Planar expressibility of constants and disequality](planar-expressibility-of-constants.md)

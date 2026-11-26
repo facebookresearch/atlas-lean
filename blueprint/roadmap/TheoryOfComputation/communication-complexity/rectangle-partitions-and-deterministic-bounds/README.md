@@ -4,7 +4,6 @@
 - [Distinct rows and the rank upper bound on communication](distinct-rows-and-rank-upper-bound.md)
 - [Exact deterministic complexity of equality on a finite set](exact-complexity-of-equality-on-a-finite-set.md)
 - [The inner-product matrix has full rank](inner-product-matrix-has-full-rank.md)
-- [Karchmer–Wigderson games](karchmer-wigderson-games.md)
 - [Communication complexity of connectivity of joined partitions](communication-complexity-of-joining-partitions.md)
 - [Monochromatic rectangle partitions and the tiling number](monochromatic-rectangle-partitions-and-tiling-number.md)
 - [Dag-like protocols for search problems](dag-like-protocols.md)

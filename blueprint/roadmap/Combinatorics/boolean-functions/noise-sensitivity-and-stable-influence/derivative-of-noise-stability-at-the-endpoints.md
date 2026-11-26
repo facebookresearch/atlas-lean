@@ -4,7 +4,7 @@ For every real $f$ on $\{-1,1\}^n$, the function $\rho \mapsto \mathrm{Stab}_\rh
 
 ## Proof sketch
 
-Differentiate $\sum_k \rho^k\mathbf{W}^k[f]$ termwise; at $\rho = 1$ the derivative is $\sum_k k\mathbf{W}^k[f] = \mathbf{I}[f]$.
+This is the case $\rho \in \{0, 1\}$ of $\frac{d}{d\rho}\mathrm{Stab}_\rho[f] = \sum_k k\rho^{k-1}\mathbf{W}^k[f]$: at $\rho = 0$ only $k = 1$ survives, giving $\mathbf{W}^1[f]$, and at $\rho = 1$ the derivative is $\sum_k k\mathbf{W}^k[f] = \mathbf{I}[f]$.
 
 ## Depends on
 
@@ -14,6 +14,7 @@ Differentiate $\sum_k \rho^k\mathbf{W}^k[f]$ termwise; at $\rho = 1$ the derivat
 
 ## Proof depends on
 
+- [Total stable influence is the derivative of noise stability](total-stable-influence-is-derivative-of-noise-stability.md)
 - [Fourier formula for noise stability](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-noise-stab-eq-sum.md)
 - [Total influence in Fourier form](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-total-influence-eq-sum-card-mul-sq.md)
 

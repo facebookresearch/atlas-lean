@@ -1,6 +1,6 @@
 # Deamortized global rebuilding by epochs
 
-*Deamortized global rebuilding* keeps a data structure in a good shape by dividing time into epochs of $q$ operations and, during each epoch, performing a constant amount of background work after each foreground operation: rebuilding dirty buckets with fresh salts, draining an old collision buffer into its new position, and clearing the old buffer's nodes. A per-bucket *shadow* copy is rebuilt alongside the live copy and swapped in when complete. If the total background work of an epoch is at most a constant times $q$, every operation does $O(1)$ worst-case work and the rebuilt structure is ready by the end of the epoch.
+Divide the operation sequence into epochs of $q$ operations. Suppose the background work of an epoch (rebuilding dirty buckets with fresh salts into per-bucket *shadow* copies, draining the old collision buffer into its new position, and clearing the old buffer's nodes) consists of at most $cq$ steps for a constant $c$, each taking $O(1)$ worst-case time, that these steps remain correct under any interleaving with foreground operations, and that a completed shadow copy replaces its live copy in $O(1)$ time. *Deamortized global rebuilding* runs $\lceil c \rceil$ background steps after each foreground operation. Then every operation, including its background steps, takes $O(1)$ worst-case time beyond the foreground work, and all background work of an epoch is finished by the end of that epoch, since $q\lceil c\rceil \ge cq$.
 
 ## Depends on
 
