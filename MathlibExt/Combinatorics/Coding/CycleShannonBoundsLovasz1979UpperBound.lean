@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.Coding.CycleCode
 import MathlibExt.Combinatorics.SimpleGraph.LovaszThetaStrongPower
+import MathlibExt.Combinatorics.SimpleGraph.ShannonCapacityPentagon
 import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 import Mathlib.Data.ZMod.Basic
 
@@ -33,6 +34,8 @@ namespace MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
 open MathlibExt.Combinatorics.SimpleGraph.LovaszTheta
 open scoped RealInnerProductSpace
+open MathlibExt.Combinatorics.ShannonCapacityPentagonWanted.Combinatorics.ShannonCapacityPentagon
+  (strongPower)
 
 private noncomputable def c7w1 : ℝ :=
   Real.cos (2 * Real.pi / 7) - Real.cos (6 * Real.pi / 7)
@@ -366,15 +369,8 @@ private theorem c7theta_le :
     lovaszTheta (SimpleGraph.cycleGraph 7) ≤ c7theta :=
   csInf_le ⟨0, fun _ ht => ht.1⟩ c7mem_feasible
 
-private def c7StrongPower (n : ℕ) : SimpleGraph (Fin n → Fin 7) where
-  Adj x y := x ≠ y ∧ ∀ i, x i = y i ∨ (SimpleGraph.cycleGraph 7).Adj (x i) (y i)
-  symm.symm x y := by
-    rintro ⟨hxy, hcoord⟩
-    exact ⟨hxy.symm, fun i => (hcoord i).imp Eq.symm SimpleGraph.Adj.symm⟩
-  loopless := ⟨fun x h => h.1 rfl⟩
-
 private theorem c7StrongPower_hyp (n : ℕ) :
-    ∀ x y, x ≠ y → ¬ (c7StrongPower n).Adj x y →
+    ∀ x y, x ≠ y → ¬ (strongPower (SimpleGraph.cycleGraph 7) n).Adj x y →
       ∃ i, x i ≠ y i ∧ ¬ (SimpleGraph.cycleGraph 7).Adj (x i) (y i) := by
   intro x y hxy hna
   by_contra! h
@@ -388,7 +384,7 @@ private theorem c7adj_diff (u v : Fin 7)
 
 private theorem c7code_indep (n : ℕ) (A : Finset (Fin n → ZMod 7))
     (hA : IsCycleCode 7 A) :
-    (c7StrongPower n).IsIndepSet
+    (strongPower (SimpleGraph.cycleGraph 7) n).IsIndepSet
       ((A : Set (Fin n → ZMod 7)) : Set (Fin n → Fin 7)) := by
   intro x hx y hy hxy hadj
   obtain ⟨hxy', hcoord⟩ := hadj
@@ -423,16 +419,16 @@ private theorem c7rate_le (n : PositiveNat) (A : CycleCode 7 n.1) :
     have := n.2
     omega
   have h_indep := c7code_indep n.1 A.1 A.2
-  have hcard : A.1.card ≤ (c7StrongPower n.1).indepNum :=
+  have hcard : A.1.card ≤ (strongPower (SimpleGraph.cycleGraph 7) n.1).indepNum :=
     h_indep.card_le_indepNum
-  have hcast : (A.1.card : ℝ) ≤ ((c7StrongPower n.1).indepNum : ℝ) :=
+  have hcast : (A.1.card : ℝ) ≤ ((strongPower (SimpleGraph.cycleGraph 7) n.1).indepNum : ℝ) :=
     Nat.cast_le.mpr hcard
   have h_theta_pow := indepNum_le_lovaszTheta_pow
     (SimpleGraph.cycleGraph 7) (c7StrongPower_hyp n.1)
   have h_pow_le : lovaszTheta (SimpleGraph.cycleGraph 7) ^ n.1 ≤ c7theta ^ n.1 :=
     pow_le_pow_left₀ (lovaszTheta_nonneg _) c7theta_le _
   have h_le : (A.1.card : ℝ) ≤ c7theta ^ n.1 :=
-    calc (A.1.card : ℝ) ≤ ((c7StrongPower n.1).indepNum : ℝ) := hcast
+    calc (A.1.card : ℝ) ≤ ((strongPower (SimpleGraph.cycleGraph 7) n.1).indepNum : ℝ) := hcast
       _ ≤ lovaszTheta (SimpleGraph.cycleGraph 7) ^ n.1 := h_theta_pow
       _ ≤ c7theta ^ n.1 := h_pow_le
   have hM_nonneg : (0 : ℝ) ≤ (A.1.card : ℝ) := Nat.cast_nonneg _
