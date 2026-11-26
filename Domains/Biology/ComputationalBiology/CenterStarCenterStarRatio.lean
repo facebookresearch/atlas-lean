@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Fintype.Prod
+public import Domains.Biology.ComputationalBiology.CenterStarCenterStarBound
 
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.BigOperators
@@ -19,8 +20,9 @@ import Mathlib.Tactic.Positivity
 /-!
 # Center-star alignment ratio
 
-This module defines pairwise and multiple alignment values and proves the center-star
-approximation ratio for a positive optimum.
+Using the pairwise and multiple alignment values of
+`Domains.Biology.ComputationalBiology.CenterStarCenterStarBound`, this module proves the
+center-star approximation ratio `V(Ac) / V(A*) ≤ 2 * (k - 1) / k < 2` for a positive optimum.
 
 Source: D. Gusfield, "Efficient methods for multiple sequence alignment with
 guaranteed error bounds", Bulletin of Mathematical Biology 55(1):141-154,
@@ -31,57 +33,7 @@ guaranteed error bounds", Bulletin of Mathematical Biology 55(1):141-154,
 
 namespace WantedExt.Biology.ComputationalBiology.CenterStarWanted
 
-
 variable {α : Type*} [DecidableEq α]
-
-/-- A pairwise alignment: two equal-length rows over `Option α`. -/
-structure PairAlignment (α : Type*) where
-  left : List (Option α)
-  right : List (Option α)
-  len_eq : left.length = right.length
-
-/-- Value of a pairwise alignment: sum of column scores. -/
-def alignValue (s : Option α → Option α → ℝ) (A : PairAlignment α) : ℝ :=
-  List.sum ((A.left.zip A.right).map fun p => s p.1 p.2)
-
-/-- Row erasure: deleting gaps recovers the string. -/
-def erasesTo (l : List (Option α)) (X : List α) : Prop := l.filterMap id = X
-
-/-- Validity: the rows erase to `X` and `Y`. -/
-def IsPairAlignmentOf (A : PairAlignment α) (X Y : List α) : Prop :=
-  erasesTo A.left X ∧ erasesTo A.right Y
-
-/-- Optimal pairwise value: infimum of alignment values. Characterized by
-`hD_le` (lower bound) and `hD_att` (attainment) in the theorems below. -/
-noncomputable def pairDist (s : Option α → Option α → ℝ)
-    (X Y : List α) : ℝ :=
-  sInf {v | ∃ A : PairAlignment α, IsPairAlignmentOf A X Y ∧
-    alignValue s A = v}
-
-/-- A multiple alignment of `k` strings: columns of optional characters. -/
-structure MSAlignment (α : Type*) (k : ℕ) where
-  cols : List (Fin k → Option α)
-
-/-- Row erasure for multiple alignments. -/
-def msErasesTo {k : ℕ} (A : MSAlignment α k) (X : Fin k → List α) : Prop :=
-  ∀ j, (A.cols.map fun c => c j).filterMap id = X j
-
-/-- Induced pairwise value of rows `i`, `j`: column scores of the projection. -/
-def inducedValue (s : Option α → Option α → ℝ) {k : ℕ}
-    (A : MSAlignment α k) (i j : Fin k) : ℝ :=
-  List.sum (((A.cols.map fun c => c i).zip
-    (A.cols.map fun c => c j)).map fun p => s p.1 p.2)
-
-/-- Sum-of-pairs value over unordered row pairs. -/
-def msaValue (s : Option α → Option α → ℝ) {k : ℕ}
-    (A : MSAlignment α k) : ℝ :=
-  Finset.sum ((Finset.univ : Finset (Fin k × Fin k)).filter
-    fun p => p.1 < p.2) fun p => inducedValue s A p.1 p.2
-
-/-- Center total: sum of optimal distances from a candidate center. -/
-noncomputable def centerTotal (s : Option α → Option α → ℝ) {k : ℕ}
-    (X : Fin k → List α) (C : List α) : ℝ :=
-  Finset.sum Finset.univ fun j => pairDist s C (X j)
 
 private theorem inducedValue_eq_sum {β : Type*} (s : Option β → Option β → ℝ)
     {k : ℕ} (A : MSAlignment β k) (i j : Fin k) :
