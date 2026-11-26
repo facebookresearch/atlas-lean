@@ -14084,6 +14084,7 @@
   "MathlibExt/Probability/Process/ContinuousDoobLp": {"to": "Probability/martingales", "title": "Doob's maximal inequalities"},
   "MathlibExt/Probability/Process/ContinuousOptionalStopping": {"to": "Probability/martingales", "title": "Optional stopping theorem"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
+  "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/BirthDeathStationary": {"to": "Probability/markov-chains", "title": "Birth–death processes"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/EqualRates": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
   "MathlibExt/Probability/Process/Girsanov": {"to": "Probability/stochastic-calculus", "title": "Girsanov's theorem"},
   "MathlibExt/Probability/Process/PoissonPointProcess": {"to": "Probability/point-processes", "title": "Poisson point processes"},
