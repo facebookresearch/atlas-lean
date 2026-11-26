@@ -5,7 +5,8 @@ $q(D) \subseteq q'(D)$ for every (finite) database $D$ that satisfies $\Sigma$. 
 functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$ identifies terms as the
 dependencies dictate, computes in polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or
 yields a query whose atoms satisfy $\Sigma$; in that case a witness is a homomorphism from $q'$ to the chased query that
-maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase.
+maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase. NP-hardness is inherited from containment
+of conjunctive queries by taking $\Sigma$ empty.
 
 ## Depends on
 
@@ -17,6 +18,7 @@ maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase.
 
 - [Containment of tableau queries under functional and join dependencies via the chase](../dependencies-and-the-chase/containment-under-fds-and-jds-via-the-chase.md)
 - [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
+- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
 
 ## Sources
 

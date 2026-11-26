@@ -10,11 +10,15 @@ bounded if the stage of $R$ is at most a fixed $k$ on every database, and the pr
 at most a fixed $k$ on every database.
 
 For a Datalog query $q = (\Pi, R)$ over a schema $S$ the following are equivalent: (1) $q$ is bounded; (2) $q$ is
-equivalent to a first-order query over $S$; (3) $q$ is equivalent to a union of conjunctive queries over $S$ in which a disjunct may also contain equality atoms
-$y = a$ between a variable and a constant, a variable of the output tuple included. The equality atoms are needed even
-for head-safe programs: over a unary relation $R$, the rules $T(x, x) \mathrel{:-} R(x)$ and $Q(x) \mathrel{:-} T(x, c)$
+equivalent to a first-order query over $S$; (3) $q$ is equivalent to a union of conjunctive queries over $S$ with a common output tuple, in which a disjunct may also
+contain equality atoms $y = z$ between two variables and $y = a$ between a variable and a constant, variables of the
+output tuple included, each variable of the output tuple being equal, through these atoms, to a constant or to a
+variable of a relational atom of the disjunct. Both kinds of equality are needed even for head-safe programs. The
+rules $Q(x, x) \mathrel{:-} R(x)$ and $Q(x, y) \mathrel{:-} S(x, y)$ return the diagonal of $R$ together with $S$,
+which is $(R(x) \wedge x = y) \vee S(x, y)$ with output $(x, y)$, and no common-output union without variable equalities
+expresses it. And over a unary relation $R$, the rules $T(x, x) \mathrel{:-} R(x)$ and $Q(x) \mathrel{:-} T(x, c)$
 define the bounded query that returns $\{c\}$ if $R(c)$ holds and nothing otherwise, which is
-$R(x) \wedge x = c$; no union of conjunctive queries without equality atoms expresses it, since on $R = \{c, d\}$ a
+$R(x) \wedge x = c$; no union of conjunctive queries without constant equalities expresses it, since on $R = \{c, d\}$ a
 disjunct that returns $c$ also returns $d$. A query
 can be bounded while its program is not: with rules $P(x, y) \mathrel{:-} S(x, y)$, $P(x, y) \mathrel{:-} P(x, z), S(z, y)$,
 $R(x, y) \mathrel{:-} S(x, y)$ and $R(x, y) \mathrel{:-} T(x, y)$, the query $(\Pi, R)$ is equivalent to
@@ -23,7 +27,8 @@ $S(x, y) \vee T(x, y)$.
 ## Expansion
 
 This node states a precise result. The cited proof of (1) implies (2) unfolds the program into such a union, and (2) implies (3) uses
-that a first-order query preserved under homomorphisms on finite databases is equivalent to a union of conjunctive queries with variable-constant equalities
+that a first-order query preserved under homomorphisms on finite databases is equivalent to a union of conjunctive
+queries with such equalities
 (the source's Theorem 28.11, a theorem of finite model theory). A good expansion links that theorem once a page for it
 exists in Logic or Theory of Computation, and adds a page for the unfolding of a Datalog query into an infinitary union
 of conjunctive queries (the source's Proposition 36.2) used for (1) implies (2).

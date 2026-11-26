@@ -4,7 +4,9 @@ The decision problem that asks, for two SPJU queries $e$ and $e'$ (relational al
 names with selection by equality conditions, projection, product, renaming and union), whether $e(D) \subseteq e'(D)$
 on every database $D$ is $\Pi_2^p$-complete, and so is equivalence of SPJU queries. Containment of unions of
 conjunctive queries is in NP, so the higher bound comes from the succinctness of nested unions, whose expansion into a
-union of conjunctive queries can be exponentially large.
+union of conjunctive queries can be exponentially large. Hardness reduces from the validity of quantified Boolean
+formulas $\forall \bar x\, \exists \bar y\, \psi$, the complement of $\mathrm{QSAT}_2$, which is $\Pi_2^p$-complete because
+$\mathrm{QSAT}_2$ is $\Sigma_2^p$-complete.
 
 ## Depends on
 
@@ -15,6 +17,7 @@ union of conjunctive queries can be exponentially large.
 ## Proof depends on
 
 - [Containment of an SPJ query in an SPJU query is in NP](containment-of-an-spj-query-in-an-spju-query-is-in-np.md)
+- [$\mathrm{QSAT}_k$ is $\Sigma_k^p$-complete, uniformly in $k$](../../../TheoryOfComputation/completeness-other-classes/quantified-boolean-formulas-with-bounded-alterna/qsat-k-sigma-k-complete.md)
 
 ## Sources
 
