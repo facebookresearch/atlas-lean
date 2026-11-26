@@ -260,20 +260,6 @@ Interpretations of Rascal Numbers", Theorem 17. -/
 theorem_wanted apkCard_succ_eq_rascalZ (n k : ℕ) :
     (apkCard (n + 1) k : ℤ) = rascalZ (n : ℤ) (k : ℤ)
 
-/-- **Generalized Fleron recurrence.** Let $j \ge 1$ be a natural number and let $n$ and $k$ be
-integers with $n \ge 2$ and $0 \le k \le n$. Then
-$$R^{(j)}_{n,k} = R^{(j)}_{n-1,k} + R^{(j)}_{n-1,k-1} - R^{(j)}_{n-2,k-1} + R^{(j-1)}_{n-2,k-1},$$
-where $R^{(i)}_{a,b}$ is the generalized Rascal number for integer indices, taken to be $0$ unless
-$0 \le b \le a$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 18. -/
-theorem_wanted rascalGenZ_fleron (j : ℕ) (hj : 1 ≤ j)
-    (n k : ℤ) (hn : 2 ≤ n) (hk0 : 0 ≤ k) (hkn : k ≤ n) :
-    rascalGenZ j n k = rascalGenZ j (n - 1) k +
-      rascalGenZ j (n - 1) (k - 1) - rascalGenZ j (n - 2) (k - 1) +
-      rascalGenZ (j - 1) (n - 2) (k - 1)
-
 /-- **Generalized Rascal numbers as sums of products of binomial coefficients.** For all natural
 numbers $j$, $n$ and $k$ with $k \le n$, the generalized Rascal number $R^{(j)}_{n,k}$, the
 number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions
