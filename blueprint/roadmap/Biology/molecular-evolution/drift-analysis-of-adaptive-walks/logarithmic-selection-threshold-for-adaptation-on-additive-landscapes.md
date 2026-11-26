@@ -23,6 +23,14 @@ and a genotype within $a$ mutations of the peak is reached in expected time $\bi
 
 So a population climbs an additive peak efficiently only if selection strength grows logarithmically with the number of sites under selection; at fixed $N\beta$ there is a maximum number of sites that can be adapted in polynomial time.
 
+## Depends on
+
+- [Closed form of Kimura's fixation probability](../../population-genetics/moran-model/kimura-fixation-half.md)
+
+## Proof depends on
+
+Its proof is that of the source below, as the Expansion describes.
+
 ## Expansion
 
 The variable drift theorem bounds the expected time to go from distance $X_0$ to distance below $a$ by $a/h(a) + \int_a^{X_0} dx/h(x)$ whenever the drift toward the target is at least an increasing positive function $h$ of the distance. Under the threshold, with $z = n - x$ remaining zeros, $\Delta \ge p_{\mathrm{fix}}(1)\,(cz - 1)/(cn) = h(z)$, and integrating gives the $n\ln n$ bound, dominated by the last few beneficial mutations, which are rare ($z/n$) and opposed by many deleterious ones ($x/n$). Below the threshold, deleterious mutations fix often enough that the walk is pushed back in an interval of length $n^{\epsilon/2}$, and the negative drift theorem (with exponentially decaying jump probabilities) gives exponential time. For general weights the large-effect sites behave like the equal-effects case.

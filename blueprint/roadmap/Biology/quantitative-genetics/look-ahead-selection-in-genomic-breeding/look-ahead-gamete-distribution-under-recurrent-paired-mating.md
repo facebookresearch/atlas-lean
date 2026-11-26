@@ -8,7 +8,7 @@ $$P(g_1 = G_{1,m,i}) = \frac{1}{2S}, \qquad i \in \{1,\dots,S\},\ m \in \{1,2\},
 
 and the founder origin is a Markov chain along the loci with transition probabilities
 
-$$P\big(g_{l+1} = G_{l+1,m_1,i_1} \,\big|\, g_l = G_{l,m_0,i_0}\big) = \begin{cases} (1-r_{l+1})^2 (1-R_{l+1}), & i_0 = i_1,\ m_0 = m_1,\\ r_{l+1}(1-r_{l+1})(1-R_{l+1}), & i_0 = i_1,\ m_0 \ne m_1,\\ \tfrac12\, r_{l+1} (1 - R_{l+1}), & i_0 \ne i_1,\ \lceil i_0/2 \rceil = \lceil i_1/2 \rceil,\\ \dfrac{R_{l+1}}{2(S-2)}, & \lceil i_0/2 \rceil \ne \lceil i_1/2 \rceil, \end{cases}$$
+$$P\big(g_{l+1} = G_{l+1,m_1,i_1} \,\big|\, g_l = G_{l,m_0,i_0}\big) = \begin{cases} (1-r_l)^2 (1-R_l), & i_0 = i_1,\ m_0 = m_1,\\ r_l(1-r_l)(1-R_l), & i_0 = i_1,\ m_0 \ne m_1,\\ \tfrac12\, r_l (1 - R_l), & i_0 \ne i_1,\ \lceil i_0/2 \rceil = \lceil i_1/2 \rceil,\\ \dfrac{R_l}{2(S-2)}, & \lceil i_0/2 \rceil \ne \lceil i_1/2 \rceil, \end{cases}$$
 
 where $R_l$, the probability that the founder pair changes between loci $l$ and $l+1$ over the later generations, is
 
@@ -18,11 +18,15 @@ The **look-ahead objective** $f_{\mathrm{LAS}}(x, y, r, T-t)$ (selection $x$, ma
 
 ## Depends on
 
-- [Breeder's equation: response to selection](../breeder-s-equation/response-eq.md)
+- [Haldane's map function](../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
 
 ## Expansion
 
-The first meiosis inside a mated pair contributes the factors $(1-r)^2$, $r(1-r)$ and $r/2$: staying on the same parental haplotype, switching haplotype within the same parent, or switching to the mate. Thereafter the chromosome is reshuffled among the $S$ lineages; a junction between loci $l$ and $l+1$ survives $T-t$ meioses unbroken with probability $(1-r_l)^{T-t}$, and a break lands on one of the $S-2$ founders outside the pair with probability $(S-2)/S$, giving $R_l$. The rows sum to one: $(1-R)\big[(1-r)^2 + r(1-r) + r\big] + R = 1$. Because $f_{\mathrm{LAS}}$ rewards the best terminal individual rather than the mean, it keeps diverse parents in the program and adapts to the deadline $T$.
+The first meiosis inside a mated pair contributes the factors $(1-r)^2$, $r(1-r)$ and $r/2$: staying on the same parental haplotype, switching haplotype within the same parent, or switching to the mate. Thereafter the chromosome is reshuffled among the $S$ lineages; a junction between loci $l$ and $l+1$ survives $T-t$ meioses unbroken with probability $(1-r_l)^{T-t}$, and a break lands on one of the $S-2$ founders outside the pair with probability $(S-2)/S$, giving $R_l$; both $r_l$ and $R_l$ belong to the interval between loci $l$ and $l+1$ (the source's Eq. 12 writes $r_{l+1}, R_{l+1}$, which is undefined at $l = L-1$). The rows sum to one: $(1-R)\big[(1-r)^2 + r(1-r) + r\big] + R = 1$. Because $f_{\mathrm{LAS}}$ rewards the best terminal individual rather than the mean, it keeps diverse parents in the program and adapts to the deadline $T$.
 
 ## Sources
 

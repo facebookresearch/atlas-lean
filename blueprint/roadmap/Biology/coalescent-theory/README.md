@@ -27,9 +27,3 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Anomalous gene trees in phylogenetic networks](anomalous-gene-trees-in-phylogenetic-networks/README.md)
-- [Central limit theorems for detectable IBD rates](central-limit-theorems-for-detectable-ibd-rates/README.md)
-- [F-matrix distances between ranked tree shapes](f-matrix-distances-between-ranked-tree-shapes/README.md)
-- [Ranked gene tree probabilities](ranked-gene-tree-probabilities/README.md)
-- [Three-species species-tree estimation](three-species-species-tree-estimation/README.md)
-- [Time-dependent migration in the multispecies coalescent](time-dependent-migration-in-the-multispecies-coalescent/README.md)

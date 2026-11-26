@@ -21,6 +21,10 @@ the recursion becomes a linear recursion on coefficient vectors $a_k, b_k$: with
 - [Hidden Markov likelihood for allele-frequency time series](../selection-from-allele-frequency-time-series/hmm-likelihood-for-allele-frequency-time-series.md)
 - [Wright–Fisher forward recursion for allele counts under piecewise-constant size](wright-fisher-forward-recursion-under-piecewise-constant-size.md)
 
+## Proof depends on
+
+- [Chapman–Kolmogorov equations, forward (law) form](../../../Probability/markov-chains/chapman-kolmogorov-equations/map-eq-bind-pow.md)
+
 ## Expansion
 
 The emission step is binomial sampling of $n_k$ haplotypes from frequency $y$; the propagation step is the Chapman–Kolmogorov equation. Since the generator with selection and mutation is self-adjoint with respect to $\pi_\ell$, its transition density has the expansion $p(s,t;x,y) = \pi_\ell(y)\sum_i e^{-\lambda_{\ell,i}(t-s)}B_{\ell,i}(x)B_{\ell,i}(y)/\langle B_{\ell,i},B_{\ell,i}\rangle_{\pi_\ell}$, so integrating against $f_{k-1}$ reduces to scaling coefficients. Truncating the series gives an accurate likelihood without discretizing frequencies, and the epoch-change projection is what extends the constant-size method to bottlenecks, exponential growth and oscillating sizes.

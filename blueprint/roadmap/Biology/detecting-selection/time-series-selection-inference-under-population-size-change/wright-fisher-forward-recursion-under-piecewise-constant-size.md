@@ -22,6 +22,10 @@ and the likelihood is $\Pr(O_{[1:K]} = o_{[1:K]}) = \sum_{i} v_{K,i}$.
 
 - [Hidden Markov likelihood for allele-frequency time series](../selection-from-allele-frequency-time-series/hmm-likelihood-for-allele-frequency-time-series.md)
 
+## Proof depends on
+
+- [The forward algorithm computes the likelihood](../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood-eq-sum-forward.md)
+
 ## Expansion
 
 This is the standard HMM forward algorithm with the population count as hidden state. Because only row vectors are propagated, the products of transition matrices are never formed: each generation costs one vector–matrix product, which keeps exact Wright–Fisher computation feasible for realistic population sizes and lets the matrix dimensions change with $N_t$ from epoch to epoch.

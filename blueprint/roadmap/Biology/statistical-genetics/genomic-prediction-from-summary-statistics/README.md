@@ -101,3 +101,7 @@
 - [The shrinkage error is orthogonal to the shrunk estimates](integral-sub-blup-score-mul-blup-score.md)
 - [The shrunk PRS is calibrated when its score term is nonzero](calib-slope-blup.md)
 - [Squared accuracy of the shrunk PRS](accuracy-sq-blup.md)
+
+## Boosted scores with non-additive effects
+
+- [Boosted polygenic scores with non-additive effects](boosted-polygenic-scores-with-non-additive-effects/README.md)

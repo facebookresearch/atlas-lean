@@ -21,6 +21,11 @@ $$C = -(m(1-u) + u) + sh\big(1 + u - m(1-u)(1-2Q)\big),\quad D = Qm(1-u) + u .$$
 ## Depends on
 
 - [Migration–selection balance on an island](migration-selection-balance-on-an-island.md)
+- [Hardy–Weinberg proportions](../../hardy-weinberg-law/offspring-apply.md)
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
 
 ## Expansion
 

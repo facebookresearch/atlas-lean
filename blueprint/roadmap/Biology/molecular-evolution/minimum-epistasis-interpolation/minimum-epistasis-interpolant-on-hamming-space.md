@@ -21,6 +21,14 @@ $$\hat f(i) = d_1(i) + \big(d_1(i) - d_2(i)\big).$$
 3. (Biharmonic form.) If $L$ is the graph Laplacian of the Hamming graph, the constrained minimization is the boundary-value problem $(L^2 - \alpha L)\hat f = 0$ off $B$ with $\hat f = f$ on $B$, a discrete analogue of the biharmonic equation solved by thin-plate splines.
 4. (Noise.) Predictions are linear in the observed values, so their noise-induced variance is explicit; in the data-dense regime the distance-shell form gives roughly an $l(\alpha-1)/5$-fold reduction of prediction variance relative to measurement noise.
 
+## Depends on
+
+- [Reciprocal sign epistasis, multiple peaks and the small-face limitation](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/epistasis-and-landscape-structure.md)
+
+## Proof depends on
+
+None beyond the statement prerequisites; this page is a definition.
+
 ## Expansion
 
 For two biallelic loci the double mutant is fixed by setting $\epsilon = 0$, the additive prediction; in general one cannot zero every face at once, and minimizing the total $\epsilon^2$ spreads the unavoidable epistasis as evenly as possible. The stationarity condition at a free genotype says it equals the average of what its faces predict, which is property 1, and averaging those predictions by distance class gives the Taylor-like correction in property 2: nearest neighbours, corrected by how phenotype changes one step further out. Since $\epsilon$ is a discrete second difference, summing $\epsilon^2$ is a discrete integrated squared curvature, which explains the squared-Laplacian operator. Iteratively replacing unobserved values by their local non-epistatic prediction converges to the same solution. Unlike low-order regression, the interpolant leaves observed data untouched and accommodates higher-order epistasis while adding little spurious structure, such as false local fitness maxima.

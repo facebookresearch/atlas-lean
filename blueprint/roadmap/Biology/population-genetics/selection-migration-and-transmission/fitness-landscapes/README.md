@@ -6,3 +6,5 @@
 - [Fitness landscapes as mathematical objects](fitness-landscapes-as-explicit-mathematical-obje.md)
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
+
+- [Epistasis from fitness rank orders](epistasis-from-fitness-rank-orders/README.md)

@@ -16,12 +16,24 @@ $\hat{t} = \rho / u$, which is unbiased for the TMRCA under the Poisson model.
 
 **Two-region refinement.** Suppose that $m < n$ of the samples are also typed in a second region
 (for example the coding region) with Poisson mutation rate $v$, giving counts $r_1, \dots, r_k$ on links
-carrying $m_1, \dots, m_k$ such samples. Combining the two unbiased region-specific estimators into a
-single estimator $t^{*}$:
+carrying $m_1, \dots, m_k$ such samples. The second region alone gives the unbiased estimator
+$\hat t_2 = \frac{1}{mv} \sum_{i=1}^{k} m_i\, r_i$, and the two are combined into
+
+$$t^{*} = \frac{\sum_{i=1}^{k} n_i\, l_i + \sum_{i=1}^{k} m_i\, r_i}{n u + m v} = \frac{n u\, \hat{t} + m v\, \hat t_2}{n u + m v},$$
+
+the total root-to-tip mutation count over both regions divided by the number of mutations it is expected to accumulate per year of TMRCA. Then:
 
 1. $\operatorname{Var}(t^{*}) < \operatorname{Var}(\hat{t})$ whenever $0 < m \le 2$;
 2. if the phylogeny is star-like, $t^{*}$ has the smallest variance among unbiased estimators that
    are convex combinations of the two region-specific estimators.
+
+## Depends on
+
+Its statement uses only the notions recalled above.
+
+## Proof depends on
+
+- [The Rao–Blackwell theorem](../../../Probability/statistical-estimation/rao-blackwell-theorem/rao-blackwell.md)
 
 ## Expansion
 

@@ -10,6 +10,11 @@ The topology $\psi$ **produces anomalies** if some $\boldsymbol\lambda$ admits a
 
 ## Depends on
 
+- [Rooted binary species tree with branch lengths](species-tree.md)
+- [The multispecies coalescent](gene-tree-prob.md)
+
+## Proof depends on
+
 - [No anomalous gene trees for three species](triple-no-anomaly.md)
 - [No anomalous gene trees on the balanced four-species tree](balanced-no-anomaly.md)
 - [The four-species anomaly zone](caterpillar-exists-anomalous-iff.md)

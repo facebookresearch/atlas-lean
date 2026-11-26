@@ -12,6 +12,10 @@ where $\Pr(S_K \mid O_K = o_K) = 1$ if $1 \le o_K < n_K$ and $0$ otherwise, and 
 
 - [Wright–Fisher forward recursion for allele counts under piecewise-constant size](wright-fisher-forward-recursion-under-piecewise-constant-size.md)
 
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 By Bayes' rule, $\Pr(O = o \mid S_K) = \Pr(S_K \mid O = o)\Pr(O = o)/\Pr(S_K)$, and $S_K$ is a function of $O_K$ alone, so the first factor is an indicator. The denominator is computed by propagating the initial distribution to $t_K$ and summing binomial sampling probabilities of a polymorphic sample. Ignoring this ascertainment biases selection estimates, since trajectories that lost the allele are excluded from the data but not from the unconditioned likelihood.

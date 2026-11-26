@@ -25,6 +25,10 @@ $$\operatorname{var}(\hat\beta_{\mathrm{MR\text{-}SPLIT}}) \le \operatorname{var
 
 - [Linear moment model for instrumental variables](linear-moment-model.md)
 
+## Proof depends on
+
+Its proof is that of the source below, as the Expansion describes.
+
 ## Expansion
 
 Because instruments and their weights are chosen in one half and applied in the other, the fitted exposure in each half is independent of that half's outcome noise, removing the selection (winner's curse) bias while still using all $N$ observations in the second stage. Collapsing the weak instruments into a single weighted score keeps their information but reduces the number of instruments, which limits weak-instrument bias of 2SLS. Combining cross-fitted exposures rather than cross-fitted instruments is what yields the variance comparison; simulations indicate the same ordering for more than two folds.

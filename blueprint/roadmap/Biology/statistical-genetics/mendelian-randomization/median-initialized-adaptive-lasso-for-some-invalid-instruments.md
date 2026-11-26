@@ -20,6 +20,10 @@ $\beta$ is identified when the valid instruments form the largest group of equal
 
 - [Linear moment model for instrumental variables](linear-moment-model.md)
 
+## Proof depends on
+
+Its proof is that of the source below, as the Expansion describes.
+
 ## Expansion
 
 The median is robust because, when fewer than half the ratios $\pi_j$ are shifted away from $\beta$ by pleiotropy, the middle order statistic is a valid ratio in the limit; but its $\sqrt n$ limit is a biased order statistic, so it serves only as a consistent pilot. Adaptive weights inflate the penalty on instruments whose pilot $\hat\alpha_{m,j}$ is near zero and shrink it on clearly invalid ones, restoring oracle selection without any irrepresentable condition. The methods are illustrated on a UK Biobank Mendelian randomization study of the effect of body mass index on diastolic blood pressure with 96 SNPs as candidate instruments.

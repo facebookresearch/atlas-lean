@@ -13,17 +13,25 @@ $$O\Big(\frac{n}{p_{\mathrm{fix}}(\delta)}\cdot\frac{d}{\delta}\Big).$$
 
 2. (Ridge.) On $f_{\mathrm{ridge}}$ with $N \ge 3$ and $\beta \ge 1/2$,
 
-$$\Delta \ge \frac1n\,p_{\mathrm{fix}}(1)\big[1 - 3e^{-2(N-1)\beta}\big] \ge \frac{6}{8}\cdot\frac{p_{\mathrm{fix}}(1)}{n},$$
+$$\Delta \ge \frac1n\,p_{\mathrm{fix}}(1)\big[1 - 3e^{-2(N-1)\beta}\big] \ge \big(1 - 3e^{-2}\big)\frac{p_{\mathrm{fix}}(1)}{n},$$
 
-and the expected time to reach the peak is $O\big(n^2/p_{\mathrm{fix}}(1)\big)$, for every selection strength above this constant, independent of $n$.
+since $2(N-1)\beta \ge 2$, with $1 - 3e^{-2} \approx 0.59 > 0$; the expected time to reach the peak is therefore $O\big(n^2/p_{\mathrm{fix}}(1)\big)$, for every selection strength above this constant, independent of $n$.
 
 ## Depends on
 
-- [Logarithmic selection threshold for adaptation on additive landscapes](logarithmic-selection-threshold-for-adaptation-on-additive-landscapes.md)
+- [Closed form of Kimura's fixation probability](../../population-genetics/moran-model/kimura-fixation-half.md)
+
+## Proof depends on
+
+Its proof is that of the source below, as the Expansion describes.
+
+## Related topics
+
+- [Logarithmic selection threshold for adaptation on additive landscapes](logarithmic-selection-threshold-for-adaptation-on-additive-landscapes.md): the additive case, which needs selection strength growing logarithmically in the number of sites.
 
 ## Expansion
 
-In a unimodal landscape a beneficial neighbour of gain at least $\delta$ is hit with probability at least $1/n$, while at most $n-1$ deleterious mutations act against it; bounding their total backward contribution with $p_{\mathrm{fix}}(-\Delta f) = e^{-2(N-1)\beta\Delta f}p_{\mathrm{fix}}(\Delta f)$ gives the drift bound, and the variable drift theorem over fitness values from $\delta$ to $d$ gives the time bound. The bound can be loose (for additive functions $d = n$ gives $O(n^2)$ instead of $O(n\ln n)$) and need not be polynomial when $d/\delta$ is exponential. On the ridge, a deleterious flip of the $j$-th leading one loses the whole suffix but has only probability $p_{\mathrm{fix}}(-(\cdot))$, exponentially small in the loss, so summing over positions costs at most a factor $3e^{-2(N-1)\beta}$; neutral drift on the plateau never hurts. Hence ordered, strongly epistatic adaptation needs only constant selection strength, in contrast with the logarithmic threshold for additive traits.
+In a unimodal landscape a beneficial neighbour of gain at least $\delta$ is hit with probability at least $1/n$, while at most $n-1$ deleterious mutations act against it; bounding their total backward contribution with $p_{\mathrm{fix}}(-\Delta f) = e^{-2(N-1)\beta\Delta f}p_{\mathrm{fix}}(\Delta f)$ gives the drift bound, and the variable drift theorem over fitness values from $\delta$ to $d$ gives the time bound. The bound can be loose (for additive functions $d = n$ gives $O(n^2)$ instead of $O(n\ln n)$) and need not be polynomial when $d/\delta$ is exponential. On the ridge, a deleterious flip of the $j$-th leading one loses the whole suffix but has only probability $p_{\mathrm{fix}}(-(\cdot))$, exponentially small in the loss, so summing over positions costs at most a factor $3e^{-2(N-1)\beta}$; neutral drift on the plateau never hurts. Hence ordered, strongly epistatic adaptation needs only constant selection strength, in contrast with the logarithmic threshold for additive traits. The source states the constant of the ridge drift bound as $6/8$, which fails at $N = 3$, $\beta = 1/2$, where $1 - 3e^{-2} \approx 0.59 < 6/8$; the time bound $O(n^2/p_{\mathrm{fix}}(1))$ is unaffected.
 
 ## Sources
 

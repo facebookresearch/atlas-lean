@@ -6,3 +6,7 @@
 - [Is Pair Law](is-pair-law.md)
 - [Multiplicative model: `λ_R` is the product of the locus ratios](recurrence-ratio-pi.md)
 - [Under a multiplicative model `λ - 1` more than halves per degree](prod-sub-one-ge-two-mul.md)
+
+## Twin concordance and genetic susceptibility
+
+- [Genetic susceptibility from twin concordance](genetic-susceptibility-from-twin-concordance/README.md)

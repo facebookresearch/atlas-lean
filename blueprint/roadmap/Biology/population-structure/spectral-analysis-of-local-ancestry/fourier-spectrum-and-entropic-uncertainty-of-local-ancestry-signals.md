@@ -20,7 +20,11 @@ The right-hand side is invariant under rescaling the interval; after rescaling $
 
 ## Depends on
 
-- [Admixture linkage disequilibrium](../admixture-linkage-disequilibrium/README.md)
+- [Parseval's identity on the circle](../../../Analysis/harmonic-analysis/fourier-series/convergence-of-fourier-series/parseval-identity-on-the-circle.md)
+
+## Proof depends on
+
+Its proof is that of the source below, as the Expansion describes.
 
 ## Expansion
 

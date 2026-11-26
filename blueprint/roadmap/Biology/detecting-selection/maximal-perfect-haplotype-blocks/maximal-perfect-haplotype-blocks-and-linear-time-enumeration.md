@@ -17,6 +17,14 @@
 
 **Theorem (linear time).** All maximal perfect haplotype blocks of $S$ can be found in $O(kn)$ time, linear in the size of the input matrix. Consequently there are $O(kn)$ such blocks in total.
 
+## Depends on
+
+Its statement uses only the notions recalled above.
+
+## Proof depends on
+
+Its proof consists of the steps listed under Expansion.
+
 ## Expansion
 
 The positional BWT is built column by column in $O(k)$ time per column. At column $l$ the available blocks are the LCP intervals of the trie whose LCP array is $\mathrm{LCP}_l[r] = l - d_l[r] + 1$, where $d_l$ is the divergence array; they are enumerated in $O(k)$ time by the standard stack-based LCP-interval algorithm. Right-maximality is tested in constant time per block by a bit vector $V_j$ with $V_j[r] = 1$ iff the next symbols of rows $a_j[r-1]$ and $a_j[r]$ differ, together with its prefix sums: the block is right-maximal iff $V_j[x+1..y]$ contains a 1. Summing $O(k)$ work over $n$ columns gives $O(kn)$. An alternative algorithm with the same bound uses a generalized suffix tree.

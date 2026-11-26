@@ -10,3 +10,7 @@
 - [Expected richness of a founder sample of size zero is zero](expected-richness-zero.md)
 - [Expected allelic richness is nonnegative for nonnegative frequencies](expected-richness-nonneg.md)
 - [Expected allelic richness does not decrease with founder sample size](expected-richness-mono.md)
+
+## Estimating diversity from samples
+
+- [Estimators of Shannon genetic diversity](estimators-of-shannon-genetic-diversity/README.md)
