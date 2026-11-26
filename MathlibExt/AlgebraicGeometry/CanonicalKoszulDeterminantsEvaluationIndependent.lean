@@ -218,9 +218,7 @@ namespace WantedExt.AlgebraicGeometry.CanonicalKoszulDeterminants
 
 /-- Independence retains the same fixed source assembly and every scalar/cochain input. -/
 public theorem evaluation_independent
-    [FourierMukai.HasDerivedPullbacks.{0}]
     [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
-    [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     [∀ R : CommRingCat.{0}, ProjectiveSources R]
     (R : CommRingCat.{0}) (I : DeterminantSources)
     (C : BoundedProjectiveDeterminants.Complex R) (m : ℕ)

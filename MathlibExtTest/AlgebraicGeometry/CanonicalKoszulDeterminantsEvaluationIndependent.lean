@@ -29,9 +29,7 @@ open MathlibExt.AlgebraicGeometry
 open BoundedProjectiveDeterminants GlobalBoundedDeterminantModels
 open MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
 
-example [FourierMukai.HasDerivedPullbacks.{0}]
-    [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
-    [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
+example [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
     [∀ R : CommRingCat.{0}, ProjectiveSources R]
     (R : CommRingCat.{0}) (I : DeterminantSources)
     (C : BoundedProjectiveDeterminants.Complex R) (m : ℕ)
