@@ -66,8 +66,8 @@ def IsWeakHomotopyEquivalence {X Y : TopCat.{u}} (f : X ⟶ Y) : Prop :=
 def WeakEquivalence {X Y : SSet.{u}} (f : X ⟶ Y) : Prop :=
   IsWeakHomotopyEquivalence (SSet.toTop.map f)
 
-/-- Mathlib's actual simplicial mapping object, constructed from the
-functor-category internal Hom, retaining every higher simplex. -/
+/-- The simplicial mapping space of simplicial sets $X$ and $Y$: the internal Hom of simplicial
+sets, whose $n$-simplices are the maps $X \times \Delta[n] \to Y$. -/
 abbrev mapping (X Y : SSet.{u}) : SSet.{u} :=
   SimplicialCategory.sHom X Y
 
