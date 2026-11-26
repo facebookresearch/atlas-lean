@@ -7,6 +7,8 @@
 - [Piecewise Legal](piecewise-legal.md)
 - [Legit iff two blocks](legit-iff-two-blocks.md)
 - [Piecewise Legal iff](piecewise-legal-iff.md)
+- [Bounded reachability of the legal form](exists-piecewise-legal-of-steps.md)
+- [Closure of the consecutive-color legal form](piecewise-legal-closed.md)
 - [Self-stabilization of Dijkstra's token ring](self-stabilization-of-dijkstra-s-k-state-token.md)
 - [Legit at quadratic bound](legit-at-quadratic-bound.md)
 - [Luby's maximal independent set algorithm](luby-s-maximal-independent-set-algorithm.md)

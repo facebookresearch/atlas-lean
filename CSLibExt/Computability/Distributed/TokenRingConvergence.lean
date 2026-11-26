@@ -17,8 +17,9 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 For `n + 1` machines and `n + 2` colors, every execution reaches a constant configuration
 within `2 * (n + 1) ^ 2` steps. In particular, it reaches the consecutive-color legal form of
-J. Aspnes, *Notes on Theory of Distributed Systems*, Chapter 32, §32.2, and has exactly one
-privileged machine thereafter. No fairness is assumed: every step must be an actual `Step`.
+J. Aspnes, *Notes on Theory of Distributed Systems*, Chapter 32, §32.2. This legal form is
+closed under steps and implies exactly one privileged machine. No fairness is assumed: every
+step must be an actual `Step`.
 
 As in Aspnes's argument, a color missing initially can only occupy an initial segment of the
 linear order starting at machine `0`, until the ring becomes constant. The potential charges a
@@ -162,6 +163,35 @@ public theorem piecewiseLegal_iff {n : ℕ} {x : ZMod (n + 1) → ZMod (n + 2)} 
       exact piecewiseLegal_of_constant fun i => by simpa [hlast] using hform i
     · obtain ⟨j, hj, hform⟩ := (legit_iff_two_blocks x).mp hlegit
       exact ⟨j, hj, by simpa only [hlast] using hform⟩
+
+/-- On a ring of `n + 1` machines with `n + 2` colors, every actual central-daemon step from
+the consecutive-color legal form leads to another configuration of that form. -/
+public theorem piecewiseLegal_closed {n : ℕ} {x y : ZMod (n + 1) → ZMod (n + 2)}
+    (hx : PiecewiseLegal x) (h : Step x y) : PiecewiseLegal y := by
+  have hy := legit_closed (piecewiseLegal_iff.mp hx).1 h
+  apply piecewiseLegal_iff.mpr
+  refine ⟨hy, ?_⟩
+  obtain ⟨i, hp, rfl⟩ := h
+  by_cases hi : i = 0
+  · subst i
+    -- In the singleton ring the two endpoints are the same machine.
+    by_cases hlast : (-1 : ZMod (n + 1)) = 0
+    · exact Or.inl (congrArg _ hlast)
+    · rw [privileged, ite_eq_left rfl] at hp
+      right
+      rw [moveVal, ite_eq_left rfl, Function.update_self, Function.update_of_ne hlast,
+        add_sub_cancel_right, hp]
+  · -- Copying preserves the two allowed colors and does not change the first machine.
+    obtain ⟨j, _, hj⟩ := hx
+    have hcolor (k : ZMod (n + 1)) : x k = x 0 ∨ x k = x 0 - 1 := by
+      rw [hj k]
+      split_ifs <;> simp
+    rw [moveVal, ite_eq_right hi, Function.update_of_ne (Ne.symm hi)]
+    by_cases hlast : (-1 : ZMod (n + 1)) = i
+    · rw [hlast, Function.update_self]
+      exact hcolor (i - 1)
+    · rw [Function.update_of_ne hlast]
+      exact hcolor (-1)
 
 -- Edge `k` runs from `k` to `k + 1`. The wraparound term `k = n` has weight zero.
 private def edge {n : ℕ} (x : ZMod (n + 1) → ZMod (n + 2)) (k : ℕ) : ℕ :=
@@ -385,9 +415,20 @@ public theorem exists_piecewiseLegal_of_steps {n : ℕ}
   obtain ⟨t, ht, hconst⟩ := exists_constant_of_steps run hstep
   exact ⟨t, ht, piecewiseLegal_of_constant hconst⟩
 
+/-- Dijkstra's central-daemon token ring on `n + 1` machines with `n + 2` colors stabilizes in
+the consecutive-color legal form: every prefix of `2 * (n + 1) ^ 2` actual steps visits that form
+by the end of the prefix, and every actual step from a configuration of that form preserves it.
+No fairness assumption is needed. -/
+public theorem self_stabilizes_piecewiseLegal (n : ℕ) :
+    (∀ run : ℕ → ZMod (n + 1) → ZMod (n + 2),
+      (∀ t < 2 * (n + 1) ^ 2, Step (run t) (run (t + 1))) →
+        ∃ t ≤ 2 * (n + 1) ^ 2, PiecewiseLegal (run t)) ∧
+    (∀ {x y : ZMod (n + 1) → ZMod (n + 2)}, PiecewiseLegal x → Step x y → PiecewiseLegal y) :=
+  ⟨exists_piecewiseLegal_of_steps, piecewiseLegal_closed⟩
+
 /-- On a ring of `m ≥ 1` machines with `m + 1` colors, after `2 * m ^ 2` actual central-daemon
-steps the configuration has exactly one privileged machine. This remains true along any
-continuation by `legit_closed`. -/
+steps the configuration has exactly one privileged machine. Each subsequent actual step
+preserves unique privilege. -/
 public theorem legit_at_quadratic_bound {n : ℕ}
     (run : ℕ → ZMod (n + 1) → ZMod (n + 2))
     (hstep : ∀ t < 2 * (n + 1) ^ 2, Step (run t) (run (t + 1))) :

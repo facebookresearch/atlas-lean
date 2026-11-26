@@ -58,10 +58,32 @@ private theorem threeRun_step (t : ℕ) : Step (threeRun t) (threeRun (t + 1)) :
   | succ t => exact ⟨_, Classical.choose_spec (exists_privileged (threeRun (t + 1))), rfl⟩
 
 example : ∃ t ≤ 18, PiecewiseLegal (threeRun t) :=
-  exists_piecewiseLegal_of_steps (n := 2) threeRun fun t _ => threeRun_step t
+  (self_stabilizes_piecewiseLegal 2).1 threeRun fun t _ => threeRun_step t
 
 example : Legit (threeRun 18) :=
   legit_at_quadratic_bound (n := 2) threeRun fun t _ => threeRun_step t
+
+-- On a singleton ring, the first and last machine are the same, including after 1 wraps to 0.
+example : PiecewiseLegal (fun _ : ZMod 1 => (0 : ZMod 2)) := by
+  apply piecewiseLegal_closed (x := fun _ : ZMod 1 => (1 : ZMod 2))
+  · exact ⟨0, le_rfl, by decide⟩
+  · exact ⟨0, by unfold privileged; decide, by decide⟩
+
+private def threeConstantMax : ZMod 3 → ZMod 4 := fun _ => 3
+private def threeCutZero : ZMod 3 → ZMod 4 := fun i => if i = 0 then 0 else 3
+private def threeCutOne : ZMod 3 → ZMod 4 := fun i => if i = -1 then 3 else 0
+
+-- Starting at (3, 3, 3), machine 0 increments modulo 4, machine 1 extends the first block,
+-- and the last machine makes the ring constant again, returning the privilege to machine 0.
+example : PiecewiseLegal threeCutZero ∧ PiecewiseLegal threeCutOne ∧
+    PiecewiseLegal threeEnd ∧ privileged threeEnd 0 := by
+  have hstart : PiecewiseLegal threeConstantMax := ⟨2, le_rfl, by decide⟩
+  have hinc : Step threeConstantMax threeCutZero := ⟨0, by unfold privileged; decide, by decide⟩
+  have hcopy : Step threeCutZero threeCutOne := ⟨1, by unfold privileged; decide, by decide⟩
+  have hwrap : Step threeCutOne threeEnd := ⟨-1, by unfold privileged; decide, by decide⟩
+  have hzero := (self_stabilizes_piecewiseLegal 2).2 hstart hinc
+  have hone := (self_stabilizes_piecewiseLegal 2).2 hzero hcopy
+  exact ⟨hzero, hone, (self_stabilizes_piecewiseLegal 2).2 hone hwrap, by unfold privileged; decide⟩
 
 -- A single privilege does not force consecutive colors: the colors (0, 1) modulo 3
 -- have just one privilege, but the second color is neither 0 nor 0 - 1.

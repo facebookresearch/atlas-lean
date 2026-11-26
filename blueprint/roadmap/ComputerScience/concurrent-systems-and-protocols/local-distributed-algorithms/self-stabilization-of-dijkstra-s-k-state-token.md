@@ -1,15 +1,18 @@
 # Self-stabilization of Dijkstra's token ring
 
-Consider $n$ processes $0, \dots, n - 1$ on a unidirectional ring. Each process $i$ can observe its own state and that of its predecessor $i - 1 \bmod n$, and each process has a state $\ell_i \in \mathbb{Z}_{n+1}$. Steps are taken one at a time by an adversarial scheduler, the central daemon, and only enabled commands may be executed. Dijkstra's token ring algorithm has two commands:
+Consider $n \ge 1$ processes $0, \dots, n - 1$ on a unidirectional ring. Each process $i$ can observe its own state and that of its predecessor $i - 1 \bmod n$, and each process has a state $\ell_i \in \mathbb{Z}_{n+1}$. Steps are taken one at a time by an adversarial scheduler, the central daemon, and only enabled commands may be executed. Dijkstra's token ring algorithm has two commands:
 
 - process $0$: if $\ell_0 = \ell_{n-1}$, set $\ell_0 \leftarrow \ell_{n-1} + 1 \bmod (n + 1)$;
 - process $i \ne 0$: if $\ell_i \ne \ell_{i-1}$, set $\ell_i \leftarrow \ell_{i-1}$.
 
-A process holds a token exactly when its command is enabled.
+A configuration is in [consecutive-color legal form](piecewise-legal.md) if there is a cut $0 \le j < n$ with $\ell_i=\ell_0$ for all $i\le j$ and $\ell_i=\ell_0-1$ modulo $n+1$ for all $i>j$. The second block may be empty.
 
-1. **At least one token.** In every configuration some process holds a token. If no nonzero process has one, all states are equal, and then process $0$ has one.
-2. **Closure.** Call a configuration *legal* if, for some $j$, $\ell_i=\ell_0$ for all $i\le j$ and $\ell_i=\ell_0-1$ modulo $n+1$ for all $i>j$. A legal configuration has exactly one token and every step from it is legal. Unique privilege alone is weaker: it allows a constant configuration or two constant blocks of distinct colors, not necessarily consecutive colors.
-3. **Convergence.** From an arbitrary configuration of a nonempty ring, every execution of at least $2n^2$ actual steps visits a legal configuration within its first $2n^2$ steps. This bound does not require scheduler fairness. In particular the ring has exactly one token at the end of this prefix.
+1. **[Convergence](exists-piecewise-legal-of-steps.md).** Every prefix of $2n^2$ actual steps, from any initial configuration, visits a legal configuration no later than the end of the prefix. No scheduler fairness is needed.
+2. **[Closure](piecewise-legal-closed.md).** Every actual step from a legal configuration leads to a legal configuration.
+
+A process holds a token exactly when its command is enabled. The [legal-form characterization](piecewise-legal-iff.md) implies that a legal configuration has exactly one token. Unique privilege alone is weaker: two constant blocks need not have consecutive colors.
+
+**Proof of closure.** From a constant configuration only process $0$ moves. Its increment makes the old color one less than the new first color, even when the color wraps around; in a singleton ring the result is still constant. With a nonempty second block, only process $j+1$ can move. It copies the first block's color, advancing the cut by one. When it is the last process, the result is constant and the privilege returns to process $0$.
 
 **Proof of convergence.** Some color $c$ is missing initially, since there are $n+1$ colors and $n$ processes. Until the first constant configuration, the processes of color $c$ form an initial segment of the order $0,\ldots,n-1$: the color can only be introduced by process $0$, and the copying rule propagates it to the right. If this segment reaches process $n-1$, the configuration is constant and hence legal.
 
@@ -31,5 +34,5 @@ Dijkstra's paper also gives the general $K$-state version and variants using few
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, <https://cs.yale.edu/homes/aspnes/classes/4650/notes.pdf>, Chapter 32: Section 32.1 (guarded commands, the central and distributed daemons) and Section 32.2 (Algorithm 32.1, the token rule, legal configurations, Lemma 32.2.1 and the potential-function proof of stabilization in $O(n^2)$ steps).
-- E. W. Dijkstra, "Self-stabilizing systems in spite of distributed control", *Communications of the ACM* 17(11):643–644, 1974.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, [Chapter 32, §32.2](https://www.cs.yale.edu/homes/aspnes/classes/4650/notes.pdf) (Algorithm 32.1, the consecutive-color legal form and its closure, and the quadratic convergence argument).
+- E. W. Dijkstra, ["Self-stabilizing systems in spite of distributed control"](https://www.cs.utexas.edu/~EWD/transcriptions/EWD04xx/EWD426.html), *Communications of the ACM* 17(11):643–644, 1974 (original transition rules).
