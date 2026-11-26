@@ -34,9 +34,13 @@ example : remainderSet 13 = insert 0 ((remainderSet 12).image (· + 1)) := by
 example : remainderCount 131 = 33 ∧ remainderCount 132 = 30 := by
   decide +kernel
 
--- The main theorem gives drops of any size beyond any bound.
+-- The upper bound is attained at the first nonempty remainder set.
+example : remainderCount 2 ≤ remainderCount 1 + 1 :=
+  remainderCount_consecutive_differences.1 1 (by decide)
+
+-- The consecutive-differences theorem gives drops of any size beyond any bound.
 example : ∃ n ≥ 10 ^ 6, remainderCount (n + 1) + 100 ≤ remainderCount n :=
-  Filter.frequently_atTop.1 (remainderCount_drops_unbounded 100) (10 ^ 6)
+  Filter.frequently_atTop.1 (remainderCount_consecutive_differences.2.2 100) (10 ^ 6)
 
 -- Equivalently, for every `M` the set of `n` with a drop of at least `M` is infinite.
 example (M : ℕ) : {n | remainderCount (n + 1) + M ≤ remainderCount n}.Infinite :=
