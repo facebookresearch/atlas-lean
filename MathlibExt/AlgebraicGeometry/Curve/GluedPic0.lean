@@ -45,8 +45,13 @@ consists of two divisors `D₁` and `D₂` of `F` and a unit `w s` of `K` at eac
 `Q_s`. It is glued principal (`AlgebraicCurve.GluingData.IsGluedPrincipal`) when it is
 `(div g₁, div g₂, (g₁(P_s) / g₂(Q_s))_s)` for nonzero `g₁` and `g₂` in `F`, with values in the sense
 of `AlgebraicCurve.Place.HasValueAt`. `AlgebraicCurve.GluedPic0 K F S` is the quotient of the
-admissible data by the glued principal data, and `AlgebraicCurve.GluedPic0.toPic0Pair` sends a class
-to the classes of `D₁` and `D₂` in `AlgebraicCurve.Pic0 K F`.
+admissible subgroup by its intersection with the glued principal subgroup, so the class of
+admissible data is zero exactly when the data is glued principal
+(`AlgebraicCurve.GluedPic0.mk_eq_zero_iff`). Glued principal data need not be admissible: for
+`F = L(t)` with `L` an infinite algebraic extension of `K` and no nodes, the divisor of `t` is
+supported at two places with residue field `L`, so it does not lie in `finiteDegZero`.
+`AlgebraicCurve.GluedPic0.toPic0Pair` sends a class to the classes of `D₁` and `D₂` in
+`AlgebraicCurve.Pic0 K F`.
 
 * At a `K`-rational place a function of order zero has a value in `Kˣ`, so the node units in `Kˣ`
   record every gluing relation: the classes whose two `Pic0` classes vanish are exactly the
@@ -239,8 +244,11 @@ theorem mem_gluedPrincipal {x : GluingData K F S} :
 
 end GluingData
 
-/-- **Glued degree-zero Picard group.** The admissible gluing data modulo the glued principal
-data, for a finite set `S` of pairs `(P_s, Q_s)` of `K`-rational places of `F`.
+/-- **Glued degree-zero Picard group.** The quotient of the admissible subgroup of gluing data by
+its intersection with the glued principal subgroup, for a finite set `S` of pairs `(P_s, Q_s)` of
+`K`-rational places of `F`: the class of admissible data is zero exactly when the data is glued
+principal (`GluedPic0.mk_eq_zero_iff`). Glued principal data that are not admissible, such as the
+data of a function whose divisor has a place with residue field infinite over `K`, play no part.
 
 Interpretation: when `F` is the function field of a smooth projective curve `C` over `K` and the
 places in each projection of `S` are distinct, gluing two copies `C₁` and `C₂` of `C` by
