@@ -66,9 +66,8 @@ private theorem eval_first {t : ℕ} (c : Circuit Boolean.signature t 1)
   exact (congrFun (c.map_eval project x) 0).trans (congrArg (fun y => c.eval bits.gates y 0) h)
 
 private theorem correct : Correct (A := fun _ => bits) (fun _ => fixture) (fun _ _ => Set.univ) := by
-  intro t c
   refine ⟨_, negligibleAdv_zero, ?_⟩
-  intro n hc kp hk m x hx
+  intro n t c hc kp hk m x hx
   simp [fixture, PMF.pure_map, eval_first c m x hx]
 
 -- A Boolean wiring circuit really computes the tagged result, including the framing bits.
@@ -91,7 +90,7 @@ private noncomputable def diagonal (n : ℕ) : Scheme bits :=
   { fixture with evaluate := fun {t} pk c x =>
       if t = n + 1 then PMF.pure (false, false) else fixture.evaluate pk c x }
 
-example : Correct (A := fun _ => bits) diagonal (fun _ _ => Set.univ) := by
+example : FixedCircuitCorrect (A := fun _ => bits) diagonal (fun _ _ => Set.univ) := by
   intro t c
   refine ⟨fun n => if t = n + 1 then 1 else 0, ?_, ?_⟩
   · refine ⟨fun n => if t = n + 1 then 1 else 0, fun k => ⟨t, fun n hn => ?_⟩, fun n => ?_⟩
@@ -106,18 +105,14 @@ example : Correct (A := fun _ => bits) diagonal (fun _ _ => Set.univ) := by
 
 -- No negligible bound works simultaneously for all circuits of this same family: project
 -- the first input at arity n + 1 on a supported all-true tuple at every n.
-example : ¬ ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n t (c : Circuit Boolean.signature t 1),
-    ∀ kp ∈ (diagonal n).pke.gen.support, ∀ (m : Fin t → Bool) (x : Fin t → Bool × Bool),
-      (∀ i, x i ∈ ((diagonal n).pke.enc kp.1 (m i)).support) →
-      winProb (((diagonal n).evaluate kp.1 c x).map fun y =>
-        decide ((diagonal n).pke.dec kp.2 y ≠ some (c.eval bits.gates m 0))) ≤ ε n := by
+example : ¬ Correct (A := fun _ => bits) diagonal (fun _ _ => Set.univ) := by
   rintro ⟨ε, hε, hb⟩
   apply not_negligibleAdv_const (δ := 1) (by norm_num) (hε.mono ?_)
   intro n
   have hx : (true, true) ∈ (tags true).support := by
     apply (PMF.mem_support_map_iff ..).mpr
     exact ⟨true, by simp [PMF.mem_support_iff], rfl⟩
-  have bound := hb n (n + 1) (Circuit.wiring _ (fun _ => 0)) (true, false)
+  have bound := hb n (n + 1) (Circuit.wiring _ (fun _ => 0)) (Set.mem_univ _) (true, false)
     ((PMF.mem_support_pure_iff ..).mpr rfl) (fun _ => true) (fun _ => (true, true)) (fun _ => hx)
   simpa [diagonal, fixture, PMF.pure_map] using bound
 
@@ -138,7 +133,8 @@ private noncomputable def broken (n : ℕ) : Scheme bits := by
     evaluate := fun _ c x =>
       if ∃ i, (x i).2 = true then PMF.pure (false, false) else PMF.pure (c.eval productGates x 0) }
 
-example : ¬ Correct (A := fun _ => bits) broken (fun _ _ => Set.univ) := by
+private theorem broken_not_fixed : ¬ FixedCircuitCorrect (A := fun _ => bits) broken
+    (fun _ _ => Set.univ) := by
   classical
   intro hcorrect
   obtain ⟨ε, hε, h⟩ := hcorrect 1 (Circuit.id Boolean.signature 1)
@@ -151,6 +147,27 @@ example : ¬ Correct (A := fun _ => bits) broken (fun _ _ => Set.univ) := by
   have bound := h n (Set.mem_univ _) (true, false) ((PMF.mem_support_pure_iff ..).mpr rfl)
     (fun _ => true) (fun _ => (true, true)) (fun _ => hx)
   simpa [broken, fixture, PMF.pure_map, Circuit.id] using bound
+
+example : ¬ Correct (A := fun _ => bits) broken (fun _ _ => Set.univ) :=
+  fun h => broken_not_fixed h.toFixedCircuitCorrect
+
+-- An empty class imposes no evaluation obligation. This is not the class used by full evaluation.
+example (E : ℕ → Scheme bits) : Correct (A := fun _ => bits) E (fun _ _ => ∅) :=
+  ⟨_, negligibleAdv_zero, fun _ _ _ hc => False.elim hc⟩
+
+-- By contrast the nullary constant-true circuit has one (empty) input tuple, not zero
+-- possible tuples. Returning false on that tuple really does violate a zero error bound.
+private def nullaryTrue : Circuit Boolean.signature 0 1 :=
+  ⟨.gate .empty ⟨.const true, Fin.elim0⟩, fun _ => .gate 0⟩
+
+example : ¬ EvaluationErrorAtMost
+    { fixture with evaluate := fun _ _ _ => PMF.pure (false, false) } nullaryTrue 0 := by
+  intro h
+  have bound := h (true, false) ((PMF.mem_support_pure_iff ..).mpr rfl)
+    Fin.elim0 Fin.elim0 (fun i => i.elim0)
+  have value : nullaryTrue.eval bits.gates Fin.elim0 0 = true := rfl
+  apply not_le_of_gt (zero_lt_one : (0 : ℝ) < 1)
+  simpa [fixture, value, PMF.pure_map] using bound
 
 -- The last input port carries an unused frame terminator. Removing it changes neither the
 -- computed bits nor the output capacity, but the framed input no longer fits.

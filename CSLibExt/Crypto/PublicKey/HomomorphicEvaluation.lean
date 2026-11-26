@@ -20,10 +20,13 @@ public import Mathlib.Data.PNat.Basic
 
 Gentry, *A Fully Homomorphic Encryption Scheme* (Stanford, 2009), §2.1, printed pp. 27–29
 (PDF pp. 37–39), Definitions 2.1.1–2.1.5. The objects are distributions and single-output
-straight-line circuits; these are functionality properties, not security games. Correctness fixes
-an arity and circuit before choosing its negligible error bound, then fixes the generated keys
-and supported ciphertexts before sampling the evaluator. Definition 5.2.4 (printed p. 60,
-PDF p. 70) also treats the arity as depending on the circuit. Compactness bounds a Boolean
+straight-line circuits; these are functionality properties, not security games. Definition 2.1.1
+lists the keys, circuits, messages and supported ciphertexts and specifies the evaluator's coins,
+but does not explicitly quantify a negligible majorant. `Correct` uses one bound for all circuits
+admitted at each parameter, so the circuit may grow with the parameter. In `FixedCircuitCorrect`
+the bound may depend on a fixed circuit; this allows a growing sequence of failing circuits even
+if every fixed one eventually succeeds. Definition 5.2.4 (printed p. 60, PDF p. 70) relates arity
+to the circuit; it does not settle this quantifier order. Compactness separately bounds a Boolean
 circuit computing the actual decryption function in the specified representations.
 
 Gentry allows the public key to determine the message and ciphertext spaces. We specialize to
@@ -65,19 +68,40 @@ structure Scheme {σ : Signature} (A : Spaces σ) where
 
 variable {σ : Signature} {A : ℕ → Spaces σ}
 
-/-- Correctness on a circuit class (circuit-wise reading of Gentry, Definition 2.1.1). Fix the
-arity and circuit first. There is a negligible bound in the security parameter that, whenever the
-circuit is permitted, works for every generated key pair, message tuple and tuple of supported
-fresh ciphertexts. Only evaluation is sampled: the probability of rejection or a plaintext other
-than the circuit output is at most this bound. -/
-def Correct (E : (n : ℕ) → Scheme (A n)) (allowed : ℕ → (t : ℕ) → Set (Circuit σ t 1)) : Prop := by
+/-- At one parameter and circuit, evaluation error is at most `δ` on every generated key pair,
+message tuple and tuple of supported fresh ciphertexts. With these fixed, only the evaluator's
+coins contribute to the probability of rejection or decryption to a wrong message. -/
+def EvaluationErrorAtMost {B : Spaces σ} (S : Scheme B) {t : ℕ} (c : Circuit σ t 1)
+    (δ : ℝ) : Prop := by
   classical
-  exact ∀ t (c : Circuit σ t 1), ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n, c ∈ allowed n t →
-    ∀ kp, kp ∈ (E n).pke.gen.support →
-    ∀ (m : Fin t → (A n).Message) (x : Fin t → (A n).Ciphertext),
-      (∀ i, x i ∈ ((E n).pke.enc kp.1 (m i)).support) →
-      winProb (((E n).evaluate kp.1 c x).map fun y =>
-        decide ((E n).pke.dec kp.2 y ≠ some (c.eval (A n).gates m 0))) ≤ ε n
+  exact ∀ kp ∈ S.pke.gen.support, ∀ (m : Fin t → B.Message) (x : Fin t → B.Ciphertext),
+    (∀ i, x i ∈ (S.pke.enc kp.1 (m i)).support) →
+    winProb ((S.evaluate kp.1 c x).map fun y =>
+      decide (S.pke.dec kp.2 y ≠ some (c.eval B.gates m 0))) ≤ δ
+
+/-- Uniform correctness on a circuit class: one negligible function of the security parameter
+bounds evaluation error for all arities and circuits admitted at each parameter. In particular
+the circuit may vary with the parameter. This is the convention for compact evaluation and
+both full homomorphism predicates. -/
+def Correct (E : (n : ℕ) → Scheme (A n)) (allowed : ℕ → (t : ℕ) → Set (Circuit σ t 1)) : Prop :=
+  ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n t (c : Circuit σ t 1), c ∈ allowed n t →
+    EvaluationErrorAtMost (E n) c (ε n)
+
+/-- Fixed-circuit correctness: for each arity and each circuit there is a negligible error bound
+that works at every parameter where this circuit is admitted. It is still uniform over generated
+keys, messages and supported fresh ciphertexts, but need not work for any other circuit. -/
+def FixedCircuitCorrect (E : (n : ℕ) → Scheme (A n))
+    (allowed : ℕ → (t : ℕ) → Set (Circuit σ t 1)) : Prop :=
+  ∀ t (c : Circuit σ t 1), ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n, c ∈ allowed n t →
+    EvaluationErrorAtMost (E n) c (ε n)
+
+/-- Uniform correctness implies fixed-circuit correctness for the same scheme and circuit class:
+the same negligible bound can be used for every fixed circuit. -/
+theorem Correct.toFixedCircuitCorrect {E : (n : ℕ) → Scheme (A n)}
+    {allowed : ℕ → (t : ℕ) → Set (Circuit σ t 1)} (h : Correct E allowed) :
+    FixedCircuitCorrect E allowed := by
+  obtain ⟨ε, hε, hb⟩ := h
+  exact fun t c => ⟨ε, hε, fun n => hb n t c⟩
 
 local notation "frame" => MetaMathlibExt.BitstringEncoding.delimit
 
@@ -114,10 +138,10 @@ def Compact (E : (n : ℕ) → Scheme (A n)) : Prop :=
   ∃ p : Polynomial ℕ, ∀ n, ∃ D : DecryptionCircuit,
     D.inputs + D.outputs + D.circuit.size ≤ p.eval n ∧ D.Implements (E n)
 
-/-- A scheme **compactly evaluates** a class of single-output circuits when it is correct for
-that class and compact (Gentry, Definition 2.1.3). Correctness bounds only evaluation error on
-supported keys and input encryptions; compactness bounds the size of a circuit for decryption
-independently of the evaluated circuit. -/
+/-- A scheme **compactly evaluates** a class of single-output circuits when it is uniformly
+correct for that class and compact (Definition 2.1.3, using the uniform-error convention).
+The error bound is shared by all admitted circuits; the decryption circuit size bound is also
+independent of the evaluated circuit. -/
 def CompactlyEvaluates (E : (n : ℕ) → Scheme (A n))
     (allowed : ℕ → (t : ℕ) → Set (Circuit σ t 1)) : Prop :=
   Correct E allowed ∧ Compact E
@@ -194,8 +218,9 @@ def FullyHomomorphic (E : (n : ℕ) → Scheme (A n)) (tag : Encoding σ.Op Bool
 
 /-- Leveled evaluation over the specified gates (the fixed-gate clause of Definition 2.1.5).
 One polynomially bounded decryption circuit at each security parameter implements decryption
-at every positive level. Level `d` is correct through depth `d` inclusive. The four algorithms
-have uniform polynomial running time across levels. This property does not require universality. -/
+at every positive level. Each fixed level `d` has one negligible bound for all arities and circuits
+through depth `d` inclusive. The four algorithms have uniform polynomial running time across
+levels. This property does not require universality. -/
 def LeveledOverBasis (E : ℕ+ → (n : ℕ) → Scheme (A n)) (tag : Encoding σ.Op Bool) : Prop :=
   (∃ (p : Polynomial ℕ) (D : ℕ → DecryptionCircuit), ∀ n,
     (D n).inputs + (D n).outputs + (D n).circuit.size ≤ p.eval n ∧
