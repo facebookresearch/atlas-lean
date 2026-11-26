@@ -12795,6 +12795,7 @@
   "MathlibExt/NumberTheory/Bernoulli/TuenterBernoulliPowerSum": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Identities for Bernoulli numbers"},
   "MathlibExt/NumberTheory/Bernoulli/WeightedStirlingSum": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Bernoulli numbers of the second kind"},
   "MathlibExt/NumberTheory/Bernoulli/WeightedSum": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},
+  "MathlibExt/NumberTheory/BernoulliDerivativeDenominatorBernoulliDerivativeIntegralIff": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Denominators of Bernoulli polynomials"},
   "MathlibExt/NumberTheory/BernoulliFibonacciExpansion": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
   "MathlibExt/NumberTheory/BernoulliFibonacciMultinomial": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
   "MathlibExt/NumberTheory/BernoulliFibonacciVanishing": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
