@@ -28,10 +28,10 @@ reported when the score is at most `k`. The reported positions are exactly the p
 `1 ≤ j ≤ n` with `C[m, j] ≤ k`.
 
 The update below is Myers' column recurrence in the standard formulation (`Xv`, `Xh`, `Ph`, `Mh`
-with the carry-propagating addition). Bit vectors are natural numbers reduced modulo `2^m`, so a
-single word of width `m` is modelled. The running-time claims (`O(1)` word operations per column
-for `m ≤ w`, `O(n⌈m/w⌉)` overall, and the `O(kn/w)` expected bound) need a word-RAM cost model
-and are not stated.
+with the carry-propagating addition). Bit vectors are natural numbers below `2^m`, with the sum
+and the shifts reduced modulo `2^m`, so a single word of width `m` is modelled. The running-time
+claims (`O(1)` word operations per column for `m ≤ w`, `O(n⌈m/w⌉)` overall, and the `O(kn/w)`
+expected bound) need a word-RAM cost model and are not stated.
 
 Sources: G. Myers, "A fast bit-vector algorithm for approximate string matching based on
 dynamic programming", J. ACM 46(3):395-415, 1999, doi:10.1145/316542.316550, Lemma 1 and the
@@ -66,14 +66,15 @@ termination_by i j => (i, j)
 def eqMask (P : List α) (c : α) : ℕ :=
   ((List.range P.length).filter fun i => P[i]? = some c).foldr (fun i acc => 2 ^ i + acc) 0
 
-/-- One column update of the bit-vector algorithm for a pattern of length `m`, on the state
-`(Pv, Mv, score)` and the match mask `Eq` of the next text character (all bit vectors reduced
-modulo `2^m`, and `mask = 2^m - 1`):
+/-- **One column update of the bit-vector algorithm.** For a pattern of length `m`, the update
+takes the state `(Pv, Mv, score)` and the match mask `Eq` of the next text character, where
+`Eq`, `Pv` and `Mv` are `m`-bit vectors, that is naturals below `2^m`. The update does not reduce
+these inputs, so wider ones are outside its contract. With `mask = 2^m - 1` and `¬x = mask ⊕ x`:
 `Xv = Eq ∨ Mv`, `Xh = (((Eq ∧ Pv) + Pv) ∧ mask) ⊕ Pv) ∨ Eq`, `Ph = Mv ∨ ¬(Xh ∨ Pv)`,
 `Mh = Pv ∧ Xh`; the score increases by one if bit `m - 1` of `Ph` is set and otherwise
 decreases by one if bit `m - 1` of `Mh` is set; then `Ph` and `Mh` are shifted left by one
-(without carry-in, since `C[0, j] = 0`), and the new state is `Pv' = Mh ∨ ¬(Xv ∨ Ph)`,
-`Mv' = Ph ∧ Xv`. -/
+(without carry-in, since `C[0, j] = 0`) and reduced modulo `2^m`, and the new state is
+`Pv' = Mh ∨ ¬(Xv ∨ Ph)`, `Mv' = Ph ∧ Xv`, again `m`-bit vectors. -/
 def step (m Eq : ℕ) (s : ℕ × ℕ × ℤ) : ℕ × ℕ × ℤ :=
   let mask := 2 ^ m - 1
   let Pv := s.1
