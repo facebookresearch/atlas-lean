@@ -9,6 +9,7 @@ Variants of SAT and CSP: 3SAT and the SAT-to-3SAT reduction, bounded-occurrence,
 - [Binary constraint satisfaction](binary-constraint-satisfaction/README.md)
 - [Circuit satisfiability](circuit-satisfiability/README.md)
 - [Consistent 2-term DNF](consistent-2-term-dnf/README.md)
+- [Equivalence deletion](equivalence-deletion/README.md)
 - [Maximum 2-satisfiability](maximum-2-satisfiability/README.md)
 - [Maximum satisfiability](maximum-satisfiability/README.md)
 - [Minimum 2-satisfiability](minimum-2-satisfiability/README.md)

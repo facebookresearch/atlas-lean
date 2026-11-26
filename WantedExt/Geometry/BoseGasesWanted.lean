@@ -40,6 +40,7 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Function.LocallyIntegrable
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+public import MathlibExt.Geometry.BoseGases
 
 @[expose] public section
 
@@ -155,18 +156,6 @@ scattering length $a(v)$, let $\mathcal{R}(v) = \int_{\mathbb{R}^3} v(x)/(8\pi a
 $a(v) \neq 0$ this is the ratio of $(8\pi)^{-1} \int v$ to $a(v)$. -/
 noncomputable def 𝓡 (v : ℝ³ → ℝ) := ∫ x, v x / (8 * π * a v)
 
-/- Constant `η` in Theorem 1.2. -/
-/-- **Lee–Huang–Yang error exponent.** $\eta$ is a real constant, not given explicitly, that
-serves as the exponent in the error term $(\rho a^3)^{1/2 + \eta}$ of the Lee–Huang–Yang lower
-bound (Theorem 1.2), where $\rho$ is the density and $a$ the scattering length of the
-potential; that theorem asserts $\eta > 0$.
-
-Source: S. Fournais and J. P. Solovej, `The energy of dilute Bose gases`, Annals of Math, 192
-(3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0,
-e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-BoseGases.lean Via
-leanprover/lean-eval@38361be, problem `annals_bose_gases`. -/
-public def_wanted η : ℝ
-
 /- Constant `𝓒` in Theorem 1.2. -/
 /-- **Lee–Huang–Yang error constant.** $\mathcal{C}$ is a real-valued function of two real
 variables, not given explicitly. Let $v$ be a potential with scattering length $a$ whose closed
@@ -182,8 +171,9 @@ leanprover/lean-eval@38361be, problem `annals_bose_gases`. -/
 public def_wanted 𝓒 (𝓡 : ℝ) (r : ℝ) : ℝ
 
 /--
-**Lee–Huang–Yang lower bound for dilute Bose gases.** There are a real number $\eta$ and a
-function $\mathcal{C}$ of two real variables such that the following holds. Let
+**Lee–Huang–Yang lower bound for dilute Bose gases.** Fix the admissible exponent
+$\eta = 1/1615$. The only remaining parameter to be supplied is a real-valued function
+$\mathcal{C}$ of two real variables such that the following holds. Let
 $v : \mathbb{R}^3 \to \mathbb{R}$ be a non-negative, radial, integrable potential that is not
 almost everywhere zero, and let $R > 0$ be such that the closed support of $v$ lies in the open
 ball $B(0, R)$. Let $a$ be the scattering length of $v$, let $\mathcal{R}(v) = \int v/(8\pi a)$,
@@ -209,9 +199,9 @@ Source: S. Fournais and J. P. Solovej, `The energy of dilute Bose gases`, Annals
 -/
 public theorem_wanted theorem_1_2 (v : ℝ³ → ℝ) (hv_ne_zero : ¬ v =ᵐ[volume] 0) (hv_nonneg : 0 ≤ v)
     (hv_radial : IsRadial v) (hv_memL1 : MemLp v 1) {R : ℝ} (hR : 0 < R)
-    (hv_supp : tsupport v ⊆ ball 0 R) : 0 < ❰η❱ ∧ ∀ᶠ ρ in 𝓝[>] 0,
+    (hv_supp : tsupport v ⊆ ball 0 R) : 0 < η ∧ ∀ᶠ ρ in 𝓝[>] 0,
       e ρ v ≥ 4 * π * ρ ^ 2 * a v * (1 + (128 / (15 * √ π)) * √ (ρ * a v ^ 3) -
-        ❰𝓒❱ (𝓡 v) (R / a v) * (ρ * a v ^ 3) ^ (1 / 2 + ❰η❱))
+        ❰𝓒❱ (𝓡 v) (R / a v) * (ρ * a v ^ 3) ^ (1 / 2 + η))
 
 end BoseGases
 
